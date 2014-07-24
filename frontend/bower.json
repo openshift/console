@@ -1,0 +1,24 @@
+{
+  "name": "bridge",
+  "version": "0.0.1",
+  "dependencies": {
+    "jquery": "latest",
+    "angular": "latest",
+    "angular-route": "latest",
+    "angular-animate": "latest",
+    "angular-bootstrap": "latest",
+    "angular-sanitize": "latest",
+    "underscore": "latest",
+    "underscore.string": "latest"
+  },
+  "devDependencies": {
+    "angular-mocks": "latest"
+  },
+
+  "overrides": {
+    "underscore.string": {
+      "main": "lib/underscore.string.js"
+    }
+  }
+
+}

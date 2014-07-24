@@ -1,0 +1,28 @@
+{
+
+  "env": {
+    "browser": true,
+  },
+
+  "rules": {
+    "camelcase": 2,
+    "curly": [2, "all"],
+    "quotes": [2, "single"],
+    "eqeqeq": 2,
+    "no-eq-null": 2,
+    "guard-for-in": 2,
+    "wrap-iife": [2, "outside"],
+
+    "no-comma-dangle": 0,
+    "no-underscore-dangle": 0,
+    "consistent-return": 0,
+
+    "no-use-before-define": 0,
+    "no-global-strict": 0
+  },
+
+  "globals": {
+    "angular": true
+  }
+
+}

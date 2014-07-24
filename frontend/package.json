@@ -1,0 +1,26 @@
+{
+  "name": "bridge",
+  "version": "0.1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "karma-jasmine": "latest",
+    "karma-chrome-launcher": "latest",
+    "gulp": "latest",
+    "run-sequence": "latest",
+    "gulp-karma": "latest",
+    "gulp-angular-templatecache": "latest",
+    "gulp-sass": "latest",
+    "gulp-concat": "latest",
+    "gulp-clean": "latest",
+    "gulp-uglify": "latest",
+    "gulp-eslint": "latest",
+    "gulp-rename": "latest",
+    "gulp-ngmin": "latest",
+    "gulp-minify-css": "latest",
+    "gulp-html-replace": "latest",
+    "main-bower-files": "latest"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
