@@ -1,0 +1,442 @@
+{
+  "kind": "discovery#restDescription",
+  "discoveryVersion": "v1",
+  "id": "bridge:v1",
+  "name": "schema",
+  "version": "v1",
+  "title": "Bridge API",
+  "description": "",
+  "documentationLink": "http://github.com/coreos-inc/bridge",
+  "protocol": "rest",
+  "icons": {
+    "x16": "",
+    "x32": ""
+  },
+  "labels": [],
+  "rootUrl": "http://localhost:9000",
+  "servicePath": "/bridge/v1",
+  "batchPath": "batch",
+  "parameters": {},
+  "auth": {},
+  "schemas": {
+
+
+    "user": {
+      "id": "user",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    },
+
+    "userPage": {
+      "id": "userPage",
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "user"
+          }
+        },
+        "nextPageToken": {
+          "type": "string"
+        }
+      }
+    },
+
+
+    "podList": {
+      "id": "podList",
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "pod"
+          }
+        }
+      }
+    },
+
+    "pod": {
+      "id": "pod",
+      "type": "object",
+      "required": false,
+      "description": "Pod resource. A pod corresponds to a co-located group of [Docker containers](http://docker.io).",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "required": false
+        },
+        "id": {
+          "type": "string",
+          "required": false
+        },
+        "creationTimestamp": {
+          "type": "string",
+          "required": false
+        },
+        "selfLink": {
+          "type": "string",
+          "required": false
+        },
+        "desiredState": {
+          "type": "object",
+          "required": false,
+          "description": "The desired configuration of the pod",
+          "properties": {
+            "manifest": {
+              "type": "object",
+              "required": false,
+              "description": "Manifest describing group of [Docker containers](http://docker.io); compatible with format used by [Google Cloud Platform's container-vm images](https://developers.google.com/compute/docs/containers)"
+            },
+            "status": {
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            "host": {
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            "hostIP": {
+              "type": "string",
+              "required": false,
+              "description": ""
+            },
+            "info": {
+              "type": "object",
+              "required": false,
+              "description": ""
+            }
+          }
+        },
+        "currentState": {
+          "type": "object",
+          "required": false,
+          "description": "The current configuration and status of the pod. Fields in common with desiredState have the same meaning.",
+          "properties": {
+            "manifest": {
+              "type": "object",
+              "required": false
+            },
+            "status": {
+              "type": "string",
+              "required": false
+            },
+            "host": {
+              "type": "string",
+              "required": false
+            },
+            "hostIP": {
+              "type": "string",
+              "required": false
+            },
+            "info": {
+              "type": "object",
+              "required": false
+            }
+          }
+        },
+        "labels": {
+          "type": "object",
+          "required": false
+        }
+      }
+    },
+
+
+    "serviceList": {
+      "id": "serviceList",
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "service"
+          }
+        }
+      }
+    },
+
+    "service": {
+      "id": "service",
+      "type": "object",
+      "required": false,
+      "description": "A service resource.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "required": false
+        },
+        "id": {
+          "type": "string",
+          "required": false
+        },
+        "creationTimestamp": {
+          "type": "string",
+          "required": false
+        },
+        "selfLink": {
+          "type": "string",
+          "required": false
+        },
+        "name": {
+          "type": "string",
+          "required": false
+        },
+        "port": {
+          "type": "number",
+          "required": false
+        },
+        "labels": {
+          "type": "object",
+          "required": false
+        },
+        "selector": {
+          "type": "object",
+          "required": false
+        }
+      }
+    },
+
+
+    "controllerList": {
+      "id": "controllerList",
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "controller"
+          }
+        }
+      }
+    },
+
+    "controller": {
+      "id": "controller",
+      "type": "object",
+      "required": false,
+      "description": "A replicationController resource. A replicationController helps to create and manage a set of pods. It acts as a factory to create new pods based on a template. It ensures that there are a specific number of pods running. If fewer pods are running than `replicas` then the needed pods are generated using `podTemplate`. If more pods are running than `replicas`, then excess pods are deleted.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "required": false
+        },
+        "id": {
+          "type": "string",
+          "required": false
+        },
+        "creationTimestamp": {
+          "type": "string",
+          "required": false
+        },
+        "selfLink": {
+          "type": "string",
+          "required": false
+        },
+        "desiredState": {
+          "type": "object",
+          "required": false,
+          "description": "The desired configuration of the replicationController",
+          "properties": {
+            "replicas": {
+              "type": "number",
+              "required": false,
+              "description": "Number of pods desired in the set"
+            },
+            "replicaSelector": {
+              "type": "object",
+              "required": false,
+              "description": "Required labels used to identify pods in the set"
+            },
+            "podTemplate": {
+              "type": "object",
+              "required": false,
+              "description": "Template from which to create new pods, as necessary. Identical to pod schema."
+            }
+          }
+        },
+        "labels": {
+          "type": "object",
+          "required": false
+        }
+      }
+    }
+
+
+
+
+
+
+  },
+  "resources": {
+
+
+    "users": {
+      "methods": {
+        "list": {
+          "id": "bridge.users.list",
+          "description": "Retrieve a page of Users.",
+          "httpMethod": "GET",
+          "path": "users",
+          "parameters": {
+            "nextPageToken": {
+              "type": "string",
+              "location": "query"
+            }
+          },
+          "response": {
+            "$ref": "userPage"
+          }
+        },
+        "get": {
+          "id": "bridge.users.get",
+          "description": "Retrieve a User.",
+          "httpMethod": "GET",
+          "path": "users/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "user"
+          }
+        },
+        "destroy": {
+          "id": "bridge.user.destroy",
+          "description": "Destroy a User.",
+          "httpMethod": "DELETE",
+          "path": "users/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          }
+        }
+      }
+    },
+
+
+    "pods": {
+      "methods": {
+        "list": {
+          "id": "bridge.pods.list",
+          "description": "Retrieve a list of Pods.",
+          "httpMethod": "GET",
+          "path": "pods",
+          "response": {
+            "$ref": "podList"
+          }
+        },
+        "get": {
+          "id": "bridge.pods.get",
+          "description": "Retrieve a Pod.",
+          "httpMethod": "GET",
+          "path": "pods/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "pod"
+          }
+        }
+      }
+    },
+
+
+    "services": {
+      "methods": {
+        "list": {
+          "id": "bridge.services.list",
+          "description": "Retrieve a list of Services.",
+          "httpMethod": "GET",
+          "path": "services",
+          "response": {
+            "$ref": "serviceList"
+          }
+        },
+        "get": {
+          "id": "bridge.services.get",
+          "description": "Retrieve a Service.",
+          "httpMethod": "GET",
+          "path": "services/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "service"
+          }
+        }
+      }
+    },
+
+
+    "controllers": {
+      "methods": {
+        "list": {
+          "id": "bridge.controllers.list",
+          "description": "Retrieve a list of Controllers.",
+          "httpMethod": "GET",
+          "path": "controllers",
+          "response": {
+            "$ref": "controllerList"
+          }
+        },
+        "get": {
+          "id": "bridge.controllers.get",
+          "description": "Retrieve a Controllers.",
+          "httpMethod": "GET",
+          "path": "controllers/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "controller"
+          }
+        }
+      }
+    }
+
+
+
+  }
+}
