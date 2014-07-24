@@ -1,0 +1,22 @@
+{
+	"ImportPath": "github.com/coreos-inc/bridge",
+	"GoVersion": "go1.2.1",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "code.google.com/p/google-api-go-client/googleapi",
+			"Comment": "release-95",
+			"Rev": "b98def84f017a6dcd8b16c68293629d14bc66a90"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1be7a086a5fd6440ef16fe96baeda0c78282b980"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "270c42505a11c779b5a5aaecfa5ec717adac996e"
+		}
+	]
+}
