@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+# build frontend
+cd frontend && ./node_modules/.bin/gulp

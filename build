@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+PROJECT_DIR=$(basename $PWD)
+export GOPATH=${PWD}/Godeps/_workspace
+export GOBIN=${PWD}/bin
+
+if [ ! -h $GOPATH/src/github.com/coreos-inc/$PROJECT_DIR ]; then
+    mkdir -p $GOPATH/src/github.com/coreos-inc/
+    ln -s ${PWD} $GOPATH/src/github.com/coreos-inc/$PROJECT_DIR
+fi
+
+eval $(go env)
+
+go install github.com/coreos-inc/$PROJECT_DIR/server
