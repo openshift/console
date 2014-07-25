@@ -1,32 +1,60 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js" ng-app="app">
 
-  <head>
+  <head co-favicons>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title></title>
+    <title co-title co-title-suffix=" · CoreOS">CoreOS</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- build:css-coreos-web -->
+    <link rel="stylesheet" href="/static/lib/coreos-web/coreos.css">
+    <!-- endbuild -->
     <!-- build:css -->
     <link rel="stylesheet" href="/static/dist/style.css">
     <!-- endbuild -->
   </head>
 
-  <body>
+  <body class="co-img-bg-hexagons">
 
-    <div id="" class="container" ng-view></div>
+    <co-footer-wrapper ng-cloak>
+      <co-navbar ng-cloak>
+        <ul class="nav navbar-nav">
+          <co-navbar-link href="/deployments">Deployments</co-navbar-link>
+        </ul>
+        <co-navbar-dropdown ng-cloak text="My Account">
+          <li><a href="/users">Manage Users & API Keys</a></li>
+          <li><a href="mailto:support@coreos.com">Contact Support</a></li>
+        </co-navbar-dropdown>
+      </co-navbar>
+      <div id="co-l-view-container" class="container" ng-view co-error-page></div>
+    </co-footer-wrapper>
+
+    <co-footer ng-cloak>
+      <co-footer-link href="https://coreos.com/docs" icon-class="fa fa-book">Documentation</co-footer-link>
+      <co-footer-link href="irc://irc.freenode.org:6667/#coreos/" icon-class="fa fa-comment">IRC #coreos</co-footer-link>
+    </co-footer>
+
+    <co-toast ng-cloak></co-toast>
+
+    <!-- build:js-deps -->
+    <script src="/static/lib/deps.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js-coreos-web -->
+    <script src="/static/lib/coreos-web/coreos.js"></script>
+    <!-- endbuild -->
 
     <!-- build:js -->
-    <!-- deps -->
-    <script src="/static/lib/deps.js"></script>
-
-    <!-- modules -->
     <script src="/static/dist/templates.js"></script>
+    <!-- modules -->
     <script src="/static/app.js"></script>
     <script src="/static/const.js"></script>
-
+    <script src="/static/module/api-client-loader.js"></script>
+    <script src="/static/module/deployments-svc.js"></script>
     <!-- pages -->
     <script src="/static/page/main/main-ctrl.js"></script>
+    <script src="/static/page/deployments/deployments-ctrl.js"></script>
     <!-- endbuild -->
   </body>
 </html>
