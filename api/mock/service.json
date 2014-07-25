@@ -1,10 +1,7 @@
 {
-  "id": "example",
-  "port": 8000,
-  "labels": {
-     "name": "nginx"
-  },
+  "id": "frontend",
+  "port": 9998,
   "selector": {
-     "name": "nginx"
+    "name": "frontend"
   }
 }

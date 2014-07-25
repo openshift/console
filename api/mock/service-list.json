@@ -1,26 +1,31 @@
 {
     "items": [
         {
-            "id": "example1",
-            "port": 8000,
-            "labels": {
-                "name": "nginx"
-            },
-            "selector": {
-                "name": "nginx"
-            }
+          "id": "frontend",
+          "port": 9998,
+          "selector": {
+            "name": "frontend"
+          }
         },
+
         {
-            "id": "example2",
-            "port": 8080,
-            "labels": {
-                "env": "prod",
-                "name": "jetty"
-            },
-            "selector": {
-                "env": "prod",
-                "name": "jetty"
-            }
+          "id": "redismaster",
+          "port": 10000,
+          "selector": {
+            "name": "redis-master"
+          }
+        },
+
+        {
+          "id": "redisslave",
+          "port": 10001,
+          "labels": {
+            "name": "redisslave"
+          },
+          "selector": {
+            "name": "redisslave"
+          }
         }
+
     ]
 }
