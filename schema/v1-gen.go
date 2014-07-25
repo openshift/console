@@ -37,7 +37,7 @@ var _ = strings.Replace
 const apiId = "bridge:v1"
 const apiName = "schema"
 const apiVersion = "v1"
-const basePath = "http://localhost:9000/bridge/v1"
+const basePath = "http://localhost:9000/api/bridge/v1/"
 
 func New(client *http.Client) (*Service, error) {
 	if client == nil {

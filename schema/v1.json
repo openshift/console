@@ -14,7 +14,7 @@
   },
   "labels": [],
   "rootUrl": "http://localhost:9000",
-  "servicePath": "/bridge/v1",
+  "servicePath": "/api/bridge/v1/",
   "batchPath": "batch",
   "parameters": {},
   "auth": {},
