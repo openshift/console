@@ -18,7 +18,8 @@
     "gulp-ngmin": "latest",
     "gulp-minify-css": "latest",
     "gulp-html-replace": "latest",
-    "main-bower-files": "latest"
+    "gulp-bower-files": "latest",
+    "merge-stream": "latest"
   },
   "engines": {
     "node": ">=0.10.0"
