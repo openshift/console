@@ -24,20 +24,44 @@
     'templates',
     'underscore',
     'jquery',
+    'coreos',
     // internal modules
     'app.ui'
   ]);
 
   // Routes
-  app.config(function($routeProvider, $locationProvider, $httpProvider) {
+  app.config(function($routeProvider, $locationProvider, $httpProvider,
+        configSvcProvider, apiClientProvider) {
 
     $locationProvider.html5Mode(true);
+
+    configSvcProvider.config({
+      siteBasePath: '/',
+      libPath: '/static/lib/coreos-web'
+    });
+
+    apiClientProvider.settings({
+      cache: false,
+      apis: [{
+        name: 'bridge',
+        id: 'bridge:v1',
+        discoveryEndpoint: window.location.origin + '/api/bridge/v1/discovery/v1/rest'
+      }]
+    });
 
     $routeProvider
       .when('/', {
         controller: 'MainCtrl',
         templateUrl: '/static/page/main/main.html',
         title: 'Main'
+      })
+      .when('/deployments', {
+        controller: 'DeploymentsCtrl',
+        templateUrl: '/static/page/deployments/deployments.html',
+        title: 'Deployments',
+        resolve: {
+          client: 'apiClientLoaderSvc'
+        }
       })
       .otherwise({
         templateUrl: '/static/page/error/404.html',

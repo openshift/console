@@ -1,0 +1,29 @@
+<div>
+  <co-nav-title title="Deployments">
+    <!--<a href="#" class="co-m-primary-action" ng-click="openCreateGroupModal()">-->
+      <!--<co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Create a New Group</a>-->
+  </co-nav-title>
+
+
+  <div class="panel">
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Labels</th>
+          <th>Desired Replicas</th>
+          <th>Selector</th>
+        </tr>
+      </thead>
+      <tr ng-repeat="d in deployments">
+        <td>{{d.id}}</td>
+        <td>{{d.labels}}</td>
+        <td>{{d.desiredState.replicas}}</td>
+        <td>{{d.desiredState.replicaSelector}}</td>
+      </tr>
+    </table>
+
+  </div>
+
+</div>
