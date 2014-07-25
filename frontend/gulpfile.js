@@ -11,7 +11,8 @@ var exec = require('child_process').exec,
     rename = require('gulp-rename'),
     concat = require('gulp-concat'),
     htmlReplace = require('gulp-html-replace'),
-    bowerFiles = require('gulp-bower-files');
+    merge = require('merge-stream');
+    bowerFiles = require('main-bower-files');
 
 var distDir = './public/dist',
     CURRENT_SHA,
@@ -69,21 +70,23 @@ gulp.task('js-quality', function() {
 });
 
 // Extract & compile dependency code.
-gulp.task('deps', function() {
-  // NOTE: order in bower.json matters.
-  // jquery must appear before angular.
-  bowerFiles()
-    .pipe(concat('deps.js'))
-    .pipe(gulp.dest('./public/lib/'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(uglify())
-    .pipe(gulp.dest('./public/lib/'))
+gulp.task('deps', function(cb) {
+  return merge(
+    // NOTE: order in bower.json matters.
+    // jquery must appear before angular.
+    gulp.src(bowerFiles())
+      .pipe(concat('deps.js'))
+      .pipe(gulp.dest('./public/lib/'))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(uglify())
+      .pipe(gulp.dest('./public/lib/')),
 
-  // copy to dist folder too for packaging.
-  return gulp.src([
-      'public/lib/deps.min.js'
-    ])
-    .pipe(gulp.dest('public/dist'));
+    // copy to dist folder too for packaging.
+    gulp.src([
+        'public/lib/deps.min.js'
+      ])
+      .pipe(gulp.dest('public/dist'))
+  );
 });
 
 // Replace code blocks in html with build versions.
