@@ -31,7 +31,7 @@ Update existing backend dependencies:
  1. `go get -u foo/bar` as usual
  1. `godep update foo/bar`
 
-Run the dev server (auto-loads new code changes):
+Run the dev server (auto-loads new code changes):  
 `./devweb`
 
 ### Dependencies
