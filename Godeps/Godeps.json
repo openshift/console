@@ -11,6 +11,10 @@
 			"Rev": "b98def84f017a6dcd8b16c68293629d14bc66a90"
 		},
 		{
+			"ImportPath": "github.com/coreos/devweb",
+			"Rev": "94a90f999f1d747bc1206662843fc058e85fb45b"
+		},
+		{
 			"ImportPath": "github.com/gorilla/context",
 			"Rev": "1be7a086a5fd6440ef16fe96baeda0c78282b980"
 		},
