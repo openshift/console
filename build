@@ -11,4 +11,4 @@ fi
 
 eval $(go env)
 
-go install github.com/coreos-inc/$PROJECT_DIR/server
+go install github.com/coreos-inc/$PROJECT_DIR

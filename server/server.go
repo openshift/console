@@ -1,9 +1,8 @@
-package main
+package server
 
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -18,7 +17,6 @@ const (
 )
 
 var (
-	listenAddress string
 	publicDir     string
 	indexTemplate *template.Template
 )
@@ -30,26 +28,19 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func main() {
+func init() {
 	publicDir = os.Getenv("PUBLIC_DIR")
 	if publicDir == "" {
 		publicDir = "./frontend/public"
-	}
-
-	listenAddress = os.Getenv("ADDRESS")
-	if listenAddress == "" {
-		listenAddress = "0.0.0.0:9000"
 	}
 
 	if _, err := os.Stat(path.Join(publicDir, "index.html")); err != nil {
 		fmt.Println("Static files do not exist in provided PUBLIC_DIR env variable.")
 		os.Exit(1)
 	}
-
-	handle()
 }
 
-func handle() {
+func Handle() {
 	r := mux.NewRouter()
 
 	// Simple static file server for requests containing static prefix.
@@ -63,9 +54,4 @@ func handle() {
 	r.HandleFunc("/{path:.*}", IndexHandler)
 
 	http.Handle("/", r)
-
-	log.Printf("listening on: %s", listenAddress)
-	if err := http.ListenAndServe(listenAddress, nil); err != nil {
-		log.Fatal("error on ListenAndServe: %s", err)
-	}
 }
