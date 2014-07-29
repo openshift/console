@@ -53,14 +53,54 @@
       .when('/', {
         controller: 'MainCtrl',
         templateUrl: '/static/page/main/main.html',
-        title: 'Main'
+        title: 'CoreOS'
       })
-      .when('/deployments', {
-        controller: 'DeploymentsCtrl',
-        templateUrl: '/static/page/deployments/deployments.html',
-        title: 'Deployments',
+      .when('/services', {
+        controller: 'ServicesCtrl',
+        templateUrl: '/static/page/services/services.html',
+        title: 'Services',
         resolve: {
-          client: 'apiClientLoaderSvc'
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/services/:id', {
+        controller: 'ServiceCtrl',
+        templateUrl: '/static/page/services/service.html',
+        title: 'Service',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/controllers', {
+        controller: 'ControllersCtrl',
+        templateUrl: '/static/page/controllers/controllers.html',
+        title: 'Controllers',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/controllers/:id', {
+        controller: 'ControllerCtrl',
+        templateUrl: '/static/page/controllers/controller.html',
+        title: 'Controller',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/pods', {
+        controller: 'PodsCtrl',
+        templateUrl: '/static/page/pods/pods.html',
+        title: 'Pods',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/pods/:id', {
+        controller: 'PodCtrl',
+        templateUrl: '/static/page/pods/pods.html',
+        title: 'Pod',
+        resolve: {
+          client: 'ClientLoaderSvc'
         }
       })
       .otherwise({
@@ -69,7 +109,8 @@
       });
 
   })
-  .run(function(CONST) {
+  .run(function($rootScope, CONST) {
+    $rootScope.CONST = CONST;
   });
 
 }());
