@@ -103,6 +103,14 @@
           client: 'ClientLoaderSvc'
         }
       })
+      .when('/search', {
+        controller: 'SearchCtrl',
+        templateUrl: '/static/page/search/search.html',
+        title: 'Search',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
       .otherwise({
         templateUrl: '/static/page/error/404.html',
         title: 'Page Not Found (404)'
