@@ -20,7 +20,9 @@
     <co-footer-wrapper ng-cloak>
       <co-navbar ng-cloak>
         <ul class="nav navbar-nav">
-          <co-navbar-link href="/deployments">Deployments</co-navbar-link>
+          <co-navbar-link href="/services">Services</co-navbar-link>
+          <co-navbar-link href="/controllers">Controllers</co-navbar-link>
+          <co-navbar-link href="/pods">Pods</co-navbar-link>
         </ul>
         <co-navbar-dropdown ng-cloak text="My Account">
           <li><a href="/users">Manage Users & API Keys</a></li>
@@ -50,11 +52,18 @@
     <!-- modules -->
     <script src="/static/app.js"></script>
     <script src="/static/const.js"></script>
-    <script src="/static/module/api-client-loader.js"></script>
-    <script src="/static/module/deployments-svc.js"></script>
+    <script src="/static/module/client-loader-svc.js"></script>
+    <script src="/static/module/controllers-svc.js"></script>
+    <script src="/static/module/services-svc.js"></script>
+    <script src="/static/module/pods-svc.js"></script>
     <!-- pages -->
     <script src="/static/page/main/main-ctrl.js"></script>
-    <script src="/static/page/deployments/deployments-ctrl.js"></script>
+    <script src="/static/page/services/services-ctrl.js"></script>
+    <script src="/static/page/services/service-ctrl.js"></script>
+    <script src="/static/page/controllers/controllers-ctrl.js"></script>
+    <script src="/static/page/controllers/controller-ctrl.js"></script>
+    <script src="/static/page/pods/pods-ctrl.js"></script>
+    <script src="/static/page/pods/pod-ctrl.js"></script>
     <!-- endbuild -->
   </body>
 </html>

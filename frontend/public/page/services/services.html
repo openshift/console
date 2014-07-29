@@ -1,0 +1,62 @@
+<div class="co-p-services">
+
+  <co-nav-title title="Services">
+    <a href="#" class="co-m-primary-action" ng-click="openCreateServiceModal()">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Create a New Service</a>
+  </co-nav-title>
+
+  <div class="co-m-pane">
+    <div class="co-m-pane__body">
+
+      <div class="row">
+        <div class="col-lg-2">
+          facet filters
+        </div>
+        <div class="col-lg-10">
+
+          <input type="text" class="form-control" placeholder="Filter services by label query..." />
+
+          <div class="co-m-table-grid--bordered">
+            <div class="row co-m-table-grid__head">
+              <div class="col-lg-1"></div>
+              <div class="col-lg-2">Service ID</div>
+              <div class="col-lg-2">Service Labels</div>
+              <div class="col-lg-2">Pod Label Selector</div>
+              <div class="col-lg-2">Service Port</div>
+            </div>
+            <div class="row" ng-repeat-start="s in services" ng-click="open = !open; getControllers(s.id)">
+              <div class="col-lg-1">COG</div>
+              <div class="col-lg-2"><a ng-href="/services/{{s.id}}" ng-bind="s.id"></a></div>
+              <div class="col-lg-2">{{s.labels}}</div>
+              <div class="col-lg-2">{{s.selector}}</div>
+              <div class="col-lg-2">{{s.port}}</div>
+            </div>
+            <div ng-show="open" ng-repeat-end>
+              <div class="co-m-table-grid">
+                <div class="row co-m-table-grid__head">
+                  <div class="col-lg-2">Replica Controller</div>
+                  <div class="col-lg-2">Status</div>
+                  <div class="col-lg-2">Labels</div>
+                  <div class="col-lg-2">Pods</div>
+                </div>
+                <div class="row" ng-repeat="c in s.controllers">
+                  <div class="col-lg-2"><a href="#">{{c.id}}</a></div>
+                  <div class="col-lg-2"></div>
+                  <div class="col-lg-2">{{c.labels}}</div>
+                  <div class="col-lg-2">{{c.desiredState.replicas}}</div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+        </div><!-- col -->
+
+      </div><!-- row -->
+
+    </div>
+
+  </div>
+
+</div>
