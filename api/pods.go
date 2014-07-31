@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/coreos-inc/bridge/Godeps/_workspace/src/github.com/gorilla/mux"
@@ -14,13 +13,18 @@ func registerPods(router *mux.Router) {
 
 // Get Pod api endpoint.
 func podGet(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-	log.Printf("getting pod id: %s", id)
-	http.ServeFile(w, r, "api/mock/pod.json")
+	err := k8proxy.DoAndRespond(w, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+	}
+	//http.ServeFile(w, r, "api/mock/pod.json")
 }
 
 // List Pods api endpoint.
 func podList(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "api/mock/pod-list.json")
+	err := k8proxy.DoAndRespond(w, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+	}
+	//http.ServeFile(w, r, "api/mock/pod-list.json")
 }
