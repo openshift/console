@@ -1,6 +1,13 @@
 /* CUSTOM STYLES */
+
+// Config variables
+@import "config";
+
 // Base
 @import "style/layout";
 
 // Pages
 @import "page/main/main";
+
+// Modules
+@import "module/directive/label";
