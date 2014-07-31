@@ -44,8 +44,8 @@ func New(client *http.Client) (*Service, error) {
 		return nil, errors.New("client is nil")
 	}
 	s := &Service{client: client, BasePath: basePath}
-	s.Controllers = NewControllersService(s)
 	s.Pods = NewPodsService(s)
+	s.ReplicationControllers = NewReplicationControllersService(s)
 	s.Services = NewServicesService(s)
 	s.Users = NewUsersService(s)
 	return s, nil
@@ -55,22 +55,13 @@ type Service struct {
 	client   *http.Client
 	BasePath string // API endpoint base URL
 
-	Controllers *ControllersService
-
 	Pods *PodsService
+
+	ReplicationControllers *ReplicationControllersService
 
 	Services *ServicesService
 
 	Users *UsersService
-}
-
-func NewControllersService(s *Service) *ControllersService {
-	rs := &ControllersService{s: s}
-	return rs
-}
-
-type ControllersService struct {
-	s *Service
 }
 
 func NewPodsService(s *Service) *PodsService {
@@ -79,6 +70,15 @@ func NewPodsService(s *Service) *PodsService {
 }
 
 type PodsService struct {
+	s *Service
+}
+
+func NewReplicationControllersService(s *Service) *ReplicationControllersService {
+	rs := &ReplicationControllersService{s: s}
+	return rs
+}
+
+type ReplicationControllersService struct {
 	s *Service
 }
 
@@ -248,121 +248,6 @@ type UserPage struct {
 	Users []*User `json:"users,omitempty"`
 }
 
-// method id "bridge.controllers.get":
-
-type ControllersGetCall struct {
-	s    *Service
-	id   string
-	opt_ map[string]interface{}
-}
-
-// Get: Retrieve a Controllers.
-func (r *ControllersService) Get(id string) *ControllersGetCall {
-	c := &ControllersGetCall{s: r.s, opt_: make(map[string]interface{})}
-	c.id = id
-	return c
-}
-
-// Id sets the optional parameter "id":
-func (c *ControllersGetCall) Id(id string) *ControllersGetCall {
-	c.opt_["id"] = id
-	return c
-}
-
-func (c *ControllersGetCall) Do() (*Controller, error) {
-	var body io.Reader = nil
-	params := make(url.Values)
-	params.Set("alt", "json")
-	if v, ok := c.opt_["id"]; ok {
-		params.Set("id", fmt.Sprintf("%v", v))
-	}
-	urls := googleapi.ResolveRelative(c.s.BasePath, "controllers/{id}")
-	urls += "?" + params.Encode()
-	req, _ := http.NewRequest("GET", urls, body)
-	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
-	googleapi.SetOpaque(req.URL)
-	req.Header.Set("User-Agent", "google-api-go-client/0.5")
-	res, err := c.s.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer googleapi.CloseBody(res)
-	if err := googleapi.CheckResponse(res); err != nil {
-		return nil, err
-	}
-	ret := new(Controller)
-	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
-		return nil, err
-	}
-	return ret, nil
-	// {
-	//   "description": "Retrieve a Controllers.",
-	//   "httpMethod": "GET",
-	//   "id": "bridge.controllers.get",
-	//   "parameterOrder": [
-	//     "id"
-	//   ],
-	//   "parameters": {
-	//     "id": {
-	//       "location": "path",
-	//       "type": "string"
-	//     }
-	//   },
-	//   "path": "controllers/{id}",
-	//   "response": {
-	//     "$ref": "controller"
-	//   }
-	// }
-
-}
-
-// method id "bridge.controllers.list":
-
-type ControllersListCall struct {
-	s    *Service
-	opt_ map[string]interface{}
-}
-
-// List: Retrieve a list of Controllers.
-func (r *ControllersService) List() *ControllersListCall {
-	c := &ControllersListCall{s: r.s, opt_: make(map[string]interface{})}
-	return c
-}
-
-func (c *ControllersListCall) Do() (*ControllerList, error) {
-	var body io.Reader = nil
-	params := make(url.Values)
-	params.Set("alt", "json")
-	urls := googleapi.ResolveRelative(c.s.BasePath, "controllers")
-	urls += "?" + params.Encode()
-	req, _ := http.NewRequest("GET", urls, body)
-	googleapi.SetOpaque(req.URL)
-	req.Header.Set("User-Agent", "google-api-go-client/0.5")
-	res, err := c.s.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer googleapi.CloseBody(res)
-	if err := googleapi.CheckResponse(res); err != nil {
-		return nil, err
-	}
-	ret := new(ControllerList)
-	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
-		return nil, err
-	}
-	return ret, nil
-	// {
-	//   "description": "Retrieve a list of Controllers.",
-	//   "httpMethod": "GET",
-	//   "id": "bridge.controllers.list",
-	//   "path": "controllers",
-	//   "response": {
-	//     "$ref": "controllerList"
-	//   }
-	// }
-
-}
-
 // method id "bridge.pods.get":
 
 type PodsGetCall struct {
@@ -473,6 +358,121 @@ func (c *PodsListCall) Do() (*PodList, error) {
 	//   "path": "pods",
 	//   "response": {
 	//     "$ref": "podList"
+	//   }
+	// }
+
+}
+
+// method id "bridge.replicationControllers.get":
+
+type ReplicationControllersGetCall struct {
+	s    *Service
+	id   string
+	opt_ map[string]interface{}
+}
+
+// Get: Retrieve a replicationControllers.
+func (r *ReplicationControllersService) Get(id string) *ReplicationControllersGetCall {
+	c := &ReplicationControllersGetCall{s: r.s, opt_: make(map[string]interface{})}
+	c.id = id
+	return c
+}
+
+// Id sets the optional parameter "id":
+func (c *ReplicationControllersGetCall) Id(id string) *ReplicationControllersGetCall {
+	c.opt_["id"] = id
+	return c
+}
+
+func (c *ReplicationControllersGetCall) Do() (*Controller, error) {
+	var body io.Reader = nil
+	params := make(url.Values)
+	params.Set("alt", "json")
+	if v, ok := c.opt_["id"]; ok {
+		params.Set("id", fmt.Sprintf("%v", v))
+	}
+	urls := googleapi.ResolveRelative(c.s.BasePath, "replicationControllers/{id}")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("GET", urls, body)
+	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(Controller)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Retrieve a replicationControllers.",
+	//   "httpMethod": "GET",
+	//   "id": "bridge.replicationControllers.get",
+	//   "parameterOrder": [
+	//     "id"
+	//   ],
+	//   "parameters": {
+	//     "id": {
+	//       "location": "path",
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "replicationControllers/{id}",
+	//   "response": {
+	//     "$ref": "controller"
+	//   }
+	// }
+
+}
+
+// method id "bridge.replicationControllers.list":
+
+type ReplicationControllersListCall struct {
+	s    *Service
+	opt_ map[string]interface{}
+}
+
+// List: Retrieve a list of replicationControllers.
+func (r *ReplicationControllersService) List() *ReplicationControllersListCall {
+	c := &ReplicationControllersListCall{s: r.s, opt_: make(map[string]interface{})}
+	return c
+}
+
+func (c *ReplicationControllersListCall) Do() (*ControllerList, error) {
+	var body io.Reader = nil
+	params := make(url.Values)
+	params.Set("alt", "json")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "replicationControllers")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("GET", urls, body)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(ControllerList)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Retrieve a list of replicationControllers.",
+	//   "httpMethod": "GET",
+	//   "id": "bridge.replicationControllers.list",
+	//   "path": "replicationControllers",
+	//   "response": {
+	//     "$ref": "controllerList"
 	//   }
 	// }
 

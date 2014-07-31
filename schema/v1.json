@@ -404,22 +404,22 @@
     },
 
 
-    "controllers": {
+    "replicationControllers": {
       "methods": {
         "list": {
-          "id": "bridge.controllers.list",
-          "description": "Retrieve a list of Controllers.",
+          "id": "bridge.replicationControllers.list",
+          "description": "Retrieve a list of replicationControllers.",
           "httpMethod": "GET",
-          "path": "controllers",
+          "path": "replicationControllers",
           "response": {
             "$ref": "controllerList"
           }
         },
         "get": {
-          "id": "bridge.controllers.get",
-          "description": "Retrieve a Controllers.",
+          "id": "bridge.replicationControllers.get",
+          "description": "Retrieve a replicationControllers.",
           "httpMethod": "GET",
-          "path": "controllers/{id}",
+          "path": "replicationControllers/{id}",
           "parameterOrder": [
             "id"
           ],

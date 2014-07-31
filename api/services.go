@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/coreos-inc/bridge/Godeps/_workspace/src/github.com/gorilla/mux"
@@ -14,13 +13,18 @@ func registerServices(router *mux.Router) {
 
 // Get Service api endpoint.
 func serviceGet(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-	log.Printf("getting service id: %s", id)
-	http.ServeFile(w, r, "api/mock/service.json")
+	err := k8proxy.DoAndRespond(w, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+	}
+	//http.ServeFile(w, r, "api/mock/service-list.json")
 }
 
 // List Services api endpoint.
 func serviceList(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "api/mock/service-list.json")
+	err := k8proxy.DoAndRespond(w, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+	}
+	//http.ServeFile(w, r, "api/mock/service.json")
 }
