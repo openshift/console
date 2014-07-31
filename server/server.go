@@ -23,6 +23,8 @@ var (
 
 // Serve the front-end index page.
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO (sym3tri): config option to cache template.
+	indexTemplate = template.Must(template.ParseFiles(path.Join(publicDir, "index.html")))
 	if err := indexTemplate.ExecuteTemplate(w, "index.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -50,7 +52,6 @@ func Handle() {
 	api.Setup(r)
 
 	// Serve index page for all other requests.
-	indexTemplate = template.Must(template.ParseFiles(path.Join(publicDir, "index.html")))
 	r.HandleFunc("/{path:.*}", IndexHandler)
 
 	http.Handle("/", r)
