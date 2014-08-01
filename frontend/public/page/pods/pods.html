@@ -7,8 +7,29 @@
 
   <div class="co-m-pane">
     <div class="co-m-pane__body">
-      Pod List
-    </div>
-  </div>
+
+      <input type="text" class="form-control" placeholder="Filter pods by label query..." />
+
+      <div class="co-m-table-grid--bordered">
+        <div class="row co-m-table-grid__head">
+          <div class="col-lg-1"></div>
+          <div class="col-lg-2">Pod ID</div>
+          <div class="col-lg-2">Pod Labels</div>
+          <div class="col-lg-2">Status</div>
+          <div class="col-lg-2">Containers</div>
+        </div>
+        <div class="row" ng-repeat="p in pods">
+          <div class="col-lg-1">COG</div>
+          <div class="col-lg-2"><a ng-href="/pods/{{p.id}}" ng-bind="p.id"></a></div>
+          <div class="col-lg-2">
+            <co-label-list type="pod" labels="p.labels"></co-label-list>
+          </div>
+          <div class="col-lg-2">-</div>
+          <div class="col-lg-2" ng-bind="p.desiredState.manifest.containers.length"></div>
+        </div>
+      </div>
+
+    </div><!-- pane body -->
+  </div><!-- pane -->
 
 </div>
