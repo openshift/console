@@ -168,7 +168,7 @@ gulp.task('html', ['sha'], function() {
 // Auto-runs: eslint & unit tests.
 gulp.task('dev', ['js-quality', 'sass', 'templates'], function() {
   gulp.watch(templateSrc, ['templates']);
-  gulp.watch('./public/**/*.scss', ['sass']);
+  gulp.watch('./public/{.,page,style,module}/**/*.scss', ['sass']);
   gulp.watch(jsSrc, ['js-quality']);
 });
 

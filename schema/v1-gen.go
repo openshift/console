@@ -329,10 +329,19 @@ func (r *PodsService) List() *PodsListCall {
 	return c
 }
 
+// Labels sets the optional parameter "labels":
+func (c *PodsListCall) Labels(labels string) *PodsListCall {
+	c.opt_["labels"] = labels
+	return c
+}
+
 func (c *PodsListCall) Do() (*PodList, error) {
 	var body io.Reader = nil
 	params := make(url.Values)
 	params.Set("alt", "json")
+	if v, ok := c.opt_["labels"]; ok {
+		params.Set("labels", fmt.Sprintf("%v", v))
+	}
 	urls := googleapi.ResolveRelative(c.s.BasePath, "pods")
 	urls += "?" + params.Encode()
 	req, _ := http.NewRequest("GET", urls, body)
@@ -355,6 +364,13 @@ func (c *PodsListCall) Do() (*PodList, error) {
 	//   "description": "Retrieve a list of Pods.",
 	//   "httpMethod": "GET",
 	//   "id": "bridge.pods.list",
+	//   "parameters": {
+	//     "labels": {
+	//       "location": "query",
+	//       "required": false,
+	//       "type": "string"
+	//     }
+	//   },
 	//   "path": "pods",
 	//   "response": {
 	//     "$ref": "podList"
@@ -384,12 +400,21 @@ func (c *ReplicationControllersGetCall) Id(id string) *ReplicationControllersGet
 	return c
 }
 
+// Labels sets the optional parameter "labels":
+func (c *ReplicationControllersGetCall) Labels(labels string) *ReplicationControllersGetCall {
+	c.opt_["labels"] = labels
+	return c
+}
+
 func (c *ReplicationControllersGetCall) Do() (*Controller, error) {
 	var body io.Reader = nil
 	params := make(url.Values)
 	params.Set("alt", "json")
 	if v, ok := c.opt_["id"]; ok {
 		params.Set("id", fmt.Sprintf("%v", v))
+	}
+	if v, ok := c.opt_["labels"]; ok {
+		params.Set("labels", fmt.Sprintf("%v", v))
 	}
 	urls := googleapi.ResolveRelative(c.s.BasePath, "replicationControllers/{id}")
 	urls += "?" + params.Encode()
@@ -420,6 +445,11 @@ func (c *ReplicationControllersGetCall) Do() (*Controller, error) {
 	//   "parameters": {
 	//     "id": {
 	//       "location": "path",
+	//       "type": "string"
+	//     },
+	//     "labels": {
+	//       "location": "query",
+	//       "required": false,
 	//       "type": "string"
 	//     }
 	//   },
@@ -559,10 +589,19 @@ func (r *ServicesService) List() *ServicesListCall {
 	return c
 }
 
+// Labels sets the optional parameter "labels":
+func (c *ServicesListCall) Labels(labels string) *ServicesListCall {
+	c.opt_["labels"] = labels
+	return c
+}
+
 func (c *ServicesListCall) Do() (*ServiceList, error) {
 	var body io.Reader = nil
 	params := make(url.Values)
 	params.Set("alt", "json")
+	if v, ok := c.opt_["labels"]; ok {
+		params.Set("labels", fmt.Sprintf("%v", v))
+	}
 	urls := googleapi.ResolveRelative(c.s.BasePath, "services")
 	urls += "?" + params.Encode()
 	req, _ := http.NewRequest("GET", urls, body)
@@ -585,6 +624,13 @@ func (c *ServicesListCall) Do() (*ServiceList, error) {
 	//   "description": "Retrieve a list of Services.",
 	//   "httpMethod": "GET",
 	//   "id": "bridge.services.list",
+	//   "parameters": {
+	//     "labels": {
+	//       "location": "query",
+	//       "required": false,
+	//       "type": "string"
+	//     }
+	//   },
 	//   "path": "services",
 	//   "response": {
 	//     "$ref": "serviceList"

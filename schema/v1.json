@@ -347,6 +347,13 @@
           "path": "pods",
           "response": {
             "$ref": "podList"
+          },
+          "parameters": {
+            "labels": {
+             "type": "string",
+             "location": "query",
+             "required": false
+            }
           }
         },
         "get": {
@@ -380,6 +387,13 @@
           "path": "services",
           "response": {
             "$ref": "serviceList"
+          },
+          "parameters": {
+            "labels": {
+             "type": "string",
+             "location": "query",
+             "required": false
+            }
           }
         },
         "get": {
@@ -427,6 +441,11 @@
             "id": {
               "type": "string",
               "location": "path"
+            },
+            "labels": {
+             "type": "string",
+             "location": "query",
+             "required": false
             }
           },
           "response": {

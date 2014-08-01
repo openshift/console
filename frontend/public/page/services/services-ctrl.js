@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ServicesCtrl', function($scope, ServicesSvc, ControllersSvc) {
+.controller('ServicesCtrl', function($scope, ServicesSvc, PodsSvc) {
   'use strict';
 
   ServicesSvc.list().then(function(result) {
@@ -8,11 +8,11 @@ angular.module('app')
 
   $scope.open = false;
 
-  $scope.getControllers = function(serviceId) {
+  $scope.getPods = function(serviceId) {
     var svc = ServicesSvc.find($scope.services, serviceId);
-    ControllersSvc.list({ selector: svc.selector })
+    PodsSvc.list({ labels: svc.selector })
       .then(function(result) {
-        svc.controllers = result;
+        svc.pods = result;
       });
   };
 
