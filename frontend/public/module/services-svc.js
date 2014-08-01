@@ -2,8 +2,8 @@ angular.module('app')
 .service('ServicesSvc', function(_, $rootScope) {
   'use strict';
 
-  this.list = function() {
-    return $rootScope.client.services.list()
+  this.list = function(params) {
+    return $rootScope.client.services.list(params)
       .then(function(result) {
         return result.data.items;
       });
