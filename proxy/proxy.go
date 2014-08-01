@@ -37,10 +37,16 @@ func (p *baseProxy) Do(localReq *http.Request) (*http.Response, error) {
 		req.Header.Del(h)
 	}
 
+	// Set the Path.
 	req.RequestURI = ""
 	req.URL = remoteUrl
 	req.URL.Path = path.Join(req.URL.Path, strings.Replace(localReq.URL.Path, p.LocalPrefix, "", 1))
-	log.Printf("proxy request from=%s%s to=%s", localReq.Host, localReq.URL.String(), req.URL.String())
+
+	// Set the query params.
+	query := localReq.URL.RawQuery
+	req.URL.RawQuery = query
+
+	log.Printf("proxy request from=%s%s?%s to=%s?%s", localReq.Host, localReq.URL.String(), query, req.URL.String(), query)
 
 	resp, err := p.HttpClient.Do(req)
 	return resp, err
