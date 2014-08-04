@@ -44,6 +44,7 @@ func New(client *http.Client) (*Service, error) {
 		return nil, errors.New("client is nil")
 	}
 	s := &Service{client: client, BasePath: basePath}
+	s.Minions = NewMinionsService(s)
 	s.Pods = NewPodsService(s)
 	s.ReplicationControllers = NewReplicationControllersService(s)
 	s.Services = NewServicesService(s)
@@ -55,6 +56,8 @@ type Service struct {
 	client   *http.Client
 	BasePath string // API endpoint base URL
 
+	Minions *MinionsService
+
 	Pods *PodsService
 
 	ReplicationControllers *ReplicationControllersService
@@ -62,6 +65,15 @@ type Service struct {
 	Services *ServicesService
 
 	Users *UsersService
+}
+
+func NewMinionsService(s *Service) *MinionsService {
+	rs := &MinionsService{s: s}
+	return rs
+}
+
+type MinionsService struct {
+	s *Service
 }
 
 func NewPodsService(s *Service) *PodsService {
@@ -138,6 +150,16 @@ type ControllerLabels struct {
 
 type ControllerList struct {
 	Items []*Controller `json:"items,omitempty"`
+}
+
+type Minion struct {
+	Id string `json:"id,omitempty"`
+
+	Kind string `json:"kind,omitempty"`
+}
+
+type MinionList struct {
+	Minions []*Minion `json:"minions,omitempty"`
 }
 
 type Pod struct {
@@ -246,6 +268,121 @@ type UserPage struct {
 	NextPageToken string `json:"nextPageToken,omitempty"`
 
 	Users []*User `json:"users,omitempty"`
+}
+
+// method id "bridge.minions.get":
+
+type MinionsGetCall struct {
+	s    *Service
+	id   string
+	opt_ map[string]interface{}
+}
+
+// Get: Retrieve a Minion.
+func (r *MinionsService) Get(id string) *MinionsGetCall {
+	c := &MinionsGetCall{s: r.s, opt_: make(map[string]interface{})}
+	c.id = id
+	return c
+}
+
+// Id sets the optional parameter "id":
+func (c *MinionsGetCall) Id(id string) *MinionsGetCall {
+	c.opt_["id"] = id
+	return c
+}
+
+func (c *MinionsGetCall) Do() (*Minion, error) {
+	var body io.Reader = nil
+	params := make(url.Values)
+	params.Set("alt", "json")
+	if v, ok := c.opt_["id"]; ok {
+		params.Set("id", fmt.Sprintf("%v", v))
+	}
+	urls := googleapi.ResolveRelative(c.s.BasePath, "minions/{id}")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("GET", urls, body)
+	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(Minion)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Retrieve a Minion.",
+	//   "httpMethod": "GET",
+	//   "id": "bridge.minions.get",
+	//   "parameterOrder": [
+	//     "id"
+	//   ],
+	//   "parameters": {
+	//     "id": {
+	//       "location": "path",
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "minions/{id}",
+	//   "response": {
+	//     "$ref": "minion"
+	//   }
+	// }
+
+}
+
+// method id "bridge.minions.list":
+
+type MinionsListCall struct {
+	s    *Service
+	opt_ map[string]interface{}
+}
+
+// List: Retrieve a list of Minions.
+func (r *MinionsService) List() *MinionsListCall {
+	c := &MinionsListCall{s: r.s, opt_: make(map[string]interface{})}
+	return c
+}
+
+func (c *MinionsListCall) Do() (*MinionList, error) {
+	var body io.Reader = nil
+	params := make(url.Values)
+	params.Set("alt", "json")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "minions")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("GET", urls, body)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(MinionList)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Retrieve a list of Minions.",
+	//   "httpMethod": "GET",
+	//   "id": "bridge.minions.list",
+	//   "path": "minions",
+	//   "response": {
+	//     "$ref": "minionList"
+	//   }
+	// }
+
 }
 
 // method id "bridge.pods.get":

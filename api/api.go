@@ -38,4 +38,5 @@ func Setup(r *mux.Router) {
 	registerPods(apiRouter)
 	registerControllers(apiRouter)
 	registerServices(apiRouter)
+	registerMinions(apiRouter)
 }

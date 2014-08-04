@@ -6,4 +6,10 @@ angular.module('app')
     $scope.machines = result;
   });
 
+  $scope.getPods = function(machine) {
+    MachinesSvc.getPods(machine).then(function(result) {
+      machine.pods = result;
+    });
+  };
+
 });
