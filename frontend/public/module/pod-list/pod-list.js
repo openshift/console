@@ -8,7 +8,7 @@ angular.module('app').directive('coPodList', function() {
   'use strict';
 
   return {
-    templateUrl: '/static/module/directive/pod-list/pod-list.html',
+    templateUrl: '/static/module/pod-list/pod-list.html',
     restrict: 'E',
     replace: true,
     scope: {

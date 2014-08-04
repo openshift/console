@@ -6,7 +6,7 @@ angular.module('app')
   var linkTemplate = $interpolate('/search?type={{type}}&q={{key}}:{{value}}');
 
   return {
-    templateUrl: '/static/module/directive/label.html',
+    templateUrl: '/static/module/label/label.html',
     restrict: 'E',
     replace: true,
     link: function(scope, el, attrs) {
@@ -37,7 +37,7 @@ angular.module('app')
 .directive('coLabelList', function($interpolate, $compile) {
   'use strict';
   return {
-    templateUrl: '/static/module/directive/label-list.html',
+    templateUrl: '/static/module/label/label-list.html',
     restrict: 'E',
     replace: true,
     scope: {
