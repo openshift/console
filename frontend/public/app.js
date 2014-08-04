@@ -97,8 +97,16 @@
       })
       .when('/pods/:id', {
         controller: 'PodCtrl',
-        templateUrl: '/static/page/pods/pods.html',
+        templateUrl: '/static/page/pods/pod.html',
         title: 'Pod',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/containers/:podId/:name', {
+        controller: 'ContainerCtrl',
+        templateUrl: '/static/page/containers/container.html',
+        title: 'Container',
         resolve: {
           client: 'ClientLoaderSvc'
         }

@@ -1,10 +1,41 @@
 <div class="co-p-controller">
 
-  <co-nav-title title="Controller"></co-nav-title>
+  <co-nav-title title="{{controller.id}}">
+    <a ng-href="/controllers" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Controllers</a>
+  </co-nav-title>
 
   <div class="co-m-pane">
-    <div class="co-m-pane__body">
-      Controller detail
+    <div class="co-m-pane__heading--bordered">
+      <h1 class="co-m-pane__title">Controller Overview</h1>
+    </div>
+    <div class="co-m-pane__body-group">
+      <div class="co-m-pane__body-section--bordered">
+        <dl>
+          <dt>Controller Labels</dt>
+          <dd>
+            <co-label-list type="controller" labels="controller.labels"></co-label-list>
+          </dd>
+          <dt>Pod Selector</dt>
+          <dd>
+            <co-label-list type="selector" labels="controller.desiredState.replicaSelector"></co-label-list>
+          </dd>
+          <dt>Status</dt>
+          <dd>-</dd>
+          <dt>Desired Count</dt>
+          <dd ng-bind="controller.desiredState.replicas"></dd>
+          <dt>Pod Template</dt>
+          <dd>
+            <pre ng-bind="getPodTemplateJson()"></pre>
+          </dl>
+        </dl>
+      </div>
+      <div class="co-m-pane__body-section--bordered">
+        <h1 class="co-m-pane__title">Running Pods</h1>
+      </div>
+      <div class="co-m-pane__body-section--bordered">
+        <co-pod-list pods="pods"></co-pod-list>
+      </div>
     </div>
   </div>
 
