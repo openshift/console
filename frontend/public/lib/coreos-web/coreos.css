@@ -5151,10 +5151,13 @@ svg .x-axis path {
   color: #999; }
 
 .co-m-table-grid > .row, .co-m-table-grid--bordered > .row {
-  padding: 10px 0; }
-.co-m-table-grid > .row, .co-m-table-grid > [class*='col-'], .co-m-table-grid--bordered > .row, .co-m-table-grid--bordered > [class*='col-'] {
-  font-size: 80%;
+  padding: 10px 0;
+  font-size: 13px; }
+.co-m-table-grid > .row, .co-m-table-grid [class*='col-'], .co-m-table-grid--bordered > .row, .co-m-table-grid--bordered [class*='col-'] {
   vertical-align: middle; }
+.co-m-table-grid [class*='col-'], .co-m-table-grid--bordered [class*='col-'] {
+  overflow: hidden;
+  text-overflow: ellipsis; }
 .co-m-table-grid .co-m-table-grid, .co-m-table-grid .co-m-table-grid--bordered, .co-m-table-grid--bordered .co-m-table-grid, .co-m-table-grid--bordered .co-m-table-grid--bordered {
   padding-left: 20px; }
 
