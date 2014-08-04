@@ -1,0 +1,62 @@
+<div class="co-p-container">
+
+  <co-nav-title title="{{container.name}}">
+    <a ng-href="/pods/{{pod.id}}" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pod</a>
+  </co-nav-title>
+
+  <div class="co-m-pane">
+    <div class="co-m-pane__heading--bordered">
+      <h1 class="co-m-pane__title">Container Overview</h1>
+    </div>
+    <div class="co-m-pane__body-group">
+      <div class="co-m-pane__body-section--bordered">
+        <div class="row">
+
+          <div class="col-lg-6">
+            <dl>
+              <dt>Id</dt>
+              <dd ng-bind="container.ID"></dd>
+              <dt>State</dt>
+              <dd ng-bind="getState()"></dd>
+              <dt>Image</dt>
+              <dd ng-bind="container.image"></dd>
+              <dt>Created</dt>
+              <dd ng-bind="container.Created"></dd>
+              <dt>Host</dt>
+              <dd ng-bind="pod.currentState.host"></dd>
+              <dt>Pod IP</dt>
+              <dd ng-bind="pod.currentState.podIP"></dd>
+            </dl>
+          </div>
+
+          <div class="col-lg-6">
+            <dl>
+              <dt>Ports</dt>
+              <dd>
+                <div ng-repeat="p in container.ports">
+                  <code ng-bind="p.hostPort"></code> : <code ng-bind="p.containerPort"></code>
+                </div>
+              </dd>
+              <dt>Volumes</dt>
+              <dd>
+                <div ng-repeat="(k, v) in container.Volumes">
+                  <code ng-bind="k"></code> : <code ng-bind="v"></code>
+                </div>
+              </dd>
+              <dt>Environment</dt>
+              <dd>
+                <div ng-repeat="e in container.Config.Env">
+                  <code ng-bind="e"></code>
+                </div>
+              </dd>
+            </dl>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,11 +1,52 @@
 <div class="co-p-service">
 
-  <co-nav-title title="Service"></co-nav-title>
+  <co-nav-title title="{{service.id}}">
+    <a ng-href="/services" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Services</a>
+  </co-nav-title>
 
   <div class="co-m-pane">
-    <div class="co-m-pane__body">
-      Service detail
+    <div class="co-m-pane__heading--bordered">
+      <h1 class="co-m-pane__title">Service Overview</h1>
     </div>
+    <div class="co-m-pane__body-group">
+      <div class="co-m-pane__body-section--bordered">
+        <div class="row">
+          <div class="col-lg-6">
+            <dl>
+              <dt>Port</dt>
+              <dd>
+                <a href="#" ng-bind="service.port"></a>
+              </dd>
+              <dt>Container Port</dt>
+              <dd>
+                <a href="#" ng-bind="service.containerPort"></a>
+              </dd>
+            </dl>
+          </div>
+          <div class="col-lg-6">
+            <dl>
+              <dt>Service Labels</dt>
+              <dd>
+                <co-label-list type="service" labels="service.labels"></co-label-list>
+              </dd>
+              <dt>Pod Selector</dt>
+              <dd>
+                <co-label-list type="selector" labels="service.selector"></co-label-list>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <div class="co-m-pane__body-section--bordered">
+        <h1 class="co-m-pane__title">Running Pods</h1>
+      </div>
+      <div class="co-m-pane__body-section">
+        <co-pod-list pods="pods"></co-pod-list>
+      </div>
+
+    </div>
+
   </div>
 
 </div>

@@ -9,6 +9,13 @@ angular.module('app')
       });
   };
 
+  this.get = function(params) {
+    return $rootScope.client.replicationControllers.get(params)
+      .then(function(result) {
+        return result.data;
+      });
+  };
+
   this.find = function(list, id) {
     return _.findWhere(list, { id: id });
   };

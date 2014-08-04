@@ -30,22 +30,7 @@
           <div class="col-lg-2" ng-bind="s.port"></div>
         </div>
         <div ng-show="open" ng-repeat-end>
-          <div class="co-m-table-grid">
-            <div class="row co-m-table-grid__head">
-              <div class="col-lg-2">Pod ID</div>
-              <div class="col-lg-2">Pod Labels</div>
-              <div class="col-lg-2">Status</div>
-              <div class="col-lg-2">Containers</div>
-            </div>
-            <div class="row" ng-repeat="p in s.pods">
-              <div class="col-lg-2"><a href="#" ng-bind="p.id"></a></div>
-              <div class="col-lg-2">
-                <co-label-list type="pod" labels="p.labels"></co-label-list>
-              </div>
-              <div class="col-lg-2">-</div>
-              <div class="col-lg-2" ng-bind="p.desiredState.manifest.containers.length"></div>
-            </div>
-          </div>
+          <co-pod-list pods="s.pods"></co-pod-list>
         </div>
       </div>
 
