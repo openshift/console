@@ -1,6 +1,6 @@
 angular.module('app')
 
-.directive('coLabel', function($interpolate, $compile) {
+.directive('coLabel', function($interpolate) {
   'use strict';
 
   var linkTemplate = $interpolate('/search?type={{type}}&q={{key}}:{{value}}');
@@ -34,7 +34,7 @@ angular.module('app')
   };
 })
 
-.directive('coLabelList', function($interpolate, $compile) {
+.directive('coLabelList', function() {
   'use strict';
   return {
     templateUrl: '/static/module/label/label-list.html',
