@@ -273,10 +273,38 @@
           "required": false
         }
       }
+    },
+
+
+    "minionList": {
+      "id": "minionList",
+      "type": "object",
+      "properties": {
+        "minions": {
+          "type": "array",
+          "items": {
+            "$ref": "minion"
+          }
+        }
+      }
+    },
+
+    "minion": {
+      "id": "minion",
+      "type": "object",
+      "required": false,
+      "description": "A minion resource.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "required": false
+        },
+        "id": {
+          "type": "string",
+          "required": false
+        }
+      }
     }
-
-
-
 
 
 
@@ -453,8 +481,40 @@
           }
         }
       }
-    }
+    },
 
+
+    "minions": {
+      "methods": {
+        "list": {
+          "id": "bridge.minions.list",
+          "description": "Retrieve a list of Minions.",
+          "httpMethod": "GET",
+          "path": "minions",
+          "response": {
+            "$ref": "minionList"
+          }
+        },
+        "get": {
+          "id": "bridge.minions.get",
+          "description": "Retrieve a Minion.",
+          "httpMethod": "GET",
+          "path": "minions/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "minion"
+          }
+        }
+      }
+    }
 
 
   }

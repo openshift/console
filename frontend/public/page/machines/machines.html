@@ -1,0 +1,25 @@
+<div class="co-p-machines">
+
+  <co-nav-title title="Machines"></co-nav-title>
+
+  <div class="co-m-pane">
+    <div class="co-m-pane__body">
+
+      <input type="text" class="form-control" placeholder="Filter machines..." />
+
+      <div class="co-m-table-grid--bordered">
+        <div class="row co-m-table-grid__head">
+          <div class="col-lg-2">Machine ID</div>
+        </div>
+        <div class="row" ng-repeat-start="m in machines" ng-click="open = !open; getPods(m)">
+          <div class="col-lg-6" ng-bind="m.id"></div>
+        </div>
+        <div ng-show="open" ng-repeat-end>
+          <co-pod-list pods="m.pods"></co-pod-list>
+        </div>
+      </div>
+
+    </div><!-- pane body -->
+  </div><!-- pane -->
+
+</div>
