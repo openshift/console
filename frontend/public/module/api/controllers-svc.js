@@ -1,5 +1,5 @@
 angular.module('app')
-.service('ControllersSvc', function($rootScope) {
+.service('ControllersSvc', function($rootScope, _) {
   'use strict';
 
   this.list = function(params) {

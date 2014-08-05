@@ -21,13 +21,16 @@
         </div>
         <div class="row" ng-repeat-start="c in controllers" ng-click="open = !open; getPods(c.id)">
           <div class="col-lg-1">COG</div>
-          <div class="col-lg-2"><a ng-href="/controllers/{{c.id}}" ng-bind="c.id"></a></div>
+          <div class="col-lg-2">
+            <co-entity-icon type="controller"></co-entity-icon>
+            <a ng-href="/controllers/{{c.id}}" ng-bind="c.id"></a>
+          </div>
           <div class="col-lg-2">
             <co-label-list type="controller" labels="c.labels"></co-label-list>
           </div>
           <div class="col-lg-2">-</div>
           <div class="col-lg-2">
-            <co-label-list type="selector" labels="c.desiredState.replicaSelector"></co-label-list>
+            <co-label-list type="pod" selector="true" labels="c.desiredState.replicaSelector"></co-label-list>
           </div>
           <div class="col-lg-2" ng-bind="c.desiredState.replicas"></div>
         </div>

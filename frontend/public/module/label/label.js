@@ -1,47 +1,51 @@
 angular.module('app')
 
-.directive('coLabel', function($interpolate, $compile) {
+.directive('coLabel', function($interpolate) {
   'use strict';
 
   var linkTemplate = $interpolate('/search?type={{type}}&q={{key}}:{{value}}');
 
   return {
-    templateUrl: '/static/module/directive/label.html',
+    templateUrl: '/static/module/label/label.html',
     restrict: 'E',
     replace: true,
     link: function(scope, el, attrs) {
-      var ref;
+      var ref, linkEl;
+
       ref = linkTemplate({
         type: attrs.type,
         key: attrs.key,
         value: attrs.value
       });
 
-      el.addClass('co-m-label--' + attrs.type);
+      linkEl = el.find('.co-m-label__link');
+      linkEl.attr('href', ref);
 
-      el.find('.co-m-label__circle')
-        .text(attrs.type[0].toUpperCase());
+      el.addClass('co-m-label--' + attrs.type);
+      if (attrs.selector) {
+        el.addClass('co-m-label--selector');
+        linkEl.prepend('<i class="co-m-label__icon fa fa-search"></i>');
+        linkEl.addClass('co-m-modal-link');
+      }
 
       el.find('.co-m-label__key')
         .text(attrs.key);
 
       el.find('.co-m-label__value')
         .text(attrs.value);
-
-      el.find('.co-m-label__link')
-        .attr('href', ref);
     }
   };
 })
 
-.directive('coLabelList', function($interpolate, $compile) {
+.directive('coLabelList', function() {
   'use strict';
   return {
-    templateUrl: '/static/module/directive/label-list.html',
+    templateUrl: '/static/module/label/label-list.html',
     restrict: 'E',
     replace: true,
     scope: {
       type: '@',
+      selector: '@',
       labels: '='
     }
   };
