@@ -1,0 +1,25 @@
+$height: 18px;
+
+.co-m-entity-icon {
+  display: inline-block;
+  text-align: center;
+  border-radius: 10px;
+  height: $height;
+  width: $height;
+  line-height: $height + 2px;
+  color: #fff;
+  font-size: 12px;
+  margin: 0 4px;
+}
+
+.co-m-entity-icon--service {
+  background-color: $color-service-dark;
+}
+
+.co-m-entity-icon--controller {
+  background-color: $color-controller-dark;
+}
+
+.co-m-entity-icon--pod {
+  background-color: $color-pod-dark;
+}

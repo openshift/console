@@ -12,20 +12,21 @@
 
       <div class="co-m-table-grid--bordered">
         <div class="row co-m-table-grid__head">
-          <div class="col-lg-1"></div>
           <div class="col-lg-2">Service ID</div>
           <div class="col-lg-2">Service Labels</div>
           <div class="col-lg-2">Pod Selector</div>
           <div class="col-lg-2">Service Port</div>
         </div>
         <div class="row" ng-repeat-start="s in services" ng-click="open = !open; getPods(s.id)">
-          <div class="col-lg-1">COG</div>
-          <div class="col-lg-2"><a ng-href="/services/{{s.id}}" ng-bind="s.id"></a></div>
+          <div class="col-lg-2">
+            <co-entity-icon type="service"></co-entity-icon>
+            <a ng-href="/services/{{s.id}}" ng-bind="s.id"></a>
+          </div>
           <div class="col-lg-2">
             <co-label-list type="service" labels="s.labels"></co-label-list>
           </div>
           <div class="col-lg-2">
-            <co-label-list type="selector" labels="s.selector"></co-label-list>
+            <co-label-list type="pod" labels="s.selector" selector="true"></co-label-list>
           </div>
           <div class="col-lg-2" ng-bind="s.port"></div>
         </div>
