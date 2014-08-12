@@ -2670,13 +2670,15 @@ angular.module("/coreos.ui/btn-bar/btn-bar.html", []).run(["$templateCache", fun
 angular.module("/coreos.ui/cog/cog.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("/coreos.ui/cog/cog.html",
     "<div class=\"co-m-cog\">\n" +
-    "  <span class=\"co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog\"></span>\n" +
-    "  <ul class=\"dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}\">\n" +
-    "    <li ng-repeat=\"option in options | orderBy:'weight'\">\n" +
-    "      <a ng-if=\"option.href\" ng-href=\"{{option.href}}\">{{option.label}}</a>\n" +
-    "      <a ng-if=\"!option.href\" ng-click=\"clickHandler($event, option)\">{{option.label}}</a>\n" +
-    "    </li>\n" +
-    "  </ul>\n" +
+    "  <span class=\"dropdown\">\n" +
+    "    <span class=\"co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog\"></span>\n" +
+    "    <ul class=\"dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}\">\n" +
+    "      <li ng-repeat=\"option in options | orderBy:'weight'\">\n" +
+    "        <a ng-if=\"option.href\" ng-href=\"{{option.href}}\">{{option.label}}</a>\n" +
+    "        <a ng-if=\"!option.href\" ng-click=\"clickHandler($event, option)\">{{option.label}}</a>\n" +
+    "      </li>\n" +
+    "    </ul>\n" +
+    "  </span>\n" +
     "</div>\n" +
     "");
 }]);

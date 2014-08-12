@@ -5155,9 +5155,6 @@ svg .x-axis path {
   font-size: 13px; }
 .co-m-table-grid > .row, .co-m-table-grid [class*='col-'], .co-m-table-grid--bordered > .row, .co-m-table-grid--bordered [class*='col-'] {
   vertical-align: middle; }
-.co-m-table-grid [class*='col-'], .co-m-table-grid--bordered [class*='col-'] {
-  overflow: hidden;
-  text-overflow: ellipsis; }
 .co-m-table-grid .co-m-table-grid, .co-m-table-grid .co-m-table-grid--bordered, .co-m-table-grid--bordered .co-m-table-grid, .co-m-table-grid--bordered .co-m-table-grid--bordered {
   padding-left: 20px; }
 
@@ -5380,6 +5377,9 @@ html, body {
     cursor: pointer; }
   .co-m-cog.open .co-m-cog__icon {
     color: #2277ad; }
+
+.co-m-cog-wrapper {
+  display: inline-block; }
 
 .co-m-cog__icon {
   vertical-align: middle; }
