@@ -6,8 +6,6 @@ angular.module('app')
     $scope.services = result;
   });
 
-  $scope.open = false;
-
   $scope.getPods = function(serviceId) {
     var svc = ServicesSvc.find($scope.services, serviceId);
     PodsSvc.list({ labels: svc.selector })
