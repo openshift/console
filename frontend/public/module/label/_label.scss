@@ -12,6 +12,7 @@ $height: 18px;
   background-color: $color-grey-background;
   font-weight: 400;
   border: solid 1px $color-grey-border;
+  vertical-align: middle;
 
   &.co-m-label--service {
     .co-m-label__link {

@@ -8,7 +8,11 @@
   <div class="co-m-pane">
     <div class="co-m-pane__body">
 
-      <input type="text" class="form-control" placeholder="Filter services by label query..." />
+      <div class="row">
+        <div class="col-lg-3 col-lg-offset-9">
+          <input type="text" class="form-control" placeholder="Filter services by label query..." />
+        </div>
+      </div>
 
       <div class="co-m-table-grid--bordered">
         <div class="row co-m-table-grid__head">
@@ -17,8 +21,9 @@
           <div class="col-lg-2">Pod Selector</div>
           <div class="col-lg-2">Service Port</div>
         </div>
-        <div class="row" ng-repeat-start="s in services" ng-click="open = !open; getPods(s.id)">
+        <div class="row" ng-repeat-start="s in services track by s.id" ng-click="open = !open; getPods(s.id)">
           <div class="col-lg-2">
+            <co-service-cog service="s"></co-service-cog>
             <co-entity-icon type="service"></co-entity-icon>
             <a ng-href="/services/{{s.id}}" ng-bind="s.id"></a>
           </div>
