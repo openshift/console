@@ -18,16 +18,13 @@ var (
 	k8proxy *proxy.K8Proxy
 )
 
-func init() {
-	// TODO(sym3tri): move to config
-	p, err := proxy.NewK8Proxy("http://localhost:9909/api/v1beta1", "api/bridge/v1")
+func Setup(r *mux.Router) {
+	var err error
+	k8proxy, err = proxy.NewK8Proxy("api/bridge/v1")
 	if err != nil {
 		panic("failed to initialize k8 proxy")
 	}
-	k8proxy = p
-}
 
-func Setup(r *mux.Router) {
 	basePath := "/" + path.Join("api", Name, Version)
 	log.Printf("subrouter basePath=%s", basePath)
 

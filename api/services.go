@@ -17,7 +17,6 @@ func serviceGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
-	//http.ServeFile(w, r, "api/mock/service-list.json")
 }
 
 // List Services api endpoint.
@@ -26,5 +25,4 @@ func serviceList(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
-	//http.ServeFile(w, r, "api/mock/service.json")
 }

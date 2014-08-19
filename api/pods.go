@@ -17,7 +17,6 @@ func podGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
-	//http.ServeFile(w, r, "api/mock/pod.json")
 }
 
 // List Pods api endpoint.
@@ -26,5 +25,4 @@ func podList(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
-	//http.ServeFile(w, r, "api/mock/pod-list.json")
 }
