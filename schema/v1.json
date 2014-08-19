@@ -13,7 +13,7 @@
     "x32": ""
   },
   "labels": [],
-  "rootUrl": "http://localhost:9000",
+  "rootUrl": "http://localhost:9090",
   "servicePath": "/api/bridge/v1/",
   "batchPath": "batch",
   "parameters": {},

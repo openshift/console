@@ -17,7 +17,6 @@ func controllerGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
-	//http.ServeFile(w, r, "api/mock/controller.json")
 }
 
 // List Controllers api endpoint.
@@ -26,5 +25,4 @@ func controllerList(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
-	//http.ServeFile(w, r, "api/mock/controller-list.json")
 }

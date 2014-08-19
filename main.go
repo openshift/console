@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
+	"github.com/coreos-inc/bridge/config"
 	"github.com/coreos-inc/bridge/server"
 )
 
@@ -13,15 +13,14 @@ var (
 )
 
 func main() {
-	server.Handle()
-
-	listenAddress = os.Getenv("ADDRESS")
-	if listenAddress == "" {
-		listenAddress = "0.0.0.0:9000"
+	if err := config.Init(); err != nil {
+		log.Fatal(err)
 	}
 
-	log.Printf("listening on: %s", listenAddress)
-	if err := http.ListenAndServe(listenAddress, nil); err != nil {
-		log.Fatal("error on ListenAndServe: %s", err)
+	server.Handle()
+
+	log.Printf("listening on: %s", *config.Address)
+	if err := http.ListenAndServe(*config.Address, nil); err != nil {
+		log.Fatal(err)
 	}
 }

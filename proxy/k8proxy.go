@@ -1,8 +1,11 @@
 package proxy
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/coreos-inc/bridge/config"
 )
 
 const (
@@ -13,8 +16,8 @@ type K8Proxy struct {
 	baseProxy
 }
 
-func NewK8Proxy(apiUrl, localPrefix string) (*K8Proxy, error) {
-	remoteUrl, err := url.Parse(apiUrl)
+func NewK8Proxy(localPrefix string) (*K8Proxy, error) {
+	remoteUrl, err := url.Parse(fmt.Sprintf("%s/api/v1beta1", *config.K8Url))
 	if err != nil {
 		return nil, err
 	}
