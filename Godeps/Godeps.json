@@ -24,7 +24,7 @@
 		},
 		{
 			"ImportPath": "github.com/rakyll/globalconf",
-			"Rev": "ff08f7b9fed375c68296bcbea80f66d1ee25f125"
+			"Rev": "415abc325023f1a00cd2d9fa512e0e71745791a2"
 		},
 		{
 			"ImportPath": "github.com/rakyll/goini",
