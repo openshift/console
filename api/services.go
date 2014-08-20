@@ -14,14 +14,14 @@ func registerServices(router *mux.Router) {
 
 // Get Service api endpoint.
 func serviceGet(w http.ResponseWriter, r *http.Request) {
-	err := k8proxy.DoAndRespond(w, r)
+	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
 }
 
 func serviceCreate(w http.ResponseWriter, r *http.Request) {
-	err := k8proxy.DoAndRespond(w, r)
+	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
@@ -29,7 +29,7 @@ func serviceCreate(w http.ResponseWriter, r *http.Request) {
 
 // List Services api endpoint.
 func serviceList(w http.ResponseWriter, r *http.Request) {
-	err := k8proxy.DoAndRespond(w, r)
+	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
