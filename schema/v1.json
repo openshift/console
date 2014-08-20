@@ -21,8 +21,8 @@
   "schemas": {
 
 
-    "user": {
-      "id": "user",
+    "User": {
+      "id": "User",
       "type": "object",
       "properties": {
         "id": {
@@ -37,14 +37,14 @@
       }
     },
 
-    "userPage": {
-      "id": "userPage",
+    "UserPage": {
+      "id": "UserPage",
       "type": "object",
       "properties": {
         "users": {
           "type": "array",
           "items": {
-            "$ref": "user"
+            "$ref": "User"
           }
         },
         "nextPageToken": {
@@ -54,21 +54,21 @@
     },
 
 
-    "podList": {
-      "id": "podList",
+    "PodList": {
+      "id": "PodList",
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "pod"
+            "$ref": "Pod"
           }
         }
       }
     },
 
-    "pod": {
-      "id": "pod",
+    "Pod": {
+      "id": "Pod",
       "type": "object",
       "required": false,
       "description": "Pod resource. A pod corresponds to a co-located group of [Docker containers](http://docker.io).",
@@ -156,21 +156,21 @@
     },
 
 
-    "serviceList": {
-      "id": "serviceList",
+    "ServiceList": {
+      "id": "ServiceList",
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "service"
+            "$ref": "Service"
           }
         }
       }
     },
 
-    "service": {
-      "id": "service",
+    "Service": {
+      "id": "Service",
       "type": "object",
       "required": false,
       "description": "A service resource.",
@@ -211,21 +211,21 @@
     },
 
 
-    "controllerList": {
-      "id": "controllerList",
+    "ControllerList": {
+      "id": "ControllerList",
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "controller"
+            "$ref": "Controller"
           }
         }
       }
     },
 
-    "controller": {
-      "id": "controller",
+    "Controller": {
+      "id": "Controller",
       "type": "object",
       "required": false,
       "description": "A replicationController resource. A replicationController helps to create and manage a set of pods. It acts as a factory to create new pods based on a template. It ensures that there are a specific number of pods running. If fewer pods are running than `replicas` then the needed pods are generated using `podTemplate`. If more pods are running than `replicas`, then excess pods are deleted.",
@@ -276,21 +276,21 @@
     },
 
 
-    "minionList": {
-      "id": "minionList",
+    "MinionList": {
+      "id": "MinionList",
       "type": "object",
       "properties": {
         "minions": {
           "type": "array",
           "items": {
-            "$ref": "minion"
+            "$ref": "Minion"
           }
         }
       }
     },
 
-    "minion": {
-      "id": "minion",
+    "Minion": {
+      "id": "Minion",
       "type": "object",
       "required": false,
       "description": "A minion resource.",
@@ -326,7 +326,7 @@
             }
           },
           "response": {
-            "$ref": "userPage"
+            "$ref": "UserPage"
           }
         },
         "get": {
@@ -344,7 +344,7 @@
             }
           },
           "response": {
-            "$ref": "user"
+            "$ref": "User"
           }
         },
         "destroy": {
@@ -374,7 +374,7 @@
           "httpMethod": "GET",
           "path": "pods",
           "response": {
-            "$ref": "podList"
+            "$ref": "PodList"
           },
           "parameters": {
             "labels": {
@@ -399,7 +399,7 @@
             }
           },
           "response": {
-            "$ref": "pod"
+            "$ref": "Pod"
           }
         }
       }
@@ -414,7 +414,7 @@
           "httpMethod": "GET",
           "path": "services",
           "response": {
-            "$ref": "serviceList"
+            "$ref": "ServiceList"
           },
           "parameters": {
             "labels": {
@@ -439,7 +439,19 @@
             }
           },
           "response": {
-            "$ref": "service"
+            "$ref": "Service"
+          }
+        },
+        "create": {
+          "id": "bridge.services.create",
+          "description": "Create a new Service.",
+          "httpMethod": "POST",
+          "path": "services",
+          "request": {
+            "$ref": "Service"
+          },
+          "response": {
+            "$ref": "Service"
           }
         }
       }
@@ -454,7 +466,7 @@
           "httpMethod": "GET",
           "path": "replicationControllers",
           "response": {
-            "$ref": "controllerList"
+            "$ref": "ControllerList"
           }
         },
         "get": {
@@ -477,7 +489,7 @@
             }
           },
           "response": {
-            "$ref": "controller"
+            "$ref": "Controller"
           }
         }
       }
@@ -492,7 +504,7 @@
           "httpMethod": "GET",
           "path": "minions",
           "response": {
-            "$ref": "minionList"
+            "$ref": "MinionList"
           }
         },
         "get": {
@@ -510,7 +522,7 @@
             }
           },
           "response": {
-            "$ref": "minion"
+            "$ref": "Minion"
           }
         }
       }
