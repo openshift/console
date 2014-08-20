@@ -332,7 +332,7 @@ func (c *MinionsGetCall) Do() (*Minion, error) {
 	//   },
 	//   "path": "minions/{id}",
 	//   "response": {
-	//     "$ref": "minion"
+	//     "$ref": "Minion"
 	//   }
 	// }
 
@@ -379,7 +379,7 @@ func (c *MinionsListCall) Do() (*MinionList, error) {
 	//   "id": "bridge.minions.list",
 	//   "path": "minions",
 	//   "response": {
-	//     "$ref": "minionList"
+	//     "$ref": "MinionList"
 	//   }
 	// }
 
@@ -447,7 +447,7 @@ func (c *PodsGetCall) Do() (*Pod, error) {
 	//   },
 	//   "path": "pods/{id}",
 	//   "response": {
-	//     "$ref": "pod"
+	//     "$ref": "Pod"
 	//   }
 	// }
 
@@ -510,7 +510,7 @@ func (c *PodsListCall) Do() (*PodList, error) {
 	//   },
 	//   "path": "pods",
 	//   "response": {
-	//     "$ref": "podList"
+	//     "$ref": "PodList"
 	//   }
 	// }
 
@@ -592,7 +592,7 @@ func (c *ReplicationControllersGetCall) Do() (*Controller, error) {
 	//   },
 	//   "path": "replicationControllers/{id}",
 	//   "response": {
-	//     "$ref": "controller"
+	//     "$ref": "Controller"
 	//   }
 	// }
 
@@ -639,7 +639,65 @@ func (c *ReplicationControllersListCall) Do() (*ControllerList, error) {
 	//   "id": "bridge.replicationControllers.list",
 	//   "path": "replicationControllers",
 	//   "response": {
-	//     "$ref": "controllerList"
+	//     "$ref": "ControllerList"
+	//   }
+	// }
+
+}
+
+// method id "bridge.services.create":
+
+type ServicesCreateCall struct {
+	s       *Service
+	service *Service
+	opt_    map[string]interface{}
+}
+
+// Create: Create a new Service.
+func (r *ServicesService) Create(service *Service) *ServicesCreateCall {
+	c := &ServicesCreateCall{s: r.s, opt_: make(map[string]interface{})}
+	c.service = service
+	return c
+}
+
+func (c *ServicesCreateCall) Do() (*Service1, error) {
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.service)
+	if err != nil {
+		return nil, err
+	}
+	ctype := "application/json"
+	params := make(url.Values)
+	params.Set("alt", "json")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "services")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("POST", urls, body)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("Content-Type", ctype)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(Service1)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Create a new Service.",
+	//   "httpMethod": "POST",
+	//   "id": "bridge.services.create",
+	//   "path": "services",
+	//   "request": {
+	//     "$ref": "Service"
+	//   },
+	//   "response": {
+	//     "$ref": "Service"
 	//   }
 	// }
 
@@ -707,7 +765,7 @@ func (c *ServicesGetCall) Do() (*Service1, error) {
 	//   },
 	//   "path": "services/{id}",
 	//   "response": {
-	//     "$ref": "service"
+	//     "$ref": "Service"
 	//   }
 	// }
 
@@ -770,7 +828,7 @@ func (c *ServicesListCall) Do() (*ServiceList, error) {
 	//   },
 	//   "path": "services",
 	//   "response": {
-	//     "$ref": "serviceList"
+	//     "$ref": "ServiceList"
 	//   }
 	// }
 
@@ -899,7 +957,7 @@ func (c *UsersGetCall) Do() (*User, error) {
 	//   },
 	//   "path": "users/{id}",
 	//   "response": {
-	//     "$ref": "user"
+	//     "$ref": "User"
 	//   }
 	// }
 
@@ -961,7 +1019,7 @@ func (c *UsersListCall) Do() (*UserPage, error) {
 	//   },
 	//   "path": "users",
 	//   "response": {
-	//     "$ref": "userPage"
+	//     "$ref": "UserPage"
 	//   }
 	// }
 

@@ -20,4 +20,8 @@ angular.module('app')
     return _.findWhere(list, { id: id });
   };
 
+  this.create = function(service) {
+    return $rootScope.client.services.create(service);
+  };
+
 });

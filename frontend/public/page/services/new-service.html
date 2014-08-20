@@ -1,0 +1,79 @@
+<div class="co-p-new-service">
+
+  <co-nav-title title="New Service">
+    <a ng-href="/services" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Services</a>
+  </co-nav-title>
+
+
+  <div class="co-m-pane">
+
+    <div class="co-m-vert-nav">
+      <ul class="co-m-vert-nav__menu hidden-sm hidden-xs">
+        <li class="co-m-vert-nav__menu-item">
+          <h2 class="co-m-vert-nav__menu-item-heading">Step 1: Service Information</h2>
+          <p class="co-m-vert-nav__menu-item-desc">Services are exposed to the cluster as a single port. Traffic is automatically load balanced to containers matchin the service's label query.</p>
+        </li>
+        <li class="co-m-vert-nav__menu-item">
+          <h2 class="co-m-vert-nav__menu-item-heading">Step 2: Pod Configuration</h2>
+          <p class="co-m-vert-nav__menu-item-desc">A pod consists of many containers working together on the same machine. For example, nginx and memcached are always deployed together.</p>
+        </li>
+        <li class="co-m-vert-nav__menu-item">
+          <h2 class="co-m-vert-nav__menu-item-heading">Step 3: Launch Pods</h2>
+          <p class="co-m-vert-nav__menu-item-desc">Select the number of pods deployed within the cluster.</p>
+        </li>
+      </ul>
+
+      <div class="co-m-vert-nav__body">
+        <form ng-controller="NewServiceFormCtrl" ng-submit="submit()" name="form" role="form">
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label for="input-service-id" class="control-label">Service Id:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <input ng-model="service.id" type="text" class="form-control" required id="input-service-id"/>
+            </div>
+          </div>
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label for="input-service-labels" class="control-label">Service Labels:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <input type="text" class="form-control" id="input-service-labels"/>
+              <small class="text-muted">Labels used to identify this service. Use a label like app=foobar to group related services.</small>
+            </div>
+          </div>
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label for="input-service-port" class="control-label">Service Port:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <input ng-model="service.port" type="number" required class="form-control" id="input-service-port"/>
+              <small class="text-muted">
+                Users of this service can communicate from any machine in the cluster over this port.
+                It is exposed as an environment variable (SERVICE_service-id_PORT) in all new containers.
+              </small>
+            </div>
+          </div>
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label for="input-service-label-query" class="control-label">Label Query:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <input type="text" class="form-control" id="input-service-label-query"/>
+              <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
+            </div>
+          </div>
+          <div class="row co-m-form-row">
+            <div class="co-m-form-col col-sm-10 col-sm-offset-2">
+              <button type="submit" class="btn btn-default ng-scope">Continue</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

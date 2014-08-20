@@ -63,6 +63,14 @@
           client: 'ClientLoaderSvc'
         }
       })
+      .when('/services/new', {
+        controller: 'NewServiceCtrl',
+        templateUrl: '/static/page/services/new-service.html',
+        title: 'New Service',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
       .when('/services/:id', {
         controller: 'ServiceCtrl',
         templateUrl: '/static/page/services/service.html',

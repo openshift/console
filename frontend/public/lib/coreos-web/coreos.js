@@ -1848,6 +1848,9 @@ angular.module('coreos.ui')
 
 });
 
+/*
+*/
+
 /**
  * @fileoverview
  * Standard CoreOS footer.
