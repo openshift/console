@@ -1,7 +1,11 @@
+/* COREOS-WEB IMPORTS */
+@import "color-pallette";
+@import "config";
+
 /* CUSTOM STYLES */
 
 // Config variables
-@import "config";
+@import "vars";
 
 // Base
 @import "style/layout";

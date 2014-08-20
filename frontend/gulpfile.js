@@ -59,7 +59,9 @@ gulp.task('clean-package', function() {
 
 gulp.task('sass', function () {
   return gulp.src('./public/style.scss')
-    .pipe(sass())
+    .pipe(sass({
+      includePaths: ['./public/lib/coreos-web/sass']
+    }))
     .pipe(gulp.dest('./public/dist'));
 });
 
