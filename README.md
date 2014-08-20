@@ -35,4 +35,4 @@ Run the dev server (auto-loads new code changes):
 `./devweb`
 
 ### Dependencies
-- nodejs glup
+- nodejs gulp
