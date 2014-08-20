@@ -67,6 +67,24 @@ func TestParse_Global(t *testing.T) {
 	}
 }
 
+func TestParse_DashConversion(t *testing.T) {
+	resetForTesting("")
+
+	flagFooBar := flag.String("foo-bar", "", "")
+	os.Setenv("PREFIX_FOO_BAR", "baz")
+
+	opts := Options{EnvPrefix: "PREFIX_"}
+	conf, err := NewWithOptions(&opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	conf.ParseAll()
+
+	if *flagFooBar != "baz" {
+		t.Errorf("flagFooBar found %v, expected 5.5", *flagFooBar)
+	}
+}
+
 func TestParse_GlobalWithDottedFlagname(t *testing.T) {
 	resetForTesting("")
 	os.Setenv(envTestPrefix+"SOME_VALUE", "some-value")
