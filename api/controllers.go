@@ -13,7 +13,7 @@ func registerControllers(router *mux.Router) {
 
 // Get Controller api endpoint.
 func controllerGet(w http.ResponseWriter, r *http.Request) {
-	err := k8proxy.DoAndRespond(w, r)
+	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
@@ -21,7 +21,7 @@ func controllerGet(w http.ResponseWriter, r *http.Request) {
 
 // List Controllers api endpoint.
 func controllerList(w http.ResponseWriter, r *http.Request) {
-	err := k8proxy.DoAndRespond(w, r)
+	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}

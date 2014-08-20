@@ -12,17 +12,17 @@ const (
 	basePath = "/api/v1beta1/"
 )
 
-type K8Proxy struct {
+type K8sProxy struct {
 	baseProxy
 }
 
-func NewK8Proxy(localPrefix string) (*K8Proxy, error) {
-	remoteUrl, err := url.Parse(fmt.Sprintf("%s/api/v1beta1", *config.K8Url))
+func NewK8sProxy(localPrefix string) (*K8sProxy, error) {
+	remoteUrl, err := url.Parse(fmt.Sprintf("%s/api/v1beta1", *config.K8sUrl))
 	if err != nil {
 		return nil, err
 	}
 
-	p := K8Proxy{}
+	p := K8sProxy{}
 	p.HttpClient = &http.Client{}
 	p.RemoteUrl = remoteUrl
 	p.LocalPrefix = localPrefix

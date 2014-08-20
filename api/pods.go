@@ -13,7 +13,7 @@ func registerPods(router *mux.Router) {
 
 // Get Pod api endpoint.
 func podGet(w http.ResponseWriter, r *http.Request) {
-	err := k8proxy.DoAndRespond(w, r)
+	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}
@@ -21,7 +21,7 @@ func podGet(w http.ResponseWriter, r *http.Request) {
 
 // List Pods api endpoint.
 func podList(w http.ResponseWriter, r *http.Request) {
-	err := k8proxy.DoAndRespond(w, r)
+	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
 	}

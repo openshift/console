@@ -15,14 +15,14 @@ const (
 )
 
 var (
-	k8proxy *proxy.K8Proxy
+	k8sproxy *proxy.K8sProxy
 )
 
 func Setup(r *mux.Router) {
 	var err error
-	k8proxy, err = proxy.NewK8Proxy("api/bridge/v1")
+	k8sproxy, err = proxy.NewK8sProxy("api/bridge/v1")
 	if err != nil {
-		panic("failed to initialize k8 proxy")
+		panic("failed to initialize k8s proxy")
 	}
 
 	basePath := "/" + path.Join("api", Name, Version)
