@@ -116,7 +116,7 @@ gulp.task('assets', function() {
 });
 
 // Compile all the js source code.
-gulp.task('js-build', ['deps'], function() {
+gulp.task('js-build', function() {
   return gulp.src(jsSrc)
     .pipe(concat('app.js'))
     .pipe(ngmin())
