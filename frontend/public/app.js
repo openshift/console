@@ -45,6 +45,7 @@
       apis: [{
         name: 'bridge',
         id: 'bridge:v1',
+        rootUrl: window.location.origin,
         discoveryEndpoint: window.location.origin + '/api/bridge/v1/discovery/v1/rest'
       }]
     });
