@@ -16,7 +16,6 @@
     "gulp-eslint": "latest",
     "gulp-rename": "latest",
     "gulp-ngmin": "latest",
-    "gulp-minify-css": "latest",
     "gulp-html-replace": "latest",
     "gulp-bower-files": "latest",
     "merge-stream": "latest"

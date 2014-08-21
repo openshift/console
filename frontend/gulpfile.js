@@ -3,7 +3,6 @@ var exec = require('child_process').exec,
     clean = require('gulp-clean'),
     sass = require('gulp-sass'),
     templateCache = require('gulp-angular-templatecache'),
-    minifycss = require('gulp-minify-css'),
     runSequence = require('run-sequence'),
     eslint = require('gulp-eslint'),
     uglify = require('gulp-uglify'),
@@ -17,11 +16,11 @@ var exec = require('child_process').exec,
 var distDir = './public/dist',
     CURRENT_SHA,
     templateSrc = [
-      './public/{ui,page}/**/*.html'
+      './public/{module,page}/**/*.html'
     ],
     jsSrc = [
       './public/*.js',
-      './public/{module,page,ui}/**/*.js',
+      './public/{module,page}/**/*.js',
       '!./public/dist/*.js',
     ];
 
@@ -47,11 +46,8 @@ gulp.task('clean', function() {
 gulp.task('clean-package', function() {
   return gulp.src([
       distDir + '/style.css',
-      distDir + '/style.min.css',
       distDir + '/app.min.js',
       distDir + '/app.js',
-      distDir + '/deps.js',
-      distDir + '/deps.min.js',
       distDir + '/templates.js'
     ], { read: false })
     .pipe(clean({ force: true }));
@@ -91,16 +87,6 @@ gulp.task('deps', function(cb) {
   );
 });
 
-// Replace code blocks in html with build versions.
-gulp.task('html', ['sha'], function() {
-  return gulp.src('./public/index.html')
-    .pipe(htmlReplace({
-      'js':  '/static/build.' + CURRENT_SHA + '.min.js',
-      'css': '/static/build.' + CURRENT_SHA +'.min.css'
-    }))
-    .pipe(gulp.dest(distDir));
-});
-
 // Precompile html templates.
 gulp.task('templates', function() {
   return gulp.src(templateSrc)
@@ -126,8 +112,14 @@ gulp.task('js-build', function() {
     .pipe(gulp.dest(distDir));
 });
 
+// Copy all deps to dist folder for packaging.
+gulp.task('copy-deps', function() {
+  return gulp.src('./public/lib/**/*')
+    .pipe(gulp.dest(distDir + '/lib'));
+});
+
 // Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'assets', 'templates', 'sha'], function() {
+gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'], function() {
   // NOTE: File Order Matters.
   return gulp.src([
       distDir + '/deps.min.js',
@@ -139,28 +131,23 @@ gulp.task('js-package', ['js-build', 'assets', 'templates', 'sha'], function() {
 });
 
 // Minify app css.
-gulp.task('css-build', ['sass'], function() {
+gulp.task('css-build', ['sass', 'sha'], function() {
   return gulp.src('public/dist/style.css')
-    .pipe(minifycss())
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(distDir));
-});
-
-// Combine all the css into the final build file.
-gulp.task('css-package', ['css-build', 'assets', 'sha'], function(cb) {
-  return gulp.src([
-      distDir + '/style.min.css'
-    ])
-    .pipe(concat('build.' + CURRENT_SHA + '.min.css'))
+    .pipe(rename('build.' + CURRENT_SHA + '.css'))
     .pipe(gulp.dest(distDir));
 });
 
 // Replace code blocks in html with build versions.
 gulp.task('html', ['sha'], function() {
-  return gulp.src('public/index.html')
+  return gulp.src('./public/index.html')
     .pipe(htmlReplace({
       'js':  '/static/build.' + CURRENT_SHA + '.min.js',
-      'css': '/static/build.' + CURRENT_SHA +'.min.css'
+      'css': '/static/build.' + CURRENT_SHA +'.css',
+      // TODO: use file hash
+      'js-deps':  '/static/lib/deps.min.js',
+      // TODO: use versions in filenames
+      'js-coreos-web':  '/static/lib/coreos-web/coreos.min.js',
+      'css-coreos-web':  '/static/lib/coreos-web/coreos.css'
     }))
     .pipe(gulp.dest(distDir));
 });
@@ -178,7 +165,7 @@ gulp.task('default', function(cb) {
   // Run in order.
   runSequence(
     ['clean', 'js-quality'],
-    ['js-package', 'css-package', 'html'],
+    ['js-package', 'css-build', 'html'],
     'clean-package',
     cb);
 });
