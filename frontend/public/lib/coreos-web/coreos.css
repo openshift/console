@@ -4761,6 +4761,9 @@ input[type="radio"] {
   font-weight: 400;
   text-shadow: 0 1px 0 white; }
 
+.co-btn-text {
+  margin: 0 10px 0 0; }
+
 svg .axis path, svg .axis line {
   fill: none;
   stroke: #ccc;

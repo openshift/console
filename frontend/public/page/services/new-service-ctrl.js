@@ -11,7 +11,7 @@ angular.module('app')
   };
 
   $scope.save = function() {
-    ServicesSvc.create($scope.service);
+    $scope.requestPromise = ServicesSvc.create($scope.service);
   };
 
 })

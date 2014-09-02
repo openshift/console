@@ -25,6 +25,7 @@
     'underscore',
     'jquery',
     'coreos',
+    'ngTagsInput',
     // internal modules
     'app.ui'
   ]);
