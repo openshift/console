@@ -36,10 +36,10 @@
           </div>
           <div class="row co-m-form-row">
             <div class="col-sm-2">
-              <label for="input-service-labels" class="control-label">Service Labels:</label>
+              <label class="control-label">Service Labels:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <input type="text" class="form-control" id="input-service-labels"/>
+              <co-label-input ng-model="service.labels" type="service"></co-label-input>
               <small class="text-muted">Labels used to identify this service. Use a label like app=foobar to group related services.</small>
             </div>
           </div>
@@ -51,22 +51,27 @@
               <input ng-model="service.port" type="number" required class="form-control" id="input-service-port"/>
               <small class="text-muted">
                 Users of this service can communicate from any machine in the cluster over this port.
-                It is exposed as an environment variable (SERVICE_service-id_PORT) in all new containers.
+                It is exposed as an environment variable (SERVICE_{{service.id || 'service-id'}}_{{service.port || 'PORT'}}) in all new containers.
               </small>
             </div>
           </div>
           <div class="row co-m-form-row">
             <div class="col-sm-2">
-              <label for="input-service-label-query" class="control-label">Label Query:</label>
+              <label class="control-label">Label Query:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <input type="text" class="form-control" id="input-service-label-query"/>
+              <co-label-input ng-model="service.selector" type="pod" selector="true"></co-label-input>
               <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
             </div>
           </div>
           <div class="row co-m-form-row">
             <div class="co-m-form-col col-sm-10 col-sm-offset-2">
-              <button type="submit" class="btn btn-default ng-scope">Continue</button>
+              <div co-btn-bar complete-promise="requestPromise">
+                <co-error-message promise="requestPromise"></co-error-message>
+                <button type="submit" class="btn btn-default ng-scope">Continue to Pod Config</button>
+                <span class="co-btn-text">or</span>
+                <button type="submit" class="btn btn-default ng-scope">Create Service Only</button>
+              </div>
             </div>
           </div>
         </form>
