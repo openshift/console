@@ -4,6 +4,7 @@ $red-light:     lighten($red, 15%);
 $red-lighter:   lighten($red, 30%);
 $red-dark:      darken($red, 15%);
 $red-darker:    darken($red, 30%);
+$red-invalid:   #DD1327;
 
 $orange:        rgba(240,142,78,1);
 $orange-light:  lighten($orange, 15%);
