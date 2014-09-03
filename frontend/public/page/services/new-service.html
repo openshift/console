@@ -10,7 +10,7 @@
 
     <div class="co-m-vert-nav">
       <ul class="co-m-vert-nav__menu hidden-sm hidden-xs">
-        <li class="co-m-vert-nav__menu-item">
+        <li class="co-m-vert-nav__menu-item co-m-vert-nav-item--active">
           <h2 class="co-m-vert-nav__menu-item-heading">Step 1: Service Information</h2>
           <p class="co-m-vert-nav__menu-item-desc">Services are exposed to the cluster as a single port. Traffic is automatically load balanced to containers matchin the service's label query.</p>
         </li>
@@ -68,7 +68,7 @@
             <div class="co-m-form-col col-sm-10 col-sm-offset-2">
               <div co-btn-bar complete-promise="requestPromise">
                 <co-error-message promise="requestPromise"></co-error-message>
-                <button type="submit" class="btn btn-default ng-scope">Continue to Pod Config</button>
+                <button type="button" ng-click="continue()" class="btn btn-default ng-scope">Continue to Pod Config</button>
                 <span class="co-btn-text">or</span>
                 <button type="submit" class="btn btn-default ng-scope">Create Service Only</button>
               </div>

@@ -1,5 +1,6 @@
 angular.module('app')
-.controller('NewServiceCtrl', function($scope, $routeParams, ServicesSvc) {
+.controller('NewServiceCtrl', function($scope, $routeParams, $location,
+      ServicesSvc) {
   'use strict';
 
   $scope.service = {
@@ -12,6 +13,9 @@ angular.module('app')
 
   $scope.save = function() {
     $scope.requestPromise = ServicesSvc.create($scope.service);
+    $scope.requestPromise.then(function() {
+      $location.path('/services');
+    });
   };
 
 })
@@ -20,4 +24,9 @@ angular.module('app')
   'use strict';
 
   $scope.submit = $scope.save;
+
+  $scope.continue = function() {
+    // TODO: continue to next step
+  };
+
 });
