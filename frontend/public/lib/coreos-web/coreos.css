@@ -4774,6 +4774,13 @@ input[type="radio"] {
   font-size: 13px;
   font-weight: 300; }
 
+.co-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.co-nowrap {
+  white-space: nowrap; }
+
 svg .axis path, svg .axis line {
   fill: none;
   stroke: #ccc;
