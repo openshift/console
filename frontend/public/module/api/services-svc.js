@@ -21,6 +21,9 @@ angular.module('app')
   };
 
   this.create = function(service) {
+    if (_.isEmpty(service.labels)) {
+      service.labels = null;
+    }
     return $rootScope.client.services.create(service);
   };
 
