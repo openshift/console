@@ -1,0 +1,90 @@
+<div class="co-p-new-pod">
+
+  <co-nav-title title="Create New Pod">
+    <a ng-href="/pods" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pods</a>
+  </co-nav-title>
+
+
+  <div class="co-m-pane">
+
+    <div class="co-m-pane__heading">
+      <h1 class="co-m-pane__title">Create a Standalone Pod</h1>
+    </div>
+    <div class="co-m-pane__body">
+
+      <form ng-controller="NewPodFormCtrl" ng-submit="submit()" name="form" role="form">
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label for="input-pod-id" class="control-label">Pod Id:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <input ng-model="pod.id" type="text" class="form-control" required id="input-pod-id"/>
+          </div>
+        </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label class="control-label">Pod Labels:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <co-label-input ng-model="pod.labels" type="pod"></co-label-input>
+            <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
+          </div>
+        </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-12">
+            <label class="control-label">Containers:</label>
+          </div>
+        </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-10 col-sm-offset-2">
+
+            <div class="co-m-container-block">
+              <div class="row co-m-form-row">
+                <div class="col-sm-3">
+                  <div class="co-m-field-head">Container Name</div>
+                  <input ng-model="container.name" type="text" class="form-control" />
+                </div>
+                <div class="col-sm-4">
+                  <div class="co-m-field-head">Container Image</div>
+                  <input ng-model="fields.containerImage" type="text" class="form-control" placeholder="[registry]/[user]/image" />
+                </div>
+                <div class="col-sm-3">
+                  <div class="co-m-field-head">Container Version/Tag</div>
+                  <input ng-model="fields.containerTag" type="text" class="form-control" placeholder="latest" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-1">
+                  <div class="co-m-field-head">Ports</div>
+                  <a href="#" ng-click="openPortsModal()" class="co-m-modal-link"><span ng-bind="container.ports.length || 0"></span> Ports</a>
+                </div>
+                <div class="col-sm-1">
+                  <div class="co-m-field-head">Volumes</div>
+                  <a href="#" class="co-m-modal-link"><span ng-bind="fields.volumes.length"></span> Volumes</a>
+                </div>
+                <div class="col-sm-1">
+                  <div class="co-m-field-head">Environment</div>
+                  <a href="#" class="co-m-modal-link"><span ng-bind="fields.env.length"></span> Variables</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="row co-m-form-row">
+          <div class="co-m-form-col col-sm-10 col-sm-offset-2">
+            <div co-btn-bar complete-promise="requestPromise">
+              <co-error-message promise="requestPromise"></co-error-message>
+              <button type="submit" class="btn btn-primary ng-scope">Launch Pod</button>
+              <button type="submit" class="btn btn-link ng-scope">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

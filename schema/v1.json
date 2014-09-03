@@ -401,6 +401,18 @@
           "response": {
             "$ref": "Pod"
           }
+        },
+        "create": {
+          "id": "bridge.pods.create",
+          "description": "Create a new Pod.",
+          "httpMethod": "POST",
+          "path": "pods",
+          "request": {
+            "$ref": "Pod"
+          },
+          "response": {
+            "$ref": "Pod"
+          }
         }
       }
     },

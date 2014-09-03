@@ -385,6 +385,64 @@ func (c *MinionsListCall) Do() (*MinionList, error) {
 
 }
 
+// method id "bridge.pods.create":
+
+type PodsCreateCall struct {
+	s    *Service
+	pod  *Pod
+	opt_ map[string]interface{}
+}
+
+// Create: Create a new Pod.
+func (r *PodsService) Create(pod *Pod) *PodsCreateCall {
+	c := &PodsCreateCall{s: r.s, opt_: make(map[string]interface{})}
+	c.pod = pod
+	return c
+}
+
+func (c *PodsCreateCall) Do() (*Pod, error) {
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.pod)
+	if err != nil {
+		return nil, err
+	}
+	ctype := "application/json"
+	params := make(url.Values)
+	params.Set("alt", "json")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "pods")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("POST", urls, body)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("Content-Type", ctype)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(Pod)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Create a new Pod.",
+	//   "httpMethod": "POST",
+	//   "id": "bridge.pods.create",
+	//   "path": "pods",
+	//   "request": {
+	//     "$ref": "Pod"
+	//   },
+	//   "response": {
+	//     "$ref": "Pod"
+	//   }
+	// }
+
+}
+
 // method id "bridge.pods.get":
 
 type PodsGetCall struct {

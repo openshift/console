@@ -15,7 +15,9 @@ angular.module('app')
     if (!$scope.container) {
       return state;
     }
-    if ($scope.container.State.Running) {
+    if (!$scope.container.State) {
+      state = 'Unknown';
+    } else if ($scope.container.State.Running) {
       state = 'Running';
     } else {
       state = 'Not Running';
