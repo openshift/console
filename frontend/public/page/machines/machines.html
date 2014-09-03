@@ -15,7 +15,7 @@
         <div class="row co-m-table-grid__head">
           <div class="col-lg-2">Machine ID</div>
         </div>
-        <div class="row" ng-repeat-start="m in machines" ng-click="open = !open; getPods(m)">
+        <div class="row co-m-table-grid--clickable" ng-repeat-start="m in machines" ng-click="open = !open; getPods(m)">
           <div class="col-lg-6" ng-bind="m.id"></div>
         </div>
         <div ng-show="open" ng-repeat-end>

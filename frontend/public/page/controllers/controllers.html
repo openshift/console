@@ -22,7 +22,7 @@
           <div class="col-lg-2">Pod Selector</div>
           <div class="col-lg-1">Desired Count</div>
         </div>
-        <div class="row" ng-repeat-start="c in controllers" ng-click="open = !open; getPods(c.id)">
+        <div class="row co-m-table-grid--clickable" ng-repeat-start="c in controllers" ng-click="open = !open; getPods(c.id)">
           <div class="col-lg-2">
             <co-controller-cog controller="c"></co-controller-cog>
             <co-entity-icon type="controller"></co-entity-icon>

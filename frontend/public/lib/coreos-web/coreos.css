@@ -5176,6 +5176,9 @@ svg .x-axis path {
   line-height: 13px; }
 .co-m-table-grid > .row, .co-m-table-grid [class*='col-'], .co-m-table-grid--bordered > .row, .co-m-table-grid--bordered [class*='col-'] {
   vertical-align: middle; }
+.co-m-table-grid .row.co-m-table-grid--clickable:hover, .co-m-table-grid--bordered .row.co-m-table-grid--clickable:hover {
+  background-color: #EAF3FF;
+  cursor: pointer; }
 .co-m-table-grid .co-m-table-grid, .co-m-table-grid .co-m-table-grid--bordered, .co-m-table-grid--bordered .co-m-table-grid, .co-m-table-grid--bordered .co-m-table-grid--bordered {
   padding-left: 20px; }
 
