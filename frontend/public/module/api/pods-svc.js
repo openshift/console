@@ -1,5 +1,5 @@
 angular.module('app')
-.service('PodsSvc', function(_, $rootScope, LabelSvc) {
+.service('PodsSvc', function(_, $rootScope, LabelSvc, EVENTS) {
   'use strict';
 
   this.list = function(params) {
@@ -25,6 +25,15 @@ angular.module('app')
 
   this.create = function(pod) {
     return $rootScope.client.pods.create(pod);
+  };
+
+  this.delete = function(pod) {
+    var p = $rootScope.client.pods.delete({ id: pod.id });
+    p.then(function() {
+      // TODO: handle pending delete status.
+      $rootScope.$broadcast(EVENTS.POD_DELETE, pod);
+    });
+    return p;
   };
 
 });
