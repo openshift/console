@@ -40,7 +40,7 @@ angular.module('app').directive('coLabelInput', function(_) {
       // 'true', 'false' (default)
       selector: '@',
     },
-    controller: function($scope, $attrs) {
+    controller: function($scope) {
       $scope.arrModel = arrayify($scope.labels);
 
       if ($scope.type) {
@@ -51,8 +51,6 @@ angular.module('app').directive('coLabelInput', function(_) {
         $scope.labels = objectify(arr);
       });
 
-    },
-    link: function(scope, elem, attrs) {
     }
   };
 
