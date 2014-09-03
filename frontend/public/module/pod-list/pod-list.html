@@ -9,7 +9,7 @@
       <div class="col-lg-2">Machine</div>
     </div>
     <div class="row" ng-repeat="p in pods">
-      <div class="col-lg-2">
+      <div class="col-lg-2 co-truncate co-nowrap">
         <co-pod-cog pod="p"></co-pod-cog>
         <co-entity-icon type="pod"></co-entity-icon>
         <a ng-href="/pods/{{p.id}}" ng-bind="p.id"></a>

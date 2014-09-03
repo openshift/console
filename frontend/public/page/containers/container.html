@@ -39,13 +39,13 @@
                 </div>
               </dd>
               <dt>Volumes</dt>
-              <dd>
+              <dd class="co-variable-items">
                 <div ng-repeat="(k, v) in container.Volumes">
                   <code ng-bind="k"></code> : <code ng-bind="v"></code>
                 </div>
               </dd>
               <dt>Environment</dt>
-              <dd>
+              <dd class="co-variable-items">
                 <div ng-repeat="e in container.Config.Env">
                   <code ng-bind="e"></code>
                 </div>
