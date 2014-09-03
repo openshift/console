@@ -51,7 +51,11 @@
             <div class="col-lg-2"><a ng-href="/containers/{{pod.id}}/{{c.name}}" ng-bind="c.name"></a></div>
             <div class="col-lg-2" ng-bind="cstate.ID"></div>
             <div class="col-lg-2" ng-bind="c.image"></div>
-            <div class="col-lg-2" ng-bind="c.ports"></div>
+            <div class="col-lg-2">
+              <div ng-repeat="p in c.ports">
+                <code>{{p.hostPort}}</code>:<code>{{p.containerPort}}</code>
+              </div>
+            </div>
             <div class="col-lg-2" ng-bind="cstate.Created | date:CONST.dateTimeFmt"></div>
           </div>
         </div>

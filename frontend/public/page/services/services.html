@@ -21,7 +21,7 @@
           <div class="col-lg-2">Pod Selector</div>
           <div class="col-lg-2">Service Port</div>
         </div>
-        <div class="row" ng-repeat-start="s in services track by s.id" ng-click="open = !open; getPods(s.id)">
+        <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services track by s.id" ng-click="open = !open; getPods(s.id)">
           <div class="col-lg-2">
             <co-service-cog service="s"></co-service-cog>
             <co-entity-icon type="service"></co-entity-icon>

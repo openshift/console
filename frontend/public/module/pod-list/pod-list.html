@@ -19,8 +19,10 @@
       </div>
       <div class="col-lg-2">-</div>
       <div class="col-lg-2">
-        <co-entity-icon type="controller"></co-entity-icon>
-        <a ng-if="p.labels.replicationController" ng-href="/controllers/{{p.labels.replicationController}}" ng-bind="p.labels.replicationController"></a>
+        <div ng-if="p.labels.replicationController" >
+          <co-entity-icon type="controller"></co-entity-icon>
+          <a ng-href="/controllers/{{p.labels.replicationController}}" ng-bind="p.labels.replicationController"></a>
+        </div>
       </div>
       <div class="col-lg-2" ng-bind="p.desiredState.manifest.containers.length"></div>
       <div class="col-lg-2" ng-bind="p.currentState.host"></div>
