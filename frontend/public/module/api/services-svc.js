@@ -1,5 +1,5 @@
 angular.module('app')
-.service('ServicesSvc', function(_, $rootScope) {
+.service('ServicesSvc', function(_, $rootScope, EVENTS) {
   'use strict';
 
   this.list = function(params) {
@@ -22,6 +22,15 @@ angular.module('app')
 
   this.create = function(service) {
     return $rootScope.client.services.create(service);
+  };
+
+  this.delete = function(service) {
+    var p = $rootScope.client.services.delete({ id: service.id });
+    p.then(function(result) {
+      // TODO: handle pending delete status.
+      $rootScope.$broadcast(EVENTS.SERVICE_DELETE, service);
+    });
+    return p;
   };
 
 });

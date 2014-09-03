@@ -3,7 +3,7 @@
  * Cog menu directive for services.
  */
 
-angular.module('app').directive('coServiceCog', function() {
+angular.module('app').directive('coServiceCog', function(ServicesSvc, ModalLauncherSvc) {
   'use strict';
 
   return {
@@ -14,6 +14,12 @@ angular.module('app').directive('coServiceCog', function() {
       'service': '='
     },
     controller: function($scope) {
+
+      function getDeleteFn() {
+        return function() {
+          return ServicesSvc.delete($scope.service);
+        };
+      }
 
       $scope.cogOptions = [
         {
@@ -28,6 +34,17 @@ angular.module('app').directive('coServiceCog', function() {
         {
           label: 'Modify Labels...',
           weight: 300
+        },
+        {
+          'label': 'Delete Service...',
+          'callback': ModalLauncherSvc.open.bind(null, 'confirm', {
+            title: 'Delete Service',
+            message: 'Are you sure you want to delete ' +
+                $scope.service.id + '?',
+            btnText: 'Delete Service',
+            executeFn: getDeleteFn
+          }),
+          'weight': 400
         }
       ];
 
