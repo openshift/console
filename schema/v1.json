@@ -427,6 +427,24 @@
             "$ref": "Pod"
           }
         },
+        "delete": {
+          "id": "bridge.pods.delete",
+          "description": "Delete a Pod.",
+          "httpMethod": "DELETE",
+          "path": "pods/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "Status"
+          }
+        },
         "create": {
           "id": "bridge.pods.create",
           "description": "Create a new Pod.",
