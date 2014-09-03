@@ -10,6 +10,7 @@ func registerServices(router *mux.Router) {
 	router.HandleFunc("/services", serviceList).Methods("GET")
 	router.HandleFunc("/services", serviceCreate).Methods("POST")
 	router.HandleFunc("/services/{id}", serviceGet).Methods("GET")
+	router.HandleFunc("/services/{id}", serviceGet).Methods("DELETE")
 }
 
 // Get Service api endpoint.
@@ -21,6 +22,13 @@ func serviceGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func serviceCreate(w http.ResponseWriter, r *http.Request) {
+	err := k8sproxy.DoAndRespond(w, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+	}
+}
+
+func serviceDelete(w http.ResponseWriter, r *http.Request) {
 	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)

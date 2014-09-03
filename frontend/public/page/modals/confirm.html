@@ -1,0 +1,15 @@
+<div class="co-p-confirm-modal">
+  <form ng-submit="execute()" name="form" role="form">
+    <div class="modal-header">
+      <h4 class="modal-title" ng-bind="title"></h4>
+    </div>
+    <div class="modal-body">
+      {{message}}
+    </div>
+    <div class="modal-footer" co-btn-bar complete-promise="requestPromise">
+      <co-error-message promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary" ng-bind="btnText"></button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -1,10 +1,12 @@
 angular.module('app')
-.controller('ServicesCtrl', function($scope, ServicesSvc, PodsSvc) {
+.controller('ServicesCtrl', function($scope, ServicesSvc, PodsSvc, EVENTS, arraySvc) {
   'use strict';
 
-  ServicesSvc.list().then(function(result) {
-    $scope.services = result;
-  });
+  $scope.fetch = function() {
+    ServicesSvc.list().then(function(result) {
+      $scope.services = result;
+    });
+  };
 
   $scope.getPods = function(serviceId) {
     var svc = ServicesSvc.find($scope.services, serviceId);
@@ -13,5 +15,11 @@ angular.module('app')
         svc.pods = result;
       });
   };
+
+  $scope.$on(EVENTS.SERVICE_DELETE, function(e, service) {
+    arraySvc.remove($scope.services, service);
+  });
+
+  $scope.fetch();
 
 });

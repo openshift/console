@@ -53,6 +53,31 @@
       }
     },
 
+    "Status": {
+      "id": "Status",
+      "type": "object",
+      "required": false,
+      "description": "Object indicating operation status.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "required": false
+        },
+        "apiVersion": {
+          "type": "string",
+          "required": false
+        },
+        "creationTimestamp": {
+          "type": "string",
+          "required": false
+        },
+        "status": {
+          "type": "string",
+          "required": false
+        }
+      }
+    },
+
 
     "PodList": {
       "id": "PodList",
@@ -452,6 +477,24 @@
           },
           "response": {
             "$ref": "Service"
+          }
+        },
+        "delete": {
+          "id": "bridge.services.delete",
+          "description": "Delete a Service.",
+          "httpMethod": "DELETE",
+          "path": "services/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "Status"
           }
         },
         "create": {

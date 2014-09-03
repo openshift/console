@@ -256,6 +256,16 @@ type ServiceList struct {
 	Items []*Service1 `json:"items,omitempty"`
 }
 
+type Status struct {
+	ApiVersion string `json:"apiVersion,omitempty"`
+
+	CreationTimestamp string `json:"creationTimestamp,omitempty"`
+
+	Kind string `json:"kind,omitempty"`
+
+	Status string `json:"status,omitempty"`
+}
+
 type User struct {
 	FirstName string `json:"firstName,omitempty"`
 
@@ -756,6 +766,74 @@ func (c *ServicesCreateCall) Do() (*Service1, error) {
 	//   },
 	//   "response": {
 	//     "$ref": "Service"
+	//   }
+	// }
+
+}
+
+// method id "bridge.services.delete":
+
+type ServicesDeleteCall struct {
+	s    *Service
+	id   string
+	opt_ map[string]interface{}
+}
+
+// Delete: Delete a Service.
+func (r *ServicesService) Delete(id string) *ServicesDeleteCall {
+	c := &ServicesDeleteCall{s: r.s, opt_: make(map[string]interface{})}
+	c.id = id
+	return c
+}
+
+// Id sets the optional parameter "id":
+func (c *ServicesDeleteCall) Id(id string) *ServicesDeleteCall {
+	c.opt_["id"] = id
+	return c
+}
+
+func (c *ServicesDeleteCall) Do() (*Status, error) {
+	var body io.Reader = nil
+	params := make(url.Values)
+	params.Set("alt", "json")
+	if v, ok := c.opt_["id"]; ok {
+		params.Set("id", fmt.Sprintf("%v", v))
+	}
+	urls := googleapi.ResolveRelative(c.s.BasePath, "services/{id}")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("DELETE", urls, body)
+	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(Status)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Delete a Service.",
+	//   "httpMethod": "DELETE",
+	//   "id": "bridge.services.delete",
+	//   "parameterOrder": [
+	//     "id"
+	//   ],
+	//   "parameters": {
+	//     "id": {
+	//       "location": "path",
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "services/{id}",
+	//   "response": {
+	//     "$ref": "Status"
 	//   }
 	// }
 
