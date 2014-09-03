@@ -9,10 +9,13 @@
 
 // Base
 @import "style/layout";
+@import "style/icons";
 
 // Pages
 @import "page/main/main";
 @import "page/services/new-service";
+@import "page/pods/new-pod";
+@import "page/modals/modal";
 
 // Modules
 @import "module/label/label";

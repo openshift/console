@@ -23,4 +23,8 @@ angular.module('app')
     return _.findWhere(list, { id: id });
   };
 
+  this.create = function(pod) {
+    return $rootScope.client.pods.create(pod);
+  };
+
 });

@@ -68,7 +68,7 @@
       .when('/services/new', {
         controller: 'NewServiceCtrl',
         templateUrl: '/static/page/services/new-service.html',
-        title: 'New Service',
+        title: 'Create New Service',
         resolve: {
           client: 'ClientLoaderSvc'
         }
@@ -101,6 +101,14 @@
         controller: 'PodsCtrl',
         templateUrl: '/static/page/pods/pods.html',
         title: 'Pods',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/pods/new', {
+        controller: 'NewPodCtrl',
+        templateUrl: '/static/page/pods/new-pod.html',
+        title: 'Create New Pod',
         resolve: {
           client: 'ClientLoaderSvc'
         }
