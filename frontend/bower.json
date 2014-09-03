@@ -10,7 +10,8 @@
     "angular-sanitize": "latest",
     "underscore": "latest",
     "underscore.string": "latest",
-    "ng-tags-input": "latest"
+    "ng-tags-input": "latest",
+    "d3": "latest"
   },
   "devDependencies": {
     "angular-mocks": "latest"
