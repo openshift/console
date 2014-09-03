@@ -4743,6 +4743,10 @@ input[type="radio"] {
   fill: black;
   color: black; }
 
+.co-img-icon-gray {
+  fill: #999;
+  color: #999; }
+
 .co-m-icon-inline {
   vertical-align: middle;
   margin-right: 2px; }
@@ -4763,6 +4767,12 @@ input[type="radio"] {
 
 .co-btn-text {
   margin: 0 10px 0 0; }
+
+.co-m-field-head, .co-m-table-grid__head {
+  color: #999;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 300; }
 
 svg .axis path, svg .axis line {
   fill: none;
@@ -5173,9 +5183,6 @@ svg .x-axis path {
   border-bottom: solid 1px #eee; }
 
 .co-m-table-grid__head {
-  color: #999;
-  text-transform: uppercase;
-  font-weight: 300;
   padding-top: 0px; }
 
 .co-m-navbar {
