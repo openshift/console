@@ -261,9 +261,16 @@ type Status struct {
 
 	CreationTimestamp string `json:"creationTimestamp,omitempty"`
 
+	Details *StatusDetails `json:"details,omitempty"`
+
 	Kind string `json:"kind,omitempty"`
 
+	Reason string `json:"reason,omitempty"`
+
 	Status string `json:"status,omitempty"`
+}
+
+type StatusDetails struct {
 }
 
 type User struct {

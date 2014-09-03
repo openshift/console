@@ -74,6 +74,14 @@
         "status": {
           "type": "string",
           "required": false
+        },
+        "reason": {
+          "type": "string",
+          "required": false
+        },
+        "details": {
+          "type": "object",
+          "required": false
         }
       }
     },
