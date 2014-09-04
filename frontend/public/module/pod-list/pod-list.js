@@ -4,7 +4,7 @@
  */
 
 
-angular.module('app').directive('coPodList', function() {
+angular.module('app').directive('coPodList', function(EVENTS, arraySvc) {
   'use strict';
 
   return {
@@ -13,6 +13,11 @@ angular.module('app').directive('coPodList', function() {
     replace: true,
     scope: {
       pods: '='
+    },
+    controller: function($scope) {
+      $scope.$on(EVENTS.POD_DELETE, function(e, pod) {
+        arraySvc.remove($scope.pods, pod);
+      });
     }
   };
 

@@ -74,6 +74,14 @@
         "status": {
           "type": "string",
           "required": false
+        },
+        "reason": {
+          "type": "string",
+          "required": false
+        },
+        "details": {
+          "type": "object",
+          "required": false
         }
       }
     },
@@ -425,6 +433,24 @@
           },
           "response": {
             "$ref": "Pod"
+          }
+        },
+        "delete": {
+          "id": "bridge.pods.delete",
+          "description": "Delete a Pod.",
+          "httpMethod": "DELETE",
+          "path": "pods/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "Status"
           }
         },
         "create": {

@@ -32,7 +32,7 @@
 
   // Routes
   app.config(function($routeProvider, $locationProvider, $httpProvider,
-        configSvcProvider, apiClientProvider) {
+        configSvcProvider, apiClientProvider, errorMessageSvcProvider) {
 
     $locationProvider.html5Mode(true);
 
@@ -49,6 +49,13 @@
         rootUrl: window.location.origin,
         discoveryEndpoint: window.location.origin + '/api/bridge/v1/discovery/v1/rest'
       }]
+    });
+
+    errorMessageSvcProvider.registerFormatter('k8sApi', function(resp) {
+      if (resp.data && resp.data.message) {
+        return resp.data.message;
+      }
+      return 'An error occurred. Please try again.';
     });
 
     $routeProvider

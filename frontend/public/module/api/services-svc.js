@@ -21,12 +21,15 @@ angular.module('app')
   };
 
   this.create = function(service) {
+    if (_.isEmpty(service.labels)) {
+      service.labels = null;
+    }
     return $rootScope.client.services.create(service);
   };
 
   this.delete = function(service) {
     var p = $rootScope.client.services.delete({ id: service.id });
-    p.then(function(result) {
+    p.then(function() {
       // TODO: handle pending delete status.
       $rootScope.$broadcast(EVENTS.SERVICE_DELETE, service);
     });

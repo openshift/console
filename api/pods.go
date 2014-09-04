@@ -10,6 +10,7 @@ func registerPods(router *mux.Router) {
 	router.HandleFunc("/pods", podList).Methods("GET")
 	router.HandleFunc("/pods", podCreate).Methods("POST")
 	router.HandleFunc("/pods/{id}", podGet).Methods("GET")
+	router.HandleFunc("/pods/{id}", podDelete).Methods("DELETE")
 }
 
 // Get Pod api endpoint.
@@ -21,6 +22,13 @@ func podGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func podCreate(w http.ResponseWriter, r *http.Request) {
+	err := k8sproxy.DoAndRespond(w, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+	}
+}
+
+func podDelete(w http.ResponseWriter, r *http.Request) {
 	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
