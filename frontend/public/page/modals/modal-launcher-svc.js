@@ -11,6 +11,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-volumes.html',
       controller: 'ConfigureVolumesCtrl',
     },
+    'configure-volume-mounts': {
+      templateUrl: '/static/page/modals/configure-volume-mounts.html',
+      controller: 'ConfigureVolumeMountsCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',

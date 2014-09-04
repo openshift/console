@@ -1,0 +1,60 @@
+<div class="co-p-configure-volume-mounts">
+  <form ng-controller="ConfigureVolumeMountsFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Container Volume Mounts</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>Mount pod data volumes into the container.</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-table-grid--bordered">
+            <div class="row co-m-table-grid__head">
+              <div class="col-sm-4">Pod Volume</div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-4">Container Location</div>
+              <div class="col-sm-2">Access</div>
+              <div class="col-sm-1"></div>
+            </div>
+            <div class="row" ng-repeat="v in volumeMounts">
+              <div class="col-sm-4">
+                <select ng-model="v.name" class="form-control" required
+                  ng-options="v.name as getDropdownLabel(v) for v in volumes">
+                </select>
+              </div>
+              <div class="col-sm-1">
+                <i class="fa fa-arrow-right co-img-icon-gray co-m-form-row-icon"></i>
+              </div>
+              <div class="col-sm-4">
+                <input ng-model="v.mountPath" class="form-control" required type="text"/>
+              </div>
+              <div class="col-sm-2">
+                <select ng-model="v.readOnly" ng-change="formatReadOnly(v)" class="form-control">
+                  <option value="false" ng-selected="v.readOnly == false">Read/Write</option>
+                  <option value="true" ng-selected="v.readOnly == true">Read Only</option>
+                </select>
+              </div>
+              <div class="col-sm-1">
+                <i ng-click="clearRow(v)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Volume Configuration</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
