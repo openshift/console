@@ -7,6 +7,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-ports.html',
       controller: 'ConfigurePortsCtrl',
     },
+    'configure-volumes': {
+      templateUrl: '/static/page/modals/configure-volumes.html',
+      controller: 'ConfigureVolumesCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',
