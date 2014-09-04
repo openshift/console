@@ -25,12 +25,18 @@ angular.module('app')
   };
 
   $scope.fields = {
-    containerImage: null,
-    containerTag: null
+    containerImage: '',
+    containerTag: ''
   };
 
   function updateImage(image, tag) {
-    $scope.container.image = (image || $scope.fields.containerImage) + ':' + (tag || $scope.fields.containerTag);
+    var t, img;
+    t = tag || $scope.fields.containerTag;
+    img = (image || $scope.fields.containerImage);
+    if (!_.isEmpty(t)) {
+      img += ':' + t;
+    }
+    $scope.container.image = img;
   }
 
   $scope.$watch('fields.containerImage', function(image) {
