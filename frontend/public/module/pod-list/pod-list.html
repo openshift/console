@@ -17,7 +17,7 @@
       <div class="col-lg-2">
         <co-label-list type="pod" labels="p.labels"></co-label-list>
       </div>
-      <div class="col-lg-2">-</div>
+      <div class="col-lg-2" ng-bind="p.currentState.status"></div>
       <div class="col-lg-2">
         <div ng-if="p.labels.replicationController" >
           <co-entity-icon type="controller"></co-entity-icon>
