@@ -53,7 +53,7 @@
             <div class="col-lg-2" ng-bind="c.image"></div>
             <div class="col-lg-2">
               <div ng-repeat="p in c.ports">
-                <code>{{p.hostPort}}</code>:<code>{{p.containerPort}}</code>
+                <span ng-if="p.name" ng-bind="p.name"></span> <span ng-bind-template="({{p.protocol}})"></span> <code ng-bind="p.hostPort"></code> : <code ng-bind="p.containerPort"></code>
               </div>
             </div>
             <div class="col-lg-2" ng-bind="cstate.Created | date:CONST.dateTimeFmt"></div>
