@@ -4,18 +4,7 @@ angular.module('app')
 
   'use strict';
 
-  $scope.pod = {
-    id: null,
-    labels: null,
-    desiredState: {
-      manifest: {
-        version: 'v1beta1',
-        id: null,
-        containers: [],
-        volumes: null
-      }
-    },
-  };
+  $scope.pod = PodsSvc.getEmptyPod();
 
   $scope.$watch('pod.id', function(id) {
     $scope.pod.desiredState.manifest.id = id;
