@@ -6,7 +6,10 @@ angular.module('app')
     var container;
     $scope.pod = result;
     container = _.findWhere($scope.pod.desiredState.manifest.containers, { name: $routeParams.name });
-    _.extend(container, $scope.pod.currentState.info[$routeParams.name]);
+    if ($scope.pod.currentState && $scope.pod.currentState.info &&
+        $scope.pod.currentState.info[$routeParams.name]) {
+      _.extend(container, $scope.pod.currentState.info[$routeParams.name]);
+    }
     $scope.container = container;
   });
 
