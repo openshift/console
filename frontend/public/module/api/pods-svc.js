@@ -51,4 +51,14 @@ angular.module('app')
     return p;
   };
 
+  this.getEmptyContainer = function() {
+    return {
+      name: null,
+      image: null,
+      ports: null,
+      env: null,
+      volumeMounts: null
+    };
+  };
+
 });

@@ -46,47 +46,16 @@
           </div>
         </div>
         <div class="row co-m-form-row">
-          <div class="col-sm-10 col-sm-offset-2">
-
-            <div class="co-m-container-block">
-              <div class="row co-m-form-row">
-                <div class="col-sm-3">
-                  <div class="co-m-field-head">Container Name</div>
-                  <input ng-model="container.name" type="text" required spellcheck="false" class="form-control" />
-                </div>
-                <div class="col-sm-4">
-                  <div class="co-m-field-head">Container Image</div>
-                  <input ng-model="fields.containerImage" type="text" required spellcheck="false" class="form-control" placeholder="[registry]/[user]/image" />
-                </div>
-                <div class="col-sm-3">
-                  <div class="co-m-field-head">Container Version/Tag</div>
-                  <input ng-model="fields.containerTag" type="text" class="form-control" placeholder="latest" />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-2">
-                  <div class="co-m-field-head">Ports</div>
-                  <a href="#" ng-click="openPortsModal()" class="co-m-modal-link"><span ng-bind="container.ports.length || 0"></span> Ports</a>
-                </div>
-                <div class="col-sm-2">
-                  <div class="co-m-field-head">Volumes</div>
-                  <a href="#" ng-click="openVolumeMountsModal()" class="co-m-modal-link"><span ng-bind="container.volumeMounts.length || 0"></span> Volume Mounts</a>
-                </div>
-                <div class="col-sm-2">
-                  <div class="co-m-field-head">Environment</div>
-                  <a href="#" ng-click="openEnvModal()" class="co-m-modal-link"><span ng-bind="container.env.length || 0"></span> Variables</a>
-                </div>
-              </div>
-            </div>
-
+          <div class="col-sm-12 col-md-10 col-lg-offset-2">
+            <co-multi-container-input pod="pod"></co-multi-container-input>
           </div>
         </div>
         <div class="row co-m-form-row">
-          <div class="co-m-form-col col-sm-10 col-sm-offset-2">
+          <div class="co-m-form-col col-sm-10 col-lg-offset-2">
             <div co-btn-bar complete-promise="requestPromise">
               <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
               <button type="submit" class="btn btn-primary ng-scope">Launch Pod</button>
-              <button type="submit" class="btn btn-link ng-scope">Cancel</button>
+              <button type="button" class="btn btn-link ng-scope">Cancel</button>
             </div>
           </div>
         </div>
