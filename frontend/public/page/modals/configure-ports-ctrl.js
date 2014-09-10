@@ -3,21 +3,24 @@ angular.module('app')
       arraySvc) {
   'use strict';
 
-  if (_.isEmpty(ports)) {
-    $scope.ports = [{
+  function getEmptyPort() {
+    return {
       hostPort: null,
       containerPort: null,
       name: null,
-    }];
+      protocol: 'TCP',
+    };
+  }
+
+  if (_.isEmpty(ports)) {
+    $scope.ports = [getEmptyPort()];
   } else {
     $scope.ports = ports;
   }
 
   $scope.clearRow = function(item) {
     if ($scope.ports.length === 1) {
-      item.hostPort = null;
-      item.containerPort = null;
-      item.name = null;
+      $scope.ports = [getEmptyPort()];
     } else {
       arraySvc.remove($scope.ports, item);
     }

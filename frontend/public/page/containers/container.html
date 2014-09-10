@@ -35,7 +35,7 @@
               <dt>Ports</dt>
               <dd>
                 <div ng-repeat="p in container.ports">
-                  <code ng-bind="p.hostPort"></code> : <code ng-bind="p.containerPort"></code>
+                  <span ng-if="p.name" ng-bind="p.name"></span> <span ng-bind-template="({{p.protocol}})"></span> <code ng-bind="p.hostPort"></code> : <code ng-bind="p.containerPort"></code>
                 </div>
               </dd>
               <dt>Volumes</dt>
