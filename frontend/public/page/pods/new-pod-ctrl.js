@@ -7,7 +7,6 @@ angular.module('app')
   $scope.pod = {
     id: null,
     labels: null,
-
     desiredState: {
       manifest: {
         version: 'v1beta1',
@@ -29,6 +28,10 @@ angular.module('app')
     .result.then(function(result) {
       $scope.pod.desiredState.manifest.volumes = result;
     });
+  };
+
+  $scope.cancel = function() {
+    $location.path('/pods');
   };
 
   $scope.save = function() {

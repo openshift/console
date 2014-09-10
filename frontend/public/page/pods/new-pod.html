@@ -55,7 +55,7 @@
             <div co-btn-bar complete-promise="requestPromise">
               <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
               <button type="submit" class="btn btn-primary ng-scope">Launch Pod</button>
-              <button type="button" class="btn btn-link ng-scope">Cancel</button>
+              <button type="button" ng-click="cancel()" class="btn btn-link ng-scope">Cancel</button>
             </div>
           </div>
         </div>
