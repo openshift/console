@@ -7,7 +7,9 @@ angular.module('app')
   });
 
   $scope.getContainerState = function(name) {
-    return $scope.pod.currentState.info[name];
+    if ($scope.pod.currentState && $scope.pod.currentState.info) { 
+      return $scope.pod.currentState.info[name];
+    }
   };
 
 });
