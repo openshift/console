@@ -1,0 +1,48 @@
+<div class="co-p-configure-env">
+  <form ng-controller="ConfigureEnvFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Container Environment</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>Expose these environment variables within the container.</p>
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-table-grid--bordered">
+            <div class="row co-m-table-grid__head">
+              <div class="col-sm-5">Variable Name</div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-5">Value</div>
+              <div class="col-sm-1"></div>
+            </div>
+            <div class="row" ng-repeat="e in env">
+              <div class="col-sm-5">
+                <input ng-model="e.name" class="form-control" required type="text"/>
+              </div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-5">
+                <input ng-model="e.value" class="form-control" required type="text"/>
+              </div>
+              <div class="col-sm-1">
+                <i ng-click="clearRow(e)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Environment Configuration</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
