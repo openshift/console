@@ -51,4 +51,29 @@ angular.module('app')
     return p;
   };
 
+  this.getEmptyPod = function() {
+    return {
+      id: null,
+      labels: null,
+      desiredState: {
+        manifest: {
+          version: 'v1beta1',
+          id: null,
+          containers: [],
+          volumes: null
+        }
+      }
+    };
+  };
+
+  this.getEmptyContainer = function() {
+    return {
+      name: null,
+      image: null,
+      ports: null,
+      env: null,
+      volumeMounts: null
+    };
+  };
+
 });
