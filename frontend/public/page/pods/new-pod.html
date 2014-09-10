@@ -32,6 +32,15 @@
           </div>
         </div>
         <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label class="control-label">Pod Volumes:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="pod.desiredState.manifest.volumes.length || 0"></span> Volumes</a></div>
+            <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
+          </div>
+        </div>
+        <div class="row co-m-form-row">
           <div class="col-sm-12">
             <label class="control-label">Containers:</label>
           </div>
@@ -43,11 +52,11 @@
               <div class="row co-m-form-row">
                 <div class="col-sm-3">
                   <div class="co-m-field-head">Container Name</div>
-                  <input ng-model="container.name" type="text" required class="form-control" />
+                  <input ng-model="container.name" type="text" required spellcheck="false" class="form-control" />
                 </div>
                 <div class="col-sm-4">
                   <div class="co-m-field-head">Container Image</div>
-                  <input ng-model="fields.containerImage" type="text" required class="form-control" placeholder="[registry]/[user]/image" />
+                  <input ng-model="fields.containerImage" type="text" required spellcheck="false" class="form-control" placeholder="[registry]/[user]/image" />
                 </div>
                 <div class="col-sm-3">
                   <div class="co-m-field-head">Container Version/Tag</div>
@@ -55,17 +64,17 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-sm-1">
+                <div class="col-sm-2">
                   <div class="co-m-field-head">Ports</div>
                   <a href="#" ng-click="openPortsModal()" class="co-m-modal-link"><span ng-bind="container.ports.length || 0"></span> Ports</a>
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-2">
                   <div class="co-m-field-head">Volumes</div>
-                  <a href="#" class="co-m-modal-link"><span ng-bind="fields.volumes.length"></span> Volumes</a>
+                  <a href="#" ng-click="openVolumeMountsModal()" class="co-m-modal-link"><span ng-bind="container.volumeMounts.length || 0"></span> Volume Mounts</a>
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-2">
                   <div class="co-m-field-head">Environment</div>
-                  <a href="#" class="co-m-modal-link"><span ng-bind="fields.env.length"></span> Variables</a>
+                  <a href="#" class="co-m-modal-link"><span ng-bind="container.env.length || 0"></span> Variables</a>
                 </div>
               </div>
             </div>

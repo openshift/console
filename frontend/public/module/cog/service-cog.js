@@ -28,7 +28,7 @@ angular.module('app').directive('coServiceCog', function(ServicesSvc, ModalLaunc
           href: '#',
         },
         {
-          label: 'Modify Ports...',
+          label: 'Modify Port...',
           weight: 200
         },
         {

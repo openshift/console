@@ -11,7 +11,8 @@ angular.module('app')
       manifest: {
         version: 'v1beta1',
         id: null,
-        containers: []
+        containers: [],
+        volumes: null
       }
     },
   };
@@ -21,7 +22,7 @@ angular.module('app')
     image: null,
     ports: null,
     env: null,
-    volumes: null
+    volumeMounts: null
   };
 
   $scope.fields = {
@@ -44,11 +45,13 @@ angular.module('app')
       updateImage(image, null);
     }
   });
+
   $scope.$watch('fields.containerTag', function(tag) {
     if (tag) {
       updateImage(null, tag);
     }
   });
+
   $scope.$watch('pod.id', function(id) {
     $scope.pod.desiredState.manifest.id = id;
   });
@@ -62,10 +65,26 @@ angular.module('app')
     });
   };
 
+  $scope.openVolumesModal = function() {
+    ModalLauncherSvc.open('configure-volumes', {
+      volumes: $scope.pod.desiredState.manifest.volumes
+    })
+    .result.then(function(result) {
+      $scope.pod.desiredState.manifest.volumes = result;
+    });
+  };
+
+  $scope.openVolumeMountsModal = function() {
+    ModalLauncherSvc.open('configure-volume-mounts', {
+      volumeMounts: $scope.container.volumeMounts,
+      volumes: $scope.pod.desiredState.manifest.volumes
+    })
+    .result.then(function(result) {
+      $scope.container.volumeMounts = result;
+    });
+  };
+
   $scope.save = function() {
-    if (_.isEmpty($scope.container.ports)) {
-      $scope.container.ports = null;
-    }
     $scope.pod.desiredState.manifest.containers.push($scope.container);
     $scope.requestPromise = PodsSvc.create($scope.pod);
     $scope.requestPromise.then(function() {

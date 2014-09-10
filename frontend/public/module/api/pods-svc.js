@@ -2,6 +2,20 @@ angular.module('app')
 .service('PodsSvc', function(_, $rootScope, LabelSvc, EVENTS) {
   'use strict';
 
+  // Nullify empty fields & prep volumes.
+  function prepareSave(pod) {
+    var m = pod.desiredState.manifest;
+
+    _.each(m.containers, function(c) {
+      if (_.isEmpty(c.ports)) {
+        c.ports = null;
+      }
+      if (_.isEmpty(c.volumeMounts)) {
+        c.volumeMounts = null;
+      }
+    });
+  }
+
   this.list = function(params) {
     if (params && params.labels) {
       params.labels = LabelSvc.encode(params.labels);
@@ -24,6 +38,7 @@ angular.module('app')
   };
 
   this.create = function(pod) {
+    prepareSave(pod);
     return $rootScope.client.pods.create(pod);
   };
 

@@ -1,0 +1,51 @@
+<div class="co-p-configure-volumes">
+  <form ng-controller="ConfigureVolumesFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Pod Volumes</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>Named volumes in a pod that may be accessed by any containers in the pod.</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-table-grid--bordered">
+            <div class="row co-m-table-grid__head">
+              <div class="col-sm-4">Name</div>
+              <div class="col-sm-4">Host Dir</div>
+              <div class="col-sm-3">Empty Dir</div>
+              <div class="col-sm-1"></div>
+            </div>
+            <div class="row" ng-repeat="v in volumes">
+              <div class="col-sm-4">
+                <input ng-model="v.name" class="form-control" type="text"/>
+              </div>
+              <div class="col-sm-4">
+                <input ng-model="v.source.hostDir.path" ng-disabled="v.source.emptyDir" class="form-control" type="text"/>
+              </div>
+              <div class="col-sm-3">
+                <input type="checkbox" ng-change="onEmptyDirChange(v)" ng-model="v.source.emptyDir"/>
+              </div>
+              <div class="col-sm-1">
+                <i ng-click="clearRow(v)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Volume Configuration</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
