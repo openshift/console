@@ -49,7 +49,7 @@
           <div class="row" ng-repeat="c in pod.desiredState.manifest.containers"
               ng-init="cstate = getContainerState(c.name)">
             <div class="col-lg-2"><a ng-href="/containers/{{pod.id}}/{{c.name}}" ng-bind="c.name"></a></div>
-            <div class="col-lg-2 co-truncate" ng-bind="cstate.ID"></div>
+            <div class="col-lg-2 co-truncate" ng-bind="cstate.Id"></div>
             <div class="col-lg-2" ng-bind="c.image"></div>
             <div class="col-lg-2">
               <div ng-repeat="p in c.ports">
