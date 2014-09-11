@@ -10,10 +10,10 @@
     <div class="co-m-pane__heading">
 
       <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
           <h1 class="co-m-pane__title">Controller List</h1>
         </div>
-        <div class="col-lg-3 col-lg-offset-6">
+        <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
           <input type="text" class="form-control" placeholder="Filter controllers by label query..." />
         </div>
       </div>
@@ -24,26 +24,26 @@
 
       <div class="co-m-table-grid--bordered">
         <div class="row co-m-table-grid__head">
-          <div class="col-lg-2">Controller ID</div>
-          <div class="col-lg-2">Controller Labels</div>
-          <div class="col-lg-2">Status</div>
-          <div class="col-lg-2">Pod Selector</div>
-          <div class="col-lg-1">Desired Count</div>
+          <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">Controller ID</div>
+          <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">Controller Labels</div>
+          <div class="col-lg-2 col-md-2 col-sm-4 hidden-xs">Status</div>
+          <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
+          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Desired Count</div>
         </div>
         <div class="row co-m-table-grid--clickable" ng-repeat-start="c in controllers" ng-click="open = !open; getPods(c.id)">
-          <div class="col-lg-2">
+          <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <co-controller-cog controller="c"></co-controller-cog>
             <co-entity-icon type="controller"></co-entity-icon>
             <a ng-href="/controllers/{{c.id}}" ng-bind="c.id"></a>
           </div>
-          <div class="col-lg-2">
+          <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">
             <co-label-list type="controller" labels="c.labels"></co-label-list>
           </div>
-          <div class="col-lg-2">-</div>
-          <div class="col-lg-2">
+          <div class="col-lg-2 col-md-2 col-sm-4 hidden-xs">-</div>
+          <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
             <co-label-list type="pod" selector="true" labels="c.desiredState.replicaSelector"></co-label-list>
           </div>
-          <div class="col-lg-2" ng-bind="c.desiredState.replicas"></div>
+          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="c.desiredState.replicas"></div>
         </div>
         <div ng-show="open" ng-repeat-end>
           <co-pod-list pods="c.pods"></co-pod-list>
