@@ -1,18 +1,26 @@
 <div class="co-p-controllers">
 
-  <co-nav-title title="Controllers">
+  <co-nav-title title="Replication Controllers">
     <a href="#" class="co-m-primary-action" ng-click="openCreateControllerModal()">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Create a New Controller</a>
   </co-nav-title>
 
   <div class="co-m-pane">
-    <div class="co-m-pane__body">
+
+    <div class="co-m-pane__heading">
 
       <div class="row">
-        <div class="col-lg-3 col-lg-offset-9">
+        <div class="col-lg-3">
+          <h1 class="co-m-pane__title">Controller List</h1>
+        </div>
+        <div class="col-lg-3 col-lg-offset-6">
           <input type="text" class="form-control" placeholder="Filter controllers by label query..." />
         </div>
       </div>
+      
+    </div>
+
+    <div class="co-m-pane__body">
 
       <div class="co-m-table-grid--bordered">
         <div class="row co-m-table-grid__head">
