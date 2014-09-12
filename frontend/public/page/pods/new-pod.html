@@ -5,6 +5,7 @@
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pods</a>
   </co-nav-title>
 
+  <form ng-controller="NewPodFormCtrl" ng-submit="submit()" name="form" role="form">
 
   <div class="co-m-pane">
 
@@ -13,7 +14,6 @@
     </div>
     <div class="co-m-pane__body">
 
-      <form ng-controller="NewPodFormCtrl" ng-submit="submit()" name="form" role="form">
         <div class="row co-m-form-row">
           <div class="col-sm-2">
             <label for="input-pod-id" class="control-label">Pod Id:</label>
@@ -61,10 +61,10 @@
             </div>
           </div>
         </div>
-      </form>
-
-    </div>
+      </div>
 
   </div>
+
+  </form>
 
 </div>
