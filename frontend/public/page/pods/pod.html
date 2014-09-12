@@ -9,11 +9,10 @@
     <div class="co-m-pane__heading">
       <h1 class="co-m-pane__title">Pod Overview</h1>
     </div>
-    <div class="co-m-pane__body-group">
-      <div class="co-m-pane__body-section--bordered">
+    <div class="co-m-pane__body">
         <div class="row">
 
-          <div class="col-lg-6">
+          <div class="col-lg-6 col-md-6 col-sm-7 col-xs-12">
             <dl>
               <dt>Status</dt>
               <dd ng-bind="pod.currentState.status"></dd>
@@ -22,7 +21,7 @@
             </dl>
           </div>
 
-          <div class="col-lg-6">
+          <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
             <dl>
               <dt>Machine</dt>
               <dd><a href="#" ng-bind="pod.currentState.host"></a></dd>
@@ -34,29 +33,29 @@
         </div>
       </div>
 
-      <div class="co-m-pane__body-section--bordered">
+      <div class="co-m-pane__heading">
         <h1 class="co-m-pane__title">Containers</h1>
       </div>
-      <div class="co-m-pane__body-section--bordered">
+      <div class="co-m-pane__body">
         <div class="co-m-table-grid--bordered">
           <div class="row co-m-table-grid__head">
-            <div class="col-lg-2">Name</div>
-            <div class="col-lg-2">Id</div>
-            <div class="col-lg-2">Image</div>
-            <div class="col-lg-2">Ports</div>
-            <div class="col-lg-2">Created</div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Name</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Id</div>
+            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-8">Image</div>
+            <div class="col-lg-2 col-md-2 col-sm-3 hidden-xs">Ports</div>
+            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Created</div>
           </div>
           <div class="row" ng-repeat="c in pod.desiredState.manifest.containers"
               ng-init="cstate = getContainerState(c.name)">
-            <div class="col-lg-2"><a ng-href="/containers/{{pod.id}}/{{c.name}}" ng-bind="c.name"></a></div>
-            <div class="col-lg-2 co-truncate" ng-bind="cstate.Id"></div>
-            <div class="col-lg-2" ng-bind="c.image"></div>
-            <div class="col-lg-2">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><a ng-href="/containers/{{pod.id}}/{{c.name}}" ng-bind="c.name"></a></div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="cstate.Id"></div>
+            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-8" ng-bind="c.image"></div>
+            <div class="col-lg-2 col-md-2 col-sm-3 hidden-xs">
               <div ng-repeat="p in c.ports">
                 <span ng-if="p.name" ng-bind="p.name"></span> <span ng-bind-template="({{p.protocol}})"></span> <code ng-bind="p.hostPort"></code> : <code ng-bind="p.containerPort"></code>
               </div>
             </div>
-            <div class="col-lg-2" ng-bind="cstate.Created | date:CONST.dateTimeFmt"></div>
+            <div class="col-lg-2 col-md-2 hidden-sm  hidden-xs" ng-bind="cstate.Created | date:CONST.dateTimeFmt"></div>
           </div>
         </div>
       </div>
