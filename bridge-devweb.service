@@ -1,0 +1,21 @@
+[Unit]
+Description=Bridge devweb
+
+[Service]
+User=core
+EnvironmentFile=/etc/bridge-environment
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+  --name %n \
+  --rm \
+  --net host \
+  -v /var/run/fleet.sock:/var/run/fleet.sock \
+  -v $BRIDGE_ROOT:/opt/bridge \
+  quay.io/coreosinc/web-builder:latest /bin/bash -c 'cd /opt/bridge && ./devweb'"
+
+ExecStop=/usr/bin/docker kill %n
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
