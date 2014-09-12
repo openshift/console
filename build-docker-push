@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+# Build, tag, and push a Bridge docker image to quay.io/coreosinc/bridge.
+# TODO(sym3tri): Do all of this inside quay once the builder supports sequential pipeline builds.
+
+source build-docker
+
+registry=quay.io
+repo=$registry/coreosinc/bridge
+git_sha=$(git rev-parse HEAD)
+
+if [ -v $DOCKER_USER ] || [ -v $DOCKER_PASSWORD ]; then
+    echo "env variables not set. skipping login, assuming creds in .dockercfg"
+else
+    echo logging in as $DOCKER_USER
+    docker login --username="$DOCKER_USER" --password="$DOCKER_PASSWORD" --email="docker.login@coreos.com" $registry
+fi
+
+docker build -q --rm=true -t $repo:$git_sha .
+docker tag $repo:$git_sha $repo:latest
+docker push $repo:$git_sha
+docker push $repo:latest

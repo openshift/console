@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+# Run inside a CoreOS machine to setup a Bridge dev environment.
+
+if [ -v $DOCKER_USER ] || [ -v $DOCKER_PASSWORD ]; then
+    echo "env variables not set. skipping login, assuming creds in .dockercfg"
+else
+    echo logging in as $DOCKER_USER
+    docker login --username="$DOCKER_USER" --password="$DOCKER_PASSWORD" --email="docker.login@coreos.com" $registry
+fi
+
+sudo bash -c 'echo BRIDGE_ROOT=`pwd` > /etc/bridge-environment'
+docker pull quay.io/coreosinc/web-builder:latest
+sudo systemctl stop bridge-devweb.service
+sudo systemctl stop bridge-devgulp.service
+sudo cp ./bridge-devweb.service /etc/systemd/system
+sudo cp ./bridge-devgulp.service /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl start bridge-devweb.service
+sudo systemctl start bridge-devgulp.service

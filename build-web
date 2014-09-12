@@ -1,4 +1,5 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
-# build frontend
+# build frontend assets into ./frontend/public/dist
+
 cd frontend && ./node_modules/.bin/gulp
