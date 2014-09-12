@@ -1,19 +1,19 @@
 <div class="co-p-new-pod">
 
-  <co-nav-title title="Create New Pod">
+  <co-nav-title title="Create Standalone Pod">
     <a ng-href="/pods" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pods</a>
   </co-nav-title>
 
+  <form ng-controller="NewPodFormCtrl" ng-submit="submit()" name="form" role="form">
 
   <div class="co-m-pane">
 
     <div class="co-m-pane__heading">
-      <h1 class="co-m-pane__title">Create a Standalone Pod</h1>
+      <h1 class="co-m-pane__title">Pod Details</h1>
     </div>
     <div class="co-m-pane__body">
 
-      <form ng-controller="NewPodFormCtrl" ng-submit="submit()" name="form" role="form">
         <div class="row co-m-form-row">
           <div class="col-sm-2">
             <label for="input-pod-id" class="control-label">Pod Id:</label>
@@ -40,18 +40,20 @@
             <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
           </div>
         </div>
+
+      </div>
+
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Containers</h1>
+      </div>
+      <div class="co-m-pane__body">
         <div class="row co-m-form-row">
-          <div class="col-sm-12">
-            <label class="control-label">Containers:</label>
-          </div>
-        </div>
-        <div class="row co-m-form-row">
-          <div class="col-sm-12 col-md-10 col-lg-offset-2">
+          <div class="col-lg-10 col-md-12 col-sm-12">
             <co-multi-container-input pod="pod"></co-multi-container-input>
           </div>
         </div>
         <div class="row co-m-form-row">
-          <div class="co-m-form-col col-sm-10 col-lg-offset-2">
+          <div class="co-m-form-col col-sm-10 ">
             <div co-btn-bar complete-promise="requestPromise">
               <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
               <button type="submit" class="btn btn-primary ng-scope">Launch Pod</button>
@@ -59,10 +61,10 @@
             </div>
           </div>
         </div>
-      </form>
-
-    </div>
+      </div>
 
   </div>
+
+  </form>
 
 </div>

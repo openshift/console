@@ -10,10 +10,10 @@
     <div class="co-m-pane__heading">
 
       <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
           <h1 class="co-m-pane__title">Service List</h1>
         </div>
-        <div class="col-lg-3 col-lg-offset-6">
+        <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
           <input type="text" class="form-control" placeholder="Filter services by label query..." />
         </div>
       </div>
@@ -24,24 +24,24 @@
 
       <div class="co-m-table-grid--bordered">
         <div class="row co-m-table-grid__head">
-          <div class="col-lg-2">Service ID</div>
-          <div class="col-lg-2">Service Labels</div>
-          <div class="col-lg-2">Pod Selector</div>
-          <div class="col-lg-2">Service Port</div>
+          <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">Service ID</div>
+          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
+          <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
+          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Service Port</div>
         </div>
         <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services track by s.id" ng-click="open = !open; getPods(s.id)">
-          <div class="col-lg-2">
+          <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
             <co-service-cog service="s"></co-service-cog>
             <co-entity-icon type="service"></co-entity-icon>
             <a ng-href="/services/{{s.id}}" ng-bind="s.id"></a>
           </div>
-          <div class="col-lg-2">
+          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
             <co-label-list type="service" labels="s.labels"></co-label-list>
           </div>
-          <div class="col-lg-2">
+          <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">
             <co-label-list type="pod" labels="s.selector" selector="true"></co-label-list>
           </div>
-          <div class="col-lg-2" ng-bind="s.port"></div>
+          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="s.port"></div>
         </div>
         <div ng-show="open" ng-repeat-end>
           <co-pod-list pods="s.pods"></co-pod-list>
