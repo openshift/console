@@ -4605,15 +4605,6 @@ kbd {
   border: solid 1px #ccc;
   padding: 4px 8px; }
 
-input[type="number"] {
-  max-width: 100px; }
-  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0; }
-
-input[type="radio"] {
-  margin-right: 5px; }
-
 .co-img-bg-hexagons {
   background: url('./img/hexagons.png') left top repeat, linear-gradient(30deg, #2277ad, #6ec654) no-repeat left top fixed;
   background-color: #2277ad;
@@ -4751,11 +4742,6 @@ input[type="radio"] {
   vertical-align: middle;
   margin-right: 2px; }
 
-.ng-dirty.ng-invalid {
-  border-color: #f04c5c;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px; }
-
 .co-m-huge-text {
   font-size: 400%;
   vertical-align: baseline; }
@@ -4792,22 +4778,6 @@ svg .axis .tick text {
   font-size: 80%; }
 svg .x-axis path {
   display: none; }
-
-.co-m-radio-desc {
-  margin-left: 23px; }
-
-.co-m-inline-field {
-  display: inline-block;
-  margin-right: 15px; }
-
-.co-m-form-row, .form-row {
-  margin-bottom: 20px; }
-
-.form-row:last-child {
-  margin-bottom: 0px; }
-
-.co-m-form-col {
-  max-width: 600px; }
 
 /* Animations */
 .co-an-fade-in-out {
@@ -4955,6 +4925,48 @@ svg .x-axis path {
         border-left: solid 1px #eee; } }
 
 /* Reusable Modules */
+input[type="number"] {
+  max-width: 100px; }
+  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0; }
+
+input[type="radio"] {
+  margin-right: 5px; }
+
+.ng-dirty.ng-invalid {
+  border-color: #f04c5c;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px; }
+
+.co-m-radio-desc {
+  margin-left: 23px; }
+
+.co-m-inline-field {
+  display: inline-block;
+  margin-right: 15px; }
+
+.co-m-form-row, .form-row {
+  margin-bottom: 20px; }
+
+.form-row:last-child {
+  margin-bottom: 0px; }
+
+.co-m-form-col {
+  max-width: 600px; }
+
+.co-m-form-field-xs {
+  max-width: 100px; }
+
+.co-m-form-field-sm {
+  max-width: 150px; }
+
+.co-m-form-field-md {
+  max-width: 215px; }
+
+.co-m-form-field-lg {
+  max-width: 300px; }
+
 .co-m-modal-link {
   position: relative;
   padding-right: 9px; }
