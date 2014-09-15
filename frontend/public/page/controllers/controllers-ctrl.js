@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ControllersCtrl', function($scope, ControllersSvc, PodsSvc) {
+.controller('ControllersCtrl', function($scope, ControllersSvc, PodsSvc, arraySvc, EVENTS) {
   'use strict';
 
   ControllersSvc.list().then(function(result) {
@@ -13,5 +13,9 @@ angular.module('app')
         ctrl.pods = result;
       });
   };
+
+  $scope.$on(EVENTS.CONTROLLER_DELETE, function(e, service) {
+    arraySvc.remove($scope.controllers, service);
+  });
 
 });

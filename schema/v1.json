@@ -554,7 +554,7 @@
           "id": "bridge.replicationControllers.delete",
           "description": "Delete a replicationController.",
           "httpMethod": "DELETE",
-          "path": "replicatoinControllers/{id}",
+          "path": "replicationControllers/{id}",
           "parameterOrder": [
             "id"
           ],

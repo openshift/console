@@ -745,7 +745,7 @@ func (c *ReplicationControllersDeleteCall) Do() (*Status, error) {
 	if v, ok := c.opt_["id"]; ok {
 		params.Set("id", fmt.Sprintf("%v", v))
 	}
-	urls := googleapi.ResolveRelative(c.s.BasePath, "replicatoinControllers/{id}")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "replicationControllers/{id}")
 	urls += "?" + params.Encode()
 	req, _ := http.NewRequest("DELETE", urls, body)
 	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
@@ -777,7 +777,7 @@ func (c *ReplicationControllersDeleteCall) Do() (*Status, error) {
 	//       "type": "string"
 	//     }
 	//   },
-	//   "path": "replicatoinControllers/{id}",
+	//   "path": "replicationControllers/{id}",
 	//   "response": {
 	//     "$ref": "Status"
 	//   }

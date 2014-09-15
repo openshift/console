@@ -3,7 +3,8 @@
  * Cog menu directive for controllers.
  */
 
-angular.module('app').directive('coControllerCog', function() {
+angular.module('app')
+.directive('coControllerCog', function(ControllersSvc, ModalLauncherSvc) {
   'use strict';
 
   return {
@@ -14,6 +15,12 @@ angular.module('app').directive('coControllerCog', function() {
       'controller': '='
     },
     controller: function($scope) {
+
+      function getDeleteFn() {
+        return function() {
+          return ControllersSvc.delete($scope.controller);
+        };
+      }
 
       $scope.cogOptions = [
         {
@@ -28,6 +35,17 @@ angular.module('app').directive('coControllerCog', function() {
         {
           label: 'Modify Labels...',
           weight: 300
+        },
+        {
+          label: 'Delete Controller...',
+          weight: 400,
+          callback: ModalLauncherSvc.open.bind(null, 'confirm', {
+            title: 'Delete Controller',
+            message: 'Are you sure you want to delete ' +
+                $scope.controller.id + '?',
+            btnText: 'Delete Controller',
+            executeFn: getDeleteFn
+          }),
         }
       ];
 
