@@ -1,5 +1,5 @@
 angular.module('app')
-.service('PodsSvc', function(_, $rootScope, LabelSvc, EVENTS) {
+.service('PodsSvc', function(_, $rootScope, LabelSvc, EVENTS, CONST) {
   'use strict';
 
   // Nullify empty fields & prep volumes.
@@ -51,19 +51,24 @@ angular.module('app')
     return p;
   };
 
-  this.getEmptyPod = function() {
+  this.getEmptyPodTemplate = function() {
     return {
-      id: null,
       labels: null,
       desiredState: {
         manifest: {
-          version: 'v1beta1',
+          version: CONST.kubernetesApiVersion,
           id: null,
           containers: [],
           volumes: null
         }
       }
     };
+  };
+
+  this.getEmptyPod = function() {
+    var p = this.getEmptyPodTemplate();
+    p.id = null;
+    return p;
   };
 
   this.getEmptyContainer = function() {

@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ConfigureVolumesCtrl', function(_, $scope, $modalInstance, volumes,
+.controller('ConfigureVolumesCtrl', function(_, $scope, $modalInstance, pod,
       arraySvc) {
 
   'use strict';
@@ -16,10 +16,10 @@ angular.module('app')
     };
   }
 
-  if (_.isEmpty(volumes)) {
+  if (_.isEmpty(pod.desiredState.manifest.volumes)) {
     $scope.volumes = [getEmptyVolume()];
   } else {
-    $scope.volumes = angular.copy(volumes);
+    $scope.volumes = angular.copy(pod.desiredState.manifest.volumes);
   }
 
   $scope.onEmptyDirChange = function(v) {
@@ -42,7 +42,9 @@ angular.module('app')
         delete v.source.emptyDir;
       }
     });
-    $modalInstance.close($scope.volumes);
+
+    pod.desiredState.manifest.volumes = $scope.volumes;
+    $modalInstance.close(pod);
   };
 
   $scope.cancel = function() {
