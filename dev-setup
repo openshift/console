@@ -2,6 +2,8 @@
 
 # Run inside a CoreOS machine to setup a Bridge dev environment.
 
+registry=quay.io
+
 if [ -v $DOCKER_USER ] || [ -v $DOCKER_PASSWORD ]; then
     echo "env variables not set. skipping login, assuming creds in .dockercfg"
 else
