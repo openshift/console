@@ -15,25 +15,28 @@
       <div class="row co-m-form-row">
         <div class="col-sm-12">
 
-          <div class="co-m-table-grid--bordered">
+          <div class="co-modal-table co-m-table-grid--bordered co-m-table-grid--compact co-m-table-grid--scroll">
             <div class="row co-m-table-grid__head">
               <div class="col-sm-4">Name</div>
+              <div class="col-sm-3">Type</div>
               <div class="col-sm-4">Host Dir</div>
-              <div class="col-sm-3">Empty Dir</div>
               <div class="col-sm-1"></div>
             </div>
-            <div class="row" ng-repeat="v in volumes">
+            <div class="row co-m-table-grid-row--compact" ng-repeat="v in volumes">
               <div class="col-sm-4">
-                <input ng-model="v.name" class="form-control" type="text"/>
-              </div>
-              <div class="col-sm-4">
-                <input ng-model="v.source.hostDir.path" ng-disabled="v.source.emptyDir" class="form-control" type="text"/>
+                <input ng-model="v.name" ng-focus="rowMgr.growIfLast($index)" class="form-control co-m-form-field-sm" type="text"/>
               </div>
               <div class="col-sm-3">
-                <input type="checkbox" ng-change="onEmptyDirChange(v)" ng-model="v.source.emptyDir"/>
+                <select ng-model="v.type" ng-change="onTypeChange(v)" class="form-control">
+                  <option value="host">Host Directory</option>
+                  <option value="container">Container Volume</option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <input ng-model="v.source.hostDir.path" ng-disabled="v.type == 'container'" class="form-control co-m-form-field-sm" type="text"/>
               </div>
               <div class="col-sm-1">
-                <i ng-click="clearRow(v)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+                <i ng-click="rowMgr.clearItem(v)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
               </div>
             </div>
           </div>
