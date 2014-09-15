@@ -244,21 +244,21 @@
     },
 
 
-    "ControllerList": {
-      "id": "ControllerList",
+    "ReplicationControllerList": {
+      "id": "ReplicationControllerList",
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "Controller"
+            "$ref": "ReplicationController"
           }
         }
       }
     },
 
-    "Controller": {
-      "id": "Controller",
+    "ReplicationController": {
+      "id": "ReplicationController",
       "type": "object",
       "required": false,
       "description": "A replicationController resource. A replicationController helps to create and manage a set of pods. It acts as a factory to create new pods based on a template. It ensures that there are a specific number of pods running. If fewer pods are running than `replicas` then the needed pods are generated using `podTemplate`. If more pods are running than `replicas`, then excess pods are deleted.",
@@ -547,7 +547,25 @@
           "httpMethod": "GET",
           "path": "replicationControllers",
           "response": {
-            "$ref": "ControllerList"
+            "$ref": "ReplicationControllerList"
+          }
+        },
+        "delete": {
+          "id": "bridge.replicationControllers.delete",
+          "description": "Delete a replicationController.",
+          "httpMethod": "DELETE",
+          "path": "replicatoinControllers/{id}",
+          "parameterOrder": [
+            "id"
+          ],
+          "parameters": {
+            "id": {
+              "type": "string",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "Status"
           }
         },
         "get": {
@@ -570,7 +588,19 @@
             }
           },
           "response": {
-            "$ref": "Controller"
+            "$ref": "ReplicationController"
+          }
+        },
+        "create": {
+          "id": "bridge.replicationControllers.create",
+          "description": "Create a new repliactoinController.",
+          "httpMethod": "POST",
+          "path": "replicationControllers",
+          "request": {
+            "$ref": "ReplicationController"
+          },
+          "response": {
+            "$ref": "ReplicationController"
           }
         }
       }
