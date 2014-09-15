@@ -12,10 +12,7 @@ angular.module('app')
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {
-      volumes: $scope.pod.desiredState.manifest.volumes
-    })
-    .result.then(function(result) {
-      $scope.pod.desiredState.manifest.volumes = result;
+      pod: $scope.pod
     });
   };
 

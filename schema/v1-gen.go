@@ -112,46 +112,6 @@ type UsersService struct {
 	s *Service
 }
 
-type Controller struct {
-	CreationTimestamp string `json:"creationTimestamp,omitempty"`
-
-	// DesiredState: The desired configuration of the replicationController
-	DesiredState *ControllerDesiredState `json:"desiredState,omitempty"`
-
-	Id string `json:"id,omitempty"`
-
-	Kind string `json:"kind,omitempty"`
-
-	Labels *ControllerLabels `json:"labels,omitempty"`
-
-	SelfLink string `json:"selfLink,omitempty"`
-}
-
-type ControllerDesiredState struct {
-	// PodTemplate: Template from which to create new pods, as necessary.
-	// Identical to pod schema.
-	PodTemplate *ControllerDesiredStatePodTemplate `json:"podTemplate,omitempty"`
-
-	// ReplicaSelector: Required labels used to identify pods in the set
-	ReplicaSelector *ControllerDesiredStateReplicaSelector `json:"replicaSelector,omitempty"`
-
-	// Replicas: Number of pods desired in the set
-	Replicas float64 `json:"replicas,omitempty"`
-}
-
-type ControllerDesiredStatePodTemplate struct {
-}
-
-type ControllerDesiredStateReplicaSelector struct {
-}
-
-type ControllerLabels struct {
-}
-
-type ControllerList struct {
-	Items []*Controller `json:"items,omitempty"`
-}
-
 type Minion struct {
 	Id string `json:"id,omitempty"`
 
@@ -226,6 +186,46 @@ type PodLabels struct {
 
 type PodList struct {
 	Items []*Pod `json:"items,omitempty"`
+}
+
+type ReplicationController struct {
+	CreationTimestamp string `json:"creationTimestamp,omitempty"`
+
+	// DesiredState: The desired configuration of the replicationController
+	DesiredState *ReplicationControllerDesiredState `json:"desiredState,omitempty"`
+
+	Id string `json:"id,omitempty"`
+
+	Kind string `json:"kind,omitempty"`
+
+	Labels *ReplicationControllerLabels `json:"labels,omitempty"`
+
+	SelfLink string `json:"selfLink,omitempty"`
+}
+
+type ReplicationControllerDesiredState struct {
+	// PodTemplate: Template from which to create new pods, as necessary.
+	// Identical to pod schema.
+	PodTemplate *ReplicationControllerDesiredStatePodTemplate `json:"podTemplate,omitempty"`
+
+	// ReplicaSelector: Required labels used to identify pods in the set
+	ReplicaSelector *ReplicationControllerDesiredStateReplicaSelector `json:"replicaSelector,omitempty"`
+
+	// Replicas: Number of pods desired in the set
+	Replicas float64 `json:"replicas,omitempty"`
+}
+
+type ReplicationControllerDesiredStatePodTemplate struct {
+}
+
+type ReplicationControllerDesiredStateReplicaSelector struct {
+}
+
+type ReplicationControllerLabels struct {
+}
+
+type ReplicationControllerList struct {
+	Items []*ReplicationController `json:"items,omitempty"`
 }
 
 type Service1 struct {
@@ -659,6 +659,132 @@ func (c *PodsListCall) Do() (*PodList, error) {
 
 }
 
+// method id "bridge.replicationControllers.create":
+
+type ReplicationControllersCreateCall struct {
+	s                     *Service
+	replicationcontroller *ReplicationController
+	opt_                  map[string]interface{}
+}
+
+// Create: Create a new repliactoinController.
+func (r *ReplicationControllersService) Create(replicationcontroller *ReplicationController) *ReplicationControllersCreateCall {
+	c := &ReplicationControllersCreateCall{s: r.s, opt_: make(map[string]interface{})}
+	c.replicationcontroller = replicationcontroller
+	return c
+}
+
+func (c *ReplicationControllersCreateCall) Do() (*ReplicationController, error) {
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.replicationcontroller)
+	if err != nil {
+		return nil, err
+	}
+	ctype := "application/json"
+	params := make(url.Values)
+	params.Set("alt", "json")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "replicationControllers")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("POST", urls, body)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("Content-Type", ctype)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(ReplicationController)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Create a new repliactoinController.",
+	//   "httpMethod": "POST",
+	//   "id": "bridge.replicationControllers.create",
+	//   "path": "replicationControllers",
+	//   "request": {
+	//     "$ref": "ReplicationController"
+	//   },
+	//   "response": {
+	//     "$ref": "ReplicationController"
+	//   }
+	// }
+
+}
+
+// method id "bridge.replicationControllers.delete":
+
+type ReplicationControllersDeleteCall struct {
+	s    *Service
+	id   string
+	opt_ map[string]interface{}
+}
+
+// Delete: Delete a replicationController.
+func (r *ReplicationControllersService) Delete(id string) *ReplicationControllersDeleteCall {
+	c := &ReplicationControllersDeleteCall{s: r.s, opt_: make(map[string]interface{})}
+	c.id = id
+	return c
+}
+
+// Id sets the optional parameter "id":
+func (c *ReplicationControllersDeleteCall) Id(id string) *ReplicationControllersDeleteCall {
+	c.opt_["id"] = id
+	return c
+}
+
+func (c *ReplicationControllersDeleteCall) Do() (*Status, error) {
+	var body io.Reader = nil
+	params := make(url.Values)
+	params.Set("alt", "json")
+	if v, ok := c.opt_["id"]; ok {
+		params.Set("id", fmt.Sprintf("%v", v))
+	}
+	urls := googleapi.ResolveRelative(c.s.BasePath, "replicatoinControllers/{id}")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("DELETE", urls, body)
+	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(Status)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Delete a replicationController.",
+	//   "httpMethod": "DELETE",
+	//   "id": "bridge.replicationControllers.delete",
+	//   "parameterOrder": [
+	//     "id"
+	//   ],
+	//   "parameters": {
+	//     "id": {
+	//       "location": "path",
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "replicatoinControllers/{id}",
+	//   "response": {
+	//     "$ref": "Status"
+	//   }
+	// }
+
+}
+
 // method id "bridge.replicationControllers.get":
 
 type ReplicationControllersGetCall struct {
@@ -686,7 +812,7 @@ func (c *ReplicationControllersGetCall) Labels(labels string) *ReplicationContro
 	return c
 }
 
-func (c *ReplicationControllersGetCall) Do() (*Controller, error) {
+func (c *ReplicationControllersGetCall) Do() (*ReplicationController, error) {
 	var body io.Reader = nil
 	params := make(url.Values)
 	params.Set("alt", "json")
@@ -710,7 +836,7 @@ func (c *ReplicationControllersGetCall) Do() (*Controller, error) {
 	if err := googleapi.CheckResponse(res); err != nil {
 		return nil, err
 	}
-	ret := new(Controller)
+	ret := new(ReplicationController)
 	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
 		return nil, err
 	}
@@ -735,7 +861,7 @@ func (c *ReplicationControllersGetCall) Do() (*Controller, error) {
 	//   },
 	//   "path": "replicationControllers/{id}",
 	//   "response": {
-	//     "$ref": "Controller"
+	//     "$ref": "ReplicationController"
 	//   }
 	// }
 
@@ -754,7 +880,7 @@ func (r *ReplicationControllersService) List() *ReplicationControllersListCall {
 	return c
 }
 
-func (c *ReplicationControllersListCall) Do() (*ControllerList, error) {
+func (c *ReplicationControllersListCall) Do() (*ReplicationControllerList, error) {
 	var body io.Reader = nil
 	params := make(url.Values)
 	params.Set("alt", "json")
@@ -771,7 +897,7 @@ func (c *ReplicationControllersListCall) Do() (*ControllerList, error) {
 	if err := googleapi.CheckResponse(res); err != nil {
 		return nil, err
 	}
-	ret := new(ControllerList)
+	ret := new(ReplicationControllerList)
 	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
 		return nil, err
 	}
@@ -782,7 +908,7 @@ func (c *ReplicationControllersListCall) Do() (*ControllerList, error) {
 	//   "id": "bridge.replicationControllers.list",
 	//   "path": "replicationControllers",
 	//   "response": {
-	//     "$ref": "ControllerList"
+	//     "$ref": "ReplicationControllerList"
 	//   }
 	// }
 

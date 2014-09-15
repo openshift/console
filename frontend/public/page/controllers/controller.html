@@ -19,8 +19,8 @@
         <dd>
           <co-label-list type="pod" selector="true" labels="controller.desiredState.replicaSelector"></co-label-list>
         </dd>
-        <dt>Status</dt>
-        <dd>-</dd>
+        <dt>Current Count</dt>
+        <dd ng-bind="controller.currentState.replicas"></dd>
         <dt>Desired Count</dt>
         <dd ng-bind="controller.desiredState.replicas"></dd>
       </dl>

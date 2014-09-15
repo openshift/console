@@ -96,6 +96,14 @@
           client: 'ClientLoaderSvc'
         }
       })
+      .when('/controllers/new', {
+        controller: 'NewReplicaControllerCtrl',
+        templateUrl: '/static/page/controllers/new-replica-controller.html',
+        title: 'New Replication Controller',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
       .when('/controllers/:id', {
         controller: 'ControllerCtrl',
         templateUrl: '/static/page/controllers/controller.html',
