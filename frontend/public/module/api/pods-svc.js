@@ -77,6 +77,14 @@ angular.module('app')
     };
   };
 
+  this.getEmptyVolumeMount = function() {
+    return {
+      name: null,
+      mountPath: null,
+      readOnly: false,
+    };
+  };
+
   this.getEmptyPod = function() {
     var p = this.getEmptyPodTemplate();
     p.id = null;

@@ -22,18 +22,19 @@
               <div class="col-sm-4">Host Dir</div>
               <div class="col-sm-1"></div>
             </div>
-            <div class="row co-m-table-grid-row--compact" ng-repeat="v in volumes">
+            <div class="row co-m-table-grid-row--compact" ng-repeat="v in rowMgr.items">
               <div class="col-sm-4">
                 <input ng-model="v.name" ng-focus="rowMgr.growIfLast($index)" class="form-control co-m-form-field-sm" type="text"/>
               </div>
               <div class="col-sm-3">
-                <select ng-model="v.type" ng-change="onTypeChange(v)" class="form-control">
+                <select ng-model="v.type" ng-change="onTypeChange(v)" ng-focus="rowMgr.growIfLast($index)" class="form-control">
                   <option value="host">Host Directory</option>
                   <option value="container">Container Volume</option>
                 </select>
               </div>
               <div class="col-sm-4">
-                <input ng-model="v.source.hostDir.path" ng-disabled="v.type == 'container'" class="form-control co-m-form-field-sm" type="text"/>
+                <input ng-model="v.source.hostDir.path" ng-disabled="v.type == 'container'" ng-focus="rowMgr.growIfLast($index)"
+                    class="form-control co-m-form-field-sm" type="text"/>
               </div>
               <div class="col-sm-1">
                 <i ng-click="rowMgr.clearItem(v)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>

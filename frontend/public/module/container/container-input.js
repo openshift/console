@@ -102,11 +102,8 @@ angular.module('app')
 
       $scope.openVolumeMountsModal = function() {
         ModalLauncherSvc.open('configure-volume-mounts', {
-          volumeMounts: $scope.container.volumeMounts,
+          container: $scope.container,
           volumes: $scope.podVolumes
-        })
-        .result.then(function(result) {
-          $scope.container.volumeMounts = result;
         });
       };
 
