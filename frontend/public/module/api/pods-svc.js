@@ -65,6 +65,18 @@ angular.module('app')
     };
   };
 
+  this.getEmptyVolume = function() {
+    return {
+      name: null,
+      source: {
+        hostDir: {
+          path: null
+        },
+        emptyDir: null
+      }
+    };
+  };
+
   this.getEmptyPod = function() {
     var p = this.getEmptyPodTemplate();
     p.id = null;
