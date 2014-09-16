@@ -14,7 +14,7 @@
       <div class="row co-m-form-row">
         <div class="col-sm-12">
 
-          <div class="co-m-table-grid--bordered">
+          <div class="co-modal-table co-m-table-grid--bordered co-m-table-grid--compact co-m-table-grid--scroll">
             <div class="row co-m-table-grid__head">
               <div class="col-sm-2">Name</div>
               <div class="col-sm-2">Protocol</div>
@@ -23,24 +23,27 @@
               <div class="col-sm-3">Container Port</div>
               <div class="col-sm-1"></div>
             </div>
-            <div class="row" ng-repeat="p in ports">
+            <div class="row" ng-repeat="p in rowMgr.items">
               <div class="col-sm-2">
-                <input ng-model="p.name" class="form-control" type="text"/>
+                <input ng-model="p.name" ng-focus="rowMgr.growIfLast($index)" class="form-control" type="text"/>
               </div>
               <div class="col-sm-2">
-                <input ng-model="p.protocol" class="form-control" type="text"/>
+                <select ng-model="p.protocol" ng-focus="rowMgr.growIfLast($index)" class="form-control">
+                  <option value="TCP">TCP</option>
+                  <option value="HTTP">HTTP</option>
+                </select>
               </div>
               <div class="col-sm-3">
-                <input ng-model="p.hostPort" min="0" max="65535" class="form-control" required type="number"/>
+                <input ng-model="p.hostPort" ng-focus="rowMgr.growIfLast($index)" min="0" max="65535" class="form-control" type="number"/>
               </div>
               <div class="col-sm-1">
                 <i class="fa fa-arrow-right co-img-icon-gray co-m-form-row-icon"></i>
               </div>
               <div class="col-sm-3">
-                <input ng-model="p.containerPort" min="0" max="65535" class="form-control" required type="number"/>
+                <input ng-model="p.containerPort" ng-focus="rowMgr.growIfLast($index)" min="0" max="65535" class="form-control" type="number"/>
               </div>
               <div class="col-sm-1">
-                <i ng-click="clearRow(p)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+                <i ng-click="rowMgr.clearItem(p)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
               </div>
             </div>
           </div>

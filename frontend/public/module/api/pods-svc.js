@@ -98,6 +98,15 @@ angular.module('app')
     };
   };
 
+  this.getEmptyPort = function() {
+    return {
+      hostPort: null,
+      containerPort: null,
+      name: null,
+      protocol: 'TCP',
+    };
+  };
+
   this.getEmptyContainer = function() {
     return {
       name: null,

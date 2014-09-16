@@ -84,10 +84,7 @@ angular.module('app')
 
       $scope.openPortsModal = function() {
         ModalLauncherSvc.open('configure-ports', {
-          ports: $scope.container.ports
-        })
-        .result.then(function(result) {
-          $scope.container.ports = result;
+          container: $scope.container
         });
       };
 
