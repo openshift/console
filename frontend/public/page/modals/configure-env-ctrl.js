@@ -1,40 +1,35 @@
 angular.module('app')
-.controller('ConfigureEnvCtrl', function(_, $scope, $modalInstance, env,
-      arraySvc) {
+.controller('ConfigureEnvCtrl', function(_, $scope, $modalInstance, $controller,
+      $rootScope, container, PodsSvc) {
   'use strict';
 
-  function getEmptyEnv() {
-    return {
-      name: null,
-      value: null,
-    };
-  }
+  $scope.rowMgr = $controller('RowMgr', {
+    $scope: $rootScope.$new(),
+    emptyCheck: function(e) {
+      return _.isEmpty(e.name) || _.isEmpty(e.value);
+    },
+    getEmptyItem: PodsSvc.getEmptyEnvVar,
+  });
 
-  if (_.isEmpty(env)) {
-    $scope.env = [getEmptyEnv()];
-  } else {
-    $scope.env = env;
-  }
-
-  $scope.clearRow = function(item) {
-    if ($scope.env.length === 1) {
-      $scope.env = [getEmptyEnv()];
+  $scope.initEnvVars = function(envVars) {
+    if (_.isEmpty(envVars)) {
+      $scope.rowMgr.setItems([]);
     } else {
-      arraySvc.remove($scope.env, item);
+      $scope.rowMgr.setItems(angular.copy(envVars));
     }
   };
 
   $scope.save = function() {
-    $modalInstance.close($scope.env);
+    container.env = $scope.rowMgr.getNonEmptyItems();
+    $modalInstance.close(container);
   };
 
   $scope.cancel = function() {
     $modalInstance.dismiss('cancel');
   };
 
+  $scope.initEnvVars(container.env);
 })
 .controller('ConfigureEnvFormCtrl', function($scope) {
-
   $scope.submit = $scope.save;
-
 });

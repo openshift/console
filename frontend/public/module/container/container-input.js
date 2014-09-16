@@ -93,10 +93,7 @@ angular.module('app')
 
       $scope.openEnvModal = function() {
         ModalLauncherSvc.open('configure-env', {
-          env: $scope.container.env
-        })
-        .result.then(function(result) {
-          $scope.container.env = result;
+          container: $scope.container
         });
       };
 

@@ -91,6 +91,13 @@ angular.module('app')
     return p;
   };
 
+  this.getEmptyEnvVar = function() {
+    return {
+      name: null,
+      value: null,
+    };
+  };
+
   this.getEmptyContainer = function() {
     return {
       name: null,

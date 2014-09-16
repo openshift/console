@@ -14,23 +14,23 @@
       <div class="row co-m-form-row">
         <div class="col-sm-12">
 
-          <div class="co-m-table-grid--bordered">
+          <div class="co-modal-table co-m-table-grid--bordered co-m-table-grid--compact co-m-table-grid--scroll">
             <div class="row co-m-table-grid__head">
               <div class="col-sm-5">Variable Name</div>
               <div class="col-sm-1"></div>
               <div class="col-sm-5">Value</div>
               <div class="col-sm-1"></div>
             </div>
-            <div class="row" ng-repeat="e in env">
+            <div class="row" ng-repeat="e in rowMgr.items">
               <div class="col-sm-5">
-                <input ng-model="e.name" class="form-control" required type="text"/>
+                <input ng-focus="rowMgr.growIfLast($index)" ng-model="e.name" class="form-control" type="text"/>
               </div>
               <div class="col-sm-1"></div>
               <div class="col-sm-5">
-                <input ng-model="e.value" class="form-control" required type="text"/>
+                <input ng-focus="rowMgr.growIfLast($index)" ng-model="e.value" class="form-control" type="text"/>
               </div>
               <div class="col-sm-1">
-                <i ng-click="clearRow(e)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+                <i ng-click="rowMgr.clearItem(e)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
               </div>
             </div>
           </div>
