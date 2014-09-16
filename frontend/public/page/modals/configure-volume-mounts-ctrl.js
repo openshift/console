@@ -13,7 +13,7 @@ angular.module('app')
     getEmptyItem: PodsSvc.getEmptyVolumeMount,
   });
 
-  $scope.initializeVolumeMounts = function(volumeMounts) {
+  $scope.initVolumeMounts = function(volumeMounts) {
     if (_.isEmpty(volumeMounts)) {
       $scope.rowMgr.setItems([]);
     } else {
@@ -42,7 +42,7 @@ angular.module('app')
     $modalInstance.dismiss('cancel');
   };
 
-  $scope.initializeVolumeMounts(container.volumeMounts);
+  $scope.initVolumeMounts(container.volumeMounts);
 })
 .controller('ConfigureVolumeMountsFormCtrl', function($scope) {
   $scope.submit = $scope.save;
