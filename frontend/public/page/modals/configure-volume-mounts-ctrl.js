@@ -1,37 +1,31 @@
 angular.module('app')
-.controller('ConfigureVolumeMountsCtrl', function(_, $scope, $modalInstance,
-      volumes, volumeMounts, arraySvc) {
+.controller('ConfigureVolumeMountsCtrl', function(_, $scope, $rootScope,
+      $controller, $modalInstance, volumes, container, arraySvc, PodsSvc) {
   'use strict';
 
   $scope.volumes = volumes;
 
-  function getEmptyVolumeMount() {
-    return {
-      name: null,
-      mountPath: null,
-      readOnly: false,
-    };
-  }
+  $scope.rowMgr = $controller('RowMgr', {
+    $scope: $rootScope.$new(),
+    emptyCheck: function(v) {
+      return _.isEmpty(v.name) || _.isEmpty(v.mountPath);
+    },
+    getEmptyItem: PodsSvc.getEmptyVolumeMount,
+  });
 
-  if (_.isEmpty(volumeMounts)) {
-    $scope.volumeMounts = [getEmptyVolumeMount()];
-  } else {
-    $scope.volumeMounts = angular.copy(volumeMounts);
-  }
-
-  $scope.clearRow = function(item) {
-    if ($scope.volumeMounts.length === 1) {
-      $scope.volumeMounts = [getEmptyVolumeMount()];
+  $scope.initializeVolumeMounts = function(volumeMounts) {
+    if (_.isEmpty(volumeMounts)) {
+      $scope.rowMgr.setItems([]);
     } else {
-      arraySvc.remove($scope.volumeMounts, item);
+      $scope.rowMgr.setItems(angular.copy(volumeMounts));
     }
   };
 
-  $scope.formatReadOnly = function(v) {
-    if (v.readOnly === 'true') {
-      v.readOnly = true;
+  $scope.formatReadOnly = function(vm) {
+    if (vm.readOnly === 'true') {
+      vm.readOnly = true;
     } else {
-      v.readOnly = false;
+      vm.readOnly = false;
     }
   };
 
@@ -40,16 +34,16 @@ angular.module('app')
   };
 
   $scope.save = function() {
-    $modalInstance.close($scope.volumeMounts);
+    container.volumeMounts = $scope.rowMgr.getNonEmptyItems();
+    $modalInstance.close(container);
   };
 
   $scope.cancel = function() {
     $modalInstance.dismiss('cancel');
   };
 
+  $scope.initializeVolumeMounts(container.volumeMounts);
 })
 .controller('ConfigureVolumeMountsFormCtrl', function($scope) {
-
   $scope.submit = $scope.save;
-
 });

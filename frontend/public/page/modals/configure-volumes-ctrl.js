@@ -18,18 +18,19 @@ angular.module('app')
   });
 
   $scope.initializeVolumes = function(volumes) {
+    var items;
     if (_.isEmpty(volumes)) {
-      $scope.volumes = [];
+      $scope.rowMgr.setItems([]);
     } else {
-      $scope.volumes = _.forEach(angular.copy(volumes), function(v) {
+      items = _.forEach(angular.copy(volumes), function(v) {
         v.type = v.source.emptyDir ? 'container' : 'host';
       });
+      $scope.rowMgr.setItems(items);
     }
-    $scope.rowMgr.setItems($scope.volumes);
   };
 
   $scope.save = function() {
-    _.each($scope.volumes, function(v) {
+    var items = _.map($scope.rowMgr.getNonEmptyItems(), function(v) {
       v.source.emptyDir = v.type === 'container' ? true : false;
       delete v.type;
       if (v.source.emptyDir) {
@@ -37,8 +38,9 @@ angular.module('app')
       } else {
         delete v.source.emptyDir;
       }
+      return v;
     });
-    pod.desiredState.manifest.volumes = $scope.rowMgr.getNonEmptyItems();
+    pod.desiredState.manifest.volumes = items;
     $modalInstance.close(pod);
   };
 
