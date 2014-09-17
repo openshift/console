@@ -22,3 +22,9 @@ func sendResponse(rw http.ResponseWriter, code int, resp interface{}) {
 		log.Printf("Failed sending HTTP response body: %v", err)
 	}
 }
+
+func closeResponse(resp *http.Response) {
+	if resp != nil && resp.Body != nil {
+		resp.Body.Close()
+	}
+}

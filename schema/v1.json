@@ -20,6 +20,84 @@
   "auth": {},
   "schemas": {
 
+    "EtcdState": {
+      "id": "EtcdState",
+      "type": "object",
+      "properties": {
+        "checkSuccess": {
+          "type": "boolean"
+        },
+        "activeSize": {
+          "type": "integer"
+        },
+        "currentSize": {
+          "type": "integer"
+        },
+        "machines": {
+          "type": "array",
+          "items": {
+            "$ref": "EtcdMachine"
+          }
+        }
+      }
+    },
+    "EtcdMachine": {
+      "id": "EtcdMachine",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "clientURL": {
+          "type": "string"
+        },
+        "peerURL": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    },
+    "UnitState": {
+      "id": "UnitState",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "machineID": {
+          "type": "string"
+        },
+        "systemdLoadState": {
+          "type": "string"
+        },
+        "systemdActiveState": {
+          "type": "string"
+        },
+        "systemdSubState": {
+          "type": "string"
+        }
+      }
+    },
+    "UnitStatePage": {
+      "id": "UnitStatePage",
+      "type": "object",
+      "properties": {
+        "states": {
+          "type": "array",
+          "items": {
+            "$ref": "UnitState"
+          }
+        },
+        "nextPageToken": {
+          "type": "string"
+        }
+      }
+    },
 
     "User": {
       "id": "User",
@@ -637,8 +715,36 @@
           }
         }
       }
-    }
+    },
 
+    "cluster": {
+      "methods": {
+        "units": {
+          "id": "bridge.cluster.status.units",
+          "description": "Retrieve fleet kubernetes unit statuses.",
+          "httpMethod": "GET",
+          "path": "cluster/status/units",
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "UnitState"
+            }
+          }
+        },
+        "etcd": {
+          "id": "bridge.cluster.status.etcd",
+          "description": "Retrieve etcd machine statuses.",
+          "httpMethod": "GET",
+          "path": "cluster/status/etcd",
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "EtcdMachine"
+            }
+          }
+        }
+      }
+    }
 
   }
 }

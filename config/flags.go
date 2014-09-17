@@ -20,4 +20,12 @@ var (
 	DiscoveryJson = flag.String("discovery-json",
 		"schema/v1.json",
 		"path to discovery json file")
+
+	EtcdEndpoints = flag.String("etcd-endpoints",
+		"http://localhost:7001",
+		"comma separated list of etcd endpoints")
+
+	FleetEndpoint = flag.String("fleet-endpoint",
+		"unix://var/run/fleet.sock",
+		"local fleet endpoint")
 )
