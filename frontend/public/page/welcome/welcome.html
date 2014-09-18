@@ -1,0 +1,153 @@
+<div class="co-p-welcome">
+
+  <co-nav-title title="Welcome to Your CoreOS Cluster">
+    <a href="/services/new" class="co-m-primary-action" ng-click="openCreateServiceModal()">
+      <span class="co-img-icon co-img-icon-light fa fa-mail-forward"></span>Skip the Tour</a>
+  </co-nav-title>
+
+  <div class="co-m-pane">
+    <div class="co-m-pane__body">
+    
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="co-title">Key Concept: Labels</div>
+        </div>
+        <div class="col-lg-6 col-lg-push-6 col-md-6 col-md-push-6 col-sm-12 col-xs-12">
+          [diagram]
+        </div>
+        <div class="col-lg-6 col-lg-pull-6 col-md-6 col-md-pull-6 col-sm-12 col-xs-12">
+          <div class="co-description">
+            Labels are a key/value pair that allows for loose coupling of related objects together.
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">Standard Use-Case:</div>
+            <ul>
+              <li>To group together related objects, assign them one or more matching labels. <code>app=api</code></li>
+            </ul>
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">More Advanced:</div>
+            <ul>
+              <li>Broad label queries allow you to easily run mixed versions of your app.</li>
+              <li>Specific label queries allow you to quickly cut traffic over from one version to another.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-lg-6 col-lg-offset-6 col-md-12 col-md-offset-6 col-sm-12 col-xs-12">
+          <div class="co-title">Key Concept: Pods</div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          [diagram]
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <div class="co-description">
+            A pod is a collection of containers that run together as a unit. A pod shares networking and host resources among itself.
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">Standard Use-Case:</div>
+            <ul>
+              <li>Run a single container that is accessible on a certain port</li>
+            </ul>
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">More Advanced:</div>
+            <ul>
+              <li>Containers within your pod can communicate with each other. For example, your app server can talk to a cache running in the same pod.</li>
+              <li>Each pod has its own IP address. This means you can run software on standard ports without conflict.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="co-title">Key Concept: Services</div>
+        </div>
+        <div class="col-lg-6 col-lg-push-6 col-md-6 col-md-push-6 col-sm-12 col-xs-12">
+          [diagram]
+        </div>
+        <div class="col-lg-6 col-lg-pull-6 col-md-6 col-md-pull-6 col-sm-12 col-xs-12">
+          <div class="co-description">
+            Services automatically load-balance traffic between a set of pods, specified by a label query.
+          </div>
+          <div class="co-description">
+            The label query for a service can be changed at any time without consumers of the service noticing.
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">Standard Use-Case:</div>
+            <ul>
+              <li>To expose a service to the cluster, you define a label query that matches backends based off that query.</li>
+            </ul>
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">More Advanced:</div>
+            <ul>
+              <li>Unlike DNS, service membership is real-time and always reflects the qualified pods.</li>
+              <li>Services also have labels, making it easy to programatically manipulate them.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-lg-6 col-lg-offset-6 col-md-12  col-md-offset-6 col-sm-12 col-xs-12">
+          <div class="co-title">Key Concept: Replication Controller</div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          [diagram]
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <div class="co-description">
+            Many copies of a pod can be run with a Replication Controller.
+          </div>
+          <div class="co-description">
+            Pods will be created or destroyed to maintain the correct number of replicas. A label query is used to count the pods.
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">Standard Use-Case:</div>
+            <ul>
+              <li>Define a pod template and set the active count to 3.</li>
+            </ul>
+          </div>
+          <div class="co-list">
+            <div class="co-list-title">More Advanced:</div>
+            <ul>
+              <li>When releasing a new version, create a new replica controller and slowly increment the replica count as you verify that everything is working properly.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="co-title">Deploy a Sample Application</div>
+        </div>
+        <div class="col-lg-6 col-lg-push-6 col-md-6 col-md-push-6 col-sm-12 col-xs-12">
+          <button class="btn btn-primary">Deploy the Guestbook App</button>
+          <button class="btn btn-primary">Deploy the Guestbook App</button>
+        </div>
+        <div class="col-lg-6 col-lg-pull-6 col-md-6 col-md-pull-6 col-sm-12 col-xs-12">
+          <div class="co-description">
+            For hands on experience on putting these building blocks together, deploy one of the sample applications on the right.
+          </div>
+          <div class="co-description">
+            More documentation can be found on the <a href="">Managed Cluster docs</a>.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- pane body -->
+  </div><!-- pane -->
+
+</div>
