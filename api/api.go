@@ -36,4 +36,8 @@ func Setup(r *mux.Router) {
 	registerControllers(apiRouter)
 	registerServices(apiRouter)
 	registerMinions(apiRouter)
+	_, err = NewClusterService(apiRouter)
+	if err != nil {
+		panic(err)
+	}
 }

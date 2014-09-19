@@ -1,0 +1,19 @@
+.co-m-status {
+  white-space: nowrap;
+}
+
+.co-m-status--critical {
+  color: $red-dark;
+}
+
+.co-m-status--ok {
+  color: $green;
+}
+
+.co-m-status--warning {
+  color: $orange;
+}
+
+.co-m-status--unknown {
+  color: $gray;
+}

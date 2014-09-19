@@ -60,9 +60,12 @@
 
     $routeProvider
       .when('/', {
-        controller: 'MainCtrl',
-        templateUrl: '/static/page/main/main.html',
-        title: 'CoreOS'
+        controller: 'ClusterStatusCtrl',
+        templateUrl: '/static/page/cluster/status.html',
+        title: 'Cluster Status',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
       })
       .when('/services', {
         controller: 'ServicesCtrl',
