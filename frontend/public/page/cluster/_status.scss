@@ -1,0 +1,10 @@
+.co-m-status-box {
+  min-height: 150px;
+  max-height: 200px;
+  border: solid 1px $color-border;
+  padding: 20px;
+  h2 {
+    margin-top: 0;
+    white-space: nowrap;
+  }
+}

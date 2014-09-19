@@ -12,7 +12,7 @@
 @import "style/icons";
 
 // Pages
-@import "page/main/main";
+@import "page/cluster/status";
 @import "page/services/new-service";
 @import "page/pods/new-pod";
 @import "page/modals/modal";
@@ -24,3 +24,4 @@
 @import "module/vert-nav/vert-nav";
 @import "module/label/label-input";
 @import "module/container/container-input";
+@import "module/icons/status";
