@@ -41,11 +41,14 @@ angular.module('app').directive('coLabelInput', function(_) {
       selector: '@',
     },
     controller: function($scope) {
-      $scope.arrModel = arrayify($scope.labels);
 
       if ($scope.type) {
         $scope.cssClass = 'co-m-label-input--' + $scope.type;
       }
+
+      $scope.$watchCollection('labels', function(labels) {
+        $scope.arrModel = arrayify(labels);
+      });
 
       $scope.$watchCollection('arrModel', function(arr) {
         $scope.labels = objectify(arr);
