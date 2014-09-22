@@ -2,16 +2,11 @@ angular.module('app')
 .service('MachinesSvc', function(_, $rootScope, PodsSvc) {
   'use strict';
 
-  this.list = function(params) {
-    return $rootScope.client.minions.list(params)
-      .then(function(result) {
-        return result.data.minions;
-      });
-  };
+  this.list = $rootScope.client.minions.list;
 
   this.getPods = function(machine) {
-    return PodsSvc.list().then(function(pods) {
-      return _.filter(pods, function(p) {
+    return PodsSvc.list().then(function(podResult) {
+      return _.filter(podResult.data.items, function(p) {
         return p.currentState && p.currentState.host === machine.id;
       });
     });

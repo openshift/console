@@ -3,7 +3,7 @@ angular.module('app')
   'use strict';
 
   PodsSvc.get({ id: $routeParams.id }).then(function(result) {
-    $scope.pod = result;
+    $scope.pod = result.data;
   });
 
   $scope.getContainerState = function(name) {
