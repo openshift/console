@@ -1058,6 +1058,77 @@ func (c *ReplicationControllersListCall) Do() (*ReplicationControllerList, error
 
 }
 
+// method id "bridge.replicationControllers.update":
+
+type ReplicationControllersUpdateCall struct {
+	s                     *Service
+	controllerId          string
+	replicationcontroller *ReplicationController
+	opt_                  map[string]interface{}
+}
+
+// Update: Update a repliactoinController.
+func (r *ReplicationControllersService) Update(controllerId string, replicationcontroller *ReplicationController) *ReplicationControllersUpdateCall {
+	c := &ReplicationControllersUpdateCall{s: r.s, opt_: make(map[string]interface{})}
+	c.controllerId = controllerId
+	c.replicationcontroller = replicationcontroller
+	return c
+}
+
+func (c *ReplicationControllersUpdateCall) Do() (*ReplicationController, error) {
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.replicationcontroller)
+	if err != nil {
+		return nil, err
+	}
+	ctype := "application/json"
+	params := make(url.Values)
+	params.Set("alt", "json")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "replicationControllers/{controllerId}")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("PUT", urls, body)
+	req.URL.Path = strings.Replace(req.URL.Path, "{controllerId}", url.QueryEscape(c.controllerId), 1)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("Content-Type", ctype)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := new(ReplicationController)
+	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Update a repliactoinController.",
+	//   "httpMethod": "PUT",
+	//   "id": "bridge.replicationControllers.update",
+	//   "parameterOrder": [
+	//     "controllerId"
+	//   ],
+	//   "parameters": {
+	//     "controllerId": {
+	//       "location": "path",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "replicationControllers/{controllerId}",
+	//   "request": {
+	//     "$ref": "ReplicationController"
+	//   },
+	//   "response": {
+	//     "$ref": "ReplicationController"
+	//   }
+	// }
+
+}
+
 // method id "bridge.services.create":
 
 type ServicesCreateCall struct {
