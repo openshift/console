@@ -1,0 +1,19 @@
+.co-m-number-spinner__input {
+  @include co-x-prefix(user-select, none);
+  display: inline-block;
+}
+
+.co-m-number-spinner__up-icon,
+.co-m-number-spinner__down-icon {
+  @include co-x-prefix(user-select, none);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.co-m-number-spinner__up-icon {
+  margin-left: 10px;
+}
+
+.co-m-number-spinner__down-icon {
+  margin-right: 10px;
+}
