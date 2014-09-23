@@ -4,7 +4,7 @@ angular.module('app')
 
   $scope.fetch = function() {
     ServicesSvc.list().then(function(result) {
-      $scope.services = result;
+      $scope.services = result.data.items;
     });
   };
 
@@ -12,7 +12,7 @@ angular.module('app')
     var svc = ServicesSvc.find($scope.services, serviceId);
     PodsSvc.list({ labels: svc.selector })
       .then(function(result) {
-        svc.pods = result;
+        svc.pods = result.data.items;
       });
   };
 

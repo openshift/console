@@ -3,7 +3,7 @@ angular.module('app')
   'use strict';
 
   PodsSvc.list().then(function(result) {
-    $scope.pods = result;
+    $scope.pods = result.data.items;
   });
 
 });

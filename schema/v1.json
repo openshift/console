@@ -660,9 +660,9 @@
               "location": "path"
             },
             "labels": {
-             "type": "string",
-             "location": "query",
-             "required": false
+               "type": "string",
+               "location": "query",
+               "required": false
             }
           },
           "response": {
@@ -674,6 +674,28 @@
           "description": "Create a new repliactoinController.",
           "httpMethod": "POST",
           "path": "replicationControllers",
+          "request": {
+            "$ref": "ReplicationController"
+          },
+          "response": {
+            "$ref": "ReplicationController"
+          }
+        },
+        "update": {
+          "id": "bridge.replicationControllers.update",
+          "description": "Update a repliactoinController.",
+          "httpMethod": "PUT",
+          "path": "replicationControllers/{controllerId}",
+          "parameterOrder": [
+            "controllerId"
+          ],
+          "parameters": {
+            "controllerId": {
+              "type": "string",
+              "location": "path",
+              "required": true
+            }
+          },
           "request": {
             "$ref": "ReplicationController"
           },

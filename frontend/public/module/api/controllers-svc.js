@@ -2,27 +2,18 @@ angular.module('app')
 .service('ControllersSvc', function($rootScope, _, CONST, EVENTS, PodsSvc) {
   'use strict';
 
-  this.list = function(params) {
-    return $rootScope.client.replicationControllers.list(params)
-      .then(function(result) {
-        return result.data.items;
-      });
-  };
+  this.list = $rootScope.client.replicationControllers.list;
+  this.create = $rootScope.client.replicationControllers.create;
+  this.get = $rootScope.client.replicationControllers.get;
 
-  this.get = function(params) {
-    return $rootScope.client.replicationControllers.get(params)
-      .then(function(result) {
-        return result.data;
-      });
+  this.update = function(replicaController) {
+    // Add id for the path property.
+    return $rootScope.client.replicationControllers.update(
+      _.extend(replicaController, { controllerId: replicaController.id }));
   };
 
   this.find = function(list, id) {
     return _.findWhere(list, { id: id });
-  };
-
-  this.create = function(replicaController) {
-    //prepareSave(pod);
-    return $rootScope.client.replicationControllers.create(replicaController);
   };
 
   this.getEmptyReplicaController = function() {

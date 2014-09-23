@@ -3,10 +3,10 @@ angular.module('app')
   'use strict';
 
   ControllersSvc.get({ id: $routeParams.id }).then(function(result) {
-    $scope.controller = result;
+    $scope.controller = result.data;
     PodsSvc.list({ labels: $scope.controller.desiredState.replicaSelector })
       .then(function(result) {
-        $scope.pods = result;
+        $scope.pods = result.data.items;
       });
   });
 

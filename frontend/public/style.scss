@@ -1,6 +1,7 @@
 /* COREOS-WEB IMPORTS */
 @import "color-pallette";
 @import "config";
+@import "mixin/prefix";
 
 /* CUSTOM STYLES */
 
@@ -25,3 +26,4 @@
 @import "module/label/label-input";
 @import "module/container/container-input";
 @import "module/icons/status";
+@import "module/number-spinner/number-spinner";

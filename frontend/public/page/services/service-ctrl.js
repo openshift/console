@@ -3,10 +3,10 @@ angular.module('app')
   'use strict';
 
   ServicesSvc.get({ id: $routeParams.id }).then(function(result) {
-    $scope.service = result;
+    $scope.service = result.data;
     PodsSvc.list({ labels: $scope.service.selector })
       .then(function(result) {
-        $scope.pods = result;
+        $scope.pods = result.data.items;
       });
   });
 

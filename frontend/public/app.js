@@ -107,6 +107,14 @@
           client: 'ClientLoaderSvc'
         }
       })
+      .when('/controllers/:id/edit', {
+        controller: 'EditReplicaControllerCtrl',
+        templateUrl: '/static/page/controllers/edit-replica-controller.html',
+        title: 'Edit Replication Controller',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
       .when('/controllers/:id', {
         controller: 'ControllerCtrl',
         templateUrl: '/static/page/controllers/controller.html',

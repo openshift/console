@@ -10,6 +10,7 @@ func registerControllers(router *mux.Router) {
 	router.HandleFunc("/replicationControllers", controllerList).Methods("GET")
 	router.HandleFunc("/replicationControllers", controllerCreate).Methods("POST")
 	router.HandleFunc("/replicationControllers/{id}", controllerGet).Methods("GET")
+	router.HandleFunc("/replicationControllers/{id}", controllerUpdate).Methods("PUT")
 	router.HandleFunc("/replicationControllers/{id}", controllerDelete).Methods("DELETE")
 }
 
@@ -22,6 +23,13 @@ func controllerGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerCreate(w http.ResponseWriter, r *http.Request) {
+	err := k8sproxy.DoAndRespond(w, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+	}
+}
+
+func controllerUpdate(w http.ResponseWriter, r *http.Request) {
 	err := k8sproxy.DoAndRespond(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)

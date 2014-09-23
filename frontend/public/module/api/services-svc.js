@@ -2,23 +2,8 @@ angular.module('app')
 .service('ServicesSvc', function(_, $rootScope, EVENTS) {
   'use strict';
 
-  this.list = function(params) {
-    return $rootScope.client.services.list(params)
-      .then(function(result) {
-        return result.data.items;
-      });
-  };
-
-  this.get = function(args) {
-    return $rootScope.client.services.get(args)
-      .then(function(result) {
-        return result.data;
-      });
-  };
-
-  this.find = function(list, id) {
-    return _.findWhere(list, { id: id });
-  };
+  this.list = $rootScope.client.services.list;
+  this.get = $rootScope.client.services.get;
 
   this.create = function(service) {
     if (_.isEmpty(service.labels)) {
@@ -31,9 +16,14 @@ angular.module('app')
     var p = $rootScope.client.services.delete({ id: service.id });
     p.then(function() {
       // TODO: handle pending delete status.
+      // TOOD: intercept these in a general way.
       $rootScope.$broadcast(EVENTS.SERVICE_DELETE, service);
     });
     return p;
+  };
+
+  this.find = function(list, id) {
+    return _.findWhere(list, { id: id });
   };
 
 });

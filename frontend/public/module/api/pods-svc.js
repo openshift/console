@@ -16,21 +16,13 @@ angular.module('app')
     });
   }
 
+  this.get = $rootScope.client.pods.get;
+
   this.list = function(params) {
     if (params && params.labels) {
       params.labels = LabelSvc.encode(params.labels);
     }
-    return $rootScope.client.pods.list(params)
-      .then(function(result) {
-        return result.data.items;
-      });
-  };
-
-  this.get = function(params) {
-    return $rootScope.client.pods.get(params)
-      .then(function(result) {
-        return result.data;
-      });
+    return $rootScope.client.pods.list(params);
   };
 
   this.find = function(list, id) {
@@ -46,6 +38,7 @@ angular.module('app')
     var p = $rootScope.client.pods.delete({ id: pod.id });
     p.then(function() {
       // TODO: handle pending delete status.
+      // TODO: generalize this interception.
       $rootScope.$broadcast(EVENTS.POD_DELETE, pod);
     });
     return p;

@@ -3,12 +3,12 @@ angular.module('app')
   'use strict';
 
   MachinesSvc.list().then(function(result) {
-    $scope.machines = result;
+    $scope.machines = result.data.minions;
   });
 
   $scope.getPods = function(machine) {
-    MachinesSvc.getPods(machine).then(function(result) {
-      machine.pods = result;
+    MachinesSvc.getPods(machine).then(function(pods) {
+      machine.pods = pods;
     });
   };
 

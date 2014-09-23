@@ -15,6 +15,7 @@ angular.module('app')
       'controller': '='
     },
     controller: function($scope) {
+      var deregisterWatch;
 
       function getDeleteFn() {
         return function() {
@@ -22,32 +23,42 @@ angular.module('app')
         };
       }
 
-      $scope.cogOptions = [
-        {
-          label: 'Modify Desired Count...',
-          weight: 100
-        },
-        {
-          label: 'Modify Selector...',
-          weight: 200,
-          href: '#',
-        },
-        {
-          label: 'Modify Labels...',
-          weight: 300
-        },
-        {
-          label: 'Delete Controller...',
-          weight: 400,
-          callback: ModalLauncherSvc.open.bind(null, 'confirm', {
-            title: 'Delete Controller',
-            message: 'Are you sure you want to delete ' +
-                $scope.controller.id + '?',
-            btnText: 'Delete Controller',
-            executeFn: getDeleteFn
-          }),
+      function generateOptions() {
+        $scope.cogOptions = [
+          {
+            label: 'Modify Desired Count...',
+            weight: 100
+          },
+          {
+            label: 'Modify Selector...',
+            weight: 200,
+            href: '#',
+          },
+          {
+            label: 'Modify Labels...',
+            weight: 300
+          },
+          {
+            label: 'Delete Controller...',
+            weight: 400,
+            callback: ModalLauncherSvc.open.bind(null, 'confirm', {
+              title: 'Delete Controller',
+              message: 'Are you sure you want to delete ' +
+                  $scope.controller.id + '?',
+              btnText: 'Delete Controller',
+              executeFn: getDeleteFn
+            }),
+          }
+        ];
+      }
+
+      // Run once after app is populated.
+      deregisterWatch = $scope.$watch('controller.id', function() {
+        if ($scope.controller && $scope.controller.id) {
+          generateOptions();
+          deregisterWatch();
         }
-      ];
+      });
 
     }
   };

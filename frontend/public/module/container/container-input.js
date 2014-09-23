@@ -16,17 +16,10 @@ angular.module('app')
     },
     controller: function($scope) {
 
-      $scope.init = function() {
-        if (_.isEmpty($scope.pod.desiredState.manifest.containers)) {
-          $scope.pod.desiredState.manifest.containers = [PodsSvc.getEmptyContainer()];
-        }
-        // shorter alias
-        $scope.containers = $scope.pod.desiredState.manifest.containers;
-        $scope.$on(EVENTS.CONTAINER_REMOVE, function(e, container) {
-          $scope.removeContainer(container);
-          e.stopPropagation();
-        });
-      };
+      $scope.$on(EVENTS.CONTAINER_REMOVE, function(e, container) {
+        $scope.removeContainer(container);
+        e.stopPropagation();
+      });
 
       $scope.removeContainer = function(c) {
         if ($scope.containers.length === 1) {
@@ -40,8 +33,16 @@ angular.module('app')
         $scope.containers.push(PodsSvc.getEmptyContainer());
       };
 
-      $scope.init();
-
+      $scope.$watch('pod', function(p) {
+        if (!p || !p.desiredState || !p.desiredState.manifest) {
+          return;
+        }
+        if (_.isEmpty(p.desiredState.manifest.containers)) {
+          p.desiredState.manifest.containers = [PodsSvc.getEmptyContainer()];
+        }
+        // shorter alias
+        $scope.containers = p.desiredState.manifest.containers;
+      });
     }
   };
 
@@ -68,19 +69,36 @@ angular.module('app')
     controller: function($scope) {
 
       function updateImage(image, tag) {
-        var t, img;
+        var t;
         t = tag || $scope.fields.containerTag;
-        img = (image || $scope.fields.containerImage);
-        if (!_.isEmpty(t)) {
-          img += ':' + t;
-        }
-        $scope.container.image = img;
+        $scope.container.image = (image || $scope.fields.containerImage) + ':' + (t || 'latest');
       }
 
-      $scope.fields = {
-        containerImage: '',
-        containerTag: '',
-      };
+      function getEmptyFields() {
+        return {
+          containerImage: '',
+          containerTag: 'latest',
+        };
+      }
+
+      function updateImageFields(image) {
+        var parts;
+        if (!image) {
+          $scope.fields = getEmptyFields();
+          return;
+        }
+        parts = image.split(':');
+        if (parts.length > 0) {
+          $scope.fields.containerImage = parts[0];
+        }
+        if (parts.length > 1) {
+          $scope.fields.containerTag = parts[1];
+        } else {
+          $scope.fields.containerTag = 'latest';
+        }
+      }
+
+      $scope.fields = getEmptyFields();
 
       $scope.openPortsModal = function() {
         ModalLauncherSvc.open('configure-ports', {
@@ -104,6 +122,8 @@ angular.module('app')
       $scope.remove = function() {
         $scope.$emit(EVENTS.CONTAINER_REMOVE, $scope.container);
       };
+
+      $scope.$watch('container.image', updateImageFields);
 
       $scope.$watch('fields.containerImage', function(image) {
         if (image) {

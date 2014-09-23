@@ -3,14 +3,14 @@ angular.module('app')
   'use strict';
 
   ControllersSvc.list().then(function(result) {
-    $scope.controllers = result;
+    $scope.controllers = result.data.items;
   });
 
   $scope.getPods = function(controllerId) {
     var ctrl = ControllersSvc.find($scope.controllers, controllerId);
     PodsSvc.list({ labels: ctrl.desiredState.replicaSelector })
       .then(function(result) {
-        ctrl.pods = result;
+        ctrl.pods = result.data.items;
       });
   };
 
