@@ -4,8 +4,13 @@ angular.module('app')
 
   this.list = $rootScope.client.replicationControllers.list;
   this.create = $rootScope.client.replicationControllers.create;
-  this.update = $rootScope.client.replicationControllers.update;
   this.get = $rootScope.client.replicationControllers.get;
+
+  this.update = function(replicaController) {
+    // Add id for the path property.
+    return $rootScope.client.replicationControllers.update(
+      _.extend(replicaController, { controllerId: replicaController.id }));
+  };
 
   this.find = function(list, id) {
     return _.findWhere(list, { id: id });
