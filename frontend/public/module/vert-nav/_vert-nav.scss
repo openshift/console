@@ -8,6 +8,10 @@ $min-height: 200px;
   display: flex;
   -webkit-flex-flow: row nowrap;
   flex-flow: row nowrap;
+
+  &.co-m-pane {
+    background-color: transparent;
+  }
 }
 
 .co-m-vert-nav__menu {
@@ -18,8 +22,6 @@ $min-height: 200px;
   -webkit-order: 1;
   order: 1;
 
-
-  width: 300px;
   min-height: $min-height;
   padding-left: 0;
   list-style: none;
@@ -27,8 +29,33 @@ $min-height: 200px;
   background-color: rgba(255, 255, 255, 0.8);
 }
 
+// large menu items with text & descriptions
+.co-m-vert-nav--lg .co-m-vert-nav__menu {
+  width: 300px;
+  .co-m-vert-nav__menu-item {
+    padding: 30px;
+    text-align: left;
+    font-size: inherit;
+  }
+}
+
+// small menu items with only icons
+.co-m-vert-nav--sm .co-m-vert-nav__menu {
+  width: 80px;
+  .co-m-vert-nav__menu-item {
+    padding: 10px;
+    font-size: 35px;
+    text-align: center;
+    &.co-m-vert-nav-item--active a,
+    &.co-m-vert-nav-item--active a:hover,
+    &.co-m-vert-nav-item--active a:active,
+    &.co-m-vert-nav-item--active a:visited {
+      color: $red;
+    }
+  }
+}
+
 .co-m-vert-nav__menu-item {
-  padding: 30px;
   margin: 0;
   border-bottom: 1px solid #ccc;
   &.co-m-vert-nav-item--active,

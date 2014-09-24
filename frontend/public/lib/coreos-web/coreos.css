@@ -4924,6 +4924,20 @@ svg .x-axis path {
       .co-l-double-pane .co-l-double-pane__col + .co-l-double-pane__col {
         border-left: solid 1px #eee; } }
 
+
+.flex-item {
+  display: block; }
+
+@media all and (min-width: 800px) {
+  .flex-group {
+    display: flex;
+    flex-flow: row nowrap; }
+  .flex-spacer {
+    flex: 0 0 1px;
+    background-color: #eee; }
+  .flex-item {
+    flex: 1 1 0px; } }
+
 /* Reusable Modules */
 input[type="number"] {
   max-width: 100px; }

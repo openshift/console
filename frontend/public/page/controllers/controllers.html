@@ -1,7 +1,7 @@
 <div class="co-p-controllers">
 
   <co-nav-title title="Replication Controllers">
-    <a href="/controllers/new" class="co-m-primary-action" ng-click="openCreateControllerModal()">
+    <a href="/replica-controllers/new" class="co-m-primary-action" ng-click="openCreateControllerModal()">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Create a New Controller</a>
   </co-nav-title>
 
@@ -34,7 +34,7 @@
           <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <co-controller-cog controller="c"></co-controller-cog>
             <co-entity-icon type="controller"></co-entity-icon>
-            <a ng-href="/controllers/{{c.id}}" ng-bind="c.id"></a>
+            <a ng-href="/replica-controllers/{{c.id}}" ng-bind="c.id"></a>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">
             <co-label-list type="controller" labels="c.labels"></co-label-list>

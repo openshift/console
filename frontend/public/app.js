@@ -99,7 +99,7 @@
           client: 'ClientLoaderSvc'
         }
       })
-      .when('/controllers/new', {
+      .when('/replica-controllers/new', {
         controller: 'NewReplicaControllerCtrl',
         templateUrl: '/static/page/controllers/new-replica-controller.html',
         title: 'New Replication Controller',
@@ -107,7 +107,7 @@
           client: 'ClientLoaderSvc'
         }
       })
-      .when('/controllers/:id/edit', {
+      .when('/replica-controllers/:id/edit', {
         controller: 'EditReplicaControllerCtrl',
         templateUrl: '/static/page/controllers/edit-replica-controller.html',
         title: 'Edit Replication Controller',
@@ -115,9 +115,9 @@
           client: 'ClientLoaderSvc'
         }
       })
-      .when('/controllers/:id', {
-        controller: 'ControllerCtrl',
-        templateUrl: '/static/page/controllers/controller.html',
+      .when('/replica-controllers/:id', {
+        controller: 'ReplicaControllerCtrl',
+        templateUrl: '/static/page/controllers/replica-controller.html',
         title: 'Controller',
         resolve: {
           client: 'ClientLoaderSvc'

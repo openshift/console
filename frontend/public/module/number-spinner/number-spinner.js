@@ -35,6 +35,12 @@ angular.module('app')
       upEl.on('click', function() {
         setValue(getValue() + 1);
       });
+
+      elem.on('$destroy', function() {
+        upEl.off();
+        downEl.off();
+      });
+
     }
   };
 
