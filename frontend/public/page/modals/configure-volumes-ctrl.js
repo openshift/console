@@ -34,7 +34,7 @@ angular.module('app')
       v.source.emptyDir = v.type === 'container' ? true : false;
       delete v.type;
       if (v.source.emptyDir) {
-        delete v.source.hostDir.path;
+        delete v.source.hostDir;
       } else {
         delete v.source.emptyDir;
       }
