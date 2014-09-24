@@ -7,93 +7,100 @@
 
   <form ng-controller="EditReplicaControllerFormCtrl" ng-submit="submit()" name="form" role="form">
 
-    <div class="co-m-pane">
+    <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
 
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Desired State</h1>
-      </div>
-      <div class="co-m-pane__body">
-        <div class="row co-m-form-row">
-          <div class="col-sm-2">
-            <label for="input-controller-replicas" class="control-label">Replicas:</label>
-          </div>
-          <div class="co-m-form-col col-sm-10">
-            <input ng-model="replicaController.desiredState.replicas" co-number-spinner type="number" class="form-control" required id="input-controller-replicas"/>
-          </div>
-        </div>
-        <div class="row co-m-form-row">
-          <div class="col-sm-2">
-            <label class="control-label">Controller Labels:</label>
-          </div>
-          <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="replicaController.labels" type="controller"></co-label-input>
-            <small class="text-muted">Labels for this controller.</small>
-          </div>
-        </div>
-        <div class="row co-m-form-row">
-          <div class="col-sm-2">
-            <label class="control-label">Label Query:</label>
-          </div>
-          <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="replicaController.desiredState.replicaSelector" type="pod" selector="true"></co-label-input>
-            <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
-          </div>
-        </div>
-      </div>
+      <co-replica-nav controller-id="replicaController.id"></co-replica-nav>
 
-      <hr/>
+      <div class="co-m-vert-nav__body">
 
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Desired Pod State</h1>
-      </div>
-
-      <div class="co-m-pane__body">
-        <div class="row co-m-form-row">
-          <div class="col-sm-12">
-            These containers make up a pod.
-            All of these containers are deployed together onto machines in the cluster.
-          </div>
+        <div class="co-m-pane__heading">
+          <h1 class="co-m-pane__title">Desired State</h1>
         </div>
-        <div class="row co-m-form-row">
-          <div class="col-sm-2">
-            <label class="control-label">Pod Labels:</label>
+        <div class="co-m-pane__body">
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label for="input-controller-replicas" class="control-label">Replicas:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <input ng-model="replicaController.desiredState.replicas" co-number-spinner type="number" class="form-control" required id="input-controller-replicas"/>
+            </div>
           </div>
-          <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="replicaController.desiredState.podTemplate.labels" type="pod"></co-label-input>
-            <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label class="control-label">Controller Labels:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <co-label-input ng-model="replicaController.labels" type="controller"></co-label-input>
+              <small class="text-muted">Labels for this controller.</small>
+            </div>
           </div>
-        </div>
-        <div class="row co-m-form-row">
-          <div class="col-sm-2">
-            <label class="control-label">Pod Volumes:</label>
-          </div>
-          <div class="co-m-form-col col-sm-10">
-            <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="replicaController.desiredState.podTemplate.desiredState.manifest.volumes.length || 0"></span> Volumes</a></div>
-            <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Containers</h1>
-      </div>
-      <div class="co-m-pane__body">
-        <div class="row co-m-form-row">
-          <div class="col-lg-10 col-md-12 col-sm-12">
-            <co-multi-container-input pod="replicaController.desiredState.podTemplate"></co-multi-container-input>
-          </div>
-        </div>
-        <div class="row co-m-form-row">
-          <div class="co-m-form-col col-sm-10 ">
-            <div co-btn-bar complete-promise="requestPromise">
-              <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
-              <button type="submit" class="btn btn-primary ng-scope">Update Desired State</button>
-              <button type="button" ng-click="cancel()" class="btn btn-link ng-scope">Cancel</button>
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label class="control-label">Label Query:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <co-label-input ng-model="replicaController.desiredState.replicaSelector" type="pod" selector="true"></co-label-input>
+              <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
             </div>
           </div>
         </div>
-      </div>
 
+        <hr/>
+
+        <div class="co-m-pane__heading">
+          <h1 class="co-m-pane__title">Desired Pod State</h1>
+        </div>
+
+        <div class="co-m-pane__body">
+          <div class="row co-m-form-row">
+            <div class="col-sm-12">
+              These containers make up a pod.
+              All of these containers are deployed together onto machines in the cluster.
+            </div>
+          </div>
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label class="control-label">Pod Labels:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <co-label-input ng-model="replicaController.desiredState.podTemplate.labels" type="pod"></co-label-input>
+              <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
+            </div>
+          </div>
+          <div class="row co-m-form-row">
+            <div class="col-sm-2">
+              <label class="control-label">Pod Volumes:</label>
+            </div>
+            <div class="co-m-form-col col-sm-10">
+              <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="replicaController.desiredState.podTemplate.desiredState.manifest.volumes.length || 0"></span> Volumes</a></div>
+              <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="co-m-pane__heading">
+          <h1 class="co-m-pane__title">Containers</h1>
+        </div>
+        <div class="co-m-pane__body">
+          <div class="row co-m-form-row">
+            <div class="col-lg-10 col-md-12 col-sm-12">
+              <co-multi-container-input pod="replicaController.desiredState.podTemplate"></co-multi-container-input>
+            </div>
+          </div>
+          <div class="row co-m-form-row">
+            <div class="co-m-form-col col-sm-10 ">
+              <div co-btn-bar complete-promise="requestPromise">
+                <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+                <button type="submit" class="btn btn-primary ng-scope">Update Desired State</button>
+                <button type="button" ng-click="cancel()" class="btn btn-link ng-scope">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
     </div>
 
   </form>

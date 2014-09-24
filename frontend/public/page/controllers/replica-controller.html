@@ -1,0 +1,44 @@
+<div class="co-p-controller">
+
+  <co-nav-title title="{{replicaController.id}}">
+    <a ng-href="/controllers" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Controllers</a>
+  </co-nav-title>
+
+  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+
+    <co-replica-nav controller-id="replicaController.id"></co-replica-nav>
+
+    <div class="co-m-vert-nav__body">
+
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Controller Overview</h1>
+      </div>
+      <div class="co-m-pane__body">
+        <dl>
+          <dt>Current Count</dt>
+          <dd ng-bind="replicaController.currentState.replicas"></dd>
+          <dt>Desired Count</dt>
+          <dd ng-bind="replicaController.desiredState.replicas"></dd>
+        </dl>
+      </div>
+
+      <div class="co-m-pane__heading">
+        <div class="row">
+          <div class="col-sm-6">
+            <h1 class="co-m-pane__title">Running Pods</h1>
+          </div>
+          <div class="col-sm-6">
+            <co-label-list class="pull-right" type="pod" selector="true" labels="replicaController.desiredState.replicaSelector"></co-label-list>
+          </div>
+        </div>
+      </div>
+      <div class="co-m-pane__body">
+        <co-pod-list pods="pods"></co-pod-list>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
