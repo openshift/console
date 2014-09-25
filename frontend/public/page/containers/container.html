@@ -5,58 +5,152 @@
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pod</a>
   </co-nav-title>
 
-  <div class="co-m-pane">
-    <div class="co-m-pane__heading--bordered">
-      <h1 class="co-m-pane__title">Container Overview</h1>
-    </div>
-    <div class="co-m-pane__body-group">
-      <div class="co-m-pane__body-section--bordered">
+  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+
+    <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
+      <li class="co-m-vert-nav__menu-item">
+        <a ng-href="/containers/{{pod.id}}/{{container.name}}">
+          <i class="fa fa-dashboard"></i>
+        </a>
+      </li>
+    </ul>
+
+    <div class="co-m-vert-nav__body">
+
+      <div class="co-m-pane__body">
         <div class="row">
 
-          <div class="col-lg-6">
+          <div class="col-sm-4">
+            <h1 class="co-section-title">Container Details</h1>
             <dl>
-              <dt>Id</dt>
-              <dd ng-bind="container.Id"></dd>
               <dt>State</dt>
               <dd ng-bind="getState()"></dd>
-              <dt>Image</dt>
-              <dd ng-bind="container.image"></dd>
+              <dt>Id</dt>
+              <dd>
+                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{container.Id}}" readonly />
+              </dd>
               <dt>Created</dt>
-              <dd ng-bind="container.Created"></dd>
+              <dd ng-bind="container.Created | customDate"></dd>
+              <dt>Started</dt>
+              <dd ng-bind="container.State.StartedAt | customDate"></dd>
+              <dt>Finished</dt>
+              <dd ng-bind="container.State.FinishedAt | customDate"></dd>
+              <dt>Raw Data</dt>
+              <dd>
+                <a href="#" ng-click="openJsonModal()" class="co-m-modal-link">Inspect Container</a>
+              </dd>
+            </dl>
+          </div><!--/col-->
+
+          <div class="col-sm-4">
+            <h1 class="co-section-title">Image Details</h1>
+            <dl>
+              <dt>Image</dt>
+              <dd>
+                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{container.image | containerImage}}" readonly />
+              </dd>
+              <dt>Image Version/Tag</dt>
+              <dd ng-bind="container.image | containerTag"></dd>
+              <dt>Command</dt>
+              <dd>
+                <code ng-show="container.Config.Cmd" ng-bind="container.Config.Cmd | join:' '"></code>
+                <span ng-hide="container.Config.Cmd" ng-bind="CONST.placeholderText"></span>
+              </dd>
+              <dt>Entrypoint</dt>
+              <dd>
+                <code ng-bind="container.Config.Entrypoint | join:' '"></code>
+              </dd>
+            </dl>
+          </div><!--/col-->
+
+          <div class="col-sm-4">
+            <h1 class="co-section-title">Network</h1>
+            <dl>
               <dt>Host</dt>
-              <dd ng-bind="pod.currentState.host"></dd>
+              <dd>
+                <a ng-href="/machines/{{pod.currentState.host}}" ng-bind-template="{{pod.currentState.host}} ({{pod.currentState.hostIP}})"></a>
+              </dd>
               <dt>Pod IP</dt>
               <dd ng-bind="pod.currentState.podIP"></dd>
             </dl>
+          </div><!--/col-->
+
+        </div><!--/row-->
+
+        <hr/>
+
+        <div class="row">
+
+          <div class="col-sm-4">
+            <h1 class="co-section-title">Ports</h1>
+            <div class="co-m-table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Host</th>
+                    <th>Container</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="p in container.ports">
+                    <td ng-bind="p.name"></td>
+                    <td ng-bind="p.hostPort"></td>
+                    <td ng-bind="p.containerPort"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="col-lg-6">
-            <dl>
-              <dt>Ports</dt>
-              <dd>
-                <div ng-repeat="p in container.ports">
-                  <span ng-if="p.name" ng-bind="p.name"></span> <span ng-bind-template="({{p.protocol}})"></span> <code ng-bind="p.hostPort"></code> : <code ng-bind="p.containerPort"></code>
-                </div>
-              </dd>
-              <dt>Volumes</dt>
-              <dd class="co-variable-items">
-                <div ng-repeat="(k, v) in container.Volumes">
-                  <code ng-bind="k"></code> : <code ng-bind="v"></code>
-                </div>
-              </dd>
-              <dt>Environment</dt>
-              <dd class="co-variable-items">
-                <div ng-repeat="e in container.Config.Env">
-                  <code ng-bind="e"></code>
-                </div>
-              </dd>
-            </dl>
+          <div class="col-sm-4">
+            <h1 class="co-section-title">Mounted Volumes</h1>
+            <div class="co-m-table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Access</th>
+                    <th>Location</th>
+                    <th>Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="(k, v) in container.Volumes">
+                    <td></td>
+                    <td ng-bind="k"></td>
+                    <td ng-bind="v"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-        </div>
-      </div>
+          <div class="col-sm-4">
+            <h1 class="co-section-title">Environment Variables</h1>
+            <div class="co-m-table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="e in container.Config.Env">
+                    <td ng-bind="e | coSplit:'=':0"></td>
+                    <td ng-bind="e | coSplit:'=':1"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-    </div>
-  </div>
+        </div><!--/row-->
+
+      </div><!--/pane-body-->
+
+    </div><!--/ver-nav-body-->
+
+  </div><!--/pane-->
 
 </div>
