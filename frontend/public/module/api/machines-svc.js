@@ -3,6 +3,7 @@ angular.module('app')
   'use strict';
 
   this.list = $rootScope.client.minions.list;
+  this.get = $rootScope.client.minions.get;
 
   this.getPods = function(machine) {
     return PodsSvc.list().then(function(podResult) {

@@ -13,8 +13,6 @@ fi
 
 sudo bash -c 'echo BRIDGE_ROOT=`pwd` > /etc/bridge-environment'
 docker pull quay.io/coreosinc/web-builder:latest
-sudo systemctl stop bridge-devweb.service
-sudo systemctl stop bridge-devgulp.service
 sudo cp ./bridge-devweb.service /etc/systemd/system
 sudo cp ./bridge-devgulp.service /etc/systemd/system
 sudo systemctl daemon-reload

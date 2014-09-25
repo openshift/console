@@ -4760,6 +4760,17 @@ kbd {
   font-size: 13px;
   font-weight: 300; }
 
+.co-m-code, .co-m-code-box {
+  background-color: #F9F2F4;
+  color: #C7254E;
+  font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; }
+
+.co-m-code-box {
+  min-height: 300px;
+  font-size: 12px;
+  word-wrap: normal;
+  white-space: pre; }
+
 .co-truncate {
   overflow: hidden;
   text-overflow: ellipsis; }
