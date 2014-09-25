@@ -163,6 +163,14 @@
           client: 'ClientLoaderSvc'
         }
       })
+      .when('/machines/:id', {
+        controller: 'MachineCtrl',
+        templateUrl: '/static/page/machines/machine.html',
+        title: 'Machine',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
       .when('/search', {
         controller: 'SearchCtrl',
         templateUrl: '/static/page/search/search.html',

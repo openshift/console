@@ -1,0 +1,23 @@
+<div class="co-p-machine">
+
+  <co-nav-title title="{{machine.id}}"></co-nav-title>
+
+  <div class="co-m-pane">
+
+    <div class="co-m-pane__heading">
+      <h1 class="co-m-pane__title">Machine Details</h1>
+    </div>
+
+    <div class="co-m-pane__body">
+
+      <dl>
+        <dt>Machine Id</dl>
+        <dd ng-bind="machine.id"></dd>
+      </dl>
+
+      <co-pod-list pods="machine.pods"></co-pod-list>
+
+    </div><!-- pane body -->
+  </div><!-- pane -->
+
+</div>
