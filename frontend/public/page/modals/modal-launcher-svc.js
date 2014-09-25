@@ -23,6 +23,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',
     },
+    'view-json': {
+      templateUrl: '/static/page/modals/view-json.html',
+      controller: 'ViewJsonCtrl',
+    },
   };
 
   return {
