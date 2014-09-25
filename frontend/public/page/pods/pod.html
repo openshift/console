@@ -24,9 +24,9 @@
           <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
             <dl>
               <dt>Machine</dt>
-              <dd><a href="#" ng-bind="pod.currentState.host"></a></dd>
+              <dd><a href="/machines/{{pod.currentState.host}}" ng-bind="pod.currentState.host"></a></dd>
               <dt>Pod IP</dt>
-              <dd><a href="#" ng-bind="pod.currentState.podIP"></a></dd>
+              <dd ng-bind="pod.currentState.podIP"></dd>
             </dl>
           </div>
 
