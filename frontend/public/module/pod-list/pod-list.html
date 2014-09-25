@@ -21,11 +21,13 @@
       <div class="col-lg-2 col-md-2 col-sm-2  hidden-xs">
         <div ng-if="p.labels.replicationController" >
           <co-entity-icon type="controller"></co-entity-icon>
-          <a ng-href="/controllers/{{p.labels.replicationController}}" ng-bind="p.labels.replicationController"></a>
+          <a ng-href="/replica-controllers/{{p.labels.replicationController}}" ng-bind="p.labels.replicationController"></a>
         </div>
       </div>
       <div class="col-lg-1 col-md-1 hidden-sm hidden-xs" ng-bind="p.desiredState.manifest.containers.length"></div>
-      <div class="col-lg-2 col-md-2 col-sm-2  hidden-xs" ng-bind="p.currentState.host"></div>
+      <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+        <a ng-href="/machines/{{p.currentState.host}}" ng-bind="p.currentState.host"></a>
+      </div>
     </div>
   </div>
 </div>
