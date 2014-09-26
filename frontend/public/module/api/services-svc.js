@@ -1,9 +1,15 @@
 angular.module('app')
-.service('ServicesSvc', function(_, $rootScope, EVENTS) {
+.service('ServicesSvc', function(_, $rootScope, EVENTS, LabelSvc) {
   'use strict';
 
-  this.list = $rootScope.client.services.list;
   this.get = $rootScope.client.services.get;
+
+  this.list = function(params) {
+    if (params && params.labels) {
+      params.labels = LabelSvc.urlEncode(params.labels);
+    }
+    return $rootScope.client.services.list(params);
+  };
 
   this.create = function(service) {
     if (_.isEmpty(service.labels)) {

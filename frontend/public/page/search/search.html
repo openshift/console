@@ -1,0 +1,87 @@
+<div class="co-p-search">
+
+  <co-nav-title title="Search"></co-nav-title>
+
+  <div class="co-m-pane">
+
+    <div class="co-m-pane__body--bordered">
+      <form ng-controller="SearchFormCtrl" ng-submit="submit()" name="form" role="form">
+        <div class="form-group">
+          <co-label-input
+              autofocus="true"
+              ng-model="fields.query"
+              type="{{fields.entityType}}"></co-label-input>
+        </div>
+        <label class="control-label">Filter:</label>
+        <div class="co-type-selector">
+          <a href="#" ng-click="changeType('service')">
+            <input name="entityType"
+                ng-checked="fields.entityType == 'service'"
+                type="radio"/>
+            Services Only
+          </a>
+          <a href="#" ng-click="changeType('controller')">
+            <input name="entityType"
+                ng-checked="fields.entityType == 'controller'"
+                type="radio"/>
+            Controllers Only
+          </a>
+          <a href="#" ng-click="changeType('pod')">
+            <input name="entityType"
+                ng-checked="fields.entityType == 'pod'"
+                type="radio"/>
+            Pods Only
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <div class="co-m-pane__body">
+
+      <div class="co-m-table-grid--bordered">
+        <div class="row co-m-table-grid__head">
+          <div class="col-sm-3">ID</div>
+          <div class="col-sm-4">Labels</div>
+        </div>
+        <div class="row" ng-repeat="r in results track by (fields.entityType + r.id)">
+          <div class="col-sm-3">
+            <a ng-href="/{{getEntityPath(fields.entityType)}}/{{r.id}}" ng-bind="r.id"></a>
+          </div>
+          <div class="col-sm-4">
+            <co-label-list type="{{fields.entityType}}" labels="r.labels"></co-label-list>
+          </div>
+        </div>
+
+        <div ng-show="!loading && !results" class="row">
+          <div class="col-sm-12 co-m-notice">
+            <div class="co-m-notice__title">
+              Enter a label query to search the cluster
+            </div>
+            <div class="co-m-notice__message">
+              Search results must match all label query conditions.
+              Refine search results by creating more specific label queries.
+            </div>
+          </div>
+        </div>
+        <div ng-show="!loading && results && !results.length" class="row">
+          <div class="col-sm-12 co-m-notice">
+            <div class="co-m-notice__title">
+              No items matched the label query
+            </div>
+            <div class="co-m-notice__message">
+              Items in the cluster may have been modified by controllers, users, or other means.
+            </div>
+          </div>
+        </div>
+        <div ng-show="loading" class="row">
+          <div class="col-sm-12 co-m-notice">
+            <co-loader></co-loader>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- pane body -->
+  </div><!-- pane -->
+
+</div>
