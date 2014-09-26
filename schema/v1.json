@@ -626,6 +626,13 @@
           "path": "replicationControllers",
           "response": {
             "$ref": "ReplicationControllerList"
+          },
+          "parameters": {
+            "labels": {
+             "type": "string",
+             "location": "query",
+             "required": false
+            }
           }
         },
         "delete": {
