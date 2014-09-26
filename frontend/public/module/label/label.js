@@ -1,21 +1,22 @@
 angular.module('app')
 
-.directive('coLabel', function($interpolate) {
+.directive('coLabel', function($interpolate, LabelSvc) {
   'use strict';
 
-  var linkTemplate = $interpolate('/search?type={{type}}&q={{key}}:{{value}}');
+  var linkTemplate = $interpolate('/search?type={{type}}&q={{query}}');
 
   return {
     templateUrl: '/static/module/label/label.html',
     restrict: 'E',
     replace: true,
     link: function(scope, el, attrs) {
-      var ref, linkEl;
+      var ref, linkEl, labelObj;
 
+      labelObj = {};
+      labelObj[attrs.key] = attrs.value;
       ref = linkTemplate({
         type: attrs.type,
-        key: attrs.key,
-        value: attrs.value
+        query: LabelSvc.linkEncode(labelObj),
       });
 
       linkEl = el.find('.co-m-label__link');

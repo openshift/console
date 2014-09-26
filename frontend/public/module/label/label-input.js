@@ -3,7 +3,7 @@
  * Generic label input field.
  */
 
-angular.module('app').directive('coLabelInput', function(_) {
+angular.module('app').directive('coLabelInput', function(_, $timeout) {
   'use strict';
 
   function objectify(arr) {
@@ -39,12 +39,18 @@ angular.module('app').directive('coLabelInput', function(_) {
       type: '@',
       // 'true', 'false' (default)
       selector: '@',
+      // Optionally auto-focus after render.
+      autofocus: '@',
     },
-    controller: function($scope) {
-
+    controller: function($scope, $attrs) {
       if ($scope.type) {
         $scope.cssClass = 'co-m-label-input--' + $scope.type;
       }
+
+      $attrs.$observe('type', function(newVal) {
+        $attrs.$removeClass('co-m-label-input--service co-m-label-input--controller co-m-label-input--pod');
+        $attrs.$addClass('co-m-label-input--' + newVal);
+      });
 
       $scope.$watchCollection('labels', function(labels) {
         $scope.arrModel = arrayify(labels);
@@ -53,8 +59,14 @@ angular.module('app').directive('coLabelInput', function(_) {
       $scope.$watchCollection('arrModel', function(arr) {
         $scope.labels = objectify(arr);
       });
-
-    }
+    },
+    link: function(scope, elem, attrs, controller) {
+      if (attrs.autofocus === 'true') {
+        $timeout(function() {
+          elem.find('input').focus();
+        }, 20, false);
+      }
+    },
   };
 
 });

@@ -20,7 +20,7 @@ angular.module('app')
 
   this.list = function(params) {
     if (params && params.labels) {
-      params.labels = LabelSvc.encode(params.labels);
+      params.labels = LabelSvc.urlEncode(params.labels);
     }
     return $rootScope.client.pods.list(params);
   };
