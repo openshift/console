@@ -1,0 +1,20 @@
+.co-p-search {
+
+  .co-m-pane {
+    min-height: 400px;
+  }
+
+  .co-type-selector {
+    display: inline-block;
+    a {
+      font-size: 14px;
+      padding: 10px;
+      border: solid 1px transparent;
+      border-radius: 5px;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+}

@@ -1,10 +1,16 @@
 angular.module('app')
-.service('ControllersSvc', function($rootScope, _, CONST, EVENTS, PodsSvc) {
+.service('ControllersSvc', function($rootScope, _, CONST, EVENTS, PodsSvc, LabelSvc) {
   'use strict';
 
-  this.list = $rootScope.client.replicationControllers.list;
   this.create = $rootScope.client.replicationControllers.create;
   this.get = $rootScope.client.replicationControllers.get;
+
+  this.list = function(params) {
+    if (params && params.labels) {
+      params.labels = LabelSvc.urlEncode(params.labels);
+    }
+    return $rootScope.client.replicationControllers.list(params);
+  };
 
   this.update = function(replicaController) {
     // Add id for the path property.

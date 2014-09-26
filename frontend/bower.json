@@ -21,7 +21,7 @@
       "main": "lib/underscore.string.js"
     },
     "ng-tags-input": {
-      "main": "ng-tags-input.min.js"
+      "main": "ng-tags-input.js"
     }
   }
 }

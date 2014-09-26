@@ -1024,10 +1024,19 @@ func (r *ReplicationControllersService) List() *ReplicationControllersListCall {
 	return c
 }
 
+// Labels sets the optional parameter "labels":
+func (c *ReplicationControllersListCall) Labels(labels string) *ReplicationControllersListCall {
+	c.opt_["labels"] = labels
+	return c
+}
+
 func (c *ReplicationControllersListCall) Do() (*ReplicationControllerList, error) {
 	var body io.Reader = nil
 	params := make(url.Values)
 	params.Set("alt", "json")
+	if v, ok := c.opt_["labels"]; ok {
+		params.Set("labels", fmt.Sprintf("%v", v))
+	}
 	urls := googleapi.ResolveRelative(c.s.BasePath, "replicationControllers")
 	urls += "?" + params.Encode()
 	req, _ := http.NewRequest("GET", urls, body)
@@ -1050,6 +1059,13 @@ func (c *ReplicationControllersListCall) Do() (*ReplicationControllerList, error
 	//   "description": "Retrieve a list of replicationControllers.",
 	//   "httpMethod": "GET",
 	//   "id": "bridge.replicationControllers.list",
+	//   "parameters": {
+	//     "labels": {
+	//       "location": "query",
+	//       "required": false,
+	//       "type": "string"
+	//     }
+	//   },
 	//   "path": "replicationControllers",
 	//   "response": {
 	//     "$ref": "ReplicationControllerList"
