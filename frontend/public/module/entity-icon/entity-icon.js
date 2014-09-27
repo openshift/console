@@ -12,9 +12,17 @@ angular.module('app').directive('coEntityIcon', function() {
     restrict: 'E',
     replace: true,
     link: function(scope, elem, attrs) {
+      var label;
       elem.addClass('co-m-entity-icon');
       elem.addClass('co-m-entity-icon--' + attrs.type);
-      elem.text(attrs.type[0].toUpperCase());
+      switch (attrs.type) {
+        case 'controller':
+          label = 'RC';
+          break;
+        default:
+          label = attrs.type[0].toUpperCase();
+      }
+      elem.text(label);
     }
   };
 
