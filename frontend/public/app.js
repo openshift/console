@@ -179,6 +179,22 @@
           client: 'ClientLoaderSvc'
         }
       })
+      .when('/settings/registries', {
+        controller: 'RegistriesCtrl',
+        templateUrl: '/static/page/settings/registries.html',
+        title: 'Configure Registries',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
+      .when('/settings/users', {
+        controller: 'UsersCtrl',
+        templateUrl: '/static/page/settings/users.html',
+        title: 'Users & API Keys',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
       .otherwise({
         templateUrl: '/static/page/error/404.html',
         title: 'Page Not Found (404)'
