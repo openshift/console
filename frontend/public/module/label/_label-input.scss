@@ -24,7 +24,7 @@ tags-input .host:active {
 }
 
 tags-input .tags {
-  padding: 6px 12px;
+  padding: 6px 12px 3px 6px;
   overflow: hidden;
   word-wrap: break-word;
   cursor: text;
@@ -84,6 +84,8 @@ tags-input .tags .input {
   margin: 2px;
   padding: 0;
   float: left;
+  //keeps placeholder same size as tag's text
+  font-size: 13px;
 }
 tags-input .tags .input.invalid-tag {
   color: $red-invalid;
