@@ -39,7 +39,7 @@ angular.module('app')
   this.etcdSummary = function() {
     var unknown = {
       state: 'unknown',
-      message: 'Failed to retrieve etcd data.',
+      message: 'Failed to communicate with etcd cluster.',
       stats: {}
     };
 

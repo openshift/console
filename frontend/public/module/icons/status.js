@@ -18,7 +18,7 @@ angular.module('app')
         ok: 'fa-check-circle-o',
         warning: 'fa-warning',
         critical: 'fa-times-circle-o',
-        unknown: ''
+        unknown: 'fa-question-circle'
       };
 
       rootClasses = {

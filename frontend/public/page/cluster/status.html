@@ -5,16 +5,17 @@
   <div class="co-m-pane">
     <div class="co-m-pane__body">
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="co-m-status-box">
             <h2>etcd</h2>
             <div>
               <co-status state="{{etcd.state}}" text="{{etcd.message}}"></co-status>
+              <small>The etcd cluster is unavailable or running in an unexpected location.</small>
             </div>
-            <div>
+            <div ng-show="etcd.state != 'unknown'">
               <small>{{etcd.stats.leaders + etcd.stats.followers}} active peers</small>
             </div>
-            <div>
+            <div ng-show="etcd.state != 'unknown'">
               <small>
                 leaders: {{etcd.stats.leaders}},
                 followers: {{etcd.stats.followers}},
@@ -23,9 +24,13 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="co-m-status-box">
             <h2>API Server</h2>
+            <div ng-show="!units">
+              <co-status state="unknown" text="Failed to communicate with fleet API."></co-status>
+              <small>The fleet API is unavailable or running in an unexpected location.</small>
+            </div>
             <div ng-show="units.apiserver.running == 0">
               <co-status state="critical" text="All services down"></co-status>
             </div>
@@ -35,7 +40,7 @@
             <div ng-show="units.apiserver.running > 0 && units.apiserver.failed == 0">
               <co-status state="ok" text="All systems go"></co-status>
             </div>
-            <div>
+            <div ng-show="units">
               <small>
                 running: {{units.apiserver.running}},
                 failed: {{units.apiserver.failed}}
@@ -43,9 +48,13 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="co-m-status-box">
             <h2>Controller Manager</h2>
+            <div ng-show="!units">
+              <co-status state="unknown" text="Failed to communicate with fleet API."></co-status>
+              <small>The fleet API is unavailable or running in an unexpected location.</small>
+            </div>
             <div ng-show="units.controller_manager.running == 0">
               <co-status state="critical" text="All services down"></co-status>
             </div>
@@ -55,7 +64,7 @@
             <div ng-show="units.controller_manager.running > 0 && units.controller_manager.failed == 0">
               <co-status state="ok" text="All systems go"></co-status>
             </div>
-            <div>
+            <div ng-show="units">
               <small>
                 running: {{units.controller_manager.running}},
                 failed: {{units.controller_manager.failed}}
@@ -63,9 +72,13 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="co-m-status-box">
             <h2>Scheduler</h2>
+            <div ng-show="!units">
+              <co-status state="unknown" text="Failed to communicate with fleet API."></co-status>
+              <small>The fleet API is unavailable or running in an unexpected location.</small>
+            </div>
             <div ng-show="units.scheduler.running == 0">
               <co-status state="critical" text="All services down"></co-status>
             </div>
@@ -75,7 +88,7 @@
             <div ng-show="units.scheduler.running > 0 && units.scheduler.failed == 0">
               <co-status state="ok" text="All systems go"></co-status>
             </div>
-            <div>
+            <div ng-show="units">
               <small>
                 running: {{units.scheduler.running}},
                 failed: {{units.scheduler.failed}}
