@@ -195,6 +195,14 @@
           client: 'ClientLoaderSvc'
         }
       })
+     .when('/welcome', {
+        controller: 'WelcomeCtrl',
+        templateUrl: '/static/page/welcome/welcome.html',
+        title: 'Welcome to your CoreOS Cluster',
+        resolve: {
+          client: 'ClientLoaderSvc'
+        }
+      })
       .otherwise({
         templateUrl: '/static/page/error/404.html',
         title: 'Page Not Found (404)'
