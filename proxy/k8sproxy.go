@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	basePath = "/api/v1beta1/"
+	basePath = "/api/v1beta2/"
 )
 
 type K8sProxy struct {
@@ -17,7 +17,7 @@ type K8sProxy struct {
 }
 
 func NewK8sProxy(localPrefix string) (*K8sProxy, error) {
-	remoteUrl, err := url.Parse(fmt.Sprintf("%s/api/v1beta1", *config.K8sUrl))
+	remoteUrl, err := url.Parse(fmt.Sprintf("%s/api/v1beta2", *config.K8sUrl))
 	if err != nil {
 		return nil, err
 	}
