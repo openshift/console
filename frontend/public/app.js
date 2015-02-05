@@ -209,8 +209,9 @@
       });
 
   })
-  .run(function($rootScope, CONST) {
+  .run(function($rootScope, $window, CONST) {
     $rootScope.CONST = CONST;
+    $rootScope.SERVER_FLAGS = $window.SERVER_FLAGS;
   });
 
 }());

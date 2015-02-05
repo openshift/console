@@ -33,3 +33,7 @@ func NewK8sProxy(endpoint, apiVersion, localPrefix string) (*K8sProxy, error) {
 
 	return p, nil
 }
+
+func (p *K8sProxy) Version() string {
+	return p.apiVersion
+}
