@@ -1,9 +1,9 @@
-package api
+package server
 
 import (
 	"net/http"
 
-	"github.com/coreos-inc/bridge/Godeps/_workspace/src/github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 )
 
 func registerPods(router *mux.Router) {

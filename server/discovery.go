@@ -1,11 +1,9 @@
-package api
+package server
 
 import (
 	"net/http"
 
-	"github.com/coreos-inc/bridge/Godeps/_workspace/src/github.com/gorilla/mux"
-
-	"github.com/coreos-inc/bridge/config"
+	"github.com/gorilla/mux"
 )
 
 func registerDiscovery(router *mux.Router) {
@@ -13,6 +11,7 @@ func registerDiscovery(router *mux.Router) {
 }
 
 // Serve the discovery json file.
+// TODO: server from compiled go source instead
 func discoveryGet(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, *config.DiscoveryJson)
+	http.ServeFile(w, r, "schema/v1.json")
 }
