@@ -24,6 +24,10 @@ var (
 	k8sproxy *proxy.K8sProxy
 )
 
+type jsGlobals struct {
+	K8sVersion string `json:"k8sVersion"`
+}
+
 type Server struct {
 	FleetClient *fleet.Client
 	EtcdClient  *etcd.Client
@@ -60,7 +64,11 @@ func (s *Server) HTTPHandler() http.Handler {
 }
 
 func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, nil); err != nil {
+	jsg := &jsGlobals{
+		K8sVersion: s.K8sProxy.Version(),
+	}
+
+	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
