@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/coreos-inc/bridge/config"
 )
 
 const (
@@ -14,19 +12,24 @@ const (
 
 type K8sProxy struct {
 	baseProxy
+	apiVersion string
+	endpoint   string
 }
 
-func NewK8sProxy(localPrefix string) (*K8sProxy, error) {
-	remoteUrl, err := url.Parse(fmt.Sprintf("%s/api/v1beta2", *config.K8sUrl))
+func NewK8sProxy(endpoint, apiVersion, localPrefix string) (*K8sProxy, error) {
+	remoteUrl, err := url.Parse(fmt.Sprintf("%s/api/%s", endpoint, apiVersion))
 	if err != nil {
 		return nil, err
 	}
 
-	p := K8sProxy{}
+	p := &K8sProxy{
+		endpoint:   endpoint,
+		apiVersion: apiVersion,
+	}
 	p.HttpClient = &http.Client{}
 	p.RemoteUrl = remoteUrl
 	p.LocalPrefix = localPrefix
 	p.RequestHeaderBlacklist = []string{"Cookie", "User-Agent"}
 
-	return &p, nil
+	return p, nil
 }

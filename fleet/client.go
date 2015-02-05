@@ -46,7 +46,7 @@ func NewClient(endpoint string) (*Client, error) {
 	}, nil
 }
 
-func (c Client) UnitStates() ([]*schema.UnitState, error) {
+func (c *Client) UnitStates() ([]*schema.UnitState, error) {
 	resp, err := c.hc.Get(fmt.Sprintf("%s/%s/%s", c.endpoint, Version, "state"))
 	if err != nil {
 		return nil, err

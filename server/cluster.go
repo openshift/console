@@ -1,4 +1,4 @@
-package api
+package server
 
 import (
 	"errors"
@@ -6,9 +6,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/coreos-inc/bridge/Godeps/_workspace/src/github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 
-	"github.com/coreos-inc/bridge/config"
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
 	"github.com/coreos-inc/bridge/schema"
@@ -24,31 +23,21 @@ var kubernetesServices = map[string]*bool{
 }
 
 type ClusterService struct {
-	fleetClient fleet.Client
-	etcdClient  etcd.Client
+	fleetClient *fleet.Client
+	etcdClient  *etcd.Client
 }
 
-func NewClusterService(router *mux.Router) (*ClusterService, error) {
-	fleetClient, err := fleet.NewClient(*config.FleetEndpoint)
-	if err != nil {
-		return nil, err
-	}
-
-	etcdClient, err := etcd.NewClient(*config.EtcdEndpoints)
-	if err != nil {
-		return nil, err
-	}
-
+func NewClusterService(router *mux.Router, etcdClient *etcd.Client, fleetClient *fleet.Client) (*ClusterService, error) {
 	s := &ClusterService{
-		fleetClient: *fleetClient,
-		etcdClient:  *etcdClient,
+		fleetClient: fleetClient,
+		etcdClient:  etcdClient,
 	}
 	router.HandleFunc("/cluster/status/units", s.GetUnits).Methods("GET")
 	router.HandleFunc("/cluster/status/etcd", s.GetEtcdState).Methods("GET")
 	return s, nil
 }
 
-func (s ClusterService) GetUnits(w http.ResponseWriter, r *http.Request) {
+func (s *ClusterService) GetUnits(w http.ResponseWriter, r *http.Request) {
 	unitStates, err := s.fleetClient.UnitStates()
 	if err != nil {
 		msg := "Error listing fleet units"
@@ -67,7 +56,7 @@ func (s ClusterService) GetUnits(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusOK, filteredUnitStates)
 }
 
-func (s ClusterService) GetEtcdState(w http.ResponseWriter, r *http.Request) {
+func (s *ClusterService) GetEtcdState(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	etcdState := schema.EtcdState{
 		CheckSuccess: true,

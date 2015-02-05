@@ -1,10 +1,10 @@
-package api
+package server
 
 import (
 	"log"
 	"net/http"
 
-	"github.com/coreos-inc/bridge/Godeps/_workspace/src/github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 
 	"github.com/coreos-inc/bridge/schema"
 )

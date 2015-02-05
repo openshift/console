@@ -14,4 +14,4 @@ ln -s ${PWD} $GOPATH/src/github.com/$repo_org/$project_dir
 
 eval $(go env)
 
-CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w' -o bin/$project_dir .
+CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w' -o bin/bridge github.com/$repo_org/$project_dir/cmd/bridge

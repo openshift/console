@@ -1,6 +1,0 @@
-#!/bin/bash -e
-
-source build
-
-go install github.com/coreos/devweb
-PATH=$PATH:$PWD ./bin/devweb -addr :9090 github.com/coreos-inc/bridge/dev

@@ -42,7 +42,7 @@ func NewClient(endpoints string) (*Client, error) {
 }
 
 // Given a path return a slice of url strings with base endpoints prefixed.
-func (c Client) Urls(urlPath string) []string {
+func (c *Client) Urls(urlPath string) []string {
 	urls := make([]string, len(c.endpoints))
 	for i, u := range c.endpoints {
 		urls[i] = fmt.Sprintf("%s/%s", u.String(), path.Clean(urlPath))
@@ -50,7 +50,7 @@ func (c Client) Urls(urlPath string) []string {
 	return urls
 }
 
-func (c Client) Machines() ([]*schema.EtcdMachine, error) {
+func (c *Client) Machines() ([]*schema.EtcdMachine, error) {
 	// TODO: cycle thru all endpoints on failure
 	resp, err := c.hc.Get(c.Urls("admin/machines")[0])
 	if err != nil {
@@ -70,7 +70,7 @@ func (c Client) Machines() ([]*schema.EtcdMachine, error) {
 	return machines, nil
 }
 
-func (c Client) ActiveSize() (int, error) {
+func (c *Client) ActiveSize() (int, error) {
 	// TODO: cycle thru all endpoints on failure
 	resp, err := c.hc.Get(c.Urls("admin/config")[0])
 	if err != nil {
