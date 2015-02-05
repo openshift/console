@@ -52,7 +52,7 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 #### Add Backend dependencies:
 
  1. `go get ...` as usual
- 1. run `godep save -r ./...`
+ 1. run `godep save ./...`
 
 #### Update existing backend dependencies:
 
@@ -61,7 +61,7 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 
 If changes are made to the `schema/v1.json` file you must:
  1. Rebuild the bindings by running: `schema/generator`
- 1. Rewrite go dependencies: `godep save -r ./...`
+ 1. Rewrite go dependencies: `godep save ./...`
 
 ### Dependencies
 
