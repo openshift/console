@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/coreos-inc/bridge",
-	"GoVersion": "go1.2.1",
+	"GoVersion": "go1.3.3",
 	"Packages": [
 		"./..."
 	],
@@ -11,8 +11,12 @@
 			"Rev": "b98def84f017a6dcd8b16c68293629d14bc66a90"
 		},
 		{
-			"ImportPath": "github.com/coreos/devweb",
-			"Rev": "94a90f999f1d747bc1206662843fc058e85fb45b"
+			"ImportPath": "github.com/coreos/pkg/flag",
+			"Rev": "8531df912fdc1829ba0d4869360bd8e6289d2ee8"
+		},
+		{
+			"ImportPath": "github.com/coreos/pkg/log",
+			"Rev": "8531df912fdc1829ba0d4869360bd8e6289d2ee8"
 		},
 		{
 			"ImportPath": "github.com/gorilla/context",
@@ -21,14 +25,6 @@
 		{
 			"ImportPath": "github.com/gorilla/mux",
 			"Rev": "270c42505a11c779b5a5aaecfa5ec717adac996e"
-		},
-		{
-			"ImportPath": "github.com/rakyll/globalconf",
-			"Rev": "415abc325023f1a00cd2d9fa512e0e71745791a2"
-		},
-		{
-			"ImportPath": "github.com/rakyll/goini",
-			"Rev": "907cca0f578a5316fb864ec6992dc3d9730ec58c"
 		}
 	]
 }
