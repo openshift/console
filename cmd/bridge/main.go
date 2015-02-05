@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"html/template"
 	"net/http"
 	"net/url"
 	"os"
@@ -46,8 +47,9 @@ func main() {
 		log.EnableTimestamps()
 	}
 
-	if _, err := os.Stat(path.Join(*publicDir, "index.html")); err != nil {
-		fmt.Println("index.html not found in configured public-dir path")
+	tpls, err := template.ParseFiles(path.Join(*publicDir, server.IndexPageTemplateName))
+	if err != nil {
+		fmt.Printf("index.html not found in configured public-dir path: %v", err)
 		os.Exit(1)
 	}
 
@@ -80,6 +82,7 @@ func main() {
 		EtcdClient:  etcdClient,
 		K8sProxy:    k8sproxy,
 		PublicDir:   *publicDir,
+		Templates:   tpls,
 	}
 
 	httpsrv := &http.Server{

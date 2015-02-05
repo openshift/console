@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"path"
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
@@ -13,8 +12,9 @@ import (
 )
 
 const (
-	staticPrefix = "/static"
-	APIVersion   = "v1"
+	staticPrefix          = "/static"
+	APIVersion            = "v1"
+	IndexPageTemplateName = "index.html"
 )
 
 var (
@@ -29,7 +29,7 @@ type Server struct {
 	EtcdClient  *etcd.Client
 	K8sProxy    *proxy.K8sProxy
 	PublicDir   string
-	// TODO: pass index template here instead of reading from pub dir
+	Templates   *template.Template
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -59,10 +59,8 @@ func (s *Server) HTTPHandler() http.Handler {
 	return http.Handler(r)
 }
 
-// Serve the front-end index page.
 func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	indexTemplate = template.Must(template.ParseFiles(path.Join(s.PublicDir, "index.html")))
-	if err := indexTemplate.ExecuteTemplate(w, "index.html", nil); err != nil {
+	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
