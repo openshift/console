@@ -1,5 +1,5 @@
 angular.module('app')
-.service('ControllersSvc', function($rootScope, _, CONST, EVENTS, PodsSvc, LabelSvc) {
+.service('ControllersSvc', function($rootScope, _, EVENTS, PodsSvc, LabelSvc) {
   'use strict';
 
   this.create = $rootScope.client.replicationControllers.create;
@@ -25,7 +25,7 @@ angular.module('app')
   this.getEmptyReplicaController = function() {
     return {
       'id': null,
-      'apiVersion': CONST.kubernetesApiVersion,
+      'apiVersion': $rootScope.SERVER_FLAGS.k8sVersion,
       'kind': 'ReplicationController',
       'labels': null,
       'desiredState': {
