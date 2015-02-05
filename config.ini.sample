@@ -1,3 +1,0 @@
-public-dir = ./frontend/public
-address = 0.0.0.0:9000
-k8s-url = http://localhost:8080
