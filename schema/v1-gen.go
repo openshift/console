@@ -49,7 +49,6 @@ func New(client *http.Client) (*Service, error) {
 	s.Pods = NewPodsService(s)
 	s.ReplicationControllers = NewReplicationControllersService(s)
 	s.Services = NewServicesService(s)
-	s.Users = NewUsersService(s)
 	return s, nil
 }
 
@@ -66,8 +65,6 @@ type Service struct {
 	ReplicationControllers *ReplicationControllersService
 
 	Services *ServicesService
-
-	Users *UsersService
 }
 
 func NewClusterService(s *Service) *ClusterService {
@@ -112,15 +109,6 @@ func NewServicesService(s *Service) *ServicesService {
 }
 
 type ServicesService struct {
-	s *Service
-}
-
-func NewUsersService(s *Service) *UsersService {
-	rs := &UsersService{s: s}
-	return rs
-}
-
-type UsersService struct {
 	s *Service
 }
 
@@ -331,12 +319,6 @@ type User struct {
 	Id string `json:"id,omitempty"`
 
 	LastName string `json:"lastName,omitempty"`
-}
-
-type UserPage struct {
-	NextPageToken string `json:"nextPageToken,omitempty"`
-
-	Users []*User `json:"users,omitempty"`
 }
 
 // method id "bridge.cluster.status.etcd":
@@ -1397,197 +1379,6 @@ func (c *ServicesListCall) Do() (*ServiceList, error) {
 	//   "path": "services",
 	//   "response": {
 	//     "$ref": "ServiceList"
-	//   }
-	// }
-
-}
-
-// method id "bridge.user.destroy":
-
-type UsersDestroyCall struct {
-	s    *Service
-	id   string
-	opt_ map[string]interface{}
-}
-
-// Destroy: Destroy a User.
-func (r *UsersService) Destroy(id string) *UsersDestroyCall {
-	c := &UsersDestroyCall{s: r.s, opt_: make(map[string]interface{})}
-	c.id = id
-	return c
-}
-
-// Id sets the optional parameter "id":
-func (c *UsersDestroyCall) Id(id string) *UsersDestroyCall {
-	c.opt_["id"] = id
-	return c
-}
-
-func (c *UsersDestroyCall) Do() error {
-	var body io.Reader = nil
-	params := make(url.Values)
-	params.Set("alt", "json")
-	if v, ok := c.opt_["id"]; ok {
-		params.Set("id", fmt.Sprintf("%v", v))
-	}
-	urls := googleapi.ResolveRelative(c.s.BasePath, "users/{id}")
-	urls += "?" + params.Encode()
-	req, _ := http.NewRequest("DELETE", urls, body)
-	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
-	googleapi.SetOpaque(req.URL)
-	req.Header.Set("User-Agent", "google-api-go-client/0.5")
-	res, err := c.s.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer googleapi.CloseBody(res)
-	if err := googleapi.CheckResponse(res); err != nil {
-		return err
-	}
-	return nil
-	// {
-	//   "description": "Destroy a User.",
-	//   "httpMethod": "DELETE",
-	//   "id": "bridge.user.destroy",
-	//   "parameterOrder": [
-	//     "id"
-	//   ],
-	//   "parameters": {
-	//     "id": {
-	//       "location": "path",
-	//       "type": "string"
-	//     }
-	//   },
-	//   "path": "users/{id}"
-	// }
-
-}
-
-// method id "bridge.users.get":
-
-type UsersGetCall struct {
-	s    *Service
-	id   string
-	opt_ map[string]interface{}
-}
-
-// Get: Retrieve a User.
-func (r *UsersService) Get(id string) *UsersGetCall {
-	c := &UsersGetCall{s: r.s, opt_: make(map[string]interface{})}
-	c.id = id
-	return c
-}
-
-// Id sets the optional parameter "id":
-func (c *UsersGetCall) Id(id string) *UsersGetCall {
-	c.opt_["id"] = id
-	return c
-}
-
-func (c *UsersGetCall) Do() (*User, error) {
-	var body io.Reader = nil
-	params := make(url.Values)
-	params.Set("alt", "json")
-	if v, ok := c.opt_["id"]; ok {
-		params.Set("id", fmt.Sprintf("%v", v))
-	}
-	urls := googleapi.ResolveRelative(c.s.BasePath, "users/{id}")
-	urls += "?" + params.Encode()
-	req, _ := http.NewRequest("GET", urls, body)
-	req.URL.Path = strings.Replace(req.URL.Path, "{id}", url.QueryEscape(c.id), 1)
-	googleapi.SetOpaque(req.URL)
-	req.Header.Set("User-Agent", "google-api-go-client/0.5")
-	res, err := c.s.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer googleapi.CloseBody(res)
-	if err := googleapi.CheckResponse(res); err != nil {
-		return nil, err
-	}
-	ret := new(User)
-	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
-		return nil, err
-	}
-	return ret, nil
-	// {
-	//   "description": "Retrieve a User.",
-	//   "httpMethod": "GET",
-	//   "id": "bridge.users.get",
-	//   "parameterOrder": [
-	//     "id"
-	//   ],
-	//   "parameters": {
-	//     "id": {
-	//       "location": "path",
-	//       "type": "string"
-	//     }
-	//   },
-	//   "path": "users/{id}",
-	//   "response": {
-	//     "$ref": "User"
-	//   }
-	// }
-
-}
-
-// method id "bridge.users.list":
-
-type UsersListCall struct {
-	s    *Service
-	opt_ map[string]interface{}
-}
-
-// List: Retrieve a page of Users.
-func (r *UsersService) List() *UsersListCall {
-	c := &UsersListCall{s: r.s, opt_: make(map[string]interface{})}
-	return c
-}
-
-// NextPageToken sets the optional parameter "nextPageToken":
-func (c *UsersListCall) NextPageToken(nextPageToken string) *UsersListCall {
-	c.opt_["nextPageToken"] = nextPageToken
-	return c
-}
-
-func (c *UsersListCall) Do() (*UserPage, error) {
-	var body io.Reader = nil
-	params := make(url.Values)
-	params.Set("alt", "json")
-	if v, ok := c.opt_["nextPageToken"]; ok {
-		params.Set("nextPageToken", fmt.Sprintf("%v", v))
-	}
-	urls := googleapi.ResolveRelative(c.s.BasePath, "users")
-	urls += "?" + params.Encode()
-	req, _ := http.NewRequest("GET", urls, body)
-	googleapi.SetOpaque(req.URL)
-	req.Header.Set("User-Agent", "google-api-go-client/0.5")
-	res, err := c.s.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer googleapi.CloseBody(res)
-	if err := googleapi.CheckResponse(res); err != nil {
-		return nil, err
-	}
-	ret := new(UserPage)
-	if err := json.NewDecoder(res.Body).Decode(ret); err != nil {
-		return nil, err
-	}
-	return ret, nil
-	// {
-	//   "description": "Retrieve a page of Users.",
-	//   "httpMethod": "GET",
-	//   "id": "bridge.users.list",
-	//   "parameters": {
-	//     "nextPageToken": {
-	//       "location": "query",
-	//       "type": "string"
-	//     }
-	//   },
-	//   "path": "users",
-	//   "response": {
-	//     "$ref": "UserPage"
 	//   }
 	// }
 
