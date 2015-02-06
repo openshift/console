@@ -19,7 +19,6 @@
   "parameters": {},
   "auth": {},
   "schemas": {
-
     "EtcdState": {
       "id": "EtcdState",
       "type": "object",
@@ -98,7 +97,6 @@
         }
       }
     },
-
     "User": {
       "id": "User",
       "type": "object",
@@ -114,23 +112,6 @@
         }
       }
     },
-
-    "UserPage": {
-      "id": "UserPage",
-      "type": "object",
-      "properties": {
-        "users": {
-          "type": "array",
-          "items": {
-            "$ref": "User"
-          }
-        },
-        "nextPageToken": {
-          "type": "string"
-        }
-      }
-    },
-
     "Status": {
       "id": "Status",
       "type": "object",
@@ -163,8 +144,6 @@
         }
       }
     },
-
-
     "PodList": {
       "id": "PodList",
       "type": "object",
@@ -177,7 +156,6 @@
         }
       }
     },
-
     "Pod": {
       "id": "Pod",
       "type": "object",
@@ -265,8 +243,6 @@
         }
       }
     },
-
-
     "ServiceList": {
       "id": "ServiceList",
       "type": "object",
@@ -279,7 +255,6 @@
         }
       }
     },
-
     "Service": {
       "id": "Service",
       "type": "object",
@@ -320,8 +295,6 @@
         }
       }
     },
-
-
     "ReplicationControllerList": {
       "id": "ReplicationControllerList",
       "type": "object",
@@ -334,7 +307,6 @@
         }
       }
     },
-
     "ReplicationController": {
       "id": "ReplicationController",
       "type": "object",
@@ -385,8 +357,6 @@
         }
       }
     },
-
-
     "MinionList": {
       "id": "MinionList",
       "type": "object",
@@ -399,7 +369,6 @@
         }
       }
     },
-
     "Minion": {
       "id": "Minion",
       "type": "object",
@@ -416,67 +385,8 @@
         }
       }
     }
-
-
-
   },
   "resources": {
-
-
-    "users": {
-      "methods": {
-        "list": {
-          "id": "bridge.users.list",
-          "description": "Retrieve a page of Users.",
-          "httpMethod": "GET",
-          "path": "users",
-          "parameters": {
-            "nextPageToken": {
-              "type": "string",
-              "location": "query"
-            }
-          },
-          "response": {
-            "$ref": "UserPage"
-          }
-        },
-        "get": {
-          "id": "bridge.users.get",
-          "description": "Retrieve a User.",
-          "httpMethod": "GET",
-          "path": "users/{id}",
-          "parameterOrder": [
-            "id"
-          ],
-          "parameters": {
-            "id": {
-              "type": "string",
-              "location": "path"
-            }
-          },
-          "response": {
-            "$ref": "User"
-          }
-        },
-        "destroy": {
-          "id": "bridge.user.destroy",
-          "description": "Destroy a User.",
-          "httpMethod": "DELETE",
-          "path": "users/{id}",
-          "parameterOrder": [
-            "id"
-          ],
-          "parameters": {
-            "id": {
-              "type": "string",
-              "location": "path"
-            }
-          }
-        }
-      }
-    },
-
-
     "pods": {
       "methods": {
         "list": {
@@ -545,8 +455,6 @@
         }
       }
     },
-
-
     "services": {
       "methods": {
         "list": {
@@ -615,8 +523,6 @@
         }
       }
     },
-
-
     "replicationControllers": {
       "methods": {
         "list": {
@@ -712,8 +618,6 @@
         }
       }
     },
-
-
     "minions": {
       "methods": {
         "list": {
@@ -745,7 +649,6 @@
         }
       }
     },
-
     "cluster": {
       "methods": {
         "units": {
@@ -774,6 +677,5 @@
         }
       }
     }
-
   }
 }

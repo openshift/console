@@ -2,12 +2,12 @@ package server
 
 import (
 	"net/http"
-
-	"github.com/gorilla/mux"
+	"path"
 )
 
-func registerDiscovery(router *mux.Router) {
-	router.HandleFunc("/discovery/v1/rest", discoveryGet).Methods("GET")
+func registerDiscovery(prefix string, mux *http.ServeMux) {
+	p := path.Join(prefix, "discovery/v1/rest")
+	mux.HandleFunc(p, discoveryGet)
 }
 
 // Serve the discovery json file.

@@ -11,20 +11,12 @@
 			"Rev": "b98def84f017a6dcd8b16c68293629d14bc66a90"
 		},
 		{
-			"ImportPath": "github.com/coreos/pkg/flag",
-			"Rev": "8531df912fdc1829ba0d4869360bd8e6289d2ee8"
+			"ImportPath": "github.com/coreos/pkg/flagutil",
+			"Rev": "f56de33226d694c30664f17e7b8d9cbfe8291dac"
 		},
 		{
 			"ImportPath": "github.com/coreos/pkg/log",
-			"Rev": "8531df912fdc1829ba0d4869360bd8e6289d2ee8"
-		},
-		{
-			"ImportPath": "github.com/gorilla/context",
-			"Rev": "1be7a086a5fd6440ef16fe96baeda0c78282b980"
-		},
-		{
-			"ImportPath": "github.com/gorilla/mux",
-			"Rev": "270c42505a11c779b5a5aaecfa5ec717adac996e"
+			"Rev": "f56de33226d694c30664f17e7b8d9cbfe8291dac"
 		}
 	]
 }

@@ -9,12 +9,11 @@ import (
 	"os"
 	"path"
 
-	pflag "github.com/coreos/pkg/flag"
+	"github.com/coreos/pkg/flagutil"
 	"github.com/coreos/pkg/log"
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
-	"github.com/coreos-inc/bridge/proxy"
 	"github.com/coreos-inc/bridge/server"
 )
 
@@ -34,7 +33,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := pflag.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
+	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
@@ -72,17 +71,18 @@ func main() {
 		log.Fatalf("Error initializing etcd client: %v", err)
 	}
 
-	k8sproxy, err := proxy.NewK8sProxy(*k8sEndpoint, *k8sAPIVersion, "api/bridge/v1")
+	k8sURL, err := url.Parse(*k8sEndpoint)
 	if err != nil {
-		log.Fatalf("Error initializing k8s proxy: %v", err)
+		log.Fatalf("Unable to use k8s-endpoint flag: %v", err)
 	}
 
 	srv := &server.Server{
-		FleetClient: fleetClient,
-		EtcdClient:  etcdClient,
-		K8sProxy:    k8sproxy,
-		PublicDir:   *publicDir,
-		Templates:   tpls,
+		FleetClient:   fleetClient,
+		EtcdClient:    etcdClient,
+		K8sEndpoint:   k8sURL,
+		K8sAPIVersion: *k8sAPIVersion,
+		PublicDir:     *publicDir,
+		Templates:     tpls,
 	}
 
 	httpsrv := &http.Server{

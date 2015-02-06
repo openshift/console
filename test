@@ -14,8 +14,8 @@ COVER=${COVER:-"-cover"}
 
 source ./build
 
-TESTABLE=""
-FORMATTABLE="$TESTABLE cmd/bridge etcd fleet proxy server version"
+TESTABLE="server"
+FORMATTABLE="$TESTABLE cmd/bridge etcd fleet version"
 
 # user has not provided PKG override
 if [ -z "$PKG" ]; then
@@ -37,7 +37,7 @@ split=(${TEST// / })
 TEST=${split[@]/#/github.com/coreos-inc/bridge/}
 
 echo "Running tests..."
-#godep go test ${COVER} $@ ${TEST}
+godep go test ${COVER} $@ ${TEST}
 
 echo "Checking gofmt..."
 fmtRes=$(gofmt -l $FMT)
@@ -47,10 +47,10 @@ if [ -n "${fmtRes}" ]; then
 fi
 
 #echo "Checking govet..."
-#vetRes=$(go vet $TEST)
-#if [ -n "${vetRes}" ]; then
-	#echo -e "govet checking failed:\n${vetRes}"
-	#exit 255
-#fi
+vetRes=$(go vet $TEST)
+if [ -n "${vetRes}" ]; then
+        echo -e "govet checking failed:\n${vetRes}"
+        exit 255
+fi
 
 echo "Success"
