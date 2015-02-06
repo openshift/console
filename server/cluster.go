@@ -4,9 +4,8 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"path"
 	"sync"
-
-	"github.com/gorilla/mux"
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
@@ -27,13 +26,13 @@ type ClusterService struct {
 	etcdClient  *etcd.Client
 }
 
-func NewClusterService(router *mux.Router, etcdClient *etcd.Client, fleetClient *fleet.Client) (*ClusterService, error) {
+func NewClusterService(prefix string, mux *http.ServeMux, etcdClient *etcd.Client, fleetClient *fleet.Client) (*ClusterService, error) {
 	s := &ClusterService{
 		fleetClient: fleetClient,
 		etcdClient:  etcdClient,
 	}
-	router.HandleFunc("/cluster/status/units", s.GetUnits).Methods("GET")
-	router.HandleFunc("/cluster/status/etcd", s.GetEtcdState).Methods("GET")
+	mux.HandleFunc(path.Join(prefix, "/cluster/status/units"), s.GetUnits)
+	mux.HandleFunc(path.Join(prefix, "/cluster/status/etcd"), s.GetEtcdState)
 	return s, nil
 }
 

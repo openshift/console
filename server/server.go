@@ -4,24 +4,15 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
-	"github.com/coreos-inc/bridge/proxy"
-	"github.com/gorilla/mux"
 )
 
 const (
-	staticPrefix          = "/static"
-	APIVersion            = "v1"
+	BridgeAPIVersion      = "v1"
 	IndexPageTemplateName = "index.html"
-)
-
-var (
-	indexTemplate *template.Template
-
-	// TODO: remove this and pass to each service
-	k8sproxy *proxy.K8sProxy
 )
 
 type jsGlobals struct {
@@ -29,46 +20,59 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	FleetClient *fleet.Client
-	EtcdClient  *etcd.Client
-	K8sProxy    *proxy.K8sProxy
-	PublicDir   string
-	Templates   *template.Template
+	FleetClient   *fleet.Client
+	EtcdClient    *etcd.Client
+	K8sEndpoint   *url.URL
+	K8sAPIVersion string
+	PublicDir     string
+	Templates     *template.Template
 }
 
 func (s *Server) HTTPHandler() http.Handler {
-	r := mux.NewRouter()
+	mux := http.NewServeMux()
 
-	// Simple static file server for requests containing static prefix.
-	r.PathPrefix(staticPrefix).Handler(http.StripPrefix(staticPrefix, http.FileServer(http.Dir(s.PublicDir))))
+	mux.Handle("/api/kubernetes/", http.StripPrefix("/api/kubernetes/", s.k8sHandler()))
 
-	k8sproxy = s.K8sProxy
-
-	apiBasePath := fmt.Sprintf("/api/bridge/%s", APIVersion)
-	ar := r.PathPrefix(apiBasePath).Subrouter()
-	registerDiscovery(ar)
-	registerUsers(ar)
-	registerPods(ar)
-	registerControllers(ar)
-	registerServices(ar)
-	registerMinions(ar)
-	_, err := NewClusterService(ar, s.EtcdClient, s.FleetClient)
+	bridgePrefix := fmt.Sprintf("/api/bridge/%s/", BridgeAPIVersion)
+	registerDiscovery(bridgePrefix, mux)
+	_, err := NewClusterService(bridgePrefix, mux, s.EtcdClient, s.FleetClient)
 	if err != nil {
 		panic(err)
 	}
 
-	// Serve index page for all other requests.
-	r.HandleFunc("/{path:.*}", s.IndexHandler)
+	// Respond with 404 for any other API rquests.
+	mux.HandleFunc("/api/", notFoundHandler)
 
-	return http.Handler(r)
+	// Serve all static files from public dir.
+	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(s.PublicDir)))
+	mux.Handle("/static/", staticHandler)
+
+	// Serve index page for anything else.
+	mux.HandleFunc("/", s.indexHandler)
+
+	return http.Handler(mux)
 }
 
-func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	jsg := &jsGlobals{
-		K8sVersion: s.K8sProxy.Version(),
-	}
+func (s *Server) k8sHandler() http.Handler {
+	t := *s.K8sEndpoint
+	t.Path = "/api"
+	proxy := newProxy(proxyConfig{
+		Target:          t,
+		HeaderBlacklist: []string{"Cookie"},
+	})
+	return proxy
+}
 
+func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
+	jsg := &jsGlobals{
+		K8sVersion: s.K8sAPIVersion,
+	}
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write([]byte("not found"))
 }
