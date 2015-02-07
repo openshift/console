@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('RegistriesCtrl', function(_, $scope) {
+.controller('RegistriesCtrl', function() {
   'use strict';
 
 });

@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('UsersCtrl', function(_, $scope) {
+.controller('UsersCtrl', function() {
   'use strict';
 
 });

@@ -1,9 +1,7 @@
 {
-
   "env": {
     "browser": true,
   },
-
   "rules": {
     "camelcase": 2,
     "curly": [2, "all"],
@@ -13,16 +11,25 @@
     "guard-for-in": 2,
     "wrap-iife": [2, "outside"],
 
+    "max-len": [1, 120],
     "no-comma-dangle": 0,
     "no-underscore-dangle": 0,
     "consistent-return": 0,
-
     "no-use-before-define": 0,
     "no-global-strict": 0
+    "no-console":1,
+    "no-alert":1,
+    "no-debugger":1,
   },
-
   "globals": {
-    "angular": true
+    "angular": true,
+    "inject": true,
+    "module": true,
+    "describe": true,
+    "spyOn": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "expect": true,
+    "it": true
   }
-
 }

@@ -60,7 +60,7 @@ angular.module('app').directive('coLabelInput', function(_, $timeout) {
         $scope.labels = objectify(arr);
       });
     },
-    link: function(scope, elem, attrs, controller) {
+    link: function(scope, elem, attrs) {
       if (attrs.autofocus === 'true') {
         $timeout(function() {
           elem.find('input').focus();

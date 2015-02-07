@@ -61,7 +61,7 @@ gulp.task('sass', function () {
     .pipe(gulp.dest('./public/dist'));
 });
 
-gulp.task('js-quality', function() {
+gulp.task('lint', function() {
   return gulp.src(jsSrc)
     .pipe(eslint())
     .pipe(eslint.format());
@@ -155,16 +155,16 @@ gulp.task('html', ['sha'], function() {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['js-quality', 'sass', 'templates'], function() {
+gulp.task('dev', ['lint', 'sass', 'templates'], function() {
   gulp.watch(templateSrc, ['templates']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['sass']);
-  gulp.watch(jsSrc, ['js-quality']);
+  gulp.watch(jsSrc, ['lint']);
 });
 
 gulp.task('default', function(cb) {
   // Run in order.
   runSequence(
-    ['clean', 'js-quality'],
+    ['clean', 'lint'],
     ['js-package', 'css-build', 'html'],
     'clean-package',
     cb);
