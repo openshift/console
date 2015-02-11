@@ -1,9 +1,9 @@
 angular.module('app')
 
-.directive('coLabel', function($interpolate, LabelSvc) {
+.directive('coLabel', function($interpolate, k8s) {
   'use strict';
 
-  var linkTemplate = $interpolate('/search?type={{type}}&q={{query}}');
+  var linkTemplate = $interpolate('/search?kind={{kind}}&q={{query}}');
 
   return {
     templateUrl: '/static/module/label/label.html',
@@ -15,14 +15,14 @@ angular.module('app')
       labelObj = {};
       labelObj[attrs.key] = attrs.value;
       ref = linkTemplate({
-        type: attrs.type,
-        query: LabelSvc.linkEncode(labelObj),
+        kind: attrs.kind,
+        query: k8s.labels.linkEncode(labelObj),
       });
 
       linkEl = el.find('.co-m-label__link');
       linkEl.attr('href', ref);
 
-      el.addClass('co-m-label--' + attrs.type);
+      el.addClass('co-m-label--' + attrs.kind);
       if (attrs.selector) {
         el.addClass('co-m-label--selector');
         linkEl.prepend('<i class="co-m-label__icon fa fa-search"></i>');
@@ -45,7 +45,8 @@ angular.module('app')
     restrict: 'E',
     replace: true,
     scope: {
-      type: '@',
+      // kind id
+      kind: '@',
       selector: '@',
       labels: '='
     }

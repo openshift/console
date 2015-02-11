@@ -16,10 +16,10 @@
 
         <div class="row co-m-form-row">
           <div class="col-sm-2">
-            <label for="input-pod-id" class="control-label">Pod Id:</label>
+            <label for="input-pod-name" class="control-label">Pod Id:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="pod.id" type="text" class="form-control" required id="input-pod-id"/>
+            <input ng-model="pod.metadata.name" type="text" class="form-control" required id="input-pod-name"/>
           </div>
         </div>
         <div class="row co-m-form-row">
@@ -27,7 +27,7 @@
             <label class="control-label">Pod Labels:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="pod.labels" type="pod"></co-label-input>
+            <co-label-input ng-model="pod.metadata.labels" kind="pod"></co-label-input>
             <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
           </div>
         </div>

@@ -10,27 +10,27 @@
           <co-label-input
               autofocus="true"
               ng-model="fields.query"
-              type="{{fields.entityType}}"></co-label-input>
+              kind="{{fields.selectedKindId}}"></co-label-input>
         </div>
         <label class="control-label">Filter:</label>
         <div class="co-type-selector">
-          <a href="#" ng-click="changeType('service')">
-            <input name="entityType"
-                ng-checked="fields.entityType == 'service'"
+          <a href="#" ng-click="changeKind(kinds.SERVICE.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.SERVICE.id"
                 type="radio"/>
-            Services Only
+            {{kinds.SERVICE.labelPlural}}
           </a>
-          <a href="#" ng-click="changeType('controller')">
-            <input name="entityType"
-                ng-checked="fields.entityType == 'controller'"
+          <a href="#" ng-click="changeKind(kinds.REPLICATIONCONTROLLER.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.REPLICATIONCONTROLLER.id"
                 type="radio"/>
-            Controllers Only
+            {{kinds.REPLICATIONCONTROLLER.labelPlural}}
           </a>
-          <a href="#" ng-click="changeType('pod')">
-            <input name="entityType"
-                ng-checked="fields.entityType == 'pod'"
+          <a href="#" ng-click="changeKind(kinds.POD.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.POD.id"
                 type="radio"/>
-            Pods Only
+            {{kinds.POD.labelPlural}}
           </a>
         </div>
       </form>
@@ -43,12 +43,12 @@
           <div class="col-sm-3">ID</div>
           <div class="col-sm-4">Labels</div>
         </div>
-        <div class="row" ng-repeat="r in results track by (fields.entityType + r.id)">
+        <div class="row" ng-repeat="r in results track by r.metadata.uid">
           <div class="col-sm-3">
-            <a ng-href="/{{getEntityPath(fields.entityType)}}/{{r.id}}" ng-bind="r.id"></a>
+            <a ng-href="/{{getResourceLink(r)}}" ng-bind="r.metadata.name"></a>
           </div>
           <div class="col-sm-4">
-            <co-label-list type="{{fields.entityType}}" labels="r.labels"></co-label-list>
+            <co-label-list kind="{{fields.selectedKindId}}" labels="r.metadata.labels"></co-label-list>
           </div>
         </div>
 

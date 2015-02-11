@@ -1,14 +1,14 @@
 angular.module('app')
 .controller('ConfigurePortsCtrl', function(_, $scope, $rootScope, $controller,
-      $modalInstance, container, PodsSvc) {
+      $modalInstance, container, k8s) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
     $scope: $rootScope.$new(),
     emptyCheck: function(p) {
-      return _.isNull(p.hostPort) || _.isNull(p.containerPort) || _.isEmpty(p.name);
+      return _.isNull(p.containerPort) || _.isEmpty(p.name);
     },
-    getEmptyItem: PodsSvc.getEmptyPort,
+    getEmptyItem: k8s.pods.emptyPort,
   });
 
   $scope.initPorts = function(ports) {

@@ -1,6 +1,6 @@
 angular.module('app')
 .controller('ConfigureVolumesCtrl', function(_, $scope, $modalInstance, $controller,
-      pod, arraySvc, PodsSvc, $rootScope) {
+      pod, arraySvc, k8s, $rootScope) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
@@ -10,7 +10,7 @@ angular.module('app')
           _.isEmpty(v.name);
     },
     getEmptyItem: function() {
-      var v = PodsSvc.getEmptyVolume();
+      var v = k8s.pods.getEmptyVolume();
       // Just a placeholder for the form with default value.
       v.type = 'host';
       return v;

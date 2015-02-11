@@ -1,12 +1,12 @@
 angular.module('app')
-.controller('ServiceCtrl', function($scope, $routeParams, ServicesSvc, PodsSvc) {
+.controller('ServiceCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  ServicesSvc.get({ id: $routeParams.id }).then(function(result) {
-    $scope.service = result.data;
-    PodsSvc.list({ labels: $scope.service.selector })
-      .then(function(result) {
-        $scope.pods = result.data.items;
+  k8s.services.get($routeParams.name).then(function(service) {
+    $scope.service = service;
+    k8s.pods.list({ labels: service.selector })
+      .then(function(pods) {
+        $scope.pods = pods;
       });
   });
 

@@ -1,10 +1,10 @@
 angular.module('app')
-.controller('MachineCtrl', function($scope, $routeParams, MachinesSvc) {
+.controller('MachineCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  MachinesSvc.get({ id: $routeParams.id }).then(function(result) {
-    $scope.machine = result.data;
-    MachinesSvc.getPods($scope.machine).then(function(pods) {
+  k8s.nodes.get($routeParams.name).then(function(node) {
+    $scope.machine = node;
+    k8s.pods.listByNode($scope.machine).then(function(pods) {
       $scope.machine.pods = pods;
     });
   });

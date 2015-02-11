@@ -38,7 +38,7 @@
             <label class="control-label">Service Labels:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="service.labels" type="service"></co-label-input>
+            <co-label-input ng-model="service.labels" kind="service"></co-label-input>
             <small class="text-muted">Labels used to identify this service. Use a label like app=frontend to group related services.</small>
           </div>
         </div>
@@ -59,7 +59,7 @@
             <label class="control-label">Label Query:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="service.selector" type="pod" selector="true"></co-label-input>
+            <co-label-input ng-model="service.selector" kind="pod" selector="true"></co-label-input>
             <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
           </div>
         </div>

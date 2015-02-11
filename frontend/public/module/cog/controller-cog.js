@@ -4,7 +4,7 @@
  */
 
 angular.module('app')
-.directive('coControllerCog', function(ControllersSvc, ModalLauncherSvc) {
+.directive('coControllerCog', function(k8s, ModalLauncherSvc) {
   'use strict';
 
   return {
@@ -19,7 +19,7 @@ angular.module('app')
 
       function getDeleteFn() {
         return function() {
-          return ControllersSvc.delete($scope.controller);
+          return k8s.replicationController.delete($scope.controller);
         };
       }
 

@@ -1,21 +1,23 @@
 angular.module('app')
-.controller('ControllersCtrl', function($scope, ControllersSvc, PodsSvc, arraySvc, EVENTS) {
+.controller('ControllersCtrl', function($scope, k8s, arraySvc) {
   'use strict';
 
-  ControllersSvc.list().then(function(result) {
-    $scope.controllers = result.data.items;
+  k8s.replicationControllers.list().then(function(rcs) {
+    $scope.controllers = rcs;
   });
 
-  $scope.getPods = function(controllerId) {
-    var ctrl = ControllersSvc.find($scope.controllers, controllerId);
-    PodsSvc.list({ labels: ctrl.desiredState.replicaSelector })
-      .then(function(result) {
-        ctrl.pods = result.data.items;
+  $scope.getPods = function(controllerName) {
+    var ctrl = k8s.util.findByName($scope.controllers, controllerName);
+    k8s.pods.list({ labels: ctrl.spec.replicaSelector })
+      .then(function(pods) {
+        ctrl.pods = pods;
       });
   };
 
-  $scope.$on(EVENTS.CONTROLLER_DELETE, function(e, service) {
-    arraySvc.remove($scope.controllers, service);
+  $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
+    if (data.type === 'replicationController') {
+      arraySvc.remove($scope.controllers, data.resource);
+    }
   });
 
 });

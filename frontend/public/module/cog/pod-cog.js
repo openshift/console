@@ -3,7 +3,7 @@
  * Cog menu directive for pods.
  */
 
-angular.module('app').directive('coPodCog', function(PodsSvc, ModalLauncherSvc) {
+angular.module('app').directive('coPodCog', function(k8s, ModalLauncherSvc) {
   'use strict';
 
   return {
@@ -18,7 +18,7 @@ angular.module('app').directive('coPodCog', function(PodsSvc, ModalLauncherSvc) 
 
       function getDeleteFn() {
         return function() {
-          return PodsSvc.delete($scope.pod);
+          return k8s.pods.delete($scope.pod);
         };
       }
 

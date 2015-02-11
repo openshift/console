@@ -1,14 +1,9 @@
 angular.module('app')
-.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, PodsSvc,
+.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s,
       ModalLauncherSvc) {
-
   'use strict';
 
-  $scope.pod = PodsSvc.getEmptyPod();
-
-  $scope.$watch('pod.id', function(id) {
-    $scope.pod.desiredState.manifest.id = id;
-  });
+  $scope.pod = k8s.pods.getEmpty();
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {
@@ -21,7 +16,7 @@ angular.module('app')
   };
 
   $scope.save = function() {
-    $scope.requestPromise = PodsSvc.create($scope.pod);
+    $scope.requestPromise = k8s.pods.create($scope.pod);
     $scope.requestPromise.then(function() {
       $location.path('/pods');
     });
@@ -31,6 +26,5 @@ angular.module('app')
 
 .controller('NewPodFormCtrl', function($scope) {
   'use strict';
-
   $scope.submit = $scope.save;
 });

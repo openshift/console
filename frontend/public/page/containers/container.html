@@ -1,7 +1,7 @@
 <div class="co-p-container">
 
-  <co-nav-title title="{{container.name}}">
-    <a ng-href="/pods/{{pod.id}}" class="co-m-primary-action">
+  <co-nav-title title="{{container.spec.name}}">
+    <a ng-href="/pods/{{pod.metadata.name}}" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pod</a>
   </co-nav-title>
 
@@ -9,7 +9,7 @@
 
     <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
       <li class="co-m-vert-nav__menu-item">
-        <a ng-href="/containers/{{pod.id}}/{{container.name}}">
+        <a ng-href="/containers/{{pod.metadata.name}}/{{container.spec.name}}">
           <i class="fa fa-dashboard"></i>
         </a>
       </li>
@@ -24,21 +24,17 @@
             <h1 class="co-section-title">Container Details</h1>
             <dl>
               <dt>State</dt>
-              <dd ng-bind="getState()"></dd>
+              <dd ng-bind="containerState.label"></dd>
               <dt>Id</dt>
               <dd>
-                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{container.Id}}" readonly />
+                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{container.containerID}}" readonly />
               </dd>
-              <dt>Created</dt>
-              <dd ng-bind="container.Created | customDate"></dd>
+              <dt>Restart Count</dt>
+              <dd ng-bind="container.restartCount"></dd>
               <dt>Started</dt>
-              <dd ng-bind="container.State.StartedAt | customDate"></dd>
+              <dd ng-bind="containerState.startedAt | customDate"></dd>
               <dt>Finished</dt>
-              <dd ng-bind="container.State.FinishedAt | customDate"></dd>
-              <dt>Raw Data</dt>
-              <dd>
-                <a href="#" ng-click="openJsonModal()" class="co-m-modal-link">Inspect Container</a>
-              </dd>
+              <dd ng-bind="containerState.finishedAt | customDate"></dd>
             </dl>
           </div><!--/col-->
 
@@ -53,12 +49,8 @@
               <dd ng-bind="container.image | containerTag"></dd>
               <dt>Command</dt>
               <dd>
-                <code ng-show="container.Config.Cmd" ng-bind="container.Config.Cmd | join:' '"></code>
-                <span ng-hide="container.Config.Cmd" ng-bind="CONST.placeholderText"></span>
-              </dd>
-              <dt>Entrypoint</dt>
-              <dd>
-                <code ng-bind="container.Config.Entrypoint | join:' '"></code>
+                <code ng-show="container.spec.command" ng-bind="container.spec.command | join:' '"></code>
+                <span ng-hide="container.spec.command" ng-bind="CONST.placeholderText"></span>
               </dd>
             </dl>
           </div><!--/col-->
@@ -68,10 +60,10 @@
             <dl>
               <dt>Machine</dt>
               <dd>
-                <a ng-href="/machines/{{pod.currentState.host}}" ng-bind-template="{{pod.currentState.host}} ({{pod.currentState.hostIP}})"></a>
+                <a ng-href="/machines/{{pod.status.host}}" ng-bind="pod.status.host"></a>
               </dd>
               <dt>Pod IP</dt>
-              <dd ng-bind="pod.currentState.podIP"></dd>
+              <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
             </dl>
           </div><!--/col-->
 

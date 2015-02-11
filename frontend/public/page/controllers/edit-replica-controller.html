@@ -30,7 +30,7 @@
               <label class="control-label">Controller Labels:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <co-label-input ng-model="replicaController.labels" type="controller"></co-label-input>
+              <co-label-input ng-model="replicaController.labels" kind="controller"></co-label-input>
               <small class="text-muted">Labels for this controller.</small>
             </div>
           </div>
@@ -39,7 +39,7 @@
               <label class="control-label">Label Query:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <co-label-input ng-model="replicaController.desiredState.replicaSelector" type="pod" selector="true"></co-label-input>
+              <co-label-input ng-model="replicaController.desiredState.replicaSelector" kind="pod" selector="true"></co-label-input>
               <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
             </div>
           </div>
@@ -63,7 +63,7 @@
               <label class="control-label">Pod Labels:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <co-label-input ng-model="replicaController.desiredState.podTemplate.labels" type="pod"></co-label-input>
+              <co-label-input ng-model="replicaController.desiredState.podTemplate.labels" kind="pod"></co-label-input>
               <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
             </div>
           </div>

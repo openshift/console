@@ -1,15 +1,13 @@
 angular.module('app')
-.controller('PodCtrl', function($scope, $routeParams, PodsSvc) {
+.controller('PodCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  PodsSvc.get({ id: $routeParams.id }).then(function(result) {
-    $scope.pod = result.data;
+  k8s.pods.get($routeParams.name).then(function(pod) {
+    $scope.pod = pod;
   });
 
-  $scope.getContainerState = function(name) {
-    if ($scope.pod.currentState && $scope.pod.currentState.info) { 
-      return $scope.pod.currentState.info[name];
-    }
+  $scope.getContainerState = function(container) {
+    return k8s.docker.getState(container);
   };
 
 });

@@ -58,22 +58,27 @@
 
     <!-- build:js -->
     <script src="/static/dist/templates.js"></script>
-    <!-- modules -->
+    <!-- module definitions -->
+    <script src="/static/modules.js"></script>
+    <!-- k8s module -->
+    <script src="/static/module/k8s/k8s.js"></script>
+    <script src="/static/module/k8s/replication-controllers.js"></script>
+    <script src="/static/module/k8s/docker.js"></script>
+    <script src="/static/module/k8s/enum.js"></script>
+    <script src="/static/module/k8s/events.js"></script>
+    <script src="/static/module/k8s/labels.js"></script>
+    <script src="/static/module/k8s/pods.js"></script>
+    <script src="/static/module/k8s/resource.js"></script>
+    <script src="/static/module/k8s/services.js"></script>
+    <script src="/static/module/k8s/util.js"></script>
+    <!-- app bootstrap -->
     <script src="/static/app.js"></script>
     <script src="/static/const.js"></script>
     <script src="/static/events.js"></script>
+    <!-- app services -->
     <script src="/static/module/api/client-loader-svc.js"></script>
-    <script src="/static/module/api/controllers-svc.js"></script>
-    <script src="/static/module/api/services-svc.js"></script>
-    <script src="/static/module/api/pods-svc.js"></script>
-    <script src="/static/module/api/machines-svc.js"></script>
     <script src="/static/module/api/cluster-svc.js"></script>
-    <script src="/static/module/api/search-svc.js"></script>
-    <script src="/static/module/label/label-svc.js"></script>
-    <script src="/static/module/cog/service-cog.js"></script>
-    <script src="/static/module/cog/controller-cog.js"></script>
-    <script src="/static/module/cog/pod-cog.js"></script>
-    <script src="/static/module/label/label-input.js"></script>
+    <script src="/static/module/flag-svc.js"></script>
     <!-- filters -->
     <script src="/static/module/filter/custom-date.js"></script>
     <script src="/static/module/filter/container-image.js"></script>
@@ -81,13 +86,17 @@
     <script src="/static/module/filter/join.js"></script>
     <script src="/static/module/filter/split.js"></script>
     <!-- directive modules -->
-    <script src="/static/module/label/label.js"></script>
-    <script src="/static/module/pod-list/pod-list.js"></script>
-    <script src="/static/module/entity-icon/entity-icon.js"></script>
+    <script src="/static/module/cog/service-cog.js"></script>
+    <script src="/static/module/cog/controller-cog.js"></script>
+    <script src="/static/module/cog/pod-cog.js"></script>
     <script src="/static/module/container/container-input.js"></script>
+    <script src="/static/module/entity-icon/entity-icon.js"></script>
     <script src="/static/module/icons/status.js"></script>
+    <script src="/static/module/label/label.js"></script>
+    <script src="/static/module/label/label-input.js"></script>
     <script src="/static/module/number-spinner/number-spinner.js"></script>
-    <!-- pages -->
+    <script src="/static/module/pod-list/pod-list.js"></script>
+    <!-- page controllers -->
     <script src="/static/page/cluster/cluster-status-ctrl.js"></script>
     <script src="/static/page/services/services-ctrl.js"></script>
     <script src="/static/page/services/service-ctrl.js"></script>

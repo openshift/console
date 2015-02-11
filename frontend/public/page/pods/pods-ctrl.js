@@ -1,9 +1,9 @@
 angular.module('app')
-.controller('PodsCtrl', function($scope, PodsSvc) {
+.controller('PodsCtrl', function($scope, k8s) {
   'use strict';
 
-  PodsSvc.list().then(function(result) {
-    $scope.pods = result.data.items;
+  k8s.pods.list().then(function(result) {
+    $scope.pods = result;
   });
 
 });

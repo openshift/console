@@ -21,12 +21,14 @@
 
       <div class="co-m-table-grid--bordered">
         <div class="row co-m-table-grid__head">
-          <div class="col-lg-2">Machine ID</div>
+          <div class="col-lg-6">Machine ID</div>
+          <div class="col-lg-6">Host IP</div>
         </div>
         <div class="row co-m-table-grid--clickable" ng-repeat-start="m in machines" ng-click="open = !open; getPods(m)">
           <div class="col-lg-6">
-            <a ng-href="/machines/{{m.id}}" ng-bind="m.id"></a>
+            <a ng-href="/machines/{{m.metadata.name}}" ng-bind="m.metadata.name"></a>
           </div>
+          <div class="col-lg-6" ng-bind="m.status.hostIP"></div>
         </div>
         <div ng-show="open" ng-repeat-end>
           <co-pod-list pods="m.pods"></co-pod-list>

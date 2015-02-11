@@ -17,7 +17,7 @@
           <input type="text" class="form-control" placeholder="Filter services by label query..." />
         </div>
       </div>
-      
+
     </div>
 
     <div class="co-m-pane__body">
@@ -29,19 +29,19 @@
           <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
           <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Service Port</div>
         </div>
-        <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services track by s.id" ng-click="open = !open; getPods(s.id)">
+        <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services track by s.metadata.name" ng-click="open = !open; getPods(s.metadata.name)">
           <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
             <co-service-cog service="s"></co-service-cog>
             <co-entity-icon type="service"></co-entity-icon>
-            <a ng-href="/services/{{s.id}}" ng-bind="s.id"></a>
+            <a ng-href="/services/{{s.metadata.name}}" ng-bind="s.metadata.name"></a>
           </div>
           <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
-            <co-label-list type="service" labels="s.labels"></co-label-list>
+            <co-label-list kind="service" labels="s.metadata.labels"></co-label-list>
           </div>
           <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">
-            <co-label-list type="pod" labels="s.selector" selector="true"></co-label-list>
+            <co-label-list kind="pod" labels="s.spec.selector" selector="true"></co-label-list>
           </div>
-          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="s.port"></div>
+          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="s.spec.port"></div>
         </div>
         <div ng-show="open" ng-repeat-end>
           <co-pod-list pods="s.pods"></co-pod-list>

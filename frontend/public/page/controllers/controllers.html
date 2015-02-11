@@ -37,11 +37,11 @@
             <a ng-href="/replica-controllers/{{c.id}}" ng-bind="c.id"></a>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">
-            <co-label-list type="controller" labels="c.labels"></co-label-list>
+            <co-label-list kind="controller" labels="c.labels"></co-label-list>
           </div>
           <div class="col-lg-2 col-md-2 col-sm-4 hidden-xs" ng-bind-template="{{c.currentState.replicas}} of {{c.desiredState.replicas}} pods"></div>
           <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
-            <co-label-list type="pod" selector="true" labels="c.desiredState.replicaSelector"></co-label-list>
+            <co-label-list kind="pod" selector="true" labels="c.desiredState.replicaSelector"></co-label-list>
           </div>
           <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="c.desiredState.replicas"></div>
         </div>

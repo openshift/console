@@ -1,9 +1,9 @@
 angular.module('app')
-.controller('NewReplicaControllerCtrl', function(_, $scope, $location, $routeParams, ControllersSvc,
+.controller('NewReplicaControllerCtrl', function(_, $scope, $location, $routeParams, k8s,
       ModalLauncherSvc) {
   'use strict';
 
-  $scope.controller = ControllersSvc.getEmptyReplicaController();
+  $scope.controller = k8s.replicationControllers.getEmpty();
   $scope.podTemplate = $scope.controller.desiredState.podTemplate;
 
   $scope.openVolumesModal = function() {
@@ -17,7 +17,7 @@ angular.module('app')
   };
 
   $scope.save = function() {
-    $scope.requestPromise = ControllersSvc.create($scope.controller);
+    $scope.requestPromise = k8s.replicationControllers.create($scope.controller);
     $scope.requestPromise.then(function() {
       $location.path('/controllers');
     });

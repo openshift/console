@@ -35,19 +35,19 @@ angular.module('app').directive('coLabelInput', function(_, $timeout) {
     scope: {
       // model to bind input to
       labels: '=ngModel',
-      // 'service', 'pod', 'controller'
-      type: '@',
+      // k8s kind enum id: 'service', 'pod', 'replicationcontroller'
+      kind: '@',
       // 'true', 'false' (default)
       selector: '@',
       // Optionally auto-focus after render.
       autofocus: '@',
     },
     controller: function($scope, $attrs) {
-      if ($scope.type) {
-        $scope.cssClass = 'co-m-label-input--' + $scope.type;
+      if ($scope.kind) {
+        $scope.cssClass = 'co-m-label-input--' + $scope.kind;
       }
 
-      $attrs.$observe('type', function(newVal) {
+      $attrs.$observe('kind', function(newVal) {
         $attrs.$removeClass('co-m-label-input--service co-m-label-input--controller co-m-label-input--pod');
         $attrs.$addClass('co-m-label-input--' + newVal);
       });
