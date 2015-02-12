@@ -30,7 +30,7 @@
             <label for="input-service-id" class="control-label">Service Id:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="service.id" type="text" class="form-control" required id="input-service-id"/>
+            <input ng-model="service.metadata.name" type="text" class="form-control" required id="input-service-id"/>
           </div>
         </div>
         <div class="row co-m-form-row">
@@ -38,7 +38,7 @@
             <label class="control-label">Service Labels:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="service.labels" kind="service"></co-label-input>
+            <co-label-input ng-model="service.metadata.labels" kind="service"></co-label-input>
             <small class="text-muted">Labels used to identify this service. Use a label like app=frontend to group related services.</small>
           </div>
         </div>
@@ -47,20 +47,31 @@
             <label for="input-service-port" class="control-label">Service Port:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="service.port" type="number" required class="form-control" id="input-service-port"/>
+            <input ng-model="service.spec.port" type="number" required class="form-control" id="input-service-port"/>
             <small class="text-muted">
               Users of this service can communicate from any machine in the cluster over this port.
-              It is exposed as an environment variable (SERVICE_{{service.id || 'service-id'}}_{{service.port || 'PORT'}}) in all new containers.
+              It is exposed as an environment variable (SERVICE_{{service.metadata.name || 'service-id'}}_{{service.spec.port || 'PORT'}}) in all new containers.
             </small>
           </div>
         </div>
         <div class="row co-m-form-row">
           <div class="col-sm-2">
-            <label class="control-label">Label Query:</label>
+            <label class="control-label">Pod Label Selector:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="service.selector" kind="pod" selector="true"></co-label-input>
+            <co-label-input ng-model="service.spec.selector" kind="pod" selector="true"></co-label-input>
             <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
+          </div>
+        </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label for="input-service-port" class="control-label">Container Port:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <input ng-model="service.spec.containerPort" type="number" required class="form-control" id="input-container-port"/>
+            <small class="text-muted">
+              Select the port of the pod that will respond to traffic for this service.
+            </small>
           </div>
         </div>
         <div class="row co-m-form-row">

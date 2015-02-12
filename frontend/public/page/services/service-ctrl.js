@@ -4,7 +4,10 @@ angular.module('app')
 
   k8s.services.get($routeParams.name).then(function(service) {
     $scope.service = service;
-    k8s.pods.list({ labels: service.selector })
+    if (!service.spec.selector) {
+      return;
+    }
+    k8s.pods.list({ labels: service.spec.selector })
       .then(function(pods) {
         $scope.pods = pods;
       });

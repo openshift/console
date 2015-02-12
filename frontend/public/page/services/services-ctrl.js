@@ -8,7 +8,10 @@ angular.module('app')
 
   $scope.getPods = function(serviceName) {
     var svc = k8s.util.findByName($scope.services, serviceName);
-    k8s.pods.list({ labels: svc.selector })
+    if (!svc.spec.selector) {
+      return;
+    }
+    k8s.pods.list({ labels: svc.spec.selector })
       .then(function(pods) {
         svc.pods = pods;
       });
