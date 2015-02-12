@@ -8,7 +8,7 @@ angular.module('app')
     emptyCheck: function(p) {
       return _.isNull(p.containerPort) || _.isEmpty(p.name);
     },
-    getEmptyItem: k8s.pods.emptyPort,
+    getEmptyItem: k8s.docker.getEmptyPort,
   });
 
   $scope.initPorts = function(ports) {

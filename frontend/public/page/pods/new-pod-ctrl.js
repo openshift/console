@@ -1,6 +1,5 @@
 angular.module('app')
-.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s,
-      ModalLauncherSvc) {
+.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 
   $scope.pod = k8s.pods.getEmpty();

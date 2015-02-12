@@ -16,23 +16,15 @@
 
           <div class="co-modal-table co-m-table-grid--bordered co-m-table-grid--compact co-m-table-grid--scroll">
             <div class="row co-m-table-grid__head">
-              <div class="col-sm-4">Name</div>
-              <div class="col-sm-3">Host Port</div>
-              <div class="col-sm-1"></div>
-              <div class="col-sm-3">Container Port</div>
+              <div class="col-sm-6">Name</div>
+              <div class="col-sm-5">Container Port</div>
               <div class="col-sm-1"></div>
             </div>
             <div class="row" ng-repeat="p in rowMgr.items">
-              <div class="col-sm-4">
+              <div class="col-sm-6">
                 <input ng-model="p.name" ng-focus="rowMgr.growIfLast($index)" class="form-control" type="text"/>
               </div>
-              <div class="col-sm-3">
-                <input ng-model="p.hostPort" ng-focus="rowMgr.growIfLast($index)" min="0" max="65535" class="form-control" type="number"/>
-              </div>
-              <div class="col-sm-1">
-                <i class="fa fa-arrow-right co-img-icon-gray co-m-form-row-icon"></i>
-              </div>
-              <div class="col-sm-3">
+              <div class="col-sm-5">
                 <input ng-model="p.containerPort" ng-focus="rowMgr.growIfLast($index)" min="0" max="65535" class="form-control" type="number"/>
               </div>
               <div class="col-sm-1">

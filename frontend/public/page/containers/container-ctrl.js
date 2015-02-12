@@ -4,9 +4,11 @@ angular.module('app')
 
   k8s.pods.get($routeParams.podName).then(function(pod) {
     $scope.pod = pod;
-    $scope.container = pod.status.info[$routeParams.name];
-    $scope.container.spec = _.findWhere(pod.spec.containers, { name: $routeParams.name });
-    $scope.containerState = k8s.docker.getState($scope.container);
+    $scope.container = _.findWhere(pod.spec.containers, { name: $routeParams.name });
+    if (pod.status && pod.status.info) {
+      $scope.container.info = pod.status.info[$routeParams.name];
+    }
+    $scope.containerState = k8s.docker.getState($scope.container.info);
   });
 
 });

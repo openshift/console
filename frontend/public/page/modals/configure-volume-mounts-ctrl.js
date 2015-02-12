@@ -1,6 +1,6 @@
 angular.module('app')
 .controller('ConfigureVolumeMountsCtrl', function(_, $scope, $rootScope,
-      $controller, $modalInstance, volumes, container, arraySvc, PodsSvc) {
+      $controller, $modalInstance, volumes, container, arraySvc, k8s) {
   'use strict';
 
   $scope.volumes = volumes;
@@ -10,7 +10,7 @@ angular.module('app')
     emptyCheck: function(v) {
       return _.isEmpty(v.name) || _.isEmpty(v.mountPath);
     },
-    getEmptyItem: PodsSvc.getEmptyVolumeMount,
+    getEmptyItem: k8s.docker.getEmptyVolumeMount,
   });
 
   $scope.initVolumeMounts = function(volumeMounts) {
@@ -30,7 +30,7 @@ angular.module('app')
   };
 
   $scope.getDropdownLabel = function(volume) {
-    return volume.name + ' (' + (volume.source.hostDir.path || 'empty') + ')';
+    return volume.name + ' (' + (volume.source.hostPath.path || 'empty') + ')';
   };
 
   $scope.save = function() {

@@ -36,7 +36,7 @@
             <label class="control-label">Pod Volumes:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="pod.desiredState.manifest.volumes.length || 0"></span> Volumes</a></div>
+            <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="pod.spec.volumes.length || 0"></span> Volumes</a></div>
             <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
           </div>
         </div>

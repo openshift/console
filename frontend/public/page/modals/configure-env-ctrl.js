@@ -1,6 +1,6 @@
 angular.module('app')
 .controller('ConfigureEnvCtrl', function(_, $scope, $modalInstance, $controller,
-      $rootScope, container, PodsSvc) {
+      $rootScope, container, k8s) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
@@ -8,7 +8,7 @@ angular.module('app')
     emptyCheck: function(e) {
       return _.isEmpty(e.name) || _.isEmpty(e.value);
     },
-    getEmptyItem: PodsSvc.getEmptyEnvVar,
+    getEmptyItem: k8s.docker.getEmptyEnvVar,
   });
 
   $scope.initEnvVars = function(envVars) {

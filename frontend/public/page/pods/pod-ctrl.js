@@ -6,8 +6,15 @@ angular.module('app')
     $scope.pod = pod;
   });
 
-  $scope.getContainerState = function(container) {
-    return k8s.docker.getState(container);
+  $scope.getContainerInfo = function(containerName) {
+    if ($scope.pod.status && $scope.pod.status.info) {
+      return $scope.pod.status.info[containerName];
+    }
+  };
+
+  $scope.getContainerState = function(containerName) {
+    var cinfo = $scope.getContainerInfo(containerName);
+    return k8s.docker.getState(cinfo);
   };
 
 });
