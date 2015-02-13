@@ -1,10 +1,10 @@
 /**
  * @fileoverview
- * Cog menu directive for controllers.
+ * Cog menu directive for replication controllers.
  */
 
 angular.module('app')
-.directive('coControllerCog', function(k8s, ModalLauncherSvc) {
+.directive('coReplicationcontrollerCog', function(k8s, ModalLauncherSvc) {
   'use strict';
 
   return {
@@ -12,14 +12,14 @@ angular.module('app')
     restrict: 'E',
     replace: true,
     scope: {
-      'controller': '='
+      'rc': '='
     },
     controller: function($scope) {
       var deregisterWatch;
 
       function getDeleteFn() {
         return function() {
-          return k8s.replicationController.delete($scope.controller);
+          return k8s.replicationcontroller.delete($scope.rc);
         };
       }
 
@@ -39,13 +39,13 @@ angular.module('app')
             weight: 300
           },
           {
-            label: 'Delete Controller...',
+            label: 'Delete Replication Controller...',
             weight: 400,
             callback: ModalLauncherSvc.open.bind(null, 'confirm', {
-              title: 'Delete Controller',
+              title: 'Delete Replication Controller',
               message: 'Are you sure you want to delete ' +
-                  $scope.controller.id + '?',
-              btnText: 'Delete Controller',
+                  $scope.rc.metadata.name + '?',
+              btnText: 'Delete Replication Controller',
               executeFn: getDeleteFn
             }),
           }
@@ -53,8 +53,8 @@ angular.module('app')
       }
 
       // Run once after app is populated.
-      deregisterWatch = $scope.$watch('controller.id', function() {
-        if ($scope.controller && $scope.controller.id) {
+      deregisterWatch = $scope.$watch('rc.metadata.name', function() {
+        if ($scope.rc && $scope.rc.metadata.name) {
           generateOptions();
           deregisterWatch();
         }

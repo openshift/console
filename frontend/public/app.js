@@ -71,24 +71,24 @@ angular.module('app', [
       templateUrl: '/static/page/services/service.html',
       title: 'Service',
     })
-    .when('/controllers', {
-      controller: 'ControllersCtrl',
-      templateUrl: '/static/page/controllers/controllers.html',
+    .when('/replicationcontrollers', {
+      controller: 'ReplicationcontrollersCtrl',
+      templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
       title: 'Controllers',
     })
-    .when('/replica-controllers/new', {
-      controller: 'NewReplicaControllerCtrl',
-      templateUrl: '/static/page/controllers/new-replica-controller.html',
+    .when('/replicationcontrollers/new', {
+      controller: 'NewReplicationcontrollerCtrl',
+      templateUrl: '/static/page/replicationcontrollers/new-replicationcontroller.html',
       title: 'New Replication Controller',
     })
-    .when('/replica-controllers/:name/edit', {
-      controller: 'EditReplicaControllerCtrl',
-      templateUrl: '/static/page/controllers/edit-replica-controller.html',
+    .when('/replicationcontrollers/:name/edit', {
+      controller: 'EditReplicationcontrollerCtrl',
+      templateUrl: '/static/page/replicationcontrollers/edit-replicationcontroller.html',
       title: 'Edit Replication Controller',
     })
-    .when('/replica-controllers/:name', {
-      controller: 'ReplicaControllerCtrl',
-      templateUrl: '/static/page/controllers/replica-controller.html',
+    .when('/replicationcontrollers/:name', {
+      controller: 'ReplicationcontrollerCtrl',
+      templateUrl: '/static/page/replicationcontrollers/replicationcontroller.html',
       title: 'Controller',
     })
     .when('/pods', {

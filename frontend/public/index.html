@@ -24,7 +24,7 @@
       <co-navbar ng-cloak>
         <ul class="nav navbar-nav">
           <co-navbar-link href="/services">Services</co-navbar-link>
-          <co-navbar-link href="/controllers">Controllers</co-navbar-link>
+          <co-navbar-link href="/replicationcontrollers">Replication Controllers</co-navbar-link>
           <co-navbar-link href="/pods">Pods</co-navbar-link>
           <co-navbar-link href="/machines">Machines</co-navbar-link>
           <co-navbar-dropdown ng-cloak text="More">
@@ -62,7 +62,7 @@
     <script src="/static/modules.js"></script>
     <!-- k8s module -->
     <script src="/static/module/k8s/k8s.js"></script>
-    <script src="/static/module/k8s/replication-controllers.js"></script>
+    <script src="/static/module/k8s/replicationcontrollers.js"></script>
     <script src="/static/module/k8s/docker.js"></script>
     <script src="/static/module/k8s/enum.js"></script>
     <script src="/static/module/k8s/events.js"></script>
@@ -87,7 +87,7 @@
     <script src="/static/module/filter/split.js"></script>
     <!-- directive modules -->
     <script src="/static/module/cog/service-cog.js"></script>
-    <script src="/static/module/cog/controller-cog.js"></script>
+    <script src="/static/module/cog/replicationcontroller-cog.js"></script>
     <script src="/static/module/cog/pod-cog.js"></script>
     <script src="/static/module/container/container-input.js"></script>
     <script src="/static/module/entity-icon/entity-icon.js"></script>
@@ -96,16 +96,16 @@
     <script src="/static/module/label/label-input.js"></script>
     <script src="/static/module/number-spinner/number-spinner.js"></script>
     <script src="/static/module/pod-list/pod-list.js"></script>
-    <!-- page controllers -->
+    <!-- page replication controllers -->
     <script src="/static/page/cluster/cluster-status-ctrl.js"></script>
     <script src="/static/page/services/services-ctrl.js"></script>
     <script src="/static/page/services/service-ctrl.js"></script>
     <script src="/static/page/services/new-service-ctrl.js"></script>
-    <script src="/static/page/controllers/controllers-ctrl.js"></script>
-    <script src="/static/page/controllers/replica-controller-ctrl.js"></script>
-    <script src="/static/page/controllers/new-replica-controller-ctrl.js"></script>
-    <script src="/static/page/controllers/edit-replica-controller-ctrl.js"></script>
-    <script src="/static/page/controllers/replica-controller-nav.js"></script>
+    <script src="/static/page/replicationcontrollers/replicationcontrollers-ctrl.js"></script>
+    <script src="/static/page/replicationcontrollers/replicationcontroller-ctrl.js"></script>
+    <script src="/static/page/replicationcontrollers/new-replicationcontroller-ctrl.js"></script>
+    <script src="/static/page/replicationcontrollers/edit-replicationcontroller-ctrl.js"></script>
+    <script src="/static/page/replicationcontrollers/replicationcontroller-nav.js"></script>
     <script src="/static/page/pods/pods-ctrl.js"></script>
     <script src="/static/page/pods/pod-ctrl.js"></script>
     <script src="/static/page/pods/new-pod-ctrl.js"></script>

@@ -1,8 +1,8 @@
 angular.module('app')
-.controller('ControllersCtrl', function($scope, k8s, arraySvc) {
+.controller('ReplicationcontrollersCtrl', function($scope, k8s, arraySvc) {
   'use strict';
 
-  k8s.replicationControllers.list().then(function(rcs) {
+  k8s.replicationcontrollers.list().then(function(rcs) {
     $scope.rcs = rcs;
   });
 

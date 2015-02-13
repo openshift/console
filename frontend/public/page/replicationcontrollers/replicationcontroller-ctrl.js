@@ -1,8 +1,8 @@
 angular.module('app')
-.controller('ReplicaControllerCtrl', function($scope, $routeParams, k8s) {
+.controller('ReplicationcontrollerCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  k8s.replicationControllers.get($routeParams.name).then(function(rc) {
+  k8s.replicationcontrollers.get($routeParams.name).then(function(rc) {
     $scope.rc = rc;
     k8s.pods.list({ labels: rc.spec.selector })
       .then(function(pods) {
