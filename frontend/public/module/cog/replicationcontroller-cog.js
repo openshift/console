@@ -19,7 +19,7 @@ angular.module('app')
 
       function getDeleteFn() {
         return function() {
-          return k8s.replicationcontroller.delete($scope.rc);
+          return k8s.replicationcontrollers.delete($scope.rc);
         };
       }
 
@@ -54,7 +54,7 @@ angular.module('app')
 
       // Run once after app is populated.
       deregisterWatch = $scope.$watch('rc.metadata.name', function() {
-        if ($scope.rc && $scope.rc.metadata.name) {
+        if ($scope.rc && $scope.rc.metadata && $scope.rc.metadata.name) {
           generateOptions();
           deregisterWatch();
         }
