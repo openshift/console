@@ -18,8 +18,8 @@ angular.module('app')
   };
 
   $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
-    if (data.type === 'service') {
-      arraySvc.remove($scope.services, data.resource);
+    if (data.kind === k8s.enum.Kind.SERVICE) {
+      arraySvc.remove($scope.services, data.original);
     }
   });
 
