@@ -3,20 +3,23 @@ angular.module('app')
   'use strict';
 
   k8s.replicationControllers.list().then(function(rcs) {
-    $scope.controllers = rcs;
+    $scope.rcs = rcs;
   });
 
   $scope.getPods = function(controllerName) {
-    var ctrl = k8s.util.findByName($scope.controllers, controllerName);
-    k8s.pods.list({ labels: ctrl.spec.replicaSelector })
+    var rc = k8s.util.findByName($scope.rcs, controllerName);
+    if (!rc.spec.selector) {
+      return;
+    }
+    k8s.pods.list({ labels: rc.spec.selector })
       .then(function(pods) {
-        ctrl.pods = pods;
+        rc.pods = pods;
       });
   };
 
   $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
-    if (data.type === 'replicationController') {
-      arraySvc.remove($scope.controllers, data.resource);
+    if (data.kind === k8s.enum.Kind.REPLICATIONCONTROLLER) {
+      arraySvc.remove($scope.rcs, data.original);
     }
   });
 

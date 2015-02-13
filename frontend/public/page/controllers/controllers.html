@@ -30,23 +30,23 @@
           <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
           <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Desired Count</div>
         </div>
-        <div class="row co-m-table-grid--clickable" ng-repeat-start="c in controllers" ng-click="open = !open; getPods(c.id)">
+        <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs" ng-click="open = !open; getPods(rc.metadata.name)">
           <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <co-controller-cog controller="c"></co-controller-cog>
             <co-entity-icon type="controller"></co-entity-icon>
-            <a ng-href="/replica-controllers/{{c.id}}" ng-bind="c.id"></a>
+            <a ng-href="/replica-controllers/{{rc.metadata.name}}" ng-bind="rc.metadata.name"></a>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">
-            <co-label-list kind="controller" labels="c.labels"></co-label-list>
+            <co-label-list kind="replicationcontroller" labels="rc.metadata.labels"></co-label-list>
           </div>
-          <div class="col-lg-2 col-md-2 col-sm-4 hidden-xs" ng-bind-template="{{c.currentState.replicas}} of {{c.desiredState.replicas}} pods"></div>
+          <div class="col-lg-2 col-md-2 col-sm-4 hidden-xs" ng-bind-template="{{rc.status.replicas}} of {{rc.spec.replicas}} pods"></div>
           <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
-            <co-label-list kind="pod" selector="true" labels="c.desiredState.replicaSelector"></co-label-list>
+            <co-label-list kind="pod" selector="true" labels="rc.spec.selector"></co-label-list>
           </div>
-          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="c.desiredState.replicas"></div>
+          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="rc.spec.replicas"></div>
         </div>
         <div ng-show="open" ng-repeat-end>
-          <co-pod-list pods="c.pods"></co-pod-list>
+          <co-pod-list pods="rc.pods"></co-pod-list>
         </div>
 
       </div>

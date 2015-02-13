@@ -1,6 +1,6 @@
 <div class="co-p-edit-replica-controller">
 
-  <co-nav-title title="{{replicaController.id}}">
+  <co-nav-title title="{{rc.metadata.name}}">
     <a ng-href="/controllers" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Controllers</a>
   </co-nav-title>
@@ -9,7 +9,7 @@
 
     <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
 
-      <co-replica-nav controller-id="replicaController.id"></co-replica-nav>
+      <co-replica-nav controller-id="rc.name"></co-replica-nav>
 
       <div class="co-m-vert-nav__body">
 
@@ -22,7 +22,7 @@
               <label for="input-controller-replicas" class="control-label">Replicas:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <input ng-model="replicaController.desiredState.replicas" co-number-spinner type="number" class="form-control" required id="input-controller-replicas"/>
+              <input ng-model="rc.spec.replicas" co-number-spinner type="number" class="form-control" required id="input-controller-replicas"/>
             </div>
           </div>
           <div class="row co-m-form-row">
@@ -30,7 +30,7 @@
               <label class="control-label">Controller Labels:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <co-label-input ng-model="replicaController.labels" kind="controller"></co-label-input>
+              <co-label-input ng-model="rc.metadata.labels" kind="replicationcontroller"></co-label-input>
               <small class="text-muted">Labels for this controller.</small>
             </div>
           </div>
@@ -39,7 +39,7 @@
               <label class="control-label">Label Query:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <co-label-input ng-model="replicaController.desiredState.replicaSelector" kind="pod" selector="true"></co-label-input>
+              <co-label-input ng-model="rc.spec.selector" kind="pod" selector="true"></co-label-input>
               <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
             </div>
           </div>
@@ -63,7 +63,7 @@
               <label class="control-label">Pod Labels:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <co-label-input ng-model="replicaController.desiredState.podTemplate.labels" kind="pod"></co-label-input>
+              <co-label-input ng-model="rc.spec.template.metadata.labels" kind="pod"></co-label-input>
               <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
             </div>
           </div>
@@ -72,7 +72,7 @@
               <label class="control-label">Pod Volumes:</label>
             </div>
             <div class="co-m-form-col col-sm-10">
-              <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="replicaController.desiredState.podTemplate.desiredState.manifest.volumes.length || 0"></span> Volumes</a></div>
+              <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="rc.spec.template.spec.volumes.length || 0"></span> Volumes</a></div>
               <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
             </div>
           </div>
@@ -84,7 +84,7 @@
         <div class="co-m-pane__body">
           <div class="row co-m-form-row">
             <div class="col-lg-10 col-md-12 col-sm-12">
-              <co-multi-container-input pod="replicaController.desiredState.podTemplate"></co-multi-container-input>
+              <co-multi-container-input pod="rc.spec.template"></co-multi-container-input>
             </div>
           </div>
           <div class="row co-m-form-row">

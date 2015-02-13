@@ -1,19 +1,18 @@
 angular.module('app')
-.controller('EditReplicaControllerCtrl', function(_, $scope, $location, $routeParams, ControllersSvc,
-      ModalLauncherSvc) {
+.controller('EditReplicaControllerCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 
-  $scope.replicaController = {};
+  $scope.rc = {};
 
   $scope.init = function() {
-    ControllersSvc.get({ id: $routeParams.id }).then(function(resp) {
-      $scope.replicaController = resp.data;
+    k8s.replicationControllers.get($routeParams.name).then(function(rc) {
+      $scope.rc = rc;
     });
   };
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {
-      pod: $scope.replicaController.desiredState.podTemplate
+      pod: $scope.rc.spec.template
     });
   };
 
@@ -22,7 +21,7 @@ angular.module('app')
   };
 
   $scope.save = function() {
-    $scope.requestPromise = ControllersSvc.update($scope.replicaController);
+    $scope.requestPromise = k8s.replicationControllers.update($scope.rc);
     $scope.requestPromise.then(function() {
       $location.path('/controllers');
     });

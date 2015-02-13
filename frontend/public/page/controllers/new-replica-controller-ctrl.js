@@ -3,8 +3,8 @@ angular.module('app')
       ModalLauncherSvc) {
   'use strict';
 
-  $scope.controller = k8s.replicationControllers.getEmpty();
-  $scope.podTemplate = $scope.controller.desiredState.podTemplate;
+  $scope.rc = k8s.replicationControllers.getEmpty();
+  $scope.podTemplate = $scope.rc.spec.template;
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {
@@ -17,7 +17,7 @@ angular.module('app')
   };
 
   $scope.save = function() {
-    $scope.requestPromise = k8s.replicationControllers.create($scope.controller);
+    $scope.requestPromise = k8s.replicationControllers.create($scope.rc);
     $scope.requestPromise.then(function() {
       $location.path('/controllers');
     });

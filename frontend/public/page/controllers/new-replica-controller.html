@@ -19,7 +19,7 @@
             <label for="input-controller-id" class="control-label">Controller Id:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="controller.id" type="text" class="form-control" required id="input-controller-id"/>
+            <input ng-model="rc.metadata.name" type="text" class="form-control" required id="input-controller-id"/>
           </div>
         </div>
         <div class="row co-m-form-row">
@@ -27,16 +27,16 @@
             <label class="control-label">Controller Labels:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="controller.labels" kind="controller"></co-label-input>
+            <co-label-input ng-model="rc.metadata.labels" kind="replicationcontroller"></co-label-input>
             <small class="text-muted">Labels for this controller.</small>
           </div>
         </div>
         <div class="row co-m-form-row">
           <div class="col-sm-2">
-            <label class="control-label">Label Query:</label>
+            <label class="control-label">Pod Label Selector:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="controller.desiredState.replicaSelector" kind="pod" selector="true"></co-label-input>
+            <co-label-input ng-model="rc.spec.selector" kind="pod" selector="true"></co-label-input>
             <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
           </div>
         </div>
@@ -45,7 +45,7 @@
             <label for="input-controller-replicas" class="control-label">Replicas:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="controller.desiredState.replicas" type="number" class="form-control" required id="input-controller-replicas"/>
+            <input ng-model="rc.spec.replicas" type="number" class="form-control" required id="input-controller-replicas"/>
           </div>
         </div>
 
@@ -56,7 +56,7 @@
             <label class="control-label">Pod Labels:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="podTemplate.labels" kind="pod"></co-label-input>
+            <co-label-input ng-model="podTemplate.metadata.labels" kind="pod"></co-label-input>
             <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
           </div>
         </div>
@@ -65,7 +65,7 @@
             <label class="control-label">Pod Volumes:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="podTemplate.desiredState.manifest.volumes.length || 0"></span> Volumes</a></div>
+            <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="podTemplate.spec.volumes.length || 0"></span> Volumes</a></div>
             <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
           </div>
         </div>

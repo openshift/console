@@ -1,20 +1,20 @@
 angular.module('app')
-.controller('ReplicaControllerCtrl', function($scope, $routeParams, ControllersSvc, PodsSvc) {
+.controller('ReplicaControllerCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  ControllersSvc.get({ id: $routeParams.id }).then(function(result) {
-    $scope.replicaController = result.data;
-    PodsSvc.list({ labels: $scope.replicaController.desiredState.replicaSelector })
-      .then(function(result) {
-        $scope.pods = result.data.items;
+  k8s.replicationControllers.get($routeParams.name).then(function(rc) {
+    $scope.rc = rc;
+    k8s.pods.list({ labels: rc.spec.selector })
+      .then(function(pods) {
+        $scope.pods = pods;
       });
   });
 
   $scope.getPodTemplateJson = function() {
-    if (!$scope.replicaController) {
+    if (!$scope.rc) {
       return '';
     }
-    return JSON.stringify($scope.replicaController.desiredState.podTemplate, null, 2);
+    return JSON.stringify($scope.rc.spec.template, null, 2);
   };
 
 });
