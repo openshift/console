@@ -33,7 +33,7 @@
         <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs" ng-click="open = !open; getPods(rc.metadata.name)">
           <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <co-replicationcontroller-cog rc="rc"></co-replicationcontroller-cog>
-            <co-entity-icon type="controller"></co-entity-icon>
+            <co-resource-icon kind="replicationcontroller"></co-resource-icon>
             <a ng-href="/replicationcontrollers/{{rc.metadata.name}}" ng-bind="rc.metadata.name"></a>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">
