@@ -15,8 +15,8 @@ angular.module('app').directive('coPodList', function(k8s, arraySvc) {
     },
     controller: function($scope) {
       $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
-        if (data.type === 'pod') {
-          arraySvc.remove($scope.pods, data.resource);
+        if (data.kind === k8s.enum.Kind.POD) {
+          arraySvc.remove($scope.pods, data.original);
         }
       });
     }
