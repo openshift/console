@@ -53,8 +53,8 @@ angular.module('app')
       }
 
       // Run once after app is populated.
-      deregisterWatch = $scope.$watch('service.id', function() {
-        if ($scope.service && $scope.service.id) {
+      deregisterWatch = $scope.$watch('service.metadata.name', function() {
+        if ($scope.service && $scope.service.metadata && $scope.service.metadata.name) {
           generateOptions();
           deregisterWatch();
         }
