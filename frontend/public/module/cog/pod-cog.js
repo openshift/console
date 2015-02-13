@@ -43,8 +43,8 @@ angular.module('app').directive('coPodCog', function(k8s, ModalLauncherSvc) {
       }
 
       // Run once after app is populated.
-      deregisterWatch = $scope.$watch('pod.id', function() {
-        if ($scope.pod && $scope.pod.id) {
+      deregisterWatch = $scope.$watch('pod.metadata.name', function() {
+        if ($scope.pod && $scope.pod.metadata && $scope.pod.metadata.name) {
           generateOptions();
           deregisterWatch();
         }
