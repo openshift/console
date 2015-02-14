@@ -3,7 +3,8 @@
  * Cog menu directive for services.
  */
 
-angular.module('app').directive('coServiceCog', function(ServicesSvc, ModalLauncherSvc) {
+angular.module('app')
+.directive('coServiceCog', function(k8s, ModalLauncherSvc) {
   'use strict';
 
   return {
@@ -18,7 +19,7 @@ angular.module('app').directive('coServiceCog', function(ServicesSvc, ModalLaunc
 
       function getDeleteFn() {
         return function() {
-          return ServicesSvc.delete($scope.service);
+          return k8s.services.delete($scope.service);
         };
       }
 
@@ -52,8 +53,8 @@ angular.module('app').directive('coServiceCog', function(ServicesSvc, ModalLaunc
       }
 
       // Run once after app is populated.
-      deregisterWatch = $scope.$watch('service.id', function() {
-        if ($scope.service && $scope.service.id) {
+      deregisterWatch = $scope.$watch('service.metadata.name', function() {
+        if ($scope.service && $scope.service.metadata && $scope.service.metadata.name) {
           generateOptions();
           deregisterWatch();
         }

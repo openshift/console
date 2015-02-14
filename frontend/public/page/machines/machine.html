@@ -1,6 +1,6 @@
 <div class="co-p-machine">
 
-  <co-nav-title title="{{machine.id}}"></co-nav-title>
+  <co-nav-title title="{{machine.metadata.name}}"></co-nav-title>
 
   <div class="co-m-pane">
 
@@ -11,8 +11,10 @@
     <div class="co-m-pane__body">
 
       <dl>
-        <dt>Machine Id</dl>
-        <dd ng-bind="machine.id"></dd>
+        <dt>Machine ID</dl>
+        <dd ng-bind="machine.metadata.name"></dd>
+        <dt>Host IP</dl>
+        <dd ng-bind="machine.status.hostIP"></dd>
       </dl>
 
       <co-pod-list pods="machine.pods"></co-pod-list>

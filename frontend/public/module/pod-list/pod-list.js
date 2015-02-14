@@ -3,8 +3,7 @@
  * List out pods in a table-like view.
  */
 
-
-angular.module('app').directive('coPodList', function(EVENTS, arraySvc) {
+angular.module('app').directive('coPodList', function(k8s, arraySvc) {
   'use strict';
 
   return {
@@ -15,8 +14,10 @@ angular.module('app').directive('coPodList', function(EVENTS, arraySvc) {
       pods: '='
     },
     controller: function($scope) {
-      $scope.$on(EVENTS.POD_DELETE, function(e, pod) {
-        arraySvc.remove($scope.pods, pod);
+      $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
+        if (data.kind === k8s.enum.Kind.POD) {
+          arraySvc.remove($scope.pods, data.original);
+        }
       });
     }
   };

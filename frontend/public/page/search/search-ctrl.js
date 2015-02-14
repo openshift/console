@@ -1,18 +1,29 @@
 angular.module('app')
-.controller('SearchCtrl', function(_, $scope, $location, SearchSvc, LabelSvc) {
+.controller('SearchCtrl', function(_, $scope, $location, k8s) {
   'use strict';
 
-  var defaultType = 'service';
+  var defaultKind = k8s.enum.Kind.SERVICE;
+  $scope.kinds = k8s.enum.Kind;
 
-  // Query fields.
-  $scope.fields = {
-    entityType: null,
-    query: null,
-  };
+  function getKind(id) {
+    var k;
+    if (!id) {
+      return defaultKind;
+    }
+    k = k8s.util.getKindEnumById(id);
+    if (k) {
+      return k;
+    }
+    return defaultKind;
+  }
 
   $scope.init = function() {
     $scope.results = null;
     $scope.loading = false;
+    $scope.fields = {
+      selectedKindId: null,
+      query: null,
+    };
     $scope.decodeSearch();
 
     if (!_.isEmpty($scope.fields.query)) {
@@ -28,50 +39,48 @@ angular.module('app')
   };
 
   // Called when type selector is changed.
-  $scope.changeType = function(type) {
-    $scope.fields.entityType = type;
+  $scope.changeKind = function(kindId) {
+    $scope.fields.selectedKindId = kindId;
     $scope.submit();
   };
 
   // Populate the scope query vars from the URL query string.
   $scope.decodeSearch = function() {
+    var kind = getKind($location.search().kind);
     $scope.fields = {
-      entityType: $location.search().type || defaultType,
-      query: LabelSvc.urlDecode($location.search().q),
+      selectedKindId: kind.id,
+      query: k8s.labels.urlDecode($location.search().q),
     };
   };
 
   // Update the query string.
   // NOTE: Triggers view reload which in turn calls init() & and search() again.
   $scope.encodeSearch = function() {
-    var search = {
-      type: $scope.fields.entityType || defaultType,
-      q: LabelSvc.urlEncode($scope.fields.query),
+    var kind, search;
+    kind = getKind($scope.fields.selectedKindId);
+    search = {
+      kind: kind.id,
+      q: k8s.labels.urlEncode($scope.fields.query),
     };
     $location.search(search);
   };
 
-  // For linking to entities.
-  $scope.getEntityPath = function(entityType) {
-    switch(entityType) {
-      case 'pod':
-        return 'pods';
-      case 'service':
-        return 'services';
-      case 'controller':
-        return 'replica-controllers';
+  // For linking to resources.
+  $scope.getResourceLink = function(resource) {
+    var kind = getKind($scope.fields.selectedKindId);
+    if (!kind) {
+      return '';
     }
+    return kind.path + '/' + resource.metadata.name;
   };
 
   // Execute the actual search with api client.
   $scope.search = function() {
+    var kind = getKind($scope.fields.selectedKindId);
     $scope.loading = true;
-    SearchSvc.search($scope.fields.entityType, $scope.fields.query)
-      .then(function(result) {
-        $scope.results = result.data.items;
-      })
-      .catch(function(e) {
-        console.log('error: ', e);
+    k8s.search(kind, { labels: $scope.fields.query })
+      .then(function(results) {
+        $scope.results = results;
       })
       .finally(function() {
         $scope.loading = false;
@@ -86,5 +95,4 @@ angular.module('app')
   $scope.init();
 })
 
-.controller('SearchFormCtrl', function() {
-});
+.controller('SearchFormCtrl', function() {});

@@ -3,7 +3,7 @@ angular.module('app')
 /**
  * multi-container input directive form.
  */
-.directive('coMultiContainerInput', function(_, arraySvc, PodsSvc, EVENTS) {
+.directive('coMultiContainerInput', function(_, arraySvc, k8s, EVENTS) {
 
   'use strict';
 
@@ -23,25 +23,25 @@ angular.module('app')
 
       $scope.removeContainer = function(c) {
         if ($scope.containers.length === 1) {
-          $scope.containers = [PodsSvc.getEmptyContainer()];
+          $scope.containers = [k8s.docker.getEmptyContainer()];
         } else {
           arraySvc.remove($scope.containers, c);
         }
       };
 
       $scope.addContainer = function() {
-        $scope.containers.push(PodsSvc.getEmptyContainer());
+        $scope.containers.push(k8s.docker.getEmptyContainer());
       };
 
       $scope.$watch('pod', function(p) {
-        if (!p || !p.desiredState || !p.desiredState.manifest) {
+        if (!p || !p.spec) {
           return;
         }
-        if (_.isEmpty(p.desiredState.manifest.containers)) {
-          p.desiredState.manifest.containers = [PodsSvc.getEmptyContainer()];
+        if (_.isEmpty(p.spec.containers)) {
+          p.spec.containers = [k8s.docker.getEmptyContainer()];
         }
         // shorter alias
-        $scope.containers = p.desiredState.manifest.containers;
+        $scope.containers = p.spec.containers;
       });
     }
   };

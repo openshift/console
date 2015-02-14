@@ -1,5 +1,5 @@
-angular.module('app')
-.service('LabelSvc', function(_) {
+angular.module('k8s')
+.service('k8sLabels', function(_) {
   'use strict';
 
   // Encode a labels object hash into a URL query string.

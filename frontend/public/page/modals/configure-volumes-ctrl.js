@@ -1,16 +1,16 @@
 angular.module('app')
 .controller('ConfigureVolumesCtrl', function(_, $scope, $modalInstance, $controller,
-      pod, arraySvc, PodsSvc, $rootScope) {
+      pod, arraySvc, k8s, $rootScope) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
     $scope: $rootScope.$new(),
     emptyCheck: function(v) {
-      return (_.isEmpty(v.source.hostDir) || _.isEmpty(v.source.hostDir.path)) &&
+      return (_.isEmpty(v.source.hostPath) || _.isEmpty(v.source.hostPath.path)) &&
           _.isEmpty(v.name);
     },
     getEmptyItem: function() {
-      var v = PodsSvc.getEmptyVolume();
+      var v = k8s.pods.getEmptyVolume();
       // Just a placeholder for the form with default value.
       v.type = 'host';
       return v;
@@ -34,13 +34,13 @@ angular.module('app')
       v.source.emptyDir = v.type === 'container' ? true : false;
       delete v.type;
       if (v.source.emptyDir) {
-        delete v.source.hostDir;
+        delete v.source.hostPath;
       } else {
         delete v.source.emptyDir;
       }
       return v;
     });
-    pod.desiredState.manifest.volumes = items;
+    pod.spec.volumes = items;
     $modalInstance.close(pod);
   };
 
@@ -50,11 +50,11 @@ angular.module('app')
 
   $scope.onTypeChange = function(v) {
     if (v.type === 'container') {
-      v.source.hostDir.path = null;
+      v.source.hostPath.path = null;
     }
   };
 
-  $scope.initializeVolumes(pod.desiredState.manifest.volumes);
+  $scope.initializeVolumes(pod.spec.volumes);
 })
 .controller('ConfigureVolumesFormCtrl', function($scope) {
   $scope.submit = $scope.save;

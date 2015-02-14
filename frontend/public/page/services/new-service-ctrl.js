@@ -1,18 +1,11 @@
 angular.module('app')
-.controller('NewServiceCtrl', function($scope, $routeParams, $location,
-      ServicesSvc) {
+.controller('NewServiceCtrl', function($scope, $routeParams, $location, k8s) {
   'use strict';
 
-  $scope.service = {
-    id: null,
-    port: null,
-    containerPort: null,
-    selector: null,
-    labels: null
-  };
+  $scope.service = k8s.services.getEmpty();
 
   $scope.save = function() {
-    $scope.requestPromise = ServicesSvc.create($scope.service);
+    $scope.requestPromise = k8s.services.create($scope.service);
     $scope.requestPromise.then(function() {
       $location.path('/services');
     });

@@ -2,17 +2,16 @@
  * Veritcal nav for replica controllers.
  */
 
-
 angular.module('app')
-.directive('coReplicaNav', function() {
+.directive('coReplicationcontrollerNav', function() {
   'use strict';
 
   return {
-    templateUrl: '/static/page/controllers/replica-controller-nav.html',
+    templateUrl: '/static/page/replicationcontrollers/replicationcontroller-nav.html',
     restrict: 'E',
     replace: true,
     scope: {
-      controllerId: '='
+      rcId: '='
     }
   };
 

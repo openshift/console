@@ -1,6 +1,6 @@
 <div class="co-p-service">
 
-  <co-nav-title title="{{service.id}}">
+  <co-nav-title title="{{service.metadata.name}}">
     <a ng-href="/services" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Services</a>
   </co-nav-title>
@@ -14,21 +14,23 @@
         <div class="row">
           <div class="col-lg-6">
             <dl>
-              <dt>Port</dt>
-              <dd ng-bind="service.port"></dd>
+              <dt>Protocol</dt>
+              <dd ng-bind="service.spec.protocol"></dd>
               <dt>Container Port</dt>
-              <dd ng-bind="service.containerPort"></dd>
+              <dd ng-bind="service.spec.containerPort"></dd>
+              <dt>Session Affinity</dt>
+              <dd ng-bind="service.spec.sessionAffinity"></dd>
             </dl>
           </div>
           <div class="col-lg-6">
             <dl>
               <dt>Service Labels</dt>
               <dd>
-                <co-label-list type="service" labels="service.labels"></co-label-list>
+                <co-label-list kind="service" labels="service.metadata.labels"></co-label-list>
               </dd>
               <dt>Pod Selector</dt>
               <dd>
-                <co-label-list type="pod" selector="true" labels="service.selector"></co-label-list>
+                <co-label-list kind="pod" selector="true" labels="service.spec.selector"></co-label-list>
               </dd>
             </dl>
           </div>
