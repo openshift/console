@@ -95,4 +95,6 @@ angular.module('app')
   $scope.init();
 })
 
-.controller('SearchFormCtrl', function() {});
+.controller('SearchFormCtrl', function() {
+  'use strict';
+});

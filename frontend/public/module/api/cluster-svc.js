@@ -7,8 +7,8 @@ angular.module('app')
   this.units = $rootScope.client.cluster.units;
 
   this.unitSummary = function() {
-    return this.units().then(function(result) {
-      return _.reduce(result.data, function(prev, curr) {
+    return this.units().then(function(resp) {
+      return _.reduce(resp.data, function(prev, curr) {
         var result, name;
         name = curr.name
           .replace('kubernetes-', '')

@@ -57,5 +57,6 @@ angular.module('app')
   $scope.initializeVolumes(pod.spec.volumes);
 })
 .controller('ConfigureVolumesFormCtrl', function($scope) {
+  'use strict';
   $scope.submit = $scope.save;
 });

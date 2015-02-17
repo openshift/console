@@ -12,7 +12,7 @@ angular.module('k8s')
       u += '/' + name;
     }
     return u;
-  }.bind(this);
+  };
 
   this.list = function(kind, params) {
     var d = $q.defer();

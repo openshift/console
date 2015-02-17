@@ -31,5 +31,6 @@ angular.module('app')
   $scope.initEnvVars(container.env);
 })
 .controller('ConfigureEnvFormCtrl', function($scope) {
+  'use strict';
   $scope.submit = $scope.save;
 });

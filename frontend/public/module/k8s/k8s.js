@@ -2,6 +2,8 @@ angular.module('k8s', ['underscore']);
 
 angular.module('k8s')
 .provider('k8sConfig', function() {
+  'use strict';
+
   var basePath;
   this.setBasePath = function(path) {
     basePath = path;

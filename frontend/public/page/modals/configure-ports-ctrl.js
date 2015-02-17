@@ -31,5 +31,6 @@ angular.module('app')
   $scope.initPorts(container.ports);
 })
 .controller('ConfigurePortsFormCtrl', function($scope) {
+  'use strict';
   $scope.submit = $scope.save;
 });

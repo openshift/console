@@ -16,10 +16,9 @@ angular.module('app', [
   'app.ui',
   'app.modules',
 ])
-
-// Routes
 .config(function($routeProvider, $locationProvider, $httpProvider,
       configSvcProvider, apiClientProvider, errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {
+  'use strict';
 
   $locationProvider.html5Mode(true);
   flagSvcProvider.setGlobalId('SERVER_FLAGS');
@@ -152,8 +151,8 @@ angular.module('app', [
       title: 'Page Not Found (404)'
     });
 })
-
 .run(function($rootScope, CONST, flagSvc) {
+  'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();

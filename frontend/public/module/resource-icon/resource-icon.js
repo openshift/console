@@ -3,9 +3,8 @@
  * Displays a different circular icon for services, controllers, pods, etc.
  */
 
-'use strict';
-
 angular.module('app').directive('coResourceIcon', function(k8s) {
+  'use strict';
 
   return {
     template: '<span></span>',

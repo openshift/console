@@ -45,5 +45,6 @@ angular.module('app')
   $scope.initVolumeMounts(container.volumeMounts);
 })
 .controller('ConfigureVolumeMountsFormCtrl', function($scope) {
+  'use strict';
   $scope.submit = $scope.save;
 });
