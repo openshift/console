@@ -63,8 +63,9 @@ gulp.task('sass', function () {
 
 gulp.task('lint', function() {
   return gulp.src(jsSrc)
-    .pipe(eslint())
-    .pipe(eslint.format());
+    .pipe(eslint({ useEslintrc: true }))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
 // Extract & compile dependency code.
@@ -122,7 +123,6 @@ gulp.task('copy-deps', function() {
 gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'], function() {
   // NOTE: File Order Matters.
   return gulp.src([
-      distDir + '/deps.min.js',
       distDir + '/templates.js',
       distDir + '/app.min.js'
     ])
