@@ -1,3 +1,5 @@
+angular.module('app.ui', []);
+angular.module('app.modules', []);
 // The main app module.
 angular.module('app', [
   // angular deps
