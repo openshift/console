@@ -11,6 +11,12 @@ control center for kubernetes clusters
 Backend binaries are generated in `/bin`  
 Frontend build assets are generated in `/frontend/public/dist`  
 
+Start bridge:
+
+```
+./bin/bridge --k8s-api-version=v1beta3 --k8s-endpoint=http://172.17.8.101:8080 --etcd-endpoints=http://localhost:7001
+```
+
 ## Docker Compiling / Building
 
 ### Compile all Code using Docker
