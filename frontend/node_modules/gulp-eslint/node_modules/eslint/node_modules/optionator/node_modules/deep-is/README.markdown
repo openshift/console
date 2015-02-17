@@ -60,4 +60,11 @@ npm test
 license
 =======
 
-MIT. Derived largely from node's assert module.
+Copyright (c) 2012, 2013 Thorsten Lorenz <thlorenz@gmx.de>
+Copyright (c) 2012 James Halliday <mail@substack.net>
+
+Derived largely from node's assert module, which has the copyright statement:
+
+Copyright (c) 2009 Thomas Robinson <280north.com>
+
+Released under the MIT license, see LICENSE for details.

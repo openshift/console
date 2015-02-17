@@ -115,6 +115,21 @@ exports ['stream comes back in the correct order'] = function (test) {
   writeArray(input, delayer)
 }
 
+exports ['continues on error event with failures `true`'] = function (test) {
+  var input = [1, 2, 3]
+
+  var delayer = map(function(data, cb){
+    cb(new Error('Something gone wrong'), data)
+  }, { failures: true })
+
+  readStream(delayer, function (err, output) {
+    it(output).deepEqual(input)
+    test.done()
+  })
+
+  writeArray(input, delayer)
+}
+
 exports['pipe two maps together'] = function (test) {
 
   var input = [1,2,3,7,5,3,1,9,0,2,4,6]
@@ -169,6 +184,22 @@ exports ['map will not call end until the callback'] = function (test) {
   })
 }
 
+exports ['emit failures with opts.failures === `ture`'] = function (test) {
+
+  var err = new Error('INTENSIONAL ERROR')
+    , mapper = 
+  map(function () {
+    throw err
+  }, { failures: true })
+
+  mapper.on('failure', function (_err) {
+    it(_err).equal(err)  
+    test.done()
+  })
+
+  mapper.write('hello')
+
+}
 
 exports ['emit error thrown'] = function (test) {
 

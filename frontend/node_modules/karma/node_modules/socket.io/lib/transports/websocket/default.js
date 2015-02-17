@@ -30,7 +30,7 @@ function WebSocket (mng, data, req) {
   // parser
   var self = this;
 
-  this.parser = new Parser({maxBuffer: mng.get('destroy buffer size')});
+  this.parser = new Parser();
   this.parser.on('data', function (packet) {
     self.log.debug(self.name + ' received data packet', packet);
     self.onMessage(parser.decodePacket(packet));
@@ -39,11 +39,6 @@ function WebSocket (mng, data, req) {
     self.end();
   });
   this.parser.on('error', function () {
-    self.end();
-  });
-  this.parser.on('kick', function (reason) {
-    self.log.warn(self.name + ' parser forced user kick: ' + reason);
-    self.onMessage({type: 'disconnect', endpoint: ''});
     self.end();
   });
 
@@ -298,9 +293,7 @@ WebSocket.prototype.doClose = function () {
  * @api public
  */
 
-function Parser (opts) {
-  this._maxBuffer = (opts && opts.maxBuffer) || 10E7;
-  this._dataLength = 0;
+function Parser () {
   this.buffer = '';
   this.i = 0;
 };
@@ -318,13 +311,6 @@ Parser.prototype.__proto__ = EventEmitter.prototype;
  */
 
 Parser.prototype.add = function (data) {
-  this._dataLength += data.length;
-  if(this._dataLength > this._maxBuffer) {
-    this.buffer = ''; //Clear buffer
-    this.emit('kick', 'max buffer size reached');
-    return;
-  }
-
   this.buffer += data;
   this.parse();
 };

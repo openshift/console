@@ -34,7 +34,7 @@ function WebSocket (mng, data, req) {
   var self = this;
 
   this.manager = mng;
-  this.parser = new Parser({maxBuffer: mng.get('destroy buffer size')});
+  this.parser = new Parser();
   this.parser.on('data', function (packet) {
     self.onMessage(parser.decodePacket(packet));
   });
@@ -53,11 +53,6 @@ function WebSocket (mng, data, req) {
   });
   this.parser.on('error', function (reason) {
     self.log.warn(self.name + ' parser error: ' + reason);
-    self.end();
-  });
-  this.parser.on('kick', function (reason) {
-    self.log.warn(self.name + ' parser forced user kick: ' + reason);
-    self.onMessage({type: 'disconnect', endpoint: ''});
     self.end();
   });
 
@@ -270,7 +265,7 @@ WebSocket.prototype.doClose = function () {
  * @api public
  */
  
-function Parser (opts) {
+function Parser () {
   this.state = {
     activeFragmentedOperation: null,
     lastFragment: false,
@@ -282,8 +277,6 @@ function Parser (opts) {
   this.expectBuffer = null;
   this.expectHandler = null;
   this.currentMessage = '';
-  this._maxBuffer = (opts && opts.maxBuffer) || 10E7;
-  this._dataLength = 0;
 
   var self = this;  
   this.opcodeHandlers = {
@@ -454,15 +447,6 @@ Parser.prototype.__proto__ = EventEmitter.prototype;
  */
 
 Parser.prototype.add = function(data) {
-  this._dataLength += data.length;
-  if (this._dataLength > this._maxBuffer) {
-    // Clear data
-    this.overflow = null;
-    this.expectBuffer = null;
-    // Kick client
-    this.emit('kick', 'max buffer size reached');
-    return;
-  }
   if (this.expectBuffer == null) {
     this.addToOverflow(data);
     return;
@@ -506,10 +490,6 @@ Parser.prototype.addToOverflow = function(data) {
  */
 
 Parser.prototype.expect = function(what, length, handler) {
-  if (length > this._maxBuffer) {
-    this.emit('kick', 'expected input larger than max buffer');
-    return;
-  }
   this.expectBuffer = new Buffer(length);
   this.expectOffset = 0;
   this.expectHandler = handler;
