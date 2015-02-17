@@ -89,6 +89,20 @@ Transport.prototype.onSocketConnect = function () { };
 Transport.prototype.setHandlers = function () {
   var self = this;
 
+  // we need to do this in a pub/sub way since the client can POST the message
+  // over a different socket (ie: different Transport instance)
+  this.store.subscribe('heartbeat-clear:' + this.id, function () {
+    self.onHeartbeatClear();
+  });
+
+  this.store.subscribe('disconnect-force:' + this.id, function () {
+    self.onForcedDisconnect();
+  });
+
+  this.store.subscribe('dispatch:' + this.id, function (packet, volatile) {
+    self.onDispatch(packet, volatile);
+  });
+
   this.bound = {
       end: this.onSocketEnd.bind(this)
     , close: this.onSocketClose.bind(this)
@@ -112,6 +126,10 @@ Transport.prototype.setHandlers = function () {
 
 Transport.prototype.clearHandlers = function () {
   if (this.handlersSet) {
+    this.store.unsubscribe('disconnect-force:' + this.id);
+    this.store.unsubscribe('heartbeat-clear:' + this.id);
+    this.store.unsubscribe('dispatch:' + this.id);
+
     this.socket.removeListener('end', this.bound.end);
     this.socket.removeListener('close', this.bound.close);
     this.socket.removeListener('error', this.bound.error);
@@ -332,7 +350,7 @@ Transport.prototype.onMessage = function (packet) {
     if (current && current.open) {
       current.onHeartbeatClear();
     } else {
-      this.store.publish('heartbeat-clear', this.id);
+      this.store.publish('heartbeat-clear:' + this.id);
     }
   } else {
     if ('disconnect' == packet.type && packet.endpoint == '') {
@@ -341,7 +359,7 @@ Transport.prototype.onMessage = function (packet) {
       if (current) {
         current.onForcedDisconnect();
       } else {
-        this.store.publish('disconnect-force', this.id);
+        this.store.publish('disconnect-force:' + this.id);
       }
 
       return;
@@ -360,7 +378,7 @@ Transport.prototype.onMessage = function (packet) {
         current.onDispatch(ack);
       } else {
         this.manager.onClientDispatch(this.id, ack);
-        this.store.publish('dispatch-remote', this.id, ack);
+        this.store.publish('dispatch:' + this.id, ack);
       }
     }
 
@@ -368,7 +386,7 @@ Transport.prototype.onMessage = function (packet) {
     if (current) {
       this.manager.onClientMessage(this.id, packet);
     } else {
-      this.store.publish('message-remote', this.id, packet);
+      this.store.publish('message:' + this.id, packet);
     }
   }
 };
@@ -446,10 +464,10 @@ Transport.prototype.end = function (reason) {
     this.disconnected = true;
 
     if (local) {
-      this.manager.onClientDisconnect(this.id, reason);
+      this.manager.onClientDisconnect(this.id, reason, true);
+    } else {
+      this.store.publish('disconnect:' + this.id, reason);
     }
-
-    this.store.publish('disconnect-remote', this.id, reason);
   }
 };
 

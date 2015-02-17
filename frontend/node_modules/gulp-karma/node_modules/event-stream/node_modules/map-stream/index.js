@@ -12,8 +12,10 @@ var Stream = require('stream').Stream
 //emitting each response as data
 //unless it's an empty callback
 
-module.exports = function (mapper) {
+module.exports = function (mapper, opts) {
+
   var stream = new Stream()
+    , self = this
     , inputs = 0
     , outputs = 0
     , ended = false
@@ -21,6 +23,9 @@ module.exports = function (mapper) {
     , destroyed = false
     , lastWritten = 0
     , inNext = false
+
+  this.opts = opts || {};
+  var errorEventName = this.opts.failures ? 'failure' : 'error';
 
   // Items that are not ready to be written yet (because they would come out of
   // order) get stuck in a queue for later.
@@ -61,13 +66,16 @@ module.exports = function (mapper) {
   function next (err, data, number) {
     if(destroyed) return
     inNext = true
-    if(err) {
-      return inNext = false, stream.emit.apply(stream, ['error', err])
+
+    if (!err || self.opts.failures) {
+      queueData(data, number)
     }
 
-    queueData(data, number)
+    if (err) {
+      stream.emit.apply(stream, [ errorEventName, err ]);
+    }
 
-    inNext = false
+    inNext = false;
   }
 
   // Wrap the mapper function by calling its callback with the order number of

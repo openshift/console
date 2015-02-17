@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html ng-app="common">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="Expires" CONTENT="0">        
+		<meta http-equiv="Cache-Control" CONTENT="no-cache, must-revalidate">        
+		<meta http-equiv="Pragma" CONTENT="no-cache">
+		<link rel='stylesheet' href='https://code.jquery.com/ui/1.10.2/themes/overcast/jquery-ui.css' />
+		<link rel="stylesheet" type="text/css" href="../css/bootstrap-3.1.1.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/bootstrap-theme-3.1.1.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
+		<link rel="stylesheet" type="text/css" href="../css/skin_flat.css" />
+		<link rel="stylesheet" type="text/css" href="../css/hoteltopoi.css" />
+		
+		<script type='text/javascript' src='../components/jquery/jquery-1.11.0.min.js'></script>
+		<script type='text/javascript' src='../components/angular/angular-1.2.16.min.js'></script>
+		<script type='text/javascript' src='../components/jquery/jquery-ui-1.10.4.min.js'></script>
+		<script src='https://maps.googleapis.com/maps/api/js?v=3.18&sensor=false&libraries=drawing,geometry' type='text/javascript'></script>
+		<script type='text/javascript' src='../components/jquery/gmap3.min.js'></script>
+		
+		<!-- Legacy dependencies -->
+		<script src="js-legacy-min.js"></script>
+
+		<!-- Angular dependencies -->
+		<script src="js-angular-min.js"></script>
+
+		<title>Hotel to Poi Association</title>
+	</head>
+	<body ng-controller="authenticationChecker">
+		<div id="container" class="container">
+			<div id="header" class="row">
+				<div id="logo" class="col-sm-3 col-md-3 col-lg-3">Gama</div>
+			
+				<div id="actions" class="col-sm-9 col-md-9 col-lg-9 pull-right">
+					<img src="/img/ajax-loader.gif" id="ajaxLoader" class="header-link" style="display: none">
+	    			<a class="header-link" href="main.html" id="home" title="Home">
+    	    			<span class="glyphicon glyphicon-home"></span>
+    				</a>
+    				<a class="header-link" href="/gama-api/logout" title="Logout" id="logoutButton">
+        				<span class="glyphicon glyphicon-off"></span>
+    				</a>
+				</div>
+			</div>
+			<div id="messages"></div>
+			<div id='controls' class="row">
+	                <div class="col-sm-4 col-md-4 col-lg-4 control">
+	                    <input id='hotelInput' class="form-control" type="text" placeholder="Find Hotel by Id or Name" autocomplete="off"/>
+	                    <a class="btn btn-xs btn-default" href="#" id='clearHotelButton'><span class="glyphicon glyphicon-remove"></span></a>
+	                    <span id='hotelInfo' style='font-weight: normal'></span>
+	                </div>
+	                <div class="col-sm-4 col-md-4 col-lg-4 control">
+	                    <input id='poiInput' type="text" placeholder="Find POI by Id or Name" class="form-control" style="margin-bottom: 0px" autocomplete="off"/>
+	                    <a id="poiClearButton" class="btn btn-xs btn-default" href="#">
+	                        <span class="glyphicon glyphicon-remove"></span>
+	                    </a>
+	                    <span id='poiInfo' class="quarter-width "></span>
+	                </div>
+	                <div class="col-sm-4 col-md-4 col-lg-4 control" style="float:left;">
+	                    <p>
+	                        <span id='poisLoadedInfo' class="small-text">Found <span id="poisNbLoaded"></span> POIs within <span id="rangeLoaded">50</span> km
+	                        &nbsp;</span>
+	                    </p>
+	                </div>
+	        </div>
+			<div id='controls' class="actions control row">
+				<div class="col-sm-4 col-md-4 col-lg-4">
+					<a id='saveAssociationButton' class="btn btn-xs btn-default disabled">
+						Save all associations
+					</a>
+				</div>
+				<div class="col-sm-4 col-md-4 col-lg-4">
+					<a id="poiAssociateButton" class="btn btn-xs btn-default" href="#">
+						Associate POI to Hotel
+					</a>
+				</div>
+				<div class="col-sm-4 col-md-4 col-lg-4" id='poisExtraActions'>
+					<div class="btn-group" >
+						<a class="btn btn-xs btn-default" href="#" id="showAllPois">Show All</a>
+						<a class="btn btn-xs btn-default" href="#" id="extendRange">Extend Range to 100km</a>
+					</div>
+				</div>
+			</div>
+	
+			<div id='content' view="hotel_to_poi" class="row">
+				<div id="map_wrapper" class="col-sm-12 col-md-12 col-lg-12">
+					<div id="map" class="map" style="width:100%">
+					</div>
+				</div>
+				<div class="poiList">
+					<h5> Points of interests associated to the Hotel</h5>
+					<ul id="associatedPoiList"></ul>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
-    "karma-jasmine": "latest",
-    "karma-chrome-launcher": "latest",
     "gulp": "latest",
-    "run-sequence": "latest",
     "gulp-karma": "latest",
     "gulp-angular-templatecache": "latest",
     "gulp-sass": "latest",
@@ -18,7 +15,11 @@
     "gulp-ngmin": "latest",
     "gulp-html-replace": "latest",
     "gulp-bower-files": "latest",
-    "merge-stream": "latest"
+    "karma-jasmine": "latest",
+    "karma-chrome-launcher": "latest",
+    "merge-stream": "latest",
+    "run-sequence": "latest",
+    "main-bower-files": "latest"
   },
   "engines": {
     "node": ">=0.10.0"

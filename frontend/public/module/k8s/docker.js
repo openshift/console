@@ -10,7 +10,7 @@ angular.module('k8s')
     state = {
       label: 'unknown',
     };
-    if (! containerInfo || !containerInfo.state) {
+    if (!containerInfo || !containerInfo.state) {
       return state;
     }
 

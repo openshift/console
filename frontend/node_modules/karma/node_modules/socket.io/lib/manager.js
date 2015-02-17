@@ -320,46 +320,8 @@ Manager.prototype.initStore = function () {
   this.store.subscribe('disconnect', function (id) {
     self.onDisconnect(id);
   });
-
-  // we need to do this in a pub/sub way since the client can POST the message
-  // over a different socket (ie: different Transport instance)
-
-  //use persistent channel for these, don't add and remove 5 channels for every connection
-  //eg. for 10,000 concurrent users this creates 50,000 channels in redis, which kind of slows things down
-  //we only need 5 (extra) total channels at all times
-  this.store.subscribe('message-remote',function (id, packet) {
-    self.onClientMessage(id, packet);
-  });
-
-  this.store.subscribe('disconnect-remote', function (id, reason) {
-    self.onClientDisconnect(id, reason);
-  });
-
-  this.store.subscribe('dispatch-remote', function (id, packet, volatile) {
-    var transport = self.transports[id];
-    if (transport) {
-      transport.onDispatch(packet, volatile);
-    }
-
-    if (!volatile) {
-      self.onClientDispatch(id, packet);
-    }
-  });
-
-  this.store.subscribe('heartbeat-clear', function (id) {
-    var transport = self.transports[id];
-    if (transport) {
-      transport.onHeartbeatClear();
-    }
-  });
-
-  this.store.subscribe('disconnect-force', function (id) {
-    var transport = self.transports[id];
-    if (transport) {
-      transport.onForcedDisconnect();
-    }
-  });
 };
+
 /**
  * Called when a client handshakes.
  *
@@ -392,17 +354,19 @@ Manager.prototype.onOpen = function (id) {
   if (this.closed[id]) {
     var self = this;
 
-    var transport = self.transports[id];
-    if (self.closed[id] && self.closed[id].length && transport) {
+    this.store.unsubscribe('dispatch:' + id, function () {
+      var transport = self.transports[id];
+      if (self.closed[id] && self.closed[id].length && transport) {
 
-      // if we have buffered messages that accumulate between calling
-      // onOpen an this async callback, send them if the transport is
-      // still open, otherwise leave them buffered
-      if (transport.open) {
-        transport.payload(self.closed[id]);
-        self.closed[id] = [];
+        // if we have buffered messages that accumulate between calling
+        // onOpen an this async callback, send them if the transport is 
+        // still open, otherwise leave them buffered
+        if (transport.open) {
+          transport.payload(self.closed[id]);
+          self.closed[id] = [];
+        }
       }
-    }
+    });
   }
 
   // clear the current transport
@@ -493,6 +457,12 @@ Manager.prototype.onClose = function (id) {
   this.closed[id] = [];
 
   var self = this;
+
+  this.store.subscribe('dispatch:' + id, function (packet, volatile) {
+    if (!volatile) {
+      self.onClientDispatch(id, packet);
+    }
+  });
 };
 
 /**
@@ -542,7 +512,7 @@ Manager.prototype.onClientDisconnect = function (id, reason) {
  * @param text
  */
 
-Manager.prototype.onDisconnect = function (id) {
+Manager.prototype.onDisconnect = function (id, local) {
   delete this.handshaken[id];
 
   if (this.open[id]) {
@@ -572,6 +542,13 @@ Manager.prototype.onDisconnect = function (id) {
   }
 
   this.store.destroyClient(id, this.get('client store expiration'));
+
+  this.store.unsubscribe('dispatch:' + id);
+
+  if (local) {
+    this.store.unsubscribe('message:' + id);
+    this.store.unsubscribe('disconnect:' + id);
+  }
 };
 
 /**
@@ -669,7 +646,7 @@ Manager.prototype.handleClient = function (data, req) {
     if (this.transports[data.id] && this.transports[data.id].open) {
       this.transports[data.id].onForcedDisconnect();
     } else {
-      this.store.publish('disconnect-force', data.id);
+      this.store.publish('disconnect-force:' + data.id);
     }
     req.res.writeHead(200);
     req.res.end();
@@ -722,6 +699,14 @@ Manager.prototype.handleClient = function (data, req) {
           }
         }
       }
+
+      this.store.subscribe('message:' + data.id, function (packet) {
+        self.onClientMessage(data.id, packet);
+      });
+
+      this.store.subscribe('disconnect:' + data.id, function (reason) {
+        self.onClientDisconnect(data.id, reason);
+      });
     }
   } else {
     if (transport.open) {
@@ -817,10 +802,10 @@ Manager.prototype.handleHandshake = function (data, req, res) {
         res.writeHead(200, headers);
       }
 
+      res.end(hs);
+
       self.onHandshake(id, newData || handshakeData);
       self.store.publish('handshake', id, newData || handshakeData);
-
-      res.end(hs);
 
       self.log.info('handshake authorized', id);
     } else {
