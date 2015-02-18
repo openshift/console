@@ -1,13 +1,13 @@
 angular.module('app')
-.controller('ConfigureLivenessCtrl', function(_, $scope, $modalInstance, $controller,
-      arraySvc, k8s, $rootScope) {
+.controller('ConfigureLivenessCtrl', function() {
   'use strict';
 
   //TODO
 
 })
-.controller('ConfigureLivenessFormCtrl', function($scope) {
+.controller('ConfigureLivenessFormCtrl', function() {
+  'use strict';
 
   //TODO
-  
+
 });
