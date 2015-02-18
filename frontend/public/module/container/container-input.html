@@ -26,6 +26,10 @@
       <div class="co-m-field-head">Environment</div>
       <a href="#" ng-click="openEnvModal()" class="co-m-modal-link"><span ng-bind="container.env.length || 0"></span> Variables</a>
     </div>
+    <div class="col-sm-3">
+      <div class="co-m-field-head">Pull Policy</div>
+      <a href="#" ng-click="openPullPolicyModal()" class="co-m-modal-link">Always Pull</a>
+    </div>
   </div>
 
   <i ng-if="enableRemove" ng-click="remove(container)" class="co-m-container-input__close fa fa-times-circle"></i>

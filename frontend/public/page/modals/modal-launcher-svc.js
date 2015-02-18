@@ -19,6 +19,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-env.html',
       controller: 'ConfigureEnvCtrl',
     },
+    'configure-pull-policy': {
+      templateUrl: '/static/page/modals/configure-pull-policy.html',
+      controller: 'ConfigurePullPolicyCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',

@@ -1,0 +1,44 @@
+<div class="co-p-configure-liveness">
+  <form ng-controller="ConfigurePullPolicyCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Pull Policy</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>Each time a new pod is created by the replication controller, it needs to know how to fetch the container image:</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-form-row">
+            <input type="radio" id="pull-always" checked="checked">
+            <label for="pull-always">Always Pull (default)</label>
+            <p class="co-m-radio-desc">Pull down a new copy of the container whenever a new instance is created.</p>
+          </div>
+          <div class="co-m-form-row">
+            <input type="radio" id="pull-if-needed">
+            <label for="pull-if-needed">Pull If Needed</label>
+            <p class="co-m-radio-desc">If the container isn’t available locally, pull it down.</p>
+          </div>
+          <div class="co-m-form-row">
+            <input type="radio" id="never-pull">
+            <label for="never-pull">Never Pull</label>
+            <p class="co-m-radio-desc">Don’t pull down a container. If the correct container doesn’t exist, the pod will fail to start correctly.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Pull Policy</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>

@@ -112,6 +112,12 @@ angular.module('app')
         });
       };
 
+      $scope.openPullPolicyModal = function() {
+        ModalLauncherSvc.open('configure-pull-policy', {
+          container: $scope.container
+        });
+      };
+
       $scope.openVolumeMountsModal = function() {
         ModalLauncherSvc.open('configure-volume-mounts', {
           container: $scope.container,
