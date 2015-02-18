@@ -23,6 +23,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-pull-policy.html',
       controller: 'ConfigurePullPolicyCtrl',
     },
+    'configure-liveness': {
+      templateUrl: '/static/page/modals/configure-liveness.html',
+      controller: 'ConfigureLivenessCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',

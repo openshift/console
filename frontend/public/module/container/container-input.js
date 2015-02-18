@@ -118,6 +118,12 @@ angular.module('app')
         });
       };
 
+      $scope.openLivenessModal = function() {
+        ModalLauncherSvc.open('configure-liveness', {
+          container: $scope.container
+        });
+      };
+
       $scope.openVolumeMountsModal = function() {
         ModalLauncherSvc.open('configure-volume-mounts', {
           container: $scope.container,
