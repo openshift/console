@@ -44,7 +44,7 @@ angular.module('k8s')
       env: [],
       resources: null,
       image: null,
-      imagePullPolicy: k8sEnum.PullPolicy.PullIfNotPresent,
+      imagePullPolicy: k8sEnum.PullPolicy.IfNotPresent,
       lifecycle: null,
       livenessProbe: null,
       name: null,
