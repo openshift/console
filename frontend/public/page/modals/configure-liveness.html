@@ -1,0 +1,80 @@
+<div class="co-p-configure-liveness">
+  <form ng-controller="ConfigureLivenessFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Liveness Probe</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>After a pod is created, the system will check its health to ensure it started properly. Define how to properly assess
+your container’s health:</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-form-row">
+            <input type="radio" id="liveness-dont-probe" checked="checked">
+            <label for="liveness-dont-probe">Don't Probe for Liveness (default)</label>
+            <p class="co-m-radio-desc">Your application will be considered healthy if the containers can be successfully started.</p>
+          </div>
+          <div class="co-m-form-row">
+            <input type="radio" id="liveness-http">
+            <label for="liveness-http">Probe via HTTP</label>
+            <div class="co-m-radio-desc">
+
+              <p>Determine pod health from the status code returned from the configured port and path.</p>
+
+              <div class="row co-m-form-row">
+                <div class="col-sm-1">
+                  <label for="liveness-http-path" class="control-label">Path:</label>
+                </div>
+                <div class="co-m-form-col col-sm-11">
+                  <input type="text" class="form-control co-m-form-field-md" id="liveness-http-path" placeholder="/v1/health"/>
+                </div>
+              </div>
+
+              <div class="row co-m-form-row">
+                <div class="col-sm-1">
+                  <label for="liveness-http-port" class="control-label">Port:</label>
+                </div>
+                <div class="co-m-form-col col-sm-11">
+                  <input type="text" class="form-control co-m-form-field-xs" id="liveness-http-port"/>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="co-m-form-row">
+            <input type="radio" id="liveness-command">
+            <label for="liveness-command">Probe via Command</label>
+            <div class="co-m-radio-desc">
+
+              <p>Determine pod health from the exit code of the command.</p>
+
+              <div class="row co-m-form-row">
+                <div class="col-sm-1">
+                  <label for="liveness-command-path" class="control-label">Path:</label>
+                </div>
+                <div class="co-m-form-col col-sm-11">
+                  <input type="text" class="form-control co-m-form-field-lg" id="liveness-command-path" placeholder="/usr/bin/my-health-probe"/>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Liveness Probe</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
