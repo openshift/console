@@ -124,6 +124,12 @@ angular.module('app')
         });
       };
 
+      $scope.openLifecycleModal = function() {
+        ModalLauncherSvc.open('configure-lifecycle', {
+          container: $scope.container
+        });
+      };
+
       $scope.openVolumeMountsModal = function() {
         ModalLauncherSvc.open('configure-volume-mounts', {
           container: $scope.container,
