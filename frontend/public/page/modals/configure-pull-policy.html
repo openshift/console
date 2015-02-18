@@ -8,7 +8,7 @@
     <div class="modal-body">
       <div class="row co-m-form-row">
         <div class="col-sm-12">
-          <p>Each time a new pod is created by the replication controller, it needs to know how to fetch the container image:</p>
+          <p>Each time a new pod is created by the replication controller, it needs to know how to fetch the container image(s):</p>
         </div>
       </div>
 
@@ -18,7 +18,7 @@
           <div class="co-m-form-row">
             <input type="radio" id="pull-always" checked="checked">
             <label for="pull-always">Always Pull (default)</label>
-            <p class="co-m-radio-desc">Pull down a new copy of the container whenever a new instance is created.</p>
+            <p class="co-m-radio-desc">Pull down a new copy of the container image whenever a new pod is created.</p>
           </div>
           <div class="co-m-form-row">
             <input type="radio" id="pull-if-needed">
@@ -28,7 +28,7 @@
           <div class="co-m-form-row">
             <input type="radio" id="never-pull">
             <label for="never-pull">Never Pull</label>
-            <p class="co-m-radio-desc">Don’t pull down a container. If the correct container doesn’t exist, the pod will fail to start correctly.</p>
+            <p class="co-m-radio-desc">Don’t pull down a container image. If the correct container image doesn’t exist locally, the pod will fail to start correctly.</p>
           </div>
 
         </div>
