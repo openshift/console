@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('NewServiceCtrl', function($scope, $routeParams, $location, k8s) {
+.controller('NewAppCtrl', function($scope, $routeParams, $location, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -8,13 +8,19 @@ angular.module('app')
   $scope.save = function() {
     $scope.requestPromise = k8s.services.create($scope.service);
     $scope.requestPromise.then(function() {
-      $location.path('/services');
+      $location.path('/apps');
     });
   };
 
 })
 
-.controller('NewServiceFormCtrl', function($scope) {
+.controller('NewAppFormCtrl', function($scope) {
   'use strict';
+
   $scope.submit = $scope.save;
+
+  $scope.continue = function() {
+    // TODO: continue to next step
+  };
+
 });

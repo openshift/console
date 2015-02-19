@@ -57,6 +57,21 @@ angular.module('app', [
         client: 'ClientLoaderSvc'
       }
     })
+    .when('/apps', {
+      controller: 'AppsCtrl',
+      templateUrl: '/static/page/apps/apps.html',
+      title: 'Applications',
+    })
+    .when('/ns/:ns/apps', {
+      controller: 'AppsCtrl',
+      templateUrl: '/static/page/apps/apps.html',
+      title: 'Applications',
+    })
+    .when('/ns/:ns/apps/new', {
+      controller: 'NewAppCtrl',
+      templateUrl: '/static/page/apps/new-app.html',
+      title: 'Create New Application',
+    })
     .when('/services', {
       controller: 'ServicesCtrl',
       templateUrl: '/static/page/services/services.html',
