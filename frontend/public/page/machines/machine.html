@@ -7,19 +7,42 @@
     <div class="co-m-pane__heading">
       <h1 class="co-m-pane__title">Machine Details</h1>
     </div>
-
     <div class="co-m-pane__body">
-
       <dl>
-        <dt>Machine ID</dl>
+        <dt>Status</dt>
+        <dd ng-repeat="condition in machine.status.conditions">
+          Status <code ng-bind="condition.kind"></code> is <code ng-bind="condition.status"></code>. Message is <code ng-bind="condition.message"></code> because <code ng-bind="condition.reason"></code></span>
+        </dd>
+        <dt>Machine Labels</dt>
+        <dd><co-label-list kind="machine" labels="machine.metadata.labels"></co-label-list></dd>
+        <dt>Machine ID</dt>
         <dd ng-bind="machine.metadata.name"></dd>
-        <dt>Host IP</dl>
+        <dt>Host IP Addresses</dt>
         <dd ng-bind="machine.status.hostIP"></dd>
+        <dt>Created</dt>
+        <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
       </dl>
+    </div>
 
+  </div>
+
+  <div class="co-m-pane">
+
+    <div class="co-m-pane__heading">
+
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+          <h1 class="co-m-pane__title">Running Pods</h1>
+        </div>
+        <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
+          <input type="text" class="form-control" placeholder="Filter pods by label query...">
+        </div>
+      </div>
+
+    </div>
+    <div class="co-m-pane__body">
       <co-pod-list pods="machine.pods"></co-pod-list>
+    </div>
 
-    </div><!-- pane body -->
   </div><!-- pane -->
-
 </div>
