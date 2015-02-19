@@ -5109,6 +5109,16 @@ kbd {
   background-color: #2277ad;
   background-size: auto, 100% 100%; }
 
+.co-img-bg-cells {
+  background: url('./img/cells.png') left top repeat, linear-gradient(30deg, #2277ad, #144768) no-repeat left top fixed;
+  background-color: #2277ad;
+  background-size: auto, 100% 100%; }
+
+.co-img-bg-network-circles {
+  background: url('./img/network-circles.png') left top repeat, linear-gradient(30deg, #2277ad, #144768) no-repeat left top fixed;
+  background-color: #2277ad;
+  background-size: auto, 100% 100%; }
+
 .co-img-bg-right-arrow {
   background: url('./img/icon-right-arrow.svg'); }
 
