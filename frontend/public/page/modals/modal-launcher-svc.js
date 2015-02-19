@@ -19,6 +19,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-env.html',
       controller: 'ConfigureEnvCtrl',
     },
+    'configure-labels': {
+      templateUrl: '/static/page/modals/configure-labels.html',
+      controller: 'ConfigureLabelsCtrl',
+    },
     'configure-pull-policy': {
       templateUrl: '/static/page/modals/configure-pull-policy.html',
       controller: 'ConfigurePullPolicyCtrl',

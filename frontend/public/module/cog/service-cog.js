@@ -36,7 +36,11 @@ angular.module('app')
           },
           {
             label: 'Modify Labels...',
-            weight: 300
+            weight: 300,
+            callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
+              kind: k8s.enum.Kind.SERVICE,
+              resource: $scope.service,
+            }),
           },
           {
             'label': 'Delete Service...',
