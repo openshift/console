@@ -23,6 +23,7 @@ angular.module('k8s')
   this.events = k8sEvents;
   this.enum = k8sEnum;
   this.docker = k8sDocker;
+  this.resource = k8sResource;
   this.search = k8sResource.list;
   this.util = k8sUtil;
   this.nodes = {
