@@ -5001,6 +5001,9 @@ dl {
   text-align: left;
   margin: 0px; }
 
+.modal-backdrop {
+  height: 10000px; }
+
 .navbar {
   min-height: 46px; }
 
