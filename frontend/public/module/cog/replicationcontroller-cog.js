@@ -36,7 +36,11 @@ angular.module('app')
           },
           {
             label: 'Modify Labels...',
-            weight: 300
+            weight: 300,
+            callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
+              kind: k8s.enum.Kind.REPLICATIONCONTROLLER,
+              resource: $scope.rc,
+            }),
           },
           {
             label: 'Delete Replication Controller...',

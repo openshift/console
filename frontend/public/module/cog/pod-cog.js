@@ -26,18 +26,22 @@ angular.module('app').directive('coPodCog', function(k8s, ModalLauncherSvc) {
         $scope.cogOptions = [
           {
             label: 'Modify Labels...',
-            weight: 100
+            weight: 100,
+            callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
+              kind: k8s.enum.Kind.POD,
+              resource: $scope.pod,
+            }),
           },
           {
-            'label': 'Delete Pod...',
-            'callback': ModalLauncherSvc.open.bind(null, 'confirm', {
+            label: 'Delete Pod...',
+            weight: 200,
+            callback: ModalLauncherSvc.open.bind(null, 'confirm', {
               title: 'Delete Pod',
               message: 'Are you sure you want to delete ' +
                   $scope.pod.id + '?',
               btnText: 'Delete Pod',
               executeFn: getDeleteFn
             }),
-            'weight': 200
           }
         ];
       }
