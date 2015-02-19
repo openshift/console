@@ -1,5 +1,7 @@
 angular.module('k8s').constant('k8sEnum', {
 
+  DefaultNS: 'default',
+
   Kind: {
     SERVICE: {
       // unique machine-friendly id

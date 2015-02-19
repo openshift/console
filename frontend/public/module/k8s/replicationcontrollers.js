@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sReplicationcontrollers', function(k8sUtil, k8sPods) {
+.service('k8sReplicationcontrollers', function(k8sUtil, k8sPods, k8sEnum) {
   'use strict';
 
   this.clean = function(rc) {
@@ -7,12 +7,13 @@ angular.module('k8s')
     k8sPods.clean(rc.spec.template);
   };
 
-  this.getEmpty = function() {
+  this.getEmpty = function(ns) {
     return {
       metadata: {
         annotations: [],
         labels: [],
         name: null,
+        namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
         replicas: 0,

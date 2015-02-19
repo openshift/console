@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sPods', function(_, k8sDocker, k8sUtil) {
+.service('k8sPods', function(_, k8sDocker, k8sUtil, k8sEnum) {
   'use strict';
 
   this.clean = function(pod) {
@@ -10,12 +10,13 @@ angular.module('k8s')
     });
   };
 
-  this.getEmpty = function() {
+  this.getEmpty = function(ns) {
     return {
       metadata: {
         annotations: [],
         labels: [],
         name: null,
+        namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
         containers: [],
