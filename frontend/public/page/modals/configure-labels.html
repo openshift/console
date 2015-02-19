@@ -1,0 +1,31 @@
+<div class="co-p-configure-labels">
+  <form ng-controller="ConfigureLabelsFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title" ng-bind-template="Configure {{kind.label}} Labels"></h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          Labels are key/value pairs used to scope and select resources.
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <label class="control-label">Labels for</label>
+          <co-resource-icon kind="{{kind.id}}"></co-resource-icon>
+          {{resource.metadata.name}}
+          <co-label-input ng-model="fields.labels" kind="{{kind.id}}"></co-label-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" co-btn-bar complete-promise="requestPromise">
+      <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Save Labels</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
