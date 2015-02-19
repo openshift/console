@@ -1,8 +1,11 @@
 angular.module('app')
-.controller('PodsCtrl', function($scope, k8s) {
+.controller('PodsCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  k8s.pods.list().then(function(result) {
+  $scope.defaultNS = k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns;
+
+  k8s.pods.list($scope.ns).then(function(result) {
     $scope.pods = result;
   });
 

@@ -1,17 +1,19 @@
 angular.module('app')
-.controller('ReplicationcontrollersCtrl', function($scope, k8s, arraySvc) {
+.controller('ReplicationcontrollersCtrl', function($scope, $routeParams, k8s, arraySvc) {
   'use strict';
 
-  k8s.replicationcontrollers.list().then(function(rcs) {
+  $scope.defaultNS = k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns;
+
+  k8s.replicationcontrollers.list({ns: $scope.ns}).then(function(rcs) {
     $scope.rcs = rcs;
   });
 
-  $scope.getPods = function(controllerName) {
-    var rc = k8s.util.findByName($scope.rcs, controllerName);
+  $scope.getPods = function(rc) {
     if (!rc.spec.selector) {
       return;
     }
-    k8s.pods.list({ labels: rc.spec.selector })
+    k8s.pods.list({ns: rc.metadata.namespace, labels: rc.spec.selector })
       .then(function(pods) {
         rc.pods = pods;
       });

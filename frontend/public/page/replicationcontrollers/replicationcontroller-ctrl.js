@@ -2,9 +2,11 @@ angular.module('app')
 .controller('ReplicationcontrollerCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  k8s.replicationcontrollers.get($routeParams.name).then(function(rc) {
+  $scope.ns = $routeParams.ns;
+
+  k8s.replicationcontrollers.get($routeParams.name, $scope.ns).then(function(rc) {
     $scope.rc = rc;
-    k8s.pods.list({ labels: rc.spec.selector })
+    k8s.pods.list({ns: $scope.ns, labels: rc.spec.selector })
       .then(function(pods) {
         $scope.pods = pods;
       });

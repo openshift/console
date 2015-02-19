@@ -1,17 +1,19 @@
 angular.module('app')
-.controller('ServicesCtrl', function($scope, k8s, arraySvc) {
+.controller('ServicesCtrl', function($scope, $routeParams, k8s, arraySvc) {
   'use strict';
 
-  k8s.services.list().then(function(result) {
+  $scope.defaultNS = k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns;
+
+  k8s.services.list({ns: $scope.ns}).then(function(result) {
     $scope.services = result;
   });
 
-  $scope.getPods = function(serviceName) {
-    var svc = k8s.util.findByName($scope.services, serviceName);
+  $scope.getPods = function(svc) {
     if (!svc.spec.selector) {
       return;
     }
-    k8s.pods.list({ labels: svc.spec.selector })
+    k8s.pods.list({ns: svc.metadata.namespace, labels: svc.spec.selector })
       .then(function(pods) {
         svc.pods = pods;
       });

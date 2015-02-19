@@ -2,7 +2,9 @@ angular.module('app')
 .controller('PodCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  k8s.pods.get($routeParams.name).then(function(pod) {
+  $scope.ns = $routeParams.ns;
+
+  k8s.pods.get($routeParams.name, $scope.ns).then(function(pod) {
     $scope.pod = pod;
   });
 

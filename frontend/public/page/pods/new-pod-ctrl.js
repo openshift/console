@@ -2,7 +2,8 @@ angular.module('app')
 .controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 
-  $scope.pod = k8s.pods.getEmpty();
+  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.pod = k8s.pods.getEmpty($scope.ns);
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {

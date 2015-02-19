@@ -1,7 +1,7 @@
 <div class="co-p-replicationcontrollers">
 
   <co-nav-title title="Replication Controllers">
-    <a href="/replicationcontrollers/new" class="co-m-primary-action">
+    <a href="/ns/{{ns || defaultNS}}/replicationcontrollers/new" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Create a New Replication Controller</a>
   </co-nav-title>
 
@@ -30,11 +30,11 @@
           <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
           <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Desired Count</div>
         </div>
-        <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs" ng-click="open = !open; getPods(rc.metadata.name)">
+        <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs" ng-click="open = !open; getPods(rc)">
           <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <co-replicationcontroller-cog rc="rc"></co-replicationcontroller-cog>
             <co-resource-icon kind="replicationcontroller"></co-resource-icon>
-            <a ng-href="/replicationcontrollers/{{rc.metadata.name}}" ng-bind="rc.metadata.name"></a>
+            <a ng-href="/ns/{{rc.metadata.namespace}}/replicationcontrollers/{{rc.metadata.name}}" ng-bind="rc.metadata.name"></a>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">
             <co-label-list kind="replicationcontroller" labels="rc.metadata.labels"></co-label-list>

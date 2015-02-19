@@ -11,7 +11,7 @@ angular.module('app')
     restrict: 'E',
     replace: true,
     scope: {
-      rcId: '='
+      rc: '='
     }
   };
 

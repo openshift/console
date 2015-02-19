@@ -2,7 +2,8 @@ angular.module('app')
 .controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 
-  $scope.rc = k8s.replicationcontrollers.getEmpty();
+  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.rc = k8s.replicationcontrollers.getEmpty($scope.ns);
   $scope.podTemplate = $scope.rc.spec.template;
 
   $scope.openVolumesModal = function() {
