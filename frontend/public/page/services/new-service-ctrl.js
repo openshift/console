@@ -16,11 +16,5 @@ angular.module('app')
 
 .controller('NewServiceFormCtrl', function($scope) {
   'use strict';
-
   $scope.submit = $scope.save;
-
-  $scope.continue = function() {
-    // TODO: continue to next step
-  };
-
 });
