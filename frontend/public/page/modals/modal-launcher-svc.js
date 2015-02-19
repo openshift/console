@@ -27,6 +27,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-liveness.html',
       controller: 'ConfigureLivenessCtrl',
     },
+    'configure-lifecycle': {
+      templateUrl: '/static/page/modals/configure-lifecycle.html',
+      controller: 'ConfigureLifecycleCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',
