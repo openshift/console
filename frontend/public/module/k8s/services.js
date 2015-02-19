@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sServices', function(k8sUtil) {
+.service('k8sServices', function(k8sUtil, k8sEnum) {
   'use strict';
 
   this.clean = function(service) {
@@ -7,12 +7,13 @@ angular.module('k8s')
     k8sUtil.nullifyEmpty(service.spec, ['publicIPs']);
   };
 
-  this.getEmpty = function() {
+  this.getEmpty = function(ns) {
     return {
       metadata: {
-        annotations: null,
+        annotations: [],
+        labels: [],
         name: null,
-        labels: null,
+        namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
         containerPort: null,

@@ -2,10 +2,11 @@ angular.module('app')
 .controller('EditReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 
+  $scope.ns = $routeParams.ns;
   $scope.rc = {};
 
   $scope.init = function() {
-    k8s.replicationcontrollers.get($routeParams.name).then(function(rc) {
+    k8s.replicationcontrollers.get($routeParams.name, $scope.ns).then(function(rc) {
       $scope.rc = rc;
     });
   };

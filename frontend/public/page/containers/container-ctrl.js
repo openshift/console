@@ -2,7 +2,9 @@ angular.module('app')
 .controller('ContainerCtrl', function($scope, $routeParams, _, k8s) {
   'use strict';
 
-  k8s.pods.get($routeParams.podName).then(function(pod) {
+  $scope.ns = $routeParams.ns;
+
+  k8s.pods.get($routeParams.podName, $scope.ns).then(function(pod) {
     $scope.pod = pod;
     $scope.container = _.findWhere(pod.spec.containers, { name: $routeParams.name });
     if (pod.status && pod.status.info) {

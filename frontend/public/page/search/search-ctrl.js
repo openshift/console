@@ -71,7 +71,7 @@ angular.module('app')
     if (!kind) {
       return '';
     }
-    return kind.path + '/' + resource.metadata.name;
+    return ['ns', resource.metadata.namespace, kind.path, resource.metadata.name].join('/');
   };
 
   // Execute the actual search with api client.

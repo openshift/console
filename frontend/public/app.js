@@ -62,12 +62,17 @@ angular.module('app', [
       templateUrl: '/static/page/services/services.html',
       title: 'Services',
     })
-    .when('/services/new', {
+    .when('/ns/:ns/services', {
+      controller: 'ServicesCtrl',
+      templateUrl: '/static/page/services/services.html',
+      title: 'Services',
+    })
+    .when('/ns/:ns/services/new', {
       controller: 'NewServiceCtrl',
       templateUrl: '/static/page/services/new-service.html',
       title: 'Create New Service',
     })
-    .when('/services/:name', {
+    .when('/ns/:ns/services/:name', {
       controller: 'ServiceCtrl',
       templateUrl: '/static/page/services/service.html',
       title: 'Service',
@@ -75,39 +80,49 @@ angular.module('app', [
     .when('/replicationcontrollers', {
       controller: 'ReplicationcontrollersCtrl',
       templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
-      title: 'Controllers',
+      title: 'Replication Controllers',
     })
-    .when('/replicationcontrollers/new', {
+    .when('/ns/:ns/replicationcontrollers', {
+      controller: 'ReplicationcontrollersCtrl',
+      templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
+      title: 'Replication Controllers',
+    })
+    .when('/ns/:ns/replicationcontrollers/new', {
       controller: 'NewReplicationcontrollerCtrl',
       templateUrl: '/static/page/replicationcontrollers/new-replicationcontroller.html',
       title: 'New Replication Controller',
     })
-    .when('/replicationcontrollers/:name/edit', {
+    .when('/ns/:ns/replicationcontrollers/:name/edit', {
       controller: 'EditReplicationcontrollerCtrl',
       templateUrl: '/static/page/replicationcontrollers/edit-replicationcontroller.html',
       title: 'Edit Replication Controller',
     })
-    .when('/replicationcontrollers/:name', {
+    .when('/ns/:ns/replicationcontrollers/:name', {
       controller: 'ReplicationcontrollerCtrl',
       templateUrl: '/static/page/replicationcontrollers/replicationcontroller.html',
-      title: 'Controller',
+      title: 'Replication Controller',
     })
     .when('/pods', {
       controller: 'PodsCtrl',
       templateUrl: '/static/page/pods/pods.html',
       title: 'Pods',
     })
-    .when('/pods/new', {
+    .when('/ns/:ns/pods', {
+      controller: 'PodsCtrl',
+      templateUrl: '/static/page/pods/pods.html',
+      title: 'Pods',
+    })
+    .when('/ns/:ns/pods/new', {
       controller: 'NewPodCtrl',
       templateUrl: '/static/page/pods/new-pod.html',
       title: 'Create New Pod',
     })
-    .when('/pods/:name', {
+    .when('/ns/:ns/pods/:name', {
       controller: 'PodCtrl',
       templateUrl: '/static/page/pods/pod.html',
       title: 'Pod',
     })
-    .when('/containers/:podName/:name', {
+    .when('/ns/:ns/pods/:podName/containers/:name', {
       controller: 'ContainerCtrl',
       templateUrl: '/static/page/containers/container.html',
       title: 'Container',

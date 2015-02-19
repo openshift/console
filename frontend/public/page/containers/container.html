@@ -1,7 +1,7 @@
 <div class="co-p-container">
 
   <co-nav-title title="{{container.name}}">
-    <a ng-href="/pods/{{pod.metadata.name}}" class="co-m-primary-action">
+    <a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pod</a>
   </co-nav-title>
 
@@ -9,7 +9,7 @@
 
     <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
       <li class="co-m-vert-nav__menu-item">
-        <a ng-href="/containers/{{pod.metadata.name}}/{{container.name}}">
+        <a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}/containers/{{container.name}}">
           <i class="fa fa-dashboard"></i>
         </a>
       </li>

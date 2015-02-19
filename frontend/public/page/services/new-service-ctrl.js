@@ -2,7 +2,8 @@ angular.module('app')
 .controller('NewServiceCtrl', function($scope, $routeParams, $location, k8s) {
   'use strict';
 
-  $scope.service = k8s.services.getEmpty();
+  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.service = k8s.services.getEmpty($scope.ns);
 
   $scope.save = function() {
     $scope.requestPromise = k8s.services.create($scope.service);

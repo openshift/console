@@ -6,22 +6,31 @@ angular.module('k8s')
 
   var basePath = k8sConfig.getBasePath();
 
-  this.resourceURL = function(kind, name) {
-    var u = basePath + '/' + kind.path;
-    if (name) {
-      u += '/' + name;
+  this.resourceURL = function(kind, options) {
+    var u = basePath;
+    if (options.ns) {
+      u += '/ns/' + options.ns;
+    }
+    u += '/' + kind.path;
+    if (options.name) {
+      u += '/' + options.name;
     }
     return u;
   };
 
   this.list = function(kind, params) {
-    var d = $q.defer();
-    if (params && params.labels) {
-      params.labels = k8sLabels.urlEncode(params.labels);
+    var ns, d = $q.defer();
+    if (params) {
+      if (params.labels) {
+        params.labels = k8sLabels.urlEncode(params.labels);
+      }
+      if (params.ns) {
+        ns = params.ns;
+      }
     }
 
     $http({
-      url: this.resourceURL(kind),
+      url: this.resourceURL(kind, {ns: ns}),
       method: 'GET',
       params: params,
     })
@@ -37,7 +46,7 @@ angular.module('k8s')
     var d = $q.defer();
     // TODO: handle pending create status.
     $http({
-      url: this.resourceURL(kind),
+      url: this.resourceURL(kind, {ns: data.metadata.namespace}),
       method: 'POST',
       data: data,
     })
@@ -58,7 +67,7 @@ angular.module('k8s')
     var d = $q.defer();
     // TODO: handle pending update status.
     $http({
-      url: this.resourceURL(kind, data.metadata.name),
+      url: this.resourceURL(kind, {ns: data.metadata.namespace, name: data.metadata.name}),
       method: 'PUT',
       data: data,
     })
@@ -75,10 +84,10 @@ angular.module('k8s')
     return d.promise;
   }.bind(this);
 
-  this.get = function(kind, name) {
+  this.get = function(kind, name, ns) {
     var d = $q.defer();
     $http({
-      url: this.resourceURL(kind, name),
+      url: this.resourceURL(kind, {ns: ns, name: name}),
       method: 'GET',
     })
     .then(function(result) {
@@ -91,7 +100,7 @@ angular.module('k8s')
 
   this.delete = function(kind, resource) {
     var p = $http({
-      url: this.resourceURL(kind, resource.metadata.name),
+      url: this.resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
       method: 'DELETE',
     });
 
