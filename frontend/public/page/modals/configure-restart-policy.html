@@ -1,0 +1,44 @@
+<div class="co-p-configure-restart-policy">
+  <form ng-controller="ConfigureRestartPolicyFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Restart Policy</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>What should happen when this container exists or stops unexpectedly?</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-form-row">
+            <input type="radio" id="restart-on-failure" checked="checked">
+            <label for="restart-on-failure">Restart on Failure (default)</label>
+            <p class="co-m-radio-desc">If the container exits with a non-zero status code, restart it.</p>
+          </div>
+          <div class="co-m-form-row">
+            <input type="radio" id="restart-always">
+            <label for="Restart Always">Restart Always</label>
+            <p class="co-m-radio-desc">If the container restarts for any reason, restart it. Useful for stateless services that may fail from time to time.</p>
+          </div>
+          <div class="co-m-form-row">
+            <input type="radio" id="restart-never">
+            <label for="restart-never">Never Restart</label>
+            <p class="co-m-radio-desc">Don’t ever restart the container. Useful for containers that exit when they have completed a specific job, like a data import daemon.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Restart Policy</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>

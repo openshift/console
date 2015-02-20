@@ -39,6 +39,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-lifecycle.html',
       controller: 'ConfigureLifecycleCtrl',
     },
+    'configure-restart-policy': {
+      templateUrl: '/static/page/modals/configure-restart-policy.html',
+      controller: 'ConfigureRestartPolicyCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',
