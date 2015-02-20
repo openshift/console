@@ -1,8 +1,13 @@
 package server
 
 import (
+	"errors"
 	"net/http"
 	"path"
+
+	"github.com/coreos/pkg/log"
+
+	"github.com/coreos-inc/bridge/schema"
 )
 
 func registerDiscovery(prefix string, mux *http.ServeMux) {
@@ -11,7 +16,15 @@ func registerDiscovery(prefix string, mux *http.ServeMux) {
 }
 
 // Serve the discovery json file.
-// TODO: server from compiled go source instead
 func discoveryGet(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "schema/v1.json")
+	if r.Method != "GET" {
+		sendError(w, http.StatusMethodNotAllowed, errors.New("only HTTP GET supported against this resource"))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := w.Write([]byte(schema.DiscoveryJSON)); err != nil {
+		log.Errorf("Failed sending discovery JSON HTTP response body: %v", err)
+		sendError(w, http.StatusInternalServerError, errors.New("error serving discovery JSON"))
+	}
 }

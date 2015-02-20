@@ -6,17 +6,20 @@
 	],
 	"Deps": [
 		{
-			"ImportPath": "code.google.com/p/google-api-go-client/googleapi",
-			"Comment": "release-95",
-			"Rev": "b98def84f017a6dcd8b16c68293629d14bc66a90"
-		},
-		{
 			"ImportPath": "github.com/coreos/pkg/flagutil",
 			"Rev": "f56de33226d694c30664f17e7b8d9cbfe8291dac"
 		},
 		{
 			"ImportPath": "github.com/coreos/pkg/log",
 			"Rev": "f56de33226d694c30664f17e7b8d9cbfe8291dac"
+		},
+		{
+			"ImportPath": "google.golang.org/api/google-api-go-generator",
+			"Rev": "d3edb0282bde692467788c50070a9211afe75cf3"
+		},
+		{
+			"ImportPath": "google.golang.org/api/googleapi",
+			"Rev": "d3edb0282bde692467788c50070a9211afe75cf3"
 		}
 	]
 }
