@@ -1,0 +1,51 @@
+<div class="co-p-configure-primary-command">
+  <form ng-controller="ConfigurePrimaryCommandCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Primary Command</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>Select the primary command run within this container.</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-form-row">
+            <input type="radio" id="command-default" checked="checked">
+            <label for="command-default">Use default command of the container (default)</label>
+            <p class="co-m-radio-desc">If a command hasn't been specified in the container image, the pod to fail when created.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-form-row">
+            <input type="radio" id="command-custom">
+            <label for="command-custom">Provide a command</label>
+            <div class="co-m-radio-desc">
+
+            <textarea class="form-control" id="command-custom-input"/>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Primary Command</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>

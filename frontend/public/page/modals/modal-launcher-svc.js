@@ -43,6 +43,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-restart-policy.html',
       controller: 'ConfigureRestartPolicyCtrl',
     },
+    'configure-primary-command': {
+      templateUrl: '/static/page/modals/configure-primary-command.html',
+      controller: 'ConfigurePrimaryCommandCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',
