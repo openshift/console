@@ -146,7 +146,7 @@ var expandTests = []ExpandTest{
 		map[string]string{
 			"bucket": "red or blue",
 		},
-		"http://www.golang.org/{object}/delete",
+		"http://www.golang.org//delete",
 	},
 	// multiple expansions
 	{
@@ -181,6 +181,16 @@ var expandTests = []ExpandTest{
 			"bucket": "red",
 		},
 		"http://www.golang.org/{bucket/get",
+	},
+	// "+" prefix for suppressing escape
+	// See also: http://tools.ietf.org/html/rfc6570#section-3.2.3
+	{
+		"http://www.golang.org/{+topic}",
+		map[string]string{
+			"topic": "/topics/myproject/mytopic",
+		},
+		// The double slashes here look weird, but it's intentional
+		"http://www.golang.org//topics/myproject/mytopic",
 	},
 }
 
@@ -288,6 +298,64 @@ func TestCheckResponse(t *testing.T) {
 		}
 		if g != nil && g.Error() != test.errText {
 			t.Errorf("CheckResponse: unexpected error message.\nGot:  %q\nwant: %q", g, test.errText)
+		}
+	}
+}
+
+type VariantPoint struct {
+	Type        string
+	Coordinates []float64
+}
+
+type VariantTest struct {
+	in     map[string]interface{}
+	result bool
+	want   VariantPoint
+}
+
+var coords = []interface{}{1.0, 2.0}
+
+var variantTests = []VariantTest{
+	{
+		in: map[string]interface{}{
+			"type":        "Point",
+			"coordinates": coords,
+		},
+		result: true,
+		want: VariantPoint{
+			Type:        "Point",
+			Coordinates: []float64{1.0, 2.0},
+		},
+	},
+	{
+		in: map[string]interface{}{
+			"type":  "Point",
+			"bogus": coords,
+		},
+		result: true,
+		want: VariantPoint{
+			Type: "Point",
+		},
+	},
+}
+
+func TestVariantType(t *testing.T) {
+	for _, test := range variantTests {
+		if g := VariantType(test.in); g != test.want.Type {
+			t.Errorf("VariantType(%v): got %v, want %v", test.in, g, test.want.Type)
+		}
+	}
+}
+
+func TestConvertVariant(t *testing.T) {
+	for _, test := range variantTests {
+		g := VariantPoint{}
+		r := ConvertVariant(test.in, &g)
+		if r != test.result {
+			t.Errorf("ConvertVariant(%v): got %v, want %v", test.in, r, test.result)
+		}
+		if !reflect.DeepEqual(g, test.want) {
+			t.Errorf("ConvertVariant(%v): got %v, want %v", test.in, g, test.want)
 		}
 	}
 }
