@@ -17,6 +17,10 @@ angular.module('app')
     controller: function($scope) {
       var deregisterWatch;
 
+      function getRC() {
+        return $scope.rc;
+      }
+
       function getDeleteFn() {
         return function() {
           return k8s.replicationcontrollers.delete($scope.rc);
@@ -30,16 +34,22 @@ angular.module('app')
             weight: 100
           },
           {
-            label: 'Modify Selector...',
+            label: 'Modify Label Selector...',
             weight: 200,
-            href: '#',
+            callback: ModalLauncherSvc.open.bind(null, 'configure-selector', {
+              resourceKind: k8s.enum.Kind.REPLICATIONCONTROLLER,
+              selectorKind: k8s.enum.Kind.POD,
+              resource: getRC,
+              message: 'Replication Controllers ensure the configured number ' +
+                  'of pods matching this label selector are healthy and running:',
+            }),
           },
           {
             label: 'Modify Labels...',
             weight: 300,
             callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
               kind: k8s.enum.Kind.REPLICATIONCONTROLLER,
-              resource: $scope.rc,
+              resource: getRC,
             }),
           },
           {

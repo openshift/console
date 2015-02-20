@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ServicesCtrl', function($scope, $routeParams, k8s, arraySvc) {
+.controller('ServicesCtrl', function($scope, $routeParams, k8s, arraySvc, resourceMgrSvc) {
   'use strict';
 
   $scope.defaultNS = k8s.enum.DefaultNS;
@@ -22,6 +22,13 @@ angular.module('app')
   $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
     if (data.kind === k8s.enum.Kind.SERVICE) {
       arraySvc.remove($scope.services, data.original);
+    }
+  });
+
+  // Remove old service and add new version on update.
+  $scope.$on(k8s.events.RESOURCE_UPDATED, function(e, data) {
+    if (data.kind === k8s.enum.Kind.SERVICE) {
+      resourceMgrSvc.updateInList($scope.services, data.resource);
     }
   });
 

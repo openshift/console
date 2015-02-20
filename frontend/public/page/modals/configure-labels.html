@@ -2,7 +2,7 @@
   <form ng-controller="ConfigureLabelsFormCtrl" ng-submit="submit()" name="form" role="form">
 
     <div class="modal-header">
-      <h4 class="modal-title" ng-bind-template="Configure {{kind.label}} Labels"></h4>
+      <h4 class="modal-title" ng-bind-template="Modify {{kind.label}} Labels"></h4>
     </div>
 
     <div class="modal-body">
@@ -16,7 +16,7 @@
           <label class="control-label">Labels for</label>
           <co-resource-icon kind="{{kind.id}}"></co-resource-icon>
           {{resource.metadata.name}}
-          <co-label-input ng-model="fields.labels" kind="{{kind.id}}"></co-label-input>
+          <co-label-input ng-model="fields.labels" kind="{{kind.id}}" autofocus="true"></co-label-input>
         </div>
       </div>
     </div>
