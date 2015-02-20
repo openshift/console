@@ -142,6 +142,12 @@ angular.module('app')
         });
       };
 
+      $scope.openResourceLimitsModal = function() {
+        ModalLauncherSvc.open('configure-resource-limits', {
+          container: $scope.container
+        });
+      };
+
       $scope.openVolumeMountsModal = function() {
         ModalLauncherSvc.open('configure-volume-mounts', {
           container: $scope.container,
