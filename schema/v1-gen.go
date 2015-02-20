@@ -11,7 +11,6 @@ package schema
 
 import (
 	"bytes"
-	"code.google.com/p/google-api-go-client/googleapi"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,6 +19,8 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/coreos-inc/bridge/Godeps/_workspace/src/google.golang.org/api/googleapi"
 )
 
 // Always reference these packages, just in case the auto-generated code
