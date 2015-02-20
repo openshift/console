@@ -38,7 +38,7 @@ angular.module('app').directive('coPodCog', function(k8s, ModalLauncherSvc) {
             callback: ModalLauncherSvc.open.bind(null, 'confirm', {
               title: 'Delete Pod',
               message: 'Are you sure you want to delete ' +
-                  $scope.pod.id + '?',
+                  $scope.pod.metadata.name + '?',
               btnText: 'Delete Pod',
               executeFn: getDeleteFn
             }),
