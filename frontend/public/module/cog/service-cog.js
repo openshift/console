@@ -47,7 +47,7 @@ angular.module('app')
             'callback': ModalLauncherSvc.open.bind(null, 'confirm', {
               title: 'Delete Service',
               message: 'Are you sure you want to delete ' +
-                  $scope.service.id + '?',
+                  $scope.service.metadata.name + '?',
               btnText: 'Delete Service',
               executeFn: getDeleteFn
             }),
