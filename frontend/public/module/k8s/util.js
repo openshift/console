@@ -10,7 +10,7 @@ angular.module('k8s')
 
   this.findByUID = function(list, uid) {
     return _.find(list, function(item) {
-      return item.metadata && item.metadata.uuid === uid;
+      return item.metadata && item.metadata.uid === uid;
     });
   };
 
