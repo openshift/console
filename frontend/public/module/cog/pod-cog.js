@@ -16,6 +16,10 @@ angular.module('app').directive('coPodCog', function(k8s, ModalLauncherSvc) {
     controller: function($scope) {
       var deregisterWatch;
 
+      function getPod() {
+        return $scope.pod;
+      }
+
       function getDeleteFn() {
         return function() {
           return k8s.pods.delete($scope.pod);
@@ -29,7 +33,7 @@ angular.module('app').directive('coPodCog', function(k8s, ModalLauncherSvc) {
             weight: 100,
             callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
               kind: k8s.enum.Kind.POD,
-              resource: $scope.pod,
+              resource: getPod,
             }),
           },
           {

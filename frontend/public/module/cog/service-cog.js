@@ -17,6 +17,10 @@ angular.module('app')
     controller: function($scope) {
       var deregisterWatch;
 
+      function getService() {
+        return $scope.service;
+      }
+
       function getDeleteFn() {
         return function() {
           return k8s.services.delete($scope.service);
@@ -26,9 +30,14 @@ angular.module('app')
       function generateOptions() {
         $scope.cogOptions = [
           {
-            label: 'Modify Selector...',
+            label: 'Modify Label Selector...',
             weight: 100,
-            href: '#',
+            callback: ModalLauncherSvc.open.bind(null, 'configure-selector', {
+              resourceKind: k8s.enum.Kind.SERVICE,
+              selectorKind: k8s.enum.Kind.POD,
+              resource: getService,
+              message: 'Services will route traffic to pods matching this label selector:',
+            }),
           },
           {
             label: 'Modify Port...',
@@ -39,7 +48,7 @@ angular.module('app')
             weight: 300,
             callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
               kind: k8s.enum.Kind.SERVICE,
-              resource: $scope.service,
+              resource: getService,
             }),
           },
           {
