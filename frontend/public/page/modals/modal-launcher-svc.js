@@ -23,6 +23,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-labels.html',
       controller: 'ConfigureLabelsCtrl',
     },
+    'configure-selector': {
+      templateUrl: '/static/page/modals/configure-selector.html',
+      controller: 'ConfigureSelectorCtrl',
+    },
     'configure-pull-policy': {
       templateUrl: '/static/page/modals/configure-pull-policy.html',
       controller: 'ConfigurePullPolicyCtrl',
