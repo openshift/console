@@ -39,6 +39,18 @@ angular.module('app')
       templateUrl: '/static/page/modals/configure-lifecycle.html',
       controller: 'ConfigureLifecycleCtrl',
     },
+    'configure-restart-policy': {
+      templateUrl: '/static/page/modals/configure-restart-policy.html',
+      controller: 'ConfigureRestartPolicyCtrl',
+    },
+    'configure-primary-command': {
+      templateUrl: '/static/page/modals/configure-primary-command.html',
+      controller: 'ConfigurePrimaryCommandCtrl',
+    },
+    'configure-resource-limits': {
+      templateUrl: '/static/page/modals/configure-resource-limits.html',
+      controller: 'ConfigureResourceLimitsCtrl',
+    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',

@@ -130,6 +130,24 @@ angular.module('app')
         });
       };
 
+      $scope.openRestartPolicyModal = function() {
+        ModalLauncherSvc.open('configure-restart-policy', {
+          container: $scope.container
+        });
+      };
+
+      $scope.openPrimaryCommandModal = function() {
+        ModalLauncherSvc.open('configure-primary-command', {
+          container: $scope.container
+        });
+      };
+
+      $scope.openResourceLimitsModal = function() {
+        ModalLauncherSvc.open('configure-resource-limits', {
+          container: $scope.container
+        });
+      };
+
       $scope.openVolumeMountsModal = function() {
         ModalLauncherSvc.open('configure-volume-mounts', {
           container: $scope.container,

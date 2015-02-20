@@ -1,0 +1,73 @@
+<div class="co-p-configure-resource-limits">
+  <form ng-controller="ConfigureResourceLimitsFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Configure Resource Limits</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>Each container within a pod has its own resource allocation. The system will distribute pods to machines with
+sufficient resources to run them. Pods over-consuming resources may be terminated.</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+
+          <div class="co-m-form-row">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="memory-desired">Desired Memory:</label>
+              </div>
+              <div class="col-sm-9">
+                <input type="text" class="form-control co-m-form-field-xs" id="memory-desired" placeholder="defaultRequest">
+              </div>
+            </div>
+          </div>
+
+          <div class="co-m-form-row">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="memory-hard">Hard Memory Limit:</label>
+              </div>
+              <div class="col-sm-9">
+                <input type="text" class="form-control co-m-form-field-xs" id="memory-hard">
+              </div>
+            </div>
+          </div>
+
+          <div class="co-m-form-row">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="cpu-desired">Desired CPUs:</label>
+              </div>
+              <div class="col-sm-9">
+                <input type="text" class="form-control co-m-form-field-xs" id="cpu-desired" placeholder="defaultRequest">
+              </div>
+            </div>
+          </div>
+
+          <div class="co-m-form-row">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="cpu-hard">Hard CPU Limit:</label>
+              </div>
+              <div class="col-sm-9">
+                <input type="text" class="form-control co-m-form-field-xs" id="cpu-hard">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Save Resource Limits</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
