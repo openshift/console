@@ -12,15 +12,25 @@
     <div class="co-m-vert-nav__body">
 
       <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Controller Overview</h1>
+        <h1 class="co-m-pane__title">Replication Controller Overview</h1>
       </div>
       <div class="co-m-pane__body">
-        <dl>
-          <dt>Current Count</dt>
-          <dd ng-bind="rc.status.replicas"></dd>
-          <dt>Desired Count</dt>
-          <dd ng-bind="rc.spec.replicas"></dd>
-        </dl>
+        <div class="row">
+          <div class="col-lg-6">
+            <dl>
+              <dt>Current Count</dt>
+              <dd ng-bind="rc.status.replicas"></dd>
+              <dt>Desired Count</dt>
+              <dd ng-bind="rc.spec.replicas"></dd>
+            </dl>
+          </div>
+          <div class="col-lg-6">
+            <dl>
+              <dt>Created At</dt>
+              <dd ng-bind="rc.metadata.creationTimestamp"></dd>
+            </dl>
+          </div>
+        </div>
       </div>
 
       <div class="co-m-pane__heading">
