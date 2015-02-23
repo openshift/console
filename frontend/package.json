@@ -1,5 +1,7 @@
 {
   "name": "bridge",
+  "description": "CoreOS Dashboard",
+  "repository": "https://github.com/coreos-inc/bridge",
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
