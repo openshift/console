@@ -24,7 +24,7 @@ func main() {
 	logTimestamps := fs.Bool("log-timestamps", false, "prefix log lines with timestamps")
 	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
 	k8sEndpoint := fs.String("k8s-endpoint", "http://172.17.8.101:8080", "URL of the Kubernetes API server")
-	k8sAPIVersion := fs.String("k8s-api-version", "v1beta2", "version of Kubernetes API to use")
+	k8sAPIVersion := fs.String("k8s-api-version", "v1beta3", "version of Kubernetes API to use")
 	etcdEndpoints := fs.String("etcd-endpoints", "http://localhost:7001", "comma separated list of etcd endpoints")
 	fleetEndpoint := fs.String("fleet-endpoint", "unix://var/run/fleet.sock", "fleet API endpoint")
 

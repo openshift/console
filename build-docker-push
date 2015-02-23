@@ -18,6 +18,6 @@ source build-docker
 git_sha=$(git rev-parse HEAD)
 
 docker build -q --rm=true -t $repo:$git_sha .
-docker tag $repo:$git_sha $repo:latest
+docker tag -f $repo:$git_sha $repo:latest
 docker push $repo:$git_sha
 docker push $repo:latest
