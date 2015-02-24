@@ -3,6 +3,10 @@ angular.module('app')
   'use strict';
 
   var modalConfig = {
+    'configure-port': {
+      templateUrl: '/static/page/modals/configure-port.html',
+      controller: 'ConfigurePortCtrl',
+    },
     'configure-ports': {
       templateUrl: '/static/page/modals/configure-ports.html',
       controller: 'ConfigurePortsCtrl',
