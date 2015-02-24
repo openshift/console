@@ -40,27 +40,46 @@ angular.module('app')
             }),
           },
           {
-            label: 'Modify Port...',
-            weight: 200
+            label: 'Modify Service Port...',
+            weight: 200,
+            callback: ModalLauncherSvc.open.bind(null, 'configure-port', {
+              kind: k8s.enum.Kind.SERVICE,
+              resource: getService,
+              propertyName: 'port',
+              title: 'Modify Service Port',
+              description: 'The service can be reached at its portal IP and this port.',
+            }),
+          },
+          {
+            label: 'Modify Container Port...',
+            weight: 300,
+            callback: ModalLauncherSvc.open.bind(null, 'configure-port', {
+              kind: k8s.enum.Kind.SERVICE,
+              resource: getService,
+              propertyName: 'containerPort',
+              title: 'Modify Container Port',
+              description: 'The port used by the service for connecting to pods. ' +
+                  'Pod ports must be exposed in their configuration.',
+            }),
           },
           {
             label: 'Modify Labels...',
-            weight: 300,
+            weight: 400,
             callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
               kind: k8s.enum.Kind.SERVICE,
               resource: getService,
             }),
           },
           {
-            'label': 'Delete Service...',
-            'callback': ModalLauncherSvc.open.bind(null, 'confirm', {
+            label: 'Delete Service...',
+            callback: ModalLauncherSvc.open.bind(null, 'confirm', {
               title: 'Delete Service',
               message: 'Are you sure you want to delete ' +
                   $scope.service.metadata.name + '?',
               btnText: 'Delete Service',
               executeFn: getDeleteFn
             }),
-            'weight': 400
+            weight: 500
           }
         ];
       }

@@ -1,0 +1,28 @@
+<div class="co-p-configure-port">
+  <form ng-controller="ConfigurePortFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title" ng-bind="title"></h4>
+    </div>
+
+    <div class="modal-body">
+      <div ng-show="description" class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p ng-bind="description"></p>
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <input ng-model="fields.port" autofocus min="0" max="65535" class="form-control" type="number"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Save Port Configuration</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
