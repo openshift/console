@@ -63,6 +63,10 @@ angular.module('app')
       templateUrl: '/static/page/modals/view-json.html',
       controller: 'ViewJsonCtrl',
     },
+    'configure-replica-count': {
+      templateUrl: '/static/page/modals/configure-replica-count.html',
+      controller: 'ConfigureReplicaCountCtrl',
+    },
   };
 
   return {
