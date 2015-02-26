@@ -31,7 +31,10 @@ angular.module('app')
         $scope.cogOptions = [
           {
             label: 'Modify Desired Count...',
-            weight: 100
+            weight: 100,
+            callback: ModalLauncherSvc.open.bind(null, 'configure-replica-count', {
+              replicationController: getRC,
+            }),
           },
           {
             label: 'Modify Label Selector...',
