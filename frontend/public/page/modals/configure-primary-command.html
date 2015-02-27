@@ -1,5 +1,5 @@
 <div class="co-p-configure-primary-command">
-  <form ng-controller="ConfigurePrimaryCommandCtrl" ng-submit="submit()" name="form" role="form">
+  <form ng-controller="ConfigurePrimaryCommandFormCtrl" ng-submit="submit()" name="form" role="form">
 
     <div class="modal-header">
       <h4 class="modal-title">Configure Primary Command</h4>
@@ -16,8 +16,8 @@
         <div class="col-sm-12">
 
           <div class="co-m-form-row">
-            <input type="radio" id="command-default" checked="checked">
-            <label for="command-default">Use default command of the container (default)</label>
+            <input ng-model="fields.commandType" value="default" type="radio" id="configure-primary-command--default" />
+            <label for="configure-primary-command--default">Use default command of the container (default)</label>
             <p class="co-m-radio-desc">If a command hasn't been specified in the container image, the pod will fail when created.</p>
           </div>
 
@@ -28,12 +28,10 @@
         <div class="col-sm-12">
 
           <div class="co-m-form-row">
-            <input type="radio" id="command-custom">
-            <label for="command-custom">Provide a command</label>
-            <div class="co-m-radio-desc">
-
-            <textarea class="form-control" id="command-custom-input"/>
-
+            <input ng-model="fields.commandType" value="custom" type="radio" id="configure-primary-command--custom"/>
+            <label for="configure-primary-command--custom">Provide a command</label>
+            <div class="co-m-radio-desc" ng-click="fields.commandType='custom'">
+              <textarea ng-required="fields.commandType == 'custom'" ng-disabled="fields.commandType == 'default'" ng-model="fields.command" class="form-control" id="command-custom-input"></textarea>
             </div>
           </div>
 
