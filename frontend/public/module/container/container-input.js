@@ -136,6 +136,13 @@ angular.module('app')
         });
       };
 
+      $scope.getCommandLabel = function() {
+        if (_.isEmpty($scope.container.command)) {
+          return 'Default Command';
+        }
+        return 'Custom Command';
+      };
+
       $scope.openPrimaryCommandModal = function() {
         ModalLauncherSvc.open('configure-primary-command', {
           container: $scope.container

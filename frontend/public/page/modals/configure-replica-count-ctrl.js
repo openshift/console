@@ -1,6 +1,5 @@
 angular.module('app')
-.controller('ConfigureReplicaCountCtrl', function($scope, $rootScope, $controller,
-      $modalInstance, k8s, replicationController) {
+.controller('ConfigureReplicaCountCtrl', function($scope, $modalInstance, k8s, replicationController) {
   'use strict';
 
   $scope.rc = angular.copy(replicationController);
