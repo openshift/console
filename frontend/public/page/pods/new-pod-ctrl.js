@@ -7,8 +7,19 @@ angular.module('app')
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {
-      pod: $scope.pod
+      pod: $scope.pod,
     });
+  };
+
+  $scope.openRestartPolicyModal = function() {
+    ModalLauncherSvc.open('configure-restart-policy', {
+      pod: $scope.pod,
+    });
+  };
+
+  $scope.getRestartPolicyLabel = function() {
+    var p = k8s.pods.getRestartPolicyByValue($scope.pod.spec.restartPolicy);
+    return p.label;
   };
 
   $scope.cancel = function() {

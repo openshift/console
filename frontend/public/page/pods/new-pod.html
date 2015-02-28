@@ -40,6 +40,15 @@
             <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
           </div>
         </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label class="control-label">Restart Policy:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <div><a href="#" ng-click="openRestartPolicyModal()" class="co-m-modal-link" ng-bind="getRestartPolicyLabel()"></a></div>
+            <small class="text-muted">What should happen when this container exits or stops unexpectedly?</small>
+          </div>
+        </div>
 
       </div>
 
@@ -63,7 +72,9 @@
         </div>
       </div>
 
-  </div>
+      <co-debug obj="pod"></co-debug>
+
+    </div>
 
   </form>
 

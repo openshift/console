@@ -5,8 +5,7 @@
  * Usage:
  * <input type="text" autofocus>
  */
-angular.module('app.ui', [])
-
+angular.module('app.ui')
 .directive('autofocus', function($timeout) {
   'use strict';
   return {
