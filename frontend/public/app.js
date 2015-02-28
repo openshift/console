@@ -183,9 +183,10 @@ angular.module('app', [
       title: 'Page Not Found (404)'
     });
 })
-.run(function($rootScope, CONST, flagSvc) {
+.run(function($rootScope, CONST, flagSvc, debugSvc) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();
+  $rootScope.debug = debugSvc;
 });
