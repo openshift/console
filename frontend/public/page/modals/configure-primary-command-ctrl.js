@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ConfigurePrimaryCommandCtrl', function($scope, $modalInstance, k8s, _, container) {
+.controller('ConfigurePrimaryCommandCtrl', function($scope, $modalInstance, _, container) {
   'use strict';
 
   $scope.fields = {

@@ -14,23 +14,13 @@
 
       <div class="row co-m-form-row">
         <div class="col-sm-12">
-
-          <div class="co-m-form-row">
-            <input type="radio" id="restart-on-failure" checked="checked">
-            <label for="restart-on-failure">Restart on Failure (default)</label>
-            <p class="co-m-radio-desc">If the container exits with a non-zero status code, restart it.</p>
+          <div ng-repeat="(k,p) in policies | orderObjectBy:'weight'" ng-click="fields.policy = p.id" class="co-m-form-row co-click-target">
+            <input ng-model="fields.policy" value="{{p.id}}" type="radio" id="configure-restart-policy--{{p.id}}"/>
+            <label for="configure-restart-policy--{{p.id}}">
+              <span ng-bind="p.label"></span><span ng-show="{{p.default}}"> (default)</span>
+            </label>
+            <p class="co-m-radio-desc" ng-bind="p.description"></p>
           </div>
-          <div class="co-m-form-row">
-            <input type="radio" id="restart-always">
-            <label for="Restart Always">Restart Always</label>
-            <p class="co-m-radio-desc">If the container restarts for any reason, restart it. Useful for stateless services that may fail from time to time.</p>
-          </div>
-          <div class="co-m-form-row">
-            <input type="radio" id="restart-never">
-            <label for="restart-never">Never Restart</label>
-            <p class="co-m-radio-desc">Never restart the container. Useful for containers that exit when they have completed a specific job, like a data import daemon.</p>
-          </div>
-
         </div>
       </div>
     </div>

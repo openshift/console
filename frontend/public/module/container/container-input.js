@@ -130,12 +130,6 @@ angular.module('app')
         });
       };
 
-      $scope.openRestartPolicyModal = function() {
-        ModalLauncherSvc.open('configure-restart-policy', {
-          container: $scope.container
-        });
-      };
-
       $scope.getCommandLabel = function() {
         if (_.isEmpty($scope.container.command)) {
           return 'Default Command';

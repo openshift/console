@@ -19,4 +19,14 @@ angular.module('app')
     return k8s.docker.getState(cinfo);
   };
 
+  $scope.getRestartPolicyLabel = function() {
+    if (!$scope.pod || !$scope.pod.spec) {
+      return '';
+    }
+    var p = k8s.pods.getRestartPolicyByValue($scope.pod.spec.restartPolicy);
+    if (p) {
+      return p.label || '';
+    }
+  };
+
 });
