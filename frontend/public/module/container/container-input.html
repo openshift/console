@@ -46,7 +46,7 @@
       <dl>
         <dt>Pull Policy</dt>
         <dd>
-          <a href="#" ng-click="openPullPolicyModal()" class="co-m-modal-link">Always Pull</a>
+          <a href="#" ng-click="openPullPolicyModal()" class="co-m-modal-link" ng-bind="getPullPolicyLabel(container)"></a>
         </dd>
         <dt>Liveness Probe</dt>
         <dd>
