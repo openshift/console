@@ -50,7 +50,7 @@ angular.module('app')
 /**
  * single-container input directive form.
  */
-.directive('coContainerInput', function(_, ModalLauncherSvc, EVENTS) {
+.directive('coContainerInput', function(_, ModalLauncherSvc, k8s, EVENTS) {
 
   'use strict';
 
@@ -117,6 +117,8 @@ angular.module('app')
           container: $scope.container
         });
       };
+
+      $scope.getPullPolicyLabel = k8s.docker.getPullPolicyLabel;
 
       $scope.openLivenessModal = function() {
         ModalLauncherSvc.open('configure-liveness', {

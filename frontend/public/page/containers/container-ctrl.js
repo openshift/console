@@ -4,6 +4,8 @@ angular.module('app')
 
   $scope.ns = $routeParams.ns;
 
+  $scope.getPullPolicyLabel = k8s.docker.getPullPolicyLabel;
+
   k8s.pods.get($routeParams.podName, $scope.ns).then(function(pod) {
     $scope.pod = pod;
     $scope.container = _.findWhere(pod.spec.containers, { name: $routeParams.name });

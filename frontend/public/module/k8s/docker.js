@@ -44,7 +44,7 @@ angular.module('k8s')
       env: [],
       resources: null,
       image: null,
-      imagePullPolicy: k8sEnum.PullPolicy.IfNotPresent,
+      imagePullPolicy: k8sEnum.PullPolicy.Always.value,
       lifecycle: null,
       livenessProbe: null,
       name: null,
@@ -78,6 +78,26 @@ angular.module('k8s')
       name: null,
       protocol: 'TCP',
     };
+  };
+
+  this.getPullPolicyLabel = function(container) {
+    var p;
+    if (!container) {
+      return '';
+    }
+    p = this.getPullPolicyByValue(container.imagePullPolicy);
+    if (p) {
+      return p.label || '';
+    }
+    return '';
+  }.bind(this);
+
+  this.getPullPolicyByValue = function(value) {
+    return _.findWhere(k8sEnum.PullPolicy, { value: value });
+  };
+
+  this.getPullPolicyById = function(id) {
+    return _.find(k8sEnum.PullPolicy, function(o) { return o.id === id; });
   };
 
 });

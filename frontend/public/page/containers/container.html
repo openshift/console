@@ -52,6 +52,8 @@
                 <code ng-show="container.command" ng-bind="container.command | join:' '"></code>
                 <span ng-hide="container.command" ng-bind="CONST.placeholderText"></span>
               </dd>
+              <dt>Pull Policy</dt>
+              <dd ng-bind="getPullPolicyLabel(container)"></dd>
             </dl>
           </div><!--/col-->
 
