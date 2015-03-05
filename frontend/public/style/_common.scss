@@ -1,3 +1,10 @@
 .co-click-target {
   cursor: default;
 }
+
+.co-btn-drop-input {
+  margin-bottom: 5px;
+  .btn.dropdown-toggle {
+    height: 32px;
+  }
+}

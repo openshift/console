@@ -103,4 +103,22 @@ angular.module('k8s').constant('k8sEnum', {
     },
   },
 
+  LifecycleHook: {
+    exec: {
+      weight: 100,
+      id: 'exec',
+      label: 'Exec Command',
+    },
+    httpGet: {
+      weight: 200,
+      id: 'httpGet',
+      label: 'HTTP Get',
+    },
+    tcpSocket: {
+      weight: 300,
+      id: 'tcpSocket',
+      label: 'TCP Socket (Port)',
+    },
+  },
+
 });

@@ -15,4 +15,20 @@ angular.module('app')
     $scope.containerState = k8s.docker.getState($scope.container.info);
   });
 
+  $scope.getHookLabel = function(stage) {
+    if (!$scope.container) {
+      return '';
+    }
+    return k8s.lifecycle.getHookLabel($scope.container.lifecycle, stage);
+  };
+
+  $scope.getHookHandler = function(stage) {
+    var fields;
+    if (!$scope.container || !$scope.container.lifecycle) {
+      return '';
+    }
+    fields = k8s.lifecycle.mapLifecycleConfigToFields($scope.container.lifecycle);
+    return fields[stage].cmd;
+  };
+
 });

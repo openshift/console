@@ -1,6 +1,9 @@
 angular.module('k8s')
-.service('k8sUtil', function(_, k8sEnum) {
+.service('k8sUtil', function(_, k8sEnum, urlSvc) {
   'use strict';
+
+  // TODO (sym3tri): refector this depencency once coreos-web is split up.
+  this.parseURL = urlSvc.parse;
 
   this.findByName = function(list, name) {
     return _.find(list, function(item) {

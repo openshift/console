@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sDocker', function(_, $rootScope, k8sEnum, k8sUtil) {
+.service('k8sDocker', function(_, k8sEnum, k8sUtil) {
   'use strict';
 
   // Parses the state from k8s container info field of a pod.
