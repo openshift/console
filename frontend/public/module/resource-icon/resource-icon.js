@@ -16,13 +16,13 @@ angular.module('app').directive('coResourceIcon', function(k8s) {
       elem.addClass('co-m-resource-icon');
       elem.addClass('co-m-resource-icon--' + kind.id);
       switch (kind.id) {
-        case k8s.enum.Kind.REPLICATIONCONTROLLER:
+        case k8s.enum.Kind.REPLICATIONCONTROLLER.id:
           label = 'RC';
           break;
-        case k8s.enum.Kind.POD:
+        case k8s.enum.Kind.POD.id:
           label = 'P';
           break;
-        case k8s.enum.Kind.SERVICE:
+        case k8s.enum.Kind.SERVICE.id:
           label = 'S';
           break;
         default:
