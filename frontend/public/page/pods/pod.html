@@ -52,7 +52,10 @@
           </div>
           <div class="row" ng-repeat="c in pod.spec.containers"
               ng-init="cstate = getContainerState(c.name)">
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4"><a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}/containers/{{c.name}}" ng-bind="c.name"></a></div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+              <co-resource-icon kind="container"></co-resource-icon>
+              <a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}/containers/{{c.name}}" ng-bind="c.name"></a>
+            </div>
             <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="getContainerInfo(c.name).containerID"></div>
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8" ng-bind="c.image"></div>
             <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">
