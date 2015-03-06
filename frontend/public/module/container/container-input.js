@@ -120,6 +120,14 @@ angular.module('app')
 
       $scope.getPullPolicyLabel = k8s.docker.getPullPolicyLabel;
 
+      $scope.getLivenessProbeLabel = function() {
+        var label = k8s.probe.getActionLabelFromObject($scope.container.livenessProbe);
+        if (!label) {
+          label = 'Not Configured';
+        }
+        return label;
+      };
+
       $scope.openLivenessModal = function() {
         ModalLauncherSvc.open('configure-liveness', {
           container: $scope.container

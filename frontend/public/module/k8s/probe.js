@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sLifecycle', function(_, k8sEnum, k8sUtil) {
+.service('k8sProbe', function(_, k8sEnum, k8sUtil) {
   'use strict';
 
   var flatteners, parsers;
@@ -50,7 +50,9 @@ angular.module('k8s')
       if (cmd.port) {
         c += ':' + cmd.port;
       }
-      c += cmd.path;
+      if (cmd.path) {
+        c += cmd.path;
+      }
       return c;
     },
 
@@ -62,6 +64,18 @@ angular.module('k8s')
     },
   };
 
+  function inferAction(obj) {
+    var keys;
+    if (_.isEmpty(obj)) {
+      return;
+    }
+    keys = _.keys(obj);
+    if (_.isEmpty(keys)) {
+      return;
+    }
+    return k8sEnum.HookAction[keys[0]];
+  }
+
   function flattenCmd(type, cmd) {
     return flatteners[type](cmd);
   }
@@ -70,32 +84,36 @@ angular.module('k8s')
     return parsers[type](cmd);
   }
 
-  function inferType(lifecycle) {
-    var keys;
-    if (_.isEmpty(lifecycle)) {
-      return;
+  function getActionLabelById(actionId) {
+    var t = k8sEnum.HookAction[actionId];
+    if (t) {
+      return t.label;
     }
-    keys = _.keys(lifecycle);
-    if (_.isEmpty(keys)) {
-      return;
-    }
-    return k8sEnum.LifecycleHook[keys[0]];
+    return '';
   }
 
-  this.inferType = inferType;
+  function getActionLabel(action) {
+    if (action) {
+      return action.label;
+    }
+    return '';
+  }
+
+  function getActionLabelFromObject(obj) {
+    var a = inferAction(obj);
+    return getActionLabel(a);
+  }
+
   this.flattenCmd = flattenCmd;
   this.parseCmd = parseCmd;
+  this.getActionLabelFromObject = getActionLabelFromObject;
+  this.getActionLabelById = getActionLabelById;
 
-  this.getHookLabel = function(lifecycle, stage) {
-    var type;
+  this.getLifecycleHookLabel = function(lifecycle, stage) {
     if (!lifecycle || !stage || !lifecycle[stage]) {
       return '';
     }
-    type = inferType(lifecycle[stage]);
-    if (!type) {
-      return '';
-    }
-    return type.label;
+    return getActionLabelFromObject(lifecycle[stage]);
   };
 
   // Maps an api config object to a simple flattened type and command field.
@@ -153,6 +171,49 @@ angular.module('k8s')
     }
 
     return c;
+  };
+
+  this.mapFieldsToLivenessProbe = function(f) {
+    var delay, c = {};
+    if (_.isEmpty(f.cmd)) {
+      return null;
+    }
+
+    c[f.type] = parseCmd(f.type, f.cmd);
+    delay = parseInt(f.initialDelaySeconds, 10);
+
+    // NaN is a number :/
+    if (_.isNumber(delay) && !_.isNaN(delay)) {
+      c.initialDelaySeconds = f.initialDelaySeconds;
+    }
+
+    return c;
+  };
+
+  this.mapLivenessProbeToFields = function(c) {
+    var k, f;
+
+    f = {
+      initialDelaySeconds: '',
+      type: 'exec',
+      cmd: '',
+    };
+
+    if (_.isEmpty(c)) {
+      return f;
+    }
+
+    if (_.isNumber(parseInt(c.initialDelaySeconds, 10))) {
+      f.initialDelaySeconds = c.initialDelaySeconds;
+    }
+
+    k = _.keys(c);
+    if (!_.isEmpty(k)) {
+      f.type = k[0];
+      f.cmd = flattenCmd(k[0], c[k[0]]);
+    }
+
+    return f;
   };
 
 });

@@ -33,13 +33,20 @@
               <dd ng-bind="container.info.restartCount"></dd>
               <dt>Lifecycle Hooks</dt>
               <dd>
-                <div ng-if="container.lifecycle.postStart">
-                  PostStart: <span ng-bind="getHookLabel('postStart')"></span> <code ng-bind="getHookHandler('postStart')"></code>
+                <div ng-show="getLifecycleValue('postStart')">
+                  PostStart: <span ng-bind="getLifecycleLabel('postStart')"></span> <code ng-bind="getLifecycleValue('postStart')"></code>
                 </div>
-                <div ng-if="container.lifecycle.preStop">
-                  PreStop: <span ng-bind="getHookLabel('postStart')"></span> <code ng-bind="getHookHandler('preStop')"></code>
+                <div ng-show="getLifecycleValue('preStop')">
+                  PreStop: <span ng-bind="getLifecycleLabel('postStart')"></span> <code ng-bind="getLifecycleValue('preStop')"></code>
                 </div>
-                <span ng-hide="container.lifecycle.preStop || container.lifecycle.postStart" ng-bind="CONST.placeholderText"></span>
+                <span ng-hide="getLifecycleValue('preStop') || getLifecycleValue('postStart')" ng-bind="CONST.placeholderText"></span>
+              </dd>
+              <dt>Liveness Probe</dt>
+              <dd>
+                <div ng-show="getLivenessValue()">
+                  <span ng-bind="getLivenessLabel()"></span> <code ng-bind="getLivenessValue()"></code>
+                </div>
+                <span ng-hide="getLivenessValue()" ng-bind="CONST.placeholderText"></span>
               </dd>
               <dt>Started</dt>
               <dd ng-bind="containerState.startedAt | customDate"></dd>

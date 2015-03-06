@@ -103,7 +103,8 @@ angular.module('k8s').constant('k8sEnum', {
     },
   },
 
-  LifecycleHook: {
+  // Used for probes and lifecycle actions.
+  HookAction: {
     exec: {
       weight: 100,
       id: 'exec',
