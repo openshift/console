@@ -16,10 +16,10 @@ angular.module('k8s')
 })
 
 .service('k8s', function(_, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels, k8sPods, k8sServices, k8sDocker,
-  k8sReplicationcontrollers, k8sLifecycle) {
+  k8sReplicationcontrollers, k8sProbe) {
   'use strict';
 
-  this.lifecycle = k8sLifecycle;
+  this.probe = k8sProbe;
   this.labels = k8sLabels;
   this.events = k8sEvents;
   this.enum = k8sEnum;
