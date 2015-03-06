@@ -15,19 +15,35 @@ angular.module('app')
     $scope.containerState = k8s.docker.getState($scope.container.info);
   });
 
-  $scope.getHookLabel = function(stage) {
+  $scope.getLivenessLabel = function() {
+    if ($scope.container) {
+      return k8s.probe.getActionLabelFromObject($scope.container.livenessProbe);
+    }
+    return '';
+  };
+
+  $scope.getLivenessValue = function() {
+    var fields;
+    if (!$scope.container || !$scope.container.livenessProbe) {
+      return '';
+    }
+    fields = k8s.probe.mapLivenessProbeToFields($scope.container.livenessProbe);
+    return fields.cmd;
+  };
+
+  $scope.getLifecycleLabel = function(stage) {
     if (!$scope.container) {
       return '';
     }
-    return k8s.lifecycle.getHookLabel($scope.container.lifecycle, stage);
+    return k8s.probe.getLifecycleHookLabel($scope.container.lifecycle, stage);
   };
 
-  $scope.getHookHandler = function(stage) {
+  $scope.getLifecycleValue = function(stage) {
     var fields;
     if (!$scope.container || !$scope.container.lifecycle) {
       return '';
     }
-    fields = k8s.lifecycle.mapLifecycleConfigToFields($scope.container.lifecycle);
+    fields = k8s.probe.mapLifecycleConfigToFields($scope.container.lifecycle);
     return fields[stage].cmd;
   };
 
