@@ -9,61 +9,35 @@
       <div class="row co-m-form-row">
         <div class="col-sm-12">
           <p>After a pod is created, the system will check its health to ensure it started properly. Define how to properly assess
-your container’s health:</p>
+            your container’s health:</p>
         </div>
       </div>
 
       <div class="row co-m-form-row">
         <div class="col-sm-12">
 
-          <div class="co-m-form-row">
-            <input type="radio" id="liveness-dont-probe" checked="checked">
-            <label for="liveness-dont-probe">Don't Probe for Liveness (default)</label>
-            <p class="co-m-radio-desc">Your application will be considered healthy if the containers can be successfully started.</p>
-          </div>
-          <div class="co-m-form-row">
-            <input type="radio" id="liveness-http">
-            <label for="liveness-http">Probe via HTTP</label>
-            <div class="co-m-radio-desc">
-
-              <p>Determine pod health from the status code returned from the configured port and path.</p>
-
-              <div class="row co-m-form-row">
-                <div class="col-sm-1">
-                  <label for="liveness-http-path" class="control-label">Path:</label>
-                </div>
-                <div class="co-m-form-col col-sm-11">
-                  <input type="text" class="form-control co-m-form-field-md" id="liveness-http-path" placeholder="/v1/health"/>
-                </div>
-              </div>
-
-              <div class="row co-m-form-row">
-                <div class="col-sm-1">
-                  <label for="liveness-http-port" class="control-label">Port:</label>
-                </div>
-                <div class="co-m-form-col col-sm-11">
-                  <input type="text" class="form-control co-m-form-field-xs" id="liveness-http-port"/>
-                </div>
-              </div>
-
+          <div class="row co-m-form-row">
+            <div class="col-sm-12">
+              <label for="configure-liveness--probe">Liveness Probe</label>
+              <p>Containers without a probe will be considered healthy if successfully started.</p>
+              <div class="input-group co-btn-drop-input">
+                <div class="input-group-btn dropdown">
+                  <button type="button" class="btn btn-default dropdown-toggle"><span ng-bind="getActionLabelById(fields.type)"></span> <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="t in actionTypes"><a href="#" ng-click="fields.type = t.id; fields.cmd = ''" ng-bind="t.label"></a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+                <input id="configure-liveness--probe" autofocus ng-model="fields.cmd" type="text" class="form-control" placeholder="{{getPlaceholder(fields.type)}}" />
+              </div><!-- /input-group -->
+              <small class="text-muted">No parameters are passed by this hook.</small>
             </div>
           </div>
-          <div class="co-m-form-row">
-            <input type="radio" id="liveness-command">
-            <label for="liveness-command">Probe via Command</label>
-            <div class="co-m-radio-desc">
 
-              <p>Determine pod health from the exit code of the command.</p>
-
-              <div class="row co-m-form-row">
-                <div class="col-sm-1">
-                  <label for="liveness-command-path" class="control-label">Path:</label>
-                </div>
-                <div class="co-m-form-col col-sm-11">
-                  <input type="text" class="form-control co-m-form-field-lg" id="liveness-command-path" placeholder="/usr/bin/my-health-probe"/>
-                </div>
-              </div>
-
+          <div class="row co-m-form-row">
+            <div class="col-sm-12">
+              <label for="configure-liveness--initialDelay">Initial Delay Seconds</label>
+              <p>How long to wait before initial liveness probe.</p>
+              <input ng-model="fields.initialDelaySeconds" min="0" class="form-control" type="number"/>
             </div>
           </div>
 
