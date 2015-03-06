@@ -19,7 +19,7 @@
           <p>This hook is sent immediately after a container is created.  It notifies the container that it has been created.</p>
           <div class="input-group co-btn-drop-input">
             <div class="input-group-btn dropdown">
-              <button type="button" class="btn btn-default dropdown-toggle"><span ng-bind="getHookLabel(fields.postStart.type)"></span> <span class="caret"></span></button>
+              <button type="button" class="btn btn-default dropdown-toggle"><span ng-bind="getActionLabelById(fields.postStart.type)"></span> <span class="caret"></span></button>
               <ul class="dropdown-menu">
                 <li ng-repeat="t in hookTypes"><a href="#" ng-click="fields.postStart.type = t.id; fields.postStart.cmd = ''" ng-bind="t.label"></a></li>
               </ul>
@@ -38,7 +38,7 @@
           Since it blocks, this is useful for saving ephemeral data or safely shutting down the application.</p>
           <div class="input-group co-btn-drop-input">
             <div class="input-group-btn dropdown">
-              <button type="button" class="btn btn-default dropdown-toggle"><span ng-bind="getHookLabel(fields.preStop.type)"></span> <span class="caret"></span></button>
+              <button type="button" class="btn btn-default dropdown-toggle"><span ng-bind="getActionLabelById(fields.preStop.type)"></span> <span class="caret"></span></button>
               <ul class="dropdown-menu">
                 <li ng-repeat="t in hookTypes"><a href="#" ng-click="fields.preStop.type = t.id; fields.preStop.cmd = ''" ng-bind="t.label"></a></li>
               </ul>

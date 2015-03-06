@@ -17,20 +17,16 @@ angular.module('app')
     },
   };
 
-  $scope.hookTypes = k8s.enum.LifecycleHook;
-
-  $scope.fields = k8s.lifecycle.mapLifecycleConfigToFields(container.lifecycle);
-
-  $scope.getHookLabel = function(type) {
-    return k8s.enum.LifecycleHook[type].label;
-  };
+  $scope.hookTypes = k8s.enum.HookAction;
+  $scope.fields = k8s.probe.mapLifecycleConfigToFields(container.lifecycle);
+  $scope.getActionLabelById = k8s.probe.getActionLabelById;
 
   $scope.getPlaceholder = function(type, hook) {
     return placeholders[type][hook];
   };
 
   $scope.save = function() {
-    container.lifecycle = k8s.lifecycle.mapFieldsToLifecycleConfig($scope.fields);
+    container.lifecycle = k8s.probe.mapFieldsToLifecycleConfig($scope.fields);
     $modalInstance.close(container);
   };
 
