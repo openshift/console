@@ -10,6 +10,8 @@ angular.module('k8s')
     _.each(pod.spec.containers, function(c) {
       k8sDocker.clean(c);
     });
+    k8sUtil.deleteNulls(pod.metadata);
+    k8sUtil.deleteNulls(pod.spec);
   };
 
   this.getRestartPolicyByValue = function(value) {
@@ -32,7 +34,7 @@ angular.module('k8s')
       },
       spec: {
         containers: [],
-        dnsPolicy: null,
+        dnsPolicy: 'Default',
         restartPolicy: defaultRestartPolicy.value,
         volumes: [],
       },

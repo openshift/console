@@ -9,7 +9,7 @@ angular.module('k8s')
   this.resourceURL = function(kind, options) {
     var u = basePath;
     if (options.ns) {
-      u += '/ns/' + options.ns;
+      u += '/namespaces/' + options.ns;
     }
     u += '/' + kind.path;
     if (options.name) {

@@ -5,6 +5,8 @@ angular.module('k8s')
   this.clean = function(service) {
     k8sUtil.nullifyEmpty(service.metadata, ['annotations', 'labels']);
     k8sUtil.nullifyEmpty(service.spec, ['publicIPs']);
+    k8sUtil.deleteNulls(service.metadata);
+    k8sUtil.deleteNulls(service.spec);
   };
 
   this.getEmpty = function(ns) {
@@ -24,7 +26,7 @@ angular.module('k8s')
         proxyPort: null,
         publicIPs: [],
         selector: null,
-        sessionAffinity: null,
+        sessionAffinity: 'None',
       },
     };
   };
