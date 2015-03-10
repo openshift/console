@@ -12,28 +12,41 @@ import (
 	"github.com/coreos-inc/bridge/schema"
 )
 
-// serves as a whitelist when filtering units states.
-var kubernetesServices = map[string]*bool{
-	"kubernetes-apiserver.service":          nil,
-	"kubernetes-kubelet.service":            nil,
-	"kubernetes-controller-manager.service": nil,
-	"kubernetes-proxy.service":              nil,
-	"kubernetes-scheduler.service":          nil,
+type clusterServiceConfig struct {
+	FleetClient *fleet.Client
+	EtcdClient  *etcd.Client
+	K8sConfig   *K8sConfig
+	Prefix      string
+	Mux         *http.ServeMux
 }
 
 type ClusterService struct {
 	fleetClient *fleet.Client
 	etcdClient  *etcd.Client
+	k8sConfig   *K8sConfig
+	// Serves as a whitelist when filtering for control service state.
+	controlServices map[string]string
 }
 
-func NewClusterService(prefix string, mux *http.ServeMux, etcdClient *etcd.Client, fleetClient *fleet.Client) (*ClusterService, error) {
+func registerClusterService(cfg clusterServiceConfig) {
+	svcs := make(map[string]string)
+	svcs[cfg.K8sConfig.APIService] = "API Server"
+	svcs[cfg.K8sConfig.ControllerManagerService] = "Controller Manager"
+	svcs[cfg.K8sConfig.SchedulerService] = "Scheduler"
+
 	s := &ClusterService{
-		fleetClient: fleetClient,
-		etcdClient:  etcdClient,
+		fleetClient:     cfg.FleetClient,
+		etcdClient:      cfg.EtcdClient,
+		k8sConfig:       cfg.K8sConfig,
+		controlServices: svcs,
 	}
-	mux.HandleFunc(path.Join(prefix, "/cluster/status/units"), s.GetUnits)
-	mux.HandleFunc(path.Join(prefix, "/cluster/status/etcd"), s.GetEtcdState)
-	return s, nil
+	cfg.Mux.HandleFunc(path.Join(cfg.Prefix, "/cluster/status/control-services"), s.GetUnits)
+	cfg.Mux.HandleFunc(path.Join(cfg.Prefix, "/cluster/status/etcd"), s.GetEtcdState)
+}
+
+func (s *ClusterService) isControlService(name string) (string, bool) {
+	id, found := s.controlServices[name]
+	return id, found
 }
 
 func (s *ClusterService) GetUnits(w http.ResponseWriter, r *http.Request) {
@@ -45,14 +58,27 @@ func (s *ClusterService) GetUnits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var filteredUnitStates []*schema.UnitState
+	usIdx := make(map[string][]*schema.UnitState)
 	for _, u := range unitStates {
-		_, exists := kubernetesServices[u.Name]
-		if exists {
-			filteredUnitStates = append(filteredUnitStates, u)
+		if sid, isCtrl := s.isControlService(u.Name); isCtrl {
+			ul, ok := usIdx[sid]
+			if ok {
+				ul = append(ul, u)
+			} else {
+				usIdx[sid] = []*schema.UnitState{u}
+			}
 		}
 	}
-	sendResponse(w, http.StatusOK, filteredUnitStates)
+
+	results := make([]*schema.ControlService, 0)
+	for id, us := range usIdx {
+		cs := &schema.ControlService{
+			Id:         id,
+			UnitStates: us,
+		}
+		results = append(results, cs)
+	}
+	sendResponse(w, http.StatusOK, results)
 }
 
 func (s *ClusterService) GetEtcdState(w http.ResponseWriter, r *http.Request) {

@@ -33,10 +33,14 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	bridgePrefix := fmt.Sprintf("/api/bridge/%s/", BridgeAPIVersion)
 	registerDiscovery(bridgePrefix, mux)
-	_, err := NewClusterService(bridgePrefix, mux, s.EtcdClient, s.FleetClient)
-	if err != nil {
-		panic(err)
+	csCfg := clusterServiceConfig{
+		Mux:         mux,
+		Prefix:      bridgePrefix,
+		EtcdClient:  s.EtcdClient,
+		FleetClient: s.FleetClient,
+		K8sConfig:   s.K8sConfig,
 	}
+	registerClusterService(csCfg)
 
 	// Respond with 404 for any other API rquests.
 	mux.HandleFunc("/api/", notFoundHandler)
