@@ -4,35 +4,29 @@ angular.module('app')
 
   this.etcd = $rootScope.client.cluster.etcd;
 
-  this.units = $rootScope.client.cluster.units;
+  this.controlServices = $rootScope.client.cluster.controlServices;
 
-  this.unitSummary = function() {
-    return this.units().then(function(resp) {
-      return _.reduce(resp.data, function(prev, curr) {
-        var result, name;
-        name = curr.name
-          .replace('kubernetes-', '')
-          .replace('.service', '');
-        name = _.str.underscored(name);
-
-        if (prev[name]) {
-          result = prev[name];
-        } else {
-          result = {
+  this.controlServiceSummary = function() {
+    return this.controlServices().then(function(resp) {
+      var svcs = resp.data;
+      _.each(svcs, function(svc) {
+        if (!svc.stats) {
+          svc.stats = {
             running: 0,
-            failed: 0
+            failed: 0,
           };
-          prev[name] = result;
         }
-        if (curr.systemdActiveState === 'active' &&
-            curr.systemdSubState === 'running') {
-          result.running++;
-        } else {
-          result.failed++;
-        }
-        return prev;
-      }, {});
+        _.each(svc.unitStates, function(us) {
+          if (us.systemdActiveState === 'active' &&
+              us.systemdSubState === 'running') {
+            svc.stats.running++;
+          } else {
+            svc.stats.failed++;
+          }
+        });
+      });
 
+      return svcs;
     });
   };
 
