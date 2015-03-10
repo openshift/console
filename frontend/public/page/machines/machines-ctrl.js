@@ -12,4 +12,11 @@ angular.module('app')
     });
   };
 
+  $scope.getStatus = function(machine) {
+    if (!machine || !machine.status || _.isEmpty(machine.status.conditions)) {
+      return 'Unknown';
+    }
+    return machine.status.conditions[0].status;
+  };
+
 });

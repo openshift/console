@@ -10,9 +10,6 @@ angular.module('app')
   });
 
   $scope.getPods = function(rc) {
-    if (!rc.spec.selector) {
-      return;
-    }
     k8s.pods.list({ns: rc.metadata.namespace, labels: rc.spec.selector })
       .then(function(pods) {
         rc.pods = pods;

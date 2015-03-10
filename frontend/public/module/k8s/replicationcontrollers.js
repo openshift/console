@@ -5,6 +5,8 @@ angular.module('k8s')
   this.clean = function(rc) {
     k8sUtil.nullifyEmpty(rc.metadata, ['annotations', 'labels']);
     k8sPods.clean(rc.spec.template);
+    k8sUtil.deleteNulls(rc.metadata);
+    k8sUtil.deleteNulls(rc.spec);
   };
 
   this.getEmpty = function(ns) {
