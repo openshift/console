@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"net/url"
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
@@ -20,12 +19,11 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	FleetClient   *fleet.Client
-	EtcdClient    *etcd.Client
-	K8sEndpoint   *url.URL
-	K8sAPIVersion string
-	PublicDir     string
-	Templates     *template.Template
+	FleetClient *fleet.Client
+	EtcdClient  *etcd.Client
+	K8sConfig   *K8sConfig
+	PublicDir   string
+	Templates   *template.Template
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -54,7 +52,7 @@ func (s *Server) HTTPHandler() http.Handler {
 }
 
 func (s *Server) k8sHandler() http.Handler {
-	t := *s.K8sEndpoint
+	t := *s.K8sConfig.Endpoint
 	t.Path = "/api"
 	proxy := newProxy(proxyConfig{
 		Target:          t,
@@ -65,7 +63,7 @@ func (s *Server) k8sHandler() http.Handler {
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		K8sVersion: s.K8sAPIVersion,
+		K8sVersion: s.K8sConfig.APIVersion,
 	}
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -40,7 +40,7 @@ func (s *ClusterService) GetUnits(w http.ResponseWriter, r *http.Request) {
 	unitStates, err := s.fleetClient.UnitStates()
 	if err != nil {
 		msg := "Error listing fleet units"
-		log.Printf("%s - error=%s", msg, err)
+		log.Printf("%s, error=%s", msg, err)
 		sendError(w, http.StatusInternalServerError, errors.New(msg))
 		return
 	}
