@@ -65,6 +65,21 @@ const DiscoveryJSON = `{
         }
       }
     },
+    "ControlService": {
+      "id": "ControlService",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "unitStates": {
+          "type": "array",
+          "items": {
+            "$ref": "UnitState"
+          }
+        }
+      }
+    },
     "UnitState": {
       "id": "UnitState",
       "type": "object",
@@ -108,15 +123,15 @@ const DiscoveryJSON = `{
   "resources": {
     "cluster": {
       "methods": {
-        "units": {
-          "id": "bridge.cluster.status.units",
-          "description": "Retrieve fleet kubernetes unit statuses.",
+        "controlServices": {
+          "id": "bridge.cluster.status.controlServices",
+          "description": "Retrieve status of all control cluster services.",
           "httpMethod": "GET",
-          "path": "cluster/status/units",
+          "path": "cluster/status/control-services",
           "response": {
             "type": "array",
             "items": {
-              "$ref": "UnitState"
+              "$ref": "ControlService"
             }
           }
         },
