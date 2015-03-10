@@ -67,3 +67,12 @@ $height: 18px;
   max-width: 60px;
   text-overflow: ellipsis;
 }
+
+.co-m-label-list:hover,
+.co-m-label.co-m-label--expand {
+  .co-m-label__key,
+  .co-m-label__value {
+    max-width: 100%;
+    text-overflow: initial;
+  }
+}

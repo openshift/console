@@ -17,7 +17,7 @@
               <dt>Status</dt>
               <dd ng-bind="pod.status.phase"></dd>
               <dt>Pod Labels</dt>
-              <dd><co-label-list kind="pod" labels="pod.metadata.labels"></co-label-list></dd>
+              <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
               <dt>Restart Policy</dt>
               <dd ng-bind="getRestartPolicyLabel()"></dd>
             </dl>

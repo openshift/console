@@ -22,6 +22,10 @@ angular.module('app')
       linkEl = el.find('.co-m-label__link');
       linkEl.attr('href', ref);
 
+      if (attrs.expand) {
+        el.addClass('co-m-label--expand');
+      }
+
       el.addClass('co-m-label--' + attrs.kind);
       if (attrs.selector) {
         el.addClass('co-m-label--selector');
@@ -48,6 +52,7 @@ angular.module('app')
       // kind id
       kind: '@',
       selector: '@',
+      expand: '@',
       labels: '='
     }
   };
