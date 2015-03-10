@@ -13,13 +13,13 @@
               <small ng-show="etcd.state == 'unknown'">The etcd cluster is unavailable or running in an unexpected location.</small>
             </div>
             <div ng-show="etcd.state != 'unknown'">
-              <small>{{etcd.stats.leaders + etcd.stats.followers}} active peers</small>
+              <small ng-bind-template="{{etcd.stats.leaders + etcd.stats.followers}} active peers"></small>
             </div>
             <div ng-show="etcd.state != 'unknown'">
               <small>
-                leaders: {{etcd.stats.leaders}},
-                followers: {{etcd.stats.followers}},
-                standby: {{etcd.stats.total - etcd.stats.followers - etcd.stats.leaders}}
+                leaders: <span ng-bind="etcd.stats.leaders"></span>,
+                followers: <span ng-bind="etcd.stats.followers"></span>,
+                standby: <span ng-bind="etcd.stats.total - etcd.stats.followers - etcd.stats.leaders"></span>
               </small>
             </div>
           </div>
@@ -42,8 +42,8 @@
             </div>
             <div ng-show="apiserver.stats">
               <small>
-                running: {{apiserver.stats.running}},
-                failed: {{apiserver.stats.failed}}
+                running: <span ng-bind="apiserver.stats.running"></span>,
+                failed: <span ng-bind="apiserver.stats.failed"></span>
               </small>
             </div>
           </div>
@@ -66,8 +66,8 @@
             </div>
             <div ng-show="services">
               <small>
-                running: {{controllerManager.stats.running}},
-                failed: {{controllerManager.stats.failed}}
+                running: <span ng-bind="controllerManager.stats.running"></span>,
+                failed: <span ng-bind="controllerManager.stats.failed"></span>
               </small>
             </div>
           </div>
@@ -90,8 +90,8 @@
             </div>
             <div ng-show="services">
               <small>
-                running: {{scheduler.stats.running}},
-                failed: {{scheduler.stats.failed}}
+                running: <span ng-bind="scheduler.stats.running"></span>,
+                failed: <span ng-bind="scheduler.stats.failed"></span>
               </small>
             </div>
           </div>
