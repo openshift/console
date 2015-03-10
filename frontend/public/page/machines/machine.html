@@ -17,7 +17,7 @@
           Status <code ng-bind="condition.kind"></code> is <code ng-bind="condition.status"></code>. Message is <code ng-bind="condition.message"></code> because <code ng-bind="condition.reason"></code></span>
         </dd>
         <dt>Machine Labels</dt>
-        <dd><co-label-list kind="machine" labels="machine.metadata.labels"></co-label-list></dd>
+        <dd><co-label-list kind="machine" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
         <dt>Machine ID</dt>
         <dd ng-bind="machine.metadata.name"></dd>
         <dt>Host IP Addresses</dt>

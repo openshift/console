@@ -29,6 +29,11 @@ $height: 18px;
       color: $color-pod-dark;
     }
   }
+  &.co-m-label--machine {
+    .co-m-label__link {
+      color: $color-machine-dark;
+    }
+  }
   &.co-m-label--selector {
     background-color: transparent;
     border: none;
@@ -61,4 +66,13 @@ $height: 18px;
 .co-m-label__value {
   max-width: 60px;
   text-overflow: ellipsis;
+}
+
+.co-m-label-list:hover,
+.co-m-label.co-m-label--expand {
+  .co-m-label__key,
+  .co-m-label__value {
+    max-width: 100%;
+    text-overflow: initial;
+  }
 }

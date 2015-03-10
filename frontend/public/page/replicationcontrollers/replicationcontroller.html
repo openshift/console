@@ -22,6 +22,8 @@
               <dd ng-bind="rc.status.replicas"></dd>
               <dt>Desired Count</dt>
               <dd ng-bind="rc.spec.replicas"></dd>
+              <dt>Replication Controller Labels</dt>
+              <dd><co-label-list kind="replicationcontroller" expand="true" labels="rc.metadata.labels"></co-label-list></dd>
             </dl>
           </div>
           <div class="col-lg-6">
