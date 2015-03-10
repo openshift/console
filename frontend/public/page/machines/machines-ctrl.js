@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('MachinesCtrl', function($scope, k8s) {
+.controller('MachinesCtrl', function($scope, _, k8s) {
   'use strict';
 
   k8s.nodes.list().then(function(nodes) {
