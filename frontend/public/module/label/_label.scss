@@ -29,6 +29,11 @@ $height: 18px;
       color: $color-pod-dark;
     }
   }
+  &.co-m-label--machine {
+    .co-m-label__link {
+      color: $color-machine-dark;
+    }
+  }
   &.co-m-label--selector {
     background-color: transparent;
     border: none;
