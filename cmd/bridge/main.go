@@ -23,10 +23,13 @@ func main() {
 	logDebug := fs.Bool("log-debug", false, "log debug-level information")
 	logTimestamps := fs.Bool("log-timestamps", false, "prefix log lines with timestamps")
 	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
-	k8sEndpoint := fs.String("k8s-endpoint", "http://172.17.8.101:8080", "URL of the Kubernetes API server")
-	k8sAPIVersion := fs.String("k8s-api-version", "v1beta3", "version of Kubernetes API to use")
 	etcdEndpoints := fs.String("etcd-endpoints", "http://localhost:7001", "comma separated list of etcd endpoints")
 	fleetEndpoint := fs.String("fleet-endpoint", "unix://var/run/fleet.sock", "fleet API endpoint")
+	k8sEndpoint := fs.String("k8s-endpoint", "http://172.17.8.101:8080", "URL of the Kubernetes API server")
+	k8sAPIVersion := fs.String("k8s-api-version", "v1beta3", "version of Kubernetes API to use")
+	k8sAPIService := fs.String("k8s-api-service", "", "fleet service name to inspect for api server status")
+	k8sControllerManagerService := fs.String("k8s-controller-manager-service", "", "fleet service name to inspect for controller manager status")
+	k8sSchedulerService := fs.String("k8s-scheduler-service", "", "fleet service name to inspect for scheduler status")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -76,13 +79,40 @@ func main() {
 		log.Fatalf("Unable to use k8s-endpoint flag: %v", err)
 	}
 
+	if k8sURL == nil || k8sURL.String() == "" {
+		log.Fatal("Missing required flag: --k8s-endpoint")
+	}
+
+	if *k8sAPIVersion == "" {
+		log.Fatal("Missing required flag: --k8s-api-version")
+	}
+
+	if *k8sAPIService == "" {
+		log.Fatal("Missing required flag: --k8s-api-service")
+	}
+
+	if *k8sControllerManagerService == "" {
+		log.Fatal("Missing required flag: --k8s-controller-manager-service")
+	}
+
+	if *k8sSchedulerService == "" {
+		log.Fatal("Missing required flag: --k8s-scheduler-service")
+	}
+
+	kCfg := &server.K8sConfig{
+		Endpoint:                 k8sURL,
+		APIVersion:               *k8sAPIVersion,
+		APIService:               *k8sAPIService,
+		ControllerManagerService: *k8sControllerManagerService,
+		SchedulerService:         *k8sSchedulerService,
+	}
+
 	srv := &server.Server{
-		FleetClient:   fleetClient,
-		EtcdClient:    etcdClient,
-		K8sEndpoint:   k8sURL,
-		K8sAPIVersion: *k8sAPIVersion,
-		PublicDir:     *publicDir,
-		Templates:     tpls,
+		FleetClient: fleetClient,
+		EtcdClient:  etcdClient,
+		K8sConfig:   kCfg,
+		PublicDir:   *publicDir,
+		Templates:   tpls,
 	}
 
 	httpsrv := &http.Server{

@@ -65,6 +65,12 @@ type ClusterService struct {
 	s *Service
 }
 
+type ControlService struct {
+	Id string `json:"id,omitempty"`
+
+	UnitStates []*UnitState `json:"unitStates,omitempty"`
+}
+
 type EtcdMachine struct {
 	ClientURL string `json:"clientURL,omitempty"`
 
@@ -103,6 +109,52 @@ type UnitStatePage struct {
 	NextPageToken string `json:"nextPageToken,omitempty"`
 
 	States []*UnitState `json:"states,omitempty"`
+}
+
+// method id "bridge.cluster.status.controlServices":
+
+type ClusterControlServicesCall struct {
+	s    *Service
+	opt_ map[string]interface{}
+}
+
+// ControlServices: Retrieve status of all control cluster services.
+func (r *ClusterService) ControlServices() *ClusterControlServicesCall {
+	c := &ClusterControlServicesCall{s: r.s, opt_: make(map[string]interface{})}
+	return c
+}
+
+func (c *ClusterControlServicesCall) Do() error {
+	var body io.Reader = nil
+	params := make(url.Values)
+	params.Set("alt", "json")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "cluster/status/control-services")
+	urls += "?" + params.Encode()
+	req, _ := http.NewRequest("GET", urls, body)
+	googleapi.SetOpaque(req.URL)
+	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	res, err := c.s.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return err
+	}
+	return nil
+	// {
+	//   "description": "Retrieve status of all control cluster services.",
+	//   "httpMethod": "GET",
+	//   "id": "bridge.cluster.status.controlServices",
+	//   "path": "cluster/status/control-services",
+	//   "response": {
+	//     "items": {
+	//       "$ref": "ControlService"
+	//     },
+	//     "type": "array"
+	//   }
+	// }
+
 }
 
 // method id "bridge.cluster.status.etcd":
@@ -144,52 +196,6 @@ func (c *ClusterEtcdCall) Do() error {
 	//   "response": {
 	//     "items": {
 	//       "$ref": "EtcdMachine"
-	//     },
-	//     "type": "array"
-	//   }
-	// }
-
-}
-
-// method id "bridge.cluster.status.units":
-
-type ClusterUnitsCall struct {
-	s    *Service
-	opt_ map[string]interface{}
-}
-
-// Units: Retrieve fleet kubernetes unit statuses.
-func (r *ClusterService) Units() *ClusterUnitsCall {
-	c := &ClusterUnitsCall{s: r.s, opt_: make(map[string]interface{})}
-	return c
-}
-
-func (c *ClusterUnitsCall) Do() error {
-	var body io.Reader = nil
-	params := make(url.Values)
-	params.Set("alt", "json")
-	urls := googleapi.ResolveRelative(c.s.BasePath, "cluster/status/units")
-	urls += "?" + params.Encode()
-	req, _ := http.NewRequest("GET", urls, body)
-	googleapi.SetOpaque(req.URL)
-	req.Header.Set("User-Agent", "google-api-go-client/0.5")
-	res, err := c.s.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer googleapi.CloseBody(res)
-	if err := googleapi.CheckResponse(res); err != nil {
-		return err
-	}
-	return nil
-	// {
-	//   "description": "Retrieve fleet kubernetes unit statuses.",
-	//   "httpMethod": "GET",
-	//   "id": "bridge.cluster.status.units",
-	//   "path": "cluster/status/units",
-	//   "response": {
-	//     "items": {
-	//       "$ref": "UnitState"
 	//     },
 	//     "type": "array"
 	//   }

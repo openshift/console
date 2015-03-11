@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ClusterStatusCtrl', function($scope, ClusterSvc) {
+.controller('ClusterStatusCtrl', function($scope, _, ClusterSvc) {
   'use strict';
 
   ClusterSvc.etcdSummary()
@@ -7,9 +7,12 @@ angular.module('app')
       $scope.etcd = result;
     });
 
-  ClusterSvc.unitSummary()
+  ClusterSvc.controlServiceSummary()
     .then(function(result) {
-      $scope.units = result;
+      $scope.services = result;
+      $scope.apiserver = _.findWhere($scope.services, { id: 'API Server' });
+      $scope.controllerManager = _.findWhere($scope.services, { id: 'Controller Manager' });
+      $scope.scheduler = _.findWhere($scope.services, { id: 'Scheduler' });
     });
 
 });
