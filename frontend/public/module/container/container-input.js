@@ -50,7 +50,7 @@ angular.module('app')
 /**
  * single-container input directive form.
  */
-.directive('coContainerInput', function(_, ModalLauncherSvc, k8s, EVENTS) {
+.directive('coContainerInput', function(_, ModalLauncherSvc, pkg, k8s, EVENTS) {
 
   'use strict';
 
@@ -126,6 +126,18 @@ angular.module('app')
           label = 'Not Configured';
         }
         return label;
+      };
+
+      $scope.getResourceLimitsLabel = function() {
+        var val;
+        if (!pkg.propExists('resources.limits', $scope.container)) {
+          return 'Not Configured';
+        }
+
+        val = pkg.join(pkg.deleteEmpties($scope.container.resources.limits), ', ', function(v, k) {
+          return k + ': ' + v;
+        });
+        return val || 'Not Configured';
       };
 
       $scope.openLivenessModal = function() {
