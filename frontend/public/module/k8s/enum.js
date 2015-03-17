@@ -2,6 +2,8 @@ angular.module('k8s').constant('k8sEnum', {
 
   DefaultNS: 'default',
 
+  ResourceLimitRegex: /^([+-]?[0-9.]+)([eEimkKMGTP]*[-+]?[0-9]*)$/,
+
   Kind: {
     SERVICE: {
       // unique machine-friendly id
