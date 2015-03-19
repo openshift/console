@@ -153,6 +153,13 @@ angular.module('app', [
       templateUrl: '/static/page/machines/machine.html',
       title: 'Machine',
     })
+    // Alias for machines (for programatic routing).
+    .when('/nodes', {
+      redirectTo: '/machines',
+    })
+    .when('/nodes/:name', {
+      redirectTo: '/machines/:name',
+    })
     .when('/search', {
       controller: 'SearchCtrl',
       templateUrl: '/static/page/search/search.html',
