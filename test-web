@@ -1,0 +1,3 @@
+#!/bin/bash -e
+
+cd frontend && ./node_modules/.bin/gulp test
