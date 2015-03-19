@@ -35,6 +35,10 @@ angular.module('k8s')
         'dnsPolicy',
         'restartPolicy',
         'volumes']);
+
+    if (container.resources && container.resources.limits) {
+      k8sUtil.deleteNulls(container.resources.limits);
+    }
   };
 
   this.getEmptyContainer = function() {
@@ -56,6 +60,15 @@ angular.module('k8s')
     };
   };
 
+  this.getEmptyResourceLimits = function() {
+    return {
+      limits: {
+        cpu: null,
+        memory: null,
+      }
+    };
+  };
+
   this.getEmptyVolumeMount = function() {
     return {
       name: null,
@@ -63,7 +76,6 @@ angular.module('k8s')
       mountPath: null,
     };
   };
-
 
   this.getEmptyEnvVar = function() {
     return {

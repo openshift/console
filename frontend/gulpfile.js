@@ -11,7 +11,8 @@ var exec = require('child_process').exec,
     concat = require('gulp-concat'),
     htmlReplace = require('gulp-html-replace'),
     merge = require('merge-stream');
-    bowerFiles = require('main-bower-files');
+    bowerFiles = require('main-bower-files'),
+    karma = require('karma').server;
 
 var distDir = './public/dist',
     CURRENT_SHA,
@@ -21,6 +22,7 @@ var distDir = './public/dist',
     jsSrc = [
       './public/*.js',
       './public/{module,page}/**/*.js',
+      '!./public/{module,page}/**/*_test.js',
       '!./public/dist/*.js',
     ];
 
@@ -159,6 +161,16 @@ gulp.task('dev', ['lint', 'sass', 'templates'], function() {
   gulp.watch(templateSrc, ['templates']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['sass']);
   gulp.watch(jsSrc, ['lint']);
+});
+
+/**
+ * Karma test
+ */
+gulp.task('test', ['templates'], function (cb) {
+  karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true
+  }, cb);
 });
 
 gulp.task('default', function(cb) {

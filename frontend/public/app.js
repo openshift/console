@@ -17,6 +17,7 @@ angular.module('app', [
   'k8s',
   'app.ui',
   'app.modules',
+  'core.pkg',
 ])
 .config(function($routeProvider, $locationProvider, $httpProvider,
       configSvcProvider, apiClientProvider, errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {

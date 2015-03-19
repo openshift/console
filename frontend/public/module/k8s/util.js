@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sUtil', function(_, k8sEnum, urlSvc) {
+.service('k8sUtil', function(_, pkg, k8sEnum, urlSvc) {
   'use strict';
 
   // TODO (sym3tri): refector this depencency once coreos-web is split up.
@@ -30,13 +30,6 @@ angular.module('k8s')
     });
   };
 
-  // Iterates thru all own properties of an object and deletes anything with a null value.
-  this.deleteNulls = function(obj) {
-    _.each(obj, function(val, key, o) {
-      if (val === null) {
-        delete o[key];
-      }
-    });
-  };
+  this.deleteNulls = pkg.deleteNulls;
 
 });

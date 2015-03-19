@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ContainerCtrl', function($scope, $routeParams, _, k8s) {
+.controller('ContainerCtrl', function($scope, $routeParams, _, pkg, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns;
@@ -45,6 +45,16 @@ angular.module('app')
     }
     fields = k8s.probe.mapLifecycleConfigToFields($scope.container.lifecycle);
     return fields[stage].cmd;
+  };
+
+  $scope.getresourcelimitvalue = function() {
+    if (!pkg.propExists('resources.limits', $scope.container)) {
+      return '';
+    }
+
+    return pkg.join($scope.container.resources.limits, ', ', function(v, k) {
+      return k + ': ' + v;
+    });
   };
 
 });
