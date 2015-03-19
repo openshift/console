@@ -1366,18 +1366,28 @@ angular.module('coreos.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      'apps': '=',
       'options': '=',
       'size': '@',
       'anchor': '@'
     },
     controller: function($scope) {
+      $scope.status = {
+        isopen: false,
+      };
+
+      // Capture all clicks on the cog to prevent bubbling.
+      $scope.captureClick = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Handles dropdown item clicks.
       $scope.clickHandler = function($event, option) {
         $event.preventDefault();
         $event.stopPropagation();
         if (option.callback) {
           option.callback();
         }
+        $scope.status.isopen = false;
       };
     }
   };
@@ -2813,6 +2823,29 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('/coreos.ui/cog/cog.html',
+    '<div class="co-m-cog">\n' +
+    '  <span class="dropdown" is-open="status.isopen" ng-click="captureClick($event)">\n' +
+    '    <span class="co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog"></span>\n' +
+    '    <ul class="dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}">\n' +
+    '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
+    '        <a ng-if="option.href" ng-href="{{option.href}}" ng-bind="option.label"></a>\n' +
+    '        <a ng-if="!option.href" ng-click="clickHandler($event, option)" ng-bind="option.label"></a>\n' +
+    '      </li>\n' +
+    '    </ul>\n' +
+    '  </span>\n' +
+    '</div>\n' +
+    '');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('coreos-templates-html');
+} catch (e) {
+  module = angular.module('coreos-templates-html', []);
+}
+module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/date-range/custom.html',
     '<div class="co-m-date-range-custom">\n' +
     '  <form ng-controller="DateRangeCustomFormCtrl" ng-submit="submitForm()" name="form" role="form">\n' +
@@ -2933,29 +2966,6 @@ module.run(['$templateCache', function($templateCache) {
     '    </ul>\n' +
     '  </div>\n' +
     '\n' +
-    '</div>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/cog/cog.html',
-    '<div class="co-m-cog">\n' +
-    '  <span class="dropdown">\n' +
-    '    <span class="co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog"></span>\n' +
-    '    <ul class="dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}">\n' +
-    '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
-    '        <a ng-if="option.href" ng-href="{{option.href}}">{{option.label}}</a>\n' +
-    '        <a ng-if="!option.href" ng-click="clickHandler($event, option)">{{option.label}}</a>\n' +
-    '      </li>\n' +
-    '    </ul>\n' +
-    '  </span>\n' +
     '</div>\n' +
     '');
 }]);
