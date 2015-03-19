@@ -32,6 +32,12 @@
                 type="radio"/>
             {{kinds.POD.labelPlural}}
           </a>
+          <a href="#" ng-click="changeKind(kinds.NODE.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.NODE.id"
+                type="radio"/>
+            {{kinds.NODE.labelPlural}}
+          </a>
         </div>
       </form>
     </div>
@@ -45,6 +51,7 @@
         </div>
         <div class="row" ng-repeat="r in results track by r.metadata.uid">
           <div class="col-sm-3">
+            <co-resource-icon kind="{{fields.selectedKindId}}"></co-resource-icon>
             <a ng-href="/{{getResourceLink(r)}}" ng-bind="r.metadata.name"></a>
           </div>
           <div class="col-sm-4">
