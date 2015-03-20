@@ -44,21 +44,9 @@
 
     <div class="co-m-pane__body">
 
-      <div class="co-m-table-grid--bordered">
-        <div class="row co-m-table-grid__head">
-          <div class="col-sm-3">ID</div>
-          <div class="col-sm-4">Labels</div>
-        </div>
-        <div class="row" ng-repeat="r in results track by r.metadata.uid">
-          <div class="col-sm-3">
-            <co-resource-icon kind="{{fields.selectedKindId}}"></co-resource-icon>
-            <a ng-href="/{{getResourceLink(r)}}" ng-bind="r.metadata.name"></a>
-          </div>
-          <div class="col-sm-4">
-            <co-label-list kind="{{fields.selectedKindId}}" labels="r.metadata.labels"></co-label-list>
-          </div>
-        </div>
+      <co-resource-list kind="fields.selectedKindId" resources="results"></co-resource-list>
 
+      <div ng-show="loading || !results.length" class="co-m-table-grid--bordered">
         <div ng-show="!loading && !results" class="row">
           <div class="col-sm-12 co-m-notice">
             <div class="co-m-notice__title">
@@ -85,7 +73,6 @@
             <co-loader></co-loader>
           </div>
         </div>
-
       </div>
 
     </div><!-- pane body -->
