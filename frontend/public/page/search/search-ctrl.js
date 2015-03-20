@@ -67,11 +67,16 @@ angular.module('app')
 
   // For linking to resources.
   $scope.getResourceLink = function(resource) {
-    var kind = getKind($scope.fields.selectedKindId);
+    var kind = getKind($scope.fields.selectedKindId), pathParts;
     if (!kind) {
       return '';
     }
-    return ['ns', resource.metadata.namespace, kind.path, resource.metadata.name].join('/');
+    pathParts = [kind.path, resource.metadata.name];
+    if (resource.metadata.namespace) {
+      pathParts.unshift(resource.metadata.namespace);
+      pathParts.unshift('ns');
+    }
+    return pathParts.join('/');
   };
 
   // Execute the actual search with api client.

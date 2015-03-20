@@ -30,6 +30,9 @@ angular.module('app').directive('coResourceIcon', function(k8s) {
         case k8s.enum.Kind.SERVICE.id:
           label = 'S';
           break;
+        case k8s.enum.Kind.NODE.id:
+          label = 'M';
+          break;
         case 'container':
           label = 'C';
           break;

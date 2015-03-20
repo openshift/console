@@ -1,0 +1,29 @@
+<div class="co-m-replication-controller-list">
+  <div class="co-m-table-grid--bordered">
+    <div class="row co-m-table-grid__head">
+      <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">Controller ID</div>
+      <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">Controller Labels</div>
+      <div class="col-lg-2 col-md-2 col-sm-4 hidden-xs">Status</div>
+      <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
+      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Desired Count</div>
+    </div>
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs | orderBy:'metadata.name' track by rc.metadata.name" ng-click="open = !open; getPods(rc)">
+      <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
+        <co-replicationcontroller-cog rc="rc"></co-replicationcontroller-cog>
+        <co-resource-icon kind="replicationcontroller"></co-resource-icon>
+        <a ng-href="/ns/{{rc.metadata.namespace}}/replicationcontrollers/{{rc.metadata.name}}" ng-bind="rc.metadata.name"></a>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">
+        <co-label-list kind="replicationcontroller" labels="rc.metadata.labels"></co-label-list>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-4 hidden-xs" ng-bind-template="{{rc.status.replicas}} of {{rc.spec.replicas}} pods"></div>
+      <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+        <co-label-list kind="pod" selector="true" labels="rc.spec.selector"></co-label-list>
+      </div>
+      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="rc.spec.replicas"></div>
+    </div>
+    <div ng-show="open" ng-repeat-end>
+      <co-pod-list pods="rc.pods"></co-pod-list>
+    </div>
+  </div>
+</div>

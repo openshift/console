@@ -32,26 +32,21 @@
                 type="radio"/>
             {{kinds.POD.labelPlural}}
           </a>
+          <a href="#" ng-click="changeKind(kinds.NODE.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.NODE.id"
+                type="radio"/>
+            {{kinds.NODE.labelPlural}}
+          </a>
         </div>
       </form>
     </div>
 
     <div class="co-m-pane__body">
 
-      <div class="co-m-table-grid--bordered">
-        <div class="row co-m-table-grid__head">
-          <div class="col-sm-3">ID</div>
-          <div class="col-sm-4">Labels</div>
-        </div>
-        <div class="row" ng-repeat="r in results track by r.metadata.uid">
-          <div class="col-sm-3">
-            <a ng-href="/{{getResourceLink(r)}}" ng-bind="r.metadata.name"></a>
-          </div>
-          <div class="col-sm-4">
-            <co-label-list kind="{{fields.selectedKindId}}" labels="r.metadata.labels"></co-label-list>
-          </div>
-        </div>
+      <co-resource-list kind="fields.selectedKindId" resources="results"></co-resource-list>
 
+      <div ng-show="loading || !results.length" class="co-m-table-grid--bordered">
         <div ng-show="!loading && !results" class="row">
           <div class="col-sm-12 co-m-notice">
             <div class="co-m-notice__title">
@@ -78,7 +73,6 @@
             <co-loader></co-loader>
           </div>
         </div>
-
       </div>
 
     </div><!-- pane body -->

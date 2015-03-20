@@ -21,36 +21,8 @@
     </div>
 
     <div class="co-m-pane__body">
-
-      <div class="co-m-table-grid--bordered">
-        <div class="row co-m-table-grid__head">
-          <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">Service ID</div>
-          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
-          <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
-          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Service Location</div>
-        </div>
-        <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services | orderBy:'metadata.name' track by s.metadata.name" ng-click="open = !open; getPods(s)">
-          <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-            <co-service-cog service="s"></co-service-cog>
-            <co-resource-icon kind="service"></co-resource-icon>
-            <a ng-href="/ns/{{s.metadata.namespace}}/services/{{s.metadata.name}}" ng-bind="s.metadata.name"></a>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
-            <co-label-list kind="service" labels="s.metadata.labels"></co-label-list>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">
-            <co-label-list kind="pod" labels="s.spec.selector" selector="true"></co-label-list>
-          </div>
-          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">
-            <a target="_blank" ng-href="http://{{s.spec.portalIP}}:{{s.spec.port}}" ng-bind-template="{{s.spec.portalIP}}:{{s.spec.port}}"></a>
-          </div>
-        </div>
-        <div ng-show="open" ng-repeat-end>
-          <co-pod-list pods="s.pods"></co-pod-list>
-        </div>
-      </div>
-
-    </div><!-- pane body -->
-  </div><!-- pane -->
+      <co-service-list services="services"></co-service-list>
+    </div>
+  </div>
 
 </div>

@@ -3,11 +3,12 @@
  * List out pods in a table-like view.
  */
 
-angular.module('app').directive('coPodList', function(k8s, arraySvc, resourceMgrSvc) {
+angular.module('app.ui')
+.directive('coPodList', function(k8s, arraySvc, resourceMgrSvc) {
   'use strict';
 
   return {
-    templateUrl: '/static/module/pod-list/pod-list.html',
+    templateUrl: '/static/module/ui/resources/pod-list.html',
     restrict: 'E',
     replace: true,
     scope: {
