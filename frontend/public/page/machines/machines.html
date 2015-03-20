@@ -23,29 +23,7 @@
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
         </div>
         <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-
-            <div class="co-m-table-grid--bordered">
-              <div class="row co-m-table-grid__head">
-                <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Status</div>
-                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">Machine ID</div>
-                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">Machine Labels</div>
-                <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Host IP</div>
-              </div>
-              <div class="row co-m-table-grid--clickable" ng-repeat-start="m in machines" ng-click="open = !open; getPods(m)">
-                <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getStatus(m)"></div>
-                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">
-                  <a ng-href="/machines/{{m.metadata.name}}" ng-bind="m.metadata.name"></a>
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">
-                  <co-label-list kind="node" labels="m.metadata.labels"></co-label-list>
-                </div>
-                <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs" ng-bind="m.status.hostIP"></div>
-              </div>
-              <div ng-show="open" ng-repeat-end>
-                <co-pod-list pods="m.pods"></co-pod-list>
-              </div>
-            </div>
-
+          <co-node-list nodes="nodes"></co-pod-list>
         </div>
       </div>
 
