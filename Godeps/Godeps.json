@@ -7,11 +7,19 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/coreos/pkg/flagutil",
-			"Rev": "f56de33226d694c30664f17e7b8d9cbfe8291dac"
+			"Rev": "04c9b0cea06ba2fb80772077e165da36d5340149"
+		},
+		{
+			"ImportPath": "github.com/coreos/pkg/health",
+			"Rev": "04c9b0cea06ba2fb80772077e165da36d5340149"
+		},
+		{
+			"ImportPath": "github.com/coreos/pkg/httputil",
+			"Rev": "04c9b0cea06ba2fb80772077e165da36d5340149"
 		},
 		{
 			"ImportPath": "github.com/coreos/pkg/log",
-			"Rev": "f56de33226d694c30664f17e7b8d9cbfe8291dac"
+			"Rev": "04c9b0cea06ba2fb80772077e165da36d5340149"
 		},
 		{
 			"ImportPath": "google.golang.org/api/google-api-go-generator",

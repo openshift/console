@@ -7,6 +7,8 @@ import (
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
+
+	"github.com/coreos/pkg/health"
 )
 
 const (
@@ -51,6 +53,17 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	// Serve index page for anything else.
 	mux.HandleFunc("/", s.indexHandler)
+
+	mux.HandleFunc("/health", health.Checker{
+		Checks: []health.Checkable{
+			newK8sAPICheck(
+				k8sAPICheckConfig{
+					version:  s.K8sConfig.APIVersion,
+					endpoint: s.K8sConfig.Endpoint,
+				},
+			),
+		},
+	}.MakeHealthHandlerFunc())
 
 	return http.Handler(mux)
 }

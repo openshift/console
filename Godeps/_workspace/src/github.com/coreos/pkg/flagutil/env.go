@@ -13,8 +13,7 @@ import (
 // are UPPERCASE, and any dashes are replaced by underscores. Environment
 // variables additionally are prefixed by the given string followed by
 // and underscore. For example, if prefix=PREFIX: some-flag => PREFIX_SOME_FLAG
-func SetFlagsFromEnv(fs *flag.FlagSet, prefix string) error {
-	var err error
+func SetFlagsFromEnv(fs *flag.FlagSet, prefix string) (err error) {
 	alreadySet := make(map[string]bool)
 	fs.Visit(func(f *flag.Flag) {
 		alreadySet[f.Name] = true
