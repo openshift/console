@@ -11,7 +11,7 @@
           <h1 class="co-m-pane__title">Machine List</h1>
         </div>
         <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
-          <input type="text" class="form-control" placeholder="Filter machines..." />
+          <input ng-model="nodeSearch.metadata.name" type="text" class="form-control" placeholder="Filter machines by name..." />
         </div>
       </div>
 
@@ -20,10 +20,9 @@
     <div class="co-m-pane__body">
 
       <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
         <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-          <co-node-list nodes="nodes"></co-pod-list>
+          <co-node-list search="nodeSearch" nodes="nodes"></co-pod-list>
         </div>
       </div>
 

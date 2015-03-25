@@ -6,7 +6,7 @@
       <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">Machine Labels</div>
       <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Host IP</div>
     </div>
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="n in nodes" ng-click="open = !open; getPods(n)">
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="n in nodes | filter:search:strict" ng-click="open = !open; getPods(n)">
       <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getStatus(n)"></div>
       <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">
         <a ng-href="/nodes/{{n.metadata.name}}" ng-bind="n.metadata.name"></a>
