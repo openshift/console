@@ -38,13 +38,13 @@
           <h1 class="co-m-pane__title">Running Pods</h1>
         </div>
         <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
-          <input type="text" class="form-control" placeholder="Filter pods by label query...">
+          <input ng-model="podSearch.metadata.name" type="text" class="form-control" placeholder="Filter pods by name...">
         </div>
       </div>
 
     </div>
     <div class="co-m-pane__body">
-      <co-pod-list pods="machine.pods"></co-pod-list>
+      <co-pod-list pods="machine.pods" search="podSearch"></co-pod-list>
     </div>
 
   </div><!-- pane -->

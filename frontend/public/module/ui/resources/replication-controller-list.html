@@ -7,7 +7,7 @@
       <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
       <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Desired Count</div>
     </div>
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs | orderBy:'metadata.name' track by rc.metadata.name" ng-click="open = !open; getPods(rc)">
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs | orderBy:'metadata.name' | filter:search:strict track by rc.metadata.name" ng-click="open = !open; getPods(rc)">
       <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
         <co-replicationcontroller-cog rc="rc"></co-replicationcontroller-cog>
         <co-resource-icon kind="replicationcontroller"></co-resource-icon>

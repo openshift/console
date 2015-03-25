@@ -12,7 +12,8 @@ angular.module('app.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      pods: '='
+      pods: '=',
+      search: '=',
     },
     controller: function($scope) {
 

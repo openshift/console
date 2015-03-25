@@ -12,7 +12,8 @@ angular.module('app.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      nodes: '='
+      nodes: '=',
+      search: '=',
     },
     controller: function($scope) {
 
