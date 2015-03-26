@@ -1,6 +1,6 @@
 Bridge
 ======
-Dashboard for CoreOS Tectonic clusters
+The Tectonic Console
 
 Bridge consists of a frontend webapp and a backend service which serves the following purposes:
 - Proxy the Kubernetes API

@@ -4,7 +4,7 @@
 # TODO(sym3tri): Do all of this inside quay once the builder supports sequential pipeline builds.
 
 registry=quay.io
-repo=$registry/coreosinc/bridge
+repo=$registry/coreos/tectonic-console
 
 if [ -v $DOCKER_USER ] || [ -v $DOCKER_PASSWORD ]; then
     echo "env variables not set. skipping login, assuming creds in .dockercfg"
