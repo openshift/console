@@ -8,3 +8,18 @@
     height: 32px;
   }
 }
+
+// Ensure bottom border on tables with no content loaded.
+.co-m-table-grid__body.cos-tristate--empty,
+.co-m-table-grid__body.cos-tristate--loading,
+.co-m-table-grid__body.cos-tristate--error {
+  border-bottom: solid 1px #efefef;
+}
+.cos-status-box__title.cos-error-title,
+.cos-error-title {
+  color: $red;
+}
+
+.cos-text-center {
+  text-align: center;
+}
