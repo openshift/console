@@ -46,7 +46,7 @@
         <h1 class="co-m-pane__title">Running Pods</h1>
       </div>
       <div class="co-m-pane__body-section">
-        <co-pod-list pods="pods"></co-pod-list>
+        <co-pod-list error="loadError" load="!!service" namespace="service.metadata.namespace" selector-required="true" selector="service.spec.selector"></co-pod-list>
       </div>
 
     </div>

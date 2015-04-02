@@ -18,17 +18,11 @@ angular.module('app')
   }
 
   $scope.init = function() {
-    $scope.results = null;
-    $scope.loading = false;
     $scope.fields = {
       selectedKindId: null,
       query: null,
     };
     $scope.decodeSearch();
-
-    if (!_.isEmpty($scope.fields.query)) {
-      $scope.search();
-    }
     $scope.$watchCollection('fields.query', function(newVal, oldVal) {
       // Ignore initial firing.
       if (newVal === oldVal) {
@@ -77,19 +71,6 @@ angular.module('app')
       pathParts.unshift('ns');
     }
     return pathParts.join('/');
-  };
-
-  // Execute the actual search with api client.
-  $scope.search = function() {
-    var kind = getKind($scope.fields.selectedKindId);
-    $scope.loading = true;
-    k8s.search(kind, { labels: $scope.fields.query })
-      .then(function(results) {
-        $scope.results = results;
-      })
-      .finally(function() {
-        $scope.loading = false;
-      });
   };
 
   // Run when user submits form chnages.

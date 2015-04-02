@@ -4,9 +4,4 @@ angular.module('app')
 
   $scope.defaultNS = k8s.enum.DefaultNS;
   $scope.ns = $routeParams.ns;
-
-  k8s.replicationcontrollers.list({ns: $scope.ns}).then(function(rcs) {
-    $scope.rcs = rcs;
-  });
-
 });

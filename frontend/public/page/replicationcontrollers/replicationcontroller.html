@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="co-m-pane__body">
-        <co-pod-list pods="pods"></co-pod-list>
+        <co-pod-list load="!!rc" error="loadError" namespace="rc.metadata.namespace" selector-required="true" selector="rc.spec.selector"></co-pod-list>
       </div>
 
     </div>

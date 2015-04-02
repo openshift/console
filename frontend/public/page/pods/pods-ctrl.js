@@ -4,9 +4,4 @@ angular.module('app')
 
   $scope.defaultNS = k8s.enum.DefaultNS;
   $scope.ns = $routeParams.ns;
-
-  k8s.pods.list($scope.ns).then(function(result) {
-    $scope.pods = result;
-  });
-
 });
