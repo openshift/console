@@ -18,6 +18,10 @@ angular.module('app.ui')
     controller: function($scope) {
 
       $scope.getPods = function(svc) {
+        if (!svc.spec.selector) {
+          svc.pods = [];
+          return;
+        }
         k8s.pods.list({ns: svc.metadata.namespace, labels: svc.spec.selector })
           .then(function(pods) {
             svc.pods = pods;

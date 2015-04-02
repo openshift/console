@@ -3,10 +3,12 @@ angular.module('app')
   'use strict';
 
   $scope.ns = $routeParams.ns;
+  $scope.pods = null;
 
   k8s.services.get($routeParams.name, $scope.ns).then(function(service) {
     $scope.service = service;
     if (!service.spec.selector) {
+      $scope.pods = [];
       return;
     }
     k8s.pods.list({ns: $scope.ns, labels: service.spec.selector })
