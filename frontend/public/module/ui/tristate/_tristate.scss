@@ -1,0 +1,13 @@
+.cos-tristate-show-empty,
+.cos-tristate-show-error,
+.cos-tristate-show-loading {
+  display: none;
+  visibility: hidden;
+}
+
+.cos-tristate--empty .cos-tristate-show-empty,
+.cos-tristate--error .cos-tristate-show-error,
+.cos-tristate--loading .cos-tristate-show-loading {
+  display: block;
+  visibility: visible;
+}

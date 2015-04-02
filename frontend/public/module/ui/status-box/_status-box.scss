@@ -1,0 +1,17 @@
+.cos-status-box {
+  padding: 20px;
+}
+
+.cos-status-box__title {
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cos-status-box__detail {
+  color: $color-text-muted;
+  font-size: 14px;
+  max-width: 500px;
+  margin: 0 auto;
+}

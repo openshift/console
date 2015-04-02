@@ -1,12 +1,13 @@
-<div class="co-m-service-list">
-  <div class="co-m-table-grid--bordered">
-    <div class="row co-m-table-grid__head">
-      <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">Service ID</div>
-      <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
-      <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
-      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Service Location</div>
-    </div>
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services | orderBy:'metadata.name' | filter:search:strict track by s.metadata.name" ng-click="open = !open; getPods(s)">
+<div class="co-m-service-list co-m-table-grid co-m-table-grid--bordered">
+  <div class="row co-m-table-grid__head">
+    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">Service ID</div>
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
+    <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
+    <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Service Location</div>
+  </div>
+
+  <div cos-tristate="services" cos-tristate-error="loadError" class="co-m-table-grid__body">
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services | orderBy:'metadata.name' | filter:search:strict track by s.metadata.name" ng-click="open = !open">
       <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
         <co-service-cog service="s"></co-service-cog>
         <co-resource-icon kind="service"></co-resource-icon>
@@ -23,7 +24,18 @@
       </div>
     </div>
     <div ng-show="open" ng-repeat-end>
-      <co-pod-list pods="s.pods"></co-pod-list>
+      <co-pod-list load="open" namespace="s.metadata.namespace" selector-required="true" selector="s.spec.selector"></co-pod-list>
     </div>
+
+    <co-loader class="cos-tristate-show-loading"></co-loader>
+    <cos-status-box class="cos-tristate-show-error">
+      <div class="cos-error-title">Error Loading Services</div>
+      <div class="cos-text-center">An error occurred during service retrieval. Please try again.</div>
+    </cos-status-box>
+    <cos-status-box class="cos-tristate-show-empty">
+      <div>No Services Found</div>
+      <div class="cos-text-center">No matching services found in the system.</div>
+    </cos-status-box>
   </div>
+
 </div>

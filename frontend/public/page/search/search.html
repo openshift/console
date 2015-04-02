@@ -43,39 +43,9 @@
     </div>
 
     <div class="co-m-pane__body">
+      <co-resource-list kind="fields.selectedKindId" selector="fields.query"></co-resource-list>
+    </div>
 
-      <co-resource-list kind="fields.selectedKindId" resources="results"></co-resource-list>
-
-      <div ng-show="loading || !results.length" class="co-m-table-grid--bordered">
-        <div ng-show="!loading && !results" class="row">
-          <div class="col-sm-12 co-m-notice">
-            <div class="co-m-notice__title">
-              Enter a label query to search the cluster
-            </div>
-            <div class="co-m-notice__message">
-              Search results must match all label query conditions.
-              Refine search results by creating more specific label queries.
-            </div>
-          </div>
-        </div>
-        <div ng-show="!loading && results && !results.length" class="row">
-          <div class="col-sm-12 co-m-notice">
-            <div class="co-m-notice__title">
-              No items matched the label query
-            </div>
-            <div class="co-m-notice__message">
-              Items in the cluster may have been modified by controllers, users, or other means.
-            </div>
-          </div>
-        </div>
-        <div ng-show="loading" class="row">
-          <div class="col-sm-12 co-m-notice">
-            <co-loader></co-loader>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- pane body -->
-  </div><!-- pane -->
+  </div>
 
 </div>

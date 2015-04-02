@@ -12,17 +12,43 @@ angular.module('app.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      services: '=',
+      namespace: '=',
       search: '=',
+      selector: '=',
+      load: '=',
     },
-    controller: function($scope) {
+    controller: function($scope, $attrs) {
+      $scope.services = null;
+      $scope.loadError = false;
 
-      $scope.getPods = function(svc) {
-        k8s.pods.list({ns: svc.metadata.namespace, labels: svc.spec.selector })
-          .then(function(pods) {
-            svc.pods = pods;
+      function loadServices() {
+        var query = {};
+        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
+          $scope.services = [];
+          return;
+        }
+        if ($scope.selector) {
+          query.labels = $scope.selector;
+        }
+        if ($scope.namespace) {
+          query.ns = $scope.namespace;
+        }
+        k8s.services.list(query)
+          .then(function(services) {
+            $scope.services = services;
+            $scope.loadError = false;
+          })
+          .catch(function() {
+            $scope.services = null;
+            $scope.loadError = true;
           });
-      };
+      }
+
+      $scope.$watch('load', function(load) {
+        if (load) {
+          loadServices();
+        }
+      });
 
       $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
         if (data.kind === k8s.enum.Kind.SERVICE) {

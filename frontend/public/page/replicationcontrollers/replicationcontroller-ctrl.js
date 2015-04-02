@@ -3,14 +3,17 @@ angular.module('app')
   'use strict';
 
   $scope.ns = $routeParams.ns;
+  $scope.loadError = false;
 
-  k8s.replicationcontrollers.get($routeParams.name, $scope.ns).then(function(rc) {
-    $scope.rc = rc;
-    k8s.pods.list({ns: $scope.ns, labels: rc.spec.selector })
-      .then(function(pods) {
-        $scope.pods = pods;
-      });
-  });
+  k8s.replicationcontrollers.get($routeParams.name, $scope.ns)
+    .then(function(rc) {
+      $scope.rc = rc;
+      $scope.loadError = false;
+    })
+    .catch(function() {
+      $scope.rc = null;
+      $scope.loadError = true;
+    });
 
   $scope.getPodTemplateJson = function() {
     if (!$scope.rc) {

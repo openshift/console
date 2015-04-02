@@ -3,16 +3,16 @@ angular.module('app')
   'use strict';
 
   $scope.ns = $routeParams.ns;
+  $scope.loadError = false;
 
-  k8s.services.get($routeParams.name, $scope.ns).then(function(service) {
-    $scope.service = service;
-    if (!service.spec.selector) {
-      return;
-    }
-    k8s.pods.list({ns: $scope.ns, labels: service.spec.selector })
-      .then(function(pods) {
-        $scope.pods = pods;
-      });
-  });
+  k8s.services.get($routeParams.name, $scope.ns)
+    .then(function(service) {
+      $scope.service = service;
+      $scope.loadError = false;
+    })
+    .catch(function() {
+      $scope.service = null;
+      $scope.loadError = true;
+    });
 
 });

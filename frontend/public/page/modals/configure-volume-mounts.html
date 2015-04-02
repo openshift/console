@@ -15,7 +15,7 @@
       <div class="row co-m-form-row">
         <div class="col-sm-12">
 
-          <div class="co-modal-table co-m-table-grid--bordered co-m-table-grid--compact co-m-table-grid--scroll">
+          <div class="co-modal-table co-m-table-grid co-m-table-grid--bordered co-m-table-grid--compact co-m-table-grid--scroll">
             <div class="row co-m-table-grid__head">
               <div class="col-sm-3">Pod Volume</div>
               <div class="col-sm-1"></div>
@@ -23,29 +23,31 @@
               <div class="col-sm-3">Access</div>
               <div class="col-sm-1"></div>
             </div>
-            <div class="row" ng-repeat="v in rowMgr.items">
-              <div class="col-sm-3">
-                <select ng-model="v.name" class="form-control"
-                    ng-focus="rowMgr.growIfLast($index)"
-                    ng-options="v.name as getDropdownLabel(v) for v in volumes">
-                </select>
-              </div>
-              <div class="col-sm-1">
-                <i class="fa fa-arrow-right co-img-icon-gray co-m-form-row-icon"></i>
-              </div>
-              <div class="col-sm-4">
-                <input ng-model="v.mountPath" class="form-control"
-                    ng-focus="rowMgr.growIfLast($index)" type="text"/>
-              </div>
-              <div class="col-sm-3">
-                <select ng-model="v.readOnly" ng-change="formatReadOnly(v)"
-                    ng-focus="rowMgr.growIfLast($index)" class="form-control">
-                  <option value="false" ng-selected="v.readOnly == false">Read/Write</option>
-                  <option value="true" ng-selected="v.readOnly == true">Read Only</option>
-                </select>
-              </div>
-              <div class="col-sm-1">
-                <i ng-click="rowMgr.clearItem(v)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+            <div class="co-m-table-grid__body">
+              <div class="row" ng-repeat="v in rowMgr.items">
+                <div class="col-sm-3">
+                  <select ng-model="v.name" class="form-control"
+                      ng-focus="rowMgr.growIfLast($index)"
+                      ng-options="v.name as getDropdownLabel(v) for v in volumes">
+                  </select>
+                </div>
+                <div class="col-sm-1">
+                  <i class="fa fa-arrow-right co-img-icon-gray co-m-form-row-icon"></i>
+                </div>
+                <div class="col-sm-4">
+                  <input ng-model="v.mountPath" class="form-control"
+                      ng-focus="rowMgr.growIfLast($index)" type="text"/>
+                </div>
+                <div class="col-sm-3">
+                  <select ng-model="v.readOnly" ng-change="formatReadOnly(v)"
+                      ng-focus="rowMgr.growIfLast($index)" class="form-control">
+                    <option value="false" ng-selected="v.readOnly == false">Read/Write</option>
+                    <option value="true" ng-selected="v.readOnly == true">Read Only</option>
+                  </select>
+                </div>
+                <div class="col-sm-1">
+                  <i ng-click="rowMgr.clearItem(v)" class="fa fa-times-circle co-img-icon-gray co-m-form-row-icon"></i>
+                </div>
               </div>
             </div>
           </div>

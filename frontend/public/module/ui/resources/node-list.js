@@ -12,22 +12,30 @@ angular.module('app.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      nodes: '=',
       search: '=',
     },
     controller: function($scope) {
+      $scope.loadError = false;
+
+      function loadNodes() {
+        k8s.nodes.list()
+          .then(function(nodes) {
+            $scope.nodes = nodes;
+            $scope.loadError = false;
+          })
+          .catch(function() {
+            $scope.nodes = null;
+            $scope.loadError = true;
+          });
+      }
+
+      loadNodes();
 
       $scope.getStatus = function(node) {
         if (!pkg.propExists('status.conditions', node) || _.isEmpty(node.status.conditions)) {
           return 'Unknown';
         }
         return node.status.conditions[0].status;
-      };
-
-      $scope.getPods = function(node) {
-        k8s.pods.listByNode(node).then(function(pods) {
-          node.pods = pods;
-        });
       };
 
       $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
