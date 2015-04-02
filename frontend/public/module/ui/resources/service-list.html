@@ -7,7 +7,7 @@
   </div>
 
   <div cos-tristate="services" cos-tristate-error="loadError" class="co-m-table-grid__body">
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services | orderBy:'metadata.name' | filter:search:strict track by s.metadata.name" ng-click="open = !open; getPods(s)">
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services | orderBy:'metadata.name' | filter:search:strict track by s.metadata.name" ng-click="open = !open">
       <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
         <co-service-cog service="s"></co-service-cog>
         <co-resource-icon kind="service"></co-resource-icon>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div ng-show="open" ng-repeat-end>
-      <co-pod-list pods="s.pods"></co-pod-list>
+      <co-pod-list load="open" namespace="s.metadata.namespace" selector-required="true" selector="s.spec.selector"></co-pod-list>
     </div>
 
     <co-loader class="cos-tristate-show-loading"></co-loader>

@@ -12,18 +12,43 @@ angular.module('app.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      rcs: '=',
+      namespace: '=',
       search: '=',
-      loadError: '=',
+      selector: '=',
+      load: '=',
     },
-    controller: function($scope) {
+    controller: function($scope, $attrs) {
+      $scope.rcs = null;
+      $scope.loadError = false;
 
-      $scope.getPods = function(rc) {
-        k8s.pods.list({ns: rc.metadata.namespace, labels: rc.spec.selector })
-          .then(function(pods) {
-            rc.pods = pods;
+      function loadRCs() {
+        var query = {};
+        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
+          $scope.rcs = [];
+          return;
+        }
+        if ($scope.selector) {
+          query.labels = $scope.selector;
+        }
+        if ($scope.namespace) {
+          query.ns = $scope.namespace;
+        }
+        k8s.replicationcontrollers.list(query)
+          .then(function(rcs) {
+            $scope.rcs = rcs;
+            $scope.loadError = false;
+          })
+          .catch(function() {
+            $scope.rcs = null;
+            $scope.loadError = true;
           });
-      };
+      }
+
+      $scope.$watch('load', function(load) {
+        if (load) {
+          loadRCs();
+        }
+      });
 
       $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
         if (data.kind === k8s.enum.Kind.REPLICATIONCONTROLLER) {

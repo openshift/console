@@ -8,7 +8,7 @@
   </div>
 
   <div cos-tristate="nodes" cos-tristate-error="loadError" class="co-m-table-grid__body">
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="n in nodes | filter:search:strict" ng-click="open = !open; getPods(n)">
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="n in nodes | filter:search:strict" ng-click="open = !open">
       <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getStatus(n)"></div>
       <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">
         <a ng-href="/nodes/{{n.metadata.name}}" ng-bind="n.metadata.name"></a>
@@ -19,7 +19,7 @@
       <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs" ng-bind="n.status.hostIP"></div>
     </div>
     <div ng-show="open" ng-repeat-end>
-      <co-pod-list pods="n.pods"></co-pod-list>
+      <co-pod-list load="open" node="n"></co-pod-list>
     </div>
 
     <co-loader class="cos-tristate-show-loading"></co-loader>

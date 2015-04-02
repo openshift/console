@@ -13,7 +13,8 @@ angular.module('app.ui')
     replace: true,
     scope: {
       kind: '=',
-      resources: '=',
+      namespace: '=',
+      selector: '=',
     }
   };
 
