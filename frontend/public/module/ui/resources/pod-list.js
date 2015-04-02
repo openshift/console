@@ -14,6 +14,7 @@ angular.module('app.ui')
     scope: {
       pods: '=',
       search: '=',
+      loadError: '=',
     },
     controller: function($scope) {
 

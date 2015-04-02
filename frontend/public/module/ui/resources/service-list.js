@@ -14,6 +14,7 @@ angular.module('app.ui')
     scope: {
       services: '=',
       search: '=',
+      loadError: '=',
     },
     controller: function($scope) {
 

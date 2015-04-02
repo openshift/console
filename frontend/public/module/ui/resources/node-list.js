@@ -14,6 +14,7 @@ angular.module('app.ui')
     scope: {
       nodes: '=',
       search: '=',
+      loadError: '=',
     },
     controller: function($scope) {
 

@@ -14,6 +14,7 @@ angular.module('app.ui')
     scope: {
       rcs: '=',
       search: '=',
+      loadError: '=',
     },
     controller: function($scope) {
 

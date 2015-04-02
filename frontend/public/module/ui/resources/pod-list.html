@@ -1,12 +1,13 @@
-<div class="co-m-pod-list">
-  <div class="co-m-table-grid--bordered">
-    <div class="row co-m-table-grid__head">
-      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">Pod ID</div>
-      <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">Pod Labels</div>
-      <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">Status</div>
-      <div class="col-lg-1 col-md-1 col-sm-1 hidden-xs">Containers</div>
-      <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">Machine</div>
-    </div>
+<div class="co-m-pod-list co-m-table-grid co-m-table-grid--bordered">
+  <div class="row co-m-table-grid__head">
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">Pod ID</div>
+    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">Pod Labels</div>
+    <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">Status</div>
+    <div class="col-lg-1 col-md-1 col-sm-1 hidden-xs">Containers</div>
+    <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">Machine</div>
+  </div>
+
+  <div cos-tristate="pods" cos-tristate-error="loadError" class="co-m-table-grid__body">
     <div class="row" ng-repeat="p in pods | orderBy:'metadata.name' | filter:search:strict track by p.metadata.name">
       <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
         <co-pod-cog pod="p"></co-pod-cog>
@@ -22,5 +23,16 @@
         <a ng-href="/machines/{{p.status.host}}" ng-bind="p.status.host"></a>
       </div>
     </div>
+
+    <co-loader class="cos-tristate-show-loading"></co-loader>
+    <cos-status-box class="cos-tristate-show-error">
+      <div class="cos-error-title">Error Loading Pods</div>
+      <div class="cos-text-center">An error occurred during pod retrieval. Please try again.</div>
+    </cos-status-box>
+    <cos-status-box class="cos-tristate-show-empty">
+      <div>No Pods Found</div>
+      <div class="cos-text-center">No matching pods found in the system.</div>
+    </cos-status-box>
   </div>
+
 </div>
