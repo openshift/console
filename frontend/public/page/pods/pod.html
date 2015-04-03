@@ -6,73 +6,78 @@
   </co-nav-title>
 
   <div class="co-m-pane">
+
     <div class="co-m-pane__heading">
       <h1 class="co-m-pane__title">Pod Overview</h1>
     </div>
-    <div class="co-m-pane__body">
-        <div class="row">
 
-          <div class="col-lg-6 col-md-6 col-sm-7 col-xs-12">
-            <dl>
-              <dt>Status</dt>
-              <dd ng-bind="pod.status.phase"></dd>
-              <dt>Pod Labels</dt>
-              <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
-              <dt>Restart Policy</dt>
-              <dd ng-bind="getRestartPolicyLabel()"></dd>
-            </dl>
-          </div>
-
-          <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
-            <dl>
-              <dt>Machine</dt>
-              <dd><a ng-href="/machines/{{pod.status.host}}" ng-bind="pod.status.host"></a></dd>
-              <dt>Pod IP</dt>
-              <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
-              <dt>Created At</dt>
-              <dd ng-bind="pod.metadata.creationTimestamp | date:CONST.dateTimeFmt"></dd>
-            </dl>
-          </div>
-
+    <div cos-tristate="pod" cos-tristate-error="loadError" class="co-m-pane__body">
+      <div ng-show="pod && !loadError" class="row">
+        <div class="col-lg-6 col-md-6 col-sm-7 col-xs-12">
+          <dl>
+            <dt>Status</dt>
+            <dd ng-bind="pod.status.phase"></dd>
+            <dt>Pod Labels</dt>
+            <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
+            <dt>Restart Policy</dt>
+            <dd ng-bind="getRestartPolicyLabel()"></dd>
+          </dl>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
+          <dl>
+            <dt>Machine</dt>
+            <dd><a ng-href="/machines/{{pod.status.host}}" ng-bind="pod.status.host"></a></dd>
+            <dt>Pod IP</dt>
+            <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
+            <dt>Created At</dt>
+            <dd ng-bind="pod.metadata.creationTimestamp | date:CONST.dateTimeFmt"></dd>
+          </dl>
         </div>
       </div>
 
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Containers</h1>
+      <div class="co-loader-wrapper cos-tristate-show-loading">
+        <co-loader></co-loader>
       </div>
-      <div class="co-m-pane__body">
-        <div class="co-m-table-grid co-m-table-grid--bordered">
-          <div class="row co-m-table-grid__head">
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Name</div>
-            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Id</div>
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8">Image</div>
-            <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">Ports</div>
-            <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">Restart Count</div>
-            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Started At</div>
-          </div>
-
-          <div class="co-m-table-grid__body">
-            <div class="row" ng-repeat="c in pod.spec.containers"
-                ng-init="cstate = getContainerState(c.name)">
-              <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
-                <co-resource-icon kind="container"></co-resource-icon>
-                <a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}/containers/{{c.name}}" ng-bind="c.name"></a>
-              </div>
-              <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="getContainerInfo(c.name).containerID"></div>
-              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8" ng-bind="c.image"></div>
-              <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">
-                <div ng-repeat="p in c.ports">
-                  <span ng-if="p.name" ng-bind="p.name"></span> <code ng-bind="p.containerPort"></code>
-                </div>
-              </div>
-              <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="getContainerInfo(c.name).restartCount"></div>
-              <div class="col-lg-2 col-md-2 hidden-sm  hidden-xs" ng-bind="cstate.startedAt | date:CONST.dateTimeFmt"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <cos-status-box class="cos-tristate-show-error">
+        <div class="cos-error-title">Error Loading Pod</div>
+        <div class="cos-text-center">An error occurred during pod retrieval. Please try again.</div>
+      </cos-status-box>
     </div>
+
+    <div class="co-m-pane__heading">
+      <h1 class="co-m-pane__title">Containers</h1>
+    </div>
+
+    <div class="co-m-pane__body">
+      <div class="co-m-table-grid co-m-table-grid--bordered">
+        <div class="row co-m-table-grid__head">
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Name</div>
+          <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Id</div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8">Image</div>
+          <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">Ports</div>
+          <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">Restart Count</div>
+          <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Started At</div>
+        </div>
+        <div class="co-m-table-grid__body">
+          <div class="row" ng-repeat="c in pod.spec.containers" ng-init="cstate = getContainerState(c.name)">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+              <co-resource-icon kind="container"></co-resource-icon>
+              <a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}/containers/{{c.name}}" ng-bind="c.name"></a>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="getContainerInfo(c.name).containerID"></div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8" ng-bind="c.image"></div>
+            <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">
+              <div ng-repeat="p in c.ports">
+                <span ng-if="p.name" ng-bind="p.name"></span> <code ng-bind="p.containerPort"></code>
+              </div>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="getContainerInfo(c.name).restartCount"></div>
+            <div class="col-lg-2 col-md-2 hidden-sm  hidden-xs" ng-bind="cstate.startedAt | date:CONST.dateTimeFmt"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </div>

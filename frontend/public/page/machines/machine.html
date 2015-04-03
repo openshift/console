@@ -10,21 +10,30 @@
     <div class="co-m-pane__heading">
       <h1 class="co-m-pane__title">Machine Details</h1>
     </div>
-    <div class="co-m-pane__body">
-      <dl>
-        <dt>Status</dt>
-        <dd ng-repeat="condition in machine.status.conditions">
-          Status <code ng-bind="condition.kind"></code> is <code ng-bind="condition.status"></code>. Message is <code ng-bind="condition.message"></code> because <code ng-bind="condition.reason"></code></span>
-        </dd>
-        <dt>Machine Labels</dt>
-        <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
-        <dt>Machine ID</dt>
-        <dd ng-bind="machine.metadata.name"></dd>
-        <dt>Host IP Addresses</dt>
-        <dd ng-bind="machine.status.hostIP"></dd>
-        <dt>Created</dt>
-        <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
-      </dl>
+    <div cos-tristate="machine" cos-tristate-error="loadError" class="co-m-pane__body">
+      <div ng-show="machine && !loadError">
+        <dl>
+          <dt>Status</dt>
+          <dd ng-repeat="condition in machine.status.conditions">
+            Status <code ng-bind="condition.kind"></code> is <code ng-bind="condition.status"></code>. Message is <code ng-bind="condition.message"></code> because <code ng-bind="condition.reason"></code></span>
+          </dd>
+          <dt>Machine Labels</dt>
+          <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
+          <dt>Machine ID</dt>
+          <dd ng-bind="machine.metadata.name"></dd>
+          <dt>Host IP Addresses</dt>
+          <dd ng-bind="machine.status.hostIP"></dd>
+          <dt>Created</dt>
+          <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
+        </dl>
+      </div>
+      <div class="co-loader-wrapper cos-tristate-show-loading">
+        <co-loader></co-loader>
+      </div>
+      <cos-status-box class="cos-tristate-show-error">
+        <div class="cos-error-title">Error Loading Machine</div>
+        <div class="cos-text-center">An error occurred during machine retrieval. Please try again.</div>
+      </cos-status-box>
     </div>
 
   </div>

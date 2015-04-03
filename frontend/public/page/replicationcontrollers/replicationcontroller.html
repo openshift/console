@@ -14,8 +14,8 @@
       <div class="co-m-pane__heading">
         <h1 class="co-m-pane__title">Replication Controller Overview</h1>
       </div>
-      <div class="co-m-pane__body">
-        <div class="row">
+      <div cos-tristate="rc" cos-tristate-error="loadError" class="co-m-pane__body">
+        <div ng-show="rc && !loadError" class="row">
           <div class="col-lg-6">
             <dl>
               <dt>Current Count</dt>
@@ -33,6 +33,14 @@
             </dl>
           </div>
         </div>
+
+        <div class="co-loader-wrapper cos-tristate-show-loading">
+          <co-loader></co-loader>
+        </div>
+        <cos-status-box class="cos-tristate-show-error">
+          <div class="cos-error-title">Error Loading Replication Controller</div>
+          <div class="cos-text-center">An error occurred during replication controller retrieval. Please try again.</div>
+        </cos-status-box>
       </div>
 
       <div class="co-m-pane__heading">

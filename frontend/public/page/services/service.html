@@ -10,8 +10,9 @@
       <h1 class="co-m-pane__title">Service Overview</h1>
     </div>
     <div class="co-m-pane__body-group">
-      <div class="co-m-pane__body-section--bordered">
-        <div class="row">
+
+      <div cos-tristate="service" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
+        <div ng-show="service && !loadError" class="row">
           <div class="col-lg-6">
             <dl>
               <dt>Protocol</dt>
@@ -41,7 +42,16 @@
             </dl>
           </div>
         </div>
+
+        <div class="co-loader-wrapper cos-tristate-show-loading">
+          <co-loader></co-loader>
+        </div>
+        <cos-status-box class="cos-tristate-show-error">
+          <div class="cos-error-title">Error Loading Service</div>
+          <div class="cos-text-center">An error occurred during service retrieval. Please try again.</div>
+        </cos-status-box>
       </div>
+
       <div class="co-m-pane__body-section--bordered">
         <h1 class="co-m-pane__title">Running Pods</h1>
       </div>

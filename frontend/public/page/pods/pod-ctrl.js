@@ -3,10 +3,17 @@ angular.module('app')
   'use strict';
 
   $scope.ns = $routeParams.ns;
+  $scope.loadError = false;
 
-  k8s.pods.get($routeParams.name, $scope.ns).then(function(pod) {
-    $scope.pod = pod;
-  });
+  k8s.pods.get($routeParams.name, $scope.ns)
+    .then(function(pod) {
+      $scope.pod = pod;
+      $scope.loadError = false;
+    })
+    .catch(function() {
+      $scope.pod = null;
+      $scope.loadError = true;
+    });
 
   $scope.getContainerInfo = function(containerName) {
     if ($scope.pod.status && $scope.pod.status.info) {
