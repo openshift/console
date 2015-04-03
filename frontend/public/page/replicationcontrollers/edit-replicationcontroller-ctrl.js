@@ -1,15 +1,21 @@
 angular.module('app')
-.controller('EditReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
+.controller('EditReplicationcontrollerCtrl', function($scope, $location, $routeParams, _, k8s, ModalLauncherSvc) {
   'use strict';
 
   $scope.ns = $routeParams.ns;
+  $scope.loadError = false;
+  $scope.loaded = false;
   $scope.rc = {};
 
-  $scope.init = function() {
-    k8s.replicationcontrollers.get($routeParams.name, $scope.ns).then(function(rc) {
+  k8s.replicationcontrollers.get($routeParams.name, $scope.ns)
+    .then(function(rc) {
       $scope.rc = rc;
+      $scope.loadError = false;
+      $scope.loaded = true;
+    })
+    .catch(function() {
+      $scope.loadError = true;
     });
-  };
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {
@@ -28,7 +34,6 @@ angular.module('app')
     });
   };
 
-  $scope.init();
 })
 
 .controller('EditReplicationcontrollerFormCtrl', function($scope) {

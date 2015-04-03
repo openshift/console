@@ -12,6 +12,10 @@ angular.module('app')
     });
   };
 
+  $scope.cancel = function() {
+    $location.path('/services');
+  };
+
 })
 
 .controller('NewServiceFormCtrl', function($scope) {
