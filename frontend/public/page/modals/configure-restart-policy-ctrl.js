@@ -5,11 +5,11 @@ angular.module('app')
   $scope.policies = k8s.enum.RestartPolicy;
 
   $scope.fields = {
-    policy: k8s.pods.getRestartPolicyByValue(pod.spec.restartPolicy).id,
+    policy: pod.spec.restartPolicy,
   };
 
   $scope.save = function() {
-    pod.spec.restartPolicy = k8s.pods.getRestartPolicyById($scope.fields.policy).value;
+    pod.spec.restartPolicy = $scope.fields.policy;
     $modalInstance.close(pod);
   };
 

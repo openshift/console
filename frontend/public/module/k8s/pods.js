@@ -14,15 +14,17 @@ angular.module('k8s')
     k8sUtil.deleteNulls(pod.spec);
   };
 
-  this.getRestartPolicyByValue = function(value) {
-    return _.find(k8sEnum.RestartPolicy, function(o) {
-      return _.keys(o.value)[0] === _.keys(value)[0];
-    });
+  this.getRestartPolicyById = function(id) {
+    return _.findWhere(k8sEnum.RestartPolicy, { id: id });
   };
 
-  this.getRestartPolicyById = function(id) {
-    return _.find(k8sEnum.RestartPolicy, function(o) { return o.id === id; });
-  };
+  this.getRestartPolicyLabelById = function(id) {
+    var p = this.getRestartPolicyById(id);
+    if (p && p.label) {
+      return p.label;
+    }
+    return '';
+  }.bind(this);
 
   this.getEmpty = function(ns) {
     return {
@@ -35,7 +37,7 @@ angular.module('k8s')
       spec: {
         containers: [],
         dnsPolicy: 'Default',
-        restartPolicy: defaultRestartPolicy.value,
+        restartPolicy: defaultRestartPolicy.id,
         volumes: [],
       },
     };

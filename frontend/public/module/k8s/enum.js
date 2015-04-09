@@ -68,12 +68,8 @@ angular.module('k8s').constant('k8sEnum', {
 
   RestartPolicy: {
     Always: {
-      // A unique id to identify the type.
-      id: 'always',
-      // Value used in communication with API.
-      value: {
-        always: {},
-      },
+      // A unique id to identify the type, used as the value when communicating with the API.
+      id: 'Always',
       // What is shown in the UI.
       label: 'Always Restart',
       // Ordering weight.
@@ -85,19 +81,13 @@ angular.module('k8s').constant('k8sEnum', {
       default: true,
     },
     OnFailure: {
-      id: 'onfailure',
-      value: {
-        onFailure: {},
-      },
+      id: 'OnFailure',
       label: 'Restart On Failure',
       weight: 200,
       description: 'If the container exits with a non-zero status code, restart it.',
     },
     Never: {
-      id: 'never',
-      value: {
-        never: {},
-      },
+      id: 'Never',
       label: 'Never Restart',
       weight: 300,
       description: 'Never restart the container. ' +
