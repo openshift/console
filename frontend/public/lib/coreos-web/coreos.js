@@ -2116,6 +2116,9 @@ angular.module('coreos.ui')
     transclude: true,
     restrict: 'E',
     replace: true,
+    scope: {
+      logoSrc: '@',
+    },
     controller: function($scope) {
       $scope.config = configSvc.get();
       $scope.isCollapsed = true;
@@ -3183,14 +3186,14 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/navbar/navbar.html',
-    '<div class="co-m-navbar co-fx-box-shadow navbar navbar-fixed-top">\n' +
+    '<div class="co-m-navbar co-fx-box-shadow navbar">\n' +
     '\n' +
     '  <div class="navbar-header">\n' +
     '    <button ng-click="isCollapsed = !isCollapsed" class="navbar-toggle" type="button">\n' +
     '      <span class="glyphicon glyphicon-align-justify"></span>\n' +
     '    </button>\n' +
     '    <a ng-href="{{config.siteBasePath}}" class="navbar-brand">\n' +
-    '      <co-svg class="co-m-navbar__logo" src="/coreos.svg/logo.svg"></co-svg>\n' +
+    '      <co-svg ng-if="logoSrc" class="co-m-navbar__logo" src="{{logoSrc}}"></co-svg>\n' +
     '    </a>\n' +
     '  </div>\n' +
     '\n' +
