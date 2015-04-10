@@ -30,7 +30,12 @@ angular.module('app')
   };
 
   $scope.getDropdownLabel = function(volume) {
-    return volume.name + ' (' + (volume.source.hostPath.path || 'empty') + ')';
+    var label = volume.name,
+        vType = k8s.pods.getVolumeType(volume);
+    if (vType) {
+      label += ' (' + vType.label + ')';
+    }
+    return label;
   };
 
   $scope.save = function() {

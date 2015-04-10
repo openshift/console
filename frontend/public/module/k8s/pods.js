@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sPods', function(_, k8sDocker, k8sUtil, k8sEnum) {
+.service('k8sPods', function(_, pkg, k8sDocker, k8sUtil, k8sEnum) {
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });
@@ -44,15 +44,23 @@ angular.module('k8s')
   };
 
   this.getEmptyVolume = function() {
-    return {
+    var vol = {
       name: null,
-      source: {
-        emptyDir: null,
-        gitRepo: null,
-        hostPath: null,
-        persistentDisk: null,
-      }
     };
+    // Add all known volume types to the empty volume for binding.
+    _.each(k8sEnum.VolumeSource, function(v) {
+      vol[v.id] = null;
+    });
+    return vol;
+  };
+
+  this.getVolumeType = function(volume) {
+    if (!volume) {
+      return null;
+    }
+    return _.find(k8sEnum.VolumeSource, function(v) {
+      return !pkg.isEmpty(volume[v.id]);
+    });
   };
 
 });

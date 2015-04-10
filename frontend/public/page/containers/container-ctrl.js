@@ -57,4 +57,11 @@ angular.module('app')
     });
   };
 
+  $scope.volumeAccessLabel = function(readOnly) {
+    if (readOnly === true) {
+      return 'Read Only';
+    }
+    return 'Read / Write';
+  };
+
 });
