@@ -17,7 +17,8 @@ var exec = require('child_process').exec,
 var distDir = './public/dist',
     CURRENT_SHA,
     templateSrc = [
-      './public/{module,page}/**/*.html'
+      './public/{module,page}/**/*.html',
+      './public/lib/mochi/img/tectonic-logo.svg',
     ],
     jsSrc = [
       './public/*.js',
