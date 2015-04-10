@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sPods', function(_, k8sDocker, k8sUtil, k8sEnum) {
+.service('k8sPods', function(_, pkg, k8sDocker, k8sUtil, k8sEnum) {
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });
@@ -14,15 +14,17 @@ angular.module('k8s')
     k8sUtil.deleteNulls(pod.spec);
   };
 
-  this.getRestartPolicyByValue = function(value) {
-    return _.find(k8sEnum.RestartPolicy, function(o) {
-      return _.keys(o.value)[0] === _.keys(value)[0];
-    });
+  this.getRestartPolicyById = function(id) {
+    return _.findWhere(k8sEnum.RestartPolicy, { id: id });
   };
 
-  this.getRestartPolicyById = function(id) {
-    return _.find(k8sEnum.RestartPolicy, function(o) { return o.id === id; });
-  };
+  this.getRestartPolicyLabelById = function(id) {
+    var p = this.getRestartPolicyById(id);
+    if (p && p.label) {
+      return p.label;
+    }
+    return '';
+  }.bind(this);
 
   this.getEmpty = function(ns) {
     return {
@@ -35,22 +37,30 @@ angular.module('k8s')
       spec: {
         containers: [],
         dnsPolicy: 'Default',
-        restartPolicy: defaultRestartPolicy.value,
+        restartPolicy: defaultRestartPolicy.id,
         volumes: [],
       },
     };
   };
 
   this.getEmptyVolume = function() {
-    return {
+    var vol = {
       name: null,
-      source: {
-        emptyDir: null,
-        gitRepo: null,
-        hostPath: null,
-        persistentDisk: null,
-      }
     };
+    // Add all known volume types to the empty volume for binding.
+    _.each(k8sEnum.VolumeSource, function(v) {
+      vol[v.id] = null;
+    });
+    return vol;
+  };
+
+  this.getVolumeType = function(volume) {
+    if (!volume) {
+      return null;
+    }
+    return _.find(k8sEnum.VolumeSource, function(v) {
+      return !pkg.isEmpty(volume[v.id]);
+    });
   };
 
 });

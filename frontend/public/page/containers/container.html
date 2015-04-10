@@ -125,12 +125,12 @@
                   <tr>
                     <th>Access</th>
                     <th>Location</th>
-                    <th>Source</th>
+                    <th>Mount Path</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr ng-repeat="vm in container.volumeMounts">
-                    <td></td>
+                    <td ng-bind="volumeAccessLabel(vm.readOnly)"></td>
                     <td ng-bind="vm.name"></td>
                     <td ng-bind="vm.mountPath"></td>
                   </tr>

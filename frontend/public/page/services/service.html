@@ -21,8 +21,8 @@
               <dd>
                 <a target="_blank" ng-href="http://{{service.spec.portalIP}}:{{service.spec.port}}" ng-bind-template="{{service.spec.portalIP}}:{{service.spec.port}}"></a>
               </dd>
-              <dt>Container Port</dt>
-              <dd ng-bind="service.spec.containerPort"></dd>
+              <dt>Target Port</dt>
+              <dd ng-bind="service.spec.targetPort"></dd>
               <dt>Session Affinity</dt>
               <dd ng-bind="service.spec.sessionAffinity"></dd>
             </dl>

@@ -54,10 +54,10 @@
         </div>
         <div class="row co-m-form-row">
           <div class="col-sm-2">
-            <label for="input-service-port" class="control-label">Container Port:</label>
+            <label for="input-target-port" class="control-label">Target Port:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="service.spec.containerPort" type="number" required class="form-control" id="input-container-port"/>
+            <input ng-model="service.spec.targetPort" type="number" required class="form-control" id="input-target-port"/>
             <small class="text-muted">
               Select the port of the pod that will respond to traffic for this service.
             </small>

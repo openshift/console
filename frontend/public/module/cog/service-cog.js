@@ -51,13 +51,13 @@ angular.module('app')
             }),
           },
           {
-            label: 'Modify Container Port...',
+            label: 'Modify Target Port...',
             weight: 300,
             callback: ModalLauncherSvc.open.bind(null, 'configure-port', {
               kind: k8s.enum.Kind.SERVICE,
               resource: getService,
-              propertyName: 'containerPort',
-              title: 'Modify Container Port',
+              propertyName: 'targetPort',
+              title: 'Modify Target Port',
               description: 'The port used by the service for connecting to pods. ' +
                   'Pod ports must be exposed in their configuration.',
             }),

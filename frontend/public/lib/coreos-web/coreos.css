@@ -5005,7 +5005,9 @@ dl {
   height: 10000px; }
 
 .navbar {
-  min-height: 46px; }
+  min-height: 46px;
+  border: 0px;
+  border-radius: 0; }
 
 .navbar-nav > li > a {
   line-height: 16px; }
@@ -5014,9 +5016,6 @@ dl {
   padding: 0;
   position: relative;
   height: auto; }
-
-.navbar-fixed-top {
-  border: 0px; }
 
 .navbar-toggle {
   margin-top: 0;
@@ -5419,7 +5418,6 @@ svg .x-axis path {
 
 /* Layouts */
 #co-l-view-container {
-  padding-top: 46px;
   height: 100%; }
 
 .co-l-secondary-nav {

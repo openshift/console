@@ -1,13 +1,15 @@
 angular.module('app')
 .controller('ConfigureVolumesCtrl', function(_, $scope, $modalInstance, $controller,
-      pod, arraySvc, k8s, $rootScope) {
+      pod, arraySvc, k8s, $rootScope, pkg) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
     $scope: $rootScope.$new(),
     emptyCheck: function(v) {
-      return (_.isEmpty(v.source.hostPath) || _.isEmpty(v.source.hostPath.path)) &&
-          _.isEmpty(v.name);
+      if (_.isEmpty(v.name)) {
+        return true;
+      }
+      return v.type === 'host' && (_.isEmpty(v.hostPath) || _.isEmpty(v.hostPath.path));
     },
     getEmptyItem: function() {
       var v = k8s.pods.getEmptyVolume();
@@ -23,7 +25,7 @@ angular.module('app')
       $scope.rowMgr.setItems([]);
     } else {
       items = _.forEach(angular.copy(volumes), function(v) {
-        v.type = v.source.emptyDir ? 'container' : 'host';
+        v.type = v.emptyDir ? 'container' : 'host';
       });
       $scope.rowMgr.setItems(items);
     }
@@ -31,13 +33,14 @@ angular.module('app')
 
   $scope.save = function() {
     var items = _.map($scope.rowMgr.getNonEmptyItems(), function(v) {
-      v.source.emptyDir = v.type === 'container' ? true : false;
-      delete v.type;
-      if (v.source.emptyDir) {
-        delete v.source.hostPath;
+      if (v.type === 'container') {
+        v.emptyDir = { medium: '' };
+        delete v.hostPath;
       } else {
-        delete v.source.emptyDir;
+        delete v.emptyDir;
       }
+      delete v.type;
+      pkg.deleteNulls(v);
       return v;
     });
     pod.spec.volumes = items;
@@ -49,8 +52,8 @@ angular.module('app')
   };
 
   $scope.onTypeChange = function(v) {
-    if (v.type === 'container') {
-      v.source.hostPath.path = null;
+    if (v.type === 'container' && pkg.propExists('hostPath.path', v)) {
+      v.hostPath.path = null;
     }
   };
 

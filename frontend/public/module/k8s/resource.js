@@ -21,11 +21,12 @@ angular.module('k8s')
   this.list = function(kind, params) {
     var ns, d = $q.defer();
     if (params) {
-      if (!_.isEmpty(params.labels)) {
-        params.labels = k8sLabels.urlEncode(params.labels);
+      if (!_.isEmpty(params.labelSelector)) {
+        params.labelSelector = k8sLabels.urlEncode(params.labelSelector);
       }
       if (params.ns) {
         ns = params.ns;
+        delete params.ns;
       }
     }
 

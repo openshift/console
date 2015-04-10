@@ -68,12 +68,8 @@ angular.module('k8s').constant('k8sEnum', {
 
   RestartPolicy: {
     Always: {
-      // A unique id to identify the type.
-      id: 'always',
-      // Value used in communication with API.
-      value: {
-        always: {},
-      },
+      // A unique id to identify the type, used as the value when communicating with the API.
+      id: 'Always',
       // What is shown in the UI.
       label: 'Always Restart',
       // Ordering weight.
@@ -85,19 +81,13 @@ angular.module('k8s').constant('k8sEnum', {
       default: true,
     },
     OnFailure: {
-      id: 'onfailure',
-      value: {
-        onFailure: {},
-      },
+      id: 'OnFailure',
       label: 'Restart On Failure',
       weight: 200,
       description: 'If the container exits with a non-zero status code, restart it.',
     },
     Never: {
-      id: 'never',
-      value: {
-        never: {},
-      },
+      id: 'Never',
       label: 'Never Restart',
       weight: 300,
       description: 'Never restart the container. ' +
@@ -121,6 +111,46 @@ angular.module('k8s').constant('k8sEnum', {
       weight: 300,
       id: 'tcpSocket',
       label: 'TCP Socket (Port)',
+    },
+  },
+
+  VolumeSource: {
+    emptyDir: {
+      weight: 100,
+      id: 'emptyDir',
+      label: 'Container Volume',
+      description: 'Temporary directory that shares a pod\'s lifetime.',
+    },
+    hostPath: {
+      weight: 200,
+      id: 'hostPath',
+      label: 'Host Directory',
+      description: 'Pre-existing host file or directory, ' +
+          'generally for privileged system daemons or other agents tied to the host.',
+    },
+    gitRepo: {
+      weight: 300,
+      id: 'gitRepot',
+      label: 'Git Repo',
+      description: 'Git repository at a particular revision.',
+    },
+    nfs: {
+      weight: 400,
+      id: 'nfs',
+      label: 'NFS',
+      description: 'NFS volume that will be mounted in the host machine.',
+    },
+    secret: {
+      weight: 500,
+      id: 'secret',
+      label: 'Secret',
+      description: 'Secret to populate volume.',
+    },
+    gcePersistentDisk: {
+      weight: 600,
+      id: 'gcePersistentDisk',
+      label: 'GCE Persistent Disk',
+      description: 'GCE disk resource attached to the host machine on demand.',
     },
   },
 

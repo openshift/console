@@ -33,7 +33,6 @@ angular.module('k8s')
         'env',
         'command',
         'dnsPolicy',
-        'restartPolicy',
         'volumes']);
 
     if (container.resources && container.resources.limits) {

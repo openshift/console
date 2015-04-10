@@ -17,10 +17,7 @@ angular.module('app')
     });
   };
 
-  $scope.getRestartPolicyLabel = function() {
-    var p = k8s.pods.getRestartPolicyByValue($scope.pod.spec.restartPolicy);
-    return p.label;
-  };
+  $scope.getRestartPolicyLabel = k8s.pods.getRestartPolicyLabelById;
 
   $scope.cancel = function() {
     $location.path('/pods');

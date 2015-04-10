@@ -28,7 +28,7 @@ angular.module('app.ui')
           return;
         }
         if ($scope.selector) {
-          query.labels = $scope.selector;
+          query.labelSelector = $scope.selector;
         }
         if ($scope.namespace) {
           query.ns = $scope.namespace;
