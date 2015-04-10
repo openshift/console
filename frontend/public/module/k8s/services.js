@@ -18,7 +18,7 @@ angular.module('k8s')
         namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
-        containerPort: null,
+        targetPort: null,
         createExternalLoadBalancer: false,
         port: null,
         portalIP: null,
