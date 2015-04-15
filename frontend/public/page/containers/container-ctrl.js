@@ -9,10 +9,10 @@ angular.module('app')
   k8s.pods.get($routeParams.podName, $scope.ns).then(function(pod) {
     $scope.pod = pod;
     $scope.container = _.findWhere(pod.spec.containers, { name: $routeParams.name });
-    if (pod.status && pod.status.info) {
-      $scope.container.info = pod.status.info[$routeParams.name];
+    if (pod.status && pod.status.containerStatuses) {
+      $scope.containerStatus = _.findWhere(pod.status.containerStatuses, { name: $routeParams.name });
     }
-    $scope.containerState = k8s.docker.getState($scope.container.info);
+    $scope.containerState = k8s.docker.getState($scope.containerStatus);
   });
 
   $scope.getLivenessLabel = function() {

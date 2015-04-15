@@ -5,23 +5,23 @@ angular.module('k8s')
   // Parses the state from k8s container info field of a pod.
   // Returned object will always have a 'label' property,
   // but existance of other properties vary depending on the state.
-  this.getState = function(containerInfo) {
+  this.getState = function(containerStatus) {
     var keys, stateKey, state;
     state = {
-      label: 'unknown',
+      label: 'Unknown',
     };
-    if (!containerInfo || !containerInfo.state) {
+    if (!containerStatus || !containerStatus.state) {
       return state;
     }
 
-    keys = Object.keys(containerInfo.state);
+    keys = Object.keys(containerStatus.state);
     if (_.isEmpty(keys)) {
       return state;
     }
 
     stateKey = keys[0];
     state.label = stateKey;
-    _.extend(state, containerInfo.state[stateKey]);
+    _.extend(state, containerStatus.state[stateKey]);
     return state;
   };
 
