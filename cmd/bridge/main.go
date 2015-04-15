@@ -87,18 +87,6 @@ func main() {
 		log.Fatal("Missing required flag: --k8s-api-version")
 	}
 
-	if *k8sAPIService == "" {
-		log.Fatal("Missing required flag: --k8s-api-service")
-	}
-
-	if *k8sControllerManagerService == "" {
-		log.Fatal("Missing required flag: --k8s-controller-manager-service")
-	}
-
-	if *k8sSchedulerService == "" {
-		log.Fatal("Missing required flag: --k8s-scheduler-service")
-	}
-
 	kCfg := &server.K8sConfig{
 		Endpoint:                 k8sURL,
 		APIVersion:               *k8sAPIVersion,
