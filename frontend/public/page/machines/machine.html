@@ -14,8 +14,16 @@
       <div ng-show="machine && !loadError">
         <dl>
           <dt>Status</dt>
-          <dd ng-repeat="condition in machine.status.conditions">
-            Status <code ng-bind="condition.kind"></code> is <code ng-bind="condition.status"></code>. Message is <code ng-bind="condition.message"></code> because <code ng-bind="condition.reason"></code></span>
+          <dd>
+            <div ng-repeat="condition in machine.status.conditions">
+              <div>
+                Status <code ng-bind="condition.type"></code> is <code ng-bind="condition.status"></code>, because <code ng-bind="condition.reason"></code>.
+              </div>
+              <small>
+                Last Probe Time: <span ng-bind="condition.lastProbeTime | customDate"></span>, 
+                Last Transition Time: <span ng-bind="condition.lastTransitionTime | customDate"></span>
+              </small>
+            </div>
           </dd>
           <dt>Machine Labels</dt>
           <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>

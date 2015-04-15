@@ -35,7 +35,10 @@ angular.module('app.ui')
         if (!pkg.propExists('status.conditions', node) || _.isEmpty(node.status.conditions)) {
           return 'Unknown';
         }
-        return node.status.conditions[0].status;
+
+        return pkg.join(node.status.conditions, ', ', function(v) {
+          return v.type + ': ' + v.status;
+        });
       };
 
       $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
