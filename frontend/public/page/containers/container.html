@@ -25,12 +25,12 @@
             <dl>
               <dt>State</dt>
               <dd ng-bind="containerState.label"></dd>
-              <dt>Id</dt>
+              <dt>ID</dt>
               <dd>
-                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{container.info.containerID}}" readonly />
+                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{containerStatus.containerID}}" readonly />
               </dd>
               <dt>Restart Count</dt>
-              <dd ng-bind="container.info.restartCount"></dd>
+              <dd ng-bind="containerStatus.restartCount"></dd>
               <dt>Resource Limits</dt>
               <dd>
                 <span ng-show="getresourcelimitvalue()" ng-bind="getresourcelimitvalue()"></span>
@@ -160,6 +160,11 @@
           </div>
 
         </div><!--/row-->
+
+
+        <co-debug obj="container"></co-debug>
+        <co-debug obj="containerStatus"></co-debug>
+        <co-debug obj="containerState"></co-debug>
 
       </div><!--/pane-body-->
 
