@@ -1,8 +1,23 @@
-.co-m-status-box {
+.cluster-status-wrapper {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+
+  -webkit-flex-flow: row wrap;
+  justify-content: center;
+}
+
+.cluster-status-item {
   min-height: 150px;
-  max-height: 200px;
+  width: 300px;
   border: solid 1px $color-border;
   padding: 20px;
+  margin: 10px;
   h2 {
     margin-top: 0;
     white-space: nowrap;
