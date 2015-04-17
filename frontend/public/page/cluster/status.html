@@ -3,19 +3,18 @@
   <co-nav-title title="Cluster Status"></co-nav-title>
 
   <div class="co-m-pane">
-    <div class="co-m-pane__body">
-      <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="co-m-status-box">
-            <h2>etcd</h2>
+    <div class="co-m-pane__body cluster-status-wrapper">
+
+        <div class="cluster-status-item">
+          <h2>etcd</h2>
+          <div ng-show="!etcd || etcd.state == 'unknown'">
+            <co-status state="unknown" text="Cluster communication failure"></co-status>
+            <small>The cluster API appears to be unreachable.</small>
+          </div>
+          <div ng-show="etcd.state != 'unknown'">
+            <co-status state="{{etcd.state}}" text="{{etcd.message}}"></co-status>
+            <small ng-bind-template="{{etcd.stats.leaders + etcd.stats.followers}} active peers"></small>
             <div>
-              <co-status state="{{etcd.state}}" text="{{etcd.message}}"></co-status>
-              <small ng-show="etcd.state == 'unknown'">The etcd cluster is unavailable or running in an unexpected location.</small>
-            </div>
-            <div ng-show="etcd.state != 'unknown'">
-              <small ng-bind-template="{{etcd.stats.leaders + etcd.stats.followers}} active peers"></small>
-            </div>
-            <div ng-show="etcd.state != 'unknown'">
               <small>
                 leaders: <span ng-bind="etcd.stats.leaders"></span>,
                 followers: <span ng-bind="etcd.stats.followers"></span>,
@@ -24,79 +23,77 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="co-m-status-box">
-            <h2>API Server</h2>
-            <div ng-show="!services">
-              <co-status state="unknown" text="Failed to communicate with fleet API."></co-status>
-              <small>The fleet API is unavailable or running in an unexpected location.</small>
-            </div>
-            <div ng-show="apiserver.stats.running == 0">
-              <co-status state="critical" text="All services down"></co-status>
-            </div>
-            <div ng-show="apiserver.stats.running > 0 && apiserver.stats.failed > 0">
-              <co-status state="warning" text="Some services down"></co-status>
-            </div>
-            <div ng-show="apiserver.stats.running > 0 && apiserver.stats.failed == 0">
-              <co-status state="ok" text="All systems go"></co-status>
-            </div>
-            <div ng-show="apiserver.stats">
-              <small>
-                running: <span ng-bind="apiserver.stats.running"></span>,
-                failed: <span ng-bind="apiserver.stats.failed"></span>
-              </small>
-            </div>
+
+        <div class="cluster-status-item">
+          <h2>API Server</h2>
+          <div ng-show="!services">
+            <co-status state="unknown" text="Cluster communication failure"></co-status>
+            <small>The cluster API appears to be unreachable.</small>
+          </div>
+          <div ng-show="apiserver.stats.running == 0">
+            <co-status state="critical" text="All services down"></co-status>
+          </div>
+          <div ng-show="apiserver.stats.running > 0 && apiserver.stats.failed > 0">
+            <co-status state="warning" text="Some services down"></co-status>
+          </div>
+          <div ng-show="apiserver.stats.running > 0 && apiserver.stats.failed == 0">
+            <co-status state="ok" text="All systems go"></co-status>
+          </div>
+          <div ng-show="apiserver.stats">
+            <small>
+              running: <span ng-bind="apiserver.stats.running"></span>,
+              failed: <span ng-bind="apiserver.stats.failed"></span>
+            </small>
           </div>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="co-m-status-box">
-            <h2>Controller Manager</h2>
-            <div ng-show="!services">
-              <co-status state="unknown" text="Failed to communicate with fleet API."></co-status>
-              <small>The fleet API is unavailable or running in an unexpected location.</small>
-            </div>
-            <div ng-show="controllerManager.stats.running == 0">
-              <co-status state="critical" text="All services down"></co-status>
-            </div>
-            <div ng-show="controllerManager.stats.running > 0 && controllerManager.stats.failed > 0">
-              <co-status state="warning" text="Some services down"></co-status>
-            </div>
-            <div ng-show="controllerManager.stats.running > 0 && controllerManager.stats.failed == 0">
-              <co-status state="ok" text="All systems go"></co-status>
-            </div>
-            <div ng-show="services">
-              <small>
-                running: <span ng-bind="controllerManager.stats.running"></span>,
-                failed: <span ng-bind="controllerManager.stats.failed"></span>
-              </small>
-            </div>
+
+        <div class="cluster-status-item">
+          <h2>Controller Manager</h2>
+          <div ng-show="!services">
+            <co-status state="unknown" text="Cluster communication failure"></co-status>
+            <small>The cluster API appears to be unreachable.</small>
+          </div>
+          <div ng-show="controllerManager.stats.running == 0">
+            <co-status state="critical" text="All services down"></co-status>
+          </div>
+          <div ng-show="controllerManager.stats.running > 0 && controllerManager.stats.failed > 0">
+            <co-status state="warning" text="Some services down"></co-status>
+          </div>
+          <div ng-show="controllerManager.stats.running > 0 && controllerManager.stats.failed == 0">
+            <co-status state="ok" text="All systems go"></co-status>
+          </div>
+          <div ng-show="services">
+            <small>
+              running: <span ng-bind="controllerManager.stats.running"></span>,
+              failed: <span ng-bind="controllerManager.stats.failed"></span>
+            </small>
           </div>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="co-m-status-box">
-            <h2>Scheduler</h2>
-            <div ng-show="!services">
-              <co-status state="unknown" text="Failed to communicate with fleet API."></co-status>
-              <small>The fleet API is unavailable or running in an unexpected location.</small>
-            </div>
-            <div ng-show="scheduler.stats.running == 0">
-              <co-status state="critical" text="All services down"></co-status>
-            </div>
-            <div ng-show="scheduler.stats.running > 0 && scheduler.stats.failed > 0">
-              <co-status state="warning" text="Some services down"></co-status>
-            </div>
-            <div ng-show="scheduler.stats.running > 0 && scheduler.stats.failed == 0">
-              <co-status state="ok" text="All systems go"></co-status>
-            </div>
-            <div ng-show="services">
-              <small>
-                running: <span ng-bind="scheduler.stats.running"></span>,
-                failed: <span ng-bind="scheduler.stats.failed"></span>
-              </small>
-            </div>
+
+        <div class="cluster-status-item">
+          <h2>Scheduler</h2>
+          <div ng-show="!services">
+            <co-status state="unknown" text="Cluster communication failure"></co-status>
+            <small>The cluster API appears to be unreachable.</small>
+          </div>
+          <div ng-show="scheduler.stats.running == 0">
+            <co-status state="critical" text="All services down"></co-status>
+          </div>
+          <div ng-show="scheduler.stats.running > 0 && scheduler.stats.failed > 0">
+            <co-status state="warning" text="Some services down"></co-status>
+          </div>
+          <div ng-show="scheduler.stats.running > 0 && scheduler.stats.failed == 0">
+            <co-status state="ok" text="All systems go"></co-status>
+          </div>
+          <div ng-show="services">
+            <small>
+              running: <span ng-bind="scheduler.stats.running"></span>,
+              failed: <span ng-bind="scheduler.stats.failed"></span>
+            </small>
           </div>
         </div>
-      </div>
+
+
 
     </div>
   </div>
