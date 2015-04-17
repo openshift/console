@@ -5605,26 +5605,12 @@ input[type="radio"] {
 
 .co-m-pane__body, .co-m-pane__body--bordered {
   padding: 30px 30px 30px 30px; }
-  .co-m-pane__body:before, .co-m-pane__body:after, .co-m-pane__body--bordered:before, .co-m-pane__body--bordered:after {
-    content: " ";
-    /* 1 */
-    display: table;
-    /* 2 */ }
-  .co-m-pane__body:after, .co-m-pane__body--bordered:after {
-    clear: both; }
 
 .co-m-pane__body--bordered {
   border-bottom: solid 1px #eee; }
 
 .co-m-pane__body-group {
   padding: 0 0 30px 0; }
-  .co-m-pane__body-group:before, .co-m-pane__body-group:after {
-    content: " ";
-    /* 1 */
-    display: table;
-    /* 2 */ }
-  .co-m-pane__body-group:after {
-    clear: both; }
   .co-m-pane__body-group .co-m-pane__body-section, .co-m-pane__body-group .co-m-pane__body-section--bordered {
     padding: 15px 30px; }
     .co-m-pane__body-group .co-m-pane__body-section:first-child, .co-m-pane__body-group .co-m-pane__body-section--bordered:first-child {
