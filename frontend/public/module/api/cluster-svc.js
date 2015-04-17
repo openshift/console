@@ -79,7 +79,7 @@ angular.module('app')
 
       return {
         state: 'ok',
-        message: 'All systems go.',
+        message: 'All systems go',
         stats: stats,
       };
 
