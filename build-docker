@@ -1,10 +1,11 @@
 #!/bin/bash -e
 
 # Compiles binaries and static assets using docker containers.
-# TODO(sym3tri): Do all of this inside quay once the builder supports sequential pipeline builds.
+
+REPO=github.com/coreos-inc/bridge
 
 echo "compiling go..."
-docker run -v `pwd`:/opt/bridge quay.io/coreosinc/web-builder:latest /bin/bash -c "cd /opt/bridge && ./build"
+docker run --rm -v `pwd`:/go/src/$REPO -w /go/src/$REPO quay.io/coreosinc/web-builder:latest ./build
+
 echo "compiling javascript..."
-docker run -v `pwd`:/opt/bridge quay.io/coreosinc/web-builder:latest /bin/bash -c "cd /opt/bridge && ./build-web"
-echo "done"
+docker run --rm -v `pwd`:/go/src/$REPO -w /go/src/$REPO quay.io/coreosinc/web-builder:latest ./build-web

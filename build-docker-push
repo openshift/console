@@ -6,7 +6,7 @@ registry=quay.io
 repo=$registry/coreos/tectonic-console
 
 if [ -v $DOCKER_USER ] || [ -v $DOCKER_PASSWORD ]; then
-    echo "env variables not set. skipping login, assuming creds in .dockercfg"
+    echo "env variables not set: DOCKER_USER, DOCKER_PASSWORD. skipping login, assuming creds in .dockercfg"
 else
     echo logging in as $DOCKER_USER
     docker login --username="$DOCKER_USER" --password="$DOCKER_PASSWORD" --email="docker.login@coreos.com" $registry
