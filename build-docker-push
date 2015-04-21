@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-# Build, tag, and push a Bridge docker image to quay.io/coreosinc/bridge.
-# TODO(sym3tri): Do all of this inside quay once the builder supports sequential pipeline builds.
+# docker build, tag, and push a docker image to quay.io/coreos/tectonic-console
 
 registry=quay.io
 repo=$registry/coreos/tectonic-console
@@ -12,8 +11,6 @@ else
     echo logging in as $DOCKER_USER
     docker login --username="$DOCKER_USER" --password="$DOCKER_PASSWORD" --email="docker.login@coreos.com" $registry
 fi
-
-source build-docker
 
 git_sha=$(git rev-parse HEAD)
 
