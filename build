@@ -3,7 +3,6 @@
 # Build go binaries into ./bin
 
 repo_org=coreos-inc
-
 project_dir=$(basename $PWD)
 export GOPATH=${PWD}/Godeps/_workspace
 export GOBIN=${PWD}/bin
@@ -11,7 +10,5 @@ export GOBIN=${PWD}/bin
 rm $GOPATH/src/github.com/$repo_org/$project_dir 2> /dev/null || true
 mkdir -p $GOPATH/src/github.com/$repo_org/
 ln -s ${PWD} $GOPATH/src/github.com/$repo_org/$project_dir
-
-eval $(go env)
 
 CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w' -o bin/bridge github.com/$repo_org/$project_dir/cmd/bridge
