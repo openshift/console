@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+REPO=github.com/coreos-inc/bridge
+
+echo "running with docker, might take a while to pull the image..."
+docker run --rm --net=host -v `pwd`:/go/src/$REPO -w /go/src/$REPO quay.io/coreos/web-builder:1.3.3 $@

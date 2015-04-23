@@ -28,29 +28,18 @@ Frontend build assets are output to: `/frontend/public/dist`.
 
 Start the application:
 ```
-./bin/bridge --k8s-endpoint=http://<kubernetes-api-host>:8080 \
-    --k8s-api-service=<fleet-unit-name> \
-    --k8s-controller-manager-service=<fleet-unit-name> \
-    --k8s-scheduler-service=<fleet-unit-name> \
-    --etcd-endpoints=http://<etcd-host>:7001
+./bin/bridge
 ```
 
 ## Docker
-
-### Compile Code with a Container
-As a convenience, this script will compile the source using a docker container if a local Go compiler is unavailable.
+The `go-docker` script will run any command from a docker container to ensure a consistent build environment.
+For example to build with docker run:
 ```
-./build-docker
-```
-
-### Compile & Build Docker Image
-```
-./build-docker
-docker build .
+./go-docker ./build
 ```
 
 ### Compile, Build, & Push Docker Image
-After compiling code and building a docker image, this additionally pushes the resulting image to the `quay.io/coreosinc/bridge` repository and tags it with the current git sha.
+Build a docker image, tag it with the current git sha, and pushes it to the `quay.io/coreos/tectonic-console` repo.
 
 Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercfg` file.
 ```
