@@ -4,6 +4,8 @@ The Tectonic Console
 
 [![Build Status](https://semaphoreci.com/api/v1/projects/38fb8e53-cc69-4f92-832c-a6608874577a/404574/badge.svg)](https://semaphoreci.com/coreos-inc/bridge)
 
+[quay.io/coreos/tectonic-console](https://quay.io/repository/coreos/tectonic-console?tab=tags)
+
 
 Bridge consists of a frontend webapp and a backend service which serves the following purposes:
 - Proxy the Kubernetes API
