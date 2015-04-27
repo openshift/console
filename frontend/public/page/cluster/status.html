@@ -6,21 +6,14 @@
     <div class="co-m-pane__body cluster-status-wrapper">
 
         <div class="cluster-status-item">
-          <h2>etcd</h2>
+          <h2>etcd Cluster</h2>
           <div ng-show="!etcd || etcd.state == 'unknown'">
             <co-status state="unknown" text="Cluster communication failure"></co-status>
             <small>The cluster API appears to be unreachable.</small>
           </div>
           <div ng-show="etcd.state != 'unknown'">
             <co-status state="{{etcd.state}}" text="{{etcd.message}}"></co-status>
-            <small ng-bind-template="{{etcd.stats.leaders + etcd.stats.followers}} active peers"></small>
-            <div>
-              <small>
-                leaders: <span ng-bind="etcd.stats.leaders"></span>,
-                followers: <span ng-bind="etcd.stats.followers"></span>,
-                standby: <span ng-bind="etcd.stats.total - etcd.stats.followers - etcd.stats.leaders"></span>
-              </small>
-            </div>
+            <small ng-bind-template="{{etcd.count}} members"></small>
           </div>
         </div>
 

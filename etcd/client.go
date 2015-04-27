@@ -50,47 +50,22 @@ func (c *Client) Urls(urlPath string) []string {
 	return urls
 }
 
-func (c *Client) Machines() ([]*schema.EtcdMachine, error) {
+func (c *Client) Members() ([]*schema.EtcdMember, error) {
 	// TODO: cycle thru all endpoints on failure
-	resp, err := c.hc.Get(c.Urls("admin/machines")[0])
+	resp, err := c.hc.Get(c.Urls("members")[0])
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("error listing etcd machines")
+		return nil, errors.New("error listing etcd members")
 	}
 
-	var machines []*schema.EtcdMachine
-	if err = json.NewDecoder(resp.Body).Decode(&machines); err != nil {
+	var state schema.EtcdState
+	if err = json.NewDecoder(resp.Body).Decode(&state); err != nil {
 		return nil, err
 	}
 
-	return machines, nil
-}
-
-func (c *Client) ActiveSize() (int, error) {
-	// TODO: cycle thru all endpoints on failure
-	resp, err := c.hc.Get(c.Urls("admin/config")[0])
-	if err != nil {
-		return -1, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return -1, errors.New("error getting etcd config")
-	}
-
-	var cnf map[string]interface{}
-	if err = json.NewDecoder(resp.Body).Decode(&cnf); err != nil {
-		return -1, err
-	}
-
-	val, exists := cnf["activeSize"]
-	if exists {
-		return int(val.(float64)), nil
-	} else {
-		return -1, errors.New("missing activeSize key from response")
-	}
+	return state.Members, nil
 }

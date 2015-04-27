@@ -71,24 +71,14 @@ type ControlService struct {
 	UnitStates []*UnitState `json:"unitStates,omitempty"`
 }
 
-type EtcdMachine struct {
-	ClientURL string `json:"clientURL,omitempty"`
-
-	Name string `json:"name,omitempty"`
-
-	PeerURL string `json:"peerURL,omitempty"`
-
-	State string `json:"state,omitempty"`
+type EtcdMember struct {
+	Id string `json:"id,omitempty"`
 }
 
 type EtcdState struct {
-	ActiveSize int64 `json:"activeSize,omitempty"`
-
 	CheckSuccess bool `json:"checkSuccess,omitempty"`
 
-	CurrentSize int64 `json:"currentSize,omitempty"`
-
-	Machines []*EtcdMachine `json:"machines,omitempty"`
+	Members []*EtcdMember `json:"members,omitempty"`
 }
 
 type UnitState struct {
@@ -195,7 +185,7 @@ func (c *ClusterEtcdCall) Do() error {
 	//   "path": "cluster/status/etcd",
 	//   "response": {
 	//     "items": {
-	//       "$ref": "EtcdMachine"
+	//       "$ref": "EtcdMember"
 	//     },
 	//     "type": "array"
 	//   }

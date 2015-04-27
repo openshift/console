@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"sync"
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
@@ -82,38 +81,14 @@ func (s *ClusterService) GetUnits(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *ClusterService) GetEtcdState(w http.ResponseWriter, r *http.Request) {
-	var wg sync.WaitGroup
-	etcdState := schema.EtcdState{
-		CheckSuccess: true,
+	var etcdState schema.EtcdState
+	members, err := s.etcdClient.Members()
+	if err != nil {
+		msg := "Error listing etcd members"
+		log.Printf("%s - error=%s", msg, err)
+	} else {
+		etcdState.CheckSuccess = true
+		etcdState.Members = members
 	}
-
-	wg.Add(1)
-	go func() {
-		machines, err := s.etcdClient.Machines()
-		if err != nil {
-			msg := "Error listing etcd machines"
-			log.Printf("%s - error=%s", msg, err)
-			etcdState.CheckSuccess = false
-		} else {
-			etcdState.Machines = machines
-			etcdState.CurrentSize = int64(len(machines))
-		}
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	go func() {
-		activeSize, err := s.etcdClient.ActiveSize()
-		if err != nil {
-			msg := "Error getting etcd active size"
-			log.Printf("%s - error=%s", msg, err)
-			etcdState.CheckSuccess = false
-		} else {
-			etcdState.ActiveSize = int64(activeSize)
-		}
-		wg.Done()
-	}()
-
-	wg.Wait()
 	sendResponse(w, http.StatusOK, etcdState)
 }

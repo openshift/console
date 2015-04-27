@@ -34,53 +34,21 @@ angular.module('app')
     var unknown = {
       state: 'unknown',
       message: 'Failed to communicate with etcd cluster.',
-      stats: {}
+      count: 0
     };
 
     return this.etcd().then(function(result) {
-      var status, stats, statsGroup;
+      var status;
       status = result.data;
 
-      if (!status.currentSize || !status.checkSuccess) {
+      if (!status.checkSuccess || !status.members) {
         return unknown;
-      }
-
-      statsGroup = _.groupBy(status.machines, 'state');
-      stats = {
-        active: status.activeSize,
-        total: status.currentSize,
-        leaders: statsGroup.leader ? statsGroup.leader.length : 0,
-        followers: statsGroup.follower ? statsGroup.follower.length : 0,
-      };
-
-      if (stats.leaders + stats.followers === 0) {
-        return {
-          state: 'critical',
-          message: 'No active peers found.',
-          stats: stats,
-        };
-      }
-
-      if (stats.leaders === 0) {
-        return {
-          state: 'warning',
-          message: 'Missing leader. Cluster is read-only.',
-          stats: stats,
-        };
-      }
-
-      if (stats.leaders + stats.followers > status.activeSize) {
-        return {
-          state: 'warning',
-          message: 'More active peers than limit',
-          stats: stats,
-        };
       }
 
       return {
         state: 'ok',
         message: 'All systems go',
-        stats: stats,
+        count: status.members.length
       };
 
     })
