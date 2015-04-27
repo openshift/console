@@ -33,34 +33,19 @@ const DiscoveryJSON = `{
         "checkSuccess": {
           "type": "boolean"
         },
-        "activeSize": {
-          "type": "integer"
-        },
-        "currentSize": {
-          "type": "integer"
-        },
-        "machines": {
+        "members": {
           "type": "array",
           "items": {
-            "$ref": "EtcdMachine"
+            "$ref": "EtcdMember"
           }
         }
       }
     },
-    "EtcdMachine": {
-      "id": "EtcdMachine",
+    "EtcdMember": {
+      "id": "EtcdMember",
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "clientURL": {
-          "type": "string"
-        },
-        "peerURL": {
-          "type": "string"
-        },
-        "state": {
+        "id": {
           "type": "string"
         }
       }
@@ -143,7 +128,7 @@ const DiscoveryJSON = `{
           "response": {
             "type": "array",
             "items": {
-              "$ref": "EtcdMachine"
+              "$ref": "EtcdMember"
             }
           }
         }
