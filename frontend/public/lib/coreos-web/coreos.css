@@ -5814,7 +5814,8 @@ html, body {
   color: #2277ad; }
 
 .co-m-nav-title {
-  line-height: 60px; }
+  line-height: 60px;
+  margin: 0; }
 
 .co-m-loader, .co-m-inline-loader {
   min-width: 28px; }
