@@ -1,4 +1,4 @@
-angular.module('app.ui', []);
+angular.module('app.ui', ['ngAnimate']);
 angular.module('app.modules', []);
 // The main app module.
 angular.module('app', [
