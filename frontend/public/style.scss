@@ -1,6 +1,8 @@
 /* COREOS-WEB IMPORTS */
 @import "color-pallette";
 @import "config";
+@import "mixin/animation";
+@import "mixin/keyframes";
 @import "mixin/prefix";
 
 /* CUSTOM STYLES */
@@ -33,3 +35,4 @@
 
 @import "module/ui/tristate/tristate";
 @import "module/ui/status-box/status-box";
+@import "module/ui/toggle-play/toggle-play";

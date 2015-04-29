@@ -1,0 +1,35 @@
+.co-toggle-play {
+  background-color: #fff;
+  border: 2px solid $color-grey-border;
+  border-radius: 50px;
+  height: 32px;
+  width: 32px;
+  padding: 0;
+  font-size: 13px;
+
+  // play icon
+  &.co-toggle-play--inactive:before {
+    content: "\f04b";
+  }
+  // pause icon
+  &.co-toggle-play--active:before {
+    content: "\f04c";
+  }
+
+  &.co-toggle-play--active {
+    @include co-x-animation(
+      $name: pulse,
+      $duration: 2s,
+      $iterationCount: infinite
+    );
+  }
+}
+
+@include co-x-keyframes(pulse) {
+  0%, 100% {
+    border-color: $color-grey-border;
+  }
+  50% {
+    border-color: $color-tectonic-green;
+  }
+}
