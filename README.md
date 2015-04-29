@@ -2,7 +2,7 @@ Bridge
 ======
 The Tectonic Console
 
-[![Build Status](https://semaphoreci.com/api/v1/projects/38fb8e53-cc69-4f92-832c-a6608874577a/404574/badge.svg)](https://semaphoreci.com/coreos-inc/bridge)
+[![Build Status](https://semaphoreci.com/api/v1/projects/eb020f87-c196-4b58-8149-f04fafc2de07/411974/badge.svg)](https://semaphoreci.com/coreos-inc/bridge)
 
 
 Bridge consists of a frontend webapp and a backend service which serves the following purposes:
