@@ -2812,8 +2812,17 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/btn-bar/btn-bar.html',
-    '<div class="co-m-btn-bar" ng-transclude>\n' +
+  $templateCache.put('/coreos.ui/cog/cog.html',
+    '<div class="co-m-cog">\n' +
+    '  <span class="dropdown" is-open="status.isopen" ng-click="captureClick($event)">\n' +
+    '    <span class="co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog"></span>\n' +
+    '    <ul class="dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}">\n' +
+    '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
+    '        <a ng-if="option.href" ng-href="{{option.href}}" ng-bind="option.label"></a>\n' +
+    '        <a ng-if="!option.href" ng-click="clickHandler($event, option)" ng-bind="option.label"></a>\n' +
+    '      </li>\n' +
+    '    </ul>\n' +
+    '  </span>\n' +
     '</div>\n' +
     '');
 }]);
@@ -2826,17 +2835,8 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/cog/cog.html',
-    '<div class="co-m-cog">\n' +
-    '  <span class="dropdown" is-open="status.isopen" ng-click="captureClick($event)">\n' +
-    '    <span class="co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog"></span>\n' +
-    '    <ul class="dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}">\n' +
-    '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
-    '        <a ng-if="option.href" ng-href="{{option.href}}" ng-bind="option.label"></a>\n' +
-    '        <a ng-if="!option.href" ng-click="clickHandler($event, option)" ng-bind="option.label"></a>\n' +
-    '      </li>\n' +
-    '    </ul>\n' +
-    '  </span>\n' +
+  $templateCache.put('/coreos.ui/btn-bar/btn-bar.html',
+    '<div class="co-m-btn-bar" ng-transclude>\n' +
     '</div>\n' +
     '');
 }]);
@@ -2981,22 +2981,6 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/donut/donut.html',
-    '<div class="co-m-donut co-m-gauge">\n' +
-    '  <div class="co-m-gauge__content"></div>\n' +
-    '  <div class="co-m-gauge__label" ng-transclude></div>\n' +
-    '</div>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/error-message/error-message.html',
     '<div ng-show="show" class="co-m-message co-m-message--error co-an-fade-in-out ng-hide">{{message}}</div>\n' +
     '');
@@ -3029,6 +3013,22 @@ module.run(['$templateCache', function($templateCache) {
     '<div class="co-m-facet-menu">\n' +
     '  <div ng-show="!!title" class="co-m-facet-menu__title" ng-bind="title"></div>\n' +
     '  <ul class="co-m-facet-menu__option-list" ng-transclude></ul>\n' +
+    '</div>\n' +
+    '');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('coreos-templates-html');
+} catch (e) {
+  module = angular.module('coreos-templates-html', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('/coreos.ui/donut/donut.html',
+    '<div class="co-m-donut co-m-gauge">\n' +
+    '  <div class="co-m-gauge__content"></div>\n' +
+    '  <div class="co-m-gauge__label" ng-transclude></div>\n' +
     '</div>\n' +
     '');
 }]);
@@ -3136,9 +3136,9 @@ try {
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/nav-title/nav-title.html',
     '<div class="co-m-nav-title row">\n' +
-    '  <div ng-transclude class="col-lg-3 col-md-3 col-sm-3 col-xs-6"></div>\n' +
+    '  <div ng-transclude class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>\n' +
     '  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">\n' +
-    '    <h1 class="co-m-page-title co-fx-text-shadow">{{title}}</h1>\n' +
+    '    <h1 class="co-m-page-title co-fx-text-shadow" ng-bind="title"></h1>\n' +
     '  </div>\n' +
     '</div>\n' +
     '');

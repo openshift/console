@@ -1,6 +1,8 @@
 /* COREOS-WEB IMPORTS */
 @import "color-pallette";
 @import "config";
+@import "mixin/animation";
+@import "mixin/keyframes";
 @import "mixin/prefix";
 
 /* CUSTOM STYLES */
@@ -15,6 +17,7 @@
 
 // Pages
 @import "page/cluster/status";
+@import "page/events/events";
 @import "page/pods/new-pod";
 @import "page/modals/modal";
 @import "page/containers/container";
@@ -33,3 +36,6 @@
 
 @import "module/ui/tristate/tristate";
 @import "module/ui/status-box/status-box";
+@import "module/ui/toggle-play/toggle-play";
+@import "module/ui/sysevents/sysevent-icon";
+@import "module/ui/sysevents/sysevent-stream";

@@ -1,4 +1,4 @@
-angular.module('app.ui', []);
+angular.module('app.ui', ['ngAnimate']);
 angular.module('app.modules', []);
 // The main app module.
 angular.module('app', [
@@ -19,8 +19,8 @@ angular.module('app', [
   'app.modules',
   'core.pkg',
 ])
-.config(function($routeProvider, $locationProvider, $httpProvider,
-      configSvcProvider, apiClientProvider, errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {
+.config(function($routeProvider, $locationProvider, $httpProvider, configSvcProvider, apiClientProvider,
+      errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {
   'use strict';
 
   $locationProvider.html5Mode(true);
@@ -29,7 +29,10 @@ angular.module('app', [
 
   configSvcProvider.config({
     siteBasePath: '/',
-    libPath: '/static/lib/coreos-web'
+    libPath: '/static/lib/coreos-web',
+    jsonParse: true,
+    detectHost: true,
+    detectScheme: true,
   });
 
   apiClientProvider.settings({
@@ -72,6 +75,16 @@ angular.module('app', [
       controller: 'NewAppCtrl',
       templateUrl: '/static/page/apps/new-app.html',
       title: 'Create New Application',
+    })
+    .when('/events', {
+      controller: 'EventsCtrl',
+      templateUrl: '/static/page/events/events.html',
+      title: 'Events',
+    })
+    .when('/ns/:ns/events', {
+      controller: 'EventsCtrl',
+      templateUrl: '/static/page/events/events.html',
+      title: 'Events',
     })
     .when('/services', {
       controller: 'ServicesCtrl',

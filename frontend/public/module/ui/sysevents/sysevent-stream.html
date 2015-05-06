@@ -1,0 +1,53 @@
+<div class="co-sysevent-stream">
+  <div class="co-sysevent-stream__totals" ng-bind="getTotalMessage()"></div>
+
+  <div class="co-sysevent-stream__timeline" ng-class="{'co-sysevent-stream__timeline--empty': !messages.length || !filteredMessages.length}">
+    <co-toggle-play class="co-sysevent-stream__timeline__btn" active="wsActive" on-toggle="toggleStream(active)"></co-toggle-play>
+    <div class="co-sysevent-stream__timeline__btn-text">
+      <span ng-hide="wsActive || wsError">
+        Event stream is paused.
+        <a href="#" ng-click="wsActive=true" ng-show="messageBuffer.length" ng-bind-template="Show {{messageBuffer.length}} new events."></a>
+      </span>
+      <span ng-show="wsActive && !wsError">Streaming events...</span>
+      <span class="co-sysevent-stream__connection-error" ng-show="wsError">Error connecting to event stream</span>
+    </div>
+    <div class="co-sysevent-stream__timeline__end-message">
+      There are no events before <span ng-bind="oldestTimestamp | customDate"></span>
+    </div>
+  </div>
+
+  <div class="co-sysevent" ng-init="updateOldest(m.object.lastTimestamp, $last)"
+        ng-repeat="m in filteredMessages=(messages | sysevents:eventsFilter | orderBy:'object.lastTimestamp':true | limitTo:maxMessages ) track by m.object.metadata.uid">
+    <div class="co-sysevent__icon-box">
+      <co-sysevent-icon kind="{{m.object.involvedObject.kind}}" reason="{{m.object.reason}}"></co-sysevent-icon>
+      <div class="co-sysevent__icon-line"></div>
+    </div>
+    <div class="co-sysevent__main-box">
+      <co-resource-link
+          kind="{{m.object.involvedObject.kind}}"
+          namespace="{{m.object.involvedObject.namespace}}"
+          name="{{m.object.involvedObject.name}}"
+          uid="{{m.object.involvedObject.uid}}">
+      </co-resource-link>
+      <div class="co-sysevent__main-message" ng-bind="m.object.message"></div>
+    </div>
+    <div class="co-sysevent__meta-box">
+      <div ng-bind="m.object.lastTimestamp | customDate"></div>
+      <small class="co-sysevent__meta-source">
+        Generated from <span ng-bind="m.object.source.component"></span>
+        <span ng-if="m.object.source.component == 'kubelet'">on <a ng-href="/machines/{{m.object.source.host}}" ng-bind="m.object.source.host"></a></span>
+      </small>
+    </div>
+  </div>
+
+  <cos-status-box ng-show="filteredMessages.length == 0 && messages.length" class="co-sysevent-stream__status-box-empty">
+    <div>No Matching Events</div>
+    <div class="cos-text-center" ng-bind-template="{{messages.length}} events exist, but none match the current filter"></div>
+  </cos-status-box>
+
+  <cos-status-box ng-show="messages.length == 0 && messageBuffer.length == 0" class="co-sysevent-stream__status-box-empty">
+    <div>No Events</div>
+    <div class="cos-text-center">No matching events found in the system.</div>
+  </cos-status-box>
+
+</div>

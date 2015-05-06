@@ -34,6 +34,7 @@
           <co-navbar-link href="/pods">Pods</co-navbar-link>
           <co-navbar-link href="/machines">Machines</co-navbar-link>
           <co-navbar-dropdown ng-cloak text="More">
+            <li><a href="/events">Events</a></li>
             <li><a href="/search">Search</a></li>
           </co-navbar-dropdown>
         </ul>
@@ -80,6 +81,7 @@
     <!-- core.pkg module -->
     <script src="/static/module/pkg/_module.js"></script>
     <script src="/static/module/pkg/pkg.js"></script>
+    <script src="/static/module/pkg/ws.js"></script>
     <!-- app bootstrap -->
     <script src="/static/app.js"></script>
     <script src="/static/const.js"></script>
@@ -94,6 +96,7 @@
     <script src="/static/module/filter/custom-date.js"></script>
     <script src="/static/module/filter/container-image.js"></script>
     <script src="/static/module/filter/container-tag.js"></script>
+    <script src="/static/module/filter/sysevents.js"></script>
     <script src="/static/module/filter/join.js"></script>
     <script src="/static/module/filter/split.js"></script>
     <!-- directive modules -->
@@ -106,17 +109,22 @@
     <script src="/static/module/label/label.js"></script>
     <script src="/static/module/label/label-input.js"></script>
     <script src="/static/module/number-spinner/number-spinner.js"></script>
+    <script src="/static/module/ui/sysevents/sysevent-icon.js"></script>
+    <script src="/static/module/ui/sysevents/sysevent-stream.js"></script>
     <script src="/static/module/ui/resources/node-list.js"></script>
     <script src="/static/module/ui/resources/pod-list.js"></script>
+    <script src="/static/module/ui/resources/resource-link.js"></script>
     <script src="/static/module/ui/resources/resource-list.js"></script>
     <script src="/static/module/ui/resources/replication-controller-list.js"></script>
     <script src="/static/module/ui/resources/service-list.js"></script>
     <script src="/static/module/ui/status-box/status-box.js"></script>
+    <script src="/static/module/ui/toggle-play/toggle-play.js"></script>
     <script src="/static/module/ui/tristate/tristate.js"></script>
     <script src="/static/module/ui/util.js"></script>
     <!-- page controllers -->
     <script src="/static/page/apps/apps-ctrl.js"></script>
     <script src="/static/page/apps/new-app-ctrl.js"></script>
+    <script src="/static/page/events/events-ctrl.js"></script>
     <script src="/static/page/cluster/cluster-status-ctrl.js"></script>
     <script src="/static/page/services/services-ctrl.js"></script>
     <script src="/static/page/services/service-ctrl.js"></script>

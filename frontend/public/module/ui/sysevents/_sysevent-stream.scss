@@ -1,0 +1,212 @@
+$color-dark-border: #ddd;
+$transition-time: 0.5s;
+
+.co-sysevent-stream {
+  padding: 60px 0 50px 0;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.co-sysevent-stream__totals {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-weight: 200;
+  color: $gray;
+}
+
+.co-sysevent-stream__connection-error {
+  color: $color-red-failure;
+}
+
+.co-sysevent-stream__timeline {
+  overflow: visible;
+  position: absolute;
+  top: 35px;
+  bottom: 30px;
+  width: 40px;
+  border-style: solid;
+  border-color: $color-grey-border;
+  border-width: 0;
+  z-index: $z-plane-1;
+  left: 0;
+}
+
+.co-sysevent-stream__timeline--empty {
+  border: none;
+  .co-sysevent-stream__timeline__end-message {
+    display: none;
+  }
+}
+
+.co-sysevent-stream__status-box-empty {
+  border-style: solid;
+  border-color: $color-grey-border;
+  border-width: 1px 0;
+}
+
+.co-sysevent-stream__timeline__end-message {
+  position: absolute;
+  bottom: 0;
+  width: 400px;
+  left: 0;
+  font-size: 14px;
+  -webkit-transform: translateY(50%);
+  transform: translateY(50%);
+}
+
+.co-sysevent-stream__timeline__btn-text {
+  width: 320px;
+  -webkit-transform: translate(50px, -60px);
+  transform: translate(50px, -60px);
+}
+
+.co-sysevent-stream__timeline__btn {
+  z-index: $z-plane-2;
+  margin: 0;
+  -webkit-transform: translate(0%, -100%);
+  transform: translate(0%, -100%);
+}
+
+.co-sysevent {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+
+  z-index: $z-plane-2;
+  margin: 0 0 20px 0;
+  .co-m-resource-icon {
+    margin-left: 0;
+  }
+  &:last-child {
+    margin-bottom: 50px;
+  }
+  position: relative;
+  transition: all $transition-time;
+}
+
+.co-sysevent.ng-leave-active {
+  opacity: 0;
+}
+.co-sysevent.ng-enter {
+  opacity: 0;
+  transform: translateX(25%);
+}
+
+.co-sysevent.ng-enter-active {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+.co-sysevent__main-box,
+.co-sysevent__meta-box {
+  font-size: 14px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.co-sysevent__main-box {
+  border: solid 1px $color-dark-border;
+  border-bottom-color: $color-grey-border;
+  overflow: hidden;
+  width: 100%;
+  -webkit-flex: none;
+  flex: none;
+}
+
+.co-sysevent__main-message,
+.co-sysevent__meta-source {
+  margin-top: 10px;
+}
+
+.co-sysevent__main-message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.co-sysevent__meta-box {
+  -webkit-flex: none;
+  flex: none;
+  border: solid 1px $color-dark-border;
+  border-top-width: 0;
+  width: 100%;
+}
+
+.co-sysevent__icon-box {
+  -webkit-flex: 0 0 100px;
+  flex: 0 0 100px;
+  display: none;
+  position: relative;
+  z-index: $z-plane-2;
+  .co-sysevent-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-45%,-50%);
+    transform: translate(-45%,-50%);
+  }
+}
+
+.co-sysevent__icon-line {
+  background-color: $color-grey-border;
+  height: 3px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  z-index: $z-plane-1;
+}
+
+@media screen and (min-width: 768px) {
+  .co-sysevent {
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    margin-left: -50px;
+  }
+
+  .co-sysevent__main-box {
+    -webkit-flex: 1 2 auto;
+    flex: 1 2 auto;
+    border: solid 1px $color-grey-border;
+  }
+
+  .co-sysevent__meta-box {
+    border: solid 1px $color-grey-border;
+    width: 250px;
+    border-left: none;
+    border-top-width: 1px;
+  }
+
+  .co-sysevent__icon-box {
+    display: block;
+  }
+
+  .co-sysevent-stream {
+    padding-left: 40px;
+  }
+
+  .co-sysevent-stream__timeline {
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    left: initial;
+  }
+
+  .co-sysevent-stream__timeline__btn {
+    -webkit-transform: translate(-50%, -100%);
+    transform: translate(-50%, -100%);
+    margin-left: -2px;
+  }
+
+  .co-sysevent-stream__timeline__end-message {
+    left: 45px;
+  }
+}

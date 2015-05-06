@@ -38,6 +38,13 @@ angular.module('k8s').constant('k8sEnum', {
       labelPlural: 'Machines',
       path: 'nodes',
     },
+    EVENT: {
+      id: 'event',
+      kind: 'Event',
+      label: 'Event',
+      labelPlural: 'Events',
+      path: 'events',
+    },
   },
 
   PullPolicy: {

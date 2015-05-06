@@ -18,6 +18,10 @@ angular.module('k8s')
     return u;
   };
 
+  this.watchURL = function(kind, options) {
+    return this.resourceURL(kind, options) + '?watch=true';
+  }.bind(this);
+
   this.list = function(kind, params) {
     var ns, d = $q.defer();
     if (params) {

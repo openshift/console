@@ -1,0 +1,96 @@
+.co-sysevent-icon {
+  background-color: $color-highlight-blue;
+  border: solid 2px #fff;
+  border-radius: 50px;
+  color: #fff;
+  position: relative;
+  z-index: $z-plane-2;
+  height: 32px;
+  width: 32px;
+  box-shadow: 0px 0px 0px 2px $color-grey-border;
+  font-size: 16px;
+}
+
+.co-sysevent-icon--pod-created {
+  &:before {
+    // fa-plus
+    content: "\f067";
+    display: inline-block;
+    -webkit-transform: translate(60%, 45%);
+    transform: translate(60%, 45%);
+  }
+}
+
+.co-sysevent-icon--pod-killing {
+  &:before {
+    // fa-minus
+    content: "\f068";
+    display: inline-block;
+    -webkit-transform: translate(60%, 45%);
+    transform: translate(60%, 45%);
+  }
+}
+
+.co-sysevent-icon--pod-pulled {
+  &:before {
+    // fa-download
+    content: "\f019";
+    display: inline-block;
+    -webkit-transform: translate(42%, 42%);
+    transform: translate(42%, 42%);
+  }
+}
+
+.co-sysevent-icon--pod-started,
+.co-sysevent-icon--node-starting {
+  &:before {
+    // fa-power-off
+    content: "\f011";
+    display: inline-block;
+    -webkit-transform: translate(51%, 41%);
+    transform: translate(51%, 41%);
+  }
+}
+
+.co-sysevent-icon--pod-scheduled {
+  &:before {
+    // fa-share
+    content: "\f064";
+    display: inline-block;
+    -webkit-transform: translate(40%, 45%);
+    transform: translate(40%, 45%);
+  }
+}
+
+.co-sysevent-icon--pod-failed,
+.co-sysevent-icon--pod-failedscheduling {
+  background-color: $color-red-failure;
+  &:before {
+    // fa-exclamation-triangle
+    content: "\f071";
+    display: inline-block;
+    -webkit-transform: translate(37%, 40%);
+    transform: translate(37%, 40%);
+  }
+}
+
+.co-sysevent-icon--node-online {
+  &:before {
+    // fa-check
+    content: "\f00c";
+    display: inline-block;
+    -webkit-transform: translate(40%, 45%);
+    transform: translate(40%, 45%);
+  }
+}
+
+.co-sysevent-icon--node-offline {
+  background-color: $color-red-failure;
+  &:before {
+    // fa-times
+    content: "\f00d";
+    display: inline-block;
+    -webkit-transform: translate(60%, 40%);
+    transform: translate(60%, 40%);
+  }
+}

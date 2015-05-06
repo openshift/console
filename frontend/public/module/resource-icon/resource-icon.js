@@ -6,40 +6,39 @@
 angular.module('app').directive('coResourceIcon', function(k8s) {
   'use strict';
 
+  function iconLabel(kindId) {
+    switch (kindId) {
+      case k8s.enum.Kind.REPLICATIONCONTROLLER.id:
+        return 'RC';
+      case k8s.enum.Kind.POD.id:
+        return 'P';
+      case k8s.enum.Kind.SERVICE.id:
+        return 'S';
+      case k8s.enum.Kind.NODE.id:
+        return 'M';
+      case 'container':
+        return 'C';
+      default:
+        return kindId.toUpperCase();
+    }
+    return '';
+  }
+
   return {
     template: '<span></span>',
     restrict: 'E',
     replace: true,
     link: function(scope, elem, attrs) {
-      var label, kind, id;
-      kind = k8s.util.getKindEnumById(attrs.kind);
+      var kind, kindInput, kindId;
+      kindInput = (attrs.kind || '').toLowerCase();
+      kind = k8s.util.getKindEnumById(kindInput);
       if (kind) {
-        id = kind.id;
+        kindId = kind.id;
       } else {
-        id = attrs.kind;
+        kindId = kindInput;
       }
-      elem.addClass('co-m-resource-icon');
-      elem.addClass('co-m-resource-icon--' + id);
-      switch (id) {
-        case k8s.enum.Kind.REPLICATIONCONTROLLER.id:
-          label = 'RC';
-          break;
-        case k8s.enum.Kind.POD.id:
-          label = 'P';
-          break;
-        case k8s.enum.Kind.SERVICE.id:
-          label = 'S';
-          break;
-        case k8s.enum.Kind.NODE.id:
-          label = 'M';
-          break;
-        case 'container':
-          label = 'C';
-          break;
-        default:
-          label = attrs.kind[0].toUpperCase();
-      }
-      elem.text(label);
+      elem.addClass('co-m-resource-icon co-m-resource-icon--' + kindId);
+      elem.text(iconLabel(kindId));
     }
   };
 
