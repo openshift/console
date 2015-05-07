@@ -15,14 +15,12 @@ angular.module('app')
       $scope.loadError = true;
     });
 
-  $scope.getContainerInfo = function(containerName) {
-    if ($scope.pod.status && $scope.pod.status.info) {
-      return $scope.pod.status.info[containerName];
-    }
+  $scope.getStatus = function(containerName) {
+    return k8s.docker.getStatus($scope.pod, containerName);
   };
 
   $scope.getContainerState = function(containerName) {
-    var cinfo = $scope.getContainerInfo(containerName);
+    var cinfo = k8s.docker.getStatus($scope.pod, containerName);
     return k8s.docker.getState(cinfo);
   };
 
