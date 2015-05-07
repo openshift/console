@@ -25,6 +25,12 @@ angular.module('k8s')
     return state;
   };
 
+  this.getStatus = function(pod, containerName) {
+    if (pod.status && pod.status.containerStatuses) {
+      return _.findWhere(pod.status.containerStatuses, containerName);
+    }
+  };
+
   // Nullify empty fields & prep volumes.
   this.clean = function(container) {
     k8sUtil.nullifyEmpty(container, [
