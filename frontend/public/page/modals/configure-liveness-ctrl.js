@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureLivenessCtrl', function($scope, $modalInstance, k8s, container) {
   'use strict';
 

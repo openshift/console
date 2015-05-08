@@ -3,7 +3,7 @@
  * List nodes in a table-like view.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coNodeList', function(k8s, _, pkg, arraySvc, resourceMgrSvc) {
   'use strict';
 

@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.filter')
 .filter('sysevents', function() {
   'use strict';
 

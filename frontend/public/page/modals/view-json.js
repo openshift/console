@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ViewJsonCtrl', function($scope, $modalInstance, json, title) {
   'use strict';
 

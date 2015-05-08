@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureResourceLimitsCtrl', function($scope, $modalInstance, _, k8s, pkg, container) {
   'use strict';
 

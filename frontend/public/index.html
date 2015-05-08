@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js" ng-app="app">
+<html lang="en" class="no-js" ng-app="bridge">
 
   <head>
     <meta charset="utf-8">
@@ -80,37 +80,39 @@
     <script src="/static/module/k8s/util.js"></script>
     <!-- core.pkg module -->
     <script src="/static/module/pkg/_module.js"></script>
+    <script src="/static/module/pkg/flag-svc.js"></script>
     <script src="/static/module/pkg/pkg.js"></script>
     <script src="/static/module/pkg/ws.js"></script>
     <!-- app bootstrap -->
     <script src="/static/app.js"></script>
-    <script src="/static/const.js"></script>
-    <script src="/static/events.js"></script>
-    <!-- app services -->
-    <script src="/static/module/api/client-loader-svc.js"></script>
-    <script src="/static/module/api/cluster-svc.js"></script>
-    <script src="/static/module/flag-svc.js"></script>
-    <script src="/static/module/resource-mgr-svc.js"></script>
-    <script src="/static/module/debug.js"></script>
+    <script src="/static/module/const/_module.js"></script>
+    <script src="/static/module/const/const.js"></script>
+    <script src="/static/module/const/events.js"></script>
+    <!-- api & app services -->
+    <script src="/static/module/service/_module.js"></script>
+    <script src="/static/module/service/client-loader-svc.js"></script>
+    <script src="/static/module/service/cluster-svc.js"></script>
+    <script src="/static/module/service/debug.js"></script>
+    <script src="/static/module/service/resource-mgr-svc.js"></script>
     <!-- filters -->
+    <script src="/static/module/filter/_module.js"></script>
     <script src="/static/module/filter/custom-date.js"></script>
     <script src="/static/module/filter/container-image.js"></script>
     <script src="/static/module/filter/container-tag.js"></script>
     <script src="/static/module/filter/sysevents.js"></script>
     <script src="/static/module/filter/join.js"></script>
     <script src="/static/module/filter/split.js"></script>
-    <!-- directive modules -->
-    <script src="/static/module/cog/service-cog.js"></script>
-    <script src="/static/module/cog/replicationcontroller-cog.js"></script>
-    <script src="/static/module/cog/pod-cog.js"></script>
-    <script src="/static/module/container/container-input.js"></script>
-    <script src="/static/module/resource-icon/resource-icon.js"></script>
-    <script src="/static/module/icons/status.js"></script>
-    <script src="/static/module/label/label.js"></script>
-    <script src="/static/module/label/label-input.js"></script>
-    <script src="/static/module/number-spinner/number-spinner.js"></script>
-    <script src="/static/module/ui/sysevents/sysevent-icon.js"></script>
-    <script src="/static/module/ui/sysevents/sysevent-stream.js"></script>
+    <!-- ui modules -->
+    <script src="/static/module/ui/_module.js"></script>
+    <script src="/static/module/ui/cog/pod-cog.js"></script>
+    <script src="/static/module/ui/cog/replicationcontroller-cog.js"></script>
+    <script src="/static/module/ui/cog/service-cog.js"></script>
+    <script src="/static/module/ui/containers/container-input.js"></script>
+    <script src="/static/module/ui/icons/resource-icon.js"></script>
+    <script src="/static/module/ui/icons/status.js"></script>
+    <script src="/static/module/ui/forms/number-spinner.js"></script>
+    <script src="/static/module/ui/labels/label.js"></script>
+    <script src="/static/module/ui/labels/label-input.js"></script>
     <script src="/static/module/ui/resources/node-list.js"></script>
     <script src="/static/module/ui/resources/pod-list.js"></script>
     <script src="/static/module/ui/resources/resource-link.js"></script>
@@ -118,10 +120,13 @@
     <script src="/static/module/ui/resources/replication-controller-list.js"></script>
     <script src="/static/module/ui/resources/service-list.js"></script>
     <script src="/static/module/ui/status-box/status-box.js"></script>
+    <script src="/static/module/ui/sysevents/sysevent-icon.js"></script>
+    <script src="/static/module/ui/sysevents/sysevent-stream.js"></script>
     <script src="/static/module/ui/toggle-play/toggle-play.js"></script>
     <script src="/static/module/ui/tristate/tristate.js"></script>
-    <script src="/static/module/ui/util.js"></script>
-    <!-- page controllers -->
+    <script src="/static/module/ui/util/autofocus.js"></script>
+    <!-- pages -->
+    <script src="/static/page/_module.js"></script>
     <script src="/static/page/apps/apps-ctrl.js"></script>
     <script src="/static/page/apps/new-app-ctrl.js"></script>
     <script src="/static/page/events/events-ctrl.js"></script>
@@ -143,6 +148,7 @@
     <script src="/static/page/search/search-ctrl.js"></script>
     <script src="/static/page/settings/registries-ctrl.js"></script>
     <script src="/static/page/settings/users-ctrl.js"></script>
+    <script src="/static/page/welcome/welcome-ctrl.js"></script>
     <!-- modals -->
     <script src="/static/page/modals/modal-launcher-svc.js"></script>
     <script src="/static/page/modals/confirm-ctrl.js"></script>
@@ -162,7 +168,6 @@
     <script src="/static/page/modals/configure-resource-limits-ctrl.js"></script>
     <script src="/static/page/modals/row-mgr.js"></script>
     <script src="/static/page/modals/view-json.js"></script>
-    <script src="/static/page/welcome/welcome-ctrl.js"></script>
     <!-- endbuild -->
   </body>
 </html>

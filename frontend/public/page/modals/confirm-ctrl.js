@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ModalConfirmCtrl', function($scope, $modalInstance,
       executeFn, title, message, btnText) {
   'use strict';

@@ -3,7 +3,7 @@
  * List RCs in a table-like view.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coReplicationControllerList', function(k8s, _, arraySvc, resourceMgrSvc) {
   'use strict';
 

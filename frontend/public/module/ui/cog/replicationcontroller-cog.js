@@ -3,7 +3,7 @@
  * Cog menu directive for replication controllers.
  */
 
-angular.module('app')
+angular.module('bridge.ui')
 .directive('coReplicationcontrollerCog', function(k8s, ModalLauncherSvc) {
   'use strict';
 

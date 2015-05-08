@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigurePrimaryCommandCtrl', function($scope, $modalInstance, _, container) {
   'use strict';
 

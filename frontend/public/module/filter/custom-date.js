@@ -3,7 +3,7 @@
 // Formats a date/time string/date value based on the formatter constant.
 // Invalid/unparsable dates return placeholder text constant.
 
-angular.module('app')
+angular.module('bridge.filter')
 .filter('customDate', function($filter, _, CONST) {
   'use strict';
 

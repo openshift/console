@@ -3,7 +3,8 @@
  * Cog menu directive for pods.
  */
 
-angular.module('app').directive('coPodCog', function(k8s, ModalLauncherSvc) {
+angular.module('bridge.ui')
+.directive('coPodCog', function(k8s, ModalLauncherSvc) {
   'use strict';
 
   return {

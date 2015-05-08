@@ -3,7 +3,7 @@
  * List out pods in a table-like view.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coPodList', function(k8s, arraySvc, _, resourceMgrSvc) {
   'use strict';
 

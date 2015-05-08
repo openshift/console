@@ -2,7 +2,7 @@
  * Helper controller for repeated form rows inputs.
  * Requires `emptyCheck` and `getEmptyItem` to be injected.
  */
-angular.module('app')
+angular.module('bridge.page')
 .controller('RowMgr', function(_, $scope, arraySvc, emptyCheck, getEmptyItem) {
   'use strict';
 

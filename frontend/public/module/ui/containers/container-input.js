@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.ui')
 
 /**
  * multi-container input directive form.
@@ -8,7 +8,7 @@ angular.module('app')
   'use strict';
 
   return {
-    templateUrl: '/static/module/container/multi-container-input.html',
+    templateUrl: '/static/module/ui/containers/multi-container-input.html',
     restrict: 'E',
     replace: true,
     scope: {
@@ -55,7 +55,7 @@ angular.module('app')
   'use strict';
 
   return {
-    templateUrl: '/static/module/container/container-input.html',
+    templateUrl: '/static/module/ui/containers/container-input.html',
     restrict: 'E',
     replace: true,
     scope: {

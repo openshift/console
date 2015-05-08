@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('WelcomeCtrl', function() {
   'use strict';
 

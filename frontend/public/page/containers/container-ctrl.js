@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ContainerCtrl', function($scope, $routeParams, _, pkg, k8s) {
   'use strict';
 

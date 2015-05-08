@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureReplicaCountCtrl', function($scope, $modalInstance, k8s, replicationController) {
   'use strict';
 

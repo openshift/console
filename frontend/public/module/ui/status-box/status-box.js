@@ -2,7 +2,7 @@
  * Convenience wrapper for status message boxes that inform user of errors or empty state, etc.
  * The first child element gets a "title" class added to it, all other immediate children get a "detail" class.
  */
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('cosStatusBox', function() {
   'use strict';
 

@@ -3,7 +3,7 @@
  * List services in a table-like view.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coServiceList', function(k8s, _, arraySvc, resourceMgrSvc) {
   'use strict';
 

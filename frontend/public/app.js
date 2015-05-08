@@ -1,7 +1,5 @@
-angular.module('app.ui', ['ngAnimate']);
-angular.module('app.modules', []);
 // The main app module.
-angular.module('app', [
+angular.module('bridge', [
   // angular deps
   'ngRoute',
   'ngAnimate',
@@ -15,8 +13,11 @@ angular.module('app', [
   // internal modules
   'templates',
   'k8s',
-  'app.ui',
-  'app.modules',
+  'bridge.const',
+  'bridge.filter',
+  'bridge.service',
+  'bridge.ui',
+  'bridge.page',
   'core.pkg',
 ])
 .config(function($routeProvider, $locationProvider, $httpProvider, configSvcProvider, apiClientProvider,

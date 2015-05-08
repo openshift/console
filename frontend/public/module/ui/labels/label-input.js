@@ -3,7 +3,8 @@
  * Generic label input field.
  */
 
-angular.module('app').directive('coLabelInput', function(_, $timeout) {
+angular.module('bridge.ui')
+.directive('coLabelInput', function(_, $timeout) {
   'use strict';
 
   function objectify(arr) {
@@ -29,7 +30,7 @@ angular.module('app').directive('coLabelInput', function(_, $timeout) {
   }
 
   return {
-    templateUrl: '/static/module/label/label-input.html',
+    templateUrl: '/static/module/ui/labels/label-input.html',
     restrict: 'E',
     replace: true,
     scope: {

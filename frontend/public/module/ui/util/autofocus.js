@@ -5,7 +5,7 @@
  * Usage:
  * <input type="text" autofocus>
  */
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('autofocus', function($timeout) {
   'use strict';
   return {

@@ -3,7 +3,7 @@
 // Applies Array.prototype.join() to an array.
 // Defaults to empty string for non-arrays and empty arrays.
 
-angular.module('app')
+angular.module('bridge.filter')
 .filter('join', function(_) {
   'use strict';
 

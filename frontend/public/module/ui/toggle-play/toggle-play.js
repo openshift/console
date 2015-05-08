@@ -4,7 +4,7 @@
  * Calls an optional 'on-toggle' callback with the active state.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coTogglePlay', function() {
   'use strict';
 

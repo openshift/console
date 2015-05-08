@@ -8,7 +8,7 @@
  *    kind
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coResourceLink', function($compile, $interpolate, k8s) {
   'use strict';
 

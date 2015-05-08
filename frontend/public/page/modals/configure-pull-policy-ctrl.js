@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigurePullPolicyCtrl', function($scope, $modalInstance, k8s, container) {
   'use strict';
 

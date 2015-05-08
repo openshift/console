@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureSelectorCtrl', function(_, $scope, $modalInstance, $controller, $rootScope,
       resource, resourceKind, selectorKind, message, k8s) {
   'use strict';
