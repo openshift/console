@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureLabelsCtrl', function(_, $scope, $modalInstance, $controller, $rootScope,
       resource, kind, k8s) {
   'use strict';

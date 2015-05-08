@@ -7,7 +7,7 @@
 // <div>{{obj.myString | split:'=':0}}</div>
 // prints: foo
 
-angular.module('app')
+angular.module('bridge.filter')
 .filter('coSplit', function() {
   'use strict';
 

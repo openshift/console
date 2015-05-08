@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureLifecycleCtrl', function($scope, _, k8s, urlSvc, $modalInstance, container) {
   'use strict';
 

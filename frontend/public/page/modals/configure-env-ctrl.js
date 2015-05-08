@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureEnvCtrl', function(_, $scope, $modalInstance, $controller,
       $rootScope, container, k8s) {
   'use strict';

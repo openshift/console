@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ServicesCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 

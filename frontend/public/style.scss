@@ -11,31 +11,30 @@
 @import "vars";
 
 // Base
-@import "style/layout";
-@import "style/icons";
 @import "style/common";
+@import "style/icons";
+@import "style/layout";
 
 // Pages
 @import "page/cluster/status";
-@import "page/events/events";
-@import "page/pods/new-pod";
-@import "page/modals/modal";
 @import "page/containers/container";
+@import "page/events/events";
+@import "page/modals/modal";
+@import "page/pods/new-pod";
 @import "page/search/search";
 @import "page/welcome/welcome";
 
-// Modules
-@import "module/label/label";
-@import "module/resource-icon/resource-icon";
-@import "module/vert-nav/vert-nav";
-@import "module/label/label-input";
-@import "module/container/container-input";
-@import "module/icons/status";
-@import "module/number-spinner/number-spinner";
-@import "module/debug";
-
-@import "module/ui/tristate/tristate";
+// UI Modules
+@import "module/ui/containers/container-input";
+@import "module/ui/icons/resource-icon";
+@import "module/ui/icons/status";
+@import "module/ui/forms/number-spinner";
+@import "module/ui/labels/label";
+@import "module/ui/labels/label-input";
 @import "module/ui/status-box/status-box";
-@import "module/ui/toggle-play/toggle-play";
 @import "module/ui/sysevents/sysevent-icon";
 @import "module/ui/sysevents/sysevent-stream";
+@import "module/ui/toggle-play/toggle-play";
+@import "module/ui/tristate/tristate";
+@import "module/ui/util/debug";
+@import "module/ui/vert-nav/vert-nav";

@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .factory('ModalLauncherSvc', function($modal, _, d3) {
   'use strict';
 

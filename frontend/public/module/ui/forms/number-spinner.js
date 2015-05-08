@@ -3,7 +3,7 @@
  * Number spinner UI component.
  */
 
-angular.module('app')
+angular.module('bridge.ui')
 .directive('coNumberSpinner', function($) {
   'use strict';
 

@@ -3,7 +3,8 @@
  * Displays a different circular icon for services, controllers, pods, etc.
  */
 
-angular.module('app').directive('coResourceIcon', function(k8s) {
+angular.module('bridge.ui')
+.directive('coResourceIcon', function(k8s) {
   'use strict';
 
   function iconLabel(kindId) {

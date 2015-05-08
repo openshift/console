@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.service')
 .factory('ClientLoaderSvc', function($rootScope, apiClient, CORE_EVENT) {
   'use strict';
 

@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('NewAppCtrl', function($scope, $routeParams, $location, k8s) {
   'use strict';
 

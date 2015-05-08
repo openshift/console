@@ -1,4 +1,4 @@
-angular.module('app.modules')
+angular.module('bridge.service')
 .service('resourceMgrSvc', function(k8s, arraySvc) {
   'use strict';
 

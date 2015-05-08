@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 

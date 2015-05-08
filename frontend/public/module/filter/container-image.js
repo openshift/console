@@ -2,7 +2,7 @@
 //
 // Given a docker image string returns the image portion without the tag.
 
-angular.module('app')
+angular.module('bridge.filter')
 .filter('containerImage', function(_, CONST) {
   'use strict';
 

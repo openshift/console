@@ -3,7 +3,7 @@
 // Given a docker image string returns the tag (aka version) portion.
 // Defaults to 'latest'.
 
-angular.module('app')
+angular.module('bridge.filter')
 .filter('containerTag', function(_, CONST) {
   'use strict';
 

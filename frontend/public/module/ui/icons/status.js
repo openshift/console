@@ -3,12 +3,12 @@
  * Simple convenience directive for displaying status icons with text.
  */
 
-angular.module('app')
+angular.module('bridge.ui')
 .directive('coStatus', function($, _) {
   'use strict';
 
   return {
-    templateUrl: '/static/module/icons/status.html',
+    templateUrl: '/static/module/ui/icons/status.html',
     restrict: 'E',
     replace: true,
     link: function(scope, elem, attrs) {

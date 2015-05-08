@@ -3,7 +3,7 @@
  * Dynamically lists resources in a table-like view.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coResourceList', function() {
   'use strict';
 

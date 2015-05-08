@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.service')
 .service('ClusterSvc', function(_, $rootScope) {
   'use strict';
 

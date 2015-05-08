@@ -3,7 +3,7 @@
  * Display an icon based on a kubernetes cluster event.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('coSyseventIcon', function($compile) {
   'use strict';
 

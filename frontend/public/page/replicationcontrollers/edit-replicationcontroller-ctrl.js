@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('EditReplicationcontrollerCtrl', function($scope, $location, $routeParams, _, k8s, ModalLauncherSvc) {
   'use strict';
 

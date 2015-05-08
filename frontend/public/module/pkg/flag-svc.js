@@ -2,7 +2,7 @@
  * @fileoverview
  * Provides access to global page flags.
  */
-angular.module('app.modules')
+angular.module('core.pkg')
 .provider('flagSvc', function() {
   'use strict';
 

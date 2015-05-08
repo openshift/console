@@ -5,7 +5,7 @@
  * or has errored while loading.
  */
 
-angular.module('app.ui')
+angular.module('bridge.ui')
 .directive('cosTristate', function() {
   'use strict';
 

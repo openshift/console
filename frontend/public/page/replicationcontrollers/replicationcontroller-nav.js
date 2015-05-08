@@ -2,7 +2,7 @@
  * Veritcal nav for replica controllers.
  */
 
-angular.module('app')
+angular.module('bridge.page')
 .directive('coReplicationcontrollerNav', function() {
   'use strict';
 

@@ -3,7 +3,7 @@
  * Cog menu directive for services.
  */
 
-angular.module('app')
+angular.module('bridge.ui')
 .directive('coServiceCog', function(k8s, ModalLauncherSvc) {
   'use strict';
 

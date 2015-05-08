@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureRestartPolicyCtrl', function($scope, $modalInstance, k8s, pod) {
   'use strict';
 

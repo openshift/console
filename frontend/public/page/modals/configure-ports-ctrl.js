@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigurePortsCtrl', function(_, $scope, $rootScope, $controller,
       $modalInstance, container, k8s) {
   'use strict';

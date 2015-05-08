@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.ui')
 
 .directive('coLabel', function($interpolate, k8s) {
   'use strict';
@@ -6,7 +6,7 @@ angular.module('app')
   var linkTemplate = $interpolate('/search?kind={{kind}}&q={{query}}');
 
   return {
-    templateUrl: '/static/module/label/label.html',
+    templateUrl: '/static/module/ui/labels/label.html',
     restrict: 'E',
     replace: true,
     link: function(scope, el, attrs) {
@@ -45,7 +45,7 @@ angular.module('app')
 .directive('coLabelList', function() {
   'use strict';
   return {
-    templateUrl: '/static/module/label/label-list.html',
+    templateUrl: '/static/module/ui/labels/label-list.html',
     restrict: 'E',
     replace: true,
     scope: {

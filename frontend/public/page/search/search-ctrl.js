@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('SearchCtrl', function(_, $scope, $location, k8s) {
   'use strict';
 

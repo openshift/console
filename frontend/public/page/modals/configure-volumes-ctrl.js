@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('bridge.page')
 .controller('ConfigureVolumesCtrl', function(_, $scope, $modalInstance, $controller,
       pod, arraySvc, k8s, $rootScope, pkg) {
   'use strict';
