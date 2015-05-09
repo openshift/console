@@ -7,4 +7,13 @@
   .modal-dialog {
     width: 700px;
   }
+
+  .co-facet-container--left {
+    padding-right: 30px;
+    border-right: solid 1px $color-grey-border;
+  }
+
+  .co-facet-container--right {
+    padding-left: 30px;
+  }
 }

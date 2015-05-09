@@ -17,7 +17,9 @@ angular.module('bridge.ui')
       // label selector to filter by. optional unless selector-required=true
       selector: '=',
       // optional search filter
-      search: '=',
+      searchFilter: '=search',
+      // field filters to apply to pod list
+      podsFilterQuery: '=filter',
       // only attempt loading pods if this is true
       load: '=',
       // force error
