@@ -1,6 +1,7 @@
 package server
 
 import (
+	"crypto/tls"
 	"io"
 	"net"
 	"net/http"
@@ -30,8 +31,21 @@ func newProxy(cfg proxyConfig) *proxy {
 			r.Header.Del(h)
 		}
 	}
+
+	// Copy of http.DefaultTransport with TLSClientConfig added
+	insecureTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		Dial: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).Dial,
+		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
+		TLSHandshakeTimeout: 10 * time.Second,
+	}
+
 	reverseProxy := &httputil.ReverseProxy{
 		FlushInterval: time.Millisecond * 500,
+		Transport:     insecureTransport,
 	}
 	proxy := &proxy{
 		reverseProxy: reverseProxy,
