@@ -7,7 +7,10 @@ angular.module('k8s')
   var basePath = k8sConfig.getBasePath();
 
   this.resourceURL = function(kind, options) {
-    var u = basePath;
+    var u = basePath,
+        q,
+        queryParams = _.omit(options, 'name', 'ns');
+
     if (options.ns) {
       u += '/namespaces/' + options.ns;
     }
@@ -15,11 +18,22 @@ angular.module('k8s')
     if (options.name) {
       u += '/' + options.name;
     }
+
+    // turn all other options into query params
+    q = _.map(queryParams, function(v, k) {
+      return k + '=' + v;
+    });
+    if (q.length) {
+      u += '?' + q.join('&');
+    }
+
     return u;
   };
 
   this.watchURL = function(kind, options) {
-    return this.resourceURL(kind, options) + '?watch=true';
+    var opts = options || {};
+    opts.watch = true;
+    return this.resourceURL(kind, opts);
   }.bind(this);
 
   this.list = function(kind, params) {
