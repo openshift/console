@@ -63,14 +63,13 @@ angular.module('k8s')
 
   this.create = function(kind, data) {
     var d = $q.defer();
-    // TODO: handle pending create status.
     $http({
       url: this.resourceURL(kind, {ns: data.metadata.namespace}),
       method: 'POST',
       data: data,
     })
     .then(function(result) {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_CREATED, {
+      $rootScope.$broadcast(k8sEvents.RESOURCE_ADDED, {
         kind: kind,
         original: data,
         resource: result.data,
@@ -84,14 +83,13 @@ angular.module('k8s')
 
   this.update = function(kind, data) {
     var d = $q.defer();
-    // TODO: handle pending update status.
     $http({
       url: this.resourceURL(kind, {ns: data.metadata.namespace, name: data.metadata.name}),
       method: 'PUT',
       data: data,
     })
     .then(function(result) {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_UPDATED, {
+      $rootScope.$broadcast(k8sEvents.RESOURCE_MODIFIED, {
         kind: kind,
         original: data,
         resource: result.data,
@@ -123,7 +121,6 @@ angular.module('k8s')
       method: 'DELETE',
     });
 
-    // TODO: handle pending delete status.
     p.then(function() {
       $rootScope.$broadcast(k8sEvents.RESOURCE_DELETED, {
         kind: kind,
