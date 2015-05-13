@@ -205,10 +205,11 @@ angular.module('bridge', [
       title: 'Page Not Found (404)'
     });
 })
-.run(function($rootScope, CONST, flagSvc, debugSvc) {
+.run(function($rootScope, CONST, flagSvc, debugSvc, firehose) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();
   $rootScope.debug = debugSvc;
+  firehose.start();
 });
