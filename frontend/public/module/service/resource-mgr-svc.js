@@ -1,21 +1,47 @@
 angular.module('bridge.service')
-.service('resourceMgrSvc', function(k8s, arraySvc) {
+.service('resourceMgrSvc', function(k8s) {
   'use strict';
 
-  // Updates a resource in a list if it exists and is newer,
-  // or appends to the list if a previous version is not found.
-  this.updateInList = function(list, resource) {
-    var current;
+  function removeByIndex(ary, index) {
+    if (!ary || !ary.length) {
+      return;
+    }
+    if (index > -1) {
+      ary.splice(index, 1);
+    }
+  }
+
+  this.removeFromList = function(list, resource) {
+    var idx;
     if (!list || !resource || !resource.metadata) {
       return;
     }
 
-    current = k8s.util.findByUID(list, resource.metadata.uid);
-    if (current && current.metadata && current.metadata.resourceVersion !==
-          resource.metadata.resourceVersion) {
-      arraySvc.remove(list, current);
+    idx = k8s.util.findIndexByUID(list, resource.metadata.uid);
+    if (idx !== -1) {
+      removeByIndex(list, idx);
     }
-    list.push(resource);
+  };
+
+  // Updates a resource in a list if it exists and is newer,
+  // or appends to the list if a previous version is not found.
+  this.updateInList = function(list, resource) {
+    var idx, current;
+    if (!list || !resource || !resource.metadata) {
+      return;
+    }
+
+    idx = k8s.util.findIndexByUID(list, resource.metadata.uid);
+    // not in list, do insert
+    if (idx === -1) {
+      list.push(resource);
+      return;
+    }
+
+    current = list[idx];
+    if (current && current.metadata.resourceVersion < resource.metadata.resourceVersion) {
+      list[idx] = resource;
+    }
   };
 
 });

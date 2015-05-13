@@ -11,10 +11,18 @@ angular.module('k8s')
     });
   };
 
-  this.findByUID = function(list, uid) {
-    return _.find(list, function(item) {
+  function uidPredicate(uid) {
+    return function(item) {
       return item.metadata && item.metadata.uid === uid;
-    });
+    };
+  }
+
+  this.findIndexByUID = function(list, uid) {
+    return _.findIndex(list, uidPredicate(uid));
+  };
+
+  this.findByUID = function(list, uid) {
+    return _.find(list, uidPredicate(uid));
   };
 
   this.getKindEnumById = function(id) {
