@@ -41,16 +41,16 @@ angular.module('bridge.ui')
         });
       };
 
-      $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.NODE) {
-          arraySvc.remove($scope.nodes, data.original);
-        }
+      $scope.$on(k8s.events.NODE_DELETED, function(e, data) {
+        resourceMgrSvc.removeFromList($scope.nodes, data.resource);
       });
 
-      $scope.$on(k8s.events.RESOURCE_UPDATED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.NODE) {
-          resourceMgrSvc.updateInList($scope.nodes, data.resource);
-        }
+      $scope.$on(k8s.events.NODE_ADDED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.nodes, data.resource);
+      });
+
+      $scope.$on(k8s.events.NODE_MODIFIED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.nodes, data.resource);
       });
 
     }
