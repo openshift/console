@@ -78,6 +78,10 @@ angular.module('bridge.ui')
         }
       });
 
+      $scope.$watch('selector', function() {
+        loadPods();
+      });
+
       $scope.$on(k8s.events.POD_DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.pods, data.resource);
       });
