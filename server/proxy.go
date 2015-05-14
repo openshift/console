@@ -25,7 +25,6 @@ type proxy struct {
 }
 
 func newProxy(cfg proxyConfig) *proxy {
-
 	headerDirector := func(r *http.Request) {
 		for _, h := range cfg.HeaderBlacklist {
 			r.Header.Del(h)
@@ -64,7 +63,6 @@ func newProxy(cfg proxyConfig) *proxy {
 	}
 
 	return proxy
-
 }
 
 func (p *proxy) rewriteURL(req *http.Request) {
@@ -96,12 +94,19 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	p.rewriteURL(outreq)
 
-	targetConn, err := net.Dial("tcp", p.target.Host)
+	var targetConn net.Conn
+	var err error
+	if p.target.Scheme == "https" {
+		targetConn, err = tls.Dial("tcp", p.target.Host, &tls.Config{InsecureSkipVerify: true})
+	} else {
+		targetConn, err = net.Dial("tcp", p.target.Host)
+	}
 	if err != nil {
 		http.Error(res, "Error contacting Kubernetes API server.", http.StatusInternalServerError)
 		log.Errorf("error dialing websocket backend %s: %v", p.target.Host, err)
 		return
 	}
+
 	hj, ok := res.(http.Hijacker)
 	if !ok {
 		// This should never happen.
