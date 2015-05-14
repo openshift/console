@@ -78,16 +78,20 @@ angular.module('bridge.ui')
         }
       });
 
-      $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.POD) {
-          arraySvc.remove($scope.pods, data.original);
-        }
+      $scope.$watch('selector', function() {
+        loadPods();
       });
 
-      $scope.$on(k8s.events.RESOURCE_UPDATED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.POD) {
-          resourceMgrSvc.updateInList($scope.pods, data.resource);
-        }
+      $scope.$on(k8s.events.POD_DELETED, function(e, data) {
+        resourceMgrSvc.removeFromList($scope.pods, data.resource);
+      });
+
+      $scope.$on(k8s.events.POD_ADDED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.pods, data.resource);
+      });
+
+      $scope.$on(k8s.events.POD_MODIFIED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.pods, data.resource);
       });
 
     }

@@ -7,7 +7,10 @@ angular.module('k8s')
   var basePath = k8sConfig.getBasePath();
 
   this.resourceURL = function(kind, options) {
-    var u = basePath;
+    var u = basePath,
+        q,
+        queryParams = _.omit(options, 'name', 'ns');
+
     if (options.ns) {
       u += '/namespaces/' + options.ns;
     }
@@ -15,11 +18,22 @@ angular.module('k8s')
     if (options.name) {
       u += '/' + options.name;
     }
+
+    // turn all other options into query params
+    q = _.map(queryParams, function(v, k) {
+      return k + '=' + v;
+    });
+    if (q.length) {
+      u += '?' + q.join('&');
+    }
+
     return u;
   };
 
   this.watchURL = function(kind, options) {
-    return this.resourceURL(kind, options) + '?watch=true';
+    var opts = options || {};
+    opts.watch = true;
+    return this.resourceURL(kind, opts);
   }.bind(this);
 
   this.list = function(kind, params) {
@@ -49,14 +63,13 @@ angular.module('k8s')
 
   this.create = function(kind, data) {
     var d = $q.defer();
-    // TODO: handle pending create status.
     $http({
       url: this.resourceURL(kind, {ns: data.metadata.namespace}),
       method: 'POST',
       data: data,
     })
     .then(function(result) {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_CREATED, {
+      $rootScope.$broadcast(k8sEvents.RESOURCE_ADDED, {
         kind: kind,
         original: data,
         resource: result.data,
@@ -70,14 +83,13 @@ angular.module('k8s')
 
   this.update = function(kind, data) {
     var d = $q.defer();
-    // TODO: handle pending update status.
     $http({
       url: this.resourceURL(kind, {ns: data.metadata.namespace, name: data.metadata.name}),
       method: 'PUT',
       data: data,
     })
     .then(function(result) {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_UPDATED, {
+      $rootScope.$broadcast(k8sEvents.RESOURCE_MODIFIED, {
         kind: kind,
         original: data,
         resource: result.data,
@@ -109,7 +121,6 @@ angular.module('k8s')
       method: 'DELETE',
     });
 
-    // TODO: handle pending delete status.
     p.then(function() {
       $rootScope.$broadcast(k8sEvents.RESOURCE_DELETED, {
         kind: kind,

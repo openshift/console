@@ -50,17 +50,16 @@ angular.module('bridge.ui')
         }
       });
 
-      $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.SERVICE) {
-          arraySvc.remove($scope.services, data.original);
-        }
+      $scope.$on(k8s.events.SERVICE_DELETED, function(e, data) {
+        resourceMgrSvc.removeFromList($scope.services, data.resource);
       });
 
-      // Remove old service and add new version on update.
-      $scope.$on(k8s.events.RESOURCE_UPDATED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.SERVICE) {
-          resourceMgrSvc.updateInList($scope.services, data.resource);
-        }
+      $scope.$on(k8s.events.SERVICE_ADDED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.services, data.resource);
+      });
+
+      $scope.$on(k8s.events.SERVICE_MODIFIED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.services, data.resource);
       });
 
     }

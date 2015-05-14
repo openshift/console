@@ -8,7 +8,7 @@
   </div>
 
   <div cos-tristate="rcs" cos-tristate-error="loadError" class="co-m-table-grid__body">
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs | orderBy:'metadata.name' | filter:search:strict track by rc.metadata.name" ng-click="open = !open">
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="rc in rcs | orderBy:'metadata.name' | filter:search:strict track by rc.metadata.uid" ng-click="open = !open">
       <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
         <co-replicationcontroller-cog rc="rc"></co-replicationcontroller-cog>
         <co-resource-icon kind="replicationcontroller"></co-resource-icon>

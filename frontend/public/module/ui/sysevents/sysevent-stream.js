@@ -16,20 +16,9 @@ angular.module('bridge.ui')
       namespace: '=',
     },
     controller: function($scope) {
-      var updateInterval = 1000;
       $scope.maxMessages = 1000;
       $scope.messages = [];
-      $scope.messageBuffer = [];
-      $scope.wsActive = true;
       $scope.oldestTimestamp = null;
-
-      function flushBuffer() {
-        if (!$scope.wsActive || !$scope.messageBuffer.length) {
-          return;
-        }
-        $scope.messages.unshift.apply($scope.messages, $scope.messageBuffer);
-        $scope.messageBuffer = [];
-      }
 
       $scope.getTotalMessage = function() {
         var msg = '',
@@ -48,46 +37,53 @@ angular.module('bridge.ui')
         }
       };
 
-      $scope.connect = function() {
-        $scope.wsError = false;
-        $scope.ws = wsFactory('clusterEvents', {
-          scope: $scope,
-          host: 'auto',
-          path: k8s.resource.watchURL(k8s.enum.Kind.EVENT, { ns: $scope.namespace }),
-          jsonParse: true,
-        });
+      $scope.ws = wsFactory('sysevents', {
+        scope: $scope,
+        host: 'auto',
+        reconnect: true,
+        path: k8s.resource.watchURL(k8s.enum.Kind.EVENT, { ns: $scope.namespace }),
+        jsonParse: true,
+        bufferEnabled: true,
+        bufferFlushInterval: 500,
+        bufferMax: $scope.maxMessages,
+      })
+      .onmessage(function(data) {
+        $scope.messages.unshift(data);
+      })
+      .onopen(function() {
+        $scope.messages = [];
+      })
+      .onclose(function() {
+        $scope.messages = [];
+      })
+      .onerror(function() {
+        $scope.messages = [];
+      });
+
+      $scope.wsConnected = function() {
+        return $scope.ws.state() === 'open';
+      };
+
+      $scope.wsError = function() {
+        var state = $scope.ws.state();
+        return state === 'error' || state === 'closed' || state === 'destroyed';
+      };
+
+      $scope.wsLoading = function() {
+        return $scope.ws.state() === 'init';
       };
 
       $scope.toggleStream = function(active) {
-        $scope.wsActive = active;
-        // Reconnect if in error or unconnected state.
-        if (active && ($scope.wsError || !$scope.ws)) {
-          $scope.connect();
+        if (active) {
+          $scope.ws.unpause();
+        } else {
+          $scope.ws.pause();
         }
       };
 
-      $scope.$on('ws.message.clusterEvents', function(e, data) {
-        $scope.wsError = false;
-        $scope.messageBuffer.unshift(data);
+      $scope.$watch('ws.isPaused()', function(isPaused) {
+        $scope.btnActive = !isPaused;
       });
-
-      $scope.$on('ws.open.clusterEvents', function() {
-        $scope.wsError = false;
-      });
-
-      $scope.$on('ws.close.clusterEvents', function() {
-        $scope.wsActive = false;
-        $scope.wsError = true;
-      });
-
-      $scope.$on('ws.error.clusterEvents', function() {
-        $log.log('socket error');
-        $scope.wsActive = false;
-        $scope.wsError = true;
-      });
-
-      $interval(flushBuffer, updateInterval);
-      $scope.toggleStream(true);
     }
 
   };

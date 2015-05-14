@@ -50,16 +50,16 @@ angular.module('bridge.ui')
         }
       });
 
-      $scope.$on(k8s.events.RESOURCE_DELETED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.REPLICATIONCONTROLLER) {
-          arraySvc.remove($scope.rcs, data.original);
-        }
+      $scope.$on(k8s.events.RC_DELETED, function(e, data) {
+        resourceMgrSvc.removeFromList($scope.rcs, data.resource);
       });
 
-      $scope.$on(k8s.events.RESOURCE_UPDATED, function(e, data) {
-        if (data.kind === k8s.enum.Kind.REPLICATIONCONTROLLER) {
-          resourceMgrSvc.updateInList($scope.rcs, data.resource);
-        }
+      $scope.$on(k8s.events.RC_ADDED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.rcs, data.resource);
+      });
+
+      $scope.$on(k8s.events.RC_MODIFIED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.rcs, data.resource);
       });
 
     }
