@@ -8,7 +8,7 @@
   </div>
 
   <div cos-tristate="pods" cos-tristate-error="loadError" class="co-m-table-grid__body">
-    <div class="row" ng-repeat="p in pods | filter:searchFilter | podsFilter:podsFilterQuery | orderBy:'metadata.name' track by p.metadata.uid">
+    <div class="row co-resource-list__item" ng-repeat="p in pods | filter:searchFilter | podsFilter:podsFilterQuery | orderBy:'metadata.name' track by p.metadata.uid">
       <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
         <co-pod-cog pod="p"></co-pod-cog>
         <co-resource-icon kind="pod"></co-resource-icon>

@@ -1,0 +1,17 @@
+$transition-time: 0.25s;
+
+.co-resource-list__item {
+  transition: all $transition-time;
+
+  &.ng-leave-active {
+    opacity: 0;
+  }
+  &.ng-enter {
+    opacity: 0;
+    transform: translateX(10%);
+  }
+  &.ng-enter-active {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
