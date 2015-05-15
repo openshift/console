@@ -1358,7 +1358,7 @@ angular.module('coreos.ui')
 
 
 angular.module('coreos.ui')
-.directive('coCog', function() {
+.directive('coCog', function($location) {
   'use strict';
 
   return {
@@ -1386,6 +1386,8 @@ angular.module('coreos.ui')
         $event.stopPropagation();
         if (option.callback) {
           option.callback();
+        } else if (option.href) {
+          $location.url(option.href);
         }
         $scope.status.isopen = false;
       };
@@ -2605,55 +2607,6 @@ angular.module('coreos.ui')
 
 /**
  * @fileoverview
- *
- * Keeps the title tag updated.
- */
-
-angular.module('coreos.ui')
-.directive('coTitle', function() {
-  'use strict';
-
-  return {
-    transclude: false,
-    restrict: 'A',
-    scope: {
-      suffix: '@coTitleSuffix'
-    },
-    controller: function($scope, $rootScope, $route) {
-      $scope.pageTitle = '';
-      $scope.defaultTitle = null;
-      $rootScope.$on('$routeChangeSuccess', function() {
-        if (!$route.current) {
-          return;
-        }
-        if ($route.current.title) {
-          $scope.pageTitle = $route.current.title;
-        }
-        if ($route.current.$$route && $route.current.$$route.title) {
-          $scope.pageTitle = $route.current.$$route.title;
-        }
-      });
-    },
-    link: function(scope, elem) {
-      scope.$watch('pageTitle', function(title) {
-        if (title) {
-          if (!scope.defaultTitle) {
-            scope.defaultTitle = elem.text();
-          }
-          elem.text(title + ' ' + scope.suffix);
-        } else {
-          if (scope.defaultTitle) {
-            elem.text(scope.defaultTitle);
-          }
-        }
-      });
-    }
-  };
-
-});
-
-/**
- * @fileoverview
  * Directive to display global error or info messages.
  * Enqueue messages through the toastSvc.
  */
@@ -2726,6 +2679,55 @@ angular.module('coreos.services')
   };
 
   return service;
+
+});
+
+/**
+ * @fileoverview
+ *
+ * Keeps the title tag updated.
+ */
+
+angular.module('coreos.ui')
+.directive('coTitle', function() {
+  'use strict';
+
+  return {
+    transclude: false,
+    restrict: 'A',
+    scope: {
+      suffix: '@coTitleSuffix'
+    },
+    controller: function($scope, $rootScope, $route) {
+      $scope.pageTitle = '';
+      $scope.defaultTitle = null;
+      $rootScope.$on('$routeChangeSuccess', function() {
+        if (!$route.current) {
+          return;
+        }
+        if ($route.current.title) {
+          $scope.pageTitle = $route.current.title;
+        }
+        if ($route.current.$$route && $route.current.$$route.title) {
+          $scope.pageTitle = $route.current.$$route.title;
+        }
+      });
+    },
+    link: function(scope, elem) {
+      scope.$watch('pageTitle', function(title) {
+        if (title) {
+          if (!scope.defaultTitle) {
+            scope.defaultTitle = elem.text();
+          }
+          elem.text(title + ' ' + scope.suffix);
+        } else {
+          if (scope.defaultTitle) {
+            elem.text(scope.defaultTitle);
+          }
+        }
+      });
+    }
+  };
 
 });
 
@@ -2812,17 +2814,8 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/cog/cog.html',
-    '<div class="co-m-cog">\n' +
-    '  <span class="dropdown" is-open="status.isopen" ng-click="captureClick($event)">\n' +
-    '    <span class="co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog"></span>\n' +
-    '    <ul class="dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}">\n' +
-    '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
-    '        <a ng-if="option.href" ng-href="{{option.href}}" ng-bind="option.label"></a>\n' +
-    '        <a ng-if="!option.href" ng-click="clickHandler($event, option)" ng-bind="option.label"></a>\n' +
-    '      </li>\n' +
-    '    </ul>\n' +
-    '  </span>\n' +
+  $templateCache.put('/coreos.ui/btn-bar/btn-bar.html',
+    '<div class="co-m-btn-bar" ng-transclude>\n' +
     '</div>\n' +
     '');
 }]);
@@ -2835,8 +2828,16 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/btn-bar/btn-bar.html',
-    '<div class="co-m-btn-bar" ng-transclude>\n' +
+  $templateCache.put('/coreos.ui/cog/cog.html',
+    '<div class="co-m-cog">\n' +
+    '  <span class="dropdown" is-open="status.isopen" ng-click="captureClick($event)">\n' +
+    '    <span class="co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog"></span>\n' +
+    '    <ul class="dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}">\n' +
+    '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
+    '        <a ng-click="clickHandler($event, option)" ng-bind="option.label"></a>\n' +
+    '      </li>\n' +
+    '    </ul>\n' +
+    '  </span>\n' +
     '</div>\n' +
     '');
 }]);
@@ -2981,6 +2982,22 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('/coreos.ui/donut/donut.html',
+    '<div class="co-m-donut co-m-gauge">\n' +
+    '  <div class="co-m-gauge__content"></div>\n' +
+    '  <div class="co-m-gauge__label" ng-transclude></div>\n' +
+    '</div>\n' +
+    '');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('coreos-templates-html');
+} catch (e) {
+  module = angular.module('coreos-templates-html', []);
+}
+module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/error-message/error-message.html',
     '<div ng-show="show" class="co-m-message co-m-message--error co-an-fade-in-out ng-hide">{{message}}</div>\n' +
     '');
@@ -3013,22 +3030,6 @@ module.run(['$templateCache', function($templateCache) {
     '<div class="co-m-facet-menu">\n' +
     '  <div ng-show="!!title" class="co-m-facet-menu__title" ng-bind="title"></div>\n' +
     '  <ul class="co-m-facet-menu__option-list" ng-transclude></ul>\n' +
-    '</div>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/donut/donut.html',
-    '<div class="co-m-donut co-m-gauge">\n' +
-    '  <div class="co-m-gauge__content"></div>\n' +
-    '  <div class="co-m-gauge__label" ng-transclude></div>\n' +
     '</div>\n' +
     '');
 }]);
