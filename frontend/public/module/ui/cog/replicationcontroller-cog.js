@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coReplicationcontrollerCog', function(k8s, ModalLauncherSvc) {
+.directive('coReplicationcontrollerCog', function(k8s, ModalLauncherSvc, resourceMgrSvc) {
   'use strict';
 
   return {
@@ -25,6 +25,10 @@ angular.module('bridge.ui')
         return function() {
           return k8s.replicationcontrollers.delete($scope.rc);
         };
+      }
+
+      function getEditLink() {
+        return resourceMgrSvc.getEditLink($scope.rc, k8s.enum.Kind.REPLICATIONCONTROLLER);
       }
 
       function generateOptions() {
@@ -56,8 +60,13 @@ angular.module('bridge.ui')
             }),
           },
           {
-            label: 'Delete Replication Controller...',
+            label: 'Edit Replication Controller...',
             weight: 400,
+            href: getEditLink(),
+          },
+          {
+            label: 'Delete Replication Controller...',
+            weight: 500,
             callback: ModalLauncherSvc.open.bind(null, 'confirm', {
               title: 'Delete Replication Controller',
               message: 'Are you sure you want to delete ' +
