@@ -9,6 +9,15 @@ angular.module('k8s')
     k8sUtil.deleteNulls(service.spec);
   };
 
+  this.getEmptyPort = function() {
+    return {
+      name: null,
+      port: null,
+      targetPort: null,
+      protocol: 'TCP',
+    };
+  };
+
   this.getEmpty = function(ns) {
     return {
       metadata: {
@@ -18,12 +27,9 @@ angular.module('k8s')
         namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
-        targetPort: null,
         createExternalLoadBalancer: false,
-        port: null,
+        ports: [],
         portalIP: null,
-        protocol: 'TCP',
-        proxyPort: null,
         publicIPs: [],
         selector: null,
         sessionAffinity: 'None',
