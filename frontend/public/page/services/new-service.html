@@ -36,10 +36,10 @@
             <label for="input-service-port" class="control-label">Service Port:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="service.spec.port" type="number" required class="form-control" id="input-service-port"/>
+            <input ng-model="fields.portObj.port" type="number" required class="form-control" id="input-service-port"/>
             <small class="text-muted">
               Users of this service can communicate from any machine in the cluster over this port.
-              It is exposed as an environment variable (SERVICE_{{service.metadata.name || 'service-id'}}_{{service.spec.port || 'PORT'}}) in all new containers.
+              It is exposed as an environment variable (SERVICE_{{service.metadata.name || 'service-id'}}_{{fields.portObj.port || 'PORT'}}) in all new containers.
             </small>
           </div>
         </div>
@@ -57,7 +57,7 @@
             <label for="input-target-port" class="control-label">Target Port:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="service.spec.targetPort" type="number" required class="form-control" id="input-target-port"/>
+            <input ng-model="fields.portObj.targetPort" type="number" required class="form-control" id="input-target-port"/>
             <small class="text-muted">
               Select the port of the pod that will respond to traffic for this service.
             </small>
