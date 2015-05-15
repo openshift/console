@@ -20,7 +20,7 @@
         <co-label-list kind="pod" labels="s.spec.selector" selector="true"></co-label-list>
       </div>
       <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">
-        <a target="_blank" ng-href="http://{{s.spec.portalIP}}:{{s.spec.port}}" ng-bind-template="{{s.spec.portalIP}}:{{s.spec.port}}"></a>
+        <co-service-ip-link service="s"></co-service-ip-link>
       </div>
     </div>
     <div ng-show="open" ng-repeat-end>

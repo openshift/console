@@ -5,7 +5,12 @@ angular.module('bridge.page')
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
   $scope.service = k8s.services.getEmpty($scope.ns);
 
+  $scope.fields = {
+    portObj: k8s.services.getEmptyPort(),
+  };
+
   $scope.save = function() {
+    $scope.service.spec.ports.push($scope.fields.portObj);
     $scope.requestPromise = k8s.services.create($scope.service);
     $scope.requestPromise.then(function() {
       $location.path('/services');

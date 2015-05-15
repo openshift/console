@@ -18,9 +18,7 @@
               <dt>Protocol</dt>
               <dd ng-bind="service.spec.protocol"></dd>
               <dt>Service Address</dt>
-              <dd>
-                <a target="_blank" ng-href="http://{{service.spec.portalIP}}:{{service.spec.port}}" ng-bind-template="{{service.spec.portalIP}}:{{service.spec.port}}"></a>
-              </dd>
+              <dd><co-service-ip-link service="service"></co-service-ip-link></dd>
               <dt>Target Port</dt>
               <dd ng-bind="service.spec.targetPort"></dd>
               <dt>Session Affinity</dt>

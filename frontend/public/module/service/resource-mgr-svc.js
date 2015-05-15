@@ -11,6 +11,28 @@ angular.module('bridge.service')
     }
   }
 
+  // The detail page link of a resource.
+  this.getLink = function(resource, kind) {
+    var meta, path = '';
+    if (!resource || !resource.metadata) {
+      return '';
+    }
+    meta = resource.metadata;
+    if (meta.namespace) {
+      path = '/ns/' + meta.namespace;
+    }
+    return path + '/' + kind.path + '/' + meta.name;
+  };
+
+  // The edit page link of a resource.
+  this.getEditLink = function(resource, kind) {
+    var link = this.getLink(resource, kind);
+    if (!link) {
+      return '';
+    }
+    return link + '/edit';
+  }.bind(this);
+
   this.removeFromList = function(list, resource) {
     var idx;
     if (!list || !resource || !resource.metadata) {
