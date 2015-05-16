@@ -20,9 +20,18 @@
     <div class="co-m-pane__body">
 
       <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
-        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-          <co-node-list search="nodeSearch"></co-node-list>
+        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+          <div class="co-facet-container--left">
+            <co-facet-menu model="facetFilter.ready" title="Machine Status">
+              <co-facet-menu-option value="">All Statuses</co-facet-menu-option>
+              <co-facet-menu-option value="true">Ready</co-facet-menu-option>
+              <co-facet-menu-option value="false">Not Ready</co-facet-menu-option>
+            </co-facet-menu>
+            <co-debug obj="facetFilter"></co-debug>
+          </div>
+        </div>
+        <div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
+          <co-node-list class="co-facet-container--right" filter="facetFilter" search="nodeSearch"></co-node-list>
         </div>
       </div>
 

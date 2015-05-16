@@ -12,7 +12,10 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      search: '=',
+      // optional search filter
+      searchFilter: '=search',
+      // field filters to apply to node list
+      nodesFilterQuery: '=filter',
     },
     controller: function($scope) {
       $scope.loadError = false;
