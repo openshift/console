@@ -34,15 +34,7 @@ angular.module('bridge.ui')
 
       loadNodes();
 
-      $scope.getStatus = function(node) {
-        if (!pkg.propExists('status.conditions', node) || _.isEmpty(node.status.conditions)) {
-          return 'Unknown';
-        }
-
-        return pkg.join(node.status.conditions, ', ', function(v) {
-          return v.type + ': ' + v.status;
-        });
-      };
+      $scope.getReadyStateLabel = k8s.nodes.getReadyStateLabel;
 
       $scope.$on(k8s.events.NODE_DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.nodes, data.resource);
