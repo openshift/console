@@ -13,7 +13,7 @@
 .co-m-table-grid__body.cos-tristate--empty,
 .co-m-table-grid__body.cos-tristate--loading,
 .co-m-table-grid__body.cos-tristate--error {
-  border-bottom: solid 1px #efefef;
+  border-bottom: solid 1px $color-grey-lightest;
 }
 .cos-status-box__title.cos-error-title,
 .cos-error-title {

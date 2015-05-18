@@ -8,8 +8,10 @@
   </div>
 
   <div cos-tristate="nodes" cos-tristate-error="loadError" class="co-m-table-grid__body">
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="n in nodes | filter:search:strict track by n.metadata.uid" ng-click="open = !open">
-      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getStatus(n)"></div>
+    <div class="row co-m-table-grid--clickable"
+        ng-repeat-start="n in filteredNodes=(nodes | filter:searchFilter | nodesFilter:nodesFilterQuery | orderBy:'metadata.name') track by n.metadata.uid"
+        ng-click="open = !open">
+      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getReadyStateLabel(n)"></div>
       <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">
         <a ng-href="/nodes/{{n.metadata.name}}" ng-bind="n.metadata.name"></a>
       </div>
@@ -27,11 +29,14 @@
       <div class="cos-error-title">Error loading machines</div>
       <div class="cos-text-center">An error occurred during machine retrieval. Please try again.</div>
     </cos-status-box>
-    <cos-status-box class="cos-tristate-show-empty">
+    <cos-status-box ng-show="!filteredNodes.length && !nodes.length" class="cos-tristate-show-empty">
       <div>No machines found</div>
-      <div class="cos-text-center">No matching machines found in the system.</div>
+      <div class="cos-text-center">No machines found in the system.</div>
     </cos-status-box>
-
+    <cos-status-box class="cos-status-box--border-bottom" ng-show="!filteredNodes.length && nodes.length">
+      <div>No matching machines</div>
+      <div class="cos-text-center" ng-bind-template="{{nodes.length}} machine(s) exist, but none match the current filter."></div>
+    </cos-status-box>
   </div>
 
 </div>
