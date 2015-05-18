@@ -16,7 +16,7 @@ angular.module('k8s')
 })
 
 .service('k8s', function(_, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels, k8sPods, k8sServices, k8sDocker,
-  k8sReplicationcontrollers, k8sProbe) {
+  k8sReplicationcontrollers, k8sProbe, k8sNodes) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -27,10 +27,10 @@ angular.module('k8s')
   this.resource = k8sResource;
   this.search = k8sResource.list;
   this.util = k8sUtil;
-  this.nodes = {
+  this.nodes = _.extend(k8sNodes, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.NODE),
     get: _.partial(k8sResource.get, k8sEnum.Kind.NODE),
-  };
+  });
 
   this.services = _.extend(k8sServices, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.SERVICE),
