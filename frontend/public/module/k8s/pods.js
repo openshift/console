@@ -63,4 +63,43 @@ angular.module('k8s')
     });
   };
 
+  this.getVolumeLocation = function(volume) {
+    var vtype = this.getVolumeType(volume), info, typeID;
+
+    if (!vtype) {
+      return '';
+    }
+
+    function readOnlySuffix(readonly) {
+      return '(' + (readonly ? 'ro' : 'rw') + ')';
+    }
+
+    function genericFormatter(volInfo) {
+      var keys = Object.keys(volInfo).sort();
+      var parts = keys.map(function(key) {
+        if (key === 'readOnly') {
+          return '';
+        }
+        return volInfo[key];
+      });
+      if (keys.indexOf('readOnly') !== -1) {
+        parts.push(readOnlySuffix(volInfo.readOnly));
+      }
+      return parts.join(' ');
+    }
+
+    typeID = vtype.id;
+    info = volume[typeID];
+    switch (typeID) {
+      // Override any special formatting cases.
+      case k8sEnum.VolumeSource.gitRepo.id:
+        return info.repository + ':' + info.revision;
+      // Defaults to space separated sorted keys.
+      default:
+        return genericFormatter(info);
+    }
+
+    return '';
+  }.bind(this);
+
 });
