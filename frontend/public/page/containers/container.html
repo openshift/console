@@ -10,7 +10,7 @@
     <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
       <li class="co-m-vert-nav__menu-item">
         <a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}/containers/{{container.name}}">
-          <i class="fa fa-dashboard"></i>
+          <i class="fa fa-dashboard" tooltip="Overview" tooltip-placement="right"></i>
         </a>
       </li>
     </ul>
@@ -21,7 +21,7 @@
         <div class="row">
 
           <div class="col-sm-4">
-            <h1 class="co-section-title">Container Details</h1>
+            <h1 class="co-section-title">Container Overview</h1>
             <dl>
               <dt>State</dt>
               <dd ng-bind="containerState.label"></dd>
@@ -84,7 +84,7 @@
             <dl>
               <dt>Machine</dt>
               <dd>
-                <a ng-href="/machines/{{pod.status.host}}" ng-bind="pod.status.host"></a>
+                <a ng-href="/machines/{{pod.spec.host}}" ng-bind="pod.spec.host"></a>
               </dd>
               <dt>Pod IP</dt>
               <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
@@ -99,7 +99,7 @@
 
           <div class="col-sm-4">
             <h1 class="co-section-title">Ports</h1>
-            <div class="co-m-table-container">
+            <div class="co-table-container">
               <table class="table">
                 <thead>
                   <tr>
@@ -119,7 +119,7 @@
 
           <div class="col-sm-4">
             <h1 class="co-section-title">Mounted Volumes</h1>
-            <div class="co-m-table-container">
+            <div class="co-table-container">
               <table class="table">
                 <thead>
                   <tr>
@@ -141,7 +141,7 @@
 
           <div class="col-sm-4">
             <h1 class="co-section-title">Environment Variables</h1>
-            <div class="co-m-table-container">
+            <div class="co-table-container">
               <table class="table">
                 <thead>
                   <tr>

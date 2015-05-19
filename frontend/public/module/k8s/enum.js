@@ -159,6 +159,24 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'GCE Persistent Disk',
       description: 'GCE disk resource attached to the host machine on demand.',
     },
+    awsElasticBlockStore: {
+      weight: 700,
+      id: 'awsElasticBlockStore',
+      label: 'AWS Elastic Block Store',
+      description: 'AWS disk resource attached to the host machine on demand.',
+    },
+    glusterfs: {
+      weight: 800,
+      id: 'glusterfs',
+      label: 'Gluster FS',
+      description: 'GlusterFS volume that will be mounted on the host machine.',
+    },
+    iscsi: {
+      weight: 900,
+      id: 'iscsi',
+      label: 'iSCSI',
+      description: 'iSCSI disk attached to host machine on demand',
+    },
   },
 
 });
