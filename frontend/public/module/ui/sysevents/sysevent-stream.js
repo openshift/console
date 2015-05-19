@@ -14,6 +14,7 @@ angular.module('bridge.ui')
     scope: {
       eventsFilter: '=filter',
       namespace: '=',
+      fieldSelector: '=',
     },
     controller: function($scope) {
       $scope.maxMessages = 1000;
@@ -37,11 +38,16 @@ angular.module('bridge.ui')
         }
       };
 
+      var params = { ns: $scope.namespace };
+      if ($scope.fieldSelector) {
+        params.fieldSelector = $scope.fieldSelector;
+      }
+
       $scope.ws = wsFactory('sysevents', {
         scope: $scope,
         host: 'auto',
         reconnect: true,
-        path: k8s.resource.watchURL(k8s.enum.Kind.EVENT, { ns: $scope.namespace }),
+        path: k8s.resource.watchURL(k8s.enum.Kind.EVENT, params),
         jsonParse: true,
         bufferEnabled: true,
         bufferFlushInterval: 500,

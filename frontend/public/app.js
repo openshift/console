@@ -152,6 +152,11 @@ angular.module('bridge', [
       templateUrl: '/static/page/pods/pod.html',
       title: 'Pod',
     })
+    .when('/ns/:ns/pods/:name/events', {
+      controller: 'PodSyseventsCtrl',
+      templateUrl: '/static/page/pods/sysevents.html',
+      title: 'Pod Events',
+    })
     .when('/ns/:ns/pods/:podName/containers/:name', {
       controller: 'ContainerCtrl',
       templateUrl: '/static/page/containers/container.html',
