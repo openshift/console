@@ -84,7 +84,7 @@
             <dl>
               <dt>Machine</dt>
               <dd>
-                <a ng-href="/machines/{{pod.status.host}}" ng-bind="pod.status.host"></a>
+                <a ng-href="/machines/{{pod.spec.host}}" ng-bind="pod.spec.host"></a>
               </dd>
               <dt>Pod IP</dt>
               <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
