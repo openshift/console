@@ -1,12 +1,12 @@
 <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
   <li class="co-m-vert-nav__menu-item">
     <a ng-href="/ns/{{rc.metadata.namespace}}/replicationcontrollers/{{rc.metadata.name}}">
-      <i class="fa fa-dashboard"></i>
+      <i class="fa fa-dashboard" tooltip="Overview" tooltip-placement="right"></i>
     </a>
   </li>
   <li class="co-m-vert-nav__menu-item">
     <a ng-href="/ns/{{rc.metadata.namespace}}/replicationcontrollers/{{rc.metadata.name}}/edit">
-      <i class="fa fa-cogs"></i>
+      <i class="fa fa-cogs" tooltip="Desired State" tooltip-placement="right"></i>
     </a>
   </li>
 </ul>

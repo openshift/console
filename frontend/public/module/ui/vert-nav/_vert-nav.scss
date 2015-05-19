@@ -43,7 +43,6 @@ $min-height: 200px;
 .co-m-vert-nav--sm .co-m-vert-nav__menu {
   width: 80px;
   .co-m-vert-nav__menu-item {
-    padding: 10px;
     font-size: 35px;
     text-align: center;
     &.co-m-vert-nav-item--active a,
@@ -51,6 +50,7 @@ $min-height: 200px;
     &.co-m-vert-nav-item--active a:active,
     &.co-m-vert-nav-item--active a:visited {
       color: $red;
+      background-color: #fff;
     }
   }
 }
@@ -58,10 +58,13 @@ $min-height: 200px;
 .co-m-vert-nav__menu-item {
   margin: 0;
   border-bottom: 1px solid #ccc;
-  &.co-m-vert-nav-item--active,
-  &:hover {
+  a {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+  }
+  a:hover {
     background-color: #fff;
-    cursor: pointer;
   }
 }
 

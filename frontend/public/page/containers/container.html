@@ -10,7 +10,7 @@
     <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
       <li class="co-m-vert-nav__menu-item">
         <a ng-href="/ns/{{ns}}/pods/{{pod.metadata.name}}/containers/{{container.name}}">
-          <i class="fa fa-dashboard"></i>
+          <i class="fa fa-dashboard" tooltip="Overview" tooltip-placement="right"></i>
         </a>
       </li>
     </ul>
@@ -21,7 +21,7 @@
         <div class="row">
 
           <div class="col-sm-4">
-            <h1 class="co-section-title">Container Details</h1>
+            <h1 class="co-section-title">Container Overview</h1>
             <dl>
               <dt>State</dt>
               <dd ng-bind="containerState.label"></dd>
