@@ -23,6 +23,10 @@ angular.module('bridge.ui')
 
       function loadRCs() {
         var query = {};
+        if (!$scope.load) {
+          return;
+        }
+
         if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
           $scope.rcs = [];
           return;
@@ -44,19 +48,13 @@ angular.module('bridge.ui')
           });
       }
 
-      $scope.$watch('load', function(load) {
-        if (load) {
-          loadRCs();
-        }
-      });
+      $scope.$watch('load', loadRCs);
 
       $scope.$on(k8s.events.RC_DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.rcs, data.resource);
       });
 
-      $scope.$on(k8s.events.RC_ADDED, function(e, data) {
-        resourceMgrSvc.updateInList($scope.rcs, data.resource);
-      });
+      $scope.$on(k8s.events.RC_ADDED, loadRCs);
 
       $scope.$on(k8s.events.RC_MODIFIED, function(e, data) {
         resourceMgrSvc.updateInList($scope.rcs, data.resource);
