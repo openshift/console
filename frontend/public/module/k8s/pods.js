@@ -3,6 +3,7 @@ angular.module('k8s')
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });
+  var fieldSelectors;
 
   this.clean = function(pod) {
     k8sUtil.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
@@ -13,6 +14,18 @@ angular.module('k8s')
     k8sUtil.deleteNulls(pod.metadata);
     k8sUtil.deleteNulls(pod.spec);
   };
+
+  fieldSelectors = {};
+
+  fieldSelectors.nodeName = function(nodeName) {
+    return 'spec.host=' + nodeName;
+  };
+
+  fieldSelectors.node = function(node) {
+    return fieldSelectors.nodeName(node.metadata.name);
+  };
+
+  this.fieldSelectors = fieldSelectors;
 
   this.getRestartPolicyById = function(id) {
     return _.findWhere(k8sEnum.RestartPolicy, { id: id });
