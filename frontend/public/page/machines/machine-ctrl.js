@@ -2,6 +2,7 @@ angular.module('bridge.page')
 .controller('MachineCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
+  $scope.machineName = $routeParams.name;
   $scope.loadError = false;
 
   k8s.nodes.get($routeParams.name)
