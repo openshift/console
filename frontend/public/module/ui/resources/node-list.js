@@ -32,6 +32,8 @@ angular.module('bridge.ui')
           });
       }
 
+      $scope.getPodFieldSelector = k8s.pods.fieldSelectors.node;
+
       loadNodes();
 
       $scope.getReadyStateLabel = k8s.nodes.getReadyStateLabel;
