@@ -101,6 +101,28 @@ angular.module('k8s')
     return d.promise;
   }.bind(this);
 
+  this.patch = function(kind, resource, payload) {
+    var d = $q.defer();
+    $http({
+      headers: {
+        'Content-Type': 'application/json-patch+json',
+      },
+      url: this.resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
+      method: 'PATCH',
+      data: payload,
+    })
+    .then(function(result) {
+      $rootScope.$broadcast(k8sEvents.RESOURCE_MODIFIED, {
+        kind: kind,
+        original: resource,
+        resource: result.data,
+      });
+      d.resolve(result.data);
+    })
+    .catch(d.reject);
+    return d.promise;
+  }.bind(this);
+
   this.get = function(kind, name, ns) {
     var d = $q.defer();
     $http({
