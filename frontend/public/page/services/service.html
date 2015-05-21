@@ -15,12 +15,8 @@
         <div ng-show="service && !loadError" class="row">
           <div class="col-lg-6">
             <dl>
-              <dt>Protocol</dt>
-              <dd ng-bind="service.spec.protocol"></dd>
               <dt>Service Address</dt>
               <dd><co-service-ip-link service="service"></co-service-ip-link></dd>
-              <dt>Target Port</dt>
-              <dd ng-bind="service.spec.targetPort"></dd>
               <dt>Session Affinity</dt>
               <dd ng-bind="service.spec.sessionAffinity"></dd>
             </dl>
