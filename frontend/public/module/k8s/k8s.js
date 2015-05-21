@@ -60,16 +60,6 @@ angular.module('k8s')
     },
   });
 
-  // Gets all the pods running on a given node.
-  this.pods.listByNode = function(node) {
-    // TODO(sym3tri): filter by label query for machine first if possible.
-    return this.pods.list().then(function(pods) {
-      return _.filter(pods, function(p) {
-        return p.status && p.status.host === node.metadata.name;
-      });
-    });
-  }.bind(this);
-
   this.replicationcontrollers = _.extend(k8sReplicationcontrollers, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.REPLICATIONCONTROLLER),
     get: _.partial(k8sResource.get, k8sEnum.Kind.REPLICATIONCONTROLLER),

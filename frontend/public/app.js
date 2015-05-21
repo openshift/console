@@ -172,6 +172,16 @@ angular.module('bridge', [
       templateUrl: '/static/page/machines/machine.html',
       title: 'Machine',
     })
+    .when('/machines/:name/events', {
+      controller: 'MachineSyseventsCtrl',
+      templateUrl: '/static/page/machines/sysevents.html',
+      title: 'Machine Events',
+    })
+    .when('/machines/:name/pods', {
+      controller: 'MachinePodsCtrl',
+      templateUrl: '/static/page/machines/pods.html',
+      title: 'Machine Pods',
+    })
     // Alias for machines (for programatic routing).
     .when('/nodes', {
       redirectTo: '/machines',

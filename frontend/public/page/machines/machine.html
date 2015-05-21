@@ -1,67 +1,52 @@
 <div class="co-p-machine">
 
-  <co-nav-title title="{{machine.metadata.name}}">
+  <co-nav-title title="{{machineName}}">
     <a ng-href="/machines" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Machines</a>
   </co-nav-title>
 
-  <div class="co-m-pane">
+  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+    <co-machine-nav name="machineName"></co-machine-nav>
+    <div class="co-m-vert-nav__body">
 
-    <div class="co-m-pane__heading">
-      <h1 class="co-m-pane__title">Machine Details</h1>
-    </div>
-    <div cos-tristate="machine" cos-tristate-error="loadError" class="co-m-pane__body">
-      <div ng-show="machine && !loadError">
-        <dl>
-          <dt>Status</dt>
-          <dd>
-            <div ng-repeat="condition in machine.status.conditions">
-              <div>
-                Status <code ng-bind="condition.type"></code> is <code ng-bind="condition.status"></code>, because <code ng-bind="condition.reason"></code>.
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Machine Details</h1>
+      </div>
+      <div cos-tristate="machine" cos-tristate-error="loadError" class="co-m-pane__body">
+        <div ng-show="machine && !loadError">
+          <dl>
+            <dt>Status</dt>
+            <dd>
+              <div ng-repeat="condition in machine.status.conditions">
+                <div>
+                  Status <code ng-bind="condition.type"></code> is <code ng-bind="condition.status"></code>, because <code ng-bind="condition.reason"></code>.
+                </div>
+                <small>
+                  Last Heartbeat: <span ng-bind="condition.lastHeartbeatTime | customDate"></span>, Last Transition: <span ng-bind="condition.lastTransitionTime | customDate"></span>
+                </small>
               </div>
-              <small>
-                Last Heartbeat: <span ng-bind="condition.lastHeartbeatTime | customDate"></span>, Last Transition: <span ng-bind="condition.lastTransitionTime | customDate"></span>
-              </small>
-            </div>
-          </dd>
-          <dt>Machine Labels</dt>
-          <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
-          <dt>Machine ID</dt>
-          <dd ng-bind="machine.metadata.name"></dd>
-          <dt>Host IP Addresses</dt>
-          <dd ng-bind="machine.status.hostIP"></dd>
-          <dt>Created</dt>
-          <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
-        </dl>
+            </dd>
+            <dt>Machine Labels</dt>
+            <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
+            <dt>Machine ID</dt>
+            <dd ng-bind="machine.metadata.name"></dd>
+            <dt>Host IP Addresses</dt>
+            <dd ng-bind="machine.status.hostIP"></dd>
+            <dt>Created</dt>
+            <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
+          </dl>
+        </div>
+        <div class="co-loader-wrapper cos-tristate-show-loading">
+          <co-loader></co-loader>
+        </div>
+        <cos-status-box class="cos-tristate-show-error">
+          <div class="cos-error-title">Error Loading Machine</div>
+          <div class="cos-text-center">An error occurred during machine retrieval. Please try again.</div>
+        </cos-status-box>
       </div>
-      <div class="co-loader-wrapper cos-tristate-show-loading">
-        <co-loader></co-loader>
-      </div>
-      <cos-status-box class="cos-tristate-show-error">
-        <div class="cos-error-title">Error Loading Machine</div>
-        <div class="cos-text-center">An error occurred during machine retrieval. Please try again.</div>
-      </cos-status-box>
+
     </div>
 
   </div>
 
-  <div class="co-m-pane">
-
-    <div class="co-m-pane__heading">
-
-      <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-          <h1 class="co-m-pane__title">Running Pods</h1>
-        </div>
-        <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
-          <input ng-model="podSearch.metadata.name" type="text" class="form-control" placeholder="Filter pods by name...">
-        </div>
-      </div>
-
-    </div>
-    <div class="co-m-pane__body">
-      <co-pod-list load="!!machine" node="machine" search="podSearch" error="loadError"></co-pod-list>
-    </div>
-
-  </div><!-- pane -->
 </div>

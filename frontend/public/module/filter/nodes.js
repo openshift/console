@@ -10,7 +10,7 @@ angular.module('bridge.filter')
   }
 
   function readyFilter(query, node) {
-    var queryVal;
+    var queryVal, isReady;
     // normalize values
     if (query.ready === 'true') {
       queryVal = true;
@@ -18,7 +18,9 @@ angular.module('bridge.filter')
     if (query.ready === 'false') {
       queryVal = false;
     }
-    return queryVal && k8s.nodes.isReady(node);
+
+    isReady = k8s.nodes.isReady(node);
+    return (queryVal && isReady) || (!queryVal && !isReady);
   }
 
   return function(nodes, query) {

@@ -24,8 +24,8 @@ angular.module('bridge.ui')
       load: '=',
       // force error
       error: '=',
-      // restrict pod list to those bound by a particular node
-      node: '=',
+      // filter pod list by an api field selector
+      fieldSelector: '=',
     },
     controller: function($scope, $attrs) {
       $scope.pods = null;
@@ -43,6 +43,9 @@ angular.module('bridge.ui')
 
       function loadPods() {
         var query = {};
+        if (!$scope.load) {
+          return;
+        }
         if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
           $scope.pods = [];
           return;
@@ -53,24 +56,18 @@ angular.module('bridge.ui')
         if ($scope.namespace) {
           query.ns = $scope.namespace;
         }
-
-        // TODO(sym3tri): maybe handle this in the k8s service instead.
-        if ($scope.node) {
-          k8s.pods.listByNode($scope.node)
-            .then(onSuccess)
-            .catch(onError);
-        } else {
-          k8s.pods.list(query)
-            .then(onSuccess)
-            .catch(onError);
+        if ($scope.fieldSelector) {
+          query.fieldSelector = $scope.fieldSelector;
         }
+
+        k8s.pods.list(query)
+          .then(onSuccess)
+          .catch(onError);
       }
 
-      $scope.$watch('load', function(load) {
-        if (load) {
-          loadPods();
-        }
-      });
+      $scope.$watch('load', loadPods);
+      $scope.$watch('selector', loadPods);
+      $scope.$watch('fieldSelector', loadPods);
 
       $scope.$watch('error', function(error) {
         if (error) {
@@ -78,17 +75,11 @@ angular.module('bridge.ui')
         }
       });
 
-      $scope.$watch('selector', function() {
-        loadPods();
-      });
-
       $scope.$on(k8s.events.POD_DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.pods, data.resource);
       });
 
-      $scope.$on(k8s.events.POD_ADDED, function(e, data) {
-        resourceMgrSvc.updateInList($scope.pods, data.resource);
-      });
+      $scope.$on(k8s.events.POD_ADDED, loadPods);
 
       $scope.$on(k8s.events.POD_MODIFIED, function(e, data) {
         resourceMgrSvc.updateInList($scope.pods, data.resource);

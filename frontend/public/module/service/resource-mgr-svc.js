@@ -46,7 +46,6 @@ angular.module('bridge.service')
   };
 
   // Updates a resource in a list if it exists and is newer,
-  // or appends to the list if a previous version is not found.
   this.updateInList = function(list, resource) {
     var idx, current;
     if (!list || !resource || !resource.metadata) {
@@ -54,9 +53,8 @@ angular.module('bridge.service')
     }
 
     idx = k8s.util.findIndexByUID(list, resource.metadata.uid);
-    // not in list, do insert
+    // Not in list, do nothing.
     if (idx === -1) {
-      list.push(resource);
       return;
     }
 

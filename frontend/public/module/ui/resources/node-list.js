@@ -32,6 +32,8 @@ angular.module('bridge.ui')
           });
       }
 
+      $scope.getPodFieldSelector = k8s.pods.fieldSelectors.node;
+
       loadNodes();
 
       $scope.getReadyStateLabel = k8s.nodes.getReadyStateLabel;
@@ -40,9 +42,7 @@ angular.module('bridge.ui')
         resourceMgrSvc.removeFromList($scope.nodes, data.resource);
       });
 
-      $scope.$on(k8s.events.NODE_ADDED, function(e, data) {
-        resourceMgrSvc.updateInList($scope.nodes, data.resource);
-      });
+      $scope.$on(k8s.events.NODE_ADDED, loadNodes);
 
       $scope.$on(k8s.events.NODE_MODIFIED, function(e, data) {
         resourceMgrSvc.updateInList($scope.nodes, data.resource);

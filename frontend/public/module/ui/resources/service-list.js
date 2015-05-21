@@ -23,6 +23,9 @@ angular.module('bridge.ui')
 
       function loadServices() {
         var query = {};
+        if (!$scope.load) {
+          return;
+        }
         if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
           $scope.services = [];
           return;
@@ -44,19 +47,13 @@ angular.module('bridge.ui')
           });
       }
 
-      $scope.$watch('load', function(load) {
-        if (load) {
-          loadServices();
-        }
-      });
+      $scope.$watch('load', loadServices);
 
       $scope.$on(k8s.events.SERVICE_DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.services, data.resource);
       });
 
-      $scope.$on(k8s.events.SERVICE_ADDED, function(e, data) {
-        resourceMgrSvc.updateInList($scope.services, data.resource);
-      });
+      $scope.$on(k8s.events.SERVICE_ADDED, loadServices);
 
       $scope.$on(k8s.events.SERVICE_MODIFIED, function(e, data) {
         resourceMgrSvc.updateInList($scope.services, data.resource);
