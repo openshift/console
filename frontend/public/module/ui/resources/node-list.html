@@ -1,8 +1,8 @@
 <div class="co-m-node-list co-m-table-grid co-m-table-grid--bordered">
 
   <div class="row co-m-table-grid__head">
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">Machine Name</div>
     <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Status</div>
-    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">Machine ID</div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">Machine Labels</div>
     <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Host IP</div>
   </div>
@@ -11,10 +11,12 @@
     <div class="row co-m-table-grid--clickable"
         ng-repeat-start="n in filteredNodes=(nodes | filter:searchFilter | nodesFilter:nodesFilterQuery | orderBy:'metadata.name') track by n.metadata.uid"
         ng-click="open = !open">
-      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getReadyStateLabel(n)"></div>
       <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">
+        <co-node-cog node="n"></co-node-cog>
+        <co-resource-icon kind="node"></co-resource-icon>
         <a ng-href="/nodes/{{n.metadata.name}}" ng-bind="n.metadata.name"></a>
       </div>
+      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getReadyStateLabel(n)"></div>
       <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">
         <co-label-list kind="node" labels="n.metadata.labels"></co-label-list>
       </div>
