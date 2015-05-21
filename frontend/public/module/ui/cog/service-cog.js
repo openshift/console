@@ -40,26 +40,11 @@ angular.module('bridge.ui')
             }),
           },
           {
-            label: 'Modify Service Port...',
+            label: 'Modify Service Ports...',
             weight: 200,
-            callback: ModalLauncherSvc.open.bind(null, 'configure-port', {
+            callback: ModalLauncherSvc.open.bind(null, 'service-ports', {
               kind: k8s.enum.Kind.SERVICE,
               resource: getService,
-              propertyName: 'port',
-              title: 'Modify Service Port',
-              description: 'The service can be reached at its portal IP and this port.',
-            }),
-          },
-          {
-            label: 'Modify Target Port...',
-            weight: 300,
-            callback: ModalLauncherSvc.open.bind(null, 'configure-port', {
-              kind: k8s.enum.Kind.SERVICE,
-              resource: getService,
-              propertyName: 'targetPort',
-              title: 'Modify Target Port',
-              description: 'The port used by the service for connecting to pods. ' +
-                  'Pod ports must be exposed in their configuration.',
             }),
           },
           {

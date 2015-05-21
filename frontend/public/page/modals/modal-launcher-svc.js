@@ -3,9 +3,9 @@ angular.module('bridge.page')
   'use strict';
 
   var modalConfig = {
-    'configure-port': {
-      templateUrl: '/static/page/modals/configure-port.html',
-      controller: 'ConfigurePortCtrl',
+    'service-ports': {
+      templateUrl: '/static/page/modals/service-ports.html',
+      controller: 'ServicePortsCtrl',
     },
     'configure-ports': {
       templateUrl: '/static/page/modals/configure-ports.html',

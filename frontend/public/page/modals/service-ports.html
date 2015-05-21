@@ -1,0 +1,46 @@
+<div class="co-p-configure-port">
+  <form ng-controller="ServicePortsFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Modify Service Ports</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>
+            Service ports proxy traffic to corresponding pod ports.
+          </p>
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-sm-3">
+          <label for="service-ports__port">Service Port:</label>
+        </div>
+        <div class="col-sm-9">
+          <input id="service-ports__port" ng-model="fields.port" autofocus min="0" max="65535" class="form-control" type="number"/>
+          <small class="text-muted">The service can be reached at its portal IP and this port.</small>
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-sm-3">
+          <label for="service-ports__target-port">Pod Port:</label>
+        </div>
+        <div class="col-sm-9">
+          <input id="service-ports__target-port" ng-model="fields.targetPort" autofocus min="0" max="65535" class="form-control" type="number"/>
+          <small class="text-muted">
+            A port exposed by pods matching the service's label query.
+            Traffic originating at the service port will reach pods at this port.
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Save Port Configuration</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
