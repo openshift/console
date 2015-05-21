@@ -10,10 +10,10 @@ angular.module('bridge.page')
   };
 
   $scope.save = function() {
-    resource.metadata.labels = $scope.fields.labels;
-    $scope.requestPromise = k8s.resource.update(kind, resource);
-    $scope.requestPromise.then(function() {
-      $modalInstance.close(resource);
+    var patch = [{ op: 'replace', path: '/metadata/labels', value: $scope.fields.labels }];
+    $scope.requestPromise = k8s.resource.patch(kind, resource, patch);
+    $scope.requestPromise.then(function(result) {
+      $modalInstance.close(result);
     });
   };
 
