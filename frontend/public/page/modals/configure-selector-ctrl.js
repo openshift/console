@@ -12,10 +12,10 @@ angular.module('bridge.page')
   };
 
   $scope.save = function() {
-    resource.spec.selector = $scope.fields.selector;
-    $scope.requestPromise = k8s.resource.update($scope.resourceKind, resource);
-    $scope.requestPromise.then(function(updatedResource) {
-      $modalInstance.close(updatedResource);
+    var patch = [{ op: 'replace', path: '/spec/selector', value: $scope.fields.selector }];
+    $scope.requestPromise = k8s.resource.patch($scope.resourceKind, resource, patch);
+    $scope.requestPromise.then(function(result) {
+      $modalInstance.close(result);
     });
   };
 

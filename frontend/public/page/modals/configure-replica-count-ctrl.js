@@ -2,12 +2,17 @@ angular.module('bridge.page')
 .controller('ConfigureReplicaCountCtrl', function($scope, $modalInstance, k8s, replicationController) {
   'use strict';
 
-  $scope.rc = angular.copy(replicationController);
+  var kind = k8s.enum.Kind.REPLICATIONCONTROLLER;
+
+  $scope.fields = {
+    replicas: replicationController.spec.replicas,
+  };
 
   $scope.save = function() {
-    $scope.requestPromise = k8s.resource.update(k8s.enum.Kind.REPLICATIONCONTROLLER, $scope.rc);
-    $scope.requestPromise.then(function(updatedRC) {
-      $modalInstance.close(updatedRC);
+    var patch = [{ op: 'replace', path: '/spec/replicas', value: $scope.fields.replicas }];
+    $scope.requestPromise = k8s.resource.patch(kind, replicationController, patch);
+    $scope.requestPromise.then(function(result) {
+      $modalInstance.close(result);
     });
   };
 
