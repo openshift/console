@@ -16,10 +16,10 @@
       <form ng-controller="NewServiceFormCtrl" ng-submit="submit()" name="form" role="form">
         <div class="row co-m-form-row">
           <div class="col-sm-2">
-            <label for="input-service-id" class="control-label">Service Id:</label>
+            <label for="input-service-name" class="control-label">Service Name:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="service.metadata.name" type="text" class="form-control" required id="input-service-id"/>
+            <input ng-model="service.metadata.name" type="text" class="form-control" required id="input-service-name"/>
           </div>
         </div>
         <div class="row co-m-form-row">
@@ -39,7 +39,7 @@
             <input ng-model="fields.portObj.port" type="number" required class="form-control" id="input-service-port"/>
             <small class="text-muted">
               Users of this service can communicate from any machine in the cluster over this port.
-              It is exposed as an environment variable (SERVICE_{{service.metadata.name || 'service-id'}}_{{fields.portObj.port || 'PORT'}}) in all new containers.
+              It is exposed as an environment variable (SERVICE_{{(service.metadata.name | uppercase) || 'service-name'}}_{{fields.portObj.port || 'PORT'}}) in all new containers.
             </small>
           </div>
         </div>
