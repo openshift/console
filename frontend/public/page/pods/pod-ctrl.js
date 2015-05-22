@@ -6,7 +6,7 @@ angular.module('bridge.page')
   $scope.podName = $routeParams.name;
   $scope.loadError = false;
 
-  k8s.pods.get($routeParams.name, $scope.ns)
+  k8s.pods.get($scope.podName, $scope.ns)
     .then(function(pod) {
       $scope.pod = pod;
       $scope.loadError = false;

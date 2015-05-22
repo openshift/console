@@ -107,6 +107,11 @@ angular.module('bridge', [
       templateUrl: '/static/page/services/service.html',
       title: 'Service',
     })
+    .when('/ns/:ns/services/:name/pods', {
+      controller: 'ServicePodsCtrl',
+      templateUrl: '/static/page/services/pods.html',
+      title: 'Service Pods',
+    })
     .when('/replicationcontrollers', {
       controller: 'ReplicationcontrollersCtrl',
       templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
