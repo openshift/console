@@ -15,14 +15,8 @@
         <div ng-show="service && !loadError" class="row">
           <div class="col-lg-6">
             <dl>
-              <dt>Service Address</dt>
-              <dd><co-service-ip-link service="service"></co-service-ip-link></dd>
-              <dt>Session Affinity</dt>
-              <dd ng-bind="service.spec.sessionAffinity"></dd>
-            </dl>
-          </div>
-          <div class="col-lg-6">
-            <dl>
+              <dt>Service Name</dt>
+              <dd ng-bind="service.metadata.name"></dd>
               <dt>Service Labels</dt>
               <dd>
                 <co-label-list kind="service" labels="service.metadata.labels"></co-label-list>
@@ -33,6 +27,14 @@
               </dd>
               <dt>Created At</dt>
               <dd ng-bind="service.metadata.creationTimestamp | date:CONST.dateTimeFmt"></dd>
+            </dl>
+          </div>
+          <div class="col-lg-6">
+            <dl>
+              <dt>Service Address</dt>
+              <dd><co-service-ip-link service="service"></co-service-ip-link></dd>
+              <dt>Session Affinity</dt>
+              <dd ng-bind="service.spec.sessionAffinity | emptyPlaceholder"></dd>
             </dl>
           </div>
         </div>
@@ -47,7 +49,7 @@
       </div>
 
       <div class="co-m-pane__body-section--bordered">
-        <h1 class="co-m-pane__title">Running Pods</h1>
+        <h1 class="co-m-pane__title">Matching Pods</h1>
       </div>
       <div class="co-m-pane__body-section">
         <co-pod-list error="loadError" load="!!service" namespace="service.metadata.namespace" selector-required="true" selector="service.spec.selector"></co-pod-list>

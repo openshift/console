@@ -14,47 +14,50 @@
       <div class="co-m-pane__heading">
         <h1 class="co-m-pane__title">Replication Controller Overview</h1>
       </div>
-      <div cos-tristate="rc" cos-tristate-error="loadError" class="co-m-pane__body">
-        <div ng-show="rc && !loadError" class="row">
-          <div class="col-lg-6">
-            <dl>
-              <dt>Current Count</dt>
-              <dd ng-bind="rc.status.replicas"></dd>
-              <dt>Desired Count</dt>
-              <dd ng-bind="rc.spec.replicas"></dd>
-              <dt>Replication Controller Labels</dt>
-              <dd><co-label-list kind="replicationcontroller" expand="true" labels="rc.metadata.labels"></co-label-list></dd>
-            </dl>
+      <div class="co-m-pane__body-group">
+
+        <div cos-tristate="rc" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
+          <div ng-show="rc && !loadError" class="row">
+            <div class="col-lg-6">
+              <dl>
+                <dt>Replication Controller Name</dt>
+                <dd ng-bind="rc.metadata.name | emptyPlaceholder"></dd>
+                <dt>Replication Controller Labels</dt>
+                <dd><co-label-list kind="replicationcontroller" expand="true" labels="rc.metadata.labels"></co-label-list></dd>
+                <dt>Pod Selector</dt>
+                <dd>
+                  <co-label-list kind="pod" selector="true" labels="rc.spec.selector"></co-label-list>
+                </dd>
+                <dt>Created At</dt>
+                <dd ng-bind="rc.metadata.creationTimestamp"></dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl>
+                <dt>Current Count</dt>
+                <dd ng-bind="rc.status.replicas | emptyPlaceholder"></dd>
+                <dt>Desired Count</dt>
+                <dd ng-bind="rc.spec.replicas | emptyPlaceholder"></dd>
+              </dl>
+            </div>
           </div>
-          <div class="col-lg-6">
-            <dl>
-              <dt>Created At</dt>
-              <dd ng-bind="rc.metadata.creationTimestamp"></dd>
-            </dl>
+
+          <div class="co-loader-wrapper cos-tristate-show-loading">
+            <co-loader></co-loader>
           </div>
+          <cos-status-box class="cos-tristate-show-error">
+            <div class="cos-error-title">Error Loading Replication Controller</div>
+            <div class="cos-text-center">An error occurred during replication controller retrieval. Please try again.</div>
+          </cos-status-box>
         </div>
 
-        <div class="co-loader-wrapper cos-tristate-show-loading">
-          <co-loader></co-loader>
+        <div class="co-m-pane__body-section--bordered">
+          <h1 class="co-m-pane__title">Matching Pods</h1>
         </div>
-        <cos-status-box class="cos-tristate-show-error">
-          <div class="cos-error-title">Error Loading Replication Controller</div>
-          <div class="cos-text-center">An error occurred during replication controller retrieval. Please try again.</div>
-        </cos-status-box>
-      </div>
+        <div class="co-m-pane__body-section">
+          <co-pod-list load="!!rc" error="loadError" namespace="rc.metadata.namespace" selector-required="true" selector="rc.spec.selector"></co-pod-list>
+        </div>
 
-      <div class="co-m-pane__heading">
-        <div class="row">
-          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">
-            <h1 class="co-m-pane__title">Running Pods</h1>
-          </div>
-          <div class="col-lg-9 col-md-8 col-sm-8 col-xs-6">
-            <co-label-list class="pull-right" kind="pod" selector="true" labels="rc.spec.selector"></co-label-list>
-          </div>
-        </div>
-      </div>
-      <div class="co-m-pane__body">
-        <co-pod-list load="!!rc" error="loadError" namespace="rc.metadata.namespace" selector-required="true" selector="rc.spec.selector"></co-pod-list>
       </div>
 
     </div>

@@ -17,7 +17,7 @@ angular.module('bridge.ui')
       fieldSelector: '=',
     },
     controller: function($scope) {
-      $scope.maxMessages = 1000;
+      $scope.maxMessages = 500;
       $scope.messages = [];
       $scope.oldestTimestamp = null;
 

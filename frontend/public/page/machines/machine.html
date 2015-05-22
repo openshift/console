@@ -10,32 +10,52 @@
     <div class="co-m-vert-nav__body">
 
       <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Machine Details</h1>
+        <h1 class="co-m-pane__title">Machine Overview</h1>
       </div>
       <div cos-tristate="machine" cos-tristate-error="loadError" class="co-m-pane__body">
-        <div ng-show="machine && !loadError">
-          <dl>
-            <dt>Status</dt>
-            <dd>
-              <div ng-repeat="condition in machine.status.conditions">
-                <div>
-                  Status <code ng-bind="condition.type"></code> is <code ng-bind="condition.status"></code>, because <code ng-bind="condition.reason"></code>.
-                </div>
-                <small>
-                  Last Heartbeat: <span ng-bind="condition.lastHeartbeatTime | customDate"></span>, Last Transition: <span ng-bind="condition.lastTransitionTime | customDate"></span>
-                </small>
-              </div>
-            </dd>
-            <dt>Machine Labels</dt>
-            <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
-            <dt>Machine ID</dt>
-            <dd ng-bind="machine.metadata.name"></dd>
-            <dt>Host IP Addresses</dt>
-            <dd ng-bind="machine.status.hostIP"></dd>
-            <dt>Created</dt>
-            <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
-          </dl>
+
+        <div class="row" ng-show="machine && !loadError">
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <dl>
+              <dt>Machine Name</dt>
+              <dd ng-bind="machine.metadata.name | emptyPlaceholder"></dd>
+              <dt>Machine ID</dt>
+              <dd ng-bind="machine.spec.externalID | emptyPlaceholder"></dd>
+              <dt>Host IP Address</dt>
+              <dd ng-bind="machine.status.hostIP | emptyPlaceholder"></dd>
+              <dt>Machine Labels</dt>
+              <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
+              <dt>Created</dt>
+              <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
+            </dl>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <h1 class="co-section-title">Machine Conditions</h1>
+            <div class="co-table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                    <th>Updated</th>
+                    <th>Changed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="c in machine.status.conditions">
+                    <td ng-bind="c.type"></td>
+                    <td ng-bind="c.status | emptyPlaceholder"></td>
+                    <td ng-bind="c.reason | emptyPlaceholder"></td>
+                    <td ng-bind="c.lastHeartbeatTime | customDate"></td>
+                    <td ng-bind="c.lastTransitionTime | customDate"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
+
         <div class="co-loader-wrapper cos-tristate-show-loading">
           <co-loader></co-loader>
         </div>

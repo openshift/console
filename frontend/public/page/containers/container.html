@@ -33,8 +33,7 @@
               <dd ng-bind="containerStatus.restartCount"></dd>
               <dt>Resource Limits</dt>
               <dd>
-                <span ng-show="getresourcelimitvalue()" ng-bind="getresourcelimitvalue()"></span>
-                <span ng-hide="getresourcelimitvalue()" ng-bind="CONST.placeholderText"></span>
+                <span ng-bind="getresourcelimitvalue() | emptyPlaceholder"></span>
               </dd>
               <dt>Lifecycle Hooks</dt>
               <dd>
