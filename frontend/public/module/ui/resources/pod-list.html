@@ -17,8 +17,8 @@
       <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
         <co-label-list kind="pod" labels="p.metadata.labels"></co-label-list>
       </div>
-      <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs" ng-bind="p.status.phase"></div>
-      <div class="col-lg-1 col-md-1 hidden-sm hidden-xs" ng-bind="p.spec.containers.length"></div>
+      <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs" ng-bind="p.status.phase | emptyPlaceholder"></div>
+      <div class="col-lg-1 col-md-1 hidden-sm hidden-xs" ng-bind="p.spec.containers.length | emptyPlaceholder"></div>
       <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">
         <a ng-href="/machines/{{p.spec.host}}" ng-bind="p.spec.host"></a>
       </div>
