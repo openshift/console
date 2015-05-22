@@ -107,6 +107,11 @@ angular.module('bridge', [
       templateUrl: '/static/page/services/service.html',
       title: 'Service',
     })
+    .when('/ns/:ns/services/:name/pods', {
+      controller: 'ServicePodsCtrl',
+      templateUrl: '/static/page/services/pods.html',
+      title: 'Service Pods',
+    })
     .when('/replicationcontrollers', {
       controller: 'ReplicationcontrollersCtrl',
       templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
@@ -131,6 +136,11 @@ angular.module('bridge', [
       controller: 'ReplicationcontrollerCtrl',
       templateUrl: '/static/page/replicationcontrollers/replicationcontroller.html',
       title: 'Replication Controller',
+    })
+    .when('/ns/:ns/replicationcontrollers/:name/pods', {
+      controller: 'ReplicationcontrollerPodsCtrl',
+      templateUrl: '/static/page/replicationcontrollers/pods.html',
+      title: 'Replication Controller Pods',
     })
     .when('/pods', {
       controller: 'PodsCtrl',

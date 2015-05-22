@@ -1,7 +1,6 @@
 angular.module('bridge.page')
-.controller('ServiceCtrl', function($scope, $routeParams, k8s) {
+.controller('ServicePodsCtrl', function($scope, $routeParams, k8s) {
   'use strict';
-
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
   $scope.serviceName = $routeParams.name;
   $scope.loadError = false;
@@ -15,5 +14,4 @@ angular.module('bridge.page')
       $scope.service = null;
       $scope.loadError = true;
     });
-
 });

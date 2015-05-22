@@ -1,17 +1,17 @@
-<div class="co-p-machine-pods">
+<div class="co-p-service-pods">
 
-  <co-nav-title title="{{machineName}}">
-    <a ng-href="/machines" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Machines</a>
+  <co-nav-title title="{{serviceName}}">
+    <a ng-href="/services" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Services</a>
   </co-nav-title>
 
   <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
-    <co-machine-nav name="machineName"></co-machine-nav>
+    <co-service-nav ns="ns" name="serviceName"></co-service-nav>
     <div class="co-m-vert-nav__body">
       <div class="co-m-pane__heading">
         <div class="row">
           <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-            <h1 class="co-m-pane__title">Pods scheduled to this Machine</h1>
+            <h1 class="co-m-pane__title">Matching Pods</h1>
           </div>
           <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
             <input ng-model="podSearch.metadata.name" type="text" class="form-control" placeholder="Filter pods by name...">
@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="co-m-pane__body">
-        <co-pod-list load="true" field-selector="fieldSelector" search="podSearch" error="loadError"></co-pod-list>
+        <co-pod-list load="!!service" error="loadError" search="podSearch" namespace="ns" selector-required="true" selector="service.spec.selector"></co-pod-list>
       </div>
     </div>
   </div>

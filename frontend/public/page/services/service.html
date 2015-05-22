@@ -1,58 +1,57 @@
 <div class="co-p-service">
 
-  <co-nav-title title="{{service.metadata.name}}">
+  <co-nav-title title="{{serviceName}}">
     <a ng-href="/services" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Services</a>
   </co-nav-title>
 
-  <div class="co-m-pane">
-    <div class="co-m-pane__heading">
-      <h1 class="co-m-pane__title">Service Overview</h1>
-    </div>
-    <div class="co-m-pane__body-group">
+  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+    <co-service-nav ns="ns" name="serviceName"></co-service-nav>
 
-      <div cos-tristate="service" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
-        <div ng-show="service && !loadError" class="row">
-          <div class="col-lg-6">
-            <dl>
-              <dt>Service Name</dt>
-              <dd ng-bind="service.metadata.name"></dd>
-              <dt>Service Labels</dt>
-              <dd>
-                <co-label-list kind="service" labels="service.metadata.labels"></co-label-list>
-              </dd>
-              <dt>Pod Selector</dt>
-              <dd>
-                <co-label-list kind="pod" selector="true" labels="service.spec.selector"></co-label-list>
-              </dd>
-              <dt>Created At</dt>
-              <dd ng-bind="service.metadata.creationTimestamp | date:CONST.dateTimeFmt"></dd>
-            </dl>
+    <div class="co-m-vert-nav__body">
+
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Service Overview</h1>
+      </div>
+      <div class="co-m-pane__body-group">
+
+        <div cos-tristate="service" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
+          <div ng-show="service && !loadError" class="row">
+            <div class="col-lg-6">
+              <dl>
+                <dt>Service Name</dt>
+                <dd ng-bind="service.metadata.name"></dd>
+                <dt>Service Labels</dt>
+                <dd>
+                  <co-label-list kind="service" labels="service.metadata.labels"></co-label-list>
+                </dd>
+                <dt>Pod Selector</dt>
+                <dd>
+                  <co-label-list kind="pod" selector="true" labels="service.spec.selector"></co-label-list>
+                </dd>
+                <dt>Created At</dt>
+                <dd ng-bind="service.metadata.creationTimestamp | date:CONST.dateTimeFmt"></dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl>
+                <dt>Service Address</dt>
+                <dd><co-service-ip-link service="service"></co-service-ip-link></dd>
+                <dt>Session Affinity</dt>
+                <dd ng-bind="service.spec.sessionAffinity | emptyPlaceholder"></dd>
+              </dl>
+            </div>
           </div>
-          <div class="col-lg-6">
-            <dl>
-              <dt>Service Address</dt>
-              <dd><co-service-ip-link service="service"></co-service-ip-link></dd>
-              <dt>Session Affinity</dt>
-              <dd ng-bind="service.spec.sessionAffinity | emptyPlaceholder"></dd>
-            </dl>
+
+          <div class="co-loader-wrapper cos-tristate-show-loading">
+            <co-loader></co-loader>
           </div>
+          <cos-status-box class="cos-tristate-show-error">
+            <div class="cos-error-title">Error Loading Service</div>
+            <div class="cos-text-center">An error occurred during service retrieval. Please try again.</div>
+          </cos-status-box>
         </div>
 
-        <div class="co-loader-wrapper cos-tristate-show-loading">
-          <co-loader></co-loader>
-        </div>
-        <cos-status-box class="cos-tristate-show-error">
-          <div class="cos-error-title">Error Loading Service</div>
-          <div class="cos-text-center">An error occurred during service retrieval. Please try again.</div>
-        </cos-status-box>
-      </div>
-
-      <div class="co-m-pane__body-section--bordered">
-        <h1 class="co-m-pane__title">Matching Pods</h1>
-      </div>
-      <div class="co-m-pane__body-section">
-        <co-pod-list error="loadError" load="!!service" namespace="service.metadata.namespace" selector-required="true" selector="service.spec.selector"></co-pod-list>
       </div>
 
     </div>
