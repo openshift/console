@@ -1,7 +1,6 @@
 angular.module('bridge.page')
-.controller('ReplicationcontrollerCtrl', function($scope, $routeParams, k8s) {
+.controller('ReplicationcontrollerPodsCtrl', function($scope, $routeParams, k8s) {
   'use strict';
-
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
   $scope.rcName = $routeParams.name;
   $scope.loadError = false;
@@ -15,12 +14,5 @@ angular.module('bridge.page')
       $scope.rc = null;
       $scope.loadError = true;
     });
-
-  $scope.getPodTemplateJson = function() {
-    if (!$scope.rc) {
-      return '';
-    }
-    return JSON.stringify($scope.rc.spec.template, null, 2);
-  };
 
 });

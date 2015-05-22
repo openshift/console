@@ -2,7 +2,8 @@ angular.module('bridge.page')
 .controller('EditReplicationcontrollerCtrl', function($scope, $location, $routeParams, _, k8s, ModalLauncherSvc) {
   'use strict';
 
-  $scope.ns = $routeParams.ns;
+  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.rcName = $routeParams.name;
   $scope.loadError = false;
   $scope.loaded = false;
   $scope.rc = {};

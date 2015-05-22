@@ -11,7 +11,8 @@ angular.module('bridge.page')
     restrict: 'E',
     replace: true,
     scope: {
-      rc: '='
+      ns: '=',
+      name: '=',
     }
   };
 
