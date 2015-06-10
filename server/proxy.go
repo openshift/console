@@ -2,16 +2,20 @@ package server
 
 import (
 	"crypto/tls"
-	"io"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"path"
-	"sync"
 	"time"
 
 	"github.com/coreos/pkg/log"
+	"github.com/coreos/pkg/netutil"
+)
+
+const (
+	proxyWriteDeadline = time.Second * 10
+	proxyReadDeadline  = time.Second * 10
 )
 
 type proxyConfig struct {
@@ -119,8 +123,6 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		log.Errorf("Hijack error: %v", err)
 		return
 	}
-	defer clientConn.Close()
-	defer targetConn.Close()
 
 	err = req.Write(targetConn)
 	if err != nil {
@@ -128,26 +130,5 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Proxy TCP; wait until both connections are closed so we can report
-	// errors.
-	var wg sync.WaitGroup
-	var clientToTargErr error
-	var targToClientErr error
-	wg.Add(2)
-	cp := func(dst io.Writer, src io.Reader, dstErr *error) {
-		_, err := io.Copy(dst, src)
-		*dstErr = err
-		wg.Done()
-	}
-	go cp(clientConn, targetConn, &targToClientErr)
-	go cp(targetConn, clientConn, &clientToTargErr)
-	wg.Wait()
-
-	if clientToTargErr != nil {
-		log.Errorf("error writing from client to target: %v", clientToTargErr)
-	}
-
-	if targToClientErr != nil {
-		log.Errorf("error writing from target to client: %v", targToClientErr)
-	}
+	netutil.ProxyTCP(clientConn, targetConn, proxyWriteDeadline, proxyReadDeadline)
 }

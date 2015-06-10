@@ -2,7 +2,6 @@ package server
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -111,7 +110,7 @@ func TestProxyDirector(t *testing.T) {
 }
 
 func TestProxyWebsocket(t *testing.T) {
-	proxyURL, closer, err := startProxyServer()
+	proxyURL, closer, err := startProxyServer(t)
 	if err != nil {
 		t.Fatalf("problem setting up proxy server: %v", err)
 	}
@@ -135,7 +134,7 @@ func TestProxyWebsocket(t *testing.T) {
 }
 
 func TestProxyHTTP(t *testing.T) {
-	proxyURL, closer, err := startProxyServer()
+	proxyURL, closer, err := startProxyServer(t)
 	if err != nil {
 		t.Fatalf("problem setting up proxy server: %v", err)
 	}
@@ -162,10 +161,10 @@ func TestProxyHTTP(t *testing.T) {
 // endppint which receives strings and responds with lowercased versions of
 // those strings.
 // The proxy server proxies requests to the underlying server on the endpoint "/proxy".
-func startProxyServer() (string, func(), error) {
+func startProxyServer(t *testing.T) (string, func(), error) {
 	// Setup the server we want to proxy.
 	mux := http.NewServeMux()
-	mux.Handle("/lower", websocket.Handler(lowercaseServer))
+	mux.Handle("/lower", websocket.Handler(lowercaseServer(t)))
 	mux.HandleFunc("/static", staticServer)
 	server := httptest.NewServer(mux)
 
@@ -188,19 +187,19 @@ func startProxyServer() (string, func(), error) {
 	}, nil
 }
 
-func lowercaseServer(ws *websocket.Conn) {
-	for {
-		str, err := readStringFromWS(ws)
-		if err != nil {
-			log.Fatalf("err reading from websocket: %v", err)
+func lowercaseServer(t *testing.T) func(ws *websocket.Conn) {
+	return func(ws *websocket.Conn) {
+		for {
+			str, err := readStringFromWS(ws)
+			if err != nil {
+				t.Fatalf("err reading from websocket: %v", err)
+			}
+			_, err = ws.Write([]byte(strings.ToLower(str)))
+			if err != nil {
+				t.Fatalf("err reading to websocket: %v", err)
+			}
 			return
 		}
-		_, err = ws.Write([]byte(strings.ToLower(str)))
-		if err != nil {
-			log.Fatalf("err reading to websocket: %v", err)
-			return
-		}
-		return
 	}
 }
 
