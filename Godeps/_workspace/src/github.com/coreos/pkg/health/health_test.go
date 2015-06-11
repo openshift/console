@@ -140,7 +140,7 @@ func TestHandlerFunc(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := &http.Request{}
 		r.Method = test.method
-		test.checker.MakeHealthHandlerFunc()(w, r)
+		test.checker.ServeHTTP(w, r)
 		if w.Code != test.expectedCode {
 			t.Errorf("case %d: w.code == %v, want %v", i, w.Code, test.expectedCode)
 		}

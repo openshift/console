@@ -63,7 +63,7 @@ func (s *Server) HTTPHandler() http.Handler {
 				},
 			),
 		},
-	}.MakeHealthHandlerFunc())
+	}.ServeHTTP)
 
 	return http.Handler(mux)
 }
