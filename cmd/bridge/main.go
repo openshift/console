@@ -9,19 +9,25 @@ import (
 	"os"
 	"path"
 
+	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
-	"github.com/coreos/pkg/log"
 
 	"github.com/coreos-inc/bridge/etcd"
 	"github.com/coreos-inc/bridge/fleet"
 	"github.com/coreos-inc/bridge/server"
 )
 
+var (
+	log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "cmd/main")
+)
+
 func main() {
+	rl := capnslog.MustRepoLogger("github.com/coreos-inc/bridge")
+	capnslog.SetFormatter(capnslog.NewStringFormatter(os.Stderr))
+
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	listen := fs.String("listen", "http://0.0.0.0:9000", "")
-	logDebug := fs.Bool("log-debug", false, "log debug-level information")
-	logTimestamps := fs.Bool("log-timestamps", false, "prefix log lines with timestamps")
+	logLevel := fs.String("log-level", "", "level of logging information by package (pkg=level)")
 	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
 	etcdEndpoints := fs.String("etcd-endpoints", "http://localhost:4001", "comma separated list of etcd endpoints")
 	fleetEndpoint := fs.String("fleet-endpoint", "unix://var/run/fleet.sock", "fleet API endpoint")
@@ -41,12 +47,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	if *logDebug {
-		log.EnableDebug()
-	}
-
-	if *logTimestamps {
-		log.EnableTimestamps()
+	capnslog.SetGlobalLogLevel(capnslog.INFO)
+	if *logLevel != "" {
+		llc, err := rl.ParseLogLevelConfig(*logLevel)
+		if err != nil {
+			log.Fatal(err)
+		}
+		rl.SetLogLevel(llc)
+		log.Infof("Setting log level to %s", *logLevel)
 	}
 
 	tpls, err := template.ParseFiles(path.Join(*publicDir, server.IndexPageTemplateName))

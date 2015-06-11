@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
@@ -19,7 +18,7 @@ func sendResponse(rw http.ResponseWriter, code int, resp interface{}) {
 
 	_, err = rw.Write(enc)
 	if err != nil {
-		log.Printf("Failed sending HTTP response body: %v", err)
+		log.Errorf("Failed sending HTTP response body: %v", err)
 	}
 }
 

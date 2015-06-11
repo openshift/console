@@ -9,7 +9,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/coreos/pkg/log"
 	"github.com/coreos/pkg/netutil"
 )
 

@@ -5,9 +5,12 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/coreos/pkg/log"
-
 	"github.com/coreos-inc/bridge/schema"
+	"github.com/coreos/pkg/capnslog"
+)
+
+var (
+	log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "server")
 )
 
 func registerDiscovery(prefix string, mux *http.ServeMux) {
