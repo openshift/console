@@ -27,7 +27,7 @@ angular.module('k8s')
         namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
-        createExternalLoadBalancer: false,
+        type: 'clusterIP',
         ports: [],
         clusterIP: null,
         publicIPs: [],
