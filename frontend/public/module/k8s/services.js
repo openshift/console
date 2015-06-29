@@ -29,7 +29,7 @@ angular.module('k8s')
       spec: {
         createExternalLoadBalancer: false,
         ports: [],
-        portalIP: null,
+        clusterIP: null,
         publicIPs: [],
         selector: null,
         sessionAffinity: 'None',
