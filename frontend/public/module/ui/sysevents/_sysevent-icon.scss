@@ -74,7 +74,7 @@
   }
 }
 
-.co-sysevent-icon--node-online {
+.co-sysevent-icon--node-nodeready {
   &:before {
     // fa-check
     content: "\f00c";
@@ -84,7 +84,7 @@
   }
 }
 
-.co-sysevent-icon--node-offline {
+.co-sysevent-icon--node-nodenotready {
   background-color: $color-red-failure;
   &:before {
     // fa-times
