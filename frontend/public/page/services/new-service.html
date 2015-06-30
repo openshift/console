@@ -31,15 +31,6 @@
             <small class="text-muted">Labels used to identify this service. Use a label like app=frontend to group related services.</small>
           </div>
         </div>
-        <div class="row co-m-form-row">
-          <div class="col-sm-2">
-            <label class="control-label">Pod Label Selector:</label>
-          </div>
-          <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="service.spec.selector" kind="pod" selector="true"></co-label-input>
-            <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
-          </div>
-        </div>
 
         <div class="row co-m-form-row">
           <div class="col-sm-2">
@@ -115,6 +106,15 @@
           </div>
         </div>
 
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label class="control-label">Pod Label Selector:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <co-label-input ng-model="service.spec.selector" kind="pod" selector="true"></co-label-input>
+            <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
+          </div>
+        </div>
         <div class="row co-m-form-row">
           <div class="col-sm-2">
             <label for="input-target-port" class="control-label">Target Port:</label>
