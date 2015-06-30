@@ -4,7 +4,7 @@ angular.module('k8s')
 
   this.clean = function(service) {
     k8sUtil.nullifyEmpty(service.metadata, ['annotations', 'labels']);
-    k8sUtil.nullifyEmpty(service.spec, ['publicIPs']);
+    k8sUtil.nullifyEmpty(service.spec, ['ports']);
     k8sUtil.deleteNulls(service.metadata);
     k8sUtil.deleteNulls(service.spec);
   };
@@ -15,6 +15,7 @@ angular.module('k8s')
       port: null,
       targetPort: null,
       protocol: 'TCP',
+      nodePort: null,
     };
   };
 
@@ -27,10 +28,9 @@ angular.module('k8s')
         namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
-        createExternalLoadBalancer: false,
+        type: 'ClusterIP',
         ports: [],
-        portalIP: null,
-        publicIPs: [],
+        clusterIP: null,
         selector: null,
         sessionAffinity: 'None',
       },

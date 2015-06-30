@@ -13,6 +13,7 @@ import (
 
 const (
 	BridgeAPIVersion      = "v1"
+	K8sAPIVersion         = "v1"
 	IndexPageTemplateName = "index.html"
 )
 
@@ -58,7 +59,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		Checks: []health.Checkable{
 			newK8sAPICheck(
 				k8sAPICheckConfig{
-					version:  s.K8sConfig.APIVersion,
+					version:  K8sAPIVersion,
 					endpoint: s.K8sConfig.Endpoint,
 				},
 			),
@@ -80,7 +81,7 @@ func (s *Server) k8sHandler() http.Handler {
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		K8sVersion: s.K8sConfig.APIVersion,
+		K8sVersion: K8sAPIVersion,
 	}
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

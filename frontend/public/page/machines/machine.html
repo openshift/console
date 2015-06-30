@@ -22,7 +22,7 @@
               <dt>Machine ID</dt>
               <dd ng-bind="machine.spec.externalID | emptyPlaceholder"></dd>
               <dt>Host IP Address</dt>
-              <dd ng-bind="machine.status.hostIP | emptyPlaceholder"></dd>
+              <dd ng-bind="getAddresses(machine.status) | emptyPlaceholder"></dd>
               <dt>Machine Labels</dt>
               <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
               <dt>Created</dt>
@@ -30,29 +30,64 @@
             </dl>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <h1 class="co-section-title">Machine Conditions</h1>
-            <div class="co-table-container">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Reason</th>
-                    <th>Updated</th>
-                    <th>Changed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr ng-repeat="c in machine.status.conditions">
-                    <td ng-bind="c.type"></td>
-                    <td ng-bind="c.status | emptyPlaceholder"></td>
-                    <td ng-bind="c.reason | emptyPlaceholder"></td>
-                    <td ng-bind="c.lastHeartbeatTime | customDate"></td>
-                    <td ng-bind="c.lastTransitionTime | customDate"></td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <div class="row">
+              <div class="col-sm-12">
+                <h1 class="co-section-title">Machine Info</h1>
+              </div>
             </div>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <dl>
+                  <dt>OS Image</dt>
+                  <dd ng-bind="machine.status.nodeInfo.osImage | emptyPlaceholder"></dd>
+                  <dt>Kernel Version</dt>
+                  <dd ng-bind="machine.status.nodeInfo.kernelVersion | emptyPlaceholder"></dd>
+                  <dt>Boot ID</dt>
+                  <dd ng-bind="machine.status.nodeInfo.bootID | emptyPlaceholder"></dd>
+                </dl>
+              </div>
+              <div class="col-sm-6">
+                <dl>
+                  <dt>Container Runtime</dt>
+                  <dd ng-bind="machine.status.nodeInfo.containerRuntimeVersion | emptyPlaceholder"></dd>
+                  <dt>Kubelet Version</dt>
+                  <dd ng-bind="machine.status.nodeInfo.kubeletVersion | emptyPlaceholder"></dd>
+                  <dt>Kube-Proxy Version</dt>
+                  <dd ng-bind="machine.status.nodeInfo.kubeProxyVersion | emptyPlaceholder"></dd>
+                </dl>
+              </div>
+            </div>
+
+            <div class="row co-p-machine__machine-coditions">
+              <div class="col-sm-12">
+                <h1 class="co-section-title">Machine Conditions</h1>
+                <div class="co-table-container">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                        <th>Updated</th>
+                        <th>Changed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="c in machine.status.conditions">
+                        <td ng-bind="c.type"></td>
+                        <td ng-bind="c.status | emptyPlaceholder"></td>
+                        <td ng-bind="c.reason | emptyPlaceholder"></td>
+                        <td ng-bind="c.lastHeartbeatTime | customDate"></td>
+                        <td ng-bind="c.lastTransitionTime | customDate"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 

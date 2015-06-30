@@ -15,6 +15,9 @@ angular.module('bridge.ui')
           'protocol: ' + portObj.protocol,
           'target port:' + portObj.targetPort,
         ];
+        if (portObj.nodePort) {
+          parts.push('node port: ' + portObj.nodePort);
+        }
         if (portObj.name) {
           parts.push('name: ' + portObj.name);
         }

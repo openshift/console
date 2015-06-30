@@ -31,8 +31,7 @@ func main() {
 	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
 	etcdEndpoints := fs.String("etcd-endpoints", "http://localhost:4001", "comma separated list of etcd endpoints")
 	fleetEndpoint := fs.String("fleet-endpoint", "unix://var/run/fleet.sock", "fleet API endpoint")
-	k8sEndpoint := fs.String("k8s-endpoint", "https://172.17.8.101:29101", "URL of the Kubernetes API server")
-	k8sAPIVersion := fs.String("k8s-api-version", "v1beta3", "version of Kubernetes API to use")
+	k8sEndpoint := fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server")
 	k8sAPIService := fs.String("k8s-api-service", "", "fleet service name to inspect for api server status")
 	k8sControllerManagerService := fs.String("k8s-controller-manager-service", "", "fleet service name to inspect for controller manager status")
 	k8sSchedulerService := fs.String("k8s-scheduler-service", "", "fleet service name to inspect for scheduler status")
@@ -91,13 +90,8 @@ func main() {
 		log.Fatal("Missing required flag: --k8s-endpoint")
 	}
 
-	if *k8sAPIVersion == "" {
-		log.Fatal("Missing required flag: --k8s-api-version")
-	}
-
 	kCfg := &server.K8sConfig{
 		Endpoint:                 k8sURL,
-		APIVersion:               *k8sAPIVersion,
 		APIService:               *k8sAPIService,
 		ControllerManagerService: *k8sControllerManagerService,
 		SchedulerService:         *k8sSchedulerService,
