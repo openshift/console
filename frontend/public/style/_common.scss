@@ -1,3 +1,24 @@
+.co-block {
+  display: block;
+}
+
+.co-inline-block {
+  display: inline-block;
+}
+
+.co-indent {
+  margin-left: 20px;
+}
+
+.co-vert-margin {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.co-no-bold {
+  font-weight: normal;
+}
+
 .co-click-target {
   cursor: default;
 }

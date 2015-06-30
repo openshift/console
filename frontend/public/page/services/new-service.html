@@ -33,6 +33,16 @@
         </div>
         <div class="row co-m-form-row">
           <div class="col-sm-2">
+            <label class="control-label">Pod Label Selector:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <co-label-input ng-model="service.spec.selector" kind="pod" selector="true"></co-label-input>
+            <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
+          </div>
+        </div>
+
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
             <label for="input-service-port" class="control-label">Service Port:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
@@ -43,15 +53,68 @@
             </small>
           </div>
         </div>
+
         <div class="row co-m-form-row">
           <div class="col-sm-2">
-            <label class="control-label">Pod Label Selector:</label>
+            <label class="control-label">Routing Method:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <co-label-input ng-model="service.spec.selector" kind="pod" selector="true"></co-label-input>
-            <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
+
+            <div>
+              <label class="control-label">
+                <input ng-model="service.spec.type" required type="radio" name="serviceType" value="ClusterIP"/>
+                Internal Cluster IP <span class="co-no-bold">(default)</span>
+              </label>
+              <div class="co-indent">
+                <small class="co-block text-muted">
+                  Access the service from within the cluster from a dedicated virtual IP.
+                  Use any valid port you'd like, this won't conflict with any other service.
+                </small>
+              </div>
+            </div>
+
+            <div>
+              <label class="control-label">
+                <input ng-model="service.spec.type" required type="radio" name="serviceType" value="NodePort"/>
+                Machine Port &amp; Internal Cluster IP
+              </label>
+              <div class="co-indent">
+                <small class="co-block text-muted">
+                  Access this service via a specific port on each machine in the cluster.
+                  Useful for some cloud load balancers.
+                </small>
+                <label class="control-label co-block co-vert-margin">
+                  <input type="radio"
+                    ng-model="fields.nodePortAssignment"
+                    name="nodePortAssignment"
+                    value="auto"
+                    ng-disabled="service.spec.type == 'ClusterIP'"/>
+                  Assign an available port <span class="co-no-bold">(default)</span>
+                </label>
+                <label class="control-label co-block">
+                  <input type="radio"
+                    ng-model="fields.nodePortAssignment"
+                    name="nodePortAssignment"
+                    value="specify"
+                    ng-disabled="service.spec.type == 'ClusterIP'"/>
+                  Specify a port:
+                  <input ng-model="fields.portObj.nodePort"
+                    type="number"
+                    min="minPort"
+                    max="maxPort"
+                    class="co-inline-block co-indent co-no-bold form-control"
+                    ng-required="service.spec.type == 'NodePort' && fields.nodePortAssignment == 'specify'"
+                    ng-disabled="service.spec.type == 'ClusterIP' || fields.nodePortAssignment == 'auto'"/>
+                </label>
+                <small class="text-muted">
+                  Ports must be within the range: <span ng-bind="minPort"></span>-<span ng-bind="maxPort"></span>.
+                </small>
+              </div>
+            </div>
+
           </div>
         </div>
+
         <div class="row co-m-form-row">
           <div class="col-sm-2">
             <label for="input-target-port" class="control-label">Target Port:</label>
@@ -63,6 +126,7 @@
             </small>
           </div>
         </div>
+
         <div class="row co-m-form-row">
           <div class="co-m-form-col col-sm-10 col-sm-offset-2">
             <div co-btn-bar complete-promise="requestPromise">
@@ -74,6 +138,9 @@
         </div>
       </form>
     </div>
+
+    <co-debug obj="fields"></co-debug>
+    <co-debug obj="service"></co-debug>
 
   </div>
 
