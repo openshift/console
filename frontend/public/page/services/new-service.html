@@ -97,7 +97,7 @@
                     ng-required="service.spec.type == 'NodePort' && fields.nodePortAssignment == 'specify'"
                     ng-disabled="service.spec.type == 'ClusterIP' || fields.nodePortAssignment == 'auto'"/>
                 </label>
-                <small class="text-muted">
+                <small class="text-muted co-indent">
                   Ports must be within the range: <span ng-bind="minPort"></span>-<span ng-bind="maxPort"></span>.
                 </small>
               </div>
