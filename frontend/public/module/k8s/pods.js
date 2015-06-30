@@ -18,7 +18,7 @@ angular.module('k8s')
   fieldSelectors = {};
 
   fieldSelectors.nodeName = function(nodeName) {
-    return 'spec.host=' + nodeName;
+    return 'spec.nodeName=' + nodeName;
   };
 
   fieldSelectors.node = function(node) {
