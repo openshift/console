@@ -15,6 +15,7 @@ angular.module('k8s')
       port: null,
       targetPort: null,
       protocol: 'TCP',
+      nodePort: null,
     };
   };
 
@@ -27,7 +28,7 @@ angular.module('k8s')
         namespace: ns || k8sEnum.DefaultNS,
       },
       spec: {
-        type: 'clusterIP',
+        type: 'ClusterIP',
         ports: [],
         clusterIP: null,
         selector: null,
