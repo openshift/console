@@ -95,3 +95,13 @@
     transform: translate(60%, 40%);
   }
 }
+
+.co-sysevent-icon--node-rebooted {
+  &:before {
+    // fa-repeat
+    content: "\f01e";
+    display: inline-block;
+    -webkit-transform: translate(50%, 40%);
+    transform: translate(50%, 40%);
+  }
+}
