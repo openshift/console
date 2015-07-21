@@ -82,19 +82,20 @@ angular.module('bridge.ui')
       }
 
       function updateImageFields(image) {
-        var parts;
+        var tagColonIdx;
         if (!image) {
           $scope.fields = getEmptyFields();
           return;
         }
-        parts = image.split(':');
-        if (parts.length > 0) {
-          $scope.fields.containerImage = parts[0];
-        }
-        if (parts.length > 1) {
-          $scope.fields.containerTag = parts[1];
-        } else {
-          $scope.fields.containerTag = 'latest';
+        tagColonIdx = image.lastIndexOf(':');
+        if (tagColonIdx) {
+          $scope.fields.containerImage = image.slice(0, tagColonIdx);
+
+          if (tagColonIdx < image.length) {
+            $scope.fields.containerTag = image.slice(tagColonIdx + 1);
+          } else {
+            $scope.fields.containerTag = 'latest';
+          }
         }
       }
 
