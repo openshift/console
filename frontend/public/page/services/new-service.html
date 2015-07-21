@@ -91,8 +91,8 @@
                   Specify a port:
                   <input ng-model="fields.portObj.nodePort"
                     type="number"
-                    min="minPort"
-                    max="maxPort"
+                    min="{{minPort}}"
+                    max="{{maxPort}}"
                     class="co-inline-block co-indent co-no-bold form-control"
                     ng-required="service.spec.type == 'NodePort' && fields.nodePortAssignment == 'specify'"
                     ng-disabled="service.spec.type == 'ClusterIP' || fields.nodePortAssignment == 'auto'"/>
