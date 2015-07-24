@@ -49,7 +49,7 @@ angular.module('k8s')
       },
       spec: {
         containers: [],
-        dnsPolicy: 'Default',
+        dnsPolicy: 'ClusterFirst',
         restartPolicy: defaultRestartPolicy.id,
         volumes: [],
       },
