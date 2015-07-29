@@ -9,10 +9,11 @@ package getwithoutbody
 
 import (
 	"bytes"
-	"google.golang.org/api/googleapi"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"golang.org/x/net/context"
+	"google.golang.org/api/googleapi"
 	"io"
 	"net/http"
 	"net/url"
@@ -31,6 +32,7 @@ var _ = url.Parse
 var _ = googleapi.Version
 var _ = errors.New
 var _ = strings.Replace
+var _ = context.Background
 
 const apiId = "getwithoutbody:v1"
 const apiName = "getwithoutbody"
@@ -47,10 +49,18 @@ func New(client *http.Client) (*Service, error) {
 }
 
 type Service struct {
-	client   *http.Client
-	BasePath string // API endpoint base URL
+	client    *http.Client
+	BasePath  string // API endpoint base URL
+	UserAgent string // optional additional User-Agent fragment
 
 	MetricDescriptors *MetricDescriptorsService
+}
+
+func (s *Service) userAgent() string {
+	if s.UserAgent == "" {
+		return googleapi.UserAgent
+	}
+	return googleapi.UserAgent + " " + s.UserAgent
 }
 
 func NewMetricDescriptorsService(s *Service) *MetricDescriptorsService {
@@ -144,7 +154,7 @@ func (c *MetricDescriptorsListCall) Do() (*ListMetricResponse, error) {
 	googleapi.Expand(req.URL, map[string]string{
 		"project": c.project,
 	})
-	req.Header.Set("User-Agent", "google-api-go-client/0.5")
+	req.Header.Set("User-Agent", c.s.userAgent())
 	res, err := c.s.client.Do(req)
 	if err != nil {
 		return nil, err
