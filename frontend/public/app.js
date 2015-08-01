@@ -263,6 +263,21 @@ angular.module('bridge', [
     }
   });
 
+  // Completely destroys Angular and reload page if in angular redirect loop.
+  // NOTE: this is a big stupid hack to get around an Angular bug wich is triggered by a Chrome bug.
+  // see: https://github.com/coreos-inc/bridge/issues/270
+  $rootScope.$on('$locationChangeStart', function(e, currURL) {
+    if (currURL === $window.location.origin + '/#') {
+      e.preventDefault();
+      $rootScope.$destroy();
+      $rootScope.$$watchers = [];
+      $rootScope.$$postDigestQueue = [];
+      $rootScope.$$asyncQueue = [];
+      $rootScope.$$listeners = null;
+      $window.location.href = '/';
+    }
+  });
+
   $rootScope.$on('xhr-error-unauthorized', function(e, rejection) {
     if (rejection && rejection.status === 401) {
       authSvc.logout($window.location.pathname);
