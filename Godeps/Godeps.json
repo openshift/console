@@ -6,32 +6,76 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/coreos/go-oidc/http",
+			"Rev": "ff509aeb8329b51256cc6d999acdb8956c8f3325"
+		},
+		{
+			"ImportPath": "github.com/coreos/go-oidc/jose",
+			"Rev": "ff509aeb8329b51256cc6d999acdb8956c8f3325"
+		},
+		{
+			"ImportPath": "github.com/coreos/go-oidc/key",
+			"Rev": "ff509aeb8329b51256cc6d999acdb8956c8f3325"
+		},
+		{
+			"ImportPath": "github.com/coreos/go-oidc/oauth2",
+			"Rev": "ff509aeb8329b51256cc6d999acdb8956c8f3325"
+		},
+		{
+			"ImportPath": "github.com/coreos/go-oidc/oidc",
+			"Rev": "ff509aeb8329b51256cc6d999acdb8956c8f3325"
+		},
+		{
 			"ImportPath": "github.com/coreos/pkg/capnslog",
-			"Rev": "8cf47902fc7e38c7b3cc6c407a4df1e15886ecd3"
+			"Rev": "7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3"
 		},
 		{
 			"ImportPath": "github.com/coreos/pkg/flagutil",
-			"Rev": "8cf47902fc7e38c7b3cc6c407a4df1e15886ecd3"
+			"Rev": "7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3"
 		},
 		{
 			"ImportPath": "github.com/coreos/pkg/health",
-			"Rev": "8cf47902fc7e38c7b3cc6c407a4df1e15886ecd3"
+			"Rev": "7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3"
 		},
 		{
 			"ImportPath": "github.com/coreos/pkg/httputil",
-			"Rev": "8cf47902fc7e38c7b3cc6c407a4df1e15886ecd3"
+			"Rev": "7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3"
 		},
 		{
 			"ImportPath": "github.com/coreos/pkg/netutil",
-			"Rev": "8cf47902fc7e38c7b3cc6c407a4df1e15886ecd3"
+			"Rev": "7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3"
+		},
+		{
+			"ImportPath": "github.com/coreos/pkg/timeutil",
+			"Rev": "7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3"
+		},
+		{
+			"ImportPath": "github.com/jonboulle/clockwork",
+			"Rev": "3f831b65b61282ba6bece21b91beea2edc4c887a"
+		},
+		{
+			"ImportPath": "github.com/kylelemons/godebug/diff",
+			"Rev": "21cb3784d9bda523911b96719efba02b7e983256"
+		},
+		{
+			"ImportPath": "github.com/kylelemons/godebug/pretty",
+			"Rev": "21cb3784d9bda523911b96719efba02b7e983256"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "669b27b881d6d006def7db14d534acdc5aba342b"
 		},
 		{
 			"ImportPath": "golang.org/x/net/websocket",
-			"Rev": "7dbad50ab5b31073856416cdcfeb2796d682f844"
+			"Rev": "669b27b881d6d006def7db14d534acdc5aba342b"
+		},
+		{
+			"ImportPath": "google.golang.org/api/google-api-go-generator",
+			"Rev": "cf0f7d2e30720b820fc9ec9f768ad765a27d641b"
 		},
 		{
 			"ImportPath": "google.golang.org/api/googleapi",
-			"Rev": "d3edb0282bde692467788c50070a9211afe75cf3"
+			"Rev": "cf0f7d2e30720b820fc9ec9f768ad765a27d641b"
 		}
 	]
 }

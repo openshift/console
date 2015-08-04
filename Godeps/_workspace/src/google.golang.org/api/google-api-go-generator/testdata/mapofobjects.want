@@ -9,10 +9,11 @@ package additionalpropsobjs
 
 import (
 	"bytes"
-	"google.golang.org/api/googleapi"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"golang.org/x/net/context"
+	"google.golang.org/api/googleapi"
 	"io"
 	"net/http"
 	"net/url"
@@ -31,6 +32,7 @@ var _ = url.Parse
 var _ = googleapi.Version
 var _ = errors.New
 var _ = strings.Replace
+var _ = context.Background
 
 const apiId = "additionalpropsobjs:v1"
 const apiName = "additionalpropsobjs"
@@ -46,8 +48,16 @@ func New(client *http.Client) (*Service, error) {
 }
 
 type Service struct {
-	client   *http.Client
-	BasePath string // API endpoint base URL
+	client    *http.Client
+	BasePath  string // API endpoint base URL
+	UserAgent string // optional additional User-Agent fragment
+}
+
+func (s *Service) userAgent() string {
+	if s.UserAgent == "" {
+		return googleapi.UserAgent
+	}
+	return googleapi.UserAgent + " " + s.UserAgent
 }
 
 type Entity struct {

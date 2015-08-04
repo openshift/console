@@ -9,10 +9,11 @@ package additionalpropsobjs
 
 import (
 	"bytes"
-	"google.golang.org/api/googleapi"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"golang.org/x/net/context"
+	"google.golang.org/api/googleapi"
 	"io"
 	"net/http"
 	"net/url"
@@ -31,6 +32,7 @@ var _ = url.Parse
 var _ = googleapi.Version
 var _ = errors.New
 var _ = strings.Replace
+var _ = context.Background
 
 const apiId = "additionalpropsobjs:v1"
 const apiName = "additionalpropsobjs"
@@ -46,8 +48,16 @@ func New(client *http.Client) (*Service, error) {
 }
 
 type Service struct {
-	client   *http.Client
-	BasePath string // API endpoint base URL
+	client    *http.Client
+	BasePath  string // API endpoint base URL
+	UserAgent string // optional additional User-Agent fragment
+}
+
+func (s *Service) userAgent() string {
+	if s.UserAgent == "" {
+		return googleapi.UserAgent
+	}
+	return googleapi.UserAgent + " " + s.UserAgent
 }
 
 type GeoJsonGeometry map[string]interface{}
@@ -118,6 +128,9 @@ type GeoJsonGeometryCollection struct {
 	Geometries []GeoJsonGeometry `json:"geometries,omitempty"`
 
 	// Type: Identifies this object as a GeoJsonGeometryCollection.
+	//
+	// Possible values:
+	//   "GeometryCollection"
 	Type string `json:"type,omitempty"`
 }
 
@@ -126,6 +139,9 @@ type GeoJsonLineString struct {
 	Coordinates [][]float64 `json:"coordinates,omitempty"`
 
 	// Type: Identifies this object as a GeoJsonLineString.
+	//
+	// Possible values:
+	//   "LineString"
 	Type string `json:"type,omitempty"`
 }
 
@@ -135,6 +151,9 @@ type GeoJsonMultiLineString struct {
 	Coordinates [][][]float64 `json:"coordinates,omitempty"`
 
 	// Type: Identifies this object as a GeoJsonMultiLineString.
+	//
+	// Possible values:
+	//   "MultiLineString"
 	Type string `json:"type,omitempty"`
 }
 
@@ -143,6 +162,9 @@ type GeoJsonMultiPoint struct {
 	Coordinates [][]float64 `json:"coordinates,omitempty"`
 
 	// Type: Identifies this object as a GeoJsonMultiPoint.
+	//
+	// Possible values:
+	//   "MultiPoint"
 	Type string `json:"type,omitempty"`
 }
 
@@ -152,6 +174,9 @@ type GeoJsonMultiPolygon struct {
 	Coordinates [][][][]float64 `json:"coordinates,omitempty"`
 
 	// Type: Identifies this object as a GeoJsonMultiPolygon.
+	//
+	// Possible values:
+	//   "MultiPolygon"
 	Type string `json:"type,omitempty"`
 }
 
@@ -161,6 +186,9 @@ type GeoJsonPoint struct {
 	Coordinates []float64 `json:"coordinates,omitempty"`
 
 	// Type: Identifies this object as a GeoJsonPoint.
+	//
+	// Possible values:
+	//   "Point"
 	Type string `json:"type,omitempty"`
 }
 
@@ -174,6 +202,9 @@ type GeoJsonPolygon struct {
 	Coordinates [][][]float64 `json:"coordinates,omitempty"`
 
 	// Type: Identifies this object as a GeoJsonPolygon.
+	//
+	// Possible values:
+	//   "Polygon"
 	Type string `json:"type,omitempty"`
 }
 
@@ -196,6 +227,9 @@ type MapFolder struct {
 	Name string `json:"name,omitempty"`
 
 	// Type: Identifies this object as a MapFolder.
+	//
+	// Possible values:
+	//   "folder"
 	Type string `json:"type,omitempty"`
 
 	// Visibility: The visibility setting of this MapFolder. One of
@@ -246,6 +280,9 @@ type MapKmlLink struct {
 	Name string `json:"name,omitempty"`
 
 	// Type: Identifies this object as a MapKmlLink.
+	//
+	// Possible values:
+	//   "kmlLink"
 	Type string `json:"type,omitempty"`
 
 	// Visibility: The visibility setting of this MapKmlLink. One of
@@ -270,6 +307,9 @@ type MapLayer struct {
 	Name string `json:"name,omitempty"`
 
 	// Type: Identifies this object as a MapLayer.
+	//
+	// Possible values:
+	//   "layer"
 	Type string `json:"type,omitempty"`
 
 	// Visibility: The visibility setting of this MapLayer. One of

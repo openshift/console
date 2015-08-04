@@ -1,5 +1,5 @@
 angular.module('core.pkg')
-.factory('pkg', function(_) {
+.factory('pkg', function($window, _) {
   'use strict';
 
   var pkg = {
@@ -91,6 +91,12 @@ angular.module('core.pkg')
         return v;
       });
       return labels.join(separator || ' ');
+    },
+
+    md5: function(data) {
+      if ($window.md5) {
+        return $window.md5(data);
+      }
     },
 
   };
