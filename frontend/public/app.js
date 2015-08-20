@@ -65,13 +65,17 @@ angular.module('bridge', [
     $routeProvider.when(route, config);
   }
 
+  //r('/', {
+    //controller: 'ClusterStatusCtrl',
+    //templateUrl: '/static/page/cluster/status.html',
+    //title: 'Cluster Status',
+    //resolve: {
+      //client: 'ClientLoaderSvc'
+    //}
+  //});
+
   r('/', {
-    controller: 'ClusterStatusCtrl',
-    templateUrl: '/static/page/cluster/status.html',
-    title: 'Cluster Status',
-    resolve: {
-      client: 'ClientLoaderSvc'
-    }
+    redirectTo: '/services',
   });
   r('/apps', {
     controller: 'AppsCtrl',
