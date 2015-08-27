@@ -2,6 +2,7 @@ package server
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -56,15 +57,23 @@ func newProxy(cfg proxyConfig) *proxy {
 	if len(cfg.HeaderBlacklist) == 0 {
 		reverseProxy.Director = func(r *http.Request) {
 			proxy.rewriteURL(r)
+			proxy.maybeAddAuthorizationHeader(r)
 		}
 	} else {
 		reverseProxy.Director = func(r *http.Request) {
 			headerDirector(r)
 			proxy.rewriteURL(r)
+			proxy.maybeAddAuthorizationHeader(r)
 		}
 	}
 
 	return proxy
+}
+
+func (p *proxy) maybeAddAuthorizationHeader(req *http.Request) {
+	if p.k8sConfig.BearerToken != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.k8sConfig.BearerToken))
+	}
 }
 
 func (p *proxy) rewriteURL(req *http.Request) {
@@ -95,6 +104,7 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	*outreq = *req
 
 	p.rewriteURL(outreq)
+	p.maybeAddAuthorizationHeader(outreq)
 
 	var targetConn net.Conn
 	var err error

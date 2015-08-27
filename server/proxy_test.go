@@ -225,3 +225,54 @@ func toWSScheme(url_ string) string {
 	parsed.Scheme = "ws"
 	return parsed.String()
 }
+
+func TestProxyMaybeAddAuthorizationHeader(t *testing.T) {
+	tests := []struct {
+		tok  string
+		req  *http.Request
+		want string
+	}{
+		{
+			tok:  "",
+			req:  mustNewRequestWithHeader(t, http.Header{}),
+			want: "",
+		},
+		{
+			tok:  "",
+			req:  mustNewRequestWithHeader(t, http.Header{"Authorization": []string{"Bearer bar"}}),
+			want: "Bearer bar",
+		},
+		{
+			tok:  "foo",
+			req:  mustNewRequestWithHeader(t, http.Header{}),
+			want: "Bearer foo",
+		},
+		{
+			tok:  "foo",
+			req:  mustNewRequestWithHeader(t, http.Header{"Authorization": []string{"Bearer bar"}}),
+			want: "Bearer foo",
+		},
+	}
+
+	for i, tt := range tests {
+		p := &proxy{
+			k8sConfig: &K8sConfig{
+				BearerToken: tt.tok,
+			},
+		}
+		p.maybeAddAuthorizationHeader(tt.req)
+		got := tt.req.Header.Get("Authorization")
+		if tt.want != got {
+			t.Errorf("case %d: unexpected header: want=%q got=%q", i, tt.want, got)
+		}
+	}
+}
+
+func mustNewRequestWithHeader(t *testing.T, hdr http.Header) *http.Request {
+	req, err := http.NewRequest("GET", "http://example.com", nil)
+	if err != nil {
+		t.Fatalf("Failed generating HTTP request: %v", err)
+	}
+	req.Header = hdr
+	return req
+}
