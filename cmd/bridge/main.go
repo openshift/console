@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"html/template"
@@ -91,6 +92,7 @@ func main() {
 	kCfg := &server.K8sConfig{
 		Endpoint:                 k8sURL,
 		BearerToken:              *k8sBearerToken,
+		TLSClientConfig:          &tls.Config{InsecureSkipVerify: true},
 		APIService:               *k8sAPIService,
 		ControllerManagerService: *k8sControllerManagerService,
 		SchedulerService:         *k8sSchedulerService,

@@ -109,7 +109,7 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	var targetConn net.Conn
 	var err error
 	if p.k8sConfig.Endpoint.Scheme == "https" {
-		targetConn, err = tls.Dial("tcp", p.k8sConfig.Endpoint.Host, &tls.Config{InsecureSkipVerify: true})
+		targetConn, err = tls.Dial("tcp", p.k8sConfig.Endpoint.Host, p.k8sConfig.TLSClientConfig)
 	} else {
 		targetConn, err = net.Dial("tcp", p.k8sConfig.Endpoint.Host)
 	}
