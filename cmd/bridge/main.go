@@ -13,6 +13,7 @@ import (
 	"github.com/coreos/go-oidc/oidc"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
+	kclient "k8s.io/kubernetes/pkg/client/unversioned"
 
 	"github.com/coreos-inc/bridge/auth"
 	"github.com/coreos-inc/bridge/etcd"
@@ -34,8 +35,9 @@ func main() {
 	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
 	etcdEndpoints := fs.String("etcd-endpoints", "http://localhost:4001", "comma separated list of etcd endpoints")
 	fleetEndpoint := fs.String("fleet-endpoint", "unix://var/run/fleet.sock", "fleet API endpoint")
-	fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server")
-	k8sBearerToken := fs.String("k8s-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests. This should only be used when --disable-auth=true, as any OIDC-related authorization information will be blindly overridden.")
+	k8sInCluster := fs.Bool("k8s-in-cluster", false, "Configure --k8s-endpoint and --k8s-bearer-token from environment, typically used when deploying as a Kubernetes pod")
+	fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server, ignored when --k8s-in-cluster=true")
+	k8sBearerToken := fs.String("k8s-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests. This should only be used when --disable-auth=true, as any OIDC-related authorization information will be blindly overridden. This flag is ignored with --k8s-in-cluster=true")
 	k8sAPIService := fs.String("k8s-api-service", "", "fleet service name to inspect for api server status")
 	k8sControllerManagerService := fs.String("k8s-controller-manager-service", "", "fleet service name to inspect for controller manager status")
 	k8sSchedulerService := fs.String("k8s-scheduler-service", "", "fleet service name to inspect for scheduler status")
@@ -90,12 +92,25 @@ func main() {
 
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
 	kCfg := &server.K8sConfig{
-		Endpoint:                 k8sURL,
-		BearerToken:              *k8sBearerToken,
 		TLSClientConfig:          &tls.Config{InsecureSkipVerify: true},
 		APIService:               *k8sAPIService,
 		ControllerManagerService: *k8sControllerManagerService,
 		SchedulerService:         *k8sSchedulerService,
+	}
+
+	if *k8sInCluster {
+		cc, err := kclient.InClusterConfig()
+		if err != nil {
+			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
+		}
+		kCfg.Endpoint, err = url.Parse(cc.Host)
+		if err != nil {
+			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
+		}
+		kCfg.BearerToken = cc.BearerToken
+	} else {
+		kCfg.Endpoint = k8sURL
+		kCfg.BearerToken = *k8sBearerToken
 	}
 
 	srv := &server.Server{
