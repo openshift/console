@@ -97,7 +97,7 @@ func TestProxyDirector(t *testing.T) {
 
 	for i, tt := range tests {
 		cfg := proxyConfig{
-			Target:          tt.target,
+			K8sConfig:       &K8sConfig{Endpoint: &tt.target},
 			HeaderBlacklist: tt.blacklist,
 		}
 		p := newProxy(cfg)
@@ -175,7 +175,7 @@ func startProxyServer(t *testing.T) (string, func(), error) {
 	}
 	targetURL.Path = "/"
 	proxy := newProxy(proxyConfig{
-		Target: *targetURL,
+		K8sConfig: &K8sConfig{Endpoint: targetURL},
 	})
 	proxyMux := http.NewServeMux()
 	proxyMux.Handle("/proxy/", http.StripPrefix("/proxy/", proxy))

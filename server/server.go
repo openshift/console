@@ -93,10 +93,9 @@ func (s *Server) HTTPHandler() http.Handler {
 }
 
 func (s *Server) k8sHandler() http.Handler {
-	t := *s.K8sConfig.Endpoint
-	t.Path = "/api"
+	s.K8sConfig.Endpoint.Path = "/api"
 	proxy := newProxy(proxyConfig{
-		Target:          t,
+		K8sConfig:       s.K8sConfig,
 		HeaderBlacklist: []string{"Cookie"},
 	})
 	return proxy

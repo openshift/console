@@ -5,7 +5,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
-	"net/url"
 	"path"
 	"time"
 
@@ -19,12 +18,12 @@ const (
 
 type proxyConfig struct {
 	HeaderBlacklist []string
-	Target          url.URL
+	K8sConfig       *K8sConfig
 }
 
 type proxy struct {
 	reverseProxy *httputil.ReverseProxy
-	target       url.URL
+	k8sConfig    *K8sConfig
 }
 
 func newProxy(cfg proxyConfig) *proxy {
@@ -51,7 +50,7 @@ func newProxy(cfg proxyConfig) *proxy {
 	}
 	proxy := &proxy{
 		reverseProxy: reverseProxy,
-		target:       cfg.Target,
+		k8sConfig:    cfg.K8sConfig,
 	}
 
 	if len(cfg.HeaderBlacklist) == 0 {
@@ -69,10 +68,10 @@ func newProxy(cfg proxyConfig) *proxy {
 }
 
 func (p *proxy) rewriteURL(req *http.Request) {
-	req.Host = p.target.Host
-	req.URL.Host = p.target.Host
-	req.URL.Scheme = p.target.Scheme
-	req.URL.Path = path.Join(p.target.Path, req.URL.Path)
+	req.Host = p.k8sConfig.Endpoint.Host
+	req.URL.Host = p.k8sConfig.Endpoint.Host
+	req.URL.Scheme = p.k8sConfig.Endpoint.Scheme
+	req.URL.Path = path.Join(p.k8sConfig.Endpoint.Path, req.URL.Path)
 }
 
 func isWebsocket(req *http.Request) bool {
@@ -99,14 +98,14 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	var targetConn net.Conn
 	var err error
-	if p.target.Scheme == "https" {
-		targetConn, err = tls.Dial("tcp", p.target.Host, &tls.Config{InsecureSkipVerify: true})
+	if p.k8sConfig.Endpoint.Scheme == "https" {
+		targetConn, err = tls.Dial("tcp", p.k8sConfig.Endpoint.Host, &tls.Config{InsecureSkipVerify: true})
 	} else {
-		targetConn, err = net.Dial("tcp", p.target.Host)
+		targetConn, err = net.Dial("tcp", p.k8sConfig.Endpoint.Host)
 	}
 	if err != nil {
 		http.Error(res, "Error contacting Kubernetes API server.", http.StatusInternalServerError)
-		log.Errorf("error dialing websocket backend %s: %v", p.target.Host, err)
+		log.Errorf("error dialing websocket backend %s: %v", p.k8sConfig.Endpoint.Host, err)
 		return
 	}
 
