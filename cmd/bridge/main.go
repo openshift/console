@@ -34,6 +34,7 @@ func main() {
 	etcdEndpoints := fs.String("etcd-endpoints", "http://localhost:4001", "comma separated list of etcd endpoints")
 	fleetEndpoint := fs.String("fleet-endpoint", "unix://var/run/fleet.sock", "fleet API endpoint")
 	fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server")
+	k8sBearerToken := fs.String("k8s-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests. This should only be used when --disable-auth=true, as any OIDC-related authorization information will be blindly overridden.")
 	k8sAPIService := fs.String("k8s-api-service", "", "fleet service name to inspect for api server status")
 	k8sControllerManagerService := fs.String("k8s-controller-manager-service", "", "fleet service name to inspect for controller manager status")
 	k8sSchedulerService := fs.String("k8s-scheduler-service", "", "fleet service name to inspect for scheduler status")
@@ -89,6 +90,7 @@ func main() {
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
 	kCfg := &server.K8sConfig{
 		Endpoint:                 k8sURL,
+		BearerToken:              *k8sBearerToken,
 		APIService:               *k8sAPIService,
 		ControllerManagerService: *k8sControllerManagerService,
 		SchedulerService:         *k8sSchedulerService,
