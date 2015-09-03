@@ -1,15 +1,13 @@
 package server
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 
-	"github.com/coreos-inc/bridge/auth"
-	"github.com/coreos-inc/bridge/etcd"
-	"github.com/coreos-inc/bridge/fleet"
-
+	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
+
+	"github.com/coreos-inc/bridge/auth"
 )
 
 const (
@@ -24,18 +22,20 @@ const (
 	AuthSuccessURL       = "/"
 )
 
+var (
+	log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "server")
+)
+
 type jsGlobals struct {
 	K8sVersion   string `json:"k8sVersion"`
 	AuthDisabled bool   `json:"authDisabled"`
 }
 
 type Server struct {
-	FleetClient *fleet.Client
-	EtcdClient  *etcd.Client
-	K8sConfig   *K8sConfig
-	PublicDir   string
-	Templates   *template.Template
-	Auther      *auth.Authenticator
+	K8sConfig *K8sConfig
+	PublicDir string
+	Templates *template.Template
+	Auther    *auth.Authenticator
 }
 
 func (s *Server) AuthDisabled() bool {
@@ -50,17 +50,6 @@ func (s *Server) HTTPHandler() http.Handler {
 		k8sHandler = authMiddleware(s.Auther, s.k8sHandler())
 	}
 	mux.Handle("/api/kubernetes/", http.StripPrefix("/api/kubernetes/", k8sHandler))
-
-	bridgePrefix := fmt.Sprintf("/api/bridge/%s/", BridgeAPIVersion)
-	registerDiscovery(bridgePrefix, mux)
-	csCfg := clusterServiceConfig{
-		Mux:         mux,
-		Prefix:      bridgePrefix,
-		EtcdClient:  s.EtcdClient,
-		FleetClient: s.FleetClient,
-		K8sConfig:   s.K8sConfig,
-	}
-	registerClusterService(csCfg)
 
 	if !s.AuthDisabled() {
 		mux.HandleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)

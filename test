@@ -15,7 +15,7 @@ COVER=${COVER:-"-cover"}
 source ./build
 
 TESTABLE="auth server"
-FORMATTABLE="$TESTABLE cmd/bridge etcd fleet version"
+FORMATTABLE="$TESTABLE cmd/bridge version"
 
 # user has not provided PKG override
 if [ -z "$PKG" ]; then
