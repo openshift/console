@@ -16,8 +16,6 @@ import (
 	kclient "k8s.io/kubernetes/pkg/client/unversioned"
 
 	"github.com/coreos-inc/bridge/auth"
-	"github.com/coreos-inc/bridge/etcd"
-	"github.com/coreos-inc/bridge/fleet"
 	"github.com/coreos-inc/bridge/server"
 )
 
@@ -33,8 +31,6 @@ func main() {
 	fs.String("listen", "http://0.0.0.0:9000", "")
 	logLevel := fs.String("log-level", "", "level of logging information by package (pkg=level)")
 	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
-	etcdEndpoints := fs.String("etcd-endpoints", "http://localhost:4001", "comma separated list of etcd endpoints")
-	fleetEndpoint := fs.String("fleet-endpoint", "unix://var/run/fleet.sock", "fleet API endpoint")
 	k8sInCluster := fs.Bool("k8s-in-cluster", false, "Configure --k8s-endpoint and --k8s-bearer-token from environment, typically used when deploying as a Kubernetes pod")
 	fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server, ignored when --k8s-in-cluster=true")
 	k8sBearerToken := fs.String("k8s-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests. This should only be used when --disable-auth=true, as any OIDC-related authorization information will be blindly overridden. This flag is ignored with --k8s-in-cluster=true")
@@ -80,16 +76,6 @@ func main() {
 		log.Fatalf("Unable to listen using scheme: %s", lu.Scheme)
 	}
 
-	fleetClient, err := fleet.NewClient(*fleetEndpoint)
-	if err != nil {
-		log.Fatalf("Error initializing fleet client: %v", err)
-	}
-
-	etcdClient, err := etcd.NewClient(*etcdEndpoints)
-	if err != nil {
-		log.Fatalf("Error initializing etcd client: %v", err)
-	}
-
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
 	kCfg := &server.K8sConfig{
 		TLSClientConfig:          &tls.Config{InsecureSkipVerify: true},
@@ -114,11 +100,9 @@ func main() {
 	}
 
 	srv := &server.Server{
-		FleetClient: fleetClient,
-		EtcdClient:  etcdClient,
-		K8sConfig:   kCfg,
-		PublicDir:   *publicDir,
-		Templates:   tpls,
+		K8sConfig: kCfg,
+		PublicDir: *publicDir,
+		Templates: tpls,
 	}
 
 	if *disableAuth {
