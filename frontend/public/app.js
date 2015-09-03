@@ -21,7 +21,7 @@ angular.module('bridge', [
   'bridge.page',
   'core.pkg',
 ])
-.config(function($routeProvider, $locationProvider, $httpProvider, configSvcProvider, apiClientProvider,
+.config(function($routeProvider, $locationProvider, $httpProvider, configSvcProvider,
       errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {
   'use strict';
 
@@ -36,16 +36,6 @@ angular.module('bridge', [
     jsonParse: true,
     detectHost: true,
     detectScheme: true,
-  });
-
-  apiClientProvider.settings({
-    cache: false,
-    apis: [{
-      name: 'bridge',
-      id: 'bridge:v1',
-      rootUrl: window.location.origin,
-      discoveryEndpoint: window.location.origin + '/api/bridge/v1/discovery/v1/rest'
-    }]
   });
 
   errorMessageSvcProvider.registerFormatter('k8sApi', function(resp) {
@@ -69,9 +59,6 @@ angular.module('bridge', [
     //controller: 'ClusterStatusCtrl',
     //templateUrl: '/static/page/cluster/status.html',
     //title: 'Cluster Status',
-    //resolve: {
-      //client: 'ClientLoaderSvc'
-    //}
   //});
 
   r('/', {
@@ -223,17 +210,11 @@ angular.module('bridge', [
     controller: 'RegistriesCtrl',
     templateUrl: '/static/page/settings/registries.html',
     title: 'Configure Registries',
-    resolve: {
-      client: 'ClientLoaderSvc'
-    }
   });
   r('/settings/users', {
     controller: 'UsersCtrl',
     templateUrl: '/static/page/settings/users.html',
     title: 'Users & API Keys',
-    resolve: {
-      client: 'ClientLoaderSvc'
-    }
   });
   r('/welcome', {
     controller: 'WelcomeCtrl',

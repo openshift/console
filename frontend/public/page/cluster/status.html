@@ -11,7 +11,7 @@
             <co-status state="unknown" text="Cluster communication failure"></co-status>
             <small>The cluster API appears to be unreachable.</small>
           </div>
-          <div ng-show="etcd.state != 'unknown'">
+          <div ng-show="etcd && etcd.state != 'unknown'">
             <co-status state="{{etcd.state}}" text="{{etcd.message}}"></co-status>
             <small ng-bind-template="{{etcd.count}} members"></small>
           </div>
