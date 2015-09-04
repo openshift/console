@@ -4,10 +4,10 @@ angular.module('k8s')
 .service('k8sResource', function($q, $rootScope, $http, _, k8sConfig, k8sLabels, k8sEvents) {
   'use strict';
 
-  var basePath = k8sConfig.getBasePath();
+  var k8sPath = k8sConfig.getKubernetesPath();
 
   this.resourceURL = function(kind, options) {
-    var u = basePath,
+    var u = k8sPath,
         q,
         queryParams = _.omit(options, 'name', 'ns');
 
