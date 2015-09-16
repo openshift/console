@@ -9,8 +9,4 @@ type K8sConfig struct {
 	Endpoint        *url.URL
 	BearerToken     string
 	TLSClientConfig *tls.Config
-
-	APIService               string
-	ControllerManagerService string
-	SchedulerService         string
 }
