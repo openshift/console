@@ -43,20 +43,15 @@
           <li ng-if="!isAuthDisabled()">
             <img class="co-user-avatar" ng-if="emailHash()" ng-src="http://gravatar.com/avatar/{{emailHash()}}?s=32"/>
           </li>
-          <li class="dropdown pull-right">
+          <li id="account" ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)">
             <a href="#" class="dropdown-toggle">
-              <span ng-bind="email() || 'My Account'"></span>&nbsp;<b class="caret"></b>
+              <span class="email" ng-bind="email() || 'My Account'"></span>&nbsp;<i class="fa fa-cog co-settings-icon"></i>
             </a>
-            <ul class="dropdown-menu co-m-dropdown--dark">
-              <!--[><li><a href="/settings/users">Manage Users & API Keys</a></li><]-->
-              <!--[><li><a href="/settings/registries">Configure Registries</a></li><]-->
-              <li><a href="mailto:support@tectonic.com">Contact Support</a></li>
-              <li ng-class="{'disabled': isAuthDisabled()}"><a href="" ng-click="logout($event)">Logout</a></li>
-            </ul>
           </li>
         </ul>
 
       </co-navbar>
+      <co-side-menu></co-side-menu>
       <div id="co-l-view-container" class="container" ng-view co-error-page></div>
     </co-footer-wrapper>
 
@@ -87,6 +82,7 @@
     <script src="/static/module/k8s/labels.js"></script>
     <script src="/static/module/k8s/node.js"></script>
     <script src="/static/module/k8s/pods.js"></script>
+    <script src="/static/module/k8s/namespaces.js"></script>
     <script src="/static/module/k8s/probe.js"></script>
     <script src="/static/module/k8s/resource.js"></script>
     <script src="/static/module/k8s/services.js"></script>
@@ -109,6 +105,7 @@
     <script src="/static/module/service/interceptors.js"></script>
     <script src="/static/module/service/firehose.js"></script>
     <script src="/static/module/service/message.js"></script>
+    <script src="/static/module/service/side-menu.js"></script>
     <script src="/static/module/service/resource-mgr-svc.js"></script>
     <script src="/static/module/service/status.js"></script>
     <!-- filters -->
@@ -136,6 +133,7 @@
     <script src="/static/module/ui/labels/label-input.js"></script>
     <script src="/static/module/ui/resources/node-list.js"></script>
     <script src="/static/module/ui/resources/pod-list.js"></script>
+    <script src="/static/module/ui/resources/namespace-list.js"></script>
     <script src="/static/module/ui/resources/resource-link.js"></script>
     <script src="/static/module/ui/resources/resource-list.js"></script>
     <script src="/static/module/ui/resources/replication-controller-list.js"></script>
@@ -147,6 +145,8 @@
     <script src="/static/module/ui/toggle-play/toggle-play.js"></script>
     <script src="/static/module/ui/tristate/tristate.js"></script>
     <script src="/static/module/ui/util/autofocus.js"></script>
+    <script src="/static/module/ui/side-menu/side-menu-ctrl.js"></script>
+    <script src="/static/module/ui/side-menu/co-side-menu.js"></script>
     <script src="/static/module/ui/util/debug.js"></script>
     <!-- pages -->
     <script src="/static/page/_module.js"></script>
