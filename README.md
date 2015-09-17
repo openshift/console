@@ -33,6 +33,19 @@ Start the application:
 ./bin/bridge
 ```
 
+If running with auth disabled you must provide a Kubernetes bearer token.
+First get the secret ID that has a type of `kubernetes.io/service-account-token` by running:
+```
+kubectl get secrets
+```
+
+then get the secret contents:
+```
+kubectl describe secrets/<secret-id-obtained-previously>
+```
+
+Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable when running Bridge.
+
 ## Docker
 The `go-docker` script will run any command from a docker container to ensure a consistent build environment.
 For example to build with docker run:
