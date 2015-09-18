@@ -1,4 +1,4 @@
-.cluster-status-wrapper {
+.cluster-status-list {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -22,4 +22,8 @@
     margin-top: 0;
     white-space: nowrap;
   }
+}
+
+.cluster-loader-container {
+    text-align: center;
 }

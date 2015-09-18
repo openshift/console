@@ -34,9 +34,6 @@ func main() {
 	k8sInCluster := fs.Bool("k8s-in-cluster", false, "Configure --k8s-endpoint and --k8s-bearer-token from environment, typically used when deploying as a Kubernetes pod")
 	fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server, ignored when --k8s-in-cluster=true")
 	k8sBearerToken := fs.String("k8s-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests. This should only be used when --disable-auth=true, as any OIDC-related authorization information will be blindly overridden. This flag is ignored with --k8s-in-cluster=true")
-	k8sAPIService := fs.String("k8s-api-service", "", "fleet service name to inspect for api server status")
-	k8sControllerManagerService := fs.String("k8s-controller-manager-service", "", "fleet service name to inspect for controller manager status")
-	k8sSchedulerService := fs.String("k8s-scheduler-service", "", "fleet service name to inspect for scheduler status")
 	fs.String("host", "http://127.0.0.1:9000", "The externally visible hostname/port of the service. Used in OIDC/OAuth2 Redirect URL.")
 	disableAuth := fs.Bool("disable-auth", false, "Disable all forms of authentication.")
 	authClientID := fs.String("auth-client-id", "", "The OIDC OAuth2 Client ID.")
@@ -78,10 +75,7 @@ func main() {
 
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
 	kCfg := &server.K8sConfig{
-		TLSClientConfig:          &tls.Config{InsecureSkipVerify: true},
-		APIService:               *k8sAPIService,
-		ControllerManagerService: *k8sControllerManagerService,
-		SchedulerService:         *k8sSchedulerService,
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
 	if *k8sInCluster {

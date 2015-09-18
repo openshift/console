@@ -3,20 +3,25 @@ angular.module('k8s')
   'use strict';
 
   var basePath;
-  this.setBasePath = function(path) {
+  var apiVersion;
+  this.setKubernetesPath = function(path, version) {
     basePath = path;
+    apiVersion = version;
   };
   this.$get = function() {
     return {
+      getKubernetesPath: function() {
+        return basePath + apiVersion;
+      },
       getBasePath: function() {
         return basePath;
-      },
+      }
     };
   };
 })
 
-.service('k8s', function(_, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels, k8sPods, k8sServices, k8sDocker,
-  k8sReplicationcontrollers, k8sProbe, k8sNodes) {
+.service('k8s', function(_, $http, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
+                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sProbe, k8sNodes) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -74,4 +79,11 @@ angular.module('k8s')
     },
   });
 
+  this.componentstatuses = {
+    list: _.partial(k8sResource.list, k8sEnum.Kind.COMPONENTSTATUS)
+  };
+
+  this.health = function() {
+    return $http({url: k8sConfig.getBasePath()});
+  };
 });

@@ -57,26 +57,16 @@ func (s *Server) HTTPHandler() http.Handler {
 		mux.HandleFunc(AuthCallbackEndpoint, s.Auther.CallbackFunc)
 	}
 
-	// Respond with 404 for any other API rquests.
 	mux.HandleFunc("/api/", notFoundHandler)
 
-	// Serve all static files from public dir.
 	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(s.PublicDir)))
 	mux.Handle("/static/", staticHandler)
 
-	// Serve index page for anything else.
-	mux.HandleFunc("/", s.indexHandler)
-
 	mux.HandleFunc("/health", health.Checker{
-		Checks: []health.Checkable{
-			newK8sAPICheck(
-				k8sAPICheckConfig{
-					version:  K8sAPIVersion,
-					endpoint: s.K8sConfig.Endpoint,
-				},
-			),
-		},
+		Checks: []health.Checkable{},
 	}.ServeHTTP)
+
+	mux.HandleFunc("/", s.indexHandler)
 
 	return http.Handler(mux)
 }

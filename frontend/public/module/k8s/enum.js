@@ -45,6 +45,13 @@ angular.module('k8s').constant('k8sEnum', {
       labelPlural: 'Events',
       path: 'events',
     },
+    COMPONENTSTATUS: {
+      id: 'componentstatus',
+      kind: 'ComponentStatus',
+      label: 'Component Status',
+      labelPlural: 'Component Statuses',
+      path: 'componentstatuses',
+    }
   },
 
   PullPolicy: {

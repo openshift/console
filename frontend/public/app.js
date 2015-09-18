@@ -27,7 +27,7 @@ angular.module('bridge', [
 
   $locationProvider.html5Mode(true);
   flagSvcProvider.setGlobalId('SERVER_FLAGS');
-  k8sConfigProvider.setBasePath('/api/kubernetes/' + window.SERVER_FLAGS.k8sVersion);
+  k8sConfigProvider.setKubernetesPath('/api/kubernetes/', window.SERVER_FLAGS.k8sVersion);
   $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
 
   configSvcProvider.config({
@@ -55,14 +55,10 @@ angular.module('bridge', [
     $routeProvider.when(route, config);
   }
 
-  //r('/', {
-    //controller: 'ClusterStatusCtrl',
-    //templateUrl: '/static/page/cluster/status.html',
-    //title: 'Cluster Status',
-  //});
-
   r('/', {
-    redirectTo: '/services',
+    controller: 'ClusterStatusCtrl',
+    templateUrl: '/static/page/cluster/status.html',
+    title: 'Cluster Status',
   });
   r('/apps', {
     controller: 'AppsCtrl',
