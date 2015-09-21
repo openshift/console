@@ -32,10 +32,11 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	K8sConfig *K8sConfig
-	PublicDir string
-	Templates *template.Template
-	Auther    *auth.Authenticator
+	K8sProxyConfig *ProxyConfig
+	DexProxyConfig *ProxyConfig
+	PublicDir      string
+	Templates      *template.Template
+	Auther         *auth.Authenticator
 }
 
 func (s *Server) AuthDisabled() bool {
@@ -72,11 +73,9 @@ func (s *Server) HTTPHandler() http.Handler {
 }
 
 func (s *Server) k8sHandler() http.Handler {
-	s.K8sConfig.Endpoint.Path = "/api"
-	proxy := newProxy(proxyConfig{
-		K8sConfig:       s.K8sConfig,
-		HeaderBlacklist: []string{"Cookie"},
-	})
+	s.K8sProxyConfig.Endpoint.Path = "/api"
+	s.K8sProxyConfig.HeaderBlacklist = []string{"Cookie"}
+	proxy := newProxy(s.K8sProxyConfig)
 	return proxy
 }
 

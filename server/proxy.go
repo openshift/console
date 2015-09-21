@@ -17,23 +17,12 @@ const (
 	proxyReadDeadline  = time.Second * 10
 )
 
-type proxyConfig struct {
-	HeaderBlacklist []string
-	K8sConfig       *K8sConfig
-}
-
 type proxy struct {
 	reverseProxy *httputil.ReverseProxy
-	k8sConfig    *K8sConfig
+	config       *ProxyConfig
 }
 
-func newProxy(cfg proxyConfig) *proxy {
-	headerDirector := func(r *http.Request) {
-		for _, h := range cfg.HeaderBlacklist {
-			r.Header.Del(h)
-		}
-	}
-
+func newProxy(cfg *ProxyConfig) *proxy {
 	// Copy of http.DefaultTransport with TLSClientConfig added
 	insecureTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
@@ -51,36 +40,31 @@ func newProxy(cfg proxyConfig) *proxy {
 	}
 	proxy := &proxy{
 		reverseProxy: reverseProxy,
-		k8sConfig:    cfg.K8sConfig,
+		config:       cfg,
 	}
 
-	if len(cfg.HeaderBlacklist) == 0 {
-		reverseProxy.Director = func(r *http.Request) {
-			proxy.rewriteURL(r)
-			proxy.maybeAddAuthorizationHeader(r)
+	reverseProxy.Director = func(r *http.Request) {
+		for _, h := range proxy.config.HeaderBlacklist {
+			r.Header.Del(h)
 		}
-	} else {
-		reverseProxy.Director = func(r *http.Request) {
-			headerDirector(r)
-			proxy.rewriteURL(r)
-			proxy.maybeAddAuthorizationHeader(r)
-		}
+		proxy.rewriteURL(r)
+		proxy.maybeAddAuthorizationHeader(r)
 	}
 
 	return proxy
 }
 
 func (p *proxy) maybeAddAuthorizationHeader(req *http.Request) {
-	if p.k8sConfig.BearerToken != "" {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.k8sConfig.BearerToken))
+	if p.config.BearerToken != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.config.BearerToken))
 	}
 }
 
 func (p *proxy) rewriteURL(req *http.Request) {
-	req.Host = p.k8sConfig.Endpoint.Host
-	req.URL.Host = p.k8sConfig.Endpoint.Host
-	req.URL.Scheme = p.k8sConfig.Endpoint.Scheme
-	req.URL.Path = path.Join(p.k8sConfig.Endpoint.Path, req.URL.Path)
+	req.Host = p.config.Endpoint.Host
+	req.URL.Host = p.config.Endpoint.Host
+	req.URL.Scheme = p.config.Endpoint.Scheme
+	req.URL.Path = path.Join(p.config.Endpoint.Path, req.URL.Path)
 }
 
 func isWebsocket(req *http.Request) bool {
@@ -108,14 +92,14 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	var targetConn net.Conn
 	var err error
-	if p.k8sConfig.Endpoint.Scheme == "https" {
-		targetConn, err = tls.Dial("tcp", p.k8sConfig.Endpoint.Host, p.k8sConfig.TLSClientConfig)
+	if p.config.Endpoint.Scheme == "https" {
+		targetConn, err = tls.Dial("tcp", p.config.Endpoint.Host, p.config.TLSClientConfig)
 	} else {
-		targetConn, err = net.Dial("tcp", p.k8sConfig.Endpoint.Host)
+		targetConn, err = net.Dial("tcp", p.config.Endpoint.Host)
 	}
 	if err != nil {
 		http.Error(res, "Error contacting Kubernetes API server.", http.StatusInternalServerError)
-		log.Errorf("error dialing websocket backend %s: %v", p.k8sConfig.Endpoint.Host, err)
+		log.Errorf("error dialing websocket backend %s: %v", p.config.Endpoint.Host, err)
 		return
 	}
 
