@@ -12,7 +12,7 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      // (required) namespace to load pods from
+      // (optional) namespace to load pods from
       namespace: '=',
       // label selector to filter by. optional unless selector-required=true
       selector: '=',

@@ -3,5 +3,5 @@ angular.module('bridge.page')
   'use strict';
 
   $scope.defaultNS = k8s.enum.DefaultNS;
-  $scope.ns = $routeParams.ns || $scope.defaultNS;
+  $scope.ns = $routeParams.ns;
 });
