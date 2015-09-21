@@ -5,7 +5,8 @@ import (
 	"net/url"
 )
 
-type K8sConfig struct {
+type ProxyConfig struct {
+	HeaderBlacklist []string
 	Endpoint        *url.URL
 	BearerToken     string
 	TLSClientConfig *tls.Config

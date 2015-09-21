@@ -74,7 +74,7 @@ func main() {
 	}
 
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
-	kCfg := &server.K8sConfig{
+	kCfg := &server.ProxyConfig{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
@@ -94,9 +94,9 @@ func main() {
 	}
 
 	srv := &server.Server{
-		K8sConfig: kCfg,
-		PublicDir: *publicDir,
-		Templates: tpls,
+		K8sProxyConfig: kCfg,
+		PublicDir:      *publicDir,
+		Templates:      tpls,
 	}
 
 	if *disableAuth {

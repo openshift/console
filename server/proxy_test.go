@@ -96,11 +96,10 @@ func TestProxyDirector(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		cfg := proxyConfig{
-			K8sConfig:       &K8sConfig{Endpoint: &tt.target},
+		p := newProxy(&ProxyConfig{
+			Endpoint:        &tt.target,
 			HeaderBlacklist: tt.blacklist,
-		}
-		p := newProxy(cfg)
+		})
 		p.reverseProxy.Director(tt.in)
 
 		if !reflect.DeepEqual(*tt.want, *tt.in) {
@@ -174,9 +173,7 @@ func startProxyServer(t *testing.T) (string, func(), error) {
 		return "", nil, err
 	}
 	targetURL.Path = "/"
-	proxy := newProxy(proxyConfig{
-		K8sConfig: &K8sConfig{Endpoint: targetURL},
-	})
+	proxy := newProxy(&ProxyConfig{Endpoint: targetURL})
 	proxyMux := http.NewServeMux()
 	proxyMux.Handle("/proxy/", http.StripPrefix("/proxy/", proxy))
 	proxyServer := httptest.NewServer(proxyMux)
@@ -256,7 +253,7 @@ func TestProxyMaybeAddAuthorizationHeader(t *testing.T) {
 
 	for i, tt := range tests {
 		p := &proxy{
-			k8sConfig: &K8sConfig{
+			config: &ProxyConfig{
 				BearerToken: tt.tok,
 			},
 		}
