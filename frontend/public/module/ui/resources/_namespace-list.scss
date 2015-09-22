@@ -19,10 +19,10 @@
 
 #co-side-menu {
   background: $color-grey-dark;
-  z-index: 99;
+  z-index: $z-plane-4;
   position: absolute;
   top: 46px;
-  bottom: 40px;
+  bottom: 0;
   right: 0px;
   width: 20%;
   padding-top: 10px;
