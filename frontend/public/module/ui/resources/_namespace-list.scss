@@ -1,4 +1,5 @@
 @import '_vars';
+@import '_config';
 
 #account {
   position: absolute;
@@ -29,20 +30,15 @@
 
   .sidemenu-link {
     color: white;
-    font-family: "Source Sans Pro";
     font-weight: 500;
     text-decoration: none;
-    padding: 0 0 0 20px;
+    padding: 5px 0 5px 20px;
     display: block;
 
     &:hover {
       text-decoration: none;
       cursor: pointer;
       background-color: $color-grey-highlight;
-    }
-
-    .sidemenu-namespace-name {
-      vertical-align: middle;
     }
   }
 
@@ -61,21 +57,24 @@
 
   .namespace-list {
     border-bottom: 1px solid #666;
+  }
 
-    .co-namespace-icon__unselected {
-      color: #ddd;
-      .sidemenu-namespace-text {
-        color: white;
-      }
+  .co-namespace-icon__unselected {
+    color: #ddd;
+    .sidemenu-namespace-text {
+      color: white;
     }
+  }
 
-    .namespace-name {
-      font-size: 15px;
-      & > .co-namespace-icon__selected {
-        &, & .sidemenu-link {
-          color: $color-highlight-blue;
-        }
-      }
-    }
+  .sidemenu-namespace-text {
+    font-family: $font-family-primary;
+  }
+
+  .namespace-name {
+    font-size: 15px;
+  }
+
+  .co-namespace-icon__selected {
+    color: $color-highlight-blue;
   }
 }
