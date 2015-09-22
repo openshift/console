@@ -51,7 +51,14 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Component Status',
       labelPlural: 'Component Statuses',
       path: 'componentstatuses',
-    }
+    },
+    NAMESPACE: {
+      id: 'namespace',
+      kind: 'Namespace',
+      label: 'Namespace',
+      labelPlural: 'Namespaces',
+      path: 'namespaces',
+    },
   },
 
   PullPolicy: {

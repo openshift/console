@@ -64,6 +64,12 @@ angular.module('bridge', [
     controller: 'AppsCtrl',
     templateUrl: '/static/page/apps/apps.html',
     title: 'Applications',
+    namespaceRedirect: true,
+  });
+  r('/all-namespaces/apps', {
+    controller: 'AppsCtrl',
+    templateUrl: '/static/page/apps/apps.html',
+    title: 'Applications',
   });
   r('/ns/:ns/apps', {
     controller: 'AppsCtrl',
@@ -79,6 +85,12 @@ angular.module('bridge', [
     controller: 'EventsCtrl',
     templateUrl: '/static/page/events/events.html',
     title: 'Events',
+    namespaceRedirect: true,
+  });
+  r('/all-namespaces/events', {
+    controller: 'EventsCtrl',
+    templateUrl: '/static/page/events/events.html',
+    title: 'Events',
   });
   r('/ns/:ns/events', {
     controller: 'EventsCtrl',
@@ -86,6 +98,12 @@ angular.module('bridge', [
     title: 'Events',
   });
   r('/services', {
+    controller: 'ServicesCtrl',
+    templateUrl: '/static/page/services/services.html',
+    title: 'Services',
+    namespaceRedirect: true,
+  });
+  r('/all-namespaces/services', {
     controller: 'ServicesCtrl',
     templateUrl: '/static/page/services/services.html',
     title: 'Services',
@@ -111,6 +129,12 @@ angular.module('bridge', [
     title: 'Service Pods',
   });
   r('/replicationcontrollers', {
+    controller: 'ReplicationcontrollersCtrl',
+    templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
+    title: 'Replication Controllers',
+    namespaceRedirect: true,
+  });
+  r('/all-namespaces/replicationcontrollers', {
     controller: 'ReplicationcontrollersCtrl',
     templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
     title: 'Replication Controllers',
@@ -141,6 +165,12 @@ angular.module('bridge', [
     title: 'Replication Controller Pods',
   });
   r('/pods', {
+    controller: 'PodsCtrl',
+    templateUrl: '/static/page/pods/pods.html',
+    title: 'Pods',
+    namespaceRedirect: true,
+  });
+  r('/all-namespaces/pods', {
     controller: 'PodsCtrl',
     templateUrl: '/static/page/pods/pods.html',
     title: 'Pods',
@@ -228,7 +258,7 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function($rootScope, $window, CONST, flagSvc, debugSvc, firehose, authSvc) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
@@ -262,6 +292,33 @@ angular.module('bridge', [
   $rootScope.$on('xhr-error-unauthorized', function(e, rejection) {
     if (rejection && rejection.status === 401) {
       authSvc.logout($window.location.pathname);
+    }
+  });
+
+  $rootScope.$on('$routeChangeStart', function(e, next) {
+    if (_.isUndefined(next)) {
+      return;
+    }
+
+    var nextPath = next.originalPath,
+        shouldRedirect = next.namespaceRedirect,
+        namespacedRoute;
+
+    if (shouldRedirect) {
+      // Cancel the route change.
+      e.preventDefault();
+
+      // Fix 'back' button behavior.
+      //
+      // This method (https://docs.angularjs.org/api/ng/service/$location#replace) will
+      // replace the current entry in the history stack. This allows us to preserve the
+      // correct functionality of the back button when doing these redirects.
+      $location.replace();
+
+      namespacedRoute = k8s.namespaces.formatNamespaceRoute(nextPath);
+
+      // Re-route to namespaced route.
+      $location.path(namespacedRoute);
     }
   });
 
