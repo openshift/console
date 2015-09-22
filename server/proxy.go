@@ -22,6 +22,10 @@ type proxy struct {
 }
 
 func newProxy(cfg *ProxyConfig) *proxy {
+	if cfg.Endpoint.Path[len(cfg.Endpoint.Path)-1] == '/' {
+		panic("Proxy paths must not end in a slash")
+	}
+
 	// Copy of http.DefaultTransport with TLSClientConfig added
 	insecureTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
