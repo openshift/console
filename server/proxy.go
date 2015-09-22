@@ -54,6 +54,12 @@ func newProxy(cfg *ProxyConfig) *proxy {
 }
 
 func (p *proxy) rewriteRequest(r *http.Request) {
+	// At this writing, the only errors we can get from TokenExtractor
+	// are benign and correct variations on "no token found"
+	if token, err := p.config.TokenExtractor(r); err == nil {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	}
+
 	for _, h := range p.config.HeaderBlacklist {
 		r.Header.Del(h)
 	}
@@ -62,12 +68,6 @@ func (p *proxy) rewriteRequest(r *http.Request) {
 	r.URL.Host = p.config.Endpoint.Host
 	r.URL.Scheme = p.config.Endpoint.Scheme
 	r.URL.Path = p.config.Endpoint.Path + "/" + r.URL.Path
-
-	// At this writing, the only errors we can get from TokenExtractor
-	// are benign and correct variations on "no token found"
-	if token, err := p.config.TokenExtractor(r); err == nil {
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	}
 }
 
 func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
