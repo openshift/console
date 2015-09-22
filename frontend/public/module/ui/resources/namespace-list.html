@@ -3,15 +3,13 @@
   <p ng-if="namespaceListError">Failed to load namespaces</p>
 
   <ul ng-if="!namespaceListError" class="sidemenu-list namespace-list">
-    <li class="namespace-name sidemenu-link" ng-click="clearNamespace($event)">
-      <i class="sidemenu-namespace-name" ng-class="activeNamespaceClass()" class="co-m-label__icon">
-        <span class="sidemenu-namespace-text" ng-click="clearNamespace($event)">all</a>
-      </i>
+    <li class="namespace-name sidemenu-link" ng-class="activeNamespaceClass(n.metadata.name)" ng-click="clearNamespace($event)">
+      <i class="sidemenu-namespace-name" class="co-m-label__icon" />
+      <span class="sidemenu-namespace-text" ng-click="clearNamespace($event)">all</span>
     </li>
-    <li class="namespace-name sidemenu-link" ng-click="selectNamespace($event)" ng-repeat="n in namespaces">
-      <i class="sidemenu-namespace-name" ng-class="activeNamespaceClass(n.metadata.name)" class="co-m-label__icon">
-        <span class="sidemenu-namespace-text" ng-bind="n.metadata.name" />
-      </i>
+    <li class="namespace-name sidemenu-link" ng-class="activeNamespaceClass(n.metadata.name)" ng-click="selectNamespace($event)" ng-repeat="n in namespaces">
+      <i class="sidemenu-namespace-name" class="co-m-label__icon" />
+      <span class="sidemenu-namespace-text" ng-bind="n.metadata.name" />
     </li>
   </ul>
 </div>
