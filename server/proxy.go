@@ -85,11 +85,7 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Copy the request, since we'll be modifying it.
-	outreq := new(http.Request)
-	*outreq = *req
-
-	p.rewriteRequest(outreq)
+	p.rewriteRequest(req)
 
 	var targetConn net.Conn
 	var err error
