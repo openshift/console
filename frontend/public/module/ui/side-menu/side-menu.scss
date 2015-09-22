@@ -1,23 +1,6 @@
 @import '_vars';
 @import '_config';
 
-#account {
-  position: absolute;
-  right: 0;
-  .email {
-    vertical-align: text-top;
-  }
-  .dropdown-toggle {
-    height: 46px;
-    padding-bottom: 0;
-  }
-}
-
-.co-settings-icon {
-  padding-left: 20px;
-  font-size: 20px;
-}
-
 #co-side-menu {
   background: $color-grey-dark;
   z-index: $z-plane-4;
@@ -27,6 +10,8 @@
   right: 0px;
   width: 20%;
   padding-top: 10px;
+  min-width: 200px;
+  max-width: 300px;
 
   .sidemenu-link {
     color: white;
