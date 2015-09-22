@@ -17,6 +17,8 @@ const (
 	cookieNameLoginState = "state"
 )
 
+var ExtractTokenFromCookie = oidc.CookieTokenExtractor(cookieNameToken)
+
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 
 type Authenticator struct {
@@ -49,7 +51,7 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 
 	return &Authenticator{
 		TokenVerifier:  jwtVerifier(client),
-		TokenExtractor: oidc.CookieTokenExtractor(cookieNameToken),
+		TokenExtractor: ExtractTokenFromCookie,
 		oidcClient:     client,
 		issuerURL:      issuerURL,
 		errorURL:       errURL,
