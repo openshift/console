@@ -63,8 +63,10 @@ func (p *proxy) rewriteRequest(r *http.Request) {
 	r.URL.Scheme = p.config.Endpoint.Scheme
 	r.URL.Path = p.config.Endpoint.Path + "/" + r.URL.Path
 
-	if p.config.BearerToken != "" {
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.config.BearerToken))
+	// At this writing, the only errors we can get from TokenExtractor
+	// are benign and correct variations on "no token found"
+	if token, err := p.config.TokenExtractor(r); err == nil {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	}
 }
 

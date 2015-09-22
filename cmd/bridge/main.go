@@ -87,10 +87,10 @@ func main() {
 		if err != nil {
 			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
 		}
-		kCfg.BearerToken = cc.BearerToken
+		kCfg.TokenExtractor = server.ConstantTokenExtractor(cc.BearerToken)
 	} else {
 		kCfg.Endpoint = k8sURL
-		kCfg.BearerToken = *k8sBearerToken
+		kCfg.TokenExtractor = server.ConstantTokenExtractor(*k8sBearerToken)
 	}
 
 	srv := &server.Server{
