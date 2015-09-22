@@ -47,27 +47,25 @@ func newProxy(cfg *ProxyConfig) *proxy {
 	}
 
 	reverseProxy.Director = func(r *http.Request) {
-		for _, h := range proxy.config.HeaderBlacklist {
-			r.Header.Del(h)
-		}
-		proxy.rewriteURL(r)
-		proxy.maybeAddAuthorizationHeader(r)
+		proxy.rewriteRequest(r)
 	}
 
 	return proxy
 }
 
-func (p *proxy) maybeAddAuthorizationHeader(req *http.Request) {
-	if p.config.BearerToken != "" {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.config.BearerToken))
+func (p *proxy) rewriteRequest(r *http.Request) {
+	for _, h := range p.config.HeaderBlacklist {
+		r.Header.Del(h)
 	}
-}
 
-func (p *proxy) rewriteURL(req *http.Request) {
-	req.Host = p.config.Endpoint.Host
-	req.URL.Host = p.config.Endpoint.Host
-	req.URL.Scheme = p.config.Endpoint.Scheme
-	req.URL.Path = p.config.Endpoint.Path + "/" + req.URL.Path
+	r.Host = p.config.Endpoint.Host
+	r.URL.Host = p.config.Endpoint.Host
+	r.URL.Scheme = p.config.Endpoint.Scheme
+	r.URL.Path = p.config.Endpoint.Path + "/" + r.URL.Path
+
+	if p.config.BearerToken != "" {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.config.BearerToken))
+	}
 }
 
 func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
@@ -89,8 +87,7 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	outreq := new(http.Request)
 	*outreq = *req
 
-	p.rewriteURL(outreq)
-	p.maybeAddAuthorizationHeader(outreq)
+	p.rewriteRequest(outreq)
 
 	var targetConn net.Conn
 	var err error
