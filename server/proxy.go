@@ -70,18 +70,17 @@ func (p *proxy) rewriteURL(req *http.Request) {
 	req.URL.Path = p.config.Endpoint.Path + "/" + req.URL.Path
 }
 
-func isWebsocket(req *http.Request) bool {
+func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+	isWebsocket := false
 	upgrades := req.Header["Upgrade"]
 	for _, upgrade := range upgrades {
 		if upgrade == "websocket" {
-			return true
+			isWebsocket = true
+			break
 		}
 	}
-	return false
-}
 
-func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	if !isWebsocket(req) {
+	if !isWebsocket {
 		p.reverseProxy.ServeHTTP(res, req)
 		return
 	}
