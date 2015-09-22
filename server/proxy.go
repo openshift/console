@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
-	"path"
 	"time"
 
 	"github.com/coreos/pkg/netutil"
@@ -64,7 +63,7 @@ func (p *proxy) rewriteURL(req *http.Request) {
 	req.Host = p.config.Endpoint.Host
 	req.URL.Host = p.config.Endpoint.Host
 	req.URL.Scheme = p.config.Endpoint.Scheme
-	req.URL.Path = path.Join(p.config.Endpoint.Path, req.URL.Path)
+	req.URL.Path = p.config.Endpoint.Path + "/" + req.URL.Path
 }
 
 func isWebsocket(req *http.Request) bool {
