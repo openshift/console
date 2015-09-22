@@ -24,7 +24,7 @@ func TestProxyDirector(t *testing.T) {
 			in: &http.Request{
 				Method: "POST",
 				Host:   "source.com",
-				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "/clients"},
+				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "clients"},
 				Header: http.Header{"Content-Type": []string{"application/json"}},
 			},
 			want: &http.Request{
@@ -40,7 +40,7 @@ func TestProxyDirector(t *testing.T) {
 			in: &http.Request{
 				Method: "POST",
 				Host:   "source.com",
-				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "/clients"},
+				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "clients"},
 			},
 			want: &http.Request{
 				Method: "POST",
@@ -54,7 +54,7 @@ func TestProxyDirector(t *testing.T) {
 			in: &http.Request{
 				Method: "POST",
 				Host:   "source.com",
-				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "/clients"},
+				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "clients"},
 			},
 			want: &http.Request{
 				Method: "POST",
@@ -69,7 +69,7 @@ func TestProxyDirector(t *testing.T) {
 			in: &http.Request{
 				Method: "POST",
 				Host:   "source.com",
-				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "/clients"},
+				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "clients"},
 				Header: http.Header{"Content-Type": []string{"application/json"}, "Cookie": []string{"choco-chip"}, "User-Agent": []string{"web-browser"}},
 			},
 			want: &http.Request{
@@ -85,7 +85,7 @@ func TestProxyDirector(t *testing.T) {
 			in: &http.Request{
 				Method: "GET",
 				Host:   "source.com",
-				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "/clients", RawQuery: "foo=bar&abc=xyz"},
+				URL:    &url.URL{Scheme: "http", Host: "source.com", Path: "clients", RawQuery: "foo=bar&abc=xyz"},
 			},
 			want: &http.Request{
 				Method: "GET",
@@ -99,6 +99,7 @@ func TestProxyDirector(t *testing.T) {
 		p := newProxy(&ProxyConfig{
 			Endpoint:        &tt.target,
 			HeaderBlacklist: tt.blacklist,
+			TokenExtractor:  ConstantTokenExtractor(""),
 		})
 		p.reverseProxy.Director(tt.in)
 
@@ -172,8 +173,11 @@ func startProxyServer(t *testing.T) (string, func(), error) {
 	if err != nil {
 		return "", nil, err
 	}
-	targetURL.Path = "/"
-	proxy := newProxy(&ProxyConfig{Endpoint: targetURL})
+	targetURL.Path = ""
+	proxy := newProxy(&ProxyConfig{
+		Endpoint:       targetURL,
+		TokenExtractor: ConstantTokenExtractor(""),
+	})
 	proxyMux := http.NewServeMux()
 	proxyMux.Handle("/proxy/", http.StripPrefix("/proxy/", proxy))
 	proxyServer := httptest.NewServer(proxyMux)
@@ -223,7 +227,7 @@ func toWSScheme(url_ string) string {
 	return parsed.String()
 }
 
-func TestProxyMaybeAddAuthorizationHeader(t *testing.T) {
+func TestProxyRewriteRequestAuthorization(t *testing.T) {
 	tests := []struct {
 		tok  string
 		req  *http.Request
@@ -251,13 +255,19 @@ func TestProxyMaybeAddAuthorizationHeader(t *testing.T) {
 		},
 	}
 
+	testurl, err := url.Parse("http://example.org/proxied")
+	if err != nil {
+		panic("test url cannot be parsed")
+	}
+
 	for i, tt := range tests {
 		p := &proxy{
 			config: &ProxyConfig{
-				BearerToken: tt.tok,
+				Endpoint:       testurl,
+				TokenExtractor: ConstantTokenExtractor(tt.tok),
 			},
 		}
-		p.maybeAddAuthorizationHeader(tt.req)
+		p.rewriteRequest(tt.req)
 		got := tt.req.Header.Get("Authorization")
 		if tt.want != got {
 			t.Errorf("case %d: unexpected header: want=%q got=%q", i, tt.want, got)
