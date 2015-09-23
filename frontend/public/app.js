@@ -13,6 +13,7 @@ angular.module('bridge', [
   'ngTagsInput',
   // internal modules
   'templates',
+  'dex',
   'k8s',
   'bridge.const',
   'bridge.filter',
@@ -240,7 +241,7 @@ angular.module('bridge', [
   r('/settings/users', {
     controller: 'UsersCtrl',
     templateUrl: '/static/page/settings/users.html',
-    title: 'Users & API Keys',
+    title: 'Manage Users',
   });
   r('/welcome', {
     controller: 'WelcomeCtrl',

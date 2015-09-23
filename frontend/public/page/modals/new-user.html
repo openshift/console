@@ -1,0 +1,34 @@
+<div class="co-p-new-user-modal">
+  <form ng-controller="NewReplicationcontrollerFormCtrl" ng-submit="submit()" name="form" role="form">
+    <div class="co-m-pane__heading">
+      <h1 class="co-m-pane__title">New User Information</h1>
+    </div>
+    <div class="co-m-pane__body">
+      <div>
+        <label for="input-name" class="control-label">Display Name</label>
+      </div>
+      <div>
+        <input type="text" ng-model="model.displayName" class="form-control" required/>
+      </div>
+      <div>
+        <label class="control-label">Email Address</label>
+      </div>
+      <div>
+        <input type="text" ng-model="model.email" class="form-control" required/>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-sm-2">
+          <label class="control-label">Role:</label>
+        </div>
+        <div class="co-m-form-col col-sm-10">
+          Administrator
+        </div>
+      </div>
+      <co-btn-bar complete-promise="userCreated">
+        <co-error-message promise="userCreated"></co-error-message>
+        <button type="submit" class="btn btn-primary" ng-click="createUser()">Submit Info</button>
+        <button type="button" ng-click="$dismiss()" class="btn btn-link">Cancel</button>
+      </co-btn-bar>
+    </div>
+  </form>
+</div>

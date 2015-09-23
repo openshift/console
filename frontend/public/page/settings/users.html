@@ -1,15 +1,37 @@
 <div class="co-p-users">
-
-  <co-nav-title title="Users & API Keys"></co-nav-title>
-
+  <co-nav-title title="Manage Users">
+    <a ng-click="newUserModal()" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Add New User</a>
+  </co-nav-title>
   <div class="co-m-pane">
-
-    <div class="co-m-pane__header">
+    <div class="co-m-pane__heading">
+      <h1 class="co-m-pane__title">Users</h1>
     </div>
 
     <div class="co-m-pane__body">
-    </div>
+      <div class="co-m-table-grid co-m-table-grid--bordered">
+        <div class="row co-m-table-grid__head">
+          <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6">Name and Email</div>
+          <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">Date Added</div>
+          <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Tectonic Role</div>
+          <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">Status</div>
+        </div>
 
-  </div>
-
+        <div class="co-m-table-grid__body">
+          <div ng-if="!(loaded || failed)">
+            <co-loader></co-loader>
+          </div>
+          <div ng-if="failed">
+            FAILED
+          </div>
+          <div class="row co-m-table-grid--clickable" ng-repeat="user in users" ng-show="loaded && !failed">
+            <div class="col-lg-3 col-md-3 col-sm-5 col-xs-6" ng-bind="user.email"></div>
+            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" ng-bind="user.createdAt">Just Now!</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Administrator</div>
+            <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">Active</div>
+          </div>
+        </div><!-- .co-m-table-grid__body -->
+      </div>
+    </div><!-- .co-m-pane-body -->
+  </div><!-- .co-m-pane -->
 </div>
