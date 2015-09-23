@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
-	"path"
 	"time"
 
 	"github.com/coreos/pkg/netutil"
@@ -23,6 +22,10 @@ type proxy struct {
 }
 
 func newProxy(cfg *ProxyConfig) *proxy {
+	if cfg.Endpoint.Path != "" && cfg.Endpoint.Path[len(cfg.Endpoint.Path)-1] == '/' {
+		panic("Proxy paths must not end in a slash")
+	}
+
 	// Copy of http.DefaultTransport with TLSClientConfig added
 	insecureTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
@@ -44,51 +47,45 @@ func newProxy(cfg *ProxyConfig) *proxy {
 	}
 
 	reverseProxy.Director = func(r *http.Request) {
-		for _, h := range proxy.config.HeaderBlacklist {
-			r.Header.Del(h)
-		}
-		proxy.rewriteURL(r)
-		proxy.maybeAddAuthorizationHeader(r)
+		proxy.rewriteRequest(r)
 	}
 
 	return proxy
 }
 
-func (p *proxy) maybeAddAuthorizationHeader(req *http.Request) {
-	if p.config.BearerToken != "" {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.config.BearerToken))
+func (p *proxy) rewriteRequest(r *http.Request) {
+	// At this writing, the only errors we can get from TokenExtractor
+	// are benign and correct variations on "no token found"
+	if token, err := p.config.TokenExtractor(r); err == nil {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	}
-}
 
-func (p *proxy) rewriteURL(req *http.Request) {
-	req.Host = p.config.Endpoint.Host
-	req.URL.Host = p.config.Endpoint.Host
-	req.URL.Scheme = p.config.Endpoint.Scheme
-	req.URL.Path = path.Join(p.config.Endpoint.Path, req.URL.Path)
-}
-
-func isWebsocket(req *http.Request) bool {
-	upgrades := req.Header["Upgrade"]
-	for _, upgrade := range upgrades {
-		if upgrade == "websocket" {
-			return true
-		}
+	for _, h := range p.config.HeaderBlacklist {
+		r.Header.Del(h)
 	}
-	return false
+
+	r.Host = p.config.Endpoint.Host
+	r.URL.Host = p.config.Endpoint.Host
+	r.URL.Scheme = p.config.Endpoint.Scheme
+	r.URL.Path = p.config.Endpoint.Path + "/" + r.URL.Path
 }
 
 func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	if !isWebsocket(req) {
+	isWebsocket := false
+	upgrades := req.Header["Upgrade"]
+	for _, upgrade := range upgrades {
+		if upgrade == "websocket" {
+			isWebsocket = true
+			break
+		}
+	}
+
+	if !isWebsocket {
 		p.reverseProxy.ServeHTTP(res, req)
 		return
 	}
 
-	// Copy the request, since we'll be modifying it.
-	outreq := new(http.Request)
-	*outreq = *req
-
-	p.rewriteURL(outreq)
-	p.maybeAddAuthorizationHeader(outreq)
+	p.rewriteRequest(req)
 
 	var targetConn net.Conn
 	var err error

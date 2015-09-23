@@ -39,6 +39,7 @@ func main() {
 	authClientID := fs.String("auth-client-id", "", "The OIDC OAuth2 Client ID.")
 	authClientSecret := fs.String("auth-client-secret", "", "The OIDC/OAuth2 Client Secret.")
 	fs.String("auth-issuer-url", "", "The OIDC/OAuth2 issuer URL")
+	fs.String("dex-endpoint", "", "URL of the Dex API server. This flag is only required for allowing user management through the console.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -87,14 +88,25 @@ func main() {
 		if err != nil {
 			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
 		}
-		kCfg.BearerToken = cc.BearerToken
+		kCfg.TokenExtractor = server.ConstantTokenExtractor(cc.BearerToken)
 	} else {
 		kCfg.Endpoint = k8sURL
-		kCfg.BearerToken = *k8sBearerToken
+		kCfg.TokenExtractor = server.ConstantTokenExtractor(*k8sBearerToken)
+	}
+
+	var dexCfg *server.ProxyConfig
+	if flag := fs.Lookup("dex-endpoint"); flag.Value.String() != "" {
+		dexURL := validateURLFlag(fs, "dex-endpoint")
+		dexCfg = &server.ProxyConfig{
+			Endpoint:        dexURL,
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			TokenExtractor:  auth.ExtractTokenFromCookie,
+		}
 	}
 
 	srv := &server.Server{
 		K8sProxyConfig: kCfg,
+		DexProxyConfig: dexCfg,
 		PublicDir:      *publicDir,
 		Templates:      tpls,
 	}

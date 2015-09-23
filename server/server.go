@@ -58,6 +58,13 @@ func (s *Server) HTTPHandler() http.Handler {
 		mux.HandleFunc(AuthCallbackEndpoint, s.Auther.CallbackFunc)
 	}
 
+	if s.DexProxyConfig != nil {
+		s.DexProxyConfig.Endpoint.Path = "/api"
+		s.DexProxyConfig.HeaderBlacklist = []string{"Cookie"}
+		dexHandler := newProxy(s.DexProxyConfig)
+		mux.Handle("/api/dex/", http.StripPrefix("/api/dex/", dexHandler))
+	}
+
 	mux.HandleFunc("/api/", notFoundHandler)
 
 	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(s.PublicDir)))
