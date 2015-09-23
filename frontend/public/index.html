@@ -40,7 +40,7 @@
         </ul>
 
         <ul ng-controller="AuthCtrl" class="nav navbar-nav pull-right">
-          <li ng-if="!isAuthDisabled()">
+          <li ng-if="!isAuthDisabled">
             <img class="co-user-avatar" ng-if="emailHash()" ng-src="http://gravatar.com/avatar/{{emailHash()}}?s=32"/>
           </li>
           <li id="account" ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)">
@@ -103,6 +103,7 @@
     <script src="/static/module/service/debug.js"></script>
     <script src="/static/module/service/error.js"></script>
     <script src="/static/module/service/interceptors.js"></script>
+    <script src="/static/module/service/features.js"></script>
     <script src="/static/module/service/firehose.js"></script>
     <script src="/static/module/service/message.js"></script>
     <script src="/static/module/service/side-menu.js"></script>

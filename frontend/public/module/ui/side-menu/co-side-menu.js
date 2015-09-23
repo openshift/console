@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, sideMenu) {
+.directive('coSideMenu', function($, sideMenu, featuresSvc) {
   'use strict';
 
   return {
@@ -18,6 +18,7 @@ angular.module('bridge.ui')
       });
     },
     link: function(scope, elem, attrs, ctrl) {
+      scope.isAuthDisabled = featuresSvc.isAuthDisabled;
       $('body').click(ctrl.hide);
     },
   };
