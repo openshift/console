@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
+	"strings"
 	"time"
 
 	"github.com/coreos/pkg/netutil"
@@ -22,7 +23,7 @@ type proxy struct {
 }
 
 func newProxy(cfg *ProxyConfig) *proxy {
-	if cfg.Endpoint.Path != "" && cfg.Endpoint.Path[len(cfg.Endpoint.Path)-1] == '/' {
+	if strings.HasSuffix(cfg.Endpoint.Path, "/") {
 		panic("Proxy paths must not end in a slash")
 	}
 
