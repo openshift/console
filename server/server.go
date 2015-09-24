@@ -27,8 +27,9 @@ var (
 )
 
 type jsGlobals struct {
-	K8sVersion   string `json:"k8sVersion"`
-	AuthDisabled bool   `json:"authDisabled"`
+	K8sVersion             string `json:"k8sVersion"`
+	AuthDisabled           bool   `json:"authDisabled"`
+	UserManagementDisabled bool   `json:"userManagementDisabled"`
 }
 
 type Server struct {
@@ -41,6 +42,10 @@ type Server struct {
 
 func (s *Server) AuthDisabled() bool {
 	return s.Auther == nil
+}
+
+func (s *Server) UserManagementDisabled() bool {
+	return s.DexProxyConfig == nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -88,8 +93,9 @@ func (s *Server) k8sHandler() http.Handler {
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		K8sVersion:   K8sAPIVersion,
-		AuthDisabled: s.AuthDisabled(),
+		K8sVersion:             K8sAPIVersion,
+		AuthDisabled:           s.AuthDisabled(),
+		UserManagementDisabled: s.UserManagementDisabled(),
 	}
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

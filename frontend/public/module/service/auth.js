@@ -1,5 +1,5 @@
 angular.module('bridge.service')
-.factory('authSvc', function($cookies, $log, $window, $location, $http, errorSvc, pkg) {
+.factory('authSvc', function($cookies, $log, $window, $location, $http, errorSvc, featuresSvc, pkg) {
   'use strict';
 
   function loginState() {
@@ -41,10 +41,6 @@ angular.module('bridge.service')
       return !!state;
     },
 
-    isAuthDisabled: function() {
-      return $window.SERVER_FLAGS.authDisabled;
-    },
-
     emailHash: function() {
       var em = email();
       if (!em) {
@@ -57,11 +53,11 @@ angular.module('bridge.service')
 
 })
 
-.factory('ensureLoggedInSvc', function($q, authSvc) {
+.factory('ensureLoggedInSvc', function($q, authSvc, featuresSvc) {
   'use strict';
   var deferred = $q.defer();
 
-  if (authSvc.isAuthDisabled()) {
+  if (featuresSvc.isAuthDisabled) {
     deferred.resolve();
     return deferred.promise;
   }

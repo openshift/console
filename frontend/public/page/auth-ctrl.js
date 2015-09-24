@@ -1,9 +1,9 @@
 angular.module('bridge.page')
-.controller('AuthCtrl', function($scope, $location, $log, authSvc) {
+.controller('AuthCtrl', function($scope, $location, $log, authSvc, featuresSvc) {
   'use strict';
 
   $scope.logout = function(e) {
-    if (!$scope.isAuthDisabled()) {
+    if (!$scope.isAuthDisabled) {
       authSvc.logout();
     }
     e.preventDefault();
@@ -14,6 +14,5 @@ angular.module('bridge.page')
   };
 
   $scope.emailHash = authSvc.emailHash;
-  $scope.isAuthDisabled = authSvc.isAuthDisabled;
-
+  $scope.isAuthDisabled = featuresSvc.isAuthDisabled;
 });
