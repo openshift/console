@@ -63,6 +63,9 @@ angular.module('k8s')
 
   this.create = function(kind, data) {
     var d = $q.defer();
+    // Lowercase the resource name
+    // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
+    data.metadata.name = data.metadata.name.toLowerCase();
     $http({
       url: this.resourceURL(kind, {ns: data.metadata.namespace}),
       method: 'POST',
