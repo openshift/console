@@ -120,7 +120,6 @@ func (a *Authenticator) CallbackFunc(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, sc)
 	// TODO(sym3tri): handle deep linking via state arg
 	http.Redirect(w, r, a.successURL, http.StatusSeeOther)
-	w.WriteHeader(http.StatusSeeOther)
 }
 
 func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
