@@ -1,0 +1,17 @@
+#account-nav {
+  position: absolute;
+  right: 0;
+  .account-nav__email {
+    vertical-align: text-top;
+  }
+  .account-nav__dropdown-toggle {
+    height: 46px;
+    padding-bottom: 0;
+  }
+}
+
+.co-settings-icon {
+  padding-left: 20px;
+  font-size: 20px;
+}
+

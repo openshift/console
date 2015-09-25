@@ -33,7 +33,6 @@
 @import "module/ui/labels/label";
 @import "module/ui/labels/label-input";
 @import "module/ui/resources/resource-list";
-@import "module/ui/resources/namespace-list";
 @import "module/ui/status-box/status-box";
 @import "module/ui/sysevents/sysevent-icon";
 @import "module/ui/sysevents/sysevent-stream";
@@ -41,4 +40,6 @@
 @import "module/ui/tristate/tristate";
 @import "module/ui/util/debug";
 @import "module/ui/vert-nav/vert-nav";
+@import "module/ui/account-nav/account-nav";
+@import "module/ui/side-menu/side-menu";
 @import "module/ui/overrides/footer";
