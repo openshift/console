@@ -15,7 +15,7 @@ angular.module('bridge.page')
         displayName: $scope.model.displayName,
         admin: $scope.admin,
       },
-      redirectURL: $window.SERVER_FLAGS.authRedirectURL
+      redirectURL: $window.SERVER_FLAGS.newUserAuthCallbackURL
     }).then(function() {
       $scope.$close();
     });

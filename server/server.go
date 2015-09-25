@@ -31,16 +31,16 @@ type jsGlobals struct {
 	K8sVersion             string `json:"k8sVersion"`
 	AuthDisabled           bool   `json:"authDisabled"`
 	UserManagementDisabled bool   `json:"userManagementDisabled"`
-	AuthRedirectURL        string `json:"authRedirectURL"`
+	NewUserAuthCallbackURL string `json:"newUserAuthCallbackURL"`
 }
 
 type Server struct {
-	K8sProxyConfig  *ProxyConfig
-	DexProxyConfig  *ProxyConfig
-	PublicDir       string
-	Templates       *template.Template
-	Auther          *auth.Authenticator
-	AuthRedirectURL *url.URL
+	K8sProxyConfig         *ProxyConfig
+	DexProxyConfig         *ProxyConfig
+	PublicDir              string
+	Templates              *template.Template
+	Auther                 *auth.Authenticator
+	NewUserAuthCallbackURL *url.URL
 }
 
 func (s *Server) AuthDisabled() bool {
@@ -99,7 +99,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sVersion:             K8sAPIVersion,
 		AuthDisabled:           s.AuthDisabled(),
 		UserManagementDisabled: s.UserManagementDisabled(),
-		AuthRedirectURL:        s.AuthRedirectURL.String(),
+		NewUserAuthCallbackURL: s.NewUserAuthCallbackURL.String(),
 	}
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

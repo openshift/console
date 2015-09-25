@@ -113,7 +113,7 @@ func main() {
 
 	rURL := validateURLFlag(fs, "host")
 	rURL.Path = server.AuthCallbackEndpoint
-	srv.AuthRedirectURL = rURL
+	srv.NewUserAuthCallbackURL = rURL
 
 	if *disableAuth {
 		log.Warningf("running with AUTHENTICATION DISABLED!")
@@ -127,7 +127,7 @@ func main() {
 				ID:     *authClientID,
 				Secret: *authClientSecret,
 			},
-			RedirectURL: srv.AuthRedirectURL.String(),
+			RedirectURL: srv.NewUserAuthCallbackURL.String(),
 		}
 
 		auther, err := auth.NewAuthenticator(ocfg, iURL, server.AuthErrorURL, server.AuthSuccessURL)
