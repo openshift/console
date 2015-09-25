@@ -3,6 +3,7 @@ package server
 import (
 	"html/template"
 	"net/http"
+	"net/url"
 
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
@@ -30,14 +31,16 @@ type jsGlobals struct {
 	K8sVersion             string `json:"k8sVersion"`
 	AuthDisabled           bool   `json:"authDisabled"`
 	UserManagementDisabled bool   `json:"userManagementDisabled"`
+	AuthRedirectURL        string `json:"authRedirectURL"`
 }
 
 type Server struct {
-	K8sProxyConfig *ProxyConfig
-	DexProxyConfig *ProxyConfig
-	PublicDir      string
-	Templates      *template.Template
-	Auther         *auth.Authenticator
+	K8sProxyConfig  *ProxyConfig
+	DexProxyConfig  *ProxyConfig
+	PublicDir       string
+	Templates       *template.Template
+	Auther          *auth.Authenticator
+	AuthRedirectURL *url.URL
 }
 
 func (s *Server) AuthDisabled() bool {
@@ -96,6 +99,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sVersion:             K8sAPIVersion,
 		AuthDisabled:           s.AuthDisabled(),
 		UserManagementDisabled: s.UserManagementDisabled(),
+		AuthRedirectURL:        s.AuthRedirectURL.String(),
 	}
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

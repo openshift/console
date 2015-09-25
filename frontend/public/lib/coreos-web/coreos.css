@@ -7266,7 +7266,8 @@ input[type="radio"] {
   color: white;
   font-size: 90%;
   font-weight: 200;
-  white-space: nowrap; }
+  white-space: nowrap;
+  cursor: pointer; }
   .co-m-primary-action:hover, .co-m-primary-action:visited {
     color: white; }
 

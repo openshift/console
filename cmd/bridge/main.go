@@ -111,21 +111,23 @@ func main() {
 		Templates:      tpls,
 	}
 
+	rURL := validateURLFlag(fs, "host")
+	rURL.Path = server.AuthCallbackEndpoint
+	srv.AuthRedirectURL = rURL
+
 	if *disableAuth {
 		log.Warningf("running with AUTHENTICATION DISABLED!")
 	} else {
 		validateFlagNotEmpty(fs, "auth-client-id")
 		validateFlagNotEmpty(fs, "auth-client-secret")
 		iURL := validateURLFlag(fs, "auth-issuer-url")
-		rURL := validateURLFlag(fs, "host")
-		rURL.Path = server.AuthCallbackEndpoint
 
 		ocfg := oidc.ClientConfig{
 			Credentials: oidc.ClientCredentials{
 				ID:     *authClientID,
 				Secret: *authClientSecret,
 			},
-			RedirectURL: rURL.String(),
+			RedirectURL: srv.AuthRedirectURL.String(),
 		}
 
 		auther, err := auth.NewAuthenticator(ocfg, iURL, server.AuthErrorURL, server.AuthSuccessURL)

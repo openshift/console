@@ -67,6 +67,10 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-replica-count.html',
       controller: 'ConfigureReplicaCountCtrl',
     },
+    'new-user': {
+      templateUrl: '/static/page/modals/new-user.html',
+      controller: 'NewUserCtrl',
+    },
   };
 
   return {
