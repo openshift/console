@@ -39,7 +39,7 @@ angular.module('k8s')
 
   this.namespaceResourceFromPath = function(path) {
     var parts = _.compact(path.split('/'));
-    return _.last(parts);
+    return _.last(parts) || '';
   };
 
 });

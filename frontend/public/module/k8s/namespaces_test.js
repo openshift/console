@@ -30,6 +30,14 @@ describe('k8s.k8sNamespaces', function() {
     });
   });
 
+  describe('namespaceResourceFromPath', function() {
+    it('parses resource from path', function () {
+      expect(k8s.namespaces.namespaceResourceFromPath('/')).toEqual('');
+      expect(k8s.namespaces.namespaceResourceFromPath('/pods')).toEqual('pods');
+      expect(k8s.namespaces.namespaceResourceFromPath('ns/foo/pods')).toEqual('pods');
+    });
+  });
+
   describe('formatNamespaceRoute', function() {
     it('formats a route correctly without an active namespace', function() {
       expect(k8s.namespaces.formatNamespaceRoute('/bar')).toEqual('/all-namespaces/bar');
