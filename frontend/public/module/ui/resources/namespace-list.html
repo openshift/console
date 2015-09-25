@@ -1,6 +1,11 @@
 <div class="co-sidemenu-list">
   <h4 class="sidemenu-list-title">Namespaces</h4>
-  <p ng-if="namespaceListError">Failed to load namespaces</p>
+  <ul ng-if="namespaceListError" class="sidemenu-list namespace-list">
+    <li class="namespace-name sidemenu-link">
+      <i class="sidemenu-namespace-name fa fa-exclamation-triangle" />
+      <span class="sidemenu-namespace-text" ng-click="clearNamespace($event)">Failed to load namespaces</span>
+    </li>
+  </ul>
 
   <ul ng-if="!namespaceListError" class="sidemenu-list namespace-list">
     <li class="namespace-name sidemenu-link" ng-class="activeNamespaceClass(n.metadata.name)" ng-click="clearNamespace($event)">

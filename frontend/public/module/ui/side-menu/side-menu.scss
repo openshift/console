@@ -13,6 +13,10 @@
   min-width: 200px;
   max-width: 300px;
 
+  .fa-exclamation-triangle {
+    color: $color-red-failure;
+  }
+
   .sidemenu-link {
     color: white;
     font-weight: 500;
