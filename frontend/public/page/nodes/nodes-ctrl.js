@@ -1,4 +1,4 @@
 angular.module('bridge.page')
-.controller('MachinesCtrl', function() {
+.controller('NodesCtrl', function() {
   'use strict';
 });

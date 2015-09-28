@@ -39,7 +39,7 @@
           <div class="co-m-form-col col-sm-10">
             <input ng-model="fields.portObj.port" type="number" required class="form-control" id="input-service-port"/>
             <small class="text-muted">
-              Users of this service can communicate from any machine in the cluster over this port.
+              Users of this service can communicate from any node in the cluster over this port.
               It is exposed as an environment variable (SERVICE_{{(service.metadata.name | uppercase) || 'service-name'}}_{{fields.portObj.port || 'PORT'}}) in all new containers.
             </small>
           </div>
@@ -67,11 +67,11 @@
             <div>
               <label class="control-label">
                 <input ng-model="service.spec.type" required type="radio" name="serviceType" value="NodePort"/>
-                Machine Port &amp; Internal Cluster IP
+                Node Port &amp; Internal Cluster IP
               </label>
               <div class="co-indent">
                 <small class="co-block text-muted">
-                  Access this service via a specific port on each machine in the cluster.
+                  Access this service via a specific port on each node in the cluster.
                   Useful for some cloud load balancers.
                 </small>
                 <label class="control-label co-block co-vert-margin">

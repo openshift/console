@@ -1,13 +1,13 @@
 /**
- * Veritcal nav for machines.
+ * Veritcal nav for nodes.
  */
 
 angular.module('bridge.page')
-.directive('coMachineNav', function() {
+.directive('coNodeNav', function() {
   'use strict';
 
   return {
-    templateUrl: '/static/page/machines/machine-nav.html',
+    templateUrl: '/static/page/nodes/node-nav.html',
     restrict: 'E',
     replace: true,
     scope: {

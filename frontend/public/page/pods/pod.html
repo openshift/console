@@ -33,8 +33,8 @@
                 <dd ng-bind="pod.status.phase"></dd>
                 <dt>Pod IP</dt>
                 <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
-                <dt>Machine</dt>
-                <dd><a ng-href="/machines/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a></dd>
+                <dt>Node</dt>
+                <dd><a ng-href="/nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a></dd>
                 <dt>Restart Policy</dt>
                 <dd ng-bind="getRestartPolicyLabel(pod.spec.restartPolicy)"></dd>
               </dl>

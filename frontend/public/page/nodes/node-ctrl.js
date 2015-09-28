@@ -1,8 +1,8 @@
 angular.module('bridge.page')
-.controller('MachineCtrl', function($scope, $routeParams, k8s, pkg) {
+.controller('NodeCtrl', function($scope, $routeParams, k8s, pkg) {
   'use strict';
 
-  $scope.machineName = $routeParams.name;
+  $scope.nodeName = $routeParams.name;
   $scope.loadError = false;
 
   $scope.getAddresses = function(status) {
@@ -16,11 +16,11 @@ angular.module('bridge.page')
 
   k8s.nodes.get($routeParams.name)
     .then(function(node) {
-      $scope.machine = node;
+      $scope.node = node;
       $scope.loadError = false;
     })
     .catch(function() {
-      $scope.machine = null;
+      $scope.node = null;
       $scope.loadError = true;
     });
 

@@ -15,7 +15,7 @@
       </li>
       <li class="co-m-vert-nav__menu-item">
         <h2 class="co-m-vert-nav__menu-item-heading">Step 2: Pod Configuration</h2>
-        <p class="co-m-vert-nav__menu-item-desc">A pod consists of many containers working together on the same machine. For example, nginx and memcached are always deployed together.</p>
+        <p class="co-m-vert-nav__menu-item-desc">A pod consists of many containers working together on the same node. For example, nginx and memcached are always deployed together.</p>
       </li>
       <li class="co-m-vert-nav__menu-item">
         <h2 class="co-m-vert-nav__menu-item-heading">Step 3: Launch Pods</h2>
@@ -49,7 +49,7 @@
           <div class="co-m-form-col col-sm-10">
             <input ng-model="service.spec.port" type="number" required class="form-control" id="input-service-port"/>
             <small class="text-muted">
-              Users of this service can communicate from any machine in the cluster over this port.
+              Users of this service can communicate from any node in the cluster over this port.
               It is exposed as an environment variable (SERVICE_{{service.metadata.name || 'service-id'}}_{{service.spec.port || 'PORT'}}) in all new containers.
             </small>
           </div>

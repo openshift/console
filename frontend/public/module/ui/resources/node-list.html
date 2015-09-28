@@ -1,10 +1,10 @@
 <div class="co-m-node-list co-m-table-grid co-m-table-grid--bordered">
 
   <div class="row co-m-table-grid__head">
-    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">Machine Name</div>
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">Node Name</div>
     <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Status</div>
-    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">Machine Labels</div>
-    <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Machine ID</div>
+    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">Node Labels</div>
+    <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Node ID</div>
   </div>
 
   <div cos-tristate="nodes" cos-tristate-error="loadError" class="co-m-table-grid__body">
@@ -28,16 +28,16 @@
 
     <co-loader class="cos-tristate-show-loading"></co-loader>
     <cos-status-box class="cos-tristate-show-error">
-      <div class="cos-error-title">Error loading machines</div>
-      <div class="cos-text-center">An error occurred during machine retrieval. Please try again.</div>
+      <div class="cos-error-title">Error loading nodes</div>
+      <div class="cos-text-center">An error occurred during node retrieval. Please try again.</div>
     </cos-status-box>
     <cos-status-box ng-show="!filteredNodes.length && !nodes.length" class="cos-tristate-show-empty">
-      <div>No machines found</div>
-      <div class="cos-text-center">No machines found in the system.</div>
+      <div>No nodes found</div>
+      <div class="cos-text-center">No nodes found in the system.</div>
     </cos-status-box>
     <cos-status-box class="cos-status-box--border-bottom" ng-show="!filteredNodes.length && nodes.length">
-      <div>No matching machines</div>
-      <div class="cos-text-center" ng-bind-template="{{nodes.length}} machine(s) exist, but none match the current filter."></div>
+      <div>No matching nodes</div>
+      <div class="cos-text-center" ng-bind-template="{{nodes.length}} node(s) exist, but none match the current filter."></div>
     </cos-status-box>
   </div>
 
