@@ -1,17 +1,23 @@
 #account-nav {
   position: absolute;
+  padding-left: 20px;
   right: 0;
+  border-left: 1px solid #ddd;
+
   .account-nav__email {
-    vertical-align: text-top;
+    vertical-align: middle;
   }
   .account-nav__dropdown-toggle {
     height: 46px;
-    padding-bottom: 0;
+  }
+  .account-nav__dropdown-toggle__auth {
+    padding: 0;
   }
 }
 
 .co-settings-icon {
-  padding-left: 20px;
+  padding: 0 10px 0 10px;
   font-size: 20px;
+  vertical-align: middle;
 }
 
