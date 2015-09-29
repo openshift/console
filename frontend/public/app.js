@@ -201,32 +201,25 @@ angular.module('bridge', [
     templateUrl: '/static/page/containers/container.html',
     title: 'Container',
   });
-  r('/machines', {
-    controller: 'MachinesCtrl',
-    templateUrl: '/static/page/machines/machines.html',
-    title: 'Machines',
-  });
-  r('/machines/:name', {
-    controller: 'MachineCtrl',
-    templateUrl: '/static/page/machines/machine.html',
-    title: 'Machine',
-  });
-  r('/machines/:name/events', {
-    controller: 'MachineSyseventsCtrl',
-    templateUrl: '/static/page/machines/sysevents.html',
-    title: 'Machine Events',
-  });
-  r('/machines/:name/pods', {
-    controller: 'MachinePodsCtrl',
-    templateUrl: '/static/page/machines/pods.html',
-    title: 'Machine Pods',
-  });
-  // Alias for machines (for programatic routing).
   r('/nodes', {
-    redirectTo: '/machines',
+    controller: 'NodesCtrl',
+    templateUrl: '/static/page/nodes/nodes.html',
+    title: 'nodes',
   });
   r('/nodes/:name', {
-    redirectTo: '/machines/:name',
+    controller: 'nodeCtrl',
+    templateUrl: '/static/page/nodes/node.html',
+    title: 'node',
+  });
+  r('/nodes/:name/events', {
+    controller: 'nodeSyseventsCtrl',
+    templateUrl: '/static/page/nodes/sysevents.html',
+    title: 'node Events',
+  });
+  r('/nodes/:name/pods', {
+    controller: 'nodePodsCtrl',
+    templateUrl: '/static/page/nodes/pods.html',
+    title: 'node Pods',
   });
   r('/search', {
     controller: 'SearchCtrl',

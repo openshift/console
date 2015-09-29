@@ -1,39 +1,39 @@
-<div class="co-p-machine">
+<div class="co-p-node">
 
-  <co-nav-title title="{{machineName}}">
-    <a ng-href="/machines" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Machines</a>
+  <co-nav-title title="{{nodeName}}">
+    <a ng-href="/nodes" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Nodes</a>
   </co-nav-title>
 
   <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
-    <co-machine-nav name="machineName"></co-machine-nav>
+    <co-node-nav name="nodeName"></co-node-nav>
     <div class="co-m-vert-nav__body">
 
       <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Machine Overview</h1>
+        <h1 class="co-m-pane__title">Node Overview</h1>
       </div>
-      <div cos-tristate="machine" cos-tristate-error="loadError" class="co-m-pane__body">
+      <div cos-tristate="node" cos-tristate-error="loadError" class="co-m-pane__body">
 
-        <div class="row" ng-show="machine && !loadError">
+        <div class="row" ng-show="node && !loadError">
           <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <dl>
-              <dt>Machine Name</dt>
-              <dd ng-bind="machine.metadata.name | emptyPlaceholder"></dd>
-              <dt>Machine ID</dt>
-              <dd ng-bind="machine.spec.externalID | emptyPlaceholder"></dd>
+              <dt>Node Name</dt>
+              <dd ng-bind="node.metadata.name | emptyPlaceholder"></dd>
+              <dt>Node ID</dt>
+              <dd ng-bind="node.spec.externalID | emptyPlaceholder"></dd>
               <dt>Host IP Address</dt>
-              <dd ng-bind="getAddresses(machine.status) | emptyPlaceholder"></dd>
-              <dt>Machine Labels</dt>
-              <dd><co-label-list kind="node" expand="true" labels="machine.metadata.labels"></co-label-list></dd>
+              <dd ng-bind="getAddresses(node.status) | emptyPlaceholder"></dd>
+              <dt>Node Labels</dt>
+              <dd><co-label-list kind="node" expand="true" labels="node.metadata.labels"></co-label-list></dd>
               <dt>Created</dt>
-              <dd ng-bind="machine.metadata.creationTimestamp | customDate"></dd>
+              <dd ng-bind="node.metadata.creationTimestamp | customDate"></dd>
             </dl>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 
             <div class="row">
               <div class="col-sm-12">
-                <h1 class="co-section-title">Machine Info</h1>
+                <h1 class="co-section-title">Node Info</h1>
               </div>
             </div>
 
@@ -41,28 +41,28 @@
               <div class="col-sm-6">
                 <dl>
                   <dt>OS Image</dt>
-                  <dd ng-bind="machine.status.nodeInfo.osImage | emptyPlaceholder"></dd>
+                  <dd ng-bind="node.status.nodeInfo.osImage | emptyPlaceholder"></dd>
                   <dt>Kernel Version</dt>
-                  <dd ng-bind="machine.status.nodeInfo.kernelVersion | emptyPlaceholder"></dd>
+                  <dd ng-bind="node.status.nodeInfo.kernelVersion | emptyPlaceholder"></dd>
                   <dt>Boot ID</dt>
-                  <dd ng-bind="machine.status.nodeInfo.bootID | emptyPlaceholder"></dd>
+                  <dd ng-bind="node.status.nodeInfo.bootID | emptyPlaceholder"></dd>
                 </dl>
               </div>
               <div class="col-sm-6">
                 <dl>
                   <dt>Container Runtime</dt>
-                  <dd ng-bind="machine.status.nodeInfo.containerRuntimeVersion | emptyPlaceholder"></dd>
+                  <dd ng-bind="node.status.nodeInfo.containerRuntimeVersion | emptyPlaceholder"></dd>
                   <dt>Kubelet Version</dt>
-                  <dd ng-bind="machine.status.nodeInfo.kubeletVersion | emptyPlaceholder"></dd>
+                  <dd ng-bind="node.status.nodeInfo.kubeletVersion | emptyPlaceholder"></dd>
                   <dt>Kube-Proxy Version</dt>
-                  <dd ng-bind="machine.status.nodeInfo.kubeProxyVersion | emptyPlaceholder"></dd>
+                  <dd ng-bind="node.status.nodeInfo.kubeProxyVersion | emptyPlaceholder"></dd>
                 </dl>
               </div>
             </div>
 
-            <div class="row co-p-machine__machine-coditions">
+            <div class="row co-p-node__node-coditions">
               <div class="col-sm-12">
-                <h1 class="co-section-title">Machine Conditions</h1>
+                <h1 class="co-section-title">Node Conditions</h1>
                 <div class="co-table-container">
                   <table class="table">
                     <thead>
@@ -75,7 +75,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="c in machine.status.conditions">
+                      <tr ng-repeat="c in node.status.conditions">
                         <td ng-bind="c.type"></td>
                         <td ng-bind="c.status | emptyPlaceholder"></td>
                         <td ng-bind="c.reason | emptyPlaceholder"></td>
@@ -95,8 +95,8 @@
           <co-loader></co-loader>
         </div>
         <cos-status-box class="cos-tristate-show-error">
-          <div class="cos-error-title">Error Loading Machine</div>
-          <div class="cos-text-center">An error occurred during machine retrieval. Please try again.</div>
+          <div class="cos-error-title">Error Loading Node</div>
+          <div class="cos-text-center">An error occurred during node retrieval. Please try again.</div>
         </cos-status-box>
       </div>
 

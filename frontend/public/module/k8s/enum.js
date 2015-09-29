@@ -34,8 +34,8 @@ angular.module('k8s').constant('k8sEnum', {
     NODE: {
       id: 'node',
       kind: 'Node',
-      label: 'Machine',
-      labelPlural: 'Machines',
+      label: 'Node',
+      labelPlural: 'Nodes',
       path: 'nodes',
     },
     EVENT: {
