@@ -41,7 +41,7 @@ angular.module('core.pkg')
       var url;
 
       if (host === 'auto') {
-        if ($window.protocol === 'https:') {
+        if ($window.location.protocol === 'https:') {
           url = 'wss://';
         } else {
           url = 'ws://';
