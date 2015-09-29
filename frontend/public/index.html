@@ -42,7 +42,7 @@
         <ul id="account-nav" ng-controller="AuthCtrl" class="nav navbar-nav pull-right">
           <li ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)">
             <a href="#" class="account-nav__dropdown-toggle" ng-class="{'account-nav__dropdown-toggle__auth': !isAuthDisabled}">
-              <img class="co-user-avatar" ng-if="!isAuthDisabled && emailHash()" ng-src="http://gravatar.com/avatar/{{emailHash()}}?s=32" />
+              <img class="co-user-avatar" ng-if="!isAuthDisabled && emailHash()" ng-src="//gravatar.com/avatar/{{emailHash()}}?s=32" />
               <span class="account-nav__email" ng-bind="email() || 'My Account'"></span>&nbsp;<i class="fa fa-cog co-settings-icon"></i>
             </a>
           </li>
@@ -127,6 +127,7 @@
     <script src="/static/module/ui/cog/pod-cog.js"></script>
     <script src="/static/module/ui/cog/replicationcontroller-cog.js"></script>
     <script src="/static/module/ui/cog/service-cog.js"></script>
+    <script src="/static/module/ui/cog/user-cog.js"></script>
     <script src="/static/module/ui/containers/container-input.js"></script>
     <script src="/static/module/ui/icons/resource-icon.js"></script>
     <script src="/static/module/ui/icons/status.js"></script>
@@ -201,6 +202,7 @@
     <script src="/static/page/modals/configure-primary-command-ctrl.js"></script>
     <script src="/static/page/modals/configure-resource-limits-ctrl.js"></script>
     <script src="/static/page/modals/new-user-ctrl.js"></script>
+    <script src="/static/page/modals/toggle-disabled-user-ctrl.js"></script>
     <script src="/static/page/modals/row-mgr.js"></script>
     <script src="/static/page/modals/service-ports-ctrl.js"></script>
     <script src="/static/page/modals/view-json.js"></script>

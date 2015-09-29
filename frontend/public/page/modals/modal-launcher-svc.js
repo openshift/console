@@ -71,15 +71,17 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/new-user.html',
       controller: 'NewUserCtrl',
     },
+    'toggle-disabled-user': {
+      templateUrl: '/static/page/modals/toggle-disabled-user.html',
+      controller: 'ToggleDisabledUserCtrl',
+    },
   };
 
   return {
     open: function(name, resolve) {
       var config = modalConfig[name];
       _.each(resolve, function(value, key) {
-        if (!_.isFunction(value)) {
-          resolve[key] = d3.functor(value);
-        }
+        resolve[key] = d3.functor(value);
       });
       config.resolve = resolve;
       return $modal.open(config);

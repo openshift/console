@@ -1,5 +1,5 @@
 angular.module('dex')
-.service('dex', function($http) {
+.service('dex', function($window, $http) {
   'use strict';
 
   var basePath = '/api/dex/v1/';
@@ -21,6 +21,15 @@ angular.module('dex')
         url: basePath + 'users',
         method: 'POST',
         data: params
+      }).then(function(r) {
+        return r.data;
+      });
+    },
+    disable: function(userID, disableIfTrue) {
+      return $http({
+        url: basePath + 'users/' + $window.encodeURIComponent(userID) + '/disable',
+        method: 'POST',
+        data: {disable: disableIfTrue}
       }).then(function(r) {
         return r.data;
       });
