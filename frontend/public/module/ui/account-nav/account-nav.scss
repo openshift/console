@@ -1,6 +1,5 @@
 #account-nav {
   position: absolute;
-  padding-left: 20px;
   right: 0;
   border-left: 1px solid #ddd;
 
@@ -9,9 +8,10 @@
   }
   .account-nav__dropdown-toggle {
     height: 46px;
+    padding-left: 20px;
   }
   .account-nav__dropdown-toggle__auth {
-    padding: 0;
+    padding: 0 0 0 20px;
   }
 }
 
