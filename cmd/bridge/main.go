@@ -39,7 +39,7 @@ func main() {
 	authClientID := fs.String("auth-client-id", "", "The OIDC OAuth2 Client ID.")
 	authClientSecret := fs.String("auth-client-secret", "", "The OIDC/OAuth2 Client Secret.")
 	fs.String("auth-issuer-url", "", "The OIDC/OAuth2 issuer URL")
-	fs.String("dex-endpoint", "", "URL of the Dex API server. This flag is only required for allowing user management through the console.")
+	enableDexUserManagement := fs.Bool("enable-dex-user-management", false, "Use auth-issuer-url as an endpoint for dex's user managment API.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -95,8 +95,15 @@ func main() {
 	}
 
 	var dexCfg *server.ProxyConfig
-	if flag := fs.Lookup("dex-endpoint"); flag.Value.String() != "" {
-		dexURL := validateURLFlag(fs, "dex-endpoint")
+	if *enableDexUserManagement {
+		flag := fs.Lookup("auth-issuer-url")
+		if flag.Value.String() == "" {
+			log.Fatalf("auth-issuer-url is required when using enable-dex-user-management")
+		}
+		if *disableAuth {
+			log.Fatalf("enable-dex-user-management requires authentication enabled")
+		}
+		dexURL := validateURLFlag(fs, "auth-issuer-url")
 		dexCfg = &server.ProxyConfig{
 			Endpoint:        dexURL,
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
