@@ -1,0 +1,14 @@
+.co-m-table-grid__cell--left-padded {
+    padding: 0 0 0 30px;
+}
+
+.co-m-table-grid__cell--left-padded__offset-cell {
+    margin-left: -30px;
+    width: 30px;
+    float: left;
+}
+
+.co-p-users__email {
+    color: $color-text-muted;
+    font-size: 12px;
+}
