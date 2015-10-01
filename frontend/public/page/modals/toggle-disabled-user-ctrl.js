@@ -6,9 +6,7 @@ angular.module('bridge.page')
   $scope.user = user;
 
   $scope.toggleDisabled = function(toggledUser, desiredState) {
-    $scope.disabledToggled = dex.users.disable(toggledUser.id, desiredState)
-    .then(function() {
-      $scope.$close();
-    });
+    $scope.disabledToggled =
+      dex.users.disable(toggledUser.id, desiredState).then($scope.$close);
   };
 });
