@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('NodeCtrl', function($scope, $routeParams, k8s, pkg) {
+.controller('nodeCtrl', function($scope, $routeParams, k8s, pkg) {
   'use strict';
 
   $scope.nodeName = $routeParams.name;
