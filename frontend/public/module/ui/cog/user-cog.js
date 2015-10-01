@@ -13,7 +13,7 @@ angular.module('bridge.ui')
     replace: true,
     scope: {
       user: '=',
-      onselect: '=',
+      onselect: '&',
     },
     controller: function($scope) {
       var desiredState = !$scope.user.disabled;
@@ -22,7 +22,7 @@ angular.module('bridge.ui')
         label: label,
         weight: 100,
         callback: function() {
-          $scope.onselect($scope.user, desiredState);
+          $scope.onselect()($scope.user, desiredState);
         }
       }];
     },
