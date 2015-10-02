@@ -26,7 +26,7 @@
               <dt>Node Labels</dt>
               <dd><co-label-list kind="node" expand="true" labels="node.metadata.labels"></co-label-list></dd>
               <dt>Created</dt>
-              <dd ng-bind="node.metadata.creationTimestamp | customDate"></dd>
+              <dd><co-timestamp timestamp="{{node.metadata.creationTimestamp}}" /></dd>
             </dl>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">

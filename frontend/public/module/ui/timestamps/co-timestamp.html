@@ -1,0 +1,5 @@
+<div>
+  <i class="fa fa-globe" />
+  <dd ng-if="!invalidDate" class="co-timestamp" tooltip="{{ timestampUTC }}" tooltip-placement="bottom" ng-bind="timestamp | date:CONST.dateTimeFmt"></dd>
+  <dd ng-if="invalidDate" class="co-timestamp">-</dd>
+</div>

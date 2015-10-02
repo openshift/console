@@ -30,7 +30,7 @@
                   <co-label-list kind="pod" selector="true" labels="service.spec.selector"></co-label-list>
                 </dd>
                 <dt>Created At</dt>
-                <dd ng-bind="service.metadata.creationTimestamp | date:CONST.dateTimeFmt"></dd>
+                <dd><co-timestamp timestamp="{{service.metadata.creationTimestamp}}" /></dd>
               </dl>
             </div>
             <div class="col-lg-6">
