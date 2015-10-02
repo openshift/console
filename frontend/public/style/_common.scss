@@ -67,3 +67,14 @@
     font-weight: 600;
     font-size: 20px;
 }
+
+.btn-primary {
+    background-color: $color-tectonic-button-green;
+    &:hover,
+    &:focus,
+    &.focus,
+    &:active,
+    &.active {
+        background-color: darken($color-tectonic-button-green, 10%);
+    }
+}
