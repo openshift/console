@@ -40,7 +40,7 @@
               <span ng-if="!user.disabled">Active</span>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-2 hidden-xs">Administrator</div>
-            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs" ng-bind="user.createdAt | date : 'MMMM dd, yyyy'">Just Now!</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs" ng-bind="user.createdAt | date : dateFmt">Just Now!</div>
           </div>
         </div><!-- .co-m-table-grid__body -->
       </div>
