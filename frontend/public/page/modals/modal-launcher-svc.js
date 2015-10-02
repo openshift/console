@@ -69,6 +69,7 @@ angular.module('bridge.page')
     },
     'new-user': {
       templateUrl: '/static/page/modals/new-user.html',
+      windowTemplateUrl: '/static/page/modals/std-width-modal.html',
       controller: 'NewUserCtrl',
     },
     'toggle-disabled-user': {
