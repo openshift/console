@@ -88,7 +88,7 @@ Run frontend tests:
 
 ### Dependency Management
 Add new frontend dependencies:
- 1. `bower install` the dependency
+ 1. `bower install --save` the dependency
  2. From `/frontend` run `gulp deps`
  3. Add and commit generated `deps.js` and `deps.min.js` files in `/frontend/public/lib/`
 
