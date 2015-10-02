@@ -9,7 +9,6 @@ angular.module('bridge.page')
 
     dex.users.list()
     .then(function(l) {
-      console.log(l);
       $scope.users = l.users;
     })
     .catch(function() {
@@ -22,6 +21,14 @@ angular.module('bridge.page')
 
   $scope.newUserModal = function() {
     var instance = ModalLauncherSvc.open('new-user', {});
+    instance.result.then(loadUsers);
+  };
+
+  $scope.showDisableModal = function(user, disableIfTrue) {
+    var instance = ModalLauncherSvc.open('toggle-disabled-user', {
+      user: user,
+      disableIfTrue: disableIfTrue
+    });
     instance.result.then(loadUsers);
   };
 
