@@ -1,0 +1,25 @@
+.co-m-table-grid__cell--left-padded {
+    padding: 0 0 0 40px;
+}
+
+.co-m-table-grid__cell--left-padded__offset-cell {
+    margin: 4px 0 0 -30px;
+    width: 30px;
+    float: left;
+}
+
+.co-p-users__user .co-p-users__email {
+    color: $color-text-muted;
+    font-size: 13px;
+    line-height: 17px;
+}
+
+.co-p-users__user.row {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.co-p-users__email, .co-p-users__name {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('UsersCtrl', function($scope, dex, ModalLauncherSvc) {
+.controller('UsersCtrl', function($scope, dex, authSvc, ModalLauncherSvc) {
   'use strict';
 
   var loadUsers = function () {
@@ -30,6 +30,11 @@ angular.module('bridge.page')
       disableIfTrue: disableIfTrue
     });
     instance.result.then(loadUsers);
+  };
+
+  $scope.isYou = function(user) {
+    var s = authSvc.state();
+    return s && (user.id === s.userID);
   };
 
   loadUsers();
