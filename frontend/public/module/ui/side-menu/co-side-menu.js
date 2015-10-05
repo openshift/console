@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, sideMenu, featuresSvc) {
+.directive('coSideMenu', function($, sideMenuVisibility, featuresSvc) {
   'use strict';
 
   return {
@@ -12,9 +12,9 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     controller: function($scope) {
-      this.hide = sideMenu.hideSideMenu;
-      $scope.$watch(sideMenu.getShowSideMenu, function(val) {
-        $scope.showSideMenu = val;
+      this.hide = sideMenuVisibility.hideSideMenu;
+      $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
+        $scope.showSideMenu = show;
       });
     },
     link: function(scope, elem, attrs, ctrl) {
