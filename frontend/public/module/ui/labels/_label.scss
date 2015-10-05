@@ -4,7 +4,7 @@ $height: 18px;
   display: inline-block;
   border-radius: 10px;
   padding: 0px 8px;
-  font-size: 13px;
+  font-size: $font-size-small;
   height: $height;
   line-height: $height;
   white-space: nowrap;

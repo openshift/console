@@ -83,3 +83,21 @@
         background-color: darken($color-tectonic-button-green, 10%);
     }
 }
+
+label {
+    margin: 0px;
+}
+
+.modal-body {
+    font-size: $font-size-small;
+}
+
+.modal-body__field {
+    margin: 0 0 13px 0;
+    max-width: 448px;
+}
+
+.modal-body__static-control-value {
+    line-height: 30px;
+    font-size: $font-size-small;
+}

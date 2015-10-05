@@ -88,7 +88,7 @@ tags-input .tags .input {
   padding: 0;
   float: left;
   //keeps placeholder same size as tag's text
-  font-size: 13px;
+  font-size: $font-size-small;
 }
 tags-input .tags .input.invalid-tag {
   color: $red-invalid;
