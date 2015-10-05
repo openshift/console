@@ -89,7 +89,7 @@ label {
 }
 
 .modal-body {
-    font-size: 13px;
+    font-size: $font-size-small;
 }
 
 .modal-body__field {
@@ -99,5 +99,5 @@ label {
 
 .modal-body__static-control-value {
     line-height: 30px;
-    font-size: 13px;
+    font-size: $font-size-small;
 }
