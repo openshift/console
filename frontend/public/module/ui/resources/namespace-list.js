@@ -12,12 +12,16 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     controller: function($scope) {
-      k8s.namespaces.list()
-      .then(function(namespaces) {
-        $scope.namespaces = namespaces;
-      })
-      .catch(function() {
-        $scope.namespaceListError = true;
+      $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
+        if (show) {
+          k8s.namespaces.list()
+          .then(function(namespaces) {
+            $scope.namespaces = namespaces;
+          })
+          .catch(function() {
+            $scope.namespaceListError = true;
+          });
+        }
       });
 
       $scope.selectNamespace = function(e) {
