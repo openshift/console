@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coNamespaceList', function(k8s, $location) {
+.directive('coNamespaceList', function(k8s, $location, sideMenuVisibility) {
   'use strict';
 
   return {

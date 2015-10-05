@@ -2,7 +2,7 @@
  * Side menu service to manage show / hide state.
  */
 angular.module('bridge.service')
-.service('sideMenu', function() {
+.service('sideMenuVisibility', function() {
   'use strict';
   var showSideMenu = false;
 
