@@ -1,34 +1,17 @@
 <div class="co-p-toggle-disabled-user-modal">
-  <div ng-if="disableIfTrue">
-    <div class="modal-header">
-      <h1 class="modal-title">Disable User</h1>
-    </div>
-    <div class="modal-body">
-      <div>Once the user is disabled they will not be able to access Tectonic.</div>
-    </div>
-    <div class="modal-footer" co-btn-bar complete-promise="disableToggled">
-      <co-error-message promise="disableToggled"></co-error-message>
-      <button type="submit" class="btn btn-primary" ng-click="toggleDisabled(user, disableIfTrue)"
-              >Disable User</button>
-      <button type="button" ng-click="$dismiss()" class="btn btn-link"
-              >Keep User Enabled</button>
-    </div>
-
-  </div><!-- if disableIFTrue -->
-
-  <div ng-if="!disableIfTrue">
-    <div class="modal-header">
-      <h1 class="modal-title">Enable User</h1>
-    </div>
-    <div class="modal-body">
-      <div>Once the user is enabled they will be able to access Tectonic.</div>
-    </div>
-    <div class="modal-footer" co-btn-bar complete-promise="disableToggled">
-      <co-error-message promise="disableToggled"></co-error-message>
-      <button type="submit" class="btn btn-primary" ng-click="toggleDisabled(user, disableIfTrue)"
-              >Enable User</button>
-      <button type="button" ng-click="$dismiss()" class="btn btn-link"
-              >Keep User Disabled</button>
-    </div>
-  </div><!-- if !disableIfTrue -->
+  <div class="modal-header">
+    <h1 class="modal-title" ng-bind="action"></h1>
+  </div>
+  <div class="modal-body">
+    <div ng-bind="blurb"></div>
+  </div>
+  <div class="modal-footer" co-btn-bar complete-promise="disableToggled">
+    <co-error-message promise="disableToggled"></co-error-message>
+    <button type="submit"
+            class="btn btn-primary"
+            ng-click="toggleDisabled(user, disableIfTrue)"
+            ng-bind="action"
+            ></button>
+    <button type="button" ng-click="$dismiss()" class="btn btn-link" ng-bind="cancel"></button>
+  </div>
 </div>
