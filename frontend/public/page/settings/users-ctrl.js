@@ -2,15 +2,34 @@ angular.module('bridge.page')
 .controller('UsersCtrl', function($scope, dex, authSvc, ModalLauncherSvc) {
   'use strict';
 
+  var latestLoad = 0;
+
   var loadUsers = function () {
     $scope.users = null;
     $scope.failed = false;
     $scope.loaded = false;
+    var batchSize = 100;
 
-    dex.users.list()
-    .then(function(l) {
-      $scope.users = l.users;
-    })
+    latestLoad++;
+    var thisLoad = latestLoad;
+    var newUsers = [];
+
+    var loadRemainingUsers = function(batch) {
+      newUsers = newUsers.concat(batch.users);
+      if (batch.nextPageToken) {
+        return dex.users.list({
+          maxResults: batchSize,
+          nextPageToken: batch.nextPageToken
+        }).then(loadRemainingUsers);
+      } else {
+        if (latestLoad === thisLoad) {
+          $scope.users = newUsers;
+        }
+      }
+    };
+
+    dex.users.list({maxResults: batchSize})
+    .then(loadRemainingUsers)
     .catch(function() {
       $scope.failed = true;
     })
