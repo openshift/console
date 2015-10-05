@@ -74,7 +74,12 @@
     &:focus,
     &.focus,
     &:active,
-    &.active {
+    &.active,
+    &.disabled,
+    &[disabled],
+    &[disabled]:active,
+    &[disabled]:hover,
+    &[disabled]:focus {
         background-color: darken($color-tectonic-button-green, 10%);
     }
 }
