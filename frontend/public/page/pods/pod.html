@@ -24,7 +24,7 @@
                 <dt>Pod Labels</dt>
                 <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
                 <dt>Created At</dt>
-                <dd ng-bind="pod.metadata.creationTimestamp | date:CONST.dateTimeFmt"></dd>
+                <dd><co-timestamp timestamp="{{pod.metadata.creationTimestamp}}" /></dd>
               </dl>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
