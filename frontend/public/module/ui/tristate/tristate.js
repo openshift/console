@@ -44,6 +44,7 @@ angular.module('bridge.ui')
         if (this.isLoading()) {
           return 'loading';
         }
+        return 'ready';
       }.bind(this);
     },
     link: function(scope, elem, attrs, loadStateCtrl) {

@@ -12,7 +12,7 @@ angular.module('bridge.page')
     'Once the user is enabled they will be able to access Tectonic.';
 
   $scope.toggleDisabled = function(toggledUser, desiredState) {
-    $scope.disabledToggled =
-      dex.users.disable(toggledUser.id, desiredState).then($scope.$close);
+    $scope.disabledToggled = dex.users.disable(toggledUser.id, desiredState);
+    $scope.disabledToggled.then($scope.$close);
   };
 });
