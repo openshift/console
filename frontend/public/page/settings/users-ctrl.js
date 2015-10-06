@@ -42,7 +42,15 @@ angular.module('bridge.page')
 
   $scope.newUserModal = function() {
     var instance = ModalLauncherSvc.open('new-user', {});
-    instance.result.then(loadUsers);
+    instance.result
+    .then(function(results) {
+      if (results.resetPasswordLink) {
+        ModalLauncherSvc.open('new-user-invite-link', {
+          link: results.resetPasswordLink
+        });
+      }
+    })
+    .then(loadUsers);
   };
 
   $scope.showDisableModal = function(user, disableIfTrue) {
