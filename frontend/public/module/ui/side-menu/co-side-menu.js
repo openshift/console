@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, sideMenuVisibility, authSvc, featuresSvc) {
+.directive('coSideMenu', function($, sideMenuVisibility, authSvc, featuresSvc, dex) {
   'use strict';
 
   return {
@@ -25,8 +25,11 @@ angular.module('bridge.ui')
       };
     },
     link: function(scope, elem, attrs, ctrl) {
+      dex.users.list({maxResults: 1})
+      .then(function() {
+        scope.usersAreManageable = true;
+      });
       scope.isAuthDisabled = featuresSvc.isAuthDisabled;
-      scope.isUserManagementDisabled = featuresSvc.isUserManagementDisabled;
       $('body').click(ctrl.hide);
     },
   };
