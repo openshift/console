@@ -27,7 +27,7 @@
           <div class="row co-m-table-grid--clickable co-p-users__user" ng-repeat="user in users" ng-show="loaded && !failed">
             <div class="col-lg-4 col-md-4 col-sm-5 col-xs-8 co-m-table-grid__cell--left-padded">
               <div class="co-m-table-grid__cell--left-padded__offset-cell">
-                <co-user-cog user="user" onselect="showDisableModal"></co-user-cog>
+                <co-user-cog ng-if="!isYou(user)" user="user" onselect="showDisableModal"></co-user-cog>
               </div>
               <div class="co-p-users__name">
                 <span ng-bind="user.displayName || '(No Name Given)'"></span>
