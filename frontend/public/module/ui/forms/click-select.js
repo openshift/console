@@ -1,4 +1,4 @@
-angular.module('bridge.ui', ['jquery'])
+angular.module('bridge.ui')
 .directive('coClickSelect', function() {
   'use strict';
 
