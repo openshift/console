@@ -5,16 +5,18 @@ angular.module('bridge.page')
   var latestLoad = 0;
 
   var loadUsers = function () {
+    var batchSize = 100;
+    var newUsers = [];
+    var thisLoad, loadRemainingUsers;
+
     $scope.users = null;
     $scope.failed = false;
     $scope.loaded = false;
-    var batchSize = 100;
 
     latestLoad++;
-    var thisLoad = latestLoad;
-    var newUsers = [];
+    thisLoad = latestLoad;
 
-    var loadRemainingUsers = function(batch) {
+    loadRemainingUsers = function(batch) {
       newUsers = newUsers.concat(batch.users);
       if (batch.nextPageToken) {
         return dex.users.list({
