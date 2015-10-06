@@ -24,12 +24,8 @@ angular.module('bridge.page')
     instance.result
     .then(function(results) {
       if (results.resetPasswordLink) {
-        var inviteLink = ModalLauncherSvc.open('new-user-invite-link', {
+        ModalLauncherSvc.open('new-user-invite-link', {
           link: results.resetPasswordLink
-        });
-        return inviteLink.result
-        .catch(function() {
-          // any dismissal is actually a succeess.
         });
       }
     })
