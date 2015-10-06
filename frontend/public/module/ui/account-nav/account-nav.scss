@@ -1,17 +1,28 @@
+@import '_vars';
+
 #account-nav {
   position: absolute;
   right: 0;
   border-left: 1px solid #ddd;
 
-  .account-nav__email {
+  .account-email-namespace {
     vertical-align: middle;
+    display: inline-block;
+  }
+  .account-nav__email {
+    color: $color-grey-text;
+    vertical-align: middle;
+  }
+  .account-nav__active-namespace {
+    font-weight: 700;
   }
   .account-nav__dropdown-toggle {
     height: 46px;
     padding-left: 20px;
+    padding-top: 10px;
   }
   .account-nav__dropdown-toggle__auth {
-    padding: 0 0 0 20px;
+    padding: 2px 0 0 20px;
   }
 }
 

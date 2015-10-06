@@ -1,13 +1,6 @@
 angular.module('bridge.page')
-.controller('AuthCtrl', function($scope, $location, $log, authSvc, featuresSvc) {
+.controller('AuthCtrl', function($scope, $location, $log, authSvc, featuresSvc, k8s) {
   'use strict';
-
-  $scope.logout = function(e) {
-    if (!$scope.isAuthDisabled) {
-      authSvc.logout();
-    }
-    e.preventDefault();
-  };
 
   $scope.email = function() {
     return authSvc.email() || '';
@@ -15,4 +8,7 @@ angular.module('bridge.page')
 
   $scope.emailHash = authSvc.emailHash;
   $scope.isAuthDisabled = featuresSvc.isAuthDisabled;
+  $scope.$watch(k8s.namespaces.getActiveNamespace, function(namespace) {
+    $scope.activeNamespace = namespace;
+  });
 });
