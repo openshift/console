@@ -43,11 +43,14 @@
           <li ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)">
             <a href="#" class="account-nav__dropdown-toggle" ng-class="{'account-nav__dropdown-toggle__auth': !isAuthDisabled}">
               <img class="co-user-avatar" ng-if="!isAuthDisabled && emailHash()" ng-src="//gravatar.com/avatar/{{emailHash()}}?s=32" />
-              <span class="account-nav__email" ng-bind="email() || 'My Account'"></span>&nbsp;<i class="fa fa-cog co-settings-icon"></i>
+              <div class="account-email-namespace">
+                <span class="account-nav__email" ng-bind="email() || 'My Account'"></span><br />
+                <span class="account-nav__active-namespace" ng-bind="activeNamespace || 'all'"></span>
+              </div>
+              &nbsp;<i class="fa fa-cog co-settings-icon"></i>
             </a>
           </li>
         </ul>
-
       </co-navbar>
       <co-side-menu></co-side-menu>
       <div id="co-l-view-container" class="container" ng-view co-error-page></div>

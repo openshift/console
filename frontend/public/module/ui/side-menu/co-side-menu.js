@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, sideMenuVisibility, featuresSvc) {
+.directive('coSideMenu', function($, sideMenuVisibility, authSvc, featuresSvc) {
   'use strict';
 
   return {
@@ -16,6 +16,13 @@ angular.module('bridge.ui')
       $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
         $scope.showSideMenu = show;
       });
+
+      $scope.logout = function(e) {
+        if (!$scope.isAuthDisabled) {
+          authSvc.logout();
+        }
+        e.preventDefault();
+      };
     },
     link: function(scope, elem, attrs, ctrl) {
       scope.isAuthDisabled = featuresSvc.isAuthDisabled;
