@@ -5,6 +5,22 @@ angular.module('dex')
   var basePath = '/api/dex/v1/';
 
   this.users = {
+    // returns true if and only if the api is available
+    available: function() {
+      return $http({
+        url: basePath + 'users',
+        method: 'GET',
+        params: {maxResults: 0},
+        unauthorizedOk: true, // We expect 401s without getting logged out
+      })
+      .then(function() {
+          return true;
+      })
+      .catch(function() {
+        return false;
+      });
+    },
+
     // params: {maxResults: ..., nextPageToken: ....}
     list: function(params) {
       return $http({

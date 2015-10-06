@@ -291,9 +291,11 @@ angular.module('bridge', [
   });
 
   $rootScope.$on('xhr-error-unauthorized', function(e, rejection) {
-    if (rejection && rejection.status === 401) {
-      authSvc.logout($window.location.pathname);
+    if (rejection.config && rejection.config.unauthorizedOk) {
+      return;
     }
+
+    authSvc.logout($window.location.pathname);
   });
 
   $rootScope.$on('$routeChangeStart', function(e, next) {

@@ -25,9 +25,9 @@ angular.module('bridge.ui')
       };
     },
     link: function(scope, elem, attrs, ctrl) {
-      dex.users.list({maxResults: 1})
-      .then(function() {
-        scope.usersAreManageable = true;
+      dex.users.available()
+      .then(function(isAvailable) {
+        scope.usersAreManageable = isAvailable;
       });
       scope.isAuthDisabled = featuresSvc.isAuthDisabled;
       $('body').click(ctrl.hide);
