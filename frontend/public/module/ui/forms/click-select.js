@@ -4,7 +4,6 @@ angular.module('bridge.ui')
 
   return {
     restrict: 'A',
-    replace: true,
     link: function(scope, elem) {
       function clickHandler(event) {
         elem.select();
