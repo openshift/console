@@ -24,10 +24,18 @@
     padding: 5px 0 5px 20px;
     display: block;
 
+    &:not(.disabled) {
+      cursor: pointer;
+    }
+
     &:hover {
       text-decoration: none;
-      cursor: pointer;
       background-color: $color-grey-highlight;
+    }
+
+    &.disabled {
+      cursor: auto;
+      opacity: 0.5;
     }
   }
 

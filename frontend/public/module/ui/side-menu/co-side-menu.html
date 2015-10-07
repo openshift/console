@@ -2,9 +2,16 @@
   <co-namespace-list></co-namespace-list>
   <ul class="sidemenu-list">
     <li ng-if="usersAreManageable"
-        ><a href="/settings/users" class="sidemenu-link">Manage Users...</a></li>
+        ><a href="/settings/users"
+            class="sidemenu-link"
+            >Manage Users...</a></li>
+    <li ng-if="userManagementError"
+        ><a class="sidemenu-link disabled"
+            title="{{userManagementErrorMessage}}">Manage Users...</a></li>
     <!--[><li><a href="/settings/registries" class="sidemenu-link">Configure Registries</a></li><]-->
     <li><a href="mailto:support@tectonic.com" class="sidemenu-link">Contact Support</a></li>
-    <li ng-class="{'disabled': isAuthDisabled}"><a href="" class="sidemenu-link" ng-click="logout($event)">Logout</a></li>
+    <li><a class="sidemenu-link"
+           ng-class="{'disabled': isAuthDisabled}"
+           ng-click="logout($event)">Logout</a></li>
   </ul>
 </div>
