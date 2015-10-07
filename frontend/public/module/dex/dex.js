@@ -11,13 +11,17 @@ angular.module('dex')
         url: basePath + 'users',
         method: 'GET',
         params: {maxResults: 0},
-        unauthorizedOk: true, // We expect 401s without getting logged out
+        unauthorizedOk: true,
       })
       .then(function() {
           return true;
       })
-      .catch(function() {
-        return false;
+      .catch(function(reason) {
+        if (reason.status === 401 || reason.status === 403 || reason.status === 404) {
+          return false;
+        }
+
+        throw reason;
       });
     },
 
