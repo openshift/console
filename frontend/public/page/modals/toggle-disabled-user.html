@@ -5,8 +5,8 @@
   <div class="modal-body">
     <div ng-bind="blurb"></div>
   </div>
-  <div class="modal-footer" co-btn-bar complete-promise="disableToggled">
-    <co-error-message promise="disableToggled"></co-error-message>
+  <div class="modal-footer" co-btn-bar complete-promise="disabledToggled">
+    <co-error-message promise="disabledToggled" formatter="dexApi"></co-error-message>
     <button type="submit"
             class="btn btn-primary"
             ng-click="toggleDisabled(user, disableIfTrue)"

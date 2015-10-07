@@ -3,7 +3,6 @@ angular.module('bridge.page')
   'use strict';
 
   var latestLoad = 0;
-
   var loadUsers = function () {
     var batchSize = 100;
     var newUsers = [];
@@ -11,7 +10,6 @@ angular.module('bridge.page')
 
     $scope.users = null;
     $scope.failed = false;
-    $scope.loaded = false;
 
     latestLoad++;
     thisLoad = latestLoad;
@@ -32,11 +30,13 @@ angular.module('bridge.page')
 
     dex.users.list({maxResults: batchSize})
     .then(loadRemainingUsers)
-    .catch(function() {
+    .catch(function(reason) {
+      if (reason && reason.data && reason.data.error_description) {
+        $scope.loadErrorMessage = reason.data.error_description;
+      } else {
+        $scope.loadErrorMessage = null;
+      }
       $scope.failed = true;
-    })
-    .finally(function() {
-      $scope.loaded = true;
     });
   };
 

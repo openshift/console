@@ -16,7 +16,7 @@ angular.module('bridge.page')
         admin: $scope.admin,
       },
       redirectURL: $window.SERVER_FLAGS.newUserAuthCallbackURL
-    })
-    .then($scope.$close);
+    });
+    $scope.userCreated.then($scope.$close);
   };
 });

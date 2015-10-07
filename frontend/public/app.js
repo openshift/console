@@ -46,6 +46,13 @@ angular.module('bridge', [
     return 'An error occurred. Please try again.';
   });
 
+  errorMessageSvcProvider.registerFormatter('dexApi', function(resp) {
+    if (resp.data && resp.data.error_description) {
+      return resp.data.error_description;
+    }
+    return 'An error occurred. Please try again.';
+  });
+
   function r(route, config, unprotected) {
     if (!unprotected) {
       if (!config.resolve) {
