@@ -13,7 +13,7 @@ angular.module('bridge.page')
       user: {
         email: $scope.model.email,
         displayName: $scope.model.displayName,
-        admin: $scope.admin,
+        admin: $scope.model.admin,
       },
       redirectURL: $window.SERVER_FLAGS.newUserAuthCallbackURL
     });
