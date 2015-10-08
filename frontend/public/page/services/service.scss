@@ -1,0 +1,43 @@
+.service-ips {
+  .co-ip-header {
+    color: #999;
+    font-weight: 300;
+    font-size: 14px;
+    padding: 20px 0 5px 20px;
+    margin-left: 0;
+  }
+
+  .co-ip-row {
+    // Collapse borders when multiple consecutive rows.
+    margin-top: -1px;
+
+    padding: 20px 0 5px 20px;
+    margin-left: 0;
+    border: 1px solid #eee;
+    border-collapse: collapse;
+
+    .ip-name {
+      margin-bottom: 5px;
+    }
+
+    .ip-desc {
+      color: #999;
+      font-size: 12px;
+    }
+
+    &:only-child {
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    &:first-child {
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+  }
+}
