@@ -8,15 +8,17 @@ angular.module('bridge.page')
     admin: true,
   };
 
-  $scope.createUser = function() {
-    $scope.userCreated = dex.users.create({
-      user: {
-        email: $scope.model.email,
-        displayName: $scope.model.displayName,
-        admin: $scope.model.admin,
-      },
-      redirectURL: $window.SERVER_FLAGS.newUserAuthCallbackURL
-    });
-    $scope.userCreated.then($scope.$close);
+  $scope.createUser = function(form) {
+    if (form.$valid) {
+      $scope.userCreated = dex.users.create({
+        user: {
+          email: $scope.model.email,
+          displayName: $scope.model.displayName,
+          admin: $scope.model.admin,
+        },
+        redirectURL: $window.SERVER_FLAGS.newUserAuthCallbackURL
+      });
+      $scope.userCreated.then($scope.$close);
+    }
   };
 });
