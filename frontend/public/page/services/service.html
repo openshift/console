@@ -36,7 +36,45 @@
             <div class="col-lg-6">
               <dl>
                 <dt>Service Address</dt>
-                <dd><co-service-ip-link service="service"></co-service-ip-link></dd>
+                <dd class="service-ips">
+                  <div class="row co-ip-header">
+                    <div class="col-lg-6">
+                      <span>Type</span>
+                    </div>
+                    <div class="col-lg-2">
+                      <span>Location</span>
+                    </div>
+                  </div>
+                  <div class="rows">
+                    <div class="row co-ip-row">
+                      <div class="col-lg-6">
+                        <p class="ip-name">Cluster IP</p>
+                        <p class="ip-desc">Accessible within the cluster only</p>
+                      </div>
+                      <div class="col-lg-2">
+                        <co-service-ip-link service="service"></co-service-ip-link>
+                      </div>
+                    </div>
+                    <div ng-if="service.status.loadBalancer" class="row co-ip-row">
+                      <div class="col-lg-6">
+                        <p class="ip-name">External Load Balancer</p>
+                        <p class="ip-desc">Ingress point for load balancer</p>
+                      </div>
+                      <div class="col-lg-2">
+                        <p ng-repeat="ingress in service.status.loadBalancer.ingress"><a target="_blank" ng-href="http://{{ingress.hostname || ingress.ip}}" ng-bind="ingress.hostname || ingress.ip || CONST.placeholderText"></a></p>
+                      </div>
+                    </div>
+                    <div ng-if="service.spec.externalIPs" class="row co-ip-row">
+                      <div class="col-lg-6">
+                        <p class="ip-name">External IP</p>
+                        <p class="ip-desc">IP Address(es) accepting traffic for service</p>
+                      </div>
+                      <div class="col-lg-2">
+                        <p ng-repeat="externalIP in service.spec.externalIPs"><a target="_blank" ng-href="http://{{ externalIP }}" ng-bind="externalIP"></a></p>
+                      </div>
+                    </div>
+                  </div>
+                </dd>
                 <dt>Session Affinity</dt>
                 <dd ng-bind="service.spec.sessionAffinity | emptyPlaceholder"></dd>
               </dl>
