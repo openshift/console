@@ -1,0 +1,34 @@
+<div class="bridge-user-list co-m-table-grid co-m-table-grid--bordered">
+  <div ng-show="users && users.length">
+    <div class="row co-m-table-grid__head cos-tristate-show-ready">
+      <div class="col-lg-4 col-md-4 col-sm-5 col-xs-8 co-m-table-grid__cell--left-padded">Name and Email</div>
+      <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Status</div>
+      <div class="col-lg-3 col-md-3 col-sm-2 hidden-xs">Tectonic Role</div>
+      <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Date Added</div>
+    </div>
+    <div class="co-m-table-grid__body cos-tristate-show-ready">
+      <div class="row co-m-table-grid--clickable co-p-users__user" ng-repeat="user in users">
+        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-8 co-m-table-grid__cell--left-padded">
+          <div class="co-m-table-grid__cell--left-padded__offset-cell">
+            <co-user-cog ng-if="!(yourId === user.id)" user="user" onselect="showDisableModal"></co-user-cog>
+          </div>
+          <div class="co-p-users__name">
+            <span ng-bind="user.displayName || '(No Name Given)'"></span>
+            <span ng-if="yourId === user.id">(You)</span>
+          </div>
+          <div class="co-p-users__email" ng-bind="user.email"></div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+          <span ng-if="user.disabled">Disabled</span>
+          <span ng-if="!user.disabled">Active</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-2 hidden-xs">Administrator</div>
+        <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs" ng-bind="user.createdAt | date : CONST.dateFmt">Just Now!</div>
+      </div>
+    </div><!-- .co-m-table-grid__body -->
+  </div>
+  <cos-status-box ng-show="!users || !users.length">
+    <div>No users found</div>
+    <div class="cos-text-center">No users were found.</div>
+  </cos-status-box>
+</div>
