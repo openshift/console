@@ -1,9 +1,9 @@
 angular.module('bridge.page')
 .controller('UsersCtrl', function($scope, _, dex, authSvc, ModalLauncherSvc) {
   'use strict';
-
   var latestLoad = 0;
   var loadUsers = function () {
+    var tooManyUsers = 1000;
     var batchSize = 100;
     var newUsers = [];
     var thisLoad, loadRemainingUsers;
@@ -19,18 +19,16 @@ angular.module('bridge.page')
 
     loadRemainingUsers = function(batch) {
       newUsers = newUsers.concat(batch.users);
-      if (batch.nextPageToken) {
+      if (batch.nextPageToken && newUsers.length < tooManyUsers) {
         return dex.users.list({
           maxResults: batchSize,
           nextPageToken: batch.nextPageToken
         }).then(loadRemainingUsers);
-      } else {
-        if (latestLoad === thisLoad) {
-          $scope.userGroups = _.groupBy(newUsers, function(u) {
-            return u.disabled ? 'disabled' : 'active';
-          });
-          $scope.users = newUsers;
-        }
+      } else if (latestLoad === thisLoad) {
+        $scope.userGroups = _.groupBy(newUsers, function(u) {
+          return u.disabled ? 'disabled' : 'active';
+        });
+        $scope.users = newUsers;
       }
     };
 
