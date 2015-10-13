@@ -3,52 +3,32 @@
     <a ng-click="newUserModal()" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Add New User</a>
   </co-nav-title>
-  <div class="co-m-pane">
-    <div class="co-m-pane__heading">
-      <h1 class="co-m-pane__title">Users</h1>
-    </div>
-
-    <div class="co-m-pane__body">
-      <div class="co-m-table-grid co-m-table-grid--bordered" cos-tristate="users" cos-tristate-error="failed">
-        <div class="row co-m-table-grid__head cos-tristate-show-ready">
-          <div class="col-lg-4 col-md-4 col-sm-5 col-xs-8 co-m-table-grid__cell--left-padded">Name and Email</div>
-          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Status</div>
-          <div class="col-lg-3 col-md-3 col-sm-2 hidden-xs">Tectonic Role</div>
-          <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Date Added</div>
-        </div>
-
-        <div class="co-m-table-grid__body cos-tristate-show-ready">
-          <div class="row co-m-table-grid--clickable co-p-users__user" ng-repeat="user in users">
-            <div class="col-lg-4 col-md-4 col-sm-5 col-xs-8 co-m-table-grid__cell--left-padded">
-              <div class="co-m-table-grid__cell--left-padded__offset-cell">
-                <co-user-cog ng-if="!isYou(user)" user="user" onselect="showDisableModal"></co-user-cog>
-              </div>
-              <div class="co-p-users__name">
-                <span ng-bind="user.displayName || '(No Name Given)'"></span>
-                <span ng-if="isYou(user)">(You)</span>
-              </div>
-              <div class="co-p-users__email" ng-bind="user.email"></div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
-              <span ng-if="user.disabled">Disabled</span>
-              <span ng-if="!user.disabled">Active</span>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-2 hidden-xs">Administrator</div>
-            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs" ng-bind="user.createdAt | date : CONST.dateFmt">Just Now!</div>
-          </div>
-        </div><!-- .co-m-table-grid__body -->
-
-        <co-loader class="cos-tristate-show-loading"></co-loader>
-        <cos-status-box class="cos-tristate-show-error">
-          <div class="cos-error-title">Can't load users</div>
-          <div class="cos-text-center"
-               ng-bind="loadErrorMessage || 'An error occurred while retrieving users. Please try again.'"></div>
-        </cos-status-box>
-        <cos-status-box ng-show="!filteredNodes.length && !nodes.length" class="cos-tristate-show-empty">
-          <div>No users found</div>
-          <div class="cos-text-center">No users were found.</div>
-        </cos-status-box>
+  <div class="co-m-pane" cos-tristate="users" cos-tristate-error="failed">
+    <div class="cos-tristate-show-ready">
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Active Users</h1>
       </div>
-    </div><!-- .co-m-pane-body -->
+
+      <div class="co-m-pane__body">
+        <bridge-user-list users="userGroups.active" your-id="yourId"></bridge-user-list>
+      </div><!-- .co-m-pane-body -->
+
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Disabled Users</h1>
+      </div>
+
+      <div class="co-m-pane__body">
+        <bridge-user-list users="userGroups.disabled" your-id="yourId"></bridge-user-list>
+      </div><!-- .co-m-pane-body -->
+    </div><!-- .cos-tristate-show-ready -->
+
+    <div class="co-m-pane-body">
+      <co-loader class="cos-tristate-show-loading"></co-loader>
+      <cos-status-box class="cos-tristate-show-error">
+        <div class="cos-error-title">Can't load users</div>
+        <div class="cos-text-center"
+             ng-bind="loadErrorMessage || 'An error occurred while retrieving users. Please try again.'"></div>
+      </cos-status-box>
+    </div>
   </div><!-- .co-m-pane -->
 </div>
