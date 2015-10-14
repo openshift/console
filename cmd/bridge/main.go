@@ -40,6 +40,8 @@ func main() {
 	authClientSecret := fs.String("auth-client-secret", "", "The OIDC/OAuth2 Client Secret.")
 	fs.String("auth-issuer-url", "", "The OIDC/OAuth2 issuer URL")
 	enableDexUserManagement := fs.Bool("enable-dex-user-management", false, "Use auth-issuer-url as an endpoint for dex's user managment API.")
+	tlsCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
+	tlsKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -151,7 +153,12 @@ func main() {
 	}
 
 	log.Infof("Binding to %s...", httpsrv.Addr)
-	log.Fatal(httpsrv.ListenAndServe())
+	if *tlsCertFile != "" && *tlsKeyFile != "" {
+		log.Info("using TLS")
+		log.Fatal(httpsrv.ListenAndServeTLS(*tlsCertFile, *tlsKeyFile))
+	} else {
+		log.Fatal(httpsrv.ListenAndServe())
+	}
 }
 
 func validateURLFlag(fs *flag.FlagSet, name string) *url.URL {
