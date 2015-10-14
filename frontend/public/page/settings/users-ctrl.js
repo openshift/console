@@ -2,7 +2,7 @@ angular.module('bridge.page')
 .controller('UsersCtrl', function($scope, _, dex, authSvc, ModalLauncherSvc) {
   'use strict';
   var latestLoad = 0;
-  var loadUsers = function () {
+  $scope.reload = function () {
     var tooManyUsers = 1000;
     var batchSize = 100;
     var newUsers = [];
@@ -54,16 +54,8 @@ angular.module('bridge.page')
         });
       }
     })
-    .then(loadUsers);
+    .then($scope.reload);
   };
 
-  $scope.showDisableModal = function(user, disableIfTrue) {
-    var instance = ModalLauncherSvc.open('toggle-disabled-user', {
-      user: user,
-      disableIfTrue: disableIfTrue
-    });
-    instance.result.then(loadUsers);
-  };
-
-  loadUsers();
+  $scope.reload();
 });
