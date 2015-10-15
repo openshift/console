@@ -2167,8 +2167,15 @@ angular.module('coreos.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      text: '@'
-    }
+      text: '@',
+      pullRight: '=',
+      pullRightClass: '@'
+    },
+    controller: function($scope) {
+      if ($scope.pullRight) {
+        $scope.pullRightClass = 'pull-right';
+      }
+    },
   };
 
 });
@@ -2607,6 +2614,55 @@ angular.module('coreos.ui')
 
 /**
  * @fileoverview
+ *
+ * Keeps the title tag updated.
+ */
+
+angular.module('coreos.ui')
+.directive('coTitle', function() {
+  'use strict';
+
+  return {
+    transclude: false,
+    restrict: 'A',
+    scope: {
+      suffix: '@coTitleSuffix'
+    },
+    controller: function($scope, $rootScope, $route) {
+      $scope.pageTitle = '';
+      $scope.defaultTitle = null;
+      $rootScope.$on('$routeChangeSuccess', function() {
+        if (!$route.current) {
+          return;
+        }
+        if ($route.current.title) {
+          $scope.pageTitle = $route.current.title;
+        }
+        if ($route.current.$$route && $route.current.$$route.title) {
+          $scope.pageTitle = $route.current.$$route.title;
+        }
+      });
+    },
+    link: function(scope, elem) {
+      scope.$watch('pageTitle', function(title) {
+        if (title) {
+          if (!scope.defaultTitle) {
+            scope.defaultTitle = elem.text();
+          }
+          elem.text(title + ' ' + scope.suffix);
+        } else {
+          if (scope.defaultTitle) {
+            elem.text(scope.defaultTitle);
+          }
+        }
+      });
+    }
+  };
+
+});
+
+/**
+ * @fileoverview
  * Directive to display global error or info messages.
  * Enqueue messages through the toastSvc.
  */
@@ -2679,55 +2735,6 @@ angular.module('coreos.services')
   };
 
   return service;
-
-});
-
-/**
- * @fileoverview
- *
- * Keeps the title tag updated.
- */
-
-angular.module('coreos.ui')
-.directive('coTitle', function() {
-  'use strict';
-
-  return {
-    transclude: false,
-    restrict: 'A',
-    scope: {
-      suffix: '@coTitleSuffix'
-    },
-    controller: function($scope, $rootScope, $route) {
-      $scope.pageTitle = '';
-      $scope.defaultTitle = null;
-      $rootScope.$on('$routeChangeSuccess', function() {
-        if (!$route.current) {
-          return;
-        }
-        if ($route.current.title) {
-          $scope.pageTitle = $route.current.title;
-        }
-        if ($route.current.$$route && $route.current.$$route.title) {
-          $scope.pageTitle = $route.current.$$route.title;
-        }
-      });
-    },
-    link: function(scope, elem) {
-      scope.$watch('pageTitle', function(title) {
-        if (title) {
-          if (!scope.defaultTitle) {
-            scope.defaultTitle = elem.text();
-          }
-          elem.text(title + ' ' + scope.suffix);
-        } else {
-          if (scope.defaultTitle) {
-            elem.text(scope.defaultTitle);
-          }
-        }
-      });
-    }
-  };
 
 });
 
@@ -3154,8 +3161,8 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/navbar/navbar-dropdown.html',
-    '<ul class="nav navbar-nav pull-right">\n' +
-    '  <li class="dropdown pull-right">\n' +
+    '<ul ng-class="pullRightClass" class="nav navbar-nav">\n' +
+    '  <li ng-class="pullRightClass" class="dropdown">\n' +
     '    <a href="#" class="dropdown-toggle">{{text}} <b class="caret"></b></a>\n' +
     '    <ul ng-transclude class="dropdown-menu co-m-dropdown--dark"></ul>\n' +
     '  </li>\n' +
@@ -3191,7 +3198,7 @@ module.run(['$templateCache', function($templateCache) {
     '\n' +
     '  <div class="navbar-header">\n' +
     '    <button ng-click="isCollapsed = !isCollapsed" class="navbar-toggle" type="button">\n' +
-    '      <span class="glyphicon glyphicon-align-justify"></span>\n' +
+    '      <span class="fa fa-bars"></span>\n' +
     '    </button>\n' +
     '    <a ng-href="{{config.siteBasePath}}" class="navbar-brand">\n' +
     '      <co-svg ng-if="logoSrc" class="co-m-navbar__logo" src="{{logoSrc}}"></co-svg>\n' +
