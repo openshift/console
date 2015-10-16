@@ -85,6 +85,10 @@
     font-family: $font-family-primary;
   }
 
+  .namespace-fail {
+    color: $color-red-error;
+  }
+
   .namespace-name {
     font-size: 15px;
   }
