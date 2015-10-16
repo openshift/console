@@ -1,4 +1,12 @@
 @import '_vars';
+@import '../../../lib/coreos-web/sass/mixin/_media-query';
+@import '../../../lib/coreos-web/sass/_config';
+
+@include co-x-media-max($screen-sm) {
+  #account-nav {
+    display: none !important;
+  }
+}
 
 #account-nav {
   position: absolute;

@@ -33,7 +33,8 @@
           <co-navbar-link href="/replicationcontrollers">Replication Controllers</co-navbar-link>
           <co-navbar-link href="/pods">Pods</co-navbar-link>
           <co-navbar-link href="/nodes">Nodes</co-navbar-link>
-          <co-navbar-dropdown ng-cloak text="More">
+          <co-navbar-dropdown ng-cloak text="More" class="more-header">
+            <li ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)"><a>Namespaces <i class="fa fa-angle-right right-angle-icon"></i></a></li>
             <li><a href="/events">Events</a></li>
             <li><a href="/search">Search</a></li>
           </co-navbar-dropdown>
