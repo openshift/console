@@ -8,3 +8,9 @@
     @content;
   }
 }
+
+@mixin co-x-media-max($size) {
+  @media (max-width: $size) {
+    @content;
+  }
+}

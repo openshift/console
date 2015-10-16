@@ -2,6 +2,20 @@
 @import '_config';
 
 #co-side-menu {
+  @include co-x-media-max($screen-sm) {
+    min-width: 100%!important;
+    height: 307px;
+
+    .dismiss {
+      display: block!important;
+      padding-right: 20px;
+      // Must be specific to override.
+      a {
+        color: #999;
+      }
+    }
+  }
+
   background: $color-grey-dark;
   z-index: $z-plane-4;
   position: absolute;
@@ -12,6 +26,10 @@
   padding-top: 10px;
   min-width: 200px;
   max-width: 300px;
+
+  .dismiss {
+    display: none;
+  }
 
   .fa-exclamation-triangle {
     color: $color-red-failure;
