@@ -45,7 +45,7 @@ func main() {
 	enableDexUserManagement := fs.Bool("enable-dex-user-management", false, "Use auth-issuer-url as an endpoint for dex's user managment API.")
 	tlsCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
 	tlsKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
-	caFile := fs.String("ca-file", "", "File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
+	caFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
