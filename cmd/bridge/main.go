@@ -2,9 +2,12 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
+	"errors"
 	"flag"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -42,6 +45,7 @@ func main() {
 	enableDexUserManagement := fs.Bool("enable-dex-user-management", false, "Use auth-issuer-url as an endpoint for dex's user managment API.")
 	tlsCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
 	tlsKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
+	caFile := fs.String("ca-file", "", "File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -76,9 +80,17 @@ func main() {
 		log.Fatalf("Unable to listen using scheme: %s", lu.Scheme)
 	}
 
+	certPool, err := newCertPool(*caFile)
+	if err != nil {
+		log.Fatalf("could not initialize CA certificate pool: %v", err)
+	}
+
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
 	kCfg := &server.ProxyConfig{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+			RootCAs:            certPool,
+		},
 	}
 
 	if *k8sInCluster {
@@ -107,9 +119,12 @@ func main() {
 		}
 		dexURL := validateURLFlag(fs, "auth-issuer-url")
 		dexCfg = &server.ProxyConfig{
-			Endpoint:        dexURL,
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			TokenExtractor:  auth.ExtractTokenFromCookie,
+			Endpoint: dexURL,
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+				RootCAs:            certPool,
+			},
+			TokenExtractor: auth.ExtractTokenFromCookie,
 		}
 	}
 
@@ -182,4 +197,24 @@ func validateFlagNotEmpty(fs *flag.FlagSet, name string) {
 	if flag.Value.String() == "" {
 		log.Fatalf("Missing required flag: %s", flag.Name)
 	}
+}
+
+func newCertPool(certFile string) (*x509.CertPool, error) {
+	if certFile == "" {
+		return nil, nil
+	}
+	certPool := x509.NewCertPool()
+
+	pemByte, err := ioutil.ReadFile(certFile)
+	if err != nil {
+		return nil, err
+	}
+
+	ok := certPool.AppendCertsFromPEM(pemByte)
+	if !ok {
+		return nil, errors.New("Could not parse CA File.")
+	}
+
+	return certPool, nil
+
 }
