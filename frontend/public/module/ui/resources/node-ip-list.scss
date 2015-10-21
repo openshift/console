@@ -1,0 +1,17 @@
+.co-node-ip {
+  padding: 0 0 10px 0;
+  margin: 0;
+  line-height: 14px;
+
+  &:last-child {
+    padding: 0;
+  }
+}
+
+.co-ip-type {
+  color: #999;
+}
+
+.co-ip-addr {
+  color: black;
+}
