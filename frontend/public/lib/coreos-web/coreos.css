@@ -7328,9 +7328,11 @@ svg .x-axis path {
 
 /* Reusable Modules */
 input[type="number"] {
-  max-width: 100px; }
+  max-width: 100px;
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  appearance: textfield; }
   input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
     margin: 0; }
 
 input[type="radio"] {
