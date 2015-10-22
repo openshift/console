@@ -147,6 +147,13 @@ func main() {
 		iURL := validateURLFlag(fs, "auth-issuer-url")
 
 		ocfg := oidc.ClientConfig{
+			HTTPClient: &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: &tls.Config{
+						RootCAs: certPool,
+					},
+				},
+			},
 			Credentials: oidc.ClientCredentials{
 				ID:     *authClientID,
 				Secret: *authClientSecret,
