@@ -2,6 +2,8 @@ angular.module('k8s')
 .service('k8sNamespaces', function(_, coLocalStorage) {
   'use strict';
 
+  var nsPathPattern = /^\/?ns\/[^\/]*\/?(.*)$/;
+  var allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
   var activeNamespace = coLocalStorage.getItem('activeNamespace') || undefined;
 
   this.setActiveNamespace = function(namespace) {
@@ -38,8 +40,21 @@ angular.module('k8s')
   };
 
   this.namespaceResourceFromPath = function(path) {
-    var parts = _.compact(path.split('/'));
-    return _.last(parts) || '';
+    var match = path.match(nsPathPattern);
+    if (match) {
+      return match[1];
+    }
+
+    match = path.match(allNsPathPattern);
+    if (match) {
+      return match[1];
+    }
+
+    if (path[0] === '/') {
+      return path.substr(1);
+    }
+
+    return path;
   };
 
 });
