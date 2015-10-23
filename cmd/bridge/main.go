@@ -34,7 +34,7 @@ func main() {
 	fs.String("listen", "http://0.0.0.0:9000", "")
 	logLevel := fs.String("log-level", "", "level of logging information by package (pkg=level)")
 	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
-	k8sInCluster := fs.Bool("k8s-in-cluster", false, "Configure --k8s-endpoint and --k8s-bearer-token from environment, typically used when deploying as a Kubernetes pod")
+	k8sInCluster := fs.Bool("k8s-in-cluster", false, "Configure --k8s-endpoint, --k8s-bearer-token and TLS configuration for communication with Kubernetes API Server from environment, typically used when deploying as a Kubernetes pod")
 	fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server, ignored when --k8s-in-cluster=true")
 	k8sBearerToken := fs.String("k8s-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests. This should only be used when --disable-auth=true, as any OIDC-related authorization information will be blindly overridden. This flag is ignored with --k8s-in-cluster=true")
 	fs.String("host", "http://127.0.0.1:9000", "The externally visible hostname/port of the service. Used in OIDC/OAuth2 Redirect URL.")
@@ -46,6 +46,7 @@ func main() {
 	tlsCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
 	tlsKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	caFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
+	insecureSkipVerifyK8sCA := fs.Bool("insecure-skip-verify-k8s-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server. This is ignored when -k8s-in-cluster is set.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -86,24 +87,36 @@ func main() {
 	}
 
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
-	kCfg := &server.ProxyConfig{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-			RootCAs:            certPool,
-		},
-	}
 
+	var kCfg *server.ProxyConfig
 	if *k8sInCluster {
 		cc, err := kclient.InClusterConfig()
 		if err != nil {
 			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 		}
+
+		inClusterTLSCfg, err := kclient.TLSConfigFor(cc)
+		if err != nil {
+			log.Fatalf("Error creating TLS config from Kubernetes config: %v", err)
+		}
+
+		kCfg = &server.ProxyConfig{
+			TLSClientConfig: inClusterTLSCfg,
+		}
+
 		kCfg.Endpoint, err = url.Parse(cc.Host)
 		if err != nil {
 			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
 		}
+
 		kCfg.TokenExtractor = server.ConstantTokenExtractor(cc.BearerToken)
 	} else {
+		kCfg = &server.ProxyConfig{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: *insecureSkipVerifyK8sCA,
+			},
+		}
+
 		kCfg.Endpoint = k8sURL
 		kCfg.TokenExtractor = server.ConstantTokenExtractor(*k8sBearerToken)
 	}
@@ -121,8 +134,7 @@ func main() {
 		dexCfg = &server.ProxyConfig{
 			Endpoint: dexURL,
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-				RootCAs:            certPool,
+				RootCAs: certPool,
 			},
 			TokenExtractor: auth.ExtractTokenFromCookie,
 		}
