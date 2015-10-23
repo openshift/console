@@ -16,11 +16,11 @@ const (
 	K8sAPIVersion         = "v1"
 	IndexPageTemplateName = "index.html"
 
-	AuthLoginEndpoint    = "/auth/login"
-	AuthLogoutEndpoint   = "/auth/logout"
-	AuthCallbackEndpoint = "/auth/callback"
-	AuthErrorURL         = "/error"
-	AuthSuccessURL       = "/"
+	AuthLoginEndpoint         = "/auth/login"
+	AuthLogoutEndpoint        = "/auth/logout"
+	AuthLoginCallbackEndpoint = "/auth/callback"
+	AuthErrorURL              = "/error"
+	AuthSuccessURL            = "/"
 )
 
 var (
@@ -58,7 +58,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		mux.HandleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
 		mux.HandleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
-		mux.HandleFunc(AuthCallbackEndpoint, s.Auther.CallbackFunc)
+		mux.HandleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc)
 	}
 
 	if s.DexProxyConfig != nil {
