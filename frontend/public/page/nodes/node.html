@@ -21,8 +21,8 @@
               <dd ng-bind="node.metadata.name | emptyPlaceholder"></dd>
               <dt>Node ID</dt>
               <dd ng-bind="node.spec.externalID | emptyPlaceholder"></dd>
-              <dt>Host IP Address</dt>
-              <dd ng-bind="getAddresses(node.status) | emptyPlaceholder"></dd>
+              <dt>Node Addresses</dt>
+              <dd><co-node-ip-list addresses="node.status.addresses"></co-node-ip-list></dd>
               <dt>Node Labels</dt>
               <dd><co-label-list kind="node" expand="true" labels="node.metadata.labels"></co-label-list></dd>
               <dt>Created</dt>

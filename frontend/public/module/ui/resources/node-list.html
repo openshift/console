@@ -4,7 +4,7 @@
     <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">Node Name</div>
     <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Status</div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">Node Labels</div>
-    <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Node ID</div>
+    <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Node Addresses</div>
   </div>
 
   <div cos-tristate="nodes" cos-tristate-error="loadError" class="co-m-table-grid__body">
@@ -20,7 +20,9 @@
       <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">
         <co-label-list kind="node" labels="n.metadata.labels"></co-label-list>
       </div>
-      <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs" ng-bind="n.spec.externalID | emptyPlaceholder"></div>
+      <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">
+	<co-node-ip-list addresses="n.status.addresses"></co-node-ip-list>
+      </div>
     </div>
     <div ng-show="open" ng-repeat-end>
       <co-pod-list load="open" field-selector="getPodFieldSelector(n)"></co-pod-list>
