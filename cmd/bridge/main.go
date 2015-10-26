@@ -76,11 +76,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	lu := validateURLFlag(fs, "listen")
-	if lu.Scheme != "http" {
-		log.Fatalf("Unable to listen using scheme: %s", lu.Scheme)
-	}
-
 	certPool, err := newCertPool(*caFile)
 	if err != nil {
 		log.Fatalf("could not initialize CA certificate pool: %v", err)
@@ -183,16 +178,28 @@ func main() {
 		srv.Auther = auther
 	}
 
+	lu := validateURLFlag(fs, "listen")
+	switch lu.Scheme {
+	case "http":
+	case "https":
+		if *tlsCertFile == "" || *tlsKeyFile == "" {
+			log.Fatalf("Must provide certificate file and private key file")
+		}
+	default:
+		log.Fatalf("Only 'http' and 'https' schemes are supported")
+	}
+
 	httpsrv := &http.Server{
 		Addr:    lu.Host,
 		Handler: srv.HTTPHandler(),
 	}
 
 	log.Infof("Binding to %s...", httpsrv.Addr)
-	if *tlsCertFile != "" && *tlsKeyFile != "" {
+	if lu.Scheme == "https" {
 		log.Info("using TLS")
 		log.Fatal(httpsrv.ListenAndServeTLS(*tlsCertFile, *tlsKeyFile))
 	} else {
+		log.Info("warning: not using TLS; communications are insecure")
 		log.Fatal(httpsrv.ListenAndServe())
 	}
 }
