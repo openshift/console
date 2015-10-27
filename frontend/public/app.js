@@ -211,22 +211,22 @@ angular.module('bridge', [
   r('/nodes', {
     controller: 'NodesCtrl',
     templateUrl: '/static/page/nodes/nodes.html',
-    title: 'nodes',
+    title: 'Nodes',
   });
   r('/nodes/:name', {
     controller: 'nodeCtrl',
     templateUrl: '/static/page/nodes/node.html',
-    title: 'node',
+    title: 'Node',
   });
   r('/nodes/:name/events', {
     controller: 'nodeSyseventsCtrl',
     templateUrl: '/static/page/nodes/sysevents.html',
-    title: 'node Events',
+    title: 'Node Events',
   });
   r('/nodes/:name/pods', {
     controller: 'nodePodsCtrl',
     templateUrl: '/static/page/nodes/pods.html',
-    title: 'node Pods',
+    title: 'Node Pods',
   });
   r('/search', {
     controller: 'SearchCtrl',
