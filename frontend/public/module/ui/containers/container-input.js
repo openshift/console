@@ -88,7 +88,7 @@ angular.module('bridge.ui')
           return;
         }
         tagColonIdx = image.lastIndexOf(':');
-        if (tagColonIdx) {
+        if (tagColonIdx >= 0) {
           $scope.fields.containerImage = image.slice(0, tagColonIdx);
 
           if (tagColonIdx < image.length) {
@@ -96,7 +96,9 @@ angular.module('bridge.ui')
           } else {
             $scope.fields.containerTag = 'latest';
           }
-        }
+        } else {
+          $scope.fields.containerImage = image;
+	}
       }
 
       $scope.fields = getEmptyFields();
