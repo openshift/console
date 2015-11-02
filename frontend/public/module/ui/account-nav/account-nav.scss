@@ -20,14 +20,16 @@
   .account-nav__email {
     color: $color-grey-text;
     vertical-align: middle;
+    font-size: 13px;
   }
   .account-nav__active-namespace {
-    font-weight: 700;
+    font-weight: 600;
+    font-size: 18px;
   }
   .account-nav__dropdown-toggle {
     height: 46px;
     padding-left: 20px;
-    padding-top: 10px;
+    padding-top: 7px;
   }
   .account-nav__dropdown-toggle__auth {
     padding: 2px 0 0 20px;
