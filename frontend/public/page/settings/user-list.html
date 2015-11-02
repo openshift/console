@@ -13,7 +13,7 @@
             <co-user-cog ng-if="!(yourId === user.id)" user="user" onselect="showDisableModal"></co-user-cog>
           </div>
           <div class="co-p-users__name">
-            <span ng-bind="user.displayName || '(No Name Given)'"></span>
+            <span ng-class="{'co-no-user-name': !user.displayName}" ng-bind="user.displayName || 'Tectonic User'"></span>
             <span ng-if="yourId === user.id" class="fa fa-asterisk co-current-user-icon"></span>
           </div>
           <div class="co-p-users__email" ng-bind="user.email"></div>
