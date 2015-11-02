@@ -14,7 +14,7 @@
           </div>
           <div class="co-p-users__name">
             <span ng-bind="user.displayName || '(No Name Given)'"></span>
-            <span ng-if="yourId === user.id">(You)</span>
+            <span ng-if="yourId === user.id" class="fa fa-asterisk co-current-user-icon"></span>
           </div>
           <div class="co-p-users__email" ng-bind="user.email"></div>
         </div>
