@@ -8,8 +8,11 @@
     <div class="modal-body">
       <div class="row co-m-form-row">
         <div class="col-sm-12">
-          <p>Lifecycle hooks are events broadcast into the container before, during, or after specific events take place.
-          These hooks are synchronous per pod and will block any other actions from taking place, including liveness probes.</p>
+          <p>Lifecycle hooks are events broadcast into the container
+           before, during, or after specific events take place. These
+           hook handler calls may block or delay other pod management
+           functions, so make your hook handlers as lightweight as
+           possible.</p>
         </div>
       </div>
 
