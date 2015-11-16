@@ -4,7 +4,7 @@
  * Uses angular scope to send events.
  *
  * TODO(sym3tri):
- *    - disconnect/reconect when tab loses/gains focus
+ *    - disconnect/reconnect when tab loses/gains focus
  *    - support for default options.
  */
 
