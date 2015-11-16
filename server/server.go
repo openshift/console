@@ -24,7 +24,7 @@ const (
 )
 
 var (
-	log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "server")
+	plog = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "server")
 )
 
 type jsGlobals struct {

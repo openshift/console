@@ -13,14 +13,14 @@ func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		encTok, err := a.TokenExtractor(r)
 		if err != nil {
-			log.Infof("no token found: %v", err)
+			plog.Infof("no token found: %v", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
 		_, err = a.TokenVerifier(encTok)
 		if err != nil {
-			log.Infof("error verifying token: %v", err)
+			plog.Infof("error verifying token: %v", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}

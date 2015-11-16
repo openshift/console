@@ -74,6 +74,7 @@ func (p *proxy) rewriteRequest(r *http.Request) {
 func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	isWebsocket := false
 	upgrades := req.Header["Upgrade"]
+
 	for _, upgrade := range upgrades {
 		if upgrade == "websocket" {
 			isWebsocket = true
@@ -97,7 +98,7 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	}
 	if err != nil {
 		http.Error(res, "Error contacting Kubernetes API server.", http.StatusInternalServerError)
-		log.Errorf("error dialing websocket backend %s: %v", p.config.Endpoint.Host, err)
+		plog.Errorf("error dialing websocket backend %s: %v", p.config.Endpoint.Host, err)
 		return
 	}
 
@@ -105,18 +106,18 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	if !ok {
 		// This should never happen.
 		http.Error(res, "Error trying to create websocket proxy.", http.StatusInternalServerError)
-		log.Error("http.ResponseWriter is not hijack-able")
+		plog.Error("http.ResponseWriter is not hijack-able")
 		return
 	}
 	clientConn, _, err := hj.Hijack()
 	if err != nil {
-		log.Errorf("Hijack error: %v", err)
+		plog.Errorf("Hijack error: %v", err)
 		return
 	}
 
 	err = req.Write(targetConn)
 	if err != nil {
-		log.Errorf("error copying request to target: %v", err)
+		plog.Errorf("error copying request to target: %v", err)
 		return
 	}
 
