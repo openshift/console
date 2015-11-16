@@ -76,7 +76,7 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	upgrades := req.Header["Upgrade"]
 
 	for _, upgrade := range upgrades {
-		if upgrade == "websocket" {
+		if strings.ToLower(upgrade) == "websocket" {
 			isWebsocket = true
 			break
 		}
