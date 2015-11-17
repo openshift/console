@@ -8,7 +8,7 @@ import (
 func sendResponse(rw http.ResponseWriter, code int, resp interface{}) {
 	enc, err := json.Marshal(resp)
 	if err != nil {
-		log.Printf("Failed JSON-encoding HTTP response: %v", err)
+		plog.Printf("Failed JSON-encoding HTTP response: %v", err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -18,7 +18,7 @@ func sendResponse(rw http.ResponseWriter, code int, resp interface{}) {
 
 	_, err = rw.Write(enc)
 	if err != nil {
-		log.Errorf("Failed sending HTTP response body: %v", err)
+		plog.Errorf("Failed sending HTTP response body: %v", err)
 	}
 }
 
