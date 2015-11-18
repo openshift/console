@@ -66,7 +66,7 @@ angular.module('bridge.service')
 
         // Cosmetic wart: "- a: b" works and is preferred, but but
         // "- - a" and "a: b: c" break without a newline between the dashes.
-        if (val.match(/^\n {2}\s*/) === 0 && _.isObject(el)) {
+        if (val.match(/^\n {2}\s*/) && _.isObject(el)) {
           val = val.replace(/^\n {2}\s*/, '');
         }
         return '\n' + indent + '- ' + val;

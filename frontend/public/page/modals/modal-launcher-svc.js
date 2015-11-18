@@ -59,10 +59,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',
     },
-    'view-json': {
-      templateUrl: '/static/page/modals/view-json.html',
-      controller: 'ViewJsonCtrl',
-    },
     'configure-replica-count': {
       templateUrl: '/static/page/modals/configure-replica-count.html',
       controller: 'ConfigureReplicaCountCtrl',
@@ -81,6 +77,10 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/toggle-disabled-user.html',
       controller: 'ToggleDisabledUserCtrl',
     },
+    'show-yaml': {
+      templateUrl: '/static/page/modals/show-yaml.html',
+      controller: 'ShowYAMLCtrl',
+    }
   };
 
   return {
