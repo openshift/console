@@ -14,7 +14,20 @@
       </div><!-- .co-m-pane-body -->
 
       <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Invited Users</h1>
+        <div class="co-m-pane__heading__explained text-muted">These users have been invited by an
+        administrator, but they have not verified their identities
+        yet.</div>
+      </div>
+
+      <div class="co-m-pane__body">
+        <bridge-user-list users="userGroups.invited" your-id="yourId"></bridge-user-list>
+      </div><!-- .co-m-pane-body -->
+
+      <div class="co-m-pane__heading">
         <h1 class="co-m-pane__title">Disabled Users</h1>
+        <div class="co-m-pane__heading__explained text-muted">These users have been disabled by an
+        administrator. They do not currently have access to Tectonic.</div>
       </div>
 
       <div class="co-m-pane__body">

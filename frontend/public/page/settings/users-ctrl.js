@@ -26,7 +26,13 @@ angular.module('bridge.page')
         }).then(loadRemainingUsers);
       } else if (latestLoad === thisLoad) {
         $scope.userGroups = _.groupBy(newUsers, function(u) {
-          return u.disabled ? 'disabled' : 'active';
+          if (u.disabled) {
+            return 'disabled';
+          }
+          if (!u.emailVerified) {
+            return 'invited';
+          }
+          return 'active';
         });
         $scope.users = newUsers;
       }
