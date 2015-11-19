@@ -5,4 +5,9 @@ angular.module('bridge.page')
   var yaml = yamlizeSvc.yamlize(cleaned) + '\n';
   $scope.yaml = yaml;
   $scope.downloadURL = blobURLSvc.blobURL([yaml], {type: 'text/plain'});
+  $scope.selectAll = function(event) {
+    event.target.select();
+    event.preventDefault();
+    event.stopPropagation();
+  };
 });

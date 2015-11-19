@@ -42,6 +42,10 @@
     color: #000;
 }
 
+.co-m-code-box--copy {
+    cursor: copy;
+}
+
 .cos-status-box__title.cos-error-title,
 .cos-error-title {
   color: $red;

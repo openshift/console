@@ -3,7 +3,10 @@
     <h1 class="modal-title">View YAML</h1>
   </div>
   <div class="modal-body">
-    <textarea class="form-control co-m-code-box" spellcheck="false" readonly ng-bind="yaml"></textarea>
+    <textarea class="form-control co-m-code-box co-m-code-box--copy"
+              spellcheck="false" readonly
+              ng-click="selectAll($event)"
+              ng-bind="yaml"></textarea>
   </div>
   <div class="modal-footer">
     <a ng-href="{{downloadURL}}" type="button" class="btn btn-primary">Download</a>
