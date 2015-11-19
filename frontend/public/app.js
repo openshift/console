@@ -22,10 +22,11 @@ angular.module('bridge', [
   'bridge.page',
   'core.pkg',
 ])
-.config(function($routeProvider, $locationProvider, $httpProvider, configSvcProvider,
-      errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {
+.config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
+                 configSvcProvider, errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {
   'use strict';
 
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
   $locationProvider.html5Mode(true);
   flagSvcProvider.setGlobalId('SERVER_FLAGS');
   k8sConfigProvider.setKubernetesPath('/api/kubernetes/', window.SERVER_FLAGS.k8sVersion);

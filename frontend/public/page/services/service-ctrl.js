@@ -7,13 +7,12 @@ angular.module('bridge.page')
   $scope.loadError = false;
 
   k8s.services.get($scope.serviceName, $scope.ns)
-    .then(function(service) {
-      $scope.service = service;
-      $scope.loadError = false;
-    })
-    .catch(function() {
-      $scope.service = null;
-      $scope.loadError = true;
-    });
-
+  .then(function(service) {
+    $scope.service = service;
+    $scope.loadError = false;
+  })
+  .catch(function() {
+    $scope.service = null;
+    $scope.loadError = true;
+  });
 });

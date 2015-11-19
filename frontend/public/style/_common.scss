@@ -36,6 +36,16 @@
 .co-m-table-grid__body.cos-tristate--error {
   border-bottom: solid 1px $color-grey-lightest;
 }
+
+.co-m-code-box, .co-m-code-box.form-control[readonly] {
+    background-color: #fff;
+    color: #000;
+}
+
+.co-m-code-box--copy {
+    cursor: copy;
+}
+
 .cos-status-box__title.cos-error-title,
 .cos-error-title {
   color: $red;

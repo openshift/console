@@ -1,0 +1,15 @@
+<div class="co-p-show-yaml-modal">
+  <div class="modal-header">
+    <h1 class="modal-title">View YAML</h1>
+  </div>
+  <div class="modal-body">
+    <textarea class="form-control co-m-code-box co-m-code-box--copy"
+              spellcheck="false" readonly
+              ng-click="selectAll($event)"
+              ng-bind="yaml"></textarea>
+  </div>
+  <div class="modal-footer">
+    <a ng-href="{{downloadURL}}" type="button" class="btn btn-primary">Download</a>
+    <button type="button" ng-click="$dismiss()" class="btn btn-link">Cancel</button>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="co-m-nav-title row">
+  <div ng-transclude class="col-lg-3 col-md-3 col-sm-3 col-xs-1"></div>
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <h1 class="co-m-page-title co-fx-text-shadow" ng-bind="title"></h1>
+  </div>
+  <div ng-if="obj()"
+       class="col-lg-3 col-md-3 col-sm-3 col-xs-1 visible-lg visible-md visible-sm tec-right-nav-action">
+    <a class="co-m-primary-action" ng-click="showYAML()"
+       ><span class="fa fa-terminal tec-right-nav-action__mark"></span> View YAML</a>
+  </div>
+</div>
