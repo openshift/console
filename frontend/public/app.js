@@ -23,7 +23,8 @@ angular.module('bridge', [
   'core.pkg',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
-                 configSvcProvider, errorMessageSvcProvider, flagSvcProvider, k8sConfigProvider) {
+                 configSvcProvider, errorMessageSvcProvider, flagSvcProvider,
+                 k8sConfigProvider, namespacesSvcProvider) {
   'use strict';
 
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
@@ -54,13 +55,9 @@ angular.module('bridge', [
     return 'An error occurred. Please try again.';
   });
 
-  function r(route, config, unprotected) {
-    if (!unprotected) {
-      if (!config.resolve) {
-        config.resolve = {};
-      }
-      config.resolve.ensureLoggedIn = 'ensureLoggedInSvc';
-    }
+  function r(route, config) {
+    config.resolve = {};
+    config.resolve.ensureLoggedIn = 'ensureLoggedInSvc';
     $routeProvider.when(route, config);
   }
 
@@ -69,33 +66,8 @@ angular.module('bridge', [
     templateUrl: '/static/page/cluster/status.html',
     title: 'Cluster Status',
   });
-  r('/apps', {
-    controller: 'AppsCtrl',
-    templateUrl: '/static/page/apps/apps.html',
-    title: 'Applications',
-    isNamespaced: true,
-  });
-  r('/all-namespaces/apps', {
-    controller: 'AppsCtrl',
-    templateUrl: '/static/page/apps/apps.html',
-    title: 'Applications',
-  });
-  r('/ns/:ns/apps', {
-    controller: 'AppsCtrl',
-    templateUrl: '/static/page/apps/apps.html',
-    title: 'Applications',
-  });
-  r('/ns/:ns/apps/new', {
-    controller: 'NewAppCtrl',
-    templateUrl: '/static/page/apps/new-app.html',
-    title: 'Create New Application',
-  });
-  r('/events', {
-    controller: 'EventsCtrl',
-    templateUrl: '/static/page/events/events.html',
-    title: 'Events',
-    isNamespaced: true,
-  });
+
+  namespacesSvcProvider.registerNamespaceFriendlyPrefix('events');
   r('/all-namespaces/events', {
     controller: 'EventsCtrl',
     templateUrl: '/static/page/events/events.html',
@@ -106,12 +78,8 @@ angular.module('bridge', [
     templateUrl: '/static/page/events/events.html',
     title: 'Events',
   });
-  r('/services', {
-    controller: 'ServicesCtrl',
-    templateUrl: '/static/page/services/services.html',
-    title: 'Services',
-    isNamespaced: true,
-  });
+
+  namespacesSvcProvider.registerNamespaceFriendlyPrefix('services');
   r('/all-namespaces/services', {
     controller: 'ServicesCtrl',
     templateUrl: '/static/page/services/services.html',
@@ -137,12 +105,8 @@ angular.module('bridge', [
     templateUrl: '/static/page/services/pods.html',
     title: 'Service Pods',
   });
-  r('/replicationcontrollers', {
-    controller: 'ReplicationcontrollersCtrl',
-    templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
-    title: 'Replication Controllers',
-    isNamespaced: true,
-  });
+
+  namespacesSvcProvider.registerNamespaceFriendlyPrefix('replicationcontrollers');
   r('/all-namespaces/replicationcontrollers', {
     controller: 'ReplicationcontrollersCtrl',
     templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
@@ -173,12 +137,8 @@ angular.module('bridge', [
     templateUrl: '/static/page/replicationcontrollers/pods.html',
     title: 'Replication Controller Pods',
   });
-  r('/pods', {
-    controller: 'PodsCtrl',
-    templateUrl: '/static/page/pods/pods.html',
-    title: 'Pods',
-    isNamespaced: true,
-  });
+
+  namespacesSvcProvider.registerNamespaceFriendlyPrefix('pods');
   r('/all-namespaces/pods', {
     controller: 'PodsCtrl',
     templateUrl: '/static/page/pods/pods.html',
@@ -249,18 +209,18 @@ angular.module('bridge', [
     templateUrl: '/static/page/welcome/welcome.html',
     title: 'Welcome to your CoreOS Cluster',
   });
-  r('/error', {
+  $routeProvider.when('/error', {
     controller: 'ErrorCtrl',
     templateUrl: '/static/page/error/error.html',
     title: 'Error',
-  }, true);
+  });
 
   $routeProvider.otherwise({
     templateUrl: '/static/page/error/404.html',
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, namespacesSvc, authSvc) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
@@ -298,32 +258,4 @@ angular.module('bridge', [
 
     authSvc.logout($window.location.pathname);
   });
-
-  $rootScope.$on('$routeChangeStart', function(e, next) {
-    if (_.isUndefined(next)) {
-      return;
-    }
-
-    var nextPath = next.originalPath,
-        isNamespaced = next.isNamespaced,
-        namespacedRoute;
-
-    if (isNamespaced) {
-      // Cancel the route change.
-      e.preventDefault();
-
-      // Fix 'back' button behavior.
-      //
-      // This method (https://docs.angularjs.org/api/ng/service/$location#replace) will
-      // replace the current entry in the history stack. This allows us to preserve the
-      // correct functionality of the back button when doing these redirects.
-      $location.replace();
-
-      namespacedRoute = namespacesSvc.formatNamespaceRoute(nextPath);
-
-      // Re-route to namespaced route.
-      $location.path(namespacedRoute);
-    }
-  });
-
 });

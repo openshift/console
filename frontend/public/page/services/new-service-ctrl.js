@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('NewServiceCtrl', function($scope, $routeParams, $location, k8s) {
+.controller('NewServiceCtrl', function($scope, $routeParams, $location, namespacesSvc, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -21,12 +21,12 @@ angular.module('bridge.page')
     $scope.service.spec.ports.push($scope.fields.portObj);
     $scope.requestPromise = k8s.services.create($scope.service);
     $scope.requestPromise.then(function() {
-      $location.path('/services');
+      $location.path(namespacesSvc.formatNamespaceRoute('/services'));
     });
   };
 
   $scope.cancel = function() {
-    $location.path('/services');
+    $location.path(namespacesSvc.formatNamespaceRoute('/services'));
   };
 
   // Prevent values for nodePort if auto-selecting a port.

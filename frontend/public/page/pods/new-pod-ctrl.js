@@ -1,9 +1,9 @@
 angular.module('bridge.page')
-.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
+.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc, namespacesSvc) {
   'use strict';
 
-  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
-  $scope.pod = k8s.pods.getEmpty($scope.ns);
+  var namespace = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.pod = k8s.pods.getEmpty(namespace);
 
   $scope.openVolumesModal = function() {
     ModalLauncherSvc.open('configure-volumes', {
@@ -20,13 +20,13 @@ angular.module('bridge.page')
   $scope.getRestartPolicyLabel = k8s.pods.getRestartPolicyLabelById;
 
   $scope.cancel = function() {
-    $location.path('/pods');
+    $location.path(namespacesSvc.formatNamespaceRoute('/pods'));
   };
 
   $scope.save = function() {
     $scope.requestPromise = k8s.pods.create($scope.pod);
     $scope.requestPromise.then(function() {
-      $location.path('/pods');
+      $location.path(namespacesSvc.formatNamespaceRoute('/pods'));
     });
   };
 
