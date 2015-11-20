@@ -73,7 +73,7 @@ angular.module('bridge', [
     controller: 'AppsCtrl',
     templateUrl: '/static/page/apps/apps.html',
     title: 'Applications',
-    namespaceRedirect: true,
+    isNamespaced: true,
   });
   r('/all-namespaces/apps', {
     controller: 'AppsCtrl',
@@ -94,7 +94,7 @@ angular.module('bridge', [
     controller: 'EventsCtrl',
     templateUrl: '/static/page/events/events.html',
     title: 'Events',
-    namespaceRedirect: true,
+    isNamespaced: true,
   });
   r('/all-namespaces/events', {
     controller: 'EventsCtrl',
@@ -110,7 +110,7 @@ angular.module('bridge', [
     controller: 'ServicesCtrl',
     templateUrl: '/static/page/services/services.html',
     title: 'Services',
-    namespaceRedirect: true,
+    isNamespaced: true,
   });
   r('/all-namespaces/services', {
     controller: 'ServicesCtrl',
@@ -141,7 +141,7 @@ angular.module('bridge', [
     controller: 'ReplicationcontrollersCtrl',
     templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
     title: 'Replication Controllers',
-    namespaceRedirect: true,
+    isNamespaced: true,
   });
   r('/all-namespaces/replicationcontrollers', {
     controller: 'ReplicationcontrollersCtrl',
@@ -177,7 +177,7 @@ angular.module('bridge', [
     controller: 'PodsCtrl',
     templateUrl: '/static/page/pods/pods.html',
     title: 'Pods',
-    namespaceRedirect: true,
+    isNamespaced: true,
   });
   r('/all-namespaces/pods', {
     controller: 'PodsCtrl',
@@ -260,7 +260,7 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, namespacesSvc, authSvc) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
@@ -305,10 +305,10 @@ angular.module('bridge', [
     }
 
     var nextPath = next.originalPath,
-        shouldRedirect = next.namespaceRedirect,
+        isNamespaced = next.isNamespaced,
         namespacedRoute;
 
-    if (shouldRedirect) {
+    if (isNamespaced) {
       // Cancel the route change.
       e.preventDefault();
 
@@ -319,7 +319,7 @@ angular.module('bridge', [
       // correct functionality of the back button when doing these redirects.
       $location.replace();
 
-      namespacedRoute = k8s.namespaces.formatNamespaceRoute(nextPath);
+      namespacedRoute = namespacesSvc.formatNamespaceRoute(nextPath);
 
       // Re-route to namespaced route.
       $location.path(namespacedRoute);

@@ -21,8 +21,7 @@ angular.module('k8s')
 })
 
 .service('k8s', function(_, $http, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
-                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sProbe, k8sNodes,
-                         k8sNamespaces) {
+                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sProbe, k8sNodes) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -88,8 +87,7 @@ angular.module('k8s')
     return $http({url: k8sConfig.getBasePath()});
   };
 
-  this.namespaces = _.extend(k8sNamespaces, {
+  this.namespaces = {
     list: _.partial(k8sResource.list, k8sEnum.Kind.NAMESPACE),
-  });
-
+  };
 });
