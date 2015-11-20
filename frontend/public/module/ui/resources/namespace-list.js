@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coNamespaceList', function(k8s, $location, sideMenuVisibility) {
+.directive('coNamespaceList', function(k8s, $location, namespacesSvc, sideMenuVisibility) {
   'use strict';
 
   return {
@@ -26,7 +26,7 @@ angular.module('bridge.ui')
 
       $scope.selectNamespace = function(e) {
         var newNamespace,
-            resource = k8s.namespaces.namespaceResourceFromPath($location.path());
+            resource = namespacesSvc.namespaceResourceFromPath($location.path());
 
         if (e) {
           newNamespace = e.target.textContent;
@@ -35,17 +35,19 @@ angular.module('bridge.ui')
         // Redirect to the resource and let the router
         // logic handle putting us in the correct namespace
         // as opposed to re-implementing logic here.
-        k8s.namespaces.setActiveNamespace(newNamespace);
+        namespacesSvc.setActiveNamespace(newNamespace);
         $location.path('/' + resource);
       };
 
       $scope.clearNamespace = function() {
-        k8s.namespaces.clearActiveNamespace();
-        $location.path(k8s.namespaces.namespaceResourceFromPath($location.path()));
+        namespacesSvc.clearActiveNamespace();
+
+        // TODO this is what breaks
+        $location.path(namespacesSvc.namespaceResourceFromPath($location.path()));
       };
 
       $scope.activeNamespaceClass = function(namespace) {
-        if (namespace === k8s.namespaces.getActiveNamespace()) {
+        if (namespace === namespacesSvc.getActiveNamespace()) {
           return 'co-namespace-icon__selected fa fa-check-circle';
         }
         return 'co-namespace-icon__unselected fa fa-circle-thin';

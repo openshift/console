@@ -1,5 +1,5 @@
-angular.module('k8s')
-.service('k8sNamespaces', function(_, coLocalStorage) {
+angular.module('bridge.service')
+.service('namespacesSvc', function(_, coLocalStorage) {
   'use strict';
 
   var nsPathPattern = /^\/?ns\/[^\/]*\/?(.*)$/;
