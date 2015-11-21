@@ -28,14 +28,13 @@
     <co-footer-wrapper ng-cloak>
       <co-navbar ng-cloak logo-src="/static/tectonic-logo.svg">
         <ul class="nav navbar-nav">
-          <!--<co-navbar-link href="/apps">Applications</co-navbar-link>-->
           <co-navbar-link href="{{'/services'|ns}}">Services</co-navbar-link>
           <co-navbar-link href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
           <co-navbar-link href="{{'/pods'|ns}}">Pods</co-navbar-link>
           <co-navbar-link href="/nodes">Nodes</co-navbar-link>
           <co-navbar-dropdown ng-cloak text="More" class="more-header">
             <li class="hidden-md hidden-lg" ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)"><a>Namespaces <i class="fa fa-angle-right right-angle-icon"></i></a></li>
-            <li><a href="{{'/events'|ns}}">Events</a></li>
+            <li><a co-namespaced-href="/events">Events</a></li>
             <li><a href="/search">Search</a></li>
           </co-navbar-dropdown>
         </ul>
@@ -124,8 +123,8 @@
     <script src="/static/module/filter/container-tag.js"></script>
     <script src="/static/module/filter/sysevents.js"></script>
     <script src="/static/module/filter/join.js"></script>
-    <script src="/static/module/filter/ns.js"></script>
     <script src="/static/module/filter/nodes.js"></script>
+    <script src="/static/module/filter/ns.js"></script>
     <script src="/static/module/filter/pods.js"></script>
     <script src="/static/module/filter/split.js"></script>
     <!-- ui modules -->
@@ -142,6 +141,7 @@
     <script src="/static/module/ui/forms/number-spinner.js"></script>
     <script src="/static/module/ui/labels/label.js"></script>
     <script src="/static/module/ui/labels/label-input.js"></script>
+    <script src="/static/module/ui/links/namespaced-href.js"></script>
     <script src="/static/module/ui/nav-title/nav-title.js"></script>
     <script src="/static/module/ui/resources/node-list.js"></script>
     <script src="/static/module/ui/resources/node-ip-list.js"></script>
