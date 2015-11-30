@@ -1,8 +1,8 @@
 angular.module('bridge.page')
-.controller('PodSyseventsCtrl', function($scope, $routeParams, k8s) {
+.controller('PodSyseventsCtrl', function($scope, $routeParams) {
   'use strict';
 
-  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns;
   $scope.podName = $routeParams.name;
   $scope.fieldSelector = 'involvedObject.name=' + $scope.podName;
 });

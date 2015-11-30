@@ -1,5 +1,6 @@
 angular.module('bridge.page')
-.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
+.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams,
+                                                     namespacesSvc, k8s, ModalLauncherSvc) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -13,13 +14,13 @@ angular.module('bridge.page')
   };
 
   $scope.cancel = function() {
-    $location.path('/replicationcontrollers');
+    $location.path(namespacesSvc.formatNamespaceRoute('/replicationcontrollers'));
   };
 
   $scope.save = function() {
     $scope.requestPromise = k8s.replicationcontrollers.create($scope.rc);
     $scope.requestPromise.then(function() {
-      $location.path('/replicationcontrollers');
+      $location.path(namespacesSvc.formatNamespaceRoute('/replicationcontrollers'));
     });
   };
 

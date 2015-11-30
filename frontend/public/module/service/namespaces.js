@@ -1,60 +1,97 @@
 angular.module('bridge.service')
-.service('namespacesSvc', function(_, coLocalStorage) {
+.provider('namespacesSvc', function() {
   'use strict';
 
-  var nsPathPattern = /^\/?ns\/[^\/]*\/?(.*)$/;
+  // Kubernetes "dns-friendly" names match [a-z0-9]([-a-z0-9]*[a-z0-9])?
+  // and are 63 or fewer characters long
+
+  var nsPathPattern = /^\/?ns\/[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\/?(.*)$/;
   var allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
-  var activeNamespace = coLocalStorage.getItem('activeNamespace') || undefined;
+  var prefixes = [];
 
-  this.setActiveNamespace = function(namespace) {
-    if (_.isUndefined(namespace)) {
-      return;
-    }
-
-    namespace = namespace.trim();
-    activeNamespace = namespace;
-    coLocalStorage.setItem('activeNamespace', namespace);
+  // Most namespaced urls can't move from one namespace to another,
+  // but happen to have prefixes that can - for example:
+  //
+  //   /ns/NS1/pods/MY_POD
+  //
+  // MY_POD is in general only associated with ns1, but /ns/$$/pods
+  // is valid for all values of $$
+  //
+  // Only paths with registered namespace friendly prefixes can be
+  // re-namespaced, so register your prefixes here as you define the
+  // associated routes.
+  this.registerNamespaceFriendlyPrefix = function(s) {
+    prefixes.push(s);
   };
 
-  this.getActiveNamespace = function() {
-    return activeNamespace;
+  this.clearPrefixes = function() {
+    prefixes = [];
   };
 
-  this.clearActiveNamespace = function() {
-    activeNamespace = undefined;
-    coLocalStorage.removeItem('activeNamespace');
-  };
+  this.$get = function(_, coLocalStorage) {
+    var activeNamespace = coLocalStorage.getItem('activeNamespace') || undefined;
+    var prefixOf = function(s) {
+      var ret = _.find(prefixes, function(prefix) {
+        return s.indexOf(prefix) === 0;
+      });
 
-  this.formatNamespaceRoute = function(originalPath) {
-    var resource = this.namespaceResourceFromPath(originalPath),
-        namespace = activeNamespace,
-        namespacePrefix;
+      if (!ret) {
+        throw new Error('path can\'t be namespaced: ' + s);
+      }
 
-    if (_.isUndefined(namespace)) {
-      namespacePrefix = '/all-namespaces/';
-    } else {
-      namespacePrefix = '/ns/' + namespace + '/';
-    }
+      return ret;
+    };
 
-    return namespacePrefix + resource;
-  };
+    return {
+      setActiveNamespace: function(namespace) {
+        if (_.isUndefined(namespace)) {
+          return;
+        }
 
-  this.namespaceResourceFromPath = function(path) {
-    var match = path.match(nsPathPattern);
-    if (match) {
-      return match[1];
-    }
+        namespace = namespace.trim();
+        activeNamespace = namespace;
+        coLocalStorage.setItem('activeNamespace', namespace);
+      },
 
-    match = path.match(allNsPathPattern);
-    if (match) {
-      return match[1];
-    }
+      getActiveNamespace: function() {
+        return activeNamespace;
+      },
 
-    if (path[0] === '/') {
-      return path.substr(1);
-    }
+      clearActiveNamespace: function() {
+        activeNamespace = undefined;
+        coLocalStorage.removeItem('activeNamespace');
+      },
 
-    return path;
-  };
+      isNamespaced: function(path) {
+        return path.match(nsPathPattern) || path.match(allNsPathPattern);
+      },
 
+      formatNamespaceRoute: function(originalPath) {
+        var resource = this.namespaceResourceFromPath(originalPath),
+            namespace = activeNamespace,
+            namespacePrefix;
+
+        if (_.isUndefined(namespace)) {
+          namespacePrefix = '/all-namespaces/';
+        } else {
+          namespacePrefix = '/ns/' + namespace + '/';
+        }
+
+        return namespacePrefix + resource;
+      },
+
+      namespaceResourceFromPath: function(path) {
+        var match = this.isNamespaced(path);
+        if (match) {
+          return prefixOf(match[1]);
+        }
+
+        if (path[0] === '/') {
+          return path.substr(1);
+        }
+
+        return path;
+      }
+    };
+  }; // $get
 });

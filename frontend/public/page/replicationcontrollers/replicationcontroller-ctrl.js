@@ -2,7 +2,7 @@ angular.module('bridge.page')
 .controller('ReplicationcontrollerCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns;
   $scope.rcName = $routeParams.name;
   $scope.loadError = false;
 

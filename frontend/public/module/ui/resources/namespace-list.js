@@ -24,26 +24,18 @@ angular.module('bridge.ui')
         }
       });
 
-      $scope.selectNamespace = function(e) {
-        var newNamespace,
-            resource = namespacesSvc.namespaceResourceFromPath($location.path());
+      $scope.selectNamespace = function(newNamespace) {
+        var oldPath = $location.path();
 
-        if (e) {
-          newNamespace = e.target.textContent;
+        if (newNamespace) {
+          namespacesSvc.setActiveNamespace(newNamespace);
+        } else {
+          namespacesSvc.clearActiveNamespace();
         }
 
-        // Redirect to the resource and let the router
-        // logic handle putting us in the correct namespace
-        // as opposed to re-implementing logic here.
-        namespacesSvc.setActiveNamespace(newNamespace);
-        $location.path('/' + resource);
-      };
-
-      $scope.clearNamespace = function() {
-        namespacesSvc.clearActiveNamespace();
-
-        // TODO this is what breaks
-        $location.path(namespacesSvc.namespaceResourceFromPath($location.path()));
+        if (namespacesSvc.isNamespaced(oldPath)) {
+          $location.path(namespacesSvc.formatNamespaceRoute(oldPath));
+        }
       };
 
       $scope.activeNamespaceClass = function(namespace) {

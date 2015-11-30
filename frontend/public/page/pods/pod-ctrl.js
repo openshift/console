@@ -2,19 +2,16 @@ angular.module('bridge.page')
 .controller('PodCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
-  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
-  $scope.podName = $routeParams.name;
   $scope.loadError = false;
-
-  k8s.pods.get($scope.podName, $scope.ns)
-    .then(function(pod) {
-      $scope.pod = pod;
-      $scope.loadError = false;
-    })
-    .catch(function() {
-      $scope.pod = null;
-      $scope.loadError = true;
-    });
+  k8s.pods.get($routeParams.name, $routeParams.ns)
+  .then(function(pod) {
+    $scope.pod = pod;
+    $scope.loadError = false;
+  })
+  .catch(function() {
+    $scope.pod = null;
+    $scope.loadError = true;
+  });
 
   $scope.getStatus = function(containerName) {
     return k8s.docker.getStatus($scope.pod, containerName);
