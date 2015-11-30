@@ -24,6 +24,10 @@ angular.module('bridge.service')
     prefixes.push(s);
   };
 
+  this.clearPrefixes = function() {
+    prefixes = [];
+  };
+
   this.$get = function(_, coLocalStorage) {
     var activeNamespace = coLocalStorage.getItem('activeNamespace') || undefined;
     var prefixOf = function(s) {

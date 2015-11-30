@@ -4,6 +4,12 @@ describe('bridge.service.namespacesSvc', function() {
 
   // Load the module.
   beforeEach(module('bridge.service'));
+
+  beforeEach(module(function(namespacesSvcProvider) {
+    namespacesSvcProvider.clearPrefixes();
+    namespacesSvcProvider.registerNamespaceFriendlyPrefix('pods');
+  }));
+
   beforeEach(inject(function(_namespacesSvc_) {
     namespacesSvc = _namespacesSvc_;
   }));
@@ -33,31 +39,33 @@ describe('bridge.service.namespacesSvc', function() {
   describe('namespaceResourceFromPath', function() {
     it('parses resource from path', function () {
       expect(namespacesSvc.namespaceResourceFromPath('/')).toEqual('');
+      expect(namespacesSvc.namespaceResourceFromPath('/gribbl')).toEqual('gribbl');
+      expect(namespacesSvc.namespaceResourceFromPath('gribbl')).toEqual('gribbl');
       expect(namespacesSvc.namespaceResourceFromPath('/pods')).toEqual('pods');
       expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods')).toEqual('pods');
+      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods/WACKY_SUFFIX')).toEqual('pods');
     });
 
     it('parses resources that contain a slash correctly', function() {
       expect(namespacesSvc.namespaceResourceFromPath('//')).toEqual('/');
       expect(namespacesSvc.namespaceResourceFromPath('/settings/users')).toEqual('settings/users');
-      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/don\'t/lets/start')).toEqual('don\'t/lets/start');
-      expect(namespacesSvc.namespaceResourceFromPath('ns/foo//bar//baz')).toEqual('/bar//baz');
-      expect(namespacesSvc.namespaceResourceFromPath('/all-namespaces/terminal/')).toEqual('terminal/');
+      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods/don\'t/lets/start')).toEqual('pods');
+      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods/bar//baz')).toEqual('pods');
+      expect(namespacesSvc.namespaceResourceFromPath('/all-namespaces/pods/terminal/')).toEqual('pods');
     });
 
   });
 
   describe('formatNamespaceRoute', function() {
     it('formats a route correctly without an active namespace', function() {
-      expect(namespacesSvc.formatNamespaceRoute('/bar')).toEqual('/all-namespaces/bar');
-      expect(namespacesSvc.formatNamespaceRoute('/foo/bar/')).toEqual('/all-namespaces/foo/bar/');
+      expect(namespacesSvc.formatNamespaceRoute('/pods')).toEqual('/all-namespaces/pods');
+      expect(namespacesSvc.formatNamespaceRoute('/pods/GRIBBL')).toEqual('/all-namespaces/pods/GRIBBL');
     });
 
     it('formats a route with the current active namespace', function() {
       namespacesSvc.setActiveNamespace('test');
-
-      expect(namespacesSvc.formatNamespaceRoute('/bar')).toEqual('/ns/test/bar');
-      expect(namespacesSvc.formatNamespaceRoute('/foo/bar/')).toEqual('/ns/test/foo/bar/');
+      expect(namespacesSvc.formatNamespaceRoute('/pods')).toEqual('/ns/test/pods');
+      expect(namespacesSvc.formatNamespaceRoute('/pods/GRIBBL')).toEqual('/ns/test/pods/GRIBBL');
     });
   });
 });
