@@ -1841,6 +1841,40 @@ angular.module('coreos.ui')
 
 });
 
+/**
+ * @fileoverview
+ * Inject favicons into the <head>.
+ * Only use on <head> tag.
+ */
+
+
+angular.module('coreos.ui')
+
+.directive('coFavicons', function($compile, $rootScope, configSvc) {
+  'use strict';
+  /*eslint max-len:0 */
+
+  return {
+    restrict: 'A',
+    replace: true,
+    link: function postLink(scope, elem) {
+      var newScope = $rootScope.$new(),
+      htmlTemplate =
+        '<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{path}}/apple-touch-icon-144-precomposed.png">' +
+        '<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{path}}/apple-touch-icon-114-precomposed.png">' +
+        '<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{path}}/apple-touch-icon-72-precomposed.png">' +
+        '<link rel="apple-touch-icon-precomposed" href="{{path}}/apple-touch-icon-57-precomposed.png">' +
+        '<link rel="shortcut icon" href="{{path}}/favicon.png">';
+      newScope.path = configSvc.get('libPath') + '/img';
+      elem.append($compile(htmlTemplate)(newScope));
+    }
+  };
+
+});
+
+/*
+*/
+
 
 angular.module('coreos.ui')
 .directive('coFacetMenu', function() {
@@ -1896,40 +1930,6 @@ angular.module('coreos.ui')
     }
   };
 });
-
-/**
- * @fileoverview
- * Inject favicons into the <head>.
- * Only use on <head> tag.
- */
-
-
-angular.module('coreos.ui')
-
-.directive('coFavicons', function($compile, $rootScope, configSvc) {
-  'use strict';
-  /*eslint max-len:0 */
-
-  return {
-    restrict: 'A',
-    replace: true,
-    link: function postLink(scope, elem) {
-      var newScope = $rootScope.$new(),
-      htmlTemplate =
-        '<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{path}}/apple-touch-icon-144-precomposed.png">' +
-        '<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{path}}/apple-touch-icon-114-precomposed.png">' +
-        '<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{path}}/apple-touch-icon-72-precomposed.png">' +
-        '<link rel="apple-touch-icon-precomposed" href="{{path}}/apple-touch-icon-57-precomposed.png">' +
-        '<link rel="shortcut icon" href="{{path}}/favicon.png">';
-      newScope.path = configSvc.get('libPath') + '/img';
-      elem.append($compile(htmlTemplate)(newScope));
-    }
-  };
-
-});
-
-/*
-*/
 
 /**
  * @fileoverview
@@ -3018,6 +3018,18 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('/coreos.ui/favicons/favicons.html',
+    '');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('coreos-templates-html');
+} catch (e) {
+  module = angular.module('coreos-templates-html', []);
+}
+module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/facet-menu/facet-menu-option.html',
     '<li class="co-m-facet-menu-option" ng-class="{\'co-m-facet-option--active\': isActive}">\n' +
     '  <a href="#" ng-transclude></a>\n' +
@@ -3038,18 +3050,6 @@ module.run(['$templateCache', function($templateCache) {
     '  <div ng-show="!!title" class="co-m-facet-menu__title" ng-bind="title"></div>\n' +
     '  <ul class="co-m-facet-menu__option-list" ng-transclude></ul>\n' +
     '</div>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/favicons/favicons.html',
     '');
 }]);
 })();
