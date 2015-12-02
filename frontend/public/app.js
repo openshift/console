@@ -30,7 +30,7 @@ angular.module('bridge', [
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
   $locationProvider.html5Mode(true);
   flagSvcProvider.setGlobalId('SERVER_FLAGS');
-  k8sConfigProvider.setKubernetesPath('/api/kubernetes/', window.SERVER_FLAGS.k8sVersion);
+  k8sConfigProvider.setKubernetesPath('/api/kubernetes/', window.SERVER_FLAGS.k8sAPIVersion);
   $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
 
   configSvcProvider.config({

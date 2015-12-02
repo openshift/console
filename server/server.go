@@ -28,7 +28,7 @@ var (
 )
 
 type jsGlobals struct {
-	K8sVersion             string `json:"k8sVersion"`
+	K8sAPIVersion          string `json:"k8sAPIVersion"`
 	AuthDisabled           bool   `json:"authDisabled"`
 	NewUserAuthCallbackURL string `json:"newUserAuthCallbackURL"`
 }
@@ -91,7 +91,7 @@ func (s *Server) k8sHandler() http.Handler {
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		K8sVersion:             K8sAPIVersion,
+		K8sAPIVersion:          K8sAPIVersion,
 		AuthDisabled:           s.AuthDisabled(),
 		NewUserAuthCallbackURL: s.NewUserAuthCallbackURL.String(),
 	}
