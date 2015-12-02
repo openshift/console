@@ -11,7 +11,7 @@ angular.module('k8s')
   this.$get = function() {
     return {
       getKubernetesPath: function() {
-        return basePath + apiVersion;
+        return basePath + 'api/' + apiVersion;
       },
       getBasePath: function() {
         return basePath;
