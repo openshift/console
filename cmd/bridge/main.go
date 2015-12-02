@@ -47,6 +47,7 @@ func main() {
 	tlsKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	caFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 	insecureSkipVerifyK8sCA := fs.Bool("insecure-skip-verify-k8s-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server. This is ignored when -k8s-in-cluster is set.")
+	tectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -136,10 +137,11 @@ func main() {
 	}
 
 	srv := &server.Server{
-		K8sProxyConfig: kCfg,
-		DexProxyConfig: dexCfg,
-		PublicDir:      *publicDir,
-		Templates:      tpls,
+		K8sProxyConfig:  kCfg,
+		DexProxyConfig:  dexCfg,
+		TectonicVersion: *tectonicVersion,
+		PublicDir:       *publicDir,
+		Templates:       tpls,
 	}
 
 	srv.NewUserAuthCallbackURL = validateURLFlag(fs, "host")

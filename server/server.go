@@ -9,6 +9,7 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/coreos-inc/bridge/auth"
+	"github.com/coreos-inc/bridge/version"
 )
 
 const (
@@ -37,6 +38,7 @@ type Server struct {
 	K8sProxyConfig         *ProxyConfig
 	DexProxyConfig         *ProxyConfig
 	PublicDir              string
+	TectonicVersion        string
 	Templates              *template.Template
 	Auther                 *auth.Authenticator
 	NewUserAuthCallbackURL *url.URL
@@ -77,6 +79,12 @@ func (s *Server) HTTPHandler() http.Handler {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
+	useVersionHandler := s.versionHandler
+	if !s.AuthDisabled() {
+		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
+	}
+	mux.HandleFunc("/version", useVersionHandler)
+
 	mux.HandleFunc("/", s.indexHandler)
 
 	return http.Handler(mux)
@@ -98,6 +106,16 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
+	sendResponse(w, http.StatusOK, struct {
+		Version        string `json:"version"`
+		ConsoleVersion string `json:"consoleVersion"`
+	}{
+		Version:        s.TectonicVersion,
+		ConsoleVersion: version.Version,
+	})
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
