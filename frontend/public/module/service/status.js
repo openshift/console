@@ -27,14 +27,22 @@ angular.module('bridge.service')
         method: 'GET',
       });
     },
+    tectonicVersion: function() {
+      return $http({
+        url: '/version',
+        method: 'GET',
+      });
+    },
     healthKubernetesApi: function() {
       return k8s.health();
+    },
+    kubernetesVersion: function() {
+      return k8s.version();
     },
     componentStatus: function() {
       return k8s.componentstatuses.list().then(function(items) {
         var etcds = [];
         var ret = {
-          uncategorized: [],
           etcdInfo: {
             running: 0,
             failed: 0,
@@ -51,8 +59,6 @@ angular.module('bridge.service')
             attemptToUpdateKnownComponent(ret, component, 'scheduler');
           } else if (component.metadata.name.match(/^etcd-\d+$/)) {
             etcds.push(component);
-          } else {
-            ret.uncategorized.push(component);
           }
         });
 

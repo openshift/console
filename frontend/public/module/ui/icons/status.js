@@ -15,9 +15,9 @@ angular.module('bridge.ui')
       var iconClasses, rootClasses, iconEl, textEl;
 
       iconClasses = {
-        ok: 'fa-check-circle-o',
+        ok: 'fa-check',
         warning: 'fa-warning',
-        critical: 'fa-times-circle-o',
+        critical: 'fa-warning',
         unknown: 'fa-question-circle'
       };
 

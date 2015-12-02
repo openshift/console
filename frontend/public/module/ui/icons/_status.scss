@@ -1,6 +1,10 @@
 .co-m-status {
 }
 
+.co-m-status__icon {
+  padding-right: 5px;
+}
+
 .co-m-status--critical {
   color: $red-dark;
 }
