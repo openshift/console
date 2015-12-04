@@ -2035,14 +2035,16 @@ angular.module('coreos.ui')
 });
 
 /**
- * Adds an active class to <li> tags where a[href] or a[ng-href] matches the
- * current url path. Removes any angular interpolated values.
+ * Adds an active class to <li> tags where a[href], a[ng-href], or
+ * a[co-active-match] matches the current url path. Removes any
+ * angular interpolated values.
  *
  * Assumes a structure of:
  *
  * <ul co-nav-active="active-class">
  *  <li><a href="/foo/bar">foo bar</a></li>
  *  <li><a ng-href="/foo/{{f.id}}">foo detail</a></li>
+ *  <li><a co-active-match="/foo/{{f.id}}/superdetail" href="/redirector">foo super detail</a></li>
  * </ul>
  */
 
@@ -2071,7 +2073,7 @@ angular.module('coreos.ui')
 
       $('a', elem).each(function() {
         var a = $(this),
-            href = a.attr('href') || a.attr('ng-href');
+            href = a.attr('co-active-match') || a.attr('href') || a.attr('ng-href');
         if (isActive(href)) {
           a.parent().addClass(attrs.coNavActive);
           return;

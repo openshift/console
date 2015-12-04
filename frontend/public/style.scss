@@ -21,6 +21,7 @@
 @import "page/events/events";
 @import "page/modals/modal";
 @import "page/pods/new-pod";
+@import "page/pods/pod-logs";
 @import "page/search/search";
 @import "page/welcome/welcome";
 @import "page/nodes/node";
@@ -34,6 +35,7 @@
 @import "module/ui/forms/number-spinner";
 @import "module/ui/labels/label";
 @import "module/ui/labels/label-input";
+@import "module/ui/log-window/log-window";
 @import "module/ui/resources/resource-list";
 @import "module/ui/resources/node-ip-list";
 @import "module/ui/status-box/status-box";
