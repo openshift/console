@@ -10,8 +10,8 @@ angular.module('k8s')
   };
   this.$get = function() {
     return {
-      getKubernetesPath: function() {
-        return basePath + apiVersion;
+      getKubernetesAPIPath: function() {
+        return basePath + 'api/' + apiVersion;
       },
       getBasePath: function() {
         return basePath;
@@ -83,11 +83,21 @@ angular.module('k8s')
     list: _.partial(k8sResource.list, k8sEnum.Kind.COMPONENTSTATUS)
   };
 
-  this.health = function() {
-    return $http({url: k8sConfig.getBasePath()});
-  };
-
   this.namespaces = {
     list: _.partial(k8sResource.list, k8sEnum.Kind.NAMESPACE),
+  };
+
+  this.health = function() {
+    return $http({
+      url: k8sConfig.getBasePath(),
+      method: 'GET'
+    });
+  };
+
+  this.version = function() {
+    return $http({
+      url: k8sConfig.getBasePath() + 'version',
+      method: 'GET'
+    });
   };
 });

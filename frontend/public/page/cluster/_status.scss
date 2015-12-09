@@ -1,29 +1,58 @@
-.cluster-status-list {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-
-  -webkit-flex-flow: row wrap;
-  flex-flow: row wrap;
-
-  -webkit-flex-flow: row wrap;
-  justify-content: center;
+.cluster-status {
+    margin: -15px -15px 0 -15px;
 }
 
-.cluster-status-item {
-  min-height: 150px;
-  width: 300px;
-  border: solid 1px $color-border;
-  padding: 20px;
-  margin: 10px;
-  h2 {
-    margin-top: 0;
-    white-space: nowrap;
+.cluster-status-cell {
+  padding: 24px;
+  font-size: 13px;
+  margin: 15px;
+}
+
+.cluster-status-cell__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 18px;
+  line-height: 25px;
+}
+
+.cluster-status-cell__info-row {
+  border-bottom: solid 1px $color-grey-border;
+  margin: 0;
+  padding: 10px 0;
+  line-height: 20px;
+}
+
+.cluster-status-cell__info-row--first {
+  border-top: solid 1px $color-grey-border;
+}
+
+.cluster-status-cell__info-row__first-cell {
+  margin-left: -5px;
+}
+
+.cluster-status-cell__info-row__last-cell {
+  margin-right: -5px;
+}
+
+.software-version {
+  text-align: right;
+}
+
+.software-release-notes {
+  text-align: right;
+}
+
+@media(min-width: 992px) {
+  .cluster-status-cell {
+    display: table-cell;
+    width: 50%;
+    margin-top: 0px;
   }
-}
 
-.cluster-loader-container {
-    text-align: center;
+  .cluster-status-row {
+    display: table;
+    border-spacing: 15px 0px;
+    width: 100%;
+  }
 }

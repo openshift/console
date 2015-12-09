@@ -1,141 +1,173 @@
 <div class="co-p-cluster-status">
 
   <tec-nav-title title="Cluster Status"></tec-nav-title>
-
-  <div class="co-m-pane">
-    <div class="co-m-pane__body cluster-status-wrapper">
-      <div class="cluster-status-loading"
-           ng-if="!(statusLoadComplete || healthCheckComplete || k8sApiCheckComplete)">
-        <div class="cluster-loader-container">
-          <co-inline-loader></co-inline-loader>
+  <div class="cluster-status">
+    <div class="cluster-status-row">
+      <div class="cluster-status-cell co-m-pane">
+        <div class="row">
+          <div class="col-xs-12">
+            <h4 class="cluster-status-cell__title">Cluster Health</h4>
+          </div>
+        </div>
+        <div class="row cluster-status-cell__info-row cluster-status-cell__info-row--first">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Tectonic Console</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-show="healthCheckComplete && !healthCheckSucceeded">
+              <co-status state="unknown" text="The console service cannot be reached."
+                         ></co-status>
+            </div>
+            <div ng-show="healthCheckComplete && healthCheckSucceeded">
+              <co-status state="ok" text="All systems go"></co-status>
+            </div>
+          </div>
+        </div>
+        <div class="row cluster-status-cell__info-row">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Kubernetes API Connection</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-show="k8sApiCheckComplete && !k8sApiCheckSucceeded">
+              <co-status state="unknown"
+                         text=" API server connection has a problem"></co-status>
+            </div>
+            <div ng-show="k8sApiCheckComplete && k8sApiCheckSucceeded">
+              <co-status state="ok" text="All systems go"></co-status>
+            </div>
+          </div>
+        </div>
+        <div class="row cluster-status-cell__info-row">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">etcd Cluster</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-show="!statusLoadComplete">
+              <co-inline-loader></co-inline-loader>
+            </div>
+            <div ng-show="statusLoadComplete">
+              <div ng-show="!status">
+                <co-status state="unknown"
+                           text="No information about the etcd cluster can be found."
+                           ></co-status>
+              </div>
+              <div ng-show="!status.etcdInfo.total">
+                <co-status state="critical"
+                           text="No members of the etcd cluster could be contacted."
+                           ></co-status>
+              </div>
+              <div ng-show="status.etcdInfo.running === status.etcdInfo.total && status.etcdInfo.running > 0">
+                <co-status state="ok"
+                           text="{{status.etcdInfo.running}} healthy members"
+                           ></co-status>
+              </div>
+              <div ng-show="status.etcdInfo.running < status.etcdInfo.total && status.etcdInfo.running == 0">
+                <co-status state="critical"
+                           text="none of {{status.etcdInfo.total}} members are healthy"
+                           ></co-status>
+              </div>
+              <div ng-show="status.etcdInfo.running < status.etcdInfo.total && status.etcdInfo.running > 0">
+                <co-status state="warning"
+                           text="{{status.etcdInfo.total - status.etcdInfo.running}} of {{status.etcdInfo.total}} members are unhealthy"
+                           ></co-status>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row cluster-status-cell__info-row">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Controller Manager</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-show="!statusLoadComplete">
+              <co-inline-loader></co-inline-loader>
+            </div>
+            <div ng-show="statusLoadComplete">
+              <div ng-show="!status">
+                <co-status state="unknown"
+                           text="No information about the Controller Manager can be found."
+                           ></co-status>
+              </div>
+              <div>
+                <div ng-show="status && isStrange(status.controllerManager.health.status)">
+                  <co-status state="critical"
+                             text="Component health could not be determined."></co-status>
+                </div>
+                <div ng-show="status.controllerManager.health.status === 'True'">
+                  <co-status state="ok" text="All systems go"></co-status>
+                </div>
+                <div ng-show="status.controllerManager.health.status === 'False'">
+                  <co-status state="critical"
+                             text="Controller Manager failed health check"></co-status>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row cluster-status-cell__info-row">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Scheduler</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-show="!statusLoadComplete">
+              <co-inline-loader></co-inline-loader>
+            </div>
+            <div ng-show="statusLoadComplete">
+              <div ng-show="!status">
+                <co-status state="unknown"
+                           text="No information about the Scheduler can be found."
+                           ></co-status>
+              </div>
+              <div>
+                <div ng-show="status && isStrange(status.scheduler.health.status)">
+                  <co-status state="critical"
+                             text="Component health could not be determined"
+                             ></co-status>
+                </div>
+                <div ng-show="status.scheduler.health.status === 'True'">
+                  <co-status state="ok" text="All systems go"></co-status>
+                </div>
+                <div ng-show="status.scheduler.health.status === 'False'">
+                  <co-status state="critical" text="Scheduler failed health check"></co-status>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="cluster-status-list">
-        <div class="cluster-status-item">
-          <h2>Tectonic Console</h2>
-          <div ng-show="!healthCheckComplete">
-            <co-inline-loader></co-inline-loader>
-          </div>
-          <div ng-show="healthCheckComplete && !healthCheckSucceeded">
-            <co-status state="unknown" text="Cluster communication failure"></co-status>
-            <small>The console service cannot be reached.</small>
-          </div>
-          <div ng-show="healthCheckComplete && healthCheckSucceeded">
-            <co-status state="ok" text="All systems go"></co-status>
+      <div class="cluster-status-cell co-m-pane">
+        <div class="row">
+          <div class="col-xs-12">
+            <h4 class="cluster-status-cell__title">Software Details</h4>
           </div>
         </div>
-
-        <div class="cluster-status-item">
-          <h2>Kubernetes API Connection</h2>
-          <div ng-show="!k8sApiCheckComplete">
-            <co-inline-loader></co-inline-loader>
-          </div>
-          <div ng-show="k8sApiCheckComplete && !k8sApiCheckSucceeded">
-            <co-status state="critical" text="API server connection has a problem"></co-status>
-          </div>
-          <div ng-show="k8sApiCheckComplete && k8sApiCheckSucceeded">
-            <co-status state="ok" text="All systems go"></co-status>
-          </div>
-        </div>
-
-        <div class="cluster-status-item">
-          <h2>etcd Cluster</h2>
-          <div ng-show="!statusLoadComplete">
-            <co-inline-loader></co-inline-loader>
-          </div>
-          <div ng-show="statusLoadComplete">
-            <div ng-show="!status">
-              <co-status state="unknown" text="Cluster communication failure"></co-status>
-              <small>No information about the etcd cluster can be found.</small>
+        <div class="row cluster-status-cell__info-row cluster-status-cell__info-row--first">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Kubernetes</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-show="!k8sVersionCheckComplete">
+              <co-inline-loader></co-inline-loader>
             </div>
-            <div ng-show="status.etcdInfo.total === 0">
-              <co-status state="critical" text="There is a problem determining etcd state"></co-status>
-              <small>No members of the etcd cluster could be contacted.</small>
+            <div ng-show="k8sVersionCheckComplete && !k8sVersionCheckSucceeded">
+              <co-status state="unknown" text="The Kubernetes version could not be determined."
+                         ></co-status>
             </div>
-            <div ng-show="status.etcdInfo.running === status.etcdInfo.total && status.etcdInfo.running > 0">
-              <co-status state="ok" text="All systems go"></co-status>
-            </div>
-            <div ng-show="status.etcdInfo.running < status.etcdInfo.total && status.etcdInfo.running == 0">
-              <co-status state="critical" text="All services down"></co-status>
-            </div>
-            <div ng-show="status.etcdInfo.running < status.etcdInfo.total && status.etcdInfo.running > 0">
-              <co-status state="warning" text="Some services down"></co-status>
-            </div>
-            <div ng-show="status.etcdInfo.total > 0">
-              <small ng-bind-template="running: {{status.etcdInfo.running}}, failed: {{status.etcdInfo.failed}}, unknown: {{status.etcdInfo.unknown}}"></small>
+            <div ng-show="k8sVersionCheckComplete && k8sVersionCheckSucceeded">
+              <div class="software-version" ng-bind="k8sVersion"></div>
+              <div class="software-release-notes"
+                   ><a ng-href="https://github.com/kubernetes/kubernetes/releases/tag/{{k8sVersion}}" target="_blank"
+                       >Release Notes</a></div>
             </div>
           </div>
         </div>
-
-        <div class="cluster-status-item">
-          <h2>Controller Manager</h2>
-          <div ng-show="!statusLoadComplete">
-            <co-inline-loader></co-inline-loader>
-          </div>
-          <div ng-show="statusLoadComplete">
-            <div ng-show="!status.controllerManager">
-              <co-status state="unknown" text="Cluster communication failure"></co-status>
-              <small>No information about the Controller Manager can be found.</small>
+        <div class="row cluster-status-cell__info-row">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Tectonic</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-show="!tectonicVersionCheckComplete">
+              <co-inline-loader></co-inline-loader>
             </div>
-            <div>
-              <div ng-show="status && !(status.controllerManager.health.status === 'True' || status.controllerManager.health.status === 'False')">
-                <co-status state="critical" text="Component health could not be determined"></co-status>
-              </div>
-              <div ng-show="status.controllerManager.health.status === 'True'">
-                <co-status state="ok" text="All systems go"></co-status>
-              </div>
-              <div ng-show="status.controllerManager.health.status === 'False'">
-                <co-status state="critical" text="System failed health check"></co-status>
-              </div>
+            <div ng-show="tectonicVersionCheckComplete && !tectonicVersionCheckSucceeded">
+              <co-status state="unknown" text="The Tectonic version could not be determined."
+                         ></co-status>
+            </div>
+            <div ng-show="tectonicVersionCheckComplete && tectonicVersionCheckSucceeded">
+              <div class="software-version" ng-bind="tectonicVersion"></div>
+              <div class="software-release-notes"
+                   ><a ng-href="https://tectonic.com/enterprise/releases/" target="_blank"
+                       >Release Notes</a></div>
             </div>
           </div>
         </div>
-
-        <div class="cluster-status-item">
-          <h2>Scheduler</h2>
-          <div ng-show="!statusLoadComplete">
-            <co-inline-loader></co-inline-loader>
-          </div>
-          <div ng-show="statusLoadComplete">
-            <div ng-show="!status.scheduler">
-              <div ng-show="!(status || status.scheduler)">
-                <co-status state="unknown" text="Cluster communication failure"></co-status>
-                <small>No information about the Scheduler can be found.</small>
-              </div>
-            </div>
-            <div>
-              <div ng-show="status.scheduler && !(status.scheduler.health.status === 'True' || status.scheduler.health.status === 'False')">
-                <co-status state="critical" text="Component health could not be determined"></co-status>
-              </div>
-              <div ng-show="status.scheduler.health.status === 'True'">
-                <co-status state="ok" text="All systems go"></co-status>
-              </div>
-              <div ng-show="status.scheduler.health.status === 'False'">
-                <co-status state="critical" text="System failed health check"></co-status>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="cluster-status-item"
-             ng-repeat="component in status.uncategorized"
-             ng-if="statusLoadComplete">
-          <h2 ng-bind="component.metadata.name"></h2>
-          <div ng-repeat="condition in component.healthConditions">
-            <div ng-show="!(condition.status === 'True' || condition.status === 'False')">
-              <co-status state="unknown" text="Component health could not be determined"></co-status>
-            </div>
-            <div ng-show="condition.status === 'True'">
-              <co-status state="ok" text="All systems go"></co-status>
-            </div>
-            <div ng-show="condition.status === 'False'">
-              <co-status state="warning" text="System failed health check"></co-status>
-            </div>
-          </div><!-- repeat condition -->
-        </div><!-- repeat component -->
-
       </div>
     </div>
   </div>
-
 </div>

@@ -9,6 +9,7 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/coreos-inc/bridge/auth"
+	"github.com/coreos-inc/bridge/version"
 )
 
 const (
@@ -28,7 +29,7 @@ var (
 )
 
 type jsGlobals struct {
-	K8sVersion             string `json:"k8sVersion"`
+	K8sAPIVersion          string `json:"k8sAPIVersion"`
 	AuthDisabled           bool   `json:"authDisabled"`
 	NewUserAuthCallbackURL string `json:"newUserAuthCallbackURL"`
 }
@@ -37,6 +38,7 @@ type Server struct {
 	K8sProxyConfig         *ProxyConfig
 	DexProxyConfig         *ProxyConfig
 	PublicDir              string
+	TectonicVersion        string
 	Templates              *template.Template
 	Auther                 *auth.Authenticator
 	NewUserAuthCallbackURL *url.URL
@@ -77,13 +79,19 @@ func (s *Server) HTTPHandler() http.Handler {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
+	useVersionHandler := s.versionHandler
+	if !s.AuthDisabled() {
+		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
+	}
+	mux.HandleFunc("/version", useVersionHandler)
+
 	mux.HandleFunc("/", s.indexHandler)
 
 	return http.Handler(mux)
 }
 
 func (s *Server) k8sHandler() http.Handler {
-	s.K8sProxyConfig.Endpoint.Path = "/api"
+	s.K8sProxyConfig.Endpoint.Path = ""
 	s.K8sProxyConfig.HeaderBlacklist = []string{"Cookie"}
 	proxy := newProxy(s.K8sProxyConfig)
 	return proxy
@@ -91,13 +99,23 @@ func (s *Server) k8sHandler() http.Handler {
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		K8sVersion:             K8sAPIVersion,
+		K8sAPIVersion:          K8sAPIVersion,
 		AuthDisabled:           s.AuthDisabled(),
 		NewUserAuthCallbackURL: s.NewUserAuthCallbackURL.String(),
 	}
 	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
+	sendResponse(w, http.StatusOK, struct {
+		Version        string `json:"version"`
+		ConsoleVersion string `json:"consoleVersion"`
+	}{
+		Version:        s.TectonicVersion,
+		ConsoleVersion: version.Version,
+	})
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
