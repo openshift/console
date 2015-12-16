@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"time"
 
 	"github.com/coreos/go-oidc/oidc"
 	"github.com/coreos/pkg/capnslog"
@@ -164,6 +165,7 @@ func main() {
 						RootCAs: certPool,
 					},
 				},
+				Timeout: time.Second * 5,
 			},
 			Credentials: oidc.ClientCredentials{
 				ID:     *authClientID,
@@ -176,7 +178,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error initializing authenticator: %v", err)
 		}
-
+		auther.Start()
 		srv.Auther = auther
 	}
 
