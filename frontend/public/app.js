@@ -164,6 +164,16 @@ angular.module('bridge', [
     templateUrl: '/static/page/pods/sysevents.html',
     title: 'Pod Events',
   });
+  r('/ns/:ns/pods/:name/logs', {
+    controller: 'PodLogsCtrl',
+    templateUrl: '/static/page/pods/logs.html',
+    title: 'Pod Logs',
+  });
+  r('/ns/:ns/pods/:name/logs/:containerName', {
+    controller: 'PodLogsCtrl',
+    templateUrl: '/static/page/pods/logs.html',
+    title: 'Pod Logs',
+  });
   r('/ns/:ns/pods/:podName/containers/:name', {
     controller: 'ContainerCtrl',
     templateUrl: '/static/page/containers/container.html',

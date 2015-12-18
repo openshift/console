@@ -14,7 +14,7 @@ angular.module('bridge.ui')
     replace: true,
     scope: {
       active: '=',
-      onToggle: '&',
+      onToggle: '&?',
     },
     link: function(scope, elem) {
       function updateUI() {
@@ -28,7 +28,9 @@ angular.module('bridge.ui')
 
       scope.toggle = function() {
         scope.active = !scope.active;
-        scope.onToggle({ active: scope.active });
+        if (scope.onToggle) {
+          scope.onToggle({ active: scope.active });
+        }
       };
 
       scope.$watch('active', updateUI);

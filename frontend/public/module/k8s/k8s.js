@@ -63,6 +63,15 @@ angular.module('k8s')
       k8sPods.clean(pod);
       return k8sResource.update(k8sEnum.Kind.POD, pod);
     },
+    log: function(podName, ns) {
+      return $http({
+        url: k8sResource.resourceURL(k8sEnum.Kind.POD, {ns: ns, name: podName, path: 'log'}),
+        method: 'GET',
+      })
+      .then(function(result) {
+        return result.data;
+      });
+    }
   });
 
   this.replicationcontrollers = _.extend(k8sReplicationcontrollers, {

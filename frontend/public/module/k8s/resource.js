@@ -7,9 +7,8 @@ angular.module('k8s')
   var k8sPath = k8sConfig.getKubernetesAPIPath();
 
   this.resourceURL = function(kind, options) {
-    var u = k8sPath,
-        q,
-        queryParams = _.omit(options, 'name', 'ns');
+    var q = '',
+        u = k8sPath;
 
     if (options.ns) {
       u += '/namespaces/' + options.ns;
@@ -18,12 +17,13 @@ angular.module('k8s')
     if (options.name) {
       u += '/' + options.name;
     }
-
-    // turn all other options into query params
-    q = _.map(queryParams, function(v, k) {
-      return k + '=' + v;
-    });
-    if (q.length) {
+    if (options.path) {
+      u += '/' + options.path;
+    }
+    if (!_.isEmpty(options.queryParams)) {
+      q = _.map(options.queryParams, function(v, k) {
+        return k + '=' + v;
+      });
       u += '?' + q.join('&');
     }
 
@@ -32,7 +32,8 @@ angular.module('k8s')
 
   this.watchURL = function(kind, options) {
     var opts = options || {};
-    opts.watch = true;
+    opts.queryParams = opts.queryParams || {};
+    opts.queryParams.watch = true;
     return this.resourceURL(kind, opts);
   }.bind(this);
 

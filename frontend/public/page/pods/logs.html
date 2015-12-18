@@ -1,0 +1,51 @@
+<div class="co-p-pod-logs">
+  <tec-nav-title title="{{podName}}">
+    <a co-namespaced-href="/pods" class="co-m-primary-action">
+      <a co-namespaced-href="/pods" class="co-m-primary-action">
+        <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pods</a>
+  </tec-nav-title>
+
+  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+    <co-pod-nav ns="ns" name="podName"></co-pod-nav>
+
+    <div class="co-m-vert-nav__body">
+      <div class="co-m-pane__body">
+        <div class="co-m-pane__body__top-controls">
+          <co-toggle-play active="active"></co-toggle-play>
+          <span class="log-container-selector__text">
+            <span ng-if="active">Streaming logs from</span>
+            <span ng-if="!active">Log stream is paused.</span>
+          </span>
+          <div class="btn-group" dropdown>
+            <button type="button" class="btn btn-default dropdown-toggle">
+              <span class="co-m-resource-icon co-m-resource-icon--container">C</span>
+              <span ng-bind="containerName"></span>
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li ng-repeat="c in containerNames"
+                  ><a href="#" ng-click="selectContainer(c)"
+                      ><span class="co-m-resource-icon co-m-resource-icon--container">C</span>
+                  <span ng-bind="c"></span></a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="log-pane">
+          <div class="log-pane__header">
+            <div class="log-pane__header__message">
+              <span ng-if="buffer.lines().length < buffer.maxSize()"
+                    ng-bind-template="{{buffer.lines().length + 0}} lines"></span>
+              <span ng-if="buffer.lines().length == buffer.maxSize()"
+                    ng-bind-template="last {{buffer.lines().length + 0}} lines"></span>
+            </div>
+          </div>
+          <div class="log-pane__body">
+            <tec-log-window buffer="buffer" log-name="containerName" state="windowState"></tec-log-window>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
