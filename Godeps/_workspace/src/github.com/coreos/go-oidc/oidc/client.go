@@ -66,7 +66,9 @@ type ClientConfig struct {
 }
 
 func NewClient(cfg ClientConfig) (*Client, error) {
-	ru, err := phttp.ParseNonEmptyURL(cfg.RedirectURL)
+	// Allow empty redirect URL in the case where the client
+	// only needs to verify a given token.
+	ru, err := url.Parse(cfg.RedirectURL)
 	if err != nil {
 		return nil, fmt.Errorf("invalid redirect URL: %v", err)
 	}
@@ -76,7 +78,7 @@ func NewClient(cfg ClientConfig) (*Client, error) {
 		httpClient:     cfg.HTTPClient,
 		scope:          cfg.Scope,
 		redirectURL:    ru.String(),
-		providerConfig: cfg.ProviderConfig,
+		providerConfig: newProviderConfigRepo(cfg.ProviderConfig),
 		keySet:         cfg.KeySet,
 	}
 
@@ -94,11 +96,12 @@ func NewClient(cfg ClientConfig) (*Client, error) {
 
 type Client struct {
 	httpClient     phttp.Client
-	providerConfig ProviderConfig
+	providerConfig *providerConfigRepo
 	credentials    ClientCredentials
 	redirectURL    string
 	scope          []string
 	keySet         key.PublicKeySet
+	providerSyncer *ProviderConfigSyncer
 
 	keySetSyncMutex sync.RWMutex
 	lastKeySetSync  time.Time
@@ -107,11 +110,13 @@ type Client struct {
 func (c *Client) Healthy() error {
 	now := time.Now().UTC()
 
-	if c.providerConfig.Empty() {
+	cfg := c.providerConfig.Get()
+
+	if cfg.Empty() {
 		return errors.New("oidc client provider config empty")
 	}
 
-	if !c.providerConfig.ExpiresAt.IsZero() && c.providerConfig.ExpiresAt.Before(now) {
+	if !cfg.ExpiresAt.IsZero() && cfg.ExpiresAt.Before(now) {
 		return errors.New("oidc client provider config expired")
 	}
 
@@ -119,7 +124,8 @@ func (c *Client) Healthy() error {
 }
 
 func (c *Client) OAuthClient() (*oauth2.Client, error) {
-	authMethod, err := c.chooseAuthMethod()
+	cfg := c.providerConfig.Get()
+	authMethod, err := chooseAuthMethod(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -127,8 +133,8 @@ func (c *Client) OAuthClient() (*oauth2.Client, error) {
 	ocfg := oauth2.Config{
 		Credentials: oauth2.ClientCredentials(c.credentials),
 		RedirectURL: c.redirectURL,
-		AuthURL:     c.providerConfig.AuthEndpoint,
-		TokenURL:    c.providerConfig.TokenEndpoint,
+		AuthURL:     cfg.AuthEndpoint,
+		TokenURL:    cfg.TokenEndpoint,
 		Scope:       c.scope,
 		AuthMethod:  authMethod,
 	}
@@ -136,12 +142,12 @@ func (c *Client) OAuthClient() (*oauth2.Client, error) {
 	return oauth2.NewClient(c.httpClient, ocfg)
 }
 
-func (c *Client) chooseAuthMethod() (string, error) {
-	if len(c.providerConfig.TokenEndpointAuthMethodsSupported) == 0 {
+func chooseAuthMethod(cfg ProviderConfig) (string, error) {
+	if len(cfg.TokenEndpointAuthMethodsSupported) == 0 {
 		return oauth2.AuthMethodClientSecretBasic, nil
 	}
 
-	for _, authMethod := range c.providerConfig.TokenEndpointAuthMethodsSupported {
+	for _, authMethod := range cfg.TokenEndpointAuthMethodsSupported {
 		if _, ok := supportedAuthMethods[authMethod]; ok {
 			return authMethod, nil
 		}
@@ -150,10 +156,13 @@ func (c *Client) chooseAuthMethod() (string, error) {
 	return "", errors.New("no supported auth methods")
 }
 
+// SyncProviderConfig starts the provider config syncer
 func (c *Client) SyncProviderConfig(discoveryURL string) chan struct{} {
-	rp := &providerConfigRepo{c}
 	r := NewHTTPProviderConfigGetter(c.httpClient, discoveryURL)
-	return NewProviderConfigSyncer(r, rp).Run()
+	s := NewProviderConfigSyncer(r, c.providerConfig)
+	stop := s.Run()
+	s.WaitUntilInitialSync()
+	return stop
 }
 
 func (c *Client) maybeSyncKeys() error {
@@ -176,21 +185,13 @@ func (c *Client) maybeSyncKeys() error {
 		return nil
 	}
 
-	r := NewRemotePublicKeyRepo(c.httpClient, c.providerConfig.KeysEndpoint)
+	cfg := c.providerConfig.Get()
+	r := NewRemotePublicKeyRepo(c.httpClient, cfg.KeysEndpoint)
 	w := &clientKeyRepo{client: c}
 	_, err := key.Sync(r, w)
 	c.lastKeySetSync = time.Now().UTC()
 
 	return err
-}
-
-type providerConfigRepo struct {
-	client *Client
-}
-
-func (r *providerConfigRepo) Set(cfg ProviderConfig) error {
-	r.client.providerConfig = cfg
-	return nil
 }
 
 type clientKeyRepo struct {
@@ -207,7 +208,9 @@ func (r *clientKeyRepo) Set(ks key.KeySet) error {
 }
 
 func (c *Client) ClientCredsToken(scope []string) (jose.JWT, error) {
-	if !c.providerConfig.SupportsGrantType(oauth2.GrantTypeClientCreds) {
+	cfg := c.providerConfig.Get()
+
+	if !cfg.SupportsGrantType(oauth2.GrantTypeClientCreds) {
 		return jose.JWT{}, fmt.Errorf("%v grant type is not supported", oauth2.GrantTypeClientCreds)
 	}
 
@@ -229,14 +232,34 @@ func (c *Client) ClientCredsToken(scope []string) (jose.JWT, error) {
 	return jwt, c.VerifyJWT(jwt)
 }
 
-// Exchange an OAuth2 auth code for an OIDC JWT
+// ExchangeAuthCode exchanges an OAuth2 auth code for an OIDC JWT ID token.
 func (c *Client) ExchangeAuthCode(code string) (jose.JWT, error) {
 	oac, err := c.OAuthClient()
 	if err != nil {
 		return jose.JWT{}, err
 	}
 
-	t, err := oac.Exchange(code)
+	t, err := oac.RequestToken(oauth2.GrantTypeAuthCode, code)
+	if err != nil {
+		return jose.JWT{}, err
+	}
+
+	jwt, err := jose.ParseJWT(t.IDToken)
+	if err != nil {
+		return jose.JWT{}, err
+	}
+
+	return jwt, c.VerifyJWT(jwt)
+}
+
+// RefreshToken uses a refresh token to exchange for a new OIDC JWT ID Token.
+func (c *Client) RefreshToken(refreshToken string) (jose.JWT, error) {
+	oac, err := c.OAuthClient()
+	if err != nil {
+		return jose.JWT{}, err
+	}
+
+	t, err := oac.RequestToken(oauth2.GrantTypeRefreshToken, refreshToken)
 	if err != nil {
 		return jose.JWT{}, err
 	}
@@ -258,7 +281,7 @@ func (c *Client) VerifyJWT(jwt jose.JWT) error {
 	}
 
 	v := NewJWTVerifier(
-		c.providerConfig.Issuer,
+		c.providerConfig.Get().Issuer,
 		c.credentials.ID,
 		c.maybeSyncKeys, keysFunc)
 
@@ -298,4 +321,27 @@ func (c *Client) keysFuncAll() func() []key.PublicKey {
 
 		return c.keySet.Keys()
 	}
+}
+
+type providerConfigRepo struct {
+	mu     sync.RWMutex
+	config ProviderConfig // do not access directly, use Get()
+}
+
+func newProviderConfigRepo(pc ProviderConfig) *providerConfigRepo {
+	return &providerConfigRepo{sync.RWMutex{}, pc}
+}
+
+// returns an error to implement ProviderConfigSetter
+func (r *providerConfigRepo) Set(cfg ProviderConfig) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.config = cfg
+	return nil
+}
+
+func (r *providerConfigRepo) Get() ProviderConfig {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return r.config
 }

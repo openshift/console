@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/coreos/pkg/capnslog"
@@ -25,6 +26,9 @@ const (
 	discoveryConfigPath = "/.well-known/openid-configuration"
 )
 
+// internally configurable for tests
+var minimumProviderConfigSyncInterval = MinimumProviderConfigSyncInterval
+
 type ProviderConfig struct {
 	Issuer                            string    `json:"issuer"`
 	AuthEndpoint                      string    `json:"authorization_endpoint"`
@@ -33,7 +37,7 @@ type ProviderConfig struct {
 	ResponseTypesSupported            []string  `json:"response_types_supported"`
 	GrantTypesSupported               []string  `json:"grant_types_supported"`
 	SubjectTypesSupported             []string  `json:"subject_types_supported"`
-	IDTokenAlgValuesSupported         []string  `json:"id_token_alg_values_supported"`
+	IDTokenAlgValuesSupported         []string  `json:"id_token_signing_alg_values_supported"`
 	TokenEndpointAuthMethodsSupported []string  `json:"token_endpoint_auth_methods_supported"`
 	ExpiresAt                         time.Time `json:"-"`
 }
@@ -72,6 +76,9 @@ type ProviderConfigSyncer struct {
 	from  ProviderConfigGetter
 	to    ProviderConfigSetter
 	clock clockwork.Clock
+
+	initialSyncDone bool
+	initialSyncWait sync.WaitGroup
 }
 
 func NewProviderConfigSyncer(from ProviderConfigGetter, to ProviderConfigSetter) *ProviderConfigSyncer {
@@ -88,6 +95,7 @@ func (s *ProviderConfigSyncer) Run() chan struct{} {
 	var next pcsStepper
 	next = &pcsStepNext{aft: time.Duration(0)}
 
+	s.initialSyncWait.Add(1)
 	go func() {
 		for {
 			select {
@@ -102,6 +110,10 @@ func (s *ProviderConfigSyncer) Run() chan struct{} {
 	return stop
 }
 
+func (s *ProviderConfigSyncer) WaitUntilInitialSync() {
+	s.initialSyncWait.Wait()
+}
+
 func (s *ProviderConfigSyncer) sync() (time.Duration, error) {
 	cfg, err := s.from.Get()
 	if err != nil {
@@ -110,6 +122,11 @@ func (s *ProviderConfigSyncer) sync() (time.Duration, error) {
 
 	if err = s.to.Set(cfg); err != nil {
 		return 0, fmt.Errorf("error setting provider config: %v", err)
+	}
+
+	if !s.initialSyncDone {
+		s.initialSyncWait.Done()
+		s.initialSyncDone = true
 	}
 
 	log.Infof("Updating provider config: config=%#v", cfg)
@@ -172,8 +189,8 @@ func nextSyncAfter(exp time.Time, clock clockwork.Clock) time.Duration {
 	t := exp.Sub(clock.Now()) / 2
 	if t > MaximumProviderConfigSyncInterval {
 		t = MaximumProviderConfigSyncInterval
-	} else if t < MinimumProviderConfigSyncInterval {
-		t = MinimumProviderConfigSyncInterval
+	} else if t < minimumProviderConfigSyncInterval {
+		t = minimumProviderConfigSyncInterval
 	}
 
 	return t

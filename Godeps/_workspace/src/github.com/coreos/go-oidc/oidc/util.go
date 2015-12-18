@@ -37,7 +37,7 @@ func ExtractBearerToken(r *http.Request) (string, error) {
 	return val, nil
 }
 
-// ExtractBearerToken returns a RequestTokenExtractor which extracts a token from the named cookie in a request.
+// CookieTokenExtractor returns a RequestTokenExtractor which extracts a token from the named cookie in a request.
 func CookieTokenExtractor(cookieName string) RequestTokenExtractor {
 	return func(r *http.Request) (string, error) {
 		ck, err := r.Cookie(cookieName)
@@ -53,7 +53,7 @@ func CookieTokenExtractor(cookieName string) RequestTokenExtractor {
 	}
 }
 
-func NewClaims(iss, sub, aud string, iat, exp time.Time) jose.Claims {
+func NewClaims(iss, sub string, aud interface{}, iat, exp time.Time) jose.Claims {
 	return jose.Claims{
 		// required
 		"iss": iss,

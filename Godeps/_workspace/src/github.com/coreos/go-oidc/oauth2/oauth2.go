@@ -19,9 +19,10 @@ const (
 )
 
 const (
-	GrantTypeAuthCode    = "authorization_code"
-	GrantTypeClientCreds = "client_credentials"
-	GrantTypeImplicit    = "implicit"
+	GrantTypeAuthCode     = "authorization_code"
+	GrantTypeClientCreds  = "client_credentials"
+	GrantTypeImplicit     = "implicit"
+	GrantTypeRefreshToken = "refresh_token"
 
 	AuthMethodClientSecretPost  = "client_secret_post"
 	AuthMethodClientSecretBasic = "client_secret_basic"
@@ -84,7 +85,9 @@ func NewClient(hc phttp.Client, cfg Config) (c *Client, err error) {
 		return
 	}
 
-	ru, err := phttp.ParseNonEmptyURL(cfg.RedirectURL)
+	// Allow empty redirect URL in the case where the client
+	// only needs to verify a given token.
+	ru, err := url.Parse(cfg.RedirectURL)
 	if err != nil {
 		return
 	}
@@ -180,13 +183,23 @@ func (c *Client) ClientCredsToken(scope []string) (result TokenResponse, err err
 	return parseTokenResponse(resp)
 }
 
-// Exchange auth code for series of tokens.
-func (c *Client) Exchange(code string) (result TokenResponse, err error) {
+// RequestToken requests a token from the Token Endpoint with the specified grantType.
+// If 'grantType' == GrantTypeAuthCode, then 'value' should be the authorization code.
+// If 'grantType' == GrantTypeRefreshToken, then 'value' should be the refresh token.
+func (c *Client) RequestToken(grantType, value string) (result TokenResponse, err error) {
 	v := c.commonURLValues()
 
-	v.Set("grant_type", GrantTypeAuthCode)
-	v.Set("code", code)
+	v.Set("grant_type", grantType)
 	v.Set("client_secret", c.creds.Secret)
+	switch grantType {
+	case GrantTypeAuthCode:
+		v.Set("code", value)
+	case GrantTypeRefreshToken:
+		v.Set("refresh_token", value)
+	default:
+		err = fmt.Errorf("unsupported grant_type: %v", grantType)
+		return
+	}
 
 	req, err := c.newAuthenticatedRequest(c.tokenURL.String(), v)
 	if err != nil {
@@ -207,11 +220,7 @@ func parseTokenResponse(resp *http.Response) (result TokenResponse, err error) {
 	if err != nil {
 		return
 	}
-
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		err = unmarshalError(body)
-		return
-	}
+	badStatusCode := resp.StatusCode < 200 || resp.StatusCode > 299
 
 	contentType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 	if err != nil {
@@ -222,47 +231,80 @@ func parseTokenResponse(resp *http.Response) (result TokenResponse, err error) {
 		RawBody: body,
 	}
 
+	newError := func(typ, desc, state string) error {
+		if typ == "" {
+			return fmt.Errorf("unrecognized error %s", body)
+		}
+		return &Error{typ, desc, state}
+	}
+
 	if contentType == "application/x-www-form-urlencoded" || contentType == "text/plain" {
 		var vals url.Values
 		vals, err = url.ParseQuery(string(body))
 		if err != nil {
 			return
 		}
-		result.AccessToken = vals.Get("access_token")
-		result.TokenType = vals.Get("token_type")
-		result.IDToken = vals.Get("id_token")
+		if error := vals.Get("error"); error != "" || badStatusCode {
+			err = newError(error, vals.Get("error_description"), vals.Get("state"))
+			return
+		}
 		e := vals.Get("expires_in")
 		if e == "" {
 			e = vals.Get("expires")
 		}
-		result.Expires, err = strconv.Atoi(e)
-		if err != nil {
-			return
+		if e != "" {
+			result.Expires, err = strconv.Atoi(e)
+			if err != nil {
+				return
+			}
 		}
+		result.AccessToken = vals.Get("access_token")
+		result.TokenType = vals.Get("token_type")
+		result.IDToken = vals.Get("id_token")
+		result.RefreshToken = vals.Get("refresh_token")
+		result.Scope = vals.Get("scope")
 	} else {
-		b := make(map[string]interface{})
-		if err = json.Unmarshal(body, &b); err != nil {
+		var r struct {
+			AccessToken  string `json:"access_token"`
+			TokenType    string `json:"token_type"`
+			IDToken      string `json:"id_token"`
+			RefreshToken string `json:"refresh_token"`
+			Scope        string `json:"scope"`
+			State        string `json:"state"`
+			ExpiresIn    int    `json:"expires_in"`
+			Expires      int    `json:"expires"`
+			Error        string `json:"error"`
+			Desc         string `json:"error_description"`
+		}
+		if err = json.Unmarshal(body, &r); err != nil {
 			return
 		}
-		result.AccessToken, _ = b["access_token"].(string)
-		result.TokenType, _ = b["token_type"].(string)
-		result.IDToken, _ = b["id_token"].(string)
-		e, ok := b["expires_in"].(int)
-		if !ok {
-			e, _ = b["expires"].(int)
+		if r.Error != "" || badStatusCode {
+			err = newError(r.Error, r.Desc, r.State)
+			return
 		}
-		result.Expires = e
+		result.AccessToken = r.AccessToken
+		result.TokenType = r.TokenType
+		result.IDToken = r.IDToken
+		result.RefreshToken = r.RefreshToken
+		result.Scope = r.Scope
+		if r.ExpiresIn == 0 {
+			result.Expires = r.Expires
+		} else {
+			result.Expires = r.ExpiresIn
+		}
 	}
-
 	return
 }
 
 type TokenResponse struct {
-	AccessToken string
-	TokenType   string
-	Expires     int
-	IDToken     string
-	RawBody     []byte // In case callers need some other non-standard info from the token response
+	AccessToken  string
+	TokenType    string
+	Expires      int
+	IDToken      string
+	RefreshToken string // OPTIONAL.
+	Scope        string // OPTIONAL, if identical to the scope requested by the client, otherwise, REQUIRED.
+	RawBody      []byte // In case callers need some other non-standard info from the token response
 }
 
 type AuthCodeRequest struct {
