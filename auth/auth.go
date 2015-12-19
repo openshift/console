@@ -37,8 +37,6 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		return nil, err
 	}
 
-	client.SyncProviderConfig(issuerURL.String())
-
 	errURL := "/"
 	if errorURL != "" {
 		errURL = errorURL
@@ -57,6 +55,11 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		errorURL:       errURL,
 		successURL:     sucURL,
 	}, nil
+}
+
+// Start starts the authenticator's provider sync, and blocks until the initial sync has completed successfully.
+func (a *Authenticator) Start() {
+	a.oidcClient.SyncProviderConfig(a.issuerURL.String())
 }
 
 // LoginFunc redirects to the OIDC provider for user login.
