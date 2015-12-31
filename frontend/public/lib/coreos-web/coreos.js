@@ -1405,7 +1405,7 @@ angular.module('coreos.ui')
  * Date dropdown selector.
  */
 angular.module('coreos.ui')
-.directive('coDateRange', function(_, $modal, d3, moment, timeSvc) {
+.directive('coDateRange', function(_, $uibModal, d3, moment, timeSvc) {
   'use strict';
 
   var modalConfig = {
@@ -1498,7 +1498,7 @@ angular.module('coreos.ui')
           utc: d3.functor(scope.utc)
         };
         // Handle custom range changes.
-        $modal.open(modalConfig)
+        $uibModal.open(modalConfig)
           .result.then(function(customRange) {
             scope.utc = customRange.utc;
             scope.start = customRange.start;
@@ -1530,7 +1530,7 @@ angular.module('coreos.ui')
 /**
  * Controller for modal to select custom date range.
  */
-.controller('DateRangeCustomCtrl', function($scope, $modalInstance, timeSvc,
+.controller('DateRangeCustomCtrl', function($scope, $uibModalInstance, timeSvc,
       moment, start, end, utc) {
   'use strict';
 
@@ -1612,7 +1612,7 @@ angular.module('coreos.ui')
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
   $scope.resetEnd = function() {
@@ -1621,7 +1621,7 @@ angular.module('coreos.ui')
   };
 
   $scope.submit = function() {
-    $modalInstance.close({
+    $uibModalInstance.close({
       start: inputsToDate($scope.inputs.startDate, $scope.inputs.startTime),
       end: inputsToDate($scope.inputs.endDate, $scope.inputs.endTime),
       utc: $scope.utc
@@ -1841,40 +1841,6 @@ angular.module('coreos.ui')
 
 });
 
-/**
- * @fileoverview
- * Inject favicons into the <head>.
- * Only use on <head> tag.
- */
-
-
-angular.module('coreos.ui')
-
-.directive('coFavicons', function($compile, $rootScope, configSvc) {
-  'use strict';
-  /*eslint max-len:0 */
-
-  return {
-    restrict: 'A',
-    replace: true,
-    link: function postLink(scope, elem) {
-      var newScope = $rootScope.$new(),
-      htmlTemplate =
-        '<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{path}}/apple-touch-icon-144-precomposed.png">' +
-        '<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{path}}/apple-touch-icon-114-precomposed.png">' +
-        '<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{path}}/apple-touch-icon-72-precomposed.png">' +
-        '<link rel="apple-touch-icon-precomposed" href="{{path}}/apple-touch-icon-57-precomposed.png">' +
-        '<link rel="shortcut icon" href="{{path}}/favicon.png">';
-      newScope.path = configSvc.get('libPath') + '/img';
-      elem.append($compile(htmlTemplate)(newScope));
-    }
-  };
-
-});
-
-/*
-*/
-
 
 angular.module('coreos.ui')
 .directive('coFacetMenu', function() {
@@ -1930,6 +1896,40 @@ angular.module('coreos.ui')
     }
   };
 });
+
+/**
+ * @fileoverview
+ * Inject favicons into the <head>.
+ * Only use on <head> tag.
+ */
+
+
+angular.module('coreos.ui')
+
+.directive('coFavicons', function($compile, $rootScope, configSvc) {
+  'use strict';
+  /*eslint max-len:0 */
+
+  return {
+    restrict: 'A',
+    replace: true,
+    link: function postLink(scope, elem) {
+      var newScope = $rootScope.$new(),
+      htmlTemplate =
+        '<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{path}}/apple-touch-icon-144-precomposed.png">' +
+        '<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{path}}/apple-touch-icon-114-precomposed.png">' +
+        '<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{path}}/apple-touch-icon-72-precomposed.png">' +
+        '<link rel="apple-touch-icon-precomposed" href="{{path}}/apple-touch-icon-57-precomposed.png">' +
+        '<link rel="shortcut icon" href="{{path}}/favicon.png">';
+      newScope.path = configSvc.get('libPath') + '/img';
+      elem.append($compile(htmlTemplate)(newScope));
+    }
+  };
+
+});
+
+/*
+*/
 
 /**
  * @fileoverview
@@ -2838,10 +2838,10 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/cog/cog.html',
-    '<div class="co-m-cog">\n' +
-    '  <span class="dropdown" is-open="status.isopen" ng-click="captureClick($event)">\n' +
-    '    <span class="co-m-cog__icon co-m-cog__icon--size-{{size}} dropdown-toggle fa fa-cog"></span>\n' +
-    '    <ul class="dropdown-menu co-m-cog__dropdown co-m-dropdown--dark co-m-cog__dropdown--anchor-{{anchor}}">\n' +
+    '<div class="co-m-cog co-m-cog--anchor-{{anchor}}">\n' +
+    '  <span uib-dropdown is-open="status.isopen" ng-click="captureClick($event)">\n' +
+    '    <span uib-dropdown-toggle class="co-m-cog__icon co-m-cog__icon--size-{{size}} fa fa-cog"></span>\n' +
+    '    <ul class="uib-dropdown-menu co-m-cog__dropdown co-m-dropdown--dark">\n' +
     '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
     '        <a ng-click="clickHandler($event, option)" ng-bind="option.label"></a>\n' +
     '      </li>\n' +
@@ -2893,7 +2893,7 @@ module.run(['$templateCache', function($templateCache) {
     '        <div class="col-lg-4 col-md-4 col-sm-4">\n' +
     '          <p class="input-group co-m-date-range-custom__selectors">\n' +
     '            <input type="text" class="form-control"\n' +
-    '                datepicker-popup="{{dateFmt}}"\n' +
+    '                uib-datepicker-popup="{{dateFmt}}"\n' +
     '                ng-model="inputs.startDate"\n' +
     '                is-open="dpSettings.startDateIsOpen"\n' +
     '                min-date="minDate"\n' +
@@ -2921,7 +2921,7 @@ module.run(['$templateCache', function($templateCache) {
     '        <div class="col-lg-4 col-md-4 col-sm-4">\n' +
     '          <p class="input-group co-m-date-range-custom__selectors">\n' +
     '            <input type="text" class="form-control"\n' +
-    '                datepicker-popup="{{dateFmt}}"\n' +
+    '                uib-datepicker-popup="{{dateFmt}}"\n' +
     '                ng-model="inputs.endDate"\n' +
     '                is-open="dpSettings.endDateIsOpen"\n' +
     '                min-date="minDate"\n' +
@@ -2968,11 +2968,11 @@ module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/date-range/date-range.html',
     '<div class="co-m-date-range">\n' +
     '\n' +
-    '  <div class="btn-group" dropdown is-open="status.isopen">\n' +
-    '    <button type="button" class="btn btn-default dropdown-toggle" ng-disabled="disabled">\n' +
+    '  <div class="btn-group" uib-dropdown is-open="status.isopen">\n' +
+    '    <button type="button" uib-dropdown-toggle class="btn btn-default" ng-disabled="disabled">\n' +
     '      <span ng-bind="btnText"></span> <span class="caret"></span>\n' +
     '    </button>\n' +
-    '    <ul class="dropdown-menu" role="menu">\n' +
+    '    <ul class="uib-dropdown-menu" role="menu">\n' +
     '      <li ng-repeat="item in items | orderBy:\'order\'"><a href="#" ng-click="select(item.value)" ng-bind="item.label"></a></li>\n' +
     '      <li class="divider"></li>\n' +
     '      <li><a href="#" ng-click="openModal()">Custom</a></li>\n' +
@@ -3020,18 +3020,6 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/favicons/favicons.html',
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/facet-menu/facet-menu-option.html',
     '<li class="co-m-facet-menu-option" ng-class="{\'co-m-facet-option--active\': isActive}">\n' +
     '  <a href="#" ng-transclude></a>\n' +
@@ -3052,6 +3040,18 @@ module.run(['$templateCache', function($templateCache) {
     '  <div ng-show="!!title" class="co-m-facet-menu__title" ng-bind="title"></div>\n' +
     '  <ul class="co-m-facet-menu__option-list" ng-transclude></ul>\n' +
     '</div>\n' +
+    '');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('coreos-templates-html');
+} catch (e) {
+  module = angular.module('coreos-templates-html', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('/coreos.ui/favicons/favicons.html',
     '');
 }]);
 })();
@@ -3164,9 +3164,9 @@ try {
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/navbar/navbar-dropdown.html',
     '<ul ng-class="pullRightClass" class="nav navbar-nav">\n' +
-    '  <li ng-class="pullRightClass" class="dropdown">\n' +
-    '    <a href="#" class="dropdown-toggle">{{text}} <b class="caret"></b></a>\n' +
-    '    <ul ng-transclude class="dropdown-menu co-m-dropdown--dark"></ul>\n' +
+    '  <li uib-dropdown ng-class="pullRightClass">\n' +
+    '    <a href="#" uib-dropdown-toggle>{{text}} <b class="caret"></b></a>\n' +
+    '    <ul ng-transclude class="uib-dropdown-menu co-m-dropdown--dark"></ul>\n' +
     '  </li>\n' +
     '</ul>\n' +
     '');
@@ -3207,7 +3207,7 @@ module.run(['$templateCache', function($templateCache) {
     '    </a>\n' +
     '  </div>\n' +
     '\n' +
-    '  <div collapse="isCollapsed" ng-transclude class="collapse navbar-collapse"></div>\n' +
+    '  <div uib-collapse="isCollapsed" ng-transclude class="collapse navbar-collapse"></div>\n' +
     '\n' +
     '</div>\n' +
     '');
