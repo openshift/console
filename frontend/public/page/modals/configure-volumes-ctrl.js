@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureVolumesCtrl', function(_, $scope, $modalInstance, $controller,
+.controller('ConfigureVolumesCtrl', function(_, $scope, $uibModalInstance, $controller,
       pod, arraySvc, k8s, $rootScope, pkg) {
   'use strict';
 
@@ -44,11 +44,11 @@ angular.module('bridge.page')
       return v;
     });
     pod.spec.volumes = items;
-    $modalInstance.close(pod);
+    $uibModalInstance.close(pod);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
   $scope.onTypeChange = function(v) {

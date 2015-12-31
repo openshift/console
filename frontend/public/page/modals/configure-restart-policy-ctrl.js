@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureRestartPolicyCtrl', function($scope, $modalInstance, k8s, pod) {
+.controller('ConfigureRestartPolicyCtrl', function($scope, $uibModalInstance, k8s, pod) {
   'use strict';
 
   $scope.policies = k8s.enum.RestartPolicy;
@@ -10,11 +10,11 @@ angular.module('bridge.page')
 
   $scope.save = function() {
     pod.spec.restartPolicy = $scope.fields.policy;
-    $modalInstance.close(pod);
+    $uibModalInstance.close(pod);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })

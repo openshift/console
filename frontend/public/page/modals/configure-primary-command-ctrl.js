@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigurePrimaryCommandCtrl', function($scope, $modalInstance, _, container) {
+.controller('ConfigurePrimaryCommandCtrl', function($scope, $uibModalInstance, _, container) {
   'use strict';
 
   $scope.fields = {
@@ -18,11 +18,11 @@ angular.module('bridge.page')
     } else {
       container.command = $scope.fields.command.split(' ');
     }
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })

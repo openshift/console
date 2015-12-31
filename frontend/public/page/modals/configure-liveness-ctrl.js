@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureLivenessCtrl', function($scope, $modalInstance, k8s, container) {
+.controller('ConfigureLivenessCtrl', function($scope, $uibModalInstance, k8s, container) {
   'use strict';
 
   var placeholders = {
@@ -18,11 +18,11 @@ angular.module('bridge.page')
 
   $scope.save = function() {
     container.livenessProbe = k8s.probe.mapFieldsToLivenessProbe($scope.fields);
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })

@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ModalConfirmCtrl', function($scope, $modalInstance,
+.controller('ModalConfirmCtrl', function($scope, $uibModalInstance,
       executeFn, title, message, btnText) {
   'use strict';
 
@@ -11,11 +11,11 @@ angular.module('bridge.page')
     $scope.requestPromise = executeFn(null, {
         supressNotifications: true
       })
-      .success($modalInstance.close);
+      .success($uibModalInstance.close);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 });

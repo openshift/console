@@ -4,8 +4,10 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSyseventStream', function($log, $interval, k8s, wsFactory) {
+.directive('coSyseventStream', function(_, $filter, $log, $interval, k8s, wsFactory) {
   'use strict';
+
+  var sysevents = $filter('sysevents');
 
   return {
     templateUrl: '/static/module/ui/sysevents/sysevent-stream.html',
@@ -20,6 +22,25 @@ angular.module('bridge.ui')
       $scope.maxMessages = 500;
       $scope.messages = [];
       $scope.oldestTimestamp = null;
+
+      // This is a workaround for a Kubernetes bug that is being
+      // addressed, where some events are missing uids.  It should be
+      // removed if the issue is fixed in Kubernetes 1.2 or greater.
+      $scope.eventID = function(event) {
+        var ret;
+        if (event.object.metadata.uid) {
+          ret = 'U:' + event.object.metadata.uid;
+        } else {
+          ret = 'N:' + event.object.metadata.name + ':' + event.object.metadata.resourceVersion;
+        }
+        return ret;
+      };
+
+      $scope.$watchCollection('messages', function() {
+        var filtered = sysevents($scope.messages, $scope.eventsFilter);
+        var sorted = _.sortBy(filtered, 'lastTimestamp');
+        $scope.filteredMessages = sorted.slice(0, $scope.maxMessages);
+      });
 
       $scope.getTotalMessage = function() {
         var msg = '',

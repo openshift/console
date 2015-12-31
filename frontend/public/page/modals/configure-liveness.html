@@ -21,9 +21,9 @@
               <label for="configure-liveness--probe">Liveness Probe</label>
               <p>Containers without a probe will be considered healthy if successfully started.</p>
               <div class="input-group co-btn-drop-input">
-                <div class="input-group-btn dropdown">
-                  <button type="button" class="btn btn-default dropdown-toggle"><span ng-bind="getActionLabelById(fields.type)"></span> <span class="caret"></span></button>
-                  <ul class="dropdown-menu">
+                <div uib-dropdown class="input-group-btn">
+                  <button uib-dropdown-toggle type="button" class="btn btn-default"><span ng-bind="getActionLabelById(fields.type)"></span> <span class="caret"></span></button>
+                  <ul uib-dropdown-menu>
                     <li ng-repeat="t in actionTypes"><a href="#" ng-click="fields.type = t.id; fields.cmd = ''" ng-bind="t.label"></a></li>
                   </ul>
                 </div><!-- /btn-group -->

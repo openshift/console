@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigurePullPolicyCtrl', function($scope, $modalInstance, k8s, container) {
+.controller('ConfigurePullPolicyCtrl', function($scope, $uibModalInstance, k8s, container) {
   'use strict';
 
   $scope.policies = k8s.enum.PullPolicy;
@@ -10,11 +10,11 @@ angular.module('bridge.page')
 
   $scope.save = function() {
     container.imagePullPolicy = k8s.docker.getPullPolicyById($scope.fields.policy).value;
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })

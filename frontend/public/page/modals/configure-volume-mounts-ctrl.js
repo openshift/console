@@ -1,6 +1,6 @@
 angular.module('bridge.page')
 .controller('ConfigureVolumeMountsCtrl', function(_, $scope, $rootScope,
-      $controller, $modalInstance, volumes, container, arraySvc, k8s) {
+      $controller, $uibModalInstance, volumes, container, arraySvc, k8s) {
   'use strict';
 
   $scope.volumes = volumes;
@@ -40,11 +40,11 @@ angular.module('bridge.page')
 
   $scope.save = function() {
     container.volumeMounts = $scope.rowMgr.getNonEmptyItems();
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
   $scope.initVolumeMounts(container.volumeMounts);
