@@ -3,7 +3,7 @@ angular.module('bridge.service')
   'use strict';
 
   function loginState() {
-    var state = $cookies.state;
+    var state = $cookies.get('state');
     if (!state) {
       return null;
     }
