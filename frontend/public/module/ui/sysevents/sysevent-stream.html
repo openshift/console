@@ -23,7 +23,7 @@
   </cos-status-box>
 
   <div class="co-sysevent" ng-init="updateOldest(m.object.lastTimestamp, $last)"
-        ng-repeat="m in filteredMessages=(messages | sysevents:eventsFilter | orderBy:'object.lastTimestamp':true | limitTo:maxMessages ) track by m.object.metadata.uid">
+        ng-repeat="m in filteredMessages track by eventID(m)">
     <div class="co-sysevent__icon-box">
       <co-sysevent-icon kind="{{m.object.involvedObject.kind}}" reason="{{m.object.reason}}"></co-sysevent-icon>
       <div class="co-sysevent__icon-line"></div>

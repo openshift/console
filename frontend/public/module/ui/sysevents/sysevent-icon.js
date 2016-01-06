@@ -22,7 +22,7 @@ angular.module('bridge.ui')
 
       tooltipMsg = reason + ' (' + kind.toLowerCase() + ')';
       cssClass = 'fa co-sysevent-icon co-sysevent-icon--' + kind.toLowerCase() + '-' + reason.toLowerCase();
-      iconEl = angular.element('<i tooltip="' + tooltipMsg +
+      iconEl = angular.element('<i uib-tooltip="' + tooltipMsg +
           '" tooltip-append-to-body="true" tooltip-placement="top" class="' + cssClass + '"></i>');
       $compile(iconEl)(scope);
       elem.append(iconEl);

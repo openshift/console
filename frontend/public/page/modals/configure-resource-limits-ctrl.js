@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureResourceLimitsCtrl', function($scope, $modalInstance, _, k8s, pkg, container) {
+.controller('ConfigureResourceLimitsCtrl', function($scope, $uibModalInstance, _, k8s, pkg, container) {
   'use strict';
 
   $scope.fields = k8s.docker.getEmptyResourceLimits();
@@ -19,11 +19,11 @@ angular.module('bridge.page')
       }
       container.resources.limits = $scope.fields.limits;
     }
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })

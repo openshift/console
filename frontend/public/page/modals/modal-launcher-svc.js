@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.factory('ModalLauncherSvc', function($modal, _, d3) {
+.factory('ModalLauncherSvc', function($uibModal, _, d3) {
   'use strict';
 
   var modalConfig = {
@@ -90,7 +90,7 @@ angular.module('bridge.page')
         resolve[key] = d3.functor(value);
       });
       config.resolve = resolve;
-      return $modal.open(config);
+      return $uibModal.open(config);
     }
   };
 

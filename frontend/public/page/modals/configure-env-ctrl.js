@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureEnvCtrl', function(_, $scope, $modalInstance, $controller,
+.controller('ConfigureEnvCtrl', function(_, $scope, $uibModalInstance, $controller,
       $rootScope, container, k8s) {
   'use strict';
 
@@ -21,11 +21,11 @@ angular.module('bridge.page')
 
   $scope.save = function() {
     container.env = $scope.rowMgr.getNonEmptyItems();
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
   $scope.initEnvVars(container.env);

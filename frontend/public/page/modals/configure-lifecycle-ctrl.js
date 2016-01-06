@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureLifecycleCtrl', function($scope, _, k8s, urlSvc, $modalInstance, container) {
+.controller('ConfigureLifecycleCtrl', function($scope, _, k8s, urlSvc, $uibModalInstance, container) {
   'use strict';
 
   var placeholders = {
@@ -27,11 +27,11 @@ angular.module('bridge.page')
 
   $scope.save = function() {
     container.lifecycle = k8s.probe.mapFieldsToLifecycleConfig($scope.fields);
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })

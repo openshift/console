@@ -1,6 +1,6 @@
 angular.module('bridge.page')
 .controller('ConfigurePortsCtrl', function(_, $scope, $rootScope, $controller,
-      $modalInstance, container, k8s) {
+      $uibModalInstance, container, k8s) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
@@ -21,11 +21,11 @@ angular.module('bridge.page')
 
   $scope.save = function() {
     container.ports = $scope.rowMgr.getNonEmptyItems();
-    $modalInstance.close(container);
+    $uibModalInstance.close(container);
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
   $scope.initPorts(container.ports);

@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureSelectorCtrl', function(_, $scope, $modalInstance, $controller, $rootScope,
+.controller('ConfigureSelectorCtrl', function(_, $scope, $uibModalInstance, $controller, $rootScope,
       resource, resourceKind, selectorKind, message, k8s) {
   'use strict';
 
@@ -15,12 +15,12 @@ angular.module('bridge.page')
     var patch = [{ op: 'replace', path: '/spec/selector', value: $scope.fields.selector }];
     $scope.requestPromise = k8s.resource.patch($scope.resourceKind, resource, patch);
     $scope.requestPromise.then(function(result) {
-      $modalInstance.close(result);
+      $uibModalInstance.close(result);
     });
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })

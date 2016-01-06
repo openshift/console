@@ -1,6 +1,6 @@
 angular.module('bridge.page')
 .controller('ServicePortsCtrl', function(_, $scope, $rootScope, $controller,
-      $modalInstance, k8s, kind, resource) {
+      $uibModalInstance, k8s, kind, resource) {
   'use strict';
 
   var portObj;
@@ -23,12 +23,12 @@ angular.module('bridge.page')
     patch = [{ op: 'replace', path: '/spec/ports', value: ports }];
     $scope.requestPromise = k8s.resource.patch(kind, resource, patch);
     $scope.requestPromise.then(function(result) {
-      $modalInstance.close(result);
+      $uibModalInstance.close(result);
     });
   };
 
   $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 
 })
