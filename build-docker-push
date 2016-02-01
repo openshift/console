@@ -13,8 +13,14 @@ else
 fi
 
 git_sha=$(git rev-parse HEAD)
+git_tag=$(git tag -l --points-at HEAD)
 
 docker build -q --rm=true -t $repo:$git_sha .
 docker tag -f $repo:$git_sha $repo:latest
 docker push $repo:$git_sha
 docker push $repo:latest
+
+if [ ! -z ${git_tag} ]; then
+    docker tag -f $repo:$git_sha $repo:$git_tag
+    docker push $repo:$git_tag
+fi
