@@ -1,6 +1,9 @@
 #!/bin/bash -e
 
 # docker build, tag, and push a docker image to quay.io/coreos/tectonic-console
+# Will push a sha-named image at every run, will tag that image as "latest"
+# if it appears to be the tip of master, will tag that image with a
+# git tag if one is present.
 
 registry=quay.io
 repo=$registry/coreos/tectonic-console
