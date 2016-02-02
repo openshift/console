@@ -8,7 +8,6 @@
 # Without env vars:
 #   ./go-docker ./my-script --my-script-arg1 --my-script-arg2
 
-
 REPO=github.com/coreos-inc/bridge
 
 # forward whitelisted env variables to docker
