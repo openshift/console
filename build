@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-# Build go binaries into ./bin
-
 repo_org=coreos-inc
 project_dir=$(basename $PWD)
 export GOPATH=${PWD}/Godeps/_workspace
