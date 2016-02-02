@@ -6,13 +6,11 @@ The Tectonic Console
 
 [quay.io/coreos/tectonic-console](https://quay.io/repository/coreos/tectonic-console?tab=tags)
 
-
 Bridge consists of a frontend webapp and a backend service which serves the following purposes:
 - Proxy the Kubernetes API
 - Provide additional non-Kubernetes APIs for interacting with the cluster
 - Serve all frontend static assets
 - User Authentication (TBD)
-
 
 ## Quickstart
 
@@ -20,12 +18,14 @@ Build the backend:
 ```
 ./build
 ```
+
 Backend binaries are output to `/bin`.
 
 Build and package all frontent assets for deployment:
 ```
 ./build-web
 ```
+
 Frontend build assets are output to: `/frontend/public/dist`.
 
 Start the application:
@@ -72,6 +72,7 @@ The following build task will watch the source code for changes and compile auto
 ```
 gulp dev
 ```
+
 If gulp is not installed, install with `npm install -g gulp`.
 All frontend build tasks are defined in `/frontend/gulpfile.js`
 
