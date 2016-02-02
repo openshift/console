@@ -13,7 +13,6 @@ Bridge consists of a frontend webapp and a backend service which serves the foll
 - User Authentication (TBD)
 
 ## Quickstart
-
 Build the backend:
 ```
 ./build
@@ -62,7 +61,6 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 ```
 
 ## Hacking
-
 ### Project Dependencies
 go, godep, nodejs, gulp
 
