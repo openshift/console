@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+COMMIT=`git rev-parse HEAD`
+TAG=$(git describe --exact-match --abbrev=0 --tags ${COMMIT} 2> /dev/null || true)
+
+if [ -z "$TAG" ]; then
+	VERSION=$COMMIT
+else
+	VERSION=$TAG
+fi
+
+# check for changed files (not untracked files)
+if [ -n "$(git diff --shortstat 2> /dev/null | tail -n1)" ]; then
+    VERSION="${VERSION}+dirty"
+fi
+
+bins=( "tectonic-stats-collector" "tectonic-stats-generator" )
+
+echo "Artifacts will be built with version=${VERSION}"
+for bin in "${bins[@]}"; do
+	echo "Building ${bin}..."
+	GOPATH=${GOPATH}:${PWD}/Godeps/_workspace CGO_ENABLED=0 go build -ldflags "-X main.VERSION ${VERSION}" -a -tags netgo -installsuffix netgo -o bin/${bin} github.com/coreos-inc/tectonic-stats-collector/cmd/${bin}
+done
+
+echo "done"

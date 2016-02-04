@@ -1,0 +1,3 @@
+FROM busybox
+ADD bin/tectonic-stats-generator /usr/local/bin/tectonic-stats-generator
+CMD /usr/local/bin/tectonic-stats-generator

@@ -1,0 +1,3 @@
+FROM golang:1.4.2
+RUN go get golang.org/x/tools/cmd/vet
+RUN go get golang.org/x/tools/cmd/cover

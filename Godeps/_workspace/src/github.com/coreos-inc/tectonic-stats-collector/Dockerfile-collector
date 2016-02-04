@@ -1,0 +1,3 @@
+FROM busybox
+ADD bin/tectonic-stats-collector /usr/local/bin/tectonic-stats-collector
+CMD /usr/local/bin/tectonic-stats-collector

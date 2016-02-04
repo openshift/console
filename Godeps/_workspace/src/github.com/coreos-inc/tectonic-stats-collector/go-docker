@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# This script mounts the local repository into a golang
+# build container and executes the provided command. It is
+# intended to be used to run the build script also contained
+# in this repo. For example:
+#
+#   ./go-docker ./build
+#
+
+REPO=github.com/coreos-inc/tectonic-stats-collector
+MOUNT=/go/src/${REPO}
+GOPATH=${MOUNT}/Godeps/_workspace:/go
+
+GOLANG_IMAGE=tectonic-stats-collector-golang:latest
+
+docker build -t ${GOLANG_IMAGE} -f Dockerfile-golang .
+docker run --rm -e GOPATH=${GOPATH} -v ${PWD}:${MOUNT} -w ${MOUNT} ${GOLANG_IMAGE} $@
