@@ -14,7 +14,7 @@ COVER=${COVER:-"-cover"}
 
 source ./build
 
-TESTABLE="auth server"
+TESTABLE="auth server stats"
 FORMATTABLE="$TESTABLE cmd/bridge version"
 
 # user has not provided PKG override
