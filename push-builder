@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+# This script pushes the builder docker image to quay.io. You'll need
+# it when you introduce new build-time dependencies or change go
+# versions, etc.
+
+git_status=$(git status --porcelain 2> /dev/null)
+git_sha=$(git rev-parse HEAD)
+git_tag=$(git tag -l --points-at HEAD)
+
+if [[ "$git_status" != "" ]]; then
+    echo "Won't push from a dirty git repo. Commit your changes before you push." 1>&2
+#    exit # TODO uncomment before merging
+fi
+
+docker build -f Dockerfile-builder -q --rm=true -t quay.io/coreos/tectonic-console-builder:$git_sha .
+docker push quay.io/coreos/tectonic-console-builder:$git_sha
+
+echo "Pushed $git_sha"

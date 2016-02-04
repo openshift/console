@@ -50,6 +50,14 @@ For example to build with docker run:
 ./go-docker ./build
 ```
 
+The docker image used by go-docker is itself built and pushed by the
+script `push-builder`, which uses the file `Dockerfile-builder` to
+define an image. To update the go-docker build environment, first make
+your changes to `Dockerfile-builder`, then run `push-builder`, and
+then update the BUILDER_VERSION variable in `go-docker` to point to
+your new image. Our practice is to manually tag images builder images in the form
+`Builder-v$SEMVER` once we're happy with the state of the push.
+
 ### Compile, Build, & Push Docker Image
 Build a docker image, tag it with the current git sha, and pushes it to the `quay.io/coreos/tectonic-console` repo.
 

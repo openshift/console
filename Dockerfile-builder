@@ -1,0 +1,12 @@
+# Used for compiling the tectonic-console. After editing this file,
+# (and committing your edits) you should run ./push-builder to
+# push a new version of your image to quay.io/coreos/tectonic-console-builder
+
+FROM golang:1.5.3
+
+MAINTAINER Joe Bowers - CoreOS
+
+RUN echo deb http://ftp.us.debian.org/debian sid main > /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install --no-install-recommends -y -q sudo wget jq npm
+RUN ln -s /usr/bin/nodejs /usr/bin/node
