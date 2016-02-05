@@ -5,28 +5,28 @@
 # if it appears to be the tip of master, will tag that image with a
 # git tag if one is present.
 
-registry=quay.io
-repo=$registry/coreos/tectonic-console
+# This script relies on .dockercfg or other external configuration to
+# grant the appropriate permissions and identity for pushing images to
+# quay.io/coreos/tectonic-console
 
-if [ -v $DOCKER_USER ] || [ -v $DOCKER_PASSWORD ]; then
-    echo "env variables not set: DOCKER_USER, DOCKER_PASSWORD. skipping login, assuming creds in .dockercfg"
-else
-    echo logging in as $DOCKER_USER
-    docker login --username="$DOCKER_USER" --password="$DOCKER_PASSWORD" --email="docker.login@coreos.com" $registry
-fi
-
+git_status=$(git status --porcelain 2> /dev/null)
 git_sha=$(git rev-parse HEAD)
 git_tag=$(git tag -l --points-at HEAD)
 
-docker build -q --rm=true -t $repo:$git_sha .
-docker push $repo:$git_sha
+if [[ "$git_status" != "" ]]; then
+    echo "Won't push from a dirty git repo. Commit your changes before you push."
+    exit
+fi
+
+docker build -q --rm=true -t quay.io/coreos/tectonic-console:$git_sha .
+docker push quay.io/coreos/tectonic-console:$git_sha
 
 if git diff --quiet HEAD origin/master; then
-   docker tag -f $repo:$git_sha $repo:latest
-   docker push $repo:latest
+   docker tag -f quay.io/coreos/tectonic-console:$git_sha quay.io/coreos/tectonic-console:latest
+   docker push quay.io/coreos/tectonic-console:latest
 fi
 
 if [ ! -z ${git_tag} ]; then
-    docker tag -f $repo:$git_sha $repo:$git_tag
-    docker push $repo:$git_tag
+    docker tag -f quay.io/coreos/tectonic-console:$git_sha quay.io/coreos/tectonic-console:$git_tag
+    docker push quay.io/coreos/tectonic-console:$git_tag
 fi

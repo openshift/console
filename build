@@ -1,12 +1,15 @@
 #!/bin/bash -e
 
+# Builds the server-side golang resources for tectonic-console. For a
+# complete build, you must also run build-web
+
 repo_org=coreos-inc
 project_dir=$(basename $PWD)
 export GOPATH=${PWD}/Godeps/_workspace
 export GOBIN=${PWD}/bin
 
 GIT_TAG=`git describe --always --tags HEAD`
-LD_FLAGS="-w -X github.com/$repo_org/$project_dir/version.Version \"$GIT_TAG\""
+LD_FLAGS="-w -X github.com/$repo_org/$project_dir/version.Version=\"$GIT_TAG\""
 
 rm $GOPATH/src/github.com/$repo_org/$project_dir 2> /dev/null || true
 mkdir -p $GOPATH/src/github.com/$repo_org/
