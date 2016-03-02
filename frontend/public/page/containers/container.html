@@ -53,9 +53,9 @@
                 <span ng-hide="getLivenessValue()" ng-bind="CONST.placeholderText"></span>
               </dd>
               <dt>Started</dt>
-              <dd ng-bind="containerState.startedAt | customDate"></dd>
+              <dd><co-timestamp timestamp="{{containerState.startedAt}}"/></dd>
               <dt>Finished</dt>
-              <dd ng-bind="containerState.finishedAt | customDate"></dd>
+              <dd><co-timestamp timestamp="{{containerState.finishedAt}}"/></dd>
             </dl>
           </div><!--/col-->
 

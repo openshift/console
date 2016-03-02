@@ -13,7 +13,7 @@
       <span class="" ng-show="wsLoading()">Loading events...</span>
     </div>
     <div class="co-sysevent-stream__timeline__end-message">
-      There are no events before <span ng-bind="oldestTimestamp | customDate"></span>
+      There are no events before <co-timestamp timestamp="{{oldestTimestamp}}"/>
     </div>
   </div>
 
@@ -38,7 +38,7 @@
       <div class="co-sysevent__main-message" ng-bind="m.object.message"></div>
     </div>
     <div class="co-sysevent__meta-box">
-      <div ng-bind="m.object.lastTimestamp | customDate"></div>
+      <div><co-timestamp timestamp="{{m.object.lastTimestamp}}"/></div>
       <small class="co-sysevent__meta-source">
         Generated from <span ng-bind="m.object.source.component"></span>
         <span ng-if="m.object.source.component == 'kubelet'">on <a ng-href="/nodes/{{m.object.source.host}}" ng-bind="m.object.source.host"></a></span>

@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coTimestamp', function(CONST, moment) {
+.directive('coTimestamp', function(moment) {
   'use strict';
 
   return {
@@ -13,9 +13,6 @@ angular.module('bridge.ui')
     replace: true,
     scope: {
       timestamp: '@',
-    },
-    controller: function($scope) {
-      $scope.CONST = CONST;
     },
     link: function(scope, el, attrs) {
       attrs.$observe('timestamp', function(timestamp) {
@@ -28,7 +25,7 @@ angular.module('bridge.ui')
           return;
         }
         scope.timestamp = date;
-        scope.timestampUTC = mdate.utc().format(CONST.dateTimeFmtUTC);
+        scope.timestampUTC = mdate.utc().format('MMM DD, H:mm A z');
       });
     },
   };

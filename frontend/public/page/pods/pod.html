@@ -96,7 +96,7 @@
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8" ng-bind="c.image"></div>
                 <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="cstate.label | emptyPlaceholder"></div>
                 <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="cstatus.restartCount"></div>
-                <div class="col-lg-2 col-md-2 hidden-sm  hidden-xs" ng-bind="cstate.startedAt | date:CONST.dateTimeFmt"></div>
+                <div class="col-lg-2 col-md-2 hidden-sm  hidden-xs"><co-timestamp timestamp="{{cstate.startedAt}}"></div>
               </div>
             </div>
           </div>

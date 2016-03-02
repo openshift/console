@@ -2,6 +2,6 @@
   <i class="fa fa-globe" />
   <dd ng-if="!invalidDate" class="co-timestamp"
       uib-tooltip="{{ timestampUTC }}" tooltip-placement="bottom"
-      ng-bind="timestamp | date:CONST.dateTimeFmt"></dd>
+      ng-bind="timestamp | date:'MMM d, h:mm a'"></dd>
   <dd ng-if="invalidDate" class="co-timestamp">-</dd>
 </div>
