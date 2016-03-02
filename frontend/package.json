@@ -12,7 +12,6 @@
     "gulp-concat": "2.5.0",
     "gulp-eslint": "0.4.2",
     "gulp-html-replace": "1.4.4",
-    "gulp-karma": "0.0.4",
     "gulp-ngmin": "0.3.0",
     "gulp-rename": "1.2.0",
     "gulp-sass": "2.1.1",
