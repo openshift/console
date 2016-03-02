@@ -1,12 +1,12 @@
 var exec = require('child_process').exec,
+    del = require('del'),
     gulp = require('gulp'),
-    clean = require('gulp-clean'),
     sass = require('gulp-sass'),
     templateCache = require('gulp-angular-templatecache'),
     runSequence = require('run-sequence'),
     eslint = require('gulp-eslint'),
     uglify = require('gulp-uglify'),
-    ngmin = require('gulp-ngmin'),
+    ngAnnotate = require('gulp-ng-annotate'),
     rename = require('gulp-rename'),
     concat = require('gulp-concat'),
     htmlReplace = require('gulp-html-replace'),
@@ -42,18 +42,16 @@ gulp.task('sha', function(cb) {
 
 // Delete ALL generated files.
 gulp.task('clean', function() {
-  return gulp.src(distDir, { read: false })
-    .pipe(clean({ force: true }));
+  return del(distDir);
 });
 
 gulp.task('clean-package', function() {
-  return gulp.src([
-      distDir + '/style.css',
-      distDir + '/app.min.js',
-      distDir + '/app.js',
-      distDir + '/templates.js'
-    ], { read: false })
-    .pipe(clean({ force: true }));
+  return del([
+    distDir + '/style.css',
+    distDir + '/app.min.js',
+    distDir + '/app.js',
+    distDir + '/templates.js'
+  ]);
 });
 
 gulp.task('sass', function () {
@@ -109,7 +107,7 @@ gulp.task('assets', function() {
 gulp.task('js-build', function() {
   return gulp.src(jsSrc)
     .pipe(concat('app.js'))
-    .pipe(ngmin())
+    .pipe(ngAnnotate())
     .pipe(gulp.dest(distDir))
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
