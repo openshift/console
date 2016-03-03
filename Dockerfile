@@ -1,4 +1,4 @@
-FROM busybox
+FROM alpine:3.3
 ADD frontend/public/dist /opt/bridge/static
 ADD bin/bridge /opt/bridge/bin/bridge
 ADD etc/ssl /etc/ssl
