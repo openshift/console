@@ -8,3 +8,7 @@ $color-text-muted: #999;
 small {
   font-size: 12px;
 }
+
+.form-control[disabled], fieldset[disabled] .form-control {
+  cursor: auto;
+}
