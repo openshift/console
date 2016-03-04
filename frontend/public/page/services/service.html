@@ -56,7 +56,7 @@
                         <co-service-ip-link service="service"></co-service-ip-link>
                       </div>
                     </div>
-                    <div ng-if="service.status.loadBalancer" class="row co-ip-row">
+                    <div ng-if="hasLoadBalancer()" class="row co-ip-row">
                       <div class="col-lg-6">
                         <p class="ip-name">External Load Balancer</p>
                         <p class="ip-desc">Ingress point for load balancer</p>

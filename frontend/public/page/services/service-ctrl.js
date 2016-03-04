@@ -5,6 +5,11 @@ angular.module('bridge.page')
   $scope.ns = $routeParams.ns;
   $scope.serviceName = $routeParams.name;
   $scope.loadError = false;
+  $scope.hasLoadBalancer = function() {
+    return $scope.service &&
+      $scope.service.status.loadBalancer &&
+      !angular.equals({}, $scope.service.status.loadBalancer);
+  };
 
   k8s.services.get($scope.serviceName, $scope.ns)
   .then(function(service) {
