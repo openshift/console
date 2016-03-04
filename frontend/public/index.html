@@ -26,32 +26,34 @@
   <body class="co-img-bg-cells">
 
     <co-footer-wrapper ng-cloak>
-      <co-navbar ng-cloak logo-src="/static/tectonic-logo.svg">
-        <ul class="nav navbar-nav">
-          <co-navbar-link href="{{'/services'|ns}}">Services</co-navbar-link>
-          <co-navbar-link href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
-          <co-navbar-link href="{{'/pods'|ns}}">Pods</co-navbar-link>
-          <co-navbar-link href="/nodes">Nodes</co-navbar-link>
-          <co-navbar-dropdown ng-cloak text="More" class="more-header">
-            <li class="hidden-md hidden-lg" ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)"><a>Namespaces <i class="fa fa-angle-right right-angle-icon"></i></a></li>
-            <li><a co-namespaced-href="/events">Events</a></li>
-            <li><a href="/search">Search</a></li>
-          </co-navbar-dropdown>
-        </ul>
+      <div class="navbar-container">
+        <co-navbar ng-cloak logo-src="/static/tectonic-logo.svg">
+          <ul class="nav navbar-nav">
+            <co-navbar-link href="{{'/services'|ns}}">Services</co-navbar-link>
+            <co-navbar-link href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
+            <co-navbar-link href="{{'/pods'|ns}}">Pods</co-navbar-link>
+            <co-navbar-link href="/nodes">Nodes</co-navbar-link>
+            <co-navbar-dropdown ng-cloak text="More" class="more-header">
+              <li class="hidden-md hidden-lg" ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)"><a>Namespaces <i class="fa fa-angle-right right-angle-icon"></i></a></li>
+              <li><a co-namespaced-href="/events">Events</a></li>
+              <li><a href="/search">Search</a></li>
+            </co-navbar-dropdown>
+          </ul>
 
-        <ul id="account-nav" ng-controller="AuthCtrl" class="nav navbar-nav pull-right">
-          <li ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)">
-            <a href="#" class="account-nav__dropdown-toggle" ng-class="{'account-nav__dropdown-toggle__auth': !isAuthDisabled}">
-              <img class="co-user-avatar" ng-if="!isAuthDisabled && emailHash()" ng-src="//gravatar.com/avatar/{{emailHash()}}?s=32" />
-              <div class="account-email-namespace">
-                <span class="account-nav__email" ng-bind="email() || 'My Account'"></span><br />
-                <span class="account-nav__active-namespace" ng-bind="activeNamespace || 'all'"></span>
-              </div>
-              &nbsp;<i class="fa fa-cog co-settings-icon"></i>
-            </a>
-          </li>
-        </ul>
-      </co-navbar>
+          <ul id="account-nav" ng-controller="AuthCtrl" class="nav navbar-nav pull-right">
+            <li ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)">
+              <a href="#" class="account-nav__dropdown-toggle" ng-class="{'account-nav__dropdown-toggle__auth': !isAuthDisabled}">
+                <img class="co-user-avatar" ng-if="!isAuthDisabled && emailHash()" ng-src="//gravatar.com/avatar/{{emailHash()}}?s=32" />
+                <div class="account-email-namespace">
+                  <span class="account-nav__email" ng-bind="email() || 'My Account'"></span><br />
+                  <span class="account-nav__active-namespace" ng-bind="activeNamespace || 'all'"></span>
+                </div>
+                &nbsp;<i class="fa fa-cog co-settings-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </co-navbar>
+      </div>
       <co-side-menu></co-side-menu>
       <div id="co-l-view-container" class="container" ng-view co-error-page></div>
     </co-footer-wrapper>

@@ -1,4 +1,9 @@
 /* Use this file to override styles from coreos-web */
+/* Going forward, please just vendor bits of CoreOS web into
+   this project's build, and alter and maintain them in this project
+   rather than overriding or bringing in built assets.
+   The coreos-web project is no longer actively maintained */
+
 $color-text-muted: #999;
 
 .text-muted {
@@ -11,4 +16,16 @@ small {
 
 .form-control[disabled], fieldset[disabled] .form-control {
   cursor: auto;
+}
+
+.co-m-navbar {
+  width: 99%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.navbar-brand {
+  margin-right: 15px;
 }
