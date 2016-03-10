@@ -35,6 +35,7 @@ angular.module('bridge', [
   flagSvcProvider.setGlobalId('SERVER_FLAGS');
   k8sConfigProvider.setKubernetesPath('/api/kubernetes/', window.SERVER_FLAGS.k8sAPIVersion);
   $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
+  $httpProvider.defaults.timeout = 5000;
 
   configSvcProvider.config({
     siteBasePath: '/',
