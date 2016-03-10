@@ -1,8 +1,13 @@
 <div class="co-m-label-list">
-  <co-label ng-repeat="(key, value) in labels"
+  <co-label
+    ng-repeat="(key, value) in labels"
     expand="{{expand}}"
     selector="{{selector}}"
     kind="{{kind}}"
     key="{{key}}"
     value="{{value}}"></co-label>
+  <div class="text-muted" ng-if="isEmpty()">
+    <span ng-if="selector">No selector</span>
+    <span ng-if="!selector">No labels</span>
+  </div>
 </div>

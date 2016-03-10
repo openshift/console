@@ -1,17 +1,19 @@
 <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
   <li class="co-m-vert-nav__menu-item">
-    <a ng-href="/ns/{{ns}}/pods/{{name}}">
-      <i class="fa fa-dashboard" uib-tooltip="Overview" tooltip-placement="right"></i>
+    <a ng-href="/ns/{{ns}}/pods/{{name}}" uib-tooltip="Overview" tooltip-placement="right">
+      <i class="fa fa-dashboard"></i>
     </a>
   </li>
   <li class="co-m-vert-nav__menu-item">
-    <a ng-href="/ns/{{ns}}/pods/{{name}}/events">
-      <i class="fa fa-history" uib-tooltip="Events" tooltip-placement="right"></i>
+    <a ng-href="/ns/{{ns}}/pods/{{name}}/events" uib-tooltip="Events" tooltip-placement="right">
+      <i class="fa fa-history"></i>
     </a>
   </li>
   <li class="co-m-vert-nav__menu-item">
-    <a ng-href="/ns/{{ns}}/pods/{{name}}/logs" co-active-match="/ns/{{ns}}/pods/{{name}}/logs/{{}}">
-      <i class="fa fa-file-text" uib-tooltip="Logs" tooltip-placement="right"></i>
+    <a ng-href="/ns/{{ns}}/pods/{{name}}/logs"
+       co-active-match="/ns/{{ns}}/pods/{{name}}/logs/{{}}"
+       uib-tooltip="Logs" tooltip-placement="right">
+      <i class="fa fa-file-text"></i>
     </a>
   </li>
 </ul>

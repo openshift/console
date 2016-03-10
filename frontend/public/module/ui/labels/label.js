@@ -54,6 +54,11 @@ angular.module('bridge.ui')
       selector: '@',
       expand: '@',
       labels: '='
+    },
+    controller: function($scope) {
+      $scope.isEmpty = function() {
+        return !$scope.labels || angular.equals({}, $scope.labels);
+      }
     }
   };
 });

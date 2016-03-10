@@ -9,8 +9,9 @@
 
     <ul co-nav-active="co-m-vert-nav-item--active" class="co-m-vert-nav__menu hidden-sm hidden-xs">
       <li class="co-m-vert-nav__menu-item">
-        <a ng-href="/ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}/containers/{{container.name}}">
-          <i class="fa fa-dashboard" uib-tooltip="Overview" tooltip-placement="right"></i>
+        <a ng-href="/ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}/containers/{{container.name}}"
+           uib-tooltip="Overview" tooltip-placement="right">
+          <i class="fa fa-dashboard"></i>
         </a>
       </li>
     </ul>

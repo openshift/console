@@ -1,0 +1,14 @@
+/* Use this file to override styles from coreos-web */
+$color-text-muted: #999;
+
+.text-muted {
+  color: $color-text-muted;
+}
+
+small {
+  font-size: 12px;
+}
+
+.form-control[disabled], fieldset[disabled] .form-control {
+  cursor: auto;
+}
