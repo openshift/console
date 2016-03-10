@@ -86,6 +86,10 @@
     margin-bottom: 20px;
 }
 
+.co-m-nav-link.active a {
+    background-color: $gray-lighter;
+}
+
 .btn-primary {
     background-color: $color-tectonic-button-green;
     &:hover,
