@@ -1,0 +1,27 @@
+<div class="co-m-replication-controller-list co-m-table-grid co-m-table-grid--bordered">
+  <div class="row co-m-table-grid__head">
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Namespace Name</div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Namespace Labels</div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Status</div>
+  </div>
+
+  <div cos-tristate="namespaces" cos-tristate-error="loadError" class="co-m-table-grid__body">
+    <div class="row" ng-repeat="namespace in namespaces | orderBy:'metadata.name' | filter:search:strict track by namespace.metadata.uid">
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+        <co-namespace-cog namespace="namespace"></co-namespace-cog>
+        <co-resource-icon kind="namespace"></co-resource-icon>
+        <span ng-bind="namespace.metadata.name"></span>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+        <co-label-list kind="namespace" labels="namespace.metadata.labels"></co-label-list>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-bind="namespace.status.phase"></div>
+    </div>
+
+    <co-loader class="cos-tristate-show-loading"></co-loader>
+    <cos-status-box class="cos-tristate-show-error">
+      <div class="cos-error-title">Error Loading Namespaces</div>
+      <div class="cos-text-center">An error occurred during replication controller retrieval. Please try again.</div>
+    </cos-status-box>
+  </div>
+</div>

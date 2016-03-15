@@ -71,6 +71,12 @@ angular.module('bridge', [
     title: 'Cluster Status',
   });
 
+  r('/namespaces', {
+    controller: 'NamespacesCtrl',
+    templateUrl: '/static/page/namespaces/namespaces.html',
+    title: 'Namespaces',
+  });
+
   namespacesSvcProvider.registerNamespaceFriendlyPrefix('events');
   r('/all-namespaces/events', {
     controller: 'EventsCtrl',

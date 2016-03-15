@@ -36,7 +36,7 @@ angular.module('bridge.ui')
     scope: {
       // model to bind input to
       labels: '=ngModel',
-      // k8s kind enum id: 'service', 'pod', 'replicationcontroller'
+      // k8s kind enum id: 'service', 'pod', 'replicationcontroller', 'namespace'
       kind: '@',
       // 'true', 'false' (default)
       selector: '@',

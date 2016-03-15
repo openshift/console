@@ -18,4 +18,8 @@ angular.module('k8s').constant('k8sEvents', {
   NODE_ADDED: 'k8s-node-added',
   NODE_MODIFIED: 'k8s-node-modified',
   NODE_DELETED: 'k8s-node-deleted',
+
+  NAMESPACE_ADDED: 'k8s-namespace-added',
+  NAMESPACE_MODIFIED: 'k8s-namespace-modified',
+  NAMESPACE_DELETED: 'k8s-namespace-deleted',
 });
