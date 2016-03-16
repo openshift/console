@@ -38,6 +38,12 @@
                 type="radio"/>
             {{kinds.NODE.labelPlural}}
           </a>
+          <a href="#" ng-click="changeKind(kinds.NAMESPACE.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.NAMESPACE.id"
+                type="radio"/>
+            {{kinds.NAMESPACE.labelPlural}}
+          </a>
         </div>
       </form>
     </div>

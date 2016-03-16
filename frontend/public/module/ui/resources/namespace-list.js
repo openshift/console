@@ -8,13 +8,24 @@ angular.module('bridge.ui')
     replace: true,
     scope: {
       search: '=',
+      selector: '=',
     },
     controller: function($scope, $attrs) {
       $scope.namespaces = null;
       $scope.loadError = false;
 
       function loadNamespaces() {
-        k8s.namespaces.list()
+        var query = {};
+        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
+          $scope.namespaces = [];
+          return;
+        }
+
+        if ($scope.selector) {
+          query.labelSelector = $scope.selector;
+        }
+
+        k8s.namespaces.list(query)
         .then(function(namespaces) {
           $scope.namespaces = namespaces;
         });

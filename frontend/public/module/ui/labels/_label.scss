@@ -34,6 +34,12 @@ $height: 18px;
       color: $color-node-dark;
     }
   }
+  &.co-m-label--namespace {
+    .co-m-label__link {
+      color: $color-namespace-dark;
+    }
+  }
+
   &.co-m-label--selector {
     background-color: transparent;
     border: none;
