@@ -1,6 +1,8 @@
 angular.module('bridge.page')
-.controller('NewNamespaceCtrl', function(k8s, $scope) {
+.controller('NewNamespaceCtrl', function($scope, CONST, k8s) {
   'use strict';
+
+  $scope.namePattern = CONST.legalNamePattern;
 
   $scope.model = {
     name: null,
