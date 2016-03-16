@@ -21,7 +21,7 @@ angular.module('bridge.ui')
           return;
         }
 
-        if ($scope.selector) {
+        if (!_.isEmpty($scope.selector)) {
           query.labelSelector = $scope.selector;
         }
 

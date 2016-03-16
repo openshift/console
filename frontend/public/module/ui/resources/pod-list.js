@@ -50,7 +50,7 @@ angular.module('bridge.ui')
           $scope.pods = [];
           return;
         }
-        if ($scope.selector) {
+        if (!_.isEmpty($scope.selector)) {
           query.labelSelector = $scope.selector;
         }
         if ($scope.namespace) {

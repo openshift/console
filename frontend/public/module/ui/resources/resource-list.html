@@ -2,22 +2,18 @@
   <co-service-list ng-if="kind == 'service'"
                    load="kind == 'service'"
                    namespace="namespace"
-                   selector-required="true"
                    selector="selector"></co-service-list>
   <co-replication-controller-list ng-if="kind == 'replicationcontroller'"
                                   load="kind == 'replicationcontroller'"
-                                  selector-required="true"
+                                  namespace="namespace"
                                   selector="selector"></co-replication-controller-list>
   <co-pod-list ng-if="kind == 'pod'"
                load="kind == 'pod'"
                namespace="namespace"
-               selector-required="true"
                selector="selector"></co-pod-list>
   <co-node-list ng-if="kind == 'node'"
-                selector-required="true"
                 selector="selector"></co-node-list>
   <co-namespace-list ng-if="kind == 'namespace'"
-                     selector-required="true"
                      selector="selector"
                      ></co-node-list>
 </div>

@@ -10,6 +10,9 @@
 .co-m-label-input--node .tag-item {
   color: $color-node-dark;
 }
+.co-m-label-input--namespace .tag-item {
+  color: $color-namespace-dark;
+}
 
 
 tags-input:focus,
