@@ -1,50 +1,47 @@
-/**
- * @fileoverview
- * List out namespaces in a list view.
- */
-
 angular.module('bridge.ui')
-.directive('coNamespaceList', function(k8s, $location, namespacesSvc, sideMenuVisibility) {
+.directive('coNamespaceList', function(k8s, resourceMgrSvc) {
   'use strict';
 
   return {
     templateUrl: '/static/module/ui/resources/namespace-list.html',
     restrict: 'E',
     replace: true,
-    controller: function($scope) {
-      $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
-        if (show) {
-          k8s.namespaces.list()
-          .then(function(namespaces) {
-            $scope.namespaces = namespaces;
-          })
-          .catch(function() {
-            $scope.namespaceListError = true;
-          });
+    scope: {
+      search: '=',
+      selector: '=',
+    },
+    controller: function($scope, $attrs) {
+      $scope.namespaces = null;
+      $scope.loadError = false;
+
+      function loadNamespaces() {
+        var query = {};
+        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
+          $scope.namespaces = [];
+          return;
         }
+
+        if (!_.isEmpty($scope.selector)) {
+          query.labelSelector = $scope.selector;
+        }
+
+        k8s.namespaces.list(query)
+        .then(function(namespaces) {
+          $scope.namespaces = namespaces;
+        });
+      }
+
+      $scope.$on(k8s.events.NAMESPACE_DELETED, function(e, data) {
+        resourceMgrSvc.removeFromList($scope.namespaces, data.resource);
       });
 
-      $scope.selectNamespace = function(newNamespace) {
-        var oldPath = $location.path();
+      $scope.$on(k8s.events.NAMESPACE_ADDED, loadNamespaces);
 
-        if (newNamespace) {
-          namespacesSvc.setActiveNamespace(newNamespace);
-        } else {
-          namespacesSvc.clearActiveNamespace();
-        }
+      $scope.$on(k8s.events.NAMESPACE_MODIFIED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.namespaces, data.resource);
+      });
 
-        if (namespacesSvc.isNamespaced(oldPath)) {
-          $location.path(namespacesSvc.formatNamespaceRoute(oldPath));
-        }
-      };
-
-      $scope.activeNamespaceClass = function(namespace) {
-        if (namespace === namespacesSvc.getActiveNamespace()) {
-          return 'co-namespace-icon__selected fa fa-check-circle';
-        }
-        return 'co-namespace-icon__unselected fa fa-circle-thin';
-      };
+      loadNamespaces();
     },
   };
-
 });

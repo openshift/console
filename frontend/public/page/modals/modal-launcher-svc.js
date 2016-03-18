@@ -63,6 +63,10 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-replica-count.html',
       controller: 'ConfigureReplicaCountCtrl',
     },
+    'new-namespace': {
+      templateUrl: '/static/page/modals/new-namespace.html',
+      controller: 'NewNamespaceCtrl',
+    },
     'new-user': {
       templateUrl: '/static/page/modals/new-user.html',
       windowTemplateUrl: '/static/page/modals/std-width-modal.html',

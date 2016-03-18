@@ -4,7 +4,8 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, sideMenuVisibility, authSvc, featuresSvc, errorMessageSvc, dex) {
+.directive('coSideMenu', function($, $location, authSvc, dex, errorMessageSvc,
+                                  featuresSvc, k8s, namespacesSvc, sideMenuVisibility) {
   'use strict';
 
   return {
@@ -15,6 +16,15 @@ angular.module('bridge.ui')
       this.hide = sideMenuVisibility.hideSideMenu;
       $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
         $scope.showSideMenu = show;
+        if (show) {
+          k8s.namespaces.list()
+          .then(function(namespaces) {
+            $scope.namespaces = namespaces;
+          })
+          .catch(function() {
+            $scope.namespaceListError = true;
+          });
+        }
       });
 
       $scope.logout = function(e) {
@@ -22,6 +32,27 @@ angular.module('bridge.ui')
           authSvc.logout();
         }
         e.preventDefault();
+      };
+
+      $scope.selectNamespace = function(newNamespace) {
+        var oldPath = $location.path();
+
+        if (newNamespace) {
+          namespacesSvc.setActiveNamespace(newNamespace);
+        } else {
+          namespacesSvc.clearActiveNamespace();
+        }
+
+        if (namespacesSvc.isNamespaced(oldPath)) {
+          $location.path(namespacesSvc.formatNamespaceRoute(oldPath));
+        }
+      };
+
+      $scope.activeNamespaceClass = function(namespace) {
+        if (namespace === namespacesSvc.getActiveNamespace()) {
+          return 'co-namespace-icon__selected fa fa-check-circle';
+        }
+        return 'co-namespace-icon__unselected fa fa-circle-thin';
       };
     },
     link: function(scope, elem, attrs, ctrl) {

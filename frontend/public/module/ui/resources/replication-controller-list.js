@@ -31,7 +31,7 @@ angular.module('bridge.ui')
           $scope.rcs = [];
           return;
         }
-        if ($scope.selector) {
+        if (!_.isEmpty($scope.selector)) {
           query.labelSelector = $scope.selector;
         }
         if ($scope.namespace) {

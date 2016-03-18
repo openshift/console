@@ -94,6 +94,24 @@ angular.module('bridge.service')
     }
   }
 
+  function emitNamespaceEvent(msg) {
+    var evt;
+    switch (msg.type) {
+      case 'ADDED':
+        evt = k8s.events.NAMESPACE_ADDED;
+        break;
+      case 'MODIFIED':
+        evt = k8s.events.NAMESPACE_MODIFIED;
+        break;
+      case 'DELETED':
+        evt = k8s.events.NAMESPACE_DELETED;
+        break;
+    }
+    if (evt) {
+      $rootScope.$broadcast(evt, { resource: msg.object });
+    }
+  }
+
   this.start = function() {
     sockets.podList = connectSocket('podList', k8s.enum.Kind.POD)
       .onmessage(emitPodEvent);
@@ -106,6 +124,9 @@ angular.module('bridge.service')
 
     sockets.nodeList = connectSocket('nodeList', k8s.enum.Kind.NODE)
       .onmessage(emitNodeEvent);
+
+    sockets.nodeList = connectSocket('namespaceList', k8s.enum.Kind.NAMESPACE)
+      .onmessage(emitNamespaceEvent);
   };
 
   this.lock = function() {

@@ -2,7 +2,28 @@
   <div class="dismiss">
     <a class="pull-right">x</a>
   </div>
-  <co-namespace-list></co-namespace-list>
+
+  <div class="co-sidemenu-list">
+    <h4 class="sidemenu-list-title">Namespaces</h4>
+    <ul ng-if="namespaceListError" class="sidemenu-list namespace-list">
+      <li class="namespace-name namespace-fail sidemenu-link">
+        <i class="sidemenu-namespace-name fa fa-ban" />
+        <span class="sidemenu-namespace-text" ng-click="selectNamespace(false)">Failed to load namespaces</span>
+      </li>
+    </ul>
+
+    <ul ng-if="!namespaceListError" class="sidemenu-list namespace-list">
+      <li class="namespace-name sidemenu-link" ng-class="activeNamespaceClass(n.metadata.name)" ng-click="selectNamespace(false)">
+        <i class="sidemenu-namespace-name" class="co-m-label__icon" />
+        <span class="sidemenu-namespace-text" ng-click="clearNamespace(false)">all</span>
+      </li>
+      <li class="namespace-name sidemenu-link" ng-class="activeNamespaceClass(n.metadata.name)" ng-click="selectNamespace(n.metadata.name)" ng-repeat="n in namespaces">
+        <i class="sidemenu-namespace-name" class="co-m-label__icon" />
+        <span class="sidemenu-namespace-text" ng-bind="n.metadata.name" />
+      </li>
+    </ul>
+  </div>
+
   <ul class="sidemenu-list">
     <li ng-if="usersAreManageable"
         ><a href="/settings/users"

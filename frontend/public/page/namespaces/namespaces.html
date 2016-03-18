@@ -1,0 +1,29 @@
+<div class="co-p-pods">
+
+  <tec-nav-title title="Namespaces">
+    <a ng-click="newNamespaceModal()" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Create a New Namespace
+    </a>
+  </tec-nav-title>
+
+  <div class="co-m-pane">
+
+    <div class="co-m-pane__heading">
+
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+          <h1 class="co-m-pane__title">Namespace List</h1>
+        </div>
+        <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
+          <input ng-model="nameSearch.metadata.name" type="text" class="form-control" placeholder="Filter namespaces by name..." />
+        </div>
+      </div>
+
+    </div>
+
+    <div class="co-m-pane__body">
+      <co-namespace-list search="nameSearch"></co-namespace-list>
+    </div>
+  </div><!-- pane -->
+
+</div>

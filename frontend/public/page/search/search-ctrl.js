@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('SearchCtrl', function(_, $scope, $location, k8s) {
+.controller('SearchCtrl', function(_, $scope, $location, k8s, featuresSvc) {
   'use strict';
 
   var defaultKind = k8s.enum.Kind.SERVICE;
@@ -16,6 +16,8 @@ angular.module('bridge.page')
     }
     return defaultKind;
   }
+
+  $scope.features = featuresSvc;
 
   $scope.init = function() {
     $scope.fields = {

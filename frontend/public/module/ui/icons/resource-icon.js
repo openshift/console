@@ -16,7 +16,9 @@ angular.module('bridge.ui')
       case k8s.enum.Kind.SERVICE.id:
         return 'S';
       case k8s.enum.Kind.NODE.id:
-        return 'M';
+        return 'N';
+      case k8s.enum.Kind.NAMESPACE.id:
+        return 'NS';
       case 'container':
         return 'C';
       default:

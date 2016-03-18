@@ -1,11 +1,13 @@
 angular.module('bridge.service')
-.provider('namespacesSvc', function() {
+.provider('namespacesSvc', function(CONST) {
   'use strict';
 
-  // Kubernetes "dns-friendly" names match [a-z0-9]([-a-z0-9]*[a-z0-9])?
-  // and are 63 or fewer characters long
+  // This module supports users viewing resources based on namespace,
+  // *not* their creation, deletion, editing of namespaces themselves.
+  // That is, this is namespaces as part of the interface, not as the
+  // object of the interface.
 
-  var nsPathPattern = /^\/?ns\/[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\/?(.*)$/;
+  var nsPathPattern = new RegExp('^\/?ns\/' + CONST.legalNamePattern.source + '\/?(.*)$');
   var allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
   var prefixes = [];
 
@@ -68,13 +70,12 @@ angular.module('bridge.service')
 
       formatNamespaceRoute: function(originalPath) {
         var resource = this.namespaceResourceFromPath(originalPath),
-            namespace = activeNamespace,
             namespacePrefix;
 
-        if (_.isUndefined(namespace)) {
+        if (!activeNamespace) {
           namespacePrefix = '/all-namespaces/';
         } else {
-          namespacePrefix = '/ns/' + namespace + '/';
+          namespacePrefix = '/ns/' + activeNamespace + '/';
         }
 
         return namespacePrefix + resource;

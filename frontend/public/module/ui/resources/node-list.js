@@ -12,16 +12,25 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      // optional search filter
-      searchFilter: '=search',
-      // field filters to apply to node list
-      nodesFilterQuery: '=filter',
+      selector: '=',
     },
-    controller: function($scope) {
+    controller: function($scope, $attrs) {
       $scope.loadError = false;
 
       function loadNodes() {
-        k8s.nodes.list()
+        var query = {};
+
+        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
+          $scope.nodes = [];
+          $scope.loadError = false;
+          return;
+        }
+
+        if (!_.isEmpty($scope.selector)) {
+          query.labelSelector = $scope.selector;
+        }
+
+        k8s.nodes.list(query)
           .then(function(nodes) {
             $scope.nodes = nodes;
             $scope.loadError = false;
