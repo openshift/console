@@ -66,16 +66,17 @@ angular.module('bridge.page')
     'new-namespace': {
       templateUrl: '/static/page/modals/new-namespace.html',
       controller: 'NewNamespaceCtrl',
+      size: 'dialog--std-width',
     },
     'new-user': {
       templateUrl: '/static/page/modals/new-user.html',
-      windowTemplateUrl: '/static/page/modals/std-width-modal.html',
       controller: 'NewUserCtrl',
+      size: 'dialog--std-width',
     },
     'new-user-invite-link': {
       templateUrl: '/static/page/modals/new-user-invite-link.html',
-      windowTemplateUrl: '/static/page/modals/std-width-modal.html',
       controller: 'NewUserInviteLinkCtrl',
+      size: 'dialog--std-width',
     },
     'toggle-disabled-user': {
       templateUrl: '/static/page/modals/toggle-disabled-user.html',
