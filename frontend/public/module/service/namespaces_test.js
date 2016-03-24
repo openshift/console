@@ -2,7 +2,7 @@ describe('bridge.service.namespacesSvc', function() {
   'use strict';
   var namespacesSvc;
 
-  // Load the module.
+  beforeEach(module('bridge.const'));
   beforeEach(module('bridge.service'));
 
   beforeEach(module(function(namespacesSvcProvider) {

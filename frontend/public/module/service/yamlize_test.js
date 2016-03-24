@@ -2,6 +2,7 @@ describe('bridge.service', function() {
   'use strict';
   var yamlizeSvc;
 
+  beforeEach(module('bridge.const'));
   beforeEach(module('bridge.service'));
 
   beforeEach(inject(function(_yamlizeSvc_) {
