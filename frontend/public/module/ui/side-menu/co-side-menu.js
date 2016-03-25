@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, $location, authSvc, dex, errorMessageSvc,
+.directive('coSideMenu', function($, authSvc, dex, errorMessageSvc,
                                   featuresSvc, k8s, namespacesSvc, sideMenuVisibility) {
   'use strict';
 
@@ -34,19 +34,7 @@ angular.module('bridge.ui')
         e.preventDefault();
       };
 
-      $scope.selectNamespace = function(newNamespace) {
-        var oldPath = $location.path();
-
-        if (newNamespace) {
-          namespacesSvc.setActiveNamespace(newNamespace);
-        } else {
-          namespacesSvc.clearActiveNamespace();
-        }
-
-        if (namespacesSvc.isNamespaced(oldPath)) {
-          $location.path(namespacesSvc.formatNamespaceRoute(oldPath));
-        }
-      };
+      $scope.setActiveNamespace = _.bind(namespacesSvc.setActiveNamespace, namespacesSvc);
 
       $scope.activeNamespaceClass = function(namespace) {
         if (namespace === namespacesSvc.getActiveNamespace()) {
