@@ -1,13 +1,17 @@
 angular.module('bridge.ui')
-.directive('coNamespaceCog', function(k8s, ModalLauncherSvc) {
+.directive('coNamespaceCog', function(k8s, ModalLauncherSvc, namespacesSvc) {
   'use strict';
 
   return {
-    template: '<div class="co-m-cog-wrapper"><co-cog options="cogOptions" size="small" anchor="left"></co-cog></div>',
+    template:
+      '<div class="co-m-cog-wrapper">' +
+        '<co-cog options="cogOptions" size="small" anchor="{{anchor || \'left\'}}"></co-cog>' +
+      '</div>',
     restrict: 'E',
     replace: true,
     scope: {
-      namespace: '='
+      namespace: '=',
+      anchor: '@',
     },
     controller: function($scope) {
       function getDeleteFn() {
@@ -18,8 +22,24 @@ angular.module('bridge.ui')
 
       $scope.cogOptions = [
         {
-          label: 'Delete Namespace...',
+          label: 'Activate Namespace',
           weight: 100,
+          callback: function() {
+            namespacesSvc.setActiveNamespace($scope.namespace.metadata.name);
+          }
+        },
+        /*** TODO DO NOT MERGE UNTIL REMOVED OR IMPLEMENTED
+        {
+          label: 'Modify Labels...',
+          weight: 200,
+          callback: function() {
+            alert('TODO - modify labels here!');
+          }
+        },
+        *** END TODO ***/
+        {
+          label: 'Delete Namespace...',
+          weight: 300,
           callback: ModalLauncherSvc.open.bind(null, 'confirm', {
             title: 'Delete Namespace',
             message: 'Are you sure you want to delete ' +
@@ -30,6 +50,10 @@ angular.module('bridge.ui')
           }),
         }
       ];
+
+      if ($scope.namespace.metadata.name === 'default') {
+        $scope.cogOptions.pop();
+      }
     }
   };
 });

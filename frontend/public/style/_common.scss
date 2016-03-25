@@ -78,6 +78,11 @@
     font-size: 20px;
 }
 
+.co-m-pane__title__btn {
+  float: right;
+  margin-right: 0;
+}
+
 .co-m-pane__body__top-controls {
   padding-bottom: 15px;
 }
@@ -88,6 +93,11 @@
 
 .co-m-nav-link.active a {
     background-color: $gray-lighter;
+}
+
+.co-m-facet-option__cog {
+    float: right;
+    padding-right: 10px;
 }
 
 .btn-primary {

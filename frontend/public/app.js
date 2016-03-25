@@ -75,6 +75,7 @@ angular.module('bridge', [
     controller: 'NamespacesCtrl',
     templateUrl: '/static/page/namespaces/namespaces.html',
     title: 'Namespaces',
+    reloadOnSearch: false,
   });
 
   namespacesSvcProvider.registerNamespaceFriendlyPrefix('events');
