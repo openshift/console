@@ -81,6 +81,10 @@
     }
   }
 
+  .co-namespace-icon__unselected:before, .co-namespace-icon__selected:before {
+    margin-right: 5px;
+  }
+
   .sidemenu-namespace-text {
     font-family: $font-family-primary;
   }
