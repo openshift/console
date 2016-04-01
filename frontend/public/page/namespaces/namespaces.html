@@ -26,10 +26,12 @@
           <div ng-if="chosen">
             <h1 class="co-m-pane__title co-m-pane__body__top-controls"
                 ng-bind="'Namespace ' + chosen.metadata.name"></h1>
-            <div class="co-m-facet-menu__title">Status</div><!-- TODO goofball css name -->
-            <div ng-bind="chosen.status.phase"></div>
-            <div class="co-m-facet-menu__title">Namespace Labels</div><!-- TODO goofball css name -->
-            <co-label-list kind="namespace" labels="chosen.metadata.labels"></co-label-list>
+            <dl>
+              <dt>Status</dt>
+              <dd ng-bind="chosen.status.phase"></dd>
+              <dt>Namespace Labels</dt>
+              <dd><co-label-list kind="namespace" labels="chosen.metadata.labels"></co-label-list></dd>
+            </dl>
           </div>
         </div>
       </div>
