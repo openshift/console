@@ -39,7 +39,7 @@
     color: white;
     font-weight: 500;
     text-decoration: none;
-    padding: 5px 0 5px 20px;
+    padding: 5px 20px;
     display: block;
 
     &:not(.disabled) {
@@ -59,7 +59,7 @@
 
   .sidemenu-list-title {
     font-size: $font-size-small;
-    padding: 0 0 0 20px;
+    padding: 0 20px;
     color: #999;
   }
 
@@ -68,6 +68,25 @@
     margin-bottom: 20px;
     list-style-type: none;
     color: white;
+  }
+
+  .sidemenu__create-namespace-button {
+    float: right;
+    display: block;
+    cursor: pointer;
+  }
+
+  .sidemenu__create-namespace-button {
+    float: right;
+    display: block;
+    cursor: pointer;
+  }
+
+  .sidemenu__view-namespace-button {
+    float: right;
+    display: block;
+    cursor: pointer;
+    color: $color-grey-text;
   }
 
   .namespace-list {

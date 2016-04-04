@@ -4,8 +4,10 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, authSvc, dex, errorMessageSvc,
-                                  featuresSvc, k8s, namespacesSvc, sideMenuVisibility) {
+.directive('coSideMenu', function($, $window, authSvc, dex, errorMessageSvc,
+                                  featuresSvc, k8s, ModalLauncherSvc,
+                                  namespacesSvc, resourceMgrSvc,
+                                  sideMenuVisibility) {
   'use strict';
 
   return {
@@ -14,9 +16,9 @@ angular.module('bridge.ui')
     replace: true,
     controller: function($scope) {
       this.hide = sideMenuVisibility.hideSideMenu;
-      $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
-        $scope.showSideMenu = show;
-        if (show) {
+
+      function loadNamespaces() {
+        if ($scope.showSideMenu) {
           k8s.namespaces.list()
           .then(function(namespaces) {
             $scope.namespaces = namespaces;
@@ -25,6 +27,21 @@ angular.module('bridge.ui')
             $scope.namespaceListError = true;
           });
         }
+      }
+
+      $scope.$on(k8s.events.NAMESPACE_DELETED, function(e, data) {
+        resourceMgrSvc.removeFromList($scope.namespaces, data.resource);
+      });
+
+      $scope.$on(k8s.events.NAMESPACE_ADDED, _.debounce(loadNamespaces, 250));
+
+      $scope.$on(k8s.events.NAMESPACE_MODIFIED, function(e, data) {
+        resourceMgrSvc.updateInList($scope.namespaces, data.resource);
+      });
+
+      $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
+        $scope.showSideMenu = show;
+        loadNamespaces();
       });
 
       $scope.logout = function(e) {
@@ -35,6 +52,9 @@ angular.module('bridge.ui')
       };
 
       $scope.setActiveNamespace = _.bind(namespacesSvc.setActiveNamespace, namespacesSvc);
+      $scope.createNamespace = function() {
+        ModalLauncherSvc.open('new-namespace');
+      };
 
       $scope.activeNamespaceClass = function(namespace) {
         if (namespace === namespacesSvc.getActiveNamespace()) {
@@ -42,6 +62,10 @@ angular.module('bridge.ui')
         }
         return 'co-namespace-icon__unselected fa fa-circle-thin';
       };
+
+      $scope.namespaceLink = function(namespace) {
+        return '/namespaces?name=' + $window.encodeURIComponent(namespace.metadata.name);
+      }
     },
     link: function(scope, elem, attrs, ctrl) {
       dex.users.available()
@@ -57,7 +81,15 @@ angular.module('bridge.ui')
         }
       });
       scope.isAuthDisabled = featuresSvc.isAuthDisabled;
-      $('body').click(ctrl.hide);
+      $('body').click(function(evt) {
+        if (evt.target.closest('.modal-dialog') ||
+            evt.target.closest('.keep-sidebar-open')) {
+          // Slight hack to keep the sidebar open if you're messing with
+          // either modals or calling them up. Do nothing.
+        } else {
+          ctrl.hide();
+        }
+      });
     },
   };
 

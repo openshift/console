@@ -22,7 +22,7 @@ angular.module('bridge.ui')
 
       $scope.cogOptions = [
         {
-          label: 'Activate Namespace',
+          label: 'Enter Namespace',
           weight: 100,
           callback: function() {
             namespacesSvc.setActiveNamespace($scope.namespace.metadata.name);

@@ -5,14 +5,23 @@ angular.module('bridge.page')
   // flicker. ( See https://github.com/angular/angular.js/pull/2398#issuecomment-16924680 )
   //
   // As a result, namespaces are routed with ?searches rather than
-  // /paths
+  // /paths, and we manually watch the $routeParams to update if needed.
 
-  if ($routeParams.name) {
+  function loadNamespace() {
     k8s.namespaces.get($routeParams.name)
     .then(function(ns) {
       $scope.chosen = ns;
     });
   }
+
+  if ($routeParams.name) {
+    loadNamespace();
+  }
+
+  $scope.$watch(
+    function() { return $routeParams.name; },
+    loadNamespace
+  )
 
   $scope.$watch('chosen', function() {
     if ($scope.chosen) {
