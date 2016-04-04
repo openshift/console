@@ -28,15 +28,6 @@ angular.module('bridge.ui')
             namespacesSvc.setActiveNamespace($scope.namespace.metadata.name);
           }
         },
-        /*** TODO DO NOT MERGE UNTIL REMOVED OR IMPLEMENTED
-        {
-          label: 'Modify Labels...',
-          weight: 200,
-          callback: function() {
-            alert('TODO - modify labels here!');
-          }
-        },
-        *** END TODO ***/
         {
           label: 'Delete Namespace...',
           weight: 300,

@@ -22,7 +22,6 @@ angular.module('bridge.ui')
         });
     }
 
-    // TODO these events could be ancient. How do other resources ensure they don't waste their time?
     $scope.$on(k8s.events.NAMESPACE_DELETED, function(e, data) {
       resourceMgrSvc.removeFromList(vm.namespaces, data.resource);
     });

@@ -9,7 +9,7 @@
     <div class="row" ng-repeat="namespace in vm.namespaces | orderBy:'metadata.name' | filter:search:strict track by namespace.metadata.uid">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <co-namespace-cog namespace="namespace"></co-namespace-cog>
-        <co-resource-icon kind="namespace"></co-resource-icon><!-- TODO remove no-cog-menu class from styles -->
+        <co-resource-icon kind="namespace"></co-resource-icon>
         <span ng-bind="namespace.metadata.name"></span>
       </div>
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
