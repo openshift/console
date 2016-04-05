@@ -1,5 +1,5 @@
 angular.module('bridge.ui')
-.directive('coNamespaceCog', function(k8s, ModalLauncherSvc, namespacesSvc) {
+.directive('coNamespaceCog', function(ModalLauncherSvc, namespaceCacheSvc, activeNamespaceSvc) {
   'use strict';
 
   return {
@@ -16,7 +16,7 @@ angular.module('bridge.ui')
     controller: function($scope) {
       function getDeleteFn() {
         return function() {
-          return k8s.namespaces.delete($scope.namespace);
+          return namespaceCacheSvc.delete($scope.namespace);
         }
       };
 
@@ -25,7 +25,7 @@ angular.module('bridge.ui')
           label: 'Enter Namespace',
           weight: 100,
           callback: function() {
-            namespacesSvc.setActiveNamespace($scope.namespace.metadata.name);
+            activeNamespaceSvc.setActiveNamespace($scope.namespace.metadata.name);
           }
         },
         {

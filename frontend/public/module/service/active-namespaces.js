@@ -1,5 +1,5 @@
 angular.module('bridge.service')
-.provider('namespacesSvc', function(CONST) {
+.provider('activeNamespaceSvc', function(CONST) {
   'use strict';
 
   // This module supports users viewing resources based on namespace,
@@ -67,6 +67,10 @@ angular.module('bridge.service')
         }
       },
 
+      // Callers note - "the Active Namespace" might not be an actual
+      // namespace (it might have been deleted, or permissions could
+      // have changed, or console could be looking at a completely
+      // different cluster, etc.)
       getActiveNamespace: function() {
         return activeNamespace;
       },

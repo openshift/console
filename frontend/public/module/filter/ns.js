@@ -1,8 +1,8 @@
 angular.module('bridge.filter')
-.filter('ns', function(namespacesSvc) {
+.filter('ns', function(activeNamespaceSvc) {
   'use strict';
   var ret = function(path) {
-    return namespacesSvc.formatNamespaceRoute(path);
+    return activeNamespaceSvc.formatNamespaceRoute(path);
   };
 
   // Because formatNamespaceRoute is stateful, this filter is

@@ -4,10 +4,9 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, $window, authSvc, dex, errorMessageSvc,
-                                  featuresSvc, k8s, ModalLauncherSvc,
-                                  namespacesSvc, resourceMgrSvc,
-                                  sideMenuVisibility) {
+.directive('coSideMenu', function($, $window,  activeNamespaceSvc, authSvc, dex,
+                                  errorMessageSvc, featuresSvc, ModalLauncherSvc,
+                                  namespaceCacheSvc, sideMenuVisibility) {
   'use strict';
 
   return {
@@ -15,33 +14,11 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     controller: function($scope) {
-      this.hide = sideMenuVisibility.hideSideMenu;
-
-      function loadNamespaces() {
-        if ($scope.showSideMenu) {
-          k8s.namespaces.list()
-          .then(function(namespaces) {
-            $scope.namespaces = namespaces;
-          })
-          .catch(function() {
-            $scope.namespaceListError = true;
-          });
-        }
-      }
-
-      $scope.$on(k8s.events.NAMESPACE_DELETED, function(e, data) {
-        resourceMgrSvc.removeFromList($scope.namespaces, data.resource);
-      });
-
-      $scope.$on(k8s.events.NAMESPACE_ADDED, _.debounce(loadNamespaces, 250));
-
-      $scope.$on(k8s.events.NAMESPACE_MODIFIED, function(e, data) {
-        resourceMgrSvc.updateInList($scope.namespaces, data.resource);
-      });
+      this.hide = sideMenuVisibility.hideSideMenu; // TODO wtf this?
+      $scope.namespaceCacheSvc = namespaceCacheSvc;
 
       $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
         $scope.showSideMenu = show;
-        loadNamespaces();
       });
 
       $scope.logout = function(e) {
@@ -51,13 +28,14 @@ angular.module('bridge.ui')
         e.preventDefault();
       };
 
-      $scope.setActiveNamespace = _.bind(namespacesSvc.setActiveNamespace, namespacesSvc);
+      // TODO the whole point of this exercise
+      $scope.setActiveNamespace = _.bind(activeNamespaceSvc.setActiveNamespace, activeNamespaceSvc);
       $scope.createNamespace = function() {
         ModalLauncherSvc.open('new-namespace');
       };
 
       $scope.activeNamespaceClass = function(namespace) {
-        if (namespace === namespacesSvc.getActiveNamespace()) {
+        if (namespace === activeNamespaceSvc.getActiveNamespace()) {
           return 'co-namespace-icon__selected fa fa-check-circle';
         }
         return 'co-namespace-icon__unselected fa fa-circle-thin';

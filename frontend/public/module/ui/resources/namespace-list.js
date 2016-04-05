@@ -1,59 +1,68 @@
+// TODO this should be two files
 angular.module('bridge.ui')
-.factory('namespaceListController', function(_, k8s, resourceMgrSvc) {
-  return function($scope, $attrs) {
-    var vm = this;
-    vm.namespaces = null;
-    vm.loadError = false;
-
-    function loadNamespaces() {
-      var query = {};
-      if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
-        vm.namespaces = [];
-        return;
-      }
-
-      if (!_.isEmpty($scope.selector)) {
-        query.labelSelector = $scope.selector;
-      }
-
-      k8s.namespaces.list(query)
-      .then(function(namespaces) {
-        vm.namespaces = namespaces;
-      })
-      .catch(function() {
-        vm.loadError = true;
-      });
-    }
-
-    $scope.$on(k8s.events.NAMESPACE_DELETED, function(e, data) {
-      resourceMgrSvc.removeFromList(vm.namespaces, data.resource);
-    });
-
-    $scope.$on(k8s.events.NAMESPACE_ADDED, _.debounce(loadNamespaces, 250));
-
-    $scope.$on(k8s.events.NAMESPACE_MODIFIED, function(e, data) {
-      resourceMgrSvc.updateInList(vm.namespaces, data.resource);
-    });
-
-    loadNamespaces();
-  };
-})
-.directive('coNamespaceList', function(namespaceListController) {
+.directive('coNamespaceList', function(_, k8s, namespaceCacheSvc, resourceMgrSvc) {
   'use strict';
 
   return {
     templateUrl: '/static/module/ui/resources/namespace-list.html',
     restrict: 'E',
     replace: true,
-    controllerAs: 'vm',
     scope: {
       search: '=',
       selector: '=',
     },
-    controller: namespaceListController
+    controller: function($scope, $attrs) {
+      $scope.namespaces = null;
+      $scope.loadError = false;
+
+      // We can't just use the namespaces in namespaceCacheSvc directly
+      // here because we might be searching.  TODO break this up - no
+      // reason to share controllers now, since *all* of the junk below
+      // is for search
+      function loadNamespaces() {
+        var query = {};
+        var expectCacheVersion = namespaceCacheSvc.cacheVersion;
+
+        $scope.loadError = false;
+        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
+          $scope.namespaces = [];
+          return;
+        }
+
+        if (!_.isEmpty($scope.selector)) {
+          query.labelSelector = $scope.selector;
+        }
+
+        if (_.isEmpty(query)) {
+          $scope.namespaces = namespaceCacheSvc.namespaces;
+        } else {
+          k8s.namespaces.list(query)
+          .then(function(namespaces) {
+            // This query races with namespaceCacheSvc - that is, a user
+            // could enter a search, then a namespace could be deleted,
+            // and the user's search results could still contain that
+            // deleted namespace. In this case, just reload.
+            if (expectCacheVersion !== namespaceCacheSvc.cacheVersion) {
+              loadNamespaces();
+            } else {
+              $scope.namespaces = namespaces;
+            }
+          })
+          .catch(function() {
+            $scope.loadError = true;
+          });
+        }
+      }
+
+      loadNamespaces();
+
+      $scope.$watch(function() {
+        return namespaceCacheSvc.cacheVersion;
+      }, loadNamespaces);
+    }
   };
 })
-.directive('coNamespaceListMenu', function(namespaceListController) {
+.directive('coNamespaceListMenu', function(namespaceCacheSvc) {
   'use strict';
 
   return {
@@ -66,7 +75,16 @@ angular.module('bridge.ui')
       chosen: '=',
     },
     controller: function($scope, $attrs) {
-      namespaceListController.call(this, $scope, $attrs);
+      var vm = this;
+      vm.namespaceCacheSvc = namespaceCacheSvc;
+
+      $scope.$watch(function() {
+        return vm.chosen && vm.namespaceCacheSvc.cacheVersion;
+      }, function() {
+        if (vm.chosen) {
+          vm.chosen = vm.namespaceCacheSvc.get(vm.chosen.metadata.name);
+        }
+      });
 
       // controllerAs is a workaround to deal with isolated scopes
       // inside of ng-repeat, but that means we have to keep the scope

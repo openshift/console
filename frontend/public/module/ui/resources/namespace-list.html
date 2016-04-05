@@ -5,8 +5,8 @@
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Status</div>
   </div>
 
-  <div cos-tristate="vm.namespaces" cos-tristate-error="vm.loadError" class="co-m-table-grid__body">
-    <div class="row" ng-repeat="namespace in vm.namespaces | orderBy:'metadata.name' | filter:search:strict track by namespace.metadata.uid">
+  <div cos-tristate="namespaces" cos-tristate-error="loadError" class="co-m-table-grid__body">
+    <div class="row" ng-repeat="namespace in namespaces | orderBy:'metadata.name' | filter:search:strict track by namespace.metadata.uid">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <co-namespace-cog namespace="namespace"></co-namespace-cog>
         <co-resource-icon kind="namespace"></co-resource-icon>
