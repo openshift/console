@@ -30,7 +30,7 @@ angular.module('bridge.service')
     prefixes = [];
   };
 
-  this.$get = function(_, coLocalStorage, $location) {
+  this.$get = function(_, $location, coLocalStorage, namespaceCacheSvc) {
     var activeNamespace = coLocalStorage.getItem('activeNamespace') || undefined;
     var prefixOf = function(s) {
       var ret = _.find(prefixes, function(prefix) {
@@ -67,12 +67,8 @@ angular.module('bridge.service')
         }
       },
 
-      // Callers note - "the Active Namespace" might not be an actual
-      // namespace (it might have been deleted, or permissions could
-      // have changed, or console could be looking at a completely
-      // different cluster, etc.)
       getActiveNamespace: function() {
-        return activeNamespace;
+        return namespaceCacheSvc.get(activeNamespace);
       },
 
       formatNamespaceRoute: function(originalPath) {

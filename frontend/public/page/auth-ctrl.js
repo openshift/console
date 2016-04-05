@@ -11,6 +11,6 @@ angular.module('bridge.page')
 
   // TODO joeatwork - namespaces aren't Auth - consider renaming this controller
   $scope.$watch(activeNamespaceSvc.getActiveNamespace, function(namespace) {
-    $scope.activeNamespace = namespace;
+    $scope.activeNamespace = namespace && namespace.metadata.name;
   });
 });

@@ -6,14 +6,21 @@ describe('bridge.service.activeNamespaceSvc', function() {
   beforeEach(module('bridge.service'));
 
   beforeEach(module(function($provide) {
-      $provide.value('$location', {
-        path: function(newPath) {
-          if (!_.isUndefined(newPath)) {
-            setPath = newPath;
-          }
-          return mockPath;
+    $provide.value('$location', {
+      path: function(newPath) {
+        if (!_.isUndefined(newPath)) {
+          setPath = newPath;
         }
-      });
+        return mockPath;
+      }
+    });
+
+    $provide.value('namespaceCacheSvc', {
+      get: function(name) {
+        return name;
+      }
+    });
+
   }));
 
   beforeEach(module(function(activeNamespaceSvcProvider) {

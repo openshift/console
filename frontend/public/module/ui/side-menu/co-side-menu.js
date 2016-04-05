@@ -14,7 +14,7 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     controller: function($scope) {
-      this.hide = sideMenuVisibility.hideSideMenu; // TODO wtf this?
+      this.hide = sideMenuVisibility.hideSideMenu;
       $scope.namespaceCacheSvc = namespaceCacheSvc;
 
       $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
@@ -35,7 +35,8 @@ angular.module('bridge.ui')
       };
 
       $scope.activeNamespaceClass = function(namespace) {
-        if (namespace === activeNamespaceSvc.getActiveNamespace()) {
+        var active = activeNamespaceSvc.getActiveNamespace();
+        if (active && namespace === active.metadata.name) {
           return 'co-namespace-icon__selected fa fa-check-circle';
         }
         return 'co-namespace-icon__unselected fa fa-circle-thin';
