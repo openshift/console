@@ -19,3 +19,10 @@ $transition-time: 0.25s;
 .co-resource-list-menu__loader {
   position: relative;
 }
+
+.co-resource-list-menu__option-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid $gray-lighter;
+}
