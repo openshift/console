@@ -8,14 +8,12 @@ angular.module('bridge.page')
   // /paths, and we manually watch the $routeParams to update if needed.
 
   function loadNamespace() {
-    k8s.namespaces.get($routeParams.name)
-    .then(function(ns) {
-      $scope.chosen = ns;
-    });
-  }
-
-  if ($routeParams.name) {
-    loadNamespace();
+    if ($routeParams.name) {
+      k8s.namespaces.get($routeParams.name)
+        .then(function(ns) {
+          $scope.chosen = ns;
+        });
+    }
   }
 
   $scope.$watch(
@@ -32,4 +30,6 @@ angular.module('bridge.page')
   $scope.newNamespaceModal = function() {
     ModalLauncherSvc.open('new-namespace');
   };
+
+  loadNamespace();
 });

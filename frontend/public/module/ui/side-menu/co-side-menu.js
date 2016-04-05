@@ -63,8 +63,8 @@ angular.module('bridge.ui')
         return 'co-namespace-icon__unselected fa fa-circle-thin';
       };
 
-      $scope.namespaceLink = function(namespace) {
-        return '/namespaces?name=' + $window.encodeURIComponent(namespace.metadata.name);
+      $scope.namespaceLink = function(namespaceName) {
+        return '/namespaces?name=' + $window.encodeURIComponent(namespaceName);
       }
     },
     link: function(scope, elem, attrs, ctrl) {
