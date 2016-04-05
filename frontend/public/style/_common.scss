@@ -138,3 +138,18 @@ label {
     display: inline-block;
     width: 13px;
 }
+
+.empty-page {
+  text-align: center;
+  padding: 10px;
+}
+
+.empty-page__header {
+  font-size: 18px;
+}
+
+.empty-page__explanation {
+  color: $color-grey-text;
+  font-size: 14px;
+  padding-top: 14px;
+}

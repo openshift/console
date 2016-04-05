@@ -23,6 +23,13 @@
           </div>
         </div><!-- left column -->
         <div class="col-sm-8 col-xs-12">
+          <div ng-if="!chosen" class="empty-page">
+            <h1 class="empty-page__header">No namespace selected</h1>
+            <p class="empty-page__explanation">
+              Namespaces organize and isolate your cluster resources
+              from other things running on the cluster.
+            </p>
+          </div>
           <div ng-if="chosen">
             <h1 class="co-m-pane__title co-m-pane__body__top-controls"
                 ng-bind="'Namespace ' + chosen.metadata.name"></h1>
