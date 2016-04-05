@@ -17,9 +17,12 @@ angular.module('bridge.ui')
       }
 
       k8s.namespaces.list(query)
-        .then(function(namespaces) {
-          vm.namespaces = namespaces;
-        });
+      .then(function(namespaces) {
+        vm.namespaces = namespaces;
+      })
+      .catch(function() {
+        vm.loadError = true;
+      });
     }
 
     $scope.$on(k8s.events.NAMESPACE_DELETED, function(e, data) {
