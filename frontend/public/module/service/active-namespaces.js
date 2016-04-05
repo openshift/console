@@ -73,7 +73,8 @@ angular.module('bridge.service')
 
       formatNamespaceRoute: function(originalPath) {
         var namespacePrefix,
-            resource = originalPath;
+            resource = originalPath,
+            active = this.getActiveNamespace();
 
         var match = isNamespaced(originalPath);
         if (match) {
@@ -84,10 +85,10 @@ angular.module('bridge.service')
           resource = resource.substr(1);
         }
 
-        if (!activeNamespace) {
+        if (!active) {
           namespacePrefix = '/all-namespaces/';
         } else {
-          namespacePrefix = '/ns/' + activeNamespace + '/';
+          namespacePrefix = '/ns/' + active.metadata.name + '/';
         }
 
         return namespacePrefix + resource;
