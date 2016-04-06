@@ -29,8 +29,11 @@ angular.module('bridge.ui')
             var destination = activeNamespaceSvc.formatNamespaceRoute('/replicationcontrollers');
             $location.url(destination);
           }
-        },
-        {
+        }
+      ];
+
+      if ($scope.namespace.metadata.name !== 'default') {
+        $scope.cogOptions.unshift({
           label: 'Delete Namespace...',
           weight: 300,
           callback: ModalLauncherSvc.open.bind(null, 'confirm', {
@@ -41,11 +44,7 @@ angular.module('bridge.ui')
             btnText: 'Delete Namespace',
             executeFn: getDeleteFn
           }),
-        }
-      ];
-
-      if ($scope.namespace.metadata.name === 'default') {
-        $scope.cogOptions.pop();
+        });
       }
     }
   };
