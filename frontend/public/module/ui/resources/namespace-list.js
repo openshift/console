@@ -44,7 +44,9 @@ angular.module('bridge.ui')
             if (expectCacheVersion !== namespaceCacheSvc.cacheVersion) {
               loadNamespaces();
             } else {
-              $scope.namespaces = namespaces;
+              $scope.namespaces = _.sortBy(namespaces, function(ns) {
+                return ns.metadata.name;
+              });
             }
           })
           .catch(function() {
