@@ -1,5 +1,5 @@
 angular.module('bridge.service')
-.factory('namespaceCacheSvc', function($rootScope, k8s) {
+  .factory('namespaceCacheSvc', function(_, $rootScope, k8s) {
   // We need a list of namespaces as part of the base UI, so we can
   // just eagerly load'um up and keep track of them.
 
@@ -23,7 +23,9 @@ angular.module('bridge.service')
 
   function reload() {
     return k8s.namespaces.list().then(function(namespaces) {
-      ret.namespaces = namespaces;
+      ret.namespaces = _.sortBy(namespaces, function(ns) {
+        return ns.metadata.name;
+      });
       ret.loadError = false;
     })
     .catch(function() {

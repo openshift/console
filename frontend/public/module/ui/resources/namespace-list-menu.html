@@ -6,7 +6,7 @@
         <div>Name</div>
       </div>
       <ul class="co-resource-list-menu__option-list co-m-table-grid__body">
-        <li ng-repeat="namespace in vm.namespaceCacheSvc.namespaces | orderBy:'metadata.name' | filter:search:strict track by namespace.metadata.uid"
+        <li ng-repeat="namespace in vm.namespaceCacheSvc.namespaces | filter:search:strict track by namespace.metadata.uid"
             ng-class="{
                       'co-m-facet-menu-option': true,
                       'co-m-facet-option--active': namespace.metadata.uid === vm.chosen.metadata.uid
