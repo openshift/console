@@ -79,8 +79,8 @@
 }
 
 .co-m-pane__title__btn {
-  float: right;
-  margin-right: 0;
+  display: block;
+  margin-top: 15px;
 }
 
 .co-m-pane__body__top-controls {
@@ -152,4 +152,21 @@ label {
   color: $color-grey-text;
   font-size: 14px;
   padding-top: 14px;
+}
+
+@media (min-width: 1200px) {
+  .co-m-pane__title__btn {
+    float: right;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .co-m-facet-option__cog {
+    display: none;
+  }
+
+  .details-page {
+    padding-top: 30px;
+  }
 }

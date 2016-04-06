@@ -5,7 +5,7 @@
   <div class="co-m-pane">
     <div class="co-m-pane__body">
       <div class="row">
-        <div class="col-sm-4 col-xs-12">
+        <div class="col-md-4 col-sm-6 col-xs-12">
           <div class="co-facet-container--left">
             <h1 class="co-m-pane__title co-m-pane__body__top-controls">
               All Namespaces
@@ -22,7 +22,7 @@
             <co-namespace-list-menu search="nameSearch" chosen="chosen"></co-namespace-list-menu>
           </div>
         </div><!-- left column -->
-        <div class="col-sm-8 col-xs-12">
+        <div class="col-md-8 col-sm-6 col-xs-12">
           <div ng-if="!chosen" class="empty-page">
             <h1 class="empty-page__header">No namespace selected</h1>
             <p class="empty-page__explanation">
@@ -30,7 +30,7 @@
               from other things running on the cluster.
             </p>
           </div>
-          <div ng-if="chosen">
+          <div ng-if="chosen" class="details-page">
             <h1 class="co-m-pane__title co-m-pane__body__top-controls"
                 ng-bind="'Namespace ' + chosen.metadata.name"></h1>
             <dl>
