@@ -60,14 +60,20 @@ angular.module('bridge.ui')
         }
       });
       scope.isAuthDisabled = featuresSvc.isAuthDisabled;
-      $('body').click(function(evt) {
+
+      function closeSideMenuOnClick(evt) {
         if (evt.target.closest('.modal-dialog') ||
             evt.target.closest('.keep-sidebar-open')) {
-          // Slight hack to keep the sidebar open if you're messing with
+          // Hack to keep the sidebar open if you're messing with
           // either modals or calling them up. Do nothing.
         } else {
           ctrl.hide();
         }
+      }
+
+      $('body').on('click', closeSideMenuOnClick);
+      scope.$on('destroy', function() {
+        $('body').off('click', closeSideMenuOnClick);
       });
     },
   };
