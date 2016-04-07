@@ -4,8 +4,9 @@
  */
 
 angular.module('bridge.ui')
-.directive('coSideMenu', function($, $location, authSvc, dex, errorMessageSvc,
-                                  featuresSvc, k8s, namespacesSvc, sideMenuVisibility) {
+.directive('coSideMenu', function($, $window,  activeNamespaceSvc, authSvc, dex,
+                                  errorMessageSvc, featuresSvc, ModalLauncherSvc,
+                                  namespaceCacheSvc, sideMenuVisibility) {
   'use strict';
 
   return {
@@ -14,17 +15,10 @@ angular.module('bridge.ui')
     replace: true,
     controller: function($scope) {
       this.hide = sideMenuVisibility.hideSideMenu;
+      $scope.namespaceCacheSvc = namespaceCacheSvc;
+
       $scope.$watch(sideMenuVisibility.getShowSideMenu, function(show) {
         $scope.showSideMenu = show;
-        if (show) {
-          k8s.namespaces.list()
-          .then(function(namespaces) {
-            $scope.namespaces = namespaces;
-          })
-          .catch(function() {
-            $scope.namespaceListError = true;
-          });
-        }
       });
 
       $scope.logout = function(e) {
@@ -34,26 +28,22 @@ angular.module('bridge.ui')
         e.preventDefault();
       };
 
-      $scope.selectNamespace = function(newNamespace) {
-        var oldPath = $location.path();
-
-        if (newNamespace) {
-          namespacesSvc.setActiveNamespace(newNamespace);
-        } else {
-          namespacesSvc.clearActiveNamespace();
-        }
-
-        if (namespacesSvc.isNamespaced(oldPath)) {
-          $location.path(namespacesSvc.formatNamespaceRoute(oldPath));
-        }
+      $scope.setActiveNamespace = _.bind(activeNamespaceSvc.setActiveNamespace, activeNamespaceSvc);
+      $scope.createNamespace = function() {
+        ModalLauncherSvc.open('new-namespace');
       };
 
       $scope.activeNamespaceClass = function(namespace) {
-        if (namespace === namespacesSvc.getActiveNamespace()) {
+        var active = activeNamespaceSvc.getActiveNamespace();
+        if (active && namespace === active.metadata.name) {
           return 'co-namespace-icon__selected fa fa-check-circle';
         }
         return 'co-namespace-icon__unselected fa fa-circle-thin';
       };
+
+      $scope.namespaceLink = function(namespaceName) {
+        return '/namespaces?name=' + $window.encodeURIComponent(namespaceName);
+      }
     },
     link: function(scope, elem, attrs, ctrl) {
       dex.users.available()
@@ -69,7 +59,21 @@ angular.module('bridge.ui')
         }
       });
       scope.isAuthDisabled = featuresSvc.isAuthDisabled;
-      $('body').click(ctrl.hide);
+
+      function closeSideMenuOnClick(evt) {
+        if (evt.target.closest('.modal-dialog') ||
+            evt.target.closest('.keep-sidebar-open')) {
+          // Hack to keep the sidebar open if you're messing with
+          // either modals or calling them up. Do nothing.
+        } else {
+          ctrl.hide();
+        }
+      }
+
+      $('body').on('click', closeSideMenuOnClick);
+      scope.$on('$destroy', function() {
+        $('body').off('click', closeSideMenuOnClick);
+      });
     },
   };
 

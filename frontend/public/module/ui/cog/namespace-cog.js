@@ -1,25 +1,41 @@
 angular.module('bridge.ui')
-.directive('coNamespaceCog', function(k8s, ModalLauncherSvc) {
+.directive('coNamespaceCog', function($location, ModalLauncherSvc, namespaceCacheSvc, activeNamespaceSvc) {
   'use strict';
 
   return {
-    template: '<div class="co-m-cog-wrapper"><co-cog options="cogOptions" size="small" anchor="left"></co-cog></div>',
+    template:
+      '<div class="co-m-cog-wrapper">' +
+        '<co-cog options="cogOptions" size="small" anchor="{{anchor || \'left\'}}"></co-cog>' +
+      '</div>',
     restrict: 'E',
     replace: true,
     scope: {
-      namespace: '='
+      namespace: '=',
+      anchor: '@',
     },
     controller: function($scope) {
       function getDeleteFn() {
         return function() {
-          return k8s.namespaces.delete($scope.namespace);
+          return namespaceCacheSvc.delete($scope.namespace);
         }
       };
 
       $scope.cogOptions = [
         {
-          label: 'Delete Namespace...',
+          label: 'Enter Namespace',
           weight: 100,
+          callback: function() {
+            activeNamespaceSvc.setActiveNamespace($scope.namespace.metadata.name);
+            var destination = activeNamespaceSvc.formatNamespaceRoute('/replicationcontrollers');
+            $location.url(destination);
+          }
+        }
+      ];
+
+      if ($scope.namespace.metadata.name !== 'default') {
+        $scope.cogOptions.unshift({
+          label: 'Delete Namespace...',
+          weight: 300,
           callback: ModalLauncherSvc.open.bind(null, 'confirm', {
             title: 'Delete Namespace',
             message: 'Are you sure you want to delete ' +
@@ -28,8 +44,8 @@ angular.module('bridge.ui')
             btnText: 'Delete Namespace',
             executeFn: getDeleteFn
           }),
-        }
-      ];
+        });
+      }
     }
   };
 });

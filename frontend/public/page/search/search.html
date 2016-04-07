@@ -38,9 +38,7 @@
                 type="radio"/>
             {{kinds.NODE.labelPlural}}
           </a>
-          <a href="#" ng-click="changeKind(kinds.NAMESPACE.id)"
-             ng-if="fields.selectedKindId == kinds.NAMESPACE.id || features.areNamespacesEnabled()"
-             >
+          <a href="#" ng-click="changeKind(kinds.NAMESPACE.id)">
             <input name="selectedKindId"
                 ng-checked="fields.selectedKindId == kinds.NAMESPACE.id"
                 type="radio"/>

@@ -24,7 +24,7 @@ angular.module('bridge', [
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
                  configSvcProvider, errorMessageSvcProvider, flagSvcProvider,
-                 k8sConfigProvider, namespacesSvcProvider) {
+                 k8sConfigProvider, activeNamespaceSvcProvider) {
   'use strict';
 
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
@@ -75,9 +75,10 @@ angular.module('bridge', [
     controller: 'NamespacesCtrl',
     templateUrl: '/static/page/namespaces/namespaces.html',
     title: 'Namespaces',
+    reloadOnSearch: false,
   });
 
-  namespacesSvcProvider.registerNamespaceFriendlyPrefix('events');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('events');
   r('/all-namespaces/events', {
     controller: 'EventsCtrl',
     templateUrl: '/static/page/events/events.html',
@@ -89,7 +90,7 @@ angular.module('bridge', [
     title: 'Events',
   });
 
-  namespacesSvcProvider.registerNamespaceFriendlyPrefix('services');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('services');
   r('/all-namespaces/services', {
     controller: 'ServicesCtrl',
     templateUrl: '/static/page/services/services.html',
@@ -116,7 +117,7 @@ angular.module('bridge', [
     title: 'Service Pods',
   });
 
-  namespacesSvcProvider.registerNamespaceFriendlyPrefix('replicationcontrollers');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicationcontrollers');
   r('/all-namespaces/replicationcontrollers', {
     controller: 'ReplicationcontrollersCtrl',
     templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
@@ -148,7 +149,7 @@ angular.module('bridge', [
     title: 'Replication Controller Pods',
   });
 
-  namespacesSvcProvider.registerNamespaceFriendlyPrefix('pods');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
   r('/all-namespaces/pods', {
     controller: 'PodsCtrl',
     templateUrl: '/static/page/pods/pods.html',

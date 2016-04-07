@@ -9,9 +9,9 @@ angular.module('bridge.page')
 
   $scope.execute = function() {
     $scope.requestPromise = executeFn(null, {
-        supressNotifications: true
-      })
-      .success($uibModalInstance.close);
+      supressNotifications: true
+    })
+    .then($uibModalInstance.close);
   };
 
   $scope.cancel = function() {

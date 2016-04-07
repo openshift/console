@@ -1,71 +1,117 @@
-describe('bridge.service.namespacesSvc', function() {
+describe('bridge.service.activeNamespaceSvc', function() {
   'use strict';
-  var namespacesSvc;
+  var activeNamespaceSvc, setPath, mockPath;
 
   beforeEach(module('bridge.const'));
   beforeEach(module('bridge.service'));
 
-  beforeEach(module(function(namespacesSvcProvider) {
-    namespacesSvcProvider.clearPrefixes();
-    namespacesSvcProvider.registerNamespaceFriendlyPrefix('pods');
+  beforeEach(module(function($provide) {
+    $provide.value('$location', {
+      path: function(newPath) {
+        if (!_.isUndefined(newPath)) {
+          setPath = newPath;
+        }
+        return mockPath;
+      }
+    });
+
+    $provide.value('namespaceCacheSvc', {
+      get: function(name) {
+        return name;
+      }
+    });
+
   }));
 
-  beforeEach(inject(function(_namespacesSvc_) {
-    namespacesSvc = _namespacesSvc_;
+  beforeEach(module(function(activeNamespaceSvcProvider) {
+    activeNamespaceSvcProvider.clearPrefixes();
+    activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
   }));
+
+  beforeEach(inject(function(_activeNamespaceSvc_) {
+    activeNamespaceSvc = _activeNamespaceSvc_;
+  }));
+
+  beforeEach(function() {
+    setPath = '*UNSET*'
+  });
 
   describe('setActiveNamespace', function() {
     it('sets active namespace in memory and local storage', function() {
       var expected = 'test';
-      namespacesSvc.setActiveNamespace(expected);
+      mockPath = '/not-a-namespaced-path';
+      activeNamespaceSvc.setActiveNamespace(expected);
+      expect(setPath).toEqual('*UNSET*');
 
-      expect(namespacesSvc.getActiveNamespace()).toEqual(expected);
+      expect(activeNamespaceSvc.getActiveNamespace()).toEqual(expected);
       expect(localStorage.getItem('activeNamespace')).toEqual(expected);
-      expect(!_.isUndefined(namespacesSvc.getActiveNamespace())).toBe(true);
+      expect(!_.isUndefined(activeNamespaceSvc.getActiveNamespace())).toBe(true);
     });
-  });
 
-  describe('clearActiveNamespace', function() {
     it('clears active namespace in memory and local storage', function() {
-      namespacesSvc.setActiveNamespace('test');
-      namespacesSvc.clearActiveNamespace();
+      activeNamespaceSvc.setActiveNamespace('test');
+      activeNamespaceSvc.setActiveNamespace(undefined);
 
-      expect(_.isUndefined(namespacesSvc.getActiveNamespace())).toBe(true);
-      expect(namespacesSvc.getActiveNamespace()).toEqual(undefined);
+      expect(_.isUndefined(activeNamespaceSvc.getActiveNamespace())).toBe(true);
+      expect(activeNamespaceSvc.getActiveNamespace()).toEqual(undefined);
       expect(localStorage.getItem('activeNamespace')).toEqual(null);
     });
-  });
 
-  describe('namespaceResourceFromPath', function() {
-    it('parses resource from path', function () {
-      expect(namespacesSvc.namespaceResourceFromPath('/')).toEqual('');
-      expect(namespacesSvc.namespaceResourceFromPath('/gribbl')).toEqual('gribbl');
-      expect(namespacesSvc.namespaceResourceFromPath('gribbl')).toEqual('gribbl');
-      expect(namespacesSvc.namespaceResourceFromPath('/pods')).toEqual('pods');
-      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods')).toEqual('pods');
-      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods/WACKY_SUFFIX')).toEqual('pods');
+    it('should redirect namespaced location paths for known namespace-friendly prefixes', function() {
+      mockPath = '/ns/floorwax/pods';
+      activeNamespaceSvc.setActiveNamespace('dessert-topping');
+      expect(setPath).toEqual('/ns/dessert-topping/pods');
     });
 
-    it('parses resources that contain a slash correctly', function() {
-      expect(namespacesSvc.namespaceResourceFromPath('//')).toEqual('/');
-      expect(namespacesSvc.namespaceResourceFromPath('/settings/users')).toEqual('settings/users');
-      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods/don\'t/lets/start')).toEqual('pods');
-      expect(namespacesSvc.namespaceResourceFromPath('ns/foo/pods/bar//baz')).toEqual('pods');
-      expect(namespacesSvc.namespaceResourceFromPath('/all-namespaces/pods/terminal/')).toEqual('pods');
+    it('should redirect namespaced location paths to their prefixes', function() {
+      mockPath = '/ns/floorwax/pods/new-shimmer';
+      activeNamespaceSvc.setActiveNamespace('dessert-topping');
+      expect(setPath).toEqual('/ns/dessert-topping/pods');
     });
 
+    it('should redirect to all if no namespaces is selected', function() {
+      mockPath = '/ns/floorwax/pods';
+      activeNamespaceSvc.setActiveNamespace(null);
+      expect(setPath).toEqual('/all-namespaces/pods');
+    });
+
+    it('should not redirect if the current path isn\'t namespaced', function() {
+      mockPath = '/not-a-namespaced-path';
+      activeNamespaceSvc.setActiveNamespace('dessert-topping');
+      expect(setPath).toEqual('*UNSET*');
+    });
   });
 
   describe('formatNamespaceRoute', function() {
     it('formats a route correctly without an active namespace', function() {
-      expect(namespacesSvc.formatNamespaceRoute('/pods')).toEqual('/all-namespaces/pods');
-      expect(namespacesSvc.formatNamespaceRoute('/pods/GRIBBL')).toEqual('/all-namespaces/pods/GRIBBL');
+      activeNamespaceSvc.setActiveNamespace();
+      expect(activeNamespaceSvc.formatNamespaceRoute('/pods')).toEqual('/all-namespaces/pods');
+      expect(activeNamespaceSvc.formatNamespaceRoute('/pods/GRIBBL')).toEqual('/all-namespaces/pods/GRIBBL');
     });
 
     it('formats a route with the current active namespace', function() {
-      namespacesSvc.setActiveNamespace('test');
-      expect(namespacesSvc.formatNamespaceRoute('/pods')).toEqual('/ns/test/pods');
-      expect(namespacesSvc.formatNamespaceRoute('/pods/GRIBBL')).toEqual('/ns/test/pods/GRIBBL');
+      activeNamespaceSvc.setActiveNamespace('test');
+      expect(activeNamespaceSvc.formatNamespaceRoute('/pods')).toEqual('/ns/test/pods');
+      expect(activeNamespaceSvc.formatNamespaceRoute('/pods/GRIBBL')).toEqual('/ns/test/pods/GRIBBL');
+    });
+
+    it('parses resource from path', function () {
+      activeNamespaceSvc.setActiveNamespace();
+      expect(activeNamespaceSvc.formatNamespaceRoute('/')).toEqual('/all-namespaces/');
+      expect(activeNamespaceSvc.formatNamespaceRoute('/gribbl')).toEqual('/all-namespaces/gribbl');
+      expect(activeNamespaceSvc.formatNamespaceRoute('gribbl')).toEqual('/all-namespaces/gribbl');
+      expect(activeNamespaceSvc.formatNamespaceRoute('/pods')).toEqual('/all-namespaces/pods');
+      expect(activeNamespaceSvc.formatNamespaceRoute('ns/foo/pods')).toEqual('/all-namespaces/pods');
+      expect(activeNamespaceSvc.formatNamespaceRoute('ns/foo/pods/WACKY_SUFFIX')).toEqual('/all-namespaces/pods');
+    });
+
+    it('parses resources that contain a slash correctly', function() {
+      activeNamespaceSvc.setActiveNamespace();
+      expect(activeNamespaceSvc.formatNamespaceRoute('//')).toEqual('/all-namespaces/');
+      expect(activeNamespaceSvc.formatNamespaceRoute('/settings/users')).toEqual('/all-namespaces/settings/users');
+      expect(activeNamespaceSvc.formatNamespaceRoute('ns/foo/pods/don\'t/lets/start')).toEqual('/all-namespaces/pods');
+      expect(activeNamespaceSvc.formatNamespaceRoute('ns/foo/pods/bar//baz')).toEqual('/all-namespaces/pods');
+      expect(activeNamespaceSvc.formatNamespaceRoute('/all-namespaces/pods/terminal/')).toEqual('/all-namespaces/pods');
     });
   });
 });

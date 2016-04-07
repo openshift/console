@@ -1,5 +1,5 @@
 angular.module('bridge.service')
-.provider('namespacesSvc', function(CONST) {
+.provider('activeNamespaceSvc', function(CONST) {
   'use strict';
 
   // This module supports users viewing resources based on namespace,
@@ -30,7 +30,7 @@ angular.module('bridge.service')
     prefixes = [];
   };
 
-  this.$get = function(_, coLocalStorage) {
+  this.$get = function(_, $location, coLocalStorage, namespaceCacheSvc) {
     var activeNamespace = coLocalStorage.getItem('activeNamespace') || undefined;
     var prefixOf = function(s) {
       var ret = _.find(prefixes, function(prefix) {
@@ -44,54 +44,54 @@ angular.module('bridge.service')
       return ret;
     };
 
+
+    var isNamespaced = function(path) {
+      return path.match(nsPathPattern) || path.match(allNsPathPattern);
+    };
+
     return {
       setActiveNamespace: function(namespace) {
-        if (_.isUndefined(namespace)) {
-          return;
+        var oldPath;
+
+        if (!namespace) {
+          activeNamespace = undefined;
+          coLocalStorage.removeItem('activeNamespace');
+        } else {
+          activeNamespace = namespace.trim();
+          coLocalStorage.setItem('activeNamespace', activeNamespace);
         }
 
-        namespace = namespace.trim();
-        activeNamespace = namespace;
-        coLocalStorage.setItem('activeNamespace', namespace);
+        oldPath = $location.path();
+        if (isNamespaced(oldPath)) {
+          $location.path(this.formatNamespaceRoute(oldPath));
+        }
       },
 
       getActiveNamespace: function() {
-        return activeNamespace;
-      },
-
-      clearActiveNamespace: function() {
-        activeNamespace = undefined;
-        coLocalStorage.removeItem('activeNamespace');
-      },
-
-      isNamespaced: function(path) {
-        return path.match(nsPathPattern) || path.match(allNsPathPattern);
+        return namespaceCacheSvc.get(activeNamespace);
       },
 
       formatNamespaceRoute: function(originalPath) {
-        var resource = this.namespaceResourceFromPath(originalPath),
-            namespacePrefix;
+        var namespacePrefix,
+            resource = originalPath,
+            active = this.getActiveNamespace();
 
-        if (!activeNamespace) {
+        var match = isNamespaced(originalPath);
+        if (match) {
+          resource = prefixOf(match[1]);
+        }
+
+        while(resource[0] === '/') {
+          resource = resource.substr(1);
+        }
+
+        if (!active) {
           namespacePrefix = '/all-namespaces/';
         } else {
-          namespacePrefix = '/ns/' + activeNamespace + '/';
+          namespacePrefix = '/ns/' + active.metadata.name + '/';
         }
 
         return namespacePrefix + resource;
-      },
-
-      namespaceResourceFromPath: function(path) {
-        var match = this.isNamespaced(path);
-        if (match) {
-          return prefixOf(match[1]);
-        }
-
-        if (path[0] === '/') {
-          return path.substr(1);
-        }
-
-        return path;
       }
     };
   }; // $get

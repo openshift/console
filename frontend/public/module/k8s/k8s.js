@@ -93,9 +93,10 @@ angular.module('k8s')
   };
 
   this.namespaces = {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.NAMESPACE),
-    delete: _.partial(k8sResource.delete, k8sEnum.Kind.NAMESPACE),
     create: _.partial(k8sResource.create, k8sEnum.Kind.NAMESPACE),
+    delete: _.partial(k8sResource.delete, k8sEnum.Kind.NAMESPACE),
+    get: _.partial(k8sResource.get, k8sEnum.Kind.NAMESPACE),
+    list: _.partial(k8sResource.list, k8sEnum.Kind.NAMESPACE),
   };
 
   this.health = function() {

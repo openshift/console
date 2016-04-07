@@ -1,0 +1,31 @@
+<div class="co-m-namespace-list-menu">
+  <div cos-tristate="vm.namespaceCacheSvc.namespaces"
+       cos-tristate-error="vm.namespaceCacheSvc.loadError">
+    <div class="cos-tristate-show-ready">
+      <div class="co-m-facet-menu__title">
+        <div>Name</div>
+      </div>
+      <ul class="co-resource-list-menu__option-list co-m-table-grid__body">
+        <li ng-repeat="namespace in vm.namespaceCacheSvc.namespaces | filter:search:strict track by namespace.metadata.uid"
+            class="co-m-facet-menu-option"
+            ng-class="{'co-m-facet-option--active': namespace.metadata.uid === vm.chosen.metadata.uid}"
+            ng-click="vm.chosen = namespace"
+            class="co-m-facet-option--namespace-menu">
+          <co-resource-icon kind="namespace"></co-resource-icon>
+          <span ng-bind="namespace.metadata.name"></span>
+          <div class="co-m-facet-option__cog"
+               ><co-namespace-cog anchor="right"
+                                  ng-if="namespace.metadata.uid === vm.chosen.metadata.uid"
+                                  namespace="namespace"></co-namespace-cog></div>
+        </li>
+      </ul>
+    </div>
+    <div class="cos-tristate-show-loading co-resource-list-menu__loader">
+      <co-loader class="co-resource-list-menu__loader-throb"></co-loader>
+    </div>
+    <cos-status-box class="cos-tristate-show-error">
+      <div class="cos-error-title">Error Loading Namespaces</div>
+      <div class="cos-text-center">An error occurred during namespace retrieval. Please try again.</div>
+    </cos-status-box>
+  </div>
+</div>
