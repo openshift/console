@@ -1,5 +1,5 @@
 angular.module('bridge.ui')
-.directive('coNamespaceList', function(_, k8s, namespaceCacheSvc, resourceMgrSvc) {
+.directive('coNamespaceList', function(_, k8s, namespaceCacheSvc) {
   'use strict';
 
   return {

@@ -11,7 +11,7 @@ angular.module('bridge.ui')
       search: '=',
       chosen: '=',
     },
-    controller: function($scope, $attrs) {
+    controller: function($scope) {
       var vm = this;
       vm.namespaceCacheSvc = namespaceCacheSvc;
 
