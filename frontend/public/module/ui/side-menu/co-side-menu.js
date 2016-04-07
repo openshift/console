@@ -28,7 +28,6 @@ angular.module('bridge.ui')
         e.preventDefault();
       };
 
-      // TODO the whole point of this exercise
       $scope.setActiveNamespace = _.bind(activeNamespaceSvc.setActiveNamespace, activeNamespaceSvc);
       $scope.createNamespace = function() {
         ModalLauncherSvc.open('new-namespace');
