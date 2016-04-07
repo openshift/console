@@ -1,5 +1,5 @@
 angular.module('bridge.service')
-  .factory('namespaceCacheSvc', function(_, $rootScope, k8s) {
+.factory('namespaceCacheSvc', function(_, $rootScope, k8s) {
   // We need a list of namespaces as part of the base UI, so we can
   // just eagerly load'um up and keep track of them.
 
