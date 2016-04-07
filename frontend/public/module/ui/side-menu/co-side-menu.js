@@ -71,7 +71,7 @@ angular.module('bridge.ui')
       }
 
       $('body').on('click', closeSideMenuOnClick);
-      scope.$on('destroy', function() {
+      scope.$on('$destroy', function() {
         $('body').off('click', closeSideMenuOnClick);
       });
     },
