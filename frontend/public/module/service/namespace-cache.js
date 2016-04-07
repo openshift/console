@@ -14,10 +14,10 @@ angular.module('bridge.service')
       });
     },
     create: function(spec) {
-      return k8s.namespaces.create(spec).then(reloadLater);
+      return k8s.namespaces.create(spec);
     },
     delete: function(namespace) {
-      return k8s.namespaces.delete(namespace).then(reloadLater);
+      return k8s.namespaces.delete(namespace);
     }
   };
 
