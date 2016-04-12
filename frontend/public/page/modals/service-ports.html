@@ -27,7 +27,7 @@
           <label for="service-ports__target-port">Pod Port:</label>
         </div>
         <div class="col-sm-9">
-          <input id="service-ports__target-port" ng-model="fields.targetPort" autofocus min="0" max="65535" class="form-control" type="number"/>
+          <input id="service-ports__target-port" ng-model="fields.targetPort" min="0" max="65535" class="form-control" type="number"/>
           <small class="text-muted">
             A port exposed by pods matching the service's label query.
             Traffic originating at the service port will reach pods at this port.
