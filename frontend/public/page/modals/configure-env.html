@@ -24,7 +24,7 @@
             <div class="co-m-table-grid__body">
               <div class="row" ng-repeat="e in rowMgr.items">
                 <div class="col-sm-5">
-                  <input ng-focus="rowMgr.growIfLast($index)" ng-model="e.name" class="form-control" type="text"/>
+                  <input ng-focus="rowMgr.growIfLast($index)" ng-model="e.name" class="form-control" type="text" ng-attr-autofocus="{{$first}}"/>
                 </div>
                 <div class="col-sm-1"></div>
                 <div class="col-sm-5">

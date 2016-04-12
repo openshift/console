@@ -25,7 +25,7 @@
             <div class="row co-m-table-grid__body">
               <div class="row co-m-table-grid-row--compact" ng-repeat="v in rowMgr.items">
                 <div class="col-sm-4">
-                  <input ng-model="v.name" ng-focus="rowMgr.growIfLast($index)" class="form-control co-m-form-field-sm" type="text"/>
+                  <input ng-model="v.name" ng-focus="rowMgr.growIfLast($index)" class="form-control co-m-form-field-sm" type="text" ng-attr-autofocus="{{$first}}"/>
                 </div>
                 <div class="col-sm-3">
                   <select ng-model="v.type" ng-change="onTypeChange(v)" ng-focus="rowMgr.growIfLast($index)" class="form-control">

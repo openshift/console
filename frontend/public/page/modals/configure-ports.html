@@ -23,7 +23,7 @@
             <div class="co-m-table-grid__body">
               <div class="row" ng-repeat="p in rowMgr.items">
                 <div class="col-sm-6">
-                  <input ng-model="p.name" ng-focus="rowMgr.growIfLast($index)" class="form-control" type="text"/>
+                  <input ng-model="p.name" ng-focus="rowMgr.growIfLast($index)" class="form-control" type="text" ng-attr-autofocus="{{$first}}"/>
                 </div>
                 <div class="col-sm-5">
                   <input ng-model="p.containerPort" ng-focus="rowMgr.growIfLast($index)" min="0" max="65535" class="form-control" type="number"/>

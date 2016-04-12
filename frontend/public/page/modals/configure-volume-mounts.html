@@ -28,7 +28,7 @@
                 <div class="col-sm-3">
                   <select ng-model="v.name" class="form-control"
                       ng-focus="rowMgr.growIfLast($index)"
-                      ng-options="v.name as getDropdownLabel(v) for v in volumes">
+                      ng-options="v.name as getDropdownLabel(v) for v in volumes" ng-attr-autofocus="{{$first}}">
                   </select>
                 </div>
                 <div class="col-sm-1">
