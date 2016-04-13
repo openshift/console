@@ -56,6 +56,15 @@
                         <co-service-ip-link service="service"></co-service-ip-link>
                       </div>
                     </div>
+                    <div class="row co-ip-row">
+                      <div class="col-lg-6">
+                        <p class="ip-name">Node Port</p>
+                        <p class="ip-desc">Accessible outside the cluster</p>
+                      </div>
+                      <div class="col-lg-2">
+                        <p ng-bind-template=":{{service.spec.ports[0].targetPort}}"></p>
+                      </div>
+                    </div>
                     <div ng-if="hasLoadBalancer()" class="row co-ip-row">
                       <div class="col-lg-6">
                         <p class="ip-name">External Load Balancer</p>
