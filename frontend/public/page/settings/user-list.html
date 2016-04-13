@@ -19,8 +19,9 @@
           <div class="co-p-users__email" ng-bind="user.email"></div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+          <span ng-if="!user.emailVerified">Pending</span>
           <span ng-if="user.disabled">Disabled</span>
-          <span ng-if="!user.disabled">Active</span>
+          <span ng-if="!user.disabled && user.emailVerified">Active</span>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-2 hidden-xs">Administrator</div>
         <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs"><co-timestamp timestamp="{{user.createdAt}}"></co-timestamp></div>
