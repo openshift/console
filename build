@@ -9,7 +9,7 @@ export GOPATH=${PWD}/Godeps/_workspace
 export GOBIN=${PWD}/bin
 
 GIT_TAG=`git describe --always --tags HEAD`
-LD_FLAGS="-w -X github.com/$repo_org/$project_dir/version.Version=\"$GIT_TAG\""
+LD_FLAGS="-w -X github.com/$repo_org/$project_dir/version.Version=$GIT_TAG"
 
 rm $GOPATH/src/github.com/$repo_org/$project_dir 2> /dev/null || true
 mkdir -p $GOPATH/src/github.com/$repo_org/
