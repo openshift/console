@@ -1,0 +1,5 @@
+**/*_test.js
+public/bower_components
+public/dist
+*.min.js
+public/lib
