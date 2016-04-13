@@ -40,18 +40,16 @@
             <div class="row">
               <div class="col-sm-6">
                 <dl>
-                  <dt>OS Image</dt>
-                  <dd ng-bind="node.status.nodeInfo.osImage | emptyPlaceholder"></dd>
                   <dt>Kernel Version</dt>
                   <dd ng-bind="node.status.nodeInfo.kernelVersion | emptyPlaceholder"></dd>
                   <dt>Boot ID</dt>
                   <dd ng-bind="node.status.nodeInfo.bootID | emptyPlaceholder"></dd>
+                  <dt>Container Runtime</dt>
+                  <dd ng-bind="node.status.nodeInfo.containerRuntimeVersion | emptyPlaceholder"></dd>
                 </dl>
               </div>
               <div class="col-sm-6">
                 <dl>
-                  <dt>Container Runtime</dt>
-                  <dd ng-bind="node.status.nodeInfo.containerRuntimeVersion | emptyPlaceholder"></dd>
                   <dt>Kubelet Version</dt>
                   <dd ng-bind="node.status.nodeInfo.kubeletVersion | emptyPlaceholder"></dd>
                   <dt>Kube-Proxy Version</dt>
