@@ -7,7 +7,8 @@ angular.module('bridge.page')
     scope: {
       users: '=',
       yourId: '=',
-      reload: '&'
+      reload: '&',
+      search: '=',
     },
     link: function(scope) {
       scope.showDisableModal = function(user, disableIfTrue) {
