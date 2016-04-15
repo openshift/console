@@ -62,7 +62,7 @@
                         <p class="ip-desc">Accessible outside the cluster</p>
                       </div>
                       <div class="col-lg-2">
-                        <p ng-bind-template=":{{service.spec.ports[0].targetPort}}"></p>
+                        <p ng-bind-template=":{{service.spec.ports[0].nodePort}}"></p>
                       </div>
                     </div>
                     <div ng-if="hasLoadBalancer()" class="row co-ip-row">
