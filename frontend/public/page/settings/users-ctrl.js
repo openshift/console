@@ -24,18 +24,23 @@ angular.module('bridge.page')
           maxResults: batchSize,
           nextPageToken: batch.nextPageToken
         }).then(loadRemainingUsers);
-      } else if (latestLoad === thisLoad) {
-        $scope.userGroups = _.groupBy(newUsers, function(u) {
-          if (u.disabled) {
-            return 'disabled';
-          }
-          if (!u.emailVerified) {
-            return 'invited';
-          }
-          return 'active';
-        });
-        $scope.users = newUsers;
       }
+
+      if (latestLoad !== thisLoad) {
+        return;
+      }
+      _.each(newUsers, function (u) {
+        if (u.disabled) {
+          u.status = 'Disabled';
+          return;
+        }
+        if (!u.emailVerified) {
+          u.status = 'Invited';
+          return;
+        }
+        u.status = 'Active';
+      });
+      $scope.users = newUsers;
     };
 
     dex.users.list({maxResults: batchSize})

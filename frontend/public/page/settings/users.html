@@ -1,37 +1,33 @@
 <div class="co-p-users">
   <tec-nav-title title="Manage Users">
-    <a ng-click="newUserModal()" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Add New User</a>
   </tec-nav-title>
+
   <div class="co-m-pane" cos-tristate="users" cos-tristate-error="failed">
     <div class="cos-tristate-show-ready">
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Active Users</h1>
+
+      <div class="co-m-pane__heading" >
+        <div class="row">
+         <!-- col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6 -->
+          <div class="col-lg-12">
+            <h1 class="co-m-pane__title co-m-pane__body__top-controls">
+              Users
+            </h1>
+            <div class="row co-co-m-pane__sub_heading">
+              <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+                <button type="button" ng-click="newUserModal()" class="btn btn-primary">
+                  Add New User
+                </button>
+              </div>
+              <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
+                <input ng-model="userSearch" type="text" class="form-control" placeholder="Filter users by name or email..." />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="co-m-pane__body">
-        <bridge-user-list users="userGroups.active" your-id="yourId" reload="reload"></bridge-user-list>
-      </div><!-- .co-m-pane-body -->
-
-      <div class="co-m-pane__heading" ng-if="userGroups.invited">
-        <h1 class="co-m-pane__title">Invited Users</h1>
-        <div class="co-m-pane__heading__explained text-muted">These users have been invited by an
-        administrator, but they have not verified their identities
-        yet.</div>
-      </div>
-
-      <div class="co-m-pane__body" ng-if="userGroups.invited">
-        <bridge-user-list users="userGroups.invited" your-id="yourId"></bridge-user-list>
-      </div><!-- .co-m-pane-body -->
-
-      <div class="co-m-pane__heading" ng-if="userGroups.disabled">
-        <h1 class="co-m-pane__title">Disabled Users</h1>
-        <div class="co-m-pane__heading__explained text-muted">These users have been disabled by an
-        administrator. They do not currently have access to Tectonic.</div>
-      </div>
-
-      <div class="co-m-pane__body" ng-if="userGroups.disabled">
-        <bridge-user-list users="userGroups.disabled" your-id="yourId" reload="reload"></bridge-user-list>
+        <bridge-user-list users="users" your-id="yourId" reload="reload" search="userSearch"></bridge-user-list>
       </div><!-- .co-m-pane-body -->
     </div><!-- .cos-tristate-show-ready -->
 
