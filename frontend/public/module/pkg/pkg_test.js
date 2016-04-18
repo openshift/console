@@ -150,7 +150,7 @@ describe('core.pkg', function() {
 
     it('uses an object predicate function to generate labels', function() {
       function key(v, k) { return k; }
-      function val(v, k) { return v; }
+      function val(v) { return v; }
       function both(v, k) { return k + ':' + v; }
 
       var sep = ', ';
