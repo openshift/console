@@ -17,7 +17,9 @@ describe('bridge.service.activeNamespaceSvc', function() {
 
     $provide.value('namespaceCacheSvc', {
       get: function(name) {
-        return name;
+        if (name) {
+          return {metadata: {name: name}};
+        }
       }
     });
 
@@ -43,7 +45,7 @@ describe('bridge.service.activeNamespaceSvc', function() {
       activeNamespaceSvc.setActiveNamespace(expected);
       expect(setPath).toEqual('*UNSET*');
 
-      expect(activeNamespaceSvc.getActiveNamespace()).toEqual(expected);
+      expect(activeNamespaceSvc.getActiveNamespace().metadata.name).toEqual(expected);
       expect(localStorage.getItem('activeNamespace')).toEqual(expected);
       expect(!_.isUndefined(activeNamespaceSvc.getActiveNamespace())).toBe(true);
     });
