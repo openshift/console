@@ -23,7 +23,6 @@ var distDir = './public/dist',
     jsSrc = [
       './public/*.js',
       './public/{module,page}/**/*.js',
-      '!./public/{module,page}/**/*_test.js',
       '!./public/dist/*.js',
     ];
 
