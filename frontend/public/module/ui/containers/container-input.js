@@ -98,7 +98,7 @@ angular.module('bridge.ui')
           }
         } else {
           $scope.fields.containerImage = image;
-	}
+        }
       }
 
       $scope.fields = getEmptyFields();
