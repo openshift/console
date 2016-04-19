@@ -11,7 +11,7 @@ angular.module('bridge.filter')
       return 'Terminating';
     }
 
-    var ret = pod.status.phase;
+    let ret = pod.status.phase;
     if (pod.status.reason) {
       ret = pod.status.reason;
     }
@@ -36,7 +36,7 @@ angular.module('bridge.filter')
 .filter('podsFilter', function($filter) {
   'use strict';
 
-  var podPhase = $filter('podPhase');
+  const podPhase = $filter('podPhase');
 
   function queryEmpty(q) {
     if (!q || !q.phase) {
