@@ -163,7 +163,7 @@ describe('bridge.service', function() {
       var equals = plausibleK8sYAML.split(/\n/);
       expect(generated.length).toEqual(equals.length);
 
-      _.zip(generated, equals).forEach(function(ge, i) {
+      _.zip(generated, equals).forEach(function(ge) {
         expect(ge[0]).toEqual(ge[1]);
       });
     });
