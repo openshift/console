@@ -3,6 +3,7 @@
   "description": "CoreOS Dashboard",
   "repository": "https://github.com/coreos-inc/bridge",
   "version": "0.1.0",
+  "private": true,
   "devDependencies": {
     "del": "2.2.0",
     "gulp": "3.9.1",
@@ -24,6 +25,6 @@
     "run-sequence": "1.1.5"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">4.3.0"
   }
 }
