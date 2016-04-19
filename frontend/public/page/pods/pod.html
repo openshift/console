@@ -31,7 +31,7 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
               <dl>
                 <dt>Status</dt>
-                <dd ng-bind="pod.status.phase"></dd>
+                <dd ng-bind="pod|podPhase"></dd>
                 <dt>Pod IP</dt>
                 <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
                 <dt>Node</dt>
