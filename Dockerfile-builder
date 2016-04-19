@@ -2,12 +2,15 @@
 # (and committing your edits) you should run ./push-builder to
 # push a new version of your image to quay.io/coreos/tectonic-console-builder
 
-FROM golang:1.5.3
+FROM golang:1.6.1
 
 MAINTAINER Joe Bowers - CoreOS
 
 RUN echo deb http://ftp.us.debian.org/debian sid main > /etc/apt/sources.list
-RUN echo deb https://deb.nodesource.com/node_5.x sid main > /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get install --no-install-recommends -y -q sudo wget jq npm nodejs
-RUN ln -s /usr/bin/nodejs /usr/bin/node
+RUN apt-get install -y -q apt-transport-https
+
+RUN echo deb https://deb.nodesource.com/node_5.x sid main >> /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install --no-install-recommends -y -q wget jq sudo
+RUN apt-get install --no-install-recommends --allow-unauthenticated -y -q nodejs
