@@ -7,6 +7,7 @@ FROM golang:1.5.3
 MAINTAINER Joe Bowers - CoreOS
 
 RUN echo deb http://ftp.us.debian.org/debian sid main > /etc/apt/sources.list
+RUN echo deb https://deb.nodesource.com/node_5.x sid main > /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get install --no-install-recommends -y -q sudo wget jq npm
+RUN apt-get install --no-install-recommends -y -q sudo wget jq npm nodejs
 RUN ln -s /usr/bin/nodejs /usr/bin/node
