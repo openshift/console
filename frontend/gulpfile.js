@@ -9,6 +9,7 @@ var exec = require('child_process').exec,
     ngAnnotate = require('gulp-ng-annotate'),
     rename = require('gulp-rename'),
     concat = require('gulp-concat'),
+    babel = require('gulp-babel'),
     htmlReplace = require('gulp-html-replace'),
     merge = require('merge-stream');
     bowerFiles = require('main-bower-files'),
@@ -107,6 +108,7 @@ gulp.task('js-build', function() {
   return gulp.src(jsSrc)
     .pipe(concat('app.js'))
     .pipe(ngAnnotate())
+    .pipe(babel({presets: ['es2015']}))
     .pipe(gulp.dest(distDir))
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
