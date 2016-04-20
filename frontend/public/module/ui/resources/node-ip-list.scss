@@ -1,11 +1,16 @@
-.co-node-ip {
-  padding: 0 0 10px 0;
-  margin: 0;
-  line-height: 14px;
+.pad-line {
+  padding: 5px 0;
+}
 
-  &:last-child {
-    padding: 0;
+.co-node-ip {
+  margin: 0;
+  padding: 0;
+  line-height: 14px;
+  p {
+    @extend .pad-line;
+    margin: 0;
   }
+  
 }
 
 .co-ip-type {

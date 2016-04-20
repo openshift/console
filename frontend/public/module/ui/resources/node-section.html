@@ -1,0 +1,45 @@
+<div>
+  <div class="co-m-pane__heading" ng-if="trusted || nodes.length">
+    <div class="row">
+      <div class="col-xs-12">
+        <h1 class="co-m-pane__title" ng-bind="title"></h1>
+      </div>
+    </div>
+    <div class="row co-m-pane__sub__heading">
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <p class="text-muted small" ng-bind="description">
+        </p>
+      </div>
+        
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
+          <label ng-class="{'btn-unselected': passByRef.compacted=='false', 'btn-selected': passByRef.compacted=='true'}" class="btn compaction-btn">
+            <input type="radio" ng-model="passByRef.compacted" value='true'> Compact
+          </label>
+          <label ng-class="{'btn-unselected': passByRef.compacted=='true', 'btn-selected': passByRef.compacted=='false'}" class="btn compaction-btn">
+            <input type="radio" ng-model="passByRef.compacted" value='false'> Expand
+          </label>
+        </div>
+        <input ng-model="passByRef.namefilter" type="text" class="form-control node-search input-sm pull-right" placeholder="Search for a node..." />
+      </div>
+    </div>
+  </div>
+
+  <div class="co-m-pane__body" ng-if="trusted || nodes.length">
+    <div class="row">
+      <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+        <div class="co-facet-container--left">
+          <co-facet-menu model="facetFilter" title="Node Status" ng-init="facetFilter=''" class="no-margin">
+            <co-facet-menu-option value="">All Statuses</co-facet-menu-option>
+            <co-facet-menu-option value="true">Ready</co-facet-menu-option>
+            <co-facet-menu-option value="false">Not Ready</co-facet-menu-option>
+          </co-facet-menu>
+          <co-debug obj="facetFilter"></co-debug>
+        </div>
+      </div>
+      <div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
+        <co-node-list class="co-facet-container--right" filter="facetFilter" namefilter="passByRef.namefilter" trusted="trusted" compacted="passByRef.compacted" nodes="nodes"></co-node-list>
+      </div>
+    </div>
+  </div><!-- pane body -->
+</div>
