@@ -1,27 +1,38 @@
 <div class="co-m-node-list co-m-table-grid co-m-table-grid--bordered">
 
   <div class="row co-m-table-grid__head">
-    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">Node Name</div>
-    <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Status</div>
-    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">Node Labels</div>
-    <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">Node Addresses</div>
+    <div class="col-xs-4">Node Name</div>
+    <div class="col-xs-4">Status</div>
+    <div class="col-xs-4">Node Addresses</div>
   </div>
 
   <div cos-tristate="nodes" cos-tristate-error="loadError" class="co-m-table-grid__body">
-    <div class="row co-m-table-grid--clickable"
-        ng-repeat-start="n in filteredNodes=(nodes | filter:searchFilter | nodesFilter:nodesFilterQuery | orderBy:'metadata.name') track by n.metadata.uid"
-        ng-click="open = !open">
-      <div class="col-lg-2 col-md-3 col-sm-4 col-xs-5">
-        <co-node-cog node="n"></co-node-cog>
-        <co-resource-icon kind="node"></co-resource-icon>
-        <a ng-href="/nodes/{{n.metadata.name}}" ng-bind="n.metadata.name"></a>
+    <div class="row co-m-table-grid--clickable" ng-repeat-start="n in filteredNodes" ng-click="open = !open">
+      <div class="middler">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+          <co-node-cog node="n"></co-node-cog>
+          <co-resource-icon kind="node"></co-resource-icon>
+          <a ng-href="/nodes/{{n.metadata.name}}" ng-bind="n.metadata.name"></a>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+          <div class="pad-line">
+            <span ng-if="isTrusted(n)" class="tpm-trusted"><i class="fa fa-shield"></i>  Trusted</span>
+            <span ng-if="!isTrusted(n)" class="tpm-untrusted"><i class="fa fa-times"></i> Untrusted</span>
+          </div>
+          <div ng-if="compacted=='false'" class="pad-line">
+            <span ng-if="isReady(n)" class="tpm-trusted"> <i class="fa fa-check"></i> Ready</span>
+            <span ng-if="!isReady(n)" class="tpm-untrusted"><i class="fa fa-minus-circle"></i> Not Ready</span>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+  	       <co-node-ip-list compacted="compacted" addresses="n.status.addresses"></co-node-ip-list>
+        </div>
       </div>
-      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="getReadyStateLabel(n) | emptyPlaceholder"></div>
-      <div class="col-lg-5 col-md-5 col-sm-5 col-xs-7">
-        <co-label-list kind="node" labels="n.metadata.labels"></co-label-list>
-      </div>
-      <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">
-	<co-node-ip-list addresses="n.status.addresses"></co-node-ip-list>
+      
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="compacted=='false'">
+        <co-label-list kind="node" labels="n.metadata.labels" expand=true></co-label-list>
       </div>
     </div>
     <div ng-show="open" ng-repeat-end>
@@ -42,5 +53,4 @@
       <div class="cos-text-center" ng-bind-template="{{nodes.length}} node(s) exist, but none match the current filter."></div>
     </cos-status-box>
   </div>
-
 </div>

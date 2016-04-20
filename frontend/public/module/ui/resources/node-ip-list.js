@@ -12,6 +12,7 @@ angular.module('bridge.ui')
     restrict: 'E',
     scope: {
       addresses: '=',
+      compacted: '=',
     },
   };
 });

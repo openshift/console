@@ -1,0 +1,21 @@
+@import '_vars';
+
+.btn-unselected {
+  &:hover {
+    color: $color-highlight-blue;
+  }
+}
+
+.btn-selected {
+  background-color: $color-highlight-blue;
+  color: white;
+  &:hover {
+    background-color: $color-highlight-blue-dark;
+    color: white;
+  }
+}
+
+.middler {
+  display:flex; 
+  align-items: center;
+}
