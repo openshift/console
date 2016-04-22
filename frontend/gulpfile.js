@@ -21,11 +21,18 @@ var distDir = './public/dist',
       './public/{module,page}/**/*.html',
       './public/lib/mochi/img/tectonic-logo.svg',
     ],
-    jsSrc = [
+    lintableSrc = [
       './public/*.js',
       './public/{module,page}/**/*.js',
       '!./public/dist/*.js',
+    ],
+    jsSrc = [
+      './public/*.js',
+      './public/{module,page}/**/*.js',
+      '!./public/{module,page}/**/*_test.js',
+      '!./public/dist/*.js',
     ];
+
 
 gulp.task('sha', function(cb) {
   exec('git rev-parse HEAD', function(err, stdout) {
@@ -63,7 +70,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('lint', function() {
-  return gulp.src(jsSrc)
+  return gulp.src(lintableSrc)
     .pipe(eslint({ useEslintrc: true }))
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
