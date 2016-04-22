@@ -26,7 +26,7 @@ if git diff --quiet HEAD origin/master; then
    docker push quay.io/coreos/tectonic-console:latest
 fi
 
-if [ ! -z ${git_tag} ]; then
+if [ ! -z "${git_tag}" ]; then
     docker tag -f quay.io/coreos/tectonic-console:$git_sha quay.io/coreos/tectonic-console:$git_tag
     docker push quay.io/coreos/tectonic-console:$git_tag
 fi
