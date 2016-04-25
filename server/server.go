@@ -1,9 +1,12 @@
 package server
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"net/url"
+	"os"
+	"path"
 
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
@@ -39,7 +42,6 @@ type Server struct {
 	DexProxyConfig         *ProxyConfig
 	PublicDir              string
 	TectonicVersion        string
-	Templates              *template.Template
 	Auther                 *auth.Authenticator
 	NewUserAuthCallbackURL *url.URL
 }
@@ -103,7 +105,15 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		AuthDisabled:           s.AuthDisabled(),
 		NewUserAuthCallbackURL: s.NewUserAuthCallbackURL.String(),
 	}
-	if err := s.Templates.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
+	tpl := template.New(IndexPageTemplateName)
+	tpl.Delims("[[", "]]")
+	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, IndexPageTemplateName))
+	if err != nil {
+		fmt.Printf("index.html not found in configured public-dir path: %v", err)
+		os.Exit(1)
+	}
+
+	if err := tpls.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

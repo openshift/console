@@ -6,12 +6,10 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"time"
 
 	"github.com/coreos/go-oidc/oidc"
@@ -74,14 +72,6 @@ func main() {
 
 	if *idFile != "" {
 		go stats.GenerateStats(*idFile)
-	}
-
-	tpl := template.New(server.IndexPageTemplateName)
-	tpl.Delims("[[", "]]")
-	tpls, err := tpl.ParseFiles(path.Join(*publicDir, server.IndexPageTemplateName))
-	if err != nil {
-		fmt.Printf("index.html not found in configured public-dir path: %v", err)
-		os.Exit(1)
 	}
 
 	certPool, err := newCertPool(*caFile)
@@ -148,7 +138,6 @@ func main() {
 		DexProxyConfig:  dexCfg,
 		TectonicVersion: *tectonicVersion,
 		PublicDir:       *publicDir,
-		Templates:       tpls,
 	}
 
 	srv.NewUserAuthCallbackURL = validateURLFlag(fs, "host")
