@@ -22,7 +22,7 @@
               <dt>Node ID</dt>
               <dd ng-bind="node.spec.externalID | emptyPlaceholder"></dd>
               <dt>Node Addresses</dt>
-              <dd><co-node-ip-list addresses="node.status.addresses"></co-node-ip-list></dd>
+              <dd><co-node-ip-list addresses="node.status.addresses" compacted="compacted"></co-node-ip-list></dd>
               <dt>Node Labels</dt>
               <dd><co-label-list kind="node" expand="true" labels="node.metadata.labels"></co-label-list></dd>
               <dt>Created</dt>

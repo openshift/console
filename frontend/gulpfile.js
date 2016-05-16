@@ -114,8 +114,8 @@ gulp.task('assets', function() {
 gulp.task('js-build', function() {
   return gulp.src(jsSrc)
     .pipe(concat('app.js'))
-    .pipe(ngAnnotate())
     .pipe(babel({presets: ['es2015']}))
+    .pipe(ngAnnotate())
     .pipe(gulp.dest(distDir))
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())

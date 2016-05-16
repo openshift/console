@@ -33,3 +33,18 @@ small {
 .navbar-brand {
   margin-right: 15px;
 }
+
+.tpm-trusted, .tpm-untrusted {
+  .fa {
+    min-width: 13px; 
+    text-align: center;
+  }  
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.no-padding {
+  padding: 0;
+}

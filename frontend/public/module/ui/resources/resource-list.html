@@ -11,9 +11,9 @@
                load="kind == 'pod'"
                namespace="namespace"
                selector="selector"></co-pod-list>
-  <co-node-list ng-if="kind == 'node'"
-                selector="selector"></co-node-list>
+  <co-node-list-search ng-if="kind == 'node'"
+                selector="selector" /></co-node-list-search>
   <co-namespace-list ng-if="kind == 'namespace'"
                      selector="selector"
-                     ></co-node-list>
+                     ></co-namespace-list>
 </div>

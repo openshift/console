@@ -1,31 +1,27 @@
-angular.module('k8s')
-.service('k8sNodes', function(_) {
-  'use strict';
+'use strict';
 
-  this.isReady = function(node) {
-    var readyState;
+angular.module('k8s')
+.service('k8sNodes', function (_) {
+
+  this.isReady = function isReady (node) {
     if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {
       return false;
     }
 
-    readyState = _.findWhere(node.status.conditions, { type: 'Ready' });
+    const readyState = _.findWhere(node.status.conditions, { type: 'Ready' });
     if (!readyState) {
       return false;
     }
 
-    if (readyState.status.toLowerCase() === true) {
-      return true;
-    }
-
-    if (readyState.status.toLowerCase() === 'true') {
-      return true;
-    }
-
-    return false;
+    return readyState.status === 'True';
   };
 
-  this.getReadyStateLabel = function(node) {
-    return this.isReady(node) ? 'Ready' : 'Not Ready';
-  }.bind(this);
+  this.isTrusted = (node) => {
+    const untrusted = node.metadata.annotations['com.coreos.tpm/untrusted'];
+    if (untrusted === undefined) {
+      return false;
+    }
 
+    return !JSON.parse(untrusted);
+  }
 });
