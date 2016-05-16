@@ -11,26 +11,34 @@ Bridge consists of a frontend webapp and a backend service which serves the foll
 - User Authentication (TBD)
 
 ## Quickstart
-Build the backend:
+
+### Build the backend:
 ```
 ./build
 ```
 
 Backend binaries are output to `/bin`.
 
-Build and package all frontent assets for deployment:
+### Build and package all frontent assets for deployment:
 ```
 ./build-web
 ```
 
 Frontend build assets are output to: `/frontend/public/dist`.
 
-Start the application:
+### Configure the application to run
+
+If you've got a working `kubectl` on your path, you can run the application with
+
 ```
+source ./contrib/environment.sh
 ./bin/bridge
 ```
 
-If running with auth disabled you must provide a Kubernetes bearer token.
+The script in `contrib/environment.sh` sets sensible defaults in the environment, and uses `kubectl` to query your cluster for endpoint and authentication information.
+
+To configure the application to run by hand, (or if `enironment.sh` doesn't work for some reason) you can manually provide a Kubernetes bearer token with the following steps.
+
 First get the secret ID that has a type of `kubernetes.io/service-account-token` by running:
 ```
 kubectl get secrets

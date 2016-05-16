@@ -15,7 +15,7 @@
 
 export BRIDGE_ENABLE_DEX_USER_MANAGEMENT=false
 export BRIDGE_DISABLE_AUTH=true
-export BRIDGE_HOST="http://localapps:9000"
+export BRIDGE_HOST="http://127.0.0.1:9000"
 export BRIDGE_INSECURE_SKIP_VERIFY_K8S_TLS=true
 
 export BRIDGE_K8S_ENDPOINT=$(kubectl config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], clusters: .clusters[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.cluster ==  .clusters.name)' | jq '.clusters.cluster.server' -r)
