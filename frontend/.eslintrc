@@ -5,33 +5,34 @@
   },
   "rules": {
     "camelcase": 2,
-    "curly": [2, "all"],
-    "quotes": [2, "single"],
-    "eqeqeq": 2,
-    "no-eq-null": 2,
-    "guard-for-in": 2,
-    "wrap-iife": [2, "outside"],
-
     "consistent-return": 0,
+    "curly": [2, "all"],
+    "eol-last": [2, "unix"],
+    "eqeqeq": 2,
+    "guard-for-in": 2,
+    "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
     "max-len": [1, 120],
     "no-alert": 1,
     "no-comma-dangle": 0,
     "no-console": 1,
     "no-debugger": 1,
+    "no-eq-null": 2,
     "no-global-strict": 0,
     "no-underscore-dangle": 0,
     "no-unused-vars": 1,
     "no-use-before-define": 0,
+    "quotes": [2, "single"],
+    "wrap-iife": [2, "outside"]
   },
   "globals": {
-    "angular": true,
-    "inject": true,
-    "module": true,
-    "describe": true,
-    "spyOn": true,
-    "beforeEach": true,
     "afterEach": true,
+    "angular": true,
+    "beforeEach": true,
+    "describe": true,
     "expect": true,
-    "it": true
+    "inject": true,
+    "it": true,
+    "module": true,
+    "spyOn": true
   }
 }

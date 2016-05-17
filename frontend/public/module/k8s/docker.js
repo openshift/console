@@ -34,12 +34,13 @@ angular.module('k8s')
   // Nullify empty fields & prep volumes.
   this.clean = function(container) {
     k8sUtil.nullifyEmpty(container, [
-        'ports',
-        'volumeMounts',
-        'env',
-        'command',
-        'dnsPolicy',
-        'volumes']);
+      'ports',
+      'volumeMounts',
+      'env',
+      'command',
+      'dnsPolicy',
+      'volumes'
+    ]);
 
     if (container.resources && container.resources.limits) {
       k8sUtil.deleteNulls(container.resources.limits);
