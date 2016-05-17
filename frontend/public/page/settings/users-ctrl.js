@@ -29,7 +29,7 @@ angular.module('bridge.page')
       if (latestLoad !== thisLoad) {
         return;
       }
-      _.each(newUsers, function (u) {
+      _.forEach(newUsers, function (u) {
         if (u.disabled) {
           u.status = 'Disabled';
           return;

@@ -38,7 +38,7 @@ angular.module('bridge.ui')
 
       $scope.$watchCollection('messages', function() {
         $scope.filteredMessages = _.chain(sysevents($scope.messages, $scope.eventsFilter))
-          .uniq($scope.eventID)
+          .uniqBy($scope.eventID)
           .sortBy((e) => e.object.lastTimestamp)
           .reverse()
           .slice(0, $scope.maxMessages)

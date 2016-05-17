@@ -21,13 +21,13 @@ angular.module('k8s')
 
     stateKey = keys[0];
     state.label = stateKey;
-    _.extend(state, containerStatus.state[stateKey]);
+    _.assign(state, containerStatus.state[stateKey]);
     return state;
   };
 
   this.getStatus = function(pod, containerName) {
     if (pod.status && pod.status.containerStatuses) {
-      return _.findWhere(pod.status.containerStatuses, containerName);
+      return _.find(pod.status.containerStatuses, containerName);
     }
   };
 
@@ -111,7 +111,7 @@ angular.module('k8s')
   }.bind(this);
 
   this.getPullPolicyByValue = function(value) {
-    return _.findWhere(k8sEnum.PullPolicy, { value: value });
+    return _.find(k8sEnum.PullPolicy, { value: value });
   };
 
   this.getPullPolicyById = function(id) {

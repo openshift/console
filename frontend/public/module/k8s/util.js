@@ -26,7 +26,7 @@ angular.module('k8s')
   };
 
   this.getKindEnumById = function(id) {
-    return _.findWhere(k8sEnum.Kind, { id: id});
+    return _.find(k8sEnum.Kind, { id: id});
   };
 
   // Set all named properties of object to null if empty.

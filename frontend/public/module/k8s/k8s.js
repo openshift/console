@@ -45,12 +45,12 @@ angular.module('k8s')
   this.resource = k8sResource;
   this.search = k8sResource.list;
   this.util = k8sUtil;
-  this.nodes = _.extend(k8sNodes, {
+  this.nodes = _.assign(k8sNodes, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.NODE),
     get: _.partial(k8sResource.get, k8sEnum.Kind.NODE),
   });
 
-  this.services = _.extend(k8sServices, {
+  this.services = _.assign(k8sServices, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.SERVICE),
     get: _.partial(k8sResource.get, k8sEnum.Kind.SERVICE),
     delete: _.partial(k8sResource.delete, k8sEnum.Kind.SERVICE),
@@ -64,7 +64,7 @@ angular.module('k8s')
     },
   });
 
-  this.pods = _.extend(k8sPods, {
+  this.pods = _.assign(k8sPods, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.POD),
     get: _.partial(k8sResource.get, k8sEnum.Kind.POD),
     delete: _.partial(k8sResource.delete, k8sEnum.Kind.POD),
@@ -87,7 +87,7 @@ angular.module('k8s')
     }
   });
 
-  this.replicationcontrollers = _.extend(k8sReplicationcontrollers, {
+  this.replicationcontrollers = _.assign(k8sReplicationcontrollers, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.REPLICATIONCONTROLLER),
     get: _.partial(k8sResource.get, k8sEnum.Kind.REPLICATIONCONTROLLER),
     delete: _.partial(k8sResource.delete, k8sEnum.Kind.REPLICATIONCONTROLLER),

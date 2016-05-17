@@ -1,1 +1,1 @@
-angular.module('core.pkg', ['underscore']);
+angular.module('core.pkg', ['lodash']);

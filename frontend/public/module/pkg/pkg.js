@@ -9,7 +9,7 @@ angular.module('core.pkg')
   var pkg = {
 
     /**
-     * Extends underscore.isEmpty() to test values beyond just arrays & objects.
+     * Extends lodash.isEmpty() to test values beyond just arrays & objects.
      */
     isEmpty: function(v) {
       if ((_.isObject(v) || _.isArray(v)) && _.isEmpty(v)) {
@@ -33,7 +33,7 @@ angular.module('core.pkg')
      * Iterates thru all own properties of an object and deletes anything identified by the filter function.
      */
     deleteProps: function(obj, fn) {
-      _.each(obj, function(val, key) {
+      _.forEach(obj, function(val, key) {
         if (fn(val)) {
           delete obj[key];
         }

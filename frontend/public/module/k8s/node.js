@@ -8,7 +8,7 @@ angular.module('k8s')
       return false;
     }
 
-    const readyState = _.findWhere(node.status.conditions, { type: 'Ready' });
+    const readyState = _.find(node.status.conditions, { type: 'Ready' });
     if (!readyState) {
       return false;
     }
