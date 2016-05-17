@@ -4,5 +4,5 @@ angular.module('bridge.page')
 
   $scope.ns = $routeParams.ns;
   $scope.podName = $routeParams.name;
-  $scope.fieldSelector = 'involvedObject.name=' + $scope.podName;
+  $scope.filter = {name: $scope.podName};
 });
