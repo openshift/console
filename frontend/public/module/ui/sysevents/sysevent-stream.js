@@ -37,9 +37,13 @@ angular.module('bridge.ui')
       };
 
       $scope.$watchCollection('messages', function() {
-        var filtered = sysevents($scope.messages, $scope.eventsFilter);
-        var sorted = _.sortBy(filtered, 'lastTimestamp');
-        $scope.filteredMessages = sorted.slice(0, $scope.maxMessages);
+        $scope.filteredMessages = _.chain(sysevents($scope.messages, $scope.eventsFilter))
+          .uniq($scope.eventID)
+          .sortBy((e) => e.object.lastTimestamp)
+          .reverse()
+          .slice(0, $scope.maxMessages)
+          .value()
+        ;
       });
 
       $scope.getTotalMessage = function() {
