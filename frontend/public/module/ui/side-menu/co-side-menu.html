@@ -17,7 +17,7 @@
     </ul>
 
     <ul ng-if="!namespaceCacheSvc.loadError" class="sidemenu-list namespace-list">
-      <li class="namespace-name sidemenu-link" ng-class="activeNamespaceClass(n.metadata.name)" ng-click="setActiveNamespace()">
+      <li class="namespace-name sidemenu-link" ng-class="activeNamespaceClass()" ng-click="setActiveNamespace()">
         <i class="sidemenu-namespace-name" class="co-m-label__icon" />
         <span class="sidemenu-namespace-text" ng-click="clearNamespace(false)">all</span>
       </li>
