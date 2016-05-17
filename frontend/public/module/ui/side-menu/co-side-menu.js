@@ -33,11 +33,11 @@ angular.module('bridge.ui')
         ModalLauncherSvc.open('new-namespace');
       };
 
-      $scope.activeNamespaceClass = function(namespace) {
-        var active = activeNamespaceSvc.getActiveNamespace();
-        if (active && namespace === active.metadata.name) {
+      $scope.activeNamespaceClass = function(namespaceName) {
+        if (activeNamespaceSvc.isNamespaceActive(namespaceName)) {
           return 'co-namespace-icon__selected fa fa-check-circle';
         }
+
         return 'co-namespace-icon__unselected fa fa-circle-thin';
       };
 

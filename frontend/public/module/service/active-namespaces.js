@@ -50,14 +50,14 @@ angular.module('bridge.service')
     };
 
     return {
-      setActiveNamespace: function(namespace) {
+      setActiveNamespace: function(namespaceName) {
         var oldPath;
 
-        if (!namespace) {
+        if (!namespaceName) {
           activeNamespace = undefined;
           coLocalStorage.removeItem('activeNamespace');
         } else {
-          activeNamespace = namespace.trim();
+          activeNamespace = namespaceName.trim();
           coLocalStorage.setItem('activeNamespace', activeNamespace);
         }
 
@@ -69,6 +69,11 @@ angular.module('bridge.service')
 
       getActiveNamespace: function() {
         return namespaceCacheSvc.get(activeNamespace);
+      },
+
+      isNamespaceActive: function(namespaceName) {
+        var isAllActive = !namespaceName && !activeNamespace; // falsy namespace name means virtual "all" namespace
+        return isAllActive || (activeNamespace === namespaceName);
       },
 
       formatNamespaceRoute: function(originalPath) {
