@@ -1,3 +1,5 @@
+import './_module';
+
 angular.module('dex')
 .service('dex', function($window, $http) {
   'use strict';

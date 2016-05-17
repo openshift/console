@@ -18,12 +18,13 @@ module.exports = function(config) {
       'public/bower_components/angular-mocks/angular-mocks.js',
 
       // Actual code & tests.
-      'public/*.js',
-      'public/page/**/*.js',
-      'public/module/**/*.js',
+      'public/*_test.js',
+      'public/**/*_test.js',
 
       // compiled templates
-      'public/dist/templates*.js'
+      'public/dist/templates*.js',
+
+      'public/dist/app-bundle.js'
     ],
 
     reporters: ['progress'],

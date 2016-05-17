@@ -1,38 +1,67 @@
-var exec = require('child_process').exec,
-    del = require('del'),
-    gulp = require('gulp'),
-    sass = require('gulp-sass'),
-    templateCache = require('gulp-angular-templatecache'),
-    runSequence = require('run-sequence'),
-    eslint = require('gulp-eslint'),
-    uglify = require('gulp-uglify'),
-    ngAnnotate = require('gulp-ng-annotate'),
-    rename = require('gulp-rename'),
-    concat = require('gulp-concat'),
-    babel = require('gulp-babel'),
-    htmlReplace = require('gulp-html-replace'),
-    merge = require('merge-stream');
-    bowerFiles = require('main-bower-files'),
-    karma = require('karma').server;
+'use strict';
 
-var distDir = './public/dist',
-    CURRENT_SHA,
-    templateSrc = [
-      './public/{module,page}/**/*.html',
-      './public/lib/mochi/img/tectonic-logo.svg',
-    ],
-    lintableSrc = [
-      './public/*.js',
-      './public/{module,page}/**/*.js',
-      '!./public/dist/*.js',
-    ],
-    jsSrc = [
-      './public/*.js',
-      './public/{module,page}/**/*.js',
-      '!./public/{module,page}/**/*_test.js',
-      '!./public/dist/*.js',
-    ];
+const exec = require('child_process').exec;
+const del = require('del');
+const gulp = require('gulp');
+const sass = require('gulp-sass');
+const templateCache = require('gulp-angular-templatecache');
+const runSequence = require('run-sequence');
+const eslint = require('gulp-eslint');
+const uglify = require('gulp-uglify');
+const ngAnnotate = require('gulp-ng-annotate');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
+const htmlReplace = require('gulp-html-replace');
+const merge = require('merge-stream');
+const bowerFiles = require('main-bower-files');
+const karma = require('karma').server;
+const browserify = require('browserify');
+const babelify = require('babelify');
+const source = require('vinyl-source-stream');
+const streamify = require('gulp-streamify');
 
+const distDir = './public/dist';
+const templateSrc = [
+  './public/{module,page}/**/*.html',
+  './public/lib/mochi/img/tectonic-logo.svg',
+];
+
+const lintableSrc = [
+  './public/*.js',
+  './public/{module,page}/**/*.js',
+  '!./public/dist/*.js',
+];
+
+const jsSrc = [
+  './public/*.js',
+  './public/{module,page}/**/*.js',
+  '!./public/{module,page}/**/*_test.js',
+  '!./public/dist/*.js',
+];
+
+let CURRENT_SHA;
+
+function jsBuild (debug) {
+  return browserify(['./public/_app.js'], {debug, transform: [babelify]})
+    .bundle()
+    // .pipe(rename({ suffix: '.min' }))
+    .pipe(source('app-bundle.js'))
+    .pipe(ngAnnotate())
+}
+
+// Compile all the js source code.
+gulp.task('js-build', function() {
+  return jsBuild(false)
+    .pipe(streamify(uglify()))
+    .pipe(gulp.dest(distDir))
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(gulp.dest(distDir));
+});
+
+
+gulp.task('browserify', () => {
+  return jsBuild(true).pipe(gulp.dest(distDir));
+});
 
 gulp.task('sha', function(cb) {
   exec('git rev-parse HEAD', function(err, stdout) {
@@ -77,7 +106,7 @@ gulp.task('lint', function() {
 });
 
 // Extract & compile dependency code.
-gulp.task('deps', function(cb) {
+gulp.task('deps', function() {
   return merge(
     // NOTE: order in bower.json matters.
     // jquery must appear before angular.
@@ -110,18 +139,6 @@ gulp.task('assets', function() {
     .pipe(gulp.dest('public/dist/img'));
 });
 
-// Compile all the js source code.
-gulp.task('js-build', function() {
-  return gulp.src(jsSrc)
-    .pipe(concat('app.js'))
-    .pipe(babel({presets: ['es2015']}))
-    .pipe(ngAnnotate())
-    .pipe(gulp.dest(distDir))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(uglify())
-    .pipe(gulp.dest(distDir));
-});
-
 // Copy all deps to dist folder for packaging.
 gulp.task('copy-deps', function() {
   return gulp.src('./public/lib/**/*')
@@ -133,7 +150,7 @@ gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'],
   // NOTE: File Order Matters.
   return gulp.src([
       distDir + '/templates.js',
-      distDir + '/app.min.js'
+      distDir + '/app-bundle.min.js'
     ])
     .pipe(concat('build.' + CURRENT_SHA + '.min.js'))
     .pipe(gulp.dest(distDir));
@@ -164,8 +181,9 @@ gulp.task('html', ['sha'], function() {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['lint', 'sass', 'templates'], function() {
+gulp.task('dev', ['lint', 'sass', 'templates', 'browserify'], function() {
   gulp.watch(templateSrc, ['templates']);
+  gulp.watch(jsSrc, ['browserify']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['sass']);
   gulp.watch(jsSrc, ['lint']);
 });
@@ -173,7 +191,7 @@ gulp.task('dev', ['lint', 'sass', 'templates'], function() {
 /**
  * Karma test
  */
-gulp.task('test', ['templates'], function (cb) {
+gulp.task('test', ['templates', 'browserify'], function (cb) {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true

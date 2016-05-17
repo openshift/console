@@ -1,3 +1,7 @@
+import './_module';
+import './ws';
+import './flag-svc';
+
 angular.module('core.pkg')
 .factory('pkg', function($window, _) {
   'use strict';

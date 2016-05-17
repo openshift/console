@@ -24,6 +24,10 @@
     "quotes": [2, "single"],
     "wrap-iife": [2, "outside"]
   },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 6
+  },
   "globals": {
     "afterEach": true,
     "angular": true,
