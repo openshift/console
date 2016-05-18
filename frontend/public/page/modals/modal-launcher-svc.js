@@ -91,7 +91,7 @@ angular.module('bridge.page')
   return {
     open: function(name, resolve) {
       var config = modalConfig[name];
-      _.each(resolve, function(value, key) {
+      _.forEach(resolve, function(value, key) {
         resolve[key] = d3.functor(value);
       });
       config.resolve = resolve;

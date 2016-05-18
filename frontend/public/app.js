@@ -7,7 +7,7 @@ angular.module('bridge', [
   'ngCookies',
   // other deps
   'ui.bootstrap',
-  'underscore',
+  'lodash',
   'jquery',
   'coreos',
   'ngTagsInput',

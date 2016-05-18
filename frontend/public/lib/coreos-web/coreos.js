@@ -2,7 +2,7 @@
   'use strict';
 
   // formally define non-angular external dependencies
-  angular.module('underscore', []).factory('_', function($window) {
+  angular.module('lodash', []).factory('_', function($window) {
     return $window._;
   });
 
@@ -20,18 +20,18 @@
 
   angular.module('coreos.services', [
     'coreos.events',
-    'underscore',
+    'lodash',
     'jquery',
   ]);
   angular.module('coreos.ui', [
     'coreos.events',
-    'underscore',
+    'lodash',
     'jquery',
     'd3',
     'ui.bootstrap',
     'moment'
   ]);
-  angular.module('coreos.filters', ['underscore']);
+  angular.module('coreos.filters', ['lodash']);
   angular.module('coreos.events', []);
   angular.module('coreos', [
     'coreos.events',
@@ -131,12 +131,6 @@ angular.module('coreos.services').provider('apiClient', function() {
 
   // Main factory method.
   this.$get = function apiClientFactory($q, $http, coLocalStorage, pathSvc, _) {
-
-    // Change underscore's template settings for path interpolation.
-    _.templateSettings = {
-      interpolate: /\{(.+?)\}/g
-    };
-
     function prefixCacheKey(key) {
       return (settings.cachePrefix || 'coreos.') + key;
     }
@@ -162,7 +156,7 @@ angular.module('coreos.services').provider('apiClient', function() {
     }
 
     function getApiSettings(name) {
-      return _.findWhere(settings.apis, { name: name });
+      return _.find(settings.apis, { name: name });
     }
 
     function getDiscoveryDoc(apiSettings) {
@@ -233,7 +227,7 @@ angular.module('coreos.services').provider('apiClient', function() {
           results.body = args;
           return results;
         }
-        _.each(args, function(value, key) {
+        _.forEach(args, function(value, key) {
           var paramType;
           if (paramMap[key] && paramMap[key].location) {
             paramType = paramMap[key].location;
@@ -241,7 +235,7 @@ angular.module('coreos.services').provider('apiClient', function() {
             // if not a path or query param it must be in the body
             paramType = 'body';
           }
-          _.extend(results[paramType], _.pick(args, key));
+          _.assign(results[paramType], _.pick(args, key));
         });
         return results;
       }
@@ -257,7 +251,9 @@ angular.module('coreos.services').provider('apiClient', function() {
           if (!_.isEmpty(parsedArgs.path)) {
             // Lazliy create and cache the path interpolation function.
             if (!methodMeta.interpolate_) {
-              methodMeta.interpolate_ = _.template(url);
+              methodMeta.interpolate_ = _.template(url, {
+                interpolate: /\{(.+?)\}/g
+              });
             }
             url = methodMeta.interpolate_(parsedArgs.path);
           }
@@ -269,7 +265,7 @@ angular.module('coreos.services').provider('apiClient', function() {
             description: methodMeta.description
           };
           if (customConfig) {
-            _.extend(config, customConfig);
+            _.assign(config, customConfig);
           }
           return $http(config);
         }.bind(this);
@@ -1427,7 +1423,7 @@ angular.module('coreos.ui')
       var dateFmt = 'MMM DD h:mma';
 
       function get(value) {
-        return _.findWhere(scope.items, { value: value });
+        return _.find(scope.items, { value: value });
       }
 
       scope.items = [
@@ -2467,7 +2463,7 @@ angular.module('coreos.ui')
           for (i = 0; i < values.length; i++) {
             currItem = values[i];
             // Skip white-listed items.
-            if (_.contains(settings.whitelist, keyFn(currItem))) {
+            if (_.some(settings.whitelist, keyFn(currItem))) {
               continue;
             }
             // Skip items above the threshold.
@@ -2501,7 +2497,7 @@ angular.module('coreos.ui')
           while (values.length > settings.maxItems && i < values.length) {
             currItem = values[i];
             // skip whitelisted items.
-            if (_.contains(settings.whitelist, keyFn(currItem))) {
+            if (_.some(settings.whitelist, keyFn(currItem))) {
               i++;
               continue;
             }

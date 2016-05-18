@@ -12,7 +12,7 @@ angular.module('bridge.ui')
     if (!arr) {
       return result;
     }
-    _.each(arr, function(item) {
+    _.forEach(arr, function(item) {
       var parts = item.text.split('=');
       result[parts[0]] = parts[1];
     });
@@ -21,7 +21,7 @@ angular.module('bridge.ui')
 
   function arrayify(obj) {
     var result = [];
-    _.each(obj, function(v, k) {
+    _.forEach(obj, function(v, k) {
       result.push({
         text: k + '=' + v
       });

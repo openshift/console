@@ -8,7 +8,7 @@ angular.module('bridge.page')
 
   k8s.pods.get($routeParams.podName, $scope.ns).then(function(pod) {
     $scope.pod = pod;
-    $scope.container = _.findWhere(pod.spec.containers, { name: $routeParams.name });
+    $scope.container = _.find(pod.spec.containers, { name: $routeParams.name });
     $scope.containerStatus = k8s.docker.getStatus(pod, $routeParams.name);
     $scope.containerState = k8s.docker.getState($scope.containerStatus);
   });

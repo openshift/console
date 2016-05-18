@@ -54,7 +54,7 @@ angular.module('bridge.page')
   }
 
   k8s.pods.get($scope.podName, $scope.ns).then(function(pod) {
-    $scope.containerNames = _.pluck(pod.spec.containers, 'name');
+    $scope.containerNames = _.map(pod.spec.containers, 'name');
   });
 
   logURL = k8s.resource.resourceURL(k8s.enum.Kind.POD, {

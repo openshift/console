@@ -20,7 +20,7 @@ angular.module('bridge.service')
   var DOESNT_NEED_QUOTES = /^[\w\/]([\w\/:+. -]*\w)?$/;
 
   safeWithoutQuotes = function(str) {
-    if (_.includes(reservedWords, str.toLowerCase())) {
+    if (_.some(reservedWords, str.toLowerCase())) {
       return false;
     }
 
@@ -80,7 +80,7 @@ angular.module('bridge.service')
         return '{}';
       }
 
-      blocks = _.chain(obj).pairs().sortBy().map(function(kv) {
+      blocks = _.chain(obj).toPairs().sortBy().map(function(kv) {
         return '\n' + indent + yamlizeObject(kv[0], '') + ': ' + yamlizeObject(kv[1], indent + '  ');
       }).value();
 

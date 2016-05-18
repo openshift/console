@@ -8,7 +8,7 @@ angular.module('k8s')
   this.clean = function(pod) {
     k8sUtil.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
     k8sUtil.nullifyEmpty(pod.spec, ['volumes']);
-    _.each(pod.spec.containers, function(c) {
+    _.forEach(pod.spec.containers, function(c) {
       k8sDocker.clean(c);
     });
     k8sUtil.deleteNulls(pod.metadata);
@@ -28,7 +28,7 @@ angular.module('k8s')
   this.fieldSelectors = fieldSelectors;
 
   this.getRestartPolicyById = function(id) {
-    return _.findWhere(k8sEnum.RestartPolicy, { id: id });
+    return _.find(k8sEnum.RestartPolicy, { id: id });
   };
 
   this.getRestartPolicyLabelById = function(id) {
@@ -61,7 +61,7 @@ angular.module('k8s')
       name: null,
     };
     // Add all known volume types to the empty volume for binding.
-    _.each(k8sEnum.VolumeSource, function(v) {
+    _.forEach(k8sEnum.VolumeSource, function(v) {
       vol[v.id] = null;
     });
     return vol;

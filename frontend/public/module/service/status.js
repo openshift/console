@@ -51,7 +51,7 @@ angular.module('bridge.service')
         };
 
         angular.forEach(items, function(component) {
-          component.healthConditions = _.where(component.conditions, {type: 'Healthy'});
+          component.healthConditions = _.filter(component.conditions, {type: 'Healthy'});
 
           if (component.metadata.name === 'controller-manager') {
             attemptToUpdateKnownComponent(ret, component, 'controllerManager');
@@ -63,8 +63,8 @@ angular.module('bridge.service')
         });
 
         angular.forEach(etcds, function(component) {
-          var running = _.where(component.healthConditions, {type: 'Healthy', status: 'True'}).length;
-          var failed = _.where(component.healthConditions, {type: 'Healthy', status: 'False'}).length;
+          var running = _.filter(component.healthConditions, {type: 'Healthy', status: 'True'}).length;
+          var failed = _.filter(component.healthConditions, {type: 'Healthy', status: 'False'}).length;
           ret.etcdInfo.running += running;
           ret.etcdInfo.failed += failed;
           ret.etcdInfo.unknown += component.healthConditions.length - (running + failed);

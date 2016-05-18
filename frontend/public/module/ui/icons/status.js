@@ -32,8 +32,8 @@ angular.module('bridge.ui')
       textEl = $('.co-m-status__text', elem);
 
       function removeClasses() {
-        _.each(rootClasses, elem.removeClass);
-        _.each(iconClasses, iconEl.removeClass);
+        _.forEach(rootClasses, elem.removeClass);
+        _.forEach(iconClasses, iconEl.removeClass);
       }
 
       attrs.$observe('state', function(state) {
