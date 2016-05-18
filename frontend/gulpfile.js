@@ -172,7 +172,6 @@ gulp.task('html', ['sha'], function() {
       // TODO: use file hash
       'js-deps':  '/static/lib/deps.min.js',
       // TODO: use versions in filenames
-      'js-coreos-web':  '/static/lib/coreos-web/coreos.min.js',
       'css-coreos-web':  '/static/lib/coreos-web/coreos.css'
     }))
     .pipe(gulp.dest(distDir));
