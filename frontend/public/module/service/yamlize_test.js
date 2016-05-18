@@ -63,54 +63,54 @@ describe('bridge.service', function() {
       'metadata': {},
       'items': [
         {
-            'kind': 'Node',
-            'apiVersion': 'v1',
-            'metadata': {
-                'name': '172.17.4.99',
-                'selfLink': '/api/v1/nodes/172.17.4.99',
-                'uid': 'ac19d123-88da-11e5-af8b-0800275bd0a6',
-                'resourceVersion': '70416',
-                'creationTimestamp': '2015-11-12T01:14:07Z',
-                'labels': {
-                    'kubernetes.io/hostname': '172.17.4.99',
-                    'mystery': 'true'
-                }
-            },
-            'spec': {
-                'externalID': '172.17.4.99'
-            },
-            'status': {
-                'capacity': {
-                    'cpu': '1',
-                    'memory': '1021492Ki',
-                    'pods': '40'
-                },
-                'conditions': [
-                    {
-                        'type': 'Ready',
-                        'status': 'True',
-                        'lastHeartbeatTime': '2015-11-18T01:49:41Z',
-                        'lastTransitionTime': '2015-11-12T01:14:07Z',
-                        'reason': 'kubelet is posting ready status'
-                    }
-                ],
-                'addresses': [
-                    {
-                        'type': 'LegacyHostIP',
-                        'address': '172.17.4.99'
-                    }
-                ],
-                'nodeInfo': {
-                    'machineID': '2533358f7f664e379793c784646fc429',
-                    'systemUUID': 'C71C3B61-F493-45EE-A1E4-9CBB4C3E6F61',
-                    'bootID': 'ad6099f2-9c52-4837-a1ba-5e6d2fa2e275',
-                    'kernelVersion': '4.2.2-coreos-r1',
-                    'osImage': 'CoreOS 845.0.0',
-                    'containerRuntimeVersion': 'docker://1.8.3',
-                    'kubeletVersion': 'v1.0.6-release-1.0+388061f',
-                    'kubeProxyVersion': 'v1.0.6-release-1.0+388061f'
-                }
+          'kind': 'Node',
+          'apiVersion': 'v1',
+          'metadata': {
+            'name': '172.17.4.99',
+            'selfLink': '/api/v1/nodes/172.17.4.99',
+            'uid': 'ac19d123-88da-11e5-af8b-0800275bd0a6',
+            'resourceVersion': '70416',
+            'creationTimestamp': '2015-11-12T01:14:07Z',
+            'labels': {
+              'kubernetes.io/hostname': '172.17.4.99',
+              'mystery': 'true'
             }
+          },
+          'spec': {
+            'externalID': '172.17.4.99'
+          },
+          'status': {
+            'capacity': {
+              'cpu': '1',
+              'memory': '1021492Ki',
+              'pods': '40'
+            },
+            'conditions': [
+              {
+                'type': 'Ready',
+                'status': 'True',
+                'lastHeartbeatTime': '2015-11-18T01:49:41Z',
+                'lastTransitionTime': '2015-11-12T01:14:07Z',
+                'reason': 'kubelet is posting ready status'
+              }
+            ],
+            'addresses': [
+              {
+                'type': 'LegacyHostIP',
+                'address': '172.17.4.99'
+              }
+            ],
+            'nodeInfo': {
+              'machineID': '2533358f7f664e379793c784646fc429',
+              'systemUUID': 'C71C3B61-F493-45EE-A1E4-9CBB4C3E6F61',
+              'bootID': 'ad6099f2-9c52-4837-a1ba-5e6d2fa2e275',
+              'kernelVersion': '4.2.2-coreos-r1',
+              'osImage': 'CoreOS 845.0.0',
+              'containerRuntimeVersion': 'docker://1.8.3',
+              'kubeletVersion': 'v1.0.6-release-1.0+388061f',
+              'kubeProxyVersion': 'v1.0.6-release-1.0+388061f'
+            }
+          }
         }
       ]
     };

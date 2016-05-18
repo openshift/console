@@ -14,7 +14,7 @@ angular.module('dex')
         unauthorizedOk: true,
       })
       .then(function() {
-          return true;
+        return true;
       })
       .catch(function(reason) {
         if (reason.status === 401 || reason.status === 403 || reason.status === 404) {
