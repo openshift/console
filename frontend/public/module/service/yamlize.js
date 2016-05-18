@@ -20,7 +20,7 @@ angular.module('bridge.service')
   var DOESNT_NEED_QUOTES = /^[\w\/]([\w\/:+. -]*\w)?$/;
 
   safeWithoutQuotes = function(str) {
-    if (_.some(reservedWords, str.toLowerCase())) {
+    if (_.includes(reservedWords, str.toLowerCase())) {
       return false;
     }
 
