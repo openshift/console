@@ -1,3 +1,6 @@
+import './_module';
+import './events';
+
 angular.module('bridge.const')
 .constant('CONST', {
   title: 'Bridge',

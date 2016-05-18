@@ -1,3 +1,16 @@
+import './_module';
+import './docker';
+import './enum';
+import './events';
+import './labels';
+import './node';
+import './pods';
+import './probe';
+import './replicationcontrollers';
+import './resource';
+import './services';
+import './util';
+
 angular.module('k8s')
 .provider('k8sConfig', function() {
   'use strict';
