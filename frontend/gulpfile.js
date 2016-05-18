@@ -180,17 +180,16 @@ gulp.task('html', ['sha'], function() {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['lint', 'sass', 'templates', 'browserify'], function() {
+gulp.task('dev', ['sass', 'templates', 'browserify'], function() {
   gulp.watch(templateSrc, ['templates']);
   gulp.watch(jsSrc, ['browserify']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['sass']);
-  gulp.watch(jsSrc, ['lint']);
 });
 
 /**
  * Karma test
  */
-gulp.task('test', ['templates', 'browserify'], function (cb) {
+gulp.task('test', ['lint', 'templates', 'browserify'], function (cb) {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
