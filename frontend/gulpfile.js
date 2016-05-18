@@ -119,9 +119,9 @@ gulp.task('deps', function() {
 
     // copy to dist folder too for packaging.
     gulp.src([
-        'public/lib/deps.min.js'
-      ])
-      .pipe(gulp.dest('public/dist'))
+      'public/lib/deps.min.js'
+    ])
+    .pipe(gulp.dest('public/dist'))
   );
 });
 
@@ -149,11 +149,11 @@ gulp.task('copy-deps', function() {
 gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'], function() {
   // NOTE: File Order Matters.
   return gulp.src([
-      distDir + '/templates.js',
-      distDir + '/app-bundle.min.js'
-    ])
-    .pipe(concat('build.' + CURRENT_SHA + '.min.js'))
-    .pipe(gulp.dest(distDir));
+    distDir + '/templates.js',
+    distDir + '/app-bundle.min.js'
+  ])
+  .pipe(concat('build.' + CURRENT_SHA + '.min.js'))
+  .pipe(gulp.dest(distDir));
 });
 
 // Minify app css.
