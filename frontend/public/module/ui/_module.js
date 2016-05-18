@@ -1,7 +1,7 @@
 angular.module('bridge.ui', [
   'ngAnimate',
   'jquery',
-  'underscore',
+  'lodash',
   'bridge.const',
   'bridge.service',
   'bridge.page',

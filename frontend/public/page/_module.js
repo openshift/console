@@ -1,6 +1,6 @@
 angular.module('bridge.page', [
   'jquery',
-  'underscore',
+  'lodash',
   'bridge.const',
   'bridge.service',
   'bridge.page',
