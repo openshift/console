@@ -1,109 +1,164 @@
 <div class="co-p-service">
-
   <tec-nav-title title="{{serviceName}}" obj="service">
     <a co-namespaced-href="/services" class="co-m-primary-action">
-    <a co-namespaced-href="/services" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Services</a>
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Services
+    </a>
   </tec-nav-title>
 
   <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
     <co-service-nav ns="ns" name="serviceName"></co-service-nav>
 
     <div class="co-m-vert-nav__body">
-
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Service Overview</h1>
-      </div>
-      <div class="co-m-pane__body-group">
-
-        <div cos-tristate="service" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
-          <div ng-show="service && !loadError" class="row">
-            <div class="col-lg-6">
-              <dl>
-                <dt>Service Name</dt>
-                <dd ng-bind="service.metadata.name"></dd>
-                <dt>Service Labels</dt>
-                <dd>
-                  <co-label-list kind="service" labels="service.metadata.labels"></co-label-list>
-                </dd>
-                <dt>Pod Selector</dt>
-                <dd>
-                  <co-label-list kind="pod" selector="true" labels="service.spec.selector"></co-label-list>
-                </dd>
-                <dt>Created At</dt>
-                <dd><co-timestamp timestamp="{{service.metadata.creationTimestamp}}" /></dd>
-              </dl>
+      <div cos-tristate="service" cos-tristate-error="loadError">
+        <div ng-if="service && !loadError" class="row">
+          <div class="col-lg-6">
+            <div class="co-m-pane__heading">
+              <h1 class="co-m-pane__title">Service Overview</h1>
             </div>
-            <div class="col-lg-6">
-              <dl>
-                <dt>Service Address</dt>
-                <dd class="service-ips">
-                  <div class="row co-ip-header">
-                    <div class="col-lg-6">
-                      <span>Type</span>
-                    </div>
-                    <div class="col-lg-2">
-                      <span>Location</span>
-                    </div>
-                  </div>
-                  <div class="rows">
-                    <div class="row co-ip-row">
-                      <div class="col-lg-6">
-                        <p class="ip-name">Cluster IP</p>
-                        <p class="ip-desc">Accessible within the cluster only</p>
-                      </div>
-                      <div class="col-lg-2">
-                        <co-service-ip-link service="service"></co-service-ip-link>
-                      </div>
-                    </div>
-                    <div class="row co-ip-row">
-                      <div class="col-lg-6">
-                        <p class="ip-name">Node Port</p>
-                        <p class="ip-desc">Accessible outside the cluster</p>
-                      </div>
-                      <div class="col-lg-2">
-                        <p ng-bind-template=":{{service.spec.ports[0].nodePort}}"></p>
-                      </div>
-                    </div>
-                    <div ng-if="hasLoadBalancer()" class="row co-ip-row">
-                      <div class="col-lg-6">
-                        <p class="ip-name">External Load Balancer</p>
-                        <p class="ip-desc">Ingress point for load balancer</p>
-                      </div>
-                      <div class="col-lg-2">
-                        <p ng-repeat="ingress in service.status.loadBalancer.ingress"><a target="_blank" ng-href="http://{{ingress.hostname || ingress.ip}}" ng-bind="ingress.hostname || ingress.ip || CONST.placeholderText"></a></p>
-                      </div>
-                    </div>
-                    <div ng-if="service.spec.externalIPs" class="row co-ip-row">
-                      <div class="col-lg-6">
-                        <p class="ip-name">External IP</p>
-                        <p class="ip-desc">IP Address(es) accepting traffic for service</p>
-                      </div>
-                      <div class="col-lg-2">
-                        <p ng-repeat="externalIP in service.spec.externalIPs"><a target="_blank" ng-href="http://{{ externalIP }}" ng-bind="externalIP"></a></p>
-                      </div>
-                    </div>
-                  </div>
-                </dd>
-                <dt>Session Affinity</dt>
-                <dd ng-bind="service.spec.sessionAffinity | emptyPlaceholder"></dd>
-              </dl>
+
+            <div class="co-m-pane__body-group">
+              <div class="co-m-pane__body-section--bordered">
+                <dl>
+                  <dt>Service Name</dt>
+                  <dd ng-bind="service.metadata.name"></dd>
+
+                  <dt>Service Labels</dt>
+                  <dd>
+                    <co-label-list kind="service" labels="service.metadata.labels"></co-label-list>
+                  </dd>
+
+                  <dt>Pod Selector</dt>
+                  <dd>
+                    <co-label-list kind="pod" selector="true" labels="service.spec.selector"></co-label-list>
+                  </dd>
+
+                  <dt>Session Affinity</dt>
+                  <dd ng-bind="service.spec.sessionAffinity | emptyPlaceholder"></dd>
+
+                  <dt>Created At</dt>
+                  <dd><co-timestamp timestamp="{{service.metadata.creationTimestamp}}" /></dd>
+                </dl>
+              </div>
             </div>
           </div>
 
-          <div class="co-loader-wrapper cos-tristate-show-loading">
-            <co-loader></co-loader>
+          <div class="col-lg-6">
+            <div class="co-m-pane__heading">
+              <h1 class="co-m-pane__title">Service Routing</h1>
+            </div>
+
+            <div class="co-m-pane__body-group">
+              <div class="co-m-pane__body-section--bordered">
+                <dl>
+                  <dt>Service Address</dt>
+                  <dd class="service-ips">
+                    <div class="row co-ip-header">
+                      <div class="col-lg-6">
+                        <span>Type</span>
+                      </div>
+
+                      <div class="col-lg-6">
+                        <span>Location</span>
+                      </div>
+                    </div>
+                    <div class="rows">
+                      <div class="row co-ip-row">
+                        <div class="col-lg-6">
+                          <p class="ip-name">Cluster IP</p>
+                          <p class="ip-desc">Accessible within the cluster only</p>
+                        </div>
+                        <div class="col-lg-6" ng-bind="service.spec.clusterIP">
+                          <!-- noop -->
+                        </div>
+                      </div>
+
+                      <div ng-if="service.spec.type == 'NodePort'" class="row co-ip-row">
+                        <div class="col-lg-6">
+                          <p class="ip-name">Node Port</p>
+                          <p class="ip-desc">Accessible outside the cluster</p>
+                        </div>
+                        <div class="col-lg-6">
+                          <p ng-repeat="portMapping in service.spec.ports">
+                            <span class="text-muted">(all nodes):</span><span ng-bind="portMapping.nodePort"></span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div ng-if="service.spec.type == 'LoadBalancer'" class="row co-ip-row">
+                        <div class="col-lg-6">
+                          <p class="ip-name">External Load Balancer</p>
+                          <p class="ip-desc">Ingress point(s) of load balancer</p>
+                        </div>
+                        <div class="col-lg-6">
+                          <p ng-repeat="ingress in service.status.loadBalancer.ingress" ng-bind="ingress.hostname || ingress.ip || CONST.placeholderText"></p>
+                        </div>
+                      </div>
+
+                      <div ng-if="service.spec.externalIPs.length" class="row co-ip-row">
+                        <div class="col-lg-6">
+                          <p class="ip-name">External IP</p>
+                          <p class="ip-desc">IP Address(es) accepting traffic for service</p>
+                        </div>
+                        <div class="col-lg-6">
+                          <p ng-repeat="externalIP in service.spec.externalIPs" ng-bind="externalIP"></p>
+                        </div>
+                      </div>
+                    </div>
+                  </dd>
+
+                  <dt>Service Port Mapping</dt>
+                  <dd class="service-ips">
+                    <div class="row co-ip-header">
+                      <div class="col-lg-3">Name</div>
+                      <div class="col-lg-3">Port</div>
+                      <div class="col-lg-3">Protocol</div>
+                      <div class="col-lg-3">Pod Port or Name</div>
+                    </div>
+                    <div class="rows">
+                      <div class="row co-ip-row" ng-repeat="portMapping in service.spec.ports">
+                        <!-- name -->
+                        <div class="col-lg-3 co-text-service">
+                          <p ng-bind="portMapping.name"></p>
+                          <p ng-if="portMapping.nodePort" class="co-text-node">Node Port</p>
+                        </div>
+
+                        <!-- port -->
+                        <div class="col-lg-3 co-text-service">
+                          <p>
+                            <span class="co-m-resource-icon co-m-resource-icon--service">S</span><span ng-bind="portMapping.port"></span>
+                          </p>
+                          <p ng-if="portMapping.nodePort" class="co-text-node">
+                            <span class="co-m-resource-icon co-m-resource-icon--node">N</span><span ng-bind="portMapping.nodePort"></span>
+                          </p>
+                        </div>
+
+                        <!-- protocol -->
+                        <div class="col-lg-3">
+                          <p ng-bind="portMapping.protocol"></p>
+                        </div>
+
+                        <!-- pod port or name -->
+                        <div class="col-lg-3 co-text-pod">
+                          <p><span class="co-m-resource-icon co-m-resource-icon--pod">P</span><span ng-bind="portMapping.targetPort"></span></p>
+                        </div>
+                      </div>
+                    </div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
           </div>
-          <cos-status-box class="cos-tristate-show-error">
-            <div class="cos-error-title">Error Loading Service</div>
-            <div class="cos-text-center">An error occurred during service retrieval. Please try again.</div>
-          </cos-status-box>
         </div>
 
+        <div class="co-loader-wrapper cos-tristate-show-loading">
+          <co-loader></co-loader>
+        </div>
+
+        <cos-status-box class="cos-tristate-show-error">
+          <div class="cos-error-title">Error Loading Service</div>
+          <div class="cos-text-center">An error occurred during service retrieval. Please try again.</div>
+        </cos-status-box>
       </div>
-
     </div>
-
   </div>
-
 </div>
