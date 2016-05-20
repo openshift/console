@@ -82,10 +82,9 @@ go, godep, nodejs, gulp
 For interactive frontend development compiling html templates and sass is required.
 The following build task will watch the source code for changes and compile automatically:
 ```
-gulp dev
+npm run gulp dev
 ```
 
-If gulp is not installed, install with `npm install -g gulp`.
 All frontend build tasks are defined in `/frontend/gulpfile.js`
 
 ### Tests
@@ -101,8 +100,8 @@ Run frontend tests:
 
 ### Dependency Management
 Add new frontend dependencies:
- 1. `bower install --save` the dependency
- 2. From `/frontend` run `gulp deps`
+ 1. `npm run bower install --save` the dependency
+ 2. From `/frontend` run `npm run gulp deps`
  3. Add and commit generated `deps.js` and `deps.min.js` files in `/frontend/public/lib/`
 
 Add new backend dependencies:
