@@ -19,6 +19,7 @@ const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const streamify = require('gulp-streamify');
+const PrettyError = require('pretty-error');
 
 const distDir = './public/dist';
 const templateSrc = [
@@ -44,6 +45,17 @@ let CURRENT_SHA;
 function jsBuild (debug) {
   return browserify(['./public/_app.js'], {debug, transform: [babelify]})
     .bundle()
+    .on('error', function(err) {
+      // eslint-disable-next-line no-console
+      console.log(new PrettyError().render(err));
+
+      if (!debug) {
+        process.exit(1);
+        return;
+      }
+
+      this.emit('end');
+    })
     // .pipe(rename({ suffix: '.min' }))
     .pipe(source('app-bundle.js'))
     .pipe(ngAnnotate())
@@ -60,17 +72,20 @@ gulp.task('js-build', function() {
 
 
 gulp.task('browserify', () => {
-  return jsBuild(true).pipe(gulp.dest(distDir));
+  return jsBuild(true)
+  .pipe(gulp.dest(distDir));
 });
 
 gulp.task('sha', function(cb) {
   exec('git rev-parse HEAD', function(err, stdout) {
     if (err) {
+      // eslint-disable-next-line no-console
       console.log('Error retrieving git SHA.');
       cb(false);
       return;
     }
     CURRENT_SHA = stdout.trim();
+    // eslint-disable-next-line no-console
     console.log('sha: ', CURRENT_SHA);
     cb();
   });
@@ -146,7 +161,7 @@ gulp.task('copy-deps', function() {
 });
 
 // Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'], function() {
+gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'], function () {
   // NOTE: File Order Matters.
   return gulp.src([
     distDir + '/templates.js',
