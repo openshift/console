@@ -149,6 +149,38 @@ angular.module('bridge', [
     title: 'Replication Controller Pods',
   });
 
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
+  r('/all-namespaces/replicasets', {
+    controller: 'ReplicaSetsCtrl',
+    templateUrl: '/static/page/replicasets/replicasets.html',
+    title: 'Replica Sets',
+  });
+  r('/ns/:ns/replicasets', {
+    controller: 'ReplicaSetsCtrl',
+    templateUrl: '/static/page/replicasets/replicasets.html',
+    title: 'Replica Sets',
+  });
+  r('/ns/:ns/replicasets/new', {
+    controller: 'NewReplicaSetCtrl',
+    templateUrl: '/static/page/replicasets/new-replicaset.html',
+    title: 'New Replica Set',
+  });
+  r('/ns/:ns/replicasets/:name/edit', {
+    controller: 'EditReplicaSetCtrl',
+    templateUrl: '/static/page/replicasets/edit-replicaset.html',
+    title: 'Edit Replica Set',
+  });
+  r('/ns/:ns/replicasets/:name', {
+    controller: 'ReplicaSetCtrl',
+    templateUrl: '/static/page/replicasets/replicaset.html',
+    title: 'Replica Set',
+  });
+  r('/ns/:ns/replicasets/:name/pods', {
+    controller: 'ReplicaSetPodsCtrl',
+    templateUrl: '/static/page/replicasets/pods.html',
+    title: 'Replica Set Pods',
+  });
+
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
   r('/all-namespaces/pods', {
     controller: 'PodsCtrl',

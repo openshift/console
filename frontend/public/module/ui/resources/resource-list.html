@@ -7,6 +7,10 @@
                                   load="kind == 'replicationcontroller'"
                                   namespace="namespace"
                                   selector="selector"></co-replication-controller-list>
+  <co-replica-set-list ng-if="kind == 'replicaset'"
+                                  load="kind == 'replicaset'"
+                                  namespace="namespace"
+                                  selector="selector"></co-replica-set-list>
   <co-pod-list ng-if="kind == 'pod'"
                load="kind == 'pod'"
                namespace="namespace"

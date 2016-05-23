@@ -1,10 +1,10 @@
 /**
  * @fileoverview
- * Cog menu directive for replication controllers.
+ * Cog menu directive for replica sets.
  */
 
 angular.module('bridge.ui')
-.directive('coReplicationcontrollerCog', function(k8s, ModalLauncherSvc, resourceMgrSvc) {
+.directive('coReplicasetCog', function(k8s, ModalLauncherSvc, resourceMgrSvc) {
   'use strict';
 
   return {
@@ -12,23 +12,23 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     scope: {
-      'rc': '='
+      'rs': '='
     },
     controller: function($scope) {
       var deregisterWatch;
 
-      function getRC() {
-        return $scope.rc;
+      function getRS() {
+        return $scope.rs;
       }
 
       function getDeleteFn() {
         return function() {
-          return k8s.replicationcontrollers.delete($scope.rc);
+          return k8s.replicaset.delete($scope.rs);
         };
       }
 
       function getEditLink() {
-        return resourceMgrSvc.getEditLink($scope.rc, k8s.enum.Kind.REPLICATIONCONTROLLER);
+        return resourceMgrSvc.getEditLink($scope.rs, k8s.enum.Kind.REPLICASET);
       }
 
       function generateOptions() {
@@ -37,42 +37,42 @@ angular.module('bridge.ui')
             label: 'Modify Desired Count...',
             weight: 100,
             callback: ModalLauncherSvc.open.bind(null, 'configure-replica-count', {
-              resourceKind: k8s.enum.Kind.REPLICATIONCONTROLLER,
-              resource:     getRC
+              resourceKind: k8s.enum.Kind.REPLICASET,
+              resource:     getRS
             }),
           },
           {
-            label: 'Modify Label Selector...',
+            label: 'Modify Pod Selector...',
             weight: 200,
             callback: ModalLauncherSvc.open.bind(null, 'configure-selector', {
-              resourceKind: k8s.enum.Kind.REPLICATIONCONTROLLER,
+              resourceKind: k8s.enum.Kind.REPLICASET,
               selectorKind: k8s.enum.Kind.POD,
-              resource: getRC,
-              message: 'Replication Controllers ensure the configured number ' +
-                  'of pods matching this label selector are healthy and running:',
+              resource: getRS,
+              message: 'Replica Sets ensure the configured number ' +
+                  'of pods matching this pod selector are healthy and running.',
             }),
           },
           {
             label: 'Modify Labels...',
             weight: 300,
             callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
-              kind: k8s.enum.Kind.REPLICATIONCONTROLLER,
-              resource: getRC,
+              kind: k8s.enum.Kind.REPLICASET,
+              resource: getRS,
             }),
           },
           {
-            label: 'Edit Replication Controller...',
+            label: 'Edit Replica Set...',
             weight: 400,
             href: getEditLink(),
           },
           {
-            label: 'Delete Replication Controller...',
+            label: 'Delete Replica Set...',
             weight: 500,
             callback: ModalLauncherSvc.open.bind(null, 'confirm', {
-              title: 'Delete Replication Controller',
+              title: 'Delete Replica Set',
               message: 'Are you sure you want to delete ' +
-                  $scope.rc.metadata.name + '?',
-              btnText: 'Delete Replication Controller',
+                  $scope.rs.metadata.name + '?',
+              btnText: 'Delete Replica Set',
               executeFn: getDeleteFn
             }),
           }
@@ -80,14 +80,12 @@ angular.module('bridge.ui')
       }
 
       // Run once after app is populated.
-      deregisterWatch = $scope.$watch('rc.metadata.name', function() {
-        if ($scope.rc && $scope.rc.metadata && $scope.rc.metadata.name) {
+      deregisterWatch = $scope.$watch('rs.metadata.name', function() {
+        if ($scope.rs && $scope.rs.metadata && $scope.rs.metadata.name) {
           generateOptions();
           deregisterWatch();
         }
       });
-
     }
   };
-
 });

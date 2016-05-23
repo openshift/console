@@ -4,6 +4,9 @@
 .co-m-label-input--replicationcontroller .tag-item {
   color: $color-controller-dark;
 }
+.co-m-label-input--replicaset .tag-item {
+  color: $color-replicaset-dark;
+}
 .co-m-label-input--pod .tag-item {
   color: $color-pod-dark;
 }

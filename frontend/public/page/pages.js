@@ -6,6 +6,7 @@ import './error/error-ctrl';
 import './namespaces/namespaces-ctrl';
 import './services/services';
 import './replicationcontrollers/controllers';
+import './replicasets/controllers';
 import './pods/pods';
 import './nodes/nodes';
 import './containers/container-ctrl';

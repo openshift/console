@@ -2,11 +2,13 @@ import './_module';
 import './docker';
 import './enum';
 import './events';
+import './selector';
 import './labels';
 import './node';
 import './pods';
 import './probe';
 import './replicationcontrollers';
+import './replicasets';
 import './resource';
 import './services';
 import './util';
@@ -25,8 +27,8 @@ angular.module('k8s')
   };
   this.$get = function() {
     return {
-      getKubernetesAPIPath: function() {
-        return basePath + 'api/' + apiVersion;
+      getKubernetesAPIPath: function(kind) {
+        return basePath + (kind.isExtension ? 'apis/extensions/' : 'api/') + (kind.apiVersion || apiVersion);
       },
       getBasePath: function() {
         return basePath;
@@ -41,10 +43,11 @@ angular.module('k8s')
 })
 
 .service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
-                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sProbe, k8sNodes, featureFlags) {
+                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets, k8sProbe, k8sNodes, k8sSelector, featureFlags) {
   'use strict';
 
   this.probe = k8sProbe;
+  this.selector = k8sSelector;
   this.labels = k8sLabels;
   this.events = k8sEvents;
   this.enum = k8sEnum;
@@ -105,6 +108,20 @@ angular.module('k8s')
     update: function(rc) {
       k8sReplicationcontrollers.clean(rc);
       return k8sResource.update(k8sEnum.Kind.REPLICATIONCONTROLLER, rc);
+    },
+  });
+
+  this.replicasets = _.assign(k8sReplicaSets, {
+    list: _.partial(k8sResource.list, k8sEnum.Kind.REPLICASET),
+    get: _.partial(k8sResource.get, k8sEnum.Kind.REPLICASET),
+    delete: _.partial(k8sResource.delete, k8sEnum.Kind.REPLICASET),
+    create: function(rc) {
+      k8sReplicaSets.clean(rc);
+      return k8sResource.create(k8sEnum.Kind.REPLICASET, rc);
+    },
+    update: function(rc) {
+      k8sReplicaSets.clean(rc);
+      return k8sResource.update(k8sEnum.Kind.REPLICASET, rc);
     },
   });
 

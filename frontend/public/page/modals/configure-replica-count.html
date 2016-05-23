@@ -1,5 +1,5 @@
 <div class="co-p-configure-replica-count">
-  <form ng-controller="ConfigureReplicaCountFormCtrl" ng-submit="submit()" name="form" role="form">
+  <form ng-submit="submit()" name="form" role="form">
 
     <div class="modal-header">
       <h4 class="modal-title">Modify Desired Count</h4>
@@ -8,7 +8,7 @@
     <div class="modal-body">
       <div class="row co-m-form-row">
         <div class="col-sm-12">
-          <p>Replication Controllers maintain the desired number of healthy pods.</p>
+          <p ng-bind-template="{{ resourceKind.labelPlural }} maintain the desired number of healthy pods."</p>
         </div>
       </div>
       <div class="row co-m-form-row">
