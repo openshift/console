@@ -26,9 +26,8 @@ angular.module('k8s')
   };
 
   this.getStatus = function(pod, containerName) {
-    if (pod.status && pod.status.containerStatuses) {
-      return _.find(pod.status.containerStatuses, containerName);
-    }
+    const statuses = _.get(pod, 'status.containerStatuses', []);
+    return _.find(statuses, {name: containerName});
   };
 
   // Nullify empty fields & prep volumes.
