@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigurePrimaryCommandCtrl', function($scope, $uibModalInstance, _, container) {
+.controller('ConfigurePrimaryCommandCtrl', function($scope, $uibModalInstance, _, container, k8s) {
   'use strict';
 
   $scope.fields = {
@@ -9,14 +9,14 @@ angular.module('bridge.page')
 
   if (!_.isEmpty(container.command)) {
     $scope.fields.commandType = 'custom';
-    $scope.fields.command = container.command.join(' ');
+    $scope.fields.command = k8s.command.fromArgs(container.command);
   }
 
   $scope.save = function() {
     if ($scope.fields.commandType === 'default') {
       container.command = null;
     } else {
-      container.command = $scope.fields.command.split(' ');
+      container.command = k8s.command.toArgs($scope.fields.command);
     }
     $uibModalInstance.close(container);
   };
@@ -24,7 +24,6 @@ angular.module('bridge.page')
   $scope.cancel = function() {
     $uibModalInstance.dismiss('cancel');
   };
-
 })
 .controller('ConfigurePrimaryCommandFormCtrl', function($scope) {
   'use strict';

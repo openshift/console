@@ -14,6 +14,7 @@ import './resource';
 import './services';
 import './util';
 import './feature_flags';
+import './command';
 
 angular.module('k8s')
 .provider('k8sConfig', function() {
@@ -44,7 +45,7 @@ angular.module('k8s')
 })
 
 .service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
-                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets, k8sDeployments, k8sProbe, k8sNodes, k8sSelector, featureFlags) {
+                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets, k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sCommand, featureFlags) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -56,6 +57,7 @@ angular.module('k8s')
   this.resource = k8sResource;
   this.search = k8sResource.list;
   this.util = k8sUtil;
+  this.command = k8sCommand;
   this.nodes = _.assign(k8sNodes, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.NODE),
     get: _.partial(k8sResource.get, k8sEnum.Kind.NODE),
