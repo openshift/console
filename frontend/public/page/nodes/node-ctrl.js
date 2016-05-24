@@ -4,6 +4,7 @@ angular.module('bridge.page')
 
   $scope.nodeName = $routeParams.name;
   $scope.loadError = false;
+  $scope.isTrusted = k8s.nodes.isTrusted;
 
   $scope.getAddresses = function(status) {
     if (!pkg.propExists('addresses.length', status)) {
