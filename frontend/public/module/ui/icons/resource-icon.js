@@ -13,6 +13,8 @@ angular.module('bridge.ui')
         return 'RC';
       case k8s.enum.Kind.REPLICASET.id:
         return 'RS';
+      case k8s.enum.Kind.DEPLOYMENT.id:
+        return 'D';
       case k8s.enum.Kind.POD.id:
         return 'P';
       case k8s.enum.Kind.SERVICE.id:

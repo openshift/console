@@ -9,6 +9,7 @@ import './pods';
 import './probe';
 import './replicationcontrollers';
 import './replicasets';
+import './deployments';
 import './resource';
 import './services';
 import './util';
@@ -43,7 +44,7 @@ angular.module('k8s')
 })
 
 .service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
-                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets, k8sProbe, k8sNodes, k8sSelector, featureFlags) {
+                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets, k8sDeployments, k8sProbe, k8sNodes, k8sSelector, featureFlags) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -122,6 +123,20 @@ angular.module('k8s')
     update: function(rc) {
       k8sReplicaSets.clean(rc);
       return k8sResource.update(k8sEnum.Kind.REPLICASET, rc);
+    },
+  });
+
+  this.deployments = _.assign(k8sDeployments, {
+    list: _.partial(k8sResource.list, k8sEnum.Kind.DEPLOYMENT),
+    get: _.partial(k8sResource.get, k8sEnum.Kind.DEPLOYMENT),
+    delete: _.partial(k8sResource.delete, k8sEnum.Kind.DEPLOYMENT),
+    create: function(deployment) {
+      k8sDeployments.clean(deployment);
+      return k8sResource.create(k8sEnum.Kind.DEPLOYMENT, deployment);
+    },
+    update: function(deployment) {
+      k8sDeployments.clean(deployment);
+      return k8sResource.update(k8sEnum.Kind.DEPLOYMENT, deployment);
     },
   });
 

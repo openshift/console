@@ -7,6 +7,7 @@ import './namespaces/namespaces-ctrl';
 import './services/services';
 import './replicationcontrollers/controllers';
 import './replicasets/controllers';
+import './deployments/controllers';
 import './pods/pods';
 import './nodes/nodes';
 import './containers/container-ctrl';

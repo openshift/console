@@ -32,6 +32,12 @@
                 type="radio"/>
             {{kinds.REPLICASET.labelPlural}}
           </a>
+          <a href="#" ng-click="changeKind(kinds.DEPLOYMENT.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.DEPLOYMENT.id"
+                type="radio"/>
+            {{kinds.DEPLOYMENT.labelPlural}}
+          </a>
           <a href="#" ng-click="changeKind(kinds.POD.id)">
             <input name="selectedKindId"
                 ng-checked="fields.selectedKindId == kinds.POD.id"

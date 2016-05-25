@@ -11,6 +11,10 @@
                                   load="kind == 'replicaset'"
                                   namespace="namespace"
                                   selector="selector"></co-replica-set-list>
+  <co-deployment-list ng-if="kind == 'deployment'"
+                                  load="kind == 'deployment'"
+                                  namespace="namespace"
+                                  selector="selector"></co-deployment-list>
   <co-pod-list ng-if="kind == 'pod'"
                load="kind == 'pod'"
                namespace="namespace"

@@ -7,6 +7,9 @@
 .co-m-label-input--replicaset .tag-item {
   color: $color-replicaset-dark;
 }
+.co-m-label-input--deployment .tag-item {
+  color: $color-deployment-dark;
+}
 .co-m-label-input--pod .tag-item {
   color: $color-pod-dark;
 }

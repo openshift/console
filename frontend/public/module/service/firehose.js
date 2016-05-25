@@ -94,6 +94,24 @@ angular.module('bridge.service')
     }
   }
 
+  function emitDeploymentEvent(msg) {
+    var evt;
+    switch (msg.type) {
+      case 'ADDED':
+        evt = k8s.events.DEPLOYMENT_ADDED;
+        break;
+      case 'MODIFIED':
+        evt = k8s.events.DEPLOYMENT_MODIFIED;
+        break;
+      case 'DELETED':
+        evt = k8s.events.DEPLOYMENT_DELETED;
+        break;
+    }
+    if (evt) {
+      $rootScope.$broadcast(evt, { resource: msg.object });
+    }
+  }
+
   function emitNodeEvent(msg) {
     var evt;
     switch (msg.type) {
@@ -142,6 +160,9 @@ angular.module('bridge.service')
 
     sockets.rsList = connectSocket('rsList', k8s.enum.Kind.REPLICASET)
       .onmessage(emitRSEvent);
+
+    sockets.deploymentList = connectSocket('deploymentList', k8s.enum.Kind.DEPLOYMENT)
+      .onmessage(emitDeploymentEvent);
 
     sockets.nodeList = connectSocket('nodeList', k8s.enum.Kind.NODE)
       .onmessage(emitNodeEvent);

@@ -181,6 +181,38 @@ angular.module('bridge', [
     title: 'Replica Set Pods',
   });
 
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('deployments');
+  r('/all-namespaces/deployments', {
+    controller: 'DeploymentsCtrl',
+    templateUrl: '/static/page/deployments/deployments.html',
+    title: 'Deployments',
+  });
+  r('/ns/:ns/deployments', {
+    controller: 'DeploymentsCtrl',
+    templateUrl: '/static/page/deployments/deployments.html',
+    title: 'Deployments',
+  });
+  r('/ns/:ns/deployments/new', {
+    controller: 'NewDeploymentCtrl',
+    templateUrl: '/static/page/deployments/new-deployment.html',
+    title: 'New Deployment',
+  });
+  r('/ns/:ns/deployments/:name/edit', {
+    controller: 'EditDeploymentCtrl',
+    templateUrl: '/static/page/deployments/edit-deployment.html',
+    title: 'Edit Deployment',
+  });
+  r('/ns/:ns/deployments/:name', {
+    controller: 'DeploymentCtrl',
+    templateUrl: '/static/page/deployments/deployment.html',
+    title: 'Deployment',
+  });
+  r('/ns/:ns/deployments/:name/pods', {
+    controller: 'DeploymentPodsCtrl',
+    templateUrl: '/static/page/deployments/pods.html',
+    title: 'Deployment Pods',
+  });
+
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
   r('/all-namespaces/pods', {
     controller: 'PodsCtrl',

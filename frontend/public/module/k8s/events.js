@@ -15,6 +15,10 @@ angular.module('k8s').constant('k8sEvents', {
   RS_MODIFIED: 'k8s-rs-modified',
   RS_DELETED: 'k8s-rs-deleted',
 
+  DEPLOYMENT_ADDED: 'k8s-deployment-added',
+  DEPLOYMENT_MODIFIED: 'k8s-deployment-modified',
+  DEPLOYMENT_DELETED: 'k8s-deployment-deleted',
+
   SERVICE_ADDED: 'k8s-service-added',
   SERVICE_MODIFIED: 'k8s-service-modified',
   SERVICE_DELETED: 'k8s-service-deleted',
