@@ -1,6 +1,8 @@
 angular.module('bridge.page')
-.controller('ClusterStatusCtrl', function($scope, k8s, statusSvc) {
+.controller('ClusterStatusCtrl', function($scope, k8s, statusSvc, featureFlags) {
   'use strict';
+
+  $scope.featureFlags = featureFlags;
 
   $scope.isStrange = function(v) {
     return !(v === 'True' || v === 'False');

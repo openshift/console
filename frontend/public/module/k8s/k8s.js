@@ -10,6 +10,7 @@ import './replicationcontrollers';
 import './resource';
 import './services';
 import './util';
+import './feature_flags';
 
 angular.module('k8s')
 .provider('k8sConfig', function() {
@@ -17,6 +18,7 @@ angular.module('k8s')
 
   var basePath;
   var apiVersion;
+
   this.setKubernetesPath = function(path, version) {
     basePath = path;
     apiVersion = version;
@@ -28,13 +30,18 @@ angular.module('k8s')
       },
       getBasePath: function() {
         return basePath;
-      }
+      },
+      getk8sFlagPaths: function () {
+        return {
+          tpm: '/apis/tpm.coreos.com/v1',
+        };
+      },
     };
   };
 })
 
-.service('k8s', function(_, $http, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
-                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sProbe, k8sNodes) {
+.service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
+                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sProbe, k8sNodes, featureFlags) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -123,6 +130,24 @@ angular.module('k8s')
     return $http({
       url: k8sConfig.getBasePath() + 'version',
       method: 'GET'
+    });
+  };
+
+  this.featureDetection = () => {
+    $http({
+      url: k8sConfig.getBasePath(),
+      method: 'GET',
+    })
+    .then(res => {
+      const paths = res.data.paths;
+      _.each(k8sConfig.getk8sFlagPaths(), (path, flag) => {
+        featureFlags[flag] = paths.indexOf(path) >= 0;
+      });
+    })
+    .catch(e => {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      $timeout(this.featureDetection, 5000);
     });
   };
 });
