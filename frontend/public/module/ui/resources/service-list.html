@@ -1,14 +1,14 @@
 <div class="co-m-service-list co-m-table-grid co-m-table-grid--bordered">
   <div class="row co-m-table-grid__head">
-    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">Service Name</div>
+    <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6">Service Name</div>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
     <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
-    <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Service Location</div>
+    <div class="col-lg-3 col-md-2 hidden-sm hidden-xs">Service Location</div>
   </div>
 
   <div cos-tristate="services" cos-tristate-error="loadError" class="co-m-table-grid__body">
     <div class="row co-m-table-grid--clickable" ng-repeat-start="s in services | orderBy:'metadata.name' | filter:search:strict track by s.metadata.uid" ng-click="open = !open">
-      <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+      <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6">
         <co-service-cog service="s"></co-service-cog>
         <co-resource-icon kind="service"></co-resource-icon>
         <a ng-href="/ns/{{s.metadata.namespace}}/services/{{s.metadata.name}}" ng-bind="s.metadata.name"></a>
@@ -19,7 +19,7 @@
       <div class="col-lg-3 col-md-4 col-sm-4 hidden-xs">
         <co-label-list kind="pod" labels="s.spec.selector" selector="true"></co-label-list>
       </div>
-      <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">
+      <div class="col-lg-3 col-md-2 hidden-sm hidden-xs">
         <co-service-ip-link service="s"></co-service-ip-link>
       </div>
     </div>
