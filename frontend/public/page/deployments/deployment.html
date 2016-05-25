@@ -1,0 +1,55 @@
+<div class="co-p-deployment">
+
+  <tec-nav-title title="{{deploymentName}}" obj="deployment">
+    <a co-namespaced-href="/deployments" class="co-m-primary-action">
+    <a co-namespaced-href="/deployments" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Deployments</a>
+  </tec-nav-title>
+
+  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+    <co-deployment-nav ns="ns" name="deploymentName"></co-deployment-nav>
+
+    <div class="co-m-vert-nav__body">
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Deployment Overview</h1>
+      </div>
+      <div class="co-m-pane__body-group">
+        <div cos-tristate="deployment" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
+          <div ng-show="deployment && !loadError" class="row">
+            <div class="col-lg-6">
+              <dl>
+                <dt>Name</dt>
+                <dd ng-bind="deploymentName | emptyPlaceholder"></dd>
+                <dt>Labels</dt>
+                <dd><co-label-list kind="Deployment" expand="true" labels="deployment.metadata.labels"></co-label-list></dd>
+                <dt>Pod Selector</dt>
+                <dd>
+                  <co-label-list kind="pod" selector="true" labels="deployment.spec.selector"></co-label-list>
+                </dd>
+                <dt>Created At</dt>
+                <dd><co-timestamp timestamp="{{deployment.metadata.creationTimestamp}}" /></dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl>
+                <dt>Current Count</dt>
+                <dd ng-bind="deployment.status.replicas | emptyPlaceholder"></dd>
+                <dt>Desired Count</dt>
+                <dd ng-bind="deployment.spec.replicas | emptyPlaceholder"></dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="co-loader-wrapper cos-tristate-show-loading">
+            <co-loader></co-loader>
+          </div>
+
+          <cos-status-box class="cos-tristate-show-error">
+            <div class="cos-error-title">Error Loading Deployment</div>
+            <div class="cos-text-center">An error occurred during Deployment retrieval. Please try again.</div>
+          </cos-status-box>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

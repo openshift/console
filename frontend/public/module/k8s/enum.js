@@ -40,6 +40,15 @@ angular.module('k8s').constant('k8sEnum', {
       apiVersion: 'v1beta1',
       path: 'replicasets',
     },
+    DEPLOYMENT: {
+      id: 'deployment',
+      kind: 'deployment',
+      label: 'Deployment',
+      labelPlural: 'Deployments',
+      isExtension: true,
+      apiVersion: 'v1beta1',
+      path: 'deployments',
+    },
     NODE: {
       id: 'node',
       kind: 'Node',
