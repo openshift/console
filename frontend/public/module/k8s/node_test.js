@@ -7,34 +7,33 @@ describe('k8s', function() {
   beforeEach(inject(function(_k8sNodes_) {
     k8sNodes = _k8sNodes_;
   }));
-
   describe('#isTrusted', function() {
-    it('returns false for falsy node', function () {
-      expect(k8sNodes.isTrusted()).toEqual(false);
+    it('returns true for falsy node', function () {
+      expect(k8sNodes.isTrusted()).toEqual(true);
     });
 
-    it('returns false for node without metadata', function () {
-      expect(k8sNodes.isTrusted({})).toEqual(false);
+    it('returns true for node without metadata', function () {
+      expect(k8sNodes.isTrusted({})).toEqual(true);
     });
 
-    it('returns false for node without annotations', function () {
-      expect(k8sNodes.isTrusted({metadata: {}})).toEqual(false);
+    it('returns true for node without annotations', function () {
+      expect(k8sNodes.isTrusted({metadata: {}})).toEqual(true);
     });
 
-    it('returns false for node without "com.coreos.tpm/untrusted" annotation', function () {
-      expect(k8sNodes.isTrusted({metadata: {annotations: {}}})).toEqual(false);
+    it('returns true for node without "scheduler.alpha.kubernetes.io/taints" annotation', function () {
+      expect(k8sNodes.isTrusted({metadata: {annotations: {}}})).toEqual(true);
     });
 
-    it('returns false for node with malformed "com.coreos.tpm/untrusted" annotation', function () {
-      expect(k8sNodes.isTrusted({metadata: {annotations: {'com.coreos.tpm/untrusted': 'Oops!'}}})).toEqual(false);
+    it('returns false for node with malformed "scheduler.alpha.kubernetes.io/taints" annotation', function () {
+      expect(k8sNodes.isTrusted({metadata: {annotations: {'scheduler.alpha.kubernetes.io/taints': ''}}})).toEqual(false);
     });
 
-    it('returns false when "com.coreos.tpm/untrusted" annotation is true', function () {
-      expect(k8sNodes.isTrusted({metadata: {annotations: {'com.coreos.tpm/untrusted': 'true'}}})).toEqual(false);
+    it('returns true when "scheduler.alpha.kubernetes.io/taints" annotation is 🍆', function () {
+      expect(k8sNodes.isTrusted({metadata: {annotations: {'scheduler.alpha.kubernetes.io/taints': '[{"key": "🍆"}]'}}})).toEqual(true);
     });
 
-    it('returns true when "com.coreos.tpm/untrusted" annotation is false', function () {
-      expect(k8sNodes.isTrusted({metadata: {annotations: {'com.coreos.tpm/untrusted': 'false'}}})).toEqual(true);
+    it('returns false when "scheduler.alpha.kubernetes.io/taints" annotation has untrusted key', function () {
+      expect(k8sNodes.isTrusted({metadata: {annotations: {'scheduler.alpha.kubernetes.io/taints': '[{"key": "untrusted","value": "true","effect": "NoSchedule"}]'}}})).toEqual(false);
     });
   });
 });

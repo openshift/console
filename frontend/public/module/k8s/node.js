@@ -1,5 +1,13 @@
 'use strict';
 
+function hasAnnotation_ (node, key) {
+  return (node &&
+    node.metadata &&
+    node.metadata.annotations &&
+    Object.hasOwnProperty.call(node.metadata.annotations, key)
+  );
+}
+
 angular.module('k8s')
 .service('k8sNodes', function (_) {
 
@@ -17,19 +25,32 @@ angular.module('k8s')
   };
 
   this.isTrusted = (node) => {
-    const UNTRUSTED_ANNOTATION_KEY = 'com.coreos.tpm/untrusted';
+    const UNTRUSTED_ANNOTATION_KEY = 'scheduler.alpha.kubernetes.io/taints';
 
-    if (!node || !node.metadata || !node.metadata.annotations || !node.metadata.annotations.hasOwnProperty(UNTRUSTED_ANNOTATION_KEY)) {
+    if (!hasAnnotation_(node, UNTRUSTED_ANNOTATION_KEY)) {
+      return true;
+    }
+
+    let taints = node.metadata.annotations[UNTRUSTED_ANNOTATION_KEY];
+
+    try {
+      taints = JSON.parse(taints);
+    } catch (error) {
+      // ????
       return false;
     }
 
-    let untrusted;
-    try {
-      untrusted = JSON.parse(node.metadata.annotations[UNTRUSTED_ANNOTATION_KEY]);
-    } catch (error) {
-      untrusted = true; // we don't trust node with malformed annotation
-    }
+    // Matthew Garrett:
+    //   The value is metadata
+    //   It's irrelevant
+    //   It's the existence of the taint entry that controls it
+    const tainted = taints.reduce((isTainted, taint) => {
+      if (taint.key === 'untrusted') {
+        return true;
+      }
+      return isTainted;
+    }, false);
 
-    return !untrusted;
+    return !tainted;
   }
 });
