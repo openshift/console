@@ -21,6 +21,10 @@ $height: 18px;
   background-color: $color-controller-dark;
 }
 
+.co-m-resource-icon--replicaset {
+  background-color: $color-replicaset-dark;
+}
+
 .co-m-resource-icon--pod {
   background-color: $color-pod-dark;
 }

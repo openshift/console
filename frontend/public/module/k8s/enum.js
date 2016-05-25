@@ -31,6 +31,15 @@ angular.module('k8s').constant('k8sEnum', {
       labelPlural: 'Replication Controllers',
       path: 'replicationcontrollers',
     },
+    REPLICASET: {
+      id: 'replicaset',
+      kind: 'replicaset',
+      label: 'Replica Set',
+      labelPlural: 'Replica Sets',
+      isExtension: true,
+      apiVersion: 'v1beta1',
+      path: 'replicasets',
+    },
     NODE: {
       id: 'node',
       kind: 'Node',
