@@ -1,0 +1,58 @@
+@import "vars";
+
+$usage_color: #1C77AD;
+$limit_color: #4EA4D9;
+$progress-bar-height: 14px;
+
+.co-heapster {
+  padding-top: 30px;
+}
+
+.co-heapster__name {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+.co-heapster__resource-metric {
+  position: relative;
+  height: $progress-bar-height;
+}
+
+.co-heapster__metric {
+  padding: 15px 0 0 0;
+}
+
+.co-heapster__resource-type {
+  color:  $color-text-muted;
+  font-weight: 300;
+  font-size: 13px;
+  padding-left: 0px;
+}
+
+.co-heapster__usage {
+  color: $usage_color;
+}
+
+.co-heapster__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 0px;
+  box-shadow: none;
+  height: $progress-bar-height;
+  border: 1px solid #ddd;
+}
+
+.co-heapster__progress-bar {
+  position: absolute;
+  min-width: 1px;
+  height: $progress-bar-height;
+  webkit-box-shadow: none;
+  box-shadow: none;
+}
+.co-heapster__progress-bar--usage {
+  color: white;
+  background-color: $usage_color;
+}

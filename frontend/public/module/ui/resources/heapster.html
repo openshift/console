@@ -1,0 +1,28 @@
+<div class="co-heapster">
+  <h1 class="co-m-pane__title">Resource Usage</h1>
+  <div class="row">
+    <div ng-if="errors">
+      <div class="col-xs-12" ng-bind="errors"></div>
+    </div>
+
+    <div ng-repeat="(name, resource) in metrics" ng-if"!errors">
+      <div class="col-lg-3 col-md-4 col-xs-6">
+
+        <h3 class="co-heapster__name" ng-bind="name"></h3>
+        <div class="co-heapster__metric">
+          <span class="co-heapster__resource-type co-m-facet-menu__title ">USAGE </span><span class="pull-right co-heapster__usage" ng-bind="resource.usage.humanValue"></span>
+          <div class="co-heapster__resource-metric" uib-tooltip="{{resource.percentage + '%'}}" tooltip-placement="bottom">
+            <div class="co-heapster__progress">
+            </div>
+            <div class="progress-bar co-heapster__progress-bar co-heapster__progress-bar--usage" role="progressbar" ng-style="{width: resource.percentage+'%'}">
+            </div>
+          </div>
+        </div>
+
+        <div class="co-heapster__metric">
+          <span class="co-heapster__resource-type co-m-facet-menu__title">CLUSTER TOTAL</span><span class="pull-right" ng-bind="resource.clusterTotal"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
