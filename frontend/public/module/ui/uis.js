@@ -14,6 +14,7 @@ import './forms/click-select';
 import './forms/number-spinner';
 import './labels/label';
 import './labels/label-input';
+import './labels/label-list';
 import './links/namespaced-href';
 import './log-window/log-window';
 import './nav-title/nav-title';
