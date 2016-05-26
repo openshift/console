@@ -21,7 +21,7 @@
                 <dt>Name</dt>
                 <dd ng-bind="deploymentName | emptyPlaceholder"></dd>
                 <dt>Labels</dt>
-                <dd><co-label-list kind="Deployment" expand="true" labels="deployment.metadata.labels"></co-label-list></dd>
+                <dd><co-label-list kind="deployment" expand="true" labels="deployment.metadata.labels"></co-label-list></dd>
                 <dt>Pod Selector</dt>
                 <dd>
                   <co-label-list kind="pod" selector="true" labels="deployment.spec.selector"></co-label-list>
