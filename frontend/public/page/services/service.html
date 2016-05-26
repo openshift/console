@@ -118,7 +118,7 @@
                       <div class="row co-ip-row" ng-repeat="portMapping in service.spec.ports">
                         <!-- name -->
                         <div class="col-lg-3 co-text-service">
-                          <p ng-bind="portMapping.name"></p>
+                          <p ng-bind="portMapping.name | emptyPlaceholder"></p>
                           <p ng-if="portMapping.nodePort" class="co-text-node">Node Port</p>
                         </div>
 
