@@ -45,4 +45,14 @@ describe('k8s.k8sDocker', function() {
       )).toEqual({name: '9242B9F6-A50A-4330-8C0E-B18EA4672A89', status: 'running'})
     });
   });
+
+  describe('#isEnvVarEmpty', function () {
+    it('returns false when env var has non-falsy name', function () {
+      expect(k8sDocker.isEnvVarEmpty({name: 'PORT', value: 3000})).toEqual(false);
+    });
+
+    it('returns true when env var has falsy name', function () {
+      expect(k8sDocker.isEnvVarEmpty({name: '', value: 3000})).toEqual(true);
+    });
+  });
 });

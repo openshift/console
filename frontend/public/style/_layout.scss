@@ -2,7 +2,6 @@
   background-color: white;
 }
 
-
 // override coreos-web
 @media screen and (min-width: 768px) {
   .modal-dialog {
@@ -21,4 +20,12 @@
   .co-facet-container--right {
     padding-left: 30px;
   }
+}
+
+.co-m-form-row--tall {
+  min-height: 225px;
+}
+
+.co-m-table-grid__footer {
+  padding: 10px 10px 0 0;
 }
