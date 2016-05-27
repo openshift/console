@@ -26,7 +26,7 @@
                 <dd><co-label-list kind="replicationcontroller" expand="true" labels="rc.metadata.labels"></co-label-list></dd>
                 <dt>Pod Selector</dt>
                 <dd>
-                  <co-label-list kind="pod" selector="true" labels="rc.spec.selector"></co-label-list>
+                  <co-selector selector="rc.spec.selector"></co-selector>
                 </dd>
                 <dt>Created At</dt>
                 <dd><co-timestamp timestamp="{{rc.metadata.creationTimestamp}}" /></dd>

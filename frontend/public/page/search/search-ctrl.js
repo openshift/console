@@ -29,7 +29,7 @@ angular.module('bridge.page')
         return;
       }
       $scope.submit();
-    });
+    }, /* objectEquality */true);
   };
 
   // Called when type selector is changed.
@@ -43,7 +43,7 @@ angular.module('bridge.page')
     var kind = getKind($location.search().kind);
     $scope.fields = {
       selectedKindId: kind.id,
-      query: k8s.labels.urlDecode($location.search().q),
+      query: k8s.selector.fromString($location.search().q),
     };
   };
 
@@ -54,7 +54,7 @@ angular.module('bridge.page')
     kind = getKind($scope.fields.selectedKindId);
     search = {
       kind: kind.id,
-      q: k8s.labels.urlEncode($scope.fields.query),
+      q: k8s.selector.toString($scope.fields.query),
     };
     $location.search(search);
   };

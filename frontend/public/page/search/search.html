@@ -7,10 +7,7 @@
     <div class="co-m-pane__body--bordered">
       <form ng-controller="SearchFormCtrl" ng-submit="submit()" name="form" role="form">
         <div class="form-group">
-          <co-label-input
-              autofocus="true"
-              ng-model="fields.query"
-              kind="{{fields.selectedKindId}}"></co-label-input>
+          <co-selector-input ng-model="fields.query"></co-selector-input>
         </div>
         <label class="control-label">Filter:</label>
         <div class="co-type-selector">

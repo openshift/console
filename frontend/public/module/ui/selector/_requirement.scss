@@ -1,0 +1,19 @@
+$height: 18px;
+
+.co-m-requirement {
+  display: inline-block;
+  font-size: $font-size-small;
+  height: $height;
+  line-height: $height;
+  white-space: nowrap;
+  font-weight: 400;
+  vertical-align: middle;
+}
+
+.co-m-requirement__link,
+.co-m-requirement__link:active,
+.co-m-requirement__link:hover,
+.co-m-requirement__link:visited {
+  color: $color-pod-dark;
+  text-decoration: none;
+}
