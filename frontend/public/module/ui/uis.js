@@ -8,6 +8,7 @@ import './cog/deployment-cog';
 import './cog/service-cog';
 import './cog/user-cog';
 import './containers/container-input';
+import './containers/multi-container-input';
 import './icons/resource-icon';
 import './icons/status';
 import './forms/click-select';
