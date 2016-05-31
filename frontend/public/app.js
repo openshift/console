@@ -21,6 +21,7 @@ angular.module('bridge', [
   'bridge.ui',
   'bridge.page',
   'core.pkg',
+  'heapster',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
                  configSvcProvider, errorMessageSvcProvider, flagSvcProvider,
