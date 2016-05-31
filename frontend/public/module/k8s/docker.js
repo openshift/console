@@ -89,6 +89,12 @@ angular.module('k8s')
     };
   };
 
+  this.isEnvVarEmpty = function(envVar) {
+    // check for name, but not value as for many applications existence of
+    // env var is enough to trigger the behavior
+    return !envVar.name;
+  };
+
   this.getEmptyPort = function() {
     return {
       containerPort: null,
