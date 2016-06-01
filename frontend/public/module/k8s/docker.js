@@ -82,6 +82,10 @@ angular.module('k8s')
     };
   };
 
+  this.isVolumeMountEmpty = function(volumeMount) {
+    return _.isEmpty(volumeMount.name) || _.isEmpty(volumeMount.mountPath);
+  };
+
   this.getEmptyEnvVar = function() {
     return {
       name: null,

@@ -7,13 +7,13 @@ angular.module('bridge.page')
 
   $scope.rowMgr = $controller('RowMgr', {
     $scope: $rootScope.$new(),
-    emptyCheck: function(v) {
-      return _.isEmpty(v.name) || _.isEmpty(v.mountPath);
-    },
+    emptyCheck: k8s.docker.isVolumeMountEmpty,
     getEmptyItem: k8s.docker.getEmptyVolumeMount,
   });
 
   $scope.initVolumeMounts = function(volumeMounts) {
+    $scope.rowMgr.min = 1;
+
     if (_.isEmpty(volumeMounts)) {
       $scope.rowMgr.setItems([]);
     } else {

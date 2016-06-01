@@ -55,4 +55,18 @@ describe('k8s.k8sDocker', function() {
       expect(k8sDocker.isEnvVarEmpty({name: '', value: 3000})).toEqual(true);
     });
   });
+
+  describe('#isVolumeMountEmpty', function () {
+    it('returns false when volume mount has both non-falsy name and mount path', function () {
+      expect(k8sDocker.isVolumeMountEmpty({name: 'grafana', mountPath: '/var/lib/grafana'})).toEqual(false);
+    });
+
+    it('returns true when volume mount has falsy name', function () {
+      expect(k8sDocker.isVolumeMountEmpty({name: '', mountPath: '/var/lib/grafana'})).toEqual(true);
+    });
+
+    it('returns true when volume mount has falsy mount path', function () {
+      expect(k8sDocker.isVolumeMountEmpty({name: 'grafana', mountPath: ''})).toEqual(true);
+    });
+  });
 });
