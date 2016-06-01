@@ -107,6 +107,10 @@ angular.module('k8s')
     };
   };
 
+  this.isPortEmpty = function(port) {
+    return _.isNull(port.containerPort) || _.isEmpty(port.name);
+  };
+
   this.getPullPolicyLabel = function(container) {
     var p;
     if (!container) {

@@ -69,4 +69,18 @@ describe('k8s.k8sDocker', function() {
       expect(k8sDocker.isVolumeMountEmpty({name: 'grafana', mountPath: ''})).toEqual(true);
     });
   });
+
+  describe('#isPortEmpty', function () {
+    it('returns false when port has both non-falsy name and container port', function () {
+      expect(k8sDocker.isPortEmpty({name: 'HTTP', containerPort: 80})).toEqual(false);
+    });
+
+    it('returns true when port has falsy name', function () {
+      expect(k8sDocker.isPortEmpty({name: '', containerPort: 80})).toEqual(true);
+    });
+
+    it('returns true when port has nully container port', function () {
+      expect(k8sDocker.isPortEmpty({name: 'HTTP', containerPort: null})).toEqual(true);
+    });
+  });
 });
