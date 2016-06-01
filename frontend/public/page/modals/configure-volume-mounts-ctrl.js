@@ -17,15 +17,7 @@ angular.module('bridge.page')
     if (_.isEmpty(volumeMounts)) {
       $scope.rowMgr.setItems([]);
     } else {
-      $scope.rowMgr.setItems(angular.copy(volumeMounts));
-    }
-  };
-
-  $scope.formatReadOnly = function(vm) {
-    if (vm.readOnly === 'true') {
-      vm.readOnly = true;
-    } else {
-      vm.readOnly = false;
+      $scope.rowMgr.setItems(angular.copy(volumeMounts).map(adjustReadOnly));
     }
   };
 
@@ -46,6 +38,13 @@ angular.module('bridge.page')
   $scope.cancel = function() {
     $uibModalInstance.dismiss('cancel');
   };
+
+  // ng-options expects values to be of concrete types
+  // so we adjust it to boolean (false or unspecified means read-write for k8s)
+  function adjustReadOnly(vm) {
+    vm.readOnly = !!vm.readOnly;
+    return vm;
+  }
 
   $scope.initVolumeMounts(container.volumeMounts);
 })
