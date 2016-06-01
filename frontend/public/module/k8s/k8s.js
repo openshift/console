@@ -3,6 +3,7 @@ import './docker';
 import './enum';
 import './events';
 import './selector';
+import './selector-requirement';
 import './labels';
 import './node';
 import './pods';
@@ -45,11 +46,13 @@ angular.module('k8s')
 })
 
 .service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
-                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets, k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sCommand, featureFlags) {
+                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
+                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featureFlags) {
   'use strict';
 
   this.probe = k8sProbe;
   this.selector = k8sSelector;
+  this.selectorRequirement = k8sSelectorRequirement;
   this.labels = k8sLabels;
   this.events = k8sEvents;
   this.enum = k8sEnum;

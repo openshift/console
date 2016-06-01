@@ -5,13 +5,13 @@
 @import "mixin/keyframes";
 @import "mixin/prefix";
 
-/* Overrides for Coreos global styles */
+// Config variables
+@import "vars";
+
+/* Overrides for coreos-web/vendor global styles */
 @import "overrides";
 
 /* CUSTOM STYLES */
-
-// Config variables
-@import "vars";
 
 // Base
 @import "style/common";
@@ -42,6 +42,9 @@
 @import "module/ui/forms/number-spinner";
 @import "module/ui/labels/label";
 @import "module/ui/labels/label-input";
+@import "module/ui/selector/selector-input";
+@import "module/ui/selector/selector";
+@import "module/ui/selector/requirement";
 @import "module/ui/log-window/log-window";
 @import "module/ui/resources/resource-list";
 @import "module/ui/resources/node-ip-list";

@@ -24,7 +24,7 @@
                 <dd><co-label-list kind="deployment" expand="true" labels="deployment.metadata.labels"></co-label-list></dd>
                 <dt>Pod Selector</dt>
                 <dd>
-                  <co-label-list kind="pod" selector="true" labels="deployment.spec.selector"></co-label-list>
+                  <co-selector expand="true" selector="deployment.spec.selector"></co-selector>
                 </dd>
                 <dt>Created At</dt>
                 <dd><co-timestamp timestamp="{{deployment.metadata.creationTimestamp}}" /></dd>

@@ -27,11 +27,6 @@ angular.module('bridge.ui')
       }
 
       el.addClass('co-m-label--' + attrs.kind);
-      if (attrs.selector) {
-        el.addClass('co-m-label--selector');
-        linkEl.prepend('<i class="co-m-label__icon fa fa-search"></i>');
-        linkEl.addClass('co-m-modal-link');
-      }
 
       el.find('.co-m-label__key')
         .text(attrs.key);

@@ -9,7 +9,6 @@ angular.module('bridge.ui')
     scope: {
       // kind id
       kind: '@',
-      selector: '@',
       expand: '@',
       labels: '='
     },

@@ -18,7 +18,7 @@
       </div>
       <div class="col-lg-3 col-md-3 col-sm-4 hidden-xs" ng-bind-template="{{rs.status.replicas}} of {{rs.spec.replicas}} pods"></div>
       <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
-        <co-label-list kind="pod" selector="true" labels="rs.spec.selector"></co-label-list>
+        <co-selector selector="rs.spec.selector"></co-selector>
       </div>
     </div>
     <div ng-show="open" ng-repeat-end>

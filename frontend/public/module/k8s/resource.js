@@ -39,7 +39,7 @@ angular.module('k8s')
     var ns, d = $q.defer();
     if (params) {
       if (!_.isEmpty(params.labelSelector)) {
-        params.labelSelector = k8sSelector.stringify(params.labelSelector);
+        params.labelSelector = k8sSelector.toString(params.labelSelector);
       }
       if (params.ns) {
         ns = params.ns;
