@@ -38,11 +38,9 @@
                   <input ng-model="v.mountPath" class="form-control"
                       ng-focus="rowMgr.growIfLast($index)" type="text"/>
                 </div>
-                <div class="col-sm-3">
-                  <select ng-model="v.readOnly" ng-change="formatReadOnly(v)"
+                <div class="col-sm-3" ng-init="access = [{label: 'Read/Write', value: false}, {label: 'Read Only', value: true}]">
+                  <select ng-model="v.readOnly" ng-options="a.value as a.label for a in access"
                       ng-focus="rowMgr.growIfLast($index)" class="form-control">
-                    <option value="false" ng-selected="v.readOnly == false">Read/Write</option>
-                    <option value="true" ng-selected="v.readOnly == true">Read Only</option>
                   </select>
                 </div>
                 <div class="col-sm-1">
