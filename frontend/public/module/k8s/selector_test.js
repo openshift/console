@@ -57,6 +57,18 @@ describe('k8s.k8sSelector', function() {
     });
   });
 
+  describe('#toRequirements', function () {
+    it('returns empty list given selector as undefined value', function () {
+      expect(k8sSelector.toRequirements(undefined)).toEqual([]);
+    });
+  });
+
+  describe('#fromRequirements', function () {
+    it('returns undefined given no requirements and undefinedWhenEmpty option', function () {
+      expect(k8sSelector.fromRequirements([], {undefinedWhenEmpty: true})).toBeUndefined();
+    });
+  });
+
   describe('#toString', function () {
     it('works when both "matchLabels" and "matchExpressions" are given', function () {
       expect(k8sSelector.toString({

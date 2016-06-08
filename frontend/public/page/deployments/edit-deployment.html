@@ -36,7 +36,7 @@
                 <label class="control-label">Pod Selector:</label>
               </div>
               <div class="co-m-form-col col-sm-10">
-                <co-selector-input ng-model="deployment.spec.selector"></co-selector-input>
+                <co-selector-input ng-model="deployment.spec.selector" options="{undefinedWhenEmpty: true}"></co-selector-input>
                 <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
               </div>
             </div>
