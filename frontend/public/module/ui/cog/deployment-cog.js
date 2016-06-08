@@ -23,7 +23,7 @@ angular.module('bridge.ui')
 
       function getDeleteFn() {
         return function() {
-          return k8s.deployment.delete($scope.deployment);
+          return k8s.deployments.delete($scope.deployment);
         };
       }
 
