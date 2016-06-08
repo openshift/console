@@ -1,6 +1,4 @@
 angular.module('bridge.page')
-.controller('NodesCtrl', function (featureFlags, $scope) {
+.controller('NodesCtrl', function () {
   'use strict';
-
-  $scope.featureFlags = featureFlags;
 });

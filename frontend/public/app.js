@@ -270,6 +270,11 @@ angular.module('bridge', [
     templateUrl: '/static/page/nodes/sysevents.html',
     title: 'Node Events',
   });
+  r('/nodes/:name/tpm-event-log', {
+    controller: 'nodeTpmLogCtrl',
+    templateUrl: '/static/page/nodes/tpm-event-log.html',
+    title: 'Node',
+  });
   r('/nodes/:name/pods', {
     controller: 'nodePodsCtrl',
     templateUrl: '/static/page/nodes/pods.html',
@@ -306,14 +311,16 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s, featureFlags) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();
   $rootScope.debug = debugSvc;
   firehose.start();
+  $rootScope.FEATURE_FLAGS = featureFlags;
   k8s.featureDetection();
+
 
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
     switch(rejection) {

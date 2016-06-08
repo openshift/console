@@ -14,4 +14,9 @@
       <i class="fa fa-history"></i>
     </a>
   </li>
+  <li class="co-m-vert-nav__menu-item" ng-if="$root.FEATURE_FLAGS.tpm">
+    <a ng-href="/nodes/{{name}}/tpm-event-log" uib-tooltip="TPM Event Log" tooltip-placement="right">
+      <i class="ci-tpm-icon"></i>
+    </a>
+  </li>
 </ul>
