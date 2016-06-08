@@ -22,6 +22,7 @@ angular.module('k8s')
     }
 
     function toRequirements(selector) {
+      selector             = selector || {};
       var requirements     = [];
       var matchLabels      = isOldFormat(selector) ? selector : selector.matchLabels;
       var matchExpressions = selector.matchExpressions;
@@ -37,12 +38,22 @@ angular.module('k8s')
       return requirements;
     }
 
+    /**
+     * @param {Object[]} requirements
+     * @param {Object}   options
+     * @param {Boolean}  options.basic
+     * @param {Boolean}  options.undefinedWhenEmpty
+     */
     function fromRequirements(requirements, options) {
       options      = options || {};
       var selector = {
         matchLabels:      {},
         matchExpressions: []
       };
+
+      if (options.undefinedWhenEmpty && requirements.length === 0) {
+        return;
+      }
 
       requirements.forEach(function (r) {
         if (r.operator === 'Equals') {
