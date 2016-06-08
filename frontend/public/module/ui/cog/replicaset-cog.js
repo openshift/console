@@ -23,7 +23,7 @@ angular.module('bridge.ui')
 
       function getDeleteFn() {
         return function() {
-          return k8s.replicaset.delete($scope.rs);
+          return k8s.replicasets.delete($scope.rs);
         };
       }
 
