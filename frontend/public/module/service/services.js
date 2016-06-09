@@ -15,3 +15,4 @@ import './resource-mgr-svc';
 import './status';
 import './stream';
 import './yamlize';
+import './firehydrant';

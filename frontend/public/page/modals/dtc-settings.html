@@ -1,0 +1,49 @@
+<div class="co-p-dtc-settings">
+  <form ng-controller="ConfigureSelectorFormCtrl" ng-submit="submit()" name="form" role="form" class="form-horizontal">
+
+    <div class="modal-header">
+      <h4 class="modal-title" ng-bind-template="DTC Admission Policy"></h4>
+    </div>
+
+    <div class="modal-body">
+      <div>1 {{taintManager|json}}</div>
+      <div>2 {{managerOfTPM|json}}</div>
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <div class="radio">
+            <label>
+              <input type="radio" name="admission" id="open" value="open" checked="{{}}">
+              Open Admission
+              <br/>
+              All nodes will be allowed to join the cluster.
+            </label>
+          </div>
+          <div class="radio">
+            <label>
+              <input type="radio" name="admission" id="trusted" value="trusted">
+              Trusted Computing
+              <br/>
+              All nodes must be in a trusted configuration before joining the cluster.
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" name="strict" id="strict" value="" checked>
+                  Trusted Computing
+                  <br/>
+                  All nodes must be in a trusted configuration before joining the cluster.
+                </label>
+              </div>
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" co-btn-bar complete-promise="requestPromise">
+      <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Save Admission Policy</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>

@@ -34,9 +34,9 @@ angular.module('bridge.ui')
       trusted: '=',
       nodes: '=',
       compacted: '=',
+      loadError: '=',
     },
     controller: function($scope) {
-      $scope.loadError = false;
       $scope.getPodFieldSelector = k8s.pods.fieldSelectors.node;
       $scope.isTrusted = k8s.nodes.isTrusted;
       $scope.isReady = k8s.nodes.isReady;
@@ -47,7 +47,10 @@ angular.module('bridge.ui')
           return hasStatus_(n, k8s, $scope.statusFilter) && isNamed_(n, $scope.namefilter);
         })
         .sort((a, b) => {
-          return a.metadata.name - b.metadata.name;
+          if (a.metadata.name > b.metadata.name) {
+            return 1;
+          }
+          return -1;
         });
       }
 

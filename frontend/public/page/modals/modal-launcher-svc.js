@@ -85,7 +85,11 @@ angular.module('bridge.page')
     'show-yaml': {
       templateUrl: '/static/page/modals/show-yaml.html',
       controller: 'ShowYAMLCtrl',
-    }
+    },
+    'dtc-settings': {
+      templateUrl: '/static/page/modals/dtc-settings.html',
+      controller: 'dtcSettings',
+    },
   };
 
   return {

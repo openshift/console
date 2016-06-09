@@ -1,0 +1,32 @@
+@import '_vars';
+
+.audit-report {
+  .co-m-table-grid__body {
+    .policy-row {
+      border: 0px;
+      &.policy-row--invalid {
+        padding: 10px 5px;
+        border: 1px solid $color-tpm-untrusted;
+        border-left: 0;
+        border-right: 0;
+        color: $color-tpm-untrusted;
+        font-weight: bold;
+        margin-top: -1px;
+      }
+      &.policy-row--valid {
+        border: 0;
+        padding: 5px;
+      }
+    }
+    a.unknown-config {
+      color: $color-tpm-untrusted;
+    }
+  }
+
+  .pad-left {
+    padding-left: 40px;
+  }
+  .audit-policy {
+    line-height: 20px;
+  }
+}

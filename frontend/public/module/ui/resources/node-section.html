@@ -10,7 +10,7 @@
         <p class="text-muted small" ng-bind="description">
         </p>
       </div>
-        
+
       <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
           <label ng-class="{'btn-unselected': passByRef.compacted=='false', 'btn-selected': passByRef.compacted=='true'}" class="btn compaction-btn">
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
-        <co-node-list class="co-facet-container--right" filter="facetFilter" namefilter="passByRef.namefilter" trusted="trusted" compacted="passByRef.compacted" nodes="nodes"></co-node-list>
+        <co-node-list class="co-facet-container--right" filter="facetFilter" namefilter="passByRef.namefilter" trusted="trusted" compacted="passByRef.compacted" nodes="nodes" load-error="loadError"></co-node-list>
       </div>
     </div>
   </div><!-- pane body -->

@@ -1,6 +1,61 @@
 <div class="co-p-nodes">
 
   <tec-nav-title title="Nodes"></tec-nav-title>
+  <div class="row">
+    <div class="col-xs-{{ $root.FEATURE_FLAGS.tpm ? '6' : '12'}} " ng-style="{'padding-right': '10px'}">
+      <div class="co-m-pane">
+        <div class="co-m-pane__heading ng-scope">
+          <div class="row">
+            <div class="col-xs-6">
+              <h1 class="co-m-pane__title">DTC Admission Settings</h1>
+            </div>
+            <div class="col-xs-6" ng-show="$root.FEATURE_FLAGS.tpm">
+              <p class="pull-right">
+                <a href="/audit-report">View Audit Report</a>
+              </p>
+            </div>
+          </div>
+          <div class="row co-m-pane__sub__heading">
+            <div class="col-xs-12">
+              <p class="text-muted small">ADMISSION POLICY</p>
+              <a ng-click="modal()">click</a>
+              <p class="text-muted small" ng-if="!$root.FEATURE_FLAGS.tpm">Open Admission &gt;</p>
+              <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm && !managerOfTPM.allowunknown">Strict Trusted Computing &gt;</p>
+              <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm && managerOfTPM.allowunknown">Trusted Computing &gt;</p>
+            </div>
+
+            <div class="col-xs-12">
+              <p class="text-muted small" ng-if="!$root.FEATURE_FLAGS.tpm">TPM support is disabled.  All nodes will be admitted into the cluster.</p>
+              <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm && managerOfTPM.allowunknown">Nodes with previously unseen TPMs will be admitted.</p>
+              <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm && !managerOfTPM.allowunknown">Only nodes with previously seen TPMs will be admitted to the cluster.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xs-12" style="padding-left: 10px;" ng-if="$root.FEATURE_FLAGS.tpm">
+      <div class="co-m-pane">
+        <div class="co-m-pane__heading ng-scope">
+          <div class="row">
+            <div class="col-xs-6">
+              <h1 class="co-m-pane__title">Trust Policies</h1>
+            </div>
+            <div class="col-xs-6">
+              <p class="pull-right">
+                <a href="/trusted-compute-policies">View Policies</a>
+              </p>
+            </div>
+          </div>
+          <div class="row co-m-pane__sub__heading">
+            <div class="col-xs-12">
+              <p class="text-muted small">PROFILE MATCHING</p>
+              <p class="text-muted small">A node matching any combination of profiles is considered trusted.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="co-m-pane">
     <co-node-section trusted="false"></co-node-section>

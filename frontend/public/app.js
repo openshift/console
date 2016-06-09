@@ -280,6 +280,7 @@ angular.module('bridge', [
     templateUrl: '/static/page/nodes/pods.html',
     title: 'Node Pods',
   });
+
   r('/search', {
     controller: 'SearchCtrl',
     templateUrl: '/static/page/search/search.html',
@@ -295,6 +296,24 @@ angular.module('bridge', [
     templateUrl: '/static/page/settings/users.html',
     title: 'Manage Users',
   });
+
+  r('/audit-report', {
+    controller: 'TPMCtrl',
+    templateUrl: '/static/page/tpm/audit-report.html',
+    title: 'Policy',
+  });
+  r('/trusted-compute-policies', {
+    controller: 'TPMCtrl',
+    templateUrl: '/static/page/tpm/policy-list.html',
+    title: 'Trusted Compute Policies',
+  });
+
+  r('/trusted-compute-policies/:name', {
+    controller: 'TPMCtrl',
+    templateUrl: '/static/page/tpm/policy-page.html',
+    title: 'Policy',
+  });
+
   r('/welcome', {
     controller: 'WelcomeCtrl',
     templateUrl: '/static/page/welcome/welcome.html',
@@ -311,12 +330,13 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s, featureFlags) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s, featureFlags, firehydrant) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();
   $rootScope.debug = debugSvc;
+  firehydrant.start();
   firehose.start();
   $rootScope.FEATURE_FLAGS = featureFlags;
   k8s.featureDetection();
