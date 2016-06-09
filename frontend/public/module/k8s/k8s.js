@@ -13,6 +13,7 @@ import './replicasets';
 import './deployments';
 import './resource';
 import './services';
+import './tpm';
 import './util';
 import './feature_flags';
 import './command';

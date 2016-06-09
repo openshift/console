@@ -1,0 +1,72 @@
+<div class="co-p-node-tpmevents">
+
+  <tec-nav-title title="{{nodeName}}">
+    <a ng-href="/nodes" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Nodes</a>
+  </tec-nav-title>
+
+  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+    <co-node-nav name="nodeName"></co-node-nav>
+
+    <div class="co-m-vert-nav__body">
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">TPM Event Log</h1>
+      </div>
+
+      <div class="co-m-pane__body">
+        <div class="row">
+          <div cos-tristate="logs" cos-tristate-error="loadError" class="co-m-table-grid__body">
+            <table class="table cos-tristate-show-ready">
+              <thead>
+                <tr>
+                  <th>
+                    PCR
+                  </th>
+                  <th>
+                    Policy
+                  </th>
+                  <th>
+                    Policy Item Matched
+                  </th>
+                  <th>
+                    Event Description
+                  </th>
+                  <th>
+                    PCR Value
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="event in logs track by $index" ng-class="!event.Valid && 'tpm-untrusted'" id="pcr-anchor-{{event.Pcr}}">
+                  <td class="no-wrap" ng-bind="pcrToHuman(event.Pcr)">
+                  </td>
+                  <td class="no-wrap">
+                    <span ng-bind="event.Source"></span>
+                    <!-- <a ng-if="event.Valid" ng-href="/trusted-compute-policies/{{event.Source}}" ng-bind="event.Source"></a> -->
+                    <span ng-if="!event.Valid">No Match</span>
+                  </td>
+                  <td>
+                    <span ng-if="event.Valid"  class="co-p-node-tpmevents__mono" ng-bind="event.Match || '-'"></span>
+                    <span ng-if="!event.Valid" class="co-p-node-tpmevents__mono" ng-bind="'No Match'"></span>
+                  </td>
+                  <td>
+                    <span ng-if="event.Valid" ng-bind="event.Description || '-'"></span>
+                    <span ng-if="!event.Valid" ng-bind="'No Match'"></span>
+                  </td>
+                  <td class="no-wrap">
+                    <span class="co-p-node-tpmevents__mono" ng-bind="pcrRawToHex(event.PcrValue) || '-'"></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <co-loader class="cos-tristate-show-loading"></co-loader>
+            <cos-status-box class="cos-tristate-show-error">
+              <div class="cos-error-title">Error Loading Logs</div>
+            </cos-status-box>
+            <cos-status-box class="cos-tristate-show-empty">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
