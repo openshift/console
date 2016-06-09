@@ -22,8 +22,8 @@
               <dd><co-node-ip-list addresses="node.status.addresses" compacted="compacted"></co-node-ip-list></dd>
               <dt>Node Labels</dt>
               <dd><co-label-list kind="node" expand="true" labels="node.metadata.labels"></co-label-list></dd>
-              <dt>Trusted</dt>
-              <dd>
+              <dt ng-if="$root.FEATURE_FLAGS.tpm">Trusted</dt>
+              <dd ng-if="$root.FEATURE_FLAGS.tpm">
                 <span ng-if="isTrusted(node)" class="tpm-trusted"><i class="fa fa-shield"></i> Trusted</span>
                 <span ng-if="!isTrusted(node)" class="tpm-untrusted"><i class="fa fa-times"></i> Untrusted</span>
               </dd>

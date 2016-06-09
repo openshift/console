@@ -16,11 +16,11 @@
         </div>
 
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-          <div class="pad-line">
+          <div class="pad-line" ng-if="$root.FEATURE_FLAGS.tpm">
             <span ng-if="isTrusted(n)" class="tpm-trusted"><i class="fa fa-shield"></i>  Trusted</span>
             <span ng-if="!isTrusted(n)" class="tpm-untrusted"><i class="fa fa-times"></i> Untrusted</span>
           </div>
-          <div ng-if="compacted=='false'" class="pad-line">
+          <div ng-if="compacted=='false' || !$root.FEATURE_FLAGS.tpm" class="pad-line">
             <span ng-if="isReady(n)" class="tpm-trusted"> <i class="fa fa-check"></i> Ready</span>
             <span ng-if="!isReady(n)" class="tpm-untrusted"><i class="fa fa-minus-circle"></i> Not Ready</span>
           </div>
