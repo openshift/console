@@ -85,7 +85,7 @@ angular.module('bridge.page')
     'show-yaml': {
       templateUrl: '/static/page/modals/show-yaml.html',
       controller: 'ShowYAMLCtrl',
-    }
+    },
   };
 
   return {

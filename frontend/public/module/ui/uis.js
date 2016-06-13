@@ -23,6 +23,7 @@ import './selector/selector-input-service';
 import './links/namespaced-href';
 import './log-window/log-window';
 import './nav-title/nav-title';
+
 import './resources/node-list';
 import './resources/node-section';
 import './resources/node-list-search';
@@ -37,6 +38,9 @@ import './resources/replica-set-list';
 import './resources/deployment-list';
 import './resources/service-ip-link';
 import './resources/service-list';
+import './resources/tpc-list';
+import './resources/policy';
+
 import './status-box/status-box';
 import './sysevents/sysevent-icon';
 import './sysevents/sysevent-stream';

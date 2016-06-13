@@ -77,6 +77,20 @@ angular.module('k8s').constant('k8sEnum', {
       labelPlural: 'Namespaces',
       path: 'namespaces',
     },
+    POLICY: {
+      id: 'policy',
+      kind: 'Policy',
+      label: 'Policy',
+      labelPlural: 'Policies',
+      path: '../../apis/tpm.coreos.com/v1/policies',
+    },
+    CONFIGMAP: {
+      id: 'configmap',
+      kind: 'Configmap',
+      label: 'Configmap',
+      labelPlural: 'Configmaps',
+      path: 'configmaps',
+    },
   },
 
   PullPolicy: {

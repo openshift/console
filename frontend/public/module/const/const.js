@@ -7,6 +7,7 @@ angular.module('bridge.const')
   dateFmt: 'MM-dd-yyyy',
   timeFmt: 'HH:mm:ss a Z',
   placeholderText: '-',
+  INVALID_POLICY: 'Unknown Configuration',
 
   // Kubernetes "dns-friendly" names match
   // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters

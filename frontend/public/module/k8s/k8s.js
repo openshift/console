@@ -17,6 +17,7 @@ import './tpm';
 import './util';
 import './feature_flags';
 import './command';
+import './configmaps';
 
 angular.module('k8s')
 .provider('k8sConfig', function() {
@@ -45,10 +46,9 @@ angular.module('k8s')
     };
   };
 })
-
 .service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featureFlags) {
+                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featureFlags, tpm, k8sConfigmaps) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -62,6 +62,17 @@ angular.module('k8s')
   this.search = k8sResource.list;
   this.util = k8sUtil;
   this.command = k8sCommand;
+
+  this.configmaps = _.extend(k8sConfigmaps, {
+    list: _.partial(k8sResource.list, k8sEnum.Kind.CONFIGMAP),
+    get: _.partial(k8sResource.get, k8sEnum.Kind.CONFIGMAP),
+  });
+
+  this.policies = _.extend(tpm, {
+    list: _.partial(k8sResource.list, k8sEnum.Kind.POLICY),
+    get: _.partial(k8sResource.get, k8sEnum.Kind.POLICY),
+  });
+
   this.nodes = _.assign(k8sNodes, {
     list: _.partial(k8sResource.list, k8sEnum.Kind.NODE),
     get: _.partial(k8sResource.get, k8sEnum.Kind.NODE),

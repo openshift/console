@@ -41,20 +41,18 @@
                   <td class="no-wrap" ng-bind="pcrToHuman(event.Pcr)">
                   </td>
                   <td class="no-wrap">
-                    <span ng-bind="event.Source"></span>
-                    <!-- <a ng-if="event.Valid" ng-href="/trusted-compute-policies/{{event.Source}}" ng-bind="event.Source"></a> -->
-                    <span ng-if="!event.Valid">No Match</span>
+                    <a ng-if="event.Valid" ng-href="/trusted-compute-policies/{{event.Source}}" ng-bind="event.Source"></a>
                   </td>
                   <td>
-                    <span ng-if="event.Valid"  class="co-p-node-tpmevents__mono" ng-bind="event.Match || '-'"></span>
-                    <span ng-if="!event.Valid" class="co-p-node-tpmevents__mono" ng-bind="'No Match'"></span>
+                    <span ng-if="event.Valid"  class="monospace" ng-bind="event.Match || '-'"></span>
+                    <span ng-if="!event.Valid" class="monospace" ng-bind="'No Match'"></span>
                   </td>
                   <td>
                     <span ng-if="event.Valid" ng-bind="event.Description || '-'"></span>
                     <span ng-if="!event.Valid" ng-bind="'No Match'"></span>
                   </td>
                   <td class="no-wrap">
-                    <span class="co-p-node-tpmevents__mono" ng-bind="pcrRawToHex(event.PcrValue) || '-'"></span>
+                    <span class="monospace" ng-bind="pcrRawToHex(event.PcrValue) || '-'"></span>
                   </td>
                 </tr>
               </tbody>

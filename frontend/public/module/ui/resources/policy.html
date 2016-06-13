@@ -1,0 +1,61 @@
+<div>
+  <tec-nav-title title="{{policy.metadata.name}}"></tec-nav-title>
+  <div class="co-m-pane">
+    <div class="co-m-pane__body">
+      <div class="row">
+        <div class="col-xs-12">
+          <h1 class="co-m-pane__title co-m-pane__body__top-controls">
+            Trusted Compute Policy
+          </h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="co-m-node-list co-m-table-grid co-m-table-grid--bordered">
+          <div class="col-xs-12">
+            <div class="row co-m-table-grid__head">
+              <div class="col-xs-3">Name</div>
+              <div class="col-xs-2">PCR</div>
+              <div class="col-xs-1">Type</div>
+              <div class="col-xs-6">Value</div>
+            </div>
+
+            <div cos-tristate="values" cos-tristate-error="loadError" class="co-m-table-grid__body">
+              <div class="row co-m-table-grid" ng-repeat="value in values" ng-click="open = !open">
+                <div class="middler">
+                  <div class="col-xs-3" ng-bind="value.description">
+                  </div>
+
+                  <div class="col-xs-2" ng-bind="pcrToHuman(value.pcrNum)">
+                  </div>
+
+                  <div class="col-xs-1" ng-bind="value.type">
+                  </div>
+
+                  <div class="col-xs-6 monospace" ng-bind="value.value">
+                  </div>
+                </div>
+              </div>
+              <co-loader class="cos-tristate-show-loading"></co-loader>
+
+              <cos-status-box class="cos-tristate-show-error">
+                <div class="cos-error-title">Error loading policies</div>
+                <div class="cos-text-center">An error occurred during policiy retrieval. Please try again.</div>
+              </cos-status-box>
+
+              <cos-status-box ng-show="!policies.length" class="cos-tristate-show-empty">
+                <div>No policies found</div>
+                <div class="cos-text-center">No policies found in the system.</div>
+              </cos-status-box>
+              <cos-status-box class="cos-status-box--border-bottom" ng-show="!policies.length">
+                <div>No matching policies</div>
+                <div class="cos-text-center" ng-bind-template="{{policies.length}} node(s) exist, but none match the current filter."></div>
+              </cos-status-box>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
