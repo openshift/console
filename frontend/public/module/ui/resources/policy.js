@@ -20,7 +20,7 @@ angular.module('bridge.ui')
     scope: {
       name: '=',
     },
-    controller: function(_, $scope, $attrs, $routeParams, tpm, firehydrant) {
+    controller: function(_, $scope, $attrs, $routeParams, tpm, k8sCache) {
       $scope.values = [];
       $scope.pcrToHuman = tpm.pcrToHuman;
 
@@ -49,7 +49,7 @@ angular.module('bridge.ui')
         $scope.values = values;
       }
 
-      firehydrant.subscribeToPolicies($scope,
+      k8sCache.subscribeToPolicies($scope,
         policies => {
           $scope.policies = policies;
           $scope.loadError = false;

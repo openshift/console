@@ -1,10 +1,6 @@
 angular.module('bridge.page')
-.controller('NodesCtrl', function ($scope, $q, k8s, ModalLauncherSvc) {
+.controller('NodesCtrl', function ($scope, $q, k8s) {
   'use strict';
-
-  $scope.modal = () => {
-    ModalLauncherSvc.open('dtc-settings');
-  }
 
   $q.all([
     k8s.configmaps.get('tpm-manager.coreos.com', 'default'),

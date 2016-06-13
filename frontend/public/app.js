@@ -330,13 +330,13 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s, featureFlags, firehydrant) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s, featureFlags, k8sCache) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();
   $rootScope.debug = debugSvc;
-  firehydrant.start();
+  k8sCache.start();
   firehose.start();
   $rootScope.FEATURE_FLAGS = featureFlags;
   k8s.featureDetection();

@@ -10,7 +10,7 @@ angular.module('bridge.ui')
     scope: {
       trusted: '=',
     },
-    controller: function ($scope, k8s, firehydrant) {
+    controller: function ($scope, k8s, k8sCache) {
       $scope.passByRef = {compacted :'true'};
 
       if ($scope.trusted) {
@@ -21,7 +21,7 @@ angular.module('bridge.ui')
         $scope.description = 'Nodes that don\'t match a trusted profile or configuration have been modified since being trusted.';
       }
 
-      firehydrant.subscribeToNodes($scope,
+      k8sCache.subscribeToNodes($scope,
         nodes => {
           $scope.loadError = false;
           $scope.nodes = nodes.filter(n => !!$scope.trusted === k8s.nodes.isTrusted(n));

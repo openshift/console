@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('bridge.ui')
-.directive('coTpcList', function (firehydrant) {
+.directive('coTpcList', function (k8sCache) {
   'use strict';
 
   return {
@@ -40,7 +40,7 @@ angular.module('bridge.ui')
         });
       }
 
-      firehydrant.subscribeToPolicies($scope,
+      k8sCache.subscribeToPolicies($scope,
         newPolicies => {
           policies = newPolicies;
           $scope.filteredPolicies = policyFilter(newPolicies);

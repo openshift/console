@@ -1,5 +1,5 @@
 angular.module('bridge.service')
-.service('firehydrant', function(_, $interval, $rootScope, $routeParams, k8s, resourceMgrSvc) {
+.service('k8sCache', function(_, $interval, $rootScope, $routeParams, k8s, resourceMgrSvc) {
   'use strict';
 
   this.objects = {
@@ -12,16 +12,14 @@ angular.module('bridge.service')
   }
 
   const subscribe = (type, scope, onSuccess, onError) => {
-    const off1 = scope.$on(`firehydrant-${type}`, (event, objects) => onSuccess(objects));
-    const off2 = scope.$on(`firehydrant-${type}-error`, (event, err) => onError(err));
+    scope.$on(`k8sCache-${type}`, (event, objects) => onSuccess(objects));
+    scope.$on(`k8sCache-${type}-error`, (event, err) => onError(err));
 
     if (this.loadErrors[type]) {
       onError();
     } else {
       onSuccess(this.objects[type]);
     }
-
-    scope.$on('$destroy', () => off1() && off2());
   }
 
   this.subscribeToNodes = (scope, onSuccess, onError) => {
@@ -60,11 +58,8 @@ angular.module('bridge.service')
   }
 
   const broadcastNodes = _.debounce(() => {
-    if (this.loadErrors.nodes) {
-      return;
-    }
     utilization();
-    $rootScope.$broadcast('firehydrant-nodes', this.objects.nodes);
+    $rootScope.$broadcast('k8sCache-nodes', this.objects.nodes);
   }, 5000, {leading: true});
 
   const loadNodes = () => {
@@ -78,7 +73,7 @@ angular.module('bridge.service')
       .catch(e => {
         this.objects.nodes.splice(0, this.objects.nodes.length);
         this.loadErrors.nodes = e;
-        $rootScope.$broadcast('firehydrant-nodes-error', e);
+        $rootScope.$broadcast('k8sCache-nodes-error', e);
       });
   }
 
@@ -117,12 +112,12 @@ angular.module('bridge.service')
         this.objects.policies.push.apply(this.objects.policies, policies.items);
         this.loadErrors.policies = false;
         utilization()
-        $rootScope.$broadcast('firehydrant-policies', this.objects.policies);
+        $rootScope.$broadcast('k8sCache-policies', this.objects.policies);
       })
       .catch(e => {
         this.objects.policies.splice(0, this.objects.policies.length);
         this.loadErrors.policies = e;
-        $rootScope.$broadcast('firehydrant-policies-error', e);
+        $rootScope.$broadcast('k8sCache-policies-error', e);
       });
   };
 

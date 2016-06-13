@@ -18,10 +18,9 @@
           <div class="row co-m-pane__sub__heading">
             <div class="col-xs-12">
               <p class="text-muted small">ADMISSION POLICY</p>
-              <a ng-click="modal()">click</a>
-              <p class="text-muted small" ng-if="!$root.FEATURE_FLAGS.tpm">Open Admission &gt;</p>
-              <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm && !managerOfTPM.allowunknown">Strict Trusted Computing &gt;</p>
-              <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm && managerOfTPM.allowunknown">Trusted Computing &gt;</p>
+              <p class="" ng-if="!$root.FEATURE_FLAGS.tpm">Open Admission</p>
+              <p class="" ng-if="$root.FEATURE_FLAGS.tpm && !managerOfTPM.allowunknown">Strict Trusted Computing</p>
+              <p class="" ng-if="$root.FEATURE_FLAGS.tpm && managerOfTPM.allowunknown">Trusted Computing</p>
             </div>
 
             <div class="col-xs-12">
@@ -49,6 +48,9 @@
           <div class="row co-m-pane__sub__heading">
             <div class="col-xs-12">
               <p class="text-muted small">PROFILE MATCHING</p>
+            </div>
+            <div class="col-xs-12">
+              <p class="" >Any secure combination</p>
               <p class="text-muted small">A node matching any combination of profiles is considered trusted.</p>
             </div>
           </div>

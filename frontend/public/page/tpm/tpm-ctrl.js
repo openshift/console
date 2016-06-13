@@ -1,13 +1,14 @@
 'use strict';
 
 angular.module('bridge.page')
-.controller('TPMCtrl', function(_, $scope, $routeParams, k8s, tpm, firehydrant, CONST) {
+.controller('TPMCtrl', function(_, $scope, $routeParams, k8s, tpm, k8sCache, CONST) {
 
   const INVALID_POLICY =  $scope.INVALID_POLICY = CONST.INVALID_POLICY;
   $scope.isTrusted = k8s.nodes.isTrusted;
   $scope.pcrToHuman = tpm.pcrToHuman;
+  $scope.layers = Object.keys(tpm.LAYERS);
 
-  firehydrant.subscribeToNodes($scope,
+  k8sCache.subscribeToNodes($scope,
     nodes => {
       $scope.nodes = nodes;
       $scope.loadNodeError = false;
@@ -16,7 +17,7 @@ angular.module('bridge.page')
     }
   );
 
-  firehydrant.subscribeToPolicies($scope,
+  k8sCache.subscribeToPolicies($scope,
     policies => {
       $scope.policies = policies;
       $scope.loadPolicyError = false;

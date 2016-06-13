@@ -14,16 +14,18 @@ const PCR_ENUM = {
   9:  '9 - Grub (Binary)',
 };
 
+const ALL = 'ALL';
+
 const LAYERS = {
-  all: [0, 15],
-  boot: [0, 7],
-  os: [8, 9],
-  application: [10, 15],
+  [ALL]: [0, 15],
+  'Early Boot': [0, 7],
+  'Operating System': [8, 9],
+  'Container Engine': [10, 15],
 };
 
 
 angular.module('k8s')
-.service('tpm', function ($q) {
+.service('tpm', function () {
   this.pcrToHuman = (number) => {
     return PCR_ENUM[number];
   };
@@ -37,11 +39,11 @@ angular.module('k8s')
     }).join('');
   };
   this.policyToLayer = (policy) => {
-    return _.union(Object.keys(policy.policy).map(pcr => {
+    return _.uniq(Object.keys(policy.policy).map(pcr => {
       let layer;
       pcr = parseInt(pcr, 10);
       _.find(LAYERS, (range, name) => {
-        if (name === 'all') {
+        if (name === ALL) {
           return;
         }
         if (pcr >= range[0] && pcr <= range[1]) {

@@ -14,17 +14,14 @@
         <div class="co-m-node-list co-m-table-grid co-m-table-grid--bordered">
           <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
             <div class="co-facet-container--left">
-              <co-facet-menu model="layerfilter" title="PCR Layer" ng-init="layerfilter='boot'" class="no-margin">
-                <co-facet-menu-option value="all">All</co-facet-menu-option>
-                <co-facet-menu-option value="boot">Early Boot</co-facet-menu-option>
-                <co-facet-menu-option value="os">Operating System</co-facet-menu-option>
-                <co-facet-menu-option value="application">Container Engine</co-facet-menu-option>
+              <co-facet-menu model="layerfilter" title="PCR Layer" ng-init="layerfilter='Early Boot'" class="no-margin">
+                <co-facet-menu-option value="{{layer}}" ng-repeat="layer in layers" ng-bind="layer"></co-facet-menu-option>
               </co-facet-menu>
               <co-debug obj="layerfilter"></co-debug>
             </div>
           </div>
           <div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
-            <co-tpc-list layerfilter="layerfilter" />
+            <co-tpc-list layerfilter="layerfilter" layers="layers" />
           </div>
         </div>
       </div>

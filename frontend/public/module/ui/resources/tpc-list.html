@@ -26,7 +26,7 @@
           </div>
 
           <div class="col-xs-3">
-            <span ng-bind="policy.metadata.utilization"></span>
+            <ng-pluralize count="policy.metadata.utilization" when="{'0': '0 Nodes', '1': '1 Node', 'other': '{} Nodes'}",></ng-pluralize>
           </div>
         </div>
       </div>
