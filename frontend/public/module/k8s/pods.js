@@ -1,9 +1,19 @@
 angular.module('k8s')
-.service('k8sPods', function(_, pkg, k8sDocker, k8sUtil, k8sEnum) {
+.service('k8sPods', function(_, pkg, k8sDocker, k8sUtil, k8sEnum, $http, k8sResource) {
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });
   var fieldSelectors;
+
+  this.log = function (podName, ns) {
+    return $http({
+      url: k8sResource.resourceURL(k8sEnum.Kind.POD, {ns: ns, name: podName, path: 'log'}),
+      method: 'GET',
+    })
+    .then(function(result) {
+      return result.data;
+    });
+  }
 
   this.clean = function(pod) {
     k8sUtil.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
