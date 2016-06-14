@@ -63,110 +63,34 @@ angular.module('k8s')
   this.util = k8sUtil;
   this.command = k8sCommand;
 
-  this.configmaps = _.extend(k8sConfigmaps, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.CONFIGMAP),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.CONFIGMAP),
-  });
+  const addDefaults = (k8sObject, kind) => {
+    return _.assign({
+      list: _.partial(k8sResource.list, kind),
+      get: _.partial(k8sResource.get, kind),
+      delete: _.partial(k8sResource.delete, kind),
+      create: function(obj) {
+        k8sObject.clean && k8sObject.clean(obj);
+        return k8sResource.create(kind, obj);
+      },
+      update: function(obj) {
+        k8sObject.clean && k8sObject.clean(obj);
+        return k8sResource.update(kind, obj);
+      },
+    }, k8sObject);
+  }
 
-  this.policies = _.extend(tpm, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.POLICY),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.POLICY),
-  });
+  const kinds = k8sEnum.Kind;
+  this.configmaps = addDefaults(k8sConfigmaps, kinds.CONFIGMAP);
+  this.nodes = addDefaults(k8sNodes, kinds.NODE);
+  this.policies = addDefaults(tpm, kinds.POLICY);
+  this.services = addDefaults(k8sServices, kinds.SERVICE);
+  this.pods = addDefaults(k8sPods, k8sEnum.Kind.POD);
+  this.replicationcontrollers = addDefaults(k8sReplicationcontrollers, k8sEnum.Kind.REPLICATIONCONTROLLER);
+  this.replicasets = addDefaults(k8sReplicaSets, k8sEnum.Kind.REPLICASET);
+  this.deployments = addDefaults(k8sDeployments, k8sEnum.Kind.DEPLOYMENT);
 
-  this.nodes = _.assign(k8sNodes, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.NODE),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.NODE),
-  });
-
-  this.services = _.assign(k8sServices, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.SERVICE),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.SERVICE),
-    delete: _.partial(k8sResource.delete, k8sEnum.Kind.SERVICE),
-    create: function(svc) {
-      k8sServices.clean(svc);
-      return k8sResource.create(k8sEnum.Kind.SERVICE, svc);
-    },
-    update: function(svc) {
-      k8sServices.clean(svc);
-      return k8sResource.update(k8sEnum.Kind.SERVICE, svc);
-    },
-  });
-
-  this.pods = _.assign(k8sPods, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.POD),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.POD),
-    delete: _.partial(k8sResource.delete, k8sEnum.Kind.POD),
-    create: function(pod) {
-      k8sPods.clean(pod);
-      return k8sResource.create(k8sEnum.Kind.POD, pod);
-    },
-    update: function(pod) {
-      k8sPods.clean(pod);
-      return k8sResource.update(k8sEnum.Kind.POD, pod);
-    },
-    log: function(podName, ns) {
-      return $http({
-        url: k8sResource.resourceURL(k8sEnum.Kind.POD, {ns: ns, name: podName, path: 'log'}),
-        method: 'GET',
-      })
-      .then(function(result) {
-        return result.data;
-      });
-    }
-  });
-
-  this.replicationcontrollers = _.assign(k8sReplicationcontrollers, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.REPLICATIONCONTROLLER),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.REPLICATIONCONTROLLER),
-    delete: _.partial(k8sResource.delete, k8sEnum.Kind.REPLICATIONCONTROLLER),
-    create: function(rc) {
-      k8sReplicationcontrollers.clean(rc);
-      return k8sResource.create(k8sEnum.Kind.REPLICATIONCONTROLLER, rc);
-    },
-    update: function(rc) {
-      k8sReplicationcontrollers.clean(rc);
-      return k8sResource.update(k8sEnum.Kind.REPLICATIONCONTROLLER, rc);
-    },
-  });
-
-  this.replicasets = _.assign(k8sReplicaSets, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.REPLICASET),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.REPLICASET),
-    delete: _.partial(k8sResource.delete, k8sEnum.Kind.REPLICASET),
-    create: function(rc) {
-      k8sReplicaSets.clean(rc);
-      return k8sResource.create(k8sEnum.Kind.REPLICASET, rc);
-    },
-    update: function(rc) {
-      k8sReplicaSets.clean(rc);
-      return k8sResource.update(k8sEnum.Kind.REPLICASET, rc);
-    },
-  });
-
-  this.deployments = _.assign(k8sDeployments, {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.DEPLOYMENT),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.DEPLOYMENT),
-    delete: _.partial(k8sResource.delete, k8sEnum.Kind.DEPLOYMENT),
-    create: function(deployment) {
-      k8sDeployments.clean(deployment);
-      return k8sResource.create(k8sEnum.Kind.DEPLOYMENT, deployment);
-    },
-    update: function(deployment) {
-      k8sDeployments.clean(deployment);
-      return k8sResource.update(k8sEnum.Kind.DEPLOYMENT, deployment);
-    },
-  });
-
-  this.componentstatuses = {
-    list: _.partial(k8sResource.list, k8sEnum.Kind.COMPONENTSTATUS)
-  };
-
-  this.namespaces = {
-    create: _.partial(k8sResource.create, k8sEnum.Kind.NAMESPACE),
-    delete: _.partial(k8sResource.delete, k8sEnum.Kind.NAMESPACE),
-    get: _.partial(k8sResource.get, k8sEnum.Kind.NAMESPACE),
-    list: _.partial(k8sResource.list, k8sEnum.Kind.NAMESPACE),
-  };
+  this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);
+  this.namespaces = addDefaults({}, k8sEnum.Kind.NAMESPACE);
 
   this.health = function() {
     return $http({
