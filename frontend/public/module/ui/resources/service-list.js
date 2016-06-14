@@ -49,13 +49,15 @@ angular.module('bridge.ui')
 
       $scope.$watch('load', loadServices);
 
-      $scope.$on(k8s.events.SERVICE_DELETED, function(e, data) {
+      const events = k8s.events.service;
+
+      $scope.$on(events.DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.services, data.resource);
       });
 
-      $scope.$on(k8s.events.SERVICE_ADDED, loadServices);
+      $scope.$on(events.ADDED, loadServices);
 
-      $scope.$on(k8s.events.SERVICE_MODIFIED, function(e, data) {
+      $scope.$on(events.MODIFIED, function(e, data) {
         resourceMgrSvc.updateInList($scope.services, data.resource);
       });
 

@@ -71,11 +71,6 @@ angular.module('k8s')
       data: data,
     })
     .then(function(result) {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_ADDED, {
-        kind: kind,
-        original: data,
-        resource: result.data,
-      });
       d.resolve(result.data);
     })
     .catch(d.reject);
@@ -91,11 +86,6 @@ angular.module('k8s')
       data: data,
     })
     .then(function(result) {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_MODIFIED, {
-        kind: kind,
-        original: data,
-        resource: result.data,
-      });
       d.resolve(result.data);
     })
     .catch(d.reject);
@@ -114,11 +104,6 @@ angular.module('k8s')
       data: payload,
     })
     .then(function(result) {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_MODIFIED, {
-        kind: kind,
-        original: resource,
-        resource: result.data,
-      });
       d.resolve(result.data);
     })
     .catch(d.reject);
@@ -143,14 +128,6 @@ angular.module('k8s')
     var p = $http({
       url: this.resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
       method: 'DELETE',
-    });
-
-    p.then(function() {
-      $rootScope.$broadcast(k8sEvents.RESOURCE_DELETED, {
-        kind: kind,
-        original: resource,
-        resource: resource,
-      });
     });
 
     return p;

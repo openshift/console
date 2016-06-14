@@ -38,9 +38,10 @@ angular.module('bridge.service')
 
   reload();
 
-  $rootScope.$on(k8s.events.NAMESPACE_DELETED, reloadLater);
-  $rootScope.$on(k8s.events.NAMESPACE_ADDED, reloadLater);
-  $rootScope.$on(k8s.events.NAMESPACE_MODIFIED, reloadLater);
+  const events = k8s.events.namespace;
+  $rootScope.$on(events.DELETED, reloadLater);
+  $rootScope.$on(events.ADDED, reloadLater);
+  $rootScope.$on(events.MODIFIED, reloadLater);
 
   return ret;
 });
