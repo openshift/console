@@ -77,7 +77,7 @@ angular.module('bridge.service')
       });
   }
 
-  const events = k8s.events.node;
+  const events = k8s.events.nodes;
   $rootScope.$on(events.DELETED, (e, data) => {
     resourceMgrSvc.removeFromList(this.objects.nodes, data.resource);
     broadcastNodes();

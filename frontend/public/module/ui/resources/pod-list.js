@@ -74,7 +74,7 @@ angular.module('bridge.ui')
           $scope.loadError = true;
         }
       });
-      const events = k8s.events.pod;
+      const events = k8s.events.pods;
       $scope.$on(events.DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.pods, data.resource);
       });

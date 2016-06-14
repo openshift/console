@@ -38,7 +38,7 @@ angular.module('bridge.service')
 
   reload();
 
-  const events = k8s.events.namespace;
+  const events = k8s.events.namespaces;
   $rootScope.$on(events.DELETED, reloadLater);
   $rootScope.$on(events.ADDED, reloadLater);
   $rootScope.$on(events.MODIFIED, reloadLater);

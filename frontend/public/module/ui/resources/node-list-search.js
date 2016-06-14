@@ -47,7 +47,7 @@ angular.module('bridge.ui')
 
       $scope.getReadyStateLabel = k8s.nodes.getReadyStateLabel;
 
-      const events = k8s.events.node;
+      const events = k8s.events.nodes;
       $scope.$on(events.DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.nodes, data.resource);
       });

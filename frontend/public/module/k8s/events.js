@@ -14,5 +14,5 @@ function makeEvents (names) {
 
 angular.module('k8s').constant('k8sEvents', makeEvents([
   // must match Enum.KIND.IDs
-  'resource', 'pod', 'replicaset', 'replicationcontroller', 'deployment', 'service', 'node', 'namespace'
+  'resources', 'pods', 'replicasets', 'replicationcontrollers', 'deployments', 'services', 'nodes', 'namespaces', 'configmaps'
 ]));
