@@ -77,17 +77,18 @@ angular.module('bridge.service')
       });
   }
 
-  $rootScope.$on(k8s.events.NODE_DELETED, (e, data) => {
+  const events = k8s.events.node;
+  $rootScope.$on(events.DELETED, (e, data) => {
     resourceMgrSvc.removeFromList(this.objects.nodes, data.resource);
     broadcastNodes();
   });
 
-  $rootScope.$on(k8s.events.NODE_ADDED, (e, data) => {
+  $rootScope.$on(events.ADDED, (e, data) => {
     resourceMgrSvc.updateInList(this.objects.nodes, data.resource);
     broadcastNodes();
   });
 
-  $rootScope.$on(k8s.events.NODE_MODIFIED, (e, data) => {
+  $rootScope.$on(events.MODIFIED, (e, data) => {
     resourceMgrSvc.updateInList(this.objects.nodes, data.resource);
     broadcastNodes();
   });

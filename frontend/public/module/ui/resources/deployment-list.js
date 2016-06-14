@@ -53,13 +53,14 @@ angular.module('bridge.ui')
 
       $scope.$watch('load', loadDeployments);
 
-      $scope.$on(k8s.events.DEPLOYMENT_DELETED, function(e, data) {
+      const events = k8s.events.deployment;
+      $scope.$on(events.DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.deployments, data.resource);
       });
 
-      $scope.$on(k8s.events.DEPLOYMENT_ADDED, loadDeployments);
+      $scope.$on(events.ADDED, loadDeployments);
 
-      $scope.$on(k8s.events.DEPLOYMENT_MODIFIED, function(e, data) {
+      $scope.$on(events.MODIFIED, function(e, data) {
         resourceMgrSvc.updateInList($scope.deployments, data.resource);
       });
     }

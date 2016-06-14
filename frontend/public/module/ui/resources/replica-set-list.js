@@ -53,13 +53,14 @@ angular.module('bridge.ui')
 
       $scope.$watch('load', loadRSs);
 
-      $scope.$on(k8s.events.RS_DELETED, function(e, data) {
+      const events = k8s.events.replicaset;
+      $scope.$on(events.DELETED, function(e, data) {
         resourceMgrSvc.removeFromList($scope.rss, data.resource);
       });
 
-      $scope.$on(k8s.events.RS_ADDED, loadRSs);
+      $scope.$on(events.ADDED, loadRSs);
 
-      $scope.$on(k8s.events.RS_MODIFIED, function(e, data) {
+      $scope.$on(events.MODIFIED, function(e, data) {
         resourceMgrSvc.updateInList($scope.rss, data.resource);
       });
     }
