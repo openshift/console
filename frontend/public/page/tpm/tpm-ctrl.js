@@ -8,7 +8,7 @@ angular.module('bridge.page')
   $scope.pcrToHuman = tpm.pcrToHuman;
   $scope.layers = Object.keys(tpm.LAYERS);
 
-  k8sCache.subscribeToNodes($scope,
+  k8sCache.nodesChanged($scope,
     nodes => {
       $scope.nodes = nodes;
       $scope.loadNodeError = false;
@@ -17,7 +17,7 @@ angular.module('bridge.page')
     }
   );
 
-  k8sCache.subscribeToPolicies($scope,
+  k8sCache.policiesChanged($scope,
     policies => {
       $scope.policies = policies;
       $scope.loadPolicyError = false;

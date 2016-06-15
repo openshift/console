@@ -41,7 +41,7 @@ angular.module('bridge.service')
   }
 
   this.start = function() {
-    ['POD', 'SERVICE', 'REPLICATIONCONTROLLER', 'REPLICASET', 'DEPLOYMENT', 'NODE', 'NAMESPACE'].forEach(connectSocket);
+    ['POD', 'SERVICE', 'REPLICATIONCONTROLLER', 'REPLICASET', 'DEPLOYMENT', 'NODE', 'NAMESPACE', 'CONFIGMAP'].forEach(connectSocket);
   };
 
   this.lock = function() {};

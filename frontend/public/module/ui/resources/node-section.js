@@ -21,7 +21,7 @@ angular.module('bridge.ui')
         $scope.description = 'Nodes that don\'t match a trusted profile or configuration have been modified since being trusted.';
       }
 
-      k8sCache.subscribeToNodes($scope,
+      k8sCache.nodesChanged($scope,
         nodes => {
           $scope.loadError = false;
           $scope.nodes = nodes.filter(n => !!$scope.trusted === k8s.nodes.isTrusted(n));
