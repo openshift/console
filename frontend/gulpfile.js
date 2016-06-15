@@ -12,7 +12,6 @@ const ngAnnotate = require('gulp-ng-annotate');
 const rename = require('gulp-rename');
 const concat = require('gulp-concat');
 const htmlReplace = require('gulp-html-replace');
-const merge = require('merge-stream');
 const bowerFiles = require('main-bower-files');
 const karma = require('karma').server;
 const browserify = require('browserify');
@@ -122,22 +121,13 @@ gulp.task('lint', function() {
 
 // Extract & compile dependency code.
 gulp.task('deps', function() {
-  return merge(
-    // NOTE: order in bower.json matters.
-    // jquery must appear before angular.
-    gulp.src(bowerFiles())
-      .pipe(concat('deps.js'))
-      .pipe(gulp.dest('./public/lib/'))
-      .pipe(rename({ suffix: '.min' }))
-      .pipe(uglify())
-      .pipe(gulp.dest('./public/lib/')),
-
-    // copy to dist folder too for packaging.
-    gulp.src([
-      'public/lib/deps.min.js'
-    ])
-    .pipe(gulp.dest('public/dist'))
-  );
+  return gulp.src(bowerFiles({filter: /.*\.js/}))
+    .pipe(concat('deps.js'))
+    .pipe(gulp.dest('./public/lib/'))
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(uglify())
+    .pipe(gulp.dest('./public/lib/'))
+    .pipe(gulp.dest('./public/dist/'))
 });
 
 // Precompile html templates.
@@ -172,8 +162,17 @@ gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'],
 });
 
 // Minify app css.
-gulp.task('css-build', ['sass', 'sha'], function() {
-  return gulp.src('public/dist/style.css')
+gulp.task('css-build', ['sass'], function () {
+  const src = bowerFiles({filter: /.*\.css/});
+  src.push('public/dist/style.css');
+  return gulp.src(src)
+    .pipe(concat('public/dist/deps.css'))
+    .pipe(rename('app-bundle.css'))
+    .pipe(gulp.dest(distDir));
+});
+
+gulp.task('css-sha', ['css-build', 'sha'], function () {
+  return gulp.src(distDir + '/app-bundle.css')
     .pipe(rename('build.' + CURRENT_SHA + '.css'))
     .pipe(gulp.dest(distDir));
 });
@@ -195,7 +194,7 @@ gulp.task('html', ['sha'], function() {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['sass', 'templates', 'browserify'], function() {
+gulp.task('dev', ['css-build', 'templates', 'browserify'], function() {
   gulp.watch(templateSrc, ['templates']);
   gulp.watch(jsSrc, ['browserify']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['sass']);
@@ -215,7 +214,7 @@ gulp.task('default', function(cb) {
   // Run in order.
   runSequence(
     ['clean', 'lint'],
-    ['js-package', 'css-build', 'html'],
+    ['js-package', 'css-sha', 'html'],
     'clean-package',
     cb);
 });
