@@ -11,7 +11,7 @@
         <h3 class="co-heapster__name" ng-bind="name"></h3>
         <div class="co-heapster__metric">
           <span class="co-heapster__resource-type co-m-facet-menu__title ">USAGE </span><span class="pull-right co-heapster__usage" ng-bind="resource.usage.humanValue"></span>
-          <div class="co-heapster__resource-metric" uib-tooltip="{{resource.percentage + '%'}}" tooltip-placement="bottom">
+          <div class="co-heapster__resource-metric hint--rounded hint--bottom" aria-label="{{resource.percentage + '%'}}">
             <div class="co-heapster__progress">
             </div>
             <div class="progress-bar co-heapster__progress-bar co-heapster__progress-bar--usage" role="progressbar" ng-style="{width: resource.percentage+'%'}">
