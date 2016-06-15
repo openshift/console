@@ -197,7 +197,7 @@ gulp.task('html', ['sha'], function() {
 gulp.task('dev', ['css-build', 'templates', 'browserify'], function() {
   gulp.watch(templateSrc, ['templates']);
   gulp.watch(jsSrc, ['browserify']);
-  gulp.watch('./public/{.,page,style,module}/**/*.scss', ['sass']);
+  gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
 });
 
 /**
