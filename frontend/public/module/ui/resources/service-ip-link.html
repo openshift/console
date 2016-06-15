@@ -1,9 +1,9 @@
 <div class="co-service-ip-link">
   <p ng-repeat="portObj in service.spec.ports">
-    <a target="_blank"
-       uib-tooltip="{{tooltipText(portObj)}}"
-       tooltip-append-to-body="true"
-       ng-href="http://{{service.spec.clusterIP}}:{{portObj.port}}"
-       ng-bind-template="{{service.spec.clusterIP}}:{{portObj.port}}"></a>
+    <a class="hint--top hint--rounded"
+      target="_blank"
+      aria-label="{{tooltipText(portObj)}}"
+      ng-href="http://{{service.spec.clusterIP}}:{{portObj.port}}"
+      ng-bind-template="{{service.spec.clusterIP}}:{{portObj.port}}"></a>
   </p>
 </div>
