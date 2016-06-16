@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('NodesCtrl', function ($scope, k8sCache) {
+.controller('NodesCtrl', function ($scope, k8sCache, ModalLauncherSvc) {
   'use strict';
 
   k8sCache.configmapsChanged($scope,
@@ -7,14 +7,16 @@ angular.module('bridge.page')
       configmaps && configmaps.forEach(cm => {
         switch (cm.metadata.name) {
           case 'taint.coreos.com':
-            $scope.taintManager = cm;
+            $scope.taintManager = cm.data;
             break;
           case 'tpm-manager.coreos.com':
-            $scope.managerOfTPM = cm;
+            $scope.tpmManager = cm.data;
             break;
         }
       });
-    }, err =>{
-      debugger;
-    });
+    }, err => $scope.dtcError = err);
+
+  $scope.dtcModal = () => {
+    ModalLauncherSvc.open('dtc-settings');
+  };
 });
