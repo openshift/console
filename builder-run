@@ -9,7 +9,7 @@
 #   ./go-docker ./my-script --my-script-arg1 --my-script-arg2
 
 
-BUILDER_VERSION=Builder-v0.2.0
+BUILDER_IMAGE=quay.io/coreos/tectonic-console-builder:v2
 
 # forward whitelisted env variables to docker
 ENV_STR=""
@@ -17,7 +17,7 @@ for VAR in ${DOCKER_ENV//,/ }; do
     ENV_STR="$ENV_STR -e $VAR=${!VAR}"
 done
 
-docker run $ENV_STR --rm --net=host \
+docker run $ENV_STR -t --rm --net=host \
        -v `pwd`:/go/src/github.com/coreos-inc/bridge \
        -w /go/src/github.com/coreos-inc/bridge \
-       quay.io/coreos/tectonic-console-builder:$BUILDER_VERSION $@
+       $BUILDER_IMAGE $@

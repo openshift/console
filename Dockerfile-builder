@@ -2,15 +2,37 @@
 # (and committing your edits) you should run ./push-builder to
 # push a new version of your image to quay.io/coreos/tectonic-console-builder
 
-FROM golang:1.6.1
+FROM golang:1.6.2-wheezy
 
-MAINTAINER Joe Bowers - CoreOS
+MAINTAINER Ed Rooth, Joe Bowers - CoreOS
 
-RUN echo deb http://ftp.us.debian.org/debian sid main > /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install -y -q apt-transport-https
+### For golang testing stuff
+RUN go get -u github.com/golang/lint/golint
+RUN go get github.com/jstemmer/go-junit-report
 
-RUN echo deb https://deb.nodesource.com/node_5.x sid main >> /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install --no-install-recommends -y -q wget jq sudo
-RUN apt-get install --no-install-recommends --allow-unauthenticated -y -q nodejs
+### Install NodeJS and NPM
+ENV NODE_VERSION="v4.4.5"
+
+# npm needs a home writable by any user running the container
+ENV HOME /opt/home
+RUN mkdir -p ${HOME}
+RUN chmod 777 -R ${HOME}
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y -q \
+    curl wget git unzip
+RUN cd /tmp && \
+    wget --quiet -O /tmp/node.tar.gz http://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.gz && \
+    tar xf node.tar.gz && \
+    rm -f /tmp/node.tar.gz && \
+    cd node-* && \
+    cp -r lib/node_modules /usr/local/lib/node_modules && \
+    cp bin/node /usr/local/bin && \
+    ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+# so any container user can install global node modules if needed
+RUN chmod 777 /usr/local/lib/node_modules
+# cleanup
+RUN rm -rf /tmp/node-v*
+
+# bower needs to run as root
+RUN echo '{ "allow_root": true }' > ${HOME}/.bowerrc
