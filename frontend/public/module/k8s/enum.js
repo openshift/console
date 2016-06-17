@@ -16,6 +16,7 @@ angular.module('k8s').constant('k8sEnum', {
       labelPlural: 'Services',
       // api path to resource
       path: 'services',
+      plural: 'services',
     },
     POD: {
       id: 'pod',
@@ -23,6 +24,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Pod',
       labelPlural: 'Pods',
       path: 'pods',
+      plural: 'pods',
     },
     REPLICATIONCONTROLLER: {
       id: 'replicationcontroller',
@@ -30,6 +32,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Replication Controller',
       labelPlural: 'Replication Controllers',
       path: 'replicationcontrollers',
+      plural: 'replicationcontrollers',
     },
     REPLICASET: {
       id: 'replicaset',
@@ -39,6 +42,7 @@ angular.module('k8s').constant('k8sEnum', {
       isExtension: true,
       apiVersion: 'v1beta1',
       path: 'replicasets',
+      plural: 'replicasets',
     },
     DEPLOYMENT: {
       id: 'deployment',
@@ -48,6 +52,7 @@ angular.module('k8s').constant('k8sEnum', {
       isExtension: true,
       apiVersion: 'v1beta1',
       path: 'deployments',
+      plural: 'deployments',
     },
     NODE: {
       id: 'node',
@@ -55,6 +60,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Node',
       labelPlural: 'Nodes',
       path: 'nodes',
+      plural: 'nodes',
     },
     EVENT: {
       id: 'event',
@@ -62,6 +68,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Event',
       labelPlural: 'Events',
       path: 'events',
+      plural: 'events',
     },
     COMPONENTSTATUS: {
       id: 'componentstatus',
@@ -69,6 +76,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Component Status',
       labelPlural: 'Component Statuses',
       path: 'componentstatuses',
+      plural: 'componentstatuses',
     },
     NAMESPACE: {
       id: 'namespace',
@@ -76,6 +84,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Namespace',
       labelPlural: 'Namespaces',
       path: 'namespaces',
+      plural: 'namespaces',
     },
     POLICY: {
       id: 'policy',
@@ -83,6 +92,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Policy',
       labelPlural: 'Policies',
       path: '../../apis/tpm.coreos.com/v1/policies',
+      plural: 'policies',
     },
     CONFIGMAP: {
       id: 'configmap',
@@ -90,6 +100,7 @@ angular.module('k8s').constant('k8sEnum', {
       label: 'Configmap',
       labelPlural: 'Configmaps',
       path: 'configmaps',
+      plural: 'configmaps',
     },
   },
 

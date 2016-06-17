@@ -20,3 +20,4 @@ import './toggle-disabled-user-ctrl';
 import './row-mgr';
 import './service-ports-ctrl';
 import './show-yaml-ctrl';
+import './dtc-settings';

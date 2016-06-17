@@ -21,7 +21,7 @@ angular.module('bridge.service')
       bufferFlushInterval: 500,
       bufferMax: 1000,
     }).onmessage(msg => {
-      const eventTypes = k8s.events[kind.id];
+      const eventTypes = k8s.events[kind.plural];
       let event;
       switch (msg.type) {
         case 'ADDED':
@@ -41,7 +41,7 @@ angular.module('bridge.service')
   }
 
   this.start = function() {
-    ['POD', 'SERVICE', 'REPLICATIONCONTROLLER', 'REPLICASET', 'DEPLOYMENT', 'NODE', 'NAMESPACE'].forEach(connectSocket);
+    ['POD', 'SERVICE', 'REPLICATIONCONTROLLER', 'REPLICASET', 'DEPLOYMENT', 'NODE', 'NAMESPACE', 'CONFIGMAP'].forEach(connectSocket);
   };
 
   this.lock = function() {};

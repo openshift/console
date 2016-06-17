@@ -1,14 +1,22 @@
 angular.module('bridge.page')
-.controller('NodesCtrl', function ($scope, $q, k8s) {
+.controller('NodesCtrl', function ($scope, k8sCache, ModalLauncherSvc) {
   'use strict';
 
-  $q.all([
-    k8s.configmaps.get('tpm-manager.coreos.com', 'default'),
-    k8s.configmaps.get('taint.coreos.com', 'default'),
-  ])
-  .then(configs => {
-    $scope.managerOfTPM = configs[0];
-    $scope.taintManager = configs[1];
-  })
-  .catch(() => {});
+  k8sCache.configmapsChanged($scope,
+    configmaps => {
+      configmaps && configmaps.forEach(cm => {
+        switch (cm.metadata.name) {
+          case 'taint.coreos.com':
+            $scope.taintManager = cm.data;
+            break;
+          case 'tpm-manager.coreos.com':
+            $scope.tpmManager = cm.data;
+            break;
+        }
+      });
+    }, err => $scope.dtcError = err);
+
+  $scope.dtcModal = () => {
+    ModalLauncherSvc.open('dtc-settings');
+  };
 });

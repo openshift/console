@@ -8255,9 +8255,7 @@ input[type="radio"] {
     font-weight: 900;
     color: #999;
     font-size: 112%;
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
+    padding-left: 5px;
     pointer-events: none; }
 
 .co-m-invisible-input {

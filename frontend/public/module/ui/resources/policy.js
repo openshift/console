@@ -49,7 +49,7 @@ angular.module('bridge.ui')
         $scope.values = values;
       }
 
-      k8sCache.subscribeToPolicies($scope,
+      k8sCache.policiesChanged($scope,
         policies => {
           $scope.policies = policies;
           $scope.loadError = false;

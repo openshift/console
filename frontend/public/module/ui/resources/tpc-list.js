@@ -40,7 +40,7 @@ angular.module('bridge.ui')
         });
       }
 
-      k8sCache.subscribeToPolicies($scope,
+      k8sCache.policiesChanged($scope,
         newPolicies => {
           policies = newPolicies;
           $scope.filteredPolicies = policyFilter(newPolicies);
