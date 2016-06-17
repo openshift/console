@@ -27,7 +27,7 @@ angular.module('bridge.page')
   $scope.execute = function() {
     const shouldTaint = ($scope.fields.admission === 'closed').toString();
     const allowUnknown = (!$scope.fields.notallowunknown).toString();
-    const reverify = $scope.fields.reverify;
+    const reverify = $scope.fields.reverify.toString();
 
 
     let promise1;
