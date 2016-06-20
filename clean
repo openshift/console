@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rm -rf bin
+rm -rf frontend/node_modules
+rm -rf frontend/public/bower_components
+rm -rf frontend/dist
