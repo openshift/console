@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -rf bin
+rm -rf frontend/node_modules
+rm -rf frontend/dist

@@ -16,3 +16,10 @@ mkdir -p $GOPATH/src/github.com/$repo_org/
 ln -s ${PWD} $GOPATH/src/github.com/$repo_org/$project_dir
 
 CGO_ENABLED=0 go build -a -tags netgo -ldflags "$LD_FLAGS" -o bin/bridge github.com/$repo_org/$project_dir/cmd/bridge
+
+# build frontend
+pushd frontend;
+rm -rf ./node_modules || true;
+npm install
+npm run gulp
+popd

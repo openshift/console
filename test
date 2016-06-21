@@ -12,8 +12,6 @@
 # Invoke ./cover for HTML output
 COVER=${COVER:-"-cover"}
 
-source ./build
-
 TESTABLE="auth server stats"
 FORMATTABLE="$TESTABLE cmd/bridge version"
 
