@@ -5,13 +5,13 @@ angular.module('bridge.page')
 
   $scope.rowMgr = $controller('RowMgr', {
     $scope: $rootScope.$new(),
-    emptyCheck: function(p) {
-      return _.isNull(p.containerPort) || _.isEmpty(p.name);
-    },
+    emptyCheck: k8s.docker.isPortEmpty,
     getEmptyItem: k8s.docker.getEmptyPort,
   });
 
   $scope.initPorts = function(ports) {
+    $scope.rowMgr.min = 1;
+
     if (_.isEmpty(ports)) {
       $scope.rowMgr.setItems([]);
     } else {
