@@ -1,5 +1,15 @@
 #!/bin/bash
 
-docker login -e="." -u="coreos+jenkins" -p="${QUAY_DOCKER_PASSWORD}" quay.io
+
+CURRENT_USER=$(whoami)
+CURRENT_UID=$(id -u $CURRENT_USER)
+echo Running under user: $CURRENT_USER, with uid: $CURRENT_UID
+
+# We assume the jenkins jenkins user with uid 1000 on all build hosts
+export BUILDER_RUN_USER=1000
+
+./clean
+
+#docker login -e="." -u="coreos+jenkins" -p="${QUAY_DOCKER_PASSWORD}" quay.io
 ./builder-run ./build
-./builder-run ./test
+#./builder-run ./test
