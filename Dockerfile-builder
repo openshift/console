@@ -33,6 +33,3 @@ RUN cd /tmp && \
 RUN chmod 777 /usr/local/lib/node_modules
 # cleanup
 RUN rm -rf /tmp/node-v*
-
-# bower needs to run as root
-RUN echo '{ "allow_root": true }' > ${HOME}/.bowerrc

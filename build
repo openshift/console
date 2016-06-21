@@ -21,6 +21,5 @@ CGO_ENABLED=0 go build -a -tags netgo -ldflags "$LD_FLAGS" -o bin/bridge github.
 pushd frontend;
 rm -rf ./node_modules || true;
 npm install
-npm run bower install
 npm run gulp
 popd

@@ -12,7 +12,6 @@ const ngAnnotate = require('gulp-ng-annotate');
 const rename = require('gulp-rename');
 const concat = require('gulp-concat');
 const htmlReplace = require('gulp-html-replace');
-const bowerFiles = require('main-bower-files');
 const karma = require('karma').server;
 const browserify = require('browserify');
 const babelify = require('babelify');
@@ -119,17 +118,6 @@ gulp.task('lint', function() {
     .pipe(eslint.failAfterError());
 });
 
-// Extract & compile dependency code.
-gulp.task('deps', function() {
-  return gulp.src(bowerFiles({filter: /.*\.js/}))
-    .pipe(concat('deps.js'))
-    .pipe(gulp.dest('./public/lib/'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(uglify())
-    .pipe(gulp.dest('./public/lib/'))
-    .pipe(gulp.dest('./public/dist/'))
-});
-
 // Precompile html templates.
 gulp.task('templates', function() {
   return gulp.src(templateSrc)
@@ -163,9 +151,7 @@ gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'],
 
 // Minify app css.
 gulp.task('css-build', ['sass'], function () {
-  const src = bowerFiles({filter: /.*\.css/});
-  src.push('public/dist/style.css');
-  return gulp.src(src)
+  return gulp.src(['public/dist/style.css'])
     .pipe(concat('public/dist/deps.css'))
     .pipe(rename('app-bundle.css'))
     .pipe(gulp.dest(distDir));
