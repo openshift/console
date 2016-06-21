@@ -1,18 +1,17 @@
 <div class="co-p-node">
-  <tec-nav-title title="{{nodeName}}" obj="node">
+  <tec-nav-title title="{{nodeName}}" obj="node" kind="'node'">
     <a ng-href="/nodes" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Nodes
     </a>
   </tec-nav-title>
 
-  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+  <div class="co-m-pane co-m-vert-nav">
     <co-node-nav name="nodeName"></co-node-nav>
 
     <div class="co-m-vert-nav__body">
       <div cos-tristate="node" cos-tristate-error="loadError" class="co-m-pane__body">
         <div class="row" ng-if="node && !loadError">
           <div class="col-lg-3">
-            <h1 class="co-section-title">Node Overview</h1>
             <dl>
               <dt>Node Name</dt>
               <dd ng-bind="node.metadata.name | emptyPlaceholder"></dd>
@@ -33,7 +32,6 @@
           </div>
 
           <div class="col-lg-3">
-            <h1 class="co-section-title">Node Info</h1>
             <dl>
               <dt>Kernel Version</dt>
               <dd ng-bind="node.status.nodeInfo.kernelVersion | emptyPlaceholder"></dd>
@@ -49,7 +47,6 @@
           </div>
 
           <div class="col-lg-6">
-            <h1 class="co-section-title">Node Conditions</h1>
             <div class="co-table-container">
               <table class="table">
                 <thead>

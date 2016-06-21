@@ -1,6 +1,6 @@
 'use strict';
 
-const ENDPOINTS = ['nodes', 'policies', 'configmaps'];
+const ENDPOINTS = ['nodes', 'policies', 'configmaps', 'namespaces'];
 
 const eventName = (name, error) => {
   return `k8sCache-${name}${error && '-error' }`;

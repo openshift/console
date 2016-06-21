@@ -1,46 +1,30 @@
 <div class="co-p-pods">
-
-  <tec-nav-title title="Pods">
-    <a ng-href="/ns/{{ns || defaultNS}}/pods/new" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-add.svg"></co-svg>Create a New Pod
-    </a>
-  </tec-nav-title>
+  <tec-nav-title title="Pods" plural="true"></tec-nav-title>
 
   <div class="co-m-pane">
-
     <div class="co-m-pane__heading">
-
       <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-          <h1 class="co-m-pane__title">Pod List</h1>
+        <div class="col-xs-3">
+          <a ng-href="/ns/{{ns || defaultNS}}/pods/new" class="co-m-primary-action">
+            <button class="btn btn-sm btn-primary">
+              Create Pod
+            </button>
+          </a>
         </div>
-        <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
-          <input ng-model="podSearch.metadata.name" type="text" class="form-control" placeholder="Filter pods by name..." />
+        <div class="col-xs-9">
+          <input ng-model="podSearch.metadata.name" type="text" class="form-control pull-right text-filter input-sm" placeholder="Filter pods by name..." />
+          <co-dropdown title="'Pod Status'" selected="facetFilter.phase" items="{'All Statuses': '', 'Pending': 'Pending', 'Running': 'Running', 'Terminating': 'Terminating'}" class="pull-right">
+          </co-dropdown>
         </div>
       </div>
-
     </div>
-
     <div class="co-m-pane__body">
-
       <div class="row">
-        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
-          <div class="co-facet-container--left">
-            <co-facet-menu model="facetFilter.phase" title="Pod Status">
-              <co-facet-menu-option value="">All Statuses</co-facet-menu-option>
-              <co-facet-menu-option value="Pending">Pending</co-facet-menu-option>
-              <co-facet-menu-option value="Running">Running</co-facet-menu-option>
-              <co-facet-menu-option value="Terminating">Terminating</co-facet-menu-option>
-            </co-facet-menu>
-            <co-debug obj="facetFilter"></co-debug>
-          </div>
-        </div>
-        <div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
-          <co-pod-list class="co-facet-container--right" filter="facetFilter" search="podSearch" namespace="ns" load="true" load-error="podLoadError"></co-pod-list>
+        <div class="col-xs-12">
+          <co-debug obj="facetFilter"></co-debug>
+          <co-pod-list filter="facetFilter" search="podSearch" namespace="ns" load="true" load-error="podLoadError"></co-pod-list>
         </div>
       </div>
-
-    </div><!-- pane body -->
-  </div><!-- pane -->
-
+    </div>
+  </div>
 </div>

@@ -10,7 +10,6 @@ import './features';
 import './firehose';
 import './message';
 import './namespace-cache';
-import './side-menu';
 import './resource-mgr-svc';
 import './status';
 import './stream';

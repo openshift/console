@@ -7,10 +7,9 @@
 
 function hasStatus_ (n, k8s, status) {
   // tri-bool classic - status (ready state) is 'true', 'false', or undefined!! :(
-  if (!status) {
+  if (status === 'all') {
     return true;
   }
-  status = status === 'true';
   return status === k8s.nodes.isReady(n);
 };
 

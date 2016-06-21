@@ -1,21 +1,17 @@
 <div class="co-p-pod">
 
-  <tec-nav-title title="{{pod.metadata.name}}" obj="pod">
+  <tec-nav-title title="{{pod.metadata.name}}" obj="pod" kind="'pod'">
     <a co-namespaced-href="/pods" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pods
     </a>
   </tec-nav-title>
 
-  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+  <div class="co-m-pane co-m-vert-nav">
     <co-pod-nav ns="pod.metadata.namespace" name="pod.metadata.name"></co-pod-nav>
 
     <div class="co-m-vert-nav__body">
 
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Pod Overview</h1>
-      </div>
-
-      <div class="co-m-pane__body-group">
+      <div class="co-m-pane__body">
         <div cos-tristate="pod" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
           <div ng-show="pod && !loadError" class="row">
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -25,7 +21,7 @@
                 <dt>Pod Labels</dt>
                 <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
                 <dt>Created At</dt>
-                <dd><co-timestamp timestamp="{{pod.metadata.creationTimestamp}}" /></dd>
+                <dd><co-timestamp timestamp="{{pod.metadata.creationTimestamp}}" ></co-timestamp></dd>
               </dl>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -77,11 +73,17 @@
             <div class="cos-text-center">An error occurred during pod retrieval. Please try again.</div>
           </cos-status-box>
         </div>
-
-        <div class="co-m-pane__body-section--bordered">
-          <h1 class="co-m-pane__title">Containers</h1>
+      </div>
+      <div class="co-m-pane">
+        <div class="co-m-pane__heading">
+          <div class="row">
+            <div class="col-xs-12">
+              <h1 class="co-m-pane__title">Containers</h1>
+            </div>
+          </div>
         </div>
-        <div class="co-m-pane__body-section">
+
+        <div class="co-m-pane__body">
           <div class="co-m-table-grid co-m-table-grid--bordered">
             <div class="row co-m-table-grid__head">
               <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Name</div>
@@ -107,11 +109,7 @@
             </div>
           </div>
         </div>
-
       </div>
-
     </div>
-
   </div>
-
 </div>

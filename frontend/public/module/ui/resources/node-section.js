@@ -11,7 +11,10 @@ angular.module('bridge.ui')
       trusted: '=',
     },
     controller: function ($scope, k8s, k8sCache) {
-      $scope.passByRef = {compacted :'true'};
+      $scope.passByRef = {
+        compacted: 'true',
+        status: 'all',
+      };
 
       if ($scope.trusted) {
         $scope.title = 'Trusted Nodes';

@@ -1,14 +1,25 @@
 .tec-right-nav-action {
-    text-align: right;
+  text-align: right;
+  line-height: 20px;
+  padding: 30px 0;
 }
 
 .tec-right-nav-action__mark {
-    font-size: 19px;
-    font-weight: bold;
-    vertical-align: middle;
-    padding-right: 7px;
+  font-size: 19px;
+  font-weight: bold;
+  vertical-align: middle;
+  padding-right: 7px;
 }
 
-.co-m-nav-title__back {
-    padding: 0px;
+.co-m-nav-title, .co-m-nav-title__plural{
+  margin: 0px;
+}
+
+.co-m-nav-title {
+  border-bottom: 1px solid $color-grey-background-border;
+  background-color: $color-grey-background;
+}
+
+.co-m-nav-title__plural {
+  background-color: inherit;
 }

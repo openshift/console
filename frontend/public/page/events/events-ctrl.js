@@ -3,4 +3,5 @@ angular.module('bridge.page')
   'use strict';
 
   $scope.ns = $routeParams.ns;
+  $scope.query = {kind: '', category: ''};
 });

@@ -1,18 +1,14 @@
 <div class="co-p-node-sysevents">
 
-  <tec-nav-title title="{{nodeName}}">
+  <tec-nav-title title="{{nodeName}}" kind="'node'">
     <a ng-href="/nodes" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Nodes</a>
   </tec-nav-title>
 
-  <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+  <div class="co-m-pane co-m-vert-nav">
     <co-node-nav name="nodeName"></co-node-nav>
 
     <div class="co-m-vert-nav__body">
-      <div class="co-m-pane__heading">
-        <h1 class="co-m-pane__title">Node Events</h1>
-      </div>
-
       <div class="co-m-pane__body">
         <co-sysevent-stream field-selector="fieldSelector"></co-sysevent-stream>
       </div>
