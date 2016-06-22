@@ -12,7 +12,7 @@ angular.module('k8s')
     // ---
 
     function fromString(string) {
-      var requirements = split(string).map(k8sSelectorRequirement.fromString);
+      var requirements = split(string || '').map(k8sSelectorRequirement.fromString);
       return fromRequirements(requirements);
     }
 
