@@ -24,11 +24,14 @@ angular.module('k8s')
     },
 
     tcpSocket: function(str) {
-      if (_.isEmpty(str)) {
+      if (str == null || str === '') {
         return null;
       }
+
       return {
-        port: str,
+        // as per http://kubernetes.io/docs/api-reference/v1/definitions/#_v1_tcpsocketaction
+        // port can be either number or IANA name
+        port: /^\d+$/.test(str) ? (+str) : str,
       };
     },
   };
@@ -60,7 +63,7 @@ angular.module('k8s')
       if (!cmd || !cmd.port) {
         return '';
       }
-      return cmd.port;
+      return '' + cmd.port;
     },
   };
 
@@ -175,7 +178,7 @@ angular.module('k8s')
 
   this.mapFieldsToLivenessProbe = function(f) {
     var delay, c = {};
-    if (_.isEmpty(f.cmd)) {
+    if (f.cmd == null || f.cmd === '') {
       return null;
     }
 
