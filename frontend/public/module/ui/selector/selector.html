@@ -3,6 +3,7 @@
     ng-repeat="requirement in requirements"
     ng-class="{'co-m-requirement--last': $last}"
     requirement="requirement"
+    with-icon="$first"
   ></co-requirement>
 
   <p ng-if="requirements.length === 0" class="text-muted">

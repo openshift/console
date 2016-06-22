@@ -7,7 +7,8 @@ angular.module('bridge.ui')
       restrict: 'E',
       replace: true,
       scope: {
-        requirement: '='
+        requirement: '=',
+        withIcon: '='
       },
       controller: function coRequirementController(
         $scope,
