@@ -71,12 +71,12 @@
               <dd ng-bind="container.image | containerTag"></dd>
               <dt>Command</dt>
               <dd>
-                <code ng-show="container.command" ng-bind="container.command | join:' '"></code>
+                <pre  ng-show="container.command"><code ng-bind="container.command | join:' '"></code></pre>
                 <span ng-hide="container.command" ng-bind="CONST.placeholderText"></span>
               </dd>
               <dt>Args</dt>
               <dd>
-                <code ng-show="container.args" ng-bind="container.args | join:' '"></code>
+                <pre  ng-show="container.args"><code ng-bind="container.args | join:' '"></code></pre>
                 <span ng-hide="container.args" ng-bind="CONST.placeholderText"></span>
               </dd>
               <dt>Pull Policy</dt>
