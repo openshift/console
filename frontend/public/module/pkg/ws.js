@@ -91,6 +91,9 @@ angular.module('core.pkg')
             $interval.cancel(flushCanceler);
           }
         },
+        function () {
+          $timeout.cancel(that._connectionAttempt);
+        },
       ];
     }
 
