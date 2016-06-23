@@ -71,7 +71,7 @@
               <dd ng-bind="container.image | containerTag"></dd>
               <dt>Command</dt>
               <dd>
-                <code ng-show="container.command" ng-bind="container.command | join:' '"></code>
+                <pre  ng-show="container.command"><code ng-bind="container.command | join:' '"></code></pre>
                 <span ng-hide="container.command" ng-bind="CONST.placeholderText"></span>
               </dd>
               <dt>Args</dt>
