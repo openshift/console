@@ -79,6 +79,9 @@ angular.module('bridge.ui')
         bufferMax: $scope.maxMessages,
       })
       .onmessage(function(data) {
+        if (data.object.message) {
+          data.object.message = data.object.message.replace(/\\"/g, '\'');
+        }
         $scope.messages.unshift(data);
       })
       .onopen(function() {
