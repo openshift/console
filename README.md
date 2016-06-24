@@ -12,19 +12,19 @@ Bridge consists of a frontend webapp and a backend service which serves the foll
 
 ## Quickstart
 
-### Build the backend:
+### Deps:
+
+1. nodejs >= 4.3 
+2. npm >= 2 (probably installed with node)
+3. go >= 1.6
+
+### Build everything:
 ```
 ./build
 ```
 
 Backend binaries are output to `/bin`.
 
-### Build and package all frontent assets for deployment:
-```
-./build-web
-```
-
-Frontend build assets are output to: `/frontend/public/dist`.
 
 ### Configure the application to run
 
@@ -82,7 +82,7 @@ go, godep, nodejs, gulp
 For interactive frontend development compiling html templates and sass is required.
 The following build task will watch the source code for changes and compile automatically:
 ```
-npm run gulp dev
+npm run dev
 ```
 
 All frontend build tasks are defined in `/frontend/gulpfile.js`
@@ -100,9 +100,8 @@ Run frontend tests:
 
 ### Dependency Management
 Add new frontend dependencies:
- 1. `npm run bower install --save` the dependency
- 2. From `/frontend` run `npm run gulp deps`
- 3. Add and commit generated `deps.js` and `deps.min.js` files in `/frontend/public/lib/`
+ 1. `npm install --save` the dependency
+ 2. commit the altered `package.json`
 
 Add new backend dependencies:
  1. `go get ...` as usual
