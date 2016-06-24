@@ -1,0 +1,94 @@
+<div class="co-p-kubectl-config">
+  <!-- step 1: get verification code -->
+  <form ng-if="vm.step === vm.STEP_GET_VERIFICATION_CODE" name="form" role="form">
+    <div class="modal-header">
+      <h4 class="modal-title">Set Up kubectl</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          Tectonic will generate a kubectl configuration file for you. First, we need to generate a set of offline credentials.
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          Your identity will be verified before generation.
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" co-btn-bar>
+      <button type="button" class="btn btn-primary" ng-click="vm.getVerificationCode()">Verify Identity</button>
+      <button type="button" class="btn btn-link" ng-click="$dismiss()">Cancel</button>
+    </div>
+  </form>
+
+  <!-- step 2: verify code -->
+  <form ng-if="vm.step === vm.STEP_VERIFY_CODE" name="form" role="form" ng-submit="vm.verifyCode()">
+    <div class="modal-header">
+      <h4 class="modal-title">Download kubectl Configuration</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          Enter the code from the previous screen to generate your credentials:
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-6">
+          <input type="text" class="form-control" placeholder="Verification Code" ng-model="vm.verificationCode" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" co-btn-bar complete-promise="vm.verifyCodePromise">
+      <co-error-message formatter="k8sApi" promise="vm.verifyCodePromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Generate Configuration</button>
+      <button type="button" class="btn btn-link" ng-click="$dismiss()">Cancel</button>
+    </div>
+  </form>
+
+  <!-- step 3: download configuration -->
+  <form ng-if="vm.step === vm.STEP_DOWNLOAD_CONFIGURATION" name="form" role="form">
+    <div class="modal-header">
+      <h4 class="modal-title">Download kubectl Configuration</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <button type="button" class="btn btn-block btn-link co-btn--download" ng-click="vm.downloadConfiguration()">
+            <i class="fa fa-download"></i>&nbsp;Download Configuration
+          </button>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          1. Download the kubectl binary for <a href="#">Mac</a> or <a href="#">Linux</a>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          2. Place the configuration file at <code>~/.kube/config</code>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          3. Done! Interact with the cluster, i.e. <code>kubectl get namespaces</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" co-btn-bar>
+      <button type="button" class="btn btn-primary" ng-click="$dismiss()">I'm Done</button>
+      <button type="button" class="btn btn-link" ng-click="$dismiss()">Cancel</button>
+    </div>
+  </form>
+</div>

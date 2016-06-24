@@ -93,6 +93,10 @@ angular.module('bridge.page')
     'namespace-quay-pull-secret': {
       templateUrl: '/static/page/modals/namespace-quay-pull-secret/namespace-quay-pull-secret.html',
       controller: 'NamespaceQuayPullSecretCtrl',
+    },
+    'kubectl-config': {
+      templateUrl: '/static/page/modals/kubectl-config/kubectl-config.html',
+      controller: 'KubectlConfigCtrl',
     }
   };
 

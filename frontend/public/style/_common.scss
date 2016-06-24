@@ -158,3 +158,15 @@ label {
 .break-all {
   word-break: break-all;
 }
+
+.co-btn--download {
+  padding: 15px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.co-btn--download,
+.co-btn--download:hover {
+  border: 1px solid #DDDDDD;
+  border-radius: 2px;
+}
