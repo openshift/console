@@ -1,6 +1,8 @@
 'use strict';
 
+const fs = require('fs');
 const exec = require('child_process').exec;
+
 const del = require('del');
 const gulp = require('gulp');
 const sass = require('gulp-sass');
@@ -14,11 +16,13 @@ const concat = require('gulp-concat');
 const htmlReplace = require('gulp-html-replace');
 const karma = require('karma').server;
 const browserify = require('browserify');
+const watchify = require('watchify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const streamify = require('gulp-streamify');
 const PrettyError = require('pretty-error');
 
+const entry = './public/_app.js';
 const distDir = './public/dist';
 const templateSrc = [
   './public/{module,page}/**/*.html',
@@ -31,37 +35,58 @@ const lintableSrc = [
   '!./public/dist/*.js',
 ];
 
-const jsSrc = [
-  './public/*.js',
-  './public/{module,page}/**/*.js',
-  '!./public/{module,page}/**/*_test.js',
-  '!./public/dist/*.js',
-];
-
 let CURRENT_SHA;
 
+function isExternalModule (file) {
+  // lifted from browserify!!!
+  var regexp = process.platform === 'win32' ?
+      /^(\.|\w:)/ :
+      /^[\/.]/;
+  return !regexp.test(file);
+}
+
+const externals = [];
 function jsBuild (debug) {
-  return browserify(['./public/_app.js'], {debug, transform: [babelify]})
+  const opts = {
+    debug,
+    cache: {},
+    packageCache: {},
+    exclude: [
+      './public/{module,page}/**/*_test.js',
+      './public/dist/*.js',
+    ],
+    transform: [babelify],
+    entries: [entry],
+    filter: (file) => {
+      const isExternal = isExternalModule(file);
+      isExternal && externals.push(file);
+      return !isExternal;
+    },
+  };
+  if (debug) {
+    opts.plugin = [watchify];
+    opts.delay = 200;
+  }
+  return browserify(opts);
+}
+
+gulp.task('js-deps', ['js-build'], () => {
+  // HACK: we rely on the externals being created by js-build (jsBuild)
+  browserify()
+  .require(externals)
+  .bundle()
+  .pipe(source('deps.js'))
+  .pipe(gulp.dest(distDir))
+});
+
+
+// Compile all the js source code.
+gulp.task('js-build', ['templates'], function() {
+  return jsBuild(false)
     .bundle()
-    .on('error', function(err) {
-      // eslint-disable-next-line no-console
-      console.log(new PrettyError().render(err));
-
-      if (!debug) {
-        process.exit(1);
-        return;
-      }
-
-      this.emit('end');
-    })
     // .pipe(rename({ suffix: '.min' }))
     .pipe(source('app-bundle.js'))
     .pipe(ngAnnotate())
-}
-
-// Compile all the js source code.
-gulp.task('js-build', function() {
-  return jsBuild(false)
     .pipe(streamify(uglify()))
     .pipe(gulp.dest(distDir))
     .pipe(rename({ suffix: '.min' }))
@@ -70,8 +95,21 @@ gulp.task('js-build', function() {
 
 
 gulp.task('browserify', () => {
-  return jsBuild(true)
-  .pipe(gulp.dest(distDir));
+  const b = jsBuild(true);
+  const bundler = (id) => {
+    b.bundle().pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
+    // eslint-disable-next-line no-console
+    console.log(`updated ${distDir}/app-bundle.js to ${id}`);
+  };
+
+  b.on('update', bundler).on('error', (err) => {
+    // eslint-disable-next-line no-console
+    console.log(new PrettyError().render(err));
+
+    this.emit('end');
+  });
+
+  bundler();
 });
 
 gulp.task('sha', function(cb) {
@@ -90,11 +128,11 @@ gulp.task('sha', function(cb) {
 });
 
 // Delete ALL generated files.
-gulp.task('clean', function() {
+gulp.task('clean', function () {
   return del(distDir);
 });
 
-gulp.task('clean-package', function() {
+gulp.task('clean-package', function () {
   return del([
     distDir + '/style.css',
     distDir + '/app.min.js',
@@ -139,10 +177,10 @@ gulp.task('copy-deps', function() {
 });
 
 // Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'assets', 'templates', 'copy-deps', 'sha'], function () {
+gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], function () {
   // NOTE: File Order Matters.
   return gulp.src([
-    distDir + '/templates.js',
+    distDir + '/deps.js',
     distDir + '/app-bundle.min.js'
   ])
   .pipe(concat('build.' + CURRENT_SHA + '.min.js'))
@@ -169,9 +207,6 @@ gulp.task('html', ['sha'], function() {
     .pipe(htmlReplace({
       'js':  '/static/build.' + CURRENT_SHA + '.min.js',
       'css': '/static/build.' + CURRENT_SHA +'.css',
-      // TODO: use file hash
-      'js-deps':  '/static/lib/deps.min.js',
-      // TODO: use versions in filenames
       'css-coreos-web':  '/static/lib/coreos-web/coreos.css'
     }))
     .pipe(gulp.dest(distDir));
@@ -182,14 +217,14 @@ gulp.task('html', ['sha'], function() {
 // Auto-runs: eslint & unit tests.
 gulp.task('dev', ['css-build', 'templates', 'browserify'], function() {
   gulp.watch(templateSrc, ['templates']);
-  gulp.watch(jsSrc, ['browserify']);
+  gulp.start('browserify');
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
 });
 
 /**
  * Karma test
  */
-gulp.task('test', ['lint', 'templates', 'browserify'], function (cb) {
+gulp.task('test', ['lint', 'js-build', 'js-deps'], function (cb) {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
