@@ -50,7 +50,7 @@ angular.module('bridge.page')
     // ---
 
     function submitCreate() {
-      var data = {};
+      const data = {};
       data[CONST.PULL_SECRET_DATA] = $window.btoa($scope.model.value);
 
       return k8s.secrets.create({
