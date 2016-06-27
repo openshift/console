@@ -18,6 +18,7 @@ import './util';
 import './feature_flags';
 import './command';
 import './configmaps';
+import './secrets';
 
 angular.module('k8s')
 .provider('k8sConfig', function() {
@@ -48,7 +49,8 @@ angular.module('k8s')
 })
 .service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featureFlags, tpm, k8sConfigmaps) {
+                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featureFlags, tpm, k8sConfigmaps,
+                         k8sSecrets) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -79,15 +81,16 @@ angular.module('k8s')
     }, k8sObject);
   }
 
-  const kinds = k8sEnum.Kind;
-  this.configmaps = addDefaults(k8sConfigmaps, kinds.CONFIGMAP);
-  this.nodes = addDefaults(k8sNodes, kinds.NODE);
-  this.policies = addDefaults(tpm, kinds.POLICY);
-  this.services = addDefaults(k8sServices, kinds.SERVICE);
+  this.kinds = k8sEnum.Kind;
+  this.configmaps = addDefaults(k8sConfigmaps, k8sEnum.Kind.CONFIGMAP);
+  this.nodes = addDefaults(k8sNodes, k8sEnum.Kind.NODE);
+  this.policies = addDefaults(tpm, k8sEnum.Kind.POLICY);
+  this.services = addDefaults(k8sServices, k8sEnum.Kind.SERVICE);
   this.pods = addDefaults(k8sPods, k8sEnum.Kind.POD);
   this.replicationcontrollers = addDefaults(k8sReplicationcontrollers, k8sEnum.Kind.REPLICATIONCONTROLLER);
   this.replicasets = addDefaults(k8sReplicaSets, k8sEnum.Kind.REPLICASET);
   this.deployments = addDefaults(k8sDeployments, k8sEnum.Kind.DEPLOYMENT);
+  this.secrets = addDefaults(k8sSecrets, k8sEnum.Kind.SECRET);
 
   this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);
   this.namespaces = addDefaults({}, k8sEnum.Kind.NAMESPACE);

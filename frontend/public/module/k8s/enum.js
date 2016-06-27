@@ -102,6 +102,14 @@ angular.module('k8s').constant('k8sEnum', {
       path: 'configmaps',
       plural: 'configmaps',
     },
+    SECRET: {
+      id: 'secret',
+      kind: 'Secret',
+      label: 'Secret',
+      labelPlural: 'Secrets',
+      path: 'secrets',
+      plural: 'secrets',
+    },
   },
 
   PullPolicy: {
