@@ -33,9 +33,15 @@
                 <dt>Status</dt>
                 <dd ng-bind="pod|podPhase"></dd>
                 <dt>Pod IP</dt>
-                <dd><a ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a></dd>
+                <dd>
+                  <a ng-if="pod.status.podIP" ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a>
+                  <span ng-if="!pod.status.podIP" ng-bind="CONST.placeholderText"></span>
+                </dd>
                 <dt>Node</dt>
-                <dd><a ng-href="/nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a></dd>
+                <dd>
+                  <a ng-if="pod.spec.nodeName" ng-href="/nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
+                  <span ng-if="!pod.spec.nodeName" ng-bind="CONST.placeholderText"></span>
+                </dd>
                 <dt>Restart Policy</dt>
                 <dd ng-bind="getRestartPolicyLabel(pod.spec.restartPolicy)"></dd>
               </dl>
@@ -92,10 +98,10 @@
                   <a ng-href="/ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}/containers/{{c.name}}"
                      ng-bind="c.name"></a>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="cstatus.containerID"></div>
+                <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="cstatus.containerID | emptyPlaceholder"></div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8" ng-bind="c.image"></div>
                 <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="cstate.label | emptyPlaceholder"></div>
-                <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="cstatus.restartCount"></div>
+                <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="cstatus.restartCount | emptyPlaceholder"></div>
                 <div class="col-lg-2 col-md-2 hidden-sm  hidden-xs"><co-timestamp timestamp="{{cstate.startedAt}}"></div>
               </div>
             </div>

@@ -20,7 +20,8 @@
       <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs" ng-bind="p | podPhase | emptyPlaceholder"></div>
       <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" ng-bind="p.spec.containers.length | emptyPlaceholder"></div>
       <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-        <a ng-href="/nodes/{{p.spec.nodeName}}" ng-bind="p.spec.nodeName"></a>
+        <a ng-if="p.spec.nodeName" ng-href="/nodes/{{p.spec.nodeName}}" ng-bind="p.spec.nodeName"></a>
+        <span ng-if="!p.spec.nodeName" ng-bind="$root.CONST.placeholderText"></span>
       </div>
     </div>
 

@@ -6,7 +6,7 @@ angular.module('bridge.filter')
   'use strict';
 
   return function(val, placeholder) {
-    return val ? val : placeholder || CONST.placeholderText;
+    return val != null ? val : (placeholder || CONST.placeholderText);
   };
 
 });
