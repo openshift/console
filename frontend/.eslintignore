@@ -1,4 +1,4 @@
-public/bower_components
 public/dist
 *.min.js
 public/lib
+node_modules

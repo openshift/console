@@ -11,20 +11,14 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // Deps
-      'public/lib/deps.js',
-      'public/lib/coreos-web/coreos.js',
-
+      'public/dist/deps.js',
       // Deps for tests
-      'public/bower_components/angular-mocks/angular-mocks.js',
 
+      'public/dist/app-bundle.js',
+      'node_modules/angular-mocks/angular-mocks.js',
       // Actual code & tests.
       'public/*_test.js',
       'public/**/*_test.js',
-
-      // compiled templates
-      'public/dist/templates*.js',
-
-      'public/dist/app-bundle.js'
     ],
 
     reporters: ['progress'],
