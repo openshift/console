@@ -21,3 +21,4 @@ import './row-mgr';
 import './service-ports-ctrl';
 import './show-yaml-ctrl';
 import './dtc-settings';
+import './namespace-quay-pull-secret/namespace-quay-pull-secret-ctrl';

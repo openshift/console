@@ -20,4 +20,10 @@ angular.module('bridge.const')
   //
   // And it's ok for users to make assumptions about capturing groups.
   legalNamePattern: /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/,
+
+  // http://kubernetes.io/docs/user-guide/images/#bypassing-kubectl-create-secrets
+  PULL_SECRET_TYPE: 'kubernetes.io/dockerconfigjson',
+  PULL_SECRET_DATA: '.dockerconfigjson',
+
+  QUAY_IO_SECRET_NAME: 'tectonic-quay.io'
 });
