@@ -5,19 +5,13 @@ angular.module('bridge.filter')
   // Whitelist of event reasons by "category" and involved object kind.
   var filterMap = {
     error: {
-      Pod: ['failed', 'failedScheduling'],
-      Node: ['offline'],
+      pod: ['failed', 'failedScheduling'],
+      node: ['offline'],
     },
     info: {
-      Pod: ['created', 'pulled', 'killing', 'started', 'scheduled'],
-      Node: ['online', 'starting'],
+      pod: ['created', 'pulling', 'pulled', 'killing', 'started', 'scheduled'],
+      node: ['online', 'starting'],
     }
-  };
-
-  // Map query kind input to event kind value.
-  var kindMap = {
-    pod: 'Pod',
-    node: 'Node',
   };
 
   // Maps query prop name to a predicate filter.
@@ -35,13 +29,13 @@ angular.module('bridge.filter')
 
   // Predicate function to filter by involved object kind.
   function kindFilter(query, evt) {
-    return evt.object.involvedObject.kind === kindMap[query.kind];
+    return evt.object.involvedObject.kind.toLowerCase() === query.kind;
   }
 
   // Predicate function to filter by event "category" (info, error, etc)
   function categoryFilter(query, evt) {
-    var kind = evt.object.involvedObject.kind;
-    var reason = evt.object.reason;
+    var kind = evt.object.involvedObject.kind.toLowerCase();
+    var reason = evt.object.reason.toLowerCase();
     var reasons = filterMap[query.category][kind];
     if (reasons && reasons.indexOf(reason) !== -1) {
       return true;

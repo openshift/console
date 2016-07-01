@@ -36,7 +36,10 @@ angular.module('bridge.ui')
         return ret;
       };
 
-      $scope.$watchCollection('messages', function() {
+      $scope.$watch('eventsFilter', updateFilteredMessages, /* objectEquality */true);
+      $scope.$watchCollection('messages', updateFilteredMessages);
+
+      function updateFilteredMessages() {
         $scope.filteredMessages = _.chain(sysevents($scope.messages, $scope.eventsFilter))
           .uniqBy($scope.eventID)
           .sortBy((e) => e.object.lastTimestamp)
@@ -44,7 +47,7 @@ angular.module('bridge.ui')
           .slice(0, $scope.maxMessages)
           .value()
         ;
-      });
+      }
 
       $scope.getTotalMessage = function() {
         var msg = '',
