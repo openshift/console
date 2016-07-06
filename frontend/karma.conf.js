@@ -21,7 +21,7 @@ module.exports = function(config) {
       'public/**/*_test.js',
     ],
 
-    reporters: ['progress'],
+    reporters: ['dots'],
 
     // web server port
     port: 8100,
@@ -36,7 +36,7 @@ module.exports = function(config) {
 
     autoWatch: false,
 
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,

@@ -1,7 +1,7 @@
 // TODO(sym3tri): pass scope to config instead of using rootScope?
 
 angular.module('k8s')
-.service('k8sResource', function($q, $rootScope, $http, _, k8sConfig, k8sSelector, k8sEvents) {
+.service('k8sResource', function($q, $rootScope, $http, _, k8sConfig, k8sSelector) {
   'use strict';
 
   this.resourceURL = function(kind, options) {

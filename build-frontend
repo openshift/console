@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+pushd frontend
+npm install
+npm run gulp
+popd

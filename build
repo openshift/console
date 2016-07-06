@@ -1,25 +1,4 @@
 #!/bin/bash -e
 
-# Builds the server-side golang resources for tectonic-console. For a
-# complete build, you must also run build-web
-
-repo_org=coreos-inc
-project_dir=$(basename $PWD)
-export GOPATH=${PWD}/Godeps/_workspace
-export GOBIN=${PWD}/bin
-
-GIT_TAG=`git describe --always --tags HEAD`
-LD_FLAGS="-w -X github.com/$repo_org/$project_dir/version.Version=$GIT_TAG"
-
-rm $GOPATH/src/github.com/$repo_org/$project_dir 2> /dev/null || true
-mkdir -p $GOPATH/src/github.com/$repo_org/
-ln -s ${PWD} $GOPATH/src/github.com/$repo_org/$project_dir
-
-CGO_ENABLED=0 go build -a -tags netgo -ldflags "$LD_FLAGS" -o bin/bridge github.com/$repo_org/$project_dir/cmd/bridge
-
-# build frontend
-pushd frontend;
-rm -rf ./node_modules || true;
-npm install
-npm run gulp
-popd
+./build-backend
+./build-frontend
