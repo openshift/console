@@ -20,7 +20,7 @@ RUN chmod 777 -R ${HOME}
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
-    curl wget git unzip
+    curl wget git unzip libfontconfig1 bzip2
 RUN cd /tmp && \
     wget --quiet -O /tmp/node.tar.gz http://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.gz && \
     tar xf node.tar.gz && \

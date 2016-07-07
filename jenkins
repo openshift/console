@@ -1,20 +1,20 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # We assume the jenkins jenkins user with uid 1000 on all build hosts
 export BUILDER_RUN_USER=1000
 
 CURRENT_USER=$(whoami)
-CURRENT_UID=$(id -u $CURRENT_USER)
+CURRENT_UID=$(id -u ${CURRENT_USER})
 
-if [ $BUILDER_RUN_USER -eq $CURRENT_UID ]; then
-    echo Running under User: $CURRENT_USER, with UID: $CURRENT_UID
+if [ ${BUILDER_RUN_USER} -eq ${CURRENT_UID} ]; then
+    echo "Running under User: ${CURRENT_USER}, with UID: ${CURRENT_UID}"
 else
-    echo Expected to run with UID: $BUILDER_RUN_USER, instead UID is: $CURRENT_UID. Fix Jenkins and try again.
+    echo "Expected to run with UID: ${BUILDER_RUN_USER}, instead UID is: ${CURRENT_UID}. Fix Jenkins and try again."
     exit 1
 fi
 
-./clean
+docker login -u="coreos+jenkins" -p="${QUAY_DOCKER_PASSWORD}" quay.io
 
-#docker login -e="." -u="coreos+jenkins" -p="${QUAY_DOCKER_PASSWORD}" quay.io
+./clean
 ./builder-run ./build
-#./builder-run ./test
+./builder-run ./test

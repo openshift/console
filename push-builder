@@ -4,16 +4,14 @@
 # it when you introduce new build-time dependencies or change go
 # versions, etc.
 
-git_status=$(git status --porcelain 2> /dev/null)
-git_sha=$(git rev-parse HEAD)
-git_tag=$(git tag -l --points-at HEAD)
-
-if [[ "$git_status" != "" ]]; then
-    echo "Won't push from a dirty git repo. Commit your changes before you push." 1>&2
-    exit
+if [ -z "${DOCKER_TAG}" ]; then
+    echo "Please provide DOCKER_TAG env var and try again."
+    exit 1
 fi
 
-docker build -f Dockerfile-builder -q --rm=true -t quay.io/coreos/tectonic-console-builder:$git_sha .
-docker push quay.io/coreos/tectonic-console-builder:$git_sha
+DOCKER_IMAGE=quay.io/coreos/tectonic-console-builder:${DOCKER_TAG}
 
-echo "Pushed $git_sha"
+docker build --rm=true -t ${DOCKER_IMAGE} - < Dockerfile-builder
+docker push ${DOCKER_IMAGE}
+
+echo "Pushed ${DOCKER_IMAGE}"

@@ -10,7 +10,7 @@ describe('heapster', function() {
 
   describe('rounds', function () {
     function testRound (n, expected) {
-      it(`${n} into ${expected}`, function () {
+      it(n + ' into ' + expected, function () {
         expect(heapster.round_(n)).toEqual(expected);
       });
     }
@@ -23,7 +23,7 @@ describe('heapster', function() {
 
   describe('should humananize the CPU value', function () {
     function test_ (value, expected) {
-      it(`'${value}' into '${expected}'`, function () {
+      it(value + ' into ' + expected, function () {
         expect(heapster.HUMAN_VALUES_.CPU(value)).toEqual(expected);
       });
     }
@@ -36,7 +36,7 @@ describe('heapster', function() {
 
   describe('should humanizifies Memory values', function () {
     function test_ (value, expected) {
-      it(`'${value}' into '${expected}'`, function () {
+      it(value + ' into ' + expected, function () {
         expect(heapster.HUMAN_VALUES_.Memory(value)).toEqual(expected);
       });
     }
