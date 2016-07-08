@@ -72,7 +72,7 @@ function jsBuild (debug) {
 
 gulp.task('js-deps', ['js-build'], () => {
   // HACK: we rely on the externals being created by js-build (jsBuild)
-  browserify()
+  return browserify()
   .require(externals)
   .bundle()
   .pipe(source('deps.js'))
@@ -109,7 +109,7 @@ gulp.task('browserify', () => {
     this.emit('end');
   });
 
-  bundler();
+  return bundler();
 });
 
 gulp.task('sha', function(cb) {
@@ -165,9 +165,8 @@ gulp.task('templates', function() {
 
 // Copy any static assets.
 gulp.task('assets', function() {
-  // images
-  gulp.src([ 'public/img/**/*' ])
-    .pipe(gulp.dest('public/dist/img'));
+  return gulp.src('public/imgs/*')
+    .pipe(gulp.dest(distDir + '/imgs'));
 });
 
 // Copy all deps to dist folder for packaging.
