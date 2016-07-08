@@ -62,7 +62,7 @@ angular.module('dex')
     .then(function(isAvailable) {
       featureFlags.userManagement = !!isAvailable;
     })
-    .catch(function(resp) {
+    .catch(function() {
       featureFlags.userManagement = false;
     });
   }
