@@ -14,7 +14,12 @@ angular.module('bridge.ui')
     replace: true,
     scope: {
       title: '@',
-      obj: '&'
+      obj: '&',
+      kind: '=',
+      plural: '=',
+    },
+    controller: function ($scope) {
+      $scope.klass = $scope.plural ? 'row co-m-nav-title__plural' : 'row co-m-nav-title';
     },
     link: function(scope) {
       scope.showYAML = function() {

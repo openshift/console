@@ -4,6 +4,10 @@
    rather than overriding or bringing in built assets.
    The coreos-web project is no longer actively maintained */
 
+a {
+  color: $color-link;
+}
+
 $color-text-muted: #999;
 
 .text-muted {
@@ -18,16 +22,54 @@ small {
   cursor: auto;
 }
 
-.co-m-navbar {
-  width: 99%;
-  padding-left: 15px;
-  padding-right: 15px;
-  margin-left: auto;
-  margin-right: auto;
+.co-m-page-title {
+  margin: 0;
+  padding: 30px 10px;
+  line-height: 26px;
+  color: black;
+  font-weight: 400;
+  letter-spacing: -.03em;
+  font-size: 26px;
+  // need the extra specifity :(
+  .co-m-page-title__icon {
+    min-width: 30px;
+    font-size: 22px;
+    border-radius: 14px;
+    height: 30px;
+    line-height: 29px;
+    position: relative;
+    top: -2px;
+  }
 }
 
+.text-filter {
+  width: 150px;
+  min-width: 150px;
+}
+.co-m-page-title__obj {
+  font-size: 14px;
+  letter-spacing: 0px;
+}
+
+.co-m-pane {
+  border-top: 1px solid $color-grey-lightest;
+  min-height: inherit;
+}
+
+.co-m-pane__body__top-controls {
+  padding: 10px 0;
+}
 .co-m-facet-menu__option-list {
   overflow: visible;
+}
+.co-m-primary-action {
+  color: black;
+  &:hover, &:visited {
+    color: black;
+  }
+}
+.co-img-icon-light {
+  fill: white;
 }
 
 .navbar-brand {

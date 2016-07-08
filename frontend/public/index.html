@@ -25,48 +25,57 @@
     </script>
   </head>
 
-  <body class="co-img-bg-cells">
-    <co-footer-wrapper ng-cloak>
-      <div class="navbar-container">
-        <co-navbar ng-cloak logo-src="/static/tectonic-logo.svg">
-          <ul class="nav navbar-nav">
-            <co-navbar-link href="{{'/services'|ns}}">Services</co-navbar-link>
-            <co-navbar-link href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
-            <co-navbar-link href="{{'/replicasets'|ns}}">Replica Sets</co-navbar-link>
-            <co-navbar-link href="{{'/deployments'|ns}}">Deployments</co-navbar-link>
-            <co-navbar-link href="{{'/pods'|ns}}">Pods</co-navbar-link>
-            <co-navbar-link href="/nodes">Nodes</co-navbar-link>
-            <co-navbar-dropdown ng-cloak text="More" class="more-header">
-              <li class="hidden-md hidden-lg" ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)"><a>Namespaces <i class="fa fa-angle-right right-angle-icon"></i></a></li>
-              <li><a co-namespaced-href="/events">Events</a></li>
-              <li><a href="/search">Search</a></li>
-            </co-navbar-dropdown>
-          </ul>
+  <body>
+    <div id="reflex">
+      <div id="sidebar" class="co-img-bg-cells">
+        <div class="navbar-container">
+          <div class="nav-section nav-section--logo">
+            <a href="/"><img src="/static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo"/></a>
+          </div>
 
-          <ul id="account-nav" ng-controller="AuthCtrl" class="nav navbar-nav pull-right">
-            <li ng-controller="SideMenuCtrl" ng-click="sideMenuToggle($event)">
-              <a href="#" class="account-nav__dropdown-toggle" ng-class="{'account-nav__dropdown-toggle__auth': !isAuthDisabled}">
-                <img class="co-user-avatar" ng-if="!isAuthDisabled && emailHash()" ng-src="//gravatar.com/avatar/{{emailHash()}}?s=32" />
-                <div class="account-email-namespace">
-                  <span class="account-nav__email" ng-bind="email() || 'My Account'"></span><br />
-                  <span class="account-nav__active-namespace" ng-bind="activeNamespace || 'all'"></span>
-                </div>
-                &nbsp;<i class="fa fa-cog co-settings-icon"></i>
-              </a>
-            </li>
-          </ul>
-        </co-navbar>
+          <div class="nav-section" ng-cloak ng-show="$root.FEATURE_FLAGS.userManagement">
+            <ul id="account-nav" ng-controller="AuthCtrl" class="nav">
+              <li>
+                <span ng-bind="email() || 'My Account'"></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="nav-section" ng-if="$root.FEATURE_FLAGS.userManagement" ng-cloak>
+            <div class="nav-title" ng-click="adminIsCollapsed = !adminIsCollapsed">
+               Administration
+            </div>
+            <ul class="nav navbar-nav collapse in" id="admin-tab" uib-collapse="adminIsCollapsed">
+              <co-navbar-link ng-cloak href="/settings/users">Users</co-navbar-link>
+            </ul>
+          </div>
+
+          <div class="nav-section">
+            <div class="nav-title" ng-click="kubernetesIsCollapsed = !kubernetesIsCollapsed">
+              Kubernetes
+            </div>
+
+            <ul class="nav navbar-nav collapse in" uib-collapse="kubernetesIsCollapsed">
+              <co-navbar-link ng-cloak href="/namespaces">Namespaces</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/services'|ns}}">Services</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/replicasets'|ns}}">Replica Sets</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/deployments'|ns}}">Deployments</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/pods'|ns}}">Pods</co-navbar-link>
+              <co-navbar-link ng-cloak href="/nodes">Nodes</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/events'|ns}}">Events</co-navbar-link>
+              <co-navbar-link ng-cloak href="/search">Search</co-navbar-link>
+            </ul>
+          </div>
+        </div>
       </div>
-      <co-side-menu></co-side-menu>
-      <div id="co-l-view-container" class="container" ng-view co-error-page></div>
-    </co-footer-wrapper>
 
-    <co-footer ng-cloak>
-      <co-footer-link href="https://tectonic.com/docs" icon-class="fa fa-book">Documentation</co-footer-link>
-      <co-footer-link href="irc://irc.freenode.org:6667/#coreos/" icon-class="fa fa-comment">IRC #coreos</co-footer-link>
-    </co-footer>
-
-    <co-toast ng-cloak></co-toast>
+      <div id="content">
+        <co-namespace-selector></co-namespace-selector>
+        <div id="co-l-view-container" class="" ng-view co-error-page></div>
+        <co-toast ng-cloak></co-toast>
+      </div>
+    </div>
 
     <!-- build:js -->
     <script src="/static/dist/deps.js"></script>

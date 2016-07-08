@@ -1,22 +1,11 @@
-$color-service-dark: #487F9F;
-$color-service-medium: #72A4CA;
-$color-service-light: #D3EAFF;
-
-$color-controller-dark: #593DA9;
-$color-controller-medium: #8369AD;
-$color-controller-light: #D8ADFE;
-
-$color-replicaset-dark: #593DA9;
-$color-replicaset-medium: #8369AD;
-$color-replicaset-light: #D8ADFE;
-
-$color-deployment-dark: #F77454;
-
-$color-pod-dark: #53B464;
-$color-pod-medium: #5DD973;
-$color-pod-light: #D0FECE;
-
-$color-namespace-dark: #99ba45;
+$color-service-dark: #145884;
+$color-pod-dark: #128E72;
+$color-controller-dark: #872C6C;
+$color-replicaset-dark: #F77454;
+$color-deployment-dark: #99BA45;
+$color-namespace-dark: #30C2B6;
+$color-node-dark: #C049BF;
+$color-container-dark: #63C2E4;
 
 $color-grey-lightest: #efefef;
 $color-grey-medium: #666;
@@ -25,24 +14,24 @@ $color-grey-text: #999;
 $color-grey-border: #eee;
 $color-grey-highlight: #353535;
 $color-grey-background: #f5f5f5;
+$color-grey-background-border: #d1d1d1;
 
 $color-red-failure: #dd1326;
 $color-red-error: #D64456;
+$color-green-success: #2fc98e;
 
-$color-container-dark: #f08e4e;
-
-$color-node-dark: #f35d6b;
-
+$color-link: #458AC8;
 $color-highlight-blue: #52a3d9;
 $color-highlight-blue-dark: #2276AD;
 
 $color-tectonic-green: #68C28D;
-$color-tectonic-button-green: #2fc98e;
+$color-tectonic-button-green: $color-green-success;
 
 $color-border-brown: #947663;
 
-$color-tpm-trusted: #489236;
-$color-tpm-untrusted: #D64456;
+$color-tpm-trusted: $color-green-success;
+$color-tpm-untrusted: $color-red-error;
+
 
 $z-plane-1: 100;
 $z-plane-2: 200;
@@ -50,3 +39,5 @@ $z-plane-3: 300;
 $z-plane-4: 400;
 
 $font-size-small: 13px;
+
+

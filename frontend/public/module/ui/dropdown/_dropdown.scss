@@ -1,0 +1,17 @@
+@import '_vars';
+
+.btn--dropdown {
+  color: black;
+  background-color: white;
+}
+
+.dropdown__selected {
+  background-color: $color-highlight-blue;
+}
+
+.dropdown__default {
+}
+
+.dropdown__not-btn {
+  cursor: pointer;
+}

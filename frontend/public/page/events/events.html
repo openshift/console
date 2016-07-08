@@ -1,35 +1,26 @@
 <div class="co-p-events">
 
-  <tec-nav-title title="Cluster Events"></tec-nav-title>
+  <tec-nav-title title="Cluster Events" plural="true"></tec-nav-title>
 
   <div class="co-m-pane">
     <div class="co-m-pane__heading">
-      <h1 class="co-m-pane__title">Event Stream</h1>
-    </div>
-    <div class="co-m-pane__body">
-
       <div class="row">
-        <div class="col-sm-2">
-          <co-facet-menu model="query.kind" title="Object Type">
-            <co-facet-menu-option value="">All Types</co-facet-menu-option>
-            <co-facet-menu-option value="pod">Pod Events</co-facet-menu-option>
-            <co-facet-menu-option value="node">Node Events</co-facet-menu-option>
-          </co-facet-menu>
+        <div class="col-xs-12">
+          <co-dropdown title="'Object Type'" selected="query.kind" items="{'All': '', 'Pods': 'pod', 'Nodes': 'node'}" class="pull-left">
+          </co-dropdown>
 
-          <co-facet-menu model="query.category" title="Event Category">
-            <co-facet-menu-option value="">All Categories</co-facet-menu-option>
-            <co-facet-menu-option value="info">Info</co-facet-menu-option>
-            <co-facet-menu-option value="error">Error</co-facet-menu-option>
-          </co-facet-menu>
-
-          <co-debug obj="query"></co-debug>
-
+          <co-dropdown title="'Event Category'" selected="query.category" items="{'All': '', 'Info': 'info', 'Error': 'error'}" class="pull-left">
+          </co-dropdown>
         </div>
-        <div class="col-sm-10">
+      </div>
+    </div>
+
+    <div class="co-m-pane__body">
+      <div class="row">
+        <div class="col-xs-12"><p></p>
           <co-sysevent-stream namespace="ns" filter="query"></co-sysevent-stream>
         </div>
       </div>
-
     </div>
   </div>
 </div>

@@ -1,39 +1,8 @@
 @import '_vars';
 @import '../../../lib/coreos-web/sass/mixin/_media-query';
-@import '../../../lib/coreos-web/sass/_config';
-
-@include co-x-media-max($screen-sm) {
-  #account-nav {
-    display: none !important;
-  }
-}
 
 #account-nav {
-  position: absolute;
-  right: 0;
-  border-left: 1px solid #ddd;
-
-  .account-email-namespace {
-    vertical-align: middle;
-    display: inline-block;
-  }
-  .account-nav__email {
-    color: $color-grey-text;
-    vertical-align: middle;
-    font-size: 13px;
-  }
-  .account-nav__active-namespace {
-    font-weight: 600;
-    font-size: 18px;
-  }
-  .account-nav__dropdown-toggle {
-    height: 46px;
-    padding-left: 20px;
-    padding-top: 7px;
-  }
-  .account-nav__dropdown-toggle__auth {
-    padding: 2px 0 0 20px;
-  }
+  margin-bottom: 0px;
 }
 
 .co-settings-icon {

@@ -1,6 +1,6 @@
 <div class="co-p-edit-replicationcontroller">
 
-  <tec-nav-title title="{{rc.metadata.name}}">
+  <tec-nav-title title="{{rc.metadata.name}}" kind="'replicationcontroller'">
     <a co-namespaced-href="/replicationcontrollers" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Replication Controllers
     </a>
@@ -8,7 +8,7 @@
 
   <form ng-controller="EditReplicationcontrollerFormCtrl" ng-submit="submit()" name="form" role="form">
 
-    <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+    <div class="co-m-pane co-m-vert-nav">
       <co-replicationcontroller-nav ns="ns" name="rcName"></co-replicationcontroller-nav>
 
       <div class="co-m-vert-nav__body">

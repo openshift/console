@@ -1,12 +1,12 @@
 <div class="co-p-edit-deployment">
-  <tec-nav-title title="{{deployment.metadata.name}}">
+  <tec-nav-title title="{{deployment.metadata.name}}" kind="'deployment'">
     <a co-namespaced-href="/deployments" class="co-m-primary-action">
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Deployments
     </a>
   </tec-nav-title>
 
   <form ng-submit="submit()" name="form" role="form">
-    <div class="co-m-pane co-m-vert-nav co-m-vert-nav--sm">
+    <div class="co-m-pane co-m-vert-nav">
       <co-deployment-nav ns="ns" name="deploymentName"></co-deployment-nav>
 
       <div class="co-m-vert-nav__body">

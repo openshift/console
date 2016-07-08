@@ -1,3 +1,5 @@
+@import "vars";
+
 $min-height: 200px;
 
 .co-m-vert-nav {
@@ -6,8 +8,8 @@ $min-height: 200px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
-  -webkit-flex-flow: row nowrap;
-  flex-flow: row nowrap;
+  -webkit-flex-flow: column nowrap;
+  flex-flow: column nowrap;
 
   &.co-m-pane {
     background-color: transparent;
@@ -15,67 +17,40 @@ $min-height: 200px;
 }
 
 .co-m-vert-nav__menu {
+  border-bottom: 1px solid $color-grey-lightest;
   -webkit-box-flex: none;
   -webkit-flex: none;
   flex: none;
+  font-weight: 300;
   -webkit-box-ordinal-group: 1;
   -webkit-order: 1;
   order: 1;
 
-  min-height: $min-height;
-  padding-left: 0;
+  padding-left: 12px;
   list-style: none;
   margin: 0;
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-// large menu items with text & descriptions
-.co-m-vert-nav--lg .co-m-vert-nav__menu {
-  width: 300px;
-  .co-m-vert-nav__menu-item {
-    padding: 30px;
-    text-align: left;
-    font-size: inherit;
-  }
-}
-
-// small menu items with only icons
-.co-m-vert-nav--sm .co-m-vert-nav__menu {
-  width: 80px;
-  .co-m-vert-nav__menu-item {
-    font-size: 35px;
-    text-align: center;
-    &.co-m-vert-nav-item--active a,
-    &.co-m-vert-nav-item--active a:hover,
-    &.co-m-vert-nav-item--active a:active,
-    &.co-m-vert-nav-item--active a:visited {
-      color: $red;
-      background-color: #fff;
-    }
-  }
+.co-m-vert-nav-item--active {
+  border-bottom: 2px solid $color-highlight-blue;
 }
 
 .co-m-vert-nav__menu-item {
   margin: 0;
-  border-bottom: 1px solid #ccc;
+  text-align: center;
+  display: inline-block;
+  font-size: 20px;
+  padding: 7px;
+
+  &.co-m-vert-nav-item--active a {
+    color: $color-highlight-blue;
+  }
   a {
-    display: inline-block;
-    width: 100%;
+    color: black;
+    text-decoration: none;
     padding: 10px;
   }
-  a:hover {
-    background-color: #fff;
-  }
-}
-
-.co-m-vert-nav__menu-item-heading {
-  font-weight: 400;
-  color: $blue-link;
-  margin: 0 0 20px 0;
-}
-
-.co-m-vert-nav__menu-item-desc {
-  font-size: 14px;
 }
 
 .co-m-vert-nav__body {

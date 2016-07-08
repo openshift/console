@@ -2297,7 +2297,7 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/navbar/navbar.html',
-    '<div class="co-m-navbar co-fx-box-shadow navbar">\n' +
+    '<div class="">\n' +
     '\n' +
     '  <div class="navbar-header">\n' +
     '    <button ng-click="isCollapsed = !isCollapsed" class="navbar-toggle" type="button">\n' +

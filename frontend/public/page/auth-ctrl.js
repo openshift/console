@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('AuthCtrl', function($scope, $location, $log, authSvc, featuresSvc, activeNamespaceSvc) {
+.controller('AuthCtrl', function($scope, authSvc) {
   'use strict';
 
   $scope.email = function() {
@@ -7,10 +7,4 @@ angular.module('bridge.page')
   };
 
   $scope.emailHash = authSvc.emailHash;
-  $scope.isAuthDisabled = featuresSvc.isAuthDisabled;
-
-  // TODO joeatwork - namespaces aren't Auth - consider renaming this controller
-  $scope.$watch(activeNamespaceSvc.getActiveNamespace, function(namespace) {
-    $scope.activeNamespace = namespace && namespace.metadata.name;
-  });
 });
