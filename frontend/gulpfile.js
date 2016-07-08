@@ -165,9 +165,8 @@ gulp.task('templates', function() {
 
 // Copy any static assets.
 gulp.task('assets', function() {
-  // images
-  gulp.src([ 'public/img/**/*' ])
-    .pipe(gulp.dest('public/dist/img'));
+  return gulp.src('public/imgs/*')
+    .pipe(gulp.dest(distDir + '/imgs'));
 });
 
 // Copy all deps to dist folder for packaging.
