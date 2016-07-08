@@ -28,34 +28,34 @@
   <body>
     <div id="reflex">
       <div id="sidebar" class="co-img-bg-cells">
-        <div class="navbar-container">
-          <div class="nav-section nav-section--logo">
+        <div class="navigation-container">
+          <div class="navigation-container__section navigation-container__section--logo">
             <a href="/"><img src="/static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo"/></a>
           </div>
 
-          <div class="nav-section" ng-cloak ng-show="$root.FEATURE_FLAGS.userManagement">
-            <ul id="account-nav" ng-controller="AuthCtrl" class="nav">
-              <li>
+          <div class="navigation-container__section" ng-cloak ng-show="$root.FEATURE_FLAGS.userManagement">
+            <ul id="account-nav" ng-controller="AuthCtrl" class="navigation-container__list">
+              <li class="co-m-nav-link">
                 <span ng-bind="email() || 'My Account'"></span>
               </li>
             </ul>
           </div>
 
-          <div class="nav-section" ng-if="$root.FEATURE_FLAGS.userManagement" ng-cloak>
-            <div class="nav-title" ng-click="adminIsCollapsed = !adminIsCollapsed">
+          <div class="navigation-container__section" ng-if="$root.FEATURE_FLAGS.userManagement" ng-cloak>
+            <div class="navigation-container__section__title" ng-click="adminIsCollapsed = !adminIsCollapsed">
                Administration
             </div>
-            <ul class="nav navbar-nav collapse in" id="admin-tab" uib-collapse="adminIsCollapsed">
+            <ul class="navigation-container__list no-margin collapse in" id="admin-tab" uib-collapse="adminIsCollapsed">
               <co-navbar-link ng-cloak href="/settings/users">Users</co-navbar-link>
             </ul>
           </div>
 
-          <div class="nav-section">
-            <div class="nav-title" ng-click="kubernetesIsCollapsed = !kubernetesIsCollapsed">
+          <div class="navigation-container__section">
+            <div class="navigation-container__section__title" ng-click="kubernetesIsCollapsed = !kubernetesIsCollapsed">
               Kubernetes
             </div>
 
-            <ul class="nav navbar-nav collapse in" uib-collapse="kubernetesIsCollapsed">
+            <ul class="navigation-container__list no-margin collapse in" uib-collapse="kubernetesIsCollapsed">
               <co-navbar-link ng-cloak href="/namespaces">Namespaces</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/services'|ns}}">Services</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
