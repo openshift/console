@@ -97,17 +97,18 @@ gulp.task('js-build', ['templates'], function() {
 gulp.task('browserify', () => {
   const b = jsBuild(true);
   const bundler = (id) => {
-    b.bundle().pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
+    b.bundle()
+      .on('error', (err) => {
+        // eslint-disable-next-line no-console
+        console.log(new PrettyError().render(err));
+        b.emit('end');
+      })
+    .pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
     // eslint-disable-next-line no-console
     console.log(`updated ${distDir}/app-bundle.js to ${id}`);
   };
 
-  b.on('update', bundler).on('error', (err) => {
-    // eslint-disable-next-line no-console
-    console.log(new PrettyError().render(err));
-
-    this.emit('end');
-  });
+  b.on('update', bundler);
 
   return bundler();
 });
