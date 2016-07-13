@@ -46,10 +46,6 @@ type proxy struct {
 }
 
 func newProxy(cfg *ProxyConfig) *proxy {
-	if strings.HasSuffix(cfg.Endpoint.Path, "/") {
-		panic("Proxy paths must not end in a slash")
-	}
-
 	// Copy of http.DefaultTransport with TLSClientConfig added
 	insecureTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
@@ -78,6 +74,18 @@ func newProxy(cfg *ProxyConfig) *proxy {
 	return proxy
 }
 
+func singleJoiningSlash(a, b string) string {
+	aslash := strings.HasSuffix(a, "/")
+	bslash := strings.HasPrefix(b, "/")
+	switch {
+	case aslash && bslash:
+		return a + b[1:]
+	case !aslash && !bslash:
+		return a + "/" + b
+	}
+	return a + b
+}
+
 func (p *proxy) rewriteRequest(r *http.Request) {
 	// At this writing, the only errors we can get from TokenExtractor
 	// are benign and correct variations on "no token found"
@@ -91,7 +99,7 @@ func (p *proxy) rewriteRequest(r *http.Request) {
 
 	r.Host = p.config.Endpoint.Host
 	r.URL.Host = p.config.Endpoint.Host
-	r.URL.Path = p.config.Endpoint.Path + "/" + r.URL.Path
+	r.URL.Path = singleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
 	r.URL.Scheme = p.config.Endpoint.Scheme
 }
 
