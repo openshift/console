@@ -93,25 +93,27 @@ func main() {
 			log.Fatalf("Error creating TLS config from Kubernetes config: %v", err)
 		}
 
-		kCfg = &server.ProxyConfig{
-			TLSClientConfig: inClusterTLSCfg,
-		}
-
-		kCfg.Endpoint, err = url.Parse(cc.Host)
+		k8sURL, err := url.Parse(cc.Host)
 		if err != nil {
 			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
 		}
 
-		kCfg.TokenExtractor = server.ConstantTokenExtractor(cc.BearerToken)
+		kCfg = &server.ProxyConfig{
+			TLSClientConfig: inClusterTLSCfg,
+			HeaderBlacklist: []string{"Cookie"},
+			Endpoint:        k8sURL,
+			TokenExtractor:  server.ConstantTokenExtractor(cc.BearerToken),
+		}
+
 	} else {
 		kCfg = &server.ProxyConfig{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: *insecureSkipVerifyK8sCA,
 			},
+			HeaderBlacklist: []string{"Cookie"},
+			Endpoint:        k8sURL,
+			TokenExtractor:  server.ConstantTokenExtractor(*k8sBearerToken),
 		}
-
-		kCfg.Endpoint = k8sURL
-		kCfg.TokenExtractor = server.ConstantTokenExtractor(*k8sBearerToken)
 	}
 
 	var dexCfg *server.ProxyConfig
@@ -124,12 +126,14 @@ func main() {
 			log.Fatalf("enable-dex-user-management requires authentication enabled")
 		}
 		dexURL := validateURLFlag(fs, "auth-issuer-url")
+		dexURL.Path = "/api"
 		dexCfg = &server.ProxyConfig{
 			Endpoint: dexURL,
 			TLSClientConfig: &tls.Config{
 				RootCAs: certPool,
 			},
-			TokenExtractor: auth.ExtractTokenFromCookie,
+			HeaderBlacklist: []string{"Cookie"},
+			TokenExtractor:  auth.ExtractTokenFromCookie,
 		}
 	}
 

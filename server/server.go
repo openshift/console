@@ -1,7 +1,6 @@
 package server
 
 import (
-	"crypto/tls"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -54,9 +53,9 @@ func (s *Server) AuthDisabled() bool {
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 
-	k8sHandler := s.k8sHandler()
+	var k8sHandler http.Handler = newProxy(s.K8sProxyConfig)
 	if !s.AuthDisabled() {
-		k8sHandler = authMiddleware(s.Auther, s.k8sHandler())
+		k8sHandler = authMiddleware(s.Auther, k8sHandler)
 	}
 	mux.Handle("/api/kubernetes/", http.StripPrefix("/api/kubernetes/", k8sHandler))
 
@@ -67,14 +66,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	if s.DexProxyConfig != nil {
-		s.DexProxyConfig.Endpoint.Path = "/api"
-		s.DexProxyConfig.HeaderBlacklist = []string{"Cookie"}
-
-		// TODO(ericchiang): Need some way of gettings Dex's TLS certificate.
-		s.DexProxyConfig.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-		dexHandler := newProxy(s.DexProxyConfig)
-		mux.Handle("/api/dex/", http.StripPrefix("/api/dex/", dexHandler))
+		mux.Handle("/api/dex/", http.StripPrefix("/api/dex/", newProxy(s.DexProxyConfig)))
 	}
 
 	mux.HandleFunc("/api/", notFoundHandler)
@@ -95,23 +87,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	mux.HandleFunc("/", s.indexHandler)
 
 	return http.Handler(mux)
-}
-
-func (s *Server) k8sHandler() http.Handler {
-	s.K8sProxyConfig.Endpoint.Path = ""
-	s.K8sProxyConfig.HeaderBlacklist = []string{"Cookie"}
-
-	// TODO(ericchiang): (╯°□°）╯︵ ┻━┻
-	//
-	// When connecting to the API Server from within the cluster through a service
-	// account, the API Server's certificate is always at the well known path:
-	//
-	//     /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-	//
-	// Stop using InsecureSkipVerify and load this instead.
-	s.K8sProxyConfig.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	proxy := newProxy(s.K8sProxyConfig)
-	return proxy
 }
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
