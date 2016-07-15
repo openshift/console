@@ -5,7 +5,6 @@
 
 REPO_ORG=coreos-inc
 PROJECT_DIR=$(basename ${PWD})
-export GOPATH=${PWD}/Godeps/_workspace
 export GOBIN=${PWD}/bin
 
 GIT_TAG=`git describe --always --tags HEAD`

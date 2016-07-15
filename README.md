@@ -76,7 +76,7 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 
 ## Hacking
 ### Project Dependencies
-go, godep, nodejs, gulp
+go, glide, nodejs, gulp
 
 ### Frontend
 For interactive frontend development compiling html templates and sass is required.
@@ -104,12 +104,8 @@ Add new frontend dependencies:
  2. commit the altered `package.json`
 
 Add new backend dependencies:
- 1. `go get ...` as usual
- 2. run `godep save ./...`
-
-Update existing backend dependencies:
- 1. `go get -u foo/bar` as usual
- 2. `godep update foo/bar`
+ 1. Edit glide.yaml
+ 2. `glide update -s -v -u`
 
 ### API Schema
 If changes are made to the `schema/v1.json` file you must regenerate the go bindings:
