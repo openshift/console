@@ -12,7 +12,7 @@ import (
 
 	"github.com/coreos/pkg/capnslog"
 
-	genStats "github.com/coreos-inc/tectonic-stats-collector/pkg/generator"
+	genStats "github.com/coreos-inc/bridge/statsGenerator"
 )
 
 var (

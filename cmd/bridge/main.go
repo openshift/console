@@ -15,7 +15,7 @@ import (
 	"github.com/coreos/go-oidc/oidc"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
-	kclient "k8s.io/kubernetes/pkg/client/unversioned"
+	"k8s.io/kubernetes/pkg/client/restclient"
 
 	"github.com/coreos-inc/bridge/auth"
 	"github.com/coreos-inc/bridge/server"
@@ -83,12 +83,12 @@ func main() {
 
 	var kCfg *server.ProxyConfig
 	if *k8sInCluster {
-		cc, err := kclient.InClusterConfig()
+		cc, err := restclient.InClusterConfig()
 		if err != nil {
 			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 		}
 
-		inClusterTLSCfg, err := kclient.TLSConfigFor(cc)
+		inClusterTLSCfg, err := restclient.TLSConfigFor(cc)
 		if err != nil {
 			log.Fatalf("Error creating TLS config from Kubernetes config: %v", err)
 		}
