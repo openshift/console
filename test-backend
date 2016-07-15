@@ -9,7 +9,6 @@
 #   PKG=ssh ./test-backend
 #
 
-export GOPATH=${PWD}/Godeps/_workspace:${GOPATH}
 export GOBIN=${PWD}/bin:${GOBIN}
 
 # Invoke ./cover for HTML output
