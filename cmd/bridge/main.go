@@ -82,8 +82,9 @@ func main() {
 	}
 
 	var (
-		// Hold on to raw certificate so we can render it in kubeconfig files.
+		// Hold on to raw certificates so we can render them in kubeconfig files.
 		dexCertPEM []byte
+		k8sCertPEM []byte
 		// If caFile is unspecified and certPool is nil, net/tls will default to
 		// using the host's certs.
 		certPool *x509.CertPool
@@ -106,6 +107,17 @@ func main() {
 		cc, err := restclient.InClusterConfig()
 		if err != nil {
 			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
+		}
+
+		// Grab the certificate of the API Server so we can render it for kubeconfig files.
+		if cc.CertData != nil {
+			k8sCertPEM = cc.CertData
+		} else if cc.CertFile != "" {
+			data, err := ioutil.ReadFile(cc.CertFile)
+			if err != nil {
+				log.Fatalf("Failed to read kubernetes client certificate (%s): %v", cc.CertFile, err)
+			}
+			k8sCertPEM = data
 		}
 
 		inClusterTLSCfg, err := restclient.TLSConfigFor(cc)
@@ -232,7 +244,7 @@ func main() {
 				*kubectlClientSecret,
 				k8sURL.String(),
 				dexURL.String(),
-				nil, // TODO(ericchiang): Grab k8s cert once #709 updates the k8s dependency.
+				k8sCertPEM,
 				dexCertPEM,
 			)
 		}
