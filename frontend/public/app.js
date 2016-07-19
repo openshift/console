@@ -281,7 +281,14 @@ angular.module('bridge', [
     title: 'Node Pods',
   });
 
-  r('/search', {
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('search');
+  r('/all-namespaces/search', {
+    controller: 'SearchCtrl',
+    templateUrl: '/static/page/search/search.html',
+    title: 'Search',
+  });
+
+  r('/ns/:ns/search', {
     controller: 'SearchCtrl',
     templateUrl: '/static/page/search/search.html',
     title: 'Search',
