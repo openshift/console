@@ -3,15 +3,9 @@
 # Builds the server-side golang resources for tectonic-console. For a
 # complete build, you must also run build-frontend
 
-REPO_ORG=coreos-inc
 PROJECT_DIR=$(basename ${PWD})
-export GOBIN=${PWD}/bin
 
 GIT_TAG=`git describe --always --tags HEAD`
-LD_FLAGS="-w -X github.com/$REPO_ORG/${PROJECT_DIR}/version.Version=${GIT_TAG}"
+LD_FLAGS="-w -X github.com/coreos-inc/bridge/version.Version=${GIT_TAG}"
 
-rm ${GOPATH}/src/github.com/${REPO_ORG}/${PROJECT_DIR} 2> /dev/null || true
-mkdir -p ${GOPATH}/src/github.com/${REPO_ORG}/
-ln -s ${PWD} ${GOPATH}/src/github.com/${REPO_ORG}/${PROJECT_DIR}
-
-CGO_ENABLED=0 go build -a -tags netgo -ldflags "${LD_FLAGS}" -o bin/bridge github.com/${REPO_ORG}/${PROJECT_DIR}/cmd/bridge
+CGO_ENABLED=0 go build -ldflags "${LD_FLAGS}" -o bin/bridge github.com/coreos-inc/bridge/cmd/bridge
