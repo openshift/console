@@ -18,7 +18,7 @@
       </div>
 
       <div class="co-m-pane__body">
-        <co-pod-list load="!!rs" error="loadError" search="podSearch" namespace="ns" selector-required="true" selector="rs.spec.selector"></co-pod-list>
+        <co-pod-list ng-if="!!rs" error="loadError" search="podSearch" namespace="ns" selector-required="true" selector="rs.spec.selector"></co-pod-list>
       </div>
     </div>
   </div>

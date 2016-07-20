@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('bridge.ui')
-.directive('coTpcList', function (k8sCache) {
+.directive('coTpcList', function () {
   'use strict';
 
   return {
@@ -11,7 +11,7 @@ angular.module('bridge.ui')
     scope: {
       layerfilter: '=',
     },
-    controller: function($scope, tpm) {
+    controller: function($scope, tpm, Firehose, k8s) {
       let policies = [];
       $scope.loadError = false;
 
@@ -40,14 +40,14 @@ angular.module('bridge.ui')
         });
       }
 
-      k8sCache.policiesChanged($scope,
-        newPolicies => {
-          policies = newPolicies;
-          $scope.filteredPolicies = policyFilter(newPolicies);
-          $scope.loadError = false;
-        },
-        () => $scope.loadError = true
-      );
+      new Firehose(k8s.policies)
+        .watchList()
+        .bindScope($scope, null, state => {
+          policies = state.policies;
+          $scope.loadError = state.loadError;
+          $scope.filteredPolicies = policyFilter(policies);
+        });
+
       $scope.$watch('layerfilter', () => {
         $scope.filteredPolicies = policyFilter(policies);
       });

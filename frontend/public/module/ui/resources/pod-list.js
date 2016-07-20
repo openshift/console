@@ -1,10 +1,11 @@
+
 /**
  * @fileoverview
  * List out pods in a table-like view.
  */
 
 angular.module('bridge.ui')
-.directive('coPodList', function(k8s, arraySvc, _, resourceMgrSvc) {
+.directive('coPodList', function (k8s) {
   'use strict';
 
   return {
@@ -20,72 +21,20 @@ angular.module('bridge.ui')
       searchFilter: '=search',
       // field filters to apply to pod list
       podsFilterQuery: '=filter',
-      // only attempt loading pods if this is true
-      load: '=',
       // force error
       error: '=',
       // filter pod list by an api field selector
       fieldSelector: '=',
     },
-    controller: function($scope, $attrs) {
-      $scope.pods = null;
-      $scope.loadError = false;
-
-      function onSuccess(pods) {
-        $scope.pods = pods;
-        $scope.loadError = false;
+    controller: function($scope, Firehose) {
+      if ($scope.error) {
+        $scope.loadError = $scope.error;
+        return;
       }
 
-      function onError() {
-        $scope.pods = null;
-        $scope.loadError = true;
-      }
-
-      function loadPods() {
-        var query = {};
-        if (!$scope.load) {
-          return;
-        }
-        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
-          $scope.pods = [];
-          return;
-        }
-        if (!_.isEmpty($scope.selector)) {
-          query.labelSelector = $scope.selector;
-        }
-        if ($scope.namespace) {
-          query.ns = $scope.namespace;
-        }
-        if ($scope.fieldSelector) {
-          query.fieldSelector = $scope.fieldSelector;
-        }
-
-        k8s.pods.list(query)
-          .then(onSuccess)
-          .catch(onError);
-      }
-
-      $scope.$watch('load', loadPods);
-      $scope.$watch('selector', loadPods);
-      $scope.$watch('fieldSelector', loadPods);
-
-      $scope.$watch('error', function(error) {
-        if (error) {
-          $scope.loadError = true;
-        }
-      });
-      const events = k8s.events.pods;
-      $scope.$on(events.DELETED, function(e, data) {
-        resourceMgrSvc.removeFromList($scope.pods, data.resource);
-      });
-
-      $scope.$on(events.ADDED, loadPods);
-
-      $scope.$on(events.MODIFIED, function(e, data) {
-        resourceMgrSvc.updateInList($scope.pods, data.resource);
-      });
-
+      new Firehose(k8s.pods, $scope.namespace, $scope.selector, $scope.fieldSelector)
+        .watchList()
+        .bindScope($scope);
     }
   };
-
 });

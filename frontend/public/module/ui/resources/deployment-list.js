@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coDeploymentList', function(k8s, _, arraySvc, resourceMgrSvc) {
+.directive('coDeploymentList', function() {
   'use strict';
 
   return {
@@ -17,52 +17,10 @@ angular.module('bridge.ui')
       selector: '=',
       load: '=',
     },
-    controller: function($scope, $attrs) {
-      $scope.deployments = null;
-      $scope.loadError = false;
-
-      function loadDeployments() {
-        var query = {};
-        if (!$scope.load) {
-          return;
-        }
-
-        if ($attrs.selectorRequired && _.isEmpty($scope.selector)) {
-          $scope.deployments = [];
-          return;
-        }
-
-        if (!_.isEmpty($scope.selector)) {
-          query.labelSelector = $scope.selector;
-        }
-
-        if ($scope.namespace) {
-          query.ns = $scope.namespace;
-        }
-
-        k8s.deployments.list(query)
-          .then(function(deployments) {
-            $scope.deployments = deployments;
-            $scope.loadError = false;
-          })
-          .catch(function() {
-            $scope.deployments = null;
-            $scope.loadError = true;
-          });
-      }
-
-      $scope.$watch('load', loadDeployments);
-
-      const events = k8s.events.deployments;
-      $scope.$on(events.DELETED, function(e, data) {
-        resourceMgrSvc.removeFromList($scope.deployments, data.resource);
-      });
-
-      $scope.$on(events.ADDED, loadDeployments);
-
-      $scope.$on(events.MODIFIED, function(e, data) {
-        resourceMgrSvc.updateInList($scope.deployments, data.resource);
-      });
+    controller: function($scope, k8s, Firehose) {
+      new Firehose(k8s.deployments, $scope.namespace, $scope.selector)
+        .watchList()
+        .bindScope($scope);
     }
   };
 });

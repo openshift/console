@@ -1,21 +1,21 @@
 angular.module('bridge.page')
-.controller('DtcSettingsCtrl', function(_, $scope, $uibModalInstance, $q, k8sCache, k8s) {
+.controller('DtcSettingsCtrl', function(_, $scope, $uibModalInstance, $q, k8s) {
   'use strict';
 
   let taintManager, tpmManager;
-  k8sCache.configmapsChanged($scope,
-    configmaps => {
-      configmaps && configmaps.forEach(cm => {
-        switch (cm.metadata.name) {
-          case 'taint.coreos.com':
-            taintManager = cm;
-            break;
-          case 'tpm-manager.coreos.com':
-            tpmManager = cm;
-            break;
-        }
-      });
-    }, err => $scope.loadError = err);
+  // k8sCache.configmapsChanged($scope,
+  //   configmaps => {
+  //     configmaps && configmaps.forEach(cm => {
+  //       switch (cm.metadata.name) {
+  //         case 'taint.coreos.com':
+  //           taintManager = cm;
+  //           break;
+  //         case 'tpm-manager.coreos.com':
+  //           tpmManager = cm;
+  //           break;
+  //       }
+  //     });
+  //   }, err => $scope.loadError = err);
 
   $scope.fields = {
     admission: taintManager.data.taint ? 'closed' : 'open',
