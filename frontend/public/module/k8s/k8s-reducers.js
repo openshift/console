@@ -1,4 +1,4 @@
-const Immutable = require('Immutable');
+const Immutable = require('immutable');
 
 import {types} from './k8s-actions';
 
