@@ -152,6 +152,11 @@ angular.module('bridge', [
     templateUrl: '/static/page/replicationcontrollers/edit-replicationcontroller.html',
     title: 'Edit Replication Controller',
   });
+  r('/ns/:ns/replicationcontrollers/:name/events', {
+    controller: 'ReplicationcontrollerSyseventsCtrl',
+    templateUrl: '/static/page/replicationcontrollers/replicationcontroller-sysevents.html',
+    title: 'Replication Controller Events',
+  });
   r('/ns/:ns/replicationcontrollers/:name', {
     controller: 'ReplicationcontrollerCtrl',
     templateUrl: '/static/page/replicationcontrollers/replicationcontroller.html',
