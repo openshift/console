@@ -14,7 +14,7 @@ pushd $SCRIPT_DIR
 set -x
 REPO=quay.io/coreos/tectonic-console
 
-GIT_VERSION=$(../git-version)
+GIT_VERSION=$(git-version)
 
 if [[ "$GIT_VERSION" == *dirty ]]; then
     echo "Won't push from a dirty git repo. Commit your changes before you push."
