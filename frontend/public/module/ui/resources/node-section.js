@@ -10,7 +10,7 @@ angular.module('bridge.ui')
     scope: {
       trusted: '=',
     },
-    controller: function ($scope, k8s, k8sCache) {
+    controller: function ($scope) {
       $scope.passByRef = {
         compacted: 'true',
         status: 'all',
@@ -23,15 +23,6 @@ angular.module('bridge.ui')
         $scope.title = 'Untrusted Nodes';
         $scope.description = 'Nodes that don\'t match a trusted profile or configuration have been modified since being trusted.';
       }
-
-      k8sCache.nodesChanged($scope,
-        nodes => {
-          $scope.loadError = false;
-          $scope.nodes = nodes.filter(n => !!$scope.trusted === k8s.nodes.isTrusted(n));
-        }, () => {
-          $scope.loadError = true
-        }
-      );
     }
   };
 });

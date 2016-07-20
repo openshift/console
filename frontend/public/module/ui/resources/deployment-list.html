@@ -21,8 +21,8 @@
         <co-selector selector="deployment.spec.selector"></co-selector>
       </div>
     </div>
-    <div ng-show="open" ng-repeat-end>
-      <co-pod-list load="open" namespace="deployment.metadata.namespace" selector-required="true" selector="deployment.spec.selector"></co-pod-list>
+    <div ng-repeat-end>
+      <co-pod-list ng-if="open" namespace="deployment.metadata.namespace" selector-required="true" selector="deployment.spec.selector"></co-pod-list>
     </div>
 
     <co-loader class="cos-tristate-show-loading"></co-loader>

@@ -21,11 +21,11 @@
         <co-label-list kind="node" labels="n.metadata.labels"></co-label-list>
       </div>
       <div class="col-lg-3 col-md-2 col-sm-3 hidden-xs">
-	<co-node-ip-list addresses="n.status.addresses"></co-node-ip-list>
+	     <co-node-ip-list addresses="n.status.addresses"></co-node-ip-list>
       </div>
     </div>
-    <div ng-show="open" ng-repeat-end>
-      <co-pod-list load="open" field-selector="getPodFieldSelector(n)"></co-pod-list>
+    <div ng-repeat-end>
+      <co-pod-list ng-if="open" field-selector="getPodFieldSelector(n)"></co-pod-list>
     </div>
 
     <co-loader class="cos-tristate-show-loading"></co-loader>

@@ -46,7 +46,7 @@ angular.module('k8s')
     };
   };
 })
-.service('k8s', function(_, $http, $timeout, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
+.service('k8s', function(_, $http, $timeout, $rootScope, wsFactory, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
                          k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featureFlags, tpm, k8sConfigmaps) {
   'use strict';
@@ -76,6 +76,22 @@ angular.module('k8s')
         k8sObject.clean && k8sObject.clean(obj);
         return k8sResource.update(kind, obj);
       },
+      watch: query => {
+        const path = k8sResource.resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
+
+        const opts = {
+          scope: $rootScope,
+          host: 'auto',
+          reconnect: true,
+          path: path,
+          jsonParse: true,
+          bufferEnabled: true,
+          bufferFlushInterval: 500,
+          bufferMax: 1000,
+        };
+        return wsFactory(kind.labelPlural, opts);
+      },
+      kind: kind,
     }, k8sObject);
   }
 

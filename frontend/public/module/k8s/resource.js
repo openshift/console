@@ -28,8 +28,31 @@ angular.module('k8s')
     return u;
   };
 
+  this.resourceURL2 = (kind, namespace, watch, labelSelector, fieldSelector) => {
+    const opts = {queryParams: {}};
+
+    if (labelSelector) {
+      opts.queryParams.labelSelector = encodeURIComponent(k8sSelector.toString(labelSelector));
+    }
+
+    if (fieldSelector) {
+      opts.queryParams.fieldSelector = encodeURIComponent(fieldSelector);
+    }
+
+    if (watch) {
+      opts.queryParams.watch = true;
+    }
+
+    if (namespace) {
+      opts.ns = namespace;
+    }
+
+    return this.resourceURL(kind, opts);
+  }
+
   this.watchURL = function(kind, options) {
     var opts = options || {};
+
     opts.queryParams = opts.queryParams || {};
     opts.queryParams.watch = true;
     return this.resourceURL(kind, opts);

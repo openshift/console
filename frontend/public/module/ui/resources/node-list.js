@@ -19,7 +19,7 @@ function isNamed_ (n, name) {
 };
 
 angular.module('bridge.ui')
-.directive('coNodeList', function(k8s) {
+.directive('coNodeList', function() {
   'use strict';
 
   return {
@@ -35,11 +35,15 @@ angular.module('bridge.ui')
       compacted: '=',
       loadError: '=',
     },
-    controller: function($scope) {
+    controller: function($scope, Firehose, k8s) {
       $scope.getPodFieldSelector = k8s.pods.fieldSelectors.node;
       $scope.isTrusted = k8s.nodes.isTrusted;
       $scope.isReady = k8s.nodes.isReady;
       $scope.filteredNodes = [];
+
+      new Firehose(k8s.nodes)
+        .watchList()
+        .bindScope($scope);
 
       const filterNodes = () => {
         $scope.filteredNodes = ($scope.nodes || []).filter((n) => {

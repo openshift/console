@@ -1,47 +1,31 @@
 angular.module('bridge.service')
-.factory('namespaceCacheSvc', function(_, $rootScope, k8s) {
-  // We need a list of namespaces as part of the base UI, so we can
+.factory('namespaceCacheSvc', function(_, $rootScope, k8s, Firehose) {
   // just eagerly load'um up and keep track of them.
-
-  var reloadLater = _.debounce(reload, 250);
-
+  const namespaces = k8s.namespaces;
   var ret = {
     cacheVersion: 0,
     loadError: false,
     get: function(nsName) {
-      return _.find(ret.namespaces, function(ns) {
+      return _.find(ret.namespaces || [], function(ns) {
         return ns.metadata.name === nsName;
       });
     },
     create: function(spec) {
-      return k8s.namespaces.create(spec);
+      return namespaces.create(spec);
     },
     delete: function(namespace) {
-      return k8s.namespaces.delete(namespace);
+      return namespaces.delete(namespace);
     }
   };
-
-  function reload() {
-    return k8s.namespaces.list().then(function(namespaces) {
-      ret.namespaces = _.sortBy(namespaces, function(ns) {
+  new Firehose(k8s.namespaces)
+    .watchList()
+    .bindScope($rootScope, null, state => {
+      ret.namespaces = _.sortBy(state.namespaces, function(ns) {
         return ns.metadata.name;
       });
-      ret.loadError = false;
-    })
-    .catch(function() {
-      ret.loadError = true;
-    })
-    .finally(function() {
-      ret.cacheVersion++;
+      ret.loadError = state.loadError;
+      ret.cacheVersion = state.cacheVersion;
     });
-  }
-
-  reload();
-
-  const events = k8s.events.namespaces;
-  $rootScope.$on(events.DELETED, reloadLater);
-  $rootScope.$on(events.ADDED, reloadLater);
-  $rootScope.$on(events.MODIFIED, reloadLater);
 
   return ret;
 });

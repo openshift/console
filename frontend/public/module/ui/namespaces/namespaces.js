@@ -13,7 +13,7 @@ const TEMPLATE = `
 `;
 
 angular.module('bridge.ui')
-.directive('coNamespaceSelector', function (k8sCache, activeNamespaceSvc, authSvc, featuresSvc) {
+.directive('coNamespaceSelector', function (activeNamespaceSvc, authSvc, featuresSvc, Firehose, k8s) {
   return {
     template: TEMPLATE,
     restrict: 'E',
@@ -34,20 +34,19 @@ angular.module('bridge.ui')
         activeNamespaceSvc.setActiveNamespace(namespace);
       }, true);
 
-      k8sCache.namespacesChanged($scope,
-        namespaces => {
-          $scope.loadError = false;
-
+      const namespaces = k8s.namespaces;
+      new Firehose(namespaces)
+        .watchList()
+        .bindScope($scope, null, state => {
           const items = {all: ''};
-          namespaces.map(n => {
-            const name = n.metadata.name;
+          state.namespaces && state.namespaces.forEach(n => {
+            const {name} = n.metadata;
             items[name] = name;
           });
           $scope.items = items;
-        }, () => {
-          $scope.loadError = true
-        }
-      );
+          $scope.loadError = state.loadError;
+        });
+
     }
   };
 });

@@ -1,3 +1,10 @@
+// eslint-disable-next-line no-unused-vars
+import ngRedux from 'ng-redux';
+
+import thunk from 'redux-thunk';
+import k8sReducers from './module/k8s/k8s-reducers';
+import { combineReducers } from 'redux';
+
 // The main app module.
 angular.module('bridge', [
   // angular deps
@@ -5,6 +12,7 @@ angular.module('bridge', [
   'ngAnimate',
   'ngSanitize',
   'ngCookies',
+  'ngRedux',
   // other deps
   'ui.bootstrap',
   'lodash',
@@ -25,8 +33,13 @@ angular.module('bridge', [
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
                  configSvcProvider, errorMessageSvcProvider, flagSvcProvider,
-                 k8sConfigProvider, activeNamespaceSvcProvider) {
+                 k8sConfigProvider, activeNamespaceSvcProvider, $ngReduxProvider) {
   'use strict';
+
+  const reducers = combineReducers({
+    k8s: k8sReducers,
+  });
+  $ngReduxProvider.createStoreWith(reducers, [thunk]);
 
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
   $locationProvider.html5Mode({
@@ -337,14 +350,12 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, firehose, authSvc, k8s, featureFlags, k8sCache, dex) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featureFlags, dex) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();
   $rootScope.debug = debugSvc;
-  k8sCache.start();
-  firehose.start();
   $rootScope.FEATURE_FLAGS = featureFlags;
   k8s.featureDetection();
   dex.featureDetection();

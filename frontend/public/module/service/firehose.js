@@ -1,51 +1,98 @@
 /**
- * Firehose of all websocket events in the system with built-in buffering.
+ * Firehose of all objects of a given type and query.
  */
+import actions from '../k8s/k8s-actions';
+
 angular.module('bridge.service')
-.service('firehose', function(wsFactory, k8s, $rootScope) {
+.service('Firehose', function($ngRedux, _) {
   'use strict';
 
-  // TODO(sym3tri): reduce this down to a single websocket once upstream k8s changes are in.
-  var sockets = {};
+  const dispatch = (...args) => $ngRedux.dispatch(...args);
 
-  function connectSocket(name) {
-    const kind = k8s.enum.Kind[name];
+  return class Firehose {
+    constructor (k8sType, namespace, labelSelector, fieldSelector) {
+      this.k8sType = k8sType;
+      this.query = this.makeQuery_(namespace, labelSelector, fieldSelector);
+      this.id = this.id_(k8sType, this.query);
+    }
 
-    sockets[kind.labelPlural] = wsFactory(kind.labelPlural, {
-      scope: $rootScope,
-      host: 'auto',
-      reconnect: true,
-      path: k8s.resource.watchURL(kind),
-      jsonParse: true,
-      bufferEnabled: true,
-      bufferFlushInterval: 500,
-      bufferMax: 1000,
-    }).onmessage(msg => {
-      const eventTypes = k8s.events[kind.plural];
-      let event;
-      switch (msg.type) {
-        case 'ADDED':
-          event = eventTypes.ADDED;
-          break;
-        case 'MODIFIED':
-          event = eventTypes.MODIFIED;
-          break;
-        case 'DELETED':
-          event = eventTypes.DELETED;
-          break;
-        default:
+    watchList () {
+      // eslint-disable-next-line no-console
+      console.log(`opening ${this.id}`);
+      dispatch(actions.addList(this.id, this.query, this.k8sType));
+      return this;
+    };
+
+    bindScope ($scope, name='', onStateChange=null) {
+      name = name || this.k8sType.kind.plural;
+      $scope[name] = null;
+      $scope.loadError = false;
+
+      const unsubscribe = this.watch_($scope, name, onStateChange);
+
+      const off = $scope.$on('$destroy', () => {
+        // eslint-disable-next-line no-console
+        console.log(`nuking ${this.id}`);
+        off();
+        unsubscribe();
+        dispatch(actions.removeList(this.id));
+      });
+      return this;
+    };
+
+    watch_ ($scope, name, onStateChange=null) {
+      let nextHash = 0;
+      let previousHash = 0;
+
+      onStateChange = onStateChange || ((state) => _.extend($scope, state));
+
+      return $ngRedux.connect(state => {
+        const objects = state.k8s.getIn([this.id, 'objects']);
+        return {
+          [name]: objects && objects.toArray().map(p => {
+            const json = p.toJSON()
+            nextHash += parseInt(json.metadata.resourceVersion, 10) + parseInt(json.metadata.uid, 10);
+            return json;
+          }),
+          loadError: state.k8s.getIn([this.id, 'loadError']),
+        };
+      })(state => {
+        if (previousHash === nextHash) {
+          // eslint-disable-next-line no-console
           return;
+        }
+        // eslint-disable-next-line no-console
+        console.info(`updated ${name} (${_.size(state[name])})`);
+        previousHash = nextHash;
+        nextHash = 0;
+        return onStateChange(state);
+      });
+    };
+
+    makeQuery_ (namespace, labelSelector, fieldSelector) {
+      const query = {};
+
+      if (!_.isEmpty(labelSelector)) {
+        query.labelSelector = labelSelector;
       }
-      $rootScope.$broadcast(event, { resource: msg.object });
-    });
+
+      if (!_.isEmpty(namespace)) {
+        query.ns = namespace;
+      }
+
+      if (fieldSelector) {
+        query.fieldSelector = fieldSelector;
+      }
+      return query;
+    }
+
+    id_ (k8sType, query) {
+      let qs = '';
+      if (!_.isEmpty(query)) {
+        qs = '---' + JSON.stringify(query);
+      }
+
+      return `${k8sType.kind.plural}${qs}`;
+    };
   }
-
-  this.start = function() {
-    ['POD', 'SERVICE', 'REPLICATIONCONTROLLER', 'REPLICASET', 'DEPLOYMENT', 'NODE', 'NAMESPACE', 'CONFIGMAP'].forEach(connectSocket);
-  };
-
-  this.lock = function() {};
-
-  this.unlock = function() {};
-
 });

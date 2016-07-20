@@ -1,30 +1,29 @@
 'use strict';
 
 angular.module('bridge.page')
-.controller('TPMCtrl', function(_, $scope, $routeParams, k8s, tpm, k8sCache, CONST) {
+.controller('TPMCtrl', function(_, $scope, $routeParams, k8s, tpm, CONST, Firehose) {
 
   const INVALID_POLICY =  $scope.INVALID_POLICY = CONST.INVALID_POLICY;
   $scope.isTrusted = k8s.nodes.isTrusted;
   $scope.pcrToHuman = tpm.pcrToHuman;
-  $scope.layers = Object.keys(tpm.LAYERS);
+  $scope.layers = {};
+  _.each(tpm.LAYERS, (value, key) => {
+    $scope.layers[key] = key;
+  })
 
-  k8sCache.nodesChanged($scope,
-    nodes => {
-      $scope.nodes = nodes;
-      $scope.loadNodeError = false;
-    }, () => {
-      $scope.loadNodeError = true
-    }
-  );
+  new Firehose(k8s.policies)
+    .watchList()
+    .bindScope($scope, null, state => {
+      $scope.policies = state.policies;
+      $scope.loadPolicyError = state.loadError;
+    });
 
-  k8sCache.policiesChanged($scope,
-    policies => {
-      $scope.policies = policies;
-      $scope.loadPolicyError = false;
-    }, () => {
-      $scope.loadPolicyError = true
-    }
-  );
+  new Firehose(k8s.nodes)
+    .watchList()
+    .bindScope($scope, null, state => {
+      $scope.nodes = state.nodes;
+      $scope.loadNodeError = state.loadError;
+    });
 
   $scope.auditNode = (node) => {
     const annotations = node.metadata.annotations && node.metadata.annotations['tpm.coreos.com/logstate'];

@@ -20,9 +20,10 @@ angular.module('bridge.ui')
     scope: {
       name: '=',
     },
-    controller: function(_, $scope, $attrs, $routeParams, tpm, k8sCache) {
+    controller: function(_, $scope, $attrs, $routeParams, tpm, k8s, Firehose) {
       $scope.values = [];
       $scope.pcrToHuman = tpm.pcrToHuman;
+
 
       function loadPolicy () {
         const values = [];
@@ -33,6 +34,7 @@ angular.module('bridge.ui')
           $scope.loadError = true;
           return;
         }
+
         const policies = $scope.policy && $scope.policy.policy;
         _.each(policies, function (pcr, pcrNum) {
           _.each(POLICY_TYPES, (name, type) => {
@@ -49,16 +51,15 @@ angular.module('bridge.ui')
         $scope.values = values;
       }
 
-      k8sCache.policiesChanged($scope,
-        policies => {
-          $scope.policies = policies;
-          $scope.loadError = false;
-          loadPolicy();
-        }, () => {
-          $scope.loadError = true;
-        }
-      );
+      $scope.loadError = false;
 
+      new Firehose(k8s.policies)
+        .watchList()
+        .bindScope($scope, null, state => {
+          $scope.policies = state.policies;
+          $scope.loadError = state.loadError;
+          loadPolicy();
+        });
     }
   };
 });
