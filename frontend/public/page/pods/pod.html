@@ -29,10 +29,7 @@
                 <dt>Status</dt>
                 <dd ng-bind="pod|podPhase"></dd>
                 <dt>Pod IP</dt>
-                <dd>
-                  <a ng-if="pod.status.podIP" ng-href="//{{pod.status.podIP}}" target="_blank" ng-bind="pod.status.podIP"></a>
-                  <span ng-if="!pod.status.podIP" ng-bind="CONST.placeholderText"></span>
-                </dd>
+                <dd  ng-bind="pod.status.podIP | emptyPlaceholder"></dd>
                 <dt>Node</dt>
                 <dd>
                   <a ng-if="pod.spec.nodeName" ng-href="/nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
