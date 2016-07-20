@@ -1,9 +1,10 @@
 angular.module('bridge.page')
-.controller('SearchCtrl', function(_, $scope, $location, k8s) {
+.controller('SearchCtrl', function($scope, $location, $routeParams, k8s) {
   'use strict';
 
   var defaultKind = k8s.enum.Kind.SERVICE;
   $scope.kinds = k8s.enum.Kind;
+  $scope.ns = $routeParams.ns;
 
   function getKind(id) {
     var k;
