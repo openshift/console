@@ -25,6 +25,8 @@ angular.module('bridge.ui')
       case kind.NAMESPACE.id:
         return 'NS';
       case kind.POLICY.id:
+        return 'PCY';
+      case kind.TPM.id:
         return 'TPM';
       case 'container':
         return 'C';

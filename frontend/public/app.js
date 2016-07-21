@@ -327,10 +327,23 @@ angular.module('bridge', [
     templateUrl: '/static/page/tpm/audit-report.html',
     title: 'Policy',
   });
+
   r('/trusted-compute-policies', {
     controller: 'TPMCtrl',
     templateUrl: '/static/page/tpm/policy-list.html',
     title: 'Trusted Compute Policies',
+  });
+
+  r('/trusted-platform-modules', {
+    controller: 'TPMCtrl',
+    templateUrl: '/static/page/tpm/tpm-list.html',
+    title: 'Trusted Platform Module',
+  });
+
+  r('/trusted-platform-modules/:name', {
+    controller: 'TPMCtrl',
+    templateUrl: '/static/page/tpm/tpm-page.html',
+    title: 'Trusted Platform Module',
   });
 
   r('/trusted-compute-policies/:name', {

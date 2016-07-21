@@ -1,0 +1,24 @@
+<div>
+  <tec-nav-title title="{{name}}" kind="'tpm'" obj='tpm'></tec-nav-title>
+  <div class="co-m-pane">
+    <div class="co-m-pane__body">
+      <div class="row">
+        <div class="col-xs-12" style="max-width: 600px;">
+          <dl>
+            <dt>Created</dt>
+            <dd><co-timestamp timestamp="{{tpm.metadata.creationTimestamp}}" /></dd>
+
+            <dt>AIK Public Key</dt>
+            <dd ng-bind="tpm.AIKPub"  class="break-all"></dd>
+
+            <dt>AIK Blob</dt>
+            <dd ng-bind="tpm.AIKBlob" class="break-all"></dd>
+
+            <dt>EK Certificate</dt>
+            <dd ng-bind="tpm.EKCert"  class="break-all"></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

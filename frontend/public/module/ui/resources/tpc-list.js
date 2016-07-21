@@ -54,5 +54,4 @@ angular.module('bridge.ui')
 
     }
   };
-
 });

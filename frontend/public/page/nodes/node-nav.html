@@ -9,12 +9,7 @@
       Pods
     </a>
   </li>
-  <li class="co-m-vert-nav__menu-item">
-    <a ng-href="/nodes/{{name}}/events">
-      Events
-    </a>
-  </li>
-  <li class="co-m-vert-nav__menu-item" ng-show="$root.FEATURE_FLAGS.tpm">
+  <li class="co-m-vert-nav__menu-item" ng-if="$root.FEATURE_FLAGS.tpm">
     <a ng-href="/nodes/{{name}}/tpm-event-log">
       TPM Event Log
     </a>
