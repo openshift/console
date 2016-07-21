@@ -45,7 +45,7 @@ angular.module('k8s')
     //   It's irrelevant
     //   It's the existence of the taint entry that controls it
     const tainted = taints.reduce((isTainted, taint) => {
-      if (taint.key === 'untrusted') {
+      if (taint.key.toLocaleLowerCase() === 'untrusted') {
         return true;
       }
       return isTainted;

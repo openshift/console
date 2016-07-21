@@ -58,7 +58,6 @@ angular.module('bridge.service')
         };
       })(state => {
         if (previousHash === nextHash) {
-          // eslint-disable-next-line no-console
           return;
         }
         // eslint-disable-next-line no-console

@@ -1,17 +1,7 @@
 <div>
-  <div class="co-m-pane__heading" ng-if="trusted || nodes.length">
-    <div class="row">
-      <div class="col-xs-12">
-        <h1 class="co-m-pane__title" ng-bind="title"></h1>
-      </div>
-    </div>
+  <div class="co-m-pane__heading">
     <div class="row co-m-pane__sub__heading">
-      <div class="col-md-6 col-sm-6 col-xs-12">
-        <p class="text-muted small" ng-bind="description">
-        </p>
-      </div>
-
-      <div class="col-md-6 col-sm-6 col-xs-12">
+      <div class="col-xs-12">
         <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
           <label ng-class="{'btn-unselected': passByRef.compacted=='false', 'btn-selected': passByRef.compacted=='true'}" class="btn compaction-btn">
             <input type="radio" ng-model="passByRef.compacted" value='true'> Compact
@@ -20,18 +10,22 @@
             <input type="radio" ng-model="passByRef.compacted" value='false'> Expand
           </label>
         </div>
+
         <input ng-model="passByRef.namefilter" type="text" class="form-control node-search input-sm pull-right" placeholder="Search for a node..." />
 
-        <co-dropdown title="'Filter Status'" selected="passByRef.status" items="{'Status: All': 'all', 'Status: Ready': true, 'Status: Not Ready': false}" class="pull-right">
+        <co-dropdown ng-show='$root.FEATURE_FLAGS.tpm' title="'Trusted Status'" selected="passByRef.trusted" items="{'Trusted: All': 'all', 'Trusted': true, 'Untrusted': false}" class="pull-right">
+        </co-dropdown>
+
+        <co-dropdown title="'Ready Status'" selected="passByRef.status" items="{'Status: All': 'all', 'Status: Ready': true, 'Status: Not Ready': false}" class="pull-right">
         </co-dropdown>
       </div>
     </div>
   </div>
 
-  <div class="co-m-pane__body" ng-if="trusted || nodes.length">
+  <div class="co-m-pane__body" >
     <div class="row">
       <div class="col-xs-12">
-        <co-node-list filter="passByRef.status" namefilter="passByRef.namefilter" trusted="trusted" compacted="passByRef.compacted" nodes="nodes" load-error="loadError"></co-node-list>
+        <co-node-list filter="passByRef.status" namefilter="passByRef.namefilter" compacted="passByRef.compacted" trusted="passByRef.trusted" load-error="loadError"></co-node-list>
       </div>
     </div>
   </div><!-- pane body -->

@@ -31,13 +31,12 @@ angular.module('bridge.ui')
       statusFilter: '=filter',
       selector: '=',
       trusted: '=',
-      nodes: '=',
       compacted: '=',
       loadError: '=',
     },
     controller: function($scope, Firehose, k8s) {
+      const isTrusted = $scope.isTrusted = k8s.nodes.isTrusted;
       $scope.getPodFieldSelector = k8s.pods.fieldSelectors.node;
-      $scope.isTrusted = k8s.nodes.isTrusted;
       $scope.isReady = k8s.nodes.isReady;
       $scope.filteredNodes = [];
 
@@ -46,20 +45,37 @@ angular.module('bridge.ui')
         .bindScope($scope);
 
       const filterNodes = () => {
+        const trusted = $scope.trusted;
         $scope.filteredNodes = ($scope.nodes || []).filter((n) => {
-          return hasStatus_(n, k8s, $scope.statusFilter) && isNamed_(n, $scope.namefilter);
+          return hasStatus_(n, k8s, $scope.statusFilter)
+            && isNamed_(n, $scope.namefilter)
+            && (trusted === 'all' ? true : isTrusted(n) === trusted);
         })
         .sort((a, b) => {
-          if (a.metadata.name > b.metadata.name) {
+          const aIsTrusted = isTrusted(a);
+          const bIsTrusted = isTrusted(b);
+
+          if (!aIsTrusted) {
+            if (bIsTrusted) {
+              return -1;
+            }
+          }
+
+          if (!bIsTrusted) {
             return 1;
           }
-          return -1;
+
+          if (a.metadata.name > b.metadata.name) {
+            return -1;
+          }
+          return 1;
         });
       }
 
       $scope.$watch('statusFilter', filterNodes);
       $scope.$watch('namefilter', filterNodes);
       $scope.$watch('nodes', filterNodes);
+      $scope.$watch('trusted', filterNodes);
     }
   };
 

@@ -1,9 +1,9 @@
 <div class="co-m-table-grid co-m-table-grid--bordered ">
   <div class="row co-m-table-grid__head">
-    <div class="col-xs-3">Name</div>
-    <div class="col-xs-3">Type</div>
-    <div class="col-xs-3">Created</div>
-    <div class="col-xs-3">Utilization</div>
+    <div class="col-xs-4">Name</div>
+    <div class="col-xs-4">Type</div>
+    <div class="col-xs-4">Created</div>
+<!--     <div class="col-xs-3">Utilization</div> -->
   </div>
 
   <div>
@@ -11,23 +11,23 @@
       <div class="row co-m-table-grid" ng-repeat-start="policy in filteredPolicies" ng-click="open = !open">
         <div class="middler">
 
-          <div class="col-xs-3">
-            <a ng-href="/trusted-compute-policies/{{policy.metadata.name}}" ng-bind="policy.metadata.name"></a>
+          <div class="col-xs-4">
+            <co-resource-icon kind="policy"></co-resource-icon> <a ng-href="/trusted-compute-policies/{{policy.metadata.name}}" ng-bind="policy.metadata.name"></a>
           </div>
 
-          <div class="col-xs-3">
+          <div class="col-xs-4">
             <span ng-repeat="label in policy.labels track by $index">
               <span ng-bind="label"></span>
             </span>
           </div>
 
-          <div class="col-xs-3">
+          <div class="col-xs-4">
             <co-timestamp timestamp="{{policy.metadata.creationTimestamp}}"></co-timestamp>
           </div>
 
-          <div class="col-xs-3">
+<!--           <div class="col-xs-3">
             <ng-pluralize count="policy.metadata.utilization" when="{'0': '0 Nodes', '1': '1 Node', 'other': '{} Nodes'}",></ng-pluralize>
-          </div>
+          </div> -->
         </div>
       </div>
 
