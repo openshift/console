@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -50,6 +49,9 @@ func main() {
 	tectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
 	idFile := fs.String("identity-file", "", "A file that identifies the console owner")
 
+	kubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
+	kubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
+
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -57,6 +59,11 @@ func main() {
 
 	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+
+	if (*kubectlClientID == "") != (*kubectlClientSecret == "") {
+		fmt.Fprintln(os.Stderr, "Must provide both --kubectl-client-id and --kubectl-client-secret")
 		os.Exit(1)
 	}
 
@@ -74,9 +81,23 @@ func main() {
 		go stats.GenerateStats(*idFile)
 	}
 
-	certPool, err := newCertPool(*caFile)
-	if err != nil {
-		log.Fatalf("could not initialize CA certificate pool: %v", err)
+	var (
+		// Hold on to raw certificates so we can render them in kubeconfig files.
+		dexCertPEM []byte
+		k8sCertPEM []byte
+		// If caFile is unspecified and certPool is nil, net/tls will default to
+		// using the host's certs.
+		certPool *x509.CertPool
+	)
+	if *caFile != "" {
+		var err error
+		if dexCertPEM, err = ioutil.ReadFile(*caFile); err != nil {
+			log.Fatalf("failed to read cert file: %v")
+		}
+		certPool = x509.NewCertPool()
+		if !certPool.AppendCertsFromPEM(dexCertPEM) {
+			log.Fatalf("no certs found in %q", *caFile)
+		}
 	}
 
 	k8sURL := validateURLFlag(fs, "k8s-endpoint")
@@ -86,6 +107,17 @@ func main() {
 		cc, err := restclient.InClusterConfig()
 		if err != nil {
 			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
+		}
+
+		// Grab the certificate of the API Server so we can render it for kubeconfig files.
+		if cc.CertData != nil {
+			k8sCertPEM = cc.CertData
+		} else if cc.CertFile != "" {
+			data, err := ioutil.ReadFile(cc.CertFile)
+			if err != nil {
+				log.Fatalf("Failed to read kubernetes client certificate (%s): %v", cc.CertFile, err)
+			}
+			k8sCertPEM = data
 		}
 
 		inClusterTLSCfg, err := restclient.TLSConfigFor(cc)
@@ -155,25 +187,69 @@ func main() {
 	} else {
 		validateFlagNotEmpty(fs, "auth-client-id")
 		validateFlagNotEmpty(fs, "auth-client-secret")
-		iURL := validateURLFlag(fs, "auth-issuer-url")
+		dexURL := validateURLFlag(fs, "auth-issuer-url")
 
-		ocfg := oidc.ClientConfig{
-			HTTPClient: &http.Client{
-				Transport: &http.Transport{
-					TLSClientConfig: &tls.Config{
-						RootCAs: certPool,
-					},
+		httpClient := &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					RootCAs: certPool,
 				},
-				Timeout: time.Second * 5,
 			},
+			Timeout: time.Second * 5,
+		}
+
+		// oidcClientConfig for logging into console.
+		oidcClientConfig := oidc.ClientConfig{
+			HTTPClient: httpClient,
 			Credentials: oidc.ClientCredentials{
 				ID:     *authClientID,
 				Secret: *authClientSecret,
 			},
 			RedirectURL: authLoginCallbackURL.String(),
+			Scope:       []string{"openid", "email", "profile"},
+		}
+		if *kubectlClientID != "" {
+			// Assume kubectl is the client ID trusted by kubernetes, not bridge.
+			// These additional flags causes Dex to issue an ID token valid for
+			// both bridge and kubernetes.
+			//
+			// For design see: https://github.com/coreos-inc/tectonic/blob/master/docs-internal/tectonic-identity.md
+			oidcClientConfig.Scope = append(
+				oidcClientConfig.Scope,
+				"audience:server:client_id:"+*authClientID,
+				"audience:server:client_id:"+*kubectlClientID,
+			)
+
+			// Configure an OpenID Connect config for kubectl. This lets us issue
+			// refresh tokens that kubectl can redeem using its own credentials.
+			kubectlOIDCCientConfig := oidc.ClientConfig{
+				HTTPClient: httpClient,
+				Credentials: oidc.ClientCredentials{
+					ID:     *kubectlClientID,
+					Secret: *kubectlClientSecret,
+				},
+				// The magic "out of band" redirect URL.
+				RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
+				// Request a refresh token with the "offline_access" scope.
+				Scope: []string{"openid", "email", "profile", "offline_access"},
+			}
+			kubectlAuther, err := auth.NewAuthenticator(kubectlOIDCCientConfig, dexURL, server.AuthErrorURL, server.AuthSuccessURL)
+			if err != nil {
+				log.Fatalf("Error initializing authenticator: %v", err)
+			}
+			kubectlAuther.Start()
+			srv.KubectlAuther = kubectlAuther
+			srv.KubeConfigTmpl = server.NewKubeConfigTmpl(
+				*kubectlClientID,
+				*kubectlClientSecret,
+				k8sURL.String(),
+				dexURL.String(),
+				k8sCertPEM,
+				dexCertPEM,
+			)
 		}
 
-		auther, err := auth.NewAuthenticator(ocfg, iURL, server.AuthErrorURL, server.AuthSuccessURL)
+		auther, err := auth.NewAuthenticator(oidcClientConfig, dexURL, server.AuthErrorURL, server.AuthSuccessURL)
 		if err != nil {
 			log.Fatalf("Error initializing authenticator: %v", err)
 		}
@@ -228,23 +304,4 @@ func validateFlagNotEmpty(fs *flag.FlagSet, name string) {
 	if flag.Value.String() == "" {
 		log.Fatalf("Missing required flag: %s", flag.Name)
 	}
-}
-
-func newCertPool(certFile string) (*x509.CertPool, error) {
-	if certFile == "" {
-		return nil, nil
-	}
-	certPool := x509.NewCertPool()
-
-	pemByte, err := ioutil.ReadFile(certFile)
-	if err != nil {
-		return nil, err
-	}
-
-	ok := certPool.AppendCertsFromPEM(pemByte)
-	if !ok {
-		return nil, errors.New("Could not parse CA File.")
-	}
-
-	return certPool, nil
 }

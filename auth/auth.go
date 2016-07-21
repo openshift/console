@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/coreos/go-oidc/oauth2"
 	"github.com/coreos/go-oidc/oidc"
 	"github.com/coreos/pkg/capnslog"
 )
@@ -73,6 +74,16 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 
 	// TODO(sym3tri): handle deep linking via state arg
 	http.Redirect(w, r, oac.AuthCodeURL("", "", ""), http.StatusSeeOther)
+}
+
+// ExchangeAuthCode allows callers to return a raw token response given a OAuth2
+// code. This is useful for clients which need to request refresh tokens.
+func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, error) {
+	oauth2Client, err := a.oidcClient.OAuthClient()
+	if err != nil {
+		return oauth2.TokenResponse{}, err
+	}
+	return oauth2Client.RequestToken(oauth2.GrantTypeAuthCode, code)
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
