@@ -33,7 +33,19 @@ angular.module('k8s')
   this.$get = function() {
     return {
       getKubernetesAPIPath: function(kind) {
-        return basePath + (kind.isExtension ? 'apis/extensions/' : 'api/') + (kind.apiVersion || apiVersion);
+        let p = basePath;
+
+        if (kind.isExtension) {
+          p += 'apis/extensions/';
+        } else if (kind.basePath) {
+          p += kind.basePath;
+        } else {
+          p += 'api/';
+        }
+
+        p += kind.apiVersion || apiVersion;
+
+        return p;
       },
       getBasePath: function() {
         return basePath;
@@ -108,6 +120,7 @@ angular.module('k8s')
 
   this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);
   this.namespaces = addDefaults({}, k8sEnum.Kind.NAMESPACE);
+  this.tpms = addDefaults({}, k8sEnum.Kind.TPM);
 
   this.health = function() {
     return $http({
