@@ -35,11 +35,11 @@ angular.module('k8s')
         let p = basePath;
 
         if (kind.isExtension) {
-          p += 'apis/extensions/';
+          p += '/apis/extensions/';
         } else if (kind.basePath) {
           p += kind.basePath;
         } else {
-          p += 'api/';
+          p += '/api/';
         }
 
         p += kind.apiVersion || apiVersion;
@@ -131,7 +131,7 @@ angular.module('k8s')
 
   this.version = function() {
     return $http({
-      url: k8sConfig.getBasePath() + 'version',
+      url: k8sConfig.getBasePath() + '/version',
       method: 'GET'
     });
   };

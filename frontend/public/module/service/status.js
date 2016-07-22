@@ -23,13 +23,13 @@ angular.module('bridge.service')
   return {
     health: function() {
       return $http({
-        url: '/health',
+        url: 'health',
         method: 'GET',
       });
     },
     tectonicVersion: function() {
       return $http({
-        url: '/version',
+        url: 'version',
         method: 'GET',
       });
     },

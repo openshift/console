@@ -74,7 +74,7 @@ func newProxy(cfg *ProxyConfig) *proxy {
 	return proxy
 }
 
-func singleJoiningSlash(a, b string) string {
+func SingleJoiningSlash(a, b string) string {
 	aslash := strings.HasSuffix(a, "/")
 	bslash := strings.HasPrefix(b, "/")
 	switch {
@@ -99,7 +99,7 @@ func (p *proxy) rewriteRequest(r *http.Request) {
 
 	r.Host = p.config.Endpoint.Host
 	r.URL.Host = p.config.Endpoint.Host
-	r.URL.Path = singleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
+	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
 	r.URL.Scheme = p.config.Endpoint.Scheme
 }
 

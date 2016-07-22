@@ -2,23 +2,25 @@
 <html lang="en" class="no-js" ng-app="bridge">
 
   <head>
+    <!-- trailing slash is important otherwise relative paths won't work!!! -->
+    <base href="[[ .BasePath ]]/">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title co-title co-title-suffix=" · Tectonic">Tectonic Console</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/lib/mochi/img/favicons/tectonic/apple-touch-icon-114x114.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/lib/mochi/img/favicons/tectonic/apple-touch-icon-144x144.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/lib/mochi/img/favicons/tectonic/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon-precomposed" siezes="57x57" href="/static/lib/mochi/img/favicons/tectonic/apple-touch-icon-57x57.png">
-    <link rel="shortcut icon" href="/static/lib/mochi/img/favicons/tectonic/favicon-96x96.png">
-    <link rel="stylesheet" href="/static/lib/core-icons/core-icons.css">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon-precomposed" siezes="57x57" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-57x57.png">
+    <link rel="shortcut icon" href="static/lib/mochi/img/favicons/tectonic/favicon-96x96.png">
+    <link rel="stylesheet" href="static/lib/core-icons/core-icons.css">
 
     <!-- build:css-coreos-web -->
-    <link rel="stylesheet" href="/static/lib/coreos-web/coreos.css">
+    <link rel="stylesheet" href="static/lib/coreos-web/coreos.css">
     <!-- endbuild -->
     <!-- build:css -->
-    <link rel="stylesheet" href="/static/dist/app-bundle.css">
+    <link rel="stylesheet" href="static/dist/app-bundle.css">
     <!-- endbuild -->
     <script>
       window.SERVER_FLAGS = [[.]];
@@ -30,7 +32,7 @@
       <div id="sidebar" class="co-img-bg-cells">
         <div class="navigation-container">
           <div class="navigation-container__section navigation-container__section--logo">
-            <a href="/"><img src="/static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo"/></a>
+            <a href="."><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo"/></a>
           </div>
 
           <div class="navigation-container__section">
@@ -38,14 +40,14 @@
               <i class="fa fa-folder-open-o navigation-container__section__title__icon"></i>Browse Cluster
             </div>
             <ul class="navigation-container__list no-margin collapse in" uib-collapse="kubernetesIsCollapsed">
-              <co-navbar-link ng-cloak href="{{'/deployments'|ns}}">Deployments</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/services'|ns}}">Services</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/replicasets'|ns}}">Replica Sets</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/daemonsets'|ns}}">Daemon Sets</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/pods'|ns}}">Pods</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/events'|ns}}">Events</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/search'|ns}}">Search</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'deployments'|ns}}">Deployments</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'services'|ns}}">Services</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'replicasets'|ns}}">Replica Sets</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'daemonsets'|ns}}">Daemon Sets</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'pods'|ns}}">Pods</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'events'|ns}}">Events</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'search'|ns}}">Search</co-navbar-link>
             </ul>
           </div>
 
@@ -54,11 +56,11 @@
               <i class="fa fa-cog navigation-container__section__title__icon"></i>Administration
             </div>
             <ul class="navigation-container__list no-margin collapse in" id="admin-tab" uib-collapse="adminIsCollapsed">
-              <co-navbar-link ng-cloak href="/namespaces">Namespaces</co-navbar-link>
-              <co-navbar-link ng-cloak href="/nodes">Nodes</co-navbar-link>
-              <co-navbar-link ng-cloak href="/settings/users" ng-if="$root.FEATURE_FLAGS.userManagement">Users</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/trusted-platform-modules'}}" ng-if="$root.FEATURE_FLAGS.tpm">TPMs</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/trusted-compute-policies'}}" ng-if="$root.FEATURE_FLAGS.tpm">DTC Policies</co-navbar-link>
+              <co-navbar-link ng-cloak href="namespaces">Namespaces</co-navbar-link>
+              <co-navbar-link ng-cloak href="nodes">Nodes</co-navbar-link>
+              <co-navbar-link ng-cloak href="settings/users" ng-if="$root.FEATURE_FLAGS.userManagement">Users</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'trusted-platform-modules'}}" ng-if="$root.FEATURE_FLAGS.tpm">TPMs</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'trusted-compute-policies'}}" ng-if="$root.FEATURE_FLAGS.tpm">DTC Policies</co-navbar-link>
             </ul>
           </div>
 
@@ -68,7 +70,7 @@
               {{ $root.user.name || $root.user.email }}
             </div>
             <ul id="account-nav" class="navigation-container__list">
-              <co-navbar-link href="/settings/profile">My Account</co-navbar-link>
+              <co-navbar-link ng-cloak href="settings/profile">My Account</co-navbar-link>
             </ul>
           </div>
         </div>
@@ -82,8 +84,8 @@
     </div>
 
     <!-- build:js -->
-    <script src="/static/dist/deps.js"></script>
-    <script src="/static/dist/app-bundle.js"></script>
+    <script src="static/dist/deps.js"></script>
+    <script src="static/dist/app-bundle.js"></script>
     <!-- endbuild -->
   </body>
 </html>

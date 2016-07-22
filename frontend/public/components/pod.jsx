@@ -18,7 +18,7 @@ const PodRow = (p) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
     <PodCog pod={p}></PodCog>
     <ResourceIcon kind="pod"></ResourceIcon>
-    <a href={`/ns/${p.metadata.namespace}/pods/${p.metadata.name}`} title={p.metadata.uid}>{p.metadata.name}</a>
+    <a href={`ns/${p.metadata.namespace}/pods/${p.metadata.name}`} title={p.metadata.uid}>{p.metadata.name}</a>
   </div>
   <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
     <LabelList kind="pod" labels={p.metadata.labels}  />
@@ -26,7 +26,7 @@ const PodRow = (p) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">{podPhase(p)}</div>
   <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{p.spec.containers.length}</div>
   <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-    {!p.spec.nodeName ? '-' : <a href={`/nodes/${p.spec.nodeName}`}>{p.spec.nodeName}</a> }
+    {!p.spec.nodeName ? '-' : <a href={`nodes/${p.spec.nodeName}`}>{p.spec.nodeName}</a> }
   </div>
 </div>;
 

@@ -42,7 +42,7 @@ const ServiceRow = (s) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
     <ServiceCog s={s}></ServiceCog>
     <ResourceIcon kind="service"></ResourceIcon>
-    <a href={`/ns/${s.metadata.namespace}/services/${s.metadata.name}`}>{s.metadata.name}</a>
+    <a href={`ns/${s.metadata.namespace}/services/${s.metadata.name}`}>{s.metadata.name}</a>
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
     <LabelList kind="service" labels={s.metadata.labels}></LabelList>

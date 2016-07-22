@@ -31,6 +31,7 @@ func main() {
 
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
+	fBaseURL := fs.String("base-url", "", "The externally visible hostname/port of the service. Used in UI and OIDC/OAuth2 Redirect URLs. It takes value from listen flag by default.")
 
 	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
@@ -46,7 +47,6 @@ func main() {
 
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
 	fPublicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets.")
-	fHost := fs.String("host", "http://127.0.0.1:9000", "The externally visible hostname/port of the service. Used in OIDC/OAuth2 Redirect URL.")
 	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
 	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
@@ -66,9 +66,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	var baseURL *url.URL
+	if *fBaseURL == "" {
+		baseURL = validateFlagIsURL("listen", *fListen)
+	} else {
+		baseURL = validateFlagIsURL("base-url", *fBaseURL)
+	}
+
 	srv := &server.Server{
 		PublicDir:       *fPublicDir,
 		TectonicVersion: *fTectonicVersion,
+		BaseURL:         baseURL,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
@@ -170,9 +178,6 @@ func main() {
 		validateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
 		validateFlagNotEmpty("user-auth-oidc-client-secret", *fUserAuthOIDCClientSecret)
 
-		hostURL := validateFlagIsURL("host", *fHost)
-		hostURL.Path = server.AuthLoginCallbackEndpoint
-
 		httpClient := &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
@@ -189,12 +194,16 @@ func main() {
 				ID:     *fUserAuthOIDCClientID,
 				Secret: *fUserAuthOIDCClientSecret,
 			},
-			RedirectURL: hostURL.String(),
+			RedirectURL: server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
 			Scope:       []string{"openid", "email", "profile"},
 		}
 
-		var err error
-		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, server.AuthErrorURL, server.AuthSuccessURL); err != nil {
+		var (
+			err                      error
+			authLoginErrorEndpoint   = server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
+			authLoginSuccessEndpoint = server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
+		)
+		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
 			log.Fatalf("Error initializing OIDC authenticator: %v", err)
 		}
 
@@ -238,8 +247,7 @@ func main() {
 				Scope: []string{"openid", "email", "profile", "offline_access"},
 			}
 
-			var err error
-			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, server.AuthErrorURL, server.AuthSuccessURL); err != nil {
+			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
 				log.Fatalf("Error initializing kubectl authenticator: %v", err)
 			}
 
@@ -281,9 +289,6 @@ func main() {
 	default:
 		flagFatalf("listen", "scheme must be one of: http, https")
 	}
-
-	srv.NewUserAuthCallbackURL = validateFlagIsURL("host", *fHost)
-	srv.NewUserAuthCallbackURL.Path = server.AuthSuccessURL
 
 	if srv.Auther != nil {
 		srv.Auther.Start()

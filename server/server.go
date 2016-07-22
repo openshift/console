@@ -26,12 +26,10 @@ const (
 	IndexPageTemplateName = "index.html"
 
 	AuthLoginEndpoint         = "/auth/login"
-	AuthLogoutEndpoint        = "/auth/logout"
 	AuthLoginCallbackEndpoint = "/auth/callback"
-	AuthErrorURL              = "/error"
-	// AuthSuccessURL is a URL with no path to match the redirect URL registered
-	// with Dex. See #728
-	AuthSuccessURL = ""
+	AuthLoginSuccessEndpoint  = "/"
+	AuthLoginErrorEndpoint    = "/error"
+	AuthLogoutEndpoint        = "/auth/logout"
 )
 
 var (
@@ -39,20 +37,26 @@ var (
 )
 
 type jsGlobals struct {
-	K8sAPIVersion          string `json:"k8sAPIVersion"`
-	AuthDisabled           bool   `json:"authDisabled"`
-	NewUserAuthCallbackURL string `json:"newUserAuthCallbackURL"`
-	KubectlClientID        string `json:"kubectlClientID"`
+	K8sAPIVersion    string `json:"k8sAPIVersion"`
+	AuthDisabled     bool   `json:"authDisabled"`
+	KubectlClientID  string `json:"kubectlClientID"`
+	BaseURL          string `json:"baseURL"`
+	BasePath         string `json:"basePath"`
+	LoginURL         string `json:"loginURL"`
+	LoginCallbackURL string `json:"loginCallbackURL"`
+	LoginSuccessURL  string `json:"loginSuccessURL"`
+	LoginErrorURL    string `json:"loginErrorURL"`
+	LogoutURL        string `json:"logoutURL"`
 }
 
 type Server struct {
-	K8sProxyConfig         *ProxyConfig
-	DexProxyConfig         *ProxyConfig
-	PublicDir              string
-	TectonicVersion        string
-	Auther                 *auth.Authenticator
-	NewUserAuthCallbackURL *url.URL
-	KubectlClientID        string
+	K8sProxyConfig  *ProxyConfig
+	DexProxyConfig  *ProxyConfig
+	BaseURL         *url.URL
+	PublicDir       string
+	TectonicVersion string
+	Auther          *auth.Authenticator
+	KubectlClientID string
 
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
@@ -144,10 +148,16 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		K8sAPIVersion:          K8sAPIVersion,
-		AuthDisabled:           s.AuthDisabled(),
-		NewUserAuthCallbackURL: s.NewUserAuthCallbackURL.String(),
-		KubectlClientID:        s.KubectlClientID,
+		K8sAPIVersion:    K8sAPIVersion,
+		AuthDisabled:     s.AuthDisabled(),
+		KubectlClientID:  s.KubectlClientID,
+		BaseURL:          s.BaseURL.String(),
+		BasePath:         s.BaseURL.Path,
+		LoginURL:         SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
+		LoginCallbackURL: SingleJoiningSlash(s.BaseURL.String(), AuthLoginCallbackEndpoint),
+		LoginSuccessURL:  SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:    SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:        SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
 	}
 	tpl := template.New(IndexPageTemplateName)
 	tpl.Delims("[[", "]]")

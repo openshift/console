@@ -27,7 +27,7 @@ const rowOfKindstring = (name) => {
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
           <CogOfKind o={o} />
           <ResourceIcon kind={kind.id}></ResourceIcon>
-          <a href={`/ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}`} title={o.metadata.uid}>{o.metadata.name}</a>
+          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}`} title={o.metadata.uid}>{o.metadata.name}</a>
         </div>
         <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
           <LabelList kind={kind.id} labels={o.metadata.labels}  />

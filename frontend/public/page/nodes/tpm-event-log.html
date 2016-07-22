@@ -1,7 +1,7 @@
 <div>
   <tec-nav-title title="{{nodeName}}" kind="'node'">
-    <a ng-href="/nodes" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Nodes</a>
+    <a ng-href="nodes" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="coreos.svg/icon-back.svg"></co-svg>Back to Nodes</a>
   </tec-nav-title>
 
   <div class="co-m-pane co-m-vert-nav">
@@ -27,8 +27,8 @@
                     <td class="no-wrap" ng-bind="pcrToHuman(event.Pcr)">
                     </td>
                     <td class="no-wrap">
-                      <a ng-if="event.Valid" ng-href="/trusted-compute-policies/{{event.Source}}" ng-bind="event.Source"></a>
-                      <span ng-if="!event.Valid" ng-href="/trusted-compute-policies/{{event.Source}}">-</span>
+                      <a ng-if="event.Valid" ng-href="trusted-compute-policies/{{event.Source}}" ng-bind="event.Source"></a>
+                      <span ng-if="!event.Valid" ng-href="trusted-compute-policies/{{event.Source}}">-</span>
                     </td>
                     <td>
                       <span ng-if="event.Valid"  class="monospace" ng-bind="event.Match || '-'"></span>

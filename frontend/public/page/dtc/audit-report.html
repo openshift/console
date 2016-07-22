@@ -31,7 +31,7 @@
               <div class="col-xs-4">
                 <co-node-cog node="n"></co-node-cog>
                 <co-resource-icon kind="node"></co-resource-icon>
-                <a ng-href="/nodes/{{node.metadata.name}}" ng-bind="node.metadata.name"></a>
+                <a ng-href="nodes/{{node.metadata.name}}" ng-bind="node.metadata.name"></a>
               </div>
               <div class="col-xs-2">
                 <div class="pad-line">
@@ -48,8 +48,8 @@
                     <div class="col-xs-6">
                       <div ng-repeat="p in policies.policies">
                         <div class="audit-policy">
-                          <a ng-if="p===INVALID_POLICY" href="{{'/nodes/' + node.metadata.name + '/tpm-event-log#pcr-anchor-' + pcr}}" ng-bind="p" class="{{p===INVALID_POLICY && 'unknown-config'}}"></a>
-                          <a ng-if="p!==INVALID_POLICY" href="{{'/trusted-compute-policies/'+p}}" ng-bind="p"></a>
+                          <a ng-if="p===INVALID_POLICY" href="{{'nodes/' + node.metadata.name + '/tpm-event-log#pcr-anchor-' + pcr}}" ng-bind="p" class="{{p===INVALID_POLICY && 'unknown-config'}}"></a>
+                          <a ng-if="p!==INVALID_POLICY" href="{{'trusted-compute-policies/'+p}}" ng-bind="p"></a>
                         </div>
                       </div>
                     </div>

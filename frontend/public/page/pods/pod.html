@@ -1,8 +1,8 @@
 <div class="co-p-pod">
 
   <tec-nav-title title="{{pod.metadata.name}}" obj="pod" kind="'pod'">
-    <a co-namespaced-href="/pods" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pods
+    <a co-namespaced-href="pods" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="coreos.svg/icon-back.svg"></co-svg>Back to Pods
     </a>
   </tec-nav-title>
 
@@ -32,7 +32,7 @@
                 <dd  ng-bind="pod.status.podIP | emptyPlaceholder"></dd>
                 <dt>Node</dt>
                 <dd>
-                  <a ng-if="pod.spec.nodeName" ng-href="/nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
+                  <a ng-if="pod.spec.nodeName" ng-href="nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
                   <span ng-if="!pod.spec.nodeName" ng-bind="CONST.placeholderText"></span>
                 </dd>
                 <dt>Restart Policy</dt>
@@ -94,7 +94,7 @@
               <div class="row" ng-repeat="c in pod.spec.containers" ng-init="cstate = getContainerState(c.name); cstatus = getStatus(c.name);">
                 <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
                   <co-resource-icon kind="container"></co-resource-icon>
-                  <a ng-href="/ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}/containers/{{c.name}}"
+                  <a ng-href="ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}/containers/{{c.name}}"
                      ng-bind="c.name"></a>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="cstatus.containerID | emptyPlaceholder"></div>
