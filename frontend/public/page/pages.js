@@ -19,4 +19,4 @@ import './search/search-ctrl';
 import './settings/settings';
 import './welcome/welcome-ctrl';
 import './modals/modals';
-import './tpm/tpm-ctrl';
+import './dtc/dtc-ctrl';

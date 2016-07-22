@@ -6,23 +6,28 @@
 angular.module('bridge.ui')
 .directive('coResourceIcon', function(k8s) {
   'use strict';
-
+  const kind = k8s.enum.Kind;
   function iconLabel(kindId) {
+
     switch (kindId) {
-      case k8s.enum.Kind.REPLICATIONCONTROLLER.id:
+      case kind.REPLICATIONCONTROLLER.id:
         return 'RC';
-      case k8s.enum.Kind.REPLICASET.id:
+      case kind.REPLICASET.id:
         return 'RS';
-      case k8s.enum.Kind.DEPLOYMENT.id:
+      case kind.DEPLOYMENT.id:
         return 'D';
-      case k8s.enum.Kind.POD.id:
+      case kind.POD.id:
         return 'P';
-      case k8s.enum.Kind.SERVICE.id:
+      case kind.SERVICE.id:
         return 'S';
-      case k8s.enum.Kind.NODE.id:
+      case kind.NODE.id:
         return 'N';
-      case k8s.enum.Kind.NAMESPACE.id:
+      case kind.NAMESPACE.id:
         return 'NS';
+      case kind.POLICY.id:
+        return 'PCY';
+      case kind.TPM.id:
+        return 'TPM';
       case 'container':
         return 'C';
       default:

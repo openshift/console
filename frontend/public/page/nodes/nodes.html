@@ -2,7 +2,7 @@
 
   <tec-nav-title title="Nodes" plural="true"></tec-nav-title>
   <div class="row co-p-nodes__top_section">
-    <div class="{{ $root.FEATURE_FLAGS.tpm ? 'col-md-6 col-xs-12' : 'col-xs-12'}}">
+    <div class="col-xs-12">
       <div class="co-m-pane">
         <div class="co-m-pane__heading">
           <div class="row">
@@ -45,35 +45,9 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6 col-xs-12" ng-if="$root.FEATURE_FLAGS.tpm">
-      <div class="co-m-pane">
-        <div class="co-m-pane__heading ng-scope">
-          <div class="row">
-            <div class="col-xs-6">
-              <h1 class="co-m-pane__title">Trust Policies</h1>
-            </div>
-            <div class="col-xs-6">
-              <p class="pull-right">
-                <a href="/trusted-compute-policies">View Policies</a>
-              </p>
-            </div>
-          </div>
-          <div class="row co-m-pane__sub__heading">
-            <div class="col-xs-12">
-              <p class="text-muted small">PROFILE MATCHING</p>
-            </div>
-            <div class="col-xs-12">
-              <p class="" >Any secure combination</p>
-              <p class="text-muted small">A node matching any combination of profiles is considered trusted.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="co-m-pane">
-    <co-node-section trusted="false"></co-node-section>
-    <co-node-section trusted="true"></co-node-section>
-  </div><!-- pane -->
+    <co-node-section></co-node-section>
+  </div>
 </div>

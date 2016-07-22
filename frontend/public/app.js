@@ -323,19 +323,32 @@ angular.module('bridge', [
   });
 
   r('/audit-report', {
-    controller: 'TPMCtrl',
-    templateUrl: '/static/page/tpm/audit-report.html',
+    controller: 'DTCCtrl',
+    templateUrl: '/static/page/dtc/audit-report.html',
     title: 'Policy',
   });
+
   r('/trusted-compute-policies', {
-    controller: 'TPMCtrl',
-    templateUrl: '/static/page/tpm/policy-list.html',
+    controller: 'DTCCtrl',
+    templateUrl: '/static/page/dtc/policy-list.html',
     title: 'Trusted Compute Policies',
   });
 
+  r('/trusted-platform-modules', {
+    controller: 'DTCCtrl',
+    templateUrl: '/static/page/dtc/tpm-list.html',
+    title: 'Trusted Platform Module',
+  });
+
+  r('/trusted-platform-modules/:name', {
+    controller: 'DTCCtrl',
+    templateUrl: '/static/page/dtc/tpm-page.html',
+    title: 'Trusted Platform Module',
+  });
+
   r('/trusted-compute-policies/:name', {
-    controller: 'TPMCtrl',
-    templateUrl: '/static/page/tpm/policy-page.html',
+    controller: 'DTCCtrl',
+    templateUrl: '/static/page/dtc/policy-page.html',
     title: 'Policy',
   });
 

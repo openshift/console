@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('bridge.ui')
-.directive('coTpcList', function () {
+.directive('coPolicyList', function () {
   'use strict';
 
   return {
-    templateUrl: '/static/module/ui/resources/tpc-list.html',
+    templateUrl: '/static/module/ui/resources/policy-list.html',
     restrict: 'E',
     replace: true,
     scope: {
@@ -54,5 +54,4 @@ angular.module('bridge.ui')
 
     }
   };
-
 });

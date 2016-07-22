@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('bridge.page')
-.controller('TPMCtrl', function(_, $scope, $routeParams, k8s, tpm, CONST, Firehose) {
+.controller('DTCCtrl', function(_, $scope, $routeParams, k8s, tpm, CONST, Firehose) {
 
   const INVALID_POLICY =  $scope.INVALID_POLICY = CONST.INVALID_POLICY;
   $scope.isTrusted = k8s.nodes.isTrusted;

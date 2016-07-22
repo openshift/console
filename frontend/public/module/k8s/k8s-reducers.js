@@ -108,7 +108,6 @@ export default (state, action)  => {
         return state;
       }
       return state.setIn([[id, 'loadError'], k8sObjects, [id, 'objects'], {}]);
-      break;
   }
   return state.setIn([id, 'objects'], newList);
 };
