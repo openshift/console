@@ -1,52 +1,6 @@
 <div class="co-p-nodes">
 
   <tec-nav-title title="Nodes" plural="true"></tec-nav-title>
-  <div class="row co-p-nodes__top_section">
-    <div class="col-xs-12">
-      <div class="co-m-pane">
-        <div class="co-m-pane__heading">
-          <div class="row">
-            <div class="col-xs-6">
-              <h1 class="co-m-pane__title">Admission Settings</h1>
-            </div>
-            <div class="col-xs-6" ng-show="$root.FEATURE_FLAGS.tpm">
-              <p class="pull-right">
-                <a href="/audit-report">View Audit Report</a>
-              </p>
-            </div>
-          </div>
-          <div class="row co-m-pane__sub__heading">
-            <div class="col-xs-12">
-              <p class="text-muted small">ADMISSION POLICY</p>
-              <p ng-if="!$root.FEATURE_FLAGS.tpm">
-                Open Admission
-              </p>
-              <p ng-if="$root.FEATURE_FLAGS.tpm">
-                <span ng-if="dtcError">
-                  Unknown state: configmaps could not be loaded.
-                </span>
-                <a ng-click="dtcModal()" ng-if="!dtcError" class="co-m-modal-link" href="#">
-                  <span ng-if="tpmManager.allowunknown === 'true'">Trusted Computing</span>
-                  <span ng-if="tpmManager.allowunknown !== 'true'">Strict Trusted Computing</span>
-                </a>
-              </p>
-            </div>
-
-            <div class="col-xs-12">
-              <p class="text-muted small" ng-if="!$root.FEATURE_FLAGS.tpm">
-                <span>TPM support is disabled.  All nodes will be admitted into the cluster.</span>
-              </p>
-              <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm">
-                <span ng-if="tpmManager.allowunknown === 'true'">Nodes with previously unseen TPMs will be admitted.</span>
-                <span ng-if="tpmManager.allowunknown !== 'true'">Only nodes with previously seen TPMs will be admitted to the cluster.</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="co-m-pane">
     <co-node-section></co-node-section>
   </div>

@@ -1,11 +1,13 @@
 'use strict';
 
 angular.module('bridge.page')
-.controller('DTCCtrl', function(_, $scope, $routeParams, k8s, tpm, CONST, Firehose) {
+.controller('DTCCtrl', function(_, $scope, k8s, tpm, CONST, Firehose, ModalLauncherSvc) {
 
-  const INVALID_POLICY =  $scope.INVALID_POLICY = CONST.INVALID_POLICY;
+  $scope.INVALID_POLICY = CONST.INVALID_POLICY;
   $scope.isTrusted = k8s.nodes.isTrusted;
   $scope.pcrToHuman = tpm.pcrToHuman;
+  $scope.auditNode = tpm.auditNode;
+
   $scope.layers = {};
   _.each(tpm.LAYERS, (value, key) => {
     $scope.layers[key] = key;
@@ -25,50 +27,31 @@ angular.module('bridge.page')
       $scope.loadNodeError = state.loadError;
     });
 
-  $scope.auditNode = (node) => {
-    const annotations = node.metadata.annotations && node.metadata.annotations['tpm.coreos.com/logstate'];
-    if (!annotations) {
-      return {};
-    }
-    const logstate = JSON.parse(annotations);
-
-    const init = {};
-    _.each(new Array(10), (v, k) => {
-      init[k] = [];
-    });
-
-    const pcrToPolicy = logstate.reduce((acculator, log) => {
-      const pcr = log.Pcr;
-      acculator[pcr] = acculator[pcr] || [];
-      let source = log.Source;
-      if (source === '') {
-        source = INVALID_POLICY;
-      }
-      acculator[pcr].push(source)
-      return acculator;
-    }, init);
-
-    const policyList = {};
-    _.each(pcrToPolicy, (policies, pcr) => {
-      // CoreOS only uses PCRs 0-9 ...
-      if (pcr > 9) {
+  new Firehose(k8s.configmaps)
+    .watchList()
+    .bindScope($scope, null, state => {
+      if (state.loadError) {
+        $scope.canAdmission = true;
+        $scope.dtcError = state.loadError;
         return;
       }
+      $scope.dtcError = null;
+      _.each(state.configmaps, cm => {
+        switch (cm.metadata.name) {
+          case 'taint.coreos.com':
+            $scope.taintManager = cm;
+            break;
+          case 'tpm-manager.coreos.com':
+            $scope.tpmManager = cm;
+            break;
+        }
+      });
 
-      let invalid = false;
-
-      policies = _.uniq(policies).sort();
-      if (policies.indexOf(INVALID_POLICY) >= 0) {
-        policies = [INVALID_POLICY];
-        invalid = true;
-      }
-
-      policyList[pcr] = {
-        policies,
-        invalid,
-      };
+      $scope.canAdmission = !!($scope.taintManager && $scope.tpmManager);
     });
 
-    return policyList;
-  }
-})
+  $scope.dtcModal = () => {
+    ModalLauncherSvc.open('dtc-settings');
+  };
+});
+
