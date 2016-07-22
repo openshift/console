@@ -38,7 +38,7 @@ import './resources/replica-set-list';
 import './resources/deployment-list';
 import './resources/service-ip-link';
 import './resources/service-list';
-import './resources/tpc-list';
+import './resources/policy-list';
 import './resources/tpm-list';
 import './resources/policy';
 import './resources/tpm';
