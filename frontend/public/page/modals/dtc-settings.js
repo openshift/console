@@ -1,28 +1,29 @@
 angular.module('bridge.page')
-.controller('DtcSettingsCtrl', function(_, $scope, $uibModalInstance, $q, k8s) {
+.controller('DtcSettingsCtrl', function(_, $scope, $uibModalInstance, $q, k8s, $ngRedux) {
   'use strict';
 
   let taintManager, tpmManager;
-  // k8sCache.configmapsChanged($scope,
-  //   configmaps => {
-  //     configmaps && configmaps.forEach(cm => {
-  //       switch (cm.metadata.name) {
-  //         case 'taint.coreos.com':
-  //           taintManager = cm;
-  //           break;
-  //         case 'tpm-manager.coreos.com':
-  //           tpmManager = cm;
-  //           break;
-  //       }
-  //     });
-  //   }, err => $scope.loadError = err);
+
+  const configmaps = $ngRedux.getState().k8s.getIn(['configmaps', 'objects']).toJS();
+
+  _.each(configmaps, cm => {
+    switch (cm.metadata.name) {
+      case 'taint.coreos.com':
+        taintManager = $scope.taintManager = cm;
+        break;
+      case 'tpm-manager.coreos.com':
+        tpmManager = $scope.tpmManager = cm;
+        break;
+    }
+  });
 
   $scope.fields = {
-    admission: taintManager.data.taint ? 'closed' : 'open',
-    reverify: tpmManager.data.reverify,
-    notallowunknown: !(tpmManager.data.allowunknown === 'true'),
-    enabledReverify: parseInt(tpmManager.data.reverify, 10) > 0,
+    admission: $scope.taintManager.data.taint ? 'closed' : 'open',
+    reverify: $scope.tpmManager.data.reverify,
+    notallowunknown: !($scope.tpmManager.data.allowunknown === 'true'),
+    enabledReverify: parseInt($scope.tpmManager.data.reverify, 10) > 0,
   };
+
 
   $scope.execute = function() {
     const shouldTaint = ($scope.fields.admission === 'closed').toString();
