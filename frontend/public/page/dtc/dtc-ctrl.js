@@ -30,6 +30,7 @@ angular.module('bridge.page')
   new Firehose(k8s.configmaps)
     .watchList()
     .bindScope($scope, null, state => {
+      let managerOfTaint, tpmManager;
       if (state.loadError) {
         $scope.canAdmission = true;
         $scope.dtcError = state.loadError;
@@ -39,15 +40,30 @@ angular.module('bridge.page')
       _.each(state.configmaps, cm => {
         switch (cm.metadata.name) {
           case 'taint.coreos.com':
-            $scope.taintManager = cm;
+            managerOfTaint = $scope.managerOfTaint = cm;
             break;
           case 'tpm-manager.coreos.com':
-            $scope.tpmManager = cm;
+            tpmManager = $scope.tpmManager = cm;
             break;
         }
       });
 
-      $scope.canAdmission = !!($scope.taintManager && $scope.tpmManager);
+      let dtcState = 'Open Admission';
+      let substate = 'All nodes will be scheduled for work.';
+      if (managerOfTaint) {
+        if (managerOfTaint.data.taint === 'true') {
+          dtcState = 'Trusted Computing';
+          substate = 'Nodes will be validated against DTC policies.';
+          if (tpmManager && tpmManager.data.allowunknown === 'false') {
+            dtcState = 'Strict Trusted Computing';
+            substate = 'Nodes will be validated against DTC policies and must have known TPMs.';
+          }
+        }
+      }
+      $scope.dtcState = dtcState;
+      $scope.substate = substate;
+
+      $scope.canAdmission = !!($scope.managerOfTaint && $scope.tpmManager);
     });
 
   $scope.dtcModal = () => {
