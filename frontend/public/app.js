@@ -332,7 +332,11 @@ angular.module('bridge', [
     templateUrl: '/static/page/dtc/audit-report.html',
     title: 'Policy',
   });
-
+  r('/create-policy', {
+    controller: 'DTCCtrl',
+    templateUrl: '/static/page/tpm/create.html',
+    title: 'Create Policy',
+  });
   r('/trusted-compute-policies', {
     controller: 'DTCCtrl',
     templateUrl: '/static/page/dtc/policy-list.html',

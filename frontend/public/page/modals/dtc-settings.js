@@ -30,7 +30,6 @@ angular.module('bridge.page')
     const allowUnknown = (!$scope.fields.notallowunknown).toString();
     const reverify = $scope.fields.reverify.toString();
 
-
     let promise1;
     if (shouldTaint !== managerOfTaint.data.taint) {
       const newTaint = _.cloneDeep(managerOfTaint);
@@ -46,6 +45,9 @@ angular.module('bridge.page')
       promise2 = k8s.configmaps.update(manager);
     }
 
+    if (!promise1 && !promise2) {
+      return;
+    }
     $scope.requestPromise = promise1 && promise2 ? $q.all([promise1, promise2]) : promise1 || promise2;
 
     $scope.requestPromise.then(function() {

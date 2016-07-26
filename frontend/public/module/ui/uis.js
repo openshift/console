@@ -38,10 +38,13 @@ import './resources/replica-set-list';
 import './resources/deployment-list';
 import './resources/service-ip-link';
 import './resources/service-list';
+import './resources/create-policy';
+import './resources/yaml-policy';
 import './resources/policy-list';
-import './resources/tpm-list';
+
 import './resources/policy';
 import './resources/tpm';
+import './resources/tpm-list';
 
 import './status-box/status-box';
 import './sysevents/sysevent-icon';

@@ -36,18 +36,20 @@ angular.module('bridge.ui')
           const policies = policy && policy.policy;
           _.each(policies, function (pcr, pcrNum) {
             _.each(POLICY_TYPES, (name, type) => {
-              const policyValues = (pcr[type] || [{}])[0];
-              let prefix = policyValues.prefix;
-              _.each(policyValues.values, (value) => {
-                value.prefix = prefix;
-                value.pcrNum = pcrNum;
-                value.type = name;
-                values.push(value);
+              const policyValues = type === 'rawvalues' ? pcr[type] : (pcr[type] || [{}])[0].values;
+              let prefix = policyValues && policyValues.prefix;
+              _.each(policyValues, (value) => {
+                values.push({
+                  description: value.Description || value.description,
+                  value: value.Value || value.value,
+                  type: name,
+                  pcrNum,
+                  prefix,
+                });
               });
             });
           });
           $scope.values = values;
-
         })
         .catch(function() {
           $scope.policy = null;
