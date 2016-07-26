@@ -24,20 +24,13 @@
               Unknown state: configmaps could not be loaded.
             </span>
             <a ng-click="dtcModal()" ng-if="!dtcError" class="co-m-modal-link" href="#">
-              <span ng-if="tpmManager.allowunknown === 'true'">Trusted Computing</span>
-              <span ng-if="tpmManager.allowunknown !== 'true'">Strict Trusted Computing</span>
+              <span ng-bind="dtcState"></span>
             </a>
           </p>
         </div>
 
         <div class="col-xs-12" ng-if="!dtcError">
-          <p class="text-muted small" ng-if="!$root.FEATURE_FLAGS.tpm">
-            <span>TPM support is disabled.  All nodes will be scheduled for work.</span>
-          </p>
-          <p class="text-muted small" ng-if="$root.FEATURE_FLAGS.tpm">
-            <span ng-if="tpmManager.allowunknown === 'true'">All nodes will be scheduled for work.</span>
-            <span ng-if="tpmManager.allowunknown !== 'true'">Only nodes with previously seen TPMs will be scheduled for work.</span>
-          </p>
+          <p class="text-muted small" ng-bind="substate"></p>
         </div>
       </div>
     </div>

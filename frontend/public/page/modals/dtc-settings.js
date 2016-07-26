@@ -2,14 +2,14 @@ angular.module('bridge.page')
 .controller('DtcSettingsCtrl', function(_, $scope, $uibModalInstance, $q, k8s, $ngRedux) {
   'use strict';
 
-  let taintManager, tpmManager;
+  let managerOfTaint, tpmManager;
 
   const configmaps = $ngRedux.getState().k8s.getIn(['configmaps', 'objects']).toJS();
 
   _.each(configmaps, cm => {
     switch (cm.metadata.name) {
       case 'taint.coreos.com':
-        taintManager = $scope.taintManager = cm;
+        managerOfTaint = $scope.managerOfTaint = cm;
         break;
       case 'tpm-manager.coreos.com':
         tpmManager = $scope.tpmManager = cm;
@@ -18,7 +18,7 @@ angular.module('bridge.page')
   });
 
   $scope.fields = {
-    admission: $scope.taintManager.data.taint ? 'closed' : 'open',
+    admission: $scope.managerOfTaint.data.taint === 'true' ? 'closed' : 'open',
     reverify: $scope.tpmManager.data.reverify,
     notallowunknown: !($scope.tpmManager.data.allowunknown === 'true'),
     enabledReverify: parseInt($scope.tpmManager.data.reverify, 10) > 0,
@@ -32,8 +32,8 @@ angular.module('bridge.page')
 
 
     let promise1;
-    if (shouldTaint !== taintManager.data.taint) {
-      const newTaint = _.cloneDeep(taintManager);
+    if (shouldTaint !== managerOfTaint.data.taint) {
+      const newTaint = _.cloneDeep(managerOfTaint);
       newTaint.data.taint = shouldTaint;
       promise1 = k8s.configmaps.update(newTaint);
     }
