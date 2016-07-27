@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coUserCog', function() {
+.directive('coUserCog', function(dex, ModalLauncherSvc) {
   'use strict';
 
   return {
@@ -14,17 +14,33 @@ angular.module('bridge.ui')
     scope: {
       user: '=',
       onselect: '&',
+      reload: '&',
+      yourID: '=yourId'
     },
     controller: function($scope) {
-      var desiredState = !$scope.user.disabled;
-      var label = desiredState ? 'Disable User' : 'Enable User';
       $scope.cogOptions = [{
-        label: label,
-        weight: 100,
+        label: 'Revoke Refresh Token',
+        weight: 50,
         callback: function() {
-          $scope.onselect()($scope.user, desiredState);
+          ModalLauncherSvc.open('revoke-refresh-token', {
+            user: $scope.user
+          });
         }
       }];
+
+      if ($scope.yourID !== $scope.user.id) {
+        $scope.cogOptions.push({
+          label: $scope.user.disabled ? 'Enable User' : 'Disable User',
+          weight: 100,
+          callback: function() {
+            var instance = ModalLauncherSvc.open('toggle-disabled-user', {
+              user: $scope.user,
+              disableIfTrue: !$scope.user.disabled
+            });
+            instance.result.then($scope.reload()());
+          }
+        });
+      }
     },
   };
 });

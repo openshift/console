@@ -40,6 +40,7 @@ type jsGlobals struct {
 	K8sAPIVersion          string `json:"k8sAPIVersion"`
 	AuthDisabled           bool   `json:"authDisabled"`
 	NewUserAuthCallbackURL string `json:"newUserAuthCallbackURL"`
+	KubectlClientID        string `json:"kubectlClientID"`
 }
 
 type Server struct {
@@ -49,6 +50,7 @@ type Server struct {
 	TectonicVersion        string
 	Auther                 *auth.Authenticator
 	NewUserAuthCallbackURL *url.URL
+	KubectlClientID        string
 
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
@@ -143,6 +145,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sAPIVersion:          K8sAPIVersion,
 		AuthDisabled:           s.AuthDisabled(),
 		NewUserAuthCallbackURL: s.NewUserAuthCallbackURL.String(),
+		KubectlClientID:        s.KubectlClientID,
 	}
 	tpl := template.New(IndexPageTemplateName)
 	tpl.Delims("[[", "]]")
