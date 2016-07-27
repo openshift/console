@@ -1,10 +1,10 @@
 package auth
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/coreos/go-oidc/oidc"
@@ -14,8 +14,9 @@ import (
 // None of the serializable fields contain any sensitive information,
 // and should be safe to send as a non-http-only cookie.
 type loginState struct {
-	Email  string `json:"email"`
 	UserID string `json:"userID"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
 	exp    time.Time
 	token  token
 	now    nowFunc
@@ -38,8 +39,12 @@ func newLoginState(tok token) (*loginState, error) {
 		return nil, err
 	}
 
-	ls.Email = id.Email
+	if ls.Name, _, err = claims.StringClaim("name"); err != nil {
+		return nil, err
+	}
+
 	ls.UserID = id.ID
+	ls.Email = id.Email
 	ls.exp = id.ExpiresAt
 	return ls, nil
 }
@@ -56,7 +61,7 @@ func (ls *loginState) stateCookie() (*http.Cookie, error) {
 	return &http.Cookie{
 		HttpOnly: false,
 		Name:     cookieNameLoginState,
-		Value:    url.QueryEscape(string(enc)),
+		Value:    base64.StdEncoding.EncodeToString(enc),
 		Path:     "/",
 		MaxAge:   maxAge(ls.exp, ls.now()),
 		// For old IE, ignored by most browsers.

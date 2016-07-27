@@ -1,5 +1,4 @@
 import './_module';
-import './auth-ctrl';
 import './events/events-ctrl';
 import './cluster/cluster-status-ctrl';
 import './error/error-ctrl';

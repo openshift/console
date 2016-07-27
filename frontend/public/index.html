@@ -33,11 +33,11 @@
             <a href="/"><img src="/static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo"/></a>
           </div>
 
-          <div class="navigation-container__section" ng-cloak ng-show="$root.FEATURE_FLAGS.userManagement">
-            <ul id="account-nav" ng-controller="AuthCtrl" class="navigation-container__list">
-              <li class="co-m-nav-link">
-                <span ng-bind="email() || 'My Account'"></span>
-              </li>
+          <div class="navigation-container__section" ng-if="$root.user">
+            <ul id="account-nav" class="navigation-container__list">
+              <co-navbar-link ng-cloak href="/settings/profile">
+                <i class="fa fa-user"></i>&nbsp;&nbsp;<span ng-bind="$root.user.name"></span>
+              </co-navbar-link>
             </ul>
           </div>
 

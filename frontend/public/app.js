@@ -316,6 +316,11 @@ angular.module('bridge', [
     templateUrl: '/static/page/settings/registries.html',
     title: 'Configure Registries',
   });
+  r('/settings/profile', {
+    controller: 'ProfileCtrl',
+    templateUrl: '/static/page/settings/profile.html',
+    title: 'Profile',
+  });
   r('/settings/users', {
     controller: 'UsersCtrl',
     templateUrl: '/static/page/settings/users.html',
