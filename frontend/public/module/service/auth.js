@@ -7,18 +7,29 @@ angular.module('bridge.service')
     if (!state) {
       return null;
     }
-    return JSON.parse(state);
+    return JSON.parse($window.atob(state));
+  }
+
+  function loginStateItem(key) {
+    return (loginState() || {})[key];
+  }
+
+  function userID() {
+    return loginStateItem('userID');
+  }
+
+  function name() {
+    return loginStateItem('name');
   }
 
   function email() {
-    var s = loginState();
-    if (s) {
-      return s.email;
-    }
+    return loginStateItem('email');
   }
 
   return {
     state: loginState,
+    userID: userID,
+    name: name,
     email: email,
 
     logout: function(prev) {
@@ -53,19 +64,22 @@ angular.module('bridge.service')
 
 })
 
-.factory('ensureLoggedInSvc', function($q, authSvc, featuresSvc) {
+.factory('ensureLoggedInSvc', function($rootScope, $q, authSvc, featuresSvc) {
   'use strict';
-  var deferred = $q.defer();
 
-  if (featuresSvc.isAuthDisabled) {
-    deferred.resolve();
-    return deferred.promise;
-  }
+  return $q.resolve().then(function () {
+    if (featuresSvc.isAuthDisabled) {
+      return;
+    }
 
-  if (authSvc.isLoggedIn()) {
-    deferred.resolve();
-  } else {
-    deferred.reject('not-logged-in');
-  }
-  return deferred.promise;
+    if (!authSvc.isLoggedIn()) {
+      throw new Error('not-logged-in');
+    }
+
+    $rootScope.user = {
+      id: authSvc.userID(),
+      name: authSvc.name(),
+      email: authSvc.email(),
+    };
+  });
 });

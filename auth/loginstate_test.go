@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"encoding/base64"
 	"encoding/json"
-	"net/url"
 	"testing"
 	"time"
 
@@ -140,13 +140,13 @@ func TestStateCookie(t *testing.T) {
 		t.Errorf("unexpected cookie max-age, want: %d, got: %d", wantAge, ck.MaxAge)
 	}
 
-	unesc, err := url.QueryUnescape(ck.Value)
+	unesc, err := base64.StdEncoding.DecodeString(ck.Value)
 	if err != nil {
 		t.Errorf("unexpected error unescaping cookie value: %v", err)
 	}
 
 	var lsDec loginState
-	if err = json.Unmarshal([]byte(unesc), &lsDec); err != nil {
+	if err = json.Unmarshal(unesc, &lsDec); err != nil {
 		t.Errorf("unexpected error unmarshaling cookie value: %v", err)
 	}
 
