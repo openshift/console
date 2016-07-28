@@ -6,20 +6,10 @@
     </a>
   </tec-nav-title>
 
-  <div class="co-m-pane co-m-vert-nav">
+  <div class="co-m-vert-nav">
     <co-service-nav ns="ns" name="serviceName"></co-service-nav>
-    <div class="co-m-vert-nav__body">
-      <div class="co-m-pane__heading">
-        <div class="row">
-          <div class="col-xs-12">
-            <input ng-model="podSearch.metadata.name" type="text" class="form-control text-filter pull-right" placeholder="Filter pods by name...">
-          </div>
-        </div>
-      </div>
-      <div class="co-m-pane__body">
-        <co-pod-list ng-if="!!service" error="loadError" search="podSearch" namespace="ns" selector-required="true" selector="service.spec.selector"></co-pod-list>
-      </div>
-    </div>
   </div>
+
+  <reactive-k8s-list ng-if="!!service" kind="'pods'" selector="service.spec.selector"/>
 
 </div>

@@ -7,6 +7,7 @@ const types = {
   loaded: 'loaded',
   errored: 'errored',
 
+  filter: 'filter',
   addList: 'addList',
   removeList: 'removeList',
 };
@@ -27,6 +28,10 @@ const actions =  {
   [types.modified]: action_(types.modified),
   [types.loaded]: action_(types.loaded),
   [types.errored]: action_(types.errored),
+
+  filter: (id, name, value) => {
+    return {id, name, value, type: types.filter};
+  },
 
   removeList: id => {
     REF_COUNTS[id] -= 1;

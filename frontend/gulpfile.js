@@ -17,7 +17,6 @@ const htmlReplace = require('gulp-html-replace');
 const karma = require('karma').server;
 const browserify = require('browserify');
 const watchify = require('watchify');
-const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const streamify = require('gulp-streamify');
 const PrettyError = require('pretty-error');
@@ -55,7 +54,6 @@ function jsBuild (debug) {
       './public/{module,page}/**/*_test.js',
       './public/dist/*.js',
     ],
-    transform: [babelify],
     entries: [entry],
     filter: (file) => {
       const isExternal = isExternalModule(file);
@@ -67,7 +65,7 @@ function jsBuild (debug) {
     opts.plugin = [watchify];
     opts.delay = 200;
   }
-  return browserify(opts);
+  return browserify(opts).transform('babelify', {presets: ['es2015', 'react']});
 }
 
 gulp.task('js-deps', ['js-build'], () => {

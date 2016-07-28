@@ -20,10 +20,6 @@ const removeFromList = (list, resource) => {
 
 const updateList = (list, resource) => {
   const uid = resource.metadata.name;
-
-  // eslint-disable-next-line no-console
-  console.info(`updating ${uid} ${resource.status && resource.status.phase}`);
-
   const current = list.get(uid);
   const next = Immutable.fromJS(resource);
 
@@ -70,6 +66,10 @@ export default (state, action)  => {
   let newList;
 
   switch (action.type) {
+    case types.filter:
+      const {name, value} = action;
+      return state.setIn([id, 'filters', name], value);
+
     case types.addList:
       if (list) {
         return state;
@@ -77,7 +77,9 @@ export default (state, action)  => {
 
       return state.set(id, Immutable.Map({
         loadError: '',
+        loaded: false,
         objects: Immutable.Map(),
+        filters: Immutable.Map(),
       }));
 
     case types.removeList:
@@ -87,7 +89,12 @@ export default (state, action)  => {
       if (!list) {
         return state;
       }
-      state = state.setIn([id, 'loadError'], '');
+      // eslint-disable-next-line no-console
+      console.info(`loaded ${id}`);
+      state = state.setIn(
+        [id, 'loaded'], true,
+        [id, 'loadError'], ''
+      );
       newList = loadList(list, k8sObjects);
       break;
     case types.deleted:
@@ -107,7 +114,11 @@ export default (state, action)  => {
       if (!list) {
         return state;
       }
-      return state.setIn([[id, 'loadError'], k8sObjects, [id, 'objects'], {}]);
+      return state.setIn(
+        [id, 'loadError'], k8sObjects,
+        [id, 'objects'], {},
+        [id, 'loaded'], false
+      );
   }
   return state.setIn([id, 'objects'], newList);
 };
