@@ -5,8 +5,8 @@ angular.module('bridge.service')
   return {
     sendToErrorPage: function(errType, errMsgKey) {
       var errURL = '/error?';
-      errURL += 'error_type=' + errType;
-      errURL += 'error=' + errMsgKey;
+      errURL += 'error_type=' + encodeURIComponent(errType);
+      errURL += '&error=' + encodeURIComponent(errMsgKey);
       $window.location.href = errURL;
     },
   };
