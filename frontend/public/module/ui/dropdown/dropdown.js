@@ -4,7 +4,7 @@ const TEMPLATE = `
     <span ng-bind="title"></span> <span class="caret"></span>
   </span>
 
-  <button ng-if="!nobutton" type="button" uib-dropdown-toggle class="btn btn-sm btn--dropdown">
+  <button ng-if="!nobutton" type="button" uib-dropdown-toggle class="btn btn--dropdown">
     <span ng-bind="title"></span> <span class="caret"></span>
   </button>
 

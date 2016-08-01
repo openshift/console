@@ -6,13 +6,13 @@
       <div class="row">
         <div class="col-xs-3">
           <a ng-href="/ns/{{ns || defaultNS}}/pods/new" class="co-m-primary-action">
-            <button class="btn btn-sm btn-primary">
+            <button class="btn btn-primary">
               Create Pod
             </button>
           </a>
         </div>
         <div class="col-xs-9">
-          <input ng-model="podSearch.metadata.name" type="text" class="form-control pull-right text-filter input-sm" placeholder="Filter pods by name..." />
+          <input ng-model="podSearch.metadata.name" type="text" class="form-control pull-right text-filter" placeholder="Filter pods by name..." />
           <co-dropdown title="'Pod Status'" selected="facetFilter.phase" items="{'All Statuses': '', 'Pending': 'Pending', 'Running': 'Running', 'Terminating': 'Terminating'}" class="pull-right">
           </co-dropdown>
         </div>

@@ -51,9 +51,12 @@ small {
   letter-spacing: 0px;
 }
 
-.co-m-pane {
-  border-top: 1px solid $color-grey-lightest;
-  min-height: inherit;
+.co-m-pane__body {
+  border-bottom: 1px solid $color-grey-background-border;
+}
+
+.co-m-pane__body:last-child {
+ border-bottom: 0 none;
 }
 
 .co-m-pane__body__top-controls {

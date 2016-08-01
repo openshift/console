@@ -1,25 +1,25 @@
-<div class="co-p-pods">
+<div class="policy-list">
   <tec-nav-title title="Trusted Compute Policies" plural='true'></tec-nav-title>
 
   <div class="co-m-pane" ng-if="canAdmission">
-    <div class="co-m-pane__heading">
-      <div class="row">
-        <div class="col-xs-6">
-          <h1 class="co-m-pane__title">Admission Settings</h1>
-        </div>
-        <div class="col-xs-6">
-          <p class="pull-right">
-            <a href="/audit-report">View Audit Report</a>
-          </p>
-        </div>
+    <div class="co-m-pane__body" >
+
+    <div class="row">
+      <div class="col-xs-6">
+        <h1 class="co-m-pane__title pull-left">Admission Settings</h1>
+        <p class="pull-right">
+          <a href="/audit-report">View Audit Report</a>
+        </p>
       </div>
-      <div class="row co-m-pane__sub__heading">
-        <div class="col-xs-12">
+    </div>
+    <div class="row">
+      <div class="col-xs-6 co-m-pane__sub__heading">
+        <div class="policy-list__admissions">
           <p class="text-muted small">ADMISSION POLICY</p>
           <p ng-if="!$root.FEATURE_FLAGS.tpm">
             Open Admission
           </p>
-          <p ng-if="$root.FEATURE_FLAGS.tpm">
+          <p ng-if="$root.FEATURE_FLAGS.tpm" class="policy-list__dtc-state">
             <span ng-if="dtcError">
               Unknown state: configmaps could not be loaded.
             </span>
@@ -27,10 +27,8 @@
               <span ng-bind="dtcState"></span>
             </a>
           </p>
-        </div>
 
-        <div class="col-xs-12" ng-if="!dtcError">
-          <p class="text-muted small" ng-bind="substate"></p>
+          <p class="text-muted small" ng-bind="substate" ng-if="!dtcError"></p>
         </div>
       </div>
     </div>
@@ -41,7 +39,7 @@
       <div class="row">
         <div class="col-xs-12 pull-right">
           <a href="/create-policy" class="co-m-primary-action">
-            <button class="btn btn-sm btn-primary">
+            <button class="btn btn-primary">
               Create Policy
             </button>
           </a>
