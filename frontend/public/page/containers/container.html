@@ -19,7 +19,7 @@
               <dd ng-bind="containerState.label"></dd>
               <dt>ID</dt>
               <dd>
-                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{containerStatus.containerID}}" readonly />
+                <co-overflow value="containerStatus.containerID" />
               </dd>
               <dt>Restart Count</dt>
               <dd ng-bind="containerStatus.restartCount"></dd>
@@ -56,7 +56,7 @@
             <dl>
               <dt>Image</dt>
               <dd>
-                <input co-text-copy class="co-m-invisible-input" spellcheck="false" type="text" value="{{container.image | containerImage}}" readonly />
+                <co-overflow value="container.image | containerImage" />
               </dd>
               <dt>Image Version/Tag</dt>
               <dd ng-bind="container.image | containerTag"></dd>
