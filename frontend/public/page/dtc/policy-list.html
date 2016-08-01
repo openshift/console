@@ -40,7 +40,13 @@
     <div class="co-m-pane__heading">
       <div class="row">
         <div class="col-xs-12 pull-right">
-          <co-dropdown title="'PCR Layer'" selected="layerfilter" items="layers" class="pull-right" ng-init="layerfilter='Early Boot'">
+          <a href="/create-policy" class="co-m-primary-action">
+            <button class="btn btn-sm btn-primary">
+              Create Policy
+            </button>
+          </a>
+
+          <co-dropdown title="'PCR Layer'" selected="layerfilter" items="layers" class="pull-right" ng-init="layerfilter='ALL'">
           </co-dropdown>
         </div>
       </div>
