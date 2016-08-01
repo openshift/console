@@ -7,7 +7,13 @@ angular.module('bridge.service')
     if (!state) {
       return null;
     }
-    return JSON.parse($window.atob(state));
+
+    try {
+      return JSON.parse($window.atob(state));
+    } catch (error) {
+      console.error(error.stack);
+      return null;
+    }
   }
 
   function loginStateItem(key) {
@@ -73,7 +79,7 @@ angular.module('bridge.service')
     }
 
     if (!authSvc.isLoggedIn()) {
-      throw new Error('not-logged-in');
+      return $q.reject('not-logged-in');
     }
 
     $rootScope.user = {
