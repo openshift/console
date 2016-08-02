@@ -33,19 +33,10 @@
             <a href="/"><img src="/static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo"/></a>
           </div>
 
-          <div class="navigation-container__section" ng-if="$root.user">
-            <ul id="account-nav" class="navigation-container__list">
-              <co-navbar-link ng-cloak href="/settings/profile">
-                <i class="fa fa-user"></i>&nbsp;&nbsp;<span ng-bind="$root.user.name"></span>
-              </co-navbar-link>
-            </ul>
-          </div>
-
           <div class="navigation-container__section">
             <div class="navigation-container__section__title" ng-click="kubernetesIsCollapsed = !kubernetesIsCollapsed">
-              Kubernetes
+              <i class="fa fa-folder-open-o navigation-container__section__title__icon"></i>Browse Cluster
             </div>
-
             <ul class="navigation-container__list no-margin collapse in" uib-collapse="kubernetesIsCollapsed">
               <co-navbar-link ng-cloak href="/namespaces">Namespaces</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/services'|ns}}">Services</co-navbar-link>
@@ -61,12 +52,21 @@
 
           <div class="navigation-container__section" ng-if="$root.FEATURE_FLAGS.userManagement || $root.FEATURE_FLAGS.tpm" ng-cloak>
             <div class="navigation-container__section__title" ng-click="adminIsCollapsed = !adminIsCollapsed">
-               Administration
+              <i class="fa fa-cog navigation-container__section__title__icon"></i>Administration
             </div>
             <ul class="navigation-container__list no-margin collapse in" id="admin-tab" uib-collapse="adminIsCollapsed">
               <co-navbar-link ng-cloak href="/settings/users">Users</co-navbar-link ng-if="$root.FEATURE_FLAGS.userManagement">
               <co-navbar-link ng-cloak href="{{'/trusted-platform-modules'}}" ng-if="$root.FEATURE_FLAGS.tpm">TPMs</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/trusted-compute-policies'}}" ng-if="$root.FEATURE_FLAGS.tpm">DTC Policies</co-navbar-link>
+            </ul>
+          </div>
+
+          <div class="navigation-container__section" ng-if="$root.user">
+            <div class="navigation-container__section__title" ng-click="kubernetesIsCollapsed = !kubernetesIsCollapsed">
+              <i class="fa fa-user navigation-container__section__title__icon"></i><span ng-bind="$root.user.name"></span>
+            </div>
+            <ul id="account-nav" class="navigation-container__list">
+              <co-navbar-link ng-cloak href="/settings/profile">My Account</co-navbar-link>
             </ul>
           </div>
         </div>
