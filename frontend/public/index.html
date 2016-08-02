@@ -38,23 +38,23 @@
               <i class="fa fa-folder-open-o navigation-container__section__title__icon"></i>Browse Cluster
             </div>
             <ul class="navigation-container__list no-margin collapse in" uib-collapse="kubernetesIsCollapsed">
-              <co-navbar-link ng-cloak href="/namespaces">Namespaces</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/services'|ns}}">Services</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'/replicasets'|ns}}">Replica Sets</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/deployments'|ns}}">Deployments</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/services'|ns}}">Services</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/replicasets'|ns}}">Replica Sets</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'/replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/pods'|ns}}">Pods</co-navbar-link>
-              <co-navbar-link ng-cloak href="/nodes">Nodes</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/events'|ns}}">Events</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/search'|ns}}">Search</co-navbar-link>
             </ul>
           </div>
 
-          <div class="navigation-container__section" ng-if="$root.FEATURE_FLAGS.userManagement || $root.FEATURE_FLAGS.tpm" ng-cloak>
+          <div class="navigation-container__section" ng-cloak>
             <div class="navigation-container__section__title" ng-click="adminIsCollapsed = !adminIsCollapsed">
               <i class="fa fa-cog navigation-container__section__title__icon"></i>Administration
             </div>
             <ul class="navigation-container__list no-margin collapse in" id="admin-tab" uib-collapse="adminIsCollapsed">
+              <co-navbar-link ng-cloak href="/namespaces">Namespaces</co-navbar-link>
+              <co-navbar-link ng-cloak href="/nodes">Nodes</co-navbar-link>
               <co-navbar-link ng-cloak href="/settings/users">Users</co-navbar-link ng-if="$root.FEATURE_FLAGS.userManagement">
               <co-navbar-link ng-cloak href="{{'/trusted-platform-modules'}}" ng-if="$root.FEATURE_FLAGS.tpm">TPMs</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'/trusted-compute-policies'}}" ng-if="$root.FEATURE_FLAGS.tpm">DTC Policies</co-navbar-link>
