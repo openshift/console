@@ -1,7 +1,7 @@
 import './_module';
 
 angular.module('dex')
-.service('dex', function($window, $http, featureFlags) {
+.service('dex', function($window, $http, featuresSvc) {
   'use strict';
 
   var basePath = '/api/dex/v1/';
@@ -60,10 +60,10 @@ angular.module('dex')
   this.featureDetection = function () {
     this.users.available()
     .then(function(isAvailable) {
-      featureFlags.userManagement = !!isAvailable;
+      featuresSvc.userManagement = !!isAvailable;
     })
     .catch(function() {
-      featureFlags.userManagement = false;
+      featuresSvc.userManagement = false;
     });
   }
 });

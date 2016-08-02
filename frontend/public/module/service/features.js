@@ -3,5 +3,7 @@ angular.module('bridge.service')
   'use strict';
   return {
     isAuthDisabled: $window.SERVER_FLAGS.authDisabled,
+    tpm: undefined,
+    userManagement: undefined,
   };
 });
