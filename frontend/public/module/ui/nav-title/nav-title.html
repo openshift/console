@@ -1,6 +1,6 @@
 <div ng-class="klass">
   <div class="col-xs-12">
-    <h1 class="co-m-page-title">
+    <h1 ng-class="h1Klass">
       <co-resource-icon ng-if="kind" kind="{{kind}}" class="co-m-page-title__icon"></co-resource-icon>
       <span ng-bind="title"></span>
       <span ng-if="obj()" class="pull-right co-m-page-title__obj">

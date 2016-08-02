@@ -20,6 +20,10 @@ angular.module('bridge.ui')
     },
     controller: function ($scope) {
       $scope.klass = $scope.plural ? 'row co-m-nav-title__plural' : 'row co-m-nav-title';
+      $scope.h1Klass = 'co-m-page-title';
+      if ($scope.plural) {
+        $scope.h1Klass += ' co-m-page-title--plural';
+      }
     },
     link: function(scope) {
       scope.showYAML = function() {

@@ -15,3 +15,11 @@
 .dropdown__not-btn {
   cursor: pointer;
 }
+
+
+.dropdown-menu > li.dropdown__selected > a {
+  color: white;
+  &:hover {
+    color: black;
+  }
+}
