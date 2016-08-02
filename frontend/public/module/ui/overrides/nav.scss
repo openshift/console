@@ -4,7 +4,7 @@
   display: block;
   float: none;
   padding: 2px 0;
-  padding-left: 42px;
+  padding-left: 40px;
   line-height: 25px;
   font-weight: 300;
   font-size: 16px;
@@ -43,15 +43,15 @@
 }
 
 .navigation-container__section__title {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 20px;
   display: inline-block;
-  font-weight: 400;
+  font-weight: 300;
   color: #8ABFE6;
   cursor: pointer;
 
   width: 100%;
-  padding: 10px 0px 15px 40px;
+  padding: 10px 0px 10px 13px;
   span {
     display: inline-block;
     margin: 0 15px 0 11px;
@@ -60,6 +60,11 @@
     width: 22px;
     margin-right: 5px;
   }
+}
+
+.navigation-container__section__title__icon {
+  margin-right: 10px;
+  vertical-align: middle;
 }
 
 .navigation-container__section--logo {
