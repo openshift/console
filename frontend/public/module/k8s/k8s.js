@@ -15,7 +15,6 @@ import './resource';
 import './services';
 import './tpm';
 import './util';
-import './feature_flags';
 import './command';
 import './configmaps';
 
@@ -60,7 +59,7 @@ angular.module('k8s')
 })
 .service('k8s', function(_, $http, $timeout, $rootScope, wsFactory, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featureFlags, tpm, k8sConfigmaps) {
+                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, tpm, k8sConfigmaps) {
   'use strict';
 
   this.probe = k8sProbe;
@@ -144,7 +143,7 @@ angular.module('k8s')
     .then(res => {
       const paths = res.data.paths;
       _.each(k8sConfig.getk8sFlagPaths(), (path, flag) => {
-        featureFlags[flag] = paths.indexOf(path) >= 0;
+        featuresSvc[flag] = paths.indexOf(path) >= 0;
       });
     })
     .catch(e => {
