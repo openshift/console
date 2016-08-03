@@ -4,11 +4,11 @@
  */
 
 angular.module('bridge.ui')
-.directive('coUserCog', function(dex, ModalLauncherSvc) {
+.directive('coUserCog', function(featuresSvc, dex, ModalLauncherSvc) {
   'use strict';
 
   return {
-    template: '<div class="co-m-cog-wrapper"><co-cog options="cogOptions" size="small" anchor="left"></co-cog></div>',
+    template: '<div class="co-m-cog-wrapper"><co-cog ng-if="cogOptions.length" options="cogOptions" size="small" anchor="left"></co-cog></div>',
     restrict: 'E',
     replace: true,
     scope: {
@@ -18,15 +18,19 @@ angular.module('bridge.ui')
       yourID: '=yourId'
     },
     controller: function($scope) {
-      $scope.cogOptions = [{
-        label: 'Revoke Refresh Token',
-        weight: 50,
-        callback: function() {
-          ModalLauncherSvc.open('revoke-refresh-token', {
-            user: $scope.user
-          });
-        }
-      }];
+      $scope.cogOptions = [];
+      
+      if (featuresSvc.revokeToken) {
+        $scope.cogOptions.push({
+          label: 'Revoke Refresh Token',
+          weight: 50,
+          callback: function() {
+            ModalLauncherSvc.open('revoke-refresh-token', {
+              user: $scope.user
+            });
+          }
+        });
+      }
 
       if ($scope.yourID !== $scope.user.id) {
         $scope.cogOptions.push({
