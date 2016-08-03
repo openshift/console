@@ -5,5 +5,6 @@ angular.module('bridge.service')
     isAuthDisabled: $window.SERVER_FLAGS.authDisabled,
     tpm: undefined,
     userManagement: undefined,
+    revokeToken: !!$window.SERVER_FLAGS.kubectlClientID
   };
 });

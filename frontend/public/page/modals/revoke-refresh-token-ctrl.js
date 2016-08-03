@@ -5,7 +5,7 @@ angular.module('bridge.page')
   $scope.user = user;
 
   $scope.action = 'Revoke Refresh Token';
-  $scope.cancel = `Keep ${$scope.user.displayName}'s Token`;
+  $scope.cancel = `Keep ${$scope.user.displayName || 'Tectonic User'}'s Token`;
 
   $scope.revokeRefreshToken = function(user) {
     $scope.refreshTokenRevoked = dex.users.revokeRefreshToken(user.id);
