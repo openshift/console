@@ -9,7 +9,7 @@ angular.module('bridge.page')
     var thisLoad, loadRemainingUsers;
     var authState = authSvc.state();
 
-    $scope.yourId = authState ? authState.userID : null;
+    $scope.yourID = authState ? authState.userID : null;
     $scope.users = null;
     $scope.userGroups = null;
     $scope.failed = false;

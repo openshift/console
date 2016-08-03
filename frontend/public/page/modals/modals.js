@@ -23,3 +23,4 @@ import './show-yaml-ctrl';
 import './dtc-settings';
 import './namespace-quay-pull-secret/namespace-quay-pull-secret-ctrl';
 import './kubectl-config/kubectl-config-ctrl';
+import './revoke-refresh-token-ctrl';

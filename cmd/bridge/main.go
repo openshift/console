@@ -174,6 +174,7 @@ func main() {
 		DexProxyConfig:  dexCfg,
 		TectonicVersion: *tectonicVersion,
 		PublicDir:       *publicDir,
+		KubectlClientID: *kubectlClientID,
 	}
 
 	srv.NewUserAuthCallbackURL = validateURLFlag(fs, "host")

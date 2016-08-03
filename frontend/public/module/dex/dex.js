@@ -56,6 +56,12 @@ angular.module('dex')
         return r.data;
       });
     },
+    revokeRefreshToken: function(userID) {
+      return $http({
+        url: basePath + 'account/' + $window.encodeURIComponent(userID) + '/refresh/' + $window.SERVER_FLAGS.kubectlClientID,
+        method: 'DELETE'
+      });
+    },
   };
   this.featureDetection = function () {
     this.users.available()

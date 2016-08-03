@@ -1,0 +1,17 @@
+<div class="co-p-toggle-disabled-user-modal">
+  <div class="modal-header">
+    <h1 class="modal-title" ng-bind="action"></h1>
+  </div>
+  <div class="modal-body">
+    <div>Revoking a user's token prevents software from refreshing a session. For example, <code>kubectl</code> will require the user to re-authenticate when the current session expires.</div>
+  </div>
+  <div class="modal-footer" co-btn-bar complete-promise="refreshTokenRevoked">
+    <co-error-message promise="refreshTokenRevoked" formatter="dexApi"></co-error-message>
+    <button type="submit"
+            class="btn btn-primary"
+            ng-click="revokeRefreshToken(user)"
+            ng-bind="action"
+            ></button>
+    <button type="button" ng-click="$dismiss()" class="btn btn-link" ng-bind="cancel"></button>
+  </div>
+</div>
