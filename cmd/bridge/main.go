@@ -30,27 +30,36 @@ func main() {
 	capnslog.SetFormatter(capnslog.NewStringFormatter(os.Stderr))
 
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
-	fs.String("listen", "http://0.0.0.0:9000", "")
-	logLevel := fs.String("log-level", "", "level of logging information by package (pkg=level)")
-	publicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets")
-	k8sInCluster := fs.Bool("k8s-in-cluster", false, "Configure --k8s-endpoint, --k8s-bearer-token and TLS configuration for communication with Kubernetes API Server from environment, typically used when deploying as a Kubernetes pod")
-	fs.String("k8s-endpoint", "https://172.17.4.101:29101", "URL of the Kubernetes API server, ignored when --k8s-in-cluster=true")
-	k8sBearerToken := fs.String("k8s-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests. This should only be used when --disable-auth=true, as any OIDC-related authorization information will be blindly overridden. This flag is ignored with --k8s-in-cluster=true")
-	fs.String("host", "http://127.0.0.1:9000", "The externally visible hostname/port of the service. Used in OIDC/OAuth2 Redirect URL.")
-	disableAuth := fs.Bool("disable-auth", false, "Disable all forms of authentication.")
-	authClientID := fs.String("auth-client-id", "", "The OIDC OAuth2 Client ID.")
-	authClientSecret := fs.String("auth-client-secret", "", "The OIDC/OAuth2 Client Secret.")
-	fs.String("auth-issuer-url", "", "The OIDC/OAuth2 issuer URL")
-	enableDexUserManagement := fs.Bool("enable-dex-user-management", false, "Use auth-issuer-url as an endpoint for dex's user managment API.")
-	tlsCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
-	tlsKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
-	caFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
-	insecureSkipVerifyK8sCA := fs.Bool("insecure-skip-verify-k8s-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server. This is ignored when -k8s-in-cluster is set.")
-	tectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
-	idFile := fs.String("identity-file", "", "A file that identifies the console owner")
+	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 
-	kubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
-	kubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
+	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc")
+	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
+	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
+	fUserAuthOIDCClientSecret := fs.String("user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
+
+	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
+	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
+	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
+
+	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc")
+	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
+
+	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
+	fPublicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets.")
+	fHost := fs.String("host", "http://127.0.0.1:9000", "The externally visible hostname/port of the service. Used in OIDC/OAuth2 Redirect URL.")
+	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
+	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
+	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
+	fTectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
+	fIdentityFile := fs.String("identity-file", "", "A file that identifies the console owner.")
+
+	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
+	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
+
+	srv := &server.Server{
+		PublicDir:       *fPublicDir,
+		TectonicVersion: *fTectonicVersion,
+	}
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -62,23 +71,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	if (*kubectlClientID == "") != (*kubectlClientSecret == "") {
+	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
 		fmt.Fprintln(os.Stderr, "Must provide both --kubectl-client-id and --kubectl-client-secret")
 		os.Exit(1)
 	}
 
 	capnslog.SetGlobalLogLevel(capnslog.INFO)
-	if *logLevel != "" {
-		llc, err := rl.ParseLogLevelConfig(*logLevel)
+	if *fLogLevel != "" {
+		llc, err := rl.ParseLogLevelConfig(*fLogLevel)
 		if err != nil {
 			log.Fatal(err)
 		}
 		rl.SetLogLevel(llc)
-		log.Infof("Setting log level to %s", *logLevel)
+		log.Infof("Setting log level to %s", *fLogLevel)
 	}
 
-	if *idFile != "" {
-		go stats.GenerateStats(*idFile)
+	if *fIdentityFile != "" {
+		go stats.GenerateStats(*fIdentityFile)
 	}
 
 	var (
@@ -89,21 +98,25 @@ func main() {
 		// using the host's certs.
 		certPool *x509.CertPool
 	)
-	if *caFile != "" {
+	if *fCAFile != "" {
 		var err error
-		if dexCertPEM, err = ioutil.ReadFile(*caFile); err != nil {
-			log.Fatalf("failed to read cert file: %v")
+
+		if dexCertPEM, err = ioutil.ReadFile(*fCAFile); err != nil {
+			log.Fatalf("Failed to read cert file: %v", err)
 		}
+
 		certPool = x509.NewCertPool()
 		if !certPool.AppendCertsFromPEM(dexCertPEM) {
-			log.Fatalf("no certs found in %q", *caFile)
+			log.Fatalf("No certs found in %q", *fCAFile)
 		}
 	}
 
-	k8sURL := validateURLFlag(fs, "k8s-endpoint")
+	var (
+		k8sAuthServiceAccountBearerToken string
+	)
 
-	var kCfg *server.ProxyConfig
-	if *k8sInCluster {
+	switch *fK8sMode {
+	case "in-cluster":
 		cc, err := restclient.InClusterConfig()
 		if err != nil {
 			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
@@ -130,65 +143,35 @@ func main() {
 			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
 		}
 
-		kCfg = &server.ProxyConfig{
+		srv.K8sProxyConfig = &server.ProxyConfig{
 			TLSClientConfig: inClusterTLSCfg,
 			HeaderBlacklist: []string{"Cookie"},
 			Endpoint:        k8sURL,
-			TokenExtractor:  server.ConstantTokenExtractor(cc.BearerToken),
 		}
 
-	} else {
-		kCfg = &server.ProxyConfig{
+		k8sAuthServiceAccountBearerToken = cc.BearerToken
+	case "off-cluster":
+		k8sModeOffClusterEndpointURL := validateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
+
+		srv.K8sProxyConfig = &server.ProxyConfig{
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: *insecureSkipVerifyK8sCA,
+				InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
 			},
 			HeaderBlacklist: []string{"Cookie"},
-			Endpoint:        k8sURL,
-			TokenExtractor:  server.ConstantTokenExtractor(*k8sBearerToken),
+			Endpoint:        k8sModeOffClusterEndpointURL,
 		}
+	default:
+		flagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
 	}
 
-	var dexCfg *server.ProxyConfig
-	if *enableDexUserManagement {
-		flag := fs.Lookup("auth-issuer-url")
-		if flag.Value.String() == "" {
-			log.Fatalf("auth-issuer-url is required when using enable-dex-user-management")
-		}
-		if *disableAuth {
-			log.Fatalf("enable-dex-user-management requires authentication enabled")
-		}
-		dexURL := validateURLFlag(fs, "auth-issuer-url")
-		dexURL.Path = "/api"
-		dexCfg = &server.ProxyConfig{
-			Endpoint: dexURL,
-			TLSClientConfig: &tls.Config{
-				RootCAs: certPool,
-			},
-			HeaderBlacklist: []string{"Cookie"},
-			TokenExtractor:  auth.ExtractTokenFromCookie,
-		}
-	}
+	switch *fUserAuth {
+	case "oidc":
+		userAuthOIDCIssuerURL := validateFlagIsURL("user-auth-oidc-client-id", *fUserAuthOIDCIssuerURL)
+		validateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
+		validateFlagNotEmpty("user-auth-oidc-client-secret", *fUserAuthOIDCClientSecret)
 
-	srv := &server.Server{
-		K8sProxyConfig:  kCfg,
-		DexProxyConfig:  dexCfg,
-		TectonicVersion: *tectonicVersion,
-		PublicDir:       *publicDir,
-		KubectlClientID: *kubectlClientID,
-	}
-
-	srv.NewUserAuthCallbackURL = validateURLFlag(fs, "host")
-	srv.NewUserAuthCallbackURL.Path = server.AuthSuccessURL
-
-	authLoginCallbackURL := validateURLFlag(fs, "host")
-	authLoginCallbackURL.Path = server.AuthLoginCallbackEndpoint
-
-	if *disableAuth {
-		log.Warningf("running with AUTHENTICATION DISABLED!")
-	} else {
-		validateFlagNotEmpty(fs, "auth-client-id")
-		validateFlagNotEmpty(fs, "auth-client-secret")
-		dexURL := validateURLFlag(fs, "auth-issuer-url")
+		hostURL := validateFlagIsURL("host", *fHost)
+		hostURL.Path = server.AuthLoginCallbackEndpoint
 
 		httpClient := &http.Client{
 			Transport: &http.Transport{
@@ -203,13 +186,33 @@ func main() {
 		oidcClientConfig := oidc.ClientConfig{
 			HTTPClient: httpClient,
 			Credentials: oidc.ClientCredentials{
-				ID:     *authClientID,
-				Secret: *authClientSecret,
+				ID:     *fUserAuthOIDCClientID,
+				Secret: *fUserAuthOIDCClientSecret,
 			},
-			RedirectURL: authLoginCallbackURL.String(),
+			RedirectURL: hostURL.String(),
 			Scope:       []string{"openid", "email", "profile"},
 		}
-		if *kubectlClientID != "" {
+
+		var err error
+		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, server.AuthErrorURL, server.AuthSuccessURL); err != nil {
+			log.Fatalf("Error initializing OIDC authenticator: %v", err)
+		}
+
+		dexProxyConfigEndpoint := validateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
+		dexProxyConfigEndpoint.Path = "/api"
+
+		srv.DexProxyConfig = &server.ProxyConfig{
+			Endpoint: dexProxyConfigEndpoint,
+			TLSClientConfig: &tls.Config{
+				RootCAs: certPool,
+			},
+			HeaderBlacklist: []string{"Cookie"},
+			TokenExtractor:  auth.ExtractTokenFromCookie,
+		}
+
+		if *fKubectlClientID != "" {
+			srv.KubectlClientID = *fKubectlClientID
+
 			// Assume kubectl is the client ID trusted by kubernetes, not bridge.
 			// These additional flags causes Dex to issue an ID token valid for
 			// both bridge and kubernetes.
@@ -217,8 +220,8 @@ func main() {
 			// For design see: https://github.com/coreos-inc/tectonic/blob/master/docs-internal/tectonic-identity.md
 			oidcClientConfig.Scope = append(
 				oidcClientConfig.Scope,
-				"audience:server:client_id:"+*authClientID,
-				"audience:server:client_id:"+*kubectlClientID,
+				"audience:server:client_id:"+*fUserAuthOIDCClientID,
+				"audience:server:client_id:"+*fKubectlClientID,
 			)
 
 			// Configure an OpenID Connect config for kubectl. This lets us issue
@@ -226,83 +229,116 @@ func main() {
 			kubectlOIDCCientConfig := oidc.ClientConfig{
 				HTTPClient: httpClient,
 				Credentials: oidc.ClientCredentials{
-					ID:     *kubectlClientID,
-					Secret: *kubectlClientSecret,
+					ID:     *fKubectlClientID,
+					Secret: *fKubectlClientSecret,
 				},
 				// The magic "out of band" redirect URL.
 				RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
 				// Request a refresh token with the "offline_access" scope.
 				Scope: []string{"openid", "email", "profile", "offline_access"},
 			}
-			kubectlAuther, err := auth.NewAuthenticator(kubectlOIDCCientConfig, dexURL, server.AuthErrorURL, server.AuthSuccessURL)
-			if err != nil {
-				log.Fatalf("Error initializing authenticator: %v", err)
+
+			var err error
+			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, server.AuthErrorURL, server.AuthSuccessURL); err != nil {
+				log.Fatalf("Error initializing kubectl authenticator: %v", err)
 			}
-			kubectlAuther.Start()
-			srv.KubectlAuther = kubectlAuther
+
 			srv.KubeConfigTmpl = server.NewKubeConfigTmpl(
-				*kubectlClientID,
-				*kubectlClientSecret,
-				k8sURL.String(),
-				dexURL.String(),
+				*fKubectlClientID,
+				*fKubectlClientSecret,
+				srv.K8sProxyConfig.Endpoint.String(),
+				userAuthOIDCIssuerURL.String(),
 				k8sCertPEM,
 				dexCertPEM,
 			)
 		}
-
-		auther, err := auth.NewAuthenticator(oidcClientConfig, dexURL, server.AuthErrorURL, server.AuthSuccessURL)
-		if err != nil {
-			log.Fatalf("Error initializing authenticator: %v", err)
-		}
-		auther.Start()
-		srv.Auther = auther
+	case "disabled":
+		log.Warningf("running with AUTHENTICATION DISABLED!")
+	default:
+		flagFatalf("user-auth", "must be one of: oidc, disabled")
 	}
 
-	lu := validateURLFlag(fs, "listen")
-	switch lu.Scheme {
+	switch *fK8sAuth {
+	case "service-account":
+		validateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
+		srv.K8sProxyConfig.TokenExtractor = server.ConstantTokenExtractor(k8sAuthServiceAccountBearerToken)
+	case "bearer-token":
+		validateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
+		srv.K8sProxyConfig.TokenExtractor = server.ConstantTokenExtractor(*fK8sAuthBearerToken)
+	case "oidc":
+		validateFlagIs("user-auth", *fUserAuth, "oidc")
+		srv.K8sProxyConfig.TokenExtractor = auth.ExtractTokenFromCookie
+	default:
+		flagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc")
+	}
+
+	listenURL := validateFlagIsURL("listen", *fListen)
+	switch listenURL.Scheme {
 	case "http":
 	case "https":
-		if *tlsCertFile == "" || *tlsKeyFile == "" {
-			log.Fatalf("Must provide certificate file and private key file")
-		}
+		validateFlagNotEmpty("tls-cert-file", *fTlSCertFile)
+		validateFlagNotEmpty("tls-key-file", *fTlSKeyFile)
 	default:
-		log.Fatalf("Only 'http' and 'https' schemes are supported")
+		flagFatalf("listen", "scheme must be one of: http, https")
+	}
+
+	srv.NewUserAuthCallbackURL = validateFlagIsURL("host", *fHost)
+	srv.NewUserAuthCallbackURL.Path = server.AuthSuccessURL
+
+	if srv.Auther != nil {
+		srv.Auther.Start()
+	}
+
+	if srv.KubectlAuther != nil {
+		srv.KubectlAuther.Start()
 	}
 
 	httpsrv := &http.Server{
-		Addr:    lu.Host,
+		Addr:    listenURL.Host,
 		Handler: srv.HTTPHandler(),
 	}
 
 	log.Infof("Binding to %s...", httpsrv.Addr)
-	if lu.Scheme == "https" {
+	if listenURL.Scheme == "https" {
 		log.Info("using TLS")
-		log.Fatal(httpsrv.ListenAndServeTLS(*tlsCertFile, *tlsKeyFile))
+		log.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
 	} else {
 		log.Info("not using TLS")
 		log.Fatal(httpsrv.ListenAndServe())
 	}
 }
 
-func validateURLFlag(fs *flag.FlagSet, name string) *url.URL {
-	validateFlagNotEmpty(fs, name)
-	flag := fs.Lookup(name)
-	ur, err := url.Parse(flag.Value.String())
+func validateFlagIsURL(name string, value string) *url.URL {
+	validateFlagNotEmpty(name, value)
+
+	ur, err := url.Parse(value)
 	if err != nil {
-		log.Fatalf("Invalid flag: %s, error: %v", flag.Name, err)
+		flagFatalf(name, "%v", err)
 	}
-	if ur == nil || ur.String() == "" {
-		log.Fatalf("Missing required flag: %s", flag.Name)
+
+	if ur == nil || ur.String() == "" || ur.Scheme == "" || ur.Host == "" {
+		flagFatalf(name, "malformed URL")
 	}
-	if ur.Scheme == "" || ur.Host == "" {
-		log.Fatalf("Invalid flag: %s, error: malformed URL", flag.Name)
-	}
+
 	return ur
 }
 
-func validateFlagNotEmpty(fs *flag.FlagSet, name string) {
-	flag := fs.Lookup(name)
-	if flag.Value.String() == "" {
-		log.Fatalf("Missing required flag: %s", flag.Name)
+func validateFlagNotEmpty(name string, value string) string {
+	if value == "" {
+		flagFatalf(name, "value is required")
 	}
+
+	return value
+}
+
+func validateFlagIs(name string, value string, expectedValue string) string {
+	if value != expectedValue {
+		flagFatalf(name, "value must be %s, not %s", expectedValue, value)
+	}
+
+	return value
+}
+
+func flagFatalf(name string, format string, a ...interface{}) {
+	log.Fatalf("Invalid flag: %s, error: %s", name, fmt.Sprintf(format, a...))
 }

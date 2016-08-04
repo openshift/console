@@ -13,14 +13,13 @@
 # bridge command line arguments - in fact. to get more information
 # about any of them, you can run ./bin/bridge --help
 
-export BRIDGE_ENABLE_DEX_USER_MANAGEMENT=false
-export BRIDGE_DISABLE_AUTH=true
 export BRIDGE_HOST="http://127.0.0.1:9000"
-export BRIDGE_INSECURE_SKIP_VERIFY_K8S_TLS=true
 
-export BRIDGE_K8S_ENDPOINT=$(kubectl config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], clusters: .clusters[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.cluster ==  .clusters.name)' | jq '.clusters.cluster.server' -r)
+export BRIDGE_USER_AUTH="disabled"
 
-# This is a workaround for a bug in bridge, that requires an explicit
-# port for https rather than using the default.
-export BRIDGE_K8S_ENDPOINT=$BRIDGE_K8S_ENDPOINT:443
-export BRIDGE_K8S_BEARER_TOKEN=$(kubectl get secrets -o json | jq '.items[].data | select(has("token")) | .token' -r | base64 --decode)
+export BRIDGE_K8S_MODE="off-cluster"
+export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(kubectl config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], clusters: .clusters[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.cluster ==  .clusters.name)' | jq '.clusters.cluster.server' -r)
+export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
+
+export BRIDGE_K8S_AUTH="bearer-token"
+export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secrets -o json | jq '.items[].data | select(has("token")) | .token' -r | base64 --decode)
