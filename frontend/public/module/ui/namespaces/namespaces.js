@@ -3,7 +3,7 @@
 const TEMPLATE = `
 <div id="co-namespace-selector" >
   Namespace:
-  <co-dropdown title="'all'" items="items" selected="passByRef.namespace" nobutton="true" class="co-namespace-selector__dropdown">
+  <co-dropdown title="title" selected="activeNamespace" items="availableNamespaces" nobutton="true" class="co-namespace-selector__dropdown">
   </co-dropdown>
 
   <div ng-if="canLogin" class="pull-right" ng-click="logout()" id="logout">
@@ -19,9 +19,11 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     controller: function ($scope) {
-      $scope.passByRef = {namespace: ''};
+      $scope.activeNamespace     = activeNamespaceSvc.getActiveNamespace();
+      $scope.title               = coerceTitle($scope.activeNamespace);
+      $scope.availableNamespaces = coerceNamespaces();
+      $scope.canLogin            = !featuresSvc.isAuthDisabled
 
-      $scope.canLogin = !featuresSvc.isAuthDisabled
       $scope.logout = e => {
         if ($scope.canLogin) {
           authSvc.logout();
@@ -29,24 +31,39 @@ angular.module('bridge.ui')
         e.preventDefault();
       };
 
-      $scope.$watch('passByRef', selected => {
-        const namespace = selected && selected.namespace;
-        activeNamespaceSvc.setActiveNamespace(namespace);
-      }, true);
+      $scope.$watch('activeNamespace', activeNamespace => {
+        activeNamespaceSvc.setActiveNamespace(activeNamespace);
+        $scope.title = coerceTitle(activeNamespace);
+      });
 
-      const namespaces = k8s.namespaces;
-      new Firehose(namespaces)
+      new Firehose(k8s.namespaces)
         .watchList()
         .bindScope($scope, null, state => {
-          const items = {all: ''};
-          state.namespaces && state.namespaces.forEach(n => {
-            const {name} = n.metadata;
-            items[name] = name;
-          });
-          $scope.items = items;
-          $scope.loadError = state.loadError;
+          $scope.availableNamespaces = coerceNamespaces(state && state.namespaces);
+          $scope.loadError           = state.loadError;
+        })
+      ;
+
+      function coerceTitle(namespace) {
+        return namespace || 'all';
+      }
+
+      function coerceNamespaces(namespaces) {
+        const coersedNamespaces = {all: undefined};
+
+        // make sure active namespace is always available
+        // until we finally get actual data from service
+        if ($scope.activeNamespace) {
+          coersedNamespaces[$scope.activeNamespace] = $scope.activeNamespace;
+        }
+
+        (namespaces || []).forEach(n => {
+          const {name} = n.metadata;
+          coersedNamespaces[name] = name;
         });
 
+        return coersedNamespaces;
+      }
     }
   };
 });
