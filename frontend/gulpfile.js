@@ -81,7 +81,7 @@ gulp.task('js-deps', ['js-build'], () => {
 
 
 // Compile all the js source code.
-gulp.task('js-build', ['templates'], function() {
+gulp.task('js-build', ['templates'], () => {
   return jsBuild(false)
     .bundle()
     // .pipe(rename({ suffix: '.min' }))
@@ -113,8 +113,8 @@ gulp.task('browserify', () => {
   return bundler();
 });
 
-gulp.task('sha', function(cb) {
-  exec('git rev-parse HEAD', function(err, stdout) {
+gulp.task('sha', (cb) => {
+  exec('git rev-parse HEAD', (err, stdout) => {
     if (err) {
       // eslint-disable-next-line no-console
       console.log('Error retrieving git SHA.');
@@ -129,11 +129,11 @@ gulp.task('sha', function(cb) {
 });
 
 // Delete ALL generated files.
-gulp.task('clean', function () {
+gulp.task('clean', () => {
   return del(distDir);
 });
 
-gulp.task('clean-package', function () {
+gulp.task('clean-package', () => {
   return del([
     distDir + '/style.css',
     distDir + '/app.min.js',
@@ -142,7 +142,7 @@ gulp.task('clean-package', function () {
   ]);
 });
 
-gulp.task('sass', function () {
+gulp.task('sass', () => {
   return gulp.src('./public/style.scss')
     .pipe(sass({
       includePaths: ['./public/lib/coreos-web/sass']
@@ -150,7 +150,7 @@ gulp.task('sass', function () {
     .pipe(gulp.dest('./public/dist'));
 });
 
-gulp.task('lint', function() {
+gulp.task('lint', () => {
   return gulp.src(lintableSrc)
     .pipe(eslint({ useEslintrc: true }))
     .pipe(eslint.format())
@@ -158,51 +158,51 @@ gulp.task('lint', function() {
 });
 
 // Precompile html templates.
-gulp.task('templates', function() {
+gulp.task('templates', () => {
   return gulp.src(templateSrc)
     .pipe(templateCache({ standalone: true, root: '/static/' }))
     .pipe(gulp.dest(distDir));
 });
 
 // Copy any static assets.
-gulp.task('assets', function() {
+gulp.task('assets', () => {
   return gulp.src('public/imgs/*')
     .pipe(gulp.dest(distDir + '/imgs'));
 });
 
 // Copy all deps to dist folder for packaging.
-gulp.task('copy-deps', function() {
+gulp.task('copy-deps', () => {
   return gulp.src('./public/lib/**/*')
     .pipe(gulp.dest(distDir + '/lib'));
 });
 
 // Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], function () {
+gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], () => {
   // NOTE: File Order Matters.
   return gulp.src([
     distDir + '/deps.js',
     distDir + '/app-bundle.min.js'
   ])
-  .pipe(concat('build.' + CURRENT_SHA + '.min.js'))
+  .pipe(concat(`build.${CURRENT_SHA}.min.js`))
   .pipe(gulp.dest(distDir));
 });
 
 // Minify app css.
-gulp.task('css-build', ['sass'], function () {
+gulp.task('css-build', ['sass'], () => {
   return gulp.src(['public/dist/style.css'])
     .pipe(concat('public/dist/deps.css'))
     .pipe(rename('app-bundle.css'))
     .pipe(gulp.dest(distDir));
 });
 
-gulp.task('css-sha', ['css-build', 'sha'], function () {
+gulp.task('css-sha', ['css-build', 'sha'], () => {
   return gulp.src(distDir + '/app-bundle.css')
-    .pipe(rename('build.' + CURRENT_SHA + '.css'))
+    .pipe(rename(`build.${CURRENT_SHA}.css`))
     .pipe(gulp.dest(distDir));
 });
 
 // Replace code blocks in html with build versions.
-gulp.task('html', ['sha'], function() {
+gulp.task('html', ['sha'], () => {
   return gulp.src('./public/index.html')
     .pipe(htmlReplace({
       'js':  '/static/build.' + CURRENT_SHA + '.min.js',
@@ -215,7 +215,7 @@ gulp.task('html', ['sha'], function() {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['css-build', 'templates', 'browserify'], function() {
+gulp.task('dev', ['css-build', 'templates', 'browserify'], () => {
   gulp.watch(templateSrc, ['templates']);
   gulp.start('browserify');
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
@@ -224,14 +224,14 @@ gulp.task('dev', ['css-build', 'templates', 'browserify'], function() {
 /**
  * Karma test
  */
-gulp.task('test', ['lint', 'js-build', 'js-deps'], function (cb) {
+gulp.task('test', ['lint', 'js-build', 'js-deps'], (cb) => {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
   }, cb);
 });
 
-gulp.task('default', function(cb) {
+gulp.task('default', (cb) => {
   // Run in order.
   runSequence(
     ['clean', 'lint'],
