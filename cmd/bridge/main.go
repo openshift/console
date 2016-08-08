@@ -56,11 +56,6 @@ func main() {
 	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
 
-	srv := &server.Server{
-		PublicDir:       *fPublicDir,
-		TectonicVersion: *fTectonicVersion,
-	}
-
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -69,6 +64,11 @@ func main() {
 	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
+	}
+
+	srv := &server.Server{
+		PublicDir:       *fPublicDir,
+		TectonicVersion: *fTectonicVersion,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
