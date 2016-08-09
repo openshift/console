@@ -61,13 +61,13 @@
             </ul>
           </div>
 
-          <div class="navigation-container__section" ng-if="$root.user">
+          <div class="navigation-container__section" ng-if="$root.user" ng-cloak>
             <div class="navigation-container__section__title" ng-click="kubernetesIsCollapsed = !kubernetesIsCollapsed">
               <i class="fa fa-user navigation-container__section__title__icon"></i>
               {{ $root.user.name || $root.user.email }}
             </div>
             <ul id="account-nav" class="navigation-container__list">
-              <co-navbar-link ng-cloak href="/settings/profile">My Account</co-navbar-link>
+              <co-navbar-link href="/settings/profile">My Account</co-navbar-link>
             </ul>
           </div>
         </div>
