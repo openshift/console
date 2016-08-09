@@ -29,7 +29,9 @@ const (
 	AuthLogoutEndpoint        = "/auth/logout"
 	AuthLoginCallbackEndpoint = "/auth/callback"
 	AuthErrorURL              = "/error"
-	AuthSuccessURL            = "/"
+	// AuthSuccessURL is a URL with no path to match the redirect URL registered
+	// with Dex. See #728
+	AuthSuccessURL = ""
 )
 
 var (
