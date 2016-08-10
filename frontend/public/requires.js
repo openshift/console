@@ -1,3 +1,4 @@
+require('react');
 window.lodash = require('lodash');
 window.md5 = require('blueimp-md5');
 window.$ = window.jQuery = require('jquery');
@@ -11,3 +12,4 @@ require('angular-ui-bootstrap');
 require('angular-cookies');
 require('angular-sanitize');
 require('ng-tags-input');
+require('ngreact');

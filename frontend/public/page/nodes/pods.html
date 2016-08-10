@@ -5,20 +5,9 @@
       <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Nodes</a>
   </tec-nav-title>
 
-  <div class="co-m-pane co-m-vert-nav">
+  <div class="co-m-vert-nav">
     <co-node-nav name="nodeName"></co-node-nav>
-    <div class="co-m-vert-nav__body">
-      <div class="co-m-pane__heading">
-        <div class="row">
-          <div class="col-xs-12">
-            <input ng-model="podSearch.metadata.name" type="text" class="form-control text-filter pull-right" placeholder="Filter pods by name...">
-          </div>
-        </div>
-      </div>
-      <div class="co-m-pane__body">
-        <co-pod-list field-selector="fieldSelector" search="podSearch" error="loadError"></co-pod-list>
-      </div>
-    </div>
   </div>
 
+  <reactive-k8s-list kind="'pods'" field-selector="fieldSelector" />
 </div>

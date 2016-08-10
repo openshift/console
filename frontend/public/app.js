@@ -5,9 +5,12 @@ import thunk from 'redux-thunk';
 import k8sReducers from './module/k8s/k8s-reducers';
 import { combineReducers } from 'redux';
 
+import './components/react-wrapper';
+
 // The main app module.
 angular.module('bridge', [
   // angular deps
+  'react',
   'ngRoute',
   'ngAnimate',
   'ngSanitize',
@@ -28,6 +31,7 @@ angular.module('bridge', [
   'bridge.service',
   'bridge.ui',
   'bridge.page',
+  'bridge.react-wrapper',
   'core.pkg',
   'heapster',
 ])
@@ -39,6 +43,7 @@ angular.module('bridge', [
   const reducers = combineReducers({
     k8s: k8sReducers,
   });
+
   $ngReduxProvider.createStoreWith(reducers, [thunk]);
 
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
@@ -377,13 +382,14 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featuresSvc, dex) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featuresSvc, dex, angularBridge) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = flagSvc.all();
   $rootScope.debug = debugSvc;
   $rootScope.FEATURE_FLAGS = featuresSvc;
+  angularBridge.expose();
   k8s.featureDetection();
   dex.featureDetection();
 

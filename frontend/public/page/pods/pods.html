@@ -1,30 +1,4 @@
 <div class="co-p-pods">
   <tec-nav-title title="Pods" plural="true"></tec-nav-title>
-
-  <div class="co-m-pane">
-    <div class="co-m-pane__heading">
-      <div class="row">
-        <div class="col-xs-3">
-          <a ng-href="/ns/{{ns || defaultNS}}/pods/new" class="co-m-primary-action">
-            <button class="btn btn-primary">
-              Create Pod
-            </button>
-          </a>
-        </div>
-        <div class="col-xs-9">
-          <input ng-model="podSearch.metadata.name" type="text" class="form-control pull-right text-filter" placeholder="Filter pods by name..." />
-          <co-dropdown title="'Pod Status'" selected="facetFilter.phase" items="{'All Statuses': '', 'Pending': 'Pending', 'Running': 'Running', 'Terminating': 'Terminating'}" class="pull-right">
-          </co-dropdown>
-        </div>
-      </div>
-    </div>
-    <div class="co-m-pane__body">
-      <div class="row">
-        <div class="col-xs-12">
-          <co-debug obj="facetFilter"></co-debug>
-          <co-pod-list filter="facetFilter" search="podSearch" namespace="ns" load-error="podLoadError"></co-pod-list>
-        </div>
-      </div>
-    </div>
-  </div>
+  <reactive-k8s-list kind="'pods'" can-create="true" />
 </div>

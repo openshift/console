@@ -1,15 +1,13 @@
-
 /**
  * @fileoverview
  * List out pods in a table-like view.
  */
 
 angular.module('bridge.ui')
-.directive('coPodList', function (k8s) {
+.directive('coPodList', function () {
   'use strict';
-
   return {
-    templateUrl: '/static/module/ui/resources/pod-list.html',
+    template: '<react-component name="{{name}}" props="props" />',
     restrict: 'E',
     replace: true,
     scope: {
@@ -18,23 +16,24 @@ angular.module('bridge.ui')
       // label selector to filter by. optional unless selector-required=true
       selector: '=',
       // optional search filter
-      searchFilter: '=search',
+      search: '=',
       // field filters to apply to pod list
-      podsFilterQuery: '=filter',
+      filter: '=',
       // force error
       error: '=',
       // filter pod list by an api field selector
       fieldSelector: '=',
     },
-    controller: function($scope, Firehose) {
-      if ($scope.error) {
-        $scope.loadError = $scope.error;
-        return;
-      }
-
-      new Firehose(k8s.pods, $scope.namespace, $scope.selector, $scope.fieldSelector)
-        .watchList()
-        .bindScope($scope);
+    controller: function($scope) {
+      $scope.name = 'podsList';
+      $scope.props = {
+        namespace: $scope.namespace,
+        selector: $scope.selector,
+        search: $scope.search,
+        filter: $scope.filter,
+        error: $scope.error,
+        fieldSelector: $scope.fieldSelector
+      };
     }
   };
 });

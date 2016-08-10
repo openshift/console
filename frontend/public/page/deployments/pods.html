@@ -5,21 +5,9 @@
     </a>
   </tec-nav-title>
 
-  <div class="co-m-pane co-m-vert-nav">
+  <div class="co-m-vert-nav">
     <co-deployment-nav ns="ns" name="deploymentName"></co-deployment-nav>
-
-    <div class="co-m-vert-nav__body">
-      <div class="co-m-pane__heading">
-        <div class="row">
-          <div class="col-xs-12">
-            <input ng-model="podSearch.metadata.name" type="text" class="form-control text-filter pull-right" placeholder="Filter pods by name...">
-          </div>
-        </div>
-      </div>
-
-      <div class="co-m-pane__body">
-        <co-pod-list ng-if="!!deployment" error="loadError" search="podSearch" namespace="ns" selector-required="true" selector="deployment.spec.selector"></co-pod-list>
-      </div>
-    </div>
   </div>
+
+  <reactive-k8s-list kind="'pods'" ng-if="!!deployment" selector="deployment.spec.selector" />
 </div>

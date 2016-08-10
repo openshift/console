@@ -23,6 +23,10 @@ angular.module('bridge.service')
       return this;
     };
 
+    unwatchList () {
+      dispatch(actions.removeList(this.id));
+    };
+
     bindScope ($scope, name='', onStateChange=null) {
       name = name || this.k8sType.kind.plural;
       $scope[name] = null;
@@ -41,29 +45,18 @@ angular.module('bridge.service')
     };
 
     watch_ ($scope, name, onStateChange=null) {
-      let nextHash = 0;
-      let previousHash = 0;
-
       onStateChange = onStateChange || ((state) => _.extend($scope, state));
-
+      const {id} = this;
       return $ngRedux.connect(state => {
-        const objects = state.k8s.getIn([this.id, 'objects']);
+        const loaded = state.k8s.getIn([id, 'loaded']);
+        const loadError = state.k8s.getIn([id, 'loadError']);
+        const objects = state.k8s.getIn([id, 'objects']);
+
         return {
-          [name]: objects && objects.toArray().map(p => {
-            const json = p.toJSON()
-            nextHash += parseInt(json.metadata.resourceVersion, 10) + parseInt(json.metadata.uid, 10);
-            return json;
-          }),
-          loadError: state.k8s.getIn([this.id, 'loadError']),
+          loadError, loaded,
+          [name]: objects && objects.toArray().map(p => p.toJSON()),
         };
       })(state => {
-        if (previousHash === nextHash) {
-          return;
-        }
-        // eslint-disable-next-line no-console
-        console.info(`updated ${name} (${_.size(state[name])})`);
-        previousHash = nextHash;
-        nextHash = 0;
         return onStateChange(state);
       });
     };

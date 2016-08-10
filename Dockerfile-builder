@@ -11,7 +11,7 @@ RUN go get -u github.com/golang/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and NPM
-ENV NODE_VERSION="v4.4.5"
+ENV NODE_VERSION="v6.3.1"
 
 # npm needs a home writable by any user running the container
 ENV HOME /opt/home
