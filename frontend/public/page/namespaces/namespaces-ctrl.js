@@ -9,17 +9,7 @@ angular.module('bridge.page')
   // /paths, and we manually watch the $routeParams to update if needed.
 
   function whichNamespace() {
-    var active;
-    if ($routeParams.name) {
-      return $routeParams.name;
-    }
-
-    active = activeNamespaceSvc.getActiveNamespace();
-    if (active) {
-      return active.metadata.name;
-    }
-
-    return null;
+    return $routeParams.name || activeNamespaceSvc.getActiveNamespace();
   }
 
   function loadNamespace() {

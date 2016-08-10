@@ -45,7 +45,7 @@ describe('bridge.service.activeNamespaceSvc', function() {
       activeNamespaceSvc.setActiveNamespace(expected);
       expect(setPath).toEqual('*UNSET*');
 
-      expect(activeNamespaceSvc.getActiveNamespace().metadata.name).toEqual(expected);
+      expect(activeNamespaceSvc.getActiveNamespace()).toEqual(expected);
       expect(localStorage.getItem('activeNamespace')).toEqual(expected);
       expect(!_.isUndefined(activeNamespaceSvc.getActiveNamespace())).toBe(true);
     });
@@ -67,6 +67,7 @@ describe('bridge.service.activeNamespaceSvc', function() {
 
     it('should redirect namespaced location paths to their prefixes', function() {
       mockPath = '/ns/floorwax/pods/new-shimmer';
+      activeNamespaceSvc.setActiveNamespace(); // reset active namespace
       activeNamespaceSvc.setActiveNamespace('dessert-topping');
       expect(setPath).toEqual('/ns/dessert-topping/pods');
     });

@@ -30,7 +30,7 @@ angular.module('bridge.service')
     prefixes = [];
   };
 
-  this.$get = function(_, $location, coLocalStorage, namespaceCacheSvc) {
+  this.$get = function(_, $location, coLocalStorage) {
     var activeNamespace = coLocalStorage.getItem('activeNamespace') || undefined;
     var prefixOf = function(s) {
       var ret = _.find(prefixes, function(prefix) {
@@ -50,30 +50,34 @@ angular.module('bridge.service')
     };
 
     return {
-      setActiveNamespace: function(namespaceName) {
-        var oldPath;
+      setActiveNamespace: function(newActiveNamespace) {
+        // make it noop when new active namespace is the same
+        // otherwise users will get page refresh and cry about
+        // broken direct links and bookmarks
+        if (newActiveNamespace === activeNamespace) {
+          return;
+        }
 
-        if (!namespaceName) {
+        if (!newActiveNamespace) {
           activeNamespace = undefined;
           coLocalStorage.removeItem('activeNamespace');
         } else {
-          activeNamespace = namespaceName.trim();
+          activeNamespace = newActiveNamespace.trim();
           coLocalStorage.setItem('activeNamespace', activeNamespace);
         }
 
-        oldPath = $location.path();
+        const oldPath = $location.path();
         if (isNamespaced(oldPath)) {
           $location.path(this.formatNamespaceRoute(oldPath));
         }
       },
 
       getActiveNamespace: function() {
-        return namespaceCacheSvc.get(activeNamespace);
+        return activeNamespace;
       },
 
-      isNamespaceActive: function(namespaceName) {
-        var isAllActive = !namespaceName && !activeNamespace; // falsy namespace name means virtual "all" namespace
-        return isAllActive || (activeNamespace === namespaceName);
+      isNamespaceActive: function(namespace) {
+        return activeNamespace === namespace;
       },
 
       formatNamespaceRoute: function(originalPath) {
@@ -93,7 +97,7 @@ angular.module('bridge.service')
         if (!active) {
           namespacePrefix = '/all-namespaces/';
         } else {
-          namespacePrefix = '/ns/' + active.metadata.name + '/';
+          namespacePrefix = '/ns/' + active + '/';
         }
 
         return namespacePrefix + resource;
