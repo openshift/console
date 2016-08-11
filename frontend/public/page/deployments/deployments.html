@@ -1,24 +1,4 @@
 <div class="co-p-deployments">
   <tec-nav-title title="Deployments" plural='true'></tec-nav-title>
-
-  <div class="co-m-pane">
-    <div class="co-m-pane__heading">
-      <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-          <a href="/ns/{{ns || defaultNS}}/deployments/new" class="co-m-primary-action">
-            <button class="btn btn-primary">
-              Create Deployment
-            </button>
-          </a>
-        </div>
-        <div class="col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-6">
-          <input ng-model="deploymentSearch.metadata.name" type="text" class="form-control" placeholder="Filter deployments by name..." />
-        </div>
-      </div>
-    </div>
-
-    <div class="co-m-pane__body">
-      <co-deployment-list load="'true'" namespace="ns" search="deploymentSearch"></co-deployment-list>
-    </div>
-  </div>
+  <reactive-k8s-list component="'DeploymentsPage'" can-create="true" />
 </div>

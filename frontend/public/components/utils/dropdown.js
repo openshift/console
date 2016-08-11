@@ -1,10 +1,8 @@
 import React from 'react';
-import classNames from 'classnames';
 
 export class DropdownMixin extends React.Component {
   constructor(props) {
     super(props);
-    this.props = props;
     this.listener = this._onWindowClick.bind(this);
     this.state = {
       title: props.title,
@@ -32,8 +30,8 @@ export class DropdownMixin extends React.Component {
     window.removeEventListener('click', this.listener);
   }
 
-  onClick_ (name, event) {
-    event.preventDefault();
+  onClick_ (name, e) {
+    e.stopPropagation();
 
     const {onChange} = this.props;
     if (onChange) {
@@ -43,11 +41,18 @@ export class DropdownMixin extends React.Component {
     this.setState({active: false, title: name});
   }
 
-  show () {
+  toggle (e) {
+    e && e.stopPropagation();
+    this.setState({active: !this.state.active});
+  }
+
+  show (e) {
+    e && e.stopPropagation();
     this.setState({active: true});
   }
 
-  hide () {
+  hide (e) {
+    e && e.stopPropagation();
     this.setState({active: false});
   }
 }
@@ -57,13 +62,13 @@ export default class Dropdown extends DropdownMixin {
     const {title} = this.state;
     const {nobutton, items, className} = this.props;
 
-    let button = <button onClick={this.show.bind(this)} type="button" className="btn btn--dropdown">
+    let button = <button onClick={this.toggle.bind(this)} type="button" className="btn btn--dropdown">
       {title}&nbsp;&nbsp;
       <span className="caret"> </span>
     </button>;
 
     if (nobutton) {
-      button = <span onClick={this.show.bind(this)} className="dropdown__not-btn">{title}&nbsp;&nbsp;<span className="caret"></span></span>;
+      button = <span onClick={this.toggle.bind(this)} className="dropdown__not-btn">{title}&nbsp;&nbsp;<span className="caret"></span></span>;
     }
 
     const children = _.map(items, (value, name) => {

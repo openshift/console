@@ -10,6 +10,6 @@
     <co-service-nav ns="ns" name="serviceName"></co-service-nav>
   </div>
 
-  <reactive-k8s-list ng-if="!!service" kind="'pods'" selector="service.spec.selector"/>
+  <reactive-k8s-list ng-if="!!service" component="'PodsPage'" selector="service.spec.selector"/>
 
 </div>

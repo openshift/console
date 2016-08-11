@@ -4,23 +4,36 @@
  */
 
 angular.module('bridge.ui')
-.directive('coDeploymentList', function() {
+.directive('coDeploymentList', function () {
   'use strict';
-
   return {
-    templateUrl: '/static/module/ui/resources/deployment-list.html',
+    template: '<react-component name="{{name}}" props="props" />',
     restrict: 'E',
     replace: true,
     scope: {
+      // (optional) namespace to load pods from
       namespace: '=',
-      search: '=',
+      // label selector to filter by. optional unless selector-required=true
       selector: '=',
-      load: '=',
+      // optional search filter
+      search: '=',
+      // field filters to apply to pod list
+      filter: '=',
+      // force error
+      error: '=',
+      // filter pod list by an api field selector
+      fieldSelector: '=',
     },
-    controller: function($scope, k8s, Firehose) {
-      new Firehose(k8s.deployments, $scope.namespace, $scope.selector)
-        .watchList()
-        .bindScope($scope);
+    controller: function($scope) {
+      $scope.name = 'Deployments';
+      $scope.props = {
+        namespace: $scope.namespace,
+        selector: $scope.selector,
+        search: $scope.search,
+        filter: $scope.filter,
+        error: $scope.error,
+        fieldSelector: $scope.fieldSelector
+      };
     }
   };
 });

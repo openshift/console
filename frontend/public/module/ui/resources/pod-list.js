@@ -25,7 +25,7 @@ angular.module('bridge.ui')
       fieldSelector: '=',
     },
     controller: function($scope) {
-      $scope.name = 'podsList';
+      $scope.name = 'Pods';
       $scope.props = {
         namespace: $scope.namespace,
         selector: $scope.selector,

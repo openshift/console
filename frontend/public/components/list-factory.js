@@ -2,8 +2,9 @@ import React from 'react';
 import fuzzy from 'fuzzysearch';
 
 import actions from '../module/k8s/k8s-actions';
-import {angulars, withStoreAndHose, register} from './react-wrapper';
 import {podPhase} from '../module/filter/pods';
+
+import {angulars, withStoreAndHose, register} from './react-wrapper';
 
 const StatusBox = ({children}) => <div className="cos-status-box"> {children} </div>
 
@@ -29,8 +30,8 @@ const Loading = () => <StatusBox>
 </StatusBox>
 
 const filters = {
-  name: (filter, obj) => fuzzy(filter, obj.metadata.name),
-  podStatus: (phase, pod) => !phase ? true : (pod.status.phase === phase || podPhase(pod) === phase),
+  'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
+  'pod-status': (phase, pod) => !phase ? true : (pod.status.phase === phase || podPhase(pod) === phase),
 }
 
 const filter = (_filters, objects) => {

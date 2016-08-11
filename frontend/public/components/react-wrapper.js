@@ -5,6 +5,8 @@ export const angulars = {
   store: null,
   Firehose: null,
   k8s: null,
+  kinds: null,
+  resourceMgrSvc: null,
   ModalLauncherSvc: null,
   $location: null,
 };
@@ -36,7 +38,7 @@ export const register = (name, Component) => {
   app.value(name, Component);
 };
 
-app.service('angularBridge', function ($ngRedux, Firehose, k8s, ModalLauncherSvc, $location) {
+app.service('angularBridge', function ($ngRedux, $location, Firehose, k8s, ModalLauncherSvc, resourceMgrSvc) {
   // "Export" angular modules to the outside world via ref through 'angulars'...
   // NOTE: this only exist after the app has loaded!
 
@@ -45,26 +47,31 @@ app.service('angularBridge', function ($ngRedux, Firehose, k8s, ModalLauncherSvc
     angulars.Firehose = Firehose;
     angulars.k8s = k8s;
     angulars.ModalLauncherSvc = ModalLauncherSvc;
+    angulars.modal = (...args) => () => ModalLauncherSvc.open(...args),
     angulars.$location = $location;
+    angulars.kinds = k8s.enum.Kind;
+    angulars.resourceMgrSvc = resourceMgrSvc;
   }
 });
 
 // see https://github.com/ngReact/ngReact#the-react-component-directive
 app.directive('reactiveK8sList', function () {
   return {
-    template: '<react-component name="ListPage" props="props"> </react-component>',
+    template: '<react-component name="{{component}}" props="props"> </react-component>',
     restrict: 'E',
     scope: {
       kind: '=',
+      // A React Component that has been registered with angular
+      component: '=',
       canCreate: '=',
       selector: '=',
       fieldSelector: '=',
     },
     controller: function ($routeParams, $scope, k8s) {
-      const { kind, canCreate, selector, fieldSelector} = $scope;
+      const { kind, canCreate, selector, fieldSelector, component } = $scope;
 
       $scope.props = {
-        kind, canCreate, selector, fieldSelector,
+        kind, canCreate, selector, fieldSelector, component,
         namespace: $routeParams.ns,
         defaultNS: k8s.enum.DefaultNS,
       };

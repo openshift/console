@@ -1,7 +1,6 @@
 angular.module('bridge.page')
-.controller('DeploymentsCtrl', function($scope, $routeParams, k8s) {
+.controller('DeploymentsCtrl', function($scope, k8s) {
   'use strict';
 
-  $scope.defaultNS = k8s.enum.DefaultNS;
-  $scope.ns = $routeParams.ns;
+  $scope.kind = k8s.enum.Kind.DEPLOYMENT;
 });
