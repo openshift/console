@@ -60,6 +60,7 @@ function jsBuild (debug) {
       isExternal && externals.push(file);
       return !isExternal;
     },
+    extensions: ['.js', '.jsx'],
   };
   if (debug) {
     opts.plugin = [watchify];
