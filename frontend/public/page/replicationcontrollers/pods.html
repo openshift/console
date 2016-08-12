@@ -10,5 +10,5 @@
     <co-replicationcontroller-nav ns="ns" name="rcName"></co-replicationcontroller-nav>
   </div>
 
-  <reactive-k8s-list ng-if="!!rc" kind="'pods'" selector="rc.spec.selector"/>
+  <reactive-k8s-list ng-if="!!rc" component="'PodsPage'" selector="rc.spec.selector"/>
 </div>

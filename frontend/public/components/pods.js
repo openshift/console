@@ -1,33 +1,17 @@
 import React from 'react';
-import {angulars, register, withStoreAndHose} from './react-wrapper';
-import createComponent from './k8s-list-factory';
+
+import {angulars} from './react-wrapper';
 import {podPhase} from '../module/filter/pods';
-import Cog from './cog';
-import LabelList from './label-list';
-import ResourceIcon from './resource-icon';
+
+import createListComponent from './list-factory';
+import createPageComponent from './page-factory';
+
+import {Cog, LabelList, ResourceIcon} from './utils'
 
 const PodCog = ({pod}) => {
-  const {k8s, ModalLauncherSvc} = angulars;
-
-  const options = [
-    {
-      label: 'Modify Labels...',
-      callback: ModalLauncherSvc.open.bind(null, 'configure-labels', {
-        kind: k8s.enum.Kind.POD,
-        resource: () => pod,
-      }),
-    },
-    {
-      label: 'Delete Pod...',
-      callback: ModalLauncherSvc.open.bind(null, 'confirm', {
-        title: 'Delete Pod',
-        message: `Are you sure you want to delete ${pod.metadata.name}?`,
-        btnText: 'Delete Pod',
-        executeFn: () => () => angulars.k8s.pods.delete(pod),
-      }),
-    }
-  ];
-  return <div className="co-m-cog-wrapper"><Cog options={options} size="small" anchor="left"></Cog></div>;
+  const kind = angulars.kinds.POD;
+  const {factory: {ModifyLabels, Delete}} = Cog;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left"></Cog>;
 }
 
 const PodRow = (p) => <div className="row co-resource-list__item">
@@ -54,6 +38,20 @@ const PodHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Node</div>
 </div>;
 
-const PodList = createComponent('podsList', 'pods', PodHeader, PodRow);
+const PodList = createListComponent('Pods', 'pods', PodHeader, PodRow);
 
-export {PodRow, PodHeader, PodList};
+const dropdownFilters = [{
+  type: 'pod-status',
+  title: 'Pod Status',
+  items: {
+    'All Statuses': '',
+    'Pending': 'Pending',
+    'Running': 'Running',
+    'Terminating': 'Terminating',
+  },
+}];
+
+const PodsPage = createPageComponent('PodsPage', 'POD', PodList, dropdownFilters);
+
+export {PodRow, PodHeader, PodList, PodsPage};
+

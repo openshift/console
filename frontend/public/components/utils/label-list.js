@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import {angulars} from './react-wrapper';
+import {angulars} from '../react-wrapper';
 
 const Label = ({kind, name, value, expand}) => {
   const labelObj = {[name]: value};

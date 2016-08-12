@@ -1,5 +1,5 @@
-import {angulars} from './react-wrapper';
-import iconLabel from '../module/ui/icons/resource-icon';
+import {angulars} from '../react-wrapper';
+import iconLabel from '../../module/ui/icons/resource-icon';
 import React from 'react';
 
 export default ({kind}) => {

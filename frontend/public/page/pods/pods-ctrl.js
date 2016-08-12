@@ -1,10 +1,5 @@
 angular.module('bridge.page')
-.controller('PodsCtrl', function($scope, $routeParams, k8s) {
+.controller('PodsCtrl', function($scope, k8s) {
   'use strict';
-
-  $scope.props = {
-    namespace: $routeParams.ns,
-    defaultNS: k8s.enum.DefaultNS,
-    kind: 'pods',
-  };
+  $scope.kind = k8s.enum.Kind.POD;
 });

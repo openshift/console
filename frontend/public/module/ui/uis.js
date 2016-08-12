@@ -1,10 +1,8 @@
 import './_module';
 import './cog/namespace-cog';
 import './cog/node-cog';
-import './cog/pod-cog';
 import './cog/replicationcontroller-cog';
 import './cog/replicaset-cog';
-import './cog/deployment-cog';
 import './cog/service-cog';
 import './cog/user-cog';
 import './containers/container-input';
