@@ -38,8 +38,6 @@ const PodHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Node</div>
 </div>;
 
-const PodList = createListComponent('Pods', 'pods', PodHeader, PodRow);
-
 const dropdownFilters = [{
   type: 'pod-status',
   title: 'Pod Status',
@@ -51,7 +49,8 @@ const dropdownFilters = [{
   },
 }];
 
+const PodList = createListComponent('Pods', 'POD', PodHeader, PodRow);
 const PodsPage = createPageComponent('PodsPage', 'POD', PodList, dropdownFilters);
 
-export {PodRow, PodHeader, PodList, PodsPage};
+export {PodList, PodsPage};
 

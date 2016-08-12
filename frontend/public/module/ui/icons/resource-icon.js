@@ -51,8 +51,10 @@ function iconLabel(k8sKind, kindId) {
       return 'TPM';
     case 'container':
       return 'C';
+    case k8sKind.DAEMONSET.id:
+      return 'DS';
     default:
-      return kindId.toUpperCase();
+      return kindId.toUpperCase().slice(0, 2);
   }
   return '';
 }

@@ -1,26 +1,34 @@
-/**
- * @fileoverview
- * List replica sets in a table-like view.
- */
-
 angular.module('bridge.ui')
-.directive('coReplicaSetList', function(k8s) {
+.directive('coReplicaSetList', function () {
   'use strict';
-
   return {
-    templateUrl: '/static/module/ui/resources/replica-set-list.html',
+    template: '<react-component name="{{name}}" props="props" />',
     restrict: 'E',
     replace: true,
     scope: {
+      // (optional) namespace to load pods from
       namespace: '=',
-      search: '=',
+      // label selector to filter by. optional unless selector-required=true
       selector: '=',
-      load: '=',
+      // optional search filter
+      search: '=',
+      // field filters to apply to pod list
+      filter: '=',
+      // force error
+      error: '=',
+      // filter pod list by an api field selector
+      fieldSelector: '=',
     },
-    controller: function($scope, Firehose) {
-      new Firehose(k8s.replicasets, $scope.namespace, $scope.selector)
-        .watchList()
-        .bindScope($scope, 'rss');
-    },
-  }
+    controller: function($scope) {
+      $scope.name = 'ReplicaSets';
+      $scope.props = {
+        namespace: $scope.namespace,
+        selector: $scope.selector,
+        search: $scope.search,
+        filter: $scope.filter,
+        error: $scope.error,
+        fieldSelector: $scope.fieldSelector
+      };
+    }
+  };
 });
