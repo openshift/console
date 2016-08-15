@@ -61,7 +61,7 @@ const filterPropType = (props, propName, componentName) => {
   }
 };
 
-export default (name, type, Header, Row) => {
+export default (name, kindstring, Header, Row) => {
   class Inner extends React.Component {
     render () {
       const {loadError, labelPlural, loaded} = this.props;
@@ -91,7 +91,8 @@ export default (name, type, Header, Row) => {
   class ReactiveList extends React.Component {
     constructor (props) {
       super(props);
-      const k8sResource = angulars.k8s[type];
+      const kind = angulars.kinds[kindstring];
+      const k8sResource = angulars.k8s[kind.plural];
       this.kind = k8sResource.kind;
       this.firehose = new angulars.Firehose(k8sResource, props.namespace, props.selector, props.fieldSelector);
       const id = this.firehose.id;

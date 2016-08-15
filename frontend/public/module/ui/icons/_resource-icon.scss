@@ -25,6 +25,10 @@ $height: 18px;
   background-color: $color-replicaset-dark;
 }
 
+.co-m-resource-icon--daemonset {
+  background-color: $color-replicaset-dark;
+}
+
 .co-m-resource-icon--deployment {
   background-color: $color-deployment-dark;
   padding: 0 4px 0 5px; // padding from .co-m-resource-icon isn't enough to center D letter

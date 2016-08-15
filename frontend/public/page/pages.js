@@ -8,6 +8,7 @@ import './namespaces/co-namespace-secret-list';
 import './namespaces/co-namespace-secret-list-ctrl';
 
 import './services/services';
+import './k8s-list/k8s-list';
 import './replicationcontrollers/controllers';
 import './replicasets/controllers';
 import './deployments/controllers';
@@ -19,3 +20,4 @@ import './settings/settings';
 import './welcome/welcome-ctrl';
 import './modals/modals';
 import './dtc/dtc-ctrl';
+

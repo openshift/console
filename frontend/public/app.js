@@ -173,15 +173,27 @@ angular.module('bridge', [
     title: 'Replication Controller Pods',
   });
 
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('daemonsets');
+  r('/all-namespaces/daemonsets', {
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
+    title: 'Daemon Sets',
+  });
+  r('/ns/:ns/daemonsets', {
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/daemonsets/daemonsets.html',
+    title: 'Daemon Sets',
+  });
+
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
   r('/all-namespaces/replicasets', {
-    controller: 'ReplicaSetsCtrl',
-    templateUrl: '/static/page/replicasets/replicasets.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Replica Sets',
   });
   r('/ns/:ns/replicasets', {
-    controller: 'ReplicaSetsCtrl',
-    templateUrl: '/static/page/replicasets/replicasets.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Replica Sets',
   });
   r('/ns/:ns/replicasets/new', {
@@ -207,13 +219,13 @@ angular.module('bridge', [
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('deployments');
   r('/all-namespaces/deployments', {
-    controller: 'DeploymentsCtrl',
-    templateUrl: '/static/page/deployments/deployments.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Deployments',
   });
   r('/ns/:ns/deployments', {
-    controller: 'DeploymentsCtrl',
-    templateUrl: '/static/page/deployments/deployments.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Deployments',
   });
   r('/ns/:ns/deployments/new', {
@@ -239,13 +251,13 @@ angular.module('bridge', [
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
   r('/all-namespaces/pods', {
-    controller: 'PodsCtrl',
-    templateUrl: '/static/page/pods/pods.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Pods',
   });
   r('/ns/:ns/pods', {
-    controller: 'PodsCtrl',
-    templateUrl: '/static/page/pods/pods.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Pods',
   });
   r('/ns/:ns/pods/new', {

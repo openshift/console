@@ -29,6 +29,13 @@ $height: 18px;
       color: $color-replicaset-dark;
     }
   }
+
+  &.co-m-label--daemonset  {
+    .co-m-label__link {
+      color: $color-replicaset-dark;
+    }
+  }
+
   &.co-m-label--deployment {
     .co-m-label__link {
       color: $color-deployment-dark;

@@ -26,6 +26,16 @@ angular.module('k8s').constant('k8sEnum', {
       path: 'pods',
       plural: 'pods',
     },
+    DAEMONSET: {
+      id: 'daemonset',
+      kind: 'DaemonSet',
+      label: 'Daemon Set',
+      labelPlural: 'Daemon Sets',
+      path: 'daemonsets',
+      plural: 'daemonsets',
+      isExtension: true,
+      apiVersion: 'v1beta1',
+    },
     REPLICATIONCONTROLLER: {
       id: 'replicationcontroller',
       kind: 'ReplicationController',
