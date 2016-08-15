@@ -138,13 +138,13 @@ angular.module('bridge', [
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicationcontrollers');
   r('/all-namespaces/replicationcontrollers', {
-    controller: 'ReplicationcontrollersCtrl',
-    templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Replication Controllers',
   });
   r('/ns/:ns/replicationcontrollers', {
-    controller: 'ReplicationcontrollersCtrl',
-    templateUrl: '/static/page/replicationcontrollers/replicationcontrollers.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Replication Controllers',
   });
   r('/ns/:ns/replicationcontrollers/new', {

@@ -1,29 +1,33 @@
-/**
- * @fileoverview
- * List RCs in a table-like view.
- */
-
 angular.module('bridge.ui')
-.directive('coReplicationControllerList', function(k8s) {
-  'use strict';
-
+.directive('coReplicationControllerList', function () {
   return {
-    templateUrl: '/static/module/ui/resources/replication-controller-list.html',
+    template: '<react-component name="{{name}}" props="props" />',
     restrict: 'E',
     replace: true,
     scope: {
+      // (optional) namespace to load pods from
       namespace: '=',
-      search: '=',
+      // label selector to filter by. optional unless selector-required=true
       selector: '=',
-      load: '=',
+      // optional search filter
+      search: '=',
+      // field filters to apply to pod list
+      filter: '=',
+      // force error
+      error: '=',
+      // filter pod list by an api field selector
+      fieldSelector: '=',
     },
-    controller: function($scope, Firehose) {
-      $scope.rcs = null;
-      $scope.loadError = false;
-
-      new Firehose(k8s.replicationcontrollers, $scope.namespace, $scope.selector)
-        .watchList()
-        .bindScope($scope, 'rcs');
+    controller: function($scope) {
+      $scope.name = 'ReplicationControllers';
+      $scope.props = {
+        namespace: $scope.namespace,
+        selector: $scope.selector,
+        search: $scope.search,
+        filter: $scope.filter,
+        error: $scope.error,
+        fieldSelector: $scope.fieldSelector
+      };
     }
   };
 });

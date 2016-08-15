@@ -1,7 +1,6 @@
 import './_module';
 import './cog/namespace-cog';
 import './cog/node-cog';
-import './cog/replicationcontroller-cog';
 import './cog/service-cog';
 import './cog/user-cog';
 import './containers/container-input';
