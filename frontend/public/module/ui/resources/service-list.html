@@ -24,7 +24,7 @@
       </div>
     </div>
     <div ng-repeat-end>
-      <co-pod-list ng-if="open" namespace="s.metadata.namespace" selector-required="true" selector="s.spec.selector"></co-pod-list>
+      <co-generic-k8s-list ng-if="open" namespace="s.metadata.namespace" component="'Pods'" selector="s.spec.selector"></co-generic-k8s-list>
     </div>
 
     <co-loader class="cos-tristate-show-loading"></co-loader>

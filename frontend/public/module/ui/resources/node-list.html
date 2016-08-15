@@ -36,7 +36,7 @@
       </div>
     </div>
     <div ng-repeat-end>
-      <co-pod-list ng-if="open" field-selector="getPodFieldSelector(n)"></co-pod-list>
+      <co-generic-k8s-list ng-if="open" component="'Pods'" field-selector="getPodFieldSelector(n)"></co-generic-k8s-list>
     </div>
 
     <co-loader class="cos-tristate-show-loading"></co-loader>

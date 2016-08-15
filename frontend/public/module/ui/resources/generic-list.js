@@ -1,10 +1,5 @@
-/**
- * @fileoverview
- * List out pods in a table-like view.
- */
-
 angular.module('bridge.ui')
-.directive('coPodList', function () {
+.directive('coGenericK8sList', function () {
   'use strict';
   return {
     template: '<react-component name="{{name}}" props="props" />',
@@ -23,9 +18,9 @@ angular.module('bridge.ui')
       error: '=',
       // filter pod list by an api field selector
       fieldSelector: '=',
+      name: '=component',
     },
     controller: function($scope) {
-      $scope.name = 'Pods';
       $scope.props = {
         namespace: $scope.namespace,
         selector: $scope.selector,
