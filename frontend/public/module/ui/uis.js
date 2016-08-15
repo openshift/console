@@ -24,14 +24,10 @@ import './resources/node-list';
 import './resources/node-section';
 import './resources/node-list-search';
 import './resources/node-ip-list';
-import './resources/pod-list';
 import './resources/namespace-list';
 import './resources/namespace-list-menu';
 import './resources/resource-link';
 import './resources/resource-list';
-import './resources/replication-controller-list';
-import './resources/replica-set-list';
-import './resources/deployment-list';
 import './resources/service-ip-link';
 import './resources/service-list';
 import './resources/create-policy';
@@ -41,6 +37,8 @@ import './resources/policy-list';
 import './resources/policy';
 import './resources/tpm';
 import './resources/tpm-list';
+
+import './resources/generic-list';
 
 import './status-box/status-box';
 import './sysevents/sysevent-icon';
@@ -54,3 +52,4 @@ import './util/debug';
 import './dropdown/dropdown';
 
 import './overflow/overflow';
+

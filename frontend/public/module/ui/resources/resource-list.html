@@ -1,24 +1,14 @@
 <div class="co-m-resource-list">
+  <co-generic-k8s-list ng-if="kind == 'replicationcontroller'" namespace="namespace" component="'ReplicationControllers'" selector="selector"></co-generic-k8s-list>
+  <co-generic-k8s-list ng-if="kind == 'replicaset'" namespace="namespace" component="'ReplicaSets'" selector="selector"></co-generic-k8s-list>
+  <co-generic-k8s-list ng-if="kind == 'deployment'" namespace="namespace" component="'Deployments'" selector="selector"></co-generic-k8s-list>
+  <co-generic-k8s-list ng-if="kind == 'pod'" namespace="namespace" component="'Pods'" selector="selector"></co-generic-k8s-list>
+
   <co-service-list ng-if="kind == 'service'"
                    load="kind == 'service'"
                    namespace="namespace"
                    selector="selector"></co-service-list>
-  <co-replication-controller-list ng-if="kind == 'replicationcontroller'"
-                                  load="kind == 'replicationcontroller'"
-                                  namespace="namespace"
-                                  selector="selector"></co-replication-controller-list>
-  <co-replica-set-list ng-if="kind == 'replicaset'"
-                                  load="kind == 'replicaset'"
-                                  namespace="namespace"
-                                  selector="selector"></co-replica-set-list>
-  <co-deployment-list ng-if="kind == 'deployment'"
-                                  load="kind == 'deployment'"
-                                  namespace="namespace"
-                                  selector="selector"></co-deployment-list>
-  <co-pod-list ng-if="kind == 'pod'"
-               load="kind == 'pod'"
-               namespace="namespace"
-               selector="selector"></co-pod-list>
+
   <co-node-list-search ng-if="kind == 'node'"
                 selector="selector" /></co-node-list-search>
   <co-namespace-list ng-if="kind == 'namespace'"
