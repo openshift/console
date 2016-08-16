@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import {PodList} from './pods';
+import {PodList} from './pod';
 
 const withPodList = (Row) => {
   return class WithPodList extends React.Component {

@@ -1,5 +1,6 @@
-import './pods';
-import './deployments';
-import './replicasets';
+import './pod';
+import './deployment';
+import './replicaset';
 import './daemonset';
+import './service';
 import './replication-controller';

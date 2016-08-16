@@ -3,11 +3,7 @@
   <co-generic-k8s-list ng-if="kind == 'replicaset'" namespace="namespace" component="'ReplicaSets'" selector="selector"></co-generic-k8s-list>
   <co-generic-k8s-list ng-if="kind == 'deployment'" namespace="namespace" component="'Deployments'" selector="selector"></co-generic-k8s-list>
   <co-generic-k8s-list ng-if="kind == 'pod'" namespace="namespace" component="'Pods'" selector="selector"></co-generic-k8s-list>
-
-  <co-service-list ng-if="kind == 'service'"
-                   load="kind == 'service'"
-                   namespace="namespace"
-                   selector="selector"></co-service-list>
+  <co-generic-k8s-list ng-if="kind == 'service'" namespace="namespace" component="'Services'" selector="selector"></co-generic-k8s-list>
 
   <co-node-list-search ng-if="kind == 'node'"
                 selector="selector" /></co-node-list-search>
