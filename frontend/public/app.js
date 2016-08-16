@@ -111,13 +111,13 @@ angular.module('bridge', [
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('services');
   r('/all-namespaces/services', {
-    controller: 'ServicesCtrl',
-    templateUrl: '/static/page/services/services.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Services',
   });
   r('/ns/:ns/services', {
-    controller: 'ServicesCtrl',
-    templateUrl: '/static/page/services/services.html',
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Services',
   });
   r('/ns/:ns/services/new', {

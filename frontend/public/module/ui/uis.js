@@ -28,8 +28,6 @@ import './resources/namespace-list';
 import './resources/namespace-list-menu';
 import './resources/resource-link';
 import './resources/resource-list';
-import './resources/service-ip-link';
-import './resources/service-list';
 import './resources/create-policy';
 import './resources/yaml-policy';
 import './resources/policy-list';
