@@ -66,12 +66,13 @@ app.directive('reactiveK8sList', function () {
       canCreate: '=',
       selector: '=',
       fieldSelector: '=',
+      selectorRequired: '=',
     },
     controller: function ($routeParams, $scope, k8s) {
-      const { kind, canCreate, selector, fieldSelector, component } = $scope;
+      const { kind, canCreate, selector, fieldSelector, component, selectorRequired } = $scope;
 
       $scope.props = {
-        kind, canCreate, selector, fieldSelector, component,
+        kind, canCreate, selector, fieldSelector, component, selectorRequired,
         namespace: $routeParams.ns,
         defaultNS: k8s.enum.DefaultNS,
       };

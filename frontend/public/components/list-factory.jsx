@@ -94,9 +94,14 @@ export default (name, kindstring, Header, Row) => {
       const kind = angulars.kinds[kindstring];
       const k8sResource = angulars.k8s[kind.plural];
       this.kind = k8sResource.kind;
-      this.firehose = new angulars.Firehose(k8sResource, props.namespace, props.selector, props.fieldSelector);
+      const {selectorRequired, selector, namespace, fieldSelector} = props;
+      if (selectorRequired && !props.selector) {
+        this.Component = () => <Empty labelPlural={this.kind.labelPlural} />;
+        return;
+      }
+      this.firehose = new angulars.Firehose(k8sResource, namespace, selector, fieldSelector);
       const id = this.firehose.id;
-      this.InnerWithHose = withStoreAndHose(Inner, id);
+      this.Component = withStoreAndHose(Inner, id);
     }
 
     applyFilter (name, value) {
@@ -107,21 +112,22 @@ export default (name, kindstring, Header, Row) => {
     }
 
     render () {
+      const {selectorRequired, selector} = this.props;
       const klass = `co-m-${this.kind.id}-list co-m-table-grid co-m-table-grid--bordered`;
       return (
         <div className={klass}>
           <Header />
-          <this.InnerWithHose labelPlural={this.kind.labelPlural} />
+          <this.Component labelPlural={this.kind.labelPlural} />
         </div>
       );
     };
 
     componentDidMount() {
-      this.firehose.watchList();
+      this.firehose && this.firehose.watchList();
     }
 
     componentWillUnmount() {
-      this.firehose.unwatchList();
+      this.firehose && this.firehose.unwatchList();
       this.firehose = null;
     }
   }
@@ -132,6 +138,7 @@ export default (name, kindstring, Header, Row) => {
     'filter': React.PropTypes.string,
     'error': React.PropTypes.bool,
     'fieldSelector': React.PropTypes.string,
+    'selectorRequired': React.PropTypes.bool,
   };
 
   register(name, ReactiveList);

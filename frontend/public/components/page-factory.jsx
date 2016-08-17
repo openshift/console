@@ -17,7 +17,7 @@ export default (name, kindName, ListComponent, dropdownFilters) => {
     };
 
     render () {
-      const {namespace, defaultNS, canCreate, selector, fieldSelector} = this.props;
+      const {namespace, defaultNS, canCreate} = this.props;
 
       const kind = angulars.kinds[kindName];
       const href = `/ns/${namespace || defaultNS}/${kind.plural}/new`;
@@ -46,7 +46,7 @@ export default (name, kindName, ListComponent, dropdownFilters) => {
           <div className="co-m-pane__body">
             <div className="row">
               <div className="col-xs-12">
-                <ListComponent ref="list" namespace={namespace} selector={selector} fieldSelector={fieldSelector} />
+                <ListComponent ref="list" {...this.props} />
               </div>
             </div>
           </div>
@@ -61,6 +61,7 @@ export default (name, kindName, ListComponent, dropdownFilters) => {
     canCreate: React.PropTypes.bool,
     selector: React.PropTypes.object,
     fieldSelector: React.PropTypes.string,
+    selectorRequired: React.PropTypes.bool,
   };
 
   register(name, ListPage);

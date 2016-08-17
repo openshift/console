@@ -38,7 +38,7 @@ const ServiceHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-2 hidden-sm hidden-xs">Service Location</div>
 </div>
 
-const ServiceRow = (s) => <div className="row co-m-table-grid--clickable co-resource-list__item">
+const ServiceRow = (s) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
     <ServiceCog s={s}></ServiceCog>
     <ResourceIcon kind="service"></ResourceIcon>

@@ -2,6 +2,7 @@
 // with the ability to expand podlist
 
 import React from 'react';
+import classnames from 'classnames';
 
 import {PodList} from './pod';
 
@@ -21,10 +22,10 @@ const withPodList = (Row) => {
       const {metadata: {namespace}, spec: {selector}} = this.props;
 
       return (
-        <div onClick={this.onClick_.bind(this)} ref="target">
+        <div onClick={this.onClick_.bind(this)} ref="target" className={classnames({clickable: !!selector})} >
           <Row {...this.props} />
           {
-            this.state.open &&
+            this.state.open && selector &&
             <PodList namespace={namespace} selector={selector}></PodList>
           }
         </div>
