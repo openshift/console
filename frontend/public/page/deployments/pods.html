@@ -9,5 +9,5 @@
     <co-deployment-nav ns="ns" name="deploymentName"></co-deployment-nav>
   </div>
 
-  <reactive-k8s-list ng-if="!!deployment" selector="deployment.spec.selector" component="'PodsPage'" />
+  <reactive-k8s-list ng-if="!!deployment" selector="deployment.spec.selector" component="'PodsPage'" selector-required="true" />
 </div>

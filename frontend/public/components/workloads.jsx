@@ -23,7 +23,7 @@ const rowOfKindstring = (name) => {
     const kind = angulars.kinds[name];
     const CogOfKind = cogOfKind(kind);
     return (
-      <div className="row co-m-table-grid--clickable co-resource-list__item">
+      <div className="row co-resource-list__item">
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
           <CogOfKind o={o} />
           <ResourceIcon kind={kind.id}></ResourceIcon>
