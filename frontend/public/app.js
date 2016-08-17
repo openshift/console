@@ -181,7 +181,7 @@ angular.module('bridge', [
   });
   r('/ns/:ns/daemonsets', {
     controller: 'k8sListCtrl',
-    templateUrl: '/static/page/daemonsets/daemonsets.html',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Daemon Sets',
   });
 
