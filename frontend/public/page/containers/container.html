@@ -148,7 +148,7 @@
                 <tbody>
                   <tr ng-repeat="ev in container.env">
                     <td ng-bind="ev.name"></td>
-                    <td ng-bind="ev.value"></td>
+                    <td ng-bind="envVarValueLabel(ev)"></td>
                   </tr>
                 </tbody>
               </table>

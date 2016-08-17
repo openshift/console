@@ -62,4 +62,28 @@ angular.module('bridge.page')
     return 'Read / Write';
   };
 
+  $scope.envVarValueLabel = function(env) {
+    const fieldRef = _.get(env, 'valueFrom.fieldRef');
+    if (fieldRef) {
+      return `field: ${fieldRef.fieldPath}`;
+    }
+
+    const resourceFieldRef = _.get(env, 'valueFrom.resourceFieldRef');
+    if (resourceFieldRef) {
+      return `resource: ${resourceFieldRef.resource}`;
+    }
+
+    const configMapKeyRef = _.get(env, 'valueFrom.configMapKeyRef');
+    if (configMapKeyRef) {
+      return `config-map: ${configMapKeyRef.name}/${configMapKeyRef.key}`;
+    }
+
+    const secretKeyRef = _.get(env, 'valueFrom.secretKeyRef');
+    if (secretKeyRef) {
+      return `secret: ${secretKeyRef.name}/${secretKeyRef.key}`;
+    }
+
+    return env.value;
+  };
+
 });
