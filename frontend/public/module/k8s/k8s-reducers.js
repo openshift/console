@@ -62,15 +62,30 @@ export default (state, action)  => {
     return Immutable.Map();
   }
   const {k8sObjects, id} = action;
-  const list = state.getIn([id, 'objects']);
+  const list = state.getIn([id, 'data']);
+
   let newList;
 
   switch (action.type) {
-    case types.filter:
+    case types.filterList:
       const {name, value} = action;
       return state.setIn([id, 'filters', name], value);
 
-    case types.addList:
+    case types.watchK8sObject:
+      return state.set(id, Immutable.Map({
+        loadError: '',
+        loaded: false,
+        data: {},
+      }));
+
+    case types.modifyObject:
+      return state.mergeIn([id], {
+        loadError: '',
+        loaded: true,
+        data: k8sObjects,
+      });
+
+    case types.watchK8sList:
       if (list) {
         return state;
       }
@@ -78,11 +93,11 @@ export default (state, action)  => {
       return state.set(id, Immutable.Map({
         loadError: '',
         loaded: false,
-        objects: Immutable.Map(),
+        data: Immutable.Map(),
         filters: Immutable.Map(),
       }));
 
-    case types.removeList:
+    case types.stopK8sWatch:
       return state.delete(id);
 
     case types.loaded:
@@ -97,14 +112,14 @@ export default (state, action)  => {
       );
       newList = loadList(list, k8sObjects);
       break;
-    case types.deleted:
+    case types.deleteFromList:
       if (!list) {
         return state;
       }
       newList = removeFromList(list, k8sObjects);
       break;
-    case types.added:
-    case types.modified:
+    case types.addToList:
+    case types.modifyList:
       if (!list) {
         return state;
       }
@@ -116,9 +131,9 @@ export default (state, action)  => {
       }
       return state.setIn(
         [id, 'loadError'], k8sObjects,
-        [id, 'objects'], {},
+        [id, 'data'], {},
         [id, 'loaded'], false
       );
   }
-  return state.setIn([id, 'objects'], newList);
+  return state.setIn([id, 'data'], newList);
 };

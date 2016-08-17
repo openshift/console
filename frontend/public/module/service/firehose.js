@@ -10,21 +10,31 @@ angular.module('bridge.service')
   const dispatch = (...args) => $ngRedux.dispatch(...args);
 
   return class Firehose {
-    constructor (k8sType, namespace, labelSelector, fieldSelector) {
+    constructor (k8sType, namespace, labelSelector, fieldSelector, name) {
       this.k8sType = k8sType;
-      this.query = this.makeQuery_(namespace, labelSelector, fieldSelector);
+      this.query = this.makeQuery_(namespace, labelSelector, fieldSelector, name);
       this.id = this.id_(k8sType, this.query);
+      this.namespace = namespace;
+      this.name = name;
     }
+
+    watchObject () {
+      // eslint-disable-next-line no-console
+      console.log(`opening ${this.id}`);
+      // watchK8sObject: (id, name, namespace, k8sType)
+      dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.k8sType));
+      return this;
+    };
 
     watchList () {
       // eslint-disable-next-line no-console
       console.log(`opening ${this.id}`);
-      dispatch(actions.addList(this.id, this.query, this.k8sType));
+      dispatch(actions.watchK8sList(this.id, this.query, this.k8sType));
       return this;
     };
 
     unwatchList () {
-      dispatch(actions.removeList(this.id));
+      dispatch(actions.stopK8sWatch(this.id));
     };
 
     bindScope ($scope, name='', onStateChange=null) {
@@ -39,7 +49,7 @@ angular.module('bridge.service')
         console.log(`nuking ${this.id}`);
         off();
         unsubscribe();
-        dispatch(actions.removeList(this.id));
+        this.unwatchList();
       });
       return this;
     };
@@ -50,18 +60,18 @@ angular.module('bridge.service')
       return $ngRedux.connect(state => {
         const loaded = state.k8s.getIn([id, 'loaded']);
         const loadError = state.k8s.getIn([id, 'loadError']);
-        const objects = state.k8s.getIn([id, 'objects']);
+        const data = state.k8s.getIn([id, 'data']);
 
         return {
           loadError, loaded,
-          [name]: objects && objects.toArray().map(p => p.toJSON()),
+          [name]: data && data.toArray().map(p => p.toJSON()),
         };
       })(state => {
         return onStateChange(state);
       });
     };
 
-    makeQuery_ (namespace, labelSelector, fieldSelector) {
+    makeQuery_ (namespace, labelSelector, fieldSelector, name) {
       const query = {};
 
       if (!_.isEmpty(labelSelector)) {
@@ -70,6 +80,10 @@ angular.module('bridge.service')
 
       if (!_.isEmpty(namespace)) {
         query.ns = namespace;
+      }
+
+      if (!_.isEmpty(name)) {
+        query.name = name;
       }
 
       if (fieldSelector) {

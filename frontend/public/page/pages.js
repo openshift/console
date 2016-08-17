@@ -20,4 +20,5 @@ import './settings/settings';
 import './welcome/welcome-ctrl';
 import './modals/modals';
 import './dtc/dtc-ctrl';
+import './daemonsets/daemonset-ctrl';
 
