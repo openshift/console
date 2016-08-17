@@ -9,7 +9,7 @@ const Requirement = ({requirement, withIcon}) => {
 
   return (
     <div className="co-m-requirement">
-      <a className="co-m-requirement__link" href={"/search?kind=pod&amp;q=" + requirementAsUrlEncodedString}>
+      <a className="co-m-requirement__link" href={`search?kind=pod&q=${requirementAsUrlEncodedString}`}>
         { withIcon &&
           <span>
             <i className="fa fa-search"></i>&nbsp;

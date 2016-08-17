@@ -5,7 +5,7 @@ import {angulars} from '../react-wrapper';
 const Label = ({kind, name, value, expand}) => {
   const labelObj = {[name]: value};
   const query = angulars.k8s.labels.linkEncode(labelObj);
-  const href = `/search?kind=${kind}&q=${query}`;
+  const href = `search?kind=${kind}&q=${query}`;
   const klass = classNames('co-m-label', `co-m-label--${kind}`, {'co-m-label--expand': expand});
 
   return (
