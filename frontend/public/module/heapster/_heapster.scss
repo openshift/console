@@ -48,6 +48,7 @@ $progress-bar-height: 14px;
 .co-heapster__progress-bar {
   position: absolute;
   min-width: 1px;
+  max-width: 100%;
   height: $progress-bar-height;
   webkit-box-shadow: none;
   box-shadow: none;
