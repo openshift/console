@@ -62,10 +62,10 @@ export default (name, kindstring, Header, Row) => {
       this.kind = k8sResource.kind;
       const {selectorRequired, selector, namespace, fieldSelector} = props;
       if (selectorRequired && !props.selector) {
-        this.Component = () => <Empty label={this.kind.labelPlural} />;
+        this.Component = () => <withStatusBox.Empty label={this.kind.labelPlural} />;
         return;
       }
-      this.firehose = new angulars.Firehose(k8sResource, namespace, selector, fieldSelector);
+      this.firehose = new Firehose(k8sResource, namespace, selector, fieldSelector);
       this.Component = connectComponentToListID(withStatusBox(Inner), this.firehose.id);
     }
 
@@ -78,7 +78,6 @@ export default (name, kindstring, Header, Row) => {
     }
 
     render () {
-      const {selectorRequired, selector} = this.props;
       const klass = `co-m-${this.kind.id}-list co-m-table-grid co-m-table-grid--bordered`;
       return (
         <div className={klass}>
