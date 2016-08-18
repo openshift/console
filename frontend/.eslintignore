@@ -2,3 +2,4 @@ public/dist
 *.min.js
 public/lib
 node_modules
+Godeps

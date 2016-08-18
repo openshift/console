@@ -29,7 +29,7 @@ export default ({expand, selector}) => {
     return <Requirement key={i} className={className} requirement={requirement} withIcon={i === 0} />
   });
 
-  const className = classnames("co-m-selector", {'co-m-selector--expand': expand});
+  const className = classnames('co-m-selector', {'co-m-selector--expand': expand});
 
   return <div className={className}>
     { reqs.length ? reqs : <p className="text-muted">No selector</p> }

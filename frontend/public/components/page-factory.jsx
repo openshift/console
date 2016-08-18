@@ -34,7 +34,7 @@ export default (name, kindName, ListComponent, dropdownFilters) => {
                     </button>
                   </a>
                 }
-                <input type="text" className="form-control text-filter pull-right" placeholder={"Filter " + kind.labelPlural + " by name..."} onChange={this.onFilterChange.bind(this)} autoFocus={true} />
+                <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${kind.labelPlural} by name...`} onChange={this.onFilterChange.bind(this)} autoFocus={true} />
                 {
                   dropdownFilters && dropdownFilters.map(({type, items, title}) => {
                     return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type, items)} />

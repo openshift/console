@@ -1,3 +1,4 @@
+/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "React" }]*/
 import React from 'react';
 
 import createListComponent from './list-factory';

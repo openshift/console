@@ -11,6 +11,7 @@ angular.module('bridge.service')
     try {
       return JSON.parse($window.atob(state));
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error.stack);
       return null;
     }
