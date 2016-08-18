@@ -1,0 +1,76 @@
+{
+  "@type": "productRatePlan",
+  "metadata": {
+    "public": true,
+    "purchasable": true,
+    "quay_teams": "tectonicstarter",
+    "bypassPaymentVerification": true
+  },
+  "currency": "USD",
+  "taxStatus": "exclusive",
+  "failedPaymentBehaviour": "CancelSubscription",
+  "duration": 1,
+  "durationPeriod": "months",
+  "trial": 0,
+  "trialPeriod": "none",
+  "productType": "recurring",
+  "proRataMode": "WithCoupon",
+  "createZeroValuedInvoices": true,
+  "name": "tectonic-starter",
+  "publicName": "Tectonic Starter Plan",
+  "migrationBehaviour": "CreditAccount",
+  "invoiceIssueType": "Immediate",
+  "taxation": [],
+  "fixedTermDefinitions": [],
+  "pricingComponents": [
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.tectonic.console",
+      "publicName": "Tectonic Console",
+      "description": "User interface to view and manage Kubernetes clusters.",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "software"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "cost",
+      "publicName": "Cost",
+      "description": "Cost",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "cost"
+      }
+    }
+  ],
+  "aggregatingComponents": []
+}

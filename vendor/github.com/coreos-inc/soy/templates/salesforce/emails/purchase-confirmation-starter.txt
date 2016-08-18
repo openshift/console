@@ -1,0 +1,18 @@
+You've signed up for the Tectonic Starter Plan
+
+It takes a few steps to get started:
+
+1. Install Kubernetes.
+2. Launch the Tectonic Console.
+3. Sign up for https://quay.io to build and store your container images.
+
+Get Started: https://tectonic.com/starter/docs/latest/
+
+Join the CoreOS Community on IRC (#coreos) for questions, advice and camaraderie.
+Issues can also be filed on GitHub (https://github.com/tectonicstack/tectonic-console-bugs/issues).
+
+Download your license and manage your account at account.tectonic.com
+
+If you didn't request this action, please let us know by responding to this email.
+
+Have a good day!

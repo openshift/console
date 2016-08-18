@@ -1,0 +1,15 @@
+{
+  "name" : "professional-services",
+  "publicName" : "Professional Services",
+  "description" : "",
+  "duration" : 30,
+  "durationPeriod" : "days",
+  "trial" : 0,
+  "trialPeriod" : "none",
+  "productType" : "non-recurring",
+  "metadata": {
+    "public": true,
+    "order": 80,
+    "externalLink": "https://tectonic.com/services"
+  }
+}

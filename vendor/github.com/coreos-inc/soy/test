@@ -1,0 +1,79 @@
+#!/bin/bash -e
+#
+# Run all tests
+#   ./test
+#   ./test -v
+#
+# Run tests for one package
+#   PKG=./unit ./test
+#   PKG=ssh ./test
+#
+
+# Invoke ./cover for HTML output
+COVER=${COVER:-"-cover"}
+
+source build-env
+#source ./build-all
+
+TESTABLE="common/serrors common/zendesk creme/server manager repo server"
+FORMATTABLE="$TESTABLE cmd/creme cmd/soy cmd/soyctl common creme/middleware db testutil"
+
+# user has not provided PKG override
+if [ -z "$PKG" ]; then
+    TEST=$TESTABLE
+    FMT=$FORMATTABLE
+
+# user has provided PKG override
+else
+    # only tests and gofmt on packages provided by user
+    TEST=${PKG}
+    FMT="$TEST"
+fi
+
+# split TEST into an array and prepend repo path to each local package
+split=(${TEST// / })
+TEST=${split[@]/#/github.com/coreos-inc/soy/}
+
+go get -u github.com/jackc/tern
+echo "Running database migrations..."
+# Check to see if we're running within a container
+# that has been linked with a Postgres container (CI environment).
+if [ -n "$POSTGRES_PORT_5432_TCP_ADDR" ]; then
+  export PGHOST=$POSTGRES_PORT_5432_TCP_ADDR
+  export PGUSER=postgres
+  export SOY_TEST_DSN=postgres://postgres@$PGHOST:$POSTGRES_PORT_5432_TCP_PORT/soy_test?sslmode=disable
+else
+  # Not running in container environment, prep DB ourselves.
+  psql -f ./scripts/test/create-extension.sql soy_test
+fi
+cd migrations && tern migrate --config tern-test.conf
+cd ..
+
+echo "Running tests..."
+if [ -z "$JUNIT_REPORT_FILE" ]; then
+    go test ${COVER} $@ ${TEST}
+else
+    echo "Generating junit report at $JUNIT_REPORT_FILE"
+    go test ${COVER} $@ ${TEST} | tee test.out
+    cat test.out | go-junit-report > "$JUNIT_REPORT_FILE"
+    rm test.out
+fi
+
+echo "Checking gofmt..."
+fmtRes=$(gofmt -l $FMT)
+if [ -n "${fmtRes}" ]; then
+    echo -e "gofmt checking failed:\n${fmtRes}"
+    exit 255
+fi
+
+# We cannot run go vet because it fails on grpc.Errorf, assuming it is a printf
+# style function, when in fact it is not.
+
+# echo "Checking govet..."
+# vetRes=$(go vet $TEST)
+# if [ -n "${vetRes}" ]; then
+#     echo -e "govet checking failed:\n${vetRes}"
+#     exit 255
+# fi
+
+echo "Success"

@@ -59,6 +59,7 @@ angular.module('bridge', [
   k8sConfigProvider.setKubernetesPath(window.SERVER_FLAGS.basePath + '/api/kubernetes', window.SERVER_FLAGS.k8sAPIVersion);
 
   $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
+  $httpProvider.interceptors.push('errorInterceptorSvc');
   $httpProvider.defaults.timeout = 5000;
 
   configSvcProvider.config({
@@ -364,7 +365,7 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featuresSvc, dex, angularBridge) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge, analyticsSvc) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
@@ -374,6 +375,11 @@ angular.module('bridge', [
   angularBridge.expose();
   k8s.featureDetection();
   dex.featureDetection();
+  statusSvc.tectonicVersion();
+
+  $rootScope.$on('$routeChangeSuccess', function() {
+    analyticsSvc.route();
+  });
 
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
     switch(rejection) {
@@ -405,4 +411,24 @@ angular.module('bridge', [
 
     authSvc.logout($window.location.pathname);
   });
+
+  $rootScope.$on('xhr-error', function(e, rejection) {
+    analyticsSvc.error(`${rejection.data}: ${rejection.config.method} ${rejection.config.url}`);
+  });
+
+  $window.onerror = function(message, source, lineno, colno, error) {
+    try {
+      var e = `${message} ${source} ${lineno} ${colno}`;
+      analyticsSvc.error(e);
+    }
+    catch(err) {
+      try {
+        $window.console.error(error);
+        $window.console.error(err);
+      }
+      catch (e) {
+      }
+    }
+    return true;
+  };
 });

@@ -1,0 +1,46 @@
+<div class="tec-contact-fields">
+  <div class="form-group">
+    <div>
+      <label>Your Name</label>
+    </div>
+    <div class="{{ fieldClass || 'cos-field-inline' }}">
+      <input type="text"
+        ng-model="profile.firstName"
+        placeholder="First Name"
+        autofocus
+        required />
+    </div>
+    <div class="{{ fieldClass || 'cos-field-inline' }}">
+      <input type="text"
+        ng-model="profile.lastName"
+        placeholder="Last Name"
+        required />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="{{ fieldClass || 'cos-field-inline' }}">
+      <label>Company Name</label>
+      <input type="text"
+        ng-model="profile.companyName"
+        required
+        size="30" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="{{ fieldClass || 'cos-field-inline' }}">
+      <label>Email</label>
+      <input type="text"
+        ng-model="profile.email"
+        minlength="6"
+        readonly
+        required />
+    </div>
+    <div class="{{ fieldClass || 'cos-field-inline' }}">
+      <label>Phone Number</label>
+      <input type="text"
+        ng-model="profile.landline"
+        minlength="10"
+        required />
+    </div>
+  </div>
+</div>

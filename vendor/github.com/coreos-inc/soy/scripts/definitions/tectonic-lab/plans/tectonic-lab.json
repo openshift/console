@@ -1,0 +1,196 @@
+{
+  "@type": "productRatePlan",
+  "metadata": {
+    "public": true,
+    "purchasable": true,
+    "quay_teams": "tectoniclab"
+  },
+  "currency": "USD",
+  "taxStatus": "exclusive",
+  "failedPaymentBehaviour": "CancelSubscription",
+  "duration": 1,
+  "durationPeriod": "months",
+  "trial": 0,
+  "trialPeriod": "days",
+  "productType": "recurring",
+  "proRataMode": "WithCoupon",
+  "createZeroValuedInvoices": true,
+  "name": "tectonic-lab",
+  "publicName": "Tectonic Lab",
+  "migrationBehaviour": "CreditAccount",
+  "invoiceIssueType": "Immediate",
+  "paymentTerms": 30,
+  "taxation": [],
+  "fixedTermDefinitions": [],
+  "pricingComponents": [
+    {
+      "@type": "tieredVolumePricingComponent",
+      "name": "support.tectonic.server-count",
+      "publicName": "Supported Servers",
+      "description": "Number of supported Tectonic servers",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "tiered_volume",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 10,
+      "minQuantity": 10,
+      "tiers": [
+        {
+          "lowerThreshold": 10,
+          "upperThreshold": 10,
+          "pricingType": "fixed",
+          "price": 5000
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "supported-servers"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.tectonic.console",
+      "publicName": "Tectonic Console",
+      "description": "User interface to view and manage Kubernetes clusters.",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "software"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "support.tectonic.standard",
+      "publicName": "Tectonic Support",
+      "description": "",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 0,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "standard-support"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.quay",
+      "publicName": "Quay Enterprise Basic",
+      "description": "Runs anywhere you can run a Docker container with unlimited users and repositories.",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "software"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.quay.builders",
+      "publicName": "Quay Builders",
+      "description": "Max number of Quay Builder nodes",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "quay-builders"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.quay.regions",
+      "publicName": "Quay Regions",
+      "description": "Max number of Quay Regions to replicate to",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "quay-regions"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "support.quay.basic",
+      "publicName": "Quay Support",
+      "description": "",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 0,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "basic-support"
+      }
+    }
+  ],
+  "aggregatingComponents": []
+}

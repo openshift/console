@@ -1,0 +1,5 @@
+<div class="wiz-certificate-field">
+  <div *ngFor="#f of fieldModel.fields; #isFirst = first" class="form-group">
+    <wiz-dynamic-field [wizField]="f" [controlGroup]="control" [autofocus]="isFirst"></wiz-dynamic-field>
+  </div>
+</div>

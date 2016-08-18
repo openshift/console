@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# generate_signing_keys takes a list of keynames and produces an RSA public/private
+# key pair for each. By default it creates a a key named `tectonic-signing-key.{pem,pub}`
+
+# generateKeys takes a single argument and produces an RSA public/private key
+# pair named $1.pem and $1.pub
+function generateKeys {
+    if [ -e "$1.pem" ]; then
+        echo "Signing key $1.pem already exist, skipping generating key."
+    else
+        echo "Generating signing key, files: $1.pem, $1.der, $1.pub"
+    fi
+
+    openssl genrsa -out "$1.pem" 2048
+    openssl rsa -in "$1.pem" -pubout -out "$1.pub"
+}
+
+if [ $# -eq 0 ]; then
+    generateKeys tectonic-signing-key
+else
+    for key in "$@"
+    do
+        generateKeys $key
+    done
+fi

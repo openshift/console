@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
@@ -50,13 +51,15 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	K8sProxyConfig  *ProxyConfig
-	DexProxyConfig  *ProxyConfig
-	BaseURL         *url.URL
-	PublicDir       string
-	TectonicVersion string
-	Auther          *auth.Authenticator
-	KubectlClientID string
+	K8sProxyConfig     *ProxyConfig
+	DexProxyConfig     *ProxyConfig
+	BaseURL            *url.URL
+	PublicDir          string
+	TectonicVersion    string
+	TectonicTier       string
+	TectonicExpiration time.Time
+	Auther             *auth.Authenticator
+	KubectlClientID    string
 
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
@@ -174,11 +177,15 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusOK, struct {
-		Version        string `json:"version"`
-		ConsoleVersion string `json:"consoleVersion"`
+		Version        string    `json:"version"`
+		ConsoleVersion string    `json:"consoleVersion"`
+		Tier           string    `json:"tier"`
+		Expiration     time.Time `json:"expiration"`
 	}{
 		Version:        s.TectonicVersion,
 		ConsoleVersion: version.Version,
+		Tier:           s.TectonicTier,
+		Expiration:     s.TectonicExpiration,
 	})
 }
 

@@ -1,0 +1,11 @@
+.tec-signup-progress {
+  margin-bottom: 30px;
+
+  .cos-flow-progress {
+    border-bottom: solid 2px #fff;
+  }
+  .cos-flow-progress--active .cos-flow-progress__item-wrap {
+    color: #fff;
+    border-color: #fff;
+  }
+}

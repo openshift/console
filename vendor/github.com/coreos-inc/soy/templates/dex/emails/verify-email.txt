@@ -1,0 +1,8 @@
+{{ template "header.txt" }}
+You must verify this email address to use it with a Tectonic account. Then, you’ll be able to access Tectonic.
+
+Follow this link to verify your email address:
+
+{{ .link }}
+
+{{ template "footer.txt" . }}

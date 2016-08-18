@@ -1,0 +1,14 @@
+<div class="tec-entitlement-list">
+  <ul ng-if="pricingComponents.length && pc.tiers.length == 1 && pc.name != 'cost'" ng-repeat="pc in pricingComponents track by pc.id" class="tec-icon-list tec-icon-list--green-block">
+    <li class="text-small">
+      <span ng-bind-template="{{pc.publicName}}:"></span>
+      <span ng-bind-template="{{pc.unitOfMeasure | unit:pc.tiers[0].upperThreshold}}"></span>
+    </li>
+  </ul>
+  <ul ng-if="componentValues.length && pcv.pricingComponentName != 'cost'" ng-repeat="pcv in componentValues track by pcv.pricingComponentID" class="tec-icon-list tec-icon-list--green-block">
+    <li class="text-small">
+      <span ng-bind-template="{{pcv.pricingComponentInfo.publicName}}:"></span>
+      <span ng-bind-template="{{pcv.pricingComponentInfo.unitOfMeasure | unit:pcv.value}}"></span>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,25 @@
+{
+  "@type": "productRatePlan",
+  "metadata": {
+    "public": false,
+    "purchasable": false
+  },
+  "currency": "USD",
+  "taxStatus": "exclusive",
+  "failedPaymentBehaviour": "CancelSubscription",
+  "duration": 1,
+  "durationPeriod": "months",
+  "trial": 0,
+  "trialPeriod": "none",
+  "productType": "recurring",
+  "proRataMode": "WithCoupon",
+  "createZeroValuedInvoices": true,
+  "name": "aggregating-monthly",
+  "publicName": "Aggregating - Monthly",
+  "migrationBehaviour": "CreditAccount",
+  "invoiceIssueType": "Immediate",
+  "taxation": [],
+  "fixedTermDefinitions": [],
+  "pricingComponents": [],
+  "aggregatingComponents": []
+}

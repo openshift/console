@@ -1,0 +1,283 @@
+{
+  "metadata": {
+    "submitEndpoint": "tectonic/submit",
+    "statusEndpoint": "http://tectonic-manager:8080/tectonic-deployment/status",
+    "caCertificate": {
+      "typeFrom": "ca/ca-certificate/ca-type",
+      "certificateFrom": "ca/ca-certificate/ca-cert",
+      "privateKeyFrom" : "ca/ca-certificate/ca-key"
+    }
+  },
+
+  "forms": [
+
+    {
+      "id": "cluster-info",
+      "title": "Cluster Info",
+      "description": "",
+      "fields": [
+        {
+          "id": "version",
+          "value": "v1.3.0",
+          "type": "HiddenField",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "ConfigMap",
+            "name": "tectonic-config"
+          }
+        },
+        {
+          "id": "identity-issuer-name",
+          "label": "Cluster Name",
+          "validators": ["NONEMPTY", "K8S_NAME"],
+          "description": "Give this cluster a name that will help you identify it",
+          "type": "TextField",
+          "placeholder": "production",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "ConfigMap",
+            "name": "tectonic-config"
+          }
+        },
+        {
+          "id": "license",
+          "label": "Tectonic License",
+          "validators": ["NONEMPTY"],
+          "description": "Input \"raw format\" license from [account.tectonic.com](https://account.tectonic.com).",
+          "placeholder": "Raw formatted license:\n\n06jd9rqTAr1DZWs/ssB0k128C1nfcq0v4yqL4PpDLXg...",
+          "type": "TextAreaField",
+          "uploadLabel": "Upload License",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "name": "tectonic-license",
+            "kind": "Secret"
+          }
+        },
+        {
+          "id": ".dockercfg",
+          "label": "Pull Secret",
+          "validators": ["NONEMPTY"],
+          "description": "Input \"dockercfg\" pull secret from [account.tectonic.com](https://account.tectonic.com).",
+          "placeholder": "{\n  \"quay.io\": {\n    \"auth\": \"rRR6lGMrrkSHRDt+HeJEwsHeW4PDe8lsM03oYjMVzCs\",\n    \"email\": \"\"\n  }\n}...",
+          "type": "TextAreaField",
+          "uploadLabel": "Upload Pull Secret",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "Secret",
+            "name": "coreos-pull-secret",
+            "type": "kubernetes.io/dockercfg"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "ca",
+      "title": "Certificate Authority",
+      "description": "Provide your CA certificate in PEM format. It will be used to verify the individual certificates provided in the next step.",
+      "fields": [
+        {
+          "id": "ca-certificate",
+          "type": "CaCertificateField",
+          "typeField": {
+            "id": "ca-type"
+          },
+          "certField": {
+            "id": "ca-cert"
+          },
+          "keyField": {
+            "id": "ca-key"
+          },
+          "organizationNameField": {
+            "id": "organization-name"
+          },
+          "commonNameField": {
+            "id": "common-name"
+          },
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "Secret",
+            "name": "tectonic-ca-cert-secret"
+          },
+          "selfSignedCertificate": {
+            "endpoint": "tectonic/generate-self-signed-certificate",
+            "organizationNameFrom": "ca/ca-certificate/organization-name",
+            "commonNameFrom": "ca/ca-certificate/common-name"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "database-configuration",
+      "title": "Database Configuration",
+      "description": "PostgreSQL is required for Tectonic services. It is recommended to operate this database off-cluster in production.",
+      "fields": [
+        {
+          "id": "database-configuration",
+          "type": "PostgreSqlField",
+          "deployField": {
+            "id": "deploy-postgres",
+            "value": "true",
+            "k8s": {
+              "namespace": "tectonic-system",
+              "kind": "ConfigMap",
+              "name": "tectonic-config"
+            }
+          },
+          "urlField": {
+            "id": "identity-db-url",
+            "k8s": {
+              "namespace": "tectonic-system",
+              "kind": "Secret",
+              "name": "tectonic-identity-config-secret"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "tectonic-identity",
+      "title": "Tectonic Identity",
+      "description": "Tectonic Identity is the authentication service for your cluster.",
+      "fields": [
+        {
+          "id": "identity-issuer-url",
+          "label": "URL",
+          "validators": ["NONEMPTY", "IDENTITY_URL_RE"],
+          "description": "This is where users will access the Identity service. Required protocol is HTTPS and port number is 32001.",
+          "type": "TextField",
+          "placeholder": "https://identity.tectonic.example.com:32001",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "ConfigMap",
+            "name": "tectonic-config"
+          }
+        }
+
+      ]
+    },
+
+    {
+      "id": "identity-connector",
+      "title": "User Directory",
+      "description": "Tectonic Identity authenticates against a user directory stored in LDAP or a PostgreSQL database.",
+      "fields": [
+        {
+          "id": "identity-connector",
+          "type": "IdentityConnectorField"
+        }
+      ]
+    },
+
+    {
+      "id": "identity-cert",
+      "title": "Identity Certificate",
+      "type": "CertificateWizForm",
+      "fields": [
+        {
+          "id": "identity-certificate",
+          "description": {
+            "ownedCertificate": "Provide a TLS certificate for the Identity service.",
+            "selfSignedCertificate": "The Identity service is secured by a TLS certificate."
+          },
+          "validators": ["NONEMPTY"],
+          "type": "SmartCertificateField",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "Secret",
+            "name": "tectonic-identity-tls-secret"
+          },
+          "selfSignedCertificate": {
+            "caCertificateSelector": {
+              "type": "ca/ca-certificate/ca-type",
+              "cert": "ca/ca-certificate/ca-cert",
+              "key": "ca/ca-certificate/ca-key"
+            }
+          }
+        }
+      ],
+      "selfSignedCertificate": {
+        "caCertificateSelector": {
+          "type": "ca/ca-certificate/ca-type",
+          "cert": "ca/ca-certificate/ca-cert",
+          "key": "ca/ca-certificate/ca-key"
+        },
+        "endpoint": "tectonic/generate-self-signed-certificate",
+        "commonNameFrom": "tectonic-identity/identity-issuer-url",
+        "organizationNameFrom": "ca/ca-certificate/organization-name",
+        "tlsCertInto": "identity-certificate/tls-cert",
+        "tlsKeyInto": "identity-certificate/tls-key"
+      }
+    },
+
+    {
+      "id": "tectonic-console",
+      "title": "Tectonic Console",
+      "description": "The Console is a dashboard for interacting with the cluster.",
+      "fields": [
+        {
+          "id": "console-url",
+          "label": "URL",
+          "validators": ["NONEMPTY", "CONSOLE_URL_RE"],
+          "description": "This is where users will access the Console. Required protocol is HTTPS and port number is 32000.",
+          "type": "TextField",
+          "placeholder": "https://console.tectonic.example.com:32000",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "ConfigMap",
+            "name": "tectonic-config"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "console-cert",
+      "title": "Console Certificate",
+      "type": "CertificateWizForm",
+      "fields": [
+        {
+          "id": "console-certificate",
+          "description": {
+            "ownedCertificate": "Provide a TLS certificate for the Console.",
+            "selfSignedCertificate": "The Console is secured by a TLS certificate."
+          },
+          "validators": ["NONEMPTY"],
+          "type": "SmartCertificateField",
+          "k8s": {
+            "namespace": "tectonic-system",
+            "kind": "Secret",
+            "name": "tectonic-console-tls-secret"
+          },
+          "selfSignedCertificate": {
+            "caCertificateSelector": {
+              "type": "ca/ca-certificate/ca-type",
+              "cert": "ca/ca-certificate/ca-cert",
+              "key": "ca/ca-certificate/ca-key"
+            }
+          }
+        }
+      ],
+      "selfSignedCertificate": {
+        "caCertificateSelector": {
+          "type": "ca/ca-certificate/ca-type",
+          "cert": "ca/ca-certificate/ca-cert",
+          "key": "ca/ca-certificate/ca-key"
+        },
+        "endpoint": "tectonic/generate-self-signed-certificate",
+        "commonNameFrom": "tectonic-console/console-url",
+        "organizationNameFrom": "ca/ca-certificate/organization-name",
+        "tlsCertInto": "console-certificate/tls-cert",
+        "tlsKeyInto": "console-certificate/tls-key"
+      }
+    }
+
+  ],
+
+  "launchForm": {
+    "urlFrom": "tectonic-console/console-url"
+  }
+
+}

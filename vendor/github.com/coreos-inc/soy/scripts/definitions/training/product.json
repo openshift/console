@@ -1,0 +1,15 @@
+{
+  "name" : "training",
+  "publicName" : "Training",
+  "description" : "Container-focused Training from CoreOS Experts",
+  "duration" : 30,
+  "durationPeriod" : "days",
+  "trial" : 0,
+  "trialPeriod" : "none",
+  "productType" : "non-recurring",
+  "metadata": {
+    "public": true,
+    "order": 80,
+    "externalLink": "https://tectonic.com/training"
+  }
+}

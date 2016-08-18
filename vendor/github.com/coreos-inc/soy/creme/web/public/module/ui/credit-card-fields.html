@@ -1,0 +1,43 @@
+<div class="tec-credit-card-fields">
+  <div class="form-group">
+    <div class="cos-field-inline">
+      <label>Credit Card Number</label>
+      <input type="text"
+             ng-model="card.number"
+             ng-required="required"
+             minlength="5" />
+    </div>
+    <div class="cos-field-inline">
+      <label>CVC Code</label>
+      <input type="text"
+             ng-model="card.cvc"
+             ng-required="required"
+             minlength="3"
+             size="6" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Expiration Date</label>
+    <div>
+      <div class="cos-field-inline">
+        <input type="text"
+               ng-model="card.expiryMonth"
+               ng-required="required"
+               minlength="2"
+               maxlength="2"
+               size="6"
+               placeholder="MM" />
+      </div>
+      <div class="cos-field-inline hidden-xs">/</div>
+      <div class="cos-field-inline">
+        <input type="text"
+               ng-model="card.expiryYear"
+               ng-required="required"
+               minlength="4"
+               maxlength="4"
+               size="6"
+               placeholder="YYYY" />
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="tec-address-form">
+  <div class="form-group">
+    <div class="tec-address-form__title-block">
+      <label ng-if="title" ng-bind="title"></label>
+      <label ng-if="copyAddress" class="tec-address-form__copy-address">
+        <input type="checkbox"
+               ng-model="vals.sameAddresses"
+               ng-click="makeAddressSame(vals.sameAddresses)"/> Same as my company address
+      </label>
+    </div>
+
+    <input type="text"
+           ng-model="editAddress.addressLine1"
+           ng-change="addressChanged()"
+           placeholder="Street Address"
+           class="form-group"
+           required />
+    <input type="text"
+           ng-model="editAddress.addressLine2"
+           ng-change="addressChanged()"
+           placeholder="Unit / Suite" />
+  </div>
+  <div class="form-group">
+    <div class="cos-field-inline">
+      <label>City</label>
+      <input type="text"
+             ng-model="editAddress.city"
+             ng-change="addressChanged()"
+             required />
+    </div>
+    <div class="cos-field-inline">
+      <label>State / Province</label>
+      <input type="text"
+             ng-model="editAddress.province"
+             ng-change="addressChanged()"
+             required />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="cos-field-inline">
+      <label>Postal Code</label>
+      <input type="text"
+             ng-model="editAddress.postcode"
+             ng-change="addressChanged()"
+             size="6"
+             required />
+    </div>
+    <div class="cos-field-inline">
+      <label>Country</label>
+      <input type="text"
+             ng-model="editAddress.country"
+             ng-change="addressChanged()"
+             required />
+    </div>
+    <div class="cos-field-inline">
+      <label>Phone Number</label>
+      <input type="text"
+        ng-model="editAddress.landline"
+        minlength="10"
+        required />
+    </div>
+  </div>
+</div>

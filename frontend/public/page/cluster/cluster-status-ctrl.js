@@ -43,6 +43,7 @@ angular.module('bridge.page')
   statusSvc.tectonicVersion()
   .then(function(resp) {
     $scope.tectonicVersion = resp.data.version;
+    $scope.tectonicTier = resp.data.tier;
     $scope.tectonicVersionCheckSucceeded = true;
   })
   .catch(function() {

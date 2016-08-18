@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.factory('ModalLauncherSvc', function($uibModal, _) {
+.factory('ModalLauncherSvc', function($uibModal, _, analyticsSvc, $rootScope) {
   'use strict';
 
   var modalConfig = {
@@ -111,8 +111,13 @@ angular.module('bridge.page')
         resolve[key] = _.isFunction(value) ? value : function () {return value;};
       });
       config.resolve = resolve;
-      return $uibModal.open(config);
+      $rootScope.modalRoute = config.templateUrl.replace('/static/page', '');
+      analyticsSvc.route($rootScope.modalRoute);
+      var open = $uibModal.open(config);
+      open.closed.then(function() {
+        delete $rootScope.modalRoute;
+      });
+      return open;
     }
   };
-
 });

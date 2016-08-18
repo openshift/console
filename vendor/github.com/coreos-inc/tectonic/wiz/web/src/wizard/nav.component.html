@@ -1,0 +1,9 @@
+<h2 class="wiz-wizard__nav__heading">1. Define Cluster</h2>
+<h2 class="wiz-wizard__nav__heading">2. Boot Cluster</h2>
+<h2 class="wiz-wizard__nav__heading">3. Configure Tectonic</h2>
+<ul>
+  <li *ngFor="#f of wizard.forms; #i = index" [ngClass]="{active: i === wizard.activeFormIndex}" class="wiz-wizard__nav__element">
+    <a *ngIf="isFormNavigatable(f)" [routerLink]="['Step', {stepNumber: i}]">{{f.title}}</a>
+    <span *ngIf="!isFormNavigatable(f)" >{{f.title}}</span>
+  </li>
+</ul>

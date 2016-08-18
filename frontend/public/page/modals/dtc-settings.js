@@ -53,6 +53,7 @@ angular.module('bridge.page')
     $scope.requestPromise.then(function() {
       $uibModalInstance.dismiss('cancel');
     });
+
   };
 
   $scope.cancel = function() {

@@ -1,0 +1,44 @@
+package: github.com/coreos-inc/tectonic/manager
+import:
+- package: github.com/coreos-inc/soy
+  version: 664b9d022bae09704bb3e556920d70475be1c64b
+  subpackages:
+  - common/license
+- package: github.com/coreos/dex
+  version: master
+  subpackages:
+  - client
+  - schema/adminschema
+- package: github.com/pborman/uuid
+- package: golang.org/x/crypto
+  subpackages:
+  - bcrypt
+- package: k8s.io/kubernetes
+  version: v1.3.0
+  subpackages:
+  - pkg/api
+  - pkg/api/errors
+  - pkg/api/v1
+  - pkg/api/validation
+  - pkg/client/cache
+  - pkg/client/record
+  - pkg/controller/framework
+  - pkg/client/unversioned
+  - pkg/client/unversioned/clientcmd
+  - pkg/client/clientset_generated/release_1_3
+  - pkg/client/clientset_generated/release_1_3/typed/core/v1
+  - pkg/client/clientset_generated/internalclientset/typed/core/unversioned
+  - pkg/kubectl/cmd/util
+  - pkg/kubectl/resource
+  - pkg/runtime
+  - pkg/util/wait
+  - pkg/watch
+- package: speter.net/go/exp/math/dec/inf
+  repo: https://gopkg.in/inf.v0
+  vcs: git
+- package: github.com/spf13/pflag
+  version: cb88ea77998c3f024757528e3305022ab50b43be
+- package: github.com/spf13/cobra
+  version: f368244301305f414206f889b1735a54cfc8bde8
+- package: github.com/coreos/go-oidc
+  version: 8ae400b75540a4f57ec549a89b3e9d994c636f2a

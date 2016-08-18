@@ -1,0 +1,10 @@
+Free Trial Ending Soon
+Your trial will end {{.trialEnd}}. Your account will automatically convert to the normal billing rate.
+
+Purchase {!bfwd__BFSubscription__c.bfwd__Name__c}
+Trial End Date {!bfwd__BFSubscription__c.bfwd__TrialEnd__c}
+
+You can edit your account information or view an invoice at any time by visiting: https://account.tectonic.com
+
+Thank you,
+The Tectonic Team

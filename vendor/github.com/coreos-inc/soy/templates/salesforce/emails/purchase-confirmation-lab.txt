@@ -1,0 +1,17 @@
+You've signed up for the Tectonic Lab Plan
+
+It takes a few steps to get started:
+
+1. Install Kubernetes.
+2. Launch the Tectonic Console.
+3. Launch the Quay Enterprise registry to build and store your container images.
+
+Get Started: https://tectonic.com/docs/lab/quickstart
+
+We want to make sure your lab is up and running with containers. Contact CoreOS Support (https://account.tectonic.com/support) between 8am - 5pm pacific time for questions, debugging, advice and more.
+
+Download your license and manage your account at https://account.tectonic.com
+
+If you didn't request this action, please let us know by responding to this email.
+
+Have a good day!

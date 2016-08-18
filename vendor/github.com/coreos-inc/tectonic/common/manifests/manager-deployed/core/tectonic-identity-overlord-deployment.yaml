@@ -1,0 +1,60 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tectonic-identity-overlord
+  labels:
+    app: tectonic-identity
+    component: overlord
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: tectonic-identity-overlord
+      labels:
+        app: tectonic-identity
+        component: overlord
+    spec:
+      containers:
+      - name: tectonic-identity-overlord
+        image: quay.io/coreos/tectonic-identity:{{.componentVersion}}
+        imagePullPolicy: IfNotPresent
+        command: ["/opt/dex/bin/dex-overlord"]
+        ports:
+        - containerPort: 5557
+          protocol: TCP
+        env:
+        - name: DEX_OVERLORD_ADMIN_LISTEN
+          value: "http://0.0.0.0:5557"
+        - name: DEX_OVERLORD_DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-identity-db-secret
+              key: identity-db-url
+        - name: DEX_OVERLORD_KEY_SECRETS
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-identity-access-secret
+              key: identity-key-secrets
+        - name: DEX_OVERLORD_ADMIN_API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-identity-access-secret
+              key: identity-admin-api-secret
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 50Mi
+        volumeMounts:
+        - name: tectonic-identity-config-secret
+          mountPath: /etc/tectonic-identity-config-secret
+          readOnly: true
+      volumes:
+      - name: tectonic-identity-config-secret
+        secret:
+          secretName: tectonic-identity-config-secret
+      imagePullSecrets:
+      - name: coreos-pull-secret
+

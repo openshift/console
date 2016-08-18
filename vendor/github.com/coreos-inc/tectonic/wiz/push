@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+# Build, tag, and push container image to quay.io/coreos/tectonic-wizard
+# Will push a sha-named image at every run.
+# If it appears to be the tip of master, will tag that image with a
+# git tag if one is present.
+
+# This script relies on .dockercfg or other external configuration to
+# grant the appropriate permissions and identity for pushing images quay.io
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd $SCRIPT_DIR
+
+set -x
+REPO=quay.io/coreos/tectonic-wizard
+
+GIT_VERSION=$(../git-version)
+
+if [[ "$GIT_VERSION" == *dirty ]]; then
+    echo "Won't push from a dirty git repo. Commit your changes before you push."
+    exit
+fi
+
+docker build -q --rm=true -t $REPO:$GIT_VERSION .
+docker tag $REPO:$GIT_VERSION $REPO:vdevel-latest
+
+docker push $REPO:$GIT_VERSION
+docker push $REPO:vdevel-latest
+
+popd

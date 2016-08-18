@@ -1,0 +1,50 @@
+{
+  "@type": "productRatePlan",
+  "metadata": {
+    "public": false,
+    "purchasable": false
+  },
+  "currency": "USD",
+  "taxStatus": "exclusive",
+  "failedPaymentBehaviour": "None",
+  "duration": 30,
+  "durationPeriod": "days",
+  "trial": 0,
+  "trialPeriod": "none",
+  "productType": "non-recurring",
+  "proRataMode": "WithCoupon",
+  "createZeroValuedInvoices": true,
+  "name": "training",
+  "publicName": "Training",
+  "migrationBehaviour": "CreditAccount",
+  "invoiceIssueType": "Manual",
+  "taxation": [],
+  "fixedTermDefinitions": [],
+  "pricingComponents": [
+    {
+      "@type": "tieredPricingComponent",
+      "name": "training",
+      "publicName": "Training",
+      "description": "Days of training",
+      "chargeType": "arrears",
+      "invoicingType": "Aggregated",
+      "chargeModel": "tiered",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 365,
+          "pricingType": "unit",
+          "price": 5000
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "days"
+      }
+    }
+  ],
+  "aggregatingComponents": []
+}

@@ -1,0 +1,31 @@
+<div class="tec-modal-cancel-subscription">
+  <form name="modalCancelSubscriptionForm" ng-submit="vm.submit(modalCancelSubscriptionForm)">
+    <div class="modal-header">
+      <h3 class="modal-title" ng-bind-template="Deactivate {{vm.model.product.publicName}}"></h3>
+    </div>
+    <div class="modal-body">
+      <div class="tec-margin-bottom">
+        Your purchase will be deactivated on the date below and access will be discontinued.
+      </div>
+      <div class="row">
+        <div class="col-sm-3"><label>Billing Period</label></div>
+        <div class="col-sm-9" ng-bind-template="{{vm.model.currentPeriodStart | apiDate}} - {{vm.endDate | apiDate}}"></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3"><label>Purchase Date</label></div>
+        <div class="col-sm-9" ng-bind="vm.model.initialPeriodStart | apiDate"></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3"><label>Deactivation</label></div>
+        <div class="col-sm-9" ng-bind="vm.endDate | apiDate"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <cos-btn-bar complete-promise="vm.submitPromise">
+        <div ng-show="vm.errorMessage" class="cos-error-box" ng-bind="errorMessage"></div>
+        <button type="submit" class="btn btn-primary">Deactivate</button>
+        <button type="button" class="btn btn-link" ng-click="$dismiss()">Cancel</button>
+      </cos-btn-bar>
+    </div>
+  </form>
+</div>

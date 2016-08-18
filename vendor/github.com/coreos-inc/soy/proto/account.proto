@@ -1,0 +1,626 @@
+syntax = "proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/coreos-inc/soy/proto/common/timestamp.proto";
+
+package proto;
+
+service AccountService {
+  // USERS
+  rpc CreateUser(CreateUserReq) returns (CreateUserResp) {}
+  rpc GetUser(GetUserReq) returns (GetUserResp) {}
+  // Invites a user to view/manage an account.
+  rpc InviteUser(InviteUserReq) returns (InviteUserResp) {}
+  // User is moved from invited state to regular user with access.
+  rpc AcceptUserInvitation(AcceptUserInvitationReq) returns (AcceptUserInvitationResp) {}
+  // Accepts ALL oustanding account invitations for the requesting user.
+  rpc AcceptAllUserInvitations(AcceptAllUserInvitationsReq) returns (AcceptAllUserInvitationsResp) {}
+  // User access is removed from an account.
+  rpc RevokeUserAccountAccess(RevokeUserAccountAccessReq) returns (RevokeUserAccountAccessResp) {}
+  // User role is changed on an account.
+  rpc ChangeUserRole(ChangeUserRoleReq) returns (ChangeUserRoleResp) {}
+  // List all users for an account.
+  rpc ListAccountUsers(ListAccountUsersReq) returns (ListAccountUsersResp) {}
+
+
+  // ACCOUNTS
+  rpc GetAccount(GetAccountReq) returns (GetAccountResp) {}
+  rpc ListAccounts(ListAccountsReq) returns (ListAccountsResp) {}
+  rpc CreateAccount(CreateAccountReq) returns (CreateAccountResp) {}
+  rpc RetireAccount(RetireAccountReq) returns (RetireAccountResp) {}
+  rpc UpsertAccount(UpsertAccountReq) returns (UpsertAccountResp) {}
+  rpc GetAccountStatus(GetAccountStatusReq) returns (GetAccountStatusResp) {}
+  rpc TerminateAccount(TerminateAccountReq) returns (TerminateAccountResp) {}
+  rpc AdvanceAccount(AdvanceAccountReq) returns (AdvanceAccountResp) {}
+
+
+  // ACCOUNT PROFILES
+  rpc UpdateProfile(UpdateProfileReq) returns (UpdateProfileResp) {}
+  rpc CreateAddress(CreateAddressReq) returns (CreateAddressResp) {}
+  rpc UpdateAddress(UpdateAddressReq) returns (UpdateAddressResp) {}
+  rpc UpsertAddress(UpsertAddressReq) returns (UpsertAddressResp) {}
+
+  // CREDIT CARD INFO
+  rpc CreateCreditCard(CreateCreditCardReq) returns (CreateCreditCardResp) {}
+  rpc GetCreditCard(GetCreditCardReq) returns (GetCreditCardResp) {}
+
+  // ACCOUNT SUBSCRIPTIONS
+  rpc ListSubscriptions(ListSubscriptionsReq) returns (ListSubscriptionsResp) {}
+  rpc CreateSubscription(CreateSubscriptionReq) returns (CreateSubscriptionResp) {}
+  rpc CancelSubscription(CancelSubscriptionReq) returns (CancelSubscriptionResp) {}
+  rpc UncancelSubscription(UncancelSubscriptionReq) returns (UncancelSubscriptionResp) {}
+
+  rpc GetInvoice(GetInvoiceReq) returns (GetInvoiceResp) {}
+  rpc ListInvoices(ListInvoicesReq) returns (ListInvoicesResp) {}
+  rpc GetInvoiceAsPDF(GetInvoiceAsPDFReq) returns (GetInvoiceAsPDFResp) {}
+
+  // PRODUCTS
+  rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
+
+  // INERNAL MGMT
+  rpc GetQuayCredentials(GetQuayCredentialsReq) returns (GetQuayCredentialsResp) {}
+  rpc SetQuayCredentials(SetQuayCredentialsReq) returns (SetQuayCredentialsResp) {}
+  rpc ConvertExternallyCreatedAccounts(ConvertExternallyCreatedAccountsReq) returns (ConvertExternallyCreatedAccountsResp) {}
+  rpc CreateLicense(CreateLicenseReq) returns (CreateLicenseResp) {}
+
+  rpc GetAssets(GetAssetsReq) returns (GetAssetsResp) {}
+}
+
+message CreditCard {
+  enum CreditCardState {
+    Pending = 0;
+    Active = 1;
+    Expired = 2;
+    Expiring = 3;
+  }
+  string id = 1 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string account_id = 2 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "id"];
+  string last_four = 3 [(gogoproto.jsontag) = "lastFour"];
+  int32 expiry_month = 4 [(gogoproto.jsontag) = "expiryMonth"];
+  int32 expiry_year = 5 [(gogoproto.jsontag) = "expiryYear"];
+  string type = 6 [(gogoproto.jsontag) = "type"];
+  CreditCardState state = 7 [(gogoproto.jsontag) = "state"];
+  string state_description = 8 [(gogoproto.jsontag) = "stateDescription"];
+}
+
+message CreateCreditCardReq {
+  string token = 1 [(gogoproto.jsontag) = "token"];
+  string account_id = 2 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message CreateCreditCardResp {
+  CreditCard card = 1 [(gogoproto.jsontag) = "card"];
+}
+
+message GetCreditCardReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "id"];
+}
+
+message GetCreditCardResp {
+  CreditCard card = 1 [(gogoproto.jsontag) = "card"];
+}
+
+message ListProductsReq {
+  bool include_deleted = 1 [(gogoproto.jsontag) = "includeDeleted"];
+  bool include_private = 2 [(gogoproto.jsontag) = "includePrivate"];
+}
+
+message ListProductsResp {
+  repeated Product items = 1 [(gogoproto.jsontag) = "items"];
+}
+
+message Product {
+  string id = 1 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string name = 2 [(gogoproto.jsontag) = "name"];
+  string public_name = 3 [(gogoproto.jsontag) = "publicName"];
+  string description = 4 [(gogoproto.jsontag) = "description"];
+  int32 duration = 7 [(gogoproto.jsontag) = "duration"];
+  string duration_period = 8 [(gogoproto.jsontag) = "durationPeriod"];
+  int32 trial = 9 [(gogoproto.jsontag) = "trial"];
+  string trial_period = 10 [(gogoproto.jsontag) = "trialPeriod"];
+  string product_type = 11 [(gogoproto.jsontag) = "productType"];
+  bool deleted = 12 [(gogoproto.jsontag) = "deleted"];
+  bool public = 13 [(gogoproto.jsontag) = "public"];
+  string external_link = 14 [(gogoproto.jsontag) = "externalLink"];
+  string tos_link = 15 [(gogoproto.customname) = "TOSLink", (gogoproto.jsontag) = "tosLink"];
+  string quickstart_link = 16 [(gogoproto.jsontag) = "quickstartLink"];
+  int32 order = 17 [(gogoproto.jsontag) = "order"];
+  repeated RatePlan rate_plans = 18 [(gogoproto.jsontag) = "ratePlans"];
+}
+
+message RatePlan {
+  string id = 1 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string name = 2 [(gogoproto.jsontag) = "name"];
+  string public_name = 3 [(gogoproto.jsontag) = "publicName"];
+  string description = 4 [(gogoproto.jsontag) = "description"];
+  int32 duration = 5 [(gogoproto.jsontag) = "duration"];
+  string duration_period = 6 [(gogoproto.jsontag) = "durationPeriod"];
+  int32 trial = 7 [(gogoproto.jsontag) = "trial"];
+  string trial_period = 8 [(gogoproto.jsontag) = "trialPeriod"];
+  bool public = 9 [(gogoproto.jsontag) = "public"];
+  bool purchasable = 10 [(gogoproto.jsontag) = "purchasable"];
+  string product_id = 11 [(gogoproto.customname) = "ProductID", (gogoproto.jsontag) = "productID"];
+  bool bypass_payment_verification = 12 [(gogoproto.customname) = "BypassPaymentVerification", (gogoproto.jsontag) = "bypassPaymentVerification"];
+  int32 order = 13 [(gogoproto.jsontag) = "order"];
+  repeated PricingComponent pricing_components = 14 [(gogoproto.jsontag) = "pricingComponents"];
+  repeated string quay_teams = 15 [(gogoproto.jsontag) = "quayTeams"];
+  string failed_payment_behaviour = 16 [(gogoproto.jsontag) = "failedPaymentBehaviour"];
+}
+
+message PricingComponent {
+  string type = 1 [(gogoproto.jsontag) = "@type"];
+  string id = 2 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string name = 3 [(gogoproto.jsontag) = "name"];
+  string public_name = 4 [(gogoproto.jsontag) = "publicName"];
+  string description = 5 [(gogoproto.jsontag) = "description"];
+  int64 default_quantity = 6 [(gogoproto.jsontag) = "defaultQuantity"];
+  int64 min_quantity = 7 [(gogoproto.jsontag) = "minQuantity"];
+  repeated PricingComponentTiers tiers = 8 [(gogoproto.jsontag) = "tiers"];
+  UnitOfMeasure unit_of_measure = 9 [(gogoproto.jsontag) = "unitOfMeasure"];
+}
+
+message PricingComponentTiers {
+  string id = 1 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  int64 lower_threshold = 2 [(gogoproto.jsontag) = "lowerThreshold"];
+  int64 upper_threshold = 3 [(gogoproto.jsontag) = "upperThreshold"];
+  string pricing_type = 4 [(gogoproto.jsontag) = "pricingType"];
+  double price = 5 [(gogoproto.jsontag) = "price"];
+}
+
+message UnitOfMeasure {
+  string id = 1 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string name = 2 [(gogoproto.jsontag) = "name"];
+  string displayed_as = 3 [(gogoproto.jsontag) = "displayedAs"];
+}
+
+message ListInvoicesReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID"];
+}
+
+message ListInvoicesResp {
+  repeated Invoice invoices = 1;
+}
+
+message GetInvoiceReq {
+  string invoice_id = 1 [(gogoproto.customname) = "InvoiceID", (gogoproto.jsontag) = "invoice_id"];
+}
+
+message GetInvoiceResp {
+  Invoice invoice = 1;
+}
+
+message Invoice {
+  string id = 1 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string name = 2 [(gogoproto.jsontag) = "name"];
+  string subscription_id = 3 [(gogoproto.customname) = "SubscriptionID", (gogoproto.jsontag) = "subscriptionID"];
+  string account_id = 4 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  string type = 5;
+  string state = 6;
+  string period_start = 7 [(gogoproto.jsontag) = "periodStart"];
+  string period_end = 8 [(gogoproto.jsontag) = "periodEnd"];
+  string issued = 9;
+  double invoice_cost = 10 [(gogoproto.jsontag) = "invoiceCost"];
+  double invoice_paid = 11 [(gogoproto.jsontag) = "invoicePaid"];
+  double discount_amount = 12 [(gogoproto.jsontag) = "discountAmount"];
+  double non_discounted_cost = 13 [(gogoproto.jsontag) = "nonDiscountedCost"];
+  string payment_received = 14 [(gogoproto.jsontag) = "paymentReceived"];
+  bool initial_invoice = 15 [(gogoproto.jsontag) = "initialInvoice"];
+  int32 total_execution_attempts = 16 [(gogoproto.jsontag) = "totalExecutionAttempts"];
+  string currency = 17;
+}
+
+message GetInvoiceAsPDFReq {
+  string invoice_id = 1 [(gogoproto.customname) = "InvoiceID", (gogoproto.jsontag) = "invoiceID"];
+}
+
+message GetInvoiceAsPDFResp {
+  bytes invoice_data = 1;
+}
+
+message CreateUserReq {
+  string dex_id = 1 [(gogoproto.customname) = "DexID", (gogoproto.jsontag) = "dexID"];
+  string email = 2 [(gogoproto.jsontag) = "email"];
+}
+
+message CreateUserResp {
+  User user = 1 [(gogoproto.jsontag) = "user"];
+}
+
+message GetUserReq {
+  string dex_id = 1 [(gogoproto.customname) = "DexID", (gogoproto.jsontag) = "dexID"];
+}
+
+message GetUserResp {
+  User user = 1 [(gogoproto.jsontag) = "user"];
+}
+
+message ListAccountUsersReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message ListAccountUsersResp {
+  repeated UserListUser items = 1 [(gogoproto.jsontag) = "items"];
+}
+
+message InviteUserReq {
+  string email = 1 [(gogoproto.jsontag) = "email"];
+  string account_id = 2 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  Role role = 3;
+}
+
+message InviteUserResp {}
+
+message AcceptUserInvitationReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message AcceptUserInvitationResp {}
+
+message AcceptAllUserInvitationsReq {
+  string dex_id = 1 [(gogoproto.customname) = "DexID", (gogoproto.jsontag) = "dexID"];
+}
+
+message AcceptAllUserInvitationsResp {}
+
+message RevokeUserAccountAccessReq {
+  // Dex id of a user who is *already* associated with an account.
+  string existing_member_dex_id = 1 [(gogoproto.customname) = "ExistingMemberDexID", (gogoproto.jsontag) = "existingUserDexID"];
+  // Email of a user who has been *invited* to an account.
+  string invited_user_email = 2 [(gogoproto.jsontag) = "invitedUserEmail"];
+  // account_id is the billforward account # the user/invited user belongs to.
+  string account_id = 3 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message ChangeUserRoleReq {
+  string dex_id = 1 [(gogoproto.customname) = "DexID", (gogoproto.jsontag) = "dexID"];
+  string account_id = 2 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  Role role = 3;
+}
+
+message ChangeUserRoleResp {}
+
+message RevokeUserAccountAccessResp {}
+
+message GetAccountReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message GetAccountResp {
+  Account account = 1 [(gogoproto.jsontag) = "account"];
+  repeated Subscription subscriptions = 2 [(gogoproto.jsontag) = "subscriptions"];
+}
+
+message ListAccountsReq {}
+
+message ListAccountsResp {
+  repeated Account items = 1 [(gogoproto.jsontag) = "items"];
+}
+
+message CreateAccountReq {
+  Account account = 1 [(gogoproto.jsontag) = "account"];
+}
+
+message CreateAccountResp {
+  Account account = 1 [(gogoproto.jsontag) = "account"];
+}
+
+message UpdateProfileReq {
+  Profile profile = 1;
+}
+
+message UpdateProfileResp {
+  Profile profile = 1 [(gogoproto.jsontag) = "profile"];
+}
+
+message CreateAddressReq {
+  Address address = 1 [(gogoproto.jsontag) = "address"];
+}
+
+message CreateAddressResp {
+  Address address = 1 [(gogoproto.jsontag) = "address"];
+}
+
+message UpdateAddressReq {
+  Address address = 1 [(gogoproto.jsontag) = "address"];
+}
+
+message UpdateAddressResp {
+  Address address = 1 [(gogoproto.jsontag) = "address"];
+}
+
+message UpsertAddressReq {
+  Address address = 1 [(gogoproto.jsontag) = "address"];
+}
+
+message UpsertAddressResp {
+  Address address = 1 [(gogoproto.jsontag) = "address"];
+}
+
+message RetireAccountReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message UpsertAccountReq {
+  Account account = 1 [(gogoproto.jsontag) = "account"];
+}
+
+message UpsertAccountResp {
+  Account account = 1 [(gogoproto.jsontag) = "account"];
+}
+
+message RetireAccountResp {
+  bool retired = 1 [(gogoproto.jsontag) = "retired"];
+}
+
+message ConvertExternallyCreatedAccountsReq {
+  string dex_id = 1 [(gogoproto.customname) = "DexID", (gogoproto.jsontag) = "dexID"];
+  string email= 2;
+}
+
+message ConvertExternallyCreatedAccountsResp {
+  repeated string converted_account_ids = 1 [(gogoproto.customname) = "ConvertedAccountIDs", (gogoproto.jsontag) = "convertedAccountIDs"];
+}
+
+message Profile {
+  string id = 1  [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string account_id = 2 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  string company_name = 3 [(gogoproto.jsontag) = "companyName"];
+  string email = 4 [(gogoproto.jsontag) = "email"];
+  string first_name = 5 [(gogoproto.jsontag) = "firstName"];
+  string last_name = 6 [(gogoproto.jsontag) = "lastName"];
+  string landline = 7 [(gogoproto.jsontag) = "landline"];
+  string mobile = 8 [(gogoproto.jsontag) = "mobile"];
+  repeated Address addresses = 9 [(gogoproto.jsontag) = "addresses"];
+}
+
+message Address {
+  string id = 1 [(gogoproto.customname) = "ID"];
+  string addressLine1 = 2 [(gogoproto.jsontag) = "addressLine1"];
+  string addressLine2 = 3 [(gogoproto.jsontag) = "addressLine2"];
+  string addressLine3 = 4 [(gogoproto.jsontag) = "addressLine3"];
+  string city = 5 [(gogoproto.jsontag) = "city"];
+  string province = 6 [(gogoproto.jsontag) = "province"];
+  string country = 7 [(gogoproto.jsontag) = "country"];
+  string postcode = 8 [(gogoproto.jsontag) = "postcode"];
+  string landline = 9 [(gogoproto.jsontag) = "landline"];
+  string profile_id = 10 [(gogoproto.customname) = "ProfileID", (gogoproto.jsontag) = "profileID"];
+  bool primary_address = 11 [(gogoproto.jsontag) = "primaryAddress"];
+}
+
+message Account {
+  string id = 1 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  Profile profile = 2 [(gogoproto.jsontag) = "profile"];
+  string quay_id = 3 [(gogoproto.customname) = "QuayID", (gogoproto.jsontag) = "quayID"];
+  bool newsletter_email = 4 [(gogoproto.customname) = "NewsletterEmail", (gogoproto.jsontag) = "newsletterEmail"];
+  bool deleted = 5 [(gogoproto.jsontag) = "deleted"];
+  common.Timestamp created_at = 6 [(gogoproto.jsontag) = "createdAt"];
+}
+
+enum StateSeverity {
+  UNKNOWN = 0;
+  NORMAL = 1;
+  GOOD = 2;
+  WARNING = 3;
+  CRITICAL = 4;
+}
+
+message Subscription {
+  enum PaymentType {
+    Unknown = 0;
+    PurchaseOrder = 1;
+    CreditCard = 2;
+    None = 3;
+  }
+  enum SubscriptionType {
+    Trial = 0;
+    Subscription = 1;
+    FixedTerm = 2;
+  }
+  string id = 2 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string version_id = 3 [(gogoproto.customname) = "VersionID", (gogoproto.jsontag) = "versionID"];
+  string account_id = 4 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  string product_id = 5 [(gogoproto.customname) = "ProductID", (gogoproto.jsontag) = "productID"];
+  string product_rate_plan_id = 6 [(gogoproto.customname) = "ProductRatePlanID", (gogoproto.jsontag) = "productRatePlanID"];
+  string name = 7 [(gogoproto.jsontag) = "name"];
+  SubscriptionState state = 8 [(gogoproto.jsontag) = "state"];
+  string state_description = 9 [(gogoproto.jsontag) = "stateDescription"];
+  StateSeverity state_severity = 10 [(gogoproto.jsontag) = "stateSeverity"];
+  common.Timestamp current_period_start = 11 [(gogoproto.jsontag) = "currentPeriodStart"];
+  common.Timestamp current_period_end = 12 [(gogoproto.jsontag) = "currentPeriodEnd"];
+  common.Timestamp initial_period_start = 13 [(gogoproto.jsontag) = "initialPeriodStart"];
+  common.Timestamp trial_end = 14 [(gogoproto.jsontag) = "trialEnd"];
+  common.Timestamp subscription_end = 15 [(gogoproto.jsontag) = "subscriptionEnd"];
+  common.Timestamp contract_start = 16 [(gogoproto.jsontag) = "contractStart"];
+  int32 successful_periods = 17 [(gogoproto.jsontag) = "successfulPeriods"];
+  int32 total_periods = 18 [(gogoproto.jsontag) = "totalPeriods"];
+  bool credit_enabled = 19 [(gogoproto.jsontag) = "creditEnabled"];
+  Product product = 20 [(gogoproto.jsontag) = "product"];
+  RatePlan rate_plan = 21 [(gogoproto.jsontag) = "ratePlan"];
+  bool aggregating = 22 [(gogoproto.jsontag) = "aggregating"];
+  SubscriptionType type = 23 [(gogoproto.jsontag) = "type"];
+  bool agreed_tos = 24 [(gogoproto.customname) = "AgreedTOS", (gogoproto.jsontag) = "agreedTOS"];
+  PaymentType payment_type = 25 [(gogoproto.jsontag) = "paymentType"];
+  bool bypass_payment_verification = 26 [(gogoproto.jsontag) = "bypassPaymentVerification"];
+  bool changelog_emails = 27 [(gogoproto.customname) = "ChangelogEmails", (gogoproto.jsontag) = "changelogEmails"];
+  repeated PricingComponentValue pricing_component_values = 28 [(gogoproto.jsontag) = "pricingComponentValues"];
+  string failed_payment_behaviour = 29 [(gogoproto.jsontag) = "failedPaymentBehaviour"];
+}
+
+message PricingComponentValue {
+  message PricingComponentInfo {
+    string public_name = 1 [(gogoproto.jsontag) = "publicName"];
+    string description = 2 [(gogoproto.jsontag) = "description"];
+    bool inferred_from_default = 3 [(gogoproto.jsontag) = "inferredFromDefault"];
+    UnitOfMeasure unit_of_measure = 4 [(gogoproto.jsontag) = "unitOfMeasure"];
+  }
+  string pricing_component_id = 2 [(gogoproto.customname) = "PricingComponentID", (gogoproto.jsontag) = "pricingComponentID"];
+  string pricing_component_name = 3 [(gogoproto.jsontag) = "pricingComponentName"];
+  int64 value = 4 [(gogoproto.jsontag) = "value"];
+  PricingComponentInfo pricing_component_info = 5 [(gogoproto.jsontag) = "pricingComponentInfo"];
+}
+
+enum Role {
+  READ_ONLY = 0;
+  ADMIN = 1;
+  SUPER_USER = 2;
+}
+
+message RoleValue {
+  Role value = 1;
+}
+
+message User {
+  message AccountRole {
+    string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+    RoleValue role = 2;
+  }
+  string dex_id = 1 [(gogoproto.customname) = "DexID", (gogoproto.jsontag) = "dexID"];
+  string email = 2 [(gogoproto.jsontag) = "email"];
+  repeated AccountRole account_roles = 3 [(gogoproto.jsontag) = "accountRoles"];
+}
+
+message UserListUser {
+  string dex_id = 1 [(gogoproto.customname) = "DexID", (gogoproto.jsontag) = "dexID"];
+  string email = 2 [(gogoproto.jsontag) = "email"];
+  Role role = 3 [(gogoproto.jsontag) = "role"];
+}
+
+enum AssetType {
+  License = 0;
+  PullSecret = 1;
+}
+
+enum SubscriptionState {
+  Provisioned = 0;
+  Paid = 1;
+  AwaitingPayment = 2;
+  Cancelled = 3;
+  Failed = 4;
+  Expired = 5;
+}
+
+message PricingComponentQuantity {
+  string pricing_component = 1 [(gogoproto.jsontag) = "pricingComponent"];
+  int64 quantity = 2 [(gogoproto.jsontag) = "quantity"];
+}
+
+message CreateSubscriptionReq {
+  enum PaymentType {
+    PurchaseOrder = 0;
+    CreditCard = 1;
+    None = 2;
+  }
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  string product_id = 2 [(gogoproto.customname) = "ProductID", (gogoproto.jsontag) = "productID"];
+  string product_rate_plan_id = 3 [(gogoproto.customname) = "ProductRatePlanID", (gogoproto.jsontag) = "productRatePlanID"];
+  bool agreed_tos = 4 [(gogoproto.customname) = "AgreedTOS", (gogoproto.jsontag) = "agreedTOS"];
+  bool changelog_emails = 5 [(gogoproto.customname) = "ChangelogEmails", (gogoproto.jsontag) = "changelogEmails"];
+  PaymentType payment_type = 6 [(gogoproto.jsontag) = "paymentType"];
+  SubscriptionState state = 7 [(gogoproto.jsontag) = "state"];
+  repeated PricingComponentQuantity pricing_component_quantities = 8 [(gogoproto.jsontag) = "pricingComponentQuantities"];
+}
+
+message CreateSubscriptionResp {
+  Subscription subscription = 1;
+}
+
+message CancelSubscriptionReq {
+  string subscription_id = 1 [(gogoproto.customname) = "SubscriptionID", (gogoproto.jsontag) = "subscriptionID"];
+  string account_id = 2 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  string reason = 3 [(gogoproto.jsontag) = "reason"];
+}
+
+message CancelSubscriptionResp {}
+
+message UncancelSubscriptionReq {
+  string subscription_id = 1 [(gogoproto.customname) = "SubscriptionID", (gogoproto.jsontag) = "subscriptionID"];
+  string account_id = 2 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message UncancelSubscriptionResp {}
+
+message ListSubscriptionsReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  bool include_retired = 2 [(gogoproto.jsontag) = "includeRetired"];
+}
+
+message ListSubscriptionsResp {
+  Subscription parent = 1 [(gogoproto.jsontag) = "parent"];
+  repeated Subscription children = 2 [(gogoproto.jsontag) = "children"];
+}
+
+message SetQuayCredentialsReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  string quay_id = 2 [(gogoproto.customname) = "QuayID", (gogoproto.jsontag) = "quayID"];
+  string quay_token = 3;
+}
+
+message SetQuayCredentialsResp {
+}
+
+
+message GetQuayCredentialsReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message GetQuayCredentialsResp {
+  string quay_id = 1 [(gogoproto.customname) = "QuayID", (gogoproto.jsontag) = "quayID"];
+  string quay_token = 2;
+}
+
+message GetAssetsReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message GetAssetsResp {
+  map<string, Asset> assets = 1;
+}
+
+message Asset {
+  string label = 1;
+  map<string, OutputFormat> formats = 2;
+}
+
+message OutputFormat {
+  string label = 1;
+  string value = 2;
+  string type = 3;
+  string filename = 4;
+}
+
+message CreateLicenseReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message CreateLicenseResp {
+}
+
+message GetAccountStatusReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message GetAccountStatusResp {
+  enum AccountStatus {
+    GOOD = 0;
+    AWAITING_PAYMENT = 1;
+    DELINQUENT = 2;
+  }
+  double balance = 1  [(gogoproto.jsontag) = "balance"];
+  AccountStatus status = 2 [(gogoproto.jsontag) = "status"];
+  string status_description = 3 [(gogoproto.jsontag) = "statusDescription"];
+  common.Timestamp next_invoice_date = 4 [(gogoproto.customname) = "NextInvoiceDate", (gogoproto.jsontag) = "nextInvoiceDate"];
+  repeated string purchased_product_ids = 5 [(gogoproto.customname) = "PurchasedProductIDs", (gogoproto.jsontag) = "purchasedProductIDs"];
+}
+
+message TerminateAccountReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+}
+
+message TerminateAccountResp {}
+
+message AdvanceAccountReq {
+  string account_id = 1 [(gogoproto.customname) = "AccountID", (gogoproto.jsontag) = "accountID"];
+  int32 periods = 2 [(gogoproto.jsontag) = "periods"];
+}
+
+message AdvanceAccountResp {}

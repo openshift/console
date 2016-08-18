@@ -1,0 +1,23 @@
+<div class="tec-modal-revoke-user">
+  <form name="modalRevokeUserForm" ng-submit="vm.submit(modalRevokeUserForm)">
+    <div class="modal-header">
+      <h4 class="modal-title">Revoke User Access</h4>
+    </div>
+    <div class="modal-body">
+      <div class="tec-no-margin-top">
+        <strong ng-bind="vm.model.email"></strong>
+      </div>
+      <div class="tec-margin-top">
+        Once revoked the user will no longer have any access to this account.
+        You can re-invite the user again.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <cos-btn-bar complete-promise="vm.submitPromise">
+        <div class="cos-error-box" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
+        <button type="submit" class="btn btn-primary">Revoke User</button>
+        <button type="button" ng-click="$dismiss()" class="btn btn-link">Cancel</button>
+      </cos-btn-bar>
+    </div>
+  </form>
+</div>

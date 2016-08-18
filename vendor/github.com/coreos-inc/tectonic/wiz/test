@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd $SCRIPT_DIR
+
+pushd web
+npm run test
+popd
+
+popd

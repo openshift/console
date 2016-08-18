@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+echo "Building creme web assets..."
+
+if [ ! -d "creme/web/node_modules" ]; then
+    if [ -d "/opt/creme/node_modules" ]; then
+        ln -s /opt/creme/node_modules creme/web/node_modules
+    else
+        echo "Could not find /opt/creme/node_modules, are you running from the right docker image?"
+        exit 1
+    fi
+fi
+
+cd creme/web
+npm rebuild node-sass
+gulp

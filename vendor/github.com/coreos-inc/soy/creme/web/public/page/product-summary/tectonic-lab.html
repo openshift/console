@@ -1,0 +1,40 @@
+<div class="cos-pane">
+
+  <div class="tec-pane-section--spacious">
+    <h3 class="tec-bright-text" ng-bind="vm.product.publicName"></h3>
+    <div class="tec-margin-top">
+      You already know the basics of containers, and are ready to conduct tests on-premises or in your existing cloud infrastructure. The Labs plan is perfect for an environment up to 10 servers. You’ll get access to an on-cluster image registry, Quay Enterprise, and the Tectonic Console, too.
+    </div>
+    <div class="tec-margin-top">
+      To ensure your tests go well we will provide email support to answer questions and provide guidance.
+    </div>
+    <div class="tec-margin-top">
+      <h5 class="tec-form-heading">Support Platforms</h5>
+      <div>AWS</div>
+      <div>Bare Metal</div>
+    </div>
+    <div class="tec-margin-top">
+      <h5 class="tec-form-heading">Support Level</h5>
+      <div>Standard - Email support from 9am-5pm PT</div>
+    </div>
+
+    <h5 class="tec-form-heading tec-vert-margin">Choose a Tier</h5>
+    <tec-tier-selector plan="vm.plan"
+        selected-tiers="selectedTiers"
+        pricing-component-name="support.tectonic.server-count"></tec-tier-selector>
+
+    <div class="tec-vert-margin">
+      <h5 class="tec-form-heading">Questions or concerns?</h5>
+      <p class="text-size-normal">
+        Get in touch <a href="mailto:support@tectonic.com">via email</a> or call (800) 744-3507.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="tec-pane-section text-center">
+    <div class="cos-error-box tec-margin-bottom" ng-show="vm.error" ng-bind="vm.error"></div>
+    <button ng-click="vm.submit()" class="btn btn-primary btn-lg" ng-bind="vm.btnText"></button>
+  </div>
+
+</div>

@@ -1,0 +1,25 @@
+<div class="tec-payment-method-fields">
+  <div class="radio tec-no-margin-top">
+    <label ng-if="hasActiveCard">
+      <input ng-model="fields.method" type="radio" value="credit-card"/> Pay with the Credit Card on file
+      <div class="text-small text-muted">Your account's Credit Card can be modified on the billing page.</div>
+    </label>
+    <label ng-if="!hasActiveCard">
+      <input ng-model="fields.method" type="radio" value="credit-card"/> Pay with a Credit Card
+    </label>
+  </div>
+  <div class="cos-indent">
+    <div ng-if="hasActiveCard">
+      <tec-card-view card="fields.card"></tec-card-view>
+    </div>
+    <div ng-if="!hasActiveCard">
+      <tec-credit-card-fields card="fields.card" required="fields.method == 'credit-card'"></tec-credit-card-fields>
+    </div>
+  </div>
+  <div class="radio tec-no-margin-bottom">
+    <label>
+      <input ng-model="fields.method" type="radio" value="purchase-order"/> Pay with a Purchase Order
+      <span class="text-small text-muted">(Access pending until we can contact you)</span>
+    </label>
+  </div>
+</div>

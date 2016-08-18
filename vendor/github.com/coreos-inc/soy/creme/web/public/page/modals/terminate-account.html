@@ -1,0 +1,19 @@
+<div class="tec-modal-terminate-account">
+  <form name="modalTerminateAccountForm" ng-submit="vm.submit(modalTerminateAccountForm)">
+    <div class="modal-header">
+      <h4 class="modal-title">Terminate Account</h4>
+    </div>
+    <div class="modal-body">
+      <div class="tec-no-margin-top">
+        This action is irreversible. The account will be fully terminated and all users of this account will lose access.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <cos-btn-bar complete-promise="vm.submitPromise">
+        <div class="cos-error-box" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
+        <button type="submit" class="btn btn-primary">Terminate Account</button>
+        <button type="button" ng-click="$dismiss()" class="btn btn-link">Never mind</button>
+      </cos-btn-bar>
+    </div>
+  </form>
+</div>

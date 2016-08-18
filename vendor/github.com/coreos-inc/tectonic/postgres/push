@@ -1,0 +1,13 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+set -ex
+TECTONIC_VERSION=$("${DIR}/../git-version")
+
+"${DIR}/../builder-run" make -f "postgres/Makefile" docker-image-deps
+
+docker build -t quay.io/coreos/tectonic-postgres:$TECTONIC_VERSION $DIR/.workspace/tmpdir
+docker tag quay.io/coreos/tectonic-postgres:$TECTONIC_VERSION quay.io/coreos/tectonic-postgres:vdevel-latest
+
+docker push quay.io/coreos/tectonic-postgres:$TECTONIC_VERSION
+docker push quay.io/coreos/tectonic-postgres:vdevel-latest

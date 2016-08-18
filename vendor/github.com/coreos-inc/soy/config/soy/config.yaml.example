@@ -1,0 +1,2 @@
+log-level: debug
+slack-hook-url: http://something.com

@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+package eventpb;
+
+// EventService is responsible for updating state whenever an external event
+// is sent to Soy.
+service EventService {
+  rpc SubscriptionProvisioned(SubscriptionProvisionedReq) returns (SubscriptionProvisionedResp) {}
+  rpc SubscriptionAwaitingPayment(SubscriptionAwaitingPaymentReq) returns (SubscriptionAwaitingPaymentResp) {}
+  rpc SubscriptionPaid(SubscriptionPaidReq) returns (SubscriptionPaidResp) {}
+  rpc ServiceEndSucceeded(ServiceEndSucceededReq) returns (ServiceEndSucceededResp) {}
+  rpc AccountCreated(AccountCreatedReq) returns (AccountCreatedResp) {}
+  rpc PaymentMethodCreated(PaymentMethodCreatedReq) returns (PaymentMethodCreatedResp) {}
+}
+
+message SubscriptionProvisionedReq {
+  Notification notification = 1;
+}
+
+message SubscriptionProvisionedResp {
+  bool activated = 1;
+}
+
+
+message SubscriptionAwaitingPaymentReq {
+  Notification notification = 1;
+}
+
+message SubscriptionAwaitingPaymentResp {
+  bool activated = 1;
+}
+
+message SubscriptionPaidReq {
+  Notification notification = 1;
+}
+
+message SubscriptionPaidResp {
+}
+
+message ServiceEndSucceededReq {
+  Notification notification = 1;
+}
+
+message ServiceEndSucceededResp {
+}
+
+message AccountCreatedReq {
+  Notification notification = 1;
+}
+
+message AccountCreatedResp {
+}
+
+message PaymentMethodCreatedReq {
+  Notification notification = 1;
+}
+
+message PaymentMethodCreatedResp {
+}
+
+message Notification {
+  bytes raw_payload = 1;
+  string id = 2 [(gogoproto.customname) = "ID", (gogoproto.jsontag) = "id"];
+  string entity_id = 3 [(gogoproto.customname) = "EntityID", (gogoproto.jsontag) = "entityID"];
+  string domain = 4;
+  string action = 5;
+  string created = 6;
+  string organization_id = 7 [(gogoproto.customname) = "OrganizationID", (gogoproto.jsontag) = "organizationID"];
+  string type = 8;
+  string entity = 9;
+  string changes = 10;
+}

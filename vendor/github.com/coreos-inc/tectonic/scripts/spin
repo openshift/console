@@ -1,0 +1,238 @@
+#!/bin/bash
+
+: "${OPENSSL:=/usr/bin/openssl}"
+: "${DOCKER_CONFIG_FORMAT:=dockercfg}" # Can also be dockerconfigjson
+: "${TECTONIC_NAMESPACE:=tectonic-system}"
+: "${TECTONIC_DEPLOY_MANAGER:=true}"
+: "${TECTONIC_GEN_TLS_SECRETS:=false}"
+: "${TECTONIC_GEN_CREDENTIAL_SECRETS:=true}"
+: "${TECTONIC_TLS_IP:=172.17.4.99}"
+: "${TECTONIC_TLS_HOSTNAME:=tectonic-demo.foo}"
+: "${POSTGRES_VOLUME_TYPE:=empty-dir}" # can also be host-volume
+: "${DELETE_STATEFUL_RESOURCES:=true}" # delete resources that contain state
+: "${FORCE_DELETE_STATEFUL_RESOURCES:=false}" # force deleting stateful resources, regardless of other options set
+: "${DEPLOY_CONFIGS:=false}"
+: "${DEPLOY_POSTGRES:=false}"
+: "${DELETE_POSTGRES_DATA:=true}"
+
+
+if [ "$FORCE_DELETE_STATEFUL_RESOURCES" = "true" ]; then
+    echo "Forcing deletion of stateful resources"
+elif [ "$POSTGRES_VOLUME_TYPE" = "host-volume" ]; then
+    echo "Not deleting stateful resources with config \$POSTGRES_VOLUME_TYPE=host-volume"
+    DELETE_STATEFUL_RESOURCES=false
+fi
+
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+DEV_DIR="$PROJECT_DIR/dev"
+SSL_DIR="$DEV_DIR/ssl"
+CONFIG_DIR="$DEV_DIR/config"
+GEN_CONFIG_DIR="$DEV_DIR/generated"
+MANAGER_DIR="$PROJECT_DIR/manager"
+MANAGER_WORKSPACE_DIR="$MANAGER_DIR/.workspace"
+MANAGER_MANIFESTS_DIR="$MANAGER_WORKSPACE_DIR/tmpdir/manifests/manager"
+
+KUBECTL="kubectl --namespace=$TECTONIC_NAMESPACE"
+
+function main {
+    case "$1" in
+    "up")
+        up
+        ;;
+    "down")
+        down
+        ;;
+    *)
+        usage
+        exit 2
+        ;;
+    esac
+}
+
+function usage {
+    echo "USAGE: ${0##*/} <command>"
+    echo "Commands:"
+    echo -e "\tup\tdeploy Tectonic against an existing Kubernetes cluster"
+    echo -e "\tdown\tdestroy existing Tectonic components"
+}
+
+function up {
+    set -e
+
+    if [ "$TECTONIC_GEN_TLS_SECRETS" = true ]; then
+        echo "Configured to generate TLS assets as Kubernetes Secrets"
+
+        if [ -z "$TECTONIC_CA_CERT" ]; then
+            echo "TECTONIC_CA_CERT must be set to a .pem file to be used as a Certificate Authority for Tectonic."
+            exit 1
+        fi
+
+        if [ -z "$TECTONIC_CA_KEY" ]; then
+            echo "TECTONIC_CA_KEY must be set to a .pem file to be used as a Certificate Authority key for Tectonic."
+            exit 1
+        fi
+    fi
+
+    if [ "$TECTONIC_GEN_CREDENTIAL_SECRETS" = true ]; then
+        echo "Configured to generate credentials as Kubernetes Secrets"
+
+        if [ ! -e "${DEV_DIR}/license" ]; then
+            echo
+            echo "ERROR: could not find expected file ${DEV_DIR}/license"
+            echo
+            exit 1
+        fi
+
+        if [ ! -e "${DEV_DIR}/dockercfg" ]; then
+            echo
+            echo "ERROR: could not find expected file ${DEV_DIR}/dockercfg"
+            echo
+            exit 1
+        fi
+    fi
+
+
+    # Handle the namespace already existing
+    $KUBECTL create namespace "$TECTONIC_NAMESPACE" | grep -q 'exists' || true
+
+    if [ "$DEPLOY_POSTGRES" == "true" ]; then
+        echo "Deploying Postgres"
+        $KUBECTL create -f "$DEV_DIR/postgres/postgres-pod-${POSTGRES_VOLUME_TYPE}.yaml"
+        $KUBECTL create -f "$DEV_DIR/postgres/postgres-service.yaml"
+
+        echo "Creating tectonic_identity table in Postgres"
+        $KUBECTL create -f "$DEV_DIR/postgres/create-db-tectonic-identity-job.yaml"
+        echo "Sleeping 5 to allow create-db job to start"
+        sleep 5
+    fi
+
+
+    if [ "$DEPLOY_CONFIGS" == "true" ]; then
+
+        local CREDENTIALS_CONF_DIR="$CONFIG_DIR/credentials"
+        local TLS_CONF_DIR="$CONFIG_DIR/tls"
+        if [ "$TECTONIC_GEN_TLS_SECRETS" = true ]; then
+            TLS_CONF_DIR="$GEN_CONFIG_DIR/tls"
+            mkdir -p "$TLS_CONF_DIR"
+
+            echo "Generating TLS"
+            gen_certs
+
+            $KUBECTL create secret generic tectonic-identity-tls-secret \
+                --from-file=tls-cert="$SSL_DIR/tectonic.pem" \
+                --from-file=tls-key="$SSL_DIR/tectonic-key.pem" \
+                --dry-run -o yaml > "$TLS_CONF_DIR/tectonic-identity-tls-secret.yaml"
+
+            $KUBECTL create secret generic tectonic-console-tls-secret \
+                --from-file=tls-cert="$SSL_DIR/tectonic.pem" \
+                --from-file=tls-key="$SSL_DIR/tectonic-key.pem" \
+                --dry-run -o yaml > "$TLS_CONF_DIR/tectonic-console-tls-secret.yaml"
+            $KUBECTL create secret generic tectonic-ca-cert-secret \
+                --from-file=ca-cert="$TECTONIC_CA_CERT" \
+                --dry-run -o yaml > "$TLS_CONF_DIR/tectonic-ca-cert-secret.yaml"
+        fi
+
+        if [ "$TECTONIC_GEN_CREDENTIAL_SECRETS" = true ]; then
+            CREDENTIALS_CONF_DIR="$GEN_CONFIG_DIR/credentials"
+            mkdir -p "$CREDENTIALS_CONF_DIR"
+
+            echo "Generating Tectonic license..."
+            $KUBECTL create secret generic tectonic-license \
+                --from-file=license="${DEV_DIR}/license" \
+                --dry-run -o yaml > "${CREDENTIALS_CONF_DIR}/tectonic-license.yml"
+
+            echo "Generating Tectonic pull secret..."
+            $KUBECTL create secret generic coreos-pull-secret \
+                --type="kubernetes.io/${DOCKER_CONFIG_FORMAT}" \
+                --from-file=".${DOCKER_CONFIG_FORMAT}=${DEV_DIR}/dockercfg" \
+                --dry-run -o yaml > "${CREDENTIALS_CONF_DIR}/coreos-pull-secret.yml"
+
+        fi
+        echo "Deploying Tectonic TLS assets..."
+        $KUBECTL create -f "$TLS_CONF_DIR"
+        echo "Labeling TLS Assets as configuration values"
+        $KUBECTL label \
+            --overwrite \
+            -f "$TLS_CONF_DIR/tectonic-identity-tls-secret.yaml" \
+            -f "$TLS_CONF_DIR/tectonic-console-tls-secret.yaml" \
+            -f "$TLS_CONF_DIR/tectonic-ca-cert-secret.yaml" \
+            "tectonic-configuration=true"
+
+        echo "Deploying Tectonic Credentials..."
+        $KUBECTL create -f "$CREDENTIALS_CONF_DIR"
+        echo "Labeling credentials as configuration values"
+        $KUBECTL label \
+            --overwrite \
+            -f "$CREDENTIALS_CONF_DIR/tectonic-license.yml" \
+            -f "$CREDENTIALS_CONF_DIR/coreos-pull-secret.yml" \
+            "tectonic-configuration=true"
+
+        echo "Deploying Tectonic Config..."
+        $KUBECTL create -f "$CONFIG_DIR/tectonic-config.yaml"
+        echo "Deploying Tectonic Identity Config..."
+        $KUBECTL create -f "$CONFIG_DIR/tectonic-identity-config-secret.yaml"
+    fi
+
+    echo "Deploying tectonic-manager"
+    if [ ! -d "$MANAGER_MANIFESTS_DIR" ]; then
+        echo "Manifests don't exist, deploying using vdevel-latest tag"
+        make -f "$MANAGER_DIR/Makefile" \
+            TECTONIC_VERSION=vdevel-latest \
+            manager-manifests
+    fi
+    $KUBECTL create -f "$MANAGER_MANIFESTS_DIR"
+
+    echo "done"
+}
+
+function down {
+    echo "Destroying Tectonic components..."
+    if [ "$DELETE_STATEFUL_RESOURCES" == true ];then
+        $KUBECTL delete namespaces "$TECTONIC_NAMESPACE"
+    else
+        # Don't delete the namespace unless we're deleting all secrets,
+        # because we'll lose our secrets otherwise
+        $KUBECTL delete deployments -l "stateful!=true"
+        $KUBECTL delete jobs -l "stateful!=true"
+        $KUBECTL delete daemonsets -l "stateful!=true"
+        $KUBECTL delete pods -l "stateful!=true"
+        $KUBECTL delete services -l "stateful!=true"
+        $KUBECTL delete configMaps -l "stateful!=true"
+        $KUBECTL delete secrets -l "stateful!=true"
+    fi
+    if [ "$DELETE_POSTGRES_DATA" == true ] && [ -n "$VAGRANT_DIRECTORY" ];then
+        echo "Deleting Postgres data from host directory"
+        pushd $VAGRANT_DIRECTORY
+        vagrant ssh -- sudo rm -rf /var/lib/postgresql/data
+        popd
+    fi
+    echo "done"
+}
+
+function gen_certs {
+    mkdir -p "$SSL_DIR"
+    cat << EOF > "$SSL_DIR/tectonic.cnf"
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]
+
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+IP=$TECTONIC_TLS_IP
+DNS=$TECTONIC_TLS_HOSTNAME
+EOF
+
+    $OPENSSL genrsa -out "$SSL_DIR/tectonic-key.pem" 2048
+    $OPENSSL req -new -key "$SSL_DIR/tectonic-key.pem" -out "$SSL_DIR/tectonic.csr" -subj "/CN=tectonic" -config "$SSL_DIR/tectonic.cnf"
+    $OPENSSL x509 -req -in "$SSL_DIR/tectonic.csr" -CA "$TECTONIC_CA_CERT" -CAkey "$TECTONIC_CA_KEY" -out "$SSL_DIR/tectonic.pem" -days 365 -extensions v3_req -extfile "$SSL_DIR/tectonic.cnf"
+}
+
+main "$@"

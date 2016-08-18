@@ -1,0 +1,66 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tectonic-support
+  labels:
+    app: tectonic-support
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: tectonic-support
+      labels:
+        app: tectonic-support
+    spec:
+      containers:
+      - name: tectonic-stats-generator
+        imagePullPolicy: Always
+        image: quay.io/coreos/tectonic-stats-generator:{{.componentVersion}}
+        env:
+        - name: TECTONIC_LICENSE_FILE
+          value: /etc/tectonic/licenses/license
+        - name: TECTONIC_ACCOUNT_ID
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-support
+              key: account-id
+        - name: TECTONIC_ACCOUNT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-support
+              key: account-secret
+        - name: TECTONIC_CLUSTER_ID
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-support
+              key: cluster-id
+        - name: TECTONIC_COLLECTOR_SCHEME
+          value: "https"
+        - name: TECTONIC_COLLECTOR_HOST
+          value: "usage.tectonic.com"
+        - name: TECTONIC_GENERATION_INTERVAL
+          value: "1h"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 20Mi
+          limits:
+            cpu: 100m
+            memory: 50Mi
+        volumeMounts:
+        - name: tectonic-license
+          mountPath: /etc/tectonic/licenses
+          readOnly: true
+      volumes:
+      - name: tectonic-license
+        secret:
+          secretName: tectonic-license
+      - name: ssl-certs-host
+        hostPath:
+          path: /etc/ssl/certs
+      - name: ca-certs-host
+        hostPath:
+          path: /usr/share/ca-certificates
+      imagePullSecrets:
+      - name: coreos-pull-secret
+

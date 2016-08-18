@@ -1,0 +1,86 @@
+hash: e46c9584ca1d06a0b8a9f1227fe76a79aa4404fa2f54c00984d28439156d90a9
+updated: 2016-08-11T14:44:00.366791767-07:00
+imports:
+- name: github.com/cloudfoundry-incubator/candiedyaml
+  version: 99c3df83b51532e3615f851d8c2dbb638f5313bf
+- name: github.com/coreos/bootkube
+  version: 96a96cc334d6f1f13561b3ff56444e293b53042b
+  subpackages:
+  - pkg/asset
+  - pkg/tlsutil
+  - pkg/asset/internal
+- name: github.com/coreos/coreos-baremetal
+  version: 7217cf2e4cbfd732e922fb243acee02ac963e905
+  subpackages:
+  - bootcfg/rpc/rpcpb
+  - bootcfg/server/serverpb
+  - bootcfg/storage/storagepb
+  - bootcfg/client
+- name: github.com/coreos/go-semver
+  version: 8ab6407b697782a06568d4b7f1db25550ec2e4c6
+  subpackages:
+  - semver
+- name: github.com/coreos/pkg
+  version: 160ae6282d8c48a33d8c150e4e4817fdef8a5cde
+  subpackages:
+  - flagutil
+- name: github.com/davecgh/go-spew
+  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  subpackages:
+  - spew
+- name: github.com/ghodss/yaml
+  version: e8e0db9016175449df0e9c4b6e6995a9433a395c
+- name: github.com/go-yaml/yaml
+  version: a83829b6f1293c91addabc89d0571c246397bbf4
+- name: github.com/golang/lint
+  version: c7bacac2b21ca01afa1dee0acf64df3ce047c28f
+  subpackages:
+  - golint
+- name: github.com/golang/protobuf
+  version: 7cc19b78d562895b13596ddce7aafb59dd789318
+  subpackages:
+  - proto
+- name: github.com/jteeuwen/go-bindata
+  version: a0ff2567cfb70903282db057e799fd826784d41d
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/Sirupsen/logrus
+  version: 081307d9bc1364753142d5962fc1d795c742baaf
+- name: github.com/stretchr/testify
+  version: 8d64eb7173c7753d6419fd4a9caf057398611364
+  subpackages:
+  - assert
+- name: github.com/toqueteos/webbrowser
+  version: 21fc9f95c83442fd164094666f7cb4f9fdd56cd6
+- name: golang.org/x/net
+  version: fb93926129b8ec0056f2f458b1f519654814edf0
+  subpackages:
+  - context
+  - http2
+  - internal/timeseries
+  - trace
+  - http2/hpack
+  - html
+  - html/atom
+- name: golang.org/x/sys
+  version: d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03
+  subpackages:
+  - unix
+- name: golang.org/x/tools
+  version: 9e7459099f9afd6a15464d69d93c6eed49bb545d
+  subpackages:
+  - go/gcimporter15
+- name: google.golang.org/grpc
+  version: 83e628beaa8cab332f304ad93dff7abc46722386
+  subpackages:
+  - codes
+  - credentials
+  - grpclog
+  - internal
+  - metadata
+  - naming
+  - transport
+  - peer
+testImports: []

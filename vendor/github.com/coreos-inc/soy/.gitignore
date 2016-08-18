@@ -1,0 +1,11 @@
+bin/
+coverage/
+migrations/tern.conf
+license-signing-key.pem
+license-signing-key.pub
+creme/web/node_modules
+creme/web/public/dist
+vendor/**/*.json
+config/**/*.yaml
+report.xml
+test.out
