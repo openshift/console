@@ -1672,6 +1672,13 @@ angular.module('coreos.ui')
     link: function postLink(scope, elem, attrs) {
 
       function isActive(href) {
+        // is it relative href?
+        if (href[0] !== '/') {
+          // prefix it with slash to mimic $location.path()
+          // behavior as it strips off <base href="..."> prefix
+          href = '/' + href;
+        }
+
         var hrefParts, currParts;
         currParts = $location.path().split('/');
         hrefParts = href.replace(ngVarMatchRE, '').split('/');
@@ -1762,7 +1769,15 @@ angular.module('coreos.ui')
     },
     link: function(scope) {
       scope.isActive = function() {
-        return $location.path() === scope.href;
+        var href = scope.href;
+        // is it relative href?
+        if (href[0] !== '/') {
+          // prefix it with slash to mimic $location.path()
+          // behavior as it strips off <base href="..."> prefix
+          href = '/' + href;
+        }
+
+        return $location.path() === href;
       };
     }
   };

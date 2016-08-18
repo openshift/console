@@ -40,8 +40,8 @@ angular.module('bridge.service')
     email: email,
 
     logout: function(prev) {
-      var url = '/auth/login';
-      return $http.post('/auth/logout')
+      var url = $window.SERVER_FLAGS.loginURL;
+      return $http.post($window.SERVER_FLAGS.logoutURL)
         .then(function() {
           if (prev) {
             url += '?prev=' + prev;

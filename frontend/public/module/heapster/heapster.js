@@ -1,6 +1,6 @@
 'use strict';
 
-const URL = '/api/kubernetes/api/v1/proxy/namespaces/kube-system/services/heapster/api/v1/model';
+const URL = 'api/kubernetes/api/v1/proxy/namespaces/kube-system/services/heapster/api/v1/model';
 
 const METRICS = [
   '/cpu/usage_rate',

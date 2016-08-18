@@ -16,7 +16,7 @@ angular.module('bridge.page')
           displayName: $scope.model.displayName,
           admin: $scope.model.admin,
         },
-        redirectURL: $window.SERVER_FLAGS.newUserAuthCallbackURL
+        redirectURL: $window.SERVER_FLAGS.loginSuccessURL
       });
       $scope.userCreated.then($scope.$close);
     }

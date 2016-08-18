@@ -41,7 +41,7 @@
       <div><co-timestamp timestamp="{{m.object.lastTimestamp}}"/></div>
       <small class="co-sysevent__meta-source">
         Generated from <span ng-bind="m.object.source.component"></span>
-        <span ng-if="m.object.source.component == 'kubelet'">on <a ng-href="/nodes/{{m.object.source.host}}" ng-bind="m.object.source.host"></a></span>
+        <span ng-if="m.object.source.component == 'kubelet'">on <a ng-href="nodes/{{m.object.source.host}}" ng-bind="m.object.source.host"></a></span>
       </small>
     </div>
   </div>

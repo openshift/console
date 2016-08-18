@@ -1,8 +1,8 @@
 <div class="co-p-container">
 
   <tec-nav-title title="{{container.name}}" obj="container" kind="'container'">
-    <a ng-href="/ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}" class="co-m-primary-action">
-      <co-svg class="co-img-icon co-img-icon-light" src="/coreos.svg/icon-back.svg"></co-svg>Back to Pod</a>
+    <a ng-href="ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}" class="co-m-primary-action">
+      <co-svg class="co-img-icon co-img-icon-light" src="coreos.svg/icon-back.svg"></co-svg>Back to Pod</a>
   </tec-nav-title>
 
   <div class="co-m-pane co-m-vert-nav">
@@ -80,7 +80,7 @@
             <dl>
               <dt>Node</dt>
               <dd>
-                <a ng-href="/nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
+                <a ng-href="nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
               </dd>
               <dt>Pod IP</dt>
               <dd ng-bind="pod.status.podIP | emptyPlaceholder"></dd>

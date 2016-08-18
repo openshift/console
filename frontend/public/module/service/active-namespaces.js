@@ -95,9 +95,9 @@ angular.module('bridge.service')
         }
 
         if (!active) {
-          namespacePrefix = '/all-namespaces/';
+          namespacePrefix = 'all-namespaces/';
         } else {
-          namespacePrefix = '/ns/' + active + '/';
+          namespacePrefix = 'ns/' + active + '/';
         }
 
         return namespacePrefix + resource;

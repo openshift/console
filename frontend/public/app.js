@@ -49,16 +49,21 @@ angular.module('bridge', [
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
   $locationProvider.html5Mode({
     enabled: true,
-    requireBase: false
+    requireBase: true
   });
   flagSvcProvider.setGlobalId('SERVER_FLAGS');
-  k8sConfigProvider.setKubernetesPath('/api/kubernetes/', window.SERVER_FLAGS.k8sAPIVersion);
+
+  // deep down in code k8s path is used to open WS connection, which doesn't respect
+  // <base> tag in index.html so we cannot use relative path as in many other places
+  // and we need to manually prepend it with passed-in base URL to form absolute path
+  k8sConfigProvider.setKubernetesPath(window.SERVER_FLAGS.basePath + '/api/kubernetes', window.SERVER_FLAGS.k8sAPIVersion);
+
   $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
   $httpProvider.defaults.timeout = 5000;
 
   configSvcProvider.config({
-    siteBasePath: '/',
-    libPath: '/static/lib/coreos-web',
+    siteBasePath: window.SERVER_FLAGS.basePath + '/',
+    libPath: 'static/lib/coreos-web',
     jsonParse: true,
     detectHost: true,
     detectScheme: true,
@@ -373,7 +378,7 @@ angular.module('bridge', [
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
     switch(rejection) {
       case 'not-logged-in':
-        $window.location.href = '/auth/login';
+        $window.location.href = $window.SERVER_FLAGS.loginURL;
         break;
     }
   });
@@ -389,7 +394,7 @@ angular.module('bridge', [
       $rootScope.$$postDigestQueue = [];
       $rootScope.$$asyncQueue = [];
       $rootScope.$$listeners = null;
-      $window.location.href = '/';
+      $window.location.href = $window.SERVER_FLAGS.basePath + '/';
     }
   });
 

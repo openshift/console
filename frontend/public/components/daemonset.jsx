@@ -26,7 +26,7 @@ const DaemonSetRow = (daemonset) => <div className="row co-m-table-grid--clickab
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
     <DaemonSetCog daemonset={daemonset}></DaemonSetCog>
     <ResourceIcon kind="daemonset"></ResourceIcon>
-    <a href={`/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/details`} title={daemonset.metadata.uid}>
+    <a href={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/details`} title={daemonset.metadata.uid}>
       {daemonset.metadata.name}
     </a>
   </div>

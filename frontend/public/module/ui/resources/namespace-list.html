@@ -10,7 +10,7 @@
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <co-namespace-cog namespace="namespace"></co-namespace-cog>
         <co-resource-icon kind="namespace"></co-resource-icon>
-        <a ng-href="/namespaces?name={{namespace.metadata.name}}" ng-bind="namespace.metadata.name"></a>
+        <a ng-href="namespaces?name={{namespace.metadata.name}}" ng-bind="namespace.metadata.name"></a>
       </div>
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <co-label-list kind="namespace" labels="namespace.metadata.labels"></co-label-list>

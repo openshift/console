@@ -13,9 +13,9 @@ angular.module('bridge.ui')
   'use strict';
 
   var linkInterpolater =
-    $interpolate('<a href="/{{path}}/{{name}}" title="{{uid}}">{{name}}</a>');
+    $interpolate('<a href="{{path}}/{{name}}" title="{{uid}}">{{name}}</a>');
   var linkInterpolaterWithNS =
-    $interpolate('<a href="/ns/{{namespace}}/{{path}}/{{name}}" title="{{uid}}">{{name}}</a>');
+    $interpolate('<a href="ns/{{namespace}}/{{path}}/{{name}}" title="{{uid}}">{{name}}</a>');
 
   return {
     template: '<span class="co-resource-link"></span>',

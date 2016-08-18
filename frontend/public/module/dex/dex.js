@@ -4,7 +4,7 @@ angular.module('dex')
 .service('dex', function($window, $http, featuresSvc) {
   'use strict';
 
-  var basePath = '/api/dex/v1/';
+  var basePath = 'api/dex/v1/';
 
   this.users = {
     // returns true if and only if the api is available
