@@ -184,6 +184,21 @@ angular.module('bridge', [
     templateUrl: '/static/page/k8s-list/k8s-list.html',
     title: 'Daemon Sets',
   });
+  r('/ns/:ns/daemonsets/:name/details', {
+    controller: 'DaemonSetCtrl',
+    templateUrl: '/static/page/daemonsets/daemon-set.html',
+    title: 'Daemon Set',
+  });
+  r('/ns/:ns/daemonsets/:name/yaml', {
+    controller: 'DaemonSetCtrl',
+    templateUrl: '/static/page/daemonsets/daemon-set.html',
+    title: 'Daemon Set YAML',
+  });
+  r('/ns/:ns/daemonsets/:name/pods', {
+    controller: 'DaemonSetCtrl',
+    templateUrl: '/static/page/daemonsets/daemon-set.html',
+    title: 'Daemon Set Pods',
+  });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
   r('/all-namespaces/replicasets', {

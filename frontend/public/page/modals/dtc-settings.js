@@ -4,7 +4,7 @@ angular.module('bridge.page')
 
   let managerOfTaint, tpmManager;
 
-  const configmaps = $ngRedux.getState().k8s.getIn(['configmaps', 'objects']).toJS();
+  const configmaps = $ngRedux.getState().k8s.getIn(['configmaps', 'data']).toJS();
 
   _.each(configmaps, cm => {
     switch (cm.metadata.name) {

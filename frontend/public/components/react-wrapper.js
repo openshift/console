@@ -12,26 +12,31 @@ export const angulars = {
 };
 
 const app = angular.module('bridge.react-wrapper', ['bridge']);
- 
-export const withHose = (Component, firehoseId) => {
+
+const withProvider = (Wrapped) => (props) => <Provider store={angulars.store}><Wrapped {...props} /></Provider>;
+
+export const connectComponentToObjectID = (Component, firehoseId) => {
   const stateToProps = ({k8s}) => {
-    const objects = k8s.getIn([firehoseId, 'objects']);
+    const stuff = k8s.get(firehoseId);
+    return stuff ? stuff.toJS() : {};
+  };
+  return withProvider(connect(stateToProps)(Component));
+};
+ 
+export const connectComponentToListID = (Component, firehoseId) => {
+  const stateToProps = ({k8s}) => {
+    const data = k8s.getIn([firehoseId, 'data']);
     const filters = k8s.getIn([firehoseId, 'filters']);
+
     return {
-      objects: objects && objects.toArray().map(p => p.toJSON()),
+      data: data && data.toArray().map(p => p.toJSON()),
       filters: filters && filters.toJS(),
       loadError: k8s.getIn([firehoseId, 'loadError']),
       loaded: k8s.getIn([firehoseId, 'loaded']),
     };
   };
 
-  return connect(stateToProps)(Component);
-};
-
-export const withStoreAndHose = (Component, firehoseId) => {
-  const Hosed = withHose(Component, firehoseId);
-
-  return (props) => <Provider store={angulars.store}><Hosed {...props} /></Provider>;
+  return withProvider(connect(stateToProps)(Component));
 };
 
 export const register = (name, Component) => {
@@ -75,6 +80,8 @@ app.directive('reactiveK8sList', function () {
         kind, canCreate, selector, fieldSelector, component, selectorRequired,
         namespace: $routeParams.ns,
         defaultNS: k8s.enum.DefaultNS,
+        name: $routeParams.name,
+        location: location.pathname
       };
     }
   };

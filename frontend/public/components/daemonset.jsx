@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
+import {angulars, register} from './react-wrapper';
 
 import withPodList from './withPodList';
 import createListComponent from './list-factory';
 import createPageComponent from './page-factory';
+import createDetailsPage from './detail-page-factory';
 
-import {Cog, LabelList, ResourceIcon, Selector} from './utils'
+import {Cog, LabelList, ResourceIcon, Selector, Timestamp, asVertNav, detailsPage} from './utils'
 
 const DaemonSetCog = ({daemonset}) => {
   const kind = angulars.kinds.DAEMONSET;
@@ -25,7 +26,9 @@ const DaemonSetRow = (daemonset) => <div className="row co-m-table-grid--clickab
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
     <DaemonSetCog daemonset={daemonset}></DaemonSetCog>
     <ResourceIcon kind="daemonset"></ResourceIcon>
-    {daemonset.metadata.name}
+    <a href={`/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/details`} title={daemonset.metadata.uid}>
+      {daemonset.metadata.name}
+    </a>
   </div>
   <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
     <LabelList kind="daemonset" labels={daemonset.metadata.labels}  />
@@ -38,8 +41,34 @@ const DaemonSetRow = (daemonset) => <div className="row co-m-table-grid--clickab
   </div>
 </div>
 
+const Details = (daemonset) => <div>
+  <div className="col-lg-6">
+    <dl>
+      <dt>Name</dt>
+      <dd>{daemonset.metadata.name || '-'}</dd>
+      <dt>Labels</dt>
+      <dd><LabelList kind="daemonset" labels={daemonset.metadata.labels} expand={true} /></dd>
+      <dt>Pod Selector</dt>
+      <dd><Selector selector={daemonset.spec.selector.matchLabels} expand={true} /></dd>
+      <dt>Created At</dt>
+      <dd><Timestamp timestamp={daemonset.metadata.creationTimestamp} /></dd>
+    </dl>
+  </div>
+  <div className="col-lg-6">
+    <dl>
+      <dt>Current Count</dt>
+      <dd>{daemonset.status.currentNumberScheduled || '-'}</dd>
+      <dt>Desired Count</dt>
+      <dd>{daemonset.status.desiredNumberScheduled || '-'}</dd>
+    </dl>
+  </div>
+</div>
+
+const {factory: {pods, yaml}} = detailsPage;
+const pages = [{href: 'details', name: 'Details', component: detailsPage(Details)}, pods(), yaml()];
+
 const DaemonSets = createListComponent('DaemonSets', 'DAEMONSET', DaemonSetHeader, withPodList(DaemonSetRow));
 const DaemonSetsPage = createPageComponent('DaemonSetsPage', 'DAEMONSET', DaemonSets);
+const DaemonSetDetailsPage = createDetailsPage('DaemonSetDetailsPage', 'DAEMONSET', asVertNav(pages));
 
-export {DaemonSets, DaemonSetsPage};
-
+export {DaemonSets, DaemonSetsPage, DaemonSetDetailsPage};

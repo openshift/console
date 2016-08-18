@@ -3,31 +3,10 @@ import fuzzy from 'fuzzysearch';
 
 import actions from '../module/k8s/k8s-actions';
 import {podPhase} from '../module/filter/pods';
+import {withStatusBox} from './utils';
 
-import {angulars, withStoreAndHose, register} from './react-wrapper';
+import {angulars, connectComponentToListID, register} from './react-wrapper';
 
-const StatusBox = ({children}) => <div className="cos-status-box"> {children} </div>
-
-const LoadError = ({labelPlural}) => <StatusBox>
-  <div className="cos-tristate--error">
-    <div className="cos-text-center cos-error-title">Error Loading {labelPlural}</div>
-    <div className="cos-text-center">Please try again.</div>
-  </div>
-</StatusBox>
-
-const Empty = ({labelPlural}) => <StatusBox>
-  <div className="cos-tristate-empty">
-    <div className="cos-text-center">No {labelPlural} Found</div>
-  </div>
-</StatusBox>
-
-const Loading = () => <StatusBox>
-  <div className="co-m-loader co-an-fade-in-out">
-    <div className="co-m-loader-dot__one"></div>
-    <div className="co-m-loader-dot__two"></div>
-    <div className="co-m-loader-dot__three"></div>
-  </div>
-</StatusBox>
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
@@ -64,26 +43,12 @@ const filterPropType = (props, propName, componentName) => {
 export default (name, kindstring, Header, Row) => {
   class Inner extends React.Component {
     render () {
-      const {loadError, labelPlural, loaded} = this.props;
-
-      if (loadError) {
-        return <LoadError labelPlural={labelPlural} loadError={loadError} />;
-      }
-
-      if (!loaded) {
-        return <Loading />
-      }
-
-      let objects = this.props.objects || [];
-
-      if (!objects.length) {
-        return <Empty labelPlural={labelPlural} />;
-      }
-
-      const rows = filter(this.props.filters, objects).map(object => <Row key={object.metadata.name} {...object} />);
+      const {filters, data} = this.props;
+      const rows = filter(filters, data).map(object => <Row key={object.metadata.name} {...object} />);
       return <div className="co-m-table-grid__body"> {rows} </div>;
     }
   };
+
   Inner.propTypes = {
     filters: filterPropType,
   };
@@ -91,24 +56,25 @@ export default (name, kindstring, Header, Row) => {
   class ReactiveList extends React.Component {
     constructor (props) {
       super(props);
-      const kind = angulars.kinds[kindstring];
-      const k8sResource = angulars.k8s[kind.plural];
+      const {kinds, k8s, Firehose} = angulars;
+      const kind = kinds[kindstring];
+      const k8sResource = k8s[kind.plural];
       this.kind = k8sResource.kind;
       const {selectorRequired, selector, namespace, fieldSelector} = props;
       if (selectorRequired && !props.selector) {
-        this.Component = () => <Empty labelPlural={this.kind.labelPlural} />;
+        this.Component = () => <Empty label={this.kind.labelPlural} />;
         return;
       }
       this.firehose = new angulars.Firehose(k8sResource, namespace, selector, fieldSelector);
-      const id = this.firehose.id;
-      this.Component = withStoreAndHose(Inner, id);
+      this.Component = connectComponentToListID(withStatusBox(Inner), this.firehose.id);
     }
 
     applyFilter (name, value) {
       if (!this.firehose) {
         return;
       }
-      angulars.store.dispatch(actions.filter(this.firehose.id, name, value));
+      const {store} = angulars;
+      store.dispatch(actions.filterList(this.firehose.id, name, value));
     }
 
     render () {
@@ -117,7 +83,7 @@ export default (name, kindstring, Header, Row) => {
       return (
         <div className={klass}>
           <Header />
-          <this.Component labelPlural={this.kind.labelPlural} />
+          <this.Component label={this.kind.labelPlural} />
         </div>
       );
     };
