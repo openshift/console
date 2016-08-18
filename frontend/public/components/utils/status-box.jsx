@@ -1,5 +1,4 @@
 import React from 'react';
-
 const StatusBox = ({children}) => <div className="cos-status-box"> {children} </div>
 
 const LoadError = ({label}) => <StatusBox>
@@ -23,7 +22,7 @@ const Loading = () => <StatusBox>
   </div>
 </StatusBox>
 
-export default (Component) => (props) => {
+const withStatusBox = (Component) => (props) => {
   const {label, loadError, loaded} = props;
 
   if (loadError) {
@@ -42,3 +41,7 @@ export default (Component) => (props) => {
 
   return <Component {...props} />;
 };
+
+withStatusBox.Empty = Empty;
+
+export default withStatusBox;

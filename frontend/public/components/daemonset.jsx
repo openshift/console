@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {angulars, register} from './react-wrapper';
+import {angulars} from './react-wrapper';
 
 import withPodList from './withPodList';
 import createListComponent from './list-factory';
