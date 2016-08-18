@@ -32,37 +32,41 @@ angular.module('bridge.ui')
       };
 
       $scope.$watch('activeNamespace', activeNamespace => {
-        activeNamespaceSvc.setActiveNamespace(activeNamespace);
+        activeNamespaceSvc.setActiveNamespace($scope.availableNamespaces[activeNamespace]);
         $scope.title = coerceTitle(activeNamespace);
       });
 
       new Firehose(k8s.namespaces)
         .watchList()
         .bindScope($scope, null, state => {
-          $scope.availableNamespaces = coerceNamespaces(state && state.namespaces);
+          $scope.availableNamespaces = coerceNamespaces(state.loaded, state && state.namespaces);
           $scope.loadError           = state.loadError;
-        })
-      ;
+        });
 
       function coerceTitle(namespace) {
         return namespace || 'all';
       }
 
-      function coerceNamespaces(namespaces) {
-        const coersedNamespaces = {all: undefined};
-
-        // make sure active namespace is always available
-        // until we finally get actual data from service
-        if ($scope.activeNamespace) {
-          coersedNamespaces[$scope.activeNamespace] = $scope.activeNamespace;
-        }
+      function coerceNamespaces(loaded, namespaces) {
+        const coerced = {all: undefined};
 
         (namespaces || []).forEach(n => {
           const {name} = n.metadata;
-          coersedNamespaces[name] = name;
+          coerced[name] = name;
         });
 
-        return coersedNamespaces;
+        if ($scope.activeNamespace) {
+          if (loaded && !_.has(coerced, $scope.activeNamespace)) {
+            $scope.activeNamespace = 'all';
+          }
+          if (!loaded) {
+            // make sure active namespace is always available
+            // until we finally get actual data from service
+            coerced[$scope.activeNamespace] = $scope.activeNamespace;
+          }
+        }
+
+        return coerced;
       }
     }
   };
