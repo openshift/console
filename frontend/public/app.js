@@ -110,16 +110,6 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('services');
-  r('/all-namespaces/services', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Services',
-  });
-  r('/ns/:ns/services', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Services',
-  });
   r('/ns/:ns/services/new', {
     controller: 'NewServiceCtrl',
     templateUrl: '/static/page/services/new-service.html',
@@ -137,16 +127,6 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicationcontrollers');
-  r('/all-namespaces/replicationcontrollers', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Replication Controllers',
-  });
-  r('/ns/:ns/replicationcontrollers', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Replication Controllers',
-  });
   r('/ns/:ns/replicationcontrollers/new', {
     controller: 'NewReplicationcontrollerCtrl',
     templateUrl: '/static/page/replicationcontrollers/new-replicationcontroller.html',
@@ -174,16 +154,6 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('daemonsets');
-  r('/all-namespaces/daemonsets', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Daemon Sets',
-  });
-  r('/ns/:ns/daemonsets', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Daemon Sets',
-  });
   r('/ns/:ns/daemonsets/:name/details', {
     controller: 'DaemonSetCtrl',
     templateUrl: '/static/page/daemonsets/daemon-set.html',
@@ -201,16 +171,6 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
-  r('/all-namespaces/replicasets', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Replica Sets',
-  });
-  r('/ns/:ns/replicasets', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Replica Sets',
-  });
   r('/ns/:ns/replicasets/new', {
     controller: 'NewReplicaSetCtrl',
     templateUrl: '/static/page/replicasets/new-replicaset.html',
@@ -233,16 +193,6 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('deployments');
-  r('/all-namespaces/deployments', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Deployments',
-  });
-  r('/ns/:ns/deployments', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Deployments',
-  });
   r('/ns/:ns/deployments/new', {
     controller: 'NewDeploymentCtrl',
     templateUrl: '/static/page/deployments/new-deployment.html',
@@ -265,16 +215,6 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
-  r('/all-namespaces/pods', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Pods',
-  });
-  r('/ns/:ns/pods', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    title: 'Pods',
-  });
   r('/ns/:ns/pods/new', {
     controller: 'NewPodCtrl',
     templateUrl: '/static/page/pods/new-pod.html',
@@ -398,6 +338,16 @@ angular.module('bridge', [
     templateUrl: '/static/page/welcome/welcome.html',
     title: 'Welcome to your CoreOS Cluster',
   });
+
+  r('/all-namespaces/:kind', {
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
+  });
+  r('/ns/:ns/:kind', {
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
+  });
+
   $routeProvider.when('/error', {
     controller: 'ErrorCtrl',
     templateUrl: '/static/page/error/error.html',

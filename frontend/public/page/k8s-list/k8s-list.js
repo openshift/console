@@ -1,11 +1,17 @@
 angular.module('bridge.page')
-.controller('k8sListCtrl', function($scope, k8s, $location) {
+.controller('k8sListCtrl', function($scope, k8s, $location, $routeParams, $window) {
   'use strict';
 
-  const id = $location.path().split('/').slice(-1)[0];
-  const kind = k8s[id].kind;
+  let kind;
+  if ($routeParams.kind in k8s) {
+    kind = k8s[$routeParams.kind].kind;
+  } else {
+    $scope.component = 'nop';
+    $location.url('/404');
+    return;
+  }
 
-  if (id === 'daemonsets') {
+  if ($routeParams.kind === 'daemonsets') {
     $scope.canCreate = false;
   } else {
     $scope.canCreate = true;
@@ -13,4 +19,5 @@ angular.module('bridge.page')
   $scope.kind = kind;
   $scope.title = kind.labelPlural;
   $scope.component = kind.labelPlural.replace(/ /g, '') + 'Page';
+  $window.document.title = `Tectonic - ${kind.labelPlural}`;
 });
