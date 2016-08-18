@@ -43,6 +43,8 @@ export const register = (name, Component) => {
   app.value(name, Component);
 };
 
+app.value('nop', () => <div/>);
+
 app.service('angularBridge', function ($ngRedux, $location, Firehose, k8s, ModalLauncherSvc, resourceMgrSvc) {
   // "Export" angular modules to the outside world via ref through 'angulars'...
   // NOTE: this only exist after the app has loaded!
@@ -62,7 +64,7 @@ app.service('angularBridge', function ($ngRedux, $location, Firehose, k8s, Modal
 // see https://github.com/ngReact/ngReact#the-react-component-directive
 app.directive('reactiveK8sList', function () {
   return {
-    template: '<react-component name="{{component}}" props="props"> </react-component>',
+    template: '<react-component name="{{component}}" props="props"></react-component>',
     restrict: 'E',
     scope: {
       kind: '=',
