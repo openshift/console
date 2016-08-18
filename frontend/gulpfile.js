@@ -8,7 +8,6 @@ const gulp = require('gulp');
 const sass = require('gulp-sass');
 const templateCache = require('gulp-angular-templatecache');
 const runSequence = require('run-sequence');
-const eslint = require('gulp-eslint');
 const uglify = require('gulp-uglify');
 const ngAnnotate = require('gulp-ng-annotate');
 const rename = require('gulp-rename');
@@ -26,12 +25,6 @@ const distDir = './public/dist';
 const templateSrc = [
   './public/{module,page}/**/*.html',
   './public/lib/mochi/img/tectonic-logo.svg',
-];
-
-const lintableSrc = [
-  './public/*.js',
-  './public/{module,page}/**/*.js',
-  '!./public/dist/*.js',
 ];
 
 let CURRENT_SHA;
@@ -149,11 +142,14 @@ gulp.task('sass', () => {
     .pipe(gulp.dest('./public/dist'));
 });
 
-gulp.task('lint', () => {
-  return gulp.src(lintableSrc)
-    .pipe(eslint({ useEslintrc: true }))
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+gulp.task('lint', cb => {
+  exec('npm run lint', (err, stdout, stderr) => {
+    // eslint-disable-next-line no-console
+    err && console.error(stderr);
+    // eslint-disable-next-line no-console
+    console.log(stdout);
+    cb(err, stdout);
+  });
 });
 
 // Precompile html templates.

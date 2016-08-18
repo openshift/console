@@ -17,10 +17,12 @@
     "no-debugger": 1,
     "no-global-strict": 0,
     "no-underscore-dangle": 0,
-    "no-unused-vars": 2,
+    "no-unused-vars": ["error", { "varsIgnorePattern": "React" }],
     "no-use-before-define": 0,
     "quotes": [2, "single"],
-    "wrap-iife": [2, "inside"]
+    "wrap-iife": [2, "inside"],
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error"
   },
   "parserOptions": {
     "sourceType": "module",
@@ -39,5 +41,8 @@
     "it": true,
     "module": true,
     "spyOn": true
-  }
+  },
+  "plugins": [
+    "react"
+  ]
 }

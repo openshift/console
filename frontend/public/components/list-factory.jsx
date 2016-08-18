@@ -7,7 +7,6 @@ import {withStatusBox} from './utils';
 
 import {angulars, connectComponentToListID, register} from './react-wrapper';
 
-
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
   'pod-status': (phase, pod) => !phase ? true : (pod.status.phase === phase || podPhase(pod) === phase),
