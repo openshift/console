@@ -1,11 +1,9 @@
 import React from 'react';
 
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-
+import {makeListPage, makeList} from './factory';
 import {Header, rowOfKindstring} from './workloads';
 
-const DeploymentList = createListComponent('Deployments', 'DEPLOYMENT', Header, rowOfKindstring('DEPLOYMENT'));
-const DeploymentsPage = createPageComponent('DeploymentsPage', 'DEPLOYMENT', DeploymentList);
+const DeploymentList = makeList('Deployments', 'DEPLOYMENT', Header, rowOfKindstring('DEPLOYMENT'));
+const DeploymentsPage = makeListPage('DeploymentsPage', 'DEPLOYMENT', DeploymentList);
 
 export {DeploymentList, DeploymentsPage};

@@ -33,6 +33,11 @@ angular.module('bridge.service')
       return this;
     };
 
+    unwatch () {
+      dispatch(actions.stopK8sWatch(this.id));
+      return this;
+    }
+
     unwatchList () {
       dispatch(actions.stopK8sWatch(this.id));
     };

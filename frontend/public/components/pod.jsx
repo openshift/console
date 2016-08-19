@@ -2,10 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {podPhase} from '../module/filter/pods';
-
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-
+import {makeListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceIcon} from './utils'
 
 const PodCog = ({pod}) => {
@@ -49,8 +46,8 @@ const dropdownFilters = [{
   },
 }];
 
-const PodList = createListComponent('Pods', 'POD', PodHeader, PodRow);
-const PodsPage = createPageComponent('PodsPage', 'POD', PodList, dropdownFilters);
+const PodList = makeList('Pods', 'POD', PodHeader, PodRow);
+const PodsPage = makeListPage('PodsPage', 'POD', PodList, dropdownFilters);
 
 export {PodList, PodsPage};
 

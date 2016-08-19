@@ -1,8 +1,9 @@
-import {angulars} from '../react-wrapper';
-import {DropdownMixin} from './dropdown';
 import React from 'react';
 
-export default class Cog extends DropdownMixin {
+import {angulars} from '../react-wrapper';
+import {DropdownMixin} from './dropdown';
+
+export class Cog extends DropdownMixin {
 
   render () {
     const onClick_ = (option, event) => {

@@ -1,8 +1,9 @@
 import React from 'react';
-import {register, angulars} from './react-wrapper';
-import Dropdown from './utils/dropdown';
 
-export default (name, kindName, ListComponent, dropdownFilters) => {
+import {register, angulars} from '../react-wrapper';
+import {Dropdown} from '../utils';
+
+export const makeListPage = (name, kindName, ListComponent, dropdownFilters) => {
   class ListPage extends React.Component {
     get list () {
       return this.refs.list;

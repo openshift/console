@@ -1,13 +1,9 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-
 import withPodList from './withPodList';
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-import createDetailsPage from './detail-page-factory';
-
-import {Cog, LabelList, ResourceIcon, Selector, Timestamp, asVertNav, detailsPage} from './utils'
+import {makeDetailsPage, makeListPage, makeList} from './factory';
+import {Cog, LabelList, ResourceIcon, Selector, Timestamp, detailsPage} from './utils'
 
 const DaemonSetCog = ({daemonset}) => {
   const kind = angulars.kinds.DAEMONSET;
@@ -67,8 +63,8 @@ const Details = (daemonset) => <div>
 const {factory: {pods, yaml}} = detailsPage;
 const pages = [{href: 'details', name: 'Details', component: detailsPage(Details)}, pods(), yaml()];
 
-const DaemonSets = createListComponent('DaemonSets', 'DAEMONSET', DaemonSetHeader, withPodList(DaemonSetRow));
-const DaemonSetsPage = createPageComponent('DaemonSetsPage', 'DAEMONSET', DaemonSets);
-const DaemonSetsDetailsPage = createDetailsPage('DaemonSetsDetailsPage', 'DAEMONSET', asVertNav(pages));
+const DaemonSets = makeList('DaemonSets', 'DAEMONSET', DaemonSetHeader, withPodList(DaemonSetRow));
+const DaemonSetsPage = makeListPage('DaemonSetsPage', 'DAEMONSET', DaemonSets);
+const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'DAEMONSET', pages);
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

@@ -21,7 +21,7 @@ const Requirement = ({requirement, withIcon}) => {
   );
 };
 
-export default ({expand, selector}) => {
+export const Selector = ({expand, selector}) => {
   const requirements = angulars.k8s.selector.toRequirements(selector || {});
 
   const reqs = _.map(requirements, (requirement, i) => {

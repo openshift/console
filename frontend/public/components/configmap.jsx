@@ -1,13 +1,9 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-import createDetailsPage from './detail-page-factory';
+import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-
-import {Cog, LabelList, ResourceIcon, Timestamp, asVertNav, detailsPage} from './utils'
+import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage} from './utils'
 
 const ConfigMapCog = ({configMap}) => {
   const kind = angulars.kinds.CONFIGMAP;
@@ -67,8 +63,8 @@ const ConfigMapDetails = (configMap) => {
 const {factory: {yaml}} = detailsPage;
 const pages = [{href: 'details', name: 'Details', component: ConfigMapDetails}, yaml()];
 
-const ConfigMaps = createListComponent('ConfigMaps', 'CONFIGMAP', ConfigMapHeader, ConfigMapRow);
-const ConfigMapsPage = createPageComponent('ConfigMapsPage', 'CONFIGMAP', ConfigMaps);
-const ConfigMapsDetailsPage = createDetailsPage('ConfigMapsDetailsPage', 'CONFIGMAP', asVertNav(pages));
+const ConfigMaps = makeList('ConfigMaps', 'CONFIGMAP', ConfigMapHeader, ConfigMapRow);
+const ConfigMapsPage = makeListPage('ConfigMapsPage', 'CONFIGMAP', ConfigMaps);
+const ConfigMapsDetailsPage = makeDetailsPage('ConfigMapsDetailsPage', 'CONFIGMAP', pages);
 
 export {ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage};

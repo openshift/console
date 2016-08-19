@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({timestamp}) => {
+export const Timestamp = ({timestamp}) => {
   const date = new Date(timestamp);
   const mdate = moment(date);
   let invalidDate = false;

@@ -1,4 +1,3 @@
-import {connect, Provider} from 'react-redux';
 import React from 'react';
 
 export const angulars = {
@@ -13,34 +12,12 @@ export const angulars = {
 
 const app = angular.module('bridge.react-wrapper', ['bridge']);
 
-const withProvider = (Wrapped) => (props) => <Provider store={angulars.store}><Wrapped {...props} /></Provider>;
-
-export const connectComponentToObjectID = (Component, firehoseId) => {
-  const stateToProps = ({k8s}) => {
-    const stuff = k8s.get(firehoseId);
-    return stuff ? stuff.toJS() : {};
-  };
-  return withProvider(connect(stateToProps)(Component));
-};
- 
-export const connectComponentToListID = (Component, firehoseId) => {
-  const stateToProps = ({k8s}) => {
-    const data = k8s.getIn([firehoseId, 'data']);
-    const filters = k8s.getIn([firehoseId, 'filters']);
-
-    return {
-      data: data && data.toArray().map(p => p.toJSON()),
-      filters: filters && filters.toJS(),
-      loadError: k8s.getIn([firehoseId, 'loadError']),
-      loaded: k8s.getIn([firehoseId, 'loaded']),
-    };
-  };
-
-  return withProvider(connect(stateToProps)(Component));
-};
-
+const toRegister = [];
 export const register = (name, Component) => {
-  app.value(name, Component);
+  if (app && app.value) {
+    return app.value(name, Component);
+  }
+  toRegister.push({name, Component});
 };
 
 app.value('nop', () => <div/>);
@@ -50,6 +27,10 @@ app.service('angularBridge', function ($ngRedux, $location, Firehose, k8s, Modal
   // NOTE: this only exist after the app has loaded!
 
   this.expose = () => {
+    _.map(toRegister, ({name, Component}) => {
+      app.value(name, Component);
+    });
+
     angulars.store = $ngRedux;
     angulars.Firehose = Firehose;
     angulars.k8s = k8s;
@@ -83,7 +64,7 @@ app.directive('reactiveK8sList', function () {
         namespace: $routeParams.ns,
         defaultNS: k8s.enum.DefaultNS,
         name: $routeParams.name,
-        location: location.pathname
+        location: location.pathname,
       };
     }
   };

@@ -1,11 +1,8 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-
 import withPodList from './withPodList';
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-
+import {makeListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceIcon, Selector} from './utils'
 
 const ServiceIPLink = ({s}) => {
@@ -55,8 +52,8 @@ const ServiceRow = (s) => <div className="row co-resource-list__item">
   </div>
 </div>
 
-const Services = createListComponent('Services', 'SERVICE', ServiceHeader, withPodList(ServiceRow));
-const ServicesPage = createPageComponent('ServicesPage', 'SERVICE', Services);
+const Services = makeList('Services', 'SERVICE', ServiceHeader, withPodList(ServiceRow));
+const ServicesPage = makeListPage('ServicesPage', 'SERVICE', Services);
 
 export {Services, ServicesPage};
 
