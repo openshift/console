@@ -53,6 +53,10 @@ function iconLabel(k8sKind, kindId) {
       return 'C';
     case k8sKind.DAEMONSET.id:
       return 'DS';
+    case k8sKind.CONFIGMAP.id:
+      return 'CM';
+    case k8sKind.SECRET.id:
+      return 'S';
     default:
       return kindId.toUpperCase().slice(0, 2);
   }

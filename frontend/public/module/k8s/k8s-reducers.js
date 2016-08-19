@@ -38,7 +38,7 @@ const loadList = (list, resources) => {
   // TODO: not supported in ie :(
   const existingKeys = new Set(list.keys());
   return list.withMutations(list => {
-    resources.forEach(r => {
+    (resources || []).forEach(r => {
       const uid = r.metadata.name;
       existingKeys.delete(uid);
       const next = Immutable.fromJS(r);

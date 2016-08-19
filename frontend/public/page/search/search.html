@@ -53,6 +53,24 @@
                 type="radio"/>
             {{kinds.NAMESPACE.labelPlural}}
           </a>
+          <a href="#" ng-click="changeKind(kinds.DAEMONSET.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.DAEMONSET.id"
+                type="radio"/>
+            {{kinds.DAEMONSET.labelPlural}}
+          </a>
+          <a href="#" ng-click="changeKind(kinds.CONFIGMAP.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.CONFIGMAP.id"
+                type="radio"/>
+            {{kinds.CONFIGMAP.labelPlural}}
+          </a>
+          <a href="#" ng-click="changeKind(kinds.SECRET.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.SECRET.id"
+                type="radio"/>
+            {{kinds.SECRET.labelPlural}}
+          </a>
         </div>
       </form>
     </div>

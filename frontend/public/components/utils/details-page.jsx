@@ -22,7 +22,7 @@ detailsPage.factory = {
   'yaml': () => ({
     href: 'yaml',
     name: 'YAML',
-    component: detailsPage((resource) => <pre>{yamlize(resource)}</pre>),
+    component: detailsPage((resource) => <div className="col-md-12"><pre className="co-pre-wrap">{yamlize(resource)}</pre></div>),
   }),
 }
 export default detailsPage;

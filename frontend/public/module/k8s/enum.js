@@ -119,8 +119,8 @@ angular.module('k8s').constant('k8sEnum', {
     CONFIGMAP: {
       id: 'configmap',
       kind: 'Configmap',
-      label: 'Configmap',
-      labelPlural: 'Configmaps',
+      label: 'Config Map',
+      labelPlural: 'Config Maps',
       path: 'configmaps',
       plural: 'configmaps',
     },

@@ -11,11 +11,12 @@ angular.module('bridge.page')
     return;
   }
 
-  if ($routeParams.kind === 'daemonsets') {
-    $scope.canCreate = false;
-  } else {
+  if (['daemonsets', 'configmaps', 'secrets'].indexOf($routeParams.kind) === -1) {
     $scope.canCreate = true;
+  } else {
+    $scope.canCreate = false;
   }
+
   $scope.kind = kind;
   $scope.title = kind.labelPlural;
   $scope.component = kind.labelPlural.replace(/ /g, '') + 'Page';
