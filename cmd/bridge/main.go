@@ -226,7 +226,7 @@ func main() {
 		}
 
 		dexProxyConfigEndpoint := validateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
-		dexProxyConfigEndpoint.Path = "/api"
+		dexProxyConfigEndpoint.Path = server.SingleJoiningSlash(dexProxyConfigEndpoint.Path, "/api")
 
 		srv.DexProxyConfig = &server.ProxyConfig{
 			Endpoint: dexProxyConfigEndpoint,
