@@ -1,0 +1,32 @@
+.tec-selected-plan__check {
+  color: $color-tectonic-green;
+  font-size: 16px;
+  padding-right: 30px;
+}
+
+.tec-contact-sales {
+  color: #999;
+  font-style: italic;
+}
+
+.tec-entitlement-list-description {
+  opacity: 0;
+  overflow: hidden;
+  padding: 0;
+  font-size: 14px;
+  max-height: 0;
+  &.tec-entitlement-list-description--visible {
+    max-height: 300px;
+    padding: 20px;
+    opacity: 1;
+    transition: max-height 0.1s, opacity 0.1s;
+  }
+}
+
+.tec-entitlement-list-description__text {
+  white-space: pre-wrap;
+}
+
+.tec-plan-selector-tabs .tec-tab__content {
+  padding: 0;
+}

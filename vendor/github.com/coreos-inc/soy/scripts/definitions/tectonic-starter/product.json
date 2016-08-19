@@ -1,0 +1,17 @@
+{
+  "name" : "tectonic-starter",
+  "publicName" : "Tectonic Starter",
+  "description" : "Perfect for learning Kubernetes",
+  "duration" : 1,
+  "durationPeriod" : "months",
+  "trial" : 0,
+  "trialPeriod" : "none",
+  "productType" : "recurring",
+  "metadata": {
+    "public": true,
+    "order": 40,
+    "externalLink": "https://tectonic.com/starter",
+    "tosLink": "https://tectonic.com/legal/terms-of-service",
+    "quickstartLink": "https://tectonic.com/starter/docs/latest"
+  }
+}

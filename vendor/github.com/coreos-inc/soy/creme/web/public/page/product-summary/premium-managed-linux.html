@@ -1,0 +1,39 @@
+<div class="cos-pane">
+
+  <div class="tec-pane-section--spacious">
+    <h3 class="tec-bright-text" ng-bind="vm.product.publicName"></h3>
+    <div class="tec-margin-top">
+      Premium Managed Linux is expert support for your CoreOS machines in your private datacenter or in the cloud. Also included is CoreUpdate, a security software that keeps your CoreOS machines up-to-date and secure by automatically installing the needed patches and upgrades
+    </div>
+    <div class="tec-margin-top">
+      Many security-minded teams use Premium Managed Linux in concert with the rest of the CoreOS stack and Kubernetes to build a scalable, secure environment.
+    </div>
+    <div class="tec-margin-top">
+      <h5 class="tec-form-heading">Support Platforms</h5>
+      <div>Anywhere CoreOS runs</div>
+    </div>
+    <div class="tec-margin-top">
+      <h5 class="tec-form-heading">Support Level</h5>
+      <div>Premium - 24/7 email support</div>
+    </div>
+
+    <h5 class="tec-form-heading tec-vert-margin">Choose a tier</h5>
+    <tec-tier-selector plan="vm.plan"
+        selected-tiers="selectedTiers"
+        pricing-component-name="support.coreoslinux.server-count"></tec-tier-selector>
+
+    <div class="tec-vert-margin">
+      <h5 class="tec-form-heading">Questions or concerns? Need more servers?</h5>
+      <p class="text-size-normal">
+        Get in touch <a href="mailto:support@tectonic.com">via email</a> or call (800) 744-3507.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="tec-pane-section text-center">
+    <div class="cos-error-box tec-margin-bottom" ng-show="vm.error" ng-bind="vm.error"></div>
+    <button ng-click="vm.submit()" class="btn btn-primary btn-lg" ng-bind="vm.btnText"></button>
+  </div>
+
+</div>

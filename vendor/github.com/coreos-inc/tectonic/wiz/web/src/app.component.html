@@ -1,0 +1,14 @@
+<div wiz-onbeforeunload>
+  <div *ngIf="isLoaded">
+    <div class="wiz-wizard">
+      <div class="wiz-wizard__cell wiz-wizard__nav">
+        <wiz-nav></wiz-nav>
+      </div>
+      <div class="wiz-wizard__cell wiz-wizard__content">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+
+  <wiz-toaster></wiz-toaster>
+</div>

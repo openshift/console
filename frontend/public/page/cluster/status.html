@@ -175,6 +175,21 @@
             </div>
           </div>
         </div>
+        <div class="row cluster-status-cell__info-row">
+          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Tier</div>
+          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
+            <div ng-if="!tectonicVersionCheckComplete">
+              <co-inline-loader></co-inline-loader>
+            </div>
+            <div ng-if="tectonicVersionCheckComplete && !tectonicVersionCheckSucceeded">
+              <co-status state="unknown" text="The Tectonic tier could not be determined."
+                         ></co-status>
+            </div>
+            <div ng-if="tectonicVersionCheckComplete && tectonicVersionCheckSucceeded">
+              <div class="software-version" ng-bind="tectonicTier"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

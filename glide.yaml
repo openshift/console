@@ -4,6 +4,19 @@ import:
 - package: github.com/beorn7/perks
   subpackages:
   - quantile
+- package: github.com/coreos-inc/tectonic
+  version: 580b9d5e2f26c2bfc98ce61028424dd59f3e253b
+  subpackages:
+  - manager/pkg/license
+  - manager/pkg/joseutil
+  vcs: git
+  repo: git@github.com:coreos-inc/tectonic.git
+- package: github.com/coreos-inc/soy
+  version: c8b5895b29929c19729217f8d16b25fd29c0717c
+  subpackages:
+  - common/license
+  vcs: git
+  repo: git@github.com:coreos-inc/soy.git
 - package: github.com/coreos/go-oidc
   subpackages:
   - http

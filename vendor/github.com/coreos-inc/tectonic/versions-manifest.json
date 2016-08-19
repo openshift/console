@@ -1,0 +1,20 @@
+{
+    "validation": {
+        "docker_base_images": {
+            "manager": "alpine:3.4",
+            "wiz": "alpine:3.4",
+            "identity": "quay.io/coreos/dex:f816cfb1876f9228483c38d1a1e05e7c31aac801",
+            "postgres": "postgres:9.5",
+            "builder": "golang:1.6.2-wheezy",
+            "monitoring/grafana": "grafana/grafana:3.0.4"
+        }
+    },
+    "versions": {
+        "external_docker_tags": {
+            "tectonic-console": "v0.2.0",
+            "tectonic-support": "116141fa405ba14d7381387353d1e7617f1b9865"
+        },
+        "coreos_baremetal": "v0.4.0",
+        "tectonic_release": "v1.3.0"
+    }
+}

@@ -1,0 +1,14 @@
+# Configuration for the soy worker app.
+
+# max-backoff: 5
+# max-wait: 5
+# visibility-timeout: 5
+# pg-dsn: postgres://my-dsn-string
+# max-idle-connections: 10
+# max-open-connections: 10
+# sql-logging: true
+# rpc-endpoint: tcp://rpc-endpoint:$port
+# quay-api-key: example-api-key
+# quay-organization: example-org
+# quay-prefix: my-prefix
+# dry-run: false # disable modification of quay teams when running

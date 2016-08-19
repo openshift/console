@@ -1,0 +1,17 @@
+<div class="tec-modal-billing-address">
+  <form name="modalBillingAddressForm" ng-submit="vm.submit(modalBillingAddressForm)">
+    <div class="modal-header">
+      <h4 class="modal-title">Edit Billing Address</h4>
+    </div>
+    <div class="modal-body">
+      <tec-address-form edit-address="vm.model"></tec-address-form>
+    </div>
+    <div class="modal-footer">
+      <cos-btn-bar complete-promise="vm.submitPromise">
+        <div class="cos-error-box" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
+        <button type="submit" class="btn btn-primary">Save Billing Address</button>
+        <button type="button" ng-click="$dismiss()" class="btn btn-link">Cancel</button>
+      </cos-btn-bar>
+    </div>
+  </form>
+</div>

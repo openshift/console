@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd $SCRIPT_DIR
+
+rm -rf bin/
+rm -rf web/node_modules
+rm -rf web/typings
+rm -rf .workspace
+
+popd

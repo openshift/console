@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tectonic-identity
+  labels:
+    app: tectonic-identity
+    component: worker
+spec:
+  selector:
+    app: tectonic-identity
+    component: worker
+  type: NodePort
+  ports:
+  - name: worker
+    protocol: TCP
+    port: 5556
+    nodePort: 30556

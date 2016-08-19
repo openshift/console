@@ -1,0 +1,250 @@
+<div class="wiz-identity-connector-field">
+  <div class="row">
+    <div class="col-sm-3">
+      <h6>User Directory:</h6>
+    </div>
+    <div class="col-sm-9">
+      <select [ngFormControl]="wrappingControl.find('userDirectory')">
+        <option *ngFor="let ud of USER_DIRECTORIES" value="{{ ud.value }}">{{ ud.label + (ud.isDefault ? ' (Default)' : '') }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="wrappingControl.find('userDirectory').value === USER_DIRECTORY_LDAP.value">
+    <div class="row">
+      <div class="col-sm-12">
+        <hr>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-12">
+        <h6>Connection</h6>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>LDAP Address:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="ldap.example.com:389"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          wiz-focus
+          [ngFormControl]="wrappingControl.find('ldap/connection/address')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('ldap/connection/address')"></wiz-validation-error>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>Security:</label>
+      </div>
+      <div class="col-sm-9">
+        <select [ngFormControl]="wrappingControl.find('ldap/connection/security')">
+          <option *ngFor="let ls of LDAP_SECURITIES" value="{{ ls.value }}">{{ ls.label }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>CA File:</label>
+      </div>
+      <div class="col-sm-9">
+        <div *ngIf="wrappingControl.find('ldap/connection/security').value === LDAP_SECURITY_UNENCRYPTED.value">
+          Not needed for unencrypted connections.
+        </div>
+        <div *ngIf="wrappingControl.find('ldap/connection/security').value !== LDAP_SECURITY_UNENCRYPTED.value">
+          <input type="file"
+            (change)="onCaFileChange($event.srcElement.files[0])"
+          >
+          <wiz-validation-error [control]="wrappingControl.find('ldap/connection/caFile')"></wiz-validation-error>
+        </div>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>Username:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="uid=me,cn=users,cn=accounts,dc=example,cd=com"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('ldap/connection/username')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('ldap/connection/username')"></wiz-validation-error>
+        <p class="text-muted wiz-help-text">Similar to <code>uid=me,cn=users,cn=accounts,dc=example,cd=com</code></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <label>Password:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="password"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('ldap/connection/password')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('ldap/connection/password')"></wiz-validation-error>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <hr>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-12">
+        <h6>Data Structure</h6>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>Base DN:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="ou=People,dc=example,dc=com"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('ldap/dataStructure/baseDn')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('ldap/dataStructure/baseDn')"></wiz-validation-error>
+        <p class="text-muted wiz-help-text">Similar to <code>ou=People,dc=example,dc=com</code></p>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>Search Filter:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="(&nbsp;(objectClass=person)(uid=%u))"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('ldap/dataStructure/searchFilter')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('ldap/dataStructure/searchFilter')"></wiz-validation-error>
+        <p class="text-muted wiz-help-text">Similar to <code>((objectClass=person)(uid=%u))</code></p>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>User Name Attribute:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="cn"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('ldap/dataStructure/usernameAttribute')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('ldap/dataStructure/usernameAttribute')"></wiz-validation-error>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <label>User Email Attribute:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="mail"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('ldap/dataStructure/emailAttribute')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('ldap/dataStructure/emailAttribute')"></wiz-validation-error>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="wrappingControl.find('userDirectory').value === USER_DIRECTORY_LOCAL.value">
+    <div class="row">
+      <div class="col-sm-12">
+        <hr>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-12">
+        <h6>Admin Account</h6>
+        <p class="text-muted wiz-help-text">Admin account will have full control over the entire cluser, including user management.</p>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>Email Address:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="postermaster@example.com"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          wiz-focus
+          [ngFormControl]="wrappingControl.find('local/adminAccount/emailAddress')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('local/adminAccount/emailAddress')"></wiz-validation-error>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <label>Password:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="password"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('local/adminAccount/password')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('local/adminAccount/password')"></wiz-validation-error>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <hr>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-12">
+        <h6>SMTP Settings</h6>
+        <p class="text-muted wiz-help-text">SMTP settings are required for sending automated emails: user invitations, password reset notifications, etc.</p>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>SMTP Address:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="smtp.example.com:25"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('local/smtpSettings/smtpAddress')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('local/smtpSettings/smtpAddress')"></wiz-validation-error>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>Username:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="postermaster@example.com"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('local/smtpSettings/username')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('local/smtpSettings/username')"></wiz-validation-error>
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-sm-3">
+        <label>Password:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="password"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('local/smtpSettings/password')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('local/smtpSettings/password')"></wiz-validation-error>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <label>From Address:</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" placeholder="name@example.com"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          [ngFormControl]="wrappingControl.find('local/smtpSettings/fromAddress')"
+        >
+        <wiz-validation-error [control]="wrappingControl.find('local/smtpSettings/fromAddress')"></wiz-validation-error>
+        <p class="text-muted wiz-help-text">This email address is used when sending automated emails.</p>
+      </div>
+    </div>
+  </div>
+</div>

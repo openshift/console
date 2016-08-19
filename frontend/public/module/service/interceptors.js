@@ -15,3 +15,20 @@ angular.module('bridge.service')
   };
 
 });
+
+angular.module('bridge.service')
+.factory('errorInterceptorSvc', function($q, $rootScope) {
+  'use strict';
+
+  return {
+    /**
+     * For every failing $http request: broadcast an error event.
+     */
+    'responseError': function(rejection) {
+      if (rejection) {
+        $rootScope.$broadcast('xhr-error', rejection);
+      }
+      return $q.reject(rejection);
+    }
+  };
+});

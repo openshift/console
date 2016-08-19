@@ -1,0 +1,48 @@
+<div class="tec-modal-account-selector">
+  <form name="modalAccountSelectorForm" ng-submit="vm.submit(modalAccountSelectorForm)">
+    <div class="modal-header">
+      <h4 class="modal-title">Choose an Account</h4>
+    </div>
+    <div class="modal-body">
+      <div class="tec-margin-bottom">
+        Which account will be purchasing this product?
+      </div>
+      <div>
+        <table class="tec-simple-table tec-simple-table--small-text">
+          <thead>
+            <tr>
+              <th class="tec-simple-table__radio"></th>
+              <th>Company</th>
+              <th>ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="a in vm.accounts" ng-click="vm.selectAccount(a.id)" class="tec-hover-row">
+              <td class="tec-simple-table__radio">
+                <input type="radio" ng-model="vm.selectedID" ng-value="a.id" />
+              </td>
+              <td>
+                <span ng-bind="a.profile.companyName"></span>
+              </td>
+              <td ng-bind="a.id"></td>
+            </tr>
+            <tr ng-click="vm.selectAccount('new')" class="tec-hover-row">
+              <td class="tec-simple-table__radio">
+                <input type="radio" ng-model="vm.selectedID" value="new"/>
+              </td>
+              <td>Create a new account...</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <cos-btn-bar complete-promise="vm.submitPromise">
+        <div class="cos-error-box" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
+        <button type="submit" class="btn btn-primary">Select Account</button>
+        <button type="button" ng-click="$dismiss()" class="btn btn-link">Cancel</button>
+      </cos-btn-bar>
+    </div>
+  </form>
+</div>

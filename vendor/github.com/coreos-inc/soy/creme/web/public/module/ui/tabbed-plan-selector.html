@@ -1,0 +1,10 @@
+<div class="tec-tabbed-plan-selector">
+  <tec-tabs class="tec-plan-selector-tabs" chosen-name="tabName">
+    <tec-tab title="'Monthly Plans'" name="'monthly'">
+      <tec-plan-selector ng-if="tabName == 'monthly'" product="product" plans="visiblePlans" selected-plan="selectedPlan"></tec-plan-selector>
+    </tec-tab>
+    <tec-tab title="'Yearly Plans'" name="'annual'">
+      <tec-plan-selector ng-if="tabName == 'annual'" product="product" plans="visiblePlans" selected-plan="selectedPlan"></tec-plan-selector>
+    </tec-tab>
+  </tec-tabs>
+</div>

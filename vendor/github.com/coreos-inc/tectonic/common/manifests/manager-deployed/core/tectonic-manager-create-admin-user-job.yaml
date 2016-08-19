@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tectonic-manager-create-admin-user
+  labels:
+    app: tectonic-manager
+    job: create-admin-user
+spec:
+  template:
+    metadata:
+      name: tectonic-manager-create-admin-user
+      labels:
+        app: tectonic-manager
+        job: create-admin-user
+    spec:
+      containers:
+      - name: tectonic-manager-create-admin-user
+        image: quay.io/coreos/tectonic-manager:{{.componentVersion}}
+        imagePullPolicy: IfNotPresent
+        command: ["/tectonic-manager", "create-admin"]
+        env:
+        - name: TECTONIC_OVERLORD_URL
+          # TODO: https
+          value: "http://tectonic-id-overlord:5557"
+        - name: TECTONIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-identity-access-secret
+              key: identity-admin-api-secret
+        - name: TECTONIC_USER_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: tectonic-config
+              key: identity-admin-user
+        - name: TECTONIC_USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-identity-config-secret
+              key: identity-admin-password
+        - name: TECTONIC_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        resources:
+          requests:
+            cpu: 20m
+            memory: 25Mi
+          limits:
+            cpu: 50m
+            memory: 50Mi
+      imagePullSecrets:
+      - name: coreos-pull-secret
+      restartPolicy: OnFailure
+

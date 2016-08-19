@@ -1,0 +1,37 @@
+@import "vars";
+
+.tec-confirm-title {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.tec-button-footer {
+  position: relative;
+}
+
+.tec-signup-footer {
+  color: #999;
+  text-align: center;
+  margin: 20px 0;
+}
+
+// Simple css tooltip that only displays if target is disabled.
+.tec-disabled-tooltip[disabled] {
+  pointer-events: all;
+  position: relative;
+  &:hover:after {
+    position: absolute;
+    top: -25px;
+    left: -40%;
+    width: auto;
+    content: attr(data-disabled-tooltip);
+    padding: 2px 8px;
+    background-color: rgba(0, 0, 0, 0.99);
+    border-radius: 4px;
+    font-size: 12px;
+    color: #fff;
+    border: 1px solid #000;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

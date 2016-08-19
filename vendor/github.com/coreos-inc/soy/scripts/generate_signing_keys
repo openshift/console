@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function generateKeys {
+    if [ -e "$1.key" ]; then
+        echo "Signing key $1.pem already exist, skipping generating key."
+    else
+        echo "Generating signing key, files: $1.key, $1.pub"
+    fi
+
+    openssl genrsa -out "$1.key" 2048
+    openssl rsa -in "$1.key" -pubout -out "$1.pub"
+}
+
+if [ $# -eq 0 ]; then
+    generateKeys license-signing-key
+else
+    for key in "$@"
+    do
+        generateKeys $key
+    done
+fi

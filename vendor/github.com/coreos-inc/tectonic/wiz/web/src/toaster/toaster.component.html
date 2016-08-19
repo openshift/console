@@ -1,0 +1,6 @@
+<div class="wiz-toaster">
+  <div *ngFor="#t of toasts" class="wiz-toaster__toast wiz-toaster__toast--{{ t.type }}">
+    {{ t.text }}
+    <span class="wiz-toaster__close" (click)="dismiss(t)"><i class="fa fa-times"></i></span>
+  </div>
+</div>

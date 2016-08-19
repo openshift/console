@@ -199,10 +199,18 @@ gulp.task('css-sha', ['css-build', 'sha'], () => {
 // Replace code blocks in html with build versions.
 gulp.task('html', ['sha'], () => {
   return gulp.src('./public/index.html')
-    .pipe(htmlReplace({
-      'js':  '/static/build.' + CURRENT_SHA + '.min.js',
-      'css': '/static/build.' + CURRENT_SHA +'.css',
-      'css-coreos-web':  '/static/lib/coreos-web/coreos.css'
+    .pipe(htmlReplace((function() {
+      var h = {
+        'js':  `/static/build.${CURRENT_SHA}.min.js`,
+        'css': `/static/build.${CURRENT_SHA}.css`,
+        'css-coreos-web':  '/static/lib/coreos-web/coreos.css'
+      };
+      if (process.env.NODE_ENV !== 'production') {
+        h['analytics'] = '';
+      }
+      return h;
+    })(), {
+      keepUnassigned: true
     }))
     .pipe(gulp.dest(distDir));
 });

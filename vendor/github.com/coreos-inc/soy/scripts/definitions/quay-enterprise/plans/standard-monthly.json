@@ -1,0 +1,148 @@
+{
+  "@type": "productRatePlan",
+  "metadata": {
+    "order": 2,
+    "public": true,
+    "purchasable": true,
+    "quay_teams": "quayenterprise"
+  },
+  "currency": "USD",
+  "taxStatus": "exclusive",
+  "failedPaymentBehaviour": "CancelSubscription",
+  "duration": 1,
+  "durationPeriod": "months",
+  "trial": 30,
+  "trialPeriod": "days",
+  "productType": "recurring",
+  "proRataMode": "WithCoupon",
+  "createZeroValuedInvoices": true,
+  "name": "standard-monthly",
+  "publicName": "Standard - Monthly",
+  "migrationBehaviour": "CreditAccount",
+  "invoiceIssueType": "Immediate",
+  "paymentTerms": 30,
+  "taxation": [],
+  "fixedTermDefinitions": [],
+  "pricingComponents": [
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.quay",
+      "publicName": "Quay Enterprise",
+      "description": "Quay Enterprise",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "software"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.quay.builders",
+      "publicName": "Quay Builders",
+      "description": "Max number of Quay Builder nodes",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 5,
+      "minQuantity": 5,
+      "tiers": [
+        {
+          "lowerThreshold": 5,
+          "upperThreshold": 5,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "quay-builders"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "software.quay.regions",
+      "publicName": "Quay Regions",
+      "description": "Max number of Quay Regions to replicate to",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 0,
+      "minQuantity": 0,
+      "tiers": [
+        {
+          "lowerThreshold": 0,
+          "upperThreshold": 0,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "quay-regions"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "support.quay.standard",
+      "publicName": "Quay Support",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 0
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "standard-support"
+      }
+    },
+    {
+      "@type": "flatPricingComponent",
+      "name": "cost",
+      "publicName": "Cost",
+      "description": "Cost",
+      "chargeType": "subscription",
+      "invoicingType": "Aggregated",
+      "chargeModel": "flat",
+      "upgradeMode": "immediate",
+      "downgradeMode": "immediate",
+      "defaultQuantity": 1,
+      "minQuantity": 1,
+      "tiers": [
+        {
+          "lowerThreshold": 1,
+          "upperThreshold": 1,
+          "pricingType": "fixed",
+          "price": 1800
+        }
+      ],
+      "unitOfMeasure": {
+        "name": "cost"
+      }
+    }
+  ],
+  "aggregatingComponents": []
+}

@@ -1,0 +1,104 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tectonic-identity-worker
+  labels:
+    app: tectonic-identity
+    component: worker
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: tectonic-identity-worker
+      labels:
+        app: tectonic-identity
+        component: worker
+    spec:
+      containers:
+      - name: tectonic-identity-worker
+        image: quay.io/coreos/tectonic-identity:{{.componentVersion}}
+        imagePullPolicy: IfNotPresent
+        command: ["/opt/dex/bin/dex-worker"]
+        ports:
+        - containerPort: 5556
+          protocol: TCP
+        env:
+        - name: DEX_WORKER_LISTEN
+          value: "https://0.0.0.0:5556"
+        - name: DEX_WORKER_EMAIL_CFG
+          value: /etc/tectonic-identity-config-secret/identity-emailer-config
+        - name: DEX_WORKER_TLS_CERT_FILE
+          value: /etc/tectonic-identity-tls-secret/tls-cert
+        - name: DEX_WORKER_TLS_KEY_FILE
+          value: /etc/tectonic-identity-tls-secret/tls-key
+        - name: DEX_WORKER_ENABLE_REGISTRATION
+          value: "false"
+        - name: DEX_WORKER_DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-identity-db-secret
+              key: identity-db-url
+        - name: DEX_WORKER_KEY_SECRETS
+          valueFrom:
+            secretKeyRef:
+              name: tectonic-identity-access-secret
+              key: identity-key-secrets
+        - name: DEX_WORKER_ISSUER
+          valueFrom:
+            configMapKeyRef:
+              name: tectonic-config
+              key: identity-issuer-url
+        - name: DEX_WORKER_ISSUER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: tectonic-config
+              key: identity-issuer-name
+        - name: DEX_WORKER_ISSUER_LOGO_URL
+          value: https://tectonic.com/assets/images/brand/tectonic-horizontal-color.png
+        - name: DEX_WORKER_EMAIL_FROM
+          valueFrom:
+            configMapKeyRef:
+              name: tectonic-config
+              key: identity-email-from
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 50Mi
+        volumeMounts:
+        - name: tectonic-identity-tls-secret
+          mountPath: /etc/tectonic-identity-tls-secret
+          readOnly: true
+        - name: tectonic-identity-config-secret
+          mountPath: /etc/tectonic-identity-config-secret
+          readOnly: true
+        - name: tectonic-config
+          mountPath: /etc/tectonic-config
+          readOnly: true
+        - name: ssl-certs-host
+          mountPath: /etc/ssl/certs
+          readOnly: true
+        - name: ca-certs-host
+          mountPath: /usr/share/ca-certificates
+          readOnly: true
+      volumes:
+      - name: tectonic-identity-tls-secret
+        secret:
+          secretName: tectonic-identity-tls-secret
+      - name: tectonic-identity-config-secret
+        secret:
+          secretName: tectonic-identity-config-secret
+      - name: tectonic-config
+        configMap:
+          name: tectonic-config
+      - name: ssl-certs-host
+        hostPath:
+          path: /etc/ssl/certs
+      - name: ca-certs-host
+        hostPath:
+          path: /usr/share/ca-certificates
+      imagePullSecrets:
+      - name: coreos-pull-secret
+

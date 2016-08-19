@@ -1,0 +1,78 @@
+{{ template "header.html" }}
+
+<div class="panel">
+  {{ if .ShowEmailVerifiedMessage }}
+    <h2 id="heading">Your email has been verified!</h2>
+  {{ end }}
+
+  {{ if .Error }}
+    <h2 class="heading">{{ .Message }}</h2>
+  {{ else }}
+    {{ if and .Register (eq .MsgCode "") }}
+      <h2 class="heading">Create your Tectonic account</h2>
+      <div class="explain">Verify using either option below</div>
+    {{ else }}
+      <h2 class="heading">Log in to your Tectonic account</h2>
+    {{ end}}
+  {{ end }}
+
+  <div>
+    {{ if .Error }}
+      <div class="instruction-block">{{ .Instruction }}</div>
+      <div class="detail-block">{{ .Detail }}</div>
+    {{ else }}
+
+      {{ if eq .MsgCode "login-maybe" }}
+        <div class="instruction-block">This email address is already in use.</div>
+        <div class="error-box">Looks like you've already registered. Try logging in instead:</div>
+      {{ end }}
+
+      {{ if eq .MsgCode "register-maybe" }}
+        <div class="instruction-block">There's no account for this user.</div>
+        <div class="error-box">Try registering with this first:</div>
+      {{ end }}
+
+      {{ if eq .MsgCode "wrong-connector" }}
+        <div class="instruction-block">Wrong login method.</div>
+        <div class="error-box">Try logging in again with this instead:</div>
+      {{ end }}
+
+      {{ if .Register }}
+        {{ range $c := .Links }}
+          <div class="form-row">
+            <a href="{{ $c.URL }}" target="_self">
+              <button class="btn btn-provider">
+                <span class="btn-icon btn-icon-{{ $c.ID }}"></span>
+                <span class="btn-text">Use {{ $c.DisplayName }}</span>
+              </button>
+            </a>
+          </div>
+        {{ end }}
+      {{ else }}
+        {{ range $c := .Links }}
+          <div class="form-row">
+            <a href="{{ $c.URL }}" target="_self">
+              <button class="btn btn-provider">
+                <span class="btn-icon btn-icon-{{ $c.ID }}"></span>
+                <span class="btn-text">Log in with {{ $c.DisplayName }}</span>
+              </button>
+            </a>
+          </div>
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  </div>
+
+</div>
+
+{{ if not .Error }}
+  <div class="footer subtle-text">
+    {{ if .Register }}
+      Already have an account? <a href="{{ .RegisterOrLoginURL }}">Log in</a>
+    {{ else }}
+      Don't have an account yet? <a href="{{ .RegisterOrLoginURL }}">Register</a>
+    {{ end }}
+  </div>
+{{ end }}
+
+{{ template "footer.html" }}

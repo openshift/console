@@ -1,0 +1,15 @@
+# Used for running DB migrations
+
+FROM golang:1.5.3
+
+MAINTAINER Derek Parker - CoreOS
+
+ENV GO15VENDOREXPERIMENT=1
+
+RUN go get github.com/jackc/tern
+
+ADD migrations /opt/migrations
+
+WORKDIR /opt/migrations
+
+CMD ["tern", "migrate"]

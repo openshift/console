@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  namespace: quay-enterprise
+  name: quay-enterprise-app
+  labels:
+    quay-enterprise-component: app
+spec:
+  replicas: 1
+  selector:
+    quay-enterprise-component: app
+  template:
+    metadata:
+      labels:
+        quay-enterprise-component: app
+    spec:
+      volumes:
+        - name: configvolume
+          secret:
+            secretName: quay-enterprise-config-secret
+      containers:
+      - name: quay-enterprise-app
+        image: quay.io/coreos/registry:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: configvolume
+          readOnly: false
+          mountPath: /conf/stack
+      imagePullSecrets:
+        - name: coreos-pull-secret

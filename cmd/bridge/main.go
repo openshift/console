@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/coreos/go-oidc/oidc"
@@ -17,8 +18,10 @@ import (
 	"k8s.io/kubernetes/pkg/client/restclient"
 
 	"github.com/coreos-inc/bridge/auth"
+	"github.com/coreos-inc/bridge/license"
 	"github.com/coreos-inc/bridge/server"
 	"github.com/coreos-inc/bridge/stats"
+	key "github.com/coreos-inc/tectonic/manager/pkg/license"
 )
 
 var (
@@ -56,6 +59,8 @@ func main() {
 	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
 
+	fLicenseFile := fs.String("license-file", "", "Path to the Tectonic license file.")
+
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -73,10 +78,23 @@ func main() {
 		baseURL = validateFlagIsURL("base-url", *fBaseURL)
 	}
 
+	var (
+		tier       string    = "unknown"
+		expiration time.Time = time.Now()
+	)
+	licenseFile, err := os.Open(*fLicenseFile)
+	if err != nil {
+		log.Warning("Could not open license file.")
+	} else {
+		tier, expiration = license.Verify(strings.NewReader(key.PublicKeyPEM), licenseFile, time.Now())
+	}
+
 	srv := &server.Server{
-		PublicDir:       *fPublicDir,
-		TectonicVersion: *fTectonicVersion,
-		BaseURL:         baseURL,
+		PublicDir:          *fPublicDir,
+		TectonicVersion:    *fTectonicVersion,
+		BaseURL:            baseURL,
+		TectonicTier:       tier,
+		TectonicExpiration: expiration,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {

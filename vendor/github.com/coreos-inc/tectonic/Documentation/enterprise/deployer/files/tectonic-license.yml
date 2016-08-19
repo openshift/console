@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tectonic-license
+type: Opaque
+data:
+  license: REPLACE-WITH-LICENSE

@@ -1,0 +1,159 @@
+<div class="tec-p-billing">
+  <h1 class="cos-page-title">Billing</h1>
+
+  <div class="row">
+    <div class="col-md-6 col-sm-6">
+      <div class="cos-pane tec-billing-top-pane">
+        <div class="tec-pane-section--spacious">
+          <h3 class="tec-small-panel-header">Since Last Invoice</h3>
+        </div>
+        <div class="tec-pane-section">
+          <div class="row">
+            <div class="col-sm-4 tec-xs-margin-bottom">
+              <div class="cos-thin-label">Amount Owed</div>
+              <div class="tec-big-info" ng-bind="vm.billingStatus.balance | price"></div>
+            </div>
+            <div class="col-sm-8 tec-xs-margin-bottom">
+              <div class="cos-thin-label">Account Status</div>
+              <div class="tec-big-info"
+                ng-class="{'tec-status--ok': vm.billingStatus.statusDescription == 'Good Standing', 'tec-status--bad': vm.billingStatus.statusDescription != 'Good Standing'}"
+                ng-bind="vm.billingStatus.statusDescription"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tec-pane-section">
+          <span ng-show="vm.billingStatus.nextInvoiceDate"
+            ng-bind-template="Your next invoice will be on {{vm.billingStatus.nextInvoiceDate | apiDate}}"></span>
+        </div>
+      </div><!-- pane -->
+    </div><!-- col -->
+
+    <div class="col-md-6 col-sm-6">
+      <div class="cos-pane tec-billing-top-pane">
+        <div class="tec-pane-section--spacious">
+          <h3 class="tec-small-panel-header">Payment Details</h3>
+        </div>
+        <div class="tec-pane-section">
+          <div class="row">
+            <div class="col-sm-6 tec-xs-margin-bottom">
+              <div ng-if="!vm.loadState.card.loaded" class="tec-pane-section">
+                <cos-loader></cos-loader>
+              </div>
+              <div ng-if="vm.loadState.card.failed" class="tec-pane-section text-center">
+                <cos-status-box>
+                  <div class="cos-error-title">Error loading card info</div>
+                  <div>Try reloading the page</div>
+                </cos-status-box>
+              </div>
+              <div ng-if="vm.loadState.card.loaded && !vm.loadState.card.failed && vm.card">
+                <dl>
+                  <dt>Credit Card</dt>
+                  <dd>
+                    <tec-card-view card="vm.card"></tec-card-view>
+                  </dd>
+                </dl>
+                <a ng-if="canModifyAccount(vm.account.id)" class="tec-edit-link" ng-click="vm.openCardModal()">Edit</a>
+              </div>
+              <div ng-if="vm.loadState.card.loaded && !vm.card && !vm.loadState.card.failed">
+                <dl>
+                  <dt>Credit Card</dt>
+                  <dd>
+                    <div>No card on file.</div>
+                    <div class="text-small text-muted">Not required if paying by Purchase Order.</div>
+                  </dd>
+                </dl>
+                <a ng-if="canModifyAccount(vm.account.id)" class="tec-edit-link" ng-click="vm.openCardModal()">Convert to Credit Card Billing</a>
+              </div>
+            </div>
+            <div class="col-sm-6 tec-xs-margin-bottom">
+              <div ng-if="!vm.loadState.account.loaded" class="tec-pane-section">
+                <cos-loader></cos-loader>
+              </div>
+              <div ng-if="vm.loadState.account.failed" class="tec-pane-section text-center">
+                <cos-status-box>
+                  <div class="cos-error-title">Error loading billing details</div>
+                  <div>Try reloading the page</div>
+                </cos-status-box>
+              </div>
+              <div ng-if="vm.loadState.account.loaded && !vm.loadState.account.failed && !vm.isAddressEmpty(vm.billingAddress)">
+                <dl>
+                  <dt>Billing Address</dt>
+                  <dd>
+                    <tec-address-view address="vm.billingAddress"></tec-address-view>
+                  </dd>
+                </dl>
+                <a ng-if="canModifyAccount(vm.account.id)" class="tec-edit-link" ng-click="vm.openBillingAddressModal()">Edit</a>
+              </div>
+              <div ng-if="vm.loadState.account.loaded && !vm.loadState.account.failed && vm.isAddressEmpty(vm.billingAddress)">
+                <dl>
+                  <dt>Billing Address</dt>
+                  <dd>
+                    No billing address on file.
+                  </dd>
+                </dl>
+                <a ng-if="canModifyAccount(vm.account.id)" class="tec-edit-link" ng-click="vm.openBillingAddressModal()">Add Address</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- pane -->
+    </div><!-- col -->
+
+  </div><!-- .row -->
+
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="cos-pane">
+
+        <div class="tec-pane-section--spacious">
+          <h3 class="tec-small-panel-header">Invoices</h3>
+        </div>
+        <div ng-if="!vm.loadState.invoices.loaded" class="tec-pane-section">
+          <cos-loader></cos-loader>
+        </div>
+        <div ng-if="vm.loadState.invoices.failed" class="tec-pane-section text-center">
+          <cos-status-box>
+            <div class="cos-error-title">Error loading invoices info</div>
+            <div>Try reloading the page</div>
+          </cos-status-box>
+        </div>
+        <div ng-if="vm.loadState.invoices.loaded && !vm.loadState.invoices.failed && !vm.invoices.length" class="tec-pane-section">
+          <div class="text-center tec-empty-state">
+            <h3 class="tec-empty-state__title">You don't have any invoices yet</h3>
+            <div class="text-muted text-small">
+              All account invoices will be downloadable here.
+            </div>
+          </div>
+        </div>
+        <div ng-if="vm.loadState.invoices.loaded && !vm.loadState.invoices.failed && vm.invoices.length" class="tec-pane-section">
+          <table class="tec-simple-table tec-simple-table--small-text">
+            <thead>
+              <tr>
+                <th>Number</th>
+                <th>Amount Due</th>
+                <th>Status</th>
+                <th>Date Issued</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="iv in vm.invoices | orderBy:'issued':true">
+                <td ng-bind="iv.id"></td>
+                <td ng-bind="iv.invoiceCost | price:iv.currency"></td>
+                <td ng-class="{'tec-status--ok': iv.state == 'Paid'}" ng-bind="iv.state"></td>
+                <td ng-bind="iv.issued | apiDate"></td>
+                <td>
+                  <a ng-href="{{vm.pdfLink(iv.id)}}" target="_blank">Download PDF</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div><!-- col -->
+  </div><!-- .row -->
+
+</div>

@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    app: grafana
+    area: system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: grafana
+        area: system
+    spec:
+      containers:
+      - name: tectonic-manager-grafana-init
+        image: quay.io/coreos/tectonic-manager:{{.componentVersion}}
+        imagePullPolicy: IfNotPresent
+        command:
+        - /tectonic-manager
+        args:
+        - grafana-init
+        - /etc/tectonic/grafana-dashboards/kubernetes-pods.json
+        - /etc/tectonic/grafana-dashboards/kubernetes-cluster-overview.json
+      - image: quay.io/coreos/tectonic-grafana:{{.componentVersion}}
+        name: grafana
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 200m
+            memory: 100Mi
+        env:
+        - name: GF_AUTH_BASIC_ENABLED
+          value: "false"
+        - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "true"
+        - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+          value: Admin
+        - name: GF_SERVER_ROOT_URL
+          value: /
+        volumeMounts:
+        - name: grafana-persistent-storage
+          mountPath: /var/lib/grafana
+      volumes:
+      - name: grafana-persistent-storage
+        emptyDir: {}

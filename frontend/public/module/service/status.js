@@ -1,5 +1,5 @@
 angular.module('bridge.service')
-.factory('statusSvc', function(_, $http, k8s) {
+.factory('statusSvc', function(_, $http, k8s, $q, analyticsSvc) {
   'use strict';
 
   var attemptToUpdateKnownComponent = function(status, component, name) {
@@ -31,6 +31,9 @@ angular.module('bridge.service')
       return $http({
         url: 'version',
         method: 'GET',
+      }).then(function(resp) {
+        analyticsSvc.push({tier: resp.data.tier});
+        return resp;
       });
     },
     healthKubernetesApi: function() {

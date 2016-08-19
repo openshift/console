@@ -1,0 +1,26 @@
+{
+  "name": "creme",
+  "version": "0.1.0",
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "lodash": "~3.9.3",
+    "angular": "~1.4.0",
+    "angular-route": "~1.4.0",
+    "angular-animate": "~1.4.0",
+    "angular-sanitize": "~1.4.0",
+    "angular-cookies": "~1.4.0"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4.0"
+  },
+  "preen": {
+    "jquery": [
+      "dist/*.js"
+    ]
+  },
+  "overrides": {
+    "jquery": {
+      "main": "dist/jquery.js"
+    }
+  }
+}

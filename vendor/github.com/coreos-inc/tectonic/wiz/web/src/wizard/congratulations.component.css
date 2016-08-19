@@ -1,0 +1,18 @@
+.wiz-congratulations {
+  padding: 30px;
+  border: 1px solid #DDDDDD;
+  border-radius: 2px;
+}
+
+.wiz-congratulations__header,
+.wiz-congratulations__info {
+  margin: 0;
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.wiz-congratulations__header {
+  font-size: 20px;
+  line-height: 1em;
+  font-weight: 600;
+}

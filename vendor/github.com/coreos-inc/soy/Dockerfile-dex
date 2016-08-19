@@ -1,0 +1,7 @@
+FROM quay.io/coreos/dex:v0.2.3
+
+ENV DEX_WORKER_EMAIL_TEMPLATES /opt/dex/email
+ADD templates/dex/emails/* $DEX_WORKER_EMAIL_TEMPLATES/
+
+ENV DEX_WORKER_HTML_ASSETS /opt/dex/html
+ADD templates/dex/html/* $DEX_WORKER_HTML_ASSETS/

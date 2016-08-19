@@ -1,0 +1,22 @@
+<div class="wiz-backup-files-step">
+  <h3 class="wiz-form__header">Almost Done!</h3>
+
+  <div>
+    You have configured Tectonic. Back up your Files!
+  </div>
+
+  <button type="button" class="btn btn-block btn-link wiz-button--download wiz-backup-files-step__download" (click)="onDownloadClick()">
+    <i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;Download your Tectonic Configuration
+  </button>
+
+  <div>
+    These files can be used to duplicate this cluster, or for debugging purposes. Next, we'll launch your Tectonic Services.
+  </div>
+
+  <div class="wiz-backup-files-step__launch text-center">
+    <button type="button" (click)="onLaunchClick()" class="btn btn-primary wiz-giant-button">Launch Services!</button>
+  </div>
+  <div class="wiz-backup-files-step__back text-center">
+    <button type="button" (click)="onBackClick()" class="btn btn-link">Back</button>
+  </div>
+</div>
