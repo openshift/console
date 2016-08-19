@@ -69,6 +69,6 @@ const pages = [{href: 'details', name: 'Details', component: ConfigMapDetails}, 
 
 const ConfigMaps = createListComponent('ConfigMaps', 'CONFIGMAP', ConfigMapHeader, ConfigMapRow);
 const ConfigMapsPage = createPageComponent('ConfigMapsPage', 'CONFIGMAP', ConfigMaps);
-const ConfigMapDetailsPage = createDetailsPage('ConfigMapDetailsPage', 'CONFIGMAP', asVertNav(pages));
+const ConfigMapsDetailsPage = createDetailsPage('ConfigMapsDetailsPage', 'CONFIGMAP', asVertNav(pages));
 
-export {ConfigMaps, ConfigMapsPage, ConfigMapDetailsPage};
+export {ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage};

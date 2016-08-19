@@ -9,6 +9,7 @@ import './namespaces/co-namespace-secret-list-ctrl';
 
 import './services/services';
 import './k8s-list/k8s-list';
+import './k8s-detail/k8s-detail';
 import './replicationcontrollers/controllers';
 import './replicasets/controllers';
 import './deployments/controllers';
@@ -20,7 +21,4 @@ import './settings/settings';
 import './welcome/welcome-ctrl';
 import './modals/modals';
 import './dtc/dtc-ctrl';
-import './daemonsets/daemonset-ctrl';
-import './configmaps/configmap-ctrl';
-import './secrets/secret-ctrl';
 

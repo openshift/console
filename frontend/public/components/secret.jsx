@@ -69,6 +69,6 @@ const pages = [{href: 'details', name: 'Details', component: detailsPage(SecretD
 
 const Secrets = createListComponent('Secrets', 'SECRET', SecretHeader, SecretRow);
 const SecretsPage = createPageComponent('SecretsPage', 'SECRET', Secrets);
-const SecretDetailsPage = createDetailsPage('SecretDetailsPage', 'SECRET', asVertNav(pages));
+const SecretsDetailsPage = createDetailsPage('SecretsDetailsPage', 'SECRET', asVertNav(pages));
 
-export {Secrets, SecretsPage, SecretDetailsPage};
+export {Secrets, SecretsPage, SecretsDetailsPage};

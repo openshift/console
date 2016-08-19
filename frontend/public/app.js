@@ -159,46 +159,8 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('daemonsets');
-  r('/ns/:ns/daemonsets/:name/details', {
-    controller: 'DaemonSetCtrl',
-    templateUrl: '/static/page/daemonsets/daemon-set.html',
-    title: 'Daemon Set',
-  });
-  r('/ns/:ns/daemonsets/:name/yaml', {
-    controller: 'DaemonSetCtrl',
-    templateUrl: '/static/page/daemonsets/daemon-set.html',
-    title: 'Daemon Set YAML',
-  });
-  r('/ns/:ns/daemonsets/:name/pods', {
-    controller: 'DaemonSetCtrl',
-    templateUrl: '/static/page/daemonsets/daemon-set.html',
-    title: 'Daemon Set Pods',
-  });
-
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('configmaps');
-  r('/ns/:ns/configmaps/:name/details', {
-    controller: 'ConfigMapCtrl',
-    templateUrl: '/static/page/configmaps/configmap.html',
-    title: 'Config Map',
-  });
-  r('/ns/:ns/configmaps/:name/yaml', {
-    controller: 'ConfigMapCtrl',
-    templateUrl: '/static/page/configmaps/configmap.html',
-    title: 'Config Map YAML',
-  });
-
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('secrets');
-  r('/ns/:ns/secrets/:name/details', {
-    controller: 'SecretCtrl',
-    templateUrl: '/static/page/secrets/secret.html',
-    title: 'Secret',
-  });
-  r('/ns/:ns/secrets/:name/yaml', {
-    controller: 'SecretCtrl',
-    templateUrl: '/static/page/secrets/secret.html',
-    title: 'Secret YAML',
-  });
-
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
   r('/ns/:ns/replicasets/new', {
     controller: 'NewReplicaSetCtrl',
@@ -372,9 +334,15 @@ angular.module('bridge', [
     controller: 'k8sListCtrl',
     templateUrl: '/static/page/k8s-list/k8s-list.html',
   });
+
   r('/ns/:ns/:kind', {
     controller: 'k8sListCtrl',
     templateUrl: '/static/page/k8s-list/k8s-list.html',
+  });
+
+  r('/ns/:ns/:kind/:name/:view', {
+    controller: 'k8sDetailCtrl',
+    templateUrl: '/static/page/k8s-detail/k8s-detail.html',
   });
 
   $routeProvider.when('/error', {

@@ -69,6 +69,6 @@ const pages = [{href: 'details', name: 'Details', component: detailsPage(Details
 
 const DaemonSets = createListComponent('DaemonSets', 'DAEMONSET', DaemonSetHeader, withPodList(DaemonSetRow));
 const DaemonSetsPage = createPageComponent('DaemonSetsPage', 'DAEMONSET', DaemonSets);
-const DaemonSetDetailsPage = createDetailsPage('DaemonSetDetailsPage', 'DAEMONSET', asVertNav(pages));
+const DaemonSetsDetailsPage = createDetailsPage('DaemonSetsDetailsPage', 'DAEMONSET', asVertNav(pages));
 
-export {DaemonSets, DaemonSetsPage, DaemonSetDetailsPage};
+export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};
