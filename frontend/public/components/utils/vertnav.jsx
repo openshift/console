@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import Chalupa from './chalupa';
 
 const isActive = (href) => {
   const current = location.pathname.split('/').slice(-1)[0];
@@ -22,9 +23,8 @@ export default (pages) => {
         const klass = classNames('co-m-vert-nav__menu-item',
           {'co-m-vert-nav-item--active': active}
         );
-
-        return <li className={klass} key={href}>
-          <a key={href} href={href}>{name}</a>
+        return <li className={klass} key={name}>
+          <Chalupa href={href}>{name}</Chalupa>
         </li>;
       });
 

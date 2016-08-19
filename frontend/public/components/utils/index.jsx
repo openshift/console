@@ -6,6 +6,7 @@ import Timestamp from './timestamp';
 import asVertNav from './vertnav';
 import detailsPage from './details-page';
 import withStatusBox from './status-box';
+import Chalupa from './chalupa';
 
 export {
   Cog,
@@ -16,4 +17,5 @@ export {
   asVertNav,
   detailsPage,
   withStatusBox,
+  Chalupa,
 }
