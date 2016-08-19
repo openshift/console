@@ -39,16 +39,16 @@ export default class Cog extends DropdownMixin {
 
 Cog.factory = {
   Delete: (kind, obj) => ({
-    label: `Delete ${kind.kind} ...`,
+    label: `Delete ${kind.label} ...`,
     callback: angulars.modal('confirm', {
-      title: `Delete ${kind.kind} `,
+      title: `Delete ${kind.label} `,
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
-      btnText: `Delete ${kind.kind} `,
+      btnText: `Delete ${kind.label} `,
       executeFn: () => () => angulars.k8s[kind.plural].delete(obj),
     }),
   }),
   Edit: (kind, obj) => ({
-    label: `Edit ${kind.kind}...`,
+    label: `Edit ${kind.label}...`,
     weight: 400,
     href: angulars.resourceMgrSvc.getEditLink(obj, kind),
   }),

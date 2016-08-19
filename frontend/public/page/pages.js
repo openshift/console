@@ -21,4 +21,6 @@ import './welcome/welcome-ctrl';
 import './modals/modals';
 import './dtc/dtc-ctrl';
 import './daemonsets/daemonset-ctrl';
+import './configmaps/configmap-ctrl';
+import './secrets/secret-ctrl';
 
