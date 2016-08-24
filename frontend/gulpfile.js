@@ -201,9 +201,9 @@ gulp.task('html', ['sha'], () => {
   return gulp.src('./public/index.html')
     .pipe(htmlReplace((function() {
       var h = {
-        'js':  `/static/build.${CURRENT_SHA}.min.js`,
-        'css': `/static/build.${CURRENT_SHA}.css`,
-        'css-coreos-web':  '/static/lib/coreos-web/coreos.css'
+        'js':  `static/build.${CURRENT_SHA}.min.js`,
+        'css': `static/build.${CURRENT_SHA}.css`,
+        'css-coreos-web':  'static/lib/coreos-web/coreos.css'
       };
       if (process.env.NODE_ENV !== 'production') {
         h['analytics'] = '';
