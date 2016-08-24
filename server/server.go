@@ -78,29 +78,29 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		k8sHandler = authMiddleware(s.Auther, k8sHandler)
 	}
-	mux.Handle("/api/kubernetes/", http.StripPrefix("/api/kubernetes/", k8sHandler))
+	mux.Handle(s.BaseURL.Path+"/api/kubernetes/", http.StripPrefix(s.BaseURL.Path+"/api/kubernetes/", k8sHandler))
 
 	if !s.AuthDisabled() {
-		mux.HandleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
-		mux.HandleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
-		mux.HandleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc)
+		mux.HandleFunc(s.BaseURL.Path+AuthLoginEndpoint, s.Auther.LoginFunc)
+		mux.HandleFunc(s.BaseURL.Path+AuthLogoutEndpoint, s.Auther.LogoutFunc)
+		mux.HandleFunc(s.BaseURL.Path+AuthLoginCallbackEndpoint, s.Auther.CallbackFunc)
 
 		if s.KubectlAuther != nil {
-			mux.HandleFunc("/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
-			mux.HandleFunc("/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
+			mux.HandleFunc(s.BaseURL.Path+"/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
+			mux.HandleFunc(s.BaseURL.Path+"/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
 		}
 	}
 
 	if s.DexProxyConfig != nil {
-		mux.Handle("/api/dex/", http.StripPrefix("/api/dex/", newProxy(s.DexProxyConfig)))
+		mux.Handle(s.BaseURL.Path+"/api/dex/", http.StripPrefix(s.BaseURL.Path+"/api/dex/", newProxy(s.DexProxyConfig)))
 	}
 
-	mux.HandleFunc("/api/", notFoundHandler)
+	mux.HandleFunc(s.BaseURL.Path+"/api/", notFoundHandler)
 
-	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(s.PublicDir)))
-	mux.Handle("/static/", staticHandler)
+	staticHandler := http.StripPrefix(s.BaseURL.Path+"/static/", http.FileServer(http.Dir(s.PublicDir)))
+	mux.Handle(s.BaseURL.Path+"/static/", staticHandler)
 
-	mux.HandleFunc("/health", health.Checker{
+	mux.HandleFunc(s.BaseURL.Path+"/health", health.Checker{
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
@@ -108,9 +108,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
 	}
-	mux.HandleFunc("/version", useVersionHandler)
+	mux.HandleFunc(s.BaseURL.Path+"/version", useVersionHandler)
 
-	mux.HandleFunc("/", s.indexHandler)
+	mux.HandleFunc(s.BaseURL.Path+"/", s.indexHandler)
 
 	return http.Handler(mux)
 }
