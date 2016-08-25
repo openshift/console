@@ -1,4 +1,4 @@
-package license
+package verify
 
 import (
 	"crypto/rand"

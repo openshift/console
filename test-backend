@@ -14,7 +14,7 @@ export GOBIN=${PWD}/bin:${GOBIN}
 # Invoke ./cover for HTML output
 COVER=${COVER:-"-cover"}
 
-TESTABLE="auth license server stats"
+TESTABLE="auth verify server stats"
 FORMATTABLE="${TESTABLE} cmd/bridge version"
 
 # user has not provided PKG override

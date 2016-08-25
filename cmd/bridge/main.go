@@ -18,10 +18,10 @@ import (
 	"k8s.io/kubernetes/pkg/client/restclient"
 
 	"github.com/coreos-inc/bridge/auth"
-	"github.com/coreos-inc/bridge/license"
 	"github.com/coreos-inc/bridge/server"
 	"github.com/coreos-inc/bridge/stats"
-	key "github.com/coreos-inc/tectonic/manager/pkg/license"
+	"github.com/coreos-inc/bridge/verify"
+	"github.com/coreos-inc/tectonic/manager/pkg/license"
 )
 
 var (
@@ -86,7 +86,7 @@ func main() {
 	if err != nil {
 		log.Warning("Could not open license file.")
 	} else {
-		tier, expiration = license.Verify(strings.NewReader(key.PublicKeyPEM), licenseFile, time.Now())
+		tier, expiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
 	}
 
 	srv := &server.Server{
