@@ -78,29 +78,29 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		k8sHandler = authMiddleware(s.Auther, k8sHandler)
 	}
-	mux.Handle(s.BaseURL.Path+"/api/kubernetes/", http.StripPrefix(s.BaseURL.Path+"/api/kubernetes/", k8sHandler))
+	mux.Handle(SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), http.StripPrefix(SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), k8sHandler))
 
 	if !s.AuthDisabled() {
-		mux.HandleFunc(s.BaseURL.Path+AuthLoginEndpoint, s.Auther.LoginFunc)
-		mux.HandleFunc(s.BaseURL.Path+AuthLogoutEndpoint, s.Auther.LogoutFunc)
-		mux.HandleFunc(s.BaseURL.Path+AuthLoginCallbackEndpoint, s.Auther.CallbackFunc)
+		mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, AuthLoginEndpoint), s.Auther.LoginFunc)
+		mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, AuthLogoutEndpoint), s.Auther.LogoutFunc)
+		mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, AuthLoginCallbackEndpoint), s.Auther.CallbackFunc)
 
 		if s.KubectlAuther != nil {
-			mux.HandleFunc(s.BaseURL.Path+"/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
-			mux.HandleFunc(s.BaseURL.Path+"/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
+			mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/api/tectonic/kubectl/code"), s.KubectlAuther.LoginFunc)
+			mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/api/tectonic/kubectl/config"), s.handleRenderKubeConfig)
 		}
 	}
 
 	if s.DexProxyConfig != nil {
-		mux.Handle(s.BaseURL.Path+"/api/dex/", http.StripPrefix(s.BaseURL.Path+"/api/dex/", newProxy(s.DexProxyConfig)))
+		mux.Handle(SingleJoiningSlash(s.BaseURL.Path, "/api/dex/"), http.StripPrefix(SingleJoiningSlash(s.BaseURL.Path, "/api/dex/"), newProxy(s.DexProxyConfig)))
 	}
 
-	mux.HandleFunc(s.BaseURL.Path+"/api/", notFoundHandler)
+	mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/api/"), notFoundHandler)
 
-	staticHandler := http.StripPrefix(s.BaseURL.Path+"/static/", http.FileServer(http.Dir(s.PublicDir)))
-	mux.Handle(s.BaseURL.Path+"/static/", staticHandler)
+	staticHandler := http.StripPrefix(SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
+	mux.Handle(SingleJoiningSlash(s.BaseURL.Path, "/static/"), staticHandler)
 
-	mux.HandleFunc(s.BaseURL.Path+"/health", health.Checker{
+	mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/health"), health.Checker{
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
@@ -108,9 +108,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
 	}
-	mux.HandleFunc(s.BaseURL.Path+"/version", useVersionHandler)
+	mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/version"), useVersionHandler)
 
-	mux.HandleFunc(s.BaseURL.Path+"/", s.indexHandler)
+	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return http.Handler(mux)
 }
