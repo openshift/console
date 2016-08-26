@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+
 import {angulars} from '../react-wrapper';
 
 const Label = ({kind, name, value, expand}) => {
@@ -19,7 +20,7 @@ const Label = ({kind, name, value, expand}) => {
   );
 };
 
-const LabelList = ({labels, kind, expand}) => {
+export const LabelList = ({labels, kind, expand}) => {
   let list = _.map(labels, (label, key) => <Label key={key} kind={kind} name={key} value={label} expand={!!expand} />);
 
   if (!list) {
@@ -28,5 +29,3 @@ const LabelList = ({labels, kind, expand}) => {
 
   return <div className="co-m-label-list">{list}</div>;
 };
-
-export default LabelList;

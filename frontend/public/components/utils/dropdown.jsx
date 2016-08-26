@@ -57,7 +57,7 @@ export class DropdownMixin extends React.Component {
   }
 }
 
-export default class Dropdown extends DropdownMixin {
+export class Dropdown extends DropdownMixin {
   render() {
     const {title} = this.state;
     const {nobutton, items, className} = this.props;

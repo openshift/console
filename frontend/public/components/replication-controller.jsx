@@ -1,14 +1,11 @@
-/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "React" }]*/
 import React from 'react';
 
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-
+import {makeListPage, makeList} from './factory';
 import {Header, rowOfKindstring} from './workloads';
 
 const RC_ENUM = 'REPLICATIONCONTROLLER';
 
-const ReplicationControllersList = createListComponent('ReplicationControllers', RC_ENUM, Header, rowOfKindstring(RC_ENUM));
-const ReplicationControllersPage = createPageComponent('ReplicationControllersPage', RC_ENUM, ReplicationControllersList);
+const ReplicationControllersList = makeList('ReplicationControllers', RC_ENUM, Header, rowOfKindstring(RC_ENUM));
+const ReplicationControllersPage = makeListPage('ReplicationControllersPage', RC_ENUM, ReplicationControllersList);
 
 export {ReplicationControllersList, ReplicationControllersPage};

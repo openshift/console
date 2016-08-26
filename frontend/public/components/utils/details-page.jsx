@@ -3,7 +3,7 @@ import React from 'react';
 import yamlize from '../../module/service/yamlize';
 import {PodsPage} from '../pod';
 
-const detailsPage = (Component) => (props) => <div className="co-m-pane__body">
+export const detailsPage = (Component) => (props) => <div className="co-m-pane__body">
   <div className="co-m-pane__body-section--bordered">
     <div className="row">
       <Component {...props} />
@@ -25,4 +25,3 @@ detailsPage.factory = {
     component: detailsPage((resource) => <div className="col-md-12"><pre className="co-pre-wrap">{yamlize(resource)}</pre></div>),
   }),
 }
-export default detailsPage;

@@ -1,11 +1,9 @@
 import React from 'react';
 
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-
+import {makeListPage, makeList} from './factory';
 import {Header, rowOfKindstring} from './workloads';
 
-const ReplicaSetsList = createListComponent('ReplicaSets', 'REPLICASET', Header, rowOfKindstring('REPLICASET'));
-const ReplicaSetsPage = createPageComponent('ReplicaSetsPage', 'REPLICASET', ReplicaSetsList);
+const ReplicaSetsList = makeList('ReplicaSets', 'REPLICASET', Header, rowOfKindstring('REPLICASET'));
+const ReplicaSetsPage = makeListPage('ReplicaSetsPage', 'REPLICASET', ReplicaSetsList);
 
 export {ReplicaSetsList, ReplicaSetsPage};

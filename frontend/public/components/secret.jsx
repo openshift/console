@@ -1,13 +1,9 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-
-import createListComponent from './list-factory';
-import createPageComponent from './page-factory';
-import createDetailsPage from './detail-page-factory';
+import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-
-import {Cog, LabelList, ResourceIcon, Timestamp, asVertNav, detailsPage} from './utils'
+import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage} from './utils'
 
 const SecretCog = ({secret}) => {
   const kind = angulars.kinds.SECRET;
@@ -67,8 +63,8 @@ const SecretDetails = (secret) => {
 const {factory: {yaml}} = detailsPage;
 const pages = [{href: 'details', name: 'Details', component: detailsPage(SecretDetails)}, yaml()];
 
-const Secrets = createListComponent('Secrets', 'SECRET', SecretHeader, SecretRow);
-const SecretsPage = createPageComponent('SecretsPage', 'SECRET', Secrets);
-const SecretsDetailsPage = createDetailsPage('SecretsDetailsPage', 'SECRET', asVertNav(pages));
+const Secrets = makeList('Secrets', 'SECRET', SecretHeader, SecretRow);
+const SecretsPage = makeListPage('SecretsPage', 'SECRET', Secrets);
+const SecretsDetailsPage = makeDetailsPage('SecretsDetailsPage', 'SECRET', pages);
 
 export {Secrets, SecretsPage, SecretsDetailsPage};
