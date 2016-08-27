@@ -25,7 +25,7 @@ const SecretRow = (secret) => {
     <div className="col-md-4">
       <SecretCog secret={secret}></SecretCog>
       <ResourceIcon kind="secret"></ResourceIcon>
-      <a href={`/ns/${secret.metadata.namespace}/secrets/${secret.metadata.name}/details`} title={secret.metadata.uid}>{secret.metadata.name}</a>
+      <a href={`ns/${secret.metadata.namespace}/secrets/${secret.metadata.name}/details`} title={secret.metadata.uid}>{secret.metadata.name}</a>
     </div>
     <div className="col-md-4">{data}</div>
     <div className="col-md-4">{age}</div>
