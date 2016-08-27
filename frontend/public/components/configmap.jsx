@@ -25,7 +25,7 @@ const ConfigMapRow = (configMap) => {
     <div className="col-md-4">
       <ConfigMapCog configMap={configMap}></ConfigMapCog>
       <ResourceIcon kind="configmap"></ResourceIcon>
-      <a href={`/ns/${configMap.metadata.namespace}/configmaps/${configMap.metadata.name}/details`} title={configMap.metadata.uid}>{configMap.metadata.name}</a>
+      <a href={`ns/${configMap.metadata.namespace}/configmaps/${configMap.metadata.name}/details`} title={configMap.metadata.uid}>{configMap.metadata.name}</a>
     </div>
     <div className="col-md-4">{data}</div>
     <div className="col-md-4">{age}</div>
