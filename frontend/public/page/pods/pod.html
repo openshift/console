@@ -14,50 +14,34 @@
       <div class="co-m-pane__body">
         <div cos-tristate="pod" cos-tristate-error="loadError" class="co-m-pane__body-section--bordered">
           <div ng-show="pod && !loadError" class="row">
-            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <dl>
-                <dt>Pod Name</dt>
-                <dd ng-bind="pod.metadata.name"></dd>
-                <dt>Pod Labels</dt>
-                <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
-                <dt>Created At</dt>
-                <dd><co-timestamp timestamp="{{pod.metadata.creationTimestamp}}" ></co-timestamp></dd>
-              </dl>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <dl>
-                <dt>Status</dt>
-                <dd ng-bind="pod|podPhase"></dd>
-                <dt>Pod IP</dt>
-                <dd  ng-bind="pod.status.podIP | emptyPlaceholder"></dd>
-                <dt>Node</dt>
-                <dd>
-                  <a ng-if="pod.spec.nodeName" ng-href="nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
-                  <span ng-if="!pod.spec.nodeName" ng-bind="CONST.placeholderText"></span>
-                </dd>
-                <dt>Restart Policy</dt>
-                <dd ng-bind="getRestartPolicyLabel(pod.spec.restartPolicy)"></dd>
-              </dl>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <h1 class="co-section-title">Pod Volumes</h1>
-              <div class="co-table-container">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Name</th>
-                      <th>Location</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat="v in pod.spec.volumes">
-                      <td ng-bind="volumeTypeLabel(v)"></td>
-                      <td ng-bind="v.name"></td>
-                      <td ng-bind="volumeLocation(v)"></td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+              <h1 class="co-section-title">Pod Overview</h1>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <dl>
+                    <dt>Pod Name</dt>
+                    <dd ng-bind="pod.metadata.name"></dd>
+                    <dt>Pod Labels</dt>
+                    <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
+                    <dt>Created At</dt>
+                    <dd><co-timestamp timestamp="{{pod.metadata.creationTimestamp}}" ></co-timestamp></dd>
+                  </dl>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <dl>
+                    <dt>Status</dt>
+                    <dd ng-bind="pod|podPhase"></dd>
+                    <dt>Pod IP</dt>
+                    <dd  ng-bind="pod.status.podIP | emptyPlaceholder"></dd>
+                    <dt>Node</dt>
+                    <dd>
+                      <a ng-if="pod.spec.nodeName" ng-href="nodes/{{pod.spec.nodeName}}" ng-bind="pod.spec.nodeName"></a>
+                      <span ng-if="!pod.spec.nodeName" ng-bind="CONST.placeholderText"></span>
+                    </dd>
+                    <dt>Restart Policy</dt>
+                    <dd ng-bind="getRestartPolicyLabel(pod.spec.restartPolicy)"></dd>
+                  </dl>
+                </div>
               </div>
             </div>
           </div>
@@ -71,37 +55,72 @@
           </cos-status-box>
         </div>
       </div>
-      <div class="co-m-pane">
-        <div class="co-m-pane__heading">
-          <div class="row">
-            <div class="col-xs-12">
-              <h1 class="co-m-pane__title">Containers</h1>
-            </div>
+      <div class="co-m-pane__heading">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1 class="co-m-pane__title">Containers</h1>
           </div>
         </div>
+      </div>
 
-        <div class="co-m-pane__body">
-          <div class="co-m-table-grid co-m-table-grid--bordered">
-            <div class="row co-m-table-grid__head">
-              <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Name</div>
-              <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Id</div>
-              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8">Image</div>
-              <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">State</div>
-              <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">Restart Count</div>
-              <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Started At</div>
-            </div>
-            <div class="co-m-table-grid__body">
-              <div class="row" ng-repeat="c in pod.spec.containers" ng-init="cstate = getContainerState(c.name); cstatus = getStatus(c.name);">
+      <div class="co-m-pane__body">
+        <div class="co-m-table-grid co-m-table-grid--bordered">
+          <div class="row co-m-table-grid__head">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">Name</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Id</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8">Image</div>
+            <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">State</div>
+            <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs">Restart Count</div>
+            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Started At</div>
+          </div>
+          <div class="co-m-table-grid__body">
+            <div class="row" ng-repeat="c in pod.spec.containers" ng-init="cstate = getContainerState(c.name); cstatus = getStatus(c.name);">
+              <div class="middler">
                 <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
                   <co-resource-icon kind="container"></co-resource-icon>
                   <a ng-href="ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}/containers/{{c.name}}"
                      ng-bind="c.name"></a>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs co-truncate" ng-bind="cstatus.containerID | emptyPlaceholder"></div>
+                <co-overflow class="col-lg-3 col-md-3 col-sm-3 hidden-xs" value="cstatus.containerID | emptyPlaceholder"></co-overflow>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-8" ng-bind="c.image"></div>
                 <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="cstate.label | emptyPlaceholder"></div>
                 <div class="col-lg-1 col-md-1 col-sm-2 hidden-xs" ng-bind="cstatus.restartCount | emptyPlaceholder"></div>
                 <div class="col-lg-2 col-md-2 hidden-sm  hidden-xs"><co-timestamp timestamp="{{cstate.startedAt}}"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="co-m-pane__heading">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1 class="co-m-pane__title">Pod Volumes</h1>
+          </div>
+        </div>
+      </div>
+      <div class="co-m-pane__body">
+        <div class="co-m-table-grid co-m-table-grid--bordered">
+          <div class="row co-m-table-grid__head">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-4">Name</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-4">Type</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs">Permissions</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-4">Utilized By</div>
+          </div>
+          <div class="co-m-table-grid__body">
+            <div class="row" ng-repeat="v in volumeMounts">
+              <div class="middler">
+                <co-overflow class="col-lg-3 col-md-3 col-sm-3 col-xs-4 co-truncate" value="v.name | emptyPlaceholder"></co-overflow>
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-4">
+                    <co-volume-icon kind="{{volumeType(v.volume)}}"></co-volume-icon>
+                    <span ng-if="volumeLocation(v.volume)" ng-bind="'(' + volumeLocation(v.volume) + ')'"></span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs" ng-bind="volumeMountPermissions(v)"></div>
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-4">
+                  <div class="co-m-resource-icon-wrapper" ng-repeat="m in v.mounts">
+                    <co-resource-icon kind="container"></co-resource-icon>
+                    <a ng-href="ns/{{pod.metadata.namespace}}/pods/{{pod.metadata.name}}/containers/{{m.container}}" ng-bind="m.container"></a>{{$last ? '' : ',&nbsp;'}}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

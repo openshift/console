@@ -6,6 +6,7 @@ import './cog/user-cog';
 import './containers/container-input';
 import './containers/multi-container-input';
 import './icons/resource-icon';
+import './icons/volume-icon';
 import './icons/status';
 import './forms/click-select';
 import './forms/number-spinner';

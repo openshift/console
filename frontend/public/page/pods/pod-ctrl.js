@@ -6,6 +6,7 @@ angular.module('bridge.page')
   k8s.pods.get($routeParams.name, $routeParams.ns)
   .then(function(pod) {
     $scope.pod = pod;
+    $scope.volumeMounts = k8s.pods.getVolumeMountsByPermissions(pod);
     $scope.loadError = false;
   })
   .catch(function() {
@@ -22,13 +23,14 @@ angular.module('bridge.page')
     return k8s.docker.getState(cinfo);
   };
 
-  $scope.volumeTypeLabel = function(v) {
+  $scope.volumeType = function(v) {
     var vtype = k8s.pods.getVolumeType(v);
-    return vtype ? vtype.label : '';
+    return vtype ? vtype.id : '';
   };
 
   $scope.volumeLocation = k8s.pods.getVolumeLocation;
 
-  $scope.getRestartPolicyLabel = k8s.pods.getRestartPolicyLabelById;
+  $scope.volumeMountPermissions = k8s.pods.getVolumeMountPermissions;
 
+  $scope.getRestartPolicyLabel = k8s.pods.getRestartPolicyLabelById;
 });
