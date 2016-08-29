@@ -408,19 +408,16 @@ angular.module('bridge', [
     analyticsSvc.error(`${rejection.data}: ${rejection.config.method} ${rejection.config.url}`);
   });
 
-  $window.onerror = function(message, source, lineno, colno, error) {
+  window.onerror = function (message, source, lineno, colno) {
     try {
       var e = `${message} ${source} ${lineno} ${colno}`;
       analyticsSvc.error(e);
     }
     catch(err) {
       try {
-        $window.console.error(error);
-        $window.console.error(err);
+        console.error(err);
       }
-      catch (e) {
-      }
+      catch (ignored) {}
     }
-    return true;
   };
 });
