@@ -8,13 +8,14 @@
 }
 
 .log-scroll-pane {
-  overflow-y: scroll;
+  overflow: auto;
   padding-top: 10px;
 }
 
 .log-contents__block {
   padding: 0px 10px;
   white-space: pre;
+  width: 0;
 }
 
 .log-contents__block--divider {
