@@ -1,10 +1,18 @@
 angular.module('bridge.page')
-.controller('SearchCtrl', function($scope, $location, $routeParams, k8s) {
+.controller('SearchCtrl', function($scope, $location, $routeParams, $route, k8s, activeNamespaceSvc) {
   'use strict';
 
-  var defaultKind = k8s.enum.Kind.SERVICE;
+  const shouldRedirect = $route.current.$$route.redirect;
+  const namespace = $routeParams.ns || activeNamespaceSvc.getActiveNamespace();
+
+  if (shouldRedirect) {
+    let path = namespace ? `ns/${$scope.ns}` : 'all-namespaces';
+    path += '/search';
+    return $location.path(path);
+  }
+  const defaultKind = k8s.enum.Kind.SERVICE;
   $scope.kinds = k8s.enum.Kind;
-  $scope.ns = $routeParams.ns;
+  $scope.ns = namespace;
 
   function getKind(id) {
     var k;

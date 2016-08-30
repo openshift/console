@@ -264,6 +264,7 @@ angular.module('bridge', [
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('search');
+
   r('/all-namespaces/search', {
     controller: 'SearchCtrl',
     templateUrl: '/static/page/search/search.html',
@@ -275,6 +276,13 @@ angular.module('bridge', [
     templateUrl: '/static/page/search/search.html',
     title: 'Search',
   });
+  r('/search', {
+    controller: 'SearchCtrl',
+    templateUrl: '/static/page/search/search.html',
+    title: 'Search',
+    redirect: true,
+  });
+
   r('/settings/registries', {
     controller: 'RegistriesCtrl',
     templateUrl: '/static/page/settings/registries.html',
