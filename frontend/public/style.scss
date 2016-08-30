@@ -26,7 +26,6 @@
 @import "page/modals/modal";
 @import "page/modals/configure-ports";
 @import "page/namespaces/namespaces";
-@import "page/pods/new-pod";
 @import "page/pods/pod-logs";
 @import "page/search/search";
 @import "page/welcome/welcome";
@@ -41,6 +40,7 @@
 // UI Modules
 @import "module/ui/containers/container-input";
 @import "module/ui/icons/resource-icon";
+@import "module/ui/icons/volume-icon";
 @import "module/ui/icons/status";
 @import "module/ui/forms/number-spinner";
 @import "module/ui/labels/label";

@@ -224,7 +224,7 @@ angular.module('k8s').constant('k8sEnum', {
     },
     gitRepo: {
       weight: 300,
-      id: 'gitRepot',
+      id: 'gitRepo',
       label: 'Git Repo',
       description: 'Git repository at a particular revision.',
     },
@@ -263,6 +263,12 @@ angular.module('k8s').constant('k8sEnum', {
       id: 'iscsi',
       label: 'iSCSI',
       description: 'iSCSI disk attached to host machine on demand',
+    },
+    configMap: {
+      weight: 1000,
+      id: 'configMap',
+      label: 'ConfigMap',
+      description: 'ConfigMap to be consumed in volume.',
     },
   },
 
