@@ -91,14 +91,19 @@ npm run dev
 All frontend build tasks are defined in `/frontend/gulpfile.js`
 
 ### Tests
-Run backend tests:
+Run all tests:
 ```
 ./test
 ```
 
+Run backend tests:
+```
+./test-backend
+```
+
 Run frontend tests:
 ```
-./test-web
+./test-frontend
 ```
 
 ### Dependency Management
