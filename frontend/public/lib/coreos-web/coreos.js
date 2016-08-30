@@ -1777,7 +1777,7 @@ angular.module('coreos.ui')
           href = '/' + href;
         }
 
-        return $location.path() === href;
+        return $location.path().indexOf(href) >= 0;
       };
     }
   };
