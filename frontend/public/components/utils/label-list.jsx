@@ -23,8 +23,8 @@ const Label = ({kind, name, value, expand}) => {
 export const LabelList = ({labels, kind, expand}) => {
   let list = _.map(labels, (label, key) => <Label key={key} kind={kind} name={key} value={label} expand={!!expand} />);
 
-  if (!list) {
-    labels = <div className="text-muted" ng-if="isEmpty()">No labels</div>
+  if (_.isEmpty(list)) {
+    list = <div className="text-muted">No labels</div>
   }
 
   return <div className="co-m-label-list">{list}</div>;
