@@ -4,7 +4,7 @@
  */
 
 angular.module('bridge.ui')
-.directive('coTimestamp', function(moment) {
+.directive('coTimestamp', function(moment, $interval) {
   'use strict';
 
   return {
@@ -24,7 +24,24 @@ angular.module('bridge.ui')
           scope.invalidDate = true;
           return;
         }
-        scope.timestamp = date;
+
+        var intervalReference;
+        const updateTimestamp = function() {
+          if (moment().diff(mdate, 'minutes', /* return floating point value */true) >= 10.5) {
+            scope.timestamp = mdate.format('MMM DD, h:mm a');
+            if (angular.isDefined(intervalReference)) {
+              $interval.cancel(intervalReference);
+            }
+          } else {
+            scope.timestamp = mdate.fromNow();
+            if (!intervalReference) {
+              intervalReference = $interval(updateTimestamp, 1000);
+              scope.$on('$destroy', $interval.cancel.bind(null, intervalReference));
+            }
+          }
+        };
+        updateTimestamp();
+
         scope.timestampUTC = mdate.utc().format('MMM DD, H:mm A z');
       });
     },
