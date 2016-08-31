@@ -16,13 +16,13 @@ angular.module('bridge.ui')
       title: '@',
       obj: '&',
       kind: '=',
-      plural: '=',
+      detail: '=',
     },
     controller: function ($scope) {
-      $scope.klass = $scope.plural ? 'row co-m-nav-title__plural' : 'row co-m-nav-title';
+      $scope.klass = $scope.detail ? 'row co-m-nav-title__detail' : 'row co-m-nav-title';
       $scope.h1Klass = 'co-m-page-title';
-      if ($scope.plural) {
-        $scope.h1Klass += ' co-m-page-title--plural';
+      if ($scope.detail) {
+        $scope.h1Klass += ' co-m-page-title--detail';
       }
     },
     link: function(scope) {

@@ -11,20 +11,20 @@
   padding-right: 7px;
 }
 
-.co-m-nav-title, .co-m-nav-title__plural{
+.co-m-nav-title, .co-m-nav-title__detail {
   margin: 0px;
 }
 
-.co-m-nav-title {
+.co-m-nav-title__detail {
   border-bottom: 1px solid $color-grey-background-border;
   background-color: $color-grey-background;
 }
 
-.co-m-nav-title__plural {
-  background-color: inherit;
-}
-
-.co-m-page-title--plural {
+.co-m-page-title {
   padding-bottom: 0px;
   margin-bottom: 0px;
+}
+
+.co-m-page-title--detail {
+  padding-bottom: 30px;
 }
