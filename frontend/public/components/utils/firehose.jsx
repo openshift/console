@@ -110,7 +110,7 @@ Firehose.propTypes = {
   namespace: React.PropTypes.string,
   selectorRequired: React.PropTypes.bool,
   selector: React.PropTypes.object,
-  fieldSelector: React.PropTypes.object,
+  fieldSelector: React.PropTypes.string,
   name: React.PropTypes.string,
   className: React.PropTypes.string,
   isList: React.PropTypes.bool,
