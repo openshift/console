@@ -25,6 +25,8 @@
                     <dd><co-label-list kind="pod" expand="true" labels="pod.metadata.labels"></co-label-list></dd>
                     <dt>Created At</dt>
                     <dd><co-timestamp timestamp="{{pod.metadata.creationTimestamp}}" ></co-timestamp></dd>
+                    <dt>Node Selector</dt>
+                    <dd><co-label-list kind="node" expand="true" labels="pod.spec.nodeSelector"></co-label-list></dd>
                   </dl>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
