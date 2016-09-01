@@ -21,7 +21,7 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters) => 
       const {namespace, defaultNS, canCreate} = this.props;
 
       const kind = angulars.kinds[kindName];
-      const href = `/ns/${namespace || defaultNS}/${kind.plural}/new`;
+      const href = `ns/${namespace || defaultNS}/${kind.plural}/new`;
 
       return (
         <div className="co-m-pane">
