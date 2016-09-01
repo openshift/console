@@ -19,9 +19,9 @@ angular.module('bridge.service')
     }
     meta = resource.metadata;
     if (meta.namespace) {
-      path = '/ns/' + meta.namespace;
+      path = 'ns/' + meta.namespace + '/';
     }
-    return path + '/' + kind.path + '/' + meta.name;
+    return path + kind.path + '/' + meta.name;
   };
 
   // The edit page link of a resource.
