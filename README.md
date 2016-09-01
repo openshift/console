@@ -17,7 +17,7 @@ Bridge consists of a frontend webapp and a backend service which serves the foll
 
 ### Deps:
 
-1. nodejs >= 6.0 (>=4 will probably work)
+1. nodejs >= 6.0
 2. npm >= 3 (probably installed with node)
 3. go >= 1.6
 
