@@ -18,11 +18,11 @@ angular.module('bridge.service')
     // ---
 
     function getVerificationCode() {
-      $window.open('/api/tectonic/kubectl/code');
+      $window.open('api/tectonic/kubectl/code');
     }
 
     function getConfiguration(code) {
-      return $http.post('/api/tectonic/kubectl/config', $httpParamSerializerJQLike({code: code}), {
+      return $http.post('api/tectonic/kubectl/config', $httpParamSerializerJQLike({code: code}), {
         headers:           {'Content-Type': 'application/x-www-form-urlencoded'},
         transformResponse: false
       })

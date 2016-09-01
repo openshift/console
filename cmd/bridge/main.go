@@ -34,7 +34,9 @@ func main() {
 
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
-	fBaseURL := fs.String("base-url", "", "The externally visible hostname/port of the service. Used in UI and OIDC/OAuth2 Redirect URLs. It takes value from listen flag by default.")
+
+	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://tectonic.example.com.")
+	fBasePath := fs.String("base-path", "/", "")
 
 	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
@@ -71,12 +73,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	var baseURL *url.URL
-	if *fBaseURL == "" {
-		baseURL = validateFlagIsURL("listen", *fListen)
-	} else {
-		baseURL = validateFlagIsURL("base-url", *fBaseURL)
+	baseURL := &url.URL{}
+	if *fBaseAddress != "" {
+		baseURL = validateFlagIsURL("base-address", *fBaseAddress)
 	}
+
+	if !strings.HasPrefix(*fBasePath, "/") || !strings.HasSuffix(*fBasePath, "/") {
+		flagFatalf("base-path", "value must start and end with slash")
+	}
+	baseURL.Path = *fBasePath
 
 	var (
 		tier       string    = "unknown"
@@ -192,6 +197,8 @@ func main() {
 
 	switch *fUserAuth {
 	case "oidc":
+		validateFlagNotEmpty("base-address", *fBaseAddress)
+
 		userAuthOIDCIssuerURL := validateFlagIsURL("user-auth-oidc-client-id", *fUserAuthOIDCIssuerURL)
 		validateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
 		validateFlagNotEmpty("user-auth-oidc-client-secret", *fUserAuthOIDCClientSecret)
