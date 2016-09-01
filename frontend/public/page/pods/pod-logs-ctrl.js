@@ -38,7 +38,7 @@ angular.module('bridge.page')
 
   $scope.$watch('containerName', function() {
     if ($routeParams.containerName !== $scope.containerName) {
-      var path = '/ns/' + $scope.ns + '/pods/' + $scope.podName + '/logs/' + $scope.containerName;
+      var path = 'ns/' + $scope.ns + '/pods/' + $scope.podName + '/logs/' + $scope.containerName;
       $location.path(path);
     }
   });
