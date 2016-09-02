@@ -1,5 +1,6 @@
 import './pod';
 import './deployment';
+import './job';
 import './replicaset';
 import './daemonset';
 import './configmap';

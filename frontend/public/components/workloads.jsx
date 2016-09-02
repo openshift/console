@@ -25,7 +25,7 @@ const rowOfKindstring = (name) => {
     const CogOfKind = cogOfKind(kind);
     return (
       <div className="row co-resource-list__item">
-        <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+        <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
           <CogOfKind o={o} />
           <ResourceIcon kind={kind.id}></ResourceIcon>
           <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}`} title={o.metadata.uid}>{o.metadata.name}</a>

@@ -64,6 +64,16 @@ angular.module('k8s').constant('k8sEnum', {
       path: 'deployments',
       plural: 'deployments',
     },
+    JOB: {
+      id: 'job',
+      kind: 'job',
+      label: 'Job',
+      labelPlural: 'Jobs',
+      isExtension: true,
+      apiVersion: 'v1beta1',
+      path: 'jobs',
+      plural: 'jobs',
+    },
     NODE: {
       id: 'node',
       kind: 'Node',

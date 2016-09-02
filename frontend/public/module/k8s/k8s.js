@@ -115,6 +115,7 @@ angular.module('k8s')
   this.replicationcontrollers = addDefaults(k8sReplicationcontrollers, k8sEnum.Kind.REPLICATIONCONTROLLER);
   this.replicasets = addDefaults(k8sReplicaSets, k8sEnum.Kind.REPLICASET);
   this.deployments = addDefaults(k8sDeployments, k8sEnum.Kind.DEPLOYMENT);
+  this.jobs = addDefaults({}, k8sEnum.Kind.JOB);
   this.daemonsets = addDefaults({}, k8sEnum.Kind.DAEMONSET);
   this.secrets = addDefaults({}, k8sEnum.Kind.SECRET);
 

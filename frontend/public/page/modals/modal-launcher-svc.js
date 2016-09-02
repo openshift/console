@@ -63,6 +63,10 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-replica-count.html',
       controller: 'ConfigureReplicaCountCtrl',
     },
+    'configure-job-parallelism': {
+      templateUrl: '/static/page/modals/configure-job-parallelism.html',
+      controller: 'ConfigureJobParallelismCtrl',
+    },
     'new-namespace': {
       templateUrl: '/static/page/modals/new-namespace.html',
       controller: 'NewNamespaceCtrl',
