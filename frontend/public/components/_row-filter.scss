@@ -1,0 +1,47 @@
+@import 'vars';
+
+$color-row-filter--border: #DDD;
+
+.row-filter {
+  outline: 1px solid $color-row-filter--border;
+  background-color: $color-grey-background;
+  margin-top: 30px;
+  margin-bottom: 3px;
+}
+
+.row-filter--box {
+  display: inline-block;
+  padding: 7px 10px;
+  background: $color-grey-background;
+  outline: 1px solid $color-row-filter--border;
+  //  relative is to trigger z-index
+  position: relative;
+  // z-index is because latter blocks overlap the joining outline of former blocks
+  font-size: 13px;
+}
+
+.row-filter--box__active {
+  outline: 1px solid #51A3D9;
+  background: #E0F1FD;
+  z-index: 1;
+}
+
+.row-filter--number-bubble {
+  background: white;
+  border-radius: 4px;
+  padding: 0 5px;
+  padding-top: 2px;
+  line-height: 16px;
+  border: 1px solid $color-row-filter--border;
+  display: inline-block;
+  text-align: center;
+  font-size: 14px;
+  margin-right: 3px;
+}
+
+.row-filter--box__empty {
+  color: #999;
+  .row-filter--number-bubble {
+    background: inherit;
+  }
+}
