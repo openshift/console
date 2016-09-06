@@ -9,7 +9,12 @@ import {angulars, register} from '../react-wrapper';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
-  'pod-status': (phase, pod) => !phase ? true : (pod.status.phase === phase || podPhase(pod) === phase),
+  'pod-status': (phases, pod) => {
+    if (!phases || !phases.size) {
+      return true;
+    }
+    return phases.has(pod.status.phase) || phases.has(podPhase(pod));
+  }
 }
 
 const filter = (_filters, objects) => {

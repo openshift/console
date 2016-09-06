@@ -2,8 +2,9 @@ import React from 'react';
 
 import {register, angulars} from '../react-wrapper';
 import {Dropdown} from '../utils';
+import {RowFilter} from '../row-filter';
 
-export const makeListPage = (name, kindName, ListComponent, dropdownFilters) => {
+export const makeListPage = (name, kindName, ListComponent, dropdownFilters, rowFilters) => {
   class ListPage extends React.Component {
     get list () {
       return this.refs.list;
@@ -22,6 +23,10 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters) => 
 
       const kind = angulars.kinds[kindName];
       const href = `ns/${namespace || defaultNS}/${kind.plural}/new`;
+
+      const RowsOfRowFilters = rowFilters && _.map(rowFilters, (rowFilter, i) => {
+        return <RowFilter key={i} rowFilter={rowFilter} {...this.props} />;
+      });
 
       return (
         <div className="co-m-pane">
@@ -42,6 +47,7 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters) => 
                   })
                 }
               </div>
+              {RowsOfRowFilters}
             </div>
           </div>
           <div className="co-m-pane__body">

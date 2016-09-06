@@ -35,19 +35,20 @@ const PodHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Node</div>
 </div>;
 
-const dropdownFilters = [{
+const filters = [{
   type: 'pod-status',
-  title: 'Pod Status',
-  items: {
-    'All Statuses': '',
-    'Pending': 'Pending',
-    'Running': 'Running',
-    'Terminating': 'Terminating',
-  },
+  selected: [0, 1, 2],
+  reducer: podPhase,
+  items: [
+    ['Running', 'Running'],
+    ['Pending', 'Pending'],
+    ['Terminating', 'Terminating'],
+    ['Job Completed', 'Completed'],
+  ],
 }];
 
 const PodList = makeList('Pods', 'POD', PodHeader, PodRow);
-const PodsPage = makeListPage('PodsPage', 'POD', PodList, dropdownFilters);
+const PodsPage = makeListPage('PodsPage', 'POD', PodList, [], filters);
 
 export {PodList, PodsPage};
 
