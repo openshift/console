@@ -1,0 +1,75 @@
+.co-deployment-pods {
+  text-align: center;
+  margin: 30px 0 0;
+  border-width: 1px;
+  border-radius: 5px;
+  max-width: 600px;
+  white-space: nowrap;
+}
+
+.co-deployment-pods__row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.co-deployment-pods, .co-deployment-pods__section  {
+  border-color: #eee;
+  border-style: solid;
+}
+
+.co-deployment-pods__section  {
+  border-width: 1px 1px 0 0;
+  padding: 20px 10px;
+  margin-top: -1px;
+  margin-right: -1px;
+}
+
+.co-deployment-pods__section--last {
+  border-right-width: 0;
+}
+
+.co-deployment-pods__list {
+  margin-top: 4px;
+}
+
+.co-deployment-pods__list-term {
+  margin-bottom: 4px;
+}
+
+.co-deployment-pods__available-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.co-deployment-pods__bracket {
+  width: 12px;
+  height: 48px;
+  background: url(../imgs/bracket.svg) center center no-repeat;
+  background-size: 12px 48px;
+  padding: 0 20px;
+}
+
+.co-deployment-pods__available, .co-deployment-pods__breakdown {
+  flex-grow: 1;
+}
+
+.co-deployment-pods__available .co-deployment-pods__list {
+  float: right;
+}
+
+.co-deployment-pods__breakdown {
+  text-align: left;
+}
+
+.co-deployment-pods__breakdown-item {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.co-deployment-pods__breakdown-item--first {
+  margin-top: -3px;
+}
+
+.co-deployment-pods__breakdown-item--last {
+  margin-bottom: 0;
+}

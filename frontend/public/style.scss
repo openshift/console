@@ -27,9 +27,11 @@
 @import "style/icons";
 @import "style/layout";
 @import "style/text";
+@import "style/modal";
 
 // Pages
 @import "page/cluster/status";
+@import "page/deployments/deployment";
 @import "page/error/error";
 @import "page/events/events";
 @import "page/modals/modal";

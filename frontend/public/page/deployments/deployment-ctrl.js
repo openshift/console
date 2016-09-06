@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('DeploymentCtrl', function($scope, $routeParams, k8s, $interval) {
+.controller('DeploymentCtrl', function($scope, $routeParams, k8s, $interval, ModalLauncherSvc) {
   'use strict';
 
   $scope.ns = $routeParams.ns;
@@ -21,6 +21,13 @@ angular.module('bridge.page')
 
   let intervalReference = $interval(update, 5000);
   $scope.$on('$destroy', $interval.cancel.bind(null, intervalReference));
+
+  $scope.openVolumesModal = function() {
+    ModalLauncherSvc.open('configure-replica-count', {
+      resourceKind: k8s.kinds.DEPLOYMENT,
+      resource: $scope.deployment
+    });
+  };
 
   $scope.getPodTemplateJson = function() {
     if (!$scope.deployment) {
