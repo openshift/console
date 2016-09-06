@@ -96,7 +96,7 @@
           <div class="col-sm-4">
             <h1 class="co-section-title">Ports</h1>
             <div class="co-table-container">
-              <table class="table">
+              <table class="table" ng-if="container.ports.length">
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -110,13 +110,17 @@
                   </tr>
                 </tbody>
               </table>
+              <cos-status-box ng-if="!container.ports.length" class="co-sysevent-stream__status-box-empty">
+                <div>No ports have been exposed</div>
+                <div class="cos-text-center">Ports allow for traffic to enter this container</div>
+              </cos-status-box>
             </div>
           </div>
 
           <div class="col-sm-4">
             <h1 class="co-section-title">Mounted Volumes</h1>
             <div class="co-table-container">
-              <table class="table">
+              <table class="table" ng-if="container.volumeMounts.length">
                 <thead>
                   <tr>
                     <th>Access</th>
@@ -132,13 +136,17 @@
                   </tr>
                 </tbody>
               </table>
+              <cos-status-box ng-if="!container.volumeMounts.length" class="co-sysevent-stream__status-box-empty">
+                <div>No volumes have been mounted</div>
+                <div class="cos-text-center">Volumes allow data to be shared as files with the pod</div>
+              </cos-status-box>
             </div>
           </div>
 
           <div class="col-sm-4">
             <h1 class="co-section-title">Environment Variables</h1>
             <div class="co-table-container">
-              <table class="table">
+              <table class="table" ng-if="container.env.length">
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -152,6 +160,10 @@
                   </tr>
                 </tbody>
               </table>
+              <cos-status-box ng-if="!container.env.length" class="co-sysevent-stream__status-box-empty">
+                <div>No variables have been set</div>
+                <div class="cos-text-center">An easy way to pass configuration values</div>
+              </cos-status-box>
             </div>
           </div>
 
