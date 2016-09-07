@@ -65,7 +65,7 @@ const getJobTypeAndCompletions = (o) => {
 }
 
 const Details = (job) => <div>
-  <div className="row">
+  <div className="row no-gutter">
     <div className="col-md-6">
       <div className="co-m-pane__heading">
         <h1 className="co-m-pane__title">Job Overview</h1>
