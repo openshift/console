@@ -97,8 +97,3 @@ body {
   padding-right: 10px;
   cursor: pointer;
 }
-
-// eliminate overflow of rows that causes scroll bar on bottom
-.row-wrapper {
-  overflow-x: hidden;
-}

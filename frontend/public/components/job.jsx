@@ -64,7 +64,7 @@ const getJobTypeAndCompletions = (o) => {
   return {type: 'Work Queue', completions: 1};
 }
 
-const Details = (job) => <div className="row-wrapper">
+const Details = (job) => <div>
   <div className="row">
     <div className="col-md-6">
       <div className="co-m-pane__heading">
