@@ -34,7 +34,7 @@ const HUMAN_VALUES = {
     const units = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
     let unit = 'B';
 
-    while (value >= 1000) {
+    while (value >= 1000 && units.length > 0) {
       value = value / 1000;
       unit = units.shift();
     }
