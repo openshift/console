@@ -512,7 +512,8 @@ angular.module('coreos.ui')
     },
     link: function(scope) {
       scope.isActive = function() {
-        var href = scope.href;
+        const currentPath = $location.path();
+        let href = scope.href;
         // is it relative href?
         if (href[0] !== '/') {
           // prefix it with slash to mimic $location.path()
@@ -520,12 +521,21 @@ angular.module('coreos.ui')
           href = '/' + href;
         }
 
-        return $location.path().indexOf(href) >= 0;
+        if (currentPath.indexOf(href) >= 0) {
+          return true;
+        }
+
+        if (href.indexOf('/all-namespaces/') === 0 && currentPath.indexOf('/ns/') === 0) {
+          const newPath = currentPath.replace(/^\/ns\/.*?\//, '/all-namespaces/');
+          return newPath.indexOf(href) >= 0;
+        }
+
+        return false;
       };
     }
   };
 
-})
+});
 
 /**
  * @fileoverview
