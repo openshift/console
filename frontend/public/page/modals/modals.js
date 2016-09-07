@@ -10,6 +10,7 @@ import './configure-lifecycle-ctrl';
 import './configure-labels-ctrl';
 import './configure-selector-ctrl';
 import './configure-replica-count-ctrl';
+import './configure-job-parallelism-ctrl';
 import './configure-restart-policy-ctrl';
 import './configure-primary-command-ctrl';
 import './configure-resource-limits-ctrl';

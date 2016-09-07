@@ -37,6 +37,8 @@ function iconLabel(k8sKind, kindId) {
       return 'RS';
     case k8sKind.DEPLOYMENT.id:
       return 'D';
+    case k8sKind.JOB.id:
+      return 'J';
     case k8sKind.POD.id:
       return 'P';
     case k8sKind.SERVICE.id:

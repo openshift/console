@@ -11,7 +11,7 @@ angular.module('bridge.page')
     return;
   }
 
-  if (['daemonsets', 'configmaps', 'secrets'].indexOf($routeParams.kind) === -1) {
+  if (['daemonsets', 'configmaps', 'secrets', 'jobs',].indexOf($routeParams.kind) === -1) {
     $scope.canCreate = true;
   } else {
     $scope.canCreate = false;

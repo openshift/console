@@ -77,5 +77,13 @@ Cog.factory = {
       resourceKind: kind,
       resource: () => obj,
     }),
+  }),
+  ModifyJobParallelism: (kind, obj) => ({
+    label: 'Modify Parallelism...',
+    weight: 100,
+    callback: angulars.modal('configure-job-parallelism', {
+      resourceKind: kind,
+      resource: () => obj,
+    }),
   })
 }

@@ -29,6 +29,10 @@ $height: 18px;
   background-color: $color-replicaset-dark;
 }
 
+.co-m-resource-icon--job {
+  background-color: $color-job-dark;
+}
+
 .co-m-resource-icon--daemonset {
   background-color: $color-replicaset-dark;
 }
