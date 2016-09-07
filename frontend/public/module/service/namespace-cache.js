@@ -24,7 +24,7 @@ angular.module('bridge.service')
         return ns.metadata.name;
       });
       ret.loadError = state.loadError;
-      ret.cacheVersion = state.cacheVersion;
+      ret.cacheVersion += 1;
     });
 
   return ret;
