@@ -24,24 +24,35 @@ const HUMAN_VALUES = {
     }
     // convert from millicores
     value /= 1000;
-    return `${value} ${(value === 1) ? 'Core' : 'Cores'}`;
+
+    let conversion = unitConversion(value, '', ['k', 'm', 'b']);
+
+    if (conversion.value >= 10) {
+      conversion.value = round(conversion.value);
+    }
+
+    return `${conversion.value}${conversion.unit} ${(conversion.value === 1 && conversion.unit.length === 0) ? 'Core' : 'Cores'}`;
   },
   Memory: (value) => {
     if (!isFinite(value)) {
       value = 0;
     }
 
-    const units = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
-    let unit = 'B';
+    const conversion = unitConversion(value, 'B', ['KB', 'MB', 'GB', 'TB', 'PB', 'EB']);
 
-    while (value >= 1000 && units.length > 0) {
-      value = value / 1000;
-      unit = units.shift();
-    }
-
-    return `${round(value)} ${unit}`;
+    return `${round(conversion.value)} ${conversion.unit}`;
   }
 };
+
+function unitConversion(value, initialUnit, unitArray) {
+  let unit = initialUnit;
+  let units = unitArray.slice();
+  while (value >= 1000 && units.length > 0) {
+    value = value / 1000;
+    unit = units.shift();
+  }
+  return { value, unit }
+}
 
 function round (value) {
   if (!isFinite(value)) {
