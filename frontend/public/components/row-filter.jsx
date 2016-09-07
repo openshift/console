@@ -29,13 +29,27 @@ class CheckBoxes extends React.Component {
     this.state = {};
   }
 
+  get storageKey() {
+    return `row-filter--${this.props.type}`;
+  }
+
   componentDidMount() {
-    this.props.selected && this.props.selected.forEach(i => {
-      this.select(i);
-    });
+    let selected;
+    try {
+      selected = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+    } catch (ignored) {}
+
+    if (_.isEmpty(selected) || !_.isArray(selected)) {
+      selected = this.props.selected;
+    }
+
+    selected.forEach(i => this.select(i));
   }
 
   select (i) {
+    if (!this.props.rowFilterItems[i]) {
+      return;
+    }
     const nextState = Object.assign({}, this.state);
     nextState[i] = !nextState[i];
     // ensure something is always active
@@ -47,7 +61,13 @@ class CheckBoxes extends React.Component {
       [i]: !this.state[i],
     }, () => {
       const rowFilterItems = this.props.rowFilterItems || [];
-      const filters = rowFilterItems.filter((item, i) => this.state[i]).map(i => i[1]);
+      const selected = [];
+      const filters = rowFilterItems.filter((item, i) => this.state[i] && selected.push(i)).map(i => i[1]);
+
+      try {
+        localStorage.setItem(this.storageKey, JSON.stringify(selected));
+      } catch (ignored) {}
+
       this.props.applyFilter(new Set(filters));
     });
   };
@@ -100,7 +120,7 @@ export class RowFilter extends React.Component {
     const {type, items, reducer, selected} = this.props.rowFilter;
 
     const props = {
-      selected, reducer,
+      selected, reducer, type,
       rowFilterItems: items,
       applyFilter: (filter) => {this.applyFilter(type, filter)},
     };
