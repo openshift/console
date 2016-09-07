@@ -4,7 +4,7 @@ import {register, angulars} from '../react-wrapper';
 import {Dropdown} from '../utils';
 import {RowFilter} from '../row-filter';
 
-export const makeListPage = (name, kindName, ListComponent, dropdownFilters, rowFilters) => {
+export const makeListPage = (name, kindName, ListComponent, dropdownFilters, rowFilters, filterLabel) => {
   class ListPage extends React.Component {
     get list () {
       return this.refs.list;
@@ -40,7 +40,7 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters, row
                     </button>
                   </a>
                 }
-                <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${kind.labelPlural} by name...`} onChange={this.onFilterChange.bind(this)} autoFocus={true} />
+                <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${filterLabel || kind.labelPlural} by name...`} onChange={this.onFilterChange.bind(this)} autoFocus={true} />
                 {
                   dropdownFilters && dropdownFilters.map(({type, items, title}) => {
                     return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type, items)} />

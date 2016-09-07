@@ -55,6 +55,10 @@ $height: 18px;
   padding: 0 4px 0 5px; // padding from .co-m-resource-icon isn't enough to center D letter
 }
 
+.co-m-resource-icon--horizontalpodautoscaler {
+  background-color: $color-hpa-dark;
+}
+
 .co-m-resource-icon--pod {
   background-color: $color-pod-dark;
 }

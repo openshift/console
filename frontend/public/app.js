@@ -161,6 +161,7 @@ angular.module('bridge', [
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('daemonsets');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('jobs');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('horizontalpodautoscalers');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('configmaps');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('secrets');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');

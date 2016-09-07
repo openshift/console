@@ -1,0 +1,37 @@
+<div class="co-p-configure-hpa-replicas">
+  <form ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Modify Replica Limits</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-xs-12">
+          <p>Use replica limits to prevent an autoscaler from consuming too many resources, or removing all of your replicas. The autoscaler will react to your desired resource targets within this range.</p>
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-xs-12">
+          <label for="min-replicas">Minimum</label>
+          <input id="min-replicas" ng-model="fields.min" min="1" max="{{ fields.max }}" type="number" class="form-control modal__input--with-label modal__input--with-units" required autofocus />
+          <span>replicas</span>
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-xs-12">
+          <label for="max-replicas">Maximum</label>
+          <input id="max-replicas" ng-model="fields.max" min="{{ fields.min }}" type="number" class="form-control modal__input--with-label modal__input--with-units" required/>
+          <span>replicas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Save Replica Limits</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>

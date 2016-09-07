@@ -85,5 +85,5 @@ Cog.factory = {
       resourceKind: kind,
       resource: () => obj,
     }),
-  })
+  }),
 }

@@ -65,6 +65,12 @@
                 type="radio"/>
             <span ng-bind="kinds.DAEMONSET.labelPlural">/<span>
           </a>
+          <a href="#" ng-click="changeKind(kinds.HORIZONTALPODAUTOSCALER.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.HORIZONTALPODAUTOSCALER.id"
+                type="radio"/>
+            <span>Autoscalers</span>
+          </a>
           <a href="#" ng-click="changeKind(kinds.CONFIGMAP.id)">
             <input name="selectedKindId"
                 ng-checked="fields.selectedKindId == kinds.CONFIGMAP.id"

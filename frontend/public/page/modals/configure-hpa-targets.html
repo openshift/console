@@ -1,0 +1,30 @@
+<div class="co-p-configure-hpa-targets">
+  <form ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Modify Resource Targets</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-xs-12">
+          <p>The autoscaler will scale pods up or down automatically, to maintain the desired resource targets. When using multiple targets, the autoscaler is generous and will pursue the largest number of replicas, to provide resources for all constrained targets.</p>
+        </div>
+      </div>
+      <div class="row co-m-form-row">
+        <div class="col-xs-12">
+          <label for="hpa-target">Target CPU Utilization</label>
+          <input id="hpa-target" ng-model="fields.target" autofocus min="1" type="number" class="form-control modal__input--with-label modal__input--with-units" required autofocus />
+          <span>percent</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Save Target</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>
