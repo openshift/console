@@ -50,7 +50,7 @@ angular.module('bridge.ui')
       function coerceNamespaces(loaded, namespaces) {
         const coerced = {all: undefined};
 
-        (namespaces || []).forEach(n => {
+        (namespaces || []).sort().forEach(n => {
           const {name} = n.metadata;
           coerced[name] = name;
         });
