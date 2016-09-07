@@ -10,9 +10,9 @@ export const Timestamp = ({timestamp}) => {
 
   return (
     <div>
-      {invalidDate ? '' : <i className="fa fa-globe" />}
+      {!invalidDate && <i className="fa fa-globe" />}
       <div className="co-timestamp">
-        {invalidDate ? '-' : '\u00a0' +  mdate.utc().format('MMM DD, H:mm A z')}
+        {invalidDate ? '-' : mdate.utc().format('MMM DD, H:mm A z')}
       </div>
     </div>
   );
