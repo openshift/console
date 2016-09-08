@@ -3,7 +3,7 @@
 const TEMPLATE = `
 <div id="co-namespace-selector" >
   Namespace:
-  <co-dropdown title="title" selected="activeNamespace" items="availableNamespaces" nobutton="true" class="co-namespace-selector__dropdown">
+  <co-dropdown title="title" selected="activeNamespace" items="namespaces" nobutton="true" class="co-namespace-selector__dropdown">
   </co-dropdown>
 
   <div ng-if="canLogin" class="pull-right" ng-click="logout()" id="logout">
@@ -21,7 +21,8 @@ angular.module('bridge.ui')
     controller: function ($scope) {
       $scope.activeNamespace     = activeNamespaceSvc.getActiveNamespace();
       $scope.title               = coerceTitle($scope.activeNamespace);
-      $scope.availableNamespaces = coerceNamespaces();
+      let namespaces = coerceNamespaces();
+      $scope.namespaces = _.map(namespaces, (v, k) => [k, v]).sort();
       $scope.canLogin            = !featuresSvc.isAuthDisabled
 
       $scope.logout = e => {
@@ -32,14 +33,15 @@ angular.module('bridge.ui')
       };
 
       $scope.$watch('activeNamespace', activeNamespace => {
-        activeNamespaceSvc.setActiveNamespace($scope.availableNamespaces[activeNamespace]);
+        activeNamespaceSvc.setActiveNamespace(namespaces[activeNamespace]);
         $scope.title = coerceTitle(activeNamespace);
       });
 
       new Firehose(k8s.namespaces)
         .watchList()
         .bindScope($scope, null, state => {
-          $scope.availableNamespaces = coerceNamespaces(state.loaded, state && state.namespaces);
+          namespaces = coerceNamespaces(state.loaded, state && state.namespaces);
+          $scope.namespaces = _.map(namespaces, (v, k) => [k, v]).sort();
           $scope.loadError           = state.loadError;
         });
 

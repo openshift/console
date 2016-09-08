@@ -9,9 +9,11 @@ angular.module('bridge.page')
   $scope.auditNode = tpm.auditNode;
 
   $scope.layers = {};
+  $scope.dropdownItems = [];
   _.each(tpm.LAYERS, (value, key) => {
     $scope.layers[key] = key;
-  })
+    $scope.dropdownItems.push([key, key]);
+  });
 
   new Firehose(k8s.policies)
     .watchList()
