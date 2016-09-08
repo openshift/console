@@ -9,8 +9,8 @@ const TEMPLATE = `
   </button>
 
   <ul class="dropdown-menu" aria-labelledby="dLabel">
-    <li ng-repeat="(name, value) in items" class="{{name === title ? 'dropdown__selected' : 'dropdown__default'}}" ng-click="select(name, value)">
-      <a href="#" value="{{name}}">{{name}}</a>
+    <li ng-repeat="item in pairs track by item.name" class="{{item.name === title ? 'dropdown__selected' : 'dropdown__default'}}" ng-click="select(item.name, item.value)">
+      <a href="#" value="{{item.name}}">{{item.name}}</a>
     </li>
   </ul>
 </div>
@@ -30,11 +30,18 @@ angular.module('bridge.ui')
       selected: '=',
     },
     controller: function ($scope) {
-
       $scope.select = (name, value) => {
         $scope.selected = value;
         $scope.title = name;
       }
+      const updatePairs = () => {
+        $scope.pairs = _.map($scope.items, item => {
+          return {name: item[0], value: item[1]};
+        });
+      };
+
+      $scope.$watch('items', updatePairs);
+      updatePairs();
     },
   };
 });
