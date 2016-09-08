@@ -228,9 +228,6 @@ func main() {
 			authLoginErrorEndpoint   = server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
 			authLoginSuccessEndpoint = server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
 		)
-		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
-			log.Fatalf("Error initializing OIDC authenticator: %v", err)
-		}
 
 		dexProxyConfigEndpoint := validateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
 		dexProxyConfigEndpoint.Path = server.SingleJoiningSlash(dexProxyConfigEndpoint.Path, "/api")
@@ -284,6 +281,10 @@ func main() {
 				k8sCertPEM,
 				dexCertPEM,
 			)
+		}
+
+		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
+			log.Fatalf("Error initializing OIDC authenticator: %v", err)
 		}
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")
