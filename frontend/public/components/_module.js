@@ -9,3 +9,4 @@ import './service';
 import './replication-controller';
 import './RBAC';
 import './horizontal-pod-autoscaler';
+import './service-account';

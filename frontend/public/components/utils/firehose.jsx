@@ -28,7 +28,7 @@ export class Firehose extends React.Component {
     return this.firehose && this.firehose.id;
   }
 
-  stateToProps ({k8s}) {
+  stateToProps ({k8s}, {filters}) {
     const reduxID = this.id;
 
     // are we watching a single object?
@@ -39,11 +39,13 @@ export class Firehose extends React.Component {
 
     // We are watching a list of objects.
     const data = k8s.getIn([reduxID, 'data']);
-    const filters = k8s.getIn([reduxID, 'filters']);
+    const _filters = k8s.getIn([reduxID, 'filters']);
 
     return {
       data: data && data.toArray().map(p => p.toJSON()),
-      filters: filters && filters.toJS(),
+      // This is a hack to allow filters passed down from props to make it to
+      // the injected component. Ideally filters should all come from redux.
+      filters: _.extend({}, _filters && _filters.toJS(), filters),
       loadError: k8s.getIn([reduxID, 'loadError']),
       loaded: k8s.getIn([reduxID, 'loaded']),
     };

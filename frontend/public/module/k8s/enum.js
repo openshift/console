@@ -54,6 +54,14 @@ angular.module('k8s').constant('k8sEnum', {
       isExtension: true,
       apiVersion: 'v1beta1',
     },
+    SERVICEACCOUNT: {
+      id: 'serviceaccount',
+      kind: 'ServiceAccount',
+      label: 'Service Account',
+      labelPlural: 'Service Accounts',
+      path: 'serviceaccounts',
+      plural: 'serviceaccounts',
+    },
     REPLICASET: {
       id: 'replicaset',
       kind: 'replicaset',

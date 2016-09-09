@@ -63,6 +63,8 @@ function iconLabel(k8sKind, kindId) {
       return 'S';
     case k8sKind.HORIZONTALPODAUTOSCALER.id:
       return 'HPA';
+    case k8sKind.SERVICEACCOUNT.id:
+      return 'SA';
     case k8sKind['*'].id:
       return 'All';
     case k8sKind.ROLE.id:

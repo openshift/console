@@ -71,6 +71,12 @@
                 type="radio"/>
             <span>Autoscalers</span>
           </a>
+          <a href="#" ng-click="changeKind(kinds.SERVICEACCOUNT.id)">
+            <input name="selectedKindId"
+                ng-checked="fields.selectedKindId == kinds.SERVICEACCOUNT.id"
+                type="radio"/>
+            <span ng-bind="kinds.SERVICEACCOUNT.labelPlural"></span>
+          </a>
           <a href="#" ng-click="changeKind(kinds.CONFIGMAP.id)">
             <input name="selectedKindId"
                 ng-checked="fields.selectedKindId == kinds.CONFIGMAP.id"

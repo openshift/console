@@ -9,6 +9,14 @@ import {angulars, register} from '../react-wrapper';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
+
+  'selector': (selector, obj) => {
+    if (!selector || !selector.values || !selector.values.size) {
+      return true;
+    }
+    return selector.values.has(_.get(obj, selector.field));
+  },
+
   'pod-status': (phases, pod) => {
     if (!phases || !phases.size) {
       return true;
