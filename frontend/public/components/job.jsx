@@ -117,8 +117,8 @@ const Details = (job) => <div>
   </div>
 </div>
 
-const {factory: {pods, yaml}} = detailsPage;
-const pages = [{href: 'details', name: 'Details', component: Details}, pods(), yaml()];
+const {factory: {pods}} = detailsPage;
+const pages = [{href: 'details', name: 'Details', component: Details}, pods()];
 const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'JOB', pages);
 const JobsList = makeList('Jobs', 'JOB', Header, withPodList(JobRow));
 const JobsPage = makeListPage('JobsPage', 'JOB', JobsList);
