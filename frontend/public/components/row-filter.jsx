@@ -13,12 +13,12 @@ const Injector = ({children, data, filters}) => {
   return <div>{inject(children, {data, filters})}</div>;
 }
 
-const CheckBox = ({name, active, number, select}) => {
+const CheckBox = ({name, active, number, toggle}) => {
   const klass = classnames('row-filter--box clickable', {
     'row-filter--box__active': active, 'row-filter--box__empty': !number,
   });
 
-  return <div onClick={select} className={klass}>
+  return <div onClick={toggle} className={klass}>
     <span key={number} className="row-filter--number-bubble">{number}</span> {name}
   </div>
 };
@@ -42,11 +42,12 @@ class CheckBoxes extends React.Component {
     if (_.isEmpty(selected) || !_.isArray(selected)) {
       selected = this.props.selected;
     }
-
-    selected.forEach(i => this.select(i));
+    const state = {};
+    selected.forEach(i => state[i] = true);
+    this.setState(state);
   }
 
-  select (i) {
+  toggle (i) {
     if (!this.props.rowFilterItems[i]) {
       return;
     }
@@ -88,7 +89,7 @@ class CheckBoxes extends React.Component {
         name, number,
         key: i,
         active: active[i],
-        select: this.select.bind(this, i),
+        toggle: this.toggle.bind(this, i),
       };
       return <CheckBox {...props} />
     });
