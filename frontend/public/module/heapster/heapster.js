@@ -25,7 +25,11 @@ const HUMAN_VALUES = {
     // convert from millicores
     value /= 1000;
 
-    let conversion = unitConversion(value, '', ['k', 'm', 'b']);
+    if (value > 1000000) {
+      return '> 1 million cores';
+    }
+
+    let conversion = unitConversion(value, '', ['k', 'm']);
 
     if (conversion.value >= 10) {
       conversion.value = round(conversion.value);

@@ -41,14 +41,7 @@ describe('heapster', function() {
     test_(10000000, '10k Cores');
     test_(100000000, '100k Cores');
     test_(1000000000, '1m Cores');
-    test_(10000000000, '10m Cores');
-    test_(100000000000, '100m Cores');
-    test_(1000000000000, '1b Cores');
-    test_(10000000000000, '10b Cores');
-    test_(100000000000000, '100b Cores');
-    test_(1000000000000000, '1000b Cores');
-    test_(10000000000000000, '10000b Cores');
-    test_(10000000000001234, '10000b Cores');
+    test_(10000000000, '> 1 million cores');
   });
 
   describe('should humanizifies Memory values', function () {
