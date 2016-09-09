@@ -39,24 +39,32 @@ const DaemonSetRow = (daemonset) => <div className="row co-m-table-grid--clickab
 
 const Details = (daemonset) => <div>
   <div className="col-lg-6">
-    <dl>
-      <dt>Name</dt>
-      <dd>{daemonset.metadata.name || '-'}</dd>
-      <dt>Labels</dt>
-      <dd><LabelList kind="daemonset" labels={daemonset.metadata.labels} expand={true} /></dd>
-      <dt>Pod Selector</dt>
-      <dd><Selector selector={daemonset.spec.selector.matchLabels} expand={true} /></dd>
-      <dt>Created At</dt>
-      <dd><Timestamp timestamp={daemonset.metadata.creationTimestamp} /></dd>
-    </dl>
+    <div className="co-m-pane">
+      <div className="co-m-pane__body">
+        <dl>
+          <dt>Name</dt>
+          <dd>{daemonset.metadata.name || '-'}</dd>
+          <dt>Labels</dt>
+          <dd><LabelList kind="daemonset" labels={daemonset.metadata.labels} expand={true} /></dd>
+          <dt>Pod Selector</dt>
+          <dd><Selector selector={daemonset.spec.selector.matchLabels} expand={true} /></dd>
+          <dt>Created At</dt>
+          <dd><Timestamp timestamp={daemonset.metadata.creationTimestamp} /></dd>
+        </dl>
+      </div>
+    </div>
   </div>
   <div className="col-lg-6">
-    <dl>
-      <dt>Current Count</dt>
-      <dd>{daemonset.status.currentNumberScheduled || '-'}</dd>
-      <dt>Desired Count</dt>
-      <dd>{daemonset.status.desiredNumberScheduled || '-'}</dd>
-    </dl>
+    <div className="co-m-pane">
+      <div className="co-m-pane__body">
+        <dl>
+          <dt>Current Count</dt>
+          <dd>{daemonset.status.currentNumberScheduled || '-'}</dd>
+          <dt>Desired Count</dt>
+          <dd>{daemonset.status.desiredNumberScheduled || '-'}</dd>
+        </dl>
+      </div>
+    </div>
   </div>
 </div>
 

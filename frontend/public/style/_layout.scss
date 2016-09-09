@@ -93,6 +93,16 @@ body {
   padding: 10px 10px 0 0;
 }
 
+.row.no-gutter {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.row.no-gutter > [class*='col-'] {
+  padding-right: 0;
+  padding-left: 0;
+}
+
 #logout {
   padding-right: 10px;
   cursor: pointer;

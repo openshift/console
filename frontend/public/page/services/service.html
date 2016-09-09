@@ -10,7 +10,7 @@
 
     <div class="co-m-vert-nav__body">
       <div cos-tristate="service" cos-tristate-error="loadError">
-        <div ng-if="service && !loadError" class="row">
+        <div ng-if="service && !loadError" class="row no-gutter">
           <div class="col-sm-6">
             <div class="co-m-pane__heading">
               <h1 class="co-m-pane__title">Service Overview</h1>
@@ -62,45 +62,53 @@
                       </div>
                     </div>
                     <div class="rows">
-                      <div class="row co-ip-row">
-                        <div class="col-xs-6">
-                          <p class="ip-name">Cluster IP</p>
-                          <p class="ip-desc">Accessible within the cluster only</p>
-                        </div>
-                        <div class="col-xs-6" ng-bind="service.spec.clusterIP">
-                          <!-- noop -->
-                        </div>
-                      </div>
-
-                      <div ng-if="service.spec.type == 'NodePort'" class="row co-ip-row">
-                        <div class="col-xs-6">
-                          <p class="ip-name">Node Port</p>
-                          <p class="ip-desc">Accessible outside the cluster</p>
-                        </div>
-                        <div class="col-xs-6">
-                          <p ng-repeat="portMapping in service.spec.ports">
-                            <span class="text-muted">(all nodes):</span><span ng-bind="portMapping.nodePort"></span>
-                          </p>
+                      <div class="co-ip-row">
+                        <div class="row">
+                          <div class="col-xs-6">
+                            <p class="ip-name">Cluster IP</p>
+                            <p class="ip-desc">Accessible within the cluster only</p>
+                          </div>
+                          <div class="col-xs-6" ng-bind="service.spec.clusterIP">
+                            <!-- noop -->
+                          </div>
                         </div>
                       </div>
 
-                      <div ng-if="service.spec.type == 'LoadBalancer'" class="row co-ip-row">
-                        <div class="col-xs-6">
-                          <p class="ip-name">External Load Balancer</p>
-                          <p class="ip-desc">Ingress point(s) of load balancer</p>
-                        </div>
-                        <div class="col-xs-6">
-                          <p ng-repeat="ingress in service.status.loadBalancer.ingress" ng-bind="ingress.hostname || ingress.ip || CONST.placeholderText"></p>
+                      <div ng-if="service.spec.type == 'NodePort'" class="co-ip-row">
+                        <div class="row">
+                          <div class="col-xs-6">
+                            <p class="ip-name">Node Port</p>
+                            <p class="ip-desc">Accessible outside the cluster</p>
+                          </div>
+                          <div class="col-xs-6">
+                            <p ng-repeat="portMapping in service.spec.ports">
+                              <span class="text-muted">(all nodes):</span><span ng-bind="portMapping.nodePort"></span>
+                            </p>
+                          </div>
                         </div>
                       </div>
 
-                      <div ng-if="service.spec.externalIPs.length" class="row co-ip-row">
-                        <div class="col-xs-6">
-                          <p class="ip-name">External IP</p>
-                          <p class="ip-desc">IP Address(es) accepting traffic for service</p>
+                      <div ng-if="service.spec.type == 'LoadBalancer'" class="co-ip-row">
+                        <div class="row">
+                          <div class="col-xs-6">
+                            <p class="ip-name">External Load Balancer</p>
+                            <p class="ip-desc">Ingress point(s) of load balancer</p>
+                          </div>
+                          <div class="col-xs-6">
+                            <p ng-repeat="ingress in service.status.loadBalancer.ingress" ng-bind="ingress.hostname || ingress.ip || CONST.placeholderText"></p>
+                          </div>
                         </div>
-                        <div class="col-xs-6">
-                          <p ng-repeat="externalIP in service.spec.externalIPs" ng-bind="externalIP"></p>
+                      </div>
+
+                      <div ng-if="service.spec.externalIPs.length" class="co-ip-row">
+                        <div class="row">
+                          <div class="col-xs-6">
+                            <p class="ip-name">External IP</p>
+                            <p class="ip-desc">IP Address(es) accepting traffic for service</p>
+                          </div>
+                          <div class="col-xs-6">
+                            <p ng-repeat="externalIP in service.spec.externalIPs" ng-bind="externalIP"></p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -115,31 +123,33 @@
                       <div class="col-sm-3">Pod Port or Name</div>
                     </div>
                     <div class="rows">
-                      <div class="row co-ip-row" ng-repeat="portMapping in service.spec.ports">
-                        <!-- name -->
-                        <div class="col-sm-3 co-text-service">
-                          <p ng-bind="portMapping.name | emptyPlaceholder"></p>
-                          <p ng-if="portMapping.nodePort" class="co-text-node">Node Port</p>
-                        </div>
+                      <div class="co-ip-row" ng-repeat="portMapping in service.spec.ports">
+                        <div class="row">
+                          <!-- name -->
+                          <div class="col-sm-3 co-text-service">
+                            <p ng-bind="portMapping.name | emptyPlaceholder"></p>
+                            <p ng-if="portMapping.nodePort" class="co-text-node">Node Port</p>
+                          </div>
 
-                        <!-- port -->
-                        <div class="col-sm-3 co-text-service">
-                          <p>
-                            <span class="co-m-resource-icon co-m-resource-icon--service">S</span><span ng-bind="portMapping.port"></span>
-                          </p>
-                          <p ng-if="portMapping.nodePort" class="co-text-node">
-                            <span class="co-m-resource-icon co-m-resource-icon--node">N</span><span ng-bind="portMapping.nodePort"></span>
-                          </p>
-                        </div>
+                          <!-- port -->
+                          <div class="col-sm-3 co-text-service">
+                            <p>
+                              <span class="co-m-resource-icon co-m-resource-icon--service">S</span><span ng-bind="portMapping.port"></span>
+                            </p>
+                            <p ng-if="portMapping.nodePort" class="co-text-node">
+                              <span class="co-m-resource-icon co-m-resource-icon--node">N</span><span ng-bind="portMapping.nodePort"></span>
+                            </p>
+                          </div>
 
-                        <!-- protocol -->
-                        <div class="col-sm-3">
-                          <p ng-bind="portMapping.protocol"></p>
-                        </div>
+                          <!-- protocol -->
+                          <div class="col-sm-3">
+                            <p ng-bind="portMapping.protocol"></p>
+                          </div>
 
-                        <!-- pod port or name -->
-                        <div class="col-sm-3 co-text-pod">
-                          <p><span class="co-m-resource-icon co-m-resource-icon--pod">P</span><span ng-bind="portMapping.targetPort"></span></p>
+                          <!-- pod port or name -->
+                          <div class="col-sm-3 co-text-pod">
+                            <p><span class="co-m-resource-icon co-m-resource-icon--pod">P</span><span ng-bind="portMapping.targetPort"></span></p>
+                          </div>
                         </div>
                       </div>
                     </div>

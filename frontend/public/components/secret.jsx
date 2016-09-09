@@ -33,28 +33,26 @@ const SecretRow = (secret) => {
 };
 
 const SecretDetails = (secret) => {
-  return <div className="row">
-    <div className="col-md-12">
-      <div className="co-m-pane">
-        <div className="co-m-pane__body">
-          <dl>
-            <dt>Name</dt>
-            <dd>{secret.metadata.name}</dd>
-            <dt>Labels</dt>
-            <dd><LabelList kind="secret" labels={secret.metadata.labels} expand={true} /></dd>
-            <dt>Created At</dt>
-            <dd><Timestamp timestamp={secret.metadata.creationTimestamp} /></dd>
-          </dl>
-        </div>
+  return <div className="col-md-12">
+    <div className="co-m-pane">
+      <div className="co-m-pane__body">
+        <dl>
+          <dt>Name</dt>
+          <dd>{secret.metadata.name}</dd>
+          <dt>Labels</dt>
+          <dd><LabelList kind="secret" labels={secret.metadata.labels} expand={true} /></dd>
+          <dt>Created At</dt>
+          <dd><Timestamp timestamp={secret.metadata.creationTimestamp} /></dd>
+        </dl>
+      </div>
 
-        <div></div>
+      <div></div>
 
-        <div className="co-m-pane__heading">
-          <h1 className="co-m-pane__title">Data</h1>
-        </div>
-        <div className="co-m-pane__body">
-          <ConfigMapAndSecretData data={secret.data} decode={window.atob} />
-        </div>
+      <div className="co-m-pane__heading">
+        <h1 className="co-m-pane__title">Data</h1>
+      </div>
+      <div className="co-m-pane__body">
+        <ConfigMapAndSecretData data={secret.data} decode={window.atob} />
       </div>
     </div>
   </div>;
