@@ -19,7 +19,7 @@
         </div>
         <div class="col-sm-9">
           <input id="service-ports__port" ng-model="fields.port" autofocus min="0" max="65535" class="form-control" type="number"/>
-          <small class="text-muted">The service can be reached at its portal IP and this port.</small>
+          <small class="help-block text-muted">The service can be reached at its portal IP and this port.</small>
         </div>
       </div>
       <div class="row co-m-form-row">
@@ -28,7 +28,7 @@
         </div>
         <div class="col-sm-9">
           <input id="service-ports__target-port" ng-model="fields.targetPort" min="0" max="65535" class="form-control" type="number"/>
-          <small class="text-muted">
+          <small class="help-block text-muted">
             A port exposed by pods matching the service's label query.
             Traffic originating at the service port will reach pods at this port.
           </small>

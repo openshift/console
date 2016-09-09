@@ -17,9 +17,9 @@
           <div ng-repeat="(k,p) in policies | orderObjectBy:'weight'" ng-click="fields.policy = p.id" class="co-m-form-row co-click-target">
             <input ng-model="fields.policy" value="{{p.id}}" type="radio" id="configure-pull-policy--{{p.id}}"/>
             <label for="configure-pull-policy--{{p.id}}">
-              <span ng-bind="p.label"></span><span ng-show="{{p.default}}"> (default)</span>
+              <span ng-bind="p.label"></span><span ng-show="{{p.default}}" class="co-no-bold"> (default)</span>
             </label>
-            <p class="co-m-radio-desc" ng-bind="p.description"></p>
+            <p class="co-m-radio-desc text-muted" ng-bind="p.description"></p>
           </div>
         </div>
       </div>
