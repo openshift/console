@@ -36,7 +36,7 @@
               </div>
               <div class="col-sm-9">
                 <input ng-model="fields.limits.memory" ng-pattern="resourceLimitRegex" autofocus type="text" class="form-control co-m-form-field-sm" name="memory_hard" id="memory-hard">
-                <small class="text-muted">Memory, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)</small>
+                <small class="help-block text-muted">Memory, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)</small>
               </div>
             </div>
           </div>
@@ -59,7 +59,7 @@
               </div>
               <div class="col-sm-9">
                 <input ng-model="fields.limits.cpu" ng-pattern="resourceLimitRegex" type="text" class="form-control co-m-form-field-sm" id="cpu-hard">
-                <small class="text-muted">CPU, in cores. (500m = .5 cores)</small>
+                <small class="help-block text-muted">CPU, in cores. (500m = .5 cores)</small>
               </div>
             </div>
           </div>

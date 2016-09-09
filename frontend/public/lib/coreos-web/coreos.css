@@ -7649,7 +7649,7 @@ input[type="number"] {
     margin: 0; }
 
 input[type="radio"] {
-  margin-right: 5px; }
+  margin-right: 7px; }
 
 .ng-dirty.ng-invalid {
   border-color: #f04c5c;
@@ -7657,7 +7657,8 @@ input[type="radio"] {
   border-bottom-right-radius: 0px; }
 
 .co-m-radio-desc {
-  margin-left: 23px; }
+  margin-top: 2px;
+  margin-left: 22px; }
 
 .co-m-inline-field {
   display: inline-block;
