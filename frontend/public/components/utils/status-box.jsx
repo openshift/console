@@ -43,13 +43,16 @@ export const StatusBox = (props) => {
     return <EmptyBox label={label} />;
   }
 
-  let child;
+  let children;
 
   if (_.isArray(data)) {
-    child = inject(props.children, {data, filters});
+    children = inject(props.children, {data, filters});
   } else {
-    child = inject(props.children, data);
+    children = inject(props.children, data);
   }
 
-  return <div>{child}</div>;
+  if (children.length > 1) {
+    return <div>{children}</div>;
+  }
+  return children[0];
 }

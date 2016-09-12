@@ -68,8 +68,8 @@ const Details = (daemonset) => <div>
   </div>
 </div>
 
-const {factory: {pods, yaml}} = detailsPage;
-const pages = [{href: 'details', name: 'Details', component: detailsPage(Details)}, pods(), yaml()];
+const {factory: {pods}} = detailsPage;
+const pages = [{href: 'details', name: 'Details', component: detailsPage(Details)}, pods()];
 
 const DaemonSets = makeList('DaemonSets', 'DAEMONSET', DaemonSetHeader, withPodList(DaemonSetRow));
 const DaemonSetsPage = makeListPage('DaemonSetsPage', 'DAEMONSET', DaemonSets);

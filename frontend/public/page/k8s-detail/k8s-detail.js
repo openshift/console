@@ -10,9 +10,8 @@ angular.module('bridge.page')
     $location.url('/404');
     return;
   }
-  $scope.obj = () => {};
+
   $scope.kind = kind.id;
-  $scope.title = kind.labelPlural;
   $scope.component = kind.labelPlural.replace(/ /g, '') + 'DetailsPage';
   let view = $routeParams.view;
   if (view) {

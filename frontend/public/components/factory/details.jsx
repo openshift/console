@@ -1,7 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 
-import {Firehose, VertNav} from '../utils';
+import {Firehose, VertNav, NavTitle} from '../utils';
 import {angulars, register} from '../react-wrapper';
 
 export const makeDetailsPage = (name, type, pages) => {
@@ -13,6 +13,7 @@ export const makeDetailsPage = (name, type, pages) => {
 
       return <Provider store={angulars.store}>
         <Firehose k8sResource={k8sResource} {...this.props}>
+          <NavTitle detail={true} title={this.props.name}/>
           <VertNav pages={pages} className={`co-m-${kind.id}`} />
         </Firehose>
       </Provider>

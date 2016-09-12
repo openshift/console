@@ -58,8 +58,7 @@ const SecretDetails = (secret) => {
   </div>;
 }
 
-const {factory: {yaml}} = detailsPage;
-const pages = [{href: 'details', name: 'Details', component: detailsPage(SecretDetails)}, yaml()];
+const pages = [{href: 'details', name: 'Details', component: detailsPage(SecretDetails)}];
 
 const Secrets = makeList('Secrets', 'SECRET', SecretHeader, SecretRow);
 const SecretsPage = makeListPage('SecretsPage', 'SECRET', Secrets);
