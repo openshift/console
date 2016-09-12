@@ -39,6 +39,8 @@ import './resources/tpm-list';
 
 import './resources/generic-list';
 
+import './resources/sparkline-graph';
+
 import './status-box/status-box';
 import './sysevents/sysevent-icon';
 import './sysevents/sysevent-stream';

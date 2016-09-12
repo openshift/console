@@ -11,13 +11,13 @@ const LoadError = ({label}) => <Box>
   </div>
 </Box>
 
-const Loading = () => <Box>
-  <div className="co-m-loader co-an-fade-in-out">
-    <div className="co-m-loader-dot__one"></div>
-    <div className="co-m-loader-dot__two"></div>
-    <div className="co-m-loader-dot__three"></div>
-  </div>
-</Box>
+export const Loading = () => <div className="co-m-loader co-an-fade-in-out">
+  <div className="co-m-loader-dot__one"></div>
+  <div className="co-m-loader-dot__two"></div>
+  <div className="co-m-loader-dot__three"></div>
+</div>
+
+const LoadingBox = () => <Box><Loading /></Box>
 
 export const EmptyBox = ({label}) => <Box>
   <div className="cos-tristate-empty">
@@ -34,7 +34,7 @@ export const StatusBox = (props) => {
   }
 
   if (!loaded) {
-    return <Loading />
+    return <LoadingBox />
   }
 
   const {data, filters, selected} = props;
