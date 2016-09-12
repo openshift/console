@@ -85,6 +85,8 @@ go, glide, nodejs, gulp
 For interactive frontend development compiling html templates and sass is required.
 The following build task will watch the source code for changes and compile automatically:
 ```
+npm install
+npm run js-deps
 npm run dev
 ```
 
