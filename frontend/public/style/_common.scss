@@ -26,7 +26,12 @@
 .co-btn-drop-input {
   margin-bottom: 5px;
   .btn.dropdown-toggle {
-    height: 32px;
+    height: 30px;
+  }
+
+  // Override display attribute of .dropdown class to preserve correct alignment within .input-group
+  .dropdown {
+    display: table-cell;
   }
 }
 
