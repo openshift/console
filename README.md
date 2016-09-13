@@ -85,20 +85,27 @@ go, glide, nodejs, gulp
 
 #### Install Dependencies
 The frontend uses node and npm to compile JS/JSX at build time. To install the build tools and dependencies:
-```npm install``
+```
+npm install
+``
 
 JS is compiled into one of two bundles - one strictly for external dependencies and the other for our source.  These bundles are not commited to git.  You must run this command once, and every time the dependencies change.
 #### Build External Dependencies
-```npm run gulp js-deps```
+```
+npm run gulp js-deps
+```
 
 #### Interactive Development
 The following build task will watch the source code for changes and compile automatically.  You must reload the page!
-```npm run dev```
+```
+npm run dev
+```
 
 #### Update Dependencies
 Dependencies should be pinned to an exact version (eg, no ^).
 
-```rm npm-shrinkwrap
+```
+rm npm-shrinkwrap
 npm install --save the-dependency
 npm shrinkwrap
 npm run gulp js-deps
