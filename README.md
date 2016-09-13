@@ -87,7 +87,7 @@ go, glide, nodejs, gulp
 The frontend uses node and npm to compile JS/JSX at build time. To install the build tools and dependencies:
 ```
 npm install
-``
+```
 
 JS is compiled into one of two bundles - one strictly for external dependencies and the other for our source.  These bundles are not commited to git.  You must run this command once, and every time the dependencies change.
 #### Build External Dependencies
