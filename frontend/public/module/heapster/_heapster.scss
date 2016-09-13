@@ -18,6 +18,7 @@ $progress-bar-height: 14px;
 .co-heapster__resource-metric {
   position: relative;
   height: $progress-bar-height;
+  clear: both;
 }
 
 .co-heapster__metric {

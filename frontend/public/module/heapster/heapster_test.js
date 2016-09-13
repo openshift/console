@@ -32,6 +32,16 @@ describe('heapster', function() {
     test_(NaN, '0 Cores');
     test_(1, '0.001 Cores');
     test_(1000, '1 Core');
+    test_(1001, '1.001 Cores');
+    test_(5123, '5.123 Cores');
+    test_(10000, '10 Cores');
+    test_(10234, '10.23 Cores');
+    test_(100000, '100 Cores');
+    test_(1000000, '1k Cores');
+    test_(10000000, '10k Cores');
+    test_(100000000, '100k Cores');
+    test_(1000000000, '1m Cores');
+    test_(10000000000, '> 1 million cores');
   });
 
   describe('should humanizifies Memory values', function () {
