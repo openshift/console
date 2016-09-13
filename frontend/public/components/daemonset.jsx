@@ -45,7 +45,7 @@ const Details = (daemonset) => <div>
           <dt>Name</dt>
           <dd>{daemonset.metadata.name || '-'}</dd>
           <dt>Labels</dt>
-          <dd><LabelList kind="daemonset" labels={daemonset.metadata.labels} expand={true} /></dd>
+          <dd><LabelList kind="daemonset" labels={daemonset.metadata.labels} /></dd>
           <dt>Pod Selector</dt>
           <dd><Selector selector={daemonset.spec.selector.matchLabels} expand={true} /></dd>
           <dt>Created At</dt>
