@@ -47,6 +47,13 @@ $height: 18px;
       color: $color-deployment-dark;
     }
   }
+
+  &.co-m-label--horizontalpodautoscaler {
+    .co-m-label__link {
+      color: $color-hpa-dark;
+    }
+  }
+
   &.co-m-label--pod {
     .co-m-label__link {
       color: $color-pod-dark;

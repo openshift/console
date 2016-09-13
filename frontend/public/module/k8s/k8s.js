@@ -119,6 +119,7 @@ angular.module('k8s')
   this.deployments = addDefaults(k8sDeployments, k8sEnum.Kind.DEPLOYMENT);
   this.jobs = addDefaults({}, k8sEnum.Kind.JOB);
   this.daemonsets = addDefaults({}, k8sEnum.Kind.DAEMONSET);
+  this.horizontalpodautoscalers = addDefaults({}, k8sEnum.Kind.HORIZONTALPODAUTOSCALER);
   this.secrets = addDefaults({}, k8sEnum.Kind.SECRET);
 
   this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);

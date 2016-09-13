@@ -67,6 +67,14 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-job-parallelism.html',
       controller: 'ConfigureJobParallelismCtrl',
     },
+    'configure-hpa-replicas': {
+      templateUrl: '/static/page/modals/configure-hpa-replicas.html',
+      controller: 'ConfigureHpaReplicasCtrl',
+    },
+    'configure-hpa-targets': {
+      templateUrl: '/static/page/modals/configure-hpa-targets.html',
+      controller: 'ConfigureHpaTargetsCtrl',
+    },
     'new-namespace': {
       templateUrl: '/static/page/modals/new-namespace.html',
       controller: 'NewNamespaceCtrl',

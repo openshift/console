@@ -44,6 +44,16 @@ angular.module('k8s').constant('k8sEnum', {
       path: 'replicationcontrollers',
       plural: 'replicationcontrollers',
     },
+    HORIZONTALPODAUTOSCALER: {
+      id: 'horizontalpodautoscaler',
+      kind: 'HorizontalPodAutoscaler',
+      label: 'Horizontal Pod Autoscaler',
+      labelPlural: 'Horizontal Pod Autoscalers',
+      path: 'horizontalpodautoscalers',
+      plural: 'horizontalpodautoscalers',
+      isExtension: true,
+      apiVersion: 'v1beta1',
+    },
     REPLICASET: {
       id: 'replicaset',
       kind: 'replicaset',

@@ -8,3 +8,4 @@ import './secret';
 import './service';
 import './replication-controller';
 import './RBAC';
+import './horizontal-pod-autoscaler';
