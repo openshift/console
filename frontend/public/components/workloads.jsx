@@ -34,7 +34,7 @@ const rowOfKindstring = (name) => {
           <LabelList kind={kind.id} labels={o.metadata.labels}  />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-          {o.status.replicas} of {o.spec.replicas} pods
+          {o.status.replicas || 0} of {o.spec.replicas} pods
         </div>
         <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
           <Selector selector={o.spec.selector}></Selector>
