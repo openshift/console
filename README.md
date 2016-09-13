@@ -81,16 +81,30 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 ### Project Dependencies
 go, glide, nodejs, gulp
 
-### Frontend
-For interactive frontend development compiling html templates and sass is required.
-The following build task will watch the source code for changes and compile automatically:
-```
-npm install
-npm run js-deps
-npm run dev
+### Frontend Development
+
+#### Install Dependencies
+The frontend uses node and npm to compile JS/JSX at build time. To install the build tools and dependencies:
+```npm install``
+
+JS is compiled into one of two bundles - one strictly for external dependencies and the other for our source.  These bundles are not commited to git.  You must run this command once, and every time the dependencies change.
+#### Build External Dependencies
+```npm run gulp js-deps```
+
+#### Interactive Development
+The following build task will watch the source code for changes and compile automatically.  You must reload the page!
+```npm run dev```
+
+#### Update Dependencies
+Dependencies should be pinned to an exact version (eg, no ^).
+
+```rm npm-shrinkwrap
+npm install --save the-dependency
+npm shrinkwrap
+npm run gulp js-deps
 ```
 
-All frontend build tasks are defined in `/frontend/gulpfile.js`
+All frontend build tasks are defined in `/frontend/gulpfile.js` and are aliased to `npm run gulp`
 
 ### Tests
 Run all tests:
