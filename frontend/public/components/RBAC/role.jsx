@@ -12,7 +12,7 @@ export const RoleHeader = () => <div className="co-m-facet-menu__title">Name</di
 export const RowOfKind = (kind) => (role) => {
   const {metadata, onClick, isActive} = role;
 
-  const klass = classnames('row co-resource-list__item co-m-facet-menu-option', {'co-m-facet-option--active': isActive});
+  const klass = classnames('row co-m-facet-menu-option', {'co-m-facet-option--active': isActive});
   return <div className={klass} onClick={() => onClick(role)}>
     <div className="col-xs-12">
       <ResourceIcon kind={kind} /> {metadata.name}
