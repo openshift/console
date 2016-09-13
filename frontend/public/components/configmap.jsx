@@ -41,7 +41,7 @@ const ConfigMapDetails = (configMap) => {
             <dt>Name</dt>
             <dd>{configMap.metadata.name}</dd>
             <dt>Labels</dt>
-            <dd><LabelList kind="configmap" labels={configMap.metadata.labels} expand={true} /></dd>
+            <dd><LabelList kind="configmap" labels={configMap.metadata.labels} /></dd>
             <dt>Created At</dt>
             <dd><Timestamp timestamp={configMap.metadata.creationTimestamp} /></dd>
           </dl>

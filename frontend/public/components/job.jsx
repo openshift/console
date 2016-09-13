@@ -76,7 +76,7 @@ const Details = (job) => <div>
             <dt>Name</dt>
             <dd>{job.metadata.name || '-'}</dd>
             <dt>Labels</dt>
-            <dd><LabelList kind="job" labels={job.metadata.labels} expand={true} /></dd>
+            <dd><LabelList kind="job" labels={job.metadata.labels} /></dd>
             <dt>Pod Selector</dt>
             <dd><Selector selector={job.spec.selector.matchLabels} expand={true} /></dd>
             <dt>Created At</dt>

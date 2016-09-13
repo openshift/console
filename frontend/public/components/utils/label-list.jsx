@@ -20,8 +20,8 @@ const Label = ({kind, name, value, expand}) => {
   );
 };
 
-export const LabelList = ({labels, kind, expand}) => {
-  let list = _.map(labels, (label, key) => <Label key={key} kind={kind} name={key} value={label} expand={!!expand} />);
+export const LabelList = ({labels, kind, dontExpand}) => {
+  let list = _.map(labels, (label, key) => <Label key={key} kind={kind} name={key} value={label} expand={!dontExpand} />);
 
   if (_.isEmpty(list)) {
     list = <div className="text-muted">No labels</div>

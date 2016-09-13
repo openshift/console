@@ -40,7 +40,7 @@ const SecretDetails = (secret) => {
           <dt>Name</dt>
           <dd>{secret.metadata.name}</dd>
           <dt>Labels</dt>
-          <dd><LabelList kind="secret" labels={secret.metadata.labels} expand={true} /></dd>
+          <dd><LabelList kind="secret" labels={secret.metadata.labels} /></dd>
           <dt>Created At</dt>
           <dd><Timestamp timestamp={secret.metadata.creationTimestamp} /></dd>
         </dl>
