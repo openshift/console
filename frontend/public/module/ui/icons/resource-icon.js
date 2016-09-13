@@ -31,6 +31,8 @@ angular.module('bridge.ui')
 
 function iconLabel(k8sKind, kindId) {
   switch (kindId) {
+    case k8sKind.PETSET.id:
+      return 'PS';
     case k8sKind.REPLICATIONCONTROLLER.id:
       return 'RC';
     case k8sKind.REPLICASET.id:
@@ -59,6 +61,17 @@ function iconLabel(k8sKind, kindId) {
       return 'CM';
     case k8sKind.SECRET.id:
       return 'S';
+    case k8sKind['*'].id:
+      return 'All';
+    case k8sKind.ROLE.id:
+      return 'R';
+    case k8sKind.ROLEBINDING.id:
+      return 'RB';
+    case k8sKind.CLUSTERROLE.id:
+      return 'CR';
+    case k8sKind.CLUSTERROLEBINDING.id:
+      return 'CRB';
+
     default:
       return kindId.toUpperCase().slice(0, 2);
   }

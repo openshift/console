@@ -1,0 +1,13 @@
+.rbac-rule-resource  {
+  min-width: 175px;
+  display: inline-block;
+}
+
+.rbac-rule-row:not(:last-of-type) {
+  padding-bottom: 5px;
+}
+
+.resource-separator {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

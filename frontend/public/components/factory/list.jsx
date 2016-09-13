@@ -14,7 +14,7 @@ const filters = {
       return true;
     }
     return phases.has(pod.status.phase) || phases.has(podPhase(pod));
-  }
+  },
 }
 
 const filter = (_filters, objects) => {
@@ -47,7 +47,10 @@ const filterPropType = (props, propName, componentName) => {
 class Rows extends React.Component {
   render () {
     const {filters, data, onClickRow, Row} = this.props;
-    const rows = filter(filters, data).map(object => <Row key={object.metadata.name} {...object} onClick={onClickRow}/>);
+    const selected = this.props.selected && this.props.selected.metadata.name;
+    const rows = filter(filters, data).map(object =>
+      <Row key={object.metadata.name} {...object} onClick={onClickRow} isActive={selected===object.metadata.name} />
+    );
     return <div className="co-m-table-grid__body"> {rows} </div>;
   }
 }
@@ -69,6 +72,10 @@ export const makeList = (name, kindstring, Header, Row) => {
       store.dispatch(actions.filterList(id, name, value));
     }
 
+    componentWillReceiveProps(nextProps) {
+      this.setState({selected: nextProps.selected});
+    }
+
     render () {
       const {kinds, k8s} = angulars;
       const kind = kinds[kindstring];
@@ -81,7 +88,7 @@ export const makeList = (name, kindstring, Header, Row) => {
           <Header />
           <Firehose ref="hose" isList={true} k8sResource={k8sResource} {...this.props}>
             <StatusBox>
-              <Rows Row={Row} filters={filters} onClickRow={onClickRow} />
+              <Rows Row={Row} filters={filters} onClickRow={onClickRow} selected={this.state && this.state.selected} />
             </StatusBox>
           </Firehose>
         </div>
@@ -92,6 +99,7 @@ export const makeList = (name, kindstring, Header, Row) => {
   ReactiveList.propTypes = {
     'namespace': React.PropTypes.string,
     'selector': React.PropTypes.object,
+    'selected': React.PropTypes.object,
     'search': React.PropTypes.string,
     'filter': React.PropTypes.string,
     'error': React.PropTypes.bool,

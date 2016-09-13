@@ -1,9 +1,13 @@
 angular.module('bridge.page')
-.controller('k8sListCtrl', function($scope, k8s, $location, $routeParams, $window) {
+.controller('k8sListCtrl', function($scope, k8s, $location, $routeParams, $window, $route) {
   'use strict';
 
   let kind;
-  if ($routeParams.kind in k8s) {
+
+  const k8sKind = $route.current.$$route.k8sKind;
+  if (k8sKind && k8sKind in k8s) {
+    kind = k8s[k8sKind].kind;
+  } else if ($routeParams.kind in k8s) {
     kind = k8s[$routeParams.kind].kind;
   } else {
     $scope.component = 'nop';

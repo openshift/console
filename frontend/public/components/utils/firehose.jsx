@@ -11,7 +11,6 @@ const InjectProps = connect((state, props) => props.stateToProps)(props => {
   return <div className={className}>{newChildren}</div>;
 });
 
-
 export class Firehose extends React.Component {
   constructor (props) {
     super(props);

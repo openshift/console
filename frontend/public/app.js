@@ -164,6 +164,12 @@ angular.module('bridge', [
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('configmaps');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('secrets');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('roles');
+  r('/clusterroles', {
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
+    k8sKind: 'clusterroles',
+  });
   r('/ns/:ns/replicasets/new', {
     controller: 'NewReplicaSetCtrl',
     templateUrl: '/static/page/replicasets/new-replicaset.html',
