@@ -11,6 +11,7 @@ $height: 18px;
   color: #fff;
   font-size: 12px;
   margin: 0 4px;
+  background-color: $color-container-dark;
 }
 
 .co-m-resource-icon-wrapper {
@@ -22,31 +23,35 @@ $height: 18px;
 }
 
 .co-m-resource-icon--replicationcontroller {
-  background-color: $color-controller-dark;
+  background-color: $color-pod-overlord;
 }
 
 .co-m-resource-icon--replicaset {
-  background-color: $color-replicaset-dark;
+  background-color: $color-pod-overlord;
 }
 
 .co-m-resource-icon--job {
-  background-color: $color-job-dark;
+  background-color: $color-pod-overlord;
 }
 
 .co-m-resource-icon--daemonset {
-  background-color: $color-replicaset-dark;
+  background-color: $color-pod-overlord;
+}
+
+.co-m-resource-icon--petset {
+  background-color: $color-pod-overlord;
 }
 
 .co-m-resource-icon--configmap {
-  background-color: $color-pod-dark;
+  background-color: $color-configmap-dark;
 }
 
 .co-m-resource-icon--secret {
-  background-color: $color-replicaset-dark;
+  background-color: $color-secret-dark;
 }
 
 .co-m-resource-icon--deployment {
-  background-color: $color-deployment-dark;
+  background-color: $color-pod-overlord;
   padding: 0 4px 0 5px; // padding from .co-m-resource-icon isn't enough to center D letter
 }
 
@@ -64,4 +69,24 @@ $height: 18px;
 
 .co-m-resource-icon--namespace {
   background-color: $color-namespace-dark;
+}
+
+.co-m-resource-icon--role {
+  background-color: $color-rbac-dark;
+}
+
+.co-m-resource-icon--clusterrole {
+ background-color: $color-rbac-dark;
+}
+
+.co-m-resource-icon--rolebinding {
+ background-color: $color-rbac-dark;
+}
+
+.co-m-resource-icon--clusterrolebinding {
+ background-color: $color-rbac-dark;
+}
+
+.co-m-resource-icon--all {
+  background-color: black;
 }

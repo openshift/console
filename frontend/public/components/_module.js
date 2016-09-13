@@ -7,3 +7,4 @@ import './configmap';
 import './secret';
 import './service';
 import './replication-controller';
+import './RBAC';

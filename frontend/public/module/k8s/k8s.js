@@ -52,6 +52,8 @@ angular.module('k8s')
       getk8sFlagPaths: function () {
         return {
           tpm: '/apis/tpm.coreos.com/v1',
+          rbac: '/apis/rbac.authorization.k8s.io',
+          rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1',
         };
       },
     };
@@ -122,6 +124,11 @@ angular.module('k8s')
   this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);
   this.namespaces = addDefaults({}, k8sEnum.Kind.NAMESPACE);
   this.tpms = addDefaults({}, k8sEnum.Kind.TPM);
+
+  this.clusterrolebindings = addDefaults({}, k8sEnum.Kind.CLUSTERROLEBINDING);
+  this.clusterroles = addDefaults({}, k8sEnum.Kind.CLUSTERROLE);
+  this.rolebindings = addDefaults({}, k8sEnum.Kind.ROLEBINDING);
+  this.roles = addDefaults({}, k8sEnum.Kind.ROLE);
 
   this.health = function() {
     return $http({

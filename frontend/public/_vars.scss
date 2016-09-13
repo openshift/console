@@ -1,12 +1,26 @@
-$color-service-dark: #145884;
-$color-pod-dark: #128E72;
-$color-controller-dark: #872C6C;
-$color-replicaset-dark: #F77454;
-$color-job-dark: #7E32DB;
-$color-deployment-dark: #99BA45;
-$color-namespace-dark: #30C2B6;
+$color-service-dark: #99BA45;
+
+$color-pod-dark: #30C2B6;
+
+$color-namespace-dark: #128E72;
+
 $color-node-dark: #C049BF;
+
 $color-container-dark: #63C2E4;
+
+$color-secret-dark: #F77454;
+
+$color-rbac-dark: #7E32DB;
+
+$color-configmap-dark: #872C6C;
+
+$color-pod-overlord: #145884;
+
+$color-controller-dark: $color-pod-overlord;
+$color-replicaset-dark: $color-controller-dark;
+$color-job-dark: $color-controller-dark;
+$color-deployment-dark: $color-controller-dark;
+$color-petset-dark: $color-controller-dark;
 
 $color-grey-lightest: #efefef;
 $color-grey-medium: #666;

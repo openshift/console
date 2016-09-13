@@ -9,3 +9,8 @@ export const inject = (children, props) => {
     return React.cloneElement(c, safeProps);
   });
 };
+
+export const injectChild = (children, props) => {
+  const onlyChild = React.Children.only(children);
+  return React.cloneElement(onlyChild, props);
+}
