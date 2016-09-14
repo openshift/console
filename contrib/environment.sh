@@ -14,12 +14,13 @@
 # about any of them, you can run ./bin/bridge --help
 
 export BRIDGE_HOST="http://127.0.0.1:9000"
-
 export BRIDGE_USER_AUTH="disabled"
-
 export BRIDGE_K8S_MODE="off-cluster"
 export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(kubectl config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], clusters: .clusters[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.cluster ==  .clusters.name)' | jq '.clusters.cluster.server' -r)
 export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
-
 export BRIDGE_K8S_AUTH="bearer-token"
-export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secrets -o json | jq '.items[].data | select(has("token")) | .token' -r | base64 --decode)
+
+secretname=$(kubectl get secrets --namespace=default \
+  -l owner=tectonic-devs \
+  -o template --template="{{range.items}}{{.metadata.name}}{{end}}")
+export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname -o template --template='{{.data.token}}' | base64 --decode)
