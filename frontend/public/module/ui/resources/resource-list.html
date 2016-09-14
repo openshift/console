@@ -7,6 +7,7 @@
   <co-generic-k8s-list ng-if="kind == 'service'" namespace="namespace" component="'Services'" selector="selector"></co-generic-k8s-list>
   <co-generic-k8s-list ng-if="kind == 'daemonset'" namespace="namespace" component="'DaemonSets'" selector="selector"></co-generic-k8s-list>
   <co-generic-k8s-list ng-if="kind == 'horizontalpodautoscaler'" namespace="namespace" component="'HorizontalPodAutoscalers'" selector="selector"></co-generic-k8s-list>
+  <co-generic-k8s-list ng-if="kind == 'serviceaccount'" namespace="namespace" component="'ServiceAccounts'" selector="selector"></co-generic-k8s-list>
   <co-generic-k8s-list ng-if="kind == 'configmap'" namespace="namespace" component="'ConfigMaps'" selector="selector"></co-generic-k8s-list>
   <co-generic-k8s-list ng-if="kind == 'secret'" namespace="namespace" component="'Secrets'" selector="selector"></co-generic-k8s-list>
 

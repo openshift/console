@@ -4,6 +4,7 @@ import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage} from './utils'
+import classnames from 'classnames';
 
 
 const SecretCog = ({secret}) => {
@@ -59,10 +60,39 @@ const SecretDetails = (secret) => {
   </div>;
 }
 
+const withSecretsList = (Row) => {
+  return class WithSecretsList extends React.Component {
+    constructor (props) {
+      super(props);
+      this.state = {open: false};
+    }
+
+    onClick_ (e) {
+      e.preventDefault();
+      this.setState({open: !this.state.open});
+    }
+
+    render () {
+      const {metadata: {namespace}, secrets} = this.props;
+      const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
+
+      return (
+        <div onClick={this.onClick_.bind(this)} ref="target" className={classnames({clickable: !!secrets})} >
+          <Row {...this.props} />
+          {
+            this.state.open && secrets &&
+            <SecretsList namespace={namespace} filters={filters}></SecretsList>
+          }
+        </div>
+      );
+    }
+  }
+}
+
 const pages = [{href: 'details', name: 'Details', component: detailsPage(SecretDetails)}];
 
-const Secrets = makeList('Secrets', 'SECRET', SecretHeader, SecretRow);
-const SecretsPage = makeListPage('SecretsPage', 'SECRET', Secrets);
+const SecretsList = makeList('Secrets', 'SECRET', SecretHeader, SecretRow);
+const SecretsPage = makeListPage('SecretsPage', 'SECRET', SecretsList);
 const SecretsDetailsPage = makeDetailsPage('SecretsDetailsPage', 'SECRET', pages);
 
-export {Secrets, SecretsPage, SecretsDetailsPage};
+export {SecretsList, SecretsPage, SecretsDetailsPage, withSecretsList};

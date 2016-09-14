@@ -15,7 +15,7 @@ angular.module('bridge.page')
     return;
   }
 
-  if (['daemonsets', 'configmaps', 'secrets', 'jobs', 'horizontalpodautoscalers'].indexOf($routeParams.kind) === -1) {
+  if (['daemonsets', 'configmaps', 'secrets', 'jobs', 'horizontalpodautoscalers', 'serviceaccounts'].indexOf($routeParams.kind) === -1) {
     $scope.canCreate = true;
   } else {
     $scope.canCreate = false;
