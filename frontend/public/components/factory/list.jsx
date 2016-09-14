@@ -23,7 +23,7 @@ const filters = {
     }
     return phases.has(pod.status.phase) || phases.has(podPhase(pod));
   },
-}
+};
 
 const filter = (_filters, objects) => {
   if (_.isEmpty(_filters)) {
@@ -54,11 +54,10 @@ const filterPropType = (props, propName, componentName) => {
 
 class Rows extends React.Component {
   render () {
-    const {filters, data, onClickRow, Row} = this.props;
-    const selected = this.props.selected && this.props.selected.metadata.name;
-    const rows = filter(filters, data).map(object =>
-      <Row key={object.metadata.name} {...object} onClick={onClickRow} isActive={selected===object.metadata.name} />
-    );
+    const {filters, data, selected, selectRow, Row} = this.props;
+    const rows = filter(filters, data).map(object => {
+      return <Row key={object.metadata.name} {...object} onClick={selectRow} isActive={selected===object.metadata.name} />;
+    });
     return <div className="co-m-table-grid__body"> {rows} </div>;
   }
 }
@@ -70,33 +69,45 @@ Rows.propTypes = {
 };
 
 export const makeList = (name, kindstring, Header, Row) => {
+
   class ReactiveList extends React.Component {
-    applyFilter (name, value) {
-      const id = this.refs.hose.id;
-      if (!id) {
+    static get k8sResource () {
+      const {kinds, k8s} = angulars;
+      const kind = kinds[kindstring];
+      return k8s[kind.plural];
+    }
+
+    get id () {
+      return this.refs.hose.id;
+    }
+
+    applyFilter (filterName, value) {
+      if (!this.id) {
         return;
       }
       const {store} = angulars;
-      store.dispatch(actions.filterList(id, name, value));
+      store.dispatch(actions.filterList(this.id, filterName, value));
     }
 
-    componentWillReceiveProps(nextProps) {
-      this.setState({selected: nextProps.selected});
+    selectRow (name) {
+      if (!this.id) {
+        return;
+      }
+      const {store} = angulars;
+      store.dispatch(actions.selectInList(this.id, name));
     }
 
     render () {
-      const {kinds, k8s} = angulars;
-      const kind = kinds[kindstring];
-      const k8sResource = k8s[kind.plural];
-      const klass = `co-m-${kind.id}-list co-m-table-grid co-m-table-grid--bordered`;
-      const {filters, onClickRow} = this.props;
+      const k8sResource = ReactiveList.k8sResource;
+      const kindID = k8sResource.kind.id;
+      const klass = `co-m-${kindID}-list co-m-table-grid co-m-table-grid--bordered`;
 
       return <Provider store={angulars.store}>
         <div className={klass}>
           <Header />
           <Firehose ref="hose" isList={true} k8sResource={k8sResource} {...this.props}>
             <StatusBox>
-              <Rows Row={Row} filters={filters} onClickRow={onClickRow} selected={this.state && this.state.selected} />
+              <Rows Row={Row} selectRow={o => this.selectRow(o.metadata.name)} />
             </StatusBox>
           </Firehose>
         </div>

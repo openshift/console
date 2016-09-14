@@ -71,6 +71,9 @@ export default (state, action)  => {
       const {name, value} = action;
       return state.setIn([id, 'filters', name], value);
 
+    case types.selectInList:
+      return state.setIn([id, 'selected'], action.value);
+
     case types.watchK8sObject:
       return state.set(id, Immutable.Map({
         loadError: '',
@@ -92,9 +95,14 @@ export default (state, action)  => {
 
       return state.set(id, Immutable.Map({
         loadError: '',
+        // has the data set been loaded successfully
         loaded: false,
+        // Canonical data
         data: Immutable.Map(),
+        // client side filters to be applied externally (ie, we keep all data intact)
         filters: Immutable.Map(),
+        // The name of an element in the list that has been "selected"
+        selected: null,
       }));
 
     case types.stopK8sWatch:

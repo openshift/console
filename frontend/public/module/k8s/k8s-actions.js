@@ -2,19 +2,18 @@
 
 const types = {
   watchK8sObject: 'watchK8sObject',
-  watchK8sList: 'watchK8sList',
   stopK8sWatch: 'stopK8sWatch',
+  modifyObject: 'modifyObject',
 
   loaded: 'loaded',
   errored: 'errored',
 
-  modifyObject: 'modifyObject',
-
+  watchK8sList: 'watchK8sList',
   addToList: 'addToList',
   deleteFromList: 'deleteFromList',
   modifyList: 'modifyList',
   filterList: 'filterList',
-
+  selectInList: 'selectInList',
 };
 
 const action_ = (type) => {
@@ -37,6 +36,10 @@ const actions =  {
 
   filterList: (id, name, value) => {
     return {id, name, value, type: types.filterList};
+  },
+
+  selectInList: (id, value) => {
+    return {id, value, type: types.selectInList};
   },
 
   watchK8sObject: (id, name, namespace, k8sType) => dispatch => {

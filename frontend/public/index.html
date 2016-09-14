@@ -75,7 +75,9 @@
               <co-navbar-link ng-cloak href="{{'trusted-platform-modules'}}" ng-if="$root.FEATURE_FLAGS.tpm">TPMs</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'trusted-compute-policies'}}" ng-if="$root.FEATURE_FLAGS.tpm">DTC Policies</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'roles'|ns}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Roles</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{'rolebindings'|ns}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Role Bindings</co-navbar-link>
               <co-navbar-link ng-cloak href="clusterroles" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Cluster Roles</co-navbar-link>
+              <co-navbar-link ng-cloak href="clusterrolebindings" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Cluster Role Bindings</co-navbar-link>
             </ul>
           </div>
 
