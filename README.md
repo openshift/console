@@ -101,6 +101,12 @@ The following build task will watch the source code for changes and compile auto
 npm run dev
 ```
 
+Alternatively you can use the Procfile if you're using [foreman](https://github.com/ddollar/foreman) or [goreman](https://github.com/mattn/goreman),
+which will start both the backend server and interactive dev mode in a single process.
+```
+goreman start
+```
+
 #### Update Dependencies
 Dependencies should be pinned to an exact version (eg, no ^).
 
