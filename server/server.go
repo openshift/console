@@ -38,16 +38,14 @@ var (
 )
 
 type jsGlobals struct {
-	K8sAPIVersion    string `json:"k8sAPIVersion"`
-	AuthDisabled     bool   `json:"authDisabled"`
-	KubectlClientID  string `json:"kubectlClientID"`
-	BaseURL          string `json:"baseURL"`
-	BasePath         string `json:"basePath"`
-	LoginURL         string `json:"loginURL"`
-	LoginCallbackURL string `json:"loginCallbackURL"`
-	LoginSuccessURL  string `json:"loginSuccessURL"`
-	LoginErrorURL    string `json:"loginErrorURL"`
-	LogoutURL        string `json:"logoutURL"`
+	K8sAPIVersion   string `json:"k8sAPIVersion"`
+	AuthDisabled    bool   `json:"authDisabled"`
+	KubectlClientID string `json:"kubectlClientID"`
+	BasePath        string `json:"basePath"`
+	LoginURL        string `json:"loginURL"`
+	LoginSuccessURL string `json:"loginSuccessURL"`
+	LoginErrorURL   string `json:"loginErrorURL"`
+	LogoutURL       string `json:"logoutURL"`
 }
 
 type Server struct {
@@ -151,16 +149,14 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		K8sAPIVersion:    K8sAPIVersion,
-		AuthDisabled:     s.AuthDisabled(),
-		KubectlClientID:  s.KubectlClientID,
-		BaseURL:          s.BaseURL.String(),
-		BasePath:         s.BaseURL.Path,
-		LoginURL:         SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
-		LoginCallbackURL: SingleJoiningSlash(s.BaseURL.String(), AuthLoginCallbackEndpoint),
-		LoginSuccessURL:  SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:    SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:        SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
+		K8sAPIVersion:   K8sAPIVersion,
+		AuthDisabled:    s.AuthDisabled(),
+		KubectlClientID: s.KubectlClientID,
+		BasePath:        s.BaseURL.Path,
+		LoginURL:        SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
+		LoginSuccessURL: SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:   SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:       SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
 	}
 	tpl := template.New(IndexPageTemplateName)
 	tpl.Delims("[[", "]]")
