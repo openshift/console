@@ -136,9 +136,7 @@ gulp.task('clean-package', () => {
 
 gulp.task('sass', () => {
   return gulp.src('./public/style.scss')
-    .pipe(sass({
-      includePaths: ['./public/lib/coreos-web/sass']
-    }))
+    .pipe(sass())
     .pipe(gulp.dest('./public/dist'));
 });
 
