@@ -3,7 +3,18 @@
  */
 
 // Configure static paths.
-@import "path-config";
+// Root path where you plan to host coreos-web.
+$coreosWebDistPath: './';
+$coreosWebFontPath: $coreosWebDistPath + 'fonts';
+// Override fontawesome font paths.
+$fa-font-path: $coreosWebFontPath;
+// Override bootstrap font paths.
+$icon-font-path: $coreosWebFontPath + '/';
+// CoreOS-web font path.
+$font-path: $coreosWebFontPath;
+// CoreOS-web image path.
+$img-path: $coreosWebDistPath + 'img';
+
 
 /* LAYOUT DIMENSIONS */
 $height-footer: 40px;

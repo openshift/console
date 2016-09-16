@@ -1,15 +1,17 @@
-/* COREOS-WEB IMPORTS */
-@import "color-pallette";
-@import "config";
-@import "mixin/animation";
-@import "mixin/keyframes";
-@import "mixin/prefix";
+// Config
+@import "style/color-pallette";
+@import "style/config";
+@import "style/vars";
 
-// Config variables
-@import "vars";
+// Overrides
+@import "style/overrides";
 
-/* Overrides for coreos-web/vendor global styles */
-@import "overrides";
+// Mixins
+@import "style/mixin/animation";
+@import "style/mixin/keyframes";
+@import "style/mixin/prefix";
+@import "style/mixin/media-query";
+
 
 /* CUSTOM STYLES */
 
@@ -61,12 +63,12 @@
 @import "module/ui/vert-nav/vert-nav";
 @import "module/ui/account-nav/account-nav";
 @import "module/ui/nav-title/nav-title";
-@import "module/ui/overrides/nav";
 @import "module/ui/timestamps/co-timestamp";
 @import "module/ui/dropdown/dropdown";
 @import "module/ui/overflow/overflow";
 @import "module/ui/detail-table/detail-table";
 
+// React Components
 @import "components/dropdown";
 @import "components/RBAC/rbac";
 @import "components/row-filter";
