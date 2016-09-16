@@ -35,16 +35,32 @@ class CheckBoxes extends React.Component {
 
   componentDidMount() {
     let selected;
+
     try {
       selected = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
     } catch (ignored) {}
 
     if (_.isEmpty(selected) || !_.isArray(selected)) {
-      selected = this.props.selected;
+      selected = this.props.selected || [];
     }
     const state = {};
     selected.forEach(i => state[i] = true);
-    this.setState(state);
+    // replaceState no longer exists :(
+    this.state = state;
+    this.setState(this.state, () => this.applyFilter());
+  }
+
+  applyFilter () {
+    const rowFilterItems = this.props.rowFilterItems || [];
+    const selected = [];
+    const filters = rowFilterItems.filter((item, i) => this.state[i] && selected.push(i)).map(i => i[1]);
+
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(selected));
+    } catch (ignored) {}
+
+    this.props.applyFilter(new Set(filters));
+
   }
 
   toggle (i) {
@@ -60,17 +76,7 @@ class CheckBoxes extends React.Component {
     }
     this.setState({
       [i]: !this.state[i],
-    }, () => {
-      const rowFilterItems = this.props.rowFilterItems || [];
-      const selected = [];
-      const filters = rowFilterItems.filter((item, i) => this.state[i] && selected.push(i)).map(i => i[1]);
-
-      try {
-        localStorage.setItem(this.storageKey, JSON.stringify(selected));
-      } catch (ignored) {}
-
-      this.props.applyFilter(new Set(filters));
-    });
+    }, () => this.applyFilter());
   };
 
   render () {
@@ -82,6 +88,7 @@ class CheckBoxes extends React.Component {
     });
 
     const active = this.state;
+
     const checkboxes = _.map(rowFilterItems, (item, i) => {
       const [name, filter] = item;
       const number = numbers[filter] || 0;
