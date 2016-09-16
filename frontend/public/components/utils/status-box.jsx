@@ -37,7 +37,7 @@ export const StatusBox = (props) => {
     return <Loading />
   }
 
-  const {data, filters} = props;
+  const {data, filters, selected} = props;
 
   if (!data || _.isEmpty(data)) {
     return <EmptyBox label={label} />;
@@ -46,7 +46,7 @@ export const StatusBox = (props) => {
   let children;
 
   if (_.isArray(data)) {
-    children = inject(props.children, {data, filters});
+    children = inject(props.children, {data, filters, selected});
   } else {
     children = inject(props.children, data);
   }

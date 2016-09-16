@@ -167,10 +167,18 @@ angular.module('bridge', [
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('secrets');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('roles');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('rolebindings');
   r('/clusterroles', {
     controller: 'k8sListCtrl',
     templateUrl: '/static/page/k8s-list/k8s-list.html',
     k8sKind: 'clusterroles',
+    reloadOnSearch: false,
+  });
+  r('/clusterrolebindings', {
+    controller: 'k8sListCtrl',
+    templateUrl: '/static/page/k8s-list/k8s-list.html',
+    k8sKind: 'clusterrolebindings',
+    reloadOnSearch: false,
   });
   r('/ns/:ns/replicasets/new', {
     controller: 'NewReplicaSetCtrl',
@@ -351,11 +359,13 @@ angular.module('bridge', [
   r('/all-namespaces/:kind', {
     controller: 'k8sListCtrl',
     templateUrl: '/static/page/k8s-list/k8s-list.html',
+    reloadOnSearch: false,
   });
 
   r('/ns/:ns/:kind', {
     controller: 'k8sListCtrl',
     templateUrl: '/static/page/k8s-list/k8s-list.html',
+    reloadOnSearch: false,
   });
 
   r('/ns/:ns/:kind/:name/:view', {

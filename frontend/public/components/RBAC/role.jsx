@@ -1,23 +1,20 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import {register} from '../react-wrapper';
-import {makeList, TwoColumns} from '../factory';
 import {Rules} from './rules';
+
+import {makeList, TwoColumns} from '../factory';
 import {Timestamp, ResourceIcon} from '../utils';
 
 
 export const RoleHeader = () => <div className="co-m-facet-menu__title">Name</div>
 
 export const RowOfKind = (kind) => (role) => {
-  const {metadata, onClick, isActive} = role;
-
-  const klass = classnames('row co-m-facet-menu-option', {'co-m-facet-option--active': isActive});
-  return <div className={klass} onClick={() => onClick(role)}>
+  return <TwoColumns.RowWrapper {...role}>
     <div className="col-xs-12">
-      <ResourceIcon kind={kind} /> {metadata.name}
+      <ResourceIcon kind={kind} /> {role.metadata.name}
     </div>
-  </div>
+  </TwoColumns.RowWrapper>
 };
 
 export const Roles = makeList('Roles', 'ROLE', RoleHeader, RowOfKind('role'));
