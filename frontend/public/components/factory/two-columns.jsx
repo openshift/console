@@ -11,7 +11,8 @@ const DetailsColumn = (props) => {
     return <div>{children}</div>
   }
 
-  const object = _.find(data, o => o.metadata.name === selected);
+  const {k8s: {getQN}} = angulars;
+  const object = _.find(data, o => getQN(o) === selected);
 
   if (!object) {
     return <div>{children}</div>
@@ -26,7 +27,8 @@ export class TwoColumns extends React.Component {
     if (!hash) {
       return;
     }
-    this.list.selectRow(hash.slice(1));
+
+    this.list.selectRow(decodeURI(hash).slice(1));
   }
 
   render () {
@@ -60,13 +62,15 @@ export class TwoColumns extends React.Component {
 
 // A simple Component that Wraps List's Rows for changing hashes
 TwoColumns.RowWrapper = (object) => {
-  const {onClick, isActive, children, metadata} = object;
+  const {onClick, isActive, children} = object;
 
   const klass = classnames('row co-m-facet-menu-option', {'co-m-facet-option--active': isActive});
 
   const _onClick = () => {
-    angulars.$location.hash(metadata.name);
-    onClick(object);
+    const {k8s: {getQN}} = angulars;
+    const qualifiedName = getQN(object);
+    angulars.$location.hash(qualifiedName);
+    onClick(qualifiedName);
   };
   return <div className={klass} onClick={_onClick}>
     {children}

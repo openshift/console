@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {ResourceIcon, LabelList, Timestamp} from '../utils';
-import {register} from '../react-wrapper';
+import {register, angulars} from '../react-wrapper';
 import {makeList, TwoColumns} from '../factory';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -35,12 +35,15 @@ const Subject = ({subject}) => <div className="row">
 const RoleRef = ({parentNamespace, namespace, name, kind}) => {
   kind = kind.toLowerCase();
 
+  const {k8s: {getQN}} = angulars;
+  const qualifiedName = getQN({metadata: {namespace: namespace || parentNamespace, name}});
+
   let href;
   if (kind === 'clusterrole') {
-    href = `/clusterroles/#${name}`;
+    href = `/clusterroles/#${qualifiedName}`;
   } else {
     // RoleRefs that are Roles must be in the same namespace as their Bindings
-    href = `/ns/${namespace || parentNamespace}/roles#${name}`;
+    href = `/ns/${namespace || parentNamespace}/roles#${qualifiedName}`;
   }
   return <span>
     <ResourceIcon kind={kind} /> <a href={href}>{name}</a>

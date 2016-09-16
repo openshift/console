@@ -1,6 +1,7 @@
 const Immutable = require('immutable');
 
 import {types} from './k8s-actions';
+import {getQN} from './k8s';
 
 const moreRecent = (a, b) => {
   const metaA  = a.get('metadata').toJSON();
@@ -12,26 +13,26 @@ const moreRecent = (a, b) => {
 };
 
 const removeFromList = (list, resource) => {
-  const uid = resource.metadata.name;
+  const qualifiedName = getQN(resource);
   // eslint-disable-next-line no-console
-  console.log(`deleting ${uid}`);
-  return list.delete(uid);
+  console.log(`deleting ${qualifiedName}`);
+  return list.delete(qualifiedName);
 };
 
 const updateList = (list, resource) => {
-  const uid = resource.metadata.name;
-  const current = list.get(uid);
+  const qualifiedName = getQN(resource);
+  const current = list.get(qualifiedName);
   const next = Immutable.fromJS(resource);
 
   if (!current) {
-    return list.set(uid, next);
+    return list.set(qualifiedName, next);
   }
 
   if (!moreRecent(next, current)) {
     return list;
   }
 
-  return list.set(uid, next);
+  return list.set(qualifiedName, next);
 };
 
 const loadList = (list, resources) => {
@@ -39,12 +40,12 @@ const loadList = (list, resources) => {
   const existingKeys = new Set(list.keys());
   return list.withMutations(list => {
     (resources || []).forEach(r => {
-      const uid = r.metadata.name;
-      existingKeys.delete(uid);
+      const qualifiedName = getQN(r);
+      existingKeys.delete(qualifiedName);
       const next = Immutable.fromJS(r);
-      const current = list.get(uid);
+      const current = list.get(qualifiedName);
       if (!current || moreRecent(next, current)) {
-        list.set(r.metadata.name, next);
+        list.set(qualifiedName, next);
       }
     });
     existingKeys.forEach(k => {
