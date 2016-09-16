@@ -4,7 +4,7 @@ describe('units', function() {
   describe('round', function () {
     function testRound (n, expected) {
       it(n + ' into ' + expected, function () {
-        expect(unitsForTesting.round(n)).toEqual(expected);
+        expect(tectonicTesting.units.round(n)).toEqual(expected);
       });
     }
 
@@ -19,7 +19,7 @@ describe('units', function() {
   describe('should humanize numeric values', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
-        expect(unitsForTesting.humanize(value, 'numeric', false).string).toEqual(expected);
+        expect(tectonicTesting.units.humanize(value, 'numeric', false).string).toEqual(expected);
       });
     }
 
@@ -58,7 +58,7 @@ describe('units', function() {
   describe('should humanize percentage values', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
-        expect(unitsForTesting.humanize(value, 'percentage', false).string).toEqual(expected);
+        expect(tectonicTesting.units.humanize(value, 'percentage', false).string).toEqual(expected);
       });
     }
 
@@ -97,7 +97,7 @@ describe('units', function() {
   describe('should humanize decimalBytes values', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
-        expect(unitsForTesting.humanize(value, 'decimalBytes', true).string).toEqual(expected);
+        expect(tectonicTesting.units.humanize(value, 'decimalBytes', true).string).toEqual(expected);
       });
     }
 
@@ -135,7 +135,7 @@ describe('units', function() {
   describe('should humanize binaryBytes values', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
-        expect(unitsForTesting.humanize(value, 'binaryBytes', true).string).toEqual(expected);
+        expect(tectonicTesting.units.humanize(value, 'binaryBytes', true).string).toEqual(expected);
       });
     }
 
@@ -173,7 +173,7 @@ describe('units', function() {
   describe('should humanize binaryBytesWithoutB values', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
-        expect(unitsForTesting.humanize(value, 'binaryBytesWithoutB', true).string).toEqual(expected);
+        expect(tectonicTesting.units.humanize(value, 'binaryBytesWithoutB', true).string).toEqual(expected);
       });
     }
 
@@ -211,7 +211,7 @@ describe('units', function() {
   describe('should de-humanize binaryBytesWithoutB values', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
-        expect(unitsForTesting.dehumanize(value, 'binaryBytesWithoutB').value).toEqual(expected);
+        expect(tectonicTesting.units.dehumanize(value, 'binaryBytesWithoutB').value).toEqual(expected);
       });
     }
 

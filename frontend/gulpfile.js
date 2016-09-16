@@ -44,7 +44,7 @@ function jsBuild (debug) {
     cache: {},
     packageCache: {},
     exclude: [
-      './public/{module,page}/**/*_test.js',
+      './public/{components,module,page}/**/*_test.js',
       './public/dist/*.js',
     ],
     entries: [entry],

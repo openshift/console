@@ -132,5 +132,5 @@ const units = {
 
 export default units;
 
-// TODO: don't do this
-window.unitsForTesting = units;
+// This is temporary! See notes in public/components/_test.js
+window.tectonicTesting && (window.tectonicTesting.units = units);

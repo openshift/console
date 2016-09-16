@@ -14,6 +14,7 @@ module.exports = function(config) {
       'public/dist/deps.js',
       // Deps for tests
 
+      'public/components/_test.js',
       'public/dist/app-bundle.js',
       'node_modules/angular-mocks/angular-mocks.js',
       // Actual code & tests.
