@@ -4,6 +4,7 @@ import ReactChart from './react-chart';
 import { register } from '../react-wrapper';
 import { Loading } from '../utils/status-box';
 import units from '../utils/units';
+import { tectonicServiceAvailable } from '../utils/tectonic-service-available';
 
 const states = {
   LOADING: 'loading',
@@ -13,8 +14,6 @@ const states = {
   BROKEN: 'broken',
   LOADED: 'loaded'
 }
-
-const prometheusApi = '/api/kubernetes/api/v1/proxy/namespaces/default/services/prometheus:9090/';
 
 class SparklineGraph extends React.Component {
   constructor(props) {
@@ -63,10 +62,26 @@ class SparklineGraph extends React.Component {
     }
     this.updateInProgress = true;
 
+    tectonicServiceAvailable({
+      serviceName: 'prometheus',
+      available: this.doUpdate.bind(this),
+      unavailable: this.doUnavailable.bind(this)
+    });
+  }
+
+  doUnavailable() {
+    this.updateInProgress = false;
+    clearInterval(this.interval);
+    this.setState({
+      state: states.NOTAVAILABLE
+    });
+  }
+
+  doUpdate(baseURL) {
     const end = Date.now() / 1000;
     const start = end - (60 * 60); // 1 hour
 
-    $.ajax(prometheusApi + '/api/v1/query_range?query=' + this.props.query + '&start=' + start + '&end=' + end + '&step=30')
+    $.ajax(baseURL + '/api/v1/query_range?query=' + this.props.query + '&start=' + start + '&end=' + end + '&step=30')
       .done((json) => {
         if (json.status !== 'success') {
           this.setState({
