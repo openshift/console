@@ -11,7 +11,10 @@
     <div class="co-m-vert-nav__body">
       <div cos-tristate="node" cos-tristate-error="loadError" class="co-m-pane__body">
         <div class="row" ng-if="node && !loadError">
-          <div class="col-lg-3">
+          <div class="col-xs-12">
+            <h1 class="co-section-title">Node Overview</h1>
+          </div>
+          <div class="col-md-6 col-xs-12">
             <dl>
               <dt>Node Name</dt>
               <dd ng-bind="node.metadata.name | emptyPlaceholder"></dd>
@@ -31,7 +34,7 @@
             </dl>
           </div>
 
-          <div class="col-lg-3">
+          <div class="col-md-6 col-xs-12">
             <dl>
               <dt>Kernel Version</dt>
               <dd ng-bind="node.status.nodeInfo.kernelVersion | emptyPlaceholder"></dd>
@@ -45,8 +48,13 @@
               <dd ng-bind="node.status.nodeInfo.kubeProxyVersion | emptyPlaceholder"></dd>
             </dl>
           </div>
+        </div>
+      </div>
 
-          <div class="col-lg-6">
+      <div class="co-m-pane__body">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1 class="co-section-title">Node Conditions</h1>
             <div class="co-table-container">
               <table class="table">
                 <thead>
