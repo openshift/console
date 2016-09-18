@@ -23,15 +23,12 @@ const rowOfKindstring = (name) => {
     const kind = angulars.kinds[name];
     const CogOfKind = cogOfKind(kind);
 
-    // TODO: Temporary hack while we migrate details pages to React
-    const detailsUrlSuffix = (name === 'DEPLOYMENT' ? '' : '/details');
-
     return (
       <div className="row co-resource-list__item">
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
           <CogOfKind o={o} />
           <ResourceIcon kind={kind.id}></ResourceIcon>
-          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}` + detailsUrlSuffix} title={o.metadata.uid}>{o.metadata.name}</a>
+          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/details`} title={o.metadata.uid}>{o.metadata.name}</a>
         </div>
         <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
           <LabelList kind={kind.id} labels={o.metadata.labels} />

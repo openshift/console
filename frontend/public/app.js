@@ -184,16 +184,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/deployments/edit-deployment.html',
     title: 'Edit Deployment',
   });
-  r('/ns/:ns/deployments/:name', {
-    controller: 'DeploymentCtrl',
-    templateUrl: '/static/page/deployments/deployment.html',
-    title: 'Deployment',
-  });
-  r('/ns/:ns/deployments/:name/pods', {
-    controller: 'DeploymentPodsCtrl',
-    templateUrl: '/static/page/deployments/pods.html',
-    title: 'Deployment Pods',
-  });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
   r('/ns/:ns/pods/new', {

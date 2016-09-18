@@ -180,6 +180,13 @@ label {
   white-space: pre-wrap;
 }
 
+.co-tooltip {
+  line-height: 1.35;
+  padding: 4px 8px !important;
+  text-align: center;
+  max-width: 200px;
+}
+
 // Remove annoying default spinners browsers add to number fields.
 input[type=number] {
   -moz-appearance: textfield;
