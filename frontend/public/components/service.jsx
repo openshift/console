@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-import {makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Selector} from './utils'
+import {makeListPage, makeList, makeDetailsPage} from './factory';
+import {Cog, detailsPage, LabelList, ResourceIcon, Selector, Timestamp} from './utils'
 
 const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
@@ -38,7 +38,7 @@ const ServiceRow = (s) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
     <ServiceCog s={s}></ServiceCog>
     <ResourceIcon kind="service"></ResourceIcon>
-    <a href={`ns/${s.metadata.namespace}/services/${s.metadata.name}`}>{s.metadata.name}</a>
+    <a href={`ns/${s.metadata.namespace}/services/${s.metadata.name}/details`}>{s.metadata.name}</a>
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
     <LabelList kind="service" labels={s.metadata.labels}></LabelList>
@@ -51,8 +51,117 @@ const ServiceRow = (s) => <div className="row co-resource-list__item">
   </div>
 </div>
 
-const Services = makeList('Services', 'SERVICE', ServiceHeader, ServiceRow);
-const ServicesPage = makeListPage('ServicesPage', 'SERVICE', Services);
+const ServiceAddress = ({s}) => {
+  const ServiceIPsRow = (name, desc, ips, note = null) => <div className="co-ip-row">
+    <div className="row">
+      <div className="col-xs-6">
+        <p className="ip-name">{name}</p>
+        <p className="ip-desc">{desc}</p>
+      </div>
+      <div className="col-xs-6">{note && <span className="text-muted">{note}</span>}{ips.join(', ')}</div>
+    </div>
+  </div>
 
-export {Services, ServicesPage};
+  return <div>
+    <div className="row co-ip-header">
+      <div className="col-xs-6">Type</div>
+      <div className="col-xs-6">Location</div>
+    </div>
+    <div className="rows">
+      {ServiceIPsRow('Cluster IP', 'Accessible within the cluster only', [s.spec.clusterIP])}
+      {s.spec.type === 'NodePort' && ServiceIPsRow('Node Port', 'Accessible outside the cluster', _.map(s.spec.ports, 'nodePort'), '(all nodes): ')}
+      {s.spec.type === 'LoadBalancer' && ServiceIPsRow('External Load Balancer', 'Ingress point(s) of load balancer', s.status.loadBalancer.ingress.map(i => i.hostname || i.ip || '-'))}
+      {s.spec.externalIPs && ServiceIPsRow('External IP', 'IP Address(es) accepting traffic for service', s.spec.externalIPs)}
+    </div>
+  </div>
+}
 
+const ServicePortMapping = ({s}) => {
+  return <div>
+    <div className="row co-ip-header">
+      <div className="col-xs-3">Name</div>
+      <div className="col-xs-3">Port</div>
+      <div className="col-xs-3">Protocol</div>
+      <div className="col-xs-3">Pod Port or Name</div>
+    </div>
+    <div className="rows">
+      {s.spec.ports.map((portObj, i) => {
+        return <div className="co-ip-row" key={i}>
+          <div className="row">
+            <div className="col-xs-3 co-text-service">
+              <p>{portObj.name || '-'}</p>
+              {portObj.nodePort && <p className="co-text-node">Node Port</p>}
+            </div>
+            <div className="col-xs-3 co-text-service">
+              <p><span className="co-m-resource-icon co-m-resource-icon--service">S</span><span>{portObj.port}</span></p>
+              {portObj.nodePort && <p className="co-text-node"><span className="co-m-resource-icon co-m-resource-icon--node">N</span><span>{portObj.nodePort}</span></p>}
+            </div>
+            <div className="col-xs-3">
+              <p>{portObj.protocol}</p>
+            </div>
+            <div className="col-xs-3 co-text-pod">
+              <p><span className="co-m-resource-icon co-m-resource-icon--pod">P</span><span>{portObj.targetPort}</span></p>
+            </div>
+          </div>
+        </div>
+      })}
+    </div>
+  </div>
+}
+
+const Details = (s) => <div>
+  <div className="row no-gutter">
+    <div className="col-sm-6">
+      <div className="co-m-pane__heading">
+        <h1 className="co-m-pane__title">Service Overview</h1>
+      </div>
+      <div className="co-m-pane__body-group">
+        <div className="co-m-pane__body-section--bordered">
+          <dl>
+            <dt>Service Name</dt>
+            <dd>{s.metadata.name || '-'}</dd>
+            <dt>Service Labels</dt>
+            <dd><LabelList kind="service" expand="true" labels={s.metadata.labels} /></dd>
+            <dt>Pod Selector</dt>
+            <dd><Selector selector={s.spec.selector}></Selector></dd>
+            <dt>Session Affinity</dt>
+            <dd>{s.spec.sessionAffinity || '-'}</dd>
+            <dt>Created At</dt>
+            <dd><Timestamp timestamp={s.metadata.creationTimestamp} /></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+    <div className="col-sm-6">
+      <div className="co-m-pane__heading">
+        <h1 className="co-m-pane__title">Service Routing</h1>
+      </div>
+      <div className="co-m-pane__body-group">
+        <div className="co-m-pane__body-section--bordered">
+          <dl>
+            <dt>Service Address</dt>
+            <dd className="service-ips">
+              <ServiceAddress s={s}></ServiceAddress>
+            </dd>
+            <dt>Service Port Mapping</dt>
+            <dd className="service-ips">
+              <ServicePortMapping s={s}></ServicePortMapping>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+const {factory: {pods}} = detailsPage;
+const pages = [
+  {href: 'details', name: 'Overview', component: Details},
+  pods(),
+];
+const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'SERVICE', pages);
+
+const ServicesList = makeList('Services', 'SERVICE', ServiceHeader, ServiceRow);
+const ServicesPage = makeListPage('ServicesPage', 'SERVICE', ServicesList);
+
+export {ServicesList, ServicesPage, ServicesDetailsPage};
