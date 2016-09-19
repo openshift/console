@@ -1,47 +1,47 @@
-$sparkline-blue: #51a3d9;
-$sparkline-orange: #f08e4e;
-$sparkline-light-gray: #eee;
-$sparkline-med-gray: #ddd;
-$sparkline-dark-gray: #999;
-$sparkline-red: #D7495B;
-$sparkline-text: #333;
+.co-sparkline {
+  $sparkline-blue: #51a3d9;
+  $sparkline-orange: #f08e4e;
+  $sparkline-light-gray: #eee;
+  $sparkline-med-gray: #ddd;
+  $sparkline-dark-gray: #999;
+  $sparkline-red: #D7495B;
+  $sparkline-text: #333;
 
-.sparkline {
   border: 1px solid $sparkline-med-gray;
   border-radius: 5px;
   font-size: 14px;
   margin: 15px;
   overflow: hidden;
 
-  .header {
+  .widget__header {
     padding: 6px 10px 4px;
     border-bottom: 1px solid $sparkline-light-gray;
   }
 
-  .title {
+  .widget__title {
     margin-right: 10px;
   }
 
-  .timespan {
+  .widget__timespan {
     color: $sparkline-dark-gray;
   }
 
-  .data-toggle {
+  .widget__data-toggle {
     float: right;
     color: $sparkline-dark-gray;
     padding: 3px;
     margin: 0 -3px -3px;
+  }
 
-    &.enabled {
-      color: $sparkline-blue;
-      cursor: pointer;
-      &:hover {
-        color: darken($sparkline-blue, 15%);
-      }
+  .widget__data-toggle--enabled {
+    color: $sparkline-blue;
+    cursor: pointer;
+    &:hover {
+      color: darken($sparkline-blue, 15%);
     }
   }
 
-  .content {
+  .widget__content {
     width: 10000px; // simulate 100% width for a table cell
     height: 60px;
     position: relative;
@@ -49,36 +49,7 @@ $sparkline-text: #333;
     vertical-align: middle;
   }
 
-  .graph {
-    height: 60px;
-    background: url(/static/imgs/sparkline-grid.png);
-    background-position: -1px -1px; // don't double the top or left borders
-    background-size: 30px;
-  }
-
-  .limit-line {
-    stroke: $sparkline-orange;
-  }
-
-  .tip {
-    fill: #52a3d9;
-  }
-
-  text {
-    font-size: 11px;
-  }
-
-  .tip-shadow {
-    stroke: #fff;
-    stroke-width: 2.5px;
-    opacity: 0.7;
-  }
-
-  .limit-text {
-    fill: $sparkline-orange;
-  }
-
-  p {
+  .widget__text {
     text-align: center;
     color: $sparkline-dark-gray;
     margin: 0;
@@ -87,15 +58,17 @@ $sparkline-text: #333;
     .fa {
       margin-right: 8px;
     }
-
-    &.error {
-      color: $sparkline-red;
-    }
-
-    a {
-      cursor: pointer;
-    }
   }
+
+  .widget__link {
+    cursor: pointer;
+  }
+
+  .widget__text--error {
+    color: $sparkline-red;
+  }
+
+  // Statistical info about the data set, shows on hover
 
   .stats {
     position: absolute;
@@ -104,30 +77,60 @@ $sparkline-text: #333;
     background: rgba(255,255,255,0.9);
     width: 100%;
     height: 100%;
-    padding-left: 1px;
+    padding: 5px;
     box-sizing: content-box;
     opacity: 0;
     display: none;
-
-    &.in {
-      display: flex;
-      animation: sparkline-fade-in .15s ease-in forwards;
-    }
   }
 
-  dl {
-    padding: 10px;
+  .stats--in {
+    display: flex;
+    animation: sparkline-fade-in .15s ease-in forwards;
+  }
+
+  .stats__item {
+    padding: 5px;
     flex-grow: 1;
   }
 
-  dt {
+  .stats__item-title {
     font-size: 13px;
     color: $sparkline-dark-gray;
   }
 
-  dd {
+  .stats__item-value {
     font-size: 16px;
     color: $sparkline-text;
+  }
+
+  // d3 chart styling
+
+  .chart {
+    height: 60px;
+    background: url(./imgs/sparkline-grid.png);
+    background-position: -1px -1px; // don't double the top or left borders
+    background-size: 30px;
+  }
+
+  .chart__text {
+    font-size: 11px;
+  }
+
+  .chart__limit-line {
+    stroke: $sparkline-orange;
+  }
+
+  .chart__limit-text {
+    fill: $sparkline-orange;
+  }
+
+  .chart__tip, .chart__tip-text-bg {
+    fill: #333;
+    opacity: 0.95;
+  }
+
+  .chart__tip-data {
+    fill: #fff;
   }
 }
 

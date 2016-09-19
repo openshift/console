@@ -19,22 +19,22 @@
             <div style="margin: -15px -15px 15px">
               <div class="row no-gutter">
                 <div class="col-md-4">
-                  <co-sparkline-graph heading="'RAM'" query="'node_memory_Active{instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'}' | queryNodeIp:this" limit="memoryLimit" units="'binaryBytes'"></co-sparkline-graph>
+                  <co-sparkline-widget heading="'RAM'" query="'node_memory_Active{instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'}' | queryNodeIp:this" limit="memoryLimit" units="'binaryBytes'"></co-sparkline-widget>
                 </div>
                 <div class="col-md-4">
-                  <co-sparkline-graph heading="'CPU'" query="'node_load1{instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'}' | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.cpu | integerLimit"></co-sparkline-graph>
+                  <co-sparkline-widget heading="'CPU'" query="cpuQuery | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.cpu | integerLimit"></co-sparkline-widget>
                 </div>
                 <div class="col-md-4">
-                  <co-sparkline-graph heading="'Number of Pods'" query="'kubelet_running_pod_count{instance=~\'ip-__NODEIP__.+\'}' | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.pods | integerLimit"></co-sparkline-graph>
+                  <co-sparkline-widget heading="'Number of Pods'" query="'kubelet_running_pod_count{instance=~\'ip-__NODEIP__.+\'}' | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.pods | integerLimit"></co-sparkline-widget>
                 </div>
                 <div class="col-md-4">
-                  <co-sparkline-graph heading="'Network In'" query="'rate(node_network_receive_bytes{device=\'eth0\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'}[1m])' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-graph>
+                  <co-sparkline-widget heading="'Network In'" query="'rate(node_network_receive_bytes{device=\'eth0\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'}[1m])' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
                 </div>
                 <div class="col-md-4">
-                  <co-sparkline-graph heading="'Network Out'" query="'rate(node_network_transmit_bytes{device=\'eth0\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'}[1m])' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-graph>
+                  <co-sparkline-widget heading="'Network Out'" query="'rate(node_network_transmit_bytes{device=\'eth0\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'}[1m])' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
                 </div>
                 <div class="col-md-4">
-                  <co-sparkline-graph heading="'Filesystem'" query="'(node_filesystem_size{device=\'overlay\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'} - node_filesystem_avail{device=\'overlay\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'})' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-graph>
+                  <co-sparkline-widget heading="'Filesystem'" query="'(node_filesystem_size{device=\'overlay\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'} - node_filesystem_avail{device=\'overlay\',instance=~\'__NODEIP__:.+\',kubernetes_role=\'endpoint\'})' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
                 </div>
               </div>
             </div>

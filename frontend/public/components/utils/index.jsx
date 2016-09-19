@@ -13,4 +13,4 @@ export * from './status-box';
 export * from './nav-title';
 export * from './connect';
 export * from './units';
-export * from './tectonic-service-available';
+export * from './discover-service';

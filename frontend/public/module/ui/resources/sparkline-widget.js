@@ -1,8 +1,8 @@
 angular.module('bridge.ui')
-.directive('coSparklineGraph', function () {
+.directive('coSparklineWidget', function () {
   'use strict';
   return {
-    template: '<react-component name="sparklinegraph" props="props" />',
+    template: '<react-component name="sparklinewidget" props="props" />',
     restrict: 'E',
     replace: true,
     scope: {

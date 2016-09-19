@@ -1,10 +1,10 @@
-let services = {
+const services = {
   prometheus: {
     available: null,
     checking: false,
     responseQueue: [],
-    baseURL:  '/api/kubernetes/api/v1/proxy/namespaces/default/services/prometheus:9090',
-    checkURL: '/api/kubernetes/api/v1/proxy/namespaces/default/services/prometheus:9090/metrics',
+    baseURL:  'api/kubernetes/api/v1/proxy/namespaces/default/services/prometheus:9090',
+    checkURL: 'api/kubernetes/api/v1/proxy/namespaces/default/services/prometheus:9090/metrics',
     check: function(service) {
       $.ajax(service.checkURL)
         .success(respondToAll.bind(this, service, 'available'))
@@ -28,7 +28,7 @@ const check = (service, opts) => {
   }
 }
 
-export const tectonicServiceAvailable = (opts) => {
+export const discoverService = (opts) => {
   const service = services[opts.serviceName];
   if (service.available !== null) {
     if (service.available) {
