@@ -36,7 +36,8 @@ const RoleRef = ({parentNamespace, namespace, name, kind}) => {
   kind = kind.toLowerCase();
 
   const {k8s: {getQN}} = angulars;
-  const qualifiedName = getQN({metadata: {namespace: namespace || parentNamespace, name}});
+  const qnNamespace = kind !== 'clusterrole' && (namespace || parentNamespace);
+  const qualifiedName = getQN({metadata: {namespace: qnNamespace, name}});
 
   let href;
   if (kind === 'clusterrole') {
@@ -48,7 +49,7 @@ const RoleRef = ({parentNamespace, namespace, name, kind}) => {
   return <span>
     <ResourceIcon kind={kind} /> <a href={href}>{name}</a>
   </span>
-}
+};
 
 export const BindingDetails = (headerText) => ({metadata, subjects, roleRef}) => <div>
   <div className="row no-gutter">
