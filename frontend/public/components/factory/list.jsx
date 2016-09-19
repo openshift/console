@@ -54,9 +54,10 @@ const filterPropType = (props, propName, componentName) => {
 
 class Rows extends React.Component {
   render () {
+    const {k8s: {getQN}} = angulars;
     const {filters, data, selected, selectRow, Row} = this.props;
     const rows = filter(filters, data).map(object => {
-      return <Row key={object.metadata.name} {...object} onClick={selectRow} isActive={selected===object.metadata.name} />;
+      return <Row key={getQN(object)} {...object} onClick={selectRow} isActive={selected===getQN(object)} />;
     });
     return <div className="co-m-table-grid__body"> {rows} </div>;
   }
@@ -89,12 +90,12 @@ export const makeList = (name, kindstring, Header, Row) => {
       store.dispatch(actions.filterList(this.id, filterName, value));
     }
 
-    selectRow (name) {
+    selectRow (qualifiedName) {
       if (!this.id) {
         return;
       }
       const {store} = angulars;
-      store.dispatch(actions.selectInList(this.id, name));
+      store.dispatch(actions.selectInList(this.id, qualifiedName));
     }
 
     render () {
@@ -107,7 +108,7 @@ export const makeList = (name, kindstring, Header, Row) => {
           <Header />
           <Firehose ref="hose" isList={true} k8sResource={k8sResource} {...this.props}>
             <StatusBox>
-              <Rows Row={Row} selectRow={o => this.selectRow(o.metadata.name)} />
+              <Rows Row={Row} selectRow={qualifiedName => this.selectRow(qualifiedName)} />
             </StatusBox>
           </Firehose>
         </div>

@@ -18,6 +18,8 @@ import './util';
 import './command';
 import './configmaps';
 
+export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
+
 angular.module('k8s')
 .provider('k8sConfig', function() {
   'use strict';
@@ -63,7 +65,7 @@ angular.module('k8s')
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
                          k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, tpm, k8sConfigmaps) {
   'use strict';
-
+  this.getQN = getQN;
   this.probe = k8sProbe;
   this.selector = k8sSelector;
   this.selectorRequirement = k8sSelectorRequirement;
