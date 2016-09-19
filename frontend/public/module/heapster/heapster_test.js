@@ -8,19 +8,6 @@ describe('heapster', function() {
     heapster = _heapster_;
   }));
 
-  describe('rounds', function () {
-    function testRound (n, expected) {
-      it(n + ' into ' + expected, function () {
-        expect(heapster.round_(n)).toEqual(expected);
-      });
-    }
-
-    testRound(100, 100);
-    testRound(NaN, 0);
-    testRound(100.101010, 100.10);
-    testRound(.101010, .10);
-  });
-
   describe('should humananize the CPU value', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
@@ -32,8 +19,9 @@ describe('heapster', function() {
     test_(NaN, '0 Cores');
     test_(1, '0.001 Cores');
     test_(1000, '1 Core');
-    test_(1001, '1.001 Cores');
-    test_(5123, '5.123 Cores');
+    test_(1001, '1 Core');
+    test_(1011, '1.01 Cores');
+    test_(5123, '5.12 Cores');
     test_(10000, '10 Cores');
     test_(10234, '10.23 Cores');
     test_(100000, '100 Cores');
@@ -44,7 +32,7 @@ describe('heapster', function() {
     test_(10000000000, '> 1 million cores');
   });
 
-  describe('should humanizifies Memory values', function () {
+  describe('should humananize Memory values', function () {
     function test_ (value, expected) {
       it(value + ' into ' + expected, function () {
         expect(heapster.HUMAN_VALUES_.Memory(value)).toEqual(expected);

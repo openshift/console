@@ -1,4 +1,5 @@
 'use strict';
+import units from '../../components/utils/units';
 
 const URL = 'api/kubernetes/api/v1/proxy/namespaces/kube-system/services/heapster/api/v1/model';
 
@@ -29,41 +30,25 @@ const HUMAN_VALUES = {
       return '> 1 million cores';
     }
 
-    let conversion = unitConversion(value, '', ['k', 'm']);
-
-    if (conversion.value >= 10) {
-      conversion.value = round(conversion.value);
+    let useRound = true;
+    if (value < 1) {
+      useRound = false;
     }
 
-    return `${conversion.value}${conversion.unit} ${(conversion.value === 1 && conversion.unit.length === 0) ? 'Core' : 'Cores'}`;
+    let conversion = units.humanize(value, 'numeric', useRound);
+
+    return `${conversion.string} ${(conversion.value === 1 && conversion.unit.length === 0) ? 'Core' : 'Cores'}`;
   },
   Memory: (value) => {
     if (!isFinite(value)) {
       value = 0;
     }
 
-    const conversion = unitConversion(value, 'B', ['KB', 'MB', 'GB', 'TB', 'PB', 'EB']);
+    const conversion = units.humanize(value, 'decimalBytes', true);
 
-    return `${round(conversion.value)} ${conversion.unit}`;
+    return `${conversion.string}`;
   }
 };
-
-function unitConversion(value, initialUnit, unitArray) {
-  let unit = initialUnit;
-  let units = unitArray.slice();
-  while (value >= 1000 && units.length > 0) {
-    value = value / 1000;
-    unit = units.shift();
-  }
-  return { value, unit }
-}
-
-function round (value) {
-  if (!isFinite(value)) {
-    return 0;
-  }
-  return parseInt(value * 100, 10) / 100;
-}
 
 function metricFromData (responses) {
   return METRICS
@@ -91,7 +76,6 @@ angular.module('heapster', ['lodash'])
 
   // expose for testing :(
   this.HUMAN_VALUES_ = HUMAN_VALUES;
-  this.round_ = round;
   this.metricFromData_ = metricFromData;
 
   this.namespaceMetrics = (namespace) => {
@@ -116,7 +100,7 @@ angular.module('heapster', ['lodash'])
         m.humanValue = HUMAN_VALUES[key](m.value);
       });
       const clusterMetric = clusterMetrics[key];
-      metric.percentage = round(100 * metric.usage.value / clusterMetric.usage.value);
+      metric.percentage = units.round(100 * metric.usage.value / clusterMetric.usage.value);
       metric.clusterTotal = HUMAN_VALUES[key](clusterMetric.usage.value);
     });
     return namespaceMetrics;
