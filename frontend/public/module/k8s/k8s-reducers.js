@@ -115,9 +115,9 @@ export default (state, action)  => {
       }
       // eslint-disable-next-line no-console
       console.info(`loaded ${id}`);
-      state = state.merge({
+      state = state.mergeDeep({
         [id]: {loaded: true, loadError: ''}
-      })
+      });
       newList = loadList(list, k8sObjects);
       break;
     case types.deleteFromList:
@@ -137,7 +137,7 @@ export default (state, action)  => {
       if (!list) {
         return state;
       }
-      return state.merge({
+      return state.mergeDeep({
         [id]: {
           'loadError': k8sObjects,
           'data': {},
