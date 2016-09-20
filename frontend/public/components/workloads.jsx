@@ -1,6 +1,5 @@
 import React from 'react';
 
-import withPodList from './withPodList';
 import {angulars} from './react-wrapper';
 import {Cog, Selector, LabelList, ResourceIcon} from './utils'
 
@@ -20,7 +19,7 @@ const cogOfKind = (kind) => ({o}) => {
 }
 
 const rowOfKindstring = (name) => {
-  const Row = (o) => {
+  return o => {
     const kind = angulars.kinds[name];
     const CogOfKind = cogOfKind(kind);
     return (
@@ -34,15 +33,16 @@ const rowOfKindstring = (name) => {
           <LabelList kind={kind.id} labels={o.metadata.labels}  />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-          {o.status.replicas || 0} of {o.spec.replicas} pods
+          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/pods`} title={"pods"}>
+            {o.status.replicas || 0} of {o.spec.replicas} pods
+          </a>
         </div>
         <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
           <Selector selector={o.spec.selector}></Selector>
         </div>
       </div>
     );
-  }
-  return withPodList(Row);
+  };
 }
 
 export {Header, rowOfKindstring};

@@ -7,7 +7,7 @@
   </div>
 
   <div cos-tristate="nodes" cos-tristate-error="loadError" class="co-m-table-grid__body">
-    <div class="row co-m-table-grid--clickable" ng-repeat-start="n in filteredNodes track by n.metadata.uid" ng-click="open = !open">
+    <div class="row" ng-repeat-start="n in filteredNodes track by n.metadata.uid" ng-click="open = !open">
       <div class="middler">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
           <co-node-cog node="n"></co-node-cog>
@@ -36,7 +36,6 @@
       </div>
     </div>
     <div ng-repeat-end>
-      <co-generic-k8s-list ng-if="open" component="'Pods'" field-selector="getPodFieldSelector(n)"></co-generic-k8s-list>
     </div>
 
     <co-loader class="cos-tristate-show-loading"></co-loader>
