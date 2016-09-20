@@ -87,6 +87,7 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 
 See [CONTRIBUTING](CONTRIBUTING.md) for workflow & convention details.
 
+See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
