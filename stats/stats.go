@@ -12,7 +12,7 @@ import (
 
 	"github.com/coreos/pkg/capnslog"
 
-	genStats "github.com/coreos-inc/bridge/statsGenerator"
+	genStats "github.com/coreos-inc/bridge/stats-generator"
 )
 
 var (

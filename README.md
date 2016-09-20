@@ -1,27 +1,29 @@
-Bridge
-======
+Tectonic Console
+================
+
+Codename: "Bridge"
 
 [![Build Status](https://jenkins-tectonic.prod.coreos.systems/buildStatus/icon?job=console-build)](https://jenkins-tectonic.prod.coreos.systems/job/console-build/)
 
-The Tectonic Console
-
 [quay.io/coreos/tectonic-console](https://quay.io/repository/coreos/tectonic-console?tab=tags)
 
-Bridge consists of a frontend webapp and a backend service which serves the following purposes:
+Console consists of a frontend webapp and a backend service which serves the following purposes:
 - Proxy the Kubernetes API
 - Provide additional non-Kubernetes APIs for interacting with the cluster
 - Serve all frontend static assets
-- User Authentication (TBD)
+- User Authentication
+- Some additional proxying to the Dex API
 
 ## Quickstart
 
 ### Deps:
 
-1. nodejs >= 6.0
-2. npm >= 3 (probably installed with node)
-3. go >= 1.6
+1. nodejs >= 6.0 & npm >= 3 (use of nvm is recommended)
+2. go >= 1.6
+3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release)
 
 ### Build everything:
+
 ```
 ./build
 ```
@@ -29,7 +31,7 @@ Bridge consists of a frontend webapp and a backend service which serves the foll
 Backend binaries are output to `/bin`.
 
 
-### Configure the application to run
+### Configure the application
 
 If you've got a working `kubectl` on your path, you can run the application with
 
@@ -55,6 +57,7 @@ kubectl describe secrets/<secret-id-obtained-previously>
 Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable when running Bridge.
 
 ## Docker
+
 The `builder-run` script will run any command from a docker container to ensure a consistent build environment.
 For example to build with docker run:
 ```
@@ -70,6 +73,9 @@ your new image. Our practice is to manually tag images builder images in the for
 `Builder-v$SEMVER` once we're happy with the state of the push.
 
 ### Compile, Build, & Push Docker Image
+
+(Almost no reason to ever do this manually, Jenkins handles this automation)
+
 Build a docker image, tag it with the current git sha, and pushes it to the `quay.io/coreos/tectonic-console` repo.
 
 Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercfg` file.
@@ -78,24 +84,30 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 ```
 
 ## Hacking
-### Project Dependencies
-go, glide, nodejs, gulp
+
+See [CONTRIBUTING](CONTRIBUTING.md) for workflow & convention details.
+
+See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
+
+### Dev Dependencies
+
+go, glide, nodejs/npm, kubectl
 
 ### Frontend Development
 
+All frontend build tasks are defined in `/frontend/gulpfile.js` and are aliased to `npm run gulp`
+
 #### Install Dependencies
+
 The frontend uses node and npm to compile JS/JSX at build time. To install the build tools and dependencies:
 ```
 npm install
 ```
 
 JS is compiled into one of two bundles - one strictly for external dependencies and the other for our source.  These bundles are not commited to git.  You must run this command once, and every time the dependencies change.
-#### Build External Dependencies
-```
-npm run gulp js-deps
-```
 
 #### Interactive Development
+
 The following build task will watch the source code for changes and compile automatically.  You must reload the page!
 ```
 npm run dev
@@ -107,19 +119,8 @@ which will start both the backend server and interactive dev mode in a single pr
 goreman start
 ```
 
-#### Update Dependencies
-Dependencies should be pinned to an exact version (eg, no ^).
-
-```
-rm npm-shrinkwrap
-npm install --save the-dependency
-npm shrinkwrap
-npm run gulp js-deps
-```
-
-All frontend build tasks are defined in `/frontend/gulpfile.js` and are aliased to `npm run gulp`
-
 ### Tests
+
 Run all tests:
 ```
 ./test
@@ -136,16 +137,34 @@ Run frontend tests:
 ```
 
 ### Dependency Management
-Add new frontend dependencies:
- 1. `npm install --save` the dependency
- 2. commit the altered `package.json`
+
+Dependencies should be pinned to an exact semver, sha, or git tag (eg, no ^).
+
+#### Backend
 
 Add new backend dependencies:
- 1. Edit glide.yaml
+ 1. Edit `glide.yaml`
  2. `glide update -s -v -u`
 
-### API Schema
-If changes are made to the `schema/v1.json` file you must regenerate the go bindings:
+Update existing backend dependencies:
+ 1. Edit the `glide.yaml` file to the desired verison (most likely a git hash)
+ 2. Run `glide update -u github.com/$ORG/$REPO`
+ 3. Verify update was successful. `glide.lock` will have been updated to reflect the changes to `glide.yaml` and the package will have been updated in `vendor`.
+
+#### Frontend
+
+Add new frontend dependencies:
 ```
-./schema/generator
+rm npm-shrinkwrap
+npm install --save the-dependency
+npm shrinkwrap
+npm run gulp js-deps
+```
+
+Update existing frontend dependencies:
+```
+rm npm-shrinkwrap
+npm install --save the-dependency
+npm shrinkwrap
+npm run gulp js-deps
 ```
