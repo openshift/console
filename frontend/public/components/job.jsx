@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-import withPodList from './withPodList';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceIcon, Selector, Timestamp, detailsPage} from './utils'
 
@@ -27,7 +26,7 @@ const JobRow = (job) => {
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
         <JobCog job={job} />
         <ResourceIcon kind={angulars.kinds.JOB.id}></ResourceIcon>
-        <a href={`ns/${job.metadata.namespace}/${angulars.kinds.JOB.plural}/${job.metadata.name}/details`} title={job.metadata.uid}>
+        <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/details`} title={job.metadata.uid}>
           {job.metadata.name}
         </a>
       </div>
@@ -35,7 +34,9 @@ const JobRow = (job) => {
         <LabelList kind={angulars.kinds.JOB.id} labels={job.metadata.labels}  />
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
-        {job.status.succeeded || 0} of {completions}
+        <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
+          {job.status.succeeded || 0} of {completions}
+        </a>
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
         {type}
@@ -120,6 +121,6 @@ const Details = (job) => <div>
 const {factory: {pods}} = detailsPage;
 const pages = [{href: 'details', name: 'Details', component: Details}, pods()];
 const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'JOB', pages);
-const JobsList = makeList('Jobs', 'JOB', Header, withPodList(JobRow));
+const JobsList = makeList('Jobs', 'JOB', Header, JobRow);
 const JobsPage = makeListPage('JobsPage', 'JOB', JobsList);
 export {JobsList, JobsPage, JobsDetailsPage};

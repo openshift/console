@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-import withPodList from './withPodList';
 import {makeListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceIcon, Selector} from './utils'
 
@@ -52,7 +51,7 @@ const ServiceRow = (s) => <div className="row co-resource-list__item">
   </div>
 </div>
 
-const Services = makeList('Services', 'SERVICE', ServiceHeader, withPodList(ServiceRow));
+const Services = makeList('Services', 'SERVICE', ServiceHeader, ServiceRow);
 const ServicesPage = makeListPage('ServicesPage', 'SERVICE', Services);
 
 export {Services, ServicesPage};
