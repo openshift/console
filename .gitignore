@@ -5,3 +5,4 @@
 /frontend/public/bower_components
 /frontend/node_modules
 /frontend/public/dist
+/frontend/npm-debug.log
