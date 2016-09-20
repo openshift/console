@@ -113,7 +113,11 @@ angular.module('bridge.page')
     'revoke-refresh-token': {
       templateUrl: '/static/page/modals/revoke-refresh-token.html',
       controller: 'RevokeRefreshTokenCtrl',
-    }
+    },
+    'reactive-modal': {
+      templateUrl: '/static/page/modals/reactive-modal.html',
+      controller: 'ReactiveModalCtrl',
+    },
   };
 
   return {
