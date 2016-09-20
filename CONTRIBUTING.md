@@ -1,25 +1,14 @@
 # How to Contribute
 
-CoreOS projects are [Apache 2.0 licensed](LICENSE) and accept contributions via
-GitHub pull requests.  This document outlines some of the conventions on
+This document outlines some of the conventions on
 development workflow, commit message formatting, contact points and other
 resources to make it easier to get your contribution accepted.
 
-# Certificate of Origin
-
-By contributing to this project you agree to the Developer Certificate of
-Origin (DCO). This document was created by the Linux Kernel community and is a
-simple statement that you, as a contributor, have the legal right to make the
-contribution. See the [DCO](DCO) file for details.
-
 # Email and Chat
 
-The project currently uses the general CoreOS email list and IRC channel:
-- Email: [coreos-dev](https://groups.google.com/forum/#!forum/coreos-dev)
-- IRC: #[coreos](irc://irc.freenode.org:6667/#coreos) IRC channel on freenode.org
-
-Please avoid emailing maintainers found in the MAINTAINERS file directly. They
-are very busy and read the mailing lists.
+The project currently uses the general Tectonic Team email list and Slack channel:
+- Email: team-tectonic@coreos.com
+- Slack: #team-tectonic
 
 ## Getting Started
 
@@ -38,7 +27,6 @@ This is a rough outline of what a contributor's workflow looks like:
 - Make sure the tests pass, and add any new tests as appropriate.
 - Submit a pull request to the original repository.
 
-Thanks for your contributions!
 
 ### Format of the Commit Message
 
