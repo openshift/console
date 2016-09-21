@@ -37,7 +37,7 @@ const ServiceHeader = () => <div className="row co-m-table-grid__head">
 const ServiceRow = (s) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
     <ServiceCog s={s}></ServiceCog>
-    <ResourceIcon kind="service"></ResourceIcon>
+    <ResourceIcon kind="service" />
     <a href={`ns/${s.metadata.namespace}/services/${s.metadata.name}/details`}>{s.metadata.name}</a>
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
@@ -93,14 +93,14 @@ const ServicePortMapping = ({s}) => {
               {portObj.nodePort && <p className="co-text-node">Node Port</p>}
             </div>
             <div className="col-xs-3 co-text-service">
-              <p><span className="co-m-resource-icon co-m-resource-icon--service">S</span><span>{portObj.port}</span></p>
-              {portObj.nodePort && <p className="co-text-node"><span className="co-m-resource-icon co-m-resource-icon--node">N</span><span>{portObj.nodePort}</span></p>}
+              <p><ResourceIcon kind="service" /><span>{portObj.port}</span></p>
+              {portObj.nodePort && <p className="co-text-node"><ResourceIcon kind="node" /><span>{portObj.nodePort}</span></p>}
             </div>
             <div className="col-xs-3">
               <p>{portObj.protocol}</p>
             </div>
             <div className="col-xs-3 co-text-pod">
-              <p><span className="co-m-resource-icon co-m-resource-icon--pod">P</span><span>{portObj.targetPort}</span></p>
+              <p><ResourceIcon kind="pod" /><span>{portObj.targetPort}</span></p>
             </div>
           </div>
         </div>
