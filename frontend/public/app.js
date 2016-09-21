@@ -121,16 +121,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/services/new-service.html',
     title: 'Create New Service',
   });
-  r('/ns/:ns/services/:name', {
-    controller: 'ServiceCtrl',
-    templateUrl: '/static/page/services/service.html',
-    title: 'Service',
-  });
-  r('/ns/:ns/services/:name/pods', {
-    controller: 'ServicePodsCtrl',
-    templateUrl: '/static/page/services/pods.html',
-    title: 'Service Pods',
-  });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicationcontrollers');
   r('/ns/:ns/replicationcontrollers/new', {
