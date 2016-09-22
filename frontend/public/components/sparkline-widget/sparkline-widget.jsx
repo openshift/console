@@ -11,6 +11,7 @@ import { register } from '../react-wrapper';
 import { Loading } from '../utils';
 import units from '../utils/units';
 import { discoverService } from '../../modules/k8s/discover-service';
+import { coFetch, coFetchUtils } from '../utils';
 
 const states = {
   LOADING: 'loading',
@@ -94,8 +95,13 @@ class SparklineWidget extends React.Component {
     const end = Date.now();
     const start = end - (timespan);
 
-    $.ajax(`${basePath}/api/v1/query_range?query=${this.props.query}&start=${start / 1000}&end=${end / 1000}&step=30`)
-      .done((json) => {
+    coFetch(`${basePath}/api/v1/query_range?query=${this.props.query}&start=${start / 1000}&end=${end / 1000}&step=30`)
+      .then((response) => {
+        this.updateInProgress = false;
+        return response;
+      })
+      .then(coFetchUtils.parseJson)
+      .then((json) => {
         if (!this._isMounted) {
           return;
         }
@@ -114,23 +120,25 @@ class SparklineWidget extends React.Component {
         }
         this.updateData(json.data.result[0].values);
       })
-      .fail((jqXHR, textStatus) => {
+      .catch(() => {
         if (!this._isMounted) {
           return;
         }
 
-        if (textStatus === 'timeout') {
-          this.setState({
-            state: states.TIMEDOUT
-          });
-        }
+        // TODO(stuart): whatwg-fetch specifies timeout as a possible
+        // termination reason, however fetch() hasn't implemented it.
+        // Once that's made available, re-enable our TIMEDOUT state
+        // https://fetch.spec.whatwg.org/#responses
+        // if (error.message === 'timeout') {
+        //   this.setState({
+        //     state: states.TIMEDOUT
+        //   });
+        // }
+
         this.setState({
           state: states.BROKEN
         });
       })
-      .always(() => {
-        this.updateInProgress = false;
-      });
   }
 
   updateData(newData) {

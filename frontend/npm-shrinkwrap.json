@@ -5291,6 +5291,11 @@
       "from": "void-elements@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/void-elements/-/void-elements-2.0.1.tgz"
     },
+    "whatwg-fetch": {
+      "version": "1.0.0",
+      "from": "whatwg-fetch@latest",
+      "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-1.0.0.tgz"
+    },
     "which": {
       "version": "1.2.10",
       "from": "which@>=1.2.9 <2.0.0",
@@ -5335,6 +5340,11 @@
       "version": "1.1.0",
       "from": "ws@1.1.0",
       "resolved": "https://registry.npmjs.org/ws/-/ws-1.1.0.tgz"
+    },
+    "xmlhttprequest": {
+      "version": "1.8.0",
+      "from": "xmlhttprequest@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/xmlhttprequest/-/xmlhttprequest-1.8.0.tgz"
     },
     "xmlhttprequest-ssl": {
       "version": "1.5.1",

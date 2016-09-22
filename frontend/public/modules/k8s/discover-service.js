@@ -4,6 +4,8 @@
 // Results are cached, so we don't have to keep re-determining availability with each request.
 // If more than one service is found, it chooses the first.
 
+import { coFetch, coFetchUtils } from '../../components/utils';
+
 const k8sBasePath = 'api/kubernetes/api/v1';
 const cacheExpireThreshold = 2 * 60 * 1000; // 2 minutes
 const serviceCache = {};
@@ -73,24 +75,25 @@ const apiPath = (service, k8sService) => {
 const check = (service) => {
   const namespaceQuery = service.namespace ? `/namespaces/${service.namespace}` : '';
   const labelQuery = service.labelSelector ? `?labelSelector=${encodeURIComponent(service.labelSelector)}` : '';
-  $.ajax(`${k8sBasePath}${namespaceQuery}/services/${labelQuery}`)
-    .done((data) => {
-      if (!data || !data.items || data.items.length < 1) {
+  coFetch(`${k8sBasePath}${namespaceQuery}/services/${labelQuery}`)
+    .then(coFetchUtils.parseJson)
+    .then((json) => {
+      if (!json || !json.items || json.items.length < 1) {
         propogateCallbackQueue(service, 'unavailable');
         return;
       }
 
-      service.apiPath = apiPath(service, data.items[0]);
+      service.apiPath = apiPath(service, json.items[0]);
       if (!service.apiPath) {
         propogateCallbackQueue(service, 'unavailable');
         return;
       }
 
-      $.ajax(service.apiPath + service.healthCheckPath)
-        .done(propogateCallbackQueue.bind(this, service, 'available'))
-        .fail(propogateCallbackQueue.bind(this, service, 'unavailable'));
+      coFetch(service.apiPath + service.healthCheckPath)
+        .then(propogateCallbackQueue.bind(this, service, 'available'))
+        .catch(propogateCallbackQueue.bind(this, service, 'unavailable'));
     })
-    .fail(propogateCallbackQueue.bind(this, service, 'unavailable'));
+    .catch(propogateCallbackQueue.bind(this, service, 'unavailable'));
 }
 
 // Options:

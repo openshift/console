@@ -35,7 +35,8 @@
     "react-dom": "15.2.1",
     "react-redux": "4.4.5",
     "redux": "3.5.2",
-    "redux-thunk": "2.1.0"
+    "redux-thunk": "2.1.0",
+    "whatwg-fetch": "1.0.0"
   },
   "devDependencies": {
     "angular-mocks": "^1.5.7",
