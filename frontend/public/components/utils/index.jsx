@@ -13,4 +13,3 @@ export * from './status-box';
 export * from './nav-title';
 export * from './connect';
 export * from './units';
-export * from './discover-service';

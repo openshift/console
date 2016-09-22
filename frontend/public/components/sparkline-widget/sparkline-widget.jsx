@@ -8,8 +8,9 @@ import React from 'react';
 import * as d3 from 'd3';
 import ReactChart from './react-chart';
 import { register } from '../react-wrapper';
-import { Loading, discoverService } from '../utils';
+import { Loading } from '../utils';
 import units from '../utils/units';
+import { discoverService } from '../../modules/k8s/discover-service';
 
 const states = {
   LOADING: 'loading',
@@ -74,7 +75,9 @@ class SparklineWidget extends React.Component {
     this.updateInProgress = true;
 
     discoverService({
-      serviceName: 'prometheus',
+      namespace: 'default',
+      labelSelector: 'name=prometheus',
+      healthCheckPath: '/metrics',
       available: this.doUpdate.bind(this),
       unavailable: this.doUnavailable.bind(this)
     });
@@ -82,13 +85,12 @@ class SparklineWidget extends React.Component {
 
   doUnavailable() {
     this.updateInProgress = false;
-    clearInterval(this.interval);
     this.setState({
       state: states.NOTAVAILABLE
     });
   }
 
-  doUpdate(baseURL) {
+  doUpdate(basePath) {
     const end = Date.now();
     const start = end - (timespan);
 
