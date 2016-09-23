@@ -138,16 +138,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/replicationcontrollers/replicationcontroller-sysevents.html',
     title: 'Replication Controller Events',
   });
-  r('/ns/:ns/replicationcontrollers/:name', {
-    controller: 'ReplicationcontrollerCtrl',
-    templateUrl: '/static/page/replicationcontrollers/replicationcontroller.html',
-    title: 'Replication Controller',
-  });
-  r('/ns/:ns/replicationcontrollers/:name/pods', {
-    controller: 'ReplicationcontrollerPodsCtrl',
-    templateUrl: '/static/page/replicationcontrollers/pods.html',
-    title: 'Replication Controller Pods',
-  });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('daemonsets');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('jobs');
@@ -179,16 +169,6 @@ angular.module('bridge', [
     controller: 'EditReplicaSetCtrl',
     templateUrl: '/static/page/replicasets/edit-replicaset.html',
     title: 'Edit Replica Set',
-  });
-  r('/ns/:ns/replicasets/:name', {
-    controller: 'ReplicaSetCtrl',
-    templateUrl: '/static/page/replicasets/replicaset.html',
-    title: 'Replica Set',
-  });
-  r('/ns/:ns/replicasets/:name/pods', {
-    controller: 'ReplicaSetPodsCtrl',
-    templateUrl: '/static/page/replicasets/pods.html',
-    title: 'Replica Set Pods',
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('deployments');
