@@ -18,7 +18,7 @@ const cacheExpired = (service) => {
   return service && service.lastCheckedAt && Date.now() - service.lastCheckedAt >= cacheExpireThreshold;
 }
 
-const propogateCallback = (opts, service) => {
+const propagateCallback = (opts, service) => {
   if (service.available) {
     opts.available(service.apiPath);
   } else {
@@ -26,7 +26,7 @@ const propogateCallback = (opts, service) => {
   }
 }
 
-const propogateCallbackQueue = (service, type) => {
+const propagateCallbackQueue = (service, type) => {
   service.available = type === 'available';
   service.discovering = false;
   service.lastCheckedAt = Date.now();
@@ -79,21 +79,21 @@ const check = (service) => {
     .then(coFetchUtils.parseJson)
     .then((json) => {
       if (!json || !json.items || json.items.length < 1) {
-        propogateCallbackQueue(service, 'unavailable');
+        propagateCallbackQueue(service, 'unavailable');
         return;
       }
 
       service.apiPath = apiPath(service, json.items[0]);
       if (!service.apiPath) {
-        propogateCallbackQueue(service, 'unavailable');
+        propagateCallbackQueue(service, 'unavailable');
         return;
       }
 
       coFetch(service.apiPath + service.healthCheckPath)
-        .then(propogateCallbackQueue.bind(this, service, 'available'))
-        .catch(propogateCallbackQueue.bind(this, service, 'unavailable'));
+        .then(propagateCallbackQueue.bind(this, service, 'available'))
+        .catch(propagateCallbackQueue.bind(this, service, 'unavailable'));
     })
-    .catch(propogateCallbackQueue.bind(this, service, 'unavailable'));
+    .catch(propagateCallbackQueue.bind(this, service, 'unavailable'));
 }
 
 // Options:
@@ -115,7 +115,7 @@ export const discoverService = (opts) => {
   if (cachedService && cachedService.lastCheckedAt > 0) {
     // this service was already found, don't block incoming requests.
     // if the cache expired, update it in the background
-    propogateCallback(opts, cachedService);
+    propagateCallback(opts, cachedService);
     if (cacheExpired(cachedService) && !cachedService.discovering) {
       cachedService.discovering = true;
       check(cachedService);
