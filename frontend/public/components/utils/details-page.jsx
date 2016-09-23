@@ -2,6 +2,7 @@ import React from 'react';
 
 import yamlize from '../../module/service/yamlize';
 import {PodsPage} from '../pod';
+import {LabelList, Selector, Timestamp} from '../utils'
 
 export const detailsPage = (Component) => (props) =>
   <div className="row row-gutter">
@@ -22,3 +23,31 @@ detailsPage.factory = {
     component: detailsPage((resource) => <div className="col-xs-12"><div className="co-m-pane__body"><pre className="co-pre-wrap">{yamlize(resource)}</pre></div></div>),
   }),
 }
+
+export const ResourceHeading = ({resourceName}) => <div>
+  <div className="co-m-pane__heading">
+    <h1 className="co-m-pane__title">{resourceName} Overview</h1>
+  </div>
+</div>
+
+export const ResourceSummary = ({resource}) => <div>
+  <dl>
+    <dt>Name</dt>
+    <dd>{resource.metadata.name || '-'}</dd>
+    <dt>Labels</dt>
+    <dd><LabelList kind="replicaset" expand="true" labels={resource.metadata.labels} /></dd>
+    <dt>Pod Selector</dt>
+    <dd><Selector selector={resource.spec.selector} /></dd>
+    <dt>Created At</dt>
+    <dd><Timestamp timestamp={resource.metadata.creationTimestamp} /></dd>
+  </dl>
+</div>
+
+export const ResourcePodCount = ({resource}) => <div>
+  <dl>
+    <dt>Current Count</dt>
+    <dd>{resource.status.replicas || 0}</dd>
+    <dt>Desired Count</dt>
+    <dd>{resource.spec.replicas || 0}</dd>
+  </dl>
+</div>
