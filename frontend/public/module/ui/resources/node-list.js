@@ -42,7 +42,12 @@ angular.module('bridge.ui')
 
       new Firehose(k8s.nodes)
         .watchList()
-        .bindScope($scope);
+        .bindScope($scope, null, state => {
+          if (!state.loaded) {
+            return;
+          }
+          $scope.nodes = state.nodes;
+        });
 
       const filterNodes = () => {
         const trusted = $scope.trusted;
