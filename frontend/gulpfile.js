@@ -157,8 +157,13 @@ gulp.task('templates', () => {
     .pipe(gulp.dest(distDir));
 });
 
+gulp.task('fonts', () => {
+  return gulp.src('public/fonts/*')
+    .pipe(gulp.dest(distDir + '/fonts'));
+});
+
 // Copy any static assets.
-gulp.task('assets', () => {
+gulp.task('assets', ['fonts'], () => {
   return gulp.src('public/imgs/*')
     .pipe(gulp.dest(distDir + '/imgs'));
 });
@@ -201,7 +206,6 @@ gulp.task('html', ['sha'], () => {
       var h = {
         'js':  `static/build.${CURRENT_SHA}.min.js`,
         'css': `static/build.${CURRENT_SHA}.css`,
-        'css-coreos-web':  'static/lib/coreos-web/coreos.css'
       };
       if (process.env.NODE_ENV !== 'production') {
         h['analytics'] = '';

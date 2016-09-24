@@ -7,6 +7,11 @@ import { combineReducers } from 'redux';
 
 import './components/react-wrapper';
 
+// Make moment available via angular DI.
+angular.module('moment', []).factory('moment', function($window) {
+  return $window.moment;
+});
+
 // The main app module.
 angular.module('bridge', [
   // angular deps
@@ -34,6 +39,7 @@ angular.module('bridge', [
   'bridge.react-wrapper',
   'core.pkg',
   'heapster',
+  'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
                  configSvcProvider, errorMessageSvcProvider, flagSvcProvider,
