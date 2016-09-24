@@ -24,7 +24,7 @@ const ServiceCog = ({s}) => {
   });
 
   const options = [ModifyPodSelector, ServicePorts, ModifyLabels, Delete].map(f => f(angulars.kinds.SERVICE, s));
-  return <Cog options={options} size="small" anchor="left"></Cog>;
+  return <Cog options={options} size="small" anchor="left" />;
 }
 
 const ServiceHeader = () => <div className="row co-m-table-grid__head">
@@ -36,18 +36,18 @@ const ServiceHeader = () => <div className="row co-m-table-grid__head">
 
 const ServiceRow = (s) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
-    <ServiceCog s={s}></ServiceCog>
+    <ServiceCog s={s} />
     <ResourceIcon kind="service" />
     <a href={`ns/${s.metadata.namespace}/services/${s.metadata.name}/details`}>{s.metadata.name}</a>
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
-    <LabelList kind="service" labels={s.metadata.labels}></LabelList>
+    <LabelList kind="service" labels={s.metadata.labels} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
-     <Selector selector={s.spec.selector}></Selector>
+    <Selector selector={s.spec.selector} />
   </div>
   <div className="col-lg-3 col-md-2 hidden-sm hidden-xs">
-    <ServiceIPLink s={s}></ServiceIPLink>
+    <ServiceIPLink s={s} />
   </div>
 </div>
 
@@ -76,79 +76,73 @@ const ServiceAddress = ({s}) => {
   </div>
 }
 
-const ServicePortMapping = ({s}) => {
-  return <div>
-    <div className="row co-ip-header">
-      <div className="col-xs-3">Name</div>
-      <div className="col-xs-3">Port</div>
-      <div className="col-xs-3">Protocol</div>
-      <div className="col-xs-3">Pod Port or Name</div>
-    </div>
-    <div className="rows">
-      {s.spec.ports.map((portObj, i) => {
-        return <div className="co-ip-row" key={i}>
-          <div className="row">
-            <div className="col-xs-3 co-text-service">
-              <p>{portObj.name || '-'}</p>
-              {portObj.nodePort && <p className="co-text-node">Node Port</p>}
-            </div>
-            <div className="col-xs-3 co-text-service">
-              <p><ResourceIcon kind="service" /><span>{portObj.port}</span></p>
-              {portObj.nodePort && <p className="co-text-node"><ResourceIcon kind="node" /><span>{portObj.nodePort}</span></p>}
-            </div>
-            <div className="col-xs-3">
-              <p>{portObj.protocol}</p>
-            </div>
-            <div className="col-xs-3 co-text-pod">
-              <p><ResourceIcon kind="pod" /><span>{portObj.targetPort}</span></p>
-            </div>
+const ServicePortMapping = ({s}) => <div>
+  <div className="row co-ip-header">
+    <div className="col-xs-3">Name</div>
+    <div className="col-xs-3">Port</div>
+    <div className="col-xs-3">Protocol</div>
+    <div className="col-xs-3">Pod Port or Name</div>
+  </div>
+  <div className="rows">
+    {s.spec.ports.map((portObj, i) => {
+      return <div className="co-ip-row" key={i}>
+        <div className="row">
+          <div className="col-xs-3 co-text-service">
+            <p>{portObj.name || '-'}</p>
+            {portObj.nodePort && <p className="co-text-node">Node Port</p>}
+          </div>
+          <div className="col-xs-3 co-text-service">
+            <p><ResourceIcon kind="service" /><span>{portObj.port}</span></p>
+            {portObj.nodePort && <p className="co-text-node"><ResourceIcon kind="node" /><span>{portObj.nodePort}</span></p>}
+          </div>
+          <div className="col-xs-3">
+            <p>{portObj.protocol}</p>
+          </div>
+          <div className="col-xs-3 co-text-pod">
+            <p><ResourceIcon kind="pod" /><span>{portObj.targetPort}</span></p>
           </div>
         </div>
-      })}
+      </div>
+    })}
+  </div>
+</div>
+
+const Details = (s) => <div className="row no-gutter">
+  <div className="col-sm-6">
+    <ResourceHeading resourceName={"Service"} />
+    <div className="co-m-pane__body-group">
+      <div className="co-m-pane__body-section--bordered">
+        <dl>
+          <dt>Service Name</dt>
+          <dd>{s.metadata.name || '-'}</dd>
+          <dt>Service Labels</dt>
+          <dd><LabelList kind="service" labels={s.metadata.labels} /></dd>
+          <dt>Pod Selector</dt>
+          <dd><Selector selector={s.spec.selector} /></dd>
+          <dt>Session Affinity</dt>
+          <dd>{s.spec.sessionAffinity || '-'}</dd>
+          <dt>Created At</dt>
+          <dd><Timestamp timestamp={s.metadata.creationTimestamp} /></dd>
+        </dl>
+      </div>
     </div>
   </div>
-}
-
-const Details = (s) => <div>
-  <div className="row no-gutter">
-    <div className="col-sm-6">
-      <div className="co-m-pane__heading">
-        <h1 className="co-m-pane__title">Service Overview</h1>
-      </div>
-      <div className="co-m-pane__body-group">
-        <div className="co-m-pane__body-section--bordered">
-          <dl>
-            <dt>Service Name</dt>
-            <dd>{s.metadata.name || '-'}</dd>
-            <dt>Service Labels</dt>
-            <dd><LabelList kind="service" expand="true" labels={s.metadata.labels} /></dd>
-            <dt>Pod Selector</dt>
-            <dd><Selector selector={s.spec.selector}></Selector></dd>
-            <dt>Session Affinity</dt>
-            <dd>{s.spec.sessionAffinity || '-'}</dd>
-            <dt>Created At</dt>
-            <dd><Timestamp timestamp={s.metadata.creationTimestamp} /></dd>
-          </dl>
-        </div>
-      </div>
+  <div className="col-sm-6">
+    <div className="co-m-pane__heading">
+      <h1 className="co-m-pane__title">Service Routing</h1>
     </div>
-    <div className="col-sm-6">
-      <div className="co-m-pane__heading">
-        <h1 className="co-m-pane__title">Service Routing</h1>
-      </div>
-      <div className="co-m-pane__body-group">
-        <div className="co-m-pane__body-section--bordered">
-          <dl>
-            <dt>Service Address</dt>
-            <dd className="service-ips">
-              <ServiceAddress s={s}></ServiceAddress>
-            </dd>
-            <dt>Service Port Mapping</dt>
-            <dd className="service-ips">
-              <ServicePortMapping s={s}></ServicePortMapping>
-            </dd>
-          </dl>
-        </div>
+    <div className="co-m-pane__body-group">
+      <div className="co-m-pane__body-section--bordered">
+        <dl>
+          <dt>Service Address</dt>
+          <dd className="service-ips">
+            <ServiceAddress s={s} />
+          </dd>
+          <dt>Service Port Mapping</dt>
+          <dd className="service-ips">
+            <ServicePortMapping s={s} />
+          </dd>
+        </dl>
       </div>
     </div>
   </div>

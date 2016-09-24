@@ -100,7 +100,7 @@ const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
           <dt>Status</dt>
           <dd>{getHPAStatus(horizontalpodautoscaler)}</dd>
           <dt>Labels</dt>
-          <dd><LabelList kind="horizontalpodautoscaler" labels={horizontalpodautoscaler.metadata.labels} expand={true} /></dd>
+          <dd><LabelList kind="horizontalpodautoscaler" labels={horizontalpodautoscaler.metadata.labels} /></dd>
           <dt>Reference</dt>
           <dd>
             <ScaleRef horizontalpodautoscaler={horizontalpodautoscaler}/>
