@@ -7695,7 +7695,11 @@ input[type="radio"] {
     color: #999;
     font-size: 112%;
     padding-left: 5px;
-    pointer-events: none; }
+    pointer-events: none;
+    position: absolute;
+    top: -10%; }
+  .co-m-modal-link:hover:after {
+    color: #777; }
 
 .co-m-invisible-input {
   border: 0;
