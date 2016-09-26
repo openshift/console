@@ -64,7 +64,7 @@ angular.module('k8s').constant('k8sEnum', {
     },
     REPLICASET: {
       id: 'replicaset',
-      kind: 'replicaset',
+      kind: 'ReplicaSet',
       label: 'Replica Set',
       labelPlural: 'Replica Sets',
       isExtension: true,
@@ -74,7 +74,7 @@ angular.module('k8s').constant('k8sEnum', {
     },
     DEPLOYMENT: {
       id: 'deployment',
-      kind: 'deployment',
+      kind: 'Deployment',
       label: 'Deployment',
       labelPlural: 'Deployments',
       isExtension: true,
@@ -84,7 +84,7 @@ angular.module('k8s').constant('k8sEnum', {
     },
     JOB: {
       id: 'job',
-      kind: 'job',
+      kind: 'Job',
       label: 'Job',
       labelPlural: 'Jobs',
       isExtension: true,
