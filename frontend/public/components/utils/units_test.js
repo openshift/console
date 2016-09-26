@@ -218,6 +218,7 @@ describe('units', function() {
     test_('banana', 'banana');
     test_(-1, -1);
     test_(-0, -0);
+    test_(0, 0);
     test_(1/0, 1/0);
     test_(-1/0, -1/0);
     test_('100$', '100$');
