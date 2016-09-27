@@ -60,6 +60,7 @@ func main() {
 
 	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
+	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
 
 	fLicenseFile := fs.String("license-file", "", "Path to the Tectonic license file.")
 
@@ -154,14 +155,17 @@ func main() {
 		}
 
 		// Grab the certificate of the API Server so we can render it for kubeconfig files.
-		if cc.CertData != nil {
+		switch {
+		case cc.CAData != nil:
 			k8sCertPEM = cc.CertData
-		} else if cc.CertFile != "" {
-			data, err := ioutil.ReadFile(cc.CertFile)
+		case cc.CAFile != "":
+			data, err := ioutil.ReadFile(cc.CAFile)
 			if err != nil {
-				log.Fatalf("Failed to read kubernetes client certificate (%s): %v", cc.CertFile, err)
+				log.Fatalf("Failed to read kubernetes CA (%s): %v", cc.CertFile, err)
 			}
 			k8sCertPEM = data
+		default:
+			log.Info("No kubernetes CA found")
 		}
 
 		inClusterTLSCfg, err := restclient.TLSConfigFor(cc)
@@ -273,10 +277,15 @@ func main() {
 				log.Fatalf("Error initializing kubectl authenticator: %v", err)
 			}
 
+			apiServerEndpoint := *fK8sPublicEndpoint
+			if apiServerEndpoint == "" {
+				apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
+			}
+
 			srv.KubeConfigTmpl = server.NewKubeConfigTmpl(
 				*fKubectlClientID,
 				*fKubectlClientSecret,
-				srv.K8sProxyConfig.Endpoint.String(),
+				apiServerEndpoint,
 				userAuthOIDCIssuerURL.String(),
 				k8sCertPEM,
 				dexCertPEM,
