@@ -1,3 +1,10 @@
+// These must come before coreos-web b/c they were a part of it.
+@import "style/reset";
+@import "style/base";
+
+// TODO: refactor this away
+@import "style/coreos";
+
 // Config
 @import "style/color-pallette";
 @import "style/config";

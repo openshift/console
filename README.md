@@ -155,16 +155,16 @@ Update existing backend dependencies:
 
 Add new frontend dependencies:
 ```
-rm npm-shrinkwrap
+rm npm-shrinkwrap.json
 npm install --save the-dependency
 npm shrinkwrap
-npm run gulp js-deps
+npm run gulp js-package
 ```
 
 Update existing frontend dependencies:
 ```
-rm npm-shrinkwrap
+rm npm-shrinkwrap.json
 npm install --save the-dependency
 npm shrinkwrap
-npm run gulp js-deps
+npm run gulp js-package
 ```
