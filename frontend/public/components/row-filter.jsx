@@ -1,11 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import {Provider} from 'react-redux';
 import {angulars} from './react-wrapper';
 import actions from '../module/k8s/k8s-actions';
 
-import {Firehose, inject} from './utils';
+import {inject, WithQuery} from './utils';
 
 // A replacement for the StatusBox to just show empty stuff instead of the usual...
 const Injector = ({children, data, filters}) => {
@@ -60,7 +59,6 @@ class CheckBoxes extends React.Component {
     } catch (ignored) {}
 
     this.props.applyFilter(new Set(filters));
-
   }
 
   toggle (i) {
@@ -116,7 +114,7 @@ export class RowFilter extends React.Component {
   }
 
   applyFilter (name, value) {
-    const id = this.hose.id;
+    const id = this.query.getFirehoseId();
     if (!id) {
       return;
     }
@@ -134,13 +132,11 @@ export class RowFilter extends React.Component {
     };
 
     return (
-      <Provider store={angulars.store}>
-      <Firehose ref={ref => this.hose = ref} isList={true} k8sResource={this.k8sResource} {...this.props}>
+      <WithQuery ref={ref => this.query = ref} isList={true} k8sResource={this.k8sResource} {...this.props}>
         <Injector>
           <CheckBoxes {...props} />
         </Injector>
-      </Firehose>
-      </Provider>
+      </WithQuery>
     );
   }
 }
