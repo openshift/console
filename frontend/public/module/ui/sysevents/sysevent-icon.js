@@ -12,7 +12,7 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     link: function(scope, elem, attrs) {
-      var tooltipMsg, cssClass, iconEl,
+      let tooltipMsg, iconEl,
           reason = attrs.reason,
           kind = attrs.kind;
 
@@ -20,10 +20,9 @@ angular.module('bridge.ui')
         return;
       }
 
-      tooltipMsg = reason + ' (' + kind.toLowerCase() + ')';
-      cssClass = 'fa co-sysevent-icon co-sysevent-icon--' + kind.toLowerCase() + '-' + reason.toLowerCase();
-      iconEl = angular.element('<i uib-tooltip="' + tooltipMsg +
-          '" tooltip-append-to-body="true" tooltip-placement="top" class="' + cssClass + '"></i>');
+      tooltipMsg = `${reason} (${kind.toLowerCase()})`;
+      iconEl = angular.element(`<i uib-tooltip="${tooltipMsg}` +
+          '" tooltip-append-to-body="true" tooltip-placement="top" class="co-sysevent-icon"></i>');
       $compile(iconEl)(scope);
       elem.append(iconEl);
     },

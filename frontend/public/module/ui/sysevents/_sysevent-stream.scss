@@ -151,8 +151,7 @@ $transition-time: 0.5s;
     position: absolute;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-45%,-50%);
-    transform: translate(-45%,-50%);
+    transform: translate(calc(50% - 18px), calc(-50% + 1px));
   }
 }
 

@@ -1,109 +1,27 @@
 .co-sysevent-icon {
-  background-color: $color-highlight-blue;
-  border: solid 2px #fff;
-  border-radius: 50px;
+  background-color: #fff;
+  border: solid 3px $color-grey-border;
+  border-radius: 50%;
   color: #fff;
   position: relative;
   z-index: $z-plane-2;
-  height: 32px;
-  width: 32px;
-  box-shadow: 0px 0px 0px 2px $color-grey-border;
-  font-size: 16px;
+  height: 19px;
+  width: 19px;
 }
 
-.co-sysevent-icon--replicationcontroller-successfulcreate,
-.co-sysevent-icon--replicaset-successfulcreate,
-.co-sysevent-icon--deployment-successfulcreate,
-.co-sysevent-icon--pod-created {
-  &:before {
-    // fa-plus
-    content: "\f067";
-    display: inline-block;
-    -webkit-transform: translate(60%, 45%);
-    transform: translate(60%, 45%);
+.co-sysevent[class*="error"],
+.co-sysevent[class*="failed"],
+.co-sysevent[class*="unhealthy"]
+.co-sysevent[class*="nodenotready"], {
+  $failure-red: #d64456;
+
+  .co-sysevent-icon,
+  .co-sysevent__main-box,
+  .co-sysevent__meta-box {
+    border-color: $failure-red;
+  }
+  .co-sysevent__icon-line {
+    background-color: $failure-red;
   }
 }
 
-.co-sysevent-icon--pod-killing {
-  &:before {
-    // fa-minus
-    content: "\f068";
-    display: inline-block;
-    -webkit-transform: translate(60%, 45%);
-    transform: translate(60%, 45%);
-  }
-}
-
-.co-sysevent-icon--pod-pulled {
-  &:before {
-    // fa-download
-    content: "\f019";
-    display: inline-block;
-    -webkit-transform: translate(42%, 42%);
-    transform: translate(42%, 42%);
-  }
-}
-
-.co-sysevent-icon--pod-started,
-.co-sysevent-icon--node-starting {
-  &:before {
-    // fa-power-off
-    content: "\f011";
-    display: inline-block;
-    -webkit-transform: translate(51%, 41%);
-    transform: translate(51%, 41%);
-  }
-}
-
-.co-sysevent-icon--pod-scheduled {
-  &:before {
-    // fa-share
-    content: "\f064";
-    display: inline-block;
-    -webkit-transform: translate(40%, 45%);
-    transform: translate(40%, 45%);
-  }
-}
-
-.co-sysevent-icon--pod-failed,
-.co-sysevent-icon--pod-failedscheduling {
-  background-color: $color-red-failure;
-  &:before {
-    // fa-exclamation-triangle
-    content: "\f071";
-    display: inline-block;
-    -webkit-transform: translate(37%, 40%);
-    transform: translate(37%, 40%);
-  }
-}
-
-.co-sysevent-icon--node-nodeready {
-  &:before {
-    // fa-check
-    content: "\f00c";
-    display: inline-block;
-    -webkit-transform: translate(40%, 45%);
-    transform: translate(40%, 45%);
-  }
-}
-
-.co-sysevent-icon--node-nodenotready {
-  background-color: $color-red-failure;
-  &:before {
-    // fa-times
-    content: "\f00d";
-    display: inline-block;
-    -webkit-transform: translate(60%, 40%);
-    transform: translate(60%, 40%);
-  }
-}
-
-.co-sysevent-icon--node-rebooted {
-  &:before {
-    // fa-repeat
-    content: "\f01e";
-    display: inline-block;
-    -webkit-transform: translate(50%, 40%);
-    transform: translate(50%, 40%);
-  }
-}
