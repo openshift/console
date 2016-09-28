@@ -22,7 +22,7 @@
     <div class="cos-text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
   </cos-status-box>
 
-  <div class="co-sysevent" ng-init="updateOldest(m.object.lastTimestamp, $last)"
+  <div class="co-sysevent co-sysevent--{{m.object.reason | lowercase}}" ng-init="updateOldest(m.object.lastTimestamp, $last)"
         ng-repeat="m in filteredMessages track by eventID(m)">
     <div class="co-sysevent__icon-box">
       <co-sysevent-icon kind="{{m.object.involvedObject.kind}}" reason="{{m.object.reason}}"></co-sysevent-icon>
