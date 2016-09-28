@@ -76,7 +76,7 @@ class SparklineWidget extends React.Component {
     this.updateInProgress = true;
 
     discoverService({
-      namespace: 'default',
+      namespace: 'tectonic-system',
       labelSelector: 'name=prometheus',
       healthCheckPath: '/metrics',
       available: this.doUpdate.bind(this),
