@@ -24,30 +24,24 @@ detailsPage.factory = {
   }),
 }
 
-export const ResourceHeading = ({resourceName}) => <div>
-  <div className="co-m-pane__heading">
-    <h1 className="co-m-pane__title">{resourceName} Overview</h1>
-  </div>
+export const ResourceHeading = ({resourceName}) => <div className="co-m-pane__heading">
+  <h1 className="co-m-pane__title">{resourceName} Overview</h1>
 </div>
 
-export const ResourceSummary = ({resource}) => <div>
-  <dl>
-    <dt>Name</dt>
-    <dd>{resource.metadata.name || '-'}</dd>
-    <dt>Labels</dt>
-    <dd><LabelList kind={resource.kind.toLowerCase()} expand="true" labels={resource.metadata.labels} /></dd>
-    <dt>Pod Selector</dt>
-    <dd><Selector selector={resource.spec.selector} /></dd>
-    <dt>Created At</dt>
-    <dd><Timestamp timestamp={resource.metadata.creationTimestamp} /></dd>
-  </dl>
-</div>
+export const ResourceSummary = ({resource}) => <dl>
+  <dt>Name</dt>
+  <dd>{resource.metadata.name || '-'}</dd>
+  <dt>Labels</dt>
+  <dd><LabelList kind={resource.kind.toLowerCase()} expand="true" labels={resource.metadata.labels} /></dd>
+  <dt>Pod Selector</dt>
+  <dd><Selector selector={resource.spec.selector} /></dd>
+  <dt>Created At</dt>
+  <dd><Timestamp timestamp={resource.metadata.creationTimestamp} /></dd>
+</dl>
 
-export const ResourcePodCount = ({resource}) => <div>
-  <dl>
-    <dt>Current Count</dt>
-    <dd>{resource.status.replicas || 0}</dd>
-    <dt>Desired Count</dt>
-    <dd>{resource.spec.replicas || 0}</dd>
-  </dl>
-</div>
+export const ResourcePodCount = ({resource}) => <dl>
+  <dt>Current Count</dt>
+  <dd>{resource.status.replicas || 0}</dd>
+  <dt>Desired Count</dt>
+  <dd>{resource.spec.replicas || 0}</dd>
+</dl>

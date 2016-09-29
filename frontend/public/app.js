@@ -205,11 +205,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/pods/new-pod.html',
     title: 'Create New Pod',
   });
-  r('/ns/:ns/pods/:name', {
-    controller: 'PodCtrl',
-    templateUrl: '/static/page/pods/pod.html',
-    title: 'Pod',
-  });
   r('/ns/:ns/pods/:name/events', {
     controller: 'PodSyseventsCtrl',
     templateUrl: '/static/page/pods/sysevents.html',
