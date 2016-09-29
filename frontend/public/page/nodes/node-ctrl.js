@@ -36,7 +36,7 @@ angular.module('bridge.page')
       $scope.node = node;
       $scope.memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
       $scope.networkAddress = _.find(node.status.addresses, ['type', 'InternalIP']).address;
-      $scope.cpuQuery = node.status.allocatable.cpu + '- sum(rate(node_cpu{kubernetes_role=\'endpoint\',mode=\'idle\'}[1m]))';
+      $scope.cpuQuery = `${node.status.allocatable.cpu} - sum(rate(node_cpu{kubernetes_role='endpoint',mode='idle',instance=~'.*__NODEIP__.*'}[1m]))`;
       $scope.loadError = false;
     })
     .catch(function() {
