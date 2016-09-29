@@ -24,7 +24,7 @@
                 <div class="col-md-4">
                   <co-sparkline-widget heading="'CPU'" query="cpuQuery | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.cpu | integerLimit"></co-sparkline-widget>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                   <co-sparkline-widget heading="'Number of Pods'" query="'kubelet_running_pod_count{instance=~\'.*__NODEIP__.*\'}' | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.pods | integerLimit"></co-sparkline-widget>
                 </div>
                 <div class="col-md-4">
@@ -32,7 +32,7 @@
                 </div>
                 <div class="col-md-4">
                   <co-sparkline-widget heading="'Network Out'" query="'rate(node_network_transmit_bytes{device=\'eth0\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'}[1m])' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                   <co-sparkline-widget heading="'Filesystem'" query="'(node_filesystem_size{device=\'overlay\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'} - node_filesystem_avail{device=\'overlay\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'})' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
                 </div>
