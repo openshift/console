@@ -20,6 +20,9 @@ angular.module('k8s')
       spec: {
         replicas: 0,
         selector: null,
+        strategy: {
+          type: 'RollingUpdate'
+        },
         template: k8sPods.getEmpty(),
         templateRef: null,
       },
