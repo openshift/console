@@ -32,7 +32,7 @@ export const ResourceSummary = ({resource}) => <dl>
   <dt>Name</dt>
   <dd>{resource.metadata.name || '-'}</dd>
   <dt>Labels</dt>
-  <dd><LabelList kind={resource.kind.toLowerCase()} expand="true" labels={resource.metadata.labels} /></dd>
+  <dd><LabelList kind={resource.kind.toLowerCase()} labels={resource.metadata.labels} /></dd>
   <dt>Pod Selector</dt>
   <dd><Selector selector={resource.spec.selector} /></dd>
   <dt>Created At</dt>

@@ -106,11 +106,11 @@ const Details = (pod) => <div>
                 <dt>Pod Name</dt>
                 <dd>{pod.metadata.name || '-'}</dd>
                 <dt>Pod Labels</dt>
-                <dd><LabelList kind="pod" expand="true" labels={pod.metadata.labels} /></dd>
+                <dd><LabelList kind="pod" labels={pod.metadata.labels} /></dd>
                 <dt>Created At</dt>
                 <dd><Timestamp timestamp={pod.metadata.creationTimestamp} /></dd>
                 <dt>Node Selector</dt>
-                <dd><LabelList kind="node" expand="true" labels={pod.spec.nodeSelector} /></dd>
+                <dd><LabelList kind="node" labels={pod.spec.nodeSelector} /></dd>
               </dl>
             </div>
             <div className="col-sm-6 col-xs-12">

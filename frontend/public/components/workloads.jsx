@@ -34,7 +34,7 @@ const rowOfKindstring = (name) => {
           <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}` + detailsUrlSuffix} title={o.metadata.uid}>{o.metadata.name}</a>
         </div>
         <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
-          <LabelList kind={kind.id} labels={o.metadata.labels}  />
+          <LabelList kind={kind.id} labels={o.metadata.labels} />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
           <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/pods`} title={"pods"}>
@@ -42,7 +42,7 @@ const rowOfKindstring = (name) => {
           </a>
         </div>
         <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-          <Selector selector={o.spec.selector}></Selector>
+          <Selector selector={o.spec.selector} />
         </div>
       </div>
     );
