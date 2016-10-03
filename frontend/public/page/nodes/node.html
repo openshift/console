@@ -34,7 +34,7 @@
                   <co-sparkline-widget heading="'Network Out'" query="'rate(node_network_transmit_bytes{device=\'eth0\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'}[1m])' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
                 </div> -->
                 <div class="col-md-4">
-                  <co-sparkline-widget heading="'Filesystem'" query="'(node_filesystem_size{device=\'overlay\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'} - node_filesystem_avail{device=\'overlay\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'})' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
+                  <co-sparkline-widget heading="'Filesystem'" query="'(node_filesystem_size{mountpoint=\'/\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'} - node_filesystem_free{mountpoint=\'/\',instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'})' | queryNodeIp:this" units="'decimalBytes'"></co-sparkline-widget>
                 </div>
               </div>
             </div>
