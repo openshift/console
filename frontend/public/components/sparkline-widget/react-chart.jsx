@@ -72,8 +72,8 @@ class ReactChart extends React.Component {
           </defs>
           <rect
             x="0" y="0" width="100%" height="100%" fillOpacity="0.5"
-            fill={`url(${window.location.pathname}#${this._id}-gradient)`}
-            clipPath={`url(${window.location.pathname}#${this._id}-clip-path`} />
+            fill={`url(${window.location.pathname}${window.location.search}#${this._id}-gradient)`}
+            clipPath={`url(${window.location.pathname}${window.location.search}#${this._id}-clip-path`} />
           <line className="chart__limit-line chart__limit-line-before" x1="0" x2="3" style={{display: 'none'}} />
           <line className="chart__limit-line chart__limit-line-after" style={{display: 'none'}} />
           <text className="chart__text chart__limit-text chart__limit-text--shadow" style={{display: 'none'}} />
