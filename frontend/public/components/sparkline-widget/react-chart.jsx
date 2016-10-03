@@ -70,7 +70,8 @@ class ReactChart extends React.Component {
             clipPath={`url(${window.location.pathname}#${this._id}-clip-path`} />
           <line className="chart__limit-line chart__limit-line-before" x1="0" x2="3" style={{display: 'none'}} />
           <line className="chart__limit-line chart__limit-line-after" style={{display: 'none'}} />
-          <text className="chart__text chart__limit-text" style={{display: 'none'}} />
+          <text className="chart__text chart__limit-text chart__limit-text--shadow" style={{display: 'none'}} />
+          <text className="chart__text chart__limit-text chart__limit-text--text" style={{display: 'none'}} />
           <g className="chart__tip-group" style={{display: 'none'}}>
             <circle className="chart__tip" r="3" />
             <rect className="chart__tip-text-bg" />

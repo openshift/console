@@ -124,6 +124,13 @@
     fill: $sparkline-orange;
   }
 
+  .chart__limit-text--shadow {
+    fill: #fff;
+    stroke: #fff;
+    stroke-width: 3;
+    opacity: 0.5;
+  }
+
   .chart__tip, .chart__tip-text-bg {
     fill: #333;
     opacity: 0.95;
