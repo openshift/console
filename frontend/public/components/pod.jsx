@@ -2,7 +2,8 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, LabelList, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon} from './utils'
+import {Cog, LabelList, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon, units} from './utils'
+import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 
 const PodCog = ({pod}) => {
   const kind = angulars.kinds.POD;
@@ -93,83 +94,111 @@ const Volume = ({pod, volume}) => {
   </div>
 }
 
-const Details = (pod) => <div>
-  <div className="co-m-pane__body">
-    <div className="co-m-pane__body-section--bordered">
-      <h1 className="co-section-title">Pod Overview</h1>
-      <div className="row no-gutter">
-        <div className="col-sm-8 col-xs-12">
-          <div className="row">
-            <div className="col-sm-6 col-xs-12">
-              <dl>
-                <dt>Pod Name</dt>
-                <dd>{pod.metadata.name || '-'}</dd>
-                <dt>Pod Labels</dt>
-                <dd><LabelList kind="pod" labels={pod.metadata.labels} /></dd>
-                <dt>Created At</dt>
-                <dd><Timestamp timestamp={pod.metadata.creationTimestamp} /></dd>
-                <dt>Node Selector</dt>
-                <dd><LabelList kind="node" labels={pod.spec.nodeSelector} /></dd>
-              </dl>
+const Details = (pod) => {
+  const limits = {
+    cpu: null,
+    memory: null
+  };
+  limits.cpu = _.reduce(pod.spec.containers, (sum, container) => {
+    const value = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric').value;
+    return sum + value;
+  }, 0);
+  limits.memory = _.reduce(pod.spec.containers, (sum, container) => {
+    const value = units.dehumanize(_.get(container, 'resources.limits.memory', 0), 'binaryBytesWithoutB').value;
+    return sum + value;
+  }, 0);
+
+  return <div>
+    <div className="co-m-pane__body">
+      <div className="co-m-pane__body-section--bordered">
+        <h1 className="co-section-title">Pod Overview</h1>
+        <div style={{ margin: '-15px -15px 15px' }}>
+          <div className="row no-gutter">
+            <div className="col-md-4">
+              <SparklineWidget heading="RAM" query={`sum(container_memory_usage_bytes{pod_name='${pod.metadata.name}',container_name!='POD'})`} limit={limits.memory} units="binaryBytes"></SparklineWidget>
             </div>
-            <div className="col-sm-6 col-xs-12">
-              <dl>
-                <dt>Status</dt>
-                <dd>{podPhase(pod)}</dd>
-                <dt>Pod IP</dt>
-                <dd>{pod.status.podIP || '-'}</dd>
-                <dt>Node</dt>
-                <dd><NodeLink name={pod.spec.nodeName} /></dd>
-                <dt>Restart Policy</dt>
-                <dd>{angulars.k8s.pods.getRestartPolicyLabelById(pod.spec.restartPolicy)}</dd>
-              </dl>
+            <div className="col-md-4">
+              <SparklineWidget heading="CPU Shares" query={`sum(container_spec_cpu_shares{pod_name='${pod.metadata.name}',container_name!='POD'}) * 1000000`} limit={limits.cpu} units="numeric"></SparklineWidget>
+            </div>
+            <div className="col-md-4">
+              <SparklineWidget heading="Filesystem" query={`sum(container_fs_usage_bytes{pod_name='${pod.metadata.name}',container_name!='POD'})`} units="decimalBytes"></SparklineWidget>
             </div>
           </div>
         </div>
+        <div className="row no-gutter">
+          <div className="col-sm-8 col-xs-12">
+            <div className="row">
+              <div className="col-sm-6 col-xs-12">
+                <dl>
+                  <dt>Pod Name</dt>
+                  <dd>{pod.metadata.name || '-'}</dd>
+                  <dt>Pod Labels</dt>
+                  <dd><LabelList kind="pod" labels={pod.metadata.labels} /></dd>
+                  <dt>Created At</dt>
+                  <dd><Timestamp timestamp={pod.metadata.creationTimestamp} /></dd>
+                  <dt>Node Selector</dt>
+                  <dd><LabelList kind="node" labels={pod.spec.nodeSelector} /></dd>
+                </dl>
+              </div>
+              <div className="col-sm-6 col-xs-12">
+                <dl>
+                  <dt>Status</dt>
+                  <dd>{podPhase(pod)}</dd>
+                  <dt>Pod IP</dt>
+                  <dd>{pod.status.podIP || '-'}</dd>
+                  <dt>Node</dt>
+                  <dd><NodeLink name={pod.spec.nodeName} /></dd>
+                  <dt>Restart Policy</dt>
+                  <dd>{angulars.k8s.pods.getRestartPolicyLabelById(pod.spec.restartPolicy)}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div className="co-m-pane__body">
-    <div className="co-m-pane__body-section--bordered">
-      <h1 className="co-section-title">Containers</h1>
-      <div className="row no-gutter">
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-2 col-xs-4">Name</div>
-            <div className="col-sm-3 hidden-xs">Id</div>
-            <div className="col-sm-3 col-xs-8">Image</div>
-            <div className="col-md-1 col-sm-2 hidden-xs">State</div>
-            <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
-            <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
+    <div className="co-m-pane__body">
+      <div className="co-m-pane__body-section--bordered">
+        <h1 className="co-section-title">Containers</h1>
+        <div className="row no-gutter">
+          <div className="co-m-table-grid co-m-table-grid--bordered">
+            <div className="row co-m-table-grid__head">
+              <div className="col-sm-2 col-xs-4">Name</div>
+              <div className="col-sm-3 hidden-xs">Id</div>
+              <div className="col-sm-3 col-xs-8">Image</div>
+              <div className="col-md-1 col-sm-2 hidden-xs">State</div>
+              <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
+              <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
+            </div>
+            <div className="co-m-table-grid__body">
+              {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
+            </div>
           </div>
-          <div className="co-m-table-grid__body">
-            {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
+        </div>
+      </div>
+    </div>
+
+    <div className="co-m-pane__body">
+      <div className="co-m-pane__body-section--bordered">
+        <h1 className="co-section-title">Pod Volumes</h1>
+        <div className="row no-gutter">
+          <div className="co-m-table-grid co-m-table-grid--bordered">
+            <div className="row co-m-table-grid__head">
+              <div className="col-sm-3 col-xs-4">Name</div>
+              <div className="col-sm-3 col-xs-4">Type</div>
+              <div className="col-sm-3 hidden-xs">Permissions</div>
+              <div className="col-sm-3 col-xs-4">Utilized By</div>
+            </div>
+            <div className="co-m-table-grid__body">
+              {angulars.k8s.pods.getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div className="co-m-pane__body">
-    <div className="co-m-pane__body-section--bordered">
-      <h1 className="co-section-title">Pod Volumes</h1>
-      <div className="row no-gutter">
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-3 col-xs-4">Name</div>
-            <div className="col-sm-3 col-xs-4">Type</div>
-            <div className="col-sm-3 hidden-xs">Permissions</div>
-            <div className="col-sm-3 col-xs-4">Utilized By</div>
-          </div>
-          <div className="co-m-table-grid__body">
-            {angulars.k8s.pods.getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+}
 
 // TODO: Logs page and Events page are still routed to Angular code for now
 const Logs = null;
