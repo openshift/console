@@ -3,7 +3,7 @@
 
 import * as d3 from 'd3';
 import moment from 'moment';
-import units from '../utils/units';
+import { units } from '../utils';
 
 class Chart {
   constructor(el, props, state) {

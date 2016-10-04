@@ -139,7 +139,7 @@ const units = {
   dehumanize
 };
 
-export default units;
+export { units };
 
 // This is temporary! See notes in public/components/_test.js
 window.tectonicTesting && (window.tectonicTesting.units = units);

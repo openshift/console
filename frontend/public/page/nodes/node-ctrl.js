@@ -1,4 +1,4 @@
-import units from '../../components/utils/units';
+import { units } from '../../components/utils';
 
 angular.module('bridge.page')
 .filter('queryNodeIp', function() {
