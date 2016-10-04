@@ -22,7 +22,7 @@
                   <co-sparkline-widget heading="'RAM'" query="'node_memory_Active{instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'}' | queryNodeIp:this" limit="memoryLimit" units="'binaryBytes'"></co-sparkline-widget>
                 </div>
                 <div class="col-md-4">
-                  <co-sparkline-widget heading="'CPU'" query="cpuQuery | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.cpu | integerLimit"></co-sparkline-widget>
+                  <co-sparkline-widget heading="'CPU'" query="'sum(rate(node_cpu{kubernetes_role=\'endpoint\',instance=~\'.*__NODEIP__.*\',mode!=\'idle\',mode!=\'iowait\',mode!~\'guest.*\'}[1m]))' | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.cpu | integerLimit"></co-sparkline-widget>
                 </div>
                 <!-- <div class="col-md-4">
                   <co-sparkline-widget heading="'Number of Pods'" query="'kubelet_running_pod_count{instance=~\'.*__NODEIP__.*\'}' | queryNodeIp:this" units="'numeric'" limit="node.status.allocatable.pods | integerLimit"></co-sparkline-widget>
