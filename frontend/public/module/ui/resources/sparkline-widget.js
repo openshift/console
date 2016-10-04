@@ -12,12 +12,17 @@ angular.module('bridge.ui')
       units: '='
     },
     controller: function($scope) {
-      $scope.props = {
-        heading: $scope.heading,
-        query: $scope.query,
-        limit: $scope.limit,
-        units: $scope.units
+      const update = () => {
+        $scope.props = {
+          heading: $scope.heading,
+          query: $scope.query,
+          limit: $scope.limit,
+          units: $scope.units
+        };
       };
+
+      update();
+      $scope.$watch('query', update);
     }
   };
 });
