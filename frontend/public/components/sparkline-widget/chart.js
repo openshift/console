@@ -78,12 +78,13 @@ class Chart {
 
     if (this.limit) {
       const y = scales.y(this.limit);
-      const limitText = this.svg.select('.chart__limit-text')
+      const text = this._valueInUnits(this.limit) + ' limit';
+      this.svg.selectAll('.chart__limit-text')
           .style('display', null)
           .attr('x', 5)
           .attr('y', y + 2.5)
-          .text(this._valueInUnits(this.limit) + ' limit');
-      const limitTextBox = limitText.node().getBBox();
+          .text(text);
+      const limitTextBox = this.svg.select('.chart__limit-text--text').node().getBBox();
 
       this.svg.selectAll('.chart__limit-line')
           .style('display', null)
