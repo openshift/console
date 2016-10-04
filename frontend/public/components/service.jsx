@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, detailsPage, LabelList, ResourceIcon, Selector, Timestamp} from './utils'
+import {Cog, detailsPage, LabelList, ResourceHeading, ResourceIcon, Selector, Timestamp} from './utils';
 
 const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
