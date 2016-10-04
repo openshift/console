@@ -77,29 +77,35 @@
     background: rgba(255,255,255,0.9);
     width: 100%;
     height: 100%;
-    padding: 5px;
-    box-sizing: content-box;
+    padding: 4px 5px 5px;
     opacity: 0;
     display: none;
+    overflow: hidden;
   }
 
   .stats--in {
     display: flex;
+    align-items: center;
     animation: sparkline-fade-in .15s ease-in forwards;
   }
 
   .stats__item {
     padding: 5px;
     flex-grow: 1;
+    max-height: 100%;
   }
 
   .stats__item-title {
     font-size: 13px;
+    line-height: 1.15;
+    margin-bottom: 1px;
+    min-height: 18px;
     color: $sparkline-dark-gray;
   }
 
   .stats__item-value {
     font-size: 16px;
+    line-height: 1;
     color: $sparkline-text;
   }
 
