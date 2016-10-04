@@ -90,7 +90,16 @@ const round = (value) => {
   if (!isFinite(value)) {
     return 0;
   }
-  return Math.round(value * 100) / 100;
+  let digits;
+  if (value >= 100) {
+    digits = 1;
+  } else if (value >= 1) {
+    digits = 2;
+  } else {
+    digits = 3;
+  }
+  const multiplier = Math.pow(10, digits);
+  return Math.round(value * multiplier) / multiplier;
 }
 
 const humanize = (value, typeName, useRound = false) => {
