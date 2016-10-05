@@ -95,7 +95,7 @@ class Chart {
           .attr('x2', '100%');
     } else {
       this.svg.selectAll('.chart__limit-line').style('display', 'none');
-      this.svg.select('.chart__limit-text').style('display', 'none');
+      this.svg.selectAll('.chart__limit-text').style('display', 'none');
     }
   }
 
