@@ -8,12 +8,21 @@ describe('units', function() {
       });
     }
 
-    testRound(100, 100);
     testRound(NaN, 0);
+    testRound(.101010, .101);
+    testRound(0, 0);
+    testRound(0.727272, .727);
+    testRound(1, 1);
+    testRound(1.727272, 1.73);
+    testRound(9.991234, 9.99);
+    testRound(9.999999, 10);
+    testRound(10.72727, 10.73);
+    testRound(99.99123, 99.99);
+    testRound(100, 100);
     testRound(100.101010, 100.10);
-    testRound(.101010, .10);
-    testRound(111.119, 111.12);
+    testRound(111.119, 111.1);
     testRound(999.999, 1000);
+    testRound(1023.12345, 1023.1);
   });
 
   describe('should humanize numeric values', function () {
@@ -113,7 +122,7 @@ describe('units', function() {
     test_(1, '1 B');
     test_(12, '12 B');
     test_(123, '123 B');
-    test_(123.123, '123.12 B');
+    test_(123.123, '123.1 B');
     test_(999.999, '1 KB');
     test_(1000, '1 KB');
     test_(1001, '1 KB');
@@ -151,7 +160,7 @@ describe('units', function() {
     test_(1, '1 iB');
     test_(12, '12 iB');
     test_(123, '123 iB');
-    test_(123.123, '123.12 iB');
+    test_(123.123, '123.1 iB');
     test_(999.999, '1000 iB');
     test_(1023, '1023 iB');
     test_(1023.999, '1 KiB');
@@ -189,7 +198,7 @@ describe('units', function() {
     test_(1, '1 i');
     test_(12, '12 i');
     test_(123, '123 i');
-    test_(123.123, '123.12 i');
+    test_(123.123, '123.1 i');
     test_(999.999, '1000 i');
     test_(1023, '1023 i');
     test_(1023.999, '1 Ki');
