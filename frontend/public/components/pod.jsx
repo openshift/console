@@ -46,7 +46,7 @@ const filters = [{
   ],
 }];
 
-const ContainerLink = ({pod, name}) => <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</a>;
+const ContainerLink = ({pod, name}) => <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</a>;
 
 const NodeLink = ({name}) => name ? <a href={`nodes/${name}`}>{name}</a> : <span>-</span>;
 

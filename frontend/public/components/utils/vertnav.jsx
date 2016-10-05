@@ -14,7 +14,7 @@ const isActive = (href) => {
 export class VertNav extends React.Component {
   render () {
     let Page;
-    const {pages} = this.props;
+    const {pages, hideNav} = this.props;
 
     const nav = _.map(pages, ({name, href, component}) => {
       const active = isActive(href);
@@ -32,9 +32,7 @@ export class VertNav extends React.Component {
 
     return <div className={this.props.className}>
       <div className="co-m-pane co-m-vert-nav">
-        <ul className="co-m-vert-nav__menu">
-          {nav}
-        </ul>
+        {!hideNav && <ul className="co-m-vert-nav__menu">{nav}</ul>}
         <div className="co-m-vert-nav__body">
           <StatusBox {...this.props}><Page /></StatusBox>
         </div>

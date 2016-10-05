@@ -20,7 +20,7 @@ export const NavTitle = (props) => <div className={classNames('row', {'co-m-nav-
     <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': props.detail})}>
       {props.kind && <ResourceIcon kind={props.kind} className="co-m-page-title__icon"></ResourceIcon>}
       <span>{props.title}</span>
-      {props.loaded && Yaml(props.data)}
+      {props.loaded && Yaml(props.yamlData || props.data)}
     </h1>
   </div>
 </div>

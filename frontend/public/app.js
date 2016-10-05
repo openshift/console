@@ -220,11 +220,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/pods/logs.html',
     title: 'Pod Logs',
   });
-  r('/ns/:ns/pods/:podName/containers/:name', {
-    controller: 'ContainerCtrl',
-    templateUrl: '/static/page/containers/container.html',
-    title: 'Container',
-  });
   r('/nodes', {
     controller: 'NodesCtrl',
     templateUrl: '/static/page/nodes/nodes.html',
@@ -340,6 +335,10 @@ angular.module('bridge', [
   });
 
   r('/ns/:ns/:kind/:name/:view', {
+    controller: 'k8sDetailCtrl',
+    templateUrl: '/static/page/k8s-detail/k8s-detail.html',
+  });
+  r('/ns/:ns/pods/:podName/:kind/:name/:view', {
     controller: 'k8sDetailCtrl',
     templateUrl: '/static/page/k8s-detail/k8s-detail.html',
   });

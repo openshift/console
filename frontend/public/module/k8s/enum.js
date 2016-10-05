@@ -26,6 +26,14 @@ angular.module('k8s').constant('k8sEnum', {
       path: 'pods',
       plural: 'pods',
     },
+    CONTAINER: {
+      id: 'container',
+      kind: 'Container',
+      label: 'Container',
+      labelPlural: 'Containers',
+      path: 'containers',
+      plural: 'containers',
+    },
     DAEMONSET: {
       id: 'daemonset',
       kind: 'DaemonSet',
