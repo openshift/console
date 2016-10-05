@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ContainerCtrl', function($scope, $routeParams, _, pkg, k8s) {
+.controller('ContainerCtrl', function($scope, $routeParams, _, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns;
@@ -45,14 +45,9 @@ angular.module('bridge.page')
     return fields[stage].cmd;
   };
 
-  $scope.getresourcelimitvalue = function() {
-    if (!pkg.propExists('resources.limits', $scope.container)) {
-      return '';
-    }
-
-    return pkg.join($scope.container.resources.limits, ', ', function(v, k) {
-      return k + ': ' + v;
-    });
+  $scope.getResourceLimitValue = function() {
+    const limits = _.get($scope.container, 'resources.limits');
+    return limits && _.map(limits, (v, k) => `${k}: ${v}`).join(', ');
   };
 
   $scope.volumeAccessLabel = function(readOnly) {
