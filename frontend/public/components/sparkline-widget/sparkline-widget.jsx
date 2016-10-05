@@ -214,7 +214,6 @@ class SparklineWidget extends React.Component {
 }
 SparklineWidget.propTypes = {
   heading: React.PropTypes.string,
-  testState: React.PropTypes.string,
   query: React.PropTypes.string,
   limit: React.PropTypes.number,
   units: React.PropTypes.string
