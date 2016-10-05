@@ -33,7 +33,7 @@
                   PostStart: <span ng-bind="getLifecycleLabel('postStart')"></span> <code ng-bind="getLifecycleValue('postStart')"></code>
                 </div>
                 <div ng-show="getLifecycleValue('preStop')">
-                  PreStop: <span ng-bind="getLifecycleLabel('postStart')"></span> <code ng-bind="getLifecycleValue('preStop')"></code>
+                  PreStop: <span ng-bind="getLifecycleLabel('preStop')"></span> <code ng-bind="getLifecycleValue('preStop')"></code>
                 </div>
                 <span ng-hide="getLifecycleValue('preStop') || getLifecycleValue('postStart')" ng-bind="CONST.placeholderText"></span>
               </dd>
