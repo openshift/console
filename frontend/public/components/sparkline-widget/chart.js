@@ -9,6 +9,7 @@ class Chart {
   constructor(el, props, state) {
     this.height = props.height;
     this.limit = props.limit;
+    this.limitText = props.limitText;
     this.units = props.units;
     this.timespan = props.timespan;
     this._bisectDate = d3.bisector((d) => d.date).left;
@@ -78,7 +79,7 @@ class Chart {
 
     if (this.limit) {
       const y = scales.y(this.limit);
-      const text = this._valueInUnits(this.limit) + ' limit';
+      const text = `${this._valueInUnits(this.limit)} ${this.limitText}`;
       this.svg.selectAll('.chart__limit-text')
           .style('display', null)
           .attr('x', 5)

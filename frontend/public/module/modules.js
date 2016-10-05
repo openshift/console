@@ -5,4 +5,4 @@ import './const/const';
 import './service/services';
 import './filter/filters';
 import './ui/uis';
-import './heapster/heapster';
+import './namespace-sparklines/namespace-sparklines';

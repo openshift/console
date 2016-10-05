@@ -23,6 +23,7 @@ const states = {
 }
 
 const timespan = 60 * 60 * 1000; // 1 hour
+const pollInterval = 30 * 1000; // 30 seconds
 
 class SparklineWidget extends React.Component {
   constructor(props) {
@@ -35,12 +36,13 @@ class SparklineWidget extends React.Component {
 
   initialize(props = this.props) {
     this.updateInProgress = false;
-    this.state = _.merge({}, {
+    this.state = _.defaults({}, props, {
       data: [],
+      limitText: 'limit',
       showStats: false,
       sortedValues: [],
       state: states.LOADING
-    }, props);
+    });
   }
 
   componentWillMount() {
@@ -48,7 +50,7 @@ class SparklineWidget extends React.Component {
       state: states.LOADING
     });
     this.update();
-    this.interval = setInterval(this.update.bind(this), 30 * 1000);
+    this.interval = setInterval(this.update.bind(this), pollInterval);
   }
 
   componentDidMount() {
@@ -221,12 +223,13 @@ class SparklineWidget extends React.Component {
         { this.isState(states.LOADED) && <ReactChart
           data={this.state.data}
           limit={this.state.limit}
+          limitText={this.state.limitText}
           units={this.state.units}
           timespan={timespan} /> }
         { this.isState(states.LOADED) &&
           <div className={this.state.showStats ? 'stats stats--in' : 'stats'}>
             <dl className="stats__item">
-              <dt className="stats__item-title">Limit</dt>
+              <dt className="stats__item-title">{_.capitalize(this.state.limitText)}</dt>
               <dd className="stats__item-value">{this.state.limit ? units.humanize(this.state.limit, this.state.units, true).string : 'None'}</dd>
             </dl>
             <dl className="stats__item">
@@ -251,6 +254,7 @@ SparklineWidget.propTypes = {
   heading: React.PropTypes.string,
   query: React.PropTypes.string,
   limit: React.PropTypes.number,
+  limitText: React.PropTypes.string,
   units: React.PropTypes.string
 }
 

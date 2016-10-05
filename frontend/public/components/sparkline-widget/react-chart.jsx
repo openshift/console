@@ -39,6 +39,7 @@ class ReactChart extends React.Component {
     this.chart = new Chart(this.chartNode, {
       height: 60,
       limit: props.limit,
+      limitText: props.limitText,
       units: props.units,
       timespan: props.timespan
     }, this.getChartState());
@@ -95,6 +96,7 @@ class ReactChart extends React.Component {
 ReactChart.propTypes = {
   data: React.PropTypes.array,
   limit: React.PropTypes.number,
+  limitText: React.PropTypes.string,
   units: React.PropTypes.string,
   timespan: React.PropTypes.number
 }

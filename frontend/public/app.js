@@ -38,7 +38,7 @@ angular.module('bridge', [
   'bridge.page',
   'bridge.react-wrapper',
   'core.pkg',
-  'heapster',
+  'namespace-sparklines',
   'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
