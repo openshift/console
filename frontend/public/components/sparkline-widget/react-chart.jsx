@@ -17,30 +17,36 @@ class ReactChart extends React.Component {
   }
 
   componentDidMount() {
-    const el = ReactDOM.findDOMNode(this);
-    this.chart = new Chart(el, {
-      height: 60,
-      limit: this.props.limit,
-      units: this.props.units,
-      timespan: this.props.timespan
-    }, this.getChartState());
-
+    this.chartNode = ReactDOM.findDOMNode(this);
+    this.createChart();
     this.handleResize();
     window.addEventListener('resize', this.handleResize.bind(this));
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.createChart(nextProps);
+  }
+
   componentDidUpdate() {
-    const el = ReactDOM.findDOMNode(this);
-    this.chart.update(el, this.getChartState());
+    this.chart.update(this.chartNode, this.getChartState());
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleResize.bind(this));
   }
 
+  createChart(props = this.props) {
+    this.chart = new Chart(this.chartNode, {
+      height: 60,
+      limit: props.limit,
+      units: props.units,
+      timespan: props.timespan
+    }, this.getChartState());
+  }
+
   handleResize() {
     this.setState({
-      width: ReactDOM.findDOMNode(this).offsetWidth
+      width: this.chartNode.offsetWidth
     });
   }
 
