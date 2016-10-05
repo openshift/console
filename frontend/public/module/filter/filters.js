@@ -6,5 +6,4 @@ import './sysevents';
 import './join';
 import './ns';
 import './pods';
-import './split';
 import './users';
