@@ -8,10 +8,10 @@
   <div style="margin: 0 -15px" ng-if="limitsLoaded">
     <div class="row no-gutter">
       <div class="col-md-6 col-xs-12">
-        <co-sparkline-widget heading="'CPU Shares'" query="'sum(container_spec_cpu_shares{namespace=\'__NAMESPACE__\'}) * 1000000' | queryNamespace:this" limit="cpuLimit" limit-text="'cluster total'" units="'numeric'"></co-sparkline-widget>
+        <co-sparkline-widget heading="'CPU Shares'" query="'sum(container_spec_cpu_shares{namespace=\'__NAMESPACE__\'}) * 1000000' | queryNamespace:this" limit="cpuLimit" limit-text="'cluster'" units="'numeric'"></co-sparkline-widget>
       </div>
       <div class="col-md-6 col-xs-12" ng-if="!errors">
-        <co-sparkline-widget heading="'RAM'" query="'sum(container_memory_usage_bytes{namespace=\'__NAMESPACE__\'})' | queryNamespace:this" limit="memoryLimit" limit-text="'cluster total'" units="'binaryBytes'"></co-sparkline-widget>
+        <co-sparkline-widget heading="'RAM'" query="'sum(container_memory_usage_bytes{namespace=\'__NAMESPACE__\'})' | queryNamespace:this" limit="memoryLimit" limit-text="'cluster'" units="'binaryBytes'"></co-sparkline-widget>
       </div>
     </div>
   </div>

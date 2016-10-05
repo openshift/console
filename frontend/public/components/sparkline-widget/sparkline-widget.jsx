@@ -237,7 +237,7 @@ class SparklineWidget extends React.Component {
               <dd className="stats__item-value">{units.humanize(d3.median(this.state.data, (d) => d.value), this.state.units, true).string}</dd>
             </dl>
             <dl className="stats__item">
-              <dt className="stats__item-title">95th Perc.</dt>
+              <dt className="stats__item-title">95th %</dt>
               <dd className="stats__item-value">{units.humanize(d3.quantile(this.state.sortedValues, 0.95), this.state.units, true).string}</dd>
             </dl>
             <dl className="stats__item">
