@@ -16,7 +16,7 @@
           </div>
 
           <div class="col-xs-12">
-            <div style="margin: -15px -15px 15px">
+            <div class="co-sparkline-wrapper">
               <div class="row no-gutter">
                 <div class="col-md-4">
                   <co-sparkline-widget heading="'RAM'" query="'node_memory_Active{instance=~\'.*__NODEIP__.*\',kubernetes_role=\'endpoint\'}' | queryNodeIp:this" limit="memoryLimit" units="'binaryBytes'"></co-sparkline-widget>

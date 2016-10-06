@@ -5,7 +5,7 @@
     <co-inline-loader></co-inline-loader>
   </div>
 
-  <div style="margin: 0 -15px" ng-if="limitsLoaded">
+  <div class="co-namespace-sparklines__wrapper" ng-if="limitsLoaded">
     <div class="row no-gutter">
       <div class="col-md-6 col-xs-12">
         <co-sparkline-widget heading="'CPU Shares'" query="'sum(container_spec_cpu_shares{namespace=\'__NAMESPACE__\'}) * 1000000' | queryNamespace:this" limit="cpuLimit" limit-text="'cluster'" units="'numeric'"></co-sparkline-widget>

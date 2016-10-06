@@ -112,7 +112,7 @@ const Details = (pod) => {
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
         <h1 className="co-section-title">Pod Overview</h1>
-        <div style={{ margin: '-15px -15px 15px' }}>
+        <div className="co-sparkline-wrapper">
           <div className="row no-gutter">
             <div className="col-md-4">
               <SparklineWidget heading="RAM" query={`sum(container_memory_usage_bytes{pod_name='${pod.metadata.name}',container_name!='POD'})`} limit={limits.memory} units="binaryBytes"></SparklineWidget>
