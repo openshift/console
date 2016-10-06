@@ -148,21 +148,21 @@ describe('units', function() {
       });
     }
 
-    test_('banana', '0 iB');
-    test_(-1, '-1 iB');
-    test_(-0, '0 iB');
-    test_(1/0, '0 iB');
-    test_(-1/0, '0 iB');
-    test_('100$', '0 iB');
-    test_(Number.MIN_VALUE, '0 iB');
-    test_(0, '0 iB');
-    test_(NaN, '0 iB');
-    test_(1, '1 iB');
-    test_(12, '12 iB');
-    test_(123, '123 iB');
-    test_(123.123, '123.1 iB');
-    test_(999.999, '1000 iB');
-    test_(1023, '1023 iB');
+    test_('banana', '0 B');
+    test_(-1, '-1 B');
+    test_(-0, '0 B');
+    test_(1/0, '0 B');
+    test_(-1/0, '0 B');
+    test_('100$', '0 B');
+    test_(Number.MIN_VALUE, '0 B');
+    test_(0, '0 B');
+    test_(NaN, '0 B');
+    test_(1, '1 B');
+    test_(12, '12 B');
+    test_(123, '123 B');
+    test_(123.123, '123.1 B');
+    test_(999.999, '1000 B');
+    test_(1023, '1023 B');
     test_(1023.999, '1 KiB');
     test_(1024, '1 KiB');
     test_(1025, '1 KiB');
