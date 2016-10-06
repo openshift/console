@@ -36,13 +36,19 @@ class SparklineWidget extends React.Component {
 
   initialize(props = this.props) {
     this.updateInProgress = false;
-    this.state = _.defaults({}, props, {
+    const newState = _.defaults({}, props, {
       data: [],
       limitText: 'limit',
       showStats: false,
       sortedValues: [],
       state: states.LOADING
     });
+
+    if (this.state) {
+      this.setState(newState);
+    } else {
+      this.state = newState;
+    }
   }
 
   componentWillMount() {
@@ -72,7 +78,7 @@ class SparklineWidget extends React.Component {
     this.initialize(nextProps);
   }
 
-  componentWillUpdate() {
+  componentDidUpdate() {
     if (!this.pollOnNextUpdate) {
       return;
     }
