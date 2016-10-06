@@ -100,9 +100,9 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/show-yaml.html',
       controller: 'ShowYAMLCtrl',
     },
-    'namespace-quay-pull-secret': {
-      templateUrl: '/static/page/modals/namespace-quay-pull-secret/namespace-quay-pull-secret.html',
-      controller: 'NamespaceQuayPullSecretCtrl',
+    'namespace-pull-secret': {
+      templateUrl: '/static/page/modals/namespace-pull-secret/namespace-pull-secret.html',
+      controller: 'NamespacePullSecretCtrl',
     },
     'kubectl-config': {
       templateUrl: '/static/page/modals/kubectl-config/kubectl-config.html',

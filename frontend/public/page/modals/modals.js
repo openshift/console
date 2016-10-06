@@ -23,7 +23,7 @@ import './toggle-disabled-user-ctrl';
 import './row-mgr';
 import './service-ports-ctrl';
 import './show-yaml-ctrl';
-import './namespace-quay-pull-secret/namespace-quay-pull-secret-ctrl';
+import './namespace-pull-secret/namespace-pull-secret-ctrl';
 import './kubectl-config/kubectl-config-ctrl';
 import './revoke-refresh-token-ctrl';
 import './reactive-modal-ctrl';

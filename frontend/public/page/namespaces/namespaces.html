@@ -36,9 +36,9 @@
               <dd ng-bind="chosen.status.phase"></dd>
               <dt>Namespace Labels</dt>
               <dd><co-label-list kind="namespace" labels="chosen.metadata.labels"></co-label-list></dd>
+              <dt>Default Pull Secret</dt>
+              <co-namespace-secret-list namespace="chosen"></co-namespace-secret-list>
             </dl>
-
-            <co-namespace-secret-list namespace="chosen"></co-namespace-secret-list>
 
             <co-namespace-sparklines namespace="chosen"></co-namespace-sparklines>
           </div>
