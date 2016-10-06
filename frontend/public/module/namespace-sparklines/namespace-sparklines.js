@@ -5,8 +5,8 @@ import { coFetch, coFetchUtils } from '../../components/utils';
 
 const pollInterval = 30 * 1000;
 const metrics = {
-  cpuLimit: 'sum(container_spec_cpu_shares{container_name!=""}) * 1000000',
-  memoryLimit: 'sum(container_memory_usage_bytes{container_name!=""})'
+  cpuLimit: 'sum(namespace:container_spec_cpu_shares:sum) * 1000000',
+  memoryLimit: 'sum(namespace:container_memory_usage_bytes:sum)'
 };
 
 angular.module('namespace-sparklines', ['lodash'])
