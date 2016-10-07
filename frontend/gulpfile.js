@@ -28,6 +28,7 @@ const templateSrc = [
 ];
 
 let CURRENT_SHA;
+let IN_DEVELOPMENT = false;
 
 function isExternalModule (file) {
   // lifted from browserify!!!
@@ -61,6 +62,10 @@ function jsBuild (debug) {
   }
   return browserify(opts).transform('babelify', {presets: ['es2015', 'react']});
 }
+
+gulp.task('set-development', () => {
+  IN_DEVELOPMENT = true;
+});
 
 gulp.task('js-deps', ['js-build'], () => {
   // HACK: we rely on the externals being created by js-build (jsBuild)
@@ -136,7 +141,7 @@ gulp.task('clean-package', () => {
 
 gulp.task('sass', () => {
   return gulp.src('./public/style.scss')
-    .pipe(sass())
+    .pipe(IN_DEVELOPMENT ? sass().on('error', sass.logError) : sass())
     .pipe(gulp.dest('./public/dist'));
 });
 
@@ -220,7 +225,7 @@ gulp.task('html', ['sha'], () => {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['css-build', 'templates', 'browserify'], () => {
+gulp.task('dev', ['set-development', 'css-build', 'templates', 'browserify'], () => {
   gulp.watch(templateSrc, ['templates']);
   gulp.start('browserify');
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
