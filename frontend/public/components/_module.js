@@ -1,4 +1,5 @@
 import './pod';
+import './container';
 import './deployment';
 import './job';
 import './replicaset';

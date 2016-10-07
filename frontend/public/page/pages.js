@@ -17,7 +17,6 @@ import './replicasets/controllers';
 import './deployments/controllers';
 import './pods/pods';
 import './nodes/nodes';
-import './containers/container-ctrl';
 import './search/search-ctrl';
 import './settings/settings';
 import './welcome/welcome-ctrl';

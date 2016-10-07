@@ -1,8 +1,9 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import {inject} from './index';
 
-const Box = ({children}) => <div className="cos-status-box">{children}</div>
+const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>
 
 const LoadError = ({label}) => <Box>
   <div className="cos-tristate--error">
@@ -24,6 +25,12 @@ export const EmptyBox = ({label}) => <Box>
     <div className="cos-text-center">No {label} Found</div>
   </div>
 </Box>
+
+export const MsgBox = ({title, detail}) => <Box className="co-sysevent-stream__status-box-empty">
+  {title && <div className="cos-status-box__title">{title}</div>}
+  {detail && <div className="cos-text-center cos-status-box__detail">{detail}</div>}
+</Box>
+
 
 export const StatusBox = (props) => {
   const {loadError, loaded} = props;

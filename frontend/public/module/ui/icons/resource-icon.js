@@ -53,7 +53,7 @@ function iconLabel(k8sKind, kindId) {
       return 'PCY';
     case k8sKind.TPM.id:
       return 'TPM';
-    case 'container':
+    case k8sKind.CONTAINER.id:
       return 'C';
     case k8sKind.DAEMONSET.id:
       return 'DS';
