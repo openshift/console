@@ -67,7 +67,10 @@ class Chart {
       yMax = yMax * 1.5;
     }
 
-    const xMax = Date.now();
+    const now = Date.now();
+    const lastDataPoint = data[data.length - 1];
+    // if the lastest data we have is within 45 seconds, don't visually show the gap
+    const xMax = (Date.now() - lastDataPoint.date <= 45 * 1000) ? lastDataPoint.date : now;
     const xMin = xMax - this.timespan;
 
     scales.x.domain([xMin, xMax]);
