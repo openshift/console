@@ -145,7 +145,7 @@ class SparklineWidget extends React.Component {
       })
       .then(coFetchUtils.parseJson)
       .then((json) => {
-        if (!this._isMounted) {
+        if (!this._isMounted || generation !== this.generation) {
           return;
         }
 
@@ -164,7 +164,7 @@ class SparklineWidget extends React.Component {
         this.updateData(json.data.result[0].values);
       })
       .catch(() => {
-        if (!this._isMounted) {
+        if (!this._isMounted || generation !== this.generation) {
           return;
         }
 
