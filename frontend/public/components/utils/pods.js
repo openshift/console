@@ -30,34 +30,3 @@ export const podPhase = function(pod) {
 
   return ret;
 }
-
-angular.module('bridge.filter')
-.filter('podPhase', () => podPhase)
-.filter('podsFilter', function($filter) {
-  'use strict';
-
-  const podPhase = $filter('podPhase');
-
-  function queryEmpty(q) {
-    if (!q || !q.phase) {
-      return true;
-    }
-    return false;
-  }
-
-  function phaseFilter(query, pod) {
-    if (!pod || !pod.status) {
-      return false;
-    }
-
-    return (pod.status.phase === query.phase || podPhase(pod) === query.phase);
-  }
-
-  return function(pods, query) {
-    if (queryEmpty(query)) {
-      return pods;
-    }
-    return pods.filter(phaseFilter.bind(null, query));
-  };
-
-});
