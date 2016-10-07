@@ -1,9 +1,8 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-import {podPhase} from '../module/filter/pods';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, LabelList, Overflow, ResourceIcon, Timestamp, VolumeIcon} from './utils'
+import {Cog, LabelList, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon} from './utils'
 
 const PodCog = ({pod}) => {
   const kind = angulars.kinds.POD;

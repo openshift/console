@@ -3,8 +3,7 @@ import fuzzy from 'fuzzysearch';
 import {Provider} from 'react-redux';
 
 import actions from '../../module/k8s/k8s-actions';
-import {podPhase} from '../../module/filter/pods';
-import {Firehose, StatusBox} from '../utils';
+import {Firehose, podPhase, StatusBox} from '../utils';
 import {angulars, register} from '../react-wrapper';
 
 const filters = {

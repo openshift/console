@@ -5,5 +5,4 @@ import './container-tag';
 import './sysevents';
 import './join';
 import './ns';
-import './pods';
 import './users';
