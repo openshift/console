@@ -15,21 +15,12 @@ angular.module('bridge.page')
     return parseInt(input, 10);
   };
 })
-.controller('nodeCtrl', function($scope, $routeParams, k8s, pkg) {
+.controller('nodeCtrl', function($scope, $routeParams, k8s) {
   'use strict';
 
   $scope.nodeName = $routeParams.name;
   $scope.loadError = false;
   $scope.isTrusted = k8s.nodes.isTrusted;
-
-  $scope.getAddresses = function(status) {
-    if (!pkg.propExists('addresses.length', status)) {
-      return;
-    }
-    return pkg.join(status.addresses, ', ', function(a) {
-      return a.address;
-    });
-  };
 
   k8s.nodes.get($routeParams.name)
     .then(function(node) {
