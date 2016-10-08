@@ -50,6 +50,3 @@ import './timestamps/co-timestamp';
 import './namespaces/namespaces';
 import './util/debug';
 import './dropdown/dropdown';
-
-import './overflow/overflow';
-
