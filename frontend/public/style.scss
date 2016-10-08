@@ -70,11 +70,11 @@
 @import "module/ui/nav-title/nav-title";
 @import "module/ui/timestamps/co-timestamp";
 @import "module/ui/dropdown/dropdown";
-@import "module/ui/overflow/overflow";
 @import "module/ui/detail-table/detail-table";
 
 // React Components
 @import "components/dropdown";
+@import "components/overflow";
 @import "components/RBAC/rbac";
 @import "components/row-filter";
 @import "components/service";
