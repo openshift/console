@@ -240,7 +240,7 @@ class SparklineWidget extends React.Component {
             </dl>
             <dl className="stats__item">
               <dt className="stats__item-title">Median</dt>
-              <dd className="stats__item-value">{units.humanize(d3.median(this.state.data, (d) => d.value), this.state.units, true).string}</dd>
+              <dd className="stats__item-value">{units.humanize(d3.median(this.state.sortedValues), this.state.units, true).string}</dd>
             </dl>
             <dl className="stats__item">
               <dt className="stats__item-title">95th %</dt>
