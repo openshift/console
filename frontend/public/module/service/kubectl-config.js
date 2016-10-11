@@ -1,9 +1,10 @@
+import {saveAs} from 'file-saver';
+
 angular.module('bridge.service')
   .factory('kubectlConfigSvc', function kubectlConfigSvc(
     $http,
     $httpParamSerializerJQLike,
-    $window,
-    fileSaverSvc
+    $window
   ) {
     'use strict';
 
@@ -33,8 +34,8 @@ angular.module('bridge.service')
     }
 
     function downloadConfiguration(config) {
-      const blob = new $window.Blob([config], { type: 'text/yaml;charset=utf-8' });
-      fileSaverSvc.saveAs(blob, 'kubectl-config');
+      const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
+      saveAs(blob, 'kubectl-config');
     }
   })
 ;

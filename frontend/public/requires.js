@@ -4,7 +4,6 @@ window.md5 = require('blueimp-md5');
 window.$ = window.jQuery = require('jquery');
 window.moment = require('moment');
 window.angular = require('angular');
-window.saveAs = require('file-saver').saveAs;
 
 require('angular-route');
 require('angular-animate');
