@@ -1,5 +1,7 @@
+import {analyticsSvc} from '../analytics';
+
 angular.module('bridge.service')
-.factory('statusSvc', function(_, $http, k8s, $q, analyticsSvc) {
+.factory('statusSvc', function(_, $http, k8s) {
   'use strict';
 
   var attemptToUpdateKnownComponent = function(status, component, name) {

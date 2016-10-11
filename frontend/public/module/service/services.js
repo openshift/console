@@ -15,4 +15,3 @@ import './status';
 import './stream';
 import './yamlize';
 import './file-saver';
-import './analytics';
