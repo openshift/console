@@ -53,6 +53,14 @@ Cog.factory = {
     weight: 400,
     href: angulars.resourceMgrSvc.getEditLink(obj, kind),
   }),
+  EnterNamespace: (kind, obj) => ({
+    label: 'Enter Namespace',
+    weight: 100,
+    obj: obj,
+    callback: () => {
+      angulars.activeNamespaceSvc.setActiveNamespace(obj.metadata.name);
+    }
+  }),
   ModifyLabels: (kind, obj) => ({
     label: 'Modify Labels...',
     callback: angulars.modal('configure-labels', {
