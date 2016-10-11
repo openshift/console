@@ -1,7 +1,6 @@
 import './_module';
 import './active-namespaces';
 import './auth';
-import './blob-url';
 import './kubectl-config';
 import './debug';
 import './error';
