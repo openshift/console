@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 import ReactChart from './react-chart';
 import { register } from '../react-wrapper';
 import { Loading } from '../utils';
-import units from '../utils/units';
+import { units } from '../utils';
 import { discoverService } from '../../modules/k8s/discover-service';
 import { coFetch, coFetchUtils } from '../utils';
 
@@ -23,17 +23,31 @@ const states = {
 }
 
 const timespan = 60 * 60 * 1000; // 1 hour
+const pollInterval = 30 * 1000; // 30 seconds
 
 class SparklineWidget extends React.Component {
-  constructor() {
-    super();
-    this.updateInProgress = false;
+  constructor(props) {
+    super(props);
     this.interval = null;
-    this.state = {
+    this.pollOnNextUpdate = false;
+    this.generation = 0;
+    this.initialize();
+  }
+
+  initialize(props = this.props) {
+    this.updateInProgress = false;
+    const newState = _.defaults({}, props, {
       data: [],
+      limitText: 'limit',
       showStats: false,
       sortedValues: [],
       state: states.LOADING
+    });
+
+    if (this.state) {
+      this.setState(newState);
+    } else {
+      this.state = newState;
     }
   }
 
@@ -42,7 +56,7 @@ class SparklineWidget extends React.Component {
       state: states.LOADING
     });
     this.update();
-    this.interval = setInterval(this.update.bind(this), 30 * 1000);
+    this.interval = setInterval(this.update.bind(this), pollInterval);
   }
 
   componentDidMount() {
@@ -52,6 +66,24 @@ class SparklineWidget extends React.Component {
   componentWillUnmount() {
     this._isMounted = false;
     clearInterval(this.interval);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.query === this.state.query) {
+      this.setState(nextProps);
+      return;
+    }
+    this.generation = this.generation + 1; // invalidate any previously running requests
+    this.pollOnNextUpdate = true;
+    this.initialize(nextProps);
+  }
+
+  componentDidUpdate() {
+    if (!this.pollOnNextUpdate) {
+      return;
+    }
+    this.pollOnNextUpdate = false;
+    this.update();
   }
 
   // UX: when a user clicks "retry", it's possible that we'll
@@ -73,36 +105,47 @@ class SparklineWidget extends React.Component {
       // prevent pile-ups
       return;
     }
+    this.generation = this.generation + 1;
     this.updateInProgress = true;
 
     discoverService({
       namespace: 'tectonic-system',
       labelSelector: 'name=prometheus',
       healthCheckPath: '/metrics',
-      available: this.doUpdate.bind(this),
-      unavailable: this.doUnavailable.bind(this)
+      available: this.doUpdate.bind(this, this.generation),
+      unavailable: this.doUnavailable.bind(this, this.generation)
     });
   }
 
-  doUnavailable() {
+  doUnavailable(generation) {
+    if (generation !== this.generation) {
+      // this is an old request, ignore it
+      return;
+    }
+
     this.updateInProgress = false;
     this.setState({
       state: states.NOTAVAILABLE
     });
   }
 
-  doUpdate(basePath) {
+  doUpdate(generation, basePath) {
+    if (generation !== this.generation) {
+      // this is an old request, ignore it
+      return;
+    }
+
     const end = Date.now();
     const start = end - (timespan);
 
-    coFetch(`${basePath}/api/v1/query_range?query=${this.props.query}&start=${start / 1000}&end=${end / 1000}&step=30`)
+    coFetch(`${basePath}/api/v1/query_range?query=${this.state.query}&start=${start / 1000}&end=${end / 1000}&step=30`)
       .then((response) => {
         this.updateInProgress = false;
         return response;
       })
       .then(coFetchUtils.parseJson)
       .then((json) => {
-        if (!this._isMounted) {
+        if (!this._isMounted || generation !== this.generation) {
           return;
         }
 
@@ -121,7 +164,7 @@ class SparklineWidget extends React.Component {
         this.updateData(json.data.result[0].values);
       })
       .catch(() => {
-        if (!this._isMounted) {
+        if (!this._isMounted || generation !== this.generation) {
           return;
         }
 
@@ -170,7 +213,7 @@ class SparklineWidget extends React.Component {
   render() {
     return <div className="co-sparkline">
       <div className="widget__header">
-        <span className="widget__title">{this.props.heading}</span>
+        <span className="widget__title">{this.state.heading}</span>
         <span className="widget__timespan">1h</span>
         { this.isState(states.LOADED)
           ? <i className="widget__data-toggle fa fa-table widget__data-toggle--enabled" onMouseOver={this.setShowStats.bind(this, true)} onMouseOut={this.setShowStats.bind(this, false)}></i>
@@ -185,26 +228,27 @@ class SparklineWidget extends React.Component {
         { this.isState(states.BROKEN) && <p className="widget__text widget__text--error"><i className="fa fa-ban"></i>Monitoring is misconfigured or broken</p> }
         { this.isState(states.LOADED) && <ReactChart
           data={this.state.data}
-          limit={this.props.limit}
-          units={this.props.units}
+          limit={this.state.limit}
+          limitText={this.state.limitText}
+          units={this.state.units}
           timespan={timespan} /> }
         { this.isState(states.LOADED) &&
           <div className={this.state.showStats ? 'stats stats--in' : 'stats'}>
             <dl className="stats__item">
-              <dt className="stats__item-title">Limit</dt>
-              <dd className="stats__item-value">{this.props.limit ? units.humanize(this.props.limit, this.props.units, true).string : 'None'}</dd>
+              <dt className="stats__item-title">{_.capitalize(this.state.limitText)}</dt>
+              <dd className="stats__item-value">{this.state.limit ? units.humanize(this.state.limit, this.state.units, true).string : 'None'}</dd>
             </dl>
             <dl className="stats__item">
               <dt className="stats__item-title">Median</dt>
-              <dd className="stats__item-value">{units.humanize(d3.median(this.state.data, (d) => d.value), this.props.units, true).string}</dd>
+              <dd className="stats__item-value">{units.humanize(d3.median(this.state.data, (d) => d.value), this.state.units, true).string}</dd>
             </dl>
             <dl className="stats__item">
-              <dt className="stats__item-title">95th Perc.</dt>
-              <dd className="stats__item-value">{units.humanize(d3.quantile(this.state.sortedValues, 0.95), this.props.units, true).string}</dd>
+              <dt className="stats__item-title">95th %</dt>
+              <dd className="stats__item-value">{units.humanize(d3.quantile(this.state.sortedValues, 0.95), this.state.units, true).string}</dd>
             </dl>
             <dl className="stats__item">
               <dt className="stats__item-title">Latest</dt>
-              <dd className="stats__item-value">{units.humanize(this.state.data[this.state.data.length - 1].value, this.props.units, true).string}</dd>
+              <dd className="stats__item-value">{units.humanize(this.state.data[this.state.data.length - 1].value, this.state.units, true).string}</dd>
             </dl>
           </div>
         }
@@ -216,6 +260,7 @@ SparklineWidget.propTypes = {
   heading: React.PropTypes.string,
   query: React.PropTypes.string,
   limit: React.PropTypes.number,
+  limitText: React.PropTypes.string,
   units: React.PropTypes.string
 }
 

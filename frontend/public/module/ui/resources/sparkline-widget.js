@@ -9,15 +9,26 @@ angular.module('bridge.ui')
       heading: '=',
       query: '=',
       limit: '=',
+      limitText: '=',
       units: '='
     },
     controller: function($scope) {
-      $scope.props = {
-        heading: $scope.heading,
-        query: $scope.query,
-        limit: $scope.limit,
-        units: $scope.units
+      const update = () => {
+        const props = {
+          heading: $scope.heading,
+          query: $scope.query,
+          limit: $scope.limit,
+          units: $scope.units
+        };
+        if ($scope.limitText) {
+          props.limitText = $scope.limitText;
+        }
+        $scope.props = props;
       };
+
+      update();
+      $scope.$watch('query', update);
+      $scope.$watch('limit', update);
     }
   };
 });

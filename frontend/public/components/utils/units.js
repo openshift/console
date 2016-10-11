@@ -15,7 +15,7 @@ const TYPES = {
     divisor: 1000
   },
   binaryBytes: {
-    units: ['iB', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'],
+    units: ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'],
     space: true,
     divisor: 1024
   },
@@ -139,7 +139,7 @@ const units = {
   dehumanize
 };
 
-export default units;
+export { units };
 
 // This is temporary! See notes in public/components/_test.js
 window.tectonicTesting && (window.tectonicTesting.units = units);
