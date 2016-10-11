@@ -1,5 +1,7 @@
+import {analyticsSvc} from '../../module/analytics';
+
 angular.module('bridge.page')
-.factory('ModalLauncherSvc', function($uibModal, _, analyticsSvc, $rootScope) {
+.factory('ModalLauncherSvc', function($uibModal, _) {
   'use strict';
 
   var modalConfig = {
@@ -127,11 +129,10 @@ angular.module('bridge.page')
         resolve[key] = _.isFunction(value) ? value : function () {return value;};
       });
       config.resolve = resolve;
-      $rootScope.modalRoute = config.templateUrl.replace('/static/page', '');
-      analyticsSvc.route($rootScope.modalRoute);
+      analyticsSvc.route(config.templateUrl.replace('/static/page', ''));
       var open = $uibModal.open(config);
       open.closed.then(function() {
-        delete $rootScope.modalRoute;
+        analyticsSvc.unsetRoute();
       });
       return open;
     }

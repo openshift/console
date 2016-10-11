@@ -1,10 +1,10 @@
 // eslint-disable-next-line no-unused-vars
 import ngRedux from 'ng-redux';
-
 import thunk from 'redux-thunk';
-import k8sReducers from './module/k8s/k8s-reducers';
 import { combineReducers } from 'redux';
 
+import {analyticsSvc} from './module/analytics';
+import k8sReducers from './module/k8s/k8s-reducers';
 import './components/react-wrapper';
 
 // Make moment available via angular DI.
@@ -354,7 +354,7 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge, analyticsSvc) {
+.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
@@ -367,7 +367,7 @@ angular.module('bridge', [
   statusSvc.tectonicVersion();
 
   $rootScope.$on('$routeChangeSuccess', function() {
-    analyticsSvc.route();
+    analyticsSvc.route(location.pathname);
   });
 
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
@@ -412,6 +412,7 @@ angular.module('bridge', [
     }
     catch(err) {
       try {
+        // eslint-disable-next-line no-console
         console.error(err);
       }
       catch (ignored) {}
