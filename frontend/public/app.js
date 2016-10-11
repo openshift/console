@@ -412,6 +412,7 @@ angular.module('bridge', [
     }
     catch(err) {
       try {
+        // eslint-disable-next-line no-console
         console.error(err);
       }
       catch (ignored) {}
