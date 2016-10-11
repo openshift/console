@@ -5,7 +5,6 @@ export * from './resource-icon';
 export * from './volume-icon';
 export * from './timestamp';
 export * from './vertnav';
-export * from './details-page';
 export * from './relative-link';
 export * from './inject';
 export * from './firehose';
@@ -18,3 +17,6 @@ export * from './units';
 export * from './co-fetch';
 export * from './select-text';
 export * from './pods';
+
+// Needs to be loaded after ./pods
+export * from './details-page';

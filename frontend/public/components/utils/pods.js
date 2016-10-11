@@ -1,6 +1,6 @@
 // This logic (at this writing, Kubernetes 1.2.2) is replicated in kubeconfig
 // (See https://github.com/kubernetes/kubernetes/blob/v1.3.0-alpha.2/pkg/kubectl/resource_printer.go#L574 )
-export const podPhase = function(pod) {
+export const podPhase = (pod) => {
   if (!pod || !pod.status) {
     return '';
   }
