@@ -3,7 +3,6 @@ import './active-namespaces';
 import './auth';
 import './kubectl-config';
 import './debug';
-import './error';
 import './interceptors';
 import './linebuffer';
 import './features';
