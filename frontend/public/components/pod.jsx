@@ -115,13 +115,13 @@ const Details = (pod) => {
         <div className="co-sparkline-wrapper">
           <div className="row no-gutter">
             <div className="col-md-4">
-              <SparklineWidget heading="RAM" query={`sum(container_memory_usage_bytes{pod_name='${pod.metadata.name}',container_name!='POD'})`} limit={limits.memory} units="binaryBytes"></SparklineWidget>
+              <SparklineWidget heading="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} limit={limits.memory} units="binaryBytes"></SparklineWidget>
             </div>
             <div className="col-md-4">
-              <SparklineWidget heading="CPU Shares" query={`sum(container_spec_cpu_shares{pod_name='${pod.metadata.name}',container_name!='POD'}) * 1000000`} limit={limits.cpu} units="numeric"></SparklineWidget>
+              <SparklineWidget heading="CPU Shares" query={`pod_name:container_spec_cpu_shares:sum{pod_name='${pod.metadata.name}'} * 1000000`} limit={limits.cpu} units="numeric"></SparklineWidget>
             </div>
             <div className="col-md-4">
-              <SparklineWidget heading="Filesystem" query={`sum(container_fs_usage_bytes{pod_name='${pod.metadata.name}',container_name!='POD'})`} units="decimalBytes"></SparklineWidget>
+              <SparklineWidget heading="Filesystem" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} units="decimalBytes"></SparklineWidget>
             </div>
           </div>
         </div>

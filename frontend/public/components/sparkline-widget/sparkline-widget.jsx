@@ -46,7 +46,7 @@ class SparklineWidget extends React.Component {
       state: states.LOADING
     });
 
-    if (this.state) {
+    if (this._isMounted) {
       this.setState(newState);
     } else {
       this.state = newState;
