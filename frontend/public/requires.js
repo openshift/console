@@ -8,7 +8,6 @@ window.angular = require('angular');
 require('angular-route');
 require('angular-animate');
 require('angular-ui-bootstrap');
-require('angular-cookies');
 require('angular-sanitize');
 require('ng-tags-input');
 require('ngreact');
