@@ -19,7 +19,7 @@ angular.module('k8s')
       return {
         host: [u.scheme, '://', u.host].join(''),
         path: u.path,
-        port: u.port,
+        port: parseInt(u.port, 10) || u.port,
       };
     },
 
