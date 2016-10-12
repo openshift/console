@@ -8,14 +8,20 @@ angular.module('bridge.ui')
   'use strict';
 
   return {
-    templateUrl: '/static/module/ui/resources/resource-list.html',
+    template: '<react-component name="ResourceList" props="props" />',
     restrict: 'E',
     replace: true,
     scope: {
       kind: '=',
       namespace: '=',
       selector: '=',
+    },
+    controller: function($scope) {
+      $scope.props = {
+        kind: $scope.kind,
+        namespace: $scope.namespace,
+        selector: $scope.selector,
+      };
     }
   };
-
 });
