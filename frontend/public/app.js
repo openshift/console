@@ -30,7 +30,6 @@ angular.module('bridge', [
   'templates',
   'dex',
   'k8s',
-  'bridge.const',
   'bridge.filter',
   'bridge.service',
   'bridge.ui',
@@ -351,10 +350,9 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
+.run(function(_, $rootScope, $location, $window, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
   'use strict';
   // Convenience access for temmplates
-  $rootScope.CONST = CONST;
   $rootScope.SERVER_FLAGS = SERVER_FLAGS;
   $rootScope.debug = debugSvc;
   $rootScope.FEATURE_FLAGS = featuresSvc;

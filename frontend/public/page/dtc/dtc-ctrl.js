@@ -1,7 +1,7 @@
-'use strict';
+import {CONST} from '../../const';
 
 angular.module('bridge.page')
-.controller('DTCCtrl', function(_, $scope, k8s, tpm, CONST, Firehose, ModalLauncherSvc) {
+.controller('DTCCtrl', function(_, $scope, k8s, tpm, Firehose, ModalLauncherSvc) {
 
   $scope.INVALID_POLICY = CONST.INVALID_POLICY;
   $scope.isTrusted = k8s.nodes.isTrusted;

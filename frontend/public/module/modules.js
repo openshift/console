@@ -1,6 +1,5 @@
 import './k8s/k8s';
 import './dex/dex';
-import './const/const';
 import './service/services';
 import './filter/filters';
 import './ui/uis';

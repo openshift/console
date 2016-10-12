@@ -1,9 +1,11 @@
+import {EVENTS} from '../../../const';
+
 angular.module('bridge.ui')
 
 /**
  * single-container input directive form.
  */
-.directive('coContainerInput', function(_, ModalLauncherSvc, k8s, k8sUtil, EVENTS) {
+.directive('coContainerInput', function(_, ModalLauncherSvc, k8s) {
 
   'use strict';
 

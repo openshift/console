@@ -2,7 +2,6 @@ describe('bridge.service.linebufferSvc', function() {
   'use strict';
   var buffer;
 
-  beforeEach(module('bridge.const'));
   beforeEach(module('bridge.service'));
   beforeEach(inject(function(_linebufferSvc_) {
     buffer = _linebufferSvc_.buffer(3);

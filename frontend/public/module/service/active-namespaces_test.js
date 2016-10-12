@@ -4,7 +4,6 @@ describe('bridge.service.activeNamespaceSvc', function() {
   // var activeNamespaceSvc;
 
   // beforeEach(module('k8s'));
-  // beforeEach(module('bridge.const'));
   // beforeEach(module('bridge.service'));
   // beforeEach(inject(function(_activeNamespaceSvc_) {
   //   activeNamespaceSvc = _activeNamespaceSvc_;
