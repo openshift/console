@@ -22,8 +22,9 @@ const states = {
   LOADED: 'loaded'
 }
 
+const stepSize = 30; // 30 seconds
 const timespan = 60 * 60 * 1000; // 1 hour
-const pollInterval = 30 * 1000; // 30 seconds
+const pollInterval = stepSize * 1000; // stepSize in milliseconds
 
 class SparklineWidget extends React.Component {
   constructor(props) {
@@ -38,6 +39,7 @@ class SparklineWidget extends React.Component {
     this.updateInProgress = false;
     const newState = _.defaults({}, props, {
       data: [],
+      presentationData: [],
       limitText: 'limit',
       showStats: false,
       sortedValues: [],
@@ -138,7 +140,7 @@ class SparklineWidget extends React.Component {
     const end = Date.now();
     const start = end - (timespan);
 
-    coFetch(`${basePath}/api/v1/query_range?query=${this.state.query}&start=${start / 1000}&end=${end / 1000}&step=30`)
+    coFetch(`${basePath}/api/v1/query_range?query=${this.state.query}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`)
       .then((response) => {
         this.updateInProgress = false;
         return response;
@@ -192,9 +194,29 @@ class SparklineWidget extends React.Component {
       }
     });
 
+    // make sure gaps in our data aren't smoothed
+    let presentationData = [
+      data[0]
+    ];
+    data.slice(1).forEach((current, index) => {
+      const previous = data[index]; // this loop starts at 0, so data[index] is previous
+      if (current.date - previous.date >= stepSize * 1.1) {
+        presentationData.push({
+          date: previous.date + 1,
+          value: -1
+        });
+        presentationData.push({
+          date: current.date - 1,
+          value: -1
+        });
+      }
+      presentationData.push(current);
+    });
+
     const sortedValues = _.map(_.sortBy(data, (item) => item.value), 'value');
     this.setState({
       data,
+      presentationData,
       sortedValues,
       state: states.LOADED
     });
@@ -227,7 +249,7 @@ class SparklineWidget extends React.Component {
         { this.isState(states.NODATA) && <p className="widget__text">No data found</p> }
         { this.isState(states.BROKEN) && <p className="widget__text widget__text--error"><i className="fa fa-ban"></i>Monitoring is misconfigured or broken</p> }
         { this.isState(states.LOADED) && <ReactChart
-          data={this.state.data}
+          data={this.state.presentationData}
           limit={this.state.limit}
           limitText={this.state.limitText}
           units={this.state.units}
@@ -240,7 +262,7 @@ class SparklineWidget extends React.Component {
             </dl>
             <dl className="stats__item">
               <dt className="stats__item-title">Median</dt>
-              <dd className="stats__item-value">{units.humanize(d3.median(this.state.data, (d) => d.value), this.state.units, true).string}</dd>
+              <dd className="stats__item-value">{units.humanize(d3.median(this.state.sortedValues), this.state.units, true).string}</dd>
             </dl>
             <dl className="stats__item">
               <dt className="stats__item-title">95th %</dt>
