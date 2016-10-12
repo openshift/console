@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie';
+import {md5} from 'blueimp-md5';
 
 angular.module('bridge.service')
-.factory('authSvc', function($log, $window, $location, $http, featuresSvc, pkg) {
+.factory('authSvc', function($log, $window, $location, $http) {
   'use strict';
 
   function loginState() {
@@ -66,7 +67,7 @@ angular.module('bridge.service')
       if (!em) {
         return;
       }
-      return pkg.md5(em);
+      return md5(em);
     },
 
   };

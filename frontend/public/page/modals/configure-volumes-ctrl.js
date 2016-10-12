@@ -1,6 +1,6 @@
 angular.module('bridge.page')
 .controller('ConfigureVolumesCtrl', function(_, $scope, $uibModalInstance, $controller,
-      pod, arraySvc, k8s, $rootScope, pkg) {
+      pod, arraySvc, k8s, k8sUtil, $rootScope) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
@@ -40,7 +40,7 @@ angular.module('bridge.page')
         delete v.emptyDir;
       }
       delete v.type;
-      pkg.deleteNulls(v);
+      k8sUtil.deleteNulls(v);
       return v;
     });
     pod.spec.volumes = items;
@@ -52,7 +52,7 @@ angular.module('bridge.page')
   };
 
   $scope.onTypeChange = function(v) {
-    if (v.type === 'container' && pkg.propExists('hostPath.path', v)) {
+    if (v.type === 'container' && _.has(v, 'hostPath.path')) {
       v.hostPath.path = null;
     }
   };

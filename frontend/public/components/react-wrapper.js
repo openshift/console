@@ -8,6 +8,9 @@ export const angulars = {
   resourceMgrSvc: null,
   ModalLauncherSvc: null,
   $location: null,
+  $log: null,
+  $interval: null,
+  $timeout: null,
 };
 
 const app = angular.module('bridge.react-wrapper', ['bridge']);
@@ -22,7 +25,7 @@ export const register = (name, Component) => {
 
 app.value('nop', () => <div/>);
 
-app.service('angularBridge', function ($ngRedux, $location, $routeParams, Firehose, k8s, ModalLauncherSvc, resourceMgrSvc, activeNamespaceSvc) {
+app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeout, $interval, $log, Firehose, k8s, ModalLauncherSvc, resourceMgrSvc, activeNamespaceSvc) {
   // "Export" angular modules to the outside world via ref through 'angulars'...
   // NOTE: this only exist after the app has loaded!
 
@@ -41,6 +44,9 @@ app.service('angularBridge', function ($ngRedux, $location, $routeParams, Fireho
     angulars.kinds = k8s.enum.Kind;
     angulars.resourceMgrSvc = resourceMgrSvc;
     angulars.activeNamespaceSvc = activeNamespaceSvc;
+    angulars.$log = $log;
+    angulars.$interval= $interval;
+    angulars.$timeout = $timeout;
   }
 });
 

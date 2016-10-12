@@ -5,7 +5,6 @@ angular.module('bridge.ui', [
   'bridge.const',
   'bridge.service',
   'bridge.page',
-  'core.pkg',
   'coreos.services',
   'k8s'
 ]);

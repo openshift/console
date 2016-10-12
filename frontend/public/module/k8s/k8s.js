@@ -18,6 +18,9 @@ import './util';
 import './command';
 import './configmaps';
 
+import {wsFactory} from '../ws-factory';
+
+
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
 angular.module('k8s')
@@ -61,7 +64,7 @@ angular.module('k8s')
     };
   };
 })
-.service('k8s', function(_, $http, $timeout, $rootScope, wsFactory, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
+.service('k8s', function(_, $http, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
                          k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, tpm, k8sConfigmaps) {
   'use strict';
