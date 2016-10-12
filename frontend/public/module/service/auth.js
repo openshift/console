@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 
 angular.module('bridge.service')
-.factory('authSvc', function($log, $window, $location, $http, errorSvc, featuresSvc, pkg) {
+.factory('authSvc', function($log, $window, $location, $http, featuresSvc, pkg) {
   'use strict';
 
   function loginState() {
@@ -42,8 +42,8 @@ angular.module('bridge.service')
     email: email,
 
     logout: function(prev) {
-      var url = $window.SERVER_FLAGS.loginURL;
-      return $http.post($window.SERVER_FLAGS.logoutURL)
+      var url = SERVER_FLAGS.loginURL;
+      return $http.post(SERVER_FLAGS.logoutURL)
         .then(function() {
           if (prev) {
             url += '?prev=' + prev;
@@ -51,7 +51,7 @@ angular.module('bridge.service')
           $window.location.href = url;
         })
         .catch(function() {
-          errorSvc.sendToErrorPage('auth', 'logout_error');
+          $window.location.href = `${SERVER_FLAGS.loginErrorURL}?error_type=auth&error=logout_error`;
         });
     },
 
