@@ -1,9 +1,11 @@
+import Cookies from 'js-cookie';
+
 angular.module('bridge.service')
-.factory('authSvc', function($cookies, $log, $window, $location, $http, errorSvc, featuresSvc, pkg) {
+.factory('authSvc', function($log, $window, $location, $http, errorSvc, featuresSvc, pkg) {
   'use strict';
 
   function loginState() {
-    var state = $cookies.get('state');
+    var state = Cookies.get('state');
     if (!state) {
       return null;
     }
