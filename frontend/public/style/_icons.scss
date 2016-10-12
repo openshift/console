@@ -13,10 +13,10 @@
   cursor: pointer;
 }
 
-.tpm-trusted {
-  color: $color-tpm-trusted;
+.node-ready {
+  color: $color-green-success;
 }
 
-.tpm-untrusted {
+.node-not-ready {
   color: $color-red-error;
 }

@@ -3,7 +3,6 @@ angular.module('bridge.service')
   'use strict';
   return {
     isAuthDisabled: $window.SERVER_FLAGS.authDisabled,
-    tpm: undefined,
     userManagement: undefined,
     rbacV1alpha1: undefined,
     revokeToken: !!$window.SERVER_FLAGS.kubectlClientID,

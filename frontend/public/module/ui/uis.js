@@ -26,13 +26,6 @@ import './resources/node-ip-list';
 import './resources/namespace-list-menu';
 import './resources/resource-link';
 import './resources/resource-list';
-import './resources/create-policy';
-import './resources/yaml-policy';
-import './resources/policy-list';
-
-import './resources/policy';
-import './resources/tpm';
-import './resources/tpm-list';
 
 import './resources/sparkline-widget';
 

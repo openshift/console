@@ -231,11 +231,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/nodes/sysevents.html',
     title: 'Node Events',
   });
-  r('/nodes/:name/tpm-event-log', {
-    controller: 'nodeTpmLogCtrl',
-    templateUrl: '/static/page/nodes/tpm-event-log.html',
-    title: 'Node',
-  });
   r('/nodes/:name/pods', {
     controller: 'nodePodsCtrl',
     templateUrl: '/static/page/nodes/pods.html',
@@ -276,40 +271,6 @@ angular.module('bridge', [
     controller: 'UsersCtrl',
     templateUrl: '/static/page/settings/users.html',
     title: 'Manage Users',
-  });
-
-  r('/audit-report', {
-    controller: 'DTCCtrl',
-    templateUrl: '/static/page/dtc/audit-report.html',
-    title: 'Policy',
-  });
-  r('/create-policy', {
-    controller: 'DTCCtrl',
-    templateUrl: '/static/page/tpm/create.html',
-    title: 'Create Policy',
-  });
-  r('/trusted-compute-policies', {
-    controller: 'DTCCtrl',
-    templateUrl: '/static/page/dtc/policy-list.html',
-    title: 'Trusted Compute Policies',
-  });
-
-  r('/trusted-platform-modules', {
-    controller: 'DTCCtrl',
-    templateUrl: '/static/page/dtc/tpm-list.html',
-    title: 'Trusted Platform Module',
-  });
-
-  r('/trusted-platform-modules/:name', {
-    controller: 'DTCCtrl',
-    templateUrl: '/static/page/dtc/tpm-page.html',
-    title: 'Trusted Platform Module',
-  });
-
-  r('/trusted-compute-policies/:name', {
-    controller: 'DTCCtrl',
-    templateUrl: '/static/page/dtc/policy-page.html',
-    title: 'Policy',
   });
 
   r('/welcome', {

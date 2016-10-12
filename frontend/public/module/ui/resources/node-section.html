@@ -13,9 +13,6 @@
 
         <input ng-model="passByRef.namefilter" type="text" class="form-control node-search pull-right" placeholder="Search for a node..." />
 
-        <co-dropdown ng-show='$root.FEATURE_FLAGS.tpm' title="'Trusted Status'" selected="passByRef.trusted" items="[['Trusted: All', 'all'], ['Trusted', true], ['Untrusted', false]]" class="pull-right">
-        </co-dropdown>
-
         <co-dropdown title="'Ready Status'" selected="passByRef.status" items="[['Status: All', 'all'], ['Status: Ready', true], ['Status: Not Ready', false]]" class="pull-right">
         </co-dropdown>
       </div>
