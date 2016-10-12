@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureLifecycleCtrl', function($scope, _, k8s, urlSvc, $uibModalInstance, container) {
+.controller('ConfigureLifecycleCtrl', function($scope, _, k8s, $uibModalInstance, container) {
   'use strict';
 
   var placeholders = {

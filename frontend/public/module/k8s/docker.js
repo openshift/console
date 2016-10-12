@@ -1,5 +1,7 @@
+import {util} from './util';
+
 angular.module('k8s')
-.service('k8sDocker', function(_, k8sEnum, k8sUtil) {
+.service('k8sDocker', function(_, k8sEnum) {
   'use strict';
 
   // Parses the state from k8s container info field of a pod.
@@ -32,7 +34,7 @@ angular.module('k8s')
 
   // Nullify empty fields & prep volumes.
   this.clean = function(container) {
-    k8sUtil.nullifyEmpty(container, [
+    util.nullifyEmpty(container, [
       'ports',
       'volumeMounts',
       'env',
@@ -42,7 +44,7 @@ angular.module('k8s')
     ]);
 
     if (container.resources && container.resources.limits) {
-      k8sUtil.deleteNulls(container.resources.limits);
+      util.deleteNulls(container.resources.limits);
     }
   };
 

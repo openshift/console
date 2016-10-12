@@ -3,6 +3,8 @@
  * Displays a different circular icon for services, controllers, pods, etc.
  */
 
+import {util} from '../../k8s/util';
+
 angular.module('bridge.ui')
 .directive('coResourceIcon', function(k8s) {
   'use strict';
@@ -15,7 +17,7 @@ angular.module('bridge.ui')
     link: function(scope, elem, attrs) {
       var kind, kindInput, kindId;
       kindInput = (attrs.kind || '').toLowerCase();
-      kind = k8s.util.getKindEnumById(kindInput);
+      kind = util.getKindEnumById(kindInput);
       if (kind) {
         kindId = kind.id;
       } else {

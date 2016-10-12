@@ -1,5 +1,6 @@
+
 angular.module('k8s')
-.service('k8sProbe', function(_, k8sEnum, k8sUtil) {
+.service('k8sProbe', function(_, k8sEnum) {
   'use strict';
 
   var flatteners, parsers;
@@ -12,14 +13,33 @@ angular.module('k8s')
     },
 
     httpGet: function(str) {
-      var u = k8sUtil.parseURL(str);
-      if (!u.valid) {
+      if (!str) {
+        return null;
+      }
+      // XXX: Kubernetes allows for named ports, but the URL spec says ports must be digits.
+      let scheme, path, port, host, hostname, rest;
+      [scheme, ...rest] = str.split('://');
+      if (!scheme) {
+        return null;
+      }
+      str = rest.join();
+      [host, ...rest] = str.split('/');
+      path = `/${rest.join()}`;
+      [hostname, port] = host.split(':');
+      if (_.isUndefined(port)) {
+        if (scheme === 'http') {
+          port = 80;
+        } else if (scheme === 'https') {
+          port = 443;
+        }
+      }
+      if (_.isUndefined(port)) {
         return null;
       }
       return {
-        host: [u.scheme, '://', u.host].join(''),
-        path: u.path,
-        port: parseInt(u.port, 10) || u.port,
+        host: [scheme, '://', hostname].join(''),
+        path: path,
+        port: parseInt(port, 10) || port,
       };
     },
 
