@@ -111,10 +111,21 @@ class Chart {
     const mouseTrigger = this.svg.select('.chart__mouse-trigger');
     mouseTrigger.on('mousemove', () => {
       const x0 = scales.x.invert(d3.mouse(mouseTrigger.node())[0]),
-          i  = this._bisectDate(data, x0, 1),
+          i  = this._bisectDate(data, x0),
           d0 = data[i - 1],
-          d1 = data[i],
-          d  = x0 - d0.date > d1.date - x0 ? d1 : d0;
+          d1 = data[i];
+
+      let d;
+      if (d0 && d1) {
+        d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+      }
+      if (!d || d.value === -1) {
+        // there's no data for this point, hide the toolitp
+        d = {
+          date: -1,
+          value: -1
+        };
+      }
 
       const translateX = scales.x(d.date);
       const translateY = scales.y(d.value);
