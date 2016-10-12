@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ConfigureResourceLimitsCtrl', function($scope, $uibModalInstance, _, k8s, pkg, container) {
+.controller('ConfigureResourceLimitsCtrl', function($scope, $uibModalInstance, _, k8s, container) {
   'use strict';
 
   $scope.fields = k8s.docker.getEmptyResourceLimits();
@@ -10,8 +10,12 @@ angular.module('bridge.page')
     _.extend($scope.fields.limits, container.resources.limits);
   }
 
+  const allEmpty = obj =>  {
+    return _.every(_.values(obj), _.isEmpty);
+  };
+
   $scope.save = function() {
-    if (pkg.allEmpty($scope.fields.limits)) {
+    if (allEmpty($scope.fields.limits)) {
       container.resources = null;
     } else {
       if (!container.resources) {

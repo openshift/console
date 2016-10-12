@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sUtil', function(_, pkg, k8sEnum, urlSvc) {
+.service('k8sUtil', function(_, k8sEnum, urlSvc) {
   'use strict';
 
   // TODO (sym3tri): refector this depencency once coreos-web is split up.
@@ -38,6 +38,18 @@ angular.module('k8s')
     });
   };
 
-  this.deleteNulls = pkg.deleteNulls;
+  this.deleteProps = (obj, fn) => {
+    _.forEach(obj, function(val, key) {
+      if (fn(val)) {
+        delete obj[key];
+      }
+    });
+    return obj;
+  };
+
+  this.deleteNulls = (obj) => {
+    this.deleteProps(obj, _.isNull);
+    return obj;
+  };
 
 });

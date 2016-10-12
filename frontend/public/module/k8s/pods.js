@@ -1,5 +1,5 @@
 angular.module('k8s')
-.service('k8sPods', function(_, pkg, k8sDocker, k8sUtil, k8sEnum, $http, k8sResource) {
+.service('k8sPods', function(_, k8sDocker, k8sUtil, k8sEnum, $http, k8sResource) {
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });

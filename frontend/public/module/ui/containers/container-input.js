@@ -3,7 +3,7 @@ angular.module('bridge.ui')
 /**
  * single-container input directive form.
  */
-.directive('coContainerInput', function(_, ModalLauncherSvc, pkg, k8s, EVENTS) {
+.directive('coContainerInput', function(_, ModalLauncherSvc, k8s, k8sUtil, EVENTS) {
 
   'use strict';
 
@@ -85,14 +85,17 @@ angular.module('bridge.ui')
       };
 
       $scope.getResourceLimitsLabel = function() {
-        var val;
-        if (!pkg.propExists('resources.limits', $scope.container)) {
+        if (!_.has($scope.container, 'resources.limits')) {
           return 'Not Configured';
         }
-
-        val = pkg.join(pkg.deleteEmpties($scope.container.resources.limits), ', ', function(v, k) {
-          return k + ': ' + v;
-        });
+        let val = [];
+        _.each($scope.container.resources.limits, (v, k) => {
+          if (_.isEmpty(v)) {
+            return;
+          }
+          val.push(`${k}: ${v}`);
+        })
+        val = val.join(', ');
         return val || 'Not Configured';
       };
 

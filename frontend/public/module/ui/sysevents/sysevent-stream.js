@@ -3,8 +3,11 @@
  * Directive to display and stream cluster events over a websocket.
  */
 
+import {wsFactory} from '../../ws-factory';
+
+
 angular.module('bridge.ui')
-.directive('coSyseventStream', function(_, $filter, $log, $interval, k8s, wsFactory) {
+.directive('coSyseventStream', function(_, $filter, $log, $interval, k8s) {
   'use strict';
 
   var sysevents = $filter('sysevents');

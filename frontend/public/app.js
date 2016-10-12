@@ -36,12 +36,11 @@ angular.module('bridge', [
   'bridge.ui',
   'bridge.page',
   'bridge.react-wrapper',
-  'core.pkg',
   'namespace-sparklines',
   'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
-                 configSvcProvider, errorMessageSvcProvider, flagSvcProvider,
+                 configSvcProvider, errorMessageSvcProvider,
                  k8sConfigProvider, activeNamespaceSvcProvider, $ngReduxProvider) {
   'use strict';
 
@@ -56,7 +55,6 @@ angular.module('bridge', [
     enabled: true,
     requireBase: true
   });
-  flagSvcProvider.setGlobalId('SERVER_FLAGS');
 
   // deep down in code k8s path is used to open WS connection, which doesn't respect
   // <base> tag in index.html so we cannot use relative path as in many other places
@@ -353,11 +351,11 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, CONST, flagSvc, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
+.run(function(_, $rootScope, $location, $window, CONST, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
   'use strict';
   // Convenience access for temmplates
   $rootScope.CONST = CONST;
-  $rootScope.SERVER_FLAGS = flagSvc.all();
+  $rootScope.SERVER_FLAGS = SERVER_FLAGS;
   $rootScope.debug = debugSvc;
   $rootScope.FEATURE_FLAGS = featuresSvc;
   angularBridge.expose();
