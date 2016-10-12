@@ -19,7 +19,7 @@ const JobCog = ({job}) => {
   return <Cog options={options} size="small" anchor="left"></Cog>;
 }
 
-const JobRow = (job) => {
+const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
     <div className="row co-resource-list__item">

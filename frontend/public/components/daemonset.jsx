@@ -17,7 +17,7 @@ const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Node Selector</div>
 </div>
 
-const DaemonSetRow = (daemonset) => <div className="row co-resource-list__item">
+const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
     <DaemonSetCog daemonset={daemonset}></DaemonSetCog>
     <ResourceIcon kind="daemonset"></ResourceIcon>

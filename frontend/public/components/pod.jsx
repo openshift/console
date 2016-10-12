@@ -11,7 +11,7 @@ const PodCog = ({pod}) => {
   return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" />;
 }
 
-const PodRow = (pod) => <div className="row co-resource-list__item">
+const PodRow = ({obj: pod}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
     <PodCog pod={pod} />
     <ResourceIcon kind="pod" />

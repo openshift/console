@@ -19,7 +19,7 @@ const SecretHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-md-4">Secret Age</div>
 </div>;
 
-const SecretRow = (secret) => {
+const SecretRow = ({obj: secret}) => {
   const data = Object.keys(secret.data || {}).length;
   const age = moment(secret.metadata.creationTimestamp).fromNow();
 
@@ -73,7 +73,7 @@ const withSecretsList = (Row) => {
     }
 
     render () {
-      const {metadata: {namespace}, secrets} = this.props;
+      const {obj: {metadata: {namespace}, secrets}} = this.props;
       const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
 
       return (

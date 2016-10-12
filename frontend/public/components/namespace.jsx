@@ -15,7 +15,7 @@ const NamespaceCog = ({namespace}) => {
   return <Cog options={options} size="small" anchor="left"></Cog>;
 }
 
-const NamespaceRow = (namespace) => <div className="row co-resource-list__item">
+const NamespaceRow = ({obj: namespace}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
     <NamespaceCog namespace={namespace} />
     <ResourceIcon kind={angulars.kinds.NAMESPACE.id} />

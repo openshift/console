@@ -30,12 +30,12 @@ export class DropdownMixin extends React.Component {
     window.removeEventListener('click', this.listener);
   }
 
-  onClick_ (name, e) {
+  onClick_ (key, name, e) {
     e.stopPropagation();
 
     const {onChange} = this.props;
     if (onChange) {
-      onChange(name);
+      onChange(key);
     }
 
     this.setState({active: false, title: name});
@@ -71,10 +71,10 @@ export class Dropdown extends DropdownMixin {
       button = <span onClick={this.toggle.bind(this)} className="dropdown__not-btn">{title}&nbsp;&nbsp;<span className="caret"></span></span>;
     }
 
-    const children = _.map(items, (value, name) => {
+    const children = _.map(items, (name, key) => {
       const klass = name === title ? 'dropdown__selected' : 'dropdown__default';
-      const onClick_ = this.onClick_.bind(this, name);
-      return <li className={klass} key={name}><a onClick={onClick_}>{name}</a></li>;
+      const onClick_ = this.onClick_.bind(this, key, name);
+      return <li className={klass} key={key}><a onClick={onClick_}>{name}</a></li>;
     });
 
     return (

@@ -8,7 +8,7 @@ import {DeploymentList} from './deployment';
 import {HorizontalPodAutoscalersList} from './horizontal-pod-autoscaler';
 import {JobsList} from './job';
 import {NamespacesList} from './namespace';
-import {NodesList} from './node';
+import {NodesListSearch} from './node';
 import {PodList} from './pod';
 import {ReplicaSetsList} from './replicaset';
 import {ReplicationControllersList} from './replication-controller';
@@ -26,7 +26,7 @@ export const ResourceList = (props) => {
     {kind === 'horizontalpodautoscaler' && <HorizontalPodAutoscalersList {...props} />}
     {kind === 'job'                     && <JobsList {...props} />}
     {kind === 'namespace'               && <NamespacesList {...props} namespace={null} />}
-    {kind === 'node'                    && <NodesList {...props} namespace={null} />}
+    {kind === 'node'                    && <NodesListSearch {...props} namespace={null} />}
     {kind === 'pod'                     && <PodList {...props} />}
     {kind === 'replicaset'              && <ReplicaSetsList {...props} />}
     {kind === 'replicationcontroller'   && <ReplicationControllersList {...props} />}
