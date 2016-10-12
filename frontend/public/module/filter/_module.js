@@ -1,1 +1,1 @@
-angular.module('bridge.filter', ['lodash', 'bridge.const']);
+angular.module('bridge.filter', ['lodash']);

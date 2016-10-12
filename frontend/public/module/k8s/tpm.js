@@ -1,4 +1,4 @@
-'use strict';
+import {CONST} from '../../const';
 
 // http://www.trustedcomputinggroup.org/wp-content/uploads/PC-ClientSpecific_Platform_Profile_for_TPM_2p0_Systems_v21_Public-Review.pdf#765
 const PCR_ENUM = {
@@ -25,7 +25,7 @@ const LAYERS = {
 
 
 angular.module('k8s')
-.service('tpm', function (CONST) {
+.service('tpm', function () {
   const INVALID_POLICY =  CONST.INVALID_POLICY;
 
   this.pcrToHuman = (number) => {

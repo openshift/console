@@ -1,9 +1,11 @@
+import {EVENTS} from '../../../const';
+
 angular.module('bridge.ui')
 
 /**
  * multi-container input directive form.
  */
-.directive('coMultiContainerInput', function(_, arraySvc, k8s, EVENTS) {
+.directive('coMultiContainerInput', function(_, arraySvc, k8s) {
 
   'use strict';
 

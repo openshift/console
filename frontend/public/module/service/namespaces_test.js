@@ -2,7 +2,6 @@ describe('bridge.service.activeNamespaceSvc', function() {
   'use strict';
   var activeNamespaceSvc, setPath, mockPath;
 
-  beforeEach(module('bridge.const'));
   beforeEach(module('bridge.service'));
 
   beforeEach(module(function($provide) {

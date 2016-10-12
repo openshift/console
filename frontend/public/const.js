@@ -1,8 +1,5 @@
-import './_module';
-import './events';
 
-angular.module('bridge.const')
-.constant('CONST', {
+export const CONST = {
   title: 'Bridge',
   dateFmt: 'MM-dd-yyyy',
   timeFmt: 'HH:mm:ss a Z',
@@ -25,5 +22,9 @@ angular.module('bridge.const')
   PULL_SECRET_TYPE: 'kubernetes.io/dockerconfigjson',
   PULL_SECRET_DATA: '.dockerconfigjson',
 
-  QUAY_IO_SECRET_NAME: 'tectonic-quay.io'
-});
+  QUAY_IO_SECRET_NAME: 'tectonic-quay.io',
+};
+
+export const EVENTS = {
+  CONTAINER_REMOVE: 'container-remove',
+};

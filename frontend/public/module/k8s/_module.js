@@ -1,1 +1,1 @@
-angular.module('k8s', ['lodash', 'coreos.services', 'bridge.const', 'bridge.service']);
+angular.module('k8s', ['lodash', 'coreos.services', 'bridge.service']);

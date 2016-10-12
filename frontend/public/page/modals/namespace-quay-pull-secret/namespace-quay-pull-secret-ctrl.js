@@ -1,10 +1,11 @@
+import {CONST} from '../../../const';
+
 angular.module('bridge.page')
   .controller('NamespaceQuayPullSecretCtrl', function NamespaceQuayPullSecretCtrl(
     $q,
     $scope,
     $uibModalInstance,
     $window,
-    CONST,
     k8s,
     namespace
   ) {

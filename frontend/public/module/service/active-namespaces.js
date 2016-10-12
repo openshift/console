@@ -1,5 +1,7 @@
+import {CONST} from '../../const';
+
 angular.module('bridge.service')
-.provider('activeNamespaceSvc', function(CONST) {
+.provider('activeNamespaceSvc', function() {
   'use strict';
 
   // This module supports users viewing resources based on namespace,

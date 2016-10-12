@@ -1,5 +1,7 @@
+import {CONST} from '../../const';
+
 angular.module('bridge.page')
-.controller('NewNamespaceCtrl', function($scope, CONST, namespaceCacheSvc) {
+.controller('NewNamespaceCtrl', function($scope, namespaceCacheSvc) {
   'use strict';
 
   $scope.namePattern = CONST.legalNamePattern;
