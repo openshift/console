@@ -131,16 +131,6 @@
             <h4 class="cluster-status-cell__title">Software Details</h4>
           </div>
         </div>
-        <div class="row cluster-status-cell__info-row cluster-status-cell__info-row--first">
-          <div class="col-xs-6 cluster-status-cell__info-row__first-cell">TPM Support</div>
-          <div class="col-xs-6 cluster-status-cell__info-row__last-cell">
-            <div class="software-version" ng-if="$root.FEATURE_FLAGS.tpm===undefined" ng-bind="'Unknown'"></div>
-            <div class="software-version" ng-if="$root.FEATURE_FLAGS.tpm!==undefined" ng-bind="$root.FEATURE_FLAGS.tpm ? 'Enabled' : 'Disabled'"></div>
-            <div class="software-release-notes">
-              <a href="https://coreos.com/blog/coreos-trusted-computing.html">TPM Documentation</a>
-            </div>
-          </div>
-        </div>
 
         <div class="row cluster-status-cell__info-row">
           <div class="col-xs-6 cluster-status-cell__info-row__first-cell">Kubernetes</div>

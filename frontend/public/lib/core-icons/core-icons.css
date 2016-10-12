@@ -99,10 +99,3 @@
 .ci-stop:before {
 	content:"\f109";
 }
-
-
-
-.ci-tpm-icon:before {
-	content:"\f10c";
-}
-

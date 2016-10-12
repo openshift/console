@@ -13,7 +13,6 @@ import './replicasets';
 import './deployments';
 import './resource';
 import './services';
-import './tpm';
 import './util';
 import './command';
 import './configmaps';
@@ -56,7 +55,6 @@ angular.module('k8s')
       },
       getk8sFlagPaths: function () {
         return {
-          tpm: '/apis/tpm.coreos.com/v1',
           rbac: '/apis/rbac.authorization.k8s.io',
           rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1',
         };
@@ -66,7 +64,7 @@ angular.module('k8s')
 })
 .service('k8s', function(_, $http, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, tpm, k8sConfigmaps) {
+                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, k8sConfigmaps) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;
@@ -116,7 +114,6 @@ angular.module('k8s')
   this.kinds = k8sEnum.Kind;
   this.configmaps = addDefaults(k8sConfigmaps, k8sEnum.Kind.CONFIGMAP);
   this.nodes = addDefaults(k8sNodes, k8sEnum.Kind.NODE);
-  this.policies = addDefaults(tpm, k8sEnum.Kind.POLICY);
   this.services = addDefaults(k8sServices, k8sEnum.Kind.SERVICE);
   this.pods = addDefaults(k8sPods, k8sEnum.Kind.POD);
   this.containers = addDefaults({}, k8sEnum.Kind.CONTAINER);
@@ -131,7 +128,6 @@ angular.module('k8s')
 
   this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);
   this.namespaces = addDefaults({}, k8sEnum.Kind.NAMESPACE);
-  this.tpms = addDefaults({}, k8sEnum.Kind.TPM);
 
   this.clusterrolebindings = addDefaults({}, k8sEnum.Kind.CLUSTERROLEBINDING);
   this.clusterroles = addDefaults({}, k8sEnum.Kind.CLUSTERROLE);
