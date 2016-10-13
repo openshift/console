@@ -61,11 +61,11 @@ const ContainerRow = ({pod, container}) => {
         <ResourceIcon kind="container" />
         <ContainerLink pod={pod} name={container.name} />
       </div>
-      <Overflow className="col-sm-3 hidden-xs" value={cstatus.containerID} />
+      <Overflow className="col-sm-3 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
       <div className="col-sm-3 col-xs-8">{container.image}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">{cstate.label || '-'}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">{cstatus.restartCount || '0'}</div>
-      <div className="col-md-2 hidden-sm  hidden-xs"><Timestamp timestamp={cstate.startedAt} /></div>
+      <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
+      <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
+      <div className="col-md-2 hidden-sm  hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
     </div>
   </div>
 }
