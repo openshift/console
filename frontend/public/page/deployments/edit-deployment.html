@@ -17,7 +17,7 @@
           <div ng-show="loaded && !loadError">
             <div class="row co-m-form-row">
               <div class="col-sm-2">
-                <label for="input-controller-replicas" class="control-label">Replicas:</label>
+                <label for="input-controller-replicas" class="control-label">Desired Pod Count:</label>
               </div>
               <div class="co-m-form-col col-sm-10">
                 <input ng-model="deployment.spec.replicas" co-number-spinner type="number" class="form-control" required id="input-controller-replicas"/>
@@ -38,6 +38,37 @@
               <div class="co-m-form-col col-sm-10">
                 <co-selector-input ng-model="deployment.spec.selector" options="{undefinedWhenEmpty: true}"></co-selector-input>
                 <small class="text-muted">Write a label query that will match labels on new or existing pods.</small>
+              </div>
+            </div>
+            <div class="row co-m-form-row">
+              <div class="col-sm-2">
+                <label class="control-label">Update Strategy:</label>
+              </div>
+              <div class="co-m-form-col col-sm-10">
+                <div><a href="#" ng-click="openUpdateStrategyModal()" class="co-m-modal-link" ng-bind="deployment.spec.strategy.type | emptyPlaceholder"></a></div>
+                <small class="text-muted" ng-if="deployment.spec.strategy.type === 'RollingUpdate'">
+                  Max Unavailable <span ng-bind="deployment.spec.strategy.rollingUpdate.maxUnavailable | emptyPlaceholder : 1"></span>, Max Surge <span ng-bind="deployment.spec.strategy.rollingUpdate.maxSurge | emptyPlaceholder : 1"></span> pods
+                </small>
+              </div>
+            </div>
+            <div class="row co-m-form-row">
+              <div class="col-sm-2">
+                <label for="input-min-ready-seconds" class="control-label">Min. Ready Seconds:</label>
+              </div>
+              <div class="co-m-form-col col-sm-10">
+                <div class="input-group">
+                  <input ng-model="deployment.spec.minReadySeconds" placeholder="0" type="number" class="form-control" id="input-min-ready-seconds"/>
+                  <div class="input-group-addon">seconds</div>
+                </div>
+                <small class="text-muted">All containers are Ready for at least this long before their pod is considered Healthy.</small>
+              </div>
+            </div>
+            <div class="row co-m-form-row">
+              <div class="col-sm-2">
+                <label class="control-label">Revision History Limit:</label>
+              </div>
+              <div class="co-m-form-col col-sm-10">
+                <div><a href="#" ng-click="openRevisionHistoryLimitModal()" class="co-m-modal-link"><span ng-bind="deployment.spec.revisionHistoryLimit | emptyPlaceholder : 'Unlimited'"></span> revisions</a></div>
               </div>
             </div>
           </div>

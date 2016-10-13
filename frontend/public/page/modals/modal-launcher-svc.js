@@ -21,6 +21,14 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-volume-mounts.html',
       controller: 'ConfigureVolumeMountsCtrl',
     },
+    'configure-update-strategy': {
+      templateUrl: '/static/page/modals/configure-update-strategy.html',
+      controller: 'ConfigureUpdateStrategyCtrl',
+    },
+    'configure-revision-history-limit': {
+      templateUrl: '/static/page/modals/configure-revision-history-limit.html',
+      controller: 'ConfigureRevisionHistoryLimitCtrl',
+    },
     'configure-env': {
       templateUrl: '/static/page/modals/configure-env.html',
       controller: 'ConfigureEnvCtrl',

@@ -6,7 +6,7 @@
   </tec-nav-title>
 
   <form ng-submit="submit()" name="form" role="form">
-    <div class="co-m-pane">
+    <div class="co-m-vert-nav__body">
       <div class="co-m-pane__heading">
         <h1 class="co-m-pane__title">Deployment Details</h1>
       </div>
@@ -17,6 +17,14 @@
           </div>
           <div class="co-m-form-col col-sm-10">
             <input ng-model="deployment.metadata.name" type="text" class="form-control" required id="input-controller-name"/>
+          </div>
+        </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label for="input-controller-replicas" class="control-label">Desired Pod Count:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <input ng-model="deployment.spec.replicas" co-number-spinner type="number" class="form-control" required id="input-controller-replicas"/>
           </div>
         </div>
         <div class="row co-m-form-row">
@@ -41,12 +49,46 @@
             <label for="input-controller-replicas" class="control-label">Replicas:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <input ng-model="deployment.spec.replicas" type="number" class="form-control" required id="input-controller-replicas"/>
+            <div><a href="#" ng-click="openUpdateStrategyModal()" class="co-m-modal-link" ng-bind="deployment.spec.strategy.type | emptyPlaceholder"></a></div>
+            <small class="text-muted" ng-if="deployment.spec.strategy.type === 'RollingUpdate'">
+              Max Unavailable <span ng-bind="deployment.spec.strategy.rollingUpdate.maxUnavailable | emptyPlaceholder : 1"></span>, Max Surge <span ng-bind="deployment.spec.strategy.rollingUpdate.maxSurge | emptyPlaceholder : 1"></span> pods
+            </small>
           </div>
         </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label for="input-min-ready-seconds" class="control-label">Min. Ready Seconds:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <div class="input-group">
+              <input ng-model="deployment.spec.minReadySeconds" placeholder="0" type="number" class="form-control" id="input-min-ready-seconds"/>
+              <div class="input-group-addon">seconds</div>
+            </div>
+            <small class="text-muted">All containers are Ready for at least this long before their pod is considered Healthy.</small>
+          </div>
+        </div>
+        <div class="row co-m-form-row">
+          <div class="col-sm-2">
+            <label class="control-label">Revision History Limit:</label>
+          </div>
+          <div class="co-m-form-col col-sm-10">
+            <div><a href="#" ng-click="openRevisionHistoryLimitModal()" class="co-m-modal-link"><span ng-bind="deployment.spec.revisionHistoryLimit | emptyPlaceholder : 'Unlimited'"></span> revisions</a></div>
+          </div>
+        </div>
+      </div>
 
-        <hr/>
 
+      <div class="co-m-pane__heading">
+        <h1 class="co-m-pane__title">Desired Pod State</h1>
+      </div>
+
+      <div class="co-m-pane__body">
+        <div class="row co-m-form-row">
+          <div class="col-sm-12">
+            These containers make up a pod.
+            All of these containers are deployed together onto nodes in the cluster.
+          </div>
+        </div>
         <div class="row co-m-form-row">
           <div class="col-sm-2">
             <label class="control-label">Pod Labels:</label>
