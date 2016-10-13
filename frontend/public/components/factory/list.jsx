@@ -47,7 +47,7 @@ const filterPropType = (props, propName, componentName) => {
     if (key in filters) {
       continue;
     }
-    return new Error(`Invalid prop ${propFullName}in ${componentName}.  (${key}) is not a valid filter type!`);
+    return new Error(`Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`);
   }
 };
 
