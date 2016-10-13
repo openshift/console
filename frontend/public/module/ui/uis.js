@@ -20,8 +20,6 @@ import './links/namespaced-href';
 import './log-window/log-window';
 import './nav-title/nav-title';
 
-import './resources/node-list';
-import './resources/node-section';
 import './resources/node-ip-list';
 import './resources/namespace-list-menu';
 import './resources/resource-link';

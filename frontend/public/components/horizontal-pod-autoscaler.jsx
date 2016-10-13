@@ -43,7 +43,7 @@ const ScaleRef = ({horizontalpodautoscaler}) => <div>
   </a>
 </div>
 
-const HorizontalPodAutoscalerRow = (horizontalpodautoscaler) => <div className="row co-resource-list__item">
+const HorizontalPodAutoscalerRow = ({obj: horizontalpodautoscaler}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
     <HorizontalPodAutoscalerCog horizontalpodautoscaler={horizontalpodautoscaler} />
     <ResourceIcon kind={angulars.kinds.HORIZONTALPODAUTOSCALER.id}></ResourceIcon>

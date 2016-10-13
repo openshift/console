@@ -22,6 +22,11 @@ const filters = {
     }
     return phases.has(pod.status.phase) || phases.has(podPhase(pod));
   },
+
+  'node-status': (status, node) => {
+    const isReady = angulars.k8sNodes.isReady(node);
+    return status === 'all' || (status === 'ready' && isReady) || (status === 'notReady' && !isReady);
+  },
 };
 
 const filter = (_filters, objects) => {
@@ -54,9 +59,9 @@ const filterPropType = (props, propName, componentName) => {
 class Rows extends React.Component {
   render () {
     const {k8s: {getQN}} = angulars;
-    const {filters, data, selected, selectRow, Row} = this.props;
+    const {expand, filters, data, selected, selectRow, Row} = this.props;
     const rows = filter(filters, data).map(object => {
-      return <Row key={getQN(object)} {...object} onClick={selectRow} isActive={selected===getQN(object)} />;
+      return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected===getQN(object)} />;
     });
     return <div className="co-m-table-grid__body"> {rows} </div>;
   }
@@ -107,7 +112,7 @@ export const makeList = (name, kindstring, Header, Row) => {
           <Header />
           <Firehose ref="hose" isList={true} k8sResource={k8sResource} {...this.props}>
             <StatusBox>
-              <Rows Row={Row} selectRow={qualifiedName => this.selectRow(qualifiedName)} />
+              <Rows Row={Row} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
             </StatusBox>
           </Firehose>
         </div>
@@ -126,7 +131,6 @@ export const makeList = (name, kindstring, Header, Row) => {
     'selectorRequired': React.PropTypes.bool,
     'onClickRow': React.PropTypes.func
   };
-
 
   register(name, ReactiveList);
   return ReactiveList;

@@ -57,7 +57,6 @@
 @import "module/ui/log-window/log-window";
 @import "module/ui/resources/resource-list";
 @import "module/ui/resources/node-ip-list";
-@import "module/ui/resources/node-section";
 @import "module/ui/status-box/status-box";
 @import "module/ui/sysevents/sysevent-icon";
 @import "module/ui/sysevents/sysevent-stream";
@@ -73,6 +72,7 @@
 
 // React Components
 @import "components/dropdown";
+@import "components/list";
 @import "components/overflow";
 @import "components/RBAC/rbac";
 @import "components/row-filter";

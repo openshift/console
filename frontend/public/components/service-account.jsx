@@ -18,7 +18,7 @@ const ServiceAccountCog = ({serviceaccount}) => {
   return <Cog options={options} size="small" anchor="left"></Cog>;
 }
 
-const ServiceAccountRow = (serviceaccount) => {
+const ServiceAccountRow = ({obj: serviceaccount}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;
 
   return (

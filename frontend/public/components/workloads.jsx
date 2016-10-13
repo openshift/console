@@ -19,7 +19,7 @@ const cogOfKind = (kind) => ({o}) => {
 }
 
 const rowOfKindstring = (name) => {
-  return o => {
+  return ({obj: o}) => {
     const kind = angulars.kinds[name];
     const CogOfKind = cogOfKind(kind);
 

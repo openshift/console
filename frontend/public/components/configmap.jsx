@@ -17,7 +17,7 @@ const ConfigMapHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-md-4">Config Map Age</div>
 </div>;
 
-const ConfigMapRow = (configMap) => {
+const ConfigMapRow = ({obj: configMap}) => {
   const data = Object.keys(configMap.data || {}).length;
   const age = moment(configMap.metadata.creationTimestamp).fromNow();
 
