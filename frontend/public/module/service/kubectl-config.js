@@ -1,41 +1,23 @@
 import {saveAs} from 'file-saver';
+import {coFetch} from '../../components/utils';
 
-angular.module('bridge.service')
-  .factory('kubectlConfigSvc', function kubectlConfigSvc(
-    $http,
-    $httpParamSerializerJQLike,
-    $window
-  ) {
-    'use strict';
+export const kubectlConfigSvc = {
+  getVerificationCode: () => {
+    window.open('api/tectonic/kubectl/code');
+  },
 
-    // ---
+  getConfiguration: code => {
+    return coFetch('api/tectonic/kubectl/config', {
+      method: 'POST',
+      body: `code=${encodeURIComponent(code)}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+    }).then(res => res.text());
+  },
 
-    return {
-      getVerificationCode,
-      getConfiguration,
-      downloadConfiguration,
-    };
-
-    // ---
-
-    function getVerificationCode() {
-      $window.open('api/tectonic/kubectl/code');
-    }
-
-    function getConfiguration(code) {
-      return $http.post('api/tectonic/kubectl/config', $httpParamSerializerJQLike({code: code}), {
-        headers:           {'Content-Type': 'application/x-www-form-urlencoded'},
-        transformResponse: false
-      })
-        .then(function (res) {
-          return res.data;
-        })
-      ;
-    }
-
-    function downloadConfiguration(config) {
-      const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
-      saveAs(blob, 'kubectl-config');
-    }
-  })
-;
+  downloadConfiguration: config => {
+    const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
+    saveAs(blob, 'kubectl-config');
+  },
+};

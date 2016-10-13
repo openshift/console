@@ -1,8 +1,8 @@
+import {kubectlConfigSvc} from '../../../module/service/kubectl-config';
+
 angular.module('bridge.page')
   .controller('KubectlConfigCtrl', function KubectlConfigCtrl(
-    $scope,
-    $window,
-    kubectlConfigSvc
+    $scope
   ) {
     'use strict';
 
