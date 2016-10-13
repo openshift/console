@@ -1,7 +1,6 @@
 import './_module';
 import './active-namespaces';
 import './auth';
-import './kubectl-config';
 import './debug';
 import './interceptors';
 import './linebuffer';

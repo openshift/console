@@ -233,29 +233,32 @@ angular.module('coreos.ui')
           angular.element('<co-inline-loader></co-inline-loader>');
       $compile(loaderDirectiveEl)(scope);
 
-      function disableButtons() {
+      // Force async execution so disabling the button won't prevent form
+      // submission.
+      const disableButtons = () => $timeout(() => {
         elem.append(loaderDirectiveEl);
         $('button', elem).attr('disabled', 'disabled');
         linkButton.addClass('hidden');
-      }
+      }, 0);
 
-      function enableButtons() {
+      // Also enable buttons asynchronously in case the request completes
+      // before disableButtons() runs.
+      const enableButtons = () => $timeout(() => {
         loaderDirectiveEl.remove();
         $('button', elem).removeAttr('disabled');
         linkButton.removeClass('hidden');
-      }
+      }, 0);
 
       scope.$watch('completePromise', function(completePromise) {
-        if (completePromise) {
-          // Force async execution so disabling the button won't prevent form
-          // submission.
-          $timeout(disableButtons, 0);
-          completePromise.finally(function() {
-            // Also enable buttons asynchronously in case the request completes
-            // before disableButtons() runs.
-            $timeout(enableButtons, 0);
-          });
+        if (!completePromise) {
+          return;
         }
+        disableButtons();
+        if (_.isFunction(completePromise.finally)) {
+          completePromise.finally(enableButtons);
+          return;
+        }
+        completePromise.then(enableButtons).catch(enableButtons);
       });
     }
 
