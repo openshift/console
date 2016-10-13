@@ -1,12 +1,14 @@
+import {util} from './util';
+
 angular.module('k8s')
-.service('k8sServices', function(k8sUtil, k8sEnum) {
+.service('k8sServices', function(k8sEnum) {
   'use strict';
 
   this.clean = function(service) {
-    k8sUtil.nullifyEmpty(service.metadata, ['annotations', 'labels']);
-    k8sUtil.nullifyEmpty(service.spec, ['ports']);
-    k8sUtil.deleteNulls(service.metadata);
-    k8sUtil.deleteNulls(service.spec);
+    util.nullifyEmpty(service.metadata, ['annotations', 'labels']);
+    util.nullifyEmpty(service.spec, ['ports']);
+    util.deleteNulls(service.metadata);
+    util.deleteNulls(service.spec);
   };
 
   this.getEmptyPort = function() {

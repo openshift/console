@@ -1,3 +1,5 @@
+import {util} from '../../module/k8s/util';
+
 angular.module('bridge.page')
 .controller('SearchCtrl', function($scope, $location, $routeParams, $route, k8s, activeNamespaceSvc) {
   'use strict';
@@ -19,7 +21,7 @@ angular.module('bridge.page')
     if (!id) {
       return defaultKind;
     }
-    k = k8s.util.getKindEnumById(id);
+    k = util.getKindEnumById(id);
     if (k) {
       return k;
     }

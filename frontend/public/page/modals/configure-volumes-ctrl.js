@@ -1,6 +1,8 @@
+import {util} from '../../module/k8s/util';
+
 angular.module('bridge.page')
 .controller('ConfigureVolumesCtrl', function(_, $scope, $uibModalInstance, $controller,
-      pod, arraySvc, k8s, k8sUtil, $rootScope) {
+      pod, arraySvc, k8s, $rootScope) {
   'use strict';
 
   $scope.rowMgr = $controller('RowMgr', {
@@ -40,7 +42,7 @@ angular.module('bridge.page')
         delete v.emptyDir;
       }
       delete v.type;
-      k8sUtil.deleteNulls(v);
+      util.deleteNulls(v);
       return v;
     });
     pod.spec.volumes = items;

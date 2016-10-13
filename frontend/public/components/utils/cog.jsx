@@ -2,6 +2,7 @@ import React from 'react';
 
 import {angulars} from '../react-wrapper';
 import {DropdownMixin} from './dropdown';
+import {util} from '../../module/k8s/util';
 
 export class Cog extends DropdownMixin {
 
@@ -51,7 +52,7 @@ Cog.factory = {
   Edit: (kind, obj) => ({
     label: `Edit ${kind.label}...`,
     weight: 400,
-    href: angulars.k8s.util.getEditLink(obj, kind),
+    href: util.getEditLink(obj, kind),
   }),
   EnterNamespace: (kind, obj) => ({
     label: 'Enter Namespace',

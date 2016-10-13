@@ -13,7 +13,6 @@ import './replicasets';
 import './deployments';
 import './resource';
 import './services';
-import './util';
 import './command';
 import './configmaps';
 
@@ -62,7 +61,7 @@ angular.module('k8s')
     };
   };
 })
-.service('k8s', function(_, $http, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sUtil, k8sLabels,
+.service('k8s', function(_, $http, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
                          k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, k8sConfigmaps) {
   'use strict';
@@ -76,7 +75,6 @@ angular.module('k8s')
   this.docker = k8sDocker;
   this.resource = k8sResource;
   this.search = k8sResource.list;
-  this.util = k8sUtil;
   this.command = k8sCommand;
 
   const addDefaults = (k8sObject, kind) => {

@@ -1,12 +1,14 @@
+import {util} from './util';
+
 angular.module('k8s')
-.service('k8sDeployments', function(k8sUtil, k8sPods, k8sEnum) {
+.service('k8sDeployments', function(k8sPods, k8sEnum) {
   'use strict';
 
   this.clean = function(deployment) {
-    k8sUtil.nullifyEmpty(deployment.metadata, ['annotations', 'labels']);
+    util.nullifyEmpty(deployment.metadata, ['annotations', 'labels']);
     k8sPods.clean(deployment.spec.template);
-    k8sUtil.deleteNulls(deployment.metadata);
-    k8sUtil.deleteNulls(deployment.spec);
+    util.deleteNulls(deployment.metadata);
+    util.deleteNulls(deployment.spec);
   };
 
   this.getEmpty = function(ns) {

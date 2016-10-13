@@ -1,5 +1,7 @@
+import {util} from './util';
+
 angular.module('k8s')
-.service('k8sPods', function(_, k8sDocker, k8sUtil, k8sEnum, $http, k8sResource) {
+.service('k8sPods', function(_, k8sDocker, k8sEnum, $http, k8sResource) {
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });
@@ -16,13 +18,13 @@ angular.module('k8s')
   }
 
   this.clean = function(pod) {
-    k8sUtil.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
-    k8sUtil.nullifyEmpty(pod.spec, ['volumes']);
+    util.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
+    util.nullifyEmpty(pod.spec, ['volumes']);
     _.forEach(pod.spec.containers, function(c) {
       k8sDocker.clean(c);
     });
-    k8sUtil.deleteNulls(pod.metadata);
-    k8sUtil.deleteNulls(pod.spec);
+    util.deleteNulls(pod.metadata);
+    util.deleteNulls(pod.spec);
   };
 
   fieldSelectors = {};

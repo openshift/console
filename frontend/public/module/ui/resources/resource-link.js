@@ -8,8 +8,10 @@
  *    kind
  */
 
+import {util} from '../../k8s/util';
+
 angular.module('bridge.ui')
-.directive('coResourceLink', function($compile, $interpolate, k8s) {
+.directive('coResourceLink', function($compile, $interpolate) {
   'use strict';
 
   var linkInterpolater =
@@ -25,7 +27,7 @@ angular.module('bridge.ui')
       var iconDirectiveEl, linkEl, kind;
 
       if (attrs.kind) {
-        kind = k8s.util.getKindEnumById(attrs.kind.toLowerCase());
+        kind = util.getKindEnumById(attrs.kind.toLowerCase());
       }
 
       if (kind) {

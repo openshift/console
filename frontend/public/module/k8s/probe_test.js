@@ -39,6 +39,12 @@ describe('k8s.k8sProbe', function () {
         expect(k8sProbe.parseCmd('httpGet', 'https://localhost:1234/check'))
           .toEqual({ host: 'https://localhost', path: '/check', port: 1234 });
       });
+
+      it('returns correct port based on scheme', function () {
+        expect(k8sProbe.parseCmd('httpGet', 'https://localhost/check'))
+          .toEqual({ host: 'https://localhost', path: '/check', port: 443 });
+      });
+
     });
   });
 
