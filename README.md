@@ -136,6 +136,26 @@ Run frontend tests:
 ./test-frontend
 ```
 
+#### Local Dex
+
+Checkout and build the `dev` branch of [dex](https://github.com/coreos/dex/).
+
+`./bin/dex serve ../bridge/contrib/dex-config-dev.yaml`
+
+Run bridge with the following options:
+
+```
+./bin/bridge \
+  --user-auth=oidc \
+  --user-auth-oidc-issuer-url='http://127.0.0.1:5556' \
+  --user-auth-oidc-client-id='example-app' \
+  --user-auth-oidc-client-secret='ZXhhbXBsZS1hcHAtc2VjcmV0' \
+  --base-address='http://localhost:9000/' \
+  --kubectl-client-id='example-app' \
+  --kubectl-client-secret='ZXhhbXBsZS1hcHAtc2VjcmV0'
+```
+
+
 ### Dependency Management
 
 Dependencies should be pinned to an exact semver, sha, or git tag (eg, no ^).
