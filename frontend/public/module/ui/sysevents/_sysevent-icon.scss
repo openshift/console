@@ -11,7 +11,7 @@
 
 .co-sysevent[class*="error"],
 .co-sysevent[class*="failed"],
-.co-sysevent[class*="unhealthy"]
+.co-sysevent[class*="unhealthy"],
 .co-sysevent[class*="nodenotready"], {
   $failure-red: #d64456;
 
