@@ -19,6 +19,5 @@ import './pods/pods';
 import './nodes/nodes';
 import './search/search-ctrl';
 import './settings/settings';
-import './welcome/welcome-ctrl';
 import './modals/modals';
 
