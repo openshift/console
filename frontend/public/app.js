@@ -273,12 +273,6 @@ angular.module('bridge', [
     title: 'Manage Users',
   });
 
-  r('/welcome', {
-    controller: 'WelcomeCtrl',
-    templateUrl: '/static/page/welcome/welcome.html',
-    title: 'Welcome to your CoreOS Cluster',
-  });
-
   r('/all-namespaces/:kind', {
     controller: 'k8sListCtrl',
     templateUrl: '/static/page/k8s-list/k8s-list.html',
