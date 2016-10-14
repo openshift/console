@@ -97,5 +97,6 @@ const dropdownFilters = [{
 }];
 const NodesListPage = makeListPage('NodesPage', kind, NodesList, dropdownFilters);
 
-export {NodesList, NodesListSearch, NodesPage};
+export {NodeIPList, NodesList, NodesListSearch, NodesPage};
 register('NodesPage', NodesPage);
+register('NodeIPList', NodeIPList);
