@@ -22,7 +22,6 @@ import './nav-title/nav-title';
 
 import './resources/namespace-list-menu';
 import './resources/resource-link';
-import './resources/resource-list';
 
 import './resources/sparkline-widget';
 

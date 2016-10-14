@@ -13,7 +13,6 @@ angular.module('bridge.page')
     return $location.path(path);
   }
   const defaultKind = k8s.enum.Kind.SERVICE;
-  $scope.kinds = k8s.enum.Kind;
   $scope.ns = namespace;
 
   function getKind(id) {
@@ -30,11 +29,21 @@ angular.module('bridge.page')
 
   $scope.init = function() {
     $scope.fields = {
-      selectedKindId: null,
-      query: null,
+      kind: null,
+      selector: null,
+      namespace: $scope.ns,
     };
+    $scope.dropdownProps = {
+      selected: null,
+
+      // Called when type selector is changed.
+      onKindChange: (kindId) => {
+        $scope.fields.kind = kindId;
+        $scope.submit();
+      }
+    },
     $scope.decodeSearch();
-    $scope.$watchCollection('fields.query', function(newVal, oldVal) {
+    $scope.$watchCollection('fields.selector', function(newVal, oldVal) {
       // Ignore initial firing.
       if (newVal === oldVal) {
         return;
@@ -43,48 +52,27 @@ angular.module('bridge.page')
     }, /* objectEquality */true);
   };
 
-  // Called when type selector is changed.
-  $scope.changeKind = function(kindId) {
-    $scope.fields.selectedKindId = kindId;
-    $scope.submit();
-  };
-
   // Populate the scope query vars from the URL query string.
   $scope.decodeSearch = function() {
     var kind = getKind($location.search().kind);
-    $scope.fields = {
-      selectedKindId: kind.id,
-      query: k8s.selector.fromString($location.search().q),
-    };
+    $scope.fields.kind = kind.id;
+    $scope.fields.selector = k8s.selector.fromString($location.search().q);
+    $scope.dropdownProps.selected = kind.id;
   };
 
   // Update the query string.
   // NOTE: Triggers view reload which in turn calls init() & and search() again.
   $scope.encodeSearch = function() {
     var kind, search;
-    kind = getKind($scope.fields.selectedKindId);
+    kind = getKind($scope.fields.kind);
     search = {
       kind: kind.id,
-      q: k8s.selector.toString($scope.fields.query),
+      q: k8s.selector.toString($scope.fields.selector),
     };
     $location.search(search);
   };
 
-  // For linking to resources.
-  $scope.getResourceLink = function(resource) {
-    var kind = getKind($scope.fields.selectedKindId), pathParts;
-    if (!kind) {
-      return '';
-    }
-    pathParts = [kind.path, resource.metadata.name];
-    if (resource.metadata.namespace) {
-      pathParts.unshift(resource.metadata.namespace);
-      pathParts.unshift('ns');
-    }
-    return pathParts.join('/');
-  };
-
-  // Run when user submits form chnages.
+  // Run when user submits form changes.
   $scope.submit = function() {
     $scope.encodeSearch();
   };
