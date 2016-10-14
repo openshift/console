@@ -28,12 +28,14 @@ angular.module('bridge.page')
       $scope.memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
       $scope.networkAddress = _.find(node.status.addresses, ['type', 'InternalIP']).address;
       $scope.loadError = false;
+      $scope.props = {ips: node.status.addresses};
     })
     .catch(function() {
       $scope.node = null;
       $scope.memoryLimit = null;
       $scope.networkAddress = null;
       $scope.loadError = true;
+      $scope.props = null;
     });
 
 });

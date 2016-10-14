@@ -1,14 +1,10 @@
-.pad-line {
-  padding: 5px 0;
-}
-
 .co-node-ip {
   margin: 0;
   padding: 0;
   line-height: 14px;
   p {
-    @extend .pad-line;
     margin: 0;
+    padding: 5px 0;
   }
 }
 
