@@ -26,8 +26,6 @@ import './resources/resource-link';
 import './resources/sparkline-widget';
 
 import './status-box/status-box';
-import './sysevents/sysevent-icon';
-import './sysevents/sysevent-stream';
 import './toggle-play/toggle-play';
 import './tristate/tristate';
 import './util/autofocus';
