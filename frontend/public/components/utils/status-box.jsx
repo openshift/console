@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import {inject} from './index';
 
-const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>
+export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>
 
 const LoadError = ({label}) => <Box>
   <div className="cos-tristate--error">
