@@ -10,6 +10,15 @@ angular.module('bridge.page')
     return encodeURIComponent(_.split(input, '__NODEIP__').join(scope.networkAddress));
   };
 })
+.filter('queryNodeName', function() {
+  return function(input, scope) {
+    if (!scope.nodeName) {
+      return input;
+    }
+
+    return encodeURIComponent(_.split(input, '__NODENAME__').join(scope.nodeName));
+  };
+})
 .filter('integerLimit', function() {
   return function(input) {
     return parseInt(input, 10);
