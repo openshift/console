@@ -56,21 +56,22 @@ const filterPropType = (props, propName, componentName) => {
   }
 };
 
-class Rows extends React.Component {
-  render () {
-    const {k8s: {getQN}} = angulars;
-    const {expand, filters, data, selected, selectRow, Row} = this.props;
-    const rows = filter(filters, data).map(object => {
-      return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected===getQN(object)} />;
-    });
-    return <div className="co-m-table-grid__body"> {rows} </div>;
-  }
+const Rows = (props) => {
+  const {k8s: {getQN}} = angulars;
+  const {expand, filters, data, selected, selectRow, Row} = props;
+  const rows = filter(filters, data).map(object => {
+    return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected === getQN(object)} />;
+  });
+  return <div className="co-m-table-grid__body"> {rows} </div>;
 }
 
 Rows.propTypes = {
   filters: filterPropType,
   data: React.PropTypes.arrayOf(React.PropTypes.object),
+  expand: React.PropTypes.bool,
   Row: React.PropTypes.func.isRequired,
+  selected: React.PropTypes.string,
+  selectRow: React.PropTypes.func.isRequired,
 };
 
 export const makeList = (name, kindstring, Header, Row) => {
