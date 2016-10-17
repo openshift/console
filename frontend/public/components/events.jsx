@@ -3,17 +3,11 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {angulars, register} from './react-wrapper';
-import {Dropdown, ResourceLink, Box, Loading, Timestamp} from './utils';
+import {Dropdown, ResourceLink, Box, Loading, Timestamp, TogglePlay} from './utils';
 
 import {wsFactory} from '../module/ws-factory';
 
 const maxMessages = 500;
-
-// TODO: split into util component later
-const TogglePlay = ({className, active, onClick}) => {
-  const klass = classNames('co-toggle-play fa', className, active ? 'co-toggle-play--active' : 'co-toggle-play--inactive');
-  return <button className={klass} onClick={onClick}></button>;
-}
 
 const eventID = (se) => {
   // This is a workaround for a Kubernetes bug that is being
