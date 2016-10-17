@@ -2,6 +2,7 @@ export * from './cog';
 export * from './selector';
 export * from './label-list';
 export * from './resource-icon';
+export * from './resource-link';
 export * from './volume-icon';
 export * from './timestamp';
 export * from './vertnav';
