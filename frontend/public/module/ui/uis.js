@@ -21,7 +21,6 @@ import './log-window/log-window';
 import './nav-title/nav-title';
 
 import './resources/namespace-list-menu';
-import './resources/resource-link';
 
 import './resources/sparkline-widget';
 
