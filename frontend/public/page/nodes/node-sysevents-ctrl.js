@@ -3,4 +3,9 @@ angular.module('bridge.page')
   'use strict';
   $scope.nodeName = $routeParams.name;
   $scope.fieldSelector = 'involvedObject.name=' + $scope.nodeName;
+  $scope.props = {
+    filter: {
+      name: $scope.nodeName,
+    },
+  };
 });
