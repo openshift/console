@@ -10,13 +10,7 @@ import {wsFactory} from '../module/ws-factory';
 const maxMessages = 500;
 
 const eventID = (se) => {
-  // This is a workaround for a Kubernetes bug that is being
-  // addressed, where some events are missing uids.  It should be
-  // removed if the issue is fixed in Kubernetes 1.2 or greater.
-  if (se.metadata.uid) {
-    return `U:${se.metadata.uid}`;
-  }
-  return `N:${se.metadata.name}:${se.metadata.resourceVersion}`;
+  return `U:${se.metadata.uid}`;
 }
 
 
