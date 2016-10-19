@@ -12,6 +12,14 @@ export class Timestamp extends React.Component {
     this.timeStr();
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.timestamp === this.props.timestamp) {
+      return;
+    }
+    this.mdate = moment(new Date(nextProps.timestamp));
+    this.timeStr();
+  }
+
   upsertState (timestamp) {
     if (this._isMounted) {
       this.setState({timestamp});
