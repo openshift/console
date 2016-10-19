@@ -4,6 +4,8 @@ import yamlize from '../../module/service/yamlize';
 import {PodsPage} from '../pod';
 import {LabelList, Selector, Timestamp} from '../utils'
 
+export const pluralize = (i, singular, plural = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
+
 export const detailsPage = (Component) => (props) =>
   <div className="row row-gutter">
     <Component {...props} />

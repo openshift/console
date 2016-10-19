@@ -12,11 +12,13 @@ const LoadError = ({label}) => <Box>
   </div>
 </Box>
 
-export const Loading = () => <div className="co-m-loader co-an-fade-in-out">
+export const Loading = ({className}) => <div className={classNames('co-m-loader co-an-fade-in-out', className)}>
   <div className="co-m-loader-dot__one"></div>
   <div className="co-m-loader-dot__two"></div>
   <div className="co-m-loader-dot__three"></div>
 </div>
+
+export const LoadingInline = () => <Loading className="co-m-loader--inline" />
 
 const LoadingBox = () => <Box><Loading /></Box>
 
