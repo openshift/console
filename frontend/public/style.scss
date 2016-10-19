@@ -38,7 +38,6 @@
 @import "page/modals/configure-ports";
 @import "page/namespaces/namespaces";
 @import "page/pods/pod-logs";
-@import "page/search/search";
 @import "page/nodes/node";
 
 @import "page/settings/users";
@@ -56,7 +55,6 @@
 @import "module/ui/selector/selector";
 @import "module/ui/selector/requirement";
 @import "module/ui/log-window/log-window";
-@import "module/ui/resources/resource-list";
 @import "module/ui/status-box/status-box";
 @import "module/ui/sysevents/sysevent-icon";
 @import "module/ui/sysevents/sysevent-stream";
@@ -77,6 +75,7 @@
 @import "components/overflow";
 @import "components/RBAC/rbac";
 @import "components/row-filter";
+@import "components/search";
 @import "components/service";
 @import "components/sparkline";
 @import "components/volume-icon";
