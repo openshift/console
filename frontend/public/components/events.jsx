@@ -119,6 +119,7 @@ export class EventStream extends React.Component {
   constructor (props) {
     super(props);
     this.ws = null;
+    this.oldestTimestamp = new Date();
     this.state = {
       active: true,
       messages: [],
@@ -153,10 +154,15 @@ export class EventStream extends React.Component {
       }
       let messages = this.state.messages
       messages.unshift(data);
-      this.setState({
+      const state = {
         messages: messages,
-        oldestTimestamp: messages.slice(-1)[0].object.lastTimestamp,
-      });
+      }
+      const lastTimestamp = new Date(data.object.lastTimestamp);
+      if (this.oldestTimestamp > lastTimestamp) {
+        this.oldestTimestamp = lastTimestamp;
+        state.oldestTimestamp = data.object.lastTimestamp;
+      }
+      this.setState(state);
     })
     .onopen(() => {
       this.setState({
@@ -179,9 +185,24 @@ export class EventStream extends React.Component {
   }
 
   filterMessages () {
-    const {kind, category} = this.props;
+    const {kind, category, filter} = this.props;
+
+    const f = (e) => {
+      const obj = e.object;
+      if (category && !categoryFilter(category, obj)) {
+        return false;
+      }
+      if (kind && !kindFilter(kind, obj)) {
+        return false;
+      }
+      if (filter && !_.isMatch(obj.involvedObject, filter)) {
+        return false;
+      }
+      return true;
+    };
+
     return _.chain(this.state.messages)
-      .filter(e => categoryFilter(category, e.object) && kindFilter(kind, e.object))
+      .filter(f)
       .uniqBy(e => eventID(e.object))
       .sortBy(e => e.object.lastTimestamp)
       .reverse()
@@ -255,8 +276,8 @@ export class EventStream extends React.Component {
 
           { filteredMessages.length === 0 && messages.length > 0 &&
             <Box className="co-sysevent-stream__status-box-empty">
-              <div>No Matching Events</div>
-              <div className="cos-text-center">
+              <div className="cos-status-box__title">No Matching Events</div>
+              <div className="cos-text-center cos-status-box__detail">
                 {messages.length} events exist, but none match the current filter
               </div>
             </Box>
@@ -266,7 +287,7 @@ export class EventStream extends React.Component {
 
           {!sysEventStatus && messages.length === 0 && this.ws && this.ws.bufferSize() === 0 &&
             <Box className="co-sysevent-stream__status-box-empty">
-              <div className="cos-status-box__detail cos-text-center">
+              <div className="cos-text-center cos-status-box__detail">
                 No Events
               </div>
             </Box>
@@ -276,5 +297,10 @@ export class EventStream extends React.Component {
     );
   }
 }
+
+EventStream.defaultProps = {
+  kind: 'all',
+  category: 'all',
+};
 
 register('EventStream', EventStream);
