@@ -216,6 +216,11 @@ angular.module('bridge', [
     templateUrl: '/static/page/nodes/node.html',
     title: 'Node',
   });
+  r('/nodes/:name/details', {
+    controller: 'nodeCtrl',
+    templateUrl: '/static/page/nodes/node.html',
+    title: 'Node',
+  });
   r('/nodes/:name/events', {
     controller: 'nodeSyseventsCtrl',
     templateUrl: '/static/page/nodes/sysevents.html',

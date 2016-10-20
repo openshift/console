@@ -8,7 +8,7 @@ export const ResourceLink = ({name, uid, kind, namespace}) => {
   let href;
   if (kind) {
     kind = _.find(angulars.kinds, {id: kind.toLowerCase()});
-    href = `${kind.path}/${name}`;
+    href = `${kind.path}/${name}/details`;
     if (namespace) {
       href = `ns/${namespace}/${href}`;
     }
