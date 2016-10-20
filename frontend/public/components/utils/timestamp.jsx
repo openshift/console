@@ -42,16 +42,21 @@ export class Timestamp extends React.Component {
       return;
     }
 
-    const minutesAgo = moment().diff(this.mdate, 'minutes', /* return floating point value */true);
+    const now = moment();
+    const minutesAgo = now.diff(this.mdate, 'minutes', /* return floating point value */true);
     if (minutesAgo >= 10.5) {
-      this.upsertState(this.mdate.format('MMM DD, h:mm a'));
+      let format = 'MMM DD, h:mm a';
+      if (this.mdate.year() !== now.year()) {
+        format = 'MMM DD, YYYY h:mm a';
+      }
+      this.upsertState(this.mdate.format(format));
       clearInterval(this.interval);
       return;
     }
     // 0-14:  a few seconds ago
     // 15-44: less than a minute ago
     // 45-89: a minute ago
-    const secondsAgo = moment().diff(this.mdate, 'seconds', /* return floating point value */true);
+    const secondsAgo = now.diff(this.mdate, 'seconds', /* return floating point value */true);
     if (secondsAgo < 45 && secondsAgo >= 15) {
       this.upsertState('less than a minute ago');
       return;
@@ -82,7 +87,7 @@ export class Timestamp extends React.Component {
     return (
       <div>
         <i className="fa fa-globe" />
-        <div className="co-timestamp" title={utcdate.format('MMM DD, H:mm A z')}>
+        <div className="co-timestamp" title={utcdate.format('MMM DD, YYYY HH:mm z')}>
           {this.state.timestamp}
         </div>
       </div>
