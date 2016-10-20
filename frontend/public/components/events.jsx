@@ -63,8 +63,8 @@ export class EventStreamPage extends React.Component {
         <div className="co-m-pane__heading">
           <div className="row">
             <div className="col-xs-12">
-              <Dropdown title='Object Type' className="pull-left" items={{all: 'All', pod: 'Pods', node: 'Nodes'}} onChange={kind => {this.setState({kind})}} />
-              <Dropdown title='Event Category' className="pull-left" items={{all: 'All', info: 'Info', error: 'Error'}} onChange={category => {this.setState({category})}} />
+              <Dropdown title='All Types' className="pull-left" items={{all: 'All Types', pod: 'Pods', node: 'Nodes'}} onChange={kind => {this.setState({kind});}} />
+              <Dropdown title='All Categories' className="pull-left" items={{all: 'All Categories', info: 'Info', error: 'Error'}} onChange={category => {this.setState({category});}} />
             </div>
           </div>
         </div>
