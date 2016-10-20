@@ -4,7 +4,7 @@ import {angulars, register} from './react-wrapper';
 
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';
-import {DeploymentList} from './deployment';
+import {DeploymentsList} from './deployment';
 import {HorizontalPodAutoscalersList} from './horizontal-pod-autoscaler';
 import {JobsList} from './job';
 import {NamespacesList} from './namespace';
@@ -43,7 +43,7 @@ export const ResourceList = (props) => {
 
   return <div className="co-m-pane__body">
     <div className="co-m-resource-list">
-      {kind === 'deployment'              && <DeploymentList {...props} />}
+      {kind === 'deployment'              && <DeploymentsList {...props} />}
       {kind === 'service'                 && <ServicesList {...props} />}
       {kind === 'job'                     && <JobsList {...props} />}
       {kind === 'replicaset'              && <ReplicaSetsList {...props} />}
