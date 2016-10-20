@@ -311,6 +311,13 @@ angular.module('bridge', [
   dex.featureDetection();
   statusSvc.tectonicVersion();
 
+  $rootScope.logout = e => {
+    if (!featuresSvc.isAuthDisabled) {
+      authSvc.logout();
+    }
+    e.preventDefault();
+  };
+
   $rootScope.$on('$routeChangeSuccess', function() {
     analyticsSvc.route(location.pathname);
   });
