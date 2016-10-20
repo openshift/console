@@ -16,8 +16,8 @@ const eventID = (se) => {
 
 const SysEvent = (se) => {
   const klass = classNames('co-sysevent', `co-sysevent--${se.reason.toLowerCase()}`);
-
-  const tooltipMsg = `${se.reason} (${se.involvedObject.kind.toLowerCase()})`;
+  const obj = se.involvedObject;
+  const tooltipMsg = `${se.reason} (${obj.kind.toLowerCase()})`;
 
   return (
     <div key={eventID(se)} className={klass}>
@@ -27,10 +27,10 @@ const SysEvent = (se) => {
       </div>
       <div className="co-sysevent__main-box">
         <ResourceLink
-          kind={se.involvedObject.kind}
-          namespace={se.involvedObject.namespace}
-          name={se.involvedObject.name}
-          uid={se.involvedObject.uid}
+          kind={obj.kind}
+          namespace={obj.namespace}
+          name={obj.name}
+          uid={obj.uid}
         />
         <div className="co-sysevent__main-message">{se.message}</div>
       </div>
@@ -101,7 +101,7 @@ const categoryFilter = (category, {involvedObject, reason}) => {
   }
   const kind = involvedObject.kind.toLowerCase();
   const reasons = filterMap[category][kind];
-  return (reasons && reasons.indexOf(reason.toLowerCase()) !== -1);
+  return (reasons && reasons.includes(reason.toLowerCase()));
 }
 
 const kindFilter = (kind, {involvedObject}) => {
@@ -148,6 +148,9 @@ export class EventStream extends React.Component {
       }
       let messages = this.state.messages
       messages.unshift(data);
+      if (messages.length > maxMessages) {
+        messages = messages.slice(0, maxMessages);
+      }
       const state = {
         messages: messages,
       }
@@ -224,15 +227,29 @@ export class EventStream extends React.Component {
     } = this.state;
 
     const filteredMessages = this.filterMessages().map(m => <SysEvent {...m.object} key={eventID(m.object)} />);
-    const klass = classNames('co-sysevent-stream__timeline', {
-      'co-sysevent-stream__timeline--empty': !messages.length || !filteredMessages.length
-    });
+    let sysEventStatus;
 
-    const count = filteredMessages.length;
-    const messageCount = count < maxMessages ? `Showing ${count} events` : `Showing ${count} of ${messages.length} events`;
+    if (messages.length === 0 && this.ws && this.ws.bufferSize() === 0) {
+      sysEventStatus = (
+        <Box className="co-sysevent-stream__status-box-empty">
+          <div className="cos-text-center cos-status-box__detail">
+            No Events
+          </div>
+        </Box>
+      );
+    }
+    if (messages.length > 0 && filteredMessages.length === 0) {
+      sysEventStatus = (
+        <Box className="co-sysevent-stream__status-box-empty">
+          <div className="cos-status-box__title">No Matching Events</div>
+          <div className="cos-text-center cos-status-box__detail">
+            {messages.length} events exist, but none match the current filter
+          </div>
+        </Box>
+      );
+    }
 
     let statusBtnTxt;
-    let sysEventStatus;
     if (error) {
       statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream</span>;
       sysEventStatus = (
@@ -250,43 +267,30 @@ export class EventStream extends React.Component {
       statusBtnTxt = <span>Event stream is paused.</span>;
     }
 
+    const count = filteredMessages.length;
+    const klass = classNames('co-sysevent-stream__timeline', {
+      'co-sysevent-stream__timeline--empty': !messages.length || !count
+    });
+    const messageCount = count < maxMessages ? `Showing ${count} events` : `Showing ${count} of ${messages.length} events`;
+
     return (
-      <div>
-        <div className="co-sysevent-stream">
-          <div className="co-sysevent-stream__totals">
-            { messageCount }
-          </div>
-
-          <div className={klass}>
-            <TogglePlay active={this.state.active} onClick={() => this.toggleStream()} className="co-sysevent-stream__timeline__btn" />
-            <div className="co-sysevent-stream__timeline__btn-text">
-              {statusBtnTxt}
-            </div>
-            <div className="co-sysevent-stream__timeline__end-message">
-              There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
-            </div>
-          </div>
-          { filteredMessages }
-
-          { filteredMessages.length === 0 && messages.length > 0 &&
-            <Box className="co-sysevent-stream__status-box-empty">
-              <div className="cos-status-box__title">No Matching Events</div>
-              <div className="cos-text-center cos-status-box__detail">
-                {messages.length} events exist, but none match the current filter
-              </div>
-            </Box>
-          }
-
-          {sysEventStatus}
-
-          {!sysEventStatus && messages.length === 0 && this.ws && this.ws.bufferSize() === 0 &&
-            <Box className="co-sysevent-stream__status-box-empty">
-              <div className="cos-text-center cos-status-box__detail">
-                No Events
-              </div>
-            </Box>
-          }
+      <div className="co-sysevent-stream">
+        <div className="co-sysevent-stream__totals">
+          { messageCount }
         </div>
+
+        <div className={klass}>
+          <TogglePlay active={active} onClick={() => this.toggleStream()} className="co-sysevent-stream__timeline__btn" />
+          <div className="co-sysevent-stream__timeline__btn-text">
+            {statusBtnTxt}
+          </div>
+          <div className="co-sysevent-stream__timeline__end-message">
+            There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+          </div>
+        </div>
+        { filteredMessages }
+
+        { sysEventStatus }
       </div>
     );
   }
