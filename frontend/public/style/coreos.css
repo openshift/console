@@ -3004,13 +3004,13 @@ input[type="radio"] {
   padding-right: 9px; }
   .co-m-modal-link:after {
     content: "\203a";
-    font-weight: 900;
+    font-weight: 100;
     color: #999;
-    font-size: 112%;
+    font-size: 125%;
     padding-left: 5px;
     pointer-events: none;
     position: absolute;
-    top: -10%; }
+    top: -15%; }
   .co-m-modal-link:hover:after {
     color: #777; }
 
