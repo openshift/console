@@ -12,11 +12,19 @@ export class Timestamp extends React.Component {
     this.timeStr();
   }
 
+  startInterval () {
+    clearInterval(this.interval);
+    this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
+  }
+
   componentWillReceiveProps (nextProps) {
     if (nextProps.timestamp === this.props.timestamp) {
       return;
     }
     this.mdate = moment(new Date(nextProps.timestamp));
+    if (this._isMounted) {
+      this.startInterval();
+    }
     this.timeStr();
   }
 
@@ -30,6 +38,7 @@ export class Timestamp extends React.Component {
 
   timeStr () {
     if (!this.mdate.isValid()) {
+      clearInterval(this.interval);
       return;
     }
 
@@ -52,7 +61,7 @@ export class Timestamp extends React.Component {
 
   componentDidMount () {
     this._isMounted = true;
-    this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
+    this.startInterval();
   }
 
   componentWillUnmount () {
@@ -66,9 +75,7 @@ export class Timestamp extends React.Component {
 
     if (!mdate.isValid()) {
       return (
-        <div>
-          <div className="co-timestamp">-</div>
-        </div>
+        <div className="co-timestamp">-</div>
       );
     }
 
