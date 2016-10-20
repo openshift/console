@@ -32,6 +32,15 @@ type Authenticator struct {
 	successURL string
 }
 
+// The trivial token "extractor" always extracts a constant string.
+// s should not be the empty string, or else the Authorization header
+// may end up as "Bearer ".
+func ConstantTokenExtractor(s string) func(*http.Request) (string, error) {
+	return func(_ *http.Request) (string, error) {
+		return s, nil
+	}
+}
+
 func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL string) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {

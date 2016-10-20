@@ -1,9 +1,9 @@
-package server
+package proxy
 
 import (
 	"crypto/tls"
-	"errors"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -12,40 +12,21 @@ import (
 	"time"
 
 	"golang.org/x/net/websocket"
-
-	"github.com/coreos/go-oidc/oidc"
 )
 
-type ProxyConfig struct {
+type Config struct {
 	HeaderBlacklist []string
 	Endpoint        *url.URL
-	TokenExtractor  oidc.RequestTokenExtractor
 	TLSClientConfig *tls.Config
+	Director        func(*http.Request)
 }
 
-// The trivial token "extractor" always extracts a constant string
-func ConstantTokenExtractor(s string) func(*http.Request) (string, error) {
-	var err error = nil
-	if s == "" {
-		err = errors.New("no token present")
-	}
-
-	return func(_ *http.Request) (string, error) {
-		return s, err
-	}
-}
-
-const (
-	proxyWriteDeadline = time.Second * 10
-	proxyReadDeadline  = time.Second * 10
-)
-
-type proxy struct {
+type Proxy struct {
 	reverseProxy *httputil.ReverseProxy
-	config       *ProxyConfig
+	config       *Config
 }
 
-func newProxy(cfg *ProxyConfig) *proxy {
+func NewProxy(cfg *Config) *Proxy {
 	// Copy of http.DefaultTransport with TLSClientConfig added
 	insecureTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
@@ -62,14 +43,15 @@ func newProxy(cfg *ProxyConfig) *proxy {
 		Transport:     insecureTransport,
 	}
 
-	proxy := &proxy{
+	proxy := &Proxy{
 		reverseProxy: reverseProxy,
 		config:       cfg,
 	}
 
-	reverseProxy.Director = func(r *http.Request) {
-		proxy.rewriteRequest(r)
+	if cfg.Director == nil {
+		cfg.Director = proxy.director
 	}
+	reverseProxy.Director = cfg.Director
 
 	return proxy
 }
@@ -86,13 +68,10 @@ func SingleJoiningSlash(a, b string) string {
 	return a + b
 }
 
-func (p *proxy) rewriteRequest(r *http.Request) {
-	// At this writing, the only errors we can get from TokenExtractor
-	// are benign and correct variations on "no token found"
-	if token, err := p.config.TokenExtractor(r); err == nil {
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	}
-
+// director is a default function to rewrite the request being
+// proxied. If the user does not supply a custom director function,
+// then this will be used.
+func (p *Proxy) director(r *http.Request) {
 	for _, h := range p.config.HeaderBlacklist {
 		r.Header.Del(h)
 	}
@@ -103,9 +82,9 @@ func (p *proxy) rewriteRequest(r *http.Request) {
 	r.URL.Scheme = p.config.Endpoint.Scheme
 }
 
-func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	isWebsocket := false
-	upgrades := req.Header["Upgrade"]
+	upgrades := r.Header["Upgrade"]
 
 	for _, upgrade := range upgrades {
 		if strings.ToLower(upgrade) == "websocket" {
@@ -115,23 +94,23 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	}
 
 	if !isWebsocket {
-		p.reverseProxy.ServeHTTP(res, req)
+		p.reverseProxy.ServeHTTP(w, r)
 		return
 	}
 
-	p.rewriteRequest(req)
+	p.config.Director(r)
 
-	if req.URL.Scheme == "https" {
-		req.URL.Scheme = "wss"
+	if r.URL.Scheme == "https" {
+		r.URL.Scheme = "wss"
 	} else {
-		req.URL.Scheme = "ws"
+		r.URL.Scheme = "ws"
 	}
 
 	config := &websocket.Config{
-		Location:  req.URL,
+		Location:  r.URL,
 		Version:   websocket.ProtocolVersionHybi13,
 		TlsConfig: p.config.TLSClientConfig,
-		Header:    req.Header,
+		Header:    r.Header,
 
 		// NOTE (ericchiang): K8s might not enforce this but websockets requests are
 		// required to supply an origin.
@@ -140,8 +119,8 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	backend, err := websocket.DialConfig(config)
 	if err != nil {
-		plog.Errorf("Failed to dial backend: %v", err)
-		http.Error(res, "bad gateway", http.StatusBadGateway)
+		log.Printf("Failed to dial backend: %v", err)
+		http.Error(w, "bad gateway", http.StatusBadGateway)
 		return
 	}
 	defer backend.Close()
@@ -166,7 +145,7 @@ func (p *proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		// Only wait for a single error and let the defers close both connections.
 		<-errc
 
-	}).ServeHTTP(res, req)
+	}).ServeHTTP(w, r)
 }
 
 func copyFrames(dest, src *websocket.Conn) error {
@@ -184,6 +163,7 @@ func copyFrames(dest, src *websocket.Conn) error {
 }
 
 // frameCodec is a websocket.Codec which preserves frame types for copying.
+
 //
 // This differs from websocket.Message which presents a different frame type for "[]byte" and "string".
 var frameCodec = websocket.Codec{Marshal: marshalFrame, Unmarshal: unmarshalFrame}

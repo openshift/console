@@ -18,6 +18,7 @@ import (
 	"k8s.io/kubernetes/pkg/client/restclient"
 
 	"github.com/coreos-inc/bridge/auth"
+	"github.com/coreos-inc/bridge/pkg/proxy"
 	"github.com/coreos-inc/bridge/server"
 	"github.com/coreos-inc/bridge/stats"
 	"github.com/coreos-inc/bridge/verify"
@@ -178,7 +179,7 @@ func main() {
 			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
 		}
 
-		srv.K8sProxyConfig = &server.ProxyConfig{
+		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: inClusterTLSCfg,
 			HeaderBlacklist: []string{"Cookie"},
 			Endpoint:        k8sURL,
@@ -188,7 +189,7 @@ func main() {
 	case "off-cluster":
 		k8sModeOffClusterEndpointURL := validateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
 
-		srv.K8sProxyConfig = &server.ProxyConfig{
+		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
 			},
@@ -223,27 +224,27 @@ func main() {
 				ID:     *fUserAuthOIDCClientID,
 				Secret: *fUserAuthOIDCClientSecret,
 			},
-			RedirectURL: server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
+			RedirectURL: proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
 			Scope:       []string{"openid", "email", "profile"},
 		}
 
 		var (
 			err                      error
-			authLoginErrorEndpoint   = server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
-			authLoginSuccessEndpoint = server.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
+			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
+			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
 		)
 
 		dexProxyConfigEndpoint := validateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
-		dexProxyConfigEndpoint.Path = server.SingleJoiningSlash(dexProxyConfigEndpoint.Path, "/api")
+		dexProxyConfigEndpoint.Path = proxy.SingleJoiningSlash(dexProxyConfigEndpoint.Path, "/api")
 
-		srv.DexProxyConfig = &server.ProxyConfig{
+		srv.DexProxyConfig = &proxy.Config{
 			Endpoint: dexProxyConfigEndpoint,
 			TLSClientConfig: &tls.Config{
 				RootCAs: certPool,
 			},
 			HeaderBlacklist: []string{"Cookie"},
-			TokenExtractor:  auth.ExtractTokenFromCookie,
 		}
+		srv.DexProxyConfig.Director = server.DirectorFromTokenExtractor(srv.DexProxyConfig, auth.ExtractTokenFromCookie)
 
 		if *fKubectlClientID != "" {
 			srv.KubectlClientID = *fKubectlClientID
@@ -304,13 +305,13 @@ func main() {
 	switch *fK8sAuth {
 	case "service-account":
 		validateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
-		srv.K8sProxyConfig.TokenExtractor = server.ConstantTokenExtractor(k8sAuthServiceAccountBearerToken)
+		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ConstantTokenExtractor(k8sAuthServiceAccountBearerToken))
 	case "bearer-token":
 		validateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
-		srv.K8sProxyConfig.TokenExtractor = server.ConstantTokenExtractor(*fK8sAuthBearerToken)
+		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ConstantTokenExtractor(*fK8sAuthBearerToken))
 	case "oidc":
 		validateFlagIs("user-auth", *fUserAuth, "oidc")
-		srv.K8sProxyConfig.TokenExtractor = auth.ExtractTokenFromCookie
+		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ExtractTokenFromCookie)
 	default:
 		flagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc")
 	}

@@ -1,6 +1,7 @@
-package server
+package proxy
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -96,10 +97,9 @@ func TestProxyDirector(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		p := newProxy(&ProxyConfig{
+		p := NewProxy(&Config{
 			Endpoint:        &tt.target,
 			HeaderBlacklist: tt.blacklist,
-			TokenExtractor:  ConstantTokenExtractor(""),
 		})
 		p.reverseProxy.Director(tt.in)
 
@@ -174,12 +174,11 @@ func startProxyServer(t *testing.T) (string, func(), error) {
 		return "", nil, err
 	}
 	targetURL.Path = ""
-	proxy := newProxy(&ProxyConfig{
-		Endpoint:       targetURL,
-		TokenExtractor: ConstantTokenExtractor(""),
+	p := NewProxy(&Config{
+		Endpoint: targetURL,
 	})
 	proxyMux := http.NewServeMux()
-	proxyMux.Handle("/proxy/", http.StripPrefix("/proxy/", proxy))
+	proxyMux.Handle("/proxy/", http.StripPrefix("/proxy/", p))
 	proxyServer := httptest.NewServer(proxyMux)
 
 	return proxyServer.URL, func() {
@@ -261,13 +260,12 @@ func TestProxyRewriteRequestAuthorization(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		p := &proxy{
-			config: &ProxyConfig{
-				Endpoint:       testurl,
-				TokenExtractor: ConstantTokenExtractor(tt.tok),
-			},
+		c := &Config{
+			Endpoint: testurl,
 		}
-		p.rewriteRequest(tt.req)
+		c.Director = DirectorFromToken(c, tt.tok)
+		p := NewProxy(c)
+		p.config.Director(tt.req)
 		got := tt.req.Header.Get("Authorization")
 		if tt.want != got {
 			t.Errorf("case %d: unexpected header: want=%q got=%q", i, tt.want, got)
@@ -282,4 +280,21 @@ func mustNewRequestWithHeader(t *testing.T, hdr http.Header) *http.Request {
 	}
 	req.Header = hdr
 	return req
+}
+
+func DirectorFromToken(config *Config, token string) func(*http.Request) {
+	return func(r *http.Request) {
+		if token != "" {
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+		}
+
+		for _, h := range config.HeaderBlacklist {
+			r.Header.Del(h)
+		}
+
+		r.Host = config.Endpoint.Host
+		r.URL.Host = config.Endpoint.Host
+		r.URL.Path = SingleJoiningSlash(config.Endpoint.Path, r.URL.Path)
+		r.URL.Scheme = config.Endpoint.Scheme
+	}
 }

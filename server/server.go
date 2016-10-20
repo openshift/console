@@ -18,6 +18,7 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/coreos-inc/bridge/auth"
+	"github.com/coreos-inc/bridge/pkg/proxy"
 	"github.com/coreos-inc/bridge/version"
 )
 
@@ -49,8 +50,8 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	K8sProxyConfig     *ProxyConfig
-	DexProxyConfig     *ProxyConfig
+	K8sProxyConfig     *proxy.Config
+	DexProxyConfig     *proxy.Config
 	BaseURL            *url.URL
 	PublicDir          string
 	TectonicVersion    string
@@ -72,33 +73,38 @@ func (s *Server) AuthDisabled() bool {
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 
-	var k8sHandler http.Handler = newProxy(s.K8sProxyConfig)
+	var k8sHandler http.Handler = proxy.NewProxy(s.K8sProxyConfig)
 	if !s.AuthDisabled() {
 		k8sHandler = authMiddleware(s.Auther, k8sHandler)
 	}
-	mux.Handle(SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), http.StripPrefix(SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), k8sHandler))
+	handle := func(path string, handler http.Handler) {
+		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
+	}
+	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
+
+	handle("/api/kubernetes/", http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), k8sHandler))
 
 	if !s.AuthDisabled() {
-		mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, AuthLoginEndpoint), s.Auther.LoginFunc)
-		mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, AuthLogoutEndpoint), s.Auther.LogoutFunc)
-		mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, AuthLoginCallbackEndpoint), s.Auther.CallbackFunc)
+		handleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
+		handleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
+		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc)
 
 		if s.KubectlAuther != nil {
-			mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/api/tectonic/kubectl/code"), s.KubectlAuther.LoginFunc)
-			mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/api/tectonic/kubectl/config"), s.handleRenderKubeConfig)
+			handleFunc("/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
+			handleFunc("/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
 		}
 	}
 
 	if s.DexProxyConfig != nil {
-		mux.Handle(SingleJoiningSlash(s.BaseURL.Path, "/api/dex/"), http.StripPrefix(SingleJoiningSlash(s.BaseURL.Path, "/api/dex/"), newProxy(s.DexProxyConfig)))
+		handle("/api/dex/", http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/dex/"), proxy.NewProxy(s.DexProxyConfig)))
 	}
 
-	mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/api/"), notFoundHandler)
+	handleFunc("/api/", notFoundHandler)
 
-	staticHandler := http.StripPrefix(SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
-	mux.Handle(SingleJoiningSlash(s.BaseURL.Path, "/static/"), staticHandler)
+	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
+	handle("/static/", staticHandler)
 
-	mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/health"), health.Checker{
+	handleFunc("/health", health.Checker{
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
@@ -106,7 +112,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
 	}
-	mux.HandleFunc(SingleJoiningSlash(s.BaseURL.Path, "/version"), useVersionHandler)
+	handleFunc("/version", useVersionHandler)
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -153,10 +159,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		AuthDisabled:    s.AuthDisabled(),
 		KubectlClientID: s.KubectlClientID,
 		BasePath:        s.BaseURL.Path,
-		LoginURL:        SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
-		LoginSuccessURL: SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:   SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:       SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
+		LoginURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
+		LoginSuccessURL: proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:   proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
 	}
 	tpl := template.New(IndexPageTemplateName)
 	tpl.Delims("[[", "]]")
@@ -277,3 +283,29 @@ contexts:
 
 current-context: tectonic
 `))
+
+// DirectorFromTokenExtractor creates a new reverse proxy director
+// that rewrites the Authorization header of the request using the
+// tokenExtractor parameter.
+// (see https://golang.org/src/net/http/httputil/reverseproxy.go?s=778:806)
+func DirectorFromTokenExtractor(config *proxy.Config, tokenExtractor func(*http.Request) (string, error)) func(*http.Request) {
+	return func(r *http.Request) {
+		for _, h := range config.HeaderBlacklist {
+			r.Header.Del(h)
+		}
+
+		// At this writing, the only errors we can get from TokenExtractor
+		// are benign and correct variations on "no token found"
+		token, err := tokenExtractor(r)
+		if err != nil {
+			plog.Errorf("Received an error while extracting token: %v", err)
+		} else {
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+		}
+
+		r.Host = config.Endpoint.Host
+		r.URL.Host = config.Endpoint.Host
+		r.URL.Path = proxy.SingleJoiningSlash(config.Endpoint.Path, r.URL.Path)
+		r.URL.Scheme = config.Endpoint.Scheme
+	}
+}
