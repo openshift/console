@@ -4,4 +4,7 @@ angular.module('bridge.page')
 
   $scope.ns = $routeParams.ns;
   $scope.query = {kind: '', category: ''};
+  $scope.props = {
+    namespace: $routeParams.ns,
+  };
 });

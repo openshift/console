@@ -15,6 +15,10 @@
 }
 
 
+.dropdown-menu > li > a {
+  cursor: pointer;
+}
+
 .dropdown-menu > li.dropdown__selected > a {
   color: white;
   &:hover {

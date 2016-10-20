@@ -18,6 +18,7 @@ export const wsFactory = (id, options) => {
   }
   // websocket with id already exists
   if (wsCache[id]) {
+    // TODO (ggreer): if id is the same but options differ, this could return the "wrong" web socket
     return wsCache[id];
   }
   // create new websocket
@@ -42,10 +43,6 @@ wsFactory.destroyAll = function() {
 function validOptions(o) {
   if (!o.host) {
     angulars.$log.error('missing required host argument');
-    return false;
-  }
-  if (!o.scope) {
-    angulars.$log.error('missing required scope argument');
     return false;
   }
   return true;
@@ -95,10 +92,6 @@ function WebSocketWrapper(id, options) {
 
   // Array of cleanup functions that get called ondestroy.
   this._cleanupFns = [
-    // Deregister scope listener.
-    options.scope.$on('$destroy', function() {
-      that.destroy();
-    }),
     // Kill interval flusher.
     function() {
       if (flushCanceler) {
@@ -109,6 +102,15 @@ function WebSocketWrapper(id, options) {
       angulars.$timeout.cancel(that._connectionAttempt);
     },
   ];
+
+  if (options.scope) {
+    this._cleanupFns.splice(0, 0,
+      // Deregister scope listener.
+      options.scope.$on('$destroy', function () {
+        that.destroy();
+      })
+    );
+  }
 }
 
 function expBackoff(prev, max) {

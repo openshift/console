@@ -5,4 +5,7 @@ angular.module('bridge.page')
   $scope.ns = $routeParams.ns;
   $scope.rcName = $routeParams.name;
   $scope.filter = {name: $scope.rcName};
+  $scope.props = {
+    filter: $scope.filter,
+  };
 });

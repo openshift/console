@@ -1,26 +1,4 @@
 <div class="co-p-events">
-
   <tec-nav-title title="Events"></tec-nav-title>
-
-  <div class="co-m-pane">
-    <div class="co-m-pane__heading">
-      <div class="row">
-        <div class="col-xs-12">
-          <co-dropdown title="'Object Type'" selected="query.kind" items="[['All', ''], ['Pods', 'pod'], ['Nodes', 'node']]" class="pull-left">
-          </co-dropdown>
-
-          <co-dropdown title="'Event Category'" selected="query.category" items="[['All', ''], ['Info', 'info'], ['Error', 'error']]" class="pull-left">
-          </co-dropdown>
-        </div>
-      </div>
-    </div>
-
-    <div class="co-m-pane__body">
-      <div class="row">
-        <div class="col-xs-12"><p></p>
-          <co-sysevent-stream namespace="ns" filter="query"></co-sysevent-stream>
-        </div>
-      </div>
-    </div>
-  </div>
+  <react-component name="EventStreamPage" props="props"></react-component>
 </div>

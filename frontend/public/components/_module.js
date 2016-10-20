@@ -15,3 +15,4 @@ import './horizontal-pod-autoscaler';
 import './service-account';
 import './resource-list';
 import './sparkline-widget/sparkline-widget';
+import './events';
