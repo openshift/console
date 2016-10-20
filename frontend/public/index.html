@@ -83,6 +83,7 @@
             </div>
             <ul id="account-nav" class="navigation-container__list">
               <co-navbar-link ng-cloak href="settings/profile">My Account</co-navbar-link>
+              <co-navbar-link ng-cloak href="#" ng-if="!$root.FEATURE_FLAGS.isAuthDisabled" ng-click="$root.logout($event)" id="logout">Log Out</co-navbar-link>
             </ul>
           </div>
         </div>
