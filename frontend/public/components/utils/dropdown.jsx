@@ -5,7 +5,7 @@ export class DropdownMixin extends React.Component {
     super(props);
     this.listener = this._onWindowClick.bind(this);
     this.state = {
-      title: props.title,
+      selectedHtml: props.title,
       active: !!props.active,
     };
   }
@@ -30,7 +30,7 @@ export class DropdownMixin extends React.Component {
     window.removeEventListener('click', this.listener);
   }
 
-  onClick_ (key, name, e) {
+  onClick_ (key, html, e) {
     e.stopPropagation();
 
     const {onChange} = this.props;
@@ -38,7 +38,7 @@ export class DropdownMixin extends React.Component {
       onChange(key);
     }
 
-    this.setState({active: false, title: name});
+    this.setState({active: false, selectedHtml: html});
   }
 
   toggle (e) {
@@ -59,22 +59,22 @@ export class DropdownMixin extends React.Component {
 
 export class Dropdown extends DropdownMixin {
   render() {
-    const {title} = this.state;
+    const {selectedHtml} = this.state;
     const {nobutton, items, className} = this.props;
 
     let button = <button onClick={this.toggle.bind(this)} type="button" className="btn btn--dropdown">
-      {title}&nbsp;&nbsp;
+      {selectedHtml}&nbsp;&nbsp;
       <span className="caret"> </span>
     </button>;
 
     if (nobutton) {
-      button = <span onClick={this.toggle.bind(this)} className="dropdown__not-btn">{title}&nbsp;&nbsp;<span className="caret"></span></span>;
+      button = <span onClick={this.toggle.bind(this)} className="dropdown__not-btn">{selectedHtml}&nbsp;&nbsp;<span className="caret"></span></span>;
     }
 
-    const children = _.map(items, (name, key) => {
-      const klass = name === title ? 'dropdown__selected' : 'dropdown__default';
-      const onClick_ = this.onClick_.bind(this, key, name);
-      return <li className={klass} key={key}><a onClick={onClick_}>{name}</a></li>;
+    const children = _.map(items, (html, key) => {
+      const klass = html === selectedHtml ? 'dropdown__selected' : 'dropdown__default';
+      const onClick_ = this.onClick_.bind(this, key, html);
+      return <li className={klass} key={key}><a onClick={onClick_}>{html}</a></li>;
     });
 
     return (
