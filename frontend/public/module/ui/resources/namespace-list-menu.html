@@ -15,7 +15,7 @@
           <span ng-bind="namespace.metadata.name"></span>
           <div class="co-m-facet-option__cog"
                ><co-namespace-cog anchor="right"
-                                  ng-if="namespace.metadata.uid === chosen.metadata.uid"
+                                  ng-if="namespace.metadata.uid === chosen.metadata.uid && namespace.metadata.name !== 'default'"
                                   namespace="namespace"></co-namespace-cog></div>
         </li>
       </ul>
