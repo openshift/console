@@ -19,7 +19,7 @@
     "no-underscore-dangle": 0,
     "no-unused-vars": ["error", { "varsIgnorePattern": "React" }],
     "no-use-before-define": 1,
-    "semi": 1,
+    "semi": 2,
     "quotes": [2, "single"],
     "wrap-iife": [2, "inside"],
     "react/jsx-uses-react": "error",
