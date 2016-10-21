@@ -7,7 +7,7 @@ import {makeList, TwoColumns} from '../factory';
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-6">Name</div>
   <div className="col-xs-6">Role</div>
-</div>
+</div>;
 
 const RoleBindingRow = (roleBinding) => {
   const {metadata, roleRef} = roleBinding;
@@ -30,7 +30,7 @@ const Subject = ({subject}) => <div className="row">
   <div className="col-xs-4">{subject.kind}</div>
   <div className="col-xs-4">{subject.name}</div>
   <div className="col-xs-4">{subject.namespace}</div>
-</div>
+</div>;
 
 const RoleRef = ({parentNamespace, namespace, name, kind}) => {
   kind = kind.toLowerCase();
@@ -48,7 +48,7 @@ const RoleRef = ({parentNamespace, namespace, name, kind}) => {
   }
   return <span>
     <ResourceIcon kind={kind} /> <a href={href}>{name}</a>
-  </span>
+  </span>;
 };
 
 export const BindingDetails = (headerText) => ({metadata, subjects, roleRef}) => <div>
@@ -83,7 +83,7 @@ export const BindingDetails = (headerText) => ({metadata, subjects, roleRef}) =>
             <div className="co-m-table-grid__body">
               {
                 _.map(subjects, (s, i) => {
-                  return <Subject subject={s} key={i} />
+                  return <Subject subject={s} key={i} />;
                 })
               }
             </div>
@@ -92,19 +92,19 @@ export const BindingDetails = (headerText) => ({metadata, subjects, roleRef}) =>
       </div>
     </div>
   </div>
-</div>
+</div>;
 
 const RBDetails = BindingDetails('Role Binding Details');
 
 const Details = (selected) => {
   if (!_.isEmpty(selected)) {
-    return <RBDetails {...selected} />
+    return <RBDetails {...selected} />;
   }
   return <div className="empty-page">
     <h1 className="empty-page__header">No Role Binding selected</h1>
     <p className="empty-page__explanation">
     </p>
-  </div>
+  </div>;
 };
 
 const RoleBindingsPage = (props) => <TwoColumns list={RoleBindings} {...props}><Details /></TwoColumns>;

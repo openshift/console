@@ -13,7 +13,7 @@ const Header = () => <div className="row co-m-table-grid__head">
 const NamespaceCog = ({namespace}) => {
   const options = [Cog.factory.EnterNamespace].map(f => f(angulars.kinds.NAMESPACE, namespace));
   return <Cog options={options} size="small" anchor="left"></Cog>;
-}
+};
 
 const NamespaceRow = ({obj: namespace}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
@@ -29,7 +29,7 @@ const NamespaceRow = ({obj: namespace}) => <div className="row co-resource-list_
   <div className="col-xs-4">
     {namespace.status.phase}
   </div>
-</div>
+</div>;
 
 const kind = 'NAMESPACE';
 

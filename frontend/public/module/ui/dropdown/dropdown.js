@@ -33,7 +33,7 @@ angular.module('bridge.ui')
       $scope.select = (name, value) => {
         $scope.selected = value;
         $scope.title = name;
-      }
+      };
       const updatePairs = () => {
         $scope.pairs = _.map($scope.items, item => {
           return {name: item[0], value: item[1]};

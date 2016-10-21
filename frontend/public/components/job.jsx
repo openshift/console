@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Selector, Timestamp, detailsPage} from './utils'
+import {Cog, LabelList, ResourceIcon, Selector, Timestamp, detailsPage} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">Name</div>
@@ -17,7 +17,7 @@ const JobCog = ({job}) => {
   const {factory: {Delete, ModifyLabels, ModifyJobParallelism, ModifyPodSelector}} = Cog;
   const options = [ModifyJobParallelism, ModifyPodSelector, ModifyLabels, Delete].map(f => f(kind, job));
   return <Cog options={options} size="small" anchor="left"></Cog>;
-}
+};
 
 const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
@@ -46,7 +46,7 @@ const JobRow = ({obj: job}) => {
       </div>
     </div>
   );
-}
+};
 
 const getJobTypeAndCompletions = (o) => {
   // if neither completions nor parallelism are defined, then it is a non-parallel job.
@@ -63,7 +63,7 @@ const getJobTypeAndCompletions = (o) => {
   }
   // otherwise, if parallelism is defined, but completions is not, then it is a 'Work Queue' job.
   return {type: 'Work Queue', completions: 1};
-}
+};
 
 const Details = (job) => <div>
   <div className="row no-gutter">
@@ -116,7 +116,7 @@ const Details = (job) => <div>
       </div>
     </div>
   </div>
-</div>
+</div>;
 
 const {factory: {pods}} = detailsPage;
 const pages = [{href: 'details', name: 'Details', component: Details}, pods()];

@@ -11,25 +11,25 @@ const NodeIPList = ({ips, expand = false}) => <div>
       <span className="co-ip-addr">{ip.address}</span>
     </p>}
   </div>)}
-</div>
+</div>;
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Node Name</div>
   <div className="col-xs-4">Status</div>
   <div className="col-xs-4">Node Addresses</div>
-</div>
+</div>;
 
 const HeaderSearch = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Node Name</div>
   <div className="col-md-2 hidden-sm hidden-xs">Status</div>
   <div className="col-sm-5 col-xs-7">Node Labels</div>
   <div className="col-md-2 col-sm-3 hidden-xs">Node Addresses</div>
-</div>
+</div>;
 
 const NodeCog = ({node}) => {
   const options = [Cog.factory.ModifyLabels].map(f => f(angulars.kinds.NODE, node));
   return <Cog options={options} size="small" anchor="left"></Cog>;
-}
+};
 
 const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}`} title={node.metadata.uid}>{node.metadata.name}</a>;
 
@@ -52,7 +52,7 @@ const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__i
   {expand && <div className="col-xs-12">
     <LabelList kind={angulars.kinds.NODE.id} labels={node.metadata.labels} />
   </div>}
-</div>
+</div>;
 
 const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
@@ -69,7 +69,7 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
   <div className="col-md-2 col-sm-3 hidden-xs">
     <NodeIPList ips={node.status.addresses} />
   </div>
-</div>
+</div>;
 
 const NodesPage = () => <div className="co-p-nodes">
   <div className="row co-m-nav-title">
@@ -78,7 +78,7 @@ const NodesPage = () => <div className="co-p-nodes">
     </div>
   </div>
   <NodesListPage canExpand={true} />
-</div>
+</div>;
 
 const kind = 'NODE';
 

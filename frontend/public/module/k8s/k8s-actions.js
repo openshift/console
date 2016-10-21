@@ -18,7 +18,7 @@ const types = {
 
 const action_ = (type) => {
   return (id, k8sObjects) => ({type, id, k8sObjects});
-}
+};
 
 const WS = {};
 const POLLs = {};

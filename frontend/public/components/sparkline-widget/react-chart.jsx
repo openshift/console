@@ -99,6 +99,6 @@ ReactChart.propTypes = {
   limitText: React.PropTypes.string,
   units: React.PropTypes.string,
   timespan: React.PropTypes.number
-}
+};
 
 export default ReactChart;

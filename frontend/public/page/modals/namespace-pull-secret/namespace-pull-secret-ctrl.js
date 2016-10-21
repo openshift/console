@@ -97,7 +97,7 @@ angular.module('bridge.page')
     $scope.submit = () => {
       $scope.pullSecretUpdated = ($scope.model.isNew ? submitCreate : submitUpdate)()
         .then($uibModalInstance.close.bind($uibModalInstance));
-    }
+    };
 
     const generateSecretData = () => {
       let data;
@@ -126,7 +126,7 @@ angular.module('bridge.page')
       }
 
       return $window.btoa(data);
-    }
+    };
 
     const submitCreate = () => {
       const data = {};
@@ -140,7 +140,7 @@ angular.module('bridge.page')
         data: data,
         type: CONST.PULL_SECRET_TYPE
       });
-    }
+    };
 
     const submitUpdate = () => {
       return k8s.resource.patch(k8s.kinds.SECRET, pullSecret, [{
@@ -148,6 +148,6 @@ angular.module('bridge.page')
         path:  `/data/${CONST.PULL_SECRET_DATA}`,
         value: generateSecretData()
       }]);
-    }
+    };
   })
 ;

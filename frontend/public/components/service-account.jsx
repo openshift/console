@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, ResourceIcon, Timestamp} from './utils'
+import {Cog, ResourceIcon, Timestamp} from './utils';
 import {SecretsList, withSecretsList} from './secret';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -16,7 +16,7 @@ const ServiceAccountCog = ({serviceaccount}) => {
   const {factory: {Delete}} = Cog;
   const options = [Delete].map(f => f(kind, serviceaccount));
   return <Cog options={options} size="small" anchor="left"></Cog>;
-}
+};
 
 const ServiceAccountRow = ({obj: serviceaccount}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;
@@ -38,7 +38,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
       </div>
     </div>
   );
-}
+};
 
 const Details = (serviceaccount) => {
   const {metadata: {namespace, creationTimestamp}, secrets} = serviceaccount;
@@ -68,7 +68,7 @@ const Details = (serviceaccount) => {
       </div>
     </div>
   );
-}
+};
 
 const pages = [{href: 'details', name: 'Details', component: Details}];
 const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'SERVICEACCOUNT', pages);

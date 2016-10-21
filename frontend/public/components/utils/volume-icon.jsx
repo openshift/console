@@ -16,5 +16,5 @@ export const VolumeIcon = ({kind}) => {
   return <span className={`co-m-volume-icon co-m-volume-icon--${kind}`}>
     {faClass && <i className={classNames('fa', faClass)}></i>}
     <span>{_.get(kinds[kind], 'label', '')}</span>
-  </span>
+  </span>;
 };

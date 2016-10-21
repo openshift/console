@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ResourceIcon} from '../utils'
+import {ResourceIcon} from '../utils';
 
 import {angulars} from '../react-wrapper';
 
@@ -47,7 +47,7 @@ const Actions = ({verbs}) => {
     actions.push(<div className="rbac-rule-row" key={a}>{a}</div>);
   });
   return <div>{actions}</div>;
-}
+};
 
 const Groups = ({apiGroups}) => {
   // defaults to [""]
@@ -63,7 +63,7 @@ const Groups = ({apiGroups}) => {
     groups.push(<div className="rbac-rule-row" key={g}>{g}</div>);
   });
   return <div>{groups}</div>;
-}
+};
 
 const Resources = ({resources, nonResourceURLs}) => {
   let allResources = [];
@@ -94,7 +94,7 @@ const Resources = ({resources, nonResourceURLs}) => {
     allResources.push.apply(allResources, URLs);
   }
   return <div>{allResources}</div>;
-}
+};
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups}) => <div>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
@@ -106,4 +106,4 @@ const Rule = ({resources, nonResourceURLs, verbs, apiGroups}) => <div>
   <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
     <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
   </div>
-</div>
+</div>;

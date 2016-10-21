@@ -8,7 +8,7 @@ const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
     return <span key={i}><a target="_blank" href={`http://${s.spec.clusterIP}:${portObj.port}`}>
       {s.spec.clusterIP}:{portObj.port}
-    </a>&nbsp;&nbsp;</span>
+    </a>&nbsp;&nbsp;</span>;
   });
 
   return <p>{children}</p>;
@@ -25,14 +25,14 @@ const ServiceCog = ({s}) => {
 
   const options = [ModifyPodSelector, ServicePorts, ModifyLabels, Delete].map(f => f(angulars.kinds.SERVICE, s));
   return <Cog options={options} size="small" anchor="left" />;
-}
+};
 
 const ServiceHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">Service Name</div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
   <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
   <div className="col-lg-3 col-md-2 hidden-sm hidden-xs">Service Location</div>
-</div>
+</div>;
 
 const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
@@ -49,7 +49,7 @@ const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 hidden-sm hidden-xs">
     <ServiceIPLink s={s} />
   </div>
-</div>
+</div>;
 
 const ServiceAddress = ({s}) => {
   const ServiceIPsRow = (name, desc, ips, note = null) => <div className="co-ip-row">
@@ -60,7 +60,7 @@ const ServiceAddress = ({s}) => {
       </div>
       <div className="col-xs-6">{note && <span className="text-muted">{note}</span>}{ips.join(', ')}</div>
     </div>
-  </div>
+  </div>;
 
   return <div>
     <div className="row co-ip-header">
@@ -73,8 +73,8 @@ const ServiceAddress = ({s}) => {
       {s.spec.type === 'LoadBalancer' && ServiceIPsRow('External Load Balancer', 'Ingress point(s) of load balancer', _.map(s.status.loadBalancer.ingress, i => i.hostname || i.ip || '-'))}
       {s.spec.externalIPs && ServiceIPsRow('External IP', 'IP Address(es) accepting traffic for service', s.spec.externalIPs)}
     </div>
-  </div>
-}
+  </div>;
+};
 
 const ServicePortMapping = ({s}) => <div>
   <div className="row co-ip-header">
@@ -102,10 +102,10 @@ const ServicePortMapping = ({s}) => <div>
             <p><ResourceIcon kind="pod" /><span>{portObj.targetPort}</span></p>
           </div>
         </div>
-      </div>
+      </div>;
     })}
   </div>
-</div>
+</div>;
 
 const Details = (s) => <div className="row no-gutter">
   <div className="col-sm-6">
@@ -146,7 +146,7 @@ const Details = (s) => <div className="row no-gutter">
       </div>
     </div>
   </div>
-</div>
+</div>;
 
 const {factory: {pods}} = detailsPage;
 const pages = [

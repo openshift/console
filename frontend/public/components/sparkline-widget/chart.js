@@ -104,7 +104,7 @@ class Chart {
   }
 
   _valueInUnits(value) {
-    return units.humanize(value, this.units, true).string
+    return units.humanize(value, this.units, true).string;
   }
 
   _drawTooltips(el, scales, data) {
@@ -158,7 +158,7 @@ class Chart {
       let textBg = {
         x: translateX + textMargin.sides,
         y: textMargin.top
-      }
+      };
       let textGroup = {
         x: textBg.x + textPadding.sides,
         y: textBg.y + textPadding.top

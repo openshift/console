@@ -48,7 +48,7 @@ export class Firehose extends React.Component {
 
     return <ConnectToState className={this.props.className} reduxID={this.id} {...newProps}>
       {children}
-    </ConnectToState>
+    </ConnectToState>;
   };
 
   componentDidMount() {

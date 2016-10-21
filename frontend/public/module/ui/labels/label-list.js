@@ -15,7 +15,7 @@ angular.module('bridge.ui')
     controller: function($scope) {
       $scope.isEmpty = function() {
         return !$scope.labels || angular.equals({}, $scope.labels);
-      }
+      };
     }
   };
 });

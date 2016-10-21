@@ -17,7 +17,7 @@ angular.module('bridge.ui')
       function getDeleteFn() {
         return function() {
           return namespaceCacheSvc.delete($scope.namespace);
-        }
+        };
       };
 
       $scope.cogOptions = [

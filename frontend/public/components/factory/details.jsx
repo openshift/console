@@ -9,7 +9,7 @@ export const ReactiveDetails = (props) => <Provider store={props.store}>
   <Firehose {...props}>
     {props.children}
   </Firehose>
-</Provider>
+</Provider>;
 
 export const makeDetailsPage = (name, type, pages) => {
   class ReactiveDetailsPage extends React.Component {
@@ -27,4 +27,4 @@ export const makeDetailsPage = (name, type, pages) => {
 
   register(name, ReactiveDetailsPage);
   return ReactiveDetailsPage;
-}
+};

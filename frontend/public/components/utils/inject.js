@@ -13,4 +13,4 @@ export const inject = (children, props) => {
 export const injectChild = (children, props) => {
   const onlyChild = React.Children.only(children);
   return React.cloneElement(onlyChild, props);
-}
+};

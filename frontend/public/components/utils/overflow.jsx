@@ -7,4 +7,4 @@ import {selectText} from './index';
 export const Overflow = ({className, value}) => <div className={classNames('co-m-overflow', className)}>
   <input className="co-m-invisible-input co-m-overflow__input" value={value || '-'} readOnly spellCheck="false" onClick={selectText} />
   <div className="co-m-overflow__gradient"></div>
-</div>
+</div>;

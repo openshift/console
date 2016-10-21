@@ -3,4 +3,4 @@ export const selectText = (e) => {
   e.currentTarget.select();
   e.preventDefault();
   e.stopPropagation();
-}
+};

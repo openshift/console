@@ -2,14 +2,14 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, LabelList, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon, units} from './utils'
+import {Cog, LabelList, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 
 const PodCog = ({pod}) => {
   const kind = angulars.kinds.POD;
   const {factory: {ModifyLabels, Delete}} = Cog;
   return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" />;
-}
+};
 
 const PodRow = ({obj: pod}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -67,8 +67,8 @@ const ContainerRow = ({pod, container}) => {
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
       <div className="col-md-2 hidden-sm  hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
     </div>
-  </div>
-}
+  </div>;
+};
 
 const Volume = ({pod, volume}) => {
   const kind = _.get(angulars.k8s.pods.getVolumeType(volume.volume), 'id', '');
@@ -91,8 +91,8 @@ const Volume = ({pod, volume}) => {
         </div>)}
       </div>
     </div>
-  </div>
-}
+  </div>;
+};
 
 const Details = (pod) => {
   const limits = {
@@ -197,8 +197,8 @@ const Details = (pod) => {
         </div>
       </div>
     </div>
-  </div>
-}
+  </div>;
+};
 
 // TODO: Logs page and Events page are still routed to Angular code for now
 const Logs = null;

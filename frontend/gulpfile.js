@@ -73,7 +73,7 @@ gulp.task('js-deps', ['js-build'], () => {
   .require(externals)
   .bundle()
   .pipe(source('deps.js'))
-  .pipe(gulp.dest(distDir))
+  .pipe(gulp.dest(distDir));
 });
 
 

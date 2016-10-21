@@ -19,5 +19,5 @@ angular.module('bridge.ui')
         $scope.chosen = $scope.vm.chosen;
       });
     }
-  }
+  };
 });

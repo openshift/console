@@ -36,7 +36,7 @@ export const ResourceListDropdown = ({selected, onKindChange}) => {
   ], k => [k.id, <span><div className="co-type-selector__icon-wrapper"><ResourceIcon kind={k.id} /></div>{k.labelPlural}</span>]));
 
   return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onKindChange} />;
-}
+};
 
 export const ResourceList = (props) => {
   const {kind} = props;
@@ -58,7 +58,7 @@ export const ResourceList = (props) => {
       {kind === 'node'                    && <NodesListSearch {...props} namespace={null} />}
     </div>
   </div>;
-}
+};
 
 register('ResourceList', ResourceList);
 register('ResourceListDropdown', ResourceListDropdown);

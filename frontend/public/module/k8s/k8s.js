@@ -107,7 +107,7 @@ angular.module('k8s')
       },
       kind: kind,
     }, k8sObject);
-  }
+  };
 
   this.kinds = k8sEnum.Kind;
   this.configmaps = addDefaults(k8sConfigmaps, k8sEnum.Kind.CONFIGMAP);

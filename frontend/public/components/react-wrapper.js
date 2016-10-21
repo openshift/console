@@ -46,7 +46,7 @@ app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeo
     angulars.$log = $log;
     angulars.$interval= $interval;
     angulars.$timeout = $timeout;
-  }
+  };
 });
 
 // see https://github.com/ngReact/ngReact#the-react-component-directive

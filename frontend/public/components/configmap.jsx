@@ -3,7 +3,7 @@ import React from 'react';
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, ResourceIcon, Timestamp} from './utils'
+import {Cog, LabelList, ResourceIcon, Timestamp} from './utils';
 
 const ConfigMapCog = ({configMap}) => {
   const kind = angulars.kinds.CONFIGMAP;

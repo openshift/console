@@ -54,7 +54,7 @@ describe('bridge.service', function() {
         .toEqual('a: \n  - 1\n  - 2\n  - 3\nb: \n  x: 1\n  y: 2\n  z: 3\nc: "ok @ok"');
       expect(yamlizeSvc.yamlize([{a: {a: 'a'}}, 2, {b: {b: {b: []}}}]))
         .toEqual('- a: \n    a: a\n- 2\n- b: \n    b: \n      b: []');
-    })
+    });
 
     var plausibleK8sJSON = {
       'kind': 'List',

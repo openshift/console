@@ -42,7 +42,7 @@ describe('k8s.k8sDocker', function() {
 
         // container name
         '9242B9F6-A50A-4330-8C0E-B18EA4672A89'
-      )).toEqual({name: '9242B9F6-A50A-4330-8C0E-B18EA4672A89', status: 'running'})
+      )).toEqual({name: '9242B9F6-A50A-4330-8C0E-B18EA4672A89', status: 'running'});
     });
   });
 

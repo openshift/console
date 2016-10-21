@@ -19,7 +19,7 @@ export class Cog extends DropdownMixin {
       }
 
       this.hide();
-    }
+    };
 
     let {options, size, anchor} = this.props;
 
@@ -95,4 +95,4 @@ Cog.factory = {
       resource: () => obj,
     }),
   }),
-}
+};

@@ -10,7 +10,7 @@ import {inject, WithQuery} from './utils';
 const Injector = ({children, data, filters}) => {
   data = data || [];
   return <div>{inject(children, {data, filters})}</div>;
-}
+};
 
 const CheckBox = ({name, active, number, toggle}) => {
   const klass = classnames('row-filter--box clickable', {
@@ -19,7 +19,7 @@ const CheckBox = ({name, active, number, toggle}) => {
 
   return <div onClick={toggle} className={klass}>
     <span key={number} className="row-filter--number-bubble">{number}</span> {name}
-  </div>
+  </div>;
 };
 
 class CheckBoxes extends React.Component {
@@ -96,12 +96,12 @@ class CheckBoxes extends React.Component {
         active: active[i],
         toggle: this.toggle.bind(this, i),
       };
-      return <CheckBox {...props} />
+      return <CheckBox {...props} />;
     });
 
     return <div className="col-xs-12">
       <div className="row-filter">{checkboxes}</div>
-    </div>
+    </div>;
   }
 }
 
@@ -128,7 +128,7 @@ export class RowFilter extends React.Component {
     const props = {
       selected, reducer, type,
       rowFilterItems: items,
-      applyFilter: (filter) => {this.applyFilter(type, filter)},
+      applyFilter: (filter) => {this.applyFilter(type, filter);},
     };
 
     return (

@@ -52,5 +52,5 @@ angular.module('k8s')
     }, false);
 
     return !tainted;
-  }
+  };
 });

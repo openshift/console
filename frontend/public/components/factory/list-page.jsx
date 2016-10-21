@@ -12,7 +12,7 @@ const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div
   <label className={classNames('btn compaction-btn', expand ? 'btn-selected' : 'btn-unselected')}>
     <input type="radio" onClick={() => onExpandChange(true)} /> Expand
   </label>
-</div>
+</div>;
 
 export const makeListPage = (name, kindName, ListComponent, dropdownFilters, rowFilters, filterLabel) => {
   class ListPage extends React.Component {
@@ -40,7 +40,7 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters, row
       const href = `ns/${namespace || defaultNS}/${kind.plural}/new`;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
-        return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type)} />
+        return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type)} />;
       });
 
       const RowsOfRowFilters = rowFilters && _.map(rowFilters, (rowFilter, i) => {
