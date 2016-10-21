@@ -1,5 +1,5 @@
 angular.module('bridge.ui')
-.directive('coNamespaceCog', function($location, ModalLauncherSvc, namespaceCacheSvc, activeNamespaceSvc) {
+.directive('coNamespaceCog', function($location, ModalLauncherSvc, namespaceCacheSvc) {
   'use strict';
 
   return {
@@ -21,15 +21,6 @@ angular.module('bridge.ui')
       };
 
       $scope.cogOptions = [
-        {
-          label: 'Enter Namespace',
-          weight: 100,
-          callback: function() {
-            activeNamespaceSvc.setActiveNamespace($scope.namespace.metadata.name);
-            var destination = activeNamespaceSvc.formatNamespaceRoute('/replicationcontrollers');
-            $location.url(destination);
-          }
-        }
       ];
 
       if ($scope.namespace.metadata.name !== 'default') {
