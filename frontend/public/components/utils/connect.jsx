@@ -22,7 +22,7 @@ export class WithQuery extends React.Component {
   render () {
     return <ConnectToState store={angulars.store} reduxID={this.firehoseId} {...this.props}>
       {this.props.children}
-    </ConnectToState>
+    </ConnectToState>;
   }
 }
 

@@ -9,7 +9,7 @@ const isActive = (href) => {
     return true;
   }
   return false;
-}
+};
 
 export class VertNav extends React.Component {
   render () {
@@ -37,7 +37,7 @@ export class VertNav extends React.Component {
           <StatusBox {...this.props}><Page /></StatusBox>
         </div>
       </div>
-    </div>
+    </div>;
   }
 }
 

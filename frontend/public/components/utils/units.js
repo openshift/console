@@ -33,10 +33,10 @@ const getType = (name) => {
       units: [],
       space: false,
       divisor: 1000
-    }
+    };
   }
   return type;
-}
+};
 
 const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit) => {
   let sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
@@ -46,8 +46,8 @@ const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit) => {
     value = value / divisor;
     unit = units.shift();
   }
-  return { value, unit }
-}
+  return { value, unit };
+};
 
 const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
   const defaultReturn = { value, unit: '' };
@@ -84,7 +84,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
   };
 
   return { value, unit };
-}
+};
 
 const round = (value) => {
   if (!isFinite(value)) {
@@ -100,7 +100,7 @@ const round = (value) => {
   }
   const multiplier = Math.pow(10, digits);
   return Math.round(value * multiplier) / multiplier;
-}
+};
 
 const humanize = (value, typeName, useRound = false) => {
   const type = getType(typeName);
@@ -125,13 +125,13 @@ const humanize = (value, typeName, useRound = false) => {
     value: converted.value,
     unit: converted.unit
   };
-}
+};
 
 const dehumanize = (value, typeName) => {
   const type = getType(typeName);
 
   return convertValueWithUnitsToBaseValue(value, type.units, type.divisor);
-}
+};
 
 const units = {
   round,

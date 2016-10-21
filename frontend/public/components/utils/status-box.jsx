@@ -3,35 +3,35 @@ import classNames from 'classnames';
 
 import {inject} from './index';
 
-export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>
+export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
 
 const LoadError = ({label}) => <Box>
   <div className="cos-tristate--error">
     <div className="cos-text-center cos-error-title">Error Loading {label}</div>
     <div className="cos-text-center">Please try again.</div>
   </div>
-</Box>
+</Box>;
 
 export const Loading = ({className}) => <div className={classNames('co-m-loader co-an-fade-in-out', className)}>
   <div className="co-m-loader-dot__one"></div>
   <div className="co-m-loader-dot__two"></div>
   <div className="co-m-loader-dot__three"></div>
-</div>
+</div>;
 
-export const LoadingInline = () => <Loading className="co-m-loader--inline" />
+export const LoadingInline = () => <Loading className="co-m-loader--inline" />;
 
-const LoadingBox = () => <Box><Loading /></Box>
+const LoadingBox = () => <Box><Loading /></Box>;
 
 export const EmptyBox = ({label}) => <Box>
   <div className="cos-tristate-empty">
     <div className="cos-text-center">No {label} Found</div>
   </div>
-</Box>
+</Box>;
 
 export const MsgBox = ({title, detail}) => <Box className="co-sysevent-stream__status-box-empty">
   {title && <div className="cos-status-box__title">{title}</div>}
   {detail && <div className="cos-text-center cos-status-box__detail">{detail}</div>}
-</Box>
+</Box>;
 
 
 export const StatusBox = (props) => {
@@ -43,7 +43,7 @@ export const StatusBox = (props) => {
   }
 
   if (!loaded) {
-    return <LoadingBox />
+    return <LoadingBox />;
   }
 
   const {data, filters, selected} = props;
@@ -64,4 +64,4 @@ export const StatusBox = (props) => {
     return <div>{children}</div>;
   }
   return children[0];
-}
+};

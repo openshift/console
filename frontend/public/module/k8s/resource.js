@@ -48,7 +48,7 @@ angular.module('k8s')
     }
 
     return this.resourceURL(kind, opts);
-  }
+  };
 
   this.watchURL = function(kind, options) {
     var opts = options || {};

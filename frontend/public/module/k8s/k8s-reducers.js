@@ -144,7 +144,7 @@ export default (state, action)  => {
           'loaded': false
         }
       });
-      return state
+      return state;
   }
   return state.setIn([id, 'data'], newList);
 };

@@ -71,5 +71,5 @@ angular.module('dex')
     .catch(function() {
       featuresSvc.userManagement = false;
     });
-  }
+  };
 });

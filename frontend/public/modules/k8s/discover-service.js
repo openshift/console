@@ -12,11 +12,11 @@ const serviceCache = {};
 
 const cacheKey = (opts) => {
   return [opts.namespace, opts.labelSelector, opts.portName, opts.healthCheckPath].join('_');
-}
+};
 
 const cacheExpired = (service) => {
   return service && service.lastCheckedAt && Date.now() - service.lastCheckedAt >= cacheExpireThreshold;
-}
+};
 
 const propagateCallback = (opts, service) => {
   if (service.available) {
@@ -24,7 +24,7 @@ const propagateCallback = (opts, service) => {
   } else {
     opts.unavailable(service.apiPath);
   }
-}
+};
 
 const propagateCallbackQueue = (service, type) => {
   service.available = type === 'available';
@@ -34,7 +34,7 @@ const propagateCallbackQueue = (service, type) => {
     const opts = service.responseQueue.shift();
     opts[type](service.apiPath);
   }
-}
+};
 
 // create the service for the first time, or reset the cached version
 const createService = (key, opts) => {
@@ -48,12 +48,12 @@ const createService = (key, opts) => {
     portName: opts.portName || null,
     labelSelector: opts.labelSelector || null,
     healthCheckPath: opts.healthCheckPath || '/'
-  }
-}
+  };
+};
 
 const addCallbackToQueue = (opts, service) => {
   service.responseQueue.push(opts);
-}
+};
 
 const apiPath = (service, k8sService) => {
   let port;
@@ -70,7 +70,7 @@ const apiPath = (service, k8sService) => {
   }
 
   return `${k8sBasePath}/proxy/namespaces/${k8sService.metadata.namespace}/services/${k8sService.metadata.name}:${port.port}`;
-}
+};
 
 const check = (service) => {
   const namespaceQuery = service.namespace ? `/namespaces/${service.namespace}` : '';
@@ -94,7 +94,7 @@ const check = (service) => {
         .catch(propagateCallbackQueue.bind(this, service, 'unavailable'));
     })
     .catch(propagateCallbackQueue.bind(this, service, 'unavailable'));
-}
+};
 
 // Options:
 // namespace       (string): limit the search by namespace
@@ -128,4 +128,4 @@ export const discoverService = (opts) => {
     addCallbackToQueue(opts, service);
     check(service);
   }
-}
+};

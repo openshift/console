@@ -23,4 +23,4 @@ angular.module('bridge.page')
     $uibModalInstance.dismiss('cancel');
   };
 
-})
+});

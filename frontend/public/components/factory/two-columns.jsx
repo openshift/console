@@ -8,18 +8,18 @@ const DetailsColumn = (props) => {
   const {selected, data, children} = props;
 
   if (!selected || !data) {
-    return <div>{children}</div>
+    return <div>{children}</div>;
   }
 
   const {k8s: {getQN}} = angulars;
   const object = _.find(data, o => getQN(o) === selected);
 
   if (!object) {
-    return <div>{children}</div>
+    return <div>{children}</div>;
   }
 
   return injectChild(children, object);
-}
+};
 
 export class TwoColumns extends React.Component {
   componentDidMount () {
@@ -74,7 +74,7 @@ TwoColumns.RowWrapper = (object) => {
   };
   return <div className={klass} onClick={_onClick}>
     {children}
-  </div>
+  </div>;
 };
 
 TwoColumns.propTypes = {

@@ -15,7 +15,7 @@ angular.module('k8s')
     .then(function(result) {
       return result.data;
     });
-  }
+  };
 
   this.clean = function(pod) {
     util.nullifyEmpty(pod.metadata, ['annotations', 'labels']);

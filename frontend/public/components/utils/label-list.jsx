@@ -24,7 +24,7 @@ export const LabelList = ({labels, kind, dontExpand}) => {
   let list = _.map(labels, (label, key) => <Label key={key} kind={kind} name={key} value={label} expand={!dontExpand} />);
 
   if (_.isEmpty(list)) {
-    list = <div className="text-muted">No labels</div>
+    list = <div className="text-muted">No labels</div>;
   }
 
   return <div className="co-m-label-list">{list}</div>;

@@ -56,7 +56,7 @@ angular.module('namespace-sparklines', ['lodash'])
       const resetLimits = () => {
         _.each(metrics, (query, metric) => {
           $scope[metric] = null;
-        })
+        });
       };
 
       const poll = () => {

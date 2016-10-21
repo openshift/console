@@ -96,7 +96,7 @@ angular.module('bridge.ui')
             return;
           }
           val.push(`${k}: ${v}`);
-        })
+        });
         val = val.join(', ');
         return val || 'Not Configured';
       };

@@ -34,7 +34,7 @@ describe('bridge.service.activeNamespaceSvc', function() {
   }));
 
   beforeEach(function() {
-    setPath = '*UNSET*'
+    setPath = '*UNSET*';
   });
 
   describe('setActiveNamespace', function() {

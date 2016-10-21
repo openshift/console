@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {angulars} from './react-wrapper';
-import {Cog, Selector, LabelList, ResourceIcon} from './utils'
+import {Cog, Selector, LabelList, ResourceIcon} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -16,7 +16,7 @@ const cogOfKind = (kind) => ({o}) => {
   const options = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete].map(f => f(kind, o));
 
   return <Cog options={options} size="small" anchor="left"></Cog>;
-}
+};
 
 const rowOfKindstring = (name) => {
   return ({obj: o}) => {
@@ -44,6 +44,6 @@ const rowOfKindstring = (name) => {
       </div>
     );
   };
-}
+};
 
 export {Header, rowOfKindstring};

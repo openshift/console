@@ -22,7 +22,7 @@ angular.module('bridge.ui')
         .then(function (pullSecrets) {
           $scope.loading = false;
           $scope.pullSecret = _.get(pullSecrets, 'items[0]');
-        })
+        });
     };
 
     $scope.$watch('namespace', load);

@@ -11,7 +11,7 @@ const maxMessages = 500;
 
 const eventID = (se) => {
   return `U:${se.metadata.uid}`;
-}
+};
 
 
 const SysEvent = (se) => {
@@ -102,7 +102,7 @@ const categoryFilter = (category, {involvedObject, reason}) => {
   const kind = involvedObject.kind.toLowerCase();
   const reasons = filterMap[category][kind];
   return (reasons && reasons.includes(reason.toLowerCase()));
-}
+};
 
 const kindFilter = (kind, {involvedObject}) => {
   return kind === 'all' || involvedObject.kind.toLowerCase() === kind;
@@ -146,14 +146,14 @@ export class EventStream extends React.Component {
       if (data.object.message) {
         data.object.message = data.object.message.replace(/\\"/g, '\'');
       }
-      let messages = this.state.messages
+      let messages = this.state.messages;
       messages.unshift(data);
       if (messages.length > maxMessages) {
         messages = messages.slice(0, maxMessages);
       }
       const state = {
         messages: messages,
-      }
+      };
       const lastTimestamp = new Date(data.object.lastTimestamp);
       if (this.oldestTimestamp > lastTimestamp) {
         this.oldestTimestamp = lastTimestamp;

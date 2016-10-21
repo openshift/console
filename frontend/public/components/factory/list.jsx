@@ -63,7 +63,7 @@ const Rows = (props) => {
     return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected === getQN(object)} />;
   });
   return <div className="co-m-table-grid__body"> {rows} </div>;
-}
+};
 
 Rows.propTypes = {
   filters: filterPropType,
@@ -117,7 +117,7 @@ export const makeList = (name, kindstring, Header, Row) => {
             </StatusBox>
           </Firehose>
         </div>
-      </Provider>
+      </Provider>;
     }
   }
 

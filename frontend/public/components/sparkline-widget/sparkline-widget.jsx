@@ -20,7 +20,7 @@ const states = {
   NODATA: 'nodata',
   BROKEN: 'broken',
   LOADED: 'loaded'
-}
+};
 
 const stepSize = 30; // 30 seconds
 const timespan = 60 * 60 * 1000; // 1 hour
@@ -183,7 +183,7 @@ class SparklineWidget extends React.Component {
         this.setState({
           state: states.BROKEN
         });
-      })
+      });
   }
 
   updateData(newData) {
@@ -191,7 +191,7 @@ class SparklineWidget extends React.Component {
       return {
         date: item[0],
         value: item[1],
-      }
+      };
     });
 
     // make sure gaps in our data aren't smoothed
@@ -284,7 +284,7 @@ SparklineWidget.propTypes = {
   limit: React.PropTypes.number,
   limitText: React.PropTypes.string,
   units: React.PropTypes.string
-}
+};
 
 register('sparklinewidget', SparklineWidget);
 export { SparklineWidget };

@@ -8,7 +8,7 @@ import {makeList, TwoColumns} from '../factory';
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-6">Name</div>
   <div className="col-xs-6">Role</div>
-</div>
+</div>;
 
 const Row = (roleBinding) => {
   const {metadata, roleRef} = roleBinding;
@@ -31,17 +31,17 @@ const RBDetails = BindingDetails('Cluster Role Binding Overview');
 
 const Details = (selected) => {
   if (!_.isEmpty(selected)) {
-    return <RBDetails {...selected} />
+    return <RBDetails {...selected} />;
   }
   return <div className="empty-page">
     <h1 className="empty-page__header">No Cluster Role Binding selected</h1>
     <p className="empty-page__explanation">
     </p>
-  </div>
+  </div>;
 };
 
 const RoleBindingsPage = (props) => <TwoColumns list={ClusterRoleBindings} {...props}>
   <Details />
-</TwoColumns>
+</TwoColumns>;
 
 register('ClusterRoleBindingsPage', RoleBindingsPage);

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars, register} from './react-wrapper';
 import {ReactiveDetails} from './factory';
-import {Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils'
+import {Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
 
 
 const getResourceLimitValue = container => {
@@ -20,18 +20,18 @@ const Lifecycle = ({lifecycle}) => {
     {postStart && <div><span>PostStart: {label('postStart')}</span> <code>{postStart}</code></div>}
     {preStop && <div><span>PreStop: {label('preStop')}</span> <code>{preStop}</code></div>}
     {!postStart && !preStop && <span>-</span>}
-  </div>
+  </div>;
 };
 
 const Liveness = ({liveness}) => {
   const label = liveness && angulars.k8s.probe.getActionLabelFromObject(liveness);
   const value = liveness && _.get(angulars.k8s.probe.mapLivenessProbeToFields(liveness), 'cmd');
   return value ? <span>{label} <code>{value}</code></span> : <span>-</span>;
-}
+};
 
 const Ports = ({ports}) => {
   if (!ports || !ports.length) {
-    return <MsgBox title="No ports have been exposed" detail="Ports allow for traffic to enter this container" />
+    return <MsgBox title="No ports have been exposed" detail="Ports allow for traffic to enter this container" />;
   }
 
   return <table className="table">
@@ -47,12 +47,12 @@ const Ports = ({ports}) => {
         <td>{p.containerPort}</td>
       </tr>)}
     </tbody>
-  </table>
-}
+  </table>;
+};
 
 const Volumes = ({volumes}) => {
   if (!volumes || !volumes.length) {
-    return <MsgBox title="No volumes have been mounted" detail="Volumes allow data to be shared as files with the pod" />
+    return <MsgBox title="No volumes have been mounted" detail="Volumes allow data to be shared as files with the pod" />;
   }
 
   return <table className="table">
@@ -70,12 +70,12 @@ const Volumes = ({volumes}) => {
         <td><Overflow value={v.mountPath} /></td>
       </tr>)}
     </tbody>
-  </table>
-}
+  </table>;
+};
 
 const Env = ({env}) => {
   if (!env || !env.length) {
-    return <MsgBox title="No variables have been set" detail="An easy way to pass configuration values" />
+    return <MsgBox title="No variables have been set" detail="An easy way to pass configuration values" />;
   }
 
   const value = (e) => {
@@ -106,8 +106,8 @@ const Env = ({env}) => {
         <td>{value(e)}</td>
       </tr>)}
     </tbody>
-  </table>
-}
+  </table>;
+};
 
 const Details = (props) => {
   const container = _.find(props.spec.containers, {name: angulars.routeParams.name});
@@ -194,8 +194,8 @@ const Details = (props) => {
         </div>
       </div>
     </div>
-  </div>
-}
+  </div>;
+};
 
 const ContainerPage = (props) => {
   const containers = _.get(props, 'data.spec.containers');
@@ -204,7 +204,7 @@ const ContainerPage = (props) => {
     <NavTitle {...props} detail={true} title={props.name} data={data} />
     <VertNav {...props} hideNav={true} pages={[{href: 'details', component: Details}]} className="co-m-pod" />
   </div>;
-}
+};
 
 export const ContainersDetailsPage = (props) => {
   const {kinds, k8s, store} = angulars;
@@ -213,7 +213,7 @@ export const ContainersDetailsPage = (props) => {
   return <ReactiveDetails {...props} store={store} k8sResource={k8sResource} name={angulars.routeParams.podName}>
     <ContainerPage {...props} />
   </ReactiveDetails>;
-}
+};
 
 register('ContainersDetailsPage', ContainersDetailsPage);
 

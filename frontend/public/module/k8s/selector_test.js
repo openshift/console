@@ -119,7 +119,7 @@ describe('k8s.k8sSelector', function() {
             values:   ['value8.1', 'value8.2']
           }
         ]
-      })).toEqual('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)')
+      })).toEqual('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)');
     });
 
     it('works when V1 selector is given', function () {
@@ -127,6 +127,6 @@ describe('k8s.k8sSelector', function() {
         key1: 'value1',
         key2: 'value2'
       })).toEqual('key1=value1,key2=value2');
-    })
+    });
   });
 });

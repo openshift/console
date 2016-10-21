@@ -26,7 +26,7 @@ export const wsFactory = (id, options) => {
     wsCache[id] = new WebSocketWrapper(id, options);
     return wsCache[id];
   }
-}
+};
 
 wsFactory.destroy = function(id) {
   var ws = wsCache[id];

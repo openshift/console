@@ -105,5 +105,5 @@ angular.module('bridge.service')
 
       return `${k8sType.kind.plural}${qs}`;
     };
-  }
+  };
 });

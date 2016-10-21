@@ -2,7 +2,7 @@ import React from 'react';
 
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Header, rowOfKindstring} from './workloads';
-import {detailsPage, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils'
+import {detailsPage, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
 const Details = (replicationController) => <div>
   <ResourceHeading resourceName="Replication Controller" />
@@ -18,7 +18,7 @@ const Details = (replicationController) => <div>
       </div>
     </div>
   </div>
-</div>
+</div>;
 
 // TODO: Edit page and Events page are still routed to Angular code for now
 const Edit = null;

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Timestamp} from './utils'
+import {Cog, LabelList, ResourceIcon, Timestamp} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -34,14 +34,14 @@ const HorizontalPodAutoscalerCog = ({horizontalpodautoscaler}) => {
   const {factory: {Delete, ModifyLabels}} = Cog;
   const options = [ModifyHpaTargets, ModifyHpaReplicas, ModifyLabels, Delete].map(f => f(kind, horizontalpodautoscaler));
   return <Cog options={options} size="small" anchor="center"></Cog>;
-}
+};
 
 const ScaleRef = ({horizontalpodautoscaler}) => <div>
   <ResourceIcon kind={angulars.kinds[horizontalpodautoscaler.spec.scaleRef.kind.toUpperCase()].id}></ResourceIcon>
   <a href={`ns/${horizontalpodautoscaler.metadata.namespace}/${angulars.kinds[horizontalpodautoscaler.spec.scaleRef.kind.toUpperCase()].plural}/${horizontalpodautoscaler.spec.scaleRef.name}`} title={horizontalpodautoscaler.spec.scaleRef.name}>
     {horizontalpodautoscaler.spec.scaleRef.name}
   </a>
-</div>
+</div>;
 
 const HorizontalPodAutoscalerRow = ({obj: horizontalpodautoscaler}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -60,11 +60,11 @@ const HorizontalPodAutoscalerRow = ({obj: horizontalpodautoscaler}) => <div clas
   <div className="col-lg-3 col-md-3 col-sm-3 hidden-xs">
     <ScaleRef horizontalpodautoscaler={horizontalpodautoscaler}/>
   </div>
-</div>
+</div>;
 
 const getHPAStatus = (horizontalpodautoscaler) => {
   if (horizontalpodautoscaler.status.conditions) {
-    return horizontalpodautoscaler.status.conditions[0].type
+    return horizontalpodautoscaler.status.conditions[0].type;
   }
   return (<span>
     <span className="co-m-inline-loader co-an-fade-in-out">
@@ -74,7 +74,7 @@ const getHPAStatus = (horizontalpodautoscaler) => {
     </span>
     In Progress
   </span>);
-}
+};
 
 const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
   <div className="row">
@@ -145,7 +145,7 @@ const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
       </div>
     </div>
   </div>
-</div>
+</div>;
 
 const pages = [{href: 'details', name: 'Details', component: Details}];
 const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'HORIZONTALPODAUTOSCALER', pages);
