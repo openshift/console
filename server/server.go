@@ -290,10 +290,6 @@ current-context: tectonic
 // (see https://golang.org/src/net/http/httputil/reverseproxy.go?s=778:806)
 func DirectorFromTokenExtractor(config *proxy.Config, tokenExtractor func(*http.Request) (string, error)) func(*http.Request) {
 	return func(r *http.Request) {
-		for _, h := range config.HeaderBlacklist {
-			r.Header.Del(h)
-		}
-
 		// At this writing, the only errors we can get from TokenExtractor
 		// are benign and correct variations on "no token found"
 		token, err := tokenExtractor(r)
@@ -301,6 +297,13 @@ func DirectorFromTokenExtractor(config *proxy.Config, tokenExtractor func(*http.
 			plog.Errorf("Received an error while extracting token: %v", err)
 		} else {
 			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+		}
+
+		// The header removal must happen after the token extraction
+		// because the token extraction relies on the `Cookie` header,
+		// which also happens to be the header that is removed.
+		for _, h := range config.HeaderBlacklist {
+			r.Header.Del(h)
 		}
 
 		r.Host = config.Endpoint.Host
