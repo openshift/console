@@ -1,9 +1,9 @@
 angular.module('bridge.service')
-.service('debugSvc', function($log, coLocalStorage) {
+.service('debugSvc', function($log) {
   'use strict';
 
   function debugOn() {
-    return coLocalStorage.getItem('debug') === 'true';
+    return window.localStorage.getItem('debug') === 'true';
   }
 
   function wrap(fn) {
