@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars, register} from './react-wrapper';
 import {makeList, makeListPage} from './factory';
-import {Cog, LabelList, ResourceIcon} from './utils';
+import {Cog, LabelList, NavTitle, ResourceIcon} from './utils';
 
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
@@ -72,11 +72,7 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
 </div>;
 
 const NodesPage = () => <div className="co-p-nodes">
-  <div className="row co-m-nav-title">
-    <div className="col-xs-12">
-      <h1 className="co-m-page-title">Nodes</h1>
-    </div>
-  </div>
+  <NavTitle title="Nodes" />
   <NodesListPage canExpand={true} />
 </div>;
 
