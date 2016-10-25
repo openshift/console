@@ -305,7 +305,6 @@ angular.module('bridge', [
 })
 .run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
   'use strict';
-  // Convenience access for temmplates
   $ngRedux.dispatch(actions.loadActiveNamespaceFromStorage());
 
   $rootScope.SERVER_FLAGS = SERVER_FLAGS;
