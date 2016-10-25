@@ -5,6 +5,8 @@ import { combineReducers } from 'redux';
 
 import {analyticsSvc} from './module/analytics';
 import k8sReducers from './module/k8s/k8s-reducers';
+import {actions} from './ui/ui-actions';
+import UIReducers from './ui/ui-reducers';
 import './components/react-wrapper';
 
 // Make moment available via angular DI.
@@ -45,6 +47,7 @@ angular.module('bridge', [
 
   const reducers = combineReducers({
     k8s: k8sReducers,
+    UI: UIReducers,
   });
 
   $ngReduxProvider.createStoreWith(reducers, [thunk]);
@@ -300,9 +303,10 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
+.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
   'use strict';
-  // Convenience access for temmplates
+  $ngRedux.dispatch(actions.loadActiveNamespaceFromStorage());
+
   $rootScope.SERVER_FLAGS = SERVER_FLAGS;
   $rootScope.debug = debugSvc;
   $rootScope.FEATURE_FLAGS = featuresSvc;

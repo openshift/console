@@ -3,6 +3,7 @@ describe('bridge.service.activeNamespaceSvc', function() {
   var activeNamespaceSvc, setPath, mockPath;
 
   beforeEach(module('bridge.service'));
+  beforeEach(module('bridge.react-wrapper'));
 
   beforeEach(module(function($provide) {
     $provide.value('$location', {
