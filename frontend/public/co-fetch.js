@@ -1,5 +1,3 @@
-import 'whatwg-fetch';
-
 const initDefaults = {
   credentials: 'same-origin'
 };
@@ -19,6 +17,8 @@ export const coFetch = (input, init = {}) => {
 };
 
 const parseJson = (response) => response.json();
+
+export const coFetchJSON = (...args) => coFetch(...args).then(parseJson);
 
 export const coFetchUtils = {
   parseJson

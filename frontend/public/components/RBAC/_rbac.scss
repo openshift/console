@@ -1,3 +1,15 @@
+.rbac-rule {
+  display: flex;
+}
+.rbac-rule--cog {
+  width: 10px;
+  flex-grow: 0;
+  align-items: center;
+  display: flex;
+}
+.rbac-rule--rule {
+  flex: 1 1;
+}
 .rbac-rule-resource  {
   min-width: 175px;
   display: inline-block;
@@ -10,4 +22,38 @@
 .resource-separator {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.edit-rule {
+  .rule-row {
+    margin-top: 30px;
+  }
+  .help-text {
+    font-weight: 300;
+    position: relative;
+    top: -10px;
+    left: 20px;
+  }
+  .checkbox-label {
+    font-weight: 400;
+    margin-bottom: 5px;
+  }
+
+  .rbac-minor {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: #ccc;
+  }
+  .rbac-major {
+    color: #ccc;
+    margin: 30px 0;
+  }
+  .newspaper-columns {
+    columns: 3 auto;
+    margin-top: 20px;
+  }
+  .text-input {
+    max-width: 500px;
+    margin-top: 20px
+  }
 }

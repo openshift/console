@@ -6,7 +6,7 @@ module.exports = function(config) {
     basePath: __dirname,
 
     // Test framework to use.
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'es6-shim'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -41,11 +41,6 @@ module.exports = function(config) {
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
-
-    // Continuous Integration mode.
-    // If true, it capture browsers, run tests and exit.
-    singleRun: true
-
   });
 
 };

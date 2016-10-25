@@ -13,7 +13,7 @@ const PodCog = ({pod}) => {
 
 const PodRow = ({obj: pod}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <PodCog pod={pod} />
+    <PodCog pod={pod} key={'cog'} />
     <ResourceIcon kind="pod" />
     <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/details`} title={pod.metadata.uid}>{pod.metadata.name}</a>
   </div>

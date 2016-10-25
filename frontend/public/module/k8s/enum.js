@@ -196,7 +196,7 @@ angular.module('k8s').constant('k8sEnum', {
     },
     '*': {
       id: 'all',
-      plural: '*',
+      plural: 'all',
       labelPlural: 'All',
     }
   },

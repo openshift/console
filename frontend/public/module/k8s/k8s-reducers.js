@@ -68,6 +68,9 @@ export default (state, action)  => {
   let newList;
 
   switch (action.type) {
+    case types.resources:
+      return state.set('RESOURCES', action.resources);
+
     case types.filterList:
       const {name, value} = action;
       return state.setIn([id, 'filters', name], value);

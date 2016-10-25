@@ -1,6 +1,8 @@
-'use strict';
+import {getResources} from './get-resources';
 
 const types = {
+  resources: 'resources',
+
   watchK8sObject: 'watchK8sObject',
   stopK8sWatch: 'stopK8sWatch',
   modifyObject: 'modifyObject',
@@ -33,6 +35,14 @@ const actions =  {
   [types.loaded]: action_(types.loaded),
   [types.errored]: action_(types.errored),
   [types.modifyObject]: action_(types.modifyObject),
+
+  getResources: () => dispatch => {
+    const type = types.resources;
+    getResources()
+      .then(resources => dispatch({type, resources}))
+      // try again or something?
+      .catch(err => console.error(err));
+  },
 
   filterList: (id, name, value) => {
     return {id, name, value, type: types.filterList};
