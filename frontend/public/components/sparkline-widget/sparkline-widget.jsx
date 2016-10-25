@@ -11,7 +11,7 @@ import { register } from '../react-wrapper';
 import { Loading } from '../utils';
 import { units } from '../utils';
 import { discoverService } from '../../modules/k8s/discover-service';
-import { coFetch, coFetchUtils } from '../utils';
+import { coFetch, coFetchUtils } from '../../co-fetch';
 
 const states = {
   LOADING: 'loading',

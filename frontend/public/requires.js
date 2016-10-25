@@ -1,3 +1,5 @@
+import 'whatwg-fetch';
+
 require('react');
 window.lodash = require('lodash');
 window.$ = window.jQuery = require('jquery');

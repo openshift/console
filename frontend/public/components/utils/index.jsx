@@ -15,7 +15,6 @@ export * from './nav-title';
 export * from './connect';
 export * from './overflow';
 export * from './units';
-export * from './co-fetch';
 export * from './select-text';
 export * from './toggle-play';
 export * from './pods';

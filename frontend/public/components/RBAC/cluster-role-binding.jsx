@@ -10,11 +10,11 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-6">Role</div>
 </div>;
 
-const Row = (roleBinding) => {
-  const {metadata, roleRef} = roleBinding;
+const Row = (props) => {
+  const {metadata, roleRef} = props.obj;
 
   return (
-    <TwoColumns.RowWrapper {...roleBinding}>
+    <TwoColumns.RowWrapper {...props}>
       <div className="col-xs-6">
         <ResourceIcon kind="rolebinding" /> {metadata.name}
       </div>

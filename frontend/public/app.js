@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-unused-vars
 import ngRedux from 'ng-redux';
-import thunk from 'redux-thunk';
 import { combineReducers } from 'redux';
+import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
 import k8sReducers from './module/k8s/k8s-reducers';
-import {actions} from './ui/ui-actions';
+import {actions as UIActions} from './ui/ui-actions';
+import actions from './module/k8s/k8s-actions';
 import UIReducers from './ui/ui-reducers';
 import './components/react-wrapper';
 
@@ -283,6 +284,26 @@ angular.module('bridge', [
     reloadOnSearch: false,
   });
 
+  r('/ns/:ns/roles/:name/add-rule',{
+    controller: 'editRulesCtrl',
+    templateUrl: '/static/page/rules/rules.html',
+  }),
+
+  r('/ns/:ns/roles/:name/:rule/edit', {
+    controller: 'editRulesCtrl',
+    templateUrl: '/static/page/rules/rules.html',
+  }),
+
+  r('/clusterroles/:name/add-rule', {
+    controller: 'editRulesCtrl',
+    templateUrl: '/static/page/rules/rules.html',
+  }),
+
+  r('/clusterroles/:name/:rule/edit', {
+    controller: 'editRulesCtrl',
+    templateUrl: '/static/page/rules/rules.html',
+  });
+
   r('/ns/:ns/:kind/:name/:view', {
     controller: 'k8sDetailCtrl',
     templateUrl: '/static/page/k8s-detail/k8s-detail.html',
@@ -305,9 +326,10 @@ angular.module('bridge', [
 })
 .run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
   'use strict';
-  $ngRedux.dispatch(actions.loadActiveNamespaceFromStorage());
+  $ngRedux.dispatch(UIActions.loadActiveNamespaceFromStorage());
 
   $rootScope.SERVER_FLAGS = SERVER_FLAGS;
+  $ngRedux.dispatch(actions.getResources());
   $rootScope.debug = debugSvc;
   $rootScope.FEATURE_FLAGS = featuresSvc;
   angularBridge.expose();

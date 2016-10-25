@@ -4,7 +4,7 @@
 // Results are cached, so we don't have to keep re-determining availability with each request.
 // If more than one service is found, it chooses the first.
 
-import { coFetch, coFetchUtils } from '../../components/utils';
+import { coFetch, coFetchUtils } from '../../co-fetch';
 
 const k8sBasePath = 'api/kubernetes/api/v1';
 const cacheExpireThreshold = 2 * 60 * 1000; // 2 minutes

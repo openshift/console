@@ -1,13 +1,13 @@
 import React from 'react';
 
-import {ResourceIcon} from '../utils';
+import {Cog, ResourceIcon} from '../utils';
 
 import {angulars} from '../react-wrapper';
 
-export const Rules = ({rules}) => {
+export const Rules = ({rules, metadata: {name, namespace}}) => {
   const rulesList = rules.map((rule, i) =>
     <div className="row co-resource-list__item" key={i}>
-      <Rule {...rule} />
+      <Rule {...rule} name={name} namespace={namespace} i={i} />
     </div>
   );
 
@@ -19,14 +19,16 @@ export const Rules = ({rules}) => {
       </h1>
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
-            Actions
-          </div>
-          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
-            API Groups
-          </div>
-          <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
-            Resources
+          <div style={{marginLeft: 10}}>
+            <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
+              Actions
+            </div>
+            <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
+              API Groups
+            </div>
+            <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
+              Resources
+            </div>
           </div>
         </div>
         <div className="co-m-table-grid__body">
@@ -67,15 +69,16 @@ const Groups = ({apiGroups}) => {
 
 const Resources = ({resources, nonResourceURLs}) => {
   let allResources = [];
-  resources && _.each(resources.sort(), r => {
+  resources && _.each([...new Set(resources)].sort(), r => {
     if (r === '*') {
       allResources = [<span key={r} className="rbac-rule-resource rbac-rule-row">All Resources</span>];
       return false;
     }
-    const kind = _.find(angulars.kinds, k => k.plural === r);
+    const base = r.split('/')[0];
+    const kind = _.find(angulars.kinds, k => k.plural === base);
 
     allResources.push(<span key={r} className="rbac-rule-resource rbac-rule-row">
-      <ResourceIcon kind={kind ? kind.id : r} /> {kind ? kind.labelPlural : r}
+      <ResourceIcon kind={kind ? kind.id : r} /> {r}
     </span>);
   });
 
@@ -96,14 +99,47 @@ const Resources = ({resources, nonResourceURLs}) => {
   return <div>{allResources}</div>;
 };
 
-const Rule = ({resources, nonResourceURLs, verbs, apiGroups}) => <div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
-    <Actions verbs={verbs} />
+const DeleteRule = (name, namespace, i) => ({
+  label: 'Delete Rule ...',
+  callback: angulars.modal('confirm', {
+    title: 'Delete Rule ',
+    message: `Are you sure you want to delete Rule #${i}?`,
+    btnText: 'Delete Rule',
+    executeFn: () => () => {
+      const kind = angulars.k8s[namespace ? 'roels' : 'clusterroles'];
+      return kind.patch({metadata: {name, namespace}}, [{
+        op: 'remove', path: `/rules/${i}`,
+      }]);
+    },
+  })
+});
+
+const EditRule = (name, namespace, i) => ({
+  label: 'Edit Rule ...',
+  href: namespace ? `ns/${namespace}/roles/${name}/${i}/edit` : `clusterroles/${name}/${i}/edit`,
+});
+
+const RuleCog = ({name, namespace, i}) => {
+  const options = [
+    EditRule,
+    DeleteRule,
+  ].map(f => f(name, namespace, i));
+  return <Cog options={options} size="small" anchor="left"></Cog>;
+};
+
+const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">
+  <div className="rbac-rule--cog">
+    <RuleCog name={name} namespace={namespace} i={i} />
   </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
-    <Groups apiGroups={apiGroups} />
-  </div>
-  <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
-    <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
+  <div className="rbac-rule--rule">
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
+      <Actions verbs={verbs} />
+    </div>
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
+      <Groups apiGroups={apiGroups} />
+    </div>
+    <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
+      <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
+    </div>
   </div>
 </div>;

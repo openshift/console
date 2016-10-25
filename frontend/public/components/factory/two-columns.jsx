@@ -61,14 +61,12 @@ export class TwoColumns extends React.Component {
 }
 
 // A simple Component that Wraps List's Rows for changing hashes
-TwoColumns.RowWrapper = (object) => {
-  const {onClick, isActive, children} = object;
-
+TwoColumns.RowWrapper = ({obj, onClick, isActive, children}) => {
   const klass = classnames('row co-m-facet-menu-option', {'co-m-facet-option--active': isActive});
 
   const _onClick = () => {
     const {k8s: {getQN}} = angulars;
-    const qualifiedName = getQN(object);
+    const qualifiedName = getQN(obj);
     angulars.$location.hash(qualifiedName);
     onClick(qualifiedName);
   };

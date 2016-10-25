@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import {connect as reactReduxConnect, Provider} from 'react-redux';
 
 import {angulars} from '../react-wrapper';
 import {inject} from './index';
@@ -28,7 +28,7 @@ export class WithQuery extends React.Component {
 
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
 // passing it to children
-export const ConnectToState = connect(({k8s}, props) => {
+export const ConnectToState = reactReduxConnect(({k8s}, props) => {
   const {reduxID, isList, filters} = props;
 
   if (!reduxID) {
@@ -58,3 +58,11 @@ export const ConnectToState = connect(({k8s}, props) => {
   const newChildren = inject(children, _.omit(props, ['className', 'children', 'reduxID', 'isList']));
   return <div className={className}>{newChildren}</div>;
 });
+
+export const connect = (...args) => Component => {
+  const Wrapped = reactReduxConnect(...args)(Component);
+
+  return props => <Provider store={angulars.store}>
+    <Wrapped {...props} />
+  </Provider>;
+};

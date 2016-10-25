@@ -90,6 +90,9 @@ angular.module('k8s')
         k8sObject.clean && k8sObject.clean(obj);
         return k8sResource.update(kind, obj);
       },
+      patch: function (obj, payload) {
+        return k8sResource.patch(kind, obj, payload);
+      },
       watch: query => {
         const path = k8sResource.resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
 
