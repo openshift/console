@@ -1,6 +1,6 @@
 'use strict';
 
-import { discoverService } from '../../modules/k8s/discover-service';
+import { discoverService } from '../../module/k8s/discover-service';
 import { coFetch, coFetchUtils } from '../../components/utils';
 
 const pollInterval = 30 * 1000;
