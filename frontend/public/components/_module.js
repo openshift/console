@@ -13,6 +13,6 @@ import './node';
 import './RBAC';
 import './horizontal-pod-autoscaler';
 import './service-account';
-import './resource-list';
+import './search';
 import './sparkline-widget/sparkline-widget';
 import './events';
