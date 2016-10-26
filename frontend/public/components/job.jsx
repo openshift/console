@@ -19,6 +19,23 @@ const JobCog = ({job}) => {
   return <Cog options={options} size="small" anchor="left"></Cog>;
 };
 
+const getJobTypeAndCompletions = (o) => {
+  // if neither completions nor parallelism are defined, then it is a non-parallel job.
+  if (!o.spec.completions && !o.spec.parallelism) {
+    return {type: 'Non-parallel', completions: 1};
+  }
+  // if completions are defined and no parallelism is defined, or if parallelism is 0 or 1, then it is a 'Non-parallel' job.
+  if (o.spec.completions && (!o.spec.parallelism || o.spec.parallelism === 1)) {
+    return {type: 'Non-parallel', completions: o.spec.completions};
+  }
+  // if parallelism is greater than 1 and completions are defined, then it is a 'Fixed Completion Count' job.
+  if (o.spec.hasOwnProperty('parallelism') && o.spec.completions) {
+    return {type: 'Fixed Completion Count', completions: o.spec.completions};
+  }
+  // otherwise, if parallelism is defined, but completions is not, then it is a 'Work Queue' job.
+  return {type: 'Work Queue', completions: 1};
+};
+
 const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
@@ -46,23 +63,6 @@ const JobRow = ({obj: job}) => {
       </div>
     </div>
   );
-};
-
-const getJobTypeAndCompletions = (o) => {
-  // if neither completions nor parallelism are defined, then it is a non-parallel job.
-  if (!o.spec.completions && !o.spec.parallelism) {
-    return {type: 'Non-parallel', completions: 1};
-  }
-  // if completions are defined and no parallelism is defined, or if parallelism is 0 or 1, then it is a 'Non-parallel' job.
-  if (o.spec.completions && (!o.spec.parallelism || o.spec.parallelism === 1)) {
-    return {type: 'Non-parallel', completions: o.spec.completions};
-  }
-  // if parallelism is greater than 1 and completions are defined, then it is a 'Fixed Completion Count' job.
-  if (o.spec.hasOwnProperty('parallelism') && o.spec.completions) {
-    return {type: 'Fixed Completion Count', completions: o.spec.completions};
-  }
-  // otherwise, if parallelism is defined, but completions is not, then it is a 'Work Queue' job.
-  return {type: 'Work Queue', completions: 1};
 };
 
 const Details = (job) => <div>
