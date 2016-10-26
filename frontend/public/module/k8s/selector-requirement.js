@@ -129,11 +129,11 @@ angular.module('k8s')
       }
 
       if (requirement.operator === 'GreaterThan') {
-        return requirement.key + '>' + requirement.values[0];
+        return requirement.key + ' > ' + requirement.values[0];
       }
 
       if (requirement.operator === 'LessThan') {
-        return requirement.key + '<' + requirement.values[0];
+        return requirement.key + ' < ' + requirement.values[0];
       }
 
       return; // falsy means malformed requirement
