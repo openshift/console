@@ -1,5 +1,6 @@
 export * from './cog';
 export * from './selector';
+export * from './selector-input';
 export * from './label-list';
 export * from './resource-icon';
 export * from './resource-link';

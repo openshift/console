@@ -6,7 +6,8 @@ angular.module('k8s')
       fromString:       fromString,
       toString:         toString,
       toRequirements:   toRequirements,
-      fromRequirements: fromRequirements
+      fromRequirements: fromRequirements,
+      split:            split,
     };
 
     // ---
@@ -71,14 +72,14 @@ angular.module('k8s')
       return selector;
     }
 
+    function split(string) {
+      return string.trim() ? string.split(/,(?![^(]*\))/) : []; // [''] -> []
+    }
+
     // ---
 
     function isOldFormat(selector) {
       return !selector.matchLabels && !selector.matchExpressions;
-    }
-
-    function split(string) {
-      return string.trim() ? string.split(/,(?![^(]*\))/) : []; // [''] -> []
     }
   })
 ;

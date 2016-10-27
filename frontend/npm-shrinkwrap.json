@@ -29,7 +29,7 @@
     },
     "babel-preset-react": {
       "version": "6.11.1",
-      "from": "babel-preset-react@6.11.1",
+      "from": "babel-preset-react@>=6.11.1 <7.0.0",
       "resolved": "https://registry.npmjs.org/babel-preset-react/-/babel-preset-react-6.11.1.tgz",
       "dependencies": {
         "babel-plugin-syntax-flow": {
@@ -95,23 +95,6 @@
           "from": "babel-plugin-transform-react-jsx@>=6.3.13 <7.0.0",
           "resolved": "https://registry.npmjs.org/babel-plugin-transform-react-jsx/-/babel-plugin-transform-react-jsx-6.8.0.tgz",
           "dependencies": {
-            "babel-runtime": {
-              "version": "6.11.6",
-              "from": "babel-runtime@>=6.0.0 <7.0.0",
-              "resolved": "https://registry.npmjs.org/babel-runtime/-/babel-runtime-6.11.6.tgz",
-              "dependencies": {
-                "core-js": {
-                  "version": "2.4.1",
-                  "from": "core-js@>=2.4.0 <3.0.0",
-                  "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.4.1.tgz"
-                },
-                "regenerator-runtime": {
-                  "version": "0.9.5",
-                  "from": "regenerator-runtime@>=0.9.5 <0.10.0",
-                  "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.9.5.tgz"
-                }
-              }
-            },
             "babel-helper-builder-react-jsx": {
               "version": "6.9.0",
               "from": "babel-helper-builder-react-jsx@>=6.8.0 <7.0.0",
@@ -135,14 +118,7 @@
                   "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz"
                 }
               }
-            }
-          }
-        },
-        "babel-plugin-transform-react-jsx-source": {
-          "version": "6.9.0",
-          "from": "babel-plugin-transform-react-jsx-source@>=6.3.13 <7.0.0",
-          "resolved": "https://registry.npmjs.org/babel-plugin-transform-react-jsx-source/-/babel-plugin-transform-react-jsx-source-6.9.0.tgz",
-          "dependencies": {
+            },
             "babel-runtime": {
               "version": "6.11.6",
               "from": "babel-runtime@>=6.0.0 <7.0.0",
@@ -185,6 +161,30 @@
               }
             }
           }
+        },
+        "babel-plugin-transform-react-jsx-source": {
+          "version": "6.9.0",
+          "from": "babel-plugin-transform-react-jsx-source@>=6.3.13 <7.0.0",
+          "resolved": "https://registry.npmjs.org/babel-plugin-transform-react-jsx-source/-/babel-plugin-transform-react-jsx-source-6.9.0.tgz",
+          "dependencies": {
+            "babel-runtime": {
+              "version": "6.11.6",
+              "from": "babel-runtime@>=6.0.0 <7.0.0",
+              "resolved": "https://registry.npmjs.org/babel-runtime/-/babel-runtime-6.11.6.tgz",
+              "dependencies": {
+                "core-js": {
+                  "version": "2.4.1",
+                  "from": "core-js@>=2.4.0 <3.0.0",
+                  "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.4.1.tgz"
+                },
+                "regenerator-runtime": {
+                  "version": "0.9.5",
+                  "from": "regenerator-runtime@>=0.9.5 <0.10.0",
+                  "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.9.5.tgz"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -195,7 +195,7 @@
     },
     "classnames": {
       "version": "2.2.5",
-      "from": "classnames@2.2.5",
+      "from": "classnames@>=2.2.5 <3.0.0",
       "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz"
     },
     "d3": {
@@ -393,7 +393,7 @@
     },
     "fuzzysearch": {
       "version": "1.0.3",
-      "from": "fuzzysearch@1.0.3",
+      "from": "fuzzysearch@latest",
       "resolved": "https://registry.npmjs.org/fuzzysearch/-/fuzzysearch-1.0.3.tgz"
     },
     "immutable": {
@@ -694,6 +694,16 @@
         }
       }
     },
+    "react-tagsinput": {
+      "version": "3.13.6",
+      "from": "react-tagsinput@>=3.13.6 <4.0.0",
+      "resolved": "https://registry.npmjs.org/react-tagsinput/-/react-tagsinput-3.13.6.tgz"
+    },
+    "react-tooltip": {
+      "version": "3.2.1",
+      "from": "react-tooltip@3.2.1",
+      "resolved": "https://registry.npmjs.org/react-tooltip/-/react-tooltip-3.2.1.tgz"
+    },
     "redux": {
       "version": "3.5.2",
       "from": "redux@3.5.2",
@@ -730,7 +740,7 @@
     },
     "whatwg-fetch": {
       "version": "1.0.0",
-      "from": "whatwg-fetch@1.0.0",
+      "from": "whatwg-fetch@latest",
       "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-1.0.0.tgz"
     }
   }

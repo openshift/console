@@ -121,12 +121,12 @@ describe('k8s.k8sSelectorRequirement', function() {
 
       {
         requirement: {key: 'key1', operator: 'GreaterThan', values: ['666.999']},
-        string:      'key1>666.999'
+        string:      'key1 > 666.999'
       },
 
       {
         requirement: {key: 'key1', operator: 'LessThan', values: ['666.999']},
-        string:      'key1<666.999'
+        string:      'key1 < 666.999'
       }
     ].forEach(function (t) {
       it('returns string for ' + JSON.stringify(t.requirement) + ' requirement', function () {
