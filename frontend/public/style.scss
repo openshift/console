@@ -5,6 +5,10 @@
 // TODO: refactor this away
 @import "style/coreos";
 
+// External dependencies
+$fa-font-path: "./fonts";
+@import "../node_modules/font-awesome/scss/font-awesome";
+
 // Config
 @import "style/color-pallette";
 @import "style/config";

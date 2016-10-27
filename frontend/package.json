@@ -21,6 +21,7 @@
     "classnames": "2.2.5",
     "d3": "4.2.6",
     "file-saver": "1.3.2",
+    "font-awesome": "4.7.0",
     "fuzzysearch": "1.0.3",
     "immutable": "3.8.1",
     "jquery": "2.1.3",
