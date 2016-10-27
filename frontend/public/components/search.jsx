@@ -69,14 +69,19 @@ export class SearchPage extends React.Component {
     };
   }
 
+  // TODO(andy): This is a workaround until we decide how we are going to do routing in React
+  updateURL () {
+    const kind = encodeURIComponent(this.state.kind);
+    const q = this.state.tags.map(encodeURIComponent).join(',');
+    window.history.pushState({kind, q}, '', `${window.location.pathname}?kind=${kind}&q=${q}`);
+  }
+
   handleKindChange (kind) {
-    this.setState({kind});
-    this.props.onKindChange(kind);
+    this.setState({kind}, this.updateURL);
   }
 
   handleSelectorChange (tags) {
-    this.setState({tags});
-    this.props.onSelectorChange(tags.join(','));
+    this.setState({tags}, this.updateURL);
   }
 
   render () {

@@ -16,15 +16,4 @@ angular.module('bridge.page')
   if($location.search().q === undefined) {
     $location.search('q', '');
   }
-
-  $scope.props = {
-    onKindChange: (kind) => {
-      // Triggers view reload
-      $location.search('kind', kind);
-    },
-    onSelectorChange: (q) => {
-      // Triggers view reload
-      $location.search('q', q);
-    }
-  };
 });
