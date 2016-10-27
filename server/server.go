@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/coreos/pkg/capnslog"
@@ -19,7 +20,9 @@ import (
 
 	"github.com/coreos-inc/bridge/auth"
 	"github.com/coreos-inc/bridge/pkg/proxy"
+	"github.com/coreos-inc/bridge/verify"
 	"github.com/coreos-inc/bridge/version"
+	"github.com/coreos-inc/tectonic/manager/pkg/license"
 )
 
 const (
@@ -50,15 +53,14 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	K8sProxyConfig     *proxy.Config
-	DexProxyConfig     *proxy.Config
-	BaseURL            *url.URL
-	PublicDir          string
-	TectonicVersion    string
-	TectonicTier       string
-	TectonicExpiration time.Time
-	Auther             *auth.Authenticator
-	KubectlClientID    string
+	K8sProxyConfig      *proxy.Config
+	DexProxyConfig      *proxy.Config
+	BaseURL             *url.URL
+	PublicDir           string
+	TectonicVersion     string
+	TectonicLicenseFile string
+	Auther              *auth.Authenticator
+	KubectlClientID     string
 
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
@@ -177,7 +179,23 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *Server) readLicense() (tier string, expiration time.Time) {
+	var (
+		tier       string    = "unknown"
+		expiration time.Time = time.Now()
+	)
+	licenseFile, err := os.Open(s.TectonicLicenseFile)
+	if err != nil {
+		plog.Warning("Could not open license file.")
+		return
+	}
+	tier, expiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
+	licenseFile.Close()
+	return
+}
+
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
+	tier, expiration := s.readLicense()
 	sendResponse(w, http.StatusOK, struct {
 		Version        string    `json:"version"`
 		ConsoleVersion string    `json:"consoleVersion"`
@@ -186,8 +204,8 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 	}{
 		Version:        s.TectonicVersion,
 		ConsoleVersion: version.Version,
-		Tier:           s.TectonicTier,
-		Expiration:     s.TectonicExpiration,
+		Tier:           tier,
+		Expiration:     expiration,
 	})
 }
 
