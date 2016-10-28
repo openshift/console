@@ -15,7 +15,7 @@ import {ReplicationControllersList} from './replication-controller';
 import {SecretsList} from './secret';
 import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
-import {Dropdown, NavTitle, ResourceIcon, SelectorInput} from './utils';
+import {connect, Dropdown, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 const ResourceListDropdown = ({selected, onChange}) => {
   const ks = angulars.k8s.enum.Kind;
@@ -38,8 +38,8 @@ const ResourceListDropdown = ({selected, onChange}) => {
   return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
 };
 
-const ResourceList = ({kind, selector}) => {
-  const namespace = angulars.store.getState().UI.get('activeNamespace');
+const ResourceList = connect(state => ({namespace: state.UI.get('activeNamespace')}))(
+({kind, namespace, selector}) => {
   const newProps = {namespace, selector};
   return <div className="co-m-pane__body">
     <div className="co-m-resource-list">
@@ -58,7 +58,7 @@ const ResourceList = ({kind, selector}) => {
       {kind === 'node'                    && <NodesListSearch selector={selector} />}
     </div>
   </div>;
-};
+});
 
 export class SearchPage extends React.Component {
   constructor (props) {
