@@ -24,7 +24,7 @@ export const register = (name, Component) => {
 
 app.value('nop', () => <div/>);
 
-app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeout, $interval, $log, Firehose, k8s, ModalLauncherSvc, activeNamespaceSvc, k8sNodes) {
+app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeout, $interval, $log, Firehose, k8s, ModalLauncherSvc, k8sNodes) {
   // "Export" angular modules to the outside world via ref through 'angulars'...
   // NOTE: this only exist after the app has loaded!
 
@@ -42,7 +42,6 @@ app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeo
     angulars.$location = $location;
     angulars.routeParams = $routeParams;
     angulars.kinds = k8s.enum.Kind;
-    angulars.activeNamespaceSvc = activeNamespaceSvc;
     angulars.$log = $log;
     angulars.$interval= $interval;
     angulars.$timeout = $timeout;
