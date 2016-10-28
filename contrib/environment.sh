@@ -9,6 +9,9 @@
 # You'll need a working kubectl, and you'll need jq installed and in
 # your path for this script to work correctly.
 
+# This will use the first secret it finds in the default namespace.
+# All secrets must be valid or removed from the namespace.
+
 # The environment variables beginning with "BRIDGE_" act just like
 # bridge command line arguments - in fact. to get more information
 # about any of them, you can run ./bin/bridge --help
@@ -21,6 +24,5 @@ export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
 export BRIDGE_K8S_AUTH="bearer-token"
 
 secretname=$(kubectl get secrets --namespace=default \
-  -l owner=tectonic-devs \
-  -o template --template="{{range.items}}{{.metadata.name}}{{end}}")
+  -o template --template=$'{{range.items}}{{.metadata.name}}\n{{end}}' | head -n 1)
 export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname -o template --template='{{.data.token}}' | base64 --decode)
