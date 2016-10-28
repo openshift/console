@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeList} from './factory';
-import {Cog, LabelList, ResourceIcon} from './utils';
+import {LabelList, ResourceIcon} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Namespace Name</div>
@@ -10,14 +10,8 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Status</div>
 </div>;
 
-const NamespaceCog = ({namespace}) => {
-  const options = [Cog.factory.EnterNamespace].map(f => f(angulars.kinds.NAMESPACE, namespace));
-  return <Cog options={options} size="small" anchor="left"></Cog>;
-};
-
 const NamespaceRow = ({obj: namespace}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
-    <NamespaceCog namespace={namespace} />
     <ResourceIcon kind={angulars.kinds.NAMESPACE.id} />
     <a href={`namespaces?name=${namespace.metadata.name}`} title={namespace.metadata.uid}>
       {namespace.metadata.name}
