@@ -163,8 +163,11 @@ gulp.task('templates', () => {
 });
 
 gulp.task('fonts', () => {
-  return gulp.src('public/fonts/*')
-    .pipe(gulp.dest(distDir + '/fonts'));
+  return gulp.src([
+    'node_modules/font-awesome/fonts/*',
+    'public/fonts/*'
+  ])
+  .pipe(gulp.dest(distDir + '/fonts'));
 });
 
 // Copy any static assets.
