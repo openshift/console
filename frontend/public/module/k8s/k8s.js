@@ -56,6 +56,7 @@ angular.module('k8s')
         return {
           rbac: '/apis/rbac.authorization.k8s.io',
           rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1',
+          clusterUpdates: '/apis/tectonic-channel-controller.tectonic.com',
         };
       },
     };

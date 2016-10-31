@@ -68,7 +68,7 @@
             <ul class="navigation-container__list no-margin collapse in" id="admin-tab" uib-collapse="adminIsCollapsed">
               <co-navbar-link ng-cloak href="namespaces">Namespaces</co-navbar-link>
               <co-navbar-link ng-cloak href="nodes">Nodes</co-navbar-link>
-              <co-navbar-link ng-cloak href="settings/cluster">Cluster Settings</co-navbar-link>
+              <co-navbar-link ng-cloak href="settings/cluster" ng-if="$root.FEATURE_FLAGS.clusterUpdates">Cluster Settings</co-navbar-link>
               <co-navbar-link ng-cloak href="settings/users" ng-if="$root.FEATURE_FLAGS.userManagement">Users</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'roles'|ns}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Roles</co-navbar-link>
               <co-navbar-link ng-cloak href="{{'rolebindings'|ns}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Role Bindings</co-navbar-link>
