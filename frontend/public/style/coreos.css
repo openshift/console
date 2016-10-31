@@ -3226,7 +3226,7 @@ input[type="radio"] {
 
 .co-m-loader,
 .co-m-inline-loader {
-  min-width: 28px; }
+  min-width: 18px; }
 
 .co-m-loader {
   display: block;
