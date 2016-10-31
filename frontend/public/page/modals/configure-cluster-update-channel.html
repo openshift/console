@@ -1,0 +1,44 @@
+<div class="co-p-configure-cluster-update-channel">
+  <form ng-controller="ConfigureClusterUpdateChannelFormCtrl" ng-submit="submit()" name="form" role="form">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Update Channel</h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <p>Select a channel that provides the correct balance of stability and new features.</p>
+          <p>Critical security updates will always be delivered to any vulnerable channels.</p>
+        </div>
+      </div>
+
+      <div class="row co-m-form-row">
+        <div class="col-sm-12">
+          <input ng-model="fields.channel" value="stable" type="radio" id="configure-cluster-update-channel--stable" />
+          <label for="configure-cluster-update-channel--stable">Stable <span class="co-no-bold">(recommended)</span></label>
+          <p class="co-m-radio-desc text-muted">Ideal for production and fully supported by CoreOS.</p>
+        </div>
+
+        <div class="col-sm-12">
+          <input ng-model="fields.channel" value="beta" type="radio" id="configure-cluster-update-channel--beta"/>
+          <label for="configure-cluster-update-channel--beta">Beta</label>
+          <p class="co-m-radio-desc text-muted">Test out new features and releases before they are generally available.</p>
+        </div>
+
+        <div class="col-sm-12">
+          <input ng-model="fields.channel" value="alpha" type="radio" id="configure-cluster-update-channel--alpha"/>
+          <label for="configure-cluster-update-channel--alpha">Alpha</label>
+          <p class="co-m-radio-desc text-muted">Closely tracks current development work and newer features may be unstable.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" co-btn-bar complete-promise="requestPromise">
+      <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
+      <button type="submit" class="btn btn-primary">Save Channel</button>
+      <button type="button" ng-click="cancel()" class="btn btn-link">Cancel</button>
+    </div>
+
+  </form>
+</div>

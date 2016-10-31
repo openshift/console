@@ -135,6 +135,10 @@ angular.module('k8s')
   this.rolebindings = addDefaults({}, k8sEnum.Kind.ROLEBINDING);
   this.roles = addDefaults({}, k8sEnum.Kind.ROLE);
 
+  this.tectonicchannelcontrollerclusterspecs = addDefaults({}, k8sEnum.Kind.TCO_CLUSTERSPEC);
+  this.tectonicchannelcontrollerconfigs = addDefaults({}, k8sEnum.Kind.TCO_CONFIG);
+  this.tectonicversionupdates = addDefaults({}, k8sEnum.Kind.TECTONICVERSIONUPDATE);
+
   this.health = function() {
     return $http({
       url: k8sConfig.getBasePath(),

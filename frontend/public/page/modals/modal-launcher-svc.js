@@ -9,6 +9,14 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/service-ports.html',
       controller: 'ServicePortsCtrl',
     },
+    'configure-cluster-update-channel': {
+      templateUrl: '/static/page/modals/configure-cluster-update-channel.html',
+      controller: 'ConfigureClusterUpdateChannelCtrl',
+    },
+    'configure-cluster-update-strategy': {
+      templateUrl: '/static/page/modals/configure-cluster-update-strategy.html',
+      controller: 'ConfigureClusterUpdateStrategyCtrl',
+    },
     'configure-ports': {
       templateUrl: '/static/page/modals/configure-ports.html',
       controller: 'ConfigurePortsCtrl',

@@ -271,6 +271,10 @@ angular.module('bridge', [
     templateUrl: '/static/page/settings/users.html',
     title: 'Manage Users',
   });
+  r('/settings/cluster', {
+    template: '<react-component name="ClusterSettingsPage"></react-component>',
+    title: 'Cluster',
+  });
 
   r('/all-namespaces/:kind', {
     controller: 'k8sListCtrl',

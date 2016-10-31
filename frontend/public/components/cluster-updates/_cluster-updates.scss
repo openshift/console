@@ -1,0 +1,161 @@
+$cluster-updates-detail-col-padding: 5px;
+$cluster-updates-breakdown-col-padding: 10px;
+$cluster-updates-green: #2ec98e;
+$cluster-updates-border: #ccc;
+
+.co-cluster-updates {
+  border: 1px solid $cluster-updates-border;
+  border-radius: 4px;
+  margin-bottom: -20px; // todo: not the best fix
+  max-width: 800px;
+}
+
+.co-cluster-updates__update-available-text {
+  color: $cluster-updates-green;
+}
+
+.co-cluster-updates__needs-attention-text {
+  color: $color-orange-warning;
+}
+
+.co-cluster-updates__text-icon {
+  margin-right: 4px;
+}
+
+.co-cluster-updates__action-button {
+  display: block;
+  margin-top: 5px;
+  padding: 7px 17px 5px;
+}
+
+.co-cluster-updates__action-button--update {
+  color: #dffdf1;
+  font-weight: 300;
+
+  &:hover, &:focus, &:active, &:focus:active {
+    color: #e5fff5;
+  }
+}
+
+.co-cluster-updates__component {
+  border-bottom: 1px solid $cluster-updates-border;
+  padding: 20px;
+}
+
+.co-cluster-updates__component--last {
+  border-bottom: none;
+}
+
+.co-cluster-updates__heading {
+  align-items: baseline;
+  display: flex;
+  flex-direction: row;
+  font-size: 13px;
+  line-height: 13px;
+  justify-content: space-between;
+}
+
+.co-cluster-updates__heading--name-wrapper {
+  min-width: 40%;
+  padding-right: 10px;
+}
+
+.co-cluster-updates__heading--name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.co-cluster-updates__heading--version {
+  color: $color-grey-text;
+  margin-left: 0.75em;
+}
+
+.co-cluster-updates__heading--updates {
+  flex: 1 0 0;
+}
+
+.co-cluster-updates__toggle {
+  // flex: 0 0 1;
+}
+
+.co-cluster-updates__details {
+  display: flex;
+  flex-direction: row;
+  font-size: 16px;
+  margin-top: 18px;
+  margin-left: -1 * $cluster-updates-detail-col-padding;
+  margin-right: -1 * $cluster-updates-detail-col-padding;
+}
+
+.co-cluster-updates__detail {
+  padding: 0 $cluster-updates-detail-col-padding;
+  flex: 2 1 auto;
+}
+
+// this spacer goes as the last __detail.
+// large displays: adds space so the last detail isn't riding the right border
+// small displays: disappears to allow for optimal text space
+.co-cluster-updates__detail--spacer {
+  padding-left: 0;
+  padding-right: 0;
+  flex: 1 2 auto;
+}
+
+.co-cluster-updates__breakdown {
+  display: flex;
+  flex-direction: row;
+  margin-top: 26px;
+
+  margin-left: -1 * $cluster-updates-breakdown-col-padding;
+  margin-right: -1 * $cluster-updates-breakdown-col-padding;
+}
+
+.co-cluster-updates__breakdown-component {
+  font-size: 14px;
+  flex: 1 1 auto;
+  padding: 0 $cluster-updates-breakdown-col-padding;
+}
+
+.co-cluster-updates__breakdown-step {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.co-cluster-updates__breakdown-step--pending {
+  color: $color-grey-text;
+}
+
+.co-cluster-updates__breakdown-icon {
+  min-width: 22px;
+  width: 25px;
+}
+
+.co-cluster-updates__breakdown-icon--updating {
+  color: $color-highlight-blue;
+}
+
+.co-cluster-updates__breakdown-icon--complete {
+  color: $cluster-updates-green;
+}
+
+.co-cluster-updates__breakdown-icon--paused {
+  color: $color-highlight-blue;
+}
+
+.co-cluster-updates__breakdown-icon--needsattention {
+  color: $color-orange-warning;
+}
+
+.co-cluster-updates__breakdown-text {
+  flex-grow: 1;
+}
+
+.co-cluster-updates__breakdown-button {
+  margin-top: 25px;
+  padding: 7px 16px 4px;
+}
