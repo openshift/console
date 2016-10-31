@@ -111,10 +111,13 @@ func (s *Server) HTTPHandler() http.Handler {
 	}.ServeHTTP)
 
 	useVersionHandler := s.versionHandler
+	useValidateLicenseHandler := s.ValidateLicenseHandler
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
+		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.ValidateLicenseHandler))
 	}
 	handleFunc("/version", useVersionHandler)
+	handleFunc("/license/validate", useValidateLicenseHandler)
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -180,10 +183,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) readLicense() (tier string, expiration time.Time) {
-	var (
-		tier       string    = "unknown"
-		expiration time.Time = time.Now()
-	)
+	tier = "unknown"
+	expiration = time.Now()
 	licenseFile, err := os.Open(s.TectonicLicenseFile)
 	if err != nil {
 		plog.Warning("Could not open license file.")
@@ -206,6 +207,35 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 		ConsoleVersion: version.Version,
 		Tier:           tier,
 		Expiration:     expiration,
+	})
+}
+
+func (s *Server) ValidateLicenseHandler(w http.ResponseWriter, r *http.Request) {
+	badLicense := func(message string) {
+		err := errors.New(message)
+		sendResponse(w, http.StatusBadRequest, apiError{err.Error()})
+	}
+
+	licenseStringInBase64 := r.FormValue("license")
+	licenseString, err := base64.StdEncoding.DecodeString(licenseStringInBase64)
+	if err != nil {
+		badLicense("Invalid license encoding")
+		return
+	}
+	licenseFile := bytes.NewBufferString(string(licenseString))
+
+	now := time.Now()
+	_, expiration := verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, now)
+
+	if expiration.Before(now) || expiration == now {
+		badLicense("Invalid or expired license")
+		return
+	}
+
+	sendResponse(w, http.StatusOK, struct {
+		Message string `json:"message"`
+	}{
+		Message: "Valid license",
 	})
 }
 
