@@ -97,5 +97,5 @@ export const ActionsMenu = ({actions}) => {
   const items = _.fromPairs(_.map(actions, (v, k) => [k, v.label]));
   const title = <span><i className="fa fa-cog btn--actions__cog"></i>Actions</span>;
   const onChange = key => actions[key].callback();
-  return <Dropdown className="btn--actions" menuClassName="btn--actions__menu" items={items} title={title} onChange={onChange} noSelection={true} />;
+  return <Dropdown className="btn--actions" menuClassName="btn--actions__menu co-m-dropdown--dark" items={items} title={title} onChange={onChange} noSelection={true} />;
 };

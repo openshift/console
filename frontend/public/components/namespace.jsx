@@ -1,16 +1,19 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
-import {makeList} from './factory';
-import {LabelList, ResourceIcon} from './utils';
+import {angulars, register} from './react-wrapper';
+import {makeList, TwoColumns} from './factory';
+import {RowOfKind} from './RBAC/role';
+import {ActionsMenu, Cog, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
 
-const Header = () => <div className="row co-m-table-grid__head">
+const kind = 'NAMESPACE';
+
+const FullHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Namespace Name</div>
   <div className="col-xs-4">Namespace Labels</div>
   <div className="col-xs-4">Status</div>
 </div>;
 
-const NamespaceRow = ({obj: namespace}) => <div className="row co-resource-list__item">
+const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
     <ResourceIcon kind={angulars.kinds.NAMESPACE.id} />
     <a href={`namespaces?name=${namespace.metadata.name}`} title={namespace.metadata.uid}>
@@ -25,8 +28,93 @@ const NamespaceRow = ({obj: namespace}) => <div className="row co-resource-list_
   </div>
 </div>;
 
-const kind = 'NAMESPACE';
+const NamespacesList = makeList('Namespaces', kind, FullHeader, FullRow);
 
-const NamespacesList = makeList('Namespaces', kind, Header, NamespaceRow);
+class PullSecret extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {isLoading: true, data: undefined};
+  }
 
-export {NamespacesList};
+  upsertState (nextState) {
+    if (this._isMounted) {
+      this.setState(nextState);
+    }
+  }
+
+  componentDidMount () {
+    this._isMounted = true;
+    this.load(_.get(this.props, 'namespace.metadata.name'));
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false;
+  }
+
+  load (namespaceName) {
+    if (!namespaceName) {
+      return;
+    }
+    const args = `?fieldSelector=${encodeURIComponent('type=kubernetes.io/dockerconfigjson')}`;
+    angulars.k8s.secrets.get(args, namespaceName)
+      .then((pullSecrets) => {
+        this.upsertState({isLoading: false, data: _.get(pullSecrets, 'items[0]')});
+      })
+      .catch((error) => {
+        this.upsertState({isLoading: false, data: undefined});
+
+        // A 404 just means that no pull secrets exist
+        if (error.status !== 404) {
+          throw error;
+        }
+      });
+  }
+
+  render () {
+    if (this.state.isLoading) {
+      return <LoadingInline />;
+    }
+    const modal = angulars.modal('namespace-pull-secret', {namespace: this.props.namespace, pullSecret: this.state.data});
+    return <a className="co-m-modal-link" onClick={modal}>{_.get(this.state.data, 'metadata.name') || 'Not Configured'}</a>;
+  }
+}
+
+const Details = (namespace) => {
+  if (_.isEmpty(namespace)) {
+    return <div className="empty-page">
+      <h1 className="empty-page__header">No namespace selected</h1>
+      <p className="empty-page__explanation">Namespaces organize and isolate your cluster resources from other things running on the cluster.</p>
+    </div>;
+  }
+
+  const actions = {DeleteNamespace: Cog.factory.DeleteNamespace(namespace)};
+  return <div className="details-page">
+    {namespace.metadata.name !== 'default' && <ActionsMenu actions={actions} />}
+    <h1 className="co-m-pane__title co-m-pane__body__top-controls">Namespace {namespace.metadata.name}</h1>
+    <dl>
+      <dt>Status</dt>
+      <dd>{namespace.status.phase}</dd>
+      <dt>Namespace Labels</dt>
+      <dd><LabelList kind="namespace" labels={namespace.metadata.labels} /></dd>
+      <dt>Default Pull Secret</dt>
+      <dd><PullSecret namespace={namespace} /></dd>
+    </dl>
+    {/* TODO(andy): Angular namespace sparklines have now been fixed and should also migrated to React
+        <NamespaceSparklines namespace={namespace} /> */}
+  </div>;
+};
+
+const Header = () => <div className="co-m-facet-menu__title">Name</div>;
+const List = makeList('Namespaces', kind, Header, RowOfKind('namespace'));
+
+const CreateButton = () => <button type="button" className="btn btn-primary co-m-pane__title__btn" onClick={angulars.modal('new-namespace')}>Create Namespace</button>;
+
+const NamespacesPage = () => <div>
+  <NavTitle title="Namespaces" />
+  <TwoColumns list={List} topControls={CreateButton}>
+    <Details />
+  </TwoColumns>
+</div>;
+
+export {NamespacesPage, NamespacesList};
+register('NamespacesPage', NamespacesPage);

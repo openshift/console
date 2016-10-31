@@ -1,5 +1,4 @@
 import './_module';
-import './cog/namespace-cog';
 import './cog/node-cog';
 import './cog/service-cog';
 import './cog/user-cog';
@@ -19,8 +18,6 @@ import './selector/selector-input-service';
 import './links/namespaced-href';
 import './log-window/log-window';
 import './nav-title/nav-title';
-
-import './resources/namespace-list-menu';
 
 import './resources/sparkline-widget';
 
