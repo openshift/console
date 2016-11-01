@@ -1,5 +1,6 @@
 import {saveAs} from 'file-saver';
-import {coFetch} from '../../components/utils';
+import {coFetch} from '../../co-fetch';
+
 
 export const kubectlConfigSvc = {
   getVerificationCode: () => {
