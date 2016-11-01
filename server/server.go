@@ -277,7 +277,6 @@ preferences: {}
 contexts:
 - context:
     cluster: tectonic
-    namespace: tectonic-system
     user: tectonic-oidc
   name: tectonic
 
