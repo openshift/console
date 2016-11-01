@@ -25,4 +25,4 @@ export BRIDGE_K8S_AUTH="bearer-token"
 
 secretname=$(kubectl get secrets --namespace=default \
   -o template --template=$'{{range.items}}{{.metadata.name}}\n{{end}}' | head -n 1)
-export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname -o template --template='{{.data.token}}' | base64 --decode)
+export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname --namespace=default -o template --template='{{.data.token}}' | base64 --decode)
