@@ -94,6 +94,7 @@ func main() {
 		log.Warning("Could not open license file.")
 	} else {
 		tier, expiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
+		licenseFile.Close()
 	}
 	licenseFile.Close()
 
