@@ -240,18 +240,17 @@ angular.module('bridge', [
 
   r('/all-namespaces/search', {
     controller: 'SearchCtrl',
-    templateUrl: '/static/page/search/search.html',
+    template: '<react-component name="SearchPage"></react-component>',
     title: 'Search',
   });
-
   r('/ns/:ns/search', {
     controller: 'SearchCtrl',
-    templateUrl: '/static/page/search/search.html',
+    template: '<react-component name="SearchPage"></react-component>',
     title: 'Search',
   });
   r('/search', {
     controller: 'SearchCtrl',
-    templateUrl: '/static/page/search/search.html',
+    template: '<react-component name="SearchPage"></react-component>',
     title: 'Search',
     redirect: true,
   });
