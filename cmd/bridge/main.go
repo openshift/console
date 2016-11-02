@@ -95,6 +95,7 @@ func main() {
 	} else {
 		tier, expiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
 	}
+	licenseFile.Close()
 
 	srv := &server.Server{
 		PublicDir:          *fPublicDir,
