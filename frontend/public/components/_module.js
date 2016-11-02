@@ -1,4 +1,5 @@
 import './pod';
+import './cluster-settings/cluster-settings';
 import './container';
 import './deployment';
 import './job';

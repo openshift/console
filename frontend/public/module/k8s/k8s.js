@@ -56,6 +56,7 @@ angular.module('k8s')
         return {
           rbac: '/apis/rbac.authorization.k8s.io',
           rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1',
+          clusterUpdates: '/apis/tectonic-channel-controller.tectonic.com',
         };
       },
     };
@@ -134,6 +135,10 @@ angular.module('k8s')
   this.clusterroles = addDefaults({}, k8sEnum.Kind.CLUSTERROLE);
   this.rolebindings = addDefaults({}, k8sEnum.Kind.ROLEBINDING);
   this.roles = addDefaults({}, k8sEnum.Kind.ROLE);
+
+  this.tectonicchannelcontrollerclusterspecs = addDefaults({}, k8sEnum.Kind.TCO_CLUSTERSPEC);
+  this.tectonicchannelcontrollerconfigs = addDefaults({}, k8sEnum.Kind.TCO_CONFIG);
+  this.tectonicversionupdates = addDefaults({}, k8sEnum.Kind.TECTONICVERSIONUPDATE);
 
   this.health = function() {
     return $http({

@@ -73,6 +73,8 @@ $fa-font-path: "./fonts";
 @import "module/ui/detail-table/detail-table";
 
 // React Components
+@import "components/cluster-settings/cluster-settings";
+@import "components/cluster-updates/cluster-updates";
 @import "components/dropdown";
 @import "components/list";
 @import "components/node-ip-list";
