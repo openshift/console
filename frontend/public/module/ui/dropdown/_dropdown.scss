@@ -3,6 +3,19 @@
   background-color: white;
 }
 
+.btn--actions {
+  float: right;
+
+  &__cog {
+    margin-right: 5px;
+  }
+
+  &__menu {
+    left: auto;
+    right: 9px;
+  }
+}
+
 .dropdown__selected {
   background-color: $color-highlight-blue;
 }
