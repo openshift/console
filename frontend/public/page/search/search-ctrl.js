@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('SearchCtrl', function($scope, $location, $routeParams, $route, k8s, activeNamespaceSvc) {
+.controller('SearchCtrl', function($location, $routeParams, $route, activeNamespaceSvc) {
   'use strict';
 
   const shouldRedirect = $route.current.$$route.redirect;

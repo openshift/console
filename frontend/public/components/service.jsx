@@ -109,7 +109,7 @@ const ServicePortMapping = ({s}) => <div>
 
 const Details = (s) => <div className="row no-gutter">
   <div className="col-sm-6">
-    <ResourceHeading resourceName={"Service"} />
+    <ResourceHeading resourceName="Service" />
     <div className="co-m-pane__body-group">
       <div className="co-m-pane__body-section--bordered">
         <dl>
