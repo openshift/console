@@ -19,7 +19,7 @@ Console consists of a frontend webapp and a backend service which serves the fol
 ### Deps:
 
 1. nodejs >= 6.0 & npm >= 3 (use of nvm is recommended)
-2. go >= 1.6
+2. go >= 1.7
 3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release)
 
 ### Build everything:
