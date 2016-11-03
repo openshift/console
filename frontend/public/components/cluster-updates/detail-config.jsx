@@ -18,7 +18,7 @@ export class DetailConfig extends React.Component {
 
   _openModal() {
     angulars.modal(this.props.modal, _.defaults({}, this.props.modalData, {
-      config: this.props.config.data,
+      config: this.props.config,
       callbacks: {
         invalidateState: this._updateOutdated.bind(this)
       }
@@ -32,17 +32,13 @@ export class DetailConfig extends React.Component {
   }
 
   render() {
-    if (this.props.config && this.props.config.loaded) {
-      const config = this.props.config.data;
-      if (config) {
-        let displayText = config[this.props.field];
-        if (this.props.displayFunction) {
-          displayText = this.props.displayFunction(displayText);
-        }
-        const outdatedClass = this.state.outdated ? 'text-muted': null;
-        return <a onClick={this._openModal.bind(this)} className={classNames('co-m-modal-link', outdatedClass)}>{displayText}</a>;
+    if (this.props.config) {
+      let displayText = this.props.config[this.props.field];
+      if (this.props.displayFunction) {
+        displayText = this.props.displayFunction(displayText);
       }
-      return <span>Unknown</span>;
+      const outdatedClass = this.state.outdated ? 'text-muted': null;
+      return <a onClick={this._openModal.bind(this)} className={classNames('co-m-modal-link', outdatedClass)}>{displayText}</a>;
     }
     return <LoadingInline />;
   }

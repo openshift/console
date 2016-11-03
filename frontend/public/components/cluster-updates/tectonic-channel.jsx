@@ -157,14 +157,28 @@ TectonicChannelWithStatuses.propTypes = {
 };
 
 class TectonicChannelWithConfigs extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      config: null
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // During an update, the API server will go down, and websockets
+    // will eventually fail causing loaded=false with stale data.
+    // The UI should ignore this and not update state until it's back.
+    if (nextProps.loaded) {
+      this.setState({
+        config: _.get(this.props, 'data[0]')
+      });
+    }
+  }
+
   render() {
     const props = _.pick(this.props, ['type', 'primaryComponent', 'components', 'last', 'expanded']);
-    const config = {
-      data: _.get(this.props, 'data[0]'),
-      loaded: this.props.loaded
-    };
 
-    return <ChannelOperator config={config} {...props} />;
+    return <ChannelOperator config={this.state.config} {...props} />;
   }
 }
 TectonicChannelWithConfigs.propTypes = {

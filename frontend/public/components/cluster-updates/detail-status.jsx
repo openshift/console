@@ -26,7 +26,7 @@ export class DetailStatus extends React.Component {
     let k8skind, resource;
     if (kind === 'config') {
       k8skind = angulars.k8s.enum.Kind.TCO_CONFIG;
-      resource = this.props.config.data;
+      resource = this.props.config;
     } else if (kind === 'version-update') {
       k8skind = angulars.k8s.enum.Kind.TECTONICVERSIONUPDATE;
       resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-channel-controller-version-update' } };
@@ -42,7 +42,7 @@ export class DetailStatus extends React.Component {
   }
 
   _actionButton() {
-    if (this.props.config && this.props.config.loaded && this.props.config.data) {
+    if (this.props.config) {
       if (this.state.outdated) {
         return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
       }
@@ -57,14 +57,12 @@ export class DetailStatus extends React.Component {
         // Updating + already paused is covered above, so we can assume updating + not paused
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'version-update', 'status/paused', true)}>Pause Updates</button>;
       } else if (this.props.state === states.UP_TO_DATE) {
-        if (this.props.config.data.triggerUpdateCheck) {
+        if (this.props.config.triggerUpdateCheck) {
           return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
         } else {
           return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdateCheck', true)}>Check for Updates</button>;
         }
       }
-    } else {
-      return <button className="co-cluster-updates__action-button btn" disabled={true}>Misconfigured Operator</button>;
     }
   }
 
