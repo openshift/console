@@ -2,7 +2,7 @@ import React from 'react';
 import {Provider} from 'react-redux';
 
 import {angulars} from '../react-wrapper';
-import {Firehose} from '../utils';
+import {MultiFirehose} from '../utils';
 import {ChannelOperator, componentStates} from './channel-operator';
 
 const componentNames = {
@@ -18,66 +18,70 @@ const componentNames = {
 // A similar "channel" would be created for CoreOS Linux to
 // consume & prepare data.
 export class TectonicChannel extends React.Component {
-  render() {
-    return <Provider store={angulars.store}>
-      <Firehose k8sResource={angulars.k8s.tectonicchannelcontrollerclusterspecs} namespace="tectonic-system" isList={true}>
-        <TectonicChannelWithClusterSpecs last={this.props.last} expanded={this.props.expanded} />
-      </Firehose>
-    </Provider>;
-  }
-}
-
-export class TectonicChannelWithClusterSpecs extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      clusterSpec: {}
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.loaded) {
-      this.setState({
-        clusterSpec: _.get(nextProps, 'data[0]') || {}
-      });
-    }
-  }
-
-  render() {
-    return <Provider store={angulars.store}>
-      <Firehose k8sResource={angulars.k8s.tectonicversionupdates} namespace="tectonic-system" isList={true}>
-        <TectonicChannelWithStatuses clusterSpec={this.state.clusterSpec} last={this.props.last} expanded={this.props.expanded} />
-      </Firehose>
-    </Provider>;
-  }
-}
-
-export class TectonicChannelWithStatuses extends React.Component {
   constructor(props) {
     super(props);
 
-    this._isMounted = false;
+    this.firehoseResources = [
+      {
+        k8sResource: angulars.k8s.tectonicchannelcontrollerclusterspecs,
+        namespace: 'tectonic-system',
+        isList: true,
+        prop: 'clusterSpec'
+      },
+      {
+        k8sResource: angulars.k8s.tectonicchannelcontrollerconfigs,
+        namespace: 'tectonic-system',
+        isList: true,
+        prop: 'config'
+      },
+      {
+        k8sResource: angulars.k8s.tectonicversionupdates,
+        namespace: 'tectonic-system',
+        isList: true,
+        prop: 'versionUpdates'
+      }
+    ];
+  }
+
+  render() {
+    return <Provider store={angulars.store}>
+      <MultiFirehose resources={this.firehoseResources}>
+        <TectonicChannelWithData {...this.props} />
+      </MultiFirehose>
+    </Provider>;
+  }
+}
+TectonicChannel.propTypes = {
+  expanded: React.PropTypes.bool,
+  last: React.PropTypes.bool
+};
+
+class TectonicChannelWithData extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
+      clusterSpec: {},
+      config: null,
       components: {}
     };
   }
 
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (nextProps.loaded) {
-      const desiredVersions = nextProps.clusterSpec.desiredVersions || [];
-      this.setState({
-        components: nextProps.data.reduce(this._createComponentFromData.bind(this, desiredVersions), {})
-      });
-    }
-    // TODO: handle errors (props.loadError from Firehose)
-  }
+    const newState = {};
 
-  componentWillUnmount() {
-    this._isMounted = false;
+    ['config', 'clusterSpec'].forEach((field) => {
+      if (nextProps[field].loaded) {
+        newState[field] = _.get(nextProps[field], 'data[0]');
+      }
+    });
+
+    if (nextProps.versionUpdates.loaded) {
+      const clusterSpec = newState.clusterSpec || this.state.clusterSpec || {};
+      const desiredVersions = clusterSpec.desiredVersions || [];
+      newState.components = nextProps.versionUpdates.data.reduce(this._createComponentFromData.bind(this, desiredVersions), {});
+    }
+
+    this.setState(newState);
   }
 
   // Plucks information from third party resources. Uses the
@@ -143,49 +147,6 @@ export class TectonicChannelWithStatuses extends React.Component {
   }
 
   render() {
-    const components = this._generateComponents();
-    return <Provider store={angulars.store}>
-      <Firehose k8sResource={angulars.k8s.tectonicchannelcontrollerconfigs} namespace="tectonic-system" isList={true}>
-        <TectonicChannelWithConfigs type="Tectonic" primaryComponent="tectonic-channel-controller-version-update" components={components} last={this.props.last} expanded={this.props.expanded} />
-      </Firehose>
-    </Provider>;
+    return <ChannelOperator type="Tectonic" primaryComponent="tectonic-channel-controller-version-update" components={this._generateComponents()} config={this.state.config} last={this.props.last} expanded={this.props.expanded} />;
   }
 }
-TectonicChannelWithStatuses.propTypes = {
-  last: React.PropTypes.bool,
-  expanded: React.PropTypes.bool
-};
-
-class TectonicChannelWithConfigs extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      config: null
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // During an update, the API server will go down, and websockets
-    // will eventually fail causing loaded=false with stale data.
-    // The UI should ignore this and not update state until it's back.
-    if (nextProps.loaded) {
-      this.setState({
-        config: _.get(this.props, 'data[0]')
-      });
-    }
-  }
-
-  render() {
-    const props = _.pick(this.props, ['type', 'primaryComponent', 'components', 'last', 'expanded']);
-
-    return <ChannelOperator config={this.state.config} {...props} />;
-  }
-}
-TectonicChannelWithConfigs.propTypes = {
-  components: React.PropTypes.object,
-  data: React.PropTypes.array,
-  last: React.PropTypes.bool,
-  loaded: React.PropTypes.bool,
-  primaryComponent: React.PropTypes.string,
-  type: React.PropTypes.string
-};

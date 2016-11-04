@@ -26,9 +26,7 @@ export class WithQuery extends React.Component {
   }
 }
 
-// A wrapper Component that takes data out of redux for a list or object at some reduxID ...
-// passing it to children
-export const ConnectToState = reactReduxConnect(({k8s}, props) => {
+const processReduxId = ({k8s}, props) => {
   const {reduxID, isList, filters} = props;
 
   if (!reduxID) {
@@ -53,11 +51,35 @@ export const ConnectToState = reactReduxConnect(({k8s}, props) => {
     loaded: k8s.getIn([reduxID, 'loaded']),
     selected,
   };
-})(props => {
+};
+
+// A wrapper Component that takes data out of redux for a list or object at some reduxID ...
+// passing it to children
+export const ConnectToState = reactReduxConnect(processReduxId)(props => {
   const {children, className} = props;
   const newChildren = inject(children, _.omit(props, ['className', 'children', 'reduxID', 'isList']));
   return <div className={className}>{newChildren}</div>;
 });
+
+// Same as ConnectToState, but takes in multiple reduxIDs,
+// and maps their data to a specified prop instead.
+export const MultiConnectToState = reactReduxConnect(({k8s}, props) => {
+  const {reduxes} = props;
+
+  const propsToInject = {};
+  reduxes.forEach((redux) => {
+    propsToInject[redux.prop] = processReduxId({ k8s: k8s}, redux);
+  });
+
+  return propsToInject;
+})(props => {
+  const {children, className} = props;
+  const newChildren = inject(children, _.omit(props, ['className', 'children', 'reduxes', 'idToPropMapping']));
+  return <div className={className}>{newChildren}</div>;
+});
+MultiConnectToState.propTypes = {
+  reduxes: React.PropTypes.array
+};
 
 export const connect = (...args) => Component => {
   const Wrapped = reactReduxConnect(...args)(Component);
