@@ -1,19 +1,42 @@
 import React from 'react';
 
 import {angulars} from '../react-wrapper';
-import {EmptyBox, ConnectToState} from './index';
+import {EmptyBox, ConnectToState, MultiConnectToState} from './index';
 
-
-export class Firehose extends React.Component {
-  constructor (props) {
-    super(props);
+class FirehoseBase extends React.Component {
+  _initFirehose(props) {
     const {selectorRequired, selector} = props;
     if (selectorRequired && !props.selector) {
       return;
     }
     const {k8sResource, namespace, name, fieldSelector} = props;
     const {Firehose} = angulars;
-    this.firehose = new Firehose(k8sResource, namespace, selector, fieldSelector, name);
+    return new Firehose(k8sResource, namespace, selector, fieldSelector, name);
+  }
+
+  _mountFirehose(firehose, props) {
+    if (!firehose) {
+      return;
+    }
+    if (props.isList) {
+      firehose.watchList();
+      return;
+    }
+    firehose.watchObject();
+  }
+
+  _unmountFirehose(firehose) {
+    if (!firehose) {
+      return;
+    }
+    firehose.unwatchList();
+  }
+}
+
+export class Firehose extends FirehoseBase {
+  constructor (props) {
+    super(props);
+    this.firehose = this._initFirehose(props);
   }
 
   get id () {
@@ -52,27 +75,14 @@ export class Firehose extends React.Component {
   };
 
   componentDidMount() {
-    const {firehose} = this;
-    if (!firehose) {
-      return;
-    }
-    if (this.props.isList) {
-      firehose.watchList();
-      return;
-    }
-    firehose.watchObject();
+    this._mountFirehose(this.firehose, this.props);
   }
 
   componentWillUnmount() {
-    const {firehose} = this;
-    if (!firehose) {
-      return;
-    }
-    firehose.unwatchList();
+    this._unmountFirehose(this.firehose);
     this.firehose = null;
   }
 };
-
 Firehose.propTypes = {
   k8sResource: React.PropTypes.object,
   name: React.PropTypes.string,
@@ -83,4 +93,40 @@ Firehose.propTypes = {
   name: React.PropTypes.string,
   className: React.PropTypes.string,
   isList: React.PropTypes.bool,
+};
+
+export class MultiFirehose extends FirehoseBase {
+  constructor(props) {
+    super(props);
+    this.props.resources.forEach((resource) => {
+      resource.firehose = this._initFirehose(resource);
+    });
+  }
+
+  componentDidMount() {
+    this.props.resources.forEach((resource) => {
+      this._mountFirehose(resource.firehose, resource);
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.resources.forEach((resource, index) => {
+      this._unmountFirehose(resource.firehose);
+      resource.firehose[index] = null;
+    });
+  }
+
+  render() {
+    const reduxes = this.props.resources.map((resource) => {
+      return _.defaults({}, { reduxID: resource.firehose.id }, resource);
+    });
+
+    return <MultiConnectToState reduxes={reduxes}>
+      {this.props.children}
+    </MultiConnectToState>;
+  }
+}
+MultiFirehose.propTypes = {
+  children: React.PropTypes.node,
+  resources: React.PropTypes.array
 };
