@@ -8,7 +8,7 @@ import {ChannelOperator, componentStates} from './channel-operator';
 const componentNames = {
   'etcd-cluster': 'etcd',
   'kube-version-update': 'Kubernetes',
-  'tectonic-channel-controller-version-update': 'Tectonic Channel'
+  'tectonic-channel-controller-version-update': 'Tectonic'
 };
 
 // Consumes component data (TCO third party resources) and
