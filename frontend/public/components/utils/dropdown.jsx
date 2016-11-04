@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 export class DropdownMixin extends React.Component {
   constructor(props) {
@@ -63,19 +64,20 @@ export class DropdownMixin extends React.Component {
 export class Dropdown extends DropdownMixin {
   render() {
     const {selectedHtml} = this.state;
-    const {nobutton, items, className} = this.props;
+    const {noButton, noSelection, items, title, className, menuClassName} = this.props;
 
+    const buttonTitle = noSelection ? title : selectedHtml;
     let button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
-      {selectedHtml}&nbsp;&nbsp;
+      {buttonTitle}&nbsp;&nbsp;
       <span className="caret"> </span>
     </button>;
 
-    if (nobutton) {
-      button = <span onClick={this.toggle} className="dropdown__not-btn">{selectedHtml}&nbsp;&nbsp;<span className="caret"></span></span>;
+    if (noButton) {
+      button = <span onClick={this.toggle} className="dropdown__not-btn">{buttonTitle}&nbsp;&nbsp;<span className="caret"></span></span>;
     }
 
     const children = _.map(items, (html, key) => {
-      const klass = html === selectedHtml ? 'dropdown__selected' : 'dropdown__default';
+      const klass = noSelection || html !== selectedHtml ? 'dropdown__default' : 'dropdown__selected';
       const onClick_ = this.onClick_.bind(this, key, html);
       return <li className={klass} key={key}><a onClick={onClick_}>{html}</a></li>;
     });
@@ -84,7 +86,7 @@ export class Dropdown extends DropdownMixin {
       <div className={className} ref="dropdownElement">
         <div className="dropdown">
           {button}
-          <ul className="dropdown-menu" aria-labelledby="dLabel" style={{display: this.state.active ? 'block' : 'none'}}>{children}</ul>
+          <ul className={classNames('dropdown-menu', menuClassName)} aria-labelledby="dLabel" style={{display: this.state.active ? 'block' : 'none'}}>{children}</ul>
         </div>
       </div>
     );
