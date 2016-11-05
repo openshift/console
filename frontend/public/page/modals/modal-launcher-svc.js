@@ -25,10 +25,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-volumes.html',
       controller: 'ConfigureVolumesCtrl',
     },
-    'configure-volume-mounts': {
-      templateUrl: '/static/page/modals/configure-volume-mounts.html',
-      controller: 'ConfigureVolumeMountsCtrl',
-    },
     'configure-update-strategy': {
       templateUrl: '/static/page/modals/configure-update-strategy.html',
       controller: 'ConfigureUpdateStrategyCtrl',

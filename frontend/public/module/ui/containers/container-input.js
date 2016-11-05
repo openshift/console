@@ -139,13 +139,6 @@ angular.module('bridge.ui')
         });
       };
 
-      $scope.openVolumeMountsModal = function() {
-        ModalLauncherSvc.open('configure-volume-mounts', {
-          container: $scope.container,
-          volumes: $scope.podVolumes
-        });
-      };
-
       $scope.remove = function() {
         $scope.$emit(EVENTS.CONTAINER_REMOVE, $scope.container);
       };
