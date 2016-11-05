@@ -5,12 +5,6 @@ angular.module('bridge.page')
   var namespace = $routeParams.ns || k8s.enum.DefaultNS;
   $scope.pod = k8s.pods.getEmpty(namespace);
 
-  $scope.openVolumesModal = function() {
-    ModalLauncherSvc.open('configure-volumes', {
-      pod: $scope.pod,
-    });
-  };
-
   $scope.openRestartPolicyModal = function() {
     ModalLauncherSvc.open('configure-restart-policy', {
       pod: $scope.pod,

@@ -98,15 +98,6 @@
             <small class="text-muted">Each pod instance will have these labels. Services matching these labels will automatically send traffic to containers.</small>
           </div>
         </div>
-        <div class="row co-m-form-row">
-          <div class="col-sm-2">
-            <label class="control-label">Pod Volumes:</label>
-          </div>
-          <div class="co-m-form-col col-sm-10">
-            <div><a href="#" ng-click="openVolumesModal()" class="co-m-modal-link"><span ng-bind="podTemplate.spec.volumes.length || 0"></span> Volumes</a></div>
-            <small class="text-muted">Named volumes that may be accessed by any containers in the pod.</small>
-          </div>
-        </div>
       </div>
 
       <div class="co-m-pane__heading">

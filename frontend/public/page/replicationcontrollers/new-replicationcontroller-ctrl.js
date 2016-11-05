@@ -1,17 +1,10 @@
 angular.module('bridge.page')
-.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams,
-                                                     activeNamespaceSvc, k8s, ModalLauncherSvc) {
+.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, activeNamespaceSvc, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
   $scope.rc = k8s.replicationcontrollers.getEmpty($scope.ns);
   $scope.podTemplate = $scope.rc.spec.template;
-
-  $scope.openVolumesModal = function() {
-    ModalLauncherSvc.open('configure-volumes', {
-      pod: $scope.podTemplate
-    });
-  };
 
   $scope.cancel = function() {
     $location.path(activeNamespaceSvc.formatNamespaceRoute('/replicationcontrollers'));
