@@ -11,27 +11,77 @@ const PodCog = ({pod}) => {
   return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" />;
 };
 
-const PodRow = ({obj: pod}) => <div className="row co-resource-list__item">
-  <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <PodCog pod={pod} key={'cog'} />
-    <ResourceIcon kind="pod" />
-    <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/details`} title={pod.metadata.uid}>{pod.metadata.name}</a>
-  </div>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-    <LabelList kind="pod" labels={pod.metadata.labels}  />
-  </div>
-  <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">{podPhase(pod)}</div>
-  <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{pod.spec.containers.length}</div>
-  <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-    <NodeLink name={pod.spec.nodeName} />
-  </div>
-</div>;
+const readiness = ({status}) => {
+  if (_.isEmpty(status.conditions)) {
+    return null;
+  }
+
+  let allReady = true;
+  const conditions = _.map(status.conditions, c => {
+    if (c.status !== 'True') {
+      allReady = false;
+    }
+    return Object.assign({time: new Date(c.lastTransitionTime)}, c);
+  });
+
+  if (allReady) {
+    return 'Ready';
+  }
+
+  let earliestNotReady = null;
+  _.each(conditions, c => {
+    if (c.status === 'True') {
+      return;
+    }
+    if (!earliestNotReady) {
+      earliestNotReady = c;
+      return;
+    }
+    if (c.time < earliestNotReady.time) {
+      earliestNotReady = c;
+    }
+  });
+
+  const reason = earliestNotReady.reason || earliestNotReady.type;
+
+  return <span className="co-error" >
+    <i className="fa fa-times-circle co-icon-space-r" aria-hidden="true" />
+    {reason}
+  </span>;
+};
+
+const PodRow = ({obj: pod}) => {
+  const phase = podPhase(pod);
+  let status = phase;
+  if (status !== 'Running') {
+    status = <span className="co-error" >
+      <i className="fa fa-times-circle co-icon-space-r" aria-hidden="true" />{phase}
+    </span>;
+  }
+
+  return <div className="row co-resource-list__item">
+    <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+      <PodCog pod={pod} key={'cog'} />
+      <ResourceIcon kind="pod" />
+      <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/details`} title={pod.metadata.uid}>{pod.metadata.name}</a>
+    </div>
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+      <LabelList kind="pod" labels={pod.metadata.labels}  />
+    </div>
+
+    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">{status}</div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{readiness(pod)}</div>
+    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+      <NodeLink name={pod.spec.nodeName} />
+    </div>
+  </div>;
+};
 
 const PodHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Pod Name</div>
   <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">Pod Labels</div>
   <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Status</div>
-  <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Containers</div>
+  <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Readiness</div>
   <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Node</div>
 </div>;
 
