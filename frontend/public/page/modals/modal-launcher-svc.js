@@ -49,10 +49,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-pull-policy.html',
       controller: 'ConfigurePullPolicyCtrl',
     },
-    'configure-liveness': {
-      templateUrl: '/static/page/modals/configure-liveness.html',
-      controller: 'ConfigureLivenessCtrl',
-    },
     'configure-lifecycle': {
       templateUrl: '/static/page/modals/configure-lifecycle.html',
       controller: 'ConfigureLifecycleCtrl',

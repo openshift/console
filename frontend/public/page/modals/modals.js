@@ -8,7 +8,6 @@ import './configure-update-strategy-ctrl';
 import './configure-revision-history-limit-ctrl';
 import './configure-env-ctrl';
 import './configure-pull-policy-ctrl';
-import './configure-liveness-ctrl';
 import './configure-lifecycle-ctrl';
 import './configure-labels-ctrl';
 import './configure-selector-ctrl';
