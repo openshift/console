@@ -78,19 +78,6 @@ angular.module('bridge.ui')
 
       $scope.getPullPolicyLabel = k8s.docker.getPullPolicyLabel;
 
-      $scope.getLifecycleLabel = function() {
-        if (_.isEmpty($scope.container.lifecycle)) {
-          return 'Not Configured';
-        }
-        return 'Configured';
-      };
-
-      $scope.openLifecycleModal = function() {
-        ModalLauncherSvc.open('configure-lifecycle', {
-          container: $scope.container
-        });
-      };
-
       $scope.getCommandLabel = function() {
         if (_.isEmpty($scope.container.command)) {
           return 'Default Command';
