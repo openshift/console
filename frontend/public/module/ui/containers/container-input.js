@@ -86,21 +86,6 @@ angular.module('bridge.ui')
         return label;
       };
 
-      $scope.getResourceLimitsLabel = function() {
-        if (!_.has($scope.container, 'resources.limits')) {
-          return 'Not Configured';
-        }
-        let val = [];
-        _.each($scope.container.resources.limits, (v, k) => {
-          if (_.isEmpty(v)) {
-            return;
-          }
-          val.push(`${k}: ${v}`);
-        });
-        val = val.join(', ');
-        return val || 'Not Configured';
-      };
-
       $scope.openLivenessModal = function() {
         ModalLauncherSvc.open('configure-liveness', {
           container: $scope.container
@@ -129,12 +114,6 @@ angular.module('bridge.ui')
 
       $scope.openPrimaryCommandModal = function() {
         ModalLauncherSvc.open('configure-primary-command', {
-          container: $scope.container
-        });
-      };
-
-      $scope.openResourceLimitsModal = function() {
-        ModalLauncherSvc.open('configure-resource-limits', {
           container: $scope.container
         });
       };

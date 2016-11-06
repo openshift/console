@@ -18,7 +18,6 @@ import './configure-hpa-replicas-ctrl';
 import './configure-hpa-targets-ctrl';
 import './configure-restart-policy-ctrl';
 import './configure-primary-command-ctrl';
-import './configure-resource-limits-ctrl';
 import './new-namespace-ctrl';
 import './new-user-ctrl';
 import './new-user-invite-link-ctrl';

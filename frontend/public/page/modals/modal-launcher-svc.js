@@ -65,10 +65,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-primary-command.html',
       controller: 'ConfigurePrimaryCommandCtrl',
     },
-    'configure-resource-limits': {
-      templateUrl: '/static/page/modals/configure-resource-limits.html',
-      controller: 'ConfigureResourceLimitsCtrl',
-    },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',
       controller: 'ModalConfirmCtrl',
