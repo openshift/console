@@ -16,8 +16,6 @@ angular.module('bridge.ui')
     scope: {
       // container object to bind to
       container: '=',
-      // pod volumes to use for container volume mount selection
-      podVolumes: '=',
       // render with 'remove' icon, default is false
       enableRemove: '@',
     },
