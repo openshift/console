@@ -33,10 +33,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-revision-history-limit.html',
       controller: 'ConfigureRevisionHistoryLimitCtrl',
     },
-    'configure-env': {
-      templateUrl: '/static/page/modals/configure-env.html',
-      controller: 'ConfigureEnvCtrl',
-    },
     'configure-labels': {
       templateUrl: '/static/page/modals/configure-labels.html',
       controller: 'ConfigureLabelsCtrl',

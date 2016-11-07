@@ -64,12 +64,6 @@ angular.module('bridge.ui')
         });
       };
 
-      $scope.openEnvModal = function() {
-        ModalLauncherSvc.open('configure-env', {
-          container: $scope.container
-        });
-      };
-
       $scope.openPullPolicyModal = function() {
         ModalLauncherSvc.open('configure-pull-policy', {
           container: $scope.container
