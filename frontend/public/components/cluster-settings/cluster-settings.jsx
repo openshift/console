@@ -62,16 +62,16 @@ class ClusterSettingsPage extends React.Component {
           <h1 className="co-p-cluster--heading">General</h1>
           <LicenseSetting />
         </div>
-        <div className="co-m-pane__body">
+        {/*<div className="co-m-pane__body">
           <h1 className="co-p-cluster--heading">Tectonic Console</h1>
           <p>Console is how you and your users interact with your Tectonic cluster and view the status and health of your applications.</p>
         </div>
         <div className="co-m-pane__body">
           <h1 className="co-p-cluster--heading">Tectonic Identity</h1>
           <p>Identity is the Tectonic component that manages user accounts, resetting password, etc. Delegation to other authentication systems, such as Google OAUTH or a corporate LDAP environment is supported.</p>
-        </div>
+        </div>*/}
       </div>
-      <div className="co-p-cluster__sidebar">
+      {/*<div className="co-p-cluster__sidebar">
         <div className="co-m-pane__body">
           <h1 className="co-p-cluster__sidebar-heading co-p-cluster__sidebar-heading--first">Documentation</h1>
           <dl>
@@ -86,7 +86,7 @@ class ClusterSettingsPage extends React.Component {
           <p>Tectonic configurations can be backed up at any time.</p>
           <p><a href="#" className="co-p-cluster__sidebar-link"><span className="fa fa-download co-p-cluster__sidebar-link-icon"></span>Export Configuration</a></p>
         </div>
-      </div>
+      </div>*/}
     </div>;
   }
 }
