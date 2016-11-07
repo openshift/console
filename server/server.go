@@ -213,7 +213,7 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) ValidateLicenseHandler(w http.ResponseWriter, r *http.Request) {
 	badLicense := func(message string) {
 		err := errors.New(message)
-		sendResponse(w, http.StatusBadRequest, apiError{err.Error()})
+		sendResponse(w, http.StatusOK, apiError{err.Error()})
 	}
 
 	licenseStringInBase64 := r.FormValue("license")

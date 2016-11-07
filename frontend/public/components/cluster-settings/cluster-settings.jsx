@@ -3,6 +3,11 @@ import React from 'react';
 import {NavTitle} from '../utils';
 import {register} from '../react-wrapper';
 import {ClusterUpdates} from '../cluster-updates/cluster-updates';
+import {LicenseSetting} from './license-setting';
+
+export const SettingsRow = ({children}) => <div className="row co-m-form-row">{children}</div>;
+export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
+export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9">{children}</div>;
 
 export const ClusterSettingsPage = () => <div className="co-p-cluster">
   <div className="co-p-cluster__body">
@@ -15,7 +20,7 @@ export const ClusterSettingsPage = () => <div className="co-p-cluster">
     </div>
     <div className="co-m-pane__body">
       <h1 className="co-p-cluster--heading">General</h1>
-      <p>General settings for your cluster</p>
+      <LicenseSetting />
     </div>
     <div className="co-m-pane__body">
       <h1 className="co-p-cluster--heading">Tectonic Console</h1>
