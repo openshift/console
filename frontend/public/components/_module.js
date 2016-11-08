@@ -2,6 +2,8 @@ import './pod';
 import './cluster-settings/cluster-settings';
 import './container';
 import './deployment';
+import './license-notifier';
+import './global-notifications';
 import './job';
 import './replicaset';
 import './daemonset';
