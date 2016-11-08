@@ -119,7 +119,7 @@ export class EventStream extends React.Component {
       messages: [],
       error: null,
       loading: true,
-      oldestTimestamp: null,
+      oldestTimestamp: this.oldestTimestamp,
     };
   }
 
