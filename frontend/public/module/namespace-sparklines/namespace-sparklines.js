@@ -1,7 +1,7 @@
 'use strict';
 
 import { discoverService } from '../../module/k8s/discover-service';
-import { coFetch, coFetchUtils } from '../../components/utils';
+import { coFetch, coFetchUtils } from '../../co-fetch';
 
 const pollInterval = 30 * 1000;
 const metrics = {
@@ -42,21 +42,21 @@ angular.module('namespace-sparklines', ['lodash'])
       const setLimits = (basePath) => {
         _.each(metrics, (query, metric) => {
           coFetch(`${basePath}/api/v1/query?query=${query}`)
-            .then(finishedPolling)
             .then(coFetchUtils.parseJson)
             .then(parseLimit)
             .then((value) => $scope[metric] = value)
             .catch(() => {
-              finishedPolling();
               $scope[metric] = null;
             });
         });
+        finishedPolling();
       };
 
       const resetLimits = () => {
         _.each(metrics, (query, metric) => {
           $scope[metric] = null;
         });
+        finishedPolling();
       };
 
       const poll = () => {
