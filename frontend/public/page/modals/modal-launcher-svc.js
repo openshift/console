@@ -25,10 +25,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-volumes.html',
       controller: 'ConfigureVolumesCtrl',
     },
-    'configure-volume-mounts': {
-      templateUrl: '/static/page/modals/configure-volume-mounts.html',
-      controller: 'ConfigureVolumeMountsCtrl',
-    },
     'configure-update-strategy': {
       templateUrl: '/static/page/modals/configure-update-strategy.html',
       controller: 'ConfigureUpdateStrategyCtrl',
@@ -36,10 +32,6 @@ angular.module('bridge.page')
     'configure-revision-history-limit': {
       templateUrl: '/static/page/modals/configure-revision-history-limit.html',
       controller: 'ConfigureRevisionHistoryLimitCtrl',
-    },
-    'configure-env': {
-      templateUrl: '/static/page/modals/configure-env.html',
-      controller: 'ConfigureEnvCtrl',
     },
     'configure-labels': {
       templateUrl: '/static/page/modals/configure-labels.html',
@@ -53,14 +45,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-pull-policy.html',
       controller: 'ConfigurePullPolicyCtrl',
     },
-    'configure-liveness': {
-      templateUrl: '/static/page/modals/configure-liveness.html',
-      controller: 'ConfigureLivenessCtrl',
-    },
-    'configure-lifecycle': {
-      templateUrl: '/static/page/modals/configure-lifecycle.html',
-      controller: 'ConfigureLifecycleCtrl',
-    },
     'configure-restart-policy': {
       templateUrl: '/static/page/modals/configure-restart-policy.html',
       controller: 'ConfigureRestartPolicyCtrl',
@@ -68,10 +52,6 @@ angular.module('bridge.page')
     'configure-primary-command': {
       templateUrl: '/static/page/modals/configure-primary-command.html',
       controller: 'ConfigurePrimaryCommandCtrl',
-    },
-    'configure-resource-limits': {
-      templateUrl: '/static/page/modals/configure-resource-limits.html',
-      controller: 'ConfigureResourceLimitsCtrl',
     },
     'confirm': {
       templateUrl: '/static/page/modals/confirm.html',

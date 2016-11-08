@@ -16,8 +16,6 @@ angular.module('bridge.ui')
     scope: {
       // container object to bind to
       container: '=',
-      // pod volumes to use for container volume mount selection
-      podVolumes: '=',
       // render with 'remove' icon, default is false
       enableRemove: '@',
     },
@@ -64,12 +62,6 @@ angular.module('bridge.ui')
         });
       };
 
-      $scope.openEnvModal = function() {
-        ModalLauncherSvc.open('configure-env', {
-          container: $scope.container
-        });
-      };
-
       $scope.openPullPolicyModal = function() {
         ModalLauncherSvc.open('configure-pull-policy', {
           container: $scope.container
@@ -77,48 +69,6 @@ angular.module('bridge.ui')
       };
 
       $scope.getPullPolicyLabel = k8s.docker.getPullPolicyLabel;
-
-      $scope.getLivenessProbeLabel = function() {
-        var label = k8s.probe.getActionLabelFromObject($scope.container.livenessProbe);
-        if (!label) {
-          label = 'Not Configured';
-        }
-        return label;
-      };
-
-      $scope.getResourceLimitsLabel = function() {
-        if (!_.has($scope.container, 'resources.limits')) {
-          return 'Not Configured';
-        }
-        let val = [];
-        _.each($scope.container.resources.limits, (v, k) => {
-          if (_.isEmpty(v)) {
-            return;
-          }
-          val.push(`${k}: ${v}`);
-        });
-        val = val.join(', ');
-        return val || 'Not Configured';
-      };
-
-      $scope.openLivenessModal = function() {
-        ModalLauncherSvc.open('configure-liveness', {
-          container: $scope.container
-        });
-      };
-
-      $scope.getLifecycleLabel = function() {
-        if (_.isEmpty($scope.container.lifecycle)) {
-          return 'Not Configured';
-        }
-        return 'Configured';
-      };
-
-      $scope.openLifecycleModal = function() {
-        ModalLauncherSvc.open('configure-lifecycle', {
-          container: $scope.container
-        });
-      };
 
       $scope.getCommandLabel = function() {
         if (_.isEmpty($scope.container.command)) {
@@ -130,19 +80,6 @@ angular.module('bridge.ui')
       $scope.openPrimaryCommandModal = function() {
         ModalLauncherSvc.open('configure-primary-command', {
           container: $scope.container
-        });
-      };
-
-      $scope.openResourceLimitsModal = function() {
-        ModalLauncherSvc.open('configure-resource-limits', {
-          container: $scope.container
-        });
-      };
-
-      $scope.openVolumeMountsModal = function() {
-        ModalLauncherSvc.open('configure-volume-mounts', {
-          container: $scope.container,
-          volumes: $scope.podVolumes
         });
       };
 
