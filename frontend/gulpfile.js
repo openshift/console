@@ -1,4 +1,5 @@
 'use strict';
+/* global process:false, __dirname:false */
 
 const fs = require('fs');
 const exec = require('child_process').exec;

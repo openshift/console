@@ -35,7 +35,7 @@ const ResourceListDropdown = ({selected, onChange}) => {
     ks.NODE,
   ], k => [k.id, <span><div className="co-type-selector__icon-wrapper"><ResourceIcon kind={k.id} /></div>{k.labelPlural}</span>]));
 
-  return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
+  return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
 };
 
 const ResourceList = connect(state => ({namespace: state.UI.get('activeNamespace')}))(

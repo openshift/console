@@ -76,7 +76,6 @@ function iconLabel(k8sKind, kindId) {
     default:
       return kindId.toUpperCase().slice(0, 2);
   }
-  return '';
 }
 
 export default iconLabel;

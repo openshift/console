@@ -37,7 +37,7 @@ export class Cog extends DropdownMixin {
       </div>
     );
   }
-};
+}
 
 Cog.factory = {
   Delete: (kind, obj) => ({

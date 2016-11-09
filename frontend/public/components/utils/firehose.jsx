@@ -72,7 +72,7 @@ export class Firehose extends FirehoseBase {
     return <ConnectToState className={this.props.className} reduxID={this.id} {...newProps}>
       {children}
     </ConnectToState>;
-  };
+  }
 
   componentDidMount() {
     this._mountFirehose(this.firehose, this.props);
@@ -82,7 +82,7 @@ export class Firehose extends FirehoseBase {
     this._unmountFirehose(this.firehose);
     this.firehose = null;
   }
-};
+}
 Firehose.propTypes = {
   k8sResource: React.PropTypes.object,
   name: React.PropTypes.string,
@@ -90,7 +90,6 @@ Firehose.propTypes = {
   selectorRequired: React.PropTypes.bool,
   selector: React.PropTypes.object,
   fieldSelector: React.PropTypes.string,
-  name: React.PropTypes.string,
   className: React.PropTypes.string,
   isList: React.PropTypes.bool,
 };

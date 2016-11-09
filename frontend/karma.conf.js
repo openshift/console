@@ -1,3 +1,5 @@
+/* global __dirname:false */
+
 module.exports = function(config) {
 
   config.set({

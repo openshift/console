@@ -43,8 +43,8 @@ angular.module('bridge.service')
     email: email,
 
     logout: function(prev) {
-      var url = SERVER_FLAGS.loginURL;
-      return $http.post(SERVER_FLAGS.logoutURL)
+      var url = $window.SERVER_FLAGS.loginURL;
+      return $http.post($window.SERVER_FLAGS.logoutURL)
         .then(function() {
           if (prev) {
             url += '?prev=' + prev;
@@ -52,7 +52,7 @@ angular.module('bridge.service')
           $window.location.href = url;
         })
         .catch(function() {
-          $window.location.href = `${SERVER_FLAGS.loginErrorURL}?error_type=auth&error=logout_error`;
+          $window.location.href = `${$window.SERVER_FLAGS.loginErrorURL}?error_type=auth&error=logout_error`;
         });
     },
 

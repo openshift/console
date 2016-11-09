@@ -84,6 +84,6 @@ export class SelectorInput extends React.Component {
       </tags-input>
     </div>;
   }
-};
+}
 
 register('SelectorInput', SelectorInput);

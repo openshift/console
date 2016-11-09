@@ -86,4 +86,4 @@ export class Dropdown extends DropdownMixin {
       </div>
     );
   }
-};
+}
