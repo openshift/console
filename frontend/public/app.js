@@ -331,7 +331,7 @@ angular.module('bridge', [
   'use strict';
   $ngRedux.dispatch(UIActions.loadActiveNamespaceFromStorage());
 
-  $rootScope.SERVER_FLAGS = SERVER_FLAGS;
+  $rootScope.SERVER_FLAGS = $window.SERVER_FLAGS;
   $ngRedux.dispatch(actions.getResources());
   $rootScope.debug = debugSvc;
   $rootScope.FEATURE_FLAGS = featuresSvc;
@@ -396,7 +396,9 @@ angular.module('bridge', [
         // eslint-disable-next-line no-console
         console.error(err);
       }
-      catch (ignored) {}
+      catch (ignored) {
+        // ignore
+      }
     }
   };
 });

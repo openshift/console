@@ -37,7 +37,9 @@ class CheckBoxes extends React.Component {
 
     try {
       selected = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-    } catch (ignored) {}
+    } catch (ignored) {
+      // ignore
+    }
 
     if (_.isEmpty(selected) || !_.isArray(selected)) {
       selected = this.props.selected || [];
@@ -56,7 +58,9 @@ class CheckBoxes extends React.Component {
 
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(selected));
-    } catch (ignored) {}
+    } catch (ignored) {
+      // ignore
+    }
 
     this.props.applyFilter(new Set(filters));
   }
@@ -75,7 +79,7 @@ class CheckBoxes extends React.Component {
     this.setState({
       [i]: !this.state[i],
     }, () => this.applyFilter());
-  };
+  }
 
   render () {
     const {data, rowFilterItems, reducer} = this.props;

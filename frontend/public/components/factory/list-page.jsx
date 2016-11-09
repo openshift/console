@@ -27,11 +27,11 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters, row
 
     onFilterChange (event) {
       this.list.applyFilter('name', event.target.value);
-    };
+    }
 
     onDropdownChange (type, status) {
       this.list.applyFilter(type, status);
-    };
+    }
 
     render () {
       const {namespace, defaultNS, canCreate, canExpand = false} = this.props;
@@ -40,7 +40,7 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters, row
       const href = `ns/${namespace || defaultNS}/${kind.plural}/new`;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
-        return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type)} />;
+        return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type)} />;
       });
 
       const RowsOfRowFilters = rowFilters && _.map(rowFilters, (rowFilter, i) => {

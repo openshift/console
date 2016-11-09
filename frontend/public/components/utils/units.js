@@ -81,7 +81,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
   while (units.length > 0) {
     value = value * divisor;
     unit = units.shift();
-  };
+  }
 
   return { value, unit };
 };

@@ -18,7 +18,7 @@ angular.module('bridge.ui')
         return function() {
           return namespaceCacheSvc.delete($scope.namespace);
         };
-      };
+      }
 
       $scope.cogOptions = [
       ];

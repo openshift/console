@@ -24,14 +24,14 @@ angular.module('bridge.service')
       // watchK8sObject: (id, name, namespace, k8sType)
       dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.k8sType));
       return this;
-    };
+    }
 
     watchList () {
       // eslint-disable-next-line no-console
       console.log(`opening ${this.id}`);
       dispatch(actions.watchK8sList(this.id, this.query, this.k8sType));
       return this;
-    };
+    }
 
     unwatch () {
       dispatch(actions.stopK8sWatch(this.id));
@@ -40,7 +40,7 @@ angular.module('bridge.service')
 
     unwatchList () {
       dispatch(actions.stopK8sWatch(this.id));
-    };
+    }
 
     bindScope ($scope, name='', onStateChange=null) {
       name = name || this.k8sType.kind.plural;
@@ -57,7 +57,7 @@ angular.module('bridge.service')
         this.unwatchList();
       });
       return this;
-    };
+    }
 
     watch_ ($scope, name, onStateChange=null) {
       onStateChange = onStateChange || ((state) => _.extend($scope, state));
@@ -74,7 +74,7 @@ angular.module('bridge.service')
       })(state => {
         return onStateChange(state);
       });
-    };
+    }
 
     makeQuery_ (namespace, labelSelector, fieldSelector, name) {
       const query = {};
@@ -104,6 +104,6 @@ angular.module('bridge.service')
       }
 
       return `${k8sType.kind.plural}${qs}`;
-    };
+    }
   };
 });

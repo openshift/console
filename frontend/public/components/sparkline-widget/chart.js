@@ -51,7 +51,7 @@ class Chart {
         .range([this.height, 0]);
 
     return { x, y };
-  };
+  }
 
   _drawPoints(el, scales, data) {
     const area = d3.area()

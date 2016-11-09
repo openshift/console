@@ -161,8 +161,6 @@ angular.module('k8s')
       default:
         return genericFormatter(info);
     }
-
-    return '';
   }.bind(this);
 
 });
