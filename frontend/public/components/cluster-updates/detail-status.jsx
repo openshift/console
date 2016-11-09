@@ -59,9 +59,8 @@ export class DetailStatus extends React.Component {
       } else if (this.props.state === states.UP_TO_DATE) {
         if (this.props.config.triggerUpdateCheck) {
           return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
-        } else {
-          return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdateCheck', true)}>Check for Updates</button>;
         }
+        return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdateCheck', true)}>Check for Updates</button>;
       }
     }
   }
