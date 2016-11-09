@@ -328,7 +328,7 @@ export class EventStream extends React.Component {
     const klass = classNames('co-sysevent-stream__timeline', {
       'co-sysevent-stream__timeline--empty': !messages.length || !count
     });
-    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${messages.length} events`;
+    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${messages.length}+ events`;
 
     return (
       <div className="co-sysevent-stream">
