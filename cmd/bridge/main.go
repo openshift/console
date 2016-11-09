@@ -21,8 +21,6 @@ import (
 	"github.com/coreos-inc/bridge/pkg/proxy"
 	"github.com/coreos-inc/bridge/server"
 	"github.com/coreos-inc/bridge/stats"
-	"github.com/coreos-inc/bridge/verify"
-	"github.com/coreos-inc/tectonic/manager/pkg/license"
 )
 
 var (
@@ -85,24 +83,11 @@ func main() {
 	}
 	baseURL.Path = *fBasePath
 
-	var (
-		tier       string    = "unknown"
-		expiration time.Time = time.Now()
-	)
-	licenseFile, err := os.Open(*fLicenseFile)
-	if err != nil {
-		log.Warning("Could not open license file.")
-	} else {
-		tier, expiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
-		licenseFile.Close()
-	}
-
 	srv := &server.Server{
-		PublicDir:          *fPublicDir,
-		TectonicVersion:    *fTectonicVersion,
-		BaseURL:            baseURL,
-		TectonicTier:       tier,
-		TectonicExpiration: expiration,
+		PublicDir:           *fPublicDir,
+		TectonicVersion:     *fTectonicVersion,
+		BaseURL:             baseURL,
+		TectonicLicenseFile: *fLicenseFile,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
