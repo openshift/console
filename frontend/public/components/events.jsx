@@ -3,7 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {angulars, register} from './react-wrapper';
-import {Dropdown, ResourceLink, Box, Loading, Timestamp, TogglePlay} from './utils';
+import {Dropdown, ResourceLink, Box, Loading, Timestamp, TogglePlay, pluralize} from './utils';
 
 import {wsFactory} from '../module/ws-factory';
 
@@ -328,7 +328,7 @@ export class EventStream extends React.Component {
     const klass = classNames('co-sysevent-stream__timeline', {
       'co-sysevent-stream__timeline--empty': !messages.length || !count
     });
-    const messageCount = count < maxMessages ? `Showing ${count} events` : `Showing ${count} of ${messages.length} events`;
+    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${messages.length} events`;
 
     return (
       <div className="co-sysevent-stream">
