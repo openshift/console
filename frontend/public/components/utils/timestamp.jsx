@@ -12,11 +12,6 @@ export class Timestamp extends React.Component {
     this.timeStr();
   }
 
-  startInterval () {
-    clearInterval(this.interval);
-    this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
-  }
-
   componentWillReceiveProps (nextProps) {
     if (nextProps.timestamp === this.props.timestamp) {
       return;
@@ -26,6 +21,15 @@ export class Timestamp extends React.Component {
       this.startInterval();
     }
     this.timeStr();
+  }
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return nextProps.timestamp !== this.props.timestamp || nextState.timestamp !== this.state.timestamp;
+  }
+
+  startInterval () {
+    clearInterval(this.interval);
+    this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
   }
 
   upsertState (timestamp) {

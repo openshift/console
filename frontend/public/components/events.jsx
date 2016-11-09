@@ -8,44 +8,51 @@ import {Dropdown, ResourceLink, Box, Loading, Timestamp, TogglePlay} from './uti
 import {wsFactory} from '../module/ws-factory';
 
 const maxMessages = 500;
+const flushInterval = 500;
 
 const eventID = (se) => {
   return `U:${se.metadata.uid}`;
 };
 
 
-const SysEvent = (se) => {
-  const klass = classNames('co-sysevent', `co-sysevent--${se.reason.toLowerCase()}`);
-  const obj = se.involvedObject;
-  const tooltipMsg = `${se.reason} (${obj.kind.toLowerCase()})`;
+class SysEvent extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return !(nextProps.metadata.uid && nextProps.metadata.uid === this.props.metadata.uid && nextProps.count === this.props.count);
+  }
 
-  return (
-    <div key={eventID(se)} className={klass}>
-      <div className="co-sysevent__icon-box">
-        <i className="co-sysevent-icon" title={tooltipMsg} />
-        <div className="co-sysevent__icon-line"></div>
+  render() {
+    const klass = classNames('co-sysevent', `co-sysevent--${this.props.reason.toLowerCase()}`);
+    const obj = this.props.involvedObject;
+    const tooltipMsg = `${this.props.reason} (${obj.kind.toLowerCase()})`;
+
+    return (
+      <div key={eventID(this.props)} className={klass}>
+        <div className="co-sysevent__icon-box">
+          <i className="co-sysevent-icon" title={tooltipMsg} />
+          <div className="co-sysevent__icon-line"></div>
+        </div>
+        <div className="co-sysevent__main-box">
+          <ResourceLink
+            kind={obj.kind}
+            namespace={obj.namespace}
+            name={obj.name}
+            uid={obj.uid}
+          />
+          <div className="co-sysevent__main-message">{this.props.message}</div>
+        </div>
+        <div className="co-sysevent__meta-box">
+          <div><Timestamp timestamp={this.props.lastTimestamp}/></div>
+          <small className="co-sysevent__meta-source">
+            Generated from <span>{this.props.source.component}</span>
+            {this.props.source.component === 'kubelet' &&
+              <span> on <a href={`nodes/${this.props.source.host}`}>{this.props.source.host}</a></span>
+            }
+          </small>
+        </div>
       </div>
-      <div className="co-sysevent__main-box">
-        <ResourceLink
-          kind={obj.kind}
-          namespace={obj.namespace}
-          name={obj.name}
-          uid={obj.uid}
-        />
-        <div className="co-sysevent__main-message">{se.message}</div>
-      </div>
-      <div className="co-sysevent__meta-box">
-        <div><Timestamp timestamp={se.lastTimestamp}/></div>
-        <small className="co-sysevent__meta-source">
-          Generated from <span>{se.source.component}</span>
-          {se.source.component === 'kubelet' &&
-            <span> on <a href={`nodes/${se.source.host}`}>{se.source.host}</a></span>
-          }
-        </small>
-      </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export class EventStreamPage extends React.Component {
   constructor (props) {
@@ -114,6 +121,8 @@ export class EventStream extends React.Component {
     super(props);
     this.ws = null;
     this.oldestTimestamp = new Date();
+    this.messages = [];
+    this.flushStateUpdates = _.throttle(this.flushStateUpdates, flushInterval);
     this.state = {
       active: true,
       messages: [],
@@ -121,10 +130,12 @@ export class EventStream extends React.Component {
       loading: true,
       oldestTimestamp: this.oldestTimestamp,
     };
+    this.boundToggleStream = this.toggleStream.bind(this);
   }
 
   componentWillUnmount() {
     wsFactory.destroy('sysevents');
+    this.flushStateUpdates.cancel();
   }
 
   componentDidMount () {
@@ -139,45 +150,95 @@ export class EventStream extends React.Component {
       path: angulars.k8s.resource.watchURL(angulars.kinds.EVENT, params),
       jsonParse: true,
       bufferEnabled: true,
-      bufferFlushInterval: 500,
+      bufferFlushInterval: flushInterval,
       bufferMax: maxMessages,
     })
     .onmessage((data) => {
       if (data.object.message) {
         data.object.message = data.object.message.replace(/\\"/g, '\'');
       }
-      let messages = this.state.messages;
-      messages.unshift(data);
-      if (messages.length > maxMessages) {
-        messages = messages.slice(0, maxMessages);
+
+      data.sortTimestamp = 1 - new Date(data.object.lastTimestamp);
+
+      switch (data.type) {
+        case 'ADDED':
+          this.insertMessage(data);
+          break;
+        case 'MODIFIED':
+          this.updateMessage(data);
+          break;
+        case 'DELETED':
+          this.deleteMessage(data);
+          break;
+        default:
+          // eslint-disable-next-line no-console
+          console.error(`UNHANDLED EVENT: ${data.type}`);
+          return;
       }
-      const state = {
-        messages: messages,
-      };
+
+      if (this.messages.length > maxMessages) {
+        this.messages = this.messages.slice(0, maxMessages);
+      }
+
       const lastTimestamp = new Date(data.object.lastTimestamp);
       if (this.oldestTimestamp > lastTimestamp) {
         this.oldestTimestamp = lastTimestamp;
-        state.oldestTimestamp = data.object.lastTimestamp;
       }
-      this.setState(state);
+
+      this.flushStateUpdates();
     })
     .onopen(() => {
       this.setState({
         error: false,
-        messages: [],
         loading: false,
       });
+      this.messages = [];
+      this.flushStateUpdates();
     })
     .onclose(() => {
-      this.setState({
-        messages: [],
-      });
+      this.messages = [];
+      this.flushStateUpdates();
     })
     .onerror(() => {
-      this.setState({
-        error: true,
-        messages: [],
-      });
+      this.setState({ error: true });
+      this.messages = [];
+      this.flushStateUpdates();
+    });
+  }
+
+  findMessageIndex(uid) {
+    return _.findIndex(this.messages, message => message.object.metadata.uid === uid);
+  }
+
+  insertMessage(data) {
+    const insertIndex = _.sortedIndexBy(this.messages, data, function(o) { return o.sortTimestamp; });
+
+    this.messages.splice(insertIndex, 0, data);
+  }
+
+  updateMessage(data) {
+    const existingMessageIndex = this.findMessageIndex(data.object.metadata.uid);
+    if (existingMessageIndex >= 0) {
+      this.messages.splice(existingMessageIndex, 1, data);
+    } else {
+      this.insertMessage(data);
+    }
+  }
+
+  deleteMessage(data) {
+    const existingMessageIndex = this.findMessageIndex(data.object.metadata.uid);
+    if (existingMessageIndex >= 0) {
+      this.messages.splice(existingMessageIndex, 1);
+    }
+  }
+
+  // Messages can come in extremely fast when the buffer flushes.
+  // Instead of calling setState() on every single message, let onmessage()
+  // update an instance variable, and throttle the actual UI update (see constructor)
+  flushStateUpdates() {
+    this.setState({
+      messages: this.messages,
+      oldestTimestamp: this.oldestTimestamp
     });
   }
 
@@ -200,10 +261,6 @@ export class EventStream extends React.Component {
 
     return _.chain(this.state.messages)
       .filter(f)
-      .uniqBy(e => eventID(e.object))
-      .sortBy(e => e.object.lastTimestamp)
-      .reverse()
-      .slice(0, maxMessages)
       .value()
     ;
   }
@@ -280,7 +337,7 @@ export class EventStream extends React.Component {
         </div>
 
         <div className={klass}>
-          <TogglePlay active={active} onClick={() => this.toggleStream()} className="co-sysevent-stream__timeline__btn" />
+          <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
           <div className="co-sysevent-stream__timeline__btn-text">
             {statusBtnTxt}
           </div>
