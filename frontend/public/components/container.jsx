@@ -88,9 +88,8 @@ const Env = ({env}) => {
       return `config-map: ${v.configMapKeyRef.name}/${v.configMapKeyRef.key}`;
     } else if (_.has(v, 'secretKeyRef')) {
       return `secret: ${v.secretKeyRef.name}/${v.secretKeyRef.key}`;
-    } else {
-      return e.value;
     }
+    return e.value;
   };
 
   return <table className="table">

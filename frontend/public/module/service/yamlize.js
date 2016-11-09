@@ -40,9 +40,8 @@ const yamlizeObject = function(obj, indent) {
   if (_.isString(obj)) {
     if (safeWithoutQuotes(obj)) {
       return obj;
-    } else {
-      return JSON.stringify(obj);
     }
+    return JSON.stringify(obj);
   }
 
   if (_.isNull(obj) ||
