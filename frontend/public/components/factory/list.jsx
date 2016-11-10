@@ -21,8 +21,8 @@ const filters = {
       return true;
     }
 
-    let allFilters = _.values(_.fromPairs(phases.all || []));
-    let phase = podPhase(pod);
+    const allFilters = _.values(_.fromPairs(phases.all || []));
+    const phase = podPhase(pod);
 
     return phases.selected.has(phase) || !_.includes(allFilters, phase);
   },
