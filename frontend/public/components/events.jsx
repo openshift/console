@@ -21,7 +21,7 @@ class SysEvent extends React.Component {
   }
 
   render() {
-    const klass = classNames('co-sysevent', `co-sysevent--${this.props.reason.toLowerCase()}`);
+    const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
     const obj = this.props.involvedObject;
     const tooltipMsg = `${this.props.reason} (${obj.kind.toLowerCase()})`;
 
@@ -90,25 +90,14 @@ export class EventStreamPage extends React.Component {
 
 register('EventStreamPage', EventStreamPage);
 
-const filterMap = {
-  error: {
-    pod: ['failed', 'failedScheduling'],
-    node: ['offline'],
-  },
-  info: {
-    pod: ['created', 'pulling', 'pulled', 'killing', 'started', 'scheduled'],
-    node: ['online', 'starting'],
-  }
-};
-
-// Predicate function to filter by event "category" (info, error, etc)
-const categoryFilter = (category, {involvedObject, reason}) => {
+// Predicate function to filter by event "category" (info, error, or all)
+const categoryFilter = (category, {reason}) => {
   if (category === 'all') {
     return true;
   }
-  const kind = involvedObject.kind.toLowerCase();
-  const reasons = filterMap[category][kind];
-  return (reasons && reasons.includes(reason.toLowerCase()));
+  const errorSubstrings = ['error', 'failed', 'unhealthy', 'nodenotready'];
+  const isError = errorSubstrings.find(substring => reason.toLowerCase().includes(substring));
+  return category === 'error' ? isError : !isError;
 };
 
 const kindFilter = (kind, {involvedObject}) => {

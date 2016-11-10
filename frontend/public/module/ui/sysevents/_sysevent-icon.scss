@@ -9,10 +9,8 @@
   width: 19px;
 }
 
-.co-sysevent[class*="error"],
-.co-sysevent[class*="failed"],
-.co-sysevent[class*="unhealthy"],
-.co-sysevent[class*="nodenotready"], {
+
+.co-sysevent--error {
   $failure-red: #d64456;
 
   .co-sysevent-icon,
