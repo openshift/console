@@ -109,7 +109,7 @@ gulp.task('js-build', ['templates'], () => {
 
 gulp.task('browserify', () => {
   const b = jsBuild();
-  const bundler = (id) => {
+  const bundler = () => {
     b.bundle()
       .on('error', (err) => {
         // eslint-disable-next-line no-console
@@ -118,7 +118,7 @@ gulp.task('browserify', () => {
       })
     .pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
     // eslint-disable-next-line no-console
-    console.log(`updated ${distDir}/app-bundle.js to ${id}`);
+    console.log(`updated ${distDir}/app-bundle.js`);
   };
 
   b.on('update', bundler);
@@ -146,11 +146,10 @@ gulp.task('clean', () => {
   return del(distDir);
 });
 
+// Delete build artifacts not served to the browser
 gulp.task('clean-package', () => {
   return del([
     distDir + '/style.css',
-    distDir + '/app.min.js',
-    distDir + '/app.js',
     distDir + '/templates.js'
   ]);
 });
@@ -212,7 +211,6 @@ gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], (
 // Minify app css.
 gulp.task('css-build', ['sass'], () => {
   return gulp.src(['public/dist/style.css'])
-    .pipe(concat('public/dist/deps.css'))
     .pipe(rename('app-bundle.css'))
     .pipe(gulp.dest(distDir));
 });
