@@ -31,7 +31,23 @@ const templateSrc = [
 ];
 
 let CURRENT_SHA;
-let IN_DEVELOPMENT = false;
+
+if (!process.env.NODE_ENV) {
+  // Default to production builds if not specified.
+  process.env.NODE_ENV = 'production';
+}
+
+// Development tasks such as `gulp dev`
+// should always run in the development environment
+gulp.task('set-development', () => {
+  process.env.NODE_ENV = 'development';
+});
+
+// Test tasks such as `npm test`
+// should always run in the test environment
+gulp.task('set-test', () => {
+  process.env.NODE_ENV = 'test';
+});
 
 function isExternalModule (file) {
   // lifted from browserify!!!
@@ -42,7 +58,8 @@ function isExternalModule (file) {
 }
 
 const externals = [];
-function jsBuild (debug) {
+function jsBuild () {
+  const debug = process.env.NODE_ENV === 'development';
   const opts = {
     debug,
     cache: {},
@@ -66,10 +83,6 @@ function jsBuild (debug) {
   return browserify(opts).transform('babelify', {presets: ['es2015', 'react']});
 }
 
-gulp.task('set-development', () => {
-  IN_DEVELOPMENT = true;
-});
-
 gulp.task('js-deps', ['js-build'], () => {
   // HACK: we rely on the externals being created by js-build (jsBuild)
   return browserify()
@@ -82,7 +95,7 @@ gulp.task('js-deps', ['js-build'], () => {
 
 // Compile all the js source code.
 gulp.task('js-build', ['templates'], () => {
-  return jsBuild(false)
+  return jsBuild()
     .bundle()
     // .pipe(rename({ suffix: '.min' }))
     .pipe(source('app-bundle.js'))
@@ -95,7 +108,7 @@ gulp.task('js-build', ['templates'], () => {
 
 
 gulp.task('browserify', () => {
-  const b = jsBuild(true);
+  const b = jsBuild();
   const bundler = (id) => {
     b.bundle()
       .on('error', (err) => {
@@ -144,7 +157,7 @@ gulp.task('clean-package', () => {
 
 gulp.task('sass', () => {
   return gulp.src('./public/style.scss')
-    .pipe(IN_DEVELOPMENT ? sass().on('error', sass.logError) : sass())
+    .pipe(process.env.NODE_ENV === 'production' ? sass() : sass().on('error', sass.logError))
     .pipe(gulp.dest('./public/dist'));
 });
 
@@ -241,7 +254,7 @@ gulp.task('dev', ['set-development', 'css-build', 'html', 'templates', 'browseri
 /**
  * Karma test
  */
-gulp.task('test', ['lint', 'js-build', 'js-deps'], (cb) => {
+gulp.task('test', ['lint', 'set-test', 'js-build', 'js-deps'], (cb) => {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
