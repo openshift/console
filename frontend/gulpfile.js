@@ -157,7 +157,7 @@ gulp.task('clean-package', () => {
 
 gulp.task('sass', () => {
   return gulp.src('./public/style.scss')
-    .pipe(process.env.NODE_ENV === 'production' ? sass() : sass().on('error', sass.logError))
+    .pipe(process.env.NODE_ENV === 'production' ? sass({outputStyle: 'compressed'}) : sass().on('error', sass.logError))
     .pipe(gulp.dest('./public/dist'));
 });
 
