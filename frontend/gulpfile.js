@@ -213,11 +213,11 @@ gulp.task('css-sha', ['css-build', 'sha'], () => {
 gulp.task('html', ['sha'], () => {
   return gulp.src('./public/index.html')
     .pipe(htmlReplace((function() {
-      var h = {
-        'js':  `static/build.${CURRENT_SHA}.min.js`,
-        'css': `static/build.${CURRENT_SHA}.css`,
-      };
-      if (process.env.NODE_ENV !== 'production') {
+      var h = {};
+      if (process.env.NODE_ENV === 'production') {
+        h['js'] = `static/build.${CURRENT_SHA}.min.js`;
+        h['css'] = `static/build.${CURRENT_SHA}.css`;
+      } else {
         h['analytics'] = '';
       }
       return h;
@@ -230,7 +230,7 @@ gulp.task('html', ['sha'], () => {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['set-development', 'css-build', 'templates', 'browserify'], () => {
+gulp.task('dev', ['set-development', 'css-build', 'html', 'templates', 'browserify'], () => {
   gulp.watch(templateSrc, ['templates']);
   gulp.start('browserify');
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
