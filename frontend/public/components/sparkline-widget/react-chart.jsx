@@ -14,13 +14,14 @@ class ReactChart extends React.Component {
     };
 
     this._id = _.uniqueId('sparkline-');
+    this._resizeHandler = this.handleResize.bind(this);
   }
 
   componentDidMount() {
     this.chartNode = ReactDOM.findDOMNode(this);
     this.createChart();
     this.handleResize();
-    window.addEventListener('resize', this.handleResize.bind(this));
+    window.addEventListener('resize', this._resizeHandler);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,7 +33,7 @@ class ReactChart extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize.bind(this));
+    window.removeEventListener('resize', this._resizeHandler);
   }
 
   createChart(props = this.props) {

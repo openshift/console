@@ -5,17 +5,19 @@ import {ResourceIcon} from './resource-icon';
 
 
 export const ResourceLink = ({name, uid, kind, namespace}) => {
-  let href;
+  let href, angularsKind;
   if (kind) {
-    kind = _.find(angulars.kinds, {id: kind.toLowerCase()});
-    href = `${kind.path}/${name}/details`;
-    if (namespace) {
-      href = `ns/${namespace}/${href}`;
+    angularsKind = _.find(angulars.kinds, {id: kind.toLowerCase()});
+    if (angularsKind) {
+      href = `${angularsKind.path}/${name}/details`;
+      if (namespace) {
+        href = `ns/${namespace}/${href}`;
+      }
     }
   }
   return (
     <span className="co-resource-link">
-      {kind && <ResourceIcon kind={kind.id} />}
+      {angularsKind && <ResourceIcon kind={angularsKind.id} />}
       {href ? <a href={href} title={uid}>{name}</a> : <span>{name}</span>}
     </span>
   );
