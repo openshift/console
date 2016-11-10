@@ -80,7 +80,7 @@ export class LicenseSetting extends React.Component {
         inputValidator: (value) => {
           const data = new FormData();
           data.append('license', value);
-          return coFetch('/license/validate', {
+          return coFetch('license/validate', {
             method: 'POST',
             body: data
           }).then((response) => {
