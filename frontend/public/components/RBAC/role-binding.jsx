@@ -41,10 +41,10 @@ const RoleRef = ({parentNamespace, namespace, name, kind}) => {
 
   let href;
   if (kind === 'clusterrole') {
-    href = `/clusterroles/#${qualifiedName}`;
+    href = `clusterroles/#${qualifiedName}`;
   } else {
     // RoleRefs that are Roles must be in the same namespace as their Bindings
-    href = `/ns/${namespace || parentNamespace}/roles#${qualifiedName}`;
+    href = `ns/${namespace || parentNamespace}/roles#${qualifiedName}`;
   }
   return <span>
     <ResourceIcon kind={kind} /> <a href={href}>{name}</a>
