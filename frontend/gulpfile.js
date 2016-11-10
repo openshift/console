@@ -24,6 +24,7 @@ const PrettyError = require('pretty-error');
 
 const entry = './public/_app.js';
 const distDir = './public/dist';
+const indexSrc = './public/index.html';
 const templateSrc = [
   './public/{module,page}/**/*.html',
   './public/lib/mochi/img/tectonic-logo.svg',
@@ -211,7 +212,7 @@ gulp.task('css-sha', ['css-build', 'sha'], () => {
 
 // Replace code blocks in html with build versions.
 gulp.task('html', ['sha'], () => {
-  return gulp.src('./public/index.html')
+  return gulp.src(indexSrc)
     .pipe(htmlReplace((function() {
       var h = {};
       if (process.env.NODE_ENV === 'production') {
@@ -232,6 +233,7 @@ gulp.task('html', ['sha'], () => {
 // Auto-runs: eslint & unit tests.
 gulp.task('dev', ['set-development', 'css-build', 'html', 'templates', 'browserify'], () => {
   gulp.watch(templateSrc, ['templates']);
+  gulp.watch(indexSrc, ['html']);
   gulp.start('browserify');
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
 });
