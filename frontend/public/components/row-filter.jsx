@@ -62,7 +62,7 @@ class CheckBoxes extends React.Component {
       // ignore
     }
 
-    this.props.applyFilter(new Set(filters));
+    this.props.applyFilter({ selected: new Set(filters), all: rowFilterItems });
   }
 
   toggle (i) {

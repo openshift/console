@@ -17,10 +17,14 @@ const filters = {
   },
 
   'pod-status': (phases, pod) => {
-    if (!phases || !phases.size) {
+    if (!phases || !phases.selected || !phases.selected.size) {
       return true;
     }
-    return phases.has(pod.status.phase) || phases.has(podPhase(pod));
+
+    const allFilters = _.values(_.fromPairs(phases.all || []));
+    const phase = podPhase(pod);
+
+    return phases.selected.has(phase) || !_.includes(allFilters, phase);
   },
 
   'node-status': (status, node) => {
@@ -29,7 +33,7 @@ const filters = {
   },
 };
 
-const filter = (_filters, objects) => {
+const getFilteredRows = (_filters, objects) => {
   if (_.isEmpty(_filters)) {
     return objects;
   }
@@ -59,7 +63,7 @@ const filterPropType = (props, propName, componentName) => {
 const Rows = (props) => {
   const {k8s: {getQN}} = angulars;
   const {expand, filters, data, selected, selectRow, Row} = props;
-  const rows = filter(filters, data).map(object => {
+  const rows = getFilteredRows(filters, data).map(object => {
     return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected === getQN(object)} />;
   });
   return <div className="co-m-table-grid__body"> {rows} </div>;
