@@ -148,10 +148,12 @@ gulp.task('clean', () => {
 
 // Delete build artifacts not served to the browser
 gulp.task('clean-package', () => {
-  return del([
-    distDir + '/style.css',
-    distDir + '/templates.js'
-  ]);
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  const files = ['style.css', 'app-bundle.*', 'templates.js'];
+  return del(files.map(file => `${distDir}/${file}`));
 });
 
 gulp.task('sass', () => {
@@ -199,6 +201,10 @@ gulp.task('copy-deps', () => {
 
 // Combine all the js into the final build file.
 gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
   // NOTE: File Order Matters.
   return gulp.src([
     distDir + '/deps.js',
@@ -216,6 +222,10 @@ gulp.task('css-build', ['sass'], () => {
 });
 
 gulp.task('css-sha', ['css-build', 'sha'], () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
   return gulp.src(distDir + '/app-bundle.css')
     .pipe(rename(`build.${CURRENT_SHA}.css`))
     .pipe(gulp.dest(distDir));
