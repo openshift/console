@@ -59,7 +59,7 @@ class LicenseNotifier extends React.Component {
   }
 
   render() {
-    const actions = <span><a href="/settings/cluster">View the cluster settings</a> or <a href="https://account.tectonic.com">log in to your Tectonic account</a></span>;
+    const actions = <span><a href="settings/cluster">View the cluster settings</a> or <a href="https://account.tectonic.com">log in to your Tectonic account</a></span>;
 
     let notification;
     if (!this.state.expiration) {
