@@ -49,6 +49,10 @@ gulp.task('set-test', () => {
   process.env.NODE_ENV = 'test';
 });
 
+/**
+ * Build JavaScript
+ */
+
 function isExternalModule (file) {
   // lifted from browserify!!!
   var regexp = process.platform === 'win32' ?
@@ -141,38 +145,22 @@ gulp.task('js-deps', ['js-bundle'], () => {
 
 gulp.task('js-build', ['js-bundle', 'js-deps']);
 
-gulp.task('sha', (cb) => {
-  exec('git rev-parse HEAD', (err, stdout) => {
-    if (err) {
-      console.log('Error retrieving git SHA.');
-      cb(false);
-      return;
-    }
-    CURRENT_SHA = stdout.trim();
-    console.log('sha: ', CURRENT_SHA);
-    cb();
-  });
-});
+/**
+ * Build CSS
+ */
 
-// Delete ALL generated files.
-gulp.task('clean', () => {
-  return del(distDir);
-});
-
-// Delete build artifacts not served to the browser
-gulp.task('clean-package', () => {
-  if (process.env.NODE_ENV !== 'production') {
-    return;
-  }
-
-  const files = ['style.css', 'app-bundle.*', 'templates.js', 'deps.*'];
-  return del(files.map(file => `${distDir}/${file}`));
-});
-
+// Build app css
 gulp.task('sass', () => {
   return gulp.src('./public/style.scss')
     .pipe(process.env.NODE_ENV === 'production' ? sass({outputStyle: 'compressed'}) : sass().on('error', sass.logError))
     .pipe(gulp.dest('./public/dist'));
+});
+
+// Rename style.css to app-bundle.css
+gulp.task('css-build', ['sass'], () => {
+  return gulp.src(['public/dist/style.css'])
+    .pipe(rename('app-bundle.css'))
+    .pipe(gulp.dest(distDir));
 });
 
 gulp.task('lint', cb => {
@@ -182,6 +170,10 @@ gulp.task('lint', cb => {
     cb(err, stdout);
   });
 });
+
+/**
+ * Build everything else
+ */
 
 // Precompile html templates.
 gulp.task('templates', () => {
@@ -204,37 +196,10 @@ gulp.task('assets', ['fonts'], () => {
     .pipe(gulp.dest(distDir + '/imgs'));
 });
 
-// Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'sha'], () => {
-  if (process.env.NODE_ENV !== 'production') {
-    return;
-  }
-
-  // NOTE: File Order Matters.
-  return gulp.src([
-    distDir + '/deps.min.js',
-    distDir + '/app-bundle.min.js'
-  ])
-  .pipe(concat(`build.${CURRENT_SHA}.min.js`))
-  .pipe(gulp.dest(distDir));
-});
-
-// Build app css
-gulp.task('css-build', ['sass'], () => {
-  return gulp.src(['public/dist/style.css'])
-    .pipe(rename('app-bundle.css'))
-    .pipe(gulp.dest(distDir));
-});
-
-// Combine all the css into the final build file.
-gulp.task('css-package', ['css-build', 'sha'], () => {
-  if (process.env.NODE_ENV !== 'production') {
-    return;
-  }
-
-  return gulp.src(distDir + '/app-bundle.css')
-    .pipe(rename(`build.${CURRENT_SHA}.css`))
-    .pipe(gulp.dest(distDir));
+// Copy all deps to dist folder
+gulp.task('copy-deps', () => {
+  return gulp.src('./public/lib/**/*')
+    .pipe(gulp.dest(distDir + '/lib'));
 });
 
 // Replace code blocks in html with build versions.
@@ -255,10 +220,63 @@ gulp.task('html', ['sha'], () => {
     .pipe(gulp.dest(distDir));
 });
 
-// Copy all deps to dist folder for packaging.
-gulp.task('copy-deps', () => {
-  return gulp.src('./public/lib/**/*')
-    .pipe(gulp.dest(distDir + '/lib'));
+/**
+ * Prepare build for production
+ */
+
+// Save current git SHA
+gulp.task('sha', (cb) => {
+  exec('git rev-parse HEAD', (err, stdout) => {
+    if (err) {
+      console.log('Error retrieving git SHA.');
+      cb(false);
+      return;
+    }
+    CURRENT_SHA = stdout.trim();
+    console.log('sha: ', CURRENT_SHA);
+    cb();
+  });
+});
+
+// Combine all the js into the final build file.
+gulp.task('js-package', ['js-build', 'sha'], () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  // NOTE: File Order Matters.
+  return gulp.src([
+    distDir + '/deps.min.js',
+    distDir + '/app-bundle.min.js'
+  ])
+  .pipe(concat(`build.${CURRENT_SHA}.min.js`))
+  .pipe(gulp.dest(distDir));
+});
+
+// Combine all the css into the final build file.
+gulp.task('css-package', ['css-build', 'sha'], () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  return gulp.src(distDir + '/app-bundle.css')
+    .pipe(rename(`build.${CURRENT_SHA}.css`))
+    .pipe(gulp.dest(distDir));
+});
+
+// Delete ALL generated files.
+gulp.task('clean', () => {
+  return del(distDir);
+});
+
+// Delete build artifacts not served to the browser
+gulp.task('clean-package', () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  const files = ['style.css', 'app-bundle.*', 'templates.js', 'deps.*'];
+  return del(files.map(file => `${distDir}/${file}`));
 });
 
 // Live-watch development mode.
