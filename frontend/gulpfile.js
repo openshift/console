@@ -86,11 +86,19 @@ function jsBuild () {
 
 gulp.task('js-deps', ['js-build'], () => {
   // HACK: we rely on the externals being created by js-build (jsBuild)
-  return browserify()
-  .require(externals)
-  .bundle()
-  .pipe(source('deps.js'))
-  .pipe(gulp.dest(distDir));
+  const build = () => browserify()
+    .require(externals)
+    .bundle()
+    .pipe(source('deps.js'));
+
+  if (process.env.NODE_ENV === 'production') {
+    return build()
+      .pipe(streamify(uglify()))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(gulp.dest(distDir));
+  }
+
+  return build().pipe(gulp.dest(distDir));
 });
 
 
@@ -151,7 +159,7 @@ gulp.task('clean-package', () => {
     return;
   }
 
-  const files = ['style.css', 'app-bundle.*', 'templates.js', 'deps.js'];
+  const files = ['style.css', 'app-bundle.*', 'templates.js', 'deps.*'];
   return del(files.map(file => `${distDir}/${file}`));
 });
 
@@ -204,7 +212,7 @@ gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], (
 
   // NOTE: File Order Matters.
   return gulp.src([
-    distDir + '/deps.js',
+    distDir + '/deps.min.js',
     distDir + '/app-bundle.min.js'
   ])
   .pipe(concat(`build.${CURRENT_SHA}.min.js`))
