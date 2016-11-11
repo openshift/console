@@ -3,7 +3,6 @@
 /* eslint-disable no-console */
 /* eslint prefer-template:0 */
 
-const fs = require('fs');
 const exec = require('child_process').exec;
 
 const del = require('del');
@@ -104,35 +103,41 @@ gulp.task('js-deps', ['js-build'], () => {
 
 // Compile all the js source code.
 gulp.task('js-build', ['templates'], () => {
-  return jsBuild()
-    .bundle()
-    // .pipe(rename({ suffix: '.min' }))
-    .pipe(source('app-bundle.js'))
-    .pipe(ngAnnotate())
-    .pipe(streamify(uglify()))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(distDir));
-});
+  let firstBuild = true;
+  const build = jsBuild();
 
-
-gulp.task('browserify', () => {
-  const b = jsBuild();
   const bundler = () => {
-    console.log('updating bundle...');
-    b.bundle()
+    return build.bundle()
       .on('error', (err) => {
+        if (firstBuild) {
+          throw err;
+        }
         console.log(new PrettyError().render(err));
-        b.emit('end');
+        build.emit('end');
       })
-      .on('end', () => {
-        console.log(`updated ${distDir}/app-bundle.js`);
-      })
-      .pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
+      .pipe(source('app-bundle.js'))
+      .pipe(ngAnnotate());
   };
 
-  b.on('update', bundler);
+  if (process.env.NODE_ENV === 'production') {
+    return bundler()
+      .pipe(streamify(uglify()))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(gulp.dest(distDir));
+  }
 
-  return bundler();
+  const devBundler = () => {
+    return bundler()
+      .pipe(gulp.dest(distDir));
+  };
+
+  build.on('update', () => {
+    firstBuild = false;
+    console.log('Updating app-bundle.js...');
+    return devBundler().on('end', () => console.log('Updated app-bundle.js'));
+  });
+
+  return devBundler();
 });
 
 gulp.task('sha', (cb) => {
@@ -255,10 +260,8 @@ gulp.task('html', ['sha'], () => {
 });
 
 // Live-watch development mode.
-// Auto-compiles: sass & templates.
-// Auto-runs: eslint & unit tests.
+// Auto-compiles: js, sass, index.html, templates.
 gulp.task('dev', ['set-development', 'default'], () => {
-  gulp.start('browserify');
   gulp.watch(templateSrc, ['templates']);
   gulp.watch(indexSrc, ['html']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
