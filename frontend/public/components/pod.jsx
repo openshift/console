@@ -5,10 +5,11 @@ import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Cog, LabelList, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 
-const PodCog = ({pod}) => {
+const PodCog = ({pod, isDisabled}) => {
   const kind = angulars.kinds.POD;
   const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" />;
+
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" isDisabled={isDisabled} />;
 };
 
 const readiness = ({status}) => {
@@ -53,6 +54,7 @@ const readiness = ({status}) => {
 const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
   let status = phase;
+  
   if (status !== 'Running') {
     status = <span className="co-error" >
       <i className="fa fa-times-circle co-icon-space-r" aria-hidden="true" />{phase}
@@ -61,7 +63,7 @@ const PodRow = ({obj: pod}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <PodCog pod={pod} key={'cog'} />
+      <PodCog pod={pod} key={'cog'} isDisabled={phase === 'Terminating'} />
       <ResourceIcon kind="pod" />
       <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/details`} title={pod.metadata.uid}>{pod.metadata.name}</a>
     </div>
