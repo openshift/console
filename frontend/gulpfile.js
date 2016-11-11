@@ -83,26 +83,8 @@ function jsBuild () {
   return browserify(opts).transform('babelify', {presets: ['es2015', 'react']});
 }
 
-gulp.task('js-deps', ['js-build'], () => {
-  // HACK: we rely on the externals being created by js-build (jsBuild)
-  const build = () => browserify()
-    .require(externals)
-    .bundle()
-    .pipe(source('deps.js'));
-
-  if (process.env.NODE_ENV === 'production') {
-    return build()
-      .pipe(streamify(uglify()))
-      .pipe(rename({ suffix: '.min' }))
-      .pipe(gulp.dest(distDir));
-  }
-
-  return build().pipe(gulp.dest(distDir));
-});
-
-
 // Compile all the js source code.
-gulp.task('js-build', ['templates'], () => {
+gulp.task('js-bundle', ['templates'], () => {
   let firstBuild = true;
   const build = jsBuild();
 
@@ -139,6 +121,25 @@ gulp.task('js-build', ['templates'], () => {
 
   return devBundler();
 });
+
+gulp.task('js-deps', ['js-bundle'], () => {
+  // HACK: we rely on the externals being created by js-build (jsBuild)
+  const build = () => browserify()
+    .require(externals)
+    .bundle()
+    .pipe(source('deps.js'));
+
+  if (process.env.NODE_ENV === 'production') {
+    return build()
+      .pipe(streamify(uglify()))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(gulp.dest(distDir));
+  }
+
+  return build().pipe(gulp.dest(distDir));
+});
+
+gulp.task('js-build', ['js-bundle', 'js-deps']);
 
 gulp.task('sha', (cb) => {
   exec('git rev-parse HEAD', (err, stdout) => {
@@ -204,7 +205,7 @@ gulp.task('assets', ['fonts'], () => {
 });
 
 // Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'js-deps', 'sha'], () => {
+gulp.task('js-package', ['js-build', 'sha'], () => {
   if (process.env.NODE_ENV !== 'production') {
     return;
   }
@@ -218,14 +219,15 @@ gulp.task('js-package', ['js-build', 'js-deps', 'sha'], () => {
   .pipe(gulp.dest(distDir));
 });
 
-// Minify app css.
+// Build app css
 gulp.task('css-build', ['sass'], () => {
   return gulp.src(['public/dist/style.css'])
     .pipe(rename('app-bundle.css'))
     .pipe(gulp.dest(distDir));
 });
 
-gulp.task('css-sha', ['css-build', 'sha'], () => {
+// Combine all the css into the final build file.
+gulp.task('css-package', ['css-build', 'sha'], () => {
   if (process.env.NODE_ENV !== 'production') {
     return;
   }
@@ -270,7 +272,7 @@ gulp.task('dev', ['set-development', 'default'], () => {
 /**
  * Karma test
  */
-gulp.task('test', ['lint', 'set-test', 'js-build', 'js-deps'], (cb) => {
+gulp.task('test', ['lint', 'set-test', 'js-build'], (cb) => {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
