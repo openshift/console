@@ -203,14 +203,8 @@ gulp.task('assets', ['fonts'], () => {
     .pipe(gulp.dest(distDir + '/imgs'));
 });
 
-// Copy all deps to dist folder for packaging.
-gulp.task('copy-deps', () => {
-  return gulp.src('./public/lib/**/*')
-    .pipe(gulp.dest(distDir + '/lib'));
-});
-
 // Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], () => {
+gulp.task('js-package', ['js-build', 'js-deps', 'sha'], () => {
   if (process.env.NODE_ENV !== 'production') {
     return;
   }
@@ -259,6 +253,12 @@ gulp.task('html', ['sha'], () => {
     .pipe(gulp.dest(distDir));
 });
 
+// Copy all deps to dist folder for packaging.
+gulp.task('copy-deps', () => {
+  return gulp.src('./public/lib/**/*')
+    .pipe(gulp.dest(distDir + '/lib'));
+});
+
 // Live-watch development mode.
 // Auto-compiles: js, sass, index.html, templates.
 gulp.task('dev', ['set-development', 'default'], () => {
@@ -281,7 +281,7 @@ gulp.task('default', (cb) => {
   // Run in order.
   runSequence(
     ['clean', 'lint'],
-    ['js-package', 'css-sha', 'html'],
+    ['js-package', 'css-package', 'html', 'assets', 'copy-deps'],
     'clean-package',
     cb);
 });
