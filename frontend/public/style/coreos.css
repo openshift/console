@@ -3379,6 +3379,9 @@ input[type="radio"] {
   .co-m-cog.open .co-m-cog__icon {
     color: #2276ad; }
 
+.co-m-cog--disabled {
+  pointer-events: none; }
+
 .co-m-cog-wrapper {
   display: inline-block; }
 
@@ -3387,6 +3390,9 @@ input[type="radio"] {
 
 .co-m-cog__icon--size-large {
   font-size: 20px; }
+
+.co-m-cog__icon--disabled {
+  color: #ddd; }
 
 .co-m-cog__icon--size-small {
   font-size: 16px; }

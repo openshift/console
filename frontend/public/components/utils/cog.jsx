@@ -3,6 +3,8 @@ import React from 'react';
 import {angulars} from '../react-wrapper';
 import {DropdownMixin} from './dropdown';
 import {util} from '../../module/k8s/util';
+import ReactTooltip from 'react-tooltip';
+import classNames from 'classnames';
 
 export class Cog extends DropdownMixin {
 
@@ -21,19 +23,21 @@ export class Cog extends DropdownMixin {
       this.hide();
     };
 
-    let {options, size, anchor} = this.props;
+    let {options, size, anchor, isDisabled} = this.props;
 
     const lis = _.map(options, (o, i) => <li key={i}><a onClick={onClick_.bind({}, o)}>{o.label}</a></li>);
-
     const style = {display: this.state.active ? 'block' : 'none'};
+
     return (
-      <div className="co-m-cog-wrapper">
-        <div ref="dropdownElement" onClick={this.show.bind(this)} className={`co-m-cog co-m-cog--anchor-${anchor || 'left'}`} >
-          <span className={`co-m-cog co-m-cog__icon co-m-cog__icon--size-${size || 'small'} fa fa-cog`}></span>
+      <div className="co-m-cog-wrapper" data-tip="Object can’t be edited in this state" data-tip-disable={!isDisabled}>
+        <div ref="dropdownElement" onClick={this.show.bind(this)} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
+          <span className={classNames('co-m-cog', 'co-m-cog__icon', `co-m-cog__icon--size-${size || 'small'}`, 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
           <ul className="co-m-cog__dropdown co-m-dropdown--dark dropdown-menu" style={style}>
             {lis}
           </ul>
+
         </div>
+        <ReactTooltip class="co-tooltip" place="bottom" effect="solid" />
       </div>
     );
   }
