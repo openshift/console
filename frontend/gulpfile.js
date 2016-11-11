@@ -1,5 +1,6 @@
 'use strict';
 /* global process:false, __dirname:false */
+/* eslint-disable no-console */
 /* eslint prefer-template:0 */
 
 const fs = require('fs');
@@ -109,16 +110,13 @@ gulp.task('js-build', ['templates'], () => {
 gulp.task('browserify', () => {
   const b = jsBuild();
   const bundler = () => {
-    // eslint-disable-next-line no-console
     console.log('updating bundle...');
     b.bundle()
       .on('error', (err) => {
-        // eslint-disable-next-line no-console
         console.log(new PrettyError().render(err));
         b.emit('end');
       })
       .on('end', () => {
-        // eslint-disable-next-line no-console
         console.log(`updated ${distDir}/app-bundle.js`);
       })
       .pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
@@ -132,13 +130,11 @@ gulp.task('browserify', () => {
 gulp.task('sha', (cb) => {
   exec('git rev-parse HEAD', (err, stdout) => {
     if (err) {
-      // eslint-disable-next-line no-console
       console.log('Error retrieving git SHA.');
       cb(false);
       return;
     }
     CURRENT_SHA = stdout.trim();
-    // eslint-disable-next-line no-console
     console.log('sha: ', CURRENT_SHA);
     cb();
   });
@@ -167,9 +163,7 @@ gulp.task('sass', () => {
 
 gulp.task('lint', cb => {
   exec('npm run lint', (err, stdout, stderr) => {
-    // eslint-disable-next-line no-console
     err && console.error(stderr);
-    // eslint-disable-next-line no-console
     console.log(stdout);
     cb(err, stdout);
   });
