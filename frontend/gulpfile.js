@@ -101,7 +101,6 @@ gulp.task('js-build', ['templates'], () => {
     .pipe(source('app-bundle.js'))
     .pipe(ngAnnotate())
     .pipe(streamify(uglify()))
-    .pipe(gulp.dest(distDir))
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest(distDir));
 });
@@ -110,15 +109,19 @@ gulp.task('js-build', ['templates'], () => {
 gulp.task('browserify', () => {
   const b = jsBuild();
   const bundler = () => {
+    // eslint-disable-next-line no-console
+    console.log('updating bundle...');
     b.bundle()
       .on('error', (err) => {
         // eslint-disable-next-line no-console
         console.log(new PrettyError().render(err));
         b.emit('end');
       })
-    .pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
-    // eslint-disable-next-line no-console
-    console.log(`updated ${distDir}/app-bundle.js`);
+      .on('end', () => {
+        // eslint-disable-next-line no-console
+        console.log(`updated ${distDir}/app-bundle.js`);
+      })
+      .pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
   };
 
   b.on('update', bundler);
@@ -152,7 +155,7 @@ gulp.task('clean-package', () => {
     return;
   }
 
-  const files = ['style.css', 'app-bundle.*', 'templates.js'];
+  const files = ['style.css', 'app-bundle.*', 'templates.js', 'deps.js'];
   return del(files.map(file => `${distDir}/${file}`));
 });
 
@@ -252,10 +255,10 @@ gulp.task('html', ['sha'], () => {
 // Live-watch development mode.
 // Auto-compiles: sass & templates.
 // Auto-runs: eslint & unit tests.
-gulp.task('dev', ['set-development', 'css-build', 'html', 'templates', 'browserify'], () => {
+gulp.task('dev', ['set-development', 'default'], () => {
+  gulp.start('browserify');
   gulp.watch(templateSrc, ['templates']);
   gulp.watch(indexSrc, ['html']);
-  gulp.start('browserify');
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
 });
 
