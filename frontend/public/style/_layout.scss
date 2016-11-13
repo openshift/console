@@ -45,7 +45,7 @@ body {
   display: block;
 }
 
-#co-namespace-selector {
+.co-namespace-selector {
   background-color: #2276AD;
   color: white;
   font-weight: 300;
@@ -54,12 +54,12 @@ body {
   padding-left: 10px;
   height: 26px;
   flex: 0 0 auto;
-}
 
-.co-namespace-selector__dropdown {
-  display: inline-block;
-  padding-left: 5px;
-  font-weight: 400;
+  &__dropdown {
+    display: inline-block;
+    padding-left: 5px;
+    font-weight: 400;
+  }
 }
 
 
