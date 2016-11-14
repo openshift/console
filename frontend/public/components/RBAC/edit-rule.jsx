@@ -243,7 +243,7 @@ class EditRule_ extends React.Component {
   }
 
   errorModal (error) {
-    const message = error.data ? error.data.statusText : error.statusText;
+    const message = _.get(error, 'data.message') || error.statusText;
     errorModal({error: message});
   }
 
