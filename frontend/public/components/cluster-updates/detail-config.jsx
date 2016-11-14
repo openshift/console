@@ -10,6 +10,7 @@ export class DetailConfig extends React.Component {
     this.state = {
       outdated: false
     };
+    this._openModal = this._openModal.bind(this);
   }
 
   componentWillReceiveProps() {
@@ -38,7 +39,7 @@ export class DetailConfig extends React.Component {
         displayText = this.props.displayFunction(displayText);
       }
       const outdatedClass = this.state.outdated ? 'text-muted': null;
-      return <a onClick={this._openModal.bind(this)} className={classNames('co-m-modal-link', outdatedClass)}>{displayText}</a>;
+      return <a onClick={this._openModal} className={classNames('co-m-modal-link', outdatedClass)}>{displayText}</a>;
     }
     return <LoadingInline />;
   }

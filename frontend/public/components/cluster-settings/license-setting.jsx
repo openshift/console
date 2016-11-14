@@ -14,6 +14,7 @@ export class LicenseSetting extends React.Component {
       expiration: null,
       tier: null
     };
+    this._openModal = this._openModal.bind(this);
   }
 
   componentDidMount() {
@@ -107,7 +108,7 @@ export class LicenseSetting extends React.Component {
     return <SettingsRow>
       <SettingsLabel>Tectonic License:</SettingsLabel>
       <SettingsContent>
-        <SettingsModalLink onClick={this._openModal.bind(this)} outdated={this.state.outdated}>{this._tierName()}</SettingsModalLink>
+        <SettingsModalLink onClick={this._openModal} outdated={this.state.outdated}>{this._tierName()}</SettingsModalLink>
       </SettingsContent>
     </SettingsRow>;
   }

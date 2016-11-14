@@ -62,6 +62,8 @@ class EditRule_ extends React.Component {
       APIGroups: '*',
     };
 
+    this.save = this.save.bind(this);
+
     this.set = (name, value) => {
       this.setState({[name]: value});
     };
@@ -395,7 +397,7 @@ class EditRule_ extends React.Component {
 
           <div className="row">
             <div className="col-xs-12">
-              <button type="submit" className="btn btn-primary" onClick={this.save.bind(this)}>Save Rule</button>
+              <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
             </div>
           </div>
         </div>

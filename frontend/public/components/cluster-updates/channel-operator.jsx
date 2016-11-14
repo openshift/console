@@ -67,6 +67,7 @@ export class ChannelOperator extends React.Component {
     super(props);
     this._isMounted = false;
     this._initialize();
+    this._toggleExpand = this._toggleExpand.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -175,7 +176,7 @@ export class ChannelOperator extends React.Component {
             {statusText}
           </div>
         }
-        <a className="co-cluster-updates__toggle" href="#" onClick={this._toggleExpand.bind(this)}>{this.state.expanded ? 'Collapse' : 'Expand'}</a>
+        <a className="co-cluster-updates__toggle" href="#" onClick={this._toggleExpand}>{this.state.expanded ? 'Collapse' : 'Expand'}</a>
       </div>
       { this.state.expanded &&
         <div className="co-cluster-updates__details">
