@@ -60,7 +60,7 @@ export const Details = (deployment) => {
         <div className="row no-gutter">
           <div className="col-sm-6">
             <dt>Status</dt>
-            <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <span>Active</span> : <div><LoadingInline />Updating</div>}</dd>
+            <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
             <ResourceSummary resource={deployment} />
           </div>
           <div className="col-sm-6">
