@@ -8,7 +8,7 @@ import {ChannelOperator, componentStates} from './channel-operator';
 const componentNames = {
   'etcd-cluster': 'etcd',
   'kube-version-update': 'Kubernetes',
-  'tectonic-channel-controller-version-update': 'Tectonic'
+  'tectonic-channel-operator-version-update': 'Tectonic'
 };
 
 // Consumes component data (TCO third party resources) and
@@ -23,13 +23,13 @@ export class TectonicChannel extends React.Component {
 
     this.firehoseResources = [
       {
-        k8sResource: angulars.k8s.tectonicchannelcontrollerclusterspecs,
+        k8sResource: angulars.k8s.tectonicchanneloperatorclusterspecs,
         namespace: 'tectonic-system',
         isList: true,
         prop: 'clusterSpec'
       },
       {
-        k8sResource: angulars.k8s.tectonicchannelcontrollerconfigs,
+        k8sResource: angulars.k8s.tectonicchanneloperatorconfigs,
         namespace: 'tectonic-system',
         isList: true,
         prop: 'config'
@@ -86,12 +86,12 @@ class TectonicChannelWithData extends React.Component {
 
   // Plucks information from third party resources. Uses the
   // desired version from the Tectonic Channel Operator instead
-  // of the one on individual controller resources.
+  // of the one on individual operator resources.
   _createComponentFromData(desiredVersions, components, component) {
     const name = component.metadata.name;
 
     let desiredVersion;
-    if (name === 'tectonic-channel-controller-version-update') {
+    if (name === 'tectonic-channel-operator-version-update') {
       desiredVersion = component.spec.desiredVersion;
     } else {
       desiredVersion = _.get(_.find(desiredVersions, ['name', name]), 'version');
@@ -147,6 +147,6 @@ class TectonicChannelWithData extends React.Component {
   }
 
   render() {
-    return <ChannelOperator type="Tectonic" primaryComponent="tectonic-channel-controller-version-update" components={this._generateComponents()} config={this.state.config} last={this.props.last} expanded={this.props.expanded} />;
+    return <ChannelOperator type="Tectonic" primaryComponent="tectonic-channel-operator-version-update" components={this._generateComponents()} config={this.state.config} last={this.props.last} expanded={this.props.expanded} />;
   }
 }

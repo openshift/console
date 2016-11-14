@@ -29,7 +29,7 @@ export class DetailStatus extends React.Component {
       resource = this.props.config;
     } else if (kind === 'version-update') {
       k8skind = angulars.k8s.enum.Kind.TECTONICVERSIONUPDATE;
-      resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-channel-controller-version-update' } };
+      resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-channel-operator-version-update' } };
     }
 
     const patch = [{ op: 'replace', path: `/${field}`, value: value }];
