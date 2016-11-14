@@ -8,6 +8,9 @@ export class DropdownMixin extends React.Component {
       selectedHtml: props.title,
       active: !!props.active,
     };
+    this.toggle = this.toggle.bind(this);
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
   }
 
   _onWindowClick ( event ) {
@@ -62,13 +65,13 @@ export class Dropdown extends DropdownMixin {
     const {selectedHtml} = this.state;
     const {nobutton, items, className} = this.props;
 
-    let button = <button onClick={this.toggle.bind(this)} type="button" className="btn btn--dropdown">
+    let button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
       {selectedHtml}&nbsp;&nbsp;
       <span className="caret"> </span>
     </button>;
 
     if (nobutton) {
-      button = <span onClick={this.toggle.bind(this)} className="dropdown__not-btn">{selectedHtml}&nbsp;&nbsp;<span className="caret"></span></span>;
+      button = <span onClick={this.toggle} className="dropdown__not-btn">{selectedHtml}&nbsp;&nbsp;<span className="caret"></span></span>;
     }
 
     const children = _.map(items, (html, key) => {

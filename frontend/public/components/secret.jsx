@@ -65,6 +65,7 @@ const withSecretsList = (Row) => {
     constructor (props) {
       super(props);
       this.state = {open: false};
+      this.onClick_ = this.onClick_.bind(this);
     }
 
     onClick_ (e) {
@@ -77,7 +78,7 @@ const withSecretsList = (Row) => {
       const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
 
       return (
-        <div onClick={this.onClick_.bind(this)} ref="target" className={classnames({clickable: !!secrets})} >
+        <div onClick={this.onClick_} ref="target" className={classnames({clickable: !!secrets})} >
           <Row {...this.props} />
           {
             this.state.open && secrets &&

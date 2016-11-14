@@ -32,6 +32,8 @@ class SparklineWidget extends React.Component {
     this.interval = null;
     this.pollOnNextUpdate = false;
     this.generation = 0;
+    this.retry = this.retry.bind(this);
+    this.setShowStats = this.setShowStats.bind(this);
     this.initialize();
   }
 
@@ -226,9 +228,9 @@ class SparklineWidget extends React.Component {
     return this.state.state === s;
   }
 
-  setShowStats(value) {
+  setShowStats(event) {
     this.setState({
-      showStats: value
+      showStats: event.type === 'mouseover'
     });
   }
 
@@ -238,14 +240,14 @@ class SparklineWidget extends React.Component {
         <span className="widget__title">{this.state.heading}</span>
         <span className="widget__timespan">1h</span>
         { this.isState(states.LOADED)
-          ? <i className="widget__data-toggle fa fa-table widget__data-toggle--enabled" onMouseOver={this.setShowStats.bind(this, true)} onMouseOut={this.setShowStats.bind(this, false)}></i>
+          ? <i className="widget__data-toggle fa fa-table widget__data-toggle--enabled" onMouseOver={this.setShowStats} onMouseOut={this.setShowStats}></i>
           : <i className="widget__data-toggle fa fa-table"></i>
         }
       </div>
       <div className="widget__content">
         { this.isState(states.LOADING) && <Loading /> }
         { this.isState(states.NOTAVAILABLE) && <p className="widget__text">Monitoring is not available for this cluster</p> }
-        { this.isState(states.TIMEDOUT) && <p className="widget__text"><i className="fa fa-question-circle"></i>Request timed out. <a className="widget__link" onClick={this.retry.bind(this)}>Retry</a></p> }
+        { this.isState(states.TIMEDOUT) && <p className="widget__text"><i className="fa fa-question-circle"></i>Request timed out. <a className="widget__link" onClick={this.retry}>Retry</a></p> }
         { this.isState(states.NODATA) && <p className="widget__text">No data found</p> }
         { this.isState(states.BROKEN) && <p className="widget__text widget__text--error"><i className="fa fa-ban"></i>Monitoring is misconfigured or broken</p> }
         { this.isState(states.LOADED) && <ReactChart
