@@ -11,7 +11,7 @@ import { register } from '../react-wrapper';
 import { Loading } from '../utils';
 import { units } from '../utils';
 import { discoverService } from '../../module/k8s/discover-service';
-import { coFetch, coFetchUtils } from '../../co-fetch';
+import { coFetch, coFetchJSON, coFetchUtils } from '../../co-fetch';
 
 const states = {
   LOADING: 'loading',
@@ -42,6 +42,7 @@ class SparklineWidget extends React.Component {
     const newState = _.defaults({}, props, {
       data: [],
       presentationData: [],
+      limitQuery: undefined,
       limitText: 'limit',
       showStats: false,
       sortedValues: [],
@@ -137,6 +138,15 @@ class SparklineWidget extends React.Component {
     if (generation !== this.generation) {
       // this is an old request, ignore it
       return;
+    }
+
+    if(this.state.limitQuery) {
+      const parseLimit = (json) => _.toInteger(_.get(json, 'data.result[0].value[1]', undefined));
+
+      coFetchJSON(`${basePath}/api/v1/query?query=${this.state.limitQuery}`)
+        .then(parseLimit)
+        .then(limit => this.setState({limit: limit}))
+        .catch(() => this.setState({limit: undefined}));
     }
 
     const end = Date.now();
@@ -284,6 +294,7 @@ SparklineWidget.propTypes = {
   heading: React.PropTypes.string,
   query: React.PropTypes.string,
   limit: React.PropTypes.number,
+  limitQuery: React.PropTypes.string,
   limitText: React.PropTypes.string,
   units: React.PropTypes.string
 };

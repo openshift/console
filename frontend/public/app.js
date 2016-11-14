@@ -38,7 +38,6 @@ angular.module('bridge', [
   'bridge.ui',
   'bridge.page',
   'bridge.react-wrapper',
-  'namespace-sparklines',
   'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,

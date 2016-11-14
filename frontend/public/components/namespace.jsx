@@ -3,6 +3,7 @@ import React from 'react';
 import {angulars, register} from './react-wrapper';
 import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
+import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {ActionsMenu, Cog, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
 
 const kind = 'NAMESPACE';
@@ -79,6 +80,20 @@ class PullSecret extends React.Component {
   }
 }
 
+const NamespaceSparklines = ({namespace}) => <div className="co-namespace-sparklines">
+  <h1 className="co-m-pane__title">Resource Usage</h1>
+  <div className="co-namespace-sparklines__wrapper">
+    <div className="row no-gutter">
+      <div className="col-md-6 col-xs-12">
+        <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${namespace.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
+      </div>
+      <div className="col-md-6 col-xs-12">
+        <SparklineWidget heading="RAM" query={`namespace:container_memory_usage_bytes:sum{namespace='${namespace.metadata.name}'}`} limitQuery="sum(namespace:container_memory_usage_bytes:sum)" limitText="cluster" units="binaryBytes" />
+      </div>
+    </div>
+  </div>
+</div>;
+
 const Details = (namespace) => {
   if (_.isEmpty(namespace)) {
     return <div className="empty-page">
@@ -99,8 +114,7 @@ const Details = (namespace) => {
       <dt>Default Pull Secret</dt>
       <dd><PullSecret namespace={namespace} /></dd>
     </dl>
-    {/* TODO(andy): Angular namespace sparklines have now been fixed and should also migrated to React
-        <NamespaceSparklines namespace={namespace} /> */}
+    <NamespaceSparklines namespace={namespace} />
   </div>;
 };
 

@@ -45,8 +45,6 @@ $fa-font-path: "./fonts";
 
 @import "page/settings/users";
 
-@import "module/namespace-sparklines/namespace-sparklines";
-
 // UI Modules
 @import "module/ui/containers/container-input";
 @import "module/ui/icons/resource-icon";
@@ -77,6 +75,7 @@ $fa-font-path: "./fonts";
 @import "components/dropdown";
 @import "components/global-notification";
 @import "components/list";
+@import "components/namespace-sparklines";
 @import "components/node-ip-list";
 @import "components/overflow";
 @import "components/RBAC/rbac";
