@@ -16,7 +16,7 @@ export const createModalLauncher = (Component, registeredName) => {
 };
 
 export const errorModal = createModalLauncher(
-  ({error, close}) => {
+  ({error, cancel}) => {
     return (
       <div role="document">
         <div className="modal-content">
@@ -27,7 +27,7 @@ export const errorModal = createModalLauncher(
             {error}
           </div>
           <div className="modal-footer">
-            <button type="button" onClick={close} className="btn btn-default">OK</button>
+            <button type="button" onClick={cancel} className="btn btn-default">OK</button>
           </div>
         </div>
       </div>

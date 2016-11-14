@@ -3,6 +3,10 @@ angular.module('bridge.page')
   'use strict';
 
   $scope.name = name;
-  const close = () => $uibModalInstance.dismiss('cancel');
-  $scope.props = Object.assign({}, {close}, props);
+
+  const dismiss = (reason) => $uibModalInstance.dismiss(reason);
+  const cancel = () => dismiss('cancel');
+  const close = (result) => $uibModalInstance.close(result);
+
+  $scope.props = Object.assign({dismiss, cancel, close}, props);
 });
