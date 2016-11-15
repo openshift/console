@@ -1,5 +1,9 @@
 {
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
   "env": {
     "browser": true,
     "es6": true
@@ -51,5 +55,9 @@
   },
   "plugins": [
     "react"
-  ]
+  ],
+  "settings": {
+    "import/resolver": {"node": {"extensions": [".js", ".jsx"]}},
+    "import/extensions": [".js", ".jsx"]
+  }
 }
