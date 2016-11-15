@@ -1,5 +1,6 @@
 'use strict';
 /* global process:false, __dirname:false */
+/* eslint prefer-template:0 */
 
 const fs = require('fs');
 const exec = require('child_process').exec;

@@ -6,15 +6,15 @@
       $scope,
       ModalLauncherSvc
     ) {
-      angular.extend($scope, {
-        downloadKubectlConfiguration
-      });
-
-      // ---
-
       function downloadKubectlConfiguration() {
         ModalLauncherSvc.open('kubectl-config');
       }
+
+      // ---
+
+      angular.extend($scope, {
+        downloadKubectlConfiguration
+      });
     })
   ;
 })();

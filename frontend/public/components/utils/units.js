@@ -117,7 +117,7 @@ const humanize = (value, typeName, useRound = false) => {
   }
 
   if (type.space && converted.unit.length > 0) {
-    converted.unit = ' ' + converted.unit;
+    converted.unit = ` ${converted.unit}`;
   }
 
   return {

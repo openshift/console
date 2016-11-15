@@ -94,11 +94,6 @@ angular.module('bridge.page')
       reader.readAsText(file, 'UTF-8');
     };
 
-    $scope.submit = () => {
-      $scope.pullSecretUpdated = ($scope.model.isNew ? submitCreate : submitUpdate)()
-        .then($uibModalInstance.close.bind($uibModalInstance));
-    };
-
     const generateSecretData = () => {
       let data;
       if ($scope.fields.method === 'upload') {
@@ -148,6 +143,11 @@ angular.module('bridge.page')
         path:  `/data/${CONST.PULL_SECRET_DATA}`,
         value: generateSecretData()
       }]);
+    };
+
+    $scope.submit = () => {
+      $scope.pullSecretUpdated = ($scope.model.isNew ? submitCreate : submitUpdate)()
+        .then($uibModalInstance.close.bind($uibModalInstance));
     };
   })
 ;

@@ -14,6 +14,20 @@ const eventID = (se) => {
   return `U:${se.metadata.uid}`;
 };
 
+// Predicate function to filter by event "category" (info, error, or all)
+const categoryFilter = (category, {reason}) => {
+  if (category === 'all') {
+    return true;
+  }
+  const errorSubstrings = ['error', 'failed', 'unhealthy', 'nodenotready'];
+  const isError = errorSubstrings.find(substring => reason.toLowerCase().includes(substring));
+  return category === 'error' ? isError : !isError;
+};
+
+const kindFilter = (kind, {involvedObject}) => {
+  return kind === 'all' || involvedObject.kind.toLowerCase() === kind;
+};
+
 
 class SysEvent extends React.Component {
   shouldComponentUpdate(nextProps) {
@@ -89,21 +103,6 @@ export class EventStreamPage extends React.Component {
 }
 
 register('EventStreamPage', EventStreamPage);
-
-// Predicate function to filter by event "category" (info, error, or all)
-const categoryFilter = (category, {reason}) => {
-  if (category === 'all') {
-    return true;
-  }
-  const errorSubstrings = ['error', 'failed', 'unhealthy', 'nodenotready'];
-  const isError = errorSubstrings.find(substring => reason.toLowerCase().includes(substring));
-  return category === 'error' ? isError : !isError;
-};
-
-const kindFilter = (kind, {involvedObject}) => {
-  return kind === 'all' || involvedObject.kind.toLowerCase() === kind;
-};
-
 
 export class EventStream extends React.Component {
   constructor (props) {

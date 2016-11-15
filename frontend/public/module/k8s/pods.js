@@ -30,7 +30,7 @@ angular.module('k8s')
   fieldSelectors = {};
 
   fieldSelectors.nodeName = function(nodeName) {
-    return 'spec.nodeName=' + nodeName;
+    return `spec.nodeName=${nodeName}`;
   };
 
   fieldSelectors.node = function(node) {
@@ -130,7 +130,7 @@ angular.module('k8s')
     }
 
     function readOnlySuffix(readonly) {
-      return '(' + (readonly ? 'ro' : 'rw') + ')';
+      return `(${readonly ? 'ro' : 'rw'})`;
     }
 
     function genericFormatter(volInfo) {
@@ -152,7 +152,7 @@ angular.module('k8s')
     switch (typeID) {
       // Override any special formatting cases.
       case k8sEnum.VolumeSource.gitRepo.id:
-        return info.repository + ':' + info.revision;
+        return `${info.repository}:${info.revision}`;
       case k8sEnum.VolumeSource.configMap.id:
       case k8sEnum.VolumeSource.emptyDir.id:
       case k8sEnum.VolumeSource.secret.id:

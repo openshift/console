@@ -1,3 +1,5 @@
+/* eslint prefer-template:0 */
+
 describe('units', function() {
   'use strict';
 

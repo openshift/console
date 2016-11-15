@@ -11,35 +11,6 @@ import {angulars} from '../components/react-wrapper';
 
 const wsCache = {};
 
-export const wsFactory = (id, options) => {
-  // get by id
-  if (!options) {
-    return wsCache[id];
-  }
-  // websocket with id already exists
-  if (wsCache[id]) {
-    // TODO (ggreer): if id is the same but options differ, this could return the "wrong" web socket
-    return wsCache[id];
-  }
-  // create new websocket
-  if (validOptions(options)) {
-    wsCache[id] = new WebSocketWrapper(id, options);
-    return wsCache[id];
-  }
-};
-
-wsFactory.destroy = function(id) {
-  var ws = wsCache[id];
-  if (!ws) {
-    return;
-  }
-  ws.destroy();
-};
-
-wsFactory.destroyAll = function() {
-  Object.keys(wsCache).forEach(wsFactory.destroy);
-};
-
 function validOptions(o) {
   if (!o.host) {
     angulars.$log.error('missing required host argument');
@@ -122,6 +93,35 @@ function expBackoff(prev, max) {
   }
   return 2 * prev;
 }
+
+export const wsFactory = (id, options) => {
+  // get by id
+  if (!options) {
+    return wsCache[id];
+  }
+  // websocket with id already exists
+  if (wsCache[id]) {
+    // TODO (ggreer): if id is the same but options differ, this could return the "wrong" web socket
+    return wsCache[id];
+  }
+  // create new websocket
+  if (validOptions(options)) {
+    wsCache[id] = new WebSocketWrapper(id, options);
+    return wsCache[id];
+  }
+};
+
+wsFactory.destroy = function(id) {
+  var ws = wsCache[id];
+  if (!ws) {
+    return;
+  }
+  ws.destroy();
+};
+
+wsFactory.destroyAll = function() {
+  Object.keys(wsCache).forEach(wsFactory.destroy);
+};
 
 WebSocketWrapper.prototype._reconnect = function() {
   var delay = 2000,

@@ -4,9 +4,6 @@ angular.module('bridge.ui')
     k8s,
     ModalLauncherSvc
   ) {
-    $scope.loading = true;
-    $scope.editPullSecret = editPullSecret;
-
     const load = () => {
       $scope.loading = true;
       $scope.pullSecretLoaded = k8s.secrets.get(`?fieldSelector=${encodeURIComponent('type=kubernetes.io/dockerconfigjson')}`, _.get($scope, 'namespace.metadata.name'))
@@ -25,15 +22,18 @@ angular.module('bridge.ui')
         });
     };
 
-    $scope.$watch('namespace', load);
-
-    // ---
-
     function editPullSecret() {
       ModalLauncherSvc.open('namespace-pull-secret', {
         namespace: $scope.namespace,
         pullSecret: $scope.pullSecret
       }).result.then(load);
     }
+
+    // ---
+
+    $scope.loading = true;
+    $scope.editPullSecret = editPullSecret;
+
+    $scope.$watch('namespace', load);
   })
 ;

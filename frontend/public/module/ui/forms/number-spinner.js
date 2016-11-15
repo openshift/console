@@ -15,7 +15,7 @@ angular.module('bridge.ui')
       // Must update the model directly in the context of a $scope.apply()
       // for changes to take effect.
       function setValue(val) {
-        scope.$apply(attrs.ngModel + ' = ' + val);
+        scope.$apply(`${attrs.ngModel} = ${val}`);
       }
 
       function getValue() {

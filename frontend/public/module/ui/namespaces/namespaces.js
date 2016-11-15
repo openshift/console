@@ -15,24 +15,6 @@ angular.module('bridge.ui')
     restrict: 'E',
     replace: true,
     controller: function ($scope) {
-      $scope.activeNamespace     = activeNamespaceSvc.getActiveNamespace();
-      $scope.title               = coerceTitle($scope.activeNamespace);
-      let namespaces = coerceNamespaces();
-      $scope.namespaces = _.map(namespaces, (v, k) => [k, v]).sort();
-
-      $scope.$watch('activeNamespace', activeNamespace => {
-        activeNamespaceSvc.setActiveNamespace(namespaces[activeNamespace]);
-        $scope.title = coerceTitle(activeNamespace);
-      });
-
-      new Firehose(k8s.namespaces)
-        .watchList()
-        .bindScope($scope, null, state => {
-          namespaces = coerceNamespaces(state.loaded, state && state.namespaces);
-          $scope.namespaces = _.map(namespaces, (v, k) => [k, v]).sort();
-          $scope.loadError           = state.loadError;
-        });
-
       function coerceTitle(namespace) {
         return namespace || 'all';
       }
@@ -58,6 +40,24 @@ angular.module('bridge.ui')
 
         return coerced;
       }
+
+      $scope.activeNamespace     = activeNamespaceSvc.getActiveNamespace();
+      $scope.title               = coerceTitle($scope.activeNamespace);
+      let namespaces = coerceNamespaces();
+      $scope.namespaces = _.map(namespaces, (v, k) => [k, v]).sort();
+
+      $scope.$watch('activeNamespace', activeNamespace => {
+        activeNamespaceSvc.setActiveNamespace(namespaces[activeNamespace]);
+        $scope.title = coerceTitle(activeNamespace);
+      });
+
+      new Firehose(k8s.namespaces)
+        .watchList()
+        .bindScope($scope, null, state => {
+          namespaces = coerceNamespaces(state.loaded, state && state.namespaces);
+          $scope.namespaces = _.map(namespaces, (v, k) => [k, v]).sort();
+          $scope.loadError           = state.loadError;
+        });
     }
   };
 });

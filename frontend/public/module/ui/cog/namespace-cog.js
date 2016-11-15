@@ -29,8 +29,7 @@ angular.module('bridge.ui')
           weight: 300,
           callback: ModalLauncherSvc.open.bind(null, 'confirm', {
             title: 'Delete Namespace',
-            message: 'Are you sure you want to delete ' +
-              $scope.namespace.metadata.name + '? ' +
+            message: `Are you sure you want to delete ${$scope.namespace.metadata.name}? ` +
               'This will destroy all pods, services, and other objects in the deleted namespace!',
             btnText: 'Delete Namespace',
             executeFn: getDeleteFn

@@ -1,6 +1,19 @@
 describe('bridge.filter.sysevents', function() {
   'use strict';
 
+  function createEvent(id, involvedObjectName) {
+    return {
+      id: id,
+      object: {
+        involvedObject: {
+          name: involvedObjectName
+        }
+      }
+    };
+  }
+
+  // ---
+
   var syseventsFilter;
 
   beforeEach(module('bridge.filter'));
@@ -25,17 +38,4 @@ describe('bridge.filter.sysevents', function() {
       createEvent(1, 'object-1')
     ]);
   });
-
-  // ---
-
-  function createEvent(id, involvedObjectName) {
-    return {
-      id: id,
-      object: {
-        involvedObject: {
-          name: involvedObjectName
-        }
-      }
-    };
-  }
 });

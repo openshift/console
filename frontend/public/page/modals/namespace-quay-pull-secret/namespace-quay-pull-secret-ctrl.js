@@ -16,7 +16,6 @@ angular.module('bridge.page')
     $scope.namespace  = namespace;
     $scope.pullSecret = null;
     $scope.model      = null;
-    $scope.submit     = submit;
 
     // ---
 
@@ -39,14 +38,6 @@ angular.module('bridge.page')
         })
       ;
     })();
-
-    // ---
-
-    function submit() {
-      $scope.pullSecretUpdated = ($scope.model.value ? ($scope.model.isNew ? submitCreate : submitUpdate) : submitDelete)()
-        .then($uibModalInstance.close.bind($uibModalInstance))
-      ;
-    }
 
     // ---
 
@@ -79,5 +70,15 @@ angular.module('bridge.page')
 
       return k8s.secrets.delete($scope.pullSecret);
     }
+
+    // ---
+
+    function submit() {
+      $scope.pullSecretUpdated = ($scope.model.value ? ($scope.model.isNew ? submitCreate : submitUpdate) : submitDelete)()
+        .then($uibModalInstance.close.bind($uibModalInstance))
+      ;
+    }
+    $scope.submit     = submit;
+
   })
 ;

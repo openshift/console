@@ -36,9 +36,9 @@ export const util = {
     }
     meta = resource.metadata;
     if (meta.namespace) {
-      path = 'ns/' + meta.namespace + '/';
+      path = `ns/${meta.namespace}/`;
     }
-    return path + kind.path + '/' + meta.name;
+    return `${path}${kind.path}/${meta.name}`;
   },
 
   // The edit page link of a resource.
@@ -47,6 +47,6 @@ export const util = {
     if (!link) {
       return '';
     }
-    return link + '/edit';
+    return `${link}/edit`;
   },
 };

@@ -9,20 +9,20 @@ angular.module('k8s')
         u = k8sConfig.getKubernetesAPIPath(kind);
 
     if (options.ns) {
-      u += '/namespaces/' + options.ns;
+      u += `/namespaces/${options.ns}`;
     }
-    u += '/' + kind.path;
+    u += `/${kind.path}`;
     if (options.name) {
-      u += '/' + options.name;
+      u += `/${options.name}`;
     }
     if (options.path) {
-      u += '/' + options.path;
+      u += `/${options.path}`;
     }
     if (!_.isEmpty(options.queryParams)) {
       q = _.map(options.queryParams, function(v, k) {
-        return k + '=' + v;
+        return `${k}=${v}`;
       });
-      u += '?' + q.join('&');
+      u += `?${q.join('&')}`;
     }
 
     return u;

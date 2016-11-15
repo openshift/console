@@ -5,32 +5,6 @@
 
 import {util} from '../../k8s/util';
 
-angular.module('bridge.ui')
-.directive('coResourceIcon', function(k8s) {
-  'use strict';
-  const k8sKind = k8s.enum.Kind;
-
-  return {
-    template: '<span></span>',
-    restrict: 'E',
-    replace: true,
-    link: function(scope, elem, attrs) {
-      var kind, kindInput, kindId;
-      kindInput = (attrs.kind || '').toLowerCase();
-      kind = util.getKindEnumById(kindInput);
-      if (kind) {
-        kindId = kind.id;
-      } else {
-        kindId = kindInput;
-      }
-      elem.addClass('co-m-resource-icon co-m-resource-icon--' + kindId);
-      elem.text(iconLabel(k8sKind, kindId));
-    }
-  };
-
-});
-
-
 function iconLabel(k8sKind, kindId) {
   switch (kindId) {
     case k8sKind.PETSET.id:
@@ -77,5 +51,30 @@ function iconLabel(k8sKind, kindId) {
       return kindId.toUpperCase().slice(0, 2);
   }
 }
+
+angular.module('bridge.ui')
+.directive('coResourceIcon', function(k8s) {
+  'use strict';
+  const k8sKind = k8s.enum.Kind;
+
+  return {
+    template: '<span></span>',
+    restrict: 'E',
+    replace: true,
+    link: function(scope, elem, attrs) {
+      var kind, kindInput, kindId;
+      kindInput = (attrs.kind || '').toLowerCase();
+      kind = util.getKindEnumById(kindInput);
+      if (kind) {
+        kindId = kind.id;
+      } else {
+        kindId = kindInput;
+      }
+      elem.addClass(`co-m-resource-icon co-m-resource-icon--${kindId}`);
+      elem.text(iconLabel(k8sKind, kindId));
+    }
+  };
+
+});
 
 export default iconLabel;

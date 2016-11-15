@@ -62,7 +62,7 @@ angular.module('bridge', [
   // deep down in code k8s path is used to open WS connection, which doesn't respect
   // <base> tag in index.html so we cannot use relative path as in many other places
   // and we need to manually prepend it with passed-in base path to form absolute path
-  k8sConfigProvider.setKubernetesPath(window.SERVER_FLAGS.basePath + 'api/kubernetes', window.SERVER_FLAGS.k8sAPIVersion);
+  k8sConfigProvider.setKubernetesPath(`${window.SERVER_FLAGS.basePath}api/kubernetes`, window.SERVER_FLAGS.k8sAPIVersion);
 
   $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
   $httpProvider.interceptors.push('errorInterceptorSvc');
@@ -363,7 +363,7 @@ angular.module('bridge', [
   // NOTE: this is a big stupid hack to get around an Angular bug wich is triggered by a Chrome bug.
   // see: https://github.com/coreos-inc/bridge/issues/270
   $rootScope.$on('$locationChangeStart', function(e, currURL) {
-    if (currURL === $window.location.origin + '/#') {
+    if (currURL === `${$window.location.origin}/#`) {
       e.preventDefault();
       $rootScope.$destroy();
       $rootScope.$$watchers = [];
