@@ -12,7 +12,7 @@ angular.module('bridge.page')
   }
 
   $scope.kind = kind.id;
-  $scope.component = kind.labelPlural.replace(/ /g, '') + 'DetailsPage';
+  $scope.component = `${kind.labelPlural.replace(/ /g, '')}DetailsPage`;
   let view = $routeParams.view;
   if (view) {
     view = view.slice(0, 1).toUpperCase() + view.slice(1);

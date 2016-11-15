@@ -5,14 +5,14 @@ angular.module('k8s')
   // Encode a labels object hash into a URL query string.
   this.urlEncode = function(labels) {
     var result = _.map(_.keys(labels), function(key) {
-      return key + '=' + labels[key];
+      return `${key}=${labels[key]}`;
     });
     return result.join(',');
   };
 
   this.linkEncode = function(labels) {
     var result = _.map(_.keys(labels), function(key) {
-      return key + '%3D' + labels[key];
+      return `${key}%3D${labels[key]}`;
     });
     return result.join(',');
   };

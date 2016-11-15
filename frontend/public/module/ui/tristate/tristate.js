@@ -50,14 +50,14 @@ angular.module('bridge.ui')
     link: function(scope, elem, attrs, loadStateCtrl) {
       function reset() {
         states.forEach(function(s) {
-          elem.removeClass(cssClassPrefix + '--' + s);
+          elem.removeClass(`${cssClassPrefix}--${s}`);
         });
       }
 
       function updateState(state) {
         reset();
         if (state) {
-          elem.addClass(cssClassPrefix + '--' + state);
+          elem.addClass(`${cssClassPrefix}--${state}`);
         }
       }
 

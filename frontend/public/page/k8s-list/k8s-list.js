@@ -23,6 +23,6 @@ angular.module('bridge.page')
 
   $scope.kind = kind;
   $scope.title = kind.labelPlural;
-  $scope.component = kind.labelPlural.replace(/ /g, '') + 'Page';
+  $scope.component = `${kind.labelPlural.replace(/ /g, '')}Page`;
   $window.document.title = `Tectonic - ${kind.labelPlural}`;
 });

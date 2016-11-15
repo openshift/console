@@ -23,7 +23,7 @@ angular.module('bridge.ui')
     var result = [];
     _.forEach(obj, function(v, k) {
       result.push({
-        text: k + '=' + v
+        text: `${k}=${v}`
       });
     });
     return result;
@@ -45,12 +45,12 @@ angular.module('bridge.ui')
     },
     controller: function($scope, $attrs) {
       if ($scope.kind) {
-        $scope.cssClass = 'co-m-label-input--' + $scope.kind;
+        $scope.cssClass = `co-m-label-input--${$scope.kind}`;
       }
 
       $attrs.$observe('kind', function(newVal) {
         $attrs.$removeClass('co-m-label-input--service co-m-label-input--controller co-m-label-input--pod');
-        $attrs.$addClass('co-m-label-input--' + newVal);
+        $attrs.$addClass(`co-m-label-input--${newVal}`);
       });
 
       $scope.$watchCollection('labels', function(labels) {

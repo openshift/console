@@ -100,7 +100,7 @@ angular.module('bridge.service')
     id_ (k8sType, query) {
       let qs = '';
       if (!_.isEmpty(query)) {
-        qs = '---' + JSON.stringify(query);
+        qs = `---${JSON.stringify(query)}`;
       }
 
       return `${k8sType.kind.plural}${qs}`;

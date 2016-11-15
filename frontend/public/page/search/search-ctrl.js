@@ -5,7 +5,7 @@ angular.module('bridge.page')
   const shouldRedirect = $route.current.$$route.redirect;
   if (shouldRedirect) {
     const namespace = $routeParams.ns || activeNamespaceSvc.getActiveNamespace();
-    const path = (namespace ? `ns/${namespace}` : 'all-namespaces') + '/search';
+    const path = `${(namespace ? `ns/${namespace}` : 'all-namespaces')}/search`;
     return $location.path(path);
   }
 

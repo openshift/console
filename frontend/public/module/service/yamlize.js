@@ -56,14 +56,14 @@ const yamlizeObject = function(obj, indent) {
     }
 
     blocks = _.map(obj, function(el) {
-      var val = yamlizeObject(el, indent + '  ');
+      var val = yamlizeObject(el, `${indent}  `);
 
       // Cosmetic wart: "- a: b" works and is preferred, but but
       // "- - a" and "a: b: c" break without a newline between the dashes.
       if (val.match(/^\n {2}\s*/) && _.isObject(el)) {
         val = val.replace(/^\n {2}\s*/, '');
       }
-      return '\n' + indent + '- ' + val;
+      return `\n${indent}- ${val}`;
     });
 
     return blocks.join('');
@@ -75,13 +75,13 @@ const yamlizeObject = function(obj, indent) {
     }
 
     blocks = _.chain(obj).toPairs().sortBy().map(function(kv) {
-      return '\n' + indent + yamlizeObject(kv[0], '') + ': ' + yamlizeObject(kv[1], indent + '  ');
+      return `\n${indent}${yamlizeObject(kv[0], '')}: ${yamlizeObject(kv[1], `${indent}  `)}`;
     }).value();
 
     return blocks.join('');
   }
 
-  throw new Error('Can\'t encode object into yaml: ' + obj);
+  throw new Error(`Can't encode object into yaml: ${obj}`);
 };
 
 const yamlize = function(obj) {
