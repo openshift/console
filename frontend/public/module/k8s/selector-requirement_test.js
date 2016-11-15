@@ -1,3 +1,5 @@
+/* eslint prefer-template:0 */
+
 describe('k8s.k8sSelectorRequirement', function() {
   'use strict';
 

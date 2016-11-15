@@ -59,8 +59,7 @@ angular.module('bridge.ui')
             label: 'Delete Service...',
             callback: ModalLauncherSvc.open.bind(null, 'confirm', {
               title: 'Delete Service',
-              message: 'Are you sure you want to delete ' +
-                  $scope.service.metadata.name + '?',
+              message: `Are you sure you want to delete ${$scope.service.metadata.name}?`,
               btnText: 'Delete Service',
               executeFn: getDeleteFn
             }),

@@ -71,7 +71,7 @@ angular.module('k8s')
       }
       c += cmd.host;
       if (cmd.port) {
-        c += ':' + cmd.port;
+        c += `:${cmd.port}`;
       }
       if (cmd.path) {
         c += cmd.path;
@@ -83,7 +83,7 @@ angular.module('k8s')
       if (!cmd || !cmd.port) {
         return '';
       }
-      return '' + cmd.port;
+      return `${cmd.port}`;
     },
   };
 

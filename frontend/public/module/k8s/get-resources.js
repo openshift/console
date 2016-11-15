@@ -21,7 +21,7 @@ export const getResources = () => coFetchJSON('api/kubernetes')
       });
 
     const all = [...apiPaths]
-      .map(p => coFetchJSON('api/kubernetes' + p).catch(err => err));
+      .map(p => coFetchJSON(`api/kubernetes${p}`).catch(err => err));
 
     return Promise.all(all)
       .then(data => {

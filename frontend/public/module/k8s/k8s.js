@@ -149,7 +149,7 @@ angular.module('k8s')
 
   this.version = function() {
     return $http({
-      url: k8sConfig.getBasePath() + '/version',
+      url: `${k8sConfig.getBasePath()}/version`,
       method: 'GET'
     });
   };

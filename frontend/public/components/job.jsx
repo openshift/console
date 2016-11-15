@@ -87,7 +87,7 @@ const Details = (job) => <div>
             <dt>Parallelism</dt>
             <dd>{job.spec.parallelism || '-'}</dd>
             <dt>Deadline</dt>
-            <dd>{job.spec.activeDeadlineSeconds ? job.spec.activeDeadlineSeconds + ' seconds' : '-'}</dd>
+            <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
           </dl>
         </div>
       </div>

@@ -10,7 +10,7 @@ angular.module('dex')
     // returns true if and only if the api is available
     available: function() {
       return $http({
-        url: basePath + 'users',
+        url: `${basePath}users`,
         method: 'GET',
         params: {maxResults: 0},
         unauthorizedOk: true,
@@ -30,7 +30,7 @@ angular.module('dex')
     // params: {maxResults: ..., nextPageToken: ....}
     list: function(params) {
       return $http({
-        url: basePath + 'users',
+        url: `${basePath}users`,
         method: 'GET',
         params: params
       }).then(function(r) {
@@ -40,7 +40,7 @@ angular.module('dex')
     // params: {user: {email:, displayName:, admin:,}}
     create: function(params) {
       return $http({
-        url: basePath + 'users',
+        url: `${basePath}users`,
         method: 'POST',
         data: params
       }).then(function(r) {
@@ -49,7 +49,7 @@ angular.module('dex')
     },
     disable: function(userID, disableIfTrue) {
       return $http({
-        url: basePath + 'users/' + $window.encodeURIComponent(userID) + '/disable',
+        url: `${basePath}users/${$window.encodeURIComponent(userID)}/disable`,
         method: 'POST',
         data: {disable: disableIfTrue}
       }).then(function(r) {
@@ -58,7 +58,7 @@ angular.module('dex')
     },
     revokeRefreshToken: function(userID) {
       return $http({
-        url: basePath + 'account/' + $window.encodeURIComponent(userID) + '/refresh/' + $window.SERVER_FLAGS.kubectlClientID,
+        url: `${basePath}account/${$window.encodeURIComponent(userID)}/refresh/${$window.SERVER_FLAGS.kubectlClientID}`,
         method: 'DELETE'
       });
     },

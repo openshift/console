@@ -23,7 +23,7 @@ angular.module('bridge.ui')
       } else {
         kindId = kindInput;
       }
-      elem.addClass('co-m-resource-icon co-m-resource-icon--' + kindId);
+      elem.addClass(`co-m-resource-icon co-m-resource-icon--${kindId}`);
       elem.text(iconLabel(k8sKind, kindId));
     }
   };

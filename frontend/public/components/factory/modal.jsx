@@ -5,7 +5,7 @@ import {angulars, register} from '../react-wrapper';
 export const createModalLauncher = (Component, registeredName) => {
   if (!registeredName) {
     const prefix = Component.name || Component.displayName || 'Modal';
-    registeredName =  _.uniqueId(prefix + '-');
+    registeredName =  _.uniqueId(`${prefix}-`);
   }
   register(registeredName, Component);
 

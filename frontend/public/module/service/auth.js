@@ -47,7 +47,7 @@ angular.module('bridge.service')
       return $http.post($window.SERVER_FLAGS.logoutURL)
         .then(function() {
           if (prev) {
-            url += '?prev=' + prev;
+            url += `?prev=${prev}`;
           }
           $window.location.href = url;
         })

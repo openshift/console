@@ -26,7 +26,7 @@ angular.module('bridge.ui')
         el.addClass('co-m-label--expand');
       }
 
-      el.addClass('co-m-label--' + attrs.kind);
+      el.addClass(`co-m-label--${attrs.kind}`);
 
       el.find('.co-m-label__key')
         .text(attrs.key);
