@@ -69,10 +69,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-hpa-targets.html',
       controller: 'ConfigureHpaTargetsCtrl',
     },
-    'configure-yaml-field': {
-      templateUrl: '/static/page/modals/configure-yaml-field.html',
-      controller: 'ConfigureYamlFieldCtrl',
-    },
     'new-namespace': {
       templateUrl: '/static/page/modals/new-namespace.html',
       controller: 'NewNamespaceCtrl',
