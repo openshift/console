@@ -14,19 +14,6 @@ angular.module('bridge.filter')
     }
   };
 
-  // Maps query prop name to a predicate filter.
-  var predicateMap = {
-    kind: kindFilter,
-    category: categoryFilter,
-    name: nameFilter
-  };
-
-  // Determines if the query is empty or not.
-  function queryEmpty(q) {
-    // Check whether at least one query key matches to available predicates.
-    return !Object.keys(q || {}).some(predicateMap.hasOwnProperty.bind(predicateMap));
-  }
-
   // Predicate function to filter by involved object kind.
   function kindFilter(query, evt) {
     return evt.object.involvedObject.kind.toLowerCase() === query.kind;
@@ -46,6 +33,19 @@ angular.module('bridge.filter')
   // Predicate function to filter by involved object name.
   function nameFilter(query, evt) {
     return evt.object.involvedObject.name === query.name;
+  }
+
+  // Maps query prop name to a predicate filter.
+  var predicateMap = {
+    kind: kindFilter,
+    category: categoryFilter,
+    name: nameFilter
+  };
+
+  // Determines if the query is empty or not.
+  function queryEmpty(q) {
+    // Check whether at least one query key matches to available predicates.
+    return !Object.keys(q || {}).some(predicateMap.hasOwnProperty.bind(predicateMap));
   }
 
   // Compose an array of predicate functions into a single function.

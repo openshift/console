@@ -2,13 +2,6 @@ angular.module('k8s')
   .factory('k8sCommand', function k8sCommand() {
     'use strict';
 
-    return {
-      fromArgs: fromArgs,
-      toArgs:   toArgs
-    };
-
-    // ---
-
     /**
      * @param  {String[]} args
      * @return {String}
@@ -68,5 +61,12 @@ angular.module('k8s')
 
       return args;
     }
+
+    // ---
+
+    return {
+      fromArgs: fromArgs,
+      toArgs:   toArgs
+    };
   })
 ;

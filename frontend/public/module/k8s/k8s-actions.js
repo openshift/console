@@ -41,6 +41,7 @@ const actions =  {
     getResources()
       .then(resources => dispatch({type, resources}))
       // try again or something?
+      // eslint-disable-next-line no-console
       .catch(err => console.error(err));
   },
 

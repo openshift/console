@@ -2,13 +2,19 @@ angular.module('k8s')
   .factory('k8sSelectorRequirement', function k8sSelectorRequirement(_) {
     'use strict';
 
-    return {
-      fromString:   fromString,
-      toString:     toString,
-      createEquals: createEquals
-    };
+    function toArray(value) {
+      return Array.isArray(value) ? value : [value];
+    }
 
     // ---
+
+    function createEquals(key, value) {
+      return {
+        key:      key,
+        operator: 'Equals',
+        values:   [value]
+      };
+    }
 
     function fromString(string) {
       string = string.trim();
@@ -139,18 +145,12 @@ angular.module('k8s')
       return; // falsy means malformed requirement
     }
 
-    function createEquals(key, value) {
-      return {
-        key:      key,
-        operator: 'Equals',
-        values:   [value]
-      };
-    }
-
     // ---
 
-    function toArray(value) {
-      return Array.isArray(value) ? value : [value];
-    }
+    return {
+      fromString:   fromString,
+      toString:     toString,
+      createEquals: createEquals
+    };
   })
 ;

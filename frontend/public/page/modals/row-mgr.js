@@ -23,6 +23,12 @@ angular.module('bridge.page')
     }
   };
 
+  function ensureMinItems(self) {
+    while (self.items.length < self.min) {
+      self.appendEmptyItem();
+    }
+  }
+
   this.setItems = function(items) {
     this.items = items;
     ensureMinItems(this);
@@ -36,10 +42,4 @@ angular.module('bridge.page')
   this.getNonEmptyItems = function() {
     return _.filter(this.items, _.negate(emptyCheck));
   };
-
-  function ensureMinItems(self) {
-    while (self.items.length < self.min) {
-      self.appendEmptyItem();
-    }
-  }
 });

@@ -2,42 +2,11 @@ angular.module('k8s')
   .factory('k8sSelector', function k8sSelector(k8sSelectorRequirement) {
     'use strict';
 
-    return {
-      fromString:       fromString,
-      toString:         toString,
-      toRequirements:   toRequirements,
-      fromRequirements: fromRequirements,
-      split:            split,
-    };
+    function isOldFormat(selector) {
+      return !selector.matchLabels && !selector.matchExpressions;
+    }
 
     // ---
-
-    function fromString(string) {
-      var requirements = split(string || '').map(k8sSelectorRequirement.fromString);
-      return fromRequirements(requirements);
-    }
-
-    function toString(selector) {
-      var requirements = toRequirements(selector);
-      return requirements.map(k8sSelectorRequirement.toString).join(',');
-    }
-
-    function toRequirements(selector) {
-      selector             = selector || {};
-      var requirements     = [];
-      var matchLabels      = isOldFormat(selector) ? selector : selector.matchLabels;
-      var matchExpressions = selector.matchExpressions;
-
-      Object.keys(matchLabels || {}).sort().forEach(function (k) {
-        requirements.push(k8sSelectorRequirement.createEquals(k, matchLabels[k]));
-      });
-
-      (matchExpressions || []).forEach(function (me) {
-        requirements.push(me);
-      });
-
-      return requirements;
-    }
 
     /**
      * @param {Object[]} requirements
@@ -76,10 +45,41 @@ angular.module('k8s')
       return string.trim() ? string.split(/,(?![^(]*\))/) : []; // [''] -> []
     }
 
+    function toRequirements(selector) {
+      selector             = selector || {};
+      var requirements     = [];
+      var matchLabels      = isOldFormat(selector) ? selector : selector.matchLabels;
+      var matchExpressions = selector.matchExpressions;
+
+      Object.keys(matchLabels || {}).sort().forEach(function (k) {
+        requirements.push(k8sSelectorRequirement.createEquals(k, matchLabels[k]));
+      });
+
+      (matchExpressions || []).forEach(function (me) {
+        requirements.push(me);
+      });
+
+      return requirements;
+    }
+
+    function fromString(string) {
+      var requirements = split(string || '').map(k8sSelectorRequirement.fromString);
+      return fromRequirements(requirements);
+    }
+
+    function toString(selector) {
+      var requirements = toRequirements(selector);
+      return requirements.map(k8sSelectorRequirement.toString).join(',');
+    }
+
     // ---
 
-    function isOldFormat(selector) {
-      return !selector.matchLabels && !selector.matchExpressions;
-    }
+    return {
+      fromString:       fromString,
+      toString:         toString,
+      toRequirements:   toRequirements,
+      fromRequirements: fromRequirements,
+      split:            split,
+    };
   })
 ;

@@ -8,18 +8,6 @@ angular.module('bridge.page')
 
     // ---
 
-    $scope.vm = {
-      STEP_GET_VERIFICATION_CODE:  1,
-      STEP_VERIFY_CODE:            2,
-      STEP_DOWNLOAD_CONFIGURATION: 3,
-      step:                        1,
-      getVerificationCode:         getVerificationCode,
-      verifyCode:                  verifyCode,
-      downloadConfiguration:       downloadConfiguration,
-    };
-
-    // ---
-
     function getVerificationCode() {
       kubectlConfigSvc.getVerificationCode();
       $scope.vm.step = $scope.vm.STEP_VERIFY_CODE;
@@ -37,5 +25,17 @@ angular.module('bridge.page')
     function downloadConfiguration() {
       kubectlConfigSvc.downloadConfiguration($scope.vm.configuration);
     }
+
+    // ---
+
+    $scope.vm = {
+      STEP_GET_VERIFICATION_CODE:  1,
+      STEP_VERIFY_CODE:            2,
+      STEP_DOWNLOAD_CONFIGURATION: 3,
+      step:                        1,
+      getVerificationCode:         getVerificationCode,
+      verifyCode:                  verifyCode,
+      downloadConfiguration:       downloadConfiguration,
+    };
   })
 ;

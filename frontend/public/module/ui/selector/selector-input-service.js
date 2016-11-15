@@ -2,11 +2,13 @@ angular.module('bridge.ui')
   .factory('coSelectorInputSservice', function coSelectorInputSservice(_, k8s) {
     'use strict';
 
-    return {
-      toTags:               toTags,
-      fromTags:             fromTags,
-      looksLikeRequirement: looksLikeRequirement
-    };
+    function requirementToTag(requirement) {
+      return {text: k8s.selectorRequirement.toString(requirement)};
+    }
+
+    function requirementFromTag(tag) {
+      return k8s.selectorRequirement.fromString(tag.text);
+    }
 
     // ---
 
@@ -27,12 +29,10 @@ angular.module('bridge.ui')
 
     // ---
 
-    function requirementToTag(requirement) {
-      return {text: k8s.selectorRequirement.toString(requirement)};
-    }
-
-    function requirementFromTag(tag) {
-      return k8s.selectorRequirement.fromString(tag.text);
-    }
+    return {
+      toTags:               toTags,
+      fromTags:             fromTags,
+      looksLikeRequirement: looksLikeRequirement
+    };
   })
 ;
