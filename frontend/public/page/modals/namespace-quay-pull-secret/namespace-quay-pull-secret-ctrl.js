@@ -67,7 +67,7 @@ angular.module('bridge.page')
     function submitUpdate() {
       return k8s.resource.patch(k8s.kinds.SECRET, $scope.pullSecret, [{
         op:    'replace',
-        path:  '/data/' + CONST.PULL_SECRET_DATA,
+        path:  `/data/${CONST.PULL_SECRET_DATA}`,
         value: $window.btoa($scope.model.value)
       }]);
     }

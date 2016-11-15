@@ -24,7 +24,7 @@ angular.module('bridge.ui')
       function updateImage(image, tag) {
         var t;
         t = tag || $scope.fields.containerTag;
-        $scope.container.image = (image || $scope.fields.containerImage) + ':' + (t || 'latest');
+        $scope.container.image = `${image || $scope.fields.containerImage}:${t || 'latest'}`;
       }
 
       function getEmptyFields() {

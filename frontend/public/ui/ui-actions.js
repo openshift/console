@@ -3,7 +3,7 @@
 import {CONST} from '../const';
 import {angulars} from '../components/react-wrapper';
 
-const nsPathPattern = new RegExp('^\/?ns\/' + CONST.legalNamePattern.source + '\/?(.*)$');
+const nsPathPattern = new RegExp(`^\/?ns\/${CONST.legalNamePattern.source}\/?(.*)$`);
 const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 const prefixes = [];
 
