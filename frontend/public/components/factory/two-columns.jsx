@@ -42,7 +42,7 @@ export class TwoColumns extends React.Component {
             <div className="col-md-4 col-sm-6 col-xs-12">
               <div className="co-facet-container--left">
                 <div className="co-m-pane__body__top-controls">
-                  <TopControls />
+                  { TopControls && <TopControls /> }
                   <input autoFocus={true} type="text" className="form-control" placeholder="Filter by name..." onChange={e => this.list.applyFilter('name', e.target.value)} />
                 </div>
                 <List ref={ref => this.list = ref} {...this.props} />
