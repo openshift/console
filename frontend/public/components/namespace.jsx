@@ -1,10 +1,12 @@
 import React from 'react';
+import {Provider} from 'react-redux';
 
 import {angulars, register} from './react-wrapper';
+import {actions} from '../ui/ui-actions';
 import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {ActionsMenu, Cog, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
+import {ActionsMenu, Cog, connect, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
 
 const kind = 'NAMESPACE';
 
@@ -130,5 +132,41 @@ const NamespacesPage = () => <div>
   </TwoColumns>
 </div>;
 
-export {NamespacesPage, NamespacesList};
+const NamespaceDropdown = connect(state => ({namespace: state.UI.get('activeNamespace'), state}))(props => {
+  const {data, loaded, state, dispatch} = props;
+
+  // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
+  const allNamespacesKey = '#ALL_NS#';
+
+  const items = {};
+  items[allNamespacesKey] = 'all';
+  (data || []).sort().forEach(n => {
+    const {name} = n.metadata;
+    items[name] = name;
+  });
+
+  let title = props.namespace || 'all';
+
+  // If the currently active namespace is not found in the list of all namespaces, default to "all"
+  if (loaded && !_.has(items, title)) {
+    title = 'all';
+  }
+
+  const onChange = (newNamespace) => {
+    dispatch(actions.setActiveNamespace(state, newNamespace === allNamespacesKey ? undefined : newNamespace));
+  };
+
+  return <div className="co-namespace-selector">
+    Namespace: <Dropdown className="co-namespace-selector__dropdown" noButton={true} items={items} title={title} onChange={onChange} />
+  </div>;
+});
+
+const NamespaceSelector = (props) => <Provider store={angulars.store}>
+  <Firehose k8sResource={angulars.k8s[angulars.kinds.NAMESPACE.plural]} isList={true}>
+    <NamespaceDropdown {...props} />
+  </Firehose>
+</Provider>;
+
+export {NamespacesPage, NamespacesList, NamespaceSelector};
 register('NamespacesPage', NamespacesPage);
+register('NamespaceSelector', NamespaceSelector);

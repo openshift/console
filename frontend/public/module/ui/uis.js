@@ -26,6 +26,5 @@ import './toggle-play/toggle-play';
 import './tristate/tristate';
 import './util/autofocus';
 import './timestamps/co-timestamp';
-import './namespaces/namespaces';
 import './util/debug';
 import './dropdown/dropdown';

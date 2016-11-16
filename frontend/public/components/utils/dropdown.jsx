@@ -69,11 +69,11 @@ export class Dropdown extends DropdownMixin {
     const buttonTitle = noSelection ? title : selectedHtml;
     let button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
       {buttonTitle}&nbsp;&nbsp;
-      <span className="caret"> </span>
+      <span className="caret"></span>
     </button>;
 
     if (noButton) {
-      button = <span onClick={this.toggle} className="dropdown__not-btn">{buttonTitle}&nbsp;&nbsp;<span className="caret"></span></span>;
+      button = <span onClick={this.toggle} className="dropdown__not-btn">{buttonTitle}&nbsp;<span className="caret"></span></span>;
     }
 
     const children = _.map(items, (html, key) => {
