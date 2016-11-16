@@ -8,8 +8,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import ReactChart from './react-chart';
 import { register } from '../react-wrapper';
-import { Loading } from '../utils';
-import { units } from '../utils';
+import { Loading, units } from '../utils';
 import { discoverService } from '../../module/k8s/discover-service';
 import { coFetch, coFetchJSON, coFetchUtils } from '../../co-fetch';
 
