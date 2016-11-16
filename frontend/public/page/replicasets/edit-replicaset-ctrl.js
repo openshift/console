@@ -1,6 +1,5 @@
 angular.module('bridge.page')
-.controller('EditReplicaSetCtrl', function($scope, $location, $routeParams,
-                                                      activeNamespaceSvc, _, k8s, ModalLauncherSvc) {
+.controller('EditReplicaSetCtrl', function($scope, $location, $routeParams, activeNamespaceSvc, _, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -18,12 +17,6 @@ angular.module('bridge.page')
     .catch(function() {
       $scope.loadError = true;
     });
-
-  $scope.openVolumesModal = function() {
-    ModalLauncherSvc.open('configure-volumes', {
-      pod: $scope.rs.spec.template
-    });
-  };
 
   $scope.cancel = function() {
     $location.path(activeNamespaceSvc.formatNamespaceRoute('/replicasets'));

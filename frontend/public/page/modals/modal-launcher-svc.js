@@ -21,10 +21,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-ports.html',
       controller: 'ConfigurePortsCtrl',
     },
-    'configure-volumes': {
-      templateUrl: '/static/page/modals/configure-volumes.html',
-      controller: 'ConfigureVolumesCtrl',
-    },
     'configure-update-strategy': {
       templateUrl: '/static/page/modals/configure-update-strategy.html',
       controller: 'ConfigureUpdateStrategyCtrl',

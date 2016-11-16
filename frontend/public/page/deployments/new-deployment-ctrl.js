@@ -7,12 +7,6 @@ angular.module('bridge.page')
   $scope.deployment = k8s.deployments.getEmpty($scope.ns);
   $scope.podTemplate = $scope.deployment.spec.template;
 
-  $scope.openVolumesModal = function() {
-    ModalLauncherSvc.open('configure-volumes', {
-      pod: $scope.podTemplate
-    });
-  };
-
   $scope.openUpdateStrategyModal = function() {
     ModalLauncherSvc.open('configure-update-strategy', {
       deploymentSpec: $scope.deployment.spec

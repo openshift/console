@@ -19,12 +19,6 @@ angular.module('bridge.page')
       $scope.loadError = true;
     });
 
-  $scope.openVolumesModal = function() {
-    ModalLauncherSvc.open('configure-volumes', {
-      pod: $scope.deployment.spec.template
-    });
-  };
-
   $scope.openUpdateStrategyModal = function() {
     ModalLauncherSvc.open('configure-update-strategy', {
       deploymentSpec: $scope.deployment.spec
