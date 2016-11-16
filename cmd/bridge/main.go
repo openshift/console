@@ -50,7 +50,7 @@ func main() {
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
-	fPublicDir := fs.String("public-dir", "./frontend/public", "directory containing static web assets.")
+	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
 	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
 	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")

@@ -1,8 +1,8 @@
 'use strict';
 /* global process:false, __dirname:false */
+/* eslint-disable no-console */
 /* eslint prefer-template:0 */
 
-const fs = require('fs');
 const exec = require('child_process').exec;
 
 const del = require('del');
@@ -24,13 +24,34 @@ const PrettyError = require('pretty-error');
 
 const entry = './public/_app.js';
 const distDir = './public/dist';
+const indexSrc = './public/index.html';
 const templateSrc = [
   './public/{module,page}/**/*.html',
   './public/lib/mochi/img/tectonic-logo.svg',
 ];
 
 let CURRENT_SHA;
-let IN_DEVELOPMENT = false;
+
+if (!process.env.NODE_ENV) {
+  // Default to production builds if not specified.
+  process.env.NODE_ENV = 'production';
+}
+
+// Development tasks such as `gulp dev`
+// should always run in the development environment
+gulp.task('set-development', () => {
+  process.env.NODE_ENV = 'development';
+});
+
+// Test tasks such as `npm test`
+// should always run in the test environment
+gulp.task('set-test', () => {
+  process.env.NODE_ENV = 'test';
+});
+
+/**
+ * Build JavaScript
+ */
 
 function isExternalModule (file) {
   // lifted from browserify!!!
@@ -41,7 +62,8 @@ function isExternalModule (file) {
 }
 
 const externals = [];
-function jsBuild (debug) {
+function jsBuild () {
+  const debug = process.env.NODE_ENV === 'development';
   const opts = {
     debug,
     cache: {},
@@ -65,97 +87,93 @@ function jsBuild (debug) {
   return browserify(opts).transform('babelify', {presets: ['es2015', 'react']});
 }
 
-gulp.task('set-development', () => {
-  IN_DEVELOPMENT = true;
-});
-
-gulp.task('js-deps', ['js-build'], () => {
-  // HACK: we rely on the externals being created by js-build (jsBuild)
-  return browserify()
-  .require(externals)
-  .bundle()
-  .pipe(source('deps.js'))
-  .pipe(gulp.dest(distDir));
-});
-
-
 // Compile all the js source code.
-gulp.task('js-build', ['templates'], () => {
-  return jsBuild(false)
-    .bundle()
-    // .pipe(rename({ suffix: '.min' }))
-    .pipe(source('app-bundle.js'))
-    .pipe(ngAnnotate())
-    .pipe(streamify(uglify()))
-    .pipe(gulp.dest(distDir))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(distDir));
-});
+gulp.task('js-bundle', ['templates'], () => {
+  let firstBuild = true;
+  const build = jsBuild();
 
-
-gulp.task('browserify', () => {
-  const b = jsBuild(true);
-  const bundler = (id) => {
-    b.bundle()
+  const bundler = () => {
+    return build.bundle()
       .on('error', (err) => {
-        // eslint-disable-next-line no-console
+        if (firstBuild) {
+          throw err;
+        }
         console.log(new PrettyError().render(err));
-        b.emit('end');
+        build.emit('end');
       })
-    .pipe(fs.createWriteStream(`${distDir}/app-bundle.js`));
-    // eslint-disable-next-line no-console
-    console.log(`updated ${distDir}/app-bundle.js to ${id}`);
+      .pipe(source('app-bundle.js'))
+      .pipe(ngAnnotate());
   };
 
-  b.on('update', bundler);
+  if (process.env.NODE_ENV === 'production') {
+    return bundler()
+      .pipe(streamify(uglify()))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(gulp.dest(distDir));
+  }
 
-  return bundler();
-});
+  const devBundler = () => {
+    return bundler()
+      .pipe(gulp.dest(distDir));
+  };
 
-gulp.task('sha', (cb) => {
-  exec('git rev-parse HEAD', (err, stdout) => {
-    if (err) {
-      // eslint-disable-next-line no-console
-      console.log('Error retrieving git SHA.');
-      cb(false);
-      return;
-    }
-    CURRENT_SHA = stdout.trim();
-    // eslint-disable-next-line no-console
-    console.log('sha: ', CURRENT_SHA);
-    cb();
+  build.on('update', () => {
+    firstBuild = false;
+    console.log('Updating app-bundle.js...');
+    return devBundler().on('end', () => console.log('Updated app-bundle.js'));
   });
+
+  return devBundler();
 });
 
-// Delete ALL generated files.
-gulp.task('clean', () => {
-  return del(distDir);
+gulp.task('js-deps', ['js-bundle'], () => {
+  // HACK: we rely on the externals being created by js-build (jsBuild)
+  const build = () => browserify()
+    .require(externals)
+    .bundle()
+    .pipe(source('deps.js'));
+
+  if (process.env.NODE_ENV === 'production') {
+    return build()
+      .pipe(streamify(uglify()))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(gulp.dest(distDir));
+  }
+
+  return build().pipe(gulp.dest(distDir));
 });
 
-gulp.task('clean-package', () => {
-  return del([
-    distDir + '/style.css',
-    distDir + '/app.min.js',
-    distDir + '/app.js',
-    distDir + '/templates.js'
-  ]);
-});
+gulp.task('js-build', ['js-bundle', 'js-deps']);
 
+/**
+ * Build CSS
+ */
+
+// Build app css
 gulp.task('sass', () => {
   return gulp.src('./public/style.scss')
-    .pipe(IN_DEVELOPMENT ? sass().on('error', sass.logError) : sass())
+    .pipe(process.env.NODE_ENV === 'production' ? sass({outputStyle: 'compressed'}) : sass().on('error', sass.logError))
     .pipe(gulp.dest('./public/dist'));
+});
+
+// Rename style.css to app-bundle.css
+gulp.task('css-build', ['sass'], () => {
+  return gulp.src(['public/dist/style.css'])
+    .pipe(rename('app-bundle.css'))
+    .pipe(gulp.dest(distDir));
 });
 
 gulp.task('lint', cb => {
   exec('npm run lint', (err, stdout, stderr) => {
-    // eslint-disable-next-line no-console
     err && console.error(stderr);
-    // eslint-disable-next-line no-console
     console.log(stdout);
     cb(err, stdout);
   });
 });
+
+/**
+ * Build everything else
+ */
 
 // Precompile html templates.
 gulp.task('templates', () => {
@@ -178,46 +196,21 @@ gulp.task('assets', ['fonts'], () => {
     .pipe(gulp.dest(distDir + '/imgs'));
 });
 
-// Copy all deps to dist folder for packaging.
+// Copy all deps to dist folder
 gulp.task('copy-deps', () => {
   return gulp.src('./public/lib/**/*')
     .pipe(gulp.dest(distDir + '/lib'));
 });
 
-// Combine all the js into the final build file.
-gulp.task('js-package', ['js-build', 'js-deps', 'assets', 'copy-deps', 'sha'], () => {
-  // NOTE: File Order Matters.
-  return gulp.src([
-    distDir + '/deps.js',
-    distDir + '/app-bundle.min.js'
-  ])
-  .pipe(concat(`build.${CURRENT_SHA}.min.js`))
-  .pipe(gulp.dest(distDir));
-});
-
-// Minify app css.
-gulp.task('css-build', ['sass'], () => {
-  return gulp.src(['public/dist/style.css'])
-    .pipe(concat('public/dist/deps.css'))
-    .pipe(rename('app-bundle.css'))
-    .pipe(gulp.dest(distDir));
-});
-
-gulp.task('css-sha', ['css-build', 'sha'], () => {
-  return gulp.src(distDir + '/app-bundle.css')
-    .pipe(rename(`build.${CURRENT_SHA}.css`))
-    .pipe(gulp.dest(distDir));
-});
-
 // Replace code blocks in html with build versions.
 gulp.task('html', ['sha'], () => {
-  return gulp.src('./public/index.html')
+  return gulp.src(indexSrc)
     .pipe(htmlReplace((function() {
-      var h = {
-        'js':  `static/build.${CURRENT_SHA}.min.js`,
-        'css': `static/build.${CURRENT_SHA}.css`,
-      };
-      if (process.env.NODE_ENV !== 'production') {
+      var h = {};
+      if (process.env.NODE_ENV === 'production') {
+        h['js'] = `static/build.${CURRENT_SHA}.min.js`;
+        h['css'] = `static/build.${CURRENT_SHA}.css`;
+      } else {
         h['analytics'] = '';
       }
       return h;
@@ -227,19 +220,77 @@ gulp.task('html', ['sha'], () => {
     .pipe(gulp.dest(distDir));
 });
 
+/**
+ * Prepare build for production
+ */
+
+// Save current git SHA
+gulp.task('sha', (cb) => {
+  exec('git rev-parse HEAD', (err, stdout) => {
+    if (err) {
+      console.log('Error retrieving git SHA.');
+      cb(false);
+      return;
+    }
+    CURRENT_SHA = stdout.trim();
+    console.log('sha: ', CURRENT_SHA);
+    cb();
+  });
+});
+
+// Combine all the js into the final build file.
+gulp.task('js-package', ['js-build', 'sha'], () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  // NOTE: File Order Matters.
+  return gulp.src([
+    distDir + '/deps.min.js',
+    distDir + '/app-bundle.min.js'
+  ])
+  .pipe(concat(`build.${CURRENT_SHA}.min.js`))
+  .pipe(gulp.dest(distDir));
+});
+
+// Combine all the css into the final build file.
+gulp.task('css-package', ['css-build', 'sha'], () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  return gulp.src(distDir + '/app-bundle.css')
+    .pipe(rename(`build.${CURRENT_SHA}.css`))
+    .pipe(gulp.dest(distDir));
+});
+
+// Delete ALL generated files.
+gulp.task('clean', () => {
+  return del(distDir);
+});
+
+// Delete build artifacts not served to the browser
+gulp.task('clean-package', () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  const files = ['style.css', 'app-bundle.*', 'templates.js', 'deps.*'];
+  return del(files.map(file => `${distDir}/${file}`));
+});
+
 // Live-watch development mode.
-// Auto-compiles: sass & templates.
-// Auto-runs: eslint & unit tests.
-gulp.task('dev', ['set-development', 'css-build', 'templates', 'browserify'], () => {
+// Auto-compiles: js, sass, index.html, templates.
+gulp.task('dev', ['set-development', 'default'], () => {
   gulp.watch(templateSrc, ['templates']);
-  gulp.start('browserify');
+  gulp.watch(indexSrc, ['html']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
 });
 
 /**
  * Karma test
  */
-gulp.task('test', ['lint', 'js-build', 'js-deps'], (cb) => {
+gulp.task('test', ['lint', 'set-test', 'js-build'], (cb) => {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
@@ -250,7 +301,7 @@ gulp.task('default', (cb) => {
   // Run in order.
   runSequence(
     ['clean', 'lint'],
-    ['js-package', 'css-sha', 'html'],
+    ['js-package', 'css-package', 'html', 'assets', 'copy-deps'],
     'clean-package',
     cb);
 });
