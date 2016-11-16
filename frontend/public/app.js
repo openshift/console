@@ -38,7 +38,6 @@ angular.module('bridge', [
   'bridge.ui',
   'bridge.page',
   'bridge.react-wrapper',
-  'namespace-sparklines',
   'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
@@ -103,10 +102,8 @@ angular.module('bridge', [
   });
 
   r('/namespaces', {
-    controller: 'NamespacesCtrl',
-    templateUrl: '/static/page/namespaces/namespaces.html',
+    template: '<react-component name="NamespacesPage"></react-component>',
     title: 'Namespaces',
-    reloadOnSearch: false,
   });
 
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('events');

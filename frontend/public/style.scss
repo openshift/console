@@ -40,13 +40,10 @@ $fa-font-path: "./fonts";
 @import "page/events/events";
 @import "page/modals/modal";
 @import "page/modals/configure-ports";
-@import "page/namespaces/namespaces";
 @import "page/pods/pod-logs";
 @import "page/nodes/node";
 
 @import "page/settings/users";
-
-@import "module/namespace-sparklines/namespace-sparklines";
 
 // UI Modules
 @import "module/ui/containers/container-input";
@@ -78,6 +75,7 @@ $fa-font-path: "./fonts";
 @import "components/dropdown";
 @import "components/global-notification";
 @import "components/list";
+@import "components/namespace-sparklines";
 @import "components/node-ip-list";
 @import "components/overflow";
 @import "components/RBAC/rbac";

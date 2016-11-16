@@ -3,10 +3,6 @@ import './events/events-ctrl';
 import './cluster/cluster-status-ctrl';
 import './error/error-ctrl';
 
-import './namespaces/namespaces-ctrl';
-import './namespaces/co-namespace-secret-list';
-import './namespaces/co-namespace-secret-list-ctrl';
-
 // Service pages have been migrated to React, except for the Create Service page
 import './services/new-service-ctrl.js';
 

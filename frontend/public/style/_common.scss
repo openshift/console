@@ -143,11 +143,8 @@ label {
   padding-top: 14px;
 }
 
-@media (min-width: 1200px) {
-  .co-m-pane__title__btn {
-    float: right;
-    margin: 0;
-  }
+.co-m-pane__title__btn {
+  margin-bottom: 15px;
 }
 
 @media (max-width: 768px) {
