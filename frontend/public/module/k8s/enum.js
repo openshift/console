@@ -132,6 +132,16 @@ angular.module('k8s').constant('k8sEnum', {
       path: 'namespaces',
       plural: 'namespaces',
     },
+    INGRESS: {
+      id: 'ingress',
+      kind: 'Ingress',
+      label: 'Ingress',
+      labelPlural: 'Ingress',
+      isExtension: true,
+      apiVersion: 'v1beta1',
+      path: 'ingresses',
+      plural: 'ingresses',
+    },
     CONFIGMAP: {
       id: 'configmap',
       kind: 'Configmap',

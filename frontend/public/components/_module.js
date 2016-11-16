@@ -19,3 +19,4 @@ import './service-account';
 import './search';
 import './sparkline-widget/sparkline-widget';
 import './events';
+import './ingress';

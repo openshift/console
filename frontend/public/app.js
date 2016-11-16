@@ -151,6 +151,8 @@ angular.module('bridge', [
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('roles');
   activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('rolebindings');
+  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('ingresses');
+
   r('/clusterroles', {
     controller: 'k8sListCtrl',
     templateUrl: '/static/page/k8s-list/k8s-list.html',

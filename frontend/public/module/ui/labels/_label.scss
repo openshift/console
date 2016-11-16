@@ -65,11 +65,13 @@ $height: 18px;
       color: $color-pod-dark;
     }
   }
+
   &.co-m-label--node {
     .co-m-label__link {
       color: $color-node-dark;
     }
   }
+
   &.co-m-label--namespace {
     .co-m-label__link {
       color: $color-namespace-dark;
@@ -79,6 +81,12 @@ $height: 18px;
   &.co-m-label--selector {
     background-color: transparent;
     border: none;
+  }
+
+  &.co-m-label--ingress  {
+    .co-m-label__link {
+      color: $color-ingress-dark;
+    }
   }
 }
 
