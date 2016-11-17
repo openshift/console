@@ -4,6 +4,10 @@ angular.module('bridge.page')
   'use strict';
   var streamLog, logURL;
 
+  function hasFailureMsg(data) {
+    return _.includes(data, '"status": "Failure"');
+  }
+
   $scope.ns = $routeParams.ns;
   $scope.podName = $routeParams.name;
   $scope.containerName = $routeParams.containerName;
@@ -85,7 +89,7 @@ angular.module('bridge.page')
       },
       function(why) { // Load failed/aborted
         if (why !== 'abort') {
-          throw new Error('Error reading log stream');
+          $scope.buffer.push(['Error:', ' ', why].join(''));
         }
       },
       function(data) { // Data inbound
@@ -93,7 +97,10 @@ angular.module('bridge.page')
           $scope.buffer.clear();
           loadTime = Date.now();
         }
-        $scope.buffer.push(data);
+        if (!hasFailureMsg(data)) {
+          $scope.buffer.push(data);
+        }
+
       }
     );
   };
