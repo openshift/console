@@ -46,7 +46,7 @@ const readiness = ({status}) => {
   const reason = earliestNotReady.reason || earliestNotReady.type;
 
   return <span className="co-error" >
-    <i className="fa fa-times-circle co-icon-space-r" aria-hidden="true" />
+    <i className="fa fa-times-circle co-icon-space-r" />
     {reason}
   </span>;
 };
@@ -54,10 +54,10 @@ const readiness = ({status}) => {
 const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
   let status = phase;
-  
+
   if (status !== 'Running') {
     status = <span className="co-error" >
-      <i className="fa fa-times-circle co-icon-space-r" aria-hidden="true" />{phase}
+      <i className="fa fa-times-circle co-icon-space-r" />{phase}
     </span>;
   }
 
