@@ -86,7 +86,7 @@ export class Dropdown extends DropdownMixin {
       <div className={className} ref="dropdownElement">
         <div className="dropdown">
           {button}
-          <ul className={classNames('dropdown-menu', menuClassName)} aria-labelledby="dLabel" style={{display: this.state.active ? 'block' : 'none'}}>{children}</ul>
+          <ul className={classNames('dropdown-menu', menuClassName)} style={{display: this.state.active ? 'block' : 'none'}}>{children}</ul>
         </div>
       </div>
     );
