@@ -1,4 +1,4 @@
-import {actions, formatNamespaceRoute, registerNamespaceFriendlyPrefix, clearPrefixes} from '../../ui/ui-actions';
+import {actions, formatNamespaceRoute, getActiveNamespace, registerNamespaceFriendlyPrefix, clearPrefixes} from '../../ui/ui-actions';
 import {angulars} from '../../components/react-wrapper';
 
 angular.module('bridge.service')
@@ -26,12 +26,9 @@ angular.module('bridge.service')
   this.clearPrefixes = clearPrefixes;
 
   this.$get = function() {
-    function getActiveNamespace() {
-      return angulars.store.getState().UI.get('activeNamespace');
-    }
     return {
       setActiveNamespace: function(newActiveNamespace) {
-        angulars.store.dispatch(actions.setActiveNamespace(angulars.store.getState(), newActiveNamespace));
+        angulars.store.dispatch(actions.setActiveNamespace(newActiveNamespace));
       },
       getActiveNamespace: getActiveNamespace,
       formatNamespaceRoute: ns => formatNamespaceRoute(getActiveNamespace(), ns),

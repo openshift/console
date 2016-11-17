@@ -30,24 +30,22 @@ describe('bridge.service.activeNamespaceSvc', function() {
   });
 
   describe('setActiveNamespace', function() {
-    it('sets active namespace in memory and local storage', function() {
+    it('sets active namespace in memory', function() {
       var expected = 'test';
       mockPath = '/not-a-namespaced-path';
       activeNamespaceSvc.setActiveNamespace(expected);
       expect(setPath).toEqual('*UNSET*');
 
       expect(activeNamespaceSvc.getActiveNamespace()).toEqual(expected);
-      expect(localStorage.getItem('activeNamespace')).toEqual(expected);
       expect(!_.isUndefined(activeNamespaceSvc.getActiveNamespace())).toBe(true);
     });
 
-    it('clears active namespace in memory and local storage', function() {
+    it('clears active namespace in memory', function() {
       activeNamespaceSvc.setActiveNamespace('test');
       activeNamespaceSvc.setActiveNamespace(undefined);
 
       expect(_.isUndefined(activeNamespaceSvc.getActiveNamespace())).toBe(true);
       expect(activeNamespaceSvc.getActiveNamespace()).toEqual(undefined);
-      expect(localStorage.getItem('activeNamespace')).toEqual(null);
     });
 
     it('should redirect namespaced location paths for known namespace-friendly prefixes', function() {

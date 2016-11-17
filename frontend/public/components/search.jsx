@@ -16,6 +16,7 @@ import {SecretsList} from './secret';
 import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
 import {IngressList} from './ingress';
+import {getActiveNamespace} from '../ui/ui-actions';
 import {connect, Dropdown, kindObj, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 const ResourceListDropdown = ({selected, onChange}) => {
@@ -40,7 +41,7 @@ const ResourceListDropdown = ({selected, onChange}) => {
   return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
 };
 
-const ResourceList = connect(state => ({namespace: state.UI.get('activeNamespace')}))(
+const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
 ({kind, namespace, selector}) => {
   const newProps = {namespace, selector};
   return <div className="co-m-pane__body">

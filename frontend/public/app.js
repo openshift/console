@@ -330,7 +330,6 @@ angular.module('bridge', [
 })
 .run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
   'use strict';
-  $ngRedux.dispatch(UIActions.loadActiveNamespaceFromStorage());
 
   $rootScope.SERVER_FLAGS = $window.SERVER_FLAGS;
   $ngRedux.dispatch(actions.getResources());
@@ -349,6 +348,7 @@ angular.module('bridge', [
   };
 
   $rootScope.$on('$routeChangeSuccess', function() {
+    $ngRedux.dispatch(UIActions.initActiveNamespace());
     analyticsSvc.route(location.pathname);
   });
 
