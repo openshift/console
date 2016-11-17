@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {coFetch, coFetchJSON} from '../../co-fetch';
 import {angulars} from '../react-wrapper';
+import {coFetch, coFetchJSON} from '../../co-fetch';
+import {configureYamlFieldModal} from '../modals/configure-yaml-field-modal';
 import {SettingsRow, SettingsLabel, SettingsContent} from './cluster-settings';
 import {SettingsModalLink} from './settings-modal-link';
 
@@ -66,7 +67,7 @@ export class LicenseSetting extends React.Component {
   }
 
   _openModal() {
-    const modal = angulars.modal('configure-yaml-field', {
+    const modal = configureYamlFieldModal({
       k8sQuery: {
         kind: angulars.kinds.SECRET,
         name: 'tectonic-license',
@@ -99,7 +100,7 @@ export class LicenseSetting extends React.Component {
           });
         }
       }
-    })();
+    });
 
     modal.result.then(this._queryLicense.bind(this)).catch(this._updateOutdated.bind(this, false));
   }

@@ -258,7 +258,10 @@ angular.module('coreos.ui')
           completePromise.finally(enableButtons);
           return;
         }
-        completePromise.then(enableButtons).catch(enableButtons);
+        completePromise.then(enableButtons).catch((error) => {
+          enableButtons();
+          throw error;
+        });
       });
     }
 
@@ -361,9 +364,11 @@ angular.module('coreos.ui')
         } else if ($scope.customMessage) {
           $scope.message = $scope.customMessage;
         } else {
-          return;
+          throw resp;
         }
         $scope.show = true;
+
+        throw resp;
       }
 
       $scope.$watch('promise', function(promise) {

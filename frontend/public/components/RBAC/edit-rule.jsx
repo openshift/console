@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {errorModal} from '../factory';
-import {connect, ResourceIcon} from '../utils';
+import {errorModal} from '../modals/error-modal';
+import {connect, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
 import {register, angulars} from '../react-wrapper';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
@@ -48,7 +48,7 @@ const HRMinor = () => <hr className="rbac-minor" />;
 const HRMajor = () => <hr className="rbac-major" />;
 
 export const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
-class EditRule_ extends React.Component {
+class EditRule_ extends PromiseComponent {
   constructor (props) {
     super(props);
 
@@ -144,8 +144,8 @@ class EditRule_ extends React.Component {
     } else {
       role.rules.push(rule);
     }
-    const promise = this.resource.update(role);
-    promise.then(() => {
+    this._setRequestPromise(this.resource.update(role));
+    this.requestPromise.then(() => {
       const {namespace, name} = this.props;
 
       let url = `/all-namespaces/${this.kind.plural}#`;
@@ -156,7 +156,7 @@ class EditRule_ extends React.Component {
       }
 
       angulars.$location.url(url);
-    }).catch(this.errorModal.bind(this));
+    });
   }
 
   isVerbSelected_ (v) {
@@ -397,7 +397,10 @@ class EditRule_ extends React.Component {
 
           <div className="row">
             <div className="col-xs-12">
-              <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
+              <ButtonBar completePromise={this.requestPromise}>
+                <ErrorMessage promise={this.requestPromise} formatter="k8sApi" />
+                <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
+              </ButtonBar>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {ButtonBar, ErrorMessage} from '../utils';
 import {angulars, register} from '../react-wrapper';
 
 export const createModalLauncher = (Component, registeredName) => {
@@ -11,27 +12,15 @@ export const createModalLauncher = (Component, registeredName) => {
 
   return (props) => {
     props = props || {};
-    angulars.modal('reactive-modal', {props, name: registeredName})();
+    return angulars.modal('reactive-modal', {props, name: registeredName})();
   };
 };
 
-export const errorModal = createModalLauncher(
-  ({error, close}) => {
-    return (
-      <div role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h1 className="modal-title">Error</h1>
-          </div>
-          <div className="modal-body">
-            {error}
-          </div>
-          <div className="modal-footer">
-            <button type="button" onClick={close} className="btn btn-default">OK</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-);
-
+export const ModalTitle = ({children}) => <div className="modal-header"><h4 className="modal-title">{children}</h4></div>;
+export const ModalBody = ({children}) => <div className="modal-body">{children}</div>;
+export const ModalFooter = ({promise, errorFormatter, errorCustomMessage, children}) => {
+  return <ButtonBar className="modal-footer" completePromise={promise}>
+    <ErrorMessage formatter={errorFormatter} promise={promise} customMessage={errorCustomMessage} />
+    {children}
+  </ButtonBar>;
+};
