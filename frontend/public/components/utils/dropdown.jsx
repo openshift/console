@@ -5,10 +5,7 @@ export class DropdownMixin extends React.Component {
   constructor(props) {
     super(props);
     this.listener = this._onWindowClick.bind(this);
-    this.state = {
-      selectedHtml: props.title,
-      active: !!props.active,
-    };
+    this.state = {active: !!props.active};
     this.toggle = this.toggle.bind(this);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
@@ -34,7 +31,7 @@ export class DropdownMixin extends React.Component {
     window.removeEventListener('click', this.listener);
   }
 
-  onClick_ (key, html, e) {
+  onClick_ (key, e) {
     e.stopPropagation();
 
     const {onChange} = this.props;
@@ -42,7 +39,7 @@ export class DropdownMixin extends React.Component {
       onChange(key);
     }
 
-    this.setState({active: false, selectedHtml: html});
+    this.setState({active: false, selectedKey: key});
   }
 
   toggle (e) {
@@ -63,10 +60,10 @@ export class DropdownMixin extends React.Component {
 
 export class Dropdown extends DropdownMixin {
   render() {
-    const {selectedHtml} = this.state;
+    const {active, selectedKey} = this.state;
     const {noButton, noSelection, items, title, className, menuClassName} = this.props;
 
-    const buttonTitle = noSelection ? title : selectedHtml;
+    const buttonTitle = noSelection || selectedKey === undefined ? title : items[selectedKey];
     let button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
       {buttonTitle}&nbsp;&nbsp;
       <span className="caret"></span>
@@ -77,8 +74,8 @@ export class Dropdown extends DropdownMixin {
     }
 
     const children = _.map(items, (html, key) => {
-      const klass = noSelection || html !== selectedHtml ? 'dropdown__default' : 'dropdown__selected';
-      const onClick_ = this.onClick_.bind(this, key, html);
+      const klass = noSelection || key !== selectedKey ? 'dropdown__default' : 'dropdown__selected';
+      const onClick_ = this.onClick_.bind(this, key);
       return <li className={klass} key={key}><a onClick={onClick_}>{html}</a></li>;
     });
 
@@ -86,7 +83,7 @@ export class Dropdown extends DropdownMixin {
       <div className={className} ref="dropdownElement">
         <div className="dropdown">
           {button}
-          <ul className={classNames('dropdown-menu', menuClassName)} style={{display: this.state.active ? 'block' : 'none'}}>{children}</ul>
+          <ul className={classNames('dropdown-menu', menuClassName)} style={{display: active ? 'block' : 'none'}}>{children}</ul>
         </div>
       </div>
     );
