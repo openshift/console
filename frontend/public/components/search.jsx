@@ -65,7 +65,7 @@ export class SearchPage extends React.Component {
     super(props);
     this.state = {
       kind: angulars.routeParams.kind || angulars.k8s.enum.Kind.SERVICE.id,
-      tags: angulars.k8s.selector.split(angulars.routeParams.q),
+      tags: angulars.k8s.selector.split(angulars.routeParams.q || ''),
     };
   }
 
