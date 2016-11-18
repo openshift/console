@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Cog, ResourceIcon} from '../utils';
-import {confirmModal} from '../modals/confirm-modal';
+import {confirmModal} from '../modals';
 import {angulars} from '../react-wrapper';
 
 export const Rules = ({rules, metadata: {name, namespace}}) => {

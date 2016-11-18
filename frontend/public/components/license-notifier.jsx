@@ -5,7 +5,7 @@ import {coFetchJSON} from '../co-fetch';
 import {pluralize} from './utils';
 import {angulars} from './react-wrapper';
 import {GlobalNotification} from './global-notification';
-import {licenseEnforcementModal} from './modals/license-enforcement-modal';
+import {licenseEnforcementModal} from './modals';
 
 const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
 

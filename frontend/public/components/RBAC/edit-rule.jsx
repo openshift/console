@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {errorModal} from '../modals/error-modal';
+import {errorModal} from '../modals';
 import {connect, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
 import {register, angulars} from '../react-wrapper';
 
