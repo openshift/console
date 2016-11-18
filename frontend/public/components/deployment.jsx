@@ -2,26 +2,47 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
 import {angulars} from './react-wrapper';
+import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
 import {configureReplicaCountModal} from './modals';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
-export class Details extends React.Component {
+export class Details extends SafetyFirst {
+  constructor(props) {
+    super(props);
+    this.state = {
+      desiredCountOutdated: false
+    };
+    this._openReplicaCountModal = this._openReplicaCountModal.bind(this);
+  }
+
   componentDidMount() {
+    super.componentDidMount();
     ReactTooltip.rebuild();
+  }
+
+  componentWillReceiveProps() {
+    this.setState({
+      desiredCountOutdated: false
+    });
+  }
+
+  _openReplicaCountModal(event) {
+    event.target.blur();
+    configureReplicaCountModal({
+      resourceKind: angulars.k8s.kinds.DEPLOYMENT,
+      resource: this.props,
+      invalidateState: (isInvalid) => {
+        this.setState({
+          desiredCountOutdated: isInvalid
+        });
+      }
+    });
   }
 
   render() {
     const deployment = this.props;
-    const openReplicaCountModal = (event) => {
-      event.target.blur();
-      configureReplicaCountModal({
-        resourceKind: angulars.k8s.kinds.DEPLOYMENT,
-        resource: deployment,
-      });
-    };
-
     const isRecreate = (deployment.spec.strategy.type === 'Recreate');
 
     return <div>
@@ -33,7 +54,7 @@ export class Details extends React.Component {
                 <div className="co-deployment-pods__section col-sm-3">
                   <dl className="co-deployment-pods__list">
                     <dt className="co-deployment-pods__list-term">Desired Count</dt>
-                    <dd><a className="co-m-modal-link" href="#" onClick={openReplicaCountModal}>{pluralize(deployment.spec.replicas, 'pod')}</a></dd>
+                    <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#" onClick={this._openReplicaCountModal}>{pluralize(deployment.spec.replicas, 'pod')}</a>}</dd>
                   </dl>
                 </div>
                 <div className="co-deployment-pods__section col-sm-3">
