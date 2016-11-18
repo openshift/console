@@ -30,6 +30,13 @@ export class VertNav extends React.Component {
       </li>;
     });
 
+    nav.find((item, index) => {
+      if (['Overview', 'Edit'].includes(item.key) && index + 1 !== nav.length && nav[index + 1].key !== 'Edit') {
+        nav.splice(index + 1, 0, <li className="co-m-vert-nav__menu-item co-m-vert-nav__menu-item--divider" key="_divider" />);
+        return true;
+      }
+    });
+
     return <div className={this.props.className}>
       <div className="co-m-pane co-m-vert-nav">
         {!hideNav && <ul className="co-m-vert-nav__menu">{nav}</ul>}

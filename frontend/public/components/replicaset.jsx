@@ -28,8 +28,8 @@ const kind = 'REPLICASET';
 const {factory: {pods}} = detailsPage;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
+  {href: 'edit', name: 'Edit', component: Edit},
   pods(),
-  {href: 'edit', name: 'Desired State', component: Edit},
 ];
 const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', kind, pages);
 

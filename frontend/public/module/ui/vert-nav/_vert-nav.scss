@@ -51,6 +51,14 @@ $min-height: 200px;
   }
 }
 
+.co-m-vert-nav__menu-item--divider {
+  border-left: 1px solid $color-grey-background-border;
+  padding: 0;
+  margin: 0 10px;
+  height: 44px;
+  vertical-align: middle;
+}
+
 .co-m-vert-nav__body {
   -webkit-box-flex: 1;
   -webkit-flex: 1;

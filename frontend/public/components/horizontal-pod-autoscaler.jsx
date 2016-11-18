@@ -147,7 +147,7 @@ const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
   </div>
 </div>;
 
-const pages = [{href: 'details', name: 'Details', component: Details}];
+const pages = [{href: 'details', name: 'Overview', component: Details}];
 const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'HORIZONTALPODAUTOSCALER', pages);
 const HorizontalPodAutoscalersList = makeList('HorizontalPodAutoscalers', 'HORIZONTALPODAUTOSCALER', Header, HorizontalPodAutoscalerRow);
 const HorizontalPodAutoscalersPage = makeListPage('HorizontalPodAutoscalersPage', 'HORIZONTALPODAUTOSCALER', HorizontalPodAutoscalersList, null, null, 'Autoscalers');
