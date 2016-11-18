@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
+import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {PromiseComponent} from '../utils';
 
 class ConfirmModal extends PromiseComponent {
@@ -24,10 +24,7 @@ class ConfirmModal extends PromiseComponent {
     return <form onSubmit={this._submit} name="form" role="form">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>{this.props.message}</ModalBody>
-      <ModalFooter promise={this.requestPromise} errorFormatter="k8sApi">
-        <button type="submit" className="btn btn-primary">{this.props.btnText || 'Confirm'}</button>
-        <button type="button" onClick={this._cancel} className="btn btn-link">Cancel</button>
-      </ModalFooter>
+      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
     </form>;
   }
 }

@@ -24,3 +24,14 @@ export const ModalFooter = ({promise, errorFormatter, errorCustomMessage, childr
     {children}
   </ButtonBar>;
 };
+
+export const ModalSubmitFooter = ({promise, errorFormatter, errorCustomMessage, cancel, submitText}) => {
+  return <ModalFooter promise={promise} errorFormatter={errorFormatter} errorCustomMessage={errorCustomMessage}>
+    <button type="submit" className="btn btn-primary">{submitText}</button>
+    <button type="button" onClick={cancel} className="btn btn-link">Cancel</button>
+  </ModalFooter>;
+};
+ModalSubmitFooter.propTypes = {
+  cancel: React.PropTypes.func.isRequired,
+  submitText: React.PropTypes.node.isRequired
+};

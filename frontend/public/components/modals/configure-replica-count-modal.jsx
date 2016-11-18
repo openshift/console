@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {angulars} from '../react-wrapper';
-import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
+import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {PromiseComponent, NumberSpinner} from '../utils';
 
 class ConfigureReplicaCountModal extends PromiseComponent {
@@ -44,10 +44,7 @@ class ConfigureReplicaCountModal extends PromiseComponent {
         <p>{this.props.resourceKind.labelPlural} maintain the desired number of healthy pods.</p>
         <NumberSpinner className="form-control" value={this.state.value} onChange={this._change} changeValueBy={this._changeValueBy} autoFocus required />
       </ModalBody>
-      <ModalFooter promise={this.requestPromise} errorFormatter="k8sApi">
-        <button type="submit" className="btn btn-primary">Save Desired Count</button>
-        <button type="button" onClick={this._cancel} className="btn btn-link">Cancel</button>
-      </ModalFooter>
+      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText="Save Desired Count" cancel={this._cancel} />
     </form>;
   }
 }
