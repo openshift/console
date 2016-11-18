@@ -7,7 +7,6 @@ import './linebuffer';
 import './features';
 import './firehose';
 import './message';
-import './namespace-cache';
 import './status';
 import './stream';
 import './yamlize';
