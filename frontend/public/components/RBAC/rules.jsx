@@ -106,7 +106,7 @@ const DeleteRule = (name, namespace, i) => ({
     message: `Are you sure you want to delete Rule #${i}?`,
     btnText: 'Delete Rule',
     executeFn: () => () => {
-      const kind = angulars.k8s[namespace ? 'roels' : 'clusterroles'];
+      const kind = angulars.k8s[namespace ? 'roles' : 'clusterroles'];
       return kind.patch({metadata: {name, namespace}}, [{
         op: 'remove', path: `/rules/${i}`,
       }]);
