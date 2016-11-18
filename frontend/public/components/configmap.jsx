@@ -60,7 +60,7 @@ const ConfigMapDetails = (configMap) => {
   </div>;
 };
 
-const pages = [{href: 'details', name: 'Details', component: ConfigMapDetails}];
+const pages = [{href: 'details', name: 'Overview', component: ConfigMapDetails}];
 
 const ConfigMaps = makeList('ConfigMaps', 'CONFIGMAP', ConfigMapHeader, ConfigMapRow);
 const ConfigMapsPage = makeListPage('ConfigMapsPage', 'CONFIGMAP', ConfigMaps);

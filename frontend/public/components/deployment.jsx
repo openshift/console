@@ -90,8 +90,8 @@ const kind = 'DEPLOYMENT';
 const {factory: {pods}} = detailsPage;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
-  pods(),
-  {href: 'edit', name: 'Desired State', component: Edit},
+  {href: 'edit', name: 'Edit', component: Edit},
+  pods()
 ];
 const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', kind, pages);
 

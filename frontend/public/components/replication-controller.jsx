@@ -29,8 +29,8 @@ const kind = 'REPLICATIONCONTROLLER';
 const {factory: {pods}} = detailsPage;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
+  {href: 'edit', name: 'Edit', component: Edit},
   pods(),
-  {href: 'edit', name: 'Desired State', component: Edit},
   {href: 'events', name: 'Events', component: Events},
 ];
 const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', kind, pages);

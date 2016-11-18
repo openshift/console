@@ -70,7 +70,7 @@ const Details = (serviceaccount) => {
   );
 };
 
-const pages = [{href: 'details', name: 'Details', component: Details}];
+const pages = [{href: 'details', name: 'Overview', component: Details}];
 const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'SERVICEACCOUNT', pages);
 const ServiceAccountsList = makeList('ServiceAccounts', 'SERVICEACCOUNT', Header, withSecretsList(ServiceAccountRow));
 const ServiceAccountsPage = makeListPage('ServiceAccountsPage', 'SERVICEACCOUNT', ServiceAccountsList);

@@ -24,6 +24,7 @@ $min-height: 200px;
   -webkit-order: 1;
   order: 1;
 
+  display: flex;
   padding-left: 12px;
   list-style: none;
   margin: 0;
@@ -37,7 +38,7 @@ $min-height: 200px;
 .co-m-vert-nav__menu-item {
   margin: 0;
   text-align: center;
-  display: inline-block;
+  display: block;
   font-size: 20px;
   padding: 7px;
 
@@ -49,6 +50,14 @@ $min-height: 200px;
     text-decoration: none;
     padding: 10px;
   }
+}
+
+.co-m-vert-nav__menu-item--divider {
+  border-left: 1px solid $color-grey-background-border;
+  padding: 0;
+  margin: 0 10px;
+  height: 44px;
+  vertical-align: middle;
 }
 
 .co-m-vert-nav__body {

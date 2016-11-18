@@ -14,7 +14,7 @@
       <div class="co-m-vert-nav__body">
 
         <div class="co-m-pane__heading">
-          <h1 class="co-m-pane__title">Desired State</h1>
+          <h1 class="co-m-pane__title">Replication Controller Details</h1>
         </div>
         <div cos-tristate="loaded" cos-tristate-error="loadError" class="co-m-pane__body">
           <div ng-show="loaded && !loadError">
@@ -90,7 +90,7 @@
             <div class="co-m-form-col col-sm-10 ">
               <div co-btn-bar complete-promise="requestPromise">
                 <co-error-message formatter="k8sApi" promise="requestPromise"></co-error-message>
-                <button type="submit" class="btn btn-primary ng-scope">Update Desired State</button>
+                <button type="submit" class="btn btn-primary ng-scope">Update Replication Controller</button>
                 <button type="button" ng-click="cancel()" class="btn btn-link ng-scope">Cancel</button>
               </div>
             </div>
