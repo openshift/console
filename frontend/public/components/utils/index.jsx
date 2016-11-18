@@ -23,3 +23,4 @@ export * from './toggle-play';
 export * from './pods';
 export * from './error-message';
 export * from './button-bar';
+export * from './number-spinner';

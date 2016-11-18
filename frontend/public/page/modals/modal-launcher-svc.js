@@ -49,10 +49,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-primary-command.html',
       controller: 'ConfigurePrimaryCommandCtrl',
     },
-    'configure-replica-count': {
-      templateUrl: '/static/page/modals/configure-replica-count.html',
-      controller: 'ConfigureReplicaCountCtrl',
-    },
     'configure-job-parallelism': {
       templateUrl: '/static/page/modals/configure-job-parallelism.html',
       controller: 'ConfigureJobParallelismCtrl',

@@ -1,3 +1,4 @@
+export * from './configure-replica-count-modal';
 export * from './configure-yaml-field-modal';
 export * from './confirm-modal';
 export * from './delete-namespace-modal';

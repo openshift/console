@@ -7,7 +7,6 @@ import './configure-revision-history-limit-ctrl';
 import './configure-pull-policy-ctrl';
 import './configure-labels-ctrl';
 import './configure-selector-ctrl';
-import './configure-replica-count-ctrl';
 import './configure-job-parallelism-ctrl';
 import './configure-hpa-replicas-ctrl';
 import './configure-hpa-targets-ctrl';

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import {util} from '../../module/k8s/util';
 import {angulars} from '../react-wrapper';
-import {confirmModal} from '../modals/confirm-modal';
+import {confirmModal, configureReplicaCountModal} from '../modals';
 import {DropdownMixin} from './dropdown';
 
 export class Cog extends DropdownMixin {
@@ -80,9 +80,9 @@ Cog.factory = {
   ModifyCount: (kind, obj) => ({
     label: 'Modify Count...',
     weight: 100,
-    callback: angulars.modal('configure-replica-count', {
+    callback: () => configureReplicaCountModal({
       resourceKind: kind,
-      resource: () => obj,
+      resource: obj,
     }),
   }),
   ModifyJobParallelism: (kind, obj) => ({
