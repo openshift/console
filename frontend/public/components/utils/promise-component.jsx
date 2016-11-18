@@ -3,6 +3,7 @@ import React from 'react';
 export class PromiseComponent extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {};
     this.requestPromise = null;
   }
 
