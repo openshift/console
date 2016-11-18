@@ -2,47 +2,15 @@ package logger
 
 import (
 	"fmt"
-	"os"
-	"strings"
 	"sync"
-	"time"
 )
 
-// Creator is a method that builds a logging driver instance with given context
+// Creator builds a logging driver instance with given context.
 type Creator func(Context) (Logger, error)
 
-//LogOptValidator is a method that validates the log opts provided
+// LogOptValidator checks the options specific to the underlying
+// logging implementation.
 type LogOptValidator func(cfg map[string]string) error
-
-// Context provides enough information for a logging driver to do its function
-type Context struct {
-	Config              map[string]string
-	ContainerID         string
-	ContainerName       string
-	ContainerEntrypoint string
-	ContainerArgs       []string
-	ContainerImageID    string
-	ContainerImageName  string
-	ContainerCreated    time.Time
-	LogPath             string
-}
-
-func (ctx *Context) Hostname() (string, error) {
-	hostname, err := os.Hostname()
-	if err != nil {
-		return "", fmt.Errorf("logger: can not resolve hostname: %v", err)
-	}
-	return hostname, nil
-}
-
-func (ctx *Context) Command() string {
-	terms := []string{ctx.ContainerEntrypoint}
-	for _, arg := range ctx.ContainerArgs {
-		terms = append(terms, arg)
-	}
-	command := strings.Join(terms, " ")
-	return command
-}
 
 type logdriverFactory struct {
 	registry     map[string]Creator
@@ -51,14 +19,21 @@ type logdriverFactory struct {
 }
 
 func (lf *logdriverFactory) register(name string, c Creator) error {
-	lf.m.Lock()
-	defer lf.m.Unlock()
-
-	if _, ok := lf.registry[name]; ok {
+	if lf.driverRegistered(name) {
 		return fmt.Errorf("logger: log driver named '%s' is already registered", name)
 	}
+
+	lf.m.Lock()
 	lf.registry[name] = c
+	lf.m.Unlock()
 	return nil
+}
+
+func (lf *logdriverFactory) driverRegistered(name string) bool {
+	lf.m.Lock()
+	_, ok := lf.registry[name]
+	lf.m.Unlock()
+	return ok
 }
 
 func (lf *logdriverFactory) registerLogOptValidator(name string, l LogOptValidator) error {
@@ -66,7 +41,7 @@ func (lf *logdriverFactory) registerLogOptValidator(name string, l LogOptValidat
 	defer lf.m.Unlock()
 
 	if _, ok := lf.optValidator[name]; ok {
-		return fmt.Errorf("logger: log driver named '%s' is already registered", name)
+		return fmt.Errorf("logger: log validator named '%s' is already registered", name)
 	}
 	lf.optValidator[name] = l
 	return nil
@@ -99,6 +74,8 @@ func RegisterLogDriver(name string, c Creator) error {
 	return factory.register(name, c)
 }
 
+// RegisterLogOptValidator registers the logging option validator with
+// the given logging driver name.
 func RegisterLogOptValidator(name string, l LogOptValidator) error {
 	return factory.registerLogOptValidator(name, l)
 }
@@ -108,10 +85,20 @@ func GetLogDriver(name string) (Creator, error) {
 	return factory.get(name)
 }
 
+// ValidateLogOpts checks the options for the given log driver. The
+// options supported are specific to the LogDriver implementation.
 func ValidateLogOpts(name string, cfg map[string]string) error {
-	l := factory.getLogOptValidator(name)
-	if l != nil {
-		return l(cfg)
+	if name == "none" {
+		return nil
 	}
-	return fmt.Errorf("Log Opts are not valid for [%s] driver", name)
+
+	if !factory.driverRegistered(name) {
+		return fmt.Errorf("logger: no log driver named '%s' is registered", name)
+	}
+
+	validator := factory.getLogOptValidator(name)
+	if validator != nil {
+		return validator(cfg)
+	}
+	return nil
 }

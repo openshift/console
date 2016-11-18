@@ -59,8 +59,8 @@ bundle_ubuntu() {
 	mkdir -p "$DIR/etc/fish/completions"
 	cp contrib/completion/fish/docker.fish "$DIR/etc/fish/completions/"
 
-	# Include contributed man pages
-	man/md2man-all.sh -q
+	# Include man pages
+	make manpages
 	manRoot="$DIR/usr/share/man"
 	mkdir -p "$manRoot"
 	for manDir in man/man?; do
@@ -71,10 +71,6 @@ bundle_ubuntu() {
 			gzip -c "$manFile" > "$manRoot/$manBase/$manName.gz"
 		done
 	done
-
-	# Include contributed apparmor policy
-	mkdir -p "$DIR/etc/apparmor.d/"
-	cp contrib/apparmor/docker "$DIR/etc/apparmor.d/"
 
 	# Copy the binary
 	# This will fail if the binary bundle hasn't been built
@@ -91,10 +87,6 @@ if [ "$1" = 'configure' ] && [ -z "$2" ]; then
 	if ! getent group docker > /dev/null; then
 		groupadd --system docker
 	fi
-fi
-
-if ( aa-status --enabled ); then
-	/sbin/apparmor_parser -r -W -T /etc/apparmor.d/docker
 fi
 
 if ! { [ -x /sbin/initctl ] && /sbin/initctl version 2>/dev/null | grep -q upstart; }; then

@@ -2,100 +2,33 @@ package opts
 
 import (
 	"fmt"
+	"math/big"
 	"net"
-	"os"
-	"path"
 	"regexp"
 	"strings"
 
-	flag "github.com/docker/docker/pkg/mflag"
-	"github.com/docker/docker/pkg/parsers"
-	"github.com/docker/docker/pkg/ulimit"
-	"github.com/docker/docker/volume"
+	"github.com/docker/docker/api/types/filters"
 )
 
 var (
 	alphaRegexp  = regexp.MustCompile(`[a-zA-Z]`)
 	domainRegexp = regexp.MustCompile(`^(:?(:?[a-zA-Z0-9]|(:?[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))(:?\.(:?[a-zA-Z0-9]|(:?[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])))*)\.?\s*$`)
-	// DefaultHTTPHost Default HTTP Host used if only port is provided to -H flag e.g. docker -d -H tcp://:8080
-	DefaultHTTPHost = "127.0.0.1"
-	// DefaultHTTPPort Default HTTP Port used if only the protocol is provided to -H flag e.g. docker -d -H tcp://
-	// TODO Windows. DefaultHTTPPort is only used on Windows if a -H parameter
-	// is not supplied. A better longer term solution would be to use a named
-	// pipe as the default on the Windows daemon.
-	DefaultHTTPPort = 2375 // Default HTTP Port
-	// DefaultUnixSocket Path for the unix socket.
-	// Docker daemon by default always listens on the default unix socket
-	DefaultUnixSocket = "/var/run/docker.sock"
 )
 
-// ListVar Defines a flag with the specified names and usage, and put the value
-// list into ListOpts that will hold the values.
-func ListVar(values *[]string, names []string, usage string) {
-	flag.Var(newListOptsRef(values, nil), names, usage)
-}
-
-// MapVar Defines a flag with the specified names and usage, and put the value
-// map into MapOpt that will hold the values (key,value).
-func MapVar(values map[string]string, names []string, usage string) {
-	flag.Var(newMapOpt(values, nil), names, usage)
-}
-
-// LogOptsVar Defines a flag with the specified names and usage for --log-opts,
-// and put the value map into MapOpt that will hold the values (key,value).
-func LogOptsVar(values map[string]string, names []string, usage string) {
-	flag.Var(newMapOpt(values, nil), names, usage)
-}
-
-// HostListVar Defines a flag with the specified names and usage and put the
-// value into a ListOpts that will hold the values, validating the Host format.
-func HostListVar(values *[]string, names []string, usage string) {
-	flag.Var(newListOptsRef(values, ValidateHost), names, usage)
-}
-
-// IPListVar Defines a flag with the specified names and usage and put the
-// value into a ListOpts that will hold the values, validating the IP format.
-func IPListVar(values *[]string, names []string, usage string) {
-	flag.Var(newListOptsRef(values, ValidateIPAddress), names, usage)
-}
-
-// DNSSearchListVar Defines a flag with the specified names and usage and put the
-// value into a ListOpts that will hold the values, validating the DNS search format.
-func DNSSearchListVar(values *[]string, names []string, usage string) {
-	flag.Var(newListOptsRef(values, ValidateDNSSearch), names, usage)
-}
-
-// IPVar Defines a flag with the specified names and usage for IP and will use
-// the specified defaultValue if the specified value is not valid.
-func IPVar(value *net.IP, names []string, defaultValue, usage string) {
-	flag.Var(NewIpOpt(value, defaultValue), names, usage)
-}
-
-// LabelListVar Defines a flag with the specified names and usage and put the
-// value into a ListOpts that will hold the values, validating the label format.
-func LabelListVar(values *[]string, names []string, usage string) {
-	flag.Var(newListOptsRef(values, ValidateLabel), names, usage)
-}
-
-// UlimitMapVar Defines a flag with the specified names and usage for --ulimit,
-// and put the value map into a UlimitOpt that will hold the values.
-func UlimitMapVar(values map[string]*ulimit.Ulimit, names []string, usage string) {
-	flag.Var(NewUlimitOpt(values), names, usage)
-}
-
-// ListOpts type that hold a list of values and a validation function.
+// ListOpts holds a list of values and a validation function.
 type ListOpts struct {
 	values    *[]string
 	validator ValidatorFctType
 }
 
-// NewListOpts Create a new ListOpts with the specified validator.
+// NewListOpts creates a new ListOpts with the specified validator.
 func NewListOpts(validator ValidatorFctType) ListOpts {
 	var values []string
-	return *newListOptsRef(&values, validator)
+	return *NewListOptsRef(&values, validator)
 }
 
-func newListOptsRef(values *[]string, validator ValidatorFctType) *ListOpts {
+// NewListOptsRef creates a new ListOpts with the specified values and validator.
+func NewListOptsRef(values *[]string, validator ValidatorFctType) *ListOpts {
 	return &ListOpts{
 		values:    values,
 		validator: validator,
@@ -106,7 +39,7 @@ func (opts *ListOpts) String() string {
 	return fmt.Sprintf("%v", []string((*opts.values)))
 }
 
-// Set validates if needed the input value and add it to the
+// Set validates if needed the input value and adds it to the
 // internal slice.
 func (opts *ListOpts) Set(value string) error {
 	if opts.validator != nil {
@@ -120,7 +53,7 @@ func (opts *ListOpts) Set(value string) error {
 	return nil
 }
 
-// Delete remove the given element from the slice.
+// Delete removes the specified element from the slice.
 func (opts *ListOpts) Delete(key string) {
 	for i, k := range *opts.values {
 		if k == key {
@@ -132,7 +65,6 @@ func (opts *ListOpts) Delete(key string) {
 
 // GetMap returns the content of values in a map in order to avoid
 // duplicates.
-// FIXME: can we remove this?
 func (opts *ListOpts) GetMap() map[string]struct{} {
 	ret := make(map[string]struct{})
 	for _, k := range *opts.values {
@@ -141,13 +73,22 @@ func (opts *ListOpts) GetMap() map[string]struct{} {
 	return ret
 }
 
-// GetAll returns the values' slice.
-// FIXME: Can we remove this?
+// GetAll returns the values of slice.
 func (opts *ListOpts) GetAll() []string {
 	return (*opts.values)
 }
 
-// Get checks the existence of the given key.
+// GetAllOrEmpty returns the values of the slice
+// or an empty slice when there are no values.
+func (opts *ListOpts) GetAllOrEmpty() []string {
+	v := *opts.values
+	if v == nil {
+		return make([]string, 0)
+	}
+	return v
+}
+
+// Get checks the existence of the specified key.
 func (opts *ListOpts) Get(key string) bool {
 	for _, k := range *opts.values {
 		if k == key {
@@ -162,7 +103,41 @@ func (opts *ListOpts) Len() int {
 	return len((*opts.values))
 }
 
-//MapOpts type that holds a map of values and a validation function.
+// Type returns a string name for this Option type
+func (opts *ListOpts) Type() string {
+	return "list"
+}
+
+// NamedOption is an interface that list and map options
+// with names implement.
+type NamedOption interface {
+	Name() string
+}
+
+// NamedListOpts is a ListOpts with a configuration name.
+// This struct is useful to keep reference to the assigned
+// field name in the internal configuration struct.
+type NamedListOpts struct {
+	name string
+	ListOpts
+}
+
+var _ NamedOption = &NamedListOpts{}
+
+// NewNamedListOptsRef creates a reference to a new NamedListOpts struct.
+func NewNamedListOptsRef(name string, values *[]string, validator ValidatorFctType) *NamedListOpts {
+	return &NamedListOpts{
+		name:     name,
+		ListOpts: *NewListOptsRef(values, validator),
+	}
+}
+
+// Name returns the name of the NamedListOpts in the configuration.
+func (o *NamedListOpts) Name() string {
+	return o.name
+}
+
+// MapOpts holds a map of values and a validation function.
 type MapOpts struct {
 	values    map[string]string
 	validator ValidatorFctType
@@ -187,115 +162,61 @@ func (opts *MapOpts) Set(value string) error {
 	return nil
 }
 
+// GetAll returns the values of MapOpts as a map.
+func (opts *MapOpts) GetAll() map[string]string {
+	return opts.values
+}
+
 func (opts *MapOpts) String() string {
 	return fmt.Sprintf("%v", map[string]string((opts.values)))
 }
 
-func newMapOpt(values map[string]string, validator ValidatorFctType) *MapOpts {
+// Type returns a string name for this Option type
+func (opts *MapOpts) Type() string {
+	return "map"
+}
+
+// NewMapOpts creates a new MapOpts with the specified map of values and a validator.
+func NewMapOpts(values map[string]string, validator ValidatorFctType) *MapOpts {
+	if values == nil {
+		values = make(map[string]string)
+	}
 	return &MapOpts{
 		values:    values,
 		validator: validator,
 	}
 }
 
-// ValidatorFctType validator that return a validate string and/or an error
+// NamedMapOpts is a MapOpts struct with a configuration name.
+// This struct is useful to keep reference to the assigned
+// field name in the internal configuration struct.
+type NamedMapOpts struct {
+	name string
+	MapOpts
+}
+
+var _ NamedOption = &NamedMapOpts{}
+
+// NewNamedMapOpts creates a reference to a new NamedMapOpts struct.
+func NewNamedMapOpts(name string, values map[string]string, validator ValidatorFctType) *NamedMapOpts {
+	return &NamedMapOpts{
+		name:    name,
+		MapOpts: *NewMapOpts(values, validator),
+	}
+}
+
+// Name returns the name of the NamedMapOpts in the configuration.
+func (o *NamedMapOpts) Name() string {
+	return o.name
+}
+
+// ValidatorFctType defines a validator function that returns a validated string and/or an error.
 type ValidatorFctType func(val string) (string, error)
 
-// ValidatorFctListType validator that return a validate list of string and/or an error
+// ValidatorFctListType defines a validator function that returns a validated list of string and/or an error
 type ValidatorFctListType func(val string) ([]string, error)
 
-// ValidateAttach Validates that the specified string is a valid attach option.
-func ValidateAttach(val string) (string, error) {
-	s := strings.ToLower(val)
-	for _, str := range []string{"stdin", "stdout", "stderr"} {
-		if s == str {
-			return s, nil
-		}
-	}
-	return val, fmt.Errorf("valid streams are STDIN, STDOUT and STDERR")
-}
-
-// ValidateLink Validates that the specified string has a valid link format (containerName:alias).
-func ValidateLink(val string) (string, error) {
-	if _, _, err := parsers.ParseLink(val); err != nil {
-		return val, err
-	}
-	return val, nil
-}
-
-// ValidateDevice Validate a path for devices
-// It will make sure 'val' is in the form:
-//    [host-dir:]container-path[:mode]
-func ValidateDevice(val string) (string, error) {
-	return validatePath(val, false)
-}
-
-// ValidatePath Validate a path for volumes
-// It will make sure 'val' is in the form:
-//    [host-dir:]container-path[:rw|ro]
-// It will also validate the mount mode.
-func ValidatePath(val string) (string, error) {
-	return validatePath(val, true)
-}
-
-func validatePath(val string, validateMountMode bool) (string, error) {
-	var containerPath string
-	var mode string
-
-	if strings.Count(val, ":") > 2 {
-		return val, fmt.Errorf("bad format for volumes: %s", val)
-	}
-
-	splited := strings.SplitN(val, ":", 3)
-	if splited[0] == "" {
-		return val, fmt.Errorf("bad format for volumes: %s", val)
-	}
-	switch len(splited) {
-	case 1:
-		containerPath = splited[0]
-		val = path.Clean(containerPath)
-	case 2:
-		if isValid, _ := volume.ValidateMountMode(splited[1]); validateMountMode && isValid {
-			containerPath = splited[0]
-			mode = splited[1]
-			val = fmt.Sprintf("%s:%s", path.Clean(containerPath), mode)
-		} else {
-			containerPath = splited[1]
-			val = fmt.Sprintf("%s:%s", splited[0], path.Clean(containerPath))
-		}
-	case 3:
-		containerPath = splited[1]
-		mode = splited[2]
-		if isValid, _ := volume.ValidateMountMode(splited[2]); validateMountMode && !isValid {
-			return val, fmt.Errorf("bad mount mode specified : %s", mode)
-		}
-		val = fmt.Sprintf("%s:%s:%s", splited[0], containerPath, mode)
-	}
-
-	if !path.IsAbs(containerPath) {
-		return val, fmt.Errorf("%s is not an absolute path", containerPath)
-	}
-	return val, nil
-}
-
-// ValidateEnv Validate an environment variable and returns it
-// It will use EnvironmentVariableRegexp to ensure the name of the environment variable is valid.
-// If no value is specified, it returns the current value using os.Getenv.
-func ValidateEnv(val string) (string, error) {
-	arr := strings.Split(val, "=")
-	if len(arr) > 1 {
-		return val, nil
-	}
-	if !EnvironmentVariableRegexp.MatchString(arr[0]) {
-		return val, ErrBadEnvVariable{fmt.Sprintf("variable '%s' is not a valid environment variable", val)}
-	}
-	if !doesEnvExist(val) {
-		return val, nil
-	}
-	return fmt.Sprintf("%s=%s", val, os.Getenv(val)), nil
-}
-
-// ValidateIPAddress Validates an Ip address
+// ValidateIPAddress validates an Ip address.
 func ValidateIPAddress(val string) (string, error) {
 	var ip = net.ParseIP(strings.TrimSpace(val))
 	if ip != nil {
@@ -304,17 +225,8 @@ func ValidateIPAddress(val string) (string, error) {
 	return "", fmt.Errorf("%s is not an ip address", val)
 }
 
-// ValidateMACAddress Validates a MAC address
-func ValidateMACAddress(val string) (string, error) {
-	_, err := net.ParseMAC(strings.TrimSpace(val))
-	if err != nil {
-		return "", err
-	}
-	return val, nil
-}
-
-// ValidateDNSSearch Validates domain for resolvconf search configuration.
-// A zero length domain is represented by .
+// ValidateDNSSearch validates domain for resolvconf search configuration.
+// A zero length domain is represented by a dot (.).
 func ValidateDNSSearch(val string) (string, error) {
 	if val = strings.Trim(val, " "); val == "." {
 		return val, nil
@@ -333,22 +245,8 @@ func validateDomain(val string) (string, error) {
 	return "", fmt.Errorf("%s is not a valid domain", val)
 }
 
-// ValidateExtraHost Validate that the given string is a valid extrahost and returns it
-// ExtraHost are in the form of name:ip where the ip has to be a valid ip (ipv4 or ipv6)
-func ValidateExtraHost(val string) (string, error) {
-	// allow for IPv6 addresses in extra hosts by only splitting on first ":"
-	arr := strings.SplitN(val, ":", 2)
-	if len(arr) != 2 || len(arr[0]) == 0 {
-		return "", fmt.Errorf("bad format for add-host: %q", val)
-	}
-	if _, err := ValidateIPAddress(arr[1]); err != nil {
-		return "", fmt.Errorf("invalid IP address in add-host: %q", arr[1])
-	}
-	return val, nil
-}
-
-// ValidateLabel Validate that the given string is a valid label, and returns it
-// Labels are in the form on key=value
+// ValidateLabel validates that the specified string is a valid label, and returns it.
+// Labels are in the form on key=value.
 func ValidateLabel(val string) (string, error) {
 	if strings.Count(val, "=") < 1 {
 		return "", fmt.Errorf("bad attribute format: %s", val)
@@ -356,21 +254,107 @@ func ValidateLabel(val string) (string, error) {
 	return val, nil
 }
 
-// ValidateHost Validate that the given string is a valid host and returns it
-func ValidateHost(val string) (string, error) {
-	host, err := parsers.ParseHost(DefaultHTTPHost, DefaultUnixSocket, val)
-	if err != nil {
-		return val, err
+// ValidateSysctl validates a sysctl and returns it.
+func ValidateSysctl(val string) (string, error) {
+	validSysctlMap := map[string]bool{
+		"kernel.msgmax":          true,
+		"kernel.msgmnb":          true,
+		"kernel.msgmni":          true,
+		"kernel.sem":             true,
+		"kernel.shmall":          true,
+		"kernel.shmmax":          true,
+		"kernel.shmmni":          true,
+		"kernel.shm_rmid_forced": true,
 	}
-	return host, nil
-}
+	validSysctlPrefixes := []string{
+		"net.",
+		"fs.mqueue.",
+	}
+	arr := strings.Split(val, "=")
+	if len(arr) < 2 {
+		return "", fmt.Errorf("sysctl '%s' is not whitelisted", val)
+	}
+	if validSysctlMap[arr[0]] {
+		return val, nil
+	}
 
-func doesEnvExist(name string) bool {
-	for _, entry := range os.Environ() {
-		parts := strings.SplitN(entry, "=", 2)
-		if parts[0] == name {
-			return true
+	for _, vp := range validSysctlPrefixes {
+		if strings.HasPrefix(arr[0], vp) {
+			return val, nil
 		}
 	}
-	return false
+	return "", fmt.Errorf("sysctl '%s' is not whitelisted", val)
+}
+
+// FilterOpt is a flag type for validating filters
+type FilterOpt struct {
+	filter filters.Args
+}
+
+// NewFilterOpt returns a new FilterOpt
+func NewFilterOpt() FilterOpt {
+	return FilterOpt{filter: filters.NewArgs()}
+}
+
+func (o *FilterOpt) String() string {
+	repr, err := filters.ToParam(o.filter)
+	if err != nil {
+		return "invalid filters"
+	}
+	return repr
+}
+
+// Set sets the value of the opt by parsing the command line value
+func (o *FilterOpt) Set(value string) error {
+	var err error
+	o.filter, err = filters.ParseFlag(value, o.filter)
+	return err
+}
+
+// Type returns the option type
+func (o *FilterOpt) Type() string {
+	return "filter"
+}
+
+// Value returns the value of this option
+func (o *FilterOpt) Value() filters.Args {
+	return o.filter
+}
+
+// NanoCPUs is a type for fixed point fractional number.
+type NanoCPUs int64
+
+// String returns the string format of the number
+func (c *NanoCPUs) String() string {
+	return big.NewRat(c.Value(), 1e9).FloatString(3)
+}
+
+// Set sets the value of the NanoCPU by passing a string
+func (c *NanoCPUs) Set(value string) error {
+	cpus, err := ParseCPUs(value)
+	*c = NanoCPUs(cpus)
+	return err
+}
+
+// Type returns the type
+func (c *NanoCPUs) Type() string {
+	return "decimal"
+}
+
+// Value returns the value in int64
+func (c *NanoCPUs) Value() int64 {
+	return int64(*c)
+}
+
+// ParseCPUs takes a string ratio and returns an integer value of nano cpus
+func ParseCPUs(value string) (int64, error) {
+	cpu, ok := new(big.Rat).SetString(value)
+	if !ok {
+		return 0, fmt.Errorf("failed to parse %v as a rational number", value)
+	}
+	nano := cpu.Mul(cpu, big.NewRat(1e9, 1))
+	if !nano.IsInt() {
+		return 0, fmt.Errorf("value is too precise")
+	}
+	return nano.Num().Int64(), nil
 }

@@ -33,13 +33,6 @@ import:
   - httputil
   - netutil
   - timeutil
-- package: github.com/coreos-inc/tectonic-stats-collector
-  version: ab5c1d4f2cc36cea32b366ec65bdfd21642f70be
-  subpackages:
-  - pkg/stats
-  # TODO(ericchiang): Refactor out this dependency.
-  vcs: git
-  repo: git@github.com:coreos-inc/tectonic-stats-collector.git
 - package: github.com/davecgh/go-spew
   subpackages:
   - spew

@@ -7,12 +7,13 @@ docker-images - List images
 # SYNOPSIS
 **docker images**
 [**--help**]
-[**-a**|**--all**[=*false*]]
-[**--digests**[=*false*]]
+[**-a**|**--all**]
+[**--digests**]
 [**-f**|**--filter**[=*[]*]]
-[**--no-trunc**[=*false*]]
-[**-q**|**--quiet**[=*false*]]
-[REPOSITORY]
+[**--format**=*"TEMPLATE"*]
+[**--no-trunc**]
+[**-q**|**--quiet**]
+[REPOSITORY[:TAG]]
 
 # DESCRIPTION
 This command lists the images stored in the local Docker repository.
@@ -38,7 +39,22 @@ versions.
    Show image digests. The default is *false*.
 
 **-f**, **--filter**=[]
-   Filters the output. The dangling=true filter finds unused images. While label=com.foo=amd64 filters for images with a com.foo value of amd64. The label=com.foo filter finds images with the label com.foo of any value.
+   Filters the output based on these conditions:
+   - dangling=(true|false) - find unused images
+   - label=<key> or label=<key>=<value>
+   - before=(<image-name>[:tag]|<image-id>|<image@digest>)
+   - since=(<image-name>[:tag]|<image-id>|<image@digest>)
+
+**--format**="*TEMPLATE*"
+   Pretty-print images using a Go template.
+   Valid placeholders:
+      .ID - Image ID
+      .Repository - Image repository
+      .Tag - Image tag
+      .Digest - Image digest
+      .CreatedSince - Elapsed time since the image was created
+      .CreatedAt - Time when the image was created
+      .Size - Image disk size
 
 **--help**
   Print usage statement
@@ -59,7 +75,23 @@ To list the images in a local repository (not the registry) run:
 
 The list will contain the image repository name, a tag for the image, and an
 image ID, when it was created and its virtual size. Columns: REPOSITORY, TAG,
-IMAGE ID, CREATED, and VIRTUAL SIZE.
+IMAGE ID, CREATED, and SIZE.
+
+The `docker images` command takes an optional `[REPOSITORY[:TAG]]` argument
+that restricts the list to images that match the argument. If you specify
+`REPOSITORY`but no `TAG`, the `docker images` command lists all images in the
+given repository.
+
+    docker images java
+
+The `[REPOSITORY[:TAG]]` value must be an "exact match". This means that, for example,
+`docker images jav` does not match the image `java`.
+
+If both `REPOSITORY` and `TAG` are provided, only images matching that
+repository and tag are listed.  To find all local images in the "java"
+repository with tag "8" you can use:
+
+    docker images java:8
 
 To get a verbose list of images which contains all the intermediate images
 used in builds use **-a**:

@@ -3,12 +3,12 @@ package jsonmessage
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/docker/docker/pkg/jsonlog"
 	"github.com/docker/docker/pkg/term"
-	"github.com/docker/docker/pkg/timeutils"
-	"strings"
 )
 
 func TestError(t *testing.T) {
@@ -19,6 +19,11 @@ func TestError(t *testing.T) {
 }
 
 func TestProgress(t *testing.T) {
+	termsz, err := term.GetWinsize(0)
+	if err != nil {
+		// we can safely ignore the err here
+		termsz = nil
+	}
 	jp := JSONProgress{}
 	if jp.String() != "" {
 		t.Fatalf("Expected empty string, got '%s'", jp.String())
@@ -31,6 +36,9 @@ func TestProgress(t *testing.T) {
 	}
 
 	expectedStart := "[==========>                                        ]     20 B/100 B"
+	if termsz != nil && termsz.Width <= 110 {
+		expectedStart = "    20 B/100 B"
+	}
 	jp3 := JSONProgress{Current: 20, Total: 100, Start: time.Now().Unix()}
 	// Just look at the start of the string
 	// (the remaining time is really hard to test -_-)
@@ -39,13 +47,19 @@ func TestProgress(t *testing.T) {
 	}
 
 	expected = "[=========================>                         ]     50 B/100 B"
+	if termsz != nil && termsz.Width <= 110 {
+		expected = "    50 B/100 B"
+	}
 	jp4 := JSONProgress{Current: 50, Total: 100}
 	if jp4.String() != expected {
 		t.Fatalf("Expected %q, got %q", expected, jp4.String())
 	}
 
 	// this number can't be negative gh#7136
-	expected = "[==================================================>]     50 B/40 B"
+	expected = "[==================================================>]     50 B"
+	if termsz != nil && termsz.Width <= 110 {
+		expected = "    50 B"
+	}
 	jp5 := JSONProgress{Current: 50, Total: 40}
 	if jp5.String() != expected {
 		t.Fatalf("Expected %q, got %q", expected, jp5.String())
@@ -53,7 +67,7 @@ func TestProgress(t *testing.T) {
 }
 
 func TestJSONMessageDisplay(t *testing.T) {
-	now := time.Now().Unix()
+	now := time.Now()
 	messages := map[JSONMessage][]string{
 		// Empty
 		JSONMessage{}: {"\n", "\n"},
@@ -66,13 +80,34 @@ func TestJSONMessageDisplay(t *testing.T) {
 		},
 		// General
 		JSONMessage{
-			Time:   now,
+			Time:   now.Unix(),
 			ID:     "ID",
 			From:   "From",
 			Status: "status",
 		}: {
-			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(now, 0).Format(timeutils.RFC3339NanoFixed)),
-			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(now, 0).Format(timeutils.RFC3339NanoFixed)),
+			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(now.Unix(), 0).Format(jsonlog.RFC3339NanoFixed)),
+			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(now.Unix(), 0).Format(jsonlog.RFC3339NanoFixed)),
+		},
+		// General, with nano precision time
+		JSONMessage{
+			TimeNano: now.UnixNano(),
+			ID:       "ID",
+			From:     "From",
+			Status:   "status",
+		}: {
+			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(0, now.UnixNano()).Format(jsonlog.RFC3339NanoFixed)),
+			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(0, now.UnixNano()).Format(jsonlog.RFC3339NanoFixed)),
+		},
+		// General, with both times Nano is preferred
+		JSONMessage{
+			Time:     now.Unix(),
+			TimeNano: now.UnixNano(),
+			ID:       "ID",
+			From:     "From",
+			Status:   "status",
+		}: {
+			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(0, now.UnixNano()).Format(jsonlog.RFC3339NanoFixed)),
+			fmt.Sprintf("%v ID: (from From) status\n", time.Unix(0, now.UnixNano()).Format(jsonlog.RFC3339NanoFixed)),
 		},
 		// Stream over status
 		JSONMessage{
@@ -147,7 +182,7 @@ func TestDisplayJSONMessagesStreamInvalidJSON(t *testing.T) {
 	reader := strings.NewReader("This is not a 'valid' JSON []")
 	inFd, _ = term.GetFdInfo(reader)
 
-	if err := DisplayJSONMessagesStream(reader, data, inFd, false); err == nil && err.Error()[:17] != "invalid character" {
+	if err := DisplayJSONMessagesStream(reader, data, inFd, false, nil); err == nil && err.Error()[:17] != "invalid character" {
 		t.Fatalf("Should have thrown an error (invalid character in ..), got [%v]", err)
 	}
 }
@@ -170,17 +205,17 @@ func TestDisplayJSONMessagesStream(t *testing.T) {
 		// Without progress, with ID
 		"{ \"id\": \"ID\",\"status\": \"status\" }": {
 			"ID: status\n",
-			fmt.Sprintf("ID: status\n%c[%dB", 27, 0),
+			fmt.Sprintf("ID: status\n"),
 		},
 		// With progress
 		"{ \"id\": \"ID\", \"status\": \"status\", \"progress\": \"ProgressMessage\" }": {
 			"ID: status ProgressMessage",
-			fmt.Sprintf("\n%c[%dAID: status ProgressMessage%c[%dB", 27, 0, 27, 0),
+			fmt.Sprintf("\n%c[%dAID: status ProgressMessage%c[%dB", 27, 1, 27, 1),
 		},
 		// With progressDetail
 		"{ \"id\": \"ID\", \"status\": \"status\", \"progressDetail\": { \"Current\": 1} }": {
 			"", // progressbar is disabled in non-terminal
-			fmt.Sprintf("\n%c[%dA%c[2K\rID: status      1 B\r%c[%dB", 27, 0, 27, 27, 0),
+			fmt.Sprintf("\n%c[%dA%c[2K\rID: status      1 B\r%c[%dB", 27, 1, 27, 27, 1),
 		},
 	}
 	for jsonMessage, expectedMessages := range messages {
@@ -189,7 +224,7 @@ func TestDisplayJSONMessagesStream(t *testing.T) {
 		inFd, _ = term.GetFdInfo(reader)
 
 		// Without terminal
-		if err := DisplayJSONMessagesStream(reader, data, inFd, false); err != nil {
+		if err := DisplayJSONMessagesStream(reader, data, inFd, false, nil); err != nil {
 			t.Fatal(err)
 		}
 		if data.String() != expectedMessages[0] {
@@ -199,7 +234,7 @@ func TestDisplayJSONMessagesStream(t *testing.T) {
 		// With terminal
 		data = bytes.NewBuffer([]byte{})
 		reader = strings.NewReader(jsonMessage)
-		if err := DisplayJSONMessagesStream(reader, data, inFd, true); err != nil {
+		if err := DisplayJSONMessagesStream(reader, data, inFd, true, nil); err != nil {
 			t.Fatal(err)
 		}
 		if data.String() != expectedMessages[1] {

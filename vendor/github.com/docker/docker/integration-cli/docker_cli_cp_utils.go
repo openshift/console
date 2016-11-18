@@ -10,40 +10,41 @@ import (
 	"strings"
 
 	"github.com/docker/docker/pkg/archive"
+	"github.com/docker/docker/pkg/integration/checker"
 	"github.com/go-check/check"
 )
 
-type FileType uint32
+type fileType uint32
 
 const (
-	Regular FileType = iota
-	Dir
-	Symlink
+	ftRegular fileType = iota
+	ftDir
+	ftSymlink
 )
 
-type FileData struct {
-	filetype FileType
+type fileData struct {
+	filetype fileType
 	path     string
 	contents string
 }
 
-func (fd FileData) creationCommand() string {
+func (fd fileData) creationCommand() string {
 	var command string
 
 	switch fd.filetype {
-	case Regular:
+	case ftRegular:
 		// Don't overwrite the file if it already exists!
 		command = fmt.Sprintf("if [ ! -f %s ]; then echo %q > %s; fi", fd.path, fd.contents, fd.path)
-	case Dir:
+	case ftDir:
 		command = fmt.Sprintf("mkdir -p %s", fd.path)
-	case Symlink:
+	case ftSymlink:
 		command = fmt.Sprintf("ln -fs %s %s", fd.contents, fd.path)
 	}
 
 	return command
 }
 
-func mkFilesCommand(fds []FileData) string {
+func mkFilesCommand(fds []fileData) string {
 	commands := make([]string, len(fds))
 
 	for i, fd := range fds {
@@ -53,29 +54,32 @@ func mkFilesCommand(fds []FileData) string {
 	return strings.Join(commands, " && ")
 }
 
-var defaultFileData = []FileData{
-	{Regular, "file1", "file1"},
-	{Regular, "file2", "file2"},
-	{Regular, "file3", "file3"},
-	{Regular, "file4", "file4"},
-	{Regular, "file5", "file5"},
-	{Regular, "file6", "file6"},
-	{Regular, "file7", "file7"},
-	{Dir, "dir1", ""},
-	{Regular, "dir1/file1-1", "file1-1"},
-	{Regular, "dir1/file1-2", "file1-2"},
-	{Dir, "dir2", ""},
-	{Regular, "dir2/file2-1", "file2-1"},
-	{Regular, "dir2/file2-2", "file2-2"},
-	{Dir, "dir3", ""},
-	{Regular, "dir3/file3-1", "file3-1"},
-	{Regular, "dir3/file3-2", "file3-2"},
-	{Dir, "dir4", ""},
-	{Regular, "dir4/file3-1", "file4-1"},
-	{Regular, "dir4/file3-2", "file4-2"},
-	{Dir, "dir5", ""},
-	{Symlink, "symlink1", "target1"},
-	{Symlink, "symlink2", "target2"},
+var defaultFileData = []fileData{
+	{ftRegular, "file1", "file1"},
+	{ftRegular, "file2", "file2"},
+	{ftRegular, "file3", "file3"},
+	{ftRegular, "file4", "file4"},
+	{ftRegular, "file5", "file5"},
+	{ftRegular, "file6", "file6"},
+	{ftRegular, "file7", "file7"},
+	{ftDir, "dir1", ""},
+	{ftRegular, "dir1/file1-1", "file1-1"},
+	{ftRegular, "dir1/file1-2", "file1-2"},
+	{ftDir, "dir2", ""},
+	{ftRegular, "dir2/file2-1", "file2-1"},
+	{ftRegular, "dir2/file2-2", "file2-2"},
+	{ftDir, "dir3", ""},
+	{ftRegular, "dir3/file3-1", "file3-1"},
+	{ftRegular, "dir3/file3-2", "file3-2"},
+	{ftDir, "dir4", ""},
+	{ftRegular, "dir4/file3-1", "file4-1"},
+	{ftRegular, "dir4/file3-2", "file4-2"},
+	{ftDir, "dir5", ""},
+	{ftSymlink, "symlinkToFile1", "file1"},
+	{ftSymlink, "symlinkToDir1", "dir1"},
+	{ftSymlink, "brokenSymlinkToFileX", "fileX"},
+	{ftSymlink, "brokenSymlinkToDirX", "dirX"},
+	{ftSymlink, "symlinkToAbsDir", "/root"},
 }
 
 func defaultMkContentCommand() string {
@@ -86,18 +90,12 @@ func makeTestContentInDir(c *check.C, dir string) {
 	for _, fd := range defaultFileData {
 		path := filepath.Join(dir, filepath.FromSlash(fd.path))
 		switch fd.filetype {
-		case Regular:
-			if err := ioutil.WriteFile(path, []byte(fd.contents+"\n"), os.FileMode(0666)); err != nil {
-				c.Fatal(err)
-			}
-		case Dir:
-			if err := os.Mkdir(path, os.FileMode(0777)); err != nil {
-				c.Fatal(err)
-			}
-		case Symlink:
-			if err := os.Symlink(fd.contents, path); err != nil {
-				c.Fatal(err)
-			}
+		case ftRegular:
+			c.Assert(ioutil.WriteFile(path, []byte(fd.contents+"\n"), os.FileMode(0666)), checker.IsNil)
+		case ftDir:
+			c.Assert(os.Mkdir(path, os.FileMode(0777)), checker.IsNil)
+		case ftSymlink:
+			c.Assert(os.Symlink(fd.contents, path), checker.IsNil)
 		}
 	}
 }
@@ -140,25 +138,17 @@ func makeTestContainer(c *check.C, options testContainerOptions) (containerID st
 
 	args = append(args, "busybox", "/bin/sh", "-c", options.command)
 
-	out, status := dockerCmd(c, args...)
-	if status != 0 {
-		c.Fatalf("failed to run container, status %d: %s", status, out)
-	}
+	out, _ := dockerCmd(c, args...)
 
 	containerID = strings.TrimSpace(out)
 
-	out, status = dockerCmd(c, "wait", containerID)
-	if status != 0 {
-		c.Fatalf("failed to wait for test container container, status %d: %s", status, out)
-	}
+	out, _ = dockerCmd(c, "wait", containerID)
 
-	if exitCode := strings.TrimSpace(out); exitCode != "0" {
-		logs, status := dockerCmd(c, "logs", containerID)
-		if status != 0 {
-			logs = "UNABLE TO GET LOGS"
-		}
-		c.Fatalf("failed to make test container, exit code (%d): %s", exitCode, logs)
+	exitCode := strings.TrimSpace(out)
+	if exitCode != "0" {
+		out, _ = dockerCmd(c, "logs", containerID)
 	}
+	c.Assert(exitCode, checker.Equals, "0", check.Commentf("failed to make test container: %s", out))
 
 	return
 }
@@ -201,10 +191,10 @@ func runDockerCp(c *check.C, src, dst string) (err error) {
 	return
 }
 
-func startContainerGetOutput(c *check.C, cID string) (out string, err error) {
-	c.Logf("running `docker start -a %s`", cID)
+func startContainerGetOutput(c *check.C, containerID string) (out string, err error) {
+	c.Logf("running `docker start -a %s`", containerID)
 
-	args := []string{"start", "-a", cID}
+	args := []string{"start", "-a", containerID}
 
 	out, _, err = runCommandWithOutput(exec.Command(dockerBinary, args...))
 	if err != nil {
@@ -217,9 +207,9 @@ func startContainerGetOutput(c *check.C, cID string) (out string, err error) {
 func getTestDir(c *check.C, label string) (tmpDir string) {
 	var err error
 
-	if tmpDir, err = ioutil.TempDir("", label); err != nil {
-		c.Fatalf("unable to make temporary directory: %s", err)
-	}
+	tmpDir, err = ioutil.TempDir("", label)
+	// unable to make temporary directory
+	c.Assert(err, checker.IsNil)
 
 	return
 }
@@ -268,12 +258,27 @@ func fileContentEquals(c *check.C, filename, contents string) (err error) {
 	return
 }
 
-func containerStartOutputEquals(c *check.C, cID, contents string) (err error) {
-	c.Logf("checking that container %q start output contains %q\n", cID, contents)
+func symlinkTargetEquals(c *check.C, symlink, expectedTarget string) (err error) {
+	c.Logf("checking that the symlink %q points to %q\n", symlink, expectedTarget)
 
-	out, err := startContainerGetOutput(c, cID)
+	actualTarget, err := os.Readlink(symlink)
 	if err != nil {
-		return err
+		return
+	}
+
+	if actualTarget != expectedTarget {
+		err = fmt.Errorf("symlink target points to %q not %q", actualTarget, expectedTarget)
+	}
+
+	return
+}
+
+func containerStartOutputEquals(c *check.C, containerID, contents string) (err error) {
+	c.Logf("checking that container %q start output contains %q\n", containerID, contents)
+
+	out, err := startContainerGetOutput(c, containerID)
+	if err != nil {
+		return
 	}
 
 	if out != contents {

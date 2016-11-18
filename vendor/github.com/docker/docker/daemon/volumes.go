@@ -3,158 +3,64 @@ package daemon
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/chrootarchive"
-	"github.com/docker/docker/pkg/system"
-	"github.com/docker/docker/runconfig"
+	dockererrors "github.com/docker/docker/api/errors"
+	"github.com/docker/docker/api/types"
+	containertypes "github.com/docker/docker/api/types/container"
+	mounttypes "github.com/docker/docker/api/types/mount"
+	"github.com/docker/docker/container"
 	"github.com/docker/docker/volume"
 	"github.com/docker/docker/volume/drivers"
-	"github.com/docker/docker/volume/local"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 
-// ErrVolumeReadonly is used to signal an error when trying to copy data into
-// a volume mount that is not writable.
-var ErrVolumeReadonly = errors.New("mounted volume is marked read-only")
+var (
+	// ErrVolumeReadonly is used to signal an error when trying to copy data into
+	// a volume mount that is not writable.
+	ErrVolumeReadonly = errors.New("mounted volume is marked read-only")
+)
 
-type mountPoint struct {
-	Name        string
-	Destination string
-	Driver      string
-	RW          bool
-	Volume      volume.Volume `json:"-"`
-	Source      string
-	Relabel     string
+type mounts []container.Mount
+
+// volumeToAPIType converts a volume.Volume to the type used by the remote API
+func volumeToAPIType(v volume.Volume) *types.Volume {
+	tv := &types.Volume{
+		Name:   v.Name(),
+		Driver: v.DriverName(),
+	}
+	if v, ok := v.(volume.DetailedVolume); ok {
+		tv.Labels = v.Labels()
+		tv.Options = v.Options()
+		tv.Scope = v.Scope()
+	}
+
+	return tv
 }
 
-func (m *mountPoint) Setup() (string, error) {
-	if m.Volume != nil {
-		return m.Volume.Mount()
-	}
-
-	if len(m.Source) > 0 {
-		if _, err := os.Stat(m.Source); err != nil {
-			if !os.IsNotExist(err) {
-				return "", err
-			}
-			if err := system.MkdirAll(m.Source, 0755); err != nil {
-				return "", err
-			}
-		}
-		return m.Source, nil
-	}
-
-	return "", fmt.Errorf("Unable to setup mount point, neither source nor volume defined")
+// Len returns the number of mounts. Used in sorting.
+func (m mounts) Len() int {
+	return len(m)
 }
 
-// hasResource checks whether the given absolute path for a container is in
-// this mount point. If the relative path starts with `../` then the resource
-// is outside of this mount point, but we can't simply check for this prefix
-// because it misses `..` which is also outside of the mount, so check both.
-func (m *mountPoint) hasResource(absolutePath string) bool {
-	relPath, err := filepath.Rel(m.Destination, absolutePath)
-
-	return err == nil && relPath != ".." && !strings.HasPrefix(relPath, fmt.Sprintf("..%c", filepath.Separator))
+// Less returns true if the number of parts (a/b/c would be 3 parts) in the
+// mount indexed by parameter 1 is less than that of the mount indexed by
+// parameter 2. Used in sorting.
+func (m mounts) Less(i, j int) bool {
+	return m.parts(i) < m.parts(j)
 }
 
-func (m *mountPoint) Path() string {
-	if m.Volume != nil {
-		return m.Volume.Path()
-	}
-
-	return m.Source
+// Swap swaps two items in an array of mounts. Used in sorting
+func (m mounts) Swap(i, j int) {
+	m[i], m[j] = m[j], m[i]
 }
 
-// BackwardsCompatible decides whether this mount point can be
-// used in old versions of Docker or not.
-// Only bind mounts and local volumes can be used in old versions of Docker.
-func (m *mountPoint) BackwardsCompatible() bool {
-	return len(m.Source) > 0 || m.Driver == volume.DefaultDriverName
-}
-
-func parseBindMount(spec string, mountLabel string, config *runconfig.Config) (*mountPoint, error) {
-	bind := &mountPoint{
-		RW: true,
-	}
-	arr := strings.Split(spec, ":")
-
-	switch len(arr) {
-	case 2:
-		bind.Destination = arr[1]
-	case 3:
-		bind.Destination = arr[1]
-		mode := arr[2]
-		isValid, isRw := volume.ValidateMountMode(mode)
-		if !isValid {
-			return nil, fmt.Errorf("invalid mode for volumes-from: %s", mode)
-		}
-		bind.RW = isRw
-		// Relabel will apply a SELinux label, if necessary
-		bind.Relabel = mode
-	default:
-		return nil, fmt.Errorf("Invalid volume specification: %s", spec)
-	}
-
-	name, source, err := parseVolumeSource(arr[0])
-	if err != nil {
-		return nil, err
-	}
-
-	if len(source) == 0 {
-		bind.Driver = config.VolumeDriver
-		if len(bind.Driver) == 0 {
-			bind.Driver = volume.DefaultDriverName
-		}
-	} else {
-		bind.Source = filepath.Clean(source)
-	}
-
-	bind.Name = name
-	bind.Destination = filepath.Clean(bind.Destination)
-	return bind, nil
-}
-
-func parseVolumesFrom(spec string) (string, string, error) {
-	if len(spec) == 0 {
-		return "", "", fmt.Errorf("malformed volumes-from specification: %s", spec)
-	}
-
-	specParts := strings.SplitN(spec, ":", 2)
-	id := specParts[0]
-	mode := "rw"
-
-	if len(specParts) == 2 {
-		mode = specParts[1]
-		if isValid, _ := volume.ValidateMountMode(mode); !isValid {
-			return "", "", fmt.Errorf("invalid mode for volumes-from: %s", mode)
-		}
-	}
-	return id, mode, nil
-}
-
-func copyExistingContents(source, destination string) error {
-	volList, err := ioutil.ReadDir(source)
-	if err != nil {
-		return err
-	}
-	if len(volList) > 0 {
-		srcList, err := ioutil.ReadDir(destination)
-		if err != nil {
-			return err
-		}
-		if len(srcList) == 0 {
-			// If the source volume is empty copy files from the root into the volume
-			if err := chrootarchive.CopyWithTar(source, destination); err != nil {
-				return err
-			}
-		}
-	}
-	return copyOwnership(source, destination)
+// parts returns the number of parts in the destination of a mount. Used in sorting.
+func (m mounts) parts(i int) int {
+	return strings.Count(filepath.Clean(m[i].Destination), string(os.PathSeparator))
 }
 
 // registerMountPoints initializes the container mount points with the configured volumes and bind mounts.
@@ -163,38 +69,53 @@ func copyExistingContents(source, destination string) error {
 // 1. Select the previously configured mount points for the containers, if any.
 // 2. Select the volumes mounted from another containers. Overrides previously configured mount point destination.
 // 3. Select the bind mounts set by the client. Overrides previously configured mount point destinations.
-func (daemon *Daemon) registerMountPoints(container *Container, hostConfig *runconfig.HostConfig) error {
+// 4. Cleanup old volumes that are about to be reassigned.
+func (daemon *Daemon) registerMountPoints(container *container.Container, hostConfig *containertypes.HostConfig) (retErr error) {
 	binds := map[string]bool{}
-	mountPoints := map[string]*mountPoint{}
+	mountPoints := map[string]*volume.MountPoint{}
+	defer func() {
+		// clean up the container mountpoints once return with error
+		if retErr != nil {
+			for _, m := range mountPoints {
+				if m.Volume == nil {
+					continue
+				}
+				daemon.volumes.Dereference(m.Volume, container.ID)
+			}
+		}
+	}()
 
 	// 1. Read already configured mount points.
-	for name, point := range container.MountPoints {
-		mountPoints[name] = point
+	for destination, point := range container.MountPoints {
+		mountPoints[destination] = point
 	}
 
 	// 2. Read volumes from other containers.
 	for _, v := range hostConfig.VolumesFrom {
-		containerID, mode, err := parseVolumesFrom(v)
+		containerID, mode, err := volume.ParseVolumesFrom(v)
 		if err != nil {
 			return err
 		}
 
-		c, err := daemon.Get(containerID)
+		c, err := daemon.GetContainer(containerID)
 		if err != nil {
 			return err
 		}
 
 		for _, m := range c.MountPoints {
-			cp := &mountPoint{
+			cp := &volume.MountPoint{
 				Name:        m.Name,
 				Source:      m.Source,
 				RW:          m.RW && volume.ReadWrite(mode),
 				Driver:      m.Driver,
 				Destination: m.Destination,
+				Propagation: m.Propagation,
+				Spec:        m.Spec,
+				CopyData:    false,
 			}
 
 			if len(cp.Source) == 0 {
-				v, err := createVolume(cp.Name, cp.Driver)
+				v, err := daemon.volumes.GetWithRef(cp.Name, cp.Driver, container.ID)
 				if err != nil {
 					return err
 				}
@@ -207,160 +128,176 @@ func (daemon *Daemon) registerMountPoints(container *Container, hostConfig *runc
 
 	// 3. Read bind mounts
 	for _, b := range hostConfig.Binds {
-		// #10618
-		bind, err := parseBindMount(b, container.MountLabel, container.Config)
+		bind, err := volume.ParseMountRaw(b, hostConfig.VolumeDriver)
 		if err != nil {
 			return err
 		}
 
-		if binds[bind.Destination] {
-			return fmt.Errorf("Duplicate bind mount %s", bind.Destination)
+		// #10618
+		_, tmpfsExists := hostConfig.Tmpfs[bind.Destination]
+		if binds[bind.Destination] || tmpfsExists {
+			return fmt.Errorf("Duplicate mount point '%s'", bind.Destination)
 		}
 
-		if len(bind.Name) > 0 && len(bind.Driver) > 0 {
+		if bind.Type == mounttypes.TypeVolume {
 			// create the volume
-			v, err := createVolume(bind.Name, bind.Driver)
+			v, err := daemon.volumes.CreateWithRef(bind.Name, bind.Driver, container.ID, nil, nil)
 			if err != nil {
 				return err
 			}
 			bind.Volume = v
 			bind.Source = v.Path()
-			// Since this is just a named volume and not a typical bind, set to shared mode `z`
-			if bind.Relabel == "" {
-				bind.Relabel = "z"
+			// bind.Name is an already existing volume, we need to use that here
+			bind.Driver = v.DriverName()
+			if bind.Driver == volume.DefaultDriverName {
+				setBindModeIfNull(bind)
 			}
 		}
 
-		if err := label.Relabel(bind.Source, container.MountLabel, bind.Relabel); err != nil {
-			return err
-		}
 		binds[bind.Destination] = true
 		mountPoints[bind.Destination] = bind
 	}
 
-	// Keep backwards compatible structures
-	bcVolumes := map[string]string{}
-	bcVolumesRW := map[string]bool{}
-	for _, m := range mountPoints {
-		if m.BackwardsCompatible() {
-			bcVolumes[m.Destination] = m.Path()
-			bcVolumesRW[m.Destination] = m.RW
+	for _, cfg := range hostConfig.Mounts {
+		mp, err := volume.ParseMountSpec(cfg)
+		if err != nil {
+			return dockererrors.NewBadRequestError(err)
 		}
+
+		if binds[mp.Destination] {
+			return fmt.Errorf("Duplicate mount point '%s'", cfg.Target)
+		}
+
+		if mp.Type == mounttypes.TypeVolume {
+			var v volume.Volume
+			if cfg.VolumeOptions != nil {
+				var driverOpts map[string]string
+				if cfg.VolumeOptions.DriverConfig != nil {
+					driverOpts = cfg.VolumeOptions.DriverConfig.Options
+				}
+				v, err = daemon.volumes.CreateWithRef(mp.Name, mp.Driver, container.ID, driverOpts, cfg.VolumeOptions.Labels)
+			} else {
+				v, err = daemon.volumes.CreateWithRef(mp.Name, mp.Driver, container.ID, nil, nil)
+			}
+			if err != nil {
+				return err
+			}
+
+			if err := label.Relabel(mp.Source, container.MountLabel, false); err != nil {
+				return err
+			}
+			mp.Volume = v
+			mp.Name = v.Name()
+			mp.Driver = v.DriverName()
+
+			// only use the cached path here since getting the path is not necessary right now and calling `Path()` may be slow
+			if cv, ok := v.(interface {
+				CachedPath() string
+			}); ok {
+				mp.Source = cv.CachedPath()
+			}
+		}
+
+		binds[mp.Destination] = true
+		mountPoints[mp.Destination] = mp
 	}
 
 	container.Lock()
+
+	// 4. Cleanup old volumes that are about to be reassigned.
+	for _, m := range mountPoints {
+		if m.BackwardsCompatible() {
+			if mp, exists := container.MountPoints[m.Destination]; exists && mp.Volume != nil {
+				daemon.volumes.Dereference(mp.Volume, container.ID)
+			}
+		}
+	}
 	container.MountPoints = mountPoints
-	container.Volumes = bcVolumes
-	container.VolumesRW = bcVolumesRW
+
 	container.Unlock()
 
 	return nil
 }
 
-// TODO Windows. Factor out as not relevant (as Windows daemon support not in pre-1.7)
-// verifyVolumesInfo ports volumes configured for the containers pre docker 1.7.
-// It reads the container configuration and creates valid mount points for the old volumes.
-func (daemon *Daemon) verifyVolumesInfo(container *Container) error {
-	// Inspect old structures only when we're upgrading from old versions
-	// to versions >= 1.7 and the MountPoints has not been populated with volumes data.
-	if len(container.MountPoints) == 0 && len(container.Volumes) > 0 {
-		for destination, hostPath := range container.Volumes {
-			vfsPath := filepath.Join(daemon.root, "vfs", "dir")
-			rw := container.VolumesRW != nil && container.VolumesRW[destination]
-
-			if strings.HasPrefix(hostPath, vfsPath) {
-				id := filepath.Base(hostPath)
-				if err := migrateVolume(id, hostPath); err != nil {
-					return err
-				}
-				container.addLocalMountPoint(id, destination, rw)
-			} else { // Bind mount
-				id, source, err := parseVolumeSource(hostPath)
-				// We should not find an error here coming
-				// from the old configuration, but who knows.
-				if err != nil {
-					return err
-				}
-				container.addBindMountPoint(id, source, destination, rw)
-			}
-		}
-	} else if len(container.MountPoints) > 0 {
-		// Volumes created with a Docker version >= 1.7. We verify integrity in case of data created
-		// with Docker 1.7 RC versions that put the information in
-		// DOCKER_ROOT/volumes/VOLUME_ID rather than DOCKER_ROOT/volumes/VOLUME_ID/_container_data.
-		l, err := getVolumeDriver(volume.DefaultDriverName)
+// lazyInitializeVolume initializes a mountpoint's volume if needed.
+// This happens after a daemon restart.
+func (daemon *Daemon) lazyInitializeVolume(containerID string, m *volume.MountPoint) error {
+	if len(m.Driver) > 0 && m.Volume == nil {
+		v, err := daemon.volumes.GetWithRef(m.Name, m.Driver, containerID)
 		if err != nil {
 			return err
 		}
+		m.Volume = v
+	}
+	return nil
+}
 
-		for _, m := range container.MountPoints {
-			if m.Driver != volume.DefaultDriverName {
-				continue
+func backportMountSpec(container *container.Container) error {
+	for target, m := range container.MountPoints {
+		if m.Spec.Type != "" {
+			// if type is set on even one mount, no need to migrate
+			return nil
+		}
+		if m.Name != "" {
+			m.Type = mounttypes.TypeVolume
+			m.Spec.Type = mounttypes.TypeVolume
+
+			// make sure this is not an anyonmous volume before setting the spec source
+			if _, exists := container.Config.Volumes[target]; !exists {
+				m.Spec.Source = m.Name
 			}
-			dataPath := l.(*local.Root).DataPath(m.Name)
-			volumePath := filepath.Dir(dataPath)
-
-			d, err := ioutil.ReadDir(volumePath)
-			if err != nil {
-				// If the volume directory doesn't exist yet it will be recreated,
-				// so we only return the error when there is a different issue.
-				if !os.IsNotExist(err) {
-					return err
+			if container.HostConfig.VolumeDriver != "" {
+				m.Spec.VolumeOptions = &mounttypes.VolumeOptions{
+					DriverConfig: &mounttypes.Driver{Name: container.HostConfig.VolumeDriver},
 				}
-				// Do not check when the volume directory does not exist.
-				continue
 			}
-			if validVolumeLayout(d) {
-				continue
+			if strings.Contains(m.Mode, "nocopy") {
+				if m.Spec.VolumeOptions == nil {
+					m.Spec.VolumeOptions = &mounttypes.VolumeOptions{}
+				}
+				m.Spec.VolumeOptions.NoCopy = true
 			}
-
-			if err := os.Mkdir(dataPath, 0755); err != nil {
-				return err
-			}
-
-			// Move data inside the data directory
-			for _, f := range d {
-				oldp := filepath.Join(volumePath, f.Name())
-				newp := filepath.Join(dataPath, f.Name())
-				if err := os.Rename(oldp, newp); err != nil {
-					logrus.Errorf("Unable to move %s to %s\n", oldp, newp)
+		} else {
+			m.Type = mounttypes.TypeBind
+			m.Spec.Type = mounttypes.TypeBind
+			m.Spec.Source = m.Source
+			if m.Propagation != "" {
+				m.Spec.BindOptions = &mounttypes.BindOptions{
+					Propagation: m.Propagation,
 				}
 			}
 		}
 
-		return container.ToDisk()
+		m.Spec.Target = m.Destination
+		if !m.RW {
+			m.Spec.ReadOnly = true
+		}
+	}
+	return container.ToDiskLocking()
+}
+
+func (daemon *Daemon) traverseLocalVolumes(fn func(volume.Volume) error) error {
+	localVolumeDriver, err := volumedrivers.GetDriver(volume.DefaultDriverName)
+	if err != nil {
+		return fmt.Errorf("can't retrieve local volume driver: %v", err)
+	}
+	vols, err := localVolumeDriver.List()
+	if err != nil {
+		return fmt.Errorf("can't retrieve local volumes: %v", err)
+	}
+
+	for _, v := range vols {
+		name := v.Name()
+		_, err := daemon.volumes.Get(name)
+		if err != nil {
+			logrus.Warnf("failed to retrieve volume %s from store: %v", name, err)
+		}
+
+		err = fn(v)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
-}
-
-func createVolume(name, driverName string) (volume.Volume, error) {
-	vd, err := getVolumeDriver(driverName)
-	if err != nil {
-		return nil, err
-	}
-	return vd.Create(name)
-}
-
-func removeVolume(v volume.Volume) error {
-	vd, err := getVolumeDriver(v.DriverName())
-	if err != nil {
-		return nil
-	}
-	return vd.Remove(v)
-}
-
-func getVolumeDriver(name string) (volume.Driver, error) {
-	if name == "" {
-		name = volume.DefaultDriverName
-	}
-	return volumedrivers.Lookup(name)
-}
-
-func parseVolumeSource(spec string) (string, string, error) {
-	if !filepath.IsAbs(spec) {
-		return spec, "", nil
-	}
-
-	return "", spec, nil
 }

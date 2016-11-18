@@ -16,6 +16,8 @@ package pretty_test
 
 import (
 	"fmt"
+	"net"
+	"reflect"
 
 	"github.com/kylelemons/godebug/pretty"
 )
@@ -78,6 +80,33 @@ func ExampleConfig_Sprint() {
 	//   [2,1]: "pond",
 	//  },
 	// }
+}
+
+func ExampleConfig_fmtFormatter() {
+	pretty.DefaultFormatter[reflect.TypeOf(&net.IPNet{})] = fmt.Sprint
+	pretty.DefaultFormatter[reflect.TypeOf(net.HardwareAddr{})] = fmt.Sprint
+	pretty.Print(&net.IPNet{
+		IP:   net.IPv4(192, 168, 1, 100),
+		Mask: net.CIDRMask(24, 32),
+	})
+	pretty.Print(net.HardwareAddr{1, 2, 3, 4, 5, 6})
+
+	// Output:
+	// 192.168.1.100/24
+	// 01:02:03:04:05:06
+}
+
+func ExampleConfig_customFormatter() {
+	pretty.DefaultFormatter[reflect.TypeOf(&net.IPNet{})] = func(n *net.IPNet) string {
+		return fmt.Sprintf("CIDR=%s", n)
+	}
+	pretty.Print(&net.IPNet{
+		IP:   net.IPv4(192, 168, 1, 100),
+		Mask: net.CIDRMask(24, 32),
+	})
+
+	// Output:
+	// CIDR=192.168.1.100/24
 }
 
 func ExamplePrint() {

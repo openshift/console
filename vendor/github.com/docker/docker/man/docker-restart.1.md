@@ -2,7 +2,7 @@
 % Docker Community
 % JUNE 2014
 # NAME
-docker-restart - Restart a running container
+docker-restart - Restart one or more containers
 
 # SYNOPSIS
 **docker restart**
@@ -17,7 +17,7 @@ Restart each container listed.
 **--help**
   Print usage statement
 
-**-t**, **--time**=10
+**-t**, **--time**=*10*
    Number of seconds to try to stop for before killing the container. Once killed it will then be restarted. Default is 10 seconds.
 
 # HISTORY

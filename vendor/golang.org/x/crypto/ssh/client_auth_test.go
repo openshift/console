@@ -9,6 +9,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
@@ -243,6 +244,9 @@ func TestClientUnsupportedCipher(t *testing.T) {
 }
 
 func TestClientUnsupportedKex(t *testing.T) {
+	if os.Getenv("GO_BUILDER_NAME") != "" {
+		t.Skip("skipping known-flaky test on the Go build dashboard; see golang.org/issue/15198")
+	}
 	config := &ClientConfig{
 		User: "testuser",
 		Auth: []AuthMethod{
@@ -435,5 +439,34 @@ func ExampleRetryableAuthMethod(t *testing.T) {
 
 	if err := tryAuth(t, config); err != nil {
 		t.Fatalf("unable to dial remote side: %s", err)
+	}
+}
+
+// Test if username is received on server side when NoClientAuth is used
+func TestClientAuthNone(t *testing.T) {
+	user := "testuser"
+	serverConfig := &ServerConfig{
+		NoClientAuth: true,
+	}
+	serverConfig.AddHostKey(testSigners["rsa"])
+
+	clientConfig := &ClientConfig{
+		User: user,
+	}
+
+	c1, c2, err := netPipe()
+	if err != nil {
+		t.Fatalf("netPipe: %v", err)
+	}
+	defer c1.Close()
+	defer c2.Close()
+
+	go NewClientConn(c2, "", clientConfig)
+	serverConn, err := newServer(c1, serverConfig)
+	if err != nil {
+		t.Fatalf("newServer: %v", err)
+	}
+	if serverConn.User() != user {
+		t.Fatalf("server: got %q, want %q", serverConn.User(), user)
 	}
 }

@@ -15,12 +15,17 @@
 package pretty
 
 import (
+	"fmt"
+	"net"
 	"reflect"
 	"testing"
 	"time"
 )
 
 func TestVal2nodeDefault(t *testing.T) {
+	err := fmt.Errorf("err")
+	var errNil error
+
 	tests := []struct {
 		desc string
 		raw  interface{}
@@ -93,6 +98,26 @@ func TestVal2nodeDefault(t *testing.T) {
 			raw:  3,
 			want: rawVal("3"),
 		},
+		{
+			desc: "time.Time",
+			raw:  time.Unix(1257894000, 0).UTC(),
+			want: rawVal("2009-11-10 23:00:00 +0000 UTC"),
+		},
+		{
+			desc: "net.IP",
+			raw:  net.IPv4(127, 0, 0, 1),
+			want: rawVal("127.0.0.1"),
+		},
+		{
+			desc: "error",
+			raw:  &err,
+			want: rawVal("err"),
+		},
+		{
+			desc: "nil error",
+			raw:  &errNil,
+			want: rawVal("<nil>"),
+		},
 	}
 
 	for _, test := range tests {
@@ -134,6 +159,19 @@ func TestVal2node(t *testing.T) {
 			desc: "time default",
 			raw:  struct{ Date time.Time }{time.Unix(1234567890, 0).UTC()},
 			cfg:  DefaultConfig,
+			want: keyvals{
+				{"Date", rawVal("2009-02-13 23:31:30 +0000 UTC")},
+			},
+		},
+		{
+			desc: "time w/ nil Formatter",
+			raw:  struct{ Date time.Time }{time.Unix(1234567890, 0).UTC()},
+			cfg: &Config{
+				PrintStringers: true,
+				Formatter: map[reflect.Type]interface{}{
+					reflect.TypeOf(time.Time{}): nil,
+				},
+			},
 			want: keyvals{
 				{"Date", keyvals{}},
 			},

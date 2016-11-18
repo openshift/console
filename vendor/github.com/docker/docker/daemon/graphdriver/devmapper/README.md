@@ -3,22 +3,33 @@
 ### Theory of operation
 
 The device mapper graphdriver uses the device mapper thin provisioning
-module (dm-thinp) to implement CoW snapshots. For each devicemapper
-graph location (typically `/var/lib/docker/devicemapper`, $graph below)
-a thin pool is created based on two block devices, one for data and
-one for metadata.  By default these block devices are created
+module (dm-thinp) to implement CoW snapshots. The preferred model is
+to have a thin pool reserved outside of Docker and passed to the
+daemon via the `--storage-opt dm.thinpooldev` option.
+
+As a fallback if no thin pool is provided, loopback files will be
+created.  Loopback is very slow, but can be used without any
+pre-configuration of storage.  It is strongly recommended that you do
+not use loopback in production.  Ensure your Docker daemon has a
+`--storage-opt dm.thinpooldev` argument provided.
+
+In loopback, a thin pool is created at `/var/lib/docker/devicemapper`
+(devicemapper graph location) based on two block devices, one for
+data and one for metadata. By default these block devices are created
 automatically by using loopback mounts of automatically created sparse
 files.
 
-The default loopback files used are `$graph/devicemapper/data` and
-`$graph/devicemapper/metadata`. Additional metadata required to map
-from docker entities to the corresponding devicemapper volumes is
-stored in the `$graph/devicemapper/json` file (encoded as Json).
+The default loopback files used are
+`/var/lib/docker/devicemapper/devicemapper/data` and
+`/var/lib/docker/devicemapper/devicemapper/metadata`. Additional metadata
+required to map from docker entities to the corresponding devicemapper
+volumes is stored in the `/var/lib/docker/devicemapper/devicemapper/json`
+file (encoded as Json).
 
 In order to support multiple devicemapper graphs on a system, the thin
 pool will be named something like: `docker-0:33-19478248-pool`, where
 the `0:33` part is the minor/major device nr and `19478248` is the
-inode number of the $graph directory.
+inode number of the `/var/lib/docker/devicemapper` directory.
 
 On the thin pool, docker automatically creates a base thin device,
 called something like `docker-0:33-19478248-base` of a fixed
@@ -38,6 +49,7 @@ will display something like:
 	Storage Driver: devicemapper
 	 Pool Name: docker-253:1-17538953-pool
 	 Pool Blocksize: 65.54 kB
+	 Base Device Size: 107.4 GB
 	 Data file: /dev/loop4
 	 Metadata file: /dev/loop4
 	 Data Space Used: 2.536 GB
@@ -58,6 +70,7 @@ Each item in the indented section under `Storage Driver: devicemapper` are
 status information about the driver.
  *  `Pool Name` name of the devicemapper pool for this driver.
  *  `Pool Blocksize` tells the blocksize the thin pool was initialized with. This only changes on creation.
+ *  `Base Device Size` tells the maximum size of a container and image
  *  `Data file` blockdevice file used for the devicemapper data
  *  `Metadata file` blockdevice file used for the devicemapper metadata
  *  `Data Space Used` tells how much of `Data file` is currently used
@@ -75,10 +88,9 @@ status information about the driver.
 
 The devicemapper backend supports some options that you can specify
 when starting the docker daemon using the `--storage-opt` flags.
-This uses the `dm` prefix and would be used something like `docker -d --storage-opt dm.foo=bar`.
+This uses the `dm` prefix and would be used something like `docker daemon --storage-opt dm.foo=bar`.
 
 These options are currently documented both in [the man
 page](../../../man/docker.1.md) and in [the online
-documentation](https://docs.docker.com/reference/commandline/daemon/#docker-
-execdriver-option).  If you add an options, update both the `man` page and the
-documentation.
+documentation](https://docs.docker.com/engine/reference/commandline/dockerd/#/storage-driver-options).
+If you add an options, update both the `man` page and the documentation.

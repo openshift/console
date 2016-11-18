@@ -7,11 +7,16 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"runtime"
 	"sort"
 	"testing"
 )
 
 func TestHardLinkOrder(t *testing.T) {
+	//TODO Should run for Solaris
+	if runtime.GOOS == "solaris" {
+		t.Skip("gcp failures on Solaris")
+	}
 	names := []string{"file1.txt", "file2.txt", "file3.txt"}
 	msg := []byte("Hey y'all")
 
@@ -20,7 +25,7 @@ func TestHardLinkOrder(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	//defer os.RemoveAll(src)
+	defer os.RemoveAll(src)
 	for _, name := range names {
 		func() {
 			fh, err := os.Create(path.Join(src, name))
@@ -61,7 +66,7 @@ func TestHardLinkOrder(t *testing.T) {
 	sort.Sort(changesByPath(changes))
 
 	// ExportChanges
-	ar, err := ExportChanges(dest, changes)
+	ar, err := ExportChanges(dest, changes, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +78,7 @@ func TestHardLinkOrder(t *testing.T) {
 	// reverse sort
 	sort.Sort(sort.Reverse(changesByPath(changes)))
 	// ExportChanges
-	arRev, err := ExportChanges(dest, changes)
+	arRev, err := ExportChanges(dest, changes, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

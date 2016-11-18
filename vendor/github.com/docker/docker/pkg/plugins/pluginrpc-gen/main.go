@@ -72,13 +72,13 @@ func main() {
 		InterfaceType string
 		RPCName       string
 		BuildTags     map[string]struct{}
-		*parsedPkg
+		*ParsedPkg
 	}{toLower(*typeName), *rpcName, flBuildTags.GetValues(), pkg}
 	var buf bytes.Buffer
 
 	errorOut("parser error", generatedTempl.Execute(&buf, analysis))
 	src, err := format.Source(buf.Bytes())
-	errorOut("error formating generated source", err)
+	errorOut("error formatting generated source:\n"+buf.String(), err)
 	errorOut("error writing file", ioutil.WriteFile(*outputFile, src, 0644))
 }
 

@@ -1,25 +1,33 @@
-<!--[metadata]>
-+++
-title = "port"
-description = "The port command description and usage"
-keywords = ["port, mapping, container"]
-[menu.main]
-parent = "smn_cli"
-weight=1
-+++
-<![end-metadata]-->
+---
+title: "port"
+description: "The port command description and usage"
+keywords: "port, mapping, container"
+---
+
+<!-- This file is maintained within the docker/docker Github
+     repository at https://github.com/docker/docker/. Make all
+     pull requests against that repo. If you see this file in
+     another repository, consider it read-only there, as it will
+     periodically be overwritten by the definitive file. Pull
+     requests which include edits to this file in other repositories
+     will be rejected.
+-->
 
 # port
 
-    Usage: docker port CONTAINER [PRIVATE_PORT[/PROTO]]
+```markdown
+Usage:  docker port CONTAINER [PRIVATE_PORT[/PROTO]]
 
-    List port mappings for the CONTAINER, or lookup the public-facing port that is
-	NAT-ed to the PRIVATE_PORT
+List port mappings or a specific mapping for the container
+
+Options:
+      --help   Print usage
+```
 
 You can find out all the ports mapped by not specifying a `PRIVATE_PORT`, or
 just a specific mapping:
 
-    $ docker ps test
+    $ docker ps
     CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                                            NAMES
     b650456536c7        busybox:latest      top                 54 minutes ago      Up 54 minutes       0.0.0.0:1234->9876/tcp, 0.0.0.0:4321->7890/tcp   test
     $ docker port test

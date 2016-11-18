@@ -18,7 +18,9 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net"
 	"reflect"
+	"time"
 
 	"github.com/kylelemons/godebug/diff"
 )
@@ -40,18 +42,52 @@ type Config struct {
 
 	// Output transforms
 	ShortList int // Maximum character length for short lists if nonzero.
+
+	// Type-specific overrides
+	//
+	// Formatter maps a type to a function that will provide a one-line string
+	// representation of the input value.  Conceptually:
+	//   Formatter[reflect.TypeOf(v)](v) = "v as a string"
+	//
+	// Note that the first argument need not explicitly match the type, it must
+	// merely be callable with it.
+	//
+	// When processing an input value, if its type exists as a key in Formatter:
+	//   1) If the value is nil, no stringification is performed.
+	//      This allows overriding of PrintStringers and PrintTextMarshalers.
+	//   2) The value will be called with the input as its only argument.
+	//      The function must return a string as its first return value.
+	//
+	// In addition to func literals, two common values for this will be:
+	//   fmt.Sprint        (function) func Sprint(...interface{}) string
+	//   Type.String         (method) func (Type) String() string
+	//
+	// Note that neither of these work if the String method is a pointer
+	// method and the input will be provided as a value.  In that case,
+	// use a function that calls .String on the formal value parameter.
+	Formatter map[reflect.Type]interface{}
 }
 
 // Default Config objects
 var (
+	// DefaultFormatter is the default set of overrides for stringification.
+	DefaultFormatter = map[reflect.Type]interface{}{
+		reflect.TypeOf(time.Time{}):          fmt.Sprint,
+		reflect.TypeOf(net.IP{}):             fmt.Sprint,
+		reflect.TypeOf((*error)(nil)).Elem(): fmt.Sprint,
+	}
+
 	// CompareConfig is the default configuration used for Compare.
 	CompareConfig = &Config{
 		Diffable:          true,
 		IncludeUnexported: true,
+		Formatter:         DefaultFormatter,
 	}
 
 	// DefaultConfig is the default configuration used for all other top-level functions.
-	DefaultConfig = &Config{}
+	DefaultConfig = &Config{
+		Formatter: DefaultFormatter,
+	}
 )
 
 func (cfg *Config) fprint(buf *bytes.Buffer, vals ...interface{}) {

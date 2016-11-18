@@ -6,24 +6,28 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"path"
 	"reflect"
 	"strings"
 )
 
-var ErrBadReturn = errors.New("found return arg with no name: all args must be named")
+var errBadReturn = errors.New("found return arg with no name: all args must be named")
 
-type ErrUnexpectedType struct {
+type errUnexpectedType struct {
 	expected string
 	actual   interface{}
 }
 
-func (e ErrUnexpectedType) Error() string {
+func (e errUnexpectedType) Error() string {
 	return fmt.Sprintf("got wrong type expecting %s, got: %v", e.expected, reflect.TypeOf(e.actual))
 }
 
-type parsedPkg struct {
+// ParsedPkg holds information about a package that has been parsed,
+// its name and the list of functions.
+type ParsedPkg struct {
 	Name      string
 	Functions []function
+	Imports   []importSpec
 }
 
 type function struct {
@@ -34,22 +38,37 @@ type function struct {
 }
 
 type arg struct {
-	Name    string
-	ArgType string
+	Name            string
+	ArgType         string
+	PackageSelector string
 }
 
 func (a *arg) String() string {
-	return strings.ToLower(a.Name) + " " + strings.ToLower(a.ArgType)
+	return a.Name + " " + a.ArgType
 }
 
-// Parses the given file for an interface definition with the given name
-func Parse(filePath string, objName string) (*parsedPkg, error) {
+type importSpec struct {
+	Name string
+	Path string
+}
+
+func (s *importSpec) String() string {
+	var ss string
+	if len(s.Name) != 0 {
+		ss += s.Name
+	}
+	ss += s.Path
+	return ss
+}
+
+// Parse parses the given file for an interface definition with the given name.
+func Parse(filePath string, objName string) (*ParsedPkg, error) {
 	fs := token.NewFileSet()
 	pkg, err := parser.ParseFile(fs, filePath, nil, parser.AllErrors)
 	if err != nil {
 		return nil, err
 	}
-	p := &parsedPkg{}
+	p := &ParsedPkg{}
 	p.Name = pkg.Name.Name
 	obj, exists := pkg.Scope.Objects[objName]
 	if !exists {
@@ -60,16 +79,54 @@ func Parse(filePath string, objName string) (*parsedPkg, error) {
 	}
 	spec, ok := obj.Decl.(*ast.TypeSpec)
 	if !ok {
-		return nil, ErrUnexpectedType{"*ast.TypeSpec", obj.Decl}
+		return nil, errUnexpectedType{"*ast.TypeSpec", obj.Decl}
 	}
 	iface, ok := spec.Type.(*ast.InterfaceType)
 	if !ok {
-		return nil, ErrUnexpectedType{"*ast.InterfaceType", spec.Type}
+		return nil, errUnexpectedType{"*ast.InterfaceType", spec.Type}
 	}
 
 	p.Functions, err = parseInterface(iface)
 	if err != nil {
 		return nil, err
+	}
+
+	// figure out what imports will be needed
+	imports := make(map[string]importSpec)
+	for _, f := range p.Functions {
+		args := append(f.Args, f.Returns...)
+		for _, arg := range args {
+			if len(arg.PackageSelector) == 0 {
+				continue
+			}
+
+			for _, i := range pkg.Imports {
+				if i.Name != nil {
+					if i.Name.Name != arg.PackageSelector {
+						continue
+					}
+					imports[i.Path.Value] = importSpec{Name: arg.PackageSelector, Path: i.Path.Value}
+					break
+				}
+
+				_, name := path.Split(i.Path.Value)
+				splitName := strings.Split(name, "-")
+				if len(splitName) > 1 {
+					name = splitName[len(splitName)-1]
+				}
+				// import paths have quotes already added in, so need to remove them for name comparison
+				name = strings.TrimPrefix(name, `"`)
+				name = strings.TrimSuffix(name, `"`)
+				if name == arg.PackageSelector {
+					imports[i.Path.Value] = importSpec{Path: i.Path.Value}
+					break
+				}
+			}
+		}
+	}
+
+	for _, spec := range imports {
+		p.Imports = append(p.Imports, spec)
 	}
 
 	return p, nil
@@ -91,11 +148,11 @@ func parseInterface(iface *ast.InterfaceType) ([]function, error) {
 		case *ast.Ident:
 			spec, ok := f.Obj.Decl.(*ast.TypeSpec)
 			if !ok {
-				return nil, ErrUnexpectedType{"*ast.TypeSpec", f.Obj.Decl}
+				return nil, errUnexpectedType{"*ast.TypeSpec", f.Obj.Decl}
 			}
 			iface, ok := spec.Type.(*ast.InterfaceType)
 			if !ok {
-				return nil, ErrUnexpectedType{"*ast.TypeSpec", spec.Type}
+				return nil, errUnexpectedType{"*ast.TypeSpec", spec.Type}
 			}
 			funcs, err := parseInterface(iface)
 			if err != nil {
@@ -104,7 +161,7 @@ func parseInterface(iface *ast.InterfaceType) ([]function, error) {
 			}
 			functions = append(functions, funcs...)
 		default:
-			return nil, ErrUnexpectedType{"*astFuncType or *ast.Ident", f}
+			return nil, errUnexpectedType{"*astFuncType or *ast.Ident", f}
 		}
 	}
 	return functions, nil
@@ -138,25 +195,69 @@ func parseArgs(fields []*ast.Field) ([]arg, error) {
 	var args []arg
 	for _, f := range fields {
 		if len(f.Names) == 0 {
-			return nil, ErrBadReturn
+			return nil, errBadReturn
 		}
 		for _, name := range f.Names {
-			var typeName string
-			switch argType := f.Type.(type) {
-			case *ast.Ident:
-				typeName = argType.Name
-			case *ast.StarExpr:
-				i, ok := argType.X.(*ast.Ident)
-				if !ok {
-					return nil, ErrUnexpectedType{"*ast.Ident", f.Type}
-				}
-				typeName = "*" + i.Name
-			default:
-				return nil, ErrUnexpectedType{"*ast.Ident or *ast.StarExpr", f.Type}
+			p, err := parseExpr(f.Type)
+			if err != nil {
+				return nil, err
 			}
-
-			args = append(args, arg{name.Name, typeName})
+			args = append(args, arg{name.Name, p.value, p.pkg})
 		}
 	}
 	return args, nil
+}
+
+type parsedExpr struct {
+	value string
+	pkg   string
+}
+
+func parseExpr(e ast.Expr) (parsedExpr, error) {
+	var parsed parsedExpr
+	switch i := e.(type) {
+	case *ast.Ident:
+		parsed.value += i.Name
+	case *ast.StarExpr:
+		p, err := parseExpr(i.X)
+		if err != nil {
+			return parsed, err
+		}
+		parsed.value += "*"
+		parsed.value += p.value
+		parsed.pkg = p.pkg
+	case *ast.SelectorExpr:
+		p, err := parseExpr(i.X)
+		if err != nil {
+			return parsed, err
+		}
+		parsed.pkg = p.value
+		parsed.value += p.value + "."
+		parsed.value += i.Sel.Name
+	case *ast.MapType:
+		parsed.value += "map["
+		p, err := parseExpr(i.Key)
+		if err != nil {
+			return parsed, err
+		}
+		parsed.value += p.value
+		parsed.value += "]"
+		p, err = parseExpr(i.Value)
+		if err != nil {
+			return parsed, err
+		}
+		parsed.value += p.value
+		parsed.pkg = p.pkg
+	case *ast.ArrayType:
+		parsed.value += "[]"
+		p, err := parseExpr(i.Elt)
+		if err != nil {
+			return parsed, err
+		}
+		parsed.value += p.value
+		parsed.pkg = p.pkg
+	default:
+		return parsed, errUnexpectedType{"*ast.Ident or *ast.StarExpr", i}
+	}
+	return parsed, nil
 }

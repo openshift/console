@@ -20,7 +20,6 @@ import (
 	"github.com/coreos-inc/bridge/auth"
 	"github.com/coreos-inc/bridge/pkg/proxy"
 	"github.com/coreos-inc/bridge/server"
-	"github.com/coreos-inc/bridge/stats"
 )
 
 var (
@@ -55,8 +54,6 @@ func main() {
 	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 	fTectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
-	fIdentityFile := fs.String("identity-file", "", "A file that identifies the console owner.")
-
 	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
 	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
@@ -103,10 +100,6 @@ func main() {
 		}
 		rl.SetLogLevel(llc)
 		log.Infof("Setting log level to %s", *fLogLevel)
-	}
-
-	if *fIdentityFile != "" {
-		go stats.GenerateStats(*fIdentityFile)
 	}
 
 	var (

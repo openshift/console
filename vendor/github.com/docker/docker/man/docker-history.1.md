@@ -7,8 +7,9 @@ docker-history - Show the history of an image
 # SYNOPSIS
 **docker history**
 [**--help**]
-[**--no-trunc**[=*false*]]
-[**-q**|**--quiet**[=*false*]]
+[**-H**|**--human**[=*true*]]
+[**--no-trunc**]
+[**-q**|**--quiet**]
 IMAGE
 
 # DESCRIPTION
@@ -19,7 +20,7 @@ Show the history of when and how an image was created.
 **--help**
   Print usage statement
 
-**-H**. **--human**=*true*|*false*
+**-H**, **--human**=*true*|*false*
     Print sizes and dates in human readable format. The default is *true*.
 
 **--no-trunc**=*true*|*false*

@@ -1,28 +1,38 @@
-<!--[metadata]>
-+++
-title = "import"
-description = "The import command description and usage"
-keywords = ["import, file, system, container"]
-[menu.main]
-parent = "smn_cli"
-weight=1
-+++
-<![end-metadata]-->
+---
+title: "import"
+description: "The import command description and usage"
+keywords: "import, file, system, container"
+---
+
+<!-- This file is maintained within the docker/docker Github
+     repository at https://github.com/docker/docker/. Make all
+     pull requests against that repo. If you see this file in
+     another repository, consider it read-only there, as it will
+     periodically be overwritten by the definitive file. Pull
+     requests which include edits to this file in other repositories
+     will be rejected.
+-->
 
 # import
 
-    Usage: docker import URL|- [REPOSITORY[:TAG]]
+```markdown
+Usage:  docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
 
-    Create an empty filesystem image and import the contents of the
-	tarball (.tar, .tar.gz, .tgz, .bzip, .tar.xz, .txz) into it, then
-	optionally tag it.
+Import the contents from a tarball to create a filesystem image
 
-      -c, --change=[]     Apply specified Dockerfile instructions while importing the image
+Options:
+  -c, --change value     Apply Dockerfile instruction to the created image (default [])
+      --help             Print usage
+  -m, --message string   Set commit message for imported image
+```
 
-URLs must start with `http` and point to a single file archive (.tar,
-.tar.gz, .tgz, .bzip, .tar.xz, or .txz) containing a root filesystem. If
-you would like to import from a local directory or archive, you can use
-the `-` parameter to take the data from `STDIN`.
+You can specify a `URL` or `-` (dash) to take data directly from `STDIN`. The
+`URL` can point to an archive (.tar, .tar.gz, .tgz, .bzip, .tar.xz, or .txz)
+containing a filesystem or to an individual file on the Docker host.  If you
+specify an archive, Docker untars it in the container relative to the `/`
+(root). If you specify an individual file, you must specify the full path within
+the host. To import from a remote location, specify a `URI` that begins with the
+`http://` or `https://` protocol.
 
 The `--change` option will apply `Dockerfile` instructions to the image
 that is created.
@@ -43,6 +53,14 @@ Import to docker via pipe and `STDIN`.
 
     $ cat exampleimage.tgz | docker import - exampleimagelocal:new
 
+Import with a commit message.
+
+    $ cat exampleimage.tgz | docker import --message "New image imported from tarball" - exampleimagelocal:new
+
+Import to docker from a local archive.
+
+    $ docker import /path/to/exampleimage.tgz
+
 **Import from a local directory:**
 
     $ sudo tar -c . | docker import - exampleimagedir
@@ -55,4 +73,3 @@ Note the `sudo` in this example – you must preserve
 the ownership of the files (especially root ownership) during the
 archiving with tar. If you are not root (or the sudo command) when you
 tar, then the ownerships might not get preserved.
-
