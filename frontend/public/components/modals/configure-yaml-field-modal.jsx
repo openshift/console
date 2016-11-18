@@ -62,7 +62,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
 
   _cancel() {
     this.props.callbacks.invalidateState(false);
-    this.props.close();
+    this.props.cancel();
   }
 
   _submit(event) {
