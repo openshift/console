@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Cog, ResourceIcon} from '../utils';
-
+import {confirmModal} from '../modals/confirm-modal';
 import {angulars} from '../react-wrapper';
 
 export const Rules = ({rules, metadata: {name, namespace}}) => {
@@ -101,11 +101,11 @@ const Resources = ({resources, nonResourceURLs}) => {
 
 const DeleteRule = (name, namespace, i) => ({
   label: 'Delete Rule ...',
-  callback: angulars.modal('confirm', {
+  callback: () => confirmModal({
     title: 'Delete Rule ',
     message: `Are you sure you want to delete Rule #${i}?`,
     btnText: 'Delete Rule',
-    executeFn: () => () => {
+    executeFn: () => {
       const kind = angulars.k8s[namespace ? 'roles' : 'clusterroles'];
       return kind.patch({metadata: {name, namespace}}, [{
         op: 'remove', path: `/rules/${i}`,

@@ -1,10 +1,11 @@
 import React from 'react';
-
-import {angulars} from '../react-wrapper';
-import {DropdownMixin} from './dropdown';
-import {util} from '../../module/k8s/util';
 import ReactTooltip from 'react-tooltip';
 import classNames from 'classnames';
+
+import {util} from '../../module/k8s/util';
+import {angulars} from '../react-wrapper';
+import {confirmModal} from '../modals/confirm-modal';
+import {DropdownMixin} from './dropdown';
 
 export class Cog extends DropdownMixin {
   componentDidMount () {
@@ -47,11 +48,11 @@ export class Cog extends DropdownMixin {
 Cog.factory = {
   Delete: (kind, obj) => ({
     label: `Delete ${kind.label} ...`,
-    callback: angulars.modal('confirm', {
+    callback: () => confirmModal({
       title: `Delete ${kind.label} `,
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
       btnText: `Delete ${kind.label} `,
-      executeFn: () => () => angulars.k8s[kind.plural].delete(obj),
+      executeFn: () => angulars.k8s[kind.plural].delete(obj),
     }),
   }),
   Edit: (kind, obj) => ({

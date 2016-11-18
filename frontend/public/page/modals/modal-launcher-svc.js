@@ -49,10 +49,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-primary-command.html',
       controller: 'ConfigurePrimaryCommandCtrl',
     },
-    'confirm': {
-      templateUrl: '/static/page/modals/confirm.html',
-      controller: 'ModalConfirmCtrl',
-    },
     'configure-replica-count': {
       templateUrl: '/static/page/modals/configure-replica-count.html',
       controller: 'ConfigureReplicaCountCtrl',

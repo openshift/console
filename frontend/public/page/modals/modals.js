@@ -1,5 +1,4 @@
 import './modal-launcher-svc';
-import './confirm-ctrl';
 import './configure-cluster-update-channel-ctrl';
 import './configure-cluster-update-strategy-ctrl';
 import './configure-ports-ctrl';
