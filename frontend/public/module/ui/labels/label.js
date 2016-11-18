@@ -3,7 +3,7 @@ angular.module('bridge.ui')
 .directive('coLabel', function($interpolate, k8s) {
   'use strict';
 
-  var linkTemplate = $interpolate('/search?kind={{kind}}&q={{query}}');
+  var linkTemplate = $interpolate('search?kind={{kind}}&q={{query}}');
 
   return {
     templateUrl: '/static/module/ui/labels/label.html',
