@@ -1,7 +1,7 @@
 import {CONST} from '../../const';
 
 angular.module('bridge.page')
-.controller('NewNamespaceCtrl', function($scope, namespaceCacheSvc) {
+.controller('NewNamespaceCtrl', function($scope, k8s) {
   'use strict';
 
   $scope.namePattern = CONST.legalNamePattern;
@@ -13,7 +13,7 @@ angular.module('bridge.page')
 
   $scope.createNamespace = function(form) {
     if (form.$valid) {
-      $scope.namespaceCreated = namespaceCacheSvc.create({
+      $scope.namespaceCreated = k8s.namespaces.create({
         metadata: {
           name: $scope.model.name,
           labels: $scope.model.labels,

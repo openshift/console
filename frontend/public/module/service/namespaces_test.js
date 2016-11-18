@@ -14,15 +14,6 @@ describe('bridge.service.activeNamespaceSvc', function() {
         return mockPath;
       }
     });
-
-    $provide.value('namespaceCacheSvc', {
-      get: function(name) {
-        if (name) {
-          return {metadata: {name: name}};
-        }
-      }
-    });
-
   }));
 
   beforeEach(module(function(activeNamespaceSvcProvider) {
