@@ -27,4 +27,3 @@ import './tristate/tristate';
 import './util/autofocus';
 import './timestamps/co-timestamp';
 import './util/debug';
-import './dropdown/dropdown';
