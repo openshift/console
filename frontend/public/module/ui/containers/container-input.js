@@ -1,4 +1,5 @@
-import {EVENTS} from '../../../const';
+import { EVENTS } from '../../../const';
+import { configurePortsModal } from '../../../components/modals';
 
 angular.module('bridge.ui')
 
@@ -56,11 +57,11 @@ angular.module('bridge.ui')
 
       $scope.fields = getEmptyFields();
 
-      $scope.openPortsModal = function() {
-        ModalLauncherSvc.open('configure-ports', {
-          container: $scope.container
-        });
-      };
+      $scope.openPortsModal = () => configurePortsModal({
+        container: $scope.container
+      }).result.then((ports) => {
+        $scope.container.ports = ports;
+      });
 
       $scope.openPullPolicyModal = function() {
         ModalLauncherSvc.open('configure-pull-policy', {

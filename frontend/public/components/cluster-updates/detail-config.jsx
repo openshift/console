@@ -2,7 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {LoadingInline} from '../utils';
-import {angulars} from '../react-wrapper';
 
 export class DetailConfig extends React.Component {
   constructor(props) {
@@ -18,12 +17,12 @@ export class DetailConfig extends React.Component {
   }
 
   _openModal() {
-    angulars.modal(this.props.modal, _.defaults({}, this.props.modalData, {
+    this.props.modal(_.defaults({}, this.props.modalData, {
       config: this.props.config,
       callbacks: {
         invalidateState: this._updateOutdated.bind(this)
       }
-    }))();
+    }));
   }
 
   _updateOutdated(outdated) {
@@ -47,7 +46,7 @@ export class DetailConfig extends React.Component {
 DetailConfig.propTypes = {
   config: React.PropTypes.object,
   displayFunction: React.PropTypes.func,
-  modal: React.PropTypes.string.isRequired,
+  modal: React.PropTypes.func.isRequired,
   modalData: React.PropTypes.object,
   field: React.PropTypes.string.isRequired
 };

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {authSvc} from '../module/auth';
-import {angulars, register} from './react-wrapper';
+import {register} from './react-wrapper';
+import {kubectlConfigModal} from './modals';
 import {NavTitle} from './utils';
 
 export const ProfilePage = () => <div className="co-p-profile">
@@ -15,7 +16,7 @@ export const ProfilePage = () => <div className="co-p-profile">
           <dt>Email Address</dt>
           <dd>{authSvc.email() || '-'}</dd>
           <dt>kubectl</dt>
-          <dd><button className="btn btn-default" type="button" onClick={angulars.modal('kubectl-config')}>Download Configuration</button></dd>
+          <dd><button className="btn btn-default" type="button" onClick={() => kubectlConfigModal()}>Download Configuration</button></dd>
         </dl>
       </div>
     </div>

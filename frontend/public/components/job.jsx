@@ -1,15 +1,15 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
+import {configureJobParallelismModal} from './modals';
 import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory} from './utils';
 
 const ModifyJobParallelism = (kind, obj) => ({
   label: 'Modify Parallelism...',
   weight: 100,
-  callback: angulars.modal('configure-job-parallelism', {
+  callback: () => configureJobParallelismModal({
     resourceKind: kind,
-    resource: () => obj,
+    resource: obj,
   }),
 });
 const menuActions = [ModifyJobParallelism, Cog.factory.ModifyPodSelector, Cog.factory.ModifyLabels, Cog.factory.Delete];

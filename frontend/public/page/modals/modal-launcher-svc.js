@@ -9,18 +9,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/service-ports.html',
       controller: 'ServicePortsCtrl',
     },
-    'configure-cluster-update-channel': {
-      templateUrl: '/static/page/modals/configure-cluster-update-channel.html',
-      controller: 'ConfigureClusterUpdateChannelCtrl',
-    },
-    'configure-cluster-update-strategy': {
-      templateUrl: '/static/page/modals/configure-cluster-update-strategy.html',
-      controller: 'ConfigureClusterUpdateStrategyCtrl',
-    },
-    'configure-ports': {
-      templateUrl: '/static/page/modals/configure-ports.html',
-      controller: 'ConfigurePortsCtrl',
-    },
     'configure-update-strategy': {
       templateUrl: '/static/page/modals/configure-update-strategy.html',
       controller: 'ConfigureUpdateStrategyCtrl',
@@ -49,10 +37,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-primary-command.html',
       controller: 'ConfigurePrimaryCommandCtrl',
     },
-    'configure-job-parallelism': {
-      templateUrl: '/static/page/modals/configure-job-parallelism.html',
-      controller: 'ConfigureJobParallelismCtrl',
-    },
     'configure-hpa-replicas': {
       templateUrl: '/static/page/modals/configure-hpa-replicas.html',
       controller: 'ConfigureHpaReplicasCtrl',
@@ -64,10 +48,6 @@ angular.module('bridge.page')
     'namespace-pull-secret': {
       templateUrl: '/static/page/modals/namespace-pull-secret/namespace-pull-secret.html',
       controller: 'NamespacePullSecretCtrl',
-    },
-    'kubectl-config': {
-      templateUrl: '/static/page/modals/kubectl-config/kubectl-config.html',
-      controller: 'KubectlConfigCtrl',
     },
     'reactive-modal': {
       templateUrl: '/static/page/modals/reactive-modal.html',
