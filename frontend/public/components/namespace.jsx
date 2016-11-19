@@ -36,6 +36,7 @@ const NamespacesList = makeList('Namespaces', kind, FullHeader, FullRow);
 class PullSecret extends React.Component {
   constructor (props) {
     super(props);
+    this._isMounted = false;
     this.state = {isLoading: true, data: undefined};
   }
 
