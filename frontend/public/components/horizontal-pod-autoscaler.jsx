@@ -38,7 +38,7 @@ const HorizontalPodAutoscalerCog = ({horizontalpodautoscaler}) => {
 
 const ScaleRef = ({horizontalpodautoscaler}) => <div>
   <ResourceIcon kind={angulars.kinds[horizontalpodautoscaler.spec.scaleRef.kind.toUpperCase()].id}></ResourceIcon>
-  <a href={`ns/${horizontalpodautoscaler.metadata.namespace}/${angulars.kinds[horizontalpodautoscaler.spec.scaleRef.kind.toUpperCase()].plural}/${horizontalpodautoscaler.spec.scaleRef.name}`} title={horizontalpodautoscaler.spec.scaleRef.name}>
+  <a href={`ns/${horizontalpodautoscaler.metadata.namespace}/${angulars.kinds[horizontalpodautoscaler.spec.scaleRef.kind.toUpperCase()].plural}/${horizontalpodautoscaler.spec.scaleRef.name}/details`} title={horizontalpodautoscaler.spec.scaleRef.name}>
     {horizontalpodautoscaler.spec.scaleRef.name}
   </a>
 </div>;
