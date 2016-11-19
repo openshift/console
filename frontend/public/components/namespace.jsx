@@ -121,7 +121,7 @@ const Details = (namespace) => {
 };
 
 const Header = () => <div className="co-m-facet-menu__title">Name</div>;
-const List = makeList('Namespaces', kind, Header, RowOfKind('namespace'), ns => ns.metadata.name);
+const List = makeList('Namespaces', kind, Header, RowOfKind('namespace'));
 
 const CreateButton = () => <button type="button" className="btn btn-primary co-m-pane__title__btn" onClick={angulars.modal('new-namespace')}>Create Namespace</button>;
 

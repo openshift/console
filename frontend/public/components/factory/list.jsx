@@ -112,13 +112,14 @@ export const makeList = (name, kindstring, Header, Row, sortBy = undefined) => {
       const k8sResource = ReactiveList.k8sResource;
       const kindID = k8sResource.kind.id;
       const klass = `co-m-${kindID}-list co-m-table-grid co-m-table-grid--bordered`;
+      const sort = sortBy || (item => item.metadata ? item.metadata.name: null);
 
       return <Provider store={angulars.store}>
         <div className={klass}>
           <Header />
           <Firehose ref="hose" isList={true} k8sResource={k8sResource} {...this.props}>
             <StatusBox>
-              <Rows Row={Row} sortBy={sortBy} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
+              <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
             </StatusBox>
           </Firehose>
         </div>
