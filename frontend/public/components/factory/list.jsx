@@ -62,8 +62,8 @@ const filterPropType = (props, propName, componentName) => {
 
 const Rows = (props) => {
   const {k8s: {getQN}} = angulars;
-  const {expand, filters, data, selected, selectRow, Row} = props;
-  const rows = getFilteredRows(filters, data).map(object => {
+  const {expand, filters, data, selected, selectRow, sortBy, Row} = props;
+  const rows = _.sortBy(getFilteredRows(filters, data), sortBy).map(object => {
     return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected === getQN(object)} />;
   });
   return <div className="co-m-table-grid__body"> {rows} </div>;
@@ -71,6 +71,7 @@ const Rows = (props) => {
 
 Rows.propTypes = {
   filters: filterPropType,
+  sortBy: React.PropTypes.func,
   data: React.PropTypes.arrayOf(React.PropTypes.object),
   expand: React.PropTypes.bool,
   Row: React.PropTypes.func.isRequired,
@@ -78,7 +79,7 @@ Rows.propTypes = {
   selectRow: React.PropTypes.func.isRequired,
 };
 
-export const makeList = (name, kindstring, Header, Row) => {
+export const makeList = (name, kindstring, Header, Row, sortBy = undefined) => {
 
   class ReactiveList extends React.Component {
     static get k8sResource () {
@@ -111,13 +112,14 @@ export const makeList = (name, kindstring, Header, Row) => {
       const k8sResource = ReactiveList.k8sResource;
       const kindID = k8sResource.kind.id;
       const klass = `co-m-${kindID}-list co-m-table-grid co-m-table-grid--bordered`;
+      const sort = sortBy || (item => item.metadata ? item.metadata.name: null);
 
       return <Provider store={angulars.store}>
         <div className={klass}>
           <Header />
           <Firehose ref="hose" isList={true} k8sResource={k8sResource} {...this.props}>
             <StatusBox>
-              <Rows Row={Row} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
+              <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
             </StatusBox>
           </Firehose>
         </div>
