@@ -132,7 +132,7 @@ const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
               <td>Average CPU</td>
               <td>
                 <a href="#" onClick={ModifyHpaTargets(angulars.kinds.HORIZONTALPODAUTOSCALER, horizontalpodautoscaler).callback}>
-                  {horizontalpodautoscaler.spec.cpuUtilization.targetPercentage}%
+                  {horizontalpodautoscaler.spec.cpuUtilization && `${horizontalpodautoscaler.spec.cpuUtilization.targetPercentage}%` || '-'}
                 </a>
                 &nbsp;<i className="text-muted fa fa-angle-right" />
               </td>
