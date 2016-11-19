@@ -28,7 +28,7 @@ const HeaderSearch = () => <div className="row co-m-table-grid__head">
 
 const NodeCog = ({node}) => {
   const options = [Cog.factory.ModifyLabels].map(f => f(angulars.kinds.NODE, node));
-  return <Cog options={options} size="small" anchor="left"></Cog>;
+  return <Cog options={options} size="small" anchor="left" />;
 };
 
 const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}`} title={node.metadata.uid}>{node.metadata.name}</a>;

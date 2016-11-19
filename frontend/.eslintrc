@@ -31,7 +31,8 @@
     "wrap-iife": [2, "inside"],
     "import/no-unresolved": ["error", {"ignore": ["./dist/templates"] }],
     "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars": "error"
+    "react/jsx-uses-vars": "error",
+    "react/self-closing-comp": ["error", {"component": true, "html": false}]
   },
   "parserOptions": {
     "sourceType": "module",

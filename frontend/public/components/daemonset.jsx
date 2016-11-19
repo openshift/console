@@ -7,7 +7,7 @@ import {Cog, LabelList, ResourceIcon, Selector, Timestamp, detailsPage} from './
 const DaemonSetCog = ({daemonset}) => {
   const kind = angulars.kinds.DAEMONSET;
   const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, daemonset))} size="small" anchor="left"></Cog>;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, daemonset))} size="small" anchor="left" />;
 };
 
 const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
@@ -19,14 +19,14 @@ const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
 
 const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-    <DaemonSetCog daemonset={daemonset}></DaemonSetCog>
-    <ResourceIcon kind="daemonset"></ResourceIcon>
+    <DaemonSetCog daemonset={daemonset} />
+    <ResourceIcon kind="daemonset" />
     <a href={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/details`} title={daemonset.metadata.uid}>
       {daemonset.metadata.name}
     </a>
   </div>
   <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
-    <LabelList kind="daemonset" labels={daemonset.metadata.labels}  />
+    <LabelList kind="daemonset" labels={daemonset.metadata.labels} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
     <a href={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
@@ -34,7 +34,7 @@ const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list_
     </a>
   </div>
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-    <Selector selector={daemonset.spec.selector.matchLabels}></Selector>
+    <Selector selector={daemonset.spec.selector.matchLabels} />
   </div>
 </div>;
 

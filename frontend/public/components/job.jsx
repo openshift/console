@@ -16,7 +16,7 @@ const JobCog = ({job}) => {
   const kind = angulars.kinds.JOB;
   const {factory: {Delete, ModifyLabels, ModifyJobParallelism, ModifyPodSelector}} = Cog;
   const options = [ModifyJobParallelism, ModifyPodSelector, ModifyLabels, Delete].map(f => f(kind, job));
-  return <Cog options={options} size="small" anchor="left"></Cog>;
+  return <Cog options={options} size="small" anchor="left" />;
 };
 
 const getJobTypeAndCompletions = (o) => {
@@ -42,13 +42,13 @@ const JobRow = ({obj: job}) => {
     <div className="row co-resource-list__item">
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
         <JobCog job={job} />
-        <ResourceIcon kind={angulars.kinds.JOB.id}></ResourceIcon>
+        <ResourceIcon kind={angulars.kinds.JOB.id} />
         <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/details`} title={job.metadata.uid}>
           {job.metadata.name}
         </a>
       </div>
       <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-        <LabelList kind={angulars.kinds.JOB.id} labels={job.metadata.labels}  />
+        <LabelList kind={angulars.kinds.JOB.id} labels={job.metadata.labels} />
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
         <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
@@ -59,7 +59,7 @@ const JobRow = ({obj: job}) => {
         {type}
       </div>
       <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-        <Selector selector={job.spec.selector}></Selector>
+        <Selector selector={job.spec.selector} />
       </div>
     </div>
   );

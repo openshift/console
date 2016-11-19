@@ -108,7 +108,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
       <ModalTitle>{this.props.modalTitle}</ModalTitle>
       <ModalBody>
         <p>{this.props.modalText}</p>
-        { this.state.resourceLoading && <p><LoadingInline></LoadingInline></p> }
+        { this.state.resourceLoading && <p><LoadingInline /></p> }
         { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
         { this.props.inputType === 'input' && <input value={this.state.value} onChange={this._handleChange} className="form-control" disabled={this.state.resourceLoading} /> }
       </ModalBody>

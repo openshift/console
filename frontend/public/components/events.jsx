@@ -55,7 +55,7 @@ class SysEvent extends React.Component {
           <div className="co-sysevent__main-message">{this.props.message}</div>
         </div>
         <div className="co-sysevent__meta-box">
-          <div><Timestamp timestamp={this.props.lastTimestamp}/></div>
+          <div><Timestamp timestamp={this.props.lastTimestamp} /></div>
           <small className="co-sysevent__meta-source">
             Generated from <span>{this.props.source.component}</span>
             {this.props.source.component === 'kubelet' &&

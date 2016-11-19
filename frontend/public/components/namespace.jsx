@@ -24,7 +24,7 @@ const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item
     </a>
   </div>
   <div className="col-xs-4">
-    <LabelList kind={angulars.kinds.NAMESPACE.id} labels={namespace.metadata.labels}  />
+    <LabelList kind={angulars.kinds.NAMESPACE.id} labels={namespace.metadata.labels} />
   </div>
   <div className="col-xs-4">
     {namespace.status.phase}

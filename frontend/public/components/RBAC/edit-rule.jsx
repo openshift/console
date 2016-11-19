@@ -388,7 +388,7 @@ class EditRule_ extends PromiseComponent {
               </p>
 
               <HelpText>
-                <input type="text" value={APIGroups} className="form-control text-input" onChange={e => this.setApiGroups(e.target.value)}  />
+                <input type="text" value={APIGroups} className="form-control text-input" onChange={e => this.setApiGroups(e.target.value)} />
                 <br/>
                 Comma separated list of the api groups for the selected resources.
               </HelpText>

@@ -8,7 +8,7 @@ import {Cog, LabelList, ResourceIcon, Timestamp} from './utils';
 const ConfigMapCog = ({configMap}) => {
   const kind = angulars.kinds.CONFIGMAP;
   const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, configMap))} size="small" anchor="left"></Cog>;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, configMap))} size="small" anchor="left" />;
 };
 
 const ConfigMapHeader = () => <div className="row co-m-table-grid__head">
@@ -23,8 +23,8 @@ const ConfigMapRow = ({obj: configMap}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-md-4">
-      <ConfigMapCog configMap={configMap}></ConfigMapCog>
-      <ResourceIcon kind="configmap"></ResourceIcon>
+      <ConfigMapCog configMap={configMap} />
+      <ResourceIcon kind="configmap" />
       <a href={`ns/${configMap.metadata.namespace}/configmaps/${configMap.metadata.name}/details`} title={configMap.metadata.uid}>{configMap.metadata.name}</a>
     </div>
     <div className="col-md-4">{data}</div>
