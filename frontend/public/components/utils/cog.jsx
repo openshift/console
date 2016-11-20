@@ -53,16 +53,6 @@ Cog.factory = {
       executeFn: () => () => angulars.k8s[kind.plural].delete(obj),
     }),
   }),
-  DeleteNamespace: (namespace) => ({
-    label: 'Delete Namespace...',
-    weight: 300,
-    callback: angulars.modal('confirm', {
-      title: 'Delete Namespace',
-      message: `Are you sure you want to delete ${namespace.metadata.name}? This will destroy all pods, services, and other objects in the deleted namespace!`,
-      btnText: 'Delete Namespace',
-      executeFn: () => () => angulars.k8s.namespaces.delete(namespace),
-    }),
-  }),
   Edit: (kind, obj) => ({
     label: `Edit ${kind.label}...`,
     weight: 400,
