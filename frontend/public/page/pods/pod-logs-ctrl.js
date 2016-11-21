@@ -4,10 +4,6 @@ angular.module('bridge.page')
   'use strict';
   var streamLog, logURL;
 
-  function hasFailureMsg(data) {
-    return _.includes(data, '"status": "Failure"');
-  }
-
   $scope.ns = $routeParams.ns;
   $scope.podName = $routeParams.name;
   $scope.containerName = $routeParams.containerName;
@@ -77,19 +73,32 @@ angular.module('bridge.page')
     $scope.pendingReload = null;
     $scope.stream = streamSvc.stream(logURL);
 
+    function hasFailureMsg(data) {
+      return _.includes(data, '"status": "Failure"');
+    }
+
+    function resetPendingReload() {
+      var sinceLastLoad = Date.now() - loadTime;
+      var wait = Math.max(0, (1000 * 5) - sinceLastLoad);
+      $scope.pendingReload = $timeout(streamLog, wait);
+    }
+
     // We use the multi-argument then() because we need to monitor
     // progress notifications
     $scope.stream.promise.then(
       function() { // Load ended
+
         if (!$scope.pendingReload) {
-          var sinceLastLoad = Date.now() - loadTime;
-          var wait = Math.max(0, (1000 * 5) - sinceLastLoad);
-          $scope.pendingReload = $timeout(streamLog, wait);
+          resetPendingReload();
         }
       },
       function(why) { // Load failed/aborted
         if (why !== 'abort') {
           $scope.buffer.push(['Error:', ' ', why].join(''));
+        }
+
+        if (!$scope.pendingReload) {
+          resetPendingReload();
         }
       },
       function(data) { // Data inbound
