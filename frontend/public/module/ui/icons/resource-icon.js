@@ -52,29 +52,4 @@ function iconLabel(k8sKind, kindId) {
   }
 }
 
-angular.module('bridge.ui')
-.directive('coResourceIcon', function(k8s) {
-  'use strict';
-  const k8sKind = k8s.enum.Kind;
-
-  return {
-    template: '<span></span>',
-    restrict: 'E',
-    replace: true,
-    link: function(scope, elem, attrs) {
-      var kind, kindInput, kindId;
-      kindInput = (attrs.kind || '').toLowerCase();
-      kind = util.getKindEnumById(kindInput);
-      if (kind) {
-        kindId = kind.id;
-      } else {
-        kindId = kindInput;
-      }
-      elem.addClass(`co-m-resource-icon co-m-resource-icon--${kindId}`);
-      elem.text(iconLabel(k8sKind, kindId));
-    }
-  };
-
-});
-
 export default iconLabel;
