@@ -29,42 +29,42 @@ const ModifyHpaTargets = (kind, obj) => ({
   }),
 });
 
-const HorizontalPodAutoscalerCog = ({horizontalpodautoscaler}) => {
+const HorizontalPodAutoscalerCog = ({hpa}) => {
   const kind = angulars.kinds.HORIZONTALPODAUTOSCALER;
   const {factory: {Delete, ModifyLabels}} = Cog;
-  const options = [ModifyHpaTargets, ModifyHpaReplicas, ModifyLabels, Delete].map(f => f(kind, horizontalpodautoscaler));
+  const options = [ModifyHpaTargets, ModifyHpaReplicas, ModifyLabels, Delete].map(f => f(kind, hpa));
   return <Cog options={options} size="small" anchor="center"></Cog>;
 };
 
-const ScaleRef = ({horizontalpodautoscaler}) => <div>
-  <ResourceIcon kind={angulars.kinds[horizontalpodautoscaler.spec.scaleRef.kind.toUpperCase()].id}></ResourceIcon>
-  <a href={`ns/${horizontalpodautoscaler.metadata.namespace}/${angulars.kinds[horizontalpodautoscaler.spec.scaleRef.kind.toUpperCase()].plural}/${horizontalpodautoscaler.spec.scaleRef.name}`} title={horizontalpodautoscaler.spec.scaleRef.name}>
-    {horizontalpodautoscaler.spec.scaleRef.name}
+const ScaleRef = ({hpa}) => <div>
+  <ResourceIcon kind={angulars.kinds[hpa.spec.scaleRef.kind.toUpperCase()].id} />
+  <a href={`ns/${hpa.metadata.namespace}/${angulars.kinds[hpa.spec.scaleRef.kind.toUpperCase()].plural}/${hpa.spec.scaleRef.name}/details`} title={hpa.spec.scaleRef.name}>
+    {hpa.spec.scaleRef.name}
   </a>
 </div>;
 
-const HorizontalPodAutoscalerRow = ({obj: horizontalpodautoscaler}) => <div className="row co-resource-list__item">
+const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <HorizontalPodAutoscalerCog horizontalpodautoscaler={horizontalpodautoscaler} />
-    <ResourceIcon kind={angulars.kinds.HORIZONTALPODAUTOSCALER.id}></ResourceIcon>
-    <a href={`ns/${horizontalpodautoscaler.metadata.namespace}/${angulars.kinds.HORIZONTALPODAUTOSCALER.plural}/${horizontalpodautoscaler.metadata.name}/details`} title={horizontalpodautoscaler.metadata.uid}>
-      {horizontalpodautoscaler.metadata.name}
+    <HorizontalPodAutoscalerCog hpa={hpa} />
+    <ResourceIcon kind="horizontalpodautoscaler" />
+    <a href={`ns/${hpa.metadata.namespace}/${angulars.kinds.HORIZONTALPODAUTOSCALER.plural}/${hpa.metadata.name}/details`} title={hpa.metadata.uid}>
+      {hpa.metadata.name}
     </a>
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <LabelList kind={angulars.kinds.HORIZONTALPODAUTOSCALER.id} labels={horizontalpodautoscaler.metadata.labels}  />
+    <LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels}  />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 hidden-xs">
-    {horizontalpodautoscaler.status.currentReplicas || 0} of {horizontalpodautoscaler.status.desiredReplicas}
+    {hpa.status.currentReplicas || 0} of {hpa.status.desiredReplicas}
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 hidden-xs">
-    <ScaleRef horizontalpodautoscaler={horizontalpodautoscaler}/>
+    <ScaleRef hpa={hpa}/>
   </div>
 </div>;
 
-const getHPAStatus = (horizontalpodautoscaler) => {
-  if (horizontalpodautoscaler.status.conditions) {
-    return horizontalpodautoscaler.status.conditions[0].type;
+const getHPAStatus = (hpa) => {
+  if (hpa.status.conditions) {
+    return hpa.status.conditions[0].type;
   }
   return (<span>
     <span className="co-m-inline-loader co-an-fade-in-out">
@@ -76,18 +76,18 @@ const getHPAStatus = (horizontalpodautoscaler) => {
   </span>);
 };
 
-const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
+const Details = (hpa) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-lg-4 col-sm-6">
       <div className="detail-table">
         <div className="detail-table-row">
           <div className="col-xs-6 detail-table-cell">
             <span className="detail-table-header text-uppercase">Desired Count</span>
-            <span>{horizontalpodautoscaler.status.desiredReplicas || 0} replicas</span>
+            <span>{hpa.status.desiredReplicas || 0} replicas</span>
           </div>
           <div className="col-xs-6 detail-table-cell">
             <span className="detail-table-header text-uppercase">Current Count</span>
-            <span>{horizontalpodautoscaler.status.currentReplicas || 0} replicas</span>
+            <span>{hpa.status.currentReplicas || 0} replicas</span>
           </div>
         </div>
       </div>
@@ -98,19 +98,17 @@ const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
         <dl>
           <dt>Status</dt>
-          <dd>{getHPAStatus(horizontalpodautoscaler)}</dd>
+          <dd>{getHPAStatus(hpa)}</dd>
           <dt>Labels</dt>
-          <dd><LabelList kind="horizontalpodautoscaler" labels={horizontalpodautoscaler.metadata.labels} /></dd>
+          <dd><LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels} /></dd>
           <dt>Reference</dt>
-          <dd>
-            <ScaleRef horizontalpodautoscaler={horizontalpodautoscaler}/>
-          </dd>
+          <dd><ScaleRef hpa={hpa} /></dd>
           <dt>Created At</dt>
-          <dd><Timestamp timestamp={horizontalpodautoscaler.metadata.creationTimestamp} /></dd>
+          <dd><Timestamp timestamp={hpa.metadata.creationTimestamp} /></dd>
           <dt>Allowed Range</dt>
           <dd>
-            <a href="#" onClick={ModifyHpaReplicas(angulars.kinds.HORIZONTALPODAUTOSCALER, horizontalpodautoscaler).callback}>
-              {horizontalpodautoscaler.spec.minReplicas || '1'}-{horizontalpodautoscaler.spec.maxReplicas || '1'} replicas
+            <a href="#" onClick={ModifyHpaReplicas(angulars.kinds.HORIZONTALPODAUTOSCALER, hpa).callback}>
+              {hpa.spec.minReplicas || '1'}-{hpa.spec.maxReplicas || '1'} replicas
             </a>
             &nbsp;<i className="text-muted fa fa-angle-right" />
           </dd>
@@ -131,13 +129,13 @@ const Details = (horizontalpodautoscaler) => <div className="co-m-pane__body">
             <tr>
               <td>Average CPU</td>
               <td>
-                <a href="#" onClick={ModifyHpaTargets(angulars.kinds.HORIZONTALPODAUTOSCALER, horizontalpodautoscaler).callback}>
-                  {horizontalpodautoscaler.spec.cpuUtilization.targetPercentage}%
+                <a href="#" onClick={ModifyHpaTargets(angulars.kinds.HORIZONTALPODAUTOSCALER, hpa).callback}>
+                  {hpa.spec.cpuUtilization && `${hpa.spec.cpuUtilization.targetPercentage}%` || '-'}
                 </a>
                 &nbsp;<i className="text-muted fa fa-angle-right" />
               </td>
               <td>
-                <dd>{horizontalpodautoscaler.status.currentCPUUtilizationPercentage ? horizontalpodautoscaler.status.currentCPUUtilizationPercentage : '0'}%</dd>
+                <dd>{hpa.status.currentCPUUtilizationPercentage ? hpa.status.currentCPUUtilizationPercentage : '0'}%</dd>
               </td>
             </tr>
           </tbody>
