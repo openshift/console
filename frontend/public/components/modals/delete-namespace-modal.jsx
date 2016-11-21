@@ -8,32 +8,29 @@ class DeleteNamespaceModal extends PromiseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      resource: this.props.resource,
       isTypedNsMatching: false
     };
     this._submit = this._submit.bind(this);
     this._close = this._close.bind(this);
-    this._dimiss = this._dismiss.bind(this);
+    this._cancel = this._cancel.bind(this);
     this._matchTypedNamespace = this._matchTypedNamespace.bind(this);
   }
 
   _matchTypedNamespace(e) {
-    this.setState({ isTypedNsMatching: e.target.value === this.state.resource.metadata.name });
+    this.setState({ isTypedNsMatching: e.target.value === this.props.resource.metadata.name });
   }
 
   _close() {
     this.props.close();
   }
 
-  _dismiss() {
-    this.props.dismiss();
+  _cancel() {
+    this.props.cancel();
   }
 
   _submit(event) {
     event.preventDefault();
-    this._setRequestPromise(angulars.k8s.namespaces.delete(this.state.resource))
-      .then(this._close)
-      .catch(this._dismiss);
+    this._setRequestPromise(angulars.k8s.namespaces.delete(this.props.resource)).then(this._close);
   }
 
   render() {
@@ -50,7 +47,7 @@ class DeleteNamespaceModal extends PromiseComponent {
         <button type="submit" className="btn btn-primary" disabled={!this.state.isTypedNsMatching}>
           Delete Namespace
         </button>
-        <button type="button" onClick={this._close} className="btn btn-link">
+        <button type="button" onClick={this._cancel} className="btn btn-link">
           Cancel
         </button>
       </ModalFooter>
