@@ -15,7 +15,7 @@ const ServiceAccountCog = ({serviceaccount}) => {
   const kind = angulars.kinds.SERVICEACCOUNT;
   const {factory: {Delete}} = Cog;
   const options = [Delete].map(f => f(kind, serviceaccount));
-  return <Cog options={options} size="small" anchor="left"></Cog>;
+  return <Cog options={options} size="small" anchor="left" />;
 };
 
 const ServiceAccountRow = ({obj: serviceaccount}) => {
@@ -25,7 +25,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
     <div className="row co-resource-list__item">
       <div className="col-xs-4">
         <ServiceAccountCog serviceaccount={serviceaccount} />
-        <ResourceIcon kind={angulars.kinds.SERVICEACCOUNT.id}></ResourceIcon>
+        <ResourceIcon kind={angulars.kinds.SERVICEACCOUNT.id} />
         <a href={`ns/${namespace}/${angulars.kinds.SERVICEACCOUNT.plural}/${name}/details`} title={uid}>
           {serviceaccount.metadata.name}
         </a>
@@ -64,7 +64,7 @@ const Details = (serviceaccount) => {
             <h1 className="co-section-title">Secrets</h1>
           </div>
         </div>
-        <SecretsList namespace={namespace} filters={filters}></SecretsList>
+        <SecretsList namespace={namespace} filters={filters} />
       </div>
     </div>
   );

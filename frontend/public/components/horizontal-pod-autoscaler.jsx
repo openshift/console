@@ -33,7 +33,7 @@ const HorizontalPodAutoscalerCog = ({hpa}) => {
   const kind = angulars.kinds.HORIZONTALPODAUTOSCALER;
   const {factory: {Delete, ModifyLabels}} = Cog;
   const options = [ModifyHpaTargets, ModifyHpaReplicas, ModifyLabels, Delete].map(f => f(kind, hpa));
-  return <Cog options={options} size="small" anchor="center"></Cog>;
+  return <Cog options={options} size="small" anchor="center" />;
 };
 
 const ScaleRef = ({hpa}) => <div>
@@ -52,13 +52,13 @@ const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resour
     </a>
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels}  />
+    <LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 hidden-xs">
     {hpa.status.currentReplicas || 0} of {hpa.status.desiredReplicas}
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 hidden-xs">
-    <ScaleRef hpa={hpa}/>
+    <ScaleRef hpa={hpa} />
   </div>
 </div>;
 

@@ -10,7 +10,7 @@ import classnames from 'classnames';
 const SecretCog = ({secret}) => {
   const kind = angulars.kinds.SECRET;
   const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, secret))} size="small" anchor="left"></Cog>;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, secret))} size="small" anchor="left" />;
 };
 
 const SecretHeader = () => <div className="row co-m-table-grid__head">
@@ -25,8 +25,8 @@ const SecretRow = ({obj: secret}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-md-4">
-      <SecretCog secret={secret}></SecretCog>
-      <ResourceIcon kind="secret"></ResourceIcon>
+      <SecretCog secret={secret} />
+      <ResourceIcon kind="secret" />
       <a href={`ns/${secret.metadata.namespace}/secrets/${secret.metadata.name}/details`} title={secret.metadata.uid}>{secret.metadata.name}</a>
     </div>
     <div className="col-md-4">{data}</div>
@@ -82,7 +82,7 @@ const withSecretsList = (Row) => {
           <Row {...this.props} />
           {
             this.state.open && secrets &&
-            <SecretsList namespace={namespace} filters={filters}></SecretsList>
+            <SecretsList namespace={namespace} filters={filters} />
           }
         </div>
       );

@@ -16,7 +16,7 @@ detailsPage.factory = {
     href: 'pods',
     name: 'Pods',
     component: ({metadata: {namespace}, spec: {selector}, selectorRequired = true}) => <div>
-      <PodsPage className="" canCreate={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired}></PodsPage>
+      <PodsPage className="" canCreate={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired} />
     </div>
   }),
   'yaml': () => ({

@@ -15,7 +15,7 @@ const cogOfKind = (kind) => ({o}) => {
   const {factory: {Edit, Delete, ModifyLabels, ModifyCount, ModifyPodSelector}} = Cog;
   const options = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete].map(f => f(kind, o));
 
-  return <Cog options={options} size="small" anchor="left"></Cog>;
+  return <Cog options={options} size="small" anchor="left" />;
 };
 
 const rowOfKindstring = (name) => {
@@ -27,7 +27,7 @@ const rowOfKindstring = (name) => {
       <div className="row co-resource-list__item">
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
           <CogOfKind o={o} />
-          <ResourceIcon kind={kind.id}></ResourceIcon>
+          <ResourceIcon kind={kind.id} />
           <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/details`} title={o.metadata.uid}>{o.metadata.name}</a>
         </div>
         <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">

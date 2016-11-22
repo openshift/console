@@ -18,7 +18,7 @@ const Yaml = (props) => <span className="pull-right co-m-page-title__obj">
 export const NavTitle = (props) => <div className={classNames('row', {'co-m-nav-title__detail': props.detail}, {'co-m-nav-title': !props.detail})}>
   <div className="col-xs-12">
     <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': props.detail})}>
-      {props.kind && <ResourceIcon kind={props.kind} className="co-m-page-title__icon"></ResourceIcon>}
+      {props.kind && <ResourceIcon kind={props.kind} className="co-m-page-title__icon" />}
       <span>{props.title}</span>
       {props.loaded && Yaml(props.yamlData || props.data)}
     </h1>
