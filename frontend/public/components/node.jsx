@@ -39,7 +39,7 @@ const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__i
   <div className="middler">
     <div className="col-xs-4">
       <NodeCog node={node} />
-      <ResourceIcon kind={angulars.kinds.NODE.id} />
+      <ResourceIcon kind="node" />
       <NodeLink node={node} />
     </div>
     <div className="col-xs-4">
@@ -50,21 +50,21 @@ const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__i
     </div>
   </div>
   {expand && <div className="col-xs-12">
-    <LabelList kind={angulars.kinds.NODE.id} labels={node.metadata.labels} />
+    <LabelList kind="node" labels={node.metadata.labels} />
   </div>}
 </div>;
 
 const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
     <NodeCog node={node} />
-    <ResourceIcon kind={angulars.kinds.NODE.id} />
+    <ResourceIcon kind="node" />
     <NodeLink node={node} />
   </div>
   <div className="col-md-2 hidden-sm hidden-xs">
     <NodeStatus node={node} />
   </div>
   <div className="col-sm-5 col-xs-7">
-    <LabelList kind={angulars.kinds.NODE.id} labels={node.metadata.labels} dontExpand={true} />
+    <LabelList kind="node" labels={node.metadata.labels} dontExpand={true} />
   </div>
   <div className="col-md-2 col-sm-3 hidden-xs">
     <NodeIPList ips={node.status.addresses} />

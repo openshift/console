@@ -42,13 +42,13 @@ const JobRow = ({obj: job}) => {
     <div className="row co-resource-list__item">
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
         <JobCog job={job} />
-        <ResourceIcon kind={angulars.kinds.JOB.id} />
+        <ResourceIcon kind="job" />
         <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/details`} title={job.metadata.uid}>
           {job.metadata.name}
         </a>
       </div>
       <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-        <LabelList kind={angulars.kinds.JOB.id} labels={job.metadata.labels} />
+        <LabelList kind="job" labels={job.metadata.labels} />
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
         <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">

@@ -37,7 +37,7 @@ const HorizontalPodAutoscalerCog = ({hpa}) => {
 };
 
 const ScaleRef = ({hpa}) => <div>
-  <ResourceIcon kind={angulars.kinds[hpa.spec.scaleRef.kind.toUpperCase()].id} />
+  <ResourceIcon kind={hpa.spec.scaleRef.kind.toLowerCase()} />
   <a href={`ns/${hpa.metadata.namespace}/${angulars.kinds[hpa.spec.scaleRef.kind.toUpperCase()].plural}/${hpa.spec.scaleRef.name}/details`} title={hpa.spec.scaleRef.name}>
     {hpa.spec.scaleRef.name}
   </a>

@@ -18,13 +18,13 @@ const FullHeader = () => <div className="row co-m-table-grid__head">
 
 const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
-    <ResourceIcon kind={angulars.kinds.NAMESPACE.id} />
+    <ResourceIcon kind="namespace" />
     <a href={`namespaces?name=${namespace.metadata.name}`} title={namespace.metadata.uid}>
       {namespace.metadata.name}
     </a>
   </div>
   <div className="col-xs-4">
-    <LabelList kind={angulars.kinds.NAMESPACE.id} labels={namespace.metadata.labels} />
+    <LabelList kind="namespace" labels={namespace.metadata.labels} />
   </div>
   <div className="col-xs-4">
     {namespace.status.phase}

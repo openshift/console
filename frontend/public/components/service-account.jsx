@@ -25,7 +25,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
     <div className="row co-resource-list__item">
       <div className="col-xs-4">
         <ServiceAccountCog serviceaccount={serviceaccount} />
-        <ResourceIcon kind={angulars.kinds.SERVICEACCOUNT.id} />
+        <ResourceIcon kind="serviceaccount" />
         <a href={`ns/${namespace}/${angulars.kinds.SERVICEACCOUNT.plural}/${name}/details`} title={uid}>
           {serviceaccount.metadata.name}
         </a>
