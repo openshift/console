@@ -47,7 +47,7 @@ class SysEvent extends React.Component {
         </div>
         <div className="co-sysevent__main-box">
           <ResourceLink
-            kind={obj.kind}
+            kind={obj.kind.toLowerCase()}
             namespace={obj.namespace}
             name={obj.name}
             uid={obj.uid}
