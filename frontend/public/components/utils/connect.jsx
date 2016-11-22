@@ -4,14 +4,19 @@ import {connect as reactReduxConnect, Provider} from 'react-redux';
 import {angulars} from '../react-wrapper';
 import {inject} from './index';
 
+export const getK8sResource = kindId => {
+  const kind = angulars.kinds[kindId.toUpperCase()];
+  return kind && angulars.k8s[kind.plural];
+};
+
 // Pulls data out of redux given an object and selectors
 export class WithQuery extends React.Component {
   constructor (props) {
     super(props);
     const {Firehose} = angulars;
-    const {k8sResource, namespace, selector, fieldSelector, name} = this.props;
+    const {kind, namespace, selector, fieldSelector, name} = this.props;
     // Just created to get the ID :-/
-    const firehose = new Firehose(k8sResource, namespace, selector, fieldSelector, name);
+    const firehose = new Firehose(getK8sResource(kind), namespace, selector, fieldSelector, name);
     this.firehoseId = firehose.id;
   }
 

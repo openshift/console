@@ -205,14 +205,9 @@ const ContainerPage = (props) => {
   </div>;
 };
 
-export const ContainersDetailsPage = (props) => {
-  const {kinds, k8s, store} = angulars;
-  const kind = kinds['POD'];
-  const k8sResource = k8s[kind.plural];
-  return <ReactiveDetails {...props} store={store} k8sResource={k8sResource} name={angulars.routeParams.podName}>
-    <ContainerPage {...props} />
-  </ReactiveDetails>;
-};
+export const ContainersDetailsPage = props => <ReactiveDetails {...props} store={angulars.store} kind="pod" name={angulars.routeParams.podName}>
+  <ContainerPage {...props} />
+</ReactiveDetails>;
 
 register('ContainersDetailsPage', ContainersDetailsPage);
 

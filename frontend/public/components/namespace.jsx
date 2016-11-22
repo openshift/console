@@ -163,7 +163,7 @@ const NamespaceDropdown = connect(state => ({namespace: state.UI.get('activeName
 });
 
 const NamespaceSelector = (props) => <Provider store={angulars.store}>
-  <Firehose k8sResource={angulars.k8s[angulars.kinds.NAMESPACE.plural]} isList={true}>
+  <Firehose kind="namespace" isList={true}>
     <NamespaceDropdown {...props} />
   </Firehose>
 </Provider>;
