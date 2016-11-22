@@ -32,7 +32,8 @@
     "import/no-unresolved": ["error", {"ignore": ["./dist/templates"] }],
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
-    "react/self-closing-comp": ["error", {"component": true, "html": false}]
+    "react/self-closing-comp": ["error", {"component": true, "html": false}],
+    "react/no-unknown-property": "error",
   },
   "parserOptions": {
     "sourceType": "module",
