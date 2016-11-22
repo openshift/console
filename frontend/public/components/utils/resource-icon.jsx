@@ -1,55 +1,53 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {angulars} from '../react-wrapper';
-
-function iconLabel(k8sKind, kindId) {
-  switch (kindId) {
-    case k8sKind.PETSET.id:
+function iconLabel(kind) {
+  switch (kind) {
+    case 'petset':
       return 'PS';
-    case k8sKind.REPLICATIONCONTROLLER.id:
+    case 'replicationcontroller':
       return 'RC';
-    case k8sKind.REPLICASET.id:
+    case 'replicaset':
       return 'RS';
-    case k8sKind.DEPLOYMENT.id:
+    case 'deployment':
       return 'D';
-    case k8sKind.JOB.id:
+    case 'job':
       return 'J';
-    case k8sKind.POD.id:
+    case 'pod':
       return 'P';
-    case k8sKind.SERVICE.id:
+    case 'service':
       return 'S';
-    case k8sKind.NODE.id:
+    case 'node':
       return 'N';
-    case k8sKind.NAMESPACE.id:
+    case 'namespace':
       return 'NS';
-    case k8sKind.CONTAINER.id:
+    case 'container':
       return 'C';
-    case k8sKind.DAEMONSET.id:
+    case 'daemonset':
       return 'DS';
-    case k8sKind.CONFIGMAP.id:
+    case 'configmap':
       return 'CM';
-    case k8sKind.SECRET.id:
+    case 'secret':
       return 'S';
-    case k8sKind.HORIZONTALPODAUTOSCALER.id:
+    case 'horizontalpodautoscaler':
       return 'HPA';
-    case k8sKind.SERVICEACCOUNT.id:
+    case 'serviceaccount':
       return 'SA';
-    case k8sKind.ROLE.id:
+    case 'role':
       return 'R';
-    case k8sKind.ROLEBINDING.id:
+    case 'rolebinding':
       return 'RB';
-    case k8sKind.CLUSTERROLE.id:
+    case 'clusterrole':
       return 'CR';
-    case k8sKind.CLUSTERROLEBINDING.id:
+    case 'clusterrolebinding':
       return 'CRB';
     default:
-      return kindId.toUpperCase().slice(0, 2);
+      return kind.toUpperCase().slice(0, 2);
   }
 }
 
 export const ResourceIcon = ({kind, className}) => {
-  const label = kind === '*' ? '*' : iconLabel(angulars.k8s.enum.Kind, kind);
+  const label = kind === '*' ? '*' : iconLabel(kind);
   const klass = classNames(`co-m-resource-icon co-m-resource-icon--${kind}`, className);
   return <span className={klass}>{label}</span>;
 };
