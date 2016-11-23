@@ -3,24 +3,24 @@
   "version": "0.1.0",
   "dependencies": {
     "angular": {
-      "version": "1.4.8",
-      "from": "angular@1.4.8",
-      "resolved": "https://registry.npmjs.org/angular/-/angular-1.4.8.tgz"
+      "version": "1.5.9",
+      "from": "angular@1.5.9",
+      "resolved": "https://registry.npmjs.org/angular/-/angular-1.5.9.tgz"
     },
     "angular-animate": {
-      "version": "1.4.8",
-      "from": "angular-animate@1.4.8",
-      "resolved": "https://registry.npmjs.org/angular-animate/-/angular-animate-1.4.8.tgz"
+      "version": "1.5.9",
+      "from": "angular-animate@1.5.9",
+      "resolved": "https://registry.npmjs.org/angular-animate/-/angular-animate-1.5.9.tgz"
     },
     "angular-route": {
-      "version": "1.4.8",
-      "from": "angular-route@1.4.8",
-      "resolved": "https://registry.npmjs.org/angular-route/-/angular-route-1.4.8.tgz"
+      "version": "1.5.9",
+      "from": "angular-route@1.5.9",
+      "resolved": "https://registry.npmjs.org/angular-route/-/angular-route-1.5.9.tgz"
     },
     "angular-sanitize": {
-      "version": "1.4.8",
-      "from": "angular-sanitize@1.4.8",
-      "resolved": "https://registry.npmjs.org/angular-sanitize/-/angular-sanitize-1.4.8.tgz"
+      "version": "1.5.9",
+      "from": "angular-sanitize@1.5.9",
+      "resolved": "https://registry.npmjs.org/angular-sanitize/-/angular-sanitize-1.5.9.tgz"
     },
     "angular-ui-bootstrap": {
       "version": "1.2.4",
