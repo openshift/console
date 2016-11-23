@@ -4,7 +4,7 @@ import {register} from '../react-wrapper';
 import {makeList, TwoColumns} from '../factory';
 import {RowOfKind, RoleHeader, RoleDetails} from './role';
 
-const Roles = makeList('Roles', 'CLUSTERROLE', RoleHeader, RowOfKind('clusterrole'));
+const Roles = makeList('Roles', 'clusterrole', RoleHeader, RowOfKind('clusterrole'));
 
 const Details = (selected) => {
   if (!_.isEmpty(selected)) {

@@ -17,7 +17,7 @@ export const RowOfKind = (kind) => (props) => {
   </TwoColumns.RowWrapper>;
 };
 
-export const Roles = makeList('Roles', 'ROLE', RoleHeader, RowOfKind('role'));
+export const Roles = makeList('Roles', 'role', RoleHeader, RowOfKind('role'));
 
 export const RoleDetails = ({rules, metadata}) => {
   let href;

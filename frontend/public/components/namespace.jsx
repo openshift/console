@@ -9,8 +9,6 @@ import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {ActionsMenu, connect, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
 import {deleteNamespaceModal} from './modals/delete-namespace-modal';
 
-const kind = 'NAMESPACE';
-
 const FullHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Namespace Name</div>
   <div className="col-xs-4">Namespace Labels</div>
@@ -32,7 +30,7 @@ const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item
   </div>
 </div>;
 
-const NamespacesList = makeList('Namespaces', kind, FullHeader, FullRow);
+const NamespacesList = makeList('Namespaces', 'namespace', FullHeader, FullRow);
 
 class PullSecret extends React.Component {
   constructor (props) {
@@ -136,7 +134,7 @@ const Details = (namespace) => {
 };
 
 const Header = () => <div className="co-m-facet-menu__title">Name</div>;
-const List = makeList('Namespaces', kind, Header, RowOfKind('namespace'));
+const List = makeList('Namespaces', 'namespace', Header, RowOfKind('namespace'));
 
 const CreateButton = () => <button type="button" className="btn btn-primary co-m-pane__title__btn" onClick={angulars.modal('new-namespace')}>Create Namespace</button>;
 

@@ -85,17 +85,15 @@ export const Details = (deployment) => {
 // TODO: Edit page is still routed to Angular code for now
 const Edit = null;
 
-const kind = 'DEPLOYMENT';
-
 const {factory: {pods}} = detailsPage;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
   {href: 'edit', name: 'Edit', component: Edit},
   pods()
 ];
-const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', kind, pages);
+const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'DEPLOYMENT', pages);
 
-const DeploymentsList = makeList('Deployments', kind, Header, rowOfKindstring(kind));
-const DeploymentsPage = makeListPage('DeploymentsPage', kind, DeploymentsList);
+const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKindstring('DEPLOYMENT'));
+const DeploymentsPage = makeListPage('DeploymentsPage', 'DEPLOYMENT', DeploymentsList);
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

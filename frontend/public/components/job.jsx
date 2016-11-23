@@ -121,6 +121,6 @@ const Details = (job) => <div>
 const {factory: {pods}} = detailsPage;
 const pages = [{href: 'details', name: 'Overview', component: Details}, pods()];
 const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'JOB', pages);
-const JobsList = makeList('Jobs', 'JOB', Header, JobRow);
+const JobsList = makeList('Jobs', 'job', Header, JobRow);
 const JobsPage = makeListPage('JobsPage', 'JOB', JobsList);
 export {JobsList, JobsPage, JobsDetailsPage};

@@ -23,17 +23,15 @@ const Details = (replicaSet) => <div>
 // TODO: Edit page is still routed to Angular code for now
 const Edit = null;
 
-const kind = 'REPLICASET';
-
 const {factory: {pods}} = detailsPage;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
   {href: 'edit', name: 'Edit', component: Edit},
   pods(),
 ];
-const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', kind, pages);
+const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', 'REPLICASET', pages);
 
-const ReplicaSetsList = makeList('ReplicaSets', kind, Header, rowOfKindstring(kind));
-const ReplicaSetsPage = makeListPage('ReplicaSetsPage', kind, ReplicaSetsList);
+const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKindstring('REPLICASET'));
+const ReplicaSetsPage = makeListPage('ReplicaSetsPage', 'REPLICASET', ReplicaSetsList);
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};

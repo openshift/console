@@ -24,8 +24,6 @@ const Details = (replicationController) => <div>
 const Edit = null;
 const Events = null;
 
-const kind = 'REPLICATIONCONTROLLER';
-
 const {factory: {pods}} = detailsPage;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
@@ -33,9 +31,9 @@ const pages = [
   pods(),
   {href: 'events', name: 'Events', component: Events},
 ];
-const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', kind, pages);
+const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', 'REPLICATIONCONTROLLER', pages);
 
-const ReplicationControllersList = makeList('ReplicationControllers', kind, Header, rowOfKindstring(kind));
-const ReplicationControllersPage = makeListPage('ReplicationControllersPage', kind, ReplicationControllersList);
+const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKindstring('REPLICATIONCONTROLLER'));
+const ReplicationControllersPage = makeListPage('ReplicationControllersPage', 'REPLICATIONCONTROLLER', ReplicationControllersList);
 
 export {ReplicationControllersList, ReplicationControllersPage, ReplicationControllersDetailsPage};

@@ -72,6 +72,6 @@ const Details = (serviceaccount) => {
 
 const pages = [{href: 'details', name: 'Overview', component: Details}];
 const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'SERVICEACCOUNT', pages);
-const ServiceAccountsList = makeList('ServiceAccounts', 'SERVICEACCOUNT', Header, withSecretsList(ServiceAccountRow));
+const ServiceAccountsList = makeList('ServiceAccounts', 'serviceaccount', Header, withSecretsList(ServiceAccountRow));
 const ServiceAccountsPage = makeListPage('ServiceAccountsPage', 'SERVICEACCOUNT', ServiceAccountsList);
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};

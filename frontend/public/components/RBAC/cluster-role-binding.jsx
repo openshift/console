@@ -25,7 +25,7 @@ const Row = (props) => {
   );
 };
 
-export const ClusterRoleBindings = makeList('ClusterRoleBindings', 'CLUSTERROLEBINDING', Header, Row);
+export const ClusterRoleBindings = makeList('ClusterRoleBindings', 'clusterrolebinding', Header, Row);
 
 const RBDetails = BindingDetails('Cluster Role Binding Overview');
 
