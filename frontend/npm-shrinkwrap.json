@@ -491,9 +491,9 @@
       }
     },
     "ng-tags-input": {
-      "version": "2.3.0",
-      "from": "ng-tags-input@2.3.0",
-      "resolved": "https://registry.npmjs.org/ng-tags-input/-/ng-tags-input-2.3.0.tgz"
+      "version": "3.1.1",
+      "from": "ng-tags-input@3.1.1",
+      "resolved": "https://registry.npmjs.org/ng-tags-input/-/ng-tags-input-3.1.1.tgz"
     },
     "ngreact": {
       "version": "0.3.0",

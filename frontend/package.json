@@ -29,7 +29,7 @@
     "lodash": "4.17.2",
     "moment": "2.17.0",
     "ng-redux": "3.3.3",
-    "ng-tags-input": "2.3.0",
+    "ng-tags-input": "3.1.1",
     "ngreact": "0.3.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
