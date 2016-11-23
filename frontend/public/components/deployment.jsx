@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Header, rowOfKindstring} from './workloads';
+import {Header, rowOfKind} from './workloads';
 import {detailsPage, LoadingInline, pluralize, ResourceSummary} from './utils';
 
 export const Details = (deployment) => {
@@ -93,7 +93,7 @@ const pages = [
 ];
 const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages);
 
-const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKindstring('DEPLOYMENT'));
+const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment'));
 const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

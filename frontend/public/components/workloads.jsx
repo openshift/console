@@ -18,23 +18,23 @@ const cogOfKind = (kind) => ({o}) => {
   return <Cog options={options} size="small" anchor="left" />;
 };
 
-const rowOfKindstring = (name) => {
+const rowOfKind = (kind) => {
   return ({obj: o}) => {
-    const kind = angulars.kinds[name];
-    const CogOfKind = cogOfKind(kind);
+    const kindObj = angulars.kinds[kind.toUpperCase()];
+    const CogOfKind = cogOfKind(kindObj);
 
     return (
       <div className="row co-resource-list__item">
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
           <CogOfKind o={o} />
-          <ResourceIcon kind={kind.id} />
-          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/details`} title={o.metadata.uid}>{o.metadata.name}</a>
+          <ResourceIcon kind={kind} />
+          <a href={`ns/${o.metadata.namespace}/${kindObj.plural}/${o.metadata.name}/details`} title={o.metadata.uid}>{o.metadata.name}</a>
         </div>
         <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
-          <LabelList kind={kind.id} labels={o.metadata.labels} />
+          <LabelList kind={kind} labels={o.metadata.labels} />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/pods`} title="pods">
+          <a href={`ns/${o.metadata.namespace}/${kindObj.plural}/${o.metadata.name}/pods`} title="pods">
             {o.status.replicas || 0} of {o.spec.replicas} pods
           </a>
         </div>
@@ -46,4 +46,4 @@ const rowOfKindstring = (name) => {
   };
 };
 
-export {Header, rowOfKindstring};
+export {Header, rowOfKind};

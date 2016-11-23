@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Header, rowOfKindstring} from './workloads';
+import {Header, rowOfKind} from './workloads';
 import {detailsPage, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
 const Details = (replicationController) => <div>
@@ -33,7 +33,7 @@ const pages = [
 ];
 const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', 'replicationcontroller', pages);
 
-const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKindstring('REPLICATIONCONTROLLER'));
+const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller'));
 const ReplicationControllersPage = makeListPage('ReplicationControllersPage', 'replicationcontroller', ReplicationControllersList);
 
 export {ReplicationControllersList, ReplicationControllersPage, ReplicationControllersDetailsPage};
