@@ -536,9 +536,9 @@
       "resolved": "https://registry.npmjs.org/react-tagsinput/-/react-tagsinput-3.13.6.tgz"
     },
     "react-tooltip": {
-      "version": "3.2.1",
-      "from": "react-tooltip@3.2.1",
-      "resolved": "https://registry.npmjs.org/react-tooltip/-/react-tooltip-3.2.1.tgz"
+      "version": "3.2.2",
+      "from": "react-tooltip@3.2.2",
+      "resolved": "https://registry.npmjs.org/react-tooltip/-/react-tooltip-3.2.2.tgz"
     },
     "redux": {
       "version": "3.6.0",
