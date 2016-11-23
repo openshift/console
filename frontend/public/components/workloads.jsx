@@ -34,7 +34,7 @@ const rowOfKindstring = (name) => {
           <LabelList kind={kind.id} labels={o.metadata.labels} />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/pods`} title={"pods"}>
+          <a href={`ns/${o.metadata.namespace}/${kind.plural}/${o.metadata.name}/pods`} title="pods">
             {o.status.replicas || 0} of {o.spec.replicas} pods
           </a>
         </div>
