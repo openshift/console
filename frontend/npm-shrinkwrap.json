@@ -470,9 +470,9 @@
       "resolved": "https://registry.npmjs.org/loose-envify/-/loose-envify-1.3.0.tgz"
     },
     "moment": {
-      "version": "2.10.6",
-      "from": "moment@2.10.6",
-      "resolved": "https://registry.npmjs.org/moment/-/moment-2.10.6.tgz"
+      "version": "2.17.0",
+      "from": "moment@2.17.0",
+      "resolved": "https://registry.npmjs.org/moment/-/moment-2.17.0.tgz"
     },
     "ng-redux": {
       "version": "3.3.3",
