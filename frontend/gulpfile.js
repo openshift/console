@@ -164,8 +164,8 @@ gulp.task('css-build', ['sass'], () => {
 });
 
 gulp.task('lint', cb => {
-  exec('npm run lint', (err, stdout, stderr) => {
-    err && console.error(stderr);
+  exec('npm run lint', (err, stdout) => {
+    err && console.log(new PrettyError().render(err));
     console.log(stdout);
     cb(err, stdout);
   });
