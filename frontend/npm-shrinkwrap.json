@@ -460,9 +460,9 @@
       }
     },
     "lodash": {
-      "version": "4.12.0",
-      "from": "lodash@4.12.0",
-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.12.0.tgz"
+      "version": "4.17.2",
+      "from": "lodash@4.17.2",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.2.tgz"
     },
     "loose-envify": {
       "version": "1.3.0",
