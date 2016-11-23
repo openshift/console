@@ -146,7 +146,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
 </div>;
 
 const pages = [{href: 'details', name: 'Overview', component: Details}];
-const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'HORIZONTALPODAUTOSCALER', pages);
+const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'horizontalpodautoscaler', pages);
 const HorizontalPodAutoscalersList = makeList('HorizontalPodAutoscalers', 'horizontalpodautoscaler', Header, HorizontalPodAutoscalerRow);
 const HorizontalPodAutoscalersPage = makeListPage('HorizontalPodAutoscalersPage', 'horizontalpodautoscaler', HorizontalPodAutoscalersList, null, null, 'Autoscalers');
 export {HorizontalPodAutoscalersList, HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage};

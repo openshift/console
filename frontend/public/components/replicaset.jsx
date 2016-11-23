@@ -29,7 +29,7 @@ const pages = [
   {href: 'edit', name: 'Edit', component: Edit},
   pods(),
 ];
-const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', 'REPLICASET', pages);
+const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', 'replicaset', pages);
 
 const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKindstring('REPLICASET'));
 const ReplicaSetsPage = makeListPage('ReplicaSetsPage', 'replicaset', ReplicaSetsList);

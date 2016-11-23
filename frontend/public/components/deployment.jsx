@@ -91,7 +91,7 @@ const pages = [
   {href: 'edit', name: 'Edit', component: Edit},
   pods()
 ];
-const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'DEPLOYMENT', pages);
+const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages);
 
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKindstring('DEPLOYMENT'));
 const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);

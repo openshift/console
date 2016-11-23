@@ -74,6 +74,6 @@ const pages = [{href: 'details', name: 'Overview', component: detailsPage(Detail
 
 const DaemonSets = makeList('DaemonSets', 'daemonset', DaemonSetHeader, DaemonSetRow);
 const DaemonSetsPage = makeListPage('DaemonSetsPage', 'daemonset', DaemonSets);
-const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'DAEMONSET', pages);
+const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'daemonset', pages);
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

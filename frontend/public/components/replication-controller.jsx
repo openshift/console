@@ -31,7 +31,7 @@ const pages = [
   pods(),
   {href: 'events', name: 'Events', component: Events},
 ];
-const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', 'REPLICATIONCONTROLLER', pages);
+const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', 'replicationcontroller', pages);
 
 const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKindstring('REPLICATIONCONTROLLER'));
 const ReplicationControllersPage = makeListPage('ReplicationControllersPage', 'replicationcontroller', ReplicationControllersList);
