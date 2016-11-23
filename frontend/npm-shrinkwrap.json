@@ -335,9 +335,9 @@
       "resolved": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz"
     },
     "jquery": {
-      "version": "2.1.3",
-      "from": "jquery@2.1.3",
-      "resolved": "https://registry.npmjs.org/jquery/-/jquery-2.1.3.tgz"
+      "version": "2.2.4",
+      "from": "jquery@2.2.4",
+      "resolved": "https://registry.npmjs.org/jquery/-/jquery-2.2.4.tgz"
     },
     "js-cookie": {
       "version": "2.1.3",
