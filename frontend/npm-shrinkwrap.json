@@ -435,30 +435,6 @@
       "from": "js-tokens@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/js-tokens/-/js-tokens-2.0.0.tgz"
     },
-    "js-yaml": {
-      "version": "3.6.1",
-      "from": "js-yaml@3.6.1",
-      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.6.1.tgz",
-      "dependencies": {
-        "argparse": {
-          "version": "1.0.9",
-          "from": "argparse@>=1.0.7 <2.0.0",
-          "resolved": "https://registry.npmjs.org/argparse/-/argparse-1.0.9.tgz",
-          "dependencies": {
-            "sprintf-js": {
-              "version": "1.0.3",
-              "from": "sprintf-js@>=1.0.2 <1.1.0",
-              "resolved": "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz"
-            }
-          }
-        },
-        "esprima": {
-          "version": "2.7.3",
-          "from": "esprima@>=2.6.0 <3.0.0",
-          "resolved": "https://registry.npmjs.org/esprima/-/esprima-2.7.3.tgz"
-        }
-      }
-    },
     "lodash": {
       "version": "4.17.2",
       "from": "lodash@4.17.2",
