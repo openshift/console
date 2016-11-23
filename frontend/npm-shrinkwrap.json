@@ -604,9 +604,9 @@
       "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz"
     },
     "whatwg-fetch": {
-      "version": "1.0.0",
-      "from": "whatwg-fetch@1.0.0",
-      "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-1.0.0.tgz"
+      "version": "2.0.1",
+      "from": "whatwg-fetch@2.0.1",
+      "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-2.0.1.tgz"
     },
     "xmlhttprequest": {
       "version": "1.8.0",
