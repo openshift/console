@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {register, angulars} from '../react-wrapper';
-import {Dropdown} from '../utils';
+import {register} from '../react-wrapper';
 import {RowFilter} from '../row-filter';
+import {Dropdown, kindObj} from '../utils';
 
 const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-unselected' : 'btn-selected')}>
@@ -14,7 +14,7 @@ const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div
   </label>
 </div>;
 
-export const makeListPage = (name, kindName, ListComponent, dropdownFilters, rowFilters, filterLabel) => {
+export const makeListPage = (name, kind, ListComponent, dropdownFilters, rowFilters, filterLabel) => {
   class ListPage extends React.Component {
     constructor (props) {
       super(props);
@@ -36,8 +36,8 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters, row
     render () {
       const {namespace, defaultNS, canCreate, canExpand = false} = this.props;
 
-      const kind = angulars.kinds[kindName.toUpperCase()];
-      const href = `ns/${namespace || defaultNS}/${kind.plural}/new`;
+      const {label, labelPlural, plural} = kindObj(kind);
+      const href = `ns/${namespace || defaultNS}/${plural}/new`;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
         return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type)} />;
@@ -57,12 +57,12 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters, row
                 { canCreate &&
                   <a href={href} className="co-m-primary-action pull-left">
                     <button className="btn btn-primary">
-                      Create {kind.label}
+                      Create {label}
                     </button>
                   </a>
                 }
                 {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={onExpandChange} />}
-                <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${filterLabel || kind.labelPlural} by name...`} onChange={this.onFilterChange.bind(this)} autoFocus={true} />
+                <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${filterLabel || labelPlural} by name...`} onChange={this.onFilterChange.bind(this)} autoFocus={true} />
                 {DropdownFilters}
               </div>
               {RowsOfRowFilters}

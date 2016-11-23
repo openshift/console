@@ -4,9 +4,11 @@ import {connect as reactReduxConnect, Provider} from 'react-redux';
 import {angulars} from '../react-wrapper';
 import {inject} from './index';
 
-export const getK8sResource = kindId => {
-  const kind = angulars.kinds[kindId.toUpperCase()];
-  return kind && angulars.k8s[kind.plural];
+export const kindObj = kind => _.isString(kind) && angulars.kinds[kind.toUpperCase()] || {};
+
+export const k8sResource = kind => {
+  const {plural} = kindObj(kind);
+  return plural && angulars.k8s[plural];
 };
 
 // Pulls data out of redux given an object and selectors
@@ -16,7 +18,7 @@ export class WithQuery extends React.Component {
     const {Firehose} = angulars;
     const {kind, namespace, selector, fieldSelector, name} = this.props;
     // Just created to get the ID :-/
-    const firehose = new Firehose(getK8sResource(kind), namespace, selector, fieldSelector, name);
+    const firehose = new Firehose(k8sResource(kind), namespace, selector, fieldSelector, name);
     this.firehoseId = firehose.id;
   }
 

@@ -50,7 +50,7 @@ class SysEvent extends React.Component {
             kind={obj.kind.toLowerCase()}
             namespace={obj.namespace}
             name={obj.name}
-            uid={obj.uid}
+            title={obj.uid}
           />
           <div className="co-sysevent__main-message">{this.props.message}</div>
         </div>

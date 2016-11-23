@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Timestamp} from './utils';
+import {Cog, LabelList, ResourceLink, Timestamp} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -36,20 +36,12 @@ const HorizontalPodAutoscalerCog = ({hpa}) => {
   return <Cog options={options} size="small" anchor="center" />;
 };
 
-const ScaleRef = ({hpa}) => <div>
-  <ResourceIcon kind={hpa.spec.scaleRef.kind.toLowerCase()} />
-  <a href={`ns/${hpa.metadata.namespace}/${angulars.kinds[hpa.spec.scaleRef.kind.toUpperCase()].plural}/${hpa.spec.scaleRef.name}/details`} title={hpa.spec.scaleRef.name}>
-    {hpa.spec.scaleRef.name}
-  </a>
-</div>;
+const ScaleRef = ({hpa}) => <ResourceLink kind={hpa.spec.scaleRef.kind.toLowerCase()} name={hpa.spec.scaleRef.name} namespace={hpa.metadata.namespace} title={hpa.spec.scaleRef.name} />;
 
 const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
     <HorizontalPodAutoscalerCog hpa={hpa} />
-    <ResourceIcon kind="horizontalpodautoscaler" />
-    <a href={`ns/${hpa.metadata.namespace}/${angulars.kinds.HORIZONTALPODAUTOSCALER.plural}/${hpa.metadata.name}/details`} title={hpa.metadata.uid}>
-      {hpa.metadata.name}
-    </a>
+    <ResourceLink kind="horizontalpodautoscaler" name={hpa.metadata.name} namespace={hpa.metadata.namespace} title={hpa.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
     <LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels} />
