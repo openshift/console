@@ -1,12 +1,6 @@
-hash: d211073983ed0fca42db5669e89783ac63a3c4514f0c7b29e88e36425a6b82b4
-updated: 2016-11-16T16:07:16.927083615-08:00
+hash: 609bd46e161b5af1c1e428b39cebd961aa1bdbc8967120af78f5cfe1ded251fb
+updated: 2016-11-23T15:18:26.222312295-08:00
 imports:
-- name: bitbucket.org/ww/goautoneg
-  version: 75cd24fc2f2c
-- name: github.com/beorn7/perks
-  version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
-  subpackages:
-  - quantile
 - name: github.com/coreos-inc/soy
   version: c8b5895b29929c19729217f8d16b25fd29c0717c
   repo: git@github.com:coreos-inc/soy.git
@@ -18,10 +12,11 @@ imports:
   repo: git@github.com:coreos-inc/tectonic.git
   vcs: git
   subpackages:
-  - manager/pkg/license
   - manager/pkg/joseutil
+  - manager/pkg/license
+  - manager/pkg/licensev1
 - name: github.com/coreos/go-oidc
-  version: 5a7f09ab5787e846efa7f56f4a08b6d6926d08c4
+  version: 5cf2aa52da8c574d3aa4458f471ad6ae2240fe6b
   subpackages:
   - http
   - jose
@@ -37,91 +32,16 @@ imports:
   - httputil
   - netutil
   - timeutil
-- name: github.com/davecgh/go-spew
-  version: 346938d642f2ec3594ed81d874461961cd0faa76
-  subpackages:
-  - spew
-- name: github.com/docker/docker
-  version: bb845dbd423e5107dcdba45bb94c4e8d54e5997b
-  subpackages:
-  - pkg/mount
-  - pkg/units
-- name: github.com/docker/libcontainer
-  version: 83a102cc68a09d890cce3b6c2e5c14c49e6373a0
-  subpackages:
-  - cgroups
-  - configs
-  - system
-- name: github.com/ghodss/yaml
-  version: bea76d6a4713e18b7f5321a2b020738552def3ea
-- name: github.com/golang/glog
-  version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
-- name: github.com/golang/protobuf
-  version: 224aaba33b1ac32a92a165f27489409fb8133d08
-  subpackages:
-  - proto
-- name: github.com/google/cadvisor
-  version: b5b0547e330937317d464f50dfe9e6f34460b125
-  subpackages:
-  - info/v1
-- name: github.com/google/gofuzz
-  version: fd52762d25a41827db7ef64c43756fd4b9f7e382
 - name: github.com/jonboulle/clockwork
   version: 3f831b65b61282ba6bece21b91beea2edc4c887a
-- name: github.com/juju/ratelimit
-  version: 77ed1c8a01217656d2080ad51981f6e99adaa177
 - name: github.com/kylelemons/godebug
-  version: d99083b96f422f8fd5a93bc02040acec769e178f
+  version: 21cb3784d9bda523911b96719efba02b7e983256
   subpackages:
   - diff
   - pretty
-- name: github.com/matttproud/golang_protobuf_extensions
-  version: c12348ce28de40eed0136aa2b644d0ee0650e56c
-  subpackages:
-  - pbutil
-- name: github.com/pborman/uuid
-  version: 3d4f2ba23642d3cfd06bd4b54cf03d99d95c0f1b
-- name: github.com/prometheus/client_golang
-  version: f9f18f54ddbde9a27263903508dc6554a3bd8ccc
-  subpackages:
-  - model
-  - prometheus
-  - text
-- name: github.com/prometheus/client_model
-  version: fa8ad6fec33561be4280a8f0514318c79d7f6cb6
-  subpackages:
-  - go
-- name: github.com/prometheus/procfs
-  version: abf152e5f3e97f2fafac028d2cc06c1feb87ffa5
-- name: github.com/spf13/pflag
-  version: 5ccb023bc27df288a957c5e994cd44fd19619465
-- name: golang.org/x/crypto
-  version: 9477e0b78b9ac3d0b03822fd95422e2fe07627cd
-  subpackages:
-  - curve25519
-  - ssh
 - name: golang.org/x/net
-  version: 4971afdc2f162e82d185353533d3cf16188a9f4e
+  version: e90d6d0afc4c315a0d87a568ae68577cc15149a0
   subpackages:
   - context
   - websocket
-- name: gopkg.in/yaml.v2
-  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
-- name: k8s.io/kubernetes
-  version: 283137936a498aed572ee22af6774b6fb6e9fd94
-  subpackages:
-  - pkg/api
-  - pkg/auth/user
-  - pkg/client/metrics
-  - pkg/client/unversioned
-  - pkg/conversion
-  - pkg/expapi
-  - pkg/fields
-  - pkg/labels
-  - pkg/runtime
-  - pkg/types
-  - pkg/util
-  - pkg/version
-  - pkg/watch
-  - third_party/forked/reflect
-devImports: []
+testImports: []
