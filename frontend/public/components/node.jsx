@@ -89,7 +89,7 @@ const dropdownFilters = [{
   },
   title: 'Ready Status',
 }];
-const NodesListPage = makeListPage('NodesPage', 'NODE', NodesList, dropdownFilters);
+const NodesListPage = makeListPage('NodesPage', 'node', NodesList, dropdownFilters);
 
 export {NodeIPList, NodesList, NodesListSearch, NodesPage};
 register('NodesPage', NodesPage);

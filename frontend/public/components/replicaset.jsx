@@ -32,6 +32,6 @@ const pages = [
 const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', 'REPLICASET', pages);
 
 const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKindstring('REPLICASET'));
-const ReplicaSetsPage = makeListPage('ReplicaSetsPage', 'REPLICASET', ReplicaSetsList);
+const ReplicaSetsPage = makeListPage('ReplicaSetsPage', 'replicaset', ReplicaSetsList);
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};

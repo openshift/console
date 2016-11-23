@@ -94,6 +94,6 @@ const pages = [
 const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'DEPLOYMENT', pages);
 
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKindstring('DEPLOYMENT'));
-const DeploymentsPage = makeListPage('DeploymentsPage', 'DEPLOYMENT', DeploymentsList);
+const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

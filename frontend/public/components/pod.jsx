@@ -264,6 +264,6 @@ const pages = [
 const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'POD', pages);
 
 const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
-const PodsPage = makeListPage('PodsPage', 'POD', PodList, [], filters);
+const PodsPage = makeListPage('PodsPage', 'pod', PodList, [], filters);
 
 export {PodList, PodsPage, PodsDetailsPage};

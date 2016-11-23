@@ -36,7 +36,7 @@ export const makeListPage = (name, kindName, ListComponent, dropdownFilters, row
     render () {
       const {namespace, defaultNS, canCreate, canExpand = false} = this.props;
 
-      const kind = angulars.kinds[kindName];
+      const kind = angulars.kinds[kindName.toUpperCase()];
       const href = `ns/${namespace || defaultNS}/${kind.plural}/new`;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {

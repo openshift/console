@@ -156,6 +156,6 @@ const pages = [
 const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'SERVICE', pages);
 
 const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);
-const ServicesPage = makeListPage('ServicesPage', 'SERVICE', ServicesList);
+const ServicesPage = makeListPage('ServicesPage', 'service', ServicesList);
 
 export {ServicesList, ServicesPage, ServicesDetailsPage};

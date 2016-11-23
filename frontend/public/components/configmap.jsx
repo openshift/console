@@ -63,7 +63,7 @@ const ConfigMapDetails = (configMap) => {
 const pages = [{href: 'details', name: 'Overview', component: ConfigMapDetails}];
 
 const ConfigMaps = makeList('ConfigMaps', 'configmap', ConfigMapHeader, ConfigMapRow);
-const ConfigMapsPage = makeListPage('ConfigMapsPage', 'CONFIGMAP', ConfigMaps);
+const ConfigMapsPage = makeListPage('ConfigMapsPage', 'configmap', ConfigMaps);
 const ConfigMapsDetailsPage = makeDetailsPage('ConfigMapsDetailsPage', 'CONFIGMAP', pages);
 
 export {ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage};

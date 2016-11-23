@@ -93,7 +93,7 @@ const withSecretsList = (Row) => {
 const pages = [{href: 'details', name: 'Overview', component: detailsPage(SecretDetails)}];
 
 const SecretsList = makeList('Secrets', 'secret', SecretHeader, SecretRow);
-const SecretsPage = makeListPage('SecretsPage', 'SECRET', SecretsList);
+const SecretsPage = makeListPage('SecretsPage', 'secret', SecretsList);
 const SecretsDetailsPage = makeDetailsPage('SecretsDetailsPage', 'SECRET', pages);
 
 export {SecretsList, SecretsPage, SecretsDetailsPage, withSecretsList};

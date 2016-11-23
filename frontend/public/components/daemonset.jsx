@@ -73,7 +73,7 @@ const {factory: {pods}} = detailsPage;
 const pages = [{href: 'details', name: 'Overview', component: detailsPage(Details)}, pods()];
 
 const DaemonSets = makeList('DaemonSets', 'daemonset', DaemonSetHeader, DaemonSetRow);
-const DaemonSetsPage = makeListPage('DaemonSetsPage', 'DAEMONSET', DaemonSets);
+const DaemonSetsPage = makeListPage('DaemonSetsPage', 'daemonset', DaemonSets);
 const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'DAEMONSET', pages);
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

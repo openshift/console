@@ -34,6 +34,6 @@ const pages = [
 const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', 'REPLICATIONCONTROLLER', pages);
 
 const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKindstring('REPLICATIONCONTROLLER'));
-const ReplicationControllersPage = makeListPage('ReplicationControllersPage', 'REPLICATIONCONTROLLER', ReplicationControllersList);
+const ReplicationControllersPage = makeListPage('ReplicationControllersPage', 'replicationcontroller', ReplicationControllersList);
 
 export {ReplicationControllersList, ReplicationControllersPage, ReplicationControllersDetailsPage};
