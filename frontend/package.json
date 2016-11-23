@@ -33,10 +33,10 @@
     "ngreact": "0.3.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
-    "react-redux": "4.4.5",
+    "react-redux": "4.4.6",
     "react-tagsinput": "3.13.6",
     "react-tooltip": "3.2.1",
-    "redux": "3.5.2",
+    "redux": "3.6.0",
     "redux-thunk": "2.1.0",
     "whatwg-fetch": "2.0.1"
   },
