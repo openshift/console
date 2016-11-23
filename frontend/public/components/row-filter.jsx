@@ -112,9 +112,6 @@ class CheckBoxes extends React.Component {
 export class RowFilter extends React.Component {
   constructor (props) {
     super(props);
-    const {kinds, k8s} = angulars;
-    const kind = kinds['POD'];
-    this.k8sResource = k8s[kind.plural];
   }
 
   applyFilter (name, value) {
@@ -136,7 +133,7 @@ export class RowFilter extends React.Component {
     };
 
     return (
-      <WithQuery ref={ref => this.query = ref} isList={true} k8sResource={this.k8sResource} {...this.props}>
+      <WithQuery ref={ref => this.query = ref} isList={true} {...this.props} kind="pod">
         <Injector>
           <CheckBoxes {...props} />
         </Injector>

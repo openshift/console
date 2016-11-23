@@ -14,13 +14,10 @@ export const ReactiveDetails = (props) => <Provider store={props.store}>
 export const makeDetailsPage = (name, type, pages) => {
   class ReactiveDetailsPage extends React.Component {
     render () {
-      const {kinds, k8s, store} = angulars;
-      const kind = kinds[type];
-      const k8sResource = k8s[kind.plural];
-
-      return <ReactiveDetails store={store} k8sResource={k8sResource} {...this.props}>
+      const kind = type.toLowerCase();
+      return <ReactiveDetails store={angulars.store} kind={kind} {...this.props}>
         <NavTitle detail={true} title={this.props.name} />
-        <VertNav pages={pages} className={`co-m-${kind.id}`} />
+        <VertNav pages={pages} className={`co-m-${kind}`} />
       </ReactiveDetails>;
     }
   }

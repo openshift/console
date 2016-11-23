@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {angulars} from '../react-wrapper';
-import {EmptyBox, ConnectToState, MultiConnectToState} from './index';
+import {EmptyBox, ConnectToState, getK8sResource, MultiConnectToState} from './index';
 
 class FirehoseBase extends React.Component {
   _initFirehose(props) {
@@ -9,9 +9,9 @@ class FirehoseBase extends React.Component {
     if (selectorRequired && !props.selector) {
       return;
     }
-    const {k8sResource, namespace, name, fieldSelector} = props;
+    const {kind, namespace, name, fieldSelector} = props;
     const {Firehose} = angulars;
-    return new Firehose(k8sResource, namespace, selector, fieldSelector, name);
+    return new Firehose(getK8sResource(kind), namespace, selector, fieldSelector, name);
   }
 
   _mountFirehose(firehose, props) {
@@ -44,17 +44,13 @@ export class Firehose extends FirehoseBase {
   }
 
   render () {
-    const {props, props: {children, isList, k8sResource: {kind}}} = this;
+    const {props, props: {children, isList, kind}} = this;
 
-    let label;
-    if (isList) {
-      label = kind.labelPlural;
-    } else {
-      label = kind.label;
-    }
+    const kindObj = _.find(angulars.kinds, {id: kind});
+    const newLabel = kindObj && (isList ? kindObj.labelPlural : kindObj.label);
 
     if (!this.firehose) {
-      return <EmptyBox label={label} />;
+      return <EmptyBox label={newLabel} />;
     }
 
     const newProps = _.omit(props, [
@@ -67,7 +63,7 @@ export class Firehose extends FirehoseBase {
       'className',
     ]);
 
-    newProps.label = label;
+    newProps.label = newLabel;
 
     return <ConnectToState className={this.props.className} reduxID={this.id} {...newProps}>
       {children}
@@ -84,7 +80,7 @@ export class Firehose extends FirehoseBase {
   }
 }
 Firehose.propTypes = {
-  k8sResource: React.PropTypes.object,
+  kind: React.PropTypes.string,
   name: React.PropTypes.string,
   namespace: React.PropTypes.string,
   selectorRequired: React.PropTypes.bool,

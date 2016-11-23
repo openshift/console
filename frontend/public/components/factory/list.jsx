@@ -82,10 +82,8 @@ Rows.propTypes = {
 export const makeList = (name, kindstring, Header, Row, sortBy = undefined) => {
 
   class ReactiveList extends React.Component {
-    static get k8sResource () {
-      const {kinds, k8s} = angulars;
-      const kind = kinds[kindstring];
-      return k8s[kind.plural];
+    static get kind () {
+      return kindstring.toLowerCase();
     }
 
     get id () {
@@ -109,15 +107,14 @@ export const makeList = (name, kindstring, Header, Row, sortBy = undefined) => {
     }
 
     render () {
-      const k8sResource = ReactiveList.k8sResource;
-      const kindID = k8sResource.kind.id;
-      const klass = `co-m-${kindID}-list co-m-table-grid co-m-table-grid--bordered`;
+      const kind = ReactiveList.kind;
+      const klass = `co-m-${kind}-list co-m-table-grid co-m-table-grid--bordered`;
       const sort = sortBy || (item => item.metadata ? item.metadata.name: null);
 
       return <Provider store={angulars.store}>
         <div className={klass}>
           <Header />
-          <Firehose ref="hose" isList={true} k8sResource={k8sResource} {...this.props}>
+          <Firehose ref="hose" isList={true} {...this.props} kind={kind}>
             <StatusBox>
               <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
             </StatusBox>

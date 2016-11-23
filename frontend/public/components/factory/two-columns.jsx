@@ -49,7 +49,7 @@ export class TwoColumns extends React.Component {
               </div>
             </div>
             <div className="col-md-8 col-sm-6 col-xs-12">
-              <WithQuery k8sResource={List.k8sResource} isList={true} {...this.props}>
+              <WithQuery isList={true} {...this.props} kind={List.kind}>
                 <DetailsColumn>
                   {this.props.children}
                 </DetailsColumn>
