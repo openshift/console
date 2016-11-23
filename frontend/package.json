@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "gulp dev",
     "gulp": "gulp",
-    "lint": "eslint --ext .js,.jsx .",
+    "lint": "eslint --ext .js,.jsx --color .",
     "test": "gulp test"
   },
   "dependencies": {
