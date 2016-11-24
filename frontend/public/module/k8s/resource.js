@@ -133,10 +133,11 @@ angular.module('k8s')
     return d.promise;
   }.bind(this);
 
-  this.get = function(kind, name, ns) {
+  this.get = function(kind, name, ns, opts) {
     var d = $q.defer();
+
     $http({
-      url: this.resourceURL(kind, {ns: ns, name: name}),
+      url: this.resourceURL(kind, Object.assign({ns: ns, name: name}, opts)),
       method: 'GET',
     })
     .then(function(result) {
@@ -147,9 +148,9 @@ angular.module('k8s')
     return d.promise;
   }.bind(this);
 
-  this.delete = function(kind, resource) {
+  this.delete = function(kind, resource, opts) {
     var p = $http({
-      url: this.resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
+      url: this.resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts)),
       method: 'DELETE',
     });
 

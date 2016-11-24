@@ -5,7 +5,7 @@ import {inject} from './index';
 
 export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
 
-const LoadError = ({label}) => <Box>
+export const LoadError = ({label}) => <Box>
   <div className="cos-tristate--error">
     <div className="cos-text-center cos-error-title">Error Loading {label}</div>
     <div className="cos-text-center">Please try again.</div>

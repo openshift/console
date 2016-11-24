@@ -20,3 +20,4 @@ import './search';
 import './sparkline-widget/sparkline-widget';
 import './events';
 import './ingress';
+import './cluster-settings/ldap';

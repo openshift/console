@@ -23,3 +23,15 @@ export const coFetchJSON = (...args) => coFetch(...args).then(parseJson);
 export const coFetchUtils = {
   parseJson
 };
+
+export const coFetchPostJSON = (url, json, options={}) => {
+  const options_ = _.defaults({
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(json),
+  }, initDefaults, options);
+  return coFetch(url, options_).then(parseJson);
+};
