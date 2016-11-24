@@ -1,11 +1,52 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {angulars} from '../react-wrapper';
-import iconLabel from '../../module/ui/icons/resource-icon';
+function iconLabel(kind) {
+  switch (kind) {
+    case 'petset':
+      return 'PS';
+    case 'replicationcontroller':
+      return 'RC';
+    case 'replicaset':
+      return 'RS';
+    case 'deployment':
+      return 'D';
+    case 'job':
+      return 'J';
+    case 'pod':
+      return 'P';
+    case 'service':
+      return 'S';
+    case 'node':
+      return 'N';
+    case 'namespace':
+      return 'NS';
+    case 'container':
+      return 'C';
+    case 'daemonset':
+      return 'DS';
+    case 'configmap':
+      return 'CM';
+    case 'secret':
+      return 'S';
+    case 'horizontalpodautoscaler':
+      return 'HPA';
+    case 'serviceaccount':
+      return 'SA';
+    case 'role':
+      return 'R';
+    case 'rolebinding':
+      return 'RB';
+    case 'clusterrole':
+      return 'CR';
+    case 'clusterrolebinding':
+      return 'CRB';
+    default:
+      return kind.toUpperCase().slice(0, 2);
+  }
+}
 
 export const ResourceIcon = ({kind, className}) => {
-  const label = kind === '*' ? '*' : iconLabel(angulars.k8s.enum.Kind, kind);
   const klass = classNames(`co-m-resource-icon co-m-resource-icon--${kind}`, className);
-  return <span className={klass}>{label}</span>;
+  return <span className={klass}>{iconLabel(kind)}</span>;
 };
