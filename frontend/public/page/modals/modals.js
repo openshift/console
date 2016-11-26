@@ -15,7 +15,6 @@ import './configure-hpa-targets-ctrl';
 import './configure-restart-policy-ctrl';
 import './configure-primary-command-ctrl';
 import './new-namespace-ctrl';
-import './toggle-disabled-user-ctrl';
 import './row-mgr';
 import './service-ports-ctrl';
 import './show-yaml-ctrl';

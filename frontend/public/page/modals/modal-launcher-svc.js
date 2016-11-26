@@ -74,10 +74,6 @@ angular.module('bridge.page')
       controller: 'NewNamespaceCtrl',
       size: 'dialog--std-width',
     },
-    'toggle-disabled-user': {
-      templateUrl: '/static/page/modals/toggle-disabled-user.html',
-      controller: 'ToggleDisabledUserCtrl',
-    },
     'show-yaml': {
       templateUrl: '/static/page/modals/show-yaml.html',
       controller: 'ShowYAMLCtrl',
