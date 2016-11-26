@@ -261,11 +261,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/settings/profile.html',
     title: 'Profile',
   });
-  r('/settings/users', {
-    controller: 'UsersCtrl',
-    templateUrl: '/static/page/settings/users.html',
-    title: 'Manage Users',
-  });
   r('/settings/ldap', {
     template: '<react-component name="LDAPPage"></react-component>',
     title: 'LDAP',
