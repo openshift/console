@@ -1,5 +1,4 @@
 import './_module';
-import './cog/node-cog';
 import './cog/user-cog';
 import './containers/container-input';
 import './containers/multi-container-input';
