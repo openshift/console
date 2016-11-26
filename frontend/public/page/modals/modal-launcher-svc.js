@@ -86,10 +86,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/kubectl-config/kubectl-config.html',
       controller: 'KubectlConfigCtrl',
     },
-    'revoke-refresh-token': {
-      templateUrl: '/static/page/modals/revoke-refresh-token.html',
-      controller: 'RevokeRefreshTokenCtrl',
-    },
     'reactive-modal': {
       templateUrl: '/static/page/modals/reactive-modal.html',
       controller: 'ReactiveModalCtrl',
