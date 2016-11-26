@@ -79,11 +79,6 @@ angular.module('bridge.page')
       controller: 'NewUserCtrl',
       size: 'dialog--std-width',
     },
-    'new-user-invite-link': {
-      templateUrl: '/static/page/modals/new-user-invite-link.html',
-      controller: 'NewUserInviteLinkCtrl',
-      size: 'dialog--std-width',
-    },
     'toggle-disabled-user': {
       templateUrl: '/static/page/modals/toggle-disabled-user.html',
       controller: 'ToggleDisabledUserCtrl',

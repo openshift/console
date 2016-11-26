@@ -16,7 +16,6 @@ import './configure-restart-policy-ctrl';
 import './configure-primary-command-ctrl';
 import './new-namespace-ctrl';
 import './new-user-ctrl';
-import './new-user-invite-link-ctrl';
 import './toggle-disabled-user-ctrl';
 import './row-mgr';
 import './service-ports-ctrl';
