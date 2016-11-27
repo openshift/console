@@ -16,6 +16,7 @@ import './services';
 import './command';
 import './configmaps';
 
+import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
 
 
@@ -69,7 +70,7 @@ angular.module('k8s')
     };
   };
 })
-.service('k8s', function(_, $http, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sLabels,
+.service('k8s', function(_, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
                          k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, k8sConfigmaps) {
   'use strict';
@@ -149,43 +150,24 @@ angular.module('k8s')
   this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
   this.basePath =  k8sConfig.getBasePath();
 
-  this.health = function() {
-    return $http({
-      url: k8sConfig.getBasePath(),
-      method: 'GET'
-    });
-  };
-
-  this.version = function() {
-    return $http({
-      url: `${k8sConfig.getBasePath()}/version`,
-      method: 'GET'
-    });
-  };
+  this.health = () => coFetchJSON(k8sConfig.getBasePath());
+  this.version = () => coFetchJSON(`${k8sConfig.getBasePath()}/version`);
 
   this.featureDetection = () => {
-    $http({
-      url: k8sConfig.getBasePath(),
-      method: 'GET',
-    })
+    coFetchJSON(k8sConfig.getBasePath())
     .then(res => {
-      const paths = res.data.paths;
       _.each(k8sConfig.getk8sFlagPaths(), (path, flag) => {
-        featuresSvc[flag] = paths.indexOf(path) >= 0;
+        featuresSvc[flag] = res.paths.indexOf(path) >= 0;
       });
     })
     .catch(() => {
       $timeout(this.featureDetection, 5000);
     });
 
-    $http({
-      url: k8sConfig.getCoreosBasePath(),
-      method: 'GET',
-    })
+    coFetchJSON(k8sConfig.getCoreosBasePath())
     .then(res => {
-      const resources = res.data.resources;
       _.each(k8sConfig.getCoreosFlagNames(), (name, flag) => {
-        featuresSvc[flag] = _.find(resources, { 'name': name });
+        featuresSvc[flag] = _.find(res.resources, {name});
       });
     })
     .catch(() => {
