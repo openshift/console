@@ -1,7 +1,8 @@
 import {analyticsSvc} from '../analytics';
+import {coFetchJSON} from '../../co-fetch';
 
 angular.module('bridge.service')
-.factory('statusSvc', function(_, $http, k8s) {
+.factory('statusSvc', function(_, k8s) {
   'use strict';
 
   var attemptToUpdateKnownComponent = function(status, component, name) {
@@ -24,18 +25,13 @@ angular.module('bridge.service')
 
   return {
     health: function() {
-      return $http({
-        url: 'health',
-        method: 'GET',
-      });
+      return coFetchJSON('health');
     },
     tectonicVersion: function() {
-      return $http({
-        url: 'version',
-        method: 'GET',
-      }).then(function(resp) {
+      return coFetchJSON('version')
+      .then(function(resp) {
         // TODO (stuart): update what we do here
-        // analyticsSvc.push({tier: resp.data.tier});
+        // analyticsSvc.push({tier: resp.tier});
         analyticsSvc.push({tier: 'tectonic'});
         return resp;
       });
