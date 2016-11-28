@@ -15,7 +15,6 @@ import (
 	"github.com/coreos/go-oidc/oidc"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
-	"k8s.io/kubernetes/pkg/client/restclient"
 
 	"github.com/coreos-inc/bridge/auth"
 	"github.com/coreos-inc/bridge/pkg/proxy"
@@ -24,6 +23,11 @@ import (
 
 var (
 	log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "cmd/main")
+)
+
+const (
+	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 )
 
 func main() {
@@ -129,42 +133,33 @@ func main() {
 
 	switch *fK8sMode {
 	case "in-cluster":
-		cc, err := restclient.InClusterConfig()
+		host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
+		if len(host) == 0 || len(port) == 0 {
+			log.Fatalf("unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined")
+		}
+		var err error
+		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
 		if err != nil {
 			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 		}
-
-		// Grab the certificate of the API Server so we can render it for kubeconfig files.
-		switch {
-		case cc.CAData != nil:
-			k8sCertPEM = cc.CertData
-		case cc.CAFile != "":
-			data, err := ioutil.ReadFile(cc.CAFile)
-			if err != nil {
-				log.Fatalf("Failed to read kubernetes CA (%s): %v", cc.CertFile, err)
-			}
-			k8sCertPEM = data
-		default:
-			log.Info("No kubernetes CA found")
+		rootCAs := x509.NewCertPool()
+		if !rootCAs.AppendCertsFromPEM(k8sCertPEM) {
+			log.Fatalf("No CA found for the API server")
 		}
+		tlsConfig := &tls.Config{RootCAs: rootCAs}
 
-		inClusterTLSCfg, err := restclient.TLSConfigFor(cc)
+		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
 		if err != nil {
-			log.Fatalf("Error creating TLS config from Kubernetes config: %v", err)
-		}
-
-		k8sURL, err := url.Parse(cc.Host)
-		if err != nil {
-			log.Fatalf("Kubernetes config provided invalid URL: %v", err)
+			log.Fatalf("failed to read bearer token: %v", err)
 		}
 
 		srv.K8sProxyConfig = &proxy.Config{
-			TLSClientConfig: inClusterTLSCfg,
+			TLSClientConfig: tlsConfig,
 			HeaderBlacklist: []string{"Cookie"},
-			Endpoint:        k8sURL,
+			Endpoint:        &url.URL{Scheme: "https", Host: host + ":" + port},
 		}
 
-		k8sAuthServiceAccountBearerToken = cc.BearerToken
+		k8sAuthServiceAccountBearerToken = string(bearerToken)
 	case "off-cluster":
 		k8sModeOffClusterEndpointURL := validateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
 

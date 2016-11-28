@@ -1,23 +1,22 @@
 package: github.com/coreos-inc/bridge
+testImports: []
 import:
-- package: bitbucket.org/ww/goautoneg
-- package: github.com/beorn7/perks
-  subpackages:
-  - quantile
-- package: github.com/coreos-inc/tectonic
-  version: 580b9d5e2f26c2bfc98ce61028424dd59f3e253b
-  subpackages:
-  - manager/pkg/license
-  - manager/pkg/joseutil
-  vcs: git
-  repo: git@github.com:coreos-inc/tectonic.git
 - package: github.com/coreos-inc/soy
   version: c8b5895b29929c19729217f8d16b25fd29c0717c
+  repo: git@github.com:coreos-inc/soy.git
+  vcs: git
   subpackages:
   - common/license
+- package: github.com/coreos-inc/tectonic
+  version: 580b9d5e2f26c2bfc98ce61028424dd59f3e253b
+  repo: git@github.com:coreos-inc/tectonic.git
   vcs: git
-  repo: git@github.com:coreos-inc/soy.git
+  subpackages:
+  - manager/pkg/joseutil
+  - manager/pkg/license
+  - manager/pkg/licensev1
 - package: github.com/coreos/go-oidc
+  version: 5cf2aa52da8c574d3aa4458f471ad6ae2240fe6b
   subpackages:
   - http
   - jose
@@ -33,71 +32,15 @@ import:
   - httputil
   - netutil
   - timeutil
-- package: github.com/davecgh/go-spew
-  subpackages:
-  - spew
-- package: github.com/docker/docker
-  subpackages:
-  - pkg/mount
-  - pkg/units
-- package: github.com/docker/libcontainer
-  subpackages:
-  - cgroups
-  - configs
-  - system
-- package: github.com/ghodss/yaml
-- package: github.com/golang/glog
-- package: github.com/golang/protobuf
-  subpackages:
-  - proto
-- package: github.com/google/cadvisor
-  subpackages:
-  - info/v1
-- package: github.com/google/gofuzz
 - package: github.com/jonboulle/clockwork
   version: 3f831b65b61282ba6bece21b91beea2edc4c887a
-- package: github.com/juju/ratelimit
 - package: github.com/kylelemons/godebug
+  version: 21cb3784d9bda523911b96719efba02b7e983256
   subpackages:
   - diff
   - pretty
-- package: github.com/matttproud/golang_protobuf_extensions
-  subpackages:
-  - pbutil
-- package: github.com/pborman/uuid
-- package: github.com/prometheus/client_golang
-  subpackages:
-  - model
-  - prometheus
-  - text
-- package: github.com/prometheus/client_model
-  subpackages:
-  - go
-- package: github.com/prometheus/procfs
-- package: github.com/spf13/pflag
-- package: golang.org/x/crypto
-  subpackages:
-  - curve25519
-  - ssh
 - package: golang.org/x/net
+  version: e90d6d0afc4c315a0d87a568ae68577cc15149a0
   subpackages:
   - context
   - websocket
-- package: gopkg.in/yaml.v2
-- package: k8s.io/kubernetes
-  version: v1.3.0
-  subpackages:
-  - pkg/api
-  - pkg/auth/user
-  - pkg/client/metrics
-  - pkg/client/unversioned
-  - pkg/conversion
-  - pkg/expapi
-  - pkg/fields
-  - pkg/labels
-  - pkg/runtime
-  - pkg/types
-  - pkg/util
-  - pkg/version
-  - pkg/watch
-  - third_party/forked/reflect
