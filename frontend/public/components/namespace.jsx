@@ -6,7 +6,8 @@ import {actions} from '../ui/ui-actions';
 import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {ActionsMenu, Cog, connect, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
+import {ActionsMenu, connect, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
+import {deleteNamespaceModal} from './modals/delete-namespace-modal';
 
 const kind = 'NAMESPACE';
 
@@ -98,6 +99,7 @@ const NamespaceSparklines = ({namespace}) => <div className="co-namespace-sparkl
 </div>;
 
 const Details = (namespace) => {
+
   if (_.isEmpty(namespace)) {
     return <div className="empty-page">
       <h1 className="empty-page__header">No namespace selected</h1>
@@ -105,9 +107,21 @@ const Details = (namespace) => {
     </div>;
   }
 
-  const actions = {DeleteNamespace: Cog.factory.DeleteNamespace(namespace)};
+  const openDeleteNamespaceModal = function() {
+    deleteNamespaceModal({
+      resource: namespace
+    });
+  };
+
+  const cogActions = {
+    DeleteNamespace: {
+      label: 'Delete Namespace',
+      callback: openDeleteNamespaceModal
+    }
+  };
+
   return <div className="details-page">
-    {namespace.metadata.name !== 'default' && <ActionsMenu actions={actions} />}
+    {namespace.metadata.name !== 'default' && namespace.status.phase !== 'Terminating' && <ActionsMenu actions={cogActions} />}
     <h1 className="co-m-pane__title co-m-pane__body__top-controls">Namespace {namespace.metadata.name}</h1>
     <dl>
       <dt>Status</dt>
