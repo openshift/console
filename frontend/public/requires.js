@@ -1,7 +1,7 @@
 import 'whatwg-fetch';
 
 require('react');
-window.lodash = require('lodash');
+window._ = require('lodash');
 window.$ = window.jQuery = require('jquery');
 window.moment = require('moment');
 window.angular = require('angular');
