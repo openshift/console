@@ -23,9 +23,9 @@
       "resolved": "https://registry.npmjs.org/angular-sanitize/-/angular-sanitize-1.5.9.tgz"
     },
     "angular-ui-bootstrap": {
-      "version": "1.2.4",
-      "from": "angular-ui-bootstrap@1.2.4",
-      "resolved": "https://registry.npmjs.org/angular-ui-bootstrap/-/angular-ui-bootstrap-1.2.4.tgz"
+      "version": "2.3.0",
+      "from": "angular-ui-bootstrap@2.3.0",
+      "resolved": "https://registry.npmjs.org/angular-ui-bootstrap/-/angular-ui-bootstrap-2.3.0.tgz"
     },
     "asap": {
       "version": "2.0.5",
