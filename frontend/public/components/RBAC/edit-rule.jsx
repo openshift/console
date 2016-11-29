@@ -113,13 +113,17 @@ class EditRule_ extends PromiseComponent {
         state.verbControl = all ? VERBS_ENUM.ALL : VERBS_ENUM.CUSTOM;
 
         all = false;
-        rule.resources.forEach(r => {
-          if (r === '*') {
-            all = true;
-            return false;
-          }
-          state.resourceSet.add(r);
-        });
+
+        if (_.has(rule, 'resources')) {
+          rule.resources.forEach(r => {
+            if (r === '*') {
+              all = true;
+              return false;
+            }
+            state.resourceSet.add(r);
+          });
+        }
+
         state.resourceControl = all ? RESOURCE_ENUM.ALL : RESOURCE_ENUM.CUSTOM;
         state.APIGroups = rule.apiGroups ? rule.apiGroups.join(', ') : '';
         state.nonResourceURLs = rule.nonResourceURLs ? rule.nonResourceURLs.join(', ') : '';
@@ -257,14 +261,14 @@ class EditRule_ extends PromiseComponent {
           <div className="row">
             <div className="col-xs-12">
               <p>
-                Rules grant access to a set of resources.
+                Each role is made up of a set of rules, which defines the type of access and resources that are allowed to be manipulated.
               </p>
             </div>
           </div>
 
           <div className="row rule-row">
             <div className="col-xs-2">
-              <label>{ this.kind.labelPlural }:</label>
+              <label>{ this.kind.label } Name:</label>
             </div>
             <div className="col-xs-10">
               <ResourceIcon kind={this.kind.id} className="no-margin" /> {name}
@@ -286,13 +290,13 @@ class EditRule_ extends PromiseComponent {
 
           <div className="row rule-row">
             <div className="col-xs-2">
-              <label>Allowed Access:</label>
+              <label>Type of Access:</label>
             </div>
             <div className="col-xs-10">
               <RadioButton name="verbControl" activeValue={verbControl} onChange={this.set}
-                value={VERBS_ENUM.RO} label="Read-only (Default)" text='View but not edit or delete' />
+                value={VERBS_ENUM.RO} label="Read-only (Default)" text='Users can view, but not edit' />
               <RadioButton name="verbControl" activeValue={verbControl} onChange={this.set}
-                value={VERBS_ENUM.ALL} label="All" text='Full access to all actions including deletion' />
+                value={VERBS_ENUM.ALL} label="All" text='Full access to all actions, including deletion' />
               <RadioButton name="verbControl" activeValue={verbControl} onChange={this.set}
                 value={VERBS_ENUM.CUSTOM} label="Custom (Advanced)" text="Granular selection of actions" />
             </div>
@@ -322,13 +326,13 @@ class EditRule_ extends PromiseComponent {
 
             <div className="col-xs-10">
               <RadioButton name="resourceControl" activeValue={resourceControl} onChange={this.set}
-                value={RESOURCE_ENUM.SAFE} label="Recommended (Default)" text="Resources for non-admins" />
+                value={RESOURCE_ENUM.SAFE} label="Recommended (Default)" text="Curated resources ideal for most users" />
+
+               <RadioButton name="resourceControl" activeValue={resourceControl} onChange={this.set}
+                value={RESOURCE_ENUM.ALL} label="All Access" text="Full access, including admin resources" />
 
               <RadioButton name="resourceControl" activeValue={resourceControl} onChange={this.set}
                 value={RESOURCE_ENUM.CUSTOM} label="Custom" text="Granular selection of resources" />
-
-              <RadioButton name="resourceControl" activeValue={resourceControl} onChange={this.set}
-                value={RESOURCE_ENUM.ALL} label="All" text="Full access" />
 
               {
                 !namespace && <div>
@@ -386,12 +390,11 @@ class EditRule_ extends PromiseComponent {
               <p>
                 <label>API Groups:</label>
               </p>
+              <p>Restrict this role to a subset og API URLs that don't correspond to objects</p>
 
-              <HelpText>
-                <input type="text" value={APIGroups} className="form-control text-input" onChange={e => this.setApiGroups(e.target.value)} />
-                <br/>
-                Comma separated list of the api groups for the selected resources.
-              </HelpText>
+              <div>
+                <input type="text" value={APIGroups} className="form-control text-input" onChange={e => this.setApiGroups(e.target.value)}  placeholder="Comma separated list of the api groups for the selected resources." />
+              </div>
             </div>
           </div>
 
