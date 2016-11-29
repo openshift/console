@@ -252,11 +252,6 @@ angular.module('bridge', [
     redirect: true,
   });
 
-  r('/settings/registries', {
-    controller: 'RegistriesCtrl',
-    templateUrl: '/static/page/settings/registries.html',
-    title: 'Configure Registries',
-  });
   r('/settings/profile', {
     controller: 'ProfileCtrl',
     templateUrl: '/static/page/settings/profile.html',
