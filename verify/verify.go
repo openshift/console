@@ -21,9 +21,10 @@ type subscriptionMap map[string]licenseReader.SubscriptionDef
 // Afterwards, the selection will be filtered by choosing the highest available tier.
 // Finally, if multiple subscriptions from the same tier are found, it will choose the newest,
 // i.e. the subscription with the most recent start date.
-func Verify(publicKey, file io.Reader, reference time.Time) (tier string, expiration time.Time) {
+func Verify(publicKey, file io.Reader, reference time.Time) (tier string, expiration time.Time, graceExpiration time.Time) {
 	tier = "unknown"
 	expiration = reference
+	graceExpiration = reference
 
 	details, err := license.Verify(publicKey, file)
 	if err != nil {
@@ -40,6 +41,7 @@ func Verify(publicKey, file io.Reader, reference time.Time) (tier string, expira
 	}
 	if l.ExpirationDate.Before(reference) {
 		expiration = l.ExpirationDate
+		graceExpiration = l.ExpirationDate.AddDate(0, 0, 30) // 30 day grace period
 		log.Warningf("License token expired on %v.", expiration)
 		return
 	}
@@ -56,6 +58,7 @@ func Verify(publicKey, file io.Reader, reference time.Time) (tier string, expira
 	}
 	subscription := u.findBestTier().newest()
 	expiration = subscription.ServiceEnd
+	graceExpiration = subscription.ServiceEnd.AddDate(0, 0, 30) // 30 day grace period
 	tier = subscription.ProductName
 	return
 }

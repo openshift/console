@@ -219,7 +219,7 @@ func TestVerify(t *testing.T) {
 			t.Errorf("%v", err)
 		}
 
-		tier, expiration := Verify(key, jwt, now)
+		tier, expiration, _ := Verify(key, jwt, now)
 		if tier != c.tier {
 			t.Errorf("Case %s: Expected %s; got %s", c.name, c.tier, tier)
 		}

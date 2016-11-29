@@ -187,31 +187,34 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) readLicense() (tier string, expiration time.Time) {
+func (s *Server) readLicense() (tier string, expiration time.Time, graceExpiration time.Time) {
 	tier = "unknown"
 	expiration = time.Now()
+	graceExpiration = time.Now()
 	licenseFile, err := os.Open(s.TectonicLicenseFile)
 	if err != nil {
 		plog.Warning("Could not open license file.")
 		return
 	}
-	tier, expiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
+	tier, expiration, graceExpiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
 	licenseFile.Close()
 	return
 }
 
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
-	tier, expiration := s.readLicense()
+	tier, expiration, graceExpiration := s.readLicense()
 	sendResponse(w, http.StatusOK, struct {
-		Version        string    `json:"version"`
-		ConsoleVersion string    `json:"consoleVersion"`
-		Tier           string    `json:"tier"`
-		Expiration     time.Time `json:"expiration"`
+		Version         string    `json:"version"`
+		ConsoleVersion  string    `json:"consoleVersion"`
+		Tier            string    `json:"tier"`
+		Expiration      time.Time `json:"expiration"`
+		GraceExpiration time.Time `json:"graceExpiration"`
 	}{
-		Version:        s.TectonicVersion,
-		ConsoleVersion: version.Version,
-		Tier:           tier,
-		Expiration:     expiration,
+		Version:         s.TectonicVersion,
+		ConsoleVersion:  version.Version,
+		Tier:            tier,
+		Expiration:      expiration,
+		GraceExpiration: graceExpiration,
 	})
 }
 
@@ -230,7 +233,7 @@ func (s *Server) ValidateLicenseHandler(w http.ResponseWriter, r *http.Request) 
 	licenseFile := bytes.NewBufferString(string(licenseString))
 
 	now := time.Now()
-	_, expiration := verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, now)
+	_, expiration, _ := verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, now)
 
 	if expiration.Before(now) || expiration == now {
 		badLicense("Invalid or expired license")

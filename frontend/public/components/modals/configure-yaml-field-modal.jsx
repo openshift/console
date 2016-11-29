@@ -61,13 +61,17 @@ class ConfigureYamlFieldModal extends PromiseComponent {
   }
 
   _cancel() {
-    this.props.callbacks.invalidateState(false);
+    if (this.props.callbacks.invalidateState) {
+      this.props.callbacks.invalidateState(false);
+    }
     this.props.cancel();
   }
 
   _submit(event) {
     event.preventDefault();
-    this.props.callbacks.invalidateState(true);
+    if (this.props.callbacks.invalidateState) {
+      this.props.callbacks.invalidateState(true);
+    }
 
     let value = this.state.value;
     if (this.props.k8sQuery.kind === angulars.k8s.kinds.SECRET) {
@@ -92,7 +96,9 @@ class ConfigureYamlFieldModal extends PromiseComponent {
       this.requestPromise.then((result) => {
         this.props.close(result);
       }).catch(() => {
-        this.props.callbacks.invalidateState(false);
+        if (this.props.callbacks.invalidateState) {
+          this.props.callbacks.invalidateState(false);
+        }
       });
     };
 

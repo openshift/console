@@ -3,15 +3,16 @@ import moment from 'moment';
 
 import {coFetchJSON} from '../co-fetch';
 import {GlobalNotification} from './global-notification';
-import {licenseExpiredModal} from './license-expired-modal';
+import {licenseExpiredModal, licenseExpiredGraceEndedModal} from './license-expired-modal';
 
-const expWarningThreshold = 7 * 24 * 60 * 60 * 1000; // 7 days
+const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 class LicenseNotifier extends React.Component {
   constructor() {
     super();
     this.state = {
-      expiration: null
+      expiration: null,
+      graceExpiration: null,
     };
   }
 
@@ -40,14 +41,21 @@ class LicenseNotifier extends React.Component {
     }
 
     this.setState({
-      expiration: new Date(json.expiration)
-    }, () => {
-      if (this._expired()) {
-        licenseExpiredModal({
-          expiration: this.state.expiration
-        });
-      }
-    });
+      expiration: new Date(json.expiration),
+      graceExpiration: new Date(json.graceExpiration)
+    }, this._triggerModal);
+  }
+
+  _triggerModal() {
+    if (this._graceExpired()) {
+      licenseExpiredGraceEndedModal({
+        expiration: this.state.expiration
+      });
+    } else if (this._expired()) {
+      licenseExpiredModal({
+        expiration: this.state.expiration
+      });
+    }
   }
 
   _expired() {
@@ -58,8 +66,12 @@ class LicenseNotifier extends React.Component {
     return this.state.expiration && this.state.expiration - Date.now() < expWarningThreshold;
   }
 
+  _graceExpired() {
+    return this.state.graceExpiration && Date.now() > this.state.graceExpiration;
+  }
+
   render() {
-    const actions = <span><a href="settings/cluster">View the cluster settings</a> or <a href="https://account.tectonic.com">log in to your Tectonic account</a></span>;
+    const actions = <span><a href="settings/cluster">View the cluster settings</a> or <a href="https://account.tectonic.com" target="_blank">log in to your Tectonic account</a></span>;
 
     let notification;
     if (!this.state.expiration) {
