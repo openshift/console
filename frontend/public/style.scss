@@ -47,7 +47,6 @@ $fa-font-path: "./fonts";
 
 // UI Modules
 @import "module/ui/containers/container-input";
-@import "module/ui/icons/resource-icon";
 @import "module/ui/icons/status";
 @import "module/ui/forms/number-spinner";
 @import "module/ui/labels/label";
@@ -79,6 +78,7 @@ $fa-font-path: "./fonts";
 @import "components/overflow";
 @import "components/RBAC/rbac";
 @import "components/row-filter";
+@import "components/resource";
 @import "components/search";
 @import "components/service";
 @import "components/sparkline";

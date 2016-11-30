@@ -47,6 +47,6 @@ function iconLabel(kind) {
 }
 
 export const ResourceIcon = ({kind, className}) => {
-  const klass = classNames(`co-m-resource-icon co-m-resource-icon--${kind}`, className);
+  const klass = classNames(`co-m-resource-icon co-m-resource-${kind}`, className);
   return <span className={klass}>{iconLabel(kind)}</span>;
 };

@@ -136,7 +136,7 @@ const Volume = ({pod, volume}) => {
       </div>
       <div className="col-sm-3 hidden-xs">{mountPermissions}</div>
       <div className="col-sm-3 col-xs-4">
-        {volume.mounts.map((m, i) => <div key={i} className="co-m-resource-icon-wrapper">
+        {volume.mounts.map((m, i) => <div key={i}>
           <ResourceIcon kind="container" />
           <ContainerLink pod={pod} name={m.container} />
           {i < volume.mounts.length - 1 && ', '}

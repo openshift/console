@@ -1,0 +1,76 @@
+$height: 18px;
+
+.co-m-resource-icon {
+  display: inline-block;
+  text-align: center;
+  border-radius: 10px;
+  height: $height;
+  min-width: $height;
+  padding: 0 4px;
+  line-height: $height + 2px;
+  color: #fff;
+  font-size: 12px;
+  margin: 0 4px;
+  background-color: $color-container-dark;
+
+  &.co-m-resource-deployment {
+    padding: 0 4px 0 5px; // padding from .co-m-resource-icon isn't enough to center D letter
+  }
+}
+
+.co-m-resource-clusterrole,
+.co-m-resource-clusterrolebinding,
+.co-m-resource-role,
+.co-m-resource-rolebinding {
+ background-color: $color-rbac-dark;
+}
+
+.co-m-resource-daemonset,
+.co-m-resource-deployment,
+.co-m-resource-job,
+.co-m-resource-petset,
+.co-m-resource-replicaset,
+.co-m-resource-replicationcontroller {
+  background-color: $color-pod-overlord;
+}
+
+.co-m-resource-node,
+.co-m-resource-policy {
+  background-color: $color-node-dark;
+}
+
+.co-m-resource-configmap {
+  background-color: $color-configmap-dark;
+}
+
+.co-m-resource-container {
+  background-color: $color-container-dark;
+}
+
+.co-m-resource-horizontalpodautoscaler {
+  background-color: $color-hpa-dark;
+}
+
+.co-m-resource-pod {
+  background-color: $color-pod-dark;
+}
+
+.co-m-resource-namespace {
+  background-color: $color-namespace-dark;
+}
+
+.co-m-resource-secret {
+  background-color: $color-secret-dark;
+}
+
+.co-m-resource-service {
+  background-color: $color-service-dark;
+}
+
+.co-m-resource-serviceaccount {
+  background-color: $color-serviceaccount-dark;
+}
+
+.co-m-resource-icon--all {
+  background-color: black;
+}
