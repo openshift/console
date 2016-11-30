@@ -1,21 +1,11 @@
 import {util} from './util';
 
 angular.module('k8s')
-.service('k8sPods', function(_, k8sDocker, k8sEnum, $http, k8sResource) {
+.service('k8sPods', function(_, k8sDocker, k8sEnum) {
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });
   var fieldSelectors;
-
-  this.log = function (podName, ns) {
-    return $http({
-      url: k8sResource.resourceURL(k8sEnum.Kind.POD, {ns: ns, name: podName, path: 'log'}),
-      method: 'GET',
-    })
-    .then(function(result) {
-      return result.data;
-    });
-  };
 
   this.clean = function(pod) {
     util.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
