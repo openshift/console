@@ -44,3 +44,15 @@ import:
   subpackages:
   - context
   - websocket
+
+# Dependencies for LDAP validation
+- package: github.com/coreos/dex
+  # TODO(ericchiang): Use a real version once we release beta.3.
+  version: 6202e4d91255b39799af77d64bc6e694523d3ddd
+  subpackages:
+  - connector
+  - connector/ldap
+- package: gopkg.in/ldap.v2
+  version: v2.4.1
+- package: gopkg.in/asn1-ber.v1
+  version: v1.1

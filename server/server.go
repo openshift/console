@@ -2,7 +2,9 @@ package server
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -15,6 +17,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/coreos/dex/connector"
+	"github.com/coreos/dex/connector/ldap"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
 
@@ -118,6 +122,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
+	handleFunc("/identity/ldap/validate", handleLDAPVerification)
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -358,4 +363,87 @@ func DirectorFromTokenExtractor(config *proxy.Config, tokenExtractor func(*http.
 		r.URL.Path = proxy.SingleJoiningSlash(config.Endpoint.Path, r.URL.Path)
 		r.URL.Scheme = config.Endpoint.Scheme
 	}
+}
+
+// ldapReq is an attempt to test an LDAP configuration object for dex.
+// It takes a username, password, and config object, then attempts to
+// get user, email, and group information.
+type ldapReq struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+
+	// A full dex LDAP configuration object. Details can be found in the
+	// dex source code and documentation.
+	//
+	// https://godoc.org/github.com/coreos/dex/connector/ldap#Config
+	// https://github.com/coreos/dex/blob/master/Documentation/ldap-connector.md
+	Config ldap.Config `json:"config"`
+}
+
+// On a successful LDAP verification request, the resulting user is returned.
+type ldapResp struct {
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Groups   []string `json:"groups"`
+}
+
+// If an error was returned, it will be in the following format.
+type ldapError struct {
+	Error  string `json:"error"`
+	Reason string `json:"reason"`
+}
+
+func handleLDAPVerification(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		sendResponse(w, http.StatusBadRequest, &ldapError{
+			Error:  "Invalid method",
+			Reason: "Endpoint only responses to POSTs.",
+		})
+		return
+	}
+
+	var req ldapReq
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		sendResponse(w, http.StatusBadRequest, &ldapError{
+			Error:  "Malformed request body",
+			Reason: err.Error(),
+		})
+		return
+	}
+
+	// TODO(ericchiang): I don't think LDAP actually respects this context.
+	// Follow up with changes to upstream dex.
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	resp, err := verifyLDAP(ctx, req)
+	if err != nil {
+		sendResponse(w, http.StatusOK, err)
+		return
+	}
+	sendResponse(w, http.StatusOK, resp)
+}
+
+func verifyLDAP(ctx context.Context, req ldapReq) (*ldapResp, *ldapError) {
+	conn, err := req.Config.OpenConnector()
+	if err != nil {
+		return nil, &ldapError{"Invalid config fields", err.Error()}
+	}
+
+	// Only search for groups if a base dn has been specified.
+	scopes := connector.Scopes{Groups: req.Config.GroupSearch.BaseDN != ""}
+
+	ident, validPassword, err := conn.Login(ctx, scopes, req.Username, req.Password)
+	if err != nil {
+		return nil, &ldapError{"LDAP query failed", err.Error()}
+	}
+	if !validPassword {
+		return nil, &ldapError{"Failed to login", "Invalid username and password combination."}
+	}
+
+	return &ldapResp{
+		Username: ident.Username,
+		Email:    ident.Email,
+		Groups:   ident.Groups,
+	}, nil
 }

@@ -1,5 +1,5 @@
-hash: 609bd46e161b5af1c1e428b39cebd961aa1bdbc8967120af78f5cfe1ded251fb
-updated: 2016-11-23T15:18:26.222312295-08:00
+hash: 32c1fc384ef0472d993749fdc66557a77e1e9aec0e093656aa2b3eeef99e5ea9
+updated: 2016-11-28T17:11:18.278126709-08:00
 imports:
 - name: github.com/coreos-inc/soy
   version: c8b5895b29929c19729217f8d16b25fd29c0717c
@@ -15,6 +15,11 @@ imports:
   - manager/pkg/joseutil
   - manager/pkg/license
   - manager/pkg/licensev1
+- name: github.com/coreos/dex
+  version: 6202e4d91255b39799af77d64bc6e694523d3ddd
+  subpackages:
+  - connector
+  - connector/ldap
 - name: github.com/coreos/go-oidc
   version: 5cf2aa52da8c574d3aa4458f471ad6ae2240fe6b
   subpackages:
@@ -44,4 +49,8 @@ imports:
   subpackages:
   - context
   - websocket
+- name: gopkg.in/asn1-ber.v1
+  version: 4e86f4367175e39f69d9358a5f17b4dda270378d
+- name: gopkg.in/ldap.v2
+  version: d0a5ced67b4dc310b9158d63a2c6f9c5ec13f105
 testImports: []
