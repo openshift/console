@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {angulars} from '../react-wrapper';
-import {EmptyBox, ConnectToState, getK8sResource, MultiConnectToState} from './index';
+import {EmptyBox, ConnectToState, k8sResource, kindObj, MultiConnectToState} from './index';
 
 class FirehoseBase extends React.Component {
   _initFirehose(props) {
@@ -11,7 +11,7 @@ class FirehoseBase extends React.Component {
     }
     const {kind, namespace, name, fieldSelector} = props;
     const {Firehose} = angulars;
-    return new Firehose(getK8sResource(kind), namespace, selector, fieldSelector, name);
+    return new Firehose(k8sResource(kind), namespace, selector, fieldSelector, name);
   }
 
   _mountFirehose(firehose, props) {
@@ -46,8 +46,8 @@ export class Firehose extends FirehoseBase {
   render () {
     const {props, props: {children, isList, kind}} = this;
 
-    const kindObj = _.find(angulars.kinds, {id: kind});
-    const newLabel = kindObj && (isList ? kindObj.labelPlural : kindObj.label);
+    const {label, labelPlural} = kindObj(kind);
+    const newLabel = isList ? labelPlural : label;
 
     if (!this.firehose) {
       return <EmptyBox label={newLabel} />;

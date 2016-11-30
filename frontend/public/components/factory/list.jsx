@@ -79,11 +79,10 @@ Rows.propTypes = {
   selectRow: React.PropTypes.func.isRequired,
 };
 
-export const makeList = (name, kindstring, Header, Row, sortBy = undefined) => {
-
+export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
   class ReactiveList extends React.Component {
     static get kind () {
-      return kindstring.toLowerCase();
+      return kind;
     }
 
     get id () {
@@ -107,7 +106,6 @@ export const makeList = (name, kindstring, Header, Row, sortBy = undefined) => {
     }
 
     render () {
-      const kind = ReactiveList.kind;
       const klass = `co-m-${kind}-list co-m-table-grid co-m-table-grid--bordered`;
       const sort = sortBy || (item => item.metadata ? item.metadata.name: null);
 

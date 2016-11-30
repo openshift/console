@@ -153,9 +153,9 @@ const pages = [
   {href: 'details', name: 'Overview', component: Details},
   pods(),
 ];
-const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'SERVICE', pages);
+const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages);
 
-const ServicesList = makeList('Services', 'SERVICE', ServiceHeader, ServiceRow);
-const ServicesPage = makeListPage('ServicesPage', 'SERVICE', ServicesList);
+const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);
+const ServicesPage = makeListPage('ServicesPage', 'service', ServicesList);
 
 export {ServicesList, ServicesPage, ServicesDetailsPage};

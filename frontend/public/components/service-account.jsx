@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, ResourceIcon, Timestamp} from './utils';
+import {Cog, ResourceLink, Timestamp} from './utils';
 import {SecretsList, withSecretsList} from './secret';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -25,10 +25,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
     <div className="row co-resource-list__item">
       <div className="col-xs-4">
         <ServiceAccountCog serviceaccount={serviceaccount} />
-        <ResourceIcon kind="serviceaccount" />
-        <a href={`ns/${namespace}/${angulars.kinds.SERVICEACCOUNT.plural}/${name}/details`} title={uid}>
-          {serviceaccount.metadata.name}
-        </a>
+        <ResourceLink kind="serviceaccount" name={name} namespace={namespace} title={uid} />
       </div>
       <div className="col-xs-4">
         {secrets ? secrets.length : 0}
@@ -71,7 +68,7 @@ const Details = (serviceaccount) => {
 };
 
 const pages = [{href: 'details', name: 'Overview', component: Details}];
-const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'SERVICEACCOUNT', pages);
-const ServiceAccountsList = makeList('ServiceAccounts', 'SERVICEACCOUNT', Header, withSecretsList(ServiceAccountRow));
-const ServiceAccountsPage = makeListPage('ServiceAccountsPage', 'SERVICEACCOUNT', ServiceAccountsList);
+const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'serviceaccount', pages);
+const ServiceAccountsList = makeList('ServiceAccounts', 'serviceaccount', Header, withSecretsList(ServiceAccountRow));
+const ServiceAccountsPage = makeListPage('ServiceAccountsPage', 'serviceaccount', ServiceAccountsList);
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};

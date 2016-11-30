@@ -76,11 +76,9 @@ const NodesPage = () => <div className="co-p-nodes">
   <NodesListPage canExpand={true} />
 </div>;
 
-const kind = 'NODE';
-
 // We have different list layouts for the Nodes page list and the Search page list
-const NodesList = makeList('Nodes', kind, Header, NodeRow);
-const NodesListSearch = makeList('Nodes', kind, HeaderSearch, NodeRowSearch);
+const NodesList = makeList('Nodes', 'node', Header, NodeRow);
+const NodesListSearch = makeList('Nodes', 'node', HeaderSearch, NodeRowSearch);
 
 const dropdownFilters = [{
   type: 'node-status',
@@ -91,7 +89,7 @@ const dropdownFilters = [{
   },
   title: 'Ready Status',
 }];
-const NodesListPage = makeListPage('NodesPage', kind, NodesList, dropdownFilters);
+const NodesListPage = makeListPage('NodesPage', 'node', NodesList, dropdownFilters);
 
 export {NodeIPList, NodesList, NodesListSearch, NodesPage};
 register('NodesPage', NodesPage);

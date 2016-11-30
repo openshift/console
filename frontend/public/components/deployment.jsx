@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Header, rowOfKindstring} from './workloads';
+import {Header, rowOfKind} from './workloads';
 import {detailsPage, LoadingInline, pluralize, ResourceSummary} from './utils';
 
 export const Details = (deployment) => {
@@ -85,17 +85,15 @@ export const Details = (deployment) => {
 // TODO: Edit page is still routed to Angular code for now
 const Edit = null;
 
-const kind = 'DEPLOYMENT';
-
 const {factory: {pods}} = detailsPage;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
   {href: 'edit', name: 'Edit', component: Edit},
   pods()
 ];
-const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', kind, pages);
+const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages);
 
-const DeploymentsList = makeList('Deployments', kind, Header, rowOfKindstring(kind));
-const DeploymentsPage = makeListPage('DeploymentsPage', kind, DeploymentsList);
+const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment'));
+const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

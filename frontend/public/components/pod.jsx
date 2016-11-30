@@ -256,16 +256,14 @@ const Details = (pod) => {
 const Logs = null;
 const Events = null;
 
-const kind = 'POD';
-
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
   {href: 'logs', name: 'Logs', component: Logs},
   {href: 'events', name: 'Events', component: Events},
 ];
-const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', kind, pages);
+const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages);
 
-const PodList = makeList('Pods', kind, PodHeader, PodRow);
-const PodsPage = makeListPage('PodsPage', kind, PodList, [], filters);
+const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
+const PodsPage = makeListPage('PodsPage', 'pod', PodList, [], filters);
 
 export {PodList, PodsPage, PodsDetailsPage};
