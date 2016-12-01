@@ -200,7 +200,7 @@ const ContainerPage = (props) => {
   const containers = _.get(props, 'data.spec.containers');
   const data = containers ? _.find(containers, {name: angulars.routeParams.name}) : props.data;
   return <div>
-    <NavTitle {...props} detail={true} title={props.name} data={data} />
+    <NavTitle {...props} detail={true} title={props.name} data={data} kind="container" />
     <VertNav {...props} hideNav={true} pages={[{href: 'details', component: Details}]} className="co-m-pod" />
   </div>;
 };
