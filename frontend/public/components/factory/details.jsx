@@ -14,7 +14,7 @@ export const ReactiveDetails = (props) => <Provider store={props.store}>
 export const makeDetailsPage = (name, kind, pages) => {
   class ReactiveDetailsPage extends React.Component {
     render () {
-      return <ReactiveDetails {...this.props} store={angulars.store} kind={kind}>
+      return <ReactiveDetails {...this.props} store={angulars.store}>
         <NavTitle detail={true} title={this.props.name} />
         <VertNav pages={pages} className={`co-m-${kind}`} />
       </ReactiveDetails>;
