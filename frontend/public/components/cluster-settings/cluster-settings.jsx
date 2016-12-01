@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {coFetchJSON} from '../../co-fetch';
 import {NavTitle} from '../utils';
 import {angulars, register} from '../react-wrapper';
 import {ClusterUpdates} from '../cluster-updates/cluster-updates';
@@ -17,16 +18,21 @@ class ClusterSettingsPage extends React.Component {
     super(props);
     this._featureCheckCount = 0;
     this._featureCheckInterval = null;
+    this._isMounted = false;
     this.state = {
-      clusterUpdatesEnabled: false
+      clusterUpdatesEnabled: false,
+      version: null
     };
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this._featureCheckInterval = setInterval(this._checkFeatures.bind(this), featureCheckInterval);
+    this._checkVersion();
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     clearInterval(this._featureCheckInterval);
   }
 
@@ -44,6 +50,10 @@ class ClusterSettingsPage extends React.Component {
       return;
     }
     this._featureCheckCount += 1;
+  }
+
+  _checkVersion() {
+    coFetchJSON('version').then((data) => this.setState({version: data}));
   }
 
   render() {
@@ -71,22 +81,21 @@ class ClusterSettingsPage extends React.Component {
           <p>Identity is the Tectonic component that manages user accounts, resetting password, etc. Delegation to other authentication systems, such as Google OAUTH or a corporate LDAP environment is supported.</p>
         </div>*/}
       </div>
-      {/*<div className="co-p-cluster__sidebar">
+      <div className="co-p-cluster__sidebar">
         <div className="co-m-pane__body">
           <h1 className="co-p-cluster__sidebar-heading co-p-cluster__sidebar-heading--first">Documentation</h1>
           <dl>
-            <dt className="co-p-cluster__doc-title"><a href="#">Cluster Achritectures</a></dt>
-            <dd className="co-p-cluster__doc-description">Common examples for deploying a cluster of CoreOS machines on the cloud or bare metal.</dd>
-            <dt className="co-p-cluster__doc-title"><a href="#">Installing Tectonic Services with kubectl</a></dt>
-            <dd className="co-p-cluster__doc-description">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laundantium</dd>
-            <dt className="co-p-cluster__doc-title"><a href="#">Upgrading your Cluster</a></dt>
-            <dd className="co-p-cluster__doc-description">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laundantium</dd>
+            <dt className="co-p-cluster__doc-title"><a href="https://tectonic.com/enterprise/docs/latest/account/" target="_blank">Manage Your Account</a></dt>
+            <dd className="co-p-cluster__doc-description">You can manage your Tectonic account at <a href="https://account.tectonic.com" target="_blank">account.tectonic.com</a> for access to licenses, billing details, invoices, and account users.</dd>
+            <dt className="co-p-cluster__doc-title"><a href="https://tectonic.com/enterprise/docs/latest/usage/" target="_blank">End User Guide</a></dt>
+            <dd className="co-p-cluster__doc-description">End-users of Tectonic are expected to deploy applications directly in Kubernetes. Your application's architecture will drive how you assemble these components together.</dd>
           </dl>
-          <h1 className="co-p-cluster__sidebar-heading">Export/Backup</h1>
-          <p>Tectonic configurations can be backed up at any time.</p>
-          <p><a href="#" className="co-p-cluster__sidebar-link"><span className="fa fa-download co-p-cluster__sidebar-link-icon"></span>Export Configuration</a></p>
+          <h1 className="co-p-cluster__sidebar-heading">Additional Support</h1>
+          <p><a href="https://tectonic.com/docs/" target="_blank" className="co-p-cluster__sidebar-link"><span className="fa fa-book co-p-cluster__sidebar-link-icon"></span>Full Documentation</a></p>
+          { this.state.version && this.state.version.entitlementKind === 'nodes' && <p><a href="https://github.com/coreos/tectonic-forum" target="_blank" className="co-p-cluster__sidebar-link"><span className="fa fa-comments-o co-p-cluster__sidebar-link-icon"></span>Tectonic Forum</a></p> }
+          { this.state.version && this.state.version.entitlementKind === 'nodes' && <p><a href="mailto:tectonic-feedback@coreos.com" className="co-p-cluster__sidebar-link"><span className="fa fa-envelope-o co-p-cluster__sidebar-link-icon"></span>tectonic-feedback@coreos.com</a></p> }
         </div>
-      </div>*/}
+      </div>
     </div>;
   }
 }
