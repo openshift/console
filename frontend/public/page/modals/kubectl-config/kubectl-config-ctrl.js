@@ -2,7 +2,7 @@ import {kubectlConfigSvc} from '../../../module/service/kubectl-config';
 
 angular.module('bridge.page')
   .controller('KubectlConfigCtrl', function KubectlConfigCtrl(
-    $scope
+    $scope, statusSvc
   ) {
     'use strict';
 
@@ -26,6 +26,19 @@ angular.module('bridge.page')
       kubectlConfigSvc.downloadConfiguration($scope.vm.configuration);
     }
 
+    function setKubectlUrls() {
+      statusSvc.kubernetesVersion()
+        .then(function(resp) {
+          const k8sVersion = resp.data.gitVersion.split('+')[0];
+          const prefix = `https://storage.googleapis.com/kubernetes-release/release/${k8sVersion}`;
+          const postfix = '/amd64/kubectl';
+
+          $scope.kubectlMacUrl = `${prefix}/bin/darwin${postfix}`;
+          $scope.kubectlLinuxUrl =` ${prefix}/bin/linux${postfix}`;
+          $scope.kubectlWinUrl = `${prefix}/bin/windows${postfix}.exe`;
+        });
+    }
+
     // ---
 
     $scope.vm = {
@@ -37,5 +50,7 @@ angular.module('bridge.page')
       verifyCode:                  verifyCode,
       downloadConfiguration:       downloadConfiguration,
     };
+
+    setKubectlUrls();
   })
 ;
