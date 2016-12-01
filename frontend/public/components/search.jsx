@@ -15,7 +15,7 @@ import {ReplicationControllersList} from './replication-controller';
 import {SecretsList} from './secret';
 import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
-import {connect, Dropdown, NavTitle, ResourceIcon, SelectorInput} from './utils';
+import {connect, Dropdown, kindObj, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 const ResourceListDropdown = ({selected, onChange}) => {
   const ks = angulars.k8s.enum.Kind;
@@ -63,9 +63,14 @@ const ResourceList = connect(state => ({namespace: state.UI.get('activeNamespace
 export class SearchPage extends React.Component {
   constructor (props) {
     super(props);
+
+    // Ensure that the "kind" route parameter is a valid resource kind ID
+    const {id} = kindObj(angulars.routeParams.kind);
+    const kind = id || 'service';
+
     this.state = {
-      kind: angulars.routeParams.kind || 'service',
-      tags: angulars.k8s.selector.split(angulars.routeParams.q || ''),
+      kind: kind,
+      tags: angulars.k8s.selector.split(_.isString(angulars.routeParams.q) ? angulars.routeParams.q : ''),
     };
   }
 
