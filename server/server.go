@@ -115,10 +115,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	}.ServeHTTP)
 
 	useVersionHandler := s.versionHandler
-	useValidateLicenseHandler := s.ValidateLicenseHandler
+	useValidateLicenseHandler := s.validateLicenseHandler
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
-		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.ValidateLicenseHandler))
+		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.validateLicenseHandler))
 	}
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
@@ -226,7 +226,7 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 
 // Validate that a license should be used, purely based on it being
 // a valid, unexpired license. Does not factor in entitlements.
-func (s *Server) ValidateLicenseHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) {
 	badLicense := func(message string) {
 		err := errors.New(message)
 		sendResponse(w, http.StatusOK, apiError{err.Error()})
