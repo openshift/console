@@ -3,7 +3,7 @@ import React from 'react';
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage} from './utils';
+import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
 
 
@@ -90,7 +90,7 @@ const withSecretsList = (Row) => {
   };
 };
 
-const pages = [{href: 'details', name: 'Overview', component: detailsPage(SecretDetails)}];
+const pages = [navFactory.details(detailsPage(SecretDetails))];
 
 const SecretsList = makeList('Secrets', 'secret', SecretHeader, SecretRow);
 const SecretsPage = makeListPage('SecretsPage', 'secret', SecretsList);

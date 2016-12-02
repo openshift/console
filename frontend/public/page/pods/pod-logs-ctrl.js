@@ -13,6 +13,13 @@ angular.module('bridge.page')
   $scope.stream = null;
   $scope.buffer = linebufferSvc.buffer(1000);
   $scope.containerNames = [$scope.containerName];
+  $scope.navProps = {
+    pages: [
+      {name: 'Overview', href: 'details'},
+      {name: 'Logs', href: 'logs'},
+      {name: 'Events', href: 'events'},
+    ]
+  };
   $scope.$on('$destroy', function() {
     // Don't leak timeouts or streams
     if ($scope.pendingReload) {

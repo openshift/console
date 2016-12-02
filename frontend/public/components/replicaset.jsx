@@ -2,7 +2,7 @@ import React from 'react';
 
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Header, rowOfKind} from './workloads';
-import {detailsPage, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
+import {navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
 const Details = (replicaSet) => <div>
   <ResourceHeading resourceName="Replica Set" />
@@ -20,15 +20,8 @@ const Details = (replicaSet) => <div>
   </div>
 </div>;
 
-// TODO: Edit page is still routed to Angular code for now
-const Edit = null;
-
-const {factory: {pods}} = detailsPage;
-const pages = [
-  {href: 'details', name: 'Overview', component: Details},
-  {href: 'edit', name: 'Edit', component: Edit},
-  pods(),
-];
+const {details, edit, pods} = navFactory;
+const pages = [details(Details), edit(), pods()];
 const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', 'replicaset', pages);
 
 const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKind('replicaset'));

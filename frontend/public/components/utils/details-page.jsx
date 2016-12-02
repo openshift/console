@@ -1,7 +1,5 @@
 import React from 'react';
 
-import yamlize from '../../module/service/yamlize';
-import {PodsPage} from '../pod';
 import {LabelList, Selector, Timestamp} from '../utils';
 
 export const pluralize = (i, singular, plural = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
@@ -10,21 +8,6 @@ export const detailsPage = (Component) => (props) =>
   <div className="row row-gutter">
     <Component {...props} />
   </div>;
-
-detailsPage.factory = {
-  'pods': () => ({
-    href: 'pods',
-    name: 'Pods',
-    component: ({metadata: {namespace}, spec: {selector}, selectorRequired = true}) => <div>
-      <PodsPage className="" canCreate={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired} />
-    </div>
-  }),
-  'yaml': () => ({
-    href: 'yaml',
-    name: 'YAML',
-    component: detailsPage((resource) => <div className="col-xs-12"><div className="co-m-pane__body"><pre className="co-pre-wrap">{yamlize(resource)}</pre></div></div>),
-  }),
-};
 
 export const ResourceHeading = ({resourceName}) => <div className="co-m-pane__heading">
   <h1 className="co-m-pane__title">{resourceName} Overview</h1>

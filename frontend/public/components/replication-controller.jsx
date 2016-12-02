@@ -2,7 +2,7 @@ import React from 'react';
 
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Header, rowOfKind} from './workloads';
-import {detailsPage, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
+import {navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
 const Details = (replicationController) => <div>
   <ResourceHeading resourceName="Replication Controller" />
@@ -20,17 +20,8 @@ const Details = (replicationController) => <div>
   </div>
 </div>;
 
-// TODO: Edit page and Events page are still routed to Angular code for now
-const Edit = null;
-const Events = null;
-
-const {factory: {pods}} = detailsPage;
-const pages = [
-  {href: 'details', name: 'Overview', component: Details},
-  {href: 'edit', name: 'Edit', component: Edit},
-  pods(),
-  {href: 'events', name: 'Events', component: Events},
-];
+const {details, edit, pods, events} = navFactory;
+const pages = [details(Details), edit(), pods(), events()];
 const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', 'replicationcontroller', pages);
 
 const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller'));

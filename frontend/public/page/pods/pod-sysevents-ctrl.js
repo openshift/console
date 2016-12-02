@@ -5,6 +5,13 @@ angular.module('bridge.page')
   $scope.ns = $routeParams.ns;
   $scope.podName = $routeParams.name;
   $scope.filter = {name: $scope.podName};
+  $scope.navProps = {
+    pages: [
+      {name: 'Overview', href: 'details'},
+      {name: 'Logs', href: 'logs'},
+      {name: 'Events', href: 'events'},
+    ]
+  };
   $scope.props = {
     filter: $scope.filter,
     namespace: $routeParams.ns,

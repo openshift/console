@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, detailsPage, LabelList, ResourceHeading, ResourceIcon, Selector, Timestamp} from './utils';
+import {Cog, navFactory, LabelList, ResourceHeading, ResourceIcon, Selector, Timestamp} from './utils';
 
 const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
@@ -148,11 +148,8 @@ const Details = (s) => <div className="row no-gutter">
   </div>
 </div>;
 
-const {factory: {pods}} = detailsPage;
-const pages = [
-  {href: 'details', name: 'Overview', component: Details},
-  pods(),
-];
+const {details, pods} = navFactory;
+const pages = [details(Details), pods()];
 const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages);
 
 const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);

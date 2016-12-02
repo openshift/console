@@ -1,52 +1,66 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {StatusBox, RelativeLink} from './index';
+import {register} from '../react-wrapper';
+import yamlize from '../../module/service/yamlize';
+import {detailsPage, StatusBox, RelativeLink} from './index';
 
-const isActive = (href) => {
-  const current = location.pathname.split('/').slice(-1)[0];
-  if (current === href) {
-    return true;
-  }
-  return false;
+export const navFactory = {
+  details: (component = undefined) => ({
+    href: 'details',
+    name: 'Overview',
+    component: component,
+  }),
+  edit: (component = undefined) => ({
+    href: 'edit',
+    name: 'Edit',
+    component: component,
+  }),
+  events: (component = undefined) => ({
+    href: 'events',
+    name: 'Events',
+    component: component,
+  }),
+  logs: (component = undefined) => ({
+    href: 'logs',
+    name: 'Logs',
+    component: component,
+  }),
+  yaml: () => ({
+    href: 'yaml',
+    name: 'YAML',
+    component: detailsPage((resource) => <div className="col-xs-12"><div className="co-m-pane__body"><pre className="co-pre-wrap">{yamlize(resource)}</pre></div></div>),
+  }),
 };
 
-export class VertNav extends React.Component {
-  render () {
-    let Page;
-    const {pages, hideNav} = this.props;
+const activeSlug = () => location.pathname.split('/').pop();
 
-    const nav = _.map(pages, ({name, href, component}) => {
-      const active = isActive(href);
-      if (active) {
-        Page = component;
-      }
-      const klass = classNames('co-m-vert-nav__menu-item',
-        {'co-m-vert-nav-item--active': active}
-      );
+export const NavBar = ({pages}) => {
+  const divider = <li className="co-m-vert-nav__menu-item co-m-vert-nav__menu-item--divider" key="_divider" />;
 
-      return <li className={klass} key={name}>
-        <RelativeLink href={href}>{name}</RelativeLink>
-      </li>;
-    });
+  return <ul className="co-m-vert-nav__menu">{_.flatten(_.map(pages, ({name, href}, i) => {
+    const klass = classNames('co-m-vert-nav__menu-item', {'co-m-vert-nav-item--active': href === activeSlug()});
+    const tab = <li className={klass} key={name}><RelativeLink href={href}>{name}</RelativeLink></li>;
 
-    nav.find((item, index) => {
-      if (['Overview', 'Edit'].includes(item.key) && index + 1 !== nav.length && nav[index + 1].key !== 'Edit') {
-        nav.splice(index + 1, 0, <li className="co-m-vert-nav__menu-item co-m-vert-nav__menu-item--divider" key="_divider" />);
-        return true;
-      }
-    });
+    // These tabs go before the divider
+    const before = ['details', 'edit'];
+    return (!before.includes(href) && i !== 0 && before.includes(pages[i - 1].href)) ? [divider, tab] : [tab];
+  }))}</ul>;
+};
+register('NavBar', NavBar);
 
-    return <div className={this.props.className}>
-      <div className="co-m-pane co-m-vert-nav">
-        {!hideNav && <ul className="co-m-vert-nav__menu">{nav}</ul>}
-        <div className="co-m-vert-nav__body">
-          <StatusBox {...this.props}><Page /></StatusBox>
-        </div>
+export const VertNav = props => {
+  const Page = _.get(_.find(props.pages, {href: activeSlug()}), 'component');
+
+  return <div className={props.className}>
+    <div className="co-m-pane co-m-vert-nav">
+      {!props.hideNav && <NavBar pages={props.pages} />}
+      <div className="co-m-vert-nav__body">
+        {Page && <StatusBox {...props}><Page /></StatusBox>}
       </div>
-    </div>;
-  }
-}
+    </div>
+  </div>;
+};
 
 VertNav.propTypes = {
   pages: React.PropTypes.arrayOf(React.PropTypes.shape({
@@ -54,4 +68,6 @@ VertNav.propTypes = {
     name: React.PropTypes.string,
     component: React.PropTypes.func,
   })),
+  className: React.PropTypes.string,
+  hideNav: React.PropTypes.bool,
 };
