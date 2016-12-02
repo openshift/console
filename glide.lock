@@ -1,20 +1,14 @@
-hash: 32c1fc384ef0472d993749fdc66557a77e1e9aec0e093656aa2b3eeef99e5ea9
-updated: 2016-11-28T17:11:18.278126709-08:00
+hash: 684c71bbfce149200effa67b47d199cca473f6d19a4eefedf9f4d0af51ec5ee8
+updated: 2016-12-05T11:31:22.051286307-08:00
 imports:
-- name: github.com/coreos-inc/soy
-  version: c8b5895b29929c19729217f8d16b25fd29c0717c
-  repo: git@github.com:coreos-inc/soy.git
+- name: github.com/coreos-inc/tectonic-licensing
+  version: 7a015ea2b0220b5c844d69401181769bef6d18df
+  repo: git@github.com:coreos-inc/tectonic-licensing.git
   vcs: git
   subpackages:
-  - common/license
-- name: github.com/coreos-inc/tectonic
-  version: 580b9d5e2f26c2bfc98ce61028424dd59f3e253b
-  repo: git@github.com:coreos-inc/tectonic.git
-  vcs: git
-  subpackages:
-  - manager/pkg/joseutil
-  - manager/pkg/license
-  - manager/pkg/licensev1
+  - gopkg.in/square/go-jose.v2
+  - license
+  - tectonic-kubernetes
 - name: github.com/coreos/dex
   version: 6202e4d91255b39799af77d64bc6e694523d3ddd
   subpackages:
@@ -53,4 +47,9 @@ imports:
   version: 4e86f4367175e39f69d9358a5f17b4dda270378d
 - name: gopkg.in/ldap.v2
   version: d0a5ced67b4dc310b9158d63a2c6f9c5ec13f105
+- name: gopkg.in/square/go-jose.v2
+  version: 296c7f1463ec9b712176dc804dea0173d06dc728
+  subpackages:
+  - cipher
+  - json
 testImports: []

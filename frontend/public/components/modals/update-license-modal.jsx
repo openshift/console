@@ -1,11 +1,10 @@
-import {angulars} from '../react-wrapper';
 import {coFetch} from '../../co-fetch';
 import {configureYamlFieldModal} from './configure-yaml-field-modal';
 
 export const updateLicenseModal = (additionalOptions) => {
   const options = _.defaultsDeep({}, additionalOptions, {
     k8sQuery: {
-      kind: angulars.kinds.SECRET,
+      kind: 'secret',
       name: 'tectonic-license',
       namespace: 'tectonic-system'
     },

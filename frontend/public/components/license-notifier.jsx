@@ -2,17 +2,43 @@ import React from 'react';
 import moment from 'moment';
 
 import {coFetchJSON} from '../co-fetch';
+import {pluralize} from './utils';
+import {angulars} from './react-wrapper';
 import {GlobalNotification} from './global-notification';
-import {licenseExpiredModal, licenseExpiredGraceEndedModal} from './license-expired-modal';
+import {licenseEnforcementModal} from './modals/license-enforcement-modal';
 
 const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+export const entitlementTitles = {
+  nodes: {
+    uppercase: 'Node',
+    lowercase: 'node'
+  },
+  vCPUs: {
+    uppercase: 'vCPU',
+    lowercase: 'vCPU'
+  },
+  sockets: {
+    uppercase: 'Socket',
+    lowercase: 'socket'
+  }
+};
 
 class LicenseNotifier extends React.Component {
   constructor() {
     super();
+    this._modalTriggered = false;
     this.state = {
       expiration: null,
       graceExpiration: null,
+      entitlementKind: null,
+      entitlementCount: null,
+      errorMessage: null,
+      current: {
+        nodes: 0,
+        sockets: 0,
+        vCPUs: 0
+      }
     };
   }
 
@@ -33,6 +59,23 @@ class LicenseNotifier extends React.Component {
         // eslint-disable-next-line no-console
         console.error('Could not load Tectonic version', error);
       });
+
+    angulars.k8s.nodes.list()
+      .then((nodes) => {
+        this.setState({
+          current: {
+            nodes: nodes.length || 0,
+            sockets: 0,
+            vCPUs: nodes.reduce((sum, node) => {
+              return sum + parseInt(_.get(node, 'status.capacity.cpu', 0), 10);
+            }, 0)
+          }
+        });
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Could not load Tectonic nodes for license validation', error);
+      });
   }
 
   _update(json) {
@@ -42,20 +85,48 @@ class LicenseNotifier extends React.Component {
 
     this.setState({
       expiration: new Date(json.expiration),
-      graceExpiration: new Date(json.graceExpiration)
+      graceExpiration: new Date(json.graceExpiration),
+      entitlementKind: json.entitlementKind,
+      entitlementCount: json.entitlementCount,
+      errorMessage: json.errorMessage
     }, this._triggerModal);
   }
 
   _triggerModal() {
-    if (this._graceExpired()) {
-      licenseExpiredGraceEndedModal({
-        expiration: this.state.expiration
+    if (this._modalTriggered) {
+      return;
+    }
+    this._modalTriggered = true;
+
+    if (this._errored()) {
+      licenseEnforcementModal({
+        type: 'invalid',
+        blocking: true,
+        message: this.state.errorMessage
       });
     } else if (this._expired()) {
-      licenseExpiredModal({
+      licenseEnforcementModal({
+        type: 'expired',
+        blocking: this._graceExpired(),
         expiration: this.state.expiration
       });
+    } else if (this._entitlementExceeded()) {
+      const current = this.state.current[this.state.entitlementKind];
+      const entitled = this.state.entitlementCount;
+      licenseEnforcementModal({
+        type: 'entitlement',
+        blocking: this.state.entitlementKind === 'nodes',
+        entitlement: this.state.entitlementKind,
+        current,
+        entitled
+      });
+    } else {
+      this._modalTriggered = false;
     }
+  }
+
+  _errored() {
+    return this.state.errorMessage && this.state.errorMessage.length > 0;
   }
 
   _expired() {
@@ -70,11 +141,21 @@ class LicenseNotifier extends React.Component {
     return this.state.graceExpiration && Date.now() > this.state.graceExpiration;
   }
 
+  _entitlementExceeded() {
+    return this.state.entitlementKind && this.state.current[this.state.entitlementKind] > this.state.entitlementCount;
+  }
+
   render() {
     const actions = <span><a href="settings/cluster">View the cluster settings</a> or <a href="https://account.tectonic.com" target="_blank">log in to your Tectonic account</a></span>;
 
     let notification;
-    if (!this.state.expiration) {
+    if (this._errored()) {
+      notification = {
+        content: <span>You have an invalid license. {actions}</span>,
+        title: 'Invalid Cluster License'
+      };
+    }
+    else if (!this.state.expiration) {
       notification = null;
     } else if (this._expired()) {
       notification = {
@@ -86,6 +167,11 @@ class LicenseNotifier extends React.Component {
       notification = {
         content: <span>Your license will expire {timeRemaining}. {actions}</span>,
         title: 'Cluster License Expires Soon'
+      };
+    } else if (this._entitlementExceeded()) {
+      notification = {
+        content: <span>Please disconnect {pluralize(this.state.current[this.state.entitlementKind] - this.state.entitlementCount, entitlementTitles[this.state.entitlementKind].lowercase)} from your cluster, or contact <a href="mailto:sales@tectonic.com">sales@tectonic.com</a> to upgrade.</span>,
+        title: `Licensed ${entitlementTitles[this.state.entitlementKind].uppercase}s Exceeded`
       };
     }
 

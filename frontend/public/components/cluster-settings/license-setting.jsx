@@ -1,6 +1,8 @@
 import React from 'react';
 
 import {coFetchJSON} from '../../co-fetch';
+import {pluralize} from '../utils';
+import {entitlementTitles} from '../license-notifier';
 import {updateLicenseModal} from '../modals/update-license-modal';
 import {SettingsRow, SettingsLabel, SettingsContent} from './cluster-settings';
 import {SettingsModalLink} from './settings-modal-link';
@@ -12,7 +14,8 @@ export class LicenseSetting extends React.Component {
     this.state = {
       outdate: false,
       expiration: null,
-      tier: null
+      entitlementCount: null,
+      entitlementKind: null
     };
     this._openModal = this._openModal.bind(this);
   }
@@ -48,12 +51,18 @@ export class LicenseSetting extends React.Component {
     }
     this.setState({
       expiration: json.expiration,
-      tier: json.tier
+      entitlementCount: json.entitlementCount,
+      entitlementKind: json.entitlementKind
     });
   }
 
-  _tierName() {
-    return _.words(this.state.tier).map(function(word) { return _.capitalize(word); }).join(' ');
+  _licenseName() {
+    if (!this.state.entitlementKind) {
+      return 'Tectonic';
+    }
+
+    const kindTitle = entitlementTitles[this.state.entitlementKind].uppercase;
+    return pluralize(this.state.entitlementCount, kindTitle);
   }
 
   _updateOutdated(outdated) {
@@ -79,7 +88,7 @@ export class LicenseSetting extends React.Component {
     return <SettingsRow>
       <SettingsLabel>Tectonic License:</SettingsLabel>
       <SettingsContent>
-        <SettingsModalLink onClick={this._openModal} outdated={this.state.outdated}>{this._tierName()}</SettingsModalLink>
+        <SettingsModalLink onClick={this._openModal} outdated={this.state.outdated}>{this._licenseName()}</SettingsModalLink>
       </SettingsContent>
     </SettingsRow>;
   }
