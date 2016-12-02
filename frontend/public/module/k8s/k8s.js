@@ -127,6 +127,7 @@ angular.module('k8s')
   this.horizontalpodautoscalers = addDefaults({}, k8sEnum.Kind.HORIZONTALPODAUTOSCALER);
   this.serviceaccounts = addDefaults({}, k8sEnum.Kind.SERVICEACCOUNT);
   this.secrets = addDefaults({}, k8sEnum.Kind.SECRET);
+  this.ingresses = addDefaults({}, k8sEnum.Kind.INGRESS);
 
   this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);
   this.namespaces = addDefaults({}, k8sEnum.Kind.NAMESPACE);

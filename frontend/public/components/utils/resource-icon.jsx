@@ -41,6 +41,8 @@ function iconLabel(kind) {
       return 'CR';
     case 'clusterrolebinding':
       return 'CRB';
+    case 'ingress':
+      return 'I';
     default:
       return kind.toUpperCase().slice(0, 2);
   }

@@ -15,6 +15,7 @@ import {ReplicationControllersList} from './replication-controller';
 import {SecretsList} from './secret';
 import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
+import {IngressList} from './ingress';
 import {connect, Dropdown, kindObj, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 const ResourceListDropdown = ({selected, onChange}) => {
@@ -33,6 +34,7 @@ const ResourceListDropdown = ({selected, onChange}) => {
     ks.SECRET,
     ks.NAMESPACE,
     ks.NODE,
+    ks.INGRESS
   ], k => [k.id, <span><div className="co-type-selector__icon-wrapper"><ResourceIcon kind={k.id} /></div>{k.labelPlural}</span>]));
 
   return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
@@ -56,6 +58,7 @@ const ResourceList = connect(state => ({namespace: state.UI.get('activeNamespace
       {kind === 'secret'                  && <SecretsList {...newProps} />}
       {kind === 'namespace'               && <NamespacesList selector={selector} />}
       {kind === 'node'                    && <NodesListSearch selector={selector} />}
+      {kind === 'ingress'                 && <IngressList {...newProps} />}
     </div>
   </div>;
 });
