@@ -12,16 +12,34 @@ const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
 export const entitlementTitles = {
   nodes: {
     uppercase: 'Node',
-    lowercase: 'node'
+    lowercase: 'node',
+    inPairs: false
   },
   vCPUs: {
     uppercase: 'vCPU',
-    lowercase: 'vCPU'
+    lowercase: 'vCPU',
+    inPairs: true
   },
   sockets: {
     uppercase: 'Socket',
-    lowercase: 'socket'
+    lowercase: 'socket',
+    inPairs: true
   }
+};
+
+export const entitlementTitle = (entitlement, count) => {
+  const entitlementTitle = entitlementTitles[entitlement];
+  if (!entitlementTitle) {
+    return 'Tectonic';
+  }
+
+  let title = entitlementTitle.uppercase;
+  if (entitlementTitle.inPairs) {
+    title = `${title} Pair`;
+    count = Math.floor(count / 2);
+  }
+
+  return pluralize(count, title);
 };
 
 class LicenseNotifier extends React.Component {

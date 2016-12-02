@@ -1,3 +1,5 @@
+import {entitlementTitle} from '../../components/license-notifier';
+
 angular.module('bridge.page')
 .controller('ClusterStatusCtrl', function($scope, k8s, statusSvc) {
   'use strict';
@@ -43,7 +45,7 @@ angular.module('bridge.page')
   statusSvc.tectonicVersion()
   .then(function(resp) {
     $scope.tectonicVersion = resp.data.version;
-    $scope.tectonicTier = resp.data.tier;
+    $scope.tectonicLicense = entitlementTitle(resp.data.entitlementKind, resp.data.entitlementCount);
     $scope.tectonicVersionCheckSucceeded = true;
   })
   .catch(function() {
