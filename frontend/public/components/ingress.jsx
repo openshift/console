@@ -101,7 +101,7 @@ const RulesRows = (props) => {
     return <div className="co-m-table-grid__body"> {rows} </div>;
   }
 
-  return <EmptyBox label='Rule' />;
+  return <EmptyBox label="Rule" />;
 };
 
 const Details = (ingress) => <div className="col-md-12">
