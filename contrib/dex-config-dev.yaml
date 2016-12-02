@@ -7,6 +7,9 @@ storage:
 web:
   http: 127.0.0.1:5556
 
+frontend:
+  theme: 'tectonic'
+
 connectors:
 - type: mockCallback
   id: mock-callback
