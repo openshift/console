@@ -294,9 +294,9 @@ class EditRule_ extends PromiseComponent {
             </div>
             <div className="col-xs-10">
               <RadioButton name="verbControl" activeValue={verbControl} onChange={this.set}
-                value={VERBS_ENUM.RO} label="Read-only (Default)" text='Users can view, but not edit' />
+                value={VERBS_ENUM.RO} label="Read-only (Default)" text="Users can view, but not edit" />
               <RadioButton name="verbControl" activeValue={verbControl} onChange={this.set}
-                value={VERBS_ENUM.ALL} label="All" text='Full access to all actions, including deletion' />
+                value={VERBS_ENUM.ALL} label="All" text="Full access to all actions, including deletion" />
               <RadioButton name="verbControl" activeValue={verbControl} onChange={this.set}
                 value={VERBS_ENUM.CUSTOM} label="Custom (Advanced)" text="Granular selection of actions" />
             </div>

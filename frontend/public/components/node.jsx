@@ -33,7 +33,7 @@ const NodeCog = ({node}) => {
 
 const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}`} title={node.metadata.uid}>{node.metadata.name}</a>;
 
-const NodeStatus = ({node}) => angulars.k8sNodes.isReady(node) ? <span className='node-ready'><i className="fa fa-check"></i> Ready</span> : <span className='node-not-ready'><i className="fa fa-minus-circle"></i> Not Ready</span>;
+const NodeStatus = ({node}) => angulars.k8sNodes.isReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 
 const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__item">
   <div className="middler">
