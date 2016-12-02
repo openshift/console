@@ -19,7 +19,7 @@ Console consists of a frontend webapp and a backend service which serves the fol
 ### Deps:
 
 1. nodejs >= 6.0 & npm >= 3 (use of nvm is recommended)
-2. go >= 1.7
+2. go >= 1.7 & glide >= 0.12.0
 3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release)
 
 ### Build everything:
@@ -162,9 +162,14 @@ Dependencies should be pinned to an exact semver, sha, or git tag (eg, no ^).
 
 #### Backend
 
+Whenever making vendor changes:
+1. Finish updating dependencies & writing changes
+2. Commit everything *except* `vendor/` (eg, `server: add x feature`)
+3. Make a second commit with only `vendor/` (eg, `vendor: revendor`)
+
 Add new backend dependencies:
  1. Edit `glide.yaml`
- 2. `glide update -s -v -u`
+ 2. `glide update -v`
 
 Update existing backend dependencies:
  1. Edit the `glide.yaml` file to the desired verison (most likely a git hash)
