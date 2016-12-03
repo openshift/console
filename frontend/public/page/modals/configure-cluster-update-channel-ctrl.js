@@ -9,7 +9,7 @@ angular.module('bridge.page')
   $scope.save = () => {
     callbacks.invalidateState(true);
     const patch = [{ op: 'replace', path: '/channel', value: $scope.fields.channel }];
-    $scope.requestPromise = k8s.resource.patch(k8s.enum.Kind.TCO_CONFIG, config, patch);
+    $scope.requestPromise = k8s.resource.patch(k8s.enum.Kind.CHANNELOPERATORCONFIG, config, patch);
     $scope.requestPromise.then((result) => {
       $uibModalInstance.close(result);
     }).catch(() => {

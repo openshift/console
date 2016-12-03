@@ -15,7 +15,7 @@ angular.module('bridge.page')
     callbacks.invalidateState(true);
     const value = $scope.fields.strategy === 'automatic';
     const patch = [{ op: 'replace', path: '/automaticUpdate', value }];
-    $scope.requestPromise = k8s.resource.patch(k8s.enum.Kind.TCO_CONFIG, config, patch);
+    $scope.requestPromise = k8s.resource.patch(k8s.enum.Kind.CHANNELOPERATORCONFIG, config, patch);
     $scope.requestPromise.then((result) => {
       $uibModalInstance.close(result);
     }).catch(() => {
