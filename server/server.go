@@ -122,7 +122,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
-	handleFunc("/identity/ldap/validate", handleLDAPVerification)
+	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
