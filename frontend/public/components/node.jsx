@@ -31,7 +31,7 @@ const NodeCog = ({node}) => {
   return <Cog options={options} size="small" anchor="left" />;
 };
 
-const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}`} title={node.metadata.uid}>{node.metadata.name}</a>;
+const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}/details`} title={node.metadata.uid}>{node.metadata.name}</a>;
 
 const NodeStatus = ({node}) => angulars.k8sNodes.isReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 

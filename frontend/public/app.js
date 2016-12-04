@@ -213,11 +213,6 @@ angular.module('bridge', [
     template: '<react-component name="NodesPage"></react-component>',
     title: 'Nodes',
   });
-  r('/nodes/:name', {
-    controller: 'nodeCtrl',
-    templateUrl: '/static/page/nodes/node.html',
-    title: 'Node',
-  });
   r('/nodes/:name/details', {
     controller: 'nodeCtrl',
     templateUrl: '/static/page/nodes/node.html',
