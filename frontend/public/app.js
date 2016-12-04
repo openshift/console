@@ -210,8 +210,7 @@ angular.module('bridge', [
     title: 'Pod Logs',
   });
   r('/nodes', {
-    controller: 'NodesCtrl',
-    templateUrl: '/static/page/nodes/nodes.html',
+    template: '<react-component name="NodesPage"></react-component>',
     title: 'Nodes',
   });
   r('/nodes/:name', {
