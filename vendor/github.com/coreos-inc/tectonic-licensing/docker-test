@@ -1,0 +1,15 @@
+#!/bin/sh
+
+PACKAGE_LOCATION=/go/src/github.com/coreos-inc/tectonic-licensing
+docker run \
+    -e GO15VENDOREXPERIMENT=1 \
+    -v "$PWD":"$PACKAGE_LOCATION" \
+    -w "$PACKAGE_LOCATION" \
+    golang:1.7-alpine \
+        sh -c "
+        apk add --no-cache git curl tar && \
+        curl -fsSL https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0.12.3-linux-amd64.tar.gz | \
+        tar xz -C /usr/local/bin --strip-components 1 linux-amd64/glide && \
+        glide install --strip-vendor --skip-test && \
+        ./test
+        "
