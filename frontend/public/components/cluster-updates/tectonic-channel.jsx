@@ -27,13 +27,13 @@ export class TectonicChannel extends React.Component {
         kind: 'tectonicversion',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'tectonicVersion'
+        prop: 'tectonicVersions'
       },
       {
         kind: 'channeloperatorconfig',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'config'
+        prop: 'configs'
       },
       {
         kind: 'appversion',
@@ -70,15 +70,16 @@ class TectonicChannelWithData extends React.Component {
   componentWillReceiveProps(nextProps) {
     const newState = {};
 
-    ['config', 'tectonicVersion'].forEach((field) => {
-      if (nextProps[field].loaded) {
-        newState[field] = _.get(nextProps[field], 'data[0]');
-      }
-    });
+    if (nextProps.configs.loaded) {
+      newState.config = _.get(nextProps.configs, 'data[0]');
+    }
 
-    if (nextProps.appVersions.loaded) {
-      const tectonicVersion = newState.tectonicVersion || this.state.tectonicVersion || {};
-      const desiredVersions = tectonicVersion.desiredVersions || [];
+    if (nextProps.appVersions.loaded && nextProps.tectonicVersions.loaded) {
+      const tectonicAppVersion = _.find(nextProps.appVersions.data, ['metadata.name', clusterAppVersionName]);
+      const currentVersion = _.get(tectonicAppVersion, 'spec.desiredVersion', '');
+      newState.tectonicVersion = _.find(nextProps.tectonicVersions.data, ['version', currentVersion]) || this.state.tectonicVersion || {};
+
+      const desiredVersions = newState.tectonicVersion.desiredVersions || [];
       newState.components = nextProps.appVersions.data.reduce(this._createComponentFromData.bind(this, desiredVersions), {});
     }
 
