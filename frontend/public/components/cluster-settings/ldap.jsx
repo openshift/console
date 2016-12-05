@@ -1,4 +1,5 @@
 import React from 'react';
+import { saveAs } from 'file-saver';
 import { Provider, connect } from 'react-redux';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
@@ -68,6 +69,17 @@ const IdentityHeader = () => <div className="row co-m-table-grid__head">
 </div>;
 
 const JobsList = makeList('TectonicIdentity', 'POD', IdentityHeader, IdentityRows);
+
+const Warning = ({config}) => <p className="co-m-message co-an-fade-in-out co-m-message--error" >
+  <span style={{}}>Warning:</span> this is an experimental feature.
+  Incorrectly configuring LDAP may bring down your cluster.
+  Review the <a target="_blank" href="https://tectonic.com/enterprise/docs/latest/admin/user-management.html">recovery documentation</a> and&nbsp;
+    <a target="_blank" download="tectonic-identity.yaml" onClick={e => {
+      e.preventDefault();
+      const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
+      saveAs(blob, 'tectonic-identity.yaml');
+    }}>backup</a> the current configuration before you begin.
+</p>;
 
 class UpdateDex extends SafetyFirst {
   constructor(props) {
@@ -355,6 +367,7 @@ class LDAPs extends SafetyFirst {
       validationData: null,
       validationError: null,
       loadError: null,
+      tectonicIdentityConfig: null,
     };
   }
 
@@ -365,7 +378,7 @@ class LDAPs extends SafetyFirst {
     .then(d => {
       const configDotYaml = safeLoad(d.data['config.yaml']) || {};
       const connectorIndex = _.findIndex(configDotYaml.connectors, connector => connector.type === 'ldap' && connector.id === 'tectonic-ldap');
-      this.setState({configDotYaml, connectorIndex, loadError: null});
+      this.setState({configDotYaml, connectorIndex, loadError: null, tectonicIdentityConfig: safeDump(d)});
       if (connectorIndex === -1) {
         return;
       }
@@ -434,16 +447,18 @@ class LDAPs extends SafetyFirst {
   }
 
   render () {
-    const { pristine, submitting } = this.props;
     if (this.state.loadError) {
       return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
     }
 
-    if (!this.state.configDotYaml) {
+    if (!this.state.tectonicIdentityConfig) {
       return <div>Loading Configuration <LoadingInline /></div>;
     }
 
     return <form className="form-horizontal">
+
+      <Warning config={this.state.tectonicIdentityConfig} />
+
       { _.map(Fields.Globals, FieldRow) }
 
       <Security/>
@@ -471,11 +486,12 @@ class LDAPs extends SafetyFirst {
       { _.map(Fields.Groups, FieldRow) }
 
       <hr/>
-      <h1 className="co-section-title ldap-group">Test Configuration</h1>
+      <h1 className="co-section-title ldap-group">Update Configuration</h1>
 
       <p className="co-m-form-row">
         Supply your credentials to test the current configuration.
         The LDAP server must be reachable from the Tectonic Console for testing to work.
+        You may not update the configuration until you first verify it.
       </p>
 
       { _.map(Fields.TestData, FieldRow) }
@@ -483,22 +499,21 @@ class LDAPs extends SafetyFirst {
       { this.state.validationData &&
         <Row>
           {this.state.validationError
-            ? <p className="co-error">Error - {this.state.validationError}:</p>
-            : <p className="co-success">Success!</p>
+            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {this.state.validationError}:</p>
+            : <p className="co-m-message co-m-message--info co-an-fade-in-out">Success!</p>
           }
           <pre><code>{this.state.validationData}</code></pre>
         </Row>
       }
 
       <Row>
-        <button className="btn btn-primary" onClick={(e) => this.test(e)}>Test Configuration</button>
+        <Warning config={this.state.tectonicIdentityConfig} />
+        <p>
+          <button className="btn btn-default" onClick={(e) => this.test(e)}>Test Configuration</button>
+          <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={this.state.validationError || !this.state.validationData}>Update Configuration</button>
+        </p>
       </Row>
 
-      <hr/>
-
-      <div>
-        <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={pristine || submitting}>Update Tectonic Identity</button>
-      </div>
     </form>;
   }
 });

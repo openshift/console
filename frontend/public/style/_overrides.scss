@@ -307,3 +307,14 @@ tags-input .autocomplete .suggestion-item em {
   padding: 16px 0;
   margin-top: 0px;
 }
+
+.co-m-message {
+  a {
+    color: white;
+    text-decoration: underline;
+    &:hover, &:focus, &:active, &:focus:active {
+      color: white;
+      text-decoration: underline;
+    }
+  }
+}
