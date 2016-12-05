@@ -2,12 +2,17 @@ $cluster-updates-detail-col-padding: 5px;
 $cluster-updates-breakdown-col-padding: 10px;
 $cluster-updates-green: #2ec98e;
 $cluster-updates-border: #ccc;
+$cluster-updates-width: 800px;
+
+.co-cluster-updates-warning {
+  max-width: $cluster-updates-width;
+}
 
 .co-cluster-updates {
   border: 1px solid $cluster-updates-border;
   border-radius: 4px;
   margin-bottom: -20px; // todo: not the best fix
-  max-width: 800px;
+  max-width: $cluster-updates-width;
 }
 
 .co-cluster-updates__update-available-text {
