@@ -394,15 +394,15 @@ class LDAPs extends SafetyFirst {
       connector = newYaml.connectors[connectorIndex];
     } else {
       newYaml.connectors = newYaml.connectors || [];
-      connector = {};
-      newYaml.connectors.append(connector);
+      connector = {name: 'ldap', id: 'tectonic-ldap', type: 'ldap'};
+      newYaml.connectors.push(connector);
     }
+
+    _.merge(connector, reduxToConnector(formData));
 
     // a merge won't stomp on these keys :-/
     delete connector.config.insecureSkipVerify;
     delete connector.config.insecureNoSSL;
-
-    _.merge(connector, reduxToConnector(formData));
 
     const yaml = safeDump(newYaml, null, 4);
     const patch = [{ op: 'replace', path: '/data/config.yaml', value: yaml }];
@@ -414,7 +414,7 @@ class LDAPs extends SafetyFirst {
     e.preventDefault();
     const connector = getFormValues(LDAPFormName)(angulars.store.getState());
     const json = reduxToConnector(connector);
-    coFetchPostJSON('identity/ldap/validate', json)
+    coFetchPostJSON('tectonic/ldap/validate', json)
     .then(data => {
       const state = {};
       if (data.error) {
