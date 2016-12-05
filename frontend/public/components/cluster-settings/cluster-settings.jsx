@@ -54,6 +54,7 @@ class ClusterSettingsPage extends React.Component {
           <div>
             {/*TODO: nesting inside an extra <div> to get rid of the bottom border...*/}
             <div className="co-m-pane__body">
+              <p className="co-m-message co-m-message--error co-cluster-updates-warning">Warning: Experimental feature. Only use on clusters that can be easily replaced, or if you have current a backup of etcd.</p>
               <ClusterUpdates />
             </div>
           </div>
