@@ -55,7 +55,7 @@ const IdentityRows = ({obj: pod}) => {
   return <div className="row co-resource-list__item">
     <div className="col-xs-5">
       <ResourceIcon kind="pod" />
-      <a target="_blank" href={`${resourcePath('pod', namespace, name)}/details`} title={uid}>{name}</a>
+      <a target="_blank" href={`${resourcePath('pod', name, namespace)}/details`} title={uid}>{name}</a>
     </div>
     <div className="col-xs-3">{status}</div>
     <div className="col-xs-4">{<Timestamp timestamp={creationTimestamp} />}</div>
@@ -68,17 +68,17 @@ const IdentityHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Created</div>
 </div>;
 
-const JobsList = makeList('TectonicIdentity', 'POD', IdentityHeader, IdentityRows);
+const JobsList = makeList('TectonicIdentity', 'pod', IdentityHeader, IdentityRows);
 
 const Warning = ({config}) => <p className="co-m-message co-an-fade-in-out co-m-message--error" >
-  <span style={{}}>Warning:</span> this is an experimental feature.
+  Warning: this is an experimental feature.
   Incorrectly configuring LDAP may bring down your cluster.
   Review the <a target="_blank" href="https://tectonic.com/enterprise/docs/latest/admin/user-management.html">recovery documentation</a> and&nbsp;
     <a target="_blank" download="tectonic-identity.yaml" onClick={e => {
       e.preventDefault();
       const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
       saveAs(blob, 'tectonic-identity.yaml');
-    }}>backup</a> the current configuration before you begin.
+    }}>download a backup</a> of the current configuration before you begin.
 </p>;
 
 class UpdateDex extends SafetyFirst {
@@ -411,11 +411,13 @@ class LDAPs extends SafetyFirst {
       newYaml.connectors.push(connector);
     }
 
-    _.merge(connector, reduxToConnector(formData));
+    if (connector.config) {
+      // a merge won't stomp on these keys :-/
+      delete connector.config.insecureSkipVerify;
+      delete connector.config.insecureNoSSL;
+    }
 
-    // a merge won't stomp on these keys :-/
-    delete connector.config.insecureSkipVerify;
-    delete connector.config.insecureNoSSL;
+    _.merge(connector, reduxToConnector(formData));
 
     const yaml = safeDump(newYaml, null, 4);
     const patch = [{ op: 'replace', path: '/data/config.yaml', value: yaml }];
