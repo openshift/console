@@ -1,5 +1,0 @@
-rpc: ./bin/soy server --log-level=$SOY_SERVER_LOG_LEVEL
-web: ./bin/creme
-quay-worker: ./bin/soy worker postgres quay-account
-license-worker: ./bin/soy worker postgres license
-hookhandler: ./bin/soy hookhandler

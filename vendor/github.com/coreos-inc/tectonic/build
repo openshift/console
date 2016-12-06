@@ -1,7 +1,0 @@
-#!/bin/bash -e
-
-for proj in manager bootstrap wiz identity postgres;
-do
-    ./${proj}/build
-done
-

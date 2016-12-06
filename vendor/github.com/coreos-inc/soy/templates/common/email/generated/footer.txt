@@ -1,4 +1,0 @@
-
-Your Account: {{.rootURL}}
-Documentation: https://tectonic.com/docs
-Tectonic.com: https://tectonic.com

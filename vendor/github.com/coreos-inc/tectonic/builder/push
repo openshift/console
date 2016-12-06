@@ -1,7 +1,0 @@
-#!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT="$DIR/.."
-source $ROOT/builder-env
-set -ex
-
-docker push $BUILDER_IMAGE

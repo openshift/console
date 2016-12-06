@@ -1,3 +1,0 @@
-#!/bin/bash
-echo "Nothing to build (image only)"
-exit 0

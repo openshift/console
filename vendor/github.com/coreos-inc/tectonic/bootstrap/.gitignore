@@ -1,9 +1,0 @@
-assets/public/scripts/
-assets/tectonic-manager-deployment.yaml
-assets/tectonic-manager-service.yaml
-bin/
-binassets/
-cluster/
-dev/scripts/
-frontend/node_modules/
-tools/

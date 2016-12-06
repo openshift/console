@@ -1,7 +1,0 @@
-.workspace
-/dev/license
-/dev/dockercfg
-/dev/ssl/
-/dev/generated/
-/dev/configs/coreos-pull-secret.yml
-/dev/configs/tectonic-license.yml

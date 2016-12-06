@@ -1,4 +1,0 @@
-#!/bin/bash -e
-export BUILDER_IMAGE="quay.io/coreos/tectonic-builder:v1.1"
-export PROJECT_GOPATH="github.com/coreos-inc/tectonic"
-export DOCKER_RUN_ARGS=${DOCKER_RUN_ARGS:-}
