@@ -528,7 +528,7 @@ class LDAPs extends SafetyFirst {
         }
         <p>
           <button className="btn btn-default" onClick={(e) => this.test(e)}>Test Configuration</button>
-          <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={disabled || this.state.validationError || !this.state.validationData}>Update Configuration</button>
+          <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={disabled}>Update Configuration</button>
         </p>
       </Row>
 
