@@ -19,5 +19,4 @@ import './status-box/status-box';
 import './toggle-play/toggle-play';
 import './tristate/tristate';
 import './util/autofocus';
-import './timestamps/co-timestamp';
 import './util/debug';
