@@ -151,7 +151,7 @@ class SparklineWidget extends React.Component {
     const end = Date.now();
     const start = end - (timespan);
 
-    coFetch(`${basePath}/api/v1/query_range?query=${this.state.query}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`)
+    coFetch(`${basePath}/api/v1/query_range?query=${encodeURIComponent(this.state.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`)
       .then((response) => {
         this.updateInProgress = false;
         return response;
