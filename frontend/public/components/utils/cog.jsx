@@ -7,6 +7,9 @@ import ReactTooltip from 'react-tooltip';
 import classNames from 'classnames';
 
 export class Cog extends DropdownMixin {
+  componentDidMount () {
+    ReactTooltip.rebuild();
+  }
 
   render () {
     const onClick_ = (option, event) => {
@@ -35,9 +38,7 @@ export class Cog extends DropdownMixin {
           <ul className="co-m-cog__dropdown co-m-dropdown--dark dropdown-menu" style={style}>
             {lis}
           </ul>
-
         </div>
-        <ReactTooltip class="co-tooltip" place="bottom" effect="solid" />
       </div>
     );
   }
