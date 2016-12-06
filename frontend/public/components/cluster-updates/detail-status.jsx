@@ -25,10 +25,10 @@ export class DetailStatus extends React.Component {
 
     let k8skind, resource;
     if (kind === 'config') {
-      k8skind = angulars.k8s.enum.Kind.TCO_CONFIG;
+      k8skind = angulars.k8s.enum.Kind.CHANNELOPERATORCONFIG;
       resource = this.props.config;
     } else if (kind === 'version-update') {
-      k8skind = angulars.k8s.enum.Kind.TECTONICVERSIONUPDATE;
+      k8skind = angulars.k8s.enum.Kind.APPVERSION;
       resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-channel-operator-version-update' } };
     }
 

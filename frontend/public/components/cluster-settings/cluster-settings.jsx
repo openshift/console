@@ -33,10 +33,10 @@ class ClusterSettingsPage extends React.Component {
   _checkFeatures() {
     const flag = angulars.FEATURE_FLAGS.clusterUpdates;
     if (typeof flag !== 'undefined') {
+      clearInterval(this._featureCheckInterval);
       this.setState({
         clusterUpdatesEnabled: flag
       });
-      clearInterval(this._featureCheckInterval);
     }
 
     if (this._featureCheckCount >= featureCheckTimeout / featureCheckInterval) {

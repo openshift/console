@@ -55,10 +55,17 @@ angular.module('k8s')
       getk8sFlagPaths: function () {
         return {
           rbac: '/apis/rbac.authorization.k8s.io',
-          rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1',
-          clusterUpdates: '/apis/tectonic-channel-operator.tectonic.com',
+          rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1'
         };
       },
+      getCoreosBasePath: function() {
+        return `${basePath}/apis/coreos.com/v1`;
+      },
+      getCoreosFlagNames: function() {
+        return {
+          clusterUpdates: 'channeloperatorconfigs'
+        };
+      }
     };
   };
 })
@@ -137,9 +144,9 @@ angular.module('k8s')
   this.rolebindings = addDefaults({}, k8sEnum.Kind.ROLEBINDING);
   this.roles = addDefaults({}, k8sEnum.Kind.ROLE);
 
-  this.tectonicchanneloperatorclusterspecs = addDefaults({}, k8sEnum.Kind.TCO_CLUSTERSPEC);
-  this.tectonicchanneloperatorconfigs = addDefaults({}, k8sEnum.Kind.TCO_CONFIG);
-  this.tectonicversionupdates = addDefaults({}, k8sEnum.Kind.TECTONICVERSIONUPDATE);
+  this.tectonicversions = addDefaults({}, k8sEnum.Kind.TECTONICVERSION);
+  this.channeloperatorconfigs = addDefaults({}, k8sEnum.Kind.CHANNELOPERATORCONFIG);
+  this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
 
   this.health = function() {
     return $http({
@@ -164,6 +171,22 @@ angular.module('k8s')
       const paths = res.data.paths;
       _.each(k8sConfig.getk8sFlagPaths(), (path, flag) => {
         featuresSvc[flag] = paths.indexOf(path) >= 0;
+      });
+    })
+    .catch(e => {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      $timeout(this.featureDetection, 5000);
+    });
+
+    $http({
+      url: k8sConfig.getCoreosBasePath(),
+      method: 'GET',
+    })
+    .then(res => {
+      const resources = res.data.resources;
+      _.each(k8sConfig.getCoreosFlagNames(), (name, flag) => {
+        featuresSvc[flag] = _.find(resources, { 'name': name });
       });
     })
     .catch(e => {

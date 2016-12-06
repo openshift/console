@@ -6,10 +6,11 @@ import {MultiFirehose} from '../utils';
 import {ChannelOperator, componentStates} from './channel-operator';
 
 const componentNames = {
-  'etcd-cluster': 'etcd',
-  'kube-version-update': 'Kubernetes',
-  'tectonic-channel-operator-version-update': 'Tectonic'
+  'kubernetes': 'Kubernetes',
+  'tectonic-cluster': 'Tectonic'
 };
+
+const clusterAppVersionName = 'tectonic-cluster';
 
 // Consumes component data (TCO third party resources) and
 // prepares it for ChannelOperator to display.
@@ -23,22 +24,22 @@ export class TectonicChannel extends React.Component {
 
     this.firehoseResources = [
       {
-        k8sResource: angulars.k8s.tectonicchanneloperatorclusterspecs,
+        kind: 'tectonicversion',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'clusterSpec'
+        prop: 'tectonicVersions'
       },
       {
-        k8sResource: angulars.k8s.tectonicchanneloperatorconfigs,
+        kind: 'channeloperatorconfig',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'config'
+        prop: 'configs'
       },
       {
-        k8sResource: angulars.k8s.tectonicversionupdates,
+        kind: 'appversion',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'versionUpdates'
+        prop: 'appVersions'
       }
     ];
   }
@@ -60,7 +61,7 @@ class TectonicChannelWithData extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      clusterSpec: {},
+      tectonicVersion: {},
       config: null,
       components: {}
     };
@@ -69,16 +70,17 @@ class TectonicChannelWithData extends React.Component {
   componentWillReceiveProps(nextProps) {
     const newState = {};
 
-    ['config', 'clusterSpec'].forEach((field) => {
-      if (nextProps[field].loaded) {
-        newState[field] = _.get(nextProps[field], 'data[0]');
-      }
-    });
+    if (nextProps.configs.loaded) {
+      newState.config = _.get(nextProps.configs, 'data[0]');
+    }
 
-    if (nextProps.versionUpdates.loaded) {
-      const clusterSpec = newState.clusterSpec || this.state.clusterSpec || {};
-      const desiredVersions = clusterSpec.desiredVersions || [];
-      newState.components = nextProps.versionUpdates.data.reduce(this._createComponentFromData.bind(this, desiredVersions), {});
+    if (nextProps.appVersions.loaded && nextProps.tectonicVersions.loaded) {
+      const tectonicAppVersion = _.find(nextProps.appVersions.data, ['metadata.name', clusterAppVersionName]);
+      const currentVersion = _.get(tectonicAppVersion, 'spec.desiredVersion', '');
+      newState.tectonicVersion = _.find(nextProps.tectonicVersions.data, ['version', currentVersion]) || this.state.tectonicVersion || {};
+
+      const desiredVersions = newState.tectonicVersion.desiredVersions || [];
+      newState.components = nextProps.appVersions.data.reduce(this._createComponentFromData.bind(this, desiredVersions), {});
     }
 
     this.setState(newState);
@@ -91,7 +93,7 @@ class TectonicChannelWithData extends React.Component {
     const name = component.metadata.name;
 
     let desiredVersion;
-    if (name === 'tectonic-channel-operator-version-update') {
+    if (name === clusterAppVersionName) {
       desiredVersion = component.spec.desiredVersion;
     } else {
       desiredVersion = _.get(_.find(desiredVersions, ['name', name]), 'version');
@@ -147,6 +149,6 @@ class TectonicChannelWithData extends React.Component {
   }
 
   render() {
-    return <ChannelOperator type="Tectonic" primaryComponent="tectonic-channel-operator-version-update" components={this._generateComponents()} config={this.state.config} last={this.props.last} expanded={this.props.expanded} />;
+    return <ChannelOperator type="Tectonic" primaryComponent={clusterAppVersionName} components={this._generateComponents()} config={this.state.config} last={this.props.last} expanded={this.props.expanded} />;
   }
 }
