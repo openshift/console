@@ -12,7 +12,7 @@ const PodCog = ({pod, isDisabled}) => {
   return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" isDisabled={isDisabled} />;
 };
 
-const readiness = ({status}) => {
+export const readiness = ({status}) => {
   if (_.isEmpty(status.conditions)) {
     return null;
   }

@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import ngRedux from 'ng-redux';
 import { combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
@@ -48,6 +49,7 @@ angular.module('bridge', [
   const reducers = combineReducers({
     k8s: k8sReducers,
     UI: UIReducers,
+    form: formReducer,
   });
 
   $ngReduxProvider.createStoreWith(reducers, [thunk]);
@@ -264,6 +266,11 @@ angular.module('bridge', [
     templateUrl: '/static/page/settings/users.html',
     title: 'Manage Users',
   });
+  r('/settings/ldap', {
+    template: '<react-component name="LDAPPage"></react-component>',
+    title: 'LDAP',
+  });
+
   r('/settings/cluster', {
     template: '<react-component name="ClusterSettingsPage"></react-component>',
     title: 'Cluster',
