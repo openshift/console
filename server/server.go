@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/coreos/dex/connector"
@@ -26,7 +26,7 @@ import (
 	"github.com/coreos-inc/bridge/pkg/proxy"
 	"github.com/coreos-inc/bridge/verify"
 	"github.com/coreos-inc/bridge/version"
-	"github.com/coreos-inc/tectonic/manager/pkg/license"
+	"github.com/coreos-inc/tectonic-licensing/license"
 )
 
 const (
@@ -115,10 +115,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	}.ServeHTTP)
 
 	useVersionHandler := s.versionHandler
-	useValidateLicenseHandler := s.ValidateLicenseHandler
+	useValidateLicenseHandler := s.validateLicenseHandler
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
-		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.ValidateLicenseHandler))
+		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.validateLicenseHandler))
 	}
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
@@ -187,53 +187,68 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) readLicense() (tier string, expiration time.Time) {
-	tier = "unknown"
-	expiration = time.Now()
-	licenseFile, err := os.Open(s.TectonicLicenseFile)
+func (s *Server) readLicense() (expiration time.Time, graceExpiration time.Time, entitlementKind string, entitlementCount int64, licenseError error) {
+	licenseBytes, err := ioutil.ReadFile(s.TectonicLicenseFile)
 	if err != nil {
 		plog.Warning("Could not open license file.")
 		return
 	}
-	tier, expiration = verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, time.Now())
-	licenseFile.Close()
+
+	expiration, graceExpiration, entitlementKind, entitlementCount, licenseError = verify.Verify(license.ProductionSigningPublicKey, string(licenseBytes), time.Now())
 	return
 }
 
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
-	tier, expiration := s.readLicense()
+	expiration, graceExpiration, entitlementKind, entitlementCount, licenseError := s.readLicense()
+	licenseErrorString := ""
+	if licenseError != nil {
+		licenseErrorString = licenseError.Error()
+	}
+
 	sendResponse(w, http.StatusOK, struct {
-		Version        string    `json:"version"`
-		ConsoleVersion string    `json:"consoleVersion"`
-		Tier           string    `json:"tier"`
-		Expiration     time.Time `json:"expiration"`
+		Version          string    `json:"version"`
+		ConsoleVersion   string    `json:"consoleVersion"`
+		Expiration       time.Time `json:"expiration"`
+		GraceExpiration  time.Time `json:"graceExpiration"`
+		EntitlementKind  string    `json:"entitlementKind"`
+		EntitlementCount int64     `json:"entitlementCount"`
+		ErrorMessage     string    `json:"errorMessage"`
 	}{
-		Version:        s.TectonicVersion,
-		ConsoleVersion: version.Version,
-		Tier:           tier,
-		Expiration:     expiration,
+		Version:          s.TectonicVersion,
+		ConsoleVersion:   version.Version,
+		Expiration:       expiration,
+		GraceExpiration:  graceExpiration,
+		EntitlementKind:  entitlementKind,
+		EntitlementCount: entitlementCount,
+		ErrorMessage:     licenseErrorString,
 	})
 }
 
-func (s *Server) ValidateLicenseHandler(w http.ResponseWriter, r *http.Request) {
+// Validate that a license should be used, purely based on it being
+// a valid, unexpired license. Does not factor in entitlements.
+func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) {
 	badLicense := func(message string) {
 		err := errors.New(message)
 		sendResponse(w, http.StatusOK, apiError{err.Error()})
 	}
 
-	licenseStringInBase64 := r.FormValue("license")
-	licenseString, err := base64.StdEncoding.DecodeString(licenseStringInBase64)
+	licenseBytesInBase64 := r.FormValue("license")
+	licenseBytes, err := base64.StdEncoding.DecodeString(licenseBytesInBase64)
 	if err != nil {
 		badLicense("Invalid license encoding")
 		return
 	}
-	licenseFile := bytes.NewBufferString(string(licenseString))
+	licenseString := string(licenseBytes)
 
 	now := time.Now()
-	_, expiration := verify.Verify(strings.NewReader(license.PublicKeyPEM), licenseFile, now)
+	expiration, _, _, _, licenseError := verify.Verify(license.ProductionSigningPublicKey, licenseString, now)
+	if licenseError != nil {
+		badLicense(licenseError.Error())
+		return
+	}
 
 	if expiration.Before(now) || expiration == now {
-		badLicense("Invalid or expired license")
+		badLicense(fmt.Sprintf("License expired on %s", expiration.Format("January 1, 2006")))
 		return
 	}
 

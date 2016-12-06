@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from '../react-wrapper';
 import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
-import {LoadingInline, PromiseComponent} from '../utils';
+import {LoadingInline, PromiseComponent, kindObj} from '../utils';
 
 class ConfigureYamlFieldModal extends PromiseComponent {
   constructor(props) {
@@ -33,16 +33,20 @@ class ConfigureYamlFieldModal extends PromiseComponent {
     this._isMounted = false;
   }
 
+  _kindObj() {
+    return kindObj(this.props.k8sQuery.kind);
+  }
+
   _loadResource() {
     this.setState({ resourceLoading: true });
-    angulars.k8s.resource.get(this.props.k8sQuery.kind, this.props.k8sQuery.name, this.props.k8sQuery.namespace)
+    angulars.k8s.resource.get(this._kindObj(), this.props.k8sQuery.name, this.props.k8sQuery.namespace)
       .then((resource) => {
         if (!this._isMounted) {
           return;
         }
 
         let value = _.get(resource, this.props.path);
-        if (this.props.k8sQuery.kind === angulars.k8s.kinds.SECRET) {
+        if (this.props.k8sQuery.kind === 'secret') {
           value = window.atob(value);
         }
 
@@ -61,16 +65,20 @@ class ConfigureYamlFieldModal extends PromiseComponent {
   }
 
   _cancel() {
-    this.props.callbacks.invalidateState(false);
+    if (this.props.callbacks.invalidateState) {
+      this.props.callbacks.invalidateState(false);
+    }
     this.props.cancel();
   }
 
   _submit(event) {
     event.preventDefault();
-    this.props.callbacks.invalidateState(true);
+    if (this.props.callbacks.invalidateState) {
+      this.props.callbacks.invalidateState(true);
+    }
 
     let value = this.state.value;
-    if (this.props.k8sQuery.kind === angulars.k8s.kinds.SECRET) {
+    if (this.props.k8sQuery.kind === 'secret') {
       value = window.btoa(value);
     }
 
@@ -83,16 +91,18 @@ class ConfigureYamlFieldModal extends PromiseComponent {
           }
         };
         _.set(newResource, this.props.path, value);
-        this._setRequestPromise(angulars.k8s.resource.create(this.props.k8sQuery.kind, newResource));
+        this._setRequestPromise(angulars.k8s.resource.create(this._kindObj(), newResource));
       } else {
         const patchPath = `/${this.props.path.replace('.', '/')}`;
         const patch = [{ op: 'replace', path: patchPath, value: value }];
-        this._setRequestPromise(angulars.k8s.resource.patch(this.props.k8sQuery.kind, this.state.resource, patch));
+        this._setRequestPromise(angulars.k8s.resource.patch(this._kindObj(), this.state.resource, patch));
       }
       this.requestPromise.then((result) => {
         this.props.close(result);
       }).catch(() => {
-        this.props.callbacks.invalidateState(false);
+        if (this.props.callbacks.invalidateState) {
+          this.props.callbacks.invalidateState(false);
+        }
       });
     };
 

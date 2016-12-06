@@ -111,14 +111,13 @@ angular.module('bridge.page')
   };
 
   return {
-    open: function(name, resolve) {
-      var config = modalConfig[name];
+    open: function(name, resolve, additionalConfig = {}) {
       _.forEach(resolve, function(value, key) {
         resolve[key] = _.isFunction(value) ? value : function () {return value;};
       });
-      config.resolve = resolve;
+      const config = _.defaults({}, modalConfig[name], {resolve: resolve}, additionalConfig);
       analyticsSvc.route(config.templateUrl.replace('/static/page', ''));
-      var open = $uibModal.open(config);
+      const open = $uibModal.open(config);
       open.closed.then(function() {
         analyticsSvc.unsetRoute();
       });

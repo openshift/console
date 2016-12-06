@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {angulars} from '../react-wrapper';
-import {coFetch, coFetchJSON} from '../../co-fetch';
-import {configureYamlFieldModal} from '../modals/configure-yaml-field-modal';
+import {coFetchJSON} from '../../co-fetch';
+import {entitlementTitle} from '../license-notifier';
+import {updateLicenseModal} from '../modals/update-license-modal';
 import {SettingsRow, SettingsLabel, SettingsContent} from './cluster-settings';
 import {SettingsModalLink} from './settings-modal-link';
 
@@ -13,7 +13,8 @@ export class LicenseSetting extends React.Component {
     this.state = {
       outdate: false,
       expiration: null,
-      tier: null
+      entitlementCount: null,
+      entitlementKind: null
     };
     this._openModal = this._openModal.bind(this);
   }
@@ -49,12 +50,9 @@ export class LicenseSetting extends React.Component {
     }
     this.setState({
       expiration: json.expiration,
-      tier: json.tier
+      entitlementCount: json.entitlementCount,
+      entitlementKind: json.entitlementKind
     });
-  }
-
-  _tierName() {
-    return _.words(this.state.tier).map(function(word) { return _.capitalize(word); }).join(' ');
   }
 
   _updateOutdated(outdated) {
@@ -67,38 +65,9 @@ export class LicenseSetting extends React.Component {
   }
 
   _openModal() {
-    const modal = configureYamlFieldModal({
-      k8sQuery: {
-        kind: angulars.kinds.SECRET,
-        name: 'tectonic-license',
-        namespace: 'tectonic-system'
-      },
-      path: 'data.license',
-      inputType: 'textarea',
-      modalText: 'Enter a new value for the Tectonic License. Changes may take a few minutes to take effect.',
-      modalTitle: 'Update Tectonic License',
+    const modal = updateLicenseModal({
       callbacks: {
-        invalidateState: this._updateOutdated.bind(this),
-        inputValidator: (value) => {
-          const data = new FormData();
-          data.append('license', value);
-          return coFetch('license/validate', {
-            method: 'POST',
-            body: data
-          }).then((response) => {
-            return response.json().then((json) => {
-              if (json.error) {
-                const error = {
-                  data: {
-                    message: json.error
-                  }
-                };
-                throw error;
-              }
-              return value;
-            });
-          });
-        }
+        invalidateState: this._updateOutdated.bind(this)
       }
     });
 
@@ -109,7 +78,7 @@ export class LicenseSetting extends React.Component {
     return <SettingsRow>
       <SettingsLabel>Tectonic License:</SettingsLabel>
       <SettingsContent>
-        <SettingsModalLink onClick={this._openModal} outdated={this.state.outdated}>{this._tierName()}</SettingsModalLink>
+        <SettingsModalLink onClick={this._openModal} outdated={this.state.outdated}>{entitlementTitle(this.state.entitlementKind, this.state.entitlementCount)}</SettingsModalLink>
       </SettingsContent>
     </SettingsRow>;
   }

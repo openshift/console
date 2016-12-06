@@ -34,7 +34,9 @@ angular.module('bridge.service')
         url: 'version',
         method: 'GET',
       }).then(function(resp) {
-        analyticsSvc.push({tier: resp.data.tier});
+        // TODO (stuart): update what we do here
+        // analyticsSvc.push({tier: resp.data.tier});
+        analyticsSvc.push({tier: 'tectonic'});
         return resp;
       });
     },

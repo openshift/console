@@ -3,7 +3,7 @@ import React from 'react';
 import {ButtonBar, ErrorMessage} from '../utils';
 import {angulars, register} from '../react-wrapper';
 
-export const createModalLauncher = (Component, registeredName) => {
+export const createModalLauncher = (Component, registeredName, config = {}) => {
   if (!registeredName) {
     const prefix = Component.name || Component.displayName || 'Modal';
     registeredName =  _.uniqueId(`${prefix}-`);
@@ -12,7 +12,7 @@ export const createModalLauncher = (Component, registeredName) => {
 
   return (props) => {
     props = props || {};
-    return angulars.modal('reactive-modal', {props, name: registeredName})();
+    return angulars.modal('reactive-modal', {props, name: registeredName}, config)();
   };
 };
 

@@ -28,6 +28,12 @@ body {
 #content {
   flex: 1 1 auto;
   background: white;
+  flex-direction: column;
+  display: flex;
+}
+
+#co-l-view-container {
+  flex: 1;
 }
 
 #namespace-bar {
