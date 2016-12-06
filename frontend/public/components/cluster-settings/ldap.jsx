@@ -393,36 +393,41 @@ class LDAPs extends SafetyFirst {
 
   submit (e) {
     e.preventDefault();
-    const formData = getFormValues(LDAPFormName)(angulars.store.getState());
+    this.test(e).then(e => {
+      if (e.error) {
+        return;
+      }
+      const formData = getFormValues(LDAPFormName)(angulars.store.getState());
 
-    // only used for LDAP Testing
-    delete formData[Username];
-    delete formData[Password];
+      // only used for LDAP Testing
+      delete formData[Username];
+      delete formData[Password];
 
-    const { configDotYaml, connectorIndex } = this.state;
-    const newYaml = _.cloneDeep(configDotYaml);
+      const { configDotYaml, connectorIndex } = this.state;
+      const newYaml = _.cloneDeep(configDotYaml);
 
-    let connector;
-    if (connectorIndex >= 0) {
-      connector = newYaml.connectors[connectorIndex];
-    } else {
-      newYaml.connectors = newYaml.connectors || [];
-      connector = {name: 'ldap', id: 'tectonic-ldap', type: 'ldap'};
-      newYaml.connectors.push(connector);
-    }
+      let connector;
+      if (connectorIndex >= 0) {
+        connector = newYaml.connectors[connectorIndex];
+      } else {
+        newYaml.connectors = newYaml.connectors || [];
+        connector = {name: 'ldap', id: 'tectonic-ldap', type: 'ldap'};
+        newYaml.connectors.push(connector);
+      }
 
-    if (connector.config) {
-      // a merge won't stomp on these keys :-/
-      delete connector.config.insecureSkipVerify;
-      delete connector.config.insecureNoSSL;
-    }
+      if (connector.config) {
+        // a merge won't stomp on these keys :-/
+        delete connector.config.insecureSkipVerify;
+        delete connector.config.insecureNoSSL;
+      }
 
-    _.merge(connector, reduxToConnector(formData));
+      _.merge(connector, reduxToConnector(formData));
 
-    const yaml = safeDump(newYaml, null, 4);
-    const patch = [{ op: 'replace', path: '/data/config.yaml', value: yaml }];
+      const yaml = safeDump(newYaml, null, 4);
+      const patch = [{ op: 'replace', path: '/data/config.yaml', value: yaml }];
 
-    statusModal({patch});
+      statusModal({patch});
+    });
   }
 
   test (e) {
@@ -444,8 +449,12 @@ class LDAPs extends SafetyFirst {
         state.validationError = null;
       }
       this.setState(state);
+      return {error: state.validationError};
     })
-    .catch(error => this.setState({validationError: error, validationData: ''}));
+    .catch(error => {
+      this.setState({validationError: error, validationData: ''});
+      return {error};
+    });
   }
 
   render () {
