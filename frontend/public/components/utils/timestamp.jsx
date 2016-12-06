@@ -27,6 +27,15 @@ export class Timestamp extends React.Component {
     return nextProps.timestamp !== this.props.timestamp || nextState.timestamp !== this.state.timestamp;
   }
 
+  componentDidMount () {
+    this._isMounted = true;
+    this.startInterval();
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.interval);
+  }
+
   startInterval () {
     clearInterval(this.interval);
     this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
@@ -66,15 +75,6 @@ export class Timestamp extends React.Component {
       return;
     }
     this.upsertState(this.mdate.fromNow());
-  }
-
-  componentDidMount () {
-    this._isMounted = true;
-    this.startInterval();
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval);
   }
 
   render () {
