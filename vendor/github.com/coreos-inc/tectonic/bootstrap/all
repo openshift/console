@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -euo pipefail
-
-./clean
-./build
-./test

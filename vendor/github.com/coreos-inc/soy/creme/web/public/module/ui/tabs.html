@@ -1,7 +1,0 @@
-<div class="tec-tabs">
-  <div ng-repeat="tab in tabs" class="tec-tab"
-      ng-class="{'tec-tab--active': tab.selected}" ng-click="selectTab(tab)">
-    <div class="tec-tab__title" ng-bind="tab.title"></div>
-  </div>
-  <div class="tec-tab__content" ng-class="{'tec-tab__content--first': tabs[0].selected}" ng-transclude></div>
-</div>

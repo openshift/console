@@ -1,6 +1,0 @@
-<ul class="wiz-launch-progress">
-  <li class="wiz-launch-progress__step {{ getStepColorCssClass(step) }}" *ngFor="let step of steps">
-    <i class="fa {{ getStepIconCssClass(step) }}"></i>&nbsp;&nbsp;{{ step.title }}
-    <div class="cos-error-box" *ngIf="step.error">Oops! Something went wrong. Please contact support.</div>
-  </li>
-</ul>

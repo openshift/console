@@ -1,9 +1,0 @@
-#!/bin/bash
-echo "Image only build. Do not run inside Docker!"
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT="$DIR/.."
-source $ROOT/builder-env
-set -ex
-
-docker build -t $BUILDER_IMAGE $DIR

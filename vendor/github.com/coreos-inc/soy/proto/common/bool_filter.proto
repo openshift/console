@@ -1,8 +1,0 @@
-syntax = "proto3";
-package common;
-
-enum BoolFilter {
-  ALL = 0;
-  TRUE = 1;
-  FALSE = 2;
-}

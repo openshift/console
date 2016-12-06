@@ -1,9 +1,0 @@
-{{ template "header.txt" }}
-You've been invited to use the {{ .issuer_name }} Tectonic cluster.
-
-Verify your email account and set a password using the button above. Then you'll be able to start using your Tectonic cluster.
-
-{{ .link }}
-
-If you have any questions, respond to this email or contact {{ .from }}.
-{{ template "footer.txt" . }}

@@ -1,3 +1,0 @@
-FROM postgres:9.4
-
-ADD scripts/test/create-extension.sql /docker-entrypoint-initdb.d/create-extension.sql
