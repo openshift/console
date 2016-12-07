@@ -72,7 +72,7 @@ const JobsList = makeList('TectonicIdentity', 'pod', IdentityHeader, IdentityRow
 
 const Warning = ({config}) => <p className="co-m-message co-an-fade-in-out co-m-message--error" >
   Warning: this is an experimental feature.
-  Incorrectly configuring LDAP may bring down your cluster.
+  Incorrectly configuring LDAP may irrevocably bring down your cluster.
   Review the <a target="_blank" href="https://tectonic.com/enterprise/docs/latest/admin/user-management.html">recovery documentation</a> and&nbsp;
     <a target="_blank" download="tectonic-identity.yaml" onClick={e => {
       e.preventDefault();
@@ -432,6 +432,7 @@ class LDAPs extends SafetyFirst {
 
   test (e) {
     e.preventDefault();
+    this.setState({validationData: null, validationError: null});
     const version = this.props.error;
     const connector = getFormValues(LDAPFormName)(angulars.store.getState());
     const json = reduxToConnector(connector);
@@ -512,20 +513,23 @@ class LDAPs extends SafetyFirst {
       { this.state.validationData &&
         <Row>
           {this.state.validationError
-            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {this.state.validationError}:</p>
-            : <p className="co-m-message co-m-message--info co-an-fade-in-out">Success!</p>
+            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {this.state.validationError}:
+                <br/>
+                <span>{this.state.validationData}</span>
+              </p>
+            : <div>
+              <p className="co-m-message co-m-message--info co-an-fade-in-out">Success! Proceed with caution.</p>
+              <pre><code>{this.state.validationData}</code></pre>
+            </div>
           }
-          <pre><code>{this.state.validationData}</code></pre>
+
         </Row>
       }
 
       <Row>
-        {
-          <p className="co-m-message co-an-fade-in-out co-m-message--error">
-            {disabled && 'You must successfully verify the current configuration before you may proceed.'}
-            {!disabled && 'This feature is experimental. Proceed with caution.'}
-         </p>
-        }
+        {disabled && <p className="co-m-message co-an-fade-in-out co-m-message--error">
+          You must successfully verify the current configuration before you may proceed.
+        </p>}
         <p>
           <button className="btn btn-default" onClick={(e) => this.test(e)}>Test Configuration</button>
           <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={disabled}>Update Configuration</button>
