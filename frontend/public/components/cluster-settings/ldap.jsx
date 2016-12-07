@@ -72,7 +72,7 @@ const JobsList = makeList('TectonicIdentity', 'pod', IdentityHeader, IdentityRow
 
 const Warning = ({config}) => <p className="co-m-message co-an-fade-in-out co-m-message--error" >
   Warning: this is an experimental feature.
-  Incorrectly configuring LDAP may bring down your cluster.
+  Incorrectly configuring LDAP may irrevocably bring down your cluster.
   Review the <a target="_blank" href="https://tectonic.com/enterprise/docs/latest/admin/user-management.html">recovery documentation</a> and&nbsp;
     <a target="_blank" download="tectonic-identity.yaml" onClick={e => {
       e.preventDefault();
@@ -358,6 +358,10 @@ const Security = connect(state => ({sslValue: selector(state, SSLType)})
 const LDAPs = reduxForm({
   initialValues, onSubmit: ()=>{},
   form: LDAPFormName,
+  validate: (values, props) => {
+    // Declare a general field error using a nonce *any time any field changes*
+    return {_error: props.error ? props.error + 1 : 1};
+  },
 })(
 class LDAPs extends SafetyFirst {
   constructor(props) {
@@ -393,45 +397,43 @@ class LDAPs extends SafetyFirst {
 
   submit (e) {
     e.preventDefault();
-    this.test(e).then(e => {
-      if (e.error) {
-        return;
-      }
-      const formData = getFormValues(LDAPFormName)(angulars.store.getState());
 
-      // only used for LDAP Testing
-      delete formData[Username];
-      delete formData[Password];
+    const formData = getFormValues(LDAPFormName)(angulars.store.getState());
 
-      const { configDotYaml, connectorIndex } = this.state;
-      const newYaml = _.cloneDeep(configDotYaml);
+    // only used for LDAP Testing
+    delete formData[Username];
+    delete formData[Password];
 
-      let connector;
-      if (connectorIndex >= 0) {
-        connector = newYaml.connectors[connectorIndex];
-      } else {
-        newYaml.connectors = newYaml.connectors || [];
-        connector = {name: 'ldap', id: 'tectonic-ldap', type: 'ldap'};
-        newYaml.connectors.push(connector);
-      }
+    const { configDotYaml, connectorIndex } = this.state;
+    const newYaml = _.cloneDeep(configDotYaml);
 
-      if (connector.config) {
-        // a merge won't stomp on these keys :-/
-        delete connector.config.insecureSkipVerify;
-        delete connector.config.insecureNoSSL;
-      }
+    let connector;
+    if (connectorIndex >= 0) {
+      connector = newYaml.connectors[connectorIndex];
+    } else {
+      newYaml.connectors = newYaml.connectors || [];
+      connector = {name: 'ldap', id: 'tectonic-ldap', type: 'ldap'};
+      newYaml.connectors.push(connector);
+    }
 
-      _.merge(connector, reduxToConnector(formData));
+    if (connector.config) {
+      // a merge won't stomp on these keys :-/
+      delete connector.config.insecureSkipVerify;
+      delete connector.config.insecureNoSSL;
+    }
 
-      const yaml = safeDump(newYaml, null, 4);
-      const patch = [{ op: 'replace', path: '/data/config.yaml', value: yaml }];
+    _.merge(connector, reduxToConnector(formData));
 
-      statusModal({patch});
-    });
+    const yaml = safeDump(newYaml, null, 4);
+    const patch = [{ op: 'replace', path: '/data/config.yaml', value: yaml }];
+
+    statusModal({patch});
   }
 
   test (e) {
     e.preventDefault();
+    this.setState({validationData: null, validationError: null});
+    const version = this.props.error;
     const connector = getFormValues(LDAPFormName)(angulars.store.getState());
     const json = reduxToConnector(connector);
     coFetchPostJSON('tectonic/ldap/validate', json)
@@ -443,17 +445,16 @@ class LDAPs extends SafetyFirst {
       } else {
         try {
           state.validationData = JSON.stringify(data, null, 4);
+          state.validatedVersion = version;
         } catch (ignored) {
           state.validationData = data;
         }
         state.validationError = null;
       }
       this.setState(state);
-      return {error: state.validationError};
     })
     .catch(error => {
-      this.setState({validationError: error, validationData: ''});
-      return {error};
+      this.setState({validationError: 'Error', validationData: error.message || error.toString()});
     });
   }
 
@@ -462,10 +463,12 @@ class LDAPs extends SafetyFirst {
       return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
     }
 
+    // General field errors are under the props.error - see validation above
+    const disabled = !this.state.validatedVersion || this.state.validatedVersion !== this.props.error;
+
     if (!this.state.tectonicIdentityConfig) {
       return <div>Loading Configuration <LoadingInline /></div>;
     }
-
     return <form className="form-horizontal">
 
       <Warning config={this.state.tectonicIdentityConfig} />
@@ -510,18 +513,26 @@ class LDAPs extends SafetyFirst {
       { this.state.validationData &&
         <Row>
           {this.state.validationError
-            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {this.state.validationError}:</p>
-            : <p className="co-m-message co-m-message--info co-an-fade-in-out">Success!</p>
+            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {this.state.validationError}:
+                <br/>
+                <span>{this.state.validationData}</span>
+              </p>
+            : <div>
+              <p className="co-m-message co-m-message--info co-an-fade-in-out">Success! Proceed with caution.</p>
+              <pre><code>{this.state.validationData}</code></pre>
+            </div>
           }
-          <pre><code>{this.state.validationData}</code></pre>
+
         </Row>
       }
 
       <Row>
-        <Warning config={this.state.tectonicIdentityConfig} />
+        {disabled && <p className="co-m-message co-an-fade-in-out co-m-message--error">
+          You must successfully verify the current configuration before you may proceed.
+        </p>}
         <p>
           <button className="btn btn-default" onClick={(e) => this.test(e)}>Test Configuration</button>
-          <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={this.state.validationError || !this.state.validationData}>Update Configuration</button>
+          <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={disabled}>Update Configuration</button>
         </p>
       </Row>
 
