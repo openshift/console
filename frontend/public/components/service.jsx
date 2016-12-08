@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, navFactory, LabelList, ResourceHeading, ResourceIcon, Selector, Timestamp} from './utils';
+import {Cog, navFactory, LabelList, ResourceHeading, ResourceIcon, ResourceLink, Selector, Timestamp} from './utils';
 
 const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
@@ -37,8 +37,7 @@ const ServiceHeader = () => <div className="row co-m-table-grid__head">
 const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
     <ServiceCog s={s} />
-    <ResourceIcon kind="service" />
-    <a href={`ns/${s.metadata.namespace}/services/${s.metadata.name}/details`}>{s.metadata.name}</a>
+    <ResourceLink kind="service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
     <LabelList kind="service" labels={s.metadata.labels} />

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Selector, Timestamp, navFactory} from './utils';
+import {Cog, LabelList, ResourceLink, Selector, Timestamp, navFactory} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">Name</div>
@@ -42,10 +42,7 @@ const JobRow = ({obj: job}) => {
     <div className="row co-resource-list__item">
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
         <JobCog job={job} />
-        <ResourceIcon kind="job" />
-        <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/details`} title={job.metadata.uid}>
-          {job.metadata.name}
-        </a>
+        <ResourceLink kind="job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
       </div>
       <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
         <LabelList kind="job" labels={job.metadata.labels} />

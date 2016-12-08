@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon, units} from './utils';
+import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 
 const PodCog = ({pod, isDisabled}) => {
@@ -64,8 +64,7 @@ const PodRow = ({obj: pod}) => {
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
       <PodCog pod={pod} key={'cog'} isDisabled={phase === 'Terminating'} />
-      <ResourceIcon kind="pod" />
-      <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/details`} title={pod.metadata.uid}>{pod.metadata.name}</a>
+      <ResourceLink kind="pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       <LabelList kind="pod" labels={pod.metadata.labels} />
@@ -99,7 +98,10 @@ const filters = [{
   ],
 }];
 
-const ContainerLink = ({pod, name}) => <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</a>;
+const ContainerLink = ({pod, name}) => <span className="co-resource-link">
+  <ResourceIcon kind="container" />
+  <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</a>
+</span>;
 
 const NodeLink = ({name}) => name ? <a href={`nodes/${name}`}>{name}</a> : <span>-</span>;
 
@@ -110,7 +112,6 @@ const ContainerRow = ({pod, container}) => {
   return <div className="row">
     <div className="middler">
       <div className="col-sm-2 col-xs-4">
-        <ResourceIcon kind="container" />
         <ContainerLink pod={pod} name={container.name} />
       </div>
       <Overflow className="col-sm-3 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
@@ -137,7 +138,6 @@ const Volume = ({pod, volume}) => {
       <div className="col-sm-3 hidden-xs">{mountPermissions}</div>
       <div className="col-sm-3 col-xs-4">
         {volume.mounts.map((m, i) => <div key={i}>
-          <ResourceIcon kind="container" />
           <ContainerLink pod={pod} name={m.container} />
           {i < volume.mounts.length - 1 && ', '}
         </div>)}
