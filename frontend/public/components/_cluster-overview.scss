@@ -1,10 +1,10 @@
-.cluster-status-cell {
+.cluster-overview-cell {
   padding: 24px;
   font-size: 13px;
   margin-bottom: 15px;
 }
 
-.cluster-status-cell__title {
+.cluster-overview-cell__title {
   font-size: 16px;
   font-weight: 600;
   margin-top: 0;
@@ -12,43 +12,37 @@
   line-height: 25px;
 }
 
-.cluster-status-cell__info-row {
+.cluster-overview-cell__info-row {
   border-bottom: solid 1px $color-grey-border;
   margin: 0;
   padding: 10px 0;
   line-height: 20px;
 }
 
-.cluster-status-cell__info-row--first {
+.cluster-overview-cell__info-row--first {
   border-top: solid 1px $color-grey-border;
 }
 
-.cluster-status-cell__info-row__first-cell {
+.cluster-overview-cell__info-row__first-cell {
   margin-left: -5px;
 }
 
-.cluster-status-cell__info-row__last-cell {
+.cluster-overview-cell__info-row__last-cell {
   margin-right: -5px;
-}
-
-.software-version {
-  text-align: right;
-}
-
-.software-release-notes {
   text-align: right;
 }
 
 @media(min-width: 992px) {
-  .cluster-status-cell {
+  .cluster-overview-cell {
     display: table-cell;
     width: 50%;
     margin-top: 0px;
   }
 
-  .cluster-status-row {
+  .cluster-overview-row {
     display: table;
     border-spacing: 15px 0px;
     width: 100%;
   }
 }
+

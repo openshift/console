@@ -90,8 +90,7 @@ angular.module('bridge', [
   }
 
   r('/', {
-    controller: 'ClusterStatusCtrl',
-    templateUrl: '/static/page/cluster/status.html',
+    template: '<react-component name="ClusterOverviewContainer"></react-component>',
     title: 'Cluster Status',
   });
 
