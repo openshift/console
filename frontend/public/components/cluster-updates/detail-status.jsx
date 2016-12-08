@@ -27,9 +27,9 @@ export class DetailStatus extends React.Component {
     if (kind === 'config') {
       k8skind = angulars.k8s.enum.Kind.CHANNELOPERATORCONFIG;
       resource = this.props.config;
-    } else if (kind === 'version-update') {
+    } else if (kind === 'app-version') {
       k8skind = angulars.k8s.enum.Kind.APPVERSION;
-      resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-channel-operator-version-update' } };
+      resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-cluster' } };
     }
 
     const patch = [{ op: 'replace', path: `/${field}`, value: value }];
@@ -48,14 +48,14 @@ export class DetailStatus extends React.Component {
       }
 
       if (this.props.state === states.PAUSED || this.props.state === states.PAUSING) {
-        return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'version-update', 'status/paused', false)}>Resume Updates</button>;
+        return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'app-version', 'spec/paused', false)}>Resume Updates</button>;
       } else if (this.props.state === states.UPDATE_AVAILABLE) {
         return <button className="co-cluster-updates__action-button co-cluster-updates__action-button--update btn btn-primary" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', true)}>Start Upgrade</button>;
       } else if (this.props.state === states.REQUESTED) {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', false)}>Request to Cancel</button>;
       } else if (this.props.state === states.UPDATING) {
         // Updating + already paused is covered above, so we can assume updating + not paused
-        return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'version-update', 'status/paused', true)}>Pause Updates</button>;
+        return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'app-version', 'spec/paused', true)}>Pause Updates</button>;
       } else if (this.props.state === states.UP_TO_DATE) {
         if (this.props.config.triggerUpdateCheck) {
           return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;

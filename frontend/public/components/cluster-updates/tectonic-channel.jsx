@@ -103,7 +103,8 @@ class TectonicChannelWithData extends React.Component {
       currentVersion: component.status.currentVersion,
       desiredVersion,
       targetVersion: component.status.targetVersion,
-      paused: component.status.paused
+      pausedSpec: component.spec.paused,
+      pausedStatus: component.status.paused
     };
 
     return components;
@@ -128,7 +129,7 @@ class TectonicChannelWithData extends React.Component {
           text = `${name} ${component.currentVersion}`;
         }
 
-        if (component.paused) {
+        if (component.pausedStatus) {
           state = componentStates.PAUSED;
           text = <span>{text}<br /><span className="text-muted">Updates paused</span></span>;
         }
@@ -137,7 +138,8 @@ class TectonicChannelWithData extends React.Component {
           currentVersion: component.currentVersion,
           desiredVersion: component.desiredVersion,
           targetVersion: component.targetVersion,
-          paused: component.paused,
+          pausedSpec: component.pausedSpec,
+          pausedStatus: component.pausedStatus,
           state,
           text,
           logsUrl
