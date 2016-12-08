@@ -115,8 +115,10 @@ export class ChannelOperator extends React.Component {
         channelState = states.UPDATE_AVAILABLE;
       }
 
-      if (newState.primaryComponent.paused) {
-        channelState = !channelState ? states.PAUSED : states.PAUSING;
+      if (newState.primaryComponent.pausedStatus && newState.primaryComponent.pausedSpec) {
+        channelState = states.PAUSED;
+      } else if (newState.primaryComponent.pausedSpec) {
+        channelState = states.PAUSING;
       } else if (props.config && props.config.triggerUpdate && channelState === states.UPDATE_AVAILABLE) {
         channelState = states.REQUESTED;
       }
