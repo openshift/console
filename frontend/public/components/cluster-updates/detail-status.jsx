@@ -34,10 +34,11 @@ export class DetailStatus extends React.Component {
 
     const patch = [{ op: 'replace', path: `/${field}`, value: value }];
     angulars.k8s.resource.patch(k8skind, resource, patch)
-      .catch(() => {
+      .catch((error) => {
         this.setState({
           outdated: false
         });
+        throw error;
       });
   }
 
