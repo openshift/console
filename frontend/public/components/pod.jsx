@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, LabelList, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon, units} from './utils';
+import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceIcon, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 
 const PodCog = ({pod, isDisabled}) => {
@@ -252,18 +252,19 @@ const Details = (pod) => {
   </div>;
 };
 
-// TODO: Logs page and Events page are still routed to Angular code for now
-const Logs = null;
-const Events = null;
-
-const pages = [
-  {href: 'details', name: 'Overview', component: Details},
-  {href: 'logs', name: 'Logs', component: Logs},
-  {href: 'events', name: 'Events', component: Events},
-];
+const {details, events, logs} = navFactory;
+const pages = [details(Details), logs(), events()];
 const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages);
 
 const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
 const PodsPage = makeListPage('PodsPage', 'pod', PodList, [], filters);
+
+navFactory.pods = () => ({
+  href: 'pods',
+  name: 'Pods',
+  component: ({metadata: {namespace}, spec: {selector}, selectorRequired = true}) => <div>
+    <PodsPage className="" canCreate={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired} />
+  </div>
+});
 
 export {PodList, PodsPage, PodsDetailsPage};

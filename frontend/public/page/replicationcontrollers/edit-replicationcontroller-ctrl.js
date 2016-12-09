@@ -7,6 +7,14 @@ angular.module('bridge.page')
   $scope.loadError = false;
   $scope.loaded = false;
   $scope.rc = {};
+  $scope.navProps = {
+    pages: [
+      {name: 'Overview', href: 'details'},
+      {name: 'Edit', href: 'edit'},
+      {name: 'Pods', href: 'pods'},
+      {name: 'Events', href: 'events'},
+    ]
+  };
 
   k8s.replicationcontrollers.get($routeParams.name, $scope.ns)
     .then(function(rc) {

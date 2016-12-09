@@ -4,7 +4,7 @@ import ReactTooltip from 'react-tooltip';
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Header, rowOfKind} from './workloads';
-import {detailsPage, LoadingInline, pluralize, ResourceSummary} from './utils';
+import {navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
 export const Details = (deployment) => {
   const openVolumesModal = angulars.modal('configure-replica-count', {
@@ -82,15 +82,8 @@ export const Details = (deployment) => {
   </div>;
 };
 
-// TODO: Edit page is still routed to Angular code for now
-const Edit = null;
-
-const {factory: {pods}} = detailsPage;
-const pages = [
-  {href: 'details', name: 'Overview', component: Details},
-  {href: 'edit', name: 'Edit', component: Edit},
-  pods()
-];
+const {details, edit, pods} = navFactory;
+const pages = [details(Details), edit(), pods()];
 const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages);
 
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment'));

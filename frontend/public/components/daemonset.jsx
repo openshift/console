@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Selector, Timestamp, detailsPage} from './utils';
+import {Cog, LabelList, ResourceIcon, Selector, Timestamp, navFactory, detailsPage} from './utils';
 
 const DaemonSetCog = ({daemonset}) => {
   const kind = angulars.kinds.DAEMONSET;
@@ -69,8 +69,8 @@ const Details = (daemonset) => <div>
   </div>
 </div>;
 
-const {factory: {pods}} = detailsPage;
-const pages = [{href: 'details', name: 'Overview', component: detailsPage(Details)}, pods()];
+const {details, pods} = navFactory;
+const pages = [details(detailsPage(Details)), pods()];
 
 const DaemonSets = makeList('DaemonSets', 'daemonset', DaemonSetHeader, DaemonSetRow);
 const DaemonSetsPage = makeListPage('DaemonSetsPage', 'daemonset', DaemonSets);

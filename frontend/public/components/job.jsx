@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Selector, Timestamp, detailsPage} from './utils';
+import {Cog, LabelList, ResourceIcon, Selector, Timestamp, navFactory} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">Name</div>
@@ -118,8 +118,8 @@ const Details = (job) => <div>
   </div>
 </div>;
 
-const {factory: {pods}} = detailsPage;
-const pages = [{href: 'details', name: 'Overview', component: Details}, pods()];
+const {details, pods} = navFactory;
+const pages = [details(Details), pods()];
 const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'job', pages);
 const JobsList = makeList('Jobs', 'job', Header, JobRow);
 const JobsPage = makeListPage('JobsPage', 'job', JobsList);

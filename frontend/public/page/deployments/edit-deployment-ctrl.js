@@ -8,6 +8,13 @@ angular.module('bridge.page')
   $scope.loadError = false;
   $scope.loaded = false;
   $scope.deployment = {};
+  $scope.navProps = {
+    pages: [
+      {name: 'Overview', href: 'details'},
+      {name: 'Edit', href: 'edit'},
+      {name: 'Pods', href: 'pods'},
+    ]
+  };
 
   k8s.deployments.get($routeParams.name, $scope.ns)
     .then(function(deployment) {
