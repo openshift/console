@@ -5,7 +5,6 @@ angular.module('k8s')
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });
-  var fieldSelectors;
 
   this.clean = function(pod) {
     util.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
@@ -16,18 +15,6 @@ angular.module('k8s')
     util.deleteNulls(pod.metadata);
     util.deleteNulls(pod.spec);
   };
-
-  fieldSelectors = {};
-
-  fieldSelectors.nodeName = function(nodeName) {
-    return `spec.nodeName=${nodeName}`;
-  };
-
-  fieldSelectors.node = function(node) {
-    return fieldSelectors.nodeName(node.metadata.name);
-  };
-
-  this.fieldSelectors = fieldSelectors;
 
   this.getRestartPolicyById = function(id) {
     return _.find(k8sEnum.RestartPolicy, { id: id });
@@ -56,17 +43,6 @@ angular.module('k8s')
         volumes: [],
       },
     };
-  };
-
-  this.getEmptyVolume = function() {
-    var vol = {
-      name: null,
-    };
-    // Add all known volume types to the empty volume for binding.
-    _.forEach(k8sEnum.VolumeSource, function(v) {
-      vol[v.id] = null;
-    });
-    return vol;
   };
 
   this.getVolumeType = function(volume) {
