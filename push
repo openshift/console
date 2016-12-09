@@ -22,9 +22,8 @@ if [[ "$GIT_VERSION" == *dirty ]]; then
 fi
 
 docker build -q --rm=true -t $REPO:$GIT_VERSION .
-docker tag $REPO:$GIT_VERSION $REPO:vdevel-latest
+docker tag $REPO:$GIT_VERSION
 
 docker push $REPO:$GIT_VERSION
-docker push $REPO:vdevel-latest
 
 popd
