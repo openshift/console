@@ -9,7 +9,7 @@ export default (state, action)  => {
 
   switch (action.type) {
     case types.setActiveNamespace:
-      return state.set('activeNamespace', action.value);
+      return state.set('activeNamespace', action.value).set('isActiveNamespaceSet', true);
     default:
       break;
   }
