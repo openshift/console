@@ -270,51 +270,6 @@ angular.module('coreos.ui')
 });
 
 
-/**
- * @fileoverview
- * Display a cog icon and construct dropdown menu.
- */
-
-
-angular.module('coreos.ui')
-.directive('coCog', function($location) {
-  'use strict';
-
-  return {
-    templateUrl: '/coreos.ui/cog/cog.html',
-    restrict: 'E',
-    replace: true,
-    scope: {
-      'options': '=',
-      'size': '@',
-      'anchor': '@'
-    },
-    controller: function($scope) {
-      $scope.status = {
-        isopen: false,
-      };
-
-      // Capture all clicks on the cog to prevent bubbling.
-      $scope.captureClick = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Handles dropdown item clicks.
-      $scope.clickHandler = function($event, option) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        if (option.callback) {
-          option.callback();
-        } else if (option.href) {
-          $location.url(option.href);
-        }
-        $scope.status.isopen = false;
-      };
-    }
-  };
-
-});
-
 angular.module('coreos.ui')
 /**
  * @fileoverview
@@ -753,27 +708,6 @@ module.run(['$templateCache', function($templateCache) {
 }]);
 })();
 
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/cog/cog.html',
-    '<div class="co-m-cog co-m-cog--anchor-{{anchor}}">\n' +
-    '  <span uib-dropdown is-open="status.isopen" ng-click="captureClick($event)">\n' +
-    '    <span uib-dropdown-toggle class="co-m-cog__icon co-m-cog__icon--size-{{size}} fa fa-cog"></span>\n' +
-    '    <ul class="uib-dropdown-menu co-m-cog__dropdown co-m-dropdown--dark dropdown-menu">\n' +
-    '      <li ng-repeat="option in options | orderBy:\'weight\'">\n' +
-    '        <a ng-click="clickHandler($event, option)" ng-bind="option.label"></a>\n' +
-    '      </li>\n' +
-    '    </ul>\n' +
-    '  </span>\n' +
-    '</div>\n' +
-    '');
-}]);
-})();
 
 (function(module) {
 try {
