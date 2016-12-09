@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceLink, Timestamp} from './utils';
+import {Cog, LabelList, LoadingInline, ResourceLink, Timestamp} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -36,6 +36,12 @@ const HorizontalPodAutoscalerCog = ({hpa}) => {
   return <Cog options={options} size="small" anchor="center" />;
 };
 
+const currentReplicas = (hpa) => hpa.status.currentReplicas || 0;
+const desiredReplicas = (hpa) => hpa.status.desiredReplicas || 0;
+
+
+const HpaStatus = ({hpa}) => currentReplicas(hpa) === desiredReplicas(hpa) ? <span>Scaled</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Rescaling</div>;
+
 const ScaleRef = ({hpa}) => <ResourceLink kind={hpa.spec.scaleRef.kind.toLowerCase()} name={hpa.spec.scaleRef.name} namespace={hpa.metadata.namespace} title={hpa.spec.scaleRef.name} />;
 
 const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resource-list__item">
@@ -47,26 +53,12 @@ const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resour
     <LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 hidden-xs">
-    {hpa.status.currentReplicas || 0} of {hpa.status.desiredReplicas}
+    {currentReplicas(hpa)} of {desiredReplicas(hpa)}
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 hidden-xs">
     <ScaleRef hpa={hpa} />
   </div>
 </div>;
-
-const getHPAStatus = (hpa) => {
-  if (hpa.status.conditions) {
-    return hpa.status.conditions[0].type;
-  }
-  return (<span>
-    <span className="co-m-inline-loader co-an-fade-in-out">
-      <div className="co-m-loader-dot__one"></div>
-      <div className="co-m-loader-dot__two"></div>
-      <div className="co-m-loader-dot__three"></div>
-    </span>
-    In Progress
-  </span>);
-};
 
 const Details = (hpa) => <div className="co-m-pane__body">
   <div className="row">
@@ -75,11 +67,11 @@ const Details = (hpa) => <div className="co-m-pane__body">
         <div className="detail-table-row">
           <div className="col-xs-6 detail-table-cell">
             <span className="detail-table-header text-uppercase">Desired Count</span>
-            <span>{hpa.status.desiredReplicas || 0} replicas</span>
+            <span>{desiredReplicas(hpa)} replicas</span>
           </div>
           <div className="col-xs-6 detail-table-cell">
             <span className="detail-table-header text-uppercase">Current Count</span>
-            <span>{hpa.status.currentReplicas || 0} replicas</span>
+            <span>{currentReplicas(hpa)} replicas</span>
           </div>
         </div>
       </div>
@@ -90,7 +82,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
         <dl>
           <dt>Status</dt>
-          <dd>{getHPAStatus(hpa)}</dd>
+          <dd><HpaStatus hpa={hpa} /></dd>
           <dt>Labels</dt>
           <dd><LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels} /></dd>
           <dt>Reference</dt>
