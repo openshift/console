@@ -40,15 +40,10 @@ export const clearPrefixes = () => prefixes.splice(0, prefixes.length);
 export const getActiveNamespace = () => angulars.store.getState().UI.get('activeNamespace');
 
 export const actions = {
-  [types.initActiveNamespace]: () => {
-    if (!angulars.store.getState().UI.get('isActiveNamespaceSet')) {
-      return {
-        type: types.setActiveNamespace,
-        value: angulars.routeParams.ns,
-      };
-    }
-  },
-
+  [types.initActiveNamespace]: () => ({
+    type: types.initActiveNamespace,
+    value: angulars.routeParams.ns,
+  }),
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {
       namespace = namespace.trim();
