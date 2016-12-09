@@ -40,7 +40,7 @@ angular.module('bridge', [
   'bridge.react-wrapper',
   'moment',
 ])
-.config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
+.config(function($compileProvider, $routeProvider, $locationProvider,
                  configSvcProvider, errorMessageSvcProvider,
                  k8sConfigProvider, activeNamespaceSvcProvider, $ngReduxProvider) {
   'use strict';
@@ -63,10 +63,6 @@ angular.module('bridge', [
   // <base> tag in index.html so we cannot use relative path as in many other places
   // and we need to manually prepend it with passed-in base path to form absolute path
   k8sConfigProvider.setKubernetesPath(`${window.SERVER_FLAGS.basePath}api/kubernetes`, window.SERVER_FLAGS.k8sAPIVersion);
-
-  $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
-  $httpProvider.interceptors.push('errorInterceptorSvc');
-  $httpProvider.defaults.timeout = 5000;
 
   configSvcProvider.config({
     siteBasePath: window.SERVER_FLAGS.basePath,
@@ -343,14 +339,6 @@ angular.module('bridge', [
       $rootScope.$$listeners = null;
       $window.location.href = $window.SERVER_FLAGS.basePath;
     }
-  });
-
-  $rootScope.$on('xhr-error-unauthorized', function(e, rejection) {
-    authSvc.logout($window.location.pathname);
-  });
-
-  $rootScope.$on('xhr-error', function(e, rejection) {
-    analyticsSvc.error(`${rejection.data}: ${rejection.config.method} ${rejection.config.url}`);
   });
 
   window.onerror = function (message, source, lineno, colno) {

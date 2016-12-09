@@ -1,3 +1,6 @@
+import {analyticsSvc} from './module/analytics';
+import {authSvc} from './module/auth';
+
 const initDefaults = {
   credentials: 'same-origin'
 };
@@ -5,6 +8,9 @@ const initDefaults = {
 const validateStatus = (response) => {
   if (response.ok) {
     return response;
+  }
+  if (response.status === 401) {
+    authSvc.logout(window.location.pathname);
   }
 
   const error = new Error(response.statusText);
@@ -14,7 +20,12 @@ const validateStatus = (response) => {
 
 export const coFetch = (url, options = {}) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
-  return fetch(url, allOptions).then(validateStatus);
+
+  // Initiate both the fetch promise and a timeout promise
+  return Promise.race([
+    fetch(url, allOptions).then(validateStatus),
+    new Promise((_, reject) => setTimeout(() => reject(new Error(`Call to ${url} timed out`)), 5000)),
+  ]);
 };
 
 const parseJson = (response) => response.json();
@@ -32,6 +43,12 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
   }, options);
 
   return coFetch(url, allOptions).then(response => {
+    if (!response.ok) {
+      return response.text().then(text => {
+        analyticsSvc.error(`${text}: ${method} ${response.url}`);
+      });
+    }
+
     // If the response has no body, return promise that resolves with an empty object
     if (response.headers.get('Content-Length') === '0') {
       return Promise.resolve({});
