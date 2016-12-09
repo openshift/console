@@ -74,20 +74,6 @@ angular.module('bridge.page')
       controller: 'NewNamespaceCtrl',
       size: 'dialog--std-width',
     },
-    'new-user': {
-      templateUrl: '/static/page/modals/new-user.html',
-      controller: 'NewUserCtrl',
-      size: 'dialog--std-width',
-    },
-    'new-user-invite-link': {
-      templateUrl: '/static/page/modals/new-user-invite-link.html',
-      controller: 'NewUserInviteLinkCtrl',
-      size: 'dialog--std-width',
-    },
-    'toggle-disabled-user': {
-      templateUrl: '/static/page/modals/toggle-disabled-user.html',
-      controller: 'ToggleDisabledUserCtrl',
-    },
     'show-yaml': {
       templateUrl: '/static/page/modals/show-yaml.html',
       controller: 'ShowYAMLCtrl',
@@ -99,10 +85,6 @@ angular.module('bridge.page')
     'kubectl-config': {
       templateUrl: '/static/page/modals/kubectl-config/kubectl-config.html',
       controller: 'KubectlConfigCtrl',
-    },
-    'revoke-refresh-token': {
-      templateUrl: '/static/page/modals/revoke-refresh-token.html',
-      controller: 'RevokeRefreshTokenCtrl',
     },
     'reactive-modal': {
       templateUrl: '/static/page/modals/reactive-modal.html',

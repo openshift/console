@@ -32,7 +32,6 @@ angular.module('bridge', [
   'ngTagsInput',
   // internal modules
   'templates',
-  'dex',
   'k8s',
   'bridge.filter',
   'bridge.service',
@@ -80,13 +79,6 @@ angular.module('bridge', [
   errorMessageSvcProvider.registerFormatter('k8sApi', function(resp) {
     if (resp.data && resp.data.message) {
       return resp.data.message;
-    }
-    return 'An error occurred. Please try again.';
-  });
-
-  errorMessageSvcProvider.registerFormatter('dexApi', function(resp) {
-    if (resp.data && resp.data.error_description) {
-      return resp.data.error_description;
     }
     return 'An error occurred. Please try again.';
   });
@@ -261,11 +253,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/settings/profile.html',
     title: 'Profile',
   });
-  r('/settings/users', {
-    controller: 'UsersCtrl',
-    templateUrl: '/static/page/settings/users.html',
-    title: 'Manage Users',
-  });
   r('/settings/ldap', {
     template: '<react-component name="LDAPPage"></react-component>',
     title: 'LDAP',
@@ -328,7 +315,7 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, dex, angularBridge) {
+.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, angularBridge) {
   'use strict';
   $ngRedux.dispatch(UIActions.loadActiveNamespaceFromStorage());
 
@@ -338,7 +325,6 @@ angular.module('bridge', [
   $rootScope.FEATURE_FLAGS = featuresSvc;
   angularBridge.expose();
   k8s.featureDetection();
-  dex.featureDetection();
   statusSvc.tectonicVersion();
 
   $rootScope.logout = e => {

@@ -1,47 +1,3 @@
-.co-m-table-grid__cell--left-padded {
-    padding: 0 0 0 40px;
-}
-
-.co-m-table-grid__cell--left-padded__offset-cell {
-    margin: 4px 0 0 -30px;
-    width: 30px;
-    float: left;
-}
-
-.co-p-users__user .co-p-users__email {
-    color: $color-text-muted;
-    font-size: $font-size-small;
-    line-height: 17px;
-}
-
-.co-p-users__user.row {
-    font-size: 16px;
-    line-height: 20px;
-}
-
-.co-p-users__email, .co-p-users__name {
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-}
-
-.cos-error-title__whole-page-error {
-    margin-top: 20px;
-}
-
-.co-current-user-icon {
-	font-size: 14px;
-	color: $blue-link;
-}
-
-.co-no-user-name {
-	color: $gray;
-	font-style: italic;
-}
-
-.co-m-pane__heading__explained {
-    padding-top: 8px;
-}
-
 .co-m-table-grid__head {
     padding: 0 0 10px 0;
 }
@@ -52,8 +8,4 @@
 
 .co-m-pane__body:last {
     padding-bottom: 30px;
-}
-
-.co-co-m-pane__sub_heading {
-    padding: 10px 0 0;
 }
