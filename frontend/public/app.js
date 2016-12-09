@@ -345,10 +345,6 @@ angular.module('bridge', [
   });
 
   $rootScope.$on('xhr-error-unauthorized', function(e, rejection) {
-    if (rejection.config && rejection.config.unauthorizedOk) {
-      return;
-    }
-
     authSvc.logout($window.location.pathname);
   });
 
