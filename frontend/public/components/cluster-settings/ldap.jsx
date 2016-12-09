@@ -5,7 +5,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
 
 import { SafetyFirst } from '../safety-first';
-import { coFetchPostJSON } from '../../co-fetch';
+import { coFetchJSON } from '../../co-fetch';
 import { angulars, register } from '../react-wrapper';
 import { LoadingInline, LoadError, NavTitle } from '../utils';
 import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings';
@@ -371,7 +371,7 @@ class LDAPs extends SafetyFirst {
       const version = this.props.error;
       const connector = getFormValues(LDAPFormName)(angulars.store.getState());
       const json = reduxToConnector(connector);
-      coFetchPostJSON('tectonic/ldap/validate', json)
+      coFetchJSON.post('tectonic/ldap/validate', json)
       .then(data => {
         const state = {};
         if (data.error) {
