@@ -5,6 +5,7 @@ import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
+import {authSvc} from './module/auth';
 import k8sReducers from './module/k8s/k8s-reducers';
 import {actions as UIActions, getNamespacedRoute} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';
@@ -296,7 +297,7 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, angularBridge) {
+.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, k8s, featuresSvc, statusSvc, angularBridge) {
   'use strict';
 
   $rootScope.SERVER_FLAGS = $window.SERVER_FLAGS;
