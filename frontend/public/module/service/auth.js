@@ -1,5 +1,4 @@
 import Cookies from 'js-cookie';
-import {md5} from 'blueimp-md5';
 
 angular.module('bridge.service')
 .factory('authSvc', function($log, $window, $location, $http) {
@@ -60,14 +59,6 @@ angular.module('bridge.service')
     isLoggedIn: function() {
       var state = loginState();
       return !!state;
-    },
-
-    emailHash: function() {
-      var em = email();
-      if (!em) {
-        return;
-      }
-      return md5(em);
     },
 
   };
