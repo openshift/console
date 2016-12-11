@@ -3,7 +3,7 @@ import React from 'react';
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage, navFactory} from './utils';
+import {Cog, LabelList, ResourceLink, Timestamp, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
 
 
@@ -26,8 +26,7 @@ const SecretRow = ({obj: secret}) => {
   return <div className="row co-resource-list__item">
     <div className="col-md-4">
       <SecretCog secret={secret} />
-      <ResourceIcon kind="secret" />
-      <a href={`ns/${secret.metadata.namespace}/secrets/${secret.metadata.name}/details`} title={secret.metadata.uid}>{secret.metadata.name}</a>
+      <ResourceLink kind="secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
     <div className="col-md-4">{data}</div>
     <div className="col-md-4">{age}</div>

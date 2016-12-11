@@ -3,7 +3,7 @@ import React from 'react';
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, detailsPage, LabelList, NavTitle, ResourceHeading, ResourceIcon, Timestamp, units} from './utils';
+import {Cog, navFactory, LabelList, NavTitle, ResourceHeading, ResourceLink, Timestamp, units} from './utils';
 
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
@@ -32,16 +32,13 @@ const NodeCog = ({node}) => {
   return <Cog options={options} size="small" anchor="left" />;
 };
 
-const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}/details`} title={node.metadata.uid}>{node.metadata.name}</a>;
-
 const NodeStatus = ({node}) => angulars.k8sNodes.isReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 
 const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__item">
   <div className="middler">
     <div className="col-xs-4">
       <NodeCog node={node} />
-      <ResourceIcon kind="node" />
-      <NodeLink node={node} />
+      <ResourceLink kind="node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
     <div className="col-xs-4">
       <NodeStatus node={node} />
@@ -58,8 +55,7 @@ const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__i
 const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
     <NodeCog node={node} />
-    <ResourceIcon kind="node" />
-    <NodeLink node={node} />
+    <ResourceLink kind="node" name={node.metadata.name} title={node.metadata.uid} />
   </div>
   <div className="col-md-2 hidden-sm hidden-xs">
     <NodeStatus node={node} />
@@ -192,7 +188,7 @@ const Details = (node) => {
   </div>;
 };
 
-const {factory: {pods}} = detailsPage;
+const {pods} = navFactory;
 const pages = [
   {href: 'details', name: 'Overview', component: Details},
   pods(),

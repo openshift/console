@@ -3,7 +3,7 @@ import React from 'react';
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, ResourceIcon, Timestamp} from './utils';
+import {Cog, LabelList, ResourceLink, Timestamp} from './utils';
 
 const ConfigMapCog = ({configMap}) => {
   const kind = angulars.kinds.CONFIGMAP;
@@ -24,8 +24,7 @@ const ConfigMapRow = ({obj: configMap}) => {
   return <div className="row co-resource-list__item">
     <div className="col-md-4">
       <ConfigMapCog configMap={configMap} />
-      <ResourceIcon kind="configmap" />
-      <a href={`ns/${configMap.metadata.namespace}/configmaps/${configMap.metadata.name}/details`} title={configMap.metadata.uid}>{configMap.metadata.name}</a>
+      <ResourceLink kind="configmap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
     </div>
     <div className="col-md-4">{data}</div>
     <div className="col-md-4">{age}</div>

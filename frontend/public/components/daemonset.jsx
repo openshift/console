@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Selector, Timestamp, navFactory, detailsPage} from './utils';
+import {Cog, LabelList, ResourceLink, Selector, Timestamp, navFactory, detailsPage} from './utils';
 
 const DaemonSetCog = ({daemonset}) => {
   const kind = angulars.kinds.DAEMONSET;
@@ -20,10 +20,7 @@ const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
 const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
     <DaemonSetCog daemonset={daemonset} />
-    <ResourceIcon kind="daemonset" />
-    <a href={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/details`} title={daemonset.metadata.uid}>
-      {daemonset.metadata.name}
-    </a>
+    <ResourceLink kind="daemonset" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
     <LabelList kind="daemonset" labels={daemonset.metadata.labels} />
