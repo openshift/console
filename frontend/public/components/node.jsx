@@ -1,8 +1,9 @@
 import React from 'react';
 
 import {angulars, register} from './react-wrapper';
-import {makeList, makeListPage} from './factory';
-import {Cog, LabelList, NavTitle, ResourceIcon} from './utils';
+import {makeDetailsPage, makeList, makeListPage} from './factory';
+import {SparklineWidget} from './sparkline-widget/sparkline-widget';
+import {Cog, detailsPage, LabelList, NavTitle, ResourceHeading, ResourceIcon, Timestamp, units} from './utils';
 
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
@@ -31,7 +32,7 @@ const NodeCog = ({node}) => {
   return <Cog options={options} size="small" anchor="left" />;
 };
 
-const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}`} title={node.metadata.uid}>{node.metadata.name}</a>;
+const NodeLink = ({node}) => <a href={`nodes/${node.metadata.name}/details`} title={node.metadata.uid}>{node.metadata.name}</a>;
 
 const NodeStatus = ({node}) => angulars.k8sNodes.isReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 
@@ -91,6 +92,115 @@ const dropdownFilters = [{
 }];
 const NodesListPage = makeListPage('NodesPage', 'node', NodesList, dropdownFilters);
 
-export {NodeIPList, NodesList, NodesListSearch, NodesPage};
+const Details = (node) => {
+  const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
+  const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
+
+  const memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
+
+  const integerLimit = input => parseInt(input, 10);
+
+  return <div>
+    <ResourceHeading resourceName="Node" />
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-xs-12">
+          <div className="co-sparkline-wrapper">
+            <div className="row no-gutter">
+              <div className="col-md-4">
+                <SparklineWidget heading="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
+              </div>
+              <div className="col-md-4">
+                <SparklineWidget heading="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
+              </div>
+              <div className="col-md-4">
+                <SparklineWidget heading="Number of Pods" query={`kubelet_running_pod_count{instance=~'.*${node.metadata.name}.*'}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
+              </div>
+              <div className="col-md-4">
+                <SparklineWidget heading="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+              </div>
+              <div className="col-md-4">
+                <SparklineWidget heading="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+              </div>
+              <div className="col-md-4">
+                <SparklineWidget heading="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6 col-xs-12">
+          <dl>
+            <dt>Node Name</dt>
+            <dd>{node.metadata.name || '-'}</dd>
+            <dt>Node ID</dt>
+            <dd>{_.get(node, 'spec.externalID', '-')}</dd>
+            <dt>Node Addresses</dt>
+            <dd><NodeIPList ips={_.get(node, 'status.addresses')} /></dd>
+            <dt>Node Labels</dt>
+            <dd><LabelList kind="node" expand={true} labels={node.metadata.labels} /></dd>
+            <dt>Created</dt>
+            <dd><Timestamp timestamp={node.metadata.creationTimestamp} /></dd>
+          </dl>
+        </div>
+        <div className="col-md-6 col-xs-12">
+          <dl>
+            <dt>Kernel Version</dt>
+            <dd>{_.get(node, 'status.nodeInfo.kernelVersion', '-')}</dd>
+            <dt>Boot ID</dt>
+            <dd>{_.get(node, 'status.nodeInfo.bootID', '-')}</dd>
+            <dt>Container Runtime</dt>
+            <dd>{_.get(node, 'status.nodeInfo.containerRuntimeVersion', '-')}</dd>
+            <dt>Kubelet Version</dt>
+            <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', '-')}</dd>
+            <dt>Kube-Proxy Version</dt>
+            <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-xs-12">
+          <h1 className="co-section-title">Node Conditions</h1>
+          <div className="co-table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Reason</th>
+                  <th>Updated</th>
+                  <th>Changed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {node.status.conditions.map(c => <tr key={_.uniqueId()}>
+                  <td>{c.type}</td>
+                  <td>{c.status || '-'}</td>
+                  <td>{c.reason || '-'}</td>
+                  <td><Timestamp timestamp={c.lastHeartbeatTime} /></td>
+                  <td><Timestamp timestamp={c.lastTransitionTime} /></td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>;
+};
+
+const {factory: {pods}} = detailsPage;
+const pages = [
+  {href: 'details', name: 'Overview', component: Details},
+  pods(),
+  {href: 'events', name: 'Events', component: undefined},
+];
+const NodeDetailsPage_ = makeDetailsPage('NodeDetailsPage', 'node', pages);
+const NodeDetailsPage = () => <NodeDetailsPage_ kind="node" name={angulars.routeParams.name} />;
+
+export {NodeDetailsPage, NodesList, NodesListSearch, NodesPage};
 register('NodesPage', NodesPage);
-register('NodeIPList', NodeIPList);
+register('NodeDetailsPage', NodeDetailsPage);
