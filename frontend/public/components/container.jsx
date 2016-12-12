@@ -161,7 +161,7 @@ const Details = (props) => {
           <h1 className="co-section-title">Network</h1>
           <dl>
             <dt>Node</dt>
-            <dd><a href={`nodes/${props.spec.nodeName}`}>{props.spec.nodeName}</a></dd>
+            <dd><a href={`nodes/${props.spec.nodeName}/details`}>{props.spec.nodeName}</a></dd>
             <dt>Pod IP</dt>
             <dd>{props.status.podIP || '-'}</dd>
           </dl>

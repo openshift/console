@@ -103,7 +103,7 @@ const ContainerLink = ({pod, name}) => <span className="co-resource-link">
   <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</a>
 </span>;
 
-const NodeLink = ({name}) => name ? <a href={`nodes/${name}`}>{name}</a> : <span>-</span>;
+const NodeLink = ({name}) => name ? <a href={`nodes/${name}/details`}>{name}</a> : <span>-</span>;
 
 const ContainerRow = ({pod, container}) => {
   const cstatus = angulars.k8s.docker.getStatus(pod, container.name);
