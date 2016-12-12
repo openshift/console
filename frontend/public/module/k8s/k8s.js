@@ -174,9 +174,7 @@ angular.module('k8s')
         featuresSvc[flag] = paths.indexOf(path) >= 0;
       });
     })
-    .catch(e => {
-      // eslint-disable-next-line no-console
-      console.error(e);
+    .catch(() => {
       $timeout(this.featureDetection, 5000);
     });
 
@@ -190,9 +188,7 @@ angular.module('k8s')
         featuresSvc[flag] = _.find(resources, { 'name': name });
       });
     })
-    .catch(e => {
-      // eslint-disable-next-line no-console
-      console.error(e);
+    .catch(() => {
       $timeout(this.featureDetection, 5000);
     });
   };
