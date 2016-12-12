@@ -1,14 +1,21 @@
 import React from 'react';
+import ReactTooltip from 'react-tooltip';
 
-export class Timestamp extends React.Component {
+import {SafetyFirst} from '../safety-first';
+
+export class Timestamp extends SafetyFirst {
   constructor (props) {
     super(props);
 
     this.interval = null;
-    this.mdate = moment(new Date(props.timestamp));
     this.state = {
       timestamp: null,
     };
+    this.initialize();
+  }
+
+  initialize (props = this.props) {
+    this.mdate = moment(new Date(props.timestamp));
     this.timeStr();
   }
 
@@ -16,15 +23,25 @@ export class Timestamp extends React.Component {
     if (nextProps.timestamp === this.props.timestamp) {
       return;
     }
-    this.mdate = moment(new Date(nextProps.timestamp));
-    if (this._isMounted) {
+    this.initialize(nextProps);
+    if (this.isMounted_) {
       this.startInterval();
     }
-    this.timeStr();
   }
 
   shouldComponentUpdate (nextProps, nextState) {
     return nextProps.timestamp !== this.props.timestamp || nextState.timestamp !== this.state.timestamp;
+  }
+
+  componentDidMount () {
+    super.componentDidMount();
+    this.startInterval();
+    ReactTooltip.rebuild();
+  }
+
+  componentWillUnmount () {
+    super.componentWillUnmount();
+    clearInterval(this.interval);
   }
 
   startInterval () {
@@ -33,7 +50,7 @@ export class Timestamp extends React.Component {
   }
 
   upsertState (timestamp) {
-    if (this._isMounted) {
+    if (this.isMounted_) {
       this.setState({timestamp});
     } else {
       this.state.timestamp = timestamp;
@@ -42,6 +59,7 @@ export class Timestamp extends React.Component {
 
   timeStr () {
     if (!this.mdate.isValid()) {
+      this.upsertState('-');
       clearInterval(this.interval);
       return;
     }
@@ -68,15 +86,6 @@ export class Timestamp extends React.Component {
     this.upsertState(this.mdate.fromNow());
   }
 
-  componentDidMount () {
-    this._isMounted = true;
-    this.startInterval();
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval);
-  }
-
   render () {
     const mdate = this.mdate;
     // Calling mdate.utc() modifies mdate to be UTC. :(
@@ -91,7 +100,7 @@ export class Timestamp extends React.Component {
     return (
       <div>
         <i className="fa fa-globe" />
-        <div className="co-timestamp" title={utcdate.format('MMM DD, YYYY HH:mm z')}>
+        <div className="co-timestamp" data-tip={utcdate.format('MMM DD, YYYY HH:mm z')}>
           {this.state.timestamp}
         </div>
       </div>
