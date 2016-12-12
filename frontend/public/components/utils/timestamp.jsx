@@ -3,6 +3,8 @@ import ReactTooltip from 'react-tooltip';
 
 import {SafetyFirst} from '../safety-first';
 
+const rebuildTooltip = _.debounce(() => ReactTooltip.rebuild(), 100);
+
 export class Timestamp extends SafetyFirst {
   constructor (props) {
     super(props);
@@ -36,7 +38,7 @@ export class Timestamp extends SafetyFirst {
   componentDidMount () {
     super.componentDidMount();
     this.startInterval();
-    ReactTooltip.rebuild();
+    rebuildTooltip();
   }
 
   componentWillUnmount () {
