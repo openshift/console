@@ -2,7 +2,6 @@ import './_module';
 import './containers/container-input';
 import './containers/multi-container-input';
 import './icons/resource-icon';
-import './icons/status';
 import './forms/click-select';
 import './forms/number-spinner';
 import './labels/label';

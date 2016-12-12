@@ -21,3 +21,5 @@ import './sparkline-widget/sparkline-widget';
 import './events';
 import './ingress';
 import './cluster-settings/ldap';
+import './cluster-overview-container';
+import './cluster-overview';

@@ -147,6 +147,7 @@ angular.module('k8s')
   this.tectonicversions = addDefaults({}, k8sEnum.Kind.TECTONICVERSION);
   this.channeloperatorconfigs = addDefaults({}, k8sEnum.Kind.CHANNELOPERATORCONFIG);
   this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
+  this.basePath =  k8sConfig.getBasePath();
 
   this.health = function() {
     return $http({

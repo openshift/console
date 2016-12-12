@@ -1,6 +1,5 @@
 import './_module';
 import './events/events-ctrl';
-import './cluster/cluster-status-ctrl';
 import './error/error-ctrl';
 
 // Service pages have been migrated to React, except for the Create Service page
