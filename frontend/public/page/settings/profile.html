@@ -6,7 +6,7 @@
       <div class="co-m-pane__body-section--bordered">
         <dl>
           <dt>Name</dt>
-          <dd ng-bind="$root.user.name | emptyPlaceholder"></dd>
+          <dd ng-bind="$root.user.name || '-'"></dd>
 
           <dt>Email Address</dt>
           <dd ng-bind="$root.user.email"></dd>
