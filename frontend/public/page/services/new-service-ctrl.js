@@ -1,5 +1,7 @@
+import {getNamespacedRoute} from '../../ui/ui-actions';
+
 angular.module('bridge.page')
-.controller('NewServiceCtrl', function($scope, $routeParams, $location, activeNamespaceSvc, k8s) {
+.controller('NewServiceCtrl', function($scope, $routeParams, $location, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -21,12 +23,12 @@ angular.module('bridge.page')
     $scope.service.spec.ports.push($scope.fields.portObj);
     $scope.requestPromise = k8s.services.create($scope.service);
     $scope.requestPromise.then(function() {
-      $location.path(activeNamespaceSvc.formatNamespaceRoute('/services'));
+      $location.path(getNamespacedRoute('/services'));
     });
   };
 
   $scope.cancel = function() {
-    $location.path(activeNamespaceSvc.formatNamespaceRoute('/services'));
+    $location.path(getNamespacedRoute('/services'));
   };
 
   // Prevent values for nodePort if auto-selecting a port.
