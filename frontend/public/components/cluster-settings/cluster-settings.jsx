@@ -5,6 +5,7 @@ import {NavTitle} from '../utils';
 import {angulars, register} from '../react-wrapper';
 import {ClusterUpdates} from '../cluster-updates/cluster-updates';
 import {LicenseSetting} from './license-setting';
+import {LDAPSetting} from './ldap';
 
 export const SettingsRow = ({children}) => <div className="row co-m-form-row">{children}</div>;
 export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
@@ -72,6 +73,7 @@ class ClusterSettingsPage extends React.Component {
         <div className="co-m-pane__body">
           <h1 className="co-p-cluster--heading">General</h1>
           <LicenseSetting />
+          <LDAPSetting />
         </div>
         {/*<div className="co-m-pane__body">
           <h1 className="co-p-cluster--heading">Tectonic Console</h1>

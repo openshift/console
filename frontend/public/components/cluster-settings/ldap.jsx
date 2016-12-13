@@ -4,13 +4,18 @@ import { Provider, connect } from 'react-redux';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
 
-import { makeList } from '../factory';
 import { SafetyFirst } from '../safety-first';
 import { coFetchPostJSON } from '../../co-fetch';
 import { angulars, register } from '../react-wrapper';
-import { createModalLauncher, ModalTitle, ModalBody, ModalFooter } from '../factory/modal';
-import { podPhase, ResourceIcon, Timestamp, LoadingInline, LoadError, NavTitle, resourcePath} from '../utils';
+import { LoadingInline, LoadError, NavTitle } from '../utils';
+import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings';
 
+export const LDAPSetting = () => <SettingsRow>
+  <SettingsLabel>LDAP:</SettingsLabel>
+  <SettingsContent>
+    <a className="co-m-modal-link" href="settings/ldap">LDAP</a>
+  </SettingsContent>
+</SettingsRow>;
 
 // silence react warnings :(:(:(
 Field.defaultProps = {name: ''};
@@ -38,104 +43,6 @@ const RootCA = 'Root CA';
 const SSLType = 'sslType';
 const Skip = 'skip';
 const NoSSL = 'NoSSL';
-
-
-const IdentityRows = ({obj: pod}) => {
-  const phase = podPhase(pod);
-  let status = phase;
-
-  if (status !== 'Running') {
-    status = <span className="co-error" >
-      <i className="fa fa-times-circle co-icon-space-r" />{phase}
-    </span>;
-  }
-
-  const {name, namespace, uid, creationTimestamp} = pod.metadata;
-
-  return <div className="row co-resource-list__item">
-    <div className="col-xs-5">
-      <ResourceIcon kind="pod" />
-      <a target="_blank" href={`${resourcePath('pod', name, namespace)}/details`} title={uid}>{name}</a>
-    </div>
-    <div className="col-xs-3">{status}</div>
-    <div className="col-xs-4">{<Timestamp timestamp={creationTimestamp} />}</div>
-  </div>;
-};
-
-const IdentityHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-5">Pod</div>
-  <div className="col-xs-3">Status</div>
-  <div className="col-xs-4">Created</div>
-</div>;
-
-const JobsList = makeList('TectonicIdentity', 'pod', IdentityHeader, IdentityRows);
-
-const Warning = ({config}) => <p className="co-m-message co-an-fade-in-out co-m-message--error" >
-  Warning: this is an experimental feature.
-  Incorrectly configuring LDAP may irrevocably bring down your cluster.
-  Review the <a target="_blank" href="https://tectonic.com/enterprise/docs/latest/admin/user-management.html">recovery documentation</a> and&nbsp;
-    <a target="_blank" download="tectonic-identity.yaml" onClick={e => {
-      e.preventDefault();
-      const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
-      saveAs(blob, 'tectonic-identity.yaml');
-    }}>download a backup</a> of the current configuration before you begin.
-</p>;
-
-class UpdateDex extends SafetyFirst {
-  constructor(props) {
-    super(props);
-    this.state = { err: false };
-  }
-
-  componentDidMount() {
-    super.componentDidMount();
-
-    const {patch} = this.props;
-    const {configmaps, pods} = angulars.k8s;
-
-    configmaps.patch({metadata: {name: 'tectonic-identity', namespace: 'tectonic-system'}}, patch)
-    .then(() => {
-      // eslint-disable-next-line no-console
-      console.log('Deleting Tectonic Identity pod');
-
-      const query = {queryParams: {labelSelector: encodeURIComponent('component=identity')}};
-      const pod = {metadata: {namespace: 'tectonic-system'}};
-      return pods.delete(pod, query);
-    })
-    // eslint-disable-next-line no-console
-    .then(() => console.log('Tectonic Identity is Restarting'))
-    .catch(err => {
-      // eslint-disable-next-line no-console
-      console.error(err);
-      this.setState({err});
-    });
-  }
-  render () {
-    return <div>
-      <ModalTitle>Updating Tectonic Identity</ModalTitle>
-      <ModalBody>
-        <br/>
-        <p>
-          The existing Tectonic Identity pod will terminate and another will be created while the service is updating.
-          <br/>
-          This should take about 30 seconds.
-        </p>
-        <p className="co-error">
-          {this.state.err}
-        </p>
-        <br/>
-        <JobsList key="const" namespace="tectonic-system" selector={{matchLabels: {component: 'identity'}}} />
-        <br/>
-      </ModalBody>
-      <ModalFooter>
-        <button onClick={this.props.close} className="btn btn-primary">Close</button>
-      </ModalFooter>
-    </div>;
-  }
-}
-
-export const statusModal = createModalLauncher(UpdateDex);
-
 
 const Fields = {
   Globals: [
@@ -354,9 +261,12 @@ const Security = connect(state => ({sslValue: selector(state, SSLType)})
   </Row>
 </div>);
 
+const STATES = {'untested': 1, 'invalid': 2, 'valid': 3, 'updating': 4};
 
 const LDAPs = reduxForm({
-  initialValues, onSubmit: ()=>{},
+  initialValues,
+  // reduxForm API contract...
+  onSubmit: ()=>{},
   form: LDAPFormName,
   validate: (values, props) => {
     // Declare a general field error using a nonce *any time any field changes*
@@ -367,6 +277,7 @@ class LDAPs extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
+      stateMachine: STATES.untested,
       configDotYaml: null,
       validationData: null,
       validationError: null,
@@ -375,6 +286,12 @@ class LDAPs extends SafetyFirst {
     };
   }
 
+  componentWillReceiveProps({error}) {
+    const { validatedVersion } = this.state;
+    if (validatedVersion && validatedVersion !== error) {
+      this.setState({stateMachine: STATES.untested, validationData: null, validationError: null});
+    }
+  }
 
   componentDidMount() {
     super.componentDidMount();
@@ -382,7 +299,7 @@ class LDAPs extends SafetyFirst {
     .then(d => {
       const configDotYaml = safeLoad(d.data['config.yaml']) || {};
       const connectorIndex = _.findIndex(configDotYaml.connectors, connector => connector.type === 'ldap' && connector.id === 'tectonic-ldap');
-      this.setState({configDotYaml, connectorIndex, loadError: null, tectonicIdentityConfig: safeDump(d)});
+      this.setState({configDotYaml, connectorIndex, loadError: null, tectonicIdentityConfig: d});
       if (connectorIndex === -1) {
         return;
       }
@@ -394,8 +311,13 @@ class LDAPs extends SafetyFirst {
     })
     .catch(loadError => this.setState({loadError}));
   }
+  downloadBackup (e) {
+    e.preventDefault();
+    const blob = new Blob([safeDump(this.state.tectonicIdentityConfig)], { type: 'text/yaml;charset=utf-8' });
+    saveAs(blob, 'tectonic-identity.yaml');
+  }
 
-  submit (e) {
+  downloadNewConfig (e) {
     e.preventDefault();
 
     const formData = getFormValues(LDAPFormName)(angulars.store.getState());
@@ -425,37 +347,50 @@ class LDAPs extends SafetyFirst {
     _.merge(connector, reduxToConnector(formData));
 
     const yaml = safeDump(newYaml, null, 4);
-    const patch = [{ op: 'replace', path: '/data/config.yaml', value: yaml }];
+    const configMap = _.cloneDeep(this.state.tectonicIdentityConfig);
+    configMap.data['config.yaml'] = yaml;
+    delete configMap.metadata.selfLink;
+    delete configMap.metadata.uid;
+    delete configMap.metadata.resourceVersion;
+    delete configMap.metadata.creationTimestamp;
 
-    statusModal({patch});
+    const dump = safeDump(configMap, null, 4);
+    const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
+    saveAs(blob, 'new-tectonic-config.yaml');
   }
 
   test (e) {
     e.preventDefault();
-    this.setState({validationData: null, validationError: null});
-    const version = this.props.error;
-    const connector = getFormValues(LDAPFormName)(angulars.store.getState());
-    const json = reduxToConnector(connector);
-    coFetchPostJSON('tectonic/ldap/validate', json)
-    .then(data => {
-      const state = {};
-      if (data.error) {
-        state.validationError = data.error;
-        state.validationData = data.reason;
-      } else {
-        try {
-          state.validationData = JSON.stringify(data, null, 4);
-          state.validatedVersion = version;
-        } catch (ignored) {
+    this.setState({validationData: null, validationError: null, stateMachine: STATES.untested}, () => {
+      const version = this.props.error;
+      const connector = getFormValues(LDAPFormName)(angulars.store.getState());
+      const json = reduxToConnector(connector);
+      coFetchPostJSON('tectonic/ldap/validate', json)
+      .then(data => {
+        const state = {};
+        if (data.error) {
+          state.stateMachine = STATES.invalid;
+          state.validationError = data.error;
+          state.validationData = data.reason;
+        } else {
+          state.stateMachine = STATES.valid;
           state.validationData = data;
+          state.validatedVersion = version;
+          state.validationError = null;
         }
-        state.validationError = null;
-      }
-      this.setState(state);
-    })
-    .catch(error => {
-      this.setState({validationError: 'Error', validationData: error.message || error.toString()});
+        this.setState(state, () => {
+          window.scrollTo(0, document.documentElement.offsetHeight);
+        });
+      })
+      .catch(error => {
+        this.setState({validationError: 'Error', validationData: error.message || error.toString(), stateMachine: STATES.invalid});
+      });
     });
+  }
+
+  continue (e) {
+    e.preventDefault();
+    this.setState({stateMachine: STATES.updating});
   }
 
   render () {
@@ -463,15 +398,20 @@ class LDAPs extends SafetyFirst {
       return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
     }
 
-    // General field errors are under the props.error - see validation above
-    const disabled = !this.state.validatedVersion || this.state.validatedVersion !== this.props.error;
-
     if (!this.state.tectonicIdentityConfig) {
       return <div>Loading Configuration <LoadingInline /></div>;
     }
-    return <form className="form-horizontal">
 
-      <Warning config={this.state.tectonicIdentityConfig} />
+      // General field errors are under the props.error - see validation above
+    const disabled = !this.state.validatedVersion || this.state.validatedVersion !== this.props.error;
+
+    const { stateMachine, validationData, validationError } = this.state;
+
+    return <form className="form-horizontal" style={{maxWidth: 900}}>
+
+      <p className="co-m-message co-m-message--info" >
+        Warning: Incorrectly configuring LDAP may irrevocably bring down this cluster!
+      </p>
 
       { _.map(Fields.Globals, FieldRow) }
 
@@ -500,41 +440,71 @@ class LDAPs extends SafetyFirst {
       { _.map(Fields.Groups, FieldRow) }
 
       <hr/>
-      <h1 className="co-section-title ldap-group">Update Configuration</h1>
+      <h1 className="co-section-title ldap-group">Test Configuration</h1>
 
       <p className="co-m-form-row">
         Supply your credentials to test the current configuration.
         The LDAP server must be reachable from the Tectonic Console for testing to work.
-        You may not update the configuration until you first verify it.
       </p>
 
       { _.map(Fields.TestData, FieldRow) }
 
-      { this.state.validationData &&
-        <Row>
-          {this.state.validationError
-            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {this.state.validationError}:
+      { (stateMachine === STATES.valid || stateMachine === STATES.invalid) &&
+        <Row label="Test Results">
+          { validationError
+            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {validationError}:
                 <br/>
-                <span>{this.state.validationData}</span>
+                <span>{validationData}</span>
               </p>
             : <div>
-              <p className="co-m-message co-m-message--info co-an-fade-in-out">Success! Proceed with caution.</p>
-              <pre><code>{this.state.validationData}</code></pre>
-            </div>
+                <dl>
+                  <dt>username</dt>
+                  <dd>{validationData.username}</dd>
+                  <dt>email</dt>
+                  <dd>{validationData.email}</dd>
+                  <dt>groups</dt>
+                  <dd>{_.map(validationData.groups, g => <div key={g}>{g}</div>)}</dd>
+                </dl>
+              </div>
           }
-
         </Row>
       }
 
-      <Row>
-        {disabled && <p className="co-m-message co-an-fade-in-out co-m-message--error">
-          You must successfully verify the current configuration before you may proceed.
-        </p>}
+      {stateMachine !== STATES.updating && <div>
+        <hr/>
+        <p className="text-muted">Next: Update Tectonic Identity</p>
+        <hr/>
+      </div>}
+
+      {(stateMachine === STATES.untested || stateMachine === STATES.invalid) &&
+        <button className="btn btn-primary" onClick={(e) => this.test(e)}>Test Configuration</button>
+      }
+      {stateMachine === STATES.valid &&
+        <button className="btn btn-primary" onClick={e => this.continue(e)} disabled={disabled}>Continue</button>
+      }
+      {stateMachine === STATES.updating && <div>
+        <hr/>
+        <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
         <p>
-          <button className="btn btn-default" onClick={(e) => this.test(e)}>Test Configuration</button>
-          <button className="btn btn-primary" onClick={(e) => this.submit(e)} disabled={disabled}>Update Configuration</button>
+          The last step is to apply the updated configuration to the cluster.
+          This is done via <code className="ldap-code"> kubectl </code> to avoid locking yourself out if something goes wrong.
+          <br/><br/>
+          During installation, an assets bundle was generated which included a kubeconfig (users name <code className="ldap-code"> kubelet </code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
+          <br/><br/>
+          <b>It is highly recommend you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
         </p>
-      </Row>
+
+        <pre className="ldap-pre"><code className="ldap-code">kubectl apply -f ~/Downloads/new-tectonic-config.yaml</code></pre>
+
+        <p>
+          Once submitted, a rolling-update of the <a target="_blank" href="ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a> will occur, which will read the new configuration.
+        </p>
+
+        <p className="row col-sm-12">
+          <button className="btn btn-primary" onClick={e => this.downloadNewConfig(e)}>Download New Config</button>
+          <button className="btn btn-default" onClick={e => this.downloadBackup(e)}>Download Existing Config</button>
+        </p>
+      </div>}
 
     </form>;
   }
