@@ -47,20 +47,20 @@
               <i class="fa fa-folder-open-o navigation-container__section__title__icon"></i>Browse Cluster
             </div>
             <ul class="navigation-container__list no-margin collapse in" uib-collapse="kubernetesIsCollapsed">
-              <co-navbar-link ng-cloak href="{{'deployments'|ns}}">Deployments</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'services'|ns}}">Services</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'jobs'|ns}}">Jobs</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'replicasets'|ns}}">Replica Sets</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'daemonsets'|ns}}">Daemon Sets</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'replicationcontrollers'|ns}}">Replication Controllers</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'horizontalpodautoscalers'|ns}}">Autoscalers</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'pods'|ns}}">Pods</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'serviceaccounts'|ns}}">Service Accounts</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'configmaps'|ns}}">Config Maps</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'secrets'|ns}}">Secrets</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'events'|ns}}">Events</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'search'|ns}}">Search</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'ingresses'|ns}}">Ingress</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('deployments')}}">Deployments</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('services')}}">Services</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('jobs')}}">Jobs</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('replicasets')}}">Replica Sets</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('daemonsets')}}">Daemon Sets</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('replicationcontrollers')}}">Replication Controllers</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('horizontalpodautoscalers')}}">Autoscalers</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('pods')}}">Pods</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('serviceaccounts')}}">Service Accounts</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('configmaps')}}">Config Maps</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('secrets')}}">Secrets</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('events')}}">Events</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('search')}}">Search</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('ingresses')}}">Ingress</co-navbar-link>
             </ul>
           </div>
 
@@ -74,8 +74,8 @@
               <co-navbar-link ng-cloak href="settings/cluster">Cluster Settings</co-navbar-link>
               <!-- <co-navbar-link ng-cloak href="settings/ldap">LDAP</co-navbar-link> -->
               <co-navbar-link ng-cloak href="settings/users" ng-if="$root.FEATURE_FLAGS.userManagement">Users</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'roles'|ns}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Roles</co-navbar-link>
-              <co-navbar-link ng-cloak href="{{'rolebindings'|ns}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Role Bindings</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('roles')}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Roles</co-navbar-link>
+              <co-navbar-link ng-cloak href="{{$root.ns('rolebindings')}}" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Role Bindings</co-navbar-link>
               <co-navbar-link ng-cloak href="clusterroles" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Cluster Roles</co-navbar-link>
               <co-navbar-link ng-cloak href="clusterrolebindings" ng-if="$root.FEATURE_FLAGS.rbacV1alpha1">Cluster Role Bindings</co-navbar-link>
             </ul>
