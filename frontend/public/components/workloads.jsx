@@ -13,15 +13,20 @@ const cogOfKind = (kind) => ({o}) => {
   const {factory: {Edit, Delete, ModifyLabels, ModifyCount, ModifyPodSelector}} = Cog;
   const options = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete].map(f => f(kind, o));
 
-  return <Cog options={options} size="small" anchor="left" />;
+  return <Cog options={options} size="small" anchor="left" key={o.metadata.uid} />;
 };
 
 const rowOfKind = (kind) => {
-  return ({obj: o}) => {
-    const CogOfKind = cogOfKind(kindObj(kind));
+  return class rowOfKindComponent extends React.Component {
+    shouldComponentUpdate(nextProps) {
+      return _.get(this.props.obj, 'metadata.resourceVersion') !== _.get(nextProps.obj, 'metadata.resourceVersion');
+    }
 
-    return (
-      <div className="row co-resource-list__item">
+    render() {
+      const CogOfKind = cogOfKind(kindObj(kind));
+      const o = this.props.obj;
+
+      return <div className="row co-resource-list__item">
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
           <CogOfKind o={o} />
           <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
@@ -37,8 +42,8 @@ const rowOfKind = (kind) => {
         <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
           <Selector selector={o.spec.selector} />
         </div>
-      </div>
-    );
+      </div>;
+    }
   };
 };
 
