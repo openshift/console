@@ -4,6 +4,7 @@ import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
+import {PodLogs} from './pod-logs';
 
 const PodCog = ({pod, isDisabled}) => {
   const kind = angulars.kinds.POD;
@@ -253,7 +254,7 @@ const Details = (pod) => {
 };
 
 const {details, events, logs} = navFactory;
-const pages = [details(Details), logs(), events()];
+const pages = [details(Details), logs(PodLogs), events()];
 const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages);
 
 const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
