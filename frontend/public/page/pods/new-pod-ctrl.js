@@ -1,5 +1,7 @@
+import {getNamespacedRoute} from '../../ui/ui-actions';
+
 angular.module('bridge.page')
-.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc, activeNamespaceSvc) {
+.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 
   var namespace = $routeParams.ns || k8s.enum.DefaultNS;
@@ -14,13 +16,13 @@ angular.module('bridge.page')
   $scope.getRestartPolicyLabel = k8s.pods.getRestartPolicyLabelById;
 
   $scope.cancel = function() {
-    $location.path(activeNamespaceSvc.formatNamespaceRoute('/pods'));
+    $location.path(getNamespacedRoute('/pods'));
   };
 
   $scope.save = function() {
     $scope.requestPromise = k8s.pods.create($scope.pod);
     $scope.requestPromise.then(function() {
-      $location.path(activeNamespaceSvc.formatNamespaceRoute('/pods'));
+      $location.path(getNamespacedRoute('/pods'));
     });
   };
 

@@ -1,5 +1,7 @@
+import {getNamespacedRoute} from '../../ui/ui-actions';
+
 angular.module('bridge.page')
-.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, activeNamespaceSvc, k8s) {
+.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -7,13 +9,13 @@ angular.module('bridge.page')
   $scope.podTemplate = $scope.rc.spec.template;
 
   $scope.cancel = function() {
-    $location.path(activeNamespaceSvc.formatNamespaceRoute('/replicationcontrollers'));
+    $location.path(getNamespacedRoute('/replicationcontrollers'));
   };
 
   $scope.save = function() {
     $scope.requestPromise = k8s.replicationcontrollers.create($scope.rc);
     $scope.requestPromise.then(function() {
-      $location.path(activeNamespaceSvc.formatNamespaceRoute('/replicationcontrollers'));
+      $location.path(getNamespacedRoute('/replicationcontrollers'));
     });
   };
 

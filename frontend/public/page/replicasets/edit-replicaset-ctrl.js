@@ -1,5 +1,7 @@
+import {getNamespacedRoute} from '../../ui/ui-actions';
+
 angular.module('bridge.page')
-.controller('EditReplicaSetCtrl', function($scope, $location, $routeParams, activeNamespaceSvc, _, k8s) {
+.controller('EditReplicaSetCtrl', function($scope, $location, $routeParams, _, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -26,13 +28,13 @@ angular.module('bridge.page')
     });
 
   $scope.cancel = function() {
-    $location.path(activeNamespaceSvc.formatNamespaceRoute('/replicasets'));
+    $location.path(getNamespacedRoute('/replicasets'));
   };
 
   $scope.submit = function() {
     $scope.requestPromise = k8s.replicasets.update($scope.rs);
     $scope.requestPromise.then(function() {
-      $location.path(activeNamespaceSvc.formatNamespaceRoute('/replicasets'));
+      $location.path(getNamespacedRoute('/replicasets'));
     });
   };
 });

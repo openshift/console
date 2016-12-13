@@ -6,7 +6,7 @@ import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
 import k8sReducers from './module/k8s/k8s-reducers';
-import {actions as UIActions} from './ui/ui-actions';
+import {actions as UIActions, getNamespacedRoute} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';
 import UIReducers from './ui/ui-reducers';
 import './components/react-wrapper';
@@ -33,7 +33,6 @@ angular.module('bridge', [
   // internal modules
   'templates',
   'k8s',
-  'bridge.filter',
   'bridge.service',
   'bridge.ui',
   'bridge.page',
@@ -317,6 +316,8 @@ angular.module('bridge', [
   angularBridge.expose();
   k8s.featureDetection();
   statusSvc.tectonicVersion();
+
+  $rootScope.ns = getNamespacedRoute;
 
   $rootScope.logout = e => {
     if (!featuresSvc.isAuthDisabled) {
