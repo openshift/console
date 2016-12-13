@@ -1,6 +1,7 @@
+import {getNamespacedRoute} from '../../ui/ui-actions';
+
 angular.module('bridge.page')
-.controller('NewDeploymentCtrl', function(_, $scope, $location, $routeParams,
-                                                     activeNamespaceSvc, k8s, ModalLauncherSvc) {
+.controller('NewDeploymentCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
@@ -20,13 +21,13 @@ angular.module('bridge.page')
   };
 
   $scope.cancel = function() {
-    $location.path(activeNamespaceSvc.formatNamespaceRoute('/deployments'));
+    $location.path(getNamespacedRoute('/deployments'));
   };
 
   $scope.submit = function() {
     $scope.requestPromise = k8s.deployments.create($scope.deployment);
     $scope.requestPromise.then(function() {
-      $location.path(activeNamespaceSvc.formatNamespaceRoute('/deployments'));
+      $location.path(getNamespacedRoute('/deployments'));
     });
   };
 });

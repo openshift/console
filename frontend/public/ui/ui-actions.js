@@ -7,6 +7,8 @@ const nsPathPattern = new RegExp(`^\/?ns\/${CONST.legalNamePattern.source}\/?(.*
 const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 const prefixes = [];
 
+export const getActiveNamespace = () => angulars.store.getState().UI.get('activeNamespace');
+
 const isNamespaced = path => {
   return path.match(nsPathPattern) || path.match(allNsPathPattern);
 };
@@ -29,6 +31,8 @@ export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   return `${namespacePrefix}${originalPath}`;
 };
 
+export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
+
 export const types = {
   initActiveNamespace: 'initActiveNamespace',
   setActiveNamespace: 'setActiveNamespace',
@@ -36,8 +40,6 @@ export const types = {
 
 export const registerNamespaceFriendlyPrefix = s => prefixes.push(s);
 export const clearPrefixes = () => prefixes.splice(0, prefixes.length);
-
-export const getActiveNamespace = () => angulars.store.getState().UI.get('activeNamespace');
 
 export const actions = {
   [types.initActiveNamespace]: () => ({
