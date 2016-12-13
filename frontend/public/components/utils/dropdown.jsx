@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export class DropdownMixin extends React.Component {
+export class DropdownMixin extends React.PureComponent {
   constructor(props) {
     super(props);
     this.listener = this._onWindowClick.bind(this);
@@ -59,6 +59,14 @@ export class DropdownMixin extends React.Component {
 }
 
 export class Dropdown extends DropdownMixin {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.title !== this.props.title) {
+      this.setState({
+        selectedKey: _.find(nextProps.items, (html) => html === nextProps.title)
+      });
+    }
+  }
+
   render() {
     const {active, selectedKey} = this.state;
     const {noButton, noSelection, items, title, className, menuClassName} = this.props;
