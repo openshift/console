@@ -7,7 +7,7 @@ import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {ActionsMenu, connect, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
-import {deleteNamespaceModal} from './modals/delete-namespace-modal';
+import {deleteNamespaceModal} from './modals';
 
 const FullHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Namespace Name</div>

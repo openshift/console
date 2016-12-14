@@ -2,7 +2,7 @@ import React from 'react';
 
 import {coFetchJSON} from '../../co-fetch';
 import {entitlementTitle} from '../license-notifier';
-import {updateLicenseModal} from '../modals/update-license-modal';
+import {updateLicenseModal} from '../modals';
 import {SettingsRow, SettingsLabel, SettingsContent} from './cluster-settings';
 import {SettingsModalLink} from './settings-modal-link';
 

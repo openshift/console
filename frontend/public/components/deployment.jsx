@@ -2,8 +2,9 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
 import {angulars} from './react-wrapper';
-import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Header, rowOfKind} from './workloads';
+import {configureReplicaCountModal} from './modals';
+import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
 export class Details extends React.Component {
@@ -13,10 +14,13 @@ export class Details extends React.Component {
 
   render() {
     const deployment = this.props;
-    const openVolumesModal = angulars.modal('configure-replica-count', {
-      resourceKind: angulars.k8s.kinds.DEPLOYMENT,
-      resource: deployment,
-    });
+    const openReplicaCountModal = (event) => {
+      event.target.blur();
+      configureReplicaCountModal({
+        resourceKind: angulars.k8s.kinds.DEPLOYMENT,
+        resource: deployment,
+      });
+    };
 
     const isRecreate = (deployment.spec.strategy.type === 'Recreate');
 
@@ -29,7 +33,7 @@ export class Details extends React.Component {
                 <div className="co-deployment-pods__section col-sm-3">
                   <dl className="co-deployment-pods__list">
                     <dt className="co-deployment-pods__list-term">Desired Count</dt>
-                    <dd><a className="co-m-modal-link" href="#" onClick={openVolumesModal}>{pluralize(deployment.spec.replicas, 'pod')}</a></dd>
+                    <dd><a className="co-m-modal-link" href="#" onClick={openReplicaCountModal}>{pluralize(deployment.spec.replicas, 'pod')}</a></dd>
                   </dl>
                 </div>
                 <div className="co-deployment-pods__section col-sm-3">
