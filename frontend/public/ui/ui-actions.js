@@ -13,6 +13,17 @@ const isNamespaced = path => {
   return path.match(nsPathPattern) || path.match(allNsPathPattern);
 };
 
+// Most namespaced urls can't move from one namespace to another,
+// but happen to have prefixes that can - for example:
+//
+//   /ns/NS1/pods/MY_POD
+//
+// MY_POD is in general only associated with ns1, but /ns/$$/pods
+// is valid for all values of $$
+//
+// Only paths with registered namespace friendly prefixes can be
+// re-namespaced, so register your prefixes here as you define the
+// associated routes.
 export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   const match = isNamespaced(originalPath);
   if (match) {
@@ -31,15 +42,14 @@ export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   return `${namespacePrefix}${originalPath}`;
 };
 
+export const registerNamespaceFriendlyPrefix = s => prefixes.push(s);
+
 export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
 
 export const types = {
   initActiveNamespace: 'initActiveNamespace',
   setActiveNamespace: 'setActiveNamespace',
 };
-
-export const registerNamespaceFriendlyPrefix = s => prefixes.push(s);
-export const clearPrefixes = () => prefixes.splice(0, prefixes.length);
 
 export const actions = {
   [types.initActiveNamespace]: () => ({
@@ -67,3 +77,10 @@ export const actions = {
     };
   },
 };
+
+window.tectonicTesting && (window.tectonicTesting.uiActions = {
+  getActiveNamespace,
+  getNamespacedRoute,
+  setActiveNamespace: ns => angulars.store.dispatch(actions.setActiveNamespace(ns)),
+});
+
