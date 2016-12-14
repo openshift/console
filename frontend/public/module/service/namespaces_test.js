@@ -17,7 +17,6 @@ describe('bridge.service.activeNamespaceSvc', function() {
   }));
 
   beforeEach(module(function(activeNamespaceSvcProvider) {
-    activeNamespaceSvcProvider.clearPrefixes();
     activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
   }));
 

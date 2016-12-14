@@ -1,4 +1,4 @@
-import {actions, getNamespacedRoute, getActiveNamespace, registerNamespaceFriendlyPrefix, clearPrefixes} from '../../ui/ui-actions';
+import {actions, getNamespacedRoute, getActiveNamespace, registerNamespaceFriendlyPrefix} from '../../ui/ui-actions';
 import {angulars} from '../../components/react-wrapper';
 
 angular.module('bridge.service')
@@ -23,7 +23,6 @@ angular.module('bridge.service')
   // associated routes.
 
   this.registerNamespaceFriendlyPrefix = registerNamespaceFriendlyPrefix;
-  this.clearPrefixes = clearPrefixes;
 
   this.$get = function() {
     return {

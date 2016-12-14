@@ -39,7 +39,6 @@ export const types = {
 };
 
 export const registerNamespaceFriendlyPrefix = s => prefixes.push(s);
-export const clearPrefixes = () => prefixes.splice(0, prefixes.length);
 
 export const actions = {
   [types.initActiveNamespace]: () => ({
