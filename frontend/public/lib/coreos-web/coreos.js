@@ -368,96 +368,12 @@ angular.module('coreos.ui')
   };
 });
 
-/**
- * Adds an active class to <li> tags where a[href], a[ng-href], or
- * a[co-active-match] matches the current url path. Removes any
- * angular interpolated values.
- *
- * Assumes a structure of:
- *
- * <ul co-nav-active="active-class">
- *  <li><a href="/foo/bar">foo bar</a></li>
- *  <li><a ng-href="/foo/{{f.id}}">foo detail</a></li>
- *  <li><a co-active-match="/foo/{{f.id}}/superdetail" href="/redirector">foo super detail</a></li>
- * </ul>
- */
-
-angular.module('coreos.ui')
-.directive('coNavActive', function($, _, $location) {
-  'use strict';
-
-  // Regex to match angular interpolation vlues.
-  var ngVarMatchRE = /{{2}[^}]*}{2}/g;
-
-  return {
-    restrict: 'A',
-    link: function postLink(scope, elem, attrs) {
-
-      function isActive(href) {
-        // is it relative href?
-        if (href[0] !== '/') {
-          // prefix it with slash to mimic $location.path()
-          // behavior as it strips off <base href="..."> prefix
-          href = '/' + href;
-        }
-
-        var hrefParts, currParts;
-        currParts = $location.path().split('/');
-        hrefParts = href.replace(ngVarMatchRE, '').split('/');
-        if (currParts.length !== hrefParts.length) {
-          return false;
-        }
-        return _.every(currParts, function(part, index) {
-          return hrefParts[index] === '' || part === hrefParts[index];
-        });
-      }
-
-      $('a', elem).each(function() {
-        var a = $(this),
-            href = a.attr('co-active-match') || a.attr('href') || a.attr('ng-href');
-        if (isActive(href)) {
-          a.parent().addClass(attrs.coNavActive);
-          return;
-        }
-      });
-
-    }
-  };
-
-});
-
-
-/**
- * @fileoverview
- * Top navbar which inlcudes nav links.
- */
-
-angular.module('coreos.ui')
-
-.directive('coNavbar', function(configSvc) {
-  'use strict';
-
-  return {
-    templateUrl: '/coreos.ui/navbar/navbar.html',
-    transclude: true,
-    restrict: 'E',
-    replace: true,
-    scope: {
-      logoSrc: '@',
-    },
-    controller: function($scope) {
-      $scope.config = configSvc.get();
-      $scope.isCollapsed = true;
-    }
-  };
-
-})
-
 
 /**
  * Simple directive to create bootstrap friendly navbar links.
  * Will automatically add the 'active' class based on the route.
  */
+angular.module('coreos.ui')
 .directive('coNavbarLink', function($location) {
   'use strict';
 
@@ -789,33 +705,6 @@ module.run(['$templateCache', function($templateCache) {
     '');
 }]);
 })();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/navbar/navbar.html',
-    '<div class="">\n' +
-    '\n' +
-    '  <div class="navbar-header">\n' +
-    '    <button ng-click="isCollapsed = !isCollapsed" class="navbar-toggle" type="button">\n' +
-    '      <span class="fa fa-bars"></span>\n' +
-    '    </button>\n' +
-    '    <a ng-href="{{config.siteBasePath}}" class="navbar-brand">\n' +
-    '      <co-svg ng-if="logoSrc" class="co-m-navbar__logo" src="{{logoSrc}}"></co-svg>\n' +
-    '    </a>\n' +
-    '  </div>\n' +
-    '\n' +
-    '  <div uib-collapse="isCollapsed" ng-transclude class="collapse navbar-collapse"></div>\n' +
-    '\n' +
-    '</div>\n' +
-    '');
-}]);
-})();
-
 
 (function(module) {
 try {

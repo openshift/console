@@ -3,4 +3,11 @@ angular.module('bridge.page')
   'use strict';
   $scope.nodeName = $routeParams.name;
   $scope.fieldSelector = `spec.nodeName=${$scope.nodeName}`;
+  $scope.navProps = {
+    pages: [
+      {name: 'Overview', href: 'details'},
+      {name: 'Pods', href: 'pods'},
+      {name: 'Events', href: 'events'},
+    ]
+  };
 });
