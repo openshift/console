@@ -191,16 +191,6 @@ angular.module('bridge', [
     templateUrl: '/static/page/pods/sysevents.html',
     title: 'Pod Events',
   });
-  r('/ns/:ns/pods/:name/logs', {
-    controller: 'PodLogsCtrl',
-    templateUrl: '/static/page/pods/logs.html',
-    title: 'Pod Logs',
-  });
-  r('/ns/:ns/pods/:name/logs/:containerName', {
-    controller: 'PodLogsCtrl',
-    templateUrl: '/static/page/pods/logs.html',
-    title: 'Pod Logs',
-  });
   r('/nodes', {
     template: '<react-component name="NodesPage"></react-component>',
     title: 'Nodes',

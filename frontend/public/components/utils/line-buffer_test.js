@@ -1,10 +1,9 @@
-describe('bridge.service.linebufferSvc', function() {
+describe('lineBuffer', function() {
   'use strict';
   var buffer;
 
-  beforeEach(module('bridge.service'));
-  beforeEach(inject(function(_linebufferSvc_) {
-    buffer = _linebufferSvc_.buffer(3);
+  beforeEach(inject(function() {
+    buffer = window.tectonicTesting.lineBuffer(3);
   }));
 
   it('should allow no newlines', function() {
