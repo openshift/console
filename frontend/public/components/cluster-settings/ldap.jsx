@@ -17,6 +17,12 @@ export const LDAPSetting = () => <SettingsRow>
   </SettingsContent>
 </SettingsRow>;
 
+const INSTRUCTIONS_APPLY = 'kubectl apply -f ~/Downloads/new-tectonic-config.yaml';
+
+const INSTRUCTIONS_PATCH = `kubectl patch deployment tectonic-identity \\
+    --patch "{\\"spec\\":{\\"template\\":{\\"metadata\\":{\\"annotations\\":{\\"date\\":\\"\`date +'%s'\`\\"}}}}}" \\
+    --namespace tectonic-system`;
+
 // silence react warnings :(:(:(
 Field.defaultProps = {name: ''};
 
@@ -494,11 +500,17 @@ class LDAPs extends SafetyFirst {
           <b>It is highly recommend you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
         </p>
 
-        <pre className="ldap-pre"><code className="ldap-code">kubectl apply -f ~/Downloads/new-tectonic-config.yaml</code></pre>
+        <pre className="ldap-pre">
+          <code className="ldap-code">{INSTRUCTIONS_APPLY}</code>
+        </pre>
 
         <p>
-          Once submitted, a rolling-update of the <a target="_blank" href="ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a> will occur, which will read the new configuration.
+          Next, trigger a rolling-update of the <a target="_blank" href="ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a>, which will read the new configuration.
         </p>
+
+        <pre className="ldap-pre" style={{marginBottom: 30}}>
+          <code className="ldap-code">{INSTRUCTIONS_PATCH}</code>
+        </pre>
 
         <p className="row col-sm-12">
           <button className="btn btn-primary" onClick={e => this.downloadNewConfig(e)}>Download New Config</button>
