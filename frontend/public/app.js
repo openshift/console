@@ -7,7 +7,7 @@ import thunk from 'redux-thunk';
 import {analyticsSvc} from './module/analytics';
 import {authSvc} from './module/auth';
 import k8sReducers from './module/k8s/k8s-reducers';
-import {actions as UIActions, getNamespacedRoute} from './ui/ui-actions';
+import {actions as UIActions, getNamespacedRoute, registerNamespaceFriendlyPrefix} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';
 import UIReducers from './ui/ui-reducers';
 import './components/react-wrapper';
@@ -41,8 +41,7 @@ angular.module('bridge', [
   'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider,
-                 configSvcProvider, errorMessageSvcProvider,
-                 k8sConfigProvider, activeNamespaceSvcProvider, $ngReduxProvider) {
+                 configSvcProvider, errorMessageSvcProvider, k8sConfigProvider, $ngReduxProvider) {
   'use strict';
 
   const reducers = combineReducers({
@@ -95,7 +94,7 @@ angular.module('bridge', [
     title: 'Namespaces',
   });
 
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('events');
+  registerNamespaceFriendlyPrefix('events');
   r('/all-namespaces/events', {
     controller: 'EventsCtrl',
     templateUrl: '/static/page/events/events.html',
@@ -107,14 +106,14 @@ angular.module('bridge', [
     title: 'Events',
   });
 
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('services');
+  registerNamespaceFriendlyPrefix('services');
   r('/ns/:ns/services/new', {
     controller: 'NewServiceCtrl',
     templateUrl: '/static/page/services/new-service.html',
     title: 'Create New Service',
   });
 
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicationcontrollers');
+  registerNamespaceFriendlyPrefix('replicationcontrollers');
   r('/ns/:ns/replicationcontrollers/new', {
     controller: 'NewReplicationcontrollerCtrl',
     templateUrl: '/static/page/replicationcontrollers/new-replicationcontroller.html',
@@ -131,16 +130,16 @@ angular.module('bridge', [
     title: 'Replication Controller Events',
   });
 
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('daemonsets');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('jobs');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('horizontalpodautoscalers');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('serviceaccounts');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('configmaps');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('secrets');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('replicasets');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('roles');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('rolebindings');
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('ingresses');
+  registerNamespaceFriendlyPrefix('daemonsets');
+  registerNamespaceFriendlyPrefix('jobs');
+  registerNamespaceFriendlyPrefix('horizontalpodautoscalers');
+  registerNamespaceFriendlyPrefix('serviceaccounts');
+  registerNamespaceFriendlyPrefix('configmaps');
+  registerNamespaceFriendlyPrefix('secrets');
+  registerNamespaceFriendlyPrefix('replicasets');
+  registerNamespaceFriendlyPrefix('roles');
+  registerNamespaceFriendlyPrefix('rolebindings');
+  registerNamespaceFriendlyPrefix('ingresses');
 
   r('/clusterroles', {
     controller: 'k8sListCtrl',
@@ -165,7 +164,7 @@ angular.module('bridge', [
     title: 'Edit Replica Set',
   });
 
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('deployments');
+  registerNamespaceFriendlyPrefix('deployments');
   r('/ns/:ns/deployments/new', {
     controller: 'NewDeploymentCtrl',
     templateUrl: '/static/page/deployments/new-deployment.html',
@@ -177,7 +176,7 @@ angular.module('bridge', [
     title: 'Edit Deployment',
   });
 
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('pods');
+  registerNamespaceFriendlyPrefix('pods');
   r('/ns/:ns/pods/new', {
     controller: 'NewPodCtrl',
     templateUrl: '/static/page/pods/new-pod.html',
@@ -207,7 +206,7 @@ angular.module('bridge', [
     title: 'Node Pods',
   });
 
-  activeNamespaceSvcProvider.registerNamespaceFriendlyPrefix('search');
+  registerNamespaceFriendlyPrefix('search');
 
   r('/all-namespaces/search', {
     controller: 'SearchCtrl',

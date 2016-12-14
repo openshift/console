@@ -1,5 +1,4 @@
 import './_module';
-import './active-namespaces';
 import './auth';
 import './debug';
 import './features';
