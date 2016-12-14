@@ -2,7 +2,6 @@ import './_module';
 import './active-namespaces';
 import './auth';
 import './debug';
-import './interceptors';
 import './features';
 import './firehose';
 import './message';

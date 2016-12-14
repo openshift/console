@@ -5,6 +5,7 @@ import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
+import {authSvc} from './module/auth';
 import k8sReducers from './module/k8s/k8s-reducers';
 import {actions as UIActions, getNamespacedRoute} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';
@@ -39,7 +40,7 @@ angular.module('bridge', [
   'bridge.react-wrapper',
   'moment',
 ])
-.config(function($compileProvider, $routeProvider, $locationProvider, $httpProvider,
+.config(function($compileProvider, $routeProvider, $locationProvider,
                  configSvcProvider, errorMessageSvcProvider,
                  k8sConfigProvider, activeNamespaceSvcProvider, $ngReduxProvider) {
   'use strict';
@@ -62,10 +63,6 @@ angular.module('bridge', [
   // <base> tag in index.html so we cannot use relative path as in many other places
   // and we need to manually prepend it with passed-in base path to form absolute path
   k8sConfigProvider.setKubernetesPath(`${window.SERVER_FLAGS.basePath}api/kubernetes`, window.SERVER_FLAGS.k8sAPIVersion);
-
-  $httpProvider.interceptors.push('unauthorizedInterceptorSvc');
-  $httpProvider.interceptors.push('errorInterceptorSvc');
-  $httpProvider.defaults.timeout = 5000;
 
   configSvcProvider.config({
     siteBasePath: window.SERVER_FLAGS.basePath,
@@ -296,7 +293,7 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, authSvc, k8s, featuresSvc, statusSvc, angularBridge) {
+.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, k8s, featuresSvc, statusSvc, angularBridge) {
   'use strict';
 
   $rootScope.SERVER_FLAGS = $window.SERVER_FLAGS;
@@ -342,18 +339,6 @@ angular.module('bridge', [
       $rootScope.$$listeners = null;
       $window.location.href = $window.SERVER_FLAGS.basePath;
     }
-  });
-
-  $rootScope.$on('xhr-error-unauthorized', function(e, rejection) {
-    if (rejection.config && rejection.config.unauthorizedOk) {
-      return;
-    }
-
-    authSvc.logout($window.location.pathname);
-  });
-
-  $rootScope.$on('xhr-error', function(e, rejection) {
-    analyticsSvc.error(`${rejection.data}: ${rejection.config.method} ${rejection.config.url}`);
   });
 
   window.onerror = function (message, source, lineno, colno) {

@@ -1,7 +1,7 @@
-// TODO(sym3tri): pass scope to config instead of using rootScope?
+import {coFetchJSON} from '../../co-fetch';
 
 angular.module('k8s')
-.service('k8sResource', function($q, $rootScope, $http, _, k8sConfig, k8sSelector) {
+.service('k8sResource', function(_, k8sConfig, k8sSelector) {
   'use strict';
 
   this.resourceURL = function(kind, options) {
@@ -50,16 +50,18 @@ angular.module('k8s')
     return this.resourceURL(kind, opts);
   };
 
-  this.watchURL = function(kind, options) {
+  this.watchURL = (kind, options) => {
     var opts = options || {};
 
     opts.queryParams = opts.queryParams || {};
     opts.queryParams.watch = true;
     return this.resourceURL(kind, opts);
-  }.bind(this);
+  };
 
-  this.list = function(kind, params) {
-    var ns, d = $q.defer();
+  this.get = (kind, name, ns, opts) => coFetchJSON(this.resourceURL(kind, Object.assign({ns, name}, opts)));
+
+  this.list = (kind, params) => {
+    let ns;
     if (params) {
       if (!_.isEmpty(params.labelSelector)) {
         params.labelSelector = k8sSelector.toString(params.labelSelector);
@@ -70,91 +72,29 @@ angular.module('k8s')
       }
     }
 
-    $http({
-      url: this.resourceURL(kind, {ns: ns}),
-      method: 'GET',
-      params: params,
-    })
-    .then(function(result) {
-      d.resolve(result.data.items);
-    })
-    .catch(d.reject);
+    const query = _.map(params, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+    return coFetchJSON(`${this.resourceURL(kind, {ns})}?${query}`).then(result => result.items);
+  };
 
-    return d.promise;
-  }.bind(this);
-
-  this.create = function(kind, data) {
-    var d = $q.defer();
+  this.create = (kind, data) => {
     // Lowercase the resource name
     // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
     data.metadata.name = data.metadata.name.toLowerCase();
-    $http({
-      url: this.resourceURL(kind, {ns: data.metadata.namespace}),
-      method: 'POST',
-      data: data,
-    })
-    .then(function(result) {
-      d.resolve(result.data);
-    })
-    .catch(d.reject);
 
-    return d.promise;
-  }.bind(this);
+    return coFetchJSON.post(this.resourceURL(kind, {ns: data.metadata.namespace}), data);
+  };
 
-  this.update = function(kind, data) {
-    var d = $q.defer();
-    $http({
-      url: this.resourceURL(kind, {ns: data.metadata.namespace, name: data.metadata.name}),
-      method: 'PUT',
-      data: data,
-    })
-    .then(function(result) {
-      d.resolve(result.data);
-    })
-    .catch(d.reject);
+  this.update = (kind, data) => coFetchJSON.put(
+    this.resourceURL(kind, {ns: data.metadata.namespace, name: data.metadata.name}),
+    data
+  );
 
-    return d.promise;
-  }.bind(this);
+  this.patch = (kind, resource, data) => coFetchJSON.patch(
+    this.resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
+    data
+  );
 
-  this.patch = function(kind, resource, payload) {
-    var d = $q.defer();
-    $http({
-      headers: {
-        'Content-Type': 'application/json-patch+json',
-      },
-      url: this.resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
-      method: 'PATCH',
-      data: payload,
-    })
-    .then(function(result) {
-      d.resolve(result.data);
-    })
-    .catch(d.reject);
-    return d.promise;
-  }.bind(this);
-
-  this.get = function(kind, name, ns, opts) {
-    var d = $q.defer();
-
-    $http({
-      url: this.resourceURL(kind, Object.assign({ns: ns, name: name}, opts)),
-      method: 'GET',
-    })
-    .then(function(result) {
-      d.resolve(result.data);
-    })
-    .catch(d.reject);
-
-    return d.promise;
-  }.bind(this);
-
-  this.delete = function(kind, resource, opts) {
-    var p = $http({
-      url: this.resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts)),
-      method: 'DELETE',
-    });
-
-    return p;
-  }.bind(this);
-
+  this.delete = (kind, resource, opts) => coFetchJSON.delete(
+    this.resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts))
+  );
 });
