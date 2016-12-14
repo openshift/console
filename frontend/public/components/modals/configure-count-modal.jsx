@@ -30,14 +30,26 @@ class ConfigureCountModal extends PromiseComponent {
     });
   }
 
+  _invalidateState(isInvalid) {
+    if (this.props.invalidateState) {
+      this.props.invalidateState(isInvalid);
+    }
+  }
+
   _submit(event) {
     event.preventDefault();
 
     const patch = [{ op: 'replace', path: this.props.path, value: _.toInteger(this.state.value) }];
 
+    this._invalidateState(true);
     this._setRequestPromise(
       angulars.k8s.resource.patch(this.props.resourceKind, this.props.resource, patch)
-    ).then(this.props.close);
+    )
+      .then(this.props.close)
+      .catch((error) => {
+        this._invalidateState(false);
+        throw error;
+      });
   }
 
   render() {
