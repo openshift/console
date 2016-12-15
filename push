@@ -21,6 +21,11 @@ if [[ "$GIT_VERSION" == *dirty ]]; then
     exit 1
 fi
 
+if [ ! -z "$PR_IMAGE_TAG" ]; then
+  echo "Pull request image, using tag ${PR_IMAGE_TAG}."
+  GIT_VERSION="$PR_IMAGE_TAG"
+fi
+
 docker build -q --rm=true -t $REPO:$GIT_VERSION .
 
 docker push $REPO:$GIT_VERSION
