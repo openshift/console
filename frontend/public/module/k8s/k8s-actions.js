@@ -69,7 +69,7 @@ const actions =  {
         .then(o => dispatch(actions.modifyObject(id, o)))
         .catch(e => dispatch(actions.errored(id, e)));
     };
-    POLLs[id] = setInterval(poller, 10 * 1000);
+    POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
   },
 
