@@ -1,13 +1,14 @@
 import {coFetchJSON} from '../../co-fetch';
+import {getKubernetesAPIPath} from './k8s';
 import {toString} from './selector';
 
 angular.module('k8s')
-.service('k8sResource', function(_, k8sConfig) {
+.service('k8sResource', function(_) {
   'use strict';
 
   this.resourceURL = function(kind, options) {
-    var q = '',
-        u = k8sConfig.getKubernetesAPIPath(kind);
+    let q = '';
+    let u = getKubernetesAPIPath(kind);
 
     if (options.ns) {
       u += `/namespaces/${options.ns}`;

@@ -13,3 +13,9 @@
 // https://github.com/coreos-inc/bridge/issues/915
 
 window.tectonicTesting = {};
+
+// Initialize global values for tests
+window.SERVER_FLAGS = {
+  basePath: '/',
+  k8sAPIVersion: 'v1',
+};
