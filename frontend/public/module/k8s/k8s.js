@@ -12,7 +12,6 @@ import './deployments';
 import './resource';
 import './services';
 import './command';
-import './configmaps';
 
 import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
@@ -56,7 +55,7 @@ const coreosFlagNames = {
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope, k8sEvents, k8sEnum, k8sResource, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sCommand, featuresSvc, k8sConfigmaps) {
+                         k8sDeployments, k8sProbe, k8sNodes, k8sCommand, featuresSvc) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;
@@ -106,7 +105,7 @@ angular.module('k8s')
   };
 
   this.kinds = k8sEnum.Kind;
-  this.configmaps = addDefaults(k8sConfigmaps, k8sEnum.Kind.CONFIGMAP);
+  this.configmaps = addDefaults({}, k8sEnum.Kind.CONFIGMAP);
   this.nodes = addDefaults(k8sNodes, k8sEnum.Kind.NODE);
   this.services = addDefaults(k8sServices, k8sEnum.Kind.SERVICE);
   this.pods = addDefaults(k8sPods, k8sEnum.Kind.POD);
