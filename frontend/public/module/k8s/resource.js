@@ -1,7 +1,8 @@
 import {coFetchJSON} from '../../co-fetch';
+import {toString} from './selector';
 
 angular.module('k8s')
-.service('k8sResource', function(_, k8sConfig, k8sSelector) {
+.service('k8sResource', function(_, k8sConfig) {
   'use strict';
 
   this.resourceURL = function(kind, options) {
@@ -32,7 +33,7 @@ angular.module('k8s')
     const opts = {queryParams: {}};
 
     if (labelSelector) {
-      opts.queryParams.labelSelector = encodeURIComponent(k8sSelector.toString(labelSelector));
+      opts.queryParams.labelSelector = encodeURIComponent(toString(labelSelector));
     }
 
     if (fieldSelector) {
@@ -64,7 +65,7 @@ angular.module('k8s')
     let ns;
     if (params) {
       if (!_.isEmpty(params.labelSelector)) {
-        params.labelSelector = k8sSelector.toString(params.labelSelector);
+        params.labelSelector = toString(params.labelSelector);
       }
       if (params.ns) {
         ns = params.ns;

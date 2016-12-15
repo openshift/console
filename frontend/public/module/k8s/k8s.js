@@ -2,7 +2,6 @@ import './_module';
 import './docker';
 import './enum';
 import './events';
-import './selector';
 import './labels';
 import './node';
 import './pods';
@@ -18,6 +17,7 @@ import './configmaps';
 import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
 
+import * as k8sSelector from './selector';
 import * as k8sSelectorRequirement from './selector-requirement';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
@@ -72,7 +72,7 @@ angular.module('k8s')
 })
 .service('k8s', function(_, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sLabels,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sCommand, featuresSvc, k8sConfigmaps) {
+                         k8sDeployments, k8sProbe, k8sNodes, k8sCommand, featuresSvc, k8sConfigmaps) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;

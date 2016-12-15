@@ -1,12 +1,9 @@
-describe('k8s.k8sSelector', function() {
+describe('k8sSelector', function() {
   'use strict';
 
-  var k8sSelector;
+  var k8sSelector = window.tectonicTesting.k8sSelector;
 
   beforeEach(module('k8s'));
-  beforeEach(inject(function(_k8sSelector_) {
-    k8sSelector = _k8sSelector_;
-  }));
 
   describe('#fromString', function () {
     it('works for nullable', function () {
