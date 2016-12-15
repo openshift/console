@@ -1,12 +1,9 @@
-describe('k8s.k8sProbe', function () {
+describe('k8sProbe', function () {
   'use strict';
 
-  var k8sProbe;
+  var k8sProbe = window.tectonicTesting.k8sProbe;
 
   beforeEach(module('k8s'));
-  beforeEach(inject(function (_k8sProbe_) {
-    k8sProbe = _k8sProbe_;
-  }));
 
   describe('#parseCmd', function () {
     describe('for tcpSocket', function () {
