@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import {register} from '../react-wrapper';
 import yamlize from '../../module/service/yamlize';
 import {detailsPage, StatusBox, RelativeLink} from './index';
+import { EditYAML } from '../edit-yaml';
 
 export const navFactory = {
   details: (component = undefined) => ({
@@ -30,6 +31,11 @@ export const navFactory = {
     href: 'yaml',
     name: 'YAML',
     component: detailsPage((resource) => <div className="col-xs-12"><div className="co-m-pane__body"><pre className="co-pre-wrap">{yamlize(resource)}</pre></div></div>),
+  }),
+  editYaml: () => ({
+    href: 'edit-yaml',
+    name: 'Edit',
+    component: EditYAML,
   }),
 };
 

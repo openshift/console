@@ -13,9 +13,30 @@ const validateStatus = (response) => {
     authSvc.logout(window.location.pathname);
   }
 
-  const error = new Error(response.statusText);
-  error.response = response;
-  throw error;
+  const contentType = response.headers.get('content-type');
+  if (!contentType || contentType.indexOf('json') === -1) {
+    const error = new Error(response.statusText);
+    error.response = response;
+    throw error;
+  }
+
+  return response.json().then(json => {
+    const cause = _.get(json, 'details.causes[0]');
+    let reason;
+    if (cause) {
+      reason = `Error "${cause.message}" for field "${cause.field}".`;
+    }
+    if (!reason) {
+      reason = json.message;
+    }
+    if (!reason) {
+      reason = response.statusText;
+    }
+    const error = new Error(reason);
+    error.response = response;
+    throw error;
+  });
+
 };
 
 export const coFetch = (url, options = {}) => {

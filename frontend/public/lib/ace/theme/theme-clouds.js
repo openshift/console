@@ -3,8 +3,9 @@ ace.define("ace/theme/clouds",["require","exports","module","ace/lib/dom"], func
 exports.isDark = false;
 exports.cssClass = "ace-clouds";
 exports.cssText = ".ace-clouds .ace_gutter {\
-background: #ebebeb;\
-color: #333\
+background: #fff;\
+color: #999;\
+border-right: 1px solid #ddd;\
 }\
 .ace-clouds .ace_print-margin {\
 width: 1px;\
