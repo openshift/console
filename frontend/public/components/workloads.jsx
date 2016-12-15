@@ -9,11 +9,15 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
 </div>;
 
-const cogOfKind = (kind) => ({o}) => {
+const CogOfKind = ({kind, o}) => {
   const {factory: {Edit, Delete, ModifyLabels, ModifyCount, ModifyPodSelector}} = Cog;
   const options = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete].map(f => f(kind, o));
 
   return <Cog options={options} size="small" anchor="left" key={o.metadata.uid} />;
+};
+CogOfKind.propTypes = {
+  kind: React.PropTypes.object.isRequired,
+  o: React.PropTypes.object.isRequired
 };
 
 const rowOfKind = (kind) => {
@@ -23,12 +27,11 @@ const rowOfKind = (kind) => {
     }
 
     render() {
-      const CogOfKind = cogOfKind(kindObj(kind));
       const o = this.props.obj;
 
       return <div className="row co-resource-list__item">
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-          <CogOfKind o={o} />
+          <CogOfKind o={o} kind={kindObj(kind)} />
           <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
