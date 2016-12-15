@@ -1,12 +1,9 @@
-describe('k8s.k8sDocker', function() {
+describe('k8sDocker', function() {
   'use strict';
 
-  var k8sDocker;
+  var k8sDocker = window.tectonicTesting.k8sDocker;
 
   beforeEach(module('k8s'));
-  beforeEach(inject(function(_k8sDocker_) {
-    k8sDocker = _k8sDocker_;
-  }));
 
   describe('#getStatus', function() {
     it('returns falsy when pod has no container status with given name', function () {
