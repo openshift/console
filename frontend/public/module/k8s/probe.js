@@ -1,6 +1,7 @@
+import {k8sEnum} from './enum';
 
 angular.module('k8s')
-.service('k8sProbe', function(_, k8sEnum) {
+.service('k8sProbe', function(_) {
   'use strict';
 
   var flatteners, parsers;

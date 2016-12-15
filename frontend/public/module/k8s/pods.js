@@ -1,7 +1,8 @@
+import {k8sEnum} from './enum';
 import {util} from './util';
 
 angular.module('k8s')
-.service('k8sPods', function(_, k8sDocker, k8sEnum) {
+.service('k8sPods', function(_, k8sDocker) {
   'use strict';
 
   var defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, function(o) { return o.default; });

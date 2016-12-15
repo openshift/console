@@ -1,7 +1,8 @@
+import {k8sEnum} from './enum';
 import {util} from './util';
 
 angular.module('k8s')
-.service('k8sServices', function(k8sEnum) {
+.service('k8sServices', function() {
   'use strict';
 
   this.clean = function(service) {

@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
-import {angulars} from '../../components/react-wrapper';
+import {k8sEnum} from './enum';
 
 export const util = {
-  getKindEnumById: id => _.find(angulars.kinds, {id: id}),
+  getKindEnumById: id => _.find(k8sEnum.Kind, {id: id}),
 
   // Set all named properties of object to null if empty.
   nullifyEmpty: (obj, props) => {

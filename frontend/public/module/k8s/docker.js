@@ -1,7 +1,8 @@
+import {k8sEnum} from './enum';
 import {util} from './util';
 
 angular.module('k8s')
-.service('k8sDocker', function(_, k8sEnum) {
+.service('k8sDocker', function(_) {
   'use strict';
 
   // Parses the state from k8s container info field of a pod.

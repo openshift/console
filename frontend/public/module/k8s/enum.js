@@ -1,4 +1,4 @@
-angular.module('k8s').constant('k8sEnum', {
+export const k8sEnum = {
 
   DefaultNS: 'default',
 
@@ -379,4 +379,4 @@ angular.module('k8s').constant('k8sEnum', {
     },
   },
 
-});
+};
