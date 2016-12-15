@@ -1,9 +1,6 @@
-'use strict';
-
 const EVENTS = {};
 
 export default EVENTS;
-angular.module('k8s').constant('k8sEvents', EVENTS);
 
 // must match Enum.KIND.plural
 [
@@ -16,4 +13,3 @@ angular.module('k8s').constant('k8sEvents', EVENTS);
     DELETED: `k8s-${name}-deleted`,
   };
 });
-
