@@ -26,14 +26,10 @@ angular.module('k8s')
 .provider('k8sConfig', function() {
   'use strict';
 
-  var basePath;
-  var apiVersion;
-
-  this.setKubernetesPath = function(path, version) {
-    basePath = path;
-    apiVersion = version;
-  };
   this.$get = function() {
+    const basePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
+    const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
+
     return {
       getKubernetesAPIPath: function(kind) {
         let p = basePath;
