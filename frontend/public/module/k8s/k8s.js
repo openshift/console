@@ -9,12 +9,12 @@ import './replicasets';
 import './deployments';
 import './resource';
 import './services';
-import './command';
 
 import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
 import {k8sEnum} from './enum';
 
+import * as k8sCommand from './command';
 import * as k8sLabels from './labels';
 import * as k8sSelector from './selector';
 import * as k8sSelectorRequirement from './selector-requirement';
@@ -55,7 +55,7 @@ const coreosFlagNames = {
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope, k8sEvents, k8sResource,
                          k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sCommand, featuresSvc) {
+                         k8sDeployments, k8sProbe, k8sNodes, featuresSvc) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;
