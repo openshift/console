@@ -1,5 +1,7 @@
+import * as k8sSelectorRequirement from './selector-requirement';
+
 angular.module('k8s')
-  .factory('k8sSelector', function k8sSelector(k8sSelectorRequirement) {
+  .factory('k8sSelector', function k8sSelector() {
     'use strict';
 
     function isOldFormat(selector) {
