@@ -1,7 +1,6 @@
 import './_module';
 import './node';
 import './resource';
-import './services';
 
 import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
@@ -18,6 +17,7 @@ import * as k8sReplicaSets from './replicasets';
 import * as k8sReplicationControllers from './replicationcontrollers';
 import * as k8sSelector from './selector';
 import * as k8sSelectorRequirement from './selector-requirement';
+import * as k8sServices from './services';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
@@ -54,7 +54,6 @@ const coreosFlagNames = {
 
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope, k8sResource,
-                         k8sServices,
                          k8sNodes, featuresSvc) {
   'use strict';
   this.getQN = getQN;
