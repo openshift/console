@@ -59,14 +59,6 @@ export class DropdownMixin extends React.PureComponent {
 }
 
 export class Dropdown extends DropdownMixin {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.title !== this.props.title) {
-      this.setState({
-        selectedKey: _.find(nextProps.items, (html) => html === nextProps.title)
-      });
-    }
-  }
-
   render() {
     const {active, selectedKey} = this.state;
     const {noButton, noSelection, items, title, className, menuClassName} = this.props;
