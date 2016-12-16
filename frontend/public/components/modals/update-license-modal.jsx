@@ -23,9 +23,7 @@ export const updateLicenseModal = (additionalOptions) => {
           return response.json().then((json) => {
             if (json.error) {
               const error = {
-                data: {
-                  message: json.error
-                }
+                message: json.error
               };
               throw error;
             }
