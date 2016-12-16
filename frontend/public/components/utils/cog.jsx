@@ -9,6 +9,7 @@ import {DropdownMixin} from './dropdown';
 
 export class Cog extends DropdownMixin {
   componentDidMount () {
+    super.componentDidMount();
     ReactTooltip.rebuild();
   }
 
