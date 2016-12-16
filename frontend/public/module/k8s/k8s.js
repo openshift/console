@@ -1,6 +1,5 @@
 import './_module';
 import './node';
-import './deployments';
 import './resource';
 import './services';
 
@@ -9,6 +8,7 @@ import {wsFactory} from '../ws-factory';
 import {k8sEnum} from './enum';
 
 import * as k8sCommand from './command';
+import * as k8sDeployments from './deployments';
 import * as k8sDocker from './docker';
 import k8sEvents from './events';
 import * as k8sLabels from './labels';
@@ -55,7 +55,7 @@ const coreosFlagNames = {
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope, k8sResource,
                          k8sServices,
-                         k8sDeployments, k8sNodes, featuresSvc) {
+                         k8sNodes, featuresSvc) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;
