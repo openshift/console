@@ -1,6 +1,5 @@
 import './_module';
 import './node';
-import './replicationcontrollers';
 import './deployments';
 import './resource';
 import './services';
@@ -16,6 +15,7 @@ import * as k8sLabels from './labels';
 import * as k8sPods from './pods';
 import * as k8sProbe from './probe';
 import * as k8sReplicaSets from './replicasets';
+import * as k8sReplicationControllers from './replicationcontrollers';
 import * as k8sSelector from './selector';
 import * as k8sSelectorRequirement from './selector-requirement';
 
@@ -54,7 +54,7 @@ const coreosFlagNames = {
 
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope, k8sResource,
-                         k8sServices, k8sReplicationcontrollers,
+                         k8sServices,
                          k8sDeployments, k8sNodes, featuresSvc) {
   'use strict';
   this.getQN = getQN;
@@ -110,7 +110,7 @@ angular.module('k8s')
   this.services = addDefaults(k8sServices, k8sEnum.Kind.SERVICE);
   this.pods = addDefaults(k8sPods, k8sEnum.Kind.POD);
   this.containers = addDefaults({}, k8sEnum.Kind.CONTAINER);
-  this.replicationcontrollers = addDefaults(k8sReplicationcontrollers, k8sEnum.Kind.REPLICATIONCONTROLLER);
+  this.replicationcontrollers = addDefaults(k8sReplicationControllers, k8sEnum.Kind.REPLICATIONCONTROLLER);
   this.replicasets = addDefaults(k8sReplicaSets, k8sEnum.Kind.REPLICASET);
   this.deployments = addDefaults(k8sDeployments, k8sEnum.Kind.DEPLOYMENT);
   this.jobs = addDefaults({}, k8sEnum.Kind.JOB);
