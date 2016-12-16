@@ -21,8 +21,8 @@ if [[ "$GIT_VERSION" == *dirty ]]; then
     exit 1
 fi
 
-if [ ! -z "$PR_IMAGE_TAG" ]; then
-  echo "Pull request image, using tag ${PR_IMAGE_TAG}."
+if [ -n "$PR_IMAGE_TAG" ]; then
+  echo "PR_IMAGE_TAG detected, using instead of the commit sha."
   GIT_VERSION="$PR_IMAGE_TAG"
 fi
 

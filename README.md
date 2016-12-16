@@ -96,6 +96,8 @@ Pull requests:
 * Comment with `Jenkins push` to push an image to Quay, tagged with:
     `pr_[pr #]_build_[jenkins build #]`
 
+If changes are ever required for the Jenkins job configuration, apply them to both the [regular console job](https://jenkins-tectonic.prod.coreos.systems/job/console-build/) and [PR image job](https://jenkins-tectonic.prod.coreos.systems/job/console-pr-image/).
+
 ## Hacking
 
 See [CONTRIBUTING](CONTRIBUTING.md) for workflow & convention details.

@@ -28,7 +28,7 @@ GIT_SHA_MASTER=$(git rev-parse origin/master)
 if [ "$GIT_SHA_HEAD" == "$GIT_SHA_MASTER" ]; then
     echo "detected master build. building & pushing images..."
     ./push
-elif [ ! -z "$PR_IMAGE_TAG" ]; then
+elif [ -n "$PR_IMAGE_TAG" ]; then
     echo "detected request to build image of PR ${ghprbPullId} using tag ${PR_IMAGE_TAG}. building & pushing images..."
     ./push
 else
