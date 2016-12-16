@@ -61,6 +61,10 @@ const actions =  {
     dispatch({id, type: types.watchK8sObject});
     REF_COUNTS[id] += 1;
 
+    if (query.name) {
+      query.fieldSelector = `metadata.name=${query.name}`;
+      delete query.name;
+    }
     const ws = k8sType.watch(query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
     WS[id] = ws;
 
