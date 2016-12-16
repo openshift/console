@@ -1,7 +1,6 @@
 import './_module';
 import './node';
 import './replicationcontrollers';
-import './replicasets';
 import './deployments';
 import './resource';
 import './services';
@@ -16,6 +15,7 @@ import k8sEvents from './events';
 import * as k8sLabels from './labels';
 import * as k8sPods from './pods';
 import * as k8sProbe from './probe';
+import * as k8sReplicaSets from './replicasets';
 import * as k8sSelector from './selector';
 import * as k8sSelectorRequirement from './selector-requirement';
 
@@ -54,7 +54,7 @@ const coreosFlagNames = {
 
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope, k8sResource,
-                         k8sServices, k8sReplicationcontrollers, k8sReplicaSets,
+                         k8sServices, k8sReplicationcontrollers,
                          k8sDeployments, k8sNodes, featuresSvc) {
   'use strict';
   this.getQN = getQN;
