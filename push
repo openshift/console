@@ -4,6 +4,7 @@
 # Will push a sha-named image at every run.
 # If it appears to be the tip of master, will tag that image with a
 # git tag if one is present.
+# If IMAGE_TAG is set, will use IMAGE_TAG as the tag instead.
 
 # This script relies on .dockercfg or other external configuration to
 # grant the appropriate permissions and identity for pushing images quay.io
@@ -21,9 +22,9 @@ if [[ "$GIT_VERSION" == *dirty ]]; then
     exit 1
 fi
 
-if [ -n "$PR_IMAGE_TAG" ]; then
-  echo "PR_IMAGE_TAG detected, using instead of the commit sha."
-  GIT_VERSION="$PR_IMAGE_TAG"
+if [ -n "$IMAGE_TAG" ]; then
+  echo "IMAGE_TAG detected, using instead of the git version."
+  GIT_VERSION="$IMAGE_TAG"
 fi
 
 docker build -q --rm=true -t $REPO:$GIT_VERSION .
