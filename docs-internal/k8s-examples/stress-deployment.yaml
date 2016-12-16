@@ -2,14 +2,14 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: frontend
+    app: k8s-examples
   name: stress
   namespace: default
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: frontend
+      app: k8s-examples
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -19,7 +19,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: frontend
+        app: k8s-examples
       namespace: default
     spec:
       containers:
