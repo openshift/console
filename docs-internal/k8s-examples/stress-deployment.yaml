@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: k8s-examples
+  name: stress
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: k8s-examples
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: k8s-examples
+      namespace: default
+    spec:
+      containers:
+        - command:
+            - stress
+            - "--cpu"
+            - "1"
+            - "--io"
+            - "1"
+            - "--vm"
+            - "1"
+            - "--vm-bytes"
+            - 1M
+            - "--timeout"
+            - 5s
+            - --verbose
+          image: progrium/stress:latest
+          imagePullPolicy: Always
+          name: stress
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
