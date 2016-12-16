@@ -28,6 +28,9 @@ GIT_SHA_MASTER=$(git rev-parse origin/master)
 if [ "$GIT_SHA_HEAD" == "$GIT_SHA_MASTER" ]; then
     echo "detected master build. building & pushing images..."
     ./push
+elif [ -n "$IMAGE_TAG" ]; then
+    echo "detected request to push built image using tag ${IMAGE_TAG}. building & pushing images..."
+    ./push
 else
     echo "skipping image push. HEAD sha does not appear to be master: $GIT_SHA_HEAD"
 fi
