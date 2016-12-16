@@ -11,6 +11,7 @@ import { register } from '../react-wrapper';
 import { Loading, units } from '../utils';
 import { discoverService } from '../../module/k8s/discover-service';
 import { coFetch, coFetchJSON, coFetchUtils } from '../../co-fetch';
+import { SafetyFirst } from '../safety-first';
 
 const states = {
   LOADING: 'loading',
@@ -25,7 +26,7 @@ const stepSize = 30; // 30 seconds
 const timespan = 60 * 60 * 1000; // 1 hour
 const pollInterval = stepSize * 1000; // stepSize in milliseconds
 
-class SparklineWidget extends React.Component {
+class SparklineWidget extends SafetyFirst {
   constructor(props) {
     super(props);
     this.interval = null;
@@ -48,7 +49,7 @@ class SparklineWidget extends React.Component {
       state: states.LOADING
     });
 
-    if (this._isMounted) {
+    if (this.isMounted_) {
       this.setState(newState);
     } else {
       this.state = newState;
@@ -63,12 +64,8 @@ class SparklineWidget extends React.Component {
     this.interval = setInterval(this.update.bind(this), pollInterval);
   }
 
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
   componentWillUnmount() {
-    this._isMounted = false;
+    super.componentWillUnmount();
     clearInterval(this.interval);
   }
 
@@ -158,7 +155,7 @@ class SparklineWidget extends React.Component {
       })
       .then(coFetchUtils.parseJson)
       .then((json) => {
-        if (!this._isMounted || generation !== this.generation) {
+        if (!this.isMounted_ || generation !== this.generation) {
           return;
         }
 
@@ -177,7 +174,7 @@ class SparklineWidget extends React.Component {
         this.updateData(json.data.result[0].values);
       })
       .catch(() => {
-        if (!this._isMounted || generation !== this.generation) {
+        if (!this.isMounted_ || generation !== this.generation) {
           return;
         }
 
