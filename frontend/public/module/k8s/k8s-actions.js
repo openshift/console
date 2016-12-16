@@ -53,7 +53,7 @@ const actions =  {
     return {id, value, type: types.selectInList};
   },
 
-  watchK8sObject: (id, name, namespace, k8sType) => dispatch => {
+  watchK8sObject: (id, name, namespace, query, k8sType) => dispatch => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -61,18 +61,21 @@ const actions =  {
     dispatch({id, type: types.watchK8sObject});
     REF_COUNTS[id] += 1;
 
+    const ws = k8sType.watch(query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
+    WS[id] = ws;
+
     const poller = () => {
       k8sType.get(name, namespace)
         .then(o => dispatch(actions.modifyObject(id, o)))
         .catch(e => dispatch(actions.errored(id, e)));
     };
-    POLLs[id] = setInterval(poller, 10 * 1000);
+    POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
   },
 
   stopK8sWatch: id => {
     REF_COUNTS[id] -= 1;
-    if (REF_COUNTS[id] >= 1) {
+    if (REF_COUNTS[id] > 0) {
       return nop;
     }
 

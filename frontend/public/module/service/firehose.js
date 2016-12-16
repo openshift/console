@@ -22,7 +22,7 @@ angular.module('bridge.service')
       // eslint-disable-next-line no-console
       console.log(`opening ${this.id}`);
       // watchK8sObject: (id, name, namespace, k8sType)
-      dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.k8sType));
+      dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.query, this.k8sType));
       return this;
     }
 
