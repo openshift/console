@@ -89,7 +89,7 @@ const withSecretsList = (Row) => {
   };
 };
 
-const pages = [navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()];
+const pages = [navFactory.details(detailsPage(SecretDetails))];
 
 const SecretsList = makeList('Secrets', 'secret', SecretHeader, SecretRow);
 const SecretsPage = makeListPage('SecretsPage', 'secret', SecretsList);

@@ -66,8 +66,8 @@ const Details = (daemonset) => <div>
   </div>
 </div>;
 
-const {details, pods, editYaml} = navFactory;
-const pages = [details(detailsPage(Details)), editYaml(), pods()];
+const {details, pods} = navFactory;
+const pages = [details(detailsPage(Details)), pods()];
 
 const DaemonSets = makeList('DaemonSets', 'daemonset', DaemonSetHeader, DaemonSetRow);
 const DaemonSetsPage = makeListPage('DaemonSetsPage', 'daemonset', DaemonSets);

@@ -147,8 +147,8 @@ const Details = (s) => <div className="row no-gutter">
   </div>
 </div>;
 
-const {details, pods, editYaml} = navFactory;
-const pages = [details(Details), editYaml(), pods()];
+const {details, pods} = navFactory;
+const pages = [details(Details), pods()];
 const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages);
 
 const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);
