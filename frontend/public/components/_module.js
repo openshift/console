@@ -24,3 +24,4 @@ import './ingress';
 import './cluster-settings/ldap';
 import './cluster-overview-container';
 import './cluster-overview';
+import './edit-yaml';

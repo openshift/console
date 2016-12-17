@@ -1,0 +1,20 @@
+.yaml-editor {
+  position: relative;
+}
+
+.yaml-editor--flexbox {
+  display: flex;
+  flex-direction: column;
+}
+
+.yaml-editor--acebox {
+  flex: 1;
+}
+
+.yaml-editor--buttons {
+  background: white;
+  z-index: 10;
+  border-top: 1px solid #ddd;
+  padding: 20px;
+  margin-top: auto;
+}
