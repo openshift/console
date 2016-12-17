@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, navFactory, ResourceIcon, Timestamp, detailsPage, EmptyBox, ResourceLink} from './utils';
+import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage, EmptyBox, ResourceLink} from './utils';
 
 const getHosts = (ingress) => {
   const hosts = _.map(_.get(ingress, 'spec.rules'), 'host');
@@ -140,9 +140,7 @@ const Details = (ingress) => <div className="col-md-12">
   </div>
 </div>;
 
-const {editYaml} = navFactory;
-
-const pages = [{href: 'details', name: 'Overview', component: detailsPage(Details)}, editYaml()];
+const pages = [{href: 'details', name: 'Overview', component: detailsPage(Details)}];
 const IngressDetailsPage = makeDetailsPage('IngressDetailsPage', 'ingress', pages);
 const IngressList = makeList('Ingress', 'ingress', IngressListHeader, IngressListRow);
 const IngressPage = makeListPage('IngressesPage', 'ingress', IngressList);
