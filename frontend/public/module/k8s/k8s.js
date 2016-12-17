@@ -1,5 +1,4 @@
 import './_module';
-import './resource';
 
 import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
@@ -15,6 +14,7 @@ import * as k8sPods from './pods';
 import * as k8sProbe from './probe';
 import * as k8sReplicaSets from './replicasets';
 import * as k8sReplicationControllers from './replicationcontrollers';
+import * as k8sResource from './resource';
 import * as k8sSelector from './selector';
 import * as k8sSelectorRequirement from './selector-requirement';
 import * as k8sServices from './services';
@@ -53,7 +53,7 @@ const coreosFlagNames = {
 
 
 angular.module('k8s')
-.service('k8s', function(_, $timeout, $rootScope, k8sResource,
+.service('k8s', function(_, $timeout, $rootScope,
                          featuresSvc) {
   'use strict';
   this.getQN = getQN;
@@ -72,7 +72,7 @@ angular.module('k8s')
     return _.assign({
       list: _.partial(k8sResource.list, kind),
       get: _.partial(k8sResource.get, kind),
-      delete: _.partial(k8sResource.delete, kind),
+      delete: _.partial(k8sResource.kill, kind),
       create: function(obj) {
         k8sObject.clean && k8sObject.clean(obj);
         return k8sResource.create(kind, obj);
