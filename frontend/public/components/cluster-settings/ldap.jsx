@@ -156,6 +156,34 @@ const Fields = {
   ],
 };
 
+const Steps = [
+  {
+    fields: 'Globals',
+    next: 'LDAP Service Account',
+  },
+  {
+    fields: 'ServiceAccount',
+    name: 'LDAP Service Account',
+    description: 'If your LDAP server allows anonymous authorization, you must provide additional credentials to search for users and groups.',
+    next: 'LDAP User Info',
+  },
+  {
+    fields: 'Users',
+    name: 'Users',
+    next: 'LDAP Group Info',
+  },
+  {
+    fields: 'Groups',
+    name: 'Groups',
+    next: 'Test LDAP config',
+  },
+  {
+    fields: 'TestData',
+    name: 'Test Configuration',
+    description: 'Supply your credentials to test the current configuration. The LDAP server must be reachable from the Tectonic Console for testing to work.',
+  },
+];
+
 const Help = ({children}) => <div><small className="text-muted">{children}</small></div>;
 
 const Row = ({children, name, label}) =>
@@ -289,6 +317,7 @@ class LDAPs extends SafetyFirst {
       validationError: null,
       loadError: null,
       tectonicIdentityConfig: null,
+      populated: {},
     };
   }
 
@@ -399,6 +428,24 @@ class LDAPs extends SafetyFirst {
     this.setState({stateMachine: STATES.updating});
   }
 
+  populate (stepName) {
+    const populated = this.state.populated;
+    populated[stepName] = true;
+    this.setState({populated});
+  }
+
+  isPopulated (stepName) {
+    if (this.state.populated[stepName]) {
+      return true;
+    }
+    const fields = Fields[stepName];
+    const formData = getFormValues(LDAPFormName)(angulars.store.getState());
+    const populated = _.every(fields, field => {
+      return !!_.get(formData, field.name);
+    });
+    return populated;
+  }
+
   render () {
     if (this.state.loadError) {
       return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
@@ -408,116 +455,104 @@ class LDAPs extends SafetyFirst {
       return <div>Loading Configuration <LoadingInline /></div>;
     }
 
-      // General field errors are under the props.error - see validation above
+    // General field errors are under the props.error - see validation above
     const disabled = !this.state.validatedVersion || this.state.validatedVersion !== this.props.error;
 
     const { stateMachine, validationData, validationError } = this.state;
 
-    return <form className="form-horizontal" style={{maxWidth: 900}}>
+    const steps = [];
 
+    _.each(Steps, s => {
+      const stepName = s.fields;
+      const fields = Fields[stepName];
+      const populated = this.isPopulated(stepName);
+      const step = <div key={`step-${stepName}`}>
+        { s.name && <h1 className="co-section-title ldap-group">{s.name}</h1> }
+        { s.description && <p className="co-m-form-row">{s.description}</p> }
+        { _.map(fields, FieldRow) }
+        { stepName === 'Globals' && <Security /> }
+        <hr/>
+        { s.next && !populated && <p className="text-muted"><a onClick={() => this.populate(stepName)}>Next: {s.next}</a></p> }
+      </div>;
+
+      steps.push(step);
+      return !!populated;
+    });
+
+    let test = false;
+    if (steps.length === Steps.length) {
+      test = (<div>
+        { (stateMachine === STATES.valid || stateMachine === STATES.invalid) &&
+          <Row label="Test Results">
+            { validationError
+              ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {validationError}:
+                  <br/>
+                  <span>{validationData}</span>
+                </p>
+              : <div>
+                  <dl>
+                    <dt>username</dt>
+                    <dd>{validationData.username}</dd>
+                    <dt>email</dt>
+                    <dd>{validationData.email}</dd>
+                    <dt>groups</dt>
+                    <dd>{_.map(validationData.groups, g => <div key={g}>{g}</div>)}</dd>
+                  </dl>
+                </div>
+            }
+          </Row>
+        }
+
+        {stateMachine !== STATES.updating && <div>
+          <p className="text-muted">Next: Update Tectonic Identity</p>
+          <hr/>
+        </div>}
+
+        {(stateMachine === STATES.untested || stateMachine === STATES.invalid) &&
+          <button className="btn btn-primary" onClick={(e) => this.test(e)}>Test Configuration</button>
+        }
+        {stateMachine === STATES.valid &&
+          <button className="btn btn-primary" onClick={e => this.continue(e)} disabled={disabled}>Continue</button>
+        }
+        {stateMachine === STATES.updating && <div>
+          <hr/>
+          <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
+          <p>
+            The last step is to apply the updated configuration to the cluster.
+            This is done via <code className="ldap-code"> kubectl </code> to avoid locking yourself out if something goes wrong.
+            <br/><br/>
+            During installation, an assets bundle was generated which included a kubeconfig (users name <code className="ldap-code"> kubelet </code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
+            <br/><br/>
+            <b>It is highly recommend you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
+          </p>
+
+          <pre className="ldap-pre">
+            <code className="ldap-code">{INSTRUCTIONS_APPLY}</code>
+          </pre>
+
+          <p>
+            Next, trigger a rolling-update of the <a target="_blank" href="ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a>, which will read the new configuration.
+          </p>
+
+          <pre className="ldap-pre" style={{marginBottom: 30}}>
+            <code className="ldap-code">{INSTRUCTIONS_PATCH}</code>
+          </pre>
+
+          <p className="row col-sm-12">
+            <button className="btn btn-primary" onClick={e => this.downloadNewConfig(e)}>Download New Config</button>
+            <button className="btn btn-default" onClick={e => this.downloadBackup(e)}>Download Existing Config</button>
+          </p>
+        </div>}
+      </div>);
+    }
+
+    return <form className="form-horizontal" style={{maxWidth: 900}}>
       <p className="co-m-message co-m-message--info" >
         Warning: Incorrectly configuring LDAP may irrevocably bring down this cluster!
       </p>
 
-      { _.map(Fields.Globals, FieldRow) }
-
-      <Security/>
-
-      <hr/>
-      <h1 className="co-section-title ldap-group">LDAP Service Account</h1>
-
-      <p className="co-m-form-row">
-        If your LDAP server does allow anonymous authorization, you
-        must provide additional credentials to search for users and groups.
-      </p>
-
-      { _.map(Fields.ServiceAccount, FieldRow) }
-
-      <hr/>
-
-      <h1 className="co-section-title ldap-group">Users</h1>
-
-      { _.map(Fields.Users, FieldRow) }
-
-      <hr/>
-
-      <h1 className="co-section-title ldap-group">Groups</h1>
-
-      { _.map(Fields.Groups, FieldRow) }
-
-      <hr/>
-      <h1 className="co-section-title ldap-group">Test Configuration</h1>
-
-      <p className="co-m-form-row">
-        Supply your credentials to test the current configuration.
-        The LDAP server must be reachable from the Tectonic Console for testing to work.
-      </p>
-
-      { _.map(Fields.TestData, FieldRow) }
-
-      { (stateMachine === STATES.valid || stateMachine === STATES.invalid) &&
-        <Row label="Test Results">
-          { validationError
-            ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {validationError}:
-                <br/>
-                <span>{validationData}</span>
-              </p>
-            : <div>
-                <dl>
-                  <dt>username</dt>
-                  <dd>{validationData.username}</dd>
-                  <dt>email</dt>
-                  <dd>{validationData.email}</dd>
-                  <dt>groups</dt>
-                  <dd>{_.map(validationData.groups, g => <div key={g}>{g}</div>)}</dd>
-                </dl>
-              </div>
-          }
-        </Row>
-      }
-
-      {stateMachine !== STATES.updating && <div>
-        <hr/>
-        <p className="text-muted">Next: Update Tectonic Identity</p>
-        <hr/>
-      </div>}
-
-      {(stateMachine === STATES.untested || stateMachine === STATES.invalid) &&
-        <button className="btn btn-primary" onClick={(e) => this.test(e)}>Test Configuration</button>
-      }
-      {stateMachine === STATES.valid &&
-        <button className="btn btn-primary" onClick={e => this.continue(e)} disabled={disabled}>Continue</button>
-      }
-      {stateMachine === STATES.updating && <div>
-        <hr/>
-        <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
-        <p>
-          The last step is to apply the updated configuration to the cluster.
-          This is done via <code className="ldap-code"> kubectl </code> to avoid locking yourself out if something goes wrong.
-          <br/><br/>
-          During installation, an assets bundle was generated which included a kubeconfig (users name <code className="ldap-code"> kubelet </code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
-          <br/><br/>
-          <b>It is highly recommend you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
-        </p>
-
-        <pre className="ldap-pre">
-          <code className="ldap-code">{INSTRUCTIONS_APPLY}</code>
-        </pre>
-
-        <p>
-          Next, trigger a rolling-update of the <a target="_blank" href="ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a>, which will read the new configuration.
-        </p>
-
-        <pre className="ldap-pre" style={{marginBottom: 30}}>
-          <code className="ldap-code">{INSTRUCTIONS_PATCH}</code>
-        </pre>
-
-        <p className="row col-sm-12">
-          <button className="btn btn-primary" onClick={e => this.downloadNewConfig(e)}>Download New Config</button>
-          <button className="btn btn-default" onClick={e => this.downloadBackup(e)}>Download Existing Config</button>
-        </p>
-      </div>}
-
+      { steps }
+      { test }
     </form>;
   }
 });
