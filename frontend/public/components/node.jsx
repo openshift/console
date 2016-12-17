@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {isReady} from '../module/k8s/node';
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
@@ -32,7 +33,7 @@ const NodeCog = ({node}) => {
   return <Cog options={options} size="small" anchor="left" />;
 };
 
-const NodeStatus = ({node}) => angulars.k8sNodes.isReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
+const NodeStatus = ({node}) => isReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 
 const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__item">
   <div className="middler">

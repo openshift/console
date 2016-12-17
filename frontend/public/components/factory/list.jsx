@@ -3,6 +3,7 @@ import fuzzy from 'fuzzysearch';
 import {Provider} from 'react-redux';
 
 import actions from '../../module/k8s/k8s-actions';
+import {isReady as isNodeReady} from '../../module/k8s/node';
 import {Firehose, podPhase, StatusBox} from '../utils';
 import {angulars, register} from '../react-wrapper';
 
@@ -28,7 +29,7 @@ const filters = {
   },
 
   'node-status': (status, node) => {
-    const isReady = angulars.k8sNodes.isReady(node);
+    const isReady = isNodeReady(node);
     return status === 'all' || (status === 'ready' && isReady) || (status === 'notReady' && !isReady);
   },
 };

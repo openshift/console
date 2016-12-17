@@ -1,5 +1,4 @@
 import './_module';
-import './node';
 import './resource';
 
 import {coFetchJSON} from '../../co-fetch';
@@ -11,6 +10,7 @@ import * as k8sDeployments from './deployments';
 import * as k8sDocker from './docker';
 import k8sEvents from './events';
 import * as k8sLabels from './labels';
+import * as k8sNodes from './node';
 import * as k8sPods from './pods';
 import * as k8sProbe from './probe';
 import * as k8sReplicaSets from './replicasets';
@@ -54,7 +54,7 @@ const coreosFlagNames = {
 
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope, k8sResource,
-                         k8sNodes, featuresSvc) {
+                         featuresSvc) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;

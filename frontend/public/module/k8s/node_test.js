@@ -1,12 +1,10 @@
-describe('k8s', function() {
+describe('k8sNodes', function() {
   'use strict';
 
-  var k8sNodes;
+  var k8sNodes = window.tectonicTesting.k8sNodes;
 
   beforeEach(module('k8s'));
-  beforeEach(inject(function(_k8sNodes_) {
-    k8sNodes = _k8sNodes_;
-  }));
+
   describe('#isTrusted', function() {
     it('returns true for falsy node', function () {
       expect(k8sNodes.isTrusted()).toEqual(true);
