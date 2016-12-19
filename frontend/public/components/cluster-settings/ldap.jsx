@@ -304,7 +304,17 @@ const LDAPs = reduxForm({
   form: LDAPFormName,
   validate: (values, props) => {
     // Declare a general field error using a nonce *any time any field changes*
-    return {_error: props.error ? props.error + 1 : 1};
+    const errs = {_error: props.error ? props.error + 1 : 1};
+    _.each(Fields, fields => _.each(fields, field => {
+      const v = _.get(values, field.name);
+      if (!v || v.trim() === v) {
+        return;
+      }
+      // TODO: (ggreer) add a renderField param to Field in FieldRow that renders this error
+      _.set(errs, field.name, 'No leading or trailing spaces allowed.');
+      errs._error++;
+    }));
+    return errs;
   },
 })(
 class LDAPs extends SafetyFirst {
@@ -434,18 +444,6 @@ class LDAPs extends SafetyFirst {
     this.setState({populated});
   }
 
-  isPopulated (stepName) {
-    if (this.state.populated[stepName]) {
-      return true;
-    }
-    const fields = Fields[stepName];
-    const formData = getFormValues(LDAPFormName)(angulars.store.getState());
-    const populated = _.every(fields, field => {
-      return !!_.get(formData, field.name);
-    });
-    return populated;
-  }
-
   render () {
     if (this.state.loadError) {
       return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
@@ -462,21 +460,23 @@ class LDAPs extends SafetyFirst {
 
     const steps = [];
 
-    _.each(Steps, s => {
+    _.each(Steps, (s, i) => {
       const stepName = s.fields;
       const fields = Fields[stepName];
-      const populated = this.isPopulated(stepName);
+      const populated = !!this.state.populated[stepName];
+      const lastStep = i === Steps.length - 1;
       const step = <div key={`step-${stepName}`}>
         { s.name && <h1 className="co-section-title ldap-group">{s.name}</h1> }
         { s.description && <p className="co-m-form-row">{s.description}</p> }
         { _.map(fields, FieldRow) }
         { stepName === 'Globals' && <Security /> }
         <hr/>
-        { s.next && !populated && <p className="text-muted"><a onClick={() => this.populate(stepName)}>Next: {s.next}</a></p> }
+        { s.next && !populated && <div><p className="text-muted">Next: {s.next}</p><hr/></div> }
+        { !lastStep && !populated && <a onClick={() => this.populate(stepName)}><button className="btn btn-primary">Continue</button></a> }
       </div>;
 
       steps.push(step);
-      return !!populated;
+      return populated;
     });
 
     let test = false;
@@ -515,7 +515,6 @@ class LDAPs extends SafetyFirst {
           <button className="btn btn-primary" onClick={e => this.continue(e)} disabled={disabled}>Continue</button>
         }
         {stateMachine === STATES.updating && <div>
-          <hr/>
           <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
           <p>
             The last step is to apply the updated configuration to the cluster.
@@ -547,10 +546,6 @@ class LDAPs extends SafetyFirst {
     }
 
     return <form className="form-horizontal" style={{maxWidth: 900}}>
-      <p className="co-m-message co-m-message--info" >
-        Warning: Incorrectly configuring LDAP may irrevocably bring down this cluster!
-      </p>
-
       { steps }
       { test }
     </form>;
