@@ -59,7 +59,7 @@ const ConfigMapDetails = (configMap) => {
   </div>;
 };
 
-const pages = [navFactory.details(ConfigMapDetails)];
+const pages = [navFactory.details(ConfigMapDetails), navFactory.editYaml()];
 
 const ConfigMaps = makeList('ConfigMaps', 'configmap', ConfigMapHeader, ConfigMapRow);
 const ConfigMapsPage = makeListPage('ConfigMapsPage', 'configmap', ConfigMaps);

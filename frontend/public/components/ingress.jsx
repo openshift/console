@@ -140,7 +140,7 @@ const Details = (ingress) => <div className="col-md-12">
   </div>
 </div>;
 
-const pages = [navFactory.details(detailsPage(Details))];
+const pages = [navFactory.details(detailsPage(Details)), navFactory.editYaml()];
 const IngressDetailsPage = makeDetailsPage('IngressDetailsPage', 'ingress', pages);
 const IngressList = makeList('Ingress', 'ingress', IngressListHeader, IngressListRow);
 const IngressPage = makeListPage('IngressesPage', 'ingress', IngressList);

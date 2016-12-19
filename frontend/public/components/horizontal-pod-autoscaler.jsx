@@ -129,7 +129,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
   </div>
 </div>;
 
-const pages = [navFactory.details(Details)];
+const pages = [navFactory.details(Details), navFactory.editYaml()];
 const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'horizontalpodautoscaler', pages);
 const HorizontalPodAutoscalersList = makeList('HorizontalPodAutoscalers', 'horizontalpodautoscaler', Header, HorizontalPodAutoscalerRow);
 const HorizontalPodAutoscalersPage = makeListPage('HorizontalPodAutoscalersPage', 'horizontalpodautoscaler', HorizontalPodAutoscalersList, null, null, 'Autoscalers');

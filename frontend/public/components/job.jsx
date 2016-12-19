@@ -115,8 +115,8 @@ const Details = (job) => <div>
   </div>
 </div>;
 
-const {details, pods} = navFactory;
-const pages = [details(Details), pods()];
+const {details, pods, editYaml} = navFactory;
+const pages = [details(Details), editYaml(), pods()];
 const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'job', pages);
 const JobsList = makeList('Jobs', 'job', Header, JobRow);
 const JobsPage = makeListPage('JobsPage', 'job', JobsList);
