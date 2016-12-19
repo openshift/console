@@ -96,7 +96,11 @@ export class EditYAML extends SafetyFirst {
     this.ace.moveCursorTo(0, 0);
     this.ace.clearSelection();
     this.ace.setOption('scrollPastEnd', 0.1);
-    this.ace.getSession().setUndoManager(new ace.UndoManager());
+    this.ace.setOption('tabSize', 2);
+    // Allow undo after saving but not after first loading the document
+    if (!this.state.initialized) {
+      this.ace.getSession().setUndoManager(new ace.UndoManager());
+    }
     this.ace.focus();
     this.setState({initialized: true});
     this.resize_();
@@ -114,7 +118,7 @@ export class EditYAML extends SafetyFirst {
       this.handleError('No "kind" field found in YAML.');
       return;
     }
-    const kind = _.find(angulars.kinds, k => k.kind === obj.kind);
+    const kind = angulars.kinds[obj.kind.toUpperCase()];
     if (!kind) {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
       return;
