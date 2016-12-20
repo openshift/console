@@ -5,4 +5,3 @@ import './features';
 import './firehose';
 import './message';
 import './status';
-import './yamlize';
