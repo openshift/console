@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, ResourceLink, Timestamp} from './utils';
+import {Cog, navFactory, ResourceLink, Timestamp} from './utils';
 import {SecretsList, withSecretsList} from './secret';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -67,7 +67,7 @@ const Details = (serviceaccount) => {
   );
 };
 
-const pages = [{href: 'details', name: 'Overview', component: Details}];
+const pages = [navFactory.details(Details)];
 const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'serviceaccount', pages);
 const ServiceAccountsList = makeList('ServiceAccounts', 'serviceaccount', Header, withSecretsList(ServiceAccountRow));
 const ServiceAccountsPage = makeListPage('ServiceAccountsPage', 'serviceaccount', ServiceAccountsList);
