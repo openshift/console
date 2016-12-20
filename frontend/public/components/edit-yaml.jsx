@@ -1,5 +1,6 @@
 import React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
+import { saveAs } from 'file-saver';
 
 import { angulars } from './react-wrapper';
 import { kindObj, Loading } from './utils';
@@ -134,6 +135,21 @@ export class EditYAML extends SafetyFirst {
     });
   }
 
+  download () {
+    const data = this.doc.getValue();
+    const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });
+    let filename = 'k8s-object.yaml';
+    try {
+      const obj = safeLoad(data);
+      if (obj.kind) {
+        filename = `${obj.kind.toLowerCase()}-${obj.metadata.name}.yaml`;
+      }
+    } catch (unused) {
+      // unused
+    }
+    saveAs(blob, filename);
+  }
+
   render () {
     if (_.isEmpty(this.props)) {
       return <Loading/>;
@@ -154,10 +170,10 @@ export class EditYAML extends SafetyFirst {
             {success && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--success">{success}</p>}
             <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>
             <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>
+            <button type="submit" className="btn btn-default" onClick={() => this.download()}>Download</button>
           </div>
         </div>
       </div>
-
     </div>;
   }
 }
