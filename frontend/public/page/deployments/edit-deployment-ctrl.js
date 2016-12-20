@@ -13,7 +13,7 @@ angular.module('bridge.page')
     pages: [
       {name: 'Overview', href: 'details'},
       {name: 'Edit', href: 'edit'},
-      {name: 'Edit YAML', href: 'edit-yaml'},
+      {name: 'YAML', href: 'yaml'},
       {name: 'Pods', href: 'pods'},
     ]
   };

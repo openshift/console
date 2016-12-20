@@ -27,8 +27,8 @@ export const navFactory = {
     component: component,
   }),
   editYaml: () => ({
-    href: 'edit-yaml',
-    name: 'Edit YAML',
+    href: 'yaml',
+    name: 'YAML',
     component: EditYAML,
   }),
 };
@@ -43,7 +43,7 @@ export const NavBar = ({pages}) => {
     const tab = <li className={klass} key={name}><RelativeLink href={href}>{name}</RelativeLink></li>;
 
     // These tabs go before the divider
-    const before = ['details', 'edit', 'edit-yaml'];
+    const before = ['details', 'edit', 'yaml'];
     return (!before.includes(href) && i !== 0 && before.includes(pages[i - 1].href)) ? [divider, tab] : [tab];
   }))}</ul>;
 };
