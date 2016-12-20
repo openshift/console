@@ -3,11 +3,6 @@
     <h1 ng-class="h1Klass">
       <co-resource-icon ng-if="kind" kind="{{kind}}" class="co-m-page-title__icon"></co-resource-icon>
       <span ng-bind="title"></span>
-      <span ng-if="obj()" class="pull-right co-m-page-title__obj">
-        <a class="co-m-primary-action text-small" ng-click="showYAML()">
-          <span class="fa fa-terminal tec-right-nav-action__mark"></span> View YAML
-        </a>
-      </span>
     </h1>
   </div>
 </div>

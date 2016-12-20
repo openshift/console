@@ -66,10 +66,6 @@ angular.module('bridge.page')
       controller: 'NewNamespaceCtrl',
       size: 'dialog--std-width',
     },
-    'show-yaml': {
-      templateUrl: '/static/page/modals/show-yaml.html',
-      controller: 'ShowYAMLCtrl',
-    },
     'namespace-pull-secret': {
       templateUrl: '/static/page/modals/namespace-pull-secret/namespace-pull-secret.html',
       controller: 'NamespacePullSecretCtrl',

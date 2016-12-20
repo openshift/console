@@ -15,7 +15,6 @@ import './configure-primary-command-ctrl';
 import './new-namespace-ctrl';
 import './row-mgr';
 import './service-ports-ctrl';
-import './show-yaml-ctrl';
 import './namespace-pull-secret/namespace-pull-secret-ctrl';
 import './kubectl-config/kubectl-config-ctrl';
 import './reactive-modal-ctrl';
