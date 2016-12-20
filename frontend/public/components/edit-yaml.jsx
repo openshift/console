@@ -3,7 +3,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
 import { angulars } from './react-wrapper';
-import { kindObj, Loading } from './utils';
+import { kindObj, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
 
 let id = 0;
@@ -126,10 +126,23 @@ export class EditYAML extends SafetyFirst {
       return;
     }
     const { namespace, name } = this.props.metadata;
+    const { namespace: newNamespace, name: newName } = obj.metadata;
     this.setState({success: null, error: null}, () => {
-      angulars.k8s.resource.update(ko, obj, namespace, name)
+      let action = angulars.k8s.resource.update;
+      let redirect = false;
+      if (newNamespace !== namespace || newName !== name) {
+        action = angulars.k8s.resource.create;
+        delete obj.metadata.resourceVersion;
+        redirect = true;
+      }
+      action(ko, obj, namespace, name)
         .then(o => {
-          const success = `${obj.metadata.name} has been updated to version ${o.metadata.resourceVersion}`;
+          if (redirect) {
+            angulars.$location.path(`${resourcePath(obj.kind, newName, newNamespace)}/yaml`);
+            // TODO: (ggreer). show message on new page. maybe delete old obj?
+            return;
+          }
+          const success = `${newName} has been updated to version ${o.metadata.resourceVersion}`;
           this.setState({success, error: null});
           this.loadYaml(true, o);
         })
