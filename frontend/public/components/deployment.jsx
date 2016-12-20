@@ -113,8 +113,8 @@ export class Details extends SafetyFirst {
   }
 }
 
-const {details, edit, pods} = navFactory;
-const pages = [details(Details), edit(), pods()];
+const {details, edit, editYaml, pods} = navFactory;
+const pages = [details(Details), edit(), editYaml(), pods()];
 const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages);
 
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment'));

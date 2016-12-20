@@ -253,8 +253,8 @@ const Details = (pod) => {
   </div>;
 };
 
-const {details, events, logs} = navFactory;
-const pages = [details(Details), logs(PodLogs), events()];
+const {details, events, logs, editYaml} = navFactory;
+const pages = [details(Details), editYaml(), logs(PodLogs), events()];
 const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages);
 
 const PodList = makeList('Pods', 'pod', PodHeader, PodRow);

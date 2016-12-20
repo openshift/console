@@ -20,8 +20,8 @@ const Details = (replicaSet) => <div>
   </div>
 </div>;
 
-const {details, edit, pods} = navFactory;
-const pages = [details(Details), edit(), pods()];
+const {details, edit, pods, editYaml} = navFactory;
+const pages = [details(Details), edit(), editYaml(), pods()];
 const ReplicaSetsDetailsPage = makeDetailsPage('ReplicaSetsDetailsPage', 'replicaset', pages);
 
 const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKind('replicaset'));

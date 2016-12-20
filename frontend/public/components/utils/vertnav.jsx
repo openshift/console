@@ -2,8 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {register} from '../react-wrapper';
-import yamlize from '../../module/service/yamlize';
-import {detailsPage, StatusBox, RelativeLink} from './index';
+import {StatusBox, RelativeLink} from './index';
 import { EditYAML } from '../edit-yaml';
 
 export const navFactory = {
@@ -27,14 +26,9 @@ export const navFactory = {
     name: 'Logs',
     component: component,
   }),
-  yaml: () => ({
+  editYaml: () => ({
     href: 'yaml',
     name: 'YAML',
-    component: detailsPage((resource) => <div className="col-xs-12"><div className="co-m-pane__body"><pre className="co-pre-wrap">{yamlize(resource)}</pre></div></div>),
-  }),
-  editYaml: () => ({
-    href: 'edit-yaml',
-    name: 'Edit',
     component: EditYAML,
   }),
 };
@@ -49,7 +43,7 @@ export const NavBar = ({pages}) => {
     const tab = <li className={klass} key={name}><RelativeLink href={href}>{name}</RelativeLink></li>;
 
     // These tabs go before the divider
-    const before = ['details', 'edit'];
+    const before = ['details', 'edit', 'yaml'];
     return (!before.includes(href) && i !== 0 && before.includes(pages[i - 1].href)) ? [divider, tab] : [tab];
   }))}</ul>;
 };

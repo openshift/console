@@ -1,10 +1,9 @@
 /**
- * Display page title with primary action link. If obj="" is included,
- * show a "View YAML" link on the right hand side of the element.
+ * Display page title with primary action link.
  */
 
 angular.module('bridge.ui')
-.directive('tecNavTitle', function(ModalLauncherSvc) {
+.directive('tecNavTitle', function() {
   'use strict';
 
   return {
@@ -25,12 +24,5 @@ angular.module('bridge.ui')
         $scope.h1Klass += ' co-m-page-title--detail';
       }
     },
-    link: function(scope) {
-      scope.showYAML = function() {
-        ModalLauncherSvc.open('show-yaml', {
-          obj: scope.obj()
-        });
-      };
-    }
   };
 });

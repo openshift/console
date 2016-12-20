@@ -1,8 +1,9 @@
 import React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
+import { saveAs } from 'file-saver';
 
 import { angulars } from './react-wrapper';
-import { Loading } from './utils';
+import { kindObj, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
 
 let id = 0;
@@ -96,7 +97,12 @@ export class EditYAML extends SafetyFirst {
     this.ace.moveCursorTo(0, 0);
     this.ace.clearSelection();
     this.ace.setOption('scrollPastEnd', 0.1);
-    this.ace.getSession().setUndoManager(new ace.UndoManager());
+    this.ace.setOption('tabSize', 2);
+    this.ace.setOption('showPrintMargin', false);
+    // Allow undo after saving but not after first loading the document
+    if (!this.state.initialized) {
+      this.ace.getSession().setUndoManager(new ace.UndoManager());
+    }
     this.ace.focus();
     this.setState({initialized: true});
     this.resize_();
@@ -114,21 +120,49 @@ export class EditYAML extends SafetyFirst {
       this.handleError('No "kind" field found in YAML.');
       return;
     }
-    const kind = _.find(angulars.kinds, k => k.kind === obj.kind);
-    if (!kind) {
+    const ko = kindObj(obj.kind);
+    if (!ko) {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
       return;
     }
+    const { namespace, name } = this.props.metadata;
+    const { namespace: newNamespace, name: newName } = obj.metadata;
     this.setState({success: null, error: null}, () => {
-      angulars.k8s.resource.update(kind, obj)
+      let action = angulars.k8s.resource.update;
+      let redirect = false;
+      if (newNamespace !== namespace || newName !== name) {
+        action = angulars.k8s.resource.create;
+        delete obj.metadata.resourceVersion;
+        redirect = true;
+      }
+      action(ko, obj, namespace, name)
         .then(o => {
-          const success = `${obj.metadata.name} has been updated to version ${o.metadata.resourceVersion}`;
+          if (redirect) {
+            angulars.$location.path(`${resourcePath(obj.kind, newName, newNamespace)}/yaml`);
+            // TODO: (ggreer). show message on new page. maybe delete old obj?
+            return;
+          }
+          const success = `${newName} has been updated to version ${o.metadata.resourceVersion}`;
           this.setState({success, error: null});
           this.loadYaml(true, o);
         })
         .catch(e => this.handleError(e.message));
     });
+  }
 
+  download () {
+    const data = this.doc.getValue();
+    const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });
+    let filename = 'k8s-object.yaml';
+    try {
+      const obj = safeLoad(data);
+      if (obj.kind) {
+        filename = `${obj.kind.toLowerCase()}-${obj.metadata.name}.yaml`;
+      }
+    } catch (unused) {
+      // unused
+    }
+    saveAs(blob, filename);
   }
 
   render () {
@@ -151,10 +185,10 @@ export class EditYAML extends SafetyFirst {
             {success && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--success">{success}</p>}
             <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>
             <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>
+            <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
           </div>
         </div>
       </div>
-
     </div>;
   }
 }

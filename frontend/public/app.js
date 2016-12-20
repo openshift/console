@@ -192,6 +192,10 @@ angular.module('bridge', [
     template: '<react-component name="NodeDetailsPage"></react-component>',
     title: 'Node',
   });
+  r('/nodes/:name/yaml', {
+    template: '<react-component name="NodeDetailsPage"></react-component>',
+    title: 'Node',
+  });
   r('/nodes/:name/events', {
     controller: 'nodeSyseventsCtrl',
     templateUrl: '/static/page/nodes/sysevents.html',
