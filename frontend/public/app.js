@@ -71,11 +71,8 @@ angular.module('bridge', [
     detectScheme: true,
   });
 
-  errorMessageSvcProvider.registerFormatter('k8sApi', function(resp) {
-    if (resp.data && resp.data.message) {
-      return resp.data.message;
-    }
-    return 'An error occurred. Please try again.';
+  errorMessageSvcProvider.registerFormatter('k8sApi', function(error) {
+    return error.message || 'An error occurred. Please try again.';
   });
 
   function r(route, config) {
