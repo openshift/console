@@ -84,8 +84,8 @@ angular.module('k8s')
     return coFetchJSON.post(this.resourceURL(kind, {ns: data.metadata.namespace}), data);
   };
 
-  this.update = (kind, data) => coFetchJSON.put(
-    this.resourceURL(kind, {ns: data.metadata.namespace, name: data.metadata.name}),
+  this.update = (kind, data, ns, name) => coFetchJSON.put(
+    this.resourceURL(kind, {ns: ns || data.metadata.namespace, name: name || data.metadata.name}),
     data
   );
 

@@ -98,6 +98,7 @@ export class EditYAML extends SafetyFirst {
     this.ace.clearSelection();
     this.ace.setOption('scrollPastEnd', 0.1);
     this.ace.setOption('tabSize', 2);
+    this.ace.setOption('showPrintMargin', false);
     // Allow undo after saving but not after first loading the document
     if (!this.state.initialized) {
       this.ace.getSession().setUndoManager(new ace.UndoManager());
@@ -124,8 +125,9 @@ export class EditYAML extends SafetyFirst {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
       return;
     }
+    const { namespace, name } = this.props.metadata;
     this.setState({success: null, error: null}, () => {
-      angulars.k8s.resource.update(ko, obj)
+      angulars.k8s.resource.update(ko, obj, namespace, name)
         .then(o => {
           const success = `${obj.metadata.name} has been updated to version ${o.metadata.resourceVersion}`;
           this.setState({success, error: null});
