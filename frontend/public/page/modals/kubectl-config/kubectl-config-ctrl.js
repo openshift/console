@@ -29,7 +29,7 @@ angular.module('bridge.page')
     function setKubectlUrls() {
       statusSvc.kubernetesVersion()
         .then(function(resp) {
-          const k8sVersion = resp.data.gitVersion.split('+')[0];
+          const k8sVersion = resp.gitVersion.split('+')[0];
           const prefix = `https://storage.googleapis.com/kubernetes-release/release/${k8sVersion}`;
           const postfix = '/amd64/kubectl';
 
