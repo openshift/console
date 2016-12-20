@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, LoadingInline, ResourceLink, Timestamp} from './utils';
+import {Cog, LabelList, LoadingInline, navFactory, ResourceLink, Timestamp} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -129,7 +129,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
   </div>
 </div>;
 
-const pages = [{href: 'details', name: 'Overview', component: Details}];
+const pages = [navFactory.details(Details)];
 const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'horizontalpodautoscaler', pages);
 const HorizontalPodAutoscalersList = makeList('HorizontalPodAutoscalers', 'horizontalpodautoscaler', Header, HorizontalPodAutoscalerRow);
 const HorizontalPodAutoscalersPage = makeListPage('HorizontalPodAutoscalersPage', 'horizontalpodautoscaler', HorizontalPodAutoscalersList, null, null, 'Autoscalers');

@@ -3,7 +3,7 @@ import React from 'react';
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, ResourceLink, Timestamp} from './utils';
+import {Cog, LabelList, navFactory, ResourceLink, Timestamp} from './utils';
 
 const ConfigMapCog = ({configMap}) => {
   const kind = angulars.kinds.CONFIGMAP;
@@ -59,7 +59,7 @@ const ConfigMapDetails = (configMap) => {
   </div>;
 };
 
-const pages = [{href: 'details', name: 'Overview', component: ConfigMapDetails}];
+const pages = [navFactory.details(ConfigMapDetails)];
 
 const ConfigMaps = makeList('ConfigMaps', 'configmap', ConfigMapHeader, ConfigMapRow);
 const ConfigMapsPage = makeListPage('ConfigMapsPage', 'configmap', ConfigMaps);

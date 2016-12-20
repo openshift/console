@@ -188,12 +188,8 @@ const Details = (node) => {
   </div>;
 };
 
-const {pods} = navFactory;
-const pages = [
-  {href: 'details', name: 'Overview', component: Details},
-  pods(),
-  {href: 'events', name: 'Events', component: undefined},
-];
+const {details, events, pods} = navFactory;
+const pages = [details(Details), pods(), events()];
 const NodeDetailsPage_ = makeDetailsPage('NodeDetailsPage', 'node', pages);
 const NodeDetailsPage = () => <NodeDetailsPage_ kind="node" name={angulars.routeParams.name} />;
 
