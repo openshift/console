@@ -2,7 +2,7 @@ import React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 
 import { angulars } from './react-wrapper';
-import { Loading } from './utils';
+import { kindObj, Loading } from './utils';
 import { SafetyFirst } from './safety-first';
 
 let id = 0;
@@ -118,13 +118,13 @@ export class EditYAML extends SafetyFirst {
       this.handleError('No "kind" field found in YAML.');
       return;
     }
-    const kind = angulars.kinds[obj.kind.toUpperCase()];
-    if (!kind) {
+    const ko = kindObj(obj.kind);
+    if (!ko) {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
       return;
     }
     this.setState({success: null, error: null}, () => {
-      angulars.k8s.resource.update(kind, obj)
+      angulars.k8s.resource.update(ko, obj)
         .then(o => {
           const success = `${obj.metadata.name} has been updated to version ${o.metadata.resourceVersion}`;
           this.setState({success, error: null});
@@ -132,7 +132,6 @@ export class EditYAML extends SafetyFirst {
         })
         .catch(e => this.handleError(e.message));
     });
-
   }
 
   render () {
