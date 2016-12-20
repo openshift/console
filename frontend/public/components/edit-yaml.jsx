@@ -170,7 +170,7 @@ export class EditYAML extends SafetyFirst {
             {success && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--success">{success}</p>}
             <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>
             <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>
-            <button type="submit" className="btn btn-default" onClick={() => this.download()}>Download</button>
+            <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
           </div>
         </div>
       </div>
