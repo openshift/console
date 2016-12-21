@@ -8,6 +8,7 @@ angular.module('bridge.page')
   $scope.navProps = {
     pages: [
       {name: 'Overview', href: 'details'},
+      {name: 'YAML', href: 'yaml'},
       {name: 'Logs', href: 'logs'},
       {name: 'Events', href: 'events'},
     ]
