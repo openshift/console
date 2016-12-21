@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, LoadingInline, navFactory, ResourceLink, Timestamp} from './utils';
+import {Cog, kindObj, LabelList, LoadingInline, navFactory, ResourceLink, Timestamp} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -91,7 +91,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
           <dd><Timestamp timestamp={hpa.metadata.creationTimestamp} /></dd>
           <dt>Allowed Range</dt>
           <dd>
-            <a href="#" onClick={ModifyHpaReplicas(angulars.kinds.HORIZONTALPODAUTOSCALER, hpa).callback}>
+            <a href="#" onClick={ModifyHpaReplicas(kindObj('horizontalpodautoscaler'), hpa).callback}>
               {hpa.spec.minReplicas || '1'}-{hpa.spec.maxReplicas || '1'} replicas
             </a>
             &nbsp;<i className="text-muted fa fa-angle-right" />
@@ -113,13 +113,13 @@ const Details = (hpa) => <div className="co-m-pane__body">
             <tr>
               <td>Average CPU</td>
               <td>
-                <a href="#" onClick={ModifyHpaTargets(angulars.kinds.HORIZONTALPODAUTOSCALER, hpa).callback}>
-                  {hpa.spec.cpuUtilization && `${hpa.spec.cpuUtilization.targetPercentage}%` || '-'}
+                <a href="#" onClick={ModifyHpaTargets(kindObj('horizontalpodautoscaler'), hpa).callback}>
+                  {_.get(hpa, 'spec.cpuUtilization.targetPercentage') || '-'}%
                 </a>
                 &nbsp;<i className="text-muted fa fa-angle-right" />
               </td>
               <td>
-                <dd>{hpa.status.currentCPUUtilizationPercentage ? hpa.status.currentCPUUtilizationPercentage : '0'}%</dd>
+                <dd>{_.get(hpa, 'status.currentCPUUtilizationPercentage') || '0'}%</dd>
               </td>
             </tr>
           </tbody>

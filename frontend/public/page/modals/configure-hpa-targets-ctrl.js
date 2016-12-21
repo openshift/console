@@ -4,7 +4,7 @@ angular.module('bridge.page')
 
   $scope.resourceKind = resourceKind;
   $scope.fields = {
-    target: resource.spec.cpuUtilization.targetPercentage,
+    target: _.get(resource, 'spec.cpuUtilization.targetPercentage'),
   };
 
   $scope.submit = function() {
