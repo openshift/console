@@ -5,13 +5,13 @@
 # The Jenkins build command should do nothing but execute this script.
 
 CURRENT_USER=$(whoami)
-CURRENT_UID=$(id -u $CURRENT_USER)
-echo Running under user: $CURRENT_USER, with uid: $CURRENT_UID
+CURRENT_UID=$(id -u "$CURRENT_USER")
+echo "Running under user: $CURRENT_USER, with uid: $CURRENT_UID"
 
 # We assume the jenkins jenkins user with uid 1000 on all build hosts
 export BUILDER_RUN_USER=1000
 
-if [ ${BUILDER_RUN_USER} -eq ${CURRENT_UID} ]; then
+if [ ${BUILDER_RUN_USER} -eq "${CURRENT_UID}" ]; then
     echo "Running under User: ${CURRENT_USER}, with UID: ${CURRENT_UID}"
 else
     echo "Expected to run with UID: ${BUILDER_RUN_USER}, instead UID is: ${CURRENT_UID}. Fix Jenkins and try again."
@@ -25,9 +25,13 @@ set -x
 
 GIT_SHA_HEAD=$(git rev-parse HEAD)
 GIT_SHA_MASTER=$(git rev-parse origin/master)
+IS_RELEASE_TAG=$(git describe --exact-match --abbrev=0 --tags "${GIT_SHA_HEAD}" 2> /dev/null || :)
 if [ "$GIT_SHA_HEAD" == "$GIT_SHA_MASTER" ]; then
     echo "detected master build. building & pushing images..."
     ./push
+elif [ -n "$IS_RELEASE_TAG" ]; then
+    echo "detected release tag ${IS_RELEASE_TAG}. building & pushing images..."
+    ./push
 else
-    echo "skipping image push. HEAD sha does not appear to be master: $GIT_SHA_HEAD"
+    echo "skipping image push. HEAD sha does not appear to be master, nor is it a release tag: $GIT_SHA_HEAD"
 fi
