@@ -5,6 +5,7 @@ import {angulars, register} from './react-wrapper';
 import {actions, getActiveNamespace} from '../ui/ui-actions';
 import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
+import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {ActionsMenu, connect, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
 import {deleteNamespaceModal} from './modals';
@@ -32,26 +33,15 @@ const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item
 
 const NamespacesList = makeList('Namespaces', 'namespace', FullHeader, FullRow);
 
-class PullSecret extends React.Component {
+class PullSecret extends SafetyFirst {
   constructor (props) {
     super(props);
-    this._isMounted = false;
     this.state = {isLoading: true, data: undefined};
   }
 
-  upsertState (nextState) {
-    if (this._isMounted) {
-      this.setState(nextState);
-    }
-  }
-
   componentDidMount () {
-    this._isMounted = true;
+    super.componentDidMount();
     this.load(_.get(this.props, 'namespace.metadata.name'));
-  }
-
-  componentWillUnmount () {
-    this._isMounted = false;
   }
 
   load (namespaceName) {
@@ -61,10 +51,10 @@ class PullSecret extends React.Component {
     const args = `?fieldSelector=${encodeURIComponent('type=kubernetes.io/dockerconfigjson')}`;
     angulars.k8s.secrets.get(args, namespaceName)
       .then((pullSecrets) => {
-        this.upsertState({isLoading: false, data: _.get(pullSecrets, 'items[0]')});
+        this.setState({isLoading: false, data: _.get(pullSecrets, 'items[0]')});
       })
       .catch((error) => {
-        this.upsertState({isLoading: false, data: undefined});
+        this.setState({isLoading: false, data: undefined});
 
         // A 404 just means that no pull secrets exist
         if (error.status !== 404) {
