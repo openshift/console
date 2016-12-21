@@ -199,7 +199,7 @@ func main() {
 				Secret: *fUserAuthOIDCClientSecret,
 			},
 			RedirectURL: proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
-			Scope:       []string{"openid", "email", "profile"},
+			Scope:       []string{"openid", "email", "profile", "groups"},
 		}
 
 		var (
@@ -245,7 +245,7 @@ func main() {
 				// The magic "out of band" redirect URL.
 				RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
 				// Request a refresh token with the "offline_access" scope.
-				Scope: []string{"openid", "email", "profile", "offline_access"},
+				Scope: []string{"openid", "email", "profile", "offline_access", "groups"},
 			}
 
 			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
