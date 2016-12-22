@@ -1,5 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
+
+import {register} from '../react-wrapper';
 import {ResourceIcon} from './index';
 
 export const NavTitle = (props) => <div className={classNames('row', {'co-m-nav-title__detail': props.detail}, {'co-m-nav-title': !props.detail})}>
@@ -10,3 +12,5 @@ export const NavTitle = (props) => <div className={classNames('row', {'co-m-nav-
     </h1>
   </div>
 </div>;
+
+register('NavTitle', NavTitle);
