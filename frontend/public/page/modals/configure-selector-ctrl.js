@@ -11,6 +11,8 @@ angular.module('bridge.page')
     selector: angular.copy(resource.spec.selector),
   };
 
+  $scope.iconProps = {kind: resourceKind.id};
+
   $scope.save = function() {
     var patch = [{ op: 'replace', path: '/spec/selector', value: $scope.fields.selector }];
     $scope.requestPromise = k8s.resource.patch($scope.resourceKind, resource, patch);

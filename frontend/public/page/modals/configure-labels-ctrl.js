@@ -9,6 +9,8 @@ angular.module('bridge.page')
     labels: angular.copy(resource.metadata.labels),
   };
 
+  $scope.iconProps = {kind: kind.id};
+
   $scope.save = function() {
     var patch = [{ op: 'replace', path: '/metadata/labels', value: $scope.fields.labels }];
     $scope.requestPromise = k8s.resource.patch(kind, resource, patch);
