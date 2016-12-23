@@ -1,4 +1,4 @@
-.co-deployment-pods {
+.co-detail-table {
   text-align: center;
   border-width: 1px;
   border-radius: 5px;
@@ -6,17 +6,17 @@
   white-space: nowrap;
 }
 
-.co-deployment-pods__row {
+.co-detail-table__row {
   margin-left: 0;
   margin-right: 0;
 }
 
-.co-deployment-pods, .co-deployment-pods__section {
+.co-detail-table, .co-detail-table__section {
   border-color: #eee;
   border-style: solid;
 }
 
-.co-deployment-pods__section {
+.co-detail-table__section {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,17 +26,17 @@
   margin-right: -1px;
 }
 
-.co-deployment-pods__section-header {
+.co-detail-table__section-header {
   margin-top: 4px;
   margin-bottom: 4px;
 }
 
-.co-deployment-pods__section--last {
+.co-detail-table__section--last {
   border-right-width: 0;
 }
 
 $bracket-height: 48px;
-.co-deployment-pods__bracket {
+.co-detail-table__bracket {
   width: 12px;
   height: $bracket-height;
   background: url(imgs/bracket.svg) center center no-repeat;
@@ -44,7 +44,7 @@ $bracket-height: 48px;
   padding: 0 20px;
 }
 
-.co-deployment-pods__breakdown {
+.co-detail-table__breakdown {
   display: flex;
   flex-direction: column;
   justify-content: space-between;

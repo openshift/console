@@ -48,27 +48,27 @@ export class Details extends SafetyFirst {
     return <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
         <div className="row no-gutter">
-          <div className="co-deployment-pods">
-            <div className="co-deployment-pods__row row">
-              <div className="co-deployment-pods__section col-sm-3">
+          <div className="co-detail-table">
+            <div className="co-detail-table__row row">
+              <div className="co-detail-table__section col-sm-3">
                 <dl>
-                  <dt className="co-deployment-pods__section-header">Desired Count</dt>
+                  <dt className="co-detail-table__section-header">Desired Count</dt>
                   <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#" onClick={this._openReplicaCountModal}>{pluralize(deployment.spec.replicas, 'pod')}</a>}</dd>
                 </dl>
               </div>
-              <div className="co-deployment-pods__section col-sm-3">
+              <div className="co-detail-table__section col-sm-3">
                 <dl>
-                  <dt className="co-deployment-pods__section-header">Up-to-date Count</dt>
+                  <dt className="co-detail-table__section-header">Up-to-date Count</dt>
                   <dd data-tip="Total number of non-terminated pods targeted by this deployment that have the desired template spec">{pluralize(deployment.status.updatedReplicas, 'pod')}</dd>
                 </dl>
               </div>
-              <div className="co-deployment-pods__section co-deployment-pods__section--last col-sm-6">
+              <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
                 <dl>
-                  <dt className="co-deployment-pods__section-header">Matching Pods</dt>
+                  <dt className="co-detail-table__section-header">Matching Pods</dt>
                   <dd data-tip="Total number of non-terminated pods targeted by this deployment (their labels match the selector)">{pluralize(deployment.status.replicas, 'pod')}</dd>
                 </dl>
-                <div className="co-deployment-pods__bracket"></div>
-                <div className="co-deployment-pods__breakdown">
+                <div className="co-detail-table__bracket"></div>
+                <div className="co-detail-table__breakdown">
                   <div data-tip="Total number of available pods (ready for at least minReadySeconds) targeted by this deployment">{deployment.status.availableReplicas || 0} available</div>
                   <div data-tip="Total number of unavailable pods targeted by this deployment">{deployment.status.unavailableReplicas || 0} unavailable</div>
                 </div>
