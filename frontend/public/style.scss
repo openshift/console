@@ -35,7 +35,6 @@ $fa-font-path: "./fonts";
 @import "style/status";
 
 // Pages
-@import "page/deployments/deployment";
 @import "page/error/error";
 @import "page/events/events";
 @import "page/modals/modal";
@@ -64,6 +63,7 @@ $fa-font-path: "./fonts";
 @import "components/cluster-overview";
 @import "components/cluster-settings/cluster-settings";
 @import "components/cluster-updates/cluster-updates";
+@import "components/detail-table";
 @import "components/dropdown";
 @import "components/global-notification";
 @import "components/list";
