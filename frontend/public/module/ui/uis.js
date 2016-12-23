@@ -13,7 +13,6 @@ import './selector/selector-input';
 import './selector/selector-input-service';
 import './nav-title/nav-title';
 import './status-box/status-box';
-import './toggle-play/toggle-play';
 import './tristate/tristate';
 import './util/autofocus';
 import './util/debug';
