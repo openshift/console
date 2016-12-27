@@ -1,78 +1,60 @@
 import './_module';
-import './docker';
-import './enum';
-import './events';
-import './selector';
-import './selector-requirement';
-import './labels';
-import './node';
-import './pods';
-import './probe';
-import './replicationcontrollers';
-import './replicasets';
-import './deployments';
-import './resource';
-import './services';
-import './command';
-import './configmaps';
 
 import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
+import {k8sEnum} from './enum';
 
+import * as k8sCommand from './command';
+import * as k8sDeployments from './deployments';
+import * as k8sDocker from './docker';
+import k8sEvents from './events';
+import * as k8sLabels from './labels';
+import * as k8sNodes from './node';
+import * as k8sPods from './pods';
+import * as k8sProbe from './probe';
+import * as k8sReplicaSets from './replicasets';
+import * as k8sReplicationControllers from './replicationcontrollers';
+import * as k8sResource from './resource';
+import * as k8sSelector from './selector';
+import * as k8sSelectorRequirement from './selector-requirement';
+import * as k8sServices from './services';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
+const basePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
+const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
+
+const coreosBasePath = `${basePath}/apis/coreos.com/v1`;
+
+export const getKubernetesAPIPath = kind => {
+  let p = basePath;
+
+  if (kind.isExtension) {
+    p += '/apis/extensions/';
+  } else if (kind.basePath) {
+    p += kind.basePath;
+  } else {
+    p += '/api/';
+  }
+
+  p += kind.apiVersion || apiVersion;
+
+  return p;
+};
+
+const k8sFlagPaths = {
+  rbac: '/apis/rbac.authorization.k8s.io',
+  rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1'
+};
+
+const coreosFlagNames = {
+  clusterUpdates: 'channeloperatorconfigs'
+};
+
+
 angular.module('k8s')
-.provider('k8sConfig', function() {
-  'use strict';
-
-  var basePath;
-  var apiVersion;
-
-  this.setKubernetesPath = function(path, version) {
-    basePath = path;
-    apiVersion = version;
-  };
-  this.$get = function() {
-    return {
-      getKubernetesAPIPath: function(kind) {
-        let p = basePath;
-
-        if (kind.isExtension) {
-          p += '/apis/extensions/';
-        } else if (kind.basePath) {
-          p += kind.basePath;
-        } else {
-          p += '/api/';
-        }
-
-        p += kind.apiVersion || apiVersion;
-
-        return p;
-      },
-      getBasePath: function() {
-        return basePath;
-      },
-      getk8sFlagPaths: function () {
-        return {
-          rbac: '/apis/rbac.authorization.k8s.io',
-          rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1'
-        };
-      },
-      getCoreosBasePath: function() {
-        return `${basePath}/apis/coreos.com/v1`;
-      },
-      getCoreosFlagNames: function() {
-        return {
-          clusterUpdates: 'channeloperatorconfigs'
-        };
-      }
-    };
-  };
-})
-.service('k8s', function(_, $timeout, $rootScope, k8sConfig, k8sEvents, k8sEnum, k8sResource, k8sLabels,
-                         k8sPods, k8sServices, k8sDocker, k8sReplicationcontrollers, k8sReplicaSets,
-                         k8sDeployments, k8sProbe, k8sNodes, k8sSelector, k8sSelectorRequirement, k8sCommand, featuresSvc, k8sConfigmaps) {
+.service('k8s', function(_, $timeout, $rootScope,
+                         featuresSvc) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;
@@ -90,7 +72,7 @@ angular.module('k8s')
     return _.assign({
       list: _.partial(k8sResource.list, kind),
       get: _.partial(k8sResource.get, kind),
-      delete: _.partial(k8sResource.delete, kind),
+      delete: _.partial(k8sResource.kill, kind),
       create: function(obj) {
         k8sObject.clean && k8sObject.clean(obj);
         return k8sResource.create(kind, obj);
@@ -122,12 +104,12 @@ angular.module('k8s')
   };
 
   this.kinds = k8sEnum.Kind;
-  this.configmaps = addDefaults(k8sConfigmaps, k8sEnum.Kind.CONFIGMAP);
+  this.configmaps = addDefaults({}, k8sEnum.Kind.CONFIGMAP);
   this.nodes = addDefaults(k8sNodes, k8sEnum.Kind.NODE);
   this.services = addDefaults(k8sServices, k8sEnum.Kind.SERVICE);
   this.pods = addDefaults(k8sPods, k8sEnum.Kind.POD);
   this.containers = addDefaults({}, k8sEnum.Kind.CONTAINER);
-  this.replicationcontrollers = addDefaults(k8sReplicationcontrollers, k8sEnum.Kind.REPLICATIONCONTROLLER);
+  this.replicationcontrollers = addDefaults(k8sReplicationControllers, k8sEnum.Kind.REPLICATIONCONTROLLER);
   this.replicasets = addDefaults(k8sReplicaSets, k8sEnum.Kind.REPLICASET);
   this.deployments = addDefaults(k8sDeployments, k8sEnum.Kind.DEPLOYMENT);
   this.jobs = addDefaults({}, k8sEnum.Kind.JOB);
@@ -148,15 +130,15 @@ angular.module('k8s')
   this.tectonicversions = addDefaults({}, k8sEnum.Kind.TECTONICVERSION);
   this.channeloperatorconfigs = addDefaults({}, k8sEnum.Kind.CHANNELOPERATORCONFIG);
   this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
-  this.basePath =  k8sConfig.getBasePath();
+  this.basePath = basePath;
 
-  this.health = () => coFetchJSON(k8sConfig.getBasePath());
-  this.version = () => coFetchJSON(`${k8sConfig.getBasePath()}/version`);
+  this.health = () => coFetchJSON(basePath);
+  this.version = () => coFetchJSON(`${basePath}/version`);
 
   this.featureDetection = () => {
-    coFetchJSON(k8sConfig.getBasePath())
+    coFetchJSON(basePath)
     .then(res => {
-      _.each(k8sConfig.getk8sFlagPaths(), (path, flag) => {
+      _.each(k8sFlagPaths, (path, flag) => {
         featuresSvc[flag] = res.paths.indexOf(path) >= 0;
       });
     })
@@ -164,9 +146,9 @@ angular.module('k8s')
       $timeout(this.featureDetection, 5000);
     });
 
-    coFetchJSON(k8sConfig.getCoreosBasePath())
+    coFetchJSON(coreosBasePath)
     .then(res => {
-      _.each(k8sConfig.getCoreosFlagNames(), (name, flag) => {
+      _.each(coreosFlagNames, (name, flag) => {
         featuresSvc[flag] = _.find(res.resources, {name});
       });
     })

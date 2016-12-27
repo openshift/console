@@ -4,10 +4,6 @@ describe('k8s.k8sResource', function() {
 
   beforeEach(module('k8s'));
 
-  beforeEach(inject(function($window) {
-    $window.SERVER_FLAGS = {};
-  }));
-
   beforeEach(inject(function(_k8s_) {
     k8s = _k8s_;
   }));

@@ -1,56 +1,51 @@
-'use strict';
+const hasAnnotation_ = (node, key) => (
+  node &&
+  node.metadata &&
+  node.metadata.annotations &&
+  Object.hasOwnProperty.call(node.metadata.annotations, key)
+);
 
-function hasAnnotation_ (node, key) {
-  return (node &&
-    node.metadata &&
-    node.metadata.annotations &&
-    Object.hasOwnProperty.call(node.metadata.annotations, key)
-  );
-}
+export const isReady = (node) => {
+  if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {
+    return false;
+  }
 
-angular.module('k8s')
-.service('k8sNodes', function (_) {
+  const readyState = _.find(node.status.conditions, { type: 'Ready' });
+  if (!readyState) {
+    return false;
+  }
 
-  this.isReady = function isReady (node) {
-    if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {
-      return false;
-    }
+  return readyState.status === 'True';
+};
 
-    const readyState = _.find(node.status.conditions, { type: 'Ready' });
-    if (!readyState) {
-      return false;
-    }
+export const isTrusted = (node) => {
+  const UNTRUSTED_ANNOTATION_KEY = 'scheduler.alpha.kubernetes.io/taints';
 
-    return readyState.status === 'True';
-  };
+  if (!hasAnnotation_(node, UNTRUSTED_ANNOTATION_KEY)) {
+    return true;
+  }
 
-  this.isTrusted = (node) => {
-    const UNTRUSTED_ANNOTATION_KEY = 'scheduler.alpha.kubernetes.io/taints';
+  let taints = node.metadata.annotations[UNTRUSTED_ANNOTATION_KEY];
 
-    if (!hasAnnotation_(node, UNTRUSTED_ANNOTATION_KEY)) {
+  try {
+    taints = JSON.parse(taints);
+  } catch (error) {
+    // ????
+    return false;
+  }
+
+  // Matthew Garrett:
+  //   The value is metadata
+  //   It's irrelevant
+  //   It's the existence of the taint entry that controls it
+  const tainted = taints.reduce((isTainted, taint) => {
+    if (taint.key.toLocaleLowerCase() === 'untrusted') {
       return true;
     }
+    return isTainted;
+  }, false);
 
-    let taints = node.metadata.annotations[UNTRUSTED_ANNOTATION_KEY];
+  return !tainted;
+};
 
-    try {
-      taints = JSON.parse(taints);
-    } catch (error) {
-      // ????
-      return false;
-    }
-
-    // Matthew Garrett:
-    //   The value is metadata
-    //   It's irrelevant
-    //   It's the existence of the taint entry that controls it
-    const tainted = taints.reduce((isTainted, taint) => {
-      if (taint.key.toLocaleLowerCase() === 'untrusted') {
-        return true;
-      }
-      return isTainted;
-    }, false);
-
-    return !tainted;
-  };
-});
+window.tectonicTesting && (window.tectonicTesting.k8sNodes = {isTrusted});

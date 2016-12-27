@@ -41,7 +41,7 @@ angular.module('bridge', [
   'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider,
-                 configSvcProvider, errorMessageSvcProvider, k8sConfigProvider, $ngReduxProvider) {
+                 configSvcProvider, errorMessageSvcProvider, $ngReduxProvider) {
   'use strict';
 
   const reducers = combineReducers({
@@ -57,11 +57,6 @@ angular.module('bridge', [
     enabled: true,
     requireBase: true
   });
-
-  // deep down in code k8s path is used to open WS connection, which doesn't respect
-  // <base> tag in index.html so we cannot use relative path as in many other places
-  // and we need to manually prepend it with passed-in base path to form absolute path
-  k8sConfigProvider.setKubernetesPath(`${window.SERVER_FLAGS.basePath}api/kubernetes`, window.SERVER_FLAGS.k8sAPIVersion);
 
   configSvcProvider.config({
     siteBasePath: window.SERVER_FLAGS.basePath,

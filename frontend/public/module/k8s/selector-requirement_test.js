@@ -1,14 +1,11 @@
 /* eslint prefer-template:0 */
 
-describe('k8s.k8sSelectorRequirement', function() {
+describe('k8sSelectorRequirement', function() {
   'use strict';
 
-  var k8sSelectorRequirement;
+  var k8sSelectorRequirement = window.tectonicTesting.k8sSelectorRequirement;
 
   beforeEach(module('k8s'));
-  beforeEach(inject(function(_k8sSelectorRequirement_) {
-    k8sSelectorRequirement = _k8sSelectorRequirement_;
-  }));
 
   describe('#fromString', function() {
     [
