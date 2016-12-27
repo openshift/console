@@ -7,7 +7,6 @@ import {k8sEnum} from './enum';
 import * as k8sCommand from './command';
 import * as k8sDeployments from './deployments';
 import * as k8sDocker from './docker';
-import k8sEvents from './events';
 import * as k8sLabels from './labels';
 import * as k8sNodes from './node';
 import * as k8sPods from './pods';
@@ -52,6 +51,7 @@ const coreosFlagNames = {
 };
 
 
+
 angular.module('k8s')
 .service('k8s', function(_, $timeout, $rootScope,
                          featuresSvc) {
@@ -61,7 +61,6 @@ angular.module('k8s')
   this.selector = k8sSelector;
   this.selectorRequirement = k8sSelectorRequirement;
   this.labels = k8sLabels;
-  this.events = k8sEvents;
   this.enum = k8sEnum;
   this.docker = k8sDocker;
   this.resource = k8sResource;
