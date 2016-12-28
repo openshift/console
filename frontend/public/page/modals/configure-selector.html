@@ -12,7 +12,7 @@
       <div class="row co-m-form-row">
         <div class="col-sm-12">
           <label class="control-label">Label Selector for</label>
-          <co-resource-icon kind="{{resourceKind.id}}"></co-resource-icon>
+          <react-component name="ResourceIcon" props="iconProps"></react-component>
           {{resource.metadata.name}}
           <co-selector-input ng-model="fields.selector" options="{basic: !resourceKind.isExtension}"></co-selector-input>
         </div>

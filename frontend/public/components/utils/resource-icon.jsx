@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import {register} from '../react-wrapper';
+
 function iconLabel(kind) {
   switch (kind) {
     case 'petset':
@@ -52,3 +54,4 @@ export const ResourceIcon = ({kind, className}) => {
   const klass = classNames(`co-m-resource-icon co-m-resource-${kind}`, className);
   return <span className={klass}>{iconLabel(kind)}</span>;
 };
+register('ResourceIcon', ResourceIcon);

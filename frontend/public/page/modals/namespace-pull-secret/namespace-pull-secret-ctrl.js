@@ -33,6 +33,9 @@ angular.module('bridge.page')
       isNew: !pullSecret
     };
 
+    $scope.nsIconProps = {kind: 'namespace'};
+    $scope.secretIconProps = {kind: 'secret'};
+
     try {
       $scope.model.existingData = pullSecret && $window.atob(pullSecret.data[CONST.PULL_SECRET_DATA]);
 
