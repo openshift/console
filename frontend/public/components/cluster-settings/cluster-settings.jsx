@@ -2,66 +2,31 @@ import React from 'react';
 
 import {coFetchJSON} from '../../co-fetch';
 import {NavTitle} from '../utils';
-import {angulars, register} from '../react-wrapper';
+import {register} from '../react-wrapper';
 import {ClusterUpdates} from '../cluster-updates/cluster-updates';
 import {LicenseSetting} from './license-setting';
 import {LDAPSetting} from './ldap';
+import {SafetyFirst} from '../safety-first';
+import {FLAGS, connectToFlags} from '../../features';
 
 export const SettingsRow = ({children}) => <div className="row co-m-form-row">{children}</div>;
 export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
 export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9">{children}</div>;
 
-const featureCheckInterval = 200;
-const featureCheckTimeout = 15 * 1000;
-
-class ClusterSettingsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this._featureCheckCount = 0;
-    this._featureCheckInterval = null;
-    this._isMounted = false;
-    this.state = {
-      clusterUpdatesEnabled: false,
-      version: null
-    };
-  }
-
+const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
+class ClusterSettingsPage_ extends SafetyFirst {
   componentDidMount() {
-    this._isMounted = true;
-    this._featureCheckInterval = setInterval(this._checkFeatures.bind(this), featureCheckInterval);
-    this._checkVersion();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-    clearInterval(this._featureCheckInterval);
-  }
-
-  _checkFeatures() {
-    const flag = angulars.FEATURE_FLAGS.clusterUpdates;
-    if (typeof flag !== 'undefined') {
-      clearInterval(this._featureCheckInterval);
-      this.setState({
-        clusterUpdatesEnabled: flag
-      });
-    }
-
-    if (this._featureCheckCount >= featureCheckTimeout / featureCheckInterval) {
-      clearInterval(this._featureCheckInterval);
-      return;
-    }
-    this._featureCheckCount += 1;
-  }
-
-  _checkVersion() {
-    coFetchJSON('version').then((data) => this.setState({version: data}));
+    super.componentDidMount();
+    coFetchJSON('version').then(version => this.setState({version}));
   }
 
   render() {
+    const { version } = (this.state || {});
+    const { CLUSTER_UPDATES } = this.props.flags;
     return <div className="co-p-cluster">
       <div className="co-p-cluster__body">
         <NavTitle title="Cluster Settings" />
-        { this.state.clusterUpdatesEnabled &&
+        { CLUSTER_UPDATES &&
           <div>
             {/*TODO: nesting inside an extra <div> to get rid of the bottom border...*/}
             <div className="co-m-pane__body">
@@ -95,12 +60,12 @@ class ClusterSettingsPage extends React.Component {
           </dl>
           <h1 className="co-p-cluster__sidebar-heading">Additional Support</h1>
           <p><a href="https://tectonic.com/docs/" target="_blank" className="co-p-cluster__sidebar-link"><span className="fa fa-book co-p-cluster__sidebar-link-icon"></span>Full Documentation</a></p>
-          { this.state.version && this.state.version.entitlementKind === 'nodes' && <p><a href="https://github.com/coreos/tectonic-forum" target="_blank" className="co-p-cluster__sidebar-link"><span className="fa fa-comments-o co-p-cluster__sidebar-link-icon"></span>Tectonic Forum</a></p> }
-          { this.state.version && this.state.version.entitlementKind === 'nodes' && <p><a href="mailto:tectonic-feedback@coreos.com" className="co-p-cluster__sidebar-link"><span className="fa fa-envelope-o co-p-cluster__sidebar-link-icon"></span>tectonic-feedback@coreos.com</a></p> }
+          { version && version.entitlementKind === 'nodes' && <p><a href="https://github.com/coreos/tectonic-forum" target="_blank" className="co-p-cluster__sidebar-link"><span className="fa fa-comments-o co-p-cluster__sidebar-link-icon"></span>Tectonic Forum</a></p> }
+          { version && version.entitlementKind === 'nodes' && <p><a href="mailto:tectonic-feedback@coreos.com" className="co-p-cluster__sidebar-link"><span className="fa fa-envelope-o co-p-cluster__sidebar-link-icon"></span>tectonic-feedback@coreos.com</a></p> }
         </div>
       </div>
     </div>;
   }
-}
+});
 
 register('ClusterSettingsPage', ClusterSettingsPage);

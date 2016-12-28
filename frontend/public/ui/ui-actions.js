@@ -47,15 +47,12 @@ export const registerNamespaceFriendlyPrefix = s => prefixes.push(s);
 export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
 
 export const types = {
-  initActiveNamespace: 'initActiveNamespace',
   setActiveNamespace: 'setActiveNamespace',
+  setCurrentLocation: 'setCurrentLocation',
 };
 
 export const actions = {
-  [types.initActiveNamespace]: () => ({
-    type: types.initActiveNamespace,
-    value: angulars.routeParams.ns,
-  }),
+  [types.setCurrentLocation]: () => ({location: location.pathname, ns: angulars.routeParams.ns, type: types.setCurrentLocation}),
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {
       namespace = namespace.trim();

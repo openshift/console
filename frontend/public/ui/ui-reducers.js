@@ -8,12 +8,13 @@ export default (state, action)  => {
   }
 
   switch (action.type) {
-    case types.initActiveNamespace:
-      return state.get('isActiveNamespaceSet') === true
-        ? state
-        : state.set('activeNamespace', action.value).set('isActiveNamespaceSet', true);
     case types.setActiveNamespace:
       return state.set('activeNamespace', action.value).set('isActiveNamespaceSet', true);
+    case types.setCurrentLocation:
+      if (state.get('isActiveNamespaceSet') !== true) {
+        state = state.set('activeNamespace', action.ns).set('isActiveNamespaceSet', true);
+      }
+      return state.set('location', action.location);
     default:
       break;
   }

@@ -368,51 +368,6 @@ angular.module('coreos.ui')
   };
 });
 
-
-/**
- * Simple directive to create bootstrap friendly navbar links.
- * Will automatically add the 'active' class based on the route.
- */
-angular.module('coreos.ui')
-.directive('coNavbarLink', function($location) {
-  'use strict';
-
-  return {
-    templateUrl: '/coreos.ui/navbar/navbar-link.html',
-    transclude: true,
-    restrict: 'E',
-    replace: true,
-    scope: {
-      // The path to link to.
-      'href': '@'
-    },
-    link: function(scope) {
-      scope.isActive = function() {
-        const currentPath = $location.path();
-        let href = scope.href;
-        // is it relative href?
-        if (href[0] !== '/') {
-          // prefix it with slash to mimic $location.path()
-          // behavior as it strips off <base href="..."> prefix
-          href = '/' + href;
-        }
-
-        if (currentPath.indexOf(href) >= 0) {
-          return true;
-        }
-
-        if (href.indexOf('/all-namespaces/') === 0 && currentPath.indexOf('/ns/') === 0) {
-          const newPath = currentPath.replace(/^\/ns\/.*?\//, '/all-namespaces/');
-          return newPath.indexOf(href) >= 0;
-        }
-
-        return false;
-      };
-    }
-  };
-
-});
-
 /**
  * @fileoverview
  * Directive to easily inline svg images.
@@ -687,21 +642,6 @@ module.run(['$templateCache', function($templateCache) {
     '    <h1 class="co-m-page-title co-fx-text-shadow" ng-bind="title"></h1>\n' +
     '  </div>\n' +
     '</div>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/navbar/navbar-link.html',
-    '<li class="co-m-nav-link" ng-class="{\'active\': isActive()}">\n' +
-    '  <a ng-href="{{href}}" ng-transclude></a>\n' +
-    '</li>\n' +
     '');
 }]);
 })();

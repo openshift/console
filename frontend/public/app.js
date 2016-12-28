@@ -5,11 +5,11 @@ import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
-import {authSvc} from './module/auth';
 import k8sReducers from './module/k8s/k8s-reducers';
-import {actions as UIActions, getNamespacedRoute, registerNamespaceFriendlyPrefix} from './ui/ui-actions';
+import {actions as UIActions, registerNamespaceFriendlyPrefix} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';
 import UIReducers from './ui/ui-reducers';
+import { featureReducers, featureReducerName, featureActions } from './features';
 import './components/react-wrapper';
 
 // Make moment available via angular DI.
@@ -48,6 +48,7 @@ angular.module('bridge', [
     k8s: k8sReducers,
     UI: UIReducers,
     form: formReducer,
+    [featureReducerName]: featureReducers,
   });
 
   $ngReduxProvider.createStoreWith(reducers, [thunk]);
@@ -286,28 +287,20 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, k8s, featuresSvc, statusSvc, angularBridge) {
+.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, k8s, statusSvc, angularBridge) {
   'use strict';
 
-  $rootScope.SERVER_FLAGS = $window.SERVER_FLAGS;
   $ngRedux.dispatch(actions.getResources());
   $rootScope.debug = debugSvc;
-  $rootScope.FEATURE_FLAGS = featuresSvc;
   angularBridge.expose();
-  k8s.featureDetection();
+
+  $ngRedux.dispatch(featureActions.detectK8sFlags(k8s.basePath));
+  $ngRedux.dispatch(featureActions.detectCoreosFlags(`${k8s.basePath}/apis/coreos.com/v1`));
+
   statusSvc.tectonicVersion();
 
-  $rootScope.ns = getNamespacedRoute;
-
-  $rootScope.logout = e => {
-    if (!featuresSvc.isAuthDisabled) {
-      authSvc.logout();
-    }
-    e.preventDefault();
-  };
-
   $rootScope.$on('$routeChangeSuccess', function() {
-    $ngRedux.dispatch(UIActions.initActiveNamespace());
+    $ngRedux.dispatch(UIActions.setCurrentLocation());
     analyticsSvc.route(location.pathname);
   });
 
