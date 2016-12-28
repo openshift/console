@@ -143,10 +143,7 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
 
   const items = {};
   items[allNamespacesKey] = 'all';
-  (data || []).sort().forEach(n => {
-    const {name} = n.metadata;
-    items[name] = name;
-  });
+  _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
 
   let title = namespace || 'all';
 
