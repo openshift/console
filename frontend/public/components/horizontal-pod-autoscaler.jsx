@@ -63,15 +63,21 @@ const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resour
 const Details = (hpa) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-lg-4 col-sm-6">
-      <div className="detail-table">
-        <div className="detail-table-row">
-          <div className="col-xs-6 detail-table-cell">
-            <span className="detail-table-header text-uppercase">Desired Count</span>
-            <span>{desiredReplicas(hpa)} replicas</span>
-          </div>
-          <div className="col-xs-6 detail-table-cell">
-            <span className="detail-table-header text-uppercase">Current Count</span>
-            <span>{currentReplicas(hpa)} replicas</span>
+      <div className="co-m-pane__body-group">
+        <div className="co-detail-table">
+          <div className="row co-detail-table__row">
+            <div className="col-xs-6 co-detail-table__section">
+              <dl>
+                <dt className="co-detail-table__section-header">Desired Count</dt>
+                <dd>{desiredReplicas(hpa)} replicas</dd>
+              </dl>
+            </div>
+            <div className="col-xs-6 co-detail-table__section co-detail-table__section--last">
+              <dl>
+                <dt className="co-detail-table__section-header">Current Count</dt>
+                <dd>{currentReplicas(hpa)} replicas</dd>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
