@@ -283,7 +283,7 @@ angular.module('bridge', [
   });
 
   $routeProvider.otherwise({
-    templateUrl: '/static/page/error/404.html',
+    template: '<react-component name="ErrorPage404"></react-component>',
     title: 'Page Not Found (404)'
   });
 })
