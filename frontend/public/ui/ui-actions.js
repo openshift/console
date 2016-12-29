@@ -9,7 +9,7 @@ const prefixes = [];
 
 export const getActiveNamespace = () => angulars.store.getState().UI.get('activeNamespace');
 
-const isNamespaced = path => {
+export const isNamespaced = path => {
   return path.match(nsPathPattern) || path.match(allNsPathPattern);
 };
 

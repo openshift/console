@@ -2,7 +2,7 @@ import React from 'react';
 import {Provider} from 'react-redux';
 
 import {angulars, register} from './react-wrapper';
-import {actions, getActiveNamespace} from '../ui/ui-actions';
+import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
 import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SafetyFirst} from './safety-first';
@@ -136,6 +136,11 @@ const NamespacesPage = () => <div>
 </div>;
 
 const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {
+  // Don't show namespace dropdown unless the namespace is relevant to the current page
+  if(!isNamespaced(window.location.pathname)) {
+    return null;
+  }
+
   const {data, loaded, namespace, dispatch} = props;
 
   // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
