@@ -4,6 +4,8 @@ import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage, EmptyBox, navFactory, ResourceLink} from './utils';
 
+const menuActions = [Cog.factory.Delete];
+
 const getHosts = (ingress) => {
   const hosts = _.map(_.get(ingress, 'spec.rules'), 'host');
 
@@ -30,9 +32,7 @@ const getTLSCert = (ingress) => {
 };
 
 const IngressCog = ({ingress}) => {
-  const kind = angulars.kinds.INGRESS;
-  const {factory: {Delete}} = Cog;
-  const options = [Delete].map(f => f(kind, ingress));
+  const options = menuActions.map(f => f(angulars.kinds.INGRESS, ingress));
   return <Cog options={options} size="small" anchor="left" />;
 };
 
@@ -49,7 +49,7 @@ const IngressListRow = ({obj: ingress}) => <div className="row co-resource-list_
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
   </div>
   <div className="col-xs-4">
-    <LabelList kind="ingress" labels={ingress.metadata.labels}  />
+    <LabelList kind="ingress" labels={ingress.metadata.labels} />
   </div>
   <div className="col-xs-5">{getHosts(ingress)}</div>
 </div>;
@@ -71,7 +71,7 @@ const RulesRow = ({rule}) => {
       <div>{rule.path}</div>
     </div>
     <div className="col-xs-3">
-      <div><ResourceIcon kind="service"  className="co-m-resource-icon--align-left" />{rule.serviceName}</div>
+      <div><ResourceIcon kind="service" className="co-m-resource-icon--align-left" />{rule.serviceName}</div>
     </div>
      <div className="col-xs-2">
       <div>{rule.servicePort}</div>
@@ -141,10 +141,9 @@ const Details = (ingress) => <div className="col-md-12">
 </div>;
 
 const pages = [navFactory.details(detailsPage(Details)), navFactory.editYaml()];
-const IngressDetailsPage = makeDetailsPage('IngressDetailsPage', 'ingress', pages);
+const IngressDetailsPage = makeDetailsPage('IngressDetailsPage', 'ingress', pages, menuActions);
 const IngressList = makeList('Ingress', 'ingress', IngressListHeader, IngressListRow);
 const IngressPage = makeListPage('IngressesPage', 'ingress', IngressList);
 
 export {IngressList, IngressPage, IngressDetailsPage};
 register('IngressPage', IngressPage);
-

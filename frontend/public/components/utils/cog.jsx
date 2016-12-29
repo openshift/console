@@ -53,7 +53,17 @@ Cog.factory = {
       title: `Delete ${kind.label} `,
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
       btnText: `Delete ${kind.label} `,
-      executeFn: () => angulars.k8s[kind.plural].delete(obj),
+      executeFn: () => {
+        const deletePromise = angulars.k8s[kind.plural].delete(obj);
+
+        // If we are currently on the deleted resource's page, redirect to the resource list page
+        const re = new RegExp(`/${obj.metadata.name}/.*$`);
+        if (re.test(window.location.pathname)) {
+          angulars.$location.url(window.location.pathname.replace(re, ''));
+        }
+
+        return deletePromise;
+      },
     }),
   }),
   Edit: (kind, obj) => ({

@@ -11,11 +11,11 @@ export const ReactiveDetails = (props) => <Provider store={props.store}>
   </Firehose>
 </Provider>;
 
-export const makeDetailsPage = (name, kind, pages) => {
+export const makeDetailsPage = (name, kind, pages, menuActions) => {
   class ReactiveDetailsPage extends React.Component {
     render () {
       return <ReactiveDetails {...this.props} store={angulars.store}>
-        <NavTitle detail={true} title={this.props.name} />
+        <NavTitle detail={true} title={this.props.name} menuActions={menuActions} />
         <VertNav pages={pages} className={`co-m-${kind}`} />
       </ReactiveDetails>;
     }
