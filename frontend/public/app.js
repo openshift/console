@@ -277,8 +277,7 @@ angular.module('bridge', [
   });
 
   $routeProvider.when('/error', {
-    controller: 'ErrorCtrl',
-    templateUrl: '/static/page/error/error.html',
+    template: '<react-component name="ErrorPage"></react-component>',
     title: 'Error',
   });
 
