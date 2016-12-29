@@ -13,7 +13,6 @@ import './deployments/controllers';
 import './pods/pods';
 import './nodes/nodes';
 import './search/search-ctrl';
-import './settings/settings';
 import './modals/modals';
 import './rules/rules-ctrl';
 

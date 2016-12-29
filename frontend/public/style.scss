@@ -41,8 +41,6 @@ $fa-font-path: "./fonts";
 @import "page/modals/configure-ports";
 @import "page/nodes/node";
 
-@import "page/settings/users";
-
 // UI Modules
 @import "module/ui/containers/container-input";
 @import "module/ui/forms/number-spinner";
@@ -80,6 +78,7 @@ $fa-font-path: "./fonts";
 @import "components/sysevent-stream";
 @import "components/timestamp";
 @import "components/toggle-play";
+@import "components/users";
 @import "components/volume-icon";
 @import "components/vert-nav";
 @import "components/cluster-overview";
