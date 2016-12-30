@@ -222,8 +222,7 @@ angular.module('bridge', [
   });
 
   r('/settings/profile', {
-    controller: 'ProfileCtrl',
-    templateUrl: '/static/page/settings/profile.html',
+    template: '<react-component name="ProfilePage"></react-component>',
     title: 'Profile',
   });
   r('/settings/ldap', {
