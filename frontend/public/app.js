@@ -277,13 +277,12 @@ angular.module('bridge', [
   });
 
   $routeProvider.when('/error', {
-    controller: 'ErrorCtrl',
-    templateUrl: '/static/page/error/error.html',
+    template: '<react-component name="ErrorPage"></react-component>',
     title: 'Error',
   });
 
   $routeProvider.otherwise({
-    templateUrl: '/static/page/error/404.html',
+    template: '<react-component name="ErrorPage404"></react-component>',
     title: 'Page Not Found (404)'
   });
 })

@@ -26,3 +26,4 @@ import './cluster-overview-container';
 import './cluster-overview';
 import './edit-yaml';
 import './profile';
+import './error';
