@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceLink, Selector, Timestamp, navFactory} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">Name</div>
@@ -12,12 +11,7 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
 </div>;
 
-const JobCog = ({job}) => {
-  const kind = angulars.kinds.JOB;
-  const {factory: {Delete, ModifyLabels, ModifyJobParallelism, ModifyPodSelector}} = Cog;
-  const options = [ModifyJobParallelism, ModifyPodSelector, ModifyLabels, Delete].map(f => f(kind, job));
-  return <Cog options={options} />;
-};
+const menuActions = [Cog.factory.ModifyJobParallelism, Cog.factory.ModifyPodSelector, Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const getJobTypeAndCompletions = (o) => {
   // if neither completions nor parallelism are defined, then it is a non-parallel job.
@@ -41,7 +35,7 @@ const JobRow = ({obj: job}) => {
   return (
     <div className="row co-resource-list__item">
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
-        <JobCog job={job} />
+        <ResourceCog actions={menuActions} kind="job" resource={job} />
         <ResourceLink kind="job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
       </div>
       <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">

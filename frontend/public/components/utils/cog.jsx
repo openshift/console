@@ -6,6 +6,7 @@ import {util} from '../../module/k8s/util';
 import {angulars} from '../react-wrapper';
 import {confirmModal, configureReplicaCountModal} from '../modals';
 import {DropdownMixin} from './dropdown';
+import {kindObj} from './index';
 
 export class Cog extends DropdownMixin {
   componentDidMount () {
@@ -105,3 +106,9 @@ Cog.factory = {
     }),
   }),
 };
+
+export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
+  options={actions.map(a => a(kindObj(kind), resource))}
+  key={resource.metadata.uid}
+  isDisabled={isDisabled}
+/>;

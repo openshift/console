@@ -2,7 +2,7 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, kindObj, LabelList, LoadingInline, navFactory, ResourceLink, Timestamp} from './utils';
+import {Cog, kindObj, LabelList, LoadingInline, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -29,16 +29,8 @@ const ModifyHpaTargets = (kind, obj) => ({
   }),
 });
 
-const HorizontalPodAutoscalerCog = ({hpa}) => {
-  const kind = angulars.kinds.HORIZONTALPODAUTOSCALER;
-  const {factory: {Delete, ModifyLabels}} = Cog;
-  const options = [ModifyHpaTargets, ModifyHpaReplicas, ModifyLabels, Delete].map(f => f(kind, hpa));
-  return <Cog options={options} anchor="center" />;
-};
-
 const currentReplicas = (hpa) => hpa.status.currentReplicas || 0;
 const desiredReplicas = (hpa) => hpa.status.desiredReplicas || 0;
-
 
 const HpaStatus = ({hpa}) => currentReplicas(hpa) === desiredReplicas(hpa) ? <span>Scaled</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Rescaling</div>;
 
@@ -46,7 +38,7 @@ const ScaleRef = ({hpa}) => <ResourceLink kind={hpa.spec.scaleRef.kind.toLowerCa
 
 const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <HorizontalPodAutoscalerCog hpa={hpa} />
+    <ResourceCog actions={[ModifyHpaTargets, ModifyHpaReplicas, Cog.factory.ModifyLabels, Cog.factory.Delete]} kind="horizontalpodautoscaler" resource={hpa} />
     <ResourceLink kind="horizontalpodautoscaler" name={hpa.metadata.name} namespace={hpa.metadata.namespace} title={hpa.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">

@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, navFactory, ResourceLink, Timestamp} from './utils';
+import {Cog, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
 import {SecretsList, withSecretsList} from './secret';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -11,20 +10,13 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Age</div>
 </div>;
 
-const ServiceAccountCog = ({serviceaccount}) => {
-  const kind = angulars.kinds.SERVICEACCOUNT;
-  const {factory: {Delete}} = Cog;
-  const options = [Delete].map(f => f(kind, serviceaccount));
-  return <Cog options={options} />;
-};
-
 const ServiceAccountRow = ({obj: serviceaccount}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;
 
   return (
     <div className="row co-resource-list__item">
       <div className="col-xs-4">
-        <ServiceAccountCog serviceaccount={serviceaccount} />
+        <ResourceCog actions={[Cog.factory.Delete]} kind="serviceaccount" resource={serviceaccount} />
         <ResourceLink kind="serviceaccount" name={name} namespace={namespace} title={uid} />
       </div>
       <div className="col-xs-4">

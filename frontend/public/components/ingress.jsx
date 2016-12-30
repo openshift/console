@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {angulars, register} from './react-wrapper';
+import {register} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceIcon, Timestamp, detailsPage, EmptyBox, navFactory, ResourceLink} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceIcon, Timestamp, detailsPage, EmptyBox, navFactory, ResourceLink} from './utils';
 
 const menuActions = [Cog.factory.Delete];
 
@@ -31,11 +31,6 @@ const getTLSCert = (ingress) => {
   </div>;
 };
 
-const IngressCog = ({ingress}) => {
-  const options = menuActions.map(f => f(angulars.kinds.INGRESS, ingress));
-  return <Cog options={options} />;
-};
-
 const IngressListHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Ingress Name</div>
   <div className="col-xs-4">Ingress Labels</div>
@@ -44,7 +39,7 @@ const IngressListHeader = () => <div className="row co-m-table-grid__head">
 
 const IngressListRow = ({obj: ingress}) => <div className="row co-resource-list__item">
   <div className="col-xs-3">
-    <IngressCog ingress={ingress} />
+    <ResourceCog actions={menuActions} kind="ingress" resource={ingress} />
     <ResourceLink kind="ingress" name={ingress.metadata.name}
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
   </div>

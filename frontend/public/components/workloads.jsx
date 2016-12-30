@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Cog, kindObj, LabelList, ResourceLink, resourcePath, Selector} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceLink, resourcePath, Selector} from './utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -18,12 +18,12 @@ const rowOfKind = (kind) => {
     render() {
       const o = this.props.obj;
 
-      const {factory: {Edit, Delete, ModifyLabels, ModifyCount, ModifyPodSelector}} = Cog;
-      const options = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete].map(f => f(kindObj(kind), o));
+      const {Edit, Delete, ModifyLabels, ModifyCount, ModifyPodSelector} = Cog.factory;
+      const menuActions = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete];
 
       return <div className="row co-resource-list__item">
         <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-          <Cog options={options} key={o.metadata.uid} />
+          <ResourceCog actions={menuActions} kind={kind} resource={o} />
           <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
