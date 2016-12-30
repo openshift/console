@@ -3,7 +3,7 @@ import fuzzy from 'fuzzysearch';
 import {Provider} from 'react-redux';
 
 import actions from '../../module/k8s/k8s-actions';
-import {isReady as isNodeReady} from '../../module/k8s/node';
+import {isNodeReady} from '../../module/k8s/node';
 import {Firehose, podPhase, StatusBox} from '../utils';
 import {angulars, register} from '../react-wrapper';
 

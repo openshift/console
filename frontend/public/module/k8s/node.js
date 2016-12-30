@@ -5,7 +5,7 @@ const hasAnnotation_ = (node, key) => (
   Object.hasOwnProperty.call(node.metadata.annotations, key)
 );
 
-export const isReady = (node) => {
+export const isNodeReady = (node) => {
   if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {
     return false;
   }
