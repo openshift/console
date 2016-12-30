@@ -33,7 +33,7 @@ const getTLSCert = (ingress) => {
 
 const IngressCog = ({ingress}) => {
   const options = menuActions.map(f => f(angulars.kinds.INGRESS, ingress));
-  return <Cog options={options} size="small" anchor="left" />;
+  return <Cog options={options} />;
 };
 
 const IngressListHeader = () => <div className="row co-m-table-grid__head">

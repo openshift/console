@@ -7,7 +7,7 @@ import {Cog, LabelList, ResourceLink, Selector, Timestamp, navFactory, detailsPa
 const DaemonSetCog = ({daemonset}) => {
   const kind = angulars.kinds.DAEMONSET;
   const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, daemonset))} size="small" anchor="left" />;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, daemonset))} />;
 };
 
 const DaemonSetHeader = () => <div className="row co-m-table-grid__head">

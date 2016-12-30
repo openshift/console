@@ -16,7 +16,7 @@ const JobCog = ({job}) => {
   const kind = angulars.kinds.JOB;
   const {factory: {Delete, ModifyLabels, ModifyJobParallelism, ModifyPodSelector}} = Cog;
   const options = [ModifyJobParallelism, ModifyPodSelector, ModifyLabels, Delete].map(f => f(kind, job));
-  return <Cog options={options} size="small" anchor="left" />;
+  return <Cog options={options} />;
 };
 
 const getJobTypeAndCompletions = (o) => {

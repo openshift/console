@@ -24,7 +24,7 @@ const ServiceCog = ({s}) => {
   });
 
   const options = [ModifyPodSelector, ServicePorts, ModifyLabels, Delete].map(f => f(angulars.kinds.SERVICE, s));
-  return <Cog options={options} size="small" anchor="left" />;
+  return <Cog options={options} />;
 };
 
 const ServiceHeader = () => <div className="row co-m-table-grid__head">

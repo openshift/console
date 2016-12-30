@@ -10,7 +10,7 @@ const PodCog = ({pod, isDisabled}) => {
   const kind = angulars.kinds.POD;
   const {factory: {ModifyLabels, Delete}} = Cog;
 
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" isDisabled={isDisabled} />;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} isDisabled={isDisabled} />;
 };
 
 export const readiness = ({status}) => {

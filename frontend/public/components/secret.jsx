@@ -10,7 +10,7 @@ import classnames from 'classnames';
 const SecretCog = ({secret}) => {
   const kind = angulars.kinds.SECRET;
   const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, secret))} size="small" anchor="left" />;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, secret))} />;
 };
 
 const SecretHeader = () => <div className="row co-m-table-grid__head">

@@ -30,7 +30,7 @@ const HeaderSearch = () => <div className="row co-m-table-grid__head">
 
 const NodeCog = ({node}) => {
   const options = [Cog.factory.ModifyLabels].map(f => f(angulars.kinds.NODE, node));
-  return <Cog options={options} size="small" anchor="left" />;
+  return <Cog options={options} />;
 };
 
 const NodeStatus = ({node}) => isNodeReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;

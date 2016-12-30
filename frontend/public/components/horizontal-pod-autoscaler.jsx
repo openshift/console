@@ -33,7 +33,7 @@ const HorizontalPodAutoscalerCog = ({hpa}) => {
   const kind = angulars.kinds.HORIZONTALPODAUTOSCALER;
   const {factory: {Delete, ModifyLabels}} = Cog;
   const options = [ModifyHpaTargets, ModifyHpaReplicas, ModifyLabels, Delete].map(f => f(kind, hpa));
-  return <Cog options={options} size="small" anchor="center" />;
+  return <Cog options={options} anchor="center" />;
 };
 
 const currentReplicas = (hpa) => hpa.status.currentReplicas || 0;

@@ -15,7 +15,7 @@ const ServiceAccountCog = ({serviceaccount}) => {
   const kind = angulars.kinds.SERVICEACCOUNT;
   const {factory: {Delete}} = Cog;
   const options = [Delete].map(f => f(kind, serviceaccount));
-  return <Cog options={options} size="small" anchor="left" />;
+  return <Cog options={options} />;
 };
 
 const ServiceAccountRow = ({obj: serviceaccount}) => {

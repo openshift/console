@@ -8,7 +8,7 @@ import {Cog, LabelList, navFactory, ResourceLink, Timestamp} from './utils';
 const ConfigMapCog = ({configMap}) => {
   const kind = angulars.kinds.CONFIGMAP;
   const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, configMap))} size="small" anchor="left" />;
+  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, configMap))} />;
 };
 
 const ConfigMapHeader = () => <div className="row co-m-table-grid__head">

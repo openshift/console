@@ -13,7 +13,7 @@ const CogOfKind = ({kind, o}) => {
   const {factory: {Edit, Delete, ModifyLabels, ModifyCount, ModifyPodSelector}} = Cog;
   const options = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete].map(f => f(kind, o));
 
-  return <Cog options={options} size="small" anchor="left" key={o.metadata.uid} />;
+  return <Cog options={options} key={o.metadata.uid} />;
 };
 CogOfKind.propTypes = {
   kind: React.PropTypes.object.isRequired,
