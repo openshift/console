@@ -23,8 +23,6 @@ export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespa
 const basePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
 const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
 
-const coreosBasePath = `${basePath}/apis/coreos.com/v1`;
-
 export const getKubernetesAPIPath = kind => {
   let p = basePath;
 
@@ -41,20 +39,10 @@ export const getKubernetesAPIPath = kind => {
   return p;
 };
 
-const k8sFlagPaths = {
-  rbac: '/apis/rbac.authorization.k8s.io',
-  rbacV1alpha1: '/apis/rbac.authorization.k8s.io/v1alpha1'
-};
-
-const coreosFlagNames = {
-  clusterUpdates: 'channeloperatorconfigs'
-};
-
 
 
 angular.module('k8s')
-.service('k8s', function(_, $timeout, $rootScope,
-                         featuresSvc) {
+.service('k8s', function(_, $timeout, $rootScope) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;
@@ -133,26 +121,4 @@ angular.module('k8s')
 
   this.health = () => coFetchJSON(basePath);
   this.version = () => coFetchJSON(`${basePath}/version`);
-
-  this.featureDetection = () => {
-    coFetchJSON(basePath)
-    .then(res => {
-      _.each(k8sFlagPaths, (path, flag) => {
-        featuresSvc[flag] = res.paths.indexOf(path) >= 0;
-      });
-    })
-    .catch(() => {
-      $timeout(this.featureDetection, 5000);
-    });
-
-    coFetchJSON(coreosBasePath)
-    .then(res => {
-      _.each(coreosFlagNames, (name, flag) => {
-        featuresSvc[flag] = _.find(res.resources, {name});
-      });
-    })
-    .catch(() => {
-      $timeout(this.featureDetection, 5000);
-    });
-  };
 });
