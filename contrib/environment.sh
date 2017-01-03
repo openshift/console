@@ -23,5 +23,5 @@ export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(kubectl config view -o json | jq '
 export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
 export BRIDGE_K8S_AUTH="bearer-token"
 
-secretname=`kubectl get serviceaccount default --namespace=kube-system -o jsonpath={.secrets[0].name}`
-export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode)
+secretname=$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}')
+export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret "$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode)
