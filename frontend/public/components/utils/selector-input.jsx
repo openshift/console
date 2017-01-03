@@ -15,6 +15,15 @@ export class SelectorInput extends React.Component {
     };
   }
 
+  static objectify (arr) {
+    const result = {};
+    _.each(arr, item => {
+      const [key, value] = item.split('=');
+      result[key] = value;
+    });
+    return result;
+  }
+
   isTagValid (tag) {
     const requirement = angulars.k8s.selectorRequirement.fromString(tag);
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
@@ -63,7 +72,7 @@ export class SelectorInput extends React.Component {
     const removeKeys = inputValue.length ? [] : [8];
 
     const inputProps = {
-      autoFocus: true,
+      autoFocus: this.props.autoFocus,
       className: classNames('input', {'invalid-tag': !isInputValid}),
       onChange: this.handleInputChange.bind(this),
       placeholder: 'app=frontend',

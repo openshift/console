@@ -106,7 +106,7 @@ export class SearchPage extends React.Component {
             <div className="input-group-btn">
               <ResourceListDropdown selected={kind} onChange={this.handleKindChange.bind(this)} />
             </div>
-            <SelectorInput tags={validTags} onChange={this.handleSelectorChange.bind(this)} />
+            <SelectorInput tags={validTags} onChange={this.handleSelectorChange.bind(this)} autoFocus/>
           </div>
         </div>
         <ResourceList kind={kind} selector={selector} />

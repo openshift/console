@@ -12,7 +12,6 @@ import './configure-hpa-replicas-ctrl';
 import './configure-hpa-targets-ctrl';
 import './configure-restart-policy-ctrl';
 import './configure-primary-command-ctrl';
-import './new-namespace-ctrl';
 import './row-mgr';
 import './service-ports-ctrl';
 import './namespace-pull-secret/namespace-pull-secret-ctrl';
