@@ -5,6 +5,7 @@ import {ClusterOverviewPage} from './cluster-overview';
 import {angulars, register} from './react-wrapper';
 import {entitlementTitle} from './license-notifier';
 import {SafetyFirst} from './safety-first';
+import {cloudProviderID} from './utils';
 
 export class ClusterOverviewContainer extends SafetyFirst {
   constructor(props) {
@@ -58,7 +59,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
 
   _checkCloudProvider() {
     angulars.k8s.nodes.get().then((nodes) => {
-      const providerIDs = _.map(nodes.items, (node) => _.get(node, 'spec.providerID', '').split('://')[0]);
+      const providerIDs = _.map(nodes.items, cloudProviderID);
       this.setState({ cloudProviders: providerIDs.length ? _.uniq(providerIDs) : null });
     });
   }

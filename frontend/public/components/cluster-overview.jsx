@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {NavTitle, LoadingInline} from './utils';
+import {NavTitle, LoadingInline, cloudProviderNames} from './utils';
 import classNames from 'classnames';
 
 const tectonicHealthMsgs = {
@@ -11,11 +11,6 @@ const tectonicHealthMsgs = {
 const k8sHealthMsgs = {
   'ok': 'All systems go',
   'unknown': 'API server connection has a problem'
-};
-
-const getProviderDisplayNames = (providerNames) => {
-  const displayNames = providerNames.length === 1 ? providerNames[0] : `Hybrid (${providerNames.join(' , ')})`;
-  return displayNames.replace(/aws/i, 'Amazon Web Services');
 };
 
 const StatusIconRow = ({state, text}) => {
@@ -117,7 +112,7 @@ export const ClusterOverviewPage = (props) => {
               text="Tectonic License could not be determined." />
 
             {props.cloudProviders &&
-              <SoftwareDetailRow title="Cloud Provider" detail={getProviderDisplayNames(props.cloudProviders)}
+              <SoftwareDetailRow title="Cloud Provider" detail={cloudProviderNames(props.cloudProviders)}
               text="Cloud Provider could not be determined." />
             }
 

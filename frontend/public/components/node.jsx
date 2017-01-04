@@ -4,7 +4,7 @@ import {isNodeReady} from '../module/k8s/node';
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, navFactory, LabelList, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units} from './utils';
+import {Cog, navFactory, LabelList, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID} from './utils';
 
 const menuActions = [Cog.factory.ModifyLabels];
 
@@ -129,18 +129,26 @@ const Details = (node) => {
           <dl>
             <dt>Node Name</dt>
             <dd>{node.metadata.name || '-'}</dd>
-            <dt>Node ID</dt>
+            <dt>External ID</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>
             <dt>Node Addresses</dt>
-            <dd><NodeIPList ips={_.get(node, 'status.addresses')} /></dd>
+            <dd><NodeIPList ips={_.get(node, 'status.addresses')} expand={true} /></dd>
             <dt>Node Labels</dt>
             <dd><LabelList kind="node" expand={true} labels={node.metadata.labels} /></dd>
+            <dt>Provider ID</dt>
+            <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
+            <dt>Unschedulable</dt>
+            <dd className="text-capitalize">{_.get(node, 'spec.unschedulable', '-').toString()}</dd>
             <dt>Created</dt>
             <dd><Timestamp timestamp={node.metadata.creationTimestamp} /></dd>
           </dl>
         </div>
         <div className="col-md-6 col-xs-12">
           <dl>
+            <dt>Operating System</dt>
+            <dd className="text-capitalize">{_.get(node, 'status.nodeInfo.operatingSystem', '-')}</dd>
+            <dt>Architecture</dt>
+            <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
             <dt>Kernel Version</dt>
             <dd>{_.get(node, 'status.nodeInfo.kernelVersion', '-')}</dd>
             <dt>Boot ID</dt>
@@ -172,12 +180,36 @@ const Details = (node) => {
                 </tr>
               </thead>
               <tbody>
-                {node.status.conditions.map(c => <tr key={_.uniqueId()}>
+                {_.map(node.status.conditions, c => <tr key={_.uniqueId()}>
                   <td>{c.type}</td>
                   <td>{c.status || '-'}</td>
                   <td>{c.reason || '-'}</td>
                   <td><Timestamp timestamp={c.lastHeartbeatTime} /></td>
                   <td><Timestamp timestamp={c.lastTransitionTime} /></td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-xs-12">
+          <h1 className="co-section-title">Images</h1>
+          <div className="co-table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Size</th>
+                </tr>
+              </thead>
+              <tbody>
+                {_.map(node.status.images, i => <tr key={_.uniqueId()}>
+                  <td>{i.names.join(',')}</td>
+                  <td>{units.humanize(i.sizeBytes, 'decimalBytes', true).string || '-'}</td>
                 </tr>)}
               </tbody>
             </table>
