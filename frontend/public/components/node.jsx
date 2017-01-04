@@ -5,8 +5,35 @@ import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {Cog, navFactory, LabelList, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID} from './utils';
+import {configureUnschedulableModal} from './modals';
 
-const menuActions = [Cog.factory.ModifyLabels];
+const makeNodeScheduable = (resourceKind, resource) => {
+  const patch = [{ op: 'replace', path: '/spec/unschedulable', value: false }];
+  angulars.k8s.resource.patch(resourceKind, resource, patch).catch((error) => {
+    throw error;
+  });
+};
+
+const MarkAsUnschedulable = (kind, obj) => ({
+  label: 'Mark as Unschedulable...',
+  weight: 100,
+  hidden: _.has(obj, 'spec.unschedulable') && obj.spec.unschedulable,
+  callback: () => configureUnschedulableModal({
+    resourceKind: kind,
+    resource: obj,
+  })
+});
+
+const MarkAsSchedulable = (kind, obj) => ({
+  label: 'Mark as Schedulable',
+  weight: 100,
+  hidden: !_.has(obj, 'spec.unschedulable'),
+  callback: () => makeNodeScheduable(kind, obj)
+});
+
+const menuActions = [Cog.factory.ModifyLabels, MarkAsSchedulable, MarkAsUnschedulable];
+
+const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="node" resource={node} />;
 
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
@@ -29,8 +56,6 @@ const HeaderSearch = () => <div className="row co-m-table-grid__head">
   <div className="col-sm-5 col-xs-7">Node Labels</div>
   <div className="col-md-2 col-sm-3 hidden-xs">Node Addresses</div>
 </div>;
-
-const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="node" resource={node} />;
 
 const NodeStatus = ({node}) => isNodeReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 
