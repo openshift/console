@@ -6,7 +6,11 @@ import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
 import {configureReplicaCountModal} from './modals';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
+import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
+
+const {ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete} = Cog.factory;
+const cogActions = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete];
+const menuActions = _.without(cogActions, Edit);
 
 export class Details extends SafetyFirst {
   constructor(props) {
@@ -105,9 +109,9 @@ export class Details extends SafetyFirst {
 
 const {details, edit, editYaml, pods} = navFactory;
 const pages = [details(Details), edit(), editYaml(), pods()];
-const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages);
+const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages, menuActions);
 
-const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment'));
+const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', cogActions));
 const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

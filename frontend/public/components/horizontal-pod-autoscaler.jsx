@@ -29,6 +29,8 @@ const ModifyHpaTargets = (kind, obj) => ({
   }),
 });
 
+const menuActions = [ModifyHpaTargets, ModifyHpaReplicas, Cog.factory.ModifyLabels, Cog.factory.Delete];
+
 const currentReplicas = (hpa) => hpa.status.currentReplicas || 0;
 const desiredReplicas = (hpa) => hpa.status.desiredReplicas || 0;
 
@@ -38,7 +40,7 @@ const ScaleRef = ({hpa}) => <ResourceLink kind={hpa.spec.scaleRef.kind.toLowerCa
 
 const HorizontalPodAutoscalerRow = ({obj: hpa}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <ResourceCog actions={[ModifyHpaTargets, ModifyHpaReplicas, Cog.factory.ModifyLabels, Cog.factory.Delete]} kind="horizontalpodautoscaler" resource={hpa} />
+    <ResourceCog actions={menuActions} kind="horizontalpodautoscaler" resource={hpa} />
     <ResourceLink kind="horizontalpodautoscaler" name={hpa.metadata.name} namespace={hpa.metadata.namespace} title={hpa.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -128,7 +130,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
 </div>;
 
 const pages = [navFactory.details(Details), navFactory.editYaml()];
-const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'horizontalpodautoscaler', pages);
+const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'horizontalpodautoscaler', pages, menuActions);
 const HorizontalPodAutoscalersList = makeList('HorizontalPodAutoscalers', 'horizontalpodautoscaler', Header, HorizontalPodAutoscalerRow);
 const HorizontalPodAutoscalersPage = makeListPage('HorizontalPodAutoscalersPage', 'horizontalpodautoscaler', HorizontalPodAutoscalersList, null, null, 'Autoscalers');
 export {HorizontalPodAutoscalersList, HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage};

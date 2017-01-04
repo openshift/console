@@ -4,6 +4,8 @@ import {makeDetailsPage, makeListPage, makeList} from './factory';
 import {Cog, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
 import {SecretsList, withSecretsList} from './secret';
 
+const menuActions = [Cog.factory.Delete];
+
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Name</div>
   <div className="col-xs-4">Secrets</div>
@@ -16,7 +18,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
   return (
     <div className="row co-resource-list__item">
       <div className="col-xs-4">
-        <ResourceCog actions={[Cog.factory.Delete]} kind="serviceaccount" resource={serviceaccount} />
+        <ResourceCog actions={menuActions} kind="serviceaccount" resource={serviceaccount} />
         <ResourceLink kind="serviceaccount" name={name} namespace={namespace} title={uid} />
       </div>
       <div className="col-xs-4">
@@ -60,7 +62,7 @@ const Details = (serviceaccount) => {
 };
 
 const pages = [navFactory.details(Details)];
-const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'serviceaccount', pages);
+const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'serviceaccount', pages, menuActions);
 const ServiceAccountsList = makeList('ServiceAccounts', 'serviceaccount', Header, withSecretsList(ServiceAccountRow));
 const ServiceAccountsPage = makeListPage('ServiceAccountsPage', 'serviceaccount', ServiceAccountsList);
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};

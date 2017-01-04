@@ -3,6 +3,8 @@ import React from 'react';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory, detailsPage} from './utils';
 
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
+
 const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
   <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">Labels</div>
@@ -12,7 +14,7 @@ const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
 
 const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-    <ResourceCog actions={[Cog.factory.ModifyLabels, Cog.factory.Delete]} kind="daemonset" resource={daemonset} />
+    <ResourceCog actions={menuActions} kind="daemonset" resource={daemonset} />
     <ResourceLink kind="daemonset" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
@@ -64,6 +66,6 @@ const pages = [details(detailsPage(Details)), editYaml(), pods()];
 
 const DaemonSets = makeList('DaemonSets', 'daemonset', DaemonSetHeader, DaemonSetRow);
 const DaemonSetsPage = makeListPage('DaemonSetsPage', 'daemonset', DaemonSets);
-const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'daemonset', pages);
+const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'daemonset', pages, menuActions);
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

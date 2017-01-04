@@ -143,7 +143,7 @@ const Details = (s) => <div className="row no-gutter">
 
 const {details, pods, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
-const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages);
+const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages, menuActions);
 
 const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);
 const ServicesPage = makeListPage('ServicesPage', 'service', ServicesList);

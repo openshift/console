@@ -5,6 +5,8 @@ import ConfigMapAndSecretData from './configmap-and-secret-data';
 import {Cog, LabelList, ResourceCog, ResourceLink, Timestamp, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
 
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
+
 const SecretHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-md-4">Secret Name</div>
   <div className="col-md-4">Secret Data</div>
@@ -17,7 +19,7 @@ const SecretRow = ({obj: secret}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-md-4">
-      <ResourceCog actions={[Cog.factory.ModifyLabels, Cog.factory.Delete]} kind="secret" resource={secret} />
+      <ResourceCog actions={menuActions} kind="secret" resource={secret} />
       <ResourceLink kind="secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
     <div className="col-md-4">{data}</div>
@@ -85,6 +87,6 @@ const pages = [navFactory.details(detailsPage(SecretDetails)), navFactory.editYa
 
 const SecretsList = makeList('Secrets', 'secret', SecretHeader, SecretRow);
 const SecretsPage = makeListPage('SecretsPage', 'secret', SecretsList);
-const SecretsDetailsPage = makeDetailsPage('SecretsDetailsPage', 'secret', pages);
+const SecretsDetailsPage = makeDetailsPage('SecretsDetailsPage', 'secret', pages, menuActions);
 
 export {SecretsList, SecretsPage, SecretsDetailsPage, withSecretsList};

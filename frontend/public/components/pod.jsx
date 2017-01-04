@@ -6,6 +6,8 @@ import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIco
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {PodLogs} from './pod-logs';
 
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
+
 export const readiness = ({status}) => {
   if (_.isEmpty(status.conditions)) {
     return null;
@@ -57,7 +59,7 @@ const PodRow = ({obj: pod}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceCog actions={[Cog.factory.ModifyLabels, Cog.factory.Delete]} kind="pod" resource={pod} isDisabled={phase === 'Terminating'} />
+      <ResourceCog actions={menuActions} kind="pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
@@ -248,7 +250,7 @@ const Details = (pod) => {
 
 const {details, events, logs, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), logs(PodLogs), events()];
-const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages);
+const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages, menuActions);
 
 const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
 const PodsPage = makeListPage('PodsPage', 'pod', PodList, [], filters);
