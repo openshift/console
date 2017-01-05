@@ -19,14 +19,31 @@
 
 .btn--actions {
   float: right;
+  margin-top: -3px;
+
+  &__title {
+    display: flex;
+    align-items: center;
+  }
 
   &__cog {
     margin-right: 5px;
   }
 
+  &__label {
+    margin-bottom: -1px;
+  }
+
   &__menu {
     left: auto;
+    letter-spacing: normal;
     right: 9px;
+  }
+
+  .btn--dropdown {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
   }
 }
 

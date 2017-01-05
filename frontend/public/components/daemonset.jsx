@@ -1,14 +1,9 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceLink, Selector, Timestamp, navFactory, detailsPage} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory, detailsPage} from './utils';
 
-const DaemonSetCog = ({daemonset}) => {
-  const kind = angulars.kinds.DAEMONSET;
-  const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, daemonset))} size="small" anchor="left" />;
-};
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -19,7 +14,7 @@ const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
 
 const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-    <DaemonSetCog daemonset={daemonset} />
+    <ResourceCog actions={menuActions} kind="daemonset" resource={daemonset} />
     <ResourceLink kind="daemonset" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
@@ -71,6 +66,6 @@ const pages = [details(detailsPage(Details)), editYaml(), pods()];
 
 const DaemonSets = makeList('DaemonSets', 'daemonset', DaemonSetHeader, DaemonSetRow);
 const DaemonSetsPage = makeListPage('DaemonSetsPage', 'daemonset', DaemonSets);
-const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'daemonset', pages);
+const DaemonSetsDetailsPage = makeDetailsPage('DaemonSetsDetailsPage', 'daemonset', pages, menuActions);
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

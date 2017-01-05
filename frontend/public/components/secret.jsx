@@ -1,17 +1,11 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, ResourceLink, Timestamp, detailsPage, navFactory} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceLink, Timestamp, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
 
-
-const SecretCog = ({secret}) => {
-  const kind = angulars.kinds.SECRET;
-  const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, secret))} size="small" anchor="left" />;
-};
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const SecretHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-md-4">Secret Name</div>
@@ -25,7 +19,7 @@ const SecretRow = ({obj: secret}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-md-4">
-      <SecretCog secret={secret} />
+      <ResourceCog actions={menuActions} kind="secret" resource={secret} />
       <ResourceLink kind="secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
     <div className="col-md-4">{data}</div>
@@ -93,6 +87,6 @@ const pages = [navFactory.details(detailsPage(SecretDetails)), navFactory.editYa
 
 const SecretsList = makeList('Secrets', 'secret', SecretHeader, SecretRow);
 const SecretsPage = makeListPage('SecretsPage', 'secret', SecretsList);
-const SecretsDetailsPage = makeDetailsPage('SecretsDetailsPage', 'secret', pages);
+const SecretsDetailsPage = makeDetailsPage('SecretsDetailsPage', 'secret', pages, menuActions);
 
 export {SecretsList, SecretsPage, SecretsDetailsPage, withSecretsList};

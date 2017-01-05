@@ -4,7 +4,9 @@ import {isNodeReady} from '../module/k8s/node';
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, navFactory, LabelList, NavTitle, ResourceHeading, ResourceLink, Timestamp, units} from './utils';
+import {Cog, navFactory, LabelList, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units} from './utils';
+
+const menuActions = [Cog.factory.ModifyLabels];
 
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
@@ -28,10 +30,7 @@ const HeaderSearch = () => <div className="row co-m-table-grid__head">
   <div className="col-md-2 col-sm-3 hidden-xs">Node Addresses</div>
 </div>;
 
-const NodeCog = ({node}) => {
-  const options = [Cog.factory.ModifyLabels].map(f => f(angulars.kinds.NODE, node));
-  return <Cog options={options} size="small" anchor="left" />;
-};
+const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="node" resource={node} />;
 
 const NodeStatus = ({node}) => isNodeReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 
@@ -191,7 +190,7 @@ const Details = (node) => {
 
 const {details, editYaml, events, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods(), events()];
-const NodeDetailsPage_ = makeDetailsPage('NodeDetailsPage', 'node', pages);
+const NodeDetailsPage_ = makeDetailsPage('NodeDetailsPage', 'node', pages, menuActions);
 const NodeDetailsPage = () => <NodeDetailsPage_ kind="node" name={angulars.routeParams.name} />;
 
 export {NodeDetailsPage, NodesList, NodesListSearch, NodesPage};

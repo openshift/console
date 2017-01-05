@@ -2,7 +2,14 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, navFactory, LabelList, ResourceHeading, ResourceIcon, ResourceLink, Selector, Timestamp} from './utils';
+import {Cog, navFactory, LabelList, ResourceCog, ResourceHeading, ResourceIcon, ResourceLink, Selector, Timestamp} from './utils';
+
+const ServicePorts = (kind, s) => ({
+  label: 'Modify Service Ports...',
+  weight: 200,
+  callback: angulars.modal('service-ports', {kind, resource: () => s}),
+});
+const menuActions = [Cog.factory.ModifyPodSelector, ServicePorts, Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
@@ -14,19 +21,6 @@ const ServiceIPLink = ({s}) => {
   return <p>{children}</p>;
 };
 
-const ServiceCog = ({s}) => {
-  const {factory: {ModifyPodSelector, ModifyLabels, Delete}} = Cog;
-
-  const ServicePorts = (kind, s) => ({
-    label: 'Modify Service Ports...',
-    weight: 200,
-    callback: angulars.modal('service-ports', {kind, resource: () => s}),
-  });
-
-  const options = [ModifyPodSelector, ServicePorts, ModifyLabels, Delete].map(f => f(angulars.kinds.SERVICE, s));
-  return <Cog options={options} size="small" anchor="left" />;
-};
-
 const ServiceHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">Service Name</div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
@@ -36,7 +30,7 @@ const ServiceHeader = () => <div className="row co-m-table-grid__head">
 
 const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
-    <ServiceCog s={s} />
+    <ResourceCog actions={menuActions} kind="service" resource={s} />
     <ResourceLink kind="service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
@@ -149,7 +143,7 @@ const Details = (s) => <div className="row no-gutter">
 
 const {details, pods, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
-const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages);
+const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages, menuActions);
 
 const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);
 const ServicesPage = makeListPage('ServicesPage', 'service', ServicesList);

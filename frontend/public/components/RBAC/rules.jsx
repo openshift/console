@@ -124,7 +124,7 @@ const RuleCog = ({name, namespace, i}) => {
     EditRule,
     DeleteRule,
   ].map(f => f(name, namespace, i));
-  return <Cog options={options} size="small" anchor="left" />;
+  return <Cog options={options} />;
 };
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">

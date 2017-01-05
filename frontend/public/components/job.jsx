@@ -2,7 +2,17 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceLink, Selector, Timestamp, navFactory} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory} from './utils';
+
+const ModifyJobParallelism = (kind, obj) => ({
+  label: 'Modify Parallelism...',
+  weight: 100,
+  callback: angulars.modal('configure-job-parallelism', {
+    resourceKind: kind,
+    resource: () => obj,
+  }),
+});
+const menuActions = [ModifyJobParallelism, Cog.factory.ModifyPodSelector, Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">Name</div>
@@ -11,13 +21,6 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">Type</div>
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
 </div>;
-
-const JobCog = ({job}) => {
-  const kind = angulars.kinds.JOB;
-  const {factory: {Delete, ModifyLabels, ModifyJobParallelism, ModifyPodSelector}} = Cog;
-  const options = [ModifyJobParallelism, ModifyPodSelector, ModifyLabels, Delete].map(f => f(kind, job));
-  return <Cog options={options} size="small" anchor="left" />;
-};
 
 const getJobTypeAndCompletions = (o) => {
   // if neither completions nor parallelism are defined, then it is a non-parallel job.
@@ -41,7 +44,7 @@ const JobRow = ({obj: job}) => {
   return (
     <div className="row co-resource-list__item">
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
-        <JobCog job={job} />
+        <ResourceCog actions={menuActions} kind="job" resource={job} />
         <ResourceLink kind="job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
       </div>
       <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -117,7 +120,7 @@ const Details = (job) => <div>
 
 const {details, pods, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
-const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'job', pages);
+const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'job', pages, menuActions);
 const JobsList = makeList('Jobs', 'job', Header, JobRow);
 const JobsPage = makeListPage('JobsPage', 'job', JobsList);
 export {JobsList, JobsPage, JobsDetailsPage};

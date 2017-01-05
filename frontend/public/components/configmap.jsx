@@ -1,15 +1,10 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, navFactory, ResourceLink, Timestamp} from './utils';
+import {Cog, LabelList, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
 
-const ConfigMapCog = ({configMap}) => {
-  const kind = angulars.kinds.CONFIGMAP;
-  const {factory: {ModifyLabels, Delete}} = Cog;
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, configMap))} size="small" anchor="left" />;
-};
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const ConfigMapHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-md-4">Config Map Name</div>
@@ -23,7 +18,7 @@ const ConfigMapRow = ({obj: configMap}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-md-4">
-      <ConfigMapCog configMap={configMap} />
+      <ResourceCog actions={menuActions} kind="configmap" resource={configMap} />
       <ResourceLink kind="configmap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
     </div>
     <div className="col-md-4">{data}</div>
@@ -63,6 +58,6 @@ const pages = [navFactory.details(ConfigMapDetails), navFactory.editYaml()];
 
 const ConfigMaps = makeList('ConfigMaps', 'configmap', ConfigMapHeader, ConfigMapRow);
 const ConfigMapsPage = makeListPage('ConfigMapsPage', 'configmap', ConfigMaps);
-const ConfigMapsDetailsPage = makeDetailsPage('ConfigMapsDetailsPage', 'configmap', pages);
+const ConfigMapsDetailsPage = makeDetailsPage('ConfigMapsDetailsPage', 'configmap', pages, menuActions);
 
 export {ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage};

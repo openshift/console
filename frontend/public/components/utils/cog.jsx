@@ -6,6 +6,7 @@ import {util} from '../../module/k8s/util';
 import {angulars} from '../react-wrapper';
 import {confirmModal, configureReplicaCountModal} from '../modals';
 import {DropdownMixin} from './dropdown';
+import {kindObj} from './index';
 
 export class Cog extends DropdownMixin {
   componentDidMount () {
@@ -53,7 +54,17 @@ Cog.factory = {
       title: `Delete ${kind.label} `,
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
       btnText: `Delete ${kind.label} `,
-      executeFn: () => angulars.k8s[kind.plural].delete(obj),
+      executeFn: () => {
+        const deletePromise = angulars.k8s[kind.plural].delete(obj);
+
+        // If we are currently on the deleted resource's page, redirect to the resource list page
+        const re = new RegExp(`/${obj.metadata.name}/.*$`);
+        if (re.test(window.location.pathname)) {
+          angulars.$location.url(window.location.pathname.replace(re, ''));
+        }
+
+        return deletePromise;
+      },
     }),
   }),
   Edit: (kind, obj) => ({
@@ -86,12 +97,10 @@ Cog.factory = {
       resource: obj,
     }),
   }),
-  ModifyJobParallelism: (kind, obj) => ({
-    label: 'Modify Parallelism...',
-    weight: 100,
-    callback: angulars.modal('configure-job-parallelism', {
-      resourceKind: kind,
-      resource: () => obj,
-    }),
-  }),
 };
+
+export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
+  options={actions.map(a => a(kindObj(kind), resource))}
+  key={resource.metadata.uid}
+  isDisabled={isDisabled}
+/>;

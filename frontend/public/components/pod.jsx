@@ -2,16 +2,11 @@ import React from 'react';
 
 import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
-import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
+import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {PodLogs} from './pod-logs';
 
-const PodCog = ({pod, isDisabled}) => {
-  const kind = angulars.kinds.POD;
-  const {factory: {ModifyLabels, Delete}} = Cog;
-
-  return <Cog options={[ModifyLabels, Delete].map(f => f(kind, pod))} size="small" anchor="left" isDisabled={isDisabled} />;
-};
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 export const readiness = ({status}) => {
   if (_.isEmpty(status.conditions)) {
@@ -64,7 +59,7 @@ const PodRow = ({obj: pod}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <PodCog pod={pod} key={'cog'} isDisabled={phase === 'Terminating'} />
+      <ResourceCog actions={menuActions} kind="pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
@@ -255,7 +250,7 @@ const Details = (pod) => {
 
 const {details, events, logs, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), logs(PodLogs), events()];
-const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages);
+const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages, menuActions);
 
 const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
 const PodsPage = makeListPage('PodsPage', 'pod', PodList, [], filters);

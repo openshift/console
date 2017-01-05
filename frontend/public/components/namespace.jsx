@@ -102,7 +102,7 @@ const Details = (namespace) => {
     });
   };
 
-  const cogActions = {
+  const menuActions = {
     DeleteNamespace: {
       label: 'Delete Namespace',
       callback: openDeleteNamespaceModal
@@ -110,7 +110,7 @@ const Details = (namespace) => {
   };
 
   return <div className="details-page">
-    {namespace.metadata.name !== 'default' && namespace.status.phase !== 'Terminating' && <ActionsMenu actions={cogActions} />}
+    {namespace.metadata.name !== 'default' && namespace.status.phase !== 'Terminating' && <ActionsMenu actions={menuActions} />}
     <h1 className="co-m-pane__title co-m-pane__body__top-controls">Namespace {namespace.metadata.name}</h1>
     <dl>
       <dt>Status</dt>
