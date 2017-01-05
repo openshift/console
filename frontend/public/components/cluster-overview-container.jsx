@@ -16,7 +16,8 @@ export class ClusterOverviewContainer extends SafetyFirst {
       tectonicLicense: null,
       kubernetesVersion: null,
       kubernetesHealth: null,
-      cloudProviders: null
+      cloudProviders: null,
+      tectonicVersionObj: null
     };
   }
 
@@ -33,7 +34,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
     coFetchJSON('version')
       .then((data) => {
         const license =  entitlementTitle(data.entitlementKind, data.entitlementCount);
-        this.setState({ tectonicVersion: data.version, tectonicLicense: license });
+        this.setState({ tectonicVersion: data.version, tectonicLicense: license, tectonicVersionObj: data });
       })
       .catch(() => this.setState({ tectonicVersion: 'unknown', tectonicLicense: 'unknown' }));
   }
@@ -72,6 +73,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
       kubernetesVersion={this.state.kubernetesVersion}
       kubernetesHealth={this.state.kubernetesHealth}
       cloudProviders={this.state.cloudProviders}
+      tectonicVersionObj={this.state.tectonicVersionObj}
     />;
   }
 }
