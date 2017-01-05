@@ -28,3 +28,4 @@ export * from './button-bar';
 export * from './number-spinner';
 export * from './stream';
 export * from './cloud-provider';
+export * from './documentation-sidebar';

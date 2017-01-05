@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {NavTitle, LoadingInline, cloudProviderNames} from './utils';
+import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
 import classNames from 'classnames';
 
 const tectonicHealthMsgs = {
@@ -120,5 +120,6 @@ export const ClusterOverviewPage = (props) => {
         </div>
       </div>
     </div>
+    <DocumentationSidebar version={props.tectonicVersionObj} />
   </div>;
 };
