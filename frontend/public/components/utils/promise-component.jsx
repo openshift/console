@@ -1,6 +1,8 @@
 import React from 'react';
 
-export class PromiseComponent extends React.Component {
+import {SafetyFirst} from '../safety-first';
+
+export class PromiseComponent extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {};

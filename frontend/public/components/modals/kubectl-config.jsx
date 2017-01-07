@@ -16,15 +16,13 @@ class KubectlConfigModal extends PromiseComponent {
     super(props);
 
     this.state = {
-      step: 1,
+      step: steps.GET_VERIFICATION_CODE,
       configuration: null,
       verificationCode: null,
       kubectlLinuxUrl: null,
       kubectlMacUrl: null,
       kubectlWinUrl: null
     };
-
-    this._isMounted = false;
 
     this._updateCode = this._updateCode.bind(this);
     this._verifyCode = this._verifyCode.bind(this);
@@ -33,12 +31,8 @@ class KubectlConfigModal extends PromiseComponent {
   }
 
   componentDidMount() {
-    this._isMounted = true;
+    super.componentDidMount();
     this._setKubectlUrls();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   _getVerificationCode(event) {
@@ -72,7 +66,7 @@ class KubectlConfigModal extends PromiseComponent {
   _setKubectlUrls() {
     angulars.statusSvc.kubernetesVersion()
       .then((resp) => {
-        if (!this._isMounted) {
+        if (!this.isMounted_) {
           return;
         }
 

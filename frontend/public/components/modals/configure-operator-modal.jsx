@@ -35,7 +35,7 @@ class ConfigureOperatorModal extends PromiseComponent {
     const patch = [{ op: 'replace', path: this.props.path, value: value }];
 
     this._setRequestPromise(
-      angulars.k8s.resource.patch(angulars.k8s.enum.Kind.CHANNELOPERATORCONFIG, this.props.config, patch)
+      angulars.k8s.resource.patch(angulars.kinds.CHANNELOPERATORCONFIG, this.props.config, patch)
     ).then(this.props.close);
   }
 
@@ -54,8 +54,7 @@ class ConfigureOperatorModal extends PromiseComponent {
         promise={this.requestPromise}
         errorFormatter="k8sApi"
         submitText={this.props.buttonText}
-        cancel={this._cancel}
-        submitText="Save Channel" />
+        cancel={this._cancel} />
     </form>;
   }
 }
