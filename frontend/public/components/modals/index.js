@@ -5,3 +5,4 @@ export * from './delete-namespace-modal';
 export * from './error-modal';
 export * from './license-enforcement-modal';
 export * from './update-license-modal';
+export * from './configure-unschedulable-modal';

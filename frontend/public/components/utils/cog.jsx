@@ -31,7 +31,8 @@ export class Cog extends DropdownMixin {
 
     let {options, size, anchor, isDisabled} = this.props;
 
-    const lis = _.map(options, (o, i) => <li key={i}><a onClick={onClick_.bind({}, o)}>{o.label}</a></li>);
+    const shownOptions = _.reject(options, o => _.get(o, 'hidden', false));
+    const lis = _.map(shownOptions, (o, i) => <li key={i}><a onClick={onClick_.bind({}, o)}>{o.label}</a></li>);
     const style = {display: this.state.active ? 'block' : 'none'};
 
     return (
