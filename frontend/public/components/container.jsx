@@ -110,6 +110,10 @@ const Env = ({env}) => {
 
 const Details = (props) => {
   const container = _.find(props.spec.containers, {name: angulars.routeParams.name});
+  if (!container) {
+    return null;
+  }
+
   const status = angulars.k8s.docker.getStatus(props, container.name);
   const state = angulars.k8s.docker.getState(status);
 
