@@ -62,6 +62,20 @@ Detail.propTypes = {
   children: React.PropTypes.node
 };
 
+// ChannelOperator is intended to be a generic UI component that
+// takes in pre-parsed data and displays it in a consistent manner,
+// regardless of which channel (Tectonic or Container Linux) is
+// being displayed.
+//
+// Ideally, channels operate exactly the same - they all share
+// the same updated/updating/paused/etc states and basic
+// config parameters. ChannelOperator aggregates those states,
+// versions, & configs into the UI.
+//
+// However, ChannelOperator and it's sub-components ended up being
+// built a little less generic than originally intended, so there
+// is a bit of refactoring to be done when the Container Linux
+// channel gets built.
 export class ChannelOperator extends React.Component {
   constructor(props) {
     super(props);

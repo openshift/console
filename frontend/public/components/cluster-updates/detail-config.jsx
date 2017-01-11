@@ -4,6 +4,10 @@ import classNames from 'classnames';
 import {LoadingInline} from '../utils';
 import {angulars} from '../react-wrapper';
 
+// Displays a field of a config & enables the user to click
+// on the value to edit in a modal.
+//
+// Eg, choosing an update channel or toggling automatic updates
 export class DetailConfig extends React.Component {
   constructor(props) {
     super(props);
