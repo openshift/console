@@ -522,7 +522,7 @@ class LDAPs extends SafetyFirst {
             <br/><br/>
             During installation, an assets bundle was generated which included a kubeconfig (users name <code className="ldap-code"> kubelet </code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
             <br/><br/>
-            <b>It is highly recommend you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
+            <b>It is highly recommended you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
           </p>
 
           <pre className="ldap-pre">
