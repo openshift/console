@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { angulars } from './react-wrapper';
 import { makeDetailsPage, makeListPage, makeList } from './factory';
 import { Cog, kindObj, LabelList, LoadingInline, navFactory, ResourceCog, ResourceLink, Timestamp } from './utils';
-import { configureHPAReplicasModal } from './modals';
+import { configureHPAReplicasModal, configureHPATargetsModal } from './modals';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
@@ -24,9 +23,9 @@ const ModifyHpaReplicas = (kind, obj) => ({
 const ModifyHpaTargets = (kind, obj) => ({
   label: 'Modify Resource Targets...',
   weight: 100,
-  callback: angulars.modal('configure-hpa-targets', {
+  callback: () => configureHPATargetsModal({
     resourceKind: kind,
-    resource: () => obj,
+    resource: obj,
   }),
 });
 

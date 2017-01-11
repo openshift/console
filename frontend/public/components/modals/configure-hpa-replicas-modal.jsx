@@ -32,12 +32,7 @@ class ConfigureHPAReplicasModal extends PromiseComponent {
 
   _change(event) {
     const id = event.target.id;
-    let value = event.target.value;
-    const numberValue = _.toNumber(value);
-
-    if (_.isFinite(numberValue)) {
-      value = numberValue;
-    }
+    const value = event.target.value;
 
     if (id === 'min-replicas') {
       this.setState({ minReplicas: value });
@@ -50,8 +45,8 @@ class ConfigureHPAReplicasModal extends PromiseComponent {
     event.preventDefault();
 
     const patch = [
-      { op: 'replace', path: '/spec/minReplicas', value: this.state.minReplicas },
-      { op: 'replace', path: '/spec/maxReplicas', value: this.state.maxReplicas },
+      { op: 'replace', path: '/spec/minReplicas', value: _.toSafeInteger(this.state.minReplicas) },
+      { op: 'replace', path: '/spec/maxReplicas', value: _.toSafeInteger(this.state.maxReplicas) },
     ];
 
     this._setRequestPromise(
@@ -69,7 +64,7 @@ class ConfigureHPAReplicasModal extends PromiseComponent {
           </p>
         </div>
         <ReplicaRow label="Minimum" id="min-replicas" value={this.state.minReplicas} min="1" max={this.state.maxReplicas} autoFocus="true" onChange={this._change} />
-        <ReplicaRow label="Maximum" id="max-replicas" value={this.state.maxReplicas} min={this.state.maxReplicas} onChange={this._change} />
+        <ReplicaRow label="Maximum" id="max-replicas" value={this.state.maxReplicas} onChange={this._change} />
       </ModalBody>
       <ModalSubmitFooter
         promise={this.requestPromise}
