@@ -60,7 +60,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
 
   _checkCloudProvider() {
     angulars.k8s.nodes.get().then((nodes) => {
-      const providerIDs = _.map(nodes.items, cloudProviderID);
+      const providerIDs =  _.filter(_.map(nodes.items, cloudProviderID));
       this.setState({ cloudProviders: providerIDs.length ? _.uniq(providerIDs) : null });
     });
   }
