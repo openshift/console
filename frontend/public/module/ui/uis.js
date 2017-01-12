@@ -5,7 +5,6 @@ import './forms/click-select';
 import './forms/number-spinner';
 import './labels/label';
 import './labels/label-input';
-import './labels/label-list';
 import './selector/requirement';
 import './selector/selector';
 import './selector/selector-input';
