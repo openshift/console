@@ -111,7 +111,7 @@ const ContainerRow = ({pod, container}) => {
         <ContainerLink pod={pod} name={container.name} />
       </div>
       <Overflow className="col-sm-3 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
-      <div className="col-sm-3 col-xs-8">{container.image}</div>
+      <Overflow className="col-sm-3 col-xs-8" value={container.image} />
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
       <div className="col-md-2 hidden-sm  hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
