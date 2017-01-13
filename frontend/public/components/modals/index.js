@@ -11,3 +11,4 @@ export * from './update-license-modal';
 export * from './configure-unschedulable-modal';
 export * from './configure-hpa-replicas-modal';
 export * from './configure-hpa-targets-modal';
+export * from './pod-restart-policy.jsx';

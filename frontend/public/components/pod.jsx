@@ -1,7 +1,9 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
+import {getPodRestartPolicyLabel} from '../module/k8s/pods';
+import {angulars, register} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
+import {podRestartPolicyModal} from './modals';
 import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {PodLogs} from './pod-logs';
@@ -197,7 +199,7 @@ const Details = (pod) => {
                   <dt>Node</dt>
                   <dd><NodeLink name={pod.spec.nodeName} /></dd>
                   <dt>Restart Policy</dt>
-                  <dd>{angulars.k8s.pods.getRestartPolicyLabelById(pod.spec.restartPolicy)}</dd>
+                  <dd>{getPodRestartPolicyLabel(pod)}</dd>
                 </dl>
               </div>
             </div>
@@ -248,6 +250,12 @@ const Details = (pod) => {
   </div>;
 };
 
+const PodRestartPolicyModalLink = ({pod}) => <div>
+  <div><a className="co-m-modal-link" onClick={() => podRestartPolicyModal({pod})}>{getPodRestartPolicyLabel(pod)}</a></div>
+  <small className="text-muted">What should happen when this container exits or stops unexpectedly?</small>
+</div>;
+register('PodRestartPolicyModalLink', PodRestartPolicyModalLink);
+
 const {details, events, logs, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), logs(PodLogs), events()];
 const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages, menuActions);
@@ -263,4 +271,4 @@ navFactory.pods = () => ({
   </div>
 });
 
-export {PodList, PodsPage, PodsDetailsPage};
+export {PodList, PodsPage, PodsDetailsPage, PodRestartPolicyModalLink};

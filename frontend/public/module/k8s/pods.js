@@ -4,8 +4,6 @@ import {util} from './util';
 
 const defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, o => o.default);
 
-const getRestartPolicyById = id => _.find(k8sEnum.RestartPolicy, {id});
-
 export const clean = pod => {
   util.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
   util.nullifyEmpty(pod.spec, ['volumes']);
@@ -16,13 +14,7 @@ export const clean = pod => {
   util.deleteNulls(pod.spec);
 };
 
-export const getRestartPolicyLabelById = id => {
-  var p = getRestartPolicyById(id);
-  if (p && p.label) {
-    return p.label;
-  }
-  return '';
-};
+export const getPodRestartPolicyLabel = pod => _.get(k8sEnum, `RestartPolicy[${pod.spec.restartPolicy}].label`, '');
 
 export const getEmpty = ns => {
   return {

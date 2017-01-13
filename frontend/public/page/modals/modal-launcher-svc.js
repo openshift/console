@@ -29,10 +29,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-pull-policy.html',
       controller: 'ConfigurePullPolicyCtrl',
     },
-    'configure-restart-policy': {
-      templateUrl: '/static/page/modals/configure-restart-policy.html',
-      controller: 'ConfigureRestartPolicyCtrl',
-    },
     'configure-primary-command': {
       templateUrl: '/static/page/modals/configure-primary-command.html',
       controller: 'ConfigurePrimaryCommandCtrl',
