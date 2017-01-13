@@ -114,7 +114,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" role="form">
+    return <form onSubmit={this._submit} name="form">
       <ModalTitle>{this.props.modalTitle}</ModalTitle>
       <ModalBody>
         <p>{this.props.modalText}</p>

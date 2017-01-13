@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {angulars} from '../react-wrapper';
-import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
-import {PromiseComponent, NumberSpinner} from '../utils';
+import { angulars } from '../react-wrapper';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { PromiseComponent, NumberSpinner } from '../utils';
 
 class ConfigureCountModal extends PromiseComponent {
   constructor(props) {
@@ -10,7 +10,7 @@ class ConfigureCountModal extends PromiseComponent {
 
     const getPath = this.props.path.substring(1).replace('/', '.');
     this.state = {
-      value: _.get(this.props.resource, getPath)
+      value: _.get(this.props.resource, getPath) || this.props.defaultValue
     };
 
     this._change = this._change.bind(this);
@@ -53,7 +53,7 @@ class ConfigureCountModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" role="form">
+    return <form onSubmit={this._submit} name="form">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
         <p>{this.props.message}</p>
@@ -67,6 +67,7 @@ ConfigureCountModal.propTypes = {
   buttonText: React.PropTypes.node.isRequired,
   cancel: React.PropTypes.func.isRequired,
   close: React.PropTypes.func.isRequired,
+  defaultValue: React.PropTypes.number.isRequired,
   path: React.PropTypes.string.isRequired,
   resource: React.PropTypes.object.isRequired,
   resourceKind: React.PropTypes.object.isRequired,
@@ -77,9 +78,20 @@ export const configureCountModal = createModalLauncher(ConfigureCountModal);
 
 export const configureReplicaCountModal = (props) => {
   return configureCountModal(_.defaults({}, {
+    defaultValue: 0,
     title: 'Modify Desired Count',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
     path: '/spec/replicas',
     buttonText: 'Save Desired Count'
+  }, props));
+};
+
+export const configureJobParallelismModal = (props) => {
+  return configureCountModal(_.defaults({}, {
+    defaultValue: 1,
+    title: 'Modify Desired Parallelism',
+    message: `${props.resourceKind.labelPlural} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.`,
+    path: '/spec/parallelism',
+    buttonText: 'Save Desired Parallelism'
   }, props));
 };

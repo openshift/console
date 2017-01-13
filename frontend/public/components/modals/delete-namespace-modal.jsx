@@ -34,7 +34,7 @@ class DeleteNamespaceModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" role="form">
+    return <form onSubmit={this._submit} name="form">
       <ModalTitle>Delete Namespace</ModalTitle>
       <ModalBody>
         <p>
