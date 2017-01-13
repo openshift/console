@@ -25,10 +25,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-selector.html',
       controller: 'ConfigureSelectorCtrl',
     },
-    'namespace-pull-secret': {
-      templateUrl: '/static/page/modals/namespace-pull-secret/namespace-pull-secret.html',
-      controller: 'NamespacePullSecretCtrl',
-    },
     'reactive-modal': {
       templateUrl: '/static/page/modals/reactive-modal.html',
       controller: 'ReactiveModalCtrl',
