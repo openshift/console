@@ -1,19 +1,11 @@
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
-.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s, ModalLauncherSvc) {
+.controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s) {
   'use strict';
 
   var namespace = $routeParams.ns || k8s.enum.DefaultNS;
   $scope.pod = k8s.pods.getEmpty(namespace);
-
-  $scope.openRestartPolicyModal = function() {
-    ModalLauncherSvc.open('configure-restart-policy', {
-      pod: $scope.pod,
-    });
-  };
-
-  $scope.getRestartPolicyLabel = k8s.pods.getRestartPolicyLabelById;
 
   $scope.cancel = function() {
     $location.path(getNamespacedRoute('/pods'));

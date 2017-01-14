@@ -33,8 +33,7 @@
             <label class="control-label">Restart Policy:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <div><a href="#" ng-click="openRestartPolicyModal()" class="co-m-modal-link" ng-bind="getRestartPolicyLabel(pod.spec.restartPolicy)"></a></div>
-            <small class="text-muted">What should happen when this container exits or stops unexpectedly?</small>
+            <react-component name="PodRestartPolicyModalLink" props="{pod}"></react-component>
           </div>
         </div>
 
