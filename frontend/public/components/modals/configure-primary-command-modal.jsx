@@ -54,7 +54,7 @@ class ConfigurePrimaryCommandModal extends React.Component {
   render() {
     const defaultTitle = <span>Use default command of the container <span className="co-no-bold">(default)</span></span>;
 
-    return <form onSubmit={this._submit} name="form" role="form">
+    return <form onSubmit={this._submit} name="form">
       <ModalTitle>Configure Primary Command</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">

@@ -34,7 +34,7 @@ class ConfigurePullPolicyModal extends React.Component {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" role="form">
+    return <form onSubmit={this._submit} name="form">
       <ModalTitle>Configure Pull Policy</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
