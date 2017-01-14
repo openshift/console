@@ -42,7 +42,7 @@ export const getKubernetesAPIPath = kind => {
 
 
 angular.module('k8s')
-.service('k8s', function(_, $timeout, $rootScope) {
+.service('k8s', function(_, $rootScope) {
   'use strict';
   this.getQN = getQN;
   this.probe = k8sProbe;
@@ -52,7 +52,6 @@ angular.module('k8s')
   this.enum = k8sEnum;
   this.docker = k8sDocker;
   this.resource = k8sResource;
-  this.search = k8sResource.list;
   this.command = k8sCommand;
 
   const addDefaults = (k8sObject, kind) => {
@@ -119,6 +118,5 @@ angular.module('k8s')
   this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
   this.basePath = basePath;
 
-  this.health = () => coFetchJSON(basePath);
   this.version = () => coFetchJSON(`${basePath}/version`);
 });
