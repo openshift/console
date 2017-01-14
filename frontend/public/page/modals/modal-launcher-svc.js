@@ -29,10 +29,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-pull-policy.html',
       controller: 'ConfigurePullPolicyCtrl',
     },
-    'configure-primary-command': {
-      templateUrl: '/static/page/modals/configure-primary-command.html',
-      controller: 'ConfigurePrimaryCommandCtrl',
-    },
     'namespace-pull-secret': {
       templateUrl: '/static/page/modals/namespace-pull-secret/namespace-pull-secret.html',
       controller: 'NamespacePullSecretCtrl',

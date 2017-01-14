@@ -1,5 +1,5 @@
 import { EVENTS } from '../../../const';
-import { configurePortsModal } from '../../../components/modals';
+import { configurePortsModal, configurePrimaryCommandModal } from '../../../components/modals';
 
 angular.module('bridge.ui')
 
@@ -78,11 +78,11 @@ angular.module('bridge.ui')
         return 'Custom Command';
       };
 
-      $scope.openPrimaryCommandModal = function() {
-        ModalLauncherSvc.open('configure-primary-command', {
-          container: $scope.container
-        });
-      };
+      $scope.openPrimaryCommandModal = () => configurePrimaryCommandModal({
+        container: $scope.container
+      }).result.then((command) => {
+        $scope.container.command = command;
+      });
 
       $scope.remove = function() {
         $scope.$emit(EVENTS.CONTAINER_REMOVE, $scope.container);

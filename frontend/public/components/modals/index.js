@@ -2,6 +2,7 @@ export * from './configure-count-modal';
 export * from './configure-operator-modal';
 export * from './configure-yaml-field-modal';
 export * from './configure-ports-modal';
+export * from './configure-primary-command-modal';
 export * from './confirm-modal';
 export * from './delete-namespace-modal';
 export * from './error-modal';
