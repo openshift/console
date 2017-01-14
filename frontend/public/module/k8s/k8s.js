@@ -1,6 +1,5 @@
 import './_module';
 
-import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
 import {k8sEnum} from './enum';
 
@@ -20,11 +19,12 @@ import * as k8sServices from './services';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
-const basePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
+export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
+
 const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
 
 export const getKubernetesAPIPath = kind => {
-  let p = basePath;
+  let p = k8sBasePath;
 
   if (kind.isExtension) {
     p += '/apis/extensions/';
@@ -116,7 +116,5 @@ angular.module('k8s')
   this.tectonicversions = addDefaults({}, k8sEnum.Kind.TECTONICVERSION);
   this.channeloperatorconfigs = addDefaults({}, k8sEnum.Kind.CHANNELOPERATORCONFIG);
   this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
-  this.basePath = basePath;
-
-  this.version = () => coFetchJSON(`${basePath}/version`);
+  this.basePath = k8sBasePath;
 });

@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { kubectlConfigSvc } from '../../module/service/kubectl-config';
+import { k8sVersion } from '../../module/status';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
-import { angulars } from '../react-wrapper';
 
 const steps = {
   GET_VERIFICATION_CODE: 1,
@@ -64,7 +64,7 @@ class KubectlConfigModal extends PromiseComponent {
   }
 
   _setKubectlUrls() {
-    angulars.statusSvc.kubernetesVersion()
+    k8sVersion()
       .then((resp) => {
         if (!this.isMounted_) {
           return;
