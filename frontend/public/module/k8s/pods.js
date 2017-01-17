@@ -14,7 +14,9 @@ export const clean = pod => {
   util.deleteNulls(pod.spec);
 };
 
-export const getPodRestartPolicyLabel = pod => _.get(k8sEnum, `RestartPolicy[${pod.spec.restartPolicy}].label`, '');
+const getRestartPolicy = pod => _.find(k8sEnum.RestartPolicy, {id: _.get(pod, 'spec.restartPolicy')});
+
+export const getRestartPolicyLabel = pod => _.get(getRestartPolicy(pod), 'label', '');
 
 export const getEmpty = ns => {
   return {

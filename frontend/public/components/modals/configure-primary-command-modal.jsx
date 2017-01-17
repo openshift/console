@@ -62,11 +62,11 @@ class ConfigurePrimaryCommandModal extends React.Component {
         </div>
 
         <div className="co-m-form-row">
-          <RadioInput key="default" onChange={this._changeType} value="default" checked={this.state.type === 'default'} title={defaultTitle} desc="If a command hasn't been specified in the container image, the pod will fail when created." autoFocus={this.state.type === 'default'} />
+          <RadioInput onChange={this._changeType} value="default" checked={this.state.type === 'default'} title={defaultTitle} desc="If a command hasn't been specified in the container image, the pod will fail when created." autoFocus={this.state.type === 'default'} />
         </div>
 
         <div className="co-m-form-row">
-          <RadioInput key="custom" onChange={this._changeType} value="custom" checked={this.state.type === 'custom'} title="Provide a command" autoFocus={this.state.type === 'custom'}>
+          <RadioInput onChange={this._changeType} value="custom" checked={this.state.type === 'custom'} title="Provide a command" autoFocus={this.state.type === 'custom'}>
             <div className="co-m-radio-desc">
               <textarea value={this.state.command} onChange={this._changeCommand} required={this.state.type === 'custom'} disabled={this.state.type !== 'custom'} className="form-control" id="command-custom-input" />
             </div>
