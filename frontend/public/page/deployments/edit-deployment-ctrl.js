@@ -29,12 +29,6 @@ angular.module('bridge.page')
       $scope.loadError = true;
     });
 
-  $scope.openUpdateStrategyModal = function() {
-    ModalLauncherSvc.open('configure-update-strategy', {
-      deploymentSpec: $scope.deployment.spec
-    });
-  };
-
   $scope.openRevisionHistoryLimitModal = function() {
     ModalLauncherSvc.open('configure-revision-history-limit', {
       deploymentSpec: $scope.deployment.spec

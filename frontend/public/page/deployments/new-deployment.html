@@ -45,10 +45,7 @@
             <label for="input-controller-replicas" class="control-label">Replicas:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <div><a href="#" ng-click="openUpdateStrategyModal()" class="co-m-modal-link" ng-bind="deployment.spec.strategy.type || '-'"></a></div>
-            <small class="text-muted" ng-if="deployment.spec.strategy.type === 'RollingUpdate'">
-              Max Unavailable <span ng-bind="deployment.spec.strategy.rollingUpdate.maxUnavailable || 1"></span>, Max Surge <span ng-bind="deployment.spec.strategy.rollingUpdate.maxSurge || 1"></span> pods
-            </small>
+            <react-component name="ConfigureUpdateStrategyModalLink" props="{deployment}"></react-component>
           </div>
         </div>
         <div class="row co-m-form-row">

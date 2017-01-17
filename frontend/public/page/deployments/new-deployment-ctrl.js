@@ -9,12 +9,6 @@ angular.module('bridge.page')
   $scope.deployment = k8s.deployments.getEmpty($scope.ns);
   $scope.podTemplate = $scope.deployment.spec.template;
 
-  $scope.openUpdateStrategyModal = function() {
-    ModalLauncherSvc.open('configure-update-strategy', {
-      deploymentSpec: $scope.deployment.spec
-    });
-  };
-
   $scope.openRevisionHistoryLimitModal = function() {
     ModalLauncherSvc.open('configure-revision-history-limit', {
       deploymentSpec: $scope.deployment.spec
