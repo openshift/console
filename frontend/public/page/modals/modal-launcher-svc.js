@@ -33,14 +33,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-primary-command.html',
       controller: 'ConfigurePrimaryCommandCtrl',
     },
-    'configure-hpa-replicas': {
-      templateUrl: '/static/page/modals/configure-hpa-replicas.html',
-      controller: 'ConfigureHpaReplicasCtrl',
-    },
-    'configure-hpa-targets': {
-      templateUrl: '/static/page/modals/configure-hpa-targets.html',
-      controller: 'ConfigureHpaTargetsCtrl',
-    },
     'namespace-pull-secret': {
       templateUrl: '/static/page/modals/namespace-pull-secret/namespace-pull-secret.html',
       controller: 'NamespacePullSecretCtrl',
