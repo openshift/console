@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
 import {angulars, register} from './react-wrapper';
 import {ReactiveDetails} from './factory';
@@ -115,8 +116,8 @@ const Details = (props) => {
     return null;
   }
 
-  const status = angulars.k8s.docker.getStatus(props, container.name);
-  const state = angulars.k8s.docker.getState(status);
+  const status = getContainerStatus(props, container.name);
+  const state = getContainerState(status);
 
   // Split image string into the Docker image string and tag (aka version) portions. The tag defaults to 'latest'.
   const [containerImage, containerTag] = container.image ? container.image.split(':') : [null, 'latest'];
@@ -158,7 +159,7 @@ const Details = (props) => {
             <dt>Args</dt>
             <dd>{container.args ? <pre><code>{container.args.join(' ')}</code></pre> : <span>-</span>}</dd>
             <dt>Pull Policy</dt>
-            <dd>{angulars.k8s.docker.getPullPolicyLabel(container)}</dd>
+            <dd>{getPullPolicyLabel(container)}</dd>
           </dl>
         </div>
 

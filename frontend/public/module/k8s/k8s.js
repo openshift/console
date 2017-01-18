@@ -4,7 +4,6 @@ import {wsFactory} from '../ws-factory';
 import {k8sEnum} from './enum';
 
 import * as k8sDeployments from './deployments';
-import * as k8sDocker from './docker';
 import * as k8sNodes from './node';
 import * as k8sPods from './pods';
 import * as k8sReplicaSets from './replicasets';
@@ -41,7 +40,6 @@ angular.module('k8s')
   'use strict';
 
   this.enum = k8sEnum;
-  this.docker = k8sDocker;
   this.resource = k8sResource;
 
   const addDefaults = (k8sObject, kind) => {

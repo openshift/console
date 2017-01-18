@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {getContainerState, getContainerStatus} from '../module/k8s/docker';
 import {getRestartPolicyLabel} from '../module/k8s/pods';
 import {angulars, register} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
@@ -104,8 +105,8 @@ const ContainerLink = ({pod, name}) => <span className="co-resource-link">
 const NodeLink = ({name}) => name ? <a href={`nodes/${name}/details`}>{name}</a> : <span>-</span>;
 
 const ContainerRow = ({pod, container}) => {
-  const cstatus = angulars.k8s.docker.getStatus(pod, container.name);
-  const cstate = angulars.k8s.docker.getState(cstatus);
+  const cstatus = getContainerStatus(pod, container.name);
+  const cstate = getContainerState(cstatus);
 
   return <div className="row">
     <div className="middler">
