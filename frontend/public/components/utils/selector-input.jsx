@@ -4,6 +4,8 @@ import TagsInput from 'react-tagsinput';
 
 import {angulars, register} from '../react-wrapper';
 
+import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
+
 export class SelectorInput extends React.Component {
   constructor(props) {
     super(props);
@@ -25,7 +27,7 @@ export class SelectorInput extends React.Component {
   }
 
   isTagValid (tag) {
-    const requirement = angulars.k8s.selectorRequirement.fromString(tag);
+    const requirement = k8sSelectorRequirement.fromString(tag);
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
   }
 

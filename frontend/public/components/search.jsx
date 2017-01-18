@@ -19,6 +19,8 @@ import {IngressList} from './ingress';
 import {getActiveNamespace} from '../ui/ui-actions';
 import {connect, Dropdown, kindObj, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
+import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
+
 const ResourceListDropdown = ({selected, onChange}) => {
   const ks = angulars.k8s.enum.Kind;
   const kinds = _.fromPairs(_.map([
@@ -95,7 +97,7 @@ export class SearchPage extends React.Component {
 
   render () {
     const {kind, tags} = this.state;
-    const validTags = _.reject(tags, tag => angulars.k8s.selectorRequirement.fromString(tag) === undefined);
+    const validTags = _.reject(tags, tag => k8sSelectorRequirement.fromString(tag) === undefined);
     const selector = angulars.k8s.selector.fromString(validTags.join(','));
 
     return <div className="co-p-search">

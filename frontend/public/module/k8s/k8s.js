@@ -14,7 +14,6 @@ import * as k8sReplicaSets from './replicasets';
 import * as k8sReplicationControllers from './replicationcontrollers';
 import * as k8sResource from './resource';
 import * as k8sSelector from './selector';
-import * as k8sSelectorRequirement from './selector-requirement';
 import * as k8sServices from './services';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
@@ -47,7 +46,6 @@ angular.module('k8s')
 
   this.probe = k8sProbe;
   this.selector = k8sSelector;
-  this.selectorRequirement = k8sSelectorRequirement;
   this.labels = k8sLabels;
   this.enum = k8sEnum;
   this.docker = k8sDocker;

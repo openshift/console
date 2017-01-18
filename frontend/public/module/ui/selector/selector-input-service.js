@@ -1,13 +1,15 @@
+import {fromString, toString} from '../../k8s/selector-requirement';
+
 angular.module('bridge.ui')
   .factory('coSelectorInputSservice', function coSelectorInputSservice(_, k8s) {
     'use strict';
 
     function requirementToTag(requirement) {
-      return {text: k8s.selectorRequirement.toString(requirement)};
+      return {text: toString(requirement)};
     }
 
     function requirementFromTag(tag) {
-      return k8s.selectorRequirement.fromString(tag.text);
+      return fromString(tag.text);
     }
 
     // ---
@@ -23,7 +25,7 @@ angular.module('bridge.ui')
     }
 
     function looksLikeRequirement(tag, options) {
-      var requirement = k8s.selectorRequirement.fromString(tag.text);
+      var requirement = fromString(tag.text);
       return !!(requirement && (!_.get(options, 'basic') || requirement.operator === 'Equals')); // has to be boolean!
     }
 
