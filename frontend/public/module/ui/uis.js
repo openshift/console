@@ -5,7 +5,6 @@ import './forms/number-spinner';
 import './labels/label';
 import './labels/label-input';
 import './selector/selector-input';
-import './selector/selector-input-service';
 import './nav-title/nav-title';
 import './status-box/status-box';
 import './tristate/tristate';
