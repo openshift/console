@@ -7,7 +7,6 @@ import * as k8sDeployments from './deployments';
 import * as k8sDocker from './docker';
 import * as k8sNodes from './node';
 import * as k8sPods from './pods';
-import * as k8sProbe from './probe';
 import * as k8sReplicaSets from './replicasets';
 import * as k8sReplicationControllers from './replicationcontrollers';
 import * as k8sResource from './resource';
@@ -41,7 +40,6 @@ angular.module('k8s')
 .service('k8s', function(_, $rootScope) {
   'use strict';
 
-  this.probe = k8sProbe;
   this.enum = k8sEnum;
   this.docker = k8sDocker;
   this.resource = k8sResource;
