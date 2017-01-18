@@ -1,3 +1,4 @@
+import {fromRequirements, toRequirements} from '../../k8s/selector';
 import {fromString, toString} from '../../k8s/selector-requirement';
 
 angular.module('bridge.ui')
@@ -15,13 +16,13 @@ angular.module('bridge.ui')
     // ---
 
     function toTags(selector) {
-      var requirements = k8s.selector.toRequirements(selector || {});
+      var requirements = toRequirements(selector || {});
       return requirements.map(requirementToTag);
     }
 
     function fromTags(tags, options) {
       var requirements = (tags || []).map(requirementFromTag);
-      return k8s.selector.fromRequirements(requirements, options);
+      return fromRequirements(requirements, options);
     }
 
     function looksLikeRequirement(tag, options) {

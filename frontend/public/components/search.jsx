@@ -19,6 +19,7 @@ import {IngressList} from './ingress';
 import {getActiveNamespace} from '../ui/ui-actions';
 import {connect, Dropdown, kindObj, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
+import * as k8sSelector from '../module/k8s/selector';
 import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
 
 const ResourceListDropdown = ({selected, onChange}) => {
@@ -76,7 +77,7 @@ export class SearchPage extends React.Component {
 
     this.state = {
       kind: kind,
-      tags: angulars.k8s.selector.split(_.isString(angulars.routeParams.q) ? angulars.routeParams.q : ''),
+      tags: k8sSelector.split(_.isString(angulars.routeParams.q) ? angulars.routeParams.q : ''),
     };
   }
 
@@ -98,7 +99,7 @@ export class SearchPage extends React.Component {
   render () {
     const {kind, tags} = this.state;
     const validTags = _.reject(tags, tag => k8sSelectorRequirement.fromString(tag) === undefined);
-    const selector = angulars.k8s.selector.fromString(validTags.join(','));
+    const selector = k8sSelector.fromString(validTags.join(','));
 
     return <div className="co-p-search">
       <NavTitle title="Search" />
