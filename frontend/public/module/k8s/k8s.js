@@ -6,7 +6,6 @@ import {k8sEnum} from './enum';
 import * as k8sCommand from './command';
 import * as k8sDeployments from './deployments';
 import * as k8sDocker from './docker';
-import * as k8sLabels from './labels';
 import * as k8sNodes from './node';
 import * as k8sPods from './pods';
 import * as k8sProbe from './probe';
@@ -44,7 +43,6 @@ angular.module('k8s')
   'use strict';
 
   this.probe = k8sProbe;
-  this.labels = k8sLabels;
   this.enum = k8sEnum;
   this.docker = k8sDocker;
   this.resource = k8sResource;

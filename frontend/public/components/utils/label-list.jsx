@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {angulars} from '../react-wrapper';
+import {linkEncode} from '../../module/k8s/labels';
 
 const Label = ({kind, name, value, expand}) => {
   const labelObj = {[name]: value};
-  const query = angulars.k8s.labels.linkEncode(labelObj);
+  const query = linkEncode(labelObj);
   const href = `search?kind=${kind}&q=${query}`;
   const klass = classNames('co-m-label', `co-m-label--${kind}`, {'co-m-label--expand': expand});
 
