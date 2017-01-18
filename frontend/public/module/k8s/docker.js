@@ -52,7 +52,7 @@ export const getEmptyContainer = function() {
     env: [],
     resources: null,
     image: null,
-    imagePullPolicy: k8sEnum.PullPolicy.Always.value,
+    imagePullPolicy: k8sEnum.PullPolicy.Always.id,
     lifecycle: null,
     livenessProbe: null,
     name: null,
@@ -110,24 +110,8 @@ export const isPortEmpty = function(port) {
   return _.isNull(port.containerPort) || _.isEmpty(port.name);
 };
 
-export const getPullPolicyByValue = function(value) {
-  return _.find(k8sEnum.PullPolicy, { value: value });
-};
+const getPullPolicy = container => _.find(k8sEnum.PullPolicy, {id: _.get(container, 'imagePullPolicy')});
 
-export const getPullPolicyById = function(id) {
-  return _.find(k8sEnum.PullPolicy, function(o) { return o.id === id; });
-};
-
-export const getPullPolicyLabel = function(container) {
-  var p;
-  if (!container) {
-    return '';
-  }
-  p = getPullPolicyByValue(container.imagePullPolicy);
-  if (p) {
-    return p.label || '';
-  }
-  return '';
-};
+export const getPullPolicyLabel = container => _.get(getPullPolicy(container), 'label', '');
 
 window.tectonicTesting && (window.tectonicTesting.k8sDocker = {getStatus, isEnvVarEmpty, isVolumeMountEmpty, isPortEmpty});

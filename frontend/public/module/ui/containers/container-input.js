@@ -1,12 +1,12 @@
 import { EVENTS } from '../../../const';
-import { configurePortsModal } from '../../../components/modals';
+import { configurePortsModal, configurePrimaryCommandModal, configurePullPolicyModal } from '../../../components/modals';
 
 angular.module('bridge.ui')
 
 /**
  * single-container input directive form.
  */
-.directive('coContainerInput', function(_, ModalLauncherSvc, k8s) {
+.directive('coContainerInput', function(_, k8s) {
 
   'use strict';
 
@@ -63,11 +63,11 @@ angular.module('bridge.ui')
         $scope.container.ports = ports;
       });
 
-      $scope.openPullPolicyModal = function() {
-        ModalLauncherSvc.open('configure-pull-policy', {
-          container: $scope.container
-        });
-      };
+      $scope.openPullPolicyModal = () => configurePullPolicyModal({
+        container: $scope.container
+      }).result.then((imagePullPolicy) => {
+        $scope.container.imagePullPolicy = imagePullPolicy;
+      });
 
       $scope.getPullPolicyLabel = k8s.docker.getPullPolicyLabel;
 
@@ -78,11 +78,11 @@ angular.module('bridge.ui')
         return 'Custom Command';
       };
 
-      $scope.openPrimaryCommandModal = function() {
-        ModalLauncherSvc.open('configure-primary-command', {
-          container: $scope.container
-        });
-      };
+      $scope.openPrimaryCommandModal = () => configurePrimaryCommandModal({
+        container: $scope.container
+      }).result.then((command) => {
+        $scope.container.command = command;
+      });
 
       $scope.remove = function() {
         $scope.$emit(EVENTS.CONTAINER_REMOVE, $scope.container);
