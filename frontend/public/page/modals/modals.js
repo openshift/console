@@ -5,5 +5,4 @@ import './configure-labels-ctrl';
 import './configure-selector-ctrl';
 import './row-mgr';
 import './service-ports-ctrl';
-import './namespace-pull-secret/namespace-pull-secret-ctrl';
 import './reactive-modal-ctrl';
