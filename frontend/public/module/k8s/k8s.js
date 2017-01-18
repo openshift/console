@@ -44,7 +44,7 @@ export const getK8sAPIPath = kind => {
 angular.module('k8s')
 .service('k8s', function(_, $rootScope) {
   'use strict';
-  this.getQN = getQN;
+
   this.probe = k8sProbe;
   this.selector = k8sSelector;
   this.selectorRequirement = k8sSelectorRequirement;

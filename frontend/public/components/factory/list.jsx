@@ -2,6 +2,7 @@ import React from 'react';
 import fuzzy from 'fuzzysearch';
 import {Provider} from 'react-redux';
 
+import {getQN} from '../../module/k8s/k8s';
 import actions from '../../module/k8s/k8s-actions';
 import {isNodeReady} from '../../module/k8s/node';
 import {Firehose, podPhase, StatusBox} from '../utils';
@@ -62,7 +63,6 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const Rows = (props) => {
-  const {k8s: {getQN}} = angulars;
   const {expand, filters, data, selected, selectRow, sortBy, Row} = props;
   const rows = _.sortBy(getFilteredRows(filters, data), sortBy).map(object => {
     return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected === getQN(object)} />;
