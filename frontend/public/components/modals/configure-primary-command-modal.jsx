@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { angulars } from '../react-wrapper';
+import { fromArgs, toArgs } from '../../module/k8s/command';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { RadioInput } from './_radio';
 
@@ -17,7 +17,7 @@ class ConfigurePrimaryCommandModal extends React.Component {
     let command = '';
     if (!_.isEmpty(this.props.container.command)) {
       type = 'custom';
-      command = angulars.k8s.command.fromArgs(this.props.container.command);
+      command = fromArgs(this.props.container.command);
     }
 
     this.state = {
@@ -45,7 +45,7 @@ class ConfigurePrimaryCommandModal extends React.Component {
     if (this.state.type === 'default') {
       command = null;
     } else {
-      command = angulars.k8s.command.toArgs(this.state.command);
+      command = toArgs(this.state.command);
     }
 
     this.props.close(command);

@@ -3,7 +3,6 @@ import './_module';
 import {wsFactory} from '../ws-factory';
 import {k8sEnum} from './enum';
 
-import * as k8sCommand from './command';
 import * as k8sDeployments from './deployments';
 import * as k8sDocker from './docker';
 import * as k8sNodes from './node';
@@ -46,7 +45,6 @@ angular.module('k8s')
   this.enum = k8sEnum;
   this.docker = k8sDocker;
   this.resource = k8sResource;
-  this.command = k8sCommand;
 
   const addDefaults = (k8sObject, kind) => {
     return _.assign({
