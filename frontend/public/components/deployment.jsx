@@ -5,7 +5,7 @@ import {k8sKinds} from '../module/k8s';
 import {register} from './react-wrapper';
 import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
-import {configureReplicaCountModal, configureUpdateStrategyModal} from './modals';
+import {configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal} from './modals';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
@@ -109,18 +109,24 @@ export class Details extends SafetyFirst {
 }
 
 const ConfigureUpdateStrategyModalLink = ({deployment}) => <div>
-  <div><a className="co-m-modal-link" onClick={() => configureUpdateStrategyModal({deployment})}>{deployment.spec.strategy.type || '-'}</a></div>
+  <div>
+    <a className="co-m-modal-link" onClick={() => configureUpdateStrategyModal({deployment})}>
+      {deployment.spec.strategy.type || '-'}
+    </a>
+  </div>
   { deployment.spec.strategy.type === 'RollingUpdate' && <small className="text-muted">
-    Max Unavailable <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', 1)}</span>, Max Surge <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', 1)}</span> pods
+    Max Unavailable
+    <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', 1)}</span>, Max Surge
+    <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', 1)}</span> pods
   </small> }
 </div>;
-register('ConfigureUpdateStrategyModalLink', ConfigureUpdateStrategyModalLink);
 
-// const ConfigureRevisionHistoryModalLink = ({deployment}) => <div>
-//   <div><a className="co-m-modal-link" onClick={() => configureUpdateStrategyModal({deployment})}>{getPodRestartPolicyLabel(deployment)}</a></div>
-//   <small className="text-muted">What should happen when this container exits or stops unexpectedly?</small>
-// </div>;
-// register('ConfigureRevisionHistoryModalLink', ConfigureRevisionHistoryModalLink);
+const ConfigureRevisionHistoryModalLink = ({deployment}) => <div>
+  <a href="#" onClick={() => configureRevisionHistoryLimitModal({deployment})}
+    className="co-m-modal-link">
+    <span>{deployment.spec.revisionHistoryLimit || 'Unlimited'}</span> revisions
+  </a>
+</div>;
 
 const {details, edit, editYaml, pods} = navFactory;
 const pages = [details(Details), edit(), editYaml(), pods()];
@@ -129,4 +135,6 @@ const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deploy
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', cogActions));
 const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);
 
-export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage,ConfigureUpdateStrategyModalLink};
+register('ConfigureUpdateStrategyModalLink', ConfigureUpdateStrategyModalLink);
+register('ConfigureRevisionHistoryModalLink', ConfigureRevisionHistoryModalLink);
+export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

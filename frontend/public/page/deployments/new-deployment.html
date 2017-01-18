@@ -65,7 +65,7 @@
             <label class="control-label">Revision History Limit:</label>
           </div>
           <div class="co-m-form-col col-sm-10">
-            <div><a href="#" ng-click="openRevisionHistoryLimitModal()" class="co-m-modal-link"><span ng-bind="deployment.spec.revisionHistoryLimit || 'Unlimited'"></span> revisions</a></div>
+            <react-component name="ConfigureRevisionHistoryModalLink" props="{deployment}"></react-component>
           </div>
         </div>
       </div>

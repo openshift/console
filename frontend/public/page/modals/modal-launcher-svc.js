@@ -9,10 +9,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/service-ports.html',
       controller: 'ServicePortsCtrl',
     },
-    'configure-revision-history-limit': {
-      templateUrl: '/static/page/modals/configure-revision-history-limit.html',
-      controller: 'ConfigureRevisionHistoryLimitCtrl',
-    },
     'configure-selector': {
       templateUrl: '/static/page/modals/configure-selector.html',
       controller: 'ConfigureSelectorCtrl',

@@ -3,8 +3,9 @@ import ReactTooltip from 'react-tooltip';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, pluralize } from '../utils';
+import { RadioInput } from './_radio';
 
-const numberOrPercent = function(value) {
+const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
     return null;
   }
@@ -24,8 +25,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     this._cancel = this.props.cancel.bind(this);
 
     this.state = {
-      strategyType: _.get(this.props.deployment.spec, 'strategy.type'),
-      rollingUpdate: {}
+      strategyType: _.get(this.props.deployment.spec, 'strategy.type')
     };
   }
 
@@ -44,9 +44,10 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     this.props.deployment.spec.strategy.type = type;
 
     if (type === 'RollingUpdate') {
-      this.props.deployment.spec.strategy.rollingUpdate = {};
-      this.props.deployment.spec.strategy.rollingUpdate.maxUnavailable = numberOrPercent(event.target.elements['input-max-unavailable'].value);
-      this.props.deployment.spec.strategy.rollingUpdate.maxSurge = numberOrPercent(event.target.elements['input-max-surge'].value);
+      this.props.deployment.spec.strategy.rollingUpdate = {
+        maxUnavailable: getNumberOrPercent(event.target.elements['input-max-unavailable'].value),
+        maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value)
+      };
     } else {
       this.props.deployment.spec.strategy.rollingUpdate = null;
     }
@@ -54,6 +55,9 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
   }
 
   render() {
+    const maxUnavailable = _.get(this.props.deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '');
+    const maxSurge = _.get(this.props.deployment.spec, 'strategy.rollingUpdate.maxSurge', '');
+
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>Deployment Update Strategy</ModalTitle>
       <ModalBody>
@@ -65,75 +69,73 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
 
         <div className="row co-m-form-row">
           <div className="col-sm-12">
-
-            <input value="RollingUpdate" type="radio"
-              id="configure-update-strategy--rollingUpdate"
-              autoFocus="true"
+            <RadioInput
+              onChange={this._onTypeChange}
+              value="RollingUpdate"
               checked={this.state.strategyType === 'RollingUpdate'}
-              onChange={this._onTypeChange} />
-            <label htmlFor="configure-update-strategy--rollingUpdate">
-              RollingUpdate <span className="co-no-bold">(default)</span>
-            </label>
-            <div className="co-m-radio-desc">
-              <p className="text-muted">
-                Execute a smooth roll out of the new revision, based on the settings below
-              </p>
+              title="RollingUpdate"
+              subTitle="(default)"
+              autoFocus={this.state.strategyType === 'RollingUpdate'}>
+              <div className="co-m-radio-desc">
+                <p className="text-muted">
+                  Execute a smooth roll out of the new revision, based on the settings below
+                </p>
 
-            <div className="row co-m-form-row">
-              <div className="col-sm-3">
-                <label htmlFor="input-max-unavailable" className="control-label">
-                  Max Unavailable:
-                </label>
-              </div>
-              <div className="co-m-form-col col-sm-9">
-                <div className="form-inline">
-                  <div className="input-group">
-                    <input disabled={this.state.strategyType !== 'RollingUpdate'}
-                      placeholder="1" size="5" type="text" className="form-control"
-                      id="input-max-unavailable" />
-                    <span className="input-group-addon" data-tip="Current desired pod count">
-                      of { pluralize(this.props.deployment.spec.replicas, 'pod')}
-                    </span>
+                <div className="row co-m-form-row">
+                  <div className="col-sm-3">
+                    <label htmlFor="input-max-unavailable" className="control-label">
+                      Max Unavailable:
+                    </label>
+                  </div>
+                  <div className="co-m-form-col col-sm-9">
+                    <div className="form-inline">
+                      <div className="input-group">
+                        <input disabled={this.state.strategyType !== 'RollingUpdate'}
+                          placeholder="1" size="5" type="text" className="form-control"
+                          id="input-max-unavailable"
+                          defaultValue={maxUnavailable} />
+                        <span className="input-group-addon" data-tip="Current desired pod count">
+                          of { pluralize(this.props.deployment.spec.replicas, 'pod')}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="help-block text-muted">Number or percentage of total pods at the start of the update (optional)</p>
                   </div>
                 </div>
-                <p className="help-block text-muted">Number or percentage of total pods at the start of the update (optional)</p>
-              </div>
-            </div>
 
-            <div className="row co-m-form-row">
-              <div className="col-sm-3">
-                <label htmlFor="input-max-surge" className="control-label">Max Surge:</label>
-              </div>
-              <div className="co-m-form-col col-sm-9">
-                <div className="form-inline">
-                  <div className="input-group">
-                    <input  disabled={this.state.strategyType !== 'RollingUpdate'} placeholder="1" size="5" type="text" className="form-control"
-                      id="input-max-surge" />
-                    <span className="input-group-addon" data-tip="Current desired pod count">
-                      greater than { pluralize(this.props.deployment.spec.replicas, 'pod')}
-                    </span>
+                <div className="row co-m-form-row">
+                  <div className="col-sm-3">
+                    <label htmlFor="input-max-surge" className="control-label">Max Surge:</label>
+                  </div>
+                  <div className="co-m-form-col col-sm-9">
+                    <div className="form-inline">
+                      <div className="input-group">
+                        <input disabled={this.state.strategyType !== 'RollingUpdate'} placeholder="1" size="5" type="text" className="form-control"
+                          id="input-max-surge"
+                          defaultValue={maxSurge} />
+                        <span className="input-group-addon" data-tip="Current desired pod count">
+                          greater than { pluralize(this.props.deployment.spec.replicas, 'pod')}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="help-block text-muted">Number or percentage of total pods at the start of the update (optional)</p>
                   </div>
                 </div>
-                <p className="help-block text-muted">Number or percentage of total pods at the start of the update (optional)</p>
               </div>
-            </div>
+            </RadioInput>
+           </div>
 
-            <div className="co-m-form-row"></div>
+          <div className="col-sm-12">
+            <RadioInput
+              onChange={this._onTypeChange}
+              value="Recreate"
+              checked={this.state.strategyType === 'Recreate'}
+              title="Recreate"
+              desc="Shut down all existing pods before creating new ones"
+              autoFocus={this.state.strategyType === 'Recreate'} />
           </div>
-        </div>
 
-        <div className="col-sm-12">
-          <input
-            checked={this.state.strategyType === 'Recreate'}
-            onChange={this._onTypeChange}
-            value="Recreate" type="radio" id="configure-update-strategy--recreate"/>
-          <label htmlFor="configure-update-strategy--recreate">Recreate</label>
-          <p className="co-m-radio-desc text-muted">
-            Shut down all existing pods before creating new ones
-          </p>
         </div>
-
-      </div>
 
       </ModalBody>
       <ModalSubmitFooter

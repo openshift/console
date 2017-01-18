@@ -3001,7 +3001,8 @@ input[type="radio"] {
 
 .co-m-modal-link {
   position: relative;
-  padding-right: 9px; }
+  padding-right: 9px;
+  outline: none; }
   .co-m-modal-link:after {
     content: "\203a";
     font-weight: 100;
@@ -3013,6 +3014,9 @@ input[type="radio"] {
     top: -15%; }
   .co-m-modal-link:hover:after {
     color: #777; }
+  .co-m-modal-link:focus {
+    outline: none;
+  }
 
 .co-m-invisible-input {
   border: 0;
