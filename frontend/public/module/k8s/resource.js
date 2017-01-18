@@ -1,10 +1,10 @@
 import {coFetchJSON} from '../../co-fetch';
-import {getKubernetesAPIPath} from './k8s';
+import {getK8sAPIPath} from './k8s';
 import {toString} from './selector';
 
 export const resourceURL = (kind, options) => {
   let q = '';
-  let u = getKubernetesAPIPath(kind);
+  let u = getK8sAPIPath(kind);
 
   if (options.ns) {
     u += `/namespaces/${options.ns}`;

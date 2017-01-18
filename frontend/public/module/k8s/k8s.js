@@ -23,7 +23,7 @@ export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
 
 const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
 
-export const getKubernetesAPIPath = kind => {
+export const getK8sAPIPath = kind => {
   let p = k8sBasePath;
 
   if (kind.isExtension) {
@@ -116,5 +116,4 @@ angular.module('k8s')
   this.tectonicversions = addDefaults({}, k8sEnum.Kind.TECTONICVERSION);
   this.channeloperatorconfigs = addDefaults({}, k8sEnum.Kind.CHANNELOPERATORCONFIG);
   this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
-  this.basePath = k8sBasePath;
 });

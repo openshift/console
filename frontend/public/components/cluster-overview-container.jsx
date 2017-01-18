@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {coFetchJSON} from '../co-fetch';
+import {k8sBasePath} from '../module/k8s/k8s';
 import {k8sVersion} from '../module/status';
 import {ClusterOverviewPage} from './cluster-overview';
 import {angulars, register} from './react-wrapper';
@@ -53,7 +54,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
   }
 
   _checkKubernetesHealth() {
-    coFetchJSON(angulars.k8s.basePath)
+    coFetchJSON(k8sBasePath)
       .then(() => this.setState({ kubernetesHealth: 'ok' }))
       .catch(() => this.setState({ kubernetesHealth: 'unknown' }));
   }
