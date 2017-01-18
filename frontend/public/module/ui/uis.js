@@ -4,7 +4,6 @@ import './containers/multi-container-input';
 import './forms/number-spinner';
 import './labels/label';
 import './labels/label-input';
-import './selector/requirement';
 import './selector/selector';
 import './selector/selector-input';
 import './selector/selector-input-service';
