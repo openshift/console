@@ -1,10 +1,11 @@
 import React from 'react';
 
+import {k8sEnum} from '../module/k8s/enum';
+
 export const angulars = {
   store: null,
   Firehose: null,
   k8s: null,
-  kinds: null,
   ModalLauncherSvc: null,
   $location: null,
   $log: null,
@@ -40,7 +41,6 @@ app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeo
     angulars.modal = (...args) => () => ModalLauncherSvc.open(...args),
     angulars.$location = $location;
     angulars.routeParams = $routeParams;
-    angulars.kinds = k8s.enum.Kind;
     angulars.$log = $log;
     angulars.$interval= $interval;
     angulars.$timeout = $timeout;
@@ -62,13 +62,13 @@ app.directive('reactiveK8sList', function () {
       fieldSelector: '=',
       selectorRequired: '=',
     },
-    controller: function ($routeParams, $scope, k8s) {
+    controller: function ($routeParams, $scope) {
       const { kind, canCreate, selector, fieldSelector, component, selectorRequired } = $scope;
 
       $scope.props = {
         kind, canCreate, selector, fieldSelector, component, selectorRequired,
         namespace: $routeParams.ns,
-        defaultNS: k8s.enum.DefaultNS,
+        defaultNS: k8sEnum.DefaultNS,
         name: $routeParams.name,
         location: location.pathname,
       };

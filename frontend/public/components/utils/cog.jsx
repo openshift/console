@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import classNames from 'classnames';
 
+import {k8sKinds} from '../../module/k8s/enum';
 import {util} from '../../module/k8s/util';
 import {angulars} from '../react-wrapper';
 import {confirmModal, configureReplicaCountModal} from '../modals';
@@ -85,7 +86,7 @@ Cog.factory = {
     weight: 200,
     callback: angulars.modal('configure-selector', {
       resourceKind: kind,
-      selectorKind: angulars.kinds.POD,
+      selectorKind: k8sKinds.POD,
       resource: () => obj,
       message: `${kind.labelPlural} ensure the configured number of pods matching this pod selector are healthy and running.`,
     }),

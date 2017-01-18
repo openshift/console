@@ -1,10 +1,11 @@
 import React from 'react';
 import {connect as reactReduxConnect, Provider} from 'react-redux';
 
+import {k8sKinds} from '../../module/k8s/enum';
 import {angulars} from '../react-wrapper';
 import {inject} from './index';
 
-export const kindObj = kind => _.isString(kind) && angulars.kinds[kind.toUpperCase()] || {};
+export const kindObj = kind => _.isString(kind) && k8sKinds[kind.toUpperCase()] || {};
 
 export const k8sResource = kind => {
   const {plural} = kindObj(kind);

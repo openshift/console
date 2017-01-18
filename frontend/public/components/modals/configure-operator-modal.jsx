@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { k8sKinds } from '../../module/k8s/enum';
 import { angulars } from '../react-wrapper';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
@@ -35,7 +36,7 @@ class ConfigureOperatorModal extends PromiseComponent {
     const patch = [{ op: 'replace', path: this.props.path, value: value }];
 
     this._setRequestPromise(
-      angulars.k8s.resource.patch(angulars.kinds.CHANNELOPERATORCONFIG, this.props.config, patch)
+      angulars.k8s.resource.patch(k8sKinds.CHANNELOPERATORCONFIG, this.props.config, patch)
     ).then(this.props.close);
   }
 

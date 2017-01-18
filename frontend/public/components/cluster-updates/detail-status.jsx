@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {k8sKinds} from '../../module/k8s/enum';
 import {LoadingInline} from '../utils';
 import {angulars} from '../react-wrapper';
 import {states} from './channel-operator';
@@ -25,10 +26,10 @@ export class DetailStatus extends React.Component {
 
     let k8skind, resource;
     if (kind === 'config') {
-      k8skind = angulars.k8s.enum.Kind.CHANNELOPERATORCONFIG;
+      k8skind = k8sKinds.CHANNELOPERATORCONFIG;
       resource = this.props.config;
     } else if (kind === 'app-version') {
-      k8skind = angulars.k8s.enum.Kind.APPVERSION;
+      k8skind = k8sKinds.APPVERSION;
       resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-cluster' } };
     }
 

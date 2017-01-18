@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {k8sKinds} from '../../module/k8s/enum';
 import {angulars} from '../react-wrapper';
 import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {PromiseComponent} from '../utils';
@@ -16,7 +17,7 @@ class UnscheduleNodeModal extends PromiseComponent {
 
     const patch = [{ op: 'replace', path: '/spec/unschedulable', value: true }];
     this._setRequestPromise(
-      angulars.k8s.resource.patch(angulars.k8s.kinds.NODE, this.props.resource, patch)
+      angulars.k8s.resource.patch(k8sKinds.NODE, this.props.resource, patch)
     )
       .then(this.props.close)
       .catch((error) => {

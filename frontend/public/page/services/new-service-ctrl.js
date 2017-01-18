@@ -1,10 +1,11 @@
+import {k8sEnum} from '../../module/k8s/enum';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
 .controller('NewServiceCtrl', function($scope, $routeParams, $location, k8s) {
   'use strict';
 
-  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns || k8sEnum.DefaultNS;
   $scope.service = k8s.services.getEmpty($scope.ns);
 
   $scope.minPort = 30000;

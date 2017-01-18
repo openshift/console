@@ -1,4 +1,5 @@
 import {CONST} from '../../../const';
+import {k8sKinds} from '../../../module/k8s/enum';
 
 angular.module('bridge.page')
   .controller('NamespaceQuayPullSecretCtrl', function NamespaceQuayPullSecretCtrl(
@@ -56,7 +57,7 @@ angular.module('bridge.page')
     }
 
     function submitUpdate() {
-      return k8s.resource.patch(k8s.kinds.SECRET, $scope.pullSecret, [{
+      return k8s.resource.patch(k8sKinds.SECRET, $scope.pullSecret, [{
         op:    'replace',
         path:  `/data/${CONST.PULL_SECRET_DATA}`,
         value: $window.btoa($scope.model.value)

@@ -1,10 +1,11 @@
+import {k8sEnum} from '../../module/k8s/enum';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
 .controller('NewPodCtrl', function(_, $scope, $location, $routeParams, k8s) {
   'use strict';
 
-  var namespace = $routeParams.ns || k8s.enum.DefaultNS;
+  var namespace = $routeParams.ns || k8sEnum.DefaultNS;
   $scope.pod = k8s.pods.getEmpty(namespace);
 
   $scope.cancel = function() {
