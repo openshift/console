@@ -17,10 +17,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/configure-revision-history-limit.html',
       controller: 'ConfigureRevisionHistoryLimitCtrl',
     },
-    'configure-labels': {
-      templateUrl: '/static/page/modals/configure-labels.html',
-      controller: 'ConfigureLabelsCtrl',
-    },
     'configure-selector': {
       templateUrl: '/static/page/modals/configure-selector.html',
       controller: 'ConfigureSelectorCtrl',
