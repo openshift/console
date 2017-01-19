@@ -89,7 +89,7 @@ export const OperatorState = ({opState, version}) => {
   }
 
   return <span className={`co-cluster-updates--${_.get(operatorState, 'suffix', '')}`}>
-    <span className={`co-cluster-updates__text-icon fa ${_.get(operatorState, 'icon', '')}`}></span>
+    <span className={`co-cluster-updates__text-icon fa ${_.get(operatorState, 'icon', '')} co-cluster-updates__operator-icon--${_.get(operatorState, 'suffix', '')}`}></span>
     {opState === 'UpdateAvailable' && version } {_.get(operatorState, 'statusText', '')}
   </span>;
 };

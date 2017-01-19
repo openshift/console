@@ -5,7 +5,8 @@ import {k8sPatch, isNodeReady} from '../module/k8s';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {PodsPage} from './pod';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, navFactory, kindObj, LabelList, NavBar, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize} from './utils';
+import {Cog, navFactory, kindObj, LabelList, NavBar, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID,
+  pluralize, containerLinuxUpdateOperator} from './utils';
 import {configureUnschedulableModal} from './modals';
 
 const makeNodeScheduable = (resourceKind, resource) => {
@@ -45,11 +46,18 @@ const NodeIPList = ({ips, expand = false}) => <div>
   </div>)}
 </div>;
 
-const Header = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">Node Name</div>
-  <div className="col-xs-4">Status</div>
-  <div className="col-xs-4">Node Addresses</div>
-</div>;
+const Header = ({data}) => {
+  if (data) {
+    const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(data[0]);
+    return <div className="row co-m-table-grid__head">
+      <div className="col-xs-4">Node Name</div>
+      <div className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'}>Status</div>
+      { isOperatorInstalled && <div className="col-xs-3">OS Update</div> }
+      <div className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'}>Node Addresses</div>
+    </div>;
+  }
+  return null;
+};
 
 const HeaderSearch = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Node Name</div>
@@ -60,23 +68,53 @@ const HeaderSearch = () => <div className="row co-m-table-grid__head">
 
 const NodeStatus = ({node}) => isNodeReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 
-const NodeRow = ({obj: node, expand}) => <div className="row co-resource-list__item">
-  <div className="middler">
-    <div className="col-xs-4">
-      <NodeCog node={node} />
-      <ResourceLink kind="node" name={node.metadata.name} title={node.metadata.uid} />
+const NodeCLUpdateStatus = ({node}) => {
+  const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
+  const newVersion = containerLinuxUpdateOperator.getNewVersion(node);
+  const lastCheckedDate = containerLinuxUpdateOperator.getLastCheckedTime(node);
+
+  return <div>
+    <span><i className={updateStatus.className}></i>&nbsp;&nbsp;{updateStatus.text}</span>
+    {!_.isEmpty(newVersion)  && !containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
+      <div>
+        <small className="">Container Linux {containerLinuxUpdateOperator.getVersion(node)} &#10141; {newVersion}</small>
+      </div>}
+    {!_.isEmpty(lastCheckedDate) && containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
+      <div>
+        <small className="">Last checked on <div className="co-inline-block">{<Timestamp timestamp={lastCheckedDate} isUnix={true} />}</div></small>
+      </div>}
+  </div>;
+};
+
+const NodeCLStatusRow = ({node}) => {
+  const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
+  return <span><i className={updateStatus.className}></i>&nbsp;&nbsp;{updateStatus.text}</span>;
+};
+
+const NodeRow = ({obj: node, expand}) => {
+  const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
+
+  return <div className="row co-resource-list__item">
+    <div className="middler">
+      <div className="col-xs-4">
+        <NodeCog node={node} />
+        <ResourceLink kind="node" name={node.metadata.name} title={node.metadata.uid} />
+      </div>
+      <div className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'}>
+        <NodeStatus node={node} />
+      </div>
+      { isOperatorInstalled &&  <div className="col-xs-3">
+        <NodeCLStatusRow node={node} />
+      </div>}
+      <div className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'}>
+        <NodeIPList ips={node.status.addresses} expand={expand} />
+      </div>
     </div>
-    <div className="col-xs-4">
-      <NodeStatus node={node} />
-    </div>
-    <div className="col-xs-4">
-      <NodeIPList ips={node.status.addresses} expand={expand} />
-    </div>
-  </div>
-  {expand && <div className="col-xs-12">
-    <LabelList kind="node" labels={node.metadata.labels} />
-  </div>}
-</div>;
+    {expand && <div className="col-xs-12">
+      <LabelList kind="node" labels={node.metadata.labels} />
+    </div>}
+  </div>;
+};
 
 const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
@@ -164,8 +202,9 @@ const Details = (node) => {
             <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('node'), node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
-            <dt>Unschedulable</dt>
-            <dd className="text-capitalize">{_.get(node, 'spec.unschedulable', '-').toString()}</dd>
+            {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}
+            {_.has(node, 'spec.unschedulable') &&  <dd className="text-capitalize">{_.get(node, 'spec.unschedulable', '-').toString()}
+              </dd>}
             <dt>Created</dt>
             <dd><Timestamp timestamp={node.metadata.creationTimestamp} /></dd>
           </dl>
@@ -190,6 +229,28 @@ const Details = (node) => {
         </div>
       </div>
     </div>
+
+    { containerLinuxUpdateOperator.isOperatorInstalled(node) && <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-xs-12">
+          <h1 className="co-section-title">Container Linux</h1>
+        </div>
+        <div className="col-md-6 col-xs-12">
+          <dl>
+            <dt>Current Version</dt>
+            <dd>{containerLinuxUpdateOperator.getVersion(node)}</dd>
+            <dt>Channel</dt>
+            <dd className="text-capitalize">{containerLinuxUpdateOperator.getChannel(node)}</dd>
+          </dl>
+        </div>
+        <div className="col-md-6 col-xs-12">
+          <dl>
+            <dt>Update Status</dt>
+            <dd><NodeCLUpdateStatus node={node} /></dd>
+          </dl>
+        </div>
+      </div>
+    </div> }
 
     <div className="co-m-pane__body">
       <div className="row">

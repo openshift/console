@@ -1,0 +1,25 @@
+import React from 'react';
+
+import { ContainerLinuxUpdateDetails } from './container-linux-update-details';
+import { Firehose, containerLinuxUpdateOperator } from '../utils';
+
+export const ContainerLinuxUpdates = (props) => {
+  return <Firehose kind="node" isList={true}>
+    <ContainerLinuxUpdatesWithData {...props} />
+  </Firehose>;
+};
+
+export const ContainerLinuxUpdatesWithData = (props) => {
+  if (props.loaded) {
+    const nodes = props.data;
+    const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(nodes[0]);
+    if (isOperatorInstalled) {
+      const nodeListUpdateStatus = containerLinuxUpdateOperator.getNodeListUpdateStatus(nodes);
+      return <ContainerLinuxUpdateDetails
+        nodeListUpdateStatus={nodeListUpdateStatus}
+        isOperatorInstalled={isOperatorInstalled}
+      />;
+    }
+  }
+  return null;
+};

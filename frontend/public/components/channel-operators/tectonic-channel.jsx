@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 
 import {LoadingInline, MultiFirehose, determineOperatorState, StatusBox} from '../utils';
 import {ChannelOperator} from './channel-operator';
@@ -163,7 +162,7 @@ class TectonicChannelWithData extends React.Component {
       const config = this._getConfig(configs);
       const versions = this._getTectonicVersions(tectonicVersions);
 
-      return <div className={classNames('co-cluster-updates__component', {'co-cluster-updates__component--last': this.props.last})}>
+      return <div className="co-cluster-updates__component">
         <ChannelOperator
           primaryOperatorName={clusterAppVersionName}
           components={components}
