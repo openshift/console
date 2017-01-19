@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { k8sKinds } from '../../module/k8s/enum';
-import { angulars } from '../react-wrapper';
+import { k8sPatch } from '../../module/k8s/resource';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
 import { RadioInput } from './_radio';
@@ -36,7 +36,7 @@ class ConfigureOperatorModal extends PromiseComponent {
     const patch = [{ op: 'replace', path: this.props.path, value: value }];
 
     this._setRequestPromise(
-      angulars.k8s.resource.patch(k8sKinds.CHANNELOPERATORCONFIG, this.props.config, patch)
+      k8sPatch(k8sKinds.CHANNELOPERATORCONFIG, this.props.config, patch)
     ).then(this.props.close);
   }
 

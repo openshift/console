@@ -56,9 +56,9 @@ export const watchURL = (kind, options) => {
   return resourceURL(kind, opts);
 };
 
-export const get = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ns, name}, opts)));
+export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ns, name}, opts)));
 
-export const list = (kind, params) => {
+export const k8sList = (kind, params) => {
   let ns;
   if (params) {
     if (!_.isEmpty(params.labelSelector)) {
@@ -74,7 +74,7 @@ export const list = (kind, params) => {
   return coFetchJSON(`${resourceURL(kind, {ns})}?${query}`).then(result => result.items);
 };
 
-export const create = (kind, data) => {
+export const k8sCreate = (kind, data) => {
   // Lowercase the resource name
   // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
   data.metadata.name = data.metadata.name.toLowerCase();
@@ -82,16 +82,16 @@ export const create = (kind, data) => {
   return coFetchJSON.post(resourceURL(kind, {ns: data.metadata.namespace}), data);
 };
 
-export const update = (kind, data, ns, name) => coFetchJSON.put(
+export const k8sUpdate = (kind, data, ns, name) => coFetchJSON.put(
   resourceURL(kind, {ns: ns || data.metadata.namespace, name: name || data.metadata.name}),
   data
 );
 
-export const patch = (kind, resource, data) => coFetchJSON.patch(
+export const k8sPatch = (kind, resource, data) => coFetchJSON.patch(
   resourceURL(kind, {ns: resource.metadata.namespace, name: resource.metadata.name}),
   data
 );
 
-export const kill = (kind, resource, opts) => coFetchJSON.delete(
+export const k8sKill = (kind, resource, opts) => coFetchJSON.delete(
   resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts))
 );

@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {k8sKinds} from '../../module/k8s/enum';
+import {k8sPatch} from '../../module/k8s/resource';
 import {LoadingInline} from '../utils';
-import {angulars} from '../react-wrapper';
 import {states} from './channel-operator';
 
 export class DetailStatus extends React.Component {
@@ -34,7 +34,7 @@ export class DetailStatus extends React.Component {
     }
 
     const patch = [{ op: 'replace', path: `/${field}`, value: value }];
-    angulars.k8s.resource.patch(k8skind, resource, patch)
+    k8sPatch(k8skind, resource, patch)
       .catch((error) => {
         this.setState({
           outdated: false

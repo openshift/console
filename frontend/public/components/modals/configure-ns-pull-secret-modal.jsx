@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { k8sKinds } from '../../module/k8s/enum';
+import { k8sPatch } from '../../module/k8s/resource';
 import { angulars } from '../react-wrapper';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, ResourceIcon } from '../utils';
@@ -144,7 +145,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         path: `/data/${CONST.PULL_SECRET_DATA}`,
         value: secretData
       }];
-      promise =  angulars.k8s.resource.patch(k8sKinds.SECRET, pullSecret, patch);
+      promise = k8sPatch(k8sKinds.SECRET, pullSecret, patch);
     } else {
       const data = {};
       data[CONST.PULL_SECRET_DATA] = secretData;

@@ -8,7 +8,7 @@ import * as k8sNodes from './node';
 import * as k8sPods from './pods';
 import * as k8sReplicaSets from './replicasets';
 import * as k8sReplicationControllers from './replicationcontrollers';
-import * as k8sResource from './resource';
+import {k8sCreate, k8sGet, k8sKill, k8sList, k8sPatch, k8sUpdate, resourceURL2} from './resource';
 import * as k8sServices from './services';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
@@ -39,26 +39,24 @@ angular.module('k8s')
 .service('k8s', function(_, $rootScope) {
   'use strict';
 
-  this.resource = k8sResource;
-
   const addDefaults = (k8sObject, kind) => {
     return _.assign({
-      list: _.partial(k8sResource.list, kind),
-      get: _.partial(k8sResource.get, kind),
-      delete: _.partial(k8sResource.kill, kind),
+      list: _.partial(k8sList, kind),
+      get: _.partial(k8sGet, kind),
+      delete: _.partial(k8sKill, kind),
       create: function(obj) {
         k8sObject.clean && k8sObject.clean(obj);
-        return k8sResource.create(kind, obj);
+        return k8sCreate(kind, obj);
       },
       update: function(obj) {
         k8sObject.clean && k8sObject.clean(obj);
-        return k8sResource.update(kind, obj);
+        return k8sUpdate(kind, obj);
       },
       patch: function (obj, payload) {
-        return k8sResource.patch(kind, obj, payload);
+        return k8sPatch(kind, obj, payload);
       },
       watch: query => {
-        const path = k8sResource.resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
+        const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
 
         const opts = {
           scope: $rootScope,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { angulars } from '../react-wrapper';
+import { k8sPatch } from '../../module/k8s/resource';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, NumberSpinner } from '../utils';
 
@@ -43,7 +43,7 @@ class ConfigureCountModal extends PromiseComponent {
 
     this._invalidateState(true);
     this._setRequestPromise(
-      angulars.k8s.resource.patch(this.props.resourceKind, this.props.resource, patch)
+      k8sPatch(this.props.resourceKind, this.props.resource, patch)
     )
       .then(this.props.close)
       .catch((error) => {

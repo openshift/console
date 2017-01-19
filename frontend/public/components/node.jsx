@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {isNodeReady} from '../module/k8s/node';
+import {k8sPatch} from '../module/k8s/resource';
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
@@ -9,7 +10,7 @@ import {configureUnschedulableModal} from './modals';
 
 const makeNodeScheduable = (resourceKind, resource) => {
   const patch = [{ op: 'replace', path: '/spec/unschedulable', value: false }];
-  angulars.k8s.resource.patch(resourceKind, resource, patch).catch((error) => {
+  k8sPatch(resourceKind, resource, patch).catch((error) => {
     throw error;
   });
 };
