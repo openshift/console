@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect as reactReduxConnect, Provider} from 'react-redux';
 
-import {k8sKinds} from '../../module/k8s/enum';
+import {k8sKinds} from '../../module/k8s';
 import {angulars} from '../react-wrapper';
 import {inject} from './index';
 

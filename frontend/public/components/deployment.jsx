@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
-import {k8sKinds} from '../module/k8s/enum';
+import {k8sKinds} from '../module/k8s';
 import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
 import {configureReplicaCountModal} from './modals';

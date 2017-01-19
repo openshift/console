@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { k8sKinds } from '../../module/k8s/enum';
-import { k8sPatch } from '../../module/k8s/resource';
+import { k8sKinds, k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
 

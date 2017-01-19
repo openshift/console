@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {getQN} from '../../module/k8s/k8s';
+import {getQN} from '../../module/k8s';
 import {ResourceIcon, LabelList, Timestamp} from '../utils';
 import {register} from '../react-wrapper';
 import {makeList, TwoColumns} from '../factory';

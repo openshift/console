@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {k8sEnum} from '../../module/k8s/enum';
+import {k8sEnum} from '../../module/k8s';
 
 export const VolumeIcon = ({kind}) => {
   const kinds = k8sEnum.VolumeSource;

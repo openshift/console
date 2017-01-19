@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {k8sKinds} from '../../module/k8s/enum';
+import {k8sKinds} from '../../module/k8s';
 import {Cog, ResourceIcon} from '../utils';
 import {confirmModal} from '../modals';
 import {angulars} from '../react-wrapper';

@@ -1,6 +1,5 @@
 import {CONST} from '../../../const';
-import {k8sKinds} from '../../../module/k8s/enum';
-import {k8sPatch} from '../../../module/k8s/resource';
+import {k8sKinds, k8sPatch} from '../../../module/k8s';
 
 angular.module('bridge.page')
   .controller('NamespaceQuayPullSecretCtrl', function NamespaceQuayPullSecretCtrl(

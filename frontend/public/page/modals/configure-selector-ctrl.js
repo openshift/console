@@ -1,4 +1,4 @@
-import {k8sPatch} from '../../module/k8s/resource';
+import {k8sPatch} from '../../module/k8s';
 
 angular.module('bridge.page')
 .controller('ConfigureSelectorCtrl', function(_, $scope, $uibModalInstance, $controller, $rootScope,

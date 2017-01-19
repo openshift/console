@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 import ReactChart from './react-chart';
 import { register } from '../react-wrapper';
 import { Loading, units } from '../utils';
-import { discoverService } from '../../module/k8s/discover-service';
+import { discoverService } from '../../module/k8s';
 import { coFetch, coFetchJSON, coFetchUtils } from '../../co-fetch';
 import { SafetyFirst } from '../safety-first';
 

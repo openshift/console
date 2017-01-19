@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { k8sKinds } from '../module/k8s/enum';
-import { resourceURL } from '../module/k8s/resource';
+import { k8sKinds, resourceURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { Dropdown, LoadingInline, LogWindow, ResourceIcon, TogglePlay, lineBuffer, stream } from './utils';
 

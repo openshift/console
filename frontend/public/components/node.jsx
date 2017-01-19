@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {isNodeReady} from '../module/k8s/node';
-import {k8sPatch} from '../module/k8s/resource';
+import {k8sPatch, isNodeReady} from '../module/k8s';
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';

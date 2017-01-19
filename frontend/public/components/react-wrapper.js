@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {k8sEnum} from '../module/k8s/enum';
+import {k8sEnum} from '../module/k8s';
 
 export const angulars = {
   store: null,

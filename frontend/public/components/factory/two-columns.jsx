@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import {getQN} from '../../module/k8s/k8s';
+import {getQN} from '../../module/k8s';
 import {angulars} from '../react-wrapper';
 import {injectChild, WithQuery} from '../utils';
 

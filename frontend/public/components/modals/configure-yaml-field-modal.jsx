@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {k8sCreate, k8sGet, k8sPatch} from '../../module/k8s/resource';
+import {k8sCreate, k8sGet, k8sPatch} from '../../module/k8s';
 import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
 import {LoadingInline, PromiseComponent, kindObj} from '../utils';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { k8sEnum } from '../../module/k8s/enum';
+import { k8sEnum } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { RadioInput } from './_radio';
 

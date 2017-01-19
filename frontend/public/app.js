@@ -6,7 +6,7 @@ import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
 import {tectonicVersion} from './module/status';
-import {k8sBasePath} from './module/k8s/k8s';
+import {k8sBasePath} from './module/k8s';
 import k8sReducers from './module/k8s/k8s-reducers';
 import {actions as UIActions, registerNamespaceFriendlyPrefix} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';

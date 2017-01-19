@@ -2,9 +2,8 @@ import React from 'react';
 import fuzzy from 'fuzzysearch';
 import {Provider} from 'react-redux';
 
-import {getQN} from '../../module/k8s/k8s';
+import {getQN, isNodeReady} from '../../module/k8s';
 import actions from '../../module/k8s/k8s-actions';
-import {isNodeReady} from '../../module/k8s/node';
 import {Firehose, podPhase, StatusBox} from '../utils';
 import {angulars, register} from '../react-wrapper';
 

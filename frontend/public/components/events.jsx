@@ -2,8 +2,7 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import {watchURL} from '../module/k8s/resource';
-import {k8sKinds} from '../module/k8s/enum';
+import {k8sKinds, watchURL} from '../module/k8s';
 import {register} from './react-wrapper';
 import {Dropdown, ResourceLink, Box, Loading, Timestamp, TogglePlay, pluralize} from './utils';
 

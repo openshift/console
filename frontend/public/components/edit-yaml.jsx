@@ -2,7 +2,7 @@ import React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
-import { k8sCreate, k8sUpdate } from '../module/k8s/resource';
+import { k8sCreate, k8sUpdate } from '../module/k8s';
 import { angulars } from './react-wrapper';
 import { kindObj, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';

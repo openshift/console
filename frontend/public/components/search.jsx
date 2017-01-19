@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {k8sKinds} from '../module/k8s/enum';
+import {k8sKinds} from '../module/k8s';
 import {angulars, register} from './react-wrapper';
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';

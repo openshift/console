@@ -1,4 +1,4 @@
-import {k8sEnum} from '../../module/k8s/enum';
+import {k8sEnum} from '../../module/k8s';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')

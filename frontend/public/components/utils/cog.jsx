@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import classNames from 'classnames';
 
-import {k8sKinds} from '../../module/k8s/enum';
+import {k8sKinds} from '../../module/k8s';
 import {util} from '../../module/k8s/util';
 import {angulars} from '../react-wrapper';
 import {confirmModal, configureReplicaCountModal} from '../modals';
