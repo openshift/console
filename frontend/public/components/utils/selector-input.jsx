@@ -2,7 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import TagsInput from 'react-tagsinput';
 
-import {angulars, register} from '../react-wrapper';
+import {register} from '../react-wrapper';
+
+import * as k8sSelector from '../../module/k8s/selector';
+import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
 
 export class SelectorInput extends React.Component {
   constructor(props) {
@@ -25,7 +28,7 @@ export class SelectorInput extends React.Component {
   }
 
   isTagValid (tag) {
-    const requirement = angulars.k8s.selectorRequirement.fromString(tag);
+    const requirement = k8sSelectorRequirement.fromString(tag);
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
   }
 
@@ -45,9 +48,8 @@ export class SelectorInput extends React.Component {
     }
 
     // Helpers for cleaning up tags by running them through the selector parser
-    const s = angulars.k8s.selector;
-    const cleanSelectorStr = (tag) => s.toString(s.fromString(tag));
-    const cleanTags = (tags) => s.split(cleanSelectorStr(tags.join(',')));
+    const cleanSelectorStr = (tag) => k8sSelector.toString(k8sSelector.fromString(tag));
+    const cleanTags = (tags) => k8sSelector.split(cleanSelectorStr(tags.join(',')));
 
     // Clean up the new tag by running it through the selector parser
     const cleanNewTag = cleanSelectorStr(newTag);

@@ -2,7 +2,8 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import {angulars, register} from './react-wrapper';
+import {k8sKinds, watchURL} from '../module/k8s';
+import {register} from './react-wrapper';
 import {Dropdown, ResourceLink, Box, Loading, Timestamp, TogglePlay, pluralize} from './utils';
 
 import {wsFactory} from '../module/ws-factory';
@@ -135,7 +136,7 @@ export class EventStream extends React.Component {
     this.ws = wsFactory('sysevents', {
       host: 'auto',
       reconnect: true,
-      path: angulars.k8s.resource.watchURL(angulars.kinds.EVENT, params),
+      path: watchURL(k8sKinds.EVENT, params),
       jsonParse: true,
       bufferEnabled: true,
       bufferFlushInterval: flushInterval,

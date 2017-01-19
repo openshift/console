@@ -1,30 +1,24 @@
 import './_module';
 
-import {coFetchJSON} from '../../co-fetch';
 import {wsFactory} from '../ws-factory';
-import {k8sEnum} from './enum';
+import {k8sKinds} from './enum';
 
-import * as k8sCommand from './command';
 import * as k8sDeployments from './deployments';
-import * as k8sDocker from './docker';
-import * as k8sLabels from './labels';
 import * as k8sNodes from './node';
 import * as k8sPods from './pods';
-import * as k8sProbe from './probe';
 import * as k8sReplicaSets from './replicasets';
 import * as k8sReplicationControllers from './replicationcontrollers';
-import * as k8sResource from './resource';
-import * as k8sSelector from './selector';
-import * as k8sSelectorRequirement from './selector-requirement';
+import {k8sCreate, k8sGet, k8sKill, k8sList, k8sPatch, k8sUpdate, resourceURL2} from './resource';
 import * as k8sServices from './services';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
-const basePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
+export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
+
 const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
 
-export const getKubernetesAPIPath = kind => {
-  let p = basePath;
+export const getK8sAPIPath = kind => {
+  let p = k8sBasePath;
 
   if (kind.isExtension) {
     p += '/apis/extensions/';
@@ -42,37 +36,27 @@ export const getKubernetesAPIPath = kind => {
 
 
 angular.module('k8s')
-.service('k8s', function(_, $timeout, $rootScope) {
+.service('k8s', function(_, $rootScope) {
   'use strict';
-  this.getQN = getQN;
-  this.probe = k8sProbe;
-  this.selector = k8sSelector;
-  this.selectorRequirement = k8sSelectorRequirement;
-  this.labels = k8sLabels;
-  this.enum = k8sEnum;
-  this.docker = k8sDocker;
-  this.resource = k8sResource;
-  this.search = k8sResource.list;
-  this.command = k8sCommand;
 
   const addDefaults = (k8sObject, kind) => {
     return _.assign({
-      list: _.partial(k8sResource.list, kind),
-      get: _.partial(k8sResource.get, kind),
-      delete: _.partial(k8sResource.kill, kind),
+      list: _.partial(k8sList, kind),
+      get: _.partial(k8sGet, kind),
+      delete: _.partial(k8sKill, kind),
       create: function(obj) {
         k8sObject.clean && k8sObject.clean(obj);
-        return k8sResource.create(kind, obj);
+        return k8sCreate(kind, obj);
       },
       update: function(obj) {
         k8sObject.clean && k8sObject.clean(obj);
-        return k8sResource.update(kind, obj);
+        return k8sUpdate(kind, obj);
       },
       patch: function (obj, payload) {
-        return k8sResource.patch(kind, obj, payload);
+        return k8sPatch(kind, obj, payload);
       },
       watch: query => {
-        const path = k8sResource.resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
+        const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
 
         const opts = {
           scope: $rootScope,
@@ -90,35 +74,30 @@ angular.module('k8s')
     }, k8sObject);
   };
 
-  this.kinds = k8sEnum.Kind;
-  this.configmaps = addDefaults({}, k8sEnum.Kind.CONFIGMAP);
-  this.nodes = addDefaults(k8sNodes, k8sEnum.Kind.NODE);
-  this.services = addDefaults(k8sServices, k8sEnum.Kind.SERVICE);
-  this.pods = addDefaults(k8sPods, k8sEnum.Kind.POD);
-  this.containers = addDefaults({}, k8sEnum.Kind.CONTAINER);
-  this.replicationcontrollers = addDefaults(k8sReplicationControllers, k8sEnum.Kind.REPLICATIONCONTROLLER);
-  this.replicasets = addDefaults(k8sReplicaSets, k8sEnum.Kind.REPLICASET);
-  this.deployments = addDefaults(k8sDeployments, k8sEnum.Kind.DEPLOYMENT);
-  this.jobs = addDefaults({}, k8sEnum.Kind.JOB);
-  this.daemonsets = addDefaults({}, k8sEnum.Kind.DAEMONSET);
-  this.horizontalpodautoscalers = addDefaults({}, k8sEnum.Kind.HORIZONTALPODAUTOSCALER);
-  this.serviceaccounts = addDefaults({}, k8sEnum.Kind.SERVICEACCOUNT);
-  this.secrets = addDefaults({}, k8sEnum.Kind.SECRET);
-  this.ingresses = addDefaults({}, k8sEnum.Kind.INGRESS);
+  this.configmaps = addDefaults({}, k8sKinds.CONFIGMAP);
+  this.nodes = addDefaults(k8sNodes, k8sKinds.NODE);
+  this.services = addDefaults(k8sServices, k8sKinds.SERVICE);
+  this.pods = addDefaults(k8sPods, k8sKinds.POD);
+  this.containers = addDefaults({}, k8sKinds.CONTAINER);
+  this.replicationcontrollers = addDefaults(k8sReplicationControllers, k8sKinds.REPLICATIONCONTROLLER);
+  this.replicasets = addDefaults(k8sReplicaSets, k8sKinds.REPLICASET);
+  this.deployments = addDefaults(k8sDeployments, k8sKinds.DEPLOYMENT);
+  this.jobs = addDefaults({}, k8sKinds.JOB);
+  this.daemonsets = addDefaults({}, k8sKinds.DAEMONSET);
+  this.horizontalpodautoscalers = addDefaults({}, k8sKinds.HORIZONTALPODAUTOSCALER);
+  this.serviceaccounts = addDefaults({}, k8sKinds.SERVICEACCOUNT);
+  this.secrets = addDefaults({}, k8sKinds.SECRET);
+  this.ingresses = addDefaults({}, k8sKinds.INGRESS);
 
-  this.componentstatuses = addDefaults({}, k8sEnum.Kind.COMPONENTSTATUS);
-  this.namespaces = addDefaults({}, k8sEnum.Kind.NAMESPACE);
+  this.componentstatuses = addDefaults({}, k8sKinds.COMPONENTSTATUS);
+  this.namespaces = addDefaults({}, k8sKinds.NAMESPACE);
 
-  this.clusterrolebindings = addDefaults({}, k8sEnum.Kind.CLUSTERROLEBINDING);
-  this.clusterroles = addDefaults({}, k8sEnum.Kind.CLUSTERROLE);
-  this.rolebindings = addDefaults({}, k8sEnum.Kind.ROLEBINDING);
-  this.roles = addDefaults({}, k8sEnum.Kind.ROLE);
+  this.clusterrolebindings = addDefaults({}, k8sKinds.CLUSTERROLEBINDING);
+  this.clusterroles = addDefaults({}, k8sKinds.CLUSTERROLE);
+  this.rolebindings = addDefaults({}, k8sKinds.ROLEBINDING);
+  this.roles = addDefaults({}, k8sKinds.ROLE);
 
-  this.tectonicversions = addDefaults({}, k8sEnum.Kind.TECTONICVERSION);
-  this.channeloperatorconfigs = addDefaults({}, k8sEnum.Kind.CHANNELOPERATORCONFIG);
-  this.appversions = addDefaults({}, k8sEnum.Kind.APPVERSION);
-  this.basePath = basePath;
-
-  this.health = () => coFetchJSON(basePath);
-  this.version = () => coFetchJSON(`${basePath}/version`);
+  this.tectonicversions = addDefaults({}, k8sKinds.TECTONICVERSION);
+  this.channeloperatorconfigs = addDefaults({}, k8sKinds.CHANNELOPERATORCONFIG);
+  this.appversions = addDefaults({}, k8sKinds.APPVERSION);
 });

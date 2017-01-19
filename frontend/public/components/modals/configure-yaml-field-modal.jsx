@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {angulars} from '../react-wrapper';
+import {k8sCreate, k8sGet, k8sPatch} from '../../module/k8s';
 import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
 import {LoadingInline, PromiseComponent, kindObj} from '../utils';
 
@@ -39,7 +39,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
 
   _loadResource() {
     this.setState({ resourceLoading: true });
-    angulars.k8s.resource.get(this._kindObj(), this.props.k8sQuery.name, this.props.k8sQuery.namespace)
+    k8sGet(this._kindObj(), this.props.k8sQuery.name, this.props.k8sQuery.namespace)
       .then((resource) => {
         if (!this._isMounted) {
           return;
@@ -91,11 +91,11 @@ class ConfigureYamlFieldModal extends PromiseComponent {
           }
         };
         _.set(newResource, this.props.path, value);
-        this._setRequestPromise(angulars.k8s.resource.create(this._kindObj(), newResource));
+        this._setRequestPromise(k8sCreate(this._kindObj(), newResource));
       } else {
         const patchPath = `/${this.props.path.replace('.', '/')}`;
         const patch = [{ op: 'replace', path: patchPath, value: value }];
-        this._setRequestPromise(angulars.k8s.resource.patch(this._kindObj(), this.state.resource, patch));
+        this._setRequestPromise(k8sPatch(this._kindObj(), this.state.resource, patch));
       }
       this.requestPromise.then((result) => {
         this.props.close(result);

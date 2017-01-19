@@ -1,7 +1,8 @@
 import React from 'react';
 
+import {getQN} from '../../module/k8s';
 import {ResourceIcon, LabelList, Timestamp} from '../utils';
-import {register, angulars} from '../react-wrapper';
+import {register} from '../react-wrapper';
 import {makeList, TwoColumns} from '../factory';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -35,7 +36,6 @@ const Subject = ({subject}) => <div className="row">
 const RoleRef = ({parentNamespace, namespace, name, kind}) => {
   kind = kind.toLowerCase();
 
-  const {k8s: {getQN}} = angulars;
   const qnNamespace = kind !== 'clusterrole' && (namespace || parentNamespace);
   const qualifiedName = getQN({metadata: {namespace: qnNamespace, name}});
 

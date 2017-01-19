@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {angulars} from '../react-wrapper';
+import {k8sEnum} from '../../module/k8s';
 
 export const VolumeIcon = ({kind}) => {
-  const kinds = angulars.k8s.enum.VolumeSource;
+  const kinds = k8sEnum.VolumeSource;
 
   const faClasses = _.fromPairs([
     [kinds.emptyDir.id, 'fa-folder-open-o'],

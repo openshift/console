@@ -1,12 +1,13 @@
 import { EVENTS } from '../../../const';
 import { configurePortsModal, configurePrimaryCommandModal, configurePullPolicyModal } from '../../../components/modals';
+import { getPullPolicyLabel } from '../../k8s/docker';
 
 angular.module('bridge.ui')
 
 /**
  * single-container input directive form.
  */
-.directive('coContainerInput', function(_, k8s) {
+.directive('coContainerInput', function(_) {
 
   'use strict';
 
@@ -69,7 +70,7 @@ angular.module('bridge.ui')
         $scope.container.imagePullPolicy = imagePullPolicy;
       });
 
-      $scope.getPullPolicyLabel = k8s.docker.getPullPolicyLabel;
+      $scope.getPullPolicyLabel = getPullPolicyLabel;
 
       $scope.getCommandLabel = function() {
         if (_.isEmpty($scope.container.command)) {

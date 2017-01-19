@@ -5,9 +5,9 @@ describe('k8sDocker', function() {
 
   beforeEach(module('k8s'));
 
-  describe('#getStatus', function() {
+  describe('#getContainerStatus', function() {
     it('returns falsy when pod has no container status with given name', function () {
-      expect(k8sDocker.getStatus(
+      expect(k8sDocker.getContainerStatus(
         // pod
         {
           status: {
@@ -25,7 +25,7 @@ describe('k8sDocker', function() {
     });
 
     it('returns container status with given name', function () {
-      expect(k8sDocker.getStatus(
+      expect(k8sDocker.getContainerStatus(
         // pod
         {
           status: {

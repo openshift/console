@@ -1,7 +1,7 @@
 import React from 'react';
 
+import {k8sKinds} from '../module/k8s';
 import {angulars, register} from './react-wrapper';
-
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';
 import {DeploymentsList} from './deployment';
@@ -19,23 +19,25 @@ import {IngressList} from './ingress';
 import {getActiveNamespace} from '../ui/ui-actions';
 import {connect, Dropdown, kindObj, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
+import * as k8sSelector from '../module/k8s/selector';
+import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
+
 const ResourceListDropdown = ({selected, onChange}) => {
-  const ks = angulars.k8s.enum.Kind;
   const kinds = _.fromPairs(_.map([
-    ks.DEPLOYMENT,
-    ks.SERVICE,
-    ks.JOB,
-    ks.REPLICASET,
-    ks.DAEMONSET,
-    ks.REPLICATIONCONTROLLER,
-    ks.HORIZONTALPODAUTOSCALER,
-    ks.POD,
-    ks.SERVICEACCOUNT,
-    ks.CONFIGMAP,
-    ks.SECRET,
-    ks.NAMESPACE,
-    ks.NODE,
-    ks.INGRESS
+    k8sKinds.DEPLOYMENT,
+    k8sKinds.SERVICE,
+    k8sKinds.JOB,
+    k8sKinds.REPLICASET,
+    k8sKinds.DAEMONSET,
+    k8sKinds.REPLICATIONCONTROLLER,
+    k8sKinds.HORIZONTALPODAUTOSCALER,
+    k8sKinds.POD,
+    k8sKinds.SERVICEACCOUNT,
+    k8sKinds.CONFIGMAP,
+    k8sKinds.SECRET,
+    k8sKinds.NAMESPACE,
+    k8sKinds.NODE,
+    k8sKinds.INGRESS
   ], k => [k.id, <span><div className="co-type-selector__icon-wrapper"><ResourceIcon kind={k.id} /></div>{k.labelPlural}</span>]));
 
   return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
@@ -74,7 +76,7 @@ export class SearchPage extends React.Component {
 
     this.state = {
       kind: kind,
-      tags: angulars.k8s.selector.split(_.isString(angulars.routeParams.q) ? angulars.routeParams.q : ''),
+      tags: k8sSelector.split(_.isString(angulars.routeParams.q) ? angulars.routeParams.q : ''),
     };
   }
 
@@ -95,8 +97,8 @@ export class SearchPage extends React.Component {
 
   render () {
     const {kind, tags} = this.state;
-    const validTags = _.reject(tags, tag => angulars.k8s.selectorRequirement.fromString(tag) === undefined);
-    const selector = angulars.k8s.selector.fromString(validTags.join(','));
+    const validTags = _.reject(tags, tag => k8sSelectorRequirement.fromString(tag) === undefined);
+    const selector = k8sSelector.fromString(validTags.join(','));
 
     return <div className="co-p-search">
       <NavTitle title="Search" />

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { angulars } from '../react-wrapper';
+import { k8sKinds, k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
 
@@ -20,7 +20,7 @@ class ConfigureHPATargetsModal extends PromiseComponent {
     }];
 
     this._setRequestPromise(
-      angulars.k8s.resource.patch(angulars.kinds.HORIZONTALPODAUTOSCALER, this.props.resource, patch)
+      k8sPatch(k8sKinds.HORIZONTALPODAUTOSCALER, this.props.resource, patch)
     ).then(this.props.close);
   }
 

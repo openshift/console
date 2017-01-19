@@ -3,8 +3,8 @@ import {util} from './util';
 
 // Parses the state from k8s container info field of a pod.
 // Returned object will always have a 'label' property,
-// but existance of other properties vary depending on the state.
-export const getState = function(containerStatus) {
+// but existence of other properties vary depending on the state.
+export const getContainerState = function(containerStatus) {
   var keys, stateKey, state;
   state = {
     label: 'Unknown',
@@ -24,7 +24,7 @@ export const getState = function(containerStatus) {
   return state;
 };
 
-export const getStatus = function(pod, containerName) {
+export const getContainerStatus = function(pod, containerName) {
   const statuses = _.get(pod, 'status.containerStatuses', []);
   return _.find(statuses, {name: containerName});
 };
@@ -114,4 +114,4 @@ const getPullPolicy = container => _.find(k8sEnum.PullPolicy, {id: _.get(contain
 
 export const getPullPolicyLabel = container => _.get(getPullPolicy(container), 'label', '');
 
-window.tectonicTesting && (window.tectonicTesting.k8sDocker = {getStatus, isEnvVarEmpty, isVolumeMountEmpty, isPortEmpty});
+window.tectonicTesting && (window.tectonicTesting.k8sDocker = {getContainerStatus, isEnvVarEmpty, isVolumeMountEmpty, isPortEmpty});

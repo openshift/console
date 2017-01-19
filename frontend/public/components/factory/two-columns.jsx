@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
+import {getQN} from '../../module/k8s';
 import {angulars} from '../react-wrapper';
 import {injectChild, WithQuery} from '../utils';
 
@@ -11,7 +12,6 @@ const DetailsColumn = (props) => {
     return <div>{children}</div>;
   }
 
-  const {k8s: {getQN}} = angulars;
   const object = _.find(data, o => getQN(o) === selected);
 
   if (!object) {
@@ -67,7 +67,6 @@ TwoColumns.RowWrapper = ({obj, onClick, isActive, children}) => {
   const klass = classnames('row co-m-facet-menu-option', {'co-m-facet-option--active': isActive});
 
   const _onClick = () => {
-    const {k8s: {getQN}} = angulars;
     const qualifiedName = getQN(obj);
     angulars.$location.hash(qualifiedName);
     onClick(qualifiedName);

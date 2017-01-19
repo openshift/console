@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
+import * as k8sProbe from '../module/k8s/probe';
 import {angulars, register} from './react-wrapper';
 import {ReactiveDetails} from './factory';
 import {Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
@@ -11,11 +13,11 @@ const getResourceLimitValue = container => {
 };
 
 const Lifecycle = ({lifecycle}) => {
-  const fields = lifecycle && angulars.k8s.probe.mapLifecycleConfigToFields(lifecycle);
+  const fields = lifecycle && k8sProbe.mapLifecycleConfigToFields(lifecycle);
   const postStart = _.get(fields, 'postStart.cmd');
   const preStop = _.get(fields, 'preStop.cmd');
 
-  const label = stage => lifecycle && angulars.k8s.probe.getLifecycleHookLabel(lifecycle, stage);
+  const label = stage => lifecycle && k8sProbe.getLifecycleHookLabel(lifecycle, stage);
   return <div>
     {postStart && <div><span>PostStart: {label('postStart')}</span> <code>{postStart}</code></div>}
     {preStop && <div><span>PreStop: {label('preStop')}</span> <code>{preStop}</code></div>}
@@ -24,8 +26,8 @@ const Lifecycle = ({lifecycle}) => {
 };
 
 const Liveness = ({liveness}) => {
-  const label = liveness && angulars.k8s.probe.getActionLabelFromObject(liveness);
-  const value = liveness && _.get(angulars.k8s.probe.mapLivenessProbeToFields(liveness), 'cmd');
+  const label = liveness && k8sProbe.getActionLabelFromObject(liveness);
+  const value = liveness && _.get(k8sProbe.mapLivenessProbeToFields(liveness), 'cmd');
   return value ? <span>{label} <code>{value}</code></span> : <span>-</span>;
 };
 
@@ -114,8 +116,8 @@ const Details = (props) => {
     return null;
   }
 
-  const status = angulars.k8s.docker.getStatus(props, container.name);
-  const state = angulars.k8s.docker.getState(status);
+  const status = getContainerStatus(props, container.name);
+  const state = getContainerState(status);
 
   // Split image string into the Docker image string and tag (aka version) portions. The tag defaults to 'latest'.
   const [containerImage, containerTag] = container.image ? container.image.split(':') : [null, 'latest'];
@@ -157,7 +159,7 @@ const Details = (props) => {
             <dt>Args</dt>
             <dd>{container.args ? <pre><code>{container.args.join(' ')}</code></pre> : <span>-</span>}</dd>
             <dt>Pull Policy</dt>
-            <dd>{angulars.k8s.docker.getPullPolicyLabel(container)}</dd>
+            <dd>{getPullPolicyLabel(container)}</dd>
           </dl>
         </div>
 

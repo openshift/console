@@ -1,7 +1,7 @@
 import React from 'react';
 
+import {k8sKinds, k8sPatch} from '../../module/k8s';
 import {LoadingInline} from '../utils';
-import {angulars} from '../react-wrapper';
 import {states} from './channel-operator';
 
 export class DetailStatus extends React.Component {
@@ -25,15 +25,15 @@ export class DetailStatus extends React.Component {
 
     let k8skind, resource;
     if (kind === 'config') {
-      k8skind = angulars.k8s.enum.Kind.CHANNELOPERATORCONFIG;
+      k8skind = k8sKinds.CHANNELOPERATORCONFIG;
       resource = this.props.config;
     } else if (kind === 'app-version') {
-      k8skind = angulars.k8s.enum.Kind.APPVERSION;
+      k8skind = k8sKinds.APPVERSION;
       resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-cluster' } };
     }
 
     const patch = [{ op: 'replace', path: `/${field}`, value: value }];
-    angulars.k8s.resource.patch(k8skind, resource, patch)
+    k8sPatch(k8skind, resource, patch)
       .catch((error) => {
         this.setState({
           outdated: false

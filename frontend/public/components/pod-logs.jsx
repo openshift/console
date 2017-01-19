@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { angulars } from './react-wrapper';
+import { k8sKinds, resourceURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { Dropdown, LoadingInline, LogWindow, ResourceIcon, TogglePlay, lineBuffer, stream } from './utils';
 
@@ -62,7 +62,7 @@ export class PodLogs extends SafetyFirst {
   }
 
   _logURL(props, currentContainer) {
-    return angulars.k8s.resource.resourceURL(angulars.k8s.enum.Kind.POD, {
+    return resourceURL(k8sKinds.POD, {
       ns: _.get(props, 'metadata.namespace'),
       name: _.get(props, 'metadata.name'),
       path: 'log',

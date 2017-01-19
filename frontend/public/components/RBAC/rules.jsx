@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {k8sKinds} from '../../module/k8s';
 import {Cog, ResourceIcon} from '../utils';
 import {confirmModal} from '../modals';
 import {angulars} from '../react-wrapper';
@@ -75,7 +76,7 @@ const Resources = ({resources, nonResourceURLs}) => {
       return false;
     }
     const base = r.split('/')[0];
-    const kind = _.find(angulars.kinds, k => k.plural === base);
+    const kind = _.find(k8sKinds, k => k.plural === base);
 
     allResources.push(<span key={r} className="rbac-rule-resource rbac-rule-row">
       <ResourceIcon kind={kind ? kind.id : r} /> {r}

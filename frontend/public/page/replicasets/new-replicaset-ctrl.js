@@ -1,10 +1,11 @@
+import {k8sEnum} from '../../module/k8s';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
 .controller('NewReplicaSetCtrl', function(_, $scope, $location, $routeParams, k8s) {
   'use strict';
 
-  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns || k8sEnum.DefaultNS;
   $scope.rs = k8s.replicasets.getEmpty($scope.ns);
   $scope.podTemplate = $scope.rs.spec.template;
 

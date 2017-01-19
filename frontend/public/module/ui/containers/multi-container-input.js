@@ -1,11 +1,12 @@
 import {EVENTS} from '../../../const';
+import {getEmptyContainer} from '../../k8s/docker';
 
 angular.module('bridge.ui')
 
 /**
  * multi-container input directive form.
  */
-.directive('coMultiContainerInput', function(_, arraySvc, k8s) {
+.directive('coMultiContainerInput', function(_, arraySvc) {
 
   'use strict';
 
@@ -25,14 +26,14 @@ angular.module('bridge.ui')
 
       $scope.removeContainer = function(c) {
         if ($scope.containers.length === 1) {
-          $scope.containers = [k8s.docker.getEmptyContainer()];
+          $scope.containers = [getEmptyContainer()];
         } else {
           arraySvc.remove($scope.containers, c);
         }
       };
 
       $scope.addContainer = function() {
-        $scope.containers.push(k8s.docker.getEmptyContainer());
+        $scope.containers.push(getEmptyContainer());
       };
 
       $scope.$watch('pod', function(p) {
@@ -40,7 +41,7 @@ angular.module('bridge.ui')
           return;
         }
         if (_.isEmpty(p.spec.containers)) {
-          p.spec.containers = [k8s.docker.getEmptyContainer()];
+          p.spec.containers = [getEmptyContainer()];
         }
         // shorter alias
         $scope.containers = p.spec.containers;

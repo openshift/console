@@ -1,10 +1,11 @@
+import {k8sEnum} from '../../module/k8s';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
 .controller('EditDeploymentCtrl', function($scope, $location, $routeParams, _, k8s, ModalLauncherSvc) {
   'use strict';
 
-  $scope.ns = $routeParams.ns || k8s.enum.DefaultNS;
+  $scope.ns = $routeParams.ns || k8sEnum.DefaultNS;
   $scope.deploymentName = $routeParams.name;
   $scope.loadError = false;
   $scope.loaded = false;

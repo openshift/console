@@ -377,3 +377,6 @@ export const k8sEnum = {
   },
 
 };
+
+// Shortcut because this is used so often
+export const k8sKinds = k8sEnum.Kind;

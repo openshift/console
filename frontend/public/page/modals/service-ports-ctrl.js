@@ -1,3 +1,5 @@
+import {k8sPatch} from '../../module/k8s';
+
 angular.module('bridge.page')
 .controller('ServicePortsCtrl', function(_, $scope, $rootScope, $controller,
       $uibModalInstance, k8s, kind, resource) {
@@ -21,7 +23,7 @@ angular.module('bridge.page')
       protocol: 'TCP',
     }];
     patch = [{ op: 'replace', path: '/spec/ports', value: ports }];
-    $scope.requestPromise = k8s.resource.patch(kind, resource, patch);
+    $scope.requestPromise = k8sPatch(kind, resource, patch);
     $scope.requestPromise.then(function(result) {
       $uibModalInstance.close(result);
     });

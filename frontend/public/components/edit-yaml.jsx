@@ -2,6 +2,7 @@ import React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
+import { k8sCreate, k8sUpdate } from '../module/k8s';
 import { angulars } from './react-wrapper';
 import { kindObj, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
@@ -128,10 +129,10 @@ export class EditYAML extends SafetyFirst {
     const { namespace, name } = this.props.metadata;
     const { namespace: newNamespace, name: newName } = obj.metadata;
     this.setState({success: null, error: null}, () => {
-      let action = angulars.k8s.resource.update;
+      let action = k8sUpdate;
       let redirect = false;
       if (newNamespace !== namespace || newName !== name) {
-        action = angulars.k8s.resource.create;
+        action = k8sCreate;
         delete obj.metadata.resourceVersion;
         redirect = true;
       }

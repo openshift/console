@@ -1,10 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import {angulars} from '../react-wrapper';
+import {toRequirements} from '../../module/k8s/selector';
+import {toString} from '../../module/k8s/selector-requirement';
 
 const Requirement = ({requirement, withIcon}) => {
-  const requirementAsString           = angulars.k8s.selectorRequirement.toString(requirement);
+  const requirementAsString           = toString(requirement);
   const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
 
   return (
@@ -22,7 +23,7 @@ const Requirement = ({requirement, withIcon}) => {
 };
 
 export const Selector = ({expand, selector}) => {
-  const requirements = angulars.k8s.selector.toRequirements(selector || {});
+  const requirements = toRequirements(selector || {});
 
   const reqs = _.map(requirements, (requirement, i) => {
     const className = classnames({'co-m-requirement--last': i === requirements.length - 1});

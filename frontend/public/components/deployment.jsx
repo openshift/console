@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
-import {angulars} from './react-wrapper';
+import {k8sKinds} from '../module/k8s';
 import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
 import {configureReplicaCountModal} from './modals';
@@ -35,7 +35,7 @@ export class Details extends SafetyFirst {
   _openReplicaCountModal(event) {
     event.target.blur();
     configureReplicaCountModal({
-      resourceKind: angulars.k8s.kinds.DEPLOYMENT,
+      resourceKind: k8sKinds.DEPLOYMENT,
       resource: this.props,
       invalidateState: (isInvalid) => {
         this.setState({

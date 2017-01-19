@@ -5,6 +5,8 @@ import { reducer as formReducer } from 'redux-form';
 import thunk from 'redux-thunk';
 
 import {analyticsSvc} from './module/analytics';
+import {tectonicVersion} from './module/status';
+import {k8sBasePath} from './module/k8s';
 import k8sReducers from './module/k8s/k8s-reducers';
 import {actions as UIActions, registerNamespaceFriendlyPrefix} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';
@@ -287,17 +289,17 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, k8s, statusSvc, angularBridge) {
+.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, angularBridge) {
   'use strict';
 
   $ngRedux.dispatch(actions.getResources());
   $rootScope.debug = debugSvc;
   angularBridge.expose();
 
-  $ngRedux.dispatch(featureActions.detectK8sFlags(k8s.basePath));
-  $ngRedux.dispatch(featureActions.detectCoreosFlags(`${k8s.basePath}/apis/coreos.com/v1`));
+  $ngRedux.dispatch(featureActions.detectK8sFlags(k8sBasePath));
+  $ngRedux.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/v1`));
 
-  statusSvc.tectonicVersion();
+  tectonicVersion();
 
   $rootScope.$on('$routeChangeSuccess', function() {
     $ngRedux.dispatch(UIActions.setCurrentLocation());

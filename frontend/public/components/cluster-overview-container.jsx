@@ -1,6 +1,8 @@
 import React from 'react';
 
-import {coFetchJSON} from './../co-fetch';
+import {coFetchJSON} from '../co-fetch';
+import {k8sBasePath} from '../module/k8s';
+import {k8sVersion} from '../module/status';
 import {ClusterOverviewPage} from './cluster-overview';
 import {angulars, register} from './react-wrapper';
 import {entitlementTitle} from './license-notifier';
@@ -33,7 +35,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
   _checkTectonicVersion() {
     coFetchJSON('version')
       .then((data) => {
-        const license =  entitlementTitle(data.entitlementKind, data.entitlementCount);
+        const license = entitlementTitle(data.entitlementKind, data.entitlementCount);
         this.setState({ tectonicVersion: data.version, tectonicLicense: license, tectonicVersionObj: data });
       })
       .catch(() => this.setState({ tectonicVersion: 'unknown', tectonicLicense: 'unknown' }));
@@ -46,21 +48,20 @@ export class ClusterOverviewContainer extends SafetyFirst {
   }
 
   _checkKubernetesVersion() {
-    const path = `${angulars.k8s.basePath}/version`;
-    coFetchJSON(path)
+    k8sVersion()
       .then((data) => this.setState({ kubernetesVersion: data.gitVersion }))
       .catch(() => this.setState({ kubernetesVersion: 'unknown' }));
   }
 
   _checkKubernetesHealth() {
-    coFetchJSON(angulars.k8s.basePath)
+    coFetchJSON(k8sBasePath)
       .then(() => this.setState({ kubernetesHealth: 'ok' }))
       .catch(() => this.setState({ kubernetesHealth: 'unknown' }));
   }
 
   _checkCloudProvider() {
     angulars.k8s.nodes.get().then((nodes) => {
-      const providerIDs =  _.filter(_.map(nodes.items, cloudProviderID));
+      const providerIDs = _.filter(_.map(nodes.items, cloudProviderID));
       this.setState({ cloudProviders: providerIDs.length ? _.uniq(providerIDs) : null });
     });
   }
