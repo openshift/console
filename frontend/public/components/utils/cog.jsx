@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import {k8sKinds} from '../../module/k8s';
 import {util} from '../../module/k8s/util';
 import {angulars} from '../react-wrapper';
-import {confirmModal, configureReplicaCountModal} from '../modals';
+import {confirmModal, configureReplicaCountModal, labelsModal} from '../modals';
 import {DropdownMixin} from './dropdown';
 import {kindObj} from './index';
 
@@ -76,9 +76,9 @@ Cog.factory = {
   }),
   ModifyLabels: (kind, obj) => ({
     label: 'Modify Labels...',
-    callback: angulars.modal('configure-labels', {
+    callback: () => labelsModal({
       kind: kind,
-      resource: () => obj,
+      resource: obj,
     }),
   }),
   ModifyPodSelector: (kind, obj) => ({

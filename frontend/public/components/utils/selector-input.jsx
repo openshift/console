@@ -18,6 +18,10 @@ export class SelectorInput extends React.Component {
     };
   }
 
+  static arrayify (obj) {
+    return _.map(obj, (v, k) => `${k}=${v}`);
+  }
+
   static objectify (arr) {
     const result = {};
     _.each(arr, item => {

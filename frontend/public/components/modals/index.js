@@ -16,3 +16,4 @@ export * from './configure-hpa-replicas-modal';
 export * from './configure-hpa-targets-modal';
 export * from './pod-restart-policy.jsx';
 export * from './configure-ns-pull-secret-modal';
+export * from './labels-modal';
