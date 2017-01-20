@@ -122,7 +122,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
         { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
         { this.props.inputType === 'input' && <input value={this.state.value} onChange={this._handleChange} className="form-control" disabled={this.state.resourceLoading} /> }
       </ModalBody>
-      <ModalFooter promise={this.requestPromise} errorFormatter="k8sApi">
+      <ModalFooter promise={this.requestPromise}>
         <button type="submit" className="btn btn-primary" disabled={this.state.resourceLoading}>Save Setting</button>
         <button type="button" onClick={this._cancel} className="btn btn-link">Cancel</button>
       </ModalFooter>

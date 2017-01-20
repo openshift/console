@@ -24,7 +24,7 @@ class ConfirmModal extends PromiseComponent {
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>{this.props.message}</ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
+      <ModalSubmitFooter promise={this.requestPromise} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
     </form>;
   }
 }

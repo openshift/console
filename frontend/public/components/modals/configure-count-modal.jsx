@@ -59,7 +59,7 @@ class ConfigureCountModal extends PromiseComponent {
         <p>{this.props.message}</p>
         <NumberSpinner className="form-control" value={this.state.value} onChange={this._change} changeValueBy={this._changeValueBy} autoFocus required />
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText={this.props.buttonText} cancel={this._cancel} />
+      <ModalSubmitFooter promise={this.requestPromise} submitText={this.props.buttonText} cancel={this._cancel} />
     </form>;
   }
 }

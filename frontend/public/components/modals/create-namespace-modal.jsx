@@ -44,7 +44,7 @@ class CreateNamespaceModal extends PromiseComponent {
           <SelectorInput onChange={labels => this.onLabels(labels)} tags={[]} />
         </div>
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
+      <ModalSubmitFooter promise={this.requestPromise} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
     </form>;
   }
 }

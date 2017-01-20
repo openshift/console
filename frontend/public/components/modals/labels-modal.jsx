@@ -78,8 +78,7 @@ class LabelsModal extends PromiseComponent {
           </div>
         </div>
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi"
-        submitText={labelSelector ? 'Save Label Selector' : 'Save Labels'} cancel={this._cancel} />
+      <ModalSubmitFooter promise={this.requestPromise} submitText={labelSelector ? 'Save Label Selector' : 'Save Labels'} cancel={this._cancel} />
     </form>;
   }
 }
