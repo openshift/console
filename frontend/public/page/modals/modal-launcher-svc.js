@@ -5,10 +5,6 @@ angular.module('bridge.page')
   'use strict';
 
   var modalConfig = {
-    'service-ports': {
-      templateUrl: '/static/page/modals/service-ports.html',
-      controller: 'ServicePortsCtrl',
-    },
     'reactive-modal': {
       templateUrl: '/static/page/modals/reactive-modal.html',
       controller: 'ReactiveModalCtrl',

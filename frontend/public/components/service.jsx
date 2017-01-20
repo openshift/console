@@ -1,15 +1,9 @@
 import React from 'react';
 
-import {angulars} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Cog, navFactory, LabelList, ResourceCog, ResourceHeading, ResourceIcon, ResourceLink, Selector, Timestamp} from './utils';
 
-const ServicePorts = (kind, s) => ({
-  label: 'Modify Service Ports...',
-  weight: 200,
-  callback: angulars.modal('service-ports', {kind, resource: () => s}),
-});
-const menuActions = [Cog.factory.ModifyPodSelector, ServicePorts, Cog.factory.ModifyLabels, Cog.factory.Delete];
+const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
