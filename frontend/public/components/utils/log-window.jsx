@@ -67,14 +67,16 @@ export class LogWindow extends React.PureComponent {
 
   _handleResize() {
     const toRescale = this.logContents;
-    const originalHeight = toRescale.clientHeight;
-    const viewportHeight = window.innerHeight;
+    if (toRescale) {
+      const originalHeight = toRescale.clientHeight;
+      const viewportHeight = window.innerHeight;
 
-    const targetHeight = Math.max(viewportHeight - VSPACE, 500);
-    if (targetHeight !== originalHeight) { // Saves some cycles when we're at minimum height
-      this.setState({
-        height: targetHeight
-      });
+      const targetHeight = Math.max(viewportHeight - VSPACE, 500);
+      if (targetHeight !== originalHeight) { // Saves some cycles when we're at minimum height
+        this.setState({
+          height: targetHeight
+        });
+      }
     }
   }
 
@@ -82,7 +84,7 @@ export class LogWindow extends React.PureComponent {
     if (this.props.logState === 'streaming') {
       // Async because scrollHeight depends on the size of the rendered pane
       setTimeout(() => {
-        if (this.props.logState === 'streaming') {
+        if (this.scrollPane && this.props.logState === 'streaming') {
           this.scrollPane.scrollTop = this.scrollPane.scrollHeight;
         }
       }, 0);
