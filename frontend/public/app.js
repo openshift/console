@@ -43,7 +43,7 @@ angular.module('bridge', [
   'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider,
-                 configSvcProvider, errorMessageSvcProvider, $ngReduxProvider) {
+                 errorMessageSvcProvider, $ngReduxProvider) {
   'use strict';
 
   const reducers = combineReducers({
@@ -59,14 +59,6 @@ angular.module('bridge', [
   $locationProvider.html5Mode({
     enabled: true,
     requireBase: true
-  });
-
-  configSvcProvider.config({
-    siteBasePath: window.SERVER_FLAGS.basePath,
-    libPath: 'static/lib/coreos-web',
-    jsonParse: true,
-    detectHost: true,
-    detectScheme: true,
   });
 
   errorMessageSvcProvider.registerFormatter('k8sApi', function(error) {
