@@ -11,24 +11,17 @@
   });
 
   angular.module('coreos.services', [
-    'coreos.events',
     'lodash',
     'jquery',
   ]);
   angular.module('coreos.ui', [
-    'coreos.events',
     'lodash',
     'jquery'
   ]);
-  angular.module('coreos.filters', ['lodash']);
-  angular.module('coreos.events', []);
   angular.module('coreos', [
-    'coreos.events',
     'coreos.services',
     'coreos.ui',
-    'coreos.filters',
     'coreos-templates-html',
-    'coreos-templates-svg',
 
     // other external deps
     'ngRoute',
@@ -42,49 +35,6 @@
 
 }());
 
-angular.module('coreos.filters')
-.filter('orderObjectBy', function() {
-  'use strict';
-
-  return function(items, field, reverse) {
-    var filtered = [];
-    angular.forEach(items, function(item) {
-      filtered.push(item);
-    });
-    filtered.sort(function (a, b) {
-      return reverse ? (a[field] < b[field]) : (a[field] > b[field]);
-    });
-    return filtered;
-  };
-});
-
-angular.module('coreos.filters')
-.filter('utc', function(_) {
-  'use strict';
-
-  function convertToUtc(date) {
-    return new Date(date.getUTCFullYear(),
-        date.getUTCMonth(),
-        date.getUTCDate(),
-        date.getUTCHours(),
-        date.getUTCMinutes(),
-        date.getUTCSeconds());
-  }
-
-  return function(input) {
-    if (_.isNumber(input)) {
-      return convertToUtc(new Date(input));
-    }
-    if (_.isString(input)) {
-      return convertToUtc(new Date(Date.parse(input)));
-    }
-    if (_.isDate(input)) {
-      return convertToUtc(input);
-    }
-    return '';
-  };
-
-});
 
 /**
  * Broadcast when the window size breakpoints change.
@@ -118,59 +68,6 @@ angular.module('coreos.services').provider('configSvc', function() {
         configValues[key] = value;
       }
     };
-  };
-
-});
-
-
-angular.module('coreos.events').constant('CORE_EVENT', {
-  PAGE_NOT_FOUND: 'core.event.page_not_found',
-  BREAKPOINT: 'core.event.breakpoint',
-  RESP_ERROR: 'core.event.resp_error',
-  RESP_MUTATE: 'core.event.resp_mutate',
-  DOC_VISIBILITY_CHANGE: 'core.event.doc_visibility_change',
-  POLL_ERROR: 'core.event.poll_error',
-  LOCAL_STORAGE_CHANGE: 'core.event.local_storage_change'
-});
-
-angular.module('coreos.services')
-.factory('coLocalStorage', function($rootScope, $window, CORE_EVENT) {
-  'use strict';
-
-  return {
-
-    length: $window.localStorage.length,
-
-    getItem: function(key) {
-      return $window.localStorage.getItem(key);
-    },
-
-    key: function(n) {
-      return $window.localStorage.key(n);
-    },
-
-    clear: function() {
-      $window.localStorage.clear();
-      $rootScope.$broadcast(CORE_EVENT.LOCAL_STORAGE_CHANGE, {
-        key: '*'
-      });
-    },
-
-    removeItem: function(key) {
-      $window.localStorage.removeItem(key);
-      $rootScope.$broadcast(CORE_EVENT.LOCAL_STORAGE_CHANGE, {
-        key: key
-      });
-    },
-
-    setItem: function(key, value) {
-      $window.localStorage.setItem(key, value);
-      $rootScope.$broadcast(CORE_EVENT.LOCAL_STORAGE_CHANGE, {
-        key: key,
-        value: value
-      });
-    }
-
   };
 
 });
@@ -368,74 +265,6 @@ angular.module('coreos.ui')
   };
 });
 
-/**
- * @fileoverview
- * Directive to easily inline svg images.
- * NOTE: kind of a hack to get ng-include to work properly within a directive
- * without wrapping it with an extra DOM element.
- */
-
-angular.module('coreos.ui')
-.directive('coSvg', function($, $rootScope, $compile) {
-  'use strict';
-
-  return {
-    template: '<div></div>',
-    restrict: 'E',
-    replace: true,
-    scope: {
-      src: '@',
-      width: '@',
-      height: '@'
-    },
-    link: function(scope, elem, attrs) {
-      var containerEl, html, newScope;
-      newScope = $rootScope.$new();
-      html = '<div class="co-m-svg" ' +
-              'ng-class="classes" ng-style="style" ng-include="src"></div>';
-      newScope.style = {};
-      if (scope.width) {
-        newScope.style.width = scope.width + 'px';
-      }
-      if (scope.height) {
-        newScope.style.height = scope.height + 'px';
-      }
-      if (attrs.class) {
-        newScope.classes = attrs.class;
-      }
-      scope.$watch('src', function(src) {
-        if (src) {
-          newScope.src = src;
-          containerEl = $compile(html)(newScope);
-          elem.replaceWith(containerEl);
-        }
-      });
-    }
-  };
-
-});
-
-angular.module('coreos.ui')
-.directive('coTextCopy', function() {
-  'use strict';
-
-  return {
-    restrict: 'A',
-    replace: true,
-    link: function(scope, elem) {
-      function onClickHandler(event) {
-        elem.select();
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      elem.on('click', onClickHandler);
-      elem.on('$destroy', function() {
-        elem.off('click', onClickHandler);
-      });
-    }
-  };
-
-});
 
 /**
  * @fileoverview
@@ -635,24 +464,6 @@ try {
   module = angular.module('coreos-templates-html', []);
 }
 module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.ui/nav-title/nav-title.html',
-    '<div class="co-m-nav-title row">\n' +
-    '  <div ng-transclude class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>\n' +
-    '  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">\n' +
-    '    <h1 class="co-m-page-title co-fx-text-shadow" ng-bind="title"></h1>\n' +
-    '  </div>\n' +
-    '</div>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-html');
-} catch (e) {
-  module = angular.module('coreos-templates-html', []);
-}
-module.run(['$templateCache', function($templateCache) {
   $templateCache.put('/coreos.ui/toast/toast.html',
     '<div class="co-m-toast">\n' +
     '  <div ng-repeat="message in messages"\n' +
@@ -661,45 +472,6 @@ module.run(['$templateCache', function($templateCache) {
     '    <span ng-click="dismiss($index)" class="pull-right glyphicon glyphicon-remove text-right co-m-message__close"></span>\n' +
     '  </div>\n' +
     '</div>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-svg');
-} catch (e) {
-  module = angular.module('coreos-templates-svg', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.svg/icon-back.svg',
-    '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n' +
-    '  preserveAspectRatio="xMinYMin" viewBox="0 0 73.356 61" enable-background="new 0 0 73.356 61" xml:space="preserve">\n' +
-    '  <path d="M5.27,33.226l22.428,22.428c1.562,1.562,4.095,1.562,5.657,0c1.562-1.562,1.562-4.095,0-5.657L17.77,34.413h48.514\n' +
-    '  c2.209,0,4-1.791,4-4s-1.791-4-4-4H17.749l15.604-15.582c1.563-1.561,1.565-4.094,0.004-5.657C32.576,4.391,31.552,4,30.527,4\n' +
-    '  c-1.023,0-2.046,0.39-2.827,1.169L5.272,27.567c-0.751,0.75-1.173,1.768-1.173,2.829C4.098,31.458,4.52,32.476,5.27,33.226z"/>\n' +
-    '</svg>\n' +
-    '');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('coreos-templates-svg');
-} catch (e) {
-  module = angular.module('coreos-templates-svg', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('/coreos.svg/icon-right-arrow.svg',
-    '<?xml version="1.0" encoding="utf-8"?>\n' +
-    '<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n' +
-    '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' +
-    '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n' +
-    '	 width="6px" height="10px" viewBox="0 0 6 10" enable-background="new 0 0 6 10" xml:space="preserve">\n' +
-    '<g>\n' +
-    '	<polygon fill="#333333" points="0,0 0,10 6,5 	"/>\n' +
-    '</g>\n' +
-    '</svg>\n' +
     '');
 }]);
 })();
