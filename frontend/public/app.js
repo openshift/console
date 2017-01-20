@@ -14,11 +14,6 @@ import UIReducers from './ui/ui-reducers';
 import { featureReducers, featureReducerName, featureActions } from './features';
 import './components/react-wrapper';
 
-// Make moment available via angular DI.
-angular.module('moment', []).factory('moment', function($window) {
-  return $window.moment;
-});
-
 // The main app module.
 angular.module('bridge', [
   // angular deps
@@ -40,7 +35,6 @@ angular.module('bridge', [
   'bridge.ui',
   'bridge.page',
   'bridge.react-wrapper',
-  'moment',
 ])
 .config(function($compileProvider, $routeProvider, $locationProvider,
                  configSvcProvider, errorMessageSvcProvider, $ngReduxProvider) {
