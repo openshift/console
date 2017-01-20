@@ -36,7 +36,7 @@ export const getK8sAPIPath = kind => {
 
 
 angular.module('k8s')
-.service('k8s', function(_, $rootScope) {
+.service('k8s', function(_) {
   'use strict';
 
   const addDefaults = (k8sObject, kind) => {
@@ -59,7 +59,6 @@ angular.module('k8s')
         const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
 
         const opts = {
-          scope: $rootScope,
           host: 'auto',
           reconnect: true,
           path: path,
