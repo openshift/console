@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
+import moment from 'moment';
 
 import {SafetyFirst} from '../safety-first';
 

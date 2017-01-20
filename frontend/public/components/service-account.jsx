@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 
 import {makeDetailsPage, makeListPage, makeList} from './factory';
 import {Cog, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
