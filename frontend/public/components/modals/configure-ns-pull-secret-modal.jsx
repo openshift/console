@@ -285,7 +285,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
       </div> }
 
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText="Save Secret" cancel={this._cancel} />
+      <ModalSubmitFooter promise={this.requestPromise} submitText="Save Secret" cancel={this._cancel} />
     </form>;
   }
 }

@@ -52,7 +52,6 @@ class ConfigureOperatorModal extends PromiseComponent {
       </ModalBody>
       <ModalSubmitFooter
         promise={this.requestPromise}
-        errorFormatter="k8sApi"
         submitText={this.props.buttonText}
         cancel={this._cancel} />
     </form>;

@@ -106,7 +106,7 @@ class KubectlConfigModal extends PromiseComponent {
             </div>
           </div>
         </ModalBody>
-        <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText="Generate Configuration" cancel={this.props.cancel} />
+        <ModalSubmitFooter promise={this.requestPromise} submitText="Generate Configuration" cancel={this.props.cancel} />
       </form> }
 
       {/*step 3: download configuration*/}

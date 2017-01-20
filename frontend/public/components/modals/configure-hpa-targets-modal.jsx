@@ -46,7 +46,6 @@ class ConfigureHPATargetsModal extends PromiseComponent {
       </ModalBody>
       <ModalSubmitFooter
         promise={this.requestPromise}
-        errorFormatter="k8sApi"
         submitText="Save Replica Limits"
         cancel={this._cancel} />
     </form>;

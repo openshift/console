@@ -20,7 +20,7 @@ export const ModalTitle = ({children}) => <div className="modal-header"><h4 clas
 export const ModalBody = ({children}) => <div className="modal-body">{children}</div>;
 export const ModalFooter = ({promise, errorFormatter, errorCustomMessage, children}) => {
   return <ButtonBar className="modal-footer" completePromise={promise}>
-    <ErrorMessage formatter={errorFormatter} promise={promise} customMessage={errorCustomMessage} />
+    <ErrorMessage formatter={errorFormatter || 'k8sApi'} promise={promise} customMessage={errorCustomMessage} />
     {children}
   </ButtonBar>;
 };

@@ -30,7 +30,7 @@ class UnscheduleNodeModal extends PromiseComponent {
       <ModalBody>
         Unschedulable nodes won&#39;t accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} errorFormatter="k8sApi" submitText="Mark Unschedulable" cancel={this._cancel} />
+      <ModalSubmitFooter promise={this.requestPromise} submitText="Mark Unschedulable" cancel={this._cancel} />
     </form>;
   }
 }
