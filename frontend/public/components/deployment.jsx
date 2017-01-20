@@ -2,9 +2,10 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
 import {k8sKinds} from '../module/k8s';
+import {register} from './react-wrapper';
 import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
-import {configureReplicaCountModal} from './modals';
+import {configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal} from './modals';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
@@ -107,6 +108,26 @@ export class Details extends SafetyFirst {
   }
 }
 
+const ConfigureUpdateStrategyModalLink = ({deployment}) => <div>
+  <div>
+    <a className="co-m-modal-link" onClick={() => configureUpdateStrategyModal({deployment})}>
+      {deployment.spec.strategy.type || '-'}
+    </a>
+  </div>
+  { deployment.spec.strategy.type === 'RollingUpdate' && <small className="text-muted">
+    Max Unavailable
+    <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', 1)}</span>, Max Surge
+    <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', 1)}</span> pods
+  </small> }
+</div>;
+
+const ConfigureRevisionHistoryModalLink = ({deployment}) => <div>
+  <a href="#" onClick={() => configureRevisionHistoryLimitModal({deployment})}
+    className="co-m-modal-link">
+    <span>{deployment.spec.revisionHistoryLimit || 'Unlimited'}</span> revisions
+  </a>
+</div>;
+
 const {details, edit, editYaml, pods} = navFactory;
 const pages = [details(Details), edit(), editYaml(), pods()];
 const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages, menuActions);
@@ -114,4 +135,6 @@ const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deploy
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', cogActions));
 const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);
 
+register('ConfigureUpdateStrategyModalLink', ConfigureUpdateStrategyModalLink);
+register('ConfigureRevisionHistoryModalLink', ConfigureRevisionHistoryModalLink);
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

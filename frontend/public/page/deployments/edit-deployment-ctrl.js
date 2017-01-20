@@ -2,7 +2,7 @@ import {k8sEnum} from '../../module/k8s';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
-.controller('EditDeploymentCtrl', function($scope, $location, $routeParams, _, k8s, ModalLauncherSvc) {
+.controller('EditDeploymentCtrl', function($scope, $location, $routeParams, _, k8s) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8sEnum.DefaultNS;
@@ -28,18 +28,6 @@ angular.module('bridge.page')
     .catch(function() {
       $scope.loadError = true;
     });
-
-  $scope.openUpdateStrategyModal = function() {
-    ModalLauncherSvc.open('configure-update-strategy', {
-      deploymentSpec: $scope.deployment.spec
-    });
-  };
-
-  $scope.openRevisionHistoryLimitModal = function() {
-    ModalLauncherSvc.open('configure-revision-history-limit', {
-      deploymentSpec: $scope.deployment.spec
-    });
-  };
 
   $scope.cancel = function() {
     $location.path(getNamespacedRoute('/deployments'));
