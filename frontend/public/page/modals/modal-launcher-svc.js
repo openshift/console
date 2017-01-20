@@ -9,10 +9,6 @@ angular.module('bridge.page')
       templateUrl: '/static/page/modals/service-ports.html',
       controller: 'ServicePortsCtrl',
     },
-    'configure-selector': {
-      templateUrl: '/static/page/modals/configure-selector.html',
-      controller: 'ConfigureSelectorCtrl',
-    },
     'reactive-modal': {
       templateUrl: '/static/page/modals/reactive-modal.html',
       controller: 'ReactiveModalCtrl',
