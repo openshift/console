@@ -2,7 +2,7 @@ import React from 'react';
 
 import { kubectlConfigSvc } from '../../module/service/kubectl-config';
 import { k8sVersion } from '../../module/status';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { createModalLauncher, ModalTitle, ModalBody, ModalFooter, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
 
 const steps = {
