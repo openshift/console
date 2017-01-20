@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import {k8sKinds} from '../../module/k8s';
 import {util} from '../../module/k8s/util';
+import {getNamespacedRoute} from '../../ui/ui-actions';
 import {angulars} from '../react-wrapper';
 import {confirmModal, configureReplicaCountModal, labelsModal} from '../modals';
 import {DropdownMixin} from './dropdown';
@@ -62,7 +63,7 @@ Cog.factory = {
         // If we are currently on the deleted resource's page, redirect to the resource list page
         const re = new RegExp(`/${obj.metadata.name}/.*$`);
         if (re.test(window.location.pathname)) {
-          angulars.$location.url(window.location.pathname.replace(re, ''));
+          angulars.$location.path(getNamespacedRoute(`/${kind.path}`));
         }
 
         return deletePromise;
