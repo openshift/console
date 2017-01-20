@@ -1,7 +1,6 @@
 /**
  * @fileOverview
  * WebSocket factory and utility wrapper.
- * Uses angular scope to send events.
  *
  * TODO(sym3tri):
  *    - disconnect/reconnect when tab loses/gains focus
@@ -87,15 +86,6 @@ function WebSocketWrapper(id, options) {
       angulars.$timeout.cancel(that._connectionAttempt);
     },
   ];
-
-  if (options.scope) {
-    this._cleanupFns.splice(0, 0,
-      // Deregister scope listener.
-      options.scope.$on('$destroy', function () {
-        that.destroy();
-      })
-    );
-  }
 }
 
 function expBackoff(prev, max) {
