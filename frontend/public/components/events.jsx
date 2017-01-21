@@ -3,8 +3,9 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
+import {getActiveNamespace} from '../ui/ui-actions';
 import {register} from './react-wrapper';
-import {Dropdown, ResourceLink, Box, Loading, Timestamp, TogglePlay, pluralize} from './utils';
+import {Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
 
 import {wsFactory} from '../module/ws-factory';
 
@@ -80,7 +81,8 @@ export class EventStreamPage extends React.Component {
 
   render () {
     const {category, kind} = this.state;
-    return (
+    return <div className="co-p-events">
+      <NavTitle title="Events" />
       <div className="co-m-pane">
         <div className="co-m-pane__heading">
           <div className="row">
@@ -99,7 +101,7 @@ export class EventStreamPage extends React.Component {
           </div>
         </div>
       </div>
-    );
+    </div>;
   }
 }
 
@@ -129,7 +131,7 @@ export class EventStream extends React.Component {
 
   componentDidMount () {
     const params = {
-      ns: this.props.namespace,
+      ns: getActiveNamespace(),
       fieldSelector: this.props.fieldSelector,
     };
 

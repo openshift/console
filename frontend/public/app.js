@@ -76,13 +76,11 @@ angular.module('bridge', [
 
   registerNamespaceFriendlyPrefix('events');
   r('/all-namespaces/events', {
-    controller: 'EventsCtrl',
-    templateUrl: '/static/page/events/events.html',
+    template: '<react-component name="EventStreamPage"></react-component>',
     title: 'Events',
   });
   r('/ns/:ns/events', {
-    controller: 'EventsCtrl',
-    templateUrl: '/static/page/events/events.html',
+    template: '<react-component name="EventStreamPage"></react-component>',
     title: 'Events',
   });
 
