@@ -111,20 +111,18 @@ export class Details extends SafetyFirst {
 const ConfigureUpdateStrategyModalLink = ({deployment}) => <div>
   <div>
     <a className="co-m-modal-link" onClick={() => configureUpdateStrategyModal({deployment})}>
-      {deployment.spec.strategy.type || '-'}
+      {_.get(deployment.spec, 'strategy.type', '-')}
     </a>
   </div>
-  { deployment.spec.strategy.type === 'RollingUpdate' && <small className="text-muted">
-    Max Unavailable
-    <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', 1)}</span>, Max Surge
-    <span>{_.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', 1)}</span> pods
+  { _.get(deployment.spec, 'strategy.type') === 'RollingUpdate' && <small className="text-muted">
+    Max Unavailable {_.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', 1)}, Max Surge {_.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', 1)} pods
   </small> }
 </div>;
 
 const ConfigureRevisionHistoryModalLink = ({deployment}) => <div>
   <a href="#" onClick={() => configureRevisionHistoryLimitModal({deployment})}
     className="co-m-modal-link">
-    <span>{deployment.spec.revisionHistoryLimit || 'Unlimited'}</span> revisions
+    <span>{_.get(deployment.spec, 'revisionHistoryLimit') || 'Unlimited'}</span> revisions
   </a>
 </div>;
 
