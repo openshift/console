@@ -4,8 +4,8 @@ import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
 import {getActiveNamespace} from '../ui/ui-actions';
-import {register} from './react-wrapper';
-import {Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
+import {angulars, register} from './react-wrapper';
+import {Dropdown, ResourceLink, Box, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
 
 import {wsFactory} from '../module/ws-factory';
 
@@ -350,3 +350,47 @@ EventStream.defaultProps = {
 };
 
 register('EventStream', EventStream);
+
+const {details, edit, editYaml, pods, logs, events} = navFactory;
+
+export const EventStreamResource = (props) => {
+  const name = angulars.routeParams.name;
+  const filter = {name};
+
+  return <div className="co-p-node-sysevents">
+    <NavTitle title={name} kind={props.kind} detail="true" />
+    <div className="co-m-pane co-m-vert-nav">
+      <NavBar pages={props.pages} />
+      <div className="co-m-vert-nav__body">
+        <div className="co-m-vert-nav__body">
+          <div className="co-m-pane__body">
+            <div className="row">
+              <div className="col-xs-12"><p></p>
+                <EventStream {...props} filter={filter} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>;
+};
+
+export const EventStreamPod = () => <EventStreamResource
+  kind="pod"
+  pages={[details(), editYaml(), logs(), events()]}
+/>;
+register('EventStreamPod', EventStreamPod);
+
+export const EventStreamNode = () => <EventStreamResource
+  kind="node"
+  pages={[details(), editYaml(), pods(), events()]}
+/>;
+register('EventStreamNode', EventStreamNode);
+
+export const EventStreamReplicationController = () => <EventStreamResource
+  kind="replicationcontroller"
+  pages={[details(), edit(), pods(), events()]}
+/>;
+register('EventStreamReplicationController', EventStreamReplicationController);
+
