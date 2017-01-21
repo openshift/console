@@ -1,8 +1,8 @@
-import {k8sEnum} from '../../module/k8s';
+import {k8s, k8sEnum} from '../../module/k8s';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
-.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams, k8s) {
+.controller('NewReplicationcontrollerCtrl', function(_, $scope, $location, $routeParams) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8sEnum.DefaultNS;

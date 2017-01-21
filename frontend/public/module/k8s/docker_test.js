@@ -3,8 +3,6 @@ describe('k8sDocker', function() {
 
   var k8sDocker = window.tectonicTesting.k8sDocker;
 
-  beforeEach(module('k8s'));
-
   describe('#getContainerStatus', function() {
     it('returns falsy when pod has no container status with given name', function () {
       expect(k8sDocker.getContainerStatus(

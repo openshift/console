@@ -3,8 +3,6 @@ describe('k8sProbe', function () {
 
   var k8sProbe = window.tectonicTesting.k8sProbe;
 
-  beforeEach(module('k8s'));
-
   describe('#parseCmd', function () {
     describe('for tcpSocket', function () {
       it('returns port as number when string looks like number', function () {

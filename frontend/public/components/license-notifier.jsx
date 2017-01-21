@@ -1,9 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 
+import {k8s} from '../module/k8s';
 import {coFetchJSON} from '../co-fetch';
 import {pluralize} from './utils';
-import {angulars} from './react-wrapper';
 import {GlobalNotification} from './global-notification';
 import {licenseEnforcementModal} from './modals';
 
@@ -78,7 +78,7 @@ class LicenseNotifier extends React.Component {
         console.error('Could not load Tectonic version', error);
       });
 
-    angulars.k8s.nodes.list()
+    k8s.nodes.list()
       .then((nodes) => {
         this.setState({
           current: {

@@ -1,5 +1,7 @@
+import {k8s} from '../../module/k8s';
+
 angular.module('bridge.page')
-.controller('k8sListCtrl', function($scope, k8s, $location, $routeParams, $window, $route) {
+.controller('k8sListCtrl', function($scope, $location, $routeParams, $window, $route) {
   'use strict';
 
   let kind;

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import classNames from 'classnames';
 
+import {k8s} from '../../module/k8s/k8s';
 import {util} from '../../module/k8s/util';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 import {angulars} from '../react-wrapper';
@@ -57,7 +58,7 @@ Cog.factory = {
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
       btnText: `Delete ${kind.label} `,
       executeFn: () => {
-        const deletePromise = angulars.k8s[kind.plural].delete(obj);
+        const deletePromise = k8s[kind.plural].delete(obj);
 
         // If we are currently on the deleted resource's page, redirect to the resource list page
         const re = new RegExp(`/${obj.metadata.name}/.*$`);

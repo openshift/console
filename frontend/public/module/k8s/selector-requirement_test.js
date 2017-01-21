@@ -5,8 +5,6 @@ describe('k8sSelectorRequirement', function() {
 
   var k8sSelectorRequirement = window.tectonicTesting.k8sSelectorRequirement;
 
-  beforeEach(module('k8s'));
-
   describe('#fromString', function() {
     [
       {

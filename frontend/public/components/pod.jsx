@@ -1,8 +1,9 @@
 import React from 'react';
 
+import {k8s} from '../module/k8s';
 import {getContainerState, getContainerStatus} from '../module/k8s/docker';
 import {getRestartPolicyLabel} from '../module/k8s/pods';
-import {angulars, register} from './react-wrapper';
+import {register} from './react-wrapper';
 import {makeListPage, makeList, makeDetailsPage} from './factory';
 import {podRestartPolicyModal} from './modals';
 import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
@@ -123,9 +124,9 @@ const ContainerRow = ({pod, container}) => {
 };
 
 const Volume = ({pod, volume}) => {
-  const kind = _.get(angulars.k8s.pods.getVolumeType(volume.volume), 'id', '');
-  const loc = angulars.k8s.pods.getVolumeLocation(volume.volume);
-  const mountPermissions = angulars.k8s.pods.getVolumeMountPermissions(volume);
+  const kind = _.get(k8s.pods.getVolumeType(volume.volume), 'id', '');
+  const loc = k8s.pods.getVolumeLocation(volume.volume);
+  const mountPermissions = k8s.pods.getVolumeMountPermissions(volume);
 
   return <div className="row">
     <div className="middler">
@@ -242,7 +243,7 @@ const Details = (pod) => {
               <div className="col-sm-3 col-xs-4">Utilized By</div>
             </div>
             <div className="co-m-table-grid__body">
-              {angulars.k8s.pods.getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
+              {k8s.pods.getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
             </div>
           </div>
         </div>

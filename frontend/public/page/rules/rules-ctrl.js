@@ -1,5 +1,7 @@
+import {k8s} from '../../module/k8s';
+
 angular.module('bridge.page')
-.controller('editRulesCtrl', function($scope, $routeParams, $window, k8s) {
+.controller('editRulesCtrl', function($scope, $routeParams, $window) {
   'use strict';
   const k8sResource = k8s.roles;
 

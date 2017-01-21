@@ -1,8 +1,8 @@
-import {k8sEnum} from '../../module/k8s';
+import {k8s, k8sEnum} from '../../module/k8s';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 
 angular.module('bridge.page')
-.controller('EditReplicaSetCtrl', function($scope, $location, $routeParams, _, k8s) {
+.controller('EditReplicaSetCtrl', function($scope, $location, $routeParams) {
   'use strict';
 
   $scope.ns = $routeParams.ns || k8sEnum.DefaultNS;

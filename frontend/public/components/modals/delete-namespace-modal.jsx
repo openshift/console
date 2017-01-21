@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {angulars} from '../react-wrapper';
+import {k8s} from '../../module/k8s';
 import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
 import {PromiseComponent} from '../utils';
 
@@ -30,7 +30,7 @@ class DeleteNamespaceModal extends PromiseComponent {
 
   _submit(event) {
     event.preventDefault();
-    this._setRequestPromise(angulars.k8s.namespaces.delete(this.props.resource)).then(this._close);
+    this._setRequestPromise(k8s.namespaces.delete(this.props.resource)).then(this._close);
   }
 
   render() {

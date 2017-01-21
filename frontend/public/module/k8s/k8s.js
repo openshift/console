@@ -1,5 +1,3 @@
-import './_module';
-
 import {wsFactory} from '../ws-factory';
 import {k8sKinds} from './enum';
 
@@ -33,70 +31,67 @@ export const getK8sAPIPath = kind => {
   return p;
 };
 
+const addDefaults = (k8sObject, kind) => {
+  return _.assign({
+    list: _.partial(k8sList, kind),
+    get: _.partial(k8sGet, kind),
+    delete: _.partial(k8sKill, kind),
+    create: function(obj) {
+      k8sObject.clean && k8sObject.clean(obj);
+      return k8sCreate(kind, obj);
+    },
+    update: function(obj) {
+      k8sObject.clean && k8sObject.clean(obj);
+      return k8sUpdate(kind, obj);
+    },
+    patch: function (obj, payload) {
+      return k8sPatch(kind, obj, payload);
+    },
+    watch: query => {
+      const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
 
+      const opts = {
+        host: 'auto',
+        reconnect: true,
+        path: path,
+        jsonParse: true,
+        bufferEnabled: true,
+        bufferFlushInterval: 500,
+        bufferMax: 1000,
+      };
+      return wsFactory(kind.labelPlural, opts);
+    },
+    kind: kind,
+  }, k8sObject);
+};
 
-angular.module('k8s')
-.service('k8s', function(_) {
-  'use strict';
+export const k8s = {
+  configmaps: addDefaults({}, k8sKinds.CONFIGMAP),
+  nodes: addDefaults(k8sNodes, k8sKinds.NODE),
+  services: addDefaults(k8sServices, k8sKinds.SERVICE),
+  pods: addDefaults(k8sPods, k8sKinds.POD),
+  containers: addDefaults({}, k8sKinds.CONTAINER),
+  replicationcontrollers: addDefaults(k8sReplicationControllers, k8sKinds.REPLICATIONCONTROLLER),
+  replicasets: addDefaults(k8sReplicaSets, k8sKinds.REPLICASET),
+  deployments: addDefaults(k8sDeployments, k8sKinds.DEPLOYMENT),
+  jobs: addDefaults({}, k8sKinds.JOB),
+  daemonsets: addDefaults({}, k8sKinds.DAEMONSET),
+  horizontalpodautoscalers: addDefaults({}, k8sKinds.HORIZONTALPODAUTOSCALER),
+  serviceaccounts: addDefaults({}, k8sKinds.SERVICEACCOUNT),
+  secrets: addDefaults({}, k8sKinds.SECRET),
+  ingresses: addDefaults({}, k8sKinds.INGRESS),
 
-  const addDefaults = (k8sObject, kind) => {
-    return _.assign({
-      list: _.partial(k8sList, kind),
-      get: _.partial(k8sGet, kind),
-      delete: _.partial(k8sKill, kind),
-      create: function(obj) {
-        k8sObject.clean && k8sObject.clean(obj);
-        return k8sCreate(kind, obj);
-      },
-      update: function(obj) {
-        k8sObject.clean && k8sObject.clean(obj);
-        return k8sUpdate(kind, obj);
-      },
-      patch: function (obj, payload) {
-        return k8sPatch(kind, obj, payload);
-      },
-      watch: query => {
-        const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
+  componentstatuses: addDefaults({}, k8sKinds.COMPONENTSTATUS),
+  namespaces: addDefaults({}, k8sKinds.NAMESPACE),
 
-        const opts = {
-          host: 'auto',
-          reconnect: true,
-          path: path,
-          jsonParse: true,
-          bufferEnabled: true,
-          bufferFlushInterval: 500,
-          bufferMax: 1000,
-        };
-        return wsFactory(kind.labelPlural, opts);
-      },
-      kind: kind,
-    }, k8sObject);
-  };
+  clusterrolebindings: addDefaults({}, k8sKinds.CLUSTERROLEBINDING),
+  clusterroles: addDefaults({}, k8sKinds.CLUSTERROLE),
+  rolebindings: addDefaults({}, k8sKinds.ROLEBINDING),
+  roles: addDefaults({}, k8sKinds.ROLE),
 
-  this.configmaps = addDefaults({}, k8sKinds.CONFIGMAP);
-  this.nodes = addDefaults(k8sNodes, k8sKinds.NODE);
-  this.services = addDefaults(k8sServices, k8sKinds.SERVICE);
-  this.pods = addDefaults(k8sPods, k8sKinds.POD);
-  this.containers = addDefaults({}, k8sKinds.CONTAINER);
-  this.replicationcontrollers = addDefaults(k8sReplicationControllers, k8sKinds.REPLICATIONCONTROLLER);
-  this.replicasets = addDefaults(k8sReplicaSets, k8sKinds.REPLICASET);
-  this.deployments = addDefaults(k8sDeployments, k8sKinds.DEPLOYMENT);
-  this.jobs = addDefaults({}, k8sKinds.JOB);
-  this.daemonsets = addDefaults({}, k8sKinds.DAEMONSET);
-  this.horizontalpodautoscalers = addDefaults({}, k8sKinds.HORIZONTALPODAUTOSCALER);
-  this.serviceaccounts = addDefaults({}, k8sKinds.SERVICEACCOUNT);
-  this.secrets = addDefaults({}, k8sKinds.SECRET);
-  this.ingresses = addDefaults({}, k8sKinds.INGRESS);
+  tectonicversions: addDefaults({}, k8sKinds.TECTONICVERSION),
+  channeloperatorconfigs: addDefaults({}, k8sKinds.CHANNELOPERATORCONFIG),
+  appversions: addDefaults({}, k8sKinds.APPVERSION),
+};
 
-  this.componentstatuses = addDefaults({}, k8sKinds.COMPONENTSTATUS);
-  this.namespaces = addDefaults({}, k8sKinds.NAMESPACE);
-
-  this.clusterrolebindings = addDefaults({}, k8sKinds.CLUSTERROLEBINDING);
-  this.clusterroles = addDefaults({}, k8sKinds.CLUSTERROLE);
-  this.rolebindings = addDefaults({}, k8sKinds.ROLEBINDING);
-  this.roles = addDefaults({}, k8sKinds.ROLE);
-
-  this.tectonicversions = addDefaults({}, k8sKinds.TECTONICVERSION);
-  this.channeloperatorconfigs = addDefaults({}, k8sKinds.CHANNELOPERATORCONFIG);
-  this.appversions = addDefaults({}, k8sKinds.APPVERSION);
-});
+window.tectonicTesting && (window.tectonicTesting.k8s = k8s);
