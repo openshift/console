@@ -7,5 +7,4 @@ import './selector/selector-input';
 import './nav-title/nav-title';
 import './status-box/status-box';
 import './tristate/tristate';
-import './util/autofocus';
 import './util/debug';
