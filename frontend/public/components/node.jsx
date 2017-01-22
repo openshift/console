@@ -3,8 +3,9 @@ import React from 'react';
 import {k8sPatch, isNodeReady} from '../module/k8s';
 import {angulars, register} from './react-wrapper';
 import {makeDetailsPage, makeList, makeListPage} from './factory';
+import {PodsPage} from './pod';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, navFactory, LabelList, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID} from './utils';
+import {Cog, navFactory, LabelList, NavBar, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID} from './utils';
 import {configureUnschedulableModal} from './modals';
 
 const makeNodeScheduable = (resourceKind, resource) => {
@@ -249,6 +250,15 @@ const {details, editYaml, events, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods(), events()];
 const NodeDetailsPage_ = makeDetailsPage('NodeDetailsPage', 'node', pages, menuActions);
 const NodeDetailsPage = () => <NodeDetailsPage_ kind="node" name={angulars.routeParams.name} />;
+
+export const NodePodsPage = () => <div className="co-p-node-pods">
+  <NavTitle title={angulars.routeParams.name} kind="node" detail="true" />
+  <div className="co-m-vert-nav">
+    <NavBar pages={pages} />
+  </div>
+  <PodsPage fieldSelector={`spec.nodeName=${angulars.routeParams.name}`} />
+</div>;
+register('NodePodsPage', NodePodsPage);
 
 export {NodeDetailsPage, NodesList, NodesListSearch, NodesPage};
 register('NodesPage', NodesPage);

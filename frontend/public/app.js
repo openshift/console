@@ -186,8 +186,7 @@ angular.module('bridge', [
     title: 'Node Events',
   });
   r('/nodes/:name/pods', {
-    controller: 'nodePodsCtrl',
-    templateUrl: '/static/page/nodes/pods.html',
+    template: '<react-component name="NodePodsPage"></react-component>',
     title: 'Node Pods',
   });
 
