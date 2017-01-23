@@ -28,7 +28,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
     if (type === 'unlimited') {
       this.props.deployment.spec.revisionHistoryLimit = null;
     } else if (type === 'custom') {
-      this.props.deployment.spec.revisionHistoryLimit = event.target.elements['input-max-unavailable'].value;
+      this.props.deployment.spec.revisionHistoryLimit = _.toInteger(event.target.elements['input-max-unavailable'].value);
     }
     this.props.close();
   }
