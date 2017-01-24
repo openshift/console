@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import {makeDetailsPage, makeListPage, makeList} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
 import {SecretsList, withSecretsList} from './secret';
 
@@ -63,7 +63,7 @@ const Details = (serviceaccount) => {
 };
 
 const pages = [navFactory.details(Details)];
-const ServiceAccountsDetailsPage = makeDetailsPage('ServiceAccountsDetailsPage', 'serviceaccount', pages, menuActions);
+const ServiceAccountsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 const ServiceAccountsList = makeList('ServiceAccounts', 'serviceaccount', Header, withSecretsList(ServiceAccountRow));
-const ServiceAccountsPage = makeListPage('ServiceAccountsPage', 'serviceaccount', ServiceAccountsList);
+const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} />;
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};

@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import {makeDetailsPage, makeListPage, makeList} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import {Cog, LabelList, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
 
@@ -58,7 +58,7 @@ const ConfigMapDetails = (configMap) => {
 const pages = [navFactory.details(ConfigMapDetails), navFactory.editYaml()];
 
 const ConfigMaps = makeList('ConfigMaps', 'configmap', ConfigMapHeader, ConfigMapRow);
-const ConfigMapsPage = makeListPage('ConfigMapsPage', 'configmap', ConfigMaps);
-const ConfigMapsDetailsPage = makeDetailsPage('ConfigMapsDetailsPage', 'configmap', pages, menuActions);
+const ConfigMapsPage = props => <ListPage ListComponent={ConfigMaps} {...props} />;
+const ConfigMapsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 export {ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage};

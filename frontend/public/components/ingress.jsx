@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {register} from './react-wrapper';
-import {makeDetailsPage, makeListPage, makeList} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceCog, ResourceIcon, Timestamp, detailsPage, EmptyBox, navFactory, ResourceLink} from './utils';
 
 const menuActions = [Cog.factory.Delete];
@@ -136,9 +135,8 @@ const Details = (ingress) => <div className="col-md-12">
 </div>;
 
 const pages = [navFactory.details(detailsPage(Details)), navFactory.editYaml()];
-const IngressDetailsPage = makeDetailsPage('IngressDetailsPage', 'ingress', pages, menuActions);
+const IngressDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 const IngressList = makeList('Ingress', 'ingress', IngressListHeader, IngressListRow);
-const IngressPage = makeListPage('IngressesPage', 'ingress', IngressList);
+const IngressPage = props => <ListPage ListComponent={IngressList} {...props} />;
 
 export {IngressList, IngressPage, IngressDetailsPage};
-register('IngressPage', IngressPage);

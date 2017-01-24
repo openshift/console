@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { makeDetailsPage, makeListPage, makeList } from './factory';
+import { DetailsPage, ListPage, makeList } from './factory';
 import { Cog, kindObj, LabelList, LoadingInline, navFactory, ResourceCog, ResourceLink, Timestamp } from './utils';
 import { configureHPAReplicasModal, configureHPATargetsModal } from './modals';
 
@@ -130,7 +130,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
 </div>;
 
 const pages = [navFactory.details(Details), navFactory.editYaml()];
-const HorizontalPodAutoscalersDetailsPage = makeDetailsPage('HorizontalPodAutoscalersDetailsPage', 'horizontalpodautoscaler', pages, menuActions);
+const HorizontalPodAutoscalersDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 const HorizontalPodAutoscalersList = makeList('HorizontalPodAutoscalers', 'horizontalpodautoscaler', Header, HorizontalPodAutoscalerRow);
-const HorizontalPodAutoscalersPage = makeListPage('HorizontalPodAutoscalersPage', 'horizontalpodautoscaler', HorizontalPodAutoscalersList, null, null, 'Autoscalers');
+const HorizontalPodAutoscalersPage = props => <ListPage ListComponent={HorizontalPodAutoscalersList} filterLabel="Autoscalers" {...props} />;
 export {HorizontalPodAutoscalersList, HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage};

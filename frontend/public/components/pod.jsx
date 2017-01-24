@@ -4,7 +4,7 @@ import {k8s} from '../module/k8s';
 import {getContainerState, getContainerStatus} from '../module/k8s/docker';
 import {getRestartPolicyLabel} from '../module/k8s/pods';
 import {register} from './react-wrapper';
-import {makeListPage, makeList, makeDetailsPage} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {podRestartPolicyModal} from './modals';
 import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
@@ -263,16 +263,16 @@ register('PodRestartPolicyModalLink', PodRestartPolicyModalLink);
 
 const {details, events, logs, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), logs(PodLogs), events()];
-const PodsDetailsPage = makeDetailsPage('PodsDetailsPage', 'pod', pages, menuActions);
+const PodsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
-const PodsPage = makeListPage('PodsPage', 'pod', PodList, [], filters);
+const PodsPage = props => <ListPage ListComponent={PodList} dropdownFilters={[]} rowFilters={filters} {...props} />;
 
 navFactory.pods = () => ({
   href: 'pods',
   name: 'Pods',
   component: ({metadata: {namespace}, spec: {selector}, selectorRequired = true}) => <div>
-    <PodsPage className="" canCreate={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired} />
+    <PodsPage className="" canCreate={false} showTitle={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired} />
   </div>
 });
 

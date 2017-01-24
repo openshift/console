@@ -2,7 +2,7 @@ import React from 'react';
 
 import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import {angulars, register} from './react-wrapper';
+import {angulars} from './react-wrapper';
 import {ReactiveDetails} from './factory';
 import {Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
 
@@ -214,6 +214,3 @@ const ContainerPage = (props) => {
 export const ContainersDetailsPage = props => <ReactiveDetails {...props} store={angulars.store} kind="pod" name={angulars.routeParams.podName}>
   <ContainerPage {...props} />
 </ReactiveDetails>;
-
-register('ContainersDetailsPage', ContainersDetailsPage);
-

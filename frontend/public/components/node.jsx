@@ -2,7 +2,7 @@ import React from 'react';
 
 import {k8sPatch, isNodeReady} from '../module/k8s';
 import {angulars, register} from './react-wrapper';
-import {makeDetailsPage, makeList, makeListPage} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {PodsPage} from './pod';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {Cog, navFactory, LabelList, NavBar, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID} from './utils';
@@ -94,11 +94,6 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
   </div>
 </div>;
 
-const NodesPage = () => <div className="co-p-nodes">
-  <NavTitle title="Nodes" />
-  <NodesListPage canExpand={true} />
-</div>;
-
 // We have different list layouts for the Nodes page list and the Search page list
 const NodesList = makeList('Nodes', 'node', Header, NodeRow);
 const NodesListSearch = makeList('Nodes', 'node', HeaderSearch, NodeRowSearch);
@@ -112,7 +107,10 @@ const dropdownFilters = [{
   },
   title: 'Ready Status',
 }];
-const NodesListPage = makeListPage('NodesPage', 'node', NodesList, dropdownFilters);
+const NodesPage = () => <div className="co-p-nodes">
+  <ListPage kind="node" ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />
+</div>;
+
 
 const Details = (node) => {
   const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
@@ -248,15 +246,14 @@ const Details = (node) => {
 
 const {details, editYaml, events, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods(), events()];
-const NodeDetailsPage_ = makeDetailsPage('NodeDetailsPage', 'node', pages, menuActions);
-const NodeDetailsPage = () => <NodeDetailsPage_ kind="node" name={angulars.routeParams.name} />;
+const NodeDetailsPage = () => <DetailsPage kind="node" name={angulars.routeParams.name} pages={pages} menuActions={menuActions} />;
 
 export const NodePodsPage = () => <div className="co-p-node-pods">
   <NavTitle title={angulars.routeParams.name} kind="node" detail="true" />
   <div className="co-m-vert-nav">
     <NavBar pages={pages} />
   </div>
-  <PodsPage fieldSelector={`spec.nodeName=${angulars.routeParams.name}`} />
+  <PodsPage canCreate={false} showTitle={false} fieldSelector={`spec.nodeName=${angulars.routeParams.name}`} />
 </div>;
 register('NodePodsPage', NodePodsPage);
 

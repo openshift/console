@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {register} from '../react-wrapper';
 import {Rules} from './rules';
 
 import {makeList, TwoColumns} from '../factory';
@@ -59,8 +58,6 @@ const Details = (selected) => {
   </div>;
 };
 
-const RolesPage = (props) => <TwoColumns list={Roles} {...props}>
+export const RolesPage = (props) => <TwoColumns list={Roles} {...props}>
   <Details />
 </TwoColumns>;
-
-register('RolesPage', RolesPage);

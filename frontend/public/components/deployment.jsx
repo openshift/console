@@ -6,7 +6,7 @@ import {register} from './react-wrapper';
 import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
 import {configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal} from './modals';
-import {makeListPage, makeList, makeDetailsPage} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
 const {ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete} = Cog.factory;
@@ -128,10 +128,10 @@ const ConfigureRevisionHistoryModalLink = ({deployment}) => <div>
 
 const {details, edit, editYaml, pods} = navFactory;
 const pages = [details(Details), edit(), editYaml(), pods()];
-const DeploymentsDetailsPage = makeDetailsPage('DeploymentsDetailsPage', 'deployment', pages, menuActions);
+const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', cogActions));
-const DeploymentsPage = makeListPage('DeploymentsPage', 'deployment', DeploymentsList);
+const DeploymentsPage = props => <ListPage ListComponent={DeploymentsList} {...props} />;
 
 register('ConfigureUpdateStrategyModalLink', ConfigureUpdateStrategyModalLink);
 register('ConfigureRevisionHistoryModalLink', ConfigureRevisionHistoryModalLink);

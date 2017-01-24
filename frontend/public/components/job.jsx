@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {makeDetailsPage, makeListPage, makeList} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {configureJobParallelismModal} from './modals';
 import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory} from './utils';
 
@@ -120,7 +120,7 @@ const Details = (job) => <div>
 
 const {details, pods, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
-const JobsDetailsPage = makeDetailsPage('JobsDetailsPage', 'job', pages, menuActions);
+const JobsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 const JobsList = makeList('Jobs', 'job', Header, JobRow);
-const JobsPage = makeListPage('JobsPage', 'job', JobsList);
+const JobsPage = props => <ListPage ListComponent={JobsList} {...props} />;
 export {JobsList, JobsPage, JobsDetailsPage};
