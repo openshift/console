@@ -151,7 +151,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
       const secret = {
         metadata: {
-          name: event.target.elements['namespace-pull-secret-username'].value,
+          name: event.target.elements['namespace-pull-secret-name'].value,
           namespace: namespace.metadata.name
         },
         data: data,
