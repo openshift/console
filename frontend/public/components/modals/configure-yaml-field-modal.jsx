@@ -12,7 +12,6 @@ class ConfigureYamlFieldModal extends PromiseComponent {
       resourceLoading: true,
       value: undefined
     };
-    this._isMounted = false;
     this._submit = this._submit.bind(this);
     this._cancel = this._cancel.bind(this);
     this._handleChange = this._handleChange.bind(this);
@@ -25,12 +24,8 @@ class ConfigureYamlFieldModal extends PromiseComponent {
   }
 
   componentDidMount() {
-    this._isMounted = true;
+    super.componentDidMount();
     this._loadResource();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   _kindObj() {
@@ -41,15 +36,11 @@ class ConfigureYamlFieldModal extends PromiseComponent {
     this.setState({ resourceLoading: true });
     k8sGet(this._kindObj(), this.props.k8sQuery.name, this.props.k8sQuery.namespace)
       .then((resource) => {
-        if (!this._isMounted) {
-          return;
-        }
 
         let value = _.get(resource, this.props.path);
         if (this.props.k8sQuery.kind === 'secret') {
           value = window.atob(value);
         }
-
         this.setState({
           resource,
           resourceLoading: false,
@@ -118,7 +109,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
       <ModalTitle>{this.props.modalTitle}</ModalTitle>
       <ModalBody>
         <p>{this.props.modalText}</p>
-        { this.state.resourceLoading && <p><LoadingInline /></p> }
+        { this.state.resourceLoading && <LoadingInline /> }
         { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
         { this.props.inputType === 'input' && <input value={this.state.value} onChange={this._handleChange} className="form-control" disabled={this.state.resourceLoading} /> }
       </ModalBody>
