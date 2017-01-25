@@ -2,6 +2,7 @@ import {getResources} from './get-resources';
 
 const types = {
   resources: 'resources',
+  swagger: 'swagger',
 
   watchK8sObject: 'watchK8sObject',
   stopK8sWatch: 'stopK8sWatch',
