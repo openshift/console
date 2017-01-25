@@ -17,11 +17,14 @@ export class EditYAML extends SafetyFirst {
       success: null,
       height: 500,
       initialized: false,
+      stale: false,
     };
     this.id = `edit-yaml-${++id}`;
     this.ace = null;
     this.doc = null;
     this.resize_ = () => this.setState({height: this.height});
+    // k8s uses strings for resource versions
+    this.displayedVersion = '0';
   }
 
   handleError(error) {
@@ -58,9 +61,10 @@ export class EditYAML extends SafetyFirst {
     this.doc = null;
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
+    const newVersion = _.get(nextProps, 'metadata.resourceVersion');
+    this.setState({stale: this.displayedVersion !== newVersion});
     this.loadYaml();
-    // TODO: check for object dirtiness and warn user
   }
 
   get height () {
@@ -105,7 +109,8 @@ export class EditYAML extends SafetyFirst {
       this.ace.getSession().setUndoManager(new ace.UndoManager());
     }
     this.ace.focus();
-    this.setState({initialized: true});
+    this.displayedVersion = obj.metadata.resourceVersion;
+    this.setState({initialized: true, stale: false});
     this.resize_();
   }
 
@@ -175,7 +180,7 @@ export class EditYAML extends SafetyFirst {
       Our parent divs are meta objects created by third parties... but we need 100% height in all parents for flexbox :-/
       The current solution uses divs that are relative -> absolute -> flexbox pinning the button row with margin-top: auto
     */
-    const {error, success} = this.state;
+    const {error, success, stale} = this.state;
 
     return <div className="yaml-editor" ref={r => this.editor = r}  style={{height: this.state.height}}>
       <div className="absolute-zero">
@@ -184,6 +189,9 @@ export class EditYAML extends SafetyFirst {
           <div className="yaml-editor--buttons">
             {error && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--error">{error}</p>}
             {success && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--success">{success}</p>}
+            {stale && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--info">
+              <i className="fa fa-fw fa-exclamation-triangle"></i> This object has been updated. Click reload to see the new version.
+            </p>}
             <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>
             <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>
             <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
