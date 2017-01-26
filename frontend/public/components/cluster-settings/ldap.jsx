@@ -4,6 +4,7 @@ import { Provider, connect } from 'react-redux';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
 
+import { k8s } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
 import { coFetchJSON } from '../../co-fetch';
 import { angulars, register } from '../react-wrapper';
@@ -340,7 +341,7 @@ class LDAPs extends SafetyFirst {
 
   componentDidMount() {
     super.componentDidMount();
-    angulars.k8s.configmaps.get('tectonic-identity', 'tectonic-system')
+    k8s.configmaps.get('tectonic-identity', 'tectonic-system')
     .then(d => {
       const configDotYaml = safeLoad(d.data['config.yaml']) || {};
       const connectorIndex = _.findIndex(configDotYaml.connectors, connector => connector.type === 'ldap' && connector.id === 'tectonic-ldap');

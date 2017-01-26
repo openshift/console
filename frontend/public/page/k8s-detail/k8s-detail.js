@@ -1,5 +1,7 @@
+import {k8s} from '../../module/k8s';
+
 angular.module('bridge.page')
-.controller('k8sDetailCtrl', function($scope, $location, $routeParams, $window, k8s) {
+.controller('k8sDetailCtrl', function($scope, $location, $routeParams, $window) {
   'use strict';
   $scope.name = $routeParams.name;
   let kind;

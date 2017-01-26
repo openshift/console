@@ -1,10 +1,10 @@
 import React from 'react';
 
 import {coFetchJSON} from '../co-fetch';
-import {k8sBasePath} from '../module/k8s';
+import {k8s, k8sBasePath} from '../module/k8s';
 import {k8sVersion} from '../module/status';
 import {ClusterOverviewPage} from './cluster-overview';
-import {angulars, register} from './react-wrapper';
+import {register} from './react-wrapper';
 import {entitlementTitle} from './license-notifier';
 import {SafetyFirst} from './safety-first';
 import {cloudProviderID} from './utils';
@@ -60,7 +60,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
   }
 
   _checkCloudProvider() {
-    angulars.k8s.nodes.get().then((nodes) => {
+    k8s.nodes.get().then((nodes) => {
       const providerIDs = _.filter(_.map(nodes.items, cloudProviderID));
       this.setState({ cloudProviders: providerIDs.length ? _.uniq(providerIDs) : null });
     });

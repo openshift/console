@@ -3,8 +3,6 @@ describe('k8sNodes', function() {
 
   var k8sNodes = window.tectonicTesting.k8sNodes;
 
-  beforeEach(module('k8s'));
-
   describe('#isTrusted', function() {
     it('returns true for falsy node', function () {
       expect(k8sNodes.isTrusted()).toEqual(true);

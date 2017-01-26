@@ -30,7 +30,6 @@ angular.module('bridge', [
   'ngTagsInput',
   // internal modules
   'templates',
-  'k8s',
   'bridge.service',
   'bridge.ui',
   'bridge.page',

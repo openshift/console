@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {k8s} from '../../module/k8s';
 import {errorModal} from '../modals';
 import {connect, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
 import {register, angulars} from '../react-wrapper';
@@ -74,7 +75,7 @@ class EditRule_ extends PromiseComponent {
     this.toggleVerb = (name, checked) => this.toggleVerb_(name, checked);
     this.toggleResource = (name, checked) => this.toggleResource_(name, checked);
 
-    this.resource = props.namespace ? angulars.k8s.roles : angulars.k8s.clusterroles;
+    this.resource = props.namespace ? k8s.roles : k8s.clusterroles;
     this.kind = this.resource.kind;
     this.getResource();
   }

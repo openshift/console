@@ -1,9 +1,8 @@
 import React from 'react';
 
-import {k8sKinds} from '../../module/k8s';
+import {k8s, k8sKinds} from '../../module/k8s';
 import {Cog, ResourceIcon} from '../utils';
 import {confirmModal} from '../modals';
-import {angulars} from '../react-wrapper';
 
 export const Rules = ({rules, metadata: {name, namespace}}) => {
   const rulesList = rules.map((rule, i) =>
@@ -107,7 +106,7 @@ const DeleteRule = (name, namespace, i) => ({
     message: `Are you sure you want to delete Rule #${i}?`,
     btnText: 'Delete Rule',
     executeFn: () => {
-      const kind = angulars.k8s[namespace ? 'roles' : 'clusterroles'];
+      const kind = k8s[namespace ? 'roles' : 'clusterroles'];
       return kind.patch({metadata: {name, namespace}}, [{
         op: 'remove', path: `/rules/${i}`,
       }]);

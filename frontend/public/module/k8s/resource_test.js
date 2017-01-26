@@ -1,13 +1,7 @@
 describe('k8s.k8sResource', function() {
   'use strict';
-  var k8s;
 
-  beforeEach(module('k8s'));
-
-  beforeEach(inject(function(_k8s_) {
-    k8s = _k8s_;
-  }));
-
+  var k8s = window.tectonicTesting.k8s;
 
   describe('create', function() {
     it('automatically lowercases resource name', function () {

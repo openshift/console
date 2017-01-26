@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {angulars} from '../react-wrapper';
+import {k8s} from '../../module/k8s';
 import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {PromiseComponent, SelectorInput} from '../utils';
 
@@ -18,7 +18,7 @@ class CreateNamespaceModal extends PromiseComponent {
         labels: SelectorInput.objectify(this.state.labels),
       },
     };
-    const promise = angulars.k8s.namespaces.create(namespace);
+    const promise = k8s.namespaces.create(namespace);
     this._setRequestPromise(promise)
       .then(this.props.close);
   }

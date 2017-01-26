@@ -1,6 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 
+import {k8s} from '../module/k8s';
 import {angulars, register} from './react-wrapper';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
 import {makeList, TwoColumns} from './factory';
@@ -49,7 +50,7 @@ class PullSecret extends SafetyFirst {
       return;
     }
     const args = `?fieldSelector=${encodeURIComponent('type=kubernetes.io/dockerconfigjson')}`;
-    angulars.k8s.secrets.get(args, namespaceName)
+    k8s.secrets.get(args, namespaceName)
       .then((pullSecrets) => {
         this.setState({isLoading: false, data: _.get(pullSecrets, 'items[0]')});
       })

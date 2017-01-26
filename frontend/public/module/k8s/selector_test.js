@@ -3,8 +3,6 @@ describe('k8sSelector', function() {
 
   var k8sSelector = window.tectonicTesting.k8sSelector;
 
-  beforeEach(module('k8s'));
-
   describe('#fromString', function () {
     it('works for nullable', function () {
       expect(k8sSelector.fromString(null)).toEqual({
