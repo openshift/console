@@ -27,7 +27,9 @@ export const isNamespaced = path => {
 export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   const match = isNamespaced(originalPath);
   if (match) {
-    const resource = _.find(prefixes, prefix => originalPath.indexOf(prefix) !== -1);
+    // The resource is the first URL slug that matches a prefix (e.g. for "/ns/test-ns/jobs/test-job/pods", the resource
+    // is "jobs", not "pods")
+    const resource = _(prefixes).filter(p => originalPath.indexOf(p) !== -1).minBy(p => originalPath.indexOf(p));
     if (!resource) {
       throw new Error(`Path can't be namespaced: ${originalPath}`);
     }
