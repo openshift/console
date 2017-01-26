@@ -273,11 +273,10 @@ angular.module('bridge', [
     title: 'Page Not Found (404)'
   });
 })
-.run(function(_, $rootScope, $location, $window, $ngRedux, debugSvc, angularBridge) {
+.run(function(_, $rootScope, $location, $window, $ngRedux, angularBridge) {
   'use strict';
 
   $ngRedux.dispatch(actions.getResources());
-  $rootScope.debug = debugSvc;
   angularBridge.expose();
 
   $ngRedux.dispatch(featureActions.detectK8sFlags(k8sBasePath));
