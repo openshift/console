@@ -1,22 +1,3 @@
-.co-p-node__node-conditions {
-  margin-top: 30px;
-
-  // Specific so that we override the default coreos style
-  .table > tbody > tr > td {
-    padding-left: 4px;
-    padding-right: 4px;
-  }
-}
-
-.co-m-pane__sub__heading {
-  padding-top: 10px;
-}
-
 .compaction-btn {
   margin-right: 1px;
-}
-
-.node-search {
-  max-width: 150px;
-  margin-right: 10px;
 }
