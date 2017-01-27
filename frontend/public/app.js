@@ -76,13 +76,11 @@ angular.module('bridge', [
 
   registerNamespaceFriendlyPrefix('events');
   r('/all-namespaces/events', {
-    controller: 'EventsCtrl',
-    templateUrl: '/static/page/events/events.html',
+    template: '<react-component name="EventStreamPage"></react-component>',
     title: 'Events',
   });
   r('/ns/:ns/events', {
-    controller: 'EventsCtrl',
-    templateUrl: '/static/page/events/events.html',
+    template: '<react-component name="EventStreamPage"></react-component>',
     title: 'Events',
   });
 
@@ -105,8 +103,7 @@ angular.module('bridge', [
     title: 'Edit Replication Controller',
   });
   r('/ns/:ns/replicationcontrollers/:name/events', {
-    controller: 'ReplicationcontrollerSyseventsCtrl',
-    templateUrl: '/static/page/replicationcontrollers/replicationcontroller-sysevents.html',
+    template: '<react-component name="EventStreamReplicationController"></react-component>',
     title: 'Replication Controller Events',
   });
 
@@ -163,8 +160,7 @@ angular.module('bridge', [
     title: 'Create New Pod',
   });
   r('/ns/:ns/pods/:name/events', {
-    controller: 'PodSyseventsCtrl',
-    templateUrl: '/static/page/pods/sysevents.html',
+    template: '<react-component name="EventStreamPod"></react-component>',
     title: 'Pod Events',
   });
   r('/nodes', {
@@ -180,8 +176,7 @@ angular.module('bridge', [
     title: 'Node',
   });
   r('/nodes/:name/events', {
-    controller: 'nodeSyseventsCtrl',
-    templateUrl: '/static/page/nodes/sysevents.html',
+    template: '<react-component name="EventStreamNode"></react-component>',
     title: 'Node Events',
   });
   r('/nodes/:name/pods', {
