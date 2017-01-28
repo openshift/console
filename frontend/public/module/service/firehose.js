@@ -42,40 +42,6 @@ angular.module('bridge.service')
       dispatch(actions.stopK8sWatch(this.id));
     }
 
-    bindScope ($scope, name='', onStateChange=null) {
-      name = name || this.k8sType.kind.plural;
-      $scope[name] = null;
-      $scope.loadError = false;
-
-      const unsubscribe = this.watch_($scope, name, onStateChange);
-
-      const off = $scope.$on('$destroy', () => {
-        // eslint-disable-next-line no-console
-        console.log(`nuking ${this.id}`);
-        off();
-        unsubscribe();
-        this.unwatchList();
-      });
-      return this;
-    }
-
-    watch_ ($scope, name, onStateChange=null) {
-      onStateChange = onStateChange || ((state) => _.extend($scope, state));
-      const {id} = this;
-      return $ngRedux.connect(state => {
-        const loaded = state.k8s.getIn([id, 'loaded']);
-        const loadError = state.k8s.getIn([id, 'loadError']);
-        const data = state.k8s.getIn([id, 'data']);
-
-        return {
-          loadError, loaded,
-          [name]: data && data.toArray().map(p => p.toJSON()),
-        };
-      })(state => {
-        return onStateChange(state);
-      });
-    }
-
     makeQuery_ (namespace, labelSelector, fieldSelector, name) {
       const query = {};
 
