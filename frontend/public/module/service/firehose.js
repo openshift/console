@@ -3,8 +3,39 @@
  */
 import actions from '../k8s/k8s-actions';
 
+const id_ = (k8sType, query) => {
+  let qs = '';
+  if (!_.isEmpty(query)) {
+    qs = `---${JSON.stringify(query)}`;
+  }
+
+  return `${k8sType.kind.plural}${qs}`;
+};
+
+const makeQuery_ = (namespace, labelSelector, fieldSelector, name) => {
+  const query = {};
+
+  if (!_.isEmpty(labelSelector)) {
+    query.labelSelector = labelSelector;
+  }
+
+  if (!_.isEmpty(namespace)) {
+    query.ns = namespace;
+  }
+
+  if (!_.isEmpty(name)) {
+    query.name = name;
+  }
+
+  if (fieldSelector) {
+    query.fieldSelector = fieldSelector;
+  }
+  return query;
+};
+
+
 angular.module('bridge.service')
-.service('Firehose', function($ngRedux, _) {
+.service('Firehose', function($ngRedux) {
   'use strict';
 
   const dispatch = (...args) => $ngRedux.dispatch(...args);
@@ -12,8 +43,8 @@ angular.module('bridge.service')
   return class Firehose {
     constructor (k8sType, namespace, labelSelector, fieldSelector, name) {
       this.k8sType = k8sType;
-      this.query = this.makeQuery_(namespace, labelSelector, fieldSelector, name);
-      this.id = this.id_(k8sType, this.query);
+      this.query = makeQuery_(namespace, labelSelector, fieldSelector, name);
+      this.id = id_(k8sType, this.query);
       this.namespace = namespace;
       this.name = name;
     }
@@ -40,36 +71,6 @@ angular.module('bridge.service')
 
     unwatchList () {
       dispatch(actions.stopK8sWatch(this.id));
-    }
-
-    makeQuery_ (namespace, labelSelector, fieldSelector, name) {
-      const query = {};
-
-      if (!_.isEmpty(labelSelector)) {
-        query.labelSelector = labelSelector;
-      }
-
-      if (!_.isEmpty(namespace)) {
-        query.ns = namespace;
-      }
-
-      if (!_.isEmpty(name)) {
-        query.name = name;
-      }
-
-      if (fieldSelector) {
-        query.fieldSelector = fieldSelector;
-      }
-      return query;
-    }
-
-    id_ (k8sType, query) {
-      let qs = '';
-      if (!_.isEmpty(query)) {
-        qs = `---${JSON.stringify(query)}`;
-      }
-
-      return `${k8sType.kind.plural}${qs}`;
     }
   };
 });
