@@ -1,6 +1,3 @@
-/**
- * Firehose of all objects of a given type and query.
- */
 import actions from '../k8s/k8s-actions';
 
 const id_ = (k8sType, query) => {
@@ -33,44 +30,37 @@ const makeQuery_ = (namespace, labelSelector, fieldSelector, name) => {
   return query;
 };
 
+export class K8sWatcher {
+  constructor (k8sType, namespace, labelSelector, fieldSelector, name, store) {
+    this.k8sType = k8sType;
+    this.query = makeQuery_(namespace, labelSelector, fieldSelector, name);
+    this.id = id_(k8sType, this.query);
+    this.namespace = namespace;
+    this.name = name;
+    this.dispatch = store.dispatch;
+  }
 
-angular.module('bridge.service')
-.service('Firehose', function($ngRedux) {
-  'use strict';
+  watchObject () {
+    // eslint-disable-next-line no-console
+    console.log(`opening ${this.id}`);
+    // watchK8sObject: (id, name, namespace, k8sType)
+    this.dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.query, this.k8sType));
+    return this;
+  }
 
-  const dispatch = (...args) => $ngRedux.dispatch(...args);
+  watchList () {
+    // eslint-disable-next-line no-console
+    console.log(`opening ${this.id}`);
+    this.dispatch(actions.watchK8sList(this.id, this.query, this.k8sType));
+    return this;
+  }
 
-  return class Firehose {
-    constructor (k8sType, namespace, labelSelector, fieldSelector, name) {
-      this.k8sType = k8sType;
-      this.query = makeQuery_(namespace, labelSelector, fieldSelector, name);
-      this.id = id_(k8sType, this.query);
-      this.namespace = namespace;
-      this.name = name;
-    }
+  unwatch () {
+    this.dispatch(actions.stopK8sWatch(this.id));
+    return this;
+  }
 
-    watchObject () {
-      // eslint-disable-next-line no-console
-      console.log(`opening ${this.id}`);
-      // watchK8sObject: (id, name, namespace, k8sType)
-      dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.query, this.k8sType));
-      return this;
-    }
-
-    watchList () {
-      // eslint-disable-next-line no-console
-      console.log(`opening ${this.id}`);
-      dispatch(actions.watchK8sList(this.id, this.query, this.k8sType));
-      return this;
-    }
-
-    unwatch () {
-      dispatch(actions.stopK8sWatch(this.id));
-      return this;
-    }
-
-    unwatchList () {
-      dispatch(actions.stopK8sWatch(this.id));
-    }
-  };
-});
+  unwatchList () {
+    this.dispatch(actions.stopK8sWatch(this.id));
+  }
+}
