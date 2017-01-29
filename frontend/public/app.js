@@ -197,10 +197,7 @@ angular.module('bridge', [
     title: 'Search',
   });
   r('/search', {
-    controller: 'SearchCtrl',
-    template: '<react-component name="SearchPage"></react-component>',
-    title: 'Search',
-    redirect: true,
+    redirectTo: '/all-namespaces/search',
   });
 
   r('/settings/profile', {
