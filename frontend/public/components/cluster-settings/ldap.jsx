@@ -89,8 +89,8 @@ const Fields = {
     {
       name: UserBaseDN,
       label: 'Base DN',
-      help: 'BaseDN to start the search from. It will translate to the query: "(&(objectClass=person)(uid=<username>))".',
-      placeholder: 'baseDN: cn=users,dc=example,dc=com',
+      help: 'BaseDN to start the user search from. It will translate to the query: "(&(objectClass=person)(uid=<username>))".',
+      placeholder: 'cn=users,dc=example,dc=com',
     },
     {
       name: UserFilter,
@@ -101,13 +101,13 @@ const Fields = {
     {
       name: UserUsername,
       label: 'Username',
-      help: 'Username attribute used for comparing user entries. This will be translated and combined with the other filter as "(<attr>=<username>)".',
-      default: 'uid',
+      help: 'Username attribute used for comparing user entries. This will be translated and combined with the other filter as "(<attr>=<username>)". For the end user, this is the field they\'ll use as their username.',
+      default: 'mail',
     },
     {
       name: UserUserId,
-      label: 'Attribute',
-      help: 'String representation of the user.',
+      label: 'User Id Attribute',
+      help: 'String representation of the user\'s unique identifier.',
       default: 'uid',
     },
     {
@@ -127,7 +127,7 @@ const Fields = {
     {
       name: GroupBaseDN,
       label: 'Base DN',
-      help: 'BaseDN to start the search from. It will translate to the query: (&(objectClass=group)(member=<user uid>)).',
+      help: 'BaseDN to start the group search from. It will translate to the query: (&(objectClass=group)(member=<user uid>)).',
       placeholder: 'cn=groups,dc=freeipa,dc=example,dc=com',
     },
     {
