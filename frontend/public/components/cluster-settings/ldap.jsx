@@ -100,7 +100,7 @@ const Fields = {
     },
     {
       name: UserUsername,
-      label: 'Username',
+      label: 'Username Attribute',
       help: 'Username attribute used for comparing user entries. This will be translated and combined with the other filter as "(<attr>=<username>)". For the end user, this is the field they\'ll use as their username.',
       default: 'mail',
     },
