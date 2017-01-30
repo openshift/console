@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect as reactReduxConnect, Provider} from 'react-redux';
 
+import {K8sWatcher} from '../../module/service/firehose';
 import {k8s as k8sModule, k8sKinds} from '../../module/k8s';
 import {angulars} from '../react-wrapper';
 import {inject} from './index';
@@ -16,10 +17,9 @@ export const k8sResource = kind => {
 export class WithQuery extends React.Component {
   constructor (props) {
     super(props);
-    const {Firehose} = angulars;
     const {kind, namespace, selector, fieldSelector, name} = this.props;
     // Just created to get the ID :-/
-    const firehose = new Firehose(k8sResource(kind), namespace, selector, fieldSelector, name);
+    const firehose = new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, angulars.store);
     this.firehoseId = firehose.id;
   }
 

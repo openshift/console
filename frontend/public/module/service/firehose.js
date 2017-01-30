@@ -1,75 +1,66 @@
-/**
- * Firehose of all objects of a given type and query.
- */
 import actions from '../k8s/k8s-actions';
 
-angular.module('bridge.service')
-.service('Firehose', function($ngRedux, _) {
-  'use strict';
+const id_ = (k8sType, query) => {
+  let qs = '';
+  if (!_.isEmpty(query)) {
+    qs = `---${JSON.stringify(query)}`;
+  }
 
-  const dispatch = (...args) => $ngRedux.dispatch(...args);
+  return `${k8sType.kind.plural}${qs}`;
+};
 
-  return class Firehose {
-    constructor (k8sType, namespace, labelSelector, fieldSelector, name) {
-      this.k8sType = k8sType;
-      this.query = this.makeQuery_(namespace, labelSelector, fieldSelector, name);
-      this.id = this.id_(k8sType, this.query);
-      this.namespace = namespace;
-      this.name = name;
-    }
+const makeQuery_ = (namespace, labelSelector, fieldSelector, name) => {
+  const query = {};
 
-    watchObject () {
-      // eslint-disable-next-line no-console
-      console.log(`opening ${this.id}`);
-      // watchK8sObject: (id, name, namespace, k8sType)
-      dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.query, this.k8sType));
-      return this;
-    }
+  if (!_.isEmpty(labelSelector)) {
+    query.labelSelector = labelSelector;
+  }
 
-    watchList () {
-      // eslint-disable-next-line no-console
-      console.log(`opening ${this.id}`);
-      dispatch(actions.watchK8sList(this.id, this.query, this.k8sType));
-      return this;
-    }
+  if (!_.isEmpty(namespace)) {
+    query.ns = namespace;
+  }
 
-    unwatch () {
-      dispatch(actions.stopK8sWatch(this.id));
-      return this;
-    }
+  if (!_.isEmpty(name)) {
+    query.name = name;
+  }
 
-    unwatchList () {
-      dispatch(actions.stopK8sWatch(this.id));
-    }
+  if (fieldSelector) {
+    query.fieldSelector = fieldSelector;
+  }
+  return query;
+};
 
-    makeQuery_ (namespace, labelSelector, fieldSelector, name) {
-      const query = {};
+export class K8sWatcher {
+  constructor (k8sType, namespace, labelSelector, fieldSelector, name, store) {
+    this.k8sType = k8sType;
+    this.query = makeQuery_(namespace, labelSelector, fieldSelector, name);
+    this.id = id_(k8sType, this.query);
+    this.namespace = namespace;
+    this.name = name;
+    this.dispatch = store.dispatch;
+  }
 
-      if (!_.isEmpty(labelSelector)) {
-        query.labelSelector = labelSelector;
-      }
+  watchObject () {
+    // eslint-disable-next-line no-console
+    console.log(`opening ${this.id}`);
+    // watchK8sObject: (id, name, namespace, k8sType)
+    this.dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.query, this.k8sType));
+    return this;
+  }
 
-      if (!_.isEmpty(namespace)) {
-        query.ns = namespace;
-      }
+  watchList () {
+    // eslint-disable-next-line no-console
+    console.log(`opening ${this.id}`);
+    this.dispatch(actions.watchK8sList(this.id, this.query, this.k8sType));
+    return this;
+  }
 
-      if (!_.isEmpty(name)) {
-        query.name = name;
-      }
+  unwatch () {
+    this.dispatch(actions.stopK8sWatch(this.id));
+    return this;
+  }
 
-      if (fieldSelector) {
-        query.fieldSelector = fieldSelector;
-      }
-      return query;
-    }
-
-    id_ (k8sType, query) {
-      let qs = '';
-      if (!_.isEmpty(query)) {
-        qs = `---${JSON.stringify(query)}`;
-      }
-
-      return `${k8sType.kind.plural}${qs}`;
-    }
-  };
-});
+  unwatchList () {
+    this.dispatch(actions.stopK8sWatch(this.id));
+  }
+}

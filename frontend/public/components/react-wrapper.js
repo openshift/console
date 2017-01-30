@@ -4,7 +4,6 @@ import {k8sEnum} from '../module/k8s';
 
 export const angulars = {
   store: null,
-  Firehose: null,
   ModalLauncherSvc: null,
   $location: null,
   $log: null,
@@ -24,7 +23,7 @@ export const register = (name, Component) => {
 
 app.value('nop', () => <div/>);
 
-app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeout, $interval, $log, Firehose, ModalLauncherSvc, errorMessageSvc) {
+app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeout, $interval, $log, ModalLauncherSvc, errorMessageSvc) {
   // "Export" angular modules to the outside world via ref through 'angulars'...
   // NOTE: this only exist after the app has loaded!
 
@@ -34,7 +33,6 @@ app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeo
     });
 
     angulars.store = $ngRedux;
-    angulars.Firehose = Firehose;
     angulars.ModalLauncherSvc = ModalLauncherSvc;
     angulars.modal = (...args) => () => ModalLauncherSvc.open(...args),
     angulars.$location = $location;
