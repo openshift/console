@@ -28,3 +28,4 @@ import './edit-yaml';
 import './profile';
 import './error';
 import './nav';
+import './resource-list';

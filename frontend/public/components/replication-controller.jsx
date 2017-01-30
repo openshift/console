@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {makeListPage, makeList, makeDetailsPage} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {Header, rowOfKind} from './workloads';
 import {Cog, navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
@@ -26,9 +26,9 @@ const Details = (replicationController) => <div>
 
 const {details, edit, pods, events} = navFactory;
 const pages = [details(Details), edit(), pods(), events()];
-const ReplicationControllersDetailsPage = makeDetailsPage('ReplicationControllersDetailsPage', 'replicationcontroller', pages, menuActions);
+const ReplicationControllersDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller', cogActions));
-const ReplicationControllersPage = makeListPage('ReplicationControllersPage', 'replicationcontroller', ReplicationControllersList);
+const ReplicationControllersPage = props => <ListPage ListComponent={ReplicationControllersList} {...props} />;
 
 export {ReplicationControllersList, ReplicationControllersPage, ReplicationControllersDetailsPage};

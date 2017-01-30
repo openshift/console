@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {makeListPage, makeList, makeDetailsPage} from './factory';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, navFactory, LabelList, ResourceCog, ResourceHeading, ResourceIcon, ResourceLink, Selector, Timestamp} from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyLabels, Cog.factory.Delete];
@@ -137,9 +137,9 @@ const Details = (s) => <div className="row no-gutter">
 
 const {details, pods, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
-const ServicesDetailsPage = makeDetailsPage('ServicesDetailsPage', 'service', pages, menuActions);
+const ServicesDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);
-const ServicesPage = makeListPage('ServicesPage', 'service', ServicesList);
+const ServicesPage = props => <ListPage ListComponent={ServicesList} {...props} />;
 
 export {ServicesList, ServicesPage, ServicesDetailsPage};

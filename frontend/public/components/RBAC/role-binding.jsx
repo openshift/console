@@ -2,7 +2,6 @@ import React from 'react';
 
 import {getQN} from '../../module/k8s';
 import {ResourceIcon, LabelList, Timestamp} from '../utils';
-import {register} from '../react-wrapper';
 import {makeList, TwoColumns} from '../factory';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -107,5 +106,4 @@ const Details = (selected) => {
   </div>;
 };
 
-const RoleBindingsPage = (props) => <TwoColumns list={RoleBindings} {...props}><Details /></TwoColumns>;
-register('RoleBindingsPage', RoleBindingsPage);
+export const RoleBindingsPage = (props) => <TwoColumns list={RoleBindings} {...props}><Details /></TwoColumns>;

@@ -119,15 +119,13 @@ angular.module('bridge', [
   registerNamespaceFriendlyPrefix('ingresses');
 
   r('/clusterroles', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    k8sKind: 'clusterroles',
+    template: '<react-component name="ClusterRolesPage" />',
+    title: 'Cluster Roles',
     reloadOnSearch: false,
   });
   r('/clusterrolebindings', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
-    k8sKind: 'clusterrolebindings',
+    template: '<react-component name="ClusterRoleBindingsPage" />',
+    title: 'Cluster Role Bindings',
     reloadOnSearch: false,
   });
   r('/ns/:ns/replicasets/new', {
@@ -218,14 +216,12 @@ angular.module('bridge', [
   });
 
   r('/all-namespaces/:kind', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
+    template: '<react-component name="ResourceListPage" />',
     reloadOnSearch: false,
   });
 
   r('/ns/:ns/:kind', {
-    controller: 'k8sListCtrl',
-    templateUrl: '/static/page/k8s-list/k8s-list.html',
+    template: '<react-component name="ResourceListPage" />',
     reloadOnSearch: false,
   });
 
@@ -250,12 +246,10 @@ angular.module('bridge', [
   });
 
   r('/ns/:ns/:kind/:name/:view', {
-    controller: 'k8sDetailCtrl',
-    templateUrl: '/static/page/k8s-detail/k8s-detail.html',
+    template: '<react-component name="ResourceDetailsPage" />',
   });
   r('/ns/:ns/pods/:podName/:kind/:name/:view', {
-    controller: 'k8sDetailCtrl',
-    templateUrl: '/static/page/k8s-detail/k8s-detail.html',
+    template: '<react-component name="ResourceDetailsPage" />',
   });
 
   $routeProvider.when('/error', {
