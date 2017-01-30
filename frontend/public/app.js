@@ -154,7 +154,6 @@ angular.module('bridge', [
 
   registerNamespaceFriendlyPrefix('pods');
   r('/ns/:ns/:kind/new', {
-    controller: 'k8sCreateCtrl',
     template: '<react-component name="CreateYAML" props="props"></react-component>',
     title: 'Create New',
   });

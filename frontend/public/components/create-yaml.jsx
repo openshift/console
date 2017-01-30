@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { register } from './react-wrapper';
+import { k8s } from '../module/k8s';
+import { angulars, register } from './react-wrapper';
 import { SafetyFirst } from './safety-first';
 import { EditYAML } from './edit-yaml';
 import { connect } from './utils';
@@ -25,9 +26,29 @@ const getDefaultType = (type, format) => {
   }
 };
 
+const modelOverrides = {
+  'v1.Container': {
+    required: ['name', 'image', 'command'],
+  }
+};
+
+const blacklist = [
+  'clusterName',
+  'finalizers',
+  'generateName',
+  'ownerReferences',
+  'status',
+];
+
 const toEmptyObj = (model, obj={}) => {
+  if (!model.properties) {
+    return getDefaultType(model.type, model.format);
+  }
   _.each(model.properties, (prop, name) => {
     if (prop.readOnly) {
+      return;
+    }
+    if (_.includes(blacklist, name)) {
       return;
     }
     if (model.required && !model.required.includes(name)) {
@@ -48,7 +69,8 @@ const toEmptyObj = (model, obj={}) => {
 const modelFromSwagger = (models, model) => {
   const objsToFollow = [models[model]];
   while (objsToFollow.length) {
-    const obj = objsToFollow.pop();
+    let obj = objsToFollow.pop();
+    obj = _.extend(obj, modelOverrides[obj.id]);
     _.each(obj.properties, (prop, name) => {
       _.each(prop, (v, k) => {
         if (k === '$ref') {
@@ -75,6 +97,25 @@ const modelFromSwagger = (models, model) => {
   return models[model];
 };
 
+const prune = obj => {
+  _.each(obj, (v, k) => {
+    if (!_.isObjectLike(v)) {
+      // Arrays & objects are object-like. Strings, numbers, & bools aren't
+      return;
+    }
+    obj[k] = prune(v);
+    if (!_.isEmpty(obj[k])) {
+      return;
+    }
+    if (_.isArray(obj)) {
+      obj.splice(k, 1);
+    } else {
+      delete obj[k];
+    }
+  });
+  return obj;
+};
+
 const stateToProps = ({k8s}) => ({
   models: k8s.get('MODELS'),
 });
@@ -91,19 +132,26 @@ class CreateYAML_ extends SafetyFirst {
   }
 
   render () {
-    const {models, kind, apiVersion, isExtension} = this.props;
+    const {models} = this.props;
     if (!models) {
       return <div />;
     }
-    const kindStr = `${apiVersion}.${kind}`;
+    const { kind } = k8s[angulars.routeParams.kind];
+    if (!kind) {
+      location.url('/404');
+    }
+
+    const apiVersion = kind.apiVersion || 'v1';
+    const namespace = angulars.routeParams.ns || 'default';
+    const kindStr = `${apiVersion}.${kind.kind}`;
     const model = modelFromSwagger(models, kindStr);
-    const obj = toEmptyObj(model);
+    const obj = prune(toEmptyObj(model));
     if (!obj) {
       return <div />;
     }
-    obj.kind = kind;
-    obj.apiVersion = `${isExtension && 'extensions/'}${apiVersion}`;
-    obj.metadata.namespace = this.props.namespace || 'default';
+    obj.kind = kind.kind;
+    obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
+    obj.metadata.namespace = namespace;
     return <div>
       <EditYAML {...obj} />
     </div>;
