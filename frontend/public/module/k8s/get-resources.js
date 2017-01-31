@@ -1,23 +1,3 @@
-// ### swagger yaml editing todos/problems
-
-// - yaml editor
-//   - info sections
-// - resource-link.jsx
-// - enum.js
-// - routes?
-// - parse swagger
-//   - get constraints,
-//   - description,
-//   - read only fields,
-//   - required fields
-// - questions
-//   - linking to other resources? (don't want to force users to fill in resource ids)
-//   - autocomplete possible values?
-//   - default values for specific attrs?
-//   - editing 3rd party resources (they don't show up in swagger)
-
-
-
 import {coFetchJSON} from  '../../co-fetch';
 
 const ADMIN_RESOURCES = new Set(
@@ -61,6 +41,7 @@ export const getResources = () => coFetchJSON('api/kubernetes/')
       });
   });
 
+// TODO: only call getSwagger if we don't have a template yaml for the object type
 export const getSwagger = (dispatch) =>
   coFetchJSON('api/kubernetes/swaggerapi/').then(data => {
     const {apis} = data;

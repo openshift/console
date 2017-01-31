@@ -7,7 +7,6 @@ import thunk from 'redux-thunk';
 import {analyticsSvc} from './module/analytics';
 import {tectonicVersion} from './module/status';
 import {k8sBasePath} from './module/k8s';
-import { getSwagger } from './module/k8s/get-resources';
 import k8sReducers from './module/k8s/k8s-reducers';
 import {actions as UIActions, registerNamespaceFriendlyPrefix} from './ui/ui-actions';
 import actions from './module/k8s/k8s-actions';
@@ -154,7 +153,7 @@ angular.module('bridge', [
 
   registerNamespaceFriendlyPrefix('pods');
   r('/ns/:ns/:kind/new', {
-    template: '<react-component name="CreateYAML" props="props"></react-component>',
+    template: '<react-component name="CreateYAML"></react-component>',
     title: 'Create New',
   });
   r('/ns/:ns/pods/:name/events', {
@@ -263,7 +262,6 @@ angular.module('bridge', [
   'use strict';
 
   $ngRedux.dispatch(actions.getResources());
-  $ngRedux.dispatch(getSwagger);
   angularBridge.expose();
 
   $ngRedux.dispatch(featureActions.detectK8sFlags(k8sBasePath));

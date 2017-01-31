@@ -120,20 +120,15 @@ class CreateYAML_ extends SafetyFirst {
     super(props);
   }
 
-  componentWillReceiveProps() {
-    // const newVersion = _.get(nextProps, 'metadata.resourceVersion');
-    // this.setState({stale: this.displayedVersion !== newVersion});
-    // this.loadYaml();
-  }
-
   render () {
     const {models} = this.props;
     if (!models) {
-      return <div />;
+      return null;
     }
     const kind = k8s[angulars.routeParams.kind] && k8s[angulars.routeParams.kind].kind;
     if (!kind) {
-      location.url('/404');
+      // <base href=...> makes this OK
+      window.location = '404';
     }
 
     const apiVersion = kind.apiVersion || 'v1';
@@ -147,7 +142,7 @@ class CreateYAML_ extends SafetyFirst {
       const model = modelFromSwagger(models, kindStr);
       obj = prune(toEmptyObj(model));
       if (!obj) {
-        return <div />;
+        return null;
       }
     }
 
@@ -156,9 +151,7 @@ class CreateYAML_ extends SafetyFirst {
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = namespace;
 
-    return <div>
-      <EditYAML obj={obj} create={true} />
-    </div>;
+    return <EditYAML obj={obj} create={true} />;
   }
 }
 
