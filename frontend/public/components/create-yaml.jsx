@@ -1,10 +1,12 @@
 import React from 'react';
 
+import { safeLoad } from 'js-yaml';
 import { k8s } from '../module/k8s';
 import { angulars, register } from './react-wrapper';
 import { SafetyFirst } from './safety-first';
 import { EditYAML } from './edit-yaml';
 import { connect } from './utils';
+import { TEMPLATES } from '../yaml-templates';
 
 const getDefaultType = (type, format) => {
   switch (type) {
@@ -23,12 +25,6 @@ const getDefaultType = (type, format) => {
       return [];
     default:
       throw new Error(`unknown type: ${type}`);
-  }
-};
-
-const modelOverrides = {
-  'v1.Container': {
-    required: ['name', 'image', 'command'],
   }
 };
 
@@ -70,7 +66,6 @@ const modelFromSwagger = (models, model) => {
   const objsToFollow = [models[model]];
   while (objsToFollow.length) {
     let obj = objsToFollow.pop();
-    obj = _.extend(obj, modelOverrides[obj.id]);
     _.each(obj.properties, (prop, name) => {
       _.each(prop, (v, k) => {
         if (k === '$ref') {
@@ -136,7 +131,7 @@ class CreateYAML_ extends SafetyFirst {
     if (!models) {
       return <div />;
     }
-    const { kind } = k8s[angulars.routeParams.kind];
+    const kind = k8s[angulars.routeParams.kind] && k8s[angulars.routeParams.kind].kind;
     if (!kind) {
       location.url('/404');
     }
@@ -144,16 +139,25 @@ class CreateYAML_ extends SafetyFirst {
     const apiVersion = kind.apiVersion || 'v1';
     const namespace = angulars.routeParams.ns || 'default';
     const kindStr = `${apiVersion}.${kind.kind}`;
-    const model = modelFromSwagger(models, kindStr);
-    const obj = prune(toEmptyObj(model));
-    if (!obj) {
-      return <div />;
+    const template = TEMPLATES[kindStr];
+    let obj;
+    if (template) {
+      obj = safeLoad(template);
+    } else {
+      const model = modelFromSwagger(models, kindStr);
+      obj = prune(toEmptyObj(model));
+      if (!obj) {
+        return <div />;
+      }
+      obj.kind = kind.kind;
+      obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     }
-    obj.kind = kind.kind;
-    obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
+
+    obj.metadata = obj.metadata || {};
     obj.metadata.namespace = namespace;
+
     return <div>
-      <EditYAML {...obj} />
+      <EditYAML obj={obj} create={true} />
     </div>;
   }
 }
