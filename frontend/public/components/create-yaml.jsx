@@ -149,10 +149,10 @@ class CreateYAML_ extends SafetyFirst {
       if (!obj) {
         return <div />;
       }
-      obj.kind = kind.kind;
-      obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     }
 
+    obj.kind = kind.kind;
+    obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = namespace;
 

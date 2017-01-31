@@ -1,10 +1,11 @@
 export const TEMPLATES = {};
 
-TEMPLATES['v1beta1.Job'] = `apiVersion: batch/v1
+TEMPLATES['v1beta1.Job'] = `apiVersion: extensions/v1beta1
 kind: Job
 metadata:
   name: pi
 spec:
+  selector: {}
   template:
     metadata:
       name: pi
@@ -18,28 +19,12 @@ spec:
 TEMPLATES['v1.Pod'] = `apiVersion: v1
 kind: Pod
 metadata:
-  name: example-app
+  name: redis
   labels:
-    app: example-app
-    version: v1
-    role: backend
+    app: redis
 spec:
   containers:
-  - name: java
-    image: companyname/java
-    ports:
-    - containerPort: 443
-    volumeMounts:
-    - mountPath: /volumes/logs
-      name: logs
-  - name: logger
-    image: companyname/logger:v1.2.3
-    ports:
-    - containerPort: 9999
-    volumeMounts:
-    - mountPath: /logs
-      name: logs
-  - name: monitoring
-    image: companyname/monitoring:v4.5.6
-    ports:
-    - containerPort: 1234`;
+    - name: key-value-store
+      image: redis
+      ports:
+        - containerPort: 6379`;
