@@ -62,7 +62,7 @@ export class EditYAML extends SafetyFirst {
   }
 
   componentWillReceiveProps(nextProps) {
-    const newVersion = _.get(nextProps, 'metadata.resourceVersion');
+    const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
     this.setState({stale: this.displayedVersion !== newVersion});
     this.loadYaml();
   }

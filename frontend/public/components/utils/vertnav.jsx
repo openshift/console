@@ -29,7 +29,7 @@ export const navFactory = {
   editYaml: () => ({
     href: 'yaml',
     name: 'YAML',
-    component: EditYAML,
+    component: (props) => <EditYAML obj={props} />,
   }),
 };
 
