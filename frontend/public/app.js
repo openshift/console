@@ -114,16 +114,6 @@ angular.module('bridge', [
   });
 
   registerNamespaceFriendlyPrefix('deployments');
-  r('/ns/:ns/deployments/new', {
-    controller: 'NewDeploymentCtrl',
-    templateUrl: '/static/page/deployments/new-deployment.html',
-    title: 'New Deployment',
-  });
-  r('/ns/:ns/deployments/:name/edit', {
-    controller: 'EditDeploymentCtrl',
-    templateUrl: '/static/page/deployments/edit-deployment.html',
-    title: 'Edit Deployment',
-  });
 
   registerNamespaceFriendlyPrefix('pods');
   r('/ns/:ns/:kind/new', {
