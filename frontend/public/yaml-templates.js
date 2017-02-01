@@ -28,3 +28,15 @@ spec:
       image: redis
       ports:
         - containerPort: 6379`;
+
+TEMPLATES['v1.Service'] = `apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376`;

@@ -122,9 +122,7 @@ class CreateYAML_ extends SafetyFirst {
 
   render () {
     const {models} = this.props;
-    if (!models) {
-      return null;
-    }
+
     const kind = k8s[angulars.routeParams.kind] && k8s[angulars.routeParams.kind].kind;
     if (!kind) {
       // <base href=...> makes this OK

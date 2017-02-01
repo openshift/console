@@ -85,12 +85,6 @@ angular.module('bridge', [
   });
 
   registerNamespaceFriendlyPrefix('services');
-  r('/ns/:ns/services/new', {
-    controller: 'NewServiceCtrl',
-    templateUrl: '/static/page/services/new-service.html',
-    title: 'Create New Service',
-  });
-
   registerNamespaceFriendlyPrefix('replicationcontrollers');
   r('/ns/:ns/replicationcontrollers/new', {
     controller: 'NewReplicationcontrollerCtrl',
