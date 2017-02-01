@@ -8,7 +8,7 @@ export const Box = ({children, className}) => <div className={classNames('cos-st
 export const LoadError = ({label}) => <Box>
   <div className="cos-tristate--error">
     <div className="cos-text-center cos-error-title">Error Loading {label}</div>
-    <div className="cos-text-center">Please try again.</div>
+    <div className="cos-text-center">Please <a onClick={location.reload}>try again</a>.</div>
   </div>
 </Box>;
 
