@@ -112,16 +112,6 @@ angular.module('bridge', [
     title: 'Cluster Role Bindings',
     reloadOnSearch: false,
   });
-  r('/ns/:ns/replicasets/new', {
-    controller: 'NewReplicaSetCtrl',
-    templateUrl: '/static/page/replicasets/new-replicaset.html',
-    title: 'New Replica Set',
-  });
-  r('/ns/:ns/replicasets/:name/edit', {
-    controller: 'EditReplicaSetCtrl',
-    templateUrl: '/static/page/replicasets/edit-replicaset.html',
-    title: 'Edit Replica Set',
-  });
 
   registerNamespaceFriendlyPrefix('deployments');
   r('/ns/:ns/deployments/new', {
