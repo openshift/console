@@ -186,23 +186,19 @@ angular.module('bridge', [
   });
 
   r('/ns/:ns/roles/:name/add-rule',{
-    controller: 'editRulesCtrl',
-    templateUrl: '/static/page/rules/rules.html',
+    template: '<react-component name="EditRuleContainer" />'
   }),
 
   r('/ns/:ns/roles/:name/:rule/edit', {
-    controller: 'editRulesCtrl',
-    templateUrl: '/static/page/rules/rules.html',
+    template: '<react-component name="EditRuleContainer" />'
   }),
 
   r('/clusterroles/:name/add-rule', {
-    controller: 'editRulesCtrl',
-    templateUrl: '/static/page/rules/rules.html',
+    template: '<react-component name="EditRuleContainer" />'
   }),
 
   r('/clusterroles/:name/:rule/edit', {
-    controller: 'editRulesCtrl',
-    templateUrl: '/static/page/rules/rules.html',
+    template: '<react-component name="EditRuleContainer" />'
   });
 
   r('/ns/:ns/:kind/:name/:view', {

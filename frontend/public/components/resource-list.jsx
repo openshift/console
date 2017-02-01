@@ -17,7 +17,7 @@ const ResourceListPage = () => {
 
   // eslint-disable-next-line import/namespace
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}Page`];
-  return <PageComponent namespace={ns} kind={kindObj.id} />;
+  return PageComponent ? <PageComponent namespace={ns} kind={kindObj.id} /> : null;
 };
 register('ResourceListPage', ResourceListPage);
 
@@ -34,6 +34,6 @@ const ResourceDetailsPage = () => {
 
   // eslint-disable-next-line import/namespace
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}DetailsPage`];
-  return <PageComponent namespace={ns} kind={kindObj.id} name={name} />;
+  return PageComponent ? <PageComponent namespace={ns} kind={kindObj.id} name={name} /> : null;
 };
 register('ResourceDetailsPage', ResourceDetailsPage);
