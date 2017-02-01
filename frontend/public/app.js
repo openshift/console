@@ -86,16 +86,6 @@ angular.module('bridge', [
 
   registerNamespaceFriendlyPrefix('services');
   registerNamespaceFriendlyPrefix('replicationcontrollers');
-  r('/ns/:ns/replicationcontrollers/new', {
-    controller: 'NewReplicationcontrollerCtrl',
-    templateUrl: '/static/page/replicationcontrollers/new-replicationcontroller.html',
-    title: 'New Replication Controller',
-  });
-  r('/ns/:ns/replicationcontrollers/:name/edit', {
-    controller: 'EditReplicationcontrollerCtrl',
-    templateUrl: '/static/page/replicationcontrollers/edit-replicationcontroller.html',
-    title: 'Edit Replication Controller',
-  });
   r('/ns/:ns/replicationcontrollers/:name/events', {
     template: '<react-component name="EventStreamReplicationController"></react-component>',
     title: 'Replication Controller Events',
