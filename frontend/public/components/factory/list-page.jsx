@@ -45,12 +45,7 @@ export class ListPage extends React.Component {
       return <RowFilter key={i} rowFilter={rowFilter} {...this.props} />;
     });
 
-    const onExpandChange = (expand) => { this.setState({expand}); };
-
-    let canCreate = this.props.canCreate;
-    if (canCreate === undefined) {
-      canCreate = _.includes(['deployment', 'service', 'replicaset', 'replicationcontroller', 'pod'], kind);
-    }
+    const onExpandChange = expand => this.setState({expand});
 
     return <div>
       {showTitle && <NavTitle title={labelPlural} />}
@@ -58,7 +53,7 @@ export class ListPage extends React.Component {
         <div className="co-m-pane__heading">
           <div className="row">
             <div className="col-xs-12">
-              { canCreate &&
+              { this.props.canCreate &&
                 <a href={href} className="co-m-primary-action pull-left">
                   <button className="btn btn-primary">
                     Create {label}

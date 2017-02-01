@@ -29,6 +29,6 @@ const pages = [details(Details), edit(), editYaml(), pods()];
 const ReplicaSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKind('replicaset', cogActions));
-const ReplicaSetsPage = props => <ListPage ListComponent={ReplicaSetsList} {...props} />;
+const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};
