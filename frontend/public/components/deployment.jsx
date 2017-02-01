@@ -131,7 +131,7 @@ const pages = [details(Details), edit(), editYaml(), pods()];
 const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', cogActions));
-const DeploymentsPage = props => <ListPage ListComponent={DeploymentsList} {...props} />;
+const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
 
 register('ConfigureUpdateStrategyModalLink', ConfigureUpdateStrategyModalLink);
 register('ConfigureRevisionHistoryModalLink', ConfigureRevisionHistoryModalLink);

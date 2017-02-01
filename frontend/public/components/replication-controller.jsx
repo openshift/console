@@ -24,11 +24,11 @@ const Details = (replicationController) => <div>
   </div>
 </div>;
 
-const {details, edit, pods, events} = navFactory;
-const pages = [details(Details), edit(), pods(), events()];
+const {details, editYaml, pods, events} = navFactory;
+const pages = [details(Details), editYaml(), pods(), events()];
 const ReplicationControllersDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller', cogActions));
-const ReplicationControllersPage = props => <ListPage ListComponent={ReplicationControllersList} {...props} />;
+const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;
 
 export {ReplicationControllersList, ReplicationControllersPage, ReplicationControllersDetailsPage};
