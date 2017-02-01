@@ -47,6 +47,6 @@ export const util = {
     if (!link) {
       return '';
     }
-    return `${link}/edit`;
+    return `${link}/yaml`;
   },
 };
