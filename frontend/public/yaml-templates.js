@@ -46,9 +46,30 @@ kind: ReplicationController
 metadata:
   name: nginx
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80`;
+
+TEMPLATES['v1beta1.ReplicaSet'] = `apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
   template:
     metadata:
       name: nginx
