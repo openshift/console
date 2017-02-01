@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
+import { k8sPatch, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, pluralize } from '../utils';
 import { RadioInput } from './_radio';
@@ -19,13 +20,13 @@ const getNumberOrPercent = (value) => {
 class ConfigureUpdateStrategyModal extends PromiseComponent {
   constructor(props) {
     super(props);
-
+    this.deployment = _.cloneDeep(props.deployment);
     this._onTypeChange = this._onTypeChange.bind(this);
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
 
     this.state = {
-      strategyType: _.get(this.props.deployment.spec, 'strategy.type')
+      strategyType: _.get(this.deployment.spec, 'strategy.type')
     };
   }
 
@@ -38,25 +39,44 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     this.setState({ strategyType: event.target.value });
   }
 
-  _submit(event) {
+  _submitOld(event) {
     event.preventDefault();
     const type = this.state.strategyType;
-    this.props.deployment.spec.strategy.type = type;
+    this.deployment.spec.strategy.type = type;
 
     if (type === 'RollingUpdate') {
-      this.props.deployment.spec.strategy.rollingUpdate = {
+      this.deployment.spec.strategy.rollingUpdate = {
         maxUnavailable: getNumberOrPercent(event.target.elements['input-max-unavailable'].value),
         maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value)
       };
     } else {
-      this.props.deployment.spec.strategy.rollingUpdate = null;
+      this.deployment.spec.strategy.rollingUpdate = null;
     }
-    this.props.close();
+  }
+
+  _submit(event) {
+    event.preventDefault();
+    const type = this.state.strategyType;
+
+    const patch = { path: '/spec/strategy/rollingUpdate' };
+    if (type === 'RollingUpdate') {
+      patch.value = {
+        maxUnavailable: getNumberOrPercent(event.target.elements['input-max-unavailable'].value),
+        maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value)
+      };
+      patch.op = 'replace';
+    } else {
+      patch.op = 'remove';
+    }
+
+    this._setRequestPromise(
+      k8sPatch(k8sKinds.DEPLOYMENT, this.deployment, [patch, {path: '/spec/strategy/type', value: type, op: 'replace'}])
+    ).then(this.props.close());
   }
 
   render() {
-    const maxUnavailable = _.get(this.props.deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '');
-    const maxSurge = _.get(this.props.deployment.spec, 'strategy.rollingUpdate.maxSurge', '');
+    const maxUnavailable = _.get(this.deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '');
+    const maxSurge = _.get(this.deployment.spec, 'strategy.rollingUpdate.maxSurge', '');
 
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>Deployment Update Strategy</ModalTitle>
@@ -95,7 +115,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                           id="input-max-unavailable"
                           defaultValue={maxUnavailable} />
                         <span className="input-group-addon" data-tip="Current desired pod count">
-                          of { pluralize(this.props.deployment.spec.replicas, 'pod')}
+                          of { pluralize(this.deployment.spec.replicas, 'pod')}
                         </span>
                       </div>
                     </div>
@@ -114,7 +134,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                           id="input-max-surge"
                           defaultValue={maxSurge} />
                         <span className="input-group-addon" data-tip="Current desired pod count">
-                          greater than { pluralize(this.props.deployment.spec.replicas, 'pod')}
+                          greater than { pluralize(this.deployment.spec.replicas, 'pod')}
                         </span>
                       </div>
                     </div>
@@ -139,6 +159,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
 
       </ModalBody>
       <ModalSubmitFooter
+        promise={this.requestPromise}
         errorFormatter="k8sApi"
         submitText="Save Strategy"
         cancel={this._cancel} />

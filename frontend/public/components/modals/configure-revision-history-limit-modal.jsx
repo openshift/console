@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { k8sPatch, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
 import { RadioInput } from './_radio';
@@ -7,12 +8,12 @@ import { RadioInput } from './_radio';
 class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
   constructor(props) {
     super(props);
-
+    this.deployment = _.cloneDeep(props.deployment);
     this._onTypeChange = this._onTypeChange.bind(this);
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
     this.state = {
-      type: _.get(this.props.deployment.spec, 'revisionHistoryLimit') ?
+      type: _.get(this.deployment.spec, 'revisionHistoryLimit') ?
         'custom' : 'unlimited'
     };
   }
@@ -25,12 +26,18 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
     event.preventDefault();
     const type = this.state.type;
 
+    const patch = { path: '/spec/revisionHistoryLimit' };
     if (type === 'unlimited') {
-      this.props.deployment.spec.revisionHistoryLimit = null;
+      patch.value = null;
+      patch.op = 'remove';
     } else if (type === 'custom') {
-      this.props.deployment.spec.revisionHistoryLimit = _.toInteger(event.target.elements['input-max-unavailable'].value);
+      patch.value = _.toInteger(event.target.elements['input-max-unavailable'].value);
+      patch.op = 'replace';
     }
-    this.props.close();
+
+    this._setRequestPromise(
+      k8sPatch(k8sKinds.DEPLOYMENT, this.deployment, [patch])
+    ).then(this.props.close());
   }
 
   render() {
@@ -71,7 +78,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
                     &nbsp;
                     <input disabled={this.state.type !== 'custom'} size="5"
                     type="number" className="form-control"
-                    defaultValue={this.props.deployment.spec.revisionHistoryLimit}
+                    defaultValue={this.deployment.spec.revisionHistoryLimit}
                     id="input-max-unavailable" required />
                     &nbsp;&nbsp;
                   <p className="form-control-static">revisions of this deployment</p>
@@ -83,6 +90,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
 
       </ModalBody>
       <ModalSubmitFooter
+        promise={this.requestPromise}
         errorFormatter="k8sApi"
         submitText="Save Limit"
         cancel={this._cancel} />
