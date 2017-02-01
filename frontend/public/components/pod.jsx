@@ -3,9 +3,7 @@ import React from 'react';
 import {k8s} from '../module/k8s';
 import {getContainerState, getContainerStatus} from '../module/k8s/docker';
 import {getRestartPolicyLabel} from '../module/k8s/pods';
-import {register} from './react-wrapper';
 import {DetailsPage, ListPage, makeList} from './factory';
-import {podRestartPolicyModal} from './modals';
 import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {PodLogs} from './pod-logs';
@@ -251,15 +249,6 @@ const Details = (pod) => {
     </div>
   </div>;
 };
-
-const PodRestartPolicyModalLink = ({pod}) => {
-  const modal = () => podRestartPolicyModal({pod}).result.then(policy => pod.spec.restartPolicy = policy);
-  return <div>
-    <div><a className="co-m-modal-link" onClick={modal}>{getRestartPolicyLabel(pod)}</a></div>
-    <small className="text-muted">What should happen when this container exits or stops unexpectedly?</small>
-  </div>;
-};
-register('PodRestartPolicyModalLink', PodRestartPolicyModalLink);
 
 const {details, events, logs, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), logs(PodLogs), events()];
