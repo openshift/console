@@ -25,6 +25,7 @@ import './cluster-settings/ldap';
 import './cluster-overview-container';
 import './cluster-overview';
 import './edit-yaml';
+import './create-yaml';
 import './profile';
 import './error';
 import './nav';

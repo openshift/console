@@ -152,10 +152,9 @@ angular.module('bridge', [
   });
 
   registerNamespaceFriendlyPrefix('pods');
-  r('/ns/:ns/pods/new', {
-    controller: 'NewPodCtrl',
-    templateUrl: '/static/page/pods/new-pod.html',
-    title: 'Create New Pod',
+  r('/ns/:ns/:kind/new', {
+    template: '<react-component name="CreateYAML"></react-component>',
+    title: 'Create New',
   });
   r('/ns/:ns/pods/:name/events', {
     template: '<react-component name="EventStreamPod"></react-component>',

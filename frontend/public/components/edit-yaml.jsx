@@ -62,7 +62,7 @@ export class EditYAML extends SafetyFirst {
   }
 
   componentWillReceiveProps(nextProps) {
-    const newVersion = _.get(nextProps, 'metadata.resourceVersion');
+    const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
     this.setState({stale: this.displayedVersion !== newVersion});
     this.loadYaml();
   }
@@ -73,7 +73,7 @@ export class EditYAML extends SafetyFirst {
     );
   }
 
-  loadYaml(reload=false, obj=this.props) {
+  loadYaml(reload=false, obj=this.props.obj) {
     if (_.isEmpty(obj)) {
       return;
     }
@@ -131,12 +131,12 @@ export class EditYAML extends SafetyFirst {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
       return;
     }
-    const { namespace, name } = this.props.metadata;
+    const { namespace, name } = this.props.obj.metadata;
     const { namespace: newNamespace, name: newName } = obj.metadata;
     this.setState({success: null, error: null}, () => {
       let action = k8sUpdate;
       let redirect = false;
-      if (newNamespace !== namespace || newName !== name) {
+      if (this.props.create || newNamespace !== namespace || newName !== name) {
         action = k8sCreate;
         delete obj.metadata.resourceVersion;
         redirect = true;
@@ -172,7 +172,7 @@ export class EditYAML extends SafetyFirst {
   }
 
   render () {
-    if (_.isEmpty(this.props)) {
+    if (_.isEmpty(this.props.obj)) {
       return <Loading/>;
     }
     /*
@@ -181,6 +181,7 @@ export class EditYAML extends SafetyFirst {
       The current solution uses divs that are relative -> absolute -> flexbox pinning the button row with margin-top: auto
     */
     const {error, success, stale} = this.state;
+    const {create} = this.props;
 
     return <div className="yaml-editor" ref={r => this.editor = r}  style={{height: this.state.height}}>
       <div className="absolute-zero">
@@ -192,8 +193,9 @@ export class EditYAML extends SafetyFirst {
             {stale && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--info">
               <i className="fa fa-fw fa-exclamation-triangle"></i> This object has been updated. Click reload to see the new version.
             </p>}
-            <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>
-            <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>
+            {create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Create</button>}
+            {!create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>}
+            {!create && <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>}
             <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
           </div>
         </div>
