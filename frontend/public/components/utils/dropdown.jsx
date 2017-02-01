@@ -94,6 +94,14 @@ export const ActionsMenu = ({actions}) => {
   const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
   const title = <span className="btn--actions__title"><i className="fa fa-cog btn--actions__cog"></i><span className="btn--actions__label">Actions</span></span>;
-  const onChange = key => shownActions[key].callback();
+  const onChange = key => {
+    const action = shownActions[key];
+    if (action.callback) {
+      return action.callback();
+    }
+    if (action.href) {
+      window.location = action.href;
+    }
+  };
   return <Dropdown className="btn--actions" menuClassName="btn--actions__menu co-m-dropdown--dark" items={items} title={title} onChange={onChange} noSelection={true} />;
 };

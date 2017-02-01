@@ -2,7 +2,6 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 
 import {k8sKinds} from '../module/k8s';
-import {register} from './react-wrapper';
 import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
 import {configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal} from './modals';
@@ -10,8 +9,26 @@ import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
 const {ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete} = Cog.factory;
-const cogActions = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete];
-const menuActions = _.without(cogActions, Edit);
+
+const RevisionHistory = (kind, deployment) => ({
+  label: 'Revision History...',
+  callback: () => configureRevisionHistoryLimitModal({deployment}),
+});
+
+const UpdateStrategy = (kind, deployment) => ({
+  label: 'Update Strategy...',
+  callback: () => configureUpdateStrategyModal({deployment}),
+});
+
+const cogActions = [
+  ModifyCount,
+  ModifyPodSelector,
+  ModifyLabels,
+  RevisionHistory,
+  UpdateStrategy,
+  Edit,
+  Delete,
+];
 
 export class Details extends SafetyFirst {
   constructor(props) {
@@ -108,31 +125,11 @@ export class Details extends SafetyFirst {
   }
 }
 
-const ConfigureUpdateStrategyModalLink = ({deployment}) => <div>
-  <div>
-    <a className="co-m-modal-link" onClick={() => configureUpdateStrategyModal({deployment})}>
-      {_.get(deployment.spec, 'strategy.type', '-')}
-    </a>
-  </div>
-  { _.get(deployment.spec, 'strategy.type') === 'RollingUpdate' && <small className="text-muted">
-    Max Unavailable {_.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', 1)}, Max Surge {_.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', 1)} pods
-  </small> }
-</div>;
-
-const ConfigureRevisionHistoryModalLink = ({deployment}) => <div>
-  <a href="#" onClick={() => configureRevisionHistoryLimitModal({deployment})}
-    className="co-m-modal-link">
-    <span>{_.get(deployment.spec, 'revisionHistoryLimit') || 'Unlimited'}</span> revisions
-  </a>
-</div>;
-
-const {details, edit, editYaml, pods} = navFactory;
-const pages = [details(Details), edit(), editYaml(), pods()];
-const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const {details, editYaml, pods} = navFactory;
+const pages = [details(Details), editYaml(), pods()];
+const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={cogActions} {...props} />;
 
 const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', cogActions));
 const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
 
-register('ConfigureUpdateStrategyModalLink', ConfigureUpdateStrategyModalLink);
-register('ConfigureRevisionHistoryModalLink', ConfigureRevisionHistoryModalLink);
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};
