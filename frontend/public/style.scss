@@ -38,18 +38,11 @@ $fa-font-path: "./fonts";
 @import "page/events/events";
 @import "page/modals/modal";
 
-// UI Modules
-@import "module/ui/containers/container-input";
-@import "module/ui/forms/number-spinner";
-@import "module/ui/labels/label";
-@import "module/ui/labels/label-input";
-@import "module/ui/selector/selector-input";
-@import "module/ui/selector/selector";
-@import "module/ui/selector/requirement";
-@import "module/ui/status-box/status-box";
-@import "module/ui/tristate/tristate";
-
 // React Components
+@import "components/utils/label";
+@import "components/utils/number-spinner";
+@import "components/utils/requirement";
+@import "components/utils/status-box";
 @import "components/account-nav";
 @import "components/cluster-overview";
 @import "components/cluster-settings/cluster-settings";

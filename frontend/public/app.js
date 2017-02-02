@@ -31,7 +31,6 @@ angular.module('bridge', [
   // internal modules
   'templates',
   'bridge.service',
-  'bridge.ui',
   'bridge.page',
   'bridge.react-wrapper',
 ])
