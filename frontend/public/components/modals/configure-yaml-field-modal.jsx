@@ -7,11 +7,11 @@ import {LoadingInline, PromiseComponent, kindObj} from '../utils';
 class ConfigureYamlFieldModal extends PromiseComponent {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = Object.assign(this.state, {
       resource: this.props.resource,
       resourceLoading: true,
       value: undefined
-    };
+    });
     this._submit = this._submit.bind(this);
     this._cancel = this._cancel.bind(this);
     this._handleChange = this._handleChange.bind(this);
@@ -74,6 +74,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
     }
 
     const applyUpdate = () => {
+      let promise;
       if (!this.state.resource) {
         const newResource = {
           metadata: {
@@ -82,15 +83,15 @@ class ConfigureYamlFieldModal extends PromiseComponent {
           }
         };
         _.set(newResource, this.props.path, value);
-        this._setRequestPromise(k8sCreate(this._kindObj(), newResource));
+        promise = k8sCreate(this._kindObj(), newResource);
       } else {
         const patchPath = `/${this.props.path.replace('.', '/')}`;
         const patch = [{ op: 'replace', path: patchPath, value: value }];
-        this._setRequestPromise(k8sPatch(this._kindObj(), this.state.resource, patch));
+        promise = k8sPatch(this._kindObj(), this.state.resource, patch);
       }
-      this.requestPromise.then((result) => {
-        this.props.close(result);
-      }).catch(() => {
+      this.handlePromise(promise)
+      .then(result => this.props.close(result))
+      .catch(() => {
         if (this.props.callbacks.invalidateState) {
           this.props.callbacks.invalidateState(false);
         }
@@ -98,7 +99,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
     };
 
     if (this.props.callbacks.inputValidator) {
-      this._setRequestPromise(this.props.callbacks.inputValidator(value).then(applyUpdate));
+      this.handlePromise(this.props.callbacks.inputValidator(value).then(applyUpdate));
     } else {
       applyUpdate();
     }
@@ -113,7 +114,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
         { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
         { this.props.inputType === 'input' && <input value={this.state.value} onChange={this._handleChange} className="form-control" disabled={this.state.resourceLoading} /> }
       </ModalBody>
-      <ModalFooter promise={this.requestPromise}>
+      <ModalFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
         <button type="submit" className="btn btn-primary" disabled={this.state.resourceLoading}>Save Setting</button>
         <button type="button" onClick={this._cancel} className="btn btn-link">Cancel</button>
       </ModalFooter>

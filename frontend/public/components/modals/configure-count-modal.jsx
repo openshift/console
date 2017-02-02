@@ -9,9 +9,9 @@ class ConfigureCountModal extends PromiseComponent {
     super(props);
 
     const getPath = this.props.path.substring(1).replace('/', '.');
-    this.state = {
+    this.state = Object.assign(this.state, {
       value: _.get(this.props.resource, getPath) || this.props.defaultValue
-    };
+    });
 
     this._change = this._change.bind(this);
     this._submit = this._submit.bind(this);
@@ -42,7 +42,7 @@ class ConfigureCountModal extends PromiseComponent {
     const patch = [{ op: 'replace', path: this.props.path, value: _.toInteger(this.state.value) }];
 
     this._invalidateState(true);
-    this._setRequestPromise(
+    this.handlePromise(
       k8sPatch(this.props.resourceKind, this.props.resource, patch)
     )
       .then(this.props.close)
@@ -59,7 +59,7 @@ class ConfigureCountModal extends PromiseComponent {
         <p>{this.props.message}</p>
         <NumberSpinner className="form-control" value={this.state.value} onChange={this._change} changeValueBy={this._changeValueBy} autoFocus required />
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} submitText={this.props.buttonText} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={this.props.buttonText} cancel={this._cancel} />
     </form>;
   }
 }

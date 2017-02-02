@@ -12,10 +12,10 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
     this._onTypeChange = this._onTypeChange.bind(this);
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
-    this.state = {
+    this.state = Object.assign(this.state, {
       type: _.get(this.deployment.spec, 'revisionHistoryLimit') ?
         'custom' : 'unlimited'
-    };
+    });
   }
 
   _onTypeChange(event) {
@@ -35,9 +35,9 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
       patch.op = 'replace';
     }
 
-    this._setRequestPromise(
+    this.handlePromise(
       k8sPatch(k8sKinds.DEPLOYMENT, this.deployment, [patch])
-    ).then(this.props.close());
+    ).then(this.props.close);
   }
 
   render() {
@@ -90,8 +90,8 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
 
       </ModalBody>
       <ModalSubmitFooter
-        promise={this.requestPromise}
-        errorFormatter="k8sApi"
+        errorMessage={this.state.errorMessage}
+        inProgress={this.state.inProgress}
         submitText="Save Limit"
         cancel={this._cancel} />
     </form>;

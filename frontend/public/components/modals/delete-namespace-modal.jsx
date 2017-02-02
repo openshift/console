@@ -30,7 +30,7 @@ class DeleteNamespaceModal extends PromiseComponent {
 
   _submit(event) {
     event.preventDefault();
-    this._setRequestPromise(k8s.namespaces.delete(this.props.resource)).then(this._close);
+    this.handlePromise(k8s.namespaces.delete(this.props.resource)).then(this._close);
   }
 
   render() {
@@ -43,7 +43,7 @@ class DeleteNamespaceModal extends PromiseComponent {
         <p>Confirm deletion by typing <strong>{this.props.resource.metadata.name}</strong> below:</p>
         <input type="text" className="form-control" onKeyUp={this._matchTypedNamespace} placeholder="Enter name" autoFocus={true} />
       </ModalBody>
-      <ModalFooter promise={this.requestPromise}>
+      <ModalFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
         <button type="submit" className="btn btn-primary" disabled={!this.state.isTypedNsMatching}>
           Delete Namespace
         </button>
