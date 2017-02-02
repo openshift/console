@@ -1,23 +1,39 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
 
-import {ButtonBar, ErrorMessage} from '../utils';
-import {angulars, register} from '../react-wrapper';
+import { ButtonBar, ErrorMessage } from '../utils';
 
-export const createModalLauncher = (Component, registeredName, config = {}) => {
+export const createModalLauncher = (Component, registeredName) => {
+
   if (!registeredName) {
     const prefix = Component.name || Component.displayName || 'Modal';
     registeredName =  _.uniqueId(`${prefix}-`);
   }
-  register(registeredName, Component);
 
   return (props) => {
     props = props || {};
-    return angulars.modal('reactive-modal', {props, name: registeredName}, config)();
+
+    const modalContainer = document.getElementById('modal-container');
+
+    const result = new Promise((resolve, reject) => {
+      const wrapper = <ModalWrapper
+        Component={Component}
+        componentProps={props}
+        isOpen={true}
+        resolve={resolve}
+        modalTitle={registeredName}
+        reject={reject} />;
+      ReactDOM.render(wrapper, modalContainer);
+    });
+    return {result};
   };
 };
 
 export const ModalTitle = ({children}) => <div className="modal-header"><h4 className="modal-title">{children}</h4></div>;
+
 export const ModalBody = ({children}) => <div className="modal-body">{children}</div>;
+
 export const ModalFooter = ({message, errorMessage, inProgress, children}) => {
   return <ButtonBar className="modal-footer" message={message} inProgress={inProgress}>
     <ErrorMessage errorMessage={errorMessage} />
@@ -31,6 +47,7 @@ export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, su
     <button type="button" onClick={cancel} className="btn btn-link">Cancel</button>
   </ModalFooter>;
 };
+
 ModalSubmitFooter.propTypes = {
   cancel: React.PropTypes.func.isRequired,
   errorMessage: React.PropTypes.string.isRequired,
@@ -38,3 +55,65 @@ ModalSubmitFooter.propTypes = {
   message: React.PropTypes.string,
   submitText: React.PropTypes.node.isRequired,
 };
+
+export class ModalWrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isModalOpen: this.props.isOpen,
+    };
+
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.dismissModal = this.dismissModal.bind(this);
+    this.cleanupDOM = this.cleanupDOM.bind(this);
+  }
+
+  cleanupDOM() {
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this).parentNode);
+  }
+
+  openModal() {
+    this.setState({ isModalOpen: true });
+  }
+
+  closeModal() {
+    this.setState({ isModalOpen: false });
+    this.cleanupDOM();
+    this.props.resolve();
+  }
+
+  dismissModal() {
+    this.setState({ isModalOpen: false });
+    this.cleanupDOM();
+    this.props.reject();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      isModalOpen: nextProps.isOpen
+    });
+  }
+
+  componentWillUnmount() {
+    this.cleanupDOM();
+  }
+
+  render() {
+    const {componentProps, Component, registeredName} = this.props;
+
+    return <Modal
+      isOpen={this.state.isModalOpen}
+      contentLabel={registeredName || 'Modal'}
+      onRequestClose={this.closeModal}
+      className="co-modal"
+      overlayClassName="co-overlay"
+      shouldCloseOnOverlayClick={true}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <Component {...componentProps} cancel={this.closeModal} close={this.closeModal} />
+        </div>
+      </div>
+    </Modal>;
+  }
+}
