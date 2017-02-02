@@ -6,10 +6,8 @@ import {inject} from './index';
 export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
 
 export const LoadError = ({label}) => <Box>
-  <div className="cos-tristate--error">
-    <div className="cos-text-center cos-error-title">Error Loading {label}</div>
-    <div className="cos-text-center">Please <a onClick={location.reload}>try again</a>.</div>
-  </div>
+  <div className="cos-text-center cos-error-title">Error Loading {label}</div>
+  <div className="cos-text-center">Please <a onClick={location.reload}>try again</a>.</div>
 </Box>;
 
 export const Loading = ({className}) => <div className={classNames('co-m-loader co-an-fade-in-out', className)}>
@@ -23,9 +21,7 @@ export const LoadingInline = () => <Loading className="co-m-loader--inline" />;
 const LoadingBox = () => <Box><Loading /></Box>;
 
 export const EmptyBox = ({label}) => <Box>
-  <div className="cos-tristate-empty">
-    <div className="cos-text-center">No {label} Found</div>
-  </div>
+  <div className="cos-text-center">No {label} Found</div>
 </Box>;
 
 export const MsgBox = ({title, detail}) => <Box className="co-sysevent-stream__status-box-empty">
