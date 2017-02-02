@@ -33,7 +33,7 @@ const LicenseModal = (props) => {
     <ModalBody>
       {body}
     </ModalBody>
-    <ModalFooter>
+    <ModalFooter inProgress={false} errorMessage="">
       {!blocking && <button type="submit" onClick={close} className="btn btn-primary">Close</button>}
       {blocking && <button type="submit" onClick={() => updateLicense({cancel})} className="btn btn-primary">Update License</button>}
       <a href="https://account.tectonic.com" className="btn btn-link" target="_blank">View Tectonic Account</a>

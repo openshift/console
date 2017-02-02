@@ -83,11 +83,11 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
     this._onMethodChange = this._onMethodChange.bind(this);
     this._onFileChange = this._onFileChange.bind(this);
 
-    this.state = {
+    this.state = Object.assign(this.state, {
       method: 'form',
       fileData: null,
       invalidJson: false
-    };
+    });
   }
 
   _onMethodChange(event) {
@@ -159,7 +159,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
       promise = k8s.secrets.create(secret);
     }
 
-    this._setRequestPromise(promise).then(this.props.close);
+    this.handlePromise(promise).then(this.props.close);
   }
 
   render() {
@@ -284,7 +284,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
       </div> }
 
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} submitText="Save Secret" cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save Secret" cancel={this._cancel} />
     </form>;
   }
 }

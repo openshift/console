@@ -10,9 +10,9 @@ class ConfigureOperatorModal extends PromiseComponent {
     super(props);
 
     const getPath = this.props.path.replace('/', '.').substr(1);
-    this.state = {
+    this.state = Object.assign(this.state, {
       value: _.get(this.props.config, getPath).toString()
-    };
+    });
 
     this._change = this._change.bind(this);
     this._submit = this._submit.bind(this);
@@ -34,7 +34,7 @@ class ConfigureOperatorModal extends PromiseComponent {
 
     const patch = [{ op: 'replace', path: this.props.path, value: value }];
 
-    this._setRequestPromise(
+    this.handlePromise(
       k8sPatch(k8sKinds.CHANNELOPERATORCONFIG, this.props.config, patch)
     ).then(this.props.close);
   }
@@ -51,7 +51,8 @@ class ConfigureOperatorModal extends PromiseComponent {
         })}
       </ModalBody>
       <ModalSubmitFooter
-        promise={this.requestPromise}
+        errorMessage={this.state.errorMessage}
+        inProgress={this.state.inProgress}
         submitText={this.props.buttonText}
         cancel={this._cancel} />
     </form>;

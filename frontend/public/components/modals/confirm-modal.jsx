@@ -13,7 +13,7 @@ class ConfirmModal extends PromiseComponent {
   _submit(event) {
     event.preventDefault();
 
-    this._setRequestPromise(
+    this.handlePromise(
       this.props.executeFn(null, {
         supressNotifications: true
       })
@@ -24,7 +24,7 @@ class ConfirmModal extends PromiseComponent {
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>{this.props.message}</ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
     </form>;
   }
 }

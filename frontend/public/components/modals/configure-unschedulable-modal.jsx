@@ -15,7 +15,7 @@ class UnscheduleNodeModal extends PromiseComponent {
     event.preventDefault();
 
     const patch = [{ op: 'replace', path: '/spec/unschedulable', value: true }];
-    this._setRequestPromise(
+    this.handlePromise(
       k8sPatch(k8sKinds.NODE, this.props.resource, patch)
     )
       .then(this.props.close)
@@ -30,7 +30,7 @@ class UnscheduleNodeModal extends PromiseComponent {
       <ModalBody>
         Unschedulable nodes won&#39;t accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} submitText="Mark Unschedulable" cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Mark Unschedulable" cancel={this._cancel} />
     </form>;
   }
 }

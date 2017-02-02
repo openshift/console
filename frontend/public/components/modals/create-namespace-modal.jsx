@@ -19,7 +19,7 @@ class CreateNamespaceModal extends PromiseComponent {
       },
     };
     const promise = k8s.namespaces.create(namespace);
-    this._setRequestPromise(promise)
+    this.handlePromise(promise)
       .then(this.props.close);
   }
 
@@ -44,7 +44,7 @@ class CreateNamespaceModal extends PromiseComponent {
           <SelectorInput onChange={labels => this.onLabels(labels)} tags={[]} />
         </div>
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
     </form>;
   }
 }

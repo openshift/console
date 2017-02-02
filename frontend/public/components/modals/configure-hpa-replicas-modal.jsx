@@ -24,10 +24,10 @@ class ConfigureHPAReplicasModal extends PromiseComponent {
     this._change = this._change.bind(this);
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
-    this.state = {
+    this.state = Object.assign(this.state, {
       minReplicas: _.get(this.props.resource.spec, 'minReplicas'),
       maxReplicas: _.get(this.props.resource.spec, 'maxReplicas')
-    };
+    });
   }
 
   _change(event) {
@@ -49,7 +49,7 @@ class ConfigureHPAReplicasModal extends PromiseComponent {
       { op: 'replace', path: '/spec/maxReplicas', value: _.toSafeInteger(this.state.maxReplicas) },
     ];
 
-    this._setRequestPromise(
+    this.handlePromise(
       k8sPatch(k8sKinds.HORIZONTALPODAUTOSCALER, this.props.resource, patch)
     ).then(this.props.close);
   }
@@ -67,7 +67,8 @@ class ConfigureHPAReplicasModal extends PromiseComponent {
         <ReplicaRow label="Maximum" id="max-replicas" value={this.state.maxReplicas} onChange={this._change} />
       </ModalBody>
       <ModalSubmitFooter
-        promise={this.requestPromise}
+        errorMessage={this.state.errorMessage}
+        inProgress={this.state.inProgress}
         submitText="Save Replica Limits"
         cancel={this._cancel} />
     </form>;

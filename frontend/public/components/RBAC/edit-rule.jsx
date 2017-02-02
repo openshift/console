@@ -53,7 +53,7 @@ class EditRule_ extends PromiseComponent {
   constructor (props) {
     super(props);
 
-    this.state = {
+    this.state = Object.assign(this.state, {
       role: null,
       verbControl: VERBS_ENUM.RO,
       resourceControl: RESOURCE_ENUM.SAFE,
@@ -61,7 +61,7 @@ class EditRule_ extends PromiseComponent {
       resourceSet: new Set(),
       nonResourceURLs: '',
       APIGroups: '*',
-    };
+    });
 
     this.save = this.save.bind(this);
 
@@ -149,8 +149,8 @@ class EditRule_ extends PromiseComponent {
     } else {
       role.rules.push(rule);
     }
-    this._setRequestPromise(this.resource.update(role));
-    this.requestPromise.then(() => {
+    this.handlePromise(this.resource.update(role))
+    .then(() => {
       const {namespace, name} = this.props;
 
       let url = `/all-namespaces/${this.kind.plural}#`;
@@ -401,8 +401,8 @@ class EditRule_ extends PromiseComponent {
 
           <div className="row">
             <div className="col-xs-12">
-              <ButtonBar completePromise={this.requestPromise}>
-                <ErrorMessage promise={this.requestPromise} formatter="k8sApi" />
+              <ButtonBar inProgress={this.state.inProgress}>
+                <ErrorMessage errorMessage={this.state.errorMessage} />
                 <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
               </ButtonBar>
             </div>

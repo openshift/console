@@ -14,9 +14,9 @@ class LabelsModal extends PromiseComponent {
     this._submit = this._submit.bind(this);
     this._cancel = props.cancel.bind(this);
     this.path = props.labelSelector ? SELECTOR_PATH : LABELS_PATH;
-    this.state = {
+    this.state = Object.assign(this.state, {
       labels: SelectorInput.arrayify(_.get(props.resource, this.path.split('/').slice(1))),
-    };
+    });
   }
 
   _submit (e) {
@@ -43,7 +43,7 @@ class LabelsModal extends PromiseComponent {
       });
     }
     const promise = k8sPatch(kind, resource, patch);
-    this._setRequestPromise(promise).then(this.props.close);
+    this.handlePromise(promise).then(this.props.close);
   }
 
   render() {
@@ -78,7 +78,7 @@ class LabelsModal extends PromiseComponent {
           </div>
         </div>
       </ModalBody>
-      <ModalSubmitFooter promise={this.requestPromise} submitText={labelSelector ? 'Save Label Selector' : 'Save Labels'} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={labelSelector ? 'Save Label Selector' : 'Save Labels'} cancel={this._cancel} />
     </form>;
   }
 }

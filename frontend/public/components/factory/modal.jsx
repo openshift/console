@@ -18,20 +18,23 @@ export const createModalLauncher = (Component, registeredName, config = {}) => {
 
 export const ModalTitle = ({children}) => <div className="modal-header"><h4 className="modal-title">{children}</h4></div>;
 export const ModalBody = ({children}) => <div className="modal-body">{children}</div>;
-export const ModalFooter = ({promise, errorFormatter, errorCustomMessage, children}) => {
-  return <ButtonBar className="modal-footer" completePromise={promise}>
-    <ErrorMessage formatter={errorFormatter || 'k8sApi'} promise={promise} customMessage={errorCustomMessage} />
+export const ModalFooter = ({message, errorMessage, inProgress, children}) => {
+  return <ButtonBar className="modal-footer" message={message} inProgress={inProgress}>
+    <ErrorMessage errorMessage={errorMessage} />
     {children}
   </ButtonBar>;
 };
 
-export const ModalSubmitFooter = ({promise, errorFormatter, errorCustomMessage, cancel, submitText}) => {
-  return <ModalFooter promise={promise} errorFormatter={errorFormatter} errorCustomMessage={errorCustomMessage}>
+export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, submitText}) => {
+  return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
     <button type="submit" className="btn btn-primary">{submitText}</button>
     <button type="button" onClick={cancel} className="btn btn-link">Cancel</button>
   </ModalFooter>;
 };
 ModalSubmitFooter.propTypes = {
   cancel: React.PropTypes.func.isRequired,
-  submitText: React.PropTypes.node.isRequired
+  errorMessage: React.PropTypes.string.isRequired,
+  inProgress: React.PropTypes.bool.isRequired,
+  message: React.PropTypes.string,
+  submitText: React.PropTypes.node.isRequired,
 };

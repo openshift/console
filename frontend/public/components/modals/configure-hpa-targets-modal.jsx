@@ -19,7 +19,7 @@ class ConfigureHPATargetsModal extends PromiseComponent {
       value: _.toNumber(event.target.elements.percentage.value)
     }];
 
-    this._setRequestPromise(
+    this.handlePromise(
       k8sPatch(k8sKinds.HORIZONTALPODAUTOSCALER, this.props.resource, patch)
     ).then(this.props.close);
   }
@@ -45,7 +45,8 @@ class ConfigureHPATargetsModal extends PromiseComponent {
         </div>
       </ModalBody>
       <ModalSubmitFooter
-        promise={this.requestPromise}
+        errorMessage={this.state.errorMessage}
+        inProgress={this.state.inProgress}
         submitText="Save Replica Limits"
         cancel={this._cancel} />
     </form>;

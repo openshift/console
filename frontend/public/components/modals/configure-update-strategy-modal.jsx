@@ -25,9 +25,9 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
 
-    this.state = {
+    this.state = Object.assign({
       strategyType: _.get(this.deployment.spec, 'strategy.type')
-    };
+    }, this.state);
   }
 
   componentDidMount() {
@@ -37,21 +37,6 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
 
   _onTypeChange(event) {
     this.setState({ strategyType: event.target.value });
-  }
-
-  _submitOld(event) {
-    event.preventDefault();
-    const type = this.state.strategyType;
-    this.deployment.spec.strategy.type = type;
-
-    if (type === 'RollingUpdate') {
-      this.deployment.spec.strategy.rollingUpdate = {
-        maxUnavailable: getNumberOrPercent(event.target.elements['input-max-unavailable'].value),
-        maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value)
-      };
-    } else {
-      this.deployment.spec.strategy.rollingUpdate = null;
-    }
   }
 
   _submit(event) {
@@ -69,9 +54,9 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
       patch.op = 'remove';
     }
 
-    this._setRequestPromise(
+    this.handlePromise(
       k8sPatch(k8sKinds.DEPLOYMENT, this.deployment, [patch, {path: '/spec/strategy/type', value: type, op: 'replace'}])
-    ).then(this.props.close());
+    ).then(this.props.close, () => {});
   }
 
   render() {
@@ -159,8 +144,8 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
 
       </ModalBody>
       <ModalSubmitFooter
-        promise={this.requestPromise}
-        errorFormatter="k8sApi"
+        errorMessage={this.state.errorMessage}
+        inProgress={this.state.inProgress}
         submitText="Save Strategy"
         cancel={this._cancel} />
     </form>;

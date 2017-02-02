@@ -15,14 +15,14 @@ class KubectlConfigModal extends PromiseComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
+    this.state = Object.assign(this.state, {
       step: steps.GET_VERIFICATION_CODE,
       configuration: null,
       verificationCode: null,
       kubectlLinuxUrl: null,
       kubectlMacUrl: null,
       kubectlWinUrl: null
-    };
+    });
 
     this._updateCode = this._updateCode.bind(this);
     this._verifyCode = this._verifyCode.bind(this);
@@ -47,7 +47,7 @@ class KubectlConfigModal extends PromiseComponent {
   _verifyCode(event) {
     event.preventDefault();
 
-    this._setRequestPromise(
+    this.handlePromise(
       kubectlConfigSvc.getConfiguration(this.state.verificationCode)
     ).then((configuration) => {
       this.setState({
@@ -106,7 +106,7 @@ class KubectlConfigModal extends PromiseComponent {
             </div>
           </div>
         </ModalBody>
-        <ModalSubmitFooter promise={this.requestPromise} submitText="Generate Configuration" cancel={this.props.cancel} />
+        <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Generate Configuration" cancel={this.props.cancel} />
       </form> }
 
       {/*step 3: download configuration*/}
@@ -122,7 +122,7 @@ class KubectlConfigModal extends PromiseComponent {
           <p>2. Place the configuration file at <code>~/.kube/config</code></p>
           <p>3. Done! Interact with the cluster, i.e. <code>kubectl get namespaces</code></p>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="button" className="btn btn-primary" onClick={this.props.close}>I'm Done</button>
         </ModalFooter>
       </div> }
