@@ -4,7 +4,6 @@ import {coFetchJSON} from '../co-fetch';
 import {k8s, k8sBasePath} from '../module/k8s';
 import {k8sVersion} from '../module/status';
 import {ClusterOverviewPage} from './cluster-overview';
-import {register} from './react-wrapper';
 import {entitlementTitle} from './license-notifier';
 import {SafetyFirst} from './safety-first';
 import {cloudProviderID} from './utils';
@@ -78,5 +77,3 @@ export class ClusterOverviewContainer extends SafetyFirst {
     />;
   }
 }
-
-register('ClusterOverviewContainer', ClusterOverviewContainer);

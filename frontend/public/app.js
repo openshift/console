@@ -63,16 +63,6 @@ angular.module('bridge', [
     $routeProvider.when(route, config);
   }
 
-  r('/', {
-    template: '<react-component name="ClusterOverviewContainer"></react-component>',
-    title: 'Cluster Status',
-  });
-
-  r('/namespaces', {
-    template: '<react-component name="NamespacesPage"></react-component>',
-    title: 'Namespaces',
-  });
-
   registerNamespaceFriendlyPrefix('events');
   r('/all-namespaces/events', {
     template: '<react-component name="EventStreamPage"></react-component>',
@@ -207,17 +197,11 @@ angular.module('bridge', [
     template: '<react-component name="ResourceDetailsPage" />',
   });
 
-  $routeProvider.when('/error', {
-    template: '<react-component name="ErrorPage"></react-component>',
-    title: 'Error',
-  });
-
   $routeProvider.otherwise({
-    template: '<react-component name="ErrorPage404"></react-component>',
-    title: 'Page Not Found (404)'
+    template: '<react-component name="AppRouter"></react-component>',
   });
 })
-.run(function(_, $rootScope, $location, $window, $ngRedux, angularBridge) {
+.run(function($rootScope, $window, $ngRedux, angularBridge) {
   'use strict';
 
   $ngRedux.dispatch(actions.getResources());

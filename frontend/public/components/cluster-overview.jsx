@@ -1,4 +1,5 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
 import classNames from 'classnames';
@@ -75,6 +76,7 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
 
 export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
+    <Helmet title="Cluster Status" titleTemplate="%s · Tectonic" />
     <div className="co-p-cluster__body">
       <NavTitle title="Cluster Status" />
 

@@ -1,13 +1,10 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import {getMessage} from '../module/service/message.js';
-import {angulars, register} from './react-wrapper';
 import {NavTitle} from './utils';
 
-const urlMessage = () => {
-  const {error_type: type, error} = angulars.routeParams;
-  return (type && error) ? getMessage(type, error) : '';
-};
+const urlMessage = ({error_type: type, error}) => (type && error) ? getMessage(type, error) : '';
 
 const Error = ({title, message}) => <div>
   <NavTitle detail={true} title="Error" />
@@ -26,8 +23,12 @@ const Error = ({title, message}) => <div>
   </div>
 </div>;
 
-export const ErrorPage = () => <Error title="Oh no! Something went wrong." message={urlMessage()} />;
-register('ErrorPage', ErrorPage);
+export const ErrorPage = ({location}) => <div>
+  <Helmet title="Error" />
+  <Error title="Oh no! Something went wrong." message={urlMessage(location.query)} />
+</div>;
 
-export const ErrorPage404 = () => <Error title="404: Page Not Found" />;
-register('ErrorPage404', ErrorPage404);
+export const ErrorPage404 = () => <div>
+  <Helmet title="Page Not Found (404)" />
+  <Error title="404: Page Not Found" />
+</div>;

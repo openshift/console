@@ -30,3 +30,4 @@ import './profile';
 import './error';
 import './nav';
 import './resource-list';
+import './app';
