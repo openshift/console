@@ -6,7 +6,7 @@
  *    - disconnect/reconnect when tab loses/gains focus
  *    - support for default options.
  */
-import {angulars} from '../components/react-wrapper';
+/* eslint-disable no-console */
 
 const wsCache = {};
 
@@ -26,7 +26,7 @@ setInterval(() => {
 
 function validOptions(o) {
   if (!o.host) {
-    angulars.$log.error('missing required host argument');
+    console.error('missing required host argument');
     return false;
   }
   return true;
@@ -71,7 +71,7 @@ function WebSocketWrapper(id, options) {
   this._connect();
 
   if (this.options.bufferEnabled) {
-    flushCanceler = angulars.$interval(this.flushBuffer.bind(this), this.options.bufferFlushInterval);
+    flushCanceler = setInterval(this.flushBuffer.bind(this), this.options.bufferFlushInterval);
   }
 
   // Array of cleanup functions that get called ondestroy.
@@ -79,11 +79,11 @@ function WebSocketWrapper(id, options) {
     // Kill interval flusher.
     function() {
       if (flushCanceler) {
-        angulars.$interval.cancel(flushCanceler);
+        clearInterval(flushCanceler);
       }
     },
     function () {
-      angulars.$timeout.cancel(that._connectionAttempt);
+      clearTimeout(that._connectionAttempt);
     },
   ];
 }
@@ -138,16 +138,16 @@ WebSocketWrapper.prototype._reconnect = function() {
 
   function attempt() {
     if (!that.options.reconnect || that._state === 'open') {
-      angulars.$timeout.cancel(that._connectionAttempt);
+      clearTimeout(that._connectionAttempt);
       that._connectionAttempt = null;
       return;
     }
     that._connect();
     delay = expBackoff(delay, max);
-    that._connectionAttempt = angulars.$timeout(attempt, delay);
-    angulars.$log.log('attempting reconnect in', delay / 1000, 'seconds...');
+    that._connectionAttempt = setTimeout(attempt, delay);
+    console.log('attempting reconnect in', delay / 1000, 'seconds...');
   }
-  this._connectionAttempt = angulars.$timeout(attempt, delay);
+  this._connectionAttempt = setTimeout(attempt, delay);
 };
 
 WebSocketWrapper.prototype._connect = function() {
@@ -156,16 +156,16 @@ WebSocketWrapper.prototype._connect = function() {
   this._buffer = [];
   this.ws = new WebSocket(this.url);
   this.ws.onopen = function() {
-    angulars.$log.log('websocket open: ', that.id);
+    console.log('websocket open: ', that.id);
     that._state = 'open';
     that._triggerEvent({ type: 'open' });
     if (that._connectionAttempt) {
-      angulars.$timeout.cancel(that._connectionAttempt);
+      clearTimeout(that._connectionAttempt);
       that._connectionAttempt = null;
     }
   };
   this.ws.onclose = function() {
-    angulars.$log.log('websocket closed: ', that.id);
+    console.log('websocket closed: ', that.id);
     that._state = 'closed';
     that._triggerEvent({ type: 'close' });
     if (!that._connectionAttempt) {
@@ -173,7 +173,7 @@ WebSocketWrapper.prototype._connect = function() {
     }
   };
   this.ws.onerror = function(code, reason) {
-    angulars.$log.log('websocket error: ', that.id);
+    console.log('websocket error: ', that.id);
     that._state = 'error';
     that._triggerEvent({ type: 'error', args: [code, reason] });
   };
@@ -283,7 +283,7 @@ WebSocketWrapper.prototype.bufferSize = function() {
 };
 
 WebSocketWrapper.prototype.destroy = function() {
-  angulars.$log.log('websocket destroy: ', this.id);
+  console.log('websocket destroy: ', this.id);
   if (this._state === 'destroyed') {
     return;
   }
@@ -301,4 +301,3 @@ WebSocketWrapper.prototype.destroy = function() {
   delete this.ws;
   delete this.options;
 };
-
