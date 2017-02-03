@@ -1,4 +1,5 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import { register, angulars } from '../react-wrapper';
 
@@ -15,13 +16,12 @@ export const EditRuleContainer = () => {
     name,
     namespace: ns
   };
-  window.document.title = `Tectonic - ${k8sResource.kind.labelPlural}`;
 
   return <div>
+    <Helmet title={k8sResource.kind.labelPlural} titleTemplate="%s · Tectonic" />
     <ResourceHeading resourceName="Create Access Rule" />
     <EditRule {...props} />
   </div>;
-
 };
 
 register('EditRuleContainer', EditRuleContainer);

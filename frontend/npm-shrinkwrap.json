@@ -297,6 +297,11 @@
       "from": "esutils@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz"
     },
+    "exenv": {
+      "version": "1.2.1",
+      "from": "exenv@>=1.2.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/exenv/-/exenv-1.2.1.tgz"
+    },
     "fbjs": {
       "version": "0.8.6",
       "from": "fbjs@>=0.8.4 <0.9.0",
@@ -328,6 +333,11 @@
       "version": "1.0.1",
       "from": "graceful-readlink@>=1.0.0",
       "resolved": "https://registry.npmjs.org/graceful-readlink/-/graceful-readlink-1.0.1.tgz"
+    },
+    "history": {
+      "version": "3.2.1",
+      "from": "history@>=3.0.0 <4.0.0",
+      "resolved": "https://registry.npmjs.org/history/-/history-3.2.1.tgz"
     },
     "hoist-non-react-statics": {
       "version": "1.2.0",
@@ -514,6 +524,11 @@
       "from": "promise@>=7.1.1 <8.0.0",
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz"
     },
+    "query-string": {
+      "version": "4.3.1",
+      "from": "query-string@>=4.2.2 <5.0.0",
+      "resolved": "https://registry.npmjs.org/query-string/-/query-string-4.3.1.tgz"
+    },
     "react": {
       "version": "15.4.1",
       "from": "react@15.4.1",
@@ -524,10 +539,25 @@
       "from": "react-dom@15.4.1",
       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.4.1.tgz"
     },
+    "react-helmet": {
+      "version": "4.0.0",
+      "from": "react-helmet@latest",
+      "resolved": "https://registry.npmjs.org/react-helmet/-/react-helmet-4.0.0.tgz"
+    },
     "react-redux": {
       "version": "4.4.6",
       "from": "react-redux@4.4.6",
       "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-4.4.6.tgz"
+    },
+    "react-router": {
+      "version": "3.0.2",
+      "from": "react-router@latest",
+      "resolved": "https://registry.npmjs.org/react-router/-/react-router-3.0.2.tgz"
+    },
+    "react-side-effect": {
+      "version": "1.1.0",
+      "from": "react-side-effect@>=1.1.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/react-side-effect/-/react-side-effect-1.1.0.tgz"
     },
     "react-tagsinput": {
       "version": "3.13.6",
@@ -574,6 +604,11 @@
       "from": "sprintf-js@>=1.0.2 <1.1.0",
       "resolved": "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz"
     },
+    "strict-uri-encode": {
+      "version": "1.1.0",
+      "from": "strict-uri-encode@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz"
+    },
     "symbol-observable": {
       "version": "1.0.4",
       "from": "symbol-observable@>=1.0.2 <2.0.0",
@@ -588,6 +623,11 @@
       "version": "0.7.12",
       "from": "ua-parser-js@>=0.7.9 <0.8.0",
       "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz"
+    },
+    "warning": {
+      "version": "3.0.0",
+      "from": "warning@>=3.0.0 <4.0.0",
+      "resolved": "https://registry.npmjs.org/warning/-/warning-3.0.0.tgz"
     },
     "whatwg-fetch": {
       "version": "2.0.1",

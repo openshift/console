@@ -1,4 +1,5 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 import {Provider} from 'react-redux';
 
 import {k8s} from '../module/k8s';
@@ -131,6 +132,7 @@ const List = makeList('Namespaces', 'namespace', Header, RowOfKind('namespace'))
 const CreateButton = () => <button type="button" className="btn btn-primary co-m-pane__title__btn" onClick={() => createNamespaceModal()}>Create Namespace</button>;
 
 const NamespacesPage = () => <div>
+  <Helmet title="Namespaces" />
   <NavTitle title="Namespaces" />
   <TwoColumns list={List} topControls={CreateButton}>
     <Details />
@@ -176,5 +178,4 @@ const NamespaceSelector = (props) => <Provider store={angulars.store}>
 
 export {NamespacesPage, NamespacesList, NamespaceSelector};
 
-register('NamespacesPage', NamespacesPage);
 register('NamespaceSelector', NamespaceSelector);
