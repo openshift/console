@@ -137,12 +137,10 @@ angular.module('bridge', [
   registerNamespaceFriendlyPrefix('search');
 
   r('/all-namespaces/search', {
-    controller: 'SearchCtrl',
     template: '<react-component name="SearchPage"></react-component>',
     title: 'Search',
   });
   r('/ns/:ns/search', {
-    controller: 'SearchCtrl',
     template: '<react-component name="SearchPage"></react-component>',
     title: 'Search',
   });
