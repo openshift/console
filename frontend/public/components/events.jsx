@@ -81,7 +81,7 @@ export class EventStreamPage extends React.Component {
 
   render () {
     const {category, kind} = this.state;
-    return <div className="co-p-events">
+    return <div>
       <NavTitle title="Events" />
       <div className="co-m-pane">
         <div className="co-m-pane__heading">
