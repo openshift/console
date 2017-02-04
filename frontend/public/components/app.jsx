@@ -1,11 +1,12 @@
 import React from 'react';
 import Helmet from 'react-helmet';
-import { browserHistory, IndexRoute, Route, Router } from 'react-router';
+import { browserHistory, IndexRoute, Redirect, Route, Router } from 'react-router';
 
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ErrorPage, ErrorPage404 } from './error';
 import { NamespacesPage } from './namespace';
 import { NodeDetailsPage, NodesPage, NodePodsPage } from './node';
+import { SearchPage } from './search';
 import { register } from './react-wrapper';
 
 const App = (props) => <div>
@@ -26,6 +27,10 @@ const AppRouter = () => <Router history={browserHistory}>
       <Route path=":name/yaml" component={NodeDetailsPage} />
       <Route path=":name/pods" component={NodePodsPage} />
     </Route>
+
+    <Route path="all-namespaces/search" component={SearchPage} />
+    <Route path="ns/:ns/search" component={SearchPage} />
+    <Redirect from="search" to="/all-namespaces/search" />
 
     <Route path="error" component={ErrorPage} />
     <Route path="*" component={ErrorPage404} />

@@ -1,7 +1,8 @@
 import React from 'react';
+import Helmet from 'react-helmet';
+import { browserHistory } from 'react-router';
 
 import {k8sKinds} from '../module/k8s';
-import {angulars, register} from './react-wrapper';
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';
 import {DeploymentsList} from './deployment';
@@ -66,55 +67,42 @@ const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
   </div>;
 });
 
-export class SearchPage extends React.Component {
-  constructor (props) {
-    super(props);
+const updateUrlParams = (params) => {
+  const location = Object.assign({}, browserHistory.getCurrentLocation());
+  Object.assign(location.query, params);
+  browserHistory.push(location);
+};
 
-    // Ensure that the "kind" route parameter is a valid resource kind ID
-    const {id} = kindObj(angulars.routeParams.kind);
-    const kind = id || 'service';
+const updateKind = kind => updateUrlParams({kind: encodeURIComponent(kind)});
+const updateTags = tags => updateUrlParams({q: tags.map(encodeURIComponent).join(',')});
 
-    this.state = {
-      kind: kind,
-      tags: k8sSelector.split(_.isString(angulars.routeParams.q) ? angulars.routeParams.q : ''),
-    };
-  }
+export const SearchPage = ({location}) => {
+  const {kind, q} = location.query;
 
-  // TODO(andy): This is a workaround until we decide how we are going to do routing in React
-  updateURL () {
-    const kind = encodeURIComponent(this.state.kind);
-    const q = this.state.tags.map(encodeURIComponent).join(',');
-    window.history.pushState({kind, q}, '', `${window.location.pathname}?kind=${kind}&q=${q}`);
-  }
+  // Ensure that the "kind" route parameter is a valid resource kind ID
+  const {id} = kindObj(decodeURIComponent(kind));
+  const kindId = id || 'service';
 
-  handleKindChange (kind) {
-    this.setState({kind}, this.updateURL);
-  }
+  const tags = k8sSelector.split(_.isString(q) ? decodeURIComponent(q) : '');
+  const validTags = _.reject(tags, tag => k8sSelectorRequirement.fromString(tag) === undefined);
+  const selector = k8sSelector.fromString(validTags.join(','));
 
-  handleSelectorChange (tags) {
-    this.setState({tags}, this.updateURL);
-  }
+  // Ensure the list is reloaded whenever the search options are changed
+  const key = `${kind}-${validTags.join(',')}`;
 
-  render () {
-    const {kind, tags} = this.state;
-    const validTags = _.reject(tags, tag => k8sSelectorRequirement.fromString(tag) === undefined);
-    const selector = k8sSelector.fromString(validTags.join(','));
-
-    return <div className="co-p-search">
-      <NavTitle title="Search" />
-      <div className="co-m-pane">
-        <div className="co-m-pane__body">
-          <div className="input-group">
-            <div className="input-group-btn">
-              <ResourceListDropdown selected={kind} onChange={this.handleKindChange.bind(this)} />
-            </div>
-            <SelectorInput tags={validTags} onChange={this.handleSelectorChange.bind(this)} autoFocus/>
+  return <div className="co-p-search">
+    <Helmet title="Search" />
+    <NavTitle title="Search" />
+    <div className="co-m-pane" key={key}>
+      <div className="co-m-pane__body">
+        <div className="input-group">
+          <div className="input-group-btn">
+            <ResourceListDropdown selected={kindId} onChange={updateKind} />
           </div>
+          <SelectorInput tags={validTags} onChange={updateTags} autoFocus/>
         </div>
-        <ResourceList kind={kind} selector={selector} />
       </div>
-    </div>;
-  }
-}
-
-register('SearchPage', SearchPage);
+      <ResourceList kind={kindId} selector={selector} />
+    </div>
+  </div>;
+};

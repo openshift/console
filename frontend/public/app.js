@@ -109,18 +109,6 @@ angular.module('bridge', [
 
   registerNamespaceFriendlyPrefix('search');
 
-  r('/all-namespaces/search', {
-    template: '<react-component name="SearchPage"></react-component>',
-    title: 'Search',
-  });
-  r('/ns/:ns/search', {
-    template: '<react-component name="SearchPage"></react-component>',
-    title: 'Search',
-  });
-  r('/search', {
-    redirectTo: '/all-namespaces/search',
-  });
-
   r('/settings/profile', {
     template: '<react-component name="ProfilePage"></react-component>',
     title: 'Profile',
