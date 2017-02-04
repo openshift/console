@@ -7,7 +7,6 @@
 import React from 'react';
 import * as d3 from 'd3';
 import ReactChart from './react-chart';
-import { register } from '../react-wrapper';
 import { Loading, units } from '../utils';
 import { discoverService } from '../../module/k8s';
 import { coFetch, coFetchJSON, coFetchUtils } from '../../co-fetch';
@@ -26,7 +25,7 @@ const stepSize = 30; // 30 seconds
 const timespan = 60 * 60 * 1000; // 1 hour
 const pollInterval = stepSize * 1000; // stepSize in milliseconds
 
-class SparklineWidget extends SafetyFirst {
+export class SparklineWidget extends SafetyFirst {
   constructor(props) {
     super(props);
     this.interval = null;
@@ -294,6 +293,3 @@ SparklineWidget.propTypes = {
   limitText: React.PropTypes.string,
   units: React.PropTypes.string
 };
-
-register('sparklinewidget', SparklineWidget);
-export { SparklineWidget };

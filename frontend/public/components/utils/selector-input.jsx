@@ -2,8 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 import TagsInput from 'react-tagsinput';
 
-import {register} from '../react-wrapper';
-
 import * as k8sSelector from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
 
@@ -100,5 +98,3 @@ export class SelectorInput extends React.Component {
     </div>;
   }
 }
-
-register('SelectorInput', SelectorInput);

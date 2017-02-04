@@ -1,8 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {register} from '../react-wrapper';
-import {StatusBox, RelativeLink} from './index';
+import { StatusBox, RelativeLink } from './index';
 import { EditYAML } from '../edit-yaml';
 
 export const navFactory = {
@@ -47,7 +46,6 @@ export const NavBar = ({pages}) => {
     return (!before.includes(href) && i !== 0 && before.includes(pages[i - 1].href)) ? [divider, tab] : [tab];
   }))}</ul>;
 };
-register('NavBar', NavBar);
 
 export const VertNav = props => {
   const Page = _.get(_.find(props.pages, {href: activeSlug()}), 'component');
