@@ -64,9 +64,9 @@ export const actions = {
     // otherwise users will get page refresh and cry about
     // broken direct links and bookmarks
     if (namespace !== getActiveNamespace()) {
-      const oldPath = angulars.$location.path();
+      const oldPath = window.location.pathname;
       if (isNamespaced(oldPath)) {
-        angulars.$location.path(formatNamespaceRoute(namespace, oldPath));
+        window.location = formatNamespaceRoute(namespace, oldPath);
       }
     }
 

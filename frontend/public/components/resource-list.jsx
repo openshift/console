@@ -10,7 +10,7 @@ const ResourceListPage = () => {
   const kindObj = _.find(k8sKinds, {path: kind});
 
   if (!kindObj) {
-    angulars.$location.url('/404');
+    window.location = '404';
     return null;
   }
 
@@ -28,7 +28,7 @@ const ResourceDetailsPage = () => {
   const kindObj = _.find(k8sKinds, {path: kind});
 
   if (!name || !kindObj) {
-    angulars.$location.url('/404');
+    window.location = '404';
     return null;
   }
 

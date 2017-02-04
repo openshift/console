@@ -3,7 +3,6 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
 import { k8sCreate, k8sUpdate } from '../module/k8s';
-import { angulars } from './react-wrapper';
 import { kindObj, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
 
@@ -144,7 +143,7 @@ export class EditYAML extends SafetyFirst {
       action(ko, obj, namespace, name)
         .then(o => {
           if (redirect) {
-            angulars.$location.path(`${resourcePath(obj.kind, newName, newNamespace)}/yaml`);
+            window.location = `${resourcePath(obj.kind, newName, newNamespace)}/yaml`;
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }

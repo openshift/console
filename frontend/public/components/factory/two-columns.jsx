@@ -2,7 +2,6 @@ import React from 'react';
 import classnames from 'classnames';
 
 import {getQN} from '../../module/k8s';
-import {angulars} from '../react-wrapper';
 import {injectChild, WithQuery} from '../utils';
 
 const DetailsColumn = (props) => {
@@ -68,7 +67,7 @@ TwoColumns.RowWrapper = ({obj, onClick, isActive, children}) => {
 
   const _onClick = () => {
     const qualifiedName = getQN(obj);
-    angulars.$location.hash(qualifiedName);
+    window.location.hash = qualifiedName;
     onClick(qualifiedName);
   };
   return <div className={klass} onClick={_onClick}>

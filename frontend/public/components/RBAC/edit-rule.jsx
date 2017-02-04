@@ -3,7 +3,7 @@ import React from 'react';
 import {k8s} from '../../module/k8s';
 import {errorModal} from '../modals';
 import {connect, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
-import {register, angulars} from '../react-wrapper';
+import {register} from '../react-wrapper';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);
@@ -160,7 +160,7 @@ class EditRule_ extends PromiseComponent {
         url += name;
       }
 
-      angulars.$location.url(url);
+      window.location = url;
     });
   }
 

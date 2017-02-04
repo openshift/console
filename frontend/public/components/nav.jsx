@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { angulars, register } from './react-wrapper';
+import { register } from './react-wrapper';
 import { connect} from './utils';
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute } from '../ui/ui-actions';
@@ -32,7 +32,7 @@ const Link = connect(stateToProps)(
         return onClick(e);
       }
       e.preventDefault();
-      angulars.$location.path(href_);
+      window.location = href_;
     }}>{name}</a>
   </li>;
 });
