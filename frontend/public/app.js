@@ -108,25 +108,9 @@ angular.module('bridge', [
     template: '<react-component name="EventStreamPod"></react-component>',
     title: 'Pod Events',
   });
-  r('/nodes', {
-    template: '<react-component name="NodesPage"></react-component>',
-    title: 'Nodes',
-  });
-  r('/nodes/:name/details', {
-    template: '<react-component name="NodeDetailsPage"></react-component>',
-    title: 'Node',
-  });
-  r('/nodes/:name/yaml', {
-    template: '<react-component name="NodeDetailsPage"></react-component>',
-    title: 'Node',
-  });
   r('/nodes/:name/events', {
     template: '<react-component name="EventStreamNode"></react-component>',
     title: 'Node Events',
-  });
-  r('/nodes/:name/pods', {
-    template: '<react-component name="NodePodsPage"></react-component>',
-    title: 'Node Pods',
   });
 
   registerNamespaceFriendlyPrefix('search');
