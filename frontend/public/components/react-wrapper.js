@@ -4,8 +4,6 @@ export const angulars = {
   store: null,
   ModalLauncherSvc: null,
   $location: null,
-  $log: null,
-  $interval: null,
   $timeout: null,
 };
 
@@ -21,7 +19,7 @@ export const register = (name, Component) => {
 
 app.value('nop', () => <div/>);
 
-app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeout, $interval, $log, ModalLauncherSvc) {
+app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeout, ModalLauncherSvc) {
   // "Export" angular modules to the outside world via ref through 'angulars'...
   // NOTE: this only exist after the app has loaded!
 
@@ -35,8 +33,6 @@ app.service('angularBridge', function ($ngRedux, $location, $routeParams, $timeo
     angulars.modal = (...args) => () => ModalLauncherSvc.open(...args),
     angulars.$location = $location;
     angulars.routeParams = $routeParams;
-    angulars.$log = $log;
-    angulars.$interval= $interval;
     angulars.$timeout = $timeout;
   };
 });
