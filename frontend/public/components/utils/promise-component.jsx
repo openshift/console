@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { angulars } from '../react-wrapper';
 import { SafetyFirst } from '../safety-first';
 
 export class PromiseComponent extends SafetyFirst {
@@ -31,8 +30,7 @@ export class PromiseComponent extends SafetyFirst {
   }
 
   _catch(error) {
-    const formatter = this.props.formatter || 'k8sApi';
-    const errorMessage = angulars.errorMessageSvc.getFormatter(formatter)(error);
+    const errorMessage = error.message || 'An error occurred. Please try again.';
     this.setState({
       inProgress: false,
       errorMessage,
