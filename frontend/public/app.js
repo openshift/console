@@ -34,8 +34,7 @@ angular.module('bridge', [
   'bridge.page',
   'bridge.react-wrapper',
 ])
-.config(function($compileProvider, $routeProvider, $locationProvider,
-                 errorMessageSvcProvider, $ngReduxProvider) {
+.config(function($compileProvider, $routeProvider, $locationProvider, $ngReduxProvider) {
   'use strict';
 
   const reducers = combineReducers({
@@ -51,10 +50,6 @@ angular.module('bridge', [
   $locationProvider.html5Mode({
     enabled: true,
     requireBase: true
-  });
-
-  errorMessageSvcProvider.registerFormatter('k8sApi', function(error) {
-    return error.message || 'An error occurred. Please try again.';
   });
 
   function r(route, config) {
