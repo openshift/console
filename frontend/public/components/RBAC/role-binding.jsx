@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import {getQN} from '../../module/k8s';
 import {ResourceIcon, LabelList, Timestamp} from '../utils';
@@ -46,7 +47,7 @@ const RoleRef = ({parentNamespace, namespace, name, kind}) => {
     href = `ns/${namespace || parentNamespace}/roles#${qualifiedName}`;
   }
   return <span>
-    <ResourceIcon kind={kind} /> <a href={href}>{name}</a>
+    <ResourceIcon kind={kind} /> <Link to={href}>{name}</Link>
   </span>;
 };
 

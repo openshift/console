@@ -1,8 +1,8 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import {coFetchJSON} from '../../co-fetch';
 import {NavTitle, DocumentationSidebar} from '../utils';
-import {register} from '../react-wrapper';
 import {ClusterUpdates} from '../cluster-updates/cluster-updates';
 import {LicenseSetting} from './license-setting';
 import {LDAPSetting} from './ldap';
@@ -13,7 +13,7 @@ export const SettingsRow = ({children}) => <div className="row co-m-form-row">{c
 export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
 export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9">{children}</div>;
 
-const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
+export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
 class ClusterSettingsPage_ extends SafetyFirst {
   componentDidMount() {
     super.componentDidMount();
@@ -24,6 +24,7 @@ class ClusterSettingsPage_ extends SafetyFirst {
     const { version } = (this.state || {});
     const { CLUSTER_UPDATES } = this.props.flags;
     return <div className="co-p-cluster">
+      <Helmet title="Cluster" />
       <div className="co-p-cluster__body">
         <NavTitle title="Cluster Settings" />
         { CLUSTER_UPDATES &&
@@ -53,5 +54,3 @@ class ClusterSettingsPage_ extends SafetyFirst {
     </div>;
   }
 });
-
-register('ClusterSettingsPage', ClusterSettingsPage);

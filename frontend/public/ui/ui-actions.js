@@ -1,13 +1,13 @@
 'use strict';
 
-import {CONST} from '../const';
-import {angulars} from '../components/react-wrapper';
+import { CONST } from '../const';
+import store from '../redux';
 
 const nsPathPattern = new RegExp(`^\/?ns\/${CONST.legalNamePattern.source}\/?(.*)$`);
 const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 const prefixes = [];
 
-export const getActiveNamespace = () => angulars.store.getState().UI.get('activeNamespace');
+export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
 
 export const isNamespaced = path => {
   return path.match(nsPathPattern) || path.match(allNsPathPattern);
@@ -54,7 +54,7 @@ export const types = {
 };
 
 export const actions = {
-  [types.setCurrentLocation]: () => ({location: location.pathname, ns: angulars.routeParams.ns, type: types.setCurrentLocation}),
+  [types.setCurrentLocation]: (location, ns) => ({location, ns, type: types.setCurrentLocation}),
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {
       namespace = namespace.trim();
@@ -80,6 +80,6 @@ export const actions = {
 window.tectonicTesting && (window.tectonicTesting.uiActions = {
   getActiveNamespace,
   getNamespacedRoute,
-  setActiveNamespace: ns => angulars.store.dispatch(actions.setActiveNamespace(ns)),
+  setActiveNamespace: ns => store.dispatch(actions.setActiveNamespace(ns)),
 });
 

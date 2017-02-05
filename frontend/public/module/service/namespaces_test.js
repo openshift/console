@@ -47,7 +47,7 @@ describe('ui-actions', function() {
       expect(getActiveNamespace()).toEqual(undefined);
     });
 
-    // TODO: These tests are currently broken
+    // TODO (andy): These tests are currently broken
     //it('should redirect namespaced location paths for known namespace-friendly prefixes', function() {
     //  mockPath = '/ns/floorwax/pods';
     //  setActiveNamespace('dessert-topping');

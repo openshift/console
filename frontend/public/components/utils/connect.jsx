@@ -1,9 +1,9 @@
 import React from 'react';
 import {connect as reactReduxConnect, Provider} from 'react-redux';
 
+import store from '../../redux';
 import {K8sWatcher} from '../../module/service/firehose';
 import {k8s as k8sModule, k8sKinds} from '../../module/k8s';
-import {angulars} from '../react-wrapper';
 import {inject} from './index';
 
 export const kindObj = kind => _.isString(kind) && k8sKinds[kind.toUpperCase()] || {};
@@ -19,7 +19,7 @@ export class WithQuery extends React.Component {
     super(props);
     const {kind, namespace, selector, fieldSelector, name} = this.props;
     // Just created to get the ID :-/
-    const firehose = new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, angulars.store);
+    const firehose = new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, store);
     this.firehoseId = firehose.id;
   }
 
@@ -28,7 +28,7 @@ export class WithQuery extends React.Component {
   }
 
   render () {
-    return <ConnectToState store={angulars.store} reduxID={this.firehoseId} {...this.props}>
+    return <ConnectToState store={store} reduxID={this.firehoseId} {...this.props}>
       {this.props.children}
     </ConnectToState>;
   }
@@ -92,7 +92,7 @@ MultiConnectToState.propTypes = {
 export const connect = (...args) => Component => {
   const Wrapped = reactReduxConnect(...args)(Component);
 
-  return props => <Provider store={angulars.store}>
+  return props => <Provider store={store}>
     <Wrapped {...props} />
   </Provider>;
 };

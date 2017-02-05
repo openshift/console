@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import {angulars} from './react-wrapper';
+import store from '../redux';
 import actions from '../module/k8s/k8s-actions';
 
 import {inject, WithQuery} from './utils';
@@ -119,7 +119,6 @@ export class RowFilter extends React.Component {
     if (!id) {
       return;
     }
-    const {store} = angulars;
     store.dispatch(actions.filterList(id, name, value));
   }
 

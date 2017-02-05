@@ -1,7 +1,6 @@
 import React from 'react';
 
 export const angulars = {
-  store: null,
   ModalLauncherSvc: null,
 };
 
@@ -15,7 +14,7 @@ export const register = (name, Component) => {
   toRegister.push({name, Component});
 };
 
-app.service('angularBridge', function ($ngRedux, $routeParams, ModalLauncherSvc) {
+app.service('angularBridge', function (ModalLauncherSvc) {
   // "Export" angular modules to the outside world via ref through 'angulars'...
   // NOTE: this only exist after the app has loaded!
 
@@ -24,9 +23,7 @@ app.service('angularBridge', function ($ngRedux, $routeParams, ModalLauncherSvc)
       app.value(name, Component);
     });
 
-    angulars.store = $ngRedux;
     angulars.ModalLauncherSvc = ModalLauncherSvc;
-    angulars.modal = (...args) => () => ModalLauncherSvc.open(...args),
-    angulars.routeParams = $routeParams;
+    angulars.modal = (...args) => () => ModalLauncherSvc.open(...args);
   };
 });

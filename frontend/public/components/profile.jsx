@@ -1,11 +1,12 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import {authSvc} from '../module/auth';
-import {register} from './react-wrapper';
 import {kubectlConfigModal} from './modals';
 import {NavTitle} from './utils';
 
 export const ProfilePage = () => <div className="co-p-profile">
+  <Helmet title="Profile" />
   <NavTitle detail={true} title="Profile" />
   <div className="co-m-pane">
     <div className="co-m-pane__body">
@@ -22,4 +23,3 @@ export const ProfilePage = () => <div className="co-p-profile">
     </div>
   </div>
 </div>;
-register('ProfilePage', ProfilePage);

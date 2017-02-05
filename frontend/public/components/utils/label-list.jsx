@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import {linkEncode} from '../../module/k8s/labels';
@@ -11,11 +12,11 @@ const Label = ({kind, name, value, expand}) => {
 
   return (
     <div className={klass}>
-      <a className="co-m-label__link" href={href}>
+      <Link className="co-m-label__link" to={href}>
         <span className="co-m-label__key">{name}</span>
         <span className="co-m-label__eq">=</span>
         <span className="co-m-label__value">{value}</span>
-      </a>
+      </Link>
     </div>
   );
 };

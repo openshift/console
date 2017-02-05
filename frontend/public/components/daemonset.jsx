@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory, detailsPage} from './utils';
@@ -21,9 +22,9 @@ const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list_
     <LabelList kind="daemonset" labels={daemonset.metadata.labels} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-    <a href={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
+    <Link to={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
       {daemonset.status.currentNumberScheduled} of {daemonset.status.desiredNumberScheduled} pods
-    </a>
+    </Link>
   </div>
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
     <Selector selector={daemonset.spec.selector.matchLabels} />

@@ -2,11 +2,9 @@ import React from 'react';
 import Helmet from 'react-helmet';
 
 import { k8sKinds } from '../module/k8s';
-import { angulars, register } from './react-wrapper';
 import * as pages from './resource-pages';
 
-const ResourceListPage = () => {
-  const {kind, ns} = angulars.routeParams;
+export const ResourceListPage = ({params: {kind, ns}}) => {
   const kindObj = _.find(k8sKinds, {path: kind});
 
   if (!kindObj) {
@@ -17,14 +15,12 @@ const ResourceListPage = () => {
   // eslint-disable-next-line import/namespace
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}Page`];
   return <div>
-    <Helmet title={kindObj.labelPlural} titleTemplate="%s · Tectonic" />
+    <Helmet title={kindObj.labelPlural} />
     {PageComponent && <PageComponent namespace={ns} kind={kindObj.id} />}
   </div>;
 };
-register('ResourceListPage', ResourceListPage);
 
-const ResourceDetailsPage = () => {
-  const {kind, name, ns} = angulars.routeParams;
+export const ResourceDetailsPage = ({params: {kind, name, ns}}) => {
   const kindObj = _.find(k8sKinds, {path: kind});
 
   if (!name || !kindObj) {
@@ -35,8 +31,7 @@ const ResourceDetailsPage = () => {
   // eslint-disable-next-line import/namespace
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}DetailsPage`];
   return <div>
-    <Helmet title={`${name} · Details`} titleTemplate="%s · Tectonic" />
+    <Helmet title={`${name} · Details`} />
     {PageComponent && <PageComponent namespace={ns} kind={kindObj.id} name={name} />}
   </div>;
 };
-register('ResourceDetailsPage', ResourceDetailsPage);

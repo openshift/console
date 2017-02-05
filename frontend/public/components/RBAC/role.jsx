@@ -1,10 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import {Rules} from './rules';
-
 import {makeList, TwoColumns} from '../factory';
 import {Timestamp, ResourceIcon} from '../utils';
-
 
 export const RoleHeader = () => <div className="co-m-facet-menu__title">Name</div>;
 
@@ -36,11 +35,11 @@ export const RoleDetails = ({rules, metadata}) => {
       <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
     </dl>
     <p>
-      <a href={href}>
+      <Link to={href}>
         <button className="btn btn-primary" style={{margin: '10px 0'}}>
           Add Rule
         </button>
-      </a>
+      </Link>
     </p>
     <Rules rules={rules} metadata={metadata} />
   </div>;

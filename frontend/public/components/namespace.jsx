@@ -1,15 +1,15 @@
 import React from 'react';
 import Helmet from 'react-helmet';
-import {Provider} from 'react-redux';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
 import {k8s} from '../module/k8s';
-import {angulars, register} from './react-wrapper';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
 import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {ActionsMenu, connect, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
+import {ActionsMenu, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 
 const FullHeader = () => <div className="row co-m-table-grid__head">
@@ -21,9 +21,9 @@ const FullHeader = () => <div className="row co-m-table-grid__head">
 const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
     <ResourceIcon kind="namespace" />
-    <a href={`namespaces?name=${namespace.metadata.name}`} title={namespace.metadata.uid}>
+    <Link to={`namespaces?name=${namespace.metadata.name}`} title={namespace.metadata.uid}>
       {namespace.metadata.name}
-    </a>
+    </Link>
   </div>
   <div className="col-xs-4">
     <LabelList kind="namespace" labels={namespace.metadata.labels} />
@@ -33,7 +33,7 @@ const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item
   </div>
 </div>;
 
-const NamespacesList = makeList('Namespaces', 'namespace', FullHeader, FullRow);
+export const NamespacesList = makeList('Namespaces', 'namespace', FullHeader, FullRow);
 
 class PullSecret extends SafetyFirst {
   constructor (props) {
@@ -131,7 +131,7 @@ const List = makeList('Namespaces', 'namespace', Header, RowOfKind('namespace'))
 
 const CreateButton = () => <button type="button" className="btn btn-primary co-m-pane__title__btn" onClick={() => createNamespaceModal()}>Create Namespace</button>;
 
-const NamespacesPage = () => <div>
+export const NamespacesPage = () => <div>
   <Helmet title="Namespaces" />
   <NavTitle title="Namespaces" />
   <TwoColumns list={List} topControls={CreateButton}>
@@ -170,12 +170,6 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
   </div>;
 });
 
-const NamespaceSelector = (props) => <Provider store={angulars.store}>
-  <Firehose kind="namespace" isList={true}>
-    <NamespaceDropdown {...props} />
-  </Firehose>
-</Provider>;
-
-export {NamespacesPage, NamespacesList, NamespaceSelector};
-
-register('NamespaceSelector', NamespaceSelector);
+export const NamespaceSelector = (props) => <Firehose kind="namespace" isList={true}>
+  <NamespaceDropdown {...props} />
+</Firehose>;

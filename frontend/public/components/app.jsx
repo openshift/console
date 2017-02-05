@@ -1,39 +1,121 @@
 import React from 'react';
+import { render } from 'react-dom';
 import Helmet from 'react-helmet';
+import { Provider } from 'react-redux';
 import { browserHistory, IndexRoute, Redirect, Route, Router } from 'react-router';
 
+import store from '../redux';
+import { featureActions } from '../features';
+import {k8sBasePath} from '../module/k8s';
+import k8sActions from '../module/k8s/k8s-actions';
+import { tectonicVersion } from '../module/status';
+import { registerNamespaceFriendlyPrefix, actions as UIActions } from '../ui/ui-actions';
 import { ClusterOverviewContainer } from './cluster-overview-container';
+import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
+import { LDAPPage } from './cluster-settings/ldap';
+import { ContainersDetailsPage } from './container';
+import { CreateYAML } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
-import { NamespacesPage } from './namespace';
+import { EventStreamNode, EventStreamPage, EventStreamPod, EventStreamReplicationController } from './events';
+import { GlobalNotifications } from './global-notifications';
+import { GlobalTooltip } from './global-tooltip';
+import { NamespacesPage, NamespaceSelector } from './namespace';
+import { Nav } from './nav';
 import { NodeDetailsPage, NodesPage, NodePodsPage } from './node';
+import { ProfilePage } from './profile';
+import { ResourceDetailsPage, ResourceListPage } from './resource-list';
+import { ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './RBAC';
 import { SearchPage } from './search';
-import { register } from './react-wrapper';
 
-const App = (props) => <div>
+const App = ({children}) => <div>
   <Helmet titleTemplate="%s · Tectonic" />
-  {props.children}
+  <GlobalNotifications />
+  <div id="reflex">
+    <Nav />
+    <Provider store={store}>
+      <div id="content">
+        <NamespaceSelector />
+        {children}
+      </div>
+    </Provider>
+  </div>
+  <GlobalTooltip />
 </div>;
 
-// TODO (andy): Once Angular router is removed, use ReactDOM's render() method to render Router to container div
-const AppRouter = () => <Router history={browserHistory}>
-  <Route path="/" component={App}>
-    <IndexRoute component={ClusterOverviewContainer}/>
+const init = ({location, params}) => {
+  registerNamespaceFriendlyPrefix('configmaps');
+  registerNamespaceFriendlyPrefix('daemonsets');
+  registerNamespaceFriendlyPrefix('deployments');
+  registerNamespaceFriendlyPrefix('events');
+  registerNamespaceFriendlyPrefix('horizontalpodautoscalers');
+  registerNamespaceFriendlyPrefix('ingresses');
+  registerNamespaceFriendlyPrefix('jobs');
+  registerNamespaceFriendlyPrefix('pods');
+  registerNamespaceFriendlyPrefix('replicasets');
+  registerNamespaceFriendlyPrefix('replicationcontrollers');
+  registerNamespaceFriendlyPrefix('rolebindings');
+  registerNamespaceFriendlyPrefix('roles');
+  registerNamespaceFriendlyPrefix('search');
+  registerNamespaceFriendlyPrefix('secrets');
+  registerNamespaceFriendlyPrefix('serviceaccounts');
+  registerNamespaceFriendlyPrefix('services');
 
-    <Route path="namespaces" component={NamespacesPage} />
+  store.dispatch(UIActions.setCurrentLocation(location.pathname, params.ns));
+  store.dispatch(k8sActions.getResources());
+  store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
+  store.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/v1`));
 
-    <Route path="nodes">
-      <IndexRoute component={NodesPage} />
-      <Route path=":name/details" component={NodeDetailsPage} />
-      <Route path=":name/yaml" component={NodeDetailsPage} />
-      <Route path=":name/pods" component={NodePodsPage} />
+  tectonicVersion();
+};
+
+render((
+  <Router history={browserHistory}>
+    <Route path="/" component={App} onEnter={init} >
+      <IndexRoute component={ClusterOverviewContainer}/>
+
+      <Route path="clusterroles">
+        <IndexRoute component={ClusterRolesPage} />
+        <Route path=":name/add-rule" component={EditRuleContainer} />
+        <Route path=":name/:rule/edit" component={EditRuleContainer} />
+      </Route>
+      <Route path="clusterrolebindings" component={ClusterRoleBindingsPage} />
+
+      <Route path="ns/:ns/roles/:name/add-rule" component={EditRuleContainer} />
+      <Route path="ns/:ns/roles/:name/:rule/edit" component={EditRuleContainer} />
+
+      <Route path="namespaces" component={NamespacesPage} />
+
+      <Route path="nodes">
+        <IndexRoute component={NodesPage} />
+        <Route path=":name/details" component={NodeDetailsPage} />
+        <Route path=":name/events" component={EventStreamNode} />
+        <Route path=":name/pods" component={NodePodsPage} />
+        <Route path=":name/yaml" component={NodeDetailsPage} />
+      </Route>
+
+      <Route path="settings">
+        <Route path="profile" component={ProfilePage} />
+        <Route path="ldap" component={LDAPPage} />
+        <Route path="cluster" component={ClusterSettingsPage} />
+      </Route>
+
+      <Route path="all-namespaces/events" component={EventStreamPage} />
+      <Route path="ns/:ns/events" component={EventStreamPage} />
+      <Route path="ns/:ns/pods/:name/events" component={EventStreamPod} />
+      <Route path="ns/:ns/replicationcontrollers/:name/events" component={EventStreamReplicationController} />
+
+      <Route path="all-namespaces/search" component={SearchPage} />
+      <Route path="ns/:ns/search" component={SearchPage} />
+      <Redirect from="search" to="all-namespaces/search" />
+
+      <Route path="all-namespaces/:kind" component={ResourceListPage} />
+      <Route path="ns/:ns/:kind" component={ResourceListPage} />
+      <Route path="ns/:ns/:kind/new" component={CreateYAML} />
+      <Route path="ns/:ns/:kind/:name/:view" component={ResourceDetailsPage} />
+      <Route path="ns/:ns/pods/:podName/:kind/:name/:view" component={ContainersDetailsPage} />
+
+      <Route path="error" component={ErrorPage} />
+      <Route path="*" component={ErrorPage404} />
     </Route>
-
-    <Route path="all-namespaces/search" component={SearchPage} />
-    <Route path="ns/:ns/search" component={SearchPage} />
-    <Redirect from="search" to="/all-namespaces/search" />
-
-    <Route path="error" component={ErrorPage} />
-    <Route path="*" component={ErrorPage404} />
-  </Route>
-</Router>;
-register('AppRouter', AppRouter);
+  </Router>
+), document.getElementById('app'));

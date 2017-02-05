@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import {k8sEnum} from '../../module/k8s';
@@ -54,11 +55,11 @@ export class ListPage extends React.Component {
           <div className="row">
             <div className="col-xs-12">
               { this.props.canCreate &&
-                <a href={href} className="co-m-primary-action pull-left">
+                <Link to={href} className="co-m-primary-action pull-left">
                   <button className="btn btn-primary">
                     Create {label}
                   </button>
-                </a>
+                </Link>
               }
               {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={onExpandChange} />}
               <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${filterLabel || labelPlural} by name...`} onChange={this.onFilterChange.bind(this)} autoFocus={true} />

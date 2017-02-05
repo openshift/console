@@ -2,7 +2,6 @@ import React from 'react';
 
 import { safeLoad } from 'js-yaml';
 import { k8s } from '../module/k8s';
-import { angulars, register } from './react-wrapper';
 import { SafetyFirst } from './safety-first';
 import { EditYAML } from './edit-yaml';
 import { connect } from './utils';
@@ -121,16 +120,16 @@ class CreateYAML_ extends SafetyFirst {
   }
 
   render () {
-    const {models} = this.props;
+    const {models, params} = this.props;
 
-    const kind = k8s[angulars.routeParams.kind] && k8s[angulars.routeParams.kind].kind;
+    const kind = k8s[params.kind] && k8s[params.kind].kind;
     if (!kind) {
       // <base href=...> makes this OK
       window.location = '404';
     }
 
     const apiVersion = kind.apiVersion || 'v1';
-    const namespace = angulars.routeParams.ns || 'default';
+    const namespace = params.ns || 'default';
     const kindStr = `${apiVersion}.${kind.kind}`;
     const template = TEMPLATES[kindStr];
     let obj;
@@ -154,5 +153,3 @@ class CreateYAML_ extends SafetyFirst {
 }
 
 export const CreateYAML = connect(stateToProps)(CreateYAML_);
-
-register('CreateYAML', CreateYAML);

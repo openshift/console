@@ -1,11 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import {angulars} from './react-wrapper';
 import {ReactiveDetails} from './factory';
 import {Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
-
 
 const getResourceLimitValue = container => {
   const limits = _.get(container, 'resources.limits');
@@ -111,7 +110,7 @@ const Env = ({env}) => {
 };
 
 const Details = (props) => {
-  const container = _.find(props.spec.containers, {name: angulars.routeParams.name});
+  const container = _.find(props.spec.containers, {name: props.params.name});
   if (!container) {
     return null;
   }
@@ -167,7 +166,7 @@ const Details = (props) => {
           <h1 className="co-section-title">Network</h1>
           <dl>
             <dt>Node</dt>
-            <dd><a href={`nodes/${props.spec.nodeName}/details`}>{props.spec.nodeName}</a></dd>
+            <dd><Link to={`nodes/${props.spec.nodeName}/details`}>{props.spec.nodeName}</Link></dd>
             <dt>Pod IP</dt>
             <dd>{props.status.podIP || '-'}</dd>
           </dl>
@@ -204,13 +203,13 @@ const Details = (props) => {
 
 const ContainerPage = (props) => {
   const containers = _.get(props, 'data.spec.containers');
-  const data = containers ? _.find(containers, {name: angulars.routeParams.name}) : props.data;
+  const data = containers ? _.find(containers, {name: props.params.name}) : props.data;
   return <div>
-    <NavTitle {...props} detail={true} title={props.name} data={data} kind="container" />
+    <NavTitle {...props} detail={true} title={props.params.name} data={data} kind="container" />
     <VertNav {...props} hideNav={true} pages={[{href: 'details', component: Details}]} className="co-m-pod" />
   </div>;
 };
 
-export const ContainersDetailsPage = props => <ReactiveDetails {...props} store={angulars.store} kind="pod" name={angulars.routeParams.podName}>
+export const ContainersDetailsPage = props => <ReactiveDetails {...props} kind="pod" name={props.params.podName}>
   <ContainerPage {...props} />
 </ReactiveDetails>;
