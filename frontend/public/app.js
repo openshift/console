@@ -22,7 +22,6 @@ angular.module('bridge', [
   'ngRedux',
   // other deps
   'ui.bootstrap',
-  'ngTagsInput',
   // internal modules
   'templates',
   'bridge.service',

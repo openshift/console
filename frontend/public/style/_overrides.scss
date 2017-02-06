@@ -94,8 +94,6 @@ h1,
   font-size: 20px;
 }
 
-// ng-tags-input
-
 tags-input:focus,
 tags-input .host:focus {
   outline: none;
@@ -183,8 +181,6 @@ tags-input .tags .input::-ms-clear {
 tags-input.ng-invalid .tags {
   border-color: $red-invalid;
 }
-
-// ng-tags-input: autocomplete
 
 tags-input .autocomplete {
   margin-top: 5px;
