@@ -3358,21 +3358,6 @@ input[type="radio"] {
     -o-transform: scale(1, 1);
     transform: scale(1, 1); } }
 
-.co-m-toast {
-  position: fixed;
-  top: 48px;
-  margin: 0 auto;
-  width: 100%;
-  z-index: 1000; }
-
-.co-m-toast__message {
-  margin: 0 auto;
-  margin-bottom: 3px; }
-
-@media (min-width: 768px) {
-  .co-m-toast__message {
-    width: 300px; } }
-
 .co-m-cog {
   position: relative;
   color: #999;
