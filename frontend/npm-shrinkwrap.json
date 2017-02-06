@@ -484,11 +484,6 @@
       "from": "ng-redux@3.3.3",
       "resolved": "https://registry.npmjs.org/ng-redux/-/ng-redux-3.3.3.tgz"
     },
-    "ng-tags-input": {
-      "version": "3.1.1",
-      "from": "ng-tags-input@3.1.1",
-      "resolved": "https://registry.npmjs.org/ng-tags-input/-/ng-tags-input-3.1.1.tgz"
-    },
     "ngreact": {
       "version": "0.3.0",
       "from": "ngreact@0.3.0",
