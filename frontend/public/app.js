@@ -19,8 +19,6 @@ angular.module('bridge', [
   // angular deps
   'react',
   'ngRoute',
-  'ngAnimate',
-  'ngSanitize',
   'ngRedux',
   // other deps
   'ui.bootstrap',
