@@ -1,7 +1,8 @@
+import _ from 'lodash';
 import {analyticsSvc} from '../../module/analytics';
 
 angular.module('bridge.page')
-.factory('ModalLauncherSvc', function($uibModal, _) {
+.factory('ModalLauncherSvc', function($uibModal) {
   'use strict';
 
   var modalConfig = {

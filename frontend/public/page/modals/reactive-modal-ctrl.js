@@ -1,5 +1,5 @@
 angular.module('bridge.page')
-.controller('ReactiveModalCtrl', function(_, $scope, $uibModalInstance, name, props) {
+.controller('ReactiveModalCtrl', function($scope, $uibModalInstance, name, props) {
   'use strict';
 
   $scope.name = name;

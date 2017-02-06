@@ -1,1 +1,1 @@
-angular.module('bridge.service', ['lodash', 'coreos.services']);
+angular.module('bridge.service', []);
