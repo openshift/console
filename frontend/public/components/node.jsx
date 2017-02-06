@@ -1,7 +1,7 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import {k8sPatch, isNodeReady} from '../module/k8s';
-import {angulars, register} from './react-wrapper';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {PodsPage} from './pod';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
@@ -108,6 +108,7 @@ const dropdownFilters = [{
   title: 'Ready Status',
 }];
 const NodesPage = () => <div className="co-p-nodes">
+  <Helmet title="Nodes" />
   <ListPage kind="node" ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />
 </div>;
 
@@ -246,17 +247,18 @@ const Details = (node) => {
 
 const {details, editYaml, events, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods(), events()];
-const NodeDetailsPage = () => <DetailsPage kind="node" name={angulars.routeParams.name} pages={pages} menuActions={menuActions} />;
+const NodeDetailsPage = ({params: {name}}) => <div>
+  <Helmet title="Node Details" />
+  <DetailsPage kind="node" name={name} pages={pages} menuActions={menuActions} />
+</div>;
 
-export const NodePodsPage = () => <div className="co-p-node-pods">
-  <NavTitle title={angulars.routeParams.name} kind="node" detail="true" />
+export const NodePodsPage = ({params: {name}}) => <div className="co-p-node-pods">
+  <Helmet title="Node Pods" />
+  <NavTitle title={name} kind="node" detail="true" />
   <div className="co-m-vert-nav">
     <NavBar pages={pages} />
   </div>
-  <PodsPage canCreate={false} showTitle={false} fieldSelector={`spec.nodeName=${angulars.routeParams.name}`} />
+  <PodsPage canCreate={false} showTitle={false} fieldSelector={`spec.nodeName=${name}`} />
 </div>;
-register('NodePodsPage', NodePodsPage);
 
 export {NodeDetailsPage, NodesList, NodesListSearch, NodesPage};
-register('NodesPage', NodesPage);
-register('NodeDetailsPage', NodeDetailsPage);
