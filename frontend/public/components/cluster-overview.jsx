@@ -106,7 +106,7 @@ export const ClusterOverviewPage = (props) => {
             <SoftwareDetailRow title="Tectonic" detail={props.tectonicVersion}
               text="Tectonic version could not be determined." >
               <div>
-                <a href="https://tectonic.com/enterprise/releases/" target="_blank">Release Notes</a>
+                <a href="https://coreos.com/tectonic/releases/" target="_blank">Release Notes</a>
               </div>
             </SoftwareDetailRow>
 
