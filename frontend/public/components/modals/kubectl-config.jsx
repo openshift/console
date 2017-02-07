@@ -92,7 +92,7 @@ class KubectlConfigModal extends PromiseComponent {
           <p>Tectonic will generate a kubectl configuration file for you. First, we need to generate a set of offline credentials.</p>
           <p>Your identity will be verified before generation.</p>
         </ModalBody>
-        <ModalSubmitFooter submitText="Verify Identity" cancel={this.props.cancel} />
+        <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Verify Identity" cancel={this.props.cancel} />
       </form> }
 
       {/*step 2: verify code*/}
