@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {register} from '../react-wrapper';
 import {ActionsMenu, kindObj, ResourceIcon} from './index';
 
 export const NavTitle = (props) => <div className={classNames('row', props.detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')}>
@@ -13,5 +12,3 @@ export const NavTitle = (props) => <div className={classNames('row', props.detai
     </h1>
   </div>
 </div>;
-
-register('NavTitle', NavTitle);
