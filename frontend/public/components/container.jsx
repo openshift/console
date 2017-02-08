@@ -210,6 +210,6 @@ const ContainerPage = (props) => {
   </div>;
 };
 
-export const ContainersDetailsPage = props => <ReactiveDetails {...props} kind="pod" name={props.params.podName}>
+export const ContainersDetailsPage = props => <ReactiveDetails {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
   <ContainerPage {...props} />
 </ReactiveDetails>;
