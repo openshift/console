@@ -84,6 +84,7 @@ export const actions = {
 window.tectonicTesting && (window.tectonicTesting.uiActions = {
   getActiveNamespace,
   getNamespacedRoute,
+  registerNamespaceFriendlyPrefix,
   setActiveNamespace: ns => store.dispatch(actions.setActiveNamespace(ns)),
 });
 

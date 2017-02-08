@@ -4,9 +4,8 @@ describe('ui-actions', function() {
 
   var getActiveNamespace = window.tectonicTesting.uiActions.getActiveNamespace;
   var getNamespacedRoute = window.tectonicTesting.uiActions.getNamespacedRoute;
+  var registerNamespaceFriendlyPrefix = window.tectonicTesting.uiActions.registerNamespaceFriendlyPrefix;
   var setActiveNamespace = window.tectonicTesting.uiActions.setActiveNamespace;
-
-  beforeEach(module('bridge.react-wrapper'));
 
   beforeEach(module(function($provide) {
     $provide.value('$location', {
@@ -19,13 +18,9 @@ describe('ui-actions', function() {
     });
   }));
 
-  // eslint-disable-next-line no-unused-vars
-  beforeEach(inject(function(_angularBridge_) {
-    // This is just to force Angular to load
-  }));
-
   beforeEach(function() {
     setPath = '*UNSET*';
+    registerNamespaceFriendlyPrefix('pods');
   });
 
   describe('setActiveNamespace', function() {
