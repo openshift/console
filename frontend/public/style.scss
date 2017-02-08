@@ -31,11 +31,7 @@ $fa-font-path: "./fonts";
 @import "style/icons";
 @import "style/layout";
 @import "style/text";
-@import "style/modal";
 @import "style/status";
-
-// Pages
-@import "page/modals/modal";
 
 // React Components
 @import "components/utils/label";
