@@ -7,7 +7,7 @@ export const Box = ({children, className}) => <div className={classNames('cos-st
 
 export const LoadError = ({label}) => <Box>
   <div className="cos-text-center cos-error-title">Error Loading {label}</div>
-  <div className="cos-text-center">Please <a onClick={location.reload}>try again</a>.</div>
+  <div className="cos-text-center">Please <a onClick={window.location.reload.bind(window.location)}>try again</a>.</div>
 </Box>;
 
 export const Loading = ({className}) => <div className={classNames('co-m-loader co-an-fade-in-out', className)}>
