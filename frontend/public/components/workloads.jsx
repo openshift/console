@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import {LabelList, ResourceCog, ResourceLink, resourcePath, Selector} from './utils';
 
@@ -27,9 +28,9 @@ const rowOfKind = (kind, actions) => {
           <LabelList kind={kind} labels={o.metadata.labels} />
         </div>
         <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-          <a href={`${resourcePath(kind, o.metadata.name, o.metadata.namespace)}/pods`} title="pods">
+          <Link to={`${resourcePath(kind, o.metadata.name, o.metadata.namespace)}/pods`} title="pods">
             {o.status.replicas || 0} of {o.spec.replicas} pods
-          </a>
+          </Link>
         </div>
         <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
           <Selector selector={o.spec.selector} />

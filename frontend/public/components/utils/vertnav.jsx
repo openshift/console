@@ -39,7 +39,7 @@ export const NavBar = ({pages}) => {
 
   return <ul className="co-m-vert-nav__menu">{_.flatten(_.map(pages, ({name, href}, i) => {
     const klass = classNames('co-m-vert-nav__menu-item', {'co-m-vert-nav-item--active': href === activeSlug()});
-    const tab = <li className={klass} key={name}><RelativeLink href={href}>{name}</RelativeLink></li>;
+    const tab = <li className={klass} key={name}><RelativeLink to={href}>{name}</RelativeLink></li>;
 
     // These tabs go before the divider
     const before = ['details', 'edit', 'yaml'];
@@ -49,12 +49,13 @@ export const NavBar = ({pages}) => {
 
 export const VertNav = props => {
   const Page = _.get(_.find(props.pages, {href: activeSlug()}), 'component');
+  const routeProps = _.pick(props, ['location', 'params', 'route', 'routeParams', 'router']);
 
   return <div className={props.className}>
     <div className="co-m-pane co-m-vert-nav">
       {!props.hideNav && <NavBar pages={props.pages} />}
       <div className="co-m-vert-nav__body">
-        {Page && <StatusBox {...props}><Page /></StatusBox>}
+        {Page && <StatusBox {...props}><Page {...routeProps} /></StatusBox>}
       </div>
     </div>
   </div>;

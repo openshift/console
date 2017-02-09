@@ -1,4 +1,5 @@
 import './pod';
+import './app';
 import './cluster-settings/cluster-settings';
 import './container';
 import './deployment';
@@ -30,4 +31,3 @@ import './profile';
 import './error';
 import './nav';
 import './resource-list';
-import './app';

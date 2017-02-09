@@ -1,11 +1,10 @@
 import React from 'react';
 import fuzzy from 'fuzzysearch';
-import {Provider} from 'react-redux';
 
+import store from '../../redux';
 import {getQN, isNodeReady} from '../../module/k8s';
 import actions from '../../module/k8s/k8s-actions';
 import {Firehose, podPhase, StatusBox} from '../utils';
-import {angulars, register} from '../react-wrapper';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
@@ -93,7 +92,6 @@ export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
       if (!this.id) {
         return;
       }
-      const {store} = angulars;
       store.dispatch(actions.filterList(this.id, filterName, value));
     }
 
@@ -101,7 +99,6 @@ export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
       if (!this.id) {
         return;
       }
-      const {store} = angulars;
       store.dispatch(actions.selectInList(this.id, qualifiedName));
     }
 
@@ -109,16 +106,14 @@ export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
       const klass = `co-m-${kind}-list co-m-table-grid co-m-table-grid--bordered`;
       const sort = sortBy || (item => item.metadata ? item.metadata.name: null);
 
-      return <Provider store={angulars.store}>
-        <div className={klass}>
-          <Header />
-          <Firehose ref="hose" isList={true} {...this.props} kind={kind}>
-            <StatusBox>
-              <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
-            </StatusBox>
-          </Firehose>
-        </div>
-      </Provider>;
+      return <div className={klass}>
+        <Header />
+        <Firehose ref="hose" isList={true} {...this.props} kind={kind}>
+          <StatusBox>
+            <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
+          </StatusBox>
+        </Firehose>
+      </div>;
     }
   }
 
@@ -134,6 +129,5 @@ export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
     'onClickRow': React.PropTypes.func
   };
 
-  register(name, ReactiveList);
   return ReactiveList;
 };

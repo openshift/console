@@ -1,7 +1,5 @@
 import React from 'react';
-import {Provider} from 'react-redux';
 
-import {angulars} from '../react-wrapper';
 import {MultiFirehose} from '../utils';
 import {ChannelOperator, componentStates} from './channel-operator';
 
@@ -45,11 +43,9 @@ export class TectonicChannel extends React.Component {
   }
 
   render() {
-    return <Provider store={angulars.store}>
-      <MultiFirehose resources={this.firehoseResources}>
-        <TectonicChannelWithData {...this.props} />
-      </MultiFirehose>
-    </Provider>;
+    return <MultiFirehose resources={this.firehoseResources}>
+      <TectonicChannelWithData {...this.props} />
+    </MultiFirehose>;
   }
 }
 TectonicChannel.propTypes = {

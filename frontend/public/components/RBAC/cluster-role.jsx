@@ -1,6 +1,6 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
-import {register} from '../react-wrapper';
 import {makeList, TwoColumns} from '../factory';
 import {RowOfKind, RoleHeader, RoleDetails} from './role';
 
@@ -18,8 +18,9 @@ const Details = (selected) => {
   </div>;
 };
 
-export const ClusterRolesPage = () => <TwoColumns list={Roles}>
-  <Details />
-</TwoColumns>;
-
-register('ClusterRolesPage', ClusterRolesPage);
+export const ClusterRolesPage = () => <div>
+  <Helmet title="Cluster Roles" />
+  <TwoColumns list={Roles}>
+    <Details />
+  </TwoColumns>
+</div>;

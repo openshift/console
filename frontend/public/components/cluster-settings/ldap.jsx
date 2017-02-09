@@ -1,20 +1,22 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 import { saveAs } from 'file-saver';
-import { Provider, connect } from 'react-redux';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
 
+import store from '../../redux';
 import { k8s } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
 import { coFetchJSON } from '../../co-fetch';
-import { angulars, register } from '../react-wrapper';
 import { LoadingInline, LoadError, NavTitle } from '../utils';
 import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings';
 
 export const LDAPSetting = () => <SettingsRow>
   <SettingsLabel>LDAP:</SettingsLabel>
   <SettingsContent>
-    <a className="co-m-modal-link" href="settings/ldap">LDAP</a>
+    <Link className="co-m-modal-link" to="settings/ldap">LDAP</Link>
   </SettingsContent>
 </SettingsRow>;
 
@@ -366,7 +368,7 @@ class LDAPs extends SafetyFirst {
   downloadNewConfig (e) {
     e.preventDefault();
 
-    const formData = getFormValues(LDAPFormName)(angulars.store.getState());
+    const formData = getFormValues(LDAPFormName)(store.getState());
 
     // only used for LDAP Testing
     delete formData[Username];
@@ -409,7 +411,7 @@ class LDAPs extends SafetyFirst {
     e.preventDefault();
     this.setState({validationData: null, validationError: null, stateMachine: STATES.untested}, () => {
       const version = this.props.error;
-      const connector = getFormValues(LDAPFormName)(angulars.store.getState());
+      const connector = getFormValues(LDAPFormName)(store.getState());
       const json = reduxToConnector(connector);
       coFetchJSON.post('tectonic/ldap/validate', json)
       .then(data => {
@@ -553,13 +555,12 @@ class LDAPs extends SafetyFirst {
   }
 });
 
-const LDAPPage = () => <div>
+export const LDAPPage = () => <div>
+  <Helmet title="LDAP" />
   <NavTitle title="LDAP" />
   <div className="co-m-pane">
     <div className="co-m-pane__body">
-      <Provider store={angulars.store} ><LDAPs /></Provider>
+      <LDAPs />
     </div>
   </div>
 </div>;
-
-register('LDAPPage', LDAPPage);

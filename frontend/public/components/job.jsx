@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import {DetailsPage, ListPage, makeList} from './factory';
 import {configureJobParallelismModal} from './modals';
@@ -51,9 +52,9 @@ const JobRow = ({obj: job}) => {
         <LabelList kind="job" labels={job.metadata.labels} />
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
-        <a href={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
+        <Link to={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
           {job.status.succeeded || 0} of {completions}
-        </a>
+        </Link>
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
         {type}

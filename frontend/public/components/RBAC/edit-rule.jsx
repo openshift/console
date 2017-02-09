@@ -1,9 +1,9 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import {k8s} from '../../module/k8s';
 import {errorModal} from '../modals';
-import {connect, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
-import {register, angulars} from '../react-wrapper';
+import {connect, history, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);
@@ -153,14 +153,14 @@ class EditRule_ extends PromiseComponent {
     .then(() => {
       const {namespace, name} = this.props;
 
-      let url = `/all-namespaces/${this.kind.plural}#`;
+      let url = `all-namespaces/${this.kind.plural}#`;
       if (namespace) {
         url += `(${namespace})-${name}`;
       } else {
         url += name;
       }
 
-      angulars.$location.url(url);
+      history.push(url);
     });
   }
 
@@ -258,6 +258,7 @@ class EditRule_ extends PromiseComponent {
 
     return (
       <div className="co-m-pane edit-rule">
+        <Helmet title={this.kind.labelPlural} />
         <div className="co-m-pane__body">
           <div className="row">
             <div className="col-xs-12">
@@ -412,5 +413,3 @@ class EditRule_ extends PromiseComponent {
     );
   }
 });
-
-register('EditRule', EditRule);

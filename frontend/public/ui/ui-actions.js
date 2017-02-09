@@ -1,16 +1,18 @@
 'use strict';
 
-import {CONST} from '../const';
-import {angulars} from '../components/react-wrapper';
+import { CONST } from '../const';
+import store from '../redux';
+import { history, stripBasePath } from '../components/utils';
 
 const nsPathPattern = new RegExp(`^\/?ns\/${CONST.legalNamePattern.source}\/?(.*)$`);
 const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 const prefixes = [];
 
-export const getActiveNamespace = () => angulars.store.getState().UI.get('activeNamespace');
+export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
 
 export const isNamespaced = path => {
-  return path.match(nsPathPattern) || path.match(allNsPathPattern);
+  const subpath = stripBasePath(path);
+  return subpath.match(nsPathPattern) || subpath.match(allNsPathPattern);
 };
 
 // Most namespaced urls can't move from one namespace to another,
@@ -54,7 +56,7 @@ export const types = {
 };
 
 export const actions = {
-  [types.setCurrentLocation]: () => ({location: location.pathname, ns: angulars.routeParams.ns, type: types.setCurrentLocation}),
+  [types.setCurrentLocation]: (location, ns) => ({location, ns, type: types.setCurrentLocation}),
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {
       namespace = namespace.trim();
@@ -64,9 +66,11 @@ export const actions = {
     // otherwise users will get page refresh and cry about
     // broken direct links and bookmarks
     if (namespace !== getActiveNamespace()) {
-      const oldPath = angulars.$location.path();
+      const oldPath = window.location.pathname;
       if (isNamespaced(oldPath)) {
-        angulars.$location.path(formatNamespaceRoute(namespace, oldPath));
+        const location = Object.assign({}, history.getCurrentLocation());
+        location.pathname = formatNamespaceRoute(namespace, oldPath);
+        history.push(location);
       }
     }
 
@@ -80,6 +84,7 @@ export const actions = {
 window.tectonicTesting && (window.tectonicTesting.uiActions = {
   getActiveNamespace,
   getNamespacedRoute,
-  setActiveNamespace: ns => angulars.store.dispatch(actions.setActiveNamespace(ns)),
+  registerNamespaceFriendlyPrefix,
+  setActiveNamespace: ns => store.dispatch(actions.setActiveNamespace(ns)),
 });
 

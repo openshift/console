@@ -36,7 +36,7 @@ export const util = {
     }
     meta = resource.metadata;
     if (meta.namespace) {
-      path = `ns/${meta.namespace}/`;
+      path = `/ns/${meta.namespace}/`;
     }
     return `${path}${kind.path}/${meta.name}`;
   },

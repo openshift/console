@@ -1,7 +1,7 @@
 import React from 'react';
 
+import store from '../../redux';
 import {K8sWatcher} from '../../module/service/firehose';
-import {angulars} from '../react-wrapper';
 import {EmptyBox, ConnectToState, k8sResource, kindObj, MultiConnectToState} from './index';
 
 class FirehoseBase extends React.Component {
@@ -11,7 +11,7 @@ class FirehoseBase extends React.Component {
       return;
     }
     const {kind, namespace, name, fieldSelector} = props;
-    return new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, angulars.store);
+    return new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, store);
   }
 
   _mountFirehose(firehose, props) {

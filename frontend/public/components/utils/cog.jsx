@@ -5,10 +5,9 @@ import classNames from 'classnames';
 import {k8s} from '../../module/k8s/k8s';
 import {util} from '../../module/k8s/util';
 import {getNamespacedRoute} from '../../ui/ui-actions';
-import {angulars} from '../react-wrapper';
 import {confirmModal, configureReplicaCountModal, labelsModal} from '../modals';
 import {DropdownMixin} from './dropdown';
-import {kindObj} from './index';
+import { history, kindObj } from './index';
 
 export class Cog extends DropdownMixin {
   componentDidMount () {
@@ -25,7 +24,7 @@ export class Cog extends DropdownMixin {
       }
 
       if (option.href) {
-        angulars.$location.url(option.href);
+        history.push(option.href);
       }
 
       this.hide();
@@ -63,7 +62,7 @@ Cog.factory = {
         // If we are currently on the deleted resource's page, redirect to the resource list page
         const re = new RegExp(`/${obj.metadata.name}/.*$`);
         if (re.test(window.location.pathname)) {
-          angulars.$location.path(getNamespacedRoute(`/${kind.path}`));
+          history.push(getNamespacedRoute(kind.path));
         }
 
         return deletePromise;

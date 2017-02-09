@@ -1,8 +1,8 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 
 import {ResourceIcon} from '../utils';
 import {BindingDetails} from './role-binding';
-import {register} from '../react-wrapper';
 import {makeList, TwoColumns} from '../factory';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -25,7 +25,7 @@ const Row = (props) => {
   );
 };
 
-export const ClusterRoleBindings = makeList('ClusterRoleBindings', 'clusterrolebinding', Header, Row);
+const ClusterRoleBindings = makeList('ClusterRoleBindings', 'clusterrolebinding', Header, Row);
 
 const RBDetails = BindingDetails('Cluster Role Binding Overview');
 
@@ -40,8 +40,9 @@ const Details = (selected) => {
   </div>;
 };
 
-const RoleBindingsPage = (props) => <TwoColumns list={ClusterRoleBindings} {...props}>
-  <Details />
-</TwoColumns>;
-
-register('ClusterRoleBindingsPage', RoleBindingsPage);
+export const ClusterRoleBindingsPage = (props) => <div>
+  <Helmet title="Cluster Role Bindings" />
+  <TwoColumns list={ClusterRoleBindings} {...props}>
+    <Details />
+  </TwoColumns>
+</div>;

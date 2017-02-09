@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 import {k8s} from '../module/k8s';
 import {getContainerState, getContainerStatus} from '../module/k8s/docker';
@@ -98,10 +99,10 @@ const filters = [{
 
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">
   <ResourceIcon kind="container" />
-  <a href={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</a>
+  <Link to={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</Link>
 </span>;
 
-const NodeLink = ({name}) => name ? <a href={`nodes/${name}/details`}>{name}</a> : <span>-</span>;
+const NodeLink = ({name}) => name ? <Link to={`nodes/${name}/details`}>{name}</Link> : <span>-</span>;
 
 const ContainerRow = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);

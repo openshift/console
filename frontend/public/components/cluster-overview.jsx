@@ -76,7 +76,7 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
 
 export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
-    <Helmet title="Cluster Status" titleTemplate="%s · Tectonic" />
+    <Helmet title="Cluster Status" />
     <div className="co-p-cluster__body">
       <NavTitle title="Cluster Status" />
 

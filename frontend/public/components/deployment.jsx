@@ -51,6 +51,7 @@ export class Details extends SafetyFirst {
   }
 
   _openReplicaCountModal(event) {
+    event.preventDefault();
     event.target.blur();
     configureReplicaCountModal({
       resourceKind: k8sKinds.DEPLOYMENT,

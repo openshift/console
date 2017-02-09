@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import classnames from 'classnames';
 
 import {toRequirements} from '../../module/k8s/selector';
@@ -10,14 +11,14 @@ const Requirement = ({requirement, withIcon}) => {
 
   return (
     <div className="co-m-requirement">
-      <a className="co-m-requirement__link" href={`search?kind=pod&q=${requirementAsUrlEncodedString}`}>
+      <Link className="co-m-requirement__link" to={`search?kind=pod&q=${requirementAsUrlEncodedString}`}>
         { withIcon &&
           <span>
             <i className="fa fa-search"></i>&nbsp;
           </span>
         }
         <span>{requirementAsString}</span>
-      </a>
+      </Link>
     </div>
   );
 };

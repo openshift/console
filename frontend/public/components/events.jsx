@@ -1,12 +1,11 @@
 import React from 'react';
-
+import Helmet from 'react-helmet';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
 import {getActiveNamespace} from '../ui/ui-actions';
-import {angulars, register} from './react-wrapper';
 import {Dropdown, ResourceLink, Box, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
-
 import {wsFactory} from '../module/ws-factory';
 
 const maxMessages = 500;
@@ -61,7 +60,7 @@ class SysEvent extends React.Component {
           <small className="co-sysevent__meta-source">
             Generated from <span>{this.props.source.component}</span>
             {this.props.source.component === 'kubelet' &&
-              <span> on <a href={`nodes/${this.props.source.host}/details`}>{this.props.source.host}</a></span>
+              <span> on <Link to={`nodes/${this.props.source.host}/details`}>{this.props.source.host}</Link></span>
             }
           </small>
         </div>
@@ -82,6 +81,7 @@ export class EventStreamPage extends React.Component {
   render () {
     const {category, kind} = this.state;
     return <div>
+      <Helmet title="Events" />
       <NavTitle title="Events" />
       <div className="co-m-pane">
         <div className="co-m-pane__heading">
@@ -104,8 +104,6 @@ export class EventStreamPage extends React.Component {
     </div>;
   }
 }
-
-register('EventStreamPage', EventStreamPage);
 
 export class EventStream extends React.Component {
   constructor (props) {
@@ -349,15 +347,14 @@ EventStream.defaultProps = {
   category: 'all',
 };
 
-register('EventStream', EventStream);
-
 const {details, edit, editYaml, pods, logs, events} = navFactory;
 
-export const EventStreamResource = (props) => {
-  const name = angulars.routeParams.name;
+const EventStreamResource = (props) => {
+  const name = props.params.name;
   const filter = {name};
 
   return <div className="co-p-node-sysevents">
+    <Helmet title={`${props.kind} Events`} />
     <NavTitle title={name} kind={props.kind} detail="true" />
     <div className="co-m-pane co-m-vert-nav">
       <NavBar pages={props.pages} />
@@ -376,21 +373,20 @@ export const EventStreamResource = (props) => {
   </div>;
 };
 
-export const EventStreamPod = () => <EventStreamResource
+export const EventStreamPod = (props) => <EventStreamResource
   kind="pod"
   pages={[details(), editYaml(), logs(), events()]}
+  {...props}
 />;
-register('EventStreamPod', EventStreamPod);
 
-export const EventStreamNode = () => <EventStreamResource
+export const EventStreamNode = (props) => <EventStreamResource
   kind="node"
   pages={[details(), editYaml(), pods(), events()]}
+  {...props}
 />;
-register('EventStreamNode', EventStreamNode);
 
-export const EventStreamReplicationController = () => <EventStreamResource
+export const EventStreamReplicationController = (props) => <EventStreamResource
   kind="replicationcontroller"
   pages={[details(), edit(), pods(), events()]}
+  {...props}
 />;
-register('EventStreamReplicationController', EventStreamReplicationController);
-
