@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import { history } from './index';
+
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -100,7 +102,7 @@ export const ActionsMenu = ({actions}) => {
       return action.callback();
     }
     if (action.href) {
-      window.location = action.href;
+      history.push(action.href);
     }
   };
   return <Dropdown className="btn--actions" menuClassName="btn--actions__menu co-m-dropdown--dark" items={items} title={title} onChange={onChange} noSelection={true} />;

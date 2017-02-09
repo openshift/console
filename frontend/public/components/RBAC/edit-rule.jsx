@@ -3,7 +3,7 @@ import Helmet from 'react-helmet';
 
 import {k8s} from '../../module/k8s';
 import {errorModal} from '../modals';
-import {connect, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
+import {connect, history, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);
@@ -160,7 +160,7 @@ class EditRule_ extends PromiseComponent {
         url += name;
       }
 
-      window.location = url;
+      history.push(url);
     });
   }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import Helmet from 'react-helmet';
-import { browserHistory } from 'react-router';
 
 import {k8sKinds} from '../module/k8s';
 import {ConfigMaps} from './configmap';
@@ -18,7 +17,7 @@ import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
 import {IngressList} from './ingress';
 import {getActiveNamespace} from '../ui/ui-actions';
-import {connect, Dropdown, kindObj, NavTitle, ResourceIcon, SelectorInput} from './utils';
+import {connect, Dropdown, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 import * as k8sSelector from '../module/k8s/selector';
 import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
@@ -68,9 +67,9 @@ const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
 });
 
 const updateUrlParams = (params) => {
-  const location = Object.assign({}, browserHistory.getCurrentLocation());
+  const location = Object.assign({}, history.getCurrentLocation());
   Object.assign(location.query, params);
-  browserHistory.push(location);
+  history.push(location);
 };
 
 const updateKind = kind => updateUrlParams({kind: encodeURIComponent(kind)});

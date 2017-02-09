@@ -3,7 +3,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
 import { k8sCreate, k8sUpdate } from '../module/k8s';
-import { kindObj, Loading, resourcePath } from './utils';
+import { kindObj, history, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
 
 let id = 0;
@@ -143,7 +143,7 @@ export class EditYAML extends SafetyFirst {
       action(ko, obj, namespace, name)
         .then(o => {
           if (redirect) {
-            window.location = `${resourcePath(obj.kind, newName, newNamespace)}/yaml`;
+            history.push(`${resourcePath(obj.kind, newName, newNamespace)}/yaml`);
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }

@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import Helmet from 'react-helmet';
 import { Provider } from 'react-redux';
-import { browserHistory, IndexRoute, Redirect, Route, Router } from 'react-router';
+import { IndexRoute, Redirect, Route, Router } from 'react-router';
 
 import store from '../redux';
 import { featureActions } from '../features';
@@ -26,6 +26,7 @@ import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './RBAC';
 import { SearchPage } from './search';
+import { history } from './utils';
 
 const App = ({children}) => <div>
   <Helmet titleTemplate="%s · Tectonic" />
@@ -69,7 +70,7 @@ const init = ({location, params}) => {
 };
 
 render((
-  <Router history={browserHistory}>
+  <Router history={history}>
     <Route path="/" component={App} onEnter={init} >
       <IndexRoute component={ClusterOverviewContainer}/>
 
