@@ -347,7 +347,7 @@ EventStream.defaultProps = {
   category: 'all',
 };
 
-const {details, edit, editYaml, pods, logs, events} = navFactory;
+const {details, editYaml, pods, logs, events} = navFactory;
 
 const EventStreamResource = (props) => {
   const name = props.params.name;
@@ -387,6 +387,6 @@ export const EventStreamNode = (props) => <EventStreamResource
 
 export const EventStreamReplicationController = (props) => <EventStreamResource
   kind="replicationcontroller"
-  pages={[details(), edit(), pods(), events()]}
+  pages={[details(), editYaml(), pods(), events()]}
   {...props}
 />;

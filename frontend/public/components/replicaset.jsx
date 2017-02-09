@@ -24,8 +24,8 @@ const Details = (replicaSet) => <div>
   </div>
 </div>;
 
-const {details, edit, pods, editYaml} = navFactory;
-const pages = [details(Details), edit(), editYaml(), pods()];
+const {details, editYaml, pods} = navFactory;
+const pages = [details(Details), editYaml(), pods()];
 const ReplicaSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKind('replicaset', cogActions));
