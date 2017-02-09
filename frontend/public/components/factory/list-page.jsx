@@ -71,7 +71,7 @@ export class ListPage extends React.Component {
         <div className="co-m-pane__body">
           <div className="row">
             <div className="col-xs-12">
-              <ListComponent ref="list" {...this.props} expand={this.state.expand} />
+              <ListComponent key={`${namespace}-${kind}`} ref="list" {...this.props} expand={this.state.expand} />
             </div>
           </div>
         </div>

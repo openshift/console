@@ -75,7 +75,7 @@ const updateUrlParams = (params) => {
 const updateKind = kind => updateUrlParams({kind: encodeURIComponent(kind)});
 const updateTags = tags => updateUrlParams({q: tags.map(encodeURIComponent).join(',')});
 
-export const SearchPage = ({location}) => {
+export const SearchPage = ({params, location}) => {
   const {kind, q} = location.query;
 
   // Ensure that the "kind" route parameter is a valid resource kind ID
@@ -87,7 +87,7 @@ export const SearchPage = ({location}) => {
   const selector = k8sSelector.fromString(validTags.join(','));
 
   // Ensure the list is reloaded whenever the search options are changed
-  const key = `${kind}-${validTags.join(',')}`;
+  const key = `${params.ns}-${kind}-${validTags.join(',')}`;
 
   return <div className="co-p-search">
     <Helmet title="Search" />

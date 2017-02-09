@@ -37,7 +37,7 @@ export class TwoColumns extends React.Component {
     return (
       <div className="co-m-pane">
         <div className="co-m-pane__body">
-          <div className="row">
+          <div className="row" key={`${this.props.namespace}-${this.props.kind}`}>
             <div className="col-md-4 col-sm-6 col-xs-12">
               <div className="co-facet-container--left">
                 <div className="co-m-pane__body__top-controls">
