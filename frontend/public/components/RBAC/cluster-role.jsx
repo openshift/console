@@ -3,6 +3,7 @@ import Helmet from 'react-helmet';
 
 import {makeList, TwoColumns} from '../factory';
 import {RowOfKind, RoleHeader, RoleDetails} from './role';
+import {NavTitle} from '../utils';
 
 const Roles = makeList('Roles', 'clusterrole', RoleHeader, RowOfKind('clusterrole'));
 
@@ -20,6 +21,7 @@ const Details = (selected) => {
 
 export const ClusterRolesPage = () => <div>
   <Helmet title="Cluster Roles" />
+  <NavTitle title="Cluster Roles" />
   <TwoColumns list={Roles}>
     <Details />
   </TwoColumns>
