@@ -47,7 +47,7 @@ class ConfigureOperatorModal extends PromiseComponent {
 
         {this.props.radios.map((radio) => {
           const checked = radio.value === this.state.value;
-          return <RadioInput onChange={this._change} checked={checked} {...radio} />;
+          return <RadioInput key={radio.value} onChange={this._change} checked={checked} {...radio} />;
         })}
       </ModalBody>
       <ModalSubmitFooter
@@ -66,7 +66,7 @@ ConfigureOperatorModal.propTypes = {
   valueType: React.PropTypes.string
 };
 
-export const configureOperatorModal = createModalLauncher(ConfigureOperatorModal);
+const configureOperatorModal = createModalLauncher(ConfigureOperatorModal);
 
 export const configureOperatorChannelModal = (props) => {
   return configureOperatorModal(_.defaults({}, {
