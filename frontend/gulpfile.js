@@ -8,10 +8,8 @@ const exec = require('child_process').exec;
 const del = require('del');
 const gulp = require('gulp');
 const sass = require('gulp-sass');
-const templateCache = require('gulp-angular-templatecache');
 const runSequence = require('run-sequence');
 const uglify = require('gulp-uglify');
-const ngAnnotate = require('gulp-ng-annotate');
 const rename = require('gulp-rename');
 const concat = require('gulp-concat');
 const htmlReplace = require('gulp-html-replace');
@@ -25,10 +23,6 @@ const PrettyError = require('pretty-error');
 const entry = './public/_app.js';
 const distDir = './public/dist';
 const indexSrc = './public/index.html';
-const templateSrc = [
-  './public/{module,page}/**/*.html',
-  './public/lib/mochi/img/tectonic-logo.svg',
-];
 
 let CURRENT_SHA;
 
@@ -88,7 +82,7 @@ function jsBuild () {
 }
 
 // Compile all the js source code.
-gulp.task('js-bundle', ['templates'], () => {
+gulp.task('js-bundle', () => {
   let firstBuild = true;
   const build = jsBuild();
 
@@ -101,8 +95,7 @@ gulp.task('js-bundle', ['templates'], () => {
         console.log(new PrettyError().render(err));
         build.emit('end');
       })
-      .pipe(source('app-bundle.js'))
-      .pipe(ngAnnotate());
+      .pipe(source('app-bundle.js'));
   };
 
   if (process.env.NODE_ENV === 'production') {
@@ -171,16 +164,6 @@ gulp.task('lint', cb => {
   });
 });
 
-/**
- * Build everything else
- */
-
-// Precompile html templates.
-gulp.task('templates', () => {
-  return gulp.src(templateSrc)
-    .pipe(templateCache({ standalone: true, root: '/static/' }))
-    .pipe(gulp.dest(distDir));
-});
 
 gulp.task('fonts', () => {
   return gulp.src([
@@ -275,14 +258,13 @@ gulp.task('clean-package', () => {
     return;
   }
 
-  const files = ['style.css', 'app-bundle.*', 'templates.js', 'deps.*'];
+  const files = ['style.css', 'app-bundle.*', 'deps.*'];
   return del(files.map(file => `${distDir}/${file}`));
 });
 
 // Live-watch development mode.
-// Auto-compiles: js, sass, index.html, templates.
+// Auto-compiles: js, sass, index.html.
 gulp.task('dev', ['set-development', 'default'], () => {
-  gulp.watch(templateSrc, ['templates']);
   gulp.watch(indexSrc, ['html']);
   gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
 });

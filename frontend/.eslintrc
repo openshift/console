@@ -48,7 +48,6 @@
   },
   "globals": {
     "afterEach": true,
-    "angular": true,
     "beforeEach": true,
     "describe": true,
     "expect": true,
