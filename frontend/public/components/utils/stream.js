@@ -1,7 +1,3 @@
-// Angular's $http is slightly too high level to allow us to observe
-// log messages streamed in via simple "HTTP Streaming" connections,
-// so we have to roll our own simple service.
-
 export const stream = (url, loadStart, notify) => {
   const xhr = new XMLHttpRequest();
   let offset = 0;

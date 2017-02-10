@@ -2,9 +2,9 @@ describe('lineBuffer', function() {
   'use strict';
   var buffer;
 
-  beforeEach(inject(function() {
+  beforeEach(function() {
     buffer = window.tectonicTesting.lineBuffer(3);
-  }));
+  });
 
   it('should allow no newlines', function() {
     buffer.push('No newline');

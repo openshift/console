@@ -1,4 +1,6 @@
-import {analyticsSvc} from './module/analytics';
+import { analyticsSvc } from './module/analytics';
+
+window._ = require('lodash');
 
 window.onerror = function (message, source, lineno, colno) {
   try {

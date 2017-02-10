@@ -1,3 +1,5 @@
+import 'whatwg-fetch';
+
 import {analyticsSvc} from './module/analytics';
 import {authSvc} from './module/auth';
 
