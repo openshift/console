@@ -149,6 +149,7 @@ export class ChannelOperator extends React.Component {
   }
 
   _toggleExpand(event) {
+    event.preventDefault();
     this.setState({
       expanded: !this.state.expanded
     });
