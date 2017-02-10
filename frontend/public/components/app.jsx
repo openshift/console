@@ -28,7 +28,7 @@ import { ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './
 import { SearchPage } from './search';
 import { history } from './utils';
 
-const App = ({children}) => <div>
+const App = ({children}) => <div className="co-container">
   <Helmet titleTemplate="%s · Tectonic" />
   <GlobalNotifications />
   <div id="reflex">

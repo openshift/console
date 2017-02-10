@@ -10,10 +10,19 @@ body {
   font-size: 16px;
 }
 
+#app {
+  height: 100%;
+}
+
+.co-container {
+  height: 100%;
+}
+
 #reflex {
   display: flex;
   flex-direction: row;
   flex: 1 0 auto;
+  min-height: 100%;
 }
 
 #sidebar {
