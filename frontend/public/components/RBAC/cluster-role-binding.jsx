@@ -1,7 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 
-import {ResourceIcon} from '../utils';
+import {ResourceIcon, NavTitle} from '../utils';
 import {BindingDetails} from './role-binding';
 import {makeList, TwoColumns} from '../factory';
 
@@ -42,6 +42,7 @@ const Details = (selected) => {
 
 export const ClusterRoleBindingsPage = (props) => <div>
   <Helmet title="Cluster Role Bindings" />
+  <NavTitle title="Cluster Role Bindings" />
   <TwoColumns list={ClusterRoleBindings} {...props}>
     <Details />
   </TwoColumns>

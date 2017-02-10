@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router';
+import Helmet from 'react-helmet';
 
 import {Rules} from './rules';
 import {makeList, TwoColumns} from '../factory';
-import {Timestamp, ResourceIcon} from '../utils';
+import {Timestamp, ResourceIcon, NavTitle} from '../utils';
 
 export const RoleHeader = () => <div className="co-m-facet-menu__title">Name</div>;
 
@@ -57,6 +58,10 @@ const Details = (selected) => {
   </div>;
 };
 
-export const RolesPage = (props) => <TwoColumns list={Roles} {...props}>
-  <Details />
-</TwoColumns>;
+export const RolesPage = (props) => <div>
+  <Helmet title="Roles" />
+  <NavTitle title="Roles" />
+  <TwoColumns list={Roles} {...props}>
+    <Details />
+  </TwoColumns>
+</div>;

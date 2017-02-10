@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router';
+import Helmet from 'react-helmet';
 
 import {getQN} from '../../module/k8s';
-import {ResourceIcon, LabelList, Timestamp} from '../utils';
+import {ResourceIcon, LabelList, Timestamp, NavTitle} from '../utils';
 import {makeList, TwoColumns} from '../factory';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -107,4 +108,10 @@ const Details = (selected) => {
   </div>;
 };
 
-export const RoleBindingsPage = (props) => <TwoColumns list={RoleBindings} {...props}><Details /></TwoColumns>;
+export const RoleBindingsPage = (props) => <div>
+  <Helmet title="Role Bindings" />
+  <NavTitle title="Role Bindings" />
+  <TwoColumns list={RoleBindings} {...props}>
+    <Details />
+  </TwoColumns>
+</div>;
