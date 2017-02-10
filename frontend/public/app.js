@@ -15,17 +15,3 @@ window.onerror = function (message, source, lineno, colno) {
     }
   }
 };
-
-// TODO
-//$rootScope.$on('$routeChangeSuccess', function() {
-//  analyticsSvc.route(location.pathname);
-//});
-
-// TODO
-//$rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
-//  switch(rejection) {
-//    case 'not-logged-in':
-//      $window.location.href = $window.SERVER_FLAGS.loginURL;
-//      break;
-//  }
-//});
