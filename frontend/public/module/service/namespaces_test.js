@@ -1,34 +1,23 @@
 describe('ui-actions', function() {
   'use strict';
-  var setPath, mockPath;
+  //var setPath, mockPath;
 
   var getActiveNamespace = window.tectonicTesting.uiActions.getActiveNamespace;
   var getNamespacedRoute = window.tectonicTesting.uiActions.getNamespacedRoute;
   var registerNamespaceFriendlyPrefix = window.tectonicTesting.uiActions.registerNamespaceFriendlyPrefix;
   var setActiveNamespace = window.tectonicTesting.uiActions.setActiveNamespace;
 
-  beforeEach(module(function($provide) {
-    $provide.value('$location', {
-      path: function(newPath) {
-        if (!_.isUndefined(newPath)) {
-          setPath = newPath;
-        }
-        return mockPath;
-      }
-    });
-  }));
-
   beforeEach(function() {
-    setPath = '*UNSET*';
+    //setPath = '*UNSET*';
     registerNamespaceFriendlyPrefix('pods');
   });
 
   describe('setActiveNamespace', function() {
     it('sets active namespace in memory', function() {
       var expected = 'test';
-      mockPath = '/not-a-namespaced-path';
+      //mockPath = '/not-a-namespaced-path';
       setActiveNamespace(expected);
-      expect(setPath).toEqual('*UNSET*');
+      //expect(setPath).toEqual('*UNSET*');
 
       expect(getActiveNamespace()).toEqual(expected);
       expect(!_.isUndefined(getActiveNamespace())).toBe(true);

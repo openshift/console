@@ -6,6 +6,8 @@ import { IndexRoute, Redirect, Route, Router } from 'react-router';
 
 import store from '../redux';
 import { featureActions } from '../features';
+import { analyticsSvc } from '../module/analytics';
+import { authSvc } from '../module/auth';
 import {k8sBasePath} from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
 import { tectonicVersion } from '../module/status';
@@ -43,7 +45,17 @@ const App = ({children}) => <div className="co-container">
   <GlobalTooltip />
 </div>;
 
+const onRouteChange = () => {
+  if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
+    window.location = window.SERVER_FLAGS.loginURL;
+    return;
+  }
+  analyticsSvc.route(window.location.pathname);
+};
+
 const init = ({location, params}) => {
+  onRouteChange();
+
   registerNamespaceFriendlyPrefix('configmaps');
   registerNamespaceFriendlyPrefix('daemonsets');
   registerNamespaceFriendlyPrefix('deployments');
@@ -71,7 +83,7 @@ const init = ({location, params}) => {
 
 render((
   <Router history={history}>
-    <Route path="/" component={App} onEnter={init} >
+    <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
       <IndexRoute component={ClusterOverviewContainer}/>
 
       <Route path="clusterroles">

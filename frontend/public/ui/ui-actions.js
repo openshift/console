@@ -1,5 +1,3 @@
-'use strict';
-
 import { CONST } from '../const';
 import store from '../redux';
 import { history, stripBasePath } from '../components/utils';
