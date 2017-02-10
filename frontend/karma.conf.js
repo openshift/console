@@ -18,7 +18,6 @@ module.exports = function(config) {
 
       'public/components/_test.js',
       'public/dist/app-bundle.js',
-      'node_modules/angular-mocks/angular-mocks.js',
       // Actual code & tests.
       'public/*_test.js',
       'public/**/*_test.js',
