@@ -265,7 +265,7 @@ gulp.task('clean-package', () => {
 // Auto-compiles: js, sass, index.html.
 gulp.task('dev', ['set-development', 'default'], () => {
   gulp.watch(indexSrc, ['html']);
-  gulp.watch('./public/{.,page,style,module}/**/*.scss', ['css-build']);
+  gulp.watch('./public/**/*.scss', ['css-build']);
 });
 
 /**
