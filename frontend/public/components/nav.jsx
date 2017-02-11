@@ -38,60 +38,64 @@ const logout = e => {
   authSvc.logout();
 };
 
-export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
-  <div className="navigation-container">
-    <div className="navigation-container__section navigation-container__section--logo">
-      <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
-    </div>
+export const Nav = () => {
+  const pathname = history.getCurrentLocation().pathname;
 
-    <div className="navigation-container__section">
-      <div className="navigation-container__section__title">
-        <i className="fa fa-folder-open-o navigation-container__section__title__icon"></i>Browse Cluster
+  return <div id="sidebar" className="co-img-bg-cells">
+    <div className="navigation-container">
+      <div className="navigation-container__section navigation-container__section--logo">
+        <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
       </div>
-      <ul className="navigation-container__list no-margin collapse in">
-        <NavLink resource="deployments" name="Deployments"/>
-        <NavLink resource="services" name="Services"/>
-        <NavLink resource="jobs" name="Jobs"/>
-        <NavLink resource="replicasets" name="Replica Sets" />
-        <NavLink resource="daemonsets" name="Daemon Sets" />
-        <NavLink resource="replicationcontrollers" name="Replication Controllers" />
-        <NavLink resource="horizontalpodautoscalers" name="Autoscalers" />
-        <NavLink resource="pods" name="Pods" />
-        <NavLink resource="serviceaccounts" name="Service Accounts" />
-        <NavLink resource="configmaps" name="Config Maps" />
-        <NavLink resource="secrets" name="Secrets" />
-        <NavLink resource="events" name="Events" />
-        <NavLink resource="search" name="Search" />
-        <NavLink resource="ingresses" name="Ingress" />
-      </ul>
-    </div>
 
-    <div className="navigation-container__section">
-      <div className="navigation-container__section__title">
-        <i className="fa fa-cog navigation-container__section__title__icon"></i>Administration
-      </div>
-      <ul className="navigation-container__list no-margin collapse in" id="admin-tab">
-        <NavLink href="namespaces" name="Namespaces" />
-        <NavLink href="nodes" name="Nodes" />
-        <NavLink href="settings/cluster" name="Cluster Settings" />
-        <NavLink resource="roles" required="RBAC" name="Roles" />
-        <NavLink resource="rolebindings" required="RBAC" name="Role Bindings" />
-        <NavLink href="clusterroles" required="RBAC" name="Cluster Roles" />
-        <NavLink href="clusterrolebindings" required="RBAC" name="Cluster Role Bindings" />
-      </ul>
-    </div>
-
-    { authSvc.userID() &&
       <div className="navigation-container__section">
         <div className="navigation-container__section__title">
-          <i className="fa fa-user navigation-container__section__title__icon"></i>
-          { authSvc.name() }
+          <i className="fa fa-folder-open-o navigation-container__section__title__icon"></i>Browse Cluster
         </div>
-        <ul id="account-nav" className="navigation-container__list">
-          <NavLink href="settings/profile" name="My Account" />
-          <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
+        <ul className="navigation-container__list no-margin collapse in" key={pathname}>
+          <NavLink resource="deployments" name="Deployments"/>
+          <NavLink resource="services" name="Services"/>
+          <NavLink resource="jobs" name="Jobs"/>
+          <NavLink resource="replicasets" name="Replica Sets" />
+          <NavLink resource="daemonsets" name="Daemon Sets" />
+          <NavLink resource="replicationcontrollers" name="Replication Controllers" />
+          <NavLink resource="horizontalpodautoscalers" name="Autoscalers" />
+          <NavLink resource="pods" name="Pods" />
+          <NavLink resource="serviceaccounts" name="Service Accounts" />
+          <NavLink resource="configmaps" name="Config Maps" />
+          <NavLink resource="secrets" name="Secrets" />
+          <NavLink resource="events" name="Events" />
+          <NavLink resource="search" name="Search" />
+          <NavLink resource="ingresses" name="Ingress" />
         </ul>
       </div>
-    }
-  </div>
-</div>;
+
+      <div className="navigation-container__section">
+        <div className="navigation-container__section__title">
+          <i className="fa fa-cog navigation-container__section__title__icon"></i>Administration
+        </div>
+        <ul className="navigation-container__list no-margin collapse in" id="admin-tab" key={pathname}>
+          <NavLink href="namespaces" name="Namespaces" />
+          <NavLink href="nodes" name="Nodes" />
+          <NavLink href="settings/cluster" name="Cluster Settings" />
+          <NavLink resource="roles" required="RBAC" name="Roles" />
+          <NavLink resource="rolebindings" required="RBAC" name="Role Bindings" />
+          <NavLink href="clusterroles" required="RBAC" name="Cluster Roles" />
+          <NavLink href="clusterrolebindings" required="RBAC" name="Cluster Role Bindings" />
+        </ul>
+      </div>
+
+      { authSvc.userID() &&
+        <div className="navigation-container__section">
+          <div className="navigation-container__section__title">
+            <i className="fa fa-user navigation-container__section__title__icon"></i>
+            { authSvc.name() }
+          </div>
+          <ul id="account-nav" className="navigation-container__list" key={pathname}>
+            <NavLink href="settings/profile" name="My Account" />
+            <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
+          </ul>
+        </div>
+      }
+    </div>
+  </div>;
+};
