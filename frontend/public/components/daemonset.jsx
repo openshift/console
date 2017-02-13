@@ -66,7 +66,7 @@ const {details, pods, editYaml} = navFactory;
 const pages = [details(detailsPage(Details)), editYaml(), pods()];
 
 const DaemonSets = makeList('DaemonSets', 'daemonset', DaemonSetHeader, DaemonSetRow);
-const DaemonSetsPage = props => <ListPage ListComponent={DaemonSets} {...props} />;
+const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />;
 const DaemonSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};
