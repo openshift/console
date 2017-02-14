@@ -8,9 +8,9 @@ import {Cog, LabelList, navFactory, ResourceCog, ResourceLink, Timestamp} from '
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const ConfigMapHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-md-4">Config Map Name</div>
-  <div className="col-md-4">Config Map Data</div>
-  <div className="col-md-4">Config Map Age</div>
+  <div className="col-xs-4">Config Map Name</div>
+  <div className="col-xs-4">Config Map Data</div>
+  <div className="col-xs-4">Config Map Age</div>
 </div>;
 
 const ConfigMapRow = ({obj: configMap}) => {
@@ -18,12 +18,12 @@ const ConfigMapRow = ({obj: configMap}) => {
   const age = moment(configMap.metadata.creationTimestamp).fromNow();
 
   return <div className="row co-resource-list__item">
-    <div className="col-md-4">
+    <div className="col-xs-4">
       <ResourceCog actions={menuActions} kind="configmap" resource={configMap} />
       <ResourceLink kind="configmap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
     </div>
-    <div className="col-md-4">{data}</div>
-    <div className="col-md-4">{age}</div>
+    <div className="col-xs-4">{data}</div>
+    <div className="col-xs-4">{age}</div>
   </div>;
 };
 

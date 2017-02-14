@@ -9,9 +9,9 @@ import classnames from 'classnames';
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const SecretHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-md-4">Secret Name</div>
-  <div className="col-md-4">Secret Data</div>
-  <div className="col-md-4">Secret Age</div>
+  <div className="col-xs-4">Secret Name</div>
+  <div className="col-xs-4">Secret Data</div>
+  <div className="col-xs-4">Secret Age</div>
 </div>;
 
 const SecretRow = ({obj: secret}) => {
@@ -19,12 +19,12 @@ const SecretRow = ({obj: secret}) => {
   const age = moment(secret.metadata.creationTimestamp).fromNow();
 
   return <div className="row co-resource-list__item">
-    <div className="col-md-4">
+    <div className="col-xs-4">
       <ResourceCog actions={menuActions} kind="secret" resource={secret} />
       <ResourceLink kind="secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
-    <div className="col-md-4">{data}</div>
-    <div className="col-md-4">{age}</div>
+    <div className="col-xs-4">{data}</div>
+    <div className="col-xs-4">{age}</div>
   </div>;
 };
 
