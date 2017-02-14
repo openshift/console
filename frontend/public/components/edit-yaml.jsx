@@ -2,6 +2,10 @@ import React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
+import '../lib/ace/ace';
+import '../lib/ace/mode/mode-yaml';
+import '../lib/ace/theme/theme-clouds';
+
 import { k8sCreate, k8sUpdate } from '../module/k8s';
 import { kindObj, history, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
