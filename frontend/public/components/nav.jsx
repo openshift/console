@@ -39,76 +39,70 @@ const logout = e => {
   authSvc.logout();
 };
 
-export class Nav extends React.Component {
-  constructor(props) {
+class NavSection extends React.Component {
+  constructor (props) {
     super(props);
-    this.state = {
-      isClusterNavVisible: true,
-      isAdminNavVisible: true
-    };
+    this.state = {visible: true};
   }
 
-  render() {
-    const pathname = history.getCurrentLocation().pathname;
+  render () {
+    const {icon, img, text, noToggle, children} = this.props;
+    const onClick_ = noToggle ? undefined : () => this.setState({visible: !this.state.visible});
 
-    return <div id="sidebar" className="co-img-bg-cells">
-      <div className="navigation-container">
-        <div className="navigation-container__section navigation-container__section--logo">
-          <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
-        </div>
-
-        <div className="navigation-container__section">
-          <div className="navigation-container__section__title"
-            onClick={() => {this.setState({isClusterNavVisible : !this.state.isClusterNavVisible});}}>
-            <i className="fa fa-folder-open-o navigation-container__section__title__icon"></i>Browse Cluster
-          </div>
-          {this.state.isClusterNavVisible && <ul className="navigation-container__list no-margin" key={pathname}>
-            <NavLink resource="deployments" name="Deployments"/>
-            <NavLink resource="services" name="Services"/>
-            <NavLink resource="jobs" name="Jobs"/>
-            <NavLink resource="replicasets" name="Replica Sets" />
-            <NavLink resource="daemonsets" name="Daemon Sets" />
-            <NavLink resource="replicationcontrollers" name="Replication Controllers" />
-            <NavLink resource="horizontalpodautoscalers" name="Autoscalers" />
-            <NavLink resource="pods" name="Pods" />
-            <NavLink resource="serviceaccounts" name="Service Accounts" />
-            <NavLink resource="configmaps" name="Config Maps" />
-            <NavLink resource="secrets" name="Secrets" />
-            <NavLink resource="events" name="Events" />
-            <NavLink resource="search" name="Search" />
-            <NavLink resource="ingresses" name="Ingress" />
-          </ul>}
-        </div>
-
-        <div className="navigation-container__section">
-          <div className="navigation-container__section__title"
-            onClick={() => {this.setState({isAdminNavVisible : !this.state.isAdminNavVisible});}}>
-            <i className="fa fa-cog navigation-container__section__title__icon"></i>Administration
-          </div>
-           {this.state.isAdminNavVisible && <ul className="navigation-container__list no-margin" id="admin-tab" key={pathname}>
-            <NavLink href="namespaces" name="Namespaces" />
-            <NavLink href="nodes" name="Nodes" />
-            <NavLink href="settings/cluster" name="Cluster Settings" />
-            <NavLink resource="roles" required="RBAC" name="Roles" />
-            <NavLink resource="rolebindings" required="RBAC" name="Role Bindings" />
-            <NavLink href="clusterroles" required="RBAC" name="Cluster Roles" />
-            <NavLink href="clusterrolebindings" required="RBAC" name="Cluster Role Bindings" />
-          </ul>}
-        </div>
-
-        { authSvc.userID() &&
-          <div className="navigation-container__section">
-            <div className="navigation-container__section__title">
-              <i className="fa fa-user navigation-container__section__title__icon"></i>
-              { authSvc.name() }
-            </div>
-            <ul id="account-nav" className="navigation-container__list" key={pathname}>
-              <NavLink href="settings/profile" name="My Account" />
-              <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
-            </ul>
-          </div>
-        }
-        </div>
-      </div>;
+    return <div className="navigation-container__section">
+      <div className="navigation-container__section__title" onClick={onClick_}>
+        {icon && <i className={`fa ${icon} navigation-container__section__title__icon`}></i>}
+        {img && <img src={img} />}
+        {text}
+      </div>
+      {this.state.visible && <ul className="navigation-container__list" key={history.getCurrentLocation().pathname}>{children}</ul>}
+    </div>;
   }
 }
+
+export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
+  <div className="navigation-container">
+    <div className="navigation-container__section navigation-container__section--logo">
+      <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
+    </div>
+
+    <NavSection text="Workloads" icon="fa-folder-open-o">
+      <NavLink resource="deployments" name="Deployments" />
+      <NavLink resource="replicasets" name="Replica Sets" />
+      <NavLink resource="replicationcontrollers" name="Replication Controllers" />
+      <NavLink resource="horizontalpodautoscalers" name="Autoscalers" />
+      <div className="navigation-container__section__separator"></div>
+      <NavLink resource="daemonsets" name="Daemon Sets" />
+      <NavLink resource="jobs" name="Jobs" />
+      <NavLink resource="pods" name="Pods" />
+      <NavLink resource="configmaps" name="Config Maps" />
+      <NavLink resource="secrets" name="Secrets" />
+    </NavSection>
+
+    <NavSection text="Routing" img="static/imgs/routing.svg">
+      <NavLink resource="services" name="Services" />
+      <NavLink resource="ingresses" name="Ingress" />
+    </NavSection>
+
+    <NavSection text="Troubleshooting" icon="fa-life-ring">
+      <NavLink resource="search" name="Search" />
+      <NavLink resource="events" name="Events" />
+    </NavSection>
+
+    <NavSection text="Administration" icon="fa-cog">
+      <NavLink href="namespaces" name="Namespaces" />
+      <NavLink href="nodes" name="Nodes" />
+      <NavLink href="settings/cluster" name="Cluster Settings" />
+      <NavLink resource="serviceaccounts" name="Service Accounts" />
+      <NavLink resource="roles" required="RBAC" name="Roles" />
+      <NavLink resource="rolebindings" required="RBAC" name="Role Bindings" />
+      <NavLink href="clusterroles" required="RBAC" name="Cluster Roles" />
+      <NavLink href="clusterrolebindings" required="RBAC" name="Cluster Role Bindings" />
+    </NavSection>
+
+    {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user" noToggle={true}>
+      <NavLink href="settings/profile" name="My Account" />
+      <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
+    </NavSection>}
+  </div>
+</div>;
