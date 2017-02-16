@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 
 import {k8sKinds} from '../module/k8s';
@@ -17,7 +18,7 @@ import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
 import {IngressList} from './ingress';
 import {getActiveNamespace} from '../ui/ui-actions';
-import {connect, Dropdown, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
+import {Dropdown, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 import * as k8sSelector from '../module/k8s/selector';
 import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';

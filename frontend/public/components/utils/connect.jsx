@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect as reactReduxConnect} from 'react-redux';
+import {connect} from 'react-redux';
 
 import store from '../../redux';
 import {K8sWatcher} from '../../module/service/firehose';
@@ -63,7 +63,7 @@ const processReduxId = ({k8s}, props) => {
 
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
 // passing it to children
-export const ConnectToState = reactReduxConnect(processReduxId)(props => {
+export const ConnectToState = connect(processReduxId)(props => {
   const {children, className} = props;
   const newChildren = inject(children, _.omit(props, ['className', 'children', 'reduxID', 'isList']));
   return <div className={className}>{newChildren}</div>;
@@ -71,7 +71,7 @@ export const ConnectToState = reactReduxConnect(processReduxId)(props => {
 
 // Same as ConnectToState, but takes in multiple reduxIDs,
 // and maps their data to a specified prop instead.
-export const MultiConnectToState = reactReduxConnect(({k8s}, props) => {
+export const MultiConnectToState = connect(({k8s}, props) => {
   const {reduxes} = props;
 
   const propsToInject = {};
@@ -87,10 +87,4 @@ export const MultiConnectToState = reactReduxConnect(({k8s}, props) => {
 });
 MultiConnectToState.propTypes = {
   reduxes: React.PropTypes.array
-};
-
-export const connect = (...args) => Component => {
-  const Wrapped = reactReduxConnect(...args)(Component);
-
-  return props => <Wrapped {...props} />;
 };

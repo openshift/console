@@ -1,8 +1,9 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
-import { connect, history } from './utils';
+import { history } from './utils';
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
