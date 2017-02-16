@@ -2,7 +2,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 
-import {k8sKinds} from '../module/k8s';
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';
 import {DeploymentsList} from './deployment';
@@ -23,47 +22,45 @@ import {Dropdown, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from 
 import * as k8sSelector from '../module/k8s/selector';
 import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
 
-const ResourceListDropdown = ({selected, onChange}) => {
-  const kinds = _.fromPairs(_.map([
-    k8sKinds.DEPLOYMENT,
-    k8sKinds.SERVICE,
-    k8sKinds.JOB,
-    k8sKinds.REPLICASET,
-    k8sKinds.DAEMONSET,
-    k8sKinds.REPLICATIONCONTROLLER,
-    k8sKinds.HORIZONTALPODAUTOSCALER,
-    k8sKinds.POD,
-    k8sKinds.SERVICEACCOUNT,
-    k8sKinds.CONFIGMAP,
-    k8sKinds.SECRET,
-    k8sKinds.NAMESPACE,
-    k8sKinds.NODE,
-    k8sKinds.INGRESS
-  ], k => [k.id, <span><div className="co-type-selector__icon-wrapper"><ResourceIcon kind={k.id} /></div>{k.labelPlural}</span>]));
+// Map resource kind IDs to their list components
+const resources = {
+  configmap: ConfigMaps,
+  daemonset: DaemonSets,
+  deployment: DeploymentsList,
+  horizontalpodautoscaler: HorizontalPodAutoscalersList,
+  ingress: IngressList,
+  job: JobsList,
+  namespace: NamespacesList,
+  node: NodesListSearch,
+  pod: PodList,
+  replicaset: ReplicaSetsList,
+  replicationcontroller: ReplicationControllersList,
+  secret: SecretsList,
+  serviceaccount: ServiceAccountsList,
+  service: ServicesList,
+};
 
+const DropdownItem = ({kind}) => <span>
+  <div className="co-type-selector__icon-wrapper">
+    <ResourceIcon kind={kind} />
+  </div>
+  {kindObj(kind).labelPlural}
+</span>;
+
+const ResourceListDropdown = ({selected, onChange}) => {
+  const kinds = _.mapValues(resources, (v, k) => <DropdownItem kind={k} />);
   return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
 };
 
 const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
 ({kind, namespace, selector}) => {
   const newProps = {namespace, selector};
+  const List = resources[kind];
+
   return <div className="co-m-pane__body">
-    <div className="co-m-resource-list">
-      {kind === 'deployment'              && <DeploymentsList {...newProps} />}
-      {kind === 'service'                 && <ServicesList {...newProps} />}
-      {kind === 'job'                     && <JobsList {...newProps} />}
-      {kind === 'replicaset'              && <ReplicaSetsList {...newProps} />}
-      {kind === 'daemonset'               && <DaemonSets {...newProps} />}
-      {kind === 'replicationcontroller'   && <ReplicationControllersList {...newProps} />}
-      {kind === 'horizontalpodautoscaler' && <HorizontalPodAutoscalersList {...newProps} />}
-      {kind === 'pod'                     && <PodList {...newProps} />}
-      {kind === 'serviceaccount'          && <ServiceAccountsList {...newProps} />}
-      {kind === 'configmap'               && <ConfigMaps {...newProps} />}
-      {kind === 'secret'                  && <SecretsList {...newProps} />}
-      {kind === 'namespace'               && <NamespacesList selector={selector} />}
-      {kind === 'node'                    && <NodesListSearch selector={selector} />}
-      {kind === 'ingress'                 && <IngressList {...newProps} />}
-    </div>
+    {List && <div className="co-m-resource-list">
+      {kind === 'namespace' || kind === 'node' ? <List selector={selector} /> : <List {...newProps} />}
+    </div>}
   </div>;
 });
 
