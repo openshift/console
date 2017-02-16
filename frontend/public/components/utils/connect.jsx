@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect as reactReduxConnect, Provider} from 'react-redux';
+import {connect as reactReduxConnect} from 'react-redux';
 
 import store from '../../redux';
 import {K8sWatcher} from '../../module/service/firehose';
@@ -92,7 +92,5 @@ MultiConnectToState.propTypes = {
 export const connect = (...args) => Component => {
   const Wrapped = reactReduxConnect(...args)(Component);
 
-  return props => <Provider store={store}>
-    <Wrapped {...props} />
-  </Provider>;
+  return props => <Wrapped {...props} />;
 };
