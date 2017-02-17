@@ -8,7 +8,7 @@ import {configureReplicaCountModal, configureUpdateStrategyModal, configureRevis
 import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
-const {ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete} = Cog.factory;
+const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, ModifyLabels, Edit, Delete} = Cog.factory;
 
 const RevisionHistory = (kind, deployment) => ({
   label: 'Revision History...',
@@ -20,9 +20,10 @@ const UpdateStrategy = (kind, deployment) => ({
   callback: () => configureUpdateStrategyModal({deployment}),
 });
 
-const cogActions = [
+const menuActions = [
   ModifyCount,
   ModifyPodSelector,
+  ModifyNodeSelector,
   ModifyLabels,
   RevisionHistory,
   UpdateStrategy,
@@ -128,9 +129,9 @@ export class Details extends SafetyFirst {
 
 const {details, editYaml, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
-const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={cogActions} {...props} />;
+const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
-const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', cogActions));
+const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', menuActions));
 const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

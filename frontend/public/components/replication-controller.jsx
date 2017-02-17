@@ -4,9 +4,14 @@ import {DetailsPage, ListPage, makeList} from './factory';
 import {Header, rowOfKind} from './workloads';
 import {Cog, navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
-const {ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete} = Cog.factory;
-const cogActions = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete];
-const menuActions = _.without(cogActions, Edit);
+const menuActions = _.at(Cog.factory, [
+  'ModifyCount',
+  'ModifyPodSelector',
+  'ModifyNodeSelector',
+  'ModifyLabels',
+  'Edit',
+  'Delete',
+]);
 
 const Details = (replicationController) => <div>
   <ResourceHeading resourceName="Replication Controller" />
@@ -28,7 +33,7 @@ const {details, editYaml, pods, events} = navFactory;
 const pages = [details(Details), editYaml(), pods(), events()];
 const ReplicationControllersDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
-const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller', cogActions));
+const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller', menuActions));
 const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;
 
 export {ReplicationControllersList, ReplicationControllersPage, ReplicationControllersDetailsPage};
