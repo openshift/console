@@ -1,9 +1,30 @@
 import React from 'react';
+import {saveAs} from 'file-saver';
 
-import { kubectlConfigSvc } from '../../module/service/kubectl-config';
 import { k8sVersion } from '../../module/status';
 import { createModalLauncher, ModalTitle, ModalBody, ModalFooter, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
+import {coFetch} from '../../co-fetch';
+
+
+const getVerificationCode = () => {
+  window.open('api/tectonic/kubectl/code');
+};
+
+const getConfiguration = code => {
+  return coFetch('api/tectonic/kubectl/config', {
+    method: 'POST',
+    body: `code=${encodeURIComponent(code)}`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+  }).then(res => res.text());
+};
+
+const downloadConfiguration = config => {
+  const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
+  saveAs(blob, 'kubectl-config');
+};
 
 const steps = {
   GET_VERIFICATION_CODE: 1,
@@ -27,7 +48,7 @@ class KubectlConfigModal extends PromiseComponent {
     this._updateCode = this._updateCode.bind(this);
     this._verifyCode = this._verifyCode.bind(this);
     this._getVerificationCode = this._getVerificationCode.bind(this);
-    this._downloadConfiguration = () => kubectlConfigSvc.downloadConfiguration(this.state.configuration);
+    this._downloadConfiguration = () => downloadConfiguration(this.state.configuration);
   }
 
   componentDidMount() {
@@ -38,7 +59,7 @@ class KubectlConfigModal extends PromiseComponent {
   _getVerificationCode(event) {
     event.preventDefault();
 
-    kubectlConfigSvc.getVerificationCode();
+    getVerificationCode();
     this.setState({
       step: steps.VERIFY_CODE
     });
@@ -48,7 +69,7 @@ class KubectlConfigModal extends PromiseComponent {
     event.preventDefault();
 
     this.handlePromise(
-      kubectlConfigSvc.getConfiguration(this.state.verificationCode)
+      getConfiguration(this.state.verificationCode)
     ).then((configuration) => {
       this.setState({
         step: steps.DOWNLOAD_CONFIGURATION,
