@@ -30,20 +30,19 @@ import { ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './
 import { SearchPage } from './search';
 import { history } from './utils';
 
-const App = ({children}) => <div className="co-container">
-  <Helmet titleTemplate="%s · Tectonic" />
-  <GlobalNotifications />
-  <div id="reflex">
-    <Nav />
-    <Provider store={store}>
-      <div id="content">
-        <NamespaceSelector />
-        {children}
-      </div>
-    </Provider>
-  </div>
-  <GlobalTooltip />
-</div>;
+const App = ({children}) =>
+  <div className="co-container">
+    <Helmet titleTemplate="%s · Tectonic" />
+    <GlobalNotifications />
+    <div id="reflex">
+      <Nav />
+        <div id="content">
+          <NamespaceSelector />
+          {children}
+        </div>
+    </div>
+    <GlobalTooltip />
+  </div>;
 
 const onRouteChange = () => {
   if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
@@ -82,53 +81,55 @@ const init = ({location, params}) => {
 };
 
 render((
-  <Router history={history}>
-    <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
-      <IndexRoute component={ClusterOverviewContainer}/>
+  <Provider store={store}>
+    <Router history={history}>
+      <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
+        <IndexRoute component={ClusterOverviewContainer}/>
 
-      <Route path="clusterroles">
-        <IndexRoute component={ClusterRolesPage} />
-        <Route path=":name/add-rule" component={EditRuleContainer} />
-        <Route path=":name/:rule/edit" component={EditRuleContainer} />
+        <Route path="clusterroles">
+          <IndexRoute component={ClusterRolesPage} />
+          <Route path=":name/add-rule" component={EditRuleContainer} />
+          <Route path=":name/:rule/edit" component={EditRuleContainer} />
+        </Route>
+        <Route path="clusterrolebindings" component={ClusterRoleBindingsPage} />
+
+        <Route path="ns/:ns/roles/:name/add-rule" component={EditRuleContainer} />
+        <Route path="ns/:ns/roles/:name/:rule/edit" component={EditRuleContainer} />
+
+        <Route path="namespaces" component={NamespacesPage} />
+
+        <Route path="nodes">
+          <IndexRoute component={NodesPage} />
+          <Route path=":name/details" component={NodeDetailsPage} />
+          <Route path=":name/events" component={EventStreamNode} />
+          <Route path=":name/pods" component={NodePodsPage} />
+          <Route path=":name/yaml" component={NodeDetailsPage} />
+        </Route>
+
+        <Route path="settings">
+          <Route path="profile" component={ProfilePage} />
+          <Route path="ldap" component={LDAPPage} />
+          <Route path="cluster" component={ClusterSettingsPage} />
+        </Route>
+
+        <Route path="all-namespaces/events" component={EventStreamPage} />
+        <Route path="ns/:ns/events" component={EventStreamPage} />
+        <Route path="ns/:ns/pods/:name/events" component={EventStreamPod} />
+        <Route path="ns/:ns/replicationcontrollers/:name/events" component={EventStreamReplicationController} />
+
+        <Route path="all-namespaces/search" component={SearchPage} />
+        <Route path="ns/:ns/search" component={SearchPage} />
+        <Redirect from="search" to="all-namespaces/search" />
+
+        <Route path="all-namespaces/:kind" component={ResourceListPage} />
+        <Route path="ns/:ns/:kind" component={ResourceListPage} />
+        <Route path="ns/:ns/:kind/new" component={CreateYAML} />
+        <Route path="ns/:ns/:kind/:name/:view" component={ResourceDetailsPage} />
+        <Route path="ns/:ns/pods/:podName/:kind/:name/:view" component={ContainersDetailsPage} />
+
+        <Route path="error" component={ErrorPage} />
+        <Route path="*" component={ErrorPage404} />
       </Route>
-      <Route path="clusterrolebindings" component={ClusterRoleBindingsPage} />
-
-      <Route path="ns/:ns/roles/:name/add-rule" component={EditRuleContainer} />
-      <Route path="ns/:ns/roles/:name/:rule/edit" component={EditRuleContainer} />
-
-      <Route path="namespaces" component={NamespacesPage} />
-
-      <Route path="nodes">
-        <IndexRoute component={NodesPage} />
-        <Route path=":name/details" component={NodeDetailsPage} />
-        <Route path=":name/events" component={EventStreamNode} />
-        <Route path=":name/pods" component={NodePodsPage} />
-        <Route path=":name/yaml" component={NodeDetailsPage} />
-      </Route>
-
-      <Route path="settings">
-        <Route path="profile" component={ProfilePage} />
-        <Route path="ldap" component={LDAPPage} />
-        <Route path="cluster" component={ClusterSettingsPage} />
-      </Route>
-
-      <Route path="all-namespaces/events" component={EventStreamPage} />
-      <Route path="ns/:ns/events" component={EventStreamPage} />
-      <Route path="ns/:ns/pods/:name/events" component={EventStreamPod} />
-      <Route path="ns/:ns/replicationcontrollers/:name/events" component={EventStreamReplicationController} />
-
-      <Route path="all-namespaces/search" component={SearchPage} />
-      <Route path="ns/:ns/search" component={SearchPage} />
-      <Redirect from="search" to="all-namespaces/search" />
-
-      <Route path="all-namespaces/:kind" component={ResourceListPage} />
-      <Route path="ns/:ns/:kind" component={ResourceListPage} />
-      <Route path="ns/:ns/:kind/new" component={CreateYAML} />
-      <Route path="ns/:ns/:kind/:name/:view" component={ResourceDetailsPage} />
-      <Route path="ns/:ns/pods/:podName/:kind/:name/:view" component={ContainersDetailsPage} />
-
-      <Route path="error" component={ErrorPage} />
-      <Route path="*" component={ErrorPage404} />
-    </Route>
-  </Router>
+    </Router>
+  </Provider>
 ), document.getElementById('app'));
