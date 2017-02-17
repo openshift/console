@@ -1,7 +1,7 @@
 import React from 'react';
 
 import store from '../../redux';
-import {K8sWatcher} from '../../module/service/firehose';
+import {K8sWatcher} from './k8s-watcher';
 import {EmptyBox, ConnectToState, k8sResource, kindObj, MultiConnectToState} from './index';
 
 class FirehoseBase extends React.Component {
