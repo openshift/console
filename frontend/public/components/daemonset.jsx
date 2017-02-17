@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import {DetailsPage, ListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory, detailsPage} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage} from './utils';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
@@ -35,16 +35,7 @@ const Details = (daemonset) => <div>
   <div className="col-lg-6">
     <div className="co-m-pane">
       <div className="co-m-pane__body">
-        <dl>
-          <dt>Name</dt>
-          <dd>{daemonset.metadata.name || '-'}</dd>
-          <dt>Labels</dt>
-          <dd><LabelList kind="daemonset" labels={daemonset.metadata.labels} /></dd>
-          <dt>Pod Selector</dt>
-          <dd><Selector selector={daemonset.spec.selector.matchLabels} expand={true} /></dd>
-          <dt>Created At</dt>
-          <dd><Timestamp timestamp={daemonset.metadata.creationTimestamp} /></dd>
-        </dl>
+        <ResourceSummary resource={daemonset} />
       </div>
     </div>
   </div>

@@ -20,6 +20,8 @@ export const ResourceSummary = ({resource}) => <dl>
   <dd><LabelList kind={resource.kind.toLowerCase()} labels={resource.metadata.labels} /></dd>
   <dt>Pod Selector</dt>
   <dd><Selector selector={resource.spec.selector} /></dd>
+  <dt>Node Selector</dt>
+  <dd><Selector kind="node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>
   <dt>Created At</dt>
   <dd><Timestamp timestamp={resource.metadata.creationTimestamp} /></dd>
 </dl>;
