@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import store from '../../redux';
-import {K8sWatcher} from '../../module/service/firehose';
+import {K8sWatcher} from './k8s-watcher';
 import {k8s as k8sModule, k8sKinds} from '../../module/k8s';
 import {inject} from './index';
 

@@ -1,4 +1,4 @@
-import actions from '../k8s/k8s-actions';
+import actions from '../../module/k8s/k8s-actions';
 
 const id_ = (k8sType, query) => {
   let qs = '';
