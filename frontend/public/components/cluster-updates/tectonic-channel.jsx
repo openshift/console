@@ -88,21 +88,15 @@ class TectonicChannelWithData extends React.Component {
   _createComponentFromData(desiredVersions, components, component) {
     const name = component.metadata.name;
 
-    let desiredVersion;
-    if (name === clusterAppVersionName) {
-      desiredVersion = component.spec.desiredVersion;
-    } else {
-      desiredVersion = _.get(_.find(desiredVersions, ['name', name]), 'version');
-    }
-
     components[name] = {
       currentVersion: component.status.currentVersion,
-      desiredVersion,
+      desiredVersion: _.get(component.spec, 'desiredVersion', null),
       targetVersion: component.status.targetVersion,
       pausedSpec: component.spec.paused,
-      pausedStatus: component.status.paused
+      pausedStatus: component.status.paused,
+      failureReason: _.get(component.status, 'failureReason', null),
+      taskStatuses: _.get(component.status, 'taskStatuses', [])
     };
-
     return components;
   }
 
@@ -110,24 +104,25 @@ class TectonicChannelWithData extends React.Component {
     return Object.keys(this.state.components).reduce((finalComponents, key) => {
       const component = this.state.components[key];
 
-      if (component.currentVersion && component.desiredVersion) {
-        let state, text, logsUrl;
+      //the component has targetVersion if in the process of an upgrade.
+      if (component.currentVersion && (component.desiredVersion || component.targetVersion)) {
+        let state, logsUrl;
         const name = componentNames[key] || key;
-        if (component.targetVersion) {
+        const headerText = <span>{name} {component.currentVersion} &#10141; {component.desiredVersion || component.targetVersion}</span>;
+
+        if (component.failureReason) {
+          state = componentStates.FAILED;
+        } else if (component.targetVersion) {
           // logsUrl = '#'; TODO: set this url
           state = componentStates.UPDATING;
-          text = <span>Update {name}<br />{component.currentVersion} &#10141; {component.desiredVersion}</span>;
         } else if (component.currentVersion !== component.desiredVersion) {
           state = componentStates.PENDING;
-          text = <span>Update {name}<br />{component.currentVersion} &#10141; {component.desiredVersion}</span>;
         } else {
           state = componentStates.COMPLETE;
-          text = `${name} ${component.currentVersion}`;
         }
 
         if (component.pausedStatus) {
           state = componentStates.PAUSED;
-          text = <span>{text}<br /><span className="text-muted">Updates paused</span></span>;
         }
 
         finalComponents[key] = {
@@ -136,9 +131,11 @@ class TectonicChannelWithData extends React.Component {
           targetVersion: component.targetVersion,
           pausedSpec: component.pausedSpec,
           pausedStatus: component.pausedStatus,
+          taskStatuses: component.taskStatuses,
+          failureReason: component.failureReason,
           state,
-          text,
-          logsUrl
+          logsUrl,
+          headerText
         };
       }
 

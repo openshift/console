@@ -1,7 +1,8 @@
-$cluster-updates-detail-col-padding: 5px;
-$cluster-updates-breakdown-col-padding: 10px;
-$cluster-updates-green: #2ec98e;
 $cluster-updates-border: #ccc;
+$cluster-updates-breakdown-col-padding: 10px;
+$cluster-updates-breakdown-icon-width: 25px;
+$cluster-updates-detail-col-padding: 5px;
+$cluster-updates-green: #2ec98e;
 $cluster-updates-width: 800px;
 
 .co-cluster-updates-warning {
@@ -9,8 +10,8 @@ $cluster-updates-width: 800px;
 }
 
 .co-cluster-updates {
-  border: 1px solid $cluster-updates-border;
   border-radius: 4px;
+  border: 1px solid $cluster-updates-border;
   margin-bottom: -20px; // todo: not the best fix
   max-width: $cluster-updates-width;
 }
@@ -21,6 +22,10 @@ $cluster-updates-width: 800px;
 
 .co-cluster-updates__needs-attention-text {
   color: $color-orange-warning;
+}
+
+.co-cluster-updates__update-failed-text {
+  color: $color-red-error;
 }
 
 .co-cluster-updates__text-icon {
@@ -56,8 +61,8 @@ $cluster-updates-width: 800px;
   display: flex;
   flex-direction: row;
   font-size: 13px;
-  line-height: 13px;
   justify-content: space-between;
+  line-height: 13px;
 }
 
 .co-cluster-updates__heading--name-wrapper {
@@ -87,37 +92,32 @@ $cluster-updates-width: 800px;
   display: flex;
   flex-direction: row;
   font-size: 16px;
-  margin-top: 18px;
-  margin-left: -1 * $cluster-updates-detail-col-padding;
-  margin-right: -1 * $cluster-updates-detail-col-padding;
+  margin: 18px -$cluster-updates-detail-col-padding 0 -$cluster-updates-detail-col-padding;
 }
 
 .co-cluster-updates__detail {
-  padding: 0 $cluster-updates-detail-col-padding;
   flex: 2 1 auto;
+  padding: 0 $cluster-updates-detail-col-padding;
 }
 
 // this spacer goes as the last __detail.
 // large displays: adds space so the last detail isn't riding the right border
 // small displays: disappears to allow for optimal text space
 .co-cluster-updates__detail--spacer {
+  flex: 1 2 auto;
   padding-left: 0;
   padding-right: 0;
-  flex: 1 2 auto;
 }
 
 .co-cluster-updates__breakdown {
   display: flex;
   flex-direction: row;
-  margin-top: 26px;
-
-  margin-left: -1 * $cluster-updates-breakdown-col-padding;
-  margin-right: -1 * $cluster-updates-breakdown-col-padding;
+  margin: 26px -$cluster-updates-breakdown-col-padding 0 -$cluster-updates-breakdown-col-padding;
 }
 
 .co-cluster-updates__breakdown-component {
-  font-size: 14px;
   flex: 1 1 auto;
+  font-size: 14px;
   padding: 0 $cluster-updates-breakdown-col-padding;
 }
 
@@ -131,13 +131,17 @@ $cluster-updates-width: 800px;
   }
 }
 
+.co-cluster-updates__breakdown-header {
+  font-size: 16px;
+}
+
 .co-cluster-updates__breakdown-step--pending {
   color: $color-grey-text;
 }
 
 .co-cluster-updates__breakdown-icon {
   min-width: 22px;
-  width: 25px;
+  width: $cluster-updates-breakdown-icon-width;
 }
 
 .co-cluster-updates__breakdown-icon--updating {
@@ -152,6 +156,10 @@ $cluster-updates-width: 800px;
   color: $color-highlight-blue;
 }
 
+.co-cluster-updates__breakdown-icon--failed {
+  color: $color-red-error;
+}
+
 .co-cluster-updates__breakdown-icon--needsattention {
   color: $color-orange-warning;
 }
@@ -164,3 +172,63 @@ $cluster-updates-width: 800px;
   margin-top: 25px;
   padding: 7px 16px 4px;
 }
+
+.co-cluster-updates__breakdown-ts-icon--running {
+  color: $color-highlight-blue;
+}
+
+.co-cluster-updates__breakdown-ts-icon--completed {
+  color: $cluster-updates-green;
+}
+
+.co-cluster-updates__breakdown-ts-icon--failed {
+  color: $color-red-error;
+}
+
+.co-cluster-updates__breakdown-ts-icon--backoff {
+  color: $color-red-error;
+}
+
+.co-cluster-updates__breakdown-ts-text--notstarted,
+.co-cluster-updates__breakdown-ts-icon--notstarted {
+  color: $color-grey-text;
+}
+
+.co-cluster-updates__breakdown-ts-error-msg {
+  border-top: 1px solid $color-red-error;
+  color: $color-red-error;
+  font-size: 11px;
+  margin: 5px 0 0 $cluster-updates-breakdown-icon-width;
+  padding-top: 5px;
+}
+
+.co-cluster-updates__breakdown-ts-error-msg-link {
+  margin-left: $cluster-updates-breakdown-icon-width;
+  font-size: 12px;
+}
+
+.co-cluster-updates__breakdown-ts-component {
+  margin-bottom: 10px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.co-cluster-updates__breakdown-ts-step {
+  display: flex;
+  flex-direction: row;
+}
+
+.co-cluster-updates__message-box {
+  font-size: 16px;
+  padding: 10px;
+}
+
+.co-cluster-updates__message-box--failed {
+  background-color: #ffeaea;
+  border: 1px solid $color-red-error;
+  color: $color-red-error;
+  margin-top: 15px;
+}
+
