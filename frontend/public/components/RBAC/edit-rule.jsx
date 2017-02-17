@@ -1,9 +1,10 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import {connect} from 'react-redux';
 
 import {k8s} from '../../module/k8s';
 import {errorModal} from '../modals';
-import {connect, history, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
+import {history, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);

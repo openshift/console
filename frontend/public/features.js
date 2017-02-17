@@ -1,8 +1,8 @@
 import _ from 'lodash';
+import {connect} from 'react-redux';
 import Immutable from 'immutable';
 
 import { coFetchJSON } from './co-fetch';
-import { connect } from './components/utils';
 
 export const FLAGS = {
   AUTH_ENABLED: 'AUTH_ENABLED',

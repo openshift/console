@@ -1,10 +1,10 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 import { safeLoad } from 'js-yaml';
 import { k8s } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { EditYAML } from './edit-yaml';
-import { connect } from './utils';
 import { TEMPLATES } from '../yaml-templates';
 
 const getDefaultType = (type, format) => {
