@@ -3,7 +3,7 @@ import React from 'react';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceCog, ResourceIcon, Timestamp, detailsPage, EmptyBox, navFactory, ResourceLink} from './utils';
 
-const menuActions = [Cog.factory.Delete];
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
 
 const getHosts = (ingress) => {
   const hosts = _.map(_.get(ingress, 'spec.rules'), 'host');
