@@ -85,7 +85,7 @@ export class SelectorInput extends React.Component {
     };
 
     const renderTag = ({tag, key, onRemove, getTagDisplayValue}) => {
-      return <span className="tag-item co-text-pod" key={key}>
+      return <span className={classNames('tag-item', this.props.labelClassName)} key={key}>
         {getTagDisplayValue(tag)}&nbsp;
         <a className="remove-button" onClick={() => onRemove(key)}>×</a>
       </span>;

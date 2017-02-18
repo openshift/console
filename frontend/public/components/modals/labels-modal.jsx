@@ -47,7 +47,7 @@ class BaseLabelsModal extends PromiseComponent {
   }
 
   render() {
-    const { kind, resource, description, message } = this.props;
+    const { kind, resource, description, message, labelClassName } = this.props;
 
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>Modify {description || `${kind.label} Labels`}</ModalTitle>
@@ -60,7 +60,7 @@ class BaseLabelsModal extends PromiseComponent {
             <label className="control-label">
               {_.capitalize(description) || 'Labels'} for <ResourceIcon kind={kind.id} /> {resource.metadata.name}
             </label>
-            <SelectorInput onChange={labels => this.setState({labels})} tags={this.state.labels} autoFocus/>
+            <SelectorInput onChange={labels => this.setState({labels})} tags={this.state.labels} labelClassName={labelClassName || `co-text-${kind.id}`} autoFocus/>
           </div>
         </div>
       </ModalBody>
@@ -79,6 +79,7 @@ export const podSelectorModal = createModalLauncher((props) => <BaseLabelsModal
   isPodSelector={true}
   description="Pod Selector"
   message={`Determines the set of pods targeted by this ${props.kind.label.toLowerCase()}.`}
+  labelClassName="co-text-pod"
   {...props}
 />);
 
@@ -86,5 +87,6 @@ export const nodeSelectorModal = createModalLauncher((props) => <BaseLabelsModal
   path={NODE_SELECTOR_PATH}
   description="Node Selector"
   message="Node selectors allow you to constrain pods to only run on nodes with matching labels."
+  labelClassName="co-text-node"
   {...props}
 />);
