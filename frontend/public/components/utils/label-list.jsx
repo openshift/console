@@ -8,11 +8,11 @@ const Label = ({kind, name, value, expand}) => {
   const labelObj = {[name]: value};
   const query = linkEncode(labelObj);
   const href = `search?kind=${kind}&q=${query}`;
-  const klass = classNames('co-m-label', `co-m-label--${kind}`, {'co-m-label--expand': expand});
+  const klass = classNames('co-m-label', {'co-m-label--expand': expand});
 
   return (
     <div className={klass}>
-      <Link className="co-m-label__link" to={href}>
+      <Link className={`co-m-label__link co-text-${kind}`} to={href}>
         <span className="co-m-label__key">{name}</span>
         <span className="co-m-label__eq">=</span>
         <span className="co-m-label__value">{value}</span>
