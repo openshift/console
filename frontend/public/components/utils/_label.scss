@@ -13,15 +13,6 @@ $height: 18px;
   font-weight: 400;
   border: solid 1px $color-grey-border;
   vertical-align: middle;
-
-  &.co-m-label--selector {
-    background-color: transparent;
-    border: none;
-  }
-}
-
-.co-m-label__icon {
-  margin-right: 4px;
 }
 
 .co-m-label__link,
@@ -33,7 +24,6 @@ $height: 18px;
   height: $height;
 }
 
-.co-m-label__icon,
 .co-m-label__eq,
 .co-m-label__key,
 .co-m-label__value {
