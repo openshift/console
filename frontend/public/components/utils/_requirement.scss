@@ -7,20 +7,4 @@ $height: 18px;
   line-height: $height;
   font-weight: 400;
   vertical-align: middle;
-
-  &__pod-link,
-  &__pod-link:active,
-  &__pod-link:hover,
-  &__pod-link:visited {
-    color: $color-pod-dark;
-    text-decoration: none;
-  }
-
-  &__node-link,
-  &__node-link:active,
-  &__node-link:hover,
-  &__node-link:visited {
-    color: $color-node-dark;
-    text-decoration: none;
-  }
 }

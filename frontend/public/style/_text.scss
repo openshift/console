@@ -1,11 +1,16 @@
-.co-text-node {
-  color: $color-node-dark;
-}
+$kinds: (
+  node: $color-node-dark,
+  pod: $color-pod-dark,
+  service: $color-service-dark,
+);
 
-.co-text-service {
-  color: $color-service-dark;
-}
+@each $kind, $color in $kinds {
+  .co-text-#{$kind} {
+    color: $color;
 
-.co-text-pod {
-  color: $color-pod-dark;
+    &:link, &:visited, &:hover, &:active {
+      color: $color;
+      text-decoration: none;
+    }
+  }
 }
