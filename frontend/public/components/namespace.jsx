@@ -9,7 +9,7 @@ import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {ActionsMenu, Dropdown, Firehose, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
+import {ActionsMenu, Cog, Dropdown, Firehose, kindObj, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 
 const FullHeader = () => <div className="row co-m-table-grid__head">
@@ -97,18 +97,12 @@ const Details = (namespace) => {
     </div>;
   }
 
-  const openDeleteNamespaceModal = function() {
-    deleteNamespaceModal({
-      resource: namespace
-    });
+  const deleteModal = {
+    label: 'Delete Namespace',
+    callback: () => deleteNamespaceModal({resource: namespace}),
   };
 
-  const menuActions = {
-    DeleteNamespace: {
-      label: 'Delete Namespace',
-      callback: openDeleteNamespaceModal
-    }
-  };
+  const menuActions = [Cog.factory.ModifyLabels(kindObj('namespace'), namespace), deleteModal];
 
   return <div className="details-page">
     {namespace.metadata.name !== 'default' && namespace.status.phase !== 'Terminating' && <ActionsMenu actions={menuActions} />}
