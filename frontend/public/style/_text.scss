@@ -1,11 +1,25 @@
-.co-text-node {
-  color: $color-node-dark;
-}
+$kinds: (
+  daemonset: $color-replicaset-dark,
+  deployment: $color-deployment-dark,
+  horizontalpodautoscaler: $color-hpa-dark,
+  ingress: $color-ingress-dark,
+  job: $color-job-dark,
+  namespace: $color-namespace-dark,
+  node: $color-node-dark,
+  pod: $color-pod-dark,
+  replicaset: $color-replicaset-dark,
+  replicationcontroller: $color-controller-dark,
+  service: $color-service-dark,
+  serviceaccount: $color-serviceaccount-dark,
+);
 
-.co-text-service {
-  color: $color-service-dark;
-}
+@each $kind, $color in $kinds {
+  .co-text-#{$kind} {
+    color: $color;
 
-.co-text-pod {
-  color: $color-pod-dark;
+    &:link, &:visited, &:hover, &:active {
+      color: $color;
+      text-decoration: none;
+    }
+  }
 }

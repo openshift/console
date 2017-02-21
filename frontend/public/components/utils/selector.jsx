@@ -10,7 +10,7 @@ const Requirement = ({kind, requirements}) => {
 
   return (
     <div className="co-m-requirement">
-      <Link className={`co-m-requirement__${kind}-link`} to={`search?kind=${kind}&q=${requirementAsUrlEncodedString}`}>
+      <Link className={`co-text-${kind}`} to={`search?kind=${kind}&q=${requirementAsUrlEncodedString}`}>
         <i className="fa fa-search"></i> {requirementAsString.replace(',', ', ')}
       </Link>
     </div>
