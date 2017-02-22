@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import {k8s} from '../../module/k8s/k8s';
 import {util} from '../../module/k8s/util';
 import {getNamespacedRoute} from '../../ui/ui-actions';
-import {confirmModal, configureReplicaCountModal, labelsModal} from '../modals';
+import {confirmModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal} from '../modals';
 import {DropdownMixin} from './dropdown';
 import { history, kindObj } from './index';
 
@@ -79,15 +79,20 @@ Cog.factory = {
     callback: () => labelsModal({
       kind: kind,
       resource: obj,
-      labelSelector: false,
     }),
   }),
   ModifyPodSelector: (kind, obj) => ({
     label: 'Modify Pod Selector...',
-    callback: () => labelsModal({
+    callback: () => podSelectorModal({
       kind: kind,
       resource:  obj,
-      labelSelector: true,
+    }),
+  }),
+  ModifyNodeSelector: (kind, obj) => ({
+    label: 'Modify Node Selector...',
+    callback: () => nodeSelectorModal({
+      kind: kind,
+      resource: obj,
     }),
   }),
   ModifyCount: (kind, obj) => ({

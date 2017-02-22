@@ -4,9 +4,14 @@ import {DetailsPage, ListPage, makeList} from './factory';
 import {Header, rowOfKind} from './workloads';
 import {Cog, navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
-const {ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete} = Cog.factory;
-const cogActions = [ModifyCount, ModifyPodSelector, ModifyLabels, Edit, Delete];
-const menuActions = _.without(cogActions, Edit);
+const menuActions = _.at(Cog.factory, [
+  'ModifyCount',
+  'ModifyPodSelector',
+  'ModifyNodeSelector',
+  'ModifyLabels',
+  'Edit',
+  'Delete',
+]);
 
 const Details = (replicaSet) => <div>
   <ResourceHeading resourceName="Replica Set" />
@@ -28,7 +33,7 @@ const {details, editYaml, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
 const ReplicaSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
-const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKind('replicaset', cogActions));
+const ReplicaSetsList = makeList('ReplicaSets', 'replicaset', Header, rowOfKind('replicaset', menuActions));
 const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};

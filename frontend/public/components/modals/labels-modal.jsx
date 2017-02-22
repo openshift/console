@@ -7,32 +7,32 @@ import { PromiseComponent, ResourceIcon, SelectorInput } from '../utils';
 const LABELS_PATH = '/metadata/labels';
 const SELECTOR_PATH = '/spec/selector/matchLabels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
+const NODE_SELECTOR_PATH = '/spec/template/spec/nodeSelector';
 
-class LabelsModal extends PromiseComponent {
+class BaseLabelsModal extends PromiseComponent {
   constructor(props) {
     super(props);
     this._submit = this._submit.bind(this);
     this._cancel = props.cancel.bind(this);
-    this.path = props.labelSelector ? SELECTOR_PATH : LABELS_PATH;
     this.state = Object.assign(this.state, {
-      labels: SelectorInput.arrayify(_.get(props.resource, this.path.split('/').slice(1))),
+      labels: SelectorInput.arrayify(_.get(props.resource, props.path.split('/').slice(1))),
     });
   }
 
   _submit (e) {
     e.preventDefault();
 
-    const { kind, resource, labelSelector } = this.props;
+    const { kind, path, resource, isPodSelector } = this.props;
 
     const patch = [{
-      path: this.path,
+      path,
       op: 'replace',
       value: SelectorInput.objectify(this.state.labels),
     }];
 
     // https://kubernetes.io/docs/user-guide/deployments/#selector
     //   .spec.selector must match .spec.template.metadata.labels, or it will be rejected by the API
-    const updateTemplate = labelSelector
+    const updateTemplate = isPodSelector
       && !_.isEmpty(_.get(resource, TEMPLATE_SELECTOR_PATH.split('/').slice(1)));
 
     if (updateTemplate) {
@@ -47,40 +47,46 @@ class LabelsModal extends PromiseComponent {
   }
 
   render() {
-    const { kind, resource, labelSelector } = this.props;
+    const { kind, resource, description, message, labelClassName } = this.props;
 
     return <form onSubmit={this._submit} name="form">
-      <ModalTitle>
-        { labelSelector
-          ? `Modify ${kind.label} Label Selector`
-          : `Modify ${kind.label} Labels`
-        }
-      </ModalTitle>
+      <ModalTitle>Modify {description || `${kind.label} Labels`}</ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            { labelSelector
-              ? `${kind.labelPlural} ensure the configured number of pods matching this pod selector are healthy and running.`
-              : 'Labels are key/value pairs used to scope and select resources.'
-            }
-          </div>
+          <div className="col-sm-12">{message || 'Labels are key/value pairs used to scope and select resources.'}</div>
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label className="control-label">
-              { labelSelector
-                ? 'Label Selector '
-                : 'Labels '
-              }
-              for <ResourceIcon kind={kind.id} /> {resource.metadata.name}
+              {_.capitalize(description) || 'Labels'} for <ResourceIcon kind={kind.id} /> {resource.metadata.name}
             </label>
-            <SelectorInput onChange={labels => this.setState({labels})} tags={this.state.labels} autoFocus/>
+            <SelectorInput onChange={labels => this.setState({labels})} tags={this.state.labels} labelClassName={labelClassName || `co-text-${kind.id}`} autoFocus/>
           </div>
         </div>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={labelSelector ? 'Save Label Selector' : 'Save Labels'} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={`Save ${description || 'Labels'}`} cancel={this._cancel} />
     </form>;
   }
 }
 
-export const labelsModal = createModalLauncher(LabelsModal);
+export const labelsModal = createModalLauncher((props) => <BaseLabelsModal
+  path={LABELS_PATH}
+  {...props}
+/>);
+
+export const podSelectorModal = createModalLauncher((props) => <BaseLabelsModal
+  path={SELECTOR_PATH}
+  isPodSelector={true}
+  description="Pod Selector"
+  message={`Determines the set of pods targeted by this ${props.kind.label.toLowerCase()}.`}
+  labelClassName="co-text-pod"
+  {...props}
+/>);
+
+export const nodeSelectorModal = createModalLauncher((props) => <BaseLabelsModal
+  path={NODE_SELECTOR_PATH}
+  description="Node Selector"
+  message="Node selectors allow you to constrain pods to only run on nodes with matching labels."
+  labelClassName="co-text-node"
+  {...props}
+/>);
