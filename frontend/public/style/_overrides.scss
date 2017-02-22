@@ -264,8 +264,10 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .navigation-container__list {
-  margin: 0;
+  margin: -10px 0 10px 0;
+  overflow-y: hidden;
   padding-left: 0;
+  transition: height 0.25s;
 }
 
 .navigation-container__section, .navigation-container__section__separator {
@@ -274,7 +276,6 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .navigation-container__section {
-  padding: 10px 0;
   font-weight: 300;
 }
 
@@ -292,7 +293,7 @@ tags-input .autocomplete .suggestion-item em {
   cursor: pointer;
 
   width: 100%;
-  padding: 10px 0px 10px 13px;
+  padding: 20px 0px 20px 13px;
   span {
     display: inline-block;
     margin: 0 15px 0 11px;
