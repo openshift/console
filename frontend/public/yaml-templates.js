@@ -98,3 +98,20 @@ spec:
         image: nginx
         ports:
         - containerPort: 80`;
+
+
+TEMPLATES['v1beta1.DaemonSet'] = `apiVersion: extensions/v1beta1
+kind: Daemonset
+metadata:
+  name: nginx-daemonset
+spec:
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80`;
