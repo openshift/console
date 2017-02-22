@@ -1,4 +1,5 @@
 $kinds: (
+  configmap: $color-configmap-dark,
   daemonset: $color-replicaset-dark,
   deployment: $color-deployment-dark,
   horizontalpodautoscaler: $color-hpa-dark,
@@ -9,6 +10,7 @@ $kinds: (
   pod: $color-pod-dark,
   replicaset: $color-replicaset-dark,
   replicationcontroller: $color-controller-dark,
+  secret: $color-secret-dark,
   service: $color-service-dark,
   serviceaccount: $color-serviceaccount-dark,
 );
