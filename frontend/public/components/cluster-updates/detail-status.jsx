@@ -3,8 +3,9 @@ import React from 'react';
 import {k8sKinds, k8sPatch} from '../../module/k8s';
 import {LoadingInline} from '../utils';
 import {states} from './channel-operator';
+import {SafetyFirst} from '../safety-first';
 
-export class DetailStatus extends React.Component {
+export class DetailStatus extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {

@@ -2,12 +2,13 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {LoadingInline} from '../utils';
+import {SafetyFirst} from '../safety-first';
 
 // Displays a field of a config & enables the user to click
 // on the value to edit in a modal.
 //
 // Eg, choosing an update channel or toggling automatic updates
-export class DetailConfig extends React.Component {
+export class DetailConfig extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
