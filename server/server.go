@@ -23,6 +23,7 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/coreos-inc/bridge/auth"
+	"github.com/coreos-inc/bridge/certs"
 	"github.com/coreos-inc/bridge/pkg/proxy"
 	"github.com/coreos-inc/bridge/verify"
 	"github.com/coreos-inc/bridge/version"
@@ -63,6 +64,7 @@ type Server struct {
 	PublicDir           string
 	TectonicVersion     string
 	TectonicLicenseFile string
+	TectonicCACertFile  string
 	Auther              *auth.Authenticator
 	KubectlClientID     string
 
@@ -116,14 +118,18 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	useVersionHandler := s.versionHandler
 	useValidateLicenseHandler := s.validateLicenseHandler
+	useCertsHandler := s.certsHandler
+
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
 		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.validateLicenseHandler))
+		useCertsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.certsHandler))
 	}
+
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
 	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
-
+	mux.HandleFunc("/tectonic/certs", useCertsHandler)
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return http.Handler(mux)
@@ -222,6 +228,40 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 		EntitlementCount: entitlementCount,
 		ErrorMessage:     licenseErrorString,
 	})
+}
+
+func (s *Server) readAndParseCert() (expiration time.Time, certError error) {
+	certBytes, readErr := certs.ReadCert(s.TectonicCACertFile)
+
+	if readErr != nil {
+		certError = readErr
+		return
+	}
+
+	expiration, certError = certs.ParseCert([]byte(certBytes))
+	return
+}
+
+func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
+	certErrorString := ""
+	expiration, certError := s.readAndParseCert()
+
+	if certError != nil {
+		certErrorString = certError.Error()
+	}
+
+	type certsInfo struct {
+		CaCert struct {
+			ExpirationDate time.Time `json:"expirationDate"`
+			ErrorMessage   string    `json:"errorMessage"`
+		} `json:"ca-cert"`
+	}
+
+	info := new(certsInfo)
+	info.CaCert.ExpirationDate = expiration
+	info.CaCert.ErrorMessage = certErrorString
+
+	sendResponse(w, http.StatusOK, info)
 }
 
 // Validate that a license should be used, purely based on it being

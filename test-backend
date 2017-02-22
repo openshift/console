@@ -14,7 +14,7 @@ export GOBIN=${PWD}/bin:${GOBIN}
 # Invoke ./cover for HTML output
 COVER=${COVER:-"-cover"}
 
-TESTABLE="auth verify pkg/proxy server"
+TESTABLE="auth verify pkg/proxy server certs"
 FORMATTABLE="${TESTABLE} cmd/bridge version"
 
 # user has not provided PKG override
