@@ -7,47 +7,100 @@ import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
 
 export const states = {
+  FAILED: 'failed',
   LOADING: 'loading',
   NEEDS_ATTENTION: 'needsattention',
-  UP_TO_DATE: 'uptodate',
-  UPDATE_AVAILABLE: 'updateavailable',
-  PAUSING: 'pausing',
   PAUSED: 'paused',
+  PAUSING: 'pausing',
   REQUESTED: 'requested',
-  UPDATING: 'updating'
-};
-export const componentStates = {
-  LOADING: 'loading',
-  PENDING: 'pending',
-  PAUSED: states.PAUSED,
-  UPDATING: states.UPDATING,
-  NEEDS_ATTENTION: states.NEEDS_ATTENTION,
-  COMPLETE: 'complete'
+  UPDATE_AVAILABLE: 'updateavailable',
+  UPDATING: 'updating',
+  UP_TO_DATE: 'uptodate'
 };
 
-const BreakdownComponent = ({state, text, logsUrl}) => {
-  const className = {
+export const componentStates = {
+  COMPLETE: 'complete',
+  FAILED: 'failed',
+  LOADING: 'loading',
+  NEEDS_ATTENTION: states.NEEDS_ATTENTION,
+  PAUSED: states.PAUSED,
+  PENDING: 'pending',
+  UPDATING: states.UPDATING
+};
+
+export const taskStatuses = {
+  'BACKOFF': 'backoff',
+  'COMPLETED': 'completed',
+  'FAILED': 'failed',
+  'NOTSTARTED': 'notstarted',
+  'RUNNING': 'running'
+};
+
+export class TaskStatusComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isErrorMsgVisible: false
+    };
+  }
+
+  render() {
+    const {name, state, reason} = this.props.taskStatus;
+    const lowerCaseState = state.toLowerCase();
+
+    const taskStatusClassName = {
+      'fa-circle-o-notch fa-spin': lowerCaseState === taskStatuses.RUNNING,
+      'fa-ban': lowerCaseState === taskStatuses.FAILED || lowerCaseState === taskStatuses.BACKOFF,
+      'fa-check-circle': lowerCaseState === taskStatuses.COMPLETED,
+      'fa-circle-o': lowerCaseState === taskStatuses.NOTSTARTED,
+    };
+
+    return <div className="co-cluster-updates__breakdown-ts-component">
+      <div className="co-cluster-updates__breakdown-ts-step">
+        <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-ts-icon--${lowerCaseState}`}>
+          <span className={classNames('fa fa-fw', taskStatusClassName)}></span>
+        </div>
+        <div className={`co-cluster-updates__breakdown-text co-cluster-updates__breakdown-ts-text--${lowerCaseState}`}>{name}</div>
+      </div>
+      { reason && !this.props.isPrimaryComponent && <div className="co-cluster-updates__breakdown-ts-error-msg-link">
+          <a onClick={() => {this.setState({isErrorMsgVisible : !this.state.isErrorMsgVisible});}}>
+            {this.state.isErrorMsgVisible ? 'Hide Failed Reason' : 'Show Failed Reason'}
+          </a>
+        </div>
+      }
+      { reason && !this.props.isPrimaryComponent && this.state.isErrorMsgVisible && <div className="co-cluster-updates__breakdown-ts-error-msg">{reason}</div> }
+    </div>;
+  }
+}
+
+const BreakdownComponent = ({component, cols, isPrimaryComponent}) => {
+
+  const {state, headerText, logsUrl} = component;
+
+  const componentStateClassName = {
     'fa-circle-o': state === componentStates.PENDING,
     'fa-pause-circle-o': state === componentStates.PAUSED,
     'fa-circle-o-notch fa-spin': state === componentStates.UPDATING,
     'fa-exclamation-triangle': state === componentStates.NEEDS_ATTENTION,
-    'fa-check-circle': state === componentStates.COMPLETE
+    'fa-check-circle': state === componentStates.COMPLETE,
+    'fa-ban': componentStates.FAILED
   };
 
-  return <div className="co-cluster-updates__breakdown-component">
-    <div className={`co-cluster-updates__breakdown-step co-cluster-updates__breakdown-step--${state}`}>
-      <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
-        <span className={classNames('fa fa-fw', className)}></span>
-      </div>
-      <div className="co-cluster-updates__breakdown-text">{text}</div>
+  return <div className={`co-cluster-updates__breakdown-component col-xs-${cols}`}>
+    <div className="co-cluster-updates__breakdown-step co-cluster-updates__breakdown-header">
+      {component.taskStatuses.length === 0 && <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
+        <span className={classNames('fa fa-fw', componentStateClassName)}></span>
+      </div>}
+      <div className="co-cluster-updates__breakdown-text">{headerText}</div>
     </div>
+    { component.taskStatuses.map((taskStatus, index) => <TaskStatusComponent taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> ) }
     { state !== componentStates.PENDING && logsUrl && <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a> }
   </div>;
 };
 BreakdownComponent.propTypes = {
-  state: React.PropTypes.string,
-  text: React.PropTypes.node,
-  logsUrl: React.PropTypes.string
+  component: React.PropTypes.object,
+  cols: React.PropTypes.number,
+  isPrimaryComponent: React.PropTypes.bool
 };
 
 const Detail = ({title, spacer, children}) => {
@@ -106,9 +159,11 @@ export class ChannelOperator extends React.Component {
       updateStrategy: null
     });
 
-    newState.primaryComponent = _.get(newState.components, newState.primaryComponent) || {};
+    newState.primaryComponent = _.get(newState.components, props.primaryComponent) || {};
     newState.components = Object.keys(newState.components).reduce((components, key) => {
-      components.push(newState.components[key]);
+      if (key !== props.primaryComponent) {
+        components.push(newState.components[key]);
+      }
       return components;
     }, []);
 
@@ -134,6 +189,8 @@ export class ChannelOperator extends React.Component {
         channelState = states.PAUSED;
       } else if (newState.primaryComponent.pausedSpec) {
         channelState = states.PAUSING;
+      } else if (newState.primaryComponent.failureReason) {
+        channelState = states.FAILED;
       } else if (props.config && props.config.triggerUpdate && channelState === states.UPDATE_AVAILABLE) {
         channelState = states.REQUESTED;
       }
@@ -162,8 +219,9 @@ export class ChannelOperator extends React.Component {
 
   render() {
     let statusText;
+    const operatorCols = Math.floor(12/this.state.components.length);
     if (this._isState(states.UPDATING)) {
-      statusText = 'Updating';
+      statusText = <span><span className="co-cluster-updates__breakdown-icon--updating"><span className="fa fa-circle-o-notch fa-spin fa-fw co-cluster-updates__text-icon"></span></span>Updating</span>;
     } else if (this._isState(states.UPDATE_AVAILABLE)) {
       statusText = <span className="co-cluster-updates__update-available-text"><span className="fa fa-arrow-circle-down fa-fw co-icon-space-r"></span>{this.state.primaryComponent.desiredVersion} is available</span>;
     } else if (this._isState(states.UP_TO_DATE)) {
@@ -178,6 +236,8 @@ export class ChannelOperator extends React.Component {
       statusText = 'Update requested...';
     } else if (this._isState(states.LOADING)) {
       statusText = <LoadingInline />;
+    } else if (this._isState(states.FAILED)) {
+      statusText = <span className="co-cluster-updates__update-failed-text"><span className="fa fa-ban co-icon-space-r"></span>Software update failed</span>;
     } else {
       statusText = 'Unknown';
     }
@@ -190,7 +250,6 @@ export class ChannelOperator extends React.Component {
         </div>
         { this.state.expanded ||
           <div className="co-cluster-updates__heading--updates">
-            {this._isState(states.UPDATING) && <span className="co-cluster-updates__breakdown-icon--updating"><span className="fa fa-circle-o-notch fa-spin fa-fw co-cluster-updates__text-icon"></span></span>}
             {statusText}
           </div>
         }
@@ -213,9 +272,17 @@ export class ChannelOperator extends React.Component {
           <Detail spacer={true} />
         </div>
       }
-      { this.state.expanded && this.state.components.length > 0 &&
+      { this.state.expanded && this.state.primaryComponent.failureReason &&
+        <div className="co-cluster-updates__message-box co-cluster-updates__message-box--failed">
+          <span className="co-cluster-updates__update-failed-text">
+           Update cannot proceed : {this.state.primaryComponent.failureReason}
+          </span>
+        </div>
+      }
+      { this.state.expanded && this.state.primaryComponent && this.state.components.length > 0 &&
         <div className="co-cluster-updates__breakdown">
-          { this.state.components.map((component, index) => <BreakdownComponent state={component.state} text={component.text} logsUrl={component.logsUrl} key={index} /> )}
+          <BreakdownComponent component={this.state.primaryComponent} cols={operatorCols} isPrimaryComponent={true}/>
+          { this.state.components.map((component, index) => <BreakdownComponent component={component} key={index} cols={operatorCols} isPrimaryComponent={false} /> )}
         </div>
       }
     </div>;
