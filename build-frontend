@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
 pushd frontend
-npm install
-npm run gulp
+yarn install
+yarn run gulp
 popd

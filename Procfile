@@ -1,2 +1,2 @@
-frontend: cd frontend/ && npm run dev
+frontend: cd frontend/ && yarn run dev
 server: ./bin/bridge

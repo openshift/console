@@ -18,7 +18,7 @@ Console consists of a frontend webapp and a backend service which serves the fol
 
 ### Deps:
 
-1. nodejs >= 6.0 & npm >= 3 (use of nvm is recommended)
+1. nodejs >= 6.0 & yarn >= 0.23.1 (use of nvm is recommended)
 2. go >= 1.7 & glide >= 0.12.0
 3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release)
 
@@ -106,17 +106,17 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
-go, glide, nodejs/npm, kubectl
+go, glide, nodejs/yarn, kubectl
 
 ### Frontend Development
 
-All frontend build tasks are defined in `/frontend/gulpfile.js` and are aliased to `npm run gulp`
+All frontend build tasks are defined in `/frontend/gulpfile.js` and are aliased to `yarn run gulp`
 
 #### Install Dependencies
 
-The frontend uses node and npm to compile JS/JSX at build time. To install the build tools and dependencies:
+The frontend uses node and yarn to compile JS/JSX at build time. To install the build tools and dependencies:
 ```
-npm install
+yarn install
 ```
 
 JS is compiled into one of two bundles - one strictly for external dependencies and the other for our source.  These bundles are not commited to git.  You must run this command once, and every time the dependencies change.
@@ -125,7 +125,7 @@ JS is compiled into one of two bundles - one strictly for external dependencies 
 
 The following build task will watch the source code for changes and compile automatically.  You must reload the page!
 ```
-npm run dev
+yarn run dev
 ```
 
 Alternatively you can use the Procfile if you're using [foreman](https://github.com/ddollar/foreman) or [goreman](https://github.com/mattn/goreman),
@@ -195,16 +195,12 @@ Update existing backend dependencies:
 
 Add new frontend dependencies:
 ```
-rm npm-shrinkwrap.json
-npm install --save the-dependency
-npm shrinkwrap
-npm run gulp js-package
+yarn add the-dependency
+yarn run gulp js-package
 ```
 
 Update existing frontend dependencies:
 ```
-rm npm-shrinkwrap.json
-npm install --save the-dependency
-npm shrinkwrap
-npm run gulp js-package
+yarn upgrade
+yarn run gulp js-package
 ```

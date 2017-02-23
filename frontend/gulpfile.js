@@ -37,7 +37,7 @@ gulp.task('set-development', () => {
   process.env.NODE_ENV = 'development';
 });
 
-// Test tasks such as `npm test`
+// Test tasks such as `yarn test`
 // should always run in the test environment
 gulp.task('set-test', () => {
   process.env.NODE_ENV = 'test';
@@ -157,7 +157,7 @@ gulp.task('css-build', ['sass'], () => {
 });
 
 gulp.task('lint', cb => {
-  exec('npm run lint', (err, stdout) => {
+  exec('yarn run lint', (err, stdout) => {
     err && console.log(new PrettyError().render(err));
     console.log(stdout);
     cb(err, stdout);
