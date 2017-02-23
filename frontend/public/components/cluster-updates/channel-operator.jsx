@@ -5,6 +5,7 @@ import {LoadingInline} from '../utils';
 import {configureOperatorChannelModal, configureOperatorStrategyModal} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
+import {SafetyFirst} from '../safety-first';
 
 export const states = {
   FAILED: 'failed',
@@ -34,6 +35,10 @@ export const taskStatuses = {
   'FAILED': 'failed',
   'NOTSTARTED': 'notstarted',
   'RUNNING': 'running'
+};
+
+export const getFailedTypeClassName = (type) => {
+  return _.includes(['Human decision needed', 'Voided warranty'], type) ? 'warning' : 'failed';
 };
 
 export class TaskStatusComponent extends React.Component {
@@ -87,11 +92,11 @@ const BreakdownComponent = ({component, cols, isPrimaryComponent}) => {
   };
 
   return <div className={`co-cluster-updates__breakdown-component col-xs-${cols}`}>
-    <div className="co-cluster-updates__breakdown-step co-cluster-updates__breakdown-header">
+    <div className="co-cluster-updates__breakdown-step">
       {component.taskStatuses.length === 0 && <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
         <span className={classNames('fa fa-fw', componentStateClassName)}></span>
       </div>}
-      <div className="co-cluster-updates__breakdown-text">{headerText}</div>
+      <div className={classNames('co-cluster-updates__breakdown-text', {'co-cluster-updates__breakdown-header' : component.taskStatuses.length})}>{headerText}</div>
     </div>
     { component.taskStatuses.map((taskStatus, index) => <TaskStatusComponent taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> ) }
     { state !== componentStates.PENDING && logsUrl && <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a> }
@@ -130,24 +135,15 @@ Detail.propTypes = {
 // built a little less generic than originally intended, so there
 // is a bit of refactoring to be done when the Container Linux
 // channel gets built.
-export class ChannelOperator extends React.Component {
+export class ChannelOperator extends SafetyFirst{
   constructor(props) {
     super(props);
-    this._isMounted = false;
     this._initialize();
     this._toggleExpand = this._toggleExpand.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     this._initialize(nextProps);
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   _initialize(props = this.props) {
@@ -189,7 +185,7 @@ export class ChannelOperator extends React.Component {
         channelState = states.PAUSED;
       } else if (newState.primaryComponent.pausedSpec) {
         channelState = states.PAUSING;
-      } else if (newState.primaryComponent.failureReason) {
+      } else if (newState.primaryComponent.failureStatus) {
         channelState = states.FAILED;
       } else if (props.config && props.config.triggerUpdate && channelState === states.UPDATE_AVAILABLE) {
         channelState = states.REQUESTED;
@@ -198,7 +194,7 @@ export class ChannelOperator extends React.Component {
 
     newState.state = channelState || states.UP_TO_DATE;
 
-    if (this._isMounted) {
+    if (this.isMounted_) {
       this.setState(newState);
     } else {
       this.state = newState;
@@ -220,6 +216,8 @@ export class ChannelOperator extends React.Component {
   render() {
     let statusText;
     const operatorCols = Math.floor(12/this.state.components.length);
+    const failureStatus = this.state.primaryComponent.failureStatus;
+
     if (this._isState(states.UPDATING)) {
       statusText = <span><span className="co-cluster-updates__breakdown-icon--updating"><span className="fa fa-circle-o-notch fa-spin fa-fw co-cluster-updates__text-icon"></span></span>Updating</span>;
     } else if (this._isState(states.UPDATE_AVAILABLE)) {
@@ -272,10 +270,10 @@ export class ChannelOperator extends React.Component {
           <Detail spacer={true} />
         </div>
       }
-      { this.state.expanded && this.state.primaryComponent.failureReason &&
-        <div className="co-cluster-updates__message-box co-cluster-updates__message-box--failed">
-          <span className="co-cluster-updates__update-failed-text">
-           Update cannot proceed : {this.state.primaryComponent.failureReason}
+      { this.state.expanded && failureStatus &&
+        <div className={`co-cluster-updates__message-box co-cluster-updates__message-box--${getFailedTypeClassName(failureStatus.type)}`}>
+          <span>
+            {failureStatus.type} : {failureStatus.reason}
           </span>
         </div>
       }

@@ -16,17 +16,36 @@ $cluster-updates-width: 800px;
   max-width: $cluster-updates-width;
 }
 
+.co-cluster-updates__breakdown-icon--complete,
+.co-cluster-updates__breakdown-ts-icon--completed,
 .co-cluster-updates__update-available-text {
   color: $cluster-updates-green;
 }
 
+.co-cluster-updates__breakdown-icon--needsattention,
 .co-cluster-updates__needs-attention-text {
   color: $color-orange-warning;
 }
 
+.co-cluster-updates__breakdown-icon--failed,
+.co-cluster-updates__breakdown-ts-icon--failed,
+.co-cluster-updates__breakdown-ts-icon--backoff,
 .co-cluster-updates__update-failed-text {
   color: $color-red-error;
 }
+
+.co-cluster-updates__breakdown-step--pending,
+.co-cluster-updates__breakdown-ts-text--notstarted,
+.co-cluster-updates__breakdown-ts-icon--notstarted {
+  color: $color-grey-text;
+}
+
+.co-cluster-updates__breakdown-icon--updating,
+.co-cluster-updates__breakdown-icon--paused,
+.co-cluster-updates__breakdown-ts-icon--running {
+  color: $color-highlight-blue;
+}
+
 
 .co-cluster-updates__text-icon {
   margin-right: 4px;
@@ -132,36 +151,12 @@ $cluster-updates-width: 800px;
 }
 
 .co-cluster-updates__breakdown-header {
-  font-size: 16px;
-}
-
-.co-cluster-updates__breakdown-step--pending {
-  color: $color-grey-text;
+  font-weight: 600;
 }
 
 .co-cluster-updates__breakdown-icon {
   min-width: 22px;
   width: $cluster-updates-breakdown-icon-width;
-}
-
-.co-cluster-updates__breakdown-icon--updating {
-  color: $color-highlight-blue;
-}
-
-.co-cluster-updates__breakdown-icon--complete {
-  color: $cluster-updates-green;
-}
-
-.co-cluster-updates__breakdown-icon--paused {
-  color: $color-highlight-blue;
-}
-
-.co-cluster-updates__breakdown-icon--failed {
-  color: $color-red-error;
-}
-
-.co-cluster-updates__breakdown-icon--needsattention {
-  color: $color-orange-warning;
 }
 
 .co-cluster-updates__breakdown-text {
@@ -171,27 +166,6 @@ $cluster-updates-width: 800px;
 .co-cluster-updates__breakdown-button {
   margin-top: 25px;
   padding: 7px 16px 4px;
-}
-
-.co-cluster-updates__breakdown-ts-icon--running {
-  color: $color-highlight-blue;
-}
-
-.co-cluster-updates__breakdown-ts-icon--completed {
-  color: $cluster-updates-green;
-}
-
-.co-cluster-updates__breakdown-ts-icon--failed {
-  color: $color-red-error;
-}
-
-.co-cluster-updates__breakdown-ts-icon--backoff {
-  color: $color-red-error;
-}
-
-.co-cluster-updates__breakdown-ts-text--notstarted,
-.co-cluster-updates__breakdown-ts-icon--notstarted {
-  color: $color-grey-text;
 }
 
 .co-cluster-updates__breakdown-ts-error-msg {
@@ -222,13 +196,19 @@ $cluster-updates-width: 800px;
 
 .co-cluster-updates__message-box {
   font-size: 16px;
+  margin-top: 15px;
   padding: 10px;
 }
 
 .co-cluster-updates__message-box--failed {
-  background-color: #ffeaea;
+  background-color: rgba(214, 68, 86, 0.1);
   border: 1px solid $color-red-error;
   color: $color-red-error;
-  margin-top: 15px;
+}
+
+.co-cluster-updates__message-box--warning {
+  background-color: rgba(252, 166, 87, 1);
+  border: 1px solid $color-orange-warning;
+  color: $color-orange-warning;
 }
 

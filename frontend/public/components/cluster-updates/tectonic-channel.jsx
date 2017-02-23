@@ -2,6 +2,7 @@ import React from 'react';
 
 import {MultiFirehose} from '../utils';
 import {ChannelOperator, componentStates} from './channel-operator';
+import {SafetyFirst} from '../safety-first';
 
 const componentNames = {
   'kubernetes': 'Kubernetes',
@@ -16,7 +17,7 @@ const clusterAppVersionName = 'tectonic-cluster';
 // are in use, what state they're in, and what text to display.
 // A similar "channel" would be created for CoreOS Linux to
 // consume & prepare data.
-export class TectonicChannel extends React.Component {
+export class TectonicChannel extends SafetyFirst {
   constructor(props) {
     super(props);
 
@@ -94,9 +95,10 @@ class TectonicChannelWithData extends React.Component {
       targetVersion: component.status.targetVersion,
       pausedSpec: component.spec.paused,
       pausedStatus: component.status.paused,
-      failureReason: _.get(component.status, 'failureReason', null),
+      failureStatus: _.get(component.status, 'failureStatus', null),
       taskStatuses: _.get(component.status, 'taskStatuses', [])
     };
+
     return components;
   }
 
@@ -110,7 +112,7 @@ class TectonicChannelWithData extends React.Component {
         const name = componentNames[key] || key;
         const headerText = <span>{name} {component.currentVersion} &#10141; {component.desiredVersion || component.targetVersion}</span>;
 
-        if (component.failureReason) {
+        if (component.failureStatus) {
           state = componentStates.FAILED;
         } else if (component.targetVersion) {
           // logsUrl = '#'; TODO: set this url
@@ -132,7 +134,7 @@ class TectonicChannelWithData extends React.Component {
           pausedSpec: component.pausedSpec,
           pausedStatus: component.pausedStatus,
           taskStatuses: component.taskStatuses,
-          failureReason: component.failureReason,
+          failureStatus: component.failureStatus,
           state,
           logsUrl,
           headerText
