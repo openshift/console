@@ -53,7 +53,7 @@ class BaseLabelsModal extends PromiseComponent {
       <ModalTitle>Modify {description || `${kind.label} Labels`}</ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">
-          <div className="col-sm-12">{message || 'Labels are key/value pairs used to scope and select resources.'}</div>
+          <div className="col-sm-12">{message || 'Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.'}</div>
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
