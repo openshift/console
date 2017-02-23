@@ -41,7 +41,7 @@ class CreateNamespaceModal extends PromiseComponent {
           <label className="control-label">Labels</label>
         </div>
         <div className="modal-body__field">
-          <SelectorInput onChange={labels => this.onLabels(labels)} tags={[]} />
+          <SelectorInput labelClassName="co-text-namespace" onChange={labels => this.onLabels(labels)} tags={[]} />
         </div>
       </ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
