@@ -5,7 +5,6 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { PromiseComponent, ResourceIcon, SelectorInput } from '../utils';
 
 const LABELS_PATH = '/metadata/labels';
-const SELECTOR_PATH = '/spec/selector/matchLabels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
 const NODE_SELECTOR_PATH = '/spec/template/spec/nodeSelector';
 
@@ -75,7 +74,7 @@ export const labelsModal = createModalLauncher((props) => <BaseLabelsModal
 />);
 
 export const podSelectorModal = createModalLauncher((props) => <BaseLabelsModal
-  path={SELECTOR_PATH}
+  path={['replicationcontroller', 'service'].includes(props.kind.id) ? '/spec/selector' : '/spec/selector/matchLabels'}
   isPodSelector={true}
   description="Pod Selector"
   message={`Determines the set of pods targeted by this ${props.kind.label.toLowerCase()}.`}
