@@ -68,35 +68,6 @@ ConfigureOperatorModal.propTypes = {
 
 const configureOperatorModal = createModalLauncher(ConfigureOperatorModal);
 
-export const configureOperatorChannelModal = (props) => {
-  return configureOperatorModal(_.defaults({}, {
-    buttonText: 'Save Channel',
-    message: <div>
-      <p>Select a channel that provides the correct balance of stability and new features.</p>
-      <p>Critical security updates will always be delivered to any vulnerable channels.</p>
-    </div>,
-    path: '/channel',
-    radios: [
-      {
-        value: 'stable',
-        title: <span>Stable <span className="co-no-bold">(recommended)</span></span>,
-        desc: 'Ideal for production and fully supported by CoreOS.'
-      },
-      {
-        value: 'beta',
-        title: 'Beta',
-        desc: 'Test out new features and releases before they are generally available.'
-      },
-      {
-        value: 'alpha',
-        title: 'Alpha',
-        desc: 'Closely tracks current development work and newer features may be unstable.'
-      }
-    ],
-    title: 'Update Strategy'
-  }, props));
-};
-
 export const configureOperatorStrategyModal = (props) => {
   return configureOperatorModal(_.defaults({}, {
     buttonText: 'Save Strategy',

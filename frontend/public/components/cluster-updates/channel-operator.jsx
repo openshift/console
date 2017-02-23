@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {LoadingInline} from '../utils';
-import {configureOperatorChannelModal, configureOperatorStrategyModal} from '../modals';
+import {configureOperatorStrategyModal} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
 
@@ -264,7 +264,7 @@ export class ChannelOperator extends React.Component {
             {this.state.primaryComponent.currentVersion || <LoadingInline />}
           </Detail>
           <Detail title="Channel">
-            <DetailConfig config={this.state.config} field="channel" modal={configureOperatorChannelModal} displayFunction={_.capitalize} />
+            <DetailConfig config={this.state.config} field="channel" displayFunction={_.capitalize} />
           </Detail>
           <Detail title="Strategy">
             <DetailConfig config={this.state.config} field="automaticUpdate" modal={configureOperatorStrategyModal} modalData={{updateAvailable: this._isState(states.UPDATE_AVAILABLE)}} displayFunction={(value) => value ? 'Automatic' : 'Admin Approval'} />
