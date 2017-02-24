@@ -32,7 +32,7 @@ const Liveness = ({liveness}) => {
 
 const Ports = ({ports}) => {
   if (!ports || !ports.length) {
-    return <MsgBox title="No ports have been exposed" detail="Ports allow for traffic to enter this container" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No ports have been exposed" detail="Ports allow for traffic to enter this container" />;
   }
 
   return <table className="table">
@@ -53,7 +53,7 @@ const Ports = ({ports}) => {
 
 const Volumes = ({volumes}) => {
   if (!volumes || !volumes.length) {
-    return <MsgBox title="No volumes have been mounted" detail="Volumes allow data to be shared as files with the pod" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No volumes have been mounted" detail="Volumes allow data to be shared as files with the pod" />;
   }
 
   return <table className="table">
@@ -76,7 +76,7 @@ const Volumes = ({volumes}) => {
 
 const Env = ({env}) => {
   if (!env || !env.length) {
-    return <MsgBox title="No variables have been set" detail="An easy way to pass configuration values" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No variables have been set" detail="An easy way to pass configuration values" />;
   }
 
   const value = (e) => {

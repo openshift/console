@@ -24,18 +24,21 @@ export const EmptyBox = ({label}) => <Box>
   <div className="cos-text-center">No {label} Found</div>
 </Box>;
 
-export const MsgBox = ({title, detail}) => <Box className="co-sysevent-stream__status-box-empty">
+export const MsgBox = ({title, detail, className}) => <Box className={className}>
   {title && <div className="cos-status-box__title">{title}</div>}
   {detail && <div className="cos-text-center cos-status-box__detail">{detail}</div>}
 </Box>;
 
+export const AccessDenied = () => <Box className="cos-text-center">
+  <img className="cos-status-box__access-denied-icon" src="static/imgs/restricted-sign.svg" />
+  <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy" />
+</Box>;
 
 export const StatusBox = (props) => {
-  const {loadError, loaded} = props;
-  const label = props.label;
+  const {label, loadError, loaded} = props;
 
   if (loadError) {
-    return <LoadError label={label} loadError={loadError} />;
+    return _.get(loadError, 'response.status') === 403 ? <AccessDenied /> : <LoadError label={label} />;
   }
 
   if (!loaded) {
