@@ -5,7 +5,7 @@ import {DetailsPage, ListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import {Cog, LabelList, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
+const menuActions = Cog.factory.common;
 
 const ConfigMapHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Config Map Name</div>

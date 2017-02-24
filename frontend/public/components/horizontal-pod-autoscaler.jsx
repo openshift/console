@@ -29,7 +29,7 @@ const ModifyHpaTargets = (kind, obj) => ({
   }),
 });
 
-const menuActions = [ModifyHpaTargets, ModifyHpaReplicas, Cog.factory.ModifyLabels, Cog.factory.Delete];
+const menuActions = [ModifyHpaTargets, ModifyHpaReplicas, ...Cog.factory.common];
 
 const currentReplicas = (hpa) => hpa.status.currentReplicas || 0;
 const desiredReplicas = (hpa) => hpa.status.desiredReplicas || 0;
