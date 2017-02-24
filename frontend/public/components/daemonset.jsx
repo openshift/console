@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage} from './utils';
 
-const menuActions = _.at(Cog.factory, ['ModifyPodSelector', 'ModifyNodeSelector', 'ModifyLabels', 'Delete']);
+const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
 
 const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>

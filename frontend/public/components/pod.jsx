@@ -9,7 +9,7 @@ import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIco
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {PodLogs} from './pod-logs';
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
+const menuActions = Cog.factory.common;
 
 export const readiness = ({status}) => {
   if (_.isEmpty(status.conditions)) {

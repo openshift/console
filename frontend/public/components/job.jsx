@@ -13,7 +13,7 @@ const ModifyJobParallelism = (kind, obj) => ({
     resource: obj,
   }),
 });
-const menuActions = [ModifyJobParallelism, Cog.factory.ModifyLabels, Cog.factory.Delete];
+const menuActions = [ModifyJobParallelism, ...Cog.factory.common];
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">Name</div>

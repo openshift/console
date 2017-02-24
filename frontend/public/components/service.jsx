@@ -3,7 +3,7 @@ import React from 'react';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, navFactory, LabelList, ResourceCog, ResourceHeading, ResourceIcon, ResourceLink, Selector, Timestamp} from './utils';
 
-const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyLabels, Cog.factory.Delete];
+const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
 
 const ServiceIPLink = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {

@@ -8,7 +8,7 @@ import {configureReplicaCountModal, configureUpdateStrategyModal, configureRevis
 import {DetailsPage, ListPage, makeList} from './factory';
 import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
-const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, ModifyLabels, Edit, Delete} = Cog.factory;
+const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
 
 const RevisionHistory = (kind, deployment) => ({
   label: 'Revision History...',
@@ -22,13 +22,11 @@ const UpdateStrategy = (kind, deployment) => ({
 
 const menuActions = [
   ModifyCount,
-  ModifyPodSelector,
-  ModifyNodeSelector,
-  ModifyLabels,
   RevisionHistory,
   UpdateStrategy,
-  Edit,
-  Delete,
+  ModifyPodSelector,
+  ModifyNodeSelector,
+  ...common,
 ];
 
 export class Details extends SafetyFirst {

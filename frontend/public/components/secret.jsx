@@ -6,7 +6,7 @@ import ConfigMapAndSecretData from './configmap-and-secret-data';
 import {Cog, LabelList, ResourceCog, ResourceLink, Timestamp, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.Delete];
+const menuActions = Cog.factory.common;
 
 const SecretHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Secret Name</div>

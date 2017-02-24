@@ -1,17 +1,9 @@
 import React from 'react';
 
 import {DetailsPage, ListPage, makeList} from './factory';
+import { replicaSetMenuActions } from './replicaset';
 import {Header, rowOfKind} from './workloads';
-import {Cog, navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
-
-const menuActions = _.at(Cog.factory, [
-  'ModifyCount',
-  'ModifyPodSelector',
-  'ModifyNodeSelector',
-  'ModifyLabels',
-  'Edit',
-  'Delete',
-]);
+import {navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
 
 const Details = (replicationController) => <div>
   <ResourceHeading resourceName="Replication Controller" />
@@ -31,9 +23,9 @@ const Details = (replicationController) => <div>
 
 const {details, editYaml, pods, events} = navFactory;
 const pages = [details(Details), editYaml(), pods(), events()];
-const ReplicationControllersDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const ReplicationControllersDetailsPage = props => <DetailsPage pages={pages} menuActions={replicaSetMenuActions} {...props} />;
 
-const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller', menuActions));
+const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller', replicaSetMenuActions));
 const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;
 
 export {ReplicationControllersList, ReplicationControllersPage, ReplicationControllersDetailsPage};

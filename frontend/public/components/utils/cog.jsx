@@ -105,6 +105,9 @@ Cog.factory = {
   }),
 };
 
+// The common menu actions that most resource share
+Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.Edit, Cog.factory.Delete];
+
 export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
   options={actions.map(a => a(kindObj(kind), resource))}
   key={resource.metadata.uid}
