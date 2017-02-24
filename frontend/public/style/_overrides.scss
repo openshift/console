@@ -264,14 +264,24 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .navigation-container__list {
+  margin: -10px 0 10px 0;
+  overflow-y: hidden;
   padding-left: 0;
+  transition: height 0.25s;
+}
+
+.navigation-container__section, .navigation-container__section__separator {
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  color: white;
 }
 
 .navigation-container__section {
-  border-bottom: 1px solid rgba(255,255,255,.1);
-  padding: 10px 0;
   font-weight: 300;
-  color: white;
+}
+
+.navigation-container__section__separator {
+  margin: 8px 20px 8px 40px;
+  padding: 0;
 }
 
 .navigation-container__section__title {
@@ -283,20 +293,21 @@ tags-input .autocomplete .suggestion-item em {
   cursor: pointer;
 
   width: 100%;
-  padding: 10px 0px 10px 13px;
+  padding: 20px 0px 20px 13px;
   span {
     display: inline-block;
     margin: 0 15px 0 11px;
   }
   img {
-    width: 22px;
-    margin-right: 5px;
+    width: 20px;
+    margin-right: 7px;
   }
 }
 
 .navigation-container__section__title__icon {
   margin-right: 10px;
   vertical-align: middle;
+  width: 18px;
 }
 
 .navigation-container__section--logo {
@@ -316,6 +327,5 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .co-m-message--success {
-    background-color: $color-green-success;
-  }
-
+  background-color: $color-green-success;
+}
