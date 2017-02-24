@@ -43,7 +43,7 @@ export class DetailConfig extends SafetyFirst {
         displayText = this.props.displayFunction(displayText);
       }
       const outdatedClass = this.state.outdated ? 'text-muted': null;
-      return <a onClick={this._openModal} className={classNames('co-m-modal-link', outdatedClass)}>{displayText}</a>;
+      return this.props.modal ? <a onClick={this._openModal} className={classNames('co-m-modal-link', outdatedClass)}>{displayText}</a> : <span>{displayText}</span>;
     }
     return <LoadingInline />;
   }
@@ -51,7 +51,7 @@ export class DetailConfig extends SafetyFirst {
 DetailConfig.propTypes = {
   config: React.PropTypes.object,
   displayFunction: React.PropTypes.func,
-  modal: React.PropTypes.func.isRequired,
+  modal: React.PropTypes.func,
   modalData: React.PropTypes.object,
   field: React.PropTypes.string.isRequired
 };
