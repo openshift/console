@@ -14,6 +14,11 @@ const validateStatus = (response) => {
   if (response.status === 401) {
     authSvc.logout(window.location.pathname);
   }
+  if (response.status === 403) {
+    const error = new Error('Access denied due to cluster policy.');
+    error.response = response;
+    throw error;
+  }
 
   const contentType = response.headers.get('content-type');
   if (!contentType || contentType.indexOf('json') === -1) {
