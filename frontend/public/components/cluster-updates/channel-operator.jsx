@@ -88,7 +88,7 @@ const BreakdownComponent = ({component, cols, isPrimaryComponent}) => {
     'fa-circle-o-notch fa-spin': state === componentStates.UPDATING,
     'fa-exclamation-triangle': state === componentStates.NEEDS_ATTENTION,
     'fa-check-circle': state === componentStates.COMPLETE,
-    'fa-ban': componentStates.FAILED
+    'fa-ban': state === componentStates.FAILED
   };
 
   return <div className={`co-cluster-updates__breakdown-component col-xs-${cols}`}>
