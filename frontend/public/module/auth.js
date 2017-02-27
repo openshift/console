@@ -36,7 +36,10 @@ export const authSvc = {
         window.location.href = url;
       })
       .catch(() => {
-        window.location.href = `${window.SERVER_FLAGS.loginErrorURL}?error_type=auth&error=logout_error`;
+        // Avoid redirect loops
+        if (window.location.href.indexOf(window.SERVER_FLAGS.loginErrorURL) === -1) {
+          window.location.href = `${window.SERVER_FLAGS.loginErrorURL}?error_type=auth&error=logout_error`;
+        }
       });
   },
 
