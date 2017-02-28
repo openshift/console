@@ -5,15 +5,12 @@ import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
 import {getActiveNamespace} from '../ui/ui-actions';
+import {SafetyFirst} from './safety-first';
 import {Dropdown, ResourceLink, Box, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
 import {wsFactory} from '../module/ws-factory';
 
 const maxMessages = 500;
 const flushInterval = 500;
-
-const eventID = (se) => {
-  return `U:${se.metadata.uid}`;
-};
 
 // Predicate function to filter by event "category" (info, error, or all)
 const categoryFilter = (category, {reason}) => {
@@ -29,19 +26,14 @@ const kindFilter = (kind, {involvedObject}) => {
   return kind === 'all' || involvedObject.kind.toLowerCase() === kind;
 };
 
-
-class SysEvent extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    return !(nextProps.metadata.uid && nextProps.metadata.uid === this.props.metadata.uid && nextProps.count === this.props.count);
-  }
-
+class SysEvent extends React.PureComponent {
   render() {
     const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
     const obj = this.props.involvedObject;
     const tooltipMsg = `${this.props.reason} (${obj.kind.toLowerCase()})`;
 
     return (
-      <div key={eventID(this.props)} className={klass}>
+      <div className={klass}>
         <div className="co-sysevent__icon-box">
           <i className="co-sysevent-icon" title={tooltipMsg} />
           <div className="co-sysevent__icon-line"></div>
@@ -105,29 +97,20 @@ export class EventStreamPage extends React.Component {
   }
 }
 
-export class EventStream extends React.Component {
+export class EventStream extends SafetyFirst {
   constructor (props) {
     super(props);
-    this.ws = null;
-    this.oldestTimestamp = new Date();
-    this.messages = [];
-    this.flushStateUpdates = _.throttle(this.flushStateUpdates, flushInterval);
+    this.messages = {};
+    this.flushMessages = _.throttle(this.flushMessages, flushInterval);
     this.state = {
       active: true,
-      messages: [],
+      messages: {},
       error: null,
       loading: true,
-      oldestTimestamp: this.oldestTimestamp,
+      oldestTimestamp: new Date(),
     };
     this.boundToggleStream = this.toggleStream.bind(this);
-  }
 
-  componentWillUnmount() {
-    wsFactory.destroy('sysevents');
-    this.flushStateUpdates.cancel();
-  }
-
-  componentDidMount () {
     const params = {
       ns: getActiveNamespace(),
       fieldSelector: this.props.fieldSelector,
@@ -143,99 +126,67 @@ export class EventStream extends React.Component {
       bufferMax: maxMessages,
     })
     .onmessage((data) => {
-      if (data.object.message) {
-        data.object.message = data.object.message.replace(/\\"/g, '\'');
-      }
-
-      data.sortTimestamp = 1 - new Date(data.object.lastTimestamp);
+      const uid = data.object.metadata.uid;
 
       switch (data.type) {
         case 'ADDED':
-          this.insertMessage(data);
-          break;
         case 'MODIFIED':
-          this.updateMessage(data);
+          if (this.messages[uid] && this.messages[uid].count > data.object.count) {
+            // We already have a more recent version of this message stored, so skip this one
+            return;
+          }
+          if (data.object.message) {
+            data.object.message = data.object.message.replace(/\\"/g, '\'');
+          }
+          this.messages[uid] = data.object;
           break;
         case 'DELETED':
-          this.deleteMessage(data);
+          delete this.messages[uid];
           break;
         default:
           // eslint-disable-next-line no-console
           console.error(`UNHANDLED EVENT: ${data.type}`);
           return;
       }
-
-      if (this.messages.length > maxMessages) {
-        this.messages = this.messages.slice(0, maxMessages);
-      }
-
-      const lastTimestamp = new Date(data.object.lastTimestamp);
-      if (this.oldestTimestamp > lastTimestamp) {
-        this.oldestTimestamp = lastTimestamp;
-      }
-
-      this.flushStateUpdates();
+      this.flushMessages();
     })
     .onopen(() => {
-      this.setState({
-        error: false,
-        loading: false,
-      });
-      this.messages = [];
-      this.flushStateUpdates();
+      this.setState({error: false, loading: false, messages: {}});
     })
     .onclose(() => {
-      this.messages = [];
-      this.flushStateUpdates();
+      this.setState({messages: {}});
     })
     .onerror(() => {
-      this.setState({ error: true });
-      this.messages = [];
-      this.flushStateUpdates();
+      this.setState({error: true, messages: {}});
     });
   }
 
-  findMessageIndex(uid) {
-    return _.findIndex(this.messages, message => message.object.metadata.uid === uid);
-  }
-
-  insertMessage(data) {
-    const insertIndex = _.sortedIndexBy(this.messages, data, function(o) { return o.sortTimestamp; });
-
-    this.messages.splice(insertIndex, 0, data);
-  }
-
-  updateMessage(data) {
-    const existingMessageIndex = this.findMessageIndex(data.object.metadata.uid);
-    if (existingMessageIndex >= 0) {
-      this.messages.splice(existingMessageIndex, 1, data);
-    } else {
-      this.insertMessage(data);
-    }
-  }
-
-  deleteMessage(data) {
-    const existingMessageIndex = this.findMessageIndex(data.object.metadata.uid);
-    if (existingMessageIndex >= 0) {
-      this.messages.splice(existingMessageIndex, 1);
-    }
+  componentWillUnmount() {
+    super.componentWillUnmount();
+    wsFactory.destroy('sysevents');
   }
 
   // Messages can come in extremely fast when the buffer flushes.
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
-  flushStateUpdates() {
-    this.setState({
-      messages: this.messages,
-      oldestTimestamp: this.oldestTimestamp
-    });
+  flushMessages() {
+    if (!_.isEmpty(this.messages)) {
+      // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
+      // the same timestamp
+      const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
+      const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
+      sorted.splice(maxMessages);
+      this.setState({messages: sorted, oldestTimestamp});
+
+      // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
+      this.messages = _.keyBy(sorted, 'metadata.uid');
+    }
   }
 
   filterMessages () {
     const {kind, category, filter} = this.props;
 
-    const f = (e) => {
-      const obj = e.object;
+    const f = (obj) => {
       if (category && !categoryFilter(category, obj)) {
         return false;
       }
@@ -248,10 +199,7 @@ export class EventStream extends React.Component {
       return true;
     };
 
-    return _.chain(this.state.messages)
-      .filter(f)
-      .value()
-    ;
+    return _.filter(this.state.messages, f);
   }
 
   toggleStream () {
@@ -265,14 +213,9 @@ export class EventStream extends React.Component {
   }
 
   render () {
-    const {
-      active,
-      error,
-      loading,
-      messages,
-    } = this.state;
-
-    const filteredMessages = this.filterMessages().map(m => <SysEvent {...m.object} key={eventID(m.object)} />);
+    const {active, error, loading, messages} = this.state;
+    const filteredMessages = this.filterMessages();
+    const count = filteredMessages.length;
     let sysEventStatus;
 
     if (messages.length === 0 && this.ws && this.ws.bufferSize() === 0) {
@@ -284,12 +227,12 @@ export class EventStream extends React.Component {
         </Box>
       );
     }
-    if (messages.length > 0 && filteredMessages.length === 0) {
+    if (messages.length > 0 && count === 0) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-status-box__title">No Matching Events</div>
           <div className="cos-text-center cos-status-box__detail">
-            {messages.length} events exist, but none match the current filter
+            {messages.length}{messages.length >= maxMessages && '+'} events exist, but none match the current filter
           </div>
         </Box>
       );
@@ -313,7 +256,6 @@ export class EventStream extends React.Component {
       statusBtnTxt = <span>Event stream is paused.</span>;
     }
 
-    const count = filteredMessages.length;
     const klass = classNames('co-sysevent-stream__timeline', {
       'co-sysevent-stream__timeline--empty': !messages.length || !count
     });
@@ -334,8 +276,7 @@ export class EventStream extends React.Component {
             There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
           </div>
         </div>
-        { filteredMessages }
-
+        { filteredMessages.map(m => <SysEvent {...m} key={m.metadata.uid} />) }
         { sysEventStatus }
       </div>
     );
