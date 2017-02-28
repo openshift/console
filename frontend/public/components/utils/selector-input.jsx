@@ -72,6 +72,9 @@ export class SelectorInput extends React.Component {
   render () {
     const {inputValue, isInputValid, tags} = this.state;
 
+    // Keys that add tags: Tab, enter, space, comma
+    const addKeys = [9, 13, 32, 188];
+
     // Backspace deletes tags, but not if there is text being edited in the input field
     const removeKeys = inputValue.length ? [] : [8];
 
@@ -93,7 +96,7 @@ export class SelectorInput extends React.Component {
 
     return <div className="co-m-selector-input">
       <tags-input>
-        <TagsInput className="tags" value={tags} removeKeys={removeKeys} inputProps={inputProps} renderTag={renderTag} onChange={this.handleChange.bind(this)} />
+        <TagsInput className="tags" value={tags} addKeys={addKeys} removeKeys={removeKeys} inputProps={inputProps} renderTag={renderTag} onChange={this.handleChange.bind(this)} addOnPaste={true} />
       </tags-input>
     </div>;
   }
