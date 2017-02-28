@@ -67,8 +67,10 @@ export class Dropdown extends DropdownMixin {
 
     const buttonTitle = noSelection || selectedKey === undefined ? title : items[selectedKey];
     let button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
-      {buttonTitle}&nbsp;&nbsp;
-      <span className="caret"></span>
+      <div className="btn--dropdown__content-wrap">
+        {buttonTitle}&nbsp;&nbsp;
+        <span className="caret"></span>
+      </div>
     </button>;
 
     if (noButton) {
