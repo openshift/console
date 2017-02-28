@@ -11,10 +11,14 @@
   display: block;
 }
 
-
 .btn--dropdown {
   color: black;
   background-color: white;
+
+  &__content-wrap {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .btn--actions {
@@ -41,8 +45,6 @@
   }
 
   .btn--dropdown {
-    display: flex;
-    align-items: center;
     margin-right: 5px;
   }
 }
