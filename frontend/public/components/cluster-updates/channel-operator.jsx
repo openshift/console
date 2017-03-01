@@ -93,9 +93,9 @@ const BreakdownComponent = ({component, cols, isPrimaryComponent}) => {
 
   return <div className={`co-cluster-updates__breakdown-component col-xs-${cols}`}>
     <div className="co-cluster-updates__breakdown-step">
-      {component.taskStatuses && component.taskStatuses.length === 0 && <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
+      <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
         <span className={classNames('fa fa-fw', componentStateClassName)}></span>
-      </div>}
+      </div>
       <div className={classNames('co-cluster-updates__breakdown-text', {'co-cluster-updates__breakdown-header' : component.taskStatuses && component.taskStatuses.length})}>{headerText}</div>
     </div>
     { _.map(component.taskStatuses, (taskStatus, index) => <TaskStatusComponent taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> ) }
