@@ -93,12 +93,12 @@ const BreakdownComponent = ({component, cols, isPrimaryComponent}) => {
 
   return <div className={`co-cluster-updates__breakdown-component col-xs-${cols}`}>
     <div className="co-cluster-updates__breakdown-step">
-      {component.taskStatuses.length === 0 && <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
+      {component.taskStatuses && component.taskStatuses.length === 0 && <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
         <span className={classNames('fa fa-fw', componentStateClassName)}></span>
       </div>}
-      <div className={classNames('co-cluster-updates__breakdown-text', {'co-cluster-updates__breakdown-header' : component.taskStatuses.length})}>{headerText}</div>
+      <div className={classNames('co-cluster-updates__breakdown-text', {'co-cluster-updates__breakdown-header' : component.taskStatuses && component.taskStatuses.length})}>{headerText}</div>
     </div>
-    { component.taskStatuses.map((taskStatus, index) => <TaskStatusComponent taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> ) }
+    { _.map(component.taskStatuses, (taskStatus, index) => <TaskStatusComponent taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> ) }
     { state !== componentStates.PENDING && logsUrl && <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a> }
   </div>;
 };
@@ -152,10 +152,17 @@ export class ChannelOperator extends SafetyFirst{
       state: states.LOADING,
       updateChannel: null,
       components: {},
-      updateStrategy: null
+      updateStrategy: null,
+      allComponents: null
     });
 
     newState.primaryComponent = _.get(newState.components, props.primaryComponent) || {};
+
+    newState.allComponents = Object.keys(newState.components).reduce((components, key) => {
+      components.push(newState.components[key]);
+      return components;
+    }, []);
+
     newState.components = Object.keys(newState.components).reduce((components, key) => {
       if (key !== props.primaryComponent) {
         components.push(newState.components[key]);
@@ -163,7 +170,7 @@ export class ChannelOperator extends SafetyFirst{
       return components;
     }, []);
 
-    const aggregateState = newState.components.reduce((state, component) => {
+    const aggregateState = newState.allComponents.reduce((state, component) => {
       state[component.state] = state[component.state] || 0;
       state[component.state] += 1;
       return state;
@@ -193,7 +200,6 @@ export class ChannelOperator extends SafetyFirst{
     }
 
     newState.state = channelState || states.UP_TO_DATE;
-
     if (this.isMounted_) {
       this.setState(newState);
     } else {
@@ -280,7 +286,7 @@ export class ChannelOperator extends SafetyFirst{
       { this.state.expanded && this.state.primaryComponent && this.state.components.length > 0 &&
         <div className="co-cluster-updates__breakdown">
           <BreakdownComponent component={this.state.primaryComponent} cols={operatorCols} isPrimaryComponent={true}/>
-          { this.state.components.map((component, index) => <BreakdownComponent component={component} key={index} cols={operatorCols} isPrimaryComponent={false} /> )}
+          { _.map(this.state.components, (component, index) => <BreakdownComponent component={component} key={index} cols={operatorCols} isPrimaryComponent={false} /> )}
         </div>
       }
     </div>;
