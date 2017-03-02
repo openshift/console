@@ -91,7 +91,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
           <dd><Timestamp timestamp={hpa.metadata.creationTimestamp} /></dd>
           <dt>Allowed Range</dt>
           <dd>
-            <a href="#" onClick={ModifyHpaReplicas(kindObj('horizontalpodautoscaler'), hpa).callback}>
+            <a onClick={ModifyHpaReplicas(kindObj('horizontalpodautoscaler'), hpa).callback}>
               {hpa.spec.minReplicas || '1'}-{hpa.spec.maxReplicas || '1'} replicas
             </a>
             &nbsp;<i className="text-muted fa fa-angle-right" />
@@ -113,7 +113,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
             <tr>
               <td>Average CPU</td>
               <td>
-                <a href="#" onClick={ModifyHpaTargets(kindObj('horizontalpodautoscaler'), hpa).callback}>
+                <a onClick={ModifyHpaTargets(kindObj('horizontalpodautoscaler'), hpa).callback}>
                   {_.get(hpa, 'spec.cpuUtilization.targetPercentage') || '-'}%
                 </a>
                 &nbsp;<i className="text-muted fa fa-angle-right" />
