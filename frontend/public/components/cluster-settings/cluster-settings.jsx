@@ -6,6 +6,7 @@ import {NavTitle, DocumentationSidebar} from '../utils';
 import {ClusterUpdates} from '../cluster-updates/cluster-updates';
 import {LicenseSetting} from './license-setting';
 import {LDAPSetting} from './ldap';
+import {CertsInfoContainer} from './certs-info';
 import {SafetyFirst} from '../safety-first';
 import {FLAGS, connectToFlags} from '../../features';
 
@@ -40,15 +41,8 @@ class ClusterSettingsPage_ extends SafetyFirst {
           <h1 className="co-p-cluster--heading">General</h1>
           <LicenseSetting />
           <LDAPSetting />
+          <CertsInfoContainer />
         </div>
-        {/*<div className="co-m-pane__body">
-          <h1 className="co-p-cluster--heading">Tectonic Console</h1>
-          <p>Console is how you and your users interact with your Tectonic cluster and view the status and health of your applications.</p>
-        </div>
-        <div className="co-m-pane__body">
-          <h1 className="co-p-cluster--heading">Tectonic Identity</h1>
-          <p>Identity is the Tectonic component that manages user accounts, resetting password, etc. Delegation to other authentication systems, such as Google OAUTH or a corporate LDAP environment is supported.</p>
-        </div>*/}
       </div>
       <DocumentationSidebar version={version} />
     </div>;

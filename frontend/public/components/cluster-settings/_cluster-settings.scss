@@ -112,3 +112,15 @@
   color: #52A3D9;
 }
 
+.certs-info-exp {
+  display: inline-block;
+}
+
+.certs-info-cert {
+  padding-bottom: 5px;
+  .co-resource-link {
+    .co-m-resource-icon {
+      margin: 0 4px 0 0;
+    }
+  }
+}
