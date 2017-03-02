@@ -1,14 +1,12 @@
-package certs
+package server
 
 import (
 	"testing"
-	"time"
 )
 
-func TestParseCert(t *testing.T) {
-
+func TestParseCertExpiration(t *testing.T) {
 	const shortForm = "2006-Jan-02"
-	testCertExpiration, _ := time.Parse(shortForm, "2014-May-29")
+	testCertExpiration := int64(1401321600)
 	tests := []struct {
 		name string
 		cert []byte
@@ -68,41 +66,30 @@ yE+vPxsiUkvQHdO2fojCkY8jg70jxM+gu59tPDNbw3Uh/2Ij310FgTHsnGQMyA==
 	for _, tt := range tests {
 		if tt.name == "valid cert" {
 			t.Run(tt.name, func(t *testing.T) {
-
-				expirationDate, err := ParseCert(tt.cert)
-
+				expirationDate, err := parseCertExpiration(tt.cert)
 				if err != nil {
 					t.Error("Expected no error in parsing cert, got error:", err)
 				}
-
 				if expirationDate != testCertExpiration {
 					t.Error("Expected testCertExpiration, got ", expirationDate)
 				}
-
 			})
 		}
 
 		if tt.name == "invalid cert" {
 			t.Run(tt.name, func(t *testing.T) {
-
-				_, err := ParseCert(tt.cert)
-
+				_, err := parseCertExpiration(tt.cert)
 				if err == nil {
 					t.Error("Expected error in parsing cert, did not get an error:")
 				}
-
 			})
 		}
-
 	}
-
 }
 
 func TestReadCert(t *testing.T) {
-	_, err := ReadCert("")
-
+	_, err := readCert("")
 	if err == nil {
 		t.Error("Expected error in reading cert, did not get an error")
 	}
-
 }
