@@ -3,35 +3,48 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
-import { history } from './utils';
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
-import { formatNamespaceRoute } from '../ui/ui-actions';
+import { formatNamespaceRoute, actions as UIActions } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '');
-const isActive = href => stripNS(history.getCurrentLocation().pathname).indexOf(stripNS(href)) === 0;
 
 const stateToProps = state => {
   const props = featuresStateToProps(Object.keys(FLAGS), state);
   props.activeNamespace = state.UI.get('activeNamespace');
+  props.activeNavSectionId = state.UI.get('activeNavSectionId');
+  props.pathname = state.UI.get('location');
   return props;
 };
 
-const NavLink = connect(stateToProps)(
-({name, href, resource, activeNamespace, flags, required=null, onClick=null}) => {
-  if (required && !flags[required]) {
-    return null;
-  }
-  const href_ = resource ? formatNamespaceRoute(activeNamespace, resource) : href;
-  const klass = classNames('co-m-nav-link', {active: isActive(href_)});
+const actions = {openSection: UIActions.setActiveNavSectionId};
 
-  return <li className={klass} key={href_}>
-    <Link to={href_} onClick={e => {
-      if (onClick) {
-        return onClick(e);
-      }
-    }}>{name}</Link>
-  </li>;
+const NavLink = connect(stateToProps, actions)(
+class NavLink_ extends React.Component {
+  componentWillMount () {
+    const {openSection, sectionId, href, resource, activeNamespace, pathname} = this.props;
+    this.href_ = resource ? formatNamespaceRoute(activeNamespace, resource) : href;
+    this.isActive = pathname && stripNS(pathname).indexOf(stripNS(this.href_)) === 0;
+    if (this.isActive) {
+      openSection(sectionId);
+    }
+  }
+
+  render () {
+    const {name, flags, required = null, onClick = null} = this.props;
+    if (required && !flags[required]) {
+      return null;
+    }
+    const klass = classNames('co-m-nav-link', {active: this.isActive});
+
+    return <li className={klass} key={this.href_}>
+      <Link to={this.href_} onClick={e => {
+        if (onClick) {
+          return onClick(e);
+        }
+      }}>{name}</Link>
+    </li>;
+  }
 });
 
 const logout = e => {
@@ -52,70 +65,64 @@ const NavSection = ({isOpen, icon, img, text, onClick_, children}) => {
       {img && <img src={img} />}
       {text}
     </div>
-    <ul className="navigation-container__list" ref={setListHeight} key={history.getCurrentLocation().pathname}>{children}</ul>
+    <ul className="navigation-container__list" ref={setListHeight}>{children}</ul>
   </div>;
 };
 
-export class Nav extends React.Component {
-  constructor (props) {
-    super(props);
-    this.state = {openId: 'workloads'};
-  }
+export const Nav = connect(stateToProps, actions)(
+({activeNavSectionId, openSection, pathname}) => {
+  const accordionProps = id => ({
+    id,
+    isOpen: id === activeNavSectionId,
+    onClick_: () => openSection(id),
+  });
 
-  render () {
-    const accordionProps = id => ({
-      id,
-      isOpen: id === this.state.openId,
-      onClick_: () => this.setState({openId: id}),
-    });
-
-    return (
-      <div id="sidebar" className="co-img-bg-cells">
-        <div className="navigation-container">
-          <div className="navigation-container__section navigation-container__section--logo">
-            <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
-          </div>
-
-          <NavSection text="Workloads" icon="fa-folder-open-o" {...accordionProps('workloads')}>
-            <NavLink resource="deployments" name="Deployments" />
-            <NavLink resource="replicasets" name="Replica Sets" />
-            <NavLink resource="replicationcontrollers" name="Replication Controllers" />
-            <NavLink resource="horizontalpodautoscalers" name="Autoscalers" />
-            <div className="navigation-container__section__separator"></div>
-            <NavLink resource="daemonsets" name="Daemon Sets" />
-            <NavLink resource="jobs" name="Jobs" />
-            <NavLink resource="pods" name="Pods" />
-            <NavLink resource="configmaps" name="Config Maps" />
-            <NavLink resource="secrets" name="Secrets" />
-          </NavSection>
-
-          <NavSection text="Routing" img="static/imgs/routing.svg" {...accordionProps('routing')}>
-            <NavLink resource="services" name="Services" />
-            <NavLink resource="ingresses" name="Ingress" />
-          </NavSection>
-
-          <NavSection text="Troubleshooting" icon="fa-life-ring" {...accordionProps('troubleshooting')}>
-            <NavLink resource="search" name="Search" />
-            <NavLink resource="events" name="Events" />
-          </NavSection>
-
-          <NavSection text="Administration" icon="fa-cog" {...accordionProps('admin')}>
-            <NavLink href="namespaces" name="Namespaces" />
-            <NavLink href="nodes" name="Nodes" />
-            <NavLink href="settings/cluster" name="Cluster Settings" />
-            <NavLink resource="serviceaccounts" name="Service Accounts" />
-            <NavLink resource="roles" required="RBAC" name="Roles" />
-            <NavLink resource="rolebindings" required="RBAC" name="Role Bindings" />
-            <NavLink href="clusterroles" required="RBAC" name="Cluster Roles" />
-            <NavLink href="clusterrolebindings" required="RBAC" name="Cluster Role Bindings" />
-          </NavSection>
-
-          {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user" {...accordionProps('account')}>
-            <NavLink href="settings/profile" name="My Account" />
-            <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
-          </NavSection>}
+  return (
+    <div id="sidebar" className="co-img-bg-cells">
+      <div className="navigation-container" key={pathname}>
+        <div className="navigation-container__section navigation-container__section--logo">
+          <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
         </div>
+
+        <NavSection text="Workloads" icon="fa-folder-open-o" {...accordionProps('workloads')}>
+          <NavLink resource="deployments" name="Deployments" sectionId="workloads" />
+          <NavLink resource="replicasets" name="Replica Sets" sectionId="workloads" />
+          <NavLink resource="replicationcontrollers" name="Replication Controllers" sectionId="workloads" />
+          <NavLink resource="horizontalpodautoscalers" name="Autoscalers" sectionId="workloads" />
+          <div className="navigation-container__section__separator"></div>
+          <NavLink resource="daemonsets" name="Daemon Sets" sectionId="workloads" />
+          <NavLink resource="jobs" name="Jobs" sectionId="workloads" />
+          <NavLink resource="pods" name="Pods" sectionId="workloads" />
+          <NavLink resource="configmaps" name="Config Maps" sectionId="workloads" />
+          <NavLink resource="secrets" name="Secrets" sectionId="workloads" />
+        </NavSection>
+
+        <NavSection text="Routing" img="static/imgs/routing.svg" {...accordionProps('routing')}>
+          <NavLink resource="services" name="Services" sectionId="routing" />
+          <NavLink resource="ingresses" name="Ingress" sectionId="routing" />
+        </NavSection>
+
+        <NavSection text="Troubleshooting" icon="fa-life-ring" {...accordionProps('troubleshooting')}>
+          <NavLink resource="search" name="Search" sectionId="troubleshooting" />
+          <NavLink resource="events" name="Events" sectionId="troubleshooting" />
+        </NavSection>
+
+        <NavSection text="Administration" icon="fa-cog" {...accordionProps('admin')}>
+          <NavLink href="namespaces" name="Namespaces" sectionId="admin" />
+          <NavLink href="nodes" name="Nodes" sectionId="admin" />
+          <NavLink href="settings/cluster" name="Cluster Settings" sectionId="admin" />
+          <NavLink resource="serviceaccounts" name="Service Accounts" sectionId="admin" />
+          <NavLink resource="roles" required="RBAC" name="Roles" sectionId="admin" />
+          <NavLink resource="rolebindings" required="RBAC" name="Role Bindings" sectionId="admin" />
+          <NavLink href="clusterroles" required="RBAC" name="Cluster Roles" sectionId="admin" />
+          <NavLink href="clusterrolebindings" required="RBAC" name="Cluster Role Bindings" sectionId="admin" />
+        </NavSection>
+
+        {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user" {...accordionProps('account')}>
+          <NavLink href="settings/profile" name="My Account" sectionId="account" />
+          <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
+        </NavSection>}
       </div>
-    );
-  }
-}
+    </div>
+  );
+});
