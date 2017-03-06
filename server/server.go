@@ -63,6 +63,7 @@ type Server struct {
 	PublicDir           string
 	TectonicVersion     string
 	TectonicLicenseFile string
+	TectonicCACertFile  string
 	Auther              *auth.Authenticator
 	KubectlClientID     string
 
@@ -116,14 +117,18 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	useVersionHandler := s.versionHandler
 	useValidateLicenseHandler := s.validateLicenseHandler
+	useCertsHandler := s.certsHandler
+
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
 		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.validateLicenseHandler))
+		useCertsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.certsHandler))
 	}
+
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
 	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
-
+	mux.HandleFunc("/tectonic/certs", useCertsHandler)
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return http.Handler(mux)
@@ -222,6 +227,26 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 		EntitlementCount: entitlementCount,
 		ErrorMessage:     licenseErrorString,
 	})
+}
+
+type certsInfo struct {
+	CaCert struct {
+		ExpirationDate int64  `json:"expirationDate"`
+		ErrorMessage   string `json:"errorMessage"`
+	} `json:"ca-cert"`
+}
+
+func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
+	info := new(certsInfo)
+	expiration, err := getCertExpiration(s.TectonicCACertFile)
+	info.CaCert.ExpirationDate = expiration
+	if err != nil {
+		info.CaCert.ErrorMessage = err.Error()
+		sendResponse(w, http.StatusInternalServerError, info)
+		return
+	}
+
+	sendResponse(w, http.StatusOK, info)
 }
 
 // Validate that a license should be used, purely based on it being

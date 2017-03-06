@@ -89,6 +89,7 @@ func main() {
 		TectonicVersion:     *fTectonicVersion,
 		BaseURL:             baseURL,
 		TectonicLicenseFile: *fLicenseFile,
+		TectonicCACertFile:  *fCAFile,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
