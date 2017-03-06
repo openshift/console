@@ -93,13 +93,13 @@ const BreakdownComponent = ({component, cols, isPrimaryComponent}) => {
 
   return <div className={`co-cluster-updates__breakdown-component col-xs-${cols}`}>
     <div className="co-cluster-updates__breakdown-step">
-      <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
+      { (state === componentStates.COMPLETE || state === componentStates.PENDING) && <div className={`co-cluster-updates__breakdown-icon co-cluster-updates__breakdown-icon--${state}`}>
         <span className={classNames('fa fa-fw', componentStateClassName)}></span>
-      </div>
-      <div className={classNames('co-cluster-updates__breakdown-text', {'co-cluster-updates__breakdown-header' : component.taskStatuses && component.taskStatuses.length})}>{headerText}</div>
+      </div> }
+      <div className="co-cluster-updates__breakdown-text">{headerText}</div>
     </div>
+    { state !== componentStates.COMPLETE && logsUrl && <div><a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a></div> }
     { _.map(component.taskStatuses, (taskStatus, index) => <TaskStatusComponent taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> ) }
-    { state !== componentStates.PENDING && logsUrl && <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a> }
   </div>;
 };
 BreakdownComponent.propTypes = {
