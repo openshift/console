@@ -50,11 +50,13 @@ export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespac
 
 export const types = {
   setActiveNamespace: 'setActiveNamespace',
+  setActiveNavSectionId: 'setActiveNavSectionId',
   setCurrentLocation: 'setCurrentLocation',
 };
 
 export const actions = {
   [types.setCurrentLocation]: (location, ns) => ({location, ns, type: types.setCurrentLocation}),
+  [types.setActiveNavSectionId]: (id) => ({value: id, type: types.setActiveNavSectionId}),
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {
       namespace = namespace.trim();

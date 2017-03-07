@@ -2,9 +2,11 @@ import Immutable from 'immutable';
 
 import {types} from './ui-actions';
 
-export default (state, action)  => {
+export default (state, action) => {
   if (!state) {
-    return Immutable.Map();
+    return Immutable.Map({
+      activeNavSectionId: 'workloads',
+    });
   }
 
   switch (action.type) {
@@ -15,6 +17,8 @@ export default (state, action)  => {
         state = state.set('activeNamespace', action.ns).set('isActiveNamespaceSet', true);
       }
       return state.set('location', action.location);
+    case types.setActiveNavSectionId:
+      return state.set('activeNavSectionId', action.value);
     default:
       break;
   }

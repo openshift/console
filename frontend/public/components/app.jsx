@@ -44,16 +44,19 @@ const App = ({children}) =>
     <GlobalTooltip />
   </div>;
 
-const onRouteChange = () => {
+const onRouteChange = (prevRoute, nextRoute) => {
   if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
     window.location = window.SERVER_FLAGS.loginURL;
     return;
   }
+  if (nextRoute) {
+    store.dispatch(UIActions.setCurrentLocation(nextRoute.location.pathname, nextRoute.params.ns));
+  }
   analyticsSvc.route(window.location.pathname);
 };
 
-const init = ({location, params}) => {
-  onRouteChange();
+const init = (nextRoute) => {
+  onRouteChange(undefined, nextRoute);
 
   registerNamespaceFriendlyPrefix('configmaps');
   registerNamespaceFriendlyPrefix('daemonsets');
@@ -72,7 +75,6 @@ const init = ({location, params}) => {
   registerNamespaceFriendlyPrefix('serviceaccounts');
   registerNamespaceFriendlyPrefix('services');
 
-  store.dispatch(UIActions.setCurrentLocation(location.pathname, params.ns));
   store.dispatch(k8sActions.getResources());
   store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
   store.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/v1`));
