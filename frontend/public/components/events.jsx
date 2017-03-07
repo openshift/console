@@ -105,7 +105,7 @@ class EventStream_ extends SafetyFirst {
     this.flushMessages = _.throttle(this.flushMessages, flushInterval);
     this.state = {
       active: true,
-      messages: [],
+      sortedMessages: [],
       error: null,
       loading: true,
       oldestTimestamp: new Date(),
@@ -155,13 +155,13 @@ class EventStream_ extends SafetyFirst {
       this.flushMessages();
     })
     .onopen(() => {
-      this.setState({error: false, loading: false, messages: {}});
+      this.setState({error: false, loading: false, sortedMessages: []});
     })
     .onclose(() => {
-      this.setState({messages: {}});
+      this.setState({sortedMessages: []});
     })
     .onerror(() => {
-      this.setState({error: true, messages: {}});
+      this.setState({error: true, sortedMessages: []});
     });
   }
 
@@ -188,7 +188,7 @@ class EventStream_ extends SafetyFirst {
       const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
       const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
       sorted.splice(maxMessages);
-      this.setState({messages: sorted, oldestTimestamp});
+      this.setState({sortedMessages: sorted, oldestTimestamp});
 
       // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
       this.messages = _.keyBy(sorted, 'metadata.uid');
@@ -211,7 +211,7 @@ class EventStream_ extends SafetyFirst {
       return true;
     };
 
-    return _.filter(this.state.messages, f);
+    return _.filter(this.state.sortedMessages, f);
   }
 
   toggleStream () {
@@ -225,12 +225,13 @@ class EventStream_ extends SafetyFirst {
   }
 
   render () {
-    const {active, error, loading, messages} = this.state;
+    const {active, error, loading, sortedMessages} = this.state;
     const filteredMessages = this.filterMessages();
     const count = filteredMessages.length;
+    const allCount = sortedMessages.length;
     let sysEventStatus;
 
-    if (messages.length === 0 && this.ws && this.ws.bufferSize() === 0) {
+    if (allCount === 0 && this.ws && this.ws.bufferSize() === 0) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-text-center cos-status-box__detail">
@@ -239,12 +240,12 @@ class EventStream_ extends SafetyFirst {
         </Box>
       );
     }
-    if (messages.length > 0 && count === 0) {
+    if (allCount > 0 && count === 0) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-status-box__title">No Matching Events</div>
           <div className="cos-text-center cos-status-box__detail">
-            {messages.length}{messages.length >= maxMessages && '+'} events exist, but none match the current filter
+            {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
           </div>
         </Box>
       );
@@ -269,9 +270,9 @@ class EventStream_ extends SafetyFirst {
     }
 
     const klass = classNames('co-sysevent-stream__timeline', {
-      'co-sysevent-stream__timeline--empty': !messages.length || !count
+      'co-sysevent-stream__timeline--empty': !allCount || !count
     });
-    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${messages.length}+ events`;
+    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
     return (
       <div className="co-sysevent-stream">
