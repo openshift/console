@@ -1,10 +1,10 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
-import {getActiveNamespace} from '../ui/ui-actions';
 import {SafetyFirst} from './safety-first';
 import {Dropdown, ResourceLink, Box, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
 import {wsFactory} from '../module/ws-factory';
@@ -97,22 +97,26 @@ export class EventStreamPage extends React.Component {
   }
 }
 
-export class EventStream extends SafetyFirst {
+export const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
+class EventStream_ extends SafetyFirst {
   constructor (props) {
     super(props);
     this.messages = {};
     this.flushMessages = _.throttle(this.flushMessages, flushInterval);
     this.state = {
       active: true,
-      messages: {},
+      messages: [],
       error: null,
       loading: true,
       oldestTimestamp: new Date(),
     };
     this.boundToggleStream = this.toggleStream.bind(this);
+    this.wsInit(props.ns);
+  }
 
+  wsInit (ns) {
     const params = {
-      ns: getActiveNamespace(),
+      ns,
       fieldSelector: this.props.fieldSelector,
     };
 
@@ -161,15 +165,23 @@ export class EventStream extends SafetyFirst {
     });
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     super.componentWillUnmount();
     wsFactory.destroy('sysevents');
+  }
+
+  componentWillReceiveProps (nextProps) {
+    // If the namespace has changed, created a new WebSocket with the new namespace
+    if (nextProps.ns !== this.props.ns) {
+      wsFactory.destroy('sysevents');
+      this.wsInit(nextProps.ns);
+    }
   }
 
   // Messages can come in extremely fast when the buffer flushes.
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
-  flushMessages() {
+  flushMessages () {
     if (!_.isEmpty(this.messages)) {
       // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
       // the same timestamp
@@ -281,7 +293,7 @@ export class EventStream extends SafetyFirst {
       </div>
     );
   }
-}
+});
 
 EventStream.defaultProps = {
   kind: 'all',
