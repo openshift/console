@@ -10,11 +10,6 @@ export const navFactory = {
     name: 'Overview',
     component: component,
   }),
-  edit: (component = undefined) => ({
-    href: 'edit',
-    name: 'Edit',
-    component: component,
-  }),
   events: (component = undefined) => ({
     href: 'events',
     name: 'Events',
