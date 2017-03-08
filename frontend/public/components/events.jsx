@@ -1,10 +1,10 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
-import {getActiveNamespace} from '../ui/ui-actions';
 import {SafetyFirst} from './safety-first';
 import {Dropdown, ResourceLink, Box, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
 import {wsFactory} from '../module/ws-factory';
@@ -97,22 +97,26 @@ export class EventStreamPage extends React.Component {
   }
 }
 
-export class EventStream extends SafetyFirst {
+export const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
+class EventStream_ extends SafetyFirst {
   constructor (props) {
     super(props);
     this.messages = {};
     this.flushMessages = _.throttle(this.flushMessages, flushInterval);
     this.state = {
       active: true,
-      messages: {},
+      sortedMessages: [],
       error: null,
       loading: true,
       oldestTimestamp: new Date(),
     };
     this.boundToggleStream = this.toggleStream.bind(this);
+    this.wsInit(props.ns);
+  }
 
+  wsInit (ns) {
     const params = {
-      ns: getActiveNamespace(),
+      ns,
       fieldSelector: this.props.fieldSelector,
     };
 
@@ -151,32 +155,40 @@ export class EventStream extends SafetyFirst {
       this.flushMessages();
     })
     .onopen(() => {
-      this.setState({error: false, loading: false, messages: {}});
+      this.setState({error: false, loading: false, sortedMessages: []});
     })
     .onclose(() => {
-      this.setState({messages: {}});
+      this.setState({sortedMessages: []});
     })
     .onerror(() => {
-      this.setState({error: true, messages: {}});
+      this.setState({error: true, sortedMessages: []});
     });
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     super.componentWillUnmount();
     wsFactory.destroy('sysevents');
+  }
+
+  componentWillReceiveProps (nextProps) {
+    // If the namespace has changed, created a new WebSocket with the new namespace
+    if (nextProps.ns !== this.props.ns) {
+      wsFactory.destroy('sysevents');
+      this.wsInit(nextProps.ns);
+    }
   }
 
   // Messages can come in extremely fast when the buffer flushes.
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
-  flushMessages() {
+  flushMessages () {
     if (!_.isEmpty(this.messages)) {
       // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
       // the same timestamp
       const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
       const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
       sorted.splice(maxMessages);
-      this.setState({messages: sorted, oldestTimestamp});
+      this.setState({sortedMessages: sorted, oldestTimestamp});
 
       // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
       this.messages = _.keyBy(sorted, 'metadata.uid');
@@ -199,7 +211,7 @@ export class EventStream extends SafetyFirst {
       return true;
     };
 
-    return _.filter(this.state.messages, f);
+    return _.filter(this.state.sortedMessages, f);
   }
 
   toggleStream () {
@@ -213,12 +225,13 @@ export class EventStream extends SafetyFirst {
   }
 
   render () {
-    const {active, error, loading, messages} = this.state;
+    const {active, error, loading, sortedMessages} = this.state;
     const filteredMessages = this.filterMessages();
     const count = filteredMessages.length;
+    const allCount = sortedMessages.length;
     let sysEventStatus;
 
-    if (messages.length === 0 && this.ws && this.ws.bufferSize() === 0) {
+    if (allCount === 0 && this.ws && this.ws.bufferSize() === 0) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-text-center cos-status-box__detail">
@@ -227,12 +240,12 @@ export class EventStream extends SafetyFirst {
         </Box>
       );
     }
-    if (messages.length > 0 && count === 0) {
+    if (allCount > 0 && count === 0) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-status-box__title">No Matching Events</div>
           <div className="cos-text-center cos-status-box__detail">
-            {messages.length}{messages.length >= maxMessages && '+'} events exist, but none match the current filter
+            {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
           </div>
         </Box>
       );
@@ -257,9 +270,9 @@ export class EventStream extends SafetyFirst {
     }
 
     const klass = classNames('co-sysevent-stream__timeline', {
-      'co-sysevent-stream__timeline--empty': !messages.length || !count
+      'co-sysevent-stream__timeline--empty': !allCount || !count
     });
-    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${messages.length}+ events`;
+    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
     return (
       <div className="co-sysevent-stream">
@@ -281,7 +294,7 @@ export class EventStream extends SafetyFirst {
       </div>
     );
   }
-}
+});
 
 EventStream.defaultProps = {
   kind: 'all',
