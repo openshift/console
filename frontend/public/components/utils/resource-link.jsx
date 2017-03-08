@@ -8,12 +8,14 @@ export const resourcePath = (kind, name, namespace = undefined) => {
   return path && `/${namespace ? `ns/${namespace}/` : ''}${path}/${name}`;
 };
 
-export const ResourceLink = ({kind, name, namespace, title}) => {
+export const ResourceLink = ({kind, name, namespace, title, displayName}) => {
   const path = resourcePath(kind, name, namespace);
+  const value = displayName ? displayName : name;
+
   return (
     <span className="co-resource-link">
       <ResourceIcon kind={kind} />
-      {path ? <Link to={`${path}/details`} title={title}>{name}</Link> : <span>{name}</span>}
+      {path ? <Link to={`${path}/details`} title={title}>{value}</Link> : <span>{value}</span>}
     </span>
   );
 };

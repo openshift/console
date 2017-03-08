@@ -18,8 +18,8 @@ export class Timestamp extends SafetyFirst {
   }
 
   initialize (props = this.props) {
-    this.mdate = moment(new Date(props.timestamp));
-    this.timeStr();
+    this.mdate = props.isUnix ? moment(new Date(props.timestamp * 1000)) : moment(new Date(props.timestamp));
+    this.timeStr(this.props.format || null);
   }
 
   componentWillReceiveProps (nextProps) {
@@ -49,7 +49,7 @@ export class Timestamp extends SafetyFirst {
 
   startInterval () {
     clearInterval(this.interval);
-    this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
+    this.interval = setInterval(() => this.timeStr(this.props.format || null), this.props.interval || 5000);
   }
 
   upsertState (timestamp) {
@@ -60,10 +60,15 @@ export class Timestamp extends SafetyFirst {
     }
   }
 
-  timeStr () {
+  timeStr (format) {
     if (!this.mdate.isValid()) {
       this.upsertState('-');
       clearInterval(this.interval);
+      return;
+    }
+
+    if (format) {
+      this.upsertState(this.mdate.format(format));
       return;
     }
 
@@ -86,6 +91,7 @@ export class Timestamp extends SafetyFirst {
       this.upsertState('less than a minute ago');
       return;
     }
+
     this.upsertState(this.mdate.fromNow());
   }
 
