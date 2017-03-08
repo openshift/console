@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -289,7 +290,14 @@ class EventStream_ extends SafetyFirst {
             There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
           </div>
         </div>
-        { filteredMessages.map(m => <SysEvent {...m} key={m.metadata.uid} />) }
+
+        <ReactCSSTransitionGroup
+          transitionName="slide"
+          transitionEnterTimeout={250}
+          transitionLeave={false}>
+          { filteredMessages.map(m => <SysEvent {...m} key={m.metadata.uid} />) }
+        </ReactCSSTransitionGroup>
+
         { sysEventStatus }
       </div>
     );
