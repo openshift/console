@@ -87,7 +87,7 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
     <NodeStatus node={node} />
   </div>
   <div className="col-sm-5 col-xs-7">
-    <LabelList kind="node" labels={node.metadata.labels} dontExpand={true} />
+    <LabelList kind="node" labels={node.metadata.labels} expand={false} />
   </div>
   <div className="col-md-2 col-sm-3 hidden-xs">
     <NodeIPList ips={node.status.addresses} />
@@ -159,7 +159,7 @@ const Details = (node) => {
             <dt>Node Addresses</dt>
             <dd><NodeIPList ips={_.get(node, 'status.addresses')} expand={true} /></dd>
             <dt>Node Labels</dt>
-            <dd><LabelList kind="node" expand={true} labels={node.metadata.labels} /></dd>
+            <dd><LabelList kind="node" labels={node.metadata.labels} /></dd>
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             <dt>Unschedulable</dt>
