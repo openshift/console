@@ -11,13 +11,13 @@ const Label = ({kind, name, value, expand}) => {
   const klass = classNames('co-m-label', {'co-m-label--expand': expand});
 
   return (
-    <div className={klass}>
-      <Link className={`co-m-label__link co-text-${kind}`} to={href}>
+    <Link className={`co-text-${kind}`} to={href}>
+      <div className={klass}>
         <span className="co-m-label__key">{name}</span>
         <span className="co-m-label__eq">=</span>
         <span className="co-m-label__value">{value}</span>
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 };
 
