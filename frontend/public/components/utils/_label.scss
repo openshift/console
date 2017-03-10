@@ -1,48 +1,29 @@
 $height: 18px;
 
 .co-m-label {
-  display: inline-block;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  max-width: 100%;
   border-radius: 10px;
   padding: 0px 8px;
   font-size: $font-size-small;
   height: $height;
   line-height: $height;
-  white-space: nowrap;
   margin: 1px;
   background-color: $color-grey-background;
   font-weight: 400;
   border: solid 1px $color-grey-border;
-  vertical-align: middle;
+
+  &__key, &__value {
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
-.co-m-label__link,
-.co-m-label__link:active,
-.co-m-label__link:hover,
-.co-m-label__link:visited {
-  display: inline-block;
-  text-decoration: none;
-  height: $height;
-}
-
-.co-m-label__eq,
-.co-m-label__key,
-.co-m-label__value {
-  display: inline-block;
-  line-height: inherit;
-  overflow: hidden;
-}
-
-.co-m-label__key,
-.co-m-label__value {
-  max-width: 60px;
-  text-overflow: ellipsis;
-}
-
-.co-m-label-list:hover,
-.co-m-label.co-m-label--expand {
-  .co-m-label__key,
-  .co-m-label__value {
+.co-m-label-list:hover .co-m-label, .co-m-label--expand {
+  .co-m-label__key, .co-m-label__value {
     max-width: 100%;
-    text-overflow: initial;
   }
 }
