@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import {DetailsPage, ListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, ResourceCog, ResourceLink, Timestamp, detailsPage, navFactory} from './utils';
+import {Cog, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
 
 const menuActions = Cog.factory.common;
@@ -32,14 +32,7 @@ const SecretDetails = (secret) => {
   return <div className="col-md-12">
     <div className="co-m-pane">
       <div className="co-m-pane__body">
-        <dl>
-          <dt>Name</dt>
-          <dd>{secret.metadata.name}</dd>
-          <dt>Labels</dt>
-          <dd><LabelList kind="secret" labels={secret.metadata.labels} /></dd>
-          <dt>Created At</dt>
-          <dd><Timestamp timestamp={secret.metadata.creationTimestamp} /></dd>
-        </dl>
+        <ResourceSummary resource={secret} showPodSelector={false} showNodeSelector={false} />
       </div>
 
       <div></div>

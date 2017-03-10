@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { DetailsPage, ListPage, makeList } from './factory';
-import { Cog, kindObj, LabelList, LoadingInline, navFactory, ResourceCog, ResourceLink, Timestamp } from './utils';
+import { Cog, kindObj, LabelList, LoadingInline, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { configureHPAReplicasModal, configureHPATargetsModal } from './modals';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -80,15 +80,11 @@ const Details = (hpa) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-lg-4 col-sm-6">
       <div className="co-m-pane__body-group">
-        <dl>
+        <ResourceSummary resource={hpa} showPodSelector={false} showNodeSelector={false}>
           <dt>Status</dt>
           <dd><HpaStatus hpa={hpa} /></dd>
-          <dt>Labels</dt>
-          <dd><LabelList kind="horizontalpodautoscaler" labels={hpa.metadata.labels} /></dd>
           <dt>Reference</dt>
           <dd><ScaleRef hpa={hpa} /></dd>
-          <dt>Created At</dt>
-          <dd><Timestamp timestamp={hpa.metadata.creationTimestamp} /></dd>
           <dt>Allowed Range</dt>
           <dd>
             <a onClick={ModifyHpaReplicas(kindObj('horizontalpodautoscaler'), hpa).callback}>
@@ -96,7 +92,7 @@ const Details = (hpa) => <div className="co-m-pane__body">
             </a>
             &nbsp;<i className="text-muted fa fa-angle-right" />
           </dd>
-        </dl>
+        </ResourceSummary>
       </div>
     </div>
     <div className="col-lg-6 col-sm-6">

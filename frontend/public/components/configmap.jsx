@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import {DetailsPage, ListPage, makeList} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, LabelList, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
+import {Cog, navFactory, ResourceCog, ResourceLink, ResourceSummary} from './utils';
 
 const menuActions = Cog.factory.common;
 
@@ -32,14 +32,7 @@ const ConfigMapDetails = (configMap) => {
     <div className="col-md-12">
       <div className="co-m-pane">
         <div className="co-m-pane__body">
-          <dl>
-            <dt>Name</dt>
-            <dd>{configMap.metadata.name}</dd>
-            <dt>Labels</dt>
-            <dd><LabelList kind="configmap" labels={configMap.metadata.labels} /></dd>
-            <dt>Created At</dt>
-            <dd><Timestamp timestamp={configMap.metadata.creationTimestamp} /></dd>
-          </dl>
+          <ResourceSummary resource={configMap} showPodSelector={false} showNodeSelector={false} />
         </div>
 
         <div></div>

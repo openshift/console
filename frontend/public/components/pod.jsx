@@ -5,7 +5,7 @@ import {k8s} from '../module/k8s';
 import {getContainerState, getContainerStatus} from '../module/k8s/docker';
 import {getRestartPolicyLabel} from '../module/k8s/pods';
 import {DetailsPage, ListPage, makeList} from './factory';
-import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, Selector, Timestamp, VolumeIcon, units} from './utils';
+import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units} from './utils';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {PodLogs} from './pod-logs';
 
@@ -180,16 +180,10 @@ const Details = (pod) => {
           <div className="col-sm-8 col-xs-12">
             <div className="row">
               <div className="col-sm-6 col-xs-12">
-                <dl>
-                  <dt>Pod Name</dt>
-                  <dd>{pod.metadata.name || '-'}</dd>
-                  <dt>Pod Labels</dt>
-                  <dd><LabelList kind="pod" labels={pod.metadata.labels} /></dd>
-                  <dt>Created At</dt>
-                  <dd><Timestamp timestamp={pod.metadata.creationTimestamp} /></dd>
+                <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
                   <dt>Node Selector</dt>
                   <dd><Selector kind="node" selector={pod.spec.nodeSelector} /></dd>
-                </dl>
+                </ResourceSummary>
               </div>
               <div className="col-sm-6 col-xs-12">
                 <dl>

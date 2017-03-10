@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {DetailsPage, ListPage, makeList} from './factory';
-import {Cog, navFactory, LabelList, ResourceCog, ResourceHeading, ResourceIcon, ResourceLink, Selector, Timestamp} from './utils';
+import {Cog, navFactory, LabelList, ResourceCog, ResourceHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector} from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
 
@@ -99,18 +99,10 @@ const Details = (s) => <div className="row no-gutter">
     <ResourceHeading resourceName="Service" />
     <div className="co-m-pane__body-group">
       <div className="co-m-pane__body-section--bordered">
-        <dl>
-          <dt>Service Name</dt>
-          <dd>{s.metadata.name || '-'}</dd>
-          <dt>Service Labels</dt>
-          <dd><LabelList kind="service" labels={s.metadata.labels} /></dd>
-          <dt>Pod Selector</dt>
-          <dd><Selector selector={s.spec.selector} /></dd>
+        <ResourceSummary resource={s} showNodeSelector={false}>
           <dt>Session Affinity</dt>
           <dd>{s.spec.sessionAffinity || '-'}</dd>
-          <dt>Created At</dt>
-          <dd><Timestamp timestamp={s.metadata.creationTimestamp} /></dd>
-        </dl>
+        </ResourceSummary>
       </div>
     </div>
   </div>

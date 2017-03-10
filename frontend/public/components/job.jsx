@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 import {DetailsPage, ListPage, makeList} from './factory';
 import {configureJobParallelismModal} from './modals';
-import {Cog, LabelList, ResourceCog, ResourceLink, Selector, Timestamp, navFactory} from './utils';
+import {Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory} from './utils';
 
 const ModifyJobParallelism = (kind, obj) => ({
   label: 'Modify Parallelism...',
@@ -74,22 +74,14 @@ const Details = (job) => <div>
       </div>
       <div className="co-m-pane__body-group">
         <div className="co-m-pane__body-section--bordered">
-          <dl>
-            <dt>Name</dt>
-            <dd>{job.metadata.name || '-'}</dd>
-            <dt>Labels</dt>
-            <dd><LabelList kind="job" labels={job.metadata.labels} /></dd>
-            <dt>Pod Selector</dt>
-            <dd><Selector selector={job.spec.selector.matchLabels} expand={true} /></dd>
-            <dt>Created At</dt>
-            <dd><Timestamp timestamp={job.metadata.creationTimestamp} /></dd>
+          <ResourceSummary resource={job} showNodeSelector={false}>
             <dt>Desired Completions</dt>
             <dd>{job.spec.completions || '-'}</dd>
             <dt>Parallelism</dt>
             <dd>{job.spec.parallelism || '-'}</dd>
             <dt>Deadline</dt>
             <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
-          </dl>
+          </ResourceSummary>
         </div>
       </div>
     </div>

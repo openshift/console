@@ -18,3 +18,4 @@ export * from './configure-ns-pull-secret-modal';
 export * from './labels-modal';
 export * from './configure-update-strategy-modal';
 export * from './configure-revision-history-limit-modal';
+export * from './tags';

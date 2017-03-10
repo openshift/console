@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import {k8s} from '../../module/k8s/k8s';
 import {util} from '../../module/k8s/util';
 import {getNamespacedRoute} from '../../ui/ui-actions';
-import {confirmModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal} from '../modals';
+import { annotationsModal, confirmModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal } from '../modals';
 import {DropdownMixin} from './dropdown';
 import { history, kindObj } from './index';
 
@@ -95,6 +95,13 @@ Cog.factory = {
       resource: obj,
     }),
   }),
+  ModifyAnnotations: (kind, obj) => ({
+    label: 'Modify Annotations...',
+    callback: () => annotationsModal({
+      kind: kind,
+      resource: obj,
+    }),
+  }),
   ModifyCount: (kind, obj) => ({
     label: 'Modify Count...',
     weight: 100,
@@ -106,7 +113,7 @@ Cog.factory = {
 };
 
 // The common menu actions that most resource share
-Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.Edit, Cog.factory.Delete];
+Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.Edit, Cog.factory.Delete, Cog.factory.ModifyAnnotations];
 
 export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
   options={actions.map(a => a(kindObj(kind), resource))}

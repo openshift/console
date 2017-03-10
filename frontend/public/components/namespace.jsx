@@ -102,7 +102,11 @@ const Details = (namespace) => {
     callback: () => deleteNamespaceModal({resource: namespace}),
   };
 
-  const menuActions = [Cog.factory.ModifyLabels(kindObj('namespace'), namespace), deleteModal];
+  const menuActions = [
+    Cog.factory.ModifyLabels(kindObj('namespace'), namespace),
+    Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace),
+    deleteModal,
+  ];
 
   return <div className="details-page">
     {namespace.metadata.name !== 'default' && namespace.status.phase !== 'Terminating' && <ActionsMenu actions={menuActions} />}
@@ -112,6 +116,8 @@ const Details = (namespace) => {
       <dd>{namespace.status.phase}</dd>
       <dt>Namespace Labels</dt>
       <dd><LabelList kind="namespace" labels={namespace.metadata.labels} /></dd>
+      <dt>Annotations</dt>
+      <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace).callback}>Annotations</a></dd>
       <dt>Default Pull Secret</dt>
       <dd><PullSecret namespace={namespace} /></dd>
     </dl>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {LabelList, Selector, Timestamp} from '../utils';
+import { Cog, kindObj, LabelList, Selector, Timestamp } from './index';
 
 export const pluralize = (i, singular, plural = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
 
@@ -13,15 +13,18 @@ export const ResourceHeading = ({resourceName}) => <div className="co-m-pane__he
   <h1 className="co-m-pane__title">{resourceName} Overview</h1>
 </div>;
 
-export const ResourceSummary = ({resource}) => <dl>
+export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true}) => <dl>
   <dt>Name</dt>
   <dd>{resource.metadata.name || '-'}</dd>
   <dt>Labels</dt>
   <dd><LabelList kind={resource.kind.toLowerCase()} labels={resource.metadata.labels} /></dd>
-  <dt>Pod Selector</dt>
-  <dd><Selector selector={resource.spec.selector} /></dd>
-  <dt>Node Selector</dt>
-  <dd><Selector kind="node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>
+  {showPodSelector && <dt>Pod Selector</dt>}
+  {showPodSelector && <dd><Selector selector={resource.spec.selector} /></dd>}
+  {showNodeSelector && <dt>Node Selector</dt>}
+  {showNodeSelector && <dd><Selector kind="node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
+  <dt>Annotations</dt>
+  <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj(resource.kind), resource).callback}>Annotations</a></dd>
+  {children}
   <dt>Created At</dt>
   <dd><Timestamp timestamp={resource.metadata.creationTimestamp} /></dd>
 </dl>;
