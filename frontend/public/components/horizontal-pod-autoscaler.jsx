@@ -13,7 +13,7 @@ const Header = () => <div className="row co-m-table-grid__head">
 
 const ModifyHpaReplicas = (kind, obj) => ({
   label: 'Modify Replica Limits...',
-  weight: 100,
+  weight: 20,
   callback: () => configureHPAReplicasModal({
     resource: obj,
     resourceKind: kind
@@ -22,7 +22,7 @@ const ModifyHpaReplicas = (kind, obj) => ({
 
 const ModifyHpaTargets = (kind, obj) => ({
   label: 'Modify Resource Targets...',
-  weight: 100,
+  weight: 10,
   callback: () => configureHPATargetsModal({
     resourceKind: kind,
     resource: obj,

@@ -99,6 +99,7 @@ const Details = (namespace) => {
 
   const deleteModal = {
     label: 'Delete Namespace',
+    weight: 900,
     callback: () => deleteNamespaceModal({resource: namespace}),
   };
 
