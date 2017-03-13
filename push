@@ -20,7 +20,7 @@ GIT_VERSION=$(./git-version)
 if [[ "$GIT_VERSION" == *dirty ]]; then
     echo "Won't push from a dirty git repo. Commit your changes before you push."
     echo "Changes:"
-    git status --porcelain --untracked-files no
+    git diff
     exit 1
 fi
 
