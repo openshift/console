@@ -19,6 +19,7 @@ import (
 
 	"github.com/coreos/dex/connector"
 	"github.com/coreos/dex/connector/ldap"
+	"github.com/coreos/go-oidc/jose"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
 
@@ -66,7 +67,6 @@ type Server struct {
 	TectonicCACertFile  string
 	Auther              *auth.Authenticator
 	KubectlClientID     string
-
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
 	KubectlAuther  *auth.Authenticator
@@ -247,6 +247,37 @@ func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendResponse(w, http.StatusOK, info)
+}
+
+// This method extracts the JWT encoded token from the cookie, parses it and
+// returns 'sub' from the payload as user Id.
+func extractUserIdFromCookie(a *auth.Authenticator, r *http.Request) (string, error) {
+	userId := ""
+	token, err := a.TokenExtractor(r)
+	if err != nil {
+		plog.Errorf("Received an error while extracting token: %v", err)
+		return userId, err
+	}
+
+	jwt, err := jose.ParseJWT(token)
+	if err != nil {
+		plog.Errorf("Received an error while parsing token: %v", err)
+		return userId, err
+	}
+
+	claims, err := jwt.Claims()
+	if err != nil {
+		plog.Errorf("Received an error while extracting claims: %v", err)
+		return userId, err
+	}
+
+	userId, _, err = claims.StringClaim("sub")
+	if err != nil {
+		plog.Errorf("Received an error while extracting userId: %v", err)
+		return userId, err
+	}
+
+	return userId, err
 }
 
 // Validate that a license should be used, purely based on it being
