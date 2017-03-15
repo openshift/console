@@ -27,11 +27,17 @@ class TagsModal extends PromiseComponent {
 
   _submit (e) {
     e.preventDefault();
-    const patch = [{
-      path: this.props.path,
-      op: 'replace',
-      value: _.chain(this.state.tags).reject(t => _.isEmpty(t[0]) || _.isEmpty(t[1])).fromPairs().value(),
-    }];
+
+    // We just throw away any rows where either the key or the value is blank
+    const tags = _.reject(this.state.tags, t => _.isEmpty(t[0]) || _.isEmpty(t[1]));
+
+    const keys = tags.map(t => t[0]);
+    if (_.uniq(keys).length !== keys.length) {
+      this.setState({errorMessage: 'Duplicate keys found.'});
+      return;
+    }
+
+    const patch = [{path: this.props.path, op: 'replace', value: _.fromPairs(tags)}];
     const promise = k8sPatch(this.props.kind, this.props.resource, patch);
     this.handlePromise(promise).then(this.props.close);
   }
