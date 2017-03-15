@@ -236,7 +236,7 @@ class EventStream_ extends SafetyFirst {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-text-center cos-status-box__detail">
-            No Events
+            No Events in the past hour
           </div>
         </Box>
       );
