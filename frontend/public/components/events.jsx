@@ -7,7 +7,7 @@ import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
 import {SafetyFirst} from './safety-first';
-import {Dropdown, ResourceLink, Box, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
+import {Dropdown, ResourceLink, Box, kindObj, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
 import {wsFactory} from '../module/ws-factory';
 
 const maxMessages = 500;
@@ -62,6 +62,11 @@ class SysEvent extends React.PureComponent {
   }
 }
 
+const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
+
+const kinds = ['daemonset', 'deployment', 'ingress', 'horizontalpodautoscaler', 'job', 'node', 'pod', 'replicaset', 'replicationcontroller'];
+const types = Object.assign({all: 'All Types'}, _.zipObject(kinds, _.map(kinds, k => kindObj(k).labelPlural)));
+
 export class EventStreamPage extends React.Component {
   constructor (props) {
     super(props);
@@ -80,8 +85,8 @@ export class EventStreamPage extends React.Component {
         <div className="co-m-pane__heading">
           <div className="row">
             <div className="col-xs-12">
-              <Dropdown title="All Types" className="pull-left" items={{all: 'All Types', pod: 'Pods', node: 'Nodes'}} onChange={kind => {this.setState({kind});}} />
-              <Dropdown title="All Categories" className="pull-left" items={{all: 'All Categories', info: 'Info', error: 'Error'}} onChange={category => {this.setState({category});}} />
+              <Dropdown title="All Types" className="pull-left" items={types} onChange={kind => this.setState({kind})} />
+              <Dropdown title="All Categories" className="pull-left" items={categories} onChange={category => this.setState({category})} />
             </div>
           </div>
         </div>
