@@ -39,7 +39,7 @@ export const operatorStates = {
   },
   UpdateAvailable: {
     suffix: 'update-available',
-    icon: 'fa-circle-o-notch fa-spin',
+    icon: 'fa-arrow-circle-down',
     statusText: ' is available'
   },
   Updating: {
@@ -82,15 +82,15 @@ export const taskStatuses = {
   }
 };
 
-export const OperatorState = ({state, version}) => {
-  const operatorState = operatorStates[state];
-  if (state === 'Loading') {
+export const OperatorState = ({opState, version}) => {
+  const operatorState = operatorStates[opState];
+  if (opState === 'Loading') {
     return <LoadingInline />;
   }
 
   return <span>
     <span className={`co-cluster-updates__text-icon fa ${_.get(operatorState, 'icon', '')} co-cluster-updates--${_.get(operatorState, 'suffix', '')}`}></span>
-    {state === 'UpdateAvailable' && version } {_.get(operatorState, 'statusText', '')}
+    {opState === 'UpdateAvailable' && version } {_.get(operatorState, 'statusText', '')}
   </span>;
 };
 
@@ -108,7 +108,6 @@ export const determineOperatorState = (operator) => {
   }
 
   return operator.currentVersion === operator.desiredVersion ? 'Complete' : 'Pending';
-
 };
 
 export const calculateChannelState = (allComponents, primaryComponent, config) => {

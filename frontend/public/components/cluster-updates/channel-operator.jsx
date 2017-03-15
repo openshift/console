@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState, StatusBox} from '../utils';
+import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState} from '../utils';
 import {configureOperatorStrategyModal} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
@@ -15,29 +15,27 @@ const Header = ({channelState, primaryComponent, expanded, onClick}) => {
     </div>
     { expanded ||
       <div className="co-cluster-updates__heading--updates">
-        <OperatorState state={channelState} version={primaryComponent.desiredVersion} />
+        <OperatorState opState={channelState} version={primaryComponent.desiredVersion} />
       </div>
     }
-    <a className="co-cluster-updates__toggle" href="#" onClick={onClick}>{expanded ? 'Collapse' : 'Expand'}</a>
+    <a className="co-cluster-updates__toggle" onClick={onClick}>{expanded ? 'Collapse' : 'Expand'}</a>
   </div>;
 };
 
-const DetailWrapper = ({title, spacer, children}) => {
-  const spacerClass = spacer ? 'co-cluster-updates__detail--spacer' : null;
-  return <dl className={classNames('co-cluster-updates__detail', spacerClass)}>
-    { spacer || <dt>{title}</dt> }
-    { spacer || <dd>{children}</dd> }
+const DetailWrapper = ({title, children}) => {
+  return <dl className="co-cluster-updates__detail">
+    <dt>{title}</dt>
+    <dd>{children}</dd>
   </dl>;
 };
 DetailWrapper.propTypes = {
   title: React.PropTypes.node,
-  spacer: React.PropTypes.bool,
   children: React.PropTypes.node
 };
 
 const Details = ({config, channelState, primaryComponent}) => {
   if (config.loadError) {
-    return  <div className="co-cluster-updates__details">
+    return <div className="co-cluster-updates__details">
       <DetailWrapper title="Current Version">
         {primaryComponent.currentVersion || <LoadingInline />}
       </DetailWrapper>
@@ -46,7 +44,7 @@ const Details = ({config, channelState, primaryComponent}) => {
 
   return <div className="co-cluster-updates__details">
     <DetailWrapper title="Status">
-      <DetailStatus config={config} state={channelState} version={primaryComponent.desiredVersion} />
+      <DetailStatus config={config} channelState={channelState} version={primaryComponent.desiredVersion} />
     </DetailWrapper>
     <DetailWrapper title="Current Version">
       {primaryComponent.currentVersion || <LoadingInline />}
@@ -59,7 +57,6 @@ const Details = ({config, channelState, primaryComponent}) => {
         modalData={{updateAvailable: channelState === 'UpdateAvailable'}}
         displayFunction={(value) => value ? 'Automatic' : 'Admin Approval'} />
     </DetailWrapper>
-    <DetailWrapper spacer={true} />
   </div>;
 };
 
@@ -68,7 +65,7 @@ const FailureStatus = ({failureStatus}) => {
     return null;
   }
   const type = _.includes(['Human decision needed', 'Voided warranty'], failureStatus.type) ? 'warning' : 'failed';
-  return  <div className={`co-cluster-updates__message-box co-cluster-updates__message-box--${type}`}>
+  return <div className={`co-cluster-updates__message-box co-cluster-updates__message-box--${type}`}>
     <span>
       {failureStatus.type} : {failureStatus.reason}
     </span>
@@ -78,7 +75,7 @@ const FailureStatus = ({failureStatus}) => {
 const Operator = ({component, cols, isPrimaryComponent}) => {
   const {state, headerText, logsUrl} = component;
   const suffix = _.get(operatorStates[state], 'suffix', '');
-  const icon = _.get(operatorStates[state], 'icon', '');
+  const icon = _.get(operatorStates[state], 'icon');
 
   return <div className={`co-cluster-updates__operator-component col-xs-${cols}`}>
     <div className="co-cluster-updates__operator-step">
@@ -87,7 +84,7 @@ const Operator = ({component, cols, isPrimaryComponent}) => {
       </div>}
       <div className="co-cluster-updates__operator-text">{headerText}</div>
     </div>
-    {state !== 'Complete' && logsUrl && <div><a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a></div>}
+    {state !== 'Complete' && logsUrl && <div className="co-cluster-updates__operator-step"><a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a></div>}
     {_.map(component.taskStatuses, (taskStatus, index) => <TaskStatus taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> )}
   </div>;
 };
@@ -108,14 +105,14 @@ export class TaskStatus extends React.Component {
   render() {
     const {name, state, reason} = this.props.taskStatus;
     const suffix = _.get(taskStatuses[state], 'suffix', '');
-    const icon = _.get(taskStatuses[state], 'icon', '');
+    const icon = _.get(taskStatuses[state], 'icon');
 
     return <div className="co-cluster-updates__operator-ts-component">
       <div className="co-cluster-updates__operator-ts-step">
         <div className={`co-cluster-updates__operator-icon co-cluster-updates__operator-ts--${suffix}`}>
           <span className={classNames('fa fa-fw', icon)}></span>
         </div>
-        <div className={`co-cluster-updates__operator-text co-cluster-updates__operator-ts--${suffix}`}>
+        <div className="co-cluster-updates__operator-text">
           {name}
         </div>
       </div>
@@ -132,50 +129,14 @@ export class TaskStatus extends React.Component {
 
 //Displays details about Channel Operators
 //Primary operator is Tectonic Channel Operator
-//The other operator currently shown is Kubertenes Version Operator
+//The other operator currently shown is Kubernetes Version Operator
 export class ChannelOperator extends SafetyFirst{
   constructor(props) {
     super(props);
-    this._initialize();
     this._toggleExpand = this._toggleExpand.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this._initialize(nextProps);
-  }
-
-  _initialize(props = this.props) {
-    const newState = _.defaults({}, props, {
-      primaryComponent: {},
-      channelState: 'Loading',
-      components: {},
-      allComponents: null,
+    this.state = {
       expanded: true
-    });
-
-    if (!props.components.loadError) {
-      newState.primaryComponent = _.get(newState.components, props.primaryOperatorName) || {};
-
-      newState.allComponents = Object.keys(newState.components).reduce((components, key) => {
-        components.push(newState.components[key]);
-        return components;
-      }, []);
-
-      newState.components = Object.keys(newState.components).reduce((components, key) => {
-        if (key !== props.primaryOperatorName) {
-          components.push(newState.components[key]);
-        }
-        return components;
-      }, []);
-
-      newState.channelState = newState.components.length === 0 ? 'Loading' : calculateChannelState(newState.allComponents, newState.primaryComponent, props.config);
-    }
-
-    if (this.isMounted_) {
-      this.setState(newState);
-    } else {
-      this.state = newState;
-    }
+    };
   }
 
   _toggleExpand(event) {
@@ -187,27 +148,36 @@ export class ChannelOperator extends SafetyFirst{
   }
 
   render() {
-    const operatorCols = Math.floor(12/this.state.components.length);
-    const failureStatus = this.state.primaryComponent.failureStatus;
+    const {primaryOperatorName, components, config} = this.props;
+    const primaryOperator = _.get(components, primaryOperatorName) || {};
+    const operators = Object.keys(components).reduce((ops, key) => {
+      ops.push(components[key]);
+      return ops;
+    }, []);
 
-    if (this.props.components.loadError) {
-      return <StatusBox loadError={this.props.components.loadError} label="Operators" />;
-    }
+    const secondaryOperators = Object.keys(components).reduce((ops, key) => {
+      if (key !== primaryOperatorName) {
+        ops.push(components[key]);
+      }
+      return ops;
+    }, []);
+    const operatorCols = Math.floor(12/components.length);
+    const channelState =  components.length === 0 ? 'Loading' : calculateChannelState(operators, primaryOperator, config);
 
     return <div>
-      <Header channelState={this.state.channelState}
-        primaryComponent={this.state.primaryComponent}
+      <Header channelState={channelState}
+        primaryComponent={primaryOperator}
         expanded={this.state.expanded}
         onClick={this._toggleExpand} />
       { this.state.expanded &&
         <div>
-          <Details config={this.state.config}
-            channelState={this.state.channelState}
-            primaryComponent={this.state.primaryComponent} />
-          <FailureStatus failureStatus={failureStatus} />
+          <Details config={config}
+            channelState={channelState}
+            primaryComponent={primaryOperator} />
+          <FailureStatus failureStatus={primaryOperator.failureStatus} />
           <div className="co-cluster-updates__operator">
-            {this.state.primaryComponent && <Operator component={this.state.primaryComponent} cols={operatorCols} isPrimaryComponent={true}/>}
-            {this.state.components.length > 0 && _.map(this.state.components, (component, index) => <Operator component={component} key={index} cols={operatorCols} isPrimaryComponent={false} /> )}
+            {primaryOperator && <Operator component={primaryOperator} cols={operatorCols} isPrimaryComponent={true}/>}
+            {secondaryOperators.length > 0 && _.map(secondaryOperators, (component, index) => <Operator component={component} key={index} cols={operatorCols} isPrimaryComponent={false} /> )}
           </div>
         </div>
       }

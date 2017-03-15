@@ -17,6 +17,7 @@ $cluster-updates-width: 800px;
 }
 
 .co-cluster-updates__operator-icon--complete,
+.co-cluster-updates__operator-icon--up-to-date,
 .co-cluster-updates__operator-ts--completed,
 .co-cluster-updates--update-available {
   color: $cluster-updates-green;
@@ -116,15 +117,6 @@ $cluster-updates-width: 800px;
 .co-cluster-updates__detail {
   flex: 2 1 auto;
   padding: 0 $cluster-updates-detail-col-padding;
-}
-
-// this spacer goes as the last __detail.
-// large displays: adds space so the last detail isn't riding the right border
-// small displays: disappears to allow for optimal text space
-.co-cluster-updates__detail--spacer {
-  flex: 1 2 auto;
-  padding-left: 0;
-  padding-right: 0;
 }
 
 .co-cluster-updates__operator {

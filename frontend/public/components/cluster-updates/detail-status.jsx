@@ -48,16 +48,16 @@ export class DetailStatus extends SafetyFirst {
         return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
       }
 
-      if (this.props.state === 'Paused' || this.props.state === 'Pausing') {
+      if (this.props.channelState === 'Paused' || this.props.channelState === 'Pausing') {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'app-version', 'spec/paused', false)}>Resume Updates</button>;
-      } else if (this.props.state === 'UpdateAvailable') {
+      } else if (this.props.channelState === 'UpdateAvailable') {
         return <button className="co-cluster-updates__action-button co-cluster-updates__action-button--update btn btn-primary" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', true)}>Start Upgrade</button>;
-      } else if (this.props.state === 'Requested') {
+      } else if (this.props.channelState === 'Requested') {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', false)}>Request to Cancel</button>;
-      } else if (this.props.state === 'Updating') {
+      } else if (this.props.channelState === 'Updating') {
         // Updating + already paused is covered above, so we can assume updating + not paused
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'app-version', 'spec/paused', true)}>Pause Updates</button>;
-      } else if (this.props.state === 'UpToDate') {
+      } else if (this.props.channelState === 'UpToDate') {
         if (this.props.config.triggerUpdateCheck) {
           return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
         }
@@ -68,13 +68,13 @@ export class DetailStatus extends SafetyFirst {
 
   render() {
     return <span>
-      {<OperatorState state={this.props.state} version={this.props.version} /> || <LoadingInline />}
+      {<OperatorState opState={this.props.channelState} version={this.props.version} /> || <LoadingInline />}
       {this._actionButton()}
     </span>;
   }
 }
 DetailStatus.propTypes = {
   config: React.PropTypes.object,
-  state: React.PropTypes.string,
+  channelState: React.PropTypes.string,
   version: React.PropTypes.string,
 };

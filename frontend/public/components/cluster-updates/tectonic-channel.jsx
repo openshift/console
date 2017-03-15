@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {MultiFirehose, determineOperatorState} from '../utils';
+import {LoadingInline, MultiFirehose, determineOperatorState, StatusBox} from '../utils';
 import {ChannelOperator} from './channel-operator';
 import {SafetyFirst} from '../safety-first';
 import * as k8sSelector from '../../module/k8s/selector';
@@ -26,7 +26,8 @@ const generateComponents = (components, pods) => {
     if (component.currentVersion && (component.desiredVersion || component.targetVersion)) {
       let logsUrl;
       const name = componentNames[key] || key;
-      const headerText = <span>{name} {component.currentVersion} &#10141; {component.desiredVersion || component.targetVersion}</span>;
+      const headerText = component.currentVersion === component.desiredVersion ? <span>{name} {component.currentVersion}</span> :
+        <span>{name} {component.currentVersion} &#10141; {component.desiredVersion || component.targetVersion}</span>;
       const state = determineOperatorState(component);
       const pod = _.find(pods, p => p.metadata.name.indexOf(podNames[key]) > -1);
       if (pod) {
@@ -97,38 +98,25 @@ TectonicChannel.propTypes = {
 class TectonicChannelWithData extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      config: null,
-      components: null
-    };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const newState = {};
-
-    if (nextProps.configs.loaded) {
-      newState.config = _.get(nextProps.configs, 'data[0]');
+  _getConfig(configs) {
+    if (configs.loaded) {
+      return _.get(configs, 'data[0]');
     }
 
-    if (nextProps.appVersions.loaded && nextProps.pods.loaded) {
-      const components = nextProps.appVersions.data.reduce(this._createComponentFromData.bind(this), {});
-      newState.components = generateComponents(components, nextProps.pods.data);
-    }
-
-    if (nextProps.configs.loadError) {
-      newState.config = {
-        loadError : nextProps.configs.loadError
+    if (configs.loadError) {
+      return {
+        loadError : configs.loadError
       };
     }
 
-    if (nextProps.appVersions.loadError) {
-      newState.components = {
-        loadError: nextProps.appVersions.loadError
-      };
-    }
+    return {};
+  }
 
-
-    this.setState(newState);
+  _getComponents(appVersions, pods) {
+    const components = appVersions.data.reduce(this._createComponentFromData.bind(this), {});
+    return generateComponents(components, pods.data);
   }
 
   // Plucks information from third party resources. Uses the
@@ -151,13 +139,24 @@ class TectonicChannelWithData extends React.Component {
   }
 
   render() {
-    return <div className={classNames('co-cluster-updates__component', {'co-cluster-updates__component--last': this.props.last})}>
-      {this.state.config && this.state.components &&
+    const {configs, pods, appVersions} = this.props;
+
+    if (appVersions.loaded) {
+      const components = this._getComponents(appVersions, pods);
+      const config = this._getConfig(configs);
+
+      return <div className={classNames('co-cluster-updates__component', {'co-cluster-updates__component--last': this.props.last})}>
         <ChannelOperator
           primaryOperatorName={clusterAppVersionName}
-          components={this.state.components}
-          config={this.state.config} />
-      }
-    </div>;
+          components={components}
+          config={config} />
+      </div>;
+    }
+
+    if (appVersions.loadError) {
+      return <StatusBox loadError={appVersions.loadError} label="Operators" />;
+    }
+
+    return <div className="co-cluster-updates__component text-center"><LoadingInline /></div>;
   }
 }
