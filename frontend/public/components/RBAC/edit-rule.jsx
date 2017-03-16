@@ -138,7 +138,7 @@ class EditRule_ extends PromiseComponent {
     const allResources = this.props.allResources || [];
 
     const rule = {
-      apiGroups: APIGroups ? APIGroups.split(',') : [],
+      apiGroups: APIGroups ? APIGroups.split(',') : [''],
       nonResourceURLs: nonResourceURLs ? nonResourceURLs.split(',') : [],
       verbs: verbControl === VERBS_ENUM.ALL ? ['*'] : ALL_VERBS.filter(this.isVerbSelected),
       resources: resourceControl === RESOURCE_ENUM.ALL ? ['*'] : allResources.filter(this.isResourceSelected),
