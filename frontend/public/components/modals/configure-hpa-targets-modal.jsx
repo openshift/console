@@ -26,7 +26,7 @@ class ConfigureHPATargetsModal extends PromiseComponent {
 
   render() {
     return <form onSubmit={this._submit} name="form">
-      <ModalTitle>Modify Replica Limits</ModalTitle>
+      <ModalTitle>Modify Resource Targets</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
           <p>
@@ -47,7 +47,7 @@ class ConfigureHPATargetsModal extends PromiseComponent {
       <ModalSubmitFooter
         errorMessage={this.state.errorMessage}
         inProgress={this.state.inProgress}
-        submitText="Save Replica Limits"
+        submitText="Save Resource Targets"
         cancel={this._cancel} />
     </form>;
   }
