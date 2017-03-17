@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {k8sKinds, k8sPatch} from '../../module/k8s';
-import {LoadingInline} from '../utils';
-import {states} from './channel-operator';
+import {LoadingInline, OperatorState} from '../utils';
 import {SafetyFirst} from '../safety-first';
 
 export class DetailStatus extends SafetyFirst {
@@ -49,16 +48,16 @@ export class DetailStatus extends SafetyFirst {
         return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
       }
 
-      if (this.props.state === states.PAUSED || this.props.state === states.PAUSING) {
+      if (this.props.channelState === 'Paused' || this.props.channelState === 'Pausing') {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'app-version', 'spec/paused', false)}>Resume Updates</button>;
-      } else if (this.props.state === states.UPDATE_AVAILABLE) {
+      } else if (this.props.channelState === 'UpdateAvailable') {
         return <button className="co-cluster-updates__action-button co-cluster-updates__action-button--update btn btn-primary" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', true)}>Start Upgrade</button>;
-      } else if (this.props.state === states.REQUESTED) {
+      } else if (this.props.channelState === 'Requested') {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', false)}>Request to Cancel</button>;
-      } else if (this.props.state === states.UPDATING) {
+      } else if (this.props.channelState === 'Updating') {
         // Updating + already paused is covered above, so we can assume updating + not paused
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'app-version', 'spec/paused', true)}>Pause Updates</button>;
-      } else if (this.props.state === states.UP_TO_DATE) {
+      } else if (this.props.channelState === 'UpToDate') {
         if (this.props.config.triggerUpdateCheck) {
           return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
         }
@@ -69,13 +68,13 @@ export class DetailStatus extends SafetyFirst {
 
   render() {
     return <span>
-      {this.props.statusText || <LoadingInline />}
+      {<OperatorState opState={this.props.channelState} version={this.props.version} /> || <LoadingInline />}
       {this._actionButton()}
     </span>;
   }
 }
 DetailStatus.propTypes = {
   config: React.PropTypes.object,
-  state: React.PropTypes.string,
-  statusText: React.PropTypes.node
+  channelState: React.PropTypes.string,
+  version: React.PropTypes.string,
 };
