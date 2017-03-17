@@ -9,7 +9,7 @@ import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {ActionsMenu, Cog, Dropdown, Firehose, kindObj, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
+import {ActionsMenu, Cog, Dropdown, Firehose, kindObj, LabelList, LoadingInline, NavTitle, pluralize, ResourceIcon} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 
 const FullHeader = () => <div className="row co-m-table-grid__head">
@@ -99,10 +99,15 @@ const Details = (namespace) => {
 
   const deleteModal = {
     label: 'Delete Namespace',
+    weight: 900,
     callback: () => deleteNamespaceModal({resource: namespace}),
   };
 
-  const menuActions = [Cog.factory.ModifyLabels(kindObj('namespace'), namespace), deleteModal];
+  const menuActions = [
+    Cog.factory.ModifyLabels(kindObj('namespace'), namespace),
+    Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace),
+    deleteModal,
+  ];
 
   return <div className="details-page">
     {namespace.metadata.name !== 'default' && namespace.status.phase !== 'Terminating' && <ActionsMenu actions={menuActions} />}
@@ -112,6 +117,8 @@ const Details = (namespace) => {
       <dd>{namespace.status.phase}</dd>
       <dt>Namespace Labels</dt>
       <dd><LabelList kind="namespace" labels={namespace.metadata.labels} /></dd>
+      <dt>Annotations</dt>
+      <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace).callback}>{pluralize(_.size(namespace.metadata.annotations), 'Annotation')}</a></dd>
       <dt>Default Pull Secret</dt>
       <dd><PullSecret namespace={namespace} /></dd>
     </dl>

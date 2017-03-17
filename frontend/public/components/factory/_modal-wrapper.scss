@@ -55,3 +55,31 @@
   transform: translate(0, 0);
 }
 
+.tags-list {
+  &__row {
+    padding-bottom: 15px;
+  }
+
+  &__field {
+    padding-right: 0;
+  }
+
+  &__heading {
+    color: #999;
+    font-weight: 300;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  &__btn {
+    cursor: pointer;
+  }
+
+  &__delete-icon {
+    line-height: 32px;
+  }
+
+  &__add-icon {
+    margin-right: 6px;
+  }
+}

@@ -12,11 +12,13 @@ const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory
 
 const RevisionHistory = (kind, deployment) => ({
   label: 'Revision History...',
+  weight: 110,
   callback: () => configureRevisionHistoryLimitModal({deployment}),
 });
 
 const UpdateStrategy = (kind, deployment) => ({
   label: 'Update Strategy...',
+  weight: 120,
   callback: () => configureUpdateStrategyModal({deployment}),
 });
 
@@ -103,9 +105,10 @@ export class Details extends SafetyFirst {
       <div className="co-m-pane__body-group">
         <div className="row no-gutter">
           <div className="col-sm-6">
-            <dt>Status</dt>
-            <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
-            <ResourceSummary resource={deployment} />
+            <ResourceSummary resource={deployment}>
+              <dt>Status</dt>
+              <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
+            </ResourceSummary>
           </div>
           <div className="col-sm-6">
             <dl>
