@@ -5,7 +5,7 @@ import {k8sPatch, isNodeReady} from '../module/k8s';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {PodsPage} from './pod';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, navFactory, kindObj, LabelList, NavBar, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID} from './utils';
+import {Cog, navFactory, kindObj, LabelList, NavBar, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize} from './utils';
 import {configureUnschedulableModal} from './modals';
 
 const makeNodeScheduable = (resourceKind, resource) => {
@@ -161,7 +161,7 @@ const Details = (node) => {
             <dt>Node Labels</dt>
             <dd><LabelList kind="node" labels={node.metadata.labels} /></dd>
             <dt>Annotations</dt>
-            <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('node'), node).callback}>Annotations</a></dd>
+            <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('node'), node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             <dt>Unschedulable</dt>

@@ -9,7 +9,7 @@ import {makeList, TwoColumns} from './factory';
 import {RowOfKind} from './RBAC/role';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {ActionsMenu, Cog, Dropdown, Firehose, kindObj, LabelList, LoadingInline, NavTitle, ResourceIcon} from './utils';
+import {ActionsMenu, Cog, Dropdown, Firehose, kindObj, LabelList, LoadingInline, NavTitle, pluralize, ResourceIcon} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 
 const FullHeader = () => <div className="row co-m-table-grid__head">
@@ -118,7 +118,7 @@ const Details = (namespace) => {
       <dt>Namespace Labels</dt>
       <dd><LabelList kind="namespace" labels={namespace.metadata.labels} /></dd>
       <dt>Annotations</dt>
-      <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace).callback}>Annotations</a></dd>
+      <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace).callback}>{pluralize(_.size(namespace.metadata.annotations), 'Annotation')}</a></dd>
       <dt>Default Pull Secret</dt>
       <dd><PullSecret namespace={namespace} /></dd>
     </dl>

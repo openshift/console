@@ -23,7 +23,7 @@ export const ResourceSummary = ({children, resource, showPodSelector = true, sho
   {showNodeSelector && <dt>Node Selector</dt>}
   {showNodeSelector && <dd><Selector kind="node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
   <dt>Annotations</dt>
-  <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj(resource.kind), resource).callback}>Annotations</a></dd>
+  <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj(resource.kind), resource).callback}>{pluralize(_.size(resource.metadata.annotations), 'Annotation')}</a></dd>
   {children}
   <dt>Created At</dt>
   <dd><Timestamp timestamp={resource.metadata.creationTimestamp} /></dd>
