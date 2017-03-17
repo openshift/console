@@ -147,7 +147,7 @@ export class EditYAML extends SafetyFirst {
       action(ko, obj, namespace, name)
         .then(o => {
           if (redirect) {
-            history.push(`${resourcePath(obj.kind, newName, newNamespace)}/yaml`);
+            history.push(`${resourcePath(obj.kind, newName, newNamespace)}/details`);
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }
