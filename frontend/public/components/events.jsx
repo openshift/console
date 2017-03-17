@@ -7,7 +7,7 @@ import classNames from 'classnames';
 
 import {k8sKinds, watchURL} from '../module/k8s';
 import {SafetyFirst} from './safety-first';
-import {Dropdown, ResourceLink, Box, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
+import {Dropdown, ResourceLink, Box, kindObj, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
 import {wsFactory} from '../module/ws-factory';
 
 const maxMessages = 500;
@@ -316,7 +316,7 @@ const EventStreamResource = (props) => {
   const filter = {name};
 
   return <div className="co-p-node-sysevents">
-    <Helmet title={`${props.kind} Events`} />
+    <Helmet title={`${kindObj(props.kind).label} Events`} />
     <NavTitle title={name} kind={props.kind} detail="true" />
     <div className="co-m-pane co-m-vert-nav">
       <NavBar pages={props.pages} />
