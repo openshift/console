@@ -1,5 +1,14 @@
+/* global jest */
+
 import store from '../public/redux';
 import { actions, getActiveNamespace, getNamespacedRoute, registerNamespaceFriendlyPrefix } from '../public/ui/ui-actions';
+
+// Mock history's createHistory() using createMemoryHistory() so the tests can run outside the browser
+jest.mock('history', () => {
+  const original = require.requireActual('history');
+  original.createHistory = jest.fn(original.createMemoryHistory);
+  return original;
+});
 
 const setActiveNamespace = ns => store.dispatch(actions.setActiveNamespace(ns));
 
@@ -27,27 +36,24 @@ describe('ui-actions', () => {
       expect(getActiveNamespace()).toEqual(undefined);
     });
 
-    // TODO
-    //it('should redirect namespaced location paths for known namespace-friendly prefixes', () => {
-    //  window.location.pathname = '/ns/floorwax/pods';
-    //  setActiveNamespace('dessert-topping');
-    //  expect(getNamespacedRoute('pods')).toEqual('ns/dessert-topping/pods');
-    //});
+    it('should redirect namespaced location paths for known namespace-friendly prefixes', () => {
+      window.location.pathname = '/ns/floorwax/pods';
+      setActiveNamespace('dessert-topping');
+      expect(getNamespacedRoute('pods')).toEqual('ns/dessert-topping/pods');
+    });
 
-    // TODO
-    //it('should redirect namespaced location paths to their prefixes', () => {
-    //  window.location.pathname = '/ns/floorwax/pods/new-shimmer';
-    //  setActiveNamespace(); // reset active namespace
-    //  setActiveNamespace('dessert-topping');
-    //  expect(getNamespacedRoute('pods')).toEqual('ns/dessert-topping/pods');
-    //});
+    it('should redirect namespaced location paths to their prefixes', () => {
+      window.location.pathname = '/ns/floorwax/pods/new-shimmer';
+      setActiveNamespace(); // reset active namespace
+      setActiveNamespace('dessert-topping');
+      expect(getNamespacedRoute('pods')).toEqual('ns/dessert-topping/pods');
+    });
 
-    // TODO
-    //it('should redirect to all if no namespaces is selected', () => {
-    //  window.location.pathname = '/ns/floorwax/pods';
-    //  setActiveNamespace(null);
-    //  expect(getNamespacedRoute('pods')).toEqual('all-namespaces/pods');
-    //});
+    it('should redirect to all if no namespaces is selected', () => {
+      window.location.pathname = '/ns/floorwax/pods';
+      setActiveNamespace(null);
+      expect(getNamespacedRoute('pods')).toEqual('all-namespaces/pods');
+    });
 
     it('should not redirect if the current path isn\'t namespaced, but should set active namespace in memory', () => {
       window.location.pathname = '/not-a-namespaced-path';
