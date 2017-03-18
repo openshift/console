@@ -1,11 +1,9 @@
+import { getContainerStatus, isEnvVarEmpty, isVolumeMountEmpty, isPortEmpty } from '../public/module/k8s/docker';
+
 describe('k8sDocker', function() {
-  'use strict';
-
-  var k8sDocker = window.tectonicTesting.k8sDocker;
-
   describe('#getContainerStatus', function() {
     it('returns falsy when pod has no container status with given name', function () {
-      expect(k8sDocker.getContainerStatus(
+      expect(getContainerStatus(
         // pod
         {
           status: {
@@ -23,7 +21,7 @@ describe('k8sDocker', function() {
     });
 
     it('returns container status with given name', function () {
-      expect(k8sDocker.getContainerStatus(
+      expect(getContainerStatus(
         // pod
         {
           status: {
@@ -43,39 +41,39 @@ describe('k8sDocker', function() {
 
   describe('#isEnvVarEmpty', function () {
     it('returns false when env var has non-falsy name', function () {
-      expect(k8sDocker.isEnvVarEmpty({name: 'PORT', value: 3000})).toEqual(false);
+      expect(isEnvVarEmpty({name: 'PORT', value: 3000})).toEqual(false);
     });
 
     it('returns true when env var has falsy name', function () {
-      expect(k8sDocker.isEnvVarEmpty({name: '', value: 3000})).toEqual(true);
+      expect(isEnvVarEmpty({name: '', value: 3000})).toEqual(true);
     });
   });
 
   describe('#isVolumeMountEmpty', function () {
     it('returns false when volume mount has both non-falsy name and mount path', function () {
-      expect(k8sDocker.isVolumeMountEmpty({name: 'grafana', mountPath: '/var/lib/grafana'})).toEqual(false);
+      expect(isVolumeMountEmpty({name: 'grafana', mountPath: '/var/lib/grafana'})).toEqual(false);
     });
 
     it('returns true when volume mount has falsy name', function () {
-      expect(k8sDocker.isVolumeMountEmpty({name: '', mountPath: '/var/lib/grafana'})).toEqual(true);
+      expect(isVolumeMountEmpty({name: '', mountPath: '/var/lib/grafana'})).toEqual(true);
     });
 
     it('returns true when volume mount has falsy mount path', function () {
-      expect(k8sDocker.isVolumeMountEmpty({name: 'grafana', mountPath: ''})).toEqual(true);
+      expect(isVolumeMountEmpty({name: 'grafana', mountPath: ''})).toEqual(true);
     });
   });
 
   describe('#isPortEmpty', function () {
     it('returns false when port has both non-falsy name and container port', function () {
-      expect(k8sDocker.isPortEmpty({name: 'HTTP', containerPort: 80})).toEqual(false);
+      expect(isPortEmpty({name: 'HTTP', containerPort: 80})).toEqual(false);
     });
 
     it('returns true when port has falsy name', function () {
-      expect(k8sDocker.isPortEmpty({name: '', containerPort: 80})).toEqual(true);
+      expect(isPortEmpty({name: '', containerPort: 80})).toEqual(true);
     });
 
     it('returns true when port has nully container port', function () {
-      expect(k8sDocker.isPortEmpty({name: 'HTTP', containerPort: null})).toEqual(true);
+      expect(isPortEmpty({name: 'HTTP', containerPort: null})).toEqual(true);
     });
   });
 });

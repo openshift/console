@@ -228,5 +228,3 @@ export const mapLivenessProbeToFields = function(c) {
 
   return f;
 };
-
-window.tectonicTesting && (window.tectonicTesting.k8sProbe = {parseCmd, flattenCmd});

@@ -1,9 +1,10 @@
+import { lineBuffer } from '../public/components/utils/line-buffer';
+
 describe('lineBuffer', function() {
-  'use strict';
   var buffer;
 
   beforeEach(function() {
-    buffer = window.tectonicTesting.lineBuffer(3);
+    buffer = lineBuffer(3);
   });
 
   it('should allow no newlines', function() {

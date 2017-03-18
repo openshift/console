@@ -63,5 +63,3 @@ export const toString = selector => {
   var requirements = toRequirements(selector);
   return requirements.map(k8sSelectorRequirement.toString).join(',');
 };
-
-window.tectonicTesting && (window.tectonicTesting.k8sSelector = {fromRequirements, toRequirements, fromString, toString, split});

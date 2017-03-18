@@ -41,6 +41,3 @@ export const lineBuffer = (maxSize) => {
     }
   };
 };
-
-// This is temporary! See notes in public/components/_test.js
-window.tectonicTesting && (window.tectonicTesting.lineBuffer = lineBuffer);

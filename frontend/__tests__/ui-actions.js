@@ -1,64 +1,67 @@
+import store from '../public/redux';
+import { actions, getActiveNamespace, getNamespacedRoute, registerNamespaceFriendlyPrefix } from '../public/ui/ui-actions';
+
+const setActiveNamespace = ns => store.dispatch(actions.setActiveNamespace(ns));
+
 describe('ui-actions', function() {
-  'use strict';
-  //var setPath, mockPath;
-
-  var getActiveNamespace = window.tectonicTesting.uiActions.getActiveNamespace;
-  var getNamespacedRoute = window.tectonicTesting.uiActions.getNamespacedRoute;
-  var registerNamespaceFriendlyPrefix = window.tectonicTesting.uiActions.registerNamespaceFriendlyPrefix;
-  var setActiveNamespace = window.tectonicTesting.uiActions.setActiveNamespace;
-
-  beforeEach(function() {
-    //setPath = '*UNSET*';
-    registerNamespaceFriendlyPrefix('pods');
-  });
-
   describe('setActiveNamespace', function() {
-    it('sets active namespace in memory', function() {
-      var expected = 'test';
-      //mockPath = '/not-a-namespaced-path';
-      setActiveNamespace(expected);
-      //expect(setPath).toEqual('*UNSET*');
+    beforeEach(() => {
+      Object.defineProperty(window.location, 'pathname', {
+        writable: true,
+        value: '*UNSET*',
+      });
+      registerNamespaceFriendlyPrefix('pods');
+    });
 
-      expect(getActiveNamespace()).toEqual(expected);
-      expect(!_.isUndefined(getActiveNamespace())).toBe(true);
+    it('should set active namespace in memory', function() {
+      setActiveNamespace('test1');
+      expect(getActiveNamespace()).toEqual('test1');
+      setActiveNamespace('test2');
+      expect(getActiveNamespace()).toEqual('test2');
     });
 
     it('clears active namespace in memory', function() {
       setActiveNamespace('test');
       setActiveNamespace(undefined);
-
       expect(_.isUndefined(getActiveNamespace())).toBe(true);
       expect(getActiveNamespace()).toEqual(undefined);
     });
 
-    // TODO (andy): These tests are currently broken
+    // TODO
     //it('should redirect namespaced location paths for known namespace-friendly prefixes', function() {
-    //  mockPath = '/ns/floorwax/pods';
+    //  window.location.pathname = '/ns/floorwax/pods';
     //  setActiveNamespace('dessert-topping');
-    //  expect(setPath).toEqual('ns/dessert-topping/pods');
+    //  expect(getNamespacedRoute('pods')).toEqual('ns/dessert-topping/pods');
     //});
 
+    // TODO
     //it('should redirect namespaced location paths to their prefixes', function() {
-    //  mockPath = '/ns/floorwax/pods/new-shimmer';
+    //  window.location.pathname = '/ns/floorwax/pods/new-shimmer';
     //  setActiveNamespace(); // reset active namespace
     //  setActiveNamespace('dessert-topping');
-    //  expect(setPath).toEqual('ns/dessert-topping/pods');
+    //  expect(getNamespacedRoute('pods')).toEqual('ns/dessert-topping/pods');
     //});
 
+    // TODO
     //it('should redirect to all if no namespaces is selected', function() {
-    //  mockPath = '/ns/floorwax/pods';
+    //  window.location.pathname = '/ns/floorwax/pods';
     //  setActiveNamespace(null);
-    //  expect(setPath).toEqual('all-namespaces/pods');
+    //  expect(getNamespacedRoute('pods')).toEqual('all-namespaces/pods');
     //});
 
-    //it('should not redirect if the current path isn\'t namespaced', function() {
-    //  mockPath = '/not-a-namespaced-path';
-    //  setActiveNamespace('dessert-topping');
-    //  expect(setPath).toEqual('*UNSET*');
-    //});
+    it('should not redirect if the current path isn\'t namespaced, but should set active namespace in memory', function() {
+      window.location.pathname = '/not-a-namespaced-path';
+      setActiveNamespace('dessert-topping');
+      expect(window.location.pathname).toEqual('/not-a-namespaced-path');
+      expect(getActiveNamespace()).toEqual('dessert-topping');
+    });
   });
 
   describe('getNamespacedRoute', function() {
+    beforeEach(() => {
+      registerNamespaceFriendlyPrefix('pods');
+    });
+
     it('formats a route correctly without an active namespace', function() {
       setActiveNamespace();
       expect(getNamespacedRoute('/pods')).toEqual('all-namespaces/pods');

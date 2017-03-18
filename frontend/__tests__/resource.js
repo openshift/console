@@ -1,8 +1,6 @@
+import { k8s } from '../public/module/k8s';
+
 describe('k8s.k8sResource', function() {
-  'use strict';
-
-  var k8s = window.tectonicTesting.k8s;
-
   describe('create', function() {
     it('automatically lowercases resource name', function () {
       var data = { metadata: { name: 'TEST' }, spec: { volumes: [] } };

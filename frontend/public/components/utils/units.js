@@ -133,13 +133,8 @@ const dehumanize = (value, typeName) => {
   return convertValueWithUnitsToBaseValue(value, type.units, type.divisor);
 };
 
-const units = {
+export const units = {
   round,
   humanize,
   dehumanize
 };
-
-export { units };
-
-// This is temporary! See notes in public/components/_test.js
-window.tectonicTesting && (window.tectonicTesting.units = units);
