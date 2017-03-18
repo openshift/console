@@ -1,15 +1,15 @@
 import { fromRequirements, fromString, toRequirements, toString } from '../public/module/k8s/selector';
 
-describe('k8sSelector', function() {
-  describe('#fromString', function () {
-    it('works for nullable', function () {
+describe('k8sSelector', () => {
+  describe('#fromString', () => {
+    it('works for nullable', () => {
       expect(fromString(null)).toEqual({
         matchLabels:      {},
         matchExpressions: []
       });
     });
 
-    it('works for complex expression', function () {
+    it('works for complex expression', () => {
       expect(fromString('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)')).toEqual({
         matchLabels: {
           key1: 'value1',
@@ -57,20 +57,20 @@ describe('k8sSelector', function() {
     });
   });
 
-  describe('#toRequirements', function () {
-    it('returns empty list given selector as undefined value', function () {
+  describe('#toRequirements', () => {
+    it('returns empty list given selector as undefined value', () => {
       expect(toRequirements(undefined)).toEqual([]);
     });
   });
 
-  describe('#fromRequirements', function () {
-    it('returns undefined given no requirements and undefinedWhenEmpty option', function () {
+  describe('#fromRequirements', () => {
+    it('returns undefined given no requirements and undefinedWhenEmpty option', () => {
       expect(fromRequirements([], {undefinedWhenEmpty: true})).toBeUndefined();
     });
   });
 
-  describe('#toString', function () {
-    it('works when both "matchLabels" and "matchExpressions" are given', function () {
+  describe('#toString', () => {
+    it('works when both "matchLabels" and "matchExpressions" are given', () => {
       expect(toString({
         matchLabels: {
           key1: 'value1',
@@ -115,7 +115,7 @@ describe('k8sSelector', function() {
       })).toEqual('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)');
     });
 
-    it('works when V1 selector is given', function () {
+    it('works when V1 selector is given', () => {
       expect(toString({
         key1: 'value1',
         key2: 'value2'

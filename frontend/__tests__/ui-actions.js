@@ -3,8 +3,8 @@ import { actions, getActiveNamespace, getNamespacedRoute, registerNamespaceFrien
 
 const setActiveNamespace = ns => store.dispatch(actions.setActiveNamespace(ns));
 
-describe('ui-actions', function() {
-  describe('setActiveNamespace', function() {
+describe('ui-actions', () => {
+  describe('setActiveNamespace', () => {
     beforeEach(() => {
       Object.defineProperty(window.location, 'pathname', {
         writable: true,
@@ -13,14 +13,14 @@ describe('ui-actions', function() {
       registerNamespaceFriendlyPrefix('pods');
     });
 
-    it('should set active namespace in memory', function() {
+    it('should set active namespace in memory', () => {
       setActiveNamespace('test1');
       expect(getActiveNamespace()).toEqual('test1');
       setActiveNamespace('test2');
       expect(getActiveNamespace()).toEqual('test2');
     });
 
-    it('clears active namespace in memory', function() {
+    it('clears active namespace in memory', () => {
       setActiveNamespace('test');
       setActiveNamespace(undefined);
       expect(_.isUndefined(getActiveNamespace())).toBe(true);
@@ -28,14 +28,14 @@ describe('ui-actions', function() {
     });
 
     // TODO
-    //it('should redirect namespaced location paths for known namespace-friendly prefixes', function() {
+    //it('should redirect namespaced location paths for known namespace-friendly prefixes', () => {
     //  window.location.pathname = '/ns/floorwax/pods';
     //  setActiveNamespace('dessert-topping');
     //  expect(getNamespacedRoute('pods')).toEqual('ns/dessert-topping/pods');
     //});
 
     // TODO
-    //it('should redirect namespaced location paths to their prefixes', function() {
+    //it('should redirect namespaced location paths to their prefixes', () => {
     //  window.location.pathname = '/ns/floorwax/pods/new-shimmer';
     //  setActiveNamespace(); // reset active namespace
     //  setActiveNamespace('dessert-topping');
@@ -43,13 +43,13 @@ describe('ui-actions', function() {
     //});
 
     // TODO
-    //it('should redirect to all if no namespaces is selected', function() {
+    //it('should redirect to all if no namespaces is selected', () => {
     //  window.location.pathname = '/ns/floorwax/pods';
     //  setActiveNamespace(null);
     //  expect(getNamespacedRoute('pods')).toEqual('all-namespaces/pods');
     //});
 
-    it('should not redirect if the current path isn\'t namespaced, but should set active namespace in memory', function() {
+    it('should not redirect if the current path isn\'t namespaced, but should set active namespace in memory', () => {
       window.location.pathname = '/not-a-namespaced-path';
       setActiveNamespace('dessert-topping');
       expect(window.location.pathname).toEqual('/not-a-namespaced-path');
@@ -57,24 +57,24 @@ describe('ui-actions', function() {
     });
   });
 
-  describe('getNamespacedRoute', function() {
+  describe('getNamespacedRoute', () => {
     beforeEach(() => {
       registerNamespaceFriendlyPrefix('pods');
     });
 
-    it('formats a route correctly without an active namespace', function() {
+    it('formats a route correctly without an active namespace', () => {
       setActiveNamespace();
       expect(getNamespacedRoute('/pods')).toEqual('all-namespaces/pods');
       expect(getNamespacedRoute('/pods/GRIBBL')).toEqual('all-namespaces/pods/GRIBBL');
     });
 
-    it('formats a route with the current active namespace', function() {
+    it('formats a route with the current active namespace', () => {
       setActiveNamespace('test');
       expect(getNamespacedRoute('/pods')).toEqual('ns/test/pods');
       expect(getNamespacedRoute('/pods/GRIBBL')).toEqual('ns/test/pods/GRIBBL');
     });
 
-    it('parses resource from path', function () {
+    it('parses resource from path', () => {
       setActiveNamespace();
       expect(getNamespacedRoute('/')).toEqual('all-namespaces/');
       expect(getNamespacedRoute('/gribbl')).toEqual('all-namespaces/gribbl');
@@ -84,7 +84,7 @@ describe('ui-actions', function() {
       expect(getNamespacedRoute('ns/foo/pods/WACKY_SUFFIX')).toEqual('all-namespaces/pods');
     });
 
-    it('parses resources that contain a slash correctly', function() {
+    it('parses resources that contain a slash correctly', () => {
       setActiveNamespace();
       expect(getNamespacedRoute('//')).toEqual('all-namespaces/');
       expect(getNamespacedRoute('/settings/users')).toEqual('all-namespaces/settings/users');
