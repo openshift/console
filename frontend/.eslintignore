@@ -1,3 +1,4 @@
+__coverage__
 public/dist
 *.min.js
 public/lib

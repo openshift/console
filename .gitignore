@@ -2,6 +2,7 @@
 /bin
 /gopath
 /Godeps/_workspace/src/github.com/coreos-inc/bridge
+/frontend/__coverage__
 /frontend/public/bower_components
 /frontend/node_modules
 /frontend/public/dist

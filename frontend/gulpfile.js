@@ -275,6 +275,17 @@ gulp.task('test', ['lint', 'set-test', 'js-build'], (cb) => {
   jest.runCLI({cache: true}, __dirname, () => cb());
 });
 
+gulp.task('coverage', ['lint', 'set-test', 'js-build'], (cb) => {
+  const config = {
+    cache: true,
+    coverage: true,
+    coverageDirectory: '__coverage__',
+    coverageReporters: ['json', 'lcov', 'text', 'text-summary'],
+    collectCoverageFrom: ['public/*.{js,jsx}', 'public/{components,module,ui}/**/*.{js,jsx}'],
+  };
+  jest.runCLI(config, __dirname, () => cb());
+});
+
 gulp.task('default', (cb) => {
   // Run in order.
   runSequence(

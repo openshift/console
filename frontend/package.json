@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "coverage": "gulp coverage",
     "dev": "gulp dev",
     "gulp": "gulp",
     "lint": "eslint --ext .js,.jsx --color .",
