@@ -35,11 +35,11 @@ class ConfigureHPATargetsModal extends PromiseComponent {
         </div>
         <div className="row co-m-form-row">
           <div className="col-xs-12">
-            <label htmlFor="percentage">Target CPU Utilization</label>
+            <label className="modal__input--label" htmlFor="percentage">Target CPU Utilization</label>
             <input id="percentage"
               defaultValue={_.get(this.props.resource.spec, 'cpuUtilization.targetPercentage')}
               autoFocus="true" min="1" max="100" type="number"
-              className="form-control modal__input--with-label modal__input--with-units" required />
+              className="form-control modal__input--with-units" required />
             <span>percent</span>
           </div>
         </div>

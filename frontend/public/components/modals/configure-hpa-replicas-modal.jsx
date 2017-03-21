@@ -5,18 +5,18 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { PromiseComponent } from '../utils';
 
 const ReplicaRow = ({label, id, value, min, max, onChange, autoFocus}) => <div className="row co-m-form-row">
-    <div className="col-xs-12">
-      <label htmlFor={id}>{label}</label>
-      <input id={id} type="number"
-        className="form-control modal__input--with-label modal__input--with-units"
-        value={value}
-        min={min}
-        max={max}
-        onChange={onChange}
-        required autoFocus={autoFocus} />
-      <span>replicas</span>
-    </div>
-  </div>;
+  <div className="col-xs-12">
+    <label className="modal__input--label" htmlFor={id}>{label}</label>
+    <input id={id} type="number"
+      className="form-control modal__input--with-units"
+      value={value}
+      min={min}
+      max={max}
+      onChange={onChange}
+      required autoFocus={autoFocus} />
+    <span>replicas</span>
+  </div>
+</div>;
 
 class ConfigureHPAReplicasModal extends PromiseComponent {
   constructor(props) {
