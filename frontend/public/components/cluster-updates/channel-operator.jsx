@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState} from '../utils';
+import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState, determineOperatorState} from '../utils';
 import {configureOperatorStrategyModal} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
@@ -72,8 +72,21 @@ const FailureStatus = ({failureStatus}) => {
   </div>;
 };
 
-const Operator = ({component, cols, isPrimaryComponent}) => {
-  const {state, headerText, logsUrl} = component;
+const Operator = ({component, cols, primaryComponent, tectonicVersions, isPrimaryComponent}) => {
+  const {key, currentVersion, targetVersion, logsUrl, name} = component;
+  let desiredVersion = component.desiredVersion;
+
+  if (!isPrimaryComponent && primaryComponent.currentVersion !== primaryComponent.desiredVersion && tectonicVersions.version === primaryComponent.desiredVersion) {
+    const latestDesiredVersion = _.find(tectonicVersions.desiredVersions, (v) => v.name === key);
+    if (latestDesiredVersion) {
+      desiredVersion = latestDesiredVersion.version;
+    }
+  }
+
+  const headerText = currentVersion === desiredVersion ? <span>{name} {currentVersion}</span> :
+    <span>{name} {currentVersion} &#10141; {desiredVersion || targetVersion}</span>;
+
+  const state = determineOperatorState(_.defaults({desiredVersion: desiredVersion}, component));
   const suffix = _.get(operatorStates[state], 'suffix', '');
   const icon = _.get(operatorStates[state], 'icon');
 
@@ -161,7 +174,7 @@ export class ChannelOperator extends SafetyFirst{
       }
       return ops;
     }, []);
-    const operatorCols = Math.floor(12/components.length);
+    const operatorCols = Math.floor(12/operators.length);
     const channelState =  components.length === 0 ? 'Loading' : calculateChannelState(operators, primaryOperator, config);
 
     return <div>
@@ -176,8 +189,17 @@ export class ChannelOperator extends SafetyFirst{
             primaryComponent={primaryOperator} />
           <FailureStatus failureStatus={primaryOperator.failureStatus} />
           <div className="co-cluster-updates__operator">
-            {primaryOperator && <Operator component={primaryOperator} cols={operatorCols} isPrimaryComponent={true}/>}
-            {secondaryOperators.length > 0 && _.map(secondaryOperators, (component, index) => <Operator component={component} key={index} cols={operatorCols} isPrimaryComponent={false} /> )}
+            {primaryOperator && <Operator
+              component={primaryOperator}
+              cols={operatorCols}
+              isPrimaryComponent={true}/>}
+            {secondaryOperators.length > 0 && _.map(secondaryOperators, (component, index) => <Operator
+              component={component}
+              key={index}
+              cols={operatorCols}
+              isPrimaryComponent={false}
+              tectonicVersions={this.props.tectonicVersions}
+              primaryComponent={primaryOperator} /> )}
           </div>
         </div>
       }
