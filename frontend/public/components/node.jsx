@@ -207,7 +207,7 @@ const Details = (node) => {
                 </tr>
               </thead>
               <tbody>
-                {_.map(node.status.conditions, c => <tr key={_.uniqueId()}>
+                {_.map(node.status.conditions, (c, i) => <tr key={i}>
                   <td>{c.type}</td>
                   <td>{c.status || '-'}</td>
                   <td>{c.reason || '-'}</td>
@@ -234,9 +234,9 @@ const Details = (node) => {
                 </tr>
               </thead>
               <tbody>
-                {_.map(node.status.images, i => <tr key={_.uniqueId()}>
-                  <td>{i.names.join(',')}</td>
-                  <td>{units.humanize(i.sizeBytes, 'decimalBytes', true).string || '-'}</td>
+                {_.map(node.status.images, (image, i) => <tr key={i}>
+                  <td>{image.names.join(',')}</td>
+                  <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
                 </tr>)}
               </tbody>
             </table>
