@@ -6,9 +6,9 @@
     color: $black;
   }
 
-  .modal__input--with-label {
-    display: inline-block;
-    margin-left: 10px;
+  .modal__input--label {
+    margin-right: 10px;
+    min-width: 65px;
   }
 
   .modal__input--with-units {
