@@ -18,7 +18,13 @@ const (
 	cookieNameLoginState = "state"
 )
 
-var ExtractTokenFromCookie = oidc.CookieTokenExtractor(cookieNameToken)
+var ExtractTokenFromCookie = func(r *http.Request) (string, error) {
+	token, err := oidc.ExtractBearerToken(r)
+	if err != nil {
+		token, err = oidc.CookieTokenExtractor(cookieNameToken)(r)
+	}
+	return token, err
+}
 
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 

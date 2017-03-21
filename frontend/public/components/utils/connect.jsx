@@ -65,7 +65,7 @@ const processReduxId = ({k8s}, props) => {
 // passing it to children
 export const ConnectToState = connect(processReduxId)(props => {
   const {children, className} = props;
-  const newChildren = inject(children, _.omit(props, ['className', 'children', 'reduxID', 'isList']));
+  const newChildren = inject(children, _.omit(props, ['className', 'children', 'isList']));
   return <div className={className}>{newChildren}</div>;
 });
 

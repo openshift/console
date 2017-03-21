@@ -52,13 +52,14 @@ function createURL(host, path) {
   return url;
 }
 
-function WebSocketWrapper(id, options) {
+function WebSocketWrapper(id, options, kluster) {
   var that = this,
       flushCanceler;
 
   this.id = id;
   this.options = options;
   this.url = createURL(options.host, options.path);
+  this.kluster = kluster;
   this._paused = false;
   this._handlers = {
     open: [],

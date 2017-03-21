@@ -22,11 +22,10 @@ export const resourceURL = (kind, options) => {
     });
     u += `?${q.join('&')}`;
   }
-
   return u;
 };
 
-export const resourceURL2 = (kind, namespace, watch, labelSelector, fieldSelector) => {
+export const resourceURL2 = (kind, namespace, watch, labelSelector, fieldSelector, kluster) => {
   const opts = {queryParams: {}};
 
   if (labelSelector) {
@@ -45,7 +44,7 @@ export const resourceURL2 = (kind, namespace, watch, labelSelector, fieldSelecto
     opts.ns = namespace;
   }
 
-  return resourceURL(kind, opts);
+  return resourceURL(kind, opts, kluster);
 };
 
 export const watchURL = (kind, options) => {
@@ -58,8 +57,9 @@ export const watchURL = (kind, options) => {
 
 export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ns, name}, opts)));
 
-export const k8sList = (kind, params) => {
+export const k8sList = (kind, params, kluster) => {
   let ns;
+
   if (params) {
     if (!_.isEmpty(params.labelSelector)) {
       params.labelSelector = toString(params.labelSelector);
@@ -70,8 +70,16 @@ export const k8sList = (kind, params) => {
     }
   }
 
+  const opts = {};
+  if (kluster) {
+    opts.headers = {
+      Authorization: `Bearer ${kluster.token}`,
+      kluster: kluster.url,
+    };
+  }
+
   const query = _.map(params, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
-  return coFetchJSON(`${resourceURL(kind, {ns})}?${query}`).then(result => result.items);
+  return coFetchJSON(`${resourceURL(kind, {ns})}?${query}`, undefined, opts).then(result => result.items);
 };
 
 export const k8sCreate = (kind, data) => {

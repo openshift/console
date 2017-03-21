@@ -10,8 +10,8 @@ class FirehoseBase extends React.Component {
     if (selectorRequired && !props.selector) {
       return;
     }
-    const {kind, namespace, name, fieldSelector} = props;
-    return new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, store);
+    const {kind, namespace, name, fieldSelector, kluster} = props;
+    return new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, store, kluster);
   }
 
   _mountFirehose(firehose, props) {

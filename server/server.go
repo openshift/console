@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -15,6 +16,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/coreos/dex/connector"
@@ -77,10 +79,76 @@ func (s *Server) AuthDisabled() bool {
 	return s.Auther == nil
 }
 
+type DynamicProxy struct {
+	defaultBackend http.Handler
+	mu             sync.Mutex
+	proxies        map[string]http.Handler
+	director       func(*http.Request)
+}
+
+func (d *DynamicProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	kluster := r.Header.Get("kluster")
+	u, err := url.Parse(kluster)
+
+	if kluster == "" || err != nil {
+		d.defaultBackend.ServeHTTP(w, r)
+		return
+	}
+
+	d.mu.Lock()
+	p, ok := d.proxies[kluster]
+	d.mu.Unlock()
+
+	if ok {
+		plog.Printf("using a kluster %v ", kluster)
+		p.ServeHTTP(w, r)
+		return
+	}
+
+	director := func(r *http.Request) {
+		for _, h := range []string{"Cookie", "kluster"} {
+			r.Header.Del(h)
+		}
+		path := proxy.SingleJoiningSlash(u.Path, r.URL.Path)
+		token, err := auth.ExtractTokenFromCookie(r)
+		if err != nil {
+			plog.Errorf("Received an error while extracting token: %v", err)
+		} else {
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+		}
+		// plog.Errorf("setting bearer token: %v for %v", token, u.String())
+		r.Host = u.Host
+		r.URL.Host = u.Host
+		r.URL.Path = path
+		r.URL.Scheme = u.Scheme
+		plog.Printf("directoring to : %v", r.URL.String())
+	}
+
+	config := &proxy.Config{
+		Endpoint: u,
+		Director: director,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+	}
+	p = proxy.NewProxy(config)
+
+	plog.Printf("make a kluster %v ", u.String())
+	d.mu.Lock()
+	d.proxies[kluster] = p
+	d.mu.Unlock()
+
+	p.ServeHTTP(w, r)
+}
+
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 
-	var k8sHandler http.Handler = proxy.NewProxy(s.K8sProxyConfig)
+	var k8sHandler http.Handler = &DynamicProxy{
+		defaultBackend: proxy.NewProxy(s.K8sProxyConfig),
+		proxies:        make(map[string]http.Handler),
+		director:       s.K8sProxyConfig.Director,
+	}
 	if !s.AuthDisabled() {
 		k8sHandler = authMiddleware(s.Auther, k8sHandler)
 	}

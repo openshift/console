@@ -35,7 +35,7 @@ export const AccessDenied = () => <Box className="cos-text-center">
 </Box>;
 
 export const StatusBox = (props) => {
-  const {label, loadError, loaded} = props;
+  const {label, loadError, loaded, reduxID} = props;
 
   if (loadError) {
     return _.get(loadError, 'response.status') === 403 ? <AccessDenied /> : <LoadError label={label} />;
@@ -54,9 +54,9 @@ export const StatusBox = (props) => {
   let children;
 
   if (_.isArray(data)) {
-    children = inject(props.children, {data, filters, selected});
+    children = inject(props.children, {data, filters, selected, reduxID});
   } else {
-    children = inject(props.children, data);
+    children = inject(props.children, data, reduxID);
   }
 
   if (children.length > 1) {

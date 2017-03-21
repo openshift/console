@@ -3,6 +3,8 @@ package proxy
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/coreos/pkg/capnslog"
+	"golang.org/x/net/websocket"
 	"log"
 	"net"
 	"net/http"
@@ -10,8 +12,10 @@ import (
 	"net/url"
 	"strings"
 	"time"
+)
 
-	"golang.org/x/net/websocket"
+var (
+	plog = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "server")
 )
 
 type Config struct {
@@ -80,6 +84,7 @@ func (p *Proxy) director(r *http.Request) {
 	r.URL.Host = p.config.Endpoint.Host
 	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
 	r.URL.Scheme = p.config.Endpoint.Scheme
+	plog.Printf("directoring to : %v", r.URL.String())
 }
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {

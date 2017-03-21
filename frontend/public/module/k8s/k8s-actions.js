@@ -54,7 +54,7 @@ const actions =  {
     return {id, value, type: types.selectInList};
   },
 
-  watchK8sObject: (id, name, namespace, query, k8sType) => dispatch => {
+  watchK8sObject: (id, name, namespace, query, k8sType, kluster) => dispatch => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -66,11 +66,11 @@ const actions =  {
       query.fieldSelector = `metadata.name=${query.name}`;
       delete query.name;
     }
-    const ws = k8sType.watch(query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
+    const ws = k8sType.watch(query, kluster).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
     WS[id] = ws;
 
     const poller = () => {
-      k8sType.get(name, namespace)
+      k8sType.get(name, namespace, kluster)
         .then(o => dispatch(actions.modifyObject(id, o)))
         .catch(e => dispatch(actions.errored(id, e)));
     };
@@ -95,7 +95,7 @@ const actions =  {
     delete REF_COUNTS[id];
     return {type: types.stopK8sWatch, id};
   },
-  watchK8sList: (id, query, k8sType) => dispatch => {
+  watchK8sList: (id, query, k8sType, kluster) => dispatch => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -104,32 +104,32 @@ const actions =  {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    const ws = k8sType.watch(query).onmessage(msg => {
-      let theAction;
-      switch (msg.type) {
-        case 'ADDED':
-          theAction = actions.addToList;
-          break;
-        case 'MODIFIED':
-          theAction = actions.modifyList;
-          break;
-        case 'DELETED':
-          theAction = actions.deleteFromList;
-          break;
-        default:
-          return;
-      }
-      dispatch(theAction(id, msg.object));
-    });
+    // const ws = k8sType.watch(query, kluster).onmessage(msg => {
+    //   let theAction;
+    //   switch (msg.type) {
+    //     case 'ADDED':
+    //       theAction = actions.addToList;
+    //       break;
+    //     case 'MODIFIED':
+    //       theAction = actions.modifyList;
+    //       break;
+    //     case 'DELETED':
+    //       theAction = actions.deleteFromList;
+    //       break;
+    //     default:
+    //       return;
+    //   }
+    //   dispatch(theAction(id, msg.object));
+    // });
 
-    WS[id] = ws;
+    // WS[id] = ws;
 
     const poller = () => {
-      k8sType.list(_.clone(query, true))
+      k8sType.list(_.clone(query), kluster)
         .then(o => dispatch(actions.loaded(id, o)))
         .catch(e => dispatch(actions.errored(id, e)));
     };
-    POLLs[id] = setInterval(poller, 30 * 1000);
+    POLLs[id] = setInterval(poller, 3 * 1000);
     poller();
   },
 };

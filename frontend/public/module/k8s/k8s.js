@@ -47,8 +47,8 @@ const addDefaults = (k8sObject, kind) => {
     patch: function (obj, payload) {
       return k8sPatch(kind, obj, payload);
     },
-    watch: query => {
-      const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
+    watch: (query, kluster) => {
+      const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector, kluster);
 
       const opts = {
         host: 'auto',
@@ -59,7 +59,7 @@ const addDefaults = (k8sObject, kind) => {
         bufferFlushInterval: 500,
         bufferMax: 1000,
       };
-      return wsFactory(kind.labelPlural, opts);
+      return wsFactory(kind.labelPlural, opts, kluster);
     },
     kind: kind,
   }, k8sObject);

@@ -1,12 +1,12 @@
 import actions from '../../module/k8s/k8s-actions';
 
-const id_ = (k8sType, query) => {
+const id_ = (k8sType, query, klusterUrl) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
   }
 
-  return `${k8sType.kind.plural}${qs}`;
+  return `${klusterUrl}::${k8sType.kind.plural}${qs}`;
 };
 
 const makeQuery_ = (namespace, labelSelector, fieldSelector, name) => {
@@ -31,12 +31,13 @@ const makeQuery_ = (namespace, labelSelector, fieldSelector, name) => {
 };
 
 export class K8sWatcher {
-  constructor (k8sType, namespace, labelSelector, fieldSelector, name, store) {
+  constructor (k8sType, namespace, labelSelector, fieldSelector, name, store, kluster) {
     this.k8sType = k8sType;
     this.query = makeQuery_(namespace, labelSelector, fieldSelector, name);
-    this.id = id_(k8sType, this.query);
+    this.id = id_(k8sType, this.query, kluster && kluster.url);
     this.namespace = namespace;
     this.name = name;
+    this.kluster = kluster;
     this.dispatch = store.dispatch;
   }
 
@@ -44,14 +45,14 @@ export class K8sWatcher {
     // eslint-disable-next-line no-console
     console.log(`opening ${this.id}`);
     // watchK8sObject: (id, name, namespace, k8sType)
-    this.dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.query, this.k8sType));
+    this.dispatch(actions.watchK8sObject(this.id, this.name, this.namespace, this.query, this.k8sType, this.kluster));
     return this;
   }
 
   watchList () {
     // eslint-disable-next-line no-console
-    console.log(`opening ${this.id}`);
-    this.dispatch(actions.watchK8sList(this.id, this.query, this.k8sType));
+    console.log(`opening ${this.id} for ${this.kluster && this.kluster.url}`);
+    this.dispatch(actions.watchK8sList(this.id, this.query, this.k8sType, this.kluster));
     return this;
   }
 
