@@ -1,14 +1,12 @@
-/* eslint prefer-template:0 */
+import { units } from '../public/components/utils/units';
 
-describe('units', function() {
-  'use strict';
-
-  describe('round', function () {
-    function testRound (n, expected) {
-      it(n + ' into ' + expected, function () {
-        expect(window.tectonicTesting.units.round(n)).toEqual(expected);
+describe('units', () => {
+  describe('round', () => {
+    const testRound = (n, expected) => {
+      it(`${n} into ${expected}`, () => {
+        expect(units.round(n)).toEqual(expected);
       });
-    }
+    };
 
     testRound(NaN, 0);
     testRound(.101010, .101);
@@ -27,12 +25,12 @@ describe('units', function() {
     testRound(1023.12345, 1023.1);
   });
 
-  describe('should humanize numeric values', function () {
-    function test_ (value, expected) {
-      it(value + ' into ' + expected, function () {
-        expect(window.tectonicTesting.units.humanize(value, 'numeric', false).string).toEqual(expected);
+  describe('should humanize numeric values', () => {
+    const test_ = (value, expected) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.humanize(value, 'numeric', false).string).toEqual(expected);
       });
-    }
+    };
 
     test_('banana', '0');
     test_(-1, '-1');
@@ -66,12 +64,12 @@ describe('units', function() {
     test_(1000000000001, '1000.000000001b');
   });
 
-  describe('should humanize percentage values', function () {
-    function test_ (value, expected) {
-      it(value + ' into ' + expected, function () {
-        expect(window.tectonicTesting.units.humanize(value, 'percentage', false).string).toEqual(expected);
+  describe('should humanize percentage values', () => {
+    const test_ = (value, expected) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.humanize(value, 'percentage', false).string).toEqual(expected);
       });
-    }
+    };
 
     test_('banana', '0%');
     test_(-1, '-1%');
@@ -105,12 +103,12 @@ describe('units', function() {
     test_(1000000001, '1000000001%');
   });
 
-  describe('should humanize decimalBytes values', function () {
-    function test_ (value, expected) {
-      it(value + ' into ' + expected, function () {
-        expect(window.tectonicTesting.units.humanize(value, 'decimalBytes', true).string).toEqual(expected);
+  describe('should humanize decimalBytes values', () => {
+    const test_ = (value, expected) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.humanize(value, 'decimalBytes', true).string).toEqual(expected);
       });
-    }
+    };
 
     test_('banana', '0 B');
     test_(-1, '-1 B');
@@ -143,12 +141,12 @@ describe('units', function() {
     test_(1000000000000000000000, '1000 EB');
   });
 
-  describe('should humanize binaryBytes values', function () {
-    function test_ (value, expected) {
-      it(value + ' into ' + expected, function () {
-        expect(window.tectonicTesting.units.humanize(value, 'binaryBytes', true).string).toEqual(expected);
+  describe('should humanize binaryBytes values', () => {
+    const test_ = (value, expected) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.humanize(value, 'binaryBytes', true).string).toEqual(expected);
       });
-    }
+    };
 
     test_('banana', '0 B');
     test_(-1, '-1 B');
@@ -181,12 +179,12 @@ describe('units', function() {
     test_(1125899906842624, '1 PiB');
   });
 
-  describe('should humanize binaryBytesWithoutB values', function () {
-    function test_ (value, expected) {
-      it(value + ' into ' + expected, function () {
-        expect(window.tectonicTesting.units.humanize(value, 'binaryBytesWithoutB', true).string).toEqual(expected);
+  describe('should humanize binaryBytesWithoutB values', () => {
+    const test_ = (value, expected) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.humanize(value, 'binaryBytesWithoutB', true).string).toEqual(expected);
       });
-    }
+    };
 
     test_('banana', '0 i');
     test_(-1, '-1 i');
@@ -219,12 +217,12 @@ describe('units', function() {
     test_(1125899906842624, '1 Pi');
   });
 
-  describe('should de-humanize binaryBytesWithoutB values', function () {
-    function test_ (value, expected) {
-      it(value + ' into ' + expected, function () {
-        expect(window.tectonicTesting.units.dehumanize(value, 'binaryBytesWithoutB').value).toEqual(expected);
+  describe('should de-humanize binaryBytesWithoutB values', () => {
+    const test_ = (value, expected) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.dehumanize(value, 'binaryBytesWithoutB').value).toEqual(expected);
       });
-    }
+    };
 
     test_('banana', 'banana');
     test_(-1, -1);

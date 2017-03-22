@@ -134,5 +134,3 @@ export const toString = requirement => {
 
   return; // falsy means malformed requirement
 };
-
-window.tectonicTesting && (window.tectonicTesting.k8sSelectorRequirement = {createEquals, fromString, toString});

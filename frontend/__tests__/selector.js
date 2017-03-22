@@ -1,18 +1,16 @@
-describe('k8sSelector', function() {
-  'use strict';
+import { fromRequirements, fromString, toRequirements, toString } from '../public/module/k8s/selector';
 
-  var k8sSelector = window.tectonicTesting.k8sSelector;
-
-  describe('#fromString', function () {
-    it('works for nullable', function () {
-      expect(k8sSelector.fromString(null)).toEqual({
+describe('k8sSelector', () => {
+  describe('#fromString', () => {
+    it('works for nullable', () => {
+      expect(fromString(null)).toEqual({
         matchLabels:      {},
         matchExpressions: []
       });
     });
 
-    it('works for complex expression', function () {
-      expect(k8sSelector.fromString('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)')).toEqual({
+    it('works for complex expression', () => {
+      expect(fromString('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)')).toEqual({
         matchLabels: {
           key1: 'value1',
           key2: 'value2'
@@ -59,21 +57,21 @@ describe('k8sSelector', function() {
     });
   });
 
-  describe('#toRequirements', function () {
-    it('returns empty list given selector as undefined value', function () {
-      expect(k8sSelector.toRequirements(undefined)).toEqual([]);
+  describe('#toRequirements', () => {
+    it('returns empty list given selector as undefined value', () => {
+      expect(toRequirements(undefined)).toEqual([]);
     });
   });
 
-  describe('#fromRequirements', function () {
-    it('returns undefined given no requirements and undefinedWhenEmpty option', function () {
-      expect(k8sSelector.fromRequirements([], {undefinedWhenEmpty: true})).toBeUndefined();
+  describe('#fromRequirements', () => {
+    it('returns undefined given no requirements and undefinedWhenEmpty option', () => {
+      expect(fromRequirements([], {undefinedWhenEmpty: true})).toBeUndefined();
     });
   });
 
-  describe('#toString', function () {
-    it('works when both "matchLabels" and "matchExpressions" are given', function () {
-      expect(k8sSelector.toString({
+  describe('#toString', () => {
+    it('works when both "matchLabels" and "matchExpressions" are given', () => {
+      expect(toString({
         matchLabels: {
           key1: 'value1',
           key2: 'value2'
@@ -117,8 +115,8 @@ describe('k8sSelector', function() {
       })).toEqual('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)');
     });
 
-    it('works when V1 selector is given', function () {
-      expect(k8sSelector.toString({
+    it('works when V1 selector is given', () => {
+      expect(toString({
         key1: 'value1',
         key2: 'value2'
       })).toEqual('key1=value1,key2=value2');

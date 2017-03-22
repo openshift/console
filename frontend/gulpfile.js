@@ -13,7 +13,7 @@ const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
 const concat = require('gulp-concat');
 const htmlReplace = require('gulp-html-replace');
-const karma = require('karma').server;
+const jest = require('jest-cli');
 const browserify = require('browserify');
 const watchify = require('watchify');
 const source = require('vinyl-source-stream');
@@ -63,7 +63,6 @@ function jsBuild () {
     cache: {},
     packageCache: {},
     exclude: [
-      './public/{components,module,page}/**/*_test.js',
       './public/dist/*.js',
     ],
     entries: [entry],
@@ -270,13 +269,21 @@ gulp.task('dev', ['set-development', 'default'], () => {
 });
 
 /**
- * Karma test
+ * Tests
  */
 gulp.task('test', ['lint', 'set-test', 'js-build'], (cb) => {
-  karma.start({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: true
-  }, cb);
+  jest.runCLI({cache: true}, __dirname, () => cb());
+});
+
+gulp.task('coverage', ['lint', 'set-test', 'js-build'], (cb) => {
+  const config = {
+    cache: true,
+    coverage: true,
+    coverageDirectory: '__coverage__',
+    coverageReporters: ['json', 'lcov', 'text', 'text-summary'],
+    collectCoverageFrom: ['public/*.{js,jsx}', 'public/{components,module,ui}/**/*.{js,jsx}'],
+  };
+  jest.runCLI(config, __dirname, () => cb());
 });
 
 gulp.task('default', (cb) => {

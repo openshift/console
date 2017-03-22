@@ -47,5 +47,3 @@ export const isTrusted = (node) => {
 
   return !tainted;
 };
-
-window.tectonicTesting && (window.tectonicTesting.k8sNodes = {isTrusted});

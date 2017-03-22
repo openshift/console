@@ -93,5 +93,3 @@ export const k8s = {
   channeloperatorconfigs: addDefaults({}, k8sKinds.CHANNELOPERATORCONFIG),
   appversions: addDefaults({}, k8sKinds.APPVERSION),
 };
-
-window.tectonicTesting && (window.tectonicTesting.k8s = k8s);

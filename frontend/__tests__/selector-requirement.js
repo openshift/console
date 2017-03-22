@@ -1,11 +1,7 @@
-/* eslint prefer-template:0 */
+import { createEquals, fromString, toString } from '../public/module/k8s/selector-requirement';
 
-describe('k8sSelectorRequirement', function() {
-  'use strict';
-
-  var k8sSelectorRequirement = window.tectonicTesting.k8sSelectorRequirement;
-
-  describe('#fromString', function() {
+describe('k8sSelectorRequirement', () => {
+  describe('#fromString', () => {
     [
       {
         requirement: {key: 'key1', operator: 'Equals', values: ['value1']},
@@ -46,10 +42,8 @@ describe('k8sSelectorRequirement', function() {
         requirement: {key: 'key1', operator: 'LessThan', values: ['666.999']},
         string:      'key1 < 666.999'
       }
-    ].forEach(function (t) {
-      it('...', function () {
-        expect(k8sSelectorRequirement.fromString(t.string)).toEqual(t.requirement);
-      });
+    ].forEach(t => {
+      it('...', () => expect(fromString(t.string)).toEqual(t.requirement));
     });
 
     [
@@ -77,14 +71,12 @@ describe('k8sSelectorRequirement', function() {
       'key1<',
       'key1<=',
       'key1<one_two_three'
-    ].forEach(function (s) {
-      it('returns falsy for unknown/malformed string: ' + s, function () {
-        expect(k8sSelectorRequirement.fromString(s)).toBeFalsy();
-      });
+    ].forEach(s => {
+      it(`returns falsy for unknown/malformed string: ${s}`, () => expect(fromString(s)).toBeFalsy());
     });
   });
 
-  describe('#toString', function() {
+  describe('#toString', () => {
     [
       {
         requirement: {key: 'key1', operator: 'Equals', values: ['value1', 'value2']},
@@ -125,20 +117,20 @@ describe('k8sSelectorRequirement', function() {
         requirement: {key: 'key1', operator: 'LessThan', values: ['666.999']},
         string:      'key1 < 666.999'
       }
-    ].forEach(function (t) {
-      it('returns string for ' + JSON.stringify(t.requirement) + ' requirement', function () {
-        expect(k8sSelectorRequirement.toString(t.requirement)).toEqual(t.string);
+    ].forEach(t => {
+      it(`returns string for ${JSON.stringify(t.requirement)} requirement`, () => {
+        expect(toString(t.requirement)).toEqual(t.string);
       });
     });
 
-    it('returns falsy for unknown requirement', function () {
-      expect(k8sSelectorRequirement.toString({key: 'key1', operator: 'Oops!', values: ['value1']})).toBeFalsy();
+    it('returns falsy for unknown requirement', () => {
+      expect(toString({key: 'key1', operator: 'Oops!', values: ['value1']})).toBeFalsy();
     });
   });
 
-  describe('#createEquals', function() {
-    it('returns "Equals" requirement object', function () {
-      expect(k8sSelectorRequirement.createEquals('Key', 'Value')).toEqual({
+  describe('#createEquals', () => {
+    it('returns "Equals" requirement object', () => {
+      expect(createEquals('Key', 'Value')).toEqual({
         key:      'Key',
         operator: 'Equals',
         values:   ['Value']

@@ -113,5 +113,3 @@ export const isPortEmpty = function(port) {
 const getPullPolicy = container => _.find(k8sEnum.PullPolicy, {id: _.get(container, 'imagePullPolicy')});
 
 export const getPullPolicyLabel = container => _.get(getPullPolicy(container), 'label', '');
-
-window.tectonicTesting && (window.tectonicTesting.k8sDocker = {getContainerStatus, isEnvVarEmpty, isVolumeMountEmpty, isPortEmpty});
