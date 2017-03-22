@@ -21,19 +21,17 @@ const clusterAppVersionName = 'tectonic-cluster';
 const generateComponents = (components, pods) => {
   return Object.keys(components).reduce((finalComponents, key) => {
     const component = components[key];
-
     //the component has targetVersion if in the process of an upgrade.
     if (component.currentVersion && (component.desiredVersion || component.targetVersion)) {
       let logsUrl;
-      const name = componentNames[key] || key;
-      const headerText = component.currentVersion === component.desiredVersion ? <span>{name} {component.currentVersion}</span> :
-        <span>{name} {component.currentVersion} &#10141; {component.desiredVersion || component.targetVersion}</span>;
       const state = determineOperatorState(component);
       const pod = _.find(pods, p => p.metadata.name.indexOf(podNames[key]) > -1);
       if (pod) {
         logsUrl = `ns/tectonic-system/pods/${pod.metadata.name}/logs`;
       }
       finalComponents[key] = {
+        key,
+        name: componentNames[key] || key,
         currentVersion: component.currentVersion,
         desiredVersion: component.desiredVersion,
         targetVersion: component.targetVersion,
@@ -42,8 +40,7 @@ const generateComponents = (components, pods) => {
         taskStatuses: component.taskStatuses,
         failureStatus: component.failureStatus,
         state,
-        logsUrl,
-        headerText
+        logsUrl
       };
     }
 
@@ -67,6 +64,12 @@ export class TectonicChannel extends SafetyFirst {
         namespace: 'tectonic-system',
         isList: true,
         prop: 'configs'
+      },
+      {
+        kind: 'tectonicversion',
+        namespace: 'tectonic-system',
+        isList: true,
+        prop: 'tectonicVersions'
       },
       {
         kind: 'appversion',
@@ -114,6 +117,20 @@ class TectonicChannelWithData extends React.Component {
     return {};
   }
 
+  _getTectonicVersions(versions) {
+    if (versions.loaded) {
+      return _.get(versions, 'data[0]');
+    }
+
+    if (versions.loadError) {
+      return {
+        loadError : versions.loadError
+      };
+    }
+
+    return {};
+  }
+
   _getComponents(appVersions, pods) {
     const components = appVersions.data.reduce(this._createComponentFromData.bind(this), {});
     return generateComponents(components, pods.data);
@@ -139,16 +156,18 @@ class TectonicChannelWithData extends React.Component {
   }
 
   render() {
-    const {configs, pods, appVersions} = this.props;
+    const {configs, pods, appVersions, tectonicVersions} = this.props;
 
     if (appVersions.loaded) {
-      const components = this._getComponents(appVersions, pods);
+      const components = this._getComponents(appVersions, pods, tectonicVersions);
       const config = this._getConfig(configs);
+      const versions = this._getTectonicVersions(tectonicVersions);
 
       return <div className={classNames('co-cluster-updates__component', {'co-cluster-updates__component--last': this.props.last})}>
         <ChannelOperator
           primaryOperatorName={clusterAppVersionName}
           components={components}
+          tectonicVersions={versions}
           config={config} />
       </div>;
     }
