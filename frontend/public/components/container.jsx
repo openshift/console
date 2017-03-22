@@ -3,8 +3,7 @@ import { Link } from 'react-router';
 
 import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import {ReactiveDetails} from './factory';
-import {Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
+import {Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
 
 const getResourceLimitValue = container => {
   const limits = _.get(container, 'resources.limits');
@@ -210,6 +209,6 @@ const ContainerPage = (props) => {
   </div>;
 };
 
-export const ContainersDetailsPage = props => <ReactiveDetails {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
+export const ContainersDetailsPage = props => <Firehose {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
   <ContainerPage {...props} />
-</ReactiveDetails>;
+</Firehose>;
