@@ -200,14 +200,10 @@ const Details = (props) => {
   </div>;
 };
 
-const ContainerPage = (props) => {
-  const containers = _.get(props, 'data.spec.containers');
-  const data = containers ? _.find(containers, {name: props.params.name}) : props.data;
-  return <div>
-    <NavTitle detail={true} title={props.params.name} data={data} kind="container" />
-    <VertNav {...props} hideNav={true} pages={[{href: 'details', component: Details}]} className="co-m-pod" />
-  </div>;
-};
+const ContainerPage = (props) => <div>
+  <NavTitle detail={true} title={props.params.name} kind="container" />
+  <VertNav {...props} hideNav={true} pages={[{href: 'details', component: Details}]} />
+</div>;
 
 export const ContainersDetailsPage = props => <Firehose {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
   <ContainerPage {...props} />
