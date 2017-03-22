@@ -3,8 +3,7 @@ import { Link } from 'react-router';
 
 import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import {ReactiveDetails} from './factory';
-import {Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
+import {Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
 
 const getResourceLimitValue = container => {
   const limits = _.get(container, 'resources.limits');
@@ -201,15 +200,9 @@ const Details = (props) => {
   </div>;
 };
 
-const ContainerPage = (props) => {
-  const containers = _.get(props, 'data.spec.containers');
-  const data = containers ? _.find(containers, {name: props.params.name}) : props.data;
-  return <div>
-    <NavTitle {...props} detail={true} title={props.params.name} data={data} kind="container" />
-    <VertNav {...props} hideNav={true} pages={[{href: 'details', component: Details}]} className="co-m-pod" />
-  </div>;
-};
-
-export const ContainersDetailsPage = props => <ReactiveDetails {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
-  <ContainerPage {...props} />
-</ReactiveDetails>;
+export const ContainersDetailsPage = props => <div>
+  <NavTitle detail={true} title={props.params.name} kind="container" />
+  <Firehose {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
+    <VertNav hideNav={true} pages={[{href: 'details', component: Details}]} />
+  </Firehose>
+</div>;
