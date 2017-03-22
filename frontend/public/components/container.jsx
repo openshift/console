@@ -200,11 +200,9 @@ const Details = (props) => {
   </div>;
 };
 
-const ContainerPage = (props) => <div>
+export const ContainersDetailsPage = props => <div>
   <NavTitle detail={true} title={props.params.name} kind="container" />
-  <VertNav {...props} hideNav={true} pages={[{href: 'details', component: Details}]} />
+  <Firehose {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
+    <VertNav hideNav={true} pages={[{href: 'details', component: Details}]} />
+  </Firehose>
 </div>;
-
-export const ContainersDetailsPage = props => <Firehose {...props} namespace={props.params.ns} kind="pod" name={props.params.podName}>
-  <ContainerPage {...props} />
-</Firehose>;
