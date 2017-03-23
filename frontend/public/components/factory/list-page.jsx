@@ -91,6 +91,5 @@ ListPage.propTypes = {
   namespace: React.PropTypes.string,
   rowFilters: React.PropTypes.array,
   selector: React.PropTypes.object,
-  selectorRequired: React.PropTypes.bool,
   showTitle: React.PropTypes.bool,
 };

@@ -255,8 +255,8 @@ const PodsPage = props => <ListPage ListComponent={PodList} dropdownFilters={[]}
 navFactory.pods = () => ({
   href: 'pods',
   name: 'Pods',
-  component: ({metadata: {namespace}, spec: {selector}, selectorRequired = true}) => <div>
-    <PodsPage className="" canCreate={false} showTitle={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired} />
+  component: ({metadata: {namespace}, spec: {selector}}) => <div>
+    <PodsPage className="" canCreate={false} showTitle={false} namespace={namespace} selector={selector} />
   </div>
 });
 
