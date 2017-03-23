@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
-import {k8sKinds, watchURL} from '../module/k8s';
-import {SafetyFirst} from './safety-first';
-import {Dropdown, ResourceLink, Box, kindObj, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
-import {wsFactory} from '../module/ws-factory';
+import { k8sKinds, watchURL } from '../module/k8s';
+import { SafetyFirst } from './safety-first';
+import { Dropdown, ResourceLink, Box, kindObj, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
+import { wsFactory } from '../module/ws-factory';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -96,7 +96,7 @@ export class EventStreamPage extends React.Component {
   }
 }
 
-export const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
+const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
 class EventStream_ extends SafetyFirst {
   constructor (props) {
     super(props);
@@ -311,38 +311,4 @@ EventStream.defaultProps = {
   category: 'all',
 };
 
-const EventStreamResource = (props) => {
-  const name = props.params.name;
-  const filter = {name};
-
-  return <div>
-    <Helmet title={`${kindObj(props.kind).label} Events`} />
-    <NavTitle detail={true} title={name} kind={props.kind} />
-    <div className="co-m-pane co-m-vert-nav">
-      <NavBar pages={props.pages} />
-      <div className="co-m-vert-nav__body">
-        <EventStream {...props} filter={filter} />
-      </div>
-    </div>
-  </div>;
-};
-
-const {details, editYaml, pods, logs, events} = navFactory;
-
-export const EventStreamPod = (props) => <EventStreamResource
-  kind="pod"
-  pages={[details(), editYaml(), logs(), events()]}
-  {...props}
-/>;
-
-export const EventStreamNode = (props) => <EventStreamResource
-  kind="node"
-  pages={[details(), editYaml(), pods(), events()]}
-  {...props}
-/>;
-
-export const EventStreamReplicationController = (props) => <EventStreamResource
-  kind="replicationcontroller"
-  pages={[details(), editYaml(), pods(), events()]}
-  {...props}
-/>;
+export const ResourceEventStream = ({metadata: {name}}) => <EventStream filter={{name}} />;
