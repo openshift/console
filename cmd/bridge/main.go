@@ -58,11 +58,16 @@ func main() {
 	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used. Not required for in-cluster clients to determine the expiration date for /tectonic/certs endpoint.")
 	fTectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
+	fDexClientCertFile := fs.String("dex-client-cert-file", "", "PEM File containing certificates of dex client.")
+	fDexClientKeyFile := fs.String("dex-client-key-file", "", "PEM File containing certificate key of the dex client.")
+
 	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
 	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
 
 	fLicenseFile := fs.String("license-file", "", "Path to the Tectonic license file.")
+
+	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -136,6 +141,14 @@ func main() {
 	var (
 		k8sAuthServiceAccountBearerToken string
 	)
+
+	if *fDexClientCertFile != "" && *fDexClientKeyFile != "" && *fDexAPIHost != "" {
+		var err error
+
+		if srv.DexClient, err = auth.NewDexClient(*fDexAPIHost, *fCAFile, *fDexClientCertFile, *fDexClientKeyFile); err != nil {
+			log.Fatalf("Failed to create a Dex API client: %v", err)
+		}
+	}
 
 	switch *fK8sMode {
 	case "in-cluster":

@@ -17,6 +17,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/coreos/dex/api"
 	"github.com/coreos/dex/connector"
 	"github.com/coreos/dex/connector/ldap"
 	"github.com/coreos/go-oidc/jose"
@@ -28,6 +29,8 @@ import (
 	"github.com/coreos-inc/bridge/verify"
 	"github.com/coreos-inc/bridge/version"
 	"github.com/coreos-inc/tectonic-licensing/license"
+
+	"github.com/Sirupsen/logrus"
 )
 
 const (
@@ -71,6 +74,7 @@ type Server struct {
 	// may be nil.
 	KubectlAuther  *auth.Authenticator
 	KubeConfigTmpl *KubeConfigTmpl
+	DexClient      api.DexClient
 }
 
 func (s *Server) AuthDisabled() bool {
@@ -482,12 +486,7 @@ func handleLDAPVerification(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO(ericchiang): I don't think LDAP actually respects this context.
-	// Follow up with changes to upstream dex.
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	resp, err := verifyLDAP(ctx, req)
+	resp, err := verifyLDAP(r.Context(), req)
 	if err != nil {
 		sendResponse(w, http.StatusOK, err)
 		return
@@ -496,7 +495,12 @@ func handleLDAPVerification(w http.ResponseWriter, r *http.Request) {
 }
 
 func verifyLDAP(ctx context.Context, req ldapReq) (*ldapResp, *ldapError) {
-	conn, err := req.Config.OpenConnector()
+	logger := &logrus.Logger{
+		Out:       os.Stderr,
+		Formatter: &logrus.TextFormatter{DisableColors: true},
+		Level:     logrus.DebugLevel,
+	}
+	conn, err := req.Config.OpenConnector(logger)
 	if err != nil {
 		return nil, &ldapError{"Invalid config fields", err.Error()}
 	}
@@ -517,4 +521,69 @@ func verifyLDAP(ctx context.Context, req ldapReq) (*ldapResp, *ldapError) {
 		Email:    ident.Email,
 		Groups:   ident.Groups,
 	}, nil
+}
+
+func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
+	clientID := r.FormValue("client_id")
+
+	userID, err := extractUserIdFromCookie(s.Auther, r)
+	if err != nil {
+		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
+		return
+	}
+
+	if userID == "" {
+		sendResponse(w, http.StatusBadRequest, apiError{"Failed to revoke refresh token: user_id not provided"})
+		return
+	}
+
+	if clientID == "" {
+		sendResponse(w, http.StatusBadRequest, apiError{"Failed to revoke refresh token: client_id not provided"})
+		return
+	}
+
+	req := &api.RevokeRefreshReq{
+		UserId:   userID,
+		ClientId: clientID,
+	}
+
+	if resp, err := s.DexClient.RevokeRefresh(r.Context(), req); err != nil || resp.NotFound {
+		if resp.NotFound {
+			sendResponse(w, http.StatusNotFound, apiError{"Failed to revoke refresh token: refresh token not found"})
+			return
+		}
+		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
+		return
+	}
+
+	sendResponse(w, http.StatusOK, apiError{})
+}
+
+func (s *Server) handleListClients(w http.ResponseWriter, r *http.Request) {
+	userID, err := extractUserIdFromCookie(s.Auther, r)
+	if err != nil {
+		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
+		return
+	}
+
+	if userID == "" {
+		sendResponse(w, http.StatusBadRequest, apiError{"Failed to list clients: user_id not provided"})
+		return
+	}
+
+	req := &api.ListRefreshReq{
+		UserId: userID,
+	}
+
+	resp, err := s.DexClient.ListRefresh(r.Context(), req)
+	if err != nil {
+		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to list clients: %v", err)})
+		return
+	}
+
+	sendResponse(w, http.StatusOK, struct {
+		TokenData []*api.RefreshTokenRef `json:"token_data"`
+	}{
+		TokenData: resp.RefreshTokens,
+	})
 }
