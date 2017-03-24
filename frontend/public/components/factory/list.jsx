@@ -125,7 +125,6 @@ export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
     'filter': React.PropTypes.string,
     'error': React.PropTypes.bool,
     'fieldSelector': React.PropTypes.string,
-    'selectorRequired': React.PropTypes.bool,
     'onClickRow': React.PropTypes.func
   };
 

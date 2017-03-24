@@ -1,13 +1,12 @@
 import React from 'react';
-import Helmet from 'react-helmet';
 
-import {k8sPatch, isNodeReady} from '../module/k8s';
-import {DetailsPage, ListPage, makeList} from './factory';
-import {PodsPage} from './pod';
-import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, navFactory, kindObj, LabelList, NavBar, NavTitle, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID,
-  pluralize, containerLinuxUpdateOperator} from './utils';
-import {configureUnschedulableModal} from './modals';
+import { k8sPatch, isNodeReady } from '../module/k8s';
+import { ResourceEventStream } from './events';
+import { DetailsPage, ListPage, makeList } from './factory';
+import { configureUnschedulableModal } from './modals';
+import { PodsPage } from './pod';
+import { SparklineWidget } from './sparkline-widget/sparkline-widget';
+import { Cog, navFactory, kindObj, LabelList, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 
 const makeNodeScheduable = (resourceKind, resource) => {
   const patch = [{ op: 'replace', path: '/spec/unschedulable', value: false }];
@@ -134,7 +133,7 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
 
 // We have different list layouts for the Nodes page list and the Search page list
 const NodesList = makeList('Nodes', 'node', Header, NodeRow);
-const NodesListSearch = makeList('Nodes', 'node', HeaderSearch, NodeRowSearch);
+export const NodesListSearch = makeList('Nodes', 'node', HeaderSearch, NodeRowSearch);
 
 const dropdownFilters = [{
   type: 'node-status',
@@ -145,11 +144,7 @@ const dropdownFilters = [{
   },
   title: 'Ready Status',
 }];
-const NodesPage = () => <div className="co-p-nodes">
-  <Helmet title="Nodes" />
-  <ListPage kind="node" ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />
-</div>;
-
+export const NodesPage = () => <ListPage ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
 
 const Details = (node) => {
   const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
@@ -309,19 +304,11 @@ const Details = (node) => {
 };
 
 const {details, editYaml, events, pods} = navFactory;
-const pages = [details(Details), editYaml(), pods(), events()];
-const NodeDetailsPage = ({params: {name}}) => <div>
-  <Helmet title="Node Details" />
-  <DetailsPage kind="node" name={name} pages={pages} menuActions={menuActions} />
-</div>;
+const pages = [
+  details(Details),
+  editYaml(),
+  pods(({metadata: {name}}) => <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${name}`} />),
+  events(ResourceEventStream),
+];
 
-export const NodePodsPage = ({params: {name}}) => <div className="co-p-node-pods">
-  <Helmet title="Node Pods" />
-  <NavTitle title={name} kind="node" detail="true" />
-  <div className="co-m-vert-nav">
-    <NavBar pages={pages} />
-  </div>
-  <PodsPage canCreate={false} showTitle={false} fieldSelector={`spec.nodeName=${name}`} />
-</div>;
-
-export {NodeDetailsPage, NodesList, NodesListSearch, NodesPage};
+export const NodesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;

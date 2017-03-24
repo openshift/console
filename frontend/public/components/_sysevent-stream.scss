@@ -40,7 +40,6 @@ $transition-time: 0.5s;
   border-style: solid;
   border-color: $color-grey-border;
   border-width: 0;
-  z-index: $z-plane-1;
   left: 0;
 }
 
@@ -74,7 +73,6 @@ $transition-time: 0.5s;
 }
 
 .co-sysevent-stream__timeline__btn {
-  z-index: $z-plane-2;
   margin: 0;
   -webkit-transform: translate(0%, -100%);
   transform: translate(0%, -100%);
@@ -93,7 +91,6 @@ $transition-time: 0.5s;
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap;
 
-  z-index: $z-plane-2;
   margin: 0 0 20px 0;
   .co-m-resource-icon {
     margin-left: 0;
@@ -143,7 +140,6 @@ $transition-time: 0.5s;
   flex: 0 0 100px;
   display: none;
   position: relative;
-  z-index: $z-plane-2;
   .co-sysevent-icon {
     position: absolute;
     top: 50%;
@@ -159,7 +155,6 @@ $transition-time: 0.5s;
   top: 50%;
   left: 50%;
   width: 50%;
-  z-index: $z-plane-1;
 }
 
 @media screen and (min-width: 768px) {

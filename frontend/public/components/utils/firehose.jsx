@@ -6,11 +6,7 @@ import {EmptyBox, ConnectToState, k8sResource, kindObj, MultiConnectToState} fro
 
 class FirehoseBase extends React.Component {
   _initFirehose(props) {
-    const {selectorRequired, selector} = props;
-    if (selectorRequired && !props.selector) {
-      return;
-    }
-    const {kind, namespace, name, fieldSelector} = props;
+    const {kind, namespace, name, fieldSelector, selector} = props;
     return new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, store);
   }
 
@@ -56,7 +52,6 @@ export class Firehose extends FirehoseBase {
     const newProps = _.omit(props, [
       'children',
       'namespace',
-      'selectorRequired',
       'selector',
       'fieldSelector',
       'name',
@@ -83,7 +78,6 @@ Firehose.propTypes = {
   kind: React.PropTypes.string,
   name: React.PropTypes.string,
   namespace: React.PropTypes.string,
-  selectorRequired: React.PropTypes.bool,
   selector: React.PropTypes.object,
   fieldSelector: React.PropTypes.string,
   className: React.PropTypes.string,

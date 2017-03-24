@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
-import {k8sKinds, watchURL} from '../module/k8s';
-import {SafetyFirst} from './safety-first';
-import {Dropdown, ResourceLink, Box, kindObj, Loading, NavBar, navFactory, NavTitle, Timestamp, TogglePlay, pluralize} from './utils';
-import {wsFactory} from '../module/ws-factory';
+import { k8sKinds, watchURL } from '../module/k8s';
+import { SafetyFirst } from './safety-first';
+import { Dropdown, ResourceLink, Box, kindObj, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
+import { wsFactory } from '../module/ws-factory';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -90,20 +90,13 @@ export class EventStreamPage extends React.Component {
             </div>
           </div>
         </div>
-
-        <div className="co-m-pane__body">
-          <div className="row">
-            <div className="col-xs-12"><p></p>
-              <EventStream {...this.props} category={category} kind={kind} />
-            </div>
-          </div>
-        </div>
+        <EventStream {...this.props} category={category} kind={kind} />
       </div>
     </div>;
   }
 }
 
-export const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
+const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
 class EventStream_ extends SafetyFirst {
   constructor (props) {
     super(props);
@@ -280,32 +273,36 @@ class EventStream_ extends SafetyFirst {
     });
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
-    return (
-      <div className="co-sysevent-stream">
-        <div className="co-sysevent-stream__totals">
-          { messageCount }
-        </div>
+    return <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-xs-12"><p></p>
+          <div className="co-sysevent-stream">
+            <div className="co-sysevent-stream__totals">
+              { messageCount }
+            </div>
 
-        <div className={klass}>
-          <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
-          <div className="co-sysevent-stream__timeline__btn-text">
-            {statusBtnTxt}
+            <div className={klass}>
+              <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
+              <div className="co-sysevent-stream__timeline__btn-text">
+                {statusBtnTxt}
+              </div>
+              <div className="co-sysevent-stream__timeline__end-message">
+                There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+              </div>
+            </div>
+
+            <ReactCSSTransitionGroup
+              transitionName="slide"
+              transitionEnterTimeout={250}
+              transitionLeave={false}>
+              { filteredMessages.map(m => <SysEvent {...m} key={m.metadata.uid} />) }
+            </ReactCSSTransitionGroup>
+
+            { sysEventStatus }
           </div>
-          <div className="co-sysevent-stream__timeline__end-message">
-            There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
-          </div>
         </div>
-
-        <ReactCSSTransitionGroup
-          transitionName="slide"
-          transitionEnterTimeout={250}
-          transitionLeave={false}>
-          { filteredMessages.map(m => <SysEvent {...m} key={m.metadata.uid} />) }
-        </ReactCSSTransitionGroup>
-
-        { sysEventStatus }
       </div>
-    );
+    </div>;
   }
 });
 
@@ -314,46 +311,4 @@ EventStream.defaultProps = {
   category: 'all',
 };
 
-const {details, editYaml, pods, logs, events} = navFactory;
-
-const EventStreamResource = (props) => {
-  const name = props.params.name;
-  const filter = {name};
-
-  return <div className="co-p-node-sysevents">
-    <Helmet title={`${kindObj(props.kind).label} Events`} />
-    <NavTitle title={name} kind={props.kind} detail="true" />
-    <div className="co-m-pane co-m-vert-nav">
-      <NavBar pages={props.pages} />
-      <div className="co-m-vert-nav__body">
-        <div className="co-m-vert-nav__body">
-          <div className="co-m-pane__body">
-            <div className="row">
-              <div className="col-xs-12"><p></p>
-                <EventStream {...props} filter={filter} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>;
-};
-
-export const EventStreamPod = (props) => <EventStreamResource
-  kind="pod"
-  pages={[details(), editYaml(), logs(), events()]}
-  {...props}
-/>;
-
-export const EventStreamNode = (props) => <EventStreamResource
-  kind="node"
-  pages={[details(), editYaml(), pods(), events()]}
-  {...props}
-/>;
-
-export const EventStreamReplicationController = (props) => <EventStreamResource
-  kind="replicationcontroller"
-  pages={[details(), editYaml(), pods(), events()]}
-  {...props}
-/>;
+export const ResourceEventStream = ({metadata: {name}}) => <EventStream filter={{name}} />;

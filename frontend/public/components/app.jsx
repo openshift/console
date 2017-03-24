@@ -8,7 +8,7 @@ import store from '../redux';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { authSvc } from '../module/auth';
-import {k8sBasePath} from '../module/k8s';
+import { k8sBasePath } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
 import { tectonicVersion } from '../module/status';
 import { registerNamespaceFriendlyPrefix, actions as UIActions } from '../ui/ui-actions';
@@ -18,12 +18,11 @@ import { LDAPPage } from './cluster-settings/ldap';
 import { ContainersDetailsPage } from './container';
 import { CreateYAML } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
-import { EventStreamNode, EventStreamPage, EventStreamPod, EventStreamReplicationController } from './events';
+import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
 import { GlobalTooltip } from './global-tooltip';
 import { NamespacesPage, NamespaceSelector } from './namespace';
 import { Nav } from './nav';
-import { NodeDetailsPage, NodesPage, NodePodsPage } from './node';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './RBAC';
@@ -101,11 +100,8 @@ render((
         <Route path="namespaces" component={NamespacesPage} />
 
         <Route path="nodes">
-          <IndexRoute component={NodesPage} />
-          <Route path=":name/details" component={NodeDetailsPage} />
-          <Route path=":name/events" component={EventStreamNode} />
-          <Route path=":name/pods" component={NodePodsPage} />
-          <Route path=":name/yaml" component={NodeDetailsPage} />
+          <IndexRoute component={ResourceListPage} kind="nodes" />
+          <Route path=":name/:view" component={ResourceDetailsPage} kind="nodes" />
         </Route>
 
         <Route path="settings">
@@ -116,8 +112,6 @@ render((
 
         <Route path="all-namespaces/events" component={EventStreamPage} />
         <Route path="ns/:ns/events" component={EventStreamPage} />
-        <Route path="ns/:ns/pods/:name/events" component={EventStreamPod} />
-        <Route path="ns/:ns/replicationcontrollers/:name/events" component={EventStreamReplicationController} />
 
         <Route path="all-namespaces/search" component={SearchPage} />
         <Route path="ns/:ns/search" component={SearchPage} />

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import {k8s} from '../module/k8s';
-import {getContainerState, getContainerStatus} from '../module/k8s/docker';
-import {getRestartPolicyLabel} from '../module/k8s/pods';
-import {DetailsPage, ListPage, makeList} from './factory';
-import {Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units} from './utils';
-import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {PodLogs} from './pod-logs';
+import { k8s } from '../module/k8s';
+import { getContainerState, getContainerStatus } from '../module/k8s/docker';
+import { getRestartPolicyLabel } from '../module/k8s/pods';
+import { ResourceEventStream } from './events';
+import { DetailsPage, ListPage, makeList } from './factory';
+import { Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
+import { SparklineWidget } from './sparkline-widget/sparkline-widget';
+import { PodLogs } from './pod-logs';
 
 const menuActions = Cog.factory.common;
 
@@ -246,18 +247,14 @@ const Details = (pod) => {
 };
 
 const {details, events, logs, editYaml} = navFactory;
-const pages = [details(Details), editYaml(), logs(PodLogs), events()];
-const PodsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const pages = [details(Details), editYaml(), logs(PodLogs), events(ResourceEventStream)];
 
-const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
-const PodsPage = props => <ListPage ListComponent={PodList} dropdownFilters={[]} kind="pod" rowFilters={filters} {...props} />;
+export const PodsDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const PodList = makeList('Pods', 'pod', PodHeader, PodRow);
+export const PodsPage = props => <ListPage ListComponent={PodList} dropdownFilters={[]} kind="pod" rowFilters={filters} {...props} />;
 
-navFactory.pods = () => ({
+navFactory.pods = (component = undefined) => ({
   href: 'pods',
   name: 'Pods',
-  component: ({metadata: {namespace}, spec: {selector}, selectorRequired = true}) => <div>
-    <PodsPage className="" canCreate={false} showTitle={false} namespace={namespace} selector={selector} selectorRequired={selectorRequired} />
-  </div>
+  component: component || (({metadata: {namespace}, spec: {selector}}) => <PodsPage showTitle={false} namespace={namespace} selector={selector} />),
 });
-
-export {PodList, PodsPage, PodsDetailsPage};
