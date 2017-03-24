@@ -524,8 +524,12 @@ func verifyLDAP(ctx context.Context, req ldapReq) (*ldapResp, *ldapError) {
 }
 
 func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
-	clientID := r.FormValue("client_id")
+	if s.DexClient == nil {
+		sendResponse(w, http.StatusNotImplemented, apiError{"Failed to revoke refresh token: Dex API access not configured"})
+		return
+	}
 
+	clientID := r.FormValue("client_id")
 	userID, err := extractUserIdFromCookie(s.Auther, r)
 	if err != nil {
 		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
@@ -560,6 +564,11 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleListClients(w http.ResponseWriter, r *http.Request) {
+	if s.DexClient == nil {
+		sendResponse(w, http.StatusNotImplemented, apiError{"Failed to List Client: Dex API access not configured."})
+		return
+	}
+
 	userID, err := extractUserIdFromCookie(s.Auther, r)
 	if err != nil {
 		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
