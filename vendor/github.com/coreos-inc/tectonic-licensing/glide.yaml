@@ -1,3 +1,0 @@
-package: github.com/coreos-inc/tectonic-licensing
-import:
-- package: gopkg.in/square/go-jose.v2

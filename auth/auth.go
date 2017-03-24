@@ -1,12 +1,20 @@
 package auth
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 
+	"github.com/coreos/dex/api"
 	"github.com/coreos/go-oidc/oauth2"
 	"github.com/coreos/go-oidc/oidc"
 	"github.com/coreos/pkg/capnslog"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 const (
@@ -158,4 +166,32 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string)
 	u.RawQuery = q.Encode()
 	w.Header().Set("Location", u.String())
 	w.WriteHeader(http.StatusSeeOther)
+}
+
+func NewDexClient(hostAndPort, caPath, clientCrt, clientKey string) (api.DexClient, error) {
+	cPool := x509.NewCertPool()
+	caCert, err := ioutil.ReadFile(caPath)
+	if err != nil {
+		return nil, fmt.Errorf("invalid CA crt file: %s", caPath)
+	}
+	if cPool.AppendCertsFromPEM(caCert) != true {
+		return nil, fmt.Errorf("failed to parse CA crt")
+	}
+
+	clientCert, err := tls.LoadX509KeyPair(clientCrt, clientKey)
+	if err != nil {
+		return nil, fmt.Errorf("invalid client crt file: %s", caPath)
+	}
+
+	clientTLSConfig := &tls.Config{
+		RootCAs:      cPool,
+		Certificates: []tls.Certificate{clientCert},
+	}
+	creds := credentials.NewTLS(clientTLSConfig)
+
+	conn, err := grpc.Dial(hostAndPort, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		return nil, fmt.Errorf("dail: %v", err)
+	}
+	return api.NewDexClient(conn), nil
 }

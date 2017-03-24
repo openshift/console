@@ -39,14 +39,23 @@ import:
   - context
   - websocket
 
-# Dependencies for LDAP validation
+# Dependencies on Dex
 - package: github.com/coreos/dex
   # TODO(ericchiang): Use a real version once we release beta.3.
-  version: 6202e4d91255b39799af77d64bc6e694523d3ddd
+  version: v2.3.0
   subpackages:
   - connector
   - connector/ldap
+  - api
+
+# Dependencies for LDAP validation
 - package: gopkg.in/ldap.v2
   version: v2.4.1
 - package: gopkg.in/asn1-ber.v1
   version: v1.1
+
+# Dependencies for gRPC
+- package: google.golang.org/grpc
+  version: b1a2821ca5a4fd6b6e48ddfbb7d6d7584d839d21
+  subpackages:
+  - credentials
