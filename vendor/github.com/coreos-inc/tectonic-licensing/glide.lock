@@ -1,9 +1,0 @@
-hash: 42be7378a6c05acbd2780c24a7916a729720cd5cb388f84ad8d7d56a8b5607e5
-updated: 2016-10-14T22:22:21.826288327Z
-imports:
-- name: gopkg.in/square/go-jose.v2
-  version: 10a2cb9e647ef69f0633874b6a2e844943f1b537
-  subpackages:
-  - cipher
-  - json
-testImports: []
