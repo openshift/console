@@ -109,7 +109,7 @@ export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
       return <div className={klass}>
         <Firehose ref="hose" isList={true} {...this.props} kind={kind}>
           <StatusBox>
-            <Header />
+            <Header data={this.props.data} />
             <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
           </StatusBox>
         </Firehose>

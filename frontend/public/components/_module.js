@@ -31,3 +31,5 @@ import './profile';
 import './error';
 import './nav';
 import './resource-list';
+import './container-linux-update-operator/container-linux-updates';
+import './container-linux-update-operator/container-linux-update-details';
