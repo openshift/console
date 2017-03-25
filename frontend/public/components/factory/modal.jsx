@@ -41,9 +41,9 @@ export const ModalFooter = ({message, errorMessage, inProgress, children}) => {
   </ButtonBar>;
 };
 
-export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, submitText}) => {
+export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled}) => {
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
-    <button type="submit" className="btn btn-primary">{submitText}</button>
+    <button type="submit" className="btn btn-primary" disabled={submitDisabled}>{submitText}</button>
     <button type="button" onClick={cancel} className="btn btn-link">Cancel</button>
   </ModalFooter>;
 };
