@@ -53,6 +53,11 @@
   background-color: $color-highlight-blue;
 }
 
+.dropdown__disabled {
+  color: #666;
+  cursor: not-allowed;
+}
+
 .dropdown__not-btn {
   cursor: pointer;
 }
