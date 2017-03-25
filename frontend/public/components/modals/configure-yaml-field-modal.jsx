@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {k8sCreate, k8sGet, k8sPatch} from '../../module/k8s';
-import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
+import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {LoadingInline, PromiseComponent, kindObj} from '../utils';
 
 class ConfigureYamlFieldModal extends PromiseComponent {
@@ -114,10 +114,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
         { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
         { this.props.inputType === 'input' && <input value={this.state.value} onChange={this._handleChange} className="form-control" disabled={this.state.resourceLoading} /> }
       </ModalBody>
-      <ModalFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-        <button type="submit" className="btn btn-primary" disabled={this.state.resourceLoading}>Save Setting</button>
-        <button type="button" onClick={this._cancel} className="btn btn-link">Cancel</button>
-      </ModalFooter>
+      <ModalSubmitFooter submitText="Save Setting" submitDisabled={this.state.resourceLoading} cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
     </form>;
   }
 }
