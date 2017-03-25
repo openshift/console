@@ -28,7 +28,7 @@ class CreateNamespaceModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={e => this._submit(e)} name="form" role="form" className="co-p-new-user-modal">
+    return <form onSubmit={e => this._submit(e)} name="form" className="co-p-new-user-modal">
       <ModalTitle>Create New Namespace</ModalTitle>
       <ModalBody>
         <div>

@@ -5,7 +5,7 @@ import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factor
 export const errorModal = createModalLauncher(
   ({error, cancel}) => {
     return (
-      <div role="document">
+      <div>
         <ModalTitle>Error</ModalTitle>
         <ModalBody>{error}</ModalBody>
         <ModalFooter inProgress={false} errorMessage=""><button type="button" onClick={cancel} className="btn btn-default">OK</button></ModalFooter>
