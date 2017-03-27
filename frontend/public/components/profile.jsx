@@ -4,6 +4,7 @@ import Helmet from 'react-helmet';
 import {authSvc} from '../module/auth';
 import {kubectlConfigModal} from './modals';
 import {NavTitle} from './utils';
+import {ClientTokensContainer} from './client-tokens';
 
 export const ProfilePage = () => <div className="co-p-profile">
   <Helmet title="Profile" />
@@ -21,5 +22,6 @@ export const ProfilePage = () => <div className="co-p-profile">
         </dl>
       </div>
     </div>
+    <ClientTokensContainer />
   </div>
 </div>;
