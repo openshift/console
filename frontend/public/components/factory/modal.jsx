@@ -4,30 +4,19 @@ import Modal from 'react-modal';
 
 import { ButtonBar, ErrorMessage } from '../utils';
 
-export const createModalLauncher = (Component, registeredName) => {
+export const createModalLauncher = (Component) => (props) => {
+  const modalContainer = document.getElementById('modal-container');
 
-  if (!registeredName) {
-    const prefix = Component.name || Component.displayName || 'Modal';
-    registeredName =  _.uniqueId(`${prefix}-`);
-  }
-
-  return (props) => {
-    props = props || {};
-
-    const modalContainer = document.getElementById('modal-container');
-
-    const result = new Promise((resolve, reject) => {
-      const wrapper = <ModalWrapper
-        Component={Component}
-        componentProps={props}
-        isOpen={true}
-        resolve={resolve}
-        modalTitle={registeredName}
-        reject={reject} />;
-      ReactDOM.render(wrapper, modalContainer);
-    });
-    return {result};
-  };
+  const result = new Promise((resolve, reject) => {
+    const wrapper = <ModalWrapper
+      Component={Component}
+      componentProps={props || {}}
+      isOpen={true}
+      resolve={resolve}
+      reject={reject} />;
+    ReactDOM.render(wrapper, modalContainer);
+  });
+  return {result};
 };
 
 export const ModalTitle = ({children}) => <div className="modal-header"><h4 className="modal-title">{children}</h4></div>;
@@ -100,11 +89,11 @@ export class ModalWrapper extends React.Component {
   }
 
   render() {
-    const {componentProps, Component, registeredName} = this.props;
+    const {componentProps, Component} = this.props;
 
     return <Modal
       isOpen={this.state.isModalOpen}
-      contentLabel={registeredName || 'Modal'}
+      contentLabel="Modal"
       onRequestClose={this.closeModal}
       className="co-modal"
       overlayClassName="co-overlay"
