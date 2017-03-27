@@ -144,7 +144,7 @@ const dropdownFilters = [{
   },
   title: 'Ready Status',
 }];
-export const NodesPage = () => <ListPage ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
+export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
 
 const Details = (node) => {
   const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
