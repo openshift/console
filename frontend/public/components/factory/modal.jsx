@@ -77,7 +77,11 @@ export class ModalWrapper extends React.Component {
     this.setState({ isModalOpen: true });
   }
 
-  closeModal() {
+  closeModal(e) {
+    // Disable closing the modal with the escape key for "blocking" modals
+    if (this.props.componentProps.blocking && _.get(e, 'type') === 'keydown') {
+      return;
+    }
     this.setState({ isModalOpen: false });
     this.cleanupDOM();
     this.props.resolve();
@@ -108,7 +112,7 @@ export class ModalWrapper extends React.Component {
       onRequestClose={this.closeModal}
       className="co-modal"
       overlayClassName="co-overlay"
-      shouldCloseOnOverlayClick={true}>
+      shouldCloseOnOverlayClick={!componentProps.blocking}>
       <div className="modal-dialog">
         <div className="modal-content">
           <Component {...componentProps} cancel={this.closeModal} close={this.closeModal} />
