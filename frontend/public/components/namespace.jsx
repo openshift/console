@@ -143,11 +143,6 @@ export const NamespacesPage = () => <div>
 </div>;
 
 const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {
-  // Don't show namespace dropdown unless the namespace is relevant to the current page
-  if(!isNamespaced(window.location.pathname)) {
-    return null;
-  }
-
   const {data, loaded, namespace, dispatch} = props;
 
   // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
@@ -173,6 +168,13 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
   </div>;
 });
 
-export const NamespaceSelector = (props) => <Firehose kind="namespace" isList={true}>
-  <NamespaceDropdown {...props} />
-</Firehose>;
+export const NamespaceSelector = (props) => {
+  // Don't show namespace dropdown unless the namespace is relevant to the current page
+  if(!isNamespaced(window.location.pathname)) {
+    return null;
+  }
+
+  return <Firehose kind="namespace" isList={true}>
+    <NamespaceDropdown {...props} />
+  </Firehose>;
+};
