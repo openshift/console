@@ -6,7 +6,7 @@ import {entitlementTitles} from '../license-notifier';
 import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
 import {updateLicenseModal} from './update-license-modal';
 
-const createBlockingModalLauncher = (props) => createModalLauncher(props, null, {backdrop: 'static', keyboard: false});
+const createBlockingModalLauncher = (Component) => createModalLauncher(Component, {backdrop: 'static', keyboard: false});
 
 const updateLicense = ({cancel}) => {
   cancel();
