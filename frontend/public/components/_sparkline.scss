@@ -151,6 +151,12 @@
   }
 }
 
+.co-namespace-sparkline {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: 400px;
+}
+
 @keyframes sparkline-fade-in {
   from {
     opacity: 0;

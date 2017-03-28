@@ -74,7 +74,7 @@ const NodeCLUpdateStatus = ({node}) => {
 
   return <div>
     <span><i className={updateStatus.className}></i>&nbsp;&nbsp;{updateStatus.text}</span>
-    {!_.isEmpty(newVersion)  && !containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
+    {!_.isEmpty(newVersion) && !containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
       <div>
         <small className="">Container Linux {containerLinuxUpdateOperator.getVersion(node)} &#10141; {newVersion}</small>
       </div>}
@@ -102,7 +102,7 @@ const NodeRow = ({obj: node, expand}) => {
       <div className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'}>
         <NodeStatus node={node} />
       </div>
-      { isOperatorInstalled &&  <div className="col-xs-3">
+      { isOperatorInstalled && <div className="col-xs-3">
         <NodeCLStatusRow node={node} />
       </div>}
       <div className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'}>
@@ -198,7 +198,7 @@ const Details = (node) => {
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}
-            {_.has(node, 'spec.unschedulable') &&  <dd className="text-capitalize">{_.get(node, 'spec.unschedulable', '-').toString()}
+            {_.has(node, 'spec.unschedulable') && <dd className="text-capitalize">{_.get(node, 'spec.unschedulable', '-').toString()}
               </dd>}
             <dt>Created</dt>
             <dd><Timestamp timestamp={node.metadata.creationTimestamp} /></dd>

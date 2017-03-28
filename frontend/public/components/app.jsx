@@ -21,7 +21,7 @@ import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
 import { GlobalTooltip } from './global-tooltip';
-import { NamespacesPage, NamespaceSelector } from './namespace';
+import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
@@ -97,7 +97,10 @@ render((
         <Route path="ns/:ns/roles/:name/add-rule" component={EditRuleContainer} />
         <Route path="ns/:ns/roles/:name/:rule/edit" component={EditRuleContainer} />
 
-        <Route path="namespaces" component={NamespacesPage} />
+        <Route path="namespaces">
+          <IndexRoute component={ResourceListPage} kind="namespaces" />
+          <Route path=":name/:view" component={ResourceDetailsPage} kind="namespaces" />
+        </Route>
 
         <Route path="nodes">
           <IndexRoute component={ResourceListPage} kind="nodes" />

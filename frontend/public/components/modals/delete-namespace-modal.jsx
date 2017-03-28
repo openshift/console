@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {k8s} from '../../module/k8s';
-import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
-import {PromiseComponent} from '../utils';
+import { k8s, k8sKinds } from '../../module/k8s';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { history, PromiseComponent} from '../utils';
 
 class DeleteNamespaceModal extends PromiseComponent {
   constructor(props) {
@@ -20,7 +20,10 @@ class DeleteNamespaceModal extends PromiseComponent {
 
   _submit(event) {
     event.preventDefault();
-    this.handlePromise(k8s.namespaces.delete(this.props.resource)).then(this._close);
+    this.handlePromise(k8s.namespaces.delete(this.props.resource)).then(() => {
+      this._close();
+      history.push(k8sKinds.NAMESPACE.path);
+    });
   }
 
   render() {

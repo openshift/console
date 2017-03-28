@@ -1,40 +1,50 @@
 import React from 'react';
-import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import ReactTooltip from 'react-tooltip';
 
-import {k8s} from '../module/k8s';
+import {k8s, k8sEnum} from '../module/k8s';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
-import {makeList, TwoColumns} from './factory';
-import {RowOfKind} from './RBAC/role';
+import {DetailsPage, ListPage, makeList} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {ActionsMenu, Cog, Dropdown, Firehose, kindObj, LabelList, LoadingInline, NavTitle, pluralize, ResourceIcon} from './utils';
+import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, ResourceHeading, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 
-const FullHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">Namespace Name</div>
-  <div className="col-xs-4">Namespace Labels</div>
+const deleteModal = (kind, ns) => {
+  let {label, weight} = Cog.factory.Delete(kind, ns);
+  let callback = undefined;
+  if (ns.metadata.name === k8sEnum.DefaultNS) {
+    label = <div className="dropdown__disabled" data-tip={`Namespace "${k8sEnum.DefaultNS}" cannot be deleted`}>{label}</div>;
+  } else if (ns.status.phase === 'Terminating') {
+    label = <div className="dropdown__disabled" data-tip="Namespace is already terminating">{label}</div>;
+  } else {
+    callback = () => deleteNamespaceModal({resource: ns});
+  }
+  return {label, weight, callback};
+};
+
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, deleteModal];
+
+const Header = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-4">Name</div>
   <div className="col-xs-4">Status</div>
+  <div className="col-xs-4">Labels</div>
 </div>;
 
-const FullRow = ({obj: namespace}) => <div className="row co-resource-list__item">
+const Row = ({obj: ns}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
-    <ResourceIcon kind="namespace" />
-    <Link to={`namespaces?name=${namespace.metadata.name}`} title={namespace.metadata.uid}>
-      {namespace.metadata.name}
-    </Link>
+    <ResourceCog actions={menuActions} kind="namespace" resource={ns} />
+    <ResourceLink kind="namespace" name={ns.metadata.name} title={ns.metadata.uid} />
   </div>
   <div className="col-xs-4">
-    <LabelList kind="namespace" labels={namespace.metadata.labels} />
+    {ns.status.phase}
   </div>
   <div className="col-xs-4">
-    {namespace.status.phase}
+    <LabelList kind="namespace" labels={ns.metadata.labels} />
   </div>
 </div>;
 
-export const NamespacesList = makeList('Namespaces', 'namespace', FullHeader, FullRow);
+export const NamespacesList = makeList('Namespaces', 'namespace', Header, Row);
+export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;
 
 class PullSecret extends SafetyFirst {
   constructor (props) {
@@ -75,72 +85,44 @@ class PullSecret extends SafetyFirst {
   }
 }
 
-const NamespaceSparklines = ({namespace}) => <div className="co-namespace-sparklines">
-  <h1 className="co-m-pane__title">Resource Usage</h1>
-  <div className="co-namespace-sparklines__wrapper">
-    <div className="row no-gutter">
-      <div className="col-md-6 col-xs-12">
-        <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${namespace.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
-      </div>
-      <div className="col-md-6 col-xs-12">
-        <SparklineWidget heading="RAM" query={`namespace:container_memory_usage_bytes:sum{namespace='${namespace.metadata.name}'}`} limitQuery="sum(namespace:container_memory_usage_bytes:sum)" limitText="cluster" units="binaryBytes" />
-      </div>
-    </div>
-  </div>
-</div>;
-
-const Details = (namespace) => {
-  if (_.isEmpty(namespace)) {
+const Details = (ns) => {
+  if (_.isEmpty(ns)) {
     return <div className="empty-page">
       <h1 className="empty-page__header">No namespace selected</h1>
       <p className="empty-page__explanation">Namespaces organize and isolate your cluster resources from other things running on the cluster.</p>
     </div>;
   }
 
-  const deleteModal = {label: 'Delete Namespace', weight: 900};
-  if(namespace.metadata.name === 'default') {
-    deleteModal.label = <div className="dropdown__disabled" data-tip='Namespace "default" cannot be deleted'>{deleteModal.label}</div>;
-    ReactTooltip.rebuild();
-  } else {
-    deleteModal.callback = () => deleteNamespaceModal({resource: namespace});
-  }
-
-  const menuActions = [
-    Cog.factory.ModifyLabels(kindObj('namespace'), namespace),
-    Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace),
-    deleteModal,
-  ];
-
-  return <div className="details-page">
-    {namespace.status.phase !== 'Terminating' && <ActionsMenu actions={menuActions} />}
-    <h1 className="co-m-pane__title co-m-pane__body__top-controls">Namespace {namespace.metadata.name}</h1>
-    <dl>
-      <dt>Status</dt>
-      <dd>{namespace.status.phase}</dd>
-      <dt>Namespace Labels</dt>
-      <dd><LabelList kind="namespace" labels={namespace.metadata.labels} /></dd>
-      <dt>Annotations</dt>
-      <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('namespace'), namespace).callback}>{pluralize(_.size(namespace.metadata.annotations), 'Annotation')}</a></dd>
-      <dt>Default Pull Secret</dt>
-      <dd><PullSecret namespace={namespace} /></dd>
-    </dl>
-    <NamespaceSparklines namespace={namespace} />
+  return <div>
+    <ResourceHeading resourceName="Namespace" />
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-sm-6 col-xs-12">
+          <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false} />
+        </div>
+        <div className="col-sm-6 col-xs-12">
+          <dl>
+            <dt>Status</dt>
+            <dd>{ns.status.phase}</dd>
+            <dt>Default Pull Secret</dt>
+            <dd><PullSecret namespace={ns} /></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+    <div className="co-m-pane__body">
+      <div className="row">
+        <h1 className="co-m-pane__title">Resource Usage</h1>
+        <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
+          <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
+        </div>
+        <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
+          <SparklineWidget heading="RAM" query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`} limitQuery="sum(namespace:container_memory_usage_bytes:sum)" limitText="cluster" units="binaryBytes" />
+        </div>
+      </div>
+    </div>
   </div>;
 };
-
-const Header = () => <div className="co-m-facet-menu__title">Name</div>;
-const List = makeList('Namespaces', 'namespace', Header, RowOfKind('namespace'));
-
-
-const CreateButton = () => <button type="button" className="btn btn-primary co-m-pane__title__btn" onClick={() => createNamespaceModal()}>Create Namespace</button>;
-
-export const NamespacesPage = () => <div>
-  <Helmet title="Namespaces" />
-  <NavTitle title="Namespaces" />
-  <TwoColumns list={List} topControls={CreateButton}>
-    <Details />
-  </TwoColumns>
-</div>;
 
 const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {
   const {data, loaded, namespace, dispatch} = props;
@@ -178,3 +160,5 @@ export const NamespaceSelector = (props) => {
     <NamespaceDropdown {...props} />
   </Firehose>;
 };
+
+export const NamespacesDetailsPage = props => <DetailsPage {...props} pages={[navFactory.details(Details)]} menuActions={menuActions} />;
