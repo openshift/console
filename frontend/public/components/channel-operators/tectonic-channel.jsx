@@ -15,7 +15,7 @@ const podNames = {
   'tectonic-cluster': 'tectonic-channel-operator'
 };
 
-const clusterAppVersionName = 'tectonic-cluster';
+export const clusterAppVersionName = 'tectonic-cluster';
 
 const generateComponents = (components, pods) => {
   return Object.keys(components).reduce((finalComponents, key) => {

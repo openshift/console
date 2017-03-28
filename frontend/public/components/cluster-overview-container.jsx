@@ -7,6 +7,7 @@ import {ClusterOverviewPage} from './cluster-overview';
 import {entitlementTitle} from './license-notifier';
 import {SafetyFirst} from './safety-first';
 import {cloudProviderID} from './utils';
+import {clusterAppVersionName} from './channel-operators/tectonic-channel';
 
 export class ClusterOverviewContainer extends SafetyFirst {
   constructor(props) {
@@ -18,7 +19,8 @@ export class ClusterOverviewContainer extends SafetyFirst {
       kubernetesVersion: null,
       kubernetesHealth: null,
       cloudProviders: null,
-      tectonicVersionObj: null
+      tectonicVersionObj: null,
+      currentTectonicVersion: null
     };
   }
 
@@ -29,6 +31,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
     this._checkKubernetesVersion();
     this._checkKubernetesHealth();
     this._checkCloudProvider();
+    this._checkAppVersions();
   }
 
   _checkTectonicVersion() {
@@ -38,6 +41,15 @@ export class ClusterOverviewContainer extends SafetyFirst {
         this.setState({ tectonicVersion: data.version, tectonicLicense: license, tectonicVersionObj: data });
       })
       .catch(() => this.setState({ tectonicVersion: 'unknown', tectonicLicense: 'unknown' }));
+  }
+
+  _checkAppVersions() {
+    k8s.appversions.get().then((appversions) => {
+      const tectonicTPR = _.find(appversions.items, (a) => a.metadata.name === clusterAppVersionName);
+      if (tectonicTPR) {
+        this.setState({ currentTectonicVersion: tectonicTPR.status.currentVersion });
+      }
+    }).catch(() => this.setState({ currentTectonicVersion: null }));
   }
 
   _checkTectonicHealth() {
@@ -74,6 +86,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
       kubernetesHealth={this.state.kubernetesHealth}
       cloudProviders={this.state.cloudProviders}
       tectonicVersionObj={this.state.tectonicVersionObj}
+      currentTectonicVersion={this.state.currentTectonicVersion}
     />;
   }
 }
