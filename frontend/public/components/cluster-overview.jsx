@@ -103,7 +103,7 @@ export const ClusterOverviewPage = (props) => {
                 detail={props.kubernetesVersion} text="Kubernetes version could not be determined." />
             </div>
 
-            <SoftwareDetailRow title="Tectonic" detail={props.tectonicVersion}
+            <SoftwareDetailRow title="Tectonic" detail={props.currentTectonicVersion || props.tectonicVersion}
               text="Tectonic version could not be determined." >
               <div>
                 <a href="https://coreos.com/tectonic/releases/" target="_blank">Release Notes</a>
