@@ -15,11 +15,11 @@ const Status = ({status}) => {
 
 /** This component can show as two sections
 "Download Completed" section:
-When a node enters 'Downloading', 'Verifying", 'Finalizing', light up (i.e. spinner shows up and showing "0 of [NodeNum]") the "Download Completed" section.
+When a node enters 'Downloading', 'Verifying", 'Finalizing', light up (i.e. spinner shows up and showing "0 of [NUMBER OF NODES NEED UPDATE]") the "Download Completed" section.
 Only update/add up the node count for nodes in "Updated_Need_Reboot" state.
 
 "Update Completed" section:
-When a node enters 'Rebooting', light up (i.e. spinner shows up and showing "0 of [NodeNum]") the "Update Completed" section.
+When a node enters 'Rebooting', light up (i.e. spinner shows up and showing "0 of [NUMBER OF NODES NEED UPDATE]") the "Update Completed" section.
 Only update/add up the node count for up-to-date nodes.
 **/
 const Breakdown = ({iconClass, text, count, total, textClass}) => {
@@ -41,25 +41,26 @@ const Breakdown = ({iconClass, text, count, total, textClass}) => {
 
 const Details = ({nodeListUpdateStatus}) => {
   const totalNodes = nodeListUpdateStatus.count;
+  const upgradeCount = nodeListUpdateStatus.upgradeCount;
 
   return <div className="co-cluster-updates__operator-component">
     <div className="co-cluster-updates__operator-step">
       <div className="co-cluster-updates__operator-text">
-        <span>Container Linux &#10141; Latest Update</span>
+        {nodeListUpdateStatus.isSoftwareUpgarding ? <span><span className="co-cluster-updates__operator-subheader">Updated Software is available</span> <span className="text-muted">({upgradeCount} nodes need updating)</span></span> : <span>Container Linux &#10141; Latest Update</span>}
       </div>
     </div>
     {(nodeListUpdateStatus.downloading.length > 0 || nodeListUpdateStatus.downloadCompleted.length > 0) &&
       <Breakdown text="Download Completed"
         count={nodeListUpdateStatus.downloadCompleted.length}
         iconClass={containerLinuxUpdateOperator.getDownloadCompletedIconClass(nodeListUpdateStatus)}
-        total={totalNodes} />
+        total={upgradeCount} />
     }
     {(nodeListUpdateStatus.downloading.length > 0 || nodeListUpdateStatus.rebooting.length > 0) &&
       <Breakdown text="Update Completed"
         iconClass={containerLinuxUpdateOperator.getUpdateCompletedIconClass(nodeListUpdateStatus)}
         count={nodeListUpdateStatus.upToDate.length}
         textClass={nodeListUpdateStatus.downloading.length ? 'co-cl-operator--pending' : ''}
-        total={totalNodes} />
+        total={upgradeCount} />
     }
     {nodeListUpdateStatus.upToDate.length === totalNodes &&
       <Breakdown text="Container Linux is up to date"
@@ -89,7 +90,6 @@ export class ContainerLinuxUpdateDetails extends SafetyFirst {
 
   render() {
     const {nodeListUpdateStatus, isOperatorInstalled} = this.props;
-
     return <div>
       { isOperatorInstalled && <div className="co-cluster-updates__component">
         <div className="co-cluster-updates__heading">
@@ -113,4 +113,3 @@ export class ContainerLinuxUpdateDetails extends SafetyFirst {
     </div>;
   }
 }
-
