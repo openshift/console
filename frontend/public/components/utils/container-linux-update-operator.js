@@ -36,6 +36,10 @@ const isDownloadCompleted = (node) => {
   return getStatus(node) === 'UPDATE_STATUS_UPDATED_NEED_REBOOT';
 };
 
+const isUpdateAvailable = (node) => {
+  return getStatus(node) === 'UPDATE_STATUS_UPDATE_AVAILABLE';
+};
+
 const isRebooting = (node) => {
   const rebootInProgress =  _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-in-progress`, 'false');
   return rebootInProgress === 'true';
@@ -70,17 +74,17 @@ const getUpdateStatus = (node) => {
 };
 
 /** 'Download Completed' section:
-Whenever a node enters a "Downloading", "Verifying", "Finalizing", light up (i.e. spinner shows up and showing "0 of [NodeNum]") the "Download Completed" section.
+Whenever a node enters a "Downloading", "Verifying", "Finalizing", light up (i.e. spinner shows up and showing "0 of [NUMBER OF NODES NEED UPDATE]") the "Download Completed" section.
 Only update/add up the node count for those reached to "Updated_Need_Reboot" state.
 **/
 const getDownloadCompletedIconClass = (nodeListUpdateStatus) => {
-  return nodeListUpdateStatus.downloadCompleted.length === nodeListUpdateStatus.count ?
+  return nodeListUpdateStatus.downloadCompleted.length === nodeListUpdateStatus.upgradeCount ?
     'fa fa-check-circle co-cl-operator--downloaded' : 'fa fa-spin fa-circle-o-notch co-cl-operator-spinner--downloading';
 };
 
 /**
 'Update Completed' section:
-Whenever a node enters "Rebooting", light up (i.e. spinner shows up and showing "0 of [NodeNum]")
+Whenever a node enters "Rebooting", light up (i.e. spinner shows up and showing "0 of [NUMBER OF NODES NEED UPDATE]")
 Only update/add up the node count for those up-to-date nodes.
 **/
 const getUpdateCompletedIconClass = (nodeListUpdateStatus) => {
@@ -93,6 +97,7 @@ const getNodeListUpdateStatus = (nodeList) => {
   let upToDate = [];
   let rebooting = [];
   let downloadCompleted = [];
+  let updateAvailable = [];
 
   _.each(nodeList, (node) => {
     if (isDownloading(node)) {
@@ -103,16 +108,21 @@ const getNodeListUpdateStatus = (nodeList) => {
       upToDate.push(node);
     } else if (isRebooting(node)) {
       rebooting.push(node);
+    } else if (isUpdateAvailable(node)) {
+      updateAvailable.push(node);
     }
   });
-
+  const isSoftwareUpgarding = downloading.length > 0 || downloadCompleted.length > 0 || rebooting.length > 0;
   return {
     count: nodeList.length,
-    overallState: downloading.length || rebooting.length ? 'Software is upgrading...' : 'Up to date',
-    downloading,
+    upgradeCount: downloading.length + updateAvailable.length + downloadCompleted.length,
+    overallState: isSoftwareUpgarding ? 'Software is upgrading...' : 'Up to date',
     upToDate,
     rebooting,
-    downloadCompleted
+    downloading,
+    downloadCompleted,
+    updateAvailable,
+    isSoftwareUpgarding,
   };
 };
 
