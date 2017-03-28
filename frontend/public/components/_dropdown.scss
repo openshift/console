@@ -53,7 +53,9 @@
   background-color: $color-highlight-blue;
 }
 
-.dropdown__default {
+.dropdown__disabled {
+  color: #666;
+  cursor: not-allowed;
 }
 
 .dropdown__not-btn {

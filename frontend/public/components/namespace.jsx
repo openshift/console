@@ -2,6 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import ReactTooltip from 'react-tooltip';
 
 import {k8s} from '../module/k8s';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
@@ -89,7 +90,6 @@ const NamespaceSparklines = ({namespace}) => <div className="co-namespace-sparkl
 </div>;
 
 const Details = (namespace) => {
-
   if (_.isEmpty(namespace)) {
     return <div className="empty-page">
       <h1 className="empty-page__header">No namespace selected</h1>
@@ -97,11 +97,13 @@ const Details = (namespace) => {
     </div>;
   }
 
-  const deleteModal = {
-    label: 'Delete Namespace',
-    weight: 900,
-    callback: () => deleteNamespaceModal({resource: namespace}),
-  };
+  const deleteModal = {label: 'Delete Namespace', weight: 900};
+  if(namespace.metadata.name === 'default') {
+    deleteModal.label = <div className="dropdown__disabled" data-tip='Namespace "default" cannot be deleted'>{deleteModal.label}</div>;
+    ReactTooltip.rebuild();
+  } else {
+    deleteModal.callback = () => deleteNamespaceModal({resource: namespace});
+  }
 
   const menuActions = [
     Cog.factory.ModifyLabels(kindObj('namespace'), namespace),
@@ -110,7 +112,7 @@ const Details = (namespace) => {
   ];
 
   return <div className="details-page">
-    {namespace.metadata.name !== 'default' && namespace.status.phase !== 'Terminating' && <ActionsMenu actions={menuActions} />}
+    {namespace.status.phase !== 'Terminating' && <ActionsMenu actions={menuActions} />}
     <h1 className="co-m-pane__title co-m-pane__body__top-controls">Namespace {namespace.metadata.name}</h1>
     <dl>
       <dt>Status</dt>

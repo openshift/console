@@ -78,7 +78,7 @@ export class Dropdown extends DropdownMixin {
     }
 
     const children = _.map(items, (html, key) => {
-      const klass = noSelection || key !== selectedKey ? 'dropdown__default' : 'dropdown__selected';
+      const klass = classNames({'dropdown__selected': !noSelection && key === selectedKey});
       const onClick_ = this.onClick_.bind(this, key);
       return <li className={klass} key={key}><a onClick={onClick_}>{html}</a></li>;
     });
