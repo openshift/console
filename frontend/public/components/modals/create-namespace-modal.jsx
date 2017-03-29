@@ -5,8 +5,8 @@ import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../
 import {PromiseComponent, SelectorInput} from '../utils';
 
 class CreateNamespaceModal extends PromiseComponent {
-  handleChange (value) {
-    this.setState({value});
+  handleChange (e) {
+    this.setState({value: e.target.value});
   }
 
   _submit(event) {
@@ -28,20 +28,20 @@ class CreateNamespaceModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={e => this._submit(e)} name="form" className="co-p-new-user-modal">
+    return <form onSubmit={this._submit.bind(this)} name="form" className="co-p-new-user-modal">
       <ModalTitle>Create New Namespace</ModalTitle>
       <ModalBody>
         <div>
           <label htmlFor="input-name" className="control-label">Name</label>
         </div>
         <div className="modal-body__field">
-          <input type="text" className="form-control" onChange={e => this.handleChange(e.target.value)} value={this.state.value || ''} autoFocus required />
+          <input type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.value || ''} autoFocus required />
         </div>
         <div>
           <label className="control-label">Labels</label>
         </div>
         <div className="modal-body__field">
-          <SelectorInput labelClassName="co-text-namespace" onChange={labels => this.onLabels(labels)} tags={[]} />
+          <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels.bind(this)} tags={[]} />
         </div>
       </ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
