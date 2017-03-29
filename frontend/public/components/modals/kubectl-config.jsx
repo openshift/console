@@ -75,6 +75,7 @@ class KubectlConfigModal extends PromiseComponent {
         step: steps.DOWNLOAD_CONFIGURATION,
         configuration
       });
+      this.props.callback();
     });
   }
 
