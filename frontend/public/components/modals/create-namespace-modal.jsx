@@ -1,26 +1,29 @@
 import React from 'react';
 
-import {k8s} from '../../module/k8s';
-import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
-import {PromiseComponent, SelectorInput} from '../utils';
+import { k8s } from '../../module/k8s';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { history, PromiseComponent, SelectorInput } from '../utils';
 
 class CreateNamespaceModal extends PromiseComponent {
   handleChange (e) {
-    this.setState({value: e.target.value});
+    this.setState({name: e.target.value});
   }
 
   _submit(event) {
     event.preventDefault();
 
+    const {name, labels} = this.state;
     const namespace = {
       metadata: {
-        name: this.state.value,
-        labels: SelectorInput.objectify(this.state.labels),
+        name,
+        labels: SelectorInput.objectify(labels),
       },
     };
     const promise = k8s.namespaces.create(namespace);
-    this.handlePromise(promise)
-      .then(this.props.close);
+    this.handlePromise(promise).then(() => {
+      this.props.close();
+      history.push(`namespaces/${name}/details`);
+    });
   }
 
   onLabels (labels) {
@@ -35,7 +38,7 @@ class CreateNamespaceModal extends PromiseComponent {
           <label htmlFor="input-name" className="control-label">Name</label>
         </div>
         <div className="modal-body__field">
-          <input type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.value || ''} autoFocus required />
+          <input type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.name || ''} autoFocus required />
         </div>
         <div>
           <label className="control-label">Labels</label>
