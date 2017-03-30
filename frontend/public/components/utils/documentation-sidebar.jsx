@@ -5,7 +5,7 @@ export const DocumentationSidebar = ({version}) => <div className="co-p-cluster_
     <h1 className="co-p-cluster__sidebar-heading co-p-cluster__sidebar-heading--first">Documentation</h1>
     <dl>
       <dt className="co-p-cluster__doc-title"><a href="https://coreos.com/tectonic/docs/latest/account/" target="_blank">Manage Your Account</a></dt>
-      <dd className="co-p-cluster__doc-description">You can manage your Tectonic account at <a href="https://account.tectonic.com" target="_blank">account.tectonic.com</a> for access to licenses, billing details, invoices, and account users.</dd>
+      <dd className="co-p-cluster__doc-description">You can manage your Tectonic account at <a href="https://account.coreos.com" target="_blank">account.coreos.com</a> for access to licenses, billing details, invoices, and account users.</dd>
       <dt className="co-p-cluster__doc-title"><a href="https://coreos.com/tectonic/docs/latest/usage/" target="_blank">End User Guide</a></dt>
       <dd className="co-p-cluster__doc-description">End-users of Tectonic are expected to deploy applications directly in Kubernetes. Your application's architecture will drive how you assemble these components together.</dd>
     </dl>
