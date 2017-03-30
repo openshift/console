@@ -551,12 +551,13 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 		ClientId: clientID,
 	}
 
-	if resp, err := s.DexClient.RevokeRefresh(r.Context(), req); err != nil || resp.NotFound {
-		if resp.NotFound {
-			sendResponse(w, http.StatusNotFound, apiError{"Failed to revoke refresh token: refresh token not found"})
-			return
-		}
+	resp, err := s.DexClient.RevokeRefresh(r.Context(), req)
+	if err != nil {
 		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
+		return
+	}
+	if resp.NotFound {
+		sendResponse(w, http.StatusNotFound, apiError{"Failed to revoke refresh token: refresh token not found"})
 		return
 	}
 
