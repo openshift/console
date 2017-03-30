@@ -22,7 +22,7 @@ const deleteModal = (kind, ns) => {
   return {label, weight, callback};
 };
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, deleteModal];
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, deleteModal];
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Name</div>
@@ -161,4 +161,5 @@ export const NamespaceSelector = (props) => {
   </Firehose>;
 };
 
-export const NamespacesDetailsPage = props => <DetailsPage {...props} pages={[navFactory.details(Details)]} menuActions={menuActions} />;
+const pages = [navFactory.details(Details), navFactory.editYaml()];
+export const NamespacesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
