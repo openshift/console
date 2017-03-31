@@ -34,9 +34,11 @@ export class ListPage extends React.Component {
   }
 
   render () {
-    const {kind, namespace, ListComponent, dropdownFilters, rowFilters, filterLabel, showTitle = true, canExpand = false} = this.props;
+    const {kind, namespace, ListComponent, dropdownFilters, rowFilters, filterLabel, showTitle = true, canExpand = false, canCreate, createHandler} = this.props;
     const {label, labelPlural, plural} = kindObj(kind);
+
     const href = `ns/${namespace || k8sEnum.DefaultNS}/${plural}/new`;
+    const createProps = createHandler ? {onClick: createHandler} : {to: href};
 
     const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
       return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type)} />;
@@ -54,8 +56,8 @@ export class ListPage extends React.Component {
         <div className="co-m-pane__heading">
           <div className="row">
             <div className="col-xs-12">
-              { this.props.canCreate &&
-                <Link to={href} className="co-m-primary-action pull-left">
+              { canCreate &&
+                <Link className="co-m-primary-action pull-left" {...createProps}>
                   <button className="btn btn-primary">
                     Create {label}
                   </button>

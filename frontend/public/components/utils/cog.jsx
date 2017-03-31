@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
 import classNames from 'classnames';
 
 import {k8s} from '../../module/k8s/k8s';
@@ -10,11 +9,6 @@ import { DropdownMixin, sortActions } from './dropdown';
 import { history, kindObj } from './index';
 
 export class Cog extends DropdownMixin {
-  componentDidMount () {
-    super.componentDidMount();
-    ReactTooltip.rebuild();
-  }
-
   render () {
     const onClick_ = (option, event) => {
       event.preventDefault();
@@ -51,7 +45,7 @@ export class Cog extends DropdownMixin {
 
 Cog.factory = {
   Delete: (kind, obj) => ({
-    label: `Delete ${kind.label} ...`,
+    label: `Delete ${kind.label}...`,
     weight: 900,
     callback: () => confirmModal({
       title: `Delete ${kind.label} `,

@@ -4,6 +4,7 @@ export { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
 export { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
 export { HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage } from './horizontal-pod-autoscaler';
 export { JobsPage, JobsDetailsPage } from './job';
+export { NamespacesPage, NamespacesDetailsPage } from './namespace';
 export { NodesPage, NodesDetailsPage } from './node';
 export { PodsPage, PodsDetailsPage } from './pod';
 export { ReplicaSetsPage, ReplicaSetsDetailsPage } from './replicaset';
