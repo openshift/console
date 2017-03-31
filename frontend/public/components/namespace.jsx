@@ -150,14 +150,14 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
   </div>;
 });
 
-export const NamespaceSelector = (props) => {
+export const NamespaceSelector = () => {
   // Don't show namespace dropdown unless the namespace is relevant to the current page
   if(!isNamespaced(window.location.pathname)) {
     return null;
   }
 
   return <Firehose kind="namespace" isList={true}>
-    <NamespaceDropdown {...props} />
+    <NamespaceDropdown />
   </Firehose>;
 };
 
