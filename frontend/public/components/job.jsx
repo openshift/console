@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 import {DetailsPage, ListPage, makeList} from './factory';
 import {configureJobParallelismModal} from './modals';
-import {Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory} from './utils';
+import {Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory} from './utils';
 
 const ModifyJobParallelism = (kind, obj) => ({
   label: 'Modify Parallelism...',
@@ -69,9 +69,7 @@ const JobRow = ({obj: job}) => {
 const Details = (job) => <div>
   <div className="row no-gutter">
     <div className="col-md-6">
-      <div className="co-m-pane__heading">
-        <h1 className="co-m-pane__title">Job Overview</h1>
-      </div>
+      <Heading text="Job Overview" />
       <div className="co-m-pane__body-group">
         <div className="co-m-pane__body-section--bordered">
           <ResourceSummary resource={job} showNodeSelector={false}>
@@ -86,9 +84,7 @@ const Details = (job) => <div>
       </div>
     </div>
     <div className="col-md-6">
-      <div className="co-m-pane__heading">
-        <h1 className="co-m-pane__title">Job Status</h1>
-      </div>
+      <Heading text="Job Status" />
       <div className="co-m-pane__body-group">
         <div className="co-m-pane__body-section--bordered">
           <dl>

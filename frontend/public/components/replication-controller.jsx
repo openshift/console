@@ -4,10 +4,10 @@ import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, makeList } from './factory';
 import { replicaSetMenuActions } from './replicaset';
 import { Header, rowOfKind } from './workloads';
-import { navFactory, ResourceHeading, ResourceSummary, ResourcePodCount } from './utils';
+import { navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 
 const Details = (replicationController) => <div>
-  <ResourceHeading resourceName="Replication Controller" />
+  <Heading text="Replication Controller Overview" />
   <div className="co-m-pane__body-group">
     <div className="co-m-pane__body-section--bordered">
       <div className="row no-gutter">

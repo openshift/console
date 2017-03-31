@@ -6,7 +6,7 @@ import { DetailsPage, ListPage, makeList } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
-import { Cog, navFactory, kindObj, LabelList, ResourceCog, ResourceHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
+import { Cog, navFactory, kindObj, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 
 const makeNodeScheduable = (resourceKind, resource) => {
   const patch = [{ op: 'replace', path: '/spec/unschedulable', value: false }];
@@ -155,7 +155,7 @@ const Details = (node) => {
   const integerLimit = input => parseInt(input, 10);
 
   return <div>
-    <ResourceHeading resourceName="Node" />
+    <Heading text="Node Overview" />
     <div className="co-m-pane__body">
       <div className="row">
         <div className="col-xs-12">

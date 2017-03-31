@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {DetailsPage, ListPage, makeList} from './factory';
-import {Cog, navFactory, LabelList, ResourceCog, ResourceHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector} from './utils';
+import {Cog, navFactory, LabelList, ResourceCog, Heading, ResourceIcon, ResourceLink, ResourceSummary, Selector} from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
 
@@ -96,7 +96,7 @@ const ServicePortMapping = ({s}) => <div>
 
 const Details = (s) => <div className="row no-gutter">
   <div className="col-sm-6">
-    <ResourceHeading resourceName="Service" />
+    <Heading text="Service Overview" />
     <div className="co-m-pane__body-group">
       <div className="co-m-pane__body-section--bordered">
         <ResourceSummary resource={s} showNodeSelector={false}>
@@ -107,9 +107,7 @@ const Details = (s) => <div className="row no-gutter">
     </div>
   </div>
   <div className="col-sm-6">
-    <div className="co-m-pane__heading">
-      <h1 className="co-m-pane__title">Service Routing</h1>
-    </div>
+    <Heading text="Service Routing" />
     <div className="co-m-pane__body-group">
       <div className="co-m-pane__body-section--bordered">
         <dl>
