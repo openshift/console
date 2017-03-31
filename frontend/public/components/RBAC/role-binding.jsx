@@ -26,7 +26,7 @@ const RoleBindingRow = (props) => {
   );
 };
 
-const RoleBindings = makeList('RoleBindings', 'rolebinding', Header, RoleBindingRow);
+const RoleBindings = makeList('rolebinding', Header, RoleBindingRow);
 
 const Subject = ({subject}) => <div className="row">
   <div className="col-xs-4">{subject.kind}</div>

@@ -5,7 +5,7 @@ import {makeList, TwoColumns} from '../factory';
 import {RowOfKind, RoleHeader, RoleDetails} from './role';
 import {NavTitle} from '../utils';
 
-const Roles = makeList('Roles', 'clusterrole', RoleHeader, RowOfKind('clusterrole'));
+const Roles = makeList('clusterrole', RoleHeader, RowOfKind('clusterrole'));
 
 const Details = (selected) => {
   if (!_.isEmpty(selected)) {

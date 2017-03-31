@@ -78,7 +78,7 @@ Rows.propTypes = {
   selectRow: React.PropTypes.func.isRequired,
 };
 
-export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
+export const makeList = (kind, Header, Row, sortBy = undefined) => {
   class ReactiveList extends React.Component {
     static get kind () {
       return kind;
@@ -104,7 +104,7 @@ export const makeList = (name, kind, Header, Row, sortBy = undefined) => {
 
     render () {
       const klass = `co-m-${kind}-list co-m-table-grid co-m-table-grid--bordered`;
-      const sort = sortBy || (item => item.metadata ? item.metadata.name: null);
+      const sort = sortBy || (item => item.metadata ? item.metadata.name : null);
 
       return <div className={klass}>
         <Firehose ref="hose" isList={true} {...this.props} kind={kind}>

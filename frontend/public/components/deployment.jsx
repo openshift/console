@@ -132,7 +132,7 @@ const {details, editYaml, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
 const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
-const DeploymentsList = makeList('Deployments', 'deployment', Header, rowOfKind('deployment', menuActions));
+const DeploymentsList = makeList('deployment', Header, rowOfKind('deployment', menuActions));
 const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

@@ -43,7 +43,7 @@ const Row = ({obj: ns}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-export const NamespacesList = makeList('Namespaces', 'namespace', Header, Row);
+export const NamespacesList = makeList('namespace', Header, Row);
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;
 
 class PullSecret extends SafetyFirst {
