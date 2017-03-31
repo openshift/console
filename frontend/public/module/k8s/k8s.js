@@ -59,7 +59,7 @@ const addDefaults = (k8sObject, kind) => {
         bufferFlushInterval: 500,
         bufferMax: 1000,
       };
-      return wsFactory(kind.labelPlural, opts);
+      return wsFactory(path, opts);
     },
     kind: kind,
   }, k8sObject);

@@ -98,6 +98,7 @@ function expBackoff(prev, max) {
   return 2 * prev;
 }
 
+// id must uniquely identify the WebSocket, otherwise this could return the "wrong" WebSocket
 export const wsFactory = (id, options) => {
   // get by id
   if (!options) {
@@ -105,7 +106,6 @@ export const wsFactory = (id, options) => {
   }
   // websocket with id already exists
   if (wsCache[id]) {
-    // TODO (ggreer): if id is the same but options differ, this could return the "wrong" web socket
     return wsCache[id];
   }
   // create new websocket

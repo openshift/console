@@ -95,6 +95,7 @@ const actions =  {
     delete REF_COUNTS[id];
     return {type: types.stopK8sWatch, id};
   },
+
   watchK8sList: (id, query, k8sType) => dispatch => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
