@@ -6,8 +6,6 @@ import {entitlementTitles} from '../license-notifier';
 import {createModalLauncher, ModalTitle, ModalBody, ModalFooter} from '../factory/modal';
 import {updateLicenseModal} from './update-license-modal';
 
-const createBlockingModalLauncher = (Component) => createModalLauncher(Component, {backdrop: 'static', keyboard: false});
-
 const updateLicense = ({cancel}) => {
   cancel();
   updateLicenseModal().result.then(() => {
@@ -74,9 +72,6 @@ const exceededModalProps = (props) => {
   };
 };
 
-const blockingModal = createBlockingModalLauncher(LicenseModal);
-const nonBlockingModal = createModalLauncher(LicenseModal);
-
 export const licenseEnforcementModal = (options) => {
   const props = _.omit(options, ['type']);
 
@@ -94,8 +89,5 @@ export const licenseEnforcementModal = (options) => {
   }
   _.defaults(props, additionalProps);
 
-  if (props.blocking) {
-    return blockingModal(props);
-  }
-  return nonBlockingModal(props);
+  return createModalLauncher(LicenseModal)(props);
 };
