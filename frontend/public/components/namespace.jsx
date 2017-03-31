@@ -112,7 +112,9 @@ const Details = (ns) => {
     </div>
     <div className="co-m-pane__body">
       <div className="row">
-        <h1 className="co-m-pane__title">Resource Usage</h1>
+        <div className="col-xs-12">
+          <h1 className="co-m-pane__title">Resource Usage</h1>
+        </div>
         <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
           <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
         </div>
