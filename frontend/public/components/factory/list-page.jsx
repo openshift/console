@@ -34,7 +34,7 @@ export class ListPage extends React.Component {
   }
 
   render () {
-    const {kind, namespace, ListComponent, dropdownFilters, rowFilters, filterLabel, showTitle = true, canExpand = false, canCreate, createHandler} = this.props;
+    const {kind, namespace, ListComponent, dropdownFilters, rowFilters, filterLabel, showTitle = true, canExpand = false, canCreate, createHandler, Intro} = this.props;
     const {label, labelPlural, plural} = kindObj(kind);
 
     const href = `ns/${namespace || k8sEnum.DefaultNS}/${plural}/new`;
@@ -56,6 +56,7 @@ export class ListPage extends React.Component {
         <div className="co-m-pane__heading">
           <div className="row">
             <div className="col-xs-12">
+              {Intro}
               { canCreate &&
                 <Link className="co-m-primary-action pull-left" {...createProps}>
                   <button className="btn btn-primary">
@@ -85,11 +86,13 @@ export class ListPage extends React.Component {
 ListPage.propTypes = {
   canCreate: React.PropTypes.bool,
   canExpand: React.PropTypes.bool,
+  createHandler: React.PropTypes.func,
   dropdownFilters: React.PropTypes.array,
   fieldSelector: React.PropTypes.string,
   filterLabel: React.PropTypes.string,
-  kind: React.PropTypes.string,
-  ListComponent: React.PropTypes.func,
+  Intro: React.PropTypes.element,
+  kind: React.PropTypes.string.isRequired,
+  ListComponent: React.PropTypes.func.isRequired,
   namespace: React.PropTypes.string,
   rowFilters: React.PropTypes.array,
   selector: React.PropTypes.object,

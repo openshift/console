@@ -134,6 +134,38 @@ const Details = (ns) => {
   </div>;
 };
 
+const RoleHeader = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-4">Role Ref</div>
+  <div className="col-xs-4">Subject Kind</div>
+  <div className="col-xs-4">Subject Name</div>
+</div>;
+
+const roleMenuActions = [Cog.factory.Edit, Cog.factory.Delete];
+
+const RoleRow = ({obj: binding}) => <div>
+  {binding.subjects.map((subject, i) => <div className="row co-resource-list__item" key={i}>
+    <div className="col-xs-4">
+      <ResourceCog actions={roleMenuActions} kind="rolebinding" resource={binding} />
+      <ResourceLink kind={binding.roleRef.kind.toLowerCase()} name={binding.roleRef.name} namespace={binding.metadata.namespace} />
+    </div>
+    <div className="col-xs-4">
+      {subject.kind}
+    </div>
+    <div className="col-xs-4">
+      {subject.name}
+    </div>
+  </div>)}
+</div>;
+
+const RolesList = makeList('rolebinding', RoleHeader, RoleRow);
+const RolesPage = props => {
+  const Intro = <div>
+    <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
+    <div className="co-m-pane__explanation">These subjects have access to resources specifically within this namespace.</div>
+  </div>;
+  return <ListPage namespace={props.metadata.name} kind="rolebinding" ListComponent={RolesList} Intro={Intro} showTitle={false} />;
+};
+
 const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {
   const {data, loaded, namespace, dispatch} = props;
 
@@ -171,5 +203,5 @@ export const NamespaceSelector = () => {
   </Firehose>;
 };
 
-const pages = [navFactory.details(Details), navFactory.editYaml()];
+const pages = [navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)];
 export const NamespacesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;

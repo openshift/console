@@ -8,22 +8,27 @@ export const navFactory = {
   details: (component = undefined) => ({
     href: 'details',
     name: 'Overview',
-    component: component,
+    component,
   }),
   events: (component = undefined) => ({
     href: 'events',
     name: 'Events',
-    component: component,
+    component,
   }),
   logs: (component = undefined) => ({
     href: 'logs',
     name: 'Logs',
-    component: component,
+    component,
   }),
   editYaml: () => ({
     href: 'yaml',
     name: 'YAML',
     component: (props) => <EditYAML obj={props} />,
+  }),
+  roles: (component = undefined) => ({
+    href: 'roles',
+    name: 'Role Bindings',
+    component,
   }),
 };
 
