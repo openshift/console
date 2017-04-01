@@ -116,7 +116,7 @@ const Details = (ingress) => <div className="col-md-12">
       </div>
       <div className="row">
         <div className="col-md-12">
-          <div className="co-m-deployment-list co-m-table-grid co-m-table-grid--bordered">
+          <div className="co-m-table-grid co-m-table-grid--bordered">
             <RulesHeader />
             <RulesRows spec={ingress.spec} />
           </div>
