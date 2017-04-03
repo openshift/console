@@ -27,5 +27,5 @@ const pages = [details(Details), editYaml(), pods(), events(ResourceEventStream)
 
 export const ReplicationControllersDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={replicaSetMenuActions} />;
 
-export const ReplicationControllersList = makeList('ReplicationControllers', 'replicationcontroller', Header, rowOfKind('replicationcontroller', replicaSetMenuActions));
+export const ReplicationControllersList = makeList('replicationcontroller', Header, rowOfKind('replicationcontroller', replicaSetMenuActions));
 export const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;

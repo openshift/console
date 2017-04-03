@@ -132,8 +132,8 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
 </div>;
 
 // We have different list layouts for the Nodes page list and the Search page list
-const NodesList = makeList('Nodes', 'node', Header, NodeRow);
-export const NodesListSearch = makeList('Nodes', 'node', HeaderSearch, NodeRowSearch);
+const NodesList = makeList('node', Header, NodeRow);
+export const NodesListSearch = makeList('node', HeaderSearch, NodeRowSearch);
 
 const dropdownFilters = [{
   type: 'node-status',

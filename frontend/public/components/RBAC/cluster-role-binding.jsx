@@ -25,7 +25,7 @@ const Row = (props) => {
   );
 };
 
-const ClusterRoleBindings = makeList('ClusterRoleBindings', 'clusterrolebinding', Header, Row);
+const ClusterRoleBindings = makeList('clusterrolebinding', Header, Row);
 
 const RBDetails = BindingDetails('Cluster Role Binding Overview');
 

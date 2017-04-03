@@ -50,7 +50,7 @@ const ConfigMapDetails = (configMap) => {
 
 const pages = [navFactory.details(ConfigMapDetails), navFactory.editYaml()];
 
-const ConfigMaps = makeList('ConfigMaps', 'configmap', ConfigMapHeader, ConfigMapRow);
+const ConfigMaps = makeList('configmap', ConfigMapHeader, ConfigMapRow);
 const ConfigMapsPage = props => <ListPage ListComponent={ConfigMaps} {...props} />;
 const ConfigMapsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 

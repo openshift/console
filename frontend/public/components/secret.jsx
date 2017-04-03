@@ -79,7 +79,7 @@ const withSecretsList = (Row) => {
 
 const pages = [navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()];
 
-const SecretsList = makeList('Secrets', 'secret', SecretHeader, SecretRow);
+const SecretsList = makeList('secret', SecretHeader, SecretRow);
 const SecretsPage = props => <ListPage ListComponent={SecretsList} {...props} />;
 const SecretsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 

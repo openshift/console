@@ -130,7 +130,7 @@ const Details = (ingress) => <div className="col-md-12">
 
 const pages = [navFactory.details(detailsPage(Details)), navFactory.editYaml()];
 const IngressDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
-const IngressList = makeList('Ingress', 'ingress', IngressListHeader, IngressListRow);
+const IngressList = makeList('ingress', IngressListHeader, IngressListRow);
 const IngressPage = props => <ListPage ListComponent={IngressList} {...props} />;
 
 export {IngressList, IngressPage, IngressDetailsPage};

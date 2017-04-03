@@ -131,7 +131,7 @@ const {details, pods, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
 const ServicesDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
-const ServicesList = makeList('Services', 'service', ServiceHeader, ServiceRow);
+const ServicesList = makeList('service', ServiceHeader, ServiceRow);
 const ServicesPage = props => <ListPage canCreate={true} ListComponent={ServicesList} {...props} />;
 
 export {ServicesList, ServicesPage, ServicesDetailsPage};
