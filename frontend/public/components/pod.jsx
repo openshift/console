@@ -251,7 +251,7 @@ const pages = [details(Details), editYaml(), logs(PodLogs), events(ResourceEvent
 
 export const PodsDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
 export const PodList = makeList('pod', PodHeader, PodRow);
-export const PodsPage = props => <ListPage ListComponent={PodList} dropdownFilters={[]} kind="pod" rowFilters={filters} {...props} />;
+export const PodsPage = props => <ListPage ListComponent={PodList} kind="pod" rowFilters={filters} {...props} />;
 
 navFactory.pods = (component = undefined) => ({
   href: 'pods',
