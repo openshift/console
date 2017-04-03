@@ -9,8 +9,8 @@ export const detailsPage = (Component) => (props) =>
     <Component {...props} />
   </div>;
 
-export const ResourceHeading = ({resourceName}) => <div className="co-m-pane__heading">
-  <h1 className="co-m-pane__title">{resourceName} Overview</h1>
+export const Heading = ({text}) => <div className="co-m-pane__heading">
+  <h1 className="co-m-pane__title">{text}</h1>
 </div>;
 
 export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true}) => <dl>

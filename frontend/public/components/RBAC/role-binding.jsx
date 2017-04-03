@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import {getQN} from '../../module/k8s';
-import {ResourceIcon, LabelList, Timestamp, NavTitle} from '../utils';
+import {Heading, ResourceIcon, LabelList, Timestamp, NavTitle} from '../utils';
 import {makeList, TwoColumns} from '../factory';
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -55,9 +55,7 @@ const RoleRef = ({parentNamespace, namespace, name, kind}) => {
 export const BindingDetails = (headerText) => ({metadata, subjects, roleRef}) => <div>
   <div className="row no-gutter">
     <div className="col-md-12">
-      <div className="co-m-pane__heading">
-        <h1 className="co-m-pane__title">{headerText}</h1>
-      </div>
+      <Heading text={headerText} />
       <div className="co-m-pane__body">
         <dl>
           <dt>Name</dt>

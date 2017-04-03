@@ -6,7 +6,7 @@ import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, ResourceHeading, ResourceLink, ResourceSummary} from './utils';
+import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 
 const deleteModal = (kind, ns) => {
@@ -94,7 +94,7 @@ const Details = (ns) => {
   }
 
   return <div>
-    <ResourceHeading resourceName="Namespace" />
+    <Heading text="Namespace Overview" />
     <div className="co-m-pane__body">
       <div className="row">
         <div className="col-sm-6 col-xs-12">

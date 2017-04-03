@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {DetailsPage, ListPage, makeList} from './factory';
-import {Cog, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary} from './utils';
+import {Cog, Heading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary} from './utils';
 
 const menuActions = Cog.factory.common;
 
@@ -106,10 +106,8 @@ const Details = (ingress) => <div className="col-md-12">
         <dd>{getTLSCert(ingress)}</dd>
       </ResourceSummary>
     </div>
-    <div className="co-m-pane__heading">
-      <h1 className="co-m-pane__title">Ingress Rules</h1>
-    </div>
 
+    <Heading text="Ingress Rules" />
     <div className="co-m-pane__body">
       <div className="row co-m-form-row">
         <div className="col-md-12">

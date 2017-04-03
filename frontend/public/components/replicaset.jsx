@@ -2,13 +2,13 @@ import React from 'react';
 
 import {DetailsPage, ListPage, makeList} from './factory';
 import {Header, rowOfKind} from './workloads';
-import {Cog, navFactory, ResourceHeading, ResourceSummary, ResourcePodCount} from './utils';
+import {Cog, navFactory, Heading, ResourceSummary, ResourcePodCount} from './utils';
 
 const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
 export const replicaSetMenuActions = [ModifyCount, ModifyPodSelector, ModifyNodeSelector, ...common];
 
 const Details = (replicaSet) => <div>
-  <ResourceHeading resourceName="Replica Set" />
+  <Heading text="Replica Set Overview" />
   <div className="co-m-pane__body-group">
     <div className="co-m-pane__body-section--bordered">
       <div className="row no-gutter">
