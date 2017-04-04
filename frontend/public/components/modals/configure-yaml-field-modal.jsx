@@ -2,7 +2,7 @@ import React from 'react';
 
 import {k8sCreate, k8sGet, k8sPatch} from '../../module/k8s';
 import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
-import {LoadingInline, PromiseComponent, kindObj} from '../utils';
+import {LoadingInline, PromiseComponent, kindObj, LoadError} from '../utils';
 
 class ConfigureYamlFieldModal extends PromiseComponent {
   constructor(props) {
@@ -10,7 +10,8 @@ class ConfigureYamlFieldModal extends PromiseComponent {
     this.state = Object.assign(this.state, {
       resource: this.props.resource,
       resourceLoading: true,
-      value: undefined
+      value: undefined,
+      loadError: false
     });
     this._submit = this._submit.bind(this);
     this._cancel = this._cancel.bind(this);
@@ -44,10 +45,10 @@ class ConfigureYamlFieldModal extends PromiseComponent {
         this.setState({
           resource,
           resourceLoading: false,
-          value: value
+          value
         });
       }).catch(() => {
-        this.setState({ resourceLoading: false });
+        this.setState({ resourceLoading: false, loadError: true });
       });
   }
 
@@ -111,10 +112,11 @@ class ConfigureYamlFieldModal extends PromiseComponent {
       <ModalBody>
         <p>{this.props.modalText}</p>
         { this.state.resourceLoading && <LoadingInline /> }
-        { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
+        { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && this.state.value && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
         { this.props.inputType === 'input' && <input value={this.state.value} onChange={this._handleChange} className="form-control" disabled={this.state.resourceLoading} /> }
+        {this.state.loadError && <LoadError label="Tectonic License" />}
       </ModalBody>
-      <ModalSubmitFooter submitText="Save Setting" submitDisabled={this.state.resourceLoading} cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
+      <ModalSubmitFooter submitText="Save Setting" submitDisabled={this.state.resourceLoading || this.state.loadError} cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
     </form>;
   }
 }
