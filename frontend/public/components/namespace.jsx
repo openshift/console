@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
+import { Link } from 'react-router';
 
 import {k8s, k8sEnum} from '../module/k8s';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
 import {DetailsPage, ListPage, makeList} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
+import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceIcon, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 
 const deleteModal = (kind, ns) => {
@@ -140,13 +141,14 @@ const RoleHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Subject Name</div>
 </div>;
 
-const roleMenuActions = [Cog.factory.Edit, Cog.factory.Delete];
-
 const RoleRow = ({obj: binding}) => <div>
   {binding.subjects.map((subject, i) => <div className="row co-resource-list__item" key={i}>
     <div className="col-xs-4">
-      <ResourceCog actions={roleMenuActions} kind="rolebinding" resource={binding} />
-      <ResourceLink kind={binding.roleRef.kind.toLowerCase()} name={binding.roleRef.name} namespace={binding.metadata.namespace} />
+      {/* TODO(andy): Link to old role details pages until the new ones are implemented */}
+      <span className="co-resource-link">
+        <ResourceIcon kind={binding.roleRef.kind.toLowerCase()} />
+        <Link to={binding.roleRef.kind === 'Role' ? `all-namespaces/roles#(${binding.metadata.namespace})-${binding.roleRef.name}` : `clusterroles#${binding.roleRef.name}`}>{binding.roleRef.name}</Link>
+      </span>
     </div>
     <div className="col-xs-4">
       {subject.kind}
@@ -163,7 +165,7 @@ const RolesPage = props => {
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
     <div className="co-m-pane__explanation">These subjects have access to resources specifically within this namespace.</div>
   </div>;
-  return <ListPage namespace={props.metadata.name} kind="rolebinding" ListComponent={RolesList} Intro={Intro} showTitle={false} />;
+  return <ListPage namespace={props.metadata.name} kind="rolebinding" ListComponent={RolesList} Intro={Intro} showTitle={false} textFilter="role-binding" filterLabel="Role Bindings by role or subject" />;
 };
 
 const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {

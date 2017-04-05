@@ -1,17 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import store from '../redux';
-import actions from '../module/k8s/k8s-actions';
-
-import {inject, WithQuery} from './utils';
-
-// A replacement for the StatusBox to just show empty stuff instead of the usual...
-const Injector = ({children, data, filters}) => {
-  data = data || [];
-  return <div>{inject(children, {data, filters})}</div>;
-};
-
 const CheckBox = ({name, active, number, toggle}) => {
   const klass = classnames('row-filter--box clickable', {
     'row-filter--box__active': active, 'row-filter--box__empty': !number,
@@ -22,7 +11,7 @@ const CheckBox = ({name, active, number, toggle}) => {
   </div>;
 };
 
-class CheckBoxes extends React.Component {
+export class CheckBoxes extends React.Component {
   constructor (props) {
     super(props);
     this.state = {};
@@ -52,9 +41,9 @@ class CheckBoxes extends React.Component {
   }
 
   applyFilter () {
-    const rowFilterItems = this.props.rowFilterItems || [];
+    const items = this.props.items || [];
     const selected = [];
-    const filters = rowFilterItems.filter((item, i) => this.state[i] && selected.push(i)).map(i => i[1]);
+    const filters = items.filter((item, i) => this.state[i] && selected.push(i)).map(i => i[1]);
 
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(selected));
@@ -62,11 +51,11 @@ class CheckBoxes extends React.Component {
       // ignore
     }
 
-    this.props.applyFilter({ selected: new Set(filters), all: rowFilterItems });
+    this.props.applyFilter(this.props.type, {selected: new Set(filters), all: items});
   }
 
   toggle (i) {
-    if (!this.props.rowFilterItems[i]) {
+    if (!this.props.items[i]) {
       return;
     }
     const nextState = Object.assign({}, this.state);
@@ -82,16 +71,10 @@ class CheckBoxes extends React.Component {
   }
 
   render () {
-    const {data, rowFilterItems, reducer} = this.props;
-    const numbers = {};
-    _.each(data, o => {
-      const phase = reducer(o);
-      numbers[phase] = (numbers[phase] || 0 ) + 1;
-    });
-
+    const {items, numbers} = this.props;
     const active = this.state;
 
-    const checkboxes = _.map(rowFilterItems, (item, i) => {
+    const checkboxes = _.map(items, (item, i) => {
       const [name, filter] = item;
       const number = numbers[filter] || 0;
       const props = {
@@ -106,37 +89,5 @@ class CheckBoxes extends React.Component {
     return <div className="col-xs-12">
       <div className="row-filter">{checkboxes}</div>
     </div>;
-  }
-}
-
-export class RowFilter extends React.Component {
-  constructor (props) {
-    super(props);
-  }
-
-  applyFilter (name, value) {
-    const id = this.query.getFirehoseId();
-    if (!id) {
-      return;
-    }
-    store.dispatch(actions.filterList(id, name, value));
-  }
-
-  render () {
-    const {type, items, reducer, selected} = this.props.rowFilter;
-
-    const props = {
-      selected, reducer, type,
-      rowFilterItems: items,
-      applyFilter: (filter) => {this.applyFilter(type, filter);},
-    };
-
-    return (
-      <WithQuery ref={ref => this.query = ref} isList={true} {...this.props} kind="pod">
-        <Injector>
-          <CheckBoxes {...props} />
-        </Injector>
-      </WithQuery>
-    );
   }
 }

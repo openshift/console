@@ -1,10 +1,12 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import {k8sEnum} from '../../module/k8s';
-import {RowFilter} from '../row-filter';
-import {Dropdown, kindObj, NavTitle} from '../utils';
+import actions from '../../module/k8s/k8s-actions';
+import {CheckBoxes} from '../row-filter';
+import {Dropdown, Firehose, kindObj, MultiFirehose, NavTitle} from '../utils';
 
 const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-unselected' : 'btn-selected')}>
@@ -15,57 +17,53 @@ const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div
   </label>
 </div>;
 
-export class ListPage extends React.Component {
+const BaseListPage = connect(null, {filterList: actions.filterList})(
+class BaseListPage_ extends React.Component {
   constructor (props) {
     super(props);
     this.state = {expand: !!props.expand};
+    this.onExpandChange = this.onExpandChange.bind(this);
+    this.applyFilter = this.applyFilter.bind(this);
   }
 
-  get list () {
-    return this.refs.list;
+  onExpandChange (expand) {
+    this.setState({expand});
   }
 
-  onFilterChange (event) {
-    this.list.applyFilter('name', event.target.value);
-  }
-
-  onDropdownChange (type, status) {
-    this.list.applyFilter(type, status);
+  applyFilter (filterName, options) {
+    const reduxIDs = this.props.reduxIDs || [this.props.reduxID];
+    reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
   }
 
   render () {
-    const {kind, namespace, ListComponent, dropdownFilters, rowFilters, filterLabel, showTitle = true, canExpand = false, canCreate, createHandler, Intro} = this.props;
-    const {label, labelPlural, plural} = kindObj(kind);
+    const {kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, rowSplitter, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro} = this.props;
 
-    const href = `ns/${namespace || k8sEnum.DefaultNS}/${plural}/new`;
-    const createProps = createHandler ? {onClick: createHandler} : {to: href};
+    // List data will either be in a single "data" property, or under multiple props if we have multiple resource kinds
+    const data = this.props.data || _.chain(this.props).pick(kinds).flatMap('data').flatMap(rowSplitter).value();
 
     const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
-      return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={this.onDropdownChange.bind(this, type)} />;
+      return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
     });
 
-    const RowsOfRowFilters = rowFilters && _.map(rowFilters, (rowFilter, i) => {
-      return <RowFilter key={i} rowFilter={rowFilter} {...this.props} />;
-    });
-
-    const onExpandChange = expand => this.setState({expand});
+    const RowsOfRowFilters = rowFilters && _.map(rowFilters, (rowFilter, i) => <CheckBoxes
+      {...rowFilter}
+      key={i}
+      applyFilter={this.applyFilter}
+      numbers={_.countBy(data, rowFilter.reducer)}
+    />);
 
     return <div>
-      {showTitle && <NavTitle title={labelPlural} />}
+      {title && <NavTitle title={title} />}
       <div className="co-m-pane">
         <div className="co-m-pane__heading">
           <div className="row">
             <div className="col-xs-12">
               {Intro}
-              { canCreate &&
-                <Link className="co-m-primary-action pull-left" {...createProps}>
-                  <button className="btn btn-primary">
-                    Create {label}
-                  </button>
-                </Link>
-              }
-              {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={onExpandChange} />}
-              <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${filterLabel || labelPlural} by name...`} onChange={this.onFilterChange.bind(this)} autoFocus={true} />
+              {canCreate && <Link className="co-m-primary-action pull-left" {...createProps}>
+                <button className="btn btn-primary">{createButtonText}</button>
+              </Link>}
+              {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
+              <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${filterLabel}...`} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} autoFocus={true} />
               {DropdownFilters}
             </div>
             {RowsOfRowFilters}
@@ -74,27 +72,61 @@ export class ListPage extends React.Component {
         <div className="co-m-pane__body">
           <div className="row">
             <div className="col-xs-12">
-              <ListComponent key={`${namespace}-${kind}`} ref="list" {...this.props} expand={this.state.expand} />
+              <ListComponent {...this.props} expand={this.state.expand} />
             </div>
           </div>
         </div>
       </div>
     </div>;
   }
-}
+});
 
-ListPage.propTypes = {
+BaseListPage.propTypes = {
   canCreate: React.PropTypes.bool,
   canExpand: React.PropTypes.bool,
-  createHandler: React.PropTypes.func,
+  createProps: React.PropTypes.object,
+  data: React.PropTypes.array,
   dropdownFilters: React.PropTypes.array,
   fieldSelector: React.PropTypes.string,
   filterLabel: React.PropTypes.string,
   Intro: React.PropTypes.element,
-  kind: React.PropTypes.string.isRequired,
+  kinds: React.PropTypes.array.isRequired,
   ListComponent: React.PropTypes.func.isRequired,
-  namespace: React.PropTypes.string,
   rowFilters: React.PropTypes.array,
+  rowSplitter: React.PropTypes.func,
   selector: React.PropTypes.object,
-  showTitle: React.PropTypes.bool,
+  textFilter: React.PropTypes.string,
+  title: React.PropTypes.string,
+};
+
+export const ListPage = props => {
+  const {createHandler, filterLabel, kind, namespace, showTitle = true} = props;
+  const {label, labelPlural, plural} = kindObj(kind);
+
+  const href = `ns/${namespace || k8sEnum.DefaultNS}/${plural}/new`;
+  const createProps = createHandler ? {onClick: createHandler} : {to: href};
+
+  return <Firehose key={`${namespace}-${kind}`} {...props} isList={true}>
+    <BaseListPage
+      {...props}
+      createButtonText={`Create ${label}`}
+      createProps={createProps}
+      filterLabel={filterLabel || `${labelPlural} by name`}
+      kinds={[kind]}
+      title={showTitle ? labelPlural : undefined}
+    />
+  </Firehose>;
+};
+
+export const MultiListPage = props => {
+  const {createHandler, kinds, namespace} = props;
+  const resources = kinds.map(kind => ({kind, isList: true, prop: kind}));
+
+  return <MultiFirehose key={`${namespace}-${kinds.join('-')}`} resources={resources}>
+    <BaseListPage
+      {...props}
+      createButtonText="Create"
+      createProps={{onClick: createHandler}}
+    />
+  </MultiFirehose>;
 };

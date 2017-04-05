@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import {getQN} from '../../module/k8s';
-import {injectChild, WithQuery} from '../utils';
+import {injectChild, Firehose, WithQuery} from '../utils';
 
 const DetailsColumn = (props) => {
   const {selected, data, children} = props;
@@ -44,7 +44,9 @@ export class TwoColumns extends React.Component {
                   { TopControls && <TopControls /> }
                   <input autoFocus={true} type="text" className="form-control" placeholder="Filter by name..." onChange={e => this.list.applyFilter('name', e.target.value)} />
                 </div>
-                <List ref={ref => this.list = ref} {...this.props} />
+                <Firehose {...this.props} isList={true} kind={List.kind}>
+                  <List ref={ref => this.list = ref} />
+                </Firehose>
               </div>
             </div>
             <div className="col-md-8 col-sm-6 col-xs-12">

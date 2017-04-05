@@ -17,7 +17,7 @@ import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
 import {IngressList} from './ingress';
 import {getActiveNamespace} from '../ui/ui-actions';
-import {Dropdown, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
+import {Dropdown, Firehose, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 import * as k8sSelector from '../module/k8s/selector';
 import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
@@ -54,12 +54,13 @@ const ResourceListDropdown = ({selected, onChange}) => {
 
 const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
 ({kind, namespace, selector}) => {
-  const newProps = {namespace, selector};
   const List = resources[kind];
 
   return <div className="co-m-pane__body">
     {List && <div className="co-m-resource-list">
-      {kind === 'namespace' || kind === 'node' ? <List selector={selector} /> : <List {...newProps} />}
+      <Firehose isList={true} kind={kind} namespace={namespace} selector={selector}>
+        <List />
+      </Firehose>
     </div>}
   </div>;
 });

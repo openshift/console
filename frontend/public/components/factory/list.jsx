@@ -2,12 +2,21 @@ import React from 'react';
 import fuzzy from 'fuzzysearch';
 
 import store from '../../redux';
-import {getQN, isNodeReady} from '../../module/k8s';
+import { getQN, isNodeReady } from '../../module/k8s';
 import actions from '../../module/k8s/k8s-actions';
-import {Firehose, podPhase, StatusBox} from '../utils';
+import { podPhase, StatusBox } from '../utils';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
+
+  // Filter role bindings by role kind
+  'role-kind': (filter, {roleRef}) => filter.selected.has(roleRef.kind),
+
+  // Filter role bindings by text match
+  'role-binding': (str, {roleRef, subjects}) => {
+    const isMatch = val => fuzzy(str.toLowerCase(), val.toLowerCase());
+    return [roleRef.name, ..._.map(subjects, 'kind'), ..._.map(subjects, 'name')].some(isMatch);
+  },
 
   'selector': (selector, obj) => {
     if (!selector || !selector.values || !selector.values.size) {
@@ -75,7 +84,7 @@ Rows.propTypes = {
   expand: React.PropTypes.bool,
   Row: React.PropTypes.func.isRequired,
   selected: React.PropTypes.string,
-  selectRow: React.PropTypes.func.isRequired,
+  selectRow: React.PropTypes.func,
 };
 
 export const makeList = (kind, Header, Row, sortBy = undefined) => {
@@ -84,34 +93,28 @@ export const makeList = (kind, Header, Row, sortBy = undefined) => {
       return kind;
     }
 
-    get id () {
-      return this.refs.hose.id;
-    }
-
     applyFilter (filterName, value) {
-      if (!this.id) {
+      if (!this.props.reduxID) {
         return;
       }
-      store.dispatch(actions.filterList(this.id, filterName, value));
+      store.dispatch(actions.filterList(this.props.reduxID, filterName, value));
     }
 
     selectRow (qualifiedName) {
-      if (!this.id) {
+      if (!this.props.reduxID) {
         return;
       }
-      store.dispatch(actions.selectInList(this.id, qualifiedName));
+      store.dispatch(actions.selectInList(this.props.reduxID, qualifiedName));
     }
 
     render () {
       const sort = sortBy || (item => item.metadata ? item.metadata.name : null);
 
       return <div className="co-m-table-grid co-m-table-grid--bordered">
-        <Firehose ref="hose" isList={true} {...this.props} kind={kind}>
-          <StatusBox>
-            <Header data={this.props.data} />
-            <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
-          </StatusBox>
-        </Firehose>
+        <StatusBox {...this.props}>
+          <Header />
+          <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
+        </StatusBox>
       </div>;
     }
   }
@@ -119,13 +122,38 @@ export const makeList = (kind, Header, Row, sortBy = undefined) => {
   ReactiveList.propTypes = {
     'namespace': React.PropTypes.string,
     'selector': React.PropTypes.object,
-    'selected': React.PropTypes.object,
-    'search': React.PropTypes.string,
+    'selected': React.PropTypes.string,
     'filter': React.PropTypes.string,
     'error': React.PropTypes.bool,
     'fieldSelector': React.PropTypes.string,
-    'onClickRow': React.PropTypes.func
+    'onClickRow': React.PropTypes.func,
+    'reduxID': React.PropTypes.string,
   };
 
   return ReactiveList;
+};
+
+export const MultiList = props => {
+  const {kinds, EmptyBox, Header, Row} = props;
+  const resources = _.pick(props, kinds);
+
+  // If any resources loaded, display them and ignore errors for resources that didn't load
+  const loaded = _.some(resources, r => r.loaded);
+  const resourceProps = {
+    data: _.flatMap(resources, 'data'),
+    filters: Object.assign({}, ..._.map(resources, 'filters')),
+    loadError: loaded ? '' : _.map(resources, 'loadError').filter(Boolean).join(', '),
+    loaded,
+  };
+  if (EmptyBox && !resourceProps.data.length) {
+    return EmptyBox;
+  }
+  return <div>
+    <Header />
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <StatusBox {...resourceProps}>
+        <Rows Row={Row} />
+      </StatusBox>
+    </div>
+  </div>;
 };

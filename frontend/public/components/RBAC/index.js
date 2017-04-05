@@ -1,3 +1,4 @@
+export * from './bindings';
 export * from './role';
 export * from './cluster-role';
 export * from './role-binding';

@@ -74,10 +74,9 @@ export default (state, action)  => {
     case types.resources:
       return state.set('RESOURCES', action.resources);
 
-    case types.filterList: {
-      const {name, value} = action;
-      return state.setIn([id, 'filters', name], value);
-    }
+    case types.filterList:
+      return state.setIn([id, 'filters', action.name], action.value);
+
     case types.selectInList:
       return state.setIn([id, 'selected'], action.value);
 
