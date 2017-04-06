@@ -396,8 +396,8 @@ users:
         client-secret: {{ .ClientSecret }}
         id-token: {{ .IDToken }}{{ if .DexCA }}
         idp-certificate-authority-data: {{ .DexCA }}{{ end }}
-        idp-issuer-url: {{ .DexURL }}
-        refresh-token: {{ .RefreshToken }}
+        idp-issuer-url: {{ .DexURL }}{{ if .RefreshToken }}
+        refresh-token: {{ .RefreshToken }}{{ end }}
       name: oidc
 
 preferences: {}
