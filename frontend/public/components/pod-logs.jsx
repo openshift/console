@@ -8,6 +8,10 @@ const dataHasFailureMsg = (data) => {
   return _.includes(data, '"status": "Failure"');
 };
 
+const dataHasHTML = (data) => {
+  return _.includes(data, '<html') || _.includes(data, '<HTML');
+};
+
 export class PodLogs extends SafetyFirst {
   constructor(props) {
     super(props);
@@ -135,9 +139,12 @@ export class PodLogs extends SafetyFirst {
   }
 
   _processData(data) {
-    if (!dataHasFailureMsg(data)) {
+    if (dataHasHTML(data)) {
+      this._buffer.push('Logs are currently unavailable');
+    } else if (!dataHasFailureMsg(data)) {
       this._buffer.push(data);
     }
+
     this._touchLoadTime();
   }
 
