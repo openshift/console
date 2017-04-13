@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import ReactTooltip from 'react-tooltip';
 
 import { history } from './index';
 
@@ -32,10 +31,6 @@ export class DropdownMixin extends React.PureComponent {
 
   componentWillUnmount () {
     window.removeEventListener('click', this.listener);
-  }
-
-  componentWillUpdate () {
-    ReactTooltip.rebuild();
   }
 
   onClick_ (key, e) {

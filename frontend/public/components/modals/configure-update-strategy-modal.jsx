@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip } from 'react-lightweight-tooltip';
 
 import { k8sPatch, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -28,11 +28,6 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     this.state = Object.assign({
       strategyType: _.get(this.deployment.spec, 'strategy.type')
     }, this.state);
-  }
-
-  componentDidMount() {
-    super.componentDidMount();
-    ReactTooltip.rebuild();
   }
 
   _onTypeChange(event) {
@@ -99,8 +94,8 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                           placeholder="1" size="5" type="text" className="form-control"
                           id="input-max-unavailable"
                           defaultValue={maxUnavailable} />
-                        <span className="input-group-addon" data-tip="Current desired pod count">
-                          of { pluralize(this.deployment.spec.replicas, 'pod')}
+                        <span className="input-group-addon">
+                          <Tooltip content="Current desired pod count">of { pluralize(this.deployment.spec.replicas, 'pod')}</Tooltip>
                         </span>
                       </div>
                     </div>
@@ -118,8 +113,8 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                         <input disabled={this.state.strategyType !== 'RollingUpdate'} placeholder="1" size="5" type="text" className="form-control"
                           id="input-max-surge"
                           defaultValue={maxSurge} />
-                        <span className="input-group-addon" data-tip="Current desired pod count">
-                          greater than { pluralize(this.deployment.spec.replicas, 'pod')}
+                        <span className="input-group-addon">
+                          <Tooltip content="Current desired pod count">greater than { pluralize(this.deployment.spec.replicas, 'pod')}</Tooltip>
                         </span>
                       </div>
                     </div>

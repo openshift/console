@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8sKinds} from '../module/k8s';
 import {SafetyFirst} from './safety-first';
@@ -40,11 +40,6 @@ export class Details extends SafetyFirst {
     this._openReplicaCountModal = this._openReplicaCountModal.bind(this);
   }
 
-  componentDidMount() {
-    super.componentDidMount();
-    ReactTooltip.rebuild();
-  }
-
   componentWillReceiveProps() {
     this.setState({
       desiredCountOutdated: false
@@ -83,18 +78,28 @@ export class Details extends SafetyFirst {
               <div className="co-detail-table__section col-sm-3">
                 <dl>
                   <dt className="co-detail-table__section-header">Up-to-date Count</dt>
-                  <dd data-tip="Total number of non-terminated pods targeted by this deployment that have the desired template spec">{pluralize(deployment.status.updatedReplicas, 'pod')}</dd>
+                  <dd>
+                    <Tooltip content="Total number of non-terminated pods targeted by this deployment that have the desired template spec.">
+                      {pluralize(deployment.status.updatedReplicas, 'pod')}
+                    </Tooltip>
+                  </dd>
                 </dl>
               </div>
               <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
                 <dl>
                   <dt className="co-detail-table__section-header">Matching Pods</dt>
-                  <dd data-tip="Total number of non-terminated pods targeted by this deployment (their labels match the selector)">{pluralize(deployment.status.replicas, 'pod')}</dd>
+                  <dd>
+                    <Tooltip content="Total number of non-terminated pods targeted by this deployment (their labels match the selector)">
+                      {pluralize(deployment.status.replicas, 'pod')}
+                    </Tooltip>
+                  </dd>
                 </dl>
                 <div className="co-detail-table__bracket"></div>
                 <div className="co-detail-table__breakdown">
-                  <div data-tip="Total number of available pods (ready for at least minReadySeconds) targeted by this deployment">{deployment.status.availableReplicas || 0} available</div>
-                  <div data-tip="Total number of unavailable pods targeted by this deployment">{deployment.status.unavailableReplicas || 0} unavailable</div>
+                  <Tooltip content="Total number of available pods (ready for at least minReadySeconds) targeted by this deployment">
+                    {deployment.status.availableReplicas || 0} available
+                  </Tooltip>
+                  <Tooltip content="Total number of unavailable pods targeted by this deployment">{deployment.status.unavailableReplicas || 0} unavailable</Tooltip>
                 </div>
               </div>
             </div>

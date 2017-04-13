@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s, k8sEnum} from '../module/k8s';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
@@ -12,12 +13,19 @@ import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecret
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
   let callback = undefined;
+  let tooltip;
+
   if (ns.metadata.name === k8sEnum.DefaultNS) {
-    label = <div className="dropdown__disabled" data-tip={`Namespace "${k8sEnum.DefaultNS}" cannot be deleted`}>{label}</div>;
+    tooltip = `Namespace "${k8sEnum.DefaultNS}" cannot be deleted`;
   } else if (ns.status.phase === 'Terminating') {
-    label = <div className="dropdown__disabled" data-tip="Namespace is already terminating">{label}</div>;
+    tooltip = 'Namespace is already terminating';
   } else {
     callback = () => deleteNamespaceModal({resource: ns});
+  }
+  if (tooltip) {
+    label = <div className="dropdown__disabled">
+      <Tooltip content={tooltip}>{label}</Tooltip>
+    </div>;
   }
   return {label, weight, callback};
 };

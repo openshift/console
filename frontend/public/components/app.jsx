@@ -20,7 +20,6 @@ import { CreateYAML } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
-import { GlobalTooltip } from './global-tooltip';
 import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
@@ -40,7 +39,6 @@ const App = ({children}) =>
           {children}
         </div>
     </div>
-    <GlobalTooltip />
   </div>;
 
 const onRouteChange = (prevRoute, nextRoute) => {

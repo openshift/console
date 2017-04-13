@@ -5,7 +5,6 @@ import './container';
 import './deployment';
 import './license-notifier';
 import './global-notifications';
-import './global-tooltip';
 import './job';
 import './replicaset';
 import './daemonset';
