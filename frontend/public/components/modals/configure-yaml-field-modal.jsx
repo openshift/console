@@ -10,7 +10,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
     this.state = Object.assign(this.state, {
       resource: this.props.resource,
       resourceLoading: true,
-      value: undefined,
+      value: null,
       loadError: false
     });
     this._submit = this._submit.bind(this);
@@ -48,7 +48,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
           value
         });
       }).catch(() => {
-        this.setState({ resourceLoading: false, loadError: true });
+        this.setState({ resourceLoading: false, loadError: true, value: null });
       });
   }
 
@@ -112,7 +112,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
       <ModalBody>
         <p>{this.props.modalText}</p>
         { this.state.resourceLoading && <LoadingInline /> }
-        { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && this.state.value && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
+        { (this.props.inputType === 'textarea' || this.props.inputType !== 'input') && this.state.value !== null && <textarea value={this.state.value} onChange={this._handleChange} className="form-control" rows="18" disabled={this.state.resourceLoading} /> }
         { this.props.inputType === 'input' && <input value={this.state.value} onChange={this._handleChange} className="form-control" disabled={this.state.resourceLoading} /> }
         {this.state.loadError && <LoadError label="Tectonic License" />}
       </ModalBody>
