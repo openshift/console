@@ -2,7 +2,7 @@
 # (and committing your edits) you should run ./push-builder to
 # push a new version of your image to quay.io/coreos/tectonic-console-builder
 
-FROM golang:1.7.1-wheezy
+FROM golang:1.8.1-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
