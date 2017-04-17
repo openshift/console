@@ -27,7 +27,6 @@ export const getK8sAPIPath = kind => {
   }
 
   p += kind.apiVersion || apiVersion;
-
   return p;
 };
 
@@ -48,7 +47,7 @@ const addDefaults = (k8sObject, kind) => {
       return k8sPatch(kind, obj, payload);
     },
     watch: query => {
-      const path = resourceURL2(kind, query.ns, true, query.labelSelector, query.fieldSelector);
+      const path = resourceURL2(kind, query.ns, true, query.labelSelector || kind.labelSelector, query.fieldSelector);
 
       const opts = {
         host: 'auto',
@@ -80,6 +79,7 @@ export const k8s = {
   serviceaccounts: addDefaults({}, k8sKinds.SERVICEACCOUNT),
   secrets: addDefaults({}, k8sKinds.SECRET),
   ingresses: addDefaults({}, k8sKinds.INGRESS),
+  clusters: addDefaults({}, k8sKinds.CLUSTER),
 
   componentstatuses: addDefaults({}, k8sKinds.COMPONENTSTATUS),
   namespaces: addDefaults({}, k8sKinds.NAMESPACE),

@@ -43,6 +43,8 @@ function iconLabel(kind) {
       return 'CRB';
     case 'ingress':
       return 'I';
+    case 'cluster':
+      return 'EC';
     default:
       return kind.toUpperCase().slice(0, 2);
   }

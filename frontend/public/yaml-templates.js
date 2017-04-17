@@ -115,3 +115,17 @@ spec:
         image: nginx
         ports:
         - containerPort: 80`;
+
+TEMPLATES['v1beta1.Cluster'] = `apiVersion: etcd.coreos.com/v1beta1
+kind: Cluster
+metadata:
+  name: example-etcd-cluster-with-backup
+spec:
+  size: 3
+  version: 3.1.4
+  backup:
+    backupIntervalInSecond: 30
+    maxBackups: 5
+    storageType: PersistentVolume
+    pv:
+      volumeSizeInMB: 512`;
