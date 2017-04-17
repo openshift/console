@@ -1,10 +1,8 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip } from 'react-lightweight-tooltip';
 import moment from 'moment';
 
 import {SafetyFirst} from '../safety-first';
-
-const rebuildTooltip = _.debounce(() => ReactTooltip.rebuild(), 100);
 
 export class Timestamp extends SafetyFirst {
   constructor (props) {
@@ -39,7 +37,6 @@ export class Timestamp extends SafetyFirst {
   componentDidMount () {
     super.componentDidMount();
     this.startInterval();
-    rebuildTooltip();
   }
 
   componentWillUnmount () {
@@ -109,8 +106,10 @@ export class Timestamp extends SafetyFirst {
     return (
       <div>
         <i className="fa fa-globe" />
-        <div className="co-timestamp" data-tip={utcdate.format('MMM DD, YYYY HH:mm z')}>
-          {this.state.timestamp}
+        <div className="co-timestamp">
+          <Tooltip content={utcdate.format('MMM DD, YYYY HH:mm z')}>
+            {this.state.timestamp}
+          </Tooltip>
         </div>
       </div>
     );

@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s} from '../../module/k8s/k8s';
 import {util} from '../../module/k8s/util';
@@ -31,13 +32,20 @@ export class Cog extends DropdownMixin {
     const style = {display: this.state.active ? 'block' : 'none'};
 
     return (
-      <div className="co-m-cog-wrapper" data-tip="Object can’t be edited in this state" data-tip-disable={!isDisabled}>
-        <div ref="dropdownElement" onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
-          <span className={classNames('co-m-cog', 'co-m-cog__icon', `co-m-cog__icon--size-${size || 'small'}`, 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
-          <ul className="co-m-cog__dropdown co-m-dropdown--dark dropdown-menu" style={style}>
-            {lis}
-          </ul>
-        </div>
+      <div className="co-m-cog-wrapper">
+        { isDisabled ?
+          <Tooltip content="disabled">
+            <div ref="dropdownElement"  className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
+              <span className={classNames('co-m-cog', 'co-m-cog__icon', `co-m-cog__icon--size-${size || 'small'}`, 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
+            </div>
+          </Tooltip>
+        : <div ref="dropdownElement" onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
+            <span className={classNames('co-m-cog', 'co-m-cog__icon', `co-m-cog__icon--size-${size || 'small'}`, 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
+            <ul className="co-m-cog__dropdown co-m-dropdown--dark dropdown-menu" style={style}>
+              {lis}
+            </ul>
+          </div>
+        }
       </div>
     );
   }
