@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router';
 
 import { MultiListPage, MultiList } from '../factory';
-import { MsgBox, ResourceIcon, ResourceLink } from '../utils';
+import { MsgBox, ResourceLink } from '../utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Role Ref</div>
@@ -11,14 +10,18 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Namespace</div>
 </div>;
 
+export const RoleLink = ({binding}) => {
+  const kind = binding.roleRef.kind.toLowerCase();
+
+  // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
+  const ns = kind === 'clusterrole' ? undefined : binding.metadata.namespace;
+  return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
+};
+
 const Row = ({obj: binding}) => <div>
   {_.map(binding.subjects, (subject, i) => <div className="row co-resource-list__item" key={i}>
     <div className="col-xs-3">
-      {/* TODO(andy): Link to old role details pages until the new ones are implemented */}
-      <span className="co-resource-link">
-        <ResourceIcon kind={binding.roleRef.kind.toLowerCase()} />
-        <Link to={binding.roleRef.kind === 'Role' ? `all-namespaces/roles#(${binding.metadata.namespace})-${binding.roleRef.name}` : `clusterroles#${binding.roleRef.name}`}>{binding.roleRef.name}</Link>
-      </span>
+      <RoleLink binding={binding} />
     </div>
     <div className="col-xs-2">
       {subject.kind}

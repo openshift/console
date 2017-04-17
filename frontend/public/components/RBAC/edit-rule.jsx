@@ -153,15 +153,7 @@ class EditRule_ extends PromiseComponent {
     this.handlePromise(this.resource.update(role))
     .then(() => {
       const {namespace, name} = this.props;
-
-      let url = `all-namespaces/${this.kind.plural}#`;
-      if (namespace) {
-        url += `(${namespace})-${name}`;
-      } else {
-        url += name;
-      }
-
-      history.push(url);
+      history.push(namespace ? `ns/${namespace}/roles/${name}/details` : `clusterroles/${name}/details`);
     });
   }
 

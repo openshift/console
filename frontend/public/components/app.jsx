@@ -24,7 +24,7 @@ import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { BindingsPage, ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './RBAC';
+import { BindingsPage, EditRuleContainer } from './RBAC';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
 
@@ -94,14 +94,16 @@ render((
       <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
         <IndexRoute component={ClusterOverviewContainer}/>
 
+        <Route path="rolebindings" component={BindingsPage} />
+
         <Route path="clusterroles">
-          <IndexRoute component={ClusterRolesPage} />
           <Route path=":name/add-rule" component={EditRuleContainer} />
           <Route path=":name/:rule/edit" component={EditRuleContainer} />
+          <Route path=":name/:view" component={ResourceDetailsPage} kind="clusterroles" />
         </Route>
-        <Route path="clusterrolebindings" component={ClusterRoleBindingsPage} />
 
-        <Route path="rolebindings" component={BindingsPage} />
+        {/* We don't have a separate list page for Roles, so redirect to the Role Bindings list */}
+        <Redirect from="ns/:ns/roles" to="rolebindings" />
 
         <Route path="ns/:ns/roles/:name/add-rule" component={EditRuleContainer} />
         <Route path="ns/:ns/roles/:name/:rule/edit" component={EditRuleContainer} />
