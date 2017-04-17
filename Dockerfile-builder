@@ -2,7 +2,7 @@
 # (and committing your edits) you should run ./push-builder to
 # push a new version of your image to quay.io/coreos/tectonic-console-builder
 
-FROM golang:1.7.1-wheezy
+FROM golang:1.8.1-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
@@ -11,8 +11,8 @@ RUN go get -u github.com/golang/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v6.3.1"
-ENV YARN_VERSION="v0.20.3"
+ENV NODE_VERSION="v6.10.2"
+ENV YARN_VERSION="v0.23.2"
 
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home
