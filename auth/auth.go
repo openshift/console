@@ -159,7 +159,13 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
-	u := url.URL{Path: a.errorURL}
+	var u url.URL
+	up, err := url.Parse(a.errorURL)
+	if err != nil {
+		u = url.URL{Path: a.errorURL}
+	} else {
+		u = *up
+	}
 	q := url.Values{}
 	q.Set("error", authErr)
 	q.Set("error_type", "auth")

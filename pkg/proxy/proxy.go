@@ -26,6 +26,14 @@ type Proxy struct {
 	config       *Config
 }
 
+func filterHeaders(r *http.Response) error {
+	badHeaders := []string{"Connection", "Keep-Alive", "Proxy-Connection", "Transfer-Encoding", "Upgrade"}
+	for _, h := range badHeaders {
+		r.Header.Del(h)
+	}
+	return nil
+}
+
 func NewProxy(cfg *Config) *Proxy {
 	// Copy of http.DefaultTransport with TLSClientConfig added
 	insecureTransport := &http.Transport{
@@ -39,8 +47,9 @@ func NewProxy(cfg *Config) *Proxy {
 	}
 
 	reverseProxy := &httputil.ReverseProxy{
-		FlushInterval: time.Millisecond * 500,
-		Transport:     insecureTransport,
+		FlushInterval:  time.Millisecond * 500,
+		Transport:      insecureTransport,
+		ModifyResponse: filterHeaders,
 	}
 
 	proxy := &Proxy{
