@@ -4,7 +4,7 @@ import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s, k8sEnum} from '../module/k8s';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
-import {DetailsPage, ListPage, makeList} from './factory';
+import {DetailsPage, List, ListPage} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
@@ -52,7 +52,7 @@ const Row = ({obj: ns}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-export const NamespacesList = makeList('namespace', Header, Row);
+export const NamespacesList = props => <List {...props} Header={Header} Row={Row} />;
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;
 
 class PullSecret extends SafetyFirst {
@@ -155,7 +155,7 @@ const RoleRow = ({obj: binding}) => <div>
   </div>)}
 </div>;
 
-const RolesList = makeList('rolebinding', RoleHeader, RoleRow);
+const RolesList = props => <List {...props} Header={RoleHeader} Row={RoleRow} />;
 const RolesPage = props => {
   const Intro = <div>
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>

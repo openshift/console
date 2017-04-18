@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, makeList } from './factory';
+import { DetailsPage, List, ListPage } from './factory';
 import { replicaSetMenuActions } from './replicaset';
 import { Header, rowOfKind } from './workloads';
 import { navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
@@ -27,5 +27,5 @@ const pages = [details(Details), editYaml(), pods(), events(ResourceEventStream)
 
 export const ReplicationControllersDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={replicaSetMenuActions} />;
 
-export const ReplicationControllersList = makeList('replicationcontroller', Header, rowOfKind('replicationcontroller', replicaSetMenuActions));
+export const ReplicationControllersList = props => <List {...props} Header={Header} Row={rowOfKind('replicationcontroller', replicaSetMenuActions)} />;
 export const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;

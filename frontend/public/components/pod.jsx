@@ -5,7 +5,7 @@ import { k8s } from '../module/k8s';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { getRestartPolicyLabel } from '../module/k8s/pods';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, makeList } from './factory';
+import { DetailsPage, List, ListPage } from './factory';
 import { Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { PodLogs } from './pod-logs';
@@ -250,7 +250,7 @@ const {details, events, logs, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), logs(PodLogs), events(ResourceEventStream)];
 
 export const PodsDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
-export const PodList = makeList('pod', PodHeader, PodRow);
+export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
 export const PodsPage = props => <ListPage ListComponent={PodList} kind="pod" rowFilters={filters} {...props} />;
 
 navFactory.pods = (component = undefined) => ({

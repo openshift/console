@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {DetailsPage, ListPage, makeList} from './factory';
+import {DetailsPage, List, ListPage} from './factory';
 import {Cog, Heading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary} from './utils';
 
 const menuActions = Cog.factory.common;
@@ -128,7 +128,7 @@ const Details = (ingress) => <div className="col-md-12">
 
 const pages = [navFactory.details(detailsPage(Details)), navFactory.editYaml()];
 const IngressDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
-const IngressList = makeList('ingress', IngressListHeader, IngressListRow);
+const IngressList = props => <List {...props} Header={IngressListHeader} Row={IngressListRow} />;
 const IngressPage = props => <ListPage ListComponent={IngressList} {...props} />;
 
 export {IngressList, IngressPage, IngressDetailsPage};

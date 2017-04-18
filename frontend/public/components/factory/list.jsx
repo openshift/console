@@ -1,9 +1,7 @@
 import React from 'react';
 import fuzzy from 'fuzzysearch';
 
-import store from '../../redux';
 import { getQN, isNodeReady } from '../../module/k8s';
-import actions from '../../module/k8s/k8s-actions';
 import { podPhase, StatusBox } from '../utils';
 
 const filters = {
@@ -70,9 +68,9 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const Rows = (props) => {
-  const {expand, filters, data, selected, selectRow, sortBy, Row} = props;
+  const {expand, filters, data, sortBy, Row} = props;
   const rows = _.sortBy(getFilteredRows(filters, data), sortBy).map(object => {
-    return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected === getQN(object)} />;
+    return <Row key={getQN(object)} obj={object} expand={expand} />;
   });
   return <div className="co-m-table-grid__body"> {rows} </div>;
 };
@@ -83,77 +81,40 @@ Rows.propTypes = {
   data: React.PropTypes.arrayOf(React.PropTypes.object),
   expand: React.PropTypes.bool,
   Row: React.PropTypes.func.isRequired,
-  selected: React.PropTypes.string,
-  selectRow: React.PropTypes.func,
 };
 
-export const makeList = (kind, Header, Row, sortBy = undefined) => {
-  class ReactiveList extends React.Component {
-    static get kind () {
-      return kind;
-    }
+export const List = props => {
+  const {expand, Header, Row, sortBy} = props;
+  return <div className="co-m-table-grid co-m-table-grid--bordered">
+    <StatusBox {...props}>
+      <Header />
+      <Rows Row={Row} expand={expand} sortBy={sortBy || (item => _.get(item, 'metadata.name'))} />
+    </StatusBox>
+  </div>;
+};
 
-    applyFilter (filterName, value) {
-      if (!this.props.reduxID) {
-        return;
-      }
-      store.dispatch(actions.filterList(this.props.reduxID, filterName, value));
-    }
-
-    selectRow (qualifiedName) {
-      if (!this.props.reduxID) {
-        return;
-      }
-      store.dispatch(actions.selectInList(this.props.reduxID, qualifiedName));
-    }
-
-    render () {
-      const sort = sortBy || (item => item.metadata ? item.metadata.name : null);
-
-      return <div className="co-m-table-grid co-m-table-grid--bordered">
-        <StatusBox {...this.props}>
-          <Header />
-          <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
-        </StatusBox>
-      </div>;
-    }
-  }
-
-  ReactiveList.propTypes = {
-    'namespace': React.PropTypes.string,
-    'selector': React.PropTypes.object,
-    'selected': React.PropTypes.string,
-    'filter': React.PropTypes.string,
-    'error': React.PropTypes.bool,
-    'fieldSelector': React.PropTypes.string,
-    'onClickRow': React.PropTypes.func,
-    'reduxID': React.PropTypes.string,
-  };
-
-  return ReactiveList;
+List.propTypes = {
+  data: React.PropTypes.array,
+  EmptyMsg: React.PropTypes.object,
+  fieldSelector: React.PropTypes.string,
+  filters: React.PropTypes.object,
+  loaded: React.PropTypes.bool,
+  loadError: React.PropTypes.string,
+  namespace: React.PropTypes.string,
+  reduxID: React.PropTypes.string,
+  selector: React.PropTypes.object,
 };
 
 export const MultiList = props => {
-  const {kinds, EmptyBox, Header, Row} = props;
-  const resources = _.pick(props, kinds);
+  const resources = _.pick(props, props.kinds);
 
   // If any resources loaded, display them and ignore errors for resources that didn't load
   const loaded = _.some(resources, r => r.loaded);
   const resourceProps = {
-    data: _.flatMap(resources, 'data'),
+    data: _.flatMap(resources, 'data').filter(d => d !== undefined),
     filters: Object.assign({}, ..._.map(resources, 'filters')),
     loadError: loaded ? '' : _.map(resources, 'loadError').filter(Boolean).join(', '),
     loaded,
   };
-  if (EmptyBox && !resourceProps.data.length) {
-    return EmptyBox;
-  }
-  return <div>
-    <Header />
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <StatusBox {...resourceProps}>
-        <Rows Row={Row} />
-      </StatusBox>
-    </div>
-  </div>;
+  return <List {...props} {...resourceProps} />;
 };

@@ -77,9 +77,6 @@ export default (state, action)  => {
     case types.filterList:
       return state.setIn([id, 'filters', action.name], action.value);
 
-    case types.selectInList:
-      return state.setIn([id, 'selected'], action.value);
-
     case types.watchK8sObject:
       return state.set(id, Immutable.Map({
         loadError: '',

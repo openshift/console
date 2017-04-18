@@ -35,7 +35,7 @@ export const AccessDenied = () => <Box className="cos-text-center">
 </Box>;
 
 export const StatusBox = (props) => {
-  const {label, loadError, loaded} = props;
+  const {EmptyMsg, label, loadError, loaded} = props;
 
   if (loadError) {
     return _.get(loadError, 'response.status') === 403 ? <AccessDenied /> : <LoadError label={label} />;
@@ -48,7 +48,7 @@ export const StatusBox = (props) => {
   const {data, filters, selected} = props;
 
   if (!data || _.isEmpty(data)) {
-    return <EmptyBox label={label} />;
+    return EmptyMsg || <EmptyBox label={label} />;
   }
 
   let children;

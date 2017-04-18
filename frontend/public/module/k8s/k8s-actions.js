@@ -16,7 +16,6 @@ const types = {
   deleteFromList: 'deleteFromList',
   modifyList: 'modifyList',
   filterList: 'filterList',
-  selectInList: 'selectInList',
 };
 
 const action_ = (type) => {
@@ -48,10 +47,6 @@ const actions =  {
 
   filterList: (id, name, value) => {
     return {id, name, value, type: types.filterList};
-  },
-
-  selectInList: (id, value) => {
-    return {id, value, type: types.selectInList};
   },
 
   watchK8sObject: (id, name, namespace, query, k8sType) => dispatch => {
