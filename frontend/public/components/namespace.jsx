@@ -9,7 +9,7 @@ import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
-import {RoleLink} from './RBAC';
+import {EmptyMsg, RoleLink} from './RBAC';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -155,7 +155,7 @@ const RoleRow = ({obj: binding}) => <div>
   </div>)}
 </div>;
 
-const RolesList = props => <List {...props} Header={RoleHeader} Row={RoleRow} />;
+const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={RoleHeader} Row={RoleRow} />;
 const RolesPage = props => {
   const Intro = <div>
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>

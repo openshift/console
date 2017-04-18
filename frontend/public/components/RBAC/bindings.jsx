@@ -35,7 +35,7 @@ const Row = ({obj: binding}) => <div>
   </div>)}
 </div>;
 
-const EmptyMsg = <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding" />;
+export const EmptyMsg = <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
 const List = props => <MultiList {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
 
