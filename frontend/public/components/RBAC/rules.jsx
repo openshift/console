@@ -15,13 +15,13 @@ export const RulesList = ({rules, metadata: {name, namespace}}) => {
     <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
       <div className="row co-m-table-grid__head">
         <div style={{marginLeft: 10}}>
-          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
+          <div className="col-xs-2">
             Actions
           </div>
-          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
+          <div className="col-xs-2">
             API Groups
           </div>
-          <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
+          <div className="col-xs-8">
             Resources
           </div>
         </div>
@@ -126,13 +126,13 @@ const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}
     <RuleCog name={name} namespace={namespace} i={i} />
   </div>
   <div className="rbac-rule--rule">
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
+    <div className="col-xs-2">
       <Actions verbs={verbs} />
     </div>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
+    <div className="col-xs-2">
       <Groups apiGroups={apiGroups} />
     </div>
-    <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
+    <div className="col-xs-8">
       <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
     </div>
   </div>
