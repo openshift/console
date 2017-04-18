@@ -122,17 +122,23 @@ func (s *Server) HTTPHandler() http.Handler {
 	useVersionHandler := s.versionHandler
 	useValidateLicenseHandler := s.validateLicenseHandler
 	useCertsHandler := s.certsHandler
+	useClientsHandler := s.handleListClients
+	useTokenRevocationHandler := s.handleTokenRevocation
 
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
 		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.validateLicenseHandler))
 		useCertsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.certsHandler))
+		useClientsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.handleListClients))
+		useTokenRevocationHandler = authMiddleware(s.Auther, http.HandlerFunc(s.handleTokenRevocation))
 	}
 
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
 	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
 	mux.HandleFunc("/tectonic/certs", useCertsHandler)
+	mux.HandleFunc("/tectonic/clients", useClientsHandler)
+	mux.HandleFunc("/tectonic/revoke-token", useTokenRevocationHandler)
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return http.Handler(mux)
@@ -529,7 +535,12 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clientID := r.FormValue("client_id")
+	clientID := r.FormValue("clientId")
+	if clientID == "" {
+		sendResponse(w, http.StatusBadRequest, apiError{"Failed to revoke refresh token: client_id not provided"})
+		return
+	}
+
 	userID, err := extractUserIdFromCookie(s.Auther, r)
 	if err != nil {
 		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
@@ -538,11 +549,6 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 
 	if userID == "" {
 		sendResponse(w, http.StatusBadRequest, apiError{"Failed to revoke refresh token: user_id not provided"})
-		return
-	}
-
-	if clientID == "" {
-		sendResponse(w, http.StatusBadRequest, apiError{"Failed to revoke refresh token: client_id not provided"})
 		return
 	}
 
