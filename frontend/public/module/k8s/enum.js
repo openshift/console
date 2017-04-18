@@ -60,6 +60,7 @@ export const k8sEnum = {
       path: 'horizontalpodautoscalers',
       plural: 'horizontalpodautoscalers',
       apiVersion: 'autoscaling/v1',
+      basePath: '/apis/'
     },
     SERVICEACCOUNT: {
       id: 'serviceaccount',
@@ -96,6 +97,7 @@ export const k8sEnum = {
       labelPlural: 'Jobs',
       apiVersion: 'batch/v1',
       path: 'jobs',
+      basePath: '/apis/',
       plural: 'jobs',
     },
     NODE: {
