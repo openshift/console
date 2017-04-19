@@ -39,13 +39,22 @@ export const EmptyMsg = <MsgBox title="No Role Bindings Found" detail="Roles gra
 
 const List = props => <MultiList {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
 
+export const roleBindingKind = binding => {
+  const {kind, name} = _.get(binding, 'roleRef', {});
+  if (!kind || !name) {
+    return undefined;
+  }
+  return name.startsWith('system:') ? 'system' : kind.toLowerCase();
+};
+
 const filters = [{
   type: 'role-kind',
   selected: [0, 1],
-  reducer: binding => _.get(binding, 'roleRef.kind'),
+  reducer: roleBindingKind,
   items: [
-    ['Cluster-wide Role Bindings', 'ClusterRole'],
-    ['Namespace Role Bindings', 'Role'],
+    ['Cluster-wide Role Bindings', 'clusterrole'],
+    ['Namespace Role Bindings', 'role'],
+    ['System Role Bindings', 'system'],
   ],
 }];
 

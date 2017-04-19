@@ -2,13 +2,14 @@ import React from 'react';
 import fuzzy from 'fuzzysearch';
 
 import { getQN, isNodeReady } from '../../module/k8s';
+import { roleBindingKind } from '../RBAC';
 import { podPhase, StatusBox } from '../utils';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
 
   // Filter role bindings by role kind
-  'role-kind': (filter, {roleRef}) => filter.selected.has(roleRef.kind),
+  'role-kind': (filter, binding) => filter.selected.has(roleBindingKind(binding)),
 
   // Filter role bindings by text match
   'role-binding': (str, {roleRef, subjects}) => {
