@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { RulesList } from './rules';
-import { DetailsPage } from '../factory';
-import { Heading, navFactory, Timestamp } from '../utils';
+import { DetailsPage, MultiList, MultiListPage } from '../factory';
+import { Heading, MsgBox, navFactory, ResourceLink, Timestamp } from '../utils';
+import { RulesList } from './index';
 
 const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
 
@@ -14,6 +14,20 @@ const AddRule = (kind, role) => ({
 });
 
 const menuActions = [AddRule];
+
+const Header = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-6">Name</div>
+  <div className="col-xs-6">Namespace</div>
+</div>;
+
+const Row = ({obj: {metadata}}) => <div className="row co-resource-list__item">
+  <div className="col-xs-6">
+    <ResourceLink kind={metadata.namespace ? 'role' : 'clusterrole'} name={metadata.name} namespace={metadata.namespace} />
+  </div>
+  <div className="col-xs-6">
+    {metadata.namespace ? <ResourceLink kind="namespace" name={metadata.namespace} /> : 'all'}
+  </div>
+</div>;
 
 const Details = ({metadata, rules}) => <div>
   <Heading text="Role Overview" />
@@ -50,3 +64,36 @@ const pages = [navFactory.details(Details)];
 
 export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
 export const ClusterRolesDetailsPage = RolesDetailsPage;
+
+const EmptyMsg = <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
+
+const List = props => <MultiList {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
+
+export const roleType = role => {
+  if (!role) {
+    return undefined;
+  }
+  if (role.metadata.name.startsWith('system:')) {
+    return 'system';
+  }
+  return role.metadata.namespace ? 'namespace' : 'cluster';
+};
+
+const filters = [{
+  type: 'role-kind',
+  selected: [0, 1],
+  reducer: roleType,
+  items: [
+    ['Cluster-wide Roles', 'cluster'],
+    ['Namespace Roles', 'namespace'],
+    ['System Roles', 'system'],
+  ],
+}];
+
+export const RolesPage = () => <MultiListPage
+  ListComponent={List}
+  kinds={['role', 'clusterrole']}
+  filterLabel="Role by name"
+  rowFilters={filters}
+  title="Roles"
+/>;

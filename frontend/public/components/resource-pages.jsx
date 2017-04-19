@@ -13,4 +13,4 @@ export { SecretsPage, SecretsDetailsPage } from './secret';
 export { ServiceAccountsPage, ServiceAccountsDetailsPage } from './service-account';
 export { ServicesPage, ServicesDetailsPage } from './service';
 export { IngressPage, IngressDetailsPage } from './ingress';
-export { ClusterRolesDetailsPage, RolesDetailsPage } from './RBAC/role';
+export { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
