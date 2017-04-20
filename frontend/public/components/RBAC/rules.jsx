@@ -14,16 +14,14 @@ export const RulesList = ({rules, metadata: {name, namespace}}) => {
   return (
     <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
       <div className="row co-m-table-grid__head">
-        <div style={{marginLeft: 10}}>
-          <div className="col-xs-2">
-            Actions
-          </div>
-          <div className="col-xs-2">
-            API Groups
-          </div>
-          <div className="col-xs-8">
-            Resources
-          </div>
+        <div className="col-xs-2">
+          Actions
+        </div>
+        <div className="col-xs-2">
+          API Groups
+        </div>
+        <div className="col-xs-8">
+          Resources
         </div>
       </div>
       <div className="co-m-table-grid__body">
@@ -122,18 +120,16 @@ const RuleCog = ({name, namespace, i}) => {
 };
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">
-  <div className="rbac-rule--cog">
-    <RuleCog name={name} namespace={namespace} i={i} />
+  <div className="col-xs-2 rbac-rule__actions">
+    <div className="rbac-rule__cog">
+      <RuleCog name={name} namespace={namespace} i={i} />
+    </div>
+    <Actions verbs={verbs} />
   </div>
-  <div className="rbac-rule--rule">
-    <div className="col-xs-2">
-      <Actions verbs={verbs} />
-    </div>
-    <div className="col-xs-2">
-      <Groups apiGroups={apiGroups} />
-    </div>
-    <div className="col-xs-8">
-      <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
-    </div>
+  <div className="col-xs-2">
+    <Groups apiGroups={apiGroups} />
+  </div>
+  <div className="col-xs-8">
+    <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
   </div>
 </div>;
