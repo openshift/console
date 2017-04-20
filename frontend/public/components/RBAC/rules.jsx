@@ -4,7 +4,7 @@ import {k8s, k8sKinds} from '../../module/k8s';
 import {Cog, ResourceIcon} from '../utils';
 import {confirmModal} from '../modals';
 
-export const Rules = ({rules, metadata: {name, namespace}}) => {
+export const RulesList = ({rules, metadata: {name, namespace}}) => {
   const rulesList = rules.map((rule, i) =>
     <div className="row co-resource-list__item" key={i}>
       <Rule {...rule} name={name} namespace={namespace} i={i} />
@@ -12,28 +12,20 @@ export const Rules = ({rules, metadata: {name, namespace}}) => {
   );
 
   return (
-    <div>
-      <hr />
-      <h1 className="co-section-title">
-        Rules
-      </h1>
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div style={{marginLeft: 10}}>
-            <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
-              Actions
-            </div>
-            <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
-              API Groups
-            </div>
-            <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
-              Resources
-            </div>
-          </div>
+    <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
+      <div className="row co-m-table-grid__head">
+        <div className="col-xs-2">
+          Actions
         </div>
-        <div className="co-m-table-grid__body">
-          {rulesList}
+        <div className="col-xs-2">
+          API Groups
         </div>
+        <div className="col-xs-8">
+          Resources
+        </div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {rulesList}
       </div>
     </div>
   );
@@ -128,18 +120,16 @@ const RuleCog = ({name, namespace, i}) => {
 };
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">
-  <div className="rbac-rule--cog">
-    <RuleCog name={name} namespace={namespace} i={i} />
+  <div className="col-xs-2 rbac-rule__actions">
+    <div className="rbac-rule__cog">
+      <RuleCog name={name} namespace={namespace} i={i} />
+    </div>
+    <Actions verbs={verbs} />
   </div>
-  <div className="rbac-rule--rule">
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
-      <Actions verbs={verbs} />
-    </div>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-4">
-      <Groups apiGroups={apiGroups} />
-    </div>
-    <div className="col-lg-8 col-md-6 col-sm-4 col-xs-8">
-      <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
-    </div>
+  <div className="col-xs-2">
+    <Groups apiGroups={apiGroups} />
+  </div>
+  <div className="col-xs-8">
+    <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
   </div>
 </div>;

@@ -24,10 +24,9 @@ import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './RBAC';
+import { BindingsPage, EditRuleContainer, RolesPage } from './RBAC';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
-
 
 const LoadingScreen = () => <div className="loading-screen">
   <div className="loading-screen__logo">
@@ -94,12 +93,14 @@ render((
       <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
         <IndexRoute component={ClusterOverviewContainer}/>
 
+        <Route path="roles" component={RolesPage} />
+        <Route path="rolebindings" component={BindingsPage} />
+
         <Route path="clusterroles">
-          <IndexRoute component={ClusterRolesPage} />
           <Route path=":name/add-rule" component={EditRuleContainer} />
           <Route path=":name/:rule/edit" component={EditRuleContainer} />
+          <Route path=":name/:view" component={ResourceDetailsPage} kind="clusterroles" />
         </Route>
-        <Route path="clusterrolebindings" component={ClusterRoleBindingsPage} />
 
         <Route path="ns/:ns/roles/:name/add-rule" component={EditRuleContainer} />
         <Route path="ns/:ns/roles/:name/:rule/edit" component={EditRuleContainer} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import {DetailsPage, ListPage, makeList} from './factory';
+import {DetailsPage, List, ListPage} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import {Cog, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
@@ -77,7 +77,7 @@ const withSecretsList = (Row) => {
 
 const pages = [navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()];
 
-const SecretsList = makeList('secret', SecretHeader, SecretRow);
+const SecretsList = props => <List {...props} Header={SecretHeader} Row={SecretRow} />;
 const SecretsPage = props => <ListPage ListComponent={SecretsList} {...props} />;
 const SecretsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 

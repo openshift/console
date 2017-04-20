@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import {DetailsPage, ListPage, makeList} from './factory';
+import {DetailsPage, List, ListPage} from './factory';
 import {Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage} from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
@@ -56,7 +56,7 @@ const Details = (daemonset) => <div>
 const {details, pods, editYaml} = navFactory;
 const pages = [details(detailsPage(Details)), editYaml(), pods()];
 
-const DaemonSets = makeList('daemonset', DaemonSetHeader, DaemonSetRow);
+const DaemonSets = props => <List {...props} Header={DaemonSetHeader} Row={DaemonSetRow} />;
 const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />;
 const DaemonSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { k8sPatch, isNodeReady } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, makeList } from './factory';
+import { DetailsPage, List, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
@@ -132,8 +132,8 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
 </div>;
 
 // We have different list layouts for the Nodes page list and the Search page list
-const NodesList = makeList('node', Header, NodeRow);
-export const NodesListSearch = makeList('node', HeaderSearch, NodeRowSearch);
+const NodesList = props => <List {...props} Header={Header} Row={NodeRow} />;
+export const NodesListSearch = props => <List {...props} Header={HeaderSearch} Row={NodeRowSearch} />;
 
 const dropdownFilters = [{
   type: 'node-status',

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {DetailsPage, ListPage, makeList} from './factory';
+import {DetailsPage, List, ListPage} from './factory';
 import {Header, rowOfKind} from './workloads';
 import {Cog, navFactory, Heading, ResourceSummary, ResourcePodCount} from './utils';
 
@@ -27,7 +27,7 @@ const {details, editYaml, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
 const ReplicaSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={replicaSetMenuActions} {...props} />;
 
-const ReplicaSetsList = makeList('replicaset', Header, rowOfKind('replicaset', replicaSetMenuActions));
+const ReplicaSetsList = props => <List {...props} Header={Header} Row={rowOfKind('replicaset', replicaSetMenuActions)} />;
 const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};

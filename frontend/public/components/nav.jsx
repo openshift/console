@@ -112,10 +112,8 @@ export const Nav = connect(stateToProps, actions)(
           <NavLink href="nodes" name="Nodes" sectionId="admin" />
           <NavLink href="settings/cluster" name="Cluster Settings" sectionId="admin" />
           <NavLink resource="serviceaccounts" name="Service Accounts" sectionId="admin" />
-          <NavLink resource="roles" required="RBAC" name="Roles" sectionId="admin" />
-          <NavLink resource="rolebindings" required="RBAC" name="Role Bindings" sectionId="admin" />
-          <NavLink href="clusterroles" required="RBAC" name="Cluster Roles" sectionId="admin" />
-          <NavLink href="clusterrolebindings" required="RBAC" name="Cluster Role Bindings" sectionId="admin" />
+          <NavLink href="roles" name="Roles" required="RBAC" sectionId="admin" />
+          <NavLink href="rolebindings" name="Role Bindings" required="RBAC" sectionId="admin" />
         </NavSection>
 
         {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user" {...accordionProps('account')}>

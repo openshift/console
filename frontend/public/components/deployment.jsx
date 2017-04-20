@@ -5,7 +5,7 @@ import {k8sKinds} from '../module/k8s';
 import {SafetyFirst} from './safety-first';
 import {Header, rowOfKind} from './workloads';
 import {configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal} from './modals';
-import {DetailsPage, ListPage, makeList} from './factory';
+import {DetailsPage, List, ListPage} from './factory';
 import {Cog, navFactory, LoadingInline, pluralize, ResourceSummary} from './utils';
 
 const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
@@ -137,7 +137,7 @@ const {details, editYaml, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
 const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
-const DeploymentsList = makeList('deployment', Header, rowOfKind('deployment', menuActions));
+const DeploymentsList = props => <List {...props} Header={Header} Row={rowOfKind('deployment', menuActions)} />;
 const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};

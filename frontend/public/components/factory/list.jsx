@@ -1,13 +1,24 @@
 import React from 'react';
 import fuzzy from 'fuzzysearch';
 
-import store from '../../redux';
-import {getQN, isNodeReady} from '../../module/k8s';
-import actions from '../../module/k8s/k8s-actions';
-import {Firehose, podPhase, StatusBox} from '../utils';
+import { getQN, isNodeReady } from '../../module/k8s';
+import { bindingType, roleType } from '../RBAC';
+import { podPhase, StatusBox } from '../utils';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
+
+  // Filter role by role kind
+  'role-kind': (filter, role) => filter.selected.has(roleType(role)),
+
+  // Filter role bindings by role kind
+  'role-binding-kind': (filter, binding) => filter.selected.has(bindingType(binding)),
+
+  // Filter role bindings by text match
+  'role-binding': (str, {roleRef, subjects}) => {
+    const isMatch = val => fuzzy(str.toLowerCase(), val.toLowerCase());
+    return [roleRef.name, ..._.map(subjects, 'kind'), ..._.map(subjects, 'name')].some(isMatch);
+  },
 
   'selector': (selector, obj) => {
     if (!selector || !selector.values || !selector.values.size) {
@@ -61,9 +72,9 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const Rows = (props) => {
-  const {expand, filters, data, selected, selectRow, sortBy, Row} = props;
+  const {expand, filters, data, sortBy, Row} = props;
   const rows = _.sortBy(getFilteredRows(filters, data), sortBy).map(object => {
-    return <Row key={getQN(object)} obj={object} expand={expand} onClick={selectRow} isActive={selected === getQN(object)} />;
+    return <Row key={getQN(object)} obj={object} expand={expand} />;
   });
   return <div className="co-m-table-grid__body"> {rows} </div>;
 };
@@ -74,59 +85,40 @@ Rows.propTypes = {
   data: React.PropTypes.arrayOf(React.PropTypes.object),
   expand: React.PropTypes.bool,
   Row: React.PropTypes.func.isRequired,
-  selected: React.PropTypes.string,
-  selectRow: React.PropTypes.func.isRequired,
 };
 
-export const makeList = (kind, Header, Row, sortBy = undefined) => {
-  class ReactiveList extends React.Component {
-    static get kind () {
-      return kind;
-    }
+export const List = props => {
+  const {expand, Header, Row, sortBy} = props;
+  return <div className="co-m-table-grid co-m-table-grid--bordered">
+    <StatusBox {...props}>
+      <Header />
+      <Rows Row={Row} expand={expand} sortBy={sortBy || (item => _.get(item, 'metadata.name'))} />
+    </StatusBox>
+  </div>;
+};
 
-    get id () {
-      return this.refs.hose.id;
-    }
+List.propTypes = {
+  data: React.PropTypes.array,
+  EmptyMsg: React.PropTypes.object,
+  fieldSelector: React.PropTypes.string,
+  filters: React.PropTypes.object,
+  loaded: React.PropTypes.bool,
+  loadError: React.PropTypes.string,
+  namespace: React.PropTypes.string,
+  reduxID: React.PropTypes.string,
+  selector: React.PropTypes.object,
+};
 
-    applyFilter (filterName, value) {
-      if (!this.id) {
-        return;
-      }
-      store.dispatch(actions.filterList(this.id, filterName, value));
-    }
+export const MultiList = props => {
+  const resources = _.pick(props, props.kinds);
 
-    selectRow (qualifiedName) {
-      if (!this.id) {
-        return;
-      }
-      store.dispatch(actions.selectInList(this.id, qualifiedName));
-    }
-
-    render () {
-      const klass = `co-m-${kind}-list co-m-table-grid co-m-table-grid--bordered`;
-      const sort = sortBy || (item => item.metadata ? item.metadata.name : null);
-
-      return <div className={klass}>
-        <Firehose ref="hose" isList={true} {...this.props} kind={kind}>
-          <StatusBox>
-            <Header data={this.props.data} />
-            <Rows Row={Row} sortBy={sort} selectRow={qualifiedName => this.selectRow(qualifiedName)} expand={this.props.expand} />
-          </StatusBox>
-        </Firehose>
-      </div>;
-    }
-  }
-
-  ReactiveList.propTypes = {
-    'namespace': React.PropTypes.string,
-    'selector': React.PropTypes.object,
-    'selected': React.PropTypes.object,
-    'search': React.PropTypes.string,
-    'filter': React.PropTypes.string,
-    'error': React.PropTypes.bool,
-    'fieldSelector': React.PropTypes.string,
-    'onClickRow': React.PropTypes.func
+  // If any resources loaded, display them and ignore errors for resources that didn't load
+  const loaded = _.some(resources, r => r.loaded);
+  const resourceProps = {
+    data: _.flatMap(resources, 'data').filter(d => d !== undefined),
+    filters: Object.assign({}, ..._.map(resources, 'filters')),
+    loadError: loaded ? '' : _.map(resources, 'loadError').filter(Boolean).join(', '),
+    loaded,
   };
-
-  return ReactiveList;
+  return <List {...props} {...resourceProps} />;
 };

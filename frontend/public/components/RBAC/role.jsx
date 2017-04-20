@@ -1,67 +1,99 @@
 import React from 'react';
 import { Link } from 'react-router';
-import Helmet from 'react-helmet';
 
-import {Rules} from './rules';
-import {makeList, TwoColumns} from '../factory';
-import {Timestamp, ResourceIcon, NavTitle} from '../utils';
+import { DetailsPage, MultiList, MultiListPage } from '../factory';
+import { Heading, MsgBox, navFactory, ResourceLink, Timestamp } from '../utils';
+import { RulesList } from './index';
 
-export const RoleHeader = () => <div className="co-m-facet-menu__title">Name</div>;
+const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
 
-export const RowOfKind = (kind) => (props) => {
-  return <TwoColumns.RowWrapper {...props}>
-    <div className="col-xs-12">
-      <ResourceIcon kind={kind} /> {props.obj.metadata.name}
-    </div>
-  </TwoColumns.RowWrapper>;
-};
+const AddRule = (kind, role) => ({
+  label: 'Add Rule',
+  weight: 100,
+  href: addHref(role.metadata.name, role.metadata.namespace),
+});
 
-export const Roles = makeList('role', RoleHeader, RowOfKind('role'));
+const menuActions = [AddRule];
 
-export const RoleDetails = ({rules, metadata}) => {
-  let href;
-  if (metadata.namespace) {
-    href = `ns/${metadata.namespace}/roles`;
-  } else {
-    href = 'clusterroles';
-  }
-  href += `/${metadata.name}/add-rule`;
-
-  return <div className="details-page">
-    <h1 className="co-m-pane__title co-m-pane__body__top-controls">
-      {metadata.name}
-    </h1>
-    <dl>
-      <dt>Created At</dt>
-      <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
-    </dl>
-    <p>
-      <Link to={href}>
-        <button className="btn btn-primary" style={{margin: '10px 0'}}>
-          Add Rule
-        </button>
-      </Link>
-    </p>
-    <Rules rules={rules} metadata={metadata} />
-  </div>;
-};
-
-const Details = (selected) => {
-  if (!_.isEmpty(selected)) {
-    return <RoleDetails {...selected} />;
-  }
-  return <div className="empty-page">
-    <h1 className="empty-page__header">No Role selected</h1>
-    <p className="empty-page__explanation">
-      Roles grant access to types of objects in the cluster.  Roles are applied to a team or user within a namespace via a Role Binding.
-    </p>
-  </div>;
-};
-
-export const RolesPage = (props) => <div>
-  <Helmet title="Roles" />
-  <NavTitle title="Roles" />
-  <TwoColumns list={Roles} {...props}>
-    <Details />
-  </TwoColumns>
+const Header = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-6">Name</div>
+  <div className="col-xs-6">Namespace</div>
 </div>;
+
+const Row = ({obj: {metadata}}) => <div className="row co-resource-list__item">
+  <div className="col-xs-6">
+    <ResourceLink kind={metadata.namespace ? 'role' : 'clusterrole'} name={metadata.name} namespace={metadata.namespace} />
+  </div>
+  <div className="col-xs-6">
+    {metadata.namespace ? <ResourceLink kind="namespace" name={metadata.namespace} /> : 'all'}
+  </div>
+</div>;
+
+const Details = ({metadata, rules}) => <div>
+  <Heading text="Role Overview" />
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-xs-6">
+        <dl>
+          <dt>Role Name</dt>
+          <dd>{metadata.name}</dd>
+        </dl>
+      </div>
+      <div className="col-xs-6">
+        <dl>
+          <dt>Created At</dt>
+          <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <Heading text="Rules" />
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-xs-12">
+        <Link to={addHref(metadata.name, metadata.namespace)}>
+          <button className="btn btn-primary">Add Rule</button>
+        </Link>
+        <RulesList rules={rules} metadata={metadata} />
+      </div>
+    </div>
+  </div>
+</div>;
+
+const pages = [navFactory.details(Details)];
+
+export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const ClusterRolesDetailsPage = RolesDetailsPage;
+
+const EmptyMsg = <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
+
+const List = props => <MultiList {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
+
+export const roleType = role => {
+  if (!role) {
+    return undefined;
+  }
+  if (role.metadata.name.startsWith('system:')) {
+    return 'system';
+  }
+  return role.metadata.namespace ? 'namespace' : 'cluster';
+};
+
+const filters = [{
+  type: 'role-kind',
+  selected: [0, 1],
+  reducer: roleType,
+  items: [
+    ['Cluster-wide Roles', 'cluster'],
+    ['Namespace Roles', 'namespace'],
+    ['System Roles', 'system'],
+  ],
+}];
+
+export const RolesPage = () => <MultiListPage
+  ListComponent={List}
+  kinds={['role', 'clusterrole']}
+  filterLabel="Role by name"
+  rowFilters={filters}
+  title="Roles"
+/>;

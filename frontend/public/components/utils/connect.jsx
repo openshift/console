@@ -65,7 +65,7 @@ const processReduxId = ({k8s}, props) => {
 // passing it to children
 export const ConnectToState = connect(processReduxId)(props => {
   const {children, className} = props;
-  const newChildren = inject(children, _.omit(props, ['className', 'children', 'reduxID', 'isList']));
+  const newChildren = inject(children, _.omit(props, ['className', 'children', 'isList']));
   return <div className={className}>{newChildren}</div>;
 });
 
@@ -81,8 +81,10 @@ export const MultiConnectToState = connect(({k8s}, props) => {
 
   return propsToInject;
 })(props => {
-  const {children, className} = props;
-  const newChildren = inject(children, _.omit(props, ['className', 'children', 'reduxes', 'idToPropMapping']));
+  const {children, className, reduxes} = props;
+  const newProps = _.omit(props, ['className', 'children', 'reduxes', 'idToPropMapping']);
+  newProps.reduxIDs = _.map(reduxes, 'reduxID');
+  const newChildren = inject(children, newProps);
   return <div className={className}>{newChildren}</div>;
 });
 MultiConnectToState.propTypes = {

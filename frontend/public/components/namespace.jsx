@@ -4,11 +4,12 @@ import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s, k8sEnum} from '../module/k8s';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
-import {DetailsPage, ListPage, makeList} from './factory';
+import {DetailsPage, List, ListPage} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
+import {EmptyMsg, RoleLink} from './RBAC';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -51,7 +52,7 @@ const Row = ({obj: ns}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-export const NamespacesList = makeList('namespace', Header, Row);
+export const NamespacesList = props => <List {...props} Header={Header} Row={Row} />;
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;
 
 class PullSecret extends SafetyFirst {
@@ -134,6 +135,35 @@ const Details = (ns) => {
   </div>;
 };
 
+const RoleHeader = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-4">Role Ref</div>
+  <div className="col-xs-4">Subject Kind</div>
+  <div className="col-xs-4">Subject Name</div>
+</div>;
+
+const RoleRow = ({obj: binding}) => <div>
+  {binding.subjects.map((subject, i) => <div className="row co-resource-list__item" key={i}>
+    <div className="col-xs-4">
+      <RoleLink binding={binding} />
+    </div>
+    <div className="col-xs-4">
+      {subject.kind}
+    </div>
+    <div className="col-xs-4">
+      {subject.name}
+    </div>
+  </div>)}
+</div>;
+
+const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={RoleHeader} Row={RoleRow} />;
+const RolesPage = props => {
+  const Intro = <div>
+    <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
+    <div className="co-m-pane__explanation">These subjects have access to resources specifically within this namespace.</div>
+  </div>;
+  return <ListPage namespace={props.metadata.name} kind="rolebinding" ListComponent={RolesList} Intro={Intro} showTitle={false} textFilter="role-binding" filterLabel="Role Bindings by role or subject" />;
+};
+
 const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {
   const {data, loaded, namespace, dispatch} = props;
 
@@ -162,7 +192,8 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
 
 export const NamespaceSelector = () => {
   // Don't show namespace dropdown unless the namespace is relevant to the current page
-  if(!isNamespaced(window.location.pathname)) {
+  const path = window.location.pathname;
+  if(!isNamespaced(path) || path.match('/ns/[^/]*/roles/')) {
     return null;
   }
 
@@ -171,5 +202,5 @@ export const NamespaceSelector = () => {
   </Firehose>;
 };
 
-const pages = [navFactory.details(Details), navFactory.editYaml()];
+const pages = [navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)];
 export const NamespacesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
