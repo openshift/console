@@ -128,3 +128,40 @@ body {
   width: 100%;
   height: 100%;
 }
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  align-items: center;
+  background-color: #0A2C41;
+  color: #8cbfe4;
+  display: flex;
+  flex-direction: column;
+  font-size: 22px;
+  justify-content: center;
+  text-align: center;
+  z-index: 999;
+
+  &__logo {
+    position: absolute;
+    top: 16px;
+    left: 40px;
+  }
+
+  &__loader {
+    position: initial;
+    margin: 0 0 20px 0;
+
+    .co-m-loader-dot__one, .co-m-loader-dot__two, .co-m-loader-dot__three {
+      background-color: #8cbfe4;
+      height: 16px;
+      width: 16px;
+    }
+    .co-m-loader-dot__one, .co-m-loader-dot__two {
+      margin-right: 18px;
+    }
+  }
+}

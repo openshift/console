@@ -26,20 +26,29 @@ import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { ClusterRoleBindingsPage, ClusterRolesPage, EditRuleContainer } from './RBAC';
 import { SearchPage } from './search';
-import { history } from './utils';
+import { history, Loading } from './utils';
 
-const App = ({children}) =>
-  <div className="co-container">
-    <Helmet titleTemplate="%s · Tectonic" />
-    <GlobalNotifications />
-    <div id="reflex">
-      <Nav />
-        <div id="content">
-          <NamespaceSelector />
-          {children}
-        </div>
+
+const LoadingScreen = () => <div className="loading-screen">
+  <div className="loading-screen__logo">
+    <img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" />
+  </div>
+  <Loading className="loading-screen__loader" />
+  <div>Loading your Tectonic Console</div>
+</div>;
+
+const App = ({children}) => <div className="co-container">
+  <Helmet titleTemplate="%s · Tectonic" />
+  {!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn() && <LoadingScreen />}
+  <GlobalNotifications />
+  <div id="reflex">
+    <Nav />
+    <div id="content">
+      <NamespaceSelector />
+      {children}
     </div>
-  </div>;
+  </div>
+</div>;
 
 const onRouteChange = (prevRoute, nextRoute) => {
   if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
