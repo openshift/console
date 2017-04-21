@@ -62,7 +62,6 @@ type jsGlobals struct {
 
 type Server struct {
 	K8sProxyConfig      *proxy.Config
-	DexProxyConfig      *proxy.Config
 	BaseURL             *url.URL
 	PublicDir           string
 	TectonicVersion     string
@@ -104,10 +103,6 @@ func (s *Server) HTTPHandler() http.Handler {
 			handleFunc("/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
 			handleFunc("/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
 		}
-	}
-
-	if s.DexProxyConfig != nil {
-		handle("/api/dex/", http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/dex/"), proxy.NewProxy(s.DexProxyConfig)))
 	}
 
 	handleFunc("/api/", notFoundHandler)
