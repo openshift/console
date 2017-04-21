@@ -5,7 +5,7 @@ export const updateLicenseModal = (additionalOptions) => {
   const options = _.defaultsDeep({}, additionalOptions, {
     k8sQuery: {
       kind: 'secret',
-      name: 'tectonic-license',
+      name: 'tectonic-license-secret',
       namespace: 'tectonic-system'
     },
     path: 'data.license',
