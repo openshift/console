@@ -53,11 +53,16 @@ const filters = [{
   type: 'role-binding-kind',
   selected: [0, 1, 2],
   reducer: bindingType,
-  items: [
-    ['Cluster-wide Role Bindings', 'cluster'],
-    ['Namespace Role Bindings', 'namespace'],
-    ['System Role Bindings', 'system'],
-  ],
+  items: ({clusterrolebinding: data}) => {
+    const items = [
+      ['Namespace Role Bindings', 'namespace'],
+      ['System Role Bindings', 'system'],
+    ];
+    if (data && data.loaded && !data.loadError) {
+      items.unshift(['Cluster-wide Role Bindings', 'cluster']);
+    }
+    return items;
+  },
 }];
 
 // Split each binding into one row per subject
