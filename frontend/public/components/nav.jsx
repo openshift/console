@@ -71,6 +71,7 @@ const NavSection = ({isOpen, icon, img, text, onClick_, children}) => {
 };
 
 const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 'clusterroles');
+const isClusterSettingsActive = path => _.startsWith(path, 'settings/cluster') || _.startsWith(path, 'settings/ldap');
 
 export const Nav = connect(stateToProps, actions)(
 ({activeNavSectionId, openSection, pathname}) => {
@@ -113,7 +114,7 @@ export const Nav = connect(stateToProps, actions)(
         <NavSection text="Administration" icon="fa-cog" {...accordionProps('admin')}>
           <NavLink href="namespaces" name="Namespaces" sectionId="admin" />
           <NavLink href="nodes" name="Nodes" sectionId="admin" />
-          <NavLink href="settings/cluster" name="Cluster Settings" sectionId="admin" />
+          <NavLink href="settings/cluster" name="Cluster Settings" sectionId="admin" isActive={isClusterSettingsActive} />
           <NavLink resource="serviceaccounts" name="Service Accounts" sectionId="admin" />
           <NavLink resource="roles" name="Roles" required="RBAC" sectionId="admin" isActive={isRolesActive} />
           <NavLink resource="rolebindings" name="Role Bindings" required="RBAC" sectionId="admin" />
