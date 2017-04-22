@@ -90,10 +90,15 @@ const filters = [{
   ],
 }];
 
+const resources = [
+  {kind: 'role', namespaced: true},
+  {kind: 'clusterrole', namespaced: false},
+];
+
 export const RolesPage = () => <MultiListPage
   ListComponent={List}
-  kinds={['role', 'clusterrole']}
   filterLabel="Role by name"
+  resources={resources}
   rowFilters={filters}
   title="Roles"
 />;

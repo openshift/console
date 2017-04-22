@@ -14,3 +14,4 @@ export { ServiceAccountsPage, ServiceAccountsDetailsPage } from './service-accou
 export { ServicesPage, ServicesDetailsPage } from './service';
 export { IngressPage, IngressDetailsPage } from './ingress';
 export { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
+export { RoleBindingsPage } from './RBAC/bindings';

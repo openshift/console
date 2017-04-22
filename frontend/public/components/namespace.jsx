@@ -192,8 +192,7 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
 
 export const NamespaceSelector = () => {
   // Don't show namespace dropdown unless the namespace is relevant to the current page
-  const path = window.location.pathname;
-  if(!isNamespaced(path) || path.match('/ns/[^/]*/roles/')) {
+  if(!isNamespaced(window.location.pathname)) {
     return null;
   }
 
