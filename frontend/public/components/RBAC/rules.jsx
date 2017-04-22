@@ -76,7 +76,7 @@ const Resources = ({resources, nonResourceURLs}) => {
 
   if (nonResourceURLs && nonResourceURLs.length) {
     if (allResources.length) {
-      allResources.push(<hr key={'hr'} className="resource-separator" />);
+      allResources.push(<hr key="hr" className="resource-separator" />);
     }
     let URLs = [];
     _.each(nonResourceURLs.sort(), r => {
