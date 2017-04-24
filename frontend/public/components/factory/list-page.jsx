@@ -37,19 +37,22 @@ class BaseListPage_ extends React.Component {
 
   render () {
     const {kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, rowSplitter, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro} = this.props;
+    const resources = _.pick(this.props, kinds);
 
     // List data will either be in a single "data" property, or under multiple props if we have multiple resource kinds
-    const data = this.props.data || _.chain(this.props).pick(kinds).flatMap('data').flatMap(rowSplitter).value();
+    const data = this.props.data || _.flatMap(_.flatMap(resources, 'data'), rowSplitter);
 
     const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
       return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
     });
 
-    const RowsOfRowFilters = rowFilters && _.map(rowFilters, (rowFilter, i) => <CheckBoxes
-      {...rowFilter}
+    const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type}, i) => <CheckBoxes
       key={i}
       applyFilter={this.applyFilter}
-      numbers={_.countBy(data, rowFilter.reducer)}
+      items={_.isFunction(items) ? items(resources) : items}
+      numbers={_.countBy(data, reducer)}
+      selected={selected}
+      type={type}
     />);
 
     return <div>
