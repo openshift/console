@@ -118,15 +118,21 @@ export const ListPage = props => {
   </Firehose>;
 };
 
-export const MultiListPage = props => {
-  const {createHandler, kinds, namespace} = props;
-  const resources = kinds.map(kind => ({kind, isList: true, prop: kind}));
-
-  return <MultiFirehose key={`${namespace}-${kinds.join('-')}`} resources={resources}>
+export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace'), path: UI.get('location')}))(
+props => {
+  const {createHandler, ns, path, resources} = props;
+  const firehoseResources = resources.map(r => ({
+    kind: r.kind,
+    isList: true,
+    namespace: r.namespaced ? ns : undefined,
+    prop: r.kind,
+  }));
+  return <MultiFirehose key={path} resources={firehoseResources}>
     <BaseListPage
       {...props}
       createButtonText="Create"
       createProps={{onClick: createHandler}}
+      kinds={_.map(resources, 'kind')}
     />
   </MultiFirehose>;
-};
+});

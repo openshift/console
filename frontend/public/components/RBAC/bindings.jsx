@@ -60,13 +60,18 @@ const filters = [{
   ],
 }];
 
+const resources = [
+  {kind: 'rolebinding', namespaced: true},
+  {kind: 'clusterrolebinding', namespaced: false},
+];
+
 // Split each binding into one row per subject
 const rowSplitter = binding => binding && _.map(binding.subjects, subject => Object.assign({}, binding, {subject}));
 
-export const BindingsPage = () => <MultiListPage
+export const RoleBindingsPage = () => <MultiListPage
   ListComponent={List}
-  kinds={['rolebinding', 'clusterrolebinding']}
   filterLabel="Role Bindings by role or subject"
+  resources={resources}
   rowFilters={filters}
   rowSplitter={rowSplitter}
   textFilter="role-binding"
