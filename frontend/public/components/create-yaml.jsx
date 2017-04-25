@@ -144,9 +144,9 @@ class CreateYAML_ extends SafetyFirst {
     }
 
     obj.kind = kind.kind;
-    //The code below strips the basePath(etcd.coreos.com) from the apiVersion that is being set in the template and causes the
-    //cluster creation to fail, hence adding a check here to skip this when kind is 'Cluster'
-    if (obj.kind !== 'Cluster') {
+    // The code below strips the basePath (etcd.coreos.com, etc.) from the apiVersion that is being set in the template
+    // and causes creation to fail for some resource kinds, hence adding a check here to skip for those kinds.
+    if (!['Cluster', 'Role', 'RoleBinding'].includes(obj.kind)) {
       obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     }
     obj.metadata = obj.metadata || {};

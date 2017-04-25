@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import { k8sEnum } from '../../module/k8s';
 import { DetailsPage, MultiList, MultiListPage } from '../factory';
 import { Cog, Heading, MsgBox, navFactory, ResourceLink, Timestamp } from '../utils';
 import { RulesList } from './index';
@@ -98,8 +99,11 @@ const resources = [
   {kind: 'clusterrole', namespaced: false},
 ];
 
-export const RolesPage = () => <MultiListPage
+export const RolesPage = ({namespace}) => <MultiListPage
   ListComponent={List}
+  canCreate={true}
+  createButtonText="Create Role"
+  createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
   filterLabel="Role by name"
   resources={resources}
   rowFilters={filters}
