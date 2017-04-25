@@ -1,13 +1,21 @@
 import React from 'react';
 
 import { MultiListPage, MultiList } from '../factory';
-import { MsgBox, ResourceLink } from '../utils';
+import { MsgBox, ResourceIcon, ResourceLink } from '../utils';
 
 const Header = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-3">Name</div>
   <div className="col-xs-3">Role Ref</div>
-  <div className="col-xs-2">Subject Kind</div>
-  <div className="col-xs-4">Subject Name</div>
-  <div className="col-xs-3">Namespace</div>
+  <div className="col-xs-6">
+    <div className="col-xs-3">Subject Kind</div>
+    <div className="col-xs-5">Subject Name</div>
+    <div className="col-xs-4">Namespace</div>
+  </div>
+</div>;
+
+export const BindingName = ({binding}) => <div>
+  <ResourceIcon kind={binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding'} />
+  {binding.metadata.name}
 </div>;
 
 export const RoleLink = ({binding}) => {
@@ -21,16 +29,21 @@ export const RoleLink = ({binding}) => {
 const Row = ({obj: binding}) => <div>
   {_.map(binding.subjects, (subject, i) => <div className="row co-resource-list__item" key={i}>
     <div className="col-xs-3">
-      <RoleLink binding={binding} />
-    </div>
-    <div className="col-xs-2">
-      {subject.kind}
-    </div>
-    <div className="col-xs-4">
-      {subject.name}
+      <BindingName binding={binding} />
     </div>
     <div className="col-xs-3">
-      {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
+      <RoleLink binding={binding} />
+    </div>
+    <div className="col-xs-6">
+      <div className="col-xs-3">
+        {subject.kind}
+      </div>
+      <div className="col-xs-5">
+        {subject.name}
+      </div>
+      <div className="col-xs-4">
+        {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
+      </div>
     </div>
   </div>)}
 </div>;
