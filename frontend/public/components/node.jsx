@@ -149,7 +149,6 @@ export const NodesPage = props => <ListPage {...props} ListComponent={NodesList}
 const Details = (node) => {
   const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
   const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
-
   const memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
 
   const integerLimit = input => parseInt(input, 10);
@@ -168,7 +167,7 @@ const Details = (node) => {
                 <SparklineWidget heading="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
               </div>
               <div className="col-md-4">
-                <SparklineWidget heading="Number of Pods" query={`kubelet_running_pod_count{instance=~'.*${node.metadata.name}.*'}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
+                <SparklineWidget heading="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
               </div>
               <div className="col-md-4">
                 <SparklineWidget heading="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
