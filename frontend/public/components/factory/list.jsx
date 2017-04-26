@@ -32,10 +32,8 @@ const filters = {
       return true;
     }
 
-    const allFilters = _.values(_.fromPairs(phases.all || []));
     const phase = podPhase(pod);
-
-    return phases.selected.has(phase) || !_.includes(allFilters, phase);
+    return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 
   'node-status': (status, node) => {

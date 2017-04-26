@@ -84,12 +84,12 @@ export const roleType = role => {
 
 const filters = [{
   type: 'role-kind',
-  selected: [0, 1],
+  selected: ['cluster', 'namespace'],
   reducer: roleType,
   items: [
-    ['Cluster-wide Roles', 'cluster'],
-    ['Namespace Roles', 'namespace'],
-    ['System Roles', 'system'],
+    {id: 'cluster', title: 'Cluster-wide Roles'},
+    {id: 'namespace', title: 'Namespace Roles'},
+    {id: 'system', title: 'System Roles'},
   ],
 }];
 

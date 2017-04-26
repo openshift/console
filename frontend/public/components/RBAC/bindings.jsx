@@ -64,15 +64,15 @@ export const bindingType = binding => {
 
 const filters = [{
   type: 'role-binding-kind',
-  selected: [0, 1, 2],
+  selected: ['cluster', 'namespace'],
   reducer: bindingType,
   items: ({clusterrolebinding: data}) => {
     const items = [
-      ['Namespace Role Bindings', 'namespace'],
-      ['System Role Bindings', 'system'],
+      {id: 'namespace', title: 'Namespace Role Bindings'},
+      {id: 'system', title: 'System Role Bindings'},
     ];
     if (data && data.loaded && !data.loadError) {
-      items.unshift(['Cluster-wide Role Bindings', 'cluster']);
+      items.unshift({id: 'cluster', title: 'Cluster-wide Role Bindings'});
     }
     return items;
   },
