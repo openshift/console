@@ -543,7 +543,7 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := extractUserIdFromCookie(s.Auther, r)
 	if err != nil {
-		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
+		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: cannot extract user id from cookie: %v", err)})
 		return
 	}
 
@@ -578,7 +578,7 @@ func (s *Server) handleListClients(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := extractUserIdFromCookie(s.Auther, r)
 	if err != nil {
-		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
+		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to List Client: cannot extract user id from cookie: %v", err)})
 		return
 	}
 
