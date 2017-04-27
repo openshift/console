@@ -7,7 +7,7 @@ import { FLAGS, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute, actions as UIActions } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
-const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '');
+const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '').replace(/^\//, '');
 
 const stateToProps = state => {
   const props = featuresStateToProps(Object.keys(FLAGS), state);
@@ -22,9 +22,10 @@ const actions = {openSection: UIActions.setActiveNavSectionId};
 const NavLink = connect(stateToProps, actions)(
 class NavLink_ extends React.Component {
   componentWillMount () {
-    const {openSection, sectionId, href, resource, activeNamespace, pathname} = this.props;
+    const {openSection, sectionId, href, isActive, resource, activeNamespace, pathname} = this.props;
+    const resourcePath = pathname ? stripNS(pathname) : '';
     this.href_ = resource ? formatNamespaceRoute(activeNamespace, resource) : href;
-    this.isActive = pathname && stripNS(pathname).indexOf(stripNS(this.href_)) === 0;
+    this.isActive = isActive ? isActive(resourcePath) : _.startsWith(resourcePath, stripNS(this.href_));
     if (this.isActive) {
       openSection(sectionId);
     }
@@ -69,6 +70,9 @@ const NavSection = ({isOpen, icon, img, text, onClick_, children}) => {
   </div>;
 };
 
+const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 'clusterroles');
+const isClusterSettingsActive = path => _.startsWith(path, 'settings/cluster') || _.startsWith(path, 'settings/ldap');
+
 export const Nav = connect(stateToProps, actions)(
 ({activeNavSectionId, openSection, pathname}) => {
   const accordionProps = id => ({
@@ -110,9 +114,9 @@ export const Nav = connect(stateToProps, actions)(
         <NavSection text="Administration" icon="fa-cog" {...accordionProps('admin')}>
           <NavLink href="namespaces" name="Namespaces" sectionId="admin" />
           <NavLink href="nodes" name="Nodes" sectionId="admin" />
-          <NavLink href="settings/cluster" name="Cluster Settings" sectionId="admin" />
+          <NavLink href="settings/cluster" name="Cluster Settings" sectionId="admin" isActive={isClusterSettingsActive} />
           <NavLink resource="serviceaccounts" name="Service Accounts" sectionId="admin" />
-          <NavLink resource="roles" name="Roles" required="RBAC" sectionId="admin" />
+          <NavLink resource="roles" name="Roles" required="RBAC" sectionId="admin" isActive={isRolesActive} />
           <NavLink resource="rolebindings" name="Role Bindings" required="RBAC" sectionId="admin" />
         </NavSection>
 
