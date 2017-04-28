@@ -33,3 +33,4 @@ import './resource-list';
 import './container-linux-update-operator/container-linux-updates';
 import './container-linux-update-operator/container-linux-update-details';
 import './client-tokens';
+import './etcd-cluster';

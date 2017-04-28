@@ -234,6 +234,16 @@ export const k8sEnum = {
       labelPlural: 'Pet Sets',
       plural: 'petsets',
     },
+    'CLUSTER': {
+      id: 'cluster',
+      kind: 'Cluster',
+      label: 'EtcdCluster',
+      labelPlural: 'EtcdClusters',
+      apiVersion: 'v1beta1',
+      basePath: '/apis/etcd.coreos.com/',
+      path: 'clusters',
+      plural: 'clusters'
+    },
     '*': {
       id: 'all',
       plural: 'all',

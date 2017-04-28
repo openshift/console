@@ -101,6 +101,10 @@ export const Nav = connect(stateToProps, actions)(
           <NavLink resource="secrets" name="Secrets" sectionId="workloads" />
         </NavSection>
 
+        <NavSection text="Operators" img="static/imgs/operator-logo.svg" {...accordionProps('operators')}>
+          <NavLink resource="clusters" name="etcd Clusters" sectionId="operators" />
+        </NavSection>
+
         <NavSection text="Routing" img="static/imgs/routing.svg" {...accordionProps('routing')}>
           <NavLink resource="services" name="Services" sectionId="routing" />
           <NavLink resource="ingresses" name="Ingress" sectionId="routing" />
