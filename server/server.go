@@ -593,7 +593,7 @@ func (s *Server) handleListClients(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := s.DexClient.ListRefresh(r.Context(), req)
 	if err != nil {
-		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to list clients: %v", err)})
+		sendResponse(w, http.StatusInternalServerError, apiError{fmt.Sprintf("Failed to list clients: %v", err)})
 		return
 	}
 
