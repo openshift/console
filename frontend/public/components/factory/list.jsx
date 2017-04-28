@@ -15,9 +15,9 @@ const filters = {
   'role-binding-kind': (filter, binding) => filter.selected.has(bindingType(binding)),
 
   // Filter role bindings by text match
-  'role-binding': (str, {roleRef, subjects}) => {
+  'role-binding': (str, {metadata, roleRef, subjects}) => {
     const isMatch = val => fuzzy(str.toLowerCase(), val.toLowerCase());
-    return [roleRef.name, ..._.map(subjects, 'kind'), ..._.map(subjects, 'name')].some(isMatch);
+    return [metadata.name, roleRef.name, ..._.map(subjects, 'kind'), ..._.map(subjects, 'name')].some(isMatch);
   },
 
   'selector': (selector, obj) => {
