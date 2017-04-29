@@ -66,8 +66,10 @@ const actions =  {
 
     const poller = () => {
       k8sType.get(name, namespace)
-        .then(o => dispatch(actions.modifyObject(id, o)))
-        .catch(e => dispatch(actions.errored(id, e)));
+        .then(
+          o => dispatch(actions.modifyObject(id, o)),
+          e => dispatch(actions.errored(id, e))
+        );
     };
     POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
@@ -122,8 +124,10 @@ const actions =  {
 
     const poller = () => {
       k8sType.list(_.clone(query, true))
-        .then(o => dispatch(actions.loaded(id, o)))
-        .catch(e => dispatch(actions.errored(id, e)));
+        .then(
+          o => dispatch(actions.loaded(id, o)),
+          e => dispatch(actions.errored(id, e))
+        );
     };
     POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
