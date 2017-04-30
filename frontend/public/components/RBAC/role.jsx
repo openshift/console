@@ -60,7 +60,7 @@ const Details = ({metadata, rules}) => <div>
   </div>
 </div>;
 
-const pages = [navFactory.details(Details)];
+const pages = [navFactory.details(Details), navFactory.editYaml()];
 
 export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
 export const ClusterRolesDetailsPage = RolesDetailsPage;
