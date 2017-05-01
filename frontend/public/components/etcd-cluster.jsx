@@ -70,6 +70,15 @@ const EtcdClusterHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Last Backup Date</div>
 </div>;
 
+const Phase = ({status}) => {
+  if (status) {
+    if (status.phase === 'Failed') {
+      return <span><icon className="fa fa-ban phase-failed-icon" />&nbsp;{status.phase}</span>;
+    }
+    return <span>{status.phase}</span>;
+  }
+};
+
 export class EtcdClusterDetails extends SafetyFirst {
   constructor(props) {
     super(props);
@@ -108,6 +117,8 @@ export class EtcdClusterDetails extends SafetyFirst {
     const members = _.get(cluster.status, 'members', null);
     const specBackup = _.get(cluster.spec, 'backup', null);
     const statusBackup = _.get(cluster.status, 'backupServiceStatus', null);
+    const readyMembers = _.get(members, 'ready.length', 0);
+    const unreadyMembers = _.get(members, 'unready.length', 0);
 
     return <div>
       <div className="co-m-pane__body">
@@ -133,17 +144,19 @@ export class EtcdClusterDetails extends SafetyFirst {
                   <dl>
                     <dt className="co-detail-table__section-header">Members</dt>
                     <dd>
-                      <Tooltip content="Total number of etcd members that are ready to serve requests">
-                        {_.has(members, 'ready') && pluralize(members.ready.length, 'pod')}
+                      <Tooltip content="Total number of etcd members that are ready/unready to serve requests">
+                        {status ? pluralize(status.size, 'pod') : '-'}
                       </Tooltip>
                     </dd>
                   </dl>
                   <div className="co-detail-table__bracket"></div>
                   <div className="co-detail-table__breakdown">
-                    <Tooltip content="Total number of etcd members that are not ready to serve requests">
-                      {_.has(members, 'unready') && pluralize(_.get(members.unready.length, '-'), 'pod')}
+                    <Tooltip content="Total number of etcd members that are ready to serve requests">
+                      {readyMembers} ready
                     </Tooltip>
-                    {_.has(members, 'unready') && <Tooltip content="Total number of unavailable pods targeted by this etcdCluster">{members.unready.length || 0} unready</Tooltip>}
+                    <Tooltip content="Total number of etcd members that are not ready to serve requests">
+                      {unreadyMembers} unready
+                    </Tooltip>
                   </div>
                 </div>}
               </div>
@@ -151,19 +164,33 @@ export class EtcdClusterDetails extends SafetyFirst {
           </div>
         </div>
 
+        {status && status.phase === 'Failed' && <div className="co-m-pane__body-group">
+          <div className="row no-gutter">
+            <div className="phase-error-box">
+              <p className="phase-error">
+                {status.reason}
+              </p>
+            </div>
+          </div>
+        </div>}
+
         <div className="co-m-pane__body-group">
           <div className="row no-gutter">
-            <div className="col-sm-6">
-              <dt>Phase</dt>
-              <dd>{status ? status.phase : '-'}</dd>
-              <dt>Name</dt>
-              <dd>{metadata.name}</dd>
-            </div>
-            <div className="col-sm-6">
-              <dt>Desired Version</dt>
-              <dd>{spec.version}</dd>
-              <dt>Current Version</dt>
-              <dd>{status ? status.currentVersion : '-'}</dd>
+            <div className="col-sm-8 col-xs-12">
+              <div className="row">
+                <div className="col-sm-6 col-xs-12">
+                  <dt>Phase</dt>
+                  <dd><Phase status={status} /></dd>
+                  <dt>Name</dt>
+                  <dd>{metadata.name}</dd>
+                </div>
+                <div className="col-sm-6 col-xs-12">
+                  <dt>Desired Version</dt>
+                  <dd>{spec.version}</dd>
+                  <dt>Current Version</dt>
+                  <dd>{status ? status.currentVersion : '-'}</dd>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -173,21 +200,25 @@ export class EtcdClusterDetails extends SafetyFirst {
         <div className="co-m-pane__body-section--bordered">
           <h1 className="co-section-title">Cluster Backup</h1>
           <div className="row no-gutter">
-            <div className="col-sm-6">
-              <dt>Backup Interval</dt>
-              <dd>{specBackup.backupIntervalInSecond}</dd>
-              <dt>Maximum Backups</dt>
-              <dd>{specBackup.maxBackups}</dd>
-              {statusBackup && <dt>Number of Backups</dt>}
-              {statusBackup && <dd>{statusBackup.backupSize}</dd>}
-            </div>
-            <div className="col-sm-6">
-              <dt>Storage Type</dt>
-              <dd>{specBackup.storageType}</dd>
-              {specBackup.storageType === 'PersistentVolume' && <dt>Volume Size</dt>}
-              {specBackup.storageType === 'PersistentVolume' && <dd>{specBackup.pv.volumeSizeInMB} MB</dd>}
-              {statusBackup && <dt>Current Backup Size</dt>}
-              {statusBackup && <dd>{statusBackup.backups}</dd>}
+            <div className="col-sm-8 col-xs-12">
+              <div className="row">
+                <div className="col-sm-6 col-xs-12">
+                  <dt>Backup Interval</dt>
+                  <dd>{specBackup.backupIntervalInSecond}</dd>
+                  <dt>Maximum Backups</dt>
+                  <dd>{specBackup.maxBackups}</dd>
+                  {statusBackup && <dt>Number of Backups</dt>}
+                  {statusBackup && <dd>{statusBackup.backupSize}</dd>}
+                </div>
+                <div className="col-sm-6 col-xs-12">
+                  <dt>Storage Type</dt>
+                  <dd>{specBackup.storageType}</dd>
+                  {specBackup.storageType === 'PersistentVolume' && <dt>Volume Size</dt>}
+                  {specBackup.storageType === 'PersistentVolume' && <dd>{specBackup.pv.volumeSizeInMB} MB</dd>}
+                  {statusBackup && <dt>Current Backup Size</dt>}
+                  {statusBackup && <dd>{statusBackup.backups}</dd>}
+                </div>
+              </div>
             </div>
           </div>
         </div>
