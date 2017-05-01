@@ -2,18 +2,21 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import { DetailsPage, MultiList, MultiListPage } from '../factory';
-import { Heading, MsgBox, navFactory, ResourceLink, Timestamp } from '../utils';
+import { Cog, Heading, MsgBox, navFactory, ResourceLink, Timestamp } from '../utils';
 import { RulesList } from './index';
 
 const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
 
-const AddRule = (kind, role) => ({
-  label: 'Add Rule',
-  weight: 100,
-  href: addHref(role.metadata.name, role.metadata.namespace),
-});
+const menuActions = [
+  (kind, role) => ({
+    label: 'Add Rule...',
+    weight: 100,
+    href: addHref(role.metadata.name, role.metadata.namespace),
+  }),
 
-const menuActions = [AddRule];
+  // Same as the normal resource Edit action, but with a different label
+  (kind, role) => Object.assign({}, Cog.factory.Edit(kind, role), {label: 'Add Rule with YAML Editor...'}),
+];
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-6">Name</div>
@@ -60,7 +63,7 @@ const Details = ({metadata, rules}) => <div>
   </div>
 </div>;
 
-const pages = [navFactory.details(Details)];
+const pages = [navFactory.details(Details), navFactory.editYaml()];
 
 export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
 export const ClusterRolesDetailsPage = RolesDetailsPage;
