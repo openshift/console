@@ -1,29 +1,28 @@
 import React from 'react';
 import classnames from 'classnames';
 
-const CheckBox = ({name, active, number, toggle}) => {
+const CheckBox = ({title, active, number, toggle}) => {
   const klass = classnames('row-filter--box clickable', {
     'row-filter--box__active': active, 'row-filter--box__empty': !number,
   });
 
   return <div onClick={toggle} className={klass}>
-    <span key={number} className="row-filter--number-bubble">{number}</span> {name}
+    <span className="row-filter--number-bubble">{number}</span> {title}
   </div>;
 };
 
 export class CheckBoxes extends React.Component {
   constructor (props) {
     super(props);
-    this.state = {};
+    this.state = {selected: []};
   }
 
-  get storageKey() {
+  get storageKey () {
     return `row-filter--${this.props.type}`;
   }
 
-  componentDidMount() {
+  componentDidMount () {
     let selected;
-
     try {
       selected = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
     } catch (ignored) {
@@ -33,57 +32,49 @@ export class CheckBoxes extends React.Component {
     if (_.isEmpty(selected) || !_.isArray(selected)) {
       selected = this.props.selected || [];
     }
-    const state = {};
-    selected.forEach(i => state[i] = true);
-    // replaceState no longer exists :(
-    this.state = state;
-    this.setState(this.state, () => this.applyFilter());
+
+    this.setState({selected}, () => this.applyFilter());
+  }
+
+  componentDidUpdate (prevProps) {
+    if (!_.isEqual(this.props.items, prevProps.items)) {
+      this.applyFilter();
+    }
   }
 
   applyFilter () {
-    const items = this.props.items || [];
-    const selected = [];
-    const filters = items.filter((item, i) => this.state[i] && selected.push(i)).map(i => i[1]);
-
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(selected));
-    } catch (ignored) {
-      // ignore
+    const all = _.map(this.props.items, 'id');
+    const recognized = _.intersection(this.state.selected, all);
+    if (!_.isEmpty(recognized)) {
+      this.props.applyFilter(this.props.type, {selected: new Set(recognized), all});
     }
-
-    this.props.applyFilter(this.props.type, {selected: new Set(filters), all: items});
   }
 
-  toggle (i) {
-    if (!this.props.items[i]) {
-      return;
+  toggle (id) {
+    const selected = _.xor(this.state.selected, [id]);
+
+    // Ensure something is always active
+    if (!_.isEmpty(selected)) {
+      try {
+        const recognized = _.filter(selected, id => _.find(this.props.items, {id}));
+        localStorage.setItem(this.storageKey, JSON.stringify(recognized));
+      } catch (ignored) {
+        // ignore
+      }
+
+      this.setState({selected}, () => this.applyFilter());
     }
-    const nextState = Object.assign({}, this.state);
-    nextState[i] = !nextState[i];
-    // ensure something is always active
-    const total = _.values(nextState).reduce((a, i) => a + i, 0);
-    if (total < 1) {
-      return;
-    }
-    this.setState({
-      [i]: !this.state[i],
-    }, () => this.applyFilter());
   }
 
   render () {
-    const {items, numbers} = this.props;
-    const active = this.state;
-
-    const checkboxes = _.map(items, (item, i) => {
-      const [name, filter] = item;
-      const number = numbers[filter] || 0;
-      const props = {
-        name, number,
-        key: i,
-        active: active[i],
-        toggle: this.toggle.bind(this, i),
-      };
-      return <CheckBox {...props} />;
+    const checkboxes = _.map(this.props.items, ({id, title}) => {
+      return <CheckBox
+        key={id}
+        title={title}
+        number={this.props.numbers[id] || 0}
+        active={_.includes(this.state.selected, id)}
+        toggle={this.toggle.bind(this, id)}
+      />;
     });
 
     return <div className="col-xs-12">

@@ -88,13 +88,13 @@ const PodHeader = () => <div className="row co-m-table-grid__head">
 
 const filters = [{
   type: 'pod-status',
-  selected: [0, 1, 2],
+  selected: ['Running', 'Pending', 'Terminating'],
   reducer: podPhase,
   items: [
-    ['Running', 'Running'],
-    ['Pending', 'Pending'],
-    ['Terminating', 'Terminating'],
-    ['Job Completed', 'Completed'],
+    {id: 'Running', title: 'Running'},
+    {id: 'Pending', title: 'Pending'},
+    {id: 'Terminating', title: 'Terminating'},
+    {id: 'Completed', title: 'Job Completed'},
   ],
 }];
 
