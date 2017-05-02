@@ -1,9 +1,10 @@
 import React from 'react';
+import fuzzy from 'fuzzysearch';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
 import { k8sEnum } from '../../module/k8s';
-import { DetailsPage, MultiList, MultiListPage } from '../factory';
+import { DetailsPage, MultiList, MultiListPage, TextFilter } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingRows, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
 
@@ -36,40 +37,59 @@ const Row = ({obj: role}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const Details = ({metadata, rules}) => <div>
-  <Heading text="Role Overview" />
-  <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-xs-6">
-        <dl>
-          <dt>Role Name</dt>
-          <dd>{metadata.name}</dd>
-          {metadata.namespace && <div>
-            <dt>Namespace</dt>
-            <dd><ResourceLink kind="namespace" name={metadata.namespace} /></dd>
-          </div>}
-        </dl>
+class Details extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {rules: props.rules};
+  }
+
+  filterRules (e) {
+    const searchStr = e.target.value.toLowerCase();
+    const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];
+    const ruleFilter = rule => searchKeys.some(k => rule[k] && rule[k].some(v => fuzzy(searchStr, v.toLowerCase())));
+    this.setState({rules: _.filter(this.props.rules, ruleFilter)});
+  }
+
+  render () {
+    const {creationTimestamp, name, namespace} = this.props.metadata;
+
+    return <div>
+      <Heading text="Role Overview" />
+      <div className="co-m-pane__body">
+        <div className="row">
+          <div className="col-xs-6">
+            <dl>
+              <dt>Role Name</dt>
+              <dd>{name}</dd>
+              {namespace && <div>
+                <dt>Namespace</dt>
+                <dd><ResourceLink kind="namespace" name={namespace} /></dd>
+              </div>}
+            </dl>
+          </div>
+          <div className="col-xs-6">
+            <dl>
+              <dt>Created At</dt>
+              <dd><Timestamp timestamp={creationTimestamp} /></dd>
+            </dl>
+          </div>
+        </div>
       </div>
-      <div className="col-xs-6">
-        <dl>
-          <dt>Created At</dt>
-          <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
-        </dl>
+      <Heading text="Rules" />
+      <div className="co-m-pane__body">
+        <div className="row">
+          <div className="col-xs-12">
+            <Link to={addHref(name, namespace)}>
+              <button className="btn btn-primary">Add Rule</button>
+            </Link>
+            <TextFilter label="Rules by action or resource" onChange={this.filterRules.bind(this)} />
+          </div>
+        </div>
+        <RulesList rules={this.state.rules} name={name} namespace={namespace} />
       </div>
-    </div>
-  </div>
-  <Heading text="Rules" />
-  <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-xs-12">
-        <Link to={addHref(metadata.name, metadata.namespace)}>
-          <button className="btn btn-primary">Add Rule</button>
-        </Link>
-        <RulesList rules={rules} metadata={metadata} />
-      </div>
-    </div>
-  </div>
-</div>;
+    </div>;
+  }
+}
 
 const pages = [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
 

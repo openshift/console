@@ -17,6 +17,14 @@ const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div
   </label>
 </div>;
 
+export const TextFilter = ({label, onChange}) => <input
+  type="text"
+  className="form-control text-filter pull-right"
+  placeholder={`Filter ${label}...`}
+  onChange={onChange}
+  autoFocus={true}
+/>;
+
 const BaseListPage = connect(null, {filterList: actions.filterList})(
 class BaseListPage_ extends React.Component {
   constructor (props) {
@@ -66,7 +74,7 @@ class BaseListPage_ extends React.Component {
                 <button className="btn btn-primary">{createButtonText}</button>
               </Link>}
               {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
-              <input type="text" className="form-control text-filter pull-right" placeholder={`Filter ${filterLabel}...`} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} autoFocus={true} />
+              <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} />
               {DropdownFilters}
             </div>
             {RowsOfRowFilters}
