@@ -158,7 +158,7 @@ export const RolesPage = ({namespace}) => <MultiListPage
   canCreate={true}
   createButtonText="Create Role"
   createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
-  filterLabel="Role by name"
+  filterLabel="Roles by name"
   resources={resources}
   rowFilters={filters}
   title="Roles"
