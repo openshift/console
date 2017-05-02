@@ -41,6 +41,10 @@ const Details = ({metadata, rules}) => <div>
         <dl>
           <dt>Role Name</dt>
           <dd>{metadata.name}</dd>
+          {metadata.namespace && <div>
+            <dt>Namespace</dt>
+            <dd><ResourceLink kind="namespace" name={metadata.namespace} /></dd>
+          </div>}
         </dl>
       </div>
       <div className="col-xs-6">
