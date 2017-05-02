@@ -1,9 +1,10 @@
 import React from 'react';
+import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
 import { DetailsPage, MultiList, MultiListPage } from '../factory';
-import { Cog, Heading, MsgBox, navFactory, ResourceLink, Timestamp } from '../utils';
-import { RulesList } from './index';
+import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceLink, Timestamp } from '../utils';
+import { BindingName, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
 
 const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
 
@@ -63,7 +64,56 @@ const Details = ({metadata, rules}) => <div>
   </div>
 </div>;
 
-const pages = [navFactory.details(Details), navFactory.editYaml()];
+const pages = [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
+
+const BindingHeader = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-4">Name</div>
+  <div className="col-xs-2">Subject Kind</div>
+  <div className="col-xs-4">Subject Name</div>
+  <div className="col-xs-2">Namespace</div>
+</div>;
+
+const BindingRow = ({obj: binding}) => <div>
+  {binding.subjects.map((subject, i) => <div className="row co-resource-list__item" key={i}>
+    <div className="col-xs-4">
+      <BindingName binding={binding} />
+    </div>
+    <div className="col-xs-2">
+      {subject.kind}
+    </div>
+    <div className="col-xs-4">
+      {subject.name}
+    </div>
+    <div className="col-xs-2">
+      {binding.namespace || 'all'}
+    </div>
+  </div>)}
+</div>;
+
+const BindingsList = props => <MultiList
+  {...props}
+  EmptyMsg={BindingsEmptyMsg}
+  Header={BindingHeader}
+  Row={BindingRow}
+/>;
+
+export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div>
+  <Helmet title={`${name} · Bindings`} />
+  <Firehose kind={kind} name={name} namespace={ns}>
+    <NavTitle detail={true} kind={kind} menuActions={menuActions} title={name} />
+  </Firehose>
+  <NavBar pages={pages} />
+  <MultiListPage
+    ListComponent={BindingsList}
+    staticFilters={[{'role-binding-roleRef': name}]}
+    resources={[
+      {kind: 'rolebinding', namespaced: true},
+      {kind: 'clusterrolebinding', namespaced: false},
+    ]}
+    textFilter="role-binding"
+    filterLabel="Role Bindings by role or subject"
+  />
+</div>;
 
 export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
 export const ClusterRolesDetailsPage = RolesDetailsPage;

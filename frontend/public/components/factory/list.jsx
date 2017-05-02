@@ -20,6 +20,9 @@ const filters = {
     return [metadata.name, roleRef.name, ..._.map(subjects, 'kind'), ..._.map(subjects, 'name')].some(isMatch);
   },
 
+  // Filter role bindings by roleRef name
+  'role-binding-roleRef': (roleRef, binding) => binding.roleRef.name === roleRef,
+
   'selector': (selector, obj) => {
     if (!selector || !selector.values || !selector.values.size) {
       return true;
@@ -69,28 +72,30 @@ const filterPropType = (props, propName, componentName) => {
   }
 };
 
-const Rows = (props) => {
-  const {expand, filters, data, sortBy, Row} = props;
-  const rows = _.sortBy(getFilteredRows(filters, data), sortBy).map(object => {
+const Rows = ({EmptyMsg, expand, filters, data, Row, sortBy, staticFilters}) => {
+  const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
+  const rows = _.sortBy(getFilteredRows(allFilters, data), sortBy).map(object => {
     return <Row key={getQN(object)} obj={object} expand={expand} />;
   });
-  return <div className="co-m-table-grid__body"> {rows} </div>;
+  return (_.isEmpty(rows) && EmptyMsg) ? EmptyMsg : <div className="co-m-table-grid__body">{rows}</div>;
 };
 
 Rows.propTypes = {
-  filters: filterPropType,
-  sortBy: React.PropTypes.func,
   data: React.PropTypes.arrayOf(React.PropTypes.object),
+  EmptyMsg: React.PropTypes.object,
   expand: React.PropTypes.bool,
+  filters: filterPropType,
   Row: React.PropTypes.func.isRequired,
+  sortBy: React.PropTypes.func,
+  staticFilters: React.PropTypes.array,
 };
 
 export const List = props => {
-  const {expand, Header, Row, sortBy} = props;
+  const {EmptyMsg, expand, Header, Row, sortBy, staticFilters} = props;
   return <div className="co-m-table-grid co-m-table-grid--bordered">
     <StatusBox {...props}>
       <Header />
-      <Rows Row={Row} expand={expand} sortBy={sortBy || (item => _.get(item, 'metadata.name'))} />
+      <Rows EmptyMsg={EmptyMsg} Row={Row} expand={expand} sortBy={sortBy || (item => _.get(item, 'metadata.name'))} staticFilters={staticFilters} />
     </StatusBox>
   </div>;
 };
@@ -105,6 +110,7 @@ List.propTypes = {
   namespace: React.PropTypes.string,
   reduxID: React.PropTypes.string,
   selector: React.PropTypes.object,
+  staticFilters: React.PropTypes.array,
 };
 
 export const MultiList = props => {
