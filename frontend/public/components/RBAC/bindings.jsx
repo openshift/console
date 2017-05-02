@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { k8sEnum } from '../../module/k8s';
 import { MultiListPage, MultiList } from '../factory';
 import { MsgBox, ResourceIcon, ResourceLink } from '../utils';
 
@@ -86,8 +87,11 @@ const resources = [
 // Split each binding into one row per subject
 const rowSplitter = binding => binding && _.map(binding.subjects, subject => Object.assign({}, binding, {subject}));
 
-export const RoleBindingsPage = () => <MultiListPage
+export const RoleBindingsPage = ({namespace}) => <MultiListPage
   ListComponent={List}
+  canCreate={true}
+  createButtonText="Create Binding"
+  createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/rolebindings/new`}}
   filterLabel="Role Bindings by role or subject"
   resources={resources}
   rowFilters={filters}

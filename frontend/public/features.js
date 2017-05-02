@@ -27,7 +27,7 @@ const setFlags = (dispatch, flags) => dispatch({flags, type: SET_FLAGS});
 
 const K8S_FLAGS = {
   [FLAGS.RBAC]: '/apis/rbac.authorization.k8s.io',
-  [FLAGS.RBAC_V1_ALPHA1]: '/apis/rbac.authorization.k8s.io/v1alpha1',
+  [FLAGS.RBAC_V1_ALPHA1]: '/apis/rbac.authorization.k8s.io/v1beta1',
 };
 
 const COREOS_FLAGS = {

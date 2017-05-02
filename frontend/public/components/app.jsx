@@ -108,6 +108,9 @@ render((
           <Route path=":name/bindings" component={BindingsForRolePage} kind="role" />
         </Route>
 
+        {/* We don't have a Role Bindings details page, so redirect to the list page */}
+        <Redirect from="ns/:ns/rolebindings/:name/details" to="ns/default/rolebindings" />
+
         <Route path="namespaces">
           <IndexRoute component={ResourceListPage} kind="namespaces" />
           <Route path=":name/:view" component={ResourceDetailsPage} kind="namespaces" />

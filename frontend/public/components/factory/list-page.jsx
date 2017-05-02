@@ -123,7 +123,7 @@ export const ListPage = props => {
 
 export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace'), path: UI.get('location')}))(
 props => {
-  const {createHandler, ns, path, resources} = props;
+  const {createButtonText, ns, path, resources} = props;
   const firehoseResources = resources.map(r => ({
     kind: r.kind,
     isList: true,
@@ -133,8 +133,7 @@ props => {
   return <MultiFirehose key={path} resources={firehoseResources}>
     <BaseListPage
       {...props}
-      createButtonText="Create"
-      createProps={{onClick: createHandler}}
+      createButtonText={createButtonText || 'Create'}
       kinds={_.map(resources, 'kind')}
     />
   </MultiFirehose>;

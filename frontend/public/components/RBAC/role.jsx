@@ -2,6 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
+import { k8sEnum } from '../../module/k8s';
 import { DetailsPage, MultiList, MultiListPage } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceLink, Timestamp } from '../utils';
 import { BindingName, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
@@ -152,8 +153,11 @@ const resources = [
   {kind: 'clusterrole', namespaced: false},
 ];
 
-export const RolesPage = () => <MultiListPage
+export const RolesPage = ({namespace}) => <MultiListPage
   ListComponent={List}
+  canCreate={true}
+  createButtonText="Create Role"
+  createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
   filterLabel="Role by name"
   resources={resources}
   rowFilters={filters}

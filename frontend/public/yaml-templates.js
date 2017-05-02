@@ -129,3 +129,25 @@ spec:
     storageType: PersistentVolume
     pv:
       volumeSizeInMB: 512`;
+
+TEMPLATES['v1beta1.Role'] = `apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: sample-pod-reader
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]`;
+
+TEMPLATES['v1beta1.RoleBinding'] = `apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: my-role-binding
+subjects:
+- kind: Group
+  name: "my-sample-group"
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io`;
