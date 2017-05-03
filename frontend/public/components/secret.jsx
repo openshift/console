@@ -35,8 +35,6 @@ const SecretDetails = (secret) => {
         <ResourceSummary resource={secret} showPodSelector={false} showNodeSelector={false} />
       </div>
 
-      <div></div>
-
       <Heading text="Data" />
       <div className="co-m-pane__body">
         <ConfigMapAndSecretData data={secret.data} decode={window.atob} />
