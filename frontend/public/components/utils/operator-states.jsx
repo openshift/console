@@ -54,7 +54,6 @@ export const operatorStates = {
   },
   UpToDate: {
     suffix: 'up-to-date',
-    icon: 'fa-check-circle',
     statusText: 'Up to date'
   }
 };
@@ -84,12 +83,13 @@ export const taskStatuses = {
 
 export const OperatorState = ({opState, version}) => {
   const operatorState = operatorStates[opState];
+  const icon = _.get(operatorState, 'icon');
   if (opState === 'Loading') {
     return <LoadingInline />;
   }
 
   return <span className={`co-cluster-updates--${_.get(operatorState, 'suffix', '')}`}>
-    <span className={`co-cluster-updates__text-icon fa ${_.get(operatorState, 'icon', '')} co-cluster-updates__operator-icon--${_.get(operatorState, 'suffix', '')}`}></span>
+    {icon && <span className={`co-cluster-updates__text-icon fa ${icon} co-cluster-updates__operator-icon--${_.get(operatorState, 'suffix', '')}`}></span>}
     {opState === 'UpdateAvailable' && version } {_.get(operatorState, 'statusText', '')}
   </span>;
 };

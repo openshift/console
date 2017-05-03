@@ -76,7 +76,7 @@ export class ContainerLinuxUpdateDetails extends SafetyFirst {
     super(props);
     this._toggleExpand = this._toggleExpand.bind(this);
     this.state = {
-      expanded: true
+      expanded: false
     };
   }
 
