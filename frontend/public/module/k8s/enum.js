@@ -237,8 +237,8 @@ export const k8sEnum = {
     'CLUSTER': {
       id: 'cluster',
       kind: 'Cluster',
-      label: 'EtcdCluster',
-      labelPlural: 'EtcdClusters',
+      label: 'etcd Cluster',
+      labelPlural: 'etcd Clusters',
       apiVersion: 'v1beta1',
       basePath: '/apis/etcd.coreos.com/',
       path: 'clusters',
