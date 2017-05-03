@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import {DetailsPage, List, ListPage} from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory} from './utils';
+import {Cog, Firehose, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory} from './utils';
 import classnames from 'classnames';
 
 const menuActions = Cog.factory.common;
@@ -77,7 +77,10 @@ const withSecretsList = (Row) => {
 
 const pages = [navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()];
 
-const SecretsList = props => <List {...props} Header={SecretHeader} Row={SecretRow} />;
+const SecretsList = props => <Firehose {...props} kind="secret" isList={true}>
+  <List {...props} Header={SecretHeader} Row={SecretRow} />
+</Firehose>;
+
 const SecretsPage = props => <ListPage ListComponent={SecretsList} {...props} />;
 const SecretsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
