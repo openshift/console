@@ -1,6 +1,6 @@
 export const TEMPLATES = {};
 
-TEMPLATES['v1beta1.Job'] = `apiVersion: extensions/v1beta1
+TEMPLATES['batch/v1.Job'] = `apiVersion: extensions/v1beta1
 kind: Job
 metadata:
   name: pi
