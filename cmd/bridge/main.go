@@ -227,18 +227,6 @@ func main() {
 			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
 		)
 
-		dexProxyConfigEndpoint := validateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
-		dexProxyConfigEndpoint.Path = proxy.SingleJoiningSlash(dexProxyConfigEndpoint.Path, "/api")
-
-		srv.DexProxyConfig = &proxy.Config{
-			Endpoint: dexProxyConfigEndpoint,
-			TLSClientConfig: &tls.Config{
-				RootCAs: certPool,
-			},
-			HeaderBlacklist: []string{"Cookie"},
-		}
-		srv.DexProxyConfig.Director = server.DirectorFromTokenExtractor(srv.DexProxyConfig, auth.ExtractTokenFromCookie)
-
 		if *fKubectlClientID != "" {
 			srv.KubectlClientID = *fKubectlClientID
 
