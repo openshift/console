@@ -155,7 +155,7 @@ export class EtcdClusterDetails extends SafetyFirst {
                       {readyMembers} ready
                     </Tooltip>
                     <Tooltip content="Total number of etcd members that are not ready to serve requests">
-                      {unreadyMembers} unready
+                      {unreadyMembers === 0 && readyMembers < spec.size ? spec.size - readyMembers : unreadyMembers} unready
                     </Tooltip>
                   </div>
                 </div>}
