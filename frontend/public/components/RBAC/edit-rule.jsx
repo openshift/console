@@ -49,7 +49,7 @@ const RadioButton = ({name, value, label, text, onChange, activeValue}) => <div>
 const HRMinor = () => <hr className="rbac-minor" />;
 const HRMajor = () => <hr className="rbac-major" />;
 
-export const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
+const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
 class EditRule_ extends PromiseComponent {
   constructor (props) {
     super(props);
@@ -408,3 +408,16 @@ class EditRule_ extends PromiseComponent {
     );
   }
 });
+
+export const EditRuleContainer = ({params}) => {
+  const {rule, name, ns} = params;
+  const k8sResource = k8s.roles;
+  const props = {
+    k8sResource,
+    rule,
+    name,
+    namespace: ns
+  };
+
+  return <EditRule {...props} />;
+};
