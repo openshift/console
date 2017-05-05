@@ -2,7 +2,6 @@ import React from 'react';
 import Helmet from 'react-helmet';
 
 import { k8s } from '../../module/k8s';
-import { Heading } from '../utils';
 import { EditRule } from './';
 
 export const EditRuleContainer = ({params}) => {
@@ -17,7 +16,6 @@ export const EditRuleContainer = ({params}) => {
 
   return <div>
     <Helmet title={k8sResource.kind.labelPlural} />
-    <Heading text="Create Access Rule" />
     <EditRule {...props} />
   </div>;
 };

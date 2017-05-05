@@ -1,10 +1,10 @@
 import React from 'react';
 import Helmet from 'react-helmet';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {k8s} from '../../module/k8s';
-import {errorModal} from '../modals';
-import {history, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage} from '../utils';
+import { k8s } from '../../module/k8s';
+import { errorModal } from '../modals';
+import { Heading, history, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage } from '../utils';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);
@@ -246,12 +246,14 @@ class EditRule_ extends PromiseComponent {
   }
 
   render () {
-    const {name, namespace, namespacedSet, safeResources, adminResources} = this.props;
+    const {name, namespace, namespacedSet, safeResources, adminResources, rule} = this.props;
     const {verbControl, resourceControl, nonResourceURLs, APIGroups} = this.state;
+    const heading = `${rule === undefined ? 'Create' : 'Edit'} Access Rule`;
 
     return (
       <div className="co-m-pane edit-rule">
         <Helmet title={this.kind.labelPlural} />
+        <Heading text={heading} />
         <div className="co-m-pane__body">
           <div className="row">
             <div className="col-xs-12">
