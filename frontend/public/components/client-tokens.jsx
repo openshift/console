@@ -77,7 +77,7 @@ const ClientTokens = ({clients, onTokenRevocation, resourceLoaded, loadingError}
      <div className="co-m-pane__heading">
         <h1 className="co-p-cluster--heading">Access Management</h1>
         <p>
-          Manage access that software tools and SDKs have on your behalf. If a client is no longer needed or trusted, revoke its refresh token (refresh_token) to invalidate its ability to obtain new access token (id_token).
+          Each user of Tectonic gets a single kubectl CLI refresh token for use in their kubeconfig file. This token never expires, unless revoked here.
         </p>
      </div>
     <div className="co-m-pane__body">
