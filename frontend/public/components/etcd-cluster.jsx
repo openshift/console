@@ -180,7 +180,7 @@ export class EtcdClusterDetails extends SafetyFirst {
               <div className="row">
                 <div className="col-sm-6 col-xs-12">
                   <dt>Status</dt>
-                  <dd><Phase status={status} /></dd>
+                  <dd>{status ? <Phase status={status} /> : '-'}</dd>
                   <dt>Name</dt>
                   <dd>{metadata.name}</dd>
                 </div>
