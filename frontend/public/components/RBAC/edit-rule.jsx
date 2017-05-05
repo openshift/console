@@ -252,7 +252,7 @@ class EditRule_ extends PromiseComponent {
 
     return (
       <div className="co-m-pane edit-rule">
-        <Helmet title={this.kind.labelPlural} />
+        <Helmet title={`${name} · ${heading}`} />
         <Heading text={heading} />
         <div className="co-m-pane__body">
           <div className="row">

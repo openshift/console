@@ -1,5 +1,4 @@
 import React from 'react';
-import Helmet from 'react-helmet';
 
 import { k8s } from '../../module/k8s';
 import { EditRule } from './';
@@ -14,8 +13,5 @@ export const EditRuleContainer = ({params}) => {
     namespace: ns
   };
 
-  return <div>
-    <Helmet title={k8sResource.kind.labelPlural} />
-    <EditRule {...props} />
-  </div>;
+  return <EditRule {...props} />;
 };
