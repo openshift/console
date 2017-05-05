@@ -84,7 +84,7 @@ const Operator = ({component, cols, primaryComponent, tectonicVersions, isPrimar
   }
 
   const headerText = currentVersion === desiredVersion ? <span>{name} {currentVersion}</span> :
-    <span>{name} {currentVersion} &#10141; {desiredVersion || targetVersion}</span>;
+    <span className="co-cluster-updates__operator-subheader">{name} {currentVersion} &#10141; {desiredVersion || targetVersion}</span>;
 
   const state = determineOperatorState(_.defaults({desiredVersion: desiredVersion}, component));
   const suffix = _.get(operatorStates[state], 'suffix', '');
@@ -97,7 +97,7 @@ const Operator = ({component, cols, primaryComponent, tectonicVersions, isPrimar
       </div>}
       <div className="co-cluster-updates__operator-text">{headerText}</div>
     </div>
-    {state !== 'Complete' && logsUrl && <div className="co-cluster-updates__operator-step"><a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl}>View Logs</a></div>}
+    {state !== 'Complete' && logsUrl && <div className="co-cluster-updates__operator-logs"><a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl} target="_blank">View Logs</a></div>}
     {_.map(component.taskStatuses, (taskStatus, index) => <TaskStatus taskStatus={taskStatus} key={index} isPrimaryComponent={isPrimaryComponent} /> )}
   </div>;
 };

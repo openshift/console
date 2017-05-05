@@ -7,12 +7,16 @@ import * as k8sSelector from '../../module/k8s/selector';
 
 const componentNames = {
   'kubernetes': 'Kubernetes',
-  'tectonic-cluster': 'Tectonic'
+  'tectonic-cluster': 'Tectonic',
+  'tectonic-etcd': 'tectonic-etcd',
+  'tectonic-monitoring': 'tectonic-monitoring'
 };
 
 const podNames = {
   'kubernetes': 'kube-version-operator',
-  'tectonic-cluster': 'tectonic-channel-operator'
+  'tectonic-cluster': 'tectonic-channel-operator',
+  'tectonic-etcd': 'etcd-operator',
+  'tectonic-monitoring': 'tectonic-prometheus-operator'
 };
 
 export const clusterAppVersionName = 'tectonic-cluster';
@@ -42,7 +46,6 @@ const generateComponents = (components, pods) => {
         logsUrl
       };
     }
-
     return finalComponents;
   }, {});
 };
@@ -156,7 +159,6 @@ class TectonicChannelWithData extends React.Component {
 
   render() {
     const {configs, pods, appVersions, tectonicVersions} = this.props;
-
     if (appVersions.loaded) {
       const components = this._getComponents(appVersions, pods, tectonicVersions);
       const config = this._getConfig(configs);
