@@ -92,9 +92,9 @@ const Resources = ({resources, nonResourceURLs}) => {
 };
 
 const DeleteRule = (name, namespace, i) => ({
-  label: 'Delete Rule ...',
+  label: 'Delete Rule...',
   callback: () => confirmModal({
-    title: 'Delete Rule ',
+    title: 'Delete Rule',
     message: `Are you sure you want to delete Rule #${i}?`,
     btnText: 'Delete Rule',
     executeFn: () => {
@@ -107,7 +107,7 @@ const DeleteRule = (name, namespace, i) => ({
 });
 
 const EditRule = (name, namespace, i) => ({
-  label: 'Edit Rule ...',
+  label: 'Edit Rule...',
   href: namespace ? `ns/${namespace}/roles/${name}/${i}/edit` : `clusterroles/${name}/${i}/edit`,
 });
 
