@@ -24,7 +24,7 @@ import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { BindingsForRolePage, EditRuleContainer } from './RBAC';
+import { BindingsForRolePage, EditRulePage } from './RBAC';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
 
@@ -95,16 +95,16 @@ render((
         <IndexRoute component={ClusterOverviewContainer}/>
 
         <Route path="clusterroles">
-          <Route path=":name/add-rule" component={EditRuleContainer} />
+          <Route path=":name/add-rule" component={EditRulePage} />
           <Route path=":name/bindings" component={BindingsForRolePage} kind="clusterrole" />
-          <Route path=":name/:rule/edit" component={EditRuleContainer} />
+          <Route path=":name/:rule/edit" component={EditRulePage} />
           <Route path=":name/:view" component={ResourceDetailsPage} kind="clusterroles" />
         </Route>
 
         <Route path="ns/:ns/roles">
           <IndexRoute component={ResourceListPage} kind="roles" />
-          <Route path=":name/add-rule" component={EditRuleContainer} />
-          <Route path=":name/:rule/edit" component={EditRuleContainer} />
+          <Route path=":name/add-rule" component={EditRulePage} />
+          <Route path=":name/:rule/edit" component={EditRulePage} />
           <Route path=":name/bindings" component={BindingsForRolePage} kind="role" />
         </Route>
 

@@ -409,13 +409,8 @@ class EditRule_ extends PromiseComponent {
   }
 });
 
-export const EditRuleContainer = ({params}) => {
-  const {rule, name, ns} = params;
-  const props = {
-    rule,
-    name,
-    namespace: ns
-  };
-
-  return <EditRule {...props} />;
-};
+export const EditRulePage = ({params}) => <EditRule
+  name={params.name}
+  namespace={params.ns}
+  rule={params.rule}
+/>;
