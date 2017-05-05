@@ -8,7 +8,6 @@ export const FLAGS = {
   AUTH_ENABLED: 'AUTH_ENABLED',
   CLUSTER_UPDATES: 'CLUSTER_UPDATES',
   RBAC: 'RBAC',
-  RBAC_V1_ALPHA1: 'RBAC_V1_ALPHA1',
   REVOKE_TOKEN: 'REVOKE_TOKEN',
   USER_MANAGEMENT: 'USER_MANAGEMENT',
 };
@@ -17,7 +16,6 @@ const DEFAULTS = {
   [FLAGS.AUTH_ENABLED]: !window.SERVER_FLAGS.authDisabled,
   [FLAGS.CLUSTER_UPDATES]: undefined,
   [FLAGS.RBAC]: undefined,
-  [FLAGS.RBAC_V1_ALPHA1]: undefined,
   [FLAGS.REVOKE_TOKEN]: !!window.SERVER_FLAGS.kubectlClientID,
   [FLAGS.USER_MANAGEMENT]: undefined,
 };
@@ -27,7 +25,6 @@ const setFlags = (dispatch, flags) => dispatch({flags, type: SET_FLAGS});
 
 const K8S_FLAGS = {
   [FLAGS.RBAC]: '/apis/rbac.authorization.k8s.io',
-  [FLAGS.RBAC_V1_ALPHA1]: '/apis/rbac.authorization.k8s.io/v1beta1',
 };
 
 const COREOS_FLAGS = {
