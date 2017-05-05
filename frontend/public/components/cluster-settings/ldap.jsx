@@ -280,7 +280,7 @@ const Security = connect(state => ({sslValue: selector(state, SSLType)})
 )(({sslValue}) => <div>
   <Row name={SSLType}>
     <label><Field name={SSLType} component="input" type="radio" value={NoSSL}/> No SSL</label>
-    <Help>Required if LDAP host does not use TLS.</Help>
+    <Help>Required if LDAP host does not use SSL.</Help>
   </Row>
   <Row name={SSLType}>
     <label><Field name={SSLType} component="input" type="radio" value={Skip} /> Skip Verification</label>
