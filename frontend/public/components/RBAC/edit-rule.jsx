@@ -411,9 +411,7 @@ class EditRule_ extends PromiseComponent {
 
 export const EditRuleContainer = ({params}) => {
   const {rule, name, ns} = params;
-  const k8sResource = k8s.roles;
   const props = {
-    k8sResource,
     rule,
     name,
     namespace: ns
