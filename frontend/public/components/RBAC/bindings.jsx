@@ -1,8 +1,37 @@
 import React from 'react';
 
-import { k8sEnum } from '../../module/k8s';
+import { k8s, k8sEnum } from '../../module/k8s';
 import { MultiListPage, MultiList } from '../factory';
-import { MsgBox, ResourceIcon, ResourceLink } from '../utils';
+import { confirmModal } from '../modals';
+import { Cog, MsgBox, ResourceCog, ResourceIcon, ResourceLink } from '../utils';
+
+const bindingKind = binding => binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding';
+
+// Split each binding into one row per subject
+const rowSplitter = binding => {
+  if (!binding) {
+    return undefined;
+  }
+  if (_.isEmpty(binding.subjects)) {
+    const subject = {kind: '-', name: '-'};
+    return [Object.assign({}, binding, {subject})];
+  }
+  return binding.subjects.map(subject => Object.assign({}, binding, {subject}));
+};
+
+const DeleteSubject = (i) => (kind, binding) => {
+  const subject = binding.subjects[i];
+  return {
+    label: `Delete ${kind.label} Subject...`,
+    weight: 900,
+    callback: () => confirmModal({
+      title: `Delete ${kind.label} Subject`,
+      message: `Are you sure you want to delete subject ${subject.name} of type ${subject.kind}?`,
+      btnText: 'Delete Subject',
+      executeFn: () => k8s[kind.plural].patch(binding, [{op: 'remove', path: `/subjects/${i}`}]),
+    }),
+  };
+};
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Name</div>
@@ -14,10 +43,10 @@ const Header = () => <div className="row co-m-table-grid__head">
   </div>
 </div>;
 
-export const BindingName = ({binding}) => <div>
-  <ResourceIcon kind={binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding'} />
-  {binding.metadata.name}
-</div>;
+export const BindingName = ({actions, binding}) => <span>
+  <ResourceCog actions={actions} kind={bindingKind(binding)} resource={binding} />
+  <ResourceIcon kind={bindingKind(binding)} /> {binding.metadata.name}
+</span>;
 
 export const RoleLink = ({binding}) => {
   const kind = binding.roleRef.kind.toLowerCase();
@@ -27,31 +56,44 @@ export const RoleLink = ({binding}) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const Row = ({obj: binding}) => <div>
-  {_.map(binding.subjects, (subject, i) => <div className="row co-resource-list__item" key={i}>
+const SubjectRow = ({actions, binding, kind, name}) => {
+  return <div className="row co-resource-list__item">
     <div className="col-xs-3">
-      <BindingName binding={binding} />
+      <BindingName actions={actions} binding={binding} />
     </div>
     <div className="col-xs-3">
       <RoleLink binding={binding} />
     </div>
     <div className="col-xs-6">
       <div className="col-xs-3">
-        {subject.kind}
+        {kind}
       </div>
       <div className="col-xs-5">
-        {subject.name}
+        {name}
       </div>
       <div className="col-xs-4">
         {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
       </div>
     </div>
-  </div>)}
-</div>;
+  </div>;
+};
+
+export const BindingRows = Row => ({obj: binding}) => {
+  const rows = rowSplitter(binding);
+  return <div>
+    {rows.map(({subject}, i) => <Row
+      key={i}
+      actions={[rows.length === 1 ? Cog.factory.Delete : DeleteSubject(i)]}
+      binding={binding}
+      kind={subject.kind}
+      name={subject.name}
+    />)}
+  </div>;
+};
 
 export const EmptyMsg = <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
-const List = props => <MultiList {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
+const List = props => <MultiList {...props} EmptyMsg={EmptyMsg} Header={Header} Row={BindingRows(SubjectRow)} />;
 
 export const bindingType = binding => {
   if (!binding) {
@@ -83,9 +125,6 @@ const resources = [
   {kind: 'rolebinding', namespaced: true},
   {kind: 'clusterrolebinding', namespaced: false},
 ];
-
-// Split each binding into one row per subject
-const rowSplitter = binding => binding && _.map(binding.subjects, subject => Object.assign({}, binding, {subject}));
 
 export const RoleBindingsPage = ({namespace}) => <MultiListPage
   ListComponent={List}
