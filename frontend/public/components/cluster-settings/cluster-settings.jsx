@@ -3,12 +3,13 @@ import Helmet from 'react-helmet';
 
 import {coFetchJSON} from '../../co-fetch';
 import {NavTitle, DocumentationSidebar} from '../utils';
-import {ClusterUpdates} from '../cluster-updates/cluster-updates';
 import {LicenseSetting} from './license-setting';
 import {LDAPSetting} from './ldap';
 import {CertsInfoContainer} from './certs-info';
 import {SafetyFirst} from '../safety-first';
 import {FLAGS, connectToFlags} from '../../features';
+import {TectonicChannel} from '../channel-operators/tectonic-channel';
+import {ContainerLinuxUpdates} from '../container-linux-update-operator/container-linux-updates';
 
 export const SettingsRow = ({children}) => <div className="row co-m-form-row">{children}</div>;
 export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
@@ -28,15 +29,17 @@ class ClusterSettingsPage_ extends SafetyFirst {
       <Helmet title="Cluster" />
       <div className="co-p-cluster__body">
         <NavTitle title="Cluster Settings" />
-        { CLUSTER_UPDATES &&
+
           <div>
             {/*TODO: nesting inside an extra <div> to get rid of the bottom border...*/}
             <div className="co-m-pane__body">
-              <p className="alert alert-info co-cluster-updates-warning">Warning: Experimental feature. Only use on clusters that can be easily replaced, or if you have a current backup of etcd.</p>
-              <ClusterUpdates />
+              {CLUSTER_UPDATES && <p className="alert alert-info co-cluster-updates-warning">Warning: Experimental feature. Only use on clusters that can be easily replaced, or if you have a current backup of etcd.</p>}
+              <div className="co-cluster-updates">
+                {CLUSTER_UPDATES && <TectonicChannel />}
+                <ContainerLinuxUpdates />
+              </div>
             </div>
           </div>
-        }
         <div className="co-m-pane__body">
           <h1 className="co-p-cluster--heading">General</h1>
           <LicenseSetting />

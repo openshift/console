@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ContainerLinuxUpdateDetails } from './container-linux-update-details';
-import { Firehose, containerLinuxUpdateOperator } from '../utils';
+import { LoadingInline, Firehose, containerLinuxUpdateOperator } from '../utils';
 
 export const ContainerLinuxUpdates = (props) => {
   return <Firehose kind="node" isList={true}>
@@ -20,6 +20,7 @@ export const ContainerLinuxUpdatesWithData = (props) => {
         isOperatorInstalled={isOperatorInstalled}
       />;
     }
+    return null;
   }
-  return null;
+  return <div className="co-cluster-updates__component text-center"><LoadingInline /></div>;
 };
