@@ -4,10 +4,12 @@ import { Link } from 'react-router';
 
 import { k8sEnum } from '../../module/k8s';
 import { DetailsPage, MultiList, MultiListPage } from '../factory';
-import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceLink, Timestamp } from '../utils';
+import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
 
 const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
+
+const roleKind = role => role.metadata.namespace ? 'role' : 'clusterrole';
 
 const menuActions = [
   (kind, role) => ({
@@ -15,9 +17,8 @@ const menuActions = [
     weight: 100,
     href: addHref(role.metadata.name, role.metadata.namespace),
   }),
-
-  // Same as the normal resource Edit action, but with a different label
-  (kind, role) => Object.assign({}, Cog.factory.Edit(kind, role), {label: 'Add Rule with YAML Editor...'}),
+  Cog.factory.Edit,
+  Cog.factory.Delete,
 ];
 
 const Header = () => <div className="row co-m-table-grid__head">
@@ -25,12 +26,13 @@ const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-6">Namespace</div>
 </div>;
 
-const Row = ({obj: {metadata}}) => <div className="row co-resource-list__item">
+const Row = ({obj: role}) => <div className="row co-resource-list__item">
   <div className="col-xs-6">
-    <ResourceLink kind={metadata.namespace ? 'role' : 'clusterrole'} name={metadata.name} namespace={metadata.namespace} />
+    <ResourceCog actions={menuActions} kind={roleKind(role)} resource={role} />
+    <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
   </div>
   <div className="col-xs-6">
-    {metadata.namespace ? <ResourceLink kind="namespace" name={metadata.namespace} /> : 'all'}
+    {role.metadata.namespace ? <ResourceLink kind="namespace" name={role.metadata.namespace} /> : 'all'}
   </div>
 </div>;
 
