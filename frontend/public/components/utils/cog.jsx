@@ -56,9 +56,9 @@ Cog.factory = {
     label: `Delete ${kind.label}...`,
     weight: 900,
     callback: () => confirmModal({
-      title: `Delete ${kind.label} `,
+      title: `Delete ${kind.label}`,
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
-      btnText: `Delete ${kind.label} `,
+      btnText: `Delete ${kind.label}`,
       executeFn: () => {
         const deletePromise = k8s[kind.plural].delete(obj);
 

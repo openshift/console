@@ -9,7 +9,7 @@ import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
-import {BindingName, EmptyMsg, RoleLink} from './RBAC';
+import {BindingName, BindingRows, EmptyMsg, RoleLink} from './RBAC';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -142,24 +142,22 @@ const RoleHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-4">Subject Name</div>
 </div>;
 
-const RoleRow = ({obj: binding}) => <div>
-  {binding.subjects.map((subject, i) => <div className="row co-resource-list__item" key={i}>
-    <div className="col-xs-3">
-      <BindingName binding={binding} />
-    </div>
-    <div className="col-xs-3">
-      <RoleLink binding={binding} />
-    </div>
-    <div className="col-xs-2">
-      {subject.kind}
-    </div>
-    <div className="col-xs-4">
-      {subject.name}
-    </div>
-  </div>)}
+const SubjectRow = ({actions, binding, kind, name}) => <div className="row co-resource-list__item">
+  <div className="col-xs-3">
+    <BindingName binding={binding} actions={actions} />
+  </div>
+  <div className="col-xs-3">
+    <RoleLink binding={binding} />
+  </div>
+  <div className="col-xs-2">
+    {kind}
+  </div>
+  <div className="col-xs-4">
+    {name}
+  </div>
 </div>;
 
-const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={RoleHeader} Row={RoleRow} />;
+const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={RoleHeader} Row={BindingRows(SubjectRow)} />;
 const RolesPage = props => {
   const Intro = <div>
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>

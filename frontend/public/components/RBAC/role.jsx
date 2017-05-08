@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import { k8sEnum } from '../../module/k8s';
 import { DetailsPage, MultiList, MultiListPage } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
-import { BindingName, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
+import { BindingName, BindingRows, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
 
 const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
 
@@ -80,28 +80,26 @@ const BindingHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-2">Namespace</div>
 </div>;
 
-const BindingRow = ({obj: binding}) => <div>
-  {binding.subjects.map((subject, i) => <div className="row co-resource-list__item" key={i}>
-    <div className="col-xs-4">
-      <BindingName binding={binding} />
-    </div>
-    <div className="col-xs-2">
-      {subject.kind}
-    </div>
-    <div className="col-xs-4">
-      {subject.name}
-    </div>
-    <div className="col-xs-2">
-      {binding.namespace || 'all'}
-    </div>
-  </div>)}
+const SubjectRow = ({actions, binding, kind, name}) => <div className="row co-resource-list__item">
+  <div className="col-xs-4">
+    <BindingName binding={binding} actions={actions} />
+  </div>
+  <div className="col-xs-2">
+    {kind}
+  </div>
+  <div className="col-xs-4">
+    {name}
+  </div>
+  <div className="col-xs-2">
+    {binding.namespace || 'all'}
+  </div>
 </div>;
 
 const BindingsList = props => <MultiList
   {...props}
   EmptyMsg={BindingsEmptyMsg}
   Header={BindingHeader}
-  Row={BindingRow}
+  Row={BindingRows(SubjectRow)}
 />;
 
 export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div>
