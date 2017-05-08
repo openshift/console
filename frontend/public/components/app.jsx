@@ -27,6 +27,7 @@ import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { BindingsForRolePage, EditRulePage } from './RBAC';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
+import { Clusters } from './federation/cluster';
 
 const LoadingScreen = () => <div className="loading-screen">
   <div className="loading-screen__logo">
@@ -85,6 +86,7 @@ const init = (nextRoute) => {
   store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
   store.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/v1`));
   store.dispatch(featureActions.detectEtcdOperatorFlags(`${k8sBasePath}/apis/etcd.coreos.com/v1beta1`));
+  store.dispatch(featureActions.detectMultiClusterFlags());
 
   tectonicVersion();
 };
@@ -126,6 +128,10 @@ render((
           <Route path="profile" component={ProfilePage} />
           <Route path="ldap" component={LDAPPage} />
           <Route path="cluster" component={ClusterSettingsPage} />
+        </Route>
+
+        <Route path="federation">
+          <Route path="clusters" component={Clusters} />
         </Route>
 
         <Route path="all-namespaces/events" component={EventStreamPage} />
