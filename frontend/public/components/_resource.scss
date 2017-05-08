@@ -19,10 +19,13 @@ $height: 18px;
 }
 
 .co-m-resource-clusterrole,
+.co-m-resource-role {
+  background-color: $color-rbac-role-dark;
+}
+
 .co-m-resource-clusterrolebinding,
-.co-m-resource-role,
 .co-m-resource-rolebinding {
-  background-color: $color-rbac-dark;
+  background-color: $color-rbac-binding-dark;
 }
 
 .co-m-resource-daemonset,
