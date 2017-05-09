@@ -35,8 +35,6 @@ const ConfigMapDetails = (configMap) => {
           <ResourceSummary resource={configMap} showPodSelector={false} showNodeSelector={false} />
         </div>
 
-        <div></div>
-
         <Heading text="Data" />
         <div className="co-m-pane__body">
           <ConfigMapAndSecretData data={configMap.data} />

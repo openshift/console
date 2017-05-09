@@ -4,32 +4,24 @@ import {k8s, k8sKinds} from '../../module/k8s';
 import {Cog, ResourceIcon} from '../utils';
 import {confirmModal} from '../modals';
 
-export const RulesList = ({rules, metadata: {name, namespace}}) => {
-  const rulesList = rules.map((rule, i) =>
-    <div className="row co-resource-list__item" key={i}>
+export const RulesList = ({rules, name, namespace}) => <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
+  <div className="row co-m-table-grid__head">
+    <div className="col-xs-2">
+      Actions
+    </div>
+    <div className="col-xs-2">
+      API Groups
+    </div>
+    <div className="col-xs-8">
+      Resources
+    </div>
+  </div>
+  <div className="co-m-table-grid__body">
+    {rules.map((rule, i) => <div className="row co-resource-list__item" key={i}>
       <Rule {...rule} name={name} namespace={namespace} i={i} />
-    </div>
-  );
-
-  return (
-    <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
-      <div className="row co-m-table-grid__head">
-        <div className="col-xs-2">
-          Actions
-        </div>
-        <div className="col-xs-2">
-          API Groups
-        </div>
-        <div className="col-xs-8">
-          Resources
-        </div>
-      </div>
-      <div className="co-m-table-grid__body">
-        {rulesList}
-      </div>
-    </div>
-  );
-};
+    </div>)}
+  </div>
+</div>;
 
 const Actions = ({verbs}) => {
   let actions = [];
