@@ -29,6 +29,9 @@ IS_RELEASE_TAG=$(git describe --exact-match --abbrev=0 --tags "${GIT_SHA_HEAD}" 
 if [ "$GIT_SHA_HEAD" == "$GIT_SHA_MASTER" ]; then
     echo "detected master build. building & pushing images..."
     ./push
+elif [ ! -z "$IMAGE_TAG" ]; then
+    echo "detected request to push built image using tag ${IMAGE_TAG}. building & pushing images..."
+   ./push
 elif [ -n "$IS_RELEASE_TAG" ]; then
     echo "detected release tag ${IS_RELEASE_TAG}. building & pushing images..."
     ./push
