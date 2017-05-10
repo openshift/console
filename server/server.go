@@ -399,6 +399,7 @@ users:
         idp-certificate-authority-data: {{ .DexCA }}{{ end }}
         idp-issuer-url: {{ .DexURL }}{{ if .RefreshToken }}
         refresh-token: {{ .RefreshToken }}{{ end }}
+        extra-scopes: groups
       name: oidc
 
 preferences: {}
