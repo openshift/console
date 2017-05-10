@@ -84,6 +84,7 @@ const init = (nextRoute) => {
   store.dispatch(k8sActions.getResources());
   store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
   store.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/v1`));
+  store.dispatch(featureActions.detectEtcdOperatorFlags(`${k8sBasePath}/apis/etcd.coreos.com/v1beta1`));
 
   tectonicVersion();
 };

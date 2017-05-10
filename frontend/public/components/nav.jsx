@@ -74,7 +74,7 @@ const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 
 const isClusterSettingsActive = path => _.startsWith(path, 'settings/cluster') || _.startsWith(path, 'settings/ldap');
 
 export const Nav = connect(stateToProps, actions)(
-({activeNavSectionId, openSection, pathname}) => {
+({activeNavSectionId, openSection, pathname, flags}) => {
   const accordionProps = id => ({
     id,
     isOpen: id === activeNavSectionId,
@@ -101,9 +101,9 @@ export const Nav = connect(stateToProps, actions)(
           <NavLink resource="secrets" name="Secrets" sectionId="workloads" />
         </NavSection>
 
-        <NavSection text="Operators" img="static/imgs/operator-logo.svg" {...accordionProps('operators')}>
+        {flags.ETCD_OPERATOR && <NavSection text="Operators" img="static/imgs/operator-logo.svg" {...accordionProps('operators')}>
           <NavLink resource="clusters" name="etcd Clusters" sectionId="operators" />
-        </NavSection>
+        </NavSection>}
 
         <NavSection text="Routing" img="static/imgs/routing.svg" {...accordionProps('routing')}>
           <NavLink resource="services" name="Services" sectionId="routing" />
