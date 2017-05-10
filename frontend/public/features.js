@@ -11,6 +11,7 @@ export const FLAGS = {
   RBAC_V1_ALPHA1: 'RBAC_V1_ALPHA1',
   REVOKE_TOKEN: 'REVOKE_TOKEN',
   USER_MANAGEMENT: 'USER_MANAGEMENT',
+  ETCD_OPERATOR: 'ETCD_OPERATOR',
 };
 
 const DEFAULTS = {
@@ -20,6 +21,7 @@ const DEFAULTS = {
   [FLAGS.RBAC_V1_ALPHA1]: undefined,
   [FLAGS.REVOKE_TOKEN]: !!window.SERVER_FLAGS.kubectlClientID,
   [FLAGS.USER_MANAGEMENT]: undefined,
+  [FLAGS.ETCD_OPERATOR]: undefined,
 };
 
 const SET_FLAGS = 'SET_FLAGS';
@@ -34,6 +36,10 @@ const COREOS_FLAGS = {
   [FLAGS.CLUSTER_UPDATES]: 'channeloperatorconfigs',
 };
 
+const ETCD_OPERATOR_FLAGS = {
+  [FLAGS.ETCD_OPERATOR]: 'clusters',
+};
+
 const detectK8sFlags = basePath => dispatch => coFetchJSON(basePath)
   .then(res => setFlags(dispatch, _.mapValues(K8S_FLAGS, path => res.paths.indexOf(path) >= 0)),
     () => setTimeout(() => detectK8sFlags(basePath), 5000));
@@ -42,8 +48,11 @@ const detectCoreosFlags = coreosPath => dispatch => coFetchJSON(coreosPath)
   .then(res => setFlags(dispatch, _.mapValues(COREOS_FLAGS, name => _.find(res.resources, {name}))),
     () => setTimeout(() => detectCoreosFlags(coreosPath), 5000));
 
+const detectEtcdOperatorFlags = etcdPath => dispatch => coFetchJSON(etcdPath)
+  .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
+    () => setTimeout(() => detectEtcdOperatorFlags(etcdPath), 5000));
 
-export const featureActions = { detectK8sFlags, detectCoreosFlags };
+export const featureActions = { detectK8sFlags, detectCoreosFlags, detectEtcdOperatorFlags };
 export const featureReducerName = 'FLAGS';
 export const featureReducers = (state, action)  => {
   if (!state) {
