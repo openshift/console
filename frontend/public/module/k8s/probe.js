@@ -59,15 +59,17 @@ const flatteners = {
     return cmd.command.join(' ');
   },
 
-  httpGet: function(cmd) {
+  httpGet: function(cmd, podIP) {
     var c = '';
     if (_.isEmpty(cmd)) {
       return c;
     }
-    c += cmd.host;
+
+    c += cmd.host || podIP;
     if (cmd.port) {
       c += `:${cmd.port}`;
     }
+
     if (cmd.path) {
       c += cmd.path;
     }
@@ -94,8 +96,8 @@ function inferAction(obj) {
   return k8sEnum.HookAction[keys[0]];
 }
 
-export function flattenCmd(type, cmd) {
-  return flatteners[type](cmd);
+export function flattenCmd(type, cmd, podIP) {
+  return flatteners[type](cmd, podIP);
 }
 
 export function parseCmd(type, cmd) {
@@ -203,7 +205,7 @@ export const mapFieldsToLivenessProbe = function(f) {
   return c;
 };
 
-export const mapLivenessProbeToFields = function(c) {
+export const mapLivenessProbeToFields = function(c, podIP) {
   var k, f;
 
   f = {
@@ -223,7 +225,7 @@ export const mapLivenessProbeToFields = function(c) {
   k = _.keys(c);
   if (!_.isEmpty(k)) {
     f.type = k[0];
-    f.cmd = flattenCmd(k[0], c[k[0]]);
+    f.cmd = flattenCmd(k[0], c[k[0]], podIP);
   }
 
   return f;

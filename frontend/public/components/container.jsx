@@ -23,9 +23,9 @@ const Lifecycle = ({lifecycle}) => {
   </div>;
 };
 
-const Liveness = ({liveness}) => {
+const Liveness = ({liveness, podIP}) => {
   const label = liveness && k8sProbe.getActionLabelFromObject(liveness);
-  const value = liveness && _.get(k8sProbe.mapLivenessProbeToFields(liveness), 'cmd');
+  const value = liveness && _.get(k8sProbe.mapLivenessProbeToFields(liveness, podIP), 'cmd');
   return value ? <span>{label} <code>{value}</code></span> : <span>-</span>;
 };
 
@@ -137,7 +137,7 @@ const Details = (props) => {
             <dt>Lifecycle Hooks</dt>
             <dd><Lifecycle lifecycle={container.lifecycle} /></dd>
             <dt>Liveness Probe</dt>
-            <dd><Liveness liveness={container.livenessProbe} /></dd>
+            <dd><Liveness liveness={container.livenessProbe} podIP={props.status.podIP || '-'} /></dd>
             <dt>Started</dt>
             <dd><Timestamp timestamp={state.startedAt} /></dd>
             <dt>Finished</dt>
