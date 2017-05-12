@@ -58,3 +58,50 @@
     margin-top: 20px
   }
 }
+
+.rbac-new-binding {
+  font-size: 14px;
+
+  .co-m-pane__explanation {
+    margin-bottom: 20px;
+  }
+
+  .alert {
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .btn--dropdown {
+    width: 100%;
+  }
+
+  .dropdown, .form-control {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .dropdown {
+    .caret {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+    }
+    .dropdown-menu {
+      max-height: 190px;
+      min-width: 250px;
+      overflow: scroll;
+    }
+  }
+
+  .radio-item {
+    margin: 10px 0;
+    .co-m-radio-desc {
+      margin-left: 19px;
+    }
+  }
+
+  .separator {
+    border-top: solid 1px #eee;
+    margin: 30px 0;
+  }
+}

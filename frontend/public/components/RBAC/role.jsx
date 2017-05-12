@@ -4,13 +4,15 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
 import { k8sEnum } from '../../module/k8s';
-import { DetailsPage, MultiList, MultiListPage, TextFilter } from '../factory';
+import { DetailsPage, List, MultiListPage, TextFilter } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingRows, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
 
+export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
+
 const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
 
-const roleKind = role => role.metadata.namespace ? 'role' : 'clusterrole';
+export const roleKind = role => role.metadata.namespace ? 'role' : 'clusterrole';
 
 const menuActions = [
   (kind, role) => ({
@@ -115,7 +117,7 @@ const SubjectRow = ({actions, binding, kind, name}) => <div className="row co-re
   </div>
 </div>;
 
-const BindingsList = props => <MultiList
+const BindingsList = props => <List
   {...props}
   EmptyMsg={BindingsEmptyMsg}
   Header={BindingHeader}
@@ -145,13 +147,13 @@ export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 const EmptyMsg = <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
 
-const List = props => <MultiList {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
+const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
 
 export const roleType = role => {
   if (!role) {
     return undefined;
   }
-  if (role.metadata.name.startsWith('system:')) {
+  if (isSystemRole(role)) {
     return 'system';
   }
   return role.metadata.namespace ? 'namespace' : 'cluster';
@@ -174,7 +176,7 @@ const resources = [
 ];
 
 export const RolesPage = ({namespace}) => <MultiListPage
-  ListComponent={List}
+  ListComponent={RolesList}
   canCreate={true}
   createButtonText="Create Role"
   createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}

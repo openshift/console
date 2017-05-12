@@ -24,7 +24,7 @@ import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { BindingsForRolePage, EditRulePage } from './RBAC';
+import { BindingsForRolePage, CreateRoleBinding, EditRulePage } from './RBAC';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
 
@@ -109,8 +109,11 @@ render((
           <Route path=":name/bindings" component={BindingsForRolePage} kind="role" />
         </Route>
 
+        <Route path="rolebindings/new" component={CreateRoleBinding} />
+        <Route path="ns/:ns/rolebindings/new" component={CreateRoleBinding} />
+
         {/* We don't have a Role Bindings details page, so redirect to the list page */}
-        <Redirect from="ns/:ns/rolebindings/:name/details" to="ns/default/rolebindings" />
+        <Redirect from="ns/:ns/rolebindings/:name/details" to="all-namespaces/rolebindings" />
 
         <Route path="namespaces">
           <IndexRoute component={ResourceListPage} kind="namespaces" />

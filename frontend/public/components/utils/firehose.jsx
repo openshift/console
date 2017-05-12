@@ -87,26 +87,24 @@ Firehose.propTypes = {
 export class MultiFirehose extends FirehoseBase {
   constructor(props) {
     super(props);
-    this.props.resources.forEach((resource) => {
-      resource.firehose = this._initFirehose(resource);
-    });
+    this.resources = props.resources.map(r => Object.assign({}, r, {firehose: this._initFirehose(r)}));
   }
 
   componentDidMount() {
-    this.props.resources.forEach((resource) => {
+    this.resources.forEach((resource) => {
       this._mountFirehose(resource.firehose, resource);
     });
   }
 
   componentWillUnmount() {
-    this.props.resources.forEach((resource, index) => {
+    this.resources.forEach((resource, i) => {
       this._unmountFirehose(resource.firehose);
-      resource.firehose[index] = null;
+      this.resources[i].firehose = null;
     });
   }
 
   render() {
-    const reduxes = this.props.resources.map((resource) => {
+    const reduxes = this.resources.map((resource) => {
       return _.defaults({}, { reduxID: resource.firehose.id }, resource);
     });
 

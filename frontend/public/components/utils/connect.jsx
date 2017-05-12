@@ -55,6 +55,7 @@ const processReduxId = ({k8s}, props) => {
     // This is a hack to allow filters passed down from props to make it to
     // the injected component. Ideally filters should all come from redux.
     filters: _.extend({}, _filters && _filters.toJS(), filters),
+    kind: props.kind,
     loadError: k8s.getIn([reduxID, 'loadError']),
     loaded: k8s.getIn([reduxID, 'loaded']),
     selected,
@@ -71,22 +72,29 @@ export const ConnectToState = connect(processReduxId)(props => {
 
 // Same as ConnectToState, but takes in multiple reduxIDs,
 // and maps their data to a specified prop instead.
-export const MultiConnectToState = connect(({k8s}, props) => {
-  const {reduxes} = props;
+export const MultiConnectToState = connect(({k8s}, {reduxes}) => {
+  const resources = {};
 
-  const propsToInject = {};
-  reduxes.forEach((redux) => {
-    propsToInject[redux.prop] = processReduxId({ k8s: k8s}, redux);
+  reduxes.forEach(redux => {
+    resources[redux.prop] = processReduxId({k8s}, redux);
   });
 
-  return propsToInject;
-})(props => {
-  const {children, className, reduxes} = props;
-  const newProps = _.omit(props, ['className', 'children', 'reduxes', 'idToPropMapping']);
-  newProps.reduxIDs = _.map(reduxes, 'reduxID');
-  const newChildren = inject(children, newProps);
-  return <div className={className}>{newChildren}</div>;
-});
+  // If any resources loaded, display them and ignore errors for resources that didn't load
+  const loaded = _.some(resources, 'loaded');
+  const loadError = loaded ? '' : _.map(resources, 'loadError').filter(Boolean).join(', ');
+
+  return Object.assign({}, resources, {
+    data: _.flatMap(resources, 'data').filter(d => d !== undefined),
+    filters: Object.assign({}, ..._.map(resources, 'filters')),
+    loaded,
+    loadError,
+    reduxIDs: _.map(reduxes, 'reduxID'),
+    resources,
+  });
+})(props => <div className={props.className}>
+  {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
+</div>);
+
 MultiConnectToState.propTypes = {
   reduxes: React.PropTypes.array
 };

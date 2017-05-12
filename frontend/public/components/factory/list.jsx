@@ -112,17 +112,3 @@ List.propTypes = {
   selector: React.PropTypes.object,
   staticFilters: React.PropTypes.array,
 };
-
-export const MultiList = props => {
-  const resources = _.pick(props, props.kinds);
-
-  // If any resources loaded, display them and ignore errors for resources that didn't load
-  const loaded = _.some(resources, r => r.loaded);
-  const resourceProps = {
-    data: _.flatMap(resources, 'data').filter(d => d !== undefined),
-    filters: Object.assign({}, ..._.map(resources, 'filters')),
-    loadError: loaded ? '' : _.map(resources, 'loadError').filter(Boolean).join(', '),
-    loaded,
-  };
-  return <List {...props} {...resourceProps} />;
-};
