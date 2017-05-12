@@ -79,7 +79,7 @@ export const k8s = {
   serviceaccounts: addDefaults({}, k8sKinds.SERVICEACCOUNT),
   secrets: addDefaults({}, k8sKinds.SECRET),
   ingresses: addDefaults({}, k8sKinds.INGRESS),
-  clusters: addDefaults({}, k8sKinds.CLUSTER),
+  etcdclusters: addDefaults({}, k8sKinds.ETCDCLUSTER),
 
   componentstatuses: addDefaults({}, k8sKinds.COMPONENTSTATUS),
   namespaces: addDefaults({}, k8sKinds.NAMESPACE),

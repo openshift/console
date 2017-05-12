@@ -24,10 +24,10 @@ const menuActions = [UpdateCount, Edit, Delete];
 
 const EtcdClusterLink = (props) => {
   const {uid, name, namespace} = props.metadata;
-  const path = `ns/${namespace}/clusters/${name}/details`;
+  const path = `ns/${namespace}/etcdclusters/${name}/details`;
 
   return <span className="co-resource-link">
-    <ResourceIcon kind="cluster" />
+    <ResourceIcon kind="etcdcluster" />
     <Link to={path} title={uid}>{name}</Link>
   </span>;
 };
@@ -45,11 +45,11 @@ const EtcdClusterRow = ({obj: cluster}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceCog actions={menuActions} kind="cluster" resource={cluster} />
+      <ResourceCog actions={menuActions} kind="etcdcluster" resource={cluster} />
       <EtcdClusterLink metadata={metadata} />
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      {<Link to={`${resourcePath('cluster', metadata.name, metadata.namespace)}/pods`} title="pods">
+      {<Link to={`${resourcePath('etcdcluster', metadata.name, metadata.namespace)}/pods`} title="pods">
         {status ? `${status.size} of ${spec.size}` : spec.size}
       </Link>}
     </div>
@@ -98,7 +98,7 @@ export class EtcdClusterDetails extends SafetyFirst {
     event.preventDefault();
     event.target.blur();
     configureClusterSizeModal({
-      resourceKind: k8sKinds.CLUSTER,
+      resourceKind: k8sKinds.ETCDCLUSTER,
       resource: this.props,
       invalidateState: (isInvalid) => {
         this.setState({

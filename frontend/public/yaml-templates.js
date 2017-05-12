@@ -116,7 +116,7 @@ spec:
         ports:
         - containerPort: 80`;
 
-TEMPLATES['v1beta1.Cluster'] = `apiVersion: etcd.coreos.com/v1beta1
+TEMPLATES['v1beta1.EtcdCluster'] = `apiVersion: etcd.coreos.com/v1beta1
 kind: Cluster
 metadata:
   name: example-etcd-cluster-with-backup
