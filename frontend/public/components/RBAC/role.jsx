@@ -131,6 +131,9 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
   </Firehose>
   <NavBar pages={pages} />
   <MultiListPage
+    canCreate={true}
+    createButtonText="Create Binding"
+    createProps={{to: `/rolebindings/new?rolekind=${kind}&rolename=${name}`}}
     ListComponent={BindingsList}
     staticFilters={[{'role-binding-roleRef': name}]}
     resources={[

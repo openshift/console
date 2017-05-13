@@ -158,12 +158,23 @@ const SubjectRow = ({actions, binding, kind, name}) => <div className="row co-re
 </div>;
 
 const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={RoleHeader} Row={BindingRows(SubjectRow)} />;
-const RolesPage = props => {
+const RolesPage = ({metadata}) => {
   const Intro = <div>
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
     <div className="co-m-pane__explanation">These subjects have access to resources specifically within this namespace.</div>
   </div>;
-  return <ListPage namespace={props.metadata.name} kind="rolebinding" ListComponent={RolesList} Intro={Intro} showTitle={false} textFilter="role-binding" filterLabel="Role Bindings by role or subject" />;
+  return <ListPage
+    canCreate={true}
+    createButtonText="Create Binding"
+    createProps={{to: `/rolebindings/new?ns=${metadata.name}`}}
+    filterLabel="Role Bindings by role or subject"
+    Intro={Intro}
+    kind="rolebinding"
+    ListComponent={RolesList}
+    namespace={metadata.name}
+    showTitle={false}
+    textFilter="role-binding"
+  />;
 };
 
 const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {
