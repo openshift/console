@@ -94,46 +94,37 @@ class PullSecret extends SafetyFirst {
   }
 }
 
-const Details = (ns) => {
-  if (_.isEmpty(ns)) {
-    return <div className="empty-page">
-      <h1 className="empty-page__header">No namespace selected</h1>
-      <p className="empty-page__explanation">Namespaces organize and isolate your cluster resources from other things running on the cluster.</p>
-    </div>;
-  }
-
-  return <div>
-    <Heading text="Namespace Overview" />
-    <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
-          <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false} />
-        </div>
-        <div className="col-sm-6 col-xs-12">
-          <dl>
-            <dt>Status</dt>
-            <dd>{ns.status.phase}</dd>
-            <dt>Default Pull Secret</dt>
-            <dd><PullSecret namespace={ns} /></dd>
-          </dl>
-        </div>
+const Details = (ns) => <div>
+  <Heading text="Namespace Overview" />
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-sm-6 col-xs-12">
+        <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false} />
+      </div>
+      <div className="col-sm-6 col-xs-12">
+        <dl>
+          <dt>Status</dt>
+          <dd>{ns.status.phase}</dd>
+          <dt>Default Pull Secret</dt>
+          <dd><PullSecret namespace={ns} /></dd>
+        </dl>
       </div>
     </div>
-    <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-xs-12">
-          <h1 className="co-m-pane__title">Resource Usage</h1>
-        </div>
-        <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
-          <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
-        </div>
-        <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
-          <SparklineWidget heading="RAM" query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`} limitQuery="sum(namespace:container_memory_usage_bytes:sum)" limitText="cluster" units="binaryBytes" />
-        </div>
+  </div>
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-xs-12">
+        <h1 className="co-m-pane__title">Resource Usage</h1>
+      </div>
+      <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
+        <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
+      </div>
+      <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
+        <SparklineWidget heading="RAM" query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`} limitQuery="sum(namespace:container_memory_usage_bytes:sum)" limitText="cluster" units="binaryBytes" />
       </div>
     </div>
-  </div>;
-};
+  </div>
+</div>;
 
 const RoleHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Name</div>
