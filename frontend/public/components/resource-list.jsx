@@ -9,7 +9,7 @@ const allParams = props => Object.assign({}, props.params, props.route);
 
 export const ResourceListPage = (props) => {
   const {kind, ns} = allParams(props);
-  const kindObj = _.find(k8sKinds, {path: kind});
+  const kindObj = _.find(k8sKinds, {plural: kind});
 
   if (!kindObj) {
     window.location = '404';
@@ -26,7 +26,7 @@ export const ResourceListPage = (props) => {
 
 export const ResourceDetailsPage = (props) => {
   const {kind, name, ns} = allParams(props);
-  const kindObj = _.find(k8sKinds, {path: kind});
+  const kindObj = _.find(k8sKinds, {plural: kind});
 
   if (!name || !kindObj) {
     window.location = '404';

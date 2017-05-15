@@ -102,7 +102,7 @@ export const Nav = connect(stateToProps, actions)(
         </NavSection>
 
         {flags.ETCD_OPERATOR && <NavSection text="Operators" img="static/imgs/operator-logo.svg" {...accordionProps('operators')}>
-          <NavLink resource="clusters" name="etcd Clusters" sectionId="operators" />
+          <NavLink resource="etcdclusters" name="etcd Clusters" sectionId="operators" />
         </NavSection>}
 
         <NavSection text="Routing" img="static/imgs/routing.svg" {...accordionProps('routing')}>

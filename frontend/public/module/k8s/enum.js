@@ -16,6 +16,7 @@ export const k8sEnum = {
       labelPlural: 'Services',
       // api path to resource
       path: 'services',
+      //Used in resource-list.jsx to return the matching object
       plural: 'services',
     },
     POD: {
@@ -234,15 +235,15 @@ export const k8sEnum = {
       labelPlural: 'Pet Sets',
       plural: 'petsets',
     },
-    'CLUSTER': {
-      id: 'cluster',
-      kind: 'Cluster',
+    'ETCDCLUSTER': {
+      id: 'etcdcluster',
+      kind: 'EtcdCluster',
       label: 'etcd Cluster',
       labelPlural: 'etcd Clusters',
       apiVersion: 'v1beta1',
       basePath: '/apis/etcd.coreos.com/',
       path: 'clusters',
-      plural: 'clusters'
+      plural: 'etcdclusters'
     },
     '*': {
       id: 'all',
