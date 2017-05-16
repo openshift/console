@@ -220,17 +220,27 @@ export class CreateRoleBinding extends SafetyFirst {
     this.changeRole = (roleName, roleKind) => this.setState({roleKind, roleName});
     this.changeSubjectKind = e => this.setState({subjectKind: e.target.value});
     this.changeSubjectName = e => this.setState({subjectName: e.target.value});
+    this.changeSubjectNamespace = subjectNamespace => this.setState({subjectNamespace});
     this.save = this.save.bind(this);
   }
 
   save () {
-    const {kind, name, roleName, roleKind, subjectKind, subjectName} = this.state;
+    const {kind, name, roleName, roleKind, subjectKind, subjectName, subjectNamespace} = this.state;
     const namespace = kind === 'RoleBinding' ? this.state.namespace : undefined;
     const k8sRoleKind = roleKind && _.get(k8sKinds, `${roleKind.toUpperCase()}.kind`);
 
-    if (!kind || !name || !roleName || !k8sRoleKind || !subjectKind || !subjectName || (kind === 'RoleBinding' && !namespace)) {
+    if (!kind || !name || !roleName || !k8sRoleKind || !subjectKind || !subjectName ||
+      (kind === 'RoleBinding' && !namespace) ||
+      (subjectKind === 'ServiceAccount') && !subjectNamespace) {
       this.setState({error: 'Please complete all fields.'});
       return;
+    }
+
+    const subject = {kind: subjectKind, name: subjectName};
+    if (subjectKind === 'ServiceAccount') {
+      subject.namespace = subjectNamespace;
+    } else {
+      subject.apiGroup = 'rbac.authorization.k8s.io';
     }
 
     this.setState({inProgress: true});
@@ -246,11 +256,7 @@ export class CreateRoleBinding extends SafetyFirst {
         name: roleName,
         apiGroup: 'rbac.authorization.k8s.io',
       },
-      subjects: [{
-        kind: subjectKind,
-        name: subjectName,
-        apiGroup: 'rbac.authorization.k8s.io',
-      }],
+      subjects: [subject],
     }).then(
       () => {
         this.setState({inProgress: false});
@@ -261,7 +267,7 @@ export class CreateRoleBinding extends SafetyFirst {
   }
 
   render () {
-    const {error, kind, name, namespace, roleName, subjectKind, subjectName} = this.state;
+    const {error, kind, name, namespace, roleName, subjectKind, subjectName, subjectNamespace} = this.state;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
     return <div className="rbac-new-binding co-m-pane__body">
@@ -295,8 +301,13 @@ export class CreateRoleBinding extends SafetyFirst {
 
         <Section label="Subject">
           <RadioGroup currentValue={subjectKind} items={subjectKinds} onChange={this.changeSubjectKind} />
+          {subjectKind === 'ServiceAccount' && <div>
+            <div className="separator"></div>
+            <p>Subject Namespace:</p>
+            <NsDropdown selectedKey={subjectNamespace} onChange={this.changeSubjectNamespace} />
+          </div>}
           <div className="separator"></div>
-          Subject Name:
+          <p>Subject Name:</p>
           <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subjectName} />
         </Section>
 
