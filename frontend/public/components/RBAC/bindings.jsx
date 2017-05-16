@@ -2,7 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
-import { k8s, k8sCreate } from '../../module/k8s';
+import { k8s, k8sCreate, k8sKinds } from '../../module/k8s';
 import { getNamespacedRoute } from '../../ui/ui-actions';
 import { MultiListPage, List } from '../factory';
 import { RadioGroup } from '../modals/_radio';
@@ -198,21 +198,26 @@ const Section = ({label, children}) => <div className="row">
 export class CreateRoleBinding extends SafetyFirst {
   constructor (props) {
     super(props);
+
+    this.fixedNamespace = props.location.query.ns;
+    this.fixedRoleKind = props.location.query.rolekind;
+    this.fixedRoleName = props.location.query.rolename;
+
     this.state = {
       inProgress: false,
       kind: 'RoleBinding',
       name: '',
-      namespace: props.params.ns,
+      namespace: this.fixedNamespace || props.params.ns,
+      roleKind: this.fixedRoleKind,
+      roleName: this.fixedRoleName,
       subjectKind: 'User',
       subjectName: '',
     };
+
     this.changeKind = e => this.setState({kind: e.target.value});
     this.changeName = e => this.setState({name: e.target.value});
     this.changeNamespace = namespace => this.setState({namespace});
-    this.changeRole = (roleName, kind) => {
-      const roleKind = ({role: 'Role', clusterrole: 'ClusterRole'})[kind];
-      this.setState({roleName, roleKind});
-    };
+    this.changeRole = (roleName, roleKind) => this.setState({roleKind, roleName});
     this.changeSubjectKind = e => this.setState({subjectKind: e.target.value});
     this.changeSubjectName = e => this.setState({subjectName: e.target.value});
     this.save = this.save.bind(this);
@@ -221,8 +226,9 @@ export class CreateRoleBinding extends SafetyFirst {
   save () {
     const {kind, name, roleName, roleKind, subjectKind, subjectName} = this.state;
     const namespace = kind === 'RoleBinding' ? this.state.namespace : undefined;
+    const k8sRoleKind = roleKind && _.get(k8sKinds, `${roleKind.toUpperCase()}.kind`);
 
-    if (!kind || !name || !roleName || !roleKind || !subjectKind || !subjectName || (kind === 'RoleBinding' && !namespace)) {
+    if (!kind || !name || !roleName || !k8sRoleKind || !subjectKind || !subjectName || (kind === 'RoleBinding' && !namespace)) {
       this.setState({error: 'Please complete all fields.'});
       return;
     }
@@ -236,7 +242,7 @@ export class CreateRoleBinding extends SafetyFirst {
         namespace,
       },
       roleRef: {
-        kind: roleKind,
+        kind: k8sRoleKind,
         name: roleName,
         apiGroup: 'rbac.authorization.k8s.io',
       },
@@ -264,7 +270,7 @@ export class CreateRoleBinding extends SafetyFirst {
         <h1 className="co-m-pane__title">Create Role Binding</h1>
         <div className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</div>
 
-        <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.changeKind} />
+        {!this.fixedNamespace && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.changeKind} />}
 
         <div className="separator"></div>
 
@@ -273,16 +279,16 @@ export class CreateRoleBinding extends SafetyFirst {
           <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={name} />
           {kind === 'RoleBinding' && <div>
             <div className="separator"></div>
-            Namespace:
-            <NsDropdown selectedKey={namespace} onChange={this.changeNamespace} />
+            <p>Namespace:</p>
+            {this.fixedNamespace ? <span><ResourceIcon kind="namespace" /> {this.fixedNamespace}</span> : <NsDropdown selectedKey={namespace} onChange={this.changeNamespace} />}
           </div>}
         </Section>
 
         <div className="separator"></div>
 
         <Section label="Role">
-          Role Name:
-          <RoleDropdown selectedKey={roleName} onChange={this.changeRole} />
+          <p>Role Name:</p>
+          {this.fixedRoleKind && this.fixedRoleName ? <span><ResourceIcon kind={this.fixedRoleKind} /> {this.fixedRoleName}</span> : <RoleDropdown selectedKey={roleName} onChange={this.changeRole} />}
         </Section>
 
         <div className="separator"></div>
