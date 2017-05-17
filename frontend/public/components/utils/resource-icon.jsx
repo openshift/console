@@ -43,7 +43,7 @@ function iconLabel(kind) {
       return 'CRB';
     case 'ingress':
       return 'I';
-    case 'cluster':
+    case 'etcdCluster':
       return 'EC';
     default:
       return kind.toUpperCase().slice(0, 2);
