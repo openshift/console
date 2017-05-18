@@ -30,11 +30,16 @@ const setFlags = (dispatch, flags) => dispatch({flags, type: SET_FLAGS});
 //These flags are currently being set on the client side for Phase 0 of this
 //feature, the plan is to move them to the backend eventually.
 const determineMultiClusterFlag = () => {
-  const fedApiUrl = localStorage.getItem('fed-url') || null;
-  const token = localStorage.getItem('token') || null;
+  const fedApiUrl = localStorage.getItem('federation-apiserver-url') || null;
+  const token = localStorage.getItem('federation-apiserver-token') || null;
 
   if (fedApiUrl && token) {
-    return { [FLAGS.MULTI_CLUSTER]: {fedApiUrl, token} };
+    return {
+      [FLAGS.MULTI_CLUSTER]: {
+        'federation-apiserver-url': fedApiUrl,
+        'federation-apiserver-token': token,
+      }
+    };
   }
   return { [FLAGS.MULTI_CLUSTER]: undefined };
 };

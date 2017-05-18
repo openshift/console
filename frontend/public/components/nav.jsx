@@ -7,7 +7,7 @@ import { FLAGS, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute, actions as UIActions } from '../ui/ui-actions';
 import { SafetyFirst } from './safety-first';
 import { authSvc } from '../module/auth';
-import { coFetchJSON } from '../co-fetch';
+import { clusterUtil } from './utils';
 
 import { ClusterPicker } from './federation/cluster-picker';
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '').replace(/^\//, '');
@@ -85,9 +85,7 @@ class Nav_ extends SafetyFirst {
 
   _getClusters() {
     const { MULTI_CLUSTER } = this.props.flags;
-    const token = MULTI_CLUSTER.get('token');
-    const fedApiUrl = MULTI_CLUSTER.get('fedApiUrl');
-    coFetchJSON(`/api/federation/clusters?token=${token}&url=${fedApiUrl}`)
+    clusterUtil.getFedClusters(MULTI_CLUSTER)
       .then((clusters) => {
         this.setState({ clusters: clusters.items });
       })

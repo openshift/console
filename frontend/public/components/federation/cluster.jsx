@@ -1,8 +1,7 @@
 import React from 'react';
 import { FLAGS, connectToFlags } from '../../features';
 import { SafetyFirst } from '../safety-first';
-import { coFetchJSON } from '../../co-fetch';
-import { LoadingInline, Timestamp, NavTitle, StatusBox } from '../utils';
+import { LoadingInline, Timestamp, NavTitle, StatusBox, clusterUtil } from '../utils';
 
 const ClusterHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Cluster Name</div>
@@ -28,9 +27,7 @@ class Clusters_ extends SafetyFirst {
 
   _getClusters() {
     const { MULTI_CLUSTER } = this.props.flags;
-    const token = MULTI_CLUSTER.get('token');
-    const fedApiUrl = MULTI_CLUSTER.get('fedApiUrl');
-    coFetchJSON(`/api/federation/clusters?token=${token}&url=${fedApiUrl}`)
+    clusterUtil.getFedClusters(MULTI_CLUSTER)
       .then((clusters) => this.setState({ clusters: clusters.items, loadingError: false }))
       .catch((err) => this.setState({ clusters: null, loadingError: err }));
   }
