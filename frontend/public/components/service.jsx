@@ -5,11 +5,10 @@ import {Cog, navFactory, LabelList, ResourceCog, Heading, ResourceIcon, Resource
 
 const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
 
-const ServiceIPLink = ({s}) => {
+const ServiceIP = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
-    return <span key={i}><a target="_blank" href={`http://${s.spec.clusterIP}:${portObj.port}`}>
-      {s.spec.clusterIP}:{portObj.port}
-    </a>&nbsp;&nbsp;</span>;
+    const clusterIP = s.spec.clusterIP === 'None' ? 'None' : `${s.spec.clusterIP}:${portObj.port}`;
+    return <span key={i}>{clusterIP}&nbsp;&nbsp;</span>;
   });
 
   return <p>{children}</p>;
@@ -34,7 +33,7 @@ const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
     <Selector selector={s.spec.selector} />
   </div>
   <div className="col-lg-3 col-md-2 hidden-sm hidden-xs">
-    <ServiceIPLink s={s} />
+    <ServiceIP s={s} />
   </div>
 </div>;
 
