@@ -80,7 +80,9 @@ export const Nav = connect(stateToProps, actions)(
 class Nav_ extends SafetyFirst {
   componentDidMount() {
     super.componentDidMount();
-    this._getClusters();
+    if (this.props.flags.MULTI_CLUSTER) {
+      this._getClusters();
+    }
   }
 
   _getClusters() {
