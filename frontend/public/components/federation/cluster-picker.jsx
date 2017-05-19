@@ -46,7 +46,10 @@ class ClusterPicker_ extends SafetyFirst {
       return matchedConsoleCluster.metadata.uid;
     }
 
-    activeClusterId = localStorage.getItem('active-cluster-id') || clusters[0].metadata.uid;
+    activeClusterId = localStorage.getItem('active-cluster-id');
+    if (!activeClusterId || !_.includes(_.map(clusters, 'metadata.uid'), activeClusterId)) {
+      activeClusterId = clusters[0].metadata.uid;
+    }
     localStorage.setItem('active-cluster-id', activeClusterId);
     return  this.setState({ activeClusterId });
   }
