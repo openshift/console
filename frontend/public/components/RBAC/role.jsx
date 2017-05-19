@@ -20,6 +20,11 @@ const menuActions = [
     weight: 100,
     href: addHref(role.metadata.name, role.metadata.namespace),
   }),
+  (kind, role) => ({
+    label: 'Add Role Binding...',
+    weight: 101,
+    href: `/rolebindings/new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`,
+  }),
   Cog.factory.Edit,
   Cog.factory.Delete,
 ];
