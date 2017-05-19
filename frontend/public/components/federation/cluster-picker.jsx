@@ -23,11 +23,7 @@ class ClusterPicker_ extends SafetyFirst {
     localStorage.setItem('active-cluster-id', id);
     this.setState({ activeClusterId: id, open: false});
     if (_.has(cluster.metadata, 'annotations')) {
-      //window.location.href = cluster.metadata.annotations['federation.alpha.coreos.com/console'];
-      window.open(
-        cluster.metadata.annotations['federation.alpha.coreos.com/console'],
-        '_blank'
-      );
+      window.location.href = cluster.metadata.annotations['federation.alpha.coreos.com/console'];
     }
   }
 
