@@ -79,7 +79,7 @@ const SecretsList = props => <Firehose {...props} kind="secret" isList={true}>
   <List {...props} Header={SecretHeader} Row={SecretRow} />
 </Firehose>;
 
-const SecretsPage = props => <ListPage ListComponent={SecretsList} {...props} />;
+const SecretsPage = props => <ListPage ListComponent={SecretsList} canCreate={true} {...props} />;
 const SecretsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 
 export {SecretsList, SecretsPage, SecretsDetailsPage, withSecretsList};

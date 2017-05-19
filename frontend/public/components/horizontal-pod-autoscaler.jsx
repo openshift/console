@@ -128,5 +128,5 @@ const Details = (hpa) => <div className="co-m-pane__body">
 const pages = [navFactory.details(Details), navFactory.editYaml()];
 const HorizontalPodAutoscalersDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
 const HorizontalPodAutoscalersList = props => <List {...props} Header={Header} Row={HorizontalPodAutoscalerRow} />;
-const HorizontalPodAutoscalersPage = props => <ListPage ListComponent={HorizontalPodAutoscalersList} filterLabel="Autoscalers by name" {...props} />;
+const HorizontalPodAutoscalersPage = props => <ListPage ListComponent={HorizontalPodAutoscalersList} canCreate={true} filterLabel="Autoscalers by name" {...props} />;
 export {HorizontalPodAutoscalersList, HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage};
