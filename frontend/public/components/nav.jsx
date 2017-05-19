@@ -5,8 +5,11 @@ import classNames from 'classnames';
 
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute, actions as UIActions } from '../ui/ui-actions';
+import { SafetyFirst } from './safety-first';
 import { authSvc } from '../module/auth';
+import { clusterUtil } from './utils';
 
+import { ClusterPicker } from './federation/cluster-picker';
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '').replace(/^\//, '');
 
 const stateToProps = state => {
@@ -74,18 +77,36 @@ const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 
 const isClusterSettingsActive = path => _.startsWith(path, 'settings/cluster') || _.startsWith(path, 'settings/ldap');
 
 export const Nav = connect(stateToProps, actions)(
-({activeNavSectionId, openSection, pathname, flags}) => {
-  const accordionProps = id => ({
-    id,
-    isOpen: id === activeNavSectionId,
-    onClick_: () => openSection(id),
-  });
+class Nav_ extends SafetyFirst {
+  componentDidMount() {
+    super.componentDidMount();
+    this._getClusters();
+  }
 
-  return (
-    <div id="sidebar" className="co-img-bg-cells">
+  _getClusters() {
+    const { MULTI_CLUSTER } = this.props.flags;
+    clusterUtil.getFedClusters(MULTI_CLUSTER)
+      .then((clusters) => {
+        this.setState({ clusters: clusters.items });
+      })
+      .catch(() => this.setState({ clusters: null }));
+  }
+
+  render () {
+    const {activeNavSectionId, openSection, pathname, flags} =  this.props;
+    const accordionProps = id => ({
+      id,
+      isOpen: id === activeNavSectionId,
+      onClick_: () => openSection(id),
+    });
+
+    const {clusters} = this.state || {};
+
+    return <div id="sidebar" className="co-img-bg-cells">
       <div className="navigation-container" key={pathname}>
         <div className="navigation-container__section navigation-container__section--logo">
           <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
+          {flags.MULTI_CLUSTER && clusters && <ClusterPicker  clusters={clusters} />}
         </div>
 
         <NavSection text="Workloads" icon="fa-folder-open-o" {...accordionProps('workloads')}>
@@ -129,6 +150,6 @@ export const Nav = connect(stateToProps, actions)(
           <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
         </NavSection>}
       </div>
-    </div>
-  );
+    </div>;
+  }
 });

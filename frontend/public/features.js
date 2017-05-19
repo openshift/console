@@ -11,6 +11,7 @@ export const FLAGS = {
   REVOKE_TOKEN: 'REVOKE_TOKEN',
   USER_MANAGEMENT: 'USER_MANAGEMENT',
   ETCD_OPERATOR: 'ETCD_OPERATOR',
+  MULTI_CLUSTER: 'MULTI_CLUSTER',
 };
 
 const DEFAULTS = {
@@ -20,10 +21,28 @@ const DEFAULTS = {
   [FLAGS.REVOKE_TOKEN]: !!window.SERVER_FLAGS.kubectlClientID,
   [FLAGS.USER_MANAGEMENT]: undefined,
   [FLAGS.ETCD_OPERATOR]: undefined,
+  [FLAGS.MULTI_CLUSTER]: undefined,
 };
 
 const SET_FLAGS = 'SET_FLAGS';
 const setFlags = (dispatch, flags) => dispatch({flags, type: SET_FLAGS});
+
+//These flags are currently being set on the client side for Phase 0 of this
+//feature, the plan is to move them to the backend eventually.
+const determineMultiClusterFlag = () => {
+  const fedApiUrl = localStorage.getItem('federation-apiserver-url') || null;
+  const token = localStorage.getItem('federation-apiserver-token') || null;
+
+  if (fedApiUrl && token) {
+    return {
+      [FLAGS.MULTI_CLUSTER]: {
+        'federation-apiserver-url': fedApiUrl,
+        'federation-apiserver-token': token,
+      }
+    };
+  }
+  return { [FLAGS.MULTI_CLUSTER]: undefined };
+};
 
 const K8S_FLAGS = {
   [FLAGS.RBAC]: '/apis/rbac.authorization.k8s.io',
@@ -49,7 +68,12 @@ const detectEtcdOperatorFlags = etcdPath => dispatch => coFetchJSON(etcdPath)
   .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
     () => setTimeout(() => detectEtcdOperatorFlags(etcdPath), 5000));
 
-export const featureActions = { detectK8sFlags, detectCoreosFlags, detectEtcdOperatorFlags };
+const detectMultiClusterFlags = () => dispatch => {
+  const multiCluster = determineMultiClusterFlag();
+  setFlags(dispatch, multiCluster);
+};
+
+export const featureActions = { detectK8sFlags, detectCoreosFlags, detectEtcdOperatorFlags, detectMultiClusterFlags };
 export const featureReducerName = 'FLAGS';
 export const featureReducers = (state, action)  => {
   if (!state) {

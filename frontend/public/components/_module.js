@@ -34,3 +34,5 @@ import './container-linux-update-operator/container-linux-updates';
 import './container-linux-update-operator/container-linux-update-details';
 import './client-tokens';
 import './etcd-cluster';
+import './federation/cluster-picker';
+import './federation/cluster';
