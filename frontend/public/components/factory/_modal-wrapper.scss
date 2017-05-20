@@ -21,6 +21,9 @@
   width: 700px;
 
   .modal-body {
+    max-height: 400px;
+    overflow: auto;
+
     .control-label {
       font-weight: 400;
     }
