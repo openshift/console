@@ -145,8 +145,8 @@ export const RoleBindingsPage = () => <MultiListPage
   title="Role Bindings"
 />;
 
-const ListDropdown_ = ({desc, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
-  let items, title, newOnChange;
+const ListDropdown_ = ({desc, fixedKey, fixedKind, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
+  let isFixed, items, title, newOnChange;
   if (loadError) {
     title = <div className="cos-error-title">Error Loading {desc}</div>;
   } else if (!loaded) {
@@ -157,11 +157,13 @@ const ListDropdown_ = ({desc, loaded, loadError, onChange, placeholder, resource
     items = _.mapValues(nameKindMap, (kind, name) => <span><ResourceIcon kind={kind} /> {name}</span>);
     title = items[selectedKey] || <span className="text-muted">{placeholder}</span>;
 
+    isFixed = (fixedKind && fixedKind === nameKindMap[fixedKey]);
+
     // Pass both the resource name and the resource kind to onChange()
     newOnChange = key => onChange(key, nameKindMap[key]);
   }
   return <div>
-    <Dropdown items={items} title={title} onChange={newOnChange} />
+    {isFixed ? items[fixedKey] : <Dropdown items={items} title={title} onChange={newOnChange} />}
     {loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p>}
   </div>;
 };
@@ -208,8 +210,6 @@ export class CreateRoleBinding extends SafetyFirst {
       kind: 'RoleBinding',
       name: '',
       namespace: this.fixedNamespace || props.params.ns,
-      roleKind: this.fixedRoleKind,
-      roleName: this.fixedRoleName,
       subjectKind: 'User',
       subjectName: '',
     };
@@ -225,7 +225,9 @@ export class CreateRoleBinding extends SafetyFirst {
   }
 
   save () {
-    const {kind, name, roleName, roleKind, subjectKind, subjectName, subjectNamespace} = this.state;
+    const {kind, name, subjectKind, subjectName, subjectNamespace} = this.state;
+    const roleKind = this.fixedRoleKind || this.state.roleKind;
+    const roleName = this.fixedRoleName || this.state.roleName;
     const namespace = kind === 'RoleBinding' ? this.state.namespace : undefined;
     const k8sRoleKind = roleKind && _.get(k8sKinds, `${roleKind.toUpperCase()}.kind`);
 
@@ -286,7 +288,7 @@ export class CreateRoleBinding extends SafetyFirst {
           {kind === 'RoleBinding' && <div>
             <div className="separator"></div>
             <p>Namespace:</p>
-            {this.fixedNamespace ? <span><ResourceIcon kind="namespace" /> {this.fixedNamespace}</span> : <NsDropdown selectedKey={namespace} onChange={this.changeNamespace} />}
+            <NsDropdown fixedKey={this.fixedNamespace} fixedKind="namespace" selectedKey={namespace} onChange={this.changeNamespace} />
           </div>}
         </Section>
 
@@ -294,7 +296,7 @@ export class CreateRoleBinding extends SafetyFirst {
 
         <Section label="Role">
           <p>Role Name:</p>
-          {this.fixedRoleKind && this.fixedRoleName ? <span><ResourceIcon kind={this.fixedRoleKind} /> {this.fixedRoleName}</span> : <RoleDropdown selectedKey={roleName} onChange={this.changeRole} />}
+          <RoleDropdown fixedKey={this.fixedRoleName} fixedKind={this.fixedRoleKind} selectedKey={roleName} onChange={this.changeRole} />
         </Section>
 
         <div className="separator"></div>
