@@ -1,0 +1,200 @@
+#!/bin/sh
+
+set -e -u -o pipefail
+
+if [ $# -eq 0 ]; then
+    echo "The first argument must be a path to a directory of kubeconfigs"
+    exit 1
+fi
+
+KUBECONFIGS_DIR=$1
+NEW_CLUSTERS=
+CLUSTERS=
+HOST=
+KUBECTL="kubectl --kubeconfig kubeconfig"
+
+# Find new clusters
+for f in $KUBECONFIGS_DIR/*; do
+    [ ! -f "$f" ] && continue
+    NEW_CLUSTERS="$NEW_CLUSTERS $(basename $f)"
+    mv $f $f.yaml
+    mkdir -p $f
+    mv $f.yaml $f/kubeconfig
+done
+
+# Find clusters
+for d in $KUBECONFIGS_DIR/*; do
+    [ ! -d "$d" ] && continue
+    [ "$(basename $d)" = "federation" ] && continue
+    CLUSTERS="$CLUSTERS $(basename $d)"
+done
+
+# Set the host cluster
+HOST=${FEDERATE_HOST=-$(echo $CLUSTERS | cut -d " " -f 1)}
+
+# Merge kubeconfigs
+for cluster in $CLUSTERS; do
+    $KUBECTL config set-cluster $cluster
+
+    $KUBECTL config set clusters.${cluster}.server \
+        "$(yq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/${cluster}/kubeconfig)"
+
+    $KUBECTL config set clusters.${cluster}.certificate-authority-data \
+        "$(yq -r '.clusters[0].cluster."certificate-authority-data"' $KUBECONFIGS_DIR/${cluster}/kubeconfig)"
+
+    $KUBECTL config set-credentials $cluster
+
+    $KUBECTL config set users.${cluster}.client-certificate-data \
+        "$(yq -r '.users[0].user."client-certificate-data"' $KUBECONFIGS_DIR/${cluster}/kubeconfig)"
+
+    $KUBECTL config set users.${cluster}.client-key-data \
+        "$(yq -r '.users[0].user."client-key-data"' $KUBECONFIGS_DIR/${cluster}/kubeconfig)"
+
+    $KUBECTL config set-context $cluster \
+        --cluster=${cluster} \
+        --user=${cluster}
+done
+
+# Create host context for convenience
+$KUBECTL config set-context host \
+    --cluster=${HOST} \
+    --user=${HOST}
+
+# Create federation objects
+$KUBECTL config use-context host
+
+# Create federation namespace
+$KUBECTL apply -f manifests/federation-namespace.yaml
+
+# Create cluster role binding
+$KUBECTL apply -f manifests/federation-cluster-role-binding.yaml
+
+# Create federation apiserver service
+$KUBECTL apply -f manifests/federation-apiserver-service.yaml
+
+# Create federation apiserver secret
+if ! $KUBECTL describe secrets federation-apiserver-secrets -n federation ; then
+    $KUBECTL create secret generic federation-apiserver-secrets \
+        --from-literal="known-tokens.csv=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' '),admin,admin"\
+        -n federation
+fi
+
+# Create persistent volume claim
+$KUBECTL apply -f manifests/federation-etcd-persistent-volume-claim.yaml
+
+# Create federation apiserver configmap
+if ! $KUBECTL describe configmap federation-apiserver -n federation ; then
+    $KUBECTL create configmap federation-apiserver \
+        -n federation \
+        --from-literal=advertise-address="$( \
+            $KUBECTL get service federation-apiserver \
+            -n federation -o jsonpath='{.spec.clusterIP}')"
+fi
+
+# Create federation apiserver deployment
+$KUBECTL apply -f manifests/federation-apiserver-deployment.yaml
+
+# Create federation apiserver ingress
+HOST_CONSOLE_URL=$(yq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/$HOST/kubeconfig | sed 's/-api\././g')
+HOST_CONSOLE_DOMAIN=$(echo $HOST_CONSOLE_URL | sed 's|https\{0,1\}://||g' | sed 's|:[0-9]\+||g')
+cat > manifests/federation-apiserver-ingress.yaml <<EOF
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/secure-backends: "true"
+    ingress.kubernetes.io/ssl-passthrough: "true"
+    kubernetes.io/ingress.class: tectonic
+  name: federation-apiserver
+  namespace: federation
+spec:
+  rules:
+  - host: $HOST_CONSOLE_DOMAIN
+    http:
+      paths:
+      - backend:
+          serviceName: federation-apiserver
+          servicePort: 443
+        path: /federation
+  - host: federation.$HOST_CONSOLE_DOMAIN
+    http:
+      paths:
+      - backend:
+          serviceName: federation-apiserver
+          servicePort: 443
+        path: /
+EOF
+$KUBECTL apply -f manifests/federation-apiserver-ingress.yaml
+
+# Get the federation token
+FEDERATION_TOKEN=$($KUBECTL get secret federation-apiserver-secrets -n federation -o go-template='{{index .data "known-tokens.csv"}}' | base64 -d | cut -d "," -f 1)
+
+# Create federation kubeconfig
+$KUBECTL config set-cluster federation \
+    --server="$HOST_CONSOLE_URL"/federation \
+    --insecure-skip-tls-verify=true
+$KUBECTL config set-credentials federation \
+    --token="$FEDERATION_TOKEN"
+$KUBECTL config set-context federation \
+    --cluster=federation \
+    --user=federation
+$KUBECTL config use-context federation
+mkdir -p "$KUBECONFIGS_DIR"/federation
+$KUBECTL config view --flatten --minify > "$KUBECONFIGS_DIR"/federation/kubeconfig
+
+# Wait for federation apiserver to become available
+until $KUBECTL get clusters 2>/dev/null; do
+    printf "waiting for federation apiserver to become available at %s/federation\n" "$HOST_CONSOLE_URL"
+    sleep 5
+done
+
+# Create federation kubeconfig secret
+$KUBECTL config use-context host
+if ! $KUBECTL describe secret federation-apiserver-kubeconfig -n federation ; then
+    $KUBECTL create secret generic federation-apiserver-kubeconfig \
+        --from-file="$KUBECONFIGS_DIR"/federation/kubeconfig \
+        -n federation
+fi
+
+# Create federation controller manager configmap
+if ! $KUBECTL describe configmap federation-controller-manager -n federation ; then
+    $KUBECTL create configmap federation-controller-manager \
+        --from-literal=zone-id=${DNS_ZONE_ID} \
+        --from-literal=zone-name=${DNS_ZONE_NAME} \
+        -n federation
+fi
+
+# Create federation controller manager deployment
+$KUBECTL apply -f manifests/federation-controller-manager-deployment.yaml
+
+# Create cluster kubeconfig secrets and resources
+mkdir -p clusters
+for cluster in ${CLUSTERS}; do
+    if ! $KUBECTL describe secret ${cluster} -n federation ; then
+        $KUBECTL create secret generic ${cluster} \
+            --from-file=$KUBECONFIGS_DIR/${cluster}/kubeconfig \
+            -n federation
+    fi
+
+    cat > clusters/${cluster}.yaml <<EOF
+apiVersion: federation/v1beta1
+kind: Cluster
+metadata:
+  name: ${cluster}
+  annotations:
+    federation.alpha.coreos.com/console: "$(yq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/${cluster}/kubeconfig | sed 's/-api\././g')"
+spec:
+  serverAddressByClientCIDRs:
+    - clientCIDR: "0.0.0.0/0"
+      serverAddress: "$(yq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/${cluster}/kubeconfig)"
+  secretRef:
+    name: ${cluster}
+EOF
+done
+
+$KUBECTL config use-context federation
+$KUBECTL apply -f clusters --validate=false
+
+printf "The federation apiserver can be reached at: %s/federation\n" "$HOST_CONSOLE_URL"
+printf "The token for the federation apiserver is: %s\n" "$FEDERATION_TOKEN"
