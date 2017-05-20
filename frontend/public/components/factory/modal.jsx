@@ -21,14 +21,10 @@ export const createModalLauncher = (Component) => (props = {}) => {
       isOpen={true}
       contentLabel="Modal"
       onRequestClose={closeModal}
-      className="co-modal"
+      className="modal-content"
       overlayClassName="co-overlay"
       shouldCloseOnOverlayClick={!props.blocking}>
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <Component {...props} cancel={closeModal} close={closeModal} />
-        </div>
-      </div>
+      <Component {...props} cancel={closeModal} close={closeModal} />
     </Modal>, modalContainer);
   });
   return {result};

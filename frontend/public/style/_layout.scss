@@ -80,14 +80,6 @@ body {
 
 // override coreos-web
 @media screen and (min-width: 768px) {
-  .modal-dialog {
-    width: 700px;
-  }
-
-  .modal-dialog.modal-dialog--std-width {
-    width: 600px;
-  }
-
   .co-facet-container--left {
     padding-right: 30px;
     border-right: solid 1px $color-grey-border;

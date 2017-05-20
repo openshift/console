@@ -1,4 +1,30 @@
-.modal-content {
+.co-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.ReactModal__Content {
+  -webkit-transform: translate(0, -25%);
+  -ms-transform: translate(0, -25%);
+  -o-transform: translate(0, -25%);
+  transform: translate(0, -25%);
+  -webkit-transition: -webkit-transform 0.3s ease-out;
+  -moz-transition: -moz-transform 0.3s ease-out;
+  -o-transition: -o-transform 0.3s ease-out;
+  transition: transform 0.3s ease-out;
+  margin: 30px auto;
+  width: 700px;
+
+  .modal-body {
+    .control-label {
+      font-weight: 400;
+    }
+  }
 
   // close icon
   .fa-times-circle:hover {
@@ -17,38 +43,7 @@
   }
 }
 
-.modal-body .control-label {
-  font-weight: 400;
-}
-
-.co-modal {
-  overflow: auto;
-  position: relative;
-  outline: 0;
-}
-
-.co-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  bottom: 0;
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 100;
-}
-
-.ReactModal__Content .modal-dialog {
-  -webkit-transform: translate(0, -25%);
-  -ms-transform: translate(0, -25%);
-  -o-transform: translate(0, -25%);
-  transform: translate(0, -25%);
-  -webkit-transition: -webkit-transform 0.3s ease-out;
-  -moz-transition: -moz-transform 0.3s ease-out;
-  -o-transition: -o-transform 0.3s ease-out;
-  transition: transform 0.3s ease-out;
-}
-
-.ReactModal__Content--after-open .modal-dialog {
+.ReactModal__Content--after-open {
   -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   -o-transform: translate(0, 0);
