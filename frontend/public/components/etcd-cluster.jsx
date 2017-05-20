@@ -208,7 +208,7 @@ export class EtcdClusterDetails extends SafetyFirst {
                   <dt>Maximum Backups</dt>
                   <dd>{specBackup.maxBackups}</dd>
                   {statusBackup && <dt>Number of Backups</dt>}
-                  {statusBackup && <dd>{statusBackup.backupSize}</dd>}
+                  {statusBackup && <dd>{statusBackup.backups}</dd>}
                 </div>
                 <div className="col-sm-6 col-xs-12">
                   <dt>Storage Type</dt>
@@ -216,7 +216,7 @@ export class EtcdClusterDetails extends SafetyFirst {
                   {specBackup.storageType === 'PersistentVolume' && <dt>Volume Size</dt>}
                   {specBackup.storageType === 'PersistentVolume' && <dd>{specBackup.pv.volumeSizeInMB} MB</dd>}
                   {statusBackup && <dt>Current Backup Size</dt>}
-                  {statusBackup && <dd>{statusBackup.backups}</dd>}
+                  {statusBackup && <dd>{statusBackup.backupSize} MB</dd>}
                 </div>
               </div>
             </div>
@@ -233,13 +233,15 @@ export class EtcdClusterDetails extends SafetyFirst {
                 <div className="col-sm-4 col-xs-4">Backup Date</div>
                 <div className="col-sm-2">Size</div>
                 <div className="col-sm-2">Version</div>
-                <div className="col-sm-2">Time it took</div>
+                <div className="col-sm-2">Duration</div>
               </div>
               <div className="co-m-table-grid__body">
-                <div className="col-sm-4 col-xs-4">{statusBackup.recentBackup.creationTime}</div>
-                <div className="col-sm-2">{statusBackup.recentBackup.creationTime}</div>
-                <div className="col-sm-2">{statusBackup.recentBackup.version}</div>
-                <div className="col-sm-2">{statusBackup.recentBackup.timeTookInSecond}s</div>
+                <div className="row co-resource-list__item">
+                  <div className="col-sm-4 col-xs-4"><Timestamp timestamp={statusBackup.recentBackup.creationTime} /></div>
+                  <div className="col-sm-2">{statusBackup.recentBackup.size} MB</div>
+                  <div className="col-sm-2">{statusBackup.recentBackup.version}</div>
+                  <div className="col-sm-2">{statusBackup.recentBackup.timeTookInSecond}s</div>
+                </div>
               </div>
             </div>
           </div>

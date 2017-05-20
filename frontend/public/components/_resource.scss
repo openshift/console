@@ -34,7 +34,7 @@ $height: 18px;
 .co-m-resource-petset,
 .co-m-resource-replicaset,
 .co-m-resource-replicationcontroller,
-.co-m-resource-cluster {
+.co-m-resource-etcdCluster {
   background-color: $color-pod-overlord;
 }
 
