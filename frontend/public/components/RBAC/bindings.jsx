@@ -145,8 +145,8 @@ export const RoleBindingsPage = () => <MultiListPage
   title="Role Bindings"
 />;
 
-const ListDropdown_ = ({desc, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
-  let items, title, newOnChange;
+const ListDropdown_ = ({desc, fixedKey, fixedKind, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
+  let isFixed, items, title, newOnChange;
   if (loadError) {
     title = <div className="cos-error-title">Error Loading {desc}</div>;
   } else if (!loaded) {
@@ -157,11 +157,13 @@ const ListDropdown_ = ({desc, loaded, loadError, onChange, placeholder, resource
     items = _.mapValues(nameKindMap, (kind, name) => <span><ResourceIcon kind={kind} /> {name}</span>);
     title = items[selectedKey] || <span className="text-muted">{placeholder}</span>;
 
+    isFixed = (fixedKind && fixedKind === nameKindMap[fixedKey]);
+
     // Pass both the resource name and the resource kind to onChange()
     newOnChange = key => onChange(key, nameKindMap[key]);
   }
   return <div>
-    <Dropdown items={items} title={title} onChange={newOnChange} />
+    {isFixed ? items[fixedKey] : <Dropdown items={items} title={title} onChange={newOnChange} />}
     {loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p>}
   </div>;
 };
@@ -208,8 +210,6 @@ export class CreateRoleBinding extends SafetyFirst {
       kind: 'RoleBinding',
       name: '',
       namespace: this.fixedNamespace || props.params.ns,
-      roleKind: this.fixedRoleKind,
-      roleName: this.fixedRoleName,
       subjectKind: 'User',
       subjectName: '',
     };
@@ -220,17 +220,29 @@ export class CreateRoleBinding extends SafetyFirst {
     this.changeRole = (roleName, roleKind) => this.setState({roleKind, roleName});
     this.changeSubjectKind = e => this.setState({subjectKind: e.target.value});
     this.changeSubjectName = e => this.setState({subjectName: e.target.value});
+    this.changeSubjectNamespace = subjectNamespace => this.setState({subjectNamespace});
     this.save = this.save.bind(this);
   }
 
   save () {
-    const {kind, name, roleName, roleKind, subjectKind, subjectName} = this.state;
+    const {kind, name, subjectKind, subjectName, subjectNamespace} = this.state;
+    const roleKind = this.fixedRoleKind || this.state.roleKind;
+    const roleName = this.fixedRoleName || this.state.roleName;
     const namespace = kind === 'RoleBinding' ? this.state.namespace : undefined;
     const k8sRoleKind = roleKind && _.get(k8sKinds, `${roleKind.toUpperCase()}.kind`);
 
-    if (!kind || !name || !roleName || !k8sRoleKind || !subjectKind || !subjectName || (kind === 'RoleBinding' && !namespace)) {
+    if (!kind || !name || !roleName || !k8sRoleKind || !subjectKind || !subjectName ||
+      (kind === 'RoleBinding' && !namespace) ||
+      (subjectKind === 'ServiceAccount') && !subjectNamespace) {
       this.setState({error: 'Please complete all fields.'});
       return;
+    }
+
+    const subject = {kind: subjectKind, name: subjectName};
+    if (subjectKind === 'ServiceAccount') {
+      subject.namespace = subjectNamespace;
+    } else {
+      subject.apiGroup = 'rbac.authorization.k8s.io';
     }
 
     this.setState({inProgress: true});
@@ -246,11 +258,7 @@ export class CreateRoleBinding extends SafetyFirst {
         name: roleName,
         apiGroup: 'rbac.authorization.k8s.io',
       },
-      subjects: [{
-        kind: subjectKind,
-        name: subjectName,
-        apiGroup: 'rbac.authorization.k8s.io',
-      }],
+      subjects: [subject],
     }).then(
       () => {
         this.setState({inProgress: false});
@@ -261,7 +269,7 @@ export class CreateRoleBinding extends SafetyFirst {
   }
 
   render () {
-    const {error, kind, name, namespace, roleName, subjectKind, subjectName} = this.state;
+    const {error, kind, name, namespace, roleName, subjectKind, subjectName, subjectNamespace} = this.state;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
     return <div className="rbac-new-binding co-m-pane__body">
@@ -280,7 +288,7 @@ export class CreateRoleBinding extends SafetyFirst {
           {kind === 'RoleBinding' && <div>
             <div className="separator"></div>
             <p>Namespace:</p>
-            {this.fixedNamespace ? <span><ResourceIcon kind="namespace" /> {this.fixedNamespace}</span> : <NsDropdown selectedKey={namespace} onChange={this.changeNamespace} />}
+            <NsDropdown fixedKey={this.fixedNamespace} fixedKind="namespace" selectedKey={namespace} onChange={this.changeNamespace} />
           </div>}
         </Section>
 
@@ -288,15 +296,20 @@ export class CreateRoleBinding extends SafetyFirst {
 
         <Section label="Role">
           <p>Role Name:</p>
-          {this.fixedRoleKind && this.fixedRoleName ? <span><ResourceIcon kind={this.fixedRoleKind} /> {this.fixedRoleName}</span> : <RoleDropdown selectedKey={roleName} onChange={this.changeRole} />}
+          <RoleDropdown fixedKey={this.fixedRoleName} fixedKind={this.fixedRoleKind} selectedKey={roleName} onChange={this.changeRole} />
         </Section>
 
         <div className="separator"></div>
 
         <Section label="Subject">
           <RadioGroup currentValue={subjectKind} items={subjectKinds} onChange={this.changeSubjectKind} />
+          {subjectKind === 'ServiceAccount' && <div>
+            <div className="separator"></div>
+            <p>Subject Namespace:</p>
+            <NsDropdown selectedKey={subjectNamespace} onChange={this.changeSubjectNamespace} />
+          </div>}
           <div className="separator"></div>
-          Subject Name:
+          <p>Subject Name:</p>
           <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subjectName} />
         </Section>
 
