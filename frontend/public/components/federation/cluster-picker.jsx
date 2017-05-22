@@ -20,11 +20,11 @@ class ClusterPicker_ extends SafetyFirst {
 
   _setActiveClusterId(cluster) {
     const id = cluster.metadata.uid;
-    localStorage.setItem('active-cluster-id', id);
     this.setState({ activeClusterId: id, open: false});
     if (_.has(cluster.metadata, 'annotations')) {
       window.location.href = cluster.metadata.annotations['federation.alpha.coreos.com/console'];
     }
+    localStorage.setItem('active-cluster-id', id);
   }
 
   _setInitialActiveClusterId(clusters) {
@@ -32,7 +32,7 @@ class ClusterPicker_ extends SafetyFirst {
 
     const matchedConsoleCluster = _.find(clusters, cluster => {
       if (_.has(cluster.metadata, 'annotations')) {
-        return cluster.metadata.annotations['federation.alpha.coreos.com/console'] === window.location.origin;
+        return cluster.metadata.annotations['federation.alpha.coreos.com/console'].includes(window.location.origin);
       }
       return false;
     });
