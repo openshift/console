@@ -1,0 +1,66 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: federation-controller-manager
+  namespace: federation
+  labels:
+    app: federated-cluster
+spec:
+  template:
+    metadata:
+      name: federation-controller-manager
+      labels:
+        app: federated-cluster
+        module: federation-controller-manager
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: ''
+      containers:
+      - name: controller-manager
+        image: gcr.io/google_containers/hyperkube-amd64:v1.6.0
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: ZONE_ID
+          valueFrom:
+            configMapKeyRef:
+              name: federation-controller-manager
+              key: zone-id
+        - name: ZONE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: federation-controller-manager
+              key: zone-name
+        args:
+        - /hyperkube
+        - federation-controller-manager
+        - --dns-provider=aws-route53
+        - --federation-name=federation
+        - --zone-id=$(ZONE_ID)
+        - --zone-name=$(ZONE_NAME)
+        - --v=2
+        volumeMounts:
+        - name: ssl
+          readOnly: true
+          mountPath: /etc/ssl/certs
+        - name: ca-certs
+          readOnly: true
+          mountPath: /usr/share/ca-certificates
+        ports:
+        - containerPort: 443
+          name: https
+        - containerPort: 8080
+          name: local
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      volumes:
+      - name: ssl
+        hostPath:
+          path: /etc/ssl/certs
+      - name: ca-certs
+        hostPath:
+          path: /usr/share/ca-certificates
