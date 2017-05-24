@@ -197,5 +197,6 @@ done
 $KUBECTL config use-context federation
 $KUBECTL apply -f clusters --validate=false
 
-printf "The federation apiserver can be reached at: %s/federation\n" "$HOST_CONSOLE_URL"
-printf "The token for the federation apiserver is: %s\n" "$FEDERATION_TOKEN"
+printf "Run the following commands in the JavaScript console in the Tectonic Console to enable the cluster picker:\n"
+printf "localStorage.setItem('federation-apiserver-token', '%s');\n" "$FEDERATION_TOKEN"
+printf "localStorage.setItem('federation-apiserver-url', '%s');\n" "$HOST_CONSOLE_URL"
