@@ -6,6 +6,7 @@ metadata:
   labels:
     app: federated-cluster
 spec:
+  replicas: 2
   template:
     metadata:
       name: federation-controller-manager
