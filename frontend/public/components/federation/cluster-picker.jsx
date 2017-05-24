@@ -20,11 +20,11 @@ class ClusterPicker_ extends SafetyFirst {
 
   _setActiveClusterId(cluster) {
     const id = cluster.metadata.uid;
-    this.setState({ activeClusterId: id, open: false});
     if (_.has(cluster.metadata, 'annotations')) {
       localStorage.removeItem('active-cluster-id');
       window.location.href = cluster.metadata.annotations['federation.alpha.coreos.com/console'];
     }
+    this.setState({ activeClusterId: id, open: false});
     localStorage.setItem('active-cluster-id', id);
   }
 
