@@ -24,7 +24,7 @@ import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { BindingsForRolePage, CreateRoleBinding, EditRulePage } from './RBAC';
+import { BindingsForRolePage, CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
 import { Clusters } from './federation/cluster';
@@ -112,6 +112,10 @@ render((
 
         <Route path="rolebindings/new" component={CreateRoleBinding} />
         <Route path="ns/:ns/rolebindings/new" component={CreateRoleBinding} />
+        <Route path="ns/:ns/rolebindings/:name/copy" component={CopyRoleBinding} kind="rolebinding" />
+        <Route path="clusterrolebindings/:name/copy" component={CopyRoleBinding} kind="clusterrolebinding" />
+        <Route path="ns/:ns/rolebindings/:name/edit" component={EditRoleBinding} kind="rolebinding" />
+        <Route path="clusterrolebindings/:name/edit" component={EditRoleBinding} kind="clusterrolebinding" />
 
         {/* We don't have a Role Bindings details page, so redirect to the list page */}
         <Redirect from="ns/:ns/rolebindings/:name/details" to="all-namespaces/rolebindings" />

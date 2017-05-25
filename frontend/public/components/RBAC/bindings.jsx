@@ -2,16 +2,19 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
-import { k8s, k8sCreate, k8sKinds } from '../../module/k8s';
+import { k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
+import { util } from '../../module/k8s/util';
 import { getNamespacedRoute } from '../../ui/ui-actions';
 import { MultiListPage, List } from '../factory';
 import { RadioGroup } from '../modals/_radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
-import { ButtonBar, Cog, Dropdown, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceIcon, ResourceLink } from '../utils';
+import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceName, ResourceLink, StatusBox } from '../utils';
 import { isSystemRole } from './index';
 
 const bindingKind = binding => binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding';
+
+const k8sKind = kindId => _.get(k8sKinds, `${_.toUpper(kindId)}.kind`);
 
 // Split each binding into one row per subject
 const rowSplitter = binding => {
@@ -25,19 +28,31 @@ const rowSplitter = binding => {
   return binding.subjects.map(subject => Object.assign({}, binding, {subject}));
 };
 
-const DeleteSubject = (i) => (kind, binding) => {
-  const subject = binding.subjects[i];
-  return {
-    label: `Delete ${kind.label} Subject...`,
-    weight: 900,
-    callback: () => confirmModal({
-      title: `Delete ${kind.label} Subject`,
-      message: `Are you sure you want to delete subject ${subject.name} of type ${subject.kind}?`,
-      btnText: 'Delete Subject',
-      executeFn: () => k8s[kind.plural].patch(binding, [{op: 'remove', path: `/subjects/${i}`}]),
-    }),
-  };
-};
+const menuActions = (subjectIndex, isBindingDelete) => [
+  (kind, obj) => ({
+    label: `Duplicate ${kind.label}...`,
+    weight: 700,
+    href: `${util.getLink(obj, kind)}/copy?subjectIndex=${subjectIndex}`,
+  }),
+  (kind, obj) => ({
+    label: `Edit ${kind.label} Subject...`,
+    weight: 800,
+    href: `${util.getLink(obj, kind)}/edit?subjectIndex=${subjectIndex}`,
+  }),
+  isBindingDelete ? Cog.factory.Delete : (kind, binding) => {
+    const subject = binding.subjects[subjectIndex];
+    return {
+      label: `Delete ${kind.label} Subject...`,
+      weight: 900,
+      callback: () => confirmModal({
+        title: `Delete ${kind.label} Subject`,
+        message: `Are you sure you want to delete subject ${subject.name} of type ${subject.kind}?`,
+        btnText: 'Delete Subject',
+        executeFn: () => k8s[kind.plural].patch(binding, [{op: 'remove', path: `/subjects/${subjectIndex}`}]),
+      }),
+    };
+  },
+];
 
 const Header = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Name</div>
@@ -51,7 +66,7 @@ const Header = () => <div className="row co-m-table-grid__head">
 
 export const BindingName = ({actions, binding}) => <span>
   <ResourceCog actions={actions} kind={bindingKind(binding)} resource={binding} />
-  <ResourceIcon kind={bindingKind(binding)} /> {binding.metadata.name}
+  <ResourceName kind={bindingKind(binding)} name={binding.metadata.name} />
 </span>;
 
 export const RoleLink = ({binding}) => {
@@ -89,7 +104,7 @@ export const BindingRows = Row => ({obj: binding}) => {
   return <div>
     {rows.map(({subject}, i) => <Row
       key={i}
-      actions={[rows.length === 1 ? Cog.factory.Delete : DeleteSubject(i)]}
+      actions={menuActions(i, rows.length === 1)}
       binding={binding}
       kind={subject.kind}
       name={subject.name}
@@ -145,8 +160,8 @@ export const RoleBindingsPage = () => <MultiListPage
   title="Role Bindings"
 />;
 
-const ListDropdown_ = ({desc, fixedKey, fixedKind, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
-  let isFixed, items, title, newOnChange;
+const ListDropdown_ = ({desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
+  let items, title, newOnChange;
   if (loadError) {
     title = <div className="cos-error-title">Error Loading {desc}</div>;
   } else if (!loaded) {
@@ -154,16 +169,14 @@ const ListDropdown_ = ({desc, fixedKey, fixedKind, loaded, loadError, onChange, 
   } else {
     const resourceNameKindMap = ({data, kind}) => _.reject(data, isSystemRole).map(d => ({[d.metadata.name]: kind}));
     const nameKindMap = Object.assign({}, ..._.flatMap(resources, resourceNameKindMap));
-    items = _.mapValues(nameKindMap, (kind, name) => <span><ResourceIcon kind={kind} /> {name}</span>);
+    items = _.mapValues(nameKindMap, (kind, name) => <ResourceName kind={kind} name={name} />);
     title = items[selectedKey] || <span className="text-muted">{placeholder}</span>;
-
-    isFixed = (fixedKind && fixedKind === nameKindMap[fixedKey]);
 
     // Pass both the resource name and the resource kind to onChange()
     newOnChange = key => onChange(key, nameKindMap[key]);
   }
   return <div>
-    {isFixed ? items[fixedKey] : <Dropdown items={items} title={title} onChange={newOnChange} />}
+    {_.has(items, fixedKey) ? items[fixedKey] : <Dropdown items={items} title={title} onChange={newOnChange} />}
     {loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p>}
   </div>;
 };
@@ -174,7 +187,12 @@ const ListDropdown = props => <MultiFirehose resources={props.kinds.map(kind => 
 
 const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['namespace']} placeholder="Select namespace" />;
 
-const NsRoleDropdown = props => <ListDropdown {...props} desc="Namespace Roles (Role)" kinds={['role', 'clusterrole']} placeholder="Select role name" />;
+const NsRoleDropdown = props => <ListDropdown
+  {...props}
+  desc="Namespace Roles (Role)"
+  kinds={props.fixedKind ? [_.toLower(props.fixedKind)] : ['role', 'clusterrole']}
+  placeholder="Select role name"
+/>;
 
 const ClusterRoleDropdown = props => <ListDropdown {...props} desc="Cluster-wide Roles (ClusterRole)" kinds={['clusterrole']} placeholder="Select role name" />;
 
@@ -197,69 +215,71 @@ const Section = ({label, children}) => <div className="row">
   </div>
 </div>;
 
-export class CreateRoleBinding extends SafetyFirst {
+class BaseEditRoleBinding extends SafetyFirst {
   constructor (props) {
     super(props);
 
-    this.fixedNamespace = props.location.query.ns;
-    this.fixedRoleKind = props.location.query.rolekind;
-    this.fixedRoleName = props.location.query.rolename;
+    this.subjectIndex = props.subjectIndex || 0;
 
-    this.state = {
-      inProgress: false,
+    const existingData = _.pick(props, ['kind', 'metadata.name', 'metadata.namespace', 'roleRef', 'subjects']);
+    const data = _.defaultsDeep({}, props.fixed, existingData, {
+      apiVersion: 'rbac.authorization.k8s.io/v1beta1',
       kind: 'RoleBinding',
-      name: '',
-      namespace: this.fixedNamespace || props.params.ns,
-      subjectKind: 'User',
-      subjectName: '',
-    };
+      metadata: {
+        name: '',
+      },
+      roleRef: {
+        apiGroup: 'rbac.authorization.k8s.io',
+      },
+      subjects: [{
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: '',
+      }],
+    });
+    this.state = {data, inProgress: false};
 
-    this.changeKind = e => this.setState({kind: e.target.value});
-    this.changeName = e => this.setState({name: e.target.value});
-    this.changeNamespace = namespace => this.setState({namespace});
-    this.changeRole = (roleName, roleKind) => this.setState({roleKind, roleName});
-    this.changeSubjectKind = e => this.setState({subjectKind: e.target.value});
-    this.changeSubjectName = e => this.setState({subjectName: e.target.value});
-    this.changeSubjectNamespace = subjectNamespace => this.setState({subjectNamespace});
+    this.setData = patch => this.setState({data: _.defaultsDeep({}, patch, this.state.data)});
+    this.changeKind = e => this.setData({kind: e.target.value});
+    this.changeName = e => this.setData({metadata: {name: e.target.value}});
+    this.changeNamespace = namespace => this.setData({metadata: {namespace}});
+    this.changeRoleRef = (name, kindId) => this.setData({roleRef: {name, kind: k8sKind(kindId)}});
+    this.setSubject = this.setSubject.bind(this);
+    this.changeSubjectKind = e => this.setSubject({kind: e.target.value});
+    this.changeSubjectName = e => this.setSubject({name: e.target.value});
+    this.changeSubjectNamespace = namespace => this.setSubject({namespace});
     this.save = this.save.bind(this);
   }
 
-  save () {
-    const {kind, name, subjectKind, subjectName, subjectNamespace} = this.state;
-    const roleKind = this.fixedRoleKind || this.state.roleKind;
-    const roleName = this.fixedRoleName || this.state.roleName;
-    const namespace = kind === 'RoleBinding' ? this.state.namespace : undefined;
-    const k8sRoleKind = roleKind && _.get(k8sKinds, `${roleKind.toUpperCase()}.kind`);
+  getSubject () {
+    return _.get(this.state.data, `subjects[${this.subjectIndex}]`);
+  }
 
-    if (!kind || !name || !roleName || !k8sRoleKind || !subjectKind || !subjectName ||
-      (kind === 'RoleBinding' && !namespace) ||
-      (subjectKind === 'ServiceAccount') && !subjectNamespace) {
+  setSubject (patch) {
+    const {kind, name, namespace} = Object.assign({}, this.getSubject(), patch);
+    const data = Object.assign({}, this.state.data);
+    data.subjects[this.subjectIndex] = kind === 'ServiceAccount' ? {kind, name, namespace} : {apiGroup: 'rbac.authorization.k8s.io', kind, name};
+    this.setState({data});
+  }
+
+  save () {
+    const {kind, metadata, roleRef} = this.state.data;
+    const subject = this.getSubject();
+
+    if (!kind || !metadata.name || !roleRef.kind || !roleRef.name || !subject.kind || !subject.name ||
+      (kind === 'RoleBinding' && !metadata.namespace) ||
+      (subject.kind === 'ServiceAccount') && !subject.namespace) {
       this.setState({error: 'Please complete all fields.'});
       return;
     }
 
-    const subject = {kind: subjectKind, name: subjectName};
-    if (subjectKind === 'ServiceAccount') {
-      subject.namespace = subjectNamespace;
-    } else {
-      subject.apiGroup = 'rbac.authorization.k8s.io';
-    }
-
     this.setState({inProgress: true});
-    k8sCreate(kindObj(kind), {
-      apiVersion: 'rbac.authorization.k8s.io/v1beta1',
-      kind,
-      metadata: {
-        name,
-        namespace,
-      },
-      roleRef: {
-        kind: k8sRoleKind,
-        name: roleName,
-        apiGroup: 'rbac.authorization.k8s.io',
-      },
-      subjects: [subject],
-    }).then(
+
+    const ko = kindObj(kind);
+    (this.props.isCreate
+      ? k8sCreate(ko, this.state.data)
+      : k8sPatch(ko, {metadata}, [{op: 'replace', path: `/subjects/${this.subjectIndex}`, value: subject}])
+    ).then(
       () => {
         this.setState({inProgress: false});
         history.push(getNamespacedRoute('rolebindings'));
@@ -269,26 +289,30 @@ export class CreateRoleBinding extends SafetyFirst {
   }
 
   render () {
-    const {error, kind, name, namespace, roleName, subjectKind, subjectName, subjectNamespace} = this.state;
+    const {kind, metadata, roleRef} = this.state.data;
+    const subject = this.getSubject();
+    const {fixed, title} = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
     return <div className="rbac-edit-binding co-m-pane__body">
-      <Helmet title="Create Role Binding" />
+      <Helmet title={title} />
       <div className="co-m-pane__body-group">
-        <h1 className="co-m-pane__title">Create Role Binding</h1>
+        <h1 className="co-m-pane__title">{title}</h1>
         <div className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</div>
 
-        {!this.fixedNamespace && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.changeKind} />}
+        {!_.get(fixed, 'kind') && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.changeKind} />}
 
         <div className="separator"></div>
 
         <Section label="Role Binding">
           <p className="rbac-edit-binding__input-label">Name:</p>
-          <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={name} />
+          {_.get(fixed, 'metadata.name')
+            ? <ResourceName kind={kind} name={metadata.name} />
+            : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} />}
           {kind === 'RoleBinding' && <div>
             <div className="separator"></div>
             <p className="rbac-edit-binding__input-label">Namespace:</p>
-            <NsDropdown fixedKey={this.fixedNamespace} fixedKind="namespace" selectedKey={namespace} onChange={this.changeNamespace} />
+            <NsDropdown fixedKey={_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} />
           </div>}
         </Section>
 
@@ -296,26 +320,31 @@ export class CreateRoleBinding extends SafetyFirst {
 
         <Section label="Role">
           <p className="rbac-edit-binding__input-label">Role Name:</p>
-          <RoleDropdown fixedKey={this.fixedRoleName} fixedKind={this.fixedRoleKind} selectedKey={roleName} onChange={this.changeRole} />
+          <RoleDropdown
+            fixedKey={_.get(fixed, 'roleRef.name')}
+            fixedKind={_.get(fixed, 'roleRef.kind')}
+            onChange={this.changeRoleRef}
+            selectedKey={roleRef.name}
+          />
         </Section>
 
         <div className="separator"></div>
 
         <Section label="Subject">
-          <RadioGroup currentValue={subjectKind} items={subjectKinds} onChange={this.changeSubjectKind} />
-          {subjectKind === 'ServiceAccount' && <div>
+          <RadioGroup currentValue={subject.kind} items={subjectKinds} onChange={this.changeSubjectKind} />
+          {subject.kind === 'ServiceAccount' && <div>
             <div className="separator"></div>
             <p className="rbac-edit-binding__input-label">Subject Namespace:</p>
-            <NsDropdown selectedKey={subjectNamespace} onChange={this.changeSubjectNamespace} />
+            <NsDropdown selectedKey={subject.namespace} onChange={this.changeSubjectNamespace} />
           </div>}
           <div className="separator"></div>
           <p className="rbac-edit-binding__input-label">Subject Name:</p>
-          <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subjectName} />
+          <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} />
         </Section>
 
         <div className="separator"></div>
 
-        <ButtonBar errorMessage={error} inProgress={this.state.inProgress}>
+        <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary" onClick={this.save}>Create Binding</button>
           <Link to={getNamespacedRoute('rolebindings')}>Cancel</Link>
         </ButtonBar>
@@ -323,3 +352,33 @@ export class CreateRoleBinding extends SafetyFirst {
     </div>;
   }
 }
+
+export const CreateRoleBinding = ({location: {query}, params}) => <BaseEditRoleBinding
+  metadata={{
+    namespace: params.namespace,
+  }}
+  fixed={{
+    kind: (query.ns || query.rolekind === 'role') ? 'RoleBinding' : undefined,
+    metadata: {namespace: query.ns},
+    roleRef: {kind: k8sKind(query.rolekind), name: query.rolename},
+  }}
+  isCreate={true}
+  title="Create Role Binding"
+/>;
+
+const EditBinding = props => {
+  const {kind, metadata, roleRef} = props;
+  return <BaseEditRoleBinding {...props} fixed={{kind, metadata, roleRef}} />;
+};
+
+export const EditRoleBinding = ({location, params, route}) => <Firehose kind={route.kind} name={params.name} namespace={params.ns}>
+  <StatusBox>
+    <EditBinding subjectIndex={location.query.subjectIndex} title="Edit Role Binding" />
+  </StatusBox>
+</Firehose>;
+
+export const CopyRoleBinding = ({location, params, route}) => <Firehose kind={route.kind} name={params.name} namespace={params.ns}>
+  <StatusBox>
+    <BaseEditRoleBinding isCreate={true} subjectIndex={location.query.subjectIndex} title="Duplicate Role Binding" />
+  </StatusBox>
+</Firehose>;

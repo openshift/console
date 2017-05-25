@@ -54,3 +54,5 @@ export const ResourceIcon = ({kind, className}) => {
   const klass = classNames(`co-m-resource-icon co-m-resource-${kind}`, className);
   return <span className={klass}>{iconLabel(kind)}</span>;
 };
+
+export const ResourceName = ({kind, name}) => <span><ResourceIcon kind={_.toLower(kind)} /> {name}</span>;

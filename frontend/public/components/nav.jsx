@@ -74,6 +74,7 @@ const NavSection = ({isOpen, icon, img, text, onClick_, children}) => {
 };
 
 const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 'clusterroles');
+const isRoleBindingsActive = path => _.startsWith(path, 'rolebindings') || _.startsWith(path, 'clusterrolebindings');
 const isClusterSettingsActive = path => _.startsWith(path, 'settings/cluster') || _.startsWith(path, 'settings/ldap');
 
 export const Nav = connect(stateToProps, actions)(
@@ -143,7 +144,7 @@ class Nav_ extends SafetyFirst {
           <NavLink href="settings/cluster" name="Cluster Settings" sectionId="admin" isActive={isClusterSettingsActive} />
           <NavLink resource="serviceaccounts" name="Service Accounts" sectionId="admin" />
           <NavLink resource="roles" name="Roles" required="RBAC" sectionId="admin" isActive={isRolesActive} />
-          <NavLink resource="rolebindings" name="Role Bindings" required="RBAC" sectionId="admin" />
+          <NavLink resource="rolebindings" name="Role Bindings" required="RBAC" sectionId="admin" isActive={isRoleBindingsActive} />
         </NavSection>
 
         {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user" {...accordionProps('account')}>
