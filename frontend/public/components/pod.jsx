@@ -170,7 +170,7 @@ const Details = (pod) => {
               <SparklineWidget heading="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} limit={limits.memory} units="binaryBytes" />
             </div>
             <div className="col-md-4">
-              <SparklineWidget heading="CPU Shares" query={`pod_name:container_spec_cpu_shares:sum{pod_name='${pod.metadata.name}'} * 1000000`} limit={limits.cpu} units="numeric" />
+              <SparklineWidget heading="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}'} * 1000`} limit={limits.cpu} units="numeric" />
             </div>
             <div className="col-md-4">
               <SparklineWidget heading="Filesystem" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} units="decimalBytes" />
