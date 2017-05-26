@@ -15,7 +15,6 @@ import './replication-controller';
 import './namespace';
 import './node';
 import './RBAC';
-import './horizontal-pod-autoscaler';
 import './service-account';
 import './search';
 import './sparkline-widget/sparkline-widget';

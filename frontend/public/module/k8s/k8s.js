@@ -75,7 +75,6 @@ export const k8s = {
   deployments: addDefaults(k8sDeployments, k8sKinds.DEPLOYMENT),
   jobs: addDefaults({}, k8sKinds.JOB),
   daemonsets: addDefaults({}, k8sKinds.DAEMONSET),
-  horizontalpodautoscalers: addDefaults({}, k8sKinds.HORIZONTALPODAUTOSCALER),
   serviceaccounts: addDefaults({}, k8sKinds.SERVICEACCOUNT),
   secrets: addDefaults({}, k8sKinds.SECRET),
   ingresses: addDefaults({}, k8sKinds.INGRESS),

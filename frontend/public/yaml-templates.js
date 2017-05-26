@@ -188,18 +188,3 @@ spec:
           serviceName: test
           servicePort: 80`;
 
-TEMPLATES['autoscaling/v1.HorizontalPodAutoscaler'] = `apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: php-apache
-  namespace: default
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1beta1
-    kind: Deployment
-    name: php-apache
-  minReplicas: 1
-  maxReplicas: 3
-  targetCPUUtilizationPercentage: 50`;
-
-
