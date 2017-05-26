@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import {kindObj, ResourceIcon} from './index';
 
 export const resourcePath = (kind, name, namespace = undefined) => {
-  const {path} = kindObj(kind);
+  const {path} = kind === 'EtcdCluster' ? { path: 'etcdclusters' } : kindObj(kind);
   return path && `/${namespace ? `ns/${namespace}/` : ''}${path}/${name}`;
 };
 

@@ -125,11 +125,14 @@ export class EditYAML extends SafetyFirst {
       this.handleError(`Error parsing YAML: ${e}`);
       return;
     }
+
     if (!obj.kind) {
       this.handleError('No "kind" field found in YAML.');
       return;
     }
-    const ko = kindObj(obj.kind);
+
+    const ko = obj.kind === 'Cluster' ? kindObj(this.props.kind) : kindObj(obj.kind);
+
     if (!ko) {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
       return;
@@ -147,7 +150,7 @@ export class EditYAML extends SafetyFirst {
       action(ko, obj, namespace, name)
         .then(o => {
           if (redirect) {
-            history.push(`${resourcePath(obj.kind, newName, newNamespace)}/details`);
+            history.push(`${resourcePath(ko.kind, newName, newNamespace)}/details`);
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }
