@@ -120,7 +120,7 @@ spec:
       - backend:
           serviceName: federation-apiserver
           servicePort: 443
-        path: /federation
+        path: /federation-api
 EOF
 $KUBECTL apply -f manifests/federation-apiserver-ingress.yaml
 
@@ -129,7 +129,7 @@ FEDERATION_TOKEN=$($KUBECTL get secret federation-apiserver-secrets -n federatio
 
 # Create federation kubeconfig
 $KUBECTL config set-cluster federation \
-    --server="$HOST_CONSOLE_URL"/federation \
+    --server="$HOST_CONSOLE_URL"/federation-api \
     --insecure-skip-tls-verify=true
 $KUBECTL config set-credentials federation \
     --token="$FEDERATION_TOKEN"
@@ -142,7 +142,7 @@ $KUBECTL config view --flatten --minify > "$KUBECONFIGS_DIR"/federation/kubeconf
 
 # Wait for federation apiserver to become available
 until $KUBECTL get clusters 2>/dev/null; do
-    printf "waiting for federation apiserver to become available at %s/federation\n" "$HOST_CONSOLE_URL"
+    printf "waiting for federation apiserver to become available at %s/federation-api\n" "$HOST_CONSOLE_URL"
     sleep 5
 done
 
@@ -195,4 +195,4 @@ $KUBECTL apply -f clusters --validate=false
 
 printf "Run the following commands in the JavaScript console in the Tectonic Console to enable the cluster picker:\n"
 printf "localStorage.setItem('federation-apiserver-token', '%s');\n" "$FEDERATION_TOKEN"
-printf "localStorage.setItem('federation-apiserver-url', '%s/federation');\n" "$HOST_CONSOLE_URL"
+printf "localStorage.setItem('federation-apiserver-url', '%s/federation-api');\n" "$HOST_CONSOLE_URL"
