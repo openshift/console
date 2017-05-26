@@ -105,11 +105,14 @@ metadata:
   annotations:
     ingress.kubernetes.io/rewrite-target: /
     ingress.kubernetes.io/secure-backends: "true"
-    ingress.kubernetes.io/ssl-passthrough: "true"
     kubernetes.io/ingress.class: tectonic
   name: federation-apiserver
   namespace: federation
 spec:
+  tls:
+  - hosts:
+    - $HOST_CONSOLE_DOMAIN
+    secretName: tectonic-ingress-tls-secret
   rules:
   - host: $HOST_CONSOLE_DOMAIN
     http:
@@ -118,13 +121,6 @@ spec:
           serviceName: federation-apiserver
           servicePort: 443
         path: /federation
-  - host: federation.$HOST_CONSOLE_DOMAIN
-    http:
-      paths:
-      - backend:
-          serviceName: federation-apiserver
-          servicePort: 443
-        path: /
 EOF
 $KUBECTL apply -f manifests/federation-apiserver-ingress.yaml
 
