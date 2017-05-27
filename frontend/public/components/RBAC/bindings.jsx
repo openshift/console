@@ -272,7 +272,7 @@ export class CreateRoleBinding extends SafetyFirst {
     const {error, kind, name, namespace, roleName, subjectKind, subjectName, subjectNamespace} = this.state;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
-    return <div className="rbac-new-binding co-m-pane__body">
+    return <div className="rbac-edit-binding co-m-pane__body">
       <Helmet title="Create Role Binding" />
       <div className="co-m-pane__body-group">
         <h1 className="co-m-pane__title">Create Role Binding</h1>
@@ -283,11 +283,11 @@ export class CreateRoleBinding extends SafetyFirst {
         <div className="separator"></div>
 
         <Section label="Role Binding">
-          Name:
+          <p className="rbac-edit-binding__input-label">Name:</p>
           <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={name} />
           {kind === 'RoleBinding' && <div>
             <div className="separator"></div>
-            <p>Namespace:</p>
+            <p className="rbac-edit-binding__input-label">Namespace:</p>
             <NsDropdown fixedKey={this.fixedNamespace} fixedKind="namespace" selectedKey={namespace} onChange={this.changeNamespace} />
           </div>}
         </Section>
@@ -295,7 +295,7 @@ export class CreateRoleBinding extends SafetyFirst {
         <div className="separator"></div>
 
         <Section label="Role">
-          <p>Role Name:</p>
+          <p className="rbac-edit-binding__input-label">Role Name:</p>
           <RoleDropdown fixedKey={this.fixedRoleName} fixedKind={this.fixedRoleKind} selectedKey={roleName} onChange={this.changeRole} />
         </Section>
 
@@ -305,11 +305,11 @@ export class CreateRoleBinding extends SafetyFirst {
           <RadioGroup currentValue={subjectKind} items={subjectKinds} onChange={this.changeSubjectKind} />
           {subjectKind === 'ServiceAccount' && <div>
             <div className="separator"></div>
-            <p>Subject Namespace:</p>
+            <p className="rbac-edit-binding__input-label">Subject Namespace:</p>
             <NsDropdown selectedKey={subjectNamespace} onChange={this.changeSubjectNamespace} />
           </div>}
           <div className="separator"></div>
-          <p>Subject Name:</p>
+          <p className="rbac-edit-binding__input-label">Subject Name:</p>
           <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subjectName} />
         </Section>
 
