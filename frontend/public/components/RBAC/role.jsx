@@ -138,7 +138,7 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
   <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
-    createProps={{to: `/rolebindings/new?rolekind=${kind}&rolename=${name}`}}
+    createProps={{to: `/rolebindings/new?${ns ? `ns=${ns}&` : ''}rolekind=${kind}&rolename=${name}`}}
     ListComponent={BindingsList}
     staticFilters={[{'role-binding-roleRef': name}]}
     resources={[
