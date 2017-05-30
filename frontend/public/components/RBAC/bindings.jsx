@@ -1,10 +1,11 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { util } from '../../module/k8s/util';
-import { getNamespacedRoute } from '../../ui/ui-actions';
+import { getNamespacedRoute, actions as UIActions } from '../../ui/ui-actions';
 import { MultiListPage, List } from '../factory';
 import { RadioGroup } from '../modals/_radio';
 import { confirmModal } from '../modals';
@@ -215,7 +216,8 @@ const Section = ({label, children}) => <div className="row">
   </div>
 </div>;
 
-class BaseEditRoleBinding extends SafetyFirst {
+const BaseEditRoleBinding = connect()(
+class BaseEditRoleBinding_ extends SafetyFirst {
   constructor (props) {
     super(props);
 
@@ -282,6 +284,9 @@ class BaseEditRoleBinding extends SafetyFirst {
     ).then(
       () => {
         this.setState({inProgress: false});
+        if (metadata.namespace) {
+          this.props.dispatch(UIActions.setActiveNamespace(metadata.namespace));
+        }
         history.push(getNamespacedRoute('rolebindings'));
       },
       e => this.setState({error: e.message, inProgress: false})
@@ -351,7 +356,7 @@ class BaseEditRoleBinding extends SafetyFirst {
       </div>
     </div>;
   }
-}
+});
 
 export const CreateRoleBinding = ({location: {query}, params}) => <BaseEditRoleBinding
   metadata={{
