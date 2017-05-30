@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { util } from '../../module/k8s/util';
-import { getNamespacedRoute, actions as UIActions } from '../../ui/ui-actions';
+import { getActiveNamespace, getNamespacedRoute, actions as UIActions } from '../../ui/ui-actions';
 import { MultiListPage, List } from '../factory';
 import { RadioGroup } from '../modals/_radio';
 import { confirmModal } from '../modals';
@@ -241,16 +241,26 @@ class BaseEditRoleBinding_ extends SafetyFirst {
     });
     this.state = {data, inProgress: false};
 
+    this.setKind = this.setKind.bind(this);
+    this.setSubject = this.setSubject.bind(this);
+    this.save = this.save.bind(this);
+
     this.setData = patch => this.setState({data: _.defaultsDeep({}, patch, this.state.data)});
-    this.changeKind = e => this.setData({kind: e.target.value});
     this.changeName = e => this.setData({metadata: {name: e.target.value}});
     this.changeNamespace = namespace => this.setData({metadata: {namespace}});
     this.changeRoleRef = (name, kindId) => this.setData({roleRef: {name, kind: k8sKind(kindId)}});
-    this.setSubject = this.setSubject.bind(this);
     this.changeSubjectKind = e => this.setSubject({kind: e.target.value});
     this.changeSubjectName = e => this.setSubject({name: e.target.value});
     this.changeSubjectNamespace = namespace => this.setSubject({namespace});
-    this.save = this.save.bind(this);
+  }
+
+  setKind (e) {
+    const kind = e.target.value;
+    const patch = {kind};
+    if (kind === 'ClusterRoleBinding') {
+      patch['metadata'] = {namespace: null};
+    }
+    this.setData(patch);
   }
 
   getSubject () {
@@ -305,7 +315,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
         <h1 className="co-m-pane__title">{title}</h1>
         <div className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</div>
 
-        {!_.get(fixed, 'kind') && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.changeKind} />}
+        {!_.get(fixed, 'kind') && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />}
 
         <div className="separator"></div>
 
@@ -358,9 +368,9 @@ class BaseEditRoleBinding_ extends SafetyFirst {
   }
 });
 
-export const CreateRoleBinding = ({location: {query}, params}) => <BaseEditRoleBinding
+export const CreateRoleBinding = ({location: {query}}) => <BaseEditRoleBinding
   metadata={{
-    namespace: params.namespace,
+    namespace: getActiveNamespace(),
   }}
   fixed={{
     kind: (query.ns || query.rolekind === 'role') ? 'RoleBinding' : undefined,
