@@ -5,7 +5,6 @@ import Helmet from 'react-helmet';
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';
 import {DeploymentsList} from './deployment';
-import {HorizontalPodAutoscalersList} from './horizontal-pod-autoscaler';
 import {JobsList} from './job';
 import {NamespacesList} from './namespace';
 import {NodesListSearch} from './node';
@@ -27,7 +26,6 @@ const resources = {
   configmap: ConfigMaps,
   daemonset: DaemonSets,
   deployment: DeploymentsList,
-  horizontalpodautoscaler: HorizontalPodAutoscalersList,
   ingress: IngressList,
   job: JobsList,
   namespace: NamespacesList,

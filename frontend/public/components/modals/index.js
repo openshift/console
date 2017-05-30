@@ -12,8 +12,6 @@ export * from './kubectl-config';
 export * from './license-enforcement-modal';
 export * from './update-license-modal';
 export * from './configure-unschedulable-modal';
-export * from './configure-hpa-replicas-modal';
-export * from './configure-hpa-targets-modal';
 export * from './configure-ns-pull-secret-modal';
 export * from './labels-modal';
 export * from './configure-update-strategy-modal';

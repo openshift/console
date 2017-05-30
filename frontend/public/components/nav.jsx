@@ -115,7 +115,6 @@ class Nav_ extends SafetyFirst {
           <NavLink resource="deployments" name="Deployments" sectionId="workloads" />
           <NavLink resource="replicasets" name="Replica Sets" sectionId="workloads" />
           <NavLink resource="replicationcontrollers" name="Replication Controllers" sectionId="workloads" />
-          <NavLink resource="horizontalpodautoscalers" name="Autoscalers" sectionId="workloads" />
           <div className="navigation-container__section__separator"></div>
           <NavLink resource="daemonsets" name="Daemon Sets" sectionId="workloads" />
           <NavLink resource="jobs" name="Jobs" sectionId="workloads" />

@@ -68,7 +68,6 @@ const init = (nextRoute) => {
   registerNamespaceFriendlyPrefix('daemonsets');
   registerNamespaceFriendlyPrefix('deployments');
   registerNamespaceFriendlyPrefix('events');
-  registerNamespaceFriendlyPrefix('horizontalpodautoscalers');
   registerNamespaceFriendlyPrefix('ingresses');
   registerNamespaceFriendlyPrefix('jobs');
   registerNamespaceFriendlyPrefix('pods');
