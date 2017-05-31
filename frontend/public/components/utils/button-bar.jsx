@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {LoadingInline} from './';
+import { LoadingInline } from './';
 
 const injectDisabled = (children, disabled) => {
   return React.Children.map(children, c => {
@@ -13,20 +13,24 @@ const injectDisabled = (children, disabled) => {
   });
 };
 
+const ErrorMessage = ({message}) => <div className="co-m-message co-m-message--error">{message}</div>;
+const InfoMessage = ({message}) => <div className="co-m-message co-m-message--info">{message}</div>;
+
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore
 // can't be disabled during a pending promise/request.
-export const ButtonBar = props => {
-  const childProps = _.omit(props, ['children', 'className', 'inProgress', 'message']);
-  return <div className={classNames(props.className, 'co-m-btn-bar')} {...childProps}>
-    {injectDisabled(props.children, props.inProgress)}
-    {props.inProgress && <LoadingInline />}
-    {props.message && <div className="co-m-message co-m-message--info">{props.message}</div>}
+export const ButtonBar = ({children, className, errorMessage, infoMessage, inProgress}) => {
+  return <div className={classNames(className, 'co-m-btn-bar')}>
+    {errorMessage && <ErrorMessage message={errorMessage} />}
+    {injectDisabled(children, inProgress)}
+    {inProgress && <LoadingInline />}
+    {infoMessage && <InfoMessage message={infoMessage} />}
   </div>;
 };
 
 ButtonBar.propTypes = {
   children: React.PropTypes.node.isRequired,
+  errorMessage: React.PropTypes.string,
+  infoMessage: React.PropTypes.string,
   inProgress: React.PropTypes.bool.isRequired,
-  message: React.PropTypes.string,
 };

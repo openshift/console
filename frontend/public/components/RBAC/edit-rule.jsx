@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { k8s } from '../../module/k8s';
 import { errorModal } from '../modals';
-import { Heading, history, ResourceIcon, PromiseComponent, ButtonBar, ErrorMessage } from '../utils';
+import { Heading, history, ResourceIcon, PromiseComponent, ButtonBar } from '../utils';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);
@@ -397,8 +397,7 @@ class EditRule_ extends PromiseComponent {
 
           <div className="row">
             <div className="col-xs-12">
-              <ButtonBar inProgress={this.state.inProgress}>
-                <ErrorMessage errorMessage={this.state.errorMessage} />
+              <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
               </ButtonBar>
             </div>

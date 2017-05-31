@@ -8,7 +8,7 @@ import { MultiListPage, List } from '../factory';
 import { RadioGroup } from '../modals/_radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
-import { ButtonBar, Cog, Dropdown, ErrorMessage, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceIcon, ResourceLink } from '../utils';
+import { ButtonBar, Cog, Dropdown, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceIcon, ResourceLink } from '../utils';
 import { isSystemRole } from './index';
 
 const bindingKind = binding => binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding';
@@ -315,8 +315,7 @@ export class CreateRoleBinding extends SafetyFirst {
 
         <div className="separator"></div>
 
-        <ButtonBar inProgress={this.state.inProgress}>
-          {error && <ErrorMessage errorMessage={error} />}
+        <ButtonBar errorMessage={error} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary" onClick={this.save}>Create Binding</button>
           <Link to={getNamespacedRoute('rolebindings')}>Cancel</Link>
         </ButtonBar>
