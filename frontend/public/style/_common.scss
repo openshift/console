@@ -120,16 +120,7 @@ label {
     width: 13px;
 }
 
-.empty-page {
-  text-align: center;
-  padding: 10px;
-}
-
-.empty-page__header {
-  font-size: 18px;
-}
-
-.empty-page__explanation, .co-m-pane__explanation {
+.co-m-pane__explanation {
   color: $color-grey-text;
   font-size: 14px;
   padding-top: 14px;
