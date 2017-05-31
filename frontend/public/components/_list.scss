@@ -18,22 +18,8 @@
   align-items: center;
 }
 
-
-$transition-time: 0.25s;
-
 .co-resource-list__item {
-  transition: all $transition-time;
-}
-
-.co-resource-list-menu__loader {
-  position: relative;
-}
-
-.co-resource-list-menu__option-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  border-bottom: 1px solid $gray-lighter;
+  transition: all 0.25s;
 }
 
 .compaction-btn {

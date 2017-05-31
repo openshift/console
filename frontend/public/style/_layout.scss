@@ -77,19 +77,6 @@ body {
   }
 }
 
-
-// override coreos-web
-@media screen and (min-width: 768px) {
-  .co-facet-container--left {
-    padding-right: 30px;
-    border-right: solid 1px $color-grey-border;
-  }
-
-  .co-facet-container--right {
-    padding-left: 30px;
-  }
-}
-
 .co-m-form-row--tall {
   min-height: 225px;
 }

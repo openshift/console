@@ -76,11 +76,6 @@
     margin-bottom: 20px;
 }
 
-.co-m-facet-option__cog {
-    float: right;
-    padding-right: 10px;
-}
-
 .btn-primary {
     background-color: $color-tectonic-button-green;
     &:hover,
@@ -115,11 +110,6 @@ label {
     font-size: $font-size-small;
 }
 
-.co-no-cog-menu {
-    display: inline-block;
-    width: 13px;
-}
-
 .co-m-pane__explanation {
   color: $color-grey-text;
   font-size: 14px;
@@ -129,16 +119,6 @@ label {
 
 .co-m-pane__title__btn {
   margin-bottom: 15px;
-}
-
-@media (max-width: 768px) {
-  .co-m-facet-option__cog {
-    display: none;
-  }
-
-  .details-page {
-    padding-top: 30px;
-  }
 }
 
 .break-all {
