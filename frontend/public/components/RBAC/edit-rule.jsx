@@ -1,10 +1,11 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
 import { k8s } from '../../module/k8s';
 import { errorModal } from '../modals';
-import { Heading, history, ResourceIcon, PromiseComponent, ButtonBar } from '../utils';
+import { Heading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar } from '../utils';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);
@@ -152,8 +153,7 @@ class EditRule_ extends PromiseComponent {
     }
     this.handlePromise(this.resource.update(role))
     .then(() => {
-      const {namespace, name} = this.props;
-      history.push(namespace ? `ns/${namespace}/roles/${name}/details` : `clusterroles/${name}/details`);
+      history.push(resourceObjPath(role));
     });
   }
 
@@ -247,7 +247,7 @@ class EditRule_ extends PromiseComponent {
 
   render () {
     const {name, namespace, namespacedSet, safeResources, adminResources, rule} = this.props;
-    const {verbControl, resourceControl, nonResourceURLs, APIGroups} = this.state;
+    const {verbControl, resourceControl, nonResourceURLs, APIGroups, role} = this.state;
     const heading = `${rule === undefined ? 'Create' : 'Edit'} Access Rule`;
 
     return (
@@ -399,6 +399,7 @@ class EditRule_ extends PromiseComponent {
             <div className="col-xs-12">
               <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
+                {role && <Link to={resourceObjPath(role)}>Cancel</Link>}
               </ButtonBar>
             </div>
           </div>
