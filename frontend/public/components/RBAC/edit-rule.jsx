@@ -378,7 +378,6 @@ class EditRule_ extends PromiseComponent {
             </div>
           </div>
 
-
           <div className="row">
             <div className="col-xs-2">
             </div>
@@ -394,6 +393,8 @@ class EditRule_ extends PromiseComponent {
               </div>
             </div>
           </div>
+
+          <HRMajor />
 
           <div className="row">
             <div className="col-xs-12">
