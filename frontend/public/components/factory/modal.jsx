@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 
-import { ButtonBar, ErrorMessage } from '../utils';
+import { ButtonBar } from '../utils';
 
 export const createModalLauncher = (Component) => (props = {}) => {
   const modalContainer = document.getElementById('modal-container');
@@ -35,8 +35,7 @@ export const ModalTitle = ({children}) => <div className="modal-header"><h4 clas
 export const ModalBody = ({children}) => <div className="modal-body">{children}</div>;
 
 export const ModalFooter = ({message, errorMessage, inProgress, children}) => {
-  return <ButtonBar className="modal-footer" message={message} inProgress={inProgress}>
-    <ErrorMessage errorMessage={errorMessage} />
+  return <ButtonBar className="modal-footer" errorMessage={errorMessage} infoMessage={message} inProgress={inProgress}>
     {children}
   </ButtonBar>;
 };
