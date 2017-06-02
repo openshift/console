@@ -47,18 +47,20 @@ const Row = ({obj: role}) => <div className="row co-resource-list__item">
 class Details extends React.Component {
   constructor (props) {
     super(props);
-    this.state = {rules: props.rules};
-  }
-
-  filterRules (e) {
-    const searchStr = e.target.value.toLowerCase();
-    const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];
-    const ruleFilter = rule => searchKeys.some(k => rule[k] && rule[k].some(v => fuzzy(searchStr, v.toLowerCase())));
-    this.setState({rules: _.filter(this.props.rules, ruleFilter)});
+    this.state = {};
+    this.changeFilter = e => this.setState({ruleFilter: e.target.value});
   }
 
   render () {
     const {creationTimestamp, name, namespace} = this.props.metadata;
+    const {ruleFilter} = this.state;
+
+    let rules = this.props.rules;
+    if (ruleFilter) {
+      const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
+      const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];
+      rules = rules.filter(rule => searchKeys.some(k => _.some(rule[k], v => fuzzyCaseInsensitive(ruleFilter, v))));
+    }
 
     return <div>
       <Heading text="Role Overview" />
@@ -89,10 +91,10 @@ class Details extends React.Component {
             <Link to={addHref(name, namespace)}>
               <button className="btn btn-primary">Add Rule</button>
             </Link>
-            <TextFilter label="Rules by action or resource" onChange={this.filterRules.bind(this)} />
+            <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
           </div>
         </div>
-        <RulesList rules={this.state.rules} name={name} namespace={namespace} />
+        <RulesList rules={rules} name={name} namespace={namespace} />
       </div>
     </div>;
   }
