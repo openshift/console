@@ -59,7 +59,7 @@
   }
 }
 
-.rbac-new-binding {
+.rbac-edit-binding {
   font-size: 14px;
 
   .co-m-resource-icon {
@@ -91,6 +91,10 @@
       min-width: 250px;
       overflow: scroll;
     }
+  }
+
+  .rbac-edit-binding__input-label {
+    margin-bottom: 5px;
   }
 
   .radio-item {
