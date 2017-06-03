@@ -105,7 +105,7 @@ export class Dropdown extends DropdownMixin {
       <div className={className} ref="dropdownElement">
         <div className="dropdown">
           {button}
-          {!_.isEmpty(children) && <ul className={classNames('dropdown-menu', menuClassName)} style={{display: active ? 'block' : 'none'}}>{children}</ul>}
+          {active && !_.isEmpty(children) && <ul className={classNames('dropdown-menu', menuClassName)}>{children}</ul>}
         </div>
       </div>
     );
