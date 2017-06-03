@@ -306,7 +306,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
   render () {
     const {kind, metadata, roleRef} = this.state.data;
     const subject = this.getSubject();
-    const {fixed, title} = this.props;
+    const {fixed, saveButtonText, title} = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
     return <div className="rbac-edit-binding co-m-pane__body">
@@ -360,7 +360,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
         <div className="separator"></div>
 
         <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary" onClick={this.save}>Create Binding</button>
+          <button type="submit" className="btn btn-primary" onClick={this.save}>{saveButtonText || 'Create Binding'}</button>
           <Link to={getNamespacedRoute('rolebindings')}>Cancel</Link>
         </ButtonBar>
       </div>
@@ -383,7 +383,7 @@ export const CreateRoleBinding = ({location: {query}}) => <BaseEditRoleBinding
 
 const EditBinding = props => {
   const {kind, metadata, roleRef} = props;
-  return <BaseEditRoleBinding {...props} fixed={{kind, metadata, roleRef}} />;
+  return <BaseEditRoleBinding {...props} fixed={{kind, metadata, roleRef}} saveButtonText="Save Binding" />;
 };
 
 export const EditRoleBinding = ({location, params, route}) => <Firehose kind={route.kind} name={params.name} namespace={params.ns}>
