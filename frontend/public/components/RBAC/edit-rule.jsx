@@ -144,7 +144,7 @@ class EditRule_ extends PromiseComponent {
       verbs: verbControl === VERBS_ENUM.ALL ? ['*'] : ALL_VERBS.filter(this.isVerbSelected),
       resources: resourceControl === RESOURCE_ENUM.ALL ? ['*'] : allResources.filter(this.isResourceSelected),
     };
-    const {role} = this.state;
+    const role = _.cloneDeep(this.state.role);
     role.rules = role.rules || [];
     if (this.props.rule) {
       role.rules[this.props.rule] = rule;
