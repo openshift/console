@@ -1,4 +1,5 @@
 import React from 'react';
+import fuzzy from 'fuzzysearch';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -162,7 +163,7 @@ export const RoleBindingsPage = () => <MultiListPage
 />;
 
 const ListDropdown_ = ({desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
-  let items, title, newOnChange;
+  let autocompleteFilter, items, title, newOnChange;
   if (loadError) {
     title = <div className="cos-error-title">Error Loading {desc}</div>;
   } else if (!loaded) {
@@ -171,13 +172,15 @@ const ListDropdown_ = ({desc, fixedKey, loaded, loadError, onChange, placeholder
     const resourceNameKindMap = ({data, kind}) => _.reject(data, isSystemRole).map(d => ({[d.metadata.name]: kind}));
     const nameKindMap = Object.assign({}, ..._.flatMap(resources, resourceNameKindMap));
     items = _.mapValues(nameKindMap, (kind, name) => <ResourceName kind={kind} name={name} />);
-    title = items[selectedKey] || <span className="text-muted">{placeholder}</span>;
+    title = <span className="text-muted">{placeholder}</span>;
+
+    autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
 
     // Pass both the resource name and the resource kind to onChange()
     newOnChange = key => onChange(key, nameKindMap[key]);
   }
   return <div>
-    {_.has(items, fixedKey) ? items[fixedKey] : <Dropdown items={items} title={title} onChange={newOnChange} />}
+    {_.has(items, fixedKey) ? items[fixedKey] : <Dropdown autocompleteFilter={autocompleteFilter} autocompletePlaceholder={placeholder} items={items} selectedKey={selectedKey} title={title} onChange={newOnChange} />}
     {loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p>}
   </div>;
 };
