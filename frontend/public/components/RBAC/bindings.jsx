@@ -306,8 +306,9 @@ class BaseEditRoleBinding_ extends SafetyFirst {
   render () {
     const {kind, metadata, roleRef} = this.state.data;
     const subject = this.getSubject();
-    const {fixed, saveButtonText, title} = this.props;
+    const {fixed, saveButtonText} = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
+    const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
 
     return <div className="rbac-edit-binding co-m-pane__body">
       <Helmet title={title} />
@@ -378,7 +379,7 @@ export const CreateRoleBinding = ({location: {query}}) => <BaseEditRoleBinding
     roleRef: {kind: k8sKind(query.rolekind), name: query.rolename},
   }}
   isCreate={true}
-  title="Create Role Binding"
+  titleVerb="Create"
 />;
 
 const EditBinding = props => {
@@ -388,12 +389,12 @@ const EditBinding = props => {
 
 export const EditRoleBinding = ({location, params, route}) => <Firehose kind={route.kind} name={params.name} namespace={params.ns}>
   <StatusBox>
-    <EditBinding subjectIndex={location.query.subjectIndex} title="Edit Role Binding" />
+    <EditBinding subjectIndex={location.query.subjectIndex} titleVerb="Edit" />
   </StatusBox>
 </Firehose>;
 
 export const CopyRoleBinding = ({location, params, route}) => <Firehose kind={route.kind} name={params.name} namespace={params.ns}>
   <StatusBox>
-    <BaseEditRoleBinding isCreate={true} subjectIndex={location.query.subjectIndex} title="Duplicate Role Binding" />
+    <BaseEditRoleBinding isCreate={true} subjectIndex={location.query.subjectIndex} titleVerb="Duplicate" />
   </StatusBox>
 </Firehose>;
