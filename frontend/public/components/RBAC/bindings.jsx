@@ -274,7 +274,9 @@ class BaseEditRoleBinding_ extends SafetyFirst {
     this.setState({data});
   }
 
-  save () {
+  save (e) {
+    e.preventDefault();
+
     const {kind, metadata, roleRef} = this.state.data;
     const subject = this.getSubject();
 
@@ -311,7 +313,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
 
     return <div className="rbac-edit-binding co-m-pane__body">
       <Helmet title={title} />
-      <div className="co-m-pane__body-group">
+      <form className="co-m-pane__body-group" onSubmit={this.save}>
         <h1 className="co-m-pane__title">{title}</h1>
         <div className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</div>
 
@@ -323,7 +325,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
           <p className="rbac-edit-binding__input-label">Name:</p>
           {_.get(fixed, 'metadata.name')
             ? <ResourceName kind={kind} name={metadata.name} />
-            : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} />}
+            : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required />}
           {kind === 'RoleBinding' && <div>
             <div className="separator"></div>
             <p className="rbac-edit-binding__input-label">Namespace:</p>
@@ -354,16 +356,16 @@ class BaseEditRoleBinding_ extends SafetyFirst {
           </div>}
           <div className="separator"></div>
           <p className="rbac-edit-binding__input-label">Subject Name:</p>
-          <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} />
+          <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required />
         </Section>
 
         <div className="separator"></div>
 
         <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary" onClick={this.save}>{saveButtonText || 'Create Binding'}</button>
+          <button type="submit" className="btn btn-primary">{saveButtonText || 'Create Binding'}</button>
           <Link to={getNamespacedRoute('rolebindings')}>Cancel</Link>
         </ButtonBar>
-      </div>
+      </form>
     </div>;
   }
 });
