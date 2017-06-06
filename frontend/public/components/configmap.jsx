@@ -1,31 +1,26 @@
 import React from 'react';
 import moment from 'moment';
 
-import {DetailsPage, List, ListPage} from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, Heading, navFactory, ResourceCog, ResourceLink, ResourceSummary} from './utils';
+import { Cog, Heading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 
 const menuActions = Cog.factory.common;
 
-const ConfigMapHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">Config Map Name</div>
-  <div className="col-xs-4">Config Map Data</div>
-  <div className="col-xs-4">Config Map Age</div>
+const ConfigMapHeader = props => <ListHeader>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Config Map Name</ColHead>
+  <ColHead {...props} className="col-xs-4" sortFunc="dataSize">Config Map Data</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Config Map Age</ColHead>
+</ListHeader>;
+
+const ConfigMapRow = ({obj: configMap}) => <div className="row co-resource-list__item">
+  <div className="col-xs-4">
+    <ResourceCog actions={menuActions} kind="configmap" resource={configMap} />
+    <ResourceLink kind="configmap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
+  </div>
+  <div className="col-xs-4">{_.size(configMap.data)}</div>
+  <div className="col-xs-4">{moment(configMap.metadata.creationTimestamp).fromNow()}</div>
 </div>;
-
-const ConfigMapRow = ({obj: configMap}) => {
-  const data = Object.keys(configMap.data || {}).length;
-  const age = moment(configMap.metadata.creationTimestamp).fromNow();
-
-  return <div className="row co-resource-list__item">
-    <div className="col-xs-4">
-      <ResourceCog actions={menuActions} kind="configmap" resource={configMap} />
-      <ResourceLink kind="configmap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
-    </div>
-    <div className="col-xs-4">{data}</div>
-    <div className="col-xs-4">{age}</div>
-  </div>;
-};
 
 const ConfigMapDetails = (configMap) => {
   return <div className="row">

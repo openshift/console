@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {DetailsPage, List, ListPage} from './factory';
-import {Header, rowOfKind} from './workloads';
-import {Cog, navFactory, Heading, ResourceSummary, ResourcePodCount} from './utils';
+import { DetailsPage, List, ListPage, rowOfKind, WorkloadListHeader } from './factory';
+import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 
 const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
 export const replicaSetMenuActions = [ModifyCount, ModifyPodSelector, ModifyNodeSelector, ...common];
@@ -27,7 +26,7 @@ const {details, editYaml, pods} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
 const ReplicaSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={replicaSetMenuActions} {...props} />;
 
-const ReplicaSetsList = props => <List {...props} Header={Header} Row={rowOfKind('replicaset', replicaSetMenuActions)} />;
+const ReplicaSetsList = props => <List {...props} Header={WorkloadListHeader} Row={rowOfKind('replicaset', replicaSetMenuActions)} />;
 const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};

@@ -1,17 +1,17 @@
 import React from 'react';
 import moment from 'moment';
 
-import {DetailsPage, List, ListPage} from './factory';
-import {Cog, navFactory, ResourceCog, ResourceLink, Timestamp} from './utils';
-import {SecretsList, withSecretsList} from './secret';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Cog, navFactory, ResourceCog, ResourceLink, Timestamp } from './utils';
+import { SecretsList, withSecretsList } from './secret';
 
 const menuActions = [Cog.factory.Delete];
 
-const Header = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">Name</div>
-  <div className="col-xs-4">Secrets</div>
-  <div className="col-xs-4">Age</div>
-</div>;
+const Header = props => <ListHeader>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="secrets">Secrets</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Age</ColHead>
+</ListHeader>;
 
 const ServiceAccountRow = ({obj: serviceaccount}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;

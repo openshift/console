@@ -1,16 +1,16 @@
 import React from 'react';
 
-import {DetailsPage, List, ListPage} from './factory';
-import {Cog, Heading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary} from './utils';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Cog, Heading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
 
 const menuActions = Cog.factory.common;
 
+export const ingressValidHosts = ingress => _.chain(ingress).get('spec.rules').map('host').filter(_.isString).value();
+
 const getHosts = (ingress) => {
-  const hosts = _.map(_.get(ingress, 'spec.rules'), 'host');
+  const hosts = ingressValidHosts(ingress);
 
-  const validHosts = _.filter(hosts, _.isString);
-
-  if (validHosts.length) {
+  if (hosts.length) {
     return <div>{hosts.join(', ')}</div>;
   }
 
@@ -30,11 +30,11 @@ const getTLSCert = (ingress) => {
   </div>;
 };
 
-const IngressListHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-3">Ingress Name</div>
-  <div className="col-xs-4">Ingress Labels</div>
-  <div className="col-xs-5">Hosts</div>
-</div>;
+const IngressListHeader = props => <ListHeader>
+  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Ingress Name</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Ingress Labels</ColHead>
+  <ColHead {...props} className="col-xs-5" sortFunc="ingressValidHosts">Hosts</ColHead>
+</ListHeader>;
 
 const IngressListRow = ({obj: ingress}) => <div className="row co-resource-list__item">
   <div className="col-xs-3">

@@ -5,49 +5,24 @@ import { k8s } from '../module/k8s';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { getRestartPolicyLabel } from '../module/k8s/pods';
 import { ResourceEventStream } from './events';
-import { DetailsPage, List, ListPage } from './factory';
-import { Cog, LabelList, navFactory, Overflow, podPhase, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Cog, LabelList, navFactory, Overflow, podPhase, podReadiness, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { PodLogs } from './pod-logs';
 
 const menuActions = Cog.factory.common;
 
-export const readiness = ({status}) => {
-  if (_.isEmpty(status.conditions)) {
+const Readiness = ({pod}) => {
+  const readiness = podReadiness(pod);
+  if (!readiness) {
     return null;
   }
-
-  let allReady = true;
-  const conditions = _.map(status.conditions, c => {
-    if (c.status !== 'True') {
-      allReady = false;
-    }
-    return Object.assign({time: new Date(c.lastTransitionTime)}, c);
-  });
-
-  if (allReady) {
-    return 'Ready';
+  if (readiness === 'Ready') {
+    return <span>{readiness}</span>;
   }
-
-  let earliestNotReady = null;
-  _.each(conditions, c => {
-    if (c.status === 'True') {
-      return;
-    }
-    if (!earliestNotReady) {
-      earliestNotReady = c;
-      return;
-    }
-    if (c.time < earliestNotReady.time) {
-      earliestNotReady = c;
-    }
-  });
-
-  const reason = earliestNotReady.reason || earliestNotReady.type;
-
-  return <span className="co-error" >
+  return <span className="co-error">
     <i className="fa fa-times-circle co-icon-space-r" />
-    {reason}
+    {readiness}
   </span>;
 };
 
@@ -71,20 +46,20 @@ const PodRow = ({obj: pod}) => {
     </div>
 
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">{status}</div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{readiness(pod)}</div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Readiness pod={pod} /></div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
       <NodeLink name={pod.spec.nodeName} />
     </div>
   </div>;
 };
 
-const PodHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Pod Name</div>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">Pod Labels</div>
-  <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Status</div>
-  <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Readiness</div>
-  <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Node</div>
-</div>;
+const PodHeader = props => <ListHeader>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.labels">Pod Labels</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortFunc="podPhase">Status</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm" sortFunc="podReadiness">Readiness</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.nodeName">Node</ColHead>
+</ListHeader>;
 
 const filters = [{
   type: 'pod-status',

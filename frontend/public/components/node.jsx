@@ -2,7 +2,7 @@ import React from 'react';
 
 import { k8sPatch, isNodeReady } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, List, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
@@ -45,25 +45,25 @@ const NodeIPList = ({ips, expand = false}) => <div>
   </div>)}
 </div>;
 
-const Header = ({data}) => {
-  if (data) {
-    const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(data[0]);
-    return <div className="row co-m-table-grid__head">
-      <div className="col-xs-4">Node Name</div>
-      <div className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'}>Status</div>
-      { isOperatorInstalled && <div className="col-xs-3">OS Update</div> }
-      <div className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'}>Node Addresses</div>
-    </div>;
+const Header = props => {
+  if (props.data) {
+    const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(props.data[0]);
+    return <ListHeader>
+      <ColHead {...props} className="col-xs-4" sortField="metadata.name">Node Name</ColHead>
+      <ColHead {...props} className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'} sortFunc="nodeReadiness">Status</ColHead>
+      { isOperatorInstalled && <ColHead {...props} className="col-xs-3" sortFunc="nodeUpdateStatus">OS Update</ColHead> }
+      <ColHead {...props} className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'} sortField="status.addresses">Node Addresses</ColHead>
+    </ListHeader>;
   }
   return null;
 };
 
-const HeaderSearch = () => <div className="row co-m-table-grid__head">
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Node Name</div>
-  <div className="col-md-2 hidden-sm hidden-xs">Status</div>
-  <div className="col-sm-5 col-xs-7">Node Labels</div>
-  <div className="col-md-2 col-sm-3 hidden-xs">Node Addresses</div>
-</div>;
+const HeaderSearch = props => <ListHeader>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-5" sortField="metadata.name">Node Name</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="nodeReadiness">Status</ColHead>
+  <ColHead {...props} className="col-sm-5 col-xs-7" sortField="metadata.labels">Node Labels</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
+</ListHeader>;
 
 const NodeStatus = ({node}) => isNodeReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
 

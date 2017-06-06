@@ -4,9 +4,9 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
 import { k8sEnum } from '../../module/k8s';
-import { DetailsPage, List, MultiListPage, TextFilter } from '../factory';
+import { ColHead, DetailsPage, List, ListHeader, MultiListPage, TextFilter } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
-import { BindingName, BindingRows, EmptyMsg as BindingsEmptyMsg, RulesList } from './index';
+import { BindingName, BindingsList, RulesList } from './index';
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
@@ -29,10 +29,10 @@ const menuActions = [
   Cog.factory.Delete,
 ];
 
-const Header = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-6">Name</div>
-  <div className="col-xs-6">Namespace</div>
-</div>;
+const Header = props => <ListHeader>
+  <ColHead {...props} className="col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+</ListHeader>;
 
 const Row = ({obj: role}) => <div className="row co-resource-list__item">
   <div className="col-xs-6">
@@ -102,34 +102,27 @@ class Details extends React.Component {
 
 const pages = [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
 
-const BindingHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">Name</div>
-  <div className="col-xs-2">Subject Kind</div>
-  <div className="col-xs-4">Subject Name</div>
-  <div className="col-xs-2">Namespace</div>
-</div>;
+const BindingHeader = props => <ListHeader>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-2" sortField="subject.kind">Subject Kind</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="subject.name">Subject Name</ColHead>
+  <ColHead {...props} className="col-xs-2" sortField="metadata.namespace">Namespace</ColHead>
+</ListHeader>;
 
-const SubjectRow = ({actions, binding, kind, name}) => <div className="row co-resource-list__item">
+const BindingRow = ({obj: binding}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
-    <BindingName binding={binding} actions={actions} />
+    <BindingName binding={binding} />
   </div>
   <div className="col-xs-2">
-    {kind}
+    {binding.subject.kind}
   </div>
   <div className="col-xs-4">
-    {name}
+    {binding.subject.name}
   </div>
   <div className="col-xs-2">
     {binding.namespace || 'all'}
   </div>
 </div>;
-
-const BindingsList = props => <List
-  {...props}
-  EmptyMsg={BindingsEmptyMsg}
-  Header={BindingHeader}
-  Row={BindingRows(SubjectRow)}
-/>;
 
 export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div>
   <Helmet title={`${name} · Bindings`} />
@@ -141,7 +134,7 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
     canCreate={true}
     createButtonText="Create Binding"
     createProps={{to: `/rolebindings/new?${ns ? `ns=${ns}&` : ''}rolekind=${kind}&rolename=${name}`}}
-    ListComponent={BindingsList}
+    ListComponent={props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />}
     staticFilters={[{'role-binding-roleRef': name}]}
     resources={[
       {kind: 'rolebinding', namespaced: true},
