@@ -11,7 +11,7 @@ const getHosts = (ingress) => {
   const validHosts = _.filter(hosts, _.isString);
 
   if (validHosts.length) {
-    return <div className="co-m-label-list">{hosts.join(', ')}</div>;
+    return <div>{hosts.join(', ')}</div>;
   }
 
   return <div className="text-muted">No hosts</div>;
