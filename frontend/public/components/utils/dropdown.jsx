@@ -7,7 +7,7 @@ export class DropdownMixin extends React.PureComponent {
   constructor(props) {
     super(props);
     this.listener = this._onWindowClick.bind(this);
-    this.state = {active: !!props.active};
+    this.state = {active: !!props.active, selectedKey: props.selectedKey};
     this.toggle = this.toggle.bind(this);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
@@ -60,21 +60,39 @@ export class DropdownMixin extends React.PureComponent {
   }
 }
 
+const AutocompleteInput = props => <input {...props} className="dropdown__autocomplete" autoFocus={true} type="text" />;
+const Caret = () => <span className="caret"></span>;
+
 export class Dropdown extends DropdownMixin {
+  constructor (props) {
+    super(props);
+    this.changeTextFilter = e => this.setState({autocompleteText: e.target.value});
+  }
+
   render() {
-    const {active, selectedKey} = this.state;
-    const {noButton, noSelection, items, title, className, menuClassName} = this.props;
+    const {active, autocompleteText, selectedKey} = this.state;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName} = this.props;
+    const isAutocomplete = !!autocompleteFilter && active;
 
-    const buttonTitle = noSelection || selectedKey === undefined ? title : items[selectedKey];
-    let button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
-      <div className="btn--dropdown__content-wrap">
-        {buttonTitle}&nbsp;&nbsp;
-        <span className="caret"></span>
-      </div>
-    </button>;
+    let items = this.props.items;
+    if (isAutocomplete && !_.isEmpty(autocompleteText)) {
+      items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
+    }
 
+    const title = _.isEmpty(autocompleteText) ? this.props.title : <span className="text-muted">{autocompleteText}</span>;
+    const buttonTitle = noSelection ? title : _.get(items, selectedKey, title);
+
+    let button;
     if (noButton) {
-      button = <span onClick={this.toggle} className="dropdown__not-btn">{buttonTitle}&nbsp;<span className="caret"></span></span>;
+      button = <span onClick={this.toggle} className="dropdown__not-btn">{buttonTitle}&nbsp;<Caret /></span>;
+    } else {
+      button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
+        <div className="btn--dropdown__content-wrap">
+          {isAutocomplete
+            ? <AutocompleteInput onChange={this.changeTextFilter} placeholder={autocompletePlaceholder} value={autocompleteText || ''} />
+            : buttonTitle}&nbsp;&nbsp;<Caret />
+        </div>
+      </button>;
     }
 
     const children = _.map(items, (html, key) => {
@@ -87,7 +105,7 @@ export class Dropdown extends DropdownMixin {
       <div className={className} ref="dropdownElement">
         <div className="dropdown">
           {button}
-          <ul className={classNames('dropdown-menu', menuClassName)} style={{display: active ? 'block' : 'none'}}>{children}</ul>
+          {!_.isEmpty(children) && <ul className={classNames('dropdown-menu', menuClassName)} style={{display: active ? 'block' : 'none'}}>{children}</ul>}
         </div>
       </div>
     );

@@ -1,5 +1,13 @@
 .dropdown {
   display: inline-block;
+
+  &__autocomplete {
+    border: none;
+    line-height: 18px;
+    outline: none;
+    padding: 0 12px 1px 0;
+    width: 100%;
+  }
 }
 
 .dropdown__content {
