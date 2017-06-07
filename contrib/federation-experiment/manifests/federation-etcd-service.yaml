@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: federation-etcd
+  namespace: federation
+spec:
+  ports:
+  - name: peer
+    nodePort: 32380
+    port: 2380
+    protocol: TCP
+    targetPort: 2380
+  - name: client
+    nodePort: 32379
+    port: 2379
+    protocol: TCP
+    targetPort: 2379
+  selector:
+    app: federation-etcd
+  type: NodePort

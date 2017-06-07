@@ -1,5 +1,5 @@
 apiVersion: extensions/v1beta1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: federation-apiserver
   namespace: federation
@@ -22,11 +22,16 @@ spec:
               configMapKeyRef:
                 name: federation-apiserver
                 key: advertise-address
+          - name: ETCD_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: federation-apiserver
+                key: etcd-address
         command:
           - /hyperkube
           - federation-apiserver
           - --bind-address=0.0.0.0
-          - --etcd-servers=http://localhost:2379
+          - --etcd-servers=http://$(ETCD_ADDRESS):2379
           - --secure-port=443
           - --advertise-address=$(ADVERTISE_ADDRESS)
           - --token-auth-file=/srv/kubernetes/known-tokens.csv
@@ -39,15 +44,8 @@ spec:
           - name: federation-apiserver-secrets
             mountPath: /srv/kubernetes/
             readOnly: true
-      - name: etcd
-        image: quay.io/coreos/etcd:v3.0.7
-        command:
-          - "/usr/local/bin/etcd"
-        args:
-          - "--data-dir=/var/lib/etcd"
-        volumeMounts:
-          - name: etcd-data
-            mountPath: /var/lib/etcd
+      nodeSelector:
+        node-role.kubernetes.io/master: ''
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
@@ -56,6 +54,3 @@ spec:
         - name: federation-apiserver-secrets
           secret:
             secretName: federation-apiserver-secrets
-        - name: etcd-data 
-          persistentVolumeClaim:
-            claimName: federation-apiserver-etcd

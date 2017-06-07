@@ -8,15 +8,18 @@ if [ $# -eq 0 ]; then
 fi
 
 KUBECONFIGS_DIR=$1
-NEW_CLUSTERS=
-CLUSTERS=
-HOST=
 KUBECTL="kubectl --kubeconfig kubeconfig"
+CLUSTERS=
+CLUSTER_IPS=
+BOOTSTRAP=
+ETCD_CLUSTER_TOKEN=
+ETCD_INITIAL_CLUSTER=
+FEDERATION_TOKEN=
+FEDERATION_URL=
 
-# Find new clusters
+# Gather kubeconfigs and convert to json
 for f in $KUBECONFIGS_DIR/*; do
     [ ! -f "$f" ] && continue
-    NEW_CLUSTERS="$NEW_CLUSTERS $(basename $f)"
     mv $f $f.yaml
     mkdir -p $f
     kubectl --kubeconfig $f.yaml config view --flatten -o json > $f/kubeconfig
@@ -30,8 +33,8 @@ for d in $KUBECONFIGS_DIR/*; do
     CLUSTERS="$CLUSTERS $(basename $d)"
 done
 
-# Set the host cluster
-HOST=${FEDERATE_HOST:-$(echo $CLUSTERS | cut -d " " -f 1)}
+# Set the bootstrap cluster
+BOOTSTRAP=$(echo $CLUSTERS | cut -d " " -f 1)
 
 # Merge kubeconfigs
 for cluster in $CLUSTERS; do
@@ -56,49 +59,82 @@ for cluster in $CLUSTERS; do
         --user=${cluster}
 done
 
-# Create host context for convenience
-$KUBECTL config set-context host \
-    --cluster=${HOST} \
-    --user=${HOST}
-
-# Create federation objects
-$KUBECTL config use-context host
-
-# Create federation namespace
-$KUBECTL apply -f manifests/federation-namespace.yaml
-
-# Create cluster role binding
-$KUBECTL apply -f manifests/federation-cluster-role-binding.yaml
-
-# Create federation apiserver service
-$KUBECTL apply -f manifests/federation-apiserver-service.yaml
-
-# Create federation apiserver secret
-if ! $KUBECTL describe secrets federation-apiserver-secrets -n federation ; then
-    $KUBECTL create secret generic federation-apiserver-secrets \
-        --from-literal="known-tokens.csv=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' '),admin,admin"\
-        -n federation
+# Create federation kubeconfig
+FEDERATION_URL="$(jq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/$BOOTSTRAP/kubeconfig | sed 's/-api\././g')/federation-api"
+# Get the federation token
+$KUBECTL config use-context $BOOTSTRAP
+if ! $KUBECTL describe secrets federation-apiserver-secrets -n federation > /dev/null 2>&1 ; then
+    FEDERATION_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')
+else
+    FEDERATION_TOKEN=$($KUBECTL get secret federation-apiserver-secrets -n federation -o go-template='{{index .data "known-tokens.csv"}}' | base64 --decode | cut -d "," -f 1)
 fi
+$KUBECTL config set-cluster federation \
+    --server="$FEDERATION_URL" \
+    --insecure-skip-tls-verify=true
+$KUBECTL config set-credentials federation \
+    --token="$FEDERATION_TOKEN"
+$KUBECTL config set-context federation \
+    --cluster=federation \
+    --user=federation
+$KUBECTL config use-context federation
+mkdir -p "$KUBECONFIGS_DIR"/federation
+$KUBECTL config view --flatten --minify > "$KUBECONFIGS_DIR"/federation/kubeconfig
 
-# Create persistent volume claim
-$KUBECTL apply -f manifests/federation-etcd-persistent-volume-claim.yaml
+for cluster in $CLUSTERS; do
+    $KUBECTL config use-context $cluster
 
-# Create federation apiserver configmap
-if ! $KUBECTL describe configmap federation-apiserver -n federation ; then
-    $KUBECTL create configmap federation-apiserver \
-        -n federation \
-        --from-literal=advertise-address="$( \
-            $KUBECTL get service federation-apiserver \
-            -n federation -o jsonpath='{.spec.clusterIP}')"
-fi
+    # Create federation namespace
+    $KUBECTL apply -f manifests/federation-namespace.yaml
+    
+    # Create cluster role binding
+    $KUBECTL apply -f manifests/federation-cluster-role-binding.yaml
+done
 
-# Create federation apiserver deployment
-$KUBECTL apply -f manifests/federation-apiserver-deployment.yaml
+# Set etcd values
+ETCD_CLUSTER_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')
+for cluster in $CLUSTERS; do
+    u=$(jq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/${cluster}/kubeconfig)
+    ip="$(dig +short $(echo $u | sed 's|https\{0,1\}://||g' | cut -d ":" -f 1) | head -n 1)"
+    CLUSTER_IPS="$CLUSTER_IPS $ip"
+    [ ! -z $ETCD_INITIAL_CLUSTER ] && ETCD_INITIAL_CLUSTER="$ETCD_INITIAL_CLUSTER,"
+    ETCD_INITIAL_CLUSTER="$ETCD_INITIAL_CLUSTER$cluster=http://$ip:32380"
+done
 
-# Create federation apiserver ingress
-HOST_CONSOLE_URL=$(jq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/$HOST/kubeconfig | sed 's/-api\././g')
-HOST_CONSOLE_DOMAIN=$(echo $HOST_CONSOLE_URL | sed 's|https\{0,1\}://||g' | cut -d ":" -f 1)
-cat > manifests/federation-apiserver-ingress.yaml <<EOF
+# Create federation etcd configmap, deployment, and service
+i=1
+for cluster in $CLUSTERS; do
+    $KUBECTL config use-context $cluster
+    if ! $KUBECTL describe configmap federation-etcd -n federation > /dev/null 2>&1 ; then
+        $KUBECTL create configmap federation-etcd \
+            -n federation \
+            --from-literal=initial-cluster=$ETCD_INITIAL_CLUSTER \
+            --from-literal=cluster-token=$ETCD_CLUSTER_TOKEN \
+            --from-literal=member-name=$cluster \
+            --from-literal=member-ip=$(echo $CLUSTER_IPS | awk "{print \$$i}")
+    fi
+    $KUBECTL apply -f manifests/federation-etcd-deployment.yaml
+    $KUBECTL apply -f manifests/federation-etcd-service.yaml
+    i=$((i+1))
+done
+
+create_apiserver_secret() {
+    # Create federation apiserver secret
+    if ! $KUBECTL describe secrets federation-apiserver-secrets -n federation > /dev/null 2>&1 ; then
+        $KUBECTL create secret generic federation-apiserver-secrets \
+            --from-literal="known-tokens.csv=$FEDERATION_TOKEN,admin,admin"\
+            -n federation
+    fi
+}
+ 
+# Create federation apiserver resources
+create_apiserver_ingress_and_configmap() {
+    # Create federation apiserver service
+    $KUBECTL apply -f manifests/federation-apiserver-service.yaml
+
+    # Create federation apiserver ingress
+    local cluster_url=$(jq -r '.clusters[0].cluster.server' $KUBECONFIGS_DIR/$1/kubeconfig | sed 's/-api\././g')
+    local cluster_domain=$(echo $cluster_url | sed 's|https\{0,1\}://||g' | cut -d ":" -f 1)
+    cat > manifests/federation-apiserver-ingress.yaml <<EOF
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -111,10 +147,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - $HOST_CONSOLE_DOMAIN
+    - $cluster_domain
     secretName: tectonic-ingress-tls-secret
   rules:
-  - host: $HOST_CONSOLE_DOMAIN
+  - host: $cluster_domain
     http:
       paths:
       - backend:
@@ -122,58 +158,75 @@ spec:
           servicePort: 443
         path: /federation-api
 EOF
-$KUBECTL apply -f manifests/federation-apiserver-ingress.yaml
+    $KUBECTL apply -f manifests/federation-apiserver-ingress.yaml
 
-# Get the federation token
-FEDERATION_TOKEN=$($KUBECTL get secret federation-apiserver-secrets -n federation -o go-template='{{index .data "known-tokens.csv"}}' | base64 --decode | cut -d "," -f 1)
+    # Create federation apiserver configmap
+    if ! $KUBECTL describe configmap federation-apiserver -n federation > /dev/null 2>&1 ; then
+        $KUBECTL create configmap federation-apiserver \
+            -n federation \
+            --from-literal=advertise-address="$( \
+                $KUBECTL get service federation-apiserver \
+                -n federation -o jsonpath='{.spec.clusterIP}')" \
+            --from-literal=etcd-address="$( \
+                $KUBECTL get service federation-etcd \
+                -n federation -o jsonpath='{.spec.clusterIP}')"
+    fi
+}
+   
+# Create kubeconfig secrets
+create_kubeconfig_secrets() {
+    # Create federation kubeconfig secret
+    if ! $KUBECTL describe secret federation-apiserver-kubeconfig -n federation > /dev/null 2>&1 ; then
+        $KUBECTL create secret generic federation-apiserver-kubeconfig \
+            --from-file="$KUBECONFIGS_DIR"/federation/kubeconfig \
+            -n federation
+    fi
+    
+    # Create cluster kubeconfig secrets
+    for cluster in ${CLUSTERS}; do
+        if ! $KUBECTL describe secret ${cluster} -n federation > /dev/null 2>&1 ; then
+            $KUBECTL create secret generic ${cluster} \
+                --from-file=$KUBECONFIGS_DIR/${cluster}/kubeconfig \
+                -n federation
+        fi
+    done
+}
 
-# Create federation kubeconfig
-$KUBECTL config set-cluster federation \
-    --server="$HOST_CONSOLE_URL"/federation-api \
-    --insecure-skip-tls-verify=true
-$KUBECTL config set-credentials federation \
-    --token="$FEDERATION_TOKEN"
-$KUBECTL config set-context federation \
-    --cluster=federation \
-    --user=federation
+# Create federation controller manager resources
+create_controller_manager_resources() {
+    # Create federation controller manager configmap
+    if ! $KUBECTL describe configmap federation-controller-manager -n federation > /dev/null 2>&1 ; then
+        $KUBECTL create configmap federation-controller-manager \
+            --from-literal=zone-id=${DNS_ZONE_ID} \
+            --from-literal=zone-name=${DNS_ZONE_NAME} \
+            -n federation
+    fi
+    
+    # Create federation controller manager deployment
+    $KUBECTL apply -f manifests/federation-controller-manager-deployment.yaml
+}
+
+$KUBECTL config use-context $BOOTSTRAP
+create_apiserver_secret
+create_apiserver_ingress_and_configmap $BOOTSTRAP
+
+# Create federation apiserver daemonset
+$KUBECTL apply -f manifests/federation-apiserver-daemonset.yaml
+
+# Wait for federation bootstrap apiserver to become available
 $KUBECTL config use-context federation
-mkdir -p "$KUBECONFIGS_DIR"/federation
-$KUBECTL config view --flatten --minify > "$KUBECONFIGS_DIR"/federation/kubeconfig
-
-# Wait for federation apiserver to become available
-until $KUBECTL get clusters 2>/dev/null; do
-    printf "waiting for federation apiserver to become available at %s/federation-api\n" "$HOST_CONSOLE_URL"
+until $KUBECTL get clusters >/dev/null 2>&1; do
+    printf "waiting for bootstrap federation apiserver to become available at %s\n" "$FEDERATION_URL"
     sleep 5
 done
 
-# Create federation kubeconfig secret
-$KUBECTL config use-context host
-if ! $KUBECTL describe secret federation-apiserver-kubeconfig -n federation ; then
-    $KUBECTL create secret generic federation-apiserver-kubeconfig \
-        --from-file="$KUBECONFIGS_DIR"/federation/kubeconfig \
-        -n federation
-fi
+$KUBECTL config use-context $BOOTSTRAP
+create_kubeconfig_secrets
+create_controller_manager_resources
 
-# Create federation controller manager configmap
-if ! $KUBECTL describe configmap federation-controller-manager -n federation ; then
-    $KUBECTL create configmap federation-controller-manager \
-        --from-literal=zone-id=${DNS_ZONE_ID} \
-        --from-literal=zone-name=${DNS_ZONE_NAME} \
-        -n federation
-fi
-
-# Create federation controller manager deployment
-$KUBECTL apply -f manifests/federation-controller-manager-deployment.yaml
-
-# Create cluster kubeconfig secrets and resources
+# Create cluster resources
 mkdir -p clusters
 for cluster in ${CLUSTERS}; do
-    if ! $KUBECTL describe secret ${cluster} -n federation ; then
-        $KUBECTL create secret generic ${cluster} \
-            --from-file=$KUBECONFIGS_DIR/${cluster}/kubeconfig \
-            -n federation
-    fi
-
     cat > clusters/${cluster}.yaml <<EOF
 apiVersion: federation/v1beta1
 kind: Cluster
@@ -193,6 +246,19 @@ done
 $KUBECTL config use-context federation
 $KUBECTL apply -f clusters --validate=false
 
+# Pivot
+for cluster in $CLUSTERS; do
+    $KUBECTL config use-context $cluster
+    create_apiserver_ingress_and_configmap $cluster
+    $KUBECTL apply -f manifests/federation-cluster-role-binding.yaml
+done
+$KUBECTL config use-context federation
+$KUBECTL apply -f manifests/federation-namespace.yaml
+create_apiserver_secret
+$KUBECTL apply -f manifests/federation-apiserver-daemonset.yaml
+create_kubeconfig_secrets
+create_controller_manager_resources
+ 
 printf "Run the following commands in the JavaScript console in the Tectonic Console to enable the cluster picker:\n"
 printf "localStorage.setItem('federation-apiserver-token', '%s');\n" "$FEDERATION_TOKEN"
-printf "localStorage.setItem('federation-apiserver-url', '%s/federation-api');\n" "$HOST_CONSOLE_URL"
+printf "localStorage.setItem('federation-apiserver-url', '%s');\n" "$FEDERATION_URL"
