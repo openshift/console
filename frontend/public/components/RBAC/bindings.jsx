@@ -162,22 +162,28 @@ export const RoleBindingsPage = () => <MultiListPage
   title="Role Bindings"
 />;
 
-const ListDropdown_ = ({desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
-  let autocompleteFilter, items, title, newOnChange;
+const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
+  const items = {};
+  let autocompleteFilter, title, newOnChange;
   if (loadError) {
     title = <div className="cos-error-title">Error Loading {desc}</div>;
   } else if (!loaded) {
     title = <LoadingInline />;
   } else {
-    const resourceNameKindMap = ({data, kind}) => _.reject(data, isSystemRole).map(d => ({[d.metadata.name]: kind}));
-    const nameKindMap = Object.assign({}, ..._.flatMap(resources, resourceNameKindMap));
-    items = _.mapValues(nameKindMap, (kind, name) => <ResourceName kind={kind} name={name} />);
+    _.each(resources, ({data}, kind) => {
+      _.each(data, resource => {
+        if (!dataFilter || dataFilter(resource)) {
+          items[resource.metadata.name] = <ResourceName kind={kind} name={resource.metadata.name} />;
+        }
+      });
+    });
+
     title = <span className="text-muted">{placeholder}</span>;
 
     autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
 
     // Pass both the resource name and the resource kind to onChange()
-    newOnChange = key => onChange(key, nameKindMap[key]);
+    newOnChange = key => onChange(key, items[key].props.kind);
   }
   return <div>
     {_.has(items, fixedKey) ? items[fixedKey] : <Dropdown autocompleteFilter={autocompleteFilter} autocompletePlaceholder={placeholder} items={items} selectedKey={selectedKey} title={title} onChange={newOnChange} />}
@@ -191,14 +197,24 @@ const ListDropdown = props => <MultiFirehose resources={props.kinds.map(kind => 
 
 const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['namespace']} placeholder="Select namespace" />;
 
-const NsRoleDropdown = props => <ListDropdown
+const NsRoleDropdown = props => {
+  const roleFilter = role => !isSystemRole(role) && (!props.namespace || !role.metadata.namespace || role.metadata.namespace === props.namespace);
+  return <ListDropdown
+    {...props}
+    dataFilter={roleFilter}
+    desc="Namespace Roles (Role)"
+    kinds={props.fixedKind ? [_.toLower(props.fixedKind)] : ['role', 'clusterrole']}
+    placeholder="Select role name"
+  />;
+};
+
+const ClusterRoleDropdown = props => <ListDropdown
   {...props}
-  desc="Namespace Roles (Role)"
-  kinds={props.fixedKind ? [_.toLower(props.fixedKind)] : ['role', 'clusterrole']}
+  dataFilter={role => !isSystemRole(role)}
+  desc="Cluster-wide Roles (ClusterRole)"
+  kinds={['clusterrole']}
   placeholder="Select role name"
 />;
-
-const ClusterRoleDropdown = props => <ListDropdown {...props} desc="Cluster-wide Roles (ClusterRole)" kinds={['clusterrole']} placeholder="Select role name" />;
 
 const bindingKinds = [
   {value: 'RoleBinding', title: 'Namespace Role Binding (RoleBinding)', desc: 'Grant the permissions to a user or set of users within the selected namespace.'},
@@ -344,6 +360,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
           <RoleDropdown
             fixedKey={_.get(fixed, 'roleRef.name')}
             fixedKind={_.get(fixed, 'roleRef.kind')}
+            namespace={metadata.namespace}
             onChange={this.changeRoleRef}
             selectedKey={roleRef.name}
           />
