@@ -106,7 +106,7 @@ List.propTypes = {
   fieldSelector: React.PropTypes.string,
   filters: React.PropTypes.object,
   loaded: React.PropTypes.bool,
-  loadError: React.PropTypes.string,
+  loadError: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.string]),
   namespace: React.PropTypes.string,
   reduxID: React.PropTypes.string,
   selector: React.PropTypes.object,
