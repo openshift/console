@@ -112,6 +112,17 @@ export class Dropdown extends DropdownMixin {
   }
 }
 
+Dropdown.propTypes = {
+  autocompleteFilter: React.PropTypes.func,
+  autocompletePlaceholder: React.PropTypes.string,
+  className: React.PropTypes.string,
+  items: React.PropTypes.object.isRequired,
+  menuClassName: React.PropTypes.string,
+  noButton: React.PropTypes.bool,
+  noSelection: React.PropTypes.bool,
+  title: React.PropTypes.node,
+};
+
 export const sortActions = actions => _.sortBy(actions, a => [a.weight || 0, a.label]);
 
 export const ActionsMenu = ({actions}) => {
