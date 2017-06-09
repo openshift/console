@@ -71,13 +71,17 @@
 }
 
 
-.dropdown-menu > li > a {
-  cursor: pointer;
-}
+.dropdown-menu {
+  display: block;
 
-.dropdown-menu > li.dropdown__selected > a {
-  color: white;
-  &:hover {
-    color: black;
+  & > li > a {
+    cursor: pointer;
+  }
+
+  & > li.dropdown__selected > a {
+    color: white;
+    &:hover {
+      color: black;
+    }
   }
 }
