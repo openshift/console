@@ -4,7 +4,7 @@ import { Tooltip } from 'react-lightweight-tooltip';
 import { k8sPatch, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, pluralize } from '../utils';
-import { RadioInput } from './_radio';
+import { RadioInput } from '../radio';
 
 const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {

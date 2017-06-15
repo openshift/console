@@ -8,7 +8,7 @@ import { k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { util } from '../../module/k8s/util';
 import { getActiveNamespace, getNamespacedRoute, actions as UIActions } from '../../ui/ui-actions';
 import { MultiListPage, List } from '../factory';
-import { RadioGroup } from '../modals/_radio';
+import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
 import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceName, ResourceLink, StatusBox } from '../utils';

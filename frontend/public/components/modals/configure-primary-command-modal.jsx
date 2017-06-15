@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fromArgs, toArgs } from '../../module/k8s/command';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { RadioInput } from './_radio';
+import { RadioInput } from '../radio';
 
 class ConfigurePrimaryCommandModal extends React.Component {
   constructor(props) {
