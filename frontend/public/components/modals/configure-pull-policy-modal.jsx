@@ -2,7 +2,7 @@ import React from 'react';
 
 import { k8sEnum } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { RadioInput } from './_radio';
+import { RadioInput } from '../radio';
 
 export const configurePullPolicyModal = createModalLauncher(({container, cancel, close}) => {
   const _submit = e => {

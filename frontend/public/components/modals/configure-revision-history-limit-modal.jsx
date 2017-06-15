@@ -3,7 +3,7 @@ import React from 'react';
 import { k8sPatch, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
-import { RadioInput } from './_radio';
+import { RadioInput } from '../radio';
 
 class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
   constructor(props) {
