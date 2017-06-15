@@ -53,10 +53,11 @@ const ResourceListDropdown = ({selected, onChange}) => {
 const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
 ({kind, namespace, selector}) => {
   const List = resources[kind];
+  const ns = kind === 'node' || kind === 'namespace' ? undefined : namespace;
 
   return <div className="co-m-pane__body">
     {List && <div className="co-m-resource-list">
-      <Firehose isList={true} kind={kind} namespace={namespace} selector={selector}>
+      <Firehose isList={true} kind={kind} namespace={ns} selector={selector}>
         <List />
       </Firehose>
     </div>}
