@@ -87,7 +87,7 @@ const NodeCLUpdateStatus = ({node}) => {
 
 const NodeCLStatusRow = ({node}) => {
   const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
-  return <span><i className={updateStatus.className}></i>&nbsp;&nbsp;{updateStatus.text}</span>;
+  return updateStatus ? <span>{updateStatus.className && <span><i className={updateStatus.className}></i>&nbsp;&nbsp;</span>}{updateStatus.text}</span> : null;
 };
 
 const NodeRow = ({obj: node, expand}) => {
