@@ -40,6 +40,10 @@ const isUpdateAvailable = (node) => {
   return getStatus(node) === 'UPDATE_STATUS_UPDATE_AVAILABLE';
 };
 
+const isCheckingForUpdate = (node) => {
+  return getStatus(node) === 'UPDATE_STATUS_CHECKING_FOR_UPDATE';
+};
+
 const isRebooting = (node) => {
   const rebootInProgress =  _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-in-progress`, 'false');
   return rebootInProgress === 'true';
@@ -57,7 +61,7 @@ const isSoftwareUpToDate = (node) => {
 
 const getUpdateStatus = (node) => {
   if (isSoftwareUpToDate(node)) {
-    return { className: 'fa fa-check-circle co-cl-operator--up-to-date', text: 'Up to date'};
+    return { className: null, text: 'Up to date'};
   }
 
   if (isDownloading(node)) {
@@ -71,6 +75,12 @@ const getUpdateStatus = (node) => {
   if (isPendingReboot(node)) {
     return { className: 'fa fa-info-circle co-cl-operator--warning', text: 'Pending Reboot'};
   }
+
+  if (isCheckingForUpdate(node)) {
+    return { className: 'fa fa-info-circle co-cl-operator--pending', text: 'Checking for update'};
+  }
+
+  return null;
 };
 
 /** 'Download Completed' section:
