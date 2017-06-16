@@ -5,7 +5,7 @@ import { Tooltip } from 'react-lightweight-tooltip';
 import { k8sKinds } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { configureClusterSizeModal } from './modals';
-import { ListPage, List, DetailsPage } from './factory';
+import { ColHead, List, ListHeader, ListPage, DetailsPage } from './factory';
 import { PodsPage } from './pod';
 import { Cog, navFactory, ResourceCog, ResourceIcon, Timestamp, Selector, resourcePath, pluralize, LoadingInline} from './utils';
 
@@ -63,12 +63,12 @@ const EtcdClusterRow = ({obj: cluster}) => {
   </div>;
 };
 
-const EtcdClusterHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
-  <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Size</div>
-  <div className="col-lg-4 col-md-4 col-sm-2 hidden-xs">Pod Selector</div>
-  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Last Backup Date</div>
-</div>;
+const EtcdClusterHeader = props => <ListHeader>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="status.size">Size</ColHead>
+  <ColHead {...props} className="col-md-4 col-sm-2 hidden-xs" sortFunc="etcdClusterPodSelector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm" sortField="status.backupServiceStatus.recentBackup.creationTime">Last Backup Date</ColHead>
+</ListHeader>;
 
 const Phase = ({status}) => {
   if (status) {

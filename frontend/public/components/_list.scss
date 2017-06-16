@@ -14,8 +14,17 @@
 }
 
 .middler {
-  display:flex; 
+  display:flex;
   align-items: center;
+}
+
+.co-m-table-grid {
+  &__sort-arrow {
+    margin-left: 10px;
+  }
+  &__sort-link--unsorted {
+    color: #999;
+  }
 }
 
 .co-resource-list__item {

@@ -1,17 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import {DetailsPage, List, ListPage} from './factory';
-import {Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage} from './utils';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
 
-const DaemonSetHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Name</div>
-  <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">Labels</div>
-  <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">Status</div>
-  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Node Selector</div>
-</div>;
+const DaemonSetHeader = props => <ListHeader>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-5 col-xs-6" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortFunc="daemonsetNumScheduled">Status</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector.matchLabels">Node Selector</ColHead>
+</ListHeader>;
 
 const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">

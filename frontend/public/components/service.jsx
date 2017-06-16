@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {DetailsPage, List, ListPage} from './factory';
-import {Cog, navFactory, LabelList, ResourceCog, Heading, ResourceIcon, ResourceLink, ResourceSummary, Selector} from './utils';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Cog, navFactory, LabelList, ResourceCog, Heading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
 
@@ -14,12 +14,12 @@ const ServiceIP = ({s}) => {
   return <p>{children}</p>;
 };
 
-const ServiceHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">Service Name</div>
-  <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">Service Labels</div>
-  <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">Pod Selector</div>
-  <div className="col-lg-3 col-md-2 hidden-sm hidden-xs">Service Location</div>
-</div>;
+const ServiceHeader = props => <ListHeader>
+  <ColHead {...props} className="col-lg-3 col-md-2 col-sm-4 col-xs-6" sortField="metadata.name">Service Name</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="metadata.labels">Service Labels</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-2 hidden-sm hidden-xs" sortField="spec.clusterIP">Service Location</ColHead>
+</ListHeader>;
 
 const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">

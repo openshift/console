@@ -1,12 +1,12 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
-import {k8sEnum} from '../../module/k8s';
-import actions from '../../module/k8s/k8s-actions';
-import {CheckBoxes} from '../row-filter';
-import {Dropdown, Firehose, kindObj, MultiFirehose, NavTitle} from '../utils';
+import { k8sEnum } from '../../module/k8s';
+import k8sActions from '../../module/k8s/k8s-actions';
+import { CheckBoxes } from '../row-filter';
+import { Dropdown, Firehose, kindObj, MultiFirehose, NavTitle } from '../utils';
 
 const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-unselected' : 'btn-selected')}>
@@ -25,7 +25,7 @@ export const TextFilter = ({label, onChange}) => <input
   autoFocus={true}
 />;
 
-const BaseListPage = connect(null, {filterList: actions.filterList})(
+const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
 class BaseListPage_ extends React.Component {
   constructor (props) {
     super(props);

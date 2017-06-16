@@ -1,21 +1,21 @@
 import React from 'react';
 import moment from 'moment';
 
-import {DetailsPage, List, ListPage} from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import {Cog, Firehose, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory} from './utils';
+import { Cog, Firehose, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
 import classnames from 'classnames';
 
 const menuActions = Cog.factory.common;
 
-const SecretHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">Secret Name</div>
-  <div className="col-xs-4">Secret Data</div>
-  <div className="col-xs-4">Secret Age</div>
-</div>;
+const SecretHeader = props => <ListHeader>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Secret Name</ColHead>
+  <ColHead {...props} className="col-xs-4" sortFunc="dataSize">Secret Data</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Secret Age</ColHead>
+</ListHeader>;
 
 const SecretRow = ({obj: secret}) => {
-  const data = Object.keys(secret.data || {}).length;
+  const data = _.size(secret.data);
   const age = moment(secret.metadata.creationTimestamp).fromNow();
 
   return <div className="row co-resource-list__item">

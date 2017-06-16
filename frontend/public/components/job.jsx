@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import {DetailsPage, List, ListPage} from './factory';
+import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {configureJobParallelismModal} from './modals';
 import {Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory} from './utils';
 
@@ -15,13 +15,13 @@ const ModifyJobParallelism = (kind, obj) => ({
 });
 const menuActions = [ModifyJobParallelism, ...Cog.factory.common];
 
-const Header = () => <div className="row co-m-table-grid__head">
-  <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">Name</div>
-  <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">Labels</div>
-  <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">Completions</div>
-  <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">Type</div>
-  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Pod Selector</div>
-</div>;
+const JobHeader = props => <ListHeader>
+  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs">Completions</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs">Type</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector">Pod Selector</ColHead>
+</ListHeader>;
 
 const getJobTypeAndCompletions = (o) => {
   // if neither completions nor parallelism are defined, then it is a non-parallel job.
@@ -110,6 +110,6 @@ const Details = (job) => <div>
 const {details, pods, editYaml} = navFactory;
 const pages = [details(Details), editYaml(), pods()];
 const JobsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
-const JobsList = props => <List {...props} Header={Header} Row={JobRow} />;
+const JobsList = props => <List {...props} Header={JobHeader} Row={JobRow} />;
 const JobsPage = props => <ListPage ListComponent={JobsList} canCreate={true} {...props} />;
 export {JobsList, JobsPage, JobsDetailsPage};

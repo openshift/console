@@ -52,11 +52,14 @@ export const types = {
   setActiveNamespace: 'setActiveNamespace',
   setActiveNavSectionId: 'setActiveNavSectionId',
   setCurrentLocation: 'setCurrentLocation',
+  sortList: 'sortList',
 };
 
 export const actions = {
   [types.setCurrentLocation]: (location, ns) => ({location, ns, type: types.setCurrentLocation}),
+
   [types.setActiveNavSectionId]: (id) => ({value: id, type: types.setActiveNavSectionId}),
+
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {
       namespace = namespace.trim();
@@ -79,4 +82,6 @@ export const actions = {
       value: namespace,
     };
   },
+
+  [types.sortList]: (listId, field, func, order) => ({listId, field, func, order, type: types.sortList}),
 };

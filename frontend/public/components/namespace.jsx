@@ -4,12 +4,12 @@ import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s, k8sEnum} from '../module/k8s';
 import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
-import {DetailsPage, List, ListPage} from './factory';
+import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
 import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
-import {BindingName, BindingRows, EmptyMsg, RoleLink} from './RBAC';
+import {BindingName, BindingsList, RoleLink} from './RBAC';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -33,11 +33,11 @@ const deleteModal = (kind, ns) => {
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, deleteModal];
 
-const Header = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">Name</div>
-  <div className="col-xs-4">Status</div>
-  <div className="col-xs-4">Labels</div>
-</div>;
+const Header = props => <ListHeader>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="status.phase">Status</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Labels</ColHead>
+</ListHeader>;
 
 const Row = ({obj: ns}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
@@ -126,29 +126,28 @@ const Details = (ns) => <div>
   </div>
 </div>;
 
-const RoleHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-3">Name</div>
-  <div className="col-xs-3">Role Ref</div>
-  <div className="col-xs-2">Subject Kind</div>
-  <div className="col-xs-4">Subject Name</div>
-</div>;
+const BindingHeader = props => <ListHeader>
+  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-3" sortField="roleRef.name">Role Ref</ColHead>
+  <ColHead {...props} className="col-xs-2" sortField="subject.kind">Subject Kind</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="subject.name">Subject Name</ColHead>
+</ListHeader>;
 
-const SubjectRow = ({actions, binding, kind, name}) => <div className="row co-resource-list__item">
+const BindingRow = ({obj: binding}) => <div className="row co-resource-list__item">
   <div className="col-xs-3">
-    <BindingName binding={binding} actions={actions} />
+    <BindingName binding={binding} />
   </div>
   <div className="col-xs-3">
     <RoleLink binding={binding} />
   </div>
   <div className="col-xs-2">
-    {kind}
+    {binding.subject.kind}
   </div>
   <div className="col-xs-4">
-    {name}
+    {binding.subject.name}
   </div>
 </div>;
 
-const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={RoleHeader} Row={BindingRows(SubjectRow)} />;
 const RolesPage = ({metadata}) => {
   const Intro = <div>
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
@@ -161,7 +160,7 @@ const RolesPage = ({metadata}) => {
     filterLabel="Role Bindings by role or subject"
     Intro={Intro}
     kind="rolebinding"
-    ListComponent={RolesList}
+    ListComponent={props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />}
     namespace={metadata.name}
     showTitle={false}
     textFilter="role-binding"

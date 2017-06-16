@@ -30,3 +30,37 @@ export const podPhase = (pod) => {
 
   return ret;
 };
+
+export const podReadiness = ({status}) => {
+  if (_.isEmpty(status.conditions)) {
+    return null;
+  }
+
+  let allReady = true;
+  const conditions = _.map(status.conditions, c => {
+    if (c.status !== 'True') {
+      allReady = false;
+    }
+    return Object.assign({time: new Date(c.lastTransitionTime)}, c);
+  });
+
+  if (allReady) {
+    return 'Ready';
+  }
+
+  let earliestNotReady = null;
+  _.each(conditions, c => {
+    if (c.status === 'True') {
+      return;
+    }
+    if (!earliestNotReady) {
+      earliestNotReady = c;
+      return;
+    }
+    if (c.time < earliestNotReady.time) {
+      earliestNotReady = c;
+    }
+  });
+
+  return earliestNotReady.reason || earliestNotReady.type;
+};

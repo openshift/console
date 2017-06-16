@@ -1,9 +1,13 @@
 import React from 'react';
 import fuzzy from 'fuzzysearch';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
 import { getQN, isNodeReady } from '../../module/k8s';
+import { actions as UIActions } from '../../ui/ui-actions';
+import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
-import { podPhase, StatusBox } from '../utils';
+import { LabelList, podPhase, podReadiness, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
@@ -72,43 +76,154 @@ const filterPropType = (props, propName, componentName) => {
   }
 };
 
-const Rows = ({EmptyMsg, expand, filters, data, Row, sortBy, staticFilters}) => {
-  const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-  const rows = _.sortBy(getFilteredRows(allFilters, data), sortBy).map(object => {
-    return <Row key={getQN(object)} obj={object} expand={expand} />;
-  });
-  return (_.isEmpty(rows) && EmptyMsg) ? EmptyMsg : <div className="co-m-table-grid__body">{rows}</div>;
+const sorts = {
+  daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
+  dataSize: resource => _.size(_.get(resource, 'data')),
+  etcdClusterPodSelector: cluster => `etcd_cluster=${cluster.metadata.name}`,
+  ingressValidHosts,
+  nodeReadiness: node => _.chain(node).get('status.conditions').find({type: 'Ready'}).get('status').value(),
+  nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
+  numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
+  podPhase,
+  podReadiness,
+  string: val => JSON.stringify(val),
+};
+
+export const ColHead = ({applySort, children, className, currentSortField, currentSortFunc, currentSortOrder, sortField, sortFunc}) => {
+  if (!sortField && !sortFunc) {
+    return <div className={className}>{children}</div>;
+  }
+
+  const isSorted = sortField === currentSortField && sortFunc === currentSortFunc;
+  const newSortOrder = isSorted && currentSortOrder === 'asc' ? 'desc' : 'asc';
+  const onClick = () => applySort(sortField, sortFunc, newSortOrder);
+  return <div className={className}>
+    <a className={isSorted ? undefined : 'co-m-table-grid__sort-link--unsorted'} onClick={onClick}>{children}</a>
+    {isSorted && <i className={`co-m-table-grid__sort-arrow fa fa-long-arrow-${currentSortOrder === 'asc' ? 'up' : 'down'}`}></i>}
+  </div>;
+};
+
+ColHead.propTypes = {
+  applySort: React.PropTypes.func,
+  children: React.PropTypes.node,
+  className: React.PropTypes.string,
+  currentSortField: React.PropTypes.string,
+  currentSortFunc: React.PropTypes.string,
+  currentSortOrder: React.PropTypes.string,
+  sortField: React.PropTypes.string,
+  sortFunc: React.PropTypes.string,
+};
+
+export const ListHeader = ({children}) => <div className="row co-m-table-grid__head">{children}</div>;
+
+export const WorkloadListHeader = props => <ListHeader>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-5 col-xs-6" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortFunc="numReplicas">Status</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector">Pod Selector</ColHead>
+</ListHeader>;
+
+const Rows = ({data, EmptyMsg, expand, Row}) => {
+  if (_.isEmpty(data) && EmptyMsg) {
+    return EmptyMsg;
+  }
+  return <div className="co-m-table-grid__body">
+    {data.map(obj => <Row key={obj.rowKey || getQN(obj)} obj={obj} expand={expand} />)}
+  </div>;
 };
 
 Rows.propTypes = {
   data: React.PropTypes.arrayOf(React.PropTypes.object),
   EmptyMsg: React.PropTypes.object,
   expand: React.PropTypes.bool,
-  filters: filterPropType,
   Row: React.PropTypes.func.isRequired,
-  sortBy: React.PropTypes.func,
-  staticFilters: React.PropTypes.array,
 };
 
-export const List = props => {
-  const {EmptyMsg, expand, Header, Row, sortBy, staticFilters} = props;
+const stateToProps = ({UI}, {data, filters, reduxID, reduxIDs, rowSplitter, staticFilters}) => {
+  if (rowSplitter) {
+    data = _.flatMap(data, rowSplitter);
+  }
+  const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
+
+  const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
+  const currentSortField = UI.getIn(['listSorts', listId, 'field'], 'metadata.name');
+  const currentSortFunc = UI.getIn(['listSorts', listId, 'func']);
+  const currentSortOrder = UI.getIn(['listSorts', listId, 'order'], 'asc');
+
+  let sortBy = 'metadata.name';
+  if (currentSortField) {
+    // Sort resources by one of their fields as a string
+    sortBy = resource => sorts.string(_.get(resource, currentSortField, ''));
+  } else if (currentSortFunc && sorts[currentSortFunc]) {
+    // Sort resources by a function in the 'sorts' object
+    sortBy = sorts[currentSortFunc];
+  }
+
+  // Always set the secondary sort criteria to ascending by name
+  const newData = _.orderBy(getFilteredRows(allFilters, data), [sortBy, 'metadata.name'], [currentSortOrder, 'asc']);
+
+  return {currentSortField, currentSortFunc, currentSortOrder, data: newData, listId};
+};
+
+export const List = connect(stateToProps, {sortList: UIActions.sortList})(props => {
+  const {currentSortField, currentSortFunc, currentSortOrder, EmptyMsg, expand, Header, listId, Row, sortList} = props;
   return <div className="co-m-table-grid co-m-table-grid--bordered">
     <StatusBox {...props}>
-      <Header />
-      <Rows EmptyMsg={EmptyMsg} Row={Row} expand={expand} sortBy={sortBy || (item => _.get(item, 'metadata.name'))} staticFilters={staticFilters} />
+      <Header
+        applySort={_.partial(sortList, listId)}
+        currentSortField={currentSortField}
+        currentSortFunc={currentSortFunc}
+        currentSortOrder={currentSortOrder}
+      />
+      <Rows EmptyMsg={EmptyMsg} expand={expand} Row={Row} />
     </StatusBox>
   </div>;
-};
+});
 
 List.propTypes = {
   data: React.PropTypes.array,
   EmptyMsg: React.PropTypes.object,
+  expand: React.PropTypes.bool,
   fieldSelector: React.PropTypes.string,
-  filters: React.PropTypes.object,
+  filters: filterPropType,
+  Header: React.PropTypes.func.isRequired,
   loaded: React.PropTypes.bool,
   loadError: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.string]),
   namespace: React.PropTypes.string,
   reduxID: React.PropTypes.string,
+  reduxIDs: React.PropTypes.array,
+  Row: React.PropTypes.func.isRequired,
+  rowSplitter: React.PropTypes.func,
   selector: React.PropTypes.object,
   staticFilters: React.PropTypes.array,
+};
+
+export const rowOfKind = (kind, actions) => {
+  return class rowOfKindComponent extends React.Component {
+    shouldComponentUpdate(nextProps) {
+      return _.get(this.props.obj, 'metadata.resourceVersion') !== _.get(nextProps.obj, 'metadata.resourceVersion');
+    }
+
+    render() {
+      const o = this.props.obj;
+
+      return <div className="row co-resource-list__item">
+        <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+          <ResourceCog actions={actions} kind={kind} resource={o} />
+          <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
+        </div>
+        <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
+          <LabelList kind={kind} labels={o.metadata.labels} />
+        </div>
+        <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
+          <Link to={`${resourcePath(kind, o.metadata.name, o.metadata.namespace)}/pods`} title="pods">
+            {o.status.replicas || 0} of {o.spec.replicas} pods
+          </Link>
+        </div>
+        <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
+          <Selector selector={o.spec.selector} />
+        </div>
+      </div>;
+    }
+  };
 };

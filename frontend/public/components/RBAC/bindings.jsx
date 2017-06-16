@@ -4,10 +4,10 @@ import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-import { k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
+import { getQN, k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { util } from '../../module/k8s/util';
 import { getActiveNamespace, getNamespacedRoute, actions as UIActions } from '../../ui/ui-actions';
-import { MultiListPage, List } from '../factory';
+import { ColHead, List, ListHeader, MultiListPage } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
@@ -27,10 +27,14 @@ const rowSplitter = binding => {
     const subject = {kind: '-', name: '-'};
     return [Object.assign({}, binding, {subject})];
   }
-  return binding.subjects.map(subject => Object.assign({}, binding, {subject}));
+  return binding.subjects.map((subject, subjectIndex) => Object.assign({}, binding, {
+    subject,
+    subjectIndex,
+    rowKey: `${getQN(binding)}|${subject.kind}|${subject.name}`,
+  }));
 };
 
-const menuActions = (subjectIndex, isBindingDelete) => [
+const menuActions = ({subjectIndex, subjects}) => [
   (kind, obj) => ({
     label: `Duplicate ${kind.label}...`,
     weight: 700,
@@ -41,7 +45,7 @@ const menuActions = (subjectIndex, isBindingDelete) => [
     weight: 800,
     href: `${util.getLink(obj, kind)}/edit?subjectIndex=${subjectIndex}`,
   }),
-  isBindingDelete ? Cog.factory.Delete : (kind, binding) => {
+  subjects.length === 1 ? Cog.factory.Delete : (kind, binding) => {
     const subject = binding.subjects[subjectIndex];
     return {
       label: `Delete ${kind.label} Subject...`,
@@ -56,18 +60,18 @@ const menuActions = (subjectIndex, isBindingDelete) => [
   },
 ];
 
-const Header = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-3">Name</div>
-  <div className="col-xs-3">Role Ref</div>
+const Header = props => <ListHeader>
+  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-3" sortField="roleRef.name">Role Ref</ColHead>
   <div className="col-xs-6">
-    <div className="col-xs-3">Subject Kind</div>
-    <div className="col-xs-5">Subject Name</div>
-    <div className="col-xs-4">Namespace</div>
+    <ColHead {...props} className="col-xs-3" sortField="subject.kind">Subject Kind</ColHead>
+    <ColHead {...props} className="col-xs-5" sortField="subject.name">Subject Name</ColHead>
+    <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
   </div>
-</div>;
+</ListHeader>;
 
-export const BindingName = ({actions, binding}) => <span>
-  <ResourceCog actions={actions} kind={bindingKind(binding)} resource={binding} />
+export const BindingName = ({binding}) => <span>
+  <ResourceCog actions={menuActions(binding)} kind={bindingKind(binding)} resource={binding} />
   <ResourceName kind={bindingKind(binding)} name={binding.metadata.name} />
 </span>;
 
@@ -79,44 +83,29 @@ export const RoleLink = ({binding}) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const SubjectRow = ({actions, binding, kind, name}) => {
-  return <div className="row co-resource-list__item">
+const Row = ({obj: binding}) => <div className="row co-resource-list__item">
+  <div className="col-xs-3">
+    <BindingName binding={binding} />
+  </div>
+  <div className="col-xs-3">
+    <RoleLink binding={binding} />
+  </div>
+  <div className="col-xs-6">
     <div className="col-xs-3">
-      <BindingName actions={actions} binding={binding} />
+      {binding.subject.kind}
     </div>
-    <div className="col-xs-3">
-      <RoleLink binding={binding} />
+    <div className="col-xs-5">
+      {binding.subject.name}
     </div>
-    <div className="col-xs-6">
-      <div className="col-xs-3">
-        {kind}
-      </div>
-      <div className="col-xs-5">
-        {name}
-      </div>
-      <div className="col-xs-4">
-        {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
-      </div>
+    <div className="col-xs-4">
+      {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
     </div>
-  </div>;
-};
+  </div>
+</div>;
 
-export const BindingRows = Row => ({obj: binding}) => {
-  const rows = rowSplitter(binding);
-  return <div>
-    {rows.map(({subject}, i) => <Row
-      key={i}
-      actions={menuActions(i, rows.length === 1)}
-      binding={binding}
-      kind={subject.kind}
-      name={subject.name}
-    />)}
-  </div>;
-};
+const EmptyMsg = <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
-export const EmptyMsg = <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
-
-const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} Header={Header} Row={BindingRows(SubjectRow)} />;
+export const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} rowSplitter={rowSplitter} />;
 
 export const bindingType = binding => {
   if (!binding) {
@@ -150,7 +139,7 @@ const resources = [
 ];
 
 export const RoleBindingsPage = () => <MultiListPage
-  ListComponent={BindingsList}
+  ListComponent={props => <BindingsList {...props} Header={Header} Row={Row} />}
   canCreate={true}
   createButtonText="Create Binding"
   createProps={{to: 'rolebindings/new'}}
