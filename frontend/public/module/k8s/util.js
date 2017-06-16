@@ -27,26 +27,4 @@ export const util = {
     util.deleteProps(obj, _.isNull);
     return obj;
   },
-
-  // The detail page link of a resource.
-  getLink: (resource, kind) => {
-    var meta, path = '';
-    if (!resource || !resource.metadata) {
-      return '';
-    }
-    meta = resource.metadata;
-    if (meta.namespace) {
-      path = `/ns/${meta.namespace}/`;
-    }
-    return `${path}${kind.path}/${meta.name}`;
-  },
-
-  // The edit page link of a resource.
-  getEditLink: (resource, kind) => {
-    var link = util.getLink(resource, kind);
-    if (!link) {
-      return '';
-    }
-    return `${link}/yaml`;
-  },
 };

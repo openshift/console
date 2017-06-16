@@ -3,11 +3,10 @@ import classNames from 'classnames';
 import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s} from '../../module/k8s/k8s';
-import {util} from '../../module/k8s/util';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 import { annotationsModal, confirmModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal } from '../modals';
 import { DropdownMixin, sortActions } from './dropdown';
-import { history, kindObj } from './index';
+import { history, kindObj, resourceObjPath } from './index';
 
 export class Cog extends DropdownMixin {
   render () {
@@ -75,7 +74,7 @@ Cog.factory = {
   Edit: (kind, obj) => ({
     label: `Edit ${kind.label}...`,
     weight: 800,
-    href: util.getEditLink(obj, kind),
+    href: `${resourceObjPath(obj, kind.id)}/yaml`,
   }),
   ModifyLabels: (kind, obj) => ({
     label: 'Modify Labels...',
