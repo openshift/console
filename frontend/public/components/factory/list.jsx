@@ -123,18 +123,12 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-const Rows = ({data, EmptyMsg, expand, Row}) => {
-  if (_.isEmpty(data) && EmptyMsg) {
-    return EmptyMsg;
-  }
-  return <div className="co-m-table-grid__body">
-    {data.map(obj => <Row key={obj.rowKey || getQN(obj)} obj={obj} expand={expand} />)}
-  </div>;
-};
+const Rows = ({data, expand, Row}) => <div className="co-m-table-grid__body">
+  {data.map(obj => <Row key={obj.rowKey || getQN(obj)} obj={obj} expand={expand} />)}
+</div>;
 
 Rows.propTypes = {
   data: React.PropTypes.arrayOf(React.PropTypes.object),
-  EmptyMsg: React.PropTypes.object,
   expand: React.PropTypes.bool,
   Row: React.PropTypes.func.isRequired,
 };
@@ -166,7 +160,7 @@ const stateToProps = ({UI}, {data, filters, reduxID, reduxIDs, rowSplitter, stat
 };
 
 export const List = connect(stateToProps, {sortList: UIActions.sortList})(props => {
-  const {currentSortField, currentSortFunc, currentSortOrder, EmptyMsg, expand, Header, listId, Row, sortList} = props;
+  const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList} = props;
   return <div className="co-m-table-grid co-m-table-grid--bordered">
     <StatusBox {...props}>
       <Header
@@ -175,7 +169,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(props 
         currentSortFunc={currentSortFunc}
         currentSortOrder={currentSortOrder}
       />
-      <Rows EmptyMsg={EmptyMsg} expand={expand} Row={Row} />
+      <Rows expand={expand} Row={Row} />
     </StatusBox>
   </div>;
 });
