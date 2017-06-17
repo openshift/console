@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 import { StatusBox, RelativeLink } from './index';
 import { EditYAML } from '../edit-yaml';
+import { PodsPage } from '../pod';
 
 export const navFactory = {
   details: (component = undefined) => ({
@@ -24,6 +25,11 @@ export const navFactory = {
     href: 'yaml',
     name: 'YAML',
     component: (props) => <EditYAML obj={props} />,
+  }),
+  pods: (component = undefined) => ({
+    href: 'pods',
+    name: 'Pods',
+    component: component || (({metadata: {namespace}, spec: {selector}}) => <PodsPage showTitle={false} namespace={namespace} selector={selector} />),
   }),
   roles: (component = undefined) => ({
     href: 'roles',

@@ -221,15 +221,15 @@ const Details = (pod) => {
   </div>;
 };
 
-const {details, events, logs, editYaml} = navFactory;
-const pages = [details(Details), editYaml(), logs(PodLogs), events(ResourceEventStream)];
-
-export const PodsDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const PodsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[
+    navFactory.details(Details),
+    navFactory.editYaml(),
+    navFactory.logs(PodLogs),
+    navFactory.events(ResourceEventStream)
+  ]}
+/>;
 export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
 export const PodsPage = props => <ListPage ListComponent={PodList} kind="pod" canCreate={true} rowFilters={filters} {...props} />;
-
-navFactory.pods = (component = undefined) => ({
-  href: 'pods',
-  name: 'Pods',
-  component: component || (({metadata: {namespace}, spec: {selector}}) => <PodsPage showTitle={false} namespace={namespace} selector={selector} />),
-});

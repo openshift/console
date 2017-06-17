@@ -204,5 +204,8 @@ export const NamespaceSelector = () => {
   </Firehose>;
 };
 
-const pages = [navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)];
-export const NamespacesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const NamespacesDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)]}
+/>;

@@ -126,8 +126,11 @@ const Details = (ingress) => <div className="col-md-12">
   </div>
 </div>;
 
-const pages = [navFactory.details(detailsPage(Details)), navFactory.editYaml()];
-const IngressDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const IngressDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[navFactory.details(detailsPage(Details)), navFactory.editYaml()]}
+/>;
 const IngressList = props => <List {...props} Header={IngressListHeader} Row={IngressListRow} />;
 const IngressPage = props => <ListPage ListComponent={IngressList} canCreate={true} {...props} />;
 

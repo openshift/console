@@ -23,8 +23,11 @@ const Details = (replicaSet) => <div>
 </div>;
 
 const {details, editYaml, pods} = navFactory;
-const pages = [details(Details), editYaml(), pods()];
-const ReplicaSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={replicaSetMenuActions} {...props} />;
+const ReplicaSetsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={replicaSetMenuActions}
+  pages={[details(Details), editYaml(), pods()]}
+/>;
 
 const ReplicaSetsList = props => <List {...props} Header={WorkloadListHeader} Row={rowOfKind('replicaset', replicaSetMenuActions)} />;
 const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;

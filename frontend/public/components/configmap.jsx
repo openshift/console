@@ -39,10 +39,12 @@ const ConfigMapDetails = (configMap) => {
   </div>;
 };
 
-const pages = [navFactory.details(ConfigMapDetails), navFactory.editYaml()];
-
 const ConfigMaps = props => <List {...props} Header={ConfigMapHeader} Row={ConfigMapRow} />;
 const ConfigMapsPage = props => <ListPage ListComponent={ConfigMaps} canCreate={true} {...props} />;
-const ConfigMapsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const ConfigMapsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[navFactory.details(ConfigMapDetails), navFactory.editYaml()]}
+/>;
 
 export {ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage};

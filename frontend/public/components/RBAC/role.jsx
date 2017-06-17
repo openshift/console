@@ -100,7 +100,7 @@ class Details extends React.Component {
   }
 }
 
-const pages = [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
+const pages = () => [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
 
 const BindingHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
@@ -129,7 +129,7 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
   <Firehose kind={kind} name={name} namespace={ns}>
     <NavTitle detail={true} kind={kind} menuActions={menuActions} title={name} />
   </Firehose>
-  <NavBar pages={pages} />
+  <NavBar pages={pages()} />
   <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
@@ -145,7 +145,7 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
   />
 </div>;
 
-export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages()} menuActions={menuActions} />;
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;

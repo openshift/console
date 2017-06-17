@@ -133,8 +133,11 @@ export class Details extends SafetyFirst {
 }
 
 const {details, editYaml, pods} = navFactory;
-const pages = [details(Details), editYaml(), pods()];
-const DeploymentsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const DeploymentsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[details(Details), editYaml(), pods()]}
+/>;
 
 const DeploymentsList = props => <List {...props} Header={WorkloadListHeader} Row={rowOfKind('deployment', menuActions)} />;
 const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;

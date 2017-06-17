@@ -22,9 +22,12 @@ const Details = (replicationController) => <div>
 </div>;
 
 const {details, editYaml, pods, events} = navFactory;
-const pages = [details(Details), editYaml(), pods(), events(ResourceEventStream)];
 
-export const ReplicationControllersDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={replicaSetMenuActions} />;
+export const ReplicationControllersDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={replicaSetMenuActions}
+  pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
+/>;
 
 export const ReplicationControllersList = props => <List {...props} Header={WorkloadListHeader} Row={rowOfKind('replicationcontroller', replicaSetMenuActions)} />;
 export const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;

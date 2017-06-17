@@ -108,8 +108,11 @@ const Details = (job) => <div>
 </div>;
 
 const {details, pods, editYaml} = navFactory;
-const pages = [details(Details), editYaml(), pods()];
-const JobsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const JobsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[details(Details), editYaml(), pods()]}
+/>;
 const JobsList = props => <List {...props} Header={JobHeader} Row={JobRow} />;
 const JobsPage = props => <ListPage ListComponent={JobsList} canCreate={true} {...props} />;
 export {JobsList, JobsPage, JobsDetailsPage};

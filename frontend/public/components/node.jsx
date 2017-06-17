@@ -303,11 +303,14 @@ const Details = (node) => {
 };
 
 const {details, editYaml, events, pods} = navFactory;
-const pages = [
-  details(Details),
-  editYaml(),
-  pods(({metadata: {name}}) => <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${name}`} />),
-  events(ResourceEventStream),
-];
 
-export const NodesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const NodesDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[
+    details(Details),
+    editYaml(),
+    pods(({metadata: {name}}) => <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${name}`} />),
+    events(ResourceEventStream),
+  ]}
+/>;
