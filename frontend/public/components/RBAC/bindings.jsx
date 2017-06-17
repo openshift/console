@@ -117,22 +117,6 @@ export const bindingType = binding => {
   return binding.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const filters = [{
-  type: 'role-binding-kind',
-  selected: ['cluster', 'namespace'],
-  reducer: bindingType,
-  items: ({clusterrolebinding: data}) => {
-    const items = [
-      {id: 'namespace', title: 'Namespace Role Bindings'},
-      {id: 'system', title: 'System Role Bindings'},
-    ];
-    if (data && data.loaded && !data.loadError) {
-      items.unshift({id: 'cluster', title: 'Cluster-wide Role Bindings'});
-    }
-    return items;
-  },
-}];
-
 const resources = [
   {kind: 'rolebinding', namespaced: true},
   {kind: 'clusterrolebinding', namespaced: false},
@@ -145,7 +129,21 @@ export const RoleBindingsPage = () => <MultiListPage
   createProps={{to: 'rolebindings/new'}}
   filterLabel="Role Bindings by role or subject"
   resources={resources}
-  rowFilters={filters}
+  rowFilters={[{
+    type: 'role-binding-kind',
+    selected: ['cluster', 'namespace'],
+    reducer: bindingType,
+    items: ({clusterrolebinding: data}) => {
+      const items = [
+        {id: 'namespace', title: 'Namespace Role Bindings'},
+        {id: 'system', title: 'System Role Bindings'},
+      ];
+      if (data && data.loaded && !data.loadError) {
+        items.unshift({id: 'cluster', title: 'Cluster-wide Role Bindings'});
+      }
+      return items;
+    },
+  }]}
   rowSplitter={rowSplitter}
   textFilter="role-binding"
   title="Role Bindings"

@@ -162,17 +162,6 @@ export const roleType = role => {
   return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const filters = [{
-  type: 'role-kind',
-  selected: ['cluster', 'namespace'],
-  reducer: roleType,
-  items: [
-    {id: 'cluster', title: 'Cluster-wide Roles'},
-    {id: 'namespace', title: 'Namespace Roles'},
-    {id: 'system', title: 'System Roles'},
-  ],
-}];
-
 const resources = [
   {kind: 'role', namespaced: true},
   {kind: 'clusterrole', namespaced: false},
@@ -185,6 +174,15 @@ export const RolesPage = ({namespace}) => <MultiListPage
   createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
   filterLabel="Roles by name"
   resources={resources}
-  rowFilters={filters}
+  rowFilters={[{
+    type: 'role-kind',
+    selected: ['cluster', 'namespace'],
+    reducer: roleType,
+    items: [
+      {id: 'cluster', title: 'Cluster-wide Roles'},
+      {id: 'namespace', title: 'Namespace Roles'},
+      {id: 'system', title: 'System Roles'},
+    ],
+  }]}
   title="Roles"
 />;

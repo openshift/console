@@ -61,18 +61,6 @@ const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.nodeName">Node</ColHead>
 </ListHeader>;
 
-const filters = [{
-  type: 'pod-status',
-  selected: ['Running', 'Pending', 'Terminating'],
-  reducer: podPhase,
-  items: [
-    {id: 'Running', title: 'Running'},
-    {id: 'Pending', title: 'Pending'},
-    {id: 'Terminating', title: 'Terminating'},
-    {id: 'Completed', title: 'Job Completed'},
-  ],
-}];
-
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">
   <ResourceIcon kind="container" />
   <Link to={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</Link>
@@ -231,5 +219,23 @@ export const PodsDetailsPage = props => <DetailsPage
     navFactory.events(ResourceEventStream)
   ]}
 />;
+
 export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
-export const PodsPage = props => <ListPage ListComponent={PodList} kind="pod" canCreate={true} rowFilters={filters} {...props} />;
+
+export const PodsPage = props => <ListPage
+  {...props}
+  canCreate={true}
+  kind="pod"
+  ListComponent={PodList}
+  rowFilters={[{
+    type: 'pod-status',
+    selected: ['Running', 'Pending', 'Terminating'],
+    reducer: podPhase,
+    items: [
+      {id: 'Running', title: 'Running'},
+      {id: 'Pending', title: 'Pending'},
+      {id: 'Terminating', title: 'Terminating'},
+      {id: 'Completed', title: 'Job Completed'},
+    ],
+  }]}
+/>;
