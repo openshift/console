@@ -65,7 +65,6 @@ class SysEvent extends React.PureComponent {
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
 const kinds = ['daemonset', 'deployment', 'ingress', 'job', 'node', 'pod', 'replicaset', 'replicationcontroller'];
-const types = Object.assign({all: 'All Types'}, _.zipObject(kinds, _.map(kinds, k => kindObj(k).labelPlural)));
 
 export class EventStreamPage extends React.Component {
   constructor (props) {
@@ -78,6 +77,7 @@ export class EventStreamPage extends React.Component {
 
   render () {
     const {category, kind} = this.state;
+    const types = Object.assign({all: 'All Types'}, _.zipObject(kinds, _.map(kinds, k => kindObj(k).labelPlural)));
     return <div>
       <Helmet title="Events" />
       <NavTitle title="Events" />

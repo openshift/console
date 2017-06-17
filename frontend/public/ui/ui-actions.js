@@ -1,17 +1,10 @@
-import { CONST } from '../const';
 import store from '../redux';
-import { history, stripBasePath } from '../components/utils';
+import { history } from '../components/utils/router';
+import { isNamespaced } from '../components/utils/link';
 
-const nsPathPattern = new RegExp(`^\/?ns\/${CONST.legalNamePattern.source}\/?(.*)$`);
-const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 const prefixes = [];
 
 export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
-
-export const isNamespaced = path => {
-  const subpath = stripBasePath(path);
-  return subpath.match(nsPathPattern) || subpath.match(allNsPathPattern);
-};
 
 // Most namespaced urls can't move from one namespace to another,
 // but happen to have prefixes that can - for example:

@@ -20,7 +20,7 @@ const source = require('vinyl-source-stream');
 const streamify = require('gulp-streamify');
 const PrettyError = require('pretty-error');
 
-const entry = './public/_app.js';
+const entry = './public/components/app.jsx';
 const distDir = './public/dist';
 const indexSrc = './public/index.html';
 
