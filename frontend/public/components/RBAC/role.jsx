@@ -148,7 +148,7 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
 export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
-const EmptyMsg = <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
+const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
 
 const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
 

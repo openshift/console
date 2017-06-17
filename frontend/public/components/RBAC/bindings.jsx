@@ -103,7 +103,7 @@ const Row = ({obj: binding}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const EmptyMsg = <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
+const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
 export const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} rowSplitter={rowSplitter} />;
 
