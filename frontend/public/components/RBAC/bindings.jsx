@@ -5,13 +5,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { getQN, k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
-import { util } from '../../module/k8s/util';
 import { getActiveNamespace, getNamespacedRoute, actions as UIActions } from '../../ui/ui-actions';
 import { ColHead, List, ListHeader, MultiListPage } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
-import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceName, ResourceLink, StatusBox } from '../utils';
+import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceName, ResourceLink, resourceObjPath, StatusBox } from '../utils';
 import { isSystemRole } from './index';
 
 const bindingKind = binding => binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding';
@@ -38,12 +37,12 @@ const menuActions = ({subjectIndex, subjects}) => [
   (kind, obj) => ({
     label: `Duplicate ${kind.label}...`,
     weight: 700,
-    href: `${util.getLink(obj, kind)}/copy?subjectIndex=${subjectIndex}`,
+    href: `${resourceObjPath(obj, kind.id)}/copy?subjectIndex=${subjectIndex}`,
   }),
   (kind, obj) => ({
     label: `Edit ${kind.label} Subject...`,
     weight: 800,
-    href: `${util.getLink(obj, kind)}/edit?subjectIndex=${subjectIndex}`,
+    href: `${resourceObjPath(obj, kind.id)}/edit?subjectIndex=${subjectIndex}`,
   }),
   subjects.length === 1 ? Cog.factory.Delete : (kind, binding) => {
     const subject = binding.subjects[subjectIndex];
