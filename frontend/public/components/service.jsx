@@ -125,8 +125,11 @@ const Details = (s) => <div className="row no-gutter">
 </div>;
 
 const {details, pods, editYaml} = navFactory;
-const pages = [details(Details), editYaml(), pods()];
-const ServicesDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const ServicesDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[details(Details), editYaml(), pods()]}
+/>;
 
 const ServicesList = props => <List {...props} Header={ServiceHeader} Row={ServiceRow} />;
 const ServicesPage = props => <ListPage canCreate={true} ListComponent={ServicesList} {...props} />;

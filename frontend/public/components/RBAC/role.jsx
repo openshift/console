@@ -100,7 +100,7 @@ class Details extends React.Component {
   }
 }
 
-const pages = [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
+const pages = () => [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
 
 const BindingHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
@@ -129,7 +129,7 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
   <Firehose kind={kind} name={name} namespace={ns}>
     <NavTitle detail={true} kind={kind} menuActions={menuActions} title={name} />
   </Firehose>
-  <NavBar pages={pages} />
+  <NavBar pages={pages()} />
   <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
@@ -145,10 +145,10 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
   />
 </div>;
 
-export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages()} menuActions={menuActions} />;
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
-const EmptyMsg = <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
+const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
 
 const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
 
@@ -162,17 +162,6 @@ export const roleType = role => {
   return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const filters = [{
-  type: 'role-kind',
-  selected: ['cluster', 'namespace'],
-  reducer: roleType,
-  items: [
-    {id: 'cluster', title: 'Cluster-wide Roles'},
-    {id: 'namespace', title: 'Namespace Roles'},
-    {id: 'system', title: 'System Roles'},
-  ],
-}];
-
 const resources = [
   {kind: 'role', namespaced: true},
   {kind: 'clusterrole', namespaced: false},
@@ -185,6 +174,15 @@ export const RolesPage = ({namespace}) => <MultiListPage
   createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
   filterLabel="Roles by name"
   resources={resources}
-  rowFilters={filters}
+  rowFilters={[{
+    type: 'role-kind',
+    selected: ['cluster', 'namespace'],
+    reducer: roleType,
+    items: [
+      {id: 'cluster', title: 'Cluster-wide Roles'},
+      {id: 'namespace', title: 'Namespace Roles'},
+      {id: 'system', title: 'System Roles'},
+    ],
+  }]}
   title="Roles"
 />;

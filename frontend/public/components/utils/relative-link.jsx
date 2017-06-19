@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-const basePathPattern = new RegExp(`^${window.SERVER_FLAGS.basePath}`);
-export const stripBasePath = path => path.replace(basePathPattern, '');
+import { stripBasePath } from './index';
 
 // A RelativeLink is a chalupa!
 export const RelativeLink = ({to, children}) => {

@@ -73,13 +73,15 @@ const withSecretsList = (Row) => {
   };
 };
 
-const pages = [navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()];
-
 const SecretsList = props => <Firehose {...props} kind="secret" isList={true}>
   <List {...props} Header={SecretHeader} Row={SecretRow} />
 </Firehose>;
 
 const SecretsPage = props => <ListPage ListComponent={SecretsList} canCreate={true} {...props} />;
-const SecretsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const SecretsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
+/>;
 
 export {SecretsList, SecretsPage, SecretsDetailsPage, withSecretsList};

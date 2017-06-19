@@ -32,3 +32,4 @@ export * from './router';
 export * from './operator-states';
 export * from './container-linux-update-operator';
 export * from './cluster-util';
+export * from './link';

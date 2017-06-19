@@ -252,9 +252,15 @@ export class EtcdClusterDetails extends SafetyFirst {
 }
 
 const {details, editYaml, pods} = navFactory;
-const pages = [details(EtcdClusterDetails), editYaml(),
-  pods(({metadata: {name}}) => <PodsPage showTitle={false} selector={{matchLabels: {'etcd_cluster': name}}} />)];
-export const EtcdClustersDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+export const EtcdClustersDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[
+    details(EtcdClusterDetails),
+    editYaml(),
+    pods(({metadata: {name}}) => <PodsPage showTitle={false} selector={{matchLabels: {'etcd_cluster': name}}} />)
+  ]}
+/>;
 
 export const EtcdClusterList = props => <List {...props} Header={EtcdClusterHeader} Row={EtcdClusterRow} />;
 export const EtcdClustersPage = props => <ListPage ListComponent={EtcdClusterList} canCreate={true} {...props} />;

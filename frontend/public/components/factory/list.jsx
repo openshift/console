@@ -176,7 +176,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(props 
 
 List.propTypes = {
   data: React.PropTypes.array,
-  EmptyMsg: React.PropTypes.object,
+  EmptyMsg: React.PropTypes.func,
   expand: React.PropTypes.bool,
   fieldSelector: React.PropTypes.string,
   filters: filterPropType,

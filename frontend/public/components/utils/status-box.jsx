@@ -48,7 +48,7 @@ export const StatusBox = (props) => {
   const {data, filters, selected} = props;
 
   if (!data || _.isEmpty(data)) {
-    return EmptyMsg || <EmptyBox label={label} />;
+    return EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />;
   }
 
   let children;

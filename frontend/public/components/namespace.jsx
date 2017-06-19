@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s, k8sEnum} from '../module/k8s';
-import {actions, getActiveNamespace, isNamespaced} from '../ui/ui-actions';
+import {actions, getActiveNamespace} from '../ui/ui-actions';
 import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
+import {Cog, Dropdown, Firehose, isNamespaced, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
 import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
 import {BindingName, BindingsList, RoleLink} from './RBAC';
 
@@ -204,5 +204,8 @@ export const NamespaceSelector = () => {
   </Firehose>;
 };
 
-const pages = [navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)];
-export const NamespacesDetailsPage = props => <DetailsPage {...props} pages={pages} menuActions={menuActions} />;
+export const NamespacesDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)]}
+/>;

@@ -54,10 +54,13 @@ const Details = (daemonset) => <div>
 </div>;
 
 const {details, pods, editYaml} = navFactory;
-const pages = [details(detailsPage(Details)), editYaml(), pods()];
 
 const DaemonSets = props => <List {...props} Header={DaemonSetHeader} Row={DaemonSetRow} />;
 const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />;
-const DaemonSetsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const DaemonSetsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[details(detailsPage(Details)), editYaml(), pods()]}
+/>;
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

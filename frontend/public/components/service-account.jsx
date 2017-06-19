@@ -62,8 +62,11 @@ const Details = (serviceaccount) => {
   );
 };
 
-const pages = [navFactory.details(Details)];
-const ServiceAccountsDetailsPage = props => <DetailsPage pages={pages} menuActions={menuActions} {...props} />;
+const ServiceAccountsDetailsPage = props => <DetailsPage
+  {...props}
+  menuActions={menuActions}
+  pages={[navFactory.details(Details)]}
+/>;
 const ServiceAccountsList = props => <List {...props} Header={Header} Row={withSecretsList(ServiceAccountRow)} />;
 const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} />;
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};
