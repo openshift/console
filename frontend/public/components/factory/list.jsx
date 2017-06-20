@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { getQN, isNodeReady } from '../../module/k8s';
-import { actions as UIActions } from '../../ui/ui-actions';
+import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
 import { LabelList, podPhase, podReadiness, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';

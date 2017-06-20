@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { getQN, k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
-import { getActiveNamespace, getNamespacedRoute, actions as UIActions } from '../../ui/ui-actions';
+import { getActiveNamespace, getNamespacedRoute, UIActions } from '../../ui/ui-actions';
 import { ColHead, List, ListHeader, MultiListPage } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';

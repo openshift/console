@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s, k8sEnum} from '../module/k8s';
-import {actions, getActiveNamespace} from '../ui/ui-actions';
+import {UIActions, getActiveNamespace} from '../ui/ui-actions';
 import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {SafetyFirst} from './safety-first';
 import {SparklineWidget} from './sparkline-widget/sparkline-widget';
@@ -185,7 +185,7 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
   }
 
   const onChange = (newNamespace) => {
-    dispatch(actions.setActiveNamespace(newNamespace === allNamespacesKey ? undefined : newNamespace));
+    dispatch(UIActions.setActiveNamespace(newNamespace === allNamespacesKey ? undefined : newNamespace));
   };
 
   return <div className="co-namespace-selector">
