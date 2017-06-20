@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
-import { formatNamespaceRoute, actions as UIActions } from '../ui/ui-actions';
+import { formatNamespaceRoute, UIActions } from '../ui/ui-actions';
 import { SafetyFirst } from './safety-first';
 import { authSvc } from '../module/auth';
 import { clusterUtil } from './utils';

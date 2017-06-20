@@ -1,7 +1,7 @@
 /* global jest */
 
 import store from '../public/redux';
-import { actions, getActiveNamespace, getNamespacedRoute, registerNamespaceFriendlyPrefix } from '../public/ui/ui-actions';
+import { UIActions, getActiveNamespace, getNamespacedRoute, registerNamespaceFriendlyPrefix } from '../public/ui/ui-actions';
 
 // Mock history's createHistory() using createMemoryHistory() so the tests can run outside the browser
 jest.mock('history', () => {
@@ -10,7 +10,7 @@ jest.mock('history', () => {
   return original;
 });
 
-const setActiveNamespace = ns => store.dispatch(actions.setActiveNamespace(ns));
+const setActiveNamespace = ns => store.dispatch(UIActions.setActiveNamespace(ns));
 
 describe('ui-actions', () => {
   describe('setActiveNamespace', () => {

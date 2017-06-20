@@ -11,7 +11,7 @@ import { authSvc } from '../module/auth';
 import { k8sBasePath } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
 import { tectonicVersion } from '../module/status';
-import { registerNamespaceFriendlyPrefix, actions as UIActions } from '../ui/ui-actions';
+import { registerNamespaceFriendlyPrefix, UIActions } from '../ui/ui-actions';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';

@@ -48,7 +48,7 @@ export const types = {
   sortList: 'sortList',
 };
 
-export const actions = {
+export const UIActions = {
   [types.setCurrentLocation]: (location, ns) => ({location, ns, type: types.setCurrentLocation}),
 
   [types.setActiveNavSectionId]: (id) => ({value: id, type: types.setActiveNavSectionId}),
