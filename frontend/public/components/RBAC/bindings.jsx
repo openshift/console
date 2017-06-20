@@ -221,7 +221,7 @@ const Section = ({label, children}) => <div className="row">
   </div>
 </div>;
 
-const BaseEditRoleBinding = connect()(
+const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActiveNamespace})(
 class BaseEditRoleBinding_ extends SafetyFirst {
   constructor (props) {
     super(props);
@@ -302,7 +302,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
       () => {
         this.setState({inProgress: false});
         if (metadata.namespace) {
-          this.props.dispatch(UIActions.setActiveNamespace(metadata.namespace));
+          this.props.setActiveNamespace(metadata.namespace);
         }
         history.push(getNamespacedRoute('rolebindings'));
       },
