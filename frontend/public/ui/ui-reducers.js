@@ -1,6 +1,6 @@
 import Immutable from 'immutable';
 
-import {types} from './ui-actions';
+import { types } from './ui-actions';
 
 export default (state, action) => {
   if (!state) {
@@ -21,6 +21,15 @@ export default (state, action) => {
 
     case types.setActiveNavSectionId:
       return state.set('activeNavSectionId', action.value);
+
+    case types.startImpersonate:
+      if (action.kind === 'User' || action.kind === 'Group') {
+        state = state.set('impersonate', {kind: action.kind, name: action.name});
+      }
+      return state;
+
+    case types.stopImpersonate:
+      return state.delete('impersonate');
 
     case types.sortList:
       return state.mergeIn(['listSorts', action.listId], _.pick(action, ['field', 'func', 'order']));

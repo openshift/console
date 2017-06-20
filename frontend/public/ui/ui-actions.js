@@ -45,6 +45,8 @@ export const types = {
   setActiveNamespace: 'setActiveNamespace',
   setActiveNavSectionId: 'setActiveNavSectionId',
   setCurrentLocation: 'setCurrentLocation',
+  startImpersonate: 'startImpersonate',
+  stopImpersonate: 'stopImpersonate',
   sortList: 'sortList',
 };
 
@@ -75,6 +77,10 @@ export const UIActions = {
       value: namespace,
     };
   },
+
+  [types.startImpersonate]: (kind, name) => ({kind, name, type: types.startImpersonate}),
+
+  [types.stopImpersonate]: () => ({type: types.stopImpersonate}),
 
   [types.sortList]: (listId, field, func, order) => ({listId, field, func, order, type: types.sortList}),
 };
