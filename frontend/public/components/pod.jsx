@@ -3,10 +3,10 @@ import { Link } from 'react-router';
 
 import { k8s } from '../module/k8s';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
-import { getRestartPolicyLabel } from '../module/k8s/pods';
+import { getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, LabelList, navFactory, Overflow, podPhase, podReadiness, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
+import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { PodLogs } from './pod-logs';
 
