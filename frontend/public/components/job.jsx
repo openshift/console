@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
-import {configureJobParallelismModal} from './modals';
-import {Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory} from './utils';
+import { getJobTypeAndCompletions } from '../module/k8s';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { configureJobParallelismModal } from './modals';
+import { Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory } from './utils';
 
 const ModifyJobParallelism = (kind, obj) => ({
   label: 'Modify Parallelism...',
@@ -18,27 +19,10 @@ const menuActions = [ModifyJobParallelism, ...Cog.factory.common];
 const JobHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs">Completions</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs">Type</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortFunc="jobCompletions">Completions</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortFunc="jobType">Type</ColHead>
   <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
-
-const getJobTypeAndCompletions = (o) => {
-  // if neither completions nor parallelism are defined, then it is a non-parallel job.
-  if (!o.spec.completions && !o.spec.parallelism) {
-    return {type: 'Non-parallel', completions: 1};
-  }
-  // if completions are defined and no parallelism is defined, or if parallelism is 0 or 1, then it is a 'Non-parallel' job.
-  if (o.spec.completions && (!o.spec.parallelism || o.spec.parallelism === 1)) {
-    return {type: 'Non-parallel', completions: o.spec.completions};
-  }
-  // if parallelism is greater than 1 and completions are defined, then it is a 'Fixed Completion Count' job.
-  if (o.spec.hasOwnProperty('parallelism') && o.spec.completions) {
-    return {type: 'Fixed Completion Count', completions: o.spec.completions};
-  }
-  // otherwise, if parallelism is defined, but completions is not, then it is a 'Work Queue' job.
-  return {type: 'Work Queue', completions: 1};
-};
 
 const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);

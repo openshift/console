@@ -3,7 +3,7 @@ import fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-import { getQN, isNodeReady } from '../../module/k8s';
+import { getJobTypeAndCompletions, getQN, isNodeReady } from '../../module/k8s';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
@@ -81,6 +81,8 @@ const sorts = {
   dataSize: resource => _.size(_.get(resource, 'data')),
   etcdClusterPodSelector: cluster => `etcd_cluster=${cluster.metadata.name}`,
   ingressValidHosts,
+  jobCompletions: job => getJobTypeAndCompletions(job).completions,
+  jobType: job => getJobTypeAndCompletions(job).type,
   nodeReadiness: node => _.chain(node).get('status.conditions').find({type: 'Ready'}).get('status').value(),
   nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
