@@ -3,11 +3,11 @@ import fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-import { getJobTypeAndCompletions, getQN, isNodeReady } from '../../module/k8s';
+import { getJobTypeAndCompletions, getQN, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
-import { LabelList, podPhase, podReadiness, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
+import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
 
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),

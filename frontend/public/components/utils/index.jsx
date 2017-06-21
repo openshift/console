@@ -22,7 +22,6 @@ export * from './overflow';
 export * from './units';
 export * from './select-text';
 export * from './toggle-play';
-export * from './pods';
 export * from './button-bar';
 export * from './number-spinner';
 export * from './stream';
