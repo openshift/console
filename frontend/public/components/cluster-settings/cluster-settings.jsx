@@ -33,7 +33,6 @@ class ClusterSettingsPage_ extends SafetyFirst {
           <div>
             {/*TODO: nesting inside an extra <div> to get rid of the bottom border...*/}
             <div className="co-m-pane__body">
-              {CLUSTER_UPDATES && <p className="alert alert-info co-cluster-updates-warning">Warning: Experimental feature. Only use on clusters that can be easily replaced, or if you have a current backup of etcd.</p>}
               <div className="co-cluster-updates">
                 {CLUSTER_UPDATES && <TectonicChannel />}
                 <ContainerLinuxUpdates />
