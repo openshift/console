@@ -13,8 +13,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
     this.state = Object.assign(this.state, {
-      type: _.get(this.deployment.spec, 'revisionHistoryLimit') ?
-        'custom' : 'unlimited'
+      type: _.isInteger(_.get(this.deployment, 'spec.revisionHistoryLimit')) ? 'custom' : 'unlimited',
     });
   }
 
