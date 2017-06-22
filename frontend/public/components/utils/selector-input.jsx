@@ -17,13 +17,13 @@ export class SelectorInput extends React.Component {
   }
 
   static arrayify (obj) {
-    return _.map(obj, (v, k) => `${k}=${v}`);
+    return _.map(obj, (v, k) => v ? `${k}=${v}` : k);
   }
 
   static objectify (arr) {
     const result = {};
     _.each(arr, item => {
-      const [key, value] = item.split('=');
+      const [key, value = null] = item.split('=');
       result[key] = value;
     });
     return result;
