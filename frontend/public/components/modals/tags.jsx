@@ -28,14 +28,17 @@ class TagsModal extends PromiseComponent {
   _submit (e) {
     e.preventDefault();
 
-    // We just throw away any rows where either the key or the value is blank
-    const tags = _.reject(this.state.tags, t => _.isEmpty(t[0]) || _.isEmpty(t[1]));
+    // We just throw away any rows where the key is blank
+    const tags = _.reject(this.state.tags, t => _.isEmpty(t[0]));
 
     const keys = tags.map(t => t[0]);
     if (_.uniq(keys).length !== keys.length) {
       this.setState({errorMessage: 'Duplicate keys found.'});
       return;
     }
+
+    // Convert any blank values to null
+    _.each(tags, t => t[1] = _.isEmpty(t[1]) ? null : t[1]);
 
     const patch = [{path: this.props.path, op: 'replace', value: _.fromPairs(tags)}];
     const promise = k8sPatch(this.props.kind, this.props.resource, patch);
@@ -59,7 +62,7 @@ class TagsModal extends PromiseComponent {
       <input type="text" className="form-control" placeholder="key" value={tag[0]} onChange={e => this._change(e, i, true)} />
         </div>
         <div className="col-xs-6 tags-list__field">
-          <input type="text" className="form-control" placeholder="value" value={tag[1]} onChange={e => this._change(e, i, false)} />
+          <input type="text" className="form-control" placeholder="value" value={tag[1] || ''} onChange={e => this._change(e, i, false)} />
         </div>
         <div className="col-xs-1">
           <i className="fa fa-minus-circle tags-list__btn tags-list__delete-icon" onClick={() => this.removeTag(i)}></i>
