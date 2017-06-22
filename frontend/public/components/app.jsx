@@ -4,6 +4,8 @@ import Helmet from 'react-helmet';
 import { Provider } from 'react-redux';
 import { IndexRoute, Redirect, Route, Router } from 'react-router';
 
+import '../globals';
+
 import store from '../redux';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
