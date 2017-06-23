@@ -135,28 +135,32 @@ Rows.propTypes = {
   Row: React.PropTypes.func.isRequired,
 };
 
-const stateToProps = ({UI}, {data, filters, reduxID, reduxIDs, rowSplitter, staticFilters}) => {
+const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, rowSplitter, staticFilters}) => {
   if (rowSplitter) {
     data = _.flatMap(data, rowSplitter);
   }
+
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
+  let newData = getFilteredRows(allFilters, data);
 
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
   const currentSortField = UI.getIn(['listSorts', listId, 'field'], 'metadata.name');
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func']);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'order'], 'asc');
 
-  let sortBy = 'metadata.name';
-  if (currentSortField) {
-    // Sort resources by one of their fields as a string
-    sortBy = resource => sorts.string(_.get(resource, currentSortField, ''));
-  } else if (currentSortFunc && sorts[currentSortFunc]) {
-    // Sort resources by a function in the 'sorts' object
-    sortBy = sorts[currentSortFunc];
-  }
+  if (loaded) {
+    let sortBy = 'metadata.name';
+    if (currentSortField) {
+      // Sort resources by one of their fields as a string
+      sortBy = resource => sorts.string(_.get(resource, currentSortField, ''));
+    } else if (currentSortFunc && sorts[currentSortFunc]) {
+      // Sort resources by a function in the 'sorts' object
+      sortBy = sorts[currentSortFunc];
+    }
 
-  // Always set the secondary sort criteria to ascending by name
-  const newData = _.orderBy(getFilteredRows(allFilters, data), [sortBy, 'metadata.name'], [currentSortOrder, 'asc']);
+    // Always set the secondary sort criteria to ascending by name
+    newData = _.orderBy(newData, [sortBy, 'metadata.name'], [currentSortOrder, 'asc']);
+  }
 
   return {currentSortField, currentSortFunc, currentSortOrder, data: newData, listId};
 };
