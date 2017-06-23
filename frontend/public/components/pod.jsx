@@ -5,7 +5,7 @@ import { k8s } from '../module/k8s';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
 import { ResourceEventStream } from './events';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { PodLogs } from './pod-logs';
@@ -36,7 +36,7 @@ const PodRow = ({obj: pod}) => {
     </span>;
   }
 
-  return <div className="row co-resource-list__item">
+  return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
       <ResourceCog actions={menuActions} kind="pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
@@ -50,7 +50,7 @@ const PodRow = ({obj: pod}) => {
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-  </div>;
+  </ResourceRow>;
 };
 
 const PodHeader = props => <ListHeader>

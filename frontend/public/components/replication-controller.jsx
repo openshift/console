@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ResourceEventStream } from './events';
-import { DetailsPage, List, ListPage, rowOfKind, WorkloadListHeader } from './factory';
+import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
 import { navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 
@@ -29,5 +29,6 @@ export const ReplicationControllersDetailsPage = props => <DetailsPage
   pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
 />;
 
-export const ReplicationControllersList = props => <List {...props} Header={WorkloadListHeader} Row={rowOfKind('replicationcontroller', replicaSetMenuActions)} />;
+const Row = props => <WorkloadListRow {...props} kind="replicationcontroller" actions={replicaSetMenuActions} />;
+export const ReplicationControllersList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
 export const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;
