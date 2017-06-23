@@ -5,7 +5,8 @@ import classnames from 'classnames';
 import { toString } from '../../module/k8s/selector';
 
 const Requirement = ({kind, requirements}) => {
-  const requirementAsString           = toString(requirements);
+  // Strip off any trailing '=' characters for valueless selectors
+  const requirementAsString = toString(requirements).replace(/=,/g, ',').replace(/=$/g, '');
   const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
 
   return (
