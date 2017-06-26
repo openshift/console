@@ -73,12 +73,12 @@ const NodeCLUpdateStatus = ({node}) => {
   const lastCheckedDate = containerLinuxUpdateOperator.getLastCheckedTime(node);
 
   return <div>
-    <span><i className={updateStatus.className}></i>&nbsp;&nbsp;{updateStatus.text}</span>
+    {updateStatus ? <span>{updateStatus.className && <span><i className={updateStatus.className}></i>&nbsp;&nbsp;</span>}{updateStatus.text}</span> : null}
     {!_.isEmpty(newVersion) && !containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
       <div>
         <small className="">Container Linux {containerLinuxUpdateOperator.getVersion(node)} &#10141; {newVersion}</small>
       </div>}
-    {!_.isEmpty(lastCheckedDate) && containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
+    {lastCheckedDate && containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
       <div>
         <small className="">Last checked on <div className="co-inline-block">{<Timestamp timestamp={lastCheckedDate} isUnix={true} />}</div></small>
       </div>}
