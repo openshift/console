@@ -4,7 +4,7 @@ import { Tooltip } from 'react-lightweight-tooltip';
 import { k8sKinds } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
-import { DetailsPage, List, ListPage, rowOfKind, WorkloadListHeader } from './factory';
+import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
 
 const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
@@ -139,7 +139,8 @@ const DeploymentsDetailsPage = props => <DetailsPage
   pages={[details(Details), editYaml(), pods()]}
 />;
 
-const DeploymentsList = props => <List {...props} Header={WorkloadListHeader} Row={rowOfKind('deployment', menuActions)} />;
+const Row = props => <WorkloadListRow {...props} kind="deployment" actions={menuActions} />;
+const DeploymentsList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
 const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
 
 export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};
