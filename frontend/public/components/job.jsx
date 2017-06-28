@@ -21,7 +21,7 @@ const JobHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.labels">Labels</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortFunc="jobCompletions">Completions</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortFunc="jobType">Type</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
 const JobRow = ({obj: job}) => {

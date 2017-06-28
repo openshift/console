@@ -122,7 +122,7 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-5 col-xs-6" sortField="metadata.labels">Labels</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortFunc="numReplicas">Status</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
 const Rows = ({data, expand, Row}) => <div className="co-m-table-grid__body">

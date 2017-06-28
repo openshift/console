@@ -57,7 +57,7 @@ const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.labels">Pod Labels</ColHead>
   <ColHead {...props} className="col-sm-2 hidden-xs" sortFunc="podPhase">Status</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm" sortFunc="podReadiness">Readiness</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
   <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.nodeName">Node</ColHead>
 </ListHeader>;
 
@@ -81,7 +81,7 @@ const ContainerRow = ({pod, container}) => {
       <Overflow className="col-sm-3 col-xs-8" value={container.image} />
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
-      <div className="col-md-2 hidden-sm  hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
+      <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
     </div>
   </div>;
 };
