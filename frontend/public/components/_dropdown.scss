@@ -8,6 +8,21 @@
     padding: 0 12px 1px 0;
     width: 100%;
   }
+
+  &--dark {
+    $dark: rgba(33, 33, 33, 0.95);
+    background-color: $dark;
+    border: solid 1px $dark;
+
+    & > li > a {
+      color: white;
+
+      &:hover {
+        background-color: $dark;
+        color: white;
+      }
+    }
+  }
 }
 
 .dropdown__content {

@@ -138,5 +138,5 @@ export const ActionsMenu = ({actions}) => {
       history.push(action.href);
     }
   };
-  return <Dropdown className="btn--actions" menuClassName="btn--actions__menu co-m-dropdown--dark" items={items} title={title} onChange={onChange} noSelection={true} />;
+  return <Dropdown className="btn--actions" menuClassName="btn--actions__menu dropdown--dark" items={items} title={title} onChange={onChange} noSelection={true} />;
 };
