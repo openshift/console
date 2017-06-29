@@ -35,14 +35,14 @@ class NavLink_ extends React.Component {
   }
 
   render () {
-    const {name, flags, required = null, onClick = null} = this.props;
+    const {name, flags, required = null, onClick = null, target = '_self'} = this.props;
     if (required && !flags[required]) {
       return null;
     }
     const klass = classNames('co-m-nav-link', {active: this.isActive});
 
     return <li className={klass} key={this.href_}>
-      <Link to={this.href_} onClick={e => {
+      <Link target={target} to={this.href_} onClick={e => {
         if (onClick) {
           return onClick(e);
         }
@@ -136,6 +136,8 @@ class Nav_ extends SafetyFirst {
         <NavSection text="Troubleshooting" icon="fa-life-ring" {...accordionProps('troubleshooting')}>
           <NavLink resource="search" name="Search" sectionId="troubleshooting" />
           <NavLink resource="events" name="Events" sectionId="troubleshooting" />
+          <NavLink href="/prometheus" target="_blank" name="Prometheus" sectionId="troubleshooting" />
+          <NavLink href="/alertmanager"  target="_blank" name="Prometheus Alerts" sectionId="troubleshooting" />
         </NavSection>
 
         <NavSection text="Administration" icon="fa-cog" {...accordionProps('admin')}>
