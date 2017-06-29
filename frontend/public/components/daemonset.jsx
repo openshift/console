@@ -10,11 +10,11 @@ const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-5 col-xs-6" sortField="metadata.labels">Labels</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortFunc="daemonsetNumScheduled">Status</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.selector.matchLabels">Node Selector</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.selector.matchLabels">Node Selector</ColHead>
 </ListHeader>;
 
 const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
-  <div className="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+  <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
     <ResourceCog actions={menuActions} kind="daemonset" resource={daemonset} />
     <ResourceLink kind="daemonset" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>

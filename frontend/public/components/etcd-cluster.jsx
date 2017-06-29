@@ -44,19 +44,19 @@ const EtcdClusterRow = ({obj: cluster}) => {
   const backup = _.get(cluster.spec, 'backup', null);
 
   return <div className="row co-resource-list__item">
-    <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+    <div className="col-md-3 col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind="etcdcluster" resource={cluster} />
       <EtcdClusterLink metadata={metadata} />
     </div>
-    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+    <div className="col-md-2 col-sm-3 col-xs-6">
       {<Link to={`${resourcePath('etcdcluster', metadata.name, metadata.namespace)}/pods`} title="pods">
         {status ? `${status.size} of ${spec.size}` : spec.size}
       </Link>}
     </div>
-    <div className="col-lg-4 col-md-4 hidden-sm hidden-xs">
+    <div className="col-md-4 col-sm-5 hidden-xs">
       <Selector selector={selector} />
     </div>
-    <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
+    <div className="col-md-3 hidden-sm hidden-xs">
       {backup === null && <div className="text-muted">No backup policy</div>}
       {backup && <div>{_.has(status, 'backupServiceStatus') ? <Timestamp timestamp={status.backupServiceStatus.recentBackup.creationTime}  /> : '-'}</div>}
     </div>
@@ -64,10 +64,10 @@ const EtcdClusterRow = ({obj: cluster}) => {
 };
 
 const EtcdClusterHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="status.size">Size</ColHead>
-  <ColHead {...props} className="col-md-4 col-sm-2 hidden-xs" sortFunc="etcdClusterPodSelector">Pod Selector</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm" sortField="status.backupServiceStatus.recentBackup.creationTime">Last Backup Date</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="status.size">Size</ColHead>
+  <ColHead {...props} className="col-md-4 col-sm-5 hidden-xs" sortFunc="etcdClusterPodSelector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="status.backupServiceStatus.recentBackup.creationTime">Last Backup Date</ColHead>
 </ListHeader>;
 
 const Phase = ({status}) => {
