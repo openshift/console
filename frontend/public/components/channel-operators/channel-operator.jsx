@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState, determineOperatorState} from '../utils';
-import {configureOperatorStrategyModal} from '../modals';
+import {configureOperatorStrategyModal, configureOperatorChannelModal,} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
 import {SafetyFirst} from '../safety-first';
@@ -50,7 +50,7 @@ const Details = ({config, channelState, primaryComponent}) => {
       {primaryComponent.currentVersion || <LoadingInline />}
     </DetailWrapper>
     <DetailWrapper title="Channel">
-      <DetailConfig config={config} field="channel" displayFunction={_.capitalize} />
+      <DetailConfig config={config} field="channel" modal={configureOperatorChannelModal} displayFunction={_.capitalize} />
     </DetailWrapper>
     <DetailWrapper title="Strategy">
       <DetailConfig config={config} field="automaticUpdate" modal={configureOperatorStrategyModal}

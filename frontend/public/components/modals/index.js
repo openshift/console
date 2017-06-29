@@ -1,5 +1,6 @@
 export * from './configure-count-modal';
 export * from './configure-operator-modal';
+export * from './configure-operator-channel-modal';
 export * from './configure-yaml-field-modal';
 export * from './confirm-modal';
 export * from './create-namespace-modal';
