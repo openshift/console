@@ -136,8 +136,6 @@ class Nav_ extends SafetyFirst {
         <NavSection text="Troubleshooting" icon="fa-life-ring" {...accordionProps('troubleshooting')}>
           <NavLink resource="search" name="Search" sectionId="troubleshooting" />
           <NavLink resource="events" name="Events" sectionId="troubleshooting" />
-          <NavLink href="/prometheus" target="_blank" name="Prometheus" sectionId="troubleshooting" />
-          <NavLink href="/alertmanager"  target="_blank" name="Prometheus Alerts" sectionId="troubleshooting" />
         </NavSection>
 
         <NavSection text="Administration" icon="fa-cog" {...accordionProps('admin')}>
