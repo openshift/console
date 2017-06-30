@@ -209,3 +209,15 @@ $cluster-updates-width: 800px;
 .co-cluster-updates__operator-subheader {
   font-weight: 600;
 }
+
+.co-cluster-channel-dropdown {
+  height: 100px;
+  & > .dropdown {
+    & > .btn--dropdown {
+      width: 200px;
+    }
+    & > .dropdown-menu {
+      width: 200px;
+    }
+  }
+}
