@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 
@@ -174,23 +173,14 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string)
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func NewDexClient(hostAndPort, caPath, clientCrt, clientKey string) (api.DexClient, error) {
-	cPool := x509.NewCertPool()
-	caCert, err := ioutil.ReadFile(caPath)
-	if err != nil {
-		return nil, fmt.Errorf("invalid CA crt file: %s", caPath)
-	}
-	if cPool.AppendCertsFromPEM(caCert) != true {
-		return nil, fmt.Errorf("failed to parse CA crt")
-	}
-
+func NewDexClient(hostAndPort string, certPool *x509.CertPool, clientCrt, clientKey string) (api.DexClient, error) {
 	clientCert, err := tls.LoadX509KeyPair(clientCrt, clientKey)
 	if err != nil {
-		return nil, fmt.Errorf("invalid client crt file: %s", caPath)
+		return nil, fmt.Errorf("invalid client crt file: %s", err)
 	}
 
 	clientTLSConfig := &tls.Config{
-		RootCAs:      cPool,
+		RootCAs:      certPool,
 		Certificates: []tls.Certificate{clientCert},
 	}
 	creds := credentials.NewTLS(clientTLSConfig)
