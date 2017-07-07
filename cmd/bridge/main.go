@@ -145,7 +145,7 @@ func main() {
 	if *fDexClientCertFile != "" && *fDexClientKeyFile != "" && *fDexAPIHost != "" {
 		var err error
 
-		if srv.DexClient, err = auth.NewDexClient(*fDexAPIHost, *fCAFile, *fDexClientCertFile, *fDexClientKeyFile); err != nil {
+		if srv.DexClient, err = auth.NewDexClient(*fDexAPIHost, certPool, *fDexClientCertFile, *fDexClientKeyFile); err != nil {
 			log.Fatalf("Failed to create a Dex API client: %v", err)
 		}
 	}
