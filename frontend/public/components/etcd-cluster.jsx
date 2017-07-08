@@ -5,7 +5,7 @@ import { Tooltip } from 'react-lightweight-tooltip';
 import { k8sKinds } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { configureClusterSizeModal } from './modals';
-import { ColHead, List, ListHeader, ListPage, DetailsPage } from './factory';
+import { ColHead, List, ListHeader, ListPage, DetailsPage, ResourceRow } from './factory';
 import { PodsPage } from './pod';
 import { Cog, navFactory, ResourceCog, ResourceIcon, Timestamp, Selector, resourcePath, pluralize, LoadingInline} from './utils';
 
@@ -43,7 +43,7 @@ const EtcdClusterRow = ({obj: cluster}) => {
   const status = cluster.status || null;
   const backup = _.get(cluster.spec, 'backup', null);
 
-  return <div className="row co-resource-list__item">
+  return <ResourceRow obj={cluster}>
     <div className="col-md-3 col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind="etcdcluster" resource={cluster} />
       <EtcdClusterLink metadata={metadata} />
@@ -60,7 +60,7 @@ const EtcdClusterRow = ({obj: cluster}) => {
       {backup === null && <div className="text-muted">No backup policy</div>}
       {backup && <div>{_.has(status, 'backupServiceStatus') ? <Timestamp timestamp={status.backupServiceStatus.recentBackup.creationTime}  /> : '-'}</div>}
     </div>
-  </div>;
+  </ResourceRow>;
 };
 
 const EtcdClusterHeader = props => <ListHeader>

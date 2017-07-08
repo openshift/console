@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import { Cog, Heading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 
@@ -13,14 +13,14 @@ const ConfigMapHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Config Map Age</ColHead>
 </ListHeader>;
 
-const ConfigMapRow = ({obj: configMap}) => <div className="row co-resource-list__item">
+const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
   <div className="col-xs-4">
     <ResourceCog actions={menuActions} kind="configmap" resource={configMap} />
     <ResourceLink kind="configmap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
   </div>
   <div className="col-xs-4">{_.size(configMap.data)}</div>
   <div className="col-xs-4">{moment(configMap.metadata.creationTimestamp).fromNow()}</div>
-</div>;
+</ResourceRow>;
 
 const ConfigMapDetails = (configMap) => {
   return <div className="row">

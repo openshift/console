@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
@@ -13,7 +13,7 @@ const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.selector.matchLabels">Node Selector</ColHead>
 </ListHeader>;
 
-const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list__item">
+const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
     <ResourceCog actions={menuActions} kind="daemonset" resource={daemonset} />
     <ResourceLink kind="daemonset" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
@@ -29,7 +29,7 @@ const DaemonSetRow = ({obj: daemonset}) => <div className="row co-resource-list_
   <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
     <Selector selector={daemonset.spec.selector.matchLabels} />
   </div>
-</div>;
+</ResourceRow>;
 
 const Details = (daemonset) => <div>
   <div className="col-lg-6">

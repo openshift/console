@@ -2,14 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
 
-import {k8s, k8sEnum} from '../module/k8s';
-import {UIActions, getActiveNamespace} from '../ui/ui-actions';
-import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
-import {SafetyFirst} from './safety-first';
-import {SparklineWidget} from './sparkline-widget/sparkline-widget';
-import {Cog, Dropdown, Firehose, isNamespaced, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary} from './utils';
-import {createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal} from './modals';
-import {BindingName, BindingsList, RoleLink} from './RBAC';
+import { k8s, k8sEnum } from '../module/k8s';
+import { UIActions, getActiveNamespace } from '../ui/ui-actions';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import { SafetyFirst } from './safety-first';
+import { SparklineWidget } from './sparkline-widget/sparkline-widget';
+import { Cog, Dropdown, Firehose, isNamespaced, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
+import { BindingName, BindingsList, RoleLink } from './RBAC';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -39,7 +39,7 @@ const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Labels</ColHead>
 </ListHeader>;
 
-const Row = ({obj: ns}) => <div className="row co-resource-list__item">
+const Row = ({obj: ns}) => <ResourceRow obj={ns}>
   <div className="col-xs-4">
     <ResourceCog actions={menuActions} kind="namespace" resource={ns} />
     <ResourceLink kind="namespace" name={ns.metadata.name} title={ns.metadata.uid} />
@@ -50,7 +50,7 @@ const Row = ({obj: ns}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
     <LabelList kind="namespace" labels={ns.metadata.labels} />
   </div>
-</div>;
+</ResourceRow>;
 
 export const NamespacesList = props => <List {...props} Header={Header} Row={Row} />;
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;

@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
 import { k8sEnum } from '../../module/k8s';
-import { ColHead, DetailsPage, List, ListHeader, MultiListPage, TextFilter } from '../factory';
+import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingsList, RulesList } from './index';
 
@@ -109,7 +109,7 @@ const BindingHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="metadata.namespace">Namespace</ColHead>
 </ListHeader>;
 
-const BindingRow = ({obj: binding}) => <div className="row co-resource-list__item">
+const BindingRow = ({obj: binding}) => <ResourceRow obj={binding}>
   <div className="col-xs-4">
     <BindingName binding={binding} />
   </div>
@@ -122,7 +122,7 @@ const BindingRow = ({obj: binding}) => <div className="row co-resource-list__ite
   <div className="col-xs-2">
     {binding.namespace || 'all'}
   </div>
-</div>;
+</ResourceRow>;
 
 export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div>
   <Helmet title={`${name} · Bindings`} />

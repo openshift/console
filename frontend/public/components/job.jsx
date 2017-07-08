@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import { getJobTypeAndCompletions } from '../module/k8s';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureJobParallelismModal } from './modals';
 import { Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory } from './utils';
 
@@ -27,7 +27,7 @@ const JobHeader = props => <ListHeader>
 const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
-    <div className="row co-resource-list__item">
+    <ResourceRow obj={job}>
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
         <ResourceCog actions={menuActions} kind="job" resource={job} />
         <ResourceLink kind="job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
@@ -46,7 +46,7 @@ const JobRow = ({obj: job}) => {
       <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
         <Selector selector={job.spec.selector} />
       </div>
-    </div>
+    </ResourceRow>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, Heading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
 
 const menuActions = Cog.factory.common;
@@ -36,7 +36,7 @@ const IngressListHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-5" sortFunc="ingressValidHosts">Hosts</ColHead>
 </ListHeader>;
 
-const IngressListRow = ({obj: ingress}) => <div className="row co-resource-list__item">
+const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
   <div className="col-xs-3">
     <ResourceCog actions={menuActions} kind="ingress" resource={ingress} />
     <ResourceLink kind="ingress" name={ingress.metadata.name}
@@ -46,7 +46,7 @@ const IngressListRow = ({obj: ingress}) => <div className="row co-resource-list_
     <LabelList kind="ingress" labels={ingress.metadata.labels} />
   </div>
   <div className="col-xs-5">{getHosts(ingress)}</div>
-</div>;
+</ResourceRow>;
 
 const RulesHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Host</div>
