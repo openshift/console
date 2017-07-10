@@ -35,7 +35,7 @@ class NavLink_ extends React.Component {
   }
 
   render () {
-    const {name, flags, required = null, onClick = null, target = '_self'} = this.props;
+    const {name, flags, required = null, onClick = null, target = undefined} = this.props;
     if (required && !flags[required]) {
       return null;
     }
