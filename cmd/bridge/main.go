@@ -60,6 +60,7 @@ func main() {
 	fTectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
 	fDexClientCertFile := fs.String("dex-client-cert-file", "", "PEM File containing certificates of dex client.")
 	fDexClientKeyFile := fs.String("dex-client-key-file", "", "PEM File containing certificate key of the dex client.")
+	fDexClientCAFile := fs.String("dex-client-ca-file", "", "PEM File containing trusted CAs for Dex client configuration. If blank, defaults to value of ca-file argument")
 
 	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
@@ -82,6 +83,9 @@ func main() {
 	baseURL := &url.URL{}
 	if *fBaseAddress != "" {
 		baseURL = validateFlagIsURL("base-address", *fBaseAddress)
+	}
+	if *fDexClientCAFile == "" {
+		*fDexClientCAFile = *fCAFile
 	}
 
 	if !strings.HasPrefix(*fBasePath, "/") || !strings.HasSuffix(*fBasePath, "/") {
@@ -145,7 +149,7 @@ func main() {
 	if *fDexClientCertFile != "" && *fDexClientKeyFile != "" && *fDexAPIHost != "" {
 		var err error
 
-		if srv.DexClient, err = auth.NewDexClient(*fDexAPIHost, certPool, *fDexClientCertFile, *fDexClientKeyFile); err != nil {
+		if srv.DexClient, err = auth.NewDexClient(*fDexAPIHost, *fDexClientCAFile, *fDexClientCertFile, *fDexClientKeyFile); err != nil {
 			log.Fatalf("Failed to create a Dex API client: %v", err)
 		}
 	}
