@@ -330,6 +330,8 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 // KubeConfigTmpl is a template which can be rendered into kubectl config file
 // ready to talk to a tectonic installation.
 type KubeConfigTmpl struct {
+	tectonicClusterName string
+
 	clientID     string
 	clientSecret string
 
@@ -341,7 +343,7 @@ type KubeConfigTmpl struct {
 }
 
 // NewKubeConfigTmpl takes the necessary arguments required to create a KubeConfigTmpl.
-func NewKubeConfigTmpl(clientID, clientSecret, k8sURL, dexURL string, k8sCA, dexCA []byte) *KubeConfigTmpl {
+func NewKubeConfigTmpl(clusterName, clientID, clientSecret, k8sURL, dexURL string, k8sCA, dexCA []byte) *KubeConfigTmpl {
 	encode := func(b []byte) string {
 		if b == nil {
 			return ""
@@ -349,31 +351,34 @@ func NewKubeConfigTmpl(clientID, clientSecret, k8sURL, dexURL string, k8sCA, dex
 		return base64.StdEncoding.EncodeToString(b)
 	}
 	return &KubeConfigTmpl{
-		clientID:         clientID,
-		clientSecret:     clientSecret,
-		k8sURL:           k8sURL,
-		dexURL:           dexURL,
-		k8sCAPEMBase64ed: encode(k8sCA),
-		dexCAPEMBase64ed: encode(dexCA),
+		tectonicClusterName: clusterName,
+		clientID:            clientID,
+		clientSecret:        clientSecret,
+		k8sURL:              k8sURL,
+		dexURL:              dexURL,
+		k8sCAPEMBase64ed:    encode(k8sCA),
+		dexCAPEMBase64ed:    encode(dexCA),
 	}
 }
 
 // Execute renders a kubectl config file unqiue to an authentication session.
 func (k *KubeConfigTmpl) Execute(w io.Writer, idToken, refreshToken string) error {
 	data := kubeConfigTmplData{
-		K8sCA:        k.k8sCAPEMBase64ed,
-		K8sURL:       k.k8sURL,
-		DexCA:        k.dexCAPEMBase64ed,
-		DexURL:       k.dexURL,
-		ClientID:     k.clientID,
-		ClientSecret: k.clientSecret,
-		IDToken:      idToken,
-		RefreshToken: refreshToken,
+		TectonicClusterName: k.tectonicClusterName,
+		K8sCA:               k.k8sCAPEMBase64ed,
+		K8sURL:              k.k8sURL,
+		DexCA:               k.dexCAPEMBase64ed,
+		DexURL:              k.dexURL,
+		ClientID:            k.clientID,
+		ClientSecret:        k.clientSecret,
+		IDToken:             idToken,
+		RefreshToken:        refreshToken,
 	}
 	return kubeConfigTmpl.Execute(w, data)
 }
 
 type kubeConfigTmplData struct {
+	TectonicClusterName    string
 	K8sCA, K8sURL          string
 	DexCA, DexURL          string
 	ClientID, ClientSecret string
@@ -388,7 +393,7 @@ clusters:
 - cluster:
     server: {{ .K8sURL }}{{ if .K8sCA }}
     certificate-authority-data: {{ .K8sCA }}{{ end }}
-  name: tectonic
+  name: {{ .TectonicClusterName }}
 
 users:
 - name: tectonic-oidc
@@ -408,7 +413,7 @@ preferences: {}
 
 contexts:
 - context:
-    cluster: tectonic
+    cluster: {{ .TectonicClusterName }}
     user: tectonic-oidc
   name: tectonic
 

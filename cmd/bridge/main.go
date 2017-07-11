@@ -40,6 +40,8 @@ func main() {
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://tectonic.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
 
+	fTectonicClusterName := fs.String("tectonic-cluster-name", "tectonic", "The Tectonic cluster name.")
+
 	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
 	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
@@ -269,6 +271,7 @@ func main() {
 			}
 
 			srv.KubeConfigTmpl = server.NewKubeConfigTmpl(
+				*fTectonicClusterName,
 				*fKubectlClientID,
 				*fKubectlClientSecret,
 				apiServerEndpoint,
