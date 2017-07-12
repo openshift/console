@@ -20,7 +20,9 @@ export class ClusterOverviewContainer extends SafetyFirst {
       kubernetesHealth: null,
       cloudProviders: null,
       tectonicVersionObj: null,
-      currentTectonicVersion: null
+      currentTectonicVersion: null,
+      fixableIssues: null,
+      scannedPods: null,
     };
   }
 
@@ -32,6 +34,8 @@ export class ClusterOverviewContainer extends SafetyFirst {
     this._checkKubernetesHealth();
     this._checkCloudProvider();
     this._checkAppVersions();
+    this._checkFixableIssues();
+    this._checkScannedPods();
   }
 
   _checkTectonicVersion() {
@@ -77,6 +81,28 @@ export class ClusterOverviewContainer extends SafetyFirst {
     });
   }
 
+  _checkFixableIssues() {
+    k8s.pods.get().then((pods) => {
+      var count = 0;
+      for (var pod of pods.items) {
+        var fixables = parseInt(pod['metadata']['labels']['secscan/fixables']);
+        count += !fixables ? 0 : fixables;
+      }
+      this.setState({fixableIssues: count});
+    });
+  }
+
+  _checkScannedPods() {
+    k8s.pods.get().then((pods) => {
+      var count = 0;
+      for (var pod of pods.items) {
+        var scanned = pod['metadata']['annotations']['secscan/lastScan'];
+        count += scanned ? 1 : 0;
+      }
+      this.setState({scannedPods: count});
+    });
+  }
+
   render() {
     return <ClusterOverviewPage
       tectonicVersion={this.state.tectonicVersion}
@@ -87,6 +113,8 @@ export class ClusterOverviewContainer extends SafetyFirst {
       cloudProviders={this.state.cloudProviders}
       tectonicVersionObj={this.state.tectonicVersionObj}
       currentTectonicVersion={this.state.currentTectonicVersion}
+      fixableIssues={this.state.fixableIssues}
+      scannedPods={this.state.scannedPods}
     />;
   }
 }

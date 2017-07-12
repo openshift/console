@@ -234,6 +234,17 @@ export const k8sEnum = {
       plural: 'alertmanagers',
       abbr: 'AM',
     },
+    'PodVuln': {
+      id: 'podvuln',
+      kind: 'PodVuln',
+      label: 'Pod Vuln',
+      labelPlural: 'Pod Vulns',
+      apiVersion: 'v1alpha1',
+      basePath: '/apis/secscan.coreos.com/',
+      path: 'podvulns',
+      plural: 'podvulns',
+      abbr: 'PV',
+    },
     '*': {
       id: 'all',
       plural: 'all',

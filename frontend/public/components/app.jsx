@@ -82,6 +82,7 @@ registerNamespaceFriendlyPrefix('services');
 registerNamespaceFriendlyPrefix('etcdclusters');
 registerNamespaceFriendlyPrefix('networkpolicies');
 registerNamespaceFriendlyPrefix('prometheuses');
+registerNamespaceFriendlyPrefix('podvulns');
 
 store.dispatch(k8sActions.getResources());
 store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
@@ -156,6 +157,7 @@ render((
         <Route path="ns/:ns/:kind/new" component={CreateYAML} />
         <Route path="ns/:ns/:kind/:name/:view" component={ResourceDetailsPage} />
         <Route path="ns/:ns/pods/:podName/:kind/:name/:view" component={ContainersDetailsPage} />
+	{/* <Route path="ns/:ns/podvulns/:podvulnName/:kind/:name/:view" component={ContainersDetailsPage} /> */}
 
         <Route path="error" component={ErrorPage} />
         <Route path="*" component={ErrorPage404} />
