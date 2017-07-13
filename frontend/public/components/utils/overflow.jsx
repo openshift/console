@@ -8,3 +8,9 @@ export const Overflow = ({className, value}) => <div className={classNames('co-m
   <input className="co-m-invisible-input co-m-overflow__input" value={value || '-'} readOnly spellCheck="false" onClick={selectText} />
   <div className="co-m-overflow__gradient"></div>
 </div>;
+
+// Displays text that is not expected to fit within its container
+export const OverflowYFade = ({className, children}) => <div className={classNames('co-overflow-y-fade', className)}>
+  {children}
+  <div className="co-m-overflow__gradient"></div>
+</div>;

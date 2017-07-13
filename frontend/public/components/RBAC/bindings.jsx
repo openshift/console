@@ -10,7 +10,7 @@ import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factor
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
-import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, ResourceCog, ResourceName, ResourceLink, resourceObjPath, StatusBox } from '../utils';
+import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, OverflowYFade, ResourceCog, ResourceName, ResourceLink, resourceObjPath, StatusBox } from '../utils';
 import { isSystemRole } from './index';
 
 const bindingKind = binding => binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding';
@@ -63,9 +63,9 @@ const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-3" sortField="roleRef.name">Role Ref</ColHead>
   <div className="col-xs-6">
-    <ColHead {...props} className="col-xs-3" sortField="subject.kind">Subject Kind</ColHead>
-    <ColHead {...props} className="col-xs-5" sortField="subject.name">Subject Name</ColHead>
-    <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
+    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="subject.kind">Subject Kind</ColHead>
+    <ColHead {...props} className="col-md-5 col-xs-7" sortField="subject.name">Subject Name</ColHead>
+    <ColHead {...props} className="col-md-4 col-xs-5" sortField="metadata.namespace">Namespace</ColHead>
   </div>
 </ListHeader>;
 
@@ -83,22 +83,22 @@ export const RoleLink = ({binding}) => {
 };
 
 const Row = ({obj: binding}) => <ResourceRow obj={binding}>
-  <div className="col-xs-3">
+  <OverflowYFade className="col-xs-3">
     <BindingName binding={binding} />
-  </div>
-  <div className="col-xs-3">
+  </OverflowYFade>
+  <OverflowYFade className="col-xs-3">
     <RoleLink binding={binding} />
-  </div>
+  </OverflowYFade>
   <div className="col-xs-6">
-    <div className="col-xs-3">
+    <OverflowYFade className="col-md-3 hidden-sm hidden-xs">
       {binding.subject.kind}
-    </div>
-    <div className="col-xs-5">
+    </OverflowYFade>
+    <OverflowYFade className="col-md-5 col-xs-7">
       {binding.subject.name}
-    </div>
-    <div className="col-xs-4">
+    </OverflowYFade>
+    <OverflowYFade className="col-md-4 col-sm-5 col-xs-5">
       {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
-    </div>
+    </OverflowYFade>
   </div>
 </ResourceRow>;
 
