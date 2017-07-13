@@ -2,7 +2,7 @@ import React from 'react';
 
 import { k8sPatch, isNodeReady } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
@@ -93,7 +93,7 @@ const NodeCLStatusRow = ({node}) => {
 const NodeRow = ({obj: node, expand}) => {
   const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
-  return <div className="row co-resource-list__item">
+  return <ResourceRow obj={node}>
     <div className="middler">
       <div className="col-xs-4">
         <NodeCog node={node} />
@@ -112,7 +112,7 @@ const NodeRow = ({obj: node, expand}) => {
     {expand && <div className="col-xs-12">
       <LabelList kind="node" labels={node.metadata.labels} />
     </div>}
-  </div>;
+  </ResourceRow>;
 };
 
 const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">

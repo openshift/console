@@ -36,7 +36,7 @@ const PodRow = ({obj: pod}) => {
     </span>;
   }
 
-  return <ResourceRow>
+  return <ResourceRow obj={pod}>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
       <ResourceCog actions={menuActions} kind="pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />

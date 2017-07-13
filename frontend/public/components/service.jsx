@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, LabelList, ResourceCog, Heading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
 
 const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
@@ -21,7 +21,7 @@ const ServiceHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-2 hidden-sm hidden-xs" sortField="spec.clusterIP">Service Location</ColHead>
 </ListHeader>;
 
-const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
+const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="service" resource={s} />
     <ResourceLink kind="service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
@@ -35,7 +35,7 @@ const ServiceRow = ({obj: s}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-2 hidden-sm hidden-xs">
     <ServiceIP s={s} />
   </div>
-</div>;
+</ResourceRow>;
 
 const ServiceAddress = ({s}) => {
   const ServiceIPsRow = (name, desc, ips, note = null) => <div className="co-ip-row">

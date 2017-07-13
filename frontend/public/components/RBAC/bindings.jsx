@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 
 import { getQN, k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { getActiveNamespace, getNamespacedRoute, UIActions } from '../../ui/ui-actions';
-import { ColHead, List, ListHeader, MultiListPage } from '../factory';
+import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
@@ -82,7 +82,7 @@ export const RoleLink = ({binding}) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const Row = ({obj: binding}) => <div className="row co-resource-list__item">
+const Row = ({obj: binding}) => <ResourceRow obj={binding}>
   <div className="col-xs-3">
     <BindingName binding={binding} />
   </div>
@@ -100,7 +100,7 @@ const Row = ({obj: binding}) => <div className="row co-resource-list__item">
       {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
     </div>
   </div>
-</div>;
+</ResourceRow>;
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 

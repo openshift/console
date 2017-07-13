@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import { Cog, Firehose, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
 import classnames from 'classnames';
@@ -18,14 +18,14 @@ const SecretRow = ({obj: secret}) => {
   const data = _.size(secret.data);
   const age = moment(secret.metadata.creationTimestamp).fromNow();
 
-  return <div className="row co-resource-list__item">
+  return <ResourceRow obj={secret}>
     <div className="col-xs-4">
       <ResourceCog actions={menuActions} kind="secret" resource={secret} />
       <ResourceLink kind="secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
     <div className="col-xs-4">{data}</div>
     <div className="col-xs-4">{age}</div>
-  </div>;
+  </ResourceRow>;
 };
 
 const SecretDetails = (secret) => {

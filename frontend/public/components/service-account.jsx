@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, ResourceCog, ResourceLink, Timestamp } from './utils';
 import { SecretsList, withSecretsList } from './secret';
 
@@ -17,7 +17,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;
 
   return (
-    <div className="row co-resource-list__item">
+    <ResourceRow obj={serviceaccount}>
       <div className="col-xs-4">
         <ResourceCog actions={menuActions} kind="serviceaccount" resource={serviceaccount} />
         <ResourceLink kind="serviceaccount" name={name} namespace={namespace} title={uid} />
@@ -28,7 +28,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
       <div className="col-xs-4">
         {moment(creationTimestamp).fromNow()}
       </div>
-    </div>
+    </ResourceRow>
   );
 };
 
