@@ -7,6 +7,16 @@ import { k8sEnum } from '../../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingsList, RulesList } from './index';
+import { registerTemplate } from '../../yaml-templates';
+
+registerTemplate('v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: sample-pod-reader
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]`);
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
