@@ -26,7 +26,7 @@ class ConfigureOperatorChannel extends PromiseComponent {
     const patch = [{ op: 'replace', path: '/channel', value: this.state.value }];
 
     this.handlePromise(
-      k8sPatch(k8sKinds.CHANNELOPERATORCONFIG, this.props.config, patch)
+      k8sPatch(k8sKinds.ChannelOperatorConfig, this.props.config, patch)
     ).then(this.props.close);
   }
 

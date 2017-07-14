@@ -66,7 +66,7 @@ export class PodLogs extends SafetyFirst {
   }
 
   _logURL(props, currentContainer) {
-    return resourceURL(k8sKinds.POD, {
+    return resourceURL(k8sKinds.Pod, {
       ns: _.get(props, 'metadata.namespace'),
       name: _.get(props, 'metadata.name'),
       path: 'log',
@@ -171,7 +171,7 @@ export class PodLogs extends SafetyFirst {
   }
 
   render() {
-    const nameWithIcon = (name) => <span><span className="co-icon-space-r"><ResourceIcon kind="container" /></span>{name}</span>;
+    const nameWithIcon = (name) => <span><span className="co-icon-space-r"><ResourceIcon kind="Container" /></span>{name}</span>;
 
     return <div className="co-m-pane__body">
       <div className="co-m-pane__body__top-controls">

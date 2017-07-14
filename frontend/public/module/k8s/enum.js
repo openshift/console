@@ -5,266 +5,193 @@ export const k8sEnum = {
   ResourceLimitRegex: /^([+-]?[0-9.]+)([eEimkKMGTP]*[-+]?[0-9]*)$/,
 
   Kind: {
-    SERVICE: {
-      // unique machine-friendly id
-      id: 'service',
-      // k8s "kind" used by api
-      kind: 'Service',
+    Service: {
       // singular label
       label: 'Service',
-      // plural label
-      labelPlural: 'Services',
       // api path to resource
       path: 'services',
       //Used in resource-list.jsx to return the matching object
       plural: 'services',
       abbr: 'S',
     },
-    POD: {
-      id: 'pod',
-      kind: 'Pod',
+    Pod: {
       label: 'Pod',
-      labelPlural: 'Pods',
       path: 'pods',
       plural: 'pods',
       abbr: 'P',
     },
-    CONTAINER: {
-      id: 'container',
-      kind: 'Container',
+    Container: {
       label: 'Container',
-      labelPlural: 'Containers',
       path: 'containers',
       plural: 'containers',
       abbr: 'C',
     },
-    DAEMONSET: {
-      id: 'daemonset',
-      kind: 'DaemonSet',
+    DaemonSet: {
       label: 'Daemon Set',
-      labelPlural: 'Daemon Sets',
       path: 'daemonsets',
       plural: 'daemonsets',
       isExtension: true,
       apiVersion: 'v1beta1',
       abbr: 'DS',
     },
-    REPLICATIONCONTROLLER: {
-      id: 'replicationcontroller',
-      kind: 'ReplicationController',
+    ReplicationController: {
       label: 'Replication Controller',
-      labelPlural: 'Replication Controllers',
       path: 'replicationcontrollers',
       plural: 'replicationcontrollers',
       abbr: 'RC',
     },
-    HORIZONTALPODAUTOSCALER: {
-      id: 'horizontalpodautoscaler',
-      kind: 'HorizontalPodAutoscaler',
+    HorizontalPodAutoscaler: {
       label: 'Horizontal Pod Autoscaler',
-      labelPlural: 'Horizontal Pod Autoscalers',
       path: 'horizontalpodautoscalers',
       plural: 'horizontalpodautoscalers',
       apiVersion: 'autoscaling/v1',
       basePath: '/apis/',
       abbr: 'HPA',
     },
-    SERVICEACCOUNT: {
-      id: 'serviceaccount',
-      kind: 'ServiceAccount',
+    ServiceAccount: {
       label: 'Service Account',
-      labelPlural: 'Service Accounts',
       path: 'serviceaccounts',
       plural: 'serviceaccounts',
       abbr: 'SA',
     },
-    REPLICASET: {
-      id: 'replicaset',
-      kind: 'ReplicaSet',
+    ReplicaSet: {
       label: 'Replica Set',
-      labelPlural: 'Replica Sets',
       isExtension: true,
       apiVersion: 'v1beta1',
       path: 'replicasets',
       plural: 'replicasets',
       abbr: 'RS',
     },
-    DEPLOYMENT: {
-      id: 'deployment',
-      kind: 'Deployment',
+    Deployment: {
       label: 'Deployment',
-      labelPlural: 'Deployments',
       isExtension: true,
       apiVersion: 'v1beta1',
       path: 'deployments',
       plural: 'deployments',
       abbr: 'D',
     },
-    JOB: {
-      id: 'job',
-      kind: 'Job',
+    Job: {
       label: 'Job',
-      labelPlural: 'Jobs',
       apiVersion: 'batch/v1',
       path: 'jobs',
       basePath: '/apis/',
       plural: 'jobs',
       abbr: 'J',
     },
-    NODE: {
-      id: 'node',
-      kind: 'Node',
+    Node: {
       label: 'Node',
-      labelPlural: 'Nodes',
       path: 'nodes',
       plural: 'nodes',
       abbr: 'N',
     },
-    EVENT: {
-      id: 'event',
-      kind: 'Event',
+    Event: {
       label: 'Event',
-      labelPlural: 'Events',
       path: 'events',
       plural: 'events',
       abbr: 'E',
     },
-    COMPONENTSTATUS: {
-      id: 'componentstatus',
-      kind: 'ComponentStatus',
+    ComponentStatus: {
       label: 'Component Status',
       labelPlural: 'Component Statuses',
       path: 'componentstatuses',
       plural: 'componentstatuses',
       abbr: 'CS',
     },
-    NAMESPACE: {
-      id: 'namespace',
-      kind: 'Namespace',
+    Namespace: {
       label: 'Namespace',
-      labelPlural: 'Namespaces',
       path: 'namespaces',
       plural: 'namespaces',
       abbr: 'N',
     },
-    INGRESS: {
-      id: 'ingress',
-      kind: 'Ingress',
+    Ingress: {
       label: 'Ingress',
-      labelPlural: 'Ingress',
+      labelPlural: 'Ingresses',
       isExtension: true,
       apiVersion: 'v1beta1',
       path: 'ingresses',
       plural: 'ingresses',
       abbr: 'I',
     },
-    CONFIGMAP: {
-      id: 'configmap',
-      kind: 'ConfigMap',
+    ConfigMap: {
       label: 'Config Map',
-      labelPlural: 'Config Maps',
       path: 'configmaps',
       plural: 'configmaps',
       abbr: 'CM',
     },
-    SECRET: {
-      id: 'secret',
-      kind: 'Secret',
+    Secret: {
       label: 'Secret',
-      labelPlural: 'Secrets',
       path: 'secrets',
       plural: 'secrets',
       abbr: 'S',
     },
-    'CLUSTERROLEBINDING': {
-      id: 'clusterrolebinding',
-      kind: 'ClusterRoleBinding',
+    ClusterRoleBinding: {
       label: 'Cluster Role Binding',
-      labelPlural: 'Cluster Role Bindings',
       basePath: '/apis/rbac.authorization.k8s.io/',
       apiVersion: 'v1beta1',
       path: 'clusterrolebindings',
       plural: 'clusterrolebindings',
       abbr: 'CRB',
     },
-    'CLUSTERROLE': {
-      id: 'clusterrole',
-      kind: 'ClusterRole',
+    ClusterRole: {
       label: 'Cluster Role',
-      labelPlural: 'Cluster Roles',
       basePath: '/apis/rbac.authorization.k8s.io/',
       apiVersion: 'v1beta1',
       path: 'clusterroles',
       plural: 'clusterroles',
       abbr: 'CR'
     },
-    'ROLEBINDING': {
-      id: 'rolebinding',
-      kind: 'RoleBinding',
+    RoleBinding: {
       label: 'Role Binding',
-      labelPlural: 'Role Bindings',
       basePath: '/apis/rbac.authorization.k8s.io/',
       apiVersion: 'v1beta1',
       path: 'rolebindings',
       plural: 'rolebindings',
       abbr: 'RB',
     },
-    'ROLE': {
-      id: 'role',
-      kind: 'Role',
+    Role: {
       label: 'Role',
-      labelPlural: 'Roles',
       basePath: '/apis/rbac.authorization.k8s.io/',
       apiVersion: 'v1beta1',
       path: 'roles',
       plural: 'roles',
       abbr: 'R',
     },
-    'TECTONICVERSION': {
-      id: 'tectonicversion',
-      kind: 'TectonicVersion',
-      label: 'TectonicVersion',
-      labelPlural: 'TectonicVersions',
+    TectonicVersion: {
+      label: 'Tectonic Version',
       basePath: '/apis/coreos.com/',
       apiVersion: 'v1',
       path: 'tectonicversions',
       plural: 'tectonicversions',
       abbr: 'TV',
     },
-    'CHANNELOPERATORCONFIG': {
-      id: 'channeloperatorconfig',
-      kind: 'ChannelOperatorConfig',
-      label: 'ChannelOperatorConfig',
-      labelPlural: 'ChannelOperatorConfigs',
+    ChannelOperatorConfig: {
+      label: 'Channel Operator Config',
       basePath: '/apis/coreos.com/',
       apiVersion: 'v1',
       path: 'channeloperatorconfigs',
       plural: 'channeloperatorconfigs',
       abbr: 'COC',
     },
-    'APPVERSION': {
-      id: 'appversion',
-      kind: 'AppVersion',
+    AppVersion: {
       label: 'AppVersion',
-      labelPlural: 'AppVersions',
       basePath: '/apis/coreos.com/',
       apiVersion: 'v1',
       path: 'appversions',
       plural: 'appversions',
       abbr: 'AV',
     },
-    PETSET: {
-      id: 'petset',
+    Petset: {
       label: 'Petset',
-      labelPlural: 'Pet Sets',
       plural: 'petsets',
       abbr: 'PS',
     },
-    'ETCDCLUSTER': {
-      id: 'etcdcluster',
-      kind: 'EtcdCluster',
+    StatefulSet: {
+      label: 'StatefulSet',
+      plural: 'statefulsets',
+      abbr: 'SS',
+    },
+    EtcdCluster: {
       label: 'etcd Cluster',
-      labelPlural: 'etcd Clusters',
       apiVersion: 'v1beta1',
       basePath: '/apis/etcd.coreos.com/',
       path: 'clusters',
@@ -421,3 +348,9 @@ _.each(k8sEnum.Kind, v => idToEnum[v.id] = v);
 
 // Shortcut because this is used so often
 export const k8sKinds = k8sEnum.Kind;
+
+_.each(k8sEnum.Kind, (v, k) => {
+  v.kind = v.kind || k;
+  v.id = v.id || k.toLowerCase();
+  v.labelPlural = v.labelPlural || `${v.label}s`;
+});

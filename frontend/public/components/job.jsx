@@ -46,11 +46,11 @@ const JobRow = ({obj: job}) => {
   return (
     <ResourceRow obj={job}>
       <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
-        <ResourceCog actions={menuActions} kind="job" resource={job} />
-        <ResourceLink kind="job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
+        <ResourceCog actions={menuActions} kind="Job" resource={job} />
+        <ResourceLink kind="Job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
       </div>
       <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-        <LabelList kind="job" labels={job.metadata.labels} />
+        <LabelList kind="Job" labels={job.metadata.labels} />
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
         <Link to={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">

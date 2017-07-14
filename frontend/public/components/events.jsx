@@ -41,7 +41,7 @@ class SysEvent extends React.PureComponent {
         </div>
         <div className="co-sysevent__main-box">
           <ResourceLink
-            kind={obj.kind.toLowerCase()}
+            kind={obj.kind}
             namespace={obj.namespace}
             name={obj.name}
             title={obj.uid}
@@ -64,7 +64,7 @@ class SysEvent extends React.PureComponent {
 
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
-const kinds = ['daemonset', 'deployment', 'ingress', 'job', 'node', 'pod', 'replicaset', 'replicationcontroller'];
+const kinds = ['DaemonSet', 'Deployment', 'Ingress', 'Job', 'Node', 'Pod', 'ReplicaSet', 'ReplicationController'];
 
 export class EventStreamPage extends React.Component {
   constructor (props) {
@@ -122,7 +122,7 @@ class EventStream_ extends SafetyFirst {
     this.ws = wsFactory('sysevents', {
       host: 'auto',
       reconnect: true,
-      path: watchURL(k8sKinds.EVENT, params),
+      path: watchURL(k8sKinds.Event, params),
       jsonParse: true,
       bufferEnabled: true,
       bufferFlushInterval: flushInterval,

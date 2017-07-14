@@ -52,11 +52,11 @@ const PodRow = ({obj: pod}) => {
 
   return <ResourceRow obj={pod}>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceCog actions={menuActions} kind="pod" resource={pod} isDisabled={phase === 'Terminating'} />
-      <ResourceLink kind="pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
+      <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
+      <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-      <LabelList kind="pod" labels={pod.metadata.labels} />
+      <LabelList kind="Pod" labels={pod.metadata.labels} />
     </div>
 
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">{status}</div>
@@ -76,7 +76,7 @@ const PodHeader = props => <ListHeader>
 </ListHeader>;
 
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">
-  <ResourceIcon kind="container" />
+  <ResourceIcon kind="Container" />
   <Link to={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</Link>
 </span>;
 
@@ -160,7 +160,7 @@ const Details = (pod) => {
               <div className="col-sm-6 col-xs-12">
                 <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
                   <dt>Node Selector</dt>
-                  <dd><Selector kind="node" selector={pod.spec.nodeSelector} /></dd>
+                  <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
                 </ResourceSummary>
               </div>
               <div className="col-sm-6 col-xs-12">
@@ -239,7 +239,7 @@ export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow}
 export const PodsPage = props => <ListPage
   {...props}
   canCreate={true}
-  kind="pod"
+  kind="Pod"
   ListComponent={PodList}
   rowFilters={[{
     type: 'pod-status',

@@ -6,7 +6,7 @@ import {K8sWatcher} from './k8s-watcher';
 import {k8s as k8sModule, k8sKinds} from '../../module/k8s';
 import {inject} from './index';
 
-export const kindObj = kind => _.isString(kind) && k8sKinds[kind.toUpperCase()] || {};
+export const kindObj = kind => _.isString(kind) && k8sKinds[kind] || {};
 
 export const k8sResource = kind => {
   const {plural} = kindObj(kind);

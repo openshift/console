@@ -30,8 +30,8 @@ const SecretRow = ({obj: secret}) => {
 
   return <ResourceRow obj={secret}>
     <div className="col-xs-4">
-      <ResourceCog actions={menuActions} kind="secret" resource={secret} />
-      <ResourceLink kind="secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
+      <ResourceCog actions={menuActions} kind="Secret" resource={secret} />
+      <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
     <div className="col-xs-4">{data}</div>
     <div className="col-xs-4">{age}</div>
@@ -83,7 +83,7 @@ const withSecretsList = (Row) => {
   };
 };
 
-const SecretsList = props => <Firehose {...props} kind="secret" isList={true}>
+const SecretsList = props => <Firehose {...props} kind="Secret" isList={true}>
   <List {...props} Header={SecretHeader} Row={SecretRow} />
 </Firehose>;
 

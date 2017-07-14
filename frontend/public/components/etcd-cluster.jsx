@@ -42,7 +42,7 @@ const EtcdClusterLink = (props) => {
   const path = `ns/${namespace}/etcdclusters/${name}/details`;
 
   return <span className="co-resource-link">
-    <ResourceIcon kind="etcdcluster" />
+    <ResourceIcon kind="EtcdCluster" />
     <Link to={path} title={uid}>{name}</Link>
   </span>;
 };
@@ -60,7 +60,7 @@ const EtcdClusterRow = ({obj: cluster}) => {
 
   return <ResourceRow obj={cluster}>
     <div className="col-md-3 col-sm-4 col-xs-6">
-      <ResourceCog actions={menuActions} kind="etcdcluster" resource={cluster} />
+      <ResourceCog actions={menuActions} kind="EtcdCluster" resource={cluster} />
       <EtcdClusterLink metadata={metadata} />
     </div>
     <div className="col-md-2 col-sm-3 col-xs-6">
@@ -113,7 +113,7 @@ export class EtcdClusterDetails extends SafetyFirst {
     event.preventDefault();
     event.target.blur();
     configureClusterSizeModal({
-      resourceKind: k8sKinds.ETCDCLUSTER,
+      resourceKind: k8sKinds.EtcdCluster,
       resource: this.props,
       invalidateState: (isInvalid) => {
         this.setState({

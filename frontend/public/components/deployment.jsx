@@ -67,7 +67,7 @@ export class Details extends SafetyFirst {
     event.preventDefault();
     event.target.blur();
     configureReplicaCountModal({
-      resourceKind: k8sKinds.DEPLOYMENT,
+      resourceKind: k8sKinds.Deployment,
       resource: this.props,
       invalidateState: (isInvalid) => {
         this.setState({
@@ -157,7 +157,7 @@ const DeploymentsDetailsPage = props => <DetailsPage
   pages={[details(Details), editYaml(), pods()]}
 />;
 
-const Row = props => <WorkloadListRow {...props} kind="deployment" actions={menuActions} />;
+const Row = props => <WorkloadListRow {...props} kind="Deployment" actions={menuActions} />;
 const DeploymentsList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
 const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
 

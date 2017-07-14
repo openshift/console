@@ -153,7 +153,7 @@ class EditRule_ extends PromiseComponent {
     }
     this.handlePromise(this.resource.update(role))
     .then(() => {
-      history.push(`${resourceObjPath(role, this.kind.id)}/details`);
+      history.push(`${resourceObjPath(role, this.kind.kind)}/details`);
     });
   }
 
@@ -400,7 +400,7 @@ class EditRule_ extends PromiseComponent {
             <div className="col-xs-12">
               <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
-                {role && <Link to={`${resourceObjPath(role, this.kind.id)}/details`}>Cancel</Link>}
+                {role && <Link to={`${resourceObjPath(role, this.kind.kind)}/details`}>Cancel</Link>}
               </ButtonBar>
             </div>
           </div>

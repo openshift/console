@@ -14,7 +14,7 @@ import {ReplicationControllersList} from './replication-controller';
 import {SecretsList} from './secret';
 import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
-import {IngressList} from './ingress';
+import {IngressesList} from './ingress';
 import {getActiveNamespace} from '../ui/ui-actions';
 import {Dropdown, Firehose, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
@@ -23,19 +23,19 @@ import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
 
 // Map resource kind IDs to their list components
 const resources = {
-  configmap: ConfigMaps,
-  daemonset: DaemonSets,
-  deployment: DeploymentsList,
-  ingress: IngressList,
-  job: JobsList,
-  namespace: NamespacesList,
-  node: NodesListSearch,
-  pod: PodList,
-  replicaset: ReplicaSetsList,
-  replicationcontroller: ReplicationControllersList,
-  secret: SecretsList,
-  serviceaccount: ServiceAccountsList,
-  service: ServicesList,
+  ConfigMap: ConfigMaps,
+  DaemonSet: DaemonSets,
+  Deployment: DeploymentsList,
+  Ingress: IngressesList,
+  Job: JobsList,
+  Namespace: NamespacesList,
+  Node: NodesListSearch,
+  Pod: PodList,
+  ReplicaSet: ReplicaSetsList,
+  ReplicationController: ReplicationControllersList,
+  Secret: SecretsList,
+  ServiceAccount: ServiceAccountsList,
+  Service: ServicesList,
 };
 
 const DropdownItem = ({kind}) => <span>
@@ -53,7 +53,7 @@ const ResourceListDropdown = ({selected, onChange}) => {
 const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
 ({kind, namespace, selector}) => {
   const List = resources[kind];
-  const ns = kind === 'node' || kind === 'namespace' ? undefined : namespace;
+  const ns = kind === 'Node' || kind === 'Namespace' ? undefined : namespace;
 
   return <div className="co-m-pane__body">
     {List && <div className="co-m-resource-list">
@@ -74,11 +74,10 @@ const updateKind = kind => updateUrlParams({kind: encodeURIComponent(kind)});
 const updateTags = tags => updateUrlParams({q: tags.map(encodeURIComponent).join(',')});
 
 export const SearchPage = ({params, location}) => {
-  const {kind, q} = location.query;
+  let {kind, q} = location.query;
 
   // Ensure that the "kind" route parameter is a valid resource kind ID
-  const {id} = kindObj(decodeURIComponent(kind));
-  const kindId = id || 'service';
+  kind = kind ? decodeURIComponent(kind) : 'Service';
 
   const tags = k8sSelector.split(_.isString(q) ? decodeURIComponent(q) : '');
   const validTags = _.reject(tags, tag => k8sSelectorRequirement.fromString(tag) === undefined);
@@ -94,12 +93,12 @@ export const SearchPage = ({params, location}) => {
       <div className="co-m-pane__body">
         <div className="input-group">
           <div className="input-group-btn">
-            <ResourceListDropdown selected={kindId} onChange={updateKind} />
+            <ResourceListDropdown selected={kind} onChange={updateKind} />
           </div>
-          <SelectorInput labelClassName={`co-text-${kindId}`} tags={validTags} onChange={updateTags} autoFocus/>
+          <SelectorInput labelClassName={`co-text-${kind}`} tags={validTags} onChange={updateTags} autoFocus/>
         </div>
       </div>
-      <ResourceList kind={kindId} selector={selector} />
+      <ResourceList kind={kind} selector={selector} />
     </div>
   </div>;
 };

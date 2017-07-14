@@ -20,7 +20,7 @@ export const ResourceListPage = (props) => {
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}Page`];
   return <div>
     <Helmet title={kindObj.labelPlural} />
-    {PageComponent && <PageComponent namespace={ns} kind={kindObj.id} />}
+    {PageComponent && <PageComponent namespace={ns} kind={kindObj.kind} />}
   </div>;
 };
 
@@ -37,6 +37,6 @@ export const ResourceDetailsPage = (props) => {
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}DetailsPage`];
   return <div>
     <Helmet title={`${name} · Details`} />
-    {PageComponent && <PageComponent namespace={ns} kind={kindObj.id} name={name} />}
+    {PageComponent && <PageComponent namespace={ns} kind={kindObj.kind} name={name} />}
   </div>;
 };

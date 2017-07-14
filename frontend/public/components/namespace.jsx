@@ -41,14 +41,14 @@ const Header = props => <ListHeader>
 
 const Row = ({obj: ns}) => <ResourceRow obj={ns}>
   <div className="col-xs-4">
-    <ResourceCog actions={menuActions} kind="namespace" resource={ns} />
-    <ResourceLink kind="namespace" name={ns.metadata.name} title={ns.metadata.uid} />
+    <ResourceCog actions={menuActions} kind="Namespace" resource={ns} />
+    <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
   </div>
   <div className="col-xs-4">
     {ns.status.phase}
   </div>
   <div className="col-xs-4">
-    <LabelList kind="namespace" labels={ns.metadata.labels} />
+    <LabelList kind="Namespace" labels={ns.metadata.labels} />
   </div>
 </ResourceRow>;
 
@@ -159,7 +159,7 @@ const RolesPage = ({metadata}) => {
     createProps={{to: `/rolebindings/new?ns=${metadata.name}`}}
     filterLabel="Role Bindings by role or subject"
     Intro={Intro}
-    kind="rolebinding"
+    kind="RoleBinding"
     ListComponent={props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />}
     namespace={metadata.name}
     showTitle={false}
@@ -199,7 +199,7 @@ export const NamespaceSelector = () => {
     return null;
   }
 
-  return <Firehose kind="namespace" isList={true}>
+  return <Firehose kind="Namespace" isList={true}>
     <NamespaceDropdown />
   </Firehose>;
 };

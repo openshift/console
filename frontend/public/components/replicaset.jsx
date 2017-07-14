@@ -51,7 +51,7 @@ const ReplicaSetsDetailsPage = props => <DetailsPage
   pages={[details(Details), editYaml(), pods()]}
 />;
 
-const Row = props => <WorkloadListRow {...props} kind="replicaset" actions={replicaSetMenuActions} />;
+const Row = props => <WorkloadListRow {...props} kind="ReplicaSet" actions={replicaSetMenuActions} />;
 const ReplicaSetsList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
 const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
 

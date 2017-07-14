@@ -16,7 +16,7 @@ class UnscheduleNodeModal extends PromiseComponent {
 
     const patch = [{ op: 'replace', path: '/spec/unschedulable', value: true }];
     this.handlePromise(
-      k8sPatch(k8sKinds.NODE, this.props.resource, patch)
+      k8sPatch(k8sKinds.Node, this.props.resource, patch)
     )
       .then(this.props.close)
       .catch((error) => {

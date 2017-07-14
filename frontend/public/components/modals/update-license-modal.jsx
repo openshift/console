@@ -4,7 +4,7 @@ import {configureYamlFieldModal} from './configure-yaml-field-modal';
 export const updateLicenseModal = (additionalOptions) => {
   const options = _.defaultsDeep({}, additionalOptions, {
     k8sQuery: {
-      kind: 'secret',
+      kind: 'Secret',
       name: 'tectonic-license-secret',
       namespace: 'tectonic-system'
     },

@@ -30,8 +30,8 @@ const ConfigMapHeader = props => <ListHeader>
 
 const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
   <div className="col-xs-4">
-    <ResourceCog actions={menuActions} kind="configmap" resource={configMap} />
-    <ResourceLink kind="configmap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
+    <ResourceCog actions={menuActions} kind="ConfigMap" resource={configMap} />
+    <ResourceLink kind="ConfigMap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
   </div>
   <div className="col-xs-4">{_.size(configMap.data)}</div>
   <div className="col-xs-4">{moment(configMap.metadata.creationTimestamp).fromNow()}</div>

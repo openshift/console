@@ -49,7 +49,7 @@ export const CertsInfo = (props) => {
       <SettingsLabel>CA Certificate:</SettingsLabel>
       <SettingsContent>
         <div className="certs-info-cert">
-          <ResourceLink kind="secret" name="tectonic-ca-cert-secret" namespace="tectonic-system" displayName="Tectonic CA certificate"/>
+          <ResourceLink kind="Secret" name="tectonic-ca-cert-secret" namespace="tectonic-system" displayName="Tectonic CA certificate"/>
         </div>
         <div>
           Expires on <div className="certs-info-exp">

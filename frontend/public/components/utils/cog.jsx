@@ -74,7 +74,7 @@ Cog.factory = {
   Edit: (kind, obj) => ({
     label: `Edit ${kind.label}...`,
     weight: 800,
-    href: `${resourceObjPath(obj, kind.id)}/yaml`,
+    href: `${resourceObjPath(obj, kind.kind)}/yaml`,
   }),
   ModifyLabels: (kind, obj) => ({
     label: 'Modify Labels...',

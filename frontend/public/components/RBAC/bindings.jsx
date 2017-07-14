@@ -28,9 +28,9 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io`);
 
 
-const bindingKind = binding => binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding';
+const bindingKind = binding => binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';
 
-const k8sKind = kindId => _.get(k8sKinds, `${_.toUpper(kindId)}.kind`);
+const k8sKind = kindId => _.get(k8sKinds, `${kindId}.kind`);
 
 // Split each binding into one row per subject
 const rowSplitter = binding => {
@@ -55,12 +55,12 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
     (kind, obj) => ({
       label: `Duplicate ${kind.label}...`,
       weight: 700,
-      href: `${resourceObjPath(obj, kind.id)}/copy?subjectIndex=${subjectIndex}`,
+      href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
     }),
     (kind, obj) => ({
       label: `Edit ${kind.label} Subject...`,
       weight: 800,
-      href: `${resourceObjPath(obj, kind.id)}/edit?subjectIndex=${subjectIndex}`,
+      href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
     }),
     subjects.length === 1 ? Cog.factory.Delete : (kind, binding) => ({
       label: `Delete ${kind.label} Subject...`,
@@ -103,10 +103,10 @@ export const BindingName = connect(null, {startImpersonate: UIActions.startImper
 </span>);
 
 export const RoleLink = ({binding}) => {
-  const kind = binding.roleRef.kind.toLowerCase();
+  const kind = binding.roleRef.kind;
 
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
-  const ns = kind === 'clusterrole' ? undefined : binding.metadata.namespace;
+  const ns = kind === 'ClusterRole' ? undefined : binding.metadata.namespace;
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
@@ -125,7 +125,7 @@ const Row = ({obj: binding}) => <ResourceRow obj={binding}>
       {binding.subject.name}
     </OverflowYFade>
     <OverflowYFade className="col-md-4 col-sm-5 col-xs-5">
-      {binding.metadata.namespace ? <ResourceLink kind="namespace" name={binding.metadata.namespace} /> : 'all'}
+      {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
     </OverflowYFade>
   </div>
 </ResourceRow>;
@@ -145,8 +145,8 @@ export const bindingType = binding => {
 };
 
 const resources = [
-  {kind: 'rolebinding', namespaced: true},
-  {kind: 'clusterrolebinding', namespaced: false},
+  {kind: 'RoleBinding', namespaced: true},
+  {kind: 'ClusterRoleBinding', namespaced: false},
 ];
 
 export const RoleBindingsPage = () => <MultiListPage
@@ -209,7 +209,7 @@ const ListDropdown = props => <MultiFirehose resources={props.kinds.map(kind => 
   <ListDropdown_ {...props} />
 </MultiFirehose>;
 
-const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['namespace']} placeholder="Select namespace" />;
+const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['Namespace']} placeholder="Select namespace" />;
 
 const NsRoleDropdown = props => {
   const roleFilter = role => !isSystemRole(role) && (!props.namespace || !role.metadata.namespace || role.metadata.namespace === props.namespace);
@@ -217,7 +217,7 @@ const NsRoleDropdown = props => {
     {...props}
     dataFilter={roleFilter}
     desc="Namespace Roles (Role)"
-    kinds={props.fixedKind ? [_.toLower(props.fixedKind)] : ['role', 'clusterrole']}
+    kinds={props.fixedKind ? [props.fixedKind] : ['Role', 'ClusterRole']}
     placeholder="Select role name"
   />;
 };
@@ -226,7 +226,7 @@ const ClusterRoleDropdown = props => <ListDropdown
   {...props}
   dataFilter={role => !isSystemRole(role)}
   desc="Cluster-wide Roles (ClusterRole)"
-  kinds={['clusterrole']}
+  kinds={['ClusterRole']}
   placeholder="Select role name"
 />;
 
