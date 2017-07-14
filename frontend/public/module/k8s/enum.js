@@ -18,6 +18,7 @@ export const k8sEnum = {
       path: 'services',
       //Used in resource-list.jsx to return the matching object
       plural: 'services',
+      abbr: 'S',
     },
     POD: {
       id: 'pod',
@@ -26,6 +27,7 @@ export const k8sEnum = {
       labelPlural: 'Pods',
       path: 'pods',
       plural: 'pods',
+      abbr: 'P',
     },
     CONTAINER: {
       id: 'container',
@@ -34,6 +36,7 @@ export const k8sEnum = {
       labelPlural: 'Containers',
       path: 'containers',
       plural: 'containers',
+      abbr: 'C',
     },
     DAEMONSET: {
       id: 'daemonset',
@@ -44,6 +47,7 @@ export const k8sEnum = {
       plural: 'daemonsets',
       isExtension: true,
       apiVersion: 'v1beta1',
+      abbr: 'DS',
     },
     REPLICATIONCONTROLLER: {
       id: 'replicationcontroller',
@@ -52,6 +56,7 @@ export const k8sEnum = {
       labelPlural: 'Replication Controllers',
       path: 'replicationcontrollers',
       plural: 'replicationcontrollers',
+      abbr: 'RC',
     },
     HORIZONTALPODAUTOSCALER: {
       id: 'horizontalpodautoscaler',
@@ -61,7 +66,8 @@ export const k8sEnum = {
       path: 'horizontalpodautoscalers',
       plural: 'horizontalpodautoscalers',
       apiVersion: 'autoscaling/v1',
-      basePath: '/apis/'
+      basePath: '/apis/',
+      abbr: 'HPA',
     },
     SERVICEACCOUNT: {
       id: 'serviceaccount',
@@ -70,6 +76,7 @@ export const k8sEnum = {
       labelPlural: 'Service Accounts',
       path: 'serviceaccounts',
       plural: 'serviceaccounts',
+      abbr: 'SA',
     },
     REPLICASET: {
       id: 'replicaset',
@@ -80,6 +87,7 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       path: 'replicasets',
       plural: 'replicasets',
+      abbr: 'RS',
     },
     DEPLOYMENT: {
       id: 'deployment',
@@ -90,6 +98,7 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       path: 'deployments',
       plural: 'deployments',
+      abbr: 'D',
     },
     JOB: {
       id: 'job',
@@ -100,6 +109,7 @@ export const k8sEnum = {
       path: 'jobs',
       basePath: '/apis/',
       plural: 'jobs',
+      abbr: 'J',
     },
     NODE: {
       id: 'node',
@@ -108,6 +118,7 @@ export const k8sEnum = {
       labelPlural: 'Nodes',
       path: 'nodes',
       plural: 'nodes',
+      abbr: 'N',
     },
     EVENT: {
       id: 'event',
@@ -116,6 +127,7 @@ export const k8sEnum = {
       labelPlural: 'Events',
       path: 'events',
       plural: 'events',
+      abbr: 'E',
     },
     COMPONENTSTATUS: {
       id: 'componentstatus',
@@ -124,6 +136,7 @@ export const k8sEnum = {
       labelPlural: 'Component Statuses',
       path: 'componentstatuses',
       plural: 'componentstatuses',
+      abbr: 'CS',
     },
     NAMESPACE: {
       id: 'namespace',
@@ -132,6 +145,7 @@ export const k8sEnum = {
       labelPlural: 'Namespaces',
       path: 'namespaces',
       plural: 'namespaces',
+      abbr: 'N',
     },
     INGRESS: {
       id: 'ingress',
@@ -142,6 +156,7 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       path: 'ingresses',
       plural: 'ingresses',
+      abbr: 'I',
     },
     CONFIGMAP: {
       id: 'configmap',
@@ -150,6 +165,7 @@ export const k8sEnum = {
       labelPlural: 'Config Maps',
       path: 'configmaps',
       plural: 'configmaps',
+      abbr: 'CM',
     },
     SECRET: {
       id: 'secret',
@@ -158,6 +174,7 @@ export const k8sEnum = {
       labelPlural: 'Secrets',
       path: 'secrets',
       plural: 'secrets',
+      abbr: 'S',
     },
     'CLUSTERROLEBINDING': {
       id: 'clusterrolebinding',
@@ -168,6 +185,7 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       path: 'clusterrolebindings',
       plural: 'clusterrolebindings',
+      abbr: 'CRB',
     },
     'CLUSTERROLE': {
       id: 'clusterrole',
@@ -178,6 +196,7 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       path: 'clusterroles',
       plural: 'clusterroles',
+      abbr: 'CR'
     },
     'ROLEBINDING': {
       id: 'rolebinding',
@@ -188,6 +207,7 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       path: 'rolebindings',
       plural: 'rolebindings',
+      abbr: 'RB',
     },
     'ROLE': {
       id: 'role',
@@ -198,6 +218,7 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       path: 'roles',
       plural: 'roles',
+      abbr: 'R',
     },
     'TECTONICVERSION': {
       id: 'tectonicversion',
@@ -208,6 +229,7 @@ export const k8sEnum = {
       apiVersion: 'v1',
       path: 'tectonicversions',
       plural: 'tectonicversions',
+      abbr: 'TV',
     },
     'CHANNELOPERATORCONFIG': {
       id: 'channeloperatorconfig',
@@ -218,6 +240,7 @@ export const k8sEnum = {
       apiVersion: 'v1',
       path: 'channeloperatorconfigs',
       plural: 'channeloperatorconfigs',
+      abbr: 'COC',
     },
     'APPVERSION': {
       id: 'appversion',
@@ -228,12 +251,14 @@ export const k8sEnum = {
       apiVersion: 'v1',
       path: 'appversions',
       plural: 'appversions',
+      abbr: 'AV',
     },
     PETSET: {
       id: 'petset',
       label: 'Petset',
       labelPlural: 'Pet Sets',
       plural: 'petsets',
+      abbr: 'PS',
     },
     'ETCDCLUSTER': {
       id: 'etcdcluster',
@@ -243,12 +268,14 @@ export const k8sEnum = {
       apiVersion: 'v1beta1',
       basePath: '/apis/etcd.coreos.com/',
       path: 'clusters',
-      plural: 'etcdclusters'
+      plural: 'etcdclusters',
+      abbr: 'EC',
     },
     '*': {
       id: 'all',
       plural: 'all',
       labelPlural: 'All',
+      abbr: '*',
     }
   },
 
@@ -388,6 +415,9 @@ export const k8sEnum = {
   },
 
 };
+
+export const idToEnum = {};
+_.each(k8sEnum.Kind, v => idToEnum[v.id] = v);
 
 // Shortcut because this is used so often
 export const k8sKinds = k8sEnum.Kind;
