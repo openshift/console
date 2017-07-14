@@ -2,8 +2,22 @@ import React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, Heading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
+import { registerTemplate } from '../yaml-templates';
 
 const menuActions = Cog.factory.common;
+
+registerTemplate('v1beta1.Ingress', `apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /testpath
+        backend:
+          serviceName: test
+          servicePort: 80`);
 
 export const ingressValidHosts = ingress => _.chain(ingress).get('spec.rules').map('host').filter(_.isString).value();
 

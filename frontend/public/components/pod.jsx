@@ -9,8 +9,22 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
 import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { PodLogs } from './pod-logs';
+import { registerTemplate } from '../yaml-templates';
 
 const menuActions = Cog.factory.common;
+
+registerTemplate('v1.Pod', `apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  containers:
+    - name: key-value-store
+      image: redis
+      ports:
+        - containerPort: 6379`);
 
 const Readiness = ({pod}) => {
   const readiness = podReadiness(pod);

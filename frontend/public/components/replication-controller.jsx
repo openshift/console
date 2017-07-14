@@ -4,6 +4,28 @@ import { ResourceEventStream } from './events';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
 import { navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1.ReplicationController', `apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx
+spec:
+  replicas: 2
+  selector:
+    app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80`);
+
 
 const Details = (replicationController) => <div>
   <Heading text="Replication Controller Overview" />

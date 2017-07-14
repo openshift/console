@@ -4,6 +4,21 @@ import moment from 'moment';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import { Cog, Heading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1.ConfigMap', `apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-config
+  namespace: default
+data:
+  example.property.1: hello
+  example.property.2: world
+  example.property.file: |-
+    property.1=value-1
+    property.2=value-2
+    property.3=value-3`);
+
 
 const menuActions = Cog.factory.common;
 

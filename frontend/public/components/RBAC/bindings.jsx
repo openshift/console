@@ -12,6 +12,21 @@ import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
 import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, OverflowYFade, ResourceCog, ResourceName, ResourceLink, resourceObjPath, StatusBox } from '../utils';
 import { isSystemRole } from './index';
+import { registerTemplate } from '../../yaml-templates';
+
+registerTemplate('v1beta1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: my-role-binding
+subjects:
+- kind: Group
+  name: "my-sample-group"
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io`);
+
 
 const bindingKind = binding => binding.metadata.namespace ? 'rolebinding' : 'clusterrolebinding';
 

@@ -8,6 +8,21 @@ import { configureClusterSizeModal } from './modals';
 import { ColHead, List, ListHeader, ListPage, DetailsPage, ResourceRow } from './factory';
 import { PodsPage } from './pod';
 import { Cog, navFactory, ResourceCog, ResourceIcon, Timestamp, Selector, resourcePath, pluralize, LoadingInline} from './utils';
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1beta1.EtcdCluster', `apiVersion: etcd.coreos.com/v1beta1
+kind: Cluster
+metadata:
+  name: example-etcd-cluster-with-backup
+spec:
+  size: 3
+  version: 3.1.4
+  backup:
+    backupIntervalInSecond: 30
+    maxBackups: 5
+    storageType: PersistentVolume
+    pv:
+      volumeSizeInMB: 512`);
 
 const {Edit, Delete} = Cog.factory;
 

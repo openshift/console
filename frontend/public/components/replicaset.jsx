@@ -2,6 +2,28 @@ import React from 'react';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1beta1.ReplicaSet', `apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80`);
 
 const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
 export const replicaSetMenuActions = [ModifyCount, ModifyPodSelector, ModifyNodeSelector, ...common];

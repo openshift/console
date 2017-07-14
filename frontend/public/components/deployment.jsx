@@ -6,6 +6,24 @@ import { SafetyFirst } from './safety-first';
 import { configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1beta1.Deployment', `apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80`);
 
 const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
 

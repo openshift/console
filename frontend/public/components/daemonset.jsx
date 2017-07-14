@@ -3,6 +3,23 @@ import { Link } from 'react-router';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1beta1.DaemonSet', `apiVersion: extensions/v1beta1
+kind: Daemonset
+metadata:
+  name: nginx-daemonset
+spec:
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80`);
 
 const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
 

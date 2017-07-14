@@ -1,10 +1,20 @@
 import React from 'react';
 import moment from 'moment';
+import classnames from 'classnames';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import { Cog, Firehose, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
-import classnames from 'classnames';
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1.Secret', `apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  username: YWRtaW4=
+  password: MWYyZDFlMmU2N2Rm`);
 
 const menuActions = Cog.factory.common;
 
