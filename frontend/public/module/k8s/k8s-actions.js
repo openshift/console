@@ -1,4 +1,5 @@
-import {getResources} from './get-resources';
+import { getResources } from './get-resources';
+import store from '../../redux';
 
 const types = {
   resources: 'resources',
@@ -27,6 +28,8 @@ const POLLs = {};
 const REF_COUNTS = {};
 
 const nop = () => {};
+
+const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
 
 const actions =  {
   [types.deleteFromList]: action_(types.deleteFromList),
@@ -61,8 +64,12 @@ const actions =  {
       query.fieldSelector = `metadata.name=${query.name}`;
       delete query.name;
     }
-    const ws = k8sType.watch(query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
-    WS[id] = ws;
+
+    // WebSocket can't send impersonate HTTP header
+    if (!isImpersonateEnabled()) {
+      const ws = k8sType.watch(query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
+      WS[id] = ws;
+    }
 
     const poller = () => {
       k8sType.get(name, namespace)
@@ -102,25 +109,28 @@ const actions =  {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    const ws = k8sType.watch(query).onmessage(msg => {
-      let theAction;
-      switch (msg.type) {
-        case 'ADDED':
-          theAction = actions.addToList;
-          break;
-        case 'MODIFIED':
-          theAction = actions.modifyList;
-          break;
-        case 'DELETED':
-          theAction = actions.deleteFromList;
-          break;
-        default:
-          return;
-      }
-      dispatch(theAction(id, msg.object));
-    });
+    // WebSocket can't send impersonate HTTP header
+    if (!isImpersonateEnabled()) {
+      const ws = k8sType.watch(query).onmessage(msg => {
+        let theAction;
+        switch (msg.type) {
+          case 'ADDED':
+            theAction = actions.addToList;
+            break;
+          case 'MODIFIED':
+            theAction = actions.modifyList;
+            break;
+          case 'DELETED':
+            theAction = actions.deleteFromList;
+            break;
+          default:
+            return;
+        }
+        dispatch(theAction(id, msg.object));
+      });
 
-    WS[id] = ws;
+      WS[id] = ws;
+    }
 
     const poller = () => {
       k8sType.list(_.clone(query, true))

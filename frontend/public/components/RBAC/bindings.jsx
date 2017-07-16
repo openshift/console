@@ -48,20 +48,21 @@ const rowSplitter = binding => {
   }));
 };
 
-const menuActions = ({subjectIndex, subjects}) => [
-  (kind, obj) => ({
-    label: `Duplicate ${kind.label}...`,
-    weight: 700,
-    href: `${resourceObjPath(obj, kind.id)}/copy?subjectIndex=${subjectIndex}`,
-  }),
-  (kind, obj) => ({
-    label: `Edit ${kind.label} Subject...`,
-    weight: 800,
-    href: `${resourceObjPath(obj, kind.id)}/edit?subjectIndex=${subjectIndex}`,
-  }),
-  subjects.length === 1 ? Cog.factory.Delete : (kind, binding) => {
-    const subject = binding.subjects[subjectIndex];
-    return {
+const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
+  const subject = subjects[subjectIndex];
+
+  const actions = [
+    (kind, obj) => ({
+      label: `Duplicate ${kind.label}...`,
+      weight: 700,
+      href: `${resourceObjPath(obj, kind.id)}/copy?subjectIndex=${subjectIndex}`,
+    }),
+    (kind, obj) => ({
+      label: `Edit ${kind.label} Subject...`,
+      weight: 800,
+      href: `${resourceObjPath(obj, kind.id)}/edit?subjectIndex=${subjectIndex}`,
+    }),
+    subjects.length === 1 ? Cog.factory.Delete : (kind, binding) => ({
       label: `Delete ${kind.label} Subject...`,
       weight: 900,
       callback: () => confirmModal({
@@ -70,9 +71,20 @@ const menuActions = ({subjectIndex, subjects}) => [
         btnText: 'Delete Subject',
         executeFn: () => k8s[kind.plural].patch(binding, [{op: 'remove', path: `/subjects/${subjectIndex}`}]),
       }),
-    };
-  },
-];
+    }),
+  ];
+
+  if (subject.kind === 'User' || subject.kind === 'Group') {
+    actions.push(() => ({
+      label: `Impersonate ${subject.kind} "${subject.name}"...`,
+      weight: 600,
+      href: '/',
+      callback: () => startImpersonate(subject.kind, subject.name),
+    }));
+  }
+
+  return actions;
+};
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
@@ -84,10 +96,11 @@ const Header = props => <ListHeader>
   </div>
 </ListHeader>;
 
-export const BindingName = ({binding}) => <span>
-  <ResourceCog actions={menuActions(binding)} kind={bindingKind(binding)} resource={binding} />
+export const BindingName = connect(null, {startImpersonate: UIActions.startImpersonate})(
+({binding, startImpersonate}) => <span>
+  <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />
   <ResourceName kind={bindingKind(binding)} name={binding.metadata.name} />
-</span>;
+</span>);
 
 export const RoleLink = ({binding}) => {
   const kind = binding.roleRef.kind.toLowerCase();

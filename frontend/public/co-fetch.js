@@ -1,7 +1,8 @@
 import 'whatwg-fetch';
 
-import {analyticsSvc} from './module/analytics';
-import {authSvc} from './module/auth';
+import { analyticsSvc } from './module/analytics';
+import { authSvc } from './module/auth';
+import store from './redux';
 
 const initDefaults = {
   credentials: 'same-origin'
@@ -43,7 +44,6 @@ const validateStatus = (response) => {
     error.response = response;
     throw error;
   });
-
 };
 
 export const coFetch = (url, options = {}) => {
@@ -63,12 +63,16 @@ export const coFetchUtils = {
 };
 
 export const coFetchJSON = (url, method = 'GET', options = {}) => {
-  const allOptions = _.defaultsDeep({
-    method,
-    headers: {
-      Accept: 'application/json',
-    },
-  }, options);
+  const headers = {Accept: 'application/json'};
+  const impersonate = store.getState().UI.get('impersonate');
+  if (impersonate) {
+    // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
+    headers['Impersonate-User'] = impersonate.name;
+    if (impersonate.kind === 'Group') {
+      headers['Impersonate-Group'] = impersonate.name;
+    }
+  }
+  const allOptions = _.defaultsDeep({method, headers}, options);
 
   return coFetch(url, allOptions).then(response => {
     if (!response.ok) {
