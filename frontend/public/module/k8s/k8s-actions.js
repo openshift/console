@@ -31,6 +31,9 @@ const nop = () => {};
 
 const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
 
+// User impersonation can't use WebSockets, so let's poll more frequently
+const pollInterval = () => (isImpersonateEnabled() ? 15 : 30) * 1000;
+
 const actions =  {
   [types.deleteFromList]: action_(types.deleteFromList),
   [types.addToList]: action_(types.addToList),
@@ -78,7 +81,7 @@ const actions =  {
           e => dispatch(actions.errored(id, e))
         );
     };
-    POLLs[id] = setInterval(poller, 30 * 1000);
+    POLLs[id] = setInterval(poller, pollInterval());
     poller();
   },
 
@@ -139,7 +142,7 @@ const actions =  {
           e => dispatch(actions.errored(id, e))
         );
     };
-    POLLs[id] = setInterval(poller, 30 * 1000);
+    POLLs[id] = setInterval(poller, pollInterval());
     poller();
   },
 };
