@@ -64,12 +64,12 @@ export const coFetchUtils = {
 
 export const coFetchJSON = (url, method = 'GET', options = {}) => {
   const headers = {Accept: 'application/json'};
-  const impersonate = store.getState().UI.get('impersonate');
-  if (impersonate) {
+  const {kind, name} = store.getState().UI.get('impersonate', {});
+  if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
-    headers['Impersonate-User'] = impersonate.name;
-    if (impersonate.kind === 'Group') {
-      headers['Impersonate-Group'] = impersonate.name;
+    headers['Impersonate-User'] = name;
+    if (kind === 'Group') {
+      headers['Impersonate-Group'] = name;
     }
   }
   const allOptions = _.defaultsDeep({method, headers}, options);
