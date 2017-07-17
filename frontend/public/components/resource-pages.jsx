@@ -16,3 +16,5 @@ export { IngressesPage, IngressesDetailsPage } from './ingress';
 export { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
 export { RoleBindingsPage } from './RBAC/bindings';
 export { EtcdClustersPage as etcdClustersPage, EtcdClustersDetailsPage as etcdClustersDetailsPage } from './etcd-cluster';
+export { PrometheusesPage, PrometheusesDetailsPage } from './prometheus';
+export { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monitor';
