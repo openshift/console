@@ -23,10 +23,7 @@ export default (state, action) => {
       return state.set('activeNavSectionId', action.value);
 
     case types.startImpersonate:
-      if (action.kind === 'User' || action.kind === 'Group') {
-        state = state.set('impersonate', {kind: action.kind, name: action.name});
-      }
-      return state;
+      return state.set('impersonate', {kind: action.kind, name: action.name});
 
     case types.stopImpersonate:
       return state.delete('impersonate');
