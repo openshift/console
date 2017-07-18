@@ -200,9 +200,18 @@ List.propTypes = {
 
 export class ResourceRow extends React.Component {
   shouldComponentUpdate(nextProps) {
-    const oldVersion = _.get(this.props.obj, 'metadata.resourceVersion');
-    const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
-    return !oldVersion || !newVersion || oldVersion !== newVersion;
+    for (let key in nextProps) {
+      if (key === 'obj') {
+        const oldVersion = _.get(this.props.obj, 'metadata.resourceVersion');
+        const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
+        if (!oldVersion || !newVersion || oldVersion !== newVersion) {
+          return true;
+        }
+      }
+      if (nextProps[key] !== this.props[key]) {
+        return true;
+      }
+    }
   }
 
   render () {

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Immutable = require('immutable');
 
 import {types} from './k8s-actions';
@@ -19,16 +20,25 @@ const removeFromList = (list, resource) => {
   return list.delete(qualifiedName);
 };
 
-const updateList = (list, resource) => {
-  const qualifiedName = getQN(resource);
+const updateList = (list, nextJS) => {
+  const qualifiedName = getQN(nextJS);
   const current = list.get(qualifiedName);
-  const next = Immutable.fromJS(resource);
+  const next = Immutable.fromJS(nextJS);
 
   if (!current) {
     return list.set(qualifiedName, next);
   }
 
   if (!moreRecent(next, current)) {
+    return list;
+  }
+
+  // TODO: (kans) only store the data for things we display ...
+  //  and then only do this comparison for the same stuff!
+  const currentJS = current.toJSON();
+  currentJS.metadata.resourceVersion = nextJS.metadata.resourceVersion;
+  if (_.isEqual(currentJS, currentJS)) {
+    // If the only thing that differs is resource version, don't fire an update.
     return list;
   }
 

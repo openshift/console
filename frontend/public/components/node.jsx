@@ -93,7 +93,7 @@ const NodeCLStatusRow = ({node}) => {
 const NodeRow = ({obj: node, expand}) => {
   const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
-  return <ResourceRow obj={node}>
+  return <ResourceRow obj={node} expand={expand}>
     <div className="middler">
       <div className="col-xs-4">
         <NodeCog node={node} />
