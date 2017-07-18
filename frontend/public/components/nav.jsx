@@ -129,8 +129,9 @@ class Nav_ extends SafetyFirst {
         </NavSection>}
 
         <NavSection text="Routing" img="static/imgs/routing.svg" {...accordionProps('routing')}>
-          <NavLink resource="services" name="Services" sectionId="routing" />
           <NavLink resource="ingresses" name="Ingress" sectionId="routing" />
+          <NavLink resource="networkpolicies" name="Network Policies" sectionId="routing" />
+          <NavLink resource="services" name="Services" sectionId="routing" />
         </NavSection>
 
         <NavSection text="Troubleshooting" icon="fa-life-ring" {...accordionProps('troubleshooting')}>

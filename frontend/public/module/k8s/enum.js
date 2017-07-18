@@ -198,6 +198,15 @@ export const k8sEnum = {
       plural: 'etcdclusters',
       abbr: 'EC',
     },
+    NetworkPolicy: {
+      label: 'Network Policy',
+      labelPlural: 'Network Policies',
+      apiVersion: 'v1beta1',
+      isExtension: true,
+      path: 'networkpolicies',
+      plural: 'networkpolicies',
+      abbr: 'NP',
+    },
     '*': {
       id: 'all',
       plural: 'all',
