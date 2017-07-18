@@ -51,6 +51,6 @@ export const ReplicationControllersDetailsPage = props => <DetailsPage
   pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
 />;
 
-const Row = props => <WorkloadListRow {...props} kind="replicationcontroller" actions={replicaSetMenuActions} />;
+const Row = props => <WorkloadListRow {...props} kind="ReplicationController" actions={replicaSetMenuActions} />;
 export const ReplicationControllersList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
 export const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;

@@ -39,7 +39,7 @@ const getTLSCert = (ingress) => {
   const certs = _.map(ingress.spec.tls, 'secretName');
 
   return <div>
-    <ResourceIcon kind="secret" className="co-m-resource-icon--align-left" />
+    <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
     <span>{certs.join(', ')}</span>
   </div>;
 };
@@ -52,12 +52,12 @@ const IngressListHeader = props => <ListHeader>
 
 const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
   <div className="col-xs-3">
-    <ResourceCog actions={menuActions} kind="ingress" resource={ingress} />
-    <ResourceLink kind="ingress" name={ingress.metadata.name}
+    <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
+    <ResourceLink kind="Ingress" name={ingress.metadata.name}
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
   </div>
   <div className="col-xs-4">
-    <LabelList kind="ingress" labels={ingress.metadata.labels} />
+    <LabelList kind="Ingress" labels={ingress.metadata.labels} />
   </div>
   <div className="col-xs-5">{getHosts(ingress)}</div>
 </ResourceRow>;
@@ -79,7 +79,7 @@ const RulesRow = ({rule}) => {
       <div>{rule.path}</div>
     </div>
     <div className="col-xs-3">
-      <div><ResourceIcon kind="service" className="co-m-resource-icon--align-left" />{rule.serviceName}</div>
+      <div><ResourceIcon kind="Service" className="co-m-resource-icon--align-left" />{rule.serviceName}</div>
     </div>
      <div className="col-xs-2">
       <div>{rule.servicePort}</div>
@@ -140,12 +140,12 @@ const Details = (ingress) => <div className="col-md-12">
   </div>
 </div>;
 
-const IngressDetailsPage = props => <DetailsPage
+const IngressesDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(Details)), navFactory.editYaml()]}
 />;
-const IngressList = props => <List {...props} Header={IngressListHeader} Row={IngressListRow} />;
-const IngressPage = props => <ListPage ListComponent={IngressList} canCreate={true} {...props} />;
+const IngressesList = props => <List {...props} Header={IngressListHeader} Row={IngressListRow} />;
+const IngressesPage = props => <ListPage ListComponent={IngressesList} canCreate={true} {...props} />;
 
-export {IngressList, IngressPage, IngressDetailsPage};
+export {IngressesList, IngressesPage, IngressesDetailsPage};

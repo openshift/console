@@ -32,11 +32,11 @@ const DaemonSetHeader = props => <ListHeader>
 
 const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-    <ResourceCog actions={menuActions} kind="daemonset" resource={daemonset} />
-    <ResourceLink kind="daemonset" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
+    <ResourceCog actions={menuActions} kind="DaemonSet" resource={daemonset} />
+    <ResourceLink kind="DaemonSet" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-5 col-xs-6">
-    <LabelList kind="daemonset" labels={daemonset.metadata.labels} />
+    <LabelList kind="DaemonSet" labels={daemonset.metadata.labels} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
     <Link to={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">

@@ -50,7 +50,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     }
 
     this.handlePromise(
-      k8sPatch(k8sKinds.DEPLOYMENT, this.deployment, [patch, {path: '/spec/strategy/type', value: type, op: 'replace'}])
+      k8sPatch(k8sKinds.Deployment, this.deployment, [patch, {path: '/spec/strategy/type', value: type, op: 'replace'}])
     ).then(this.props.close, () => {});
   }
 

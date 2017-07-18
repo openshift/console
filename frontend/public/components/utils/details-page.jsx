@@ -17,11 +17,11 @@ export const ResourceSummary = ({children, resource, showPodSelector = true, sho
   <dt>Name</dt>
   <dd>{resource.metadata.name || '-'}</dd>
   <dt>Labels</dt>
-  <dd><LabelList kind={resource.kind.toLowerCase()} labels={resource.metadata.labels} /></dd>
+  <dd><LabelList kind={resource.kind} labels={resource.metadata.labels} /></dd>
   {showPodSelector && <dt>Pod Selector</dt>}
   {showPodSelector && <dd><Selector selector={resource.spec.selector} /></dd>}
   {showNodeSelector && <dt>Node Selector</dt>}
-  {showNodeSelector && <dd><Selector kind="node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
+  {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
   <dt>Annotations</dt>
   <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj(resource.kind), resource).callback}>{pluralize(_.size(resource.metadata.annotations), 'Annotation')}</a></dd>
   {children}

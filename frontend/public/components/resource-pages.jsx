@@ -11,7 +11,7 @@ export { ReplicationControllersPage, ReplicationControllersDetailsPage } from '.
 export { SecretsPage, SecretsDetailsPage } from './secret';
 export { ServiceAccountsPage, ServiceAccountsDetailsPage } from './service-account';
 export { ServicesPage, ServicesDetailsPage } from './service';
-export { IngressPage, IngressDetailsPage } from './ingress';
+export { IngressesPage, IngressesDetailsPage } from './ingress';
 export { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
 export { RoleBindingsPage } from './RBAC/bindings';
 export { EtcdClustersPage as etcdClustersPage, EtcdClustersDetailsPage as etcdClustersDetailsPage } from './etcd-cluster';

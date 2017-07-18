@@ -34,7 +34,7 @@ const MarkAsSchedulable = (kind, obj) => ({
 
 const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit];
 
-const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="node" resource={node} />;
+const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="Node" resource={node} />;
 
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
@@ -97,7 +97,7 @@ const NodeRow = ({obj: node, expand}) => {
     <div className="middler">
       <div className="col-xs-4">
         <NodeCog node={node} />
-        <ResourceLink kind="node" name={node.metadata.name} title={node.metadata.uid} />
+        <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
       </div>
       <div className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'}>
         <NodeStatus node={node} />
@@ -110,7 +110,7 @@ const NodeRow = ({obj: node, expand}) => {
       </div>
     </div>
     {expand && <div className="col-xs-12">
-      <LabelList kind="node" labels={node.metadata.labels} />
+      <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
   </ResourceRow>;
 };
@@ -118,13 +118,13 @@ const NodeRow = ({obj: node, expand}) => {
 const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
     <NodeCog node={node} />
-    <ResourceLink kind="node" name={node.metadata.name} title={node.metadata.uid} />
+    <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
   </div>
   <div className="col-md-2 hidden-sm hidden-xs">
     <NodeStatus node={node} />
   </div>
   <div className="col-sm-5 col-xs-7">
-    <LabelList kind="node" labels={node.metadata.labels} expand={false} />
+    <LabelList kind="Node" labels={node.metadata.labels} expand={false} />
   </div>
   <div className="col-md-2 col-sm-3 hidden-xs">
     <NodeIPList ips={node.status.addresses} />
@@ -191,7 +191,7 @@ const Details = (node) => {
             <dt>Node Addresses</dt>
             <dd><NodeIPList ips={_.get(node, 'status.addresses')} expand={true} /></dd>
             <dt>Node Labels</dt>
-            <dd><LabelList kind="node" labels={node.metadata.labels} /></dd>
+            <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
             <dt>Annotations</dt>
             <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('node'), node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
             <dt>Provider ID</dt>

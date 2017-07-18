@@ -25,10 +25,10 @@ export class DetailStatus extends SafetyFirst {
 
     let k8skind, resource;
     if (kind === 'config') {
-      k8skind = k8sKinds.CHANNELOPERATORCONFIG;
+      k8skind = k8sKinds.ChannelOperatorConfig;
       resource = this.props.config;
     } else if (kind === 'app-version') {
-      k8skind = k8sKinds.APPVERSION;
+      k8skind = k8sKinds.AppVersion;
       resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-cluster' } };
     }
 

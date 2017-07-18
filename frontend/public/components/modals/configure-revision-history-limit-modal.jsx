@@ -35,7 +35,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
     }
 
     this.handlePromise(
-      k8sPatch(k8sKinds.DEPLOYMENT, this.deployment, [patch])
+      k8sPatch(k8sKinds.Deployment, this.deployment, [patch])
     ).then(this.props.close);
   }
 

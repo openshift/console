@@ -25,6 +25,6 @@ export const Selector = ({kind, expand, selector}) => {
   return <div className={className}>
     { _.isEmpty(requirements)
       ? <p className="text-muted">No selector</p>
-      : <Requirement kind={kind || 'pod'} requirements={requirements} /> }
+      : <Requirement kind={kind || 'Pod'} requirements={requirements} /> }
   </div>;
 };

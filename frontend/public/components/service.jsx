@@ -36,11 +36,11 @@ const ServiceHeader = props => <ListHeader>
 
 const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
   <div className="col-lg-3 col-md-2 col-sm-4 col-xs-6">
-    <ResourceCog actions={menuActions} kind="service" resource={s} />
-    <ResourceLink kind="service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
+    <ResourceCog actions={menuActions} kind="Service" resource={s} />
+    <ResourceLink kind="Service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
-    <LabelList kind="service" labels={s.metadata.labels} />
+    <LabelList kind="Service" labels={s.metadata.labels} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
     <Selector selector={s.spec.selector} />
@@ -91,14 +91,14 @@ const ServicePortMapping = ({s}) => <div>
             {portObj.nodePort && <p className="co-text-node">Node Port</p>}
           </div>
           <div className="col-xs-3 co-text-service">
-            <p><ResourceIcon kind="service" /><span>{portObj.port}</span></p>
-            {portObj.nodePort && <p className="co-text-node"><ResourceIcon kind="node" /><span>{portObj.nodePort}</span></p>}
+            <p><ResourceIcon kind="Service" /><span>{portObj.port}</span></p>
+            {portObj.nodePort && <p className="co-text-node"><ResourceIcon kind="Node" /><span>{portObj.nodePort}</span></p>}
           </div>
           <div className="col-xs-3">
             <p>{portObj.protocol}</p>
           </div>
           <div className="col-xs-3 co-text-pod">
-            <p><ResourceIcon kind="pod" /><span>{portObj.targetPort}</span></p>
+            <p><ResourceIcon kind="Pod" /><span>{portObj.targetPort}</span></p>
           </div>
         </div>
       </div>;

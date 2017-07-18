@@ -62,25 +62,25 @@ export class TectonicChannel extends SafetyFirst {
     const selector = k8sSelector.fromString(`k8s-app in (${_.values(podNames).join()})`);
     this.firehoseResources = [
       {
-        kind: 'channeloperatorconfig',
+        kind: 'ChannelOperatorConfig',
         namespace: 'tectonic-system',
         isList: true,
         prop: 'configs'
       },
       {
-        kind: 'tectonicversion',
+        kind: 'TectonicVersion',
         namespace: 'tectonic-system',
         isList: true,
         prop: 'tectonicVersions'
       },
       {
-        kind: 'appversion',
+        kind: 'AppVersion',
         namespace: 'tectonic-system',
         isList: true,
         prop: 'appVersions'
       },
       {
-        kind: 'pod',
+        kind: 'Pod',
         namespace: 'tectonic-system',
         isList: true,
         prop: 'pods',

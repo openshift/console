@@ -143,7 +143,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         path: `/data/${CONST.PULL_SECRET_DATA}`,
         value: secretData
       }];
-      promise = k8sPatch(k8sKinds.SECRET, pullSecret, patch);
+      promise = k8sPatch(k8sKinds.Secret, pullSecret, patch);
     } else {
       const data = {};
       data[CONST.PULL_SECRET_DATA] = secretData;
@@ -181,7 +181,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
             <label>Namespace:</label>
           </div>
           <div className="col-xs-9">
-            <ResourceIcon kind="namespace" className="co-m-resource-icon--align-left" /> &nbsp;{namespace.metadata.name}
+            <ResourceIcon kind="Namespace" className="co-m-resource-icon--align-left" /> &nbsp;{namespace.metadata.name}
           </div>
         </div>
 
@@ -191,7 +191,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
             { pullSecret ?
               <div className="col-xs-9">
-                <ResourceIcon kind="secret" className="co-m-resource-icon--align-left" />
+                <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
                 &nbsp;{_.get(pullSecret, 'metadata.name')}
               </div> : <div className="col-xs-9">
                 <input type="text" className="form-control" id="namespace-pull-secret-name" required />

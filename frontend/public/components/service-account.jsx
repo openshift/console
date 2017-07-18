@@ -19,8 +19,8 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
   return (
     <ResourceRow obj={serviceaccount}>
       <div className="col-xs-4">
-        <ResourceCog actions={menuActions} kind="serviceaccount" resource={serviceaccount} />
-        <ResourceLink kind="serviceaccount" name={name} namespace={namespace} title={uid} />
+        <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
+        <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
       </div>
       <div className="col-xs-4">
         {secrets ? secrets.length : 0}

@@ -4,7 +4,7 @@ import { ContainerLinuxUpdateDetails } from './container-linux-update-details';
 import { LoadingInline, Firehose, containerLinuxUpdateOperator } from '../utils';
 
 export const ContainerLinuxUpdates = (props) => {
-  return <Firehose kind="node" isList={true}>
+  return <Firehose kind="Node" isList={true}>
     <ContainerLinuxUpdatesWithData {...props} />
   </Firehose>;
 };

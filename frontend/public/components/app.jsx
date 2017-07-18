@@ -100,13 +100,13 @@ render((
 
         <Route path="clusterroles">
           <Route path=":name/add-rule" component={EditRulePage} />
-          <Route path=":name/bindings" component={BindingsForRolePage} kind="clusterrole" />
+          <Route path=":name/bindings" component={BindingsForRolePage} kind="clusterroles" />
           <Route path=":name/:rule/edit" component={EditRulePage} />
           <Route path=":name/:view" component={ResourceDetailsPage} kind="clusterroles" />
         </Route>
 
         <Route path="ns/:ns/roles">
-          <IndexRoute component={ResourceListPage} kind="roles" />
+          <IndexRoute component={ResourceListPage} kind="role" />
           <Route path=":name/add-rule" component={EditRulePage} />
           <Route path=":name/:rule/edit" component={EditRulePage} />
           <Route path=":name/bindings" component={BindingsForRolePage} kind="role" />

@@ -22,7 +22,7 @@ export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
 const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
 
-export const roleKind = role => role.metadata.namespace ? 'role' : 'clusterrole';
+export const roleKind = role => role.metadata.namespace ? 'Role' : 'ClusterRole';
 
 const menuActions = [
   (kind, role) => ({
@@ -50,7 +50,7 @@ const Row = ({obj: role}) => <div className="row co-resource-list__item">
     <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
   </div>
   <div className="col-xs-6">
-    {role.metadata.namespace ? <ResourceLink kind="namespace" name={role.metadata.namespace} /> : 'all'}
+    {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
   </div>
 </div>;
 
@@ -82,7 +82,7 @@ class Details extends React.Component {
               <dd>{name}</dd>
               {namespace && <div>
                 <dt>Namespace</dt>
-                <dd><ResourceLink kind="namespace" name={namespace} /></dd>
+                <dd><ResourceLink kind="Namespace" name={namespace} /></dd>
               </div>}
             </dl>
           </div>
@@ -147,8 +147,8 @@ export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div
     ListComponent={props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />}
     staticFilters={[{'role-binding-roleRef': name}]}
     resources={[
-      {kind: 'rolebinding', namespaced: true},
-      {kind: 'clusterrolebinding', namespaced: false},
+      {kind: 'RoleBinding', namespaced: true},
+      {kind: 'ClusterRoleBinding', namespaced: false},
     ]}
     textFilter="role-binding"
     filterLabel="Role Bindings by role or subject"
@@ -173,8 +173,8 @@ export const roleType = role => {
 };
 
 const resources = [
-  {kind: 'role', namespaced: true},
-  {kind: 'clusterrole', namespaced: false},
+  {kind: 'Role', namespaced: true},
+  {kind: 'ClusterRole', namespaced: false},
 ];
 
 export const RolesPage = ({namespace}) => <MultiListPage
