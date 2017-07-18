@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 
 import { Cog, kindObj, LabelList, Selector, Timestamp } from './index';
@@ -13,13 +14,13 @@ export const Heading = ({text}) => <div className="co-m-pane__heading">
   <h1 className="co-m-pane__title">{text}</h1>
 </div>;
 
-export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true}) => <dl>
+export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true, podSelector = 'spec.selector'}) => <dl>
   <dt>Name</dt>
   <dd>{resource.metadata.name || '-'}</dd>
   <dt>Labels</dt>
   <dd><LabelList kind={resource.kind} labels={resource.metadata.labels} /></dd>
   {showPodSelector && <dt>Pod Selector</dt>}
-  {showPodSelector && <dd><Selector selector={resource.spec.selector} /></dd>}
+  {showPodSelector && <dd><Selector selector={_.get(resource, podSelector)} /></dd>}
   {showNodeSelector && <dt>Node Selector</dt>}
   {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
   <dt>Annotations</dt>
