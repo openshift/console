@@ -82,6 +82,7 @@ const init = (nextRoute) => {
   registerNamespaceFriendlyPrefix('serviceaccounts');
   registerNamespaceFriendlyPrefix('services');
   registerNamespaceFriendlyPrefix('etcdclusters');
+  registerNamespaceFriendlyPrefix('networkpolicies');
 
   store.dispatch(k8sActions.getResources());
   store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
