@@ -25,8 +25,8 @@ export const fromArgs = args => {
   * @return {String[]}
   */
 export const toArgs = cmd => {
-  let parts      = cmd.split(' ');
-  let args       = [];
+  const parts    = cmd.split(' ');
+  const args     = [];
   let quoteKind  = null;
   let quotedArgs = [];
 

@@ -44,8 +44,5 @@ export const authSvc = {
   },
 
   // Infer user is logged-in by presence of valid state cookie.
-  isLoggedIn: () => {
-    const state = loginState();
-    return !!state;
-  },
+  isLoggedIn: () => !!loginState(),
 };

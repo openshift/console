@@ -5,7 +5,7 @@ import { StatusBox, RelativeLink } from './index';
 import { EditYAML } from '../edit-yaml';
 import { PodsPage } from '../pod';
 
-const editYamlComponent = (props) => <EditYAML obj={props} />;
+const editYamlComponent = props => <EditYAML obj={props} />;
 
 const podsComponent = ({metadata: {namespace}, spec: {selector}}) => <PodsPage showTitle={false} namespace={namespace} selector={selector} />;
 
