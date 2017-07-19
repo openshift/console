@@ -18,6 +18,7 @@ class ReactChart extends React.Component {
   }
 
   componentDidMount() {
+    // eslint-disable-next-line react/no-find-dom-node
     this.chartNode = ReactDOM.findDOMNode(this);
     this.createChart();
     this.handleResize();

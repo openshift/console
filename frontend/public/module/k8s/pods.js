@@ -53,22 +53,21 @@ export const getVolumeMountPermissions = v => {
 };
 
 export const getVolumeMountsByPermissions = pod => {
-  var m = {};
-
   if (!pod || !pod.spec) {
     return [];
   }
 
-  var volumes = pod.spec.volumes.reduce((p, v) => {
+  const volumes = pod.spec.volumes.reduce((p, v) => {
     p[v.name] = v;
     return p;
   }, {});
 
+  const m = {};
   _.forEach(pod.spec.containers, function(c) {
     _.forEach(c.volumeMounts, function(v) {
       let k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
       let mount = {container: c.name, mountPath: v.mountPath};
-      if ( k in m) {
+      if (k in m) {
         return m[k].mounts.push(mount);
       }
       m[k] = {mounts: [mount], name: v.name, readOnly: !!v.readOnly, volume: volumes[v.name]};
@@ -79,8 +78,7 @@ export const getVolumeMountsByPermissions = pod => {
 };
 
 export const getVolumeLocation = volume => {
-  var vtype = getVolumeType(volume), info, typeID;
-
+  const vtype = getVolumeType(volume);
   if (!vtype) {
     return null;
   }
@@ -90,8 +88,8 @@ export const getVolumeLocation = volume => {
   }
 
   function genericFormatter(volInfo) {
-    var keys = Object.keys(volInfo).sort();
-    var parts = keys.map(function(key) {
+    const keys = Object.keys(volInfo).sort();
+    const parts = keys.map(function(key) {
       if (key === 'readOnly') {
         return '';
       }
@@ -103,8 +101,8 @@ export const getVolumeLocation = volume => {
     return parts.join(' ') || null;
   }
 
-  typeID = vtype.id;
-  info = volume[typeID];
+  const typeID = vtype.id;
+  const info = volume[typeID];
   switch (typeID) {
     // Override any special formatting cases.
     case k8sEnum.VolumeSource.gitRepo.id:

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({data, decode}) => {
+const ConfigMapAndSecretData = ({data, decode}) => {
   decode = decode || (v => v);
 
   const dl = [];
@@ -11,3 +11,5 @@ export default ({data, decode}) => {
 
   return <dl>{dl}</dl>;
 };
+
+export default ConfigMapAndSecretData;

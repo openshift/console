@@ -49,7 +49,7 @@ export const resourceURL2 = (kind, namespace, watch, labelSelector, fieldSelecto
 };
 
 export const watchURL = (kind, options) => {
-  var opts = options || {};
+  const opts = options || {};
 
   opts.queryParams = opts.queryParams || {};
   opts.queryParams.watch = true;

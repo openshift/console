@@ -5,6 +5,10 @@ import { StatusBox, RelativeLink } from './index';
 import { EditYAML } from '../edit-yaml';
 import { PodsPage } from '../pod';
 
+const editYamlComponent = props => <EditYAML obj={props} />;
+
+const podsComponent = ({metadata: {namespace}, spec: {selector}}) => <PodsPage showTitle={false} namespace={namespace} selector={selector} />;
+
 export const navFactory = {
   details: (component = undefined) => ({
     href: 'details',
@@ -24,12 +28,12 @@ export const navFactory = {
   editYaml: () => ({
     href: 'yaml',
     name: 'YAML',
-    component: (props) => <EditYAML obj={props} />,
+    component: editYamlComponent,
   }),
   pods: (component = undefined) => ({
     href: 'pods',
     name: 'Pods',
-    component: component || (({metadata: {namespace}, spec: {selector}}) => <PodsPage showTitle={false} namespace={namespace} selector={selector} />),
+    component: component || podsComponent,
   }),
   roles: (component = undefined) => ({
     href: 'roles',

@@ -5,20 +5,19 @@ import {util} from './util';
 // Returned object will always have a 'label' property,
 // but existence of other properties vary depending on the state.
 export const getContainerState = function(containerStatus) {
-  var keys, stateKey, state;
-  state = {
+  const state = {
     label: 'Unknown',
   };
   if (!containerStatus || !containerStatus.state) {
     return state;
   }
 
-  keys = Object.keys(containerStatus.state);
+  const keys = Object.keys(containerStatus.state);
   if (_.isEmpty(keys)) {
     return state;
   }
 
-  stateKey = keys[0];
+  const stateKey = keys[0];
   state.label = stateKey;
   _.assign(state, containerStatus.state[stateKey]);
   return state;

@@ -10,7 +10,7 @@ const isOldFormat = selector => !selector.matchLabels && !selector.matchExpressi
   */
 export const fromRequirements = (requirements, options) => {
   options      = options || {};
-  var selector = {
+  const selector = {
     matchLabels:      {},
     matchExpressions: []
   };
@@ -39,9 +39,9 @@ export const split = string => string.trim() ? string.split(/,(?![^(]*\))/) : []
 
 export const toRequirements = selector => {
   selector             = selector || {};
-  var requirements     = [];
-  var matchLabels      = isOldFormat(selector) ? selector : selector.matchLabels;
-  var matchExpressions = selector.matchExpressions;
+  const requirements     = [];
+  const matchLabels      = isOldFormat(selector) ? selector : selector.matchLabels;
+  const matchExpressions = selector.matchExpressions;
 
   Object.keys(matchLabels || {}).sort().forEach(function (k) {
     requirements.push(k8sSelectorRequirement.createEquals(k, matchLabels[k]));
@@ -55,11 +55,11 @@ export const toRequirements = selector => {
 };
 
 export const fromString = string => {
-  var requirements = split(string || '').map(k8sSelectorRequirement.fromString);
+  const requirements = split(string || '').map(k8sSelectorRequirement.fromString);
   return fromRequirements(requirements);
 };
 
 export const toString = selector => {
-  var requirements = toRequirements(selector);
+  const requirements = toRequirements(selector);
   return requirements.map(k8sSelectorRequirement.toString).join(',');
 };

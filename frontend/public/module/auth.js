@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import {coFetchJSON} from '../co-fetch.js';
 
 const loginState = () => {
-  var state = Cookies.get('state');
+  const state = Cookies.get('state');
   if (!state) {
     return null;
   }
@@ -27,7 +27,7 @@ export const authSvc = {
   email: () => loginStateItem('email'),
 
   logout: (prev) => {
-    var url = window.SERVER_FLAGS.loginURL;
+    let url = window.SERVER_FLAGS.loginURL;
     return coFetchJSON.post(window.SERVER_FLAGS.logoutURL)
       .then(() => {
         if (prev) {
@@ -44,8 +44,5 @@ export const authSvc = {
   },
 
   // Infer user is logged-in by presence of valid state cookie.
-  isLoggedIn: () => {
-    var state = loginState();
-    return !!state;
-  },
+  isLoggedIn: () => !!loginState(),
 };
