@@ -4,19 +4,56 @@ import { Link } from 'react-router';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
 import { Cog, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
 
-
 const podvulnNameToPodName = function(name) {
   return name.replace(/^podvuln-/, '');
 };
 
 const menuActions = Cog.factory.common;
 
+const CountVulnerabilityFilter = (podvulns) => {
+  if (!podvulns) {
+    return undefined;
+  }
+  var count = {
+    'P0': 0,
+    'P1': 0,
+    'P2': 0,
+    'P3': 0,
+    'Fixables': 0,
+    'Passed': 0,
+  };
+  _.forEach(podvulns, (podvuln) => {
+    if (_.has(podvuln, 'metadata.labels.secscan/P0')) {
+      count.P0++;
+    }
+    if (_.has(podvuln, 'metadata.labels.secscan/P1')) {
+      count.P1++;
+    }
+    if (_.has(podvuln, 'metadata.labels.secscan/P2')) {
+      count.P2++;
+    }
+    if (_.has(podvuln, 'metadata.labels.secscan/P3')) {
+      count.P3++;
+    }
+    if (_.has(podvuln, 'metadata.labels.secscan/fixables')) {
+      count.Fixables++;
+    }
+    if (!_.has(podvuln, 'metadata.labels.secscan/P0') &&
+	!_.has(podvuln, 'metadata.labels.secscan/P1') &&
+	!_.has(podvuln, 'metadata.labels.secscan/P2') &&
+	!_.has(podvuln, 'metadata.labels.secscan/P3')) {
+      count.Passed++;
+    }
+  });
+  return count;
+};
+
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6">Images Scanned</ColHead>
   <ColHead {...props} className="col-sm-2 hidden-xs">Security Scan</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs">Highest</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs">Last Scan</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs">Last Update</ColHead>
 </ListHeader>;
 
 const PodVulnRow = ({obj: podvuln}) => {
@@ -62,7 +99,7 @@ const SubHeaderRow = ({header}) => {
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
     <ResourceIcon kind="Vulnerability" />
-    <a href={vuln.link}>{vuln.name}</a>
+    <a href={vuln.link} target="_blank">{vuln.name}</a>
   </span>;
 };
 
@@ -112,7 +149,7 @@ const Details = (podvuln) => {
                   <dd>{podvuln.metadata.labels['secscan/fixables']}</dd>
                   <dt>Highest</dt>
                   <dd>{podvuln.metadata.labels['secscan/highest']}</dd>
-                  <dt>Last Scan</dt>
+                  <dt>Last Update</dt>
                   <dd><Timestamp timestamp={podvuln.metadata.annotations['secscan/lastScan']} /></dd>
                 </dl>
               </div>
@@ -139,8 +176,8 @@ const Details = (podvuln) => {
             <div className="co-m-table-grid__body">
               {podvuln.imagevulns.map((imgvuln) =>
                 imgvuln.features.map((feature) =>
-                  feature.vulnerabilities.map((vuln) =>
-                    <ContainerVulnRow podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
+                  feature.vulnerabilities.map((vuln, i) =>
+                    <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
                   )
                 )
               )}
@@ -162,11 +199,26 @@ export const PodVulnsDetailsPage = props => <DetailsPage
 
 export const PodVulnList = props => <List {...props} Header={PodVulnHeader} Row={PodVulnRow} />;
 
-export const PodVulnsPage = props => <ListPage
+export const PodVulnsPage = props => {
+  return <ListPage
   {...props}
   canCreate={false}
   kind="PodVuln"
   ListComponent={PodVulnList}
   title="Security Scan Report"
   Intro={<SubHeaderRow header="All supported container images are scanned for known vulnerabilities and CVEs." />}
-/>;
+  rowFilters={[{
+    type: 'podvuln-filter',
+    selected: ['P0', 'P1', 'P2', 'P3'],
+    numbers: CountVulnerabilityFilter,
+    items: [
+      {id: 'P0', title: 'P0'},
+      {id: 'P1', title: 'P1'},
+      {id: 'P2', title: 'P2'},
+      {id: 'P3', title: 'P3'},
+      {id: 'Passed', title: 'No Vulnerabilities'},
+      {id: 'Fixables', title: 'Fixables'},
+    ],
+  },
+  ]}
+/>;};

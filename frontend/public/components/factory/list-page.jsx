@@ -51,14 +51,17 @@ class BaseListPage_ extends React.PureComponent {
       return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
     });
 
-    const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type}, i) => <CheckBoxes
-      key={i}
-      applyFilter={this.applyFilter}
-      items={_.isFunction(items) ? items(resources) : items}
-      numbers={_.countBy(_.flatMap(data, rowSplitter), reducer)}
-      selected={selected}
-      type={type}
-    />);
+    const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type, numbers}, i) => {
+      const count = _.isFunction(numbers) ? numbers(data) : undefined;
+      return <CheckBoxes
+        key={i}
+        applyFilter={this.applyFilter}
+        items={_.isFunction(items) ? items(resources) : items}
+        numbers={count || _.countBy(_.flatMap(data, rowSplitter), reducer)}
+        selected={selected}
+        type={type}
+      />;
+    });
 
     return <div>
       {title && <NavTitle title={title} />}

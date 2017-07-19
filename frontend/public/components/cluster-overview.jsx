@@ -115,7 +115,6 @@ export const ClusterOverviewPage = (props) => {
               detail={props.fixableIssues} text="Could not get fixable issues" />
             <SecurityScanningRow title="Scanned Pods"
               detail={props.scannedPods} text="Could not get fixable issues" />
-
           </div>
 
           <div className="cluster-overview-cell co-m-pane">

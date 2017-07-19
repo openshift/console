@@ -47,6 +47,26 @@ const filters = {
     const isReady = isNodeReady(node);
     return status === 'all' || (status === 'ready' && isReady) || (status === 'notReady' && !isReady);
   },
+
+  'podvuln-filter': (filters, podvuln) => {
+    if (!filters || !filters.selected || !filters.selected.size) {
+      return true;
+    }
+    const highest = podvuln.metadata.labels['secscan/highest'];
+    const fixables = podvuln.metadata.labels['secscan/fixables'];
+    const P0 = podvuln.metadata.labels['secscan/P0'];
+    const P1 = podvuln.metadata.labels['secscan/P1'];
+    const P2 = podvuln.metadata.labels['secscan/P2'];
+    const P3 = podvuln.metadata.labels['secscan/P3'];
+
+    return filters.selected.has(highest) ||
+           filters.selected.has('P0') && P0 ||
+           filters.selected.has('P1') && P1 ||
+           filters.selected.has('P2') && P2 ||
+           filters.selected.has('P3') && P3 ||
+           filters.selected.has('Fixables') && (fixables ? true : false) ||
+           filters.selected.has('Passed') && !highest;
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {
