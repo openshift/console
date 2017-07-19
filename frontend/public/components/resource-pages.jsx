@@ -18,3 +18,4 @@ export { RoleBindingsPage } from './RBAC/bindings';
 export { EtcdClustersPage as etcdClustersPage, EtcdClustersDetailsPage as etcdClustersDetailsPage } from './etcd-cluster';
 export { PrometheusesPage, PrometheusesDetailsPage } from './prometheus';
 export { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monitor';
+export { AlertManagersDetailsPage } from './alert-manager';

@@ -10,12 +10,13 @@ import {SafetyFirst} from '../safety-first';
 import {FLAGS, connectToFlags} from '../../features';
 import {TectonicChannel} from '../channel-operators/tectonic-channel';
 import {ContainerLinuxUpdates} from '../container-linux-update-operator/container-linux-updates';
+import {AlertManagersListContainer} from '../alert-manager';
 
 export const SettingsRow = ({children}) => <div className="row co-m-form-row">{children}</div>;
 export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
 export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9">{children}</div>;
 
-export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
+export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES, FLAGS.PROMETHEUS)(
 class ClusterSettingsPage_ extends SafetyFirst {
   componentDidMount() {
     super.componentDidMount();
@@ -24,7 +25,8 @@ class ClusterSettingsPage_ extends SafetyFirst {
 
   render() {
     const { version } = (this.state || {});
-    const { CLUSTER_UPDATES } = this.props.flags;
+    const { CLUSTER_UPDATES, PROMETHEUS } = this.props.flags;
+
     return <div className="co-p-cluster">
       <Helmet title="Cluster" />
       <div className="co-p-cluster__body">
@@ -44,6 +46,7 @@ class ClusterSettingsPage_ extends SafetyFirst {
           <LicenseSetting />
           <LDAPSetting />
           <CertsInfoContainer />
+          {PROMETHEUS && <AlertManagersListContainer />}
         </div>
       </div>
       <DocumentationSidebar version={version} />

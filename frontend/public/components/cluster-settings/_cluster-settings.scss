@@ -124,3 +124,23 @@
     }
   }
 }
+
+.alert-manager-wrapper {
+  margin: 20px 0;
+  .co-resource-link {
+    .co-m-resource-icon {
+      margin: 0 4px 0 0;
+    }
+  }
+}
+
+.alert-manager-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.alert-manager-row {
+  flex: 0 1 50%;
+  padding-bottom: 15px;
+}

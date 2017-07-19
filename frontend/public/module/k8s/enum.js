@@ -225,6 +225,15 @@ export const k8sEnum = {
       plural: 'servicemonitors',
       abbr: 'SM',
     },
+    Alertmanager: {
+      label: 'Alert Manager',
+      labelPlural: 'Alert Managers',
+      apiVersion: 'v1alpha1',
+      basePath: '/apis/monitoring.coreos.com/',
+      path: 'alertmanagers',
+      plural: 'alertmanagers',
+      abbr: 'AM',
+    },
     '*': {
       id: 'all',
       plural: 'all',

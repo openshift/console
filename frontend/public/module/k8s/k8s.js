@@ -81,6 +81,7 @@ export const k8s = {
   etcdclusters: addDefaults({}, k8sKinds.EtcdCluster),
   prometheuses: addDefaults({}, k8sKinds.Prometheus),
   servicemonitors: addDefaults({}, k8sKinds.ServiceMonitor),
+  alertmanagers: addDefaults({}, k8sKinds.Alertmanager),
 
   componentstatuses: addDefaults({}, k8sKinds.ComponentStatus),
   namespaces: addDefaults({}, k8sKinds.Namespace),
