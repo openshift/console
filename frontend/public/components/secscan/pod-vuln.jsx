@@ -31,7 +31,7 @@ const PodVulnRow = ({obj: podvuln}) => {
   
   return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceLink kind="podvuln" name={podvuln.metadata.name} displayName={podvuln.metadata.name.replace(/^podvuln-/, '')} namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
+      <ResourceLink kind="PodVuln" name={podvuln.metadata.name} displayName={podvuln.metadata.name.replace(/^podvuln-/, '')} namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       {length}
@@ -61,7 +61,7 @@ const SubHeaderRow = ({header}) => {
 
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
-    <ResourceIcon kind="vulnerability" />
+    <ResourceIcon kind="Vulnerability" />
     <a href={vuln.link}>{vuln.name}</a>
   </span>;
 };
@@ -70,7 +70,7 @@ const ContainerLink = ({podvuln, name}) => {
   const podname = podvulnNameToPodName(podvuln.metadata.name);
 
   return <span className="co-resource-link">
-    <ResourceIcon kind="container" />
+    <ResourceIcon kind="Container" />
     <Link to={`ns/${podvuln.metadata.namespace}/pods/${podname}/containers/${name}/details`}>{name}</Link>
   </span>;
 };
@@ -165,7 +165,7 @@ export const PodVulnList = props => <List {...props} Header={PodVulnHeader} Row=
 export const PodVulnsPage = props => <ListPage
   {...props}
   canCreate={false}
-  kind="podvuln"
+  kind="PodVuln"
   ListComponent={PodVulnList}
   title="Security Scan Report"
   Intro={<SubHeaderRow header="All supported container images are scanned for known vulnerabilities and CVEs." />}
