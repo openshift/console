@@ -112,11 +112,11 @@ class Nav_ extends SafetyFirst {
         </div>
 
         <NavSection text="Workloads" icon="fa-folder-open-o" {...accordionProps('workloads')}>
+          <NavLink resource="daemonsets" name="Daemon Sets" sectionId="workloads" />
           <NavLink resource="deployments" name="Deployments" sectionId="workloads" />
           <NavLink resource="replicasets" name="Replica Sets" sectionId="workloads" />
           <NavLink resource="replicationcontrollers" name="Replication Controllers" sectionId="workloads" />
           <div className="navigation-container__section__separator"></div>
-          <NavLink resource="daemonsets" name="Daemon Sets" sectionId="workloads" />
           <NavLink resource="jobs" name="Jobs" sectionId="workloads" />
           <NavLink resource="pods" name="Pods" sectionId="workloads" />
           <NavLink resource="configmaps" name="Config Maps" sectionId="workloads" />
