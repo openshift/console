@@ -26,60 +26,27 @@ const menuActions = [Edit, Delete];
 
 const EndpointRow = ({endpoint}) => <div>
   <div className="row co-ip-header">
-    <div className="col-xs-4">Port</div>
-    <div className="col-xs-4">Interval</div>
-    <div className="col-xs-4">Scheme</div>
+    <div className="col-xs-6">Port</div>
+    <div className="col-xs-2">Interval</div>
+    <div className="col-xs-4"></div>
   </div>
   <div className="rows">
     <div className="co-ip-row">
       <div className="row">
-        <div className="col-xs-4">
+        <div className="col-xs-6">
           <p><ResourceIcon kind="Service" />{endpoint.port || '--'}</p>
         </div>
-        <div className="col-xs-4">
+        <div className="col-xs-2">
           <p>{endpoint.interval || '--'}</p>
         </div>
         <div className="col-xs-4">
-          <p>{endpoint.scheme || '--'}</p>
+          {_.has(endpoint, 'scheme') && <span><span className="text-muted">scheme:</span>{endpoint.scheme}</span>}
+          {_.has(endpoint, 'targetPort') && <span><span className="text-muted">targetPort:</span>{endpoint.targetPort}</span>}
+          {_.has(endpoint, 'honorLabels') && <span><span className="text-muted">honorLabels:</span>{endpoint.honorLabels}</span>}
         </div>
       </div>
     </div>
   </div>
-
-  {endpoint.tlsConfig && <div>
-    <div className="row co-ip-header">
-      <div className="col-xs-8">caFile</div>
-      <div className="col-xs-4">serverName</div>
-    </div>
-    <div className="rows">
-      <div className="co-ip-row">
-        <div className="row">
-          <div className="col-xs-8">
-            <p>{endpoint.tlsConfig.caFile}</p>
-          </div>
-          <div className="col-xs-4">
-            <p>{endpoint.tlsConfig.serverName}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>}
-
-  {endpoint.bearerTokenFile && <div>
-    <div className="row co-ip-header">
-      <div className="col-xs-12">bearerTokenFile</div>
-    </div>
-    <div className="rows">
-      <div className="co-ip-row">
-        <div className="row">
-          <div className="col-xs-12">
-            <p>{endpoint.bearerTokenFile}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>}
-
 </div>;
 
 const Details = (sm) => {
@@ -100,8 +67,8 @@ const Details = (sm) => {
                   <dd><LabelList kind="ServiceMonitor" labels={metadata.labels} /></dd>
                   <dt>Service Selector</dt>
                   <dd><Selector selector={spec.selector} kind="Service" /></dd>
-                  <dt>Namespace Selector</dt>
-                  <dd><Selector selector={spec.namespaceSelector} /></dd>
+                  <dt>Monitoring Namespace</dt>
+                  <dd><ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /></dd>
                 </dl>
               </div>
               <div className="col-sm-6 col-xs-12">
@@ -109,7 +76,7 @@ const Details = (sm) => {
                   <dt>Job Label</dt>
                   <dd>{spec.jobLabel || '--'}</dd>
                   <dt>Endpoints</dt>
-                  <dd className="service-ips">{_.map(spec.endpoints, (e, i) => <EndpointRow e={e} key={i} />)}</dd>
+                  <dd className="service-ips">{_.map(spec.endpoints, (e, i) => <EndpointRow endpoint={e} key={i} />)}</dd>
                 </dl>
               </div>
             </div>
@@ -126,31 +93,24 @@ const ServiceMonitorRow = ({obj: sm}) => {
   const kind = 'ServiceMonitor';
 
   return <ResourceRow obj={sm}>
-    <div className="col-md-3 col-sm-3 col-xs-6">
+    <div className="col-md-4 col-sm-3 col-xs-6">
       <ResourceCog actions={menuActions} kind={kind} resource={sm} />
       <ResourceLink kind={kind} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
-    <div className="col-md-3 col-sm-5 hidden-xs">
-      <Selector selector={spec.selector} kind="Service" />
+    <div className="col-md-5 col-sm-5 col-xs-6">
+      <Selector selector={spec.selector} kind="Service" namespace={spec.namespaceSelector.matchNames[0]} />
     </div>
-    <div className="col-md-3 hidden-sm hidden-xs">
-      {_.map(spec.endpoints, (e, i) =>
-        <p key={i}>
-          <span className="text-muted">Port:</span> {e.port}&nbsp;&nbsp;<span className="text-muted">Interval:</span> {e.interval}
-        </p>)}
-    </div>
-    <div className="col-md-3 col-sm-4 col-xs-6">
-      <Selector selector={spec.namespaceSelector} kind="Namespace"/>
+    <div className="col-md-3 col-sm-4 hidden-xs">
+      <p><ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /></p>
     </div>
   </ResourceRow>;
 };
 
 const ServiceMonitorHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-5 hidden-xs" sortField="spec.selector">Service Selector</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.endpoints">Endpoints</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="spec.namespaceSelector">
-    Namespace Selector
+  <ColHead {...props} className="col-md-4 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-5 col-sm-5 col-xs-6 " sortField="spec.selector">Service Selector</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="spec.namespaceSelector">
+    Monitoring Namespace
   </ColHead>
 </ListHeader>;
 
