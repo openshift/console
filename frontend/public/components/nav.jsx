@@ -104,7 +104,6 @@ class Nav_ extends SafetyFirst {
     });
 
     const {clusters} = this.state || {};
-
     return <div id="sidebar" className="co-img-bg-cells">
       <div className="navigation-container" key={pathname}>
         <div className="navigation-container__section navigation-container__section--logo">
@@ -124,8 +123,9 @@ class Nav_ extends SafetyFirst {
           <NavLink resource="secrets" name="Secrets" sectionId="workloads" />
         </NavSection>
 
-        {flags.ETCD_OPERATOR && <NavSection text="Operators" img="static/imgs/operator-logo.svg" {...accordionProps('operators')}>
-          <NavLink resource="etcdclusters" name="etcd Clusters" sectionId="operators" />
+        {flags.ETCD_OPERATOR || flags.PROMETHEUS && <NavSection text="Operators" img="static/imgs/operator-logo.svg" {...accordionProps('operators')}>
+          {flags.ETCD_OPERATOR && <NavLink resource="etcdclusters" name="etcd Clusters" sectionId="operators" />}
+          {flags.PROMETHEUS && <NavLink resource="prometheuses" name="Prometheus Instances" sectionId="operators" />}
         </NavSection>}
 
         <NavSection text="Routing" img="static/imgs/routing.svg" {...accordionProps('routing')}>

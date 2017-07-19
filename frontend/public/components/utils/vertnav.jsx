@@ -36,6 +36,11 @@ export const navFactory = {
     name: 'Role Bindings',
     component,
   }),
+  serviceMonitors: (component = undefined) => ({
+    href: 'servicemonitors',
+    name: 'Service Monitor',
+    component,
+  }),
 };
 
 const activeSlug = () => location.pathname.split('/').pop();

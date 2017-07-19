@@ -16,7 +16,7 @@ const Requirement = ({kind, requirements, namespace=''}) => {
 
   return (
     <div className="co-m-requirement">
-      <Link className={`co-text-${kind}`} to={to}>
+      <Link className={`co-text-${kind.toLowerCase()}`} to={to}>
         <i className="fa fa-search"></i> {requirementAsString.replace(/,/g, ', ')}
       </Link>
     </div>

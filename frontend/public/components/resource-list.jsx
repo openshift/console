@@ -10,7 +10,6 @@ const allParams = props => Object.assign({}, props.params, props.route);
 export const ResourceListPage = (props) => {
   const {kind, ns} = allParams(props);
   const kindObj = _.find(k8sKinds, {plural: kind});
-
   if (!kindObj) {
     window.location = '404';
     return null;

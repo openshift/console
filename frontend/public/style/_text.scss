@@ -12,6 +12,7 @@ $kinds: (
   secret: $color-secret-dark,
   service: $color-service-dark,
   serviceaccount: $color-serviceaccount-dark,
+  servicemonitor: $color-service-dark,
 );
 
 @each $kind, $color in $kinds {
