@@ -64,7 +64,7 @@ const processReduxId = ({k8s}, props) => {
 
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
 // passing it to children
-export const ConnectToState = connect(processReduxId)(props => {
+export const ConnectToState = connect(processReduxId)(function GenericConnectToState (props) {
   const {children, className} = props;
   const newChildren = inject(children, _.omit(props, ['className', 'children', 'isList']));
   return <div className={className}>{newChildren}</div>;

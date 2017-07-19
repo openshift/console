@@ -165,7 +165,7 @@ const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, rowSplitt
   return {currentSortField, currentSortFunc, currentSortOrder, data: newData, listId};
 };
 
-export const List = connect(stateToProps, {sortList: UIActions.sortList})(props => {
+export const List = connect(stateToProps, {sortList: UIActions.sortList})(function ListInner (props) {
   const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList} = props;
   return <div className="co-m-table-grid co-m-table-grid--bordered">
     <StatusBox {...props}>

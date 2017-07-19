@@ -34,7 +34,7 @@ export const AccessDenied = () => <Box className="cos-text-center">
   <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy" />
 </Box>;
 
-export const StatusBox = (props) => {
+export const StatusBox = props => {
   const {EmptyMsg, label, loadError, loaded} = props;
 
   if (loadError) {

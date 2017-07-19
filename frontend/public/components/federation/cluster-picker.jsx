@@ -2,6 +2,7 @@ import React from 'react';
 
 import { SafetyFirst } from '../safety-first';
 import { FLAGS, connectToFlags } from '../../features';
+import { clusterUtil } from '../utils';
 
 export const ClusterPicker = connectToFlags(FLAGS.MULTI_CLUSTER)(
 class ClusterPicker_ extends SafetyFirst {
@@ -15,7 +16,19 @@ class ClusterPicker_ extends SafetyFirst {
 
   componentDidMount() {
     super.componentDidMount();
-    this._setInitialActiveClusterId(this.props.clusters);
+    if (this.props.flags && this.props.flags.MULTI_CLUSTER) {
+      this._getClusters();
+      this._setActiveClusterId();
+    }
+  }
+
+  _getClusters() {
+    const { MULTI_CLUSTER } = this.props.flags;
+    clusterUtil.getFedClusters(MULTI_CLUSTER)
+      .then((clusters) => {
+        this.setState({ clusters: clusters.items });
+      })
+      .catch(() => this.setState({ clusters: null }));
   }
 
   _setActiveClusterId(cluster) {
