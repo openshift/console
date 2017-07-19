@@ -33,7 +33,7 @@ function validOptions(o) {
 }
 
 function createURL(host, path) {
-  var url;
+  let url;
 
   if (host === 'auto') {
     if (location.protocol === 'https:') {
@@ -53,8 +53,7 @@ function createURL(host, path) {
 }
 
 function WebSocketWrapper(id, options) {
-  var that = this,
-      flushCanceler;
+  const that = this;
 
   this.id = id;
   this.options = options;
@@ -70,6 +69,7 @@ function WebSocketWrapper(id, options) {
 
   this._connect();
 
+  let flushCanceler;
   if (this.options.bufferEnabled) {
     flushCanceler = setInterval(this.flushBuffer.bind(this), this.options.bufferFlushInterval);
   }
@@ -116,7 +116,7 @@ export const wsFactory = (id, options) => {
 };
 
 wsFactory.destroy = function(id) {
-  var ws = wsCache[id];
+  const ws = wsCache[id];
   if (!ws) {
     return;
   }
@@ -128,9 +128,9 @@ wsFactory.destroyAll = function() {
 };
 
 WebSocketWrapper.prototype._reconnect = function() {
-  var delay = 2000,
-      max = 30000,
-      that = this;
+  const that = this;
+  const max = 30000;
+  let delay = 2000;
 
   if (this._connectionAttempt) {
     return;
@@ -151,7 +151,7 @@ WebSocketWrapper.prototype._reconnect = function() {
 };
 
 WebSocketWrapper.prototype._connect = function() {
-  var that = this;
+  const that = this;
   this._state = 'init';
   this._buffer = [];
   this.ws = new WebSocket(this.url);
@@ -178,7 +178,7 @@ WebSocketWrapper.prototype._connect = function() {
     that._triggerEvent({ type: 'error', args: [code, reason] });
   };
   this.ws.onmessage = function(e) {
-    var msg = that.options.jsonParse ? JSON.parse(e.data) : e.data;
+    const msg = that.options.jsonParse ? JSON.parse(e.data) : e.data;
     that._state = 'open';
     that._triggerEvent({ type: 'message', args: [msg] });
   };
@@ -204,7 +204,7 @@ WebSocketWrapper.prototype._bufferEvent = function(evt) {
 
 // Invoke all registered handler callbacks for a given event type.
 WebSocketWrapper.prototype._invokeHandlers = function(evt) {
-  var handlers = this._handlers[evt.type];
+  const handlers = this._handlers[evt.type];
   if (!handlers) {
     return;
   }

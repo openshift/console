@@ -12,9 +12,9 @@ export const fromArgs = args => {
       return arg;
     }
 
-    var sqi = arg.indexOf('\'');      // possible single quote position
-    var dqi = arg.indexOf('"');       // possible double quote position
-    var qk  = sqi > dqi ? '"' : '\''; // whatever quote comes first, we use opposite
+    const sqi = arg.indexOf('\'');      // possible single quote position
+    const dqi = arg.indexOf('"');       // possible double quote position
+    const qk  = sqi > dqi ? '"' : '\''; // whatever quote comes first, we use opposite
 
     return qk + arg + qk;
   }).join(' ');
@@ -25,10 +25,10 @@ export const fromArgs = args => {
   * @return {String[]}
   */
 export const toArgs = cmd => {
-  var parts      = cmd.split(' ');
-  var args       = [];
-  var quoteKind  = null;
-  var quotedArgs = [];
+  let parts      = cmd.split(' ');
+  let args       = [];
+  let quoteKind  = null;
+  let quotedArgs = [];
 
   parts.forEach(function (part) {
     if (quotedArgs.length === 0) {

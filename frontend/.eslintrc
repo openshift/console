@@ -27,6 +27,7 @@
     "no-underscore-dangle": 0,
     "no-unused-vars": ["error", {"varsIgnorePattern": "React"}],
     "no-use-before-define": 1,
+    "no-var": 2,
     "prefer-template": 1,
     "semi": 2,
     "radix": 2,

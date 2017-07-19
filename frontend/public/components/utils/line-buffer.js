@@ -3,7 +3,7 @@
 const LINE_PATTERN = /[^\n]+(?:\n|$)/g;
 
 export const lineBuffer = (maxSize) => {
-  var buffer = [];
+  let buffer = [];
 
   return {
     totalLineCount: 0,
@@ -16,9 +16,9 @@ export const lineBuffer = (maxSize) => {
         return;
       }
 
-      var overflow = 0;
-      var lines = data.match(LINE_PATTERN);
-      var trailer = buffer.pop() || '';
+      let overflow = 0;
+      let lines = data.match(LINE_PATTERN);
+      let trailer = buffer.pop() || '';
 
       if (trailer.substr(-1) !== '\n') {
         trailer = trailer + (lines.shift() || '');

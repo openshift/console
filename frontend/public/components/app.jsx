@@ -167,7 +167,7 @@ render((
 
 window.onerror = function (message, source, lineno, colno) {
   try {
-    var e = `${message} ${source} ${lineno} ${colno}`;
+    const e = `${message} ${source} ${lineno} ${colno}`;
     analyticsSvc.error(e);
   }
   catch(err) {

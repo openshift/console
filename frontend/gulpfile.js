@@ -49,9 +49,9 @@ gulp.task('set-test', () => {
 
 function isExternalModule (file) {
   // lifted from browserify!!!
-  var regexp = process.platform === 'win32' ?
-      /^(\.|\w:)/ :
-      /^[\/.]/;
+  const regexp = process.platform === 'win32' ?
+        /^(\.|\w:)/ :
+        /^[\/.]/;
   return !regexp.test(file);
 }
 
@@ -188,7 +188,7 @@ gulp.task('copy-deps', () => {
 gulp.task('html', ['sha'], () => {
   return gulp.src(indexSrc)
     .pipe(htmlReplace((function() {
-      var h = {};
+      const h = {};
       if (process.env.NODE_ENV === 'production') {
         h['js'] = `static/build.${CURRENT_SHA}.min.js`;
         h['css'] = `static/build.${CURRENT_SHA}.css`;

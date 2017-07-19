@@ -60,7 +60,7 @@ const flatteners = {
   },
 
   httpGet: function(cmd, podIP) {
-    var c = '';
+    let c = '';
     if (_.isEmpty(cmd)) {
       return c;
     }
@@ -85,11 +85,10 @@ const flatteners = {
 };
 
 function inferAction(obj) {
-  var keys;
   if (_.isEmpty(obj)) {
     return;
   }
-  keys = _.keys(obj);
+  const keys = _.keys(obj);
   if (_.isEmpty(keys)) {
     return;
   }
@@ -105,7 +104,7 @@ export function parseCmd(type, cmd) {
 }
 
 export function getActionLabelById(actionId) {
-  var t = k8sEnum.HookAction[actionId];
+  const t = k8sEnum.HookAction[actionId];
   if (t) {
     return t.label;
   }
@@ -120,7 +119,7 @@ function getActionLabel(action) {
 }
 
 export function getActionLabelFromObject(obj) {
-  var a = inferAction(obj);
+  const a = inferAction(obj);
   return getActionLabel(a);
 }
 
@@ -133,9 +132,7 @@ export const getLifecycleHookLabel = function(lifecycle, stage) {
 
 // Maps an api config object to a simple flattened type and command field.
 export const mapLifecycleConfigToFields = function(c) {
-  var k, f;
-
-  f = {
+  const f = {
     postStart: {
       type: 'exec',
       cmd: '',
@@ -151,13 +148,13 @@ export const mapLifecycleConfigToFields = function(c) {
   }
 
   if (!_.isEmpty(c.postStart)) {
-    k = _.keys(c.postStart);
+    const k = _.keys(c.postStart);
     f.postStart.type = k[0];
     f.postStart.cmd = flattenCmd(k[0], c.postStart[k[0]]);
   }
 
   if (!_.isEmpty(c.preStop)) {
-    k = _.keys(c.preStop);
+    const k = _.keys(c.preStop);
     f.preStop.type = k[0];
     f.preStop.cmd = flattenCmd(k[0], c.preStop[k[0]]);
   }
@@ -166,7 +163,7 @@ export const mapLifecycleConfigToFields = function(c) {
 };
 
 export const mapFieldsToLifecycleConfig = function(f) {
-  var c = {};
+  const c = {};
   if (_.isEmpty(f.postStart.cmd) && _.isEmpty(f.preStop.cmd)) {
     return null;
   }
@@ -189,13 +186,13 @@ export const mapFieldsToLifecycleConfig = function(f) {
 };
 
 export const mapFieldsToLivenessProbe = function(f) {
-  var delay, c = {};
   if (f.cmd == null || f.cmd === '') {
     return null;
   }
 
+  const c = {};
   c[f.type] = parseCmd(f.type, f.cmd);
-  delay = parseInt(f.initialDelaySeconds, 10);
+  const delay = parseInt(f.initialDelaySeconds, 10);
 
   // NaN is a number :/
   if (_.isNumber(delay) && !_.isNaN(delay)) {
@@ -206,9 +203,7 @@ export const mapFieldsToLivenessProbe = function(f) {
 };
 
 export const mapLivenessProbeToFields = function(c, podIP) {
-  var k, f;
-
-  f = {
+  const f = {
     initialDelaySeconds: '',
     type: 'exec',
     cmd: '',
@@ -222,7 +217,7 @@ export const mapLivenessProbeToFields = function(c, podIP) {
     f.initialDelaySeconds = c.initialDelaySeconds;
   }
 
-  k = _.keys(c);
+  const k = _.keys(c);
   if (!_.isEmpty(k)) {
     f.type = k[0];
     f.cmd = flattenCmd(k[0], c[k[0]], podIP);
