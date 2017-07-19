@@ -5,7 +5,8 @@ import { Cog, kindObj, LabelList, Selector, Timestamp } from './index';
 
 export const pluralize = (i, singular, plural = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
 
-export const detailsPage = (Component) => (props) =>
+// eslint-disable-next-line react/display-name
+export const detailsPage = Component => props =>
   <div className="row row-gutter">
     <Component {...props} />
   </div>;
