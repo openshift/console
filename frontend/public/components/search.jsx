@@ -17,6 +17,7 @@ import {ServicesList} from './service';
 import {IngressesList} from './ingress';
 import {PrometheusesList} from './prometheus';
 import {ServiceMonitorsList} from './service-monitor';
+import {AlertManagersList} from './alert-manager';
 import {getActiveNamespace} from '../ui/ui-actions';
 import {Dropdown, Firehose, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
@@ -40,6 +41,7 @@ const resources = {
   Service: ServicesList,
   Prometheus: PrometheusesList,
   ServiceMonitor: ServiceMonitorsList,
+  Alertmanager: AlertManagersList,
 };
 
 const DropdownItem = ({kind}) => <span>

@@ -7,7 +7,7 @@ const Label = ({kind, name, value, expand}) => {
   const klass = classNames('co-m-label', {'co-m-label--expand': expand});
 
   return (
-    <Link className={`co-text-${kind}`} to={href}>
+    <Link className={`co-text-${kind.toLowerCase()}`} to={href}>
       <div className={klass}>
         <span className="co-m-label__key">{name}</span>
         {value && <span className="co-m-label__eq">=</span>}

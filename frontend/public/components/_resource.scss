@@ -63,6 +63,10 @@ $height: 18px;
   background-color: $color-secret-dark;
 }
 
+.co-m-resource-alertmanager {
+  background-color: $color-alertmanager-dark;
+}
+
 .co-m-resource-service,
 .co-m-resource-servicemonitor {
   background-color: $color-service-dark;
