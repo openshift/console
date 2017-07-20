@@ -83,22 +83,22 @@ export class ClusterOverviewContainer extends SafetyFirst {
 
   _checkFixableIssues() {
     k8s.pods.get().then((pods) => {
-      var count = 0;
-      for (var pod of pods.items) {
-        var fixables = parseInt(pod['metadata']['labels']['secscan/fixables']);
-        count += !fixables ? 0 : fixables;
-      }
+      let count = 0;
+      _.forEach(pods.items, (pod) => {
+        const fixables = _.get(pod, 'metadata.labels.secscan/fixables');
+        count += !fixables ? 0 : parseInt(fixables, 10);
+      });
       this.setState({fixableIssues: count});
     });
   }
 
   _checkScannedPods() {
     k8s.pods.get().then((pods) => {
-      var count = 0;
-      for (var pod of pods.items) {
-        var scanned = pod['metadata']['annotations']['secscan/lastScan'];
+      let count = 0;
+      _.forEach(pods.items,  (pod) => {
+        const scanned = _.get(pod, 'metadata.annotations.secscan/lastScan');
         count += scanned ? 1 : 0;
-      }
+      });
       this.setState({scannedPods: count});
     });
   }

@@ -14,7 +14,7 @@ const CountVulnerabilityFilter = (podvulns) => {
   if (!podvulns) {
     return undefined;
   }
-  var count = {
+  let count = {
     'P0': 0,
     'P1': 0,
     'P2': 0,
@@ -57,25 +57,31 @@ const PodVulnHeader = props => <ListHeader>
 </ListHeader>;
 
 const PodVulnRow = ({obj: podvuln}) => {
-  const scannable = podvuln.metadata.annotations['secscan/lastScan'] ? podvuln.metadata.annotations['secscan/lastScan'] : null;
-  const fixables = podvuln.metadata.labels['secscan/fixables'] ? podvuln.metadata.labels['secscan/fixables'] : null;
-  const P0 = podvuln.metadata.labels['secscan/P0'] ? parseInt(podvuln.metadata.labels['secscan/P0']) : 0;
-  const P1 = podvuln.metadata.labels['secscan/P1'] ? parseInt(podvuln.metadata.labels['secscan/P1']) : 0;
-  const P2 = podvuln.metadata.labels['secscan/P2'] ? parseInt(podvuln.metadata.labels['secscan/P2']) : 0;
-  const P3 = podvuln.metadata.labels['secscan/P3'] ? parseInt(podvuln.metadata.labels['secscan/P3']) : 0;
+  const scannable = _.get(podvuln, 'metadata.annotations.secscan/lastScan');
+  const fixables = _.get(podvuln, 'metadata.labels.secscan/fixables');
+  const P0 = _.has(podvuln, 'metadata.labels.secscan/P0') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P0'), 10) : 0;
+  const P1 = _.has(podvuln, 'metadata.labels.secscan/P1') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P1'), 10) : 0;
+  const P2 = _.has(podvuln, 'metadata.labels.secscan/P2') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P2'), 10) : 0;
+  const P3 = _.has(podvuln, 'metadata.labels.secscan/P3') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P3'), 10) : 0;
   const count = P0 + P1 + P2 + P3;
   const length = scannable ? (podvuln.imagevulns ? podvuln.imagevulns.length : 0) : 0;
   
   return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceLink kind="PodVuln" name={podvuln.metadata.name} displayName={podvuln.metadata.name.replace(/^podvuln-/, '')} namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
+      <ResourceLink kind="PodVuln" name={podvuln.metadata.name}
+	displayName={podvuln.metadata.name.replace(/^podvuln-/, '')}
+	namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       {length}
     </div>
 
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      {scannable ? (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`) : 'Unable to scan pod'}
+      {
+	(!length && scannable) ? <div className="text-muted">(Unsupported)</div> :
+	scannable ? (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`) :
+	'Unable to scan pod'
+      }
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       {podvuln.metadata.labels['secscan/highest'] ? podvuln.metadata.labels['secscan/highest'] : '-'}
@@ -98,7 +104,6 @@ const SubHeaderRow = ({header}) => {
 
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
-    <ResourceIcon kind="Vulnerability" />
     <a href={vuln.link} target="_blank">{vuln.name}</a>
   </span>;
 };
@@ -150,7 +155,7 @@ const Details = (podvuln) => {
                   <dt>Highest</dt>
                   <dd>{podvuln.metadata.labels['secscan/highest']}</dd>
                   <dt>Last Update</dt>
-                  <dd><Timestamp timestamp={podvuln.metadata.annotations['secscan/lastScan']} /></dd>
+                  <dd><Timestamp timestamp={_.get(podvuln, 'metadata.annotations.secscan/lastScan')} /></dd>
                 </dl>
               </div>
             </div>
