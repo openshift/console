@@ -63,37 +63,36 @@ const onRouteChange = (prevRoute, nextRoute) => {
   analyticsSvc.route(window.location.pathname);
 };
 
-const init = (nextRoute) => {
-  onRouteChange(undefined, nextRoute);
 
-  registerNamespaceFriendlyPrefix('configmaps');
-  registerNamespaceFriendlyPrefix('daemonsets');
-  registerNamespaceFriendlyPrefix('deployments');
-  registerNamespaceFriendlyPrefix('events');
-  registerNamespaceFriendlyPrefix('ingresses');
-  registerNamespaceFriendlyPrefix('jobs');
-  registerNamespaceFriendlyPrefix('pods');
-  registerNamespaceFriendlyPrefix('replicasets');
-  registerNamespaceFriendlyPrefix('replicationcontrollers');
-  registerNamespaceFriendlyPrefix('rolebindings');
-  registerNamespaceFriendlyPrefix('roles');
-  registerNamespaceFriendlyPrefix('search');
-  registerNamespaceFriendlyPrefix('secrets');
-  registerNamespaceFriendlyPrefix('serviceaccounts');
-  registerNamespaceFriendlyPrefix('services');
-  registerNamespaceFriendlyPrefix('etcdclusters');
-  registerNamespaceFriendlyPrefix('networkpolicies');
-  registerNamespaceFriendlyPrefix('prometheuses');
+registerNamespaceFriendlyPrefix('configmaps');
+registerNamespaceFriendlyPrefix('daemonsets');
+registerNamespaceFriendlyPrefix('deployments');
+registerNamespaceFriendlyPrefix('events');
+registerNamespaceFriendlyPrefix('ingresses');
+registerNamespaceFriendlyPrefix('jobs');
+registerNamespaceFriendlyPrefix('pods');
+registerNamespaceFriendlyPrefix('replicasets');
+registerNamespaceFriendlyPrefix('replicationcontrollers');
+registerNamespaceFriendlyPrefix('rolebindings');
+registerNamespaceFriendlyPrefix('roles');
+registerNamespaceFriendlyPrefix('search');
+registerNamespaceFriendlyPrefix('secrets');
+registerNamespaceFriendlyPrefix('serviceaccounts');
+registerNamespaceFriendlyPrefix('services');
+registerNamespaceFriendlyPrefix('etcdclusters');
+registerNamespaceFriendlyPrefix('networkpolicies');
+registerNamespaceFriendlyPrefix('prometheuses');
 
-  store.dispatch(k8sActions.getResources());
-  store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
-  store.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/v1`));
-  store.dispatch(featureActions.detectEtcdOperatorFlags(`${k8sBasePath}/apis/etcd.coreos.com/v1beta1`));
-  store.dispatch(featureActions.detectPrometheusFlags(`${k8sBasePath}/apis/monitoring.coreos.com/v1alpha1`));
-  store.dispatch(featureActions.detectMultiClusterFlags());
+store.dispatch(k8sActions.getResources());
+store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
+store.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/v1`));
+store.dispatch(featureActions.detectEtcdOperatorFlags(`${k8sBasePath}/apis/etcd.coreos.com/v1beta1`));
+store.dispatch(featureActions.detectPrometheusFlags(`${k8sBasePath}/apis/monitoring.coreos.com/v1alpha1`));
+store.dispatch(featureActions.detectMultiClusterFlags());
 
-  tectonicVersion();
-};
+tectonicVersion();
+
+const init = nextRoute => onRouteChange(undefined, nextRoute);
 
 render((
   <Provider store={store}>
