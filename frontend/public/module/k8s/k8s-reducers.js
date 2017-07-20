@@ -37,7 +37,7 @@ const updateList = (list, nextJS) => {
   //  and then only do this comparison for the same stuff!
   const currentJS = current.toJSON();
   currentJS.metadata.resourceVersion = nextJS.metadata.resourceVersion;
-  if (_.isEqual(currentJS, currentJS)) {
+  if (_.isEqual(currentJS, nextJS)) {
     // If the only thing that differs is resource version, don't fire an update.
     return list;
   }
