@@ -18,7 +18,6 @@ class ClusterPicker_ extends SafetyFirst {
     super.componentDidMount();
     if (this.props.flags && this.props.flags.MULTI_CLUSTER) {
       this._getClusters();
-      this._setActiveClusterId();
     }
   }
 
@@ -27,6 +26,7 @@ class ClusterPicker_ extends SafetyFirst {
     clusterUtil.getFedClusters(MULTI_CLUSTER)
       .then((clusters) => {
         this.setState({ clusters: clusters.items });
+        this._setInitialActiveClusterId(clusters.items);
       })
       .catch(() => this.setState({ clusters: null }));
   }
