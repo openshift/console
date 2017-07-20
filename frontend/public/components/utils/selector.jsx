@@ -23,11 +23,11 @@ const Requirement = ({kind, requirements, namespace=''}) => {
   );
 };
 
-export const Selector = ({kind, expand, selector, namespace}) => {
+export const Selector = ({kind, expand, selector, namespace, style}) => {
   const requirements = selector || {};
   const className = classnames('co-m-selector', {'co-m-selector--expand': expand});
 
-  return <div className={className}>
+  return <div className={className} style={style}>
     { _.isEmpty(requirements)
       ? <p className="text-muted">No selector</p>
       : <Requirement kind={kind || 'Pod'} requirements={requirements} namespace={namespace} /> }
