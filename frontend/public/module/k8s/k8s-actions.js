@@ -134,14 +134,13 @@ const actions =  {
 
       WS[id] = ws;
     }
+    const clonedQuery = _.clone(query, true);
+    const poller = () => k8sType.list(clonedQuery)
+      .then(
+        o => dispatch(actions.loaded(id, o)),
+        e => dispatch(actions.errored(id, e))
+      );
 
-    const poller = () => {
-      k8sType.list(_.clone(query, true))
-        .then(
-          o => dispatch(actions.loaded(id, o)),
-          e => dispatch(actions.errored(id, e))
-        );
-    };
     POLLs[id] = setInterval(poller, pollInterval());
     poller();
   },
