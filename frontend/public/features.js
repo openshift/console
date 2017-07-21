@@ -113,7 +113,7 @@ export const featureReducers = (state, action)  => {
 export const stateToProps = (flags, state) => {
   const props = {flags: {}};
   _.each(flags, f => {
-    props.flags[f] = state[featureReducerName].get(f);
+    props.flags[f] = _.get(state[featureReducerName].toJSON(), f);
   });
   return props;
 };

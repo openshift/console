@@ -260,7 +260,7 @@ tags-input .autocomplete .suggestion-item em {
   margin: -10px 0 10px 0;
   overflow-y: hidden;
   padding-left: 0;
-  transition: height 0.25s;
+  transition: max-height 0.25s;
 }
 
 .navigation-container__section, .navigation-container__section__separator {
