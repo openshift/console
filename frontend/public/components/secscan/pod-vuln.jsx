@@ -39,9 +39,9 @@ const CountVulnerabilityFilter = (podvulns) => {
       count.Fixables++;
     }
     if (!_.has(podvuln, 'metadata.labels.secscan/P0') &&
-	!_.has(podvuln, 'metadata.labels.secscan/P1') &&
-	!_.has(podvuln, 'metadata.labels.secscan/P2') &&
-	!_.has(podvuln, 'metadata.labels.secscan/P3')) {
+        !_.has(podvuln, 'metadata.labels.secscan/P1') &&
+        !_.has(podvuln, 'metadata.labels.secscan/P2') &&
+        !_.has(podvuln, 'metadata.labels.secscan/P3')) {
       count.Passed++;
     }
   });
@@ -65,12 +65,16 @@ const PodVulnRow = ({obj: podvuln}) => {
   const P3 = _.has(podvuln, 'metadata.labels.secscan/P3') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P3'), 10) : 0;
   const count = P0 + P1 + P2 + P3;
   const length = scannable ? (podvuln.imagevulns ? podvuln.imagevulns.length : 0) : 0;
-  
+
+  const supported = _.has(podvuln, 'imagevulns') ? _.every(
+    _.map(podvuln.imagevulns, (imgvuln) => _.has(imgvuln, 'features')),
+    Boolean) : false;
+
   return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
       <ResourceLink kind="PodVuln" name={podvuln.metadata.name}
-	displayName={podvuln.metadata.name.replace(/^podvuln-/, '')}
-	namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
+        displayName={podvuln.metadata.name.replace(/^podvuln-/, '')}
+        namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       {length}
@@ -78,9 +82,9 @@ const PodVulnRow = ({obj: podvuln}) => {
 
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
       {
-	(!length && scannable) ? <div className="text-muted">(Unsupported)</div> :
-	scannable ? (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`) :
-	'Unable to scan pod'
+        !supported ? <div className="text-muted">(Unsupported)</div> :
+        scannable ? (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`) :
+        'Unable to scan pod'
       }
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
