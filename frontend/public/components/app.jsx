@@ -18,7 +18,6 @@ import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';
 import { ContainersDetailsPage } from './container';
-import { PodVulnsDetailsPage } from './secscan/pod-vuln';
 import { CreateYAML } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';

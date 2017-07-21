@@ -1,14 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { ContainerRow } from '../pod'
+import { ContainerRow } from '../pod';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
-import { Cog, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
+import { MsgBox, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
 import { isScanned, isSupported, imagesScanned, hasAccess, parsePodAnnotation, CountVulnerabilityFilter } from '../../module/k8s/podvulns';
-
-import classNames from 'classnames';
-
-const menuActions = Cog.factory.common;
 
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
@@ -44,13 +40,13 @@ const PodVulnRow = ({obj: pod}) => {
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
         {
           !isScanned(podvuln) ? <div className="text-muted">(Not scanned)</div> :
-	  !hasAccess(podvuln) ? <div className="text-muted">(Unable to scan)</div> :
+          !hasAccess(podvuln) ? <div className="text-muted">(Unable to scan)</div> :
           !isSupported(podvuln) ? <div className="text-muted">(Unsupported)</div> :
           (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`)
         }
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
-      {podvuln.metadata.labels['secscan/highest'] ? podvuln.metadata.labels['secscan/highest'] : '-'}
+      {_.get(podvuln, 'metadata.labels.secscan/highest') ? _.get(podvuln, 'metadata.labels.secscan/highest') : '-'}
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
       {/* {scannable ? scannable : '-'} */}
@@ -102,14 +98,19 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
 };
 
 const Details = (pod) => {
+  const imagevulns = parsePodAnnotation(pod);
+  if (_.isError(imagevulns)) {
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail="No images was scanned in this pod" />;
+  }
   const podvuln = {
     'metadata': _.get(pod, 'metadata'),
     'imagevulns': _.attempt(
       JSON.parse.bind(null, _.get(pod, 'metadata.annotations.secscan/imageVulns'))
     ),
   };
-  console.log(pod);
-  console.log(podvuln);
+  if (!isSupported(podvuln)) {
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail="The images in this pod could not be scanned" />;
+  }
   return <div>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
@@ -179,13 +180,15 @@ const Details = (pod) => {
               {/* TODO: HANDLE EMPTY IMAGEVULNS, AKA NON ACCESSIBLE IMAGES */}
               {/* TODO: HANDLE EMPTY FEATURE, AKA NON SUPPORTED IMAGES */}
               
-              {podvuln.imagevulns.map((imgvuln) =>
-                imgvuln.features.map((feature) =>
-                  feature.vulnerabilities.map((vuln, i) =>
-                    <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
+              {
+                podvuln.imagevulns.map((imgvuln) =>
+                  imgvuln.features.map((feature) =>
+                    feature.vulnerabilities.map((vuln, i) =>
+                      <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
+                    )
                   )
                 )
-              )}
+              }
             </div>
           </div>
         </div>
@@ -196,7 +199,6 @@ const Details = (pod) => {
 
 export const PodVulnsDetailsPage = props => <DetailsPage
   {...props}
-  menuActions={menuActions}
   kind="Pod"
   pages={[
     navFactory.details(Details)

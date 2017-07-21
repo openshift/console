@@ -5,10 +5,6 @@ export const parsePodAnnotation = pod => {
   return _.attempt(JSON.parse.bind(null, _.get(pod, 'metadata.annotations.secscan/imageVulns')));
 };
 
-export const isValidJSON = str => {
-  return _.isError(str);
-};
-
 // Check if a pod was scanned
 export const isScanned = podvuln => {
   return _.get(podvuln, 'metadata.annotations.secscan/lastScan');
@@ -17,13 +13,13 @@ export const isScanned = podvuln => {
 // Get the number of images scanned
 export const imagesScanned = podvuln => {
   return isScanned(podvuln) ? (_.has(podvuln, 'imagevulns') ? podvuln.imagevulns.length : 0) : 0;
-}
+};
 
 // Check if the labeller has access to the images
 // i.e. length ? 0
 export const hasAccess = podvuln => {
   return imagesScanned(podvuln) > 0;
-}
+};
 
 // Check is the pod's images are supported.
 // Unsupported if:
