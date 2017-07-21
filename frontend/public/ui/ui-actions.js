@@ -43,7 +43,6 @@ export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespac
 
 export const types = {
   setActiveNamespace: 'setActiveNamespace',
-  setActiveNavSectionId: 'setActiveNavSectionId',
   setCurrentLocation: 'setCurrentLocation',
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
@@ -52,8 +51,6 @@ export const types = {
 
 export const UIActions = {
   [types.setCurrentLocation]: (location, ns) => ({location, ns, type: types.setCurrentLocation}),
-
-  [types.setActiveNavSectionId]: (id) => ({value: id, type: types.setActiveNavSectionId}),
 
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {
