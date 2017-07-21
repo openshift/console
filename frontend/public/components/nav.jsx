@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import classNames from 'classnames';
 
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
-import { formatNamespaceRoute, UIActions } from '../ui/ui-actions';
+import { formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
 import { ClusterPicker } from './federation/cluster-picker';
@@ -32,9 +32,7 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   return props;
 };
 
-const actions = {openSection: UIActions.setActiveNavSectionId};
-
-const NavLink = connect(navLinkStateToProps, actions, mergeProps, {pure: true, areStatesEqual})(
+const NavLink = connect(navLinkStateToProps, null, mergeProps, {pure: true, areStatesEqual})(
 class NavLink_ extends React.PureComponent {
   componentWillMount () {
     const {isActive, openSection, sectionId} = this.props;
@@ -62,13 +60,12 @@ const logout = e => {
   authSvc.logout();
 };
 
-const navSectionStateToProps = (state, {text, required}) => {
+const navSectionStateToProps = (state, {required}) => {
   let canRender = true;
   if (required) {
     canRender = _.some(required, r => featuresStateToProps(Object.keys(FLAGS), state).flags[r]);
   }
   return {
-    isOpen: state.UI.get('activeNavSectionId') === text,
     canRender,
   };
 };
@@ -79,20 +76,32 @@ const setListHeight = (isOpen, node) => {
   }
 };
 
-const NavSection = connect(navSectionStateToProps, actions)(function NavSection_({isOpen, icon, img, text, openSection, children, canRender}) {
-  if (!canRender) {
-    return null;
+class NavSection_ extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {isOpen: false};
+    this.openSection = () => this.setState({isOpen: true});
+    this.toggle = () => this.setState({isOpen: !this.state.isOpen});
   }
-  const Children = React.Children.map(children, c => React.cloneElement(c, {sectionId: text, key: c.props.name}));
-  return <div className="navigation-container__section">
-    <div className="navigation-container__section__title" onClick={() => openSection(text)}>
-      {icon && <i className={`fa ${icon} navigation-container__section__title__icon`}></i>}
-      {img && <img src={img} />}
-      {text}
-    </div>
-    <ul className="navigation-container__list" ref={function(node) {setListHeight(isOpen, node);}}>{Children}</ul>
-  </div>;
-});
+
+  render () {
+    if (!this.props.canRender) {
+      return null;
+    }
+    const { icon, img, text, children } = this.props;
+    const Children = React.Children.map(children, c => React.cloneElement(c, {sectionId: text, key: c.props.name, openSection: this.openSection}));
+    return <div className="navigation-container__section">
+      <div className="navigation-container__section__title" onClick={this.toggle}>
+        {icon && <i className={`fa ${icon} navigation-container__section__title__icon`}></i>}
+        {img && <img src={img} />}
+        {text}
+      </div>
+      <ul className="navigation-container__list" ref={node => setListHeight(this.state.isOpen, node)}>{Children}</ul>
+    </div>;
+  }
+}
+
+const NavSection = connect(navSectionStateToProps)(NavSection_);
 
 const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 'clusterroles');
 const isRoleBindingsActive = path => _.startsWith(path, 'rolebindings') || _.startsWith(path, 'clusterrolebindings');

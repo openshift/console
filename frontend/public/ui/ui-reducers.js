@@ -19,9 +19,6 @@ export default (state, action) => {
       }
       return state.set('location', action.location);
 
-    case types.setActiveNavSectionId:
-      return state.set('activeNavSectionId', action.value);
-
     case types.startImpersonate:
       return state.set('impersonate', {kind: action.kind, name: action.name});
 
