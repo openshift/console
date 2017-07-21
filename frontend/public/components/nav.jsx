@@ -10,11 +10,9 @@ import { authSvc } from '../module/auth';
 import { ClusterPicker } from './federation/cluster-picker';
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '').replace(/^\//, '');
 
-const areStatesEqual = (next, previous) => {
-  return next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
-    next.UI.get('location') === previous.UI.get('location') &&
-    next.FLAGS.equals(previous.FLAGS);
-};
+const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLAGS) &&
+  next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
+  next.UI.get('location') === previous.UI.get('location');
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
 const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
@@ -23,9 +21,13 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   const resourcePath = pathname ? stripNS(pathname) : '';
   href = resource ? formatNamespaceRoute(activeNamespace, resource) : href;
 
+  let canRender = true;
+  if (required) {
+    const flags = featuresStateToProps([required], state).flags;
+    canRender = !!flags[required];
+  }
   const props = {
-    canRender: required ? featuresStateToProps(Object.keys(FLAGS), state).flags[required] : true,
-    href,
+    canRender, href,
     isActive: isActive ? isActive(resourcePath) : _.startsWith(resourcePath, stripNS(href)),
   };
 
@@ -70,12 +72,6 @@ const navSectionStateToProps = (state, {required}) => {
   };
 };
 
-const setListHeight = (isOpen, node) => {
-  if (node) {
-    node.style.height = isOpen ? `${node.scrollHeight}px` : 0;
-  }
-};
-
 class NavSection_ extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -90,13 +86,21 @@ class NavSection_ extends React.PureComponent {
     }
     const { icon, img, text, children } = this.props;
     const Children = React.Children.map(children, c => React.cloneElement(c, {sectionId: text, key: c.props.name, openSection: this.openSection}));
+
+    // WARNING:
+    // we transition on max-height because you can't transition to height 'inherit'
+    // however, the transition animiation is calculated on the actual max-height, so it must be roughly equal to the actual height
+    // we could use scaleY, but that literally scales along the Y axis, ie shrinks
+    // we could use flexbox or the equivalent to get an actual height, but this is the easiest solution :-/
+    const maxHeight = this.state.isOpen ? (this.props.children.length * 29) : 0;
+
     return <div className="navigation-container__section">
       <div className="navigation-container__section__title" onClick={this.toggle}>
         {icon && <i className={`fa ${icon} navigation-container__section__title__icon`}></i>}
         {img && <img src={img} />}
         {text}
       </div>
-      <ul className="navigation-container__list" ref={node => setListHeight(this.state.isOpen, node)}>{Children}</ul>
+      <ul className="navigation-container__list" style={{maxHeight}}>{Children}</ul>
     </div>;
   }
 }
