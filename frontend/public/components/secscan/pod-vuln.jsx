@@ -1,52 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import { ContainerRow } from '../pod'
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
 import { Cog, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
+import { isScanned, isSupported, imagesScanned, hasAccess, parsePodAnnotation, CountVulnerabilityFilter } from '../../module/k8s/podvulns';
 
-const podvulnNameToPodName = function(name) {
-  return name.replace(/^podvuln-/, '');
-};
+import classNames from 'classnames';
 
 const menuActions = Cog.factory.common;
-
-const CountVulnerabilityFilter = (podvulns) => {
-  if (!podvulns) {
-    return undefined;
-  }
-  let count = {
-    'P0': 0,
-    'P1': 0,
-    'P2': 0,
-    'P3': 0,
-    'Fixables': 0,
-    'Passed': 0,
-  };
-  _.forEach(podvulns, (podvuln) => {
-    if (_.has(podvuln, 'metadata.labels.secscan/P0')) {
-      count.P0++;
-    }
-    if (_.has(podvuln, 'metadata.labels.secscan/P1')) {
-      count.P1++;
-    }
-    if (_.has(podvuln, 'metadata.labels.secscan/P2')) {
-      count.P2++;
-    }
-    if (_.has(podvuln, 'metadata.labels.secscan/P3')) {
-      count.P3++;
-    }
-    if (_.has(podvuln, 'metadata.labels.secscan/fixables')) {
-      count.Fixables++;
-    }
-    if (!_.has(podvuln, 'metadata.labels.secscan/P0') &&
-        !_.has(podvuln, 'metadata.labels.secscan/P1') &&
-        !_.has(podvuln, 'metadata.labels.secscan/P2') &&
-        !_.has(podvuln, 'metadata.labels.secscan/P3')) {
-      count.Passed++;
-    }
-  });
-  return count;
-};
 
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
@@ -56,19 +18,18 @@ const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-2 hidden-xs">Last Update</ColHead>
 </ListHeader>;
 
-const PodVulnRow = ({obj: podvuln}) => {
-  const scannable = _.get(podvuln, 'metadata.annotations.secscan/lastScan');
+const PodVulnRow = ({obj: pod}) => {
+  const podvuln = {
+    'metadata': _.get(pod, 'metadata'),
+    'imagevulns': parsePodAnnotation(pod),
+  };
+  
   const fixables = _.get(podvuln, 'metadata.labels.secscan/fixables');
   const P0 = _.has(podvuln, 'metadata.labels.secscan/P0') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P0'), 10) : 0;
   const P1 = _.has(podvuln, 'metadata.labels.secscan/P1') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P1'), 10) : 0;
   const P2 = _.has(podvuln, 'metadata.labels.secscan/P2') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P2'), 10) : 0;
   const P3 = _.has(podvuln, 'metadata.labels.secscan/P3') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P3'), 10) : 0;
   const count = P0 + P1 + P2 + P3;
-  const length = scannable ? (podvuln.imagevulns ? podvuln.imagevulns.length : 0) : 0;
-
-  const supported = _.has(podvuln, 'imagevulns') ? _.every(
-    _.map(podvuln.imagevulns, (imgvuln) => _.has(imgvuln, 'features')),
-    Boolean) : false;
 
   return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -77,33 +38,34 @@ const PodVulnRow = ({obj: podvuln}) => {
         namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-      {length}
+      {imagesScanned(podvuln)}
     </div>
 
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      {
-        !supported ? <div className="text-muted">(Unsupported)</div> :
-        scannable ? (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`) :
-        'Unable to scan pod'
-      }
+        {
+          !isScanned(podvuln) ? <div className="text-muted">(Not scanned)</div> :
+	  !hasAccess(podvuln) ? <div className="text-muted">(Unable to scan)</div> :
+          !isSupported(podvuln) ? <div className="text-muted">(Unsupported)</div> :
+          (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`)
+        }
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       {podvuln.metadata.labels['secscan/highest'] ? podvuln.metadata.labels['secscan/highest'] : '-'}
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
       {/* {scannable ? scannable : '-'} */}
-      <Timestamp timestamp={scannable} />
+      <Timestamp timestamp={isScanned(podvuln)} />
     </div>
   </ResourceRow>;
 };
 
 const PodLink = ({podvuln}) => {
-  const podname = podvulnNameToPodName(podvuln.metadata.name);
-  return podvuln ? <Link to={`ns/${podvuln.metadata.namespace}/pods/${podname}/details`}>{podname}</Link> : <span></span>;
+  const podname = _.get(podvuln, 'metadata.name');
+  return podvuln ? <Link to={`ns/${podvuln.metadata.namespace}/pods/${podname}/details`}>{}</Link> : <span></span>;
 };
 
-const SubHeaderRow = ({header}) => {
-  return <div className="col-md-6">{header}</div>;
+const SubHeaderRow = ({header, href, link}) => {
+  return <div className="col-md-6">{header} <a href={href}>{link}</a></div>;
 };
 
 const VulnLink = ({vuln}) => {
@@ -113,7 +75,7 @@ const VulnLink = ({vuln}) => {
 };
 
 const ContainerLink = ({podvuln, name}) => {
-  const podname = podvulnNameToPodName(podvuln.metadata.name);
+  const podname = _.get(podvuln, 'metadata.name');
 
   return <span className="co-resource-link">
     <ResourceIcon kind="Container" />
@@ -139,7 +101,15 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
   </div>;
 };
 
-const Details = (podvuln) => {
+const Details = (pod) => {
+  const podvuln = {
+    'metadata': _.get(pod, 'metadata'),
+    'imagevulns': _.attempt(
+      JSON.parse.bind(null, _.get(pod, 'metadata.annotations.secscan/imageVulns'))
+    ),
+  };
+  console.log(pod);
+  console.log(podvuln);
   return <div>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
@@ -148,20 +118,42 @@ const Details = (podvuln) => {
           <div className="col-sm-8 col-xs-12">
             <div className="row">
               <div className="col-sm-6 col-xs-12">
-                <ResourceSummary resource={podvuln} showPodSelector={false} showNodeSelector={false} />
+                <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false} />
               </div>
               <div className="col-sm-6 col-xs-12">
                 <dl>
                   <dt>Pod</dt>
-                  <dd><PodLink podvuln={podvuln} /></dd>
+                  <dd><PodLink podvuln={podvuln} text="" /></dd>
                   <dt>Fixables</dt>
-                  <dd>{podvuln.metadata.labels['secscan/fixables']}</dd>
+                  <dd>{_.get(pod, 'metadata.labels.secscan/fixables')}</dd>
                   <dt>Highest</dt>
-                  <dd>{podvuln.metadata.labels['secscan/highest']}</dd>
+                  <dd>{_.get(pod, 'metadata.labels.secscan/highest')}</dd>
                   <dt>Last Update</dt>
                   <dd><Timestamp timestamp={_.get(podvuln, 'metadata.annotations.secscan/lastScan')} /></dd>
                 </dl>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="co-m-pane__body">
+      <div className="co-m-pane__body-section--bordered">
+        <h1 className="co-section-title">Containers</h1>
+        <div className="row no-gutter">
+          <div className="co-m-table-grid co-m-table-grid--bordered">
+            <div className="row co-m-table-grid__head">
+              <div className="col-sm-2 col-xs-4">Name</div>
+              <div className="col-sm-2 hidden-xs">Id</div>
+              <div className="col-sm-2 col-xs-8">Image</div>
+              <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
+              <div className="col-md-1 col-sm-2 hidden-xs">State</div>
+              <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
+              <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
+            </div>
+            <div className="co-m-table-grid__body">
+              {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
             </div>
           </div>
         </div>
@@ -183,6 +175,10 @@ const Details = (podvuln) => {
               <div className="col-md-2 hidden-sm hidden-xs">Container</div>
             </div>
             <div className="co-m-table-grid__body">
+
+              {/* TODO: HANDLE EMPTY IMAGEVULNS, AKA NON ACCESSIBLE IMAGES */}
+              {/* TODO: HANDLE EMPTY FEATURE, AKA NON SUPPORTED IMAGES */}
+              
               {podvuln.imagevulns.map((imgvuln) =>
                 imgvuln.features.map((feature) =>
                   feature.vulnerabilities.map((vuln, i) =>
@@ -201,6 +197,7 @@ const Details = (podvuln) => {
 export const PodVulnsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
+  kind="Pod"
   pages={[
     navFactory.details(Details)
   ]}
@@ -212,10 +209,16 @@ export const PodVulnsPage = props => {
   return <ListPage
   {...props}
   canCreate={false}
-  kind="PodVuln"
+  kind="Pod"
   ListComponent={PodVulnList}
   title="Security Scan Report"
-  Intro={<SubHeaderRow header="All supported container images are scanned for known vulnerabilities and CVEs." />}
+  Intro={
+    <SubHeaderRow
+      header="All supported container images are scanned for known vulnerabilities and CVEs." 
+      href="https://quay.io"
+      link="Learn more about Tectonic Security Scanning."
+    />
+  }
   rowFilters={[{
     type: 'podvuln-filter',
     selected: ['P0', 'P1', 'P2', 'P3'],

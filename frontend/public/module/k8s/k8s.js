@@ -95,5 +95,4 @@ export const k8s = {
   channeloperatorconfigs: addDefaults({}, k8sKinds.ChannelOperatorConfig),
   appversions: addDefaults({}, k8sKinds.AppVersion),
   networkpolicies: addDefaults({}, k8sKinds.NetworkPolicy),
-  podvulns: addDefaults({}, k8sKinds.PodVuln),
 };

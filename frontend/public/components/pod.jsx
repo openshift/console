@@ -82,7 +82,7 @@ const ContainerLink = ({pod, name}) => <span className="co-resource-link">
 
 const NodeLink = ({name}) => name ? <Link to={`nodes/${name}/details`}>{name}</Link> : <span>-</span>;
 
-const ContainerRow = ({pod, container}) => {
+export const ContainerRow = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
 

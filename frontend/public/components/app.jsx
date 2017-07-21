@@ -18,6 +18,7 @@ import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';
 import { ContainersDetailsPage } from './container';
+import { PodVulnsDetailsPage } from './secscan/pod-vuln';
 import { CreateYAML } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
@@ -157,7 +158,6 @@ render((
         <Route path="ns/:ns/:kind/new" component={CreateYAML} />
         <Route path="ns/:ns/:kind/:name/:view" component={ResourceDetailsPage} />
         <Route path="ns/:ns/pods/:podName/:kind/:name/:view" component={ContainersDetailsPage} />
-	{/* <Route path="ns/:ns/podvulns/:podvulnName/:kind/:name/:view" component={ContainersDetailsPage} /> */}
 
         <Route path="error" component={ErrorPage} />
         <Route path="*" component={ErrorPage404} />
