@@ -10,13 +10,20 @@ import { authSvc } from '../module/auth';
 import { ClusterPicker } from './federation/cluster-picker';
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '').replace(/^\//, '');
 
+const areStatesEqual = (next, previous) => {
+  return next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
+    next.UI.get('location') === previous.UI.get('location') &&
+    next.FLAGS.equals(previous.FLAGS);
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
 const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   const activeNamespace = state.UI.get('activeNamespace');
   const pathname = state.UI.get('location');
   const resourcePath = pathname ? stripNS(pathname) : '';
   href = resource ? formatNamespaceRoute(activeNamespace, resource) : href;
 
-  const props =  {
+  const props = {
     canRender: required ? featuresStateToProps(Object.keys(FLAGS), state).flags[required] : true,
     href,
     isActive: isActive ? isActive(resourcePath) : _.startsWith(resourcePath, stripNS(href)),
@@ -27,7 +34,7 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
 
 const actions = {openSection: UIActions.setActiveNavSectionId};
 
-const NavLink = connect(navLinkStateToProps, actions)(
+const NavLink = connect(navLinkStateToProps, actions, mergeProps, {pure: true, areStatesEqual})(
 class NavLink_ extends React.PureComponent {
   componentWillMount () {
     const {isActive, openSection, sectionId} = this.props;

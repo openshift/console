@@ -26,7 +26,7 @@ export const TextFilter = ({label, onChange}) => <input
 />;
 
 const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
-class BaseListPage_ extends React.Component {
+class BaseListPage_ extends React.PureComponent {
   constructor (props) {
     super(props);
     this.state = {expand: !!props.expand};

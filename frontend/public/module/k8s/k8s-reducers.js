@@ -37,7 +37,7 @@ const updateList = (list, nextJS) => {
   //  and then only do this comparison for the same stuff!
   const currentJS = current.toJSON();
   currentJS.metadata.resourceVersion = nextJS.metadata.resourceVersion;
-  if (_.isEqual(currentJS, currentJS)) {
+  if (_.isEqual(currentJS, nextJS)) {
     // If the only thing that differs is resource version, don't fire an update.
     return list;
   }
@@ -94,12 +94,23 @@ export default (state, action)  => {
         data: {},
       }));
 
-    case types.modifyObject:
+    case types.modifyObject: {
+      let currentJS = state.getIn([id, 'data'], {});
+      // getIn can return JS object or Immutable object
+      if (currentJS.toJSON) {
+        currentJS = currentJS.toJSON();
+        currentJS.metadata.resourceVersion = k8sObjects.metadata.resourceVersion;
+        if (_.isEqual(currentJS, k8sObjects)) {
+          // If the only thing that differs is resource version, don't fire an update.
+          return state;
+        }
+      }
       return state.mergeIn([id], {
         loadError: '',
         loaded: true,
         data: k8sObjects,
       });
+    }
 
     case types.watchK8sList:
       if (list) {
