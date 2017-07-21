@@ -201,8 +201,8 @@ export const k8sEnum = {
     NetworkPolicy: {
       label: 'Network Policy',
       labelPlural: 'Network Policies',
-      apiVersion: 'v1beta1',
-      isExtension: true,
+      apiVersion: 'v1',
+      basePath: '/apis/networking.k8s.io/',
       path: 'networkpolicies',
       plural: 'networkpolicies',
       abbr: 'NP',
