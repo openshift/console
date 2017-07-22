@@ -232,6 +232,7 @@ export const PodVulnsPage = props => {
       {id: 'P3', title: 'P3'},
       {id: 'Passed', title: 'No Vulnerabilities'},
       {id: 'Fixables', title: 'Fixables'},
+      {id: 'NotScanned', title: 'Not Scanned'},
     ],
   },
   ]}

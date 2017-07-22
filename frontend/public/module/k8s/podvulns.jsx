@@ -31,6 +31,14 @@ export const isSupported = podvuln => {
     Boolean) : false;
 };
 
+export const highestSeverity = podvuln => {
+  return _.get(podvuln, 'metadata.labels.secscan/highest');
+};
+
+export const numFixables = podvuln => {
+  return _.get(podvuln, 'metadata.labels.secscan/fixables');
+};
+
 export const CountVulnerabilityFilter = (podvulns) => {
   if (!podvulns) {
     return undefined;
@@ -42,8 +50,12 @@ export const CountVulnerabilityFilter = (podvulns) => {
     'P3': 0,
     'Fixables': 0,
     'Passed': 0,
+    'NotScanned': 0,
   };
   _.forEach(podvulns, (podvuln) => {
+    if (!_.has(podvuln, 'metadata.annotations.secscan/lastScan')) {
+      count.NotScanned++;
+    }
     if (_.has(podvuln, 'metadata.labels.secscan/P0')) {
       count.P0++;
     }
@@ -62,7 +74,8 @@ export const CountVulnerabilityFilter = (podvulns) => {
     if (!_.has(podvuln, 'metadata.labels.secscan/P0') &&
         !_.has(podvuln, 'metadata.labels.secscan/P1') &&
         !_.has(podvuln, 'metadata.labels.secscan/P2') &&
-        !_.has(podvuln, 'metadata.labels.secscan/P3')) {
+        !_.has(podvuln, 'metadata.labels.secscan/P3') &&
+	isSupported(podvuln)) {
       count.Passed++;
     }
   });
