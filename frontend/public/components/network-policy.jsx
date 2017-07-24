@@ -6,7 +6,7 @@ import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Selector} from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: extensions/v1beta1
+registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: test-network-policy
