@@ -149,7 +149,7 @@ class CreateYAML_ extends SafetyFirst {
 
     // The code below strips the basePath (etcd.coreos.com, etc.) from the apiVersion that is being set in the template
     // and causes creation to fail for some resource kinds, hence adding a check here to skip for those kinds.
-    if (!['Cluster', 'Role', 'RoleBinding', 'Prometheus', 'ServiceMonitor', 'AlertManager'].includes(obj.kind)) {
+    if (!['Cluster', 'Role', 'RoleBinding', 'Prometheus', 'ServiceMonitor', 'AlertManager', 'NetworkPolicy'].includes(obj.kind)) {
       obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     }
     obj.metadata = obj.metadata || {};
