@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { ContainerRow } from '../pod';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
 import { MsgBox, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
-import { isScanned, isSupported, imagesScanned, hasAccess, parsePodAnnotation, CountVulnerabilityFilter } from '../../module/k8s/podvulns';
+import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVulnerabilityFilter } from '../../module/k8s/podvulns';
 
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
@@ -15,23 +15,20 @@ const PodVulnHeader = props => <ListHeader>
 </ListHeader>;
 
 const PodVulnRow = ({obj: pod}) => {
-  const podvuln = {
-    'metadata': _.get(pod, 'metadata'),
-    'imagevulns': parsePodAnnotation(pod),
-  };
+  const podvuln = makePodvuln(pod);
   
-  const fixables = _.get(podvuln, 'metadata.labels.secscan/fixables');
-  const P0 = _.has(podvuln, 'metadata.labels.secscan/P0') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P0'), 10) : 0;
-  const P1 = _.has(podvuln, 'metadata.labels.secscan/P1') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P1'), 10) : 0;
-  const P2 = _.has(podvuln, 'metadata.labels.secscan/P2') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P2'), 10) : 0;
-  const P3 = _.has(podvuln, 'metadata.labels.secscan/P3') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P3'), 10) : 0;
+  const fixables = _.get(pod, 'metadata.labels.secscan/fixables');
+  const P0 = _.has(pod, 'metadata.labels.secscan/P0') ? parseInt(_.get(pod, 'metadata.labels.secscan/P0'), 10) : 0;
+  const P1 = _.has(pod, 'metadata.labels.secscan/P1') ? parseInt(_.get(pod, 'metadata.labels.secscan/P1'), 10) : 0;
+  const P2 = _.has(pod, 'metadata.labels.secscan/P2') ? parseInt(_.get(pod, 'metadata.labels.secscan/P2'), 10) : 0;
+  const P3 = _.has(pod, 'metadata.labels.secscan/P3') ? parseInt(_.get(pod, 'metadata.labels.secscan/P3'), 10) : 0;
   const count = P0 + P1 + P2 + P3;
 
   return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceLink kind="PodVuln" name={podvuln.metadata.name}
-        displayName={podvuln.metadata.name.replace(/^podvuln-/, '')}
-        namespace={podvuln.metadata.namespace} title={podvuln.metadata.uid} />
+      <ResourceLink kind="PodVuln" name={_.get(pod, 'metadata.name')}
+        displayName={_.get(pod, 'metadata.name')}
+        namespace={_.get(pod, 'metadata.namespace')} title={_.get(pod, 'metadata.uid')} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       {imagesScanned(podvuln)}
@@ -46,23 +43,20 @@ const PodVulnRow = ({obj: pod}) => {
         }
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
-      {_.get(podvuln, 'metadata.labels.secscan/highest') ? _.get(podvuln, 'metadata.labels.secscan/highest') : '-'}
+      {_.get(pod, 'metadata.labels.secscan/highest', '-')}
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      {/* {scannable ? scannable : '-'} */}
       <Timestamp timestamp={isScanned(podvuln)} />
     </div>
   </ResourceRow>;
 };
 
-const PodLink = ({podvuln}) => {
-  const podname = _.get(podvuln, 'metadata.name');
-  return podvuln ? <Link to={`ns/${podvuln.metadata.namespace}/pods/${podname}/details`}>{}</Link> : <span></span>;
+const PodLink = ({pod}) => {
+  const podname = _.get(pod, 'metadata.name');
+  return <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>{podname}</Link>;
 };
 
-const SubHeaderRow = ({header, href, link}) => {
-  return <div className="col-md-6">{header} <a href={href}>{link}</a></div>;
-};
+const SubHeaderRow = ({header, href, link}) => <div className="col-md-6">{header} <a href={href}>{link}</a></div>;
 
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
@@ -98,19 +92,19 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
 };
 
 const Details = (pod) => {
-  const imagevulns = parsePodAnnotation(pod);
-  if (_.isError(imagevulns)) {
+  const podvuln = makePodvuln(pod);
+  if (_.isError(podvuln)) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail="No images was scanned in this pod" />;
   }
-  const podvuln = {
-    'metadata': _.get(pod, 'metadata'),
-    'imagevulns': _.attempt(
-      JSON.parse.bind(null, _.get(pod, 'metadata.annotations.secscan/imageVulns'))
-    ),
-  };
+
+  if (!hasAccess(podvuln)) {
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Could read images from registry API" detail="The labeller could not get image information from registry" />;
+  }
+  
   if (!isSupported(podvuln)) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail="The images in this pod could not be scanned" />;
   }
+  
   return <div>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
@@ -124,13 +118,13 @@ const Details = (pod) => {
               <div className="col-sm-6 col-xs-12">
                 <dl>
                   <dt>Pod</dt>
-                  <dd><PodLink podvuln={podvuln} text="" /></dd>
+                  <dd><PodLink pod={pod} /></dd>
                   <dt>Fixables</dt>
                   <dd>{_.get(pod, 'metadata.labels.secscan/fixables')}</dd>
                   <dt>Highest</dt>
                   <dd>{_.get(pod, 'metadata.labels.secscan/highest')}</dd>
                   <dt>Last Update</dt>
-                  <dd><Timestamp timestamp={_.get(podvuln, 'metadata.annotations.secscan/lastScan')} /></dd>
+                  <dd><Timestamp timestamp={_.get(pod, 'metadata.annotations.secscan/lastScan')} /></dd>
                 </dl>
               </div>
             </div>
@@ -175,11 +169,7 @@ const Details = (pod) => {
               <div className="col-sm-2 col-xs-8">Image</div>
               <div className="col-md-2 hidden-sm hidden-xs">Container</div>
             </div>
-            <div className="co-m-table-grid__body">
-
-              {/* TODO: HANDLE EMPTY IMAGEVULNS, AKA NON ACCESSIBLE IMAGES */}
-              {/* TODO: HANDLE EMPTY FEATURE, AKA NON SUPPORTED IMAGES */}
-              
+            <div className="co-m-table-grid__body">              
               {
                 podvuln.imagevulns.map((imgvuln) =>
                   imgvuln.features.map((feature) =>

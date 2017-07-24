@@ -5,9 +5,17 @@ export const parsePodAnnotation = pod => {
   return _.attempt(JSON.parse.bind(null, _.get(pod, 'metadata.annotations.secscan/imageVulns')));
 };
 
+export const makePodvuln = pod => {
+  const imagevulns = parsePodAnnotation(pod);
+  return _.isError(imagevulns) ? imagevulns : {
+    'metadata': _.get(pod, 'metadata'),
+    'imagevulns': imagevulns,
+  };
+};
+
 // Check if a pod was scanned
-export const isScanned = podvuln => {
-  return _.get(podvuln, 'metadata.annotations.secscan/lastScan');
+export const isScanned = pod => {
+  return _.get(pod, 'metadata.annotations.secscan/lastScan');
 };
 
 // Get the number of images scanned
@@ -31,16 +39,16 @@ export const isSupported = podvuln => {
     Boolean) : false;
 };
 
-export const highestSeverity = podvuln => {
-  return _.get(podvuln, 'metadata.labels.secscan/highest');
+export const highestSeverity = pod => {
+  return _.get(pod, 'metadata.labels.secscan/highest');
 };
 
-export const numFixables = podvuln => {
-  return _.get(podvuln, 'metadata.labels.secscan/fixables');
+export const numFixables = pod => {
+  return _.get(pod, 'metadata.labels.secscan/fixables');
 };
 
-export const CountVulnerabilityFilter = (podvulns) => {
-  if (!podvulns) {
+export const CountVulnerabilityFilter = (pods) => {
+  if (!pods) {
     return undefined;
   }
   let count = {
@@ -52,8 +60,9 @@ export const CountVulnerabilityFilter = (podvulns) => {
     'Passed': 0,
     'NotScanned': 0,
   };
-  _.forEach(podvulns, (podvuln) => {
-    if (!_.has(podvuln, 'metadata.annotations.secscan/lastScan')) {
+  _.forEach(pods, (pod) => {
+    const podvuln = makePodvuln(pod);
+    if (!isScanned(podvuln) || !isSupported(podvuln)) {
       count.NotScanned++;
     }
     if (_.has(podvuln, 'metadata.labels.secscan/P0')) {
