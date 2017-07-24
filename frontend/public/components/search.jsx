@@ -101,7 +101,7 @@ export const SearchPage = ({params, location}) => {
           <div className="input-group-btn">
             <ResourceListDropdown selected={kind} onChange={updateKind} />
           </div>
-          <SelectorInput labelClassName={`co-text-${kind}`} tags={validTags} onChange={updateTags} autoFocus/>
+          <SelectorInput labelClassName={`co-text-${_.toLower(kind)}`} tags={validTags} onChange={updateTags} autoFocus/>
         </div>
       </div>
       <ResourceList kind={kind} selector={selector} />
