@@ -9,9 +9,9 @@ import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVul
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6">Images Scanned</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs">Security Scan</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs">Highest</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs">Last Update</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.labels.secscan/fixables">Security Scan</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.labels.secscan/highest">Highest</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.annotations.secscan/lastScan">Last Update</ColHead>
 </ListHeader>;
 
 const PodVulnRow = ({obj: pod}) => {
