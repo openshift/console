@@ -102,7 +102,7 @@ render((
 
         <Route path="clusterroles">
           <Route path=":name/add-rule" component={EditRulePage} />
-          <Route path=":name/bindings" component={BindingsForRolePage} kind="clusterroles" />
+          <Route path=":name/bindings" component={BindingsForRolePage} kind="ClusterRole" />
           <Route path=":name/:rule/edit" component={EditRulePage} />
           <Route path=":name/:view" component={ResourceDetailsPage} kind="clusterroles" />
         </Route>
@@ -111,15 +111,15 @@ render((
           <IndexRoute component={ResourceListPage} kind="role" />
           <Route path=":name/add-rule" component={EditRulePage} />
           <Route path=":name/:rule/edit" component={EditRulePage} />
-          <Route path=":name/bindings" component={BindingsForRolePage} kind="role" />
+          <Route path=":name/bindings" component={BindingsForRolePage} kind="Role" />
         </Route>
 
         <Route path="rolebindings/new" component={CreateRoleBinding} />
         <Route path="ns/:ns/rolebindings/new" component={CreateRoleBinding} />
-        <Route path="ns/:ns/rolebindings/:name/copy" component={CopyRoleBinding} kind="rolebinding" />
-        <Route path="clusterrolebindings/:name/copy" component={CopyRoleBinding} kind="clusterrolebinding" />
-        <Route path="ns/:ns/rolebindings/:name/edit" component={EditRoleBinding} kind="rolebinding" />
-        <Route path="clusterrolebindings/:name/edit" component={EditRoleBinding} kind="clusterrolebinding" />
+        <Route path="ns/:ns/rolebindings/:name/copy" component={CopyRoleBinding} kind="RoleBinding" />
+        <Route path="clusterrolebindings/:name/copy" component={CopyRoleBinding} kind="ClusterRoleBinding" />
+        <Route path="ns/:ns/rolebindings/:name/edit" component={EditRoleBinding} kind="RoleBinding" />
+        <Route path="clusterrolebindings/:name/edit" component={EditRoleBinding} kind="ClusterRoleBinding" />
 
         {/* We don't have a Role Bindings details page, so redirect to the list page */}
         <Redirect from="ns/:ns/rolebindings/:name/details" to="all-namespaces/rolebindings" />
