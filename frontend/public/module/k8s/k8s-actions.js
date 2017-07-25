@@ -19,9 +19,7 @@ const types = {
   filterList: 'filterList',
 };
 
-const action_ = (type) => {
-  return (id, k8sObjects) => ({type, id, k8sObjects});
-};
+const action_ = (type) => (id, k8sObjects) => ({type, id, k8sObjects});
 
 const WS = {};
 const POLLs = {};
@@ -134,8 +132,7 @@ const actions =  {
 
       WS[id] = ws;
     }
-    const clonedQuery = _.clone(query, true);
-    const poller = () => k8sType.list(clonedQuery)
+    const poller = () => k8sType.list(query)
       .then(
         o => dispatch(actions.loaded(id, o)),
         e => dispatch(actions.errored(id, e))
