@@ -58,20 +58,20 @@ export const watchURL = (kind, options) => {
 
 export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ns, name}, opts)));
 
-export const k8sList = (kind, params) => {
-  let ns;
-  if (params) {
-    if (!_.isEmpty(params.labelSelector)) {
-      params.labelSelector = toString(params.labelSelector);
-    }
-    if (params.ns) {
-      ns = params.ns;
-      delete params.ns;
-    }
-  }
+export const k8sList = (kind, params={}) => {
+  const query = _(params)
+    .omit('ns')
+    .map((v, k) => {
+      if (k === 'labelSelector') {
+        v = toString(v);
+      }
+      return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+    })
+    .value()
+    .join('&');
 
-  const query = _.map(params, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
-  return coFetchJSON(`${resourceURL(kind, {ns})}?${query}`).then(result => result.items);
+  const listURL = resourceURL(kind, {ns: params.ns});
+  return coFetchJSON(`${listURL}?${query}`).then(result => result.items);
 };
 
 export const k8sCreate = (kind, data) => {
