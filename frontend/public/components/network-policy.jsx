@@ -59,36 +59,38 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
 export const NetworkPoliciesList = props => <List {...props} Header={Header} Row={Row} />;
 export const NetworkPoliciesPage = props => <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />;
 
-const IngressHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-6">From</div>
-  <div className="col-xs-6">Ports</div>
-</div>;
+const FromNamespaceSelector = ({selector}) => <Selector selector={selector} kind="Namespace" style={{display: 'inline-block'}}/>;
 
-const FromNamespaceSelector = ({selector, namespace}) => <div>
-  <span className="text-muted">Namespace Selector</span> <Selector selector={selector} kind={namespace} style={{display: 'inline-block'}}/>
-</div>;
-
-const FromPodSelector = ({selector, namespace}) => <div>
-  <span className="text-muted">Pod Selector</span> <Selector selector={selector} namespace={namespace} style={{display: 'inline-block'}} />
-</div>;
+const FromPodSelector = ({selector, namespace}) => <Selector selector={selector} namespace={namespace} style={{display: 'inline-block'}} />;
 
 const From = ({ingressFrom, namespace}) => ingressFrom.namespaceSelector ?
-  <FromNamespaceSelector selector={ingressFrom.namespaceSelector.matchLabels} namespace={namespace} /> :
+  <FromNamespaceSelector selector={ingressFrom.namespaceSelector.matchLabels} /> :
   <FromPodSelector selector={ingressFrom.podSelector.matchLabels} namespace={namespace} />;
 
-const IngressRow = ({ingress, namespace}) => <div className="row co-resource-list__item">
+const IngressRow = ({ingress, namespace}) => <div className="row" style={{marginBottom: 50}} >
   <div className="col-xs-6">
-    <div>
-      {
-        _.map(ingress.from, (ingressFrom, i) => <p><From key={i} ingressFrom={ingressFrom} namespace={namespace} /></p>)
-      }
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-xs-4">Selectors</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        { _.map(ingress.from, (ingressFrom, i) => <div className="row" style={{borderBottom: 0}} key={i}>
+          <div className="col-xs-6"><span className="text-muted">{ingressFrom.namespaceSelector ? 'Namespace' : 'Pod'} Selector</span></div>
+          <div className="col-xs-6"><From key={i} ingressFrom={ingressFrom} namespace={namespace} /></div>
+        </div>) }
+      </div>
     </div>
   </div>
   <div className="col-xs-6">
-    <div>
-      {
-       _.map(ingress.ports, (port, i) => <p key={i}>{port.protocol}/{port.port}</p>)
-      }
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-xs-4">Ports</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        { _.map(ingress.ports, (port, i) => <div className="row" style={{borderBottom: 0}} key={i}>
+          <div className="col-xs-12">{port.protocol}/{port.port}</div>
+        </div>) }
+      </div>
     </div>
   </div>
 </div>;
@@ -114,21 +116,13 @@ const Details = (np) => <div>
     <div className="row">
       <div className="col-md-12">
         {
-          _.isEmpty(np.spec.ingress[0]) ?
-            `All Traffic is allowed to Pods in ${np.metadata.namespace}.` :
-            <div className="co-m-table-grid co-m-table-grid--bordered">
-              <IngressHeader />
-              <div className="co-m-table-grid__body">
-                {
-                 _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} namespace={np.metadata.namespace} />)
-                }
-              </div>
-            </div>
+          _.isEmpty(_.get(np, 'spec.ingress[0]', [])) ?
+            `All traffic is allowed to Pods in ${np.metadata.namespace}.` :
+            _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} namespace={np.metadata.namespace} />)
         }
       </div>
     </div>
   </div>
-
 </div>;
 
 export const NetworkPoliciesDetailsPage = props => <DetailsPage
