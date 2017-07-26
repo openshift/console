@@ -82,17 +82,20 @@ const ContainerLink = ({pod, name}) => <span className="co-resource-link">
 
 const NodeLink = ({name}) => name ? <Link to={`nodes/${name}/details`}>{name}</Link> : <span>-</span>;
 
-const ContainerRow = ({pod, container}) => {
+export const ContainerRow = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
+
+  const fixes = pod.metadata.labels['secscan/fixables'];
 
   return <div className="row">
     <div className="middler">
       <div className="col-sm-2 col-xs-4">
         <ContainerLink pod={pod} name={container.name} />
       </div>
-      <Overflow className="col-sm-3 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
-      <Overflow className="col-sm-3 col-xs-8" value={container.image} />
+      <Overflow className="col-sm-2 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
+      <Overflow className="col-sm-2 col-xs-8" value={container.image} />
+      <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div> 
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
       <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
@@ -188,8 +191,9 @@ const Details = (pod) => {
           <div className="co-m-table-grid co-m-table-grid--bordered">
             <div className="row co-m-table-grid__head">
               <div className="col-sm-2 col-xs-4">Name</div>
-              <div className="col-sm-3 hidden-xs">Id</div>
-              <div className="col-sm-3 col-xs-8">Image</div>
+              <div className="col-sm-2 hidden-xs">Id</div>
+              <div className="col-sm-2 col-xs-8">Image</div>
+              <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
               <div className="col-md-1 col-sm-2 hidden-xs">State</div>
               <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
               <div className="col-md-2 hidden-sm hidden-xs">Started At</div>

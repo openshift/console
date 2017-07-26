@@ -82,6 +82,7 @@ registerNamespaceFriendlyPrefix('services');
 registerNamespaceFriendlyPrefix('etcdclusters');
 registerNamespaceFriendlyPrefix('networkpolicies');
 registerNamespaceFriendlyPrefix('prometheuses');
+registerNamespaceFriendlyPrefix('podvulns');
 
 store.dispatch(k8sActions.getResources());
 store.dispatch(featureActions.detectK8sFlags(k8sBasePath));

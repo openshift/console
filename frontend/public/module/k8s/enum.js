@@ -234,6 +234,13 @@ export const k8sEnum = {
       plural: 'alertmanagers',
       abbr: 'AM',
     },
+    'PodVuln': {
+      label: 'Pod Vuln',
+      labelPlural: 'Pod Vulns',
+      path: 'podvulns',
+      plural: 'podvulns',
+      abbr: 'PV',
+    },
     '*': {
       id: 'all',
       plural: 'all',

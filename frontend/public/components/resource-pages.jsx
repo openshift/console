@@ -19,3 +19,4 @@ export { EtcdClustersPage as etcdClustersPage, EtcdClustersDetailsPage as etcdCl
 export { PrometheusesPage, PrometheusesDetailsPage } from './prometheus';
 export { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monitor';
 export { AlertManagersDetailsPage } from './alert-manager';
+export { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
