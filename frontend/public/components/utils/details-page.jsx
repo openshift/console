@@ -18,7 +18,7 @@ export const Heading = ({text}) => <div className="co-m-pane__heading">
 export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true, podSelector = 'spec.selector'}) => {
   const { metadata } = resource;
   const owners = _.get(metadata, 'ownerReferences', [])
-    .map(o => <ResourceLink kind={o.kind} name={o.name} namespace={metadata.namespace}/>);
+    .map((o, i) => <ResourceLink key={i} kind={o.kind} name={o.name} namespace={metadata.namespace}/>);
 
   return <dl>
     <dt>Name</dt>
