@@ -209,7 +209,7 @@ export const k8sEnum = {
     },
     Prometheus: {
       label: 'Prometheus',
-      labelPlural: 'Prometheuses',
+      labelPlural: 'Prometheus Instances',
       apiVersion: 'v1alpha1',
       basePath: '/apis/monitoring.coreos.com/',
       path: 'prometheuses',

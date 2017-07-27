@@ -16,7 +16,7 @@ export { IngressesPage, IngressesDetailsPage } from './ingress';
 export { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
 export { RoleBindingsPage } from './RBAC/bindings';
 export { EtcdClustersPage as etcdClustersPage, EtcdClustersDetailsPage as etcdClustersDetailsPage } from './etcd-cluster';
-export { PrometheusesPage, PrometheusesDetailsPage } from './prometheus';
+export { PrometheusInstancesPage, PrometheusInstancesDetailsPage } from './prometheus';
 export { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monitor';
 export { AlertManagersDetailsPage } from './alert-manager';
 export { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
