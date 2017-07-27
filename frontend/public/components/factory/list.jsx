@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -116,6 +117,7 @@ const sorts = {
 };
 
 export const ColHead = ({applySort, children, className, currentSortField, currentSortFunc, currentSortOrder, sortField, sortFunc}) => {
+  className = classNames(className, 'text-nowrap');
   if (!sortField && !sortFunc) {
     return <div className={className}>{children}</div>;
   }
