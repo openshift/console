@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import Cookies from 'js-cookie';
+
 import {coFetchJSON} from '../co-fetch.js';
 
 const loginState = () => {
@@ -16,7 +18,19 @@ const loginState = () => {
   }
 };
 
-const loginStateItem = key => (loginState() || {})[key];
+const decodeUTF8 = utf8 => {
+  if (!_.isString(utf8)) {
+    return utf8;
+  }
+  // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa#Unicode_Strings
+  try {
+    return decodeURIComponent(escape(utf8));
+  } catch (ignored) {
+    return utf8;
+  }
+};
+
+const loginStateItem = key => decodeUTF8(_.get(loginState(), key));
 
 
 export const authSvc = {
