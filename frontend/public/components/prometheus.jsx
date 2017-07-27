@@ -145,7 +145,7 @@ class InstanceDetails extends SafetyFirst {
 }
 
 const {details, editYaml, serviceMonitors} = navFactory;
-export const PrometheusesDetailsPage = props => <DetailsPage
+export const PrometheusInstancesDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
   pages={[
@@ -156,5 +156,5 @@ export const PrometheusesDetailsPage = props => <DetailsPage
   ]}
 />;
 
-export const PrometheusesList = props => <List {...props} Header={PrometheusHeader} Row={PrometheusRow} />;
-export const PrometheusesPage = props => <ListPage ListComponent={PrometheusesList} canCreate={true} {...props} />;
+export const PrometheusInstancesList = props => <List {...props} Header={PrometheusHeader} Row={PrometheusRow} />;
+export const PrometheusInstancesPage = props => <ListPage ListComponent={PrometheusInstancesList} canCreate={true} {...props} />;

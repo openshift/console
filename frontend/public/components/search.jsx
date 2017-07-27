@@ -15,7 +15,7 @@ import {SecretsList} from './secret';
 import {ServiceAccountsList} from './service-account';
 import {ServicesList} from './service';
 import {IngressesList} from './ingress';
-import {PrometheusesList} from './prometheus';
+import {PrometheusInstancesList} from './prometheus';
 import {ServiceMonitorsList} from './service-monitor';
 import {AlertManagersList} from './alert-manager';
 import {getActiveNamespace} from '../ui/ui-actions';
@@ -39,7 +39,7 @@ const resources = {
   Secret: SecretsList,
   ServiceAccount: ServiceAccountsList,
   Service: ServicesList,
-  Prometheus: PrometheusesList,
+  Prometheus: PrometheusInstancesList,
   ServiceMonitor: ServiceMonitorsList,
   Alertmanager: AlertManagersList,
 };
