@@ -75,15 +75,17 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
 };
 
 const SecurityScanningRow = ({title, detail, text}) => {
+  if (detail === null) {
+    detail = <LoadingInline />;
+  } else if (detail === 'unknown') {
+    detail = <StatusIcon state={detail} text={text} />;
+  }
   return <div className="row cluster-overview-cell__info-row">
     <div className="col-xs-6 cluster-overview-cell__info-row__first-cell">
       {title}
     </div>
     <div className="col-xs-6 cluster-overview-cell__info-row__last-cell">
-      <div>
-        {!detail && <LoadingInline />}
-        {detail === 'unknown' ? <StatusIcon state={detail} text={text} /> : detail}
-      </div>
+      {detail}
     </div>
   </div>;
 };
