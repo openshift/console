@@ -1,8 +1,8 @@
 import { coFetchJSON } from '../../co-fetch';
 
 export const getFedClusters = (MULTI_CLUSTER) => {
-  const token = MULTI_CLUSTER && MULTI_CLUSTER.get('federation-apiserver-token');
-  const fedApiUrl = MULTI_CLUSTER && MULTI_CLUSTER.get('federation-apiserver-url');
+  const token = MULTI_CLUSTER && _.get(MULTI_CLUSTER, 'federation-apiserver-token');
+  const fedApiUrl = MULTI_CLUSTER && _.get(MULTI_CLUSTER, 'federation-apiserver-url');
   const opts = {
     headers: {
       'X-Tectonic-Federation-token': token,
