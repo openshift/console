@@ -160,7 +160,7 @@ export const RoleBindingsPage = () => <MultiListPage
     type: 'role-binding-kind',
     selected: ['cluster', 'namespace'],
     reducer: bindingType,
-    items: ({clusterrolebinding: data}) => {
+    items: ({ClusterRoleBinding: data}) => {
       const items = [
         {id: 'namespace', title: 'Namespace Role Bindings'},
         {id: 'system', title: 'System Role Bindings'},
