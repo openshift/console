@@ -59,41 +59,58 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
 export const NetworkPoliciesList = props => <List {...props} Header={Header} Row={Row} />;
 export const NetworkPoliciesPage = props => <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />;
 
-const FromNamespaceSelector = ({selector}) => <Selector selector={selector} kind="Namespace" style={{display: 'inline-block'}}/>;
 
-const FromPodSelector = ({selector, namespace}) => <Selector selector={selector} namespace={namespace} style={{display: 'inline-block'}} />;
-
-const From = ({ingressFrom, namespace}) => ingressFrom.namespaceSelector ?
-  <FromNamespaceSelector selector={ingressFrom.namespaceSelector.matchLabels} /> :
-  <FromPodSelector selector={ingressFrom.podSelector.matchLabels} namespace={namespace} />;
-
-const IngressRow = ({ingress, namespace}) => <div className="row" style={{marginBottom: 50}} >
-  <div className="col-xs-6">
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-xs-4">Selectors</div>
-      </div>
-      <div className="co-m-table-grid__body">
-        { _.map(ingress.from, (ingressFrom, i) => <div className="row" style={{borderBottom: 0}} key={i}>
-          <div className="col-xs-6"><span className="text-muted">{ingressFrom.namespaceSelector ? 'Namespace' : 'Pod'} Selector</span></div>
-          <div className="col-xs-6"><From key={i} ingressFrom={ingressFrom} namespace={namespace} /></div>
-        </div>) }
-      </div>
-    </div>
-  </div>
-  <div className="col-xs-6">
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-xs-4">Ports</div>
-      </div>
-      <div className="co-m-table-grid__body">
-        { _.map(ingress.ports, (port, i) => <div className="row" style={{borderBottom: 0}} key={i}>
-          <div className="col-xs-12">{port.protocol}/{port.port}</div>
-        </div>) }
-      </div>
-    </div>
-  </div>
+const IngressHeader = () => <div className="row co-m-table-grid__head">
+  <div className="col-xs-4">target pods</div>
+  <div className="col-xs-5">from</div>
+  <div className="col-xs-3">to ports</div>
 </div>;
+
+const IngressRow = ({ingress, namespace, podSelector}) => {
+  const podSelectors = [];
+  const nsSelectors = [];
+  let i = 0;
+
+  const style = {margin: '5px 0'};
+  _.each(ingress.from, ({namespaceSelector, podSelector}) => {
+    if (namespaceSelector) {
+      nsSelectors.push(<div key={i++} style={style}><Selector selector={namespaceSelector} kind="Namespace"/></div>);
+    } else {
+      podSelectors.push(<div key={i++} style={style}><Selector selector={podSelector} namespace={namespace}/></div>);
+    }
+  });
+  return <div className="row co-resource-list__item">
+    <div className="col-xs-4">
+      <div>
+        <span className="text-muted">Pod Selector:</span>
+      </div>
+      <div style={style}>
+        <Selector selector={podSelector} namespace={namespace} />
+      </div>
+    </div>
+    <div className="col-xs-5">
+      <div>
+        { !podSelectors.length ? null :
+          <div>
+            <span className="text-muted">Pod Selector:</span>
+            {podSelectors}
+          </div>
+        }
+        { !nsSelectors.length ? null :
+          <div style={{paddingTop: podSelectors.length ? 10 : 0}}>
+            <span className="text-muted">NS Selector:</span>
+            {nsSelectors}
+          </div>
+        }
+      </div>
+    </div>
+    <div className="col-xs-3">
+      {
+       _.map(ingress.ports, (port, i) => <p key={i}>{port.protocol}/{port.port}</p>)
+      }
+    </div>
+  </div>;
+};
 
 const Details = (np) => <div>
   <Heading text="Namespace Overview" />
@@ -108,8 +125,9 @@ const Details = (np) => <div>
   <div className="co-m-pane__body">
     <div className="row co-m-form-row">
       <div className="col-md-12 text-muted">
-        Pods accept all traffic by default, although they can be isolated via Network Policies which specify a whitelist of ingress rules.
-        As soon as a Pod is selected by any Network Policy (in that Policy's namespace), it will reject all traffic not explicitly allowed via a Network Policy.
+        Pods accept all traffic by default.
+        They can be isolated via Network Policies which specify a whitelist of ingress rules.
+        When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.
         See more details in <a target="_blank" href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Network Policies Documentation</a>.
       </div>
     </div>
@@ -118,7 +136,12 @@ const Details = (np) => <div>
         {
           _.isEmpty(_.get(np, 'spec.ingress[0]', [])) ?
             `All traffic is allowed to Pods in ${np.metadata.namespace}.` :
-            _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} namespace={np.metadata.namespace} />)
+            <div className="co-m-table-grid co-m-table-grid--bordered">
+              <IngressHeader />
+              <div className="co-m-table-grid__body">
+                { _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} podSelector={np.spec.podSelector} namespace={np.metadata.namespace} />) }
+              </div>
+            </div>
         }
       </div>
     </div>
