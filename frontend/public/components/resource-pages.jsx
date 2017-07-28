@@ -18,5 +18,5 @@ export { RoleBindingsPage } from './RBAC/bindings';
 export { EtcdClustersPage as etcdClustersPage, EtcdClustersDetailsPage as etcdClustersDetailsPage } from './etcd-cluster';
 export { PrometheusInstancesPage, PrometheusInstancesDetailsPage } from './prometheus';
 export { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monitor';
-export { AlertManagersDetailsPage } from './alert-manager';
+export { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
 export { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';

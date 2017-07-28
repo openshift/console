@@ -2,7 +2,7 @@ import React from 'react';
 
 import { k8sKinds } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
-import { ColHead, List, ListHeader, ResourceRow, DetailsPage } from './factory';
+import { ColHead, List, ListHeader, ListPage, ResourceRow, DetailsPage } from './factory';
 import { LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
 import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings/cluster-settings';
 import { configureReplicaCountModal } from './modals';
@@ -134,3 +134,4 @@ const AlertManagerHeader = props => <ListHeader>
 </ListHeader>;
 
 export const AlertManagersList = props => <List {...props} Header={AlertManagerHeader} Row={AlertManagerRow} />;
+export const AlertManagersPage = props => <ListPage {...props} ListComponent={AlertManagersList} canCreate={false} {...props} />;
