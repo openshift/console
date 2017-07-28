@@ -183,7 +183,7 @@ export class PodLogs extends SafetyFirst {
           { this.state.logState === 'paused' && <span>Log stream is paused.</span> }
           { this.state.logState === 'loading' && <span>Loading log...</span> }
         </span>
-        <Dropdown className="btn-group" items={this.state.containerNames.map(nameWithIcon)} title={nameWithIcon(this.state.currentContainer || <LoadingInline />)} onChange={this._selectContainer} />
+        <Dropdown className="btn-group" items={_.mapValues(this.state.containerNames, nameWithIcon)} title={nameWithIcon(this.state.currentContainer || <LoadingInline />)} onChange={this._selectContainer} />
       </div>
 
       <LogWindow buffer={this._buffer} logName={this.state.currentContainer} logState={this.state.logState} updateLogState={this._updateLogState} loadGeneration={this.state.loadTime} />
