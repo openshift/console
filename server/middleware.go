@@ -13,7 +13,7 @@ func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		encTok, err := a.TokenExtractor(r)
 		if err != nil {
-			plog.Infof("no token found: %v", err)
+			plog.Infof("no token found for %v: %v", r.URL.String(), err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}

@@ -34,9 +34,10 @@ import (
 )
 
 const (
-	BridgeAPIVersion      = "v1"
-	K8sAPIVersion         = "v1"
-	IndexPageTemplateName = "index.html"
+	BridgeAPIVersion          = "v1"
+	K8sAPIVersion             = "v1"
+	IndexPageTemplateName     = "index.html"
+	TokenizerPageTemplateName = "tokener.html"
 
 	AuthLoginEndpoint         = "/auth/login"
 	AuthLoginCallbackEndpoint = "/auth/callback"
@@ -92,15 +93,37 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
+
 	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
 
 	handle("/api/kubernetes/", http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), k8sHandler))
 	handle("/api/federation/", federationMiddleware(http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/federation/"), federationHandler)))
+	fn := func(loginInfo auth.LoginJSON, successURL string, w http.ResponseWriter) {
+		jsg := struct {
+			auth.LoginJSON  `json:",inline"`
+			LoginSuccessURL string `json:"loginSuccessURL"`
+		}{
+			LoginJSON:       loginInfo,
+			LoginSuccessURL: successURL,
+		}
+
+		tpl := template.New(TokenizerPageTemplateName)
+		tpl.Delims("[[", "]]")
+		tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, TokenizerPageTemplateName))
+		if err != nil {
+			fmt.Printf("%v not found in configured public-dir path: %v", TokenizerPageTemplateName, err)
+			os.Exit(1)
+		}
+
+		if err := tpls.ExecuteTemplate(w, TokenizerPageTemplateName, jsg); err != nil {
+			fmt.Printf("%v", err)
+			os.Exit(1)
+		}
+	}
 
 	if !s.AuthDisabled() {
 		handleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
-		handleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
-		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc)
+		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc(fn))
 
 		if s.KubectlAuther != nil {
 			handleFunc("/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
@@ -258,9 +281,9 @@ func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusOK, info)
 }
 
-// This method extracts the JWT encoded token from the cookie, parses it and
+// This method extracts the JWT encoded token from a request, parses it and
 // returns 'sub' from the payload as user Id.
-func extractUserIdFromCookie(a *auth.Authenticator, r *http.Request) (string, error) {
+func extractUserIdFromRequest(a *auth.Authenticator, r *http.Request) (string, error) {
 	userId := ""
 	token, err := a.TokenExtractor(r)
 	if err != nil {
@@ -431,6 +454,7 @@ func DirectorFromTokenExtractor(config *proxy.Config, tokenExtractor func(*http.
 		// At this writing, the only errors we can get from TokenExtractor
 		// are benign and correct variations on "no token found"
 		token, err := tokenExtractor(r)
+
 		if err != nil {
 			plog.Errorf("Received an error while extracting token: %v", err)
 		} else {
@@ -440,6 +464,7 @@ func DirectorFromTokenExtractor(config *proxy.Config, tokenExtractor func(*http.
 		// The header removal must happen after the token extraction
 		// because the token extraction relies on the `Cookie` header,
 		// which also happens to be the header that is removed.
+		// TODO: don't blacklist the cookie
 		for _, h := range config.HeaderBlacklist {
 			r.Header.Del(h)
 		}
@@ -546,7 +571,7 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := extractUserIdFromCookie(s.Auther, r)
+	userID, err := extractUserIdFromRequest(s.Auther, r)
 	if err != nil {
 		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: cannot extract user id from cookie: %v", err)})
 		return
@@ -581,7 +606,7 @@ func (s *Server) handleListClients(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := extractUserIdFromCookie(s.Auther, r)
+	userID, err := extractUserIdFromRequest(s.Auther, r)
 	if err != nil {
 		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to List Client: cannot extract user id from cookie: %v", err)})
 		return

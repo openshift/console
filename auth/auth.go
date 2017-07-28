@@ -3,10 +3,12 @@ package auth
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/go-oidc/oauth2"
@@ -24,12 +26,7 @@ const (
 	errorInternal    = "internal_error"
 	errorMissingCode = "missing_code"
 	errorInvalidCode = "invalid_code"
-
-	cookieNameToken      = "token"
-	cookieNameLoginState = "state"
 )
-
-var ExtractTokenFromCookie = oidc.CookieTokenExtractor(cookieNameToken)
 
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 
@@ -52,6 +49,29 @@ func ConstantTokenExtractor(s string) func(*http.Request) (string, error) {
 	}
 }
 
+// ExtractTokenFromRequest is a RequestTokenExtractor which extracts a token from a WebSocket Subprotocol if needed
+// this is only needed until k8s supports subprotocol auth for WS
+func ExtractTokenFromRequest(r *http.Request) (string, error) {
+	header := r.Header.Get("Authorization")
+	if header != "" {
+		return oidc.ExtractBearerToken(r)
+	}
+
+	protocolKey := "Sec-WebSocket-Protocol"
+	protocolHeader := r.Header.Get(protocolKey)
+	protocols := strings.Split(protocolHeader, ", ")
+
+	bearerTokenPrefix := "base64url.bearer.authorization.k8s.io."
+	for _, protocol := range protocols {
+		split := strings.Split(protocol, bearerTokenPrefix)
+		if len(split) == 2 {
+			return split[1], nil
+		}
+	}
+
+	return "", errors.New("token not found in request (Sec-WebSocket-Protocol or Authorization Header)")
+}
+
 func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL string) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
@@ -70,7 +90,7 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 
 	return &Authenticator{
 		TokenVerifier:  jwtVerifier(client),
-		TokenExtractor: ExtractTokenFromCookie,
+		TokenExtractor: ExtractTokenFromRequest,
 		oidcClient:     client,
 		issuerURL:      issuerURL,
 		errorURL:       errURL,
@@ -108,57 +128,42 @@ func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, err
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
 // Requests with unexpected params are redirected to the root route.
-func (a *Authenticator) CallbackFunc(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	qErr := q.Get("error")
-	code := q.Get("code")
+func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		qErr := q.Get("error")
+		code := q.Get("code")
 
-	// Lack of both `error` and `code` indicates some other redirect with no params.
-	if qErr == "" && code == "" {
-		deleteLoginCookies(w, r)
-		http.Redirect(w, r, a.errorURL, http.StatusSeeOther)
-		return
+		// Lack of both `error` and `code` indicates some other redirect with no params.
+		if qErr == "" && code == "" {
+			http.Redirect(w, r, a.errorURL, http.StatusSeeOther)
+			return
+		}
+
+		if code == "" {
+			log.Infof("missing auth code in query param")
+			a.redirectAuthError(w, errorMissingCode, nil)
+			return
+		}
+
+		// NOTE: token is verified here
+		jwt, err := a.oidcClient.ExchangeAuthCode(code)
+		if err != nil {
+			log.Infof("unable to verify auth code with issuer: %v", err)
+			a.redirectAuthError(w, errorInvalidCode, err)
+			return
+		}
+
+		ls, err := newLoginState(&jwt)
+		if err != nil {
+			log.Errorf("error constructing login state: %v", err)
+			a.redirectAuthError(w, errorInternal, nil)
+			return
+		}
+
+		log.Infof("oauth success, redirecting to: %q", a.successURL)
+		fn(ls.toLoginJSON(), a.successURL, w)
 	}
-
-	if code == "" {
-		log.Infof("missing auth code in query param")
-		a.redirectAuthError(w, errorMissingCode, nil)
-		return
-	}
-
-	// NOTE: token is verified here
-	jwt, err := a.oidcClient.ExchangeAuthCode(code)
-	if err != nil {
-		log.Infof("unable to verify auth code with issuer: %v", err)
-		a.redirectAuthError(w, errorInvalidCode, err)
-		return
-	}
-
-	ls, err := newLoginState(&jwt)
-	if err != nil {
-		log.Errorf("error constructing login state: %v", err)
-		a.redirectAuthError(w, errorLoginState, nil)
-		return
-	}
-	http.SetCookie(w, ls.tokenCookie())
-
-	sc, err := ls.stateCookie()
-	if err != nil {
-		log.Infof("error setting login state cookie: %v", err)
-		a.redirectAuthError(w, errorCookie, nil)
-		return
-	}
-
-	log.Infof("oauth success, redirecting to: %q", a.successURL)
-
-	http.SetCookie(w, sc)
-	// TODO(sym3tri): handle deep linking via state arg
-	http.Redirect(w, r, a.successURL, http.StatusSeeOther)
-}
-
-func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
-	deleteLoginCookies(w, r)
-	w.WriteHeader(http.StatusOK)
 }
 
 func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string, err error) {

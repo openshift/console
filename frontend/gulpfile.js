@@ -23,6 +23,7 @@ const PrettyError = require('pretty-error');
 const entry = './public/components/app.jsx';
 const distDir = './public/dist';
 const indexSrc = './public/index.html';
+const tokenSrc = './public/tokener.html';
 
 let CURRENT_SHA;
 
@@ -186,7 +187,7 @@ gulp.task('copy-deps', () => {
 
 // Replace code blocks in html with build versions.
 gulp.task('html', ['sha'], () => {
-  return gulp.src(indexSrc)
+  return gulp.src([indexSrc, tokenSrc])
     .pipe(htmlReplace((function() {
       const h = {};
       if (process.env.NODE_ENV === 'production') {

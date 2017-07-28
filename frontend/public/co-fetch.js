@@ -4,9 +4,18 @@ import { analyticsSvc } from './module/analytics';
 import { authSvc } from './module/auth';
 import store from './redux';
 
+const token = authSvc.getToken();
+
 const initDefaults = {
-  credentials: 'same-origin'
+  credentials: 'same-origin',
 };
+
+if (token) {
+  initDefaults.headers = {
+    // https://kubernetes.io/docs/admin/authentication/#putting-a-bearer-token-in-a-request
+    Authorization: `Bearer ${token}`,
+  };
+}
 
 const validateStatus = (response) => {
   if (response.ok) {
@@ -48,7 +57,6 @@ const validateStatus = (response) => {
 
 export const coFetch = (url, options = {}) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
-
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([
     fetch(url, allOptions).then(validateStatus),
