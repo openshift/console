@@ -109,7 +109,7 @@ render((
         </Route>
 
         <Route path="ns/:ns/roles">
-          <IndexRoute component={ResourceListPage} kind="role" />
+          <IndexRoute component={ResourceListPage} kind="roles" />
           <Route path=":name/add-rule" component={EditRulePage} />
           <Route path=":name/:rule/edit" component={EditRulePage} />
           <Route path=":name/bindings" component={BindingsForRolePage} kind="Role" />
