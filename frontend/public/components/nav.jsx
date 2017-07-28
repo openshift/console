@@ -20,6 +20,7 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   const pathname = state.UI.get('location');
   const resourcePath = pathname ? stripNS(pathname) : '';
   href = resource ? formatNamespaceRoute(activeNamespace, resource) : href;
+  const noNSHref = stripNS(href);
 
   let canRender = true;
   if (required) {
@@ -28,9 +29,8 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   }
   const props = {
     canRender, href,
-    isActive: isActive ? isActive(resourcePath) : _.startsWith(resourcePath, stripNS(href)),
+    isActive: isActive ? isActive(resourcePath) : (resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`)),
   };
-
   return props;
 };
 
@@ -48,11 +48,11 @@ class NavLink_ extends React.PureComponent {
       return null;
     }
 
-    const {isActive, href, name, onClick = undefined} = this.props;
+    const {isActive, href, name, onClick = undefined, target= undefined} = this.props;
     const klass = classNames('co-m-nav-link', {active: isActive});
 
     return <li className={klass} key={href}>
-      <Link to={href} onClick={onClick}>{name}</Link>
+      <Link to={href} onClick={onClick} target={target}>{name}</Link>
     </li>;
   }
 });
@@ -146,6 +146,8 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     <NavSection text="Troubleshooting" icon="fa-life-ring">
       <NavLink resource="search" name="Search" />
       <NavLink resource="events" name="Events" />
+      <NavLink href="/prometheus" target="_blank" name="Prometheus" required="PROMETHEUS" />
+      <NavLink href="/alertmanager"  target="_blank" name="Prometheus Alerts" required="PROMETHEUS" />
     </NavSection>
 
     <NavSection text="Administration" icon="fa-cog">
