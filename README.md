@@ -153,9 +153,9 @@ Run frontend tests:
 
 #### Local Dex
 
-Checkout and build the `dev` branch of [dex](https://github.com/coreos/dex/).
+Checkout and build [dex](https://github.com/coreos/dex/).
 
-`./bin/dex serve ../bridge/contrib/dex-config-dev.yaml`
+`./bin/dex serve ../../coreos-inc/bridge/contrib/dex-config-dev.yaml`
 
 Run bridge with the following options:
 
