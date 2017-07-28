@@ -151,7 +151,8 @@ export const PrometheusInstancesDetailsPage = props => <DetailsPage
   pages={[
     details(InstanceDetails),
     editYaml(),
-    serviceMonitors(({spec: {serviceMonitorSelector}}) => <ServiceMonitorsPage
+    serviceMonitors(({spec: {serviceMonitorSelector}, metadata: {namespace}}) => <ServiceMonitorsPage
+      namespace={namespace}
       selector={_.isEmpty(serviceMonitorSelector) ? { matchExpressions:[{ key:'undefined', operator:'Exists' }]} : serviceMonitorSelector}/>)
   ]}
 />;
