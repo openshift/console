@@ -27,8 +27,7 @@ const parseExisitingPullSecret = (pullSecret) => {
         // we'll display the first secret, but upon saving, the
         // others will get erased
         invalidData = true;
-      }
-      else if (keys.length < 1) {
+      } else if (keys.length < 1) {
         throw 'Invalid data';
       }
       address = keys[0];

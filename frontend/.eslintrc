@@ -10,6 +10,7 @@
     "es6": true,
   },
   "rules": {
+    "brace-style": 2,
     "camelcase": 2,
     "consistent-return": 0,
     "curly": [2, "all"],

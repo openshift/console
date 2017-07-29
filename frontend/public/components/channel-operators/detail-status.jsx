@@ -62,8 +62,7 @@ export class DetailStatus extends SafetyFirst {
           return <button className="co-cluster-updates__action-button btn" disabled={true}><LoadingInline /></button>;
         }
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdateCheck', true)}>Check for Updates</button>;
-      }
-      else if (this.props.channelState === 'Failed') {
+      } else if (this.props.channelState === 'Failed') {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', true)}>Retry Upgrade</button>;
       }
     }
