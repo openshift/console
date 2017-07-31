@@ -1,7 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
+import { stateToProps as featuresStateToProps } from '../features';
 import classNames from 'classnames';
 
 const tectonicHealthMsgs = {
@@ -90,6 +92,36 @@ const SecurityScanningRow = ({title, detail, text}) => {
   </div>;
 };
 
+const securityScanStateToProps = (state, {required}) => {
+  let canRender = true;
+  if (required) {
+    const flags = featuresStateToProps([required], state).flags;
+    canRender = !!flags[required];
+  }
+  const props = { canRender };
+  return props;
+};
+
+const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLAGS) &&
+  next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
+  next.UI.get('location') === previous.UI.get('location');
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
+const SecurityScanningOverview = connect(securityScanStateToProps, null, mergeProps, {pure: true, areStatesEqual})(
+class SecurityScanningOverview_ extends React.PureComponent {
+  render () {
+    if (!this.props.canRender) {
+      return null;
+    }
+    return <div>
+      <SubHeaderRow header="Container Security Scanning" />
+      <SecurityScanningRow title="Fixable Issues"
+        detail={this.props.fixableIssues} text="Could not get fixable issues" />
+      <SecurityScanningRow title="Scanned Pods"
+        detail={this.props.scannedPods} text="Could not get scanned pods" />
+    </div>;
+  }
+});
+
 export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
     <Helmet title="Cluster Status" />
@@ -111,12 +143,10 @@ export const ClusterOverviewPage = (props) => {
               text={k8sHealthMsgs[props.kubernetesHealth]} />
 
             <br />
-            <SubHeaderRow header="Container Security Scanning" />
-
-            <SecurityScanningRow title="Fixable Issues"
-              detail={props.fixableIssues} text="Could not get fixable issues" />
-            <SecurityScanningRow title="Scanned Pods"
-              detail={props.scannedPods} text="Could not get fixable issues" />
+            <SecurityScanningOverview
+              {...props}
+              required="SECURITY_LABELLER"
+            />
           </div>
 
           <div className="cluster-overview-cell co-m-pane">
