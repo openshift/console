@@ -173,8 +173,7 @@ class LicenseNotifier extends React.Component {
         content: <span>You have an invalid license. {actions}</span>,
         title: 'Invalid Cluster License'
       };
-    }
-    else if (!this.state.expiration) {
+    } else if (!this.state.expiration) {
       notification = null;
     } else if (this._expired()) {
       notification = {

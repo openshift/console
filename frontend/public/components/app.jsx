@@ -169,13 +169,11 @@ window.onerror = function (message, source, lineno, colno) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
     analyticsSvc.error(e);
-  }
-  catch(err) {
+  } catch(err) {
     try {
       // eslint-disable-next-line no-console
       console.error(err);
-    }
-    catch (ignored) {
+    } catch (ignored) {
       // ignore
     }
   }

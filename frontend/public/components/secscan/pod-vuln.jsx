@@ -197,8 +197,7 @@ export const PodVulnsDetailsPage = props => <DetailsPage
 
 export const PodVulnList = props => <List {...props} Header={PodVulnHeader} Row={PodVulnRow} />;
 
-export const PodVulnsPage = props => {
-  return <ListPage
+export const PodVulnsPage = props => <ListPage
   {...props}
   canCreate={false}
   kind="Pod"
@@ -226,4 +225,4 @@ export const PodVulnsPage = props => {
     ],
   },
   ]}
-/>;};
+/>;
