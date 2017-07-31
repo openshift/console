@@ -3,18 +3,13 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
-import { FLAGS, stateToProps as featuresStateToProps } from '../features';
+import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
 import { ClusterPicker } from './federation/cluster-picker';
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '').replace(/^\//, '');
 
-const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLAGS) &&
-  next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
-  next.UI.get('location') === previous.UI.get('location');
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
 const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   const activeNamespace = state.UI.get('activeNamespace');
   const pathname = state.UI.get('location');

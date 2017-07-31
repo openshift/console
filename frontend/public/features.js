@@ -130,4 +130,10 @@ export const stateToProps = (flags, state) => {
   return props;
 };
 
+export const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
+
+export const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLAGS) &&
+  next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
+  next.UI.get('location') === previous.UI.get('location');
+
 export const connectToFlags = (...flags) => connect(state => stateToProps(flags, state));

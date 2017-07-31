@@ -1,9 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
-import { stateToProps as featuresStateToProps } from '../features';
+import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import classNames from 'classnames';
 
 const tectonicHealthMsgs = {
@@ -29,7 +28,7 @@ const StatusIconRow = ({state, text}) => {
   </div>;
 };
 
-const StatusIcon = ({state, text}) => {
+export const StatusIcon = ({state, text}) => {
   if (['ok', 'warning', 'critical', 'unknown'].includes(state)) {
     return <StatusIconRow state={state} text={text} />;
   }
@@ -39,7 +38,7 @@ const StatusIcon = ({state, text}) => {
   </div>;
 };
 
-const SubHeaderRow = ({header}) => {
+export const SubHeaderRow = ({header}) => {
   return <div className="row">
     <div className="col-xs-12">
       <h4 className="cluster-overview-cell__title">
@@ -75,52 +74,6 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
     </div>
   </div>;
 };
-
-const SecurityScanningRow = ({title, detail, text}) => {
-  if (detail === null) {
-    detail = <LoadingInline />;
-  } else if (detail === 'unknown') {
-    detail = <StatusIcon state={detail} text={text} />;
-  }
-  return <div className="row cluster-overview-cell__info-row">
-    <div className="col-xs-6 cluster-overview-cell__info-row__first-cell">
-      {title}
-    </div>
-    <div className="col-xs-6 cluster-overview-cell__info-row__last-cell">
-      {detail}
-    </div>
-  </div>;
-};
-
-const securityScanStateToProps = (state, {required}) => {
-  let canRender = true;
-  if (required) {
-    const flags = featuresStateToProps([required], state).flags;
-    canRender = !!flags[required];
-  }
-  const props = { canRender };
-  return props;
-};
-
-const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLAGS) &&
-  next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
-  next.UI.get('location') === previous.UI.get('location');
-const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
-const SecurityScanningOverview = connect(securityScanStateToProps, null, mergeProps, {pure: true, areStatesEqual})(
-class SecurityScanningOverview_ extends React.PureComponent {
-  render () {
-    if (!this.props.canRender) {
-      return null;
-    }
-    return <div>
-      <SubHeaderRow header="Container Security Scanning" />
-      <SecurityScanningRow title="Fixable Issues"
-        detail={this.props.fixableIssues} text="Could not get fixable issues" />
-      <SecurityScanningRow title="Scanned Pods"
-        detail={this.props.scannedPods} text="Could not get scanned pods" />
-    </div>;
-  }
-});
 
 export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
