@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import Immutable from 'immutable';
 
 import { coFetchJSON } from './co-fetch';
+import { CONST } from './const';
 
 export const FLAGS = {
   AUTH_ENABLED: 'AUTH_ENABLED',
@@ -13,6 +14,7 @@ export const FLAGS = {
   ETCD_OPERATOR: 'ETCD_OPERATOR',
   PROMETHEUS: 'PROMETHEUS',
   MULTI_CLUSTER: 'MULTI_CLUSTER',
+  SECURITY_LABELLER: 'SECURITY_LABELLER',
 };
 
 const DEFAULTS = {
@@ -24,6 +26,7 @@ const DEFAULTS = {
   [FLAGS.ETCD_OPERATOR]: undefined,
   [FLAGS.PROMETHEUS]: undefined,
   [FLAGS.MULTI_CLUSTER]: undefined,
+  [FLAGS.SECURITY_LABELLER]: undefined,
 };
 
 const SET_FLAGS = 'SET_FLAGS';
@@ -62,6 +65,10 @@ const PROMETHEUS_FLAGS = {
   [FLAGS.PROMETHEUS]: 'prometheuses',
 };
 
+const SECURITY_LABELLER_FLAGS = {
+  [FLAGS.SECURITY_LABELLER]: CONST.SECURITY_LABELLER_NAME,
+};
+
 const detectK8sFlags = basePath => dispatch => coFetchJSON(basePath)
   .then(res => setFlags(dispatch, _.mapValues(K8S_FLAGS, path => res.paths.indexOf(path) >= 0)),
     () => setTimeout(() => detectK8sFlags(basePath), 5000));
@@ -83,12 +90,17 @@ const detectMultiClusterFlags = () => dispatch => {
   setFlags(dispatch, multiCluster);
 };
 
+const detectSecurityLabellerFlags = labellerDeploymentPath => dispatch => coFetchJSON(labellerDeploymentPath)
+  .then(res => setFlags(dispatch,  _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
+    () => setTimeout(() => detectSecurityLabellerFlags(labellerDeploymentPath), 5000));
+
 export const featureActions = {
   detectK8sFlags,
   detectCoreosFlags,
   detectEtcdOperatorFlags,
   detectPrometheusFlags,
-  detectMultiClusterFlags
+  detectMultiClusterFlags,
+  detectSecurityLabellerFlags
 };
 
 export const featureReducerName = 'FLAGS';
@@ -117,5 +129,11 @@ export const stateToProps = (flags, state) => {
   });
   return props;
 };
+
+export const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
+
+export const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLAGS) &&
+  next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
+  next.UI.get('location') === previous.UI.get('location');
 
 export const connectToFlags = (...flags) => connect(state => stateToProps(flags, state));

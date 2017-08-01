@@ -90,6 +90,7 @@ store.dispatch(featureActions.detectCoreosFlags(`${k8sBasePath}/apis/coreos.com/
 store.dispatch(featureActions.detectEtcdOperatorFlags(`${k8sBasePath}/apis/etcd.coreos.com/v1beta1`));
 store.dispatch(featureActions.detectPrometheusFlags(`${k8sBasePath}/apis/monitoring.coreos.com/v1alpha1`));
 store.dispatch(featureActions.detectMultiClusterFlags());
+store.dispatch(featureActions.detectSecurityLabellerFlags(`${k8sBasePath}/apis/extensions/v1beta1/deployments`));
 
 tectonicVersion();
 

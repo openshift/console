@@ -2,6 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
+import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import classNames from 'classnames';
 
 const tectonicHealthMsgs = {
@@ -27,7 +28,7 @@ const StatusIconRow = ({state, text}) => {
   </div>;
 };
 
-const StatusIcon = ({state, text}) => {
+export const StatusIcon = ({state, text}) => {
   if (['ok', 'warning', 'critical', 'unknown'].includes(state)) {
     return <StatusIconRow state={state} text={text} />;
   }
@@ -37,7 +38,7 @@ const StatusIcon = ({state, text}) => {
   </div>;
 };
 
-const SubHeaderRow = ({header}) => {
+export const SubHeaderRow = ({header}) => {
   return <div className="row">
     <div className="col-xs-12">
       <h4 className="cluster-overview-cell__title">
@@ -74,22 +75,6 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
-const SecurityScanningRow = ({title, detail, text}) => {
-  if (detail === null) {
-    detail = <LoadingInline />;
-  } else if (detail === 'unknown') {
-    detail = <StatusIcon state={detail} text={text} />;
-  }
-  return <div className="row cluster-overview-cell__info-row">
-    <div className="col-xs-6 cluster-overview-cell__info-row__first-cell">
-      {title}
-    </div>
-    <div className="col-xs-6 cluster-overview-cell__info-row__last-cell">
-      {detail}
-    </div>
-  </div>;
-};
-
 export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
     <Helmet title="Cluster Status" />
@@ -111,12 +96,10 @@ export const ClusterOverviewPage = (props) => {
               text={k8sHealthMsgs[props.kubernetesHealth]} />
 
             <br />
-            <SubHeaderRow header="Container Security Scanning" />
-
-            <SecurityScanningRow title="Fixable Issues"
-              detail={props.fixableIssues} text="Could not get fixable issues" />
-            <SecurityScanningRow title="Scanned Pods"
-              detail={props.scannedPods} text="Could not get fixable issues" />
+            <SecurityScanningOverview
+              {...props}
+              required="SECURITY_LABELLER"
+            />
           </div>
 
           <div className="cluster-overview-cell co-m-pane">
