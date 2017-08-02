@@ -1,4 +1,5 @@
 .env
+.idea
 /bin
 /gopath
 /Godeps/_workspace/src/github.com/coreos-inc/bridge

@@ -1,2 +1,2 @@
-frontend: cd frontend/ && yarn run dev
-server: ./bin/bridge
+frontend: sh -c 'cd frontend/ && yarn run dev'
+server: sh -c './bin/bridge'
