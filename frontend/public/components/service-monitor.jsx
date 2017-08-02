@@ -67,8 +67,8 @@ const Details = (sm) => {
                   <dd><LabelList kind="ServiceMonitor" labels={metadata.labels} /></dd>
                   <dt>Service Selector</dt>
                   <dd><Selector selector={spec.selector} kind="Service" /></dd>
-                  <dt>Monitoring Namespace</dt>
-                  <dd><ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /></dd>
+                  {spec.namespaceSelector && <dt>Monitoring Namespace</dt>}
+                  {spec.namespaceSelector && <dd><ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /></dd>}
                 </dl>
               </div>
               <div className="col-sm-6 col-xs-12">
@@ -98,10 +98,13 @@ const ServiceMonitorRow = ({obj: sm}) => {
       <ResourceLink kind={kind} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
     <div className="col-md-5 col-sm-5 col-xs-6">
-      <Selector selector={spec.selector} kind="Service" namespace={spec.namespaceSelector.matchNames[0]} />
+      <Selector selector={spec.selector} kind="Service"
+        namespace={_.get(spec, ['namespaceSelector', 'matchNames', 0], '')} />
     </div>
     <div className="col-md-3 col-sm-4 hidden-xs">
-      <p><ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /></p>
+      <p>
+        {_.has(spec, 'namespaceSelector') ? <ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /> : <span className="text-muted">--</span> }
+      </p>
     </div>
   </ResourceRow>;
 };
