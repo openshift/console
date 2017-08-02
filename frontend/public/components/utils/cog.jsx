@@ -60,12 +60,14 @@ Cog.factory = {
       btnText: `Delete ${kind.label}`,
       executeFn: () => {
         const deletePromise = k8s[kind.plural].delete(obj);
+        deletePromise.then(() => {
+          // If we are currently on the deleted resource's page, redirect to the resource list page
+          const re = new RegExp(`/${obj.metadata.name}/.*$`);
+          if (re.test(window.location.pathname)) {
+            history.push(getNamespacedRoute(kind.path));
+          }
 
-        // If we are currently on the deleted resource's page, redirect to the resource list page
-        const re = new RegExp(`/${obj.metadata.name}/.*$`);
-        if (re.test(window.location.pathname)) {
-          history.push(getNamespacedRoute(kind.path));
-        }
+        });
 
         return deletePromise;
       },
