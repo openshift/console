@@ -18,6 +18,9 @@ import (
 )
 
 const (
+	errorOAuth       = "oauth_error"
+	errorLoginState  = "login_state_error"
+	errorCookie      = "cookie_error"
 	errorInternal    = "internal_error"
 	errorMissingCode = "missing_code"
 	errorInvalidCode = "invalid_code"
@@ -85,7 +88,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 	oac, err := a.oidcClient.OAuthClient()
 	if err != nil {
 		log.Errorf("error generating OAuth client from OIDC client: %v", err)
-		a.redirectAuthError(w, errorInternal)
+		a.redirectAuthError(w, errorOAuth, err)
 		return
 	}
 
@@ -119,7 +122,7 @@ func (a *Authenticator) CallbackFunc(w http.ResponseWriter, r *http.Request) {
 
 	if code == "" {
 		log.Infof("missing auth code in query param")
-		a.redirectAuthError(w, errorMissingCode)
+		a.redirectAuthError(w, errorMissingCode, nil)
 		return
 	}
 
@@ -127,14 +130,14 @@ func (a *Authenticator) CallbackFunc(w http.ResponseWriter, r *http.Request) {
 	jwt, err := a.oidcClient.ExchangeAuthCode(code)
 	if err != nil {
 		log.Infof("unable to verify auth code with issuer: %v", err)
-		a.redirectAuthError(w, errorInvalidCode)
+		a.redirectAuthError(w, errorInvalidCode, err)
 		return
 	}
 
 	ls, err := newLoginState(&jwt)
 	if err != nil {
 		log.Errorf("error constructing login state: %v", err)
-		a.redirectAuthError(w, errorInternal)
+		a.redirectAuthError(w, errorLoginState, nil)
 		return
 	}
 	http.SetCookie(w, ls.tokenCookie())
@@ -142,7 +145,7 @@ func (a *Authenticator) CallbackFunc(w http.ResponseWriter, r *http.Request) {
 	sc, err := ls.stateCookie()
 	if err != nil {
 		log.Infof("error setting login state cookie: %v", err)
-		a.redirectAuthError(w, errorInternal)
+		a.redirectAuthError(w, errorCookie, nil)
 		return
 	}
 
@@ -158,7 +161,7 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
+func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string, err error) {
 	var u url.URL
 	up, err := url.Parse(a.errorURL)
 	if err != nil {
@@ -169,6 +172,9 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string)
 	q := url.Values{}
 	q.Set("error", authErr)
 	q.Set("error_type", "auth")
+	if err != nil {
+		q.Set("error_msg", err.Error())
+	}
 	u.RawQuery = q.Encode()
 	w.Header().Set("Location", u.String())
 	w.WriteHeader(http.StatusSeeOther)

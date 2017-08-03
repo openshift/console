@@ -23,7 +23,7 @@ func TestRedirectAuthError(t *testing.T) {
 	}
 	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL)
 
-	a.redirectAuthError(w, "fake_error")
+	a.redirectAuthError(w, "fake_error", err)
 	if err != nil {
 		t.Fatal("error instantiating test authenticator")
 	}
