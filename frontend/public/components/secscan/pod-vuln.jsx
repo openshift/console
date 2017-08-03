@@ -4,7 +4,16 @@ import { Link } from 'react-router';
 import { ContainerRow } from '../pod';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
 import { MsgBox, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
-import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVulnerabilityFilter } from '../../module/k8s/podvulns';
+import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVulnerabilityFilter, severityBreakdownInfo } from '../../module/k8s/podvulns';
+
+import { DonutChart } from './donut-chart/donut-chart';
+
+const severityMap = {
+  'P0': 'High',
+  'P1': 'Medium',
+  'P2': 'Low',
+  'P3': 'Negligible'
+};
 
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
@@ -18,6 +27,8 @@ const PodVulnRow = ({obj: pod}) => {
   const podvuln = makePodvuln(pod);
   
   const fixables = _.get(pod, 'metadata.labels.secscan/fixables');
+  const highest = _.get(pod, 'metadata.labels.secscan/highest');
+  const numHighest = _.get(pod, `metadata.labels.secscan/${highest}`);
   const P0 = _.has(pod, 'metadata.labels.secscan/P0') ? parseInt(_.get(pod, 'metadata.labels.secscan/P0'), 10) : 0;
   const P1 = _.has(pod, 'metadata.labels.secscan/P1') ? parseInt(_.get(pod, 'metadata.labels.secscan/P1'), 10) : 0;
   const P2 = _.has(pod, 'metadata.labels.secscan/P2') ? parseInt(_.get(pod, 'metadata.labels.secscan/P2'), 10) : 0;
@@ -33,14 +44,16 @@ const PodVulnRow = ({obj: pod}) => {
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       {imagesScanned(podvuln)}
     </div>
-
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      {
-        !isScanned(podvuln) ? <div className="text-muted">(Not scanned)</div> :
-          !hasAccess(podvuln) ? <div className="text-muted">(Unable to scan)</div> :
-            !isSupported(podvuln) ? <div className="text-muted">(Unsupported)</div> :
-              (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`)
-      }
+      <DonutChart width={22} data={severityBreakdownInfo(podvuln)} />
+      <span>
+        {
+          !isScanned(podvuln) ? <span className="text-muted">(Not scanned)</span> :
+          !hasAccess(podvuln) ? <span className="text-muted">(Unable to scan)</span> :
+          !isSupported(podvuln) ? <span className="text-muted">(Unsupported)</span> :
+          (fixables ? `${numHighest} ${severityMap[highest]}: ${fixables} fixables` : `${count.toString()} vulnerable packages`)
+        }
+      </span>
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       {_.get(pod, 'metadata.labels.secscan/highest', '-')}
@@ -135,6 +148,17 @@ const Details = (pod) => {
 
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
+        <div className="row no-gutter">
+          <div className="co-m-table-grid co-m-table-grid--bordered">
+            <DonutChart width={40} data={severityBreakdownInfo(podvuln)} />
+            <DonutChart width={50} data={severityBreakdownInfo(podvuln)} />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="co-m-pane__body">
+      <div className="co-m-pane__body-section--bordered">
         <h1 className="co-section-title">Containers</h1>
         <div className="row no-gutter">
           <div className="co-m-table-grid co-m-table-grid--bordered">
@@ -203,6 +227,7 @@ export const PodVulnsPage = props => <ListPage
   kind="Pod"
   ListComponent={PodVulnList}
   title="Security Scan Report"
+  textFilter="Filter vulnerabilities by name"
   Intro={
     <SubHeaderRow
       header="All supported container images are scanned for known vulnerabilities and CVEs." 
