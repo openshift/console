@@ -6,14 +6,16 @@ export const analyticsSvc = {
   unsetRoute: () => activeRoute = null,
   push: (...args) => dataLayer.push(...args),
 
-  error: (message, route) => {
+  error: (message, route, stack='') => {
     route = route || activeRoute || location.pathname;
     dataLayer.push({
       event: 'tectonicError',
       attributes: {
-        message: message,
-        route: route,
-      }
+        consoleVersion: window.SERVER_FLAGS.consoleVersion,
+        message,
+        route,
+        stack: stack.toString(),
+      },
     });
   },
 
