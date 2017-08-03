@@ -15,51 +15,67 @@ const severityMap = {
   'P3': 'Negligible'
 };
 
+const SecurityScanCell = ({podvuln}) => {
+  const fixables = _.get(podvuln, 'metadata.labels.secscan/fixables');
+  const highest = _.get(podvuln, 'metadata.labels.secscan/highest');
+  const numHighest = _.get(podvuln, `metadata.labels.secscan/${highest}`);
+
+  const P0 = _.has(podvuln, 'metadata.labels.secscan/P0') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P0'), 10) : 0;
+  const P1 = _.has(podvuln, 'metadata.labels.secscan/P1') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P1'), 10) : 0;
+  const P2 = _.has(podvuln, 'metadata.labels.secscan/P2') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P2'), 10) : 0;
+  const P3 = _.has(podvuln, 'metadata.labels.secscan/P3') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P3'), 10) : 0;
+  const count = P0 + P1 + P2 + P3;
+  
+  return <div className="secscan-col">
+    <DonutChart width={22} data={severityBreakdownInfo(podvuln)} />
+    <span className="secscan-cell">
+      {
+        !isScanned(podvuln) ? <span className="text-muted">(Not scanned)</span> :
+        !hasAccess(podvuln) ? <span className="text-muted">(Unable to scan)</span> :
+        !isSupported(podvuln) ? <span className="text-muted">(Unsupported)</span> :
+        (fixables ? <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span> :
+         <span>{count.toString()} vulnerable packages</span>)
+      }
+    </span>
+  </div>;
+};
+
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6">Images Scanned</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.labels.secscan/fixables">Security Scan</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.labels.secscan/highest">Highest</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.labels.secscan/fixables">Security Scan</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6">Images Scanned</ColHead>
   <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.annotations.secscan/lastScan">Last Update</ColHead>
 </ListHeader>;
 
 const PodVulnRow = ({obj: pod}) => {
   const podvuln = makePodvuln(pod);
-  
-  const fixables = _.get(pod, 'metadata.labels.secscan/fixables');
-  const highest = _.get(pod, 'metadata.labels.secscan/highest');
-  const numHighest = _.get(pod, `metadata.labels.secscan/${highest}`);
-  const P0 = _.has(pod, 'metadata.labels.secscan/P0') ? parseInt(_.get(pod, 'metadata.labels.secscan/P0'), 10) : 0;
-  const P1 = _.has(pod, 'metadata.labels.secscan/P1') ? parseInt(_.get(pod, 'metadata.labels.secscan/P1'), 10) : 0;
-  const P2 = _.has(pod, 'metadata.labels.secscan/P2') ? parseInt(_.get(pod, 'metadata.labels.secscan/P2'), 10) : 0;
-  const P3 = _.has(pod, 'metadata.labels.secscan/P3') ? parseInt(_.get(pod, 'metadata.labels.secscan/P3'), 10) : 0;
-  const count = P0 + P1 + P2 + P3;
 
   return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceLink kind="PodVuln" name={_.get(pod, 'metadata.name')}
-        displayName={_.get(pod, 'metadata.name')}
-        namespace={_.get(pod, 'metadata.namespace')} title={_.get(pod, 'metadata.uid')} />
-    </div>
-    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-      {imagesScanned(podvuln)}
-    </div>
-    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <DonutChart width={22} data={severityBreakdownInfo(podvuln)} />
-      <span>
-        {
-          !isScanned(podvuln) ? <span className="text-muted">(Not scanned)</span> :
-          !hasAccess(podvuln) ? <span className="text-muted">(Unable to scan)</span> :
-          !isSupported(podvuln) ? <span className="text-muted">(Unsupported)</span> :
-          (fixables ? `${numHighest} ${severityMap[highest]}: ${fixables} fixables` : `${count.toString()} vulnerable packages`)
-        }
+      <span className="secscan-cell">
+        <ResourceLink kind="PodVuln" name={_.get(pod, 'metadata.name')}
+          displayName={_.get(pod, 'metadata.name')}
+          namespace={_.get(pod, 'metadata.namespace')} title={_.get(pod, 'metadata.uid')} />
       </span>
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
-      {_.get(pod, 'metadata.labels.secscan/highest', '-')}
+      <span className="secscan-cell">
+        {_.get(pod, 'metadata.labels.secscan/highest', '-')}
+      </span>
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Timestamp timestamp={isScanned(podvuln)} />
+      <SecurityScanCell podvuln={podvuln} />
+    </div>
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+      <span className="secscan-cell">
+        {imagesScanned(podvuln)}
+      </span>
+    </div>
+    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+      <span className="secscan-cell">
+        <Timestamp timestamp={isScanned(podvuln)} />
+      </span>
     </div>
   </ResourceRow>;
 };
@@ -69,7 +85,7 @@ const PodLink = ({pod}) => {
   return <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>{podname}</Link>;
 };
 
-const SubHeaderRow = ({header, href, link}) => <div className="col-md-6">{header} <a href={href}>{link}</a></div>;
+const SubHeaderRow = ({header, href, link}) => <div className="col-md-6 subheader-row">{header} <a href={href}>{link}</a></div>;
 
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
@@ -148,17 +164,6 @@ const Details = (pod) => {
 
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
-        <div className="row no-gutter">
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <DonutChart width={40} data={severityBreakdownInfo(podvuln)} />
-            <DonutChart width={50} data={severityBreakdownInfo(podvuln)} />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
         <h1 className="co-section-title">Containers</h1>
         <div className="row no-gutter">
           <div className="co-m-table-grid co-m-table-grid--bordered">
@@ -227,7 +232,7 @@ export const PodVulnsPage = props => <ListPage
   kind="Pod"
   ListComponent={PodVulnList}
   title="Security Scan Report"
-  textFilter="Filter vulnerabilities by name"
+  filterLabel="vulnerabilities by name"
   Intro={
     <SubHeaderRow
       header="All supported container images are scanned for known vulnerabilities and CVEs." 
@@ -240,10 +245,10 @@ export const PodVulnsPage = props => <ListPage
     selected: ['P0', 'P1', 'P2', 'P3'],
     numbers: CountVulnerabilityFilter,
     items: [
-      {id: 'P0', title: 'P0'},
-      {id: 'P1', title: 'P1'},
-      {id: 'P2', title: 'P2'},
-      {id: 'P3', title: 'P3'},
+      {id: 'P0', title: 'Priority/P0'},
+      {id: 'P1', title: 'Priority/P1'},
+      {id: 'P2', title: 'Priority/P2'},
+      {id: 'P3', title: 'Priority/P3'},
       {id: 'Passed', title: 'No Vulnerabilities'},
       {id: 'Fixables', title: 'Fixables'},
       {id: 'NotScanned', title: 'Not Scanned'},

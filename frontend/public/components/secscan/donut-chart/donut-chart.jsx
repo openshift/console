@@ -105,7 +105,7 @@ export class DonutChart extends React.Component {
   }
   
   render () {
-    return <span className="chart" ref={node => this.node = node}></span>;
+    return <span className="donut-chart" ref={node => this.node = node}></span>;
     //return <div className="chart" ref={node => this.node = node}></div>;
   }
 }

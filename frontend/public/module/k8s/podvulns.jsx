@@ -1,6 +1,4 @@
 
-// 0 images: []
-// 1+ images: [{ImageVuln with no features}]
 export const parsePodAnnotation = pod => {
   return _.attempt(JSON.parse.bind(null, _.get(pod, 'metadata.annotations.secscan/imageVulns')));
 };
