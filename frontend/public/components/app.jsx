@@ -12,7 +12,6 @@ import { analyticsSvc } from '../module/analytics';
 import { authSvc } from '../module/auth';
 import { k8sBasePath } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
-import { tectonicVersion } from '../module/status';
 import { registerNamespaceFriendlyPrefix, UIActions } from '../ui/ui-actions';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
@@ -92,7 +91,7 @@ store.dispatch(featureActions.detectPrometheusFlags(`${k8sBasePath}/apis/monitor
 store.dispatch(featureActions.detectMultiClusterFlags());
 store.dispatch(featureActions.detectSecurityLabellerFlags(`${k8sBasePath}/apis/extensions/v1beta1/deployments`));
 
-tectonicVersion();
+analyticsSvc.push({tier: 'tectonic'});
 
 const init = nextRoute => onRouteChange(undefined, nextRoute);
 
@@ -166,10 +165,10 @@ render((
   </Provider>
 ), document.getElementById('app'));
 
-window.onerror = function (message, source, lineno, colno) {
+window.onerror = function (message, source, lineno, colno, optError={}) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
-    analyticsSvc.error(e);
+    analyticsSvc.error(e, null,  optError.stack);
   } catch(err) {
     try {
       // eslint-disable-next-line no-console
