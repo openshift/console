@@ -55,7 +55,7 @@ const PrometheusRow = ({obj: instance}) => {
     </div>
     <div className="col-md-2 hidden-sm hidden-xs">{spec.version}</div>
     <div className="col-md-3 col-sm-4 col-xs-6">
-      <Selector selector={spec.serviceMonitorSelector} kind="Service"/>
+      <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor"/>
     </div>
   </ResourceRow>;
 };
