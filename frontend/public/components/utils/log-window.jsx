@@ -2,7 +2,7 @@ import React from 'react';
 
 import { pluralize } from './';
 
-const VSPACE = 380;
+const FUDGE_FACTOR = 70;
 
 export class LogWindow extends React.PureComponent {
   constructor(props) {
@@ -66,18 +66,13 @@ export class LogWindow extends React.PureComponent {
   }
 
   _handleResize() {
-    const toRescale = this.logContents;
-    if (toRescale) {
-      const originalHeight = toRescale.clientHeight;
-      const viewportHeight = window.innerHeight;
-
-      const targetHeight = Math.max(viewportHeight - VSPACE, 500);
-      if (targetHeight !== originalHeight) { // Saves some cycles when we're at minimum height
-        this.setState({
-          height: targetHeight
-        });
-      }
+    if (!this.scrollPane) {
+      return;
     }
+    const targetHeight = Math.floor(document.body.getBoundingClientRect().bottom - this.scrollPane.getBoundingClientRect().top - FUDGE_FACTOR);
+    this.setState({
+      height: targetHeight
+    });
   }
 
   _scrollToBottom() {
