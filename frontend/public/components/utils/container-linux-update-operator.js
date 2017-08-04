@@ -45,17 +45,17 @@ const isCheckingForUpdate = (node) => {
 };
 
 const isRebooting = (node) => {
-  const rebootInProgress =  _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-in-progress`, 'false');
+  const rebootInProgress = _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-in-progress`, 'false');
   return rebootInProgress === 'true';
 };
 
 const isPendingReboot = (node) => {
-  const rebootNeeded =  _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-needed`, 'false');
+  const rebootNeeded = _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-needed`, 'false');
   return rebootNeeded === 'true';
 };
 
 const isSoftwareUpToDate = (node) => {
-  const rebootNeeded =  _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-needed`, 'false');
+  const rebootNeeded = _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-needed`, 'false');
   return getStatus(node) === 'UPDATE_STATUS_IDLE' && rebootNeeded === 'false';
 };
 

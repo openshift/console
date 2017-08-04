@@ -32,7 +32,7 @@ const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
 // User impersonation can't use WebSockets, so let's poll more frequently
 const pollInterval = () => (isImpersonateEnabled() ? 15 : 30) * 1000;
 
-const actions =  {
+const actions = {
   [types.deleteFromList]: action_(types.deleteFromList),
   [types.addToList]: action_(types.addToList),
   [types.modifyList]: action_(types.modifyList),

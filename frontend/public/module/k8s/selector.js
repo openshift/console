@@ -9,7 +9,7 @@ const isOldFormat = selector => !selector.matchLabels && !selector.matchExpressi
   * @param {Boolean}  options.undefinedWhenEmpty
   */
 export const fromRequirements = (requirements, options) => {
-  options      = options || {};
+  options = options || {};
   const selector = {
     matchLabels:      {},
     matchExpressions: []
@@ -38,9 +38,9 @@ export const fromRequirements = (requirements, options) => {
 export const split = string => string.trim() ? string.split(/,(?![^(]*\))/) : []; // [''] -> []
 
 export const toRequirements = selector => {
-  selector             = selector || {};
-  const requirements     = [];
-  const matchLabels      = isOldFormat(selector) ? selector : selector.matchLabels;
+  selector = selector || {};
+  const requirements = [];
+  const matchLabels = isOldFormat(selector) ? selector : selector.matchLabels;
   const matchExpressions = selector.matchExpressions;
 
   Object.keys(matchLabels || {}).sort().forEach(function (k) {

@@ -26,6 +26,7 @@
     "no-debugger": 1,
     "no-else-return": "error",
     "no-global-strict": 0,
+    "no-multi-spaces": [2],
     "no-underscore-dangle": 0,
     "no-unused-vars": ["error", {"varsIgnorePattern": "React"}],
     "no-use-before-define": 1,

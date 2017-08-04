@@ -112,7 +112,7 @@ class Chart {
     const mouseTrigger = this.svg.select('.chart__mouse-trigger');
     mouseTrigger.on('mousemove', () => {
       const x0 = scales.x.invert(d3.mouse(mouseTrigger.node())[0]),
-          i  = this._bisectDate(data, x0),
+          i = this._bisectDate(data, x0),
           d0 = data[i - 1],
           d1 = data[i];
 

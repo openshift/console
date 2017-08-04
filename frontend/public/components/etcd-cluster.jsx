@@ -74,7 +74,7 @@ const EtcdClusterRow = ({obj: cluster}) => {
     </div>
     <div className="col-md-3 hidden-sm hidden-xs">
       {backup === null && <div className="text-muted">No backup policy</div>}
-      {backup && <div>{_.has(status, 'backupServiceStatus') ? <Timestamp timestamp={status.backupServiceStatus.recentBackup.creationTime}  /> : '-'}</div>}
+      {backup && <div>{_.has(status, 'backupServiceStatus') ? <Timestamp timestamp={status.backupServiceStatus.recentBackup.creationTime} /> : '-'}</div>}
     </div>
   </ResourceRow>;
 };

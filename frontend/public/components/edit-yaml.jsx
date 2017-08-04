@@ -189,7 +189,7 @@ export class EditYAML extends SafetyFirst {
     const {error, success, stale} = this.state;
     const {create} = this.props;
 
-    return <div className="yaml-editor" ref={r => this.editor = r}  style={{height: this.state.height}}>
+    return <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
       <div className="absolute-zero">
         <div className="full-width-and-height yaml-editor--flexbox">
           <div id={this.id} key={this.id} className="yaml-editor--acebox" />

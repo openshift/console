@@ -143,7 +143,7 @@ class CreateYAML_ extends SafetyFirst {
       }
     }
 
-    if (kind.kind  !== 'EtcdCluster') {
+    if (kind.kind !== 'EtcdCluster') {
       obj.kind = kind.kind;
     }
 

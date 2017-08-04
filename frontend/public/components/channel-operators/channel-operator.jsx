@@ -177,7 +177,7 @@ export class ChannelOperator extends SafetyFirst{
       return ops;
     }, []);
     const operatorCols = Math.floor(12/operators.length);
-    const channelState =  components.length === 0 ? 'Loading' : calculateChannelState(operators, primaryOperator, config);
+    const channelState = components.length === 0 ? 'Loading' : calculateChannelState(operators, primaryOperator, config);
 
     return <div>
       <Header channelState={channelState}

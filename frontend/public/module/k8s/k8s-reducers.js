@@ -5,8 +5,8 @@ import {types} from './k8s-actions';
 import {getQN} from './k8s';
 
 const moreRecent = (a, b) => {
-  const metaA  = a.get('metadata').toJSON();
-  const metaB  = b.get('metadata').toJSON();
+  const metaA = a.get('metadata').toJSON();
+  const metaB = b.get('metadata').toJSON();
   if (metaA.uid !== metaB.uid) {
     return new Date(metaA.creationTimestamp) > new Date(metaB.creationTimestamp);
   }
@@ -68,7 +68,7 @@ const loadList = (list, resources) => {
   });
 };
 
-export default (state, action)  => {
+export default (state, action) => {
   if (!state) {
     return Immutable.Map();
   }

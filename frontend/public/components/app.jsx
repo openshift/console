@@ -168,7 +168,7 @@ render((
 window.onerror = function (message, source, lineno, colno, optError={}) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
-    analyticsSvc.error(e, null,  optError.stack);
+    analyticsSvc.error(e, null, optError.stack);
   } catch(err) {
     try {
       // eslint-disable-next-line no-console
