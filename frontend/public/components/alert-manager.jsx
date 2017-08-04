@@ -89,12 +89,12 @@ export const AlertManagersDetailsPage = props => <DetailsPage
 />;
 
 const AlertManagersNameList = (props) => {
-  return <div  className="alert-manager-wrapper">
+  return <div className="alert-manager-wrapper">
     <SettingsRow>
       <SettingsLabel>AlertManager:</SettingsLabel>
       <SettingsContent>
         <div className="alert-manager-list">
-          {props.loaded ? _.map(props.data, (alertManager, i) => <div className="alert-manager-row" key={i}><ResourceLink kind="Alertmanager" name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid}/></div>) :  <LoadingInline />}
+          {props.loaded ? _.map(props.data, (alertManager, i) => <div className="alert-manager-row" key={i}><ResourceLink kind="Alertmanager" name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid}/></div>) : <LoadingInline />}
         </div>
       </SettingsContent>
     </SettingsRow>

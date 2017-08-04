@@ -95,7 +95,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
   _checkScannedPods() {
     k8s.pods.get().then((pods) => {
       let count = 0;
-      _.forEach(pods.items,  (pod) => {
+      _.forEach(pods.items, (pod) => {
         const scanned = _.get(pod, 'metadata.annotations.secscan/lastScan');
         count += scanned ? 1 : 0;
       });

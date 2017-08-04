@@ -91,7 +91,7 @@ const detectMultiClusterFlags = () => dispatch => {
 };
 
 const detectSecurityLabellerFlags = labellerDeploymentPath => dispatch => coFetchJSON(labellerDeploymentPath)
-  .then(res => setFlags(dispatch,  _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
+  .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
     () => setTimeout(() => detectSecurityLabellerFlags(labellerDeploymentPath), 5000));
 
 export const featureActions = {
@@ -104,7 +104,7 @@ export const featureActions = {
 };
 
 export const featureReducerName = 'FLAGS';
-export const featureReducers = (state, action)  => {
+export const featureReducers = (state, action) => {
   if (!state) {
     return Immutable.Map(DEFAULTS);
   }

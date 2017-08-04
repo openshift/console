@@ -1,4 +1,4 @@
-import {coFetchJSON} from  '../../co-fetch';
+import {coFetchJSON} from '../../co-fetch';
 
 const ADMIN_RESOURCES = new Set(
   ['roles', 'rolebindings', 'clusterroles', 'clusterrolebindings', 'thirdpartyresources', 'nodes', 'secrets']

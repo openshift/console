@@ -142,7 +142,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="search" name="Search" />
       <NavLink resource="events" name="Events" />
       <NavLink href="/prometheus" target="_blank" name="Prometheus" required="PROMETHEUS" />
-      <NavLink href="/alertmanager"  target="_blank" name="Prometheus Alerts" required="PROMETHEUS" />
+      <NavLink href="/alertmanager" target="_blank" name="Prometheus Alerts" required="PROMETHEUS" />
     </NavSection>
 
     <NavSection text="Administration" icon="fa-cog">

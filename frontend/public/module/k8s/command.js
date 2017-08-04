@@ -14,7 +14,7 @@ export const fromArgs = args => {
 
     const sqi = arg.indexOf('\'');      // possible single quote position
     const dqi = arg.indexOf('"');       // possible double quote position
-    const qk  = sqi > dqi ? '"' : '\''; // whatever quote comes first, we use opposite
+    const qk = sqi > dqi ? '"' : '\''; // whatever quote comes first, we use opposite
 
     return qk + arg + qk;
   }).join(' ');
@@ -25,9 +25,9 @@ export const fromArgs = args => {
   * @return {String[]}
   */
 export const toArgs = cmd => {
-  const parts    = cmd.split(' ');
-  const args     = [];
-  let quoteKind  = null;
+  const parts = cmd.split(' ');
+  const args = [];
+  let quoteKind = null;
   let quotedArgs = [];
 
   parts.forEach(function (part) {

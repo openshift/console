@@ -57,7 +57,7 @@ const generateSecretData = (formData) => {
     auths: {}
   };
 
-  let authParts  = [];
+  let authParts = [];
 
   if (_.trim(formData.username).length >= 1) {
     authParts.push(formData.username);

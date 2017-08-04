@@ -61,7 +61,7 @@ class ClusterPicker_ extends SafetyFirst {
       activeClusterId = clusters[0].metadata.uid;
     }
     localStorage.setItem('active-cluster-id', activeClusterId);
-    return  this.setState({ activeClusterId });
+    return this.setState({ activeClusterId });
   }
 
   _redirectToClusters() {
@@ -98,6 +98,6 @@ class ClusterPicker_ extends SafetyFirst {
         </div>
       </div> ;
     }
-    return  null;
+    return null;
   }
 });
