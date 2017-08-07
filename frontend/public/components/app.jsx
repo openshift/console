@@ -53,7 +53,7 @@ const App = ({children}) => <div className="co-container">
 
 const onRouteChange = (prevRoute, nextRoute) => {
   if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
-    window.location = window.SERVER_FLAGS.loginURL;
+    authSvc.login();
     return;
   }
   if (nextRoute) {
