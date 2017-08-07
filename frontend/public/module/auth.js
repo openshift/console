@@ -1,62 +1,48 @@
-import _ from 'lodash';
-import Cookies from 'js-cookie';
+const loginState = key => localStorage.getItem(key);
 
-import {coFetchJSON} from '../co-fetch.js';
+const loginStateItem = key => loginState(key);
 
-const loginState = () => {
-  const state = Cookies.get('state');
-  if (!state) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(window.atob(state));
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error.stack);
-    return null;
-  }
-};
-
-const decodeUTF8 = utf8 => {
-  if (!_.isString(utf8)) {
-    return utf8;
-  }
-  // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa#Unicode_Strings
-  try {
-    return decodeURIComponent(escape(utf8));
-  } catch (ignored) {
-    return utf8;
-  }
-};
-
-const loginStateItem = key => decodeUTF8(_.get(loginState(), key));
-
+const bearerToken = 'bearerToken';
+const userID = 'userID';
+const name = 'name';
+const email = 'email';
 
 export const authSvc = {
-  state: loginState,
+  getToken: () => localStorage.getItem(bearerToken),
+  userID: () => loginStateItem(userID) && atob(loginStateItem(userID)),
+  name: () => loginStateItem(name),
+  email: () => loginStateItem(email),
 
-  userID: () => loginStateItem('userID'),
-  name: () => loginStateItem('name'),
-  email: () => loginStateItem('email'),
+  logout: () => {
+    [userID, name, email, bearerToken].forEach(key => {
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      }
+    });
 
-  logout: (prev) => {
-    let url = window.SERVER_FLAGS.loginURL;
-    return coFetchJSON.post(window.SERVER_FLAGS.logoutURL)
-      .then(() => {
-        if (prev) {
-          url += `?prev=${prev}`;
-        }
-        window.location.href = url;
-      })
-      .catch(() => {
-        // Avoid redirect loops
-        if (window.location.href.indexOf(window.SERVER_FLAGS.loginErrorURL) === -1) {
-          window.location.href = `${window.SERVER_FLAGS.loginErrorURL}?error_type=auth&error=logout_error`;
-        }
-      });
+    window.location.href = window.SERVER_FLAGS.loginURL;
   },
 
   // Infer user is logged-in by presence of valid state cookie.
-  isLoggedIn: () => !!loginState(),
+  isLoggedIn: () => {
+    const token = authSvc.getToken();
+    if (!token) {
+      return false;
+    }
+    const split = token.split('.');
+    if (split.length !== 3) {
+      return false;
+    }
+    const middle = split[1];
+
+    try {
+      JSON.parse(atob(middle));
+    } catch (ignored) {
+      return false;
+    }
+    return true;
+  }
 };

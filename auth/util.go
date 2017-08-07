@@ -1,10 +1,7 @@
 package auth
 
 import (
-	"net/http"
 	"time"
-
-	"github.com/coreos/pkg/httputil"
 
 	"github.com/coreos/go-oidc/jose"
 	"github.com/coreos/go-oidc/oidc"
@@ -43,8 +40,4 @@ func jwtVerifier(oidcClient *oidc.Client) tokenVerifier {
 
 		return &jwt, nil
 	}
-}
-
-func deleteLoginCookies(w http.ResponseWriter, r *http.Request) {
-	httputil.DeleteCookies(w, cookieNameToken, cookieNameLoginState)
 }

@@ -116,7 +116,7 @@ func TestProxyWebsocket(t *testing.T) {
 	}
 	defer closer()
 
-	ws, err := websocket.Dial(toWSScheme(proxyURL)+"/proxy/lower", "", "http://localhost")
+	ws, err := websocket.Dial(toWSScheme(proxyURL)+"/proxy/lower", "base64.binary.k8s.io", "http://localhost")
 	if err != nil {
 		t.Fatalf("error connecting to /proxy/lower as websocket: %v", err)
 		return

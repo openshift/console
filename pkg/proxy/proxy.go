@@ -115,12 +115,27 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.URL.Scheme = "ws"
 	}
 
+	subProtocol := ""
+	proxiedHeader := make(http.Header, len(r.Header))
+	for key, value := range r.Header {
+		if key != "Sec-Websocket-Protocol" {
+			// Do not proxy the subprotocol to the API server because k8s does not understand it yet
+			proxiedHeader.Set(key, r.Header.Get(key))
+			continue
+		}
+
+		for _, protocol := range value {
+			if protocol == "base64.binary.k8s.io" {
+				subProtocol = "base64.binary.k8s.io"
+			}
+		}
+	}
+
 	config := &websocket.Config{
 		Location:  r.URL,
 		Version:   websocket.ProtocolVersionHybi13,
 		TlsConfig: p.config.TLSClientConfig,
-		Header:    r.Header,
-
+		Header:    proxiedHeader,
 		// NOTE (ericchiang): K8s might not enforce this but websockets requests are
 		// required to supply an origin.
 		Origin: &url.URL{Scheme: "http", Host: "localhost"},
@@ -134,7 +149,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer backend.Close()
 
-	websocket.Handler(func(frontend *websocket.Conn) {
+	h := websocket.Handler(func(frontend *websocket.Conn) {
 		defer frontend.Close()
 
 		errc := make(chan error, 2)
@@ -154,7 +169,19 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// Only wait for a single error and let the defers close both connections.
 		<-errc
 
-	}).ServeHTTP(w, r)
+	})
+	// We must reply with support for a given subprotocol or the client will bail
+	handshaker := func(config *websocket.Config, req *http.Request) (err error) {
+		if subProtocol != "" {
+			config.Protocol = []string{subProtocol}
+		}
+		return nil
+	}
+	s := websocket.Server{
+		Handler:   h,
+		Handshake: handshaker,
+	}
+	s.ServeHTTP(w, r)
 }
 
 func copyFrames(dest, src *websocket.Conn) error {

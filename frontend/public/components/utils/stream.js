@@ -1,3 +1,7 @@
+import { authSvc } from '../../module/auth';
+
+const token = authSvc.getToken();
+
 export const stream = (url, loadStart, notify) => {
   const xhr = new XMLHttpRequest();
   let offset = 0;
@@ -39,6 +43,10 @@ export const stream = (url, loadStart, notify) => {
     });
 
     xhr.open('GET', url, true);
+
+    if (token) {
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
     xhr.send();
   });
 

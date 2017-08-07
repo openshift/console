@@ -2,11 +2,10 @@
  * @fileOverview
  * WebSocket factory and utility wrapper.
  *
- * TODO(sym3tri):
- *    - disconnect/reconnect when tab loses/gains focus
- *    - support for default options.
  */
 /* eslint-disable no-console */
+
+import { authSvc } from './auth';
 
 const wsCache = {};
 
@@ -150,11 +149,20 @@ WebSocketWrapper.prototype._reconnect = function() {
   this._connectionAttempt = setTimeout(attempt, delay);
 };
 
+const token = authSvc.getToken();
+
 WebSocketWrapper.prototype._connect = function() {
   const that = this;
   this._state = 'init';
   this._buffer = [];
-  this.ws = new WebSocket(this.url);
+  const auth = [];
+  if (token) {
+    // https://github.com/kubernetes/kubernetes/pull/47740
+    auth.push(`base64url.bearer.authorization.k8s.io.${token}`);
+    auth.push('base64.binary.k8s.io');
+  }
+  this.ws = new WebSocket(this.url, auth);
+
   this.ws.onopen = function() {
     console.log('websocket open: ', that.id);
     that._state = 'open';

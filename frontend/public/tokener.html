@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Tectonic Console</title>
+    <script type="text/javascript">
+      // eslint-disable-next-line no-var
+      var json = [[.]];
+      try {
+        ['exp', 'email', 'name', 'userID', 'bearerToken'].forEach(function (key) {
+          localStorage.setItem(key, json[key]);
+        });
+        window.location = json.loginSuccessURL;
+      } catch (e) {
+        console.error(e);
+        document.body.append('localStorage must be enabled to access Tectonic Console:');
+        document.body.append(e.message || e.toString());
+      }
+    </script>
+  </head>
+  <body>
+    <noscript>JavaScript must be enabled to access Tectonic Console.</noscript>
+  </body>
+</html>

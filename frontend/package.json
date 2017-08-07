@@ -30,7 +30,6 @@
     "fuzzysearch": "1.0.x",
     "history": "3.2.1",
     "immutable": "3.8.x",
-    "js-cookie": "2.1.x",
     "js-yaml": "3.x",
     "lodash": "4.x",
     "moment": "2.x",
