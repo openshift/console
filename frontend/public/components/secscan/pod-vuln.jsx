@@ -89,7 +89,7 @@ const SubHeaderRow = ({header, href, link}) => <div className="col-md-6 subheade
 
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
-    <a href={vuln.link} target="_blank">{vuln.name}</a>
+    <a href={vuln.Link} target="_blank">{vuln.Name}</a>
   </span>;
 };
 
@@ -108,13 +108,13 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
       <div className="col-sm-2 col-xs-4">
         <VulnLink vuln={vuln} />
       </div>
-      <div className="col-sm-1 hidden-xs">{vuln.severity}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">{feature.name}</div>
-      <div className="col-md-2 col-sm-2 hidden-xs">{feature.version}</div>
-      <div className="col-md-2 col-sm-2 hidden-xs">{vuln.fixedby}</div>
-      <Overflow className="col-sm-2 col-xs-8" value={imgvuln.image} />
+      <div className="col-sm-1 hidden-xs">{vuln.Severity}</div>
+      <div className="col-md-1 col-sm-2 hidden-xs">{feature.Name}</div>
+      <div className="col-md-2 col-sm-2 hidden-xs">{feature.Version}</div>
+      <div className="col-md-2 col-sm-2 hidden-xs">{vuln.FixedBy}</div>
+      <Overflow className="col-sm-2 col-xs-8" value={imgvuln.Image} />
       <div className="col-md-2 hidden-sm hidden-xs">
-        <ContainerLink podvuln={podvuln} name={imgvuln.container} />
+        <ContainerLink podvuln={podvuln} name={imgvuln.Container} />
       </div>
     </div>
   </div>;
@@ -201,8 +201,8 @@ const Details = (pod) => {
             <div className="co-m-table-grid__body">              
               {
                 podvuln.imagevulns.map((imgvuln) =>
-                  imgvuln.features.map((feature) =>
-                    feature.vulnerabilities.map((vuln, i) =>
+                  imgvuln.Features.map((feature) =>
+                    feature.Vulnerabilities.map((vuln, i) =>
                       <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
                     )
                   )

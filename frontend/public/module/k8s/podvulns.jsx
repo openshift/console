@@ -33,7 +33,7 @@ export const hasAccess = podvuln => {
 //   - Don't have access to the image. (e.g org permissions in Quay)
 export const isSupported = podvuln => {
   return hasAccess(podvuln) ? _.every(
-    _.map(podvuln.imagevulns, (imgvuln) => _.has(imgvuln, 'features')),
+    _.map(podvuln.imagevulns, (imgvuln) => _.has(imgvuln, 'Features')),
     Boolean) : false;
 };
 
@@ -109,14 +109,14 @@ export const severityBreakdownInfo = (podvuln) => {
   let vulns = [];
 
   _.map(_.get(podvuln, 'imagevulns', []), (imagevuln) =>
-    _.map(_.get(imagevuln, 'features', []), (feature) => {
-      _.map(_.get(feature, 'vulnerabilities', []), (vulnerability) => {
+    _.map(_.get(imagevuln, 'Features', []), (feature) => {
+      _.map(_.get(feature, 'Vulnerabilities', []), (vulnerability) => {
         vulns.push(vulnerability);
       });
     })
   );
 
-  const severities = _.groupBy(vulns, (o) => o.severity);
+  const severities = _.groupBy(vulns, (o) => o.Severity);
   _.forOwn(severities, (v, k) => {
     if (k === 'High') {
       severityBreakdown.push({'index': 0, 'value': v.length, 'color': '#D64456'});
