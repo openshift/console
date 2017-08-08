@@ -22,8 +22,17 @@ export const authSvc = {
         console.error(e);
       }
     });
+    authSvc.login();
+  },
 
-    window.location.href = window.SERVER_FLAGS.loginURL;
+  login: () => {
+    try {
+      localStorage.setItem('next', window.location.pathname);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
+    window.location = window.SERVER_FLAGS.loginURL;
   },
 
   // Infer user is logged-in by presence of valid state cookie.

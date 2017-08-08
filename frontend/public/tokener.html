@@ -5,15 +5,25 @@
     <script type="text/javascript">
       // eslint-disable-next-line no-var
       var json = [[.]];
+      var error;
       try {
         ['exp', 'email', 'name', 'userID', 'bearerToken'].forEach(function (key) {
           localStorage.setItem(key, json[key]);
         });
-        window.location = json.loginSuccessURL;
       } catch (e) {
+        error = e;
         console.error(e);
         document.body.append('localStorage must be enabled to access Tectonic Console:');
         document.body.append(e.message || e.toString());
+      }
+      if (!error) {
+        var next = localStorage.getItem('next') || '';
+        if (next) {
+          localStorage.removeItem('next');
+          window.location = json.loginSuccessURL + next;
+        } else {
+          window.location = json.loginSuccessURL;
+        }
       }
     </script>
   </head>
