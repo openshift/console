@@ -3,6 +3,7 @@ import Helmet from 'react-helmet';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
+import { StartGuide } from './start-guide';
 import classNames from 'classnames';
 
 const tectonicHealthMsgs = {
@@ -77,8 +78,9 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
 
 export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
-    <Helmet title="Cluster Status" />
     <div className="co-p-cluster__body">
+      <StartGuide />
+      <Helmet title="Cluster Status" />
       <NavTitle title="Cluster Status" />
 
       <div className="cluster-overview">
