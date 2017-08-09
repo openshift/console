@@ -1,4 +1,4 @@
-import { getContainerStatus, isEnvVarEmpty, isVolumeMountEmpty, isPortEmpty } from '../public/module/k8s/docker';
+import { getContainerStatus } from '../public/module/k8s/docker';
 
 describe('k8sDocker', () => {
   describe('#getContainerStatus', () => {
@@ -36,44 +36,6 @@ describe('k8sDocker', () => {
         // container name
         '9242B9F6-A50A-4330-8C0E-B18EA4672A89'
       )).toEqual({name: '9242B9F6-A50A-4330-8C0E-B18EA4672A89', status: 'running'});
-    });
-  });
-
-  describe('#isEnvVarEmpty', () => {
-    it('returns false when env var has non-falsy name', () => {
-      expect(isEnvVarEmpty({name: 'PORT', value: 3000})).toEqual(false);
-    });
-
-    it('returns true when env var has falsy name', () => {
-      expect(isEnvVarEmpty({name: '', value: 3000})).toEqual(true);
-    });
-  });
-
-  describe('#isVolumeMountEmpty', () => {
-    it('returns false when volume mount has both non-falsy name and mount path', () => {
-      expect(isVolumeMountEmpty({name: 'grafana', mountPath: '/var/lib/grafana'})).toEqual(false);
-    });
-
-    it('returns true when volume mount has falsy name', () => {
-      expect(isVolumeMountEmpty({name: '', mountPath: '/var/lib/grafana'})).toEqual(true);
-    });
-
-    it('returns true when volume mount has falsy mount path', () => {
-      expect(isVolumeMountEmpty({name: 'grafana', mountPath: ''})).toEqual(true);
-    });
-  });
-
-  describe('#isPortEmpty', () => {
-    it('returns false when port has both non-falsy name and container port', () => {
-      expect(isPortEmpty({name: 'HTTP', containerPort: 80})).toEqual(false);
-    });
-
-    it('returns true when port has falsy name', () => {
-      expect(isPortEmpty({name: '', containerPort: 80})).toEqual(true);
-    });
-
-    it('returns true when port has nully container port', () => {
-      expect(isPortEmpty({name: 'HTTP', containerPort: null})).toEqual(true);
     });
   });
 });
