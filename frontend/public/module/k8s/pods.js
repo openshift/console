@@ -2,8 +2,6 @@ import * as k8sDocker from './docker';
 import {k8sEnum} from './enum';
 import {util} from './util';
 
-const defaultRestartPolicy = _.find(k8sEnum.RestartPolicy, o => o.default);
-
 export const clean = pod => {
   util.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
   util.nullifyEmpty(pod.spec, ['volumes']);
@@ -17,23 +15,6 @@ export const clean = pod => {
 const getRestartPolicy = pod => _.find(k8sEnum.RestartPolicy, {id: _.get(pod, 'spec.restartPolicy')});
 
 export const getRestartPolicyLabel = pod => _.get(getRestartPolicy(pod), 'label', '');
-
-export const getEmpty = ns => {
-  return {
-    metadata: {
-      annotations: [],
-      labels: [],
-      name: null,
-      namespace: ns || k8sEnum.DefaultNS,
-    },
-    spec: {
-      containers: [],
-      dnsPolicy: 'ClusterFirst',
-      restartPolicy: defaultRestartPolicy.id,
-      volumes: [],
-    },
-  };
-};
 
 export const getVolumeType = volume => {
   if (!volume) {

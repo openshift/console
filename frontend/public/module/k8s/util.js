@@ -1,10 +1,6 @@
 import _ from 'lodash';
 
-import {k8sKinds} from './enum';
-
 export const util = {
-  getKindEnumById: id => _.find(k8sKinds, {id: id}),
-
   // Set all named properties of object to null if empty.
   nullifyEmpty: (obj, props) => {
     props.forEach(function(p) {

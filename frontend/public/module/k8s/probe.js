@@ -162,46 +162,6 @@ export const mapLifecycleConfigToFields = function(c) {
   return f;
 };
 
-export const mapFieldsToLifecycleConfig = function(f) {
-  const c = {};
-  if (_.isEmpty(f.postStart.cmd) && _.isEmpty(f.preStop.cmd)) {
-    return null;
-  }
-
-  if (!_.isEmpty(f.postStart.cmd)) {
-    c.postStart = {};
-    c.postStart[f.postStart.type] = parseCmd(f.postStart.type, f.postStart.cmd);
-  }
-
-  if (!_.isEmpty(f.preStop.cmd)) {
-    c.preStop = {};
-    c.preStop[f.preStop.type] = parseCmd(f.preStop.type, f.preStop.cmd);
-  }
-
-  if (_.isEmpty(c)) {
-    return null;
-  }
-
-  return c;
-};
-
-export const mapFieldsToLivenessProbe = function(f) {
-  if (f.cmd == null || f.cmd === '') {
-    return null;
-  }
-
-  const c = {};
-  c[f.type] = parseCmd(f.type, f.cmd);
-  const delay = parseInt(f.initialDelaySeconds, 10);
-
-  // NaN is a number :/
-  if (_.isNumber(delay) && !_.isNaN(delay)) {
-    c.initialDelaySeconds = f.initialDelaySeconds;
-  }
-
-  return c;
-};
-
 export const mapLivenessProbeToFields = function(c, podIP) {
   const f = {
     initialDelaySeconds: '',
