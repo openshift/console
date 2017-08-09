@@ -53,7 +53,7 @@
     "babelify": "7.x",
     "browserify": "13.x",
     "del": "2.x",
-    "eslint": "3.x",
+    "eslint": "4.x",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-react": "6.x",
     "gulp": "3.9.x",
