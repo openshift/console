@@ -140,6 +140,25 @@ $cluster-updates-width: 800px;
   }
 }
 
+.co-cluster-updates__operator-details {
+  padding-left: 25px;
+  button {
+    padding-top: 0;
+  }
+}
+
+.co-cluster-updates__operator-list {
+  color: #999;
+  padding: 10px 0 0 15px;
+  li {
+    padding-bottom: 10px;
+  }
+}
+
+.co-cluster-updates__operator-show-details {
+  padding: 0 0 20px 0;
+}
+
 .co-cluster-updates__operator-logs {
   margin-bottom: 20px;
 }
@@ -176,11 +195,7 @@ $cluster-updates-width: 800px;
 }
 
 .co-cluster-updates__operator-ts-component {
-  margin-bottom: 10px;
-
-  &:last-of-type {
-    margin-bottom: 0;
-  }
+  margin-top: 10px;
 }
 
 .co-cluster-updates__operator-ts-step {
@@ -220,4 +235,19 @@ $cluster-updates-width: 800px;
       width: 250px;
     }
   }
+}
+
+.co-cluster-updates__sec-appversion-ts {
+  border-left: 1px solid $cluster-updates-border;
+  border-image: linear-gradient(#fff, #ccc, #fff);
+  border-image-slice: 1;
+}
+
+.co-cluster-updates__operator-text--running {
+  border-bottom: 1px solid $cluster-updates-border;
+  padding-bottom: 5px;
+}
+
+.co-cluster-updates__appversion-ts {
+  padding-right: 0;
 }

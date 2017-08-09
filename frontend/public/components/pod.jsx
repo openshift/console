@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions } from '../module/k8s/pods';
+import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions, getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
-import { getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
