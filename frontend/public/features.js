@@ -109,16 +109,14 @@ export const featureReducers = (state, action) => {
     return Immutable.Map(DEFAULTS);
   }
 
-  switch (action.type) {
-    case SET_FLAGS:
-      _.each(action.flags, (v, k) => {
-        if (!FLAGS[k]) {
-          throw new Error(`unknown key for reducer ${k}`);
-        }
-      });
-      return state.merge(action.flags);
+  if (action.type === SET_FLAGS) {
+    _.each(action.flags, (v, k) => {
+      if (!FLAGS[k]) {
+        throw new Error(`unknown key for reducer ${k}`);
+      }
+    });
+    return state.merge(action.flags);
   }
-
   return state;
 };
 

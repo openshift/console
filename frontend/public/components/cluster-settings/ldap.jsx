@@ -246,6 +246,8 @@ const reduxToConnector = data => {
       // delete config[RootCA];
       config.insecureNoSSL = true;
       break;
+    default:
+      break;
   }
 
   delete connector[SSLType];

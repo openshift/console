@@ -291,7 +291,7 @@ class BaseEditRoleBinding_ extends SafetyFirst {
     const kind = e.target.value;
     const patch = {kind};
     if (kind === 'ClusterRoleBinding') {
-      patch['metadata'] = {namespace: null};
+      patch.metadata = {namespace: null};
     }
     this.setData(patch);
   }
