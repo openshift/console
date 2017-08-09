@@ -50,8 +50,8 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
   <div className="col-xs-5">
     {
       _.isEmpty(np.spec.podSelector) ?
-      <Link to={`ns/${np.metadata.namespace}/search?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
-      <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
+        <Link to={`ns/${np.metadata.namespace}/search?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
+        <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
     }
   </div>
 </div>;
@@ -106,7 +106,7 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
     </div>
     <div className="col-xs-3">
       {
-       _.map(ingress.ports, (port, i) => <p key={i}>{port.protocol}/{port.port}</p>)
+        _.map(ingress.ports, (port, i) => <p key={i}>{port.protocol}/{port.port}</p>)
       }
     </div>
   </div>;

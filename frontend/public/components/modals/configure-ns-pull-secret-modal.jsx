@@ -188,15 +188,15 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           <div className="col-xs-3">
             <label htmlFor="namespace-pull-secret-name">Secret Name:</label>
           </div>
-            { pullSecret ?
-              <div className="col-xs-9">
-                <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
+          { pullSecret ?
+            <div className="col-xs-9">
+              <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
                 &nbsp;{_.get(pullSecret, 'metadata.name')}
-              </div> : <div className="col-xs-9">
-                <input type="text" className="form-control" id="namespace-pull-secret-name" required />
-                <p className="help-block text-muted">Friendly name to help you manage this in the future</p>
-              </div>
-            }
+            </div> : <div className="col-xs-9">
+              <input type="text" className="form-control" id="namespace-pull-secret-name" required />
+              <p className="help-block text-muted">Friendly name to help you manage this in the future</p>
+            </div>
+          }
         </div>
 
         <div className="row co-m-form-row form-group">
@@ -258,29 +258,29 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <input type="text" defaultValue={existingData.password} className="form-control" id="namespace-pull-secret-password" required />
             </div>
           </div>
-      </div> }
+        </div> }
 
-      { this.state.method === 'upload' && <div>
-        <div className="row co-m-form-row">
-          <div className="col-xs-3">
-            <label htmlFor="namespace-pull-secret-file">File Upload:</label>
+        { this.state.method === 'upload' && <div>
+          <div className="row co-m-form-row">
+            <div className="col-xs-3">
+              <label htmlFor="namespace-pull-secret-file">File Upload:</label>
+            </div>
+            <div className="col-xs-9">
+              <input type="file" id="namespace-pull-secret-file" onChange={this._onFileChange} />
+              <p className="help-block etext-muted">Properly configured Docker config file in JSON format. Will be base64 encoded after upload.</p>
+            </div>
           </div>
-          <div className="col-xs-9">
-            <input type="file" id="namespace-pull-secret-file" onChange={this._onFileChange} />
-            <p className="help-block etext-muted">Properly configured Docker config file in JSON format. Will be base64 encoded after upload.</p>
-          </div>
-        </div>
-        { this.state.invalidJson || existingData.invalidJson && <div className="row co-m-form-row">
-          <div className="col-xs-9 col-sm-offset-3">
-            <div className="co-m-message co-m-message--error">Invalid format. Uploaded file is not properly formatted json.</div>
-          </div>
+          { this.state.invalidJson || existingData.invalidJson && <div className="row co-m-form-row">
+            <div className="col-xs-9 col-sm-offset-3">
+              <div className="co-m-message co-m-message--error">Invalid format. Uploaded file is not properly formatted json.</div>
+            </div>
+          </div> }
+          { this.state.fileData &&<div className="row co-m-form-row">
+            <div className="col-xs-9 col-sm-offset-3">
+              <pre className="co-pre-wrap">{this.state.fileData}</pre>
+            </div>
+          </div> }
         </div> }
-        { this.state.fileData &&<div className="row co-m-form-row">
-          <div className="col-xs-9 col-sm-offset-3">
-            <pre className="co-pre-wrap">{this.state.fileData}</pre>
-          </div>
-        </div> }
-      </div> }
 
       </ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save Secret" cancel={this._cancel} />

@@ -130,12 +130,12 @@ export class TaskStatus extends React.Component {
         </div>
       </div>
       { reason && !this.props.isPrimaryComponent && <div className="co-cluster-updates__operator-ts-error-msg-link">
-          <a onClick={() => {
-            this.setState({isErrorMsgVisible: !this.state.isErrorMsgVisible});
-          }}>
-            {this.state.isErrorMsgVisible ? 'Hide Failed Reason' : 'Show Failed Reason'}
-          </a>
-        </div>
+        <a onClick={() => {
+          this.setState({isErrorMsgVisible: !this.state.isErrorMsgVisible});
+        }}>
+          {this.state.isErrorMsgVisible ? 'Hide Failed Reason' : 'Show Failed Reason'}
+        </a>
+      </div>
       }
       { reason && !this.props.isPrimaryComponent && this.state.isErrorMsgVisible && <div className="co-cluster-updates__operator-ts-error-msg">{reason}</div> }
     </div>;

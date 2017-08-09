@@ -123,7 +123,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                 </div>
               </div>
             </RadioInput>
-           </div>
+          </div>
 
           <div className="col-sm-12">
             <RadioInput

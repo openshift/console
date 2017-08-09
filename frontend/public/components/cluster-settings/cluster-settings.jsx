@@ -16,14 +16,14 @@ export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3">
 export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9">{children}</div>;
 
 export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES, FLAGS.PROMETHEUS)(
-class ClusterSettingsPage_ extends SafetyFirst {
-  render() {
-    const { CLUSTER_UPDATES, PROMETHEUS } = this.props.flags;
+  class ClusterSettingsPage_ extends SafetyFirst {
+    render() {
+      const { CLUSTER_UPDATES, PROMETHEUS } = this.props.flags;
 
-    return <div className="co-p-cluster">
-      <Helmet title="Cluster" />
-      <div className="co-p-cluster__body">
-        <NavTitle title="Cluster Settings" />
+      return <div className="co-p-cluster">
+        <Helmet title="Cluster" />
+        <div className="co-p-cluster__body">
+          <NavTitle title="Cluster Settings" />
 
           <div>
             {/*TODO: nesting inside an extra <div> to get rid of the bottom border...*/}
@@ -34,15 +34,15 @@ class ClusterSettingsPage_ extends SafetyFirst {
               </div>
             </div>
           </div>
-        <div className="co-m-pane__body">
-          <h1 className="co-p-cluster--heading">General</h1>
-          <LicenseSetting />
-          <LDAPSetting />
-          <CertsInfoContainer />
-          {PROMETHEUS && <AlertManagersListContainer />}
+          <div className="co-m-pane__body">
+            <h1 className="co-p-cluster--heading">General</h1>
+            <LicenseSetting />
+            <LDAPSetting />
+            <CertsInfoContainer />
+            {PROMETHEUS && <AlertManagersListContainer />}
+          </div>
         </div>
-      </div>
-      <DocumentationSidebar />
-    </div>;
-  }
-});
+        <DocumentationSidebar />
+      </div>;
+    }
+  });

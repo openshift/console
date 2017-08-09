@@ -190,17 +190,17 @@ const Steps = [
 const Help = ({children}) => <div><small className="text-muted">{children}</small></div>;
 
 const Row = ({children, name, label}) =>
-<div className="row co-m-form-row">
-  <div className="col-sm-2">
-    {label
-      ? <label className="control-label" htmlFor={name}>{label}:</label>
-      : <div className="col-sm-3 control-label"></div>
-    }
-  </div>
-  <div className="co-m-form-col col-sm-10">
-    {children}
-  </div>
-</div>;
+  <div className="row co-m-form-row">
+    <div className="col-sm-2">
+      {label
+        ? <label className="control-label" htmlFor={name}>{label}:</label>
+        : <div className="col-sm-3 control-label"></div>
+      }
+    </div>
+    <div className="co-m-form-col col-sm-10">
+      {children}
+    </div>
+  </div>;
 
 const FieldRow = field => {
   const component = field.component || 'input';
@@ -322,240 +322,240 @@ const LDAPs = reduxForm({
     return errs;
   },
 })(
-class LDAPs extends SafetyFirst {
-  constructor(props) {
-    super(props);
-    this.state = {
-      stateMachine: STATES.untested,
-      configDotYaml: null,
-      validationData: null,
-      validationError: null,
-      loadError: null,
-      tectonicIdentityConfig: null,
-      populated: {},
-    };
-  }
-
-  componentWillReceiveProps({error}) {
-    const { validatedVersion } = this.state;
-    if (validatedVersion && validatedVersion !== error) {
-      this.setState({stateMachine: STATES.untested, validationData: null, validationError: null});
-    }
-  }
-
-  componentDidMount() {
-    super.componentDidMount();
-    k8s.configmaps.get('tectonic-identity', 'tectonic-system')
-    .then(d => {
-      const configDotYaml = safeLoad(d.data['config.yaml']) || {};
-      const connectorIndex = _.findIndex(configDotYaml.connectors, connector => connector.type === 'ldap' && connector.id === 'tectonic-ldap');
-      this.setState({configDotYaml, connectorIndex, loadError: null, tectonicIdentityConfig: d});
-      if (connectorIndex === -1) {
-        return;
-      }
-      const formData = connectorToRedux(configDotYaml.connectors[connectorIndex]);
-      if (_.isEmpty(formData)) {
-        return;
-      }
-      this.props.initialize(formData);
-    })
-    .catch(loadError => this.setState({loadError}));
-  }
-  downloadBackup (e) {
-    e.preventDefault();
-    const blob = new Blob([safeDump(this.state.tectonicIdentityConfig)], { type: 'text/yaml;charset=utf-8' });
-    saveAs(blob, 'tectonic-identity.yaml');
-  }
-
-  downloadNewConfig (e) {
-    e.preventDefault();
-
-    const formData = getFormValues(LDAPFormName)(store.getState());
-
-    // only used for LDAP Testing
-    delete formData[Username];
-    delete formData[Password];
-
-    const { configDotYaml, connectorIndex } = this.state;
-    const newYaml = _.cloneDeep(configDotYaml);
-
-    let connector;
-    if (connectorIndex >= 0) {
-      connector = newYaml.connectors[connectorIndex];
-    } else {
-      newYaml.connectors = newYaml.connectors || [];
-      connector = {name: 'ldap', id: 'tectonic-ldap', type: 'ldap'};
-      newYaml.connectors.push(connector);
+  class LDAPs extends SafetyFirst {
+    constructor(props) {
+      super(props);
+      this.state = {
+        stateMachine: STATES.untested,
+        configDotYaml: null,
+        validationData: null,
+        validationError: null,
+        loadError: null,
+        tectonicIdentityConfig: null,
+        populated: {},
+      };
     }
 
-    if (connector.config) {
+    componentWillReceiveProps({error}) {
+      const { validatedVersion } = this.state;
+      if (validatedVersion && validatedVersion !== error) {
+        this.setState({stateMachine: STATES.untested, validationData: null, validationError: null});
+      }
+    }
+
+    componentDidMount() {
+      super.componentDidMount();
+      k8s.configmaps.get('tectonic-identity', 'tectonic-system')
+        .then(d => {
+          const configDotYaml = safeLoad(d.data['config.yaml']) || {};
+          const connectorIndex = _.findIndex(configDotYaml.connectors, connector => connector.type === 'ldap' && connector.id === 'tectonic-ldap');
+          this.setState({configDotYaml, connectorIndex, loadError: null, tectonicIdentityConfig: d});
+          if (connectorIndex === -1) {
+            return;
+          }
+          const formData = connectorToRedux(configDotYaml.connectors[connectorIndex]);
+          if (_.isEmpty(formData)) {
+            return;
+          }
+          this.props.initialize(formData);
+        })
+        .catch(loadError => this.setState({loadError}));
+    }
+    downloadBackup (e) {
+      e.preventDefault();
+      const blob = new Blob([safeDump(this.state.tectonicIdentityConfig)], { type: 'text/yaml;charset=utf-8' });
+      saveAs(blob, 'tectonic-identity.yaml');
+    }
+
+    downloadNewConfig (e) {
+      e.preventDefault();
+
+      const formData = getFormValues(LDAPFormName)(store.getState());
+
+      // only used for LDAP Testing
+      delete formData[Username];
+      delete formData[Password];
+
+      const { configDotYaml, connectorIndex } = this.state;
+      const newYaml = _.cloneDeep(configDotYaml);
+
+      let connector;
+      if (connectorIndex >= 0) {
+        connector = newYaml.connectors[connectorIndex];
+      } else {
+        newYaml.connectors = newYaml.connectors || [];
+        connector = {name: 'ldap', id: 'tectonic-ldap', type: 'ldap'};
+        newYaml.connectors.push(connector);
+      }
+
+      if (connector.config) {
       // a merge won't stomp on these keys :-/
-      delete connector.config.insecureSkipVerify;
-      delete connector.config.insecureNoSSL;
+        delete connector.config.insecureSkipVerify;
+        delete connector.config.insecureNoSSL;
+      }
+
+      _.merge(connector, reduxToConnector(formData));
+
+      const yaml = safeDump(newYaml, null, 4);
+      const configMap = _.cloneDeep(this.state.tectonicIdentityConfig);
+      configMap.data['config.yaml'] = yaml;
+      delete configMap.metadata.selfLink;
+      delete configMap.metadata.uid;
+      delete configMap.metadata.resourceVersion;
+      delete configMap.metadata.creationTimestamp;
+
+      const dump = safeDump(configMap, null, 4);
+      const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
+      saveAs(blob, 'new-tectonic-config.yaml');
     }
 
-    _.merge(connector, reduxToConnector(formData));
-
-    const yaml = safeDump(newYaml, null, 4);
-    const configMap = _.cloneDeep(this.state.tectonicIdentityConfig);
-    configMap.data['config.yaml'] = yaml;
-    delete configMap.metadata.selfLink;
-    delete configMap.metadata.uid;
-    delete configMap.metadata.resourceVersion;
-    delete configMap.metadata.creationTimestamp;
-
-    const dump = safeDump(configMap, null, 4);
-    const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
-    saveAs(blob, 'new-tectonic-config.yaml');
-  }
-
-  test (e) {
-    e.preventDefault();
-    this.setState({validationData: null, validationError: null, stateMachine: STATES.untested}, () => {
-      const version = this.props.error;
-      const connector = getFormValues(LDAPFormName)(store.getState());
-      const json = reduxToConnector(connector);
-      coFetchJSON.post('tectonic/ldap/validate', json)
-      .then(data => {
-        const state = {};
-        if (data.error) {
-          state.stateMachine = STATES.invalid;
-          state.validationError = data.error;
-          state.validationData = data.reason;
-        } else {
-          state.stateMachine = STATES.valid;
-          state.validationData = data;
-          state.validatedVersion = version;
-          state.validationError = null;
-        }
-        this.setState(state, () => {
-          window.scrollTo(0, document.documentElement.offsetHeight);
-        });
-      })
-      .catch(error => {
-        this.setState({validationError: 'Error', validationData: error.message || error.toString(), stateMachine: STATES.invalid});
+    test (e) {
+      e.preventDefault();
+      this.setState({validationData: null, validationError: null, stateMachine: STATES.untested}, () => {
+        const version = this.props.error;
+        const connector = getFormValues(LDAPFormName)(store.getState());
+        const json = reduxToConnector(connector);
+        coFetchJSON.post('tectonic/ldap/validate', json)
+          .then(data => {
+            const state = {};
+            if (data.error) {
+              state.stateMachine = STATES.invalid;
+              state.validationError = data.error;
+              state.validationData = data.reason;
+            } else {
+              state.stateMachine = STATES.valid;
+              state.validationData = data;
+              state.validatedVersion = version;
+              state.validationError = null;
+            }
+            this.setState(state, () => {
+              window.scrollTo(0, document.documentElement.offsetHeight);
+            });
+          })
+          .catch(error => {
+            this.setState({validationError: 'Error', validationData: error.message || error.toString(), stateMachine: STATES.invalid});
+          });
       });
-    });
-  }
-
-  continue (e) {
-    e.preventDefault();
-    this.setState({stateMachine: STATES.updating});
-  }
-
-  populate (stepName) {
-    const populated = this.state.populated;
-    populated[stepName] = true;
-    this.setState({populated});
-  }
-
-  render () {
-    if (this.state.loadError) {
-      return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
     }
 
-    if (!this.state.tectonicIdentityConfig) {
-      return <div>Loading Configuration <LoadingInline /></div>;
+    continue (e) {
+      e.preventDefault();
+      this.setState({stateMachine: STATES.updating});
     }
 
-    // General field errors are under the props.error - see validation above
-    const disabled = !this.state.validatedVersion || this.state.validatedVersion !== this.props.error;
+    populate (stepName) {
+      const populated = this.state.populated;
+      populated[stepName] = true;
+      this.setState({populated});
+    }
 
-    const { stateMachine, validationData, validationError } = this.state;
+    render () {
+      if (this.state.loadError) {
+        return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
+      }
 
-    const steps = [];
+      if (!this.state.tectonicIdentityConfig) {
+        return <div>Loading Configuration <LoadingInline /></div>;
+      }
 
-    _.each(Steps, (s, i) => {
-      const stepName = s.fields;
-      const fields = Fields[stepName];
-      const populated = !!this.state.populated[stepName];
-      const lastStep = i === Steps.length - 1;
-      const step = <div key={`step-${stepName}`}>
-        { s.name && <h1 className="co-section-title ldap-group">{s.name}</h1> }
-        { s.description && <p className="co-m-form-row">{s.description}</p> }
-        { _.map(fields, FieldRow) }
-        { stepName === 'Globals' && <Security /> }
-        <hr/>
-        { s.next && !populated && <div><p className="text-muted">Next: {s.next}</p><hr/></div> }
-        { !lastStep && !populated && <a onClick={() => this.populate(stepName)}><button className="btn btn-primary">Continue</button></a> }
-      </div>;
+      // General field errors are under the props.error - see validation above
+      const disabled = !this.state.validatedVersion || this.state.validatedVersion !== this.props.error;
 
-      steps.push(step);
-      return populated;
-    });
+      const { stateMachine, validationData, validationError } = this.state;
 
-    let test = false;
-    if (steps.length === Steps.length) {
-      test = (<div>
-        { (stateMachine === STATES.valid || stateMachine === STATES.invalid) &&
+      const steps = [];
+
+      _.each(Steps, (s, i) => {
+        const stepName = s.fields;
+        const fields = Fields[stepName];
+        const populated = !!this.state.populated[stepName];
+        const lastStep = i === Steps.length - 1;
+        const step = <div key={`step-${stepName}`}>
+          { s.name && <h1 className="co-section-title ldap-group">{s.name}</h1> }
+          { s.description && <p className="co-m-form-row">{s.description}</p> }
+          { _.map(fields, FieldRow) }
+          { stepName === 'Globals' && <Security /> }
+          <hr/>
+          { s.next && !populated && <div><p className="text-muted">Next: {s.next}</p><hr/></div> }
+          { !lastStep && !populated && <a onClick={() => this.populate(stepName)}><button className="btn btn-primary">Continue</button></a> }
+        </div>;
+
+        steps.push(step);
+        return populated;
+      });
+
+      let test = false;
+      if (steps.length === Steps.length) {
+        test = (<div>
+          { (stateMachine === STATES.valid || stateMachine === STATES.invalid) &&
           <Row label="Test Results">
             { validationError
               ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {validationError}:
-                  <br/>
-                  <span>{validationData}</span>
-                </p>
+                <br/>
+                <span>{validationData}</span>
+              </p>
               : <div>
-                  <dl>
-                    <dt>username</dt>
-                    <dd>{validationData.username}</dd>
-                    <dt>email</dt>
-                    <dd>{validationData.email}</dd>
-                    <dt>groups</dt>
-                    <dd>{_.map(validationData.groups, g => <div key={g}>{g}</div>)}</dd>
-                  </dl>
-                </div>
+                <dl>
+                  <dt>username</dt>
+                  <dd>{validationData.username}</dd>
+                  <dt>email</dt>
+                  <dd>{validationData.email}</dd>
+                  <dt>groups</dt>
+                  <dd>{_.map(validationData.groups, g => <div key={g}>{g}</div>)}</dd>
+                </dl>
+              </div>
             }
           </Row>
-        }
+          }
 
-        {stateMachine !== STATES.updating && <div>
-          <p className="text-muted">Next: Update Tectonic Identity</p>
-          <hr/>
-        </div>}
+          {stateMachine !== STATES.updating && <div>
+            <p className="text-muted">Next: Update Tectonic Identity</p>
+            <hr/>
+          </div>}
 
-        {(stateMachine === STATES.untested || stateMachine === STATES.invalid) &&
+          {(stateMachine === STATES.untested || stateMachine === STATES.invalid) &&
           <button className="btn btn-primary" onClick={(e) => this.test(e)}>Test Configuration</button>
-        }
-        {stateMachine === STATES.valid &&
+          }
+          {stateMachine === STATES.valid &&
           <button className="btn btn-primary" onClick={e => this.continue(e)} disabled={disabled}>Continue</button>
-        }
-        {stateMachine === STATES.updating && <div>
-          <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
-          <p>
+          }
+          {stateMachine === STATES.updating && <div>
+            <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
+            <p>
             The last step is to apply the updated configuration to the cluster.
             This is done via <code className="ldap-code"> kubectl </code> to avoid locking yourself out if something goes wrong.
-            <br/><br/>
+              <br/><br/>
             During installation, an assets bundle was generated which included a kubeconfig (users name <code className="ldap-code"> kubelet </code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
-            <br/><br/>
-            <b>It is highly recommended you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
-          </p>
+              <br/><br/>
+              <b>It is highly recommended you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
+            </p>
 
-          <pre className="ldap-pre">
-            <code className="ldap-code">{INSTRUCTIONS_APPLY}</code>
-          </pre>
+            <pre className="ldap-pre">
+              <code className="ldap-code">{INSTRUCTIONS_APPLY}</code>
+            </pre>
 
-          <p>
+            <p>
             Next, trigger a rolling-update of the <a target="_blank" href="ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a>, which will read the new configuration.
-          </p>
+            </p>
 
-          <pre className="ldap-pre" style={{marginBottom: 30}}>
-            <code className="ldap-code">{INSTRUCTIONS_PATCH}</code>
-          </pre>
+            <pre className="ldap-pre" style={{marginBottom: 30}}>
+              <code className="ldap-code">{INSTRUCTIONS_PATCH}</code>
+            </pre>
 
-          <p className="row col-sm-12">
-            <button className="btn btn-primary" onClick={e => this.downloadNewConfig(e)}>Download New Config</button>
-            <button className="btn btn-default" onClick={e => this.downloadBackup(e)}>Download Existing Config</button>
-          </p>
-        </div>}
-      </div>);
+            <p className="row col-sm-12">
+              <button className="btn btn-primary" onClick={e => this.downloadNewConfig(e)}>Download New Config</button>
+              <button className="btn btn-default" onClick={e => this.downloadBackup(e)}>Download Existing Config</button>
+            </p>
+          </div>}
+        </div>);
+      }
+
+      return <form className="form-horizontal" style={{maxWidth: 900}}>
+        { steps }
+        { test }
+      </form>;
     }
-
-    return <form className="form-horizontal" style={{maxWidth: 900}}>
-      { steps }
-      { test }
-    </form>;
-  }
-});
+  });
 
 export const LDAPPage = () => <div>
   <Helmet title="LDAP" />

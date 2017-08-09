@@ -81,7 +81,7 @@ const RulesRow = ({rule}) => {
     <div className="col-xs-3">
       <div><ResourceIcon kind="Service" className="co-m-resource-icon--align-left" />{rule.serviceName}</div>
     </div>
-     <div className="col-xs-2">
+    <div className="col-xs-2">
       <div>{rule.servicePort}</div>
     </div>
   </div>;

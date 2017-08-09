@@ -8,7 +8,7 @@ import { formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
 import { ClusterPicker } from './federation/cluster-picker';
-const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^\/]*)/, '').replace(/^\//, '');
+const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 
 const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   const activeNamespace = state.UI.get('activeNamespace');
@@ -30,27 +30,27 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
 };
 
 const NavLink = connect(navLinkStateToProps, null, mergeProps, {pure: true, areStatesEqual})(
-class NavLink_ extends React.PureComponent {
-  componentWillMount () {
-    const {isActive, openSection, sectionId} = this.props;
-    if (isActive) {
-      openSection(sectionId);
-    }
-  }
-
-  render () {
-    if (!this.props.canRender) {
-      return null;
+  class NavLink_ extends React.PureComponent {
+    componentWillMount () {
+      const {isActive, openSection, sectionId} = this.props;
+      if (isActive) {
+        openSection(sectionId);
+      }
     }
 
-    const {isActive, href, name, onClick = undefined, target= undefined} = this.props;
-    const klass = classNames('co-m-nav-link', {active: isActive});
+    render () {
+      if (!this.props.canRender) {
+        return null;
+      }
 
-    return <li className={klass} key={href}>
-      <Link to={href} onClick={onClick} target={target}>{name}</Link>
-    </li>;
-  }
-});
+      const {isActive, href, name, onClick = undefined, target= undefined} = this.props;
+      const klass = classNames('co-m-nav-link', {active: isActive});
+
+      return <li className={klass} key={href}>
+        <Link to={href} onClick={onClick} target={target}>{name}</Link>
+      </li>;
+    }
+  });
 
 const logout = e => {
   e.preventDefault();

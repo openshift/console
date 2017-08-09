@@ -75,7 +75,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
                 <div className="form-inline">
                   <p className="form-control-static">Keep</p>
                     &nbsp;
-                    <input disabled={this.state.type !== 'custom'} size="5"
+                  <input disabled={this.state.type !== 'custom'} size="5"
                     type="number" className="form-control"
                     defaultValue={this.deployment.spec.revisionHistoryLimit}
                     id="input-max-unavailable" required />

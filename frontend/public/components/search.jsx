@@ -57,18 +57,18 @@ const ResourceListDropdown = ({selected, onChange}) => {
 };
 
 const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
-({kind, namespace, selector}) => {
-  const List = resources[kind];
-  const ns = kind === 'Node' || kind === 'Namespace' ? undefined : namespace;
+  ({kind, namespace, selector}) => {
+    const List = resources[kind];
+    const ns = kind === 'Node' || kind === 'Namespace' ? undefined : namespace;
 
-  return <div className="co-m-pane__body">
-    {List && <div className="co-m-resource-list">
-      <Firehose isList={true} kind={kind} namespace={ns} selector={selector}>
-        <List />
-      </Firehose>
-    </div>}
-  </div>;
-});
+    return <div className="co-m-pane__body">
+      {List && <div className="co-m-resource-list">
+        <Firehose isList={true} kind={kind} namespace={ns} selector={selector}>
+          <List />
+        </Firehose>
+      </div>}
+    </div>;
+  });
 
 const updateUrlParams = (params) => {
   const location = Object.assign({}, history.getCurrentLocation());

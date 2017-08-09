@@ -74,12 +74,12 @@ const ClientRow = ({client, onTokenRevocation}) => {
 
 const ClientTokens = ({clients, onTokenRevocation, resourceLoaded, loadingError}) => {
   return <div className="co-m-pane">
-     <div className="co-m-pane__heading">
-        <h1 className="co-p-cluster--heading">Access Management</h1>
-        <p>
+    <div className="co-m-pane__heading">
+      <h1 className="co-p-cluster--heading">Access Management</h1>
+      <p>
           Each user of Tectonic gets a single kubectl CLI refresh token for use in their kubeconfig file. This token never expires, unless revoked here.
-        </p>
-     </div>
+      </p>
+    </div>
     <div className="co-m-pane__body">
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">

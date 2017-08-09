@@ -198,7 +198,7 @@ const Details = (node) => {
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}
             {_.has(node, 'spec.unschedulable') && <dd className="text-capitalize">{_.get(node, 'spec.unschedulable', '-').toString()}
-              </dd>}
+            </dd>}
             <dt>Created</dt>
             <dd><Timestamp timestamp={node.metadata.creationTimestamp} /></dd>
           </dl>

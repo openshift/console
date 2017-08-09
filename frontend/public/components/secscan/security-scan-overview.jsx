@@ -32,17 +32,17 @@ const securityScanStateToProps = (state, {required}) => {
 };
 
 export const SecurityScanningOverview = connect(securityScanStateToProps, null, mergeProps, {pure: true, areStatesEqual})(
-class SecurityScanningOverview_ extends React.PureComponent {
-  render () {
-    if (!this.props.canRender) {
-      return null;
+  class SecurityScanningOverview_ extends React.PureComponent {
+    render () {
+      if (!this.props.canRender) {
+        return null;
+      }
+      return <div>
+        <SubHeaderRow header="Container Security Scanning" />
+        <SecurityScanningRow title="Fixable Issues"
+          detail={this.props.fixableIssues} text="Could not get fixable issues" />
+        <SecurityScanningRow title="Scanned Pods"
+          detail={this.props.scannedPods} text="Could not get scanned pods" />
+      </div>;
     }
-    return <div>
-      <SubHeaderRow header="Container Security Scanning" />
-      <SecurityScanningRow title="Fixable Issues"
-        detail={this.props.fixableIssues} text="Could not get fixable issues" />
-      <SecurityScanningRow title="Scanned Pods"
-        detail={this.props.scannedPods} text="Could not get scanned pods" />
-    </div>;
-  }
-});
+  });

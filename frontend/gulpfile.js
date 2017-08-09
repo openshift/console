@@ -51,8 +51,8 @@ gulp.task('set-test', () => {
 function isExternalModule (file) {
   // lifted from browserify!!!
   const regexp = process.platform === 'win32' ?
-        /^(\.|\w:)/ :
-        /^[\/.]/;
+    /^(\.|\w:)/ :
+    /^[/.]/;
   return !regexp.test(file);
 }
 
@@ -169,8 +169,7 @@ gulp.task('fonts', () => {
   return gulp.src([
     'node_modules/font-awesome/fonts/*',
     'public/fonts/*'
-  ])
-  .pipe(gulp.dest(distDir + '/fonts'));
+  ]).pipe(gulp.dest(distDir + '/fonts'));
 });
 
 // Copy any static assets.
@@ -231,9 +230,8 @@ gulp.task('js-package', ['js-build', 'sha'], () => {
   return gulp.src([
     distDir + '/deps.min.js',
     distDir + '/app-bundle.min.js'
-  ])
-  .pipe(concat(`build.${CURRENT_SHA}.min.js`))
-  .pipe(gulp.dest(distDir));
+  ]).pipe(concat(`build.${CURRENT_SHA}.min.js`))
+    .pipe(gulp.dest(distDir));
 });
 
 // Combine all the css into the final build file.

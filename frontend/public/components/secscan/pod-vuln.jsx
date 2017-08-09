@@ -35,12 +35,12 @@ const PodVulnRow = ({obj: pod}) => {
     </div>
 
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-        {
-          !isScanned(podvuln) ? <div className="text-muted">(Not scanned)</div> :
+      {
+        !isScanned(podvuln) ? <div className="text-muted">(Not scanned)</div> :
           !hasAccess(podvuln) ? <div className="text-muted">(Unable to scan)</div> :
-          !isSupported(podvuln) ? <div className="text-muted">(Unsupported)</div> :
-          (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`)
-        }
+            !isSupported(podvuln) ? <div className="text-muted">(Unsupported)</div> :
+              (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`)
+      }
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       {_.get(pod, 'metadata.labels.secscan/highest', '-')}
