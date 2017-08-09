@@ -131,6 +131,6 @@ export const ClusterOverviewPage = (props) => {
         </div>
       </div>
     </div>
-    <DocumentationSidebar version={props.tectonicVersionObj} />
+    <DocumentationSidebar />
   </div>;
 };

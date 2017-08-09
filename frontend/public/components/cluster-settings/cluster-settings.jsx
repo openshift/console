@@ -1,7 +1,6 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 
-import {coFetchJSON} from '../../co-fetch';
 import {NavTitle, DocumentationSidebar} from '../utils';
 import {LicenseSetting} from './license-setting';
 import {LDAPSetting} from './ldap';
@@ -18,13 +17,7 @@ export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9
 
 export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES, FLAGS.PROMETHEUS)(
 class ClusterSettingsPage_ extends SafetyFirst {
-  componentDidMount() {
-    super.componentDidMount();
-    coFetchJSON('version').then(version => this.setState({version}));
-  }
-
   render() {
-    const { version } = (this.state || {});
     const { CLUSTER_UPDATES, PROMETHEUS } = this.props.flags;
 
     return <div className="co-p-cluster">
@@ -49,7 +42,7 @@ class ClusterSettingsPage_ extends SafetyFirst {
           {PROMETHEUS && <AlertManagersListContainer />}
         </div>
       </div>
-      <DocumentationSidebar version={version} />
+      <DocumentationSidebar />
     </div>;
   }
 });
