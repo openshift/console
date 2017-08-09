@@ -269,14 +269,24 @@ gulp.task('dev', ['set-development', 'default'], () => {
   gulp.watch('./public/**/*.scss', ['css-build']);
 });
 
+const handleJest = (results, cb) => {
+  if (results.success) {
+    return cb(null, results);
+  }
+  process.nextTick(() => process.exit(1));
+  return cb(results);
+};
+
 /**
  * Tests
  */
-gulp.task('test', ['lint', 'set-test', 'js-build'], (cb) => {
-  jest.runCLI({cache: true}, __dirname, () => cb());
-});
+gulp.task('test', ['lint', 'set-test', 'js-build'], cb => jest.runCLI(
+  {cache: true},
+  __dirname,
+  results => handleJest(results, cb)
+));
 
-gulp.task('coverage', ['lint', 'set-test', 'js-build'], (cb) => {
+gulp.task('coverage', ['lint', 'set-test', 'js-build'], cb => {
   const config = {
     cache: true,
     coverage: true,
@@ -284,10 +294,10 @@ gulp.task('coverage', ['lint', 'set-test', 'js-build'], (cb) => {
     coverageReporters: ['json', 'lcov', 'text', 'text-summary'],
     collectCoverageFrom: ['public/*.{js,jsx}', 'public/{components,module,ui}/**/*.{js,jsx}'],
   };
-  jest.runCLI(config, __dirname, () => cb());
+  jest.runCLI(config, __dirname, results => handleJest(results, cb));
 });
 
-gulp.task('default', (cb) => {
+gulp.task('default', cb => {
   // Run in order.
   runSequence(
     ['clean', 'lint'],

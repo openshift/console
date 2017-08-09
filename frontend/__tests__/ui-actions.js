@@ -1,4 +1,5 @@
 /* global jest */
+import '../__mocks__/localStorage';
 
 import store from '../public/redux';
 import { UIActions, getActiveNamespace, getNamespacedRoute, registerNamespaceFriendlyPrefix } from '../public/ui/ui-actions';
