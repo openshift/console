@@ -148,6 +148,13 @@ label {
   max-width: 200px;
 }
 
+.co-well {
+  color: $blue-darker;
+  background-color: $blue-bg;
+  padding: 20px;
+  margin: 30px;
+}
+
 // Remove annoying default spinners browsers add to number fields.
 input[type=number] {
   -moz-appearance: textfield;
