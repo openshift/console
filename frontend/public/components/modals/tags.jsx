@@ -59,7 +59,7 @@ class TagsModal extends PromiseComponent {
     const tagsElems = this.state.tags.map((tag, i) =>
       <div className="row tags-list__row" key={i}>
         <div className="col-xs-5 tags-list__field">
-      <input type="text" className="form-control" placeholder="key" value={tag[0]} onChange={e => this._change(e, i, true)} />
+          <input type="text" className="form-control" placeholder="key" value={tag[0]} onChange={e => this._change(e, i, true)} />
         </div>
         <div className="col-xs-6 tags-list__field">
           <input type="text" className="form-control" placeholder="value" value={tag[1] || ''} onChange={e => this._change(e, i, false)} />

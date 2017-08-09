@@ -31,8 +31,8 @@ class Chart {
 
     const tipGroup = this.svg.select('.chart__tip-group');
     this.svg.select('.chart__mouse-trigger')
-        .on('mouseover', () => tipGroup.style('display', null))
-        .on('mouseout', () => tipGroup.style('display', 'none'));
+      .on('mouseover', () => tipGroup.style('display', null))
+      .on('mouseout', () => tipGroup.style('display', 'none'));
   }
 
   _processData(data) {
@@ -46,19 +46,19 @@ class Chart {
 
   _scales(width) {
     const x = d3.scaleTime()
-        .range([0, width]);
+      .range([0, width]);
 
     const y = d3.scaleLinear()
-        .range([this.height, 0]);
+      .range([this.height, 0]);
 
     return { x, y };
   }
 
   _drawPoints(el, scales, data) {
     const area = d3.area()
-        .x((d) => scales.x(d.date))
-        .y0(this.height)
-        .y1((d) => scales.y(d.value));
+      .x((d) => scales.x(d.date))
+      .y0(this.height)
+      .y1((d) => scales.y(d.value));
 
     let yMax = d3.max(data, (d) => d.value);
 
@@ -78,26 +78,26 @@ class Chart {
     scales.y.domain([0, yMax]);
 
     this.svg.select('.chart__area')
-        .datum(data)
-        .attr('d', area);
+      .datum(data)
+      .attr('d', area);
 
     if (this.limit) {
       const y = scales.y(this.limit);
       const text = `${this._valueInUnits(this.limit)} ${this.limitText}`;
       this.svg.selectAll('.chart__limit-text')
-          .style('display', null)
-          .attr('x', 5)
-          .attr('y', y + 2.5)
-          .text(text);
+        .style('display', null)
+        .attr('x', 5)
+        .attr('y', y + 2.5)
+        .text(text);
       const limitTextBox = this.svg.select('.chart__limit-text--text').node().getBBox();
 
       this.svg.selectAll('.chart__limit-line')
-          .style('display', null)
-          .attr('y1', y)
-          .attr('y2', y);
+        .style('display', null)
+        .attr('y1', y)
+        .attr('y2', y);
       this.svg.select('.chart__limit-line-after')
-          .attr('x1', limitTextBox.x + limitTextBox.width + 3)
-          .attr('x2', '100%');
+        .attr('x1', limitTextBox.x + limitTextBox.width + 3)
+        .attr('x2', '100%');
     } else {
       this.svg.selectAll('.chart__limit-line').style('display', 'none');
       this.svg.selectAll('.chart__limit-text').style('display', 'none');
@@ -137,13 +137,13 @@ class Chart {
       const tipTextGroup = this.svg.select('.chart__tip-text-group');
 
       tipGroup.select('.chart__tip')
-          .attr('transform', `translate(${translateX},${translateY})`);
+        .attr('transform', `translate(${translateX},${translateY})`);
 
       tipTextGroup.select('.chart__value.chart__tip-data')
-          .text(tipValue);
+        .text(tipValue);
 
       tipTextGroup.select('.chart__date.chart__tip-data')
-          .text(moment(d.date).format('MMM DD, h:mm a'));
+        .text(moment(d.date).format('MMM DD, h:mm a'));
 
       const textPadding = {
         top: 7,

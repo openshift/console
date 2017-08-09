@@ -84,7 +84,7 @@ export const CountVulnerabilityFilter = (pods) => {
         !_.has(podvuln, 'metadata.labels.secscan/P1') &&
         !_.has(podvuln, 'metadata.labels.secscan/P2') &&
         !_.has(podvuln, 'metadata.labels.secscan/P3') &&
-	isSupported(podvuln)) {
+ isSupported(podvuln)) {
       count.Passed++;
     }
   });

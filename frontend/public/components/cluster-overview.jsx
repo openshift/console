@@ -43,7 +43,7 @@ export const SubHeaderRow = ({header}) => {
   return <div className="row">
     <div className="col-xs-12">
       <h4 className="cluster-overview-cell__title">
-       {header}
+        {header}
       </h4>
     </div>
   </div>;
@@ -124,7 +124,7 @@ export const ClusterOverviewPage = (props) => {
 
             {props.cloudProviders &&
               <SoftwareDetailRow title="Cloud Provider" detail={cloudProviderNames(props.cloudProviders)}
-              text="Cloud Provider could not be determined." />
+                text="Cloud Provider could not be determined." />
             }
 
           </div>

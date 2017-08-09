@@ -18,25 +18,25 @@ const ClusterRow = ({cluster}) => <div className="row co-resource-list__item">
 </div>;
 
 export const Clusters = connectToFlags(FLAGS.MULTI_CLUSTER)(
-class Clusters_ extends SafetyFirst {
+  class Clusters_ extends SafetyFirst {
 
-  componentDidMount() {
-    super.componentDidMount();
-    this._getClusters();
-  }
+    componentDidMount() {
+      super.componentDidMount();
+      this._getClusters();
+    }
 
-  _getClusters() {
-    const { MULTI_CLUSTER } = this.props.flags;
-    clusterUtil.getFedClusters(MULTI_CLUSTER)
-      .then((clusters) => this.setState({ clusters: clusters.items, loadingError: false }))
-      .catch((err) => this.setState({ clusters: null, loadingError: err }));
-  }
+    _getClusters() {
+      const { MULTI_CLUSTER } = this.props.flags;
+      clusterUtil.getFedClusters(MULTI_CLUSTER)
+        .then((clusters) => this.setState({ clusters: clusters.items, loadingError: false }))
+        .catch((err) => this.setState({ clusters: null, loadingError: err }));
+    }
 
-  render() {
-    const { clusters, loadingError } = (this.state || {});
+    render() {
+      const { clusters, loadingError } = (this.state || {});
 
-    return <div className="co-m-pane">
-      <NavTitle title="Clusters" />
+      return <div className="co-m-pane">
+        <NavTitle title="Clusters" />
         <div className="co-m-pane__heading"></div>
         <div className="co-m-pane__body">
           <div className="row no-gutter">
@@ -45,11 +45,11 @@ class Clusters_ extends SafetyFirst {
               {!clusters && !loadingError && <div className="co-cluster-updates__component text-center"><LoadingInline /></div>}
               { clusters && <div className="co-m-table-grid__body">
                 {_.map(clusters, cluster => <ClusterRow key={cluster.metadata.uid} cluster={cluster} />)}
-              { loadingError && <StatusBox loadError={loadingError} label="Clusters" />}
+                { loadingError && <StatusBox loadError={loadingError} label="Clusters" />}
               </div>}
             </div>
           </div>
         </div>
-    </div>;
-  }
-});
+      </div>;
+    }
+  });

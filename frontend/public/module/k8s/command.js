@@ -12,8 +12,8 @@ export const fromArgs = args => {
       return arg;
     }
 
-    const sqi = arg.indexOf('\'');      // possible single quote position
-    const dqi = arg.indexOf('"');       // possible double quote position
+    const sqi = arg.indexOf('\''); // possible single quote position
+    const dqi = arg.indexOf('"'); // possible double quote position
     const qk = sqi > dqi ? '"' : '\''; // whatever quote comes first, we use opposite
 
     return qk + arg + qk;

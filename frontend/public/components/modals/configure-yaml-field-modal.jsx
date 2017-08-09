@@ -91,12 +91,12 @@ class ConfigureYamlFieldModal extends PromiseComponent {
         promise = k8sPatch(this._kindObj(), this.state.resource, patch);
       }
       this.handlePromise(promise)
-      .then(result => this.props.close(result))
-      .catch(() => {
-        if (this.props.callbacks.invalidateState) {
-          this.props.callbacks.invalidateState(false);
-        }
-      });
+        .then(result => this.props.close(result))
+        .catch(() => {
+          if (this.props.callbacks.invalidateState) {
+            this.props.callbacks.invalidateState(false);
+          }
+        });
     };
 
     if (this.props.callbacks.inputValidator) {

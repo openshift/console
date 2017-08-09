@@ -51,12 +51,12 @@ export const getSwagger = (dispatch) =>
       .map(p => coFetchJSON(`api/kubernetes/swaggerapi${p.path}`).catch(err => err));
 
     return Promise.all(all)
-    .then(data => {
-      const models = {};
-      data.forEach(d => _.each(d.models, (v, k) => models[k] = v));
-      dispatch({
-        models,
-        type: 'models',
+      .then(data => {
+        const models = {};
+        data.forEach(d => _.each(d.models, (v, k) => models[k] = v));
+        dispatch({
+          models,
+          type: 'models',
+        });
       });
-    });
   });

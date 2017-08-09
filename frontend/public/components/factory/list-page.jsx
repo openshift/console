@@ -26,71 +26,71 @@ export const TextFilter = ({label, onChange}) => <input
 />;
 
 const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
-class BaseListPage_ extends React.PureComponent {
-  constructor (props) {
-    super(props);
-    this.state = {expand: !!props.expand};
-    this.onExpandChange = this.onExpandChange.bind(this);
-    this.applyFilter = this.applyFilter.bind(this);
-  }
+  class BaseListPage_ extends React.PureComponent {
+    constructor (props) {
+      super(props);
+      this.state = {expand: !!props.expand};
+      this.onExpandChange = this.onExpandChange.bind(this);
+      this.applyFilter = this.applyFilter.bind(this);
+    }
 
-  onExpandChange (expand) {
-    this.setState({expand});
-  }
+    onExpandChange (expand) {
+      this.setState({expand});
+    }
 
-  applyFilter (filterName, options) {
-    const reduxIDs = this.props.reduxIDs || [this.props.reduxID];
-    reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
-  }
+    applyFilter (filterName, options) {
+      const reduxIDs = this.props.reduxIDs || [this.props.reduxID];
+      reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
+    }
 
-  render () {
-    const {data, kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, rowSplitter, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro} = this.props;
-    const resources = _.pick(this.props, kinds);
+    render () {
+      const {data, kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, rowSplitter, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro} = this.props;
+      const resources = _.pick(this.props, kinds);
 
-    const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
-      return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
-    });
+      const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
+        return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
+      });
 
-    const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type, numbers}, i) => {
-      const count = _.isFunction(numbers) ? numbers(data) : undefined;
-      return <CheckBoxes
-        key={i}
-        applyFilter={this.applyFilter}
-        items={_.isFunction(items) ? items(resources) : items}
-        numbers={count || _.countBy(_.flatMap(data, rowSplitter), reducer)}
-        selected={selected}
-        type={type}
-      />;
-    });
+      const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type, numbers}, i) => {
+        const count = _.isFunction(numbers) ? numbers(data) : undefined;
+        return <CheckBoxes
+          key={i}
+          applyFilter={this.applyFilter}
+          items={_.isFunction(items) ? items(resources) : items}
+          numbers={count || _.countBy(_.flatMap(data, rowSplitter), reducer)}
+          selected={selected}
+          type={type}
+        />;
+      });
 
-    return <div>
-      {title && <NavTitle title={title} />}
-      <div className="co-m-pane">
-        <div className="co-m-pane__heading">
-          <div className="row">
-            <div className="col-xs-12">
-              {Intro}
-              {canCreate && <Link className="co-m-primary-action pull-left" {...createProps}>
-                <button className="btn btn-primary">{createButtonText}</button>
-              </Link>}
-              {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
-              <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} />
-              {DropdownFilters}
-            </div>
-            {RowsOfRowFilters}
-          </div>
-        </div>
-        <div className="co-m-pane__body">
-          <div className="row">
-            <div className="col-xs-12">
-              <ListComponent {...this.props} expand={this.state.expand} />
+      return <div>
+        {title && <NavTitle title={title} />}
+        <div className="co-m-pane">
+          <div className="co-m-pane__heading">
+            <div className="row">
+              <div className="col-xs-12">
+                {Intro}
+                {canCreate && <Link className="co-m-primary-action pull-left" {...createProps}>
+                  <button className="btn btn-primary">{createButtonText}</button>
+                </Link>}
+                {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
+                <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} />
+                {DropdownFilters}
+              </div>
+              {RowsOfRowFilters}
             </div>
           </div>
+          <div className="co-m-pane__body">
+            <div className="row">
+              <div className="col-xs-12">
+                <ListComponent {...this.props} expand={this.state.expand} />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>;
-  }
-});
+      </div>;
+    }
+  });
 
 BaseListPage.propTypes = {
   canCreate: React.PropTypes.bool,
@@ -130,19 +130,19 @@ export const ListPage = props => {
 };
 
 export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace'), path: UI.get('location')}))(
-props => {
-  const {createButtonText, ns, path, resources} = props;
-  const firehoseResources = resources.map(r => ({
-    kind: r.kind,
-    isList: true,
-    namespace: r.namespaced ? ns : undefined,
-    prop: r.kind,
-  }));
-  return <MultiFirehose key={path} resources={firehoseResources}>
-    <BaseListPage
-      {...props}
-      createButtonText={createButtonText || 'Create'}
-      kinds={_.map(resources, 'kind')}
-    />
-  </MultiFirehose>;
-});
+  props => {
+    const {createButtonText, ns, path, resources} = props;
+    const firehoseResources = resources.map(r => ({
+      kind: r.kind,
+      isList: true,
+      namespace: r.namespaced ? ns : undefined,
+      prop: r.kind,
+    }));
+    return <MultiFirehose key={path} resources={firehoseResources}>
+      <BaseListPage
+        {...props}
+        createButtonText={createButtonText || 'Create'}
+        kinds={_.map(resources, 'kind')}
+      />
+    </MultiFirehose>;
+  });

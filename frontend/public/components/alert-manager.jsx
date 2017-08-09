@@ -55,7 +55,7 @@ class Details extends SafetyFirst {
                     <dd><LabelList kind="Alertmanager" labels={metadata.labels} /></dd>
                     {spec.nodeSelector && <dt>Alert Manager Node Selector</dt>}
                     {spec.nodeSelector && <dd><Selector selector={spec.nodeSelector} kind="Node" /></dd>}
-                    </dl>
+                  </dl>
                 </div>
                 <div className="col-sm-6 col-xs-12">
                   <dl>
@@ -103,8 +103,8 @@ const AlertManagersNameList = (props) => {
 
 
 export const AlertManagersListContainer = props => <Firehose kind="Alertmanager" isList={true}>
-    <AlertManagersNameList {...props} />
-  </Firehose>;
+  <AlertManagersNameList {...props} />
+</Firehose>;
 
 const AlertManagerRow = ({obj: alertManager}) => {
   const {metadata, spec} = alertManager;
