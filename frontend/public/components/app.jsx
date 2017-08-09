@@ -26,6 +26,7 @@ import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { BindingsForRolePage, CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
+import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
 import { Clusters } from './federation/cluster';
@@ -100,6 +101,8 @@ render((
     <Router history={history}>
       <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
         <IndexRoute component={ClusterOverviewContainer}/>
+
+        <Route path="start-guide" component={StartGuidePage} />
 
         <Route path="clusterroles">
           <Route path=":name/add-rule" component={EditRulePage} />

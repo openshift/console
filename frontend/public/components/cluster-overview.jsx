@@ -79,7 +79,7 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
 export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
     <div className="co-p-cluster__body">
-      <StartGuide />
+      <StartGuide dismissible={true} />
       <Helmet title="Cluster Status" />
       <NavTitle title="Cluster Status" />
 

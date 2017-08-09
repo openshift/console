@@ -1,19 +1,21 @@
 import React from 'react';
 
 import { SafetyFirst } from './safety-first';
+import { DocumentationSidebar } from './utils';
 
 const seenGuide = 'seenGuide';
 
 export class StartGuide extends SafetyFirst {
   constructor (props) {
     super(props);
-    let visible = { props };
+    let {dismissible, visible} = props;
     try {
       visible = visible || !localStorage.getItem(seenGuide);
     } catch (ignored) {
       // ignored
     }
     this.state = {
+      dismissible,
       visible,
     };
   }
@@ -30,7 +32,7 @@ export class StartGuide extends SafetyFirst {
       return null;
     }
     return <div className="co-well">
-      <button className="btn btn-link pull-right" onClick={() => this.dismiss()}>Dismiss</button>
+      {this.state.dismissible && <button className="btn btn-link pull-right" onClick={() => this.dismiss()}>Dismiss</button>}
       <h3 style={{marginBottom: 20}}>Tectonic Quick Start Guide</h3>
 
       <h4>1. Set up kubectl</h4>
@@ -63,3 +65,10 @@ export class StartGuide extends SafetyFirst {
     </div>;
   }
 }
+
+export const StartGuidePage = () => <div className="co-p-cluster">
+  <div className="co-p-cluster__body">
+    <StartGuide visible={true} dismissible={false} />
+  </div>
+  <DocumentationSidebar />
+</div>;
