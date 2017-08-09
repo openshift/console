@@ -1,3 +1,4 @@
+import '../__mocks__/localStorage';
 import { k8s } from '../public/module/k8s';
 
 describe('k8s.k8sResource', () => {
