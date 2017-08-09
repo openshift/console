@@ -24,30 +24,40 @@ spec:
 const {Edit, Delete} = Cog.factory;
 const menuActions = [Edit, Delete];
 
-const EndpointRow = ({endpoint}) => <div>
-  <div className="row co-ip-header">
-    <div className="col-xs-6">Port</div>
-    <div className="col-xs-2">Interval</div>
-    <div className="col-xs-4"></div>
-  </div>
-  <div className="rows">
-    <div className="co-ip-row">
-      <div className="row">
-        <div className="col-xs-6">
-          <p><ResourceIcon kind="Service" />{endpoint.port || '--'}</p>
-        </div>
-        <div className="col-xs-2">
-          <p>{endpoint.interval || '--'}</p>
-        </div>
-        <div className="col-xs-4">
-          {_.has(endpoint, 'scheme') && <span><span className="text-muted">scheme:</span>{endpoint.scheme}</span>}
-          {_.has(endpoint, 'targetPort') && <span><span className="text-muted">targetPort:</span>{endpoint.targetPort}</span>}
-          {_.has(endpoint, 'honorLabels') && <span><span className="text-muted">honorLabels:</span>{endpoint.honorLabels}</span>}
+const EndpointRow = ({endpoint}) => {
+  let detail = <span className="text-muted">--</span>;
+
+  if (_.has(endpoint, 'scheme')) {
+    detail = <span><span className="text-muted">scheme:</span>{endpoint.scheme}</span>;
+  } else if (_.has(endpoint, 'honorLabels')) {
+    detail = <span><span className="text-muted">honorLabels:</span>{endpoint.honorLabels}</span>;
+  } else if (_.has(endpoint, 'targetPort')) {
+    detail = <span><span className="text-muted">targetPort:</span>{endpoint.targetPort}</span>;
+  }
+
+  return <div>
+    <div className="row co-ip-header">
+      <div className="col-xs-6">Port</div>
+      <div className="col-xs-2">Interval</div>
+      <div className="col-xs-4"></div>
+    </div>
+    <div className="rows">
+      <div className="co-ip-row">
+        <div className="row">
+          <div className="col-xs-6">
+            <p><ResourceIcon kind="Service" />{endpoint.port || '--'}</p>
+          </div>
+          <div className="col-xs-2">
+            <p>{endpoint.interval || '--'}</p>
+          </div>
+          <div className="col-xs-4">
+            {detail}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>;
+  </div>;
+};
 
 const Details = (sm) => {
   const {metadata, spec} = sm;
