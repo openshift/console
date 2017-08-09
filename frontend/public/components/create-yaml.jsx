@@ -74,8 +74,8 @@ const modelFromSwagger = (models, model) => {
             readOnly: _.includes(prop.description, 'Read-only'),
           });
           objsToFollow.push(obj.properties[name]);
-        } else if (k === 'items' && v['$ref']) {
-          const ref = v['$ref'];
+        } else if (k === 'items' && v.$ref) {
+          const ref = v.$ref;
           prop[k] = _.extend(_.clone(models[ref]), {
             description: prop.description,
             readOnly: _.includes(v.description, 'Read-only'),

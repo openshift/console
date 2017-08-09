@@ -166,6 +166,8 @@ class EditRule_ extends PromiseComponent {
         return READ_VERBS.has(v);
       case VERBS_ENUM.ALL:
         return true;
+      default:
+        return false;
     }
   }
   has (set, resource) {
@@ -184,6 +186,8 @@ class EditRule_ extends PromiseComponent {
         return false;
       case RESOURCE_ENUM.ALL:
         return true;
+      default:
+        return false;
     }
   }
 

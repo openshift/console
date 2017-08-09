@@ -167,6 +167,8 @@ export default (state, action) => {
           'loaded': false
         }
       });
+    default:
+      return state;
   }
   return state.setIn([id, 'data'], newList);
 };

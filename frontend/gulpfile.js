@@ -191,10 +191,10 @@ gulp.task('html', ['sha'], () => {
     .pipe(htmlReplace((function() {
       const h = {};
       if (process.env.NODE_ENV === 'production') {
-        h['js'] = `static/build.${CURRENT_SHA}.min.js`;
-        h['css'] = `static/build.${CURRENT_SHA}.css`;
+        h.js = `static/build.${CURRENT_SHA}.min.js`;
+        h.css = `static/build.${CURRENT_SHA}.css`;
       } else {
-        h['analytics'] = '';
+        h.analytics = '';
       }
       return h;
     })(), {
