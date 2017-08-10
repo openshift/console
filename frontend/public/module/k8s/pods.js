@@ -1,16 +1,4 @@
-import * as k8sDocker from './docker';
 import {k8sEnum} from './enum';
-import {util} from './util';
-
-export const clean = pod => {
-  util.nullifyEmpty(pod.metadata, ['annotations', 'labels']);
-  util.nullifyEmpty(pod.spec, ['volumes']);
-  _.forEach(pod.spec.containers, function(c) {
-    k8sDocker.clean(c);
-  });
-  util.deleteNulls(pod.metadata);
-  util.deleteNulls(pod.spec);
-};
 
 const getRestartPolicy = pod => _.find(k8sEnum.RestartPolicy, {id: _.get(pod, 'spec.restartPolicy')});
 

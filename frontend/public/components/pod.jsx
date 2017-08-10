@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { k8s } from '../module/k8s';
+import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
 import { ResourceEventStream } from './events';
@@ -95,7 +95,7 @@ export const ContainerRow = ({pod, container}) => {
       </div>
       <Overflow className="col-sm-2 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
       <Overflow className="col-sm-2 col-xs-8" value={container.image} />
-      <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div> 
+      <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
       <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
@@ -104,9 +104,9 @@ export const ContainerRow = ({pod, container}) => {
 };
 
 const Volume = ({pod, volume}) => {
-  const kind = _.get(k8s.pods.getVolumeType(volume.volume), 'id', '');
-  const loc = k8s.pods.getVolumeLocation(volume.volume);
-  const mountPermissions = k8s.pods.getVolumeMountPermissions(volume);
+  const kind = _.get(getVolumeType(volume.volume), 'id', '');
+  const loc = getVolumeLocation(volume.volume);
+  const mountPermissions = getVolumeMountPermissions(volume);
 
   return <div className="row">
     <div className="middler">
@@ -218,7 +218,7 @@ const Details = (pod) => {
               <div className="col-sm-3 col-xs-4">Utilized By</div>
             </div>
             <div className="co-m-table-grid__body">
-              {k8s.pods.getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
+              {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
             </div>
           </div>
         </div>
