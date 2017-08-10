@@ -128,7 +128,7 @@ export const sortActions = actions => _.sortBy(actions, a => [a.weight || 0, a.l
 export const ActionsMenu = ({actions}) => {
   const shownActions = sortActions(_.reject(actions, o => _.get(o, 'hidden', false)));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
-  const title = <span className="btn--actions__title"><i className="fa fa-cog btn--actions__cog"></i><span className="btn--actions__label">Actions</span></span>;
+  const title = <span className="btn--actions__title"><i className="fa fa-cog btn--actions__cog"></i><span className="btn--actions__label" id="action-dropdown">Actions</span></span>;
   const onChange = key => {
     const action = shownActions[key];
     if (action.callback) {

@@ -199,7 +199,7 @@ export class EditYAML extends SafetyFirst {
             {stale && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--info">
               <i className="fa fa-fw fa-exclamation-triangle"></i> This object has been updated. Click reload to see the new version.
             </p>}
-            {create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Create</button>}
+            {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
             {!create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>}
             {!create && <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>}
             <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>

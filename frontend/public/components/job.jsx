@@ -10,7 +10,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('batch/v1.Job', `apiVersion: extensions/v1beta1
 kind: Job
 metadata:
-  name: pi
+  name: example
 spec:
   selector: {}
   template:

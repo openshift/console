@@ -9,7 +9,7 @@ const menuActions = Cog.factory.common;
 registerTemplate('v1beta1.Ingress', `apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: test-ingress
+  name: example
 spec:
   rules:
   - http:

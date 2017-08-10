@@ -64,9 +64,9 @@ Cog.factory = {
           // If we are currently on the deleted resource's page, redirect to the resource list page
           const re = new RegExp(`/${obj.metadata.name}/.*$`);
           if (re.test(window.location.pathname)) {
-            history.push(getNamespacedRoute(kind.path));
+            const path = kind.kind === 'EtcdCluster' ? 'etcdclusters' : kind.path;
+            history.push(getNamespacedRoute(path));
           }
-
         });
 
         return deletePromise;

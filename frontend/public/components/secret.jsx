@@ -10,7 +10,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1.Secret', `apiVersion: v1
 kind: Secret
 metadata:
-  name: mysecret
+  name: example
 type: Opaque
 data:
   username: YWRtaW4=

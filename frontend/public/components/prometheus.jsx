@@ -11,7 +11,7 @@ import { ServiceMonitorsPage } from './service-monitor';
 registerTemplate('v1alpha1.Prometheus', `apiVersion: monitoring.coreos.com/v1alpha1
 kind: Prometheus
 metadata:
-  name: k8s
+  name: example
   labels:
     prometheus: k8s
 spec:

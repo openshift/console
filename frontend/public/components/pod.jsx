@@ -16,7 +16,7 @@ const menuActions = Cog.factory.common;
 registerTemplate('v1.Pod', `apiVersion: v1
 kind: Pod
 metadata:
-  name: redis
+  name: example
   labels:
     app: redis
 spec:
@@ -95,7 +95,7 @@ export const ContainerRow = ({pod, container}) => {
       </div>
       <Overflow className="col-sm-2 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
       <Overflow className="col-sm-2 col-xs-8" value={container.image} />
-      <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div> 
+      <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
       <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>

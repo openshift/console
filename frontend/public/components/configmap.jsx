@@ -9,7 +9,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1.ConfigMap', `apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: example-config
+  name: example
   namespace: default
 data:
   example.property.1: hello
