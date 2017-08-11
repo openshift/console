@@ -8,7 +8,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1beta1.DaemonSet', `apiVersion: extensions/v1beta1
 kind: Daemonset
 metadata:
-  name: nginx-daemonset
+  name: example
 spec:
   template:
     metadata:

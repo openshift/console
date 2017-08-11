@@ -9,7 +9,8 @@
     "dev": "gulp dev",
     "gulp": "gulp",
     "lint": "eslint --ext .js,.jsx --color .",
-    "test": "gulp test"
+    "test": "gulp test",
+    "test-gui": "nightwatch --test integration-tests/tests/gui.js"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -70,7 +71,9 @@
     "pretty-error": "2.x",
     "run-sequence": "1.x",
     "vinyl-source-stream": "1.x",
-    "watchify": "3.x"
+    "watchify": "3.x",
+    "nightwatch": "0.9.x",
+    "chromedriver": "2.x"
   },
   "engines": {
     "node": "8.x"

@@ -7,7 +7,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1beta1.ReplicaSet', `apiVersion: extensions/v1beta1
 kind: ReplicaSet
 metadata:
-  name: nginx
+  name: example
 spec:
   replicas: 2
   selector:

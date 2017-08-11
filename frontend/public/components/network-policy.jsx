@@ -9,7 +9,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: test-network-policy
+  name: example
   namespace: default
 spec:
   podSelector:

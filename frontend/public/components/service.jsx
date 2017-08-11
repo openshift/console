@@ -7,7 +7,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1.Service', `apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
+  name: example
 spec:
   selector:
     app: MyApp

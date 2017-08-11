@@ -11,7 +11,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1beta1.Deployment', `apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: example
 spec:
   replicas: 3
   template:

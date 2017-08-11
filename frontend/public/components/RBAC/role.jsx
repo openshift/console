@@ -12,7 +12,7 @@ import { registerTemplate } from '../../yaml-templates';
 registerTemplate('v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: sample-pod-reader
+  name: example
 rules:
 - apiGroups: [""] # "" indicates the core API group
   resources: ["pods"]

@@ -9,7 +9,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1.ReplicationController', `apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: nginx
+  name: example
 spec:
   replicas: 2
   selector:

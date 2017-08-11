@@ -17,7 +17,7 @@ import { registerTemplate } from '../../yaml-templates';
 registerTemplate('v1beta1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: my-role-binding
+  name: example
 subjects:
 - kind: Group
   name: "my-sample-group"

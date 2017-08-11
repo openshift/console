@@ -7,7 +7,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('v1alpha1.ServiceMonitor', `apiVersion: monitoring.coreos.com/v1alpha1
 kind: ServiceMonitor
 metadata:
-  name: prometheus
+  name: example
   labels:
     k8s-app: prometheus
 spec:

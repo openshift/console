@@ -16,7 +16,7 @@ const menuActions = Cog.factory.common;
 registerTemplate('v1.Pod', `apiVersion: v1
 kind: Pod
 metadata:
-  name: redis
+  name: example
   labels:
     app: redis
 spec:

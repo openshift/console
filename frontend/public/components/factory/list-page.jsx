@@ -71,7 +71,7 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
               <div className="col-xs-12">
                 {Intro}
                 {canCreate && <Link className="co-m-primary-action pull-left" {...createProps}>
-                  <button className="btn btn-primary">{createButtonText}</button>
+                  <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
                 </Link>}
                 {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
                 <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} />

@@ -14,7 +14,7 @@ import { EditYAML } from './edit-yaml';
 registerTemplate('v1beta1.EtcdCluster', `apiVersion: etcd.coreos.com/v1beta1
 kind: Cluster
 metadata:
-  name: example-etcd-cluster-with-backup
+  name: example
 spec:
   size: 3
   version: 3.1.4
