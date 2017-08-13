@@ -31,10 +31,10 @@ const SecurityScanCell = ({podvuln}) => {
     <span className="secscan-cell">
       {
         !isScanned(podvuln) ? <span className="text-muted">(Not scanned)</span> :
-        !hasAccess(podvuln) ? <span className="text-muted">(Unable to scan)</span> :
-        !isSupported(podvuln) ? <span className="text-muted">(Unsupported)</span> :
-        fixables ? <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span> :
-        count === 0 ? <span>Passed</span> : <span>{count.toString()} vulnerable packages</span>
+          !hasAccess(podvuln) ? <span className="text-muted">(Unable to scan)</span> :
+            !isSupported(podvuln) ? <span className="text-muted">(Unsupported)</span> :
+              fixables ? <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span> :
+                count === 0 ? <span>Passed</span> : <span>{count.toString()} vulnerable packages</span>
       }
     </span>
   </div>;
@@ -84,9 +84,9 @@ const PodLink = ({pod, text}) => {
   const podname = _.get(pod, 'metadata.name');
   return <div>
     {text ? (`${text}: `) : ''}
-  <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>
-    {podname}
-  </Link>
+    <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>
+      {podname}
+    </Link>
   </div>;
 };
 

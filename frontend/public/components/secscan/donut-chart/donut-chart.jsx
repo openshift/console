@@ -45,38 +45,38 @@ class Chart {
     });
     
     let topG = chart.append('svg:svg')
-                    .attr('width', (chartR + chartM) * 2)
-                    .attr('height', (chartR + chartM) * 2)
-                    .append('svg:g')
-                    .attr('class', 'donut')
-                    .attr('transform', `translate(${chartR+chartM}, ${chartR+chartM})`);
+      .attr('width', (chartR + chartM) * 2)
+      .attr('height', (chartR + chartM) * 2)
+      .append('svg:g')
+      .attr('class', 'donut')
+      .attr('transform', `translate(${chartR+chartM}, ${chartR+chartM})`);
 
     // `translate(${chartR+chartM}, ${chartR+chartM})`
 
     let arc = d3.arc()
-                .innerRadius(chartR * 0.6)
-                .outerRadius(function(d, i) {
-                  return i === adjustedData.length - 1 ? chartR * 1.2 : chartR * 1;
-                });
+      .innerRadius(chartR * 0.6)
+      .outerRadius(function(d, i) {
+        return i === adjustedData.length - 1 ? chartR * 1.2 : chartR * 1;
+      });
 
     let pie = d3.pie()
-                .sort(null)
-                .value(function(d) {
-                  return d.value;
-                });
+      .sort(null)
+      .value(function(d) {
+        return d.value;
+      });
 
     let reversed = adjustedData.reverse();
     let g = topG.selectAll('.arc')
-                .data(pie(reversed))
-                .enter().append('g')
-                .attr('class', 'arc');
+      .data(pie(reversed))
+      .enter().append('g')
+      .attr('class', 'arc');
 
     g.append('path')
-     .attr('d', arc)
-     .style('stroke', '#fff')
-     .style('fill', function(d) {
-       return d.data.color;
-     });
+      .attr('d', arc)
+      .style('stroke', '#fff')
+      .style('fill', function(d) {
+        return d.data.color;
+      });
 
   }
 }
