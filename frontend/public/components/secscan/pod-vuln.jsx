@@ -201,11 +201,13 @@ const Details = (pod) => {
             <div className="co-m-table-grid__body">              
               {
                 podvuln.imagevulns.map((imgvuln) =>
-                  imgvuln.Features.map((feature) =>
-                    feature.Vulnerabilities.map((vuln, i) =>
-                      <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
-                    )
-                  )
+                  imgvuln.Features.map((feature) => {
+		    if (_.has(feature, 'Vulnerabilities')) {
+		      feature.Vulnerabilities.map((vuln, i) =>
+			<ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
+		      )
+		    }
+		  })
                 )
               }
             </div>
