@@ -80,9 +80,14 @@ const PodVulnRow = ({obj: pod}) => {
   </ResourceRow>;
 };
 
-const PodLink = ({pod}) => {
+const PodLink = ({pod, text}) => {
   const podname = _.get(pod, 'metadata.name');
-  return <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>{podname}</Link>;
+  return <div>
+    {text ? (`${text}: `) : ''}
+  <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>
+    {podname}
+  </Link>
+  </div>;
 };
 
 const SubHeaderRow = ({header, href, link}) => <div className="col-md-6 subheader-row">{header} <a href={href}>{link}</a></div>;
@@ -123,15 +128,15 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
 const Details = (pod) => {
   const podvuln = makePodvuln(pod);
   if (_.isError(podvuln)) {
-    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail="No images was scanned in this pod" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail={<PodLink pod={pod} text="No images was scanned in this pod" />} />;
   }
 
   if (!hasAccess(podvuln)) {
-    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Could read images from registry API" detail="The labeller could not get image information from registry" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Could read images from registry API" detail={<PodLink pod={pod} text="The labeller could not get image information from registry" />} />;
   }
   
   if (!isSupported(podvuln)) {
-    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail="The images in this pod could not be scanned" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail={<PodLink pod={pod} text="The images in this pod could not be scanned" />} />;
   }
   
   return <div>
