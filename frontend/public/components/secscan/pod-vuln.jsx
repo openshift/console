@@ -33,8 +33,8 @@ const SecurityScanCell = ({podvuln}) => {
         !isScanned(podvuln) ? <span className="text-muted">(Not scanned)</span> :
         !hasAccess(podvuln) ? <span className="text-muted">(Unable to scan)</span> :
         !isSupported(podvuln) ? <span className="text-muted">(Unsupported)</span> :
-        (fixables ? <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span> :
-         <span>{count.toString()} vulnerable packages</span>)
+        fixables ? <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span> :
+        count === 0 ? <span>Passed</span> : <span>{count.toString()} vulnerable packages</span>
       }
     </span>
   </div>;
@@ -202,12 +202,12 @@ const Details = (pod) => {
               {
                 podvuln.imagevulns.map((imgvuln) =>
                   imgvuln.Features.map((feature) => {
-		    if (_.has(feature, 'Vulnerabilities')) {
-		      feature.Vulnerabilities.map((vuln, i) =>
-			<ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
-		      )
-		    }
-		  })
+                    if (_.has(feature, 'Vulnerabilities')) {
+                      feature.Vulnerabilities.map((vuln, i) =>
+                        <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
+                      );
+                    }
+                  })
                 )
               }
             </div>
