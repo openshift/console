@@ -127,6 +127,7 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
 
 const Details = (pod) => {
   const podvuln = makePodvuln(pod);
+  
   if (_.isError(podvuln)) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail={<PodLink pod={pod} text="No images was scanned in this pod" />} />;
   }
@@ -138,7 +139,18 @@ const Details = (pod) => {
   if (!isSupported(podvuln)) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail={<PodLink pod={pod} text="The images in this pod could not be scanned" />} />;
   }
-  
+
+  let containerVulnRows = [];
+  podvuln.imagevulns.map((imgvuln) =>
+    imgvuln.Features.map((feature) => {
+      if (_.has(feature, 'Vulnerabilities')) {
+        _.map(feature.Vulnerabilities, (vuln) => {
+          containerVulnRows.push(<ContainerVulnRow key={_.uniqueId()} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />);
+        });
+      }
+    })
+  );
+
   return <div>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
@@ -203,18 +215,8 @@ const Details = (pod) => {
               <div className="col-sm-2 col-xs-8">Image</div>
               <div className="col-md-2 hidden-sm hidden-xs">Container</div>
             </div>
-            <div className="co-m-table-grid__body">              
-              {
-                podvuln.imagevulns.map((imgvuln) =>
-                  imgvuln.Features.map((feature) => {
-                    if (_.has(feature, 'Vulnerabilities')) {
-                      feature.Vulnerabilities.map((vuln, i) =>
-                        <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
-                      );
-                    }
-                  })
-                )
-              }
+            <div className="co-m-table-grid__body">
+              {_.map(containerVulnRows, o => o)}
             </div>
           </div>
         </div>
