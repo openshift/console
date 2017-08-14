@@ -124,9 +124,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		for _, protocol := range value {
-			if protocol == "base64.binary.k8s.io" {
-				subProtocol = "base64.binary.k8s.io"
+		for _, protocols := range value {
+			for _, protocol := range strings.Split(protocols, ", ") {
+				if protocol == "base64.binary.k8s.io" {
+					subProtocol = "base64.binary.k8s.io"
+				}
 			}
 		}
 	}
