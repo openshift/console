@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import * as classNames from'classnames';
 
 export class TogglePlay extends React.Component {
   shouldComponentUpdate(nextProps) {

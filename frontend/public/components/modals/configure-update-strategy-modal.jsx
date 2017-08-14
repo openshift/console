@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Tooltip } from 'react-lightweight-tooltip';
 
 import { k8sPatch, k8sKinds } from '../../module/k8s';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 export const GlobalNotification = ({title, content}) => <div className="co-global-notification">
   <div className="co-global-notification__sidebar">

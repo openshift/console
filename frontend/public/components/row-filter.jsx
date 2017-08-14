@@ -1,8 +1,8 @@
-import React from 'react';
-import classnames from 'classnames';
+import * as React from 'react';
+import * as classNames from'classnames';
 
 const CheckBox = ({title, active, number, toggle}) => {
-  const klass = classnames('row-filter--box clickable', {
+  const klass = classNames('row-filter--box clickable', {
     'row-filter--box__active': active, 'row-filter--box__empty': !number,
   });
 

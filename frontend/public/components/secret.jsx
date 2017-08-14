@@ -1,6 +1,6 @@
-import React from 'react';
-import moment from 'moment';
-import classnames from 'classnames';
+import * as React from 'react';
+import * as moment from 'moment';
+import * as classNames from'classnames';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
@@ -71,7 +71,7 @@ const withSecretsList = (Row) => {
       const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
 
       return (
-        <div onClick={this.onClick_} ref="target" className={classnames({clickable: !!secrets})} >
+        <div onClick={this.onClick_} ref="target" className={classNames({clickable: !!secrets})} >
           <Row {...this.props} />
           {
             this.state.open && secrets &&

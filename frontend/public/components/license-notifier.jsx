@@ -1,5 +1,5 @@
-import React from 'react';
-import moment from 'moment';
+import * as React from 'react';
+import * as moment from 'moment';
 import { Link } from 'react-router';
 
 import {k8s} from '../module/k8s';

@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 pushd frontend
-yarn test
+yarn run lint && yarn run lint:ts
+yarn run test
 popd
 
 if git status --short | grep 'yarn.lock' > /dev/null; then

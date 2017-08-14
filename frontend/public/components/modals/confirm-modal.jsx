@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {PromiseComponent} from '../utils';

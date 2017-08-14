@@ -8,3 +8,4 @@
 /frontend/node_modules
 /frontend/public/dist
 /frontend/npm-debug.log
+/frontend/yarn-error.log

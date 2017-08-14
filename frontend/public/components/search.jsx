@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import {connect} from 'react-redux';
-import Helmet from 'react-helmet';
+import * as Helmet from 'react-helmet';
 
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';

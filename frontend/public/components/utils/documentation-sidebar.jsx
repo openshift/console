@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 export const DocumentationSidebar = () => <div className="co-p-cluster__sidebar">
   <div className="co-m-pane__body">

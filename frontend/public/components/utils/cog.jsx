@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import * as classNames from'classnames';
 import { Tooltip } from 'react-lightweight-tooltip';
 
 import {k8s} from '../../module/k8s/k8s';

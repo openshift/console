@@ -1,5 +1,5 @@
-import React from 'react';
-import Helmet from 'react-helmet';
+import * as React from 'react';
+import * as Helmet from 'react-helmet';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';

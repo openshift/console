@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import { Link } from 'react-router';
-import classNames from 'classnames';
+import * as classNames from'classnames';
 
 const Label = ({kind, name, value, expand}) => {
   const href = `search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;

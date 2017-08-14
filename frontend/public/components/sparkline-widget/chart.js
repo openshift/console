@@ -2,7 +2,7 @@
 // the actual chart
 
 import * as d3 from 'd3';
-import moment from 'moment';
+import * as moment from 'moment';
 
 import { units } from '../utils';
 

@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import { Link } from 'react-router';
-import classnames from 'classnames';
+import * as classNames from'classnames';
 
 import { toString } from '../../module/k8s/selector';
 
@@ -25,7 +25,7 @@ const Requirement = ({kind, requirements, namespace=''}) => {
 
 export const Selector = ({kind, expand, selector, namespace, style}) => {
   const requirements = selector || {};
-  const className = classnames('co-m-selector', {'co-m-selector--expand': expand});
+  const className = classNames('co-m-selector', {'co-m-selector--expand': expand});
 
   return <div className={className} style={style}>
     { _.isEmpty(requirements)

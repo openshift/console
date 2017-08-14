@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import * as classNames from'classnames';
 import { k8sEnum } from '../../module/k8s/enum';
 
 export const ResourceIcon = ({kind, className}) => {

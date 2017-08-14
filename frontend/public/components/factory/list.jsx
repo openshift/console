@@ -1,6 +1,6 @@
-import React from 'react';
-import classNames from 'classnames';
-import fuzzy from 'fuzzysearch';
+import * as React from 'react';
+import * as classNames from'classnames';
+import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 

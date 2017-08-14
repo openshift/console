@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import {k8sKinds, k8sPatch} from '../../module/k8s';
 import {LoadingInline, OperatorState} from '../utils';

@@ -1,6 +1,6 @@
-import React from 'react';
-import classNames from 'classnames';
-import TagsInput from 'react-tagsinput';
+import * as React from 'react';
+import * as classNames from'classnames';
+import * as TagsInput from 'react-tagsinput';
 
 import * as k8sSelector from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';

@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import * as classNames from 'classnames';
 
 import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState, determineOperatorState, orderedTaskStatuses} from '../utils';
 import {configureOperatorStrategyModal, configureOperatorChannelModal,} from '../modals';

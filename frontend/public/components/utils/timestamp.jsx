@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import { Tooltip } from 'react-lightweight-tooltip';
-import moment from 'moment';
+import * as moment from 'moment';
 
 import {SafetyFirst} from '../safety-first';
 
@@ -95,6 +95,7 @@ export class Timestamp extends SafetyFirst {
   render () {
     const mdate = this.mdate;
     // Calling mdate.utc() modifies mdate to be UTC. :(
+    // eslint-disable-next-line import/namespace
     const utcdate = moment.utc(mdate);
 
     if (!mdate.isValid()) {

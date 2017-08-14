@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, LabelList, ResourceCog, Heading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';

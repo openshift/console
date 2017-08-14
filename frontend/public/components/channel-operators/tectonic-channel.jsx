@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import {LoadingInline, MultiFirehose, determineOperatorState, StatusBox} from '../utils';
 import {AppVersionDetails} from './app-version';

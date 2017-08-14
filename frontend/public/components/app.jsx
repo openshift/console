@@ -1,10 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import { render } from 'react-dom';
-import Helmet from 'react-helmet';
+import * as Helmet from 'react-helmet';
 import { Provider } from 'react-redux';
 import { IndexRoute, Redirect, Route, Router } from 'react-router';
-
-import '../globals';
 
 import store from '../redux';
 import { featureActions } from '../features';
@@ -30,10 +28,12 @@ import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
 import { Clusters } from './federation/cluster';
+import '../style.scss';
+import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
 const LoadingScreen = () => <div className="loading-screen">
   <div className="loading-screen__logo">
-    <img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" />
+    <img src={tectonicLogoImg} id="logo" />
   </div>
   <Loading className="loading-screen__loader" />
   <div>Loading your Tectonic Console</div>
@@ -100,7 +100,7 @@ render((
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
-        <IndexRoute component={ClusterOverviewContainer}/>
+        <IndexRoute component={ClusterOverviewContainer} /> 
 
         <Route path="start-guide" component={StartGuidePage} />
 
@@ -129,7 +129,7 @@ render((
         <Redirect from="ns/:ns/rolebindings/:name/details" to="all-namespaces/rolebindings" />
 
         <Route path="namespaces">
-          <IndexRoute component={ResourceListPage} kind="namespaces" />
+          <IndexRoute component={ResourceListPage} kind="namespaces" /> 
           <Route path=":name/:view" component={ResourceDetailsPage} kind="namespaces" />
         </Route>
 
@@ -151,8 +151,8 @@ render((
         <Route path="all-namespaces/events" component={EventStreamPage} />
         <Route path="ns/:ns/events" component={EventStreamPage} />
 
-        <Route path="all-namespaces/search" component={SearchPage} />
-        <Route path="ns/:ns/search" component={SearchPage} />
+        <Route path="all-namespaces/search" component={SearchPage} /> 
+        <Route path="ns/:ns/search" component={SearchPage} /> 
         <Redirect from="search" to="all-namespaces/search" />
 
         <Route path="all-namespaces/:kind" component={ResourceListPage} />
@@ -162,7 +162,7 @@ render((
         <Route path="ns/:ns/pods/:podName/:kind/:name/:view" component={ContainersDetailsPage} />
 
         <Route path="error" component={ErrorPage} />
-        <Route path="*" component={ErrorPage404} />
+        <Route path="*" component={ErrorPage404} />   
       </Route>
     </Router>
   </Provider>

@@ -110,7 +110,7 @@ go, glide, nodejs/yarn, kubectl
 
 ### Frontend Development
 
-All frontend build tasks are defined in `/frontend/gulpfile.js` and are aliased to `yarn run gulp`
+All frontend tasks are defined in `/frontend/package.json` and are aliased to `yarn run <cmd>`
 
 #### Install Dependencies
 
@@ -189,12 +189,10 @@ Update existing backend dependencies:
 
 Add new frontend dependencies:
 ```
-yarn add the-dependency
-yarn run gulp js-package
+yarn add <package@version>
 ```
 
 Update existing frontend dependencies:
 ```
-yarn upgrade
-yarn run gulp js-package
+yarn upgrade <package@version>
 ```

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { k8sKinds, resourceURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';

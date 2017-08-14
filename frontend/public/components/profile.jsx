@@ -1,5 +1,5 @@
-import React from 'react';
-import Helmet from 'react-helmet';
+import * as React from 'react';
+import * as Helmet from 'react-helmet';
 
 import { authSvc } from '../module/auth';
 import { kubectlConfigModal, tokenInfoModal } from './modals';

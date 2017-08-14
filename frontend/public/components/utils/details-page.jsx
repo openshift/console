@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import React from 'react';
+import * as React from 'react';
 
 import { Cog, kindObj, LabelList, ResourceLink, Selector, Timestamp } from './index';
 

@@ -1,6 +1,6 @@
-import React from 'react';
-import fuzzy from 'fuzzysearch';
-import Helmet from 'react-helmet';
+import * as React from 'react';
+import * as fuzzy from 'fuzzysearch';
+import * as Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 

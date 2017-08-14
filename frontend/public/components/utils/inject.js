@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 export const inject = (children, props) => {
   const safeProps = _.omit(props, ['children']);

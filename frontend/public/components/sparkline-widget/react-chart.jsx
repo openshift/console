@@ -1,8 +1,8 @@
 // React wrapper around d3 chart generation.
 // This prepares the component for d3 to render it's chart into
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import Chart from './chart';
 
 class ReactChart extends React.Component {

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import store from '../../redux';
 import {K8sWatcher} from './k8s-watcher';
