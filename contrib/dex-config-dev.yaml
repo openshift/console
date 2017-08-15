@@ -36,4 +36,12 @@ staticPasswords:
   hash: "JDJhJDE0JDh4TnlVZ3pzSmVuQm4ySlRPT2QvbmVGcUlnQzF4TEFVRFA3VlpTVzhDNWlkLnFPcmNlYUJX"
   username: "admin"
   userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+  # Must match an existing group
+  groupnames:
+  - "group-1"
 
+# Note: The following directive only works with Eric's special dex (https://github.com/estroz/dex/tree/static-groups)
+# A static list of groups that a user can be a part of. By identifying here, dex
+# won't look in its underlying storage for passwords.
+staticGroups:
+- groupname: "group-1"
