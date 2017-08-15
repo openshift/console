@@ -20,17 +20,13 @@ class Chart {
       return;
     }
 
-    // let chart = d3.select(el);
     let svg = d3.select(el).select('svg');
 
     const chartM = width / 2 * 0.14;
     const chartR = width / 2 * 0.85;
     
     let adjustedData = [];
-    let total = 0;
-    data.map(function(entry) {
-      total += entry.value;
-    });
+    const total = _.sumBy(data, 'value');
 
     adjustedData = data.map(function(entry) {
       let value = entry.value;
@@ -49,20 +45,15 @@ class Chart {
       .attr('width', (chartR + chartM) * 2)
       .attr('height', (chartR + chartM) * 2)
       .append('svg:g')
-      .attr('class', 'donut')
       .attr('transform', `translate(${chartR+chartM}, ${chartR+chartM})`);
 
     let arc = d3.arc()
       .innerRadius(chartR * 0.6)
-      .outerRadius(function(d, i) {
-        return i === adjustedData.length - 1 ? chartR * 1.2 : chartR * 1;
-      });
+      .outerRadius((d, i) => i === adjustedData.length - 1 ? chartR * 1.2 : chartR * 1);
 
     let pie = d3.pie()
       .sort(null)
-      .value(function(d) {
-        return d.value;
-      });
+      .value(d => d.value);
 
     let reversed = adjustedData.reverse();
     let g = topG.selectAll('.arc')
@@ -73,9 +64,7 @@ class Chart {
     g.append('path')
       .attr('d', arc)
       .style('stroke', '#fff')
-      .attr('class', function(d) {
-        return d.data.colorClass;
-      });
+      .attr('class', d => d.data.colorClass);
   }
 }
 
@@ -104,7 +93,7 @@ export class DonutChart extends React.Component {
   
   render () {
     return <span className="donut-chart" ref={node => this.node = node}>
-      <svg></svg>
+      <svg className="donut"></svg>
     </span>;
   }
 }

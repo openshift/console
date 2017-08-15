@@ -25,17 +25,26 @@ const SecurityScanCell = ({podvuln}) => {
   const P2 = _.has(podvuln, 'metadata.labels.secscan/P2') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P2'), 10) : 0;
   const P3 = _.has(podvuln, 'metadata.labels.secscan/P3') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P3'), 10) : 0;
   const count = P0 + P1 + P2 + P3;
-  
+
+  let scanResult;
+  if (!isScanned(podvuln)) {
+    scanResult = <span className="text-muted">(Not scanned)</span>;
+  } else if (!hasAccess(podvuln)) {
+    scanResult = <span className="text-muted">(Unable to scan)</span>;
+  } else if (!isSupported(podvuln)) {
+    scanResult = <span className="text-muted">(Unsupported)</span>;
+  } else if (fixables) {
+    scanResult = <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span>;
+  } else if (count === 0) {
+    scanResult = <span>Passed</span>;
+  } else {
+    scanResult = <span>{count.toString()} vulnerable packages</span>;
+  }
+
   return <div className="secscan-col">
     <DonutChart width={22} data={severityBreakdownInfo(podvuln)} />
     <span className="secscan-cell">
-      {
-        !isScanned(podvuln) ? <span className="text-muted">(Not scanned)</span> :
-          !hasAccess(podvuln) ? <span className="text-muted">(Unable to scan)</span> :
-            !isSupported(podvuln) ? <span className="text-muted">(Unsupported)</span> :
-              fixables ? <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span> :
-                count === 0 ? <span>Passed</span> : <span>{count.toString()} vulnerable packages</span>
-      }
+      { scanResult }
     </span>
   </div>;
 };
@@ -129,7 +138,7 @@ const Details = (pod) => {
   const podvuln = makePodvuln(pod);
   
   if (_.isError(podvuln)) {
-    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail={<PodLink pod={pod} text="No images was scanned in this pod" />} />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail={<PodLink pod={pod} text="No images were scanned in this pod" />} />;
   }
 
   if (!hasAccess(podvuln)) {
@@ -216,7 +225,7 @@ const Details = (pod) => {
               <div className="col-md-2 hidden-sm hidden-xs">Container</div>
             </div>
             <div className="co-m-table-grid__body">
-              {_.map(containerVulnRows, o => o)}
+              { containerVulnRows }
             </div>
           </div>
         </div>
