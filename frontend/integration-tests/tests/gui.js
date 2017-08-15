@@ -15,10 +15,10 @@ const TIMEOUT = 4000;
 const exports_ = {};
 
 [
+  'daemonsets',
   'deployments',
   'replicasets',
   'replicationcontrollers',
-  'daemonsets',
   'jobs',
   'pods',
   'configmaps',
@@ -29,7 +29,7 @@ const exports_ = {};
   'networkpolicies',
   'services',
   // 'namespaces', // TODO: (kans) special case
-  // 'serviceaccounts', // TODO: (kans) not support ...
+  'serviceaccounts',
   'roles',
 ].forEach(resource => {
   exports_[`YAML - ${resource}`] = browser => {
