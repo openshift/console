@@ -4,63 +4,106 @@ import { Link } from 'react-router';
 import { ContainerRow } from '../pod';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
 import { MsgBox, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
-import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVulnerabilityFilter } from '../../module/k8s/podvulns';
+import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVulnerabilityFilter, severityBreakdownInfo } from '../../module/k8s/podvulns';
+
+import { DonutChart } from './donut-chart/donut-chart';
+
+const severityMap = {
+  'P0': 'High',
+  'P1': 'Medium',
+  'P2': 'Low',
+  'P3': 'Negligible'
+};
+
+const SecurityScanCell = ({podvuln}) => {
+  const fixables = _.get(podvuln, 'metadata.labels.secscan/fixables');
+  const highest = _.get(podvuln, 'metadata.labels.secscan/highest');
+  const numHighest = _.get(podvuln, `metadata.labels.secscan/${highest}`);
+
+  const P0 = _.has(podvuln, 'metadata.labels.secscan/P0') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P0'), 10) : 0;
+  const P1 = _.has(podvuln, 'metadata.labels.secscan/P1') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P1'), 10) : 0;
+  const P2 = _.has(podvuln, 'metadata.labels.secscan/P2') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P2'), 10) : 0;
+  const P3 = _.has(podvuln, 'metadata.labels.secscan/P3') ? parseInt(_.get(podvuln, 'metadata.labels.secscan/P3'), 10) : 0;
+  const count = P0 + P1 + P2 + P3;
+
+  let scanResult;
+  if (!isScanned(podvuln)) {
+    scanResult = <span className="text-muted">(Not scanned)</span>;
+  } else if (!hasAccess(podvuln)) {
+    scanResult = <span className="text-muted">(Unable to scan)</span>;
+  } else if (!isSupported(podvuln)) {
+    scanResult = <span className="text-muted">(Unsupported)</span>;
+  } else if (fixables) {
+    scanResult = <span><span className={highest}>{numHighest} {severityMap[highest]}</span> / <span>{fixables} fixables</span></span>;
+  } else if (count === 0) {
+    scanResult = <span>Passed</span>;
+  } else {
+    scanResult = <span>{count.toString()} vulnerable packages</span>;
+  }
+
+  return <div className="secscan-col">
+    <DonutChart width={22} data={severityBreakdownInfo(podvuln)} />
+    <span className="secscan-cell">
+      { scanResult }
+    </span>
+  </div>;
+};
 
 const PodVulnHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6">Images Scanned</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.labels.secscan/fixables">Security Scan</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.labels.secscan/highest">Highest</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.labels.secscan/fixables">Security Scan</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6">Images Scanned</ColHead>
   <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.annotations.secscan/lastScan">Last Update</ColHead>
 </ListHeader>;
 
 const PodVulnRow = ({obj: pod}) => {
   const podvuln = makePodvuln(pod);
-  
-  const fixables = _.get(pod, 'metadata.labels.secscan/fixables');
-  const P0 = _.has(pod, 'metadata.labels.secscan/P0') ? parseInt(_.get(pod, 'metadata.labels.secscan/P0'), 10) : 0;
-  const P1 = _.has(pod, 'metadata.labels.secscan/P1') ? parseInt(_.get(pod, 'metadata.labels.secscan/P1'), 10) : 0;
-  const P2 = _.has(pod, 'metadata.labels.secscan/P2') ? parseInt(_.get(pod, 'metadata.labels.secscan/P2'), 10) : 0;
-  const P3 = _.has(pod, 'metadata.labels.secscan/P3') ? parseInt(_.get(pod, 'metadata.labels.secscan/P3'), 10) : 0;
-  const count = P0 + P1 + P2 + P3;
 
   return <ResourceRow>
     <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-      <ResourceLink kind="PodVuln" name={_.get(pod, 'metadata.name')}
-        displayName={_.get(pod, 'metadata.name')}
-        namespace={_.get(pod, 'metadata.namespace')} title={_.get(pod, 'metadata.uid')} />
-    </div>
-    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-      {imagesScanned(podvuln)}
-    </div>
-
-    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      {
-        !isScanned(podvuln) ? <div className="text-muted">(Not scanned)</div> :
-          !hasAccess(podvuln) ? <div className="text-muted">(Unable to scan)</div> :
-            !isSupported(podvuln) ? <div className="text-muted">(Unsupported)</div> :
-              (fixables ? `${fixables} fixable packages` : `${count.toString()} vulnerable packages`)
-      }
+      <span className="secscan-cell">
+        <ResourceLink kind="PodVuln" name={_.get(pod, 'metadata.name')}
+          displayName={_.get(pod, 'metadata.name')}
+          namespace={_.get(pod, 'metadata.namespace')} title={_.get(pod, 'metadata.uid')} />
+      </span>
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
-      {_.get(pod, 'metadata.labels.secscan/highest', '-')}
+      <span className="secscan-cell">
+        {_.get(pod, 'metadata.labels.secscan/highest', '-')}
+      </span>
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Timestamp timestamp={isScanned(podvuln)} />
+      <SecurityScanCell podvuln={podvuln} />
+    </div>
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+      <span className="secscan-cell">
+        {imagesScanned(podvuln)}
+      </span>
+    </div>
+    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+      <span className="secscan-cell">
+        <Timestamp timestamp={isScanned(podvuln)} />
+      </span>
     </div>
   </ResourceRow>;
 };
 
-const PodLink = ({pod}) => {
+const PodLink = ({pod, text}) => {
   const podname = _.get(pod, 'metadata.name');
-  return <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>{podname}</Link>;
+  return <div>
+    {text ? (`${text}: `) : ''}
+    <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>
+      {podname}
+    </Link>
+  </div>;
 };
 
-const SubHeaderRow = ({header, href, link}) => <div className="col-md-6">{header} <a href={href}>{link}</a></div>;
+const SubHeaderRow = ({header, href, link}) => <div className="col-md-6 subheader-row">{header} <a href={href}>{link}</a></div>;
 
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
-    <a href={vuln.link} target="_blank">{vuln.name}</a>
+    <a href={vuln.Link} target="_blank">{vuln.Name}</a>
   </span>;
 };
 
@@ -79,13 +122,13 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
       <div className="col-sm-2 col-xs-4">
         <VulnLink vuln={vuln} />
       </div>
-      <div className="col-sm-1 hidden-xs">{vuln.severity}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">{feature.name}</div>
-      <div className="col-md-2 col-sm-2 hidden-xs">{feature.version}</div>
-      <div className="col-md-2 col-sm-2 hidden-xs">{vuln.fixedby}</div>
-      <Overflow className="col-sm-2 col-xs-8" value={imgvuln.image} />
+      <div className="col-sm-1 hidden-xs">{vuln.Severity}</div>
+      <div className="col-md-1 col-sm-2 hidden-xs">{feature.Name}</div>
+      <div className="col-md-2 col-sm-2 hidden-xs">{feature.Version}</div>
+      <div className="col-md-2 col-sm-2 hidden-xs">{vuln.FixedBy}</div>
+      <Overflow className="col-sm-2 col-xs-8" value={imgvuln.Image} />
       <div className="col-md-2 hidden-sm hidden-xs">
-        <ContainerLink podvuln={podvuln} name={imgvuln.container} />
+        <ContainerLink podvuln={podvuln} name={imgvuln.Container} />
       </div>
     </div>
   </div>;
@@ -93,18 +136,30 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
 
 const Details = (pod) => {
   const podvuln = makePodvuln(pod);
+  
   if (_.isError(podvuln)) {
-    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail="No images was scanned in this pod" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail={<PodLink pod={pod} text="No images were scanned in this pod" />} />;
   }
 
   if (!hasAccess(podvuln)) {
-    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Could read images from registry API" detail="The labeller could not get image information from registry" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Could read images from registry API" detail={<PodLink pod={pod} text="The labeller could not get image information from registry" />} />;
   }
   
   if (!isSupported(podvuln)) {
-    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail="The images in this pod could not be scanned" />;
+    return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail={<PodLink pod={pod} text="The images in this pod could not be scanned" />} />;
   }
-  
+
+  let containerVulnRows = [];
+  podvuln.imagevulns.map((imgvuln) =>
+    imgvuln.Features.map((feature) => {
+      if (_.has(feature, 'Vulnerabilities')) {
+        _.map(feature.Vulnerabilities, (vuln) => {
+          containerVulnRows.push(<ContainerVulnRow key={_.uniqueId()} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />);
+        });
+      }
+    })
+  );
+
   return <div>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
@@ -169,16 +224,8 @@ const Details = (pod) => {
               <div className="col-sm-2 col-xs-8">Image</div>
               <div className="col-md-2 hidden-sm hidden-xs">Container</div>
             </div>
-            <div className="co-m-table-grid__body">              
-              {
-                podvuln.imagevulns.map((imgvuln) =>
-                  imgvuln.features.map((feature) =>
-                    feature.vulnerabilities.map((vuln, i) =>
-                      <ContainerVulnRow key={i} podvuln={podvuln} imgvuln={imgvuln} feature={feature} vuln={vuln} />
-                    )
-                  )
-                )
-              }
+            <div className="co-m-table-grid__body">
+              { containerVulnRows }
             </div>
           </div>
         </div>
@@ -203,6 +250,7 @@ export const PodVulnsPage = props => <ListPage
   kind="Pod"
   ListComponent={PodVulnList}
   title="Security Scan Report"
+  filterLabel="vulnerabilities by name"
   Intro={
     <SubHeaderRow
       header="All supported container images are scanned for known vulnerabilities and CVEs." 
@@ -215,10 +263,10 @@ export const PodVulnsPage = props => <ListPage
     selected: ['P0', 'P1', 'P2', 'P3'],
     numbers: CountVulnerabilityFilter,
     items: [
-      {id: 'P0', title: 'P0'},
-      {id: 'P1', title: 'P1'},
-      {id: 'P2', title: 'P2'},
-      {id: 'P3', title: 'P3'},
+      {id: 'P0', title: 'Priority/P0'},
+      {id: 'P1', title: 'Priority/P1'},
+      {id: 'P2', title: 'Priority/P2'},
+      {id: 'P3', title: 'Priority/P3'},
       {id: 'Passed', title: 'No Vulnerabilities'},
       {id: 'Fixables', title: 'Fixables'},
       {id: 'NotScanned', title: 'Not Scanned'},

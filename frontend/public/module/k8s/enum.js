@@ -239,7 +239,7 @@ export const k8sEnum = {
       labelPlural: 'Pod Vulns',
       path: 'podvulns',
       plural: 'podvulns',
-      abbr: 'PV',
+      abbr: 'V',
     },
     '*': {
       id: 'all',
