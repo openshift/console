@@ -2,7 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 
 import { authSvc } from '../module/auth';
-import { kubectlConfigModal } from './modals';
+import { kubectlConfigModal, tokenInfoModal } from './modals';
 import { NavTitle } from './utils';
 import { SafetyFirst } from './safety-first';
 import { ClientTokensContainer } from './client-tokens';
@@ -34,6 +34,8 @@ export class ProfilePage extends SafetyFirst {
               <dd>{authSvc.email() || '-'}</dd>
               <dt>kubectl</dt>
               <dd><button className="btn btn-default" type="button" onClick={() => kubectlConfigModal({ callback: this._onKubeCtlDownloaded })}>Download Configuration</button></dd>
+              <dt>Auth Token</dt>
+              <dd><button className="btn btn-default" type="button" onClick={() => tokenInfoModal()}>Show Token Information</button></dd>
             </dl>
           </div>
         </div>
