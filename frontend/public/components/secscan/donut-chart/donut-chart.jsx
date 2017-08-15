@@ -20,8 +20,9 @@ class Chart {
       return;
     }
 
-    let chart = d3.select(el);
-    
+    // let chart = d3.select(el);
+    let svg = d3.select(el).select('svg');
+
     const chartM = width / 2 * 0.14;
     const chartR = width / 2 * 0.85;
     
@@ -44,14 +45,12 @@ class Chart {
       return copy;
     });
     
-    let topG = chart.append('svg:svg')
+    let topG = svg
       .attr('width', (chartR + chartM) * 2)
       .attr('height', (chartR + chartM) * 2)
       .append('svg:g')
       .attr('class', 'donut')
       .attr('transform', `translate(${chartR+chartM}, ${chartR+chartM})`);
-
-    // `translate(${chartR+chartM}, ${chartR+chartM})`
 
     let arc = d3.arc()
       .innerRadius(chartR * 0.6)
@@ -105,7 +104,8 @@ export class DonutChart extends React.Component {
   }
   
   render () {
-    return <span className="donut-chart" ref={node => this.node = node}></span>;
-    //return <div className="chart" ref={node => this.node = node}></div>;
+    return <span className="donut-chart" ref={node => this.node = node}>
+      <svg></svg>
+    </span>;
   }
 }
