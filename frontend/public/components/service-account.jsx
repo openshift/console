@@ -4,8 +4,14 @@ import moment from 'moment';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, ResourceCog, ResourceLink, Timestamp } from './utils';
 import { SecretsList, withSecretsList } from './secret';
+import { registerTemplate } from '../yaml-templates';
 
 const menuActions = [Cog.factory.Delete];
+
+registerTemplate('v1.ServiceAccount', `apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: example`);
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
@@ -65,8 +71,8 @@ const Details = (serviceaccount) => {
 const ServiceAccountsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details)]}
+  pages={[navFactory.details(Details), navFactory.editYaml()]}
 />;
 const ServiceAccountsList = props => <List {...props} Header={Header} Row={withSecretsList(ServiceAccountRow)} />;
-const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} />;
+const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true}/>;
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};
