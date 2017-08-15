@@ -81,6 +81,8 @@ export const taskStatuses = {
   }
 };
 
+export const orderedTaskStatuses = ['Running', 'Failed', 'BackOff', 'NotStarted', 'Completed'];
+
 export const OperatorState = ({opState, version}) => {
   const operatorState = operatorStates[opState];
   const icon = _.get(operatorState, 'icon');

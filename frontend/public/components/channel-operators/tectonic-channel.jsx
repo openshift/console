@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {LoadingInline, MultiFirehose, determineOperatorState, StatusBox} from '../utils';
-import {ChannelOperator} from './channel-operator';
+import {AppVersionDetails} from './app-version';
 import {SafetyFirst} from '../safety-first';
 import * as k8sSelector from '../../module/k8s/selector';
 
@@ -160,14 +160,14 @@ class TectonicChannelWithData extends React.Component {
   render() {
     const {configs, pods, appVersions, tectonicVersions} = this.props;
     if (appVersions.loaded) {
-      const components = this._getComponents(appVersions, pods, tectonicVersions);
+      const appVersionList = this._getComponents(appVersions, pods, tectonicVersions);
       const config = this._getConfig(configs);
       const versions = this._getTectonicVersions(tectonicVersions);
 
       return <div className="co-cluster-updates__component">
-        <ChannelOperator
+        <AppVersionDetails
           primaryOperatorName={clusterAppVersionName}
-          components={components}
+          appVersionList={appVersionList}
           tectonicVersions={versions}
           config={config} />
       </div>;
