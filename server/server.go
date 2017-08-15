@@ -73,9 +73,10 @@ type Server struct {
 	KubectlClientID     string
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
-	KubectlAuther  *auth.Authenticator
-	KubeConfigTmpl *KubeConfigTmpl
-	DexClient      api.DexClient
+	KubectlAuther   *auth.Authenticator
+	KubeConfigTmpl  *KubeConfigTmpl
+	DexClient       api.DexClient
+	NamespaceLister *NamespaceLister
 }
 
 func (s *Server) AuthDisabled() bool {
@@ -157,6 +158,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
 	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
+	handleFunc("/namespaces", s.handleListNamespaces)
 	mux.HandleFunc("/tectonic/certs", useCertsHandler)
 	mux.HandleFunc("/tectonic/clients", useClientsHandler)
 	mux.HandleFunc("/tectonic/revoke-token", useTokenRevocationHandler)
@@ -345,6 +347,14 @@ func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) 
 	}{
 		Message: "Valid license",
 	})
+}
+
+func (s *Server) handleListNamespaces(w http.ResponseWriter, r *http.Request) {
+	bearerToken, err := auth.ExtractTokenFromRequest(r)
+	if err != nil {
+		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
+	}
+	s.NamespaceLister.handleNamespaces(bearerToken, w, r)
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
