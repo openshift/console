@@ -99,10 +99,10 @@ export const CountVulnerabilityFilter = (pods) => {
 
 export const severityBreakdownInfo = (podvuln) => {
   if (!isSupported(podvuln)) {
-    return [{'index': 0, 'value': 1, 'color': '#9B9B9B'}];
+    return [{'index': 0, 'value': 1, 'colorClass': 'UnsupportedFill'}];
   }
   if (passed(podvuln)) {
-    return [{'index': 0, 'value': 1, 'color': '#2FC98E'}];
+    return [{'index': 0, 'value': 1, 'colorClass': 'PassedFill'}];
   }
   
   let severityBreakdown = [];
@@ -119,16 +119,16 @@ export const severityBreakdownInfo = (podvuln) => {
   const severities = _.groupBy(vulns, (o) => o.Severity);
   _.forOwn(severities, (v, k) => {
     if (k === 'High') {
-      severityBreakdown.push({'index': 0, 'value': v.length, 'color': '#D64456'});
+      severityBreakdown.push({'index': 0, 'value': v.length, 'colorClass': 'P0Fill'});
     }
     if (k === 'Medium') {
-      severityBreakdown.push({'index': 1, 'value': v.length, 'color': '#FCA657'});
+      severityBreakdown.push({'index': 1, 'value': v.length, 'colorClass': 'P1Fill'});
     }
     if (k === 'Low') {
-      severityBreakdown.push({'index': 2, 'value': v.length, 'color': '#F8CA1C'});
+      severityBreakdown.push({'index': 2, 'value': v.length, 'colorClass': 'P2Fill'});
     }
     if (k === 'Negligible') {
-      severityBreakdown.push({'index': 3, 'value': v.length, 'color': '#9B9B9B'});
+      severityBreakdown.push({'index': 3, 'value': v.length, 'colorClass': 'P3Fill'});
     }
   });
   return _.sortBy(severityBreakdown, o => o.index);

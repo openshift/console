@@ -73,10 +73,9 @@ class Chart {
     g.append('path')
       .attr('d', arc)
       .style('stroke', '#fff')
-      .style('fill', function(d) {
-        return d.data.color;
+      .attr('class', function(d) {
+        return d.data.colorClass;
       });
-
   }
 }
 

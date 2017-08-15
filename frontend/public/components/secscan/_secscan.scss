@@ -1,3 +1,9 @@
+$Passed-color: #2FC98E;
+$P0-color: #D64456;
+$P1-color: #FCA657;
+$P2-color: #F8CA1C;
+$P3-color: #9B9B9B;
+
 .donut-chart {
   padding-right: 3px;
 }
@@ -17,17 +23,37 @@
 }
 
 .P0 {
-  color: #D64456;
+  color: $P0-color;
 }
 
 .P1 {
-  color: #FCA657;
+  color: $P1-color;
 }
 
 .P2 {
-  color: #F8CA1C;
+  color: $P2-color;
 }
 
-.P3 {
-  color: #9B9B9B;
+.P3, .Unsupported {
+  color: $P3-color;
+}
+
+.P0Fill {
+  fill: $P0-color;
+}
+
+.P1Fill {
+  fill: $P1-color;
+}
+
+.P2Fill {
+  fill: $P2-color;
+}
+
+.P3Fill, .UnsupportedFill {
+  fill: $P3-color;
+}
+
+.PassedFill {
+  fill: $Passed-color;
 }
