@@ -128,8 +128,8 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     </NavSection>
 
     <NavSection required={['ETCD_OPERATOR', 'PROMETHEUS']} text="Open Cloud Services" img="static/imgs/operator-logo.svg">
-      <NavLink resource="etcdclusters" name="etcd Clusters" required="ETCD_OPERATOR" />
-      <NavLink resource="prometheuses" name="Prometheus Instances" required="PROMETHEUS" />
+      <NavLink resource="etcdclusters" name="etcd" required="ETCD_OPERATOR" />
+      <NavLink resource="prometheuses" name="Prometheus" required="PROMETHEUS" />
     </NavSection>
 
     <NavSection text="Routing" img="static/imgs/routing.svg">
