@@ -158,7 +158,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
 	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
-	handleFunc("/namespaces", s.handleListNamespaces)
+	handleFunc("/api/tectonic/namespaces", s.handleListNamespaces)
 	mux.HandleFunc("/tectonic/certs", useCertsHandler)
 	mux.HandleFunc("/tectonic/clients", useClientsHandler)
 	mux.HandleFunc("/tectonic/revoke-token", useTokenRevocationHandler)

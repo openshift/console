@@ -61,7 +61,20 @@ func forwardResponse(w http.ResponseWriter, r *http.Response) {
 // cases the method will list all the namespaces, then filter the ones the bearer
 // token can view.
 func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.ResponseWriter, r *http.Request) {
-	resp, err := l.get(r.Context(), requestBearerToken, namespacesPath)
+	// dev mode of some sort most likely
+	nsURL := namespacesPath + "?" + r.URL.RawQuery
+	if requestBearerToken == "" {
+		plog.Printf("no request bearer token")
+		resp, err := l.get(r.Context(), l.BearerToken, nsURL)
+		if err != nil {
+			sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
+			return
+		}
+		forwardResponse(w, resp)
+		return
+	}
+
+	resp, err := l.get(r.Context(), requestBearerToken, nsURL)
 	if err != nil {
 		sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
 		return
@@ -78,7 +91,7 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 	resp.Body.Close()
 
 	// List all namespaces using bridge's root credentials.
-	resp, err = l.get(r.Context(), l.BearerToken, namespacesPath)
+	resp, err = l.get(r.Context(), l.BearerToken, nsURL)
 	if err != nil {
 		sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
 		return
@@ -100,6 +113,8 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 		} `json:"metadata"`
 
 		Items []*json.RawMessage `json:"items"`
+		// Items user doesn't have access to. One day we may expose this
+		RestrictedItems []*json.RawMessage `json:"restrictedItems"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&namespaces)
 	resp.Body.Close()
@@ -130,6 +145,8 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 		if ok {
 			namespaces.Items[n] = item
 			n++
+		} else {
+			namespaces.RestrictedItems = append(namespaces.RestrictedItems, item)
 		}
 	}
 	namespaces.Items = namespaces.Items[:n]
