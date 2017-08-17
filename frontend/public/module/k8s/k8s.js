@@ -1,7 +1,9 @@
 import {wsFactory} from '../ws-factory';
 import {k8sKinds} from './enum';
 
-import {k8sCreate, k8sGet, k8sKill, k8sList, k8sPatch, k8sUpdate, resourceURL2} from './resource';
+import {k8sCreate, k8sGet, k8sKill, k8sPatch, k8sUpdate, resourceURL, resourceURL2} from './resource';
+import {coFetchJSON} from '../../co-fetch';
+import {toString} from './selector';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
@@ -59,7 +61,28 @@ export const k8s = {};
 
   k8s[kind.plural] = {
     kind,
-    list: (...args) => k8sList(kind, ...args),
+    list: (params={}) => {
+      const query = _(params)
+        .omit('ns')
+        .map((v, k) => {
+          if (k === 'labelSelector') {
+            v = toString(v);
+          }
+          return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+        })
+        .value()
+        .join('&');
+
+      const k = kind.kind === 'Namespace' ? {
+        // hit our custom /namespaces path which better handles users with limited permissions
+        basePath: '../../',
+        apiVersion: 'tectonic',
+        path: 'namespaces',
+      } : kind;
+
+      const listURL = resourceURL(k, {ns: params.ns});
+      return coFetchJSON(`${listURL}?${query}`).then(result => result.items);
+    },
     get: (...args) => k8sGet(kind, ...args),
     delete: (...args) => k8sKill(kind, ...args),
     create: (obj) => k8sCreate(kind, obj),
@@ -79,4 +102,3 @@ export const k8s = {};
     },
   };
 });
-

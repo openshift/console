@@ -58,22 +58,6 @@ export const watchURL = (kind, options) => {
 
 export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ns, name}, opts)));
 
-export const k8sList = (kind, params={}) => {
-  const query = _(params)
-    .omit('ns')
-    .map((v, k) => {
-      if (k === 'labelSelector') {
-        v = toString(v);
-      }
-      return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
-    })
-    .value()
-    .join('&');
-
-  const listURL = resourceURL(kind, {ns: params.ns});
-  return coFetchJSON(`${listURL}?${query}`).then(result => result.items);
-};
-
 export const k8sCreate = (kind, data) => {
   // Lowercase the resource name
   // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
