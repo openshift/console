@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import * as classNames from'classnames';
 
 import { StatusBox, RelativeLink } from './index';
 import { EditYAML } from '../edit-yaml';

@@ -1,10 +1,10 @@
-import React from 'react';
-import Helmet from 'react-helmet';
+import * as React from 'react';
+import * as Helmet from 'react-helmet';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
-import classNames from 'classnames';
+import * as classNames from'classnames';
 
 const tectonicHealthMsgs = {
   'ok': 'All systems go',

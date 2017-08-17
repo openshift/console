@@ -1,7 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import classNames from 'classnames';
+import * as classNames from'classnames';
 
 import { k8sEnum } from '../../module/k8s';
 import k8sActions from '../../module/k8s/k8s-actions';

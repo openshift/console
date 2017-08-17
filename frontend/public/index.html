@@ -8,15 +8,12 @@
     <title>Tectonic Console</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-114x114.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-144x144.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon-precomposed" siezes="57x57" href="static/lib/mochi/img/favicons/tectonic/apple-touch-icon-57x57.png">
-    <link rel="shortcut icon" href="static/lib/mochi/img/favicons/tectonic/favicon-96x96.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-114x114.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-144x144.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-72x72.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-57x57.png') %>">
+    <link rel="shortcut icon" href="<%= require('./lib/mochi/img/favicons/tectonic/favicon-96x96.png') %>">
 
-    <!-- build:css -->
-    <link rel="stylesheet" href="static/app-bundle.css">
-    <!-- endbuild -->
     <script type="text/javascript">
       window.SERVER_FLAGS = [[.]];
     </script>
@@ -24,21 +21,17 @@
 
   <body>
     <div id="modal-container"></div>
-    <!-- build:analytics -->
-    <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-N3KH3N"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <script type="text/javascript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-N3KH3N');</script>
-    <!-- endbuild -->
-
+    <% if (htmlWebpackPlugin.options.production) { %>
+      <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-N3KH3N"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <script type="text/javascript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-N3KH3N');</script>
+    <% } %>
+    
     <div id="app"></div>
 
-    <!-- build:js -->
-    <script type="text/javascript" src="static/deps.js"></script>
-    <script type="text/javascript" src="static/app-bundle.js"></script>
-    <!-- endbuild -->
   </body>
 </html>

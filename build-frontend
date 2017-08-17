@@ -2,5 +2,5 @@
 
 pushd frontend
 yarn install
-yarn run gulp
+yarn run build
 popd

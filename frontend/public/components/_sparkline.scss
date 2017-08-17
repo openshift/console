@@ -117,7 +117,7 @@
 
   .chart {
     height: 60px;
-    background: url(imgs/sparkline-grid.png);
+    background: url('../imgs/sparkline-grid.png');
     background-position: -1px -1px; // don't double the top or left borders
     background-size: 30px;
   }

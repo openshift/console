@@ -1,9 +1,9 @@
-import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import Helmet from 'react-helmet';
+import * as React from 'react';
+import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import * as Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import classNames from 'classnames';
+import * as classNames from'classnames';
 
 import { k8sKinds, watchURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { FLAGS, connectToFlags } from '../../features';
 import { SafetyFirst } from '../safety-first';
 import { LoadingInline, Timestamp, NavTitle, StatusBox, clusterUtil } from '../utils';

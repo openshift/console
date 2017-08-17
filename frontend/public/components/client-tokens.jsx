@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';

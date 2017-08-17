@@ -1,5 +1,5 @@
-import React from 'react';
-import Helmet from 'react-helmet';
+import * as React from 'react';
+import * as Helmet from 'react-helmet';
 
 import { k8sKinds } from '../module/k8s';
 import * as pages from './resource-pages';

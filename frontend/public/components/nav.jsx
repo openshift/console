@@ -1,13 +1,18 @@
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import classNames from 'classnames';
+import * as classNames from'classnames';
 
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
 import { ClusterPicker } from './federation/cluster-picker';
+
+import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
+import * as operatorLogoImg from '../imgs/operator-logo.svg';
+import * as routingImg from '../imgs/routing.svg';
+
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 
 const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
@@ -111,7 +116,7 @@ const Sep = () => <div className="navigation-container__section__separator" />;
 export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
   <div className="navigation-container">
     <div className="navigation-container__section navigation-container__section--logo">
-      <Link to="/"><img src="static/imgs/tectonic-bycoreos-whitegrn.svg" id="logo" /></Link>
+      <Link to="/"><img src={tectonicLogoImg} id="logo" /></Link>
       <ClusterPicker />
     </div>
 
@@ -127,12 +132,12 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="secrets" name="Secrets" />
     </NavSection>
 
-    <NavSection required={['ETCD_OPERATOR', 'PROMETHEUS']} text="Open Cloud Services" img="static/imgs/operator-logo.svg">
+    <NavSection required={['ETCD_OPERATOR', 'PROMETHEUS']} text="Open Cloud Services" img={operatorLogoImg}>
       <NavLink resource="etcdclusters" name="etcd" required="ETCD_OPERATOR" />
       <NavLink resource="prometheuses" name="Prometheus" required="PROMETHEUS" />
     </NavSection>
 
-    <NavSection text="Routing" img="static/imgs/routing.svg">
+    <NavSection text="Routing" img={routingImg}>
       <NavLink resource="ingresses" name="Ingress" />
       <NavLink resource="networkpolicies" name="Network Policies" />
       <NavLink resource="services" name="Services" />

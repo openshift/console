@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { SafetyFirst } from '../safety-first';
 import { FLAGS, connectToFlags } from '../../features';

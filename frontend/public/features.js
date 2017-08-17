@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import {connect} from 'react-redux';
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 import { coFetchJSON } from './co-fetch';
 import { CONST } from './const';

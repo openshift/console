@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { k8s, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';

@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import * as classNames from'classnames';
 
 export const NumberSpinner = (props) => {
   const inputProps = _.omit(props, ['className', 'changeValueBy']);

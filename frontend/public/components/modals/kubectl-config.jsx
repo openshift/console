@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {saveAs} from 'file-saver';
 
 import { k8sVersion } from '../../module/status';

@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Modal from 'react-modal';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as Modal from 'react-modal';
 
 import { ButtonBar } from '../utils';
 

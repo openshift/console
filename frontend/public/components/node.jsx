@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { k8sPatch, isNodeReady } from '../module/k8s';
 import { ResourceEventStream } from './events';

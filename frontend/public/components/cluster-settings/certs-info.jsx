@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { coFetchJSON } from '../../co-fetch';
 import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings';
