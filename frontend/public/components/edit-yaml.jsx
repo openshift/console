@@ -90,6 +90,8 @@ export class EditYAML extends SafetyFirst {
       // Squelch warning from Ace
       this.ace.$blockScrolling = Infinity;
       const es = this.ace.getSession();
+      // Restore native browser Ctrl+F
+      this.ace.commands.removeCommand('find');
       es.setMode('ace/mode/yaml');
       this.ace.setTheme('ace/theme/clouds');
       es.setUseWrapMode(true);
