@@ -175,7 +175,7 @@ class TectonicClusterAppVersion extends React.Component {
   }
 
   render() {
-    const {tcAppVersion, secondaryAppVersions, tectonicVersions} = this.props;
+    const {tcAppVersion, secondaryAppVersions, tectonicVersions, channelState} = this.props;
     const {currentVersion, targetVersion, logsUrl, name} = tcAppVersion;
     let desiredVersion = tcAppVersion.desiredVersion;
 
@@ -193,7 +193,7 @@ class TectonicClusterAppVersion extends React.Component {
         <div className="co-cluster-updates__operator-text">{headerText}</div>
       </div>
 
-      {groupedTaskStatuses &&
+      {groupedTaskStatuses && channelState !== 'UpdateAvailable' &&
         <button className="btn btn-link co-cluster-updates__operator-show-details" onClick={() => this.setState({showDetails: !this.state.showDetails})}>
           {this.state.showDetails ? 'Hide Details' : 'Show Details'}
         </button>
@@ -216,6 +216,7 @@ TectonicClusterAppVersion.propTypes = {
   tcAppVersion: React.PropTypes.object,
   secondaryAppVersions: React.PropTypes.array,
   tectonicVersions: React.PropTypes.object,
+  channelState: React.PropTypes.string,
 };
 
 const SecondaryAppVersion = ({appVersion, tcAppVersion, tectonicVersions}) => {
@@ -242,7 +243,9 @@ const SecondaryAppVersion = ({appVersion, tcAppVersion, tectonicVersions}) => {
         </span>
       </div>
     </div>
-    {state !== 'Complete' && logsUrl && <div className="co-cluster-updates__operator-logs"><a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl} target="_blank">View Logs</a></div>}
+    {state !== 'Complete' && logsUrl && <div className="co-cluster-updates__operator-logs">
+      <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl} target="_blank">View Logs</a>
+    </div>}
     {_.map(appVersion.taskStatuses, (taskStatus, index) =>
       <TaskStatus taskStatus={taskStatus} key={index} isTCAppVersion={false} /> )
     }
@@ -282,7 +285,7 @@ class TaskStatus extends React.Component {
       <div className={taskStatus.type === 'appversion' ? 'co-cluster-updates__appversion-ts col-xs-6' : 'col-xs-6'}>
         <TaskStatusStep status={taskStatus} style={{paddingBottom: '10px'}} />
 
-        {!_.isEmpty(_.get(taskStatus, 'statuses')) && this.props.showDetails && taskStatus.state === 'Completed' &&
+        {!_.isEmpty(_.get(taskStatus, 'statuses')) && this.props.showDetails && taskStatus.state !== 'Completed' &&
           _.map(taskStatus.statuses, (status, index) =>
             <TaskStatusStep status={status} key={index} style={{padding: '0 0 10px 20px'}}/>)
         }
@@ -379,6 +382,7 @@ export class AppVersionDetails extends SafetyFirst{
             }
             {tcAppVersion && channelState !== 'UpToDate' &&
               <TectonicClusterAppVersion
+                channelState={channelState}
                 tcAppVersion={tcAppVersion}
                 secondaryAppVersions={secondaryAppVersions}
                 tectonicVersions={this.props.tectonicVersions}

@@ -26,22 +26,29 @@ const getNewVersion = (node) => {
 };
 
 /** Whenever any node enters Downloading, Verifying, Finalizing **/
-const isDownloading = (node) => {
-  return _.includes('UPDATE_STATUS_DOWNLOADING', 'UPDATE_STATUS_VERIFYING',
-    'UPDATE_STATUS_FINALIZING', getStatus(node)) ;
+const isDownloading = (status) => {
+  return status === 'UPDATE_STATUS_DOWNLOADING';
+};
+
+const isVerifying = (status) => {
+  return status === 'UPDATE_STATUS_VERIFYING';
+};
+
+const isFinalizing = (status) => {
+  return status === 'UPDATE_STATUS_FINALIZING';
 };
 
 /** Whenever any node enters Updated_Need_Reboot **/
-const isDownloadCompleted = (node) => {
-  return getStatus(node) === 'UPDATE_STATUS_UPDATED_NEED_REBOOT';
+const isUpdatedNeedReboot = (status) => {
+  return status === 'UPDATE_STATUS_UPDATED_NEED_REBOOT';
 };
 
-const isUpdateAvailable = (node) => {
-  return getStatus(node) === 'UPDATE_STATUS_UPDATE_AVAILABLE';
+const isUpdateAvailable = (status) => {
+  return status === 'UPDATE_STATUS_UPDATE_AVAILABLE';
 };
 
-const isCheckingForUpdate = (node) => {
-  return getStatus(node) === 'UPDATE_STATUS_CHECKING_FOR_UPDATE';
+const isCheckingForUpdate = (status) => {
+  return status === 'UPDATE_STATUS_CHECKING_FOR_UPDATE';
 };
 
 const isRebooting = (node) => {
@@ -60,11 +67,13 @@ const isSoftwareUpToDate = (node) => {
 };
 
 const getUpdateStatus = (node) => {
+  const status = getStatus(node);
+
   if (isSoftwareUpToDate(node)) {
     return { className: null, text: 'Up to date'};
   }
 
-  if (isDownloading(node)) {
+  if (isDownloading(status) || isVerifying(status) || isFinalizing(status)) {
     return { className: 'fa fa-info-circle co-cl-operator--pending', text: 'Downloading...'};
   }
 
@@ -76,7 +85,7 @@ const getUpdateStatus = (node) => {
     return { className: 'fa fa-info-circle co-cl-operator--warning', text: 'Pending Reboot'};
   }
 
-  if (isCheckingForUpdate(node)) {
+  if (isCheckingForUpdate(status)) {
     return { className: 'fa fa-info-circle co-cl-operator--pending', text: 'Checking for update'};
   }
 
@@ -88,7 +97,8 @@ Whenever a node enters a "Downloading", "Verifying", "Finalizing", light up (i.e
 Only update/add up the node count for those reached to "Updated_Need_Reboot" state.
 **/
 const getDownloadCompletedIconClass = (nodeListUpdateStatus) => {
-  return nodeListUpdateStatus.downloadCompleted.length === nodeListUpdateStatus.upgradeCount ?
+  const {downloading, verifying, finalizing} = nodeListUpdateStatus;
+  return _.isEmpty(downloading) && _.isEmpty(verifying) && _.isEmpty(finalizing) ?
     'fa fa-check-circle co-cl-operator--downloaded' : 'fa fa-spin fa-circle-o-notch co-cl-operator-spinner--downloading';
 };
 
@@ -98,41 +108,63 @@ Whenever a node enters "Rebooting", light up (i.e. spinner shows up and showing 
 Only update/add up the node count for those up-to-date nodes.
 **/
 const getUpdateCompletedIconClass = (nodeListUpdateStatus) => {
-  return nodeListUpdateStatus.rebooting.length === 0 ?
-    'fa fa-fw fa-circle-o co-cl-operator--pending' : 'fa fa-spin fa-circle-o-notch co-cl-operator-spinner--rebooting';
+  const {rebooting, updatedNeedsReboot} = nodeListUpdateStatus;
+
+  if (rebooting.length > 0 || updatedNeedsReboot.length > 0) {
+    return 'fa fa-spin fa-circle-o-notch co-cl-operator-spinner--downloading';
+  }
+  return 'fa fa-fw fa-circle-o co-cl-operator--pending';
 };
 
 const getNodeListUpdateStatus = (nodeList) => {
   let downloading = [];
+  let verifying = [];
+  let finalizing = [];
+
   let upToDate = [];
   let rebooting = [];
-  let downloadCompleted = [];
+  let updatedNeedsReboot = [];
   let updateAvailable = [];
+  let versions = [];
 
   _.each(nodeList, (node) => {
-    if (isDownloading(node)) {
+    const status = getStatus(node);
+
+    if (isDownloading(status)) {
       downloading.push(node);
-    } else if (isDownloadCompleted(node)) {
-      downloadCompleted.push(node);
+    } if (isVerifying(status)) {
+      verifying.push(node);
+    } if (isFinalizing(status)) {
+      finalizing.push(node);
+    } else if (isUpdatedNeedReboot(status)) {
+      updatedNeedsReboot.push(node);
     } if (isSoftwareUpToDate(node)) {
       upToDate.push(node);
     } else if (isRebooting(node)) {
       rebooting.push(node);
-    } else if (isUpdateAvailable(node)) {
+    } else if (isUpdateAvailable(status)) {
       updateAvailable.push(node);
     }
   });
-  const isSoftwareUpgarding = downloading.length > 0 || downloadCompleted.length > 0 || rebooting.length > 0;
+
+  if (upToDate.length === nodeList.length) {
+    versions = _.map(nodeList, (node) => `${_.capitalize(getChannel(node))}: ${getVersion(node)}`);
+  }
+
+  const upgradeCount = downloading.length + verifying.length + finalizing.length + updateAvailable.length + updatedNeedsReboot.length + rebooting.length;
+
   return {
     count: nodeList.length,
-    upgradeCount: downloading.length + updateAvailable.length + downloadCompleted.length,
-    overallState: isSoftwareUpgarding ? 'Software is upgrading...' : 'Up to date',
+    upgradeCount: downloading.length + verifying.length + finalizing.length + updateAvailable.length + updatedNeedsReboot.length + rebooting.length,
+    overallState: upgradeCount ? 'Updating' : 'Up to date',
     upToDate,
     rebooting,
     downloading,
-    downloadCompleted,
+    verifying,
+    finalizing,
+    updatedNeedsReboot,
     updateAvailable,
-    isSoftwareUpgarding,
+    versions,
   };
 };
 
