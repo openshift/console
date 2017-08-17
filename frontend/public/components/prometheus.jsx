@@ -129,9 +129,11 @@ class InstanceDetails extends SafetyFirst {
                     <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#"
                       onClick={this._openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>}</dd>
                     <dt>Service Account Name</dt>
-                    <dd><ResourceLink kind="ServiceAccount" name={spec.serviceAccountName} namespace={metadata.namespace} /></dd>
+                    <dd>
+                      <ResourceLink kind="ServiceAccount" name={spec.serviceAccountName} namespace={metadata.namespace} />
+                    </dd>
                     <dt>Resource Request</dt>
-                    <dd><span className="text-muted">Memory:</span> {spec.resources.requests.memory}</dd>
+                    <dd><span className="text-muted">Memory:</span> {_.get(spec, 'resources.requests.memory', '-')}</dd>
                   </dl>
                 </div>
               </div>
