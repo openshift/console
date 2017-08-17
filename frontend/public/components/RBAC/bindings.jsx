@@ -132,7 +132,7 @@ const Row = ({obj: binding}) => <ResourceRow obj={binding}>
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
-export const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} rowSplitter={rowSplitter} />;
+export const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} rowSplitter={rowSplitter} Header={Header} Row={Row} />;
 
 export const bindingType = binding => {
   if (!binding) {
@@ -150,7 +150,7 @@ const resources = [
 ];
 
 export const RoleBindingsPage = () => <MultiListPage
-  ListComponent={props => <BindingsList {...props} Header={Header} Row={Row} />}
+  ListComponent={BindingsList}
   canCreate={true}
   createButtonText="Create Binding"
   createProps={{to: 'rolebindings/new'}}

@@ -116,24 +116,38 @@ const sorts = {
   string: val => JSON.stringify(val),
 };
 
-export const ColHead = ({applySort, children, className, currentSortField, currentSortFunc, currentSortOrder, sortField, sortFunc}) => {
-  className = classNames(className, 'text-nowrap');
-  if (!sortField && !sortFunc) {
-    return <div className={className}>{children}</div>;
+export class ColHead extends React.Component {
+  componentWillMount() {
+    const {applySort, children, sortField, sortFunc} = this.props;
+
+    const u = new URL(window.location).searchParams;
+    if (u.get('sortBy') === children) {
+      applySort(sortField, sortFunc, u.get('orderBy') || 'asc', children);
+    }
   }
 
-  const isSorted = sortField === currentSortField && sortFunc === currentSortFunc;
-  const newSortOrder = isSorted && currentSortOrder === 'asc' ? 'desc' : 'asc';
-  const onClick = () => applySort(sortField, sortFunc, newSortOrder);
-  return <div className={className}>
-    <a className={isSorted ? undefined : 'co-m-table-grid__sort-link--unsorted'} onClick={onClick}>{children}</a>
-    {isSorted && <i className={`co-m-table-grid__sort-arrow fa fa-long-arrow-${currentSortOrder === 'asc' ? 'up' : 'down'}`}></i>}
-  </div>;
-};
+  render () {
+    // currentSortField/Func == info for currently sorted ColHead.
+    // sortField/Func == this ColHead's field/func
+    const {applySort, children, currentSortField, currentSortFunc, currentSortOrder, sortField, sortFunc} = this.props;
+    const className = classNames(this.props.className, 'text-nowrap');
+    if (!sortField && !sortFunc) {
+      return <div className={className}>{children}</div>;
+    }
+
+    const isSorted = sortField === currentSortField && sortFunc === currentSortFunc;
+    const newSortOrder = isSorted && currentSortOrder === 'asc' ? 'desc' : 'asc';
+    const onClick = () => applySort(sortField, sortFunc, newSortOrder, children);
+    return <div className={className}>
+      <a className={isSorted ? undefined : 'co-m-table-grid__sort-link--unsorted'} onClick={onClick}>{children}</a>
+      {isSorted && <i className={`co-m-table-grid__sort-arrow fa fa-long-arrow-${currentSortOrder === 'asc' ? 'up' : 'down'}`}></i>}
+    </div>;
+  }
+}
 
 ColHead.propTypes = {
   applySort: React.PropTypes.func,
-  children: React.PropTypes.node,
+  children: React.PropTypes.string,
   className: React.PropTypes.string,
   currentSortField: React.PropTypes.string,
   currentSortFunc: React.PropTypes.string,
@@ -172,7 +186,7 @@ const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, rowSplitt
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
   const currentSortField = UI.getIn(['listSorts', listId, 'field'], 'metadata.name');
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func']);
-  const currentSortOrder = UI.getIn(['listSorts', listId, 'order'], 'asc');
+  const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], 'asc');
 
   if (loaded) {
     let sortBy = 'metadata.name';

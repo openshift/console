@@ -79,5 +79,12 @@ export const UIActions = {
 
   [types.stopImpersonate]: () => ({type: types.stopImpersonate}),
 
-  [types.sortList]: (listId, field, func, order) => ({listId, field, func, order, type: types.sortList}),
+  [types.sortList]: (listId, field, func, orderBy, column) => {
+    const url = new URL(window.location);
+    const sp = url.searchParams;
+    sp.set('orderBy', orderBy);
+    sp.set('sortBy', column);
+    history.replace(`${url.pathname}${url.search}${url.hash}`);
+    return {listId, field, func, orderBy, type: types.sortList};
+  },
 };
