@@ -26,7 +26,7 @@ export default (state, action) => {
       return state.delete('impersonate');
 
     case types.sortList:
-      return state.mergeIn(['listSorts', action.listId], _.pick(action, ['field', 'func', 'order']));
+      return state.mergeIn(['listSorts', action.listId], _.pick(action, ['field', 'func', 'orderBy']));
 
     default:
       break;

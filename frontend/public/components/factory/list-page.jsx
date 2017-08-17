@@ -129,16 +129,16 @@ export const ListPage = props => {
   </Firehose>;
 };
 
-export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace'), path: UI.get('location')}))(
+export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace')}))(
   props => {
-    const {createButtonText, ns, path, resources} = props;
+    const {createButtonText, ns, resources} = props;
     const firehoseResources = resources.map(r => ({
       kind: r.kind,
       isList: true,
       namespace: r.namespaced ? ns : undefined,
       prop: r.kind,
     }));
-    return <MultiFirehose key={path} resources={firehoseResources}>
+    return <MultiFirehose resources={firehoseResources}>
       <BaseListPage
         {...props}
         createButtonText={createButtonText || 'Create'}
