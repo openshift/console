@@ -47,6 +47,7 @@ class KubectlConfigModal extends PromiseComponent {
 
     this._updateCode = this._updateCode.bind(this);
     this._verifyCode = this._verifyCode.bind(this);
+    this._closeModal = this._closeModal.bind(this);
     this._getVerificationCode = this._getVerificationCode.bind(this);
     this._downloadConfiguration = () => downloadConfiguration(this.state.configuration);
   }
@@ -63,6 +64,10 @@ class KubectlConfigModal extends PromiseComponent {
     this.setState({
       step: steps.VERIFY_CODE
     });
+  }
+
+  _closeModal(event) {
+    this.props.cancel(event);
   }
 
   _verifyCode(event) {
@@ -145,7 +150,7 @@ class KubectlConfigModal extends PromiseComponent {
           <p>3. Done! Interact with the cluster, i.e. <code>kubectl get namespaces</code></p>
         </ModalBody>
         <ModalFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="button" className="btn btn-primary" onClick={this.props.close}>I'm Done</button>
+          <button type="button" className="btn btn-primary" onClick={this._closeModal}>I'm Done.</button>
         </ModalFooter>
       </div> }
 

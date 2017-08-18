@@ -13,6 +13,9 @@ export const createModalLauncher = (Component) => (props = {}) => {
       if (props.blocking && _.get(e, 'type') === 'keydown') {
         return;
       }
+      if (e && e.stopPropagation) {
+        e.stopPropagation();
+      }
       ReactDOM.unmountComponentAtNode(modalContainer);
       resolve();
     };
@@ -43,7 +46,7 @@ export const ModalFooter = ({message, errorMessage, inProgress, children}) => {
 export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled}) => {
   const onCancelClick = e => {
     e.stopPropagation();
-    cancel();
+    cancel(e);
   };
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
     <button type="submit" className="btn btn-primary" disabled={submitDisabled}>{submitText}</button>

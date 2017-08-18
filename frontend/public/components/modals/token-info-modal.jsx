@@ -34,7 +34,7 @@ class TokenInfoModal extends PromiseComponent {
   render () {
     const onCloseClick = e => {
       e.stopPropagation();
-      this.props.close();
+      this.props.close(e);
     };
     return <div>
       <ModalTitle>Token Information</ModalTitle>
