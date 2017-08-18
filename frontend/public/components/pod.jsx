@@ -85,7 +85,7 @@ export const ContainerRow = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
 
-  const fixes = pod.metadata.labels['secscan/fixables'];
+  const fixes = _.get(pod.metadata, 'labels[secscan/fixables]');
 
   return <div className="row">
     <div className="middler">
