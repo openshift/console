@@ -1,6 +1,5 @@
 import {coFetchJSON} from '../../co-fetch';
 import {getK8sAPIPath} from './k8s';
-import {toString} from './selector';
 
 export const resourceURL = (kind, options) => {
   let q = '';
@@ -24,28 +23,6 @@ export const resourceURL = (kind, options) => {
   }
 
   return u;
-};
-
-export const resourceURL2 = (kind, namespace, watch, labelSelector, fieldSelector) => {
-  const opts = {queryParams: {}};
-
-  if (labelSelector) {
-    opts.queryParams.labelSelector = encodeURIComponent(toString(labelSelector));
-  }
-
-  if (fieldSelector) {
-    opts.queryParams.fieldSelector = encodeURIComponent(fieldSelector);
-  }
-
-  if (watch) {
-    opts.queryParams.watch = true;
-  }
-
-  if (namespace) {
-    opts.ns = namespace;
-  }
-
-  return resourceURL(kind, opts);
 };
 
 export const watchURL = (kind, options) => {

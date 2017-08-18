@@ -1,7 +1,7 @@
 import {wsFactory} from '../ws-factory';
 import {k8sKinds} from './enum';
 
-import {k8sCreate, k8sGet, k8sKill, k8sPatch, k8sUpdate, resourceURL, resourceURL2} from './resource';
+import {k8sCreate, k8sGet, k8sKill, k8sPatch, k8sUpdate, resourceURL} from './resource';
 import {coFetchJSON} from '../../co-fetch';
 import {toString} from './selector';
 
@@ -89,7 +89,23 @@ export const k8s = {};
     update: (obj) => k8sUpdate(kind, obj),
     patch: (obj, payload) => k8sPatch(kind, obj, payload),
     watch: (query) => {
-      const path = resourceURL2(kind, query.ns, true, query.labelSelector || kind.labelSelector, query.fieldSelector);
+      const queryParams = {watch: true};
+      const opts = {queryParams};
+
+      const labelSelector = query.labelSelector || kind.labelSelector;
+      if (labelSelector) {
+        queryParams.labelSelector = encodeURIComponent(toString(labelSelector));
+      }
+
+      if (query.fieldSelector) {
+        queryParams.fieldSelector = encodeURIComponent(query.fieldSelector);
+      }
+
+      if (query.ns) {
+        opts.ns = query.ns;
+      }
+
+      const path = resourceURL(kind, opts);
       return wsFactory(path, {
         host: 'auto',
         reconnect: true,
