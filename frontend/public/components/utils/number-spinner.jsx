@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 export const NumberSpinner = (props) => {
   const inputProps = _.omit(props, ['className', 'changeValueBy']);
@@ -13,5 +14,5 @@ export const NumberSpinner = (props) => {
 };
 NumberSpinner.propTypes = {
   // function that increments/decrements the existing value
-  changeValueBy: React.PropTypes.func.isRequired
+  changeValueBy: PropTypes.func.isRequired
 };

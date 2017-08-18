@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import { k8s, k8sKinds, k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -289,8 +290,8 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 }
 
 ConfigureNamespacePullSecret.propTypes = {
-  namespace: React.PropTypes.object.isRequired,
-  pullSecret: React.PropTypes.object
+  namespace: PropTypes.object.isRequired,
+  pullSecret: PropTypes.object
 };
 
 export const configureNamespacePullSecretModal = createModalLauncher(ConfigureNamespacePullSecret);

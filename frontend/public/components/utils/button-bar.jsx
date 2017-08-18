@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 import { LoadingInline } from './';
 
@@ -29,8 +30,8 @@ export const ButtonBar = ({children, className, errorMessage, infoMessage, inPro
 };
 
 ButtonBar.propTypes = {
-  children: React.PropTypes.node.isRequired,
-  errorMessage: React.PropTypes.string,
-  infoMessage: React.PropTypes.string,
-  inProgress: React.PropTypes.bool.isRequired,
+  children: PropTypes.node.isRequired,
+  errorMessage: PropTypes.string,
+  infoMessage: PropTypes.string,
+  inProgress: PropTypes.bool.isRequired,
 };

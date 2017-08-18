@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {PromiseComponent} from '../utils';
@@ -29,12 +30,12 @@ class ConfirmModal extends PromiseComponent {
   }
 }
 ConfirmModal.propTypes = {
-  btnText: React.PropTypes.node,
-  cancel: React.PropTypes.func.isRequired,
-  close: React.PropTypes.func.isRequired,
-  executeFn: React.PropTypes.func.isRequired,
-  message: React.PropTypes.node,
-  title: React.PropTypes.node.isRequired
+  btnText: PropTypes.node,
+  cancel: PropTypes.func.isRequired,
+  close: PropTypes.func.isRequired,
+  executeFn: PropTypes.func.isRequired,
+  message: PropTypes.node,
+  title: PropTypes.node.isRequired
 };
 
 export const confirmModal = createModalLauncher(ConfirmModal);

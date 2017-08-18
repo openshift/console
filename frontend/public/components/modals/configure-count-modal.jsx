@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import { k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -64,14 +65,14 @@ class ConfigureCountModal extends PromiseComponent {
   }
 }
 ConfigureCountModal.propTypes = {
-  buttonText: React.PropTypes.node.isRequired,
-  cancel: React.PropTypes.func.isRequired,
-  close: React.PropTypes.func.isRequired,
-  defaultValue: React.PropTypes.number.isRequired,
-  path: React.PropTypes.string.isRequired,
-  resource: React.PropTypes.object.isRequired,
-  resourceKind: React.PropTypes.object.isRequired,
-  title: React.PropTypes.node.isRequired
+  buttonText: PropTypes.node.isRequired,
+  cancel: PropTypes.func.isRequired,
+  close: PropTypes.func.isRequired,
+  defaultValue: PropTypes.number.isRequired,
+  path: PropTypes.string.isRequired,
+  resource: PropTypes.object.isRequired,
+  resourceKind: PropTypes.object.isRequired,
+  title: PropTypes.node.isRequired
 };
 
 export const configureCountModal = createModalLauncher(ConfigureCountModal);

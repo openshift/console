@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import store from '../../redux';
 import {K8sWatcher} from './k8s-watcher';
@@ -75,13 +76,13 @@ export class Firehose extends FirehoseBase {
   }
 }
 Firehose.propTypes = {
-  kind: React.PropTypes.string,
-  name: React.PropTypes.string,
-  namespace: React.PropTypes.string,
-  selector: React.PropTypes.object,
-  fieldSelector: React.PropTypes.string,
-  className: React.PropTypes.string,
-  isList: React.PropTypes.bool,
+  kind: PropTypes.string,
+  name: PropTypes.string,
+  namespace: PropTypes.string,
+  selector: PropTypes.object,
+  fieldSelector: PropTypes.string,
+  className: PropTypes.string,
+  isList: PropTypes.bool,
 };
 
 export class MultiFirehose extends FirehoseBase {
@@ -114,6 +115,6 @@ export class MultiFirehose extends FirehoseBase {
   }
 }
 MultiFirehose.propTypes = {
-  children: React.PropTypes.node,
-  resources: React.PropTypes.array
+  children: PropTypes.node,
+  resources: PropTypes.array
 };

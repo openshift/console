@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import { pluralize } from './';
 
@@ -125,8 +126,8 @@ export class LogWindow extends React.PureComponent {
   }
 }
 LogWindow.propTypes = {
-  buffer: React.PropTypes.object.isRequired,
-  logState: React.PropTypes.string.isRequired,
-  updateLogState: React.PropTypes.func.isRequired,
-  loadGeneration: React.PropTypes.number.isRequired // loadGeneration is used as a signal that props.buffer has changed
+  buffer: PropTypes.object.isRequired,
+  logState: PropTypes.string.isRequired,
+  updateLogState: PropTypes.func.isRequired,
+  loadGeneration: PropTypes.number.isRequired // loadGeneration is used as a signal that props.buffer has changed
 };

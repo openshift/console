@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 export const RadioInput = (props) => {
   const inputProps = _.omit(props, ['title', 'subTitle', 'desc', 'children']);
@@ -12,9 +13,9 @@ export const RadioInput = (props) => {
   </div>;
 };
 RadioInput.propTypes = {
-  children: React.PropTypes.node,
-  desc: React.PropTypes.node,
-  title: React.PropTypes.node.isRequired,
+  children: PropTypes.node,
+  desc: PropTypes.node,
+  title: PropTypes.node.isRequired,
 };
 
 export const RadioGroup = ({currentValue, onChange, items}) => <div>

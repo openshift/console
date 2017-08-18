@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 import { history } from './index';
 
@@ -113,14 +114,14 @@ export class Dropdown extends DropdownMixin {
 }
 
 Dropdown.propTypes = {
-  autocompleteFilter: React.PropTypes.func,
-  autocompletePlaceholder: React.PropTypes.string,
-  className: React.PropTypes.string,
-  items: React.PropTypes.object.isRequired,
-  menuClassName: React.PropTypes.string,
-  noButton: React.PropTypes.bool,
-  noSelection: React.PropTypes.bool,
-  title: React.PropTypes.node,
+  autocompleteFilter: PropTypes.func,
+  autocompletePlaceholder: PropTypes.string,
+  className: PropTypes.string,
+  items: PropTypes.object.isRequired,
+  menuClassName: PropTypes.string,
+  noButton: PropTypes.bool,
+  noSelection: PropTypes.bool,
+  title: PropTypes.node,
 };
 
 export const sortActions = actions => _.sortBy(actions, a => [a.weight || 0, a.label]);

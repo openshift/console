@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 export class TogglePlay extends React.Component {
   shouldComponentUpdate(nextProps) {
@@ -12,7 +13,7 @@ export class TogglePlay extends React.Component {
   }
 }
 TogglePlay.PropTypes = {
-  active: React.PropTypes.bool.isRequired,
-  className: React.PropTypes.string,
-  onClick: React.PropTypes.func.isRequired
+  active: PropTypes.bool.isRequired,
+  className: PropTypes.string,
+  onClick: PropTypes.func.isRequired
 };

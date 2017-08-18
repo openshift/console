@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 import { LoadingInline } from '../utils';
 
@@ -15,7 +16,7 @@ export const SettingsModalLink = ({onClick, outdated, children}) => {
   </a>;
 };
 SettingsModalLink.propTypes = {
-  children: React.PropTypes.node,
-  onClick: React.PropTypes.func,
-  outdated: React.PropTypes.bool
+  children: PropTypes.node,
+  onClick: PropTypes.func,
+  outdated: PropTypes.bool
 };

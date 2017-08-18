@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Modal from 'react-modal';
+import * as PropTypes from 'prop-types';
 
 import { ButtonBar } from '../utils';
 
@@ -52,9 +53,9 @@ export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, su
 };
 
 ModalSubmitFooter.propTypes = {
-  cancel: React.PropTypes.func.isRequired,
-  errorMessage: React.PropTypes.string.isRequired,
-  inProgress: React.PropTypes.bool.isRequired,
-  message: React.PropTypes.string,
-  submitText: React.PropTypes.node.isRequired,
+  cancel: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  inProgress: PropTypes.bool.isRequired,
+  message: PropTypes.string,
+  submitText: PropTypes.node.isRequired,
 };
