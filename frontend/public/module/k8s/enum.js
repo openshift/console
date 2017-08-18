@@ -158,7 +158,7 @@ export const k8sEnum = {
     },
     TectonicVersion: {
       label: 'Tectonic Version',
-      basePath: '/apis/coreos.com/',
+      basePath: '/apis/tco.coreos.com/',
       apiVersion: 'v1',
       path: 'tectonicversions',
       plural: 'tectonicversions',
@@ -166,7 +166,7 @@ export const k8sEnum = {
     },
     ChannelOperatorConfig: {
       label: 'Channel Operator Config',
-      basePath: '/apis/coreos.com/',
+      basePath: '/apis/tco.coreos.com/',
       apiVersion: 'v1',
       path: 'channeloperatorconfigs',
       plural: 'channeloperatorconfigs',
@@ -174,7 +174,7 @@ export const k8sEnum = {
     },
     AppVersion: {
       label: 'AppVersion',
-      basePath: '/apis/coreos.com/',
+      basePath: '/apis/tco.coreos.com/',
       apiVersion: 'v1',
       path: 'appversions',
       plural: 'appversions',
