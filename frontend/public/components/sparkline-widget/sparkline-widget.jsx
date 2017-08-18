@@ -5,6 +5,7 @@
 // data/widget (such as a bar graph instead of lines)
 
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import ReactChart from './react-chart';
 import { Loading, units } from '../utils';
@@ -286,10 +287,10 @@ export class SparklineWidget extends SafetyFirst {
   }
 }
 SparklineWidget.propTypes = {
-  heading: React.PropTypes.string,
-  query: React.PropTypes.string,
-  limit: React.PropTypes.number,
-  limitQuery: React.PropTypes.string,
-  limitText: React.PropTypes.string,
-  units: React.PropTypes.string
+  heading: PropTypes.string,
+  query: PropTypes.string,
+  limit: PropTypes.number,
+  limitQuery: PropTypes.string,
+  limitText: PropTypes.string,
+  units: PropTypes.string
 };

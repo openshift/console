@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 export const GlobalNotification = ({title, content}) => <div className="co-global-notification">
   <div className="co-global-notification__sidebar">
@@ -9,6 +10,6 @@ export const GlobalNotification = ({title, content}) => <div className="co-globa
   </div>
 </div>;
 GlobalNotification.propTypes = {
-  title: React.PropTypes.node,
-  content: React.PropTypes.node
+  title: PropTypes.node,
+  content: PropTypes.node
 };

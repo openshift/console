@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import {k8sCreate, k8sGet, k8sPatch} from '../../module/k8s';
 import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
@@ -121,14 +122,14 @@ class ConfigureYamlFieldModal extends PromiseComponent {
   }
 }
 ConfigureYamlFieldModal.propTypes = {
-  callbacks: React.PropTypes.object,
-  close: React.PropTypes.func,
-  inputType: React.PropTypes.string,
-  k8sQuery: React.PropTypes.object,
-  modalTitle: React.PropTypes.node,
-  modalText: React.PropTypes.node,
-  path: React.PropTypes.string,
-  resource: React.PropTypes.object
+  callbacks: PropTypes.object,
+  close: PropTypes.func,
+  inputType: PropTypes.string,
+  k8sQuery: PropTypes.object,
+  modalTitle: PropTypes.node,
+  modalText: PropTypes.node,
+  path: PropTypes.string,
+  resource: PropTypes.object
 };
 
 export const configureYamlFieldModal = createModalLauncher(ConfigureYamlFieldModal);

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import {k8sKinds, k8sPatch} from '../../module/k8s';
 import {LoadingInline, OperatorState} from '../utils';
@@ -76,7 +77,7 @@ export class DetailStatus extends SafetyFirst {
   }
 }
 DetailStatus.propTypes = {
-  config: React.PropTypes.object,
-  channelState: React.PropTypes.string,
-  version: React.PropTypes.string,
+  config: PropTypes.object,
+  channelState: PropTypes.string,
+  version: PropTypes.string,
 };

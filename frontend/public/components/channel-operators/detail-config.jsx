@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 import {LoadingInline} from '../utils';
 import {SafetyFirst} from '../safety-first';
@@ -49,9 +50,9 @@ export class DetailConfig extends SafetyFirst {
   }
 }
 DetailConfig.propTypes = {
-  config: React.PropTypes.object,
-  displayFunction: React.PropTypes.func,
-  modal: React.PropTypes.func,
-  modalData: React.PropTypes.object,
-  field: React.PropTypes.string.isRequired
+  config: PropTypes.object,
+  displayFunction: PropTypes.func,
+  modal: PropTypes.func,
+  modalData: PropTypes.object,
+  field: PropTypes.string.isRequired
 };

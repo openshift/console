@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import * as PropTypes from 'prop-types';
 
 import store from '../../redux';
 import {K8sWatcher} from './k8s-watcher';
@@ -96,5 +97,5 @@ export const MultiConnectToState = connect(({k8s}, {reduxes}) => {
 </div>);
 
 MultiConnectToState.propTypes = {
-  reduxes: React.PropTypes.array
+  reduxes: PropTypes.array
 };

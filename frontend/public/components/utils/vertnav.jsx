@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 import { StatusBox, RelativeLink } from './index';
 import { EditYAML } from '../edit-yaml';
@@ -77,11 +78,11 @@ export const VertNav = props => {
 };
 
 VertNav.propTypes = {
-  pages: React.PropTypes.arrayOf(React.PropTypes.shape({
-    href: React.PropTypes.string,
-    name: React.PropTypes.string,
-    component: React.PropTypes.func,
+  pages: PropTypes.arrayOf(PropTypes.shape({
+    href: PropTypes.string,
+    name: PropTypes.string,
+    component: PropTypes.func,
   })),
-  className: React.PropTypes.string,
-  hideNav: React.PropTypes.bool,
+  className: PropTypes.string,
+  hideNav: PropTypes.bool,
 };

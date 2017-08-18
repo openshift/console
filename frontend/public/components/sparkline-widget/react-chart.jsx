@@ -2,6 +2,7 @@
 // This prepares the component for d3 to render it's chart into
 
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import * as ReactDOM from 'react-dom';
 import Chart from './chart';
 
@@ -96,11 +97,11 @@ class ReactChart extends React.Component {
   }
 }
 ReactChart.propTypes = {
-  data: React.PropTypes.array,
-  limit: React.PropTypes.number,
-  limitText: React.PropTypes.string,
-  units: React.PropTypes.string,
-  timespan: React.PropTypes.number
+  data: PropTypes.array,
+  limit: PropTypes.number,
+  limitText: PropTypes.string,
+  units: PropTypes.string,
+  timespan: PropTypes.number
 };
 
 export default ReactChart;

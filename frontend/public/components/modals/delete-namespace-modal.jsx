@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import { k8s, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -40,7 +41,7 @@ class DeleteNamespaceModal extends PromiseComponent {
 }
 
 DeleteNamespaceModal.propTypes = {
-  resource: React.PropTypes.object
+  resource: PropTypes.object
 };
 
 export const deleteNamespaceModal = createModalLauncher(DeleteNamespaceModal);

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import { k8sPatch, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -98,7 +99,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
 }
 
 ConfigureRevisionHistoryLimitModal.propTypes = {
-  deployment: React.PropTypes.object
+  deployment: PropTypes.object
 };
 
 export const configureRevisionHistoryLimitModal = createModalLauncher(ConfigureRevisionHistoryLimitModal);

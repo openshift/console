@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import * as classNames from'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
@@ -146,14 +147,14 @@ export class ColHead extends React.Component {
 }
 
 ColHead.propTypes = {
-  applySort: React.PropTypes.func,
-  children: React.PropTypes.string,
-  className: React.PropTypes.string,
-  currentSortField: React.PropTypes.string,
-  currentSortFunc: React.PropTypes.string,
-  currentSortOrder: React.PropTypes.string,
-  sortField: React.PropTypes.string,
-  sortFunc: React.PropTypes.string,
+  applySort: PropTypes.func,
+  children: PropTypes.string,
+  className: PropTypes.string,
+  currentSortField: PropTypes.string,
+  currentSortFunc: PropTypes.string,
+  currentSortOrder: PropTypes.string,
+  sortField: PropTypes.string,
+  sortFunc: PropTypes.string,
 };
 
 export const ListHeader = ({children}) => <div className="row co-m-table-grid__head">{children}</div>;
@@ -170,9 +171,9 @@ const Rows = ({data, expand, Row}) => <div className="co-m-table-grid__body">
 </div>;
 
 Rows.propTypes = {
-  data: React.PropTypes.arrayOf(React.PropTypes.object),
-  expand: React.PropTypes.bool,
-  Row: React.PropTypes.func.isRequired,
+  data: PropTypes.arrayOf(PropTypes.object),
+  expand: PropTypes.bool,
+  Row: PropTypes.func.isRequired,
 };
 
 const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, rowSplitter, staticFilters}) => {
@@ -221,21 +222,21 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(functi
 });
 
 List.propTypes = {
-  data: React.PropTypes.array,
-  EmptyMsg: React.PropTypes.func,
-  expand: React.PropTypes.bool,
-  fieldSelector: React.PropTypes.string,
+  data: PropTypes.array,
+  EmptyMsg: PropTypes.func,
+  expand: PropTypes.bool,
+  fieldSelector: PropTypes.string,
   filters: filterPropType,
-  Header: React.PropTypes.func.isRequired,
-  loaded: React.PropTypes.bool,
-  loadError: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.string]),
-  namespace: React.PropTypes.string,
-  reduxID: React.PropTypes.string,
-  reduxIDs: React.PropTypes.array,
-  Row: React.PropTypes.func.isRequired,
-  rowSplitter: React.PropTypes.func,
-  selector: React.PropTypes.object,
-  staticFilters: React.PropTypes.array,
+  Header: PropTypes.func.isRequired,
+  loaded: PropTypes.bool,
+  loadError: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  namespace: PropTypes.string,
+  reduxID: PropTypes.string,
+  reduxIDs: PropTypes.array,
+  Row: PropTypes.func.isRequired,
+  rowSplitter: PropTypes.func,
+  selector: PropTypes.object,
+  staticFilters: PropTypes.array,
 };
 
 export class ResourceRow extends React.Component {

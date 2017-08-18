@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import { k8sKinds, k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -59,11 +60,11 @@ class ConfigureOperatorModal extends PromiseComponent {
   }
 }
 ConfigureOperatorModal.propTypes = {
-  cancel: React.PropTypes.func.isRequired,
-  close: React.PropTypes.func.isRequired,
-  config: React.PropTypes.object.isRequired,
-  callbacks: React.PropTypes.object.isRequired,
-  valueType: React.PropTypes.string
+  cancel: PropTypes.func.isRequired,
+  close: PropTypes.func.isRequired,
+  config: PropTypes.object.isRequired,
+  callbacks: PropTypes.object.isRequired,
+  valueType: PropTypes.string
 };
 
 const configureOperatorModal = createModalLauncher(ConfigureOperatorModal);

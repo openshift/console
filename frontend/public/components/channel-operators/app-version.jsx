@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import * as PropTypes from 'prop-types';
 
 import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState, determineOperatorState, orderedTaskStatuses} from '../utils';
 import {configureOperatorStrategyModal, configureOperatorChannelModal,} from '../modals';
@@ -82,8 +83,8 @@ const DetailWrapper = ({title, children}) => {
   </dl>;
 };
 DetailWrapper.propTypes = {
-  title: React.PropTypes.node,
-  children: React.PropTypes.node
+  title: PropTypes.node,
+  children: PropTypes.node
 };
 
 const Details = ({config, channelState, tcAppVersion}) => {
@@ -161,8 +162,8 @@ class UpToDateTectonicCluster extends React.Component {
 }
 
 UpToDateTectonicCluster.propTypes = {
-  tcAppVersion: React.PropTypes.object,
-  secondaryAppVersions: React.PropTypes.array,
+  tcAppVersion: PropTypes.object,
+  secondaryAppVersions: PropTypes.array,
 };
 
 //Component used when updates are available or in progress.
@@ -213,10 +214,10 @@ class TectonicClusterAppVersion extends React.Component {
 }
 
 TectonicClusterAppVersion.propTypes = {
-  tcAppVersion: React.PropTypes.object,
-  secondaryAppVersions: React.PropTypes.array,
-  tectonicVersions: React.PropTypes.object,
-  channelState: React.PropTypes.string,
+  tcAppVersion: PropTypes.object,
+  secondaryAppVersions: PropTypes.array,
+  tectonicVersions: PropTypes.object,
+  channelState: PropTypes.string,
 };
 
 const SecondaryAppVersion = ({appVersion, tcAppVersion, tectonicVersions}) => {
@@ -252,7 +253,7 @@ const SecondaryAppVersion = ({appVersion, tcAppVersion, tectonicVersions}) => {
   </div>;
 };
 SecondaryAppVersion.propTypes = {
-  component: React.PropTypes.object,
+  component: PropTypes.object,
 };
 
 const TaskStatusStep = ({status, style}) => {
@@ -320,11 +321,11 @@ class TaskStatus extends React.Component {
 }
 
 TaskStatus.propTypes = {
-  taskStatus: React.PropTypes.object,
-  isTCAppVersion: React.PropTypes.bool,
-  tcAppVersion: React.PropTypes.object,
-  secondaryAppVersions: React.PropTypes.array,
-  tectonicVersions: React.PropTypes.object,
+  taskStatus: PropTypes.object,
+  isTCAppVersion: PropTypes.bool,
+  tcAppVersion: PropTypes.object,
+  secondaryAppVersions: PropTypes.array,
+  tectonicVersions: PropTypes.object,
 };
 
 //Displays details about Channel Operators
@@ -396,7 +397,7 @@ export class AppVersionDetails extends SafetyFirst{
 }
 
 AppVersionDetails.propTypes = {
-  primaryOperatorName: React.PropTypes.string,
-  config: React.PropTypes.object,
-  appVersionList: React.PropTypes.object,
+  primaryOperatorName: PropTypes.string,
+  config: PropTypes.object,
+  appVersionList: PropTypes.object,
 };

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
 import { k8sEnum } from '../../module/k8s';
 import k8sActions from '../../module/k8s/k8s-actions';
@@ -93,21 +94,21 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
   });
 
 BaseListPage.propTypes = {
-  canCreate: React.PropTypes.bool,
-  canExpand: React.PropTypes.bool,
-  createProps: React.PropTypes.object,
-  data: React.PropTypes.array,
-  dropdownFilters: React.PropTypes.array,
-  fieldSelector: React.PropTypes.string,
-  filterLabel: React.PropTypes.string,
-  Intro: React.PropTypes.element,
-  kinds: React.PropTypes.array.isRequired,
-  ListComponent: React.PropTypes.func.isRequired,
-  rowFilters: React.PropTypes.array,
-  rowSplitter: React.PropTypes.func,
-  selector: React.PropTypes.object,
-  textFilter: React.PropTypes.string,
-  title: React.PropTypes.string,
+  canCreate: PropTypes.bool,
+  canExpand: PropTypes.bool,
+  createProps: PropTypes.object,
+  data: PropTypes.array,
+  dropdownFilters: PropTypes.array,
+  fieldSelector: PropTypes.string,
+  filterLabel: PropTypes.string,
+  Intro: PropTypes.element,
+  kinds: PropTypes.array.isRequired,
+  ListComponent: PropTypes.func.isRequired,
+  rowFilters: PropTypes.array,
+  rowSplitter: PropTypes.func,
+  selector: PropTypes.object,
+  textFilter: PropTypes.string,
+  title: PropTypes.string,
 };
 
 export const ListPage = props => {

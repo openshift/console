@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import { Link } from 'react-router';
 import { containerLinuxUpdateOperator } from '../utils';
@@ -66,11 +67,11 @@ class UpToDateState extends React.Component {
   }
 }
 UpToDateState.propTypes = {
-  iconClass: React.PropTypes.string,
-  textClass: React.PropTypes.string,
-  total: React.PropTypes.number,
-  text: React.PropTypes.string,
-  versions: React.PropTypes.array,
+  iconClass: PropTypes.string,
+  textClass: PropTypes.string,
+  total: PropTypes.number,
+  text: PropTypes.string,
+  versions: PropTypes.array,
 };
 
 class UpdateProgress extends React.Component {
@@ -146,7 +147,7 @@ class UpdateProgress extends React.Component {
   }
 }
 UpdateProgress.propTypes = {
-  nodeListUpdateStatus: React.PropTypes.object,
+  nodeListUpdateStatus: PropTypes.object,
 };
 
 
