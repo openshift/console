@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
 
 import {LoadingInline, MultiFirehose, determineOperatorState, StatusBox} from '../utils';
 import {AppVersionDetails} from './app-version';
@@ -97,9 +96,6 @@ export class TectonicChannel extends SafetyFirst {
     </MultiFirehose>;
   }
 }
-TectonicChannel.propTypes = {
-  last: PropTypes.bool
-};
 
 class TectonicChannelWithData extends React.Component {
   constructor(props) {
