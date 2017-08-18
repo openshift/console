@@ -70,17 +70,23 @@ const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
     </div>;
   });
 
-const updateUrlParams = (params) => {
-  const location = Object.assign({}, history.getCurrentLocation());
-  Object.assign(location.query, params);
-  history.push(location);
+const updateUrlParams = (k, v) => {
+  const url = new URL(window.location);
+  url.searchParams.set(k, v);
+  history.push(`${url.pathname}${url.search}${url.hash}`);
 };
 
-const updateKind = kind => updateUrlParams({kind: encodeURIComponent(kind)});
-const updateTags = tags => updateUrlParams({q: tags.map(encodeURIComponent).join(',')});
+const updateKind = kind => updateUrlParams('kind', encodeURIComponent(kind));
+const updateTags = tags => updateUrlParams('q', tags.map(encodeURIComponent).join(','));
 
-export const SearchPage = ({params, location}) => {
-  let {kind, q} = location.query;
+export const SearchPage = ({match, location}) => {
+  const { params } = match;
+  let kind, q;
+  if (location.search) {
+    const u = new URL(window.location);
+    kind = u.searchParams.get('kind');
+    q = u.searchParams.get('q');
+  }
 
   // Ensure that the "kind" route parameter is a valid resource kind ID
   kind = kind ? decodeURIComponent(kind) : 'Service';

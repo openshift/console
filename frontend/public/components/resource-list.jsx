@@ -5,7 +5,7 @@ import { k8sKinds } from '../module/k8s';
 import * as pages from './resource-pages';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
-const allParams = props => Object.assign({}, props.params, props.route);
+const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
 
 export const ResourceListPage = (props) => {
   const {kind, ns} = allParams(props);
@@ -19,7 +19,7 @@ export const ResourceListPage = (props) => {
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}Page`];
   return <div>
     <Helmet title={kindObj.labelPlural} />
-    {PageComponent && <PageComponent namespace={ns} kind={kindObj.kind} />}
+    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} />}
   </div>;
 };
 
@@ -36,6 +36,6 @@ export const ResourceDetailsPage = (props) => {
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}DetailsPage`];
   return <div>
     <Helmet title={`${name} · Details`} />
-    {PageComponent && <PageComponent namespace={ns} kind={kindObj.kind} name={name} />}
+    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} name={name} />}
   </div>;
 };

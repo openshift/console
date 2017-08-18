@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Helmet from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { k8s } from '../../module/k8s';
 import { errorModal } from '../modals';

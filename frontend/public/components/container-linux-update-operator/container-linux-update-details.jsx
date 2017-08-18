@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { containerLinuxUpdateOperator } from '../utils';
 import { SafetyFirst } from '../safety-first';
 
@@ -101,7 +101,7 @@ class UpdateProgress extends React.Component {
       </button>
       {this.state.showDetails && <div>
         <div className="co-cluster-updates__operator-logs">
-          <Link to="nodes" className="co-cluster-updates__breakdown-button btn btn-default" target="_blank">View Logs</Link>
+          <Link to="/nodes" className="co-cluster-updates__breakdown-button btn btn-default" target="_blank">View Logs</Link>
         </div>
         <div className="co-cluster-updates__operator-ts-component">
           <Breakdown text="Download and finalize updates"

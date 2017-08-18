@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import * as Helmet from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 
 import { k8sKinds, watchURL } from '../module/k8s';
@@ -53,7 +53,7 @@ class SysEvent extends React.PureComponent {
           <small className="co-sysevent__meta-source">
             Generated from <span>{this.props.source.component}</span>
             {this.props.source.component === 'kubelet' &&
-              <span> on <Link to={`nodes/${this.props.source.host}/details`}>{this.props.source.host}</Link></span>
+              <span> on <Link to={`/nodes/${this.props.source.host}/details`}>{this.props.source.host}</Link></span>
             }
           </small>
         </div>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Tooltip } from 'react-lightweight-tooltip';
 
 import { k8sKinds } from '../module/k8s';
@@ -40,7 +40,7 @@ const menuActions = [UpdateCount, Edit, Delete];
 
 const EtcdClusterLink = (props) => {
   const {uid, name, namespace} = props.metadata;
-  const path = `ns/${namespace}/etcdclusters/${name}/details`;
+  const path = `/ns/${namespace}/etcdclusters/${name}/details`;
 
   return <span className="co-resource-link">
     <ResourceIcon kind="EtcdCluster" />

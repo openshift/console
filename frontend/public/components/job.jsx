@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { getJobTypeAndCompletions } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
@@ -53,7 +53,7 @@ const JobRow = ({obj: job}) => {
         <LabelList kind="Job" labels={job.metadata.labels} />
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
-        <Link to={`ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
+        <Link to={`/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
           {job.status.succeeded || 0} of {completions}
         </Link>
       </div>

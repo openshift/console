@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import * as Helmet from 'react-helmet';
 import { Provider } from 'react-redux';
-import { IndexRoute, Redirect, Route, Router } from 'react-router';
+import { Redirect, Route, Router, Switch } from 'react-router-dom';
 
 import store from '../redux';
 import { featureActions } from '../features';
@@ -39,30 +39,98 @@ const LoadingScreen = () => <div className="loading-screen">
   <div>Loading your Tectonic Console</div>
 </div>;
 
-const App = ({children}) => <div className="co-container">
-  <Helmet titleTemplate="%s · Tectonic" />
-  {!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn() && <LoadingScreen />}
-  <GlobalNotifications />
-  <div id="reflex">
-    <Nav />
-    <div id="content">
-      <NamespaceSelector />
-      {children}
-    </div>
-  </div>
-</div>;
 
-const onRouteChange = (prevRoute, nextRoute) => {
-  if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
-    authSvc.login();
-    return;
+class App extends React.PureComponent {
+  onRouteChange (props) {
+    if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
+      authSvc.login();
+      return;
+    }
+    if (props) {
+      store.dispatch(UIActions.setCurrentLocation(props.location.pathname, _.get(props, 'match.params.ns')));
+    }
+    analyticsSvc.route(window.location.pathname);
   }
-  if (nextRoute) {
-    store.dispatch(UIActions.setCurrentLocation(nextRoute.location.pathname, nextRoute.params.ns));
-  }
-  analyticsSvc.route(window.location.pathname);
-};
 
+  componentWillMount () {
+    this.onRouteChange(this.props);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (_.isEqual(nextProps.location, this.props.location) && _.isEqual(nextProps.match, this.props.match)) {
+      return;
+    }
+    this.onRouteChange(nextProps);
+  }
+
+  render () {
+    return <div className="co-container">
+      <Helmet titleTemplate="%s · Tectonic" />
+
+      {!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn() && <LoadingScreen />}
+
+      <GlobalNotifications />
+
+      <div id="reflex">
+        <Nav />
+        <div id="content">
+          <NamespaceSelector />
+          <Switch>
+            <Route path="/" exact component={ClusterOverviewContainer} />
+            <Route path="/start-guide" exact component={StartGuidePage} />
+
+            <Route path="/clusterroles/:name/add-rule" exact component={EditRulePage} />
+            <Route path="/clusterroles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="ClusterRole" />} />
+            <Route path="/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
+            <Route path="/clusterroles/:name" component={props => <ResourceDetailsPage {...props} kind="clusterroles" />} />
+
+            <Route path="/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
+            <Route path="/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
+            <Route path="/ns/:ns/roles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="Role" />} />
+            <Route path="/ns/:ns/roles" exact component={props => <ResourceListPage {...props} kind="roles" />} />
+
+            <Route path="/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/ns/:ns/rolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/ns/:ns/rolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
+            <Route path="/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
+
+            <Redirect from="/ns/:ns/rolebindings/:name/details" to="/all-namespaces/rolebindings" />
+
+            <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} kind="namespaces" />} />
+            <Route path="/namespaces" exact component={props => <ResourceListPage {...props} kind="namespaces" />} />
+
+            <Route path="/nodes/:name" component={props => <ResourceDetailsPage {...props} kind="nodes" />} />
+            <Route path="/nodes" exact component={props => <ResourceListPage {...props} kind="nodes" />} />
+
+            <Route path="/settings/profile" exact component={ProfilePage} />
+            <Route path="/settings/ldap" exact component={LDAPPage} />
+            <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
+
+            <Route path="/federation/clusters" exact component={Clusters} />
+
+            <Route path="/all-namespaces/events" exact component={EventStreamPage} />
+            <Route path="/ns/:ns/events" exact component={EventStreamPage} />
+
+            <Route path="/all-namespaces/search" exact component={SearchPage} />
+            <Route path="/ns/:ns/search" exact component={SearchPage} />
+            <Route path="/search" exact component={props => <Redirect from="/search" to={{pathname: '/all-namespaces/search', search: props.location.search}} />} />
+
+            <Route path="/all-namespaces/:kind" exact component={ResourceListPage} />
+            <Route path="/ns/:ns/pods/:podName/:kind/:name" component={ContainersDetailsPage} />
+            <Route path="/ns/:ns/:kind/new" exact component={CreateYAML} />
+            <Route path="/ns/:ns/:kind/:name" component={ResourceDetailsPage} />
+            <Route path="/ns/:ns/:kind" exact component={ResourceListPage} />
+
+            <Route path="/error" exact component={ErrorPage} />
+            <Route component={ErrorPage404} />
+          </Switch>
+        </div>
+      </div>
+    </div>;
+  }
+}
 
 registerNamespaceFriendlyPrefix('configmaps');
 registerNamespaceFriendlyPrefix('daemonsets');
@@ -94,76 +162,10 @@ store.dispatch(featureActions.detectSecurityLabellerFlags(`${k8sBasePath}/apis/e
 
 analyticsSvc.push({tier: 'tectonic'});
 
-const init = nextRoute => onRouteChange(undefined, nextRoute);
-
 render((
   <Provider store={store}>
-    <Router history={history}>
-      <Route path="/" component={App} onEnter={init} onChange={onRouteChange}>
-        <IndexRoute component={ClusterOverviewContainer} /> 
-
-        <Route path="start-guide" component={StartGuidePage} />
-
-        <Route path="clusterroles">
-          <Route path=":name/add-rule" component={EditRulePage} />
-          <Route path=":name/bindings" component={BindingsForRolePage} kind="ClusterRole" />
-          <Route path=":name/:rule/edit" component={EditRulePage} />
-          <Route path=":name/:view" component={ResourceDetailsPage} kind="clusterroles" />
-        </Route>
-
-        <Route path="ns/:ns/roles">
-          <IndexRoute component={ResourceListPage} kind="roles" />
-          <Route path=":name/add-rule" component={EditRulePage} />
-          <Route path=":name/:rule/edit" component={EditRulePage} />
-          <Route path=":name/bindings" component={BindingsForRolePage} kind="Role" />
-        </Route>
-
-        <Route path="rolebindings/new" component={CreateRoleBinding} />
-        <Route path="ns/:ns/rolebindings/new" component={CreateRoleBinding} />
-        <Route path="ns/:ns/rolebindings/:name/copy" component={CopyRoleBinding} kind="RoleBinding" />
-        <Route path="clusterrolebindings/:name/copy" component={CopyRoleBinding} kind="ClusterRoleBinding" />
-        <Route path="ns/:ns/rolebindings/:name/edit" component={EditRoleBinding} kind="RoleBinding" />
-        <Route path="clusterrolebindings/:name/edit" component={EditRoleBinding} kind="ClusterRoleBinding" />
-
-        {/* We don't have a Role Bindings details page, so redirect to the list page */}
-        <Redirect from="ns/:ns/rolebindings/:name/details" to="all-namespaces/rolebindings" />
-
-        <Route path="namespaces">
-          <IndexRoute component={ResourceListPage} kind="namespaces" /> 
-          <Route path=":name/:view" component={ResourceDetailsPage} kind="namespaces" />
-        </Route>
-
-        <Route path="nodes">
-          <IndexRoute component={ResourceListPage} kind="nodes" />
-          <Route path=":name/:view" component={ResourceDetailsPage} kind="nodes" />
-        </Route>
-
-        <Route path="settings">
-          <Route path="profile" component={ProfilePage} />
-          <Route path="ldap" component={LDAPPage} />
-          <Route path="cluster" component={ClusterSettingsPage} />
-        </Route>
-
-        <Route path="federation">
-          <Route path="clusters" component={Clusters} />
-        </Route>
-
-        <Route path="all-namespaces/events" component={EventStreamPage} />
-        <Route path="ns/:ns/events" component={EventStreamPage} />
-
-        <Route path="all-namespaces/search" component={SearchPage} /> 
-        <Route path="ns/:ns/search" component={SearchPage} /> 
-        <Redirect from="search" to="all-namespaces/search" />
-
-        <Route path="all-namespaces/:kind" component={ResourceListPage} />
-        <Route path="ns/:ns/:kind" component={ResourceListPage} />
-        <Route path="ns/:ns/:kind/new" component={CreateYAML} />
-        <Route path="ns/:ns/:kind/:name/:view" component={ResourceDetailsPage} />
-        <Route path="ns/:ns/pods/:podName/:kind/:name/:view" component={ContainersDetailsPage} />
-
-        <Route path="error" component={ErrorPage} />
-        <Route path="*" component={ErrorPage404} />   
-      </Route>
+    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+      <Route path="/" component={App} />
     </Router>
   </Provider>
 ), document.getElementById('app'));

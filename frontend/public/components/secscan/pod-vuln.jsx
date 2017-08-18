@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { ContainerRow } from '../pod';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
@@ -93,7 +93,7 @@ const PodLink = ({pod, text}) => {
   const podname = _.get(pod, 'metadata.name');
   return <div>
     {text ? (`${text}: `) : ''}
-    <Link to={`ns/${pod.metadata.namespace}/pods/${podname}/details`}>
+    <Link to={`/ns/${pod.metadata.namespace}/pods/${podname}/details`}>
       {podname}
     </Link>
   </div>;
@@ -112,7 +112,7 @@ const ContainerLink = ({podvuln, name}) => {
 
   return <span className="co-resource-link">
     <ResourceIcon kind="Container" />
-    <Link to={`ns/${podvuln.metadata.namespace}/pods/${podname}/containers/${name}/details`}>{name}</Link>
+    <Link to={`/ns/${podvuln.metadata.namespace}/pods/${podname}/containers/${name}/details`}>{name}</Link>
   </span>;
 };
 
@@ -136,7 +136,7 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
 
 const Details = (pod) => {
   const podvuln = makePodvuln(pod);
-  
+
   if (_.isError(podvuln)) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="No images scanned" detail={<PodLink pod={pod} text="No images were scanned in this pod" />} />;
   }
@@ -144,7 +144,7 @@ const Details = (pod) => {
   if (!hasAccess(podvuln)) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="Could read images from registry API" detail={<PodLink pod={pod} text="The labeller could not get image information from registry" />} />;
   }
-  
+
   if (!isSupported(podvuln)) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="Images not supported" detail={<PodLink pod={pod} text="The images in this pod could not be scanned" />} />;
   }
@@ -253,7 +253,7 @@ export const PodVulnsPage = props => <ListPage
   filterLabel="vulnerabilities by name"
   Intro={
     <SubHeaderRow
-      header="All supported container images are scanned for known vulnerabilities and CVEs." 
+      header="All supported container images are scanned for known vulnerabilities and CVEs."
       href="https://quay.io"
       link="Learn more about Tectonic Security Scanning."
     />

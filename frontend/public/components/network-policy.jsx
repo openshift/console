@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Selector} from './utils';
@@ -49,7 +49,7 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
   <div className="col-xs-5">
     {
       _.isEmpty(np.spec.podSelector) ?
-        <Link to={`ns/${np.metadata.namespace}/search?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
+        <Link to={`/ns/${np.metadata.namespace}/search?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
         <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
     }
   </div>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Helmet from 'react-helmet';
 
-import {NavTitle} from './utils';
+import {NavTitle, getQueryArgument} from './utils';
 
 //User messages for error_types returned in auth.go
 const messages = {
@@ -17,8 +17,13 @@ const messages = {
 };
 
 const getMessage = (type, id) => _.get(messages, `${type}.${id}`) || _.get(messages, `${type}.default`) || '';
-const urlMessage = ({error_type: type, error}) => (type && error) ? getMessage(type, error) : '';
-const getErrMessage = ({ error_msg: msg }) => {
+const urlMessage = () => {
+  const type = getQueryArgument('error_type');
+  const error = getQueryArgument('error');
+  return (type && error) ? getMessage(type, error) : '';
+};
+const getErrMessage = () => {
+  const msg = getQueryArgument('error_msg');
   if (msg) {
     try {
       return decodeURIComponent(msg);
@@ -50,9 +55,9 @@ const Error = ({title, message, errMessage}) => <div>
   </div>
 </div>;
 
-export const ErrorPage = ({location}) => <div>
+export const ErrorPage = () => <div>
   <Helmet title="Error" />
-  <Error title="Oh no! Something went wrong." message={urlMessage(location.query)} errMessage={getErrMessage(location.query)}/>
+  <Error title="Oh no! Something went wrong." message={urlMessage()} errMessage={getErrMessage()}/>
 </div>;
 
 export const ErrorPage404 = () => <div>

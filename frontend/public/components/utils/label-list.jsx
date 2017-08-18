@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 
 const Label = ({kind, name, value, expand}) => {
-  const href = `search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
+  const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
   const klass = classNames('co-m-label', {'co-m-label--expand': expand});
 
   return (

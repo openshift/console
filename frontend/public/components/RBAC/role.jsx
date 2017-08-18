@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as Helmet from 'react-helmet';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { k8sEnum } from '../../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
@@ -134,7 +134,7 @@ const BindingRow = ({obj: binding}) => <ResourceRow obj={binding}>
   </div>
 </ResourceRow>;
 
-export const BindingsForRolePage = ({params: {name, ns}, route: {kind}}) => <div>
+export const BindingsForRolePage = ({match: {params: {name, ns}}, kind}) => <div>
   <Helmet title={`${name} · Bindings`} />
   <Firehose kind={kind} name={name} namespace={ns}>
     <NavTitle detail={true} kind={kind} menuActions={menuActions} title={name} />
@@ -181,7 +181,7 @@ export const RolesPage = ({namespace}) => <MultiListPage
   ListComponent={RolesList}
   canCreate={true}
   createButtonText="Create Role"
-  createProps={{to: `ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
+  createProps={{to: `/ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
   filterLabel="Roles by name"
   resources={resources}
   rowFilters={[{
