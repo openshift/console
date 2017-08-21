@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { k8sPatch, isNodeReady } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
@@ -290,7 +289,9 @@ const Details = (node) => {
               </thead>
               <tbody>
                 {_.map(node.status.images, (image, i) => <tr key={i}>
-                  <td>{image.names.join(',')}</td>
+                  <td>
+                    {image.names.find(name => name.indexOf('@') === -1)}
+                  </td>
                   <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
                 </tr>)}
               </tbody>
