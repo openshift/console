@@ -72,7 +72,7 @@ const Header = ({channelState, tcAppVersion, expanded, onClick}) => {
         <OperatorState opState={channelState} version={tcAppVersion.desiredVersion} />
       </div>
     }
-    <a className="co-cluster-updates__toggle" onClick={onClick}>{expanded ? 'Collapse' : 'Expand'}</a>
+    <a className="co-cluster-updates__toggle" id="expand-cluster-updates" onClick={onClick}>{expanded ? 'Collapse' : 'Expand'}</a>
   </div>;
 };
 
@@ -144,7 +144,7 @@ class UpToDateTectonicCluster extends React.Component {
         <div className="co-cluster-updates__operator-icon co-cluster-updates__operator-icon--up-to-date">
           <span className="fa fa-fw fa-check-circle"></span>
         </div>
-        <div className="co-cluster-updates__operator-text"> <span>{name} {currentVersion}</span></div>
+        <div className="co-cluster-updates__operator-text" id="up-to-date-cluster"> <span>{name} {currentVersion}</span></div>
       </div>
       <div className="co-cluster-updates__operator-details">
         <button className="btn btn-link" onClick={() => this.setState({showDetails: !this.state.showDetails})}>
@@ -265,7 +265,7 @@ const TaskStatusStep = ({status, style}) => {
     <div className={`co-cluster-updates__operator-icon co-cluster-updates__operator-ts--${suffix}`}>
       <span className={classNames('fa fa-fw', icon)}></span>
     </div>
-    <div className={(!_.has(status, 'statuses') && status.type === 'appversion' && status.state === 'Running') ? 'co-cluster-updates__operator-text co-cluster-updates__operator-text--running' : 'co-cluster-updates__operator-text'}>
+    <div className={(!_.has(status, 'statuses') && status.type === 'appversion' && status.state === 'Running') ? 'co-cluster-updates__operator-text co-cluster-updates__operator-text--running' : 'co-cluster-updates__operator-text'} data-id={status.name}>
       {name}
     </div>
   </div>;

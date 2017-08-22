@@ -9,3 +9,4 @@
 /frontend/public/dist
 /frontend/npm-debug.log
 /frontend/yarn-error.log
+/frontend/tests_output
