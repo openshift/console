@@ -188,10 +188,10 @@ export class ContainerLinuxUpdateDetails extends SafetyFirst {
         { this.state.expanded && <div>
           <Status status={overallState} upgradeCount={upgradeCount}/>
           <div className="co-cluster-updates__operator">
-            {nodeListUpdateStatus.upToDate.length === count &&
+            {nodeListUpdateStatus.upToDate.length !== count &&
               <UpdateProgress nodeListUpdateStatus={nodeListUpdateStatus} />
             }
-            {nodeListUpdateStatus.upToDate.length !== count &&
+            {nodeListUpdateStatus.upToDate.length === count &&
               <UpToDateState text="Container Linux is up to date"
                 iconClass="fa fa-check-circle co-cl-operator--up-to-date"
                 count={nodeListUpdateStatus.upToDate.length}
