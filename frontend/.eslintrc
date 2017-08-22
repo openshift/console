@@ -5,6 +5,7 @@
   },
   "extends": [
     "eslint:recommended",
+    // TODO (ggreer): re-enable import plugin when it works with typescript-eslint-parser
     // "plugin:import/errors",
     // "plugin:import/warnings",
     "plugin:react/recommended",
