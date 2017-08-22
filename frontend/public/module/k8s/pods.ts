@@ -1,4 +1,4 @@
-import {k8sEnum} from './enum';
+import { k8sEnum } from './enum';
 import * as _ from 'lodash';
 
 const getRestartPolicy = pod => _.find(k8sEnum.RestartPolicy, {id: _.get(pod, 'spec.restartPolicy')});

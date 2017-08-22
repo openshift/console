@@ -1,6 +1,6 @@
 /**
-  * @param  {String[]} args
-  * @return {String}
+{String[]} args
+{String}
   */
 export const fromArgs = args => {
   return args.map(function (arg) {
@@ -21,8 +21,8 @@ export const fromArgs = args => {
 };
 
 /**
-  * @param  {String}   cmd
-  * @return {String[]}
+{String} cmd
+{String[]}
   */
 export const toArgs = cmd => {
   const parts = cmd.split(' ');
