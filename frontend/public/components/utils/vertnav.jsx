@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
+import { Route, Switch } from 'react-router-dom';
 
 import { StatusBox, RelativeLink } from './index';
 import { EditYAML } from '../edit-yaml';
@@ -8,7 +9,12 @@ import { PodsPage } from '../pod';
 
 const editYamlComponent = props => <EditYAML obj={props} />;
 
-const podsComponent = ({metadata: {namespace}, spec: {selector}}) => <PodsPage showTitle={false} namespace={namespace} selector={selector} />;
+class PodsComponent extends React.PureComponent {
+  render() {
+    const {metadata: {namespace}, spec: {selector}} = this.props;
+    return <PodsPage showTitle={false} namespace={namespace} selector={selector} />;
+  }
+}
 
 export const navFactory = {
   details: (component = undefined) => ({
@@ -34,7 +40,7 @@ export const navFactory = {
   pods: (component = undefined) => ({
     href: 'pods',
     name: 'Pods',
-    component: component || podsComponent,
+    component: component || PodsComponent,
   }),
   roles: (component = undefined) => ({
     href: 'roles',
@@ -63,19 +69,25 @@ export const NavBar = ({pages}) => {
   }))}</ul>;
 };
 
-export const VertNav = props => {
-  const Page = _.get(_.find(props.pages, {href: activeSlug()}), 'component');
-  const routeProps = _.pick(props, ['location', 'params', 'route', 'routeParams', 'router']);
+export class VertNav extends React.PureComponent {
+  render () {
+    const props = this.props;
+    const routeProps = _.pick(props, ['location', 'route', 'routeParams', 'router']);
+    routeProps.params = _.get(props, 'match.params');
 
-  return <div className={props.className}>
-    <div className="co-m-pane co-m-vert-nav">
-      {!props.hideNav && <NavBar pages={props.pages} />}
-      <div className="co-m-vert-nav__body">
-        {Page && <StatusBox {...props}><Page {...routeProps} /></StatusBox>}
+    return <div className={props.className}>
+      <div className="co-m-pane co-m-vert-nav">
+        {!props.hideNav && <NavBar pages={props.pages} />}
+        <div className="co-m-vert-nav__body">
+          <Switch>
+            {props.pages.map(p => <Route path={`${props.match.path}/${p.href}`} exact key={p.name} render={() =>
+              <StatusBox {...props}><p.component {...routeProps} /></StatusBox>} />)}
+          </Switch>
+        </div>
       </div>
-    </div>
-  </div>;
-};
+    </div>;
+  }
+}
 
 VertNav.propTypes = {
   pages: PropTypes.arrayOf(PropTypes.shape({
@@ -85,4 +97,7 @@ VertNav.propTypes = {
   })),
   className: PropTypes.string,
   hideNav: PropTypes.bool,
+  match: PropTypes.shape({
+    path: PropTypes.string,
+  }),
 };

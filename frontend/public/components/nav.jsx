@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
@@ -36,7 +36,7 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
 
 const NavLink = connect(navLinkStateToProps, null, mergeProps, {pure: true, areStatesEqual})(
   class NavLink_ extends React.PureComponent {
-    componentWillMount () {
+    componentDidMount () {
       const {isActive, openSection, sectionId} = this.props;
       if (isActive) {
         openSection(sectionId);
@@ -151,9 +151,9 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     </NavSection>
 
     <NavSection text="Administration" icon="fa-cog">
-      <NavLink href="namespaces" name="Namespaces" />
-      <NavLink href="nodes" name="Nodes" />
-      <NavLink href="settings/cluster" name="Cluster Settings" isActive={isClusterSettingsActive} />
+      <NavLink href="/namespaces" name="Namespaces" />
+      <NavLink href="/nodes" name="Nodes" />
+      <NavLink href="/settings/cluster" name="Cluster Settings" isActive={isClusterSettingsActive} />
       <NavLink resource="serviceaccounts" name="Service Accounts" />
       <NavLink resource="roles" name="Roles" required="RBAC" isActive={isRolesActive} />
       <NavLink resource="rolebindings" name="Role Bindings" required="RBAC" isActive={isRoleBindingsActive} />
@@ -161,7 +161,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     </NavSection>
 
     {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user">
-      <NavLink href="settings/profile" name="My Account" />
+      <NavLink href="/settings/profile" name="My Account" />
       <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
     </NavSection>}
   </div>

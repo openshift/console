@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
@@ -165,7 +165,7 @@ const Details = (props) => {
           <h1 className="co-section-title">Network</h1>
           <dl>
             <dt>Node</dt>
-            <dd><Link to={`nodes/${props.spec.nodeName}/details`}>{props.spec.nodeName}</Link></dd>
+            <dd><Link to={`/nodes/${props.spec.nodeName}/details`}>{props.spec.nodeName}</Link></dd>
             <dt>Pod IP</dt>
             <dd>{props.status.podIP || '-'}</dd>
           </dl>
@@ -201,8 +201,8 @@ const Details = (props) => {
 };
 
 export const ContainersDetailsPage = props => <div>
-  <NavTitle detail={true} title={props.params.name} kind="Container" />
-  <Firehose {...props} namespace={props.params.ns} kind="Pod" name={props.params.podName}>
-    <VertNav hideNav={true} pages={[{href: 'details', component: Details}]} />
+  <NavTitle detail={true} title={props.match.params.name} kind="Container" />
+  <Firehose {...props} namespace={props.match.params.ns} kind="Pod" name={props.match.params.podName}>
+    <VertNav hideNav={true} pages={[{name: 'container', href: 'details', component: Details}]} />
   </Firehose>
 </div>;

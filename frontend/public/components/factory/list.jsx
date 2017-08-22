@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types';
 import * as classNames from'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { getJobTypeAndCompletions, getQN, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';

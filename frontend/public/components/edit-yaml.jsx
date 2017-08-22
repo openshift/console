@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
-import { browserHistory } from 'react-router';
 
 import '../lib/ace/ace';
 import '../lib/ace/mode/mode-yaml';
@@ -30,7 +29,7 @@ export class EditYAML extends SafetyFirst {
     // k8s uses strings for resource versions
     this.displayedVersion = '0';
     // Default cancel action is browser back navigation
-    this.onCancel = 'onCancel' in props ? props.onCancel : browserHistory.goBack;
+    this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
   }
 
   handleError(error) {

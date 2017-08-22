@@ -120,7 +120,8 @@ class CreateYAML_ extends SafetyFirst {
   }
 
   render () {
-    const {models, params} = this.props;
+    const {models, match} = this.props;
+    const {params} = match;
 
     const kind = k8s[params.kind] && k8s[params.kind].kind;
     if (!kind) {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
@@ -39,7 +39,7 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
     <LabelList kind="DaemonSet" labels={daemonset.metadata.labels} />
   </div>
   <div className="col-md-2 col-sm-4 hidden-xs">
-    <Link to={`ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
+    <Link to={`/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
       {daemonset.status.currentNumberScheduled} of {daemonset.status.desiredNumberScheduled} pods
     </Link>
   </div>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
 
@@ -64,6 +64,17 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
         />;
       });
 
+      let createLink;
+      if (canCreate) {
+        if (createProps.to) {
+          createLink = <Link className="co-m-primary-action pull-left" {...createProps}>
+            <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
+          </Link>;
+        } else {
+          createLink = <button className="btn btn-primary" id="yaml-create" {...createProps}>{createButtonText}</button>;
+        }
+      }
+
       return <div>
         {title && <NavTitle title={title} />}
         <div className="co-m-pane">
@@ -71,9 +82,7 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
             <div className="row">
               <div className="col-xs-12">
                 {Intro}
-                {canCreate && <Link className="co-m-primary-action pull-left" {...createProps}>
-                  <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
-                </Link>}
+                {createLink}
                 {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
                 <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} />
                 {DropdownFilters}
@@ -115,7 +124,7 @@ export const ListPage = props => {
   const {createHandler, filterLabel, kind, namespace, showTitle = true} = props;
   const {label, labelPlural, plural} = kindObj(kind);
 
-  const href = `ns/${namespace || k8sEnum.DefaultNS}/${plural}/new`;
+  const href = `/ns/${namespace || k8sEnum.DefaultNS}/${plural}/new`;
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
 
   return <Firehose key={`${namespace}-${kind}`} {...props} isList={true}>

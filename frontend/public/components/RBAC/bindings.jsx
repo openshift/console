@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as Helmet from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { getQN, k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { getActiveNamespace, getNamespacedRoute, UIActions } from '../../ui/ui-actions';
@@ -10,7 +10,7 @@ import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factor
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
-import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, OverflowYFade, ResourceCog, ResourceName, ResourceLink, resourceObjPath, StatusBox } from '../utils';
+import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox, MultiFirehose, OverflowYFade, ResourceCog, ResourceName, ResourceLink, resourceObjPath, StatusBox, getQueryArgument } from '../utils';
 import { isSystemRole } from './index';
 import { registerTemplate } from '../../yaml-templates';
 
@@ -153,7 +153,7 @@ export const RoleBindingsPage = () => <MultiListPage
   ListComponent={BindingsList}
   canCreate={true}
   createButtonText="Create Binding"
-  createProps={{to: 'rolebindings/new'}}
+  createProps={{to: '/rolebindings/new'}}
   filterLabel="Role Bindings by role or subject"
   resources={resources}
   rowFilters={[{
@@ -405,32 +405,37 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
     }
   });
 
-export const CreateRoleBinding = ({location: {query}}) => <BaseEditRoleBinding
+export const CreateRoleBinding = ({match: {params}}) => <BaseEditRoleBinding
   metadata={{
     namespace: getActiveNamespace(),
   }}
   fixed={{
-    kind: (query.ns || query.rolekind === 'role') ? 'RoleBinding' : undefined,
-    metadata: {namespace: query.ns},
-    roleRef: {kind: k8sKind(query.rolekind), name: query.rolename},
+    kind: (params.ns || params.rolekind === 'role') ? 'RoleBinding' : undefined,
+    metadata: {namespace: params.ns},
+    roleRef: {kind: k8sKind(params.rolekind), name: params.rolename},
   }}
   isCreate={true}
   titleVerb="Create"
 />;
+
+const getSubjectIndex = () => {
+  const subjectIndex = getQueryArgument('subjectIndex') || '0';
+  return parseInt(subjectIndex, 10);
+};
 
 const EditBinding = props => {
   const {kind, metadata, roleRef} = props;
   return <BaseEditRoleBinding {...props} fixed={{kind, metadata, roleRef}} saveButtonText="Save Binding" />;
 };
 
-export const EditRoleBinding = ({location, params, route}) => <Firehose kind={route.kind} name={params.name} namespace={params.ns}>
+export const EditRoleBinding = ({match: {params}, kind}) => <Firehose kind={kind} name={params.name} namespace={params.ns}>
   <StatusBox>
-    <EditBinding subjectIndex={location.query.subjectIndex} titleVerb="Edit" />
+    <EditBinding subjectIndex={getSubjectIndex()} titleVerb="Edit" />
   </StatusBox>
 </Firehose>;
 
-export const CopyRoleBinding = ({location, params, route}) => <Firehose kind={route.kind} name={params.name} namespace={params.ns}>
+export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose kind={kind} name={params.name} namespace={params.ns}>
   <StatusBox>
-    <BaseEditRoleBinding isCreate={true} subjectIndex={location.query.subjectIndex} titleVerb="Duplicate" />
+    <BaseEditRoleBinding isCreate={true} subjectIndex={getSubjectIndex()} titleVerb="Duplicate" />
   </StatusBox>
 </Firehose>;

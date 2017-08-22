@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions, getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
@@ -78,10 +78,10 @@ const PodHeader = props => <ListHeader>
 
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">
   <ResourceIcon kind="Container" />
-  <Link to={`ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</Link>
+  <Link to={`/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}/details`}>{name}</Link>
 </span>;
 
-const NodeLink = ({name}) => name ? <Link to={`nodes/${name}/details`}>{name}</Link> : <span>-</span>;
+const NodeLink = ({name}) => name ? <Link to={`/nodes/${name}/details`}>{name}</Link> : <span>-</span>;
 
 export const ContainerRow = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);
@@ -241,20 +241,29 @@ export const PodsDetailsPage = props => <DetailsPage
 
 export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
 
-export const PodsPage = props => <ListPage
-  {...props}
-  canCreate={true}
-  kind="Pod"
-  ListComponent={PodList}
-  rowFilters={[{
-    type: 'pod-status',
-    selected: ['Running', 'Pending', 'Terminating'],
-    reducer: podPhase,
-    items: [
-      {id: 'Running', title: 'Running'},
-      {id: 'Pending', title: 'Pending'},
-      {id: 'Terminating', title: 'Terminating'},
-      {id: 'Completed', title: 'Job Completed'},
-    ],
-  }]}
-/>;
+const filters = [{
+  type: 'pod-status',
+  selected: ['Running', 'Pending', 'Terminating'],
+  reducer: podPhase,
+  items: [
+    {id: 'Running', title: 'Running'},
+    {id: 'Pending', title: 'Pending'},
+    {id: 'Terminating', title: 'Terminating'},
+    {id: 'Completed', title: 'Job Completed'},
+  ],
+}];
+
+export class PodsPage extends React.PureComponent {
+  shouldComponentUpdate(nextProps) {
+    return !_.isEqual(nextProps, this.props);
+  }
+  render() {
+    return <ListPage
+      {...this.props}
+      canCreate={true}
+      kind="Pod"
+      ListComponent={PodList}
+      rowFilters={filters}
+    />;
+  }
+}

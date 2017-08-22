@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Helmet from 'react-helmet';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
 
@@ -16,7 +16,7 @@ import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings'
 export const LDAPSetting = () => <SettingsRow>
   <SettingsLabel>LDAP:</SettingsLabel>
   <SettingsContent>
-    <Link className="co-m-modal-link" to="settings/ldap">LDAP</Link>
+    <Link className="co-m-modal-link" to="/settings/ldap">LDAP</Link>
   </SettingsContent>
 </SettingsRow>;
 
@@ -535,7 +535,7 @@ const LDAPs = reduxForm({
             </pre>
 
             <p>
-            Next, trigger a rolling-update of the <a target="_blank" href="ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a>, which will read the new configuration.
+            Next, trigger a rolling-update of the <a target="_blank" href="/ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</a>, which will read the new configuration.
             </p>
 
             <pre className="ldap-pre" style={{marginBottom: 30}}>

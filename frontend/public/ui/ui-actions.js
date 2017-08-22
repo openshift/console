@@ -34,7 +34,7 @@ export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   }
 
   const namespacePrefix = activeNamespace ? `ns/${activeNamespace}/` : 'all-namespaces/';
-  return `${namespacePrefix}${originalPath}`;
+  return `/${namespacePrefix}${originalPath}`;
 };
 
 export const registerNamespaceFriendlyPrefix = s => prefixes.push(s);
@@ -63,7 +63,7 @@ export const UIActions = {
     if (namespace !== getActiveNamespace()) {
       const oldPath = window.location.pathname;
       if (isNamespaced(oldPath)) {
-        const location = Object.assign({}, history.getCurrentLocation());
+        const location = Object.assign({}, window.location);
         location.pathname = formatNamespaceRoute(namespace, oldPath);
         history.push(location);
       }
