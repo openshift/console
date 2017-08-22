@@ -1,11 +1,12 @@
 #!/bin/bash -e
 
-pushd frontend
-yarn run lint && yarn run lint:ts
+set -euo pipefail
+
+cd frontend
+yarn run lint
 yarn run test
-popd
 
 if git status --short | grep 'yarn.lock' > /dev/null; then
-  echo "outdated yarn.lock (commit it to fix)"
+  printf "\n\nOUTDATED yarn.lock (COMMIT IT TO FIX!!!!!)\n"
   exit 1
 fi
