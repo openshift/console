@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import { PodList, Readiness } from '../../public/components/pod';
+import { shallow } from 'enzyme';
+import { Readiness } from '../../public/components/pod';
 
 describe('Readiness', () => {
   let pod;
@@ -11,7 +9,7 @@ describe('Readiness', () => {
     pod = {
       status: {
         phase: 'Running',
-        conditions: []
+        conditions: [],
       }
     };
   });

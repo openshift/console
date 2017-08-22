@@ -1,7 +1,3 @@
-/**
-  * @param  {String[]} args
-  * @return {String}
-  */
 export const fromArgs = args => {
   return args.map(function (arg) {
     if (!arg) { // empty argument is still valid argument and needs to be quoted
@@ -20,10 +16,6 @@ export const fromArgs = args => {
   }).join(' ');
 };
 
-/**
-  * @param  {String}   cmd
-  * @return {String[]}
-  */
 export const toArgs = cmd => {
   const parts = cmd.split(' ');
   const args = [];

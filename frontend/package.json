@@ -8,8 +8,7 @@
     "dev": "rm -rf ./public/dist/ && webpack --watch",
     "build": "rm -rf ./public/dist && NODE_ENV=production webpack --progress",
     "coverage": "jest --coverage .",
-    "lint": "eslint --ext .js,.jsx --color .",
-    "lint:ts": "tslint -p . -c tslint.json",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
     "test-gui": "nightwatch --test integration-tests/tests/gui.js",
     "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>1)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
@@ -94,18 +93,17 @@
     "jest-cli": "19.x",
     "nightwatch": "0.9.x",
     "node-sass": "^4.5.3",
-    "react-test-renderer": "^15.6.1",
-    "resolve-url-loader": "^2.1.0",
-    "sass-loader": "^6.0.6",
-    "style-loader": "^0.18.2",
-    "ts-jest": "^20.0.10",
-    "ts-loader": "^2.3.2",
-    "tslint": "^5.6.0",
-    "tslint-eslint-rules": "^4.1.1",
-    "typescript": "^2.4.2",
+    "react-test-renderer": "15.x",
+    "resolve-url-loader": "2.x",
+    "sass-loader": "6.x",
+    "style-loader": "0.18.x",
+    "ts-jest": "20.x",
+    "ts-loader": "2.x",
+    "typescript-eslint-parser": "7.x",
+    "typescript": "2.4.x",
     "uglifyjs-webpack-plugin": "1.0.0-beta.1",
-    "webpack": "^3.5.3",
-    "webpack-bundle-analyzer": "^2.9.0"
+    "webpack": "3.x",
+    "webpack-bundle-analyzer": "2.x"
   },
   "engines": {
     "node": "8.x"

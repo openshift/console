@@ -2,12 +2,6 @@ import * as k8sSelectorRequirement from './selector-requirement';
 
 const isOldFormat = selector => !selector.matchLabels && !selector.matchExpressions;
 
-/**
-  * @param {Object[]} requirements
-  * @param {Object}   options
-  * @param {Boolean}  options.basic
-  * @param {Boolean}  options.undefinedWhenEmpty
-  */
 export const fromRequirements = (requirements, options) => {
   options = options || {};
   const selector = {
