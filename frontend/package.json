@@ -21,11 +21,17 @@
       "ts",
       "tsx"
     ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "./__mocks__/fileMock.js",
+      "\\.(css|less)$": "./__mocks__/styleMock.js"
+    },
     "transform": {
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
     },
+    "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
     "setupFiles": [
-      "./before-tests.js"
+      "./before-tests.js",
+      "./__mocks__/localStorage.js"
     ],
     "coverageDirectory": "__coverage__",
     "coverageReporters": [
@@ -67,6 +73,7 @@
     "whatwg-fetch": "2.x"
   },
   "devDependencies": {
+    "@types/enzyme": "^2.8.6",
     "@types/immutable": "^3.8.7",
     "@types/jest": "^20.0.6",
     "@types/lodash": "^4.14.72",
@@ -76,6 +83,7 @@
     "@types/react-helmet": "^5.0.3",
     "chromedriver": "2.x",
     "css-loader": "^0.28.4",
+    "enzyme": "^2.9.1",
     "eslint": "4.x",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-react": "6.x",
@@ -86,6 +94,7 @@
     "jest-cli": "19.x",
     "nightwatch": "0.9.x",
     "node-sass": "^4.5.3",
+    "react-test-renderer": "^15.6.1",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",

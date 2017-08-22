@@ -11,6 +11,8 @@ import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 
 const menuActions = Cog.factory.common;
+const validReadinessStates = new Set(['Ready', 'PodCompleted']);
+const validStatuses = new Set(['Running', 'Completed']);
 
 registerTemplate('v1.Pod', `apiVersion: v1
 kind: Pod
@@ -25,12 +27,12 @@ spec:
       ports:
         - containerPort: 6379`);
 
-const Readiness = ({pod}) => {
+export const Readiness = ({pod}) => {
   const readiness = podReadiness(pod);
   if (!readiness) {
     return null;
   }
-  if (readiness === 'Ready') {
+  if (validReadinessStates.has(readiness)) {
     return <span>{readiness}</span>;
   }
   return <span className="co-error">
@@ -39,11 +41,11 @@ const Readiness = ({pod}) => {
   </span>;
 };
 
-const PodRow = ({obj: pod}) => {
+export const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
   let status = phase;
 
-  if (status !== 'Running') {
+  if (!validStatuses.has(status)) {
     status = <span className="co-error" >
       <i className="fa fa-times-circle co-icon-space-r" />{phase}
     </span>;

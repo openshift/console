@@ -1,8 +1,12 @@
 import {k8sEnum} from './enum';
+import * as _ from 'lodash';
 
 const getRestartPolicy = pod => _.find(k8sEnum.RestartPolicy, {id: _.get(pod, 'spec.restartPolicy')});
 
 export const getRestartPolicyLabel = pod => _.get(getRestartPolicy(pod), 'label', '');
+
+export type PodReadiness = string;
+export type PodPhase = string;
 
 export const getVolumeType = volume => {
   if (!volume) {
@@ -88,7 +92,7 @@ export const getVolumeLocation = volume => {
 
 // This logic (at this writing, Kubernetes 1.2.2) is replicated in kubeconfig
 // (See https://github.com/kubernetes/kubernetes/blob/v1.3.0-alpha.2/pkg/kubectl/resource_printer.go#L574 )
-export const podPhase = (pod) => {
+export const podPhase = (pod): PodPhase => {
   if (!pod || !pod.status) {
     return '';
   }
@@ -119,7 +123,7 @@ export const podPhase = (pod) => {
   return ret;
 };
 
-export const podReadiness = ({status}) => {
+export const podReadiness = ({status}): PodReadiness => {
   if (_.isEmpty(status.conditions)) {
     return null;
   }
