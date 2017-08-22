@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
+import { browserHistory } from 'react-router';
 
 import '../lib/ace/ace';
 import '../lib/ace/mode/mode-yaml';
@@ -28,6 +29,8 @@ export class EditYAML extends SafetyFirst {
     this.resize_ = () => this.setState({height: this.height});
     // k8s uses strings for resource versions
     this.displayedVersion = '0';
+    // Default cancel action is browser back navigation
+    this.onCancel = 'onCancel' in props ? props.onCancel : browserHistory.goBack;
   }
 
   handleError(error) {
@@ -204,6 +207,7 @@ export class EditYAML extends SafetyFirst {
             {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
             {!create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>}
             {!create && <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>}
+            <button className="btn btn-default" onClick={() => this.onCancel()}>Cancel</button>
             <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
           </div>
         </div>
