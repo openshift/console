@@ -5,8 +5,8 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
+    // "plugin:import/errors",
+    // "plugin:import/warnings",
     "plugin:react/recommended",
   ],
   "globals": {
@@ -23,6 +23,7 @@
     "require": true,
     "spyOn": true,
   },
+  "parser": "typescript-eslint-parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true,
@@ -44,7 +45,7 @@
     "eol-last": [2, "unix"],
     "eqeqeq": [2, "allow-null"],
     "guard-for-in": 2,
-    "import/no-unresolved": ["error", {"ignore": ["./dist/templates"] }],
+    // "import/no-unresolved": ["error", {"ignore": ["./dist/templates"] }],
     "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
     "jsx-quotes": "error",
     "linebreak-style": [2, "unix"],
