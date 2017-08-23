@@ -24,6 +24,7 @@ const updateLicense = ({cancel}) => {
   });
 };
 
+/* eslint-disable react/jsx-no-target-blank */
 const LicenseModal = (props) => {
   const {cancel, close, blocking, title, body} = props;
   return <div>
@@ -34,7 +35,7 @@ const LicenseModal = (props) => {
     <ModalFooter inProgress={false} errorMessage="">
       {!blocking && <button type="submit" onClick={close} className="btn btn-primary">Close</button>}
       {blocking && <button type="submit" onClick={() => updateLicense({cancel})} className="btn btn-primary">Update License</button>}
-      <a href="https://account.coreos.com" className="btn btn-link" target="_blank">View Tectonic Account</a>
+      <a href="https://account.coreos.com" className="btn btn-link" target="_blank" rel="noopener">View Tectonic Account</a>
     </ModalFooter>
   </div>;
 };
@@ -44,7 +45,7 @@ const invalidModalProps = (props) => {
     title: 'Invalid Tectonic License',
     body: <div>
       <p>{_.capitalize(props.message) || 'Your Tectonic license is invalid.'}</p>
-      <p>Please login to <a href="https://account.coreos.com" target="_blank">account.coreos.com</a> to get your latest license. You may need to contact sales to renew.</p>
+      <p>Please login to <a href="https://account.coreos.com" target="_blank" rel="noopener">account.coreos.com</a> to get your latest license. You may need to contact sales to renew.</p>
     </div>
   };
 };
@@ -54,10 +55,11 @@ const expiredModalProps = (props) => {
     title: 'Tectonic License Expired',
     body: <div>
       <p>The Tectonic license expired on <span>{moment(props.expiration).format('LL')}</span>.</p>
-      <p>Please login to <a href="https://account.coreos.com" target="_blank">account.coreos.com</a> to get your latest license. You may need to contact sales to renew.</p>
+      <p>Please login to <a href="https://account.coreos.com" target="_blank" rel="noopener">account.coreos.com</a> to get your latest license. You may need to contact sales to renew.</p>
     </div>
   };
 };
+/* eslint-enable react/jsx-no-target-blank */
 
 const exceededModalProps = (props) => {
   const {entitlement, current, entitled} = props;

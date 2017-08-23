@@ -174,7 +174,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull secret.
         </p>
 
-        {existingData.invalidData && <p className="co-m-message co-m-message--error">A default pull secret exists, but can't be parsed. Saving this will overwrite it.</p>}
+        {existingData.invalidData && <p className="co-m-message co-m-message--error">A default pull secret exists, but can&rsquo;t be parsed. Saving this will overwrite it.</p>}
 
         <div className="row co-m-form-row">
           <div className="col-xs-3">

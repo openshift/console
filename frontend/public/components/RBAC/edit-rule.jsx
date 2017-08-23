@@ -392,7 +392,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
                 <p>
                   <label>API Groups:</label>
                 </p>
-                <p>Restrict this role to a subset of API URLs that don't correspond to objects.</p>
+                <p>Restrict this role to a subset of API URLs that don&rsquo;t correspond to objects.</p>
 
                 <div>
                   <input type="text" value={APIGroups} className="form-control text-input" onChange={e => this.setApiGroups(e.target.value)} placeholder="Comma separated list of the api groups for the selected resources." />

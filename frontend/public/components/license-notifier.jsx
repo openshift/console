@@ -165,7 +165,8 @@ class LicenseNotifier extends React.Component {
   }
 
   render() {
-    const actions = <span><Link to="/settings/cluster">View the cluster settings</Link> or <a href="https://account.coreos.com" target="_blank">log in to your Tectonic account</a></span>;
+    // eslint-disable-next-line react/jsx-no-target-blank
+    const actions = <span><Link to="/settings/cluster">View the cluster settings</Link> or <a href="https://account.coreos.com" target="_blank" rel="noopener">log in to your Tectonic account</a></span>;
 
     let notification;
     if (this._errored()) {

@@ -117,7 +117,8 @@ export const ClusterOverviewPage = (props) => {
             <SoftwareDetailRow title="Tectonic" detail={props.currentTectonicVersion || props.tectonicVersion}
               text="Tectonic version could not be determined." >
               <div>
-                <a href="https://coreos.com/tectonic/releases/" target="_blank">Release Notes</a>
+                {// eslint-disable-next-line react/jsx-no-target-blank
+                } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes</a>
               </div>
             </SoftwareDetailRow>
 
