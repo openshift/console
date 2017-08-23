@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
 
-import { k8sEnum } from '../../module/k8s';
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes } from '../row-filter';
 import { Dropdown, Firehose, kindObj, MultiFirehose, NavTitle } from '../utils';
@@ -124,7 +123,7 @@ export const ListPage = props => {
   const {createHandler, filterLabel, kind, namespace, showTitle = true} = props;
   const {label, labelPlural, plural} = kindObj(kind);
 
-  const href = `/ns/${namespace || k8sEnum.DefaultNS}/${plural}/new`;
+  const href = `/ns/${namespace || 'default'}/${plural}/new`;
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
 
   return <Firehose key={`${namespace}-${kind}`} {...props} isList={true}>
