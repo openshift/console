@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 import {NavTitle, DocumentationSidebar} from '../utils';
 import {LicenseSetting} from './license-setting';
@@ -21,7 +21,9 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES, FLAGS.P
       const { CLUSTER_UPDATES, PROMETHEUS } = this.props.flags;
 
       return <div className="co-p-cluster">
-        <Helmet title="Cluster" />
+        <Helmet>
+          <title>Cluster</title>
+        </Helmet>
         <div className="co-p-cluster__body">
           <NavTitle title="Cluster Settings" />
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 import {NavTitle, getQueryArgument} from './utils';
 
@@ -56,11 +56,15 @@ const Error = ({title, message, errMessage}) => <div>
 </div>;
 
 export const ErrorPage = () => <div>
-  <Helmet title="Error" />
+  <Helmet>
+    <title>Error</title>
+  </Helmet>
   <Error title="Oh no! Something went wrong." message={urlMessage()} errMessage={getErrMessage()}/>
 </div>;
 
 export const ErrorPage404 = () => <div>
-  <Helmet title="Page Not Found (404)" />
+  <Helmet>
+    <title>Page Not Found (404)</title>
+  </Helmet>
   <Error title="404: Page Not Found" />
 </div>;

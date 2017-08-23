@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 import { authSvc } from '../module/auth';
 import { kubectlConfigModal, tokenInfoModal } from './modals';
@@ -22,7 +22,9 @@ export class ProfilePage extends SafetyFirst {
 
   render() {
     return <div className="co-p-profile">
-      <Helmet title="Profile" />
+      <Helmet>
+        <title>Profile</title>
+      </Helmet>
       <NavTitle detail={true} title="Profile" />
       <div className="co-m-pane">
         <div className="co-m-pane__body">

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 import {ConfigMaps} from './configmap';
 import {DaemonSets} from './daemonset';
@@ -99,7 +99,9 @@ export const SearchPage = ({match, location}) => {
   const key = `${params.ns}-${kind}-${validTags.join(',')}`;
 
   return <div className="co-p-search">
-    <Helmet title="Search" />
+    <Helmet>
+      <title>Search</title>
+    </Helmet>
     <NavTitle title="Search" />
     <div className="co-m-pane" key={key}>
       <div className="co-m-pane__body">

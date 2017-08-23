@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 import { k8sKinds } from '../module/k8s';
 import * as pages from './resource-pages';
@@ -18,7 +18,9 @@ export const ResourceListPage = (props) => {
   // eslint-disable-next-line import/namespace
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}Page`];
   return <div>
-    <Helmet title={kindObj.labelPlural} />
+    <Helmet>
+      <title>{kindObj.labelPlural}</title>
+    </Helmet>
     {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} />}
   </div>;
 };
@@ -35,7 +37,9 @@ export const ResourceDetailsPage = (props) => {
   // eslint-disable-next-line import/namespace
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}DetailsPage`];
   return <div>
-    <Helmet title={`${name} · Details`} />
+    <Helmet>
+      <title>title={`${name} · Details`}</title>
+    </Helmet>
     {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} name={name} />}
   </div>;
 };
