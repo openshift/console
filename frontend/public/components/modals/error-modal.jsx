@@ -8,7 +8,7 @@ export const errorModal = createModalLauncher(
       <div>
         <ModalTitle>Error</ModalTitle>
         <ModalBody>{error}</ModalBody>
-        <ModalFooter inProgress={false} errorMessage=""><button type="button" onClick={cancel} className="btn btn-default">OK</button></ModalFooter>
+        <ModalFooter inProgress={false} errorMessage=""><button type="button" onClick={(e) => cancel(e)} className="btn btn-default">OK</button></ModalFooter>
       </div>
     );
   }
