@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -256,7 +256,9 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
 
       return (
         <div className="co-m-pane edit-rule">
-          <Helmet title={`${name} · ${heading}`} />
+          <Helmet>
+            <title>{`${name} · ${heading}`}</title>
+          </Helmet>
           <Heading text={heading} />
           <div className="co-m-pane__body">
             <div className="row">

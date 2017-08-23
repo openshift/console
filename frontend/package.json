@@ -60,7 +60,7 @@
     "react": "15.6.x",
     "react-addons-css-transition-group": "15.6.x",
     "react-dom": "15.6.x",
-    "react-helmet": "4.x",
+    "react-helmet": "5.x",
     "react-lightweight-tooltip": "0.x",
     "react-modal": "1.x",
     "react-redux": "5.x",

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
@@ -80,7 +80,9 @@ export const ClusterOverviewPage = (props) => {
   return <div className="co-p-cluster">
     <div className="co-p-cluster__body">
       <StartGuide dismissible={true} />
-      <Helmet title="Cluster Status" />
+      <Helmet>
+        <title>Cluster Status</title>
+      </Helmet>
       <NavTitle title="Cluster Status" />
 
       <div className="cluster-overview">

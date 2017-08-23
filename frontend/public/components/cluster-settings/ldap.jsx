@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -558,7 +558,9 @@ const LDAPs = reduxForm({
   });
 
 export const LDAPPage = () => <div>
-  <Helmet title="LDAP" />
+  <Helmet>
+    <title>LDAP</title>
+  </Helmet>
   <NavTitle title="LDAP" />
   <div className="co-m-pane">
     <div className="co-m-pane__body">

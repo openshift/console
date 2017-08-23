@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { Provider } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 

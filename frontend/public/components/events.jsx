@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
@@ -79,7 +79,9 @@ export class EventStreamPage extends React.Component {
     const {category, kind} = this.state;
     const types = Object.assign({all: 'All Types'}, _.zipObject(kinds, _.map(kinds, k => kindObj(k).labelPlural)));
     return <div>
-      <Helmet title="Events" />
+      <Helmet>
+        <title>Events</title>
+      </Helmet>
       <NavTitle title="Events" />
       <div className="co-m-pane">
         <div className="co-m-pane__heading">

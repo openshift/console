@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -346,7 +346,9 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
 
       return <div className="rbac-edit-binding co-m-pane__body">
-        <Helmet title={title} />
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
         <form className="co-m-pane__body-group" onSubmit={this.save}>
           <h1 className="co-m-pane__title">{title}</h1>
           <div className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</div>

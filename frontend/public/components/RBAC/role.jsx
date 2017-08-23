@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import * as Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { k8sEnum } from '../../module/k8s';
@@ -135,7 +135,9 @@ const BindingRow = ({obj: binding}) => <ResourceRow obj={binding}>
 </ResourceRow>;
 
 export const BindingsForRolePage = ({match: {params: {name, ns}}, kind}) => <div>
-  <Helmet title={`${name} · Bindings`} />
+  <Helmet>
+    <title>{`${name} · Bindings`}</title>
+  </Helmet>
   <Firehose kind={kind} name={name} namespace={ns}>
     <NavTitle detail={true} kind={kind} menuActions={menuActions} title={name} />
   </Firehose>
