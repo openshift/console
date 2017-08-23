@@ -30,6 +30,7 @@ const exports_ = {};
   'services',
   // 'namespaces', // TODO: (kans) special case
   'serviceaccounts',
+  'statefulsets',
   'roles',
 ].forEach(resource => {
   exports_[`YAML - ${resource}`] = browser => {

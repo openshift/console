@@ -7,7 +7,7 @@ import { registerTemplate } from '../yaml-templates';
 registerTemplate('apps/v1beta1.StatefulSet', `apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
-  name: web
+  name: example
 spec:
   serviceName: "nginx"
   replicas: 3
