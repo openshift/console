@@ -3,12 +3,17 @@ import * as PropTypes from 'prop-types';
 
 import store from '../../redux';
 import {K8sWatcher} from './k8s-watcher';
-import {EmptyBox, ConnectToState, k8sResource, kindObj, MultiConnectToState} from './index';
+import {k8s as k8sModule} from '../../module/k8s';
+import {EmptyBox, ConnectToState, kindObj, MultiConnectToState} from './index';
 
 class FirehoseBase extends React.Component {
   _initFirehose(props) {
     const {kind, namespace, name, fieldSelector, selector} = props;
-    return new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, store);
+
+    const {plural} = kindObj(kind);
+    const k8sKind = plural && k8sModule[plural];
+
+    return new K8sWatcher(k8sKind, namespace, selector, fieldSelector, name, store);
   }
 
   _mountFirehose(firehose, props) {
