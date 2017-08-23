@@ -1,21 +1,148 @@
-import { k8sEnum } from './enum';
 import * as _ from 'lodash';
 
-const getRestartPolicy = pod => _.find(k8sEnum.RestartPolicy, {id: _.get(pod, 'spec.restartPolicy')});
+const getRestartPolicy = pod => _.find({
+  Always: {
+    // A unique id to identify the type, used as the value when communicating with the API.
+    id: 'Always',
+    // What is shown in the UI.
+    label: 'Always Restart',
+    // Ordering weight.
+    weight: 100,
+    // Description in the UI.
+    description: 'If the container restarts for any reason, restart it. ' +
+      'Useful for stateless services that may fail from time to time.',
+    // Default selection for new pods.
+    default: true,
+  },
+  OnFailure: {
+    id: 'OnFailure',
+    label: 'Restart On Failure',
+    weight: 200,
+    description: 'If the container exits with a non-zero status code, restart it.',
+  },
+  Never: {
+    id: 'Never',
+    label: 'Never Restart',
+    weight: 300,
+    description: 'Never restart the container. ' +
+      'Useful for containers that exit when they have completed a specific job, like a data import daemon.',
+  },
+}, {id: _.get(pod, 'spec.restartPolicy')});
 
-export const getRestartPolicyLabel = pod => _.get(getRestartPolicy(pod), 'label', '');
-
-export type PodReadiness = string;
-export type PodPhase = string;
+export const VolumeSource = {
+  emptyDir: {
+    weight: 100,
+    id: 'emptyDir',
+    label: 'Container Volume',
+    description: 'Temporary directory that shares a pod\'s lifetime.',
+  },
+  hostPath: {
+    weight: 200,
+    id: 'hostPath',
+    label: 'Host Directory',
+    description: 'Pre-existing host file or directory, ' +
+        'generally for privileged system daemons or other agents tied to the host.',
+  },
+  gitRepo: {
+    weight: 300,
+    id: 'gitRepo',
+    label: 'Git Repo',
+    description: 'Git repository at a particular revision.',
+  },
+  nfs: {
+    weight: 400,
+    id: 'nfs',
+    label: 'NFS',
+    description: 'NFS volume that will be mounted in the host machine.',
+  },
+  secret: {
+    weight: 500,
+    id: 'secret',
+    label: 'Secret',
+    description: 'Secret to populate volume.',
+  },
+  gcePersistentDisk: {
+    weight: 600,
+    id: 'gcePersistentDisk',
+    label: 'GCE Persistent Disk',
+    description: 'GCE disk resource attached to the host machine on demand.',
+  },
+  awsElasticBlockStore: {
+    weight: 700,
+    id: 'awsElasticBlockStore',
+    label: 'AWS Elastic Block Store',
+    description: 'AWS disk resource attached to the host machine on demand.',
+  },
+  glusterfs: {
+    weight: 800,
+    id: 'glusterfs',
+    label: 'Gluster FS',
+    description: 'GlusterFS volume that will be mounted on the host machine.',
+  },
+  iscsi: {
+    weight: 900,
+    id: 'iscsi',
+    label: 'iSCSI',
+    description: 'iSCSI disk attached to host machine on demand',
+  },
+  configMap: {
+    weight: 1000,
+    id: 'configMap',
+    label: 'ConfigMap',
+    description: 'ConfigMap to be consumed in volume.',
+  },
+};
 
 export const getVolumeType = volume => {
   if (!volume) {
     return null;
   }
-  return _.find(k8sEnum.VolumeSource, function(v) {
+  return _.find(VolumeSource, function(v) {
     return !!volume[v.id];
   });
 };
+
+const genericFormatter = volInfo => {
+  const keys = Object.keys(volInfo).sort();
+  const parts = keys.map(function(key) {
+    if (key === 'readOnly') {
+      return '';
+    }
+    return volInfo[key];
+  });
+  if (keys.indexOf('readOnly') !== -1) {
+    parts.push(volInfo.readOnly ? 'ro' : 'rw');
+  }
+  return parts.join(' ') || null;
+};
+
+export const getVolumeLocation = volume => {
+  const vtype = getVolumeType(volume);
+  if (!vtype) {
+    return null;
+  }
+
+  const typeID = vtype.id;
+  const info = volume[typeID];
+  switch (typeID) {
+    // Override any special formatting cases.
+    case VolumeSource.gitRepo.id:
+      return `${info.repository}:${info.revision}`;
+    case VolumeSource.configMap.id:
+    case VolumeSource.emptyDir.id:
+    case VolumeSource.secret.id:
+      return null;
+    // Defaults to space separated sorted keys.
+    default:
+      return genericFormatter(info);
+  }
+};
+
+
+export const getRestartPolicyLabel = pod => _.get(getRestartPolicy(pod), 'label', '');
+
+export type PodReadiness = string;
+export type PodPhase = string;
 
 export const getVolumeMountPermissions = v => {
   if (!v) {
@@ -50,45 +177,6 @@ export const getVolumeMountsByPermissions = pod => {
   return _.values(m);
 };
 
-export const getVolumeLocation = volume => {
-  const vtype = getVolumeType(volume);
-  if (!vtype) {
-    return null;
-  }
-
-  function readOnlySuffix(readonly) {
-    return `(${readonly ? 'ro' : 'rw'})`;
-  }
-
-  function genericFormatter(volInfo) {
-    const keys = Object.keys(volInfo).sort();
-    const parts = keys.map(function(key) {
-      if (key === 'readOnly') {
-        return '';
-      }
-      return volInfo[key];
-    });
-    if (keys.indexOf('readOnly') !== -1) {
-      parts.push(readOnlySuffix(volInfo.readOnly));
-    }
-    return parts.join(' ') || null;
-  }
-
-  const typeID = vtype.id;
-  const info = volume[typeID];
-  switch (typeID) {
-    // Override any special formatting cases.
-    case k8sEnum.VolumeSource.gitRepo.id:
-      return `${info.repository}:${info.revision}`;
-    case k8sEnum.VolumeSource.configMap.id:
-    case k8sEnum.VolumeSource.emptyDir.id:
-    case k8sEnum.VolumeSource.secret.id:
-      return null;
-    // Defaults to space separated sorted keys.
-    default:
-      return genericFormatter(info);
-  }
-};
 
 // This logic (at this writing, Kubernetes 1.2.2) is replicated in kubeconfig
 // (See https://github.com/kubernetes/kubernetes/blob/v1.3.0-alpha.2/pkg/kubectl/resource_printer.go#L574 )
