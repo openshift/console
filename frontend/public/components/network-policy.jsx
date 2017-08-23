@@ -127,7 +127,7 @@ const Details = (np) => <div>
         Pods accept all traffic by default.
         They can be isolated via Network Policies which specify a whitelist of ingress rules.
         When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.
-        See more details in <a target="_blank" href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Network Policies Documentation</a>.
+        See more details in <a target="_blank" rel="noopener noreferrer" href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Network Policies Documentation</a>.
       </div>
     </div>
     <div className="row">

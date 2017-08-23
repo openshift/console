@@ -42,7 +42,7 @@ class ConfigureOperatorChannel extends PromiseComponent {
       <ModalBody>
         <div className="co-m-form-row">
           <div>
-            <p>Select a channel that reflects your desired Tectonic Version. <a href="https://coreos.com/tectonic/releases/" target="_blank">Read the release notes</a> for more information.</p>
+            <p>Select a channel that reflects your desired Tectonic Version. <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener noreferrer">Read the release notes</a> for more information.</p>
             <p>Critical security updates will always be delivered to any vulnerable channels.</p>
           </div>
         </div>

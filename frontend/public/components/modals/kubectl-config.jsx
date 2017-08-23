@@ -150,7 +150,7 @@ class KubectlConfigModal extends PromiseComponent {
           <p>3. Done! Interact with the cluster, i.e. <code>kubectl get namespaces</code></p>
         </ModalBody>
         <ModalFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="button" className="btn btn-primary" onClick={this._closeModal}>I'm Done.</button>
+          <button type="button" className="btn btn-primary" onClick={this._closeModal}>I&rsquo;m Done.</button>
         </ModalFooter>
       </div> }
 

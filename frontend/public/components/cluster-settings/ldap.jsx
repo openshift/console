@@ -286,7 +286,7 @@ const Security = connect(state => ({sslValue: selector(state, SSLType)})
   </Row>
   <Row name={SSLType}>
     <label><Field name={SSLType} component="input" type="radio" value={Skip} /> Skip Verification</label>
-    <Help>Don't verify the CA.</Help>
+    <Help>Don&rsquo;t verify the CA.</Help>
   </Row>
   <Row name={SSLType}>
     <label><Field name={SSLType} component="input" type="radio" value={RootCA} /> Root CA</label>
