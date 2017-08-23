@@ -3,7 +3,6 @@ import * as fuzzy from 'fuzzysearch';
 import * as Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 
-import { k8sEnum } from '../../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingsList, RulesList } from './index';
@@ -181,7 +180,7 @@ export const RolesPage = ({namespace}) => <MultiListPage
   ListComponent={RolesList}
   canCreate={true}
   createButtonText="Create Role"
-  createProps={{to: `/ns/${namespace || k8sEnum.DefaultNS}/roles/new`}}
+  createProps={{to: `/ns/${namespace || 'default'}/roles/new`}}
   filterLabel="Roles by name"
   resources={resources}
   rowFilters={[{

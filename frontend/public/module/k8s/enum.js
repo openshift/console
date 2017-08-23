@@ -1,9 +1,4 @@
 export const k8sEnum = {
-
-  DefaultNS: 'default',
-
-  ResourceLimitRegex: /^([+-]?[0-9.]+)([eEimkKMGTP]*[-+]?[0-9]*)$/,
-
   Kind: {
     Service: {
       // singular label

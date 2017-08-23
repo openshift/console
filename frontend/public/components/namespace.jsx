@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
 
-import { k8s, k8sEnum } from '../module/k8s';
+import { k8s } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
@@ -16,8 +16,8 @@ const deleteModal = (kind, ns) => {
   let callback = undefined;
   let tooltip;
 
-  if (ns.metadata.name === k8sEnum.DefaultNS) {
-    tooltip = `Namespace "${k8sEnum.DefaultNS}" cannot be deleted`;
+  if (ns.metadata.name === 'default') {
+    tooltip = 'Namespace default cannot be deleted';
   } else if (ns.status.phase === 'Terminating') {
     tooltip = 'Namespace is already terminating';
   } else {
