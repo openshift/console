@@ -1,4 +1,20 @@
-import {k8sEnum} from './enum';
+const HookAction = {
+  exec: {
+    weight: 100,
+    id: 'exec',
+    label: 'Exec Command',
+  },
+  httpGet: {
+    weight: 200,
+    id: 'httpGet',
+    label: 'HTTP Get',
+  },
+  tcpSocket: {
+    weight: 300,
+    id: 'tcpSocket',
+    label: 'TCP Socket (Port)',
+  },
+};
 
 const parsers = {
   exec: function(str) {
@@ -92,7 +108,7 @@ function inferAction(obj) {
   if (_.isEmpty(keys)) {
     return;
   }
-  return k8sEnum.HookAction[keys[0]];
+  return HookAction[keys[0]];
 }
 
 export function flattenCmd(type, cmd, podIP) {
@@ -101,14 +117,6 @@ export function flattenCmd(type, cmd, podIP) {
 
 export function parseCmd(type, cmd) {
   return parsers[type](cmd);
-}
-
-export function getActionLabelById(actionId) {
-  const t = k8sEnum.HookAction[actionId];
-  if (t) {
-    return t.label;
-  }
-  return '';
 }
 
 function getActionLabel(action) {
