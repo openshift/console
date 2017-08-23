@@ -2,38 +2,10 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import * as PropTypes from 'prop-types';
 
-import store from '../../redux';
-import {K8sWatcher} from './k8s-watcher';
-import {k8s as k8sModule, k8sKinds} from '../../module/k8s';
+import {k8sKinds} from '../../module/k8s';
 import {inject} from './index';
 
 export const kindObj = kind => _.isString(kind) && k8sKinds[kind] || {};
-
-export const k8sResource = kind => {
-  const {plural} = kindObj(kind);
-  return plural && k8sModule[plural];
-};
-
-// Pulls data out of redux given an object and selectors
-export class WithQuery extends React.Component {
-  constructor (props) {
-    super(props);
-    const {kind, namespace, selector, fieldSelector, name} = this.props;
-    // Just created to get the ID :-/
-    const firehose = new K8sWatcher(k8sResource(kind), namespace, selector, fieldSelector, name, store);
-    this.firehoseId = firehose.id;
-  }
-
-  getFirehoseId () {
-    return this.firehoseId;
-  }
-
-  render () {
-    return <ConnectToState store={store} reduxID={this.firehoseId} {...this.props}>
-      {this.props.children}
-    </ConnectToState>;
-  }
-}
 
 const processReduxId = ({k8s}, props) => {
   const {reduxID, isList, filters} = props;
