@@ -38,7 +38,7 @@ export const ResourceDetailsPage = (props) => {
   const PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}DetailsPage`];
   return <div>
     <Helmet>
-      <title>title={`${name} · Details`}</title>
+      <title>{`${name} · Details`}</title>
     </Helmet>
     {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} name={name} />}
   </div>;

@@ -20,3 +20,4 @@ export { PrometheusInstancesPage, PrometheusInstancesDetailsPage } from './prome
 export { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monitor';
 export { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
 export { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
+export { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';

@@ -147,6 +147,7 @@ registerNamespaceFriendlyPrefix('search');
 registerNamespaceFriendlyPrefix('secrets');
 registerNamespaceFriendlyPrefix('serviceaccounts');
 registerNamespaceFriendlyPrefix('services');
+registerNamespaceFriendlyPrefix('statefulsets');
 registerNamespaceFriendlyPrefix('etcdclusters');
 registerNamespaceFriendlyPrefix('networkpolicies');
 registerNamespaceFriendlyPrefix('prometheuses');
