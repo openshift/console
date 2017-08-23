@@ -181,6 +181,9 @@ export const k8sKinds = {
   },
   StatefulSet: {
     label: 'StatefulSet',
+    basePath: '/apis/',
+    apiVersion: 'apps/v1beta1',
+    path: 'statefulsets',
     plural: 'statefulsets',
     abbr: 'SS',
   },
