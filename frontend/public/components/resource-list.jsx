@@ -25,6 +25,8 @@ export const ResourceListPage = (props) => {
   </div>;
 };
 
+ResourceListPage.displayName = 'ResourceListPage';
+
 export const ResourceDetailsPage = (props) => {
   const {kind, name, ns} = allParams(props);
   const kindObj = _.find(k8sKinds, {plural: kind});
@@ -43,3 +45,5 @@ export const ResourceDetailsPage = (props) => {
     {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} name={name} />}
   </div>;
 };
+
+ResourceDetailsPage.displayName = 'ResourceDetailsPage';

@@ -21,3 +21,5 @@ export const ResourceLink = ({kind, name, namespace, title, displayName}) => {
     </span>
   );
 };
+
+ResourceLink.displayName = 'ResourceLink';

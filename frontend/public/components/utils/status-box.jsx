@@ -64,3 +64,5 @@ export const StatusBox = props => {
   }
   return children[0];
 };
+
+StatusBox.displayName = 'StatusBox';

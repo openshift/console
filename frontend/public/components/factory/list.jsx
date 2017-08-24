@@ -158,6 +158,7 @@ ColHead.propTypes = {
 };
 
 export const ListHeader = ({children}) => <div className="row co-m-table-grid__head">{children}</div>;
+ListHeader.displayName = 'ListHeader';
 
 export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
