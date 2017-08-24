@@ -52,7 +52,7 @@ const K8S_FLAGS = {
   [FLAGS.RBAC]: '/apis/rbac.authorization.k8s.io',
 };
 
-const COREOS_FLAGS = {
+const TCO_FLAGS = {
   [FLAGS.CLUSTER_UPDATES]: 'channeloperatorconfigs',
 };
 
@@ -72,9 +72,9 @@ const detectK8sFlags = basePath => dispatch => coFetchJSON(basePath)
   .then(res => setFlags(dispatch, _.mapValues(K8S_FLAGS, path => res.paths.indexOf(path) >= 0)),
     () => setTimeout(() => detectK8sFlags(basePath), 5000));
 
-const detectCoreosFlags = coreosPath => dispatch => coFetchJSON(coreosPath)
-  .then(res => setFlags(dispatch, _.mapValues(COREOS_FLAGS, name => _.find(res.resources, {name}))),
-    () => setTimeout(() => detectCoreosFlags(coreosPath), 5000));
+const detectTectonicChannelOperatorFlags = tcoPath => dispatch => coFetchJSON(tcoPath)
+  .then(res => setFlags(dispatch, _.mapValues(TCO_FLAGS, name => _.find(res.resources, {name}))),
+    () => setTimeout(() => detectTectonicChannelOperatorFlags(tcoPath), 5000));
 
 const detectEtcdOperatorFlags = etcdPath => dispatch => coFetchJSON(etcdPath)
   .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
@@ -95,7 +95,7 @@ const detectSecurityLabellerFlags = labellerDeploymentPath => dispatch => coFetc
 
 export const featureActions = {
   detectK8sFlags,
-  detectCoreosFlags,
+  detectTectonicChannelOperatorFlags,
   detectEtcdOperatorFlags,
   detectPrometheusFlags,
   detectMultiClusterFlags,
