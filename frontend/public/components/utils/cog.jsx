@@ -128,3 +128,5 @@ export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
   key={resource.metadata.uid}
   isDisabled={isDisabled}
 />;
+
+ResourceCog.displayName = 'ResourceCog';

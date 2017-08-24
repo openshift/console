@@ -11,3 +11,5 @@ export const NavTitle = ({kind, detail, title, menuActions, data}) => <div class
     </h1>
   </div>
 </div>;
+
+NavTitle.displayName = 'NavTitle';

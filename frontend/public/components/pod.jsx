@@ -41,6 +41,8 @@ export const Readiness = ({pod}) => {
   </span>;
 };
 
+Readiness.displayName = 'Readiness';
+
 export const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
   let status = phase;
@@ -67,6 +69,8 @@ export const PodRow = ({obj: pod}) => {
     </div>
   </ResourceRow>;
 };
+
+PodRow.displayName = 'PodRow';
 
 const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Pod Name</ColHead>
@@ -240,6 +244,7 @@ export const PodsDetailsPage = props => <DetailsPage
 />;
 
 export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
+PodList.displayName = 'PodList';
 
 const filters = [{
   type: 'pod-status',

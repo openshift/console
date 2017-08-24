@@ -25,6 +25,8 @@ export const TextFilter = ({label, onChange}) => <input
   autoFocus={true}
 />;
 
+TextFilter.displayName = 'TextFilter';
+
 const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
   class BaseListPage_ extends React.PureComponent {
     constructor (props) {
@@ -137,6 +139,7 @@ export const ListPage = props => {
     />
   </Firehose>;
 };
+ListPage.displayName = 'ListPage';
 
 export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace')}))(
   props => {
