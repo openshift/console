@@ -1,5 +1,6 @@
 import {coFetchJSON} from '../../co-fetch';
 import {getK8sAPIPath} from './k8s';
+import {selectorToString} from './selector';
 
 export const resourceURL = (kind, options) => {
   let q = '';
@@ -56,3 +57,26 @@ export const k8sPatch = (kind, resource, data) => coFetchJSON.patch(
 export const k8sKill = (kind, resource, opts) => coFetchJSON.delete(
   resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts))
 );
+
+export const k8sList = (kind, params={}) => {
+  const query = _(params)
+    .omit('ns')
+    .map((v, k) => {
+      if (k === 'labelSelector') {
+        v = selectorToString(v);
+      }
+      return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+    })
+    .value()
+    .join('&');
+
+  const k = kind.kind === 'Namespace' ? {
+    // hit our custom /namespaces path which better handles users with limited permissions
+    basePath: '../../',
+    apiVersion: 'tectonic',
+    path: 'namespaces',
+  } : kind;
+
+  const listURL = resourceURL(k, {ns: params.ns});
+  return coFetchJSON(`${listURL}?${query}`).then(result => result.items);
+};
