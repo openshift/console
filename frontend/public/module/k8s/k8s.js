@@ -3,7 +3,7 @@ import {k8sKinds} from './enum';
 
 import {k8sCreate, k8sGet, k8sKill, k8sPatch, k8sUpdate, resourceURL} from './resource';
 import {coFetchJSON} from '../../co-fetch';
-import {toString} from './selector';
+import {selectorToString} from './selector';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
@@ -67,7 +67,7 @@ export const k8s = {};
         .omit('ns')
         .map((v, k) => {
           if (k === 'labelSelector') {
-            v = toString(v);
+            v = selectorToString(v);
           }
           return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
         })
@@ -95,7 +95,7 @@ export const k8s = {};
 
       const labelSelector = query.labelSelector || kind.labelSelector;
       if (labelSelector) {
-        queryParams.labelSelector = encodeURIComponent(toString(labelSelector));
+        queryParams.labelSelector = encodeURIComponent(selectorToString(labelSelector));
       }
 
       if (query.fieldSelector) {

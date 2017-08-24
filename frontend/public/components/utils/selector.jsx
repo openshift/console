@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 
-import { toString } from '../../module/k8s/selector';
+import { selectorToString } from '../../module/k8s/selector';
 
 const Requirement = ({kind, requirements, namespace=''}) => {
   // Strip off any trailing '=' characters for valueless selectors
-  const requirementAsString = toString(requirements).replace(/=,/g, ',').replace(/=$/g, '');
+  const requirementAsString = selectorToString(requirements).replace(/=,/g, ',').replace(/=$/g, '');
   const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
 
   let to = `search?kind=${kind}&q=${requirementAsUrlEncodedString}`;

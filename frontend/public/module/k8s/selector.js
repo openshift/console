@@ -1,4 +1,4 @@
-import * as k8sSelectorRequirement from './selector-requirement';
+import {createEquals, requirementFromString, requirementToString} from './selector-requirement';
 
 const isOldFormat = selector => !selector.matchLabels && !selector.matchExpressions;
 
@@ -38,7 +38,7 @@ export const toRequirements = selector => {
   const matchExpressions = selector.matchExpressions;
 
   Object.keys(matchLabels || {}).sort().forEach(function (k) {
-    requirements.push(k8sSelectorRequirement.createEquals(k, matchLabels[k]));
+    requirements.push(createEquals(k, matchLabels[k]));
   });
 
   (matchExpressions || []).forEach(function (me) {
@@ -48,12 +48,12 @@ export const toRequirements = selector => {
   return requirements;
 };
 
-export const fromString = string => {
-  const requirements = split(string || '').map(k8sSelectorRequirement.fromString);
+export const selectorFromString = string => {
+  const requirements = split(string || '').map(requirementFromString);
   return fromRequirements(requirements);
 };
 
-export const toString = selector => {
+export const selectorToString = selector => {
   const requirements = toRequirements(selector);
-  return requirements.map(k8sSelectorRequirement.toString).join(',');
+  return requirements.map(requirementToString).join(',');
 };

@@ -1,16 +1,16 @@
-import { fromRequirements, fromString, toRequirements, toString } from '../public/module/k8s/selector';
+import { fromRequirements, selectorFromString, toRequirements, selectorToString } from '../public/module/k8s/selector';
 
 describe('k8sSelector', () => {
-  describe('#fromString', () => {
+  describe('#selectorFromString', () => {
     it('works for nullable', () => {
-      expect(fromString(null)).toEqual({
+      expect(selectorFromString(null)).toEqual({
         matchLabels:      {},
         matchExpressions: []
       });
     });
 
     it('works for complex expression', () => {
-      expect(fromString('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)')).toEqual({
+      expect(selectorFromString('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)')).toEqual({
         matchLabels: {
           key1: 'value1',
           key2: 'value2'
@@ -69,9 +69,9 @@ describe('k8sSelector', () => {
     });
   });
 
-  describe('#toString', () => {
+  describe('#selectorToString', () => {
     it('works when both "matchLabels" and "matchExpressions" are given', () => {
-      expect(toString({
+      expect(selectorToString({
         matchLabels: {
           key1: 'value1',
           key2: 'value2'
@@ -116,7 +116,7 @@ describe('k8sSelector', () => {
     });
 
     it('works when V1 selector is given', () => {
-      expect(toString({
+      expect(selectorToString({
         key1: 'value1',
         key2: 'value2'
       })).toEqual('key1=value1,key2=value2');
