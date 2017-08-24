@@ -59,7 +59,7 @@ const generateComponents = (components, pods) => {
 export class TectonicChannel extends SafetyFirst {
   constructor(props) {
     super(props);
-    const selector = k8sSelector.fromString(`k8s-app in (${_.values(podNames).join()})`);
+    const selector = k8sSelector.selectorFromString(`k8s-app in (${_.values(podNames).join()})`);
     this.firehoseResources = [
       {
         kind: 'ChannelOperatorConfig',

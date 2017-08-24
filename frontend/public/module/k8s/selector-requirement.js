@@ -6,7 +6,7 @@ export const createEquals = (key, value) => ({
   values:   [value]
 });
 
-export const fromString = string => {
+export const requirementFromString = string => {
   string = string.trim();
 
   // "key"
@@ -99,7 +99,7 @@ export const fromString = string => {
   return; // falsy means parsing failure
 };
 
-export const toString = requirement => {
+export const requirementToString = requirement => {
   if (requirement.operator === 'Equals') {
     return `${requirement.key}=${requirement.values[0]}`;
   }

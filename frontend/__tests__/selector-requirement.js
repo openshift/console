@@ -1,8 +1,8 @@
 /* eslint-disable max-nested-callbacks */
-import { createEquals, fromString, toString } from '../public/module/k8s/selector-requirement';
+import { createEquals, requirementFromString, requirementToString } from '../public/module/k8s/selector-requirement';
 
 describe('k8sSelectorRequirement', () => {
-  describe('#fromString', () => {
+  describe('#requirementFromString', () => {
     [
       {
         requirement: {key: 'key1', operator: 'Equals', values: ['value1']},
@@ -44,7 +44,7 @@ describe('k8sSelectorRequirement', () => {
         string:      'key1 < 666.999'
       }
     ].forEach(t => {
-      it('...', () => expect(fromString(t.string)).toEqual(t.requirement));
+      it('...', () => expect(requirementFromString(t.string)).toEqual(t.requirement));
     });
 
     [
@@ -73,11 +73,11 @@ describe('k8sSelectorRequirement', () => {
       'key1<=',
       'key1<one_two_three'
     ].forEach(s => {
-      it(`returns falsy for unknown/malformed string: ${s}`, () => expect(fromString(s)).toBeFalsy());
+      it(`returns falsy for unknown/malformed string: ${s}`, () => expect(requirementFromString(s)).toBeFalsy());
     });
   });
 
-  describe('#toString', () => {
+  describe('#requirementToString', () => {
     [
       {
         requirement: {key: 'key1', operator: 'Equals', values: ['value1', 'value2']},
@@ -120,12 +120,12 @@ describe('k8sSelectorRequirement', () => {
       }
     ].forEach(t => {
       it(`returns string for ${JSON.stringify(t.requirement)} requirement`, () => {
-        expect(toString(t.requirement)).toEqual(t.string);
+        expect(requirementToString(t.requirement)).toEqual(t.string);
       });
     });
 
     it('returns falsy for unknown requirement', () => {
-      expect(toString({key: 'key1', operator: 'Oops!', values: ['value1']})).toBeFalsy();
+      expect(requirementToString({key: 'key1', operator: 'Oops!', values: ['value1']})).toBeFalsy();
     });
   });
 

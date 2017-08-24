@@ -21,8 +21,8 @@ import {AlertManagersList} from './alert-manager';
 import {getActiveNamespace} from '../ui/ui-actions';
 import {Dropdown, Firehose, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
-import * as k8sSelector from '../module/k8s/selector';
-import * as k8sSelectorRequirement from '../module/k8s/selector-requirement';
+import {split, selectorFromString} from '../module/k8s/selector';
+import {requirementFromString} from '../module/k8s/selector-requirement';
 
 // Map resource kind IDs to their list components
 const resources = {
@@ -91,9 +91,9 @@ export const SearchPage = ({match, location}) => {
   // Ensure that the "kind" route parameter is a valid resource kind ID
   kind = kind ? decodeURIComponent(kind) : 'Service';
 
-  const tags = k8sSelector.split(_.isString(q) ? decodeURIComponent(q) : '');
-  const validTags = _.reject(tags, tag => k8sSelectorRequirement.fromString(tag) === undefined);
-  const selector = k8sSelector.fromString(validTags.join(','));
+  const tags = split(_.isString(q) ? decodeURIComponent(q) : '');
+  const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
+  const selector = selectorFromString(validTags.join(','));
 
   // Ensure the list is reloaded whenever the search options are changed
   const key = `${params.ns}-${kind}-${validTags.join(',')}`;

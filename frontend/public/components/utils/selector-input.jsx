@@ -30,7 +30,7 @@ export class SelectorInput extends React.Component {
   }
 
   isTagValid (tag) {
-    const requirement = k8sSelectorRequirement.fromString(tag);
+    const requirement = k8sSelectorRequirement.requirementFromString(tag);
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
   }
 
@@ -50,7 +50,7 @@ export class SelectorInput extends React.Component {
     }
 
     // Helpers for cleaning up tags by running them through the selector parser
-    const cleanSelectorStr = (tag) => k8sSelector.toString(k8sSelector.fromString(tag));
+    const cleanSelectorStr = (tag) => k8sSelector.selectorToString(k8sSelector.selectorFromString(tag));
     const cleanTags = (tags) => k8sSelector.split(cleanSelectorStr(tags.join(',')));
 
     // Clean up the new tag by running it through the selector parser
