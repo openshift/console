@@ -12,7 +12,7 @@ const navigate = (browser, path, cb) => {
 
 const TIMEOUT = 4000;
 
-const exports_ = {};
+const crudTests_ = {};
 
 [
   'daemonsets',
@@ -33,20 +33,21 @@ const exports_ = {};
   'statefulsets',
   'roles',
 ].forEach(resource => {
-  exports_[`YAML - ${resource}`] = browser => {
-    const utils = browser.page.utils();
+  crudTests_[`YAML - ${resource}`] = browser => {
+    const crudPage = browser.page.crudPage();
 
     console.log('Testing', resource);
     navigate(browser, `/all-namespaces/${resource}`, () => {
-      utils
+      crudPage
         .waitForElementVisible('@CreateYAMLButton', TIMEOUT)
         .click('@CreateYAMLButton')
         .click('@saveYAMLButton')
         .waitForElementVisible('@actionsDropdownButton', TIMEOUT);
 
-      browser.assert.urlContains('/example/details');
+      //with verify(), when an assertion fails, the test logs the failure and continues with other assertions.
+      browser.verify.urlContains('/example/details');
 
-      utils
+      crudPage
         .click('@actionsDropdownButton')
         .click('@actionsDropdownDeleteLink')
         .waitForElementVisible('@deleteModalConfirmButton', TIMEOUT)
@@ -56,6 +57,6 @@ const exports_ = {};
   };
 });
 
-exports_.after = browser => browser.end();
+crudTests_.after = browser => browser.end();
 
-module.exports = exports_;
+module.exports = crudTests_;
