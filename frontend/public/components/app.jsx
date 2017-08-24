@@ -10,7 +10,7 @@ import { analyticsSvc } from '../module/analytics';
 import { authSvc } from '../module/auth';
 import { k8sBasePath } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
-import { registerNamespaceFriendlyPrefix, UIActions } from '../ui/ui-actions';
+import { UIActions } from '../ui/ui-actions';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';
@@ -131,27 +131,6 @@ class App extends React.PureComponent {
     </div>;
   }
 }
-
-registerNamespaceFriendlyPrefix('configmaps');
-registerNamespaceFriendlyPrefix('daemonsets');
-registerNamespaceFriendlyPrefix('deployments');
-registerNamespaceFriendlyPrefix('events');
-registerNamespaceFriendlyPrefix('ingresses');
-registerNamespaceFriendlyPrefix('jobs');
-registerNamespaceFriendlyPrefix('pods');
-registerNamespaceFriendlyPrefix('replicasets');
-registerNamespaceFriendlyPrefix('replicationcontrollers');
-registerNamespaceFriendlyPrefix('rolebindings');
-registerNamespaceFriendlyPrefix('roles');
-registerNamespaceFriendlyPrefix('search');
-registerNamespaceFriendlyPrefix('secrets');
-registerNamespaceFriendlyPrefix('serviceaccounts');
-registerNamespaceFriendlyPrefix('services');
-registerNamespaceFriendlyPrefix('statefulsets');
-registerNamespaceFriendlyPrefix('etcdclusters');
-registerNamespaceFriendlyPrefix('networkpolicies');
-registerNamespaceFriendlyPrefix('prometheuses');
-registerNamespaceFriendlyPrefix('podvulns');
 
 store.dispatch(k8sActions.getResources());
 store.dispatch(featureActions.detectK8sFlags(k8sBasePath));

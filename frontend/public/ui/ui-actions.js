@@ -1,8 +1,15 @@
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { isNamespaced } from '../components/utils/link';
+import { k8sKinds } from '../module/k8s';
 
-const prefixes = [];
+const prefixes = ['search'];
+
+_.each(k8sKinds, v => {
+  if (v.namespaced) {
+    prefixes.push(v.plural);
+  }
+});
 
 export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
 
@@ -36,8 +43,6 @@ export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   const namespacePrefix = activeNamespace ? `ns/${activeNamespace}/` : 'all-namespaces/';
   return `/${namespacePrefix}${originalPath}`;
 };
-
-export const registerNamespaceFriendlyPrefix = s => prefixes.push(s);
 
 export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
 

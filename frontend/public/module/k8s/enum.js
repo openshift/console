@@ -7,12 +7,14 @@ export const k8sKinds = {
     //Used in resource-list.jsx to return the matching object
     plural: 'services',
     abbr: 'S',
+    namespaced: true,
   },
   Pod: {
     label: 'Pod',
     path: 'pods',
     plural: 'pods',
     abbr: 'P',
+    namespaced: true,
   },
   Container: {
     label: 'Container',
@@ -27,12 +29,14 @@ export const k8sKinds = {
     isExtension: true,
     apiVersion: 'v1beta1',
     abbr: 'DS',
+    namespaced: true,
   },
   ReplicationController: {
     label: 'Replication Controller',
     path: 'replicationcontrollers',
     plural: 'replicationcontrollers',
     abbr: 'RC',
+    namespaced: true,
   },
   HorizontalPodAutoscaler: {
     label: 'Horizontal Pod Autoscaler',
@@ -47,6 +51,7 @@ export const k8sKinds = {
     path: 'serviceaccounts',
     plural: 'serviceaccounts',
     abbr: 'SA',
+    namespaced: true,
   },
   ReplicaSet: {
     label: 'Replica Set',
@@ -55,6 +60,7 @@ export const k8sKinds = {
     path: 'replicasets',
     plural: 'replicasets',
     abbr: 'RS',
+    namespaced: true,
   },
   Deployment: {
     label: 'Deployment',
@@ -63,6 +69,7 @@ export const k8sKinds = {
     path: 'deployments',
     plural: 'deployments',
     abbr: 'D',
+    namespaced: true,
   },
   Job: {
     label: 'Job',
@@ -71,6 +78,7 @@ export const k8sKinds = {
     basePath: '/apis/',
     plural: 'jobs',
     abbr: 'J',
+    namespaced: true,
   },
   Node: {
     label: 'Node',
@@ -83,6 +91,7 @@ export const k8sKinds = {
     path: 'events',
     plural: 'events',
     abbr: 'E',
+    namespaced: true,
   },
   ComponentStatus: {
     label: 'Component Status',
@@ -105,18 +114,21 @@ export const k8sKinds = {
     path: 'ingresses',
     plural: 'ingresses',
     abbr: 'I',
+    namespaced: true,
   },
   ConfigMap: {
     label: 'Config Map',
     path: 'configmaps',
     plural: 'configmaps',
     abbr: 'CM',
+    namespaced: true,
   },
   Secret: {
     label: 'Secret',
     path: 'secrets',
     plural: 'secrets',
     abbr: 'S',
+    namespaced: true,
   },
   ClusterRoleBinding: {
     label: 'Cluster Role Binding',
@@ -141,6 +153,7 @@ export const k8sKinds = {
     path: 'rolebindings',
     plural: 'rolebindings',
     abbr: 'RB',
+    namespaced: true,
   },
   Role: {
     label: 'Role',
@@ -149,6 +162,7 @@ export const k8sKinds = {
     path: 'roles',
     plural: 'roles',
     abbr: 'R',
+    namespaced: true,
   },
   TectonicVersion: {
     label: 'Tectonic Version',
@@ -186,6 +200,7 @@ export const k8sKinds = {
     path: 'statefulsets',
     plural: 'statefulsets',
     abbr: 'SS',
+    namespaced: true,
   },
   EtcdCluster: {
     label: 'etcd Cluster',
@@ -194,6 +209,7 @@ export const k8sKinds = {
     path: 'clusters',
     plural: 'etcdclusters',
     abbr: 'EC',
+    namespaced: true,
   },
   NetworkPolicy: {
     label: 'Network Policy',
@@ -203,6 +219,7 @@ export const k8sKinds = {
     path: 'networkpolicies',
     plural: 'networkpolicies',
     abbr: 'NP',
+    namespaced: true,
   },
   Prometheus: {
     label: 'Prometheus',
@@ -212,6 +229,7 @@ export const k8sKinds = {
     path: 'prometheuses',
     plural: 'prometheuses',
     abbr: 'PI',
+    namespaced: true,
   },
   ServiceMonitor: {
     label: 'Service Monitor',
@@ -237,6 +255,7 @@ export const k8sKinds = {
     path: 'podvulns',
     plural: 'podvulns',
     abbr: 'V',
+    namespaced: true,
   },
   '*': {
     id: 'all',

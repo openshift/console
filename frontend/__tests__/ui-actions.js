@@ -2,7 +2,7 @@
 import '../__mocks__/localStorage';
 
 import store from '../public/redux';
-import { UIActions, getActiveNamespace, getNamespacedRoute, registerNamespaceFriendlyPrefix } from '../public/ui/ui-actions';
+import { UIActions, getActiveNamespace, getNamespacedRoute } from '../public/ui/ui-actions';
 
 // Mock history's createHistory() using createMemoryHistory() so the tests can run outside the browser
 jest.mock('history', () => {
@@ -20,7 +20,6 @@ describe('ui-actions', () => {
         writable: true,
         value: '*UNSET*',
       });
-      registerNamespaceFriendlyPrefix('pods');
     });
 
     it('should set active namespace in memory', () => {
@@ -65,10 +64,6 @@ describe('ui-actions', () => {
   });
 
   describe('getNamespacedRoute', () => {
-    beforeEach(() => {
-      registerNamespaceFriendlyPrefix('pods');
-    });
-
     it('formats a route correctly without an active namespace', () => {
       setActiveNamespace();
       expect(getNamespacedRoute('/pods')).toEqual('/all-namespaces/pods');
