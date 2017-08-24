@@ -21,8 +21,6 @@ export const CONST = {
   // http://kubernetes.io/docs/user-guide/images/#bypassing-kubectl-create-secrets
   PULL_SECRET_TYPE: 'kubernetes.io/dockerconfigjson',
   PULL_SECRET_DATA: '.dockerconfigjson',
-
-  SECURITY_LABELLER_NAME: 'security-labeller-app',
 };
 
 export const EVENTS = {

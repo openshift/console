@@ -1,15 +1,12 @@
 import {connect} from 'react-redux';
 import * as Immutable from 'immutable';
 
+import { k8sBasePath } from './module/k8s';
 import { coFetchJSON } from './co-fetch';
-import { CONST } from './const';
 
 export const FLAGS = {
   AUTH_ENABLED: 'AUTH_ENABLED',
   CLUSTER_UPDATES: 'CLUSTER_UPDATES',
-  RBAC: 'RBAC',
-  REVOKE_TOKEN: 'REVOKE_TOKEN',
-  USER_MANAGEMENT: 'USER_MANAGEMENT',
   ETCD_OPERATOR: 'ETCD_OPERATOR',
   PROMETHEUS: 'PROMETHEUS',
   MULTI_CLUSTER: 'MULTI_CLUSTER',
@@ -19,9 +16,6 @@ export const FLAGS = {
 const DEFAULTS = {
   [FLAGS.AUTH_ENABLED]: !window.SERVER_FLAGS.authDisabled,
   [FLAGS.CLUSTER_UPDATES]: undefined,
-  [FLAGS.RBAC]: undefined,
-  [FLAGS.REVOKE_TOKEN]: !!window.SERVER_FLAGS.kubectlClientID,
-  [FLAGS.USER_MANAGEMENT]: undefined,
   [FLAGS.ETCD_OPERATOR]: undefined,
   [FLAGS.PROMETHEUS]: undefined,
   [FLAGS.MULTI_CLUSTER]: undefined,
@@ -48,10 +42,6 @@ const determineMultiClusterFlag = () => {
   return { [FLAGS.MULTI_CLUSTER]: undefined };
 };
 
-const K8S_FLAGS = {
-  [FLAGS.RBAC]: '/apis/rbac.authorization.k8s.io',
-};
-
 const TCO_FLAGS = {
   [FLAGS.CLUSTER_UPDATES]: 'channeloperatorconfigs',
 };
@@ -65,36 +55,39 @@ const PROMETHEUS_FLAGS = {
 };
 
 const SECURITY_LABELLER_FLAGS = {
-  [FLAGS.SECURITY_LABELLER]: CONST.SECURITY_LABELLER_NAME,
+  [FLAGS.SECURITY_LABELLER]: 'security-labeller-app',
 };
 
-const detectK8sFlags = basePath => dispatch => coFetchJSON(basePath)
-  .then(res => setFlags(dispatch, _.mapValues(K8S_FLAGS, path => res.paths.indexOf(path) >= 0)),
-    () => setTimeout(() => detectK8sFlags(basePath), 5000));
 
-const detectTectonicChannelOperatorFlags = tcoPath => dispatch => coFetchJSON(tcoPath)
-  .then(res => setFlags(dispatch, _.mapValues(TCO_FLAGS, name => _.find(res.resources, {name}))),
-    () => setTimeout(() => detectTectonicChannelOperatorFlags(tcoPath), 5000));
+const tcoPath = `${k8sBasePath}/apis/tco.coreos.com/v1`;
+const detectTectonicChannelOperatorFlags = dispatch => {
+  coFetchJSON(tcoPath)
+    .then(res => setFlags(dispatch, _.mapValues(TCO_FLAGS, name => _.find(res.resources, {name}))),
+      () => setTimeout(() => detectTectonicChannelOperatorFlags(dispatch), 15000));
+};
 
-const detectEtcdOperatorFlags = etcdPath => dispatch => coFetchJSON(etcdPath)
+const etdPath = `${k8sBasePath}/apis/etcd.coreos.com/v1beta1`;
+const detectEtcdOperatorFlags = dispatch => coFetchJSON(etdPath)
   .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
-    () => setTimeout(() => detectEtcdOperatorFlags(etcdPath), 5000));
+    () => setTimeout(() => detectEtcdOperatorFlags(dispatch), 15000));
 
-const detectPrometheusFlags = monitoringPath => dispatch => coFetchJSON(monitoringPath)
+
+const monitoringPath = `${k8sBasePath}/apis/monitoring.coreos.com/v1alpha1`;
+const detectPrometheusFlags = dispatch => coFetchJSON(monitoringPath)
   .then(res => setFlags(dispatch, _.mapValues(PROMETHEUS_FLAGS, name => _.find(res.resources, {name}))),
-    () => setTimeout(() => detectPrometheusFlags(monitoringPath), 5000));
+    () => setTimeout(() => detectPrometheusFlags(dispatch), 15000));
 
-const detectMultiClusterFlags = () => dispatch => {
+const detectMultiClusterFlags = dispatch => {
   const multiCluster = determineMultiClusterFlag();
   setFlags(dispatch, multiCluster);
 };
 
-const detectSecurityLabellerFlags = labellerDeploymentPath => dispatch => coFetchJSON(labellerDeploymentPath)
+const labellerDeploymentPath = `${k8sBasePath}/apis/extensions/v1beta1/deployments`;
+const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPath)
   .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
-    () => setTimeout(() => detectSecurityLabellerFlags(labellerDeploymentPath), 5000));
+    () => setTimeout(() => detectSecurityLabellerFlags(dispatch), 15000));
 
 export const featureActions = {
-  detectK8sFlags,
   detectTectonicChannelOperatorFlags,
   detectEtcdOperatorFlags,
   detectPrometheusFlags,
