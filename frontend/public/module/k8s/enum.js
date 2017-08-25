@@ -188,6 +188,22 @@ export const k8sKinds = {
     plural: 'appversions',
     abbr: 'AV',
   },
+  PersistentVolume: {
+    label: 'Persistent Volume',
+    apiVersion: 'v1',
+    path: 'persistentvolumes',
+    plural: 'persistentvolumes',
+    abbr: 'PV',
+    namespaced: true,
+  },
+  PersistentVolumeClaim: {
+    label: 'Persistent Volume Claim',
+    apiVersion: 'v1',
+    path: 'persistentvolumeclaims',
+    plural: 'persistentvolumeclaims',
+    abbr: 'PVC',
+    namespaced: true,
+  },
   Petset: {
     label: 'Petset',
     plural: 'petsets',

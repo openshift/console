@@ -42,6 +42,8 @@ export const k8s = {};
   'Namespace',
   'NetworkPolicy',
   'Node',
+  'PersistentVolume',
+  'PersistentVolumeClaim',
   'Pod',
   'Prometheus',
   'ReplicaSet',
