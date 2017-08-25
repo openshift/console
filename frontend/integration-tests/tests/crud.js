@@ -27,6 +27,7 @@ const crudTests_ = {};
   'prometheuses',
   'ingresses',
   'networkpolicies',
+  'resourcequotas',
   'services',
   // 'namespaces', // TODO: (kans) special case
   'serviceaccounts',

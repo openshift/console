@@ -194,12 +194,20 @@ export const k8sKinds = {
     abbr: 'PS',
   },
   StatefulSet: {
-    label: 'StatefulSet',
+    label: 'Stateful Set',
     basePath: '/apis/',
     apiVersion: 'apps/v1beta1',
     path: 'statefulsets',
     plural: 'statefulsets',
     abbr: 'SS',
+    namespaced: true,
+  },
+  ResourceQuota: {
+    label: 'Resource Quota',
+    apiVersion: 'v1',
+    path: 'resourcequotas',
+    plural: 'resourcequotas',
+    abbr: 'RQ',
     namespaced: true,
   },
   EtcdCluster: {
