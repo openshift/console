@@ -8,7 +8,6 @@ import store from '../redux';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { authSvc } from '../module/auth';
-import { k8sBasePath } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterOverviewContainer } from './cluster-overview-container';
@@ -132,13 +131,12 @@ class App extends React.PureComponent {
   }
 }
 
+store.dispatch(featureActions.detectTectonicChannelOperatorFlags);
+store.dispatch(featureActions.detectEtcdOperatorFlags);
+store.dispatch(featureActions.detectPrometheusFlags);
+store.dispatch(featureActions.detectMultiClusterFlags);
+store.dispatch(featureActions.detectSecurityLabellerFlags);
 store.dispatch(k8sActions.getResources());
-store.dispatch(featureActions.detectK8sFlags(k8sBasePath));
-store.dispatch(featureActions.detectTectonicChannelOperatorFlags(`${k8sBasePath}/apis/tco.coreos.com/v1`));
-store.dispatch(featureActions.detectEtcdOperatorFlags(`${k8sBasePath}/apis/etcd.coreos.com/v1beta1`));
-store.dispatch(featureActions.detectPrometheusFlags(`${k8sBasePath}/apis/monitoring.coreos.com/v1alpha1`));
-store.dispatch(featureActions.detectMultiClusterFlags());
-store.dispatch(featureActions.detectSecurityLabellerFlags(`${k8sBasePath}/apis/extensions/v1beta1/deployments`));
 
 analyticsSvc.push({tier: 'tectonic'});
 

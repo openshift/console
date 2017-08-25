@@ -40,23 +40,3 @@ export const getResources = () => coFetchJSON('api/kubernetes/')
         return {allResources, safeResources, adminResources, namespacedSet};
       });
   });
-
-// TODO: only call getSwagger if we don't have a template yaml for the object type
-export const getSwagger = (dispatch) =>
-  coFetchJSON('api/kubernetes/swaggerapi/').then(data => {
-    const {apis} = data;
-
-    const all = apis
-      .filter(p => p.path.startsWith('/api'))
-      .map(p => coFetchJSON(`api/kubernetes/swaggerapi${p.path}`).catch(err => err));
-
-    return Promise.all(all)
-      .then(data => {
-        const models = {};
-        data.forEach(d => _.each(d.models, (v, k) => models[k] = v));
-        dispatch({
-          models,
-          type: 'models',
-        });
-      });
-  });
