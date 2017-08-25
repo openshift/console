@@ -19,7 +19,7 @@ rules:
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
-const addHref = (name, ns) => ns ? `ns/${ns}/roles/${name}/add-rule` : `clusterroles/${name}/add-rule`;
+const addHref = (name, ns) => ns ? `/ns/${ns}/roles/${name}/add-rule` : `/clusterroles/${name}/add-rule`;
 
 export const roleKind = role => role.metadata.namespace ? 'Role' : 'ClusterRole';
 

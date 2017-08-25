@@ -1,5 +1,6 @@
 import { getResources } from './get-resources';
 import store from '../../redux';
+import { k8sList, k8sWatch, k8sGet } from './resource';
 
 const types = {
   resources: 'resources',
@@ -68,12 +69,12 @@ const actions = {
 
     // WebSocket can't send impersonate HTTP header
     if (!isImpersonateEnabled()) {
-      const ws = k8sType.watch(query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
+      const ws = k8sWatch(k8sType, query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
       WS[id] = ws;
     }
 
     const poller = () => {
-      k8sType.get(name, namespace)
+      k8sGet(k8sType, name, namespace)
         .then(
           o => dispatch(actions.modifyObject(id, o)),
           e => dispatch(actions.errored(id, e))
@@ -101,7 +102,7 @@ const actions = {
     return {type: types.stopK8sWatch, id};
   },
 
-  watchK8sList: (id, query, k8sType) => dispatch => {
+  watchK8sList: (id, query, k8skind) => dispatch => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -112,7 +113,7 @@ const actions = {
 
     // WebSocket can't send impersonate HTTP header
     if (!isImpersonateEnabled()) {
-      const ws = k8sType.watch(query).onmessage(msg => {
+      const ws = k8sWatch(k8skind, query).onmessage(msg => {
         let theAction;
         switch (msg.type) {
           case 'ADDED':
@@ -132,7 +133,7 @@ const actions = {
 
       WS[id] = ws;
     }
-    const poller = () => k8sType.list(query)
+    const poller = () => k8sList(k8skind, query)
       .then(
         o => dispatch(actions.loaded(id, o)),
         e => dispatch(actions.errored(id, e))
