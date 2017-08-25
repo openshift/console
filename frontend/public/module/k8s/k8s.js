@@ -55,6 +55,7 @@ export const k8s = {};
   'ServiceAccount',
   'ServiceMonitor',
   'StatefulSet',
+  'ResourceQuota',
   'TectonicVersion',
 ].forEach(name => {
   const kind = k8sKinds[name];

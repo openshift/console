@@ -21,3 +21,4 @@ export { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monit
 export { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
 export { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
 export { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';
+export { ResourceQuotasPage, ResourceQuotasDetailsPage } from './resource-quota';
