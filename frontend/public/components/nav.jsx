@@ -125,12 +125,13 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="deployments" name="Deployments" />
       <NavLink resource="replicasets" name="Replica Sets" />
       <NavLink resource="replicationcontrollers" name="Replication Controllers" />
+      <NavLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
+      <NavLink resource="statefulsets" name="Stateful Sets" />
       <Sep />
       <NavLink resource="jobs" name="Jobs" />
       <NavLink resource="pods" name="Pods" />
       <NavLink resource="configmaps" name="Config Maps" />
       <NavLink resource="secrets" name="Secrets" />
-      <NavLink resource="statefulsets" name="Stateful Sets" />
       <NavLink resource="resourcequotas" name="Resource Quotas" />
     </NavSection>
 
@@ -155,6 +156,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     <NavSection text="Administration" icon="fa-cog">
       <NavLink href="/namespaces" name="Namespaces" />
       <NavLink href="/nodes" name="Nodes" />
+      <NavLink resource="persistentvolumes" name="Persistent Volumes" />
       <NavLink href="/settings/cluster" name="Cluster Settings" isActive={isClusterSettingsActive} />
       <NavLink resource="serviceaccounts" name="Service Accounts" />
       <NavLink resource="roles" name="Roles" isActive={isRolesActive} />

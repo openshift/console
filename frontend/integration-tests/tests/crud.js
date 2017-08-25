@@ -27,6 +27,8 @@ const crudTests_ = {};
   'prometheuses',
   'ingresses',
   'networkpolicies',
+  // 'persistentvolumes', // TODO: (ggreer) needs a backing store (ebs, azure, nfs, etc)
+  'persistentvolumeclaims',
   'resourcequotas',
   'services',
   // 'namespaces', // TODO: (kans) special case
