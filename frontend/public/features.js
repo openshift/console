@@ -96,7 +96,7 @@ export const featureActions = {
 };
 
 export const featureReducerName = 'FLAGS';
-export const featureReducers = (state, action) => {
+export const featureReducer = (state, action) => {
   if (!state) {
     return Immutable.Map(DEFAULTS);
   }
