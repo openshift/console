@@ -1,8 +1,6 @@
-import {wsFactory} from '../ws-factory';
 import {k8sKinds} from './enum';
 
-import {k8sCreate, k8sGet, k8sKill, k8sPatch, k8sUpdate, resourceURL, k8sList} from './resource';
-import {selectorToString} from './selector';
+import {k8sCreate, k8sGet, k8sKill, k8sPatch, k8sUpdate} from './resource';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
@@ -61,39 +59,10 @@ export const k8s = {};
 
   k8s[kind.plural] = {
     kind,
-    list: (query) => k8sList(kind, query),
     get: (...args) => k8sGet(kind, ...args),
     delete: (...args) => k8sKill(kind, ...args),
     create: (obj) => k8sCreate(kind, obj),
     update: (obj) => k8sUpdate(kind, obj),
     patch: (obj, payload) => k8sPatch(kind, obj, payload),
-    watch: (query) => {
-      const queryParams = {watch: true};
-      const opts = {queryParams};
-
-      const labelSelector = query.labelSelector || kind.labelSelector;
-      if (labelSelector) {
-        queryParams.labelSelector = encodeURIComponent(selectorToString(labelSelector));
-      }
-
-      if (query.fieldSelector) {
-        queryParams.fieldSelector = encodeURIComponent(query.fieldSelector);
-      }
-
-      if (query.ns) {
-        opts.ns = query.ns;
-      }
-
-      const path = resourceURL(kind, opts);
-      return wsFactory(path, {
-        host: 'auto',
-        reconnect: true,
-        path: path,
-        jsonParse: true,
-        bufferEnabled: true,
-        bufferFlushInterval: 500,
-        bufferMax: 1000,
-      });
-    },
   };
 });

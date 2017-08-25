@@ -10,7 +10,9 @@
     "checkJs": true,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "exclude": [
     "node_modules"

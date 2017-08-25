@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as moment from 'moment';
 import { Link } from 'react-router-dom';
 
-import {k8s} from '../module/k8s';
+import {k8sKinds, k8sList} from '../module/k8s';
 import {coFetchJSON} from '../co-fetch';
 import {pluralize} from './utils';
 import {GlobalNotification} from './global-notification';
@@ -79,7 +79,7 @@ class LicenseNotifier extends React.Component {
         console.error('Could not load Tectonic version', error);
       });
 
-    k8s.nodes.list()
+    k8sList(k8sKinds.Node)
       .then((nodes) => {
         this.setState({
           current: {

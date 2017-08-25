@@ -30,10 +30,6 @@ import { Clusters } from './federation/cluster';
 import '../style.scss';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
-
-import * as Perf from 'react-addons-perf';
-window.Perf = Perf;
-
 const LoadingScreen = () => <div className="loading-screen">
   <div className="loading-screen__logo">
     <img src={tectonicLogoImg} id="logo" />
@@ -57,7 +53,6 @@ class App extends React.PureComponent {
 
   componentWillMount () {
     this.onRouteChange(this.props);
-    setTimeout(Perf.start, 100);
   }
 
   componentWillReceiveProps (nextProps) {

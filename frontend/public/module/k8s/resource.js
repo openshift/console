@@ -1,6 +1,7 @@
 import {coFetchJSON} from '../../co-fetch';
 import {getK8sAPIPath} from './k8s';
 import {selectorToString} from './selector';
+import {wsFactory} from '../ws-factory';
 
 export const resourceURL = (kind, options) => {
   let q = '';
@@ -79,4 +80,33 @@ export const k8sList = (kind, params={}) => {
 
   const listURL = resourceURL(k, {ns: params.ns});
   return coFetchJSON(`${listURL}?${query}`).then(result => result.items);
+};
+
+export const k8sWatch = (kind, query={}) => {
+  const queryParams = {watch: true};
+  const opts = {queryParams};
+
+  const labelSelector = query.labelSelector || kind.labelSelector;
+  if (labelSelector) {
+    queryParams.labelSelector = encodeURIComponent(selectorToString(labelSelector));
+  }
+
+  if (query.fieldSelector) {
+    queryParams.fieldSelector = encodeURIComponent(query.fieldSelector);
+  }
+
+  if (query.ns) {
+    opts.ns = query.ns;
+  }
+
+  const path = resourceURL(kind, opts);
+  return wsFactory(path, {
+    host: 'auto',
+    reconnect: true,
+    path: path,
+    jsonParse: true,
+    bufferEnabled: true,
+    bufferFlushInterval: 500,
+    bufferMax: 1000,
+  });
 };

@@ -62,7 +62,7 @@ const Resources = ({resources, nonResourceURLs}) => {
     const kind = _.find(k8sKinds, k => k.plural === base);
 
     allResources.push(<span key={r} className="rbac-rule-resource rbac-rule-row">
-      <ResourceIcon kind={kind ? kind.id : r} /> {r}
+      <ResourceIcon kind={kind ? kind.kind : r} /> {r}
     </span>);
   });
 

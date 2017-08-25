@@ -274,7 +274,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
                 <label>{ this.kind.label } Name:</label>
               </div>
               <div className="col-xs-10">
-                <ResourceIcon kind={this.kind.id} className="no-margin" /> {name}
+                <ResourceIcon kind={this.kind.kind} className="no-margin" /> {name}
               </div>
             </div>
 
@@ -285,7 +285,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
                 <label>Namespace:</label>
               </div>
               <div className="col-xs-10">
-                <ResourceIcon kind="namespace" className="no-margin" /> {namespace}
+                <ResourceIcon kind="Namespace" className="no-margin" /> {namespace}
               </div>
             </div>
             }
@@ -416,7 +416,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
     }
   });
 
-export const EditRulePage = ({params}) => <EditRule
+export const EditRulePage = ({match: {params}}) => <EditRule
   name={params.name}
   namespace={params.ns}
   rule={params.rule}
