@@ -1,9 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import * as Modal from 'react-modal';
 import * as PropTypes from 'prop-types';
+import { Router } from 'react-router-dom';
 
-import { ButtonBar } from '../utils';
+import store from '../../redux';
+import { ButtonBar, history } from '../utils';
 
 export const createModalLauncher = (Component) => (props = {}) => {
   const modalContainer = document.getElementById('modal-container');
@@ -21,15 +24,19 @@ export const createModalLauncher = (Component) => (props = {}) => {
       resolve();
     };
 
-    ReactDOM.render(<Modal
-      isOpen={true}
-      contentLabel="Modal"
-      onRequestClose={closeModal}
-      className="modal-content"
-      overlayClassName="co-overlay"
-      shouldCloseOnOverlayClick={!props.blocking}>
-      <Component {...props} cancel={closeModal} close={closeModal} />
-    </Modal>, modalContainer);
+    ReactDOM.render(<Provider store={store}>
+      <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+        <Modal
+          isOpen={true}
+          contentLabel="Modal"
+          onRequestClose={closeModal}
+          className="modal-content"
+          overlayClassName="co-overlay"
+          shouldCloseOnOverlayClick={!props.blocking}>
+          <Component {...props} cancel={closeModal} close={closeModal} />
+        </Modal>
+      </Router>
+    </Provider>, modalContainer);
   });
   return {result};
 };
