@@ -81,7 +81,7 @@ class App extends React.PureComponent {
             <Route path="/clusterroles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/clusterroles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="ClusterRole" />} />
             <Route path="/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
-            <Route path="/clusterroles/:name" component={props => <ResourceDetailsPage {...props} kind="clusterroles" />} />
+            <Route path="/clusterroles/:name" component={props => <ResourceDetailsPage {...props} plural="clusterroles" />} />
 
             <Route path="/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
@@ -97,11 +97,11 @@ class App extends React.PureComponent {
 
             <Redirect from="/ns/:ns/rolebindings/:name/details" to="/all-namespaces/rolebindings" />
 
-            <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} kind="namespaces" />} />
-            <Route path="/namespaces" exact component={props => <ResourceListPage {...props} kind="namespaces" />} />
+            <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} plural="namespaces" />} />
+            <Route path="/namespaces" exact component={props => <ResourceListPage {...props} plural="namespaces" />} />
 
-            <Route path="/nodes/:name" component={props => <ResourceDetailsPage {...props} kind="nodes" />} />
-            <Route path="/nodes" exact component={props => <ResourceListPage {...props} kind="nodes" />} />
+            <Route path="/nodes/:name" component={props => <ResourceDetailsPage {...props} plural="nodes" />} />
+            <Route path="/nodes" exact component={props => <ResourceListPage {...props} plural="nodes" />} />
 
             <Route path="/settings/profile" exact component={ProfilePage} />
             <Route path="/settings/ldap" exact component={LDAPPage} />
@@ -116,11 +116,11 @@ class App extends React.PureComponent {
             <Route path="/ns/:ns/search" exact component={SearchPage} />
             <Route path="/search" exact component={props => <Redirect from="/search" to={{pathname: '/all-namespaces/search', search: props.location.search}} />} />
 
-            <Route path="/all-namespaces/:kind" exact component={ResourceListPage} />
-            <Route path="/ns/:ns/pods/:podName/:kind/:name" component={ContainersDetailsPage} />
-            <Route path="/ns/:ns/:kind/new" exact component={CreateYAML} />
-            <Route path="/ns/:ns/:kind/:name" component={ResourceDetailsPage} />
-            <Route path="/ns/:ns/:kind" exact component={ResourceListPage} />
+            <Route path="/all-namespaces/:plural" exact component={ResourceListPage} />
+            <Route path="/ns/:ns/pods/:podName/containers/:name" component={ContainersDetailsPage} />
+            <Route path="/ns/:ns/:plural/new" exact component={CreateYAML} />
+            <Route path="/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
+            <Route path="/ns/:ns/:plural" exact component={ResourceListPage} />
 
             <Route path="/error" exact component={ErrorPage} />
             <Route component={ErrorPage404} />

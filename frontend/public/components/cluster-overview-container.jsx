@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {coFetchJSON} from '../co-fetch';
-import {k8s, k8sBasePath} from '../module/k8s';
+import {k8sBasePath, k8sKinds, k8sGet} from '../module/k8s';
 import {k8sVersion} from '../module/status';
 import {ClusterOverviewPage} from './cluster-overview';
 import {entitlementTitle} from './license-notifier';
@@ -48,7 +48,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
   }
 
   _checkAppVersions() {
-    k8s.appversions.get().then((appversions) => {
+    k8sGet(k8sKinds.AppVersion).then((appversions) => {
       const tectonicTPR = _.find(appversions.items, (a) => a.metadata.name === clusterAppVersionName);
       if (tectonicTPR) {
         this.setState({ currentTectonicVersion: tectonicTPR.status.currentVersion });
@@ -75,14 +75,14 @@ export class ClusterOverviewContainer extends SafetyFirst {
   }
 
   _checkCloudProvider() {
-    k8s.nodes.get().then((nodes) => {
+    k8sGet(k8sKinds.Node).then((nodes) => {
       const providerIDs = _.filter(_.map(nodes.items, cloudProviderID));
       this.setState({ cloudProviders: providerIDs.length ? _.uniq(providerIDs) : null });
     });
   }
 
   _checkFixableIssues() {
-    k8s.pods.get().then((pods) => {
+    k8sGet(k8sKinds.Pod).then((pods) => {
       let count = 0;
       _.forEach(pods.items, (pod) => {
         const fixables = _.get(pod, 'metadata.labels.secscan/fixables', '0');
@@ -93,7 +93,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
   }
 
   _checkScannedPods() {
-    k8s.pods.get().then((pods) => {
+    k8sGet(k8sKinds.Pod).then((pods) => {
       let count = 0;
       _.forEach(pods.items, (pod) => {
         const scanned = _.get(pod, 'metadata.annotations.secscan/lastScan');

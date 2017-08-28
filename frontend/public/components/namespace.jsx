@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
 
-import { k8s } from '../module/k8s';
+import { k8sGet, k8sKinds } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
@@ -70,8 +70,7 @@ class PullSecret extends SafetyFirst {
     if (!namespaceName) {
       return;
     }
-    const args = `?fieldSelector=${encodeURIComponent('type=kubernetes.io/dockerconfigjson')}`;
-    k8s.secrets.get(args, namespaceName)
+    k8sGet(k8sKinds.Secret, null, namespaceName, {queryParams: {fieldSelector: 'type=kubernetes.io/dockerconfigjson'}})
       .then((pullSecrets) => {
         this.setState({isLoading: false, data: _.get(pullSecrets, 'items[0]')});
       })

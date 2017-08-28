@@ -2,10 +2,10 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 
 import { safeLoad } from 'js-yaml';
-import { k8s } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { EditYAML } from './edit-yaml';
 import { TEMPLATES } from '../yaml-templates';
+import { kindFromPlural } from '../kinds';
 
 const getDefaultType = (type, format) => {
   switch (type) {
@@ -123,7 +123,7 @@ class CreateYAML_ extends SafetyFirst {
     const {models, match} = this.props;
     const {params} = match;
 
-    const kind = k8s[params.kind] && k8s[params.kind].kind;
+    const kind = kindFromPlural(params.plural);
     if (!kind) {
       // <base href=...> makes this OK
       window.location = '404';

@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import * as Immutable from 'immutable';
 
@@ -34,3 +35,11 @@ export const stateToProps = function (state, props): {kindObj: K8sKind | {}} {
 };
 
 export const connectToKinds = () => connect(stateToProps);
+
+export const connectToPlural = Component => connect((state, props) => {
+  const plural = props.plural || _.get(props, 'match.params.plural');
+  const kindObj = state[kindReducerName].find(v => v.get('plural') === plural);
+  return {kindObj: kindObj && kindObj.toJSON()};
+})(Component);
+
+export const kindFromPlural = plural => _.find(k8sKinds, {plural});

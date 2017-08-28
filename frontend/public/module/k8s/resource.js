@@ -1,7 +1,24 @@
 import {coFetchJSON} from '../../co-fetch';
-import {getK8sAPIPath} from './k8s';
+import {k8sBasePath} from './k8s';
 import {selectorToString} from './selector';
 import {wsFactory} from '../ws-factory';
+
+const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
+
+const getK8sAPIPath = kind => {
+  let p = k8sBasePath;
+
+  if (kind.isExtension) {
+    p += '/apis/extensions/';
+  } else if (kind.basePath) {
+    p += kind.basePath;
+  } else {
+    p += '/api/';
+  }
+
+  p += kind.apiVersion || apiVersion;
+  return p;
+};
 
 export const resourceURL = (kind, options) => {
   let q = '';

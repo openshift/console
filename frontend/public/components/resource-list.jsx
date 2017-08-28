@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import { k8sKinds } from '../module/k8s';
 import * as pages from './resource-pages';
+import { connectToPlural } from '../kinds';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
 
-export const ResourceListPage = (props) => {
-  const {kind, ns} = allParams(props);
-  const kindObj = _.find(k8sKinds, {plural: kind});
+export const ResourceListPage = connectToPlural(props => {
+  const { ns, kindObj } = allParams(props);
+
   if (!kindObj) {
     window.location = '404';
     return null;
@@ -23,13 +23,12 @@ export const ResourceListPage = (props) => {
     </Helmet>
     {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} />}
   </div>;
-};
+});
 
 ResourceListPage.displayName = 'ResourceListPage';
 
-export const ResourceDetailsPage = (props) => {
-  const {kind, name, ns} = allParams(props);
-  const kindObj = _.find(k8sKinds, {plural: kind});
+export const ResourceDetailsPage = connectToPlural(props => {
+  const {name, ns, kindObj} = allParams(props);
 
   if (!name || !kindObj) {
     window.location = '404';
@@ -44,6 +43,6 @@ export const ResourceDetailsPage = (props) => {
     </Helmet>
     {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} name={name} />}
   </div>;
-};
+});
 
 ResourceDetailsPage.displayName = 'ResourceDetailsPage';
