@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from'classnames';
 import { Tooltip } from 'react-lightweight-tooltip';
 
-import {k8s} from '../../module/k8s/k8s';
+import { k8sKill } from '../../module/k8s/';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 import { annotationsModal, confirmModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal } from '../modals';
 import { DropdownMixin, sortActions } from './dropdown';
@@ -59,7 +59,7 @@ Cog.factory = {
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
       btnText: `Delete ${kind.label}`,
       executeFn: () => {
-        const deletePromise = k8s[kind.plural].delete(obj);
+        const deletePromise = k8sKill(kind, obj);
         deletePromise.then(() => {
           // If we are currently on the deleted resource's page, redirect to the resource list page
           const re = new RegExp(`/${obj.metadata.name}/.*$`);

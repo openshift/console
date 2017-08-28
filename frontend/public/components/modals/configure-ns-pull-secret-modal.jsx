@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import { k8s, k8sKinds, k8sPatch } from '../../module/k8s';
+import { k8sKinds, k8sPatch, k8sCreate } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, ResourceIcon } from '../utils';
 import { CONST } from '../../const';
@@ -156,7 +156,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         data: data,
         type: CONST.PULL_SECRET_TYPE
       };
-      promise = k8s.secrets.create(secret);
+      promise = k8sCreate(k8sKinds.Secret, secret);
     }
 
     this.handlePromise(promise).then(this.props.close);

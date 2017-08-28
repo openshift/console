@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { getQN, k8s, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
+import { getQN, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { getActiveNamespace, getNamespacedRoute, UIActions } from '../../ui/ui-actions';
 import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
 import { RadioGroup } from '../radio';
@@ -69,7 +69,7 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
         title: `Delete ${kind.label} Subject`,
         message: `Are you sure you want to delete subject ${subject.name} of type ${subject.kind}?`,
         btnText: 'Delete Subject',
-        executeFn: () => k8s[kind.plural].patch(binding, [{op: 'remove', path: `/subjects/${subjectIndex}`}]),
+        executeFn: () => k8sPatch(kind, binding, [{op: 'remove', path: `/subjects/${subjectIndex}`}]),
       }),
     }),
   ];

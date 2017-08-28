@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {k8s, k8sKinds} from '../../module/k8s';
+import {k8sKinds, k8sPatch} from '../../module/k8s';
 import {Cog, ResourceIcon} from '../utils';
 import {confirmModal} from '../modals';
 
@@ -90,8 +90,8 @@ const DeleteRule = (name, namespace, i) => ({
     message: `Are you sure you want to delete Rule #${i}?`,
     btnText: 'Delete Rule',
     executeFn: () => {
-      const kind = k8s[namespace ? 'roles' : 'clusterroles'];
-      return kind.patch({metadata: {name, namespace}}, [{
+      const kind = namespace ? k8sKinds.Role : k8sKinds.Clusterrole;
+      return k8sPatch(kind, {metadata: {name, namespace}}, [{
         op: 'remove', path: `/rules/${i}`,
       }]);
     },
