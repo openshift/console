@@ -25,20 +25,11 @@ let config = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules/,
         loader: 'ts-loader',
         options: {
           entryFileIsJs: true,
-        }
-      },
-      {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loader: 'ts-loader',
-        options: {
-          entryFileIsJs: true,
-          transpileOnly: true,
         }
       },
       {
@@ -98,6 +89,7 @@ let config = {
     }),
   ],
   devtool: 'cheap-module-source-map',
+  stats: 'minimal',
 };
 
 /* Production settings  */
