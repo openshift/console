@@ -150,5 +150,5 @@ const Details = (np) => <div>
 export const NetworkPoliciesDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml()]}
+  pages={[navFactory.details(Details), navFactory.editYamlWithSidebar()]}
 />;

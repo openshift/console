@@ -2,6 +2,8 @@
   display: flex;
   font-size: 14px;
   height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .co-p-cluster--heading {
@@ -20,7 +22,10 @@
   border-left: 1px solid #ccc;
   flex: 0 2 340px;
   font-size: 13px;
-  min-width: 220px;
+  height: 100vh;
+  min-width: 340px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .co-p-cluster__sidebar-heading {

@@ -132,7 +132,7 @@ class CreateYAML_ extends SafetyFirst {
     const apiVersion = kind.apiVersion || 'v1';
     const namespace = params.ns || 'default';
     const kindStr = `${apiVersion}.${kind.kind}`;
-    const template = TEMPLATES[kindStr];
+    const template = TEMPLATES[kindStr].default;
     let obj;
     if (template) {
       obj = safeLoad(template);
@@ -155,6 +155,9 @@ class CreateYAML_ extends SafetyFirst {
     }
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = namespace;
+    if (obj.kind === 'NetworkPolicy') {
+      return <AsyncComponent loader={() => System.import('./edit-yaml-with-sidebar').then(c => c.EditYAMLWithSidebar)} obj={obj} create={true} kind={kind.kind} />;
+    }
     return <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} />;
   }
 }

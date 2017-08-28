@@ -7,14 +7,18 @@ import 'brace/ext/searchbox';
 import 'brace/mode/yaml';
 import 'brace/theme/clouds';
 
-import { k8sCreate, k8sUpdate } from '../module/k8s';
+import { k8sCreate, k8sUpdate, k8sKinds } from '../module/k8s';
 import { kindObj, history, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
 
 let id = 0;
 
+const getKind = (obj, kind) => {
+  return obj.kind === 'Cluster' ? kind : obj.kind;
+};
+
 /**
- * This component loads the entire Ace editor library (~100kB) with it. 
+ * This component loads the entire Ace editor library (~100kB) with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
 export class EditYAML extends SafetyFirst {
@@ -26,6 +30,7 @@ export class EditYAML extends SafetyFirst {
       height: 500,
       initialized: false,
       stale: false,
+      sampleObj: props.sampleObj,
     };
     this.id = `edit-yaml-${++id}`;
     this.ace = null;
@@ -73,14 +78,24 @@ export class EditYAML extends SafetyFirst {
 
   componentWillReceiveProps(nextProps) {
     const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
-    this.setState({stale: this.displayedVersion !== newVersion});
-    this.loadYaml();
+    const stale = this.displayedVersion !== newVersion;
+    this.setState({stale: stale });
+    if (nextProps.sampleObj) {
+      this.loadYaml(!_.isEqual(this.state.sampleObj, nextProps.sampleObj), nextProps.sampleObj);
+    } else {
+      this.loadYaml();
+    }
   }
 
   get height () {
     return Math.floor(
       document.body.getBoundingClientRect().bottom - this.editor.getBoundingClientRect().top
     );
+  }
+
+  reload() {
+    this.loadYaml(true);
+    this.setState({ sampleObj: null });
   }
 
   loadYaml(reload=false, obj=this.props.obj) {
@@ -138,7 +153,7 @@ export class EditYAML extends SafetyFirst {
       return;
     }
 
-    const ko = obj.kind === 'Cluster' ? kindObj(this.props.kind) : kindObj(obj.kind);
+    const ko = kindObj(getKind(obj, this.props.kind));
 
     if (!ko) {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
@@ -194,23 +209,33 @@ export class EditYAML extends SafetyFirst {
       The current solution uses divs that are relative -> absolute -> flexbox pinning the button row with margin-top: auto
     */
     const {error, success, stale} = this.state;
-    const {create} = this.props;
-
-    return <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
-      <div className="absolute-zero">
-        <div className="full-width-and-height yaml-editor--flexbox">
-          <div id={this.id} key={this.id} className="yaml-editor--acebox" />
-          <div className="yaml-editor--buttons">
-            {error && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--error">{error}</p>}
-            {success && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--success">{success}</p>}
-            {stale && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--info">
-              <i className="fa fa-fw fa-exclamation-triangle"></i> This object has been updated. Click reload to see the new version.
-            </p>}
-            {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
-            {!create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>}
-            {!create && <button type="submit" className="btn btn-default" onClick={() => this.loadYaml(true)}>Reload</button>}
-            <button className="btn btn-default" onClick={() => this.onCancel()}>Cancel</button>
-            <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
+    const {create, obj, showHeader=true} = this.props;
+    const kind = getKind(obj, this.props.kind);
+    const kindObj = _.get(k8sKinds, kind, {});
+    return <div>
+      {create && showHeader && <div className="yaml-editor-header">
+        Create {_.get(kindObj, 'label', kind)}
+      </div>}
+      <div className="co-p-cluster">
+        <div className="co-p-cluster__body">
+          <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
+            <div className="absolute-zero">
+              <div className="full-width-and-height yaml-editor--flexbox">
+                <div id={this.id} key={this.id} className="yaml-editor--acebox" />
+                <div className="yaml-editor--buttons">
+                  {error && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--error">{error}</p>}
+                  {success && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--success">{success}</p>}
+                  {stale && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--info">
+                    <i className="fa fa-fw fa-exclamation-triangle"></i> This object has been updated. Click reload to see the new version.
+                  </p>}
+                  {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
+                  {!create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>}
+                  {!create && <button type="submit" className="btn btn-default" onClick={() => this.reload()}>Reload</button>}
+                  <button className="btn btn-default" onClick={() => this.onCancel()}>Cancel</button>
+                  <button type="submit" className="btn btn-default pull-right" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
