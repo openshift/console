@@ -1,4 +1,4 @@
-import { getResources } from './get-resources';
+import { getResources as getResources_} from './get-resources';
 import store from '../../redux';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 
@@ -43,7 +43,7 @@ const actions = {
 
   getResources: () => dispatch => {
     const type = types.resources;
-    getResources()
+    getResources_()
       .then(resources => dispatch({type, resources}))
       // try again or something?
       // eslint-disable-next-line no-console
