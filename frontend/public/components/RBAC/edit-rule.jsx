@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { k8s } from '../../module/k8s';
+import { k8sKinds, k8sGet, k8sUpdate } from '../../module/k8s';
 import { errorModal } from '../modals';
 import { Heading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar } from '../utils';
 
@@ -77,15 +77,14 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
       this.toggleVerb = (name, checked) => this.toggleVerb_(name, checked);
       this.toggleResource = (name, checked) => this.toggleResource_(name, checked);
 
-      this.resource = props.namespace ? k8s.roles : k8s.clusterroles;
-      this.kind = this.resource.kind;
+      this.kind = props.namespace ? k8sKinds.Role : k8sKinds.ClusterRole;
       this.getResource();
     }
 
     getResource () {
       const {name, namespace} = this.props;
 
-      this.resource.get(name, namespace)
+      k8sGet(this.kind, name, namespace)
         .then(role => {
           const {props} = this;
           this.setState({role});
@@ -151,7 +150,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
       } else {
         role.rules.push(rule);
       }
-      this.handlePromise(this.resource.update(role))
+      this.handlePromise(k8sUpdate(this.kind, role))
         .then(() => {
           history.push(`${resourceObjPath(role, this.kind.kind)}/details`);
         });

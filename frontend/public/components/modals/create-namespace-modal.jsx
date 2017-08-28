@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { k8s } from '../../module/k8s';
+import { k8sCreate, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { history, PromiseComponent, SelectorInput } from '../utils';
 
@@ -19,7 +19,7 @@ class CreateNamespaceModal extends PromiseComponent {
         labels: SelectorInput.objectify(labels),
       },
     };
-    const promise = k8s.namespaces.create(namespace);
+    const promise = k8sCreate(k8sKinds.Namespace, namespace);
     this.handlePromise(promise).then(() => {
       this.props.close();
       history.push(`namespaces/${name}/details`);

@@ -1,6 +1,6 @@
 import {k8sKinds} from './enum';
 
-import {k8sCreate, k8sGet, k8sKill, k8sPatch, k8sUpdate} from './resource';
+import {k8sGet} from './resource';
 
 export const getQN = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
@@ -63,9 +63,5 @@ export const k8s = {};
   k8s[kind.plural] = {
     kind,
     get: (...args) => k8sGet(kind, ...args),
-    delete: (...args) => k8sKill(kind, ...args),
-    create: (obj) => k8sCreate(kind, obj),
-    update: (obj) => k8sUpdate(kind, obj),
-    patch: (obj, payload) => k8sPatch(kind, obj, payload),
   };
 });
