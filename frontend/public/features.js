@@ -1,4 +1,4 @@
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as Immutable from 'immutable';
 
 import { k8sBasePath } from './module/k8s';
@@ -11,6 +11,7 @@ export const FLAGS = {
   PROMETHEUS: 'PROMETHEUS',
   MULTI_CLUSTER: 'MULTI_CLUSTER',
   SECURITY_LABELLER: 'SECURITY_LABELLER',
+  CLOUD_SERVICES: 'CLOUD_SERVICES',
 };
 
 const DEFAULTS = {
@@ -20,6 +21,7 @@ const DEFAULTS = {
   [FLAGS.PROMETHEUS]: undefined,
   [FLAGS.MULTI_CLUSTER]: undefined,
   [FLAGS.SECURITY_LABELLER]: undefined,
+  [FLAGS.CLOUD_SERVICES]: undefined,
 };
 
 const SET_FLAGS = 'SET_FLAGS';
@@ -58,6 +60,10 @@ const SECURITY_LABELLER_FLAGS = {
   [FLAGS.SECURITY_LABELLER]: 'security-labeller-app',
 };
 
+const CLOUD_SERVICES_FLAGS = {
+  [FLAGS.CLOUD_SERVICES]: 'apptypes',
+};
+
 
 const tcoPath = `${k8sBasePath}/apis/tco.coreos.com/v1`;
 const detectTectonicChannelOperatorFlags = dispatch => {
@@ -87,12 +93,18 @@ const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPa
   .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
     () => setTimeout(() => detectSecurityLabellerFlags(dispatch), 15000));
 
+const cloudServicesPath = `${k8sBasePath}/apis/app.coreos.com/v1alpha1`;
+const detectCloudServicesFlags = dispatch => coFetchJSON(cloudServicesPath)
+  .then(res => setFlags(dispatch, _.mapValues(CLOUD_SERVICES_FLAGS, name => _.find(res.resources, {name}))),
+    () => setTimeout(() => detectCloudServicesFlags(dispatch), 15000));
+
 export const featureActions = {
   detectTectonicChannelOperatorFlags,
   detectEtcdOperatorFlags,
   detectPrometheusFlags,
   detectMultiClusterFlags,
-  detectSecurityLabellerFlags
+  detectSecurityLabellerFlags,
+  detectCloudServicesFlags,
 };
 
 export const featureReducerName = 'FLAGS';
