@@ -100,8 +100,8 @@
     "style-loader": "0.18.x",
     "ts-jest": "20.x",
     "ts-loader": "2.x",
-    "typescript-eslint-parser": "7.x",
     "typescript": "2.4.x",
+    "typescript-eslint-parser": "7.x",
     "uglifyjs-webpack-plugin": "1.0.0-beta.1",
     "webpack": "3.x",
     "webpack-bundle-analyzer": "2.x"

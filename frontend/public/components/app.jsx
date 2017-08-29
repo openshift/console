@@ -136,6 +136,7 @@ store.dispatch(featureActions.detectEtcdOperatorFlags);
 store.dispatch(featureActions.detectPrometheusFlags);
 store.dispatch(featureActions.detectMultiClusterFlags);
 store.dispatch(featureActions.detectSecurityLabellerFlags);
+store.dispatch(featureActions.detectCloudServicesFlags);
 store.dispatch(k8sActions.getResources());
 
 analyticsSvc.push({tier: 'tectonic'});
