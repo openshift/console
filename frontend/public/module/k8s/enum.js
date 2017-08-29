@@ -194,7 +194,6 @@ export const k8sKinds = {
     path: 'persistentvolumes',
     plural: 'persistentvolumes',
     abbr: 'PV',
-    namespaced: true,
   },
   PersistentVolumeClaim: {
     label: 'Persistent Volume Claim',
@@ -286,7 +285,16 @@ export const k8sKinds = {
     plural: 'all',
     labelPlural: 'All',
     abbr: '*',
-  }
+  },
+  CustomResourceDefinition: {
+    label: 'Custom Resource Definition',
+    basePath: '/apis/apiextensions.k8s.io/',
+    apiVersion: 'v1beta1',
+    path: 'customresourcedefinitions',
+    abbr: 'CRD',
+    namespaced: false,
+    plural: 'customresourcedefinitions',
+  },
 };
 
 _.each(k8sKinds, (v, k) => {

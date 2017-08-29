@@ -3,11 +3,11 @@ import { history } from '../components/utils/router';
 import { isNamespaced } from '../components/utils/link';
 import { k8sKinds } from '../module/k8s';
 
-const prefixes = ['search'];
+export const prefixes = new Set(['search']);
 
 _.each(k8sKinds, v => {
   if (v.namespaced) {
-    prefixes.push(v.plural);
+    prefixes.add(v.plural);
   }
 });
 
@@ -29,7 +29,10 @@ export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   if (match) {
     // The resource is the first URL slug that matches a prefix (e.g. for "/ns/test-ns/jobs/test-job/pods", the resource
     // is "jobs", not "pods")
-    const resource = _(prefixes).filter(p => originalPath.indexOf(p) !== -1).minBy(p => originalPath.indexOf(p));
+    const resource = _([...prefixes])
+      .filter(p => originalPath.indexOf(p) !== -1)
+      .minBy(p => originalPath.indexOf(p));
+
     if (!resource) {
       throw new Error(`Path can't be namespaced: ${originalPath}`);
     }

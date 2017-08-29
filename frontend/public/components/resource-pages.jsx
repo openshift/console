@@ -24,3 +24,5 @@ export { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';
 export { ResourceQuotasPage, ResourceQuotasDetailsPage } from './resource-quota';
 export { PersistentVolumesPage, PersistentVolumesDetailsPage } from './persistent-volume';
 export { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from './persistent-volume-claim';
+export { DefaultPage, DefaultDetailsPage } from './default-resource';
+export { CustomResourceDefinitionsPage } from './custom-resource-definition';
