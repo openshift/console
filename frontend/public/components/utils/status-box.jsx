@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as classNames from'classnames';
 
-import {inject} from './index';
+import { inject } from './index';
+import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 
 export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
 
@@ -30,7 +31,7 @@ export const MsgBox = ({title, detail, className}) => <Box className={className}
 </Box>;
 
 export const AccessDenied = () => <Box className="cos-text-center">
-  <img className="cos-status-box__access-denied-icon" src="static/imgs/restricted-sign.svg" />
+  <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
   <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy" />
 </Box>;
 
