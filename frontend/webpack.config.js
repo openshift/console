@@ -87,9 +87,9 @@ let config = {
       template: './public/index.html',
       production: process.env.NODE_ENV === 'production',
     }),
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
   ],
   devtool: 'cheap-module-source-map',
-  stats: 'minimal',
 };
 
 /* Production settings  */
