@@ -19,7 +19,6 @@ export class EditYAMLWithSidebar extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
-      showSidebar: true,
       sampleObj: null
     };
     this.loadSampleYaml_ = this.loadSampleYaml_.bind(this);
@@ -46,28 +45,18 @@ export class EditYAMLWithSidebar extends SafetyFirst {
   }
 
   render () {
-    const {showSidebar} = this.state;
     const {create, kind, obj} = this.props;
 
     if (_.isEmpty(obj)) {
       return <Loading/>;
     }
 
-    const kindObj = _.get(k8sKinds, kind, {});
-    const header = create ? `Create ${_.get(kindObj, 'label', kind)}` : `Edit ${obj.metadata.name}`;
     return <div>
-      {create && <div className="yaml-editor-header">
-        {header}
-        <button className="btn btn-link pull-right" onClick={() => this.setState({showSidebar: !showSidebar})}>
-          <span className="fa fa-fw fa-info-circle co-p-cluster__sidebar-link-icon"></span>
-          {showSidebar ? 'Hide samples' : 'View samples'}
-        </button>
-      </div>}
       <div className="co-p-cluster">
         <div className="co-p-cluster__body">
-          <EditYAML obj={obj} create={create} kind={kind} showHeader={false} sampleObj={this.state.sampleObj} />;
+          <EditYAML obj={obj} create={create} kind={kind} sampleObj={this.state.sampleObj} />;
         </div>
-        {kind === 'NetworkPolicy' && showSidebar && <NetworkPolicySidebar
+        {kind === 'NetworkPolicy' && <NetworkPolicySidebar
           loadSampleYaml={this.loadSampleYaml_}
           downloadSampleYaml={this.downloadSampleYaml_} />}
       </div>

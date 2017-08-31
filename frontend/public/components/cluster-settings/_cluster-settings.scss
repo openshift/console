@@ -19,13 +19,17 @@
 }
 
 .co-p-cluster__sidebar {
-  border-left: 1px solid #ccc;
   flex: 0 2 340px;
   font-size: 13px;
   height: 100vh;
   min-width: 340px;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.co-p-cluster__sidebar--bordered {
+  @extend .co-p-cluster__sidebar;
+  border-left: 1px solid #ccc;
 }
 
 .co-p-cluster__sidebar-heading {
@@ -57,6 +61,21 @@
 
 .co-p-cluster__sidebar-link-icon {
   margin-right: 7px;
+}
+
+.co-p-cluster__sidebar--visible {
+  border-left: none;
+  border-bottom: 1px solid #ccc;
+  height: 45px;
+  padding: 10px;
+}
+
+.co-p-cluster__sidebar--hidden {
+  border-left: none;
+  height: 45px;
+  padding: 10px;
+  position: absolute;
+  right: 0%;
 }
 
 // todo: name
