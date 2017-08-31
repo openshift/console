@@ -75,7 +75,7 @@ let config = {
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      minChunks: ({resource}) => /node_modules|lib/.test(resource),
+      minChunks: ({resource}) => /node_modules/.test(resource),
     }), 
     new HtmlWebpackPlugin({
       filename: './tokener.html',
@@ -87,7 +87,7 @@ let config = {
       template: './public/index.html',
       production: process.env.NODE_ENV === 'production',
     }),
-    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
   ],
   devtool: 'cheap-module-source-map',
 };

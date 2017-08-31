@@ -2,10 +2,6 @@ import * as React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
-import '../lib/ace/ace';
-import '../lib/ace/mode/mode-yaml';
-import '../lib/ace/theme/theme-clouds';
-
 import { k8sCreate, k8sUpdate } from '../module/k8s';
 import { kindObj, history, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
@@ -87,38 +83,44 @@ export class EditYAML extends SafetyFirst {
       return;
     }
 
-    if (!this.ace) {
-      this.ace = ace.edit(this.id);
-      // Squelch warning from Ace
-      this.ace.$blockScrolling = Infinity;
-      const es = this.ace.getSession();
-      // Restore native browser Ctrl+F
-      this.ace.commands.removeCommand('find');
-      es.setMode('ace/mode/yaml');
-      this.ace.setTheme('ace/theme/clouds');
-      es.setUseWrapMode(true);
-      this.doc = es.getDocument();
-    }
-    let yaml;
-    try {
-      yaml = safeDump(obj);
-    } catch (e) {
-      yaml = `Error dumping YAML: ${e}`;
-    }
-    this.doc.setValue(yaml);
-    this.ace.moveCursorTo(0, 0);
-    this.ace.clearSelection();
-    this.ace.setOption('scrollPastEnd', 0.1);
-    this.ace.setOption('tabSize', 2);
-    this.ace.setOption('showPrintMargin', false);
-    // Allow undo after saving but not after first loading the document
-    if (!this.state.initialized) {
-      this.ace.getSession().setUndoManager(new ace.UndoManager());
-    }
-    this.ace.focus();
-    this.displayedVersion = obj.metadata.resourceVersion;
-    this.setState({initialized: true, stale: false});
-    this.resize_();
+    // Lazily import Ace editor library
+    System.import('../lib/ace/ace')
+      .then(() => System.import('../lib/ace/mode/mode-yaml'))
+      .then(() => System.import('../lib/ace/theme/theme-clouds'))
+      .then(() => {
+        if (!this.ace) {
+          this.ace = ace.edit(this.id);
+          // Squelch warning from Ace
+          this.ace.$blockScrolling = Infinity;
+          const es = this.ace.getSession();
+          // Restore native browser Ctrl+F
+          this.ace.commands.removeCommand('find');
+          es.setMode('ace/mode/yaml');
+          this.ace.setTheme('ace/theme/clouds');
+          es.setUseWrapMode(true);
+          this.doc = es.getDocument();
+        }
+        let yaml;
+        try {
+          yaml = safeDump(obj);
+        } catch (e) {
+          yaml = `Error dumping YAML: ${e}`;
+        }
+        this.doc.setValue(yaml);
+        this.ace.moveCursorTo(0, 0);
+        this.ace.clearSelection();
+        this.ace.setOption('scrollPastEnd', 0.1);
+        this.ace.setOption('tabSize', 2);
+        this.ace.setOption('showPrintMargin', false);
+        // Allow undo after saving but not after first loading the document
+        if (!this.state.initialized) {
+          this.ace.getSession().setUndoManager(new ace.UndoManager());
+        }
+        this.ace.focus();
+        this.displayedVersion = obj.metadata.resourceVersion;
+        this.setState({initialized: true, stale: false});
+        this.resize_();
+      });
   }
 
   save() {
