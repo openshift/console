@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 
 import store from '../redux';
+import { getCRDs } from '../kinds';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { authSvc } from '../module/auth';
@@ -86,7 +87,7 @@ class App extends React.PureComponent {
             <Route path="/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
             <Route path="/ns/:ns/roles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="Role" />} />
-            <Route path="/ns/:ns/roles" exact component={props => <ResourceListPage {...props} kind="roles" />} />
+            <Route path="/ns/:ns/roles" exact component={props => <ResourceListPage {...props} plural="roles" />} />
 
             <Route path="/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
             <Route path="/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
@@ -99,6 +100,7 @@ class App extends React.PureComponent {
 
             <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} plural="namespaces" />} />
             <Route path="/namespaces" exact component={props => <ResourceListPage {...props} plural="namespaces" />} />
+            <Route path="/crds" exact component={props => <ResourceListPage {...props} plural="customresourcedefinitions" />} />
 
             <Route path="/nodes/:name" component={props => <ResourceDetailsPage {...props} plural="nodes" />} />
             <Route path="/nodes" exact component={props => <ResourceListPage {...props} plural="nodes" />} />
@@ -138,6 +140,7 @@ store.dispatch(featureActions.detectMultiClusterFlags);
 store.dispatch(featureActions.detectSecurityLabellerFlags);
 store.dispatch(featureActions.detectCloudServicesFlags);
 store.dispatch(k8sActions.getResources());
+store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});
 

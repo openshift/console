@@ -86,6 +86,7 @@ Firehose.propTypes = {
   isList: PropTypes.bool,
 };
 
+// Connect this?
 export class MultiFirehose extends FirehoseBase {
   constructor(props) {
     super(props);

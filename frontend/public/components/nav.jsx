@@ -162,6 +162,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="roles" name="Roles" isActive={isRolesActive} />
       <NavLink resource="rolebindings" name="Role Bindings" isActive={isRoleBindingsActive} />
       <NavLink resource="podvulns" name="Security Report" required="SECURITY_LABELLER" />
+      {/* <NavLink href="/crds" name="CRDs" /> */}
     </NavSection>
 
     {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user">

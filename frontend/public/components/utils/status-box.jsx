@@ -19,7 +19,7 @@ export const Loading = ({className}) => <div className={classNames('co-m-loader 
 
 export const LoadingInline = () => <Loading className="co-m-loader--inline" />;
 
-const LoadingBox = () => <Box><Loading /></Box>;
+export const LoadingBox = () => <Box><Loading /></Box>;
 
 export const EmptyBox = ({label}) => <Box>
   <div className="cos-text-center">No {label} Found</div>
