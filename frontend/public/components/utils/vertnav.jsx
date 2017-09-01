@@ -8,7 +8,6 @@ import { PodsPage } from '../pod';
 import { AsyncComponent } from '../utils/async';
 
 const editYamlComponent = (props) => <AsyncComponent loader={() => System.import('../edit-yaml').then(c => c.EditYAML)} obj={props} />;
-const editYamlWithSidebarComponent = (props) => <AsyncComponent loader={() => System.import('../edit-yaml-with-sidebar').then(c => c.EditYAML)} obj={props} />;
 
 class PodsComponent extends React.PureComponent {
   render() {
@@ -34,11 +33,6 @@ export const navFactory = {
     component,
   }),
   editYaml: (component = editYamlComponent) => ({
-    href: 'yaml',
-    name: 'YAML',
-    component: component,
-  }),
-  editYamlWithSidebar: (component = editYamlWithSidebarComponent) => ({
     href: 'yaml',
     name: 'YAML',
     component: component,

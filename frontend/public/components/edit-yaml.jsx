@@ -10,11 +10,19 @@ import 'brace/theme/clouds';
 import { k8sCreate, k8sUpdate, k8sKinds } from '../module/k8s';
 import { kindObj, history, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
+import { NetworkPolicySidebar } from './network-policy-sidebar';
+import { TEMPLATES } from '../yaml-templates';
 
 let id = 0;
 
 const getKind = (obj, kind) => {
   return obj.kind === 'Cluster' ? kind : obj.kind;
+};
+
+const generateObjToLoad = (kind, templateName) => {
+  const kindObj = _.get(k8sKinds, kind, {});
+  const kindStr = `${kindObj.apiVersion}.${kind}`;
+  return safeLoad(TEMPLATES[kindStr][templateName]);
 };
 
 /**
@@ -40,6 +48,8 @@ export class EditYAML extends SafetyFirst {
     this.displayedVersion = '0';
     // Default cancel action is browser back navigation
     this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
+    this.loadSampleYaml_ = this.loadSampleYaml_.bind(this);
+    this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
   }
 
   handleError(error) {
@@ -184,8 +194,7 @@ export class EditYAML extends SafetyFirst {
     });
   }
 
-  download () {
-    const data = this.doc.getValue();
+  download (data = this.doc.getValue()) {
     const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });
     let filename = 'k8s-object.yaml';
     try {
@@ -199,6 +208,17 @@ export class EditYAML extends SafetyFirst {
     saveAs(blob, filename);
   }
 
+  loadSampleYaml_(templateName = 'default') {
+    const sampleObj = generateObjToLoad(getKind(this.props.obj, this.props.kind), templateName);
+    this.setState({ sampleObj: sampleObj });
+    this.loadYaml(true, sampleObj);
+  }
+
+  downloadSampleYaml_ (templateName = 'default') {
+    const data = safeDump(generateObjToLoad(this.props.kind, templateName));
+    this.download(data);
+  }
+
   render () {
     if (_.isEmpty(this.props.obj)) {
       return <Loading/>;
@@ -208,6 +228,7 @@ export class EditYAML extends SafetyFirst {
       Our parent divs are meta objects created by third parties... but we need 100% height in all parents for flexbox :-/
       The current solution uses divs that are relative -> absolute -> flexbox pinning the button row with margin-top: auto
     */
+
     const {error, success, stale} = this.state;
     const {create, obj, showHeader=true} = this.props;
     const kind = getKind(obj, this.props.kind);
@@ -238,6 +259,9 @@ export class EditYAML extends SafetyFirst {
             </div>
           </div>
         </div>
+        {kind === 'NetworkPolicy' && <NetworkPolicySidebar
+          loadSampleYaml={this.loadSampleYaml_}
+          downloadSampleYaml={this.downloadSampleYaml_} />}
       </div>
     </div>;
   }
