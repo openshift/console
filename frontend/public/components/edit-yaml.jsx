@@ -215,7 +215,7 @@ export class EditYAML extends SafetyFirst {
   }
 
   downloadSampleYaml_ (templateName = 'default') {
-    const data = safeDump(generateObjToLoad(this.props.kind, templateName));
+    const data = safeDump(generateObjToLoad(getKind(this.props.obj, this.props.kind), templateName));
     this.download(data);
   }
 
