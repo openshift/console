@@ -6,7 +6,7 @@
   version "0.22.2"
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.2.tgz#539625874bc856086ad491c2fdc9b10c05ae308e"
 
-"@types/enzyme@2.x":
+"@types/enzyme@^2.8.6":
   version "2.8.6"
   resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-2.8.6.tgz#b508da0860b4fcda2ab851d600e5bfaf695775dd"
   dependencies:
@@ -1707,7 +1707,7 @@ entities@^1.1.1, entities@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
 
-enzyme@2.x:
+enzyme@^2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/enzyme/-/enzyme-2.9.1.tgz#07d5ce691241240fb817bf2c4b18d6e530240df6"
   dependencies:

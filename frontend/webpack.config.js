@@ -30,6 +30,8 @@ let config = {
         loader: 'ts-loader',
         options: {
           entryFileIsJs: true,
+          // Ignore until https://github.com/Microsoft/TypeScript/issues/18134 is resolved
+          ignoreDiagnostics: [2605, 2607]
         }
       },
       {
@@ -90,9 +92,10 @@ let config = {
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
   ],
   devtool: 'cheap-module-source-map',
+  stats: 'minimal',
 };
 
-/* Production settings  */
+/* Production settings */
 if (process.env.NODE_ENV === 'production') {
   config.output.filename = `[name]-bundle.${gitHash()}.min.js`;
   config.output.chunkFilename = `[name]-[chunkhash].${gitHash()}.min.js`;
@@ -101,6 +104,7 @@ if (process.env.NODE_ENV === 'production') {
     new UglifyJsPlugin({sourceMap: true}),
     new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify('production')}),
   ]);
+  config.stats = 'normal';
 }
 
 module.exports = config;

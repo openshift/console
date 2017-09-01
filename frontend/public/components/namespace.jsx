@@ -6,10 +6,14 @@ import { k8sGet, k8sKinds } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { Cog, Dropdown, Firehose, isNamespaced, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { BindingName, BindingsList, RoleLink } from './RBAC';
+import { AsyncComponent } from './utils/async';
+
+const SparklineWidget = (props) => (
+  <AsyncComponent loader={() => System.import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
+);
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);

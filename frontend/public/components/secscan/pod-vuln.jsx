@@ -5,8 +5,11 @@ import { ContainerRow } from '../pod';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
 import { MsgBox, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
 import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVulnerabilityFilter, severityBreakdownInfo } from '../../module/k8s/podvulns';
+import { AsyncComponent } from '../utils/async';
 
-import { DonutChart } from './donut-chart/donut-chart';
+const DonutChart = (props) => (
+  <AsyncComponent loader={() => System.import('./donut-chart/donut-chart').then(c => c.DonutChart)} {...props} />
+);
 
 const severityMap = {
   'P0': 'High',

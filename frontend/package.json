@@ -72,7 +72,7 @@
     "whatwg-fetch": "2.x"
   },
   "devDependencies": {
-    "@types/enzyme": "2.x",
+    "@types/enzyme": "^2.8.6",
     "@types/immutable": "3.x",
     "@types/jest": "20.x",
     "@types/lodash": "4.x",
@@ -82,7 +82,7 @@
     "@types/react-helmet": "5.x",
     "chromedriver": "2.x",
     "css-loader": "0.28.x",
-    "enzyme": "2.x",
+    "enzyme": "^2.9.1",
     "eslint": "4.x",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-react": "7.x",

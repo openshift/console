@@ -4,10 +4,10 @@ import * as PropTypes from 'prop-types';
 import { Route, Switch } from 'react-router-dom';
 
 import { StatusBox, RelativeLink } from './index';
-import { EditYAML } from '../edit-yaml';
 import { PodsPage } from '../pod';
+import { AsyncComponent } from '../utils/async';
 
-const editYamlComponent = props => <EditYAML obj={props} />;
+const editYamlComponent = (props) => <AsyncComponent loader={() => System.import('../edit-yaml').then(c => c.EditYAML)} obj={props} />;
 
 class PodsComponent extends React.PureComponent {
   render() {
