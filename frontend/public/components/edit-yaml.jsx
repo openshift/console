@@ -260,6 +260,7 @@ export class EditYAML extends SafetyFirst {
           </div>
         </div>
         {kind === 'NetworkPolicy' && <NetworkPolicySidebar
+          style={{height: this.state.height}}
           loadSampleYaml={this.loadSampleYaml_}
           downloadSampleYaml={this.downloadSampleYaml_} />}
       </div>

@@ -121,7 +121,8 @@ export class NetworkPolicySidebar extends React.Component {
   }
 
   render() {
-    const {loadSampleYaml, downloadSampleYaml} = this.props;
+    const {loadSampleYaml, downloadSampleYaml, style} = this.props;
+    const {height} = style;
     const {showSidebar} = this.state;
 
     if (!showSidebar) {
@@ -132,7 +133,7 @@ export class NetworkPolicySidebar extends React.Component {
       </div>;
     }
 
-    return <div className="co-p-cluster__sidebar">
+    return <div className="co-p-cluster__sidebar" style={{height}}>
       <div className="co-network-policy-sidebar co-m-pane__body">
         <div className="pull-right co-network-policy-sidebar__close-btn" onClick={() => this.setState({showSidebar: !showSidebar})}>
           <img src={closeBtnImg} className="co-network-policy-sidebar__close-btn"/>
