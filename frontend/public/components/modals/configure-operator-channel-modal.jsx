@@ -33,7 +33,6 @@ class ConfigureOperatorChannel extends PromiseComponent {
 
   render() {
     const items = {
-      'tectonic-1.6': 'Tectonic-1.6',
       'tectonic-1.7-preproduction': 'Tectonic-1.7-preproduction',
       'tectonic-1.7-production': 'Tectonic-1.7-production',
     };
