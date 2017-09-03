@@ -64,6 +64,7 @@ export class DropdownMixin extends React.PureComponent {
 const AutocompleteInput = props => <input {...props} className="dropdown__autocomplete" autoFocus={true} type="text" />;
 const Caret = () => <span className="caret"></span>;
 
+/** @augments {React.Component<any>} */
 export class Dropdown extends DropdownMixin {
   constructor (props) {
     super(props);
