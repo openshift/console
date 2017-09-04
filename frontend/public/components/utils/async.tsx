@@ -10,6 +10,7 @@ export class AsyncComponent extends SafetyFirst {
   props: AsyncComponentProps;
 
   private retryCount: number = 0;
+  private maxRetries: number = 25;
 
   componentDidMount() {
     super.componentDidMount();
@@ -34,7 +35,8 @@ export class AsyncComponent extends SafetyFirst {
 
   get retryAfter(): number {
     this.retryCount++;
-    return 100 * (Math.pow(this.retryCount, 2));
+    const base = this.retryCount < this.maxRetries ? this.retryCount : this.maxRetries;
+    return 100 * (Math.pow(base, 2));
   }
 
   render() {
@@ -46,7 +48,7 @@ export class AsyncComponent extends SafetyFirst {
   }
 }
 
-export enum AsyncComponentError {
+enum AsyncComponentError {
   ComponentNotFound = 'COMPONENT_NOT_FOUND',
 }
 
