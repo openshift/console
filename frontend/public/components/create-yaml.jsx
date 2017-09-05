@@ -155,9 +155,6 @@ class CreateYAML_ extends SafetyFirst {
     }
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = namespace;
-    if (obj.kind === 'NetworkPolicy') {
-      return <AsyncComponent loader={() => System.import('./edit-yaml-with-sidebar').then(c => c.EditYAMLWithSidebar)} obj={obj} create={true} kind={kind.kind} />;
-    }
     return <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} />;
   }
 }
