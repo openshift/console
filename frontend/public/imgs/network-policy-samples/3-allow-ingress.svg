@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="280px" height="130px" viewBox="0 0 280 130" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>diagram__3</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="55" height="10" rx="5"></rect>
+        <rect id="path-2" x="0" y="0" width="72" height="10" rx="5"></rect>
+        <rect id="path-3" x="0" y="0" width="44" height="10" rx="5"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="diagram__3">
+            <g>
+                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="0" width="280" height="130"></rect>
+                <text id="namespace:-target-ns" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" fill="#872C6C">
+                    <tspan x="52.3679878" y="128">namespace: </tspan>
+                    <tspan x="95.2799878" y="128" font-family="SourceSansPro-SemiboldIt, Source Sans Pro" font-style="italic">target-ns</tspan>
+                </text>
+                <text id="UDP/88" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="6" font-weight="normal" fill="#999999">
+                    <tspan x="10.7999878" y="59">UDP/88</tspan>
+                </text>
+                <text id="TCP/80" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="6" font-weight="500" fill="#2FC98E">
+                    <tspan x="72.7999878" y="81">TCP/80</tspan>
+                </text>
+                <text id="TCP/443" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="6" font-weight="500" fill="#2FC98E">
+                    <tspan x="72.7999878" y="89">TCP/443</tspan>
+                </text>
+                <polygon id="Polygon-5-Copy-25" fill="#AAAAAA" transform="translate(26.299988, 66.000000) rotate(-270.000000) translate(-26.299988, -66.000000) " points="26.2999878 63 27.7999878 69 24.7999878 69"></polygon>
+                <text id="TCP/80" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="6" font-weight="normal" fill="#999999">
+                    <tspan x="72.7999878" y="53">TCP/80</tspan>
+                </text>
+                <g id="Group-24" transform="translate(105.799988, 53.000000)">
+                    <text id="TCP/80" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="6" font-weight="normal" fill="#999999">
+                        <tspan x="1" y="6">TCP/80</tspan>
+                    </text>
+                    <polygon id="Polygon-5-Copy-25" fill="#AAAAAA" transform="translate(3.000000, 12.000000) scale(-1, 1) rotate(-270.000000) translate(-3.000000, -12.000000) " points="3 9 4.73205081 15 1.26794919 15"></polygon>
+                </g>
+                <g id="Group-8" opacity="0.5" transform="translate(33.799988, 17.000000)">
+                    <g id="Group-Copy-6">
+                        <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="13.026">P</tspan>
+                        </text>
+                        <circle id="Oval-1-Copy-31" fill="#999999" cx="9" cy="9.763" r="9"></circle>
+                        <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="14.026">P</tspan>
+                        </text>
+                    </g>
+                    <g id="Group-13" transform="translate(23.000000, 5.000000)">
+                        <g id="Rectangle-2">
+                            <use fill="#F5F5F5" fill-rule="evenodd" xlink:href="#path-1"></use>
+                            <rect stroke="#E5E5E5" stroke-width="1" x="0.5" y="0.5" width="54" height="9" rx="4.5"></rect>
+                        </g>
+                        <text id="app-=-foobar" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="8" font-weight="normal" line-spacing="9" fill="#999999">
+                            <tspan x="6" y="8.17602539">app</tspan>
+                            <tspan x="18.664" y="8" font-family="SourceSansPro-Bold, Source Sans Pro" font-weight="bold"> = </tspan>
+                            <tspan x="26.528" y="8.17602539">foobar</tspan>
+                        </text>
+                    </g>
+                </g>
+                <g id="Group-27" transform="translate(68.500000, 84.500000) scale(1, -1) translate(-68.500000, -84.500000) translate(66.000000, 75.000000)">
+                    <path d="M2.5,2 L2.5,14" id="Line" stroke="#2FC98E" stroke-width="1.5" stroke-linecap="square"></path>
+                    <polygon id="Polygon-5-Copy-25" fill-opacity="0" fill="#2FC98E" points="2.5 0 4 6 1 6"></polygon>
+                    <polygon id="Polygon-5-Copy-25" fill="#2FC98E" points="2.5 19 0.5 13 4.5 13"></polygon>
+                </g>
+                <g id="Group-8" transform="translate(33.799988, 93.000000)">
+                    <g id="Group-Copy-6">
+                        <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="13.026">P</tspan>
+                        </text>
+                        <circle id="Oval-1-Copy-31" fill="#999999" cx="9" cy="9.763" r="9"></circle>
+                        <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="14.026">P</tspan>
+                        </text>
+                    </g>
+                    <g id="Group-13" transform="translate(23.000000, 5.000000)">
+                        <g id="Rectangle-2">
+                            <use fill="#F5F5F5" fill-rule="evenodd" xlink:href="#path-2"></use>
+                            <rect stroke="#E5E5E5" stroke-width="1" x="0.5" y="0.5" width="71" height="9" rx="4.5"></rect>
+                        </g>
+                        <text id="role-=-monitoring" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" line-spacing="9">
+                            <tspan x="6" y="8" fill="#333333">role</tspan>
+                            <tspan x="19.6" y="8" fill="#999999"> = </tspan>
+                            <tspan x="26.984" y="8" fill="#333333">monitoring</tspan>
+                        </text>
+                    </g>
+                </g>
+                <g id="Group-8" transform="translate(33.799988, 55.000000)">
+                    <g id="Group-Copy-6">
+                        <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="13.026">P</tspan>
+                        </text>
+                        <circle id="Oval-1-Copy-31" fill="#30C2B6" cx="9" cy="9.763" r="9"></circle>
+                        <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="14.026">P</tspan>
+                        </text>
+                    </g>
+                    <g id="Group-13" transform="translate(23.000000, 5.000000)">
+                        <g id="Rectangle-2">
+                            <use fill="#F5F5F5" fill-rule="evenodd" xlink:href="#path-3"></use>
+                            <rect stroke="#E5E5E5" stroke-width="1" x="0.5" y="0.5" width="43" height="9" rx="4.5"></rect>
+                        </g>
+                        <text id="app-=-api" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" line-spacing="9">
+                            <tspan x="6" y="8" fill="#30C2B6">app</tspan>
+                            <tspan x="19.208" y="8" fill="#999999"> = </tspan>
+                            <tspan x="26.592" y="8" fill="#30C2B6">api</tspan>
+                        </text>
+                    </g>
+                </g>
+                <path d="M139.999988,0 L139.999988,130" id="Line-2" stroke="#CCCCCC" stroke-width="0.5" stroke-linecap="square"></path>
+                <g id="Group" transform="translate(154.000000, 55.000000)">
+                    <text id="other-namespaces" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" fill="#999999">
+                        <tspan x="0.855987793" y="73">other namespaces</tspan>
+                    </text>
+                    <g id="Group-2" opacity="0.5" transform="translate(29.000000, 0.000000)">
+                        <g id="Group-Copy-6">
+                            <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                                <tspan x="5" y="13.026">P</tspan>
+                            </text>
+                            <circle id="Oval-1-Copy-31" fill="#999999" cx="9" cy="9.763" r="9"></circle>
+                            <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                                <tspan x="5" y="14.026">P</tspan>
+                            </text>
+                        </g>
+                        <text id="Any-pods" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="8" font-weight="normal" line-spacing="9" fill="#999999">
+                            <tspan x="23" y="13">Any pods</tspan>
+                        </text>
+                    </g>
+                </g>
+                <path d="M111.799988,65 L179.009987,65" id="Line-Copy-8" stroke="#AAAAAA" stroke-width="0.75" stroke-dasharray="3"></path>
+                <path d="M143.785714,64.6941964 C143.785714,63.9754428 143.59152,63.3169673 143.203125,62.71875 L138.154018,67.7611607 C138.765628,68.1584841 139.428568,68.3571429 140.142857,68.3571429 C140.638395,68.3571429 141.110489,68.2600456 141.559152,68.0658482 C142.007815,67.8716508 142.395088,67.6116088 142.720982,67.2857143 C143.046877,66.9598198 143.305803,66.5703148 143.497768,66.1171875 C143.689733,65.6640602 143.785714,65.1897346 143.785714,64.6941964 Z M137.095982,66.6964286 L142.151786,61.6473214 C141.549104,61.2410694 140.879468,61.0379464 140.142857,61.0379464 C139.48214,61.0379464 138.872771,61.2008912 138.314732,61.5267857 C137.756694,61.8526802 137.314734,62.2968722 136.988839,62.859375 C136.662945,63.4218778 136.5,64.0334788 136.5,64.6941964 C136.5,65.4174143 136.698659,66.0848184 137.095982,66.6964286 Z M145.285714,64.6941964 C145.285714,65.3950928 145.149555,66.064729 144.877232,66.703125 C144.604909,67.341521 144.239958,67.8906227 143.782366,68.3504464 C143.324774,68.8102702 142.777905,69.1763379 142.141741,69.4486607 C141.505577,69.7209835 140.839289,69.8571429 140.142857,69.8571429 C139.446425,69.8571429 138.780137,69.7209835 138.143973,69.4486607 C137.507809,69.1763379 136.96094,68.8102702 136.503348,68.3504464 C136.045757,67.8906227 135.680805,67.341521 135.408482,66.703125 C135.136159,66.064729 135,65.3950928 135,64.6941964 C135,63.9933001 135.136159,63.32478 135.408482,62.6886161 C135.680805,62.0524522 136.045757,61.5044666 136.503348,61.0446429 C136.96094,60.5848191 137.507809,60.2187514 138.143973,59.9464286 C138.780137,59.6741058 139.446425,59.5379464 140.142857,59.5379464 C140.839289,59.5379464 141.505577,59.6741058 142.141741,59.9464286 C142.777905,60.2187514 143.324774,60.5848191 143.782366,61.0446429 C144.239958,61.5044666 144.604909,62.0524522 144.877232,62.6886161 C145.149555,63.32478 145.285714,63.9933001 145.285714,64.6941964 Z" id="" fill="#D64456"></path>
+                <g id="Group-47" transform="translate(62.000000, 35.000000)">
+                    <g id="Group-27" transform="translate(3.799988, 1.000000)">
+                        <path d="M2.375,2 L2.375,17" id="Line" stroke="#AAAAAA" stroke-width="0.75" stroke-linecap="square" stroke-dasharray="3"></path>
+                        <polygon id="Polygon-5-Copy-25" fill-opacity="0" fill="#2FC98E" points="2.5 0 4.23205081 6 0.767949192 6"></polygon>
+                        <polygon id="Polygon-5-Copy-25" fill="#AAAAAA" points="2.5 19 0.767949192 13 4.23205081 13"></polygon>
+                    </g>
+                    <path d="M9.58570208,5.69419643 C9.58570208,4.97544283 9.39150759,4.31696728 9.00311279,3.71875 L3.95400565,8.76116071 C4.56561585,9.15848413 5.22855565,9.35714286 5.94284494,9.35714286 C6.43838313,9.35714286 6.91047662,9.26004561 7.35913958,9.06584821 C7.80780254,8.87165081 8.19507545,8.61160877 8.52096994,8.28571429 C8.84686442,7.9598198 9.1057904,7.57031477 9.29775565,7.1171875 C9.4897209,6.66406023 9.58570208,6.18973462 9.58570208,5.69419643 Z M2.89596994,7.69642857 L7.95177351,2.64732143 C7.34909192,2.2410694 6.67945576,2.03794643 5.94284494,2.03794643 C5.28212735,2.03794643 4.67275844,2.20089123 4.11471994,2.52678571 C3.55668143,2.8526802 3.11472157,3.29687219 2.78882708,3.859375 C2.46293259,4.42187781 2.29998779,5.03347884 2.29998779,5.69419643 C2.29998779,6.41741433 2.49864652,7.08481837 2.89596994,7.69642857 Z M11.0857021,5.69419643 C11.0857021,6.39509279 10.9495427,7.06472895 10.6772199,7.703125 C10.4048971,8.34152105 10.0399454,8.8906227 9.58235386,9.35044643 C9.12476229,9.81027016 8.57789276,10.1763379 7.94172886,10.4486607 C7.30556497,10.7209835 6.63927699,10.8571429 5.94284494,10.8571429 C5.24641288,10.8571429 4.5801249,10.7209835 3.94396101,10.4486607 C3.30779711,10.1763379 2.76092758,9.81027016 2.30333601,9.35044643 C1.84574443,8.8906227 1.48079273,8.34152105 1.20846994,7.703125 C0.936147146,7.06472895 0.799987793,6.39509279 0.799987793,5.69419643 C0.799987793,4.99330007 0.936147146,4.32477997 1.20846994,3.68861607 C1.48079273,3.05245218 1.84574443,2.50446658 2.30333601,2.04464286 C2.76092758,1.58481913 3.30779711,1.21875136 3.94396101,0.946428571 C4.5801249,0.674105781 5.24641288,0.537946429 5.94284494,0.537946429 C6.63927699,0.537946429 7.30556497,0.674105781 7.94172886,0.946428571 C8.57789276,1.21875136 9.12476229,1.58481913 9.58235386,2.04464286 C10.0399454,2.50446658 10.4048971,3.05245218 10.6772199,3.68861607 C10.9495427,4.32477997 11.0857021,4.99330007 11.0857021,5.69419643 Z" id="" fill="#D64456"></path>
+                </g>
+                <path d="M24.7999878,66 C20.6235809,66 9.79998779,66.7367712 9.79998779,84.5 C9.79998779,102.263229 23.6235809,103 27.7999878,103" id="Baseline" stroke="#AAAAAA" stroke-width="0.75" stroke-dasharray="3"></path>
+                <path d="M13.5857021,84.6941964 C13.5857021,83.9754428 13.3915076,83.3169673 13.0031128,82.71875 L7.95400565,87.7611607 C8.56561585,88.1584841 9.22855565,88.3571429 9.94284494,88.3571429 C10.4383831,88.3571429 10.9104766,88.2600456 11.3591396,88.0658482 C11.8078025,87.8716508 12.1950754,87.6116088 12.5209699,87.2857143 C12.8468644,86.9598198 13.1057904,86.5703148 13.2977557,86.1171875 C13.4897209,85.6640602 13.5857021,85.1897346 13.5857021,84.6941964 Z M6.89596994,86.6964286 L11.9517735,81.6473214 C11.3490919,81.2410694 10.6794558,81.0379464 9.94284494,81.0379464 C9.28212735,81.0379464 8.67275844,81.2008912 8.11471994,81.5267857 C7.55668143,81.8526802 7.11472157,82.2968722 6.78882708,82.859375 C6.46293259,83.4218778 6.29998779,84.0334788 6.29998779,84.6941964 C6.29998779,85.4174143 6.49864652,86.0848184 6.89596994,86.6964286 Z M15.0857021,84.6941964 C15.0857021,85.3950928 14.9495427,86.064729 14.6772199,86.703125 C14.4048971,87.341521 14.0399454,87.8906227 13.5823539,88.3504464 C13.1247623,88.8102702 12.5778928,89.1763379 11.9417289,89.4486607 C11.305565,89.7209835 10.639277,89.8571429 9.94284494,89.8571429 C9.24641288,89.8571429 8.5801249,89.7209835 7.94396101,89.4486607 C7.30779711,89.1763379 6.76092758,88.8102702 6.30333601,88.3504464 C5.84574443,87.8906227 5.48079273,87.341521 5.20846994,86.703125 C4.93614715,86.064729 4.79998779,85.3950928 4.79998779,84.6941964 C4.79998779,83.9933001 4.93614715,83.32478 5.20846994,82.6886161 C5.48079273,82.0524522 5.84574443,81.5044666 6.30333601,81.0446429 C6.76092758,80.5848191 7.30779711,80.2187514 7.94396101,79.9464286 C8.5801249,79.6741058 9.24641288,79.5379464 9.94284494,79.5379464 C10.639277,79.5379464 11.305565,79.6741058 11.9417289,79.9464286 C12.5778928,80.2187514 13.1247623,80.5848191 13.5823539,81.0446429 C14.0399454,81.5044666 14.4048971,82.0524522 14.6772199,82.6886161 C14.9495427,83.32478 15.0857021,83.9933001 15.0857021,84.6941964 Z" id="" fill="#D64456"></path>
+            </g>
+        </g>
+    </g>
+</svg>

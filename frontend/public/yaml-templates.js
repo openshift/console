@@ -1,8 +1,8 @@
 export const TEMPLATES = {};
 
-export const registerTemplate = (kindString, template) => {
-  if (TEMPLATES[kindString]) {
-    throw new Error(`${kindString} has already been registered`);
+export const registerTemplate = (kindString, template, templateName = 'default') => {
+  if (!_.has(TEMPLATES, kindString)) {
+    TEMPLATES[kindString] = {};
   }
-  TEMPLATES[kindString] = template;
+  TEMPLATES[kindString][templateName] = template;
 };

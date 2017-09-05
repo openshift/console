@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="280px" height="130px" viewBox="0 0 280 130" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>diagram__7</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="68" height="10" rx="5"></rect>
+        <rect id="path-2" x="57.7999878" y="60" width="46" height="10" rx="5"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="diagram__7">
+            <g id="diagram_7" transform="translate(-1.000000, 0.000000)">
+                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="0" width="280" height="130"></rect>
+                <text id="namespace:-target-ns" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" fill="#872C6C">
+                    <tspan x="53.568" y="128">namespace: </tspan>
+                    <tspan x="96.48" y="128" font-family="SourceSansPro-SemiboldIt, Source Sans Pro" font-style="italic">target-ns</tspan>
+                </text>
+                <text id="namespace:" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" fill="#999999">
+                    <tspan x="156" y="58">namespace: </tspan>
+                </text>
+                <g id="Group-13" transform="translate(202.000000, 50.000000)">
+                    <g id="Rectangle-2">
+                        <use fill="#F5F5F5" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <rect stroke="#E5E5E5" stroke-width="1" x="0.5" y="0.5" width="67" height="9" rx="4.5"></rect>
+                    </g>
+                    <text id="env-=-production" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" line-spacing="9">
+                        <tspan x="5" y="8" fill="#128E72">env</tspan>
+                        <tspan x="17.496" y="8" fill="#999999"> = </tspan>
+                        <tspan x="24.88" y="8" fill="#128E72">production</tspan>
+                    </text>
+                </g>
+                <g id="Group-Copy-6" opacity="0" transform="translate(199.799988, 20.000000)">
+                    <circle id="Oval-1-Copy-32" stroke="#FFFFFF" fill="#6EC654" cx="21" cy="9.763" r="9"></circle>
+                    <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                        <tspan x="5" y="13.026">P</tspan>
+                    </text>
+                    <circle id="Oval-1-Copy-30" stroke="#FFFFFF" fill="#6EC654" cx="15" cy="9.763" r="9"></circle>
+                    <circle id="Oval-1-Copy-31" stroke="#FFFFFF" fill="#6EC654" cx="9" cy="9.763" r="9"></circle>
+                    <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                        <tspan x="6" y="14.026">P</tspan>
+                    </text>
+                </g>
+                <g id="Group-Copy-6" opacity="0" transform="translate(199.799988, 90.000000)">
+                    <circle id="Oval-1-Copy-32" stroke="#FFFFFF" fill="#F35D6B" cx="21" cy="9.763" r="9"></circle>
+                    <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                        <tspan x="5" y="13.026">P</tspan>
+                    </text>
+                    <circle id="Oval-1-Copy-30" stroke="#FFFFFF" fill="#F35D6B" cx="15" cy="9.763" r="9"></circle>
+                    <circle id="Oval-1-Copy-31" stroke="#FFFFFF" fill="#F35D6B" cx="9" cy="9.763" r="9"></circle>
+                    <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                        <tspan x="6" y="14.026">P</tspan>
+                    </text>
+                </g>
+                <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                    <tspan x="39.7999878" y="68.026">P</tspan>
+                </text>
+                <circle id="Oval-1-Copy-31" fill="#30C2B6" cx="43.7999878" cy="64.763" r="9"></circle>
+                <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                    <tspan x="39.7999878" y="69.026">P</tspan>
+                </text>
+                <g id="Rectangle-2">
+                    <use fill="#F5F5F5" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <rect stroke="#E5E5E5" stroke-width="1" x="58.2999878" y="60.5" width="45" height="9" rx="4.5"></rect>
+                </g>
+                <text id="app-=-web" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" line-spacing="9">
+                    <tspan x="63.7999878" y="68" fill="#30C2B6">app</tspan>
+                    <tspan x="77.0079878" y="68" fill="#999999"> = </tspan>
+                    <tspan x="84.3919878" y="68" fill="#30C2B6">web</tspan>
+                </text>
+                <path d="M141,0 L141.000012,130" id="Line-2" stroke="#CCCCCC" stroke-width="0.5" stroke-linecap="square"></path>
+                <path d="M141,65 L281.5,65" id="Line-3" stroke="#CCCCCC" stroke-width="0.5" stroke-linecap="square"></path>
+                <g id="Group" transform="translate(183.000000, 18.000000)">
+                    <g id="Group-Copy-6" transform="translate(0.799988, 0.000000)">
+                        <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="13.026">P</tspan>
+                        </text>
+                        <circle id="Oval-1-Copy-31" fill="#999999" cx="9" cy="9.763" r="9"></circle>
+                        <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="14.026">P</tspan>
+                        </text>
+                    </g>
+                    <text id="Any-pods" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" line-spacing="9" fill="#333333">
+                        <tspan x="23.7999878" y="13">Any pods</tspan>
+                    </text>
+                </g>
+                <text id="other-namespaces" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="8" font-weight="500" fill="#999999">
+                    <tspan x="156.056" y="128">other namespaces</tspan>
+                </text>
+                <g id="Group-4" transform="translate(183.000000, 88.000000)">
+                    <g id="Group-Copy-6" transform="translate(0.799988, 0.000000)">
+                        <text id="P-Copy-27" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="13.026">P</tspan>
+                        </text>
+                        <circle id="Oval-1-Copy-31" fill="#CCCCCC" cx="9" cy="9.763" r="9"></circle>
+                        <text id="P-Copy-29" font-family="SourceSansPro-Semibold, Source Sans Pro" font-size="13" font-weight="500" fill="#FFFFFF">
+                            <tspan x="5" y="14.026">P</tspan>
+                        </text>
+                    </g>
+                    <text id="Any-pods" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="8" font-weight="normal" line-spacing="9" fill="#999999">
+                        <tspan x="23.7999878" y="13">Any pods</tspan>
+                    </text>
+                </g>
+                <path d="M179,27.0595238 C163.971067,27.0595238 145.483014,27 127.100196,27 C95.1621479,27 75,38.8791728 75,51" id="Baseline" stroke="#2FC98E" stroke-width="1.5"></path>
+                <path d="M179,75.0595238 C163.891126,75.0595238 144.320689,75 125.84009,75 C93.7321593,75 74,85.8791728 74,98" id="Baseline" stroke="#AAAAAA" stroke-width="0.75" stroke-dasharray="3" transform="translate(126.500000, 86.500000) scale(1, -1) translate(-126.500000, -86.500000) "></path>
+                <polygon id="Polygon-5-Copy-25" fill="#2FC98E" points="74.7999878 57 72.7999878 51 76.7999878 51"></polygon>
+                <path d="M144.785714,97.6941964 C144.785714,96.9754428 144.59152,96.3169673 144.203125,95.71875 L139.154018,100.761161 C139.765628,101.158484 140.428568,101.357143 141.142857,101.357143 C141.638395,101.357143 142.110489,101.260046 142.559152,101.065848 C143.007815,100.871651 143.395088,100.611609 143.720982,100.285714 C144.046877,99.9598198 144.305803,99.5703148 144.497768,99.1171875 C144.689733,98.6640602 144.785714,98.1897346 144.785714,97.6941964 Z M138.095982,99.6964286 L143.151786,94.6473214 C142.549104,94.2410694 141.879468,94.0379464 141.142857,94.0379464 C140.48214,94.0379464 139.872771,94.2008912 139.314732,94.5267857 C138.756694,94.8526802 138.314734,95.2968722 137.988839,95.859375 C137.662945,96.4218778 137.5,97.0334788 137.5,97.6941964 C137.5,98.4174143 137.698659,99.0848184 138.095982,99.6964286 Z M146.285714,97.6941964 C146.285714,98.3950928 146.149555,99.064729 145.877232,99.703125 C145.604909,100.341521 145.239958,100.890623 144.782366,101.350446 C144.324774,101.81027 143.777905,102.176338 143.141741,102.448661 C142.505577,102.720984 141.839289,102.857143 141.142857,102.857143 C140.446425,102.857143 139.780137,102.720984 139.143973,102.448661 C138.507809,102.176338 137.96094,101.81027 137.503348,101.350446 C137.045757,100.890623 136.680805,100.341521 136.408482,99.703125 C136.136159,99.064729 136,98.3950928 136,97.6941964 C136,96.9933001 136.136159,96.32478 136.408482,95.6886161 C136.680805,95.0524522 137.045757,94.5044666 137.503348,94.0446429 C137.96094,93.5848191 138.507809,93.2187514 139.143973,92.9464286 C139.780137,92.6741058 140.446425,92.5379464 141.142857,92.5379464 C141.839289,92.5379464 142.505577,92.6741058 143.141741,92.9464286 C143.777905,93.2187514 144.324774,93.5848191 144.782366,94.0446429 C145.239958,94.5044666 145.604909,95.0524522 145.877232,95.6886161 C146.149555,96.32478 146.285714,96.9933001 146.285714,97.6941964 Z" id="" fill="#D64456"></path>
+                <polygon id="Polygon-5-Copy-25" fill="#AAAAAA" points="74.5320386 73 76.2640894 79 72.7999878 79"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

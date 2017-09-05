@@ -132,7 +132,7 @@ class CreateYAML_ extends SafetyFirst {
     const apiVersion = kind.apiVersion || 'v1';
     const namespace = params.ns || 'default';
     const kindStr = `${apiVersion}.${kind.kind}`;
-    const template = TEMPLATES[kindStr];
+    const template = TEMPLATES[kindStr].default;
     let obj;
     if (template) {
       obj = safeLoad(template);

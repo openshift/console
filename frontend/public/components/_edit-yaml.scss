@@ -1,3 +1,10 @@
+.yaml-editor-header {
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
+  height: 45px;
+  padding: 10px;
+}
+
 .yaml-editor {
   position: relative;
 }
@@ -13,8 +20,8 @@
 
 .yaml-editor--buttons {
   background: white;
-  z-index: 10;
   border-top: 1px solid #ddd;
   padding: 20px;
   margin-top: auto;
+  z-index: 10;
 }
