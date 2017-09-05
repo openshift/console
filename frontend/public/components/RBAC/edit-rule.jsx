@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 
 import { k8sKinds, k8sGet, k8sUpdate } from '../../module/k8s';
 import { errorModal } from '../modals';
-import { Heading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar } from '../utils';
+import { Heading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar, LoadingBox } from '../utils';
+import k8sActions from '../../module/k8s/k8s-actions';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);
@@ -50,7 +51,7 @@ const RadioButton = ({name, value, label, text, onChange, activeValue}) => <div>
 const HRMinor = () => <hr className="rbac-minor" />;
 const HRMajor = () => <hr className="rbac-major" />;
 
-const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
+const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResources: k8sActions.getResources}) (
   class EditRule_ extends PromiseComponent {
     constructor (props) {
       super(props);
@@ -79,6 +80,10 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
 
       this.kind = props.namespace ? k8sKinds.Role : k8sKinds.ClusterRole;
       this.getResource();
+    }
+
+    componentWillMount() {
+      this.props.getResources();
     }
 
     getResource () {
@@ -356,10 +361,11 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
                 <HRMinor />
                 <p><label>Safe Resources</label></p>
                 <div className="newspaper-columns">
-                  {
-                    (safeResources || [])
+                  { safeResources
+                    ? safeResources
                       .filter(r=> namespace ? namespacedSet.has(r) : true )
                       .map(r => <Checkbox value={r} onChange={this.toggleResource} checked={this.isResourceSelected(r)} key={r} />)
+                    : <LoadingBox />
                   }
                 </div>
               </div>
@@ -374,10 +380,11 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {})(
                   <label>Admin Resources</label>
                 </p>
                 <div className="newspaper-columns">
-                  {
-                    (adminResources || [])
+                  { adminResources
+                    ? adminResources
                       .filter(r=> namespace ? namespacedSet.has(r) : true)
                       .map(r => <Checkbox value={r} onChange={this.toggleResource} checked={this.isResourceSelected(r)} key={r} />)
+                    : <LoadingBox />
                   }
                 </div>
               </div>

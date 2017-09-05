@@ -9,7 +9,6 @@ import { getCRDs } from '../kinds';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { authSvc } from '../module/auth';
-import k8sActions from '../module/k8s/k8s-actions';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
@@ -139,7 +138,6 @@ store.dispatch(featureActions.detectPrometheusFlags);
 store.dispatch(featureActions.detectMultiClusterFlags);
 store.dispatch(featureActions.detectSecurityLabellerFlags);
 store.dispatch(featureActions.detectCloudServicesFlags);
-store.dispatch(k8sActions.getResources());
 store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});
