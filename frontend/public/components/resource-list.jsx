@@ -9,10 +9,10 @@ import { LoadingBox } from './utils';
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
 
 export const ResourceListPage = connectToPlural(props => {
-  const { ns, kindObj, findingKinds } = allParams(props);
+  const { ns, kindObj, kindsInFlight } = allParams(props);
 
   if (!kindObj) {
-    if (findingKinds) {
+    if (kindsInFlight) {
       return <LoadingBox />;
     }
     window.location = '404';
@@ -35,10 +35,10 @@ export const ResourceListPage = connectToPlural(props => {
 ResourceListPage.displayName = 'ResourceListPage';
 
 export const ResourceDetailsPage = connectToPlural(props => {
-  const { name, ns, kindObj, findingKinds } = allParams(props);
+  const { name, ns, kindObj, kindsInFlight } = allParams(props);
 
   if (!name || !kindObj) {
-    if (findingKinds) {
+    if (kindsInFlight) {
       return <LoadingBox />;
     }
     window.location = '404';
