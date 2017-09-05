@@ -6,9 +6,13 @@ import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
-import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
+import { AsyncComponent } from './utils/async';
+
+const SparklineWidget = (props) => (
+  <AsyncComponent loader={() => System.import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
+);
 
 const menuActions = Cog.factory.common;
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);

@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 
 import { safeLoad } from 'js-yaml';
 import { SafetyFirst } from './safety-first';
-import { EditYAML } from './edit-yaml';
 import { TEMPLATES } from '../yaml-templates';
 import { kindFromPlural } from '../kinds';
+import { AsyncComponent } from './utils/async';
 
 const getDefaultType = (type, format) => {
   switch (type) {
@@ -155,7 +155,7 @@ class CreateYAML_ extends SafetyFirst {
     }
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = namespace;
-    return <EditYAML obj={obj} create={true} kind={kind.kind} />;
+    return <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} />;
   }
 }
 

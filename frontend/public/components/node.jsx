@@ -4,8 +4,12 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { SparklineWidget } from './sparkline-widget/sparkline-widget';
 import { Cog, navFactory, kindObj, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
+import { AsyncComponent } from './utils/async';
+
+const SparklineWidget = (props) => (
+  <AsyncComponent loader={() => System.import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
+);
 
 const makeNodeScheduable = (resourceKind, resource) => {
   const patch = [{ op: 'replace', path: '/spec/unschedulable', value: false }];

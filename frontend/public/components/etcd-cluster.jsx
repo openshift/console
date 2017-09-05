@@ -9,7 +9,7 @@ import { ColHead, List, ListHeader, ListPage, DetailsPage, ResourceRow } from '.
 import { PodsPage } from './pod';
 import { Cog, navFactory, ResourceCog, ResourceIcon, Timestamp, Selector, resourcePath, pluralize, LoadingInline} from './utils';
 import { registerTemplate } from '../yaml-templates';
-import { EditYAML } from './edit-yaml';
+import { AsyncComponent } from './utils/async';
 
 registerTemplate('v1beta1.EtcdCluster', `apiVersion: etcd.coreos.com/v1beta1
 kind: Cluster
@@ -273,7 +273,7 @@ export const EtcdClustersDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[
     details(EtcdClusterDetails),
-    editYaml((props) => <EditYAML obj={props} kind="EtcdCluster" />),
+    editYaml((props) => <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={props} kind="EtcdCluster" />),
     pods(({metadata: {name}}) => <PodsPage showTitle={false} selector={{matchLabels: {'etcd_cluster': name}}} />)
   ]}
 />;

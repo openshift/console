@@ -1,5 +1,9 @@
 .co-sparkline-wrapper {
   margin: -15px -15px 15px;
+
+  .row .col-md-4 {
+    min-height: 130px;
+  }
 }
 
 .co-sparkline {

@@ -2,9 +2,10 @@ import * as React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 
-import '../lib/ace/ace';
-import '../lib/ace/mode/mode-yaml';
-import '../lib/ace/theme/theme-clouds';
+import * as ace from 'brace';
+import 'brace/ext/searchbox';
+import 'brace/mode/yaml';
+import 'brace/theme/clouds';
 
 import { k8sCreate, k8sUpdate } from '../module/k8s';
 import { kindObj, history, Loading, resourcePath } from './utils';
@@ -12,6 +13,10 @@ import { SafetyFirst } from './safety-first';
 
 let id = 0;
 
+/**
+ * This component loads the entire Ace editor library (~100kB) with it. 
+ * Consider using `AsyncComponent` to dynamically load this component when needed.
+ */
 export class EditYAML extends SafetyFirst {
   constructor(props) {
     super(props);
@@ -92,8 +97,6 @@ export class EditYAML extends SafetyFirst {
       // Squelch warning from Ace
       this.ace.$blockScrolling = Infinity;
       const es = this.ace.getSession();
-      // Restore native browser Ctrl+F
-      this.ace.commands.removeCommand('find');
       es.setMode('ace/mode/yaml');
       this.ace.setTheme('ace/theme/clouds');
       es.setUseWrapMode(true);
