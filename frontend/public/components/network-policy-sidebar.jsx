@@ -111,6 +111,77 @@ spec:
         env: production
 `, 'web-allow-production');
 
+const samples = [
+  {
+    highlightText: 'Limit',
+    subheader: 'access to the current namespace',
+    img: denyOtherNamespacesImg,
+    details: 'Deny traffic from other namespaces while allowing all traffic from the namespaces the Pod is living in.',
+    templateName: 'deny-other-namespaces',
+  },
+  {
+    highlightText: 'Limit',
+    subheader: 'traffic to an application within the same namespace',
+    img: limitCertainAppImg,
+    details: 'Allow inbound traffic from only certain Pods. One typical use case is to restrict the connections to a database only to the specific applications.',
+    templateName: 'db-or-api-allow-app',
+  },
+  {
+    highlightText: 'Allow',
+    subheader: 'http and https ingress within the same namespace',
+    img: allowIngressImg,
+    details: 'Define ingress rules for specific port numbers of an application. The rule applies to all port numbers if not specified.',
+    templateName: 'api-allow-http-and-https',
+  },
+  {
+    highlightText: 'Deny',
+    subheader: 'all non-whitelisted traffic in the current namespace',
+    img: defaultDenyAllImg,
+    details: 'A fundamental policy by blocking all cross-pod traffics expect whitelisted ones through the other Network Policies being deployed.',
+    templateName: 'default-deny-all',
+  },
+  {
+    highlightText: 'Allow',
+    subheader: 'traffic from external clients',
+    img: webAllowExternalImg,
+    details: 'Allow external service from public Internet directly or through a Load Balancer to access the pod.',
+    templateName: 'web-allow-external',
+  },
+  {
+    highlightText: 'Allow',
+    subheader: 'traffic to an application from all namespaces',
+    img: webDbAllowAllNsImg,
+    details: 'One typical use case is for a common database which is used by deployments in different namespaces.',
+    templateName: 'web-db-allow-all-ns',
+  },
+  {
+    highlightText: 'Allow',
+    subheader: 'traffic from all pods in a particular namespace',
+    img: webAllowProductionImg,
+    details: 'Typical use case should be "only allow deployments in production namespaces to access the database" or "allow monitoring tools (in another namespace) to scrape metrics from current namespace."',
+    templateName: 'web-allow-production',
+  },
+
+];
+
+const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
+  const {highlightText, subheader, img, details, templateName} = sample;
+  return <li className="co-network-policy-sidebar-item">
+    <h5 className="co-network-policy-sidebar-item__header">
+      <span className="text-uppercase">{highlightText}</span> {subheader}
+    </h5>
+    <img src={img} />
+    <p className="co-network-policy-sidebar-item__details">
+      {details}
+    </p>
+    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName)}>
+      <span className="fa fa-fw fa-paste"></span> Try this policy
+    </button>
+    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName)}>
+      <span className="fa fa-fw fa-download"></span> Download this yaml
+    </button>
+  </li>;
+};
 
 export class NetworkPolicySidebar extends React.Component {
   constructor(props) {
@@ -142,107 +213,11 @@ export class NetworkPolicySidebar extends React.Component {
           Network policy samples
         </h1>
         <ol className="co-network-policy-sidebar-list">
-          <li className="co-network-policy-sidebar-item">
-            <h5 className="co-network-policy-sidebar-item__header">
-              <span className="text-uppercase">Limit</span> access to the current namespace
-            </h5>
-            <img src={denyOtherNamespacesImg} />
-            <p className="co-network-policy-sidebar-item__details">
-              Deny traffic from other namespaces while allowing all traffic from the namespaces the  <span className="text-capitalize">pod</span> is living in.
-            </p>
-            <button className="btn btn-link" onClick={() => loadSampleYaml('deny-other-namespaces')}>
-              <span className="fa fa-fw fa-paste"></span> Try this policy
-            </button>
-            <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml('deny-other-namespaces')}>
-              <span className="fa fa-fw fa-download"></span> Download this yaml
-            </button>
-          </li>
-          <li className="co-network-policy-sidebar-item">
-            <h5 className="co-network-policy-sidebar-item__header">
-              <span className="text-uppercase">Limit</span> traffic to an application within the same namespace
-            </h5>
-            <img src={limitCertainAppImg} />
-            <p className="co-network-policy-sidebar-item__details">
-              Allow inbound traffic from only certain <span className="text-capitalize">pods</span>. One typical use case is to restrict the connections to a database only to the specific applications.
-            </p>
-            <button className="btn btn-link" onClick={() => loadSampleYaml('db-or-api-allow-app')}>
-              <span className="fa fa-fw fa-paste"></span> Try this policy
-            </button>
-            <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml('db-or-api-allow-app')}>
-              <span className="fa fa-fw fa-download"></span> Download this yaml
-            </button>
-          </li>
-          <li className="co-network-policy-sidebar-item">
-            <h5 className="co-network-policy-sidebar-item__header"><span className="text-uppercase">Allow</span> http and https ingress within the same namespace</h5>
-            <img src={allowIngressImg} />
-            <p className="co-network-policy-sidebar-item__details">
-              Define ingress rules for specific port numbers of an application. The rule applies to all port numbers if not specified.
-            </p>
-            <button className="btn btn-link" onClick={() => loadSampleYaml('api-allow-http-and-https')}>
-              <span className="fa fa-fw fa-paste"></span> Try this policy
-            </button>
-            <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml('api-allow-http-and-https')}>
-              <span className="fa fa-fw fa-download"></span> Download this yaml
-            </button>
-          </li>
-          <li className="co-network-policy-sidebar-item">
-            <h5 className="co-network-policy-sidebar-item__header">
-              <span className="text-uppercase">Deny</span> all non-whitelisted traffic in the current namespace
-            </h5>
-            <img src={defaultDenyAllImg} />
-            <p className="co-network-policy-sidebar-item__details">
-              A fundamental policy by blocking all cross-pod traffics expect whitelisted ones through the other <span className="text-capitalize">network policies</span> being deployed.
-            </p>
-            <button className="btn btn-link" onClick={() => loadSampleYaml('default-deny-all')}>
-              <span className="fa fa-fw fa-paste"></span> Try this policy
-            </button>
-            <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml('default-deny-all')}>
-              <span className="fa fa-fw fa-download"></span> Download this yaml
-            </button>
-          </li>
-          <li className="co-network-policy-sidebar-item">
-            <h5><span className="text-uppercase">Allow</span> traffic from external clients</h5>
-            <img src={webAllowExternalImg} />
-            <p className="co-network-policy-sidebar-item__details">
-              Allow external service from public <span className="text-capitalize">internet</span> directly or through a <span className="text-capitalize">load balancer</span> to access the pod.
-            </p>
-            <button className="btn btn-link" onClick={() => loadSampleYaml('web-allow-external')}>
-              <span className="fa fa-fw fa-paste"></span> Try this policy
-            </button>
-            <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml('web-allow-external')}>
-              <span className="fa fa-fw fa-download"></span> Download this yaml
-            </button>
-          </li>
-          <li className="co-network-policy-sidebar-item">
-            <h5 className="co-network-policy-sidebar-item__header">
-              <span className="text-uppercase">Allow</span> traffic to an application from all namespaces
-            </h5>
-            <img src={webDbAllowAllNsImg} />
-            <p className="co-network-policy-sidebar-item__details">
-              One typical use case is for a common database which is used by deployments in different namespaces.
-            </p>
-            <button className="btn btn-link" onClick={() => loadSampleYaml('web-db-allow-all-ns')}>
-              <span className="fa fa-fw fa-paste"></span> Try this policy
-            </button>
-            <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml('web-db-allow-all-ns')}>
-              <span className="fa fa-fw fa-download"></span> Download this yaml
-            </button>
-          </li>
-          <li className="co-network-policy-sidebar-item">
-            <h5 className="co-network-policy-sidebar-item__header">
-              <span className="text-uppercase">Allow</span> traffic from all pods in a particular namespace
-            </h5>
-            <img src={webAllowProductionImg} />
-            <p className="co-network-policy-sidebar-item__details">
-              Typical use case should be &#34;only allow deployments in production namespaces to access the database&#59;&#34; or &#34;allow monitoring tools &#40;in another namespace&#41; to scrape metrics from current namespace.&#34;
-            </p>
-            <button className="btn btn-link" onClick={() => loadSampleYaml('web-allow-production')}>
-              <span className="fa fa-fw fa-paste"></span> Try this policy
-            </button>
-            <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml('web-allow-production')}>
-              <span className="fa fa-fw fa-download"></span> Download this yaml
-            </button>
-          </li>
+          {_.map(samples, (sample) => <SampleYaml
+            key={sample.templateName}
+            sample={sample}
+            loadSampleYaml={loadSampleYaml}
+            downloadSampleYaml={downloadSampleYaml} />)}
         </ol>
       </div>
     </div>;
