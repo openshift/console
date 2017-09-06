@@ -19,6 +19,7 @@ import {PrometheusInstancesList} from './prometheus';
 import {ServiceMonitorsList} from './service-monitor';
 import {AlertManagersList} from './alert-manager';
 import {getActiveNamespace} from '../ui/ui-actions';
+import {NetworkPoliciesList} from './network-policy';
 import {Dropdown, Firehose, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
 
 import {split, selectorFromString} from '../module/k8s/selector';
@@ -26,22 +27,23 @@ import {requirementFromString} from '../module/k8s/selector-requirement';
 
 // Map resource kind IDs to their list components
 const resources = {
+  Alertmanager: AlertManagersList,
   ConfigMap: ConfigMaps,
   DaemonSet: DaemonSets,
   Deployment: DeploymentsList,
   Ingress: IngressesList,
   Job: JobsList,
   Namespace: NamespacesList,
+  NetworkPolicy: NetworkPoliciesList,
   Node: NodesListSearch,
   Pod: PodList,
+  Prometheus: PrometheusInstancesList,
   ReplicaSet: ReplicaSetsList,
   ReplicationController: ReplicationControllersList,
   Secret: SecretsList,
-  ServiceAccount: ServiceAccountsList,
   Service: ServicesList,
-  Prometheus: PrometheusInstancesList,
+  ServiceAccount: ServiceAccountsList,
   ServiceMonitor: ServiceMonitorsList,
-  Alertmanager: AlertManagersList,
 };
 
 const DropdownItem = ({kind}) => <span>
