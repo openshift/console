@@ -338,6 +338,15 @@ export const k8sKinds = {
     crd: true,
     plural: 'installplan-v1s',
   },
+  CronJob: {
+    label: 'Cron Job',
+    apiVersion: 'batch/v1beta1',
+    path: 'cronjobs',
+    basePath: '/apis/',
+    plural: 'cronjobs',
+    abbr: 'CJ',
+    namespaced: true,
+  },
 };
 
 _.each(k8sKinds, (v, k) => {

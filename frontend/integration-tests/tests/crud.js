@@ -160,6 +160,7 @@ const k8sObjs = {
   'persistentvolumes': 'PersistentVolume',
   'ingresses': 'Ingress',
   // Meta resources
+  'cronjobs': 'CronJob',
   'jobs': 'Job',
   'daemonsets': 'DaemonSet',
   'deployments': 'Deployment',

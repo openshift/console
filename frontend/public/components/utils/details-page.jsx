@@ -17,7 +17,7 @@ export const Heading = ({text}) => <div className="co-m-pane__heading">
 </div>;
 
 /** @type {React.StatelessComponent<any>} */
-export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true, podSelector = 'spec.selector'}) => {
+export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true, showAnnotations = true, podSelector = 'spec.selector'}) => {
   const { metadata } = resource;
   const owners = _.get(metadata, 'ownerReferences', [])
     .map((o, i) => <ResourceLink key={i} kind={o.kind} name={o.name} namespace={metadata.namespace}/>);
@@ -33,8 +33,8 @@ export const ResourceSummary = ({children, resource, showPodSelector = true, sho
     {showPodSelector && <dd><Selector selector={_.get(resource, podSelector)} /></dd>}
     {showNodeSelector && <dt>Node Selector</dt>}
     {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
-    <dt>Annotations</dt>
-    <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj(resource.kind), resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>
+    {showAnnotations && <dt>Annotations</dt>}
+    {showAnnotations && <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj(resource.kind), resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>}
     {children}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
