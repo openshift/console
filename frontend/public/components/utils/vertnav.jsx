@@ -68,6 +68,7 @@ export const NavBar = ({pages}) => {
     return (!before.includes(href) && i !== 0 && before.includes(pages[i - 1].href)) ? [divider, tab] : [tab];
   }))}</ul>;
 };
+NavBar.displayName = 'NavBar';
 
 export class VertNav extends React.PureComponent {
   render () {

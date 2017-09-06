@@ -108,6 +108,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
 
   render() {
     return <ClusterOverviewPage
+      match={this.props.match}
       tectonicVersion={this.state.tectonicVersion}
       tectonicHealth={this.state.tectonicHealth}
       tectonicLicense={this.state.tectonicLicense}
