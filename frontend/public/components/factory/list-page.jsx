@@ -46,7 +46,7 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
     }
 
     render () {
-      const {data, kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, rowSplitter, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro} = this.props;
+      const {data, kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, rowSplitter, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro, loaded, loadError} = this.props;
       const resources = _.pick(this.props, kinds);
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
@@ -66,7 +66,7 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
       });
 
       let createLink;
-      if (canCreate) {
+      if (loaded && _.isEmpty(loadError) && canCreate) {
         if (createProps.to) {
           createLink = <Link className="co-m-primary-action pull-left" {...createProps}>
             <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
