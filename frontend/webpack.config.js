@@ -21,10 +21,14 @@ let config = {
     chunkFilename: '[name]-[chunkhash].js',
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
+  },
+  node: {
+    fs: 'empty',
   },
   module: {
     rules: [
+      { test: /\.glsl$/, loader: 'raw!glslify' },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules/,
