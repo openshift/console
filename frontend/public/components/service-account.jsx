@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, navFactory, ResourceCog, ResourceLink, Timestamp } from './utils';
+import { Cog, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { SecretsList, withSecretsList } from './secret';
 import { registerTemplate } from '../yaml-templates';
 
@@ -14,9 +14,10 @@ metadata:
   name: example`);
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="secrets">Secrets</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Age</ColHead>
+  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-xs-3" sortField="secrets">Secrets</ColHead>
+  <ColHead {...props} className="col-xs-3" sortField="metadata.creationTimestamp">Age</ColHead>
 </ListHeader>;
 
 const ServiceAccountRow = ({obj: serviceaccount}) => {
@@ -24,14 +25,17 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
 
   return (
     <ResourceRow obj={serviceaccount}>
-      <div className="col-xs-4">
+      <div className="col-xs-3">
         <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
         <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
       </div>
-      <div className="col-xs-4">
+      <div className="col-xs-3">
+        <ResourceLink kind="Namespace" name={namespace} title={namespace}/> {}
+      </div>
+      <div className="col-xs-3">
         {secrets ? secrets.length : 0}
       </div>
-      <div className="col-xs-4">
+      <div className="col-xs-3">
         {moment(creationTimestamp).fromNow()}
       </div>
     </ResourceRow>
@@ -39,7 +43,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
 };
 
 const Details = (serviceaccount) => {
-  const {metadata: {namespace, creationTimestamp}, secrets} = serviceaccount;
+  const {metadata: {namespace}, secrets} = serviceaccount;
   const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
 
   return (
@@ -48,10 +52,7 @@ const Details = (serviceaccount) => {
         <div className="row">
           <div className="col-md-6">
             <div className="co-m-pane__body-group">
-              <dl>
-                <dt>Created At</dt>
-                <dd><Timestamp timestamp={creationTimestamp} /></dd>
-              </dl>
+              <ResourceSummary resource={serviceaccount} showPodSelector={false} showNodeSelector={false} />
             </div>
           </div>
         </div>
