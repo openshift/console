@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
     "test-gui": "nightwatch --test integration-tests/tests/crud.js",
-    "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>1)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
+    "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>7)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -81,6 +81,7 @@
     "@types/react": "16.x",
     "@types/react-dom": "15.x",
     "@types/react-helmet": "5.x",
+    "awesome-typescript-loader": "^3.2.3",
     "chromedriver": "2.x",
     "css-loader": "0.28.x",
     "enzyme": "^2.9.1",
@@ -101,7 +102,7 @@
     "style-loader": "0.18.x",
     "ts-jest": "20.x",
     "ts-loader": "2.x",
-    "typescript": "2.4.x",
+    "typescript": "2.5.1",
     "typescript-eslint-parser": "7.x",
     "uglifyjs-webpack-plugin": "1.0.0-beta.1",
     "webpack": "3.x",
