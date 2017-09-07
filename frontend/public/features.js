@@ -113,6 +113,7 @@ export const featureActions = {
   detectMultiClusterFlags,
   detectSecurityLabellerFlags,
   detectCloudServicesFlags,
+  handleError,
 };
 
 export const featureReducerName = 'FLAGS';

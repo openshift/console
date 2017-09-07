@@ -37,10 +37,10 @@ describe('featureActions', () => {
 
     it('handles errors', (done) => {
       coFetchSpy = spyOn(coFetch, 'coFetchJSON').and.returnValue(Promise.reject('some nasty error'));
-      
-      featureActions.detectCloudServicesFlags(dispatchMock).then(() => {
-        expect(dispatchMock).not.toHaveBeenCalled();
-        done();
+      const handleErrSpy = spyOn(featureActions, 'handleError').and.returnValue(done());
+
+      featureActions.detectCloudServicesFlags(dispatchMock).then().catch(() => {
+        expect(handleErrSpy).toHaveBeenCalled();
       });
     });
   });
