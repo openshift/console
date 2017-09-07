@@ -6359,9 +6359,9 @@ typescript-eslint-parser@7.x:
     lodash.unescape "4.0.1"
     semver "5.3.0"
 
-typescript@2.4.x:
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.2.tgz#f8395f85d459276067c988aa41837a8f82870844"
+typescript@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.5.1.tgz#ce7cc93ada3de19475cc9d17e3adea7aee1832aa"
 
 ua-parser-js@^0.7.9:
   version "0.7.14"
