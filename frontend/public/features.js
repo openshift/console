@@ -27,6 +27,14 @@ const DEFAULTS = {
 const SET_FLAGS = 'SET_FLAGS';
 const setFlags = (dispatch, flags) => dispatch({flags, type: SET_FLAGS});
 
+const handleError = (res, flags, dispatch, cb) => {
+  if (res.response.status === 403 || res.response.status === 502) {
+    setFlags(dispatch, _.mapValues(flags, () => undefined));
+  } else {
+    setTimeout(() => cb(dispatch), 15000);
+  }
+};
+
 //These flags are currently being set on the client side for Phase 0 of this
 //feature, the plan is to move them to the backend eventually.
 const determineMultiClusterFlag = () => {
@@ -53,7 +61,7 @@ const ETCD_OPERATOR_FLAGS = {
 };
 
 const PROMETHEUS_FLAGS = {
-  [FLAGS.PROMETHEUS]: 'prometheuses',
+  [FLAGS.PROMETHEUS]: 'prometheuses'
 };
 
 const SECURITY_LABELLER_FLAGS = {
@@ -69,19 +77,19 @@ const tcoPath = `${k8sBasePath}/apis/tco.coreos.com/v1`;
 const detectTectonicChannelOperatorFlags = dispatch => {
   coFetchJSON(tcoPath)
     .then(res => setFlags(dispatch, _.mapValues(TCO_FLAGS, name => _.find(res.resources, {name}))),
-      () => setTimeout(() => detectTectonicChannelOperatorFlags(dispatch), 15000));
+      (res) => handleError(res, TCO_FLAGS, dispatch, detectTectonicChannelOperatorFlags));
 };
 
 const etdPath = `${k8sBasePath}/apis/etcd.coreos.com/v1beta1`;
 const detectEtcdOperatorFlags = dispatch => coFetchJSON(etdPath)
   .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
-    () => setTimeout(() => detectEtcdOperatorFlags(dispatch), 15000));
+    (res) => handleError(res, ETCD_OPERATOR_FLAGS, dispatch, detectEtcdOperatorFlags));
 
 
 const monitoringPath = `${k8sBasePath}/apis/monitoring.coreos.com/v1alpha1`;
 const detectPrometheusFlags = dispatch => coFetchJSON(monitoringPath)
   .then(res => setFlags(dispatch, _.mapValues(PROMETHEUS_FLAGS, name => _.find(res.resources, {name}))),
-    () => setTimeout(() => detectPrometheusFlags(dispatch), 15000));
+    (res) => handleError(res, PROMETHEUS_FLAGS, dispatch, detectPrometheusFlags));
 
 const detectMultiClusterFlags = dispatch => {
   const multiCluster = determineMultiClusterFlag();
@@ -91,12 +99,12 @@ const detectMultiClusterFlags = dispatch => {
 const labellerDeploymentPath = `${k8sBasePath}/apis/extensions/v1beta1/deployments`;
 const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPath)
   .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
-    () => setTimeout(() => detectSecurityLabellerFlags(dispatch), 15000));
+    (res) => handleError(res, SECURITY_LABELLER_FLAGS, dispatch, detectSecurityLabellerFlags));
 
 const cloudServicesPath = `${k8sBasePath}/apis/app.coreos.com/v1alpha1`;
 const detectCloudServicesFlags = dispatch => coFetchJSON(cloudServicesPath)
   .then(res => setFlags(dispatch, _.mapValues(CLOUD_SERVICES_FLAGS, name => _.find(res.resources, {name}))),
-    () => setTimeout(() => detectCloudServicesFlags(dispatch), 15000));
+    (res) => handleError(res, CLOUD_SERVICES_FLAGS, dispatch, detectCloudServicesFlags));
 
 export const featureActions = {
   detectTectonicChannelOperatorFlags,

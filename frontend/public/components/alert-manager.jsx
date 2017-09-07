@@ -89,6 +89,9 @@ export const AlertManagersDetailsPage = props => <DetailsPage
 />;
 
 const AlertManagersNameList = (props) => {
+  if (props.loadError) {
+    return null;
+  }
   return <div className="alert-manager-wrapper">
     <SettingsRow>
       <SettingsLabel>AlertManager:</SettingsLabel>
