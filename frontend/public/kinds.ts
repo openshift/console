@@ -35,7 +35,7 @@ export const kindReducer = (state, action) => {
       return state.set(inFlight, true);
 
     case 'addCRDs':
-      _.each(action.kinds, resource => {
+      _.each(action.kinds, (resource: any) => {
         const { plural, singular, kind, shortNames } = resource.spec.names;
         const { version, scope, group } = resource.spec;
         const label = kind.replace(/([A-Z]+)/g, ' $1').slice(1);

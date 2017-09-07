@@ -28,12 +28,7 @@ let config = {
       {
         test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules/,
-        loader: 'ts-loader',
-        options: {
-          entryFileIsJs: true,
-          // Ignore until https://github.com/Microsoft/TypeScript/issues/18134 is resolved
-          ignoreDiagnostics: [2605, 2607]
-        }
+        loader: 'awesome-typescript-loader',
       },
       {
         test: /\.s?css$/,

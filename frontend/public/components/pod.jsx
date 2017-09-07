@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import * as _ from 'lodash';
 
 import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions, getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
@@ -31,6 +32,8 @@ spec:
       ports:
         - containerPort: 6379`);
 
+
+/** @type {React.StatelessComponent.<{pod: string}>} */
 export const Readiness = ({pod}) => {
   const readiness = podReadiness(pod);
   if (!readiness) {
