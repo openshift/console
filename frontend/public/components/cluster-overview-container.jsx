@@ -71,7 +71,10 @@ export class ClusterOverviewContainer extends SafetyFirst {
   _checkKubernetesHealth() {
     coFetchJSON(k8sBasePath)
       .then(() => this.setState({ kubernetesHealth: 'ok' }))
-      .catch(() => this.setState({ kubernetesHealth: 'unknown' }));
+      .catch((resp) => {
+        const health = _.get(resp, 'response.status') === 403 ? 'access-denied' : 'unknown';
+        this.setState({ kubernetesHealth: health });
+      });
   }
 
   _checkCloudProvider() {

@@ -7,13 +7,14 @@ import { StartGuide } from './start-guide';
 import * as classNames from'classnames';
 
 const tectonicHealthMsgs = {
-  'ok': 'All systems go',
-  'unknown': 'The console service cannot be reached.'
+  ok: 'All systems go',
+  unknown: 'The console service cannot be reached.'
 };
 
 const k8sHealthMsgs = {
-  'ok': 'All systems go',
-  'unknown': 'API server connection has a problem'
+  ok: 'All systems go',
+  unknown: 'API server connection has a problem',
+  'access-denied': 'Access denied due to cluster policy'
 };
 
 const StatusIconRow = ({state, text}) => {
@@ -21,7 +22,8 @@ const StatusIconRow = ({state, text}) => {
     ok: 'fa-check',
     warning: 'fa-warning',
     critical: 'fa-warning',
-    unknown: 'fa-question-circle'
+    unknown: 'fa-question-circle',
+    'access-denied': 'fa-ban'
   };
   return <div className={classNames('co-m-status', [`co-m-status--${state}`])}>
     <i className={classNames('co-m-status__icon', 'fa', iconClasses[state])}></i>
@@ -30,7 +32,7 @@ const StatusIconRow = ({state, text}) => {
 };
 
 export const StatusIcon = ({state, text}) => {
-  if (['ok', 'warning', 'critical', 'unknown'].includes(state)) {
+  if (['ok', 'warning', 'critical', 'unknown', 'access-denied'].includes(state)) {
     return <StatusIconRow state={state} text={text} />;
   }
 
