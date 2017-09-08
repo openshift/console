@@ -26,15 +26,12 @@ export class Line extends BaseGraph {
         rangemode: 'tozero',
         zeroline: false,
         color: '#333',
-        // yaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]}
       },
       xaxis: {
         zeroline: false,
         tickformat:'%H:%M',
-        // tickcolor: '#DDD',
         color: '#333',
         // range: ['0', '2016-12-31'],
-        // type: 'linear'
       },
       legend: {
         x: 0, y: 1,

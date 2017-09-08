@@ -129,28 +129,28 @@ const multiLoad = [
   },
 ];
 
-const Plotly = () => <div>
+const Plotly = () => <div style={{padding: '15px 20px'}}>
   <div className="row">
-    <div className="col-xs-6">
+    <div className="col-lg-6">
       <Line title="Idle CPU" query={'sum(rate(node_cpu{mode="idle"}[2m])) * 100'} />
     </div>
-    <div className="col-xs-6">
+    <div className="col-lg-6">
       <Line title="System Load" query={multiLoad} />
     </div>
   </div>
   <div className="row">
-    <div className="col-xs-4">
+    <div className="col-lg-4">
       <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
     </div>
-    <div className="col-xs-4">
+    <div className="col-lg-4">
       <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
     </div>
   </div>
   <div className="row">
-    <div className="col-xs-6">
+    <div className="col-lg-6">
       <Line title="Network Received" query={'sum(rate(node_network_receive_bytes{device!~"lo"}[5m]))'} />
     </div>
-    <div className="col-xs-6">
+    <div className="col-lg-6">
       <Line title="Network Transmitted" query={'sum(rate(node_network_transmit_bytes{device!~"lo"}[5m]))'} />
     </div>
   </div>

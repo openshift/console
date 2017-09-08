@@ -73,7 +73,7 @@ export class BaseGraph extends React.PureComponent {
 
   render () {
     const title = this.props.title;
-    return <div style={{border: '1px solid #ddd', borderRadius: 8, padding: 8, margin: 8}} >
+    return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 8, margin: '8px 0'}, this.style)} >
       { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#333'}}>{title}</h4> }
       <div ref={this.setNode} />
     </div>;

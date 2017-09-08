@@ -70,13 +70,15 @@ export class Gauge extends BaseGraph {
       },
     ];
     this.layout = {
+      height: 200,
       xaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]},
       yaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]},
+      // yanchor: 'bottom',
       margin: {
-        l: 20,
-        b: 20,
-        r: 20,
-        t: 20,
+        l: 5,
+        b: 5,
+        r: 5,
+        t: 15,
         pad: 10,
       },
       annotations: [
@@ -99,6 +101,11 @@ export class Gauge extends BaseGraph {
       staticPlot: true,
     };
     this.timeSpan = 1 * 1000; // 1 minute
+    this.style = {
+      height: 200,
+      minWidth: 200,
+      overflow: 'hidden',
+    };
   }
 
   update (result) {
