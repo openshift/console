@@ -22,6 +22,8 @@ export const ResourceSummary = ({children, resource, showPodSelector = true, sho
   return <dl>
     <dt>Name</dt>
     <dd>{metadata.name || '-'}</dd>
+    { metadata.namespace ? <dt>Namespace</dt> : null }
+    { metadata.namespace ? <dd><ResourceLink kind="Namespace" name={metadata.namespace} /></dd> : null }
     <dt>Labels</dt>
     <dd><LabelList kind={resource.kind} labels={metadata.labels} /></dd>
     {showPodSelector && <dt>Pod Selector</dt>}
