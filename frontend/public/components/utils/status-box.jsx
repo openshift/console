@@ -39,7 +39,7 @@ export const StatusBox = props => {
   const {EmptyMsg, label, loadError, loaded} = props;
 
   if (loadError) {
-    return _.get(loadError, 'response.status') === 403 ? <AccessDenied /> : <LoadError label={label} />;
+    return _.get(loadError, 'response.status') === 403 || _.includes(_.toLower(loadError), 'access denied') ? <AccessDenied /> : <LoadError label={label} />;
   }
 
   if (!loaded) {
