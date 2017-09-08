@@ -5,7 +5,6 @@ import { plot, Plots } from 'plotly.js/lib/core';
 import { coFetchJSON } from '../../co-fetch';
 
 const stepSize = 30; // 30 seconds
-const timespan = 60 * 60 * 1000; // 1 hour
 // const pollInterval = stepSize * 1000; // stepSize in milliseconds
 const basePath = '/api/kubernetes/api/v1/proxy/namespaces/tectonic-system/services/prometheus:9090';
 
@@ -27,6 +26,7 @@ export class BaseGraph extends React.PureComponent {
       },
     };
     this.defaultOptions = {};
+    this.timeSpan = 60 * 60 * 1000; // 1 hour
   }
 
   setNode_(node) {
@@ -37,13 +37,19 @@ export class BaseGraph extends React.PureComponent {
 
   fetch () {
     const end = Date.now();
-    const start = end - (timespan);
+    const start = end - (this.timeSpan);
 
-    coFetchJSON(`${basePath}/api/v1/query_range?query=${encodeURIComponent(this.props.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`)
-      .then(res => {
-        this.update(res);
-      })
-      .catch(e => console.error(e));
+    let queries = this.props.query;
+    if (!_.isArray(queries)) {
+      queries = [{
+        query: queries,
+      }];
+    }
+
+    const promises = queries.map(q => coFetchJSON(`${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`));
+    Promise.all(promises).then(values => {
+      this.update(values);
+    }).catch(e => console.error(e));
   }
 
   componentWillMount() {

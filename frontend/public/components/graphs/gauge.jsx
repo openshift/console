@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { relayout, register } from 'plotly.js/lib/core';
 import * as pie from 'plotly.js/lib/pie';
+// Horrible hack to get around plotly vs webpack incompatibility
 register(pie);
 
 import { BaseGraph } from './base';
@@ -97,10 +98,11 @@ export class Gauge extends BaseGraph {
     this.options = {
       staticPlot: true,
     };
+    this.timeSpan = 1 * 1000; // 1 minute
   }
 
   update (result) {
-    const data = parseInt(result.data.result[0].values.slice(-1)[0][1], 10);
+    const data = parseInt(result[0].data.result[0].values.slice(-1)[0][1], 10);
     if (isNaN(data)) {
       console.error('data is NaN!');
       return;

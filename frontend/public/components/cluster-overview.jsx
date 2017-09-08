@@ -114,13 +114,28 @@ const GrafanaDash = () => <div>
 </div>;
 GrafanaDash.displayName = 'GrafanaDash';
 
+const multiLoad = [
+  {
+    name: '1m',
+    query: 'sum(node_load1)',
+  },
+  {
+    name: '5m',
+    query: 'sum(node_load5)',
+  },
+  {
+    name: '15m',
+    query: 'sum(node_load15)',
+  },
+];
+
 const Plotly = () => <div>
   <div className="row">
     <div className="col-xs-6">
       <Line title="Idle CPU" query={'sum(rate(node_cpu{mode="idle"}[2m])) * 100'} />
     </div>
     <div className="col-xs-6">
-      <Line title="System Load" query={'sum(node_load1)'} />
+      <Line title="System Load" query={multiLoad} />
     </div>
   </div>
   <div className="row">

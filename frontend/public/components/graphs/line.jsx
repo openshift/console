@@ -3,19 +3,24 @@ import { restyle } from 'plotly.js/lib/core';
 
 import { BaseGraph } from './base';
 
+const baseData = {
+  x: [],
+  y: [],
+  mode: 'lines',
+  fill: 'tozeroy',
+  type: 'scatter',
+};
+
 export class Line extends BaseGraph {
   constructor (props) {
     super(props);
-    this.data = [{
-      x: [],
-      y: [],
-      mode: 'lines',
-      line: {
-        color: 'rgb(127, 171, 222)',
-      },
-      fill: 'tozeroy',
-      type: 'scatter',
-    }];
+
+    let queries = props.query;
+    if (!_.isArray(queries)) {
+      queries = [queries];
+    }
+
+    this.data = queries.map(() => Object.assign({}, baseData));
     this.layout = {
       yaxis: {
         rangemode: 'tozero',
@@ -31,17 +36,27 @@ export class Line extends BaseGraph {
         // range: ['0', '2016-12-31'],
         // type: 'linear'
       },
+      legend: {
+        x: 0, y: 1,
+        bgcolor: 'rgba(255, 255, 255, 0)',
+        orientation: 'h'
+      }
     };
   }
 
-  update (result) {
-    const data = result.data.result[0].values;
+  update (results) {
+    _.each(results, (result, i) => {
+      const query = this.props.query[i];
+      const name = query && query.name;
+      const data = result.data.result[0].values;
 
-    // TODO (ggreer): handle multiple lines
-    restyle(this.node, {
-      x: [data.map(v => new Date(v[0] * 1000))],
-      y: [data.map(v => v[1])],
-    }, [0])
-      .catch(e => console.error(e));
+      // TODO (ggreer): handle multiple lines
+      restyle(this.node, {
+        x: [data.map(v => new Date(v[0] * 1000))],
+        y: [data.map(v => v[1])],
+        name,
+      }, [i])
+        .catch(e => console.error(e));
+    });
   }
 }
