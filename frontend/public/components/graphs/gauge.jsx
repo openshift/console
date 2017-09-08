@@ -94,6 +94,9 @@ export class Gauge extends BaseGraph {
         }
       ],
     };
+    this.options = {
+      staticPlot: true,
+    };
   }
 
   update (result) {

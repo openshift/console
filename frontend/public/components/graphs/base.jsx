@@ -26,6 +26,7 @@ export class BaseGraph extends React.PureComponent {
         pad: 10,
       },
     };
+    this.defaultOptions = {};
   }
 
   setNode_(node) {
@@ -58,7 +59,8 @@ export class BaseGraph extends React.PureComponent {
 
   componentDidMount () {
     this.layout = _.extend(this.defaultLayout, this.layout);
-    plot(this.node, this.data, this.layout).catch(e => {
+    this.options = _.extend(this.defaultOptions, this.options);
+    plot(this.node, this.data, this.layout, this.options).catch(e => {
       console.error('error initializing graph:', e);
     });
   }
