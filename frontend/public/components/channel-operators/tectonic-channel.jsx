@@ -171,7 +171,12 @@ class TectonicChannelWithData extends React.Component {
     }
 
     if (appVersions.loadError) {
-      return <StatusBox loadError={appVersions.loadError} label="Operators" />;
+      return <div className="co-cluster-updates__component">
+        <div className="co-cluster-updates__heading--name-wrapper">
+          <span className="co-cluster-updates__heading--name">Tectonic</span>
+        </div>
+        <StatusBox loadError={appVersions.loadError} label="Operators" />
+      </div>;
     }
 
     return <div className="co-cluster-updates__component text-center"><LoadingInline /></div>;
