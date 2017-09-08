@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { plot } from 'plotly.js/lib/core';
+import { plot, Plots } from 'plotly.js/lib/core';
 
 import { coFetchJSON } from '../../co-fetch';
 
@@ -16,10 +16,11 @@ export class BaseGraph extends React.PureComponent {
     this.setNode = n => this.setNode_(n);
     // Child classes set these
     this.data = [];
+    this.resize = () => this.node && Plots.resize(this.node);
     this.defaultLayout = {
       margin: {
         l: 40,
-        b: 40,
+        b: 30,
         r: 10,
         t: 10,
         pad: 10,
@@ -46,23 +47,26 @@ export class BaseGraph extends React.PureComponent {
 
   componentWillMount() {
     this.fetch();
+    window.addEventListener('resize', this.resize);
     this.interval = setInterval(() => this.fetch(), 5000);
   }
 
   componentWillUnmount () {
+    window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
 
   componentDidMount () {
-    // this.layout.title = this.layout.title || this.props.title;
     this.layout = _.extend(this.defaultLayout, this.layout);
-    plot(this.node, this.data, this.layout);
+    plot(this.node, this.data, this.layout).catch(e => {
+      console.error('error initializing graph:', e);
+    });
   }
 
   render () {
     const title = this.props.title;
-    return <div style={{border: '2px solid #ddd', borderRadius: 8, padding: 10, margin: 10}} >
-      { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center'}}>{title}</h4> }
+    return <div style={{border: '1px solid #ddd', borderRadius: 8, padding: 8, margin: 8}} >
+      { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#333'}}>{title}</h4> }
       <div ref={this.setNode} />
     </div>;
   }

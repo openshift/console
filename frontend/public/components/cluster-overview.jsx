@@ -124,10 +124,10 @@ const Plotly = () => <div>
     </div>
   </div>
   <div className="row">
-    <div className="col-xs-6">
+    <div className="col-xs-4">
       <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
     </div>
-    <div className="col-xs-6">
+    <div className="col-xs-4">
       <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
     </div>
   </div>

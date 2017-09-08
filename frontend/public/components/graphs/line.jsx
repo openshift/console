@@ -15,24 +15,19 @@ export class Line extends BaseGraph {
       },
       fill: 'tozeroy',
       type: 'scatter',
-      // titlefont: {
-      //   family: 'Comic Sans',
-      //   size: 18,
-      //   color: '#F00',
-      // }
     }];
     this.layout = {
       yaxis: {
         rangemode: 'tozero',
         zeroline: false,
-        color: '#555',
+        color: '#333',
         // yaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]}
       },
       xaxis: {
         zeroline: false,
         tickformat:'%H:%M',
         // tickcolor: '#DDD',
-        color: '#555',
+        color: '#333',
         // range: ['0', '2016-12-31'],
         // type: 'linear'
       },
