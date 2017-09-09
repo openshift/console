@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
+import { Link } from 'react-router-dom';
 
 import { k8sGet, k8sKinds } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
@@ -110,6 +111,10 @@ const Details = (ns) => <div>
           <dd>{ns.status.phase}</dd>
           <dt>Default Pull Secret</dt>
           <dd><PullSecret namespace={ns} /></dd>
+          <dt>Network Policies</dt>
+          <dd>
+            <Link to={`/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
+          </dd>
         </dl>
       </div>
     </div>
