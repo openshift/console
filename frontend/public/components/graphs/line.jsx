@@ -31,7 +31,6 @@ export class Line extends BaseGraph {
         zeroline: false,
         tickformat:'%H:%M',
         color: '#333',
-        // range: ['0', '2016-12-31'],
       },
       legend: {
         x: 0, y: 1,
@@ -45,9 +44,10 @@ export class Line extends BaseGraph {
     _.each(results, (result, i) => {
       const query = this.props.query[i];
       const name = query && query.name;
+      if (result.data.result.length === 0) {
+        console.warn('no data for query', query);
+      }
       const data = result.data.result[0].values;
-
-      // TODO (ggreer): handle multiple lines
       restyle(this.node, {
         x: [data.map(v => new Date(v[0] * 1000))],
         y: [data.map(v => v[1])],

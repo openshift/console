@@ -84,7 +84,7 @@ export class Gauge extends BaseGraph {
       annotations: [
         {
           x: 0,
-          y: -0.25,
+          y: -0.05,
           text: '...',
           showarrow: false,
           ax: 0,
@@ -100,7 +100,7 @@ export class Gauge extends BaseGraph {
     this.options = {
       staticPlot: true,
     };
-    this.timeSpan = 1 * 1000; // 1 minute
+    this.timeSpan = 0;
     this.style = {
       height: 200,
       minWidth: 200,
@@ -109,9 +109,9 @@ export class Gauge extends BaseGraph {
   }
 
   update (result) {
-    const data = parseInt(result[0].data.result[0].values.slice(-1)[0][1], 10);
+    const data = parseInt(result[0].data.result[0].value[1], 10);
     if (isNaN(data)) {
-      console.error('data is NaN!');
+      console.error('data is NaN!', result);
       return;
     }
     const percent = data;
@@ -127,8 +127,5 @@ export class Gauge extends BaseGraph {
     this.data[0].marker.colors[1] = color;
     this.layout.annotations[0].text = `${percent}%`;
     relayout(this.node, this.layout);
-    // restyle(this.node, this.data).catch((e) => {
-    //   console.error(e);
-    // });
   }
 }

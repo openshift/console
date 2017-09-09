@@ -6,8 +6,8 @@ import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from 
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
 import * as classNames from'classnames';
-import { NavBar } from './utils';
-import { Gauge, Line } from './graphs';
+import { units, NavBar } from './utils';
+import { Gauge, Line, Bar } from './graphs';
 
 const tectonicHealthMsgs = {
   ok: 'All systems go',
@@ -114,7 +114,7 @@ const GrafanaDash = () => <div>
 </div>;
 GrafanaDash.displayName = 'GrafanaDash';
 
-const multiLoad = [
+const multiLoadQueries = [
   {
     name: '1m',
     query: 'sum(node_load1)',
@@ -129,23 +129,56 @@ const multiLoad = [
   },
 ];
 
+const memoryQueries = [
+  {
+    name: 'Total',
+    query: 'sum(node_memory_MemTotal)',
+  },
+  {
+    name: 'Free',
+    query: 'sum(node_memory_MemFree)',
+  },
+];
+
+const humanizeMem = v => units.humanize(v, 'binaryBytes', true).string;
+const humanizeCPU = v => units.humanize(v, 'numeric', true).string;
+
 const Plotly = () => <div style={{padding: '15px 20px'}}>
   <div className="row">
-    <div className="col-lg-6">
+    <div className="col-lg-3">
       <Line title="Idle CPU" query={'sum(rate(node_cpu{mode="idle"}[2m])) * 100'} />
     </div>
     <div className="col-lg-6">
-      <Line title="System Load" query={multiLoad} />
+      <Line title="Cluster Load Average" query={multiLoadQueries} />
+    </div>
+    <div className="col-lg-3">
+      <Bar title="CPU Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_cpu_usage:sum)))'} humanize={humanizeCPU} />
     </div>
   </div>
   <div className="row">
-    <div className="col-lg-4">
+    <div className="col-lg-3">
       <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
     </div>
-    <div className="col-lg-4">
-      <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
+    <div className="col-lg-6">
+      <Line title="Memory" query={memoryQueries} />
+    </div>
+    <div className="col-lg-3">
+      <Bar title="Mem. Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_memory_usage_bytes:sum)))'} humanize={humanizeMem} />
     </div>
   </div>
+
+  <div className="row">
+    <div className="col-lg-3">
+      <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
+    </div>
+    <div className="col-lg-3">
+      <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (container_network_receive_bytes_total)))'} humanize={humanizeMem} />
+    </div>
+    <div className="col-lg-3">
+      <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (container_network_transmit_bytes_total)))'} humanize={humanizeMem} />
+    </div>
+  </div>
+
   <div className="row">
     <div className="col-lg-6">
       <Line title="Network Received" query={'sum(rate(node_network_receive_bytes{device!~"lo"}[5m]))'} />

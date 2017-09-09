@@ -4,8 +4,6 @@ import { plot, Plots } from 'plotly.js/lib/core';
 
 import { coFetchJSON } from '../../co-fetch';
 
-const stepSize = 30; // 30 seconds
-// const pollInterval = stepSize * 1000; // stepSize in milliseconds
 const basePath = '/api/kubernetes/api/v1/proxy/namespaces/tectonic-system/services/prometheus:9090';
 
 export class BaseGraph extends React.PureComponent {
@@ -17,6 +15,7 @@ export class BaseGraph extends React.PureComponent {
     this.data = [];
     this.resize = () => this.node && Plots.resize(this.node);
     this.defaultLayout = {
+      height: 250,
       margin: {
         l: 40,
         b: 30,
@@ -46,19 +45,32 @@ export class BaseGraph extends React.PureComponent {
       }];
     }
 
-    const promises = queries.map(q => coFetchJSON(`${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`));
-    Promise.all(promises).then(values => {
-      this.update(values);
-    }).catch(e => console.error(e));
+    const pollInterval = this.timeSpan ? this.timeSpan / 120 : 15000;
+    const stepSize = pollInterval / 1000;
+    const promises = queries.map(q => {
+      const url = this.timeSpan
+        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`
+        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}`;
+      return coFetchJSON(url);
+    });
+    Promise.all(promises)
+      .then(values => this.update(values))
+      .catch(e => console.error(e))
+      .then(() => {
+        if (this.unmounted) {
+          return;
+        }
+        this.interval = setTimeout(() => this.fetch(), pollInterval);
+      });
   }
 
   componentWillMount() {
     this.fetch();
     window.addEventListener('resize', this.resize);
-    this.interval = setInterval(() => this.fetch(), 5000);
   }
 
   componentWillUnmount () {
+    this.unmounted = true;
     window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
@@ -74,7 +86,7 @@ export class BaseGraph extends React.PureComponent {
   render () {
     const title = this.props.title;
     return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 8, margin: '8px 0'}, this.style)} >
-      { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#333'}}>{title}</h4> }
+      { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#444'}}>{title}</h4> }
       <div ref={this.setNode} />
     </div>;
   }
