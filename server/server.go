@@ -98,13 +98,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
 
 	handle("/api/kubernetes/", http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), k8sHandler))
-	bearerToken, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
-	if err != nil {
-		fmt.Printf("failed to read bearer token: %v", err)
-	}
-	s.K8sProxyConfig.Director = DirectorFromTokenExtractor(s.K8sProxyConfig, auth.ConstantTokenExtractor(string(bearerToken)))
-
-	handle("/api/v1/proxy/namespaces/tectonic-system/services/", proxy.NewProxy(s.K8sProxyConfig))
 	handle("/api/federation/", federationMiddleware(http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/federation/"), federationHandler)))
 	fn := func(loginInfo auth.LoginJSON, successURL string, w http.ResponseWriter) {
 		jsg := struct {

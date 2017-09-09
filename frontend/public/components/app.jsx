@@ -78,9 +78,6 @@ class App extends React.PureComponent {
           <NamespaceSelector />
           <Switch>
             <Route path="/" exact component={ClusterOverviewContainer} />
-            <Route path="/grafana" exact component={ClusterOverviewContainer} />
-            <Route path="/grafanadash" exact component={ClusterOverviewContainer} />
-            <Route path="/plotly" exact component={ClusterOverviewContainer} />
 
             <Route path="/start-guide" exact component={StartGuidePage} />
 

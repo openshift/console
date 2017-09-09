@@ -91,6 +91,7 @@ export class Bar extends BaseGraph {
     });
     return annotations;
   }
+
   update (result) {
     if (_.get(result, '[0].status') !== 'success') {
       return;

@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { Route, Switch } from 'react-router-dom';
 
 import {NavTitle, LoadingInline, cloudProviderNames, DocumentationSidebar} from './utils';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
 import * as classNames from'classnames';
-import { units, NavBar } from './utils';
+import { units } from './utils';
 import { Gauge, Line, Bar } from './graphs';
 
 const tectonicHealthMsgs = {
@@ -81,39 +80,6 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
-const Grafana = () => <div>
-  { /* CPU cores (dial) */ }
-  <iframe src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/resource-requests?orgId=1&panelId=2&theme=light&refresh=30s" width="450" height="200" frameBorder="0"></iframe>
-  { /* cluster memory (dial) */ }
-  <iframe src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/resource-requests?orgId=1&panelId=4&theme=light&refresh=30s" width="450" height="200" frameBorder="0"></iframe>
-
-  { /* system load */ }
-  <iframe style={{border: '1px solid #fbfbfb', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/all-nodes?orgId=1&panelId=9&theme=light&refresh=30s" width="450" height="200" frameBorder="0"></iframe>
-  { /* memory usage */ }
-  <iframe style={{border: '1px solid #fbfbfb', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/all-nodes?orgId=1&panelId=4&theme=light&refresh=30s" width="450" height="200" frameBorder="0"></iframe>
-  { /* disk i/o */ }
-  <iframe style={{border: '1px solid #fbfbfb', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/all-nodes?orgId=1&panelId=6&theme=light&refresh=30s" width="450" height="200" frameBorder="0"></iframe>
-
-  { /* memory usage (dial) */ }
-  <iframe style={{border: '1px solid #fbfbfb', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/all-nodes?orgId=1&panelId=5&theme=light&refresh=30s" width="450" height="200" frameBorder="0"></iframe>
-  { /* disk space (dial) */ }
-  <iframe style={{border: '1px solid #fbfbfb', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/all-nodes?orgId=1&panelId=7&theme=light&refresh=30s" width="450" height="200" frameBorder="0"></iframe>
-
-
-  { /* network in/out */ }
-  <iframe style={{border: '1px solid #fbfbfb', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/all-nodes?orgId=1&panelId=8&theme=light&refresh=30s" width="600" height="300" frameBorder="0"></iframe>
-  <iframe style={{border: '1px solid #eee', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/all-nodes?orgId=1&panelId=10&theme=light&refresh=30s" width="600" height="300" frameBorder="0"></iframe>
-
-  <iframe style={{border: '1px solid #eee', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/resource-requests?orgId=1&panelId=1&theme=light&refresh=30s" width="600" height="600" frameBorder="0"></iframe>
-  <iframe style={{border: '1px solid #eee', margin: 10}} src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard-solo/db/resource-requests?orgId=1&panelId=3&theme=light&refresh=30s" width="600" height="600" frameBorder="00"></iframe>
-</div>;
-Grafana.displayName = 'Grafana';
-
-const GrafanaDash = () => <div>
-  <iframe src="/api/v1/proxy/namespaces/tectonic-system/services/grafana:3001/dashboard/db/all-nodes?orgId=1&theme=light" width="1000" height="1600" frameBorder="0"></iframe>
-</div>;
-GrafanaDash.displayName = 'GrafanaDash';
-
 const multiLoadQueries = [
   {
     name: '1m',
@@ -143,7 +109,7 @@ const memoryQueries = [
 const humanizeMem = v => units.humanize(v, 'binaryBytes', true).string;
 const humanizeCPU = v => units.humanize(v, 'numeric', true).string;
 
-const Plotly = () => <div style={{padding: '15px 20px'}}>
+const Graphs = () => <div style={{padding: '15px 20px'}}>
   <div className="row">
     <div className="col-lg-3">
       <Line title="Idle CPU" query={'sum(rate(node_cpu{mode="idle"}[2m])) * 100'} />
@@ -188,80 +154,7 @@ const Plotly = () => <div style={{padding: '15px 20px'}}>
     </div>
   </div>
 </div>;
-Plotly.displayName = 'Plotly';
-
-const Overview = props => <div className="cluster-overview">
-  <div className="cluster-overview-row">
-
-    <div className="cluster-overview-cell co-m-pane">
-      <SubHeaderRow header="Cluster Health" />
-
-      <div className="cluster-overview-cell__info-row--first">
-        <ClusterHealthRow title="Tectonic Console" state={props.tectonicHealth}
-          text={tectonicHealthMsgs[props.tectonicHealth]} />
-      </div>
-
-      <ClusterHealthRow title="Kubernetes API Connection" state={props.kubernetesHealth}
-        text={k8sHealthMsgs[props.kubernetesHealth]} />
-
-      <br />
-      <SecurityScanningOverview
-        {...props}
-        required="SECURITY_LABELLER"
-      />
-    </div>
-
-    <div className="cluster-overview-cell co-m-pane">
-      <SubHeaderRow header="Software Details" />
-
-      <div className="cluster-overview-cell__info-row--first">
-        <SoftwareDetailRow title="Kubernetes"
-          detail={props.kubernetesVersion} text="Kubernetes version could not be determined." />
-      </div>
-
-      <SoftwareDetailRow title="Tectonic" detail={props.currentTectonicVersion || props.tectonicVersion}
-        text="Tectonic version could not be determined." >
-        <div>
-          {// eslint-disable-next-line react/jsx-no-target-blank
-          } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes</a>
-        </div>
-      </SoftwareDetailRow>
-
-      <SoftwareDetailRow title="License" detail={props.tectonicLicense}
-        text="Tectonic License could not be determined." />
-
-      {props.cloudProviders &&
-        <SoftwareDetailRow title="Cloud Provider" detail={cloudProviderNames(props.cloudProviders)}
-          text="Cloud Provider could not be determined." />
-      }
-
-    </div>
-  </div>
-</div>;
-Overview.displayName = 'Overview';
-
-const pages = [
-  {
-    name: 'Old overview',
-    href: '',
-    component: Overview,
-  },
-  {
-    name: 'Plotly',
-    href: 'plotly',
-    component: Plotly
-  },
-  {
-    name: 'Grafana',
-    href: 'grafana',
-    component: Grafana,
-  },
-  {
-    name: 'Grafana 1 iframe',
-    href: 'grafanadash',
-    component: GrafanaDash,
-  },
-];
+Graphs.displayName = 'Graphs';
 
 export const ClusterOverviewPage = props => {
   return <div className="co-p-cluster">
@@ -271,12 +164,56 @@ export const ClusterOverviewPage = props => {
         <title>Cluster Status</title>
       </Helmet>
       <NavTitle title="Cluster Status" />
+      <div className="cluster-overview">
+        <div className="cluster-overview-row">
 
-      <NavBar pages={pages} />
-      <Switch>
-        {pages.map(p => <Route path={`/${p.href}`} exact key={p.name} render={() =>
-          <p.component {...props} />} />)}
-      </Switch>
+          <div className="cluster-overview-cell co-m-pane">
+            <SubHeaderRow header="Cluster Health" />
+
+            <div className="cluster-overview-cell__info-row--first">
+              <ClusterHealthRow title="Tectonic Console" state={props.tectonicHealth}
+                text={tectonicHealthMsgs[props.tectonicHealth]} />
+            </div>
+
+            <ClusterHealthRow title="Kubernetes API Connection" state={props.kubernetesHealth}
+              text={k8sHealthMsgs[props.kubernetesHealth]} />
+
+            <br />
+            <SecurityScanningOverview
+              {...props}
+              required="SECURITY_LABELLER"
+            />
+          </div>
+
+          <div className="cluster-overview-cell co-m-pane">
+            <SubHeaderRow header="Software Details" />
+
+            <div className="cluster-overview-cell__info-row--first">
+              <SoftwareDetailRow title="Kubernetes"
+                detail={props.kubernetesVersion} text="Kubernetes version could not be determined." />
+            </div>
+
+            <SoftwareDetailRow title="Tectonic" detail={props.currentTectonicVersion || props.tectonicVersion}
+              text="Tectonic version could not be determined." >
+              <div>
+                {// eslint-disable-next-line react/jsx-no-target-blank
+                } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes</a>
+              </div>
+            </SoftwareDetailRow>
+
+            <SoftwareDetailRow title="License" detail={props.tectonicLicense}
+              text="Tectonic License could not be determined." />
+
+            {props.cloudProviders &&
+              <SoftwareDetailRow title="Cloud Provider" detail={cloudProviderNames(props.cloudProviders)}
+                text="Cloud Provider could not be determined." />
+            }
+
+          </div>
+        </div>
+      </div>
+
+      <Graphs />
     </div>
     <DocumentationSidebar />
   </div>;
