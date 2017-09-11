@@ -30,6 +30,17 @@ const memoryQueries = [
   },
 ];
 
+const diskQueries = [
+  {
+    name: 'Total',
+    query: 'sum(node_filesystem_size{device!="rootfs"})',
+  },
+  {
+    name: 'Free',
+    query: 'sum(node_filesystem_free{device!="rootfs"})',
+  },
+];
+
 const humanizeMem = v => units.humanize(v, 'binaryBytes', true).string;
 const humanizeCPU = v => units.humanize(v, 'numeric', true).string;
 
@@ -67,20 +78,26 @@ export const ClusterHealth = () => <div style={{padding: '15px 20px'}}>
     <div className="col-lg-3">
       <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
     </div>
-    <div className="col-lg-3">
-      <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (container_network_receive_bytes_total)))'} humanize={humanizeMem} />
-    </div>
-    <div className="col-lg-3">
-      <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (container_network_transmit_bytes_total)))'} humanize={humanizeMem} />
+    <div className="col-lg-9">
+      <Line title="Disk" query={diskQueries} />
     </div>
   </div>
 
   <div className="row">
-    <div className="col-lg-6">
-      <Line title="Network Received" query={'sum(rate(node_network_receive_bytes{device!~"lo"}[5m]))'} />
+    <div className="col-lg-8">
+      <Line title="Network Received (bytes/s)" query={'sum(rate(node_network_receive_bytes{device=~"^eth.*"}[5m]))'} />
     </div>
-    <div className="col-lg-6">
-      <Line title="Network Transmitted" query={'sum(rate(node_network_transmit_bytes{device!~"lo"}[5m]))'} />
+    <div className="col-lg-4">
+      <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_receive_bytes_total[5m]))))'} humanize={humanizeMem} />
+    </div>
+  </div>
+
+  <div className="row">
+    <div className="col-lg-8">
+      <Line title="Network Transmitted (bytes/s)" query={'sum(rate(node_network_transmit_bytes{device=~"^eth.*"}[5m]))'} />
+    </div>
+    <div className="col-lg-4">
+      <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_transmit_bytes_total[5m]))))'} humanize={humanizeMem} />
     </div>
   </div>
 </div>;

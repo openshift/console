@@ -23,9 +23,10 @@ export class BaseGraph extends React.PureComponent {
         t: 10,
         pad: 10,
       },
+      autosize: true,
     };
     this.defaultOptions = {};
-    this.timeSpan = 60 * 60 * 1000; // 1 hour
+    this.timeSpan = this.props.timeSpan || 60 * 60 * 1000; // 1 hour
   }
 
   setNode_(node) {
@@ -57,7 +58,7 @@ export class BaseGraph extends React.PureComponent {
       .then(values => this.update(values))
       .catch(e => console.error(e))
       .then(() => {
-        if (this.unmounted) {
+        if (this.isMounted_) {
           return;
         }
         this.interval = setTimeout(() => this.fetch(), pollInterval);
@@ -70,7 +71,7 @@ export class BaseGraph extends React.PureComponent {
   }
 
   componentWillUnmount () {
-    this.unmounted = true;
+    this.isMounted_ = true;
     window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
@@ -85,7 +86,7 @@ export class BaseGraph extends React.PureComponent {
 
   render () {
     const title = this.props.title;
-    return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 8, margin: '8px 0'}, this.style)} >
+    return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 15, margin: '8px 0'}, this.style)} >
       { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#444'}}>{title}</h4> }
       <div ref={this.setNode} />
     </div>;

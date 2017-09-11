@@ -70,7 +70,7 @@ export class Gauge extends BaseGraph {
       },
     ];
     this.layout = {
-      height: 200,
+      height: 170,
       xaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]},
       yaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]},
       // yanchor: 'bottom',
@@ -84,14 +84,14 @@ export class Gauge extends BaseGraph {
       annotations: [
         {
           x: 0,
-          y: -0.05,
+          y: -0.15,
           text: '...',
           showarrow: false,
           ax: 0,
           ay: 0,
           align: 'center',
           font: {
-            size: 32,
+            size: 20,
             color: '#333'
           },
         }
@@ -114,7 +114,7 @@ export class Gauge extends BaseGraph {
       console.error('data is NaN!', result);
       return;
     }
-    const percent = data;
+    const percent = Math.min(data, 100);
     this.data[0].values[1] = percent / 100;
     this.data[0].values[2] = (100 - percent) / 100;
 
@@ -125,7 +125,7 @@ export class Gauge extends BaseGraph {
       color = colors.warn;
     }
     this.data[0].marker.colors[1] = color;
-    this.layout.annotations[0].text = `${percent}%`;
+    this.layout.annotations[0].text = `${data}%`;
     relayout(this.node, this.layout);
   }
 }

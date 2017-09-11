@@ -101,7 +101,7 @@ export const ClusterOverviewPage = props => {
 
         <div className="row">
           <div className="col-lg-3">
-            <Scalar title="Cluster Status" fetch={fetchHealth} />
+            <Scalar title="Kubernetes API" fetch={fetchHealth} />
           </div>
           <div className="col-lg-3">
             <Gauge title="CPU Usage" query={'sum(rate(node_cpu{mode!="idle"}[2m])) * 100'} />
