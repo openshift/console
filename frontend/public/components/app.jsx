@@ -27,6 +27,7 @@ import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, Loading } from './utils';
 import { Clusters } from './federation/cluster';
+import { ClusterHealth } from './cluster-health';
 import '../style.scss';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
@@ -78,6 +79,7 @@ class App extends React.PureComponent {
           <NamespaceSelector />
           <Switch>
             <Route path="/" exact component={ClusterOverviewContainer} />
+            <Route path="/cluster-health" exact component={ClusterHealth} />
 
             <Route path="/start-guide" exact component={StartGuidePage} />
 
