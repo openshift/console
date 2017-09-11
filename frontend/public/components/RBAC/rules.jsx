@@ -37,13 +37,10 @@ const Actions = ({verbs}) => {
 
 const Groups = ({apiGroups}) => {
   // defaults to [""]
-  if (!apiGroups || !apiGroups[0]) {
-    return <div className="rbac-rule-row" key={0}>core/v1</div>;
-  }
   let groups = [];
   _.each(apiGroups, g => {
     if (g === '*') {
-      groups = <div className="rbac-rule-row">All</div>;
+      groups = <div className="rbac-rule-row">* <i>All</i></div>;
       return false;
     }
     groups.push(<div className="rbac-rule-row" key={g}>{g}</div>);
