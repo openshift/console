@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import * as pages from './resource-pages';
+import { resourceListPages, resourceDetailPages } from './resource-pages';
 import { connectToPlural } from '../kinds';
 import { LoadingBox } from './utils';
 
@@ -19,10 +19,9 @@ export const ResourceListPage = connectToPlural(props => {
     return null;
   }
 
-  // eslint-disable-next-line import/namespace
-  let PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}Page`];
+  let PageComponent = resourceListPages.get(kindObj.labelPlural.replace(/ /g, ''));
   if (!PageComponent) {
-    PageComponent = pages.DefaultPage;
+    PageComponent = resourceListPages.get('Default');
   }
   return <div>
     <Helmet>
@@ -45,10 +44,9 @@ export const ResourceDetailsPage = connectToPlural(props => {
     return null;
   }
 
-  // eslint-disable-next-line import/namespace
-  let PageComponent = pages[`${kindObj.labelPlural.replace(/ /g, '')}DetailsPage`];
+  let PageComponent = resourceDetailPages.get(kindObj.labelPlural.replace(/ /g, ''));
   if (!PageComponent) {
-    PageComponent = pages.DefaultDetailsPage;
+    PageComponent = resourceDetailPages.get('Default');
   }
   return <div>
     <Helmet>
