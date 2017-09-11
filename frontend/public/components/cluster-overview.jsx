@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import * as classNames from 'classnames';
 
+import { coFetchJSON } from '../co-fetch';
 import { NavTitle, LoadingInline, DocumentationSidebar, cloudProviderNames} from './utils';
+import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
-import * as classNames from'classnames';
+import { Gauge, Scalar } from './graphs';
 
 const tectonicHealthMsgs = {
   ok: 'All systems go',
@@ -42,12 +45,13 @@ export const StatusIcon = ({state, text}) => {
   </div>;
 };
 
-export const SubHeaderRow = ({header}) => {
+export const SubHeaderRow = ({header, children}) => {
   return <div className="row">
     <div className="col-xs-12">
       <h4 className="cluster-overview-cell__title">
         {header}
       </h4>
+      {children}
     </div>
   </div>;
 };
@@ -79,6 +83,9 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
+const fetchHealth = () => coFetchJSON(k8sBasePath)
+  .then(() => ({short: 'UP', long: 'All good', status: 'OK'}));
+
 export const ClusterOverviewPage = props => {
   return <div className="co-p-cluster">
     <div className="co-p-cluster__body">
@@ -87,11 +94,30 @@ export const ClusterOverviewPage = props => {
         <title>Cluster Status</title>
       </Helmet>
       <NavTitle title="Cluster Status" />
+      <div className="cluster-overview-cell co-m-pane">
+        <SubHeaderRow header="Cluster Health">
+          <div className="pull-right"><Link to="/cluster-health"><h4>Go to Dashboard</h4></Link></div>
+        </SubHeaderRow>
+
+        <div className="row">
+          <div className="col-lg-3">
+            <Scalar title="Cluster Status" fetch={fetchHealth} />
+          </div>
+          <div className="col-lg-3">
+            <Gauge title="CPU Usage" query={'sum(rate(node_cpu{mode!="idle"}[2m])) * 100'} />
+          </div>
+          <div className="col-lg-3">
+            <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
+          </div>
+          <div className="col-lg-3">
+            <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
+          </div>
+        </div>
+      </div>
       <div className="cluster-overview">
         <div className="cluster-overview-row">
 
           <div className="cluster-overview-cell co-m-pane">
-            <div className="pull-right"><Link to="/cluster-health">Go to Dashboard</Link></div>
             <SubHeaderRow header="Cluster Health" />
 
             <div className="cluster-overview-cell__info-row--first">
