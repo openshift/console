@@ -81,7 +81,7 @@ export const ClusterOverviewPage = props => {
       <NavTitle title="Cluster Status" />
       <div className="cluster-overview-cell co-m-pane">
         <SubHeaderRow header="Cluster Health">
-          <div className="pull-right"><Link to="/cluster-health"><h4>Go to Dashboard</h4></Link></div>
+          <div className="pull-right"><Link to="/cluster-health"><h4>View Dashboard</h4></Link></div>
         </SubHeaderRow>
 
         <div className="row">

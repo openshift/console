@@ -52,10 +52,10 @@ export const ClusterHealth = () => <div style={{padding: '15px 20px'}}>
   <NavTitle title="Cluster Health" />
 
   <div className="row">
-    <div className="col-lg-3">
+    <div className="col-lg-2">
       <Line title="Idle CPU" query={'sum(rate(node_cpu{mode="idle"}[2m])) * 100'} />
     </div>
-    <div className="col-lg-6">
+    <div className="col-lg-7">
       <Line title="Cluster Load Average" query={multiLoadQueries} />
     </div>
     <div className="col-lg-3">
@@ -63,10 +63,10 @@ export const ClusterHealth = () => <div style={{padding: '15px 20px'}}>
     </div>
   </div>
   <div className="row">
-    <div className="col-lg-3">
+    <div className="col-lg-2">
       <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
     </div>
-    <div className="col-lg-6">
+    <div className="col-lg-7">
       <Line title="Memory" query={memoryQueries} />
     </div>
     <div className="col-lg-3">
@@ -75,28 +75,28 @@ export const ClusterHealth = () => <div style={{padding: '15px 20px'}}>
   </div>
 
   <div className="row">
-    <div className="col-lg-3">
+    <div className="col-lg-2">
       <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
     </div>
-    <div className="col-lg-9">
+    <div className="col-lg-7">
       <Line title="Disk" query={diskQueries} />
     </div>
   </div>
 
   <div className="row">
-    <div className="col-lg-8">
+    <div className="col-lg-9">
       <Line title="Network Received (bytes/s)" query={'sum(rate(node_network_receive_bytes{device=~"^eth.*"}[5m]))'} />
     </div>
-    <div className="col-lg-4">
+    <div className="col-lg-3">
       <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_receive_bytes_total[5m]))))'} humanize={humanizeMem} />
     </div>
   </div>
 
   <div className="row">
-    <div className="col-lg-8">
+    <div className="col-lg-9">
       <Line title="Network Transmitted (bytes/s)" query={'sum(rate(node_network_transmit_bytes{device=~"^eth.*"}[5m]))'} />
     </div>
-    <div className="col-lg-4">
+    <div className="col-lg-3">
       <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_transmit_bytes_total[5m]))))'} humanize={humanizeMem} />
     </div>
   </div>
