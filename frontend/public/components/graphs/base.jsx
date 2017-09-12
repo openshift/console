@@ -16,13 +16,6 @@ export class BaseGraph extends React.PureComponent {
     this.resize = () => this.node && Plots.resize(this.node);
     this.defaultLayout = {
       height: 250,
-      margin: {
-        l: 40,
-        b: 30,
-        r: 10,
-        t: 10,
-        pad: 10,
-      },
       autosize: true,
     };
     this.defaultOptions = {};
@@ -65,7 +58,7 @@ export class BaseGraph extends React.PureComponent {
       });
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.fetch();
     window.addEventListener('resize', this.resize);
   }
@@ -77,8 +70,8 @@ export class BaseGraph extends React.PureComponent {
   }
 
   componentDidMount () {
-    this.layout = _.extend(this.defaultLayout, this.layout);
-    this.options = _.extend(this.defaultOptions, this.options);
+    this.layout = _.extend({}, this.defaultLayout, this.layout);
+    this.options = _.extend({}, this.defaultOptions, this.options);
     plot(this.node, this.data, this.layout, this.options).catch(e => {
       console.error('error initializing graph:', e);
     });
@@ -86,8 +79,8 @@ export class BaseGraph extends React.PureComponent {
 
   render () {
     const title = this.props.title;
-    return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 15, margin: '8px 0'}, this.style)} >
-      { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#444'}}>{title}</h4> }
+    return <div className="graph-wrapper" style={this.style}>
+      { title && <h4 className="graph-title">{title}</h4> }
       <div ref={this.setNode} />
     </div>;
   }

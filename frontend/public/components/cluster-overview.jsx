@@ -8,7 +8,7 @@ import { NavTitle, LoadingInline, DocumentationSidebar, cloudProviderNames} from
 import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
-import { Gauge, Scalar } from './graphs';
+import { Gauge, Status } from './graphs';
 
 const StatusIconRow = ({state, text}) => {
   const iconClasses = {
@@ -80,26 +80,31 @@ export const ClusterOverviewPage = props => {
       </Helmet>
       <NavTitle title="Cluster Status" />
       <div className="cluster-overview-cell co-m-pane">
-        <SubHeaderRow header="Cluster Health">
-          <div className="pull-right"><Link to="/cluster-health"><h4>View Dashboard</h4></Link></div>
-        </SubHeaderRow>
+        <div className="row">
+          <div className="col-lg-9 pull-left">
+            <h4>Cluster Health</h4>
+          </div>
+          <div className="col-lg-3 text-right">
+            <Link to="/cluster-health"><h4>View Dashboard</h4></Link>
+          </div>
+        </div>
 
         <div className="row">
-          <div className="col-lg-3">
-            <Scalar title="Kubernetes API" fetch={fetchHealth} />
+          <div className="col-lg-4 col-md-6">
+            <Status title="Kubernetes API" fetch={fetchHealth} />
           </div>
-          <div className="col-lg-3">
-            <Scalar title="Tectonic Console" fetch={fetchTectonicHealth} />
+          <div className="col-lg-4 col-md-6">
+            <Status title="Tectonic Console" fetch={fetchTectonicHealth} />
           </div>
         </div>
         <div className="row">
-          <div className="col-lg-3">
+          <div className="col-lg-4 col-md-6">
             <Gauge title="CPU Usage" query={'sum(rate(node_cpu{mode!="idle"}[2m])) * 100'} />
           </div>
-          <div className="col-lg-3">
+          <div className="col-lg-4 col-md-6">
             <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
           </div>
-          <div className="col-lg-3">
+          <div className="col-lg-4 col-md-6">
             <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
           </div>
         </div>

@@ -36,7 +36,14 @@ export class Line extends BaseGraph {
         x: 0, y: 1,
         bgcolor: 'rgba(255, 255, 255, 0)',
         orientation: 'h'
-      }
+      },
+      margin: {
+        l: 50,
+        b: 30,
+        r: 10,
+        t: 10,
+        pad: 10,
+      },
     };
   }
 

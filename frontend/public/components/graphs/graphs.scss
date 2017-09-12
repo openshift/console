@@ -1,0 +1,15 @@
+.graph-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding-top: 15px; // So graph title doesn't abut border
+  padding-bottom: 10px; // So graphs don't intersect with rounded corners
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.graph-title {
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+  color: #444;
+}

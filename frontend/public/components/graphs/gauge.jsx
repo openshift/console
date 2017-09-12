@@ -78,7 +78,7 @@ export class Gauge extends BaseGraph {
         l: 5,
         b: 5,
         r: 5,
-        t: 15,
+        t: 30,
         pad: 10,
       },
       annotations: [
