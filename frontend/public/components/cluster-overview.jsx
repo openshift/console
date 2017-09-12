@@ -10,17 +10,6 @@ import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
 import { Gauge, Scalar } from './graphs';
 
-const tectonicHealthMsgs = {
-  ok: 'All systems go',
-  unknown: 'The console service cannot be reached.'
-};
-
-const k8sHealthMsgs = {
-  ok: 'All systems go',
-  unknown: 'API server connection has a problem',
-  'access-denied': 'Access denied due to cluster policy'
-};
-
 const StatusIconRow = ({state, text}) => {
   const iconClasses = {
     ok: 'fa-check',
@@ -56,18 +45,6 @@ export const SubHeaderRow = ({header, children}) => {
   </div>;
 };
 
-const ClusterHealthRow = ({title, state, text}) => {
-  return <div className="row cluster-overview-cell__info-row">
-    <div className="col-xs-6 cluster-overview-cell__info-row__first-cell">
-      {title}
-    </div>
-    <div className="col-xs-6 cluster-overview-cell__info-row__last-cell">
-      {!state && <LoadingInline />}
-      <StatusIcon state={state} text={text} />
-    </div>
-  </div>;
-};
-
 const SoftwareDetailRow = ({title, detail, text, children}) => {
   return <div className="row cluster-overview-cell__info-row">
     <div className="col-xs-6 cluster-overview-cell__info-row__first-cell">
@@ -83,8 +60,16 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
+// TODO: (ggreer) handle 403
 const fetchHealth = () => coFetchJSON(k8sBasePath)
-  .then(() => ({short: 'UP', long: 'All good', status: 'OK'}));
+  .then(() => ({short: 'UP', long: 'All good', status: 'OK'}))
+  .catch(() => ({short: 'ERROR', long: 'API server connection has a problem', status: 'ERROR'}));
+
+// TODO: (ggreer) handle 403
+const fetchTectonicHealth = () => coFetchJSON('health')
+  .then(() => ({short: 'UP', long: 'All good', status: 'OK'}))
+  .catch(() => ({short: 'ERROR', long: 'The console service cannot be reached', status: 'ERROR'}));
+
 
 export const ClusterOverviewPage = props => {
   return <div className="co-p-cluster">
@@ -104,6 +89,11 @@ export const ClusterOverviewPage = props => {
             <Scalar title="Kubernetes API" fetch={fetchHealth} />
           </div>
           <div className="col-lg-3">
+            <Scalar title="Tectonic Console" fetch={fetchTectonicHealth} />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-lg-3">
             <Gauge title="CPU Usage" query={'sum(rate(node_cpu{mode!="idle"}[2m])) * 100'} />
           </div>
           <div className="col-lg-3">
@@ -113,28 +103,11 @@ export const ClusterOverviewPage = props => {
             <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
           </div>
         </div>
-      </div>
-      <div className="cluster-overview">
-        <div className="cluster-overview-row">
-
-          <div className="cluster-overview-cell co-m-pane">
-            <SubHeaderRow header="Cluster Health" />
-
-            <div className="cluster-overview-cell__info-row--first">
-              <ClusterHealthRow title="Tectonic Console" state={props.tectonicHealth}
-                text={tectonicHealthMsgs[props.tectonicHealth]} />
-            </div>
-
-            <ClusterHealthRow title="Kubernetes API Connection" state={props.kubernetesHealth}
-              text={k8sHealthMsgs[props.kubernetesHealth]} />
-
-            <br />
-            <SecurityScanningOverview
-              {...props}
-              required="SECURITY_LABELLER"
-            />
-          </div>
-        </div>
+        <br />
+        <SecurityScanningOverview
+          {...props}
+          required="SECURITY_LABELLER"
+        />
       </div>
     </div>
 

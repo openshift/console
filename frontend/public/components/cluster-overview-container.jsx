@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {coFetchJSON} from '../co-fetch';
-import {k8sBasePath, k8sKinds, k8sGet} from '../module/k8s';
+import {k8sKinds, k8sGet} from '../module/k8s';
 import {k8sVersion} from '../module/status';
 import {ClusterOverviewPage} from './cluster-overview';
 import {entitlementTitle} from './license-notifier';
@@ -14,10 +14,8 @@ export class ClusterOverviewContainer extends SafetyFirst {
     super(props);
     this.state = {
       tectonicVersion: null,
-      tectonicHealth: null,
       tectonicLicense: null,
       kubernetesVersion: null,
-      kubernetesHealth: null,
       cloudProviders: null,
       tectonicVersionObj: null,
       currentTectonicVersion: null,
@@ -29,9 +27,7 @@ export class ClusterOverviewContainer extends SafetyFirst {
   componentDidMount() {
     super.componentDidMount();
     this._checkTectonicVersion();
-    this._checkTectonicHealth();
     this._checkKubernetesVersion();
-    this._checkKubernetesHealth();
     this._checkCloudProvider();
     this._checkAppVersions();
     this._checkFixableIssues();
@@ -56,25 +52,10 @@ export class ClusterOverviewContainer extends SafetyFirst {
     }).catch(() => this.setState({ currentTectonicVersion: null }));
   }
 
-  _checkTectonicHealth() {
-    coFetchJSON('health')
-      .then(() => this.setState({ tectonicHealth: 'ok' }))
-      .catch(() => this.setState({ tectonicHealth: 'unknown' }));
-  }
-
   _checkKubernetesVersion() {
     k8sVersion()
       .then((data) => this.setState({ kubernetesVersion: data.gitVersion }))
       .catch(() => this.setState({ kubernetesVersion: 'unknown' }));
-  }
-
-  _checkKubernetesHealth() {
-    coFetchJSON(k8sBasePath)
-      .then(() => this.setState({ kubernetesHealth: 'ok' }))
-      .catch((resp) => {
-        const health = _.get(resp, 'response.status') === 403 ? 'access-denied' : 'unknown';
-        this.setState({ kubernetesHealth: health });
-      });
   }
 
   _checkCloudProvider() {
