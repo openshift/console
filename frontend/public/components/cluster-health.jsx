@@ -85,19 +85,19 @@ export const ClusterHealth = () => <div style={{padding: '15px 20px'}}>
 
   <div className="row">
     <div className="col-lg-9">
-      <Line title="Network Received (bytes/s)" query={'sum(rate(node_network_receive_bytes{device=~"^eth.*"}[5m]))'} />
+      <Line title="Network Received (bytes/s)" query={'sum(rate(container_network_receive_bytes_total{interface="eth0"}[1m]))'} />
     </div>
     <div className="col-lg-3">
-      <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_receive_bytes_total[5m]))))'} humanize={humanizeMem} />
+      <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_receive_bytes_total{interface="eth0"}[1m]))))'} humanize={humanizeMem} />
     </div>
   </div>
 
   <div className="row">
     <div className="col-lg-9">
-      <Line title="Network Transmitted (bytes/s)" query={'sum(rate(node_network_transmit_bytes{device=~"^eth.*"}[5m]))'} />
+      <Line title="Network Transmitted (bytes/s)" query={'sum(rate(container_network_transmit_bytes_total{interface="eth0"}[1m]))'} />
     </div>
     <div className="col-lg-3">
-      <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_transmit_bytes_total[5m]))))'} humanize={humanizeMem} />
+      <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_transmit_bytes_total{interface="eth0"}[1m]))))'} humanize={humanizeMem} />
     </div>
   </div>
 </div>;
