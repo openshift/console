@@ -74,8 +74,9 @@ const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
 
 const updateUrlParams = (k, v) => {
   const url = new URL(window.location);
-  url.searchParams.set(k, v);
-  history.push(`${url.pathname}${url.search}${url.hash}`);
+  const sp = new URLSearchParams(window.location.search);
+  sp.set(k, v);
+  history.push(`${url.pathname}?${sp.toString()}${url.hash}`);
 };
 
 const updateKind = kind => updateUrlParams('kind', encodeURIComponent(kind));
@@ -85,9 +86,9 @@ export const SearchPage = ({match, location}) => {
   const { params } = match;
   let kind, q;
   if (location.search) {
-    const u = new URL(window.location);
-    kind = u.searchParams.get('kind');
-    q = u.searchParams.get('q');
+    const sp = new URLSearchParams(window.location.search);
+    kind = sp.get('kind');
+    q = sp.get('q');
   }
 
   // Ensure that the "kind" route parameter is a valid resource kind ID
