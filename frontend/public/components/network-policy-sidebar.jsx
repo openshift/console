@@ -34,8 +34,8 @@ spec:
   ingress:
     - from:
       - podSelector:
-        matchLabels:
-        app: mail
+          matchLabels:
+            app: mail
 `, 'db-or-api-allow-app');
 
 registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
@@ -50,8 +50,8 @@ spec:
   ingress:
   - from:
     - podSelector:
-        matchLabels:
-        role: monitoring
+          matchLabels:
+            role: monitoring
   - ports:
     - protocol: TCP
       port: 80
@@ -75,8 +75,8 @@ metadata:
   namespace: target-ns
 spec:
   podSelector:
-  matchLabels:
-    app: web
+    matchLabels:
+      app: web
   ingress:
   - {}
 `, 'web-allow-external');
