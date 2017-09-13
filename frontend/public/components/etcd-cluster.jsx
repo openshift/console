@@ -11,8 +11,8 @@ import { Cog, navFactory, ResourceCog, ResourceIcon, Timestamp, Selector, resour
 import { registerTemplate } from '../yaml-templates';
 import { AsyncComponent } from './utils/async';
 
-registerTemplate('v1beta1.EtcdCluster', `apiVersion: etcd.coreos.com/v1beta1
-kind: Cluster
+registerTemplate('v1beta2.EtcdCluster', `apiVersion: etcd.database.coreos.com/v1beta2
+kind: EtcdCluster
 metadata:
   name: example
 spec:

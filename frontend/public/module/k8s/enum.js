@@ -227,9 +227,9 @@ export const k8sKinds = {
   },
   EtcdCluster: {
     label: 'etcd Cluster',
-    apiVersion: 'v1beta1',
-    basePath: '/apis/etcd.coreos.com/',
-    path: 'clusters',
+    apiVersion: 'v1beta2',
+    basePath: '/apis/etcd.database.coreos.com/',
+    path: 'etcdclusters',
     plural: 'etcdclusters',
     abbr: 'EC',
     namespaced: true,

@@ -80,7 +80,7 @@ const detectTectonicChannelOperatorFlags = dispatch => {
       (res) => handleError(res, TCO_FLAGS, dispatch, detectTectonicChannelOperatorFlags));
 };
 
-const etdPath = `${k8sBasePath}/apis/etcd.coreos.com/v1beta1`;
+const etdPath = `${k8sBasePath}/apis/etcd.database.coreos.com/v1beta2`;
 const detectEtcdOperatorFlags = dispatch => coFetchJSON(etdPath)
   .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
     (res) => handleError(res, ETCD_OPERATOR_FLAGS, dispatch, detectEtcdOperatorFlags));
