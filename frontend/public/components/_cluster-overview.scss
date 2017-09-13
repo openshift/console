@@ -31,18 +31,3 @@
   margin-right: -5px;
   text-align: right;
 }
-
-@media(min-width: 992px) {
-  .cluster-overview-cell {
-    display: table-cell;
-    width: 50%;
-    margin-top: 0px;
-  }
-
-  .cluster-overview-row {
-    display: table;
-    border-spacing: 15px 0px;
-    width: 100%;
-  }
-}
-

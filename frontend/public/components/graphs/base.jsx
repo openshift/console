@@ -96,7 +96,7 @@ export class BaseGraph extends SafetyFirst {
   render () {
     return <div className="graph-wrapper" style={this.style}>
       <h4 className="graph-title">{this.props.title}</h4>
-      <div ref={this.setNode} />
+      <div ref={this.setNode} style={{width: '100%'}}/>
     </div>;
   }
 }

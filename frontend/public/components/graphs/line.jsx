@@ -45,6 +45,7 @@ export class Line extends BaseGraph {
         pad: 10,
       },
     };
+    this.style={width: '100%'};
   }
 
   updateGraph (data) {
