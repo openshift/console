@@ -9,9 +9,9 @@ const Requirement = ({kind, requirements, namespace=''}) => {
   const requirementAsString = selectorToString(requirements).replace(/=,/g, ',').replace(/=$/g, '');
   const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
 
-  let to = `search?kind=${kind}&q=${requirementAsUrlEncodedString}`;
+  let to = `/search?kind=${kind}&q=${requirementAsUrlEncodedString}`;
   if (namespace) {
-    to = `ns/${namespace}/${to}`;
+    to = `/ns/${namespace}/${to}`;
   }
 
   return (
