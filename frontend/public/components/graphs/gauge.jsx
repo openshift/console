@@ -18,62 +18,20 @@ const colors = {
 export class Gauge extends BaseGraph {
   constructor (props) {
     super(props);
-    this.data = [
-      {
-        values: [0.5, 0.0, 1],
-        rotation: 120,
-        direction: 'clockwise',
-        marker: {
-          colors: [
-            colors.clear,
-            colors.ok,
-            colors.gray,
-          ]
-        },
-        textinfo: 'none',
-        hole: .65,
-        type: 'pie',
-        showlegend: false,
-        sort: false,
-        hoverinfo: 'none',
-      },
-      // White Spacer Ring
-      {
-        values: [1],
-        direction: 'clockwise',
-        marker: {colors: [
-          colors.white,
-        ]},
-        textinfo: 'none',
-        hole: .94,
-        type: 'pie',
-        showlegend: false,
-        sort: false,
-        hoverinfo: 'none',
-      },
-      // Danger Zone Ring
-      {
-        values: [3, 4, 1.5, 0.5],
-        rotation: 120,
-        direction: 'clockwise',
-        textinfo: 'none',
-        marker: {
-          colors:[
-            colors.clear, colors.ok, colors.warn, colors.error,
-          ],
-        },
-        hole: .95,
-        type: 'pie',
-        showlegend: false,
-        sort: false,
-        hoverinfo: 'none',
-      },
-    ];
+
+    this.timeSpan = 0;
+    this.style = {
+      height: 200,
+      minWidth: 200,
+      overflow: 'hidden',
+    };
+
+    this.options = { staticPlot: true };
+
     this.layout = {
       height: 170,
-      xaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]},
-      yaxis: {zeroline:false, showticklabels:false, showgrid: false, range: [-1, 1]},
-      // yanchor: 'bottom',
+      xaxis: {zeroline: false, showticklabels: false, showgrid: false, range: [-1, 1]},
+      yaxis: {zeroline: false, showticklabels: false, showgrid: false, range: [-1, 1]},
       margin: {
         l: 5,
         b: 5,
@@ -81,37 +39,75 @@ export class Gauge extends BaseGraph {
         t: 30,
         pad: 10,
       },
-      annotations: [
-        {
-          x: 0,
-          y: -0.15,
-          text: '...',
-          showarrow: false,
-          ax: 0,
-          ay: 0,
-          align: 'center',
-          font: {
-            size: 20,
-            color: '#333'
-          },
-        }
-      ],
+      annotations: [{
+        x: 0,
+        y: -0.15,
+        text: '...',
+        showarrow: false,
+        ax: 0,
+        ay: 0,
+        align: 'center',
+        font: {
+          size: 20,
+          color: '#333'
+        },
+      }],
     };
-    this.options = {
-      staticPlot: true,
-    };
-    this.timeSpan = 0;
-    this.style = {
-      height: 200,
-      minWidth: 200,
-      overflow: 'hidden',
-    };
+
+    this.data = [{
+      values: [0.5, 0.0, 1],
+      rotation: 120,
+      direction: 'clockwise',
+      marker: {
+        colors: [
+          colors.clear,
+          colors.ok,
+          colors.gray,
+        ]
+      },
+      textinfo: 'none',
+      hole: .65,
+      type: 'pie',
+      showlegend: false,
+      sort: false,
+      hoverinfo: 'none',
+    }, {
+      // White Spacer Ring
+      values: [1],
+      direction: 'clockwise',
+      marker: {colors: [
+        colors.white,
+      ]},
+      textinfo: 'none',
+      hole: .94,
+      type: 'pie',
+      showlegend: false,
+      sort: false,
+      hoverinfo: 'none',
+    }, {
+      // Danger Zone Ring
+      values: [3, 4, 1.5, 0.5],
+      rotation: 120,
+      direction: 'clockwise',
+      textinfo: 'none',
+      marker: {
+        colors:[
+          colors.clear, colors.ok, colors.warn, colors.error,
+        ],
+      },
+      hole: .95,
+      type: 'pie',
+      showlegend: false,
+      sort: false,
+      hoverinfo: 'none',
+    }];
   }
 
-  update (result) {
-    const data = parseInt(result[0].data.result[0].value[1], 10);
+  updateGraph (data) {
+    data = parseInt(_.get(data, '[0].data.result[0].value[1]'), 10);
     if (isNaN(data)) {
-      console.error('data is NaN!', result);
+      // eslint-disable-next-line no-console
+      console.error('data is NaN!', data);
       return;
     }
     const percent = Math.min(data, 100);

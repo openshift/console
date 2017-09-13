@@ -47,20 +47,24 @@ export class Line extends BaseGraph {
     };
   }
 
-  update (results) {
-    _.each(results, (result, i) => {
+  updateGraph (data) {
+    _.each(data, (result, i) => {
       const query = this.props.query[i];
       const name = query && query.name;
       if (result.data.result.length === 0) {
+        // eslint-disable-next-line no-console
         console.warn('no data for query', query);
+        return;
       }
       const data = result.data.result[0].values;
       restyle(this.node, {
         x: [data.map(v => new Date(v[0] * 1000))],
         y: [data.map(v => v[1])],
         name,
-      }, [i])
-        .catch(e => console.error(e));
+      }, [i]).catch(e => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      });
     });
   }
 }

@@ -3,10 +3,11 @@ import * as PropTypes from 'prop-types';
 import { plot, Plots } from 'plotly.js/lib/core';
 
 import { coFetchJSON } from '../../co-fetch';
+import { SafetyFirst } from '../safety-first';
 
 const basePath = '/api/kubernetes/api/v1/proxy/namespaces/tectonic-system/services/prometheus:9090';
 
-export class BaseGraph extends React.PureComponent {
+export class BaseGraph extends SafetyFirst {
   constructor(props) {
     super(props);
     this.interval = null;
@@ -14,12 +15,10 @@ export class BaseGraph extends React.PureComponent {
     // Child classes set these
     this.data = [];
     this.resize = () => this.node && Plots.resize(this.node);
-    this.defaultLayout = {
-      height: 250,
-      autosize: true,
-    };
-    this.defaultOptions = {};
     this.timeSpan = this.props.timeSpan || 60 * 60 * 1000; // 1 hour
+    this.state = {
+      error: null,
+    };
   }
 
   setNode_(node) {
@@ -30,7 +29,7 @@ export class BaseGraph extends React.PureComponent {
 
   fetch () {
     const end = Date.now();
-    const start = end - (this.timeSpan);
+    const start = end - this.timeSpan;
 
     let queries = this.props.query;
     if (!_.isArray(queries)) {
@@ -48,8 +47,15 @@ export class BaseGraph extends React.PureComponent {
       return coFetchJSON(url);
     });
     Promise.all(promises)
-      .then(values => this.update(values))
-      .catch(e => console.error(e))
+      .then(data => {
+        try {
+          this.updateGraph(data);
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(e);
+        }
+      })
+      .catch(error => this.updateGraph(null, error))
       .then(() => {
         if (this.isMounted_) {
           return;
@@ -64,23 +70,32 @@ export class BaseGraph extends React.PureComponent {
   }
 
   componentWillUnmount () {
-    this.isMounted_ = true;
+    super.componentWillUnmount();
     window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
 
   componentDidMount () {
-    this.layout = _.extend({}, this.defaultLayout, this.layout);
-    this.options = _.extend({}, this.defaultOptions, this.options);
+    super.componentDidMount();
+
+    if (!this.node) {
+      return;
+    }
+
+    this.layout = _.extend({
+      height: 250,
+      autosize: true,
+    }, this.layout);
+
     plot(this.node, this.data, this.layout, this.options).catch(e => {
+      // eslint-disable-next-line no-console
       console.error('error initializing graph:', e);
     });
   }
 
   render () {
-    const title = this.props.title;
     return <div className="graph-wrapper" style={this.style}>
-      { title && <h4 className="graph-title">{title}</h4> }
+      <h4 className="graph-title">{this.props.title}</h4>
       <div ref={this.setNode} />
     </div>;
   }
@@ -88,5 +103,6 @@ export class BaseGraph extends React.PureComponent {
 
 BaseGraph.PropTypes = {
   query: PropTypes.string.isRequired,
-  title: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  timeSpan: PropTypes.number,
 };
