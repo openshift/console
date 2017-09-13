@@ -117,6 +117,7 @@ const sorts = {
   string: val => JSON.stringify(val),
 };
 
+/** @augments {React.Component<any>} */
 export class ColHead extends React.Component {
   componentWillMount() {
     const {applySort, children, sortField, sortFunc} = this.props;
@@ -240,6 +241,7 @@ List.propTypes = {
   staticFilters: PropTypes.array,
 };
 
+/** @augments {React.Component<{obj: any>}} */
 export class ResourceRow extends React.Component {
   shouldComponentUpdate(nextProps) {
     for (let key in nextProps) {

@@ -69,7 +69,7 @@ const SECURITY_LABELLER_FLAGS = {
 };
 
 const CLOUD_SERVICES_FLAGS = {
-  [FLAGS.CLOUD_SERVICES]: 'apptypes',
+  [FLAGS.CLOUD_SERVICES]: 'apptype-v1s',
 };
 
 

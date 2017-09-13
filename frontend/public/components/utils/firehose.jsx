@@ -5,6 +5,7 @@ import store from '../../redux';
 import {K8sWatcher} from './k8s-watcher';
 import {EmptyBox, ConnectToState, kindObj, MultiConnectToState} from './index';
 
+/** @augments {React.Component<{kind: string, isList: boolean}>} */
 class FirehoseBase extends React.Component {
   _initFirehose(props) {
     const {kind, namespace, name, fieldSelector, selector} = props;

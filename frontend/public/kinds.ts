@@ -8,7 +8,7 @@ import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
 
 /* eslint-disable no-unused-vars,no-undef */
-type K8sKind = {
+export type K8sKind = {
   abbr: string;
   kind: string;
   label: string;
@@ -74,7 +74,7 @@ export const stateToProps = function (state, props): {kindObj: K8sKind | {}, kin
 
 export const connectToKinds = () => connect(stateToProps);
 
-export const connectToPlural = Component => connect((state, props) => {
+export const connectToPlural = Component => connect((state, props: any) => {
   const plural = props.plural || _.get(props, 'match.params.plural');
   const ns = state[kindReducerName];
   const kindObj = ns.get('kinds').find(v => v.get('plural') === plural);

@@ -1,0 +1,1 @@
+export { AppTypesPage } from './installed';

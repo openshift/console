@@ -40,7 +40,7 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
       this.setState({expand});
     }
 
-    applyFilter (filterName, options) {
+    applyFilter (filterName, options) {      
       const reduxIDs = this.props.reduxIDs || [this.props.reduxID];
       reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
     }
@@ -121,9 +121,11 @@ BaseListPage.propTypes = {
   title: PropTypes.string,
 };
 
+/** @type {React.StatelessComponent<{ListComponent: React.ComponentType<any>, kind: string, filterLabel: string, title: string, showTitle: boolean, dropdownFilters?: any[]}>} */
 export const ListPage = props => {
   const {createHandler, filterLabel, kind, namespace, showTitle = true} = props;
   const {label, labelPlural, plural} = kindObj(kind);
+  const title = props.title || labelPlural;
 
   const href = `/ns/${namespace || 'default'}/${plural}/new`;
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
@@ -135,7 +137,7 @@ export const ListPage = props => {
       createProps={createProps}
       filterLabel={filterLabel || `${labelPlural} by name`}
       kinds={[kind]}
-      title={showTitle ? labelPlural : undefined}
+      title={showTitle ? title : undefined}
     />
   </Firehose>;
 };

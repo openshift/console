@@ -29,6 +29,7 @@ $fa-font-path: "~font-awesome/fonts";
 // Base
 @import "style/common";
 @import "style/icons";
+@import "style/core-icons";
 @import "style/layout";
 @import "style/text";
 @import "style/status";
@@ -72,3 +73,4 @@ $fa-font-path: "~font-awesome/fonts";
 @import "components/federation/cluster";
 @import "components/secscan/secscan";
 @import "components/network-policy-sidebar";
+@import "components/cloud-services/cloud-services"

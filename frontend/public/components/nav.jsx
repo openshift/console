@@ -92,7 +92,7 @@ class NavSection_ extends React.PureComponent {
     // however, the transition animiation is calculated on the actual max-height, so it must be roughly equal to the actual height
     // we could use scaleY, but that literally scales along the Y axis, ie shrinks
     // we could use flexbox or the equivalent to get an actual height, but this is the easiest solution :-/
-    const maxHeight = this.state.isOpen ? (this.props.children.length * 29) : 0;
+    const maxHeight = this.state.isOpen ? ((this.props.children.length || 1) * 29) : 0;
 
     return <div className="navigation-container__section">
       <div className="navigation-container__section__title" onClick={this.toggle}>
@@ -119,6 +119,10 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <Link to="/"><img src={tectonicLogoImg} id="logo" /></Link>
       <ClusterPicker />
     </div>
+
+    <NavSection required={[FLAGS.CLOUD_SERVICES]} text="Applications" icon="ci-appcube">
+      <NavLink resource="apptype-v1s" name="Installed Applications" />
+    </NavSection>
 
     <NavSection text="Workloads" icon="fa-folder-open-o">
       <NavLink resource="daemonsets" name="Daemon Sets" />

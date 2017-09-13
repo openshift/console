@@ -81,6 +81,7 @@
     "@types/react": "16.x",
     "@types/react-dom": "15.x",
     "@types/react-helmet": "5.x",
+    "@types/react-redux": "5.0.7",
     "awesome-typescript-loader": "^3.2.3",
     "chromedriver": "2.x",
     "css-loader": "0.28.x",
