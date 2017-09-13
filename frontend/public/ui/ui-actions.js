@@ -89,10 +89,10 @@ export const UIActions = {
 
   [types.sortList]: (listId, field, func, orderBy, column) => {
     const url = new URL(window.location);
-    const sp = url.searchParams;
+    const sp = new URLSearchParams(window.location.search);
     sp.set('orderBy', orderBy);
     sp.set('sortBy', column);
-    history.replace(`${url.pathname}${url.search}${url.hash}`);
+    history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
     return {listId, field, func, orderBy, type: types.sortList};
   },
 };

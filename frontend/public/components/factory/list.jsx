@@ -122,9 +122,9 @@ export class ColHead extends React.Component {
   componentWillMount() {
     const {applySort, children, sortField, sortFunc} = this.props;
 
-    const u = new URL(window.location).searchParams;
-    if (u.get('sortBy') === children) {
-      applySort(sortField, sortFunc, u.get('orderBy') || 'asc', children);
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get('sortBy') === children) {
+      applySort(sortField, sortFunc, sp.get('orderBy') || 'asc', children);
     }
   }
 

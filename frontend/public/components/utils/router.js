@@ -16,4 +16,4 @@ try {
 
 export const history = createHistory({basename: window.SERVER_FLAGS.basePath});
 
-export const getQueryArgument = arg => new URL(window.location).searchParams.get(arg);
+export const getQueryArgument = arg => new URLSearchParams(window.location.search).get(arg);

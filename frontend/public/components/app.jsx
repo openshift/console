@@ -30,6 +30,8 @@ import { Clusters } from './federation/cluster';
 import '../style.scss';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
+require('url-search-params-polyfill');
+
 const LoadingScreen = () => <div className="loading-screen">
   <div className="loading-screen__logo">
     <img src={tectonicLogoImg} id="logo" />
