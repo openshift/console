@@ -13,7 +13,7 @@ import * as React from 'react';
 const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
 const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
-const nsPathPattern = new RegExp(`^/?ns/${legalNamePattern.source}/?(.*)$`);
+const nsPathPattern = new RegExp(`^/?ns/(${legalNamePattern.source})/?(.*)$`);
 const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 
 export const stripBasePath = path => path.replace(basePathPattern, '/');
@@ -21,4 +21,13 @@ export const stripBasePath = path => path.replace(basePathPattern, '/');
 export const isNamespaced = path => {
   const subpath = stripBasePath(path);
   return subpath.match(nsPathPattern) || subpath.match(allNsPathPattern);
+};
+
+export const getNamespace = path => {
+  const subpath = stripBasePath(path);
+  if (subpath.match(allNsPathPattern)) {
+    return;
+  }
+  const match = subpath.match(nsPathPattern);
+  return match && match.length > 0 && match[1];
 };

@@ -87,29 +87,39 @@ Firehose.propTypes = {
   isList: PropTypes.bool,
 };
 
-// Connect this?
+
 export class MultiFirehose extends FirehoseBase {
   constructor(props) {
     super(props);
-    this.resources = props.resources.map(r => Object.assign({}, r, {firehose: this._initFirehose(r)}));
+    this.firehoses = props.resources.map(r => this._initFirehose(r));
+  }
+
+  componentDidUpdate({resources}) {
+    const currentResources = this.props.resources;
+    if (_.intersectionWith(resources, currentResources, _.isEqual).length === resources.length) {
+      return;
+    }
+    this.componentWillUnmount();
+    this.firehoses = this.props.resources.map(r => this._initFirehose(r));
+    this.componentDidMount();
   }
 
   componentDidMount() {
-    this.resources.forEach((resource) => {
-      this._mountFirehose(resource.firehose, resource);
+    this.props.resources.forEach((resource, i) => {
+      this._mountFirehose(this.firehoses[i], resource);
     });
   }
 
   componentWillUnmount() {
-    this.resources.forEach((resource, i) => {
-      this._unmountFirehose(resource.firehose);
-      this.resources[i].firehose = null;
+    this.props.resources.forEach((resource, i) => {
+      this._unmountFirehose(this.firehoses[i]);
     });
+    this.firehoses = [];
   }
 
   render() {
-    const reduxes = this.resources.map((resource) => {
-      return _.defaults({}, { reduxID: resource.firehose.id }, resource);
+    const reduxes = this.props.resources.map((resource, i) => {
+      return _.defaults({}, { reduxID: this.firehoses[i].id }, resource);
     });
 
     return <MultiConnectToState reduxes={reduxes}>

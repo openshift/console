@@ -40,7 +40,7 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
       this.setState({expand});
     }
 
-    applyFilter (filterName, options) {      
+    applyFilter (filterName, options) {
       const reduxIDs = this.props.reduxIDs || [this.props.reduxID];
       reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
     }

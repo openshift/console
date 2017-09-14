@@ -3,13 +3,13 @@ import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
 import { Provider } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
+import * as PropTypes from 'prop-types';
 
 import store from '../redux';
 import { getCRDs } from '../kinds';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { authSvc } from '../module/auth';
-import { UIActions } from '../ui/ui-actions';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';
@@ -25,13 +25,21 @@ import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { BindingsForRolePage, CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
-import { history, Loading } from './utils';
+import { history, Loading, getNamespace } from './utils';
+import { UIActions } from '../ui/ui-actions';
 import { Clusters } from './federation/cluster';
 import { ClusterHealth } from './cluster-health';
 import '../style.scss';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
+// Edge lacks URLSearchParams
 require('url-search-params-polyfill');
+
+// React Router's proptypes are incorrect. See https://github.com/ReactTraining/react-router/pull/5393
+Route.propTypes.path = PropTypes.oneOfType([
+  PropTypes.string,
+  PropTypes.arrayOf(PropTypes.string),
+]);
 
 const LoadingScreen = () => <div className="loading-screen">
   <div className="loading-screen__logo">
@@ -41,7 +49,6 @@ const LoadingScreen = () => <div className="loading-screen">
   <div>Loading your Tectonic Console</div>
 </div>;
 
-
 class App extends React.PureComponent {
   onRouteChange (props) {
     if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
@@ -49,7 +56,8 @@ class App extends React.PureComponent {
       return;
     }
     if (props) {
-      store.dispatch(UIActions.setCurrentLocation(props.location.pathname, _.get(props, 'match.params.ns')));
+      const namespace = getNamespace(props.location.pathname);
+      store.dispatch(UIActions.setCurrentLocation(props.location.pathname, namespace));
     }
     analyticsSvc.route(window.location.pathname);
   }
@@ -76,7 +84,7 @@ class App extends React.PureComponent {
       <div id="reflex">
         <Nav />
         <div id="content">
-          <NamespaceSelector />
+          <Route path={['/all-namespaces', '/ns/:ns']} component={NamespaceSelector} />
           <Switch>
             <Route path="/" exact component={ClusterOverviewContainer} />
             <Route path="/cluster-health" exact component={ClusterHealth} />
