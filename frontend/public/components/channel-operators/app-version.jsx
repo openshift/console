@@ -21,8 +21,6 @@ const groupTaskStatuses = (taskStatuses) => {
       name: 'Update Tectonic Operators',
       reason: '',
       state: '',
-      //TODO: amrutac This is being implemented in TCO operator and
-      //will be returned in the response
       type: 'operator',
       statuses: []
     };
@@ -31,20 +29,18 @@ const groupTaskStatuses = (taskStatuses) => {
       name: 'Update AppVersion components',
       reason: '',
       state: '',
-      //TODO: amrutac This is being implemented in TCO operator and
-      //will be returned in the response
       type: 'appversion',
       statuses: []
     };
 
     const groupedTaskStatuses = [operatorTaskStatuses, appVersionTaskStatuses];
     _.forEach(taskStatuses, (status) => {
-      if (status.name.startsWith('Update deployment')) {
+      if (_.get(status, 'type') === 'operator' || status.name.startsWith('Update deployment')) {
         operatorTaskStatuses.statuses.push(status);
-      } else if (status.name.startsWith('Update AppVersion')) {
-        //TODO: amrutac This is being implemented in TCO operator
-        //and will be returned in the response
-        status.type = 'appversion';
+      } else if (_.get(status, 'type') === 'appversion' || status.name.startsWith('Update AppVersion')) {
+        if (!_.has(status, 'type')) {
+          status.type = 'appversion';
+        }
         appVersionTaskStatuses.statuses.push(status);
       } else {
         groupedTaskStatuses.push(status);
