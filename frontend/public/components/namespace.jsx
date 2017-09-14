@@ -7,7 +7,7 @@ import { k8sGet, k8sKinds } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { Cog, Dropdown, Firehose, isNamespaced, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { BindingName, BindingsList, RoleLink } from './RBAC';
 import { AsyncComponent } from './utils/async';
@@ -201,16 +201,9 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
   </div>;
 });
 
-export const NamespaceSelector = () => {
-  // Don't show namespace dropdown unless the namespace is relevant to the current page
-  if(!isNamespaced(window.location.pathname)) {
-    return null;
-  }
-
-  return <Firehose kind="Namespace" isList={true}>
-    <NamespaceDropdown />
-  </Firehose>;
-};
+export const NamespaceSelector = () => <Firehose kind="Namespace" isList={true}>
+  <NamespaceDropdown />
+</Firehose>;
 
 export const NamespacesDetailsPage = props => <DetailsPage
   {...props}

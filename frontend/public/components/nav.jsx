@@ -43,6 +43,13 @@ const NavLink = connect(navLinkStateToProps, null, mergeProps, {pure: true, areS
       }
     }
 
+    componentWillReceiveProps (nextProps) {
+      const {isActive, openSection, sectionId} = nextProps;
+      if (isActive && !this.props.isActive) {
+        openSection(sectionId);
+      }
+    }
+
     render () {
       if (!this.props.canRender) {
         return null;
