@@ -57,7 +57,7 @@ export const ClusterHealth = () => <div>
         <Gauge title="CPU Usage" query={'sum(rate(node_cpu{mode!="idle"}[2m])) * 100'} />
         <div className="row">
           <div className="col-xs-6">
-            <Scalar title="Used Cores" unit="numeric" query={'cluster:node_cpu:sum_rate5m'} />
+            <Scalar title="Used Cores" unit="numeric" query={'cluster:node_cpu:sum_rate5m * sum(machine_cpu_cores)'} />
           </div>
           <div className="col-xs-6">
             <Scalar title="Total Cores" unit="numeric" query={'sum(machine_cpu_cores)'} />
