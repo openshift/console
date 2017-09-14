@@ -128,6 +128,10 @@ export class EditYAML extends SafetyFirst {
       this.doc = es.getDocument();
     }
     let yaml;
+    // TODO: (kans) this is because we spread the object into Details pages (but need to add other props too) :-/
+    obj = Object.assign({}, obj);
+    delete obj.params;
+
     try {
       yaml = safeDump(obj);
     } catch (e) {
