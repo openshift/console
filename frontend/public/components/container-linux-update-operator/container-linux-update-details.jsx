@@ -169,10 +169,26 @@ export class ContainerLinuxUpdateDetails extends SafetyFirst {
   }
 
   render() {
-    const {nodeListUpdateStatus, isOperatorInstalled} = this.props;
+    const {nodeListUpdateStatus, isOperatorInstalled, isSandbox} = this.props;
     const {count, overallState, upgradeCount} = nodeListUpdateStatus;
 
     return <div>
+      { isSandbox && <div className="co-cluster-updates__component">
+        <div className="co-cluster-updates__heading">
+          <div className="co-cluster-updates__heading--name-wrapper">
+            <span className="co-cluster-updates__heading--name">Container Linux</span>
+          </div>
+          { !this.state.expanded &&
+            <div className="co-cluster-updates__heading--updates">
+              <div className="co-cluster-updates__heading--updates">N&#47;A</div>
+            </div>
+          }
+          <a className="co-cluster-updates__toggle" onClick={this._toggleExpand}>{this.state.expanded ? 'Collapse' : 'Expand'}</a>
+        </div>
+        { this.state.expanded && <div>
+          <Status status="N/A"/>
+        </div> }
+      </div> }
       { isOperatorInstalled && <div className="co-cluster-updates__component">
         <div className="co-cluster-updates__heading">
           <div className="co-cluster-updates__heading--name-wrapper">

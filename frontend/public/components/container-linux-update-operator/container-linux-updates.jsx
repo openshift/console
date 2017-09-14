@@ -1,12 +1,26 @@
 import * as React from 'react';
 
 import { ContainerLinuxUpdateDetails } from './container-linux-update-details';
-import { LoadingInline, Firehose, containerLinuxUpdateOperator, StatusBox } from '../utils';
+import { LoadingInline, MultiFirehose, containerLinuxUpdateOperator, StatusBox } from '../utils';
 
 export const ContainerLinuxUpdates = (props) => {
-  return <Firehose kind="Node" isList={true}>
+  const firehoseResources = [
+    {
+      kind: 'Node',
+      isList: true,
+      prop: 'nodes'
+    },
+    {
+      kind: 'ConfigMap',
+      namespace: 'tectonic-system',
+      name: 'tectonic-config',
+      prop: 'configMap'
+
+    },
+  ];
+  return <MultiFirehose resources={firehoseResources}>
     <ContainerLinuxUpdatesWithData {...props} />
-  </Firehose>;
+  </MultiFirehose>;
 };
 
 export const ContainerLinuxUpdatesWithData = (props) => {
@@ -18,14 +32,16 @@ export const ContainerLinuxUpdatesWithData = (props) => {
       <StatusBox loadError={props.loadError} />
     </div>;
   }
-  if (!_.isEmpty(props.data)) {
-    const nodes = props.data;
+  if (!_.isEmpty(props.nodes.data)) {
+    const nodes = props.nodes.data;
     const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(nodes[0]);
-    if (isOperatorInstalled) {
+    const isSandbox = _.includes(_.get(props.configMap.data, 'data.installerPlatform', ''), 'sandbox');
+    if (isOperatorInstalled || isSandbox) {
       const nodeListUpdateStatus = containerLinuxUpdateOperator.getNodeListUpdateStatus(nodes);
       return <ContainerLinuxUpdateDetails
         nodeListUpdateStatus={nodeListUpdateStatus}
         isOperatorInstalled={isOperatorInstalled}
+        isSandbox={isSandbox}
       />;
     }
     return null;

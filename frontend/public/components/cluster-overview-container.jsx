@@ -6,7 +6,6 @@ import {k8sVersion} from '../module/status';
 import {ClusterOverviewPage} from './cluster-overview';
 import {entitlementTitle} from './license-notifier';
 import {SafetyFirst} from './safety-first';
-import {cloudProviderID} from './utils';
 import {clusterAppVersionName} from './channel-operators/tectonic-channel';
 
 export class ClusterOverviewContainer extends SafetyFirst {
@@ -59,9 +58,8 @@ export class ClusterOverviewContainer extends SafetyFirst {
   }
 
   _checkCloudProvider() {
-    k8sGet(k8sKinds.Node).then((nodes) => {
-      const providerIDs = _.filter(_.map(nodes.items, cloudProviderID));
-      this.setState({ cloudProviders: providerIDs.length ? _.uniq(providerIDs) : null });
+    k8sGet(k8sKinds.ConfigMap, 'tectonic-config', 'tectonic-system').then((configMap) => {
+      this.setState({ cloudProviders: [_.get(configMap, 'data.installerPlatform', null)]});
     });
   }
 
