@@ -44,18 +44,26 @@ const crudTests_ = {};
       crudPage
         .waitForElementVisible('@CreateYAMLButton', TIMEOUT)
         .click('@CreateYAMLButton')
-        .click('@saveYAMLButton')
-        .waitForElementVisible('@actionsDropdownButton', TIMEOUT);
+        .waitForElementVisible('@saveYAMLButton', TIMEOUT)
+        .click('@saveYAMLButton');
 
-      //with verify(), when an assertion fails, the test logs the failure and continues with other assertions.
-      browser.verify.urlContains('/example/details');
+      browser.pause(TIMEOUT);
 
-      crudPage
-        .click('@actionsDropdownButton')
-        .click('@actionsDropdownDeleteLink')
-        .waitForElementVisible('@deleteModalConfirmButton', TIMEOUT)
-        .click('@deleteModalConfirmButton')
-        .waitForElementVisible('@CreateYAMLButton', TIMEOUT);
+      crudPage.isVisible('@actionsDropdownButton', (visible) => {
+        if (visible.status === 0) {
+          console.log('Resource created');
+          //with verify(), when an assertion fails, the test logs the failure and continues with other assertions.
+          browser.verify.urlContains('/example/details');
+          crudPage
+            .click('@actionsDropdownButton')
+            .click('@actionsDropdownDeleteLink')
+            .waitForElementVisible('@deleteModalConfirmButton', TIMEOUT)
+            .click('@deleteModalConfirmButton')
+            .waitForElementVisible('@CreateYAMLButton', TIMEOUT);
+        } else {
+          console.log('Resource creation failed');
+        }
+      });
     });
   };
 });
