@@ -117,6 +117,9 @@ class App extends React.PureComponent {
             <Route path="/nodes/:name" component={props => <ResourceDetailsPage {...props} plural="nodes" />} />
             <Route path="/nodes" exact component={props => <ResourceListPage {...props} plural="nodes" />} />
 
+            <Route path="/persistentvolumes/:name" exact component={props => <ResourceDetailsPage {...props} plural="persistentvolumes" />} />
+            <Route path="/persistentvolumes" exact component={props => <ResourceListPage {...props} plural="persistentvolumes" />} />
+
             <Route path="/settings/profile" exact component={ProfilePage} />
             <Route path="/settings/ldap" exact component={LDAPPage} />
             <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
