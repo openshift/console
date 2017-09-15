@@ -57,7 +57,7 @@ const TCO_FLAGS = {
 };
 
 const ETCD_OPERATOR_FLAGS = {
-  [FLAGS.ETCD_OPERATOR]: 'clusters',
+  [FLAGS.ETCD_OPERATOR]: 'etcdclusters',
 };
 
 const PROMETHEUS_FLAGS = {
