@@ -86,7 +86,7 @@ const detectEtcdOperatorFlags = dispatch => coFetchJSON(etdPath)
     (res) => handleError(res, ETCD_OPERATOR_FLAGS, dispatch, detectEtcdOperatorFlags));
 
 
-const monitoringPath = `${k8sBasePath}/apis/monitoring.coreos.com/v1alpha1`;
+const monitoringPath = `${k8sBasePath}/apis/monitoring.coreos.com/v1`;
 const detectPrometheusFlags = dispatch => coFetchJSON(monitoringPath)
   .then(res => setFlags(dispatch, _.mapValues(PROMETHEUS_FLAGS, name => _.find(res.resources, {name}))),
     (res) => handleError(res, PROMETHEUS_FLAGS, dispatch, detectPrometheusFlags));

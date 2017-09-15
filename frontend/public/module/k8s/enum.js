@@ -247,7 +247,7 @@ export const k8sKinds = {
   Prometheus: {
     label: 'Prometheus',
     labelPlural: 'Prometheus Instances',
-    apiVersion: 'v1alpha1',
+    apiVersion: 'v1',
     basePath: '/apis/monitoring.coreos.com/',
     path: 'prometheuses',
     plural: 'prometheuses',
