@@ -15,10 +15,6 @@ import { TEMPLATES } from '../yaml-templates';
 
 let id = 0;
 
-const getKind = (obj, kind) => {
-  return obj.kind === 'Cluster' ? kind : obj.kind;
-};
-
 const generateObjToLoad = (kind, templateName) => {
   const kindObj = _.get(k8sKinds, kind, {});
   const kindStr = `${kindObj.apiVersion}.${kind}`;
@@ -167,7 +163,7 @@ export class EditYAML extends SafetyFirst {
       return;
     }
 
-    const ko = kindObj(getKind(obj, this.props.kind));
+    const ko = kindObj(obj.kind);
 
     if (!ko) {
       this.handleError(`"${obj.kind}" is not a valid kind.`);
@@ -213,13 +209,13 @@ export class EditYAML extends SafetyFirst {
   }
 
   loadSampleYaml_(templateName = 'default') {
-    const sampleObj = generateObjToLoad(getKind(this.props.obj, this.props.kind), templateName);
+    const sampleObj = generateObjToLoad(this.props.obj.kind, templateName);
     this.setState({ sampleObj: sampleObj });
     this.loadYaml(true, sampleObj);
   }
 
   downloadSampleYaml_ (templateName = 'default') {
-    const data = safeDump(generateObjToLoad(getKind(this.props.obj, this.props.kind), templateName));
+    const data = safeDump(generateObjToLoad(this.props.obj.kind, templateName));
     this.download(data);
   }
 
@@ -235,7 +231,7 @@ export class EditYAML extends SafetyFirst {
 
     const {error, success, stale} = this.state;
     const {create, obj, showHeader=true} = this.props;
-    const kind = getKind(obj, this.props.kind);
+    const kind = obj.kind;
     const kindObj = _.get(k8sKinds, kind, {});
     return <div>
       {create && showHeader && <div className="yaml-editor-header">
