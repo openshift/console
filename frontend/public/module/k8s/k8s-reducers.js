@@ -117,7 +117,8 @@ export default (state, action) => {
         return state;
       }
 
-      return state.set(id, Immutable.Map({
+      // We mergeDeep instead of overwriting state because it's possible to add filters before load/watching
+      return state.mergeDeep({[id]: {
         loadError: '',
         // has the data set been loaded successfully
         loaded: false,
@@ -127,7 +128,7 @@ export default (state, action) => {
         filters: Immutable.Map(),
         // The name of an element in the list that has been "selected"
         selected: null,
-      }));
+      }});
 
     case types.stopK8sWatch:
       return state.delete(id);
