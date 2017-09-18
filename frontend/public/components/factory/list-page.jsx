@@ -6,7 +6,7 @@ import * as PropTypes from 'prop-types';
 
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes } from '../row-filter';
-import { Dropdown, Firehose, kindObj, MultiFirehose, NavTitle } from '../utils';
+import { Dropdown, Firehose, kindObj, MultiFirehose, NavTitle, history } from '../utils';
 
 const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-unselected' : 'btn-selected')}>
@@ -17,12 +17,13 @@ const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div
   </label>
 </div>;
 
-export const TextFilter = ({label, onChange}) => <input
+export const TextFilter = ({label, onChange, defaultValue}) => <input
   type="text"
   className="form-control text-filter pull-right"
   placeholder={`Filter ${label}...`}
   onChange={onChange}
   autoFocus={true}
+  defaultValue={defaultValue}
 />;
 
 TextFilter.displayName = 'TextFilter';
@@ -40,9 +41,31 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
       this.setState({expand});
     }
 
+    updateURL (filterName, options) {
+      if (filterName !== this.props.textFilter) {
+        // TODO (ggreer): support complex filters (objects, not just strings)
+        return;
+      }
+      const params = new URLSearchParams(window.location.search);
+      if (options) {
+        params.set(filterName, options);
+      } else {
+        params.delete(filterName);
+      }
+      const url = new URL(window.location);
+      history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+    }
+
     applyFilter (filterName, options) {
       const reduxIDs = this.props.reduxIDs || [this.props.reduxID];
       reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
+      this.updateURL(filterName, options);
+    }
+
+    componentWillMount () {
+      const params = new URLSearchParams(window.location.search);
+      this.defaultValue = params.get(this.props.textFilter);
+      params.forEach((v, k) => this.applyFilter(k, v));
     }
 
     render () {
@@ -85,7 +108,7 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
                 {Intro}
                 {createLink}
                 {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
-                <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter || 'name', e.target.value)} />
+                <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter, e.target.value)} defaultValue={this.defaultValue} />
                 {DropdownFilters}
               </div>
               {RowsOfRowFilters}
@@ -102,6 +125,10 @@ const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
       </div>;
     }
   });
+
+BaseListPage.defaultProps = {
+  textFilter: 'name',
+};
 
 BaseListPage.propTypes = {
   canCreate: PropTypes.bool,
