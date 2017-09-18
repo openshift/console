@@ -129,7 +129,8 @@ class KubectlConfigModal extends PromiseComponent {
           <p>Enter the code from the previous screen to generate your credentials:</p>
           <div className="row co-m-form-row">
             <div className="col-sm-6">
-              <input type="text" className="form-control" placeholder="Verification Code" required={true} onChange={this._updateCode} />
+              <input autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} 
+                type="text" className="form-control" placeholder="Verification Code" required={true} onChange={this._updateCode} />
             </div>
           </div>
         </ModalBody>
