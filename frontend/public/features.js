@@ -28,7 +28,8 @@ const SET_FLAGS = 'SET_FLAGS';
 const setFlags = (dispatch, flags) => dispatch({flags, type: SET_FLAGS});
 
 const handleError = (res, flags, dispatch, cb) => {
-  if (res.response.status === 403 || res.response.status === 502) {
+  const status = _.get(res, 'response.status');
+  if (status === 403 || status === 502) {
     setFlags(dispatch, _.mapValues(flags, () => undefined));
   } else {
     setTimeout(() => cb(dispatch), 15000);
