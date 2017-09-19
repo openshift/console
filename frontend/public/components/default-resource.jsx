@@ -23,7 +23,7 @@ const RowForKind = kind => function RowForKind ({obj}) {
   </div>;
 };
 
-const DetailsForKind = kind => function DetailsForKind (obj) {
+const DetailsForKind = kind => function DetailsForKind ({obj}) {
   return <div>
     <Heading text={`${kind} Overview`} />
     <div className="co-m-pane__body">

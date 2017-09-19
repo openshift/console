@@ -137,7 +137,7 @@ const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
   </div>;
 };
 
-const Details = (pod) => {
+const Details = ({obj: pod}) => {
   const podvuln = makePodvuln(pod);
 
   if (_.isError(podvuln)) {

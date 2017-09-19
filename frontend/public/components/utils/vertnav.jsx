@@ -7,11 +7,11 @@ import { StatusBox, RelativeLink } from './index';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from '../utils/async';
 
-const editYamlComponent = (props) => <AsyncComponent loader={() => System.import('../edit-yaml').then(c => c.EditYAML)} obj={props} />;
+const editYamlComponent = (props) => <AsyncComponent loader={() => System.import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
 
 class PodsComponent extends React.PureComponent {
   render() {
-    const {metadata: {namespace}, spec: {selector}} = this.props;
+    const {metadata: {namespace}, spec: {selector}} = this.props.obj;
     return <PodsPage showTitle={false} namespace={namespace} selector={selector} />;
   }
 }
@@ -73,17 +73,22 @@ NavBar.displayName = 'NavBar';
 export class VertNav extends React.PureComponent {
   render () {
     const props = this.props;
-    const routeProps = _.pick(props, ['location', 'route', 'routeParams', 'router']);
-    routeProps.params = _.get(props, 'match.params');
+
+    const componentProps = _.pick(props, ['filters', 'selected', 'match']);
+    componentProps.obj = props.data;
 
     return <div className={props.className}>
       <div className="co-m-pane co-m-vert-nav">
+
         {!props.hideNav && <NavBar pages={props.pages} />}
+
         <div className="co-m-vert-nav__body">
-          <Switch>
-            {props.pages.map(p => <Route path={`${props.match.path}/${p.href}`} exact key={p.name} render={() =>
-              <StatusBox {...props}><p.component {...routeProps} /></StatusBox>} />)}
-          </Switch>
+          <StatusBox {...props}>
+            <Switch>
+              {props.pages.map(p => <Route path={`${props.match.path}/${p.href}`} exact key={p.name} render={() =>
+                <p.component {...componentProps} />} />)}
+            </Switch>
+          </StatusBox>
         </div>
       </div>
     </div>;

@@ -313,4 +313,4 @@ EventStream.defaultProps = {
   category: 'all',
 };
 
-export const ResourceEventStream = ({metadata: {name}}) => <EventStream filter={{name}} />;
+export const ResourceEventStream = ({obj: {metadata: {name}}}) => <EventStream filter={{name}} />;

@@ -42,7 +42,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
   );
 };
 
-const Details = (serviceaccount) => {
+const Details = ({obj: serviceaccount}) => {
   const {metadata: {namespace}, secrets} = serviceaccount;
   const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
 

@@ -49,7 +49,7 @@ export class PodLogs extends SafetyFirst {
     this._endStreaming();
   }
 
-  _initialState(props = this.props) {
+  _initialState(props = this.props.obj) {
     const newState = {};
 
     const containers = _.get(props, 'spec.containers', []);
@@ -84,7 +84,7 @@ export class PodLogs extends SafetyFirst {
     const currentContainer = this.state.containerNames[index];
     this.setState({
       currentContainer,
-      logURL: this._logURL(this.props, currentContainer),
+      logURL: this._logURL(this.props.obj, currentContainer),
       logState: 'loading'
     }, this._beginStreaming);
   }

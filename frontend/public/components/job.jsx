@@ -67,7 +67,7 @@ const JobRow = ({obj: job}) => {
   );
 };
 
-const Details = (job) => <div>
+const Details = ({obj: job}) => <div>
   <div className="row no-gutter">
     <div className="col-md-6">
       <Heading text="Job Overview" />

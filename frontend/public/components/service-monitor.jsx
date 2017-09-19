@@ -59,7 +59,7 @@ const EndpointRow = ({endpoint}) => {
   </div>;
 };
 
-const Details = (sm) => {
+const Details = ({obj: sm}) => {
   const {metadata, spec} = sm;
   return <div>
     <div className="co-m-pane__body">

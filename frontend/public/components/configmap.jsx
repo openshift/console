@@ -37,7 +37,7 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
   <div className="col-xs-4">{moment(configMap.metadata.creationTimestamp).fromNow()}</div>
 </ResourceRow>;
 
-const ConfigMapDetails = (configMap) => {
+const ConfigMapDetails = ({obj: configMap}) => {
   return <div className="row">
     <div className="col-md-12">
       <div className="co-m-pane">

@@ -27,7 +27,7 @@ class Details extends SafetyFirst {
     event.target.blur();
     configureReplicaCountModal({
       resourceKind: k8sKinds.Alertmanager,
-      resource: this.props,
+      resource: this.props.obj,
       invalidateState: (isInvalid) => {
         this.setState({
           desiredCountOutdated: isInvalid
@@ -37,7 +37,7 @@ class Details extends SafetyFirst {
   }
 
   render() {
-    const alertManager = this.props;
+    const alertManager = this.props.obj;
     const {metadata, spec} = alertManager;
     return <div>
       <div className="co-m-pane__body">
