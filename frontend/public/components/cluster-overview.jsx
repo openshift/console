@@ -8,7 +8,7 @@ import { NavTitle, LoadingInline, DocumentationSidebar, cloudProviderNames} from
 import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
-import { Gauge, Status } from './graphs';
+import { Gauge, Scalar, Status } from './graphs';
 
 const StatusIconRow = ({state, text}) => {
   const iconClasses = {
@@ -85,27 +85,66 @@ export const ClusterOverviewPage = props => {
             <h4>Cluster Health</h4>
           </div>
           <div className="col-lg-3 text-right">
-            <Link to="/cluster-health"><h4>View Dashboard</h4></Link>
+            <Link to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1"><h4>View Dashboard</h4></Link>
           </div>
         </div>
-
         <div className="row">
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-3 col-md-6">
             <Status title="Kubernetes API" fetch={fetchHealth} />
           </div>
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-3 col-md-6">
             <Status title="Tectonic Console" fetch={fetchTectonicHealth} />
+          </div>
+          <div className="col-lg-3 col-md-6">
+            <Scalar title="Alerts Firing" unit="numeric" query={'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})'} />
+          </div>
+        </div>
+        <br />
+
+        <div className="row">
+          <div className="col-lg-9 pull-left">
+            <h4>Control Plane Status</h4>
+          </div>
+          <div className="col-lg-3 text-right">
+            <Link to="/grafana/dashboard/db/kubernetes-control-plane-status?orgId=1"><h4>View Dashboard</h4></Link>
           </div>
         </div>
         <div className="row">
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-3 col-md-6">
+            <Gauge title="API Servers Up" query={'(sum(up{job="apiserver"} == 1) / sum(up{job="apiserver"})) * 100'} />
+          </div>
+          <div className="col-lg-3 col-md-6">
+            <Gauge title="Controller Managers Up" query={'(sum(up{job="kube-controller-manager"} == 1) / sum(up{job="kube-controller-manager"})) * 100'} />
+          </div>
+          <div className="col-lg-3 col-md-6">
+            <Gauge title="Schedulers Up" query={'(sum(up{job="kube-scheduler"} == 1) / sum(up{job="kube-scheduler"})) * 100'} />
+          </div>
+          <div className="col-lg-3 col-md-6">
+            <Gauge title="API Server Request Error Rate" query={'topk(1, (sum by(instance) (rate(apiserver_request_count{code!~"2.."}[5m])) / sum by(instance) (rate(apiserver_request_count[5m]))) * 100)'} />
+          </div>
+        </div>
+        <br />
+
+        <div className="row">
+          <div className="col-lg-9 pull-left">
+            <h4>Capacity Planning</h4>
+          </div>
+          <div className="col-lg-3 text-right">
+            <Link to="/grafana/dashboard/db/kubernetes-capacity-planing?orgId=1"><h4>View Dashboard</h4></Link>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-lg-3 col-md-6">
             <Gauge title="CPU Usage" query={'sum(rate(node_cpu{mode!="idle"}[2m])) * 100'} />
           </div>
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-3 col-md-6">
             <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
           </div>
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-3 col-md-6">
             <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
+          </div>
+          <div className="col-lg-3 col-md-6">
+            <Gauge title="Pod Usage" query={'100 - (sum(kube_node_status_capacity_pods) - sum(kube_pod_info)) / sum(kube_node_status_capacity_pods) * 100'} />
           </div>
         </div>
         <br />
