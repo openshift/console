@@ -40,6 +40,8 @@ export class Status extends SafetyFirst {
       color = colors.ok;
     } else if (status === 'ERROR') {
       color = colors.error;
+    } else if (status === 'WARN') {
+      color = colors.warn;
     }
     return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 15, margin: '8px 0', height: 150, backgroundColor: 'rgb(252,252,252)'}, this.style)} >
       { title && <h5 style={{margin: 0, textAlign: 'center', color: '#444'}}>{title}</h5> }

@@ -5,7 +5,7 @@ import { plot, Plots } from 'plotly.js/lib/core';
 import { coFetchJSON } from '../../co-fetch';
 import { SafetyFirst } from '../safety-first';
 
-const basePath = '/api/kubernetes/api/v1/proxy/namespaces/tectonic-system/services/prometheus:9090';
+import { prometheusBasePath } from './index';
 
 export class BaseGraph extends SafetyFirst {
   constructor(props) {
@@ -42,8 +42,8 @@ export class BaseGraph extends SafetyFirst {
     const stepSize = pollInterval / 1000;
     const promises = queries.map(q => {
       const url = this.timeSpan
-        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`
-        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}`;
+        ? `${prometheusBasePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`
+        : `${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q.query)}`;
       return coFetchJSON(url);
     });
     Promise.all(promises)

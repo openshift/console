@@ -31,7 +31,7 @@ export class Scalar extends BaseGraph {
 
   render () {
     const { value, unit } = units.humanize(this.state.value, this.props.unit, true);
-    return <div className="graph-wrapper" style={style}>
+    return <div className="graph-wrapper" style={Object.assign(style, this.props.style)}>
       <h5 className="graph-title">{this.props.title}</h5>
       <h3 className="text-center" style={{marginTop: 10}}>{ value }<span className="text-muted" style={{fontSize: 14}}>{unit}</span></h3>
     </div>;
