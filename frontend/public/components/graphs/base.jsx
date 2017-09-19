@@ -83,7 +83,7 @@ export class BaseGraph extends SafetyFirst {
     }
 
     this.layout = _.extend({
-      height: 250,
+      height: 150,
       autosize: true,
     }, this.layout);
 
@@ -95,7 +95,7 @@ export class BaseGraph extends SafetyFirst {
 
   render () {
     return <div className="graph-wrapper" style={this.style}>
-      <h4 className="graph-title">{this.props.title}</h4>
+      <h5 className="graph-title">{this.props.title}</h5>
       <div ref={this.setNode} style={{width: '100%'}}/>
     </div>;
   }
