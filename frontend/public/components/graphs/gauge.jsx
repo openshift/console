@@ -54,6 +54,14 @@ export class Gauge extends BaseGraph {
       }],
     };
 
+    const { thresholds } = this.props;
+
+    const ringValues = [50, thresholds.warn, (thresholds.error - thresholds.warn), 100 - thresholds.error];
+    if (props.invert) {
+      ringValues[1] = 100 - thresholds.error;
+      ringValues[3] = thresholds.warn;
+    }
+
     this.data = [{
       values: [0.5, 0.0, 1],
       rotation: 120,
@@ -86,14 +94,12 @@ export class Gauge extends BaseGraph {
       hoverinfo: 'none',
     }, {
       // Danger Zone Ring
-      values: [3, 4, 1.5, 0.5],
+      values: ringValues,
       rotation: 120,
       direction: 'clockwise',
       textinfo: 'none',
       marker: {
-        colors:[
-          colors.clear, colors.ok, colors.warn, colors.error,
-        ],
+        colors: props.invert ? [colors.clear, colors.error, colors.warn, colors.ok] : [colors.clear, colors.ok, colors.warn, colors.error],
       },
       hole: .95,
       type: 'pie',
@@ -114,14 +120,33 @@ export class Gauge extends BaseGraph {
     this.data[0].values[1] = percent / 100;
     this.data[0].values[2] = (100 - percent) / 100;
 
+    const { invert, thresholds } = this.props;
+
     let color = colors.ok;
-    if (percent >= 92) {
-      color = colors.error;
-    } else if (percent >= 67) {
-      color = colors.warn;
+    if (invert) {
+      if (percent < thresholds.error) {
+        color = colors.error;
+      } else if (percent < thresholds.warn) {
+        color = colors.warn;
+      }
+    } else {
+      if (percent >= thresholds.error) {
+        color = colors.error;
+      } else if (percent >= thresholds.warn) {
+        color = colors.warn;
+      }
     }
+
     this.data[0].marker.colors[1] = color;
     this.layout.annotations[0].text = `${data}%`;
     relayout(this.node, this.layout);
   }
 }
+
+Gauge.defaultProps = {
+  invert: false,
+  thresholds: {
+    warn: 67,
+    error: 92,
+  },
+};

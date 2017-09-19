@@ -80,7 +80,7 @@ const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
         long: name,
       };
     }
-    let value = parseInt(_.get(res, 'data.result[0]'), 10) || 0;
+    const value = parseInt(_.get(res, 'data.result[0]'), 10) || 0;
     return {
       short: value,
       status: value === 0 ? 'OK' : 'WARN',
