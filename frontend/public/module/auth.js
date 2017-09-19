@@ -9,7 +9,16 @@ const email = 'email';
 
 export const authSvc = {
   getToken: () => localStorage.getItem(bearerToken),
-  userID: () => loginStateItem(userID) && atob(loginStateItem(userID)),
+  userID: () => {
+    const id = loginStateItem(userID);
+    try {
+      return id && atob(id);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('error decoding userID', id, ':', e);
+    }
+    return id;
+  },
   name: () => loginStateItem(name),
   email: () => loginStateItem(email),
 
