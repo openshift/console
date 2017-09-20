@@ -133,13 +133,13 @@ export const ClusterOverviewPage = props => {
         </div>
         <div className="row">
           <div className="col-lg-3 col-md-6">
-            <Gauge title="API Servers Up" query={'(sum(up{job="apiserver"} == 1) / sum(up{job="apiserver"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+            <Gauge title="API Servers Up" query={'(sum(up{job="apiserver"} == 1) / count(up{job="apiserver"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
           </div>
           <div className="col-lg-3 col-md-6">
-            <Gauge title="Controller Managers Up" query={'(sum(up{job="kube-controller-manager"} == 1) / sum(up{job="kube-controller-manager"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+            <Gauge title="Controller Managers Up" query={'(sum(up{job="kube-controller-manager"} == 1) / count(up{job="kube-controller-manager"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
           </div>
           <div className="col-lg-3 col-md-6">
-            <Gauge title="Schedulers Up" query={'(sum(up{job="kube-scheduler"} == 1) / sum(up{job="kube-scheduler"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+            <Gauge title="Schedulers Up" query={'(sum(up{job="kube-scheduler"} == 1) / count(up{job="kube-scheduler"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
           </div>
           <div className="col-lg-3 col-md-6">
             <Gauge title="API Server Request Error Rate" query={'topk(1, (sum by(instance) (rate(apiserver_request_count{code=~"5.."}[5m])) / sum by(instance) (rate(apiserver_request_count[5m]))) * 100)'} thresholds={{warn: 1, error: 20}} />
