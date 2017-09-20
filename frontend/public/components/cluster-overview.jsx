@@ -90,6 +90,10 @@ const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
   .catch(() => ({short: 'ERROR', long: 'The console service cannot be reached', status: 'ERROR'}));
 
 
+const DashboardLink = ({to}) => <div className="col-lg-3 text-right" style={{marginTop: 16}}>
+  <Link target="_blank" to={to}>View Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
+</div>;
+
 export const ClusterOverviewPage = props => {
   return <div className="co-p-cluster">
     <div className="co-p-cluster__body">
@@ -103,9 +107,7 @@ export const ClusterOverviewPage = props => {
           <div className="col-lg-9">
             <h4>Cluster Health</h4>
           </div>
-          <div className="col-lg-3 text-right" style={{marginTop: 16}}>
-            <Link target="_blank" to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1">View Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
-          </div>
+          <DashboardLink to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1" />
         </div>
         <div className="row">
           <div className="col-lg-3 col-md-6">
@@ -127,9 +129,7 @@ export const ClusterOverviewPage = props => {
           <div className="col-lg-9">
             <h4>Control Plane Status</h4>
           </div>
-          <div className="col-lg-3 text-right" style={{marginTop: 16}}>
-            <Link target="_blank" to="/grafana/dashboard/db/kubernetes-control-plane-status?orgId=1">View Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
-          </div>
+          <DashboardLink to="/grafana/dashboard/db/kubernetes-control-plane-status?orgId=1" />
         </div>
         <div className="row">
           <div className="col-lg-3 col-md-6">
@@ -151,9 +151,7 @@ export const ClusterOverviewPage = props => {
           <div className="col-lg-9">
             <h4>Capacity Planning</h4>
           </div>
-          <div className="col-lg-3 text-right" style={{marginTop: 16}}>
-            <Link target="_blank" to="/grafana/dashboard/db/kubernetes-capacity-planing?orgId=1">View Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
-          </div>
+          <DashboardLink to="/grafana/dashboard/db/kubernetes-capacity-planing?orgId=1" />
         </div>
         <div className="row">
           <div className="col-lg-3 col-md-6">
