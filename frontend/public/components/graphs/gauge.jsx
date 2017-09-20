@@ -56,8 +56,11 @@ export class Gauge extends BaseGraph {
 
     const { thresholds } = this.props;
 
+    // Set up correct portions for the ok/warn/error sections surrounding the gauge value.
+    // First element is clear and takes up 1/3rd of the pie
     const ringValues = [50, thresholds.warn, (thresholds.error - thresholds.warn), 100 - thresholds.error];
     if (props.invert) {
+      // Inverted graph (100% === good). Reverse order of ok/warn/error.
       ringValues[1] = 100 - thresholds.error;
       ringValues[3] = thresholds.warn;
     }
