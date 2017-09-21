@@ -27,7 +27,7 @@ spec:
         - containerPort: 80`);
 
 
-const Details = (replicationController) => <div>
+const Details = ({obj: replicationController}) => <div>
   <Heading text="Replication Controller Overview" />
   <div className="co-m-pane__body-group">
     <div className="co-m-pane__body-section--bordered">

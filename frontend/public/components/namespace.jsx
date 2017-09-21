@@ -11,6 +11,7 @@ import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, Resource
 import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { BindingName, BindingsList, RoleLink } from './RBAC';
 import { AsyncComponent } from './utils/async';
+// import { Bar } from './graphs';
 
 const SparklineWidget = (props) => (
   <AsyncComponent loader={() => System.import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
@@ -98,7 +99,7 @@ class PullSecret extends SafetyFirst {
   }
 }
 
-const Details = (ns) => <div>
+const Details = ({obj: ns}) => <div>
   <Heading text="Namespace Overview" />
   <div className="co-m-pane__body">
     <div className="row">
@@ -124,6 +125,8 @@ const Details = (ns) => <div>
       <div className="col-xs-12">
         <h1 className="co-m-pane__title">Resource Usage</h1>
       </div>
+    </div>
+    <div className="row">
       <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
         <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
       </div>
@@ -131,6 +134,12 @@ const Details = (ns) => <div>
         <SparklineWidget heading="RAM" query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`} limitQuery="sum(namespace:container_memory_usage_bytes:sum)" limitText="cluster" units="binaryBytes" />
       </div>
     </div>
+    {/* TODO: (ggreer) show this once UX team has given input
+    <div className="row">
+      <div className="col-sm-12 col-xs-12">
+        <Bar title="Memory Usage by Pod (Top 10)" query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`} humanize={humanizeMem} metric="pod_name" />
+      </div>
+    </div>*/}
   </div>
 </div>;
 
@@ -156,7 +165,7 @@ const BindingRow = ({obj: binding}) => <div className="row co-resource-list__ite
   </div>
 </div>;
 
-const RolesPage = ({metadata}) => {
+const RolesPage = ({obj: {metadata}}) => {
   const Intro = <div>
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
     <div className="co-m-pane__explanation">These subjects have access to resources specifically within this namespace.</div>

@@ -12,15 +12,20 @@ export class DropdownMixin extends React.PureComponent {
     this.toggle = this.toggle.bind(this);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
+    this.setNode = this.setNode.bind(this);
   }
 
-  _onWindowClick ( event ) {
-    if (!this.state.active ) {
+  setNode (node) {
+    if (node) {
+      this.dropdownElement = node;
+    }
+  }
+
+  _onWindowClick (event) {
+    if (!this.state.active) {
       return;
     }
-    const {dropdownElement} = this.refs;
-
-    if( event.target === dropdownElement || dropdownElement.contains(event.target)) {
+    if (event.target === this.dropdownElement || _.includes(this.dropdownElement, event.target)) {
       return;
     }
     this.hide();
@@ -110,7 +115,7 @@ export class Dropdown extends DropdownMixin {
     });
 
     return (
-      <div className={className} ref="dropdownElement">
+      <div className={className} ref={this.setNode}>
         <div className="dropdown">
           {button}
           {active && !_.isEmpty(children) && <ul className={classNames('dropdown-menu', menuClassName)}>{children}</ul>}

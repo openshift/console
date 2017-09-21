@@ -106,7 +106,7 @@ const ServicePortMapping = ({s}) => <div>
   </div>
 </div>;
 
-const Details = (s) => <div className="row no-gutter">
+const Details = ({obj: s}) => <div className="row no-gutter">
   <div className="col-sm-6">
     <Heading text="Service Overview" />
     <div className="co-m-pane__body-group">

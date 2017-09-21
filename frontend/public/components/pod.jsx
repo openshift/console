@@ -138,7 +138,7 @@ const Volume = ({pod, volume}) => {
   </div>;
 };
 
-const Details = (pod) => {
+const Details = ({obj: pod}) => {
   const limits = {
     cpu: null,
     memory: null

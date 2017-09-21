@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { registerTemplate } from '../yaml-templates';
+import { registerTemplate } from '../../yaml-templates';
 
-import * as denyOtherNamespacesImg from '../imgs/network-policy-samples/1-deny-other-namespaces.svg';
-import * as limitCertainAppImg from '../imgs/network-policy-samples/2-limit-certain-apps.svg';
-import * as allowIngressImg from '../imgs/network-policy-samples/3-allow-ingress.svg';
-import * as defaultDenyAllImg from '../imgs/network-policy-samples/4-default-deny-all.svg';
-import * as webAllowExternalImg from '../imgs/network-policy-samples/5-web-allow-external.svg';
-import * as webDbAllowAllNsImg from '../imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
-import * as webAllowProductionImg from '../imgs/network-policy-samples/7-web-allow-production.svg';
-import * as closeBtnImg from '../imgs/close-button.svg';
+import * as denyOtherNamespacesImg from '../../imgs/network-policy-samples/1-deny-other-namespaces.svg';
+import * as limitCertainAppImg from '../../imgs/network-policy-samples/2-limit-certain-apps.svg';
+import * as allowIngressImg from '../../imgs/network-policy-samples/3-allow-ingress.svg';
+import * as defaultDenyAllImg from '../../imgs/network-policy-samples/4-default-deny-all.svg';
+import * as webAllowExternalImg from '../../imgs/network-policy-samples/5-web-allow-external.svg';
+import * as webDbAllowAllNsImg from '../../imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
+import * as webAllowProductionImg from '../../imgs/network-policy-samples/7-web-allow-production.svg';
 
 registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -166,12 +165,12 @@ const samples = [
 
 const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
   const {highlightText, subheader, img, details, templateName} = sample;
-  return <li className="co-network-policy-sidebar-item">
-    <h5 className="co-network-policy-sidebar-item__header">
+  return <li className="co-resource-sidebar-item">
+    <h5 className="co-resource-item__header">
       <span className="text-uppercase">{highlightText}</span> {subheader}
     </h5>
     <img src={img} />
-    <p className="co-network-policy-sidebar-item__details">
+    <p className="co-resource-item__details">
       {details}
     </p>
     <button className="btn btn-link" onClick={() => loadSampleYaml(templateName)}>
@@ -183,43 +182,10 @@ const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
   </li>;
 };
 
-export class NetworkPolicySidebar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showSidebar: true
-    };
-  }
-
-  render() {
-    const {loadSampleYaml, downloadSampleYaml, style} = this.props;
-    const {height} = style;
-    const {showSidebar} = this.state;
-
-    if (!showSidebar) {
-      return <div className="co-p-cluster__sidebar--hidden pull-right hidden-xs">
-        <button className="btn btn-link" onClick={() => this.setState({showSidebar: !showSidebar})}>
-          <span className="fa fa-fw fa-info-circle co-p-cluster__sidebar-link-icon"></span>View samples
-        </button>
-      </div>;
-    }
-
-    return <div className="co-p-cluster__sidebar" style={{height}}>
-      <div className="co-network-policy-sidebar co-m-pane__body">
-        <div className="pull-right co-network-policy-sidebar__close-btn" onClick={() => this.setState({showSidebar: !showSidebar})}>
-          <img src={closeBtnImg} className="co-network-policy-sidebar__close-btn"/>
-        </div>
-        <h1 className="co-p-cluster__sidebar-heading co-network-policy-sidebar-header text-capitalize">
-          Network policy samples
-        </h1>
-        <ol className="co-network-policy-sidebar-list">
-          {_.map(samples, (sample) => <SampleYaml
-            key={sample.templateName}
-            sample={sample}
-            loadSampleYaml={loadSampleYaml}
-            downloadSampleYaml={downloadSampleYaml} />)}
-        </ol>
-      </div>
-    </div>;
-  }
-}
+export const NetworkPolicySidebar = ({loadSampleYaml, downloadSampleYaml}) => <ol className="co-resource-sidebar-list">
+  {_.map(samples, (sample) => <SampleYaml
+    key={sample.templateName}
+    sample={sample}
+    loadSampleYaml={loadSampleYaml}
+    downloadSampleYaml={downloadSampleYaml} />)}
+</ol>;

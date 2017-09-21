@@ -10,7 +10,8 @@ import 'brace/theme/clouds';
 import { k8sCreate, k8sUpdate, k8sKinds } from '../module/k8s';
 import { kindObj, history, Loading, resourcePath } from './utils';
 import { SafetyFirst } from './safety-first';
-import { NetworkPolicySidebar } from './network-policy-sidebar';
+
+import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { TEMPLATES } from '../yaml-templates';
 
 let id = 0;
@@ -124,9 +125,6 @@ export class EditYAML extends SafetyFirst {
       this.doc = es.getDocument();
     }
     let yaml;
-    // TODO: (kans) this is because we spread the object into Details pages (but need to add other props too) :-/
-    obj = Object.assign({}, obj);
-    delete obj.params;
 
     try {
       yaml = safeDump(obj);
@@ -144,7 +142,7 @@ export class EditYAML extends SafetyFirst {
       this.ace.getSession().setUndoManager(new ace.UndoManager());
     }
     this.ace.focus();
-    this.displayedVersion = obj.metadata.resourceVersion;
+    this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
     this.setState({initialized: true, stale: false});
     this.resize_();
   }
@@ -208,8 +206,8 @@ export class EditYAML extends SafetyFirst {
     saveAs(blob, filename);
   }
 
-  loadSampleYaml_(templateName = 'default') {
-    const sampleObj = generateObjToLoad(this.props.obj.kind, templateName);
+  loadSampleYaml_(templateName = 'default', kind = this.props.obj.kind) {
+    const sampleObj = generateObjToLoad(kind, templateName);
     this.setState({ sampleObj: sampleObj });
     this.loadYaml(true, sampleObj);
   }
@@ -233,6 +231,7 @@ export class EditYAML extends SafetyFirst {
     const {create, obj, showHeader=true} = this.props;
     const kind = obj.kind;
     const kindObj = _.get(k8sKinds, kind, {});
+
     return <div>
       {create && showHeader && <div className="yaml-editor-header">
         Create {_.get(kindObj, 'label', kind)}
@@ -259,10 +258,7 @@ export class EditYAML extends SafetyFirst {
             </div>
           </div>
         </div>
-        {kind === 'NetworkPolicy' && <NetworkPolicySidebar
-          style={{height: this.state.height}}
-          loadSampleYaml={this.loadSampleYaml_}
-          downloadSampleYaml={this.downloadSampleYaml_} />}
+        <ResourceSidebar isCreateMode={create} kindObj={kindObj} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
       </div>
     </div>;
   }

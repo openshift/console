@@ -180,13 +180,13 @@ export class ContainerLinuxUpdateDetails extends SafetyFirst {
           </div>
           { !this.state.expanded &&
             <div className="co-cluster-updates__heading--updates">
-              <div className="co-cluster-updates__heading--updates">N&#47;A</div>
+              <div className="co-cluster-updates__heading--updates">Not available in Tectonic Sandbox</div>
             </div>
           }
           <a className="co-cluster-updates__toggle" onClick={this._toggleExpand}>{this.state.expanded ? 'Collapse' : 'Expand'}</a>
         </div>
         { this.state.expanded && <div>
-          <Status status="N/A"/>
+          <Status status="Not available in Tectonic Sandbox"/>
         </div> }
       </div> }
       { isOperatorInstalled && <div className="co-cluster-updates__component">

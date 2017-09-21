@@ -111,7 +111,7 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
   </div>;
 };
 
-const Details = (np) => <div>
+const Details = ({obj: np}) => <div>
   <Heading text="Namespace Overview" />
   <div className="co-m-pane__body">
     <div className="row">

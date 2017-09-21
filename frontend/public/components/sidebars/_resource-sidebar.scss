@@ -1,0 +1,35 @@
+.co-resource-sidebar {
+  border-left: 1px solid #ccc;
+}
+
+.co-resource-sidebar-header {
+  margin: 0;
+}
+
+.co-resource-sidebar-list {
+  padding-left: 15px;
+}
+
+.co-resource-sidebar-item {
+  border-bottom: 1px solid #ccc;
+  padding: 20px 0;
+}
+
+.co-resource-sidebar-item__header {
+  font-weight: 600;
+}
+
+.co-resource-sidebar-item__details {
+  margin: 0;
+  padding: 25px 0;
+}
+
+.co-resource-sidebar__close-btn {
+  cursor: pointer;
+  height: 14px;
+  width: 14px;
+}
+
+.co-role-sidebar-subheader {
+  font-weight: normal;
+}

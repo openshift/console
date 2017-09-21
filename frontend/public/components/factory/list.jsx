@@ -210,6 +210,8 @@ const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, rowSplitt
 
 export const List = connect(stateToProps, {sortList: UIActions.sortList})(function ListInner (props) {
   const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList} = props;
+  const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match']);
+
   return <div className="co-m-table-grid co-m-table-grid--bordered">
     <StatusBox {...props}>
       <Header
@@ -217,8 +219,9 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(functi
         currentSortField={currentSortField}
         currentSortFunc={currentSortFunc}
         currentSortOrder={currentSortOrder}
+        {...componentProps}
       />
-      <Rows expand={expand} Row={Row} />
+      <Rows expand={expand} Row={Row} {...componentProps}/>
     </StatusBox>
   </div>;
 });

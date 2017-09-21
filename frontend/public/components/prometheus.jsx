@@ -8,7 +8,7 @@ import { Cog, LabelList, navFactory, ResourceCog, ResourceLink, Selector, plural
 import { registerTemplate } from '../yaml-templates';
 import { ServiceMonitorsPage } from './service-monitor';
 
-registerTemplate('v1alpha1.Prometheus', `apiVersion: monitoring.coreos.com/v1alpha1
+registerTemplate('v1.Prometheus', `apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
   name: example
@@ -89,7 +89,7 @@ class InstanceDetails extends SafetyFirst {
     event.target.blur();
     configureReplicaCountModal({
       resourceKind: k8sKinds.Prometheus,
-      resource: this.props,
+      resource: this.props.obj,
       invalidateState: (isInvalid) => {
         this.setState({
           desiredCountOutdated: isInvalid
@@ -99,7 +99,7 @@ class InstanceDetails extends SafetyFirst {
   }
 
   render() {
-    const instance = this.props;
+    const instance = this.props.obj;
     const {metadata, spec} = instance;
     return <div>
       <div className="co-m-pane__body">

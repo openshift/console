@@ -40,12 +40,14 @@ export class Status extends SafetyFirst {
       color = colors.ok;
     } else if (status === 'ERROR') {
       color = colors.error;
+    } else if (status === 'WARN') {
+      color = colors.warn;
     }
-    return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 15, margin: '8px 0', height: 200, backgroundColor: 'rgb(252,252,252)'}, this.style)} >
-      { title && <h4 style={{fontWeight: 'bold', margin: 0, textAlign: 'center', color: '#444'}}>{title}</h4> }
+    return <div style={Object.assign({}, {border: '1px solid #ddd', borderRadius: 8, padding: 15, margin: '8px 0', height: 150, backgroundColor: 'rgb(252,252,252)'}, this.style)} >
+      { title && <h5 style={{margin: 0, textAlign: 'center', color: '#444'}}>{title}</h5> }
       <div className="text-center">
-        <h1 style={{color, fontSize: 40, fontWeight: 'bold', padding: '28px 0 0', marginBottom: 0}}>{short}</h1>
-        <div className="text-muted" style={{fontSize: 20}}>{long}</div>
+        <h1 style={{color, fontSize: 26, fontWeight: 'semibold', padding: '16px 0 0', marginBottom: 0}}>{short}</h1>
+        <div className="text-muted" style={{fontSize: 14}}>{long}</div>
       </div>
     </div>;
   }

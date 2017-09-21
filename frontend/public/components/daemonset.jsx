@@ -48,7 +48,7 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   </div>
 </ResourceRow>;
 
-const Details = (daemonset) => <div>
+const Details = ({obj: daemonset}) => <div>
   <div className="col-lg-6">
     <div className="co-m-pane">
       <div className="co-m-pane__body">

@@ -40,7 +40,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
       .then((resource) => {
 
         let value = _.get(resource, this.props.path);
-        if (this.props.k8sQuery.kind === 'secret') {
+        if (this.props.k8sQuery.kind === 'Secret') {
           value = window.atob(value);
         }
         this.setState({
@@ -71,7 +71,7 @@ class ConfigureYamlFieldModal extends PromiseComponent {
     }
 
     let value = this.state.value;
-    if (this.props.k8sQuery.kind === 'secret') {
+    if (this.props.k8sQuery.kind === 'Secret') {
       value = window.btoa(value);
     }
 

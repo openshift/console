@@ -68,7 +68,7 @@ export class Details extends SafetyFirst {
     event.target.blur();
     configureReplicaCountModal({
       resourceKind: k8sKinds.Deployment,
-      resource: this.props,
+      resource: this.props.obj,
       invalidateState: (isInvalid) => {
         this.setState({
           desiredCountOutdated: isInvalid
@@ -78,7 +78,7 @@ export class Details extends SafetyFirst {
   }
 
   render() {
-    const deployment = this.props;
+    const deployment = this.props.obj;
     const isRecreate = (deployment.spec.strategy.type === 'Recreate');
 
     return <div className="co-m-pane__body">
