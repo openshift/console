@@ -89,7 +89,7 @@ class InstanceDetails extends SafetyFirst {
     event.target.blur();
     configureReplicaCountModal({
       resourceKind: k8sKinds.Prometheus,
-      resource: this.props,
+      resource: this.props.obj,
       invalidateState: (isInvalid) => {
         this.setState({
           desiredCountOutdated: isInvalid
@@ -99,7 +99,7 @@ class InstanceDetails extends SafetyFirst {
   }
 
   render() {
-    const instance = this.props;
+    const instance = this.props.obj;
     const {metadata, spec} = instance;
     return <div>
       <div className="co-m-pane__body">

@@ -149,7 +149,7 @@ const dropdownFilters = [{
 }];
 export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
 
-const Details = (node) => {
+const Details = ({obj: node}) => {
   const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
   const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
   const memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
@@ -309,13 +309,14 @@ const Details = (node) => {
 
 const {details, editYaml, events, pods} = navFactory;
 
+const pages = [
+  details(Details),
+  editYaml(),
+  pods(({obj}) => <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />),
+  events(ResourceEventStream),
+];
 export const NodesDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[
-    details(Details),
-    editYaml(),
-    pods(({metadata: {name}}) => <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${name}`} />),
-    events(ResourceEventStream),
-  ]}
+  pages={pages}
 />;

@@ -28,7 +28,7 @@ spec:
 const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
 export const replicaSetMenuActions = [ModifyCount, ModifyPodSelector, ModifyNodeSelector, ...common];
 
-const Details = (replicaSet) => <div>
+const Details = ({obj: replicaSet}) => <div>
   <Heading text="Replica Set Overview" />
   <div className="co-m-pane__body-group">
     <div className="co-m-pane__body-section--bordered">

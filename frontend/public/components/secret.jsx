@@ -38,7 +38,7 @@ const SecretRow = ({obj: secret}) => {
   </ResourceRow>;
 };
 
-const SecretDetails = (secret) => {
+const SecretDetails = ({obj: secret}) => {
   return <div className="col-md-12">
     <div className="co-m-pane">
       <div className="co-m-pane__body">

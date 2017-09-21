@@ -115,7 +115,7 @@ export class EtcdClusterDetails extends SafetyFirst {
     event.target.blur();
     configureClusterSizeModal({
       resourceKind: k8sKinds.EtcdCluster,
-      resource: this.props,
+      resource: this.props.obj,
       invalidateState: (isInvalid) => {
         this.setState({
           sizeCountOutdated: isInvalid
@@ -125,7 +125,7 @@ export class EtcdClusterDetails extends SafetyFirst {
   }
 
   render() {
-    const cluster = this.props;
+    const cluster = this.props.obj;
 
     const metadata = cluster.metadata;
     const spec = cluster.spec;
@@ -274,7 +274,7 @@ export const EtcdClustersDetailsPage = props => <DetailsPage
   pages={[
     details(EtcdClusterDetails),
     editYaml((props) => <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={props} kind="EtcdCluster" />),
-    pods(({metadata: {name}}) => <PodsPage showTitle={false} selector={{matchLabels: {'etcd_cluster': name}}} />)
+    pods(({obj: {metadata: {name}}}) => <PodsPage showTitle={false} selector={{matchLabels: {'etcd_cluster': name}}} />)
   ]}
 />;
 

@@ -38,7 +38,7 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const Details = obj => <div>
+const Details = ({obj}) => <div>
   <Heading text="PersistentVolume Overview" />
   <div className="co-m-pane__body">
     <div className="row">

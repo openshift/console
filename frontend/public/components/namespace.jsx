@@ -98,7 +98,7 @@ class PullSecret extends SafetyFirst {
   }
 }
 
-const Details = (ns) => <div>
+const Details = ({obj: ns}) => <div>
   <Heading text="Namespace Overview" />
   <div className="co-m-pane__body">
     <div className="row">
@@ -156,7 +156,7 @@ const BindingRow = ({obj: binding}) => <div className="row co-resource-list__ite
   </div>
 </div>;
 
-const RolesPage = ({metadata}) => {
+const RolesPage = ({obj: {metadata}}) => {
   const Intro = <div>
     <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
     <div className="co-m-pane__explanation">These subjects have access to resources specifically within this namespace.</div>

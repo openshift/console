@@ -56,7 +56,7 @@ const Row = ({obj: ss}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const Details = (ss) => <div>
+const Details = ({obj: ss}) => <div>
   <Heading text="StatefulSet Overview" />
   <div className="co-m-pane__body">
     <div className="row">

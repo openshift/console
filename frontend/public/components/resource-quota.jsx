@@ -26,22 +26,22 @@ const Header = props => <ListHeader>
 </ListHeader>;
 
 const kind = 'ResourceQuota';
-const Row = ({obj: ss}) => <div className="row co-resource-list__item">
+const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
-    <ResourceCog actions={menuActions} kind={kind} resource={ss} />
-    <ResourceLink kind={kind} name={ss.metadata.name} namespace={ss.metadata.namespace} title={ss.metadata.name} />
+    <ResourceCog actions={menuActions} kind={kind} resource={rq} />
+    <ResourceLink kind={kind} name={rq.metadata.name} namespace={rq.metadata.namespace} title={rq.metadata.name} />
   </div>
   <div className="col-xs-3">
-    <ResourceLink kind="Namespace" name={ss.metadata.namespace} title={ss.metadata.namespace} />
+    <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} />
   </div>
 </div>;
 
-const Details = (ss) => <div>
+const Details = ({obj: rq}) => <div>
   <Heading text="ResourceQuota Overview" />
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={ss} podSelector="spec.podSelector" showNodeSelector={false} />
+        <ResourceSummary resource={rq} podSelector="spec.podSelector" showNodeSelector={false} />
       </div>
     </div>
   </div>

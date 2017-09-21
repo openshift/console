@@ -61,10 +61,11 @@ class Details extends React.Component {
   }
 
   render () {
-    const {creationTimestamp, name, namespace} = this.props.metadata;
+    const rule = this.props.obj;
+    const {creationTimestamp, name, namespace} = rule.metadata;
     const {ruleFilter} = this.state;
 
-    let rules = this.props.rules;
+    let rules = rule.rules;
     if (ruleFilter) {
       const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
       const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];

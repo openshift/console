@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as classNames from'classnames';
 
-import { inject } from './index';
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 
 export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
@@ -50,24 +49,13 @@ export const StatusBox = props => {
     return <LoadingBox />;
   }
 
-  const {data, filters, selected} = props;
+  const {data} = props;
 
   if (!data || _.isEmpty(data)) {
     return EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />;
   }
 
-  let children;
-
-  if (_.isArray(data)) {
-    children = inject(props.children, {data, filters, selected});
-  } else {
-    children = inject(props.children, data);
-  }
-
-  if (children.length > 1) {
-    return <div>{children}</div>;
-  }
-  return children[0];
+  return <div>{props.children}</div>;
 };
 
 StatusBox.displayName = 'StatusBox';

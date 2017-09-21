@@ -109,12 +109,13 @@ const Env = ({env}) => {
 };
 
 const Details = (props) => {
-  const container = _.find(props.spec.containers, {name: props.params.name});
+  const pod = props.obj;
+  const container = _.find(pod.spec.containers, {name: props.match.params.name});
   if (!container) {
     return null;
   }
 
-  const status = getContainerStatus(props, container.name);
+  const status = getContainerStatus(pod, container.name);
   const state = getContainerState(status);
 
   // Split image string into the Docker image string and tag (aka version) portions. The tag defaults to 'latest'.
@@ -137,7 +138,7 @@ const Details = (props) => {
             <dt>Lifecycle Hooks</dt>
             <dd><Lifecycle lifecycle={container.lifecycle} /></dd>
             <dt>Liveness Probe</dt>
-            <dd><Liveness liveness={container.livenessProbe} podIP={props.status.podIP || '-'} /></dd>
+            <dd><Liveness liveness={container.livenessProbe} podIP={pod.status.podIP || '-'} /></dd>
             <dt>Started</dt>
             <dd><Timestamp timestamp={state.startedAt} /></dd>
             <dt>Finished</dt>
@@ -165,9 +166,9 @@ const Details = (props) => {
           <h1 className="co-section-title">Network</h1>
           <dl>
             <dt>Node</dt>
-            <dd><Link to={`/nodes/${props.spec.nodeName}/details`}>{props.spec.nodeName}</Link></dd>
+            <dd><Link to={`/nodes/${pod.spec.nodeName}/details`}>{pod.spec.nodeName}</Link></dd>
             <dt>Pod IP</dt>
-            <dd>{props.status.podIP || '-'}</dd>
+            <dd>{pod.status.podIP || '-'}</dd>
           </dl>
         </div>
       </div>
@@ -200,7 +201,7 @@ const Details = (props) => {
   </div>;
 };
 
-export const ContainersDetailsPage = props => <div>
+export const ContainersDetailsPage = (props) => <div>
   <NavTitle detail={true} title={props.match.params.name} kind="Container" />
   <Firehose {...props} namespace={props.match.params.ns} kind="Pod" name={props.match.params.podName}>
     <VertNav hideNav={true} pages={[{name: 'container', href: 'details', component: Details}]} />

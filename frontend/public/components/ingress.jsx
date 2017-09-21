@@ -112,7 +112,7 @@ const RulesRows = (props) => {
   return <EmptyBox label="Rule" />;
 };
 
-const Details = (ingress) => <div className="col-md-12">
+const Details = ({obj: ingress}) => <div className="col-md-12">
   <div className="co-m-pane">
     <div className="co-m-pane__body">
       <ResourceSummary resource={ingress} showPodSelector={false} showNodeSelector={false}>
