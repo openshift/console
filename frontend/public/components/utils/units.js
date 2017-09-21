@@ -127,6 +127,9 @@ const humanize = (value, typeName, useRound = false) => {
   };
 };
 
+export const humanizeMem = v => humanize(v, 'binaryBytes', true).string;
+export const humanizeCPU = v => humanize(v, 'numeric', true).string;
+
 const dehumanize = (value, typeName) => {
   const type = getType(typeName);
 
@@ -136,5 +139,5 @@ const dehumanize = (value, typeName) => {
 export const units = {
   round,
   humanize,
-  dehumanize
+  dehumanize,
 };

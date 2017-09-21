@@ -33,7 +33,7 @@ export class Bar extends BaseGraph {
       xaxis: {zeroline: false, showticklabels: false, showgrid: false},
       yaxis: {zeroline: false, showticklabels: false, showgrid: false},
       margin: {
-        l: 0,
+        l: 10,
         b: 0,
         r: 0,
         t: 15,
@@ -85,8 +85,9 @@ export class Bar extends BaseGraph {
     }
     const newX = [];
     const newY = [];
+    const metricName = this.props.metric;
     _.each(data[0].data.result, ({metric, value}) => {
-      newY.push(metric.namespace);
+      newY.push(metric[metricName]);
       newX.push(value[1]);
     });
 

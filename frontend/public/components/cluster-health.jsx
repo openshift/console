@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import { NavTitle, units } from './utils';
+import { NavTitle, humanizeCPU, humanizeMem } from './utils';
 import { Bar, Gauge, Line, Scalar } from './graphs';
 
 const multiLoadQueries = [
@@ -41,9 +41,6 @@ const diskQueries = [
   },
 ];
 
-const humanizeMem = v => units.humanize(v, 'binaryBytes', true).string;
-const humanizeCPU = v => units.humanize(v, 'numeric', true).string;
-
 export const ClusterHealth = () => <div>
   <Helmet>
     <title>Cluster Health</title>
@@ -68,7 +65,7 @@ export const ClusterHealth = () => <div>
         <Line title="Cluster Load Average" query={multiLoadQueries} />
       </div>
       <div className="col-lg-3 col-md-6">
-        <Bar title="CPU Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_cpu_usage:sum)))'} humanize={humanizeCPU} />
+        <Bar title="CPU Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_cpu_usage:sum)))'} humanize={humanizeCPU} metric="namespace" />
       </div>
     </div>
     <div className="row">
@@ -87,7 +84,7 @@ export const ClusterHealth = () => <div>
         <Line title="Memory" query={memoryQueries} />
       </div>
       <div className="col-lg-3 col-md-6">
-        <Bar title="Mem. Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_memory_usage_bytes:sum)))'} humanize={humanizeMem} />
+        <Bar title="Mem. Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_memory_usage_bytes:sum)))'} humanize={humanizeMem} metric="namespace" />
       </div>
     </div>
 
@@ -114,7 +111,7 @@ export const ClusterHealth = () => <div>
         <Line title="Network Received (bytes/s)" query={'sum(rate(container_network_receive_bytes_total{interface="eth0"}[1m]))'} />
       </div>
       <div className="col-lg-3 col-md-6">
-        <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_receive_bytes_total{interface="eth0"}[1m]))))'} humanize={humanizeMem} />
+        <Bar title="Network Receive (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_receive_bytes_total{interface="eth0"}[1m]))))'} humanize={humanizeMem} metric="namespace" />
       </div>
     </div>
 
@@ -123,7 +120,26 @@ export const ClusterHealth = () => <div>
         <Line title="Network Transmitted (bytes/s)" query={'sum(rate(container_network_transmit_bytes_total{interface="eth0"}[1m]))'} />
       </div>
       <div className="col-lg-3 col-md-6">
-        <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_transmit_bytes_total{interface="eth0"}[1m]))))'} humanize={humanizeMem} />
+        <Bar title="Network Transmit (Top 10 Namespaces)" query={'sort(topk(10, sum by (namespace) (rate(container_network_transmit_bytes_total{interface="eth0"}[1m]))))'} humanize={humanizeMem} metric="namespace" />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-lg-9">
+        <Line title="API Error Rate (5m)" query={'sum(rate(apiserver_request_count{code=~"5.."}[1m]))'} />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-lg-9">
+        <Bar title="API Writes Req/sec (Top 10 Clients)" query={'sort(topk(10, sum by (client)(rate(apiserver_request_count{verb!="GET", verb!="LIST", verb!="WATCH"}[5m]))))'} humanize={humanizeCPU} metric="client" />
+      </div>
+      <div className="col-lg-9">
+        <Bar title="API Reads Req/sec (Top 10 Clients)" query={'sort(topk(10, sum by (client)(rate(apiserver_request_count{verb!="POST", verb!="PUT", verb!="PATCH"}[5m]))))'} humanize={humanizeCPU} metric="client" />
+      </div>
+      <div className="col-lg-9">
+        <Bar title="Top 10 Pod Memory" query={'sort(topk(10, container_memory_usage_bytes{pod_name!=""}))'} humanize={humanizeMem} metric="pod_name" />
+      </div>
+      <div className="col-lg-9">
+        <Bar title="Top 10 Pod Memory (non-system)" query={'sort(topk(10, container_memory_usage_bytes{pod_name!="", namespace!="kube-system", namespace!="tectonic-system"}))'} humanize={humanizeMem} metric="pod_name" />
       </div>
     </div>
   </div>
