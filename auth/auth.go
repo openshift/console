@@ -59,11 +59,11 @@ func ExtractTokenFromRequest(r *http.Request) (string, error) {
 
 	protocolKey := "Sec-WebSocket-Protocol"
 	protocolHeader := r.Header.Get(protocolKey)
-	protocols := strings.Split(protocolHeader, ", ")
+	protocols := strings.Split(protocolHeader, ",")
 
 	bearerTokenPrefix := "base64url.bearer.authorization.k8s.io."
 	for _, protocol := range protocols {
-		split := strings.Split(protocol, bearerTokenPrefix)
+		split := strings.Split(strings.TrimSpace(protocol), bearerTokenPrefix)
 		if len(split) == 2 {
 			return split[1], nil
 		}
