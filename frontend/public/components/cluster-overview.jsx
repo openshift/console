@@ -142,7 +142,7 @@ export const ClusterOverviewPage = props => {
             <Gauge title="Schedulers Up" query={'(sum(up{job="kube-scheduler"} == 1) / count(up{job="kube-scheduler"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
           </div>
           <div className="col-lg-3 col-md-6">
-            <Gauge title="API Server Request Error Rate" query={'topk(1, (sum by(instance) (rate(apiserver_request_count{code=~"5.."}[5m])) / sum by(instance) (rate(apiserver_request_count[5m]))) * 100)'} thresholds={{warn: 1, error: 20}} />
+            <Gauge title="API Server Request Error Rate" query={'sum(rate(apiserver_request_count{code=~"5.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'} thresholds={{warn: 1, error: 20}} />
           </div>
         </div>
         <br />
