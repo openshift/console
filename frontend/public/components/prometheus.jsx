@@ -8,7 +8,7 @@ import { Cog, LabelList, navFactory, ResourceCog, ResourceLink, Selector, plural
 import { registerTemplate } from '../yaml-templates';
 import { ServiceMonitorsPage } from './service-monitor';
 
-registerTemplate('v1alpha1.Prometheus', `apiVersion: monitoring.coreos.com/v1alpha1
+registerTemplate('v1.Prometheus', `apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
   name: example

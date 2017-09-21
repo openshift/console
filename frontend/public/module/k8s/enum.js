@@ -231,6 +231,7 @@ export const k8sKinds = {
     basePath: '/apis/etcd.database.coreos.com/',
     path: 'etcdclusters',
     plural: 'etcdclusters',
+    labelPlural: 'Etcd Clusters',
     abbr: 'EC',
     namespaced: true,
   },
@@ -246,7 +247,7 @@ export const k8sKinds = {
   },
   Prometheus: {
     label: 'Prometheus',
-    labelPlural: 'Prometheus Instances',
+    labelPlural: 'Prometheuses',
     apiVersion: 'v1',
     basePath: '/apis/monitoring.coreos.com/',
     path: 'prometheuses',
