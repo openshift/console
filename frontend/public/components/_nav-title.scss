@@ -7,6 +7,29 @@
   background-color: $color-grey-background;
 }
 
+.co-m-nav-title__breadcrumbs {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 10px;
+}
+
+.co-m-nav-title__breadcrumbs__link {
+  margin: 5px;
+}
+
+.co-m-nav-title__breadcrumbs__link--end {
+  color: #999999;
+}
+
+.co-m-nav-title__breadcrumbs__seperator {
+  font-weight: 200;
+  font-size: 11px;
+  color: #333333;
+}
+
 .co-m-page-title {
   display: flex;
   justify-content: space-between;
@@ -23,3 +46,8 @@
   padding-top: 15px;
   padding-bottom: 15px;
 }
+
+.co-m-page-title--breadcrumbs {
+  padding-top: 0;
+}
+

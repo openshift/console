@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
@@ -383,7 +383,14 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} />);
+    const match: match<any> = {
+      params: {appName: 'etcd', plural: 'etcdclusters', name: 'my-etcd'},
+      isExact: false,
+      url: '/ns/example/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd',
+      path: '/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name',
+    };
+
+    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -400,6 +407,15 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     const detailsPage = wrapper.find(DetailsPage);
 
     expect(detailsPage.props().menuActions).toEqual(Cog.factory.common);
+  });
+
+  it('passes breadcrumbs to `DetailsPage`', () => {
+    const detailsPage = wrapper.find(DetailsPage);
+
+    expect(detailsPage.props().breadcrumbs).toEqual([
+      {name: 'etcd', path: '/ns/example/clusterserviceversion-v1s/etcd/details'},
+      {name: `${testResourceInstance.kind} Details`, path: '/ns/example/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd/details'},
+    ]);
   });
 });
 

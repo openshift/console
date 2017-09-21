@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import * as _ from 'lodash';
 
-import {getContainerState, getContainerStatus, getPullPolicyLabel} from '../module/k8s/docker';
+import { getContainerState, getContainerStatus, getPullPolicyLabel } from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import {Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav} from './utils';
+import { Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav } from './utils';
 
 const getResourceLimitValue = container => {
   const limits = _.get(container, 'resources.limits');
@@ -202,7 +203,14 @@ const Details = (props) => {
 };
 
 export const ContainersDetailsPage = (props) => <div>
-  <NavTitle detail={true} title={props.match.params.name} kind="Container" />
+  <NavTitle
+    detail={true}
+    title={props.match.params.name}
+    kind="Container"
+    breadcrumbs={[
+      {name: props.match.params.podName, path: `${props.match.url.split('/').slice(0, 5).join('/')}/details`},
+      {name: 'Container Details', path: `${props.match.url}/details`},
+    ]} />
   <Firehose resources={[{
     name: props.match.params.podName,
     namespace: props.match.params.ns,

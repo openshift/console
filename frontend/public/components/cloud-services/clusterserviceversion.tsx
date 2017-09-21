@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
@@ -205,7 +205,7 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     <ClusterServiceVersionResourcesPage loaded={true} obj={obj} />
   </div>;
 
-  return <DetailsPage {...props} pages={[details(ClusterServiceVersionDetails), editYaml(), {href: 'resources', name: 'Resources', component: Resources}]} />;
+  return <DetailsPage {...props} isList={false} pages={[details(ClusterServiceVersionDetails), editYaml(), {href: 'resources', name: 'Resources', component: Resources}]} />;
 };
 
 export type ClusterServiceVersionsPageProps = {
@@ -230,6 +230,7 @@ export type ClusterServiceVersionsDetailsPageProps = {
   kind: string;
   name: string;
   namespace: string;
+  match: match<any>;
 };
 
 export type ClusterServiceVersionDetailsProps = {

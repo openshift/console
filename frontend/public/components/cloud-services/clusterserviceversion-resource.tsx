@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
@@ -293,6 +293,11 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
   {...props}
   menuActions={Cog.factory.common}
+  isList={false}
+  breadcrumbs={[
+    {name: props.match.params.appName, path: `${props.match.url.split('/').slice(0, 5).join('/')}/details`},
+    {name: `${props.kind} Details`, path: `${props.match.url}/details`},
+  ]}
   pages={[
     navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
     navFactory.editYaml(),
@@ -373,6 +378,7 @@ export type ClusterServiceVersionResourcesDetailsPageProps = {
   kind: string;
   name: string;
   namespace: string;
+  match: match<any>;
 };
 
 export type ClusterServiceVersionResourcesDetailsState = {

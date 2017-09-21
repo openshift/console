@@ -273,7 +273,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsDetailsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsDetailsPage kind={testClusterServiceVersion.kind} name={testClusterServiceVersion.metadata.name} namespace="default" />);
+    wrapper = shallow(<ClusterServiceVersionsDetailsPage kind={testClusterServiceVersion.kind} name={testClusterServiceVersion.metadata.name} namespace="default" match={null} />);
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
