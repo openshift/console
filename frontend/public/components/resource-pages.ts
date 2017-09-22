@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import { ConfigMapsPage, ConfigMapsDetailsPage } from './configmap';
 import { ContainersDetailsPage } from './container';
 import { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
