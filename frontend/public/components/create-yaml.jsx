@@ -152,7 +152,10 @@ class CreateYAML_ extends SafetyFirst {
       obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     }
     obj.metadata = obj.metadata || {};
-    obj.metadata.namespace = namespace;
+    if (kind.namespaced) {
+      obj.metadata.namespace = namespace;
+    }
+
     return <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} />;
   }
 }
