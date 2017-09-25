@@ -80,7 +80,7 @@ const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
         long: name,
       };
     }
-    const value = parseInt(_.get(res, 'data.result[0]'), 10) || 0;
+    const value = parseInt(_.get(res, 'data.result[0].value[1]'), 10) || 0;
     return {
       short: value,
       status: value === 0 ? 'OK' : 'WARN',
@@ -142,7 +142,7 @@ export const ClusterOverviewPage = props => {
             <Gauge title="Schedulers Up" query={'(sum(up{job="kube-scheduler"} == 1) / count(up{job="kube-scheduler"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
           </div>
           <div className="col-lg-3 col-md-6">
-            <Gauge title="API Server Request Error Rate" query={'sum(rate(apiserver_request_count{code=~"5.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'} thresholds={{warn: 1, error: 20}} />
+            <Gauge title="API Request Success Rate" query={'100 - sum(rate(apiserver_request_count{code=~"5.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'} invert={true} thresholds={{warn: 10, error: 20}} />
           </div>
         </div>
         <br />
