@@ -16,10 +16,14 @@ import { TEMPLATES } from '../yaml-templates';
 
 let id = 0;
 
-const generateObjToLoad = (kind, templateName) => {
+const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   const kindObj = _.get(k8sKinds, kind, {});
   const kindStr = `${kindObj.apiVersion}.${kind}`;
-  return safeLoad(TEMPLATES[kindStr][templateName]);
+  const sampleObj = safeLoad(TEMPLATES[kindStr][templateName]);
+  if (_.has(sampleObj.metadata, 'namespace')) {
+    sampleObj.metadata.namespace = namespace;
+  }
+  return sampleObj;
 };
 
 /**
@@ -207,13 +211,13 @@ export class EditYAML extends SafetyFirst {
   }
 
   loadSampleYaml_(templateName = 'default', kind = this.props.obj.kind) {
-    const sampleObj = generateObjToLoad(kind, templateName);
+    const sampleObj = generateObjToLoad(kind, templateName, this.props.obj.metadata.namespace);
     this.setState({ sampleObj: sampleObj });
     this.loadYaml(true, sampleObj);
   }
 
   downloadSampleYaml_ (templateName = 'default') {
-    const data = safeDump(generateObjToLoad(this.props.obj.kind, templateName));
+    const data = safeDump(generateObjToLoad(this.props.obj.kind, templateName, this.props.obj.metadata.namespace));
     this.download(data);
   }
 
