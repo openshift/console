@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import * as _ from 'lodash';
 
 const getRestartPolicy = pod => _.find({

@@ -61,7 +61,7 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
 };
 
 // TODO: (ggreer) handle 403
-const fetchHealth = () => coFetchJSON(k8sBasePath)
+const fetchHealth = () => coFetchJSON(`${k8sBasePath}/`)
   .then(() => ({short: 'UP', long: 'All good', status: 'OK'}))
   .catch(() => ({short: 'ERROR', long: 'API server connection has a problem', status: 'ERROR'}));
 

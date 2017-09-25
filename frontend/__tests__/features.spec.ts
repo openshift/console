@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import store from '../public/redux';
 import * as Immutable from 'immutable';
 

@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable no-undef */
 
 import * as React from 'react';
 
@@ -45,15 +45,15 @@ const filterAppTypes = (data: AppTypeKind[] = [], filters = {}) => {
         return filteredData;
     }
   }, data);
-}
+};
 
 export const AppTypeList = (props: AppTypeListProps) => {
   const data = filterAppTypes(props.data, props.filters);
 
-  return props.loaded && data.length > 0
+  return props.loaded && data.length > 0 
     ? <div className="co-apptype-list">
-        { data.map((appType, i) => <AppTypeListItem key={i} appType={appType} />) } 
-      </div>
+      { data.map((appType, i) => <AppTypeListItem key={i} appType={appType} />) } 
+    </div> 
     : <StatusBox label="Applications" loaded={props.loaded} />;
 };
 
