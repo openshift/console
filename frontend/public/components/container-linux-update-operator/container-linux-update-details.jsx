@@ -46,7 +46,7 @@ class UpToDateState extends React.Component {
   render() {
     const {iconClass, text, total, textClass, versions} = this.props;
 
-    return <div className="co-cluster-updates__operator-ts-component">
+    return <div className="co-cluster-updates__operator-component">
       <div className="co-cluster-updates__operator-ts-step">
         <div className="co-cluster-updates__operator-icon"><span className={iconClass}></span></div>
         <div className="co-cluster-updates__operator-text">
