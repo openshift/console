@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import * as Immutable from 'immutable';

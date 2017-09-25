@@ -1,6 +1,7 @@
-/* eslint-disable */
+/* eslint-disable no-undef */
 
 import * as React from 'react';
+import * as _ from 'lodash';
 
 import { LoadingBox } from './status-box';
 import { SafetyFirst } from '../safety-first';
@@ -21,15 +22,14 @@ export class AsyncComponent extends SafetyFirst {
           return Promise.reject(AsyncComponentError.ComponentNotFound);
         }
         this.setState({Component});
-      })
-      .catch(error => {
+      }).catch(error => {
         if (error === AsyncComponentError.ComponentNotFound) {
           console.error('Component does not exist in module');
         } else {
           setTimeout(() => loadComponent(), this.retryAfter);
         }
       });
-    }
+    };
     loadComponent();
   }
 
@@ -41,7 +41,7 @@ export class AsyncComponent extends SafetyFirst {
 
   render() {
     const {Component} = this.state;
-    const {loader, ...rest} = this.props;
+    const rest = _.omit(this.props, 'loader');
     return Component != null 
       ? <Component {...rest} />
       : <LoadingBox />;

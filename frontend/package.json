@@ -108,7 +108,7 @@
     "ts-jest": "20.x",
     "ts-loader": "2.x",
     "typescript": "2.5.1",
-    "typescript-eslint-parser": "7.x",
+    "typescript-eslint-parser": "8.0",
     "uglifyjs-webpack-plugin": "1.0.0-beta.1",
     "webpack": "3.x",
     "webpack-bundle-analyzer": "2.x"

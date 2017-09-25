@@ -6,9 +6,8 @@
   },
   "extends": [
     "eslint:recommended",
-    // TODO (ggreer): re-enable import plugin when it works with typescript-eslint-parser
-    // "plugin:import/errors",
-    // "plugin:import/warnings",
+    "plugin:import/errors",
+    "plugin:import/warnings",
     "plugin:react/recommended",
   ],
   "globals": {
@@ -27,6 +26,7 @@
   },
   "parser": "typescript-eslint-parser",
   "parserOptions": {
+    "comment": true,
     "ecmaFeatures": {
       "jsx": true,
     },
@@ -47,7 +47,7 @@
     "eol-last": [2, "unix"],
     "eqeqeq": [2, "allow-null"],
     "guard-for-in": 2,
-    // "import/no-unresolved": ["error", {"ignore": ["./dist/templates"] }],
+    "import/no-unresolved": ["error"],
     "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
     "jsx-quotes": "error",
     "linebreak-style": [2, "unix"],
@@ -82,6 +82,6 @@
   },
   "settings": {
     "import/extensions": [".js", ".jsx"],
-    "import/resolver": {"node": {"extensions": [".js", ".jsx"]}},
+    "import/resolver": {"node": {"extensions": [".js", ".jsx", ".ts", ".tsx"]}},
   }
 }
