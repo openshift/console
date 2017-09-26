@@ -28,7 +28,7 @@ import { PersistentVolumesPage, PersistentVolumesDetailsPage } from './persisten
 import { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from './persistent-volume-claim';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
 import { CustomResourceDefinitionsPage } from './custom-resource-definition';
-import { AppTypesPage } from './cloud-services';
+import { AppTypesPage, AppTypesDetailsPage } from './cloud-services';
 
 export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('ConfigMaps',ConfigMapsPage)
@@ -89,4 +89,5 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('ResourceQuotas', ResourceQuotasDetailsPage)
   .set('PersistentVolumes', PersistentVolumesDetailsPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsDetailsPage)
-  .set('Default', DefaultDetailsPage);
+  .set('Default', DefaultDetailsPage)
+  .set('AppType-v1s', AppTypesDetailsPage);
