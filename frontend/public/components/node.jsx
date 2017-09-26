@@ -20,7 +20,6 @@ const makeNodeScheduable = (resourceKind, resource) => {
 
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable...',
-  weight: 100,
   hidden: _.has(obj, 'spec.unschedulable') && obj.spec.unschedulable,
   callback: () => configureUnschedulableModal({
     resourceKind: kind,
@@ -30,7 +29,6 @@ const MarkAsUnschedulable = (kind, obj) => ({
 
 const MarkAsSchedulable = (kind, obj) => ({
   label: 'Mark as Schedulable',
-  weight: 100,
   hidden: !_.has(obj, 'spec.unschedulable'),
   callback: () => makeNodeScheduable(kind, obj)
 });

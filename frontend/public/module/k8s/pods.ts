@@ -8,8 +8,6 @@ const getRestartPolicy = pod => _.find({
     id: 'Always',
     // What is shown in the UI.
     label: 'Always Restart',
-    // Ordering weight.
-    weight: 100,
     // Description in the UI.
     description: 'If the container restarts for any reason, restart it. ' +
       'Useful for stateless services that may fail from time to time.',
@@ -19,13 +17,11 @@ const getRestartPolicy = pod => _.find({
   OnFailure: {
     id: 'OnFailure',
     label: 'Restart On Failure',
-    weight: 200,
     description: 'If the container exits with a non-zero status code, restart it.',
   },
   Never: {
     id: 'Never',
     label: 'Never Restart',
-    weight: 300,
     description: 'Never restart the container. ' +
       'Useful for containers that exit when they have completed a specific job, like a data import daemon.',
   },
@@ -33,62 +29,52 @@ const getRestartPolicy = pod => _.find({
 
 export const VolumeSource = {
   emptyDir: {
-    weight: 100,
     id: 'emptyDir',
     label: 'Container Volume',
     description: 'Temporary directory that shares a pod\'s lifetime.',
   },
   hostPath: {
-    weight: 200,
     id: 'hostPath',
     label: 'Host Directory',
     description: 'Pre-existing host file or directory, ' +
         'generally for privileged system daemons or other agents tied to the host.',
   },
   gitRepo: {
-    weight: 300,
     id: 'gitRepo',
     label: 'Git Repo',
     description: 'Git repository at a particular revision.',
   },
   nfs: {
-    weight: 400,
     id: 'nfs',
     label: 'NFS',
     description: 'NFS volume that will be mounted in the host machine.',
   },
   secret: {
-    weight: 500,
     id: 'secret',
     label: 'Secret',
     description: 'Secret to populate volume.',
   },
   gcePersistentDisk: {
-    weight: 600,
     id: 'gcePersistentDisk',
     label: 'GCE Persistent Disk',
     description: 'GCE disk resource attached to the host machine on demand.',
   },
   awsElasticBlockStore: {
-    weight: 700,
     id: 'awsElasticBlockStore',
     label: 'AWS Elastic Block Store',
     description: 'AWS disk resource attached to the host machine on demand.',
   },
   glusterfs: {
-    weight: 800,
     id: 'glusterfs',
     label: 'Gluster FS',
     description: 'GlusterFS volume that will be mounted on the host machine.',
   },
   iscsi: {
-    weight: 900,
     id: 'iscsi',
     label: 'iSCSI',
     description: 'iSCSI disk attached to host machine on demand',
   },
   configMap: {
-    weight: 1000,
     id: 'configMap',
     label: 'ConfigMap',
     description: 'ConfigMap to be consumed in volume.',

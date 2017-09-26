@@ -29,7 +29,6 @@ const {Edit, Delete} = Cog.factory;
 
 const UpdateCount = (kind, cluster) => ({
   label: 'Modify Cluster Size',
-  weight: 120,
   callback: () => configureClusterSizeModal({
     resourceKind: kind,
     resource: cluster

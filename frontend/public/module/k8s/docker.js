@@ -2,20 +2,17 @@ const PullPolicy = {
   Always: {
     id: 'Always',
     label: 'Always Pull',
-    weight: 100,
     description: 'Pull down a new copy of the container image whenever a new pod is created.',
     default: true,
   },
   IfNotPresent: {
     id: 'IfNotPresent',
     label: 'Pull If Needed',
-    weight: 200,
     description: 'If the container isn’t available locally, pull it down.',
   },
   Never: {
     id: 'Never',
     label: 'Never Pull',
-    weight: 300,
     description: 'Don\'t pull down a container image. ' +
       'If the correct container image doesn\'t exist locally, the pod will fail to start correctly.',
   },
