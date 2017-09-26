@@ -97,7 +97,7 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
   });
 };
 
-const coFetchSendJSON = (url, method, json = undefined, options = {}) => {
+const coFetchSendJSON = (url, method, json = null, options = {}) => {
   const allOptions = {
     headers: {
       Accept: 'application/json',
@@ -110,7 +110,9 @@ const coFetchSendJSON = (url, method, json = undefined, options = {}) => {
   return coFetchJSON(url, method, _.defaultsDeep(allOptions, options));
 };
 
-coFetchJSON.delete = (url, options = {}) => coFetchJSON(url, 'DELETE', options);
+coFetchJSON.delete = (url, options = {}, json = null) => {
+  return json ? coFetchSendJSON(url, 'DELETE', json, options) : coFetchJSON(url, 'DELETE', options);
+};
 coFetchJSON.post = (url, json, options = {}) => coFetchSendJSON(url, 'POST', json, options);
 coFetchJSON.put = (url, json, options = {}) => coFetchSendJSON(url, 'PUT', json, options);
 coFetchJSON.patch = (url, json, options = {}) => coFetchSendJSON(url, 'PATCH', json, options);

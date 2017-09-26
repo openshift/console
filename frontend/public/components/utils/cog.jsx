@@ -2,9 +2,7 @@ import * as React from 'react';
 import * as classNames from'classnames';
 import { Tooltip } from 'react-lightweight-tooltip';
 
-import { k8sKill } from '../../module/k8s/';
-import {getNamespacedRoute} from '../../ui/ui-actions';
-import { annotationsModal, confirmModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal } from '../modals';
+import { annotationsModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { history, kindObj, resourceObjPath } from './index';
 
@@ -53,23 +51,9 @@ export class Cog extends DropdownMixin {
 Cog.factory = {
   Delete: (kind, obj) => ({
     label: `Delete ${kind.label}...`,
-    callback: () => confirmModal({
-      title: `Delete ${kind.label}`,
-      message: `Are you sure you want to delete ${obj.metadata.name}?`,
-      btnText: `Delete ${kind.label}`,
-      executeFn: () => {
-        const deletePromise = k8sKill(kind, obj);
-        deletePromise.then(() => {
-          // If we are currently on the deleted resource's page, redirect to the resource list page
-          const re = new RegExp(`/${obj.metadata.name}/.*$`);
-          if (re.test(window.location.pathname)) {
-            const path = kind.kind === 'EtcdCluster' ? 'etcdclusters' : kind.path;
-            history.push(getNamespacedRoute(path));
-          }
-        });
-
-        return deletePromise;
-      },
+    callback: () => deleteModal({
+      kind: kind,
+      resource: obj,
     }),
   }),
   Edit: (kind, obj) => ({
@@ -116,10 +100,13 @@ Cog.factory = {
 // The common menu actions that most resource share
 Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
-export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
-  options={actions.map(a => a(kindObj(kind), resource))}
-  key={resource.metadata.uid}
-  isDisabled={isDisabled}
-/>;
+export const ResourceCog = ({actions, kind, resource, isDisabled}) => {
+  //Don't show the resource cog if deletionTimestamp is set which means the resources is in 'deletion in progress' state
+  return _.has(resource.metadata, 'deletionTimestamp') ? null : <Cog
+    options={actions.map(a => a(kindObj(kind), resource))}
+    key={resource.metadata.uid}
+    isDisabled={isDisabled}
+  />;
+};
 
 ResourceCog.displayName = 'ResourceCog';
