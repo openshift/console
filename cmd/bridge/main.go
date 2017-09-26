@@ -106,6 +106,7 @@ func main() {
 		BaseURL:             baseURL,
 		TectonicLicenseFile: *fLicenseFile,
 		TectonicCACertFile:  caCertFilePath,
+		ClusterName:         *fTectonicClusterName,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
@@ -199,6 +200,12 @@ func main() {
 		flagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
 	}
 
+	apiServerEndpoint := *fK8sPublicEndpoint
+	if apiServerEndpoint == "" {
+		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
+	}
+	srv.KubeAPIServerURL = apiServerEndpoint
+
 	switch *fUserAuth {
 	case "oidc":
 		validateFlagNotEmpty("base-address", *fBaseAddress)
@@ -263,11 +270,6 @@ func main() {
 
 			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
 				log.Fatalf("Error initializing kubectl authenticator: %v", err)
-			}
-
-			apiServerEndpoint := *fK8sPublicEndpoint
-			if apiServerEndpoint == "" {
-				apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 			}
 
 			srv.KubeConfigTmpl = server.NewKubeConfigTmpl(

@@ -1,12 +1,66 @@
 import * as React from 'react';
 import * as moment from 'moment';
+import { safeDump } from 'js-yaml';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { k8sKinds, k8sGet } from '../module/k8s';
 import { SecretsList, withSecretsList } from './secret';
 import { registerTemplate } from '../yaml-templates';
+import { saveAs } from 'file-saver';
+import { errorModal } from './modals';
 
-const menuActions = [Cog.factory.Delete];
+const KubeConfigify = (kind, sa) => ({
+  label: 'Download Kube Config...',
+  weight: 200,
+  callback: () => {
+    const name = _.get(sa, 'secrets[0].name');
+    const namespace = sa.metadata.namespace;
+
+    k8sGet(k8sKinds.Secret, name, namespace).then(({data}) => {
+      const server = window.SERVER_FLAGS.kubeAPIServerURL;
+      const clusterName = window.SERVER_FLAGS.clusterName;
+
+      const token = atob(data.token);
+      const cert = data['ca.crt'];
+
+      const config = {
+        apiVersion: 'v1',
+        'current-context': name,
+        kind: 'Config',
+        preferences: {},
+        clusters: [{
+          name: clusterName,
+          cluster: {
+            'certificate-authority-data': cert,
+            server,
+          }
+        }],
+        contexts: [{
+          name,
+          context: {
+            cluster: clusterName,
+            namespace,
+            user: name,
+          }
+        }],
+        'users': [{
+          name,
+          user: {
+            token: token,
+          }
+        }]
+      };
+      const dump = safeDump(config);
+      const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
+      saveAs(blob, `sa-${name}-${clusterName}-kubeconfig`);
+    }).catch(err => {
+      const error = err.message;
+      errorModal({error});
+    });
+  },
+});
+const menuActions = [Cog.factory.Delete, KubeConfigify];
 
 registerTemplate('v1.ServiceAccount', `apiVersion: v1
 kind: ServiceAccount

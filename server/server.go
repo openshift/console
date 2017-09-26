@@ -51,15 +51,17 @@ var (
 )
 
 type jsGlobals struct {
-	ConsoleVersion  string `json:"consoleVersion"`
-	K8sAPIVersion   string `json:"k8sAPIVersion"`
-	AuthDisabled    bool   `json:"authDisabled"`
-	KubectlClientID string `json:"kubectlClientID"`
-	BasePath        string `json:"basePath"`
-	LoginURL        string `json:"loginURL"`
-	LoginSuccessURL string `json:"loginSuccessURL"`
-	LoginErrorURL   string `json:"loginErrorURL"`
-	LogoutURL       string `json:"logoutURL"`
+	ConsoleVersion   string `json:"consoleVersion"`
+	K8sAPIVersion    string `json:"k8sAPIVersion"`
+	AuthDisabled     bool   `json:"authDisabled"`
+	KubectlClientID  string `json:"kubectlClientID"`
+	BasePath         string `json:"basePath"`
+	LoginURL         string `json:"loginURL"`
+	LoginSuccessURL  string `json:"loginSuccessURL"`
+	LoginErrorURL    string `json:"loginErrorURL"`
+	LogoutURL        string `json:"logoutURL"`
+	KubeAPIServerURL string `json:"kubeAPIServerURL"`
+	ClusterName      string `json:"clusterName"`
 }
 
 type Server struct {
@@ -71,6 +73,8 @@ type Server struct {
 	TectonicCACertFile  string
 	Auther              *auth.Authenticator
 	KubectlClientID     string
+	ClusterName         string
+	KubeAPIServerURL    string
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
 	KubectlAuther   *auth.Authenticator
@@ -203,15 +207,17 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		ConsoleVersion:  version.Version,
-		K8sAPIVersion:   K8sAPIVersion,
-		AuthDisabled:    s.AuthDisabled(),
-		KubectlClientID: s.KubectlClientID,
-		BasePath:        s.BaseURL.Path,
-		LoginURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
-		LoginSuccessURL: proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:   proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
+		ConsoleVersion:   version.Version,
+		K8sAPIVersion:    K8sAPIVersion,
+		AuthDisabled:     s.AuthDisabled(),
+		KubectlClientID:  s.KubectlClientID,
+		BasePath:         s.BaseURL.Path,
+		LoginURL:         proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
+		LoginSuccessURL:  proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:    proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
+		ClusterName:      s.ClusterName,
+		KubeAPIServerURL: s.KubeAPIServerURL,
 	}
 	tpl := template.New(IndexPageTemplateName)
 	tpl.Delims("[[", "]]")
