@@ -5,7 +5,7 @@ import { Tooltip } from 'react-lightweight-tooltip';
 import { k8sKill } from '../../module/k8s/';
 import {getNamespacedRoute} from '../../ui/ui-actions';
 import { annotationsModal, confirmModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal } from '../modals';
-import { DropdownMixin, sortActions } from './dropdown';
+import { DropdownMixin } from './dropdown';
 import { history, kindObj, resourceObjPath } from './index';
 
 export class Cog extends DropdownMixin {
@@ -53,7 +53,6 @@ export class Cog extends DropdownMixin {
 Cog.factory = {
   Delete: (kind, obj) => ({
     label: `Delete ${kind.label}...`,
-    weight: 900,
     callback: () => confirmModal({
       title: `Delete ${kind.label}`,
       message: `Are you sure you want to delete ${obj.metadata.name}?`,
@@ -75,12 +74,10 @@ Cog.factory = {
   }),
   Edit: (kind, obj) => ({
     label: `Edit ${kind.label}...`,
-    weight: 800,
     href: `${resourceObjPath(obj, kind.kind)}/yaml`,
   }),
   ModifyLabels: (kind, obj) => ({
     label: 'Modify Labels...',
-    weight: 200,
     callback: () => labelsModal({
       kind: kind,
       resource: obj,
@@ -88,7 +85,6 @@ Cog.factory = {
   }),
   ModifyPodSelector: (kind, obj) => ({
     label: 'Modify Pod Selector...',
-    weight: 300,
     callback: () => podSelectorModal({
       kind: kind,
       resource:  obj,
@@ -96,7 +92,6 @@ Cog.factory = {
   }),
   ModifyNodeSelector: (kind, obj) => ({
     label: 'Modify Node Selector...',
-    weight: 400,
     callback: () => nodeSelectorModal({
       kind: kind,
       resource: obj,
@@ -104,7 +99,6 @@ Cog.factory = {
   }),
   ModifyAnnotations: (kind, obj) => ({
     label: 'Modify Annotations...',
-    weight: 500,
     callback: () => annotationsModal({
       kind: kind,
       resource: obj,
@@ -112,7 +106,6 @@ Cog.factory = {
   }),
   ModifyCount: (kind, obj) => ({
     label: 'Modify Count...',
-    weight: 100,
     callback: () => configureReplicaCountModal({
       resourceKind: kind,
       resource: obj,
@@ -121,10 +114,10 @@ Cog.factory = {
 };
 
 // The common menu actions that most resource share
-Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.Edit, Cog.factory.Delete, Cog.factory.ModifyAnnotations];
+Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
 export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
-  options={sortActions(actions.map(a => a(kindObj(kind), resource)))}
+  options={actions.map(a => a(kindObj(kind), resource))}
   key={resource.metadata.uid}
   isDisabled={isDisabled}
 />;

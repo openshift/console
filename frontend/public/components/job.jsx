@@ -25,7 +25,6 @@ spec:
 
 const ModifyJobParallelism = (kind, obj) => ({
   label: 'Modify Parallelism...',
-  weight: 100,
   callback: () => configureJobParallelismModal({
     resourceKind: kind,
     resource: obj,

@@ -26,12 +26,10 @@ export const roleKind = role => role.metadata.namespace ? 'Role' : 'ClusterRole'
 const menuActions = [
   (kind, role) => ({
     label: 'Add Rule...',
-    weight: 100,
     href: addHref(role.metadata.name, role.metadata.namespace),
   }),
   (kind, role) => ({
     label: 'Add Role Binding...',
-    weight: 101,
     href: `/rolebindings/new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`,
   }),
   Cog.factory.Edit,

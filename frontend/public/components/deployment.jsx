@@ -29,13 +29,11 @@ const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory
 
 const RevisionHistory = (kind, deployment) => ({
   label: 'Revision History...',
-  weight: 110,
   callback: () => configureRevisionHistoryLimitModal({deployment}),
 });
 
 const UpdateStrategy = (kind, deployment) => ({
   label: 'Update Strategy...',
-  weight: 120,
   callback: () => configureUpdateStrategyModal({deployment}),
 });
 

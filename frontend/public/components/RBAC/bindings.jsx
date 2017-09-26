@@ -56,17 +56,14 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
   const actions = [
     (kind, obj) => ({
       label: `Duplicate ${kind.label}...`,
-      weight: 700,
       href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
     }),
     (kind, obj) => ({
       label: `Edit ${kind.label} Subject...`,
-      weight: 800,
       href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
     }),
     subjects.length === 1 ? Cog.factory.Delete : (kind, binding) => ({
       label: `Delete ${kind.label} Subject...`,
-      weight: 900,
       callback: () => confirmModal({
         title: `Delete ${kind.label} Subject`,
         message: `Are you sure you want to delete subject ${subject.name} of type ${subject.kind}?`,
@@ -77,9 +74,8 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
   ];
 
   if (subject.kind === 'User' || subject.kind === 'Group') {
-    actions.push(() => ({
+    actions.unshift(() => ({
       label: `Impersonate ${subject.kind} "${subject.name}"...`,
-      weight: 600,
       href: '/',
       callback: () => startImpersonate(subject.kind, subject.name),
     }));
