@@ -14,7 +14,7 @@ export const AppTypeLogo = (props: AppTypeLogoProps) => {
     </div>
     <div className="co-apptype-logo__name">
       <h1 style={{margin: 0}}>{displayName}</h1>
-      <span className="co-apptype-logo__provider">{`by ${provider.name}`}</span>
+      {provider && provider.name && <span className="co-apptype-logo__provider">{`by ${provider.name}`}</span>}
     </div>
   </div>;
 };
@@ -67,6 +67,14 @@ export const AppTypesPage = (props: AppTypesPageProps) => {
   />;
 };
 
+// FIXME(alecmerdler): Update with full AppType schema
+export type AppTypeKind = {
+  apiVersion: string;
+  kind: string;
+  metadata: {[key: string]: any};
+  spec: {[key: string]: any};
+};
+
 export type AppTypesPageProps = {
   kind: string;
 };
@@ -86,12 +94,4 @@ export type AppTypeLogoProps = {
   displayName: string;
   icon: {base64data: string; mediatype: string};
   provider: {name: string; website: string}
-};
-
-// FIXME(alecmerdler): Update with full AppType schema
-export type AppTypeKind = {
-  apiVersion: string;
-  kind: string;
-  metadata: {[key: string]: any};
-  spec: {[key: string]: any};
 };

@@ -24,6 +24,7 @@ export class AsyncComponent extends SafetyFirst {
         this.setState({Component});
       }).catch(error => {
         if (error === AsyncComponentError.ComponentNotFound) {
+          // eslint-disable-next-line no-console
           console.error('Component does not exist in module');
         } else {
           setTimeout(() => loadComponent(), this.retryAfter);

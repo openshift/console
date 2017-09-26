@@ -7,8 +7,8 @@ import { AsyncComponent } from '../../../public/components/utils/async';
 
 describe('AsyncComponent', () => {
   let wrapper: ReactWrapper;
-  const Foo = (props: {className: string}) => <div id={fooId} className={props.className} />;
   const fooId = 'fooId';
+  const Foo = (props: {className: string}) => <div id={fooId} className={props.className} />;
   const loadingBoxSelector = '.cos-status-box';
 
   beforeEach(() => {
