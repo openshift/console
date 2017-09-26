@@ -14,7 +14,7 @@ export const AppTypeLogo = (props: AppTypeLogoProps) => {
     </div>
     <div className="co-apptype-logo__name">
       <h1 style={{margin: 0}}>{displayName}</h1>
-      <span className="co-apptype-logo__provider">{`by ${provider.name}`}</span>
+      {provider && provider.name && <span className="co-apptype-logo__provider">{`by ${provider.name}`}</span>}
     </div>
   </div>;
 };
