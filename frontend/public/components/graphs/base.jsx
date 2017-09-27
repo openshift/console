@@ -19,6 +19,8 @@ export class BaseGraph extends SafetyFirst {
     this.state = {
       error: null,
     };
+    this.start = null;
+    this.end = null;
   }
 
   setNode_(node) {
@@ -28,8 +30,9 @@ export class BaseGraph extends SafetyFirst {
   }
 
   fetch () {
-    const end = Date.now();
-    const start = end - this.timeSpan;
+    const timeSpan = this.end - this.start || this.timeSpan;
+    const end = this.end || Date.now();
+    const start = this.start || (end - timeSpan);
 
     let queries = this.props.query;
     if (!_.isArray(queries)) {
@@ -38,7 +41,7 @@ export class BaseGraph extends SafetyFirst {
       }];
     }
 
-    const pollInterval = this.timeSpan ? this.timeSpan / 120 : 15000;
+    const pollInterval = timeSpan / 120 || 15000;
     const stepSize = pollInterval / 1000;
     const promises = queries.map(q => {
       const url = this.timeSpan
