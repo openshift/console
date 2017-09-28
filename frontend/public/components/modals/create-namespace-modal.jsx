@@ -4,7 +4,23 @@ import { k8sCreate, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { history, PromiseComponent, SelectorInput } from '../utils';
 
+const allow = 'allow';
+const deny = 'deny';
+
+const defaultDeny = {
+  'apiVersion': 'networking.k8s.io/v1',
+  'kind': 'NetworkPolicy',
+  'spec': {
+    'podSelector': null
+  }
+};
+
 class CreateNamespaceModal extends PromiseComponent {
+  constructor(props) {
+    super(props);
+    this.state.np = allow;
+  }
+
   handleChange (e) {
     this.setState({name: e.target.value});
   }
@@ -19,7 +35,15 @@ class CreateNamespaceModal extends PromiseComponent {
         labels: SelectorInput.objectify(labels),
       },
     };
-    const promise = k8sCreate(k8sKinds.Namespace, namespace);
+    let promise = k8sCreate(k8sKinds.Namespace, namespace);
+    if (this.state.np === deny) {
+      promise = promise.then(() => {
+        const policy = Object.assign({}, defaultDeny, {metadata: {namespace: name, name: 'default-deny'}});
+        return k8sCreate(k8sKinds.NetworkPolicy, policy);
+      });
+    }
+
+
     this.handlePromise(promise).then(() => {
       this.props.close();
       history.push(`namespaces/${name}/details`);
@@ -46,6 +70,16 @@ class CreateNamespaceModal extends PromiseComponent {
         <div className="modal-body__field">
           <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels.bind(this)} tags={[]} />
         </div>
+        <div>
+          <label className="control-label">Default Network Policy</label>
+        </div>
+        <div className="modal-body__field ">
+          <select onChange={e => this.setState({np: e.target.value})} value={this.state.np} className="form-control">
+            <option value={allow}>No restrictions (default)</option>
+            <option value={deny}>Deny all inbound traffic.</option>
+          </select>
+        </div>
+
       </ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
     </form>;
