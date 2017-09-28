@@ -1,6 +1,14 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { AppTypeKind, AppTypeResourceKind, CustomResourceDefinitionKind } from '../public/components/cloud-services';
+import { AppTypeKind, AppTypeResourceKind, CustomResourceDefinitionKind, K8sResourceKind, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
+
+export const testNamespace: K8sResourceKind = {
+  apiVersion: 'v1',
+  kind: 'Namespace',
+  metadata: {
+    name: 'default',
+  }
+};
 
 export const testAppType: AppTypeKind = {
   apiVersion: 'app.coreos.com/v1alpha1',
@@ -35,6 +43,10 @@ export const testAppType: AppTypeKind = {
         'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1'
       }
     }
+  },
+  status: {
+    phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
+    reason: CSVConditionReason.CSVReasonInstallSuccessful,
   },
 };
 
@@ -120,5 +132,51 @@ export const testResourceInstance: AppTypeResourceKind = {
       metrics: [{query: 'has_leader', name: 'Has Active Leader', type: 'Gauge', subtype: 'boolean'}],
       endpoint: 'https://prometheus.testapp.com',
     })
+  },
+};
+
+export const testCatalogApp: CatalogEntryKind = {
+  apiVersion: 'app.coreos.com/v1alpha1',
+  kind: 'AlphaCatalogEntrySpec',
+  metadata: {
+    name: 'testapp',
+    uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
+    creationTimestamp: '2017-09-20T18:19:49Z',
+    namespace: 'default',
+  },
+  spec: {
+    displayName: 'Test App',
+    description: 'This app does cool stuff',
+    provider: 'MyCompany, Inc',
+    links: [
+      {name: 'Documentation', url: 'https://docs.testapp.com'},
+    ],
+    maintainers: [
+      {name: 'John Doe', email: 'johndoe@example.com'},
+    ],
+    icon: [
+      {base64data: '', mediatype: 'image/png',} 
+    ],
+    labels: {
+      'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1',
+      'alm-catalog': 'open-cloud-services.coreos.com',
+    },
+  },
+};
+
+export const testInstallPlan: InstallPlanKind = {
+  apiVersion: 'app.coreos.com/v1alpha1',
+  kind: 'InstallPlan-v1',
+  metadata: {
+    namespace: 'default',
+    name: 'etcd',
+  },
+  spec: {
+    clusterServiceVersions: ['etcd'],
+    approval: 'Automatic',
+  },
+  status: {
+    status: 'Complete',
+    plan: [],
   },
 };

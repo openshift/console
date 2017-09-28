@@ -303,6 +303,24 @@ export const k8sKinds = {
     namespaced: false,
     plural: 'customresourcedefinitions',
   },
+  'AlphaCatalogEntry-v1': {
+    label: 'AlphaCatalogEntry-v1',
+    basePath: '/apis/app.coreos.com/',
+    apiVersion: 'v1alpha1',
+    path: 'alphacatalogentry-v1s',
+    abbr: 'CE',
+    namespaced: true,
+    plural: 'alphacatalogentry-v1s',
+  },
+  'ClusterServiceVersion-v1': {
+    label: 'ClusterServiceVersion-v1',
+    basePath: '/apis/app.coreos.com/',
+    apiVersion: 'v1alpha1',
+    path: 'clusterserviceversion-v1s',
+    abbr: 'CSV',
+    namespaced: true,
+    plural: 'clusterserviceversion-v1s',
+  },
 };
 
 _.each(k8sKinds, (v, k) => {

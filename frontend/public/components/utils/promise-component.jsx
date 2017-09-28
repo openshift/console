@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { SafetyFirst } from '../safety-first';
 
+/** @augments {React.Component<any, {inProgress: boolean, errorMessage: string} & any>} */
 export class PromiseComponent extends SafetyFirst {
   constructor(props) {
     super(props);
