@@ -21,7 +21,7 @@ describe('featureActions', () => {
     beforeEach(() => {
       apiResourceList = {
         resources: [{
-          name: 'apptype-v1s'}
+          name: 'clusterserviceversion-v1s'}
         ],
       };
       spyOn(store, 'getState').and.returnValue({UI: new Map()});
@@ -32,7 +32,7 @@ describe('featureActions', () => {
 
       featureActions.detectCloudServicesFlags(dispatchMock).then(() => {
         expect(coFetchSpy.calls.argsFor(0)[0]).toEqual(`${k8sBasePath}/apis/app.coreos.com/v1alpha1`);
-        expect(dispatchMock.calls.argsFor(0)[0]).toEqual({flags: {[FLAGS.CLOUD_SERVICES]: {name: 'apptype-v1s'}}, type: 'SET_FLAGS'});
+        expect(dispatchMock.calls.argsFor(0)[0]).toEqual({flags: {[FLAGS.CLOUD_SERVICES]: {name: 'clusterserviceversion-v1s'}}, type: 'SET_FLAGS'});
         done();
       });
     });

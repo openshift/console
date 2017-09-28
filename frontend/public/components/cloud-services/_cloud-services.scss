@@ -35,11 +35,6 @@ $apptype-list-border: #ccc;
   margin: 0 15px 15px 0;
 }
 
-.co-apptype-list__section__title {
-  margin-top: 0px;
-  margin-bottom: 15px;
-}
-
 .co-apptype-list-item {
   border: 1px solid $apptype-list-border;
   border-radius: 4px;
@@ -55,14 +50,31 @@ $apptype-list-border: #ccc;
   display: flex;
 }
 
+.co-apptype-logo__icon {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .co-apptype-logo__name {
   display: flex;
   flex-direction: column;
-  margin: 0 20px;
+  margin: 0 10px;
 }
 
-.co-apptype-logo__provider {
+.co-apptype-logo__name__provider {
   color: #999;
+  font-size: 14px;
+}
+
+.co-apptype-logo__name__apptype {
+  font-size: 26px;
+  font-weight: 400;
+  margin: 0;
 }
 
 .co-apptype-list-item__body {
@@ -78,6 +90,16 @@ $apptype-list-border: #ccc;
   align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+.co-apptype-resource-details__section--info {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.co-apptype-resource-details__section--info__item {
+  width: 25%;
 }
 
 .co-apptype-resource-output--metrics {

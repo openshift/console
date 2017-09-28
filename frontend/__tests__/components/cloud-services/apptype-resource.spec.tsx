@@ -1,14 +1,15 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { AppTypeResourceList, AppTypeResourceListProps, AppTypeResourceHeaderProps, AppTypeResourceRowProps, AppTypeResourceHeader, AppTypeResourceRow, AppTypeResources, AppTypeResourcesProps, AppTypeResourceOutput, AppTypeResourceOutputProps } from '../../../public/components/cloud-services/apptype-resource';
-import { AppTypeResourceKind, CustomResourceDefinitionKind, ALMCapabilites } from '../../../public/components/cloud-services';
+import { AppTypeResourceList, AppTypeResourceListProps, AppTypeResourceHeaderProps, AppTypeResourceRowProps, AppTypeResourceHeader, AppTypeResourceRow, AppTypeResourceOutput, AppTypeResourceOutputProps, AppTypeResourceDetails, AppTypeResourcesDetailsPage, AppTypeResourcesDetailsPageProps, AppTypeResourcesDetailsProps } from '../../../public/components/cloud-services/apptype-resource';
+import { AppTypeResourceKind, ALMCapabilites } from '../../../public/components/cloud-services';
 import { testAppTypeResource, testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import { List, ColHead, ListHeader } from '../../../public/components/factory';
-import { FirehoseHoC, ResourceLink } from '../../../public/components/utils';
+import { List, ColHead, ListHeader, DetailsPage } from '../../../public/components/factory';
+import { ResourceLink, Timestamp, LabelList } from '../../../public/components/utils';
 
 describe('AppTypeResourceOutput', () => {
   let wrapper: ShallowWrapper<AppTypeResourceOutputProps>;
@@ -59,90 +60,99 @@ describe('AppTypeResourceOutput', () => {
 
 describe('AppTypeResourceHeader', () => {
   let wrapper: ShallowWrapper<AppTypeResourceHeaderProps>;
-  let outputs: {[name: string]: any};
 
   beforeEach(() => {
-    outputs = JSON.parse(testAppTypeResource.metadata.annotations.outputs);
-    wrapper = shallow(<AppTypeResourceHeader kindObj={testAppTypeResource} data={[]} />);
+    wrapper = shallow(<AppTypeResourceHeader data={[]} />);
   });
 
-  it('renders first column header for resource name', () => {
-    const nameColHeader = wrapper.find(ListHeader).find(ColHead).first();
+  it('renders column header for resource name', () => {
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(0);
 
-    expect(nameColHeader.exists()).toBe(true);
-    expect(nameColHeader.props().sortField).toEqual('metadata.name');
-    expect(nameColHeader.childAt(0).text()).toEqual('Name');
+    expect(colHeader.props().sortField).toEqual('metadata.name');
+    expect(colHeader.childAt(0).text()).toEqual('Name');
   });
 
-  it('renders column header for each defined output', () => {
-    const outputColHeaders = wrapper.find(ListHeader).find(ColHead).slice(1);
-    const outputNames: string[] = Object.keys(outputs)
-      .map((name: string) => outputs[name].displayName);
+  it('renders column header for resource labels', () => {
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(1);
 
-    expect(outputColHeaders.length).toEqual(outputNames.length);
+    expect(colHeader.props().sortField).toEqual('metadata.labels');
+    expect(colHeader.childAt(0).text()).toEqual('Labels');
+  }); 
 
-    outputColHeaders.forEach((header) => {
-      expect(outputNames).toContain(header.childAt(0).text());
-    });
+  it('renders column header for resource type', () => {
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(2);
+
+    expect(colHeader.props().sortField).toEqual('kind');
+    expect(colHeader.childAt(0).text()).toEqual('Type');
   });
 
-  it('handles resource definition with no `outputs` annotation', () => {
-    let emptyAppTypeResource = _.cloneDeep(testAppTypeResource);
-    emptyAppTypeResource.metadata.annotations.outputs = undefined;
-    wrapper.setProps({kindObj: emptyAppTypeResource});
-   
-    expect(wrapper.find(ColHead).length).toEqual(1);
+  it('renders column header for resource status', () => {
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(3);
+
+    expect(colHeader.childAt(0).text()).toEqual('Status');
+  });
+
+  it('renders column header for resource version', () => {
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(4);
+
+    expect(colHeader.childAt(0).text()).toEqual('Version');
+  });
+
+  it('renders column header for last updated timestamp', () => {
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(5);
+
+    expect(colHeader.childAt(0).text()).toEqual('Last Updated');
   });
 });
 
 describe('AppTypeResourceRow', () => {
   let wrapper: ShallowWrapper<AppTypeResourceRowProps>;
-  let outputs: {[name: string]: any};
 
   beforeEach(() => {
-    outputs = JSON.parse(testAppTypeResource.metadata.annotations.outputs);
-    wrapper = shallow(<AppTypeResourceRow obj={testResourceInstance} kindObj={testAppTypeResource} />);
+    wrapper = shallow(<AppTypeResourceRow obj={testResourceInstance} />);
   });
 
-  it('renders resource link as first column', () => {
-    const nameRow = wrapper.find(ResourceLink);
+  it('renders column for resource name', () => {
+    const col = wrapper.childAt(0);
+    const link = col.find(ResourceLink);
 
-    expect(nameRow.exists()).toBe(true);
-    expect(nameRow.props().name).toEqual(testResourceInstance.metadata.name);
-    expect(nameRow.props().title).toEqual(testResourceInstance.metadata.name);
-    expect(nameRow.props().kind).toEqual(testResourceInstance.kind);
-    expect(nameRow.props().namespace).toEqual(testResourceInstance.metadata.namespace);
+    expect(link.props().name).toEqual(testResourceInstance.metadata.name);
+    expect(link.props().title).toEqual(testResourceInstance.metadata.name);
+    expect(link.props().kind).toEqual(testResourceInstance.kind);
+    expect(link.props().namespace).toEqual(testResourceInstance.metadata.namespace);
   });
 
-  it('renders column for each defined output', () => {
-    const outputCols = wrapper.find(AppTypeResourceOutput);
-    const outputNames: string[] = Object.keys(outputs)
-      .map((name: string) => outputs[name].displayName);
+  it('renders column for resource labels', () => {
+    const col = wrapper.childAt(1);
+    const labelList = col.find(LabelList);
 
-    expect(outputCols.length).toEqual(outputNames.length);
-
-    outputCols.forEach((output) => {
-      expect(output.exists()).toBe(true);
-      expect(Object.keys(outputs).map(name => outputs[name].displayName)).toContain(output.props().outputDefinition.displayName);
-      expect(Object.keys(outputs).map(name => outputs[name].description)).toContain(output.props().outputDefinition.description);
-      expect(Object.keys(testResourceInstance.outputs).map(name => testResourceInstance.outputs[name])).toContain(output.props().outputValue);
-    });
+    expect(labelList.props().kind).toEqual(testResourceInstance.kind);
+    expect(labelList.props().labels).toEqual(testResourceInstance.metadata.labels);
   });
 
-  it('handles resource instance with no `outputs`', () => {
-    let emptyResourceInstance = _.cloneDeep(testResourceInstance);
-    emptyResourceInstance.outputs = undefined;
-    wrapper.setProps({obj: emptyResourceInstance});
+  it('renders column for resource type', () => {
+    const col = wrapper.childAt(2);
 
-    expect(wrapper.find(AppTypeResourceOutput).length).toEqual(0);
+    expect(col.text()).toEqual(testResourceInstance.kind);
   });
 
-  it('handles resource definition with no `outputs` annotation', () => {
-    let emptyAppTypeResource = _.cloneDeep(testAppTypeResource);
-    emptyAppTypeResource.metadata.annotations.outputs = undefined;
-    wrapper.setProps({kindObj: emptyAppTypeResource});
+  it('renders column for resource status', () => {
+    const col = wrapper.childAt(3);
 
-    expect(wrapper.find(AppTypeResourceOutput).length).toEqual(0);
+    expect(col.text()).toEqual('Running');
+  });
+
+  it('renders column for resource version', () => {
+    const col = wrapper.childAt(4);
+
+    expect(col.text()).toEqual(testResourceInstance.spec.version || 'None');
+  });
+
+  it('renders column for last updated timestamp', () => {
+    const col = wrapper.childAt(5);
+    const timestamp = col.find(Timestamp);
+
+    expect(timestamp.props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
   });
 });
 
@@ -152,7 +162,7 @@ describe('AppTypeResourceList', () => {
 
   beforeEach(() => {
     resources = [testResourceInstance];
-    wrapper = shallow(<AppTypeResourceList loaded={true} data={resources} kindObj={testAppTypeResource} filters={{}} />);
+    wrapper = shallow(<AppTypeResourceList loaded={true} data={resources} filters={{}} />);
   });
 
   it('renders a `List` of the custom resource instances of the given kind', () => {
@@ -165,27 +175,83 @@ describe('AppTypeResourceList', () => {
   });
 });
 
-describe('AppTypeResources', () => {
-  let wrapper: ShallowWrapper<AppTypeResourcesProps>;
-  let appTypeResources: CustomResourceDefinitionKind[];
+describe('AppTypeResourcesDetails', () => {
+  let wrapper: ShallowWrapper<AppTypeResourcesDetailsProps>;
+  let resourceDefinition: any;
 
   beforeEach(() => {
-    appTypeResources = [testAppTypeResource];
-    wrapper = shallow(<AppTypeResources loaded={true} data={appTypeResources} />);
+    resourceDefinition = {
+      annotations: testAppTypeResource.metadata.annotations,
+    };
+    // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
+    const Component: React.StatelessComponent<AppTypeResourcesDetailsProps> = (AppTypeResourceDetails as any).WrappedComponent;
+    wrapper = shallow(<Component obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} />);
   });
 
-  it('renders a list for each CustomResourceDefinition in `props.data`', () => {
-    appTypeResources.forEach((resource, i) => {
-      const list = wrapper.childAt(i);
-      const firehose = list.find(FirehoseHoC);
+  it('renders description title', () => {
+    const title = wrapper.find('.co-section-title');
 
-      expect(list.exists()).toBe(true);
-      expect(list.find('h4').text()).toEqual(resource.metadata.annotations.displayName);
-      expect(firehose.exists()).toBe(true);
-      expect(firehose.props().kind).toEqual(resource.spec.names.kind);
-      // FIXME(alecmerdler): Test component
-      expect(firehose.props().Component).toBeDefined();
-      expect(firehose.props().isList).toBe(true);
+    expect(title.text()).toEqual(`${testResourceInstance.kind} Overview`);
+  });
+
+  it('renders info section', () => {
+    const section = wrapper.find('.co-apptype-resource-details__section--info');
+
+    expect(section.exists()).toBe(true); 
+  });
+
+  it('renders creation date from CRD metadata', () => {
+    expect(wrapper.find(Timestamp).props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
+  });
+
+  it('renders link to search page with resource `spec.selector.matchLabels` in query parameter', () => {
+    const matchLabels = testResourceInstance.spec.selector ? _.map(testResourceInstance.spec.selector.matchLabels, (val, key) => `${key}=${val}`) : [];
+    const link: ShallowWrapper<any> = wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).parent().find('dd').find(Link);
+
+    expect(link.props().to).toEqual(`/ns/${testResourceInstance.metadata.namespace}/search?q=${matchLabels.map(pair => `${pair},`)}`);
+    expect(link.props().title).toEqual('View resources');
+  });
+
+  it('does not render link to search page if `spec.selector.matchLabels` is not present on resource', () => {
+    wrapper.setProps({obj: {...testResourceInstance, spec: {}}});
+
+    expect(wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).exists()).toBe(false);
+  });
+
+  it('renders list of metrics links if resource contains metrics output(s)', () => {
+    const outputs = JSON.parse(testAppTypeResource.metadata.annotations.outputs);
+    const metricsOutputs = Object.keys(outputs)
+      .filter(name => outputs[name]['x-alm-capabilities'].indexOf(ALMCapabilites.metrics) !== -1)
+      .map(name => Object.assign({}, outputs[name], {value: testResourceInstance.outputs[name]}));
+    const links = wrapper.findWhere(node => node.equals(<dt>Important Metrics</dt>)).parent().find('dd');
+
+    expect(links.length).toEqual(metricsOutputs.length);
+
+    metricsOutputs.forEach((output, i) => {
+      const resourceOutput = links.at(i).find(AppTypeResourceOutput);
+      
+      expect(resourceOutput.exists()).toBe(true);
+      expect(resourceOutput.props().outputDefinition).toEqual(output);
+      expect(resourceOutput.props().outputValue).toEqual(output.value);
     });
+  });
+});
+
+describe('AppTypeResourcesDetailsPage', () => {
+  let wrapper: ShallowWrapper<AppTypeResourcesDetailsPageProps>;
+
+  beforeEach(() => {
+    wrapper = shallow(<AppTypeResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} />);
+  });
+
+  it('renders a `DetailsPage` with the correct subpages', () => {
+    const detailsPage = wrapper.find(DetailsPage);
+
+    expect(detailsPage.exists()).toBe(true);
+    expect(detailsPage.props().pages[0].name).toEqual('Overview');
+    expect(detailsPage.props().pages[0].href).toEqual('details');
+    expect(detailsPage.props().pages[0].component).toEqual(AppTypeResourceDetails);
+    expect(detailsPage.props().pages[1].name).toEqual('YAML');
+    expect(detailsPage.props().pages[1].href).toEqual('yaml');
   });
 });

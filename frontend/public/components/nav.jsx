@@ -128,7 +128,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     </div>
 
     <NavSection required={[FLAGS.CLOUD_SERVICES]} text="Applications" icon="ci-appcube">
-      <NavLink resource="apptype-v1s" name="Installed Applications" />
+      <NavLink resource="clusterserviceversion-v1s" name="Installed Applications" />
     </NavSection>
 
     <NavSection text="Workloads" icon="fa-folder-open-o">

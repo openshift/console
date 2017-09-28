@@ -87,7 +87,7 @@ Firehose.propTypes = {
   isList: PropTypes.bool,
 };
 
-/** @type {React.StatelessComponent<{Component: React.ComponentType<any>, kind: string, isList: boolean, selector?: any}>} */
+/** @type {React.StatelessComponent<{Component: React.ComponentType<any>, kind: string, namespace?: string, isList: boolean, selector?: any}>} */
 export const FirehoseHoC = (props) => <Firehose {...props}>
   <props.Component />
 </Firehose>;

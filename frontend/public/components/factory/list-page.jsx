@@ -172,8 +172,10 @@ export const ListPage = props => {
 };
 ListPage.displayName = 'ListPage';
 
+// FIXME(alecmerdler): Fix this typing
+/** @type {React.StatelessComponent<any>} */
 export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace')}))(
-  /** @type {React.StatelessComponent<{createButtonText?: string, ns: string, resources: any[]}>} */
+  /** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, ns: string, resources: any[], ListComponent: React.ComponentType<any>}>} */
   props => {
     const {createButtonText, ns, resources} = props;
     const firehoseResources = resources.map(r => ({
