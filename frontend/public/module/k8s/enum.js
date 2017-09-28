@@ -30,6 +30,7 @@ export const k8sKinds = {
     apiVersion: 'v1beta1',
     abbr: 'DS',
     namespaced: true,
+    propagationPolicy: 'Foreground',
   },
   ReplicationController: {
     label: 'Replication Controller',
@@ -37,6 +38,7 @@ export const k8sKinds = {
     plural: 'replicationcontrollers',
     abbr: 'RC',
     namespaced: true,
+    propagationPolicy: 'Foreground',
   },
   HorizontalPodAutoscaler: {
     label: 'Horizontal Pod Autoscaler',
@@ -61,6 +63,7 @@ export const k8sKinds = {
     plural: 'replicasets',
     abbr: 'RS',
     namespaced: true,
+    propagationPolicy : 'Foreground',
   },
   Deployment: {
     label: 'Deployment',
@@ -70,6 +73,7 @@ export const k8sKinds = {
     plural: 'deployments',
     abbr: 'D',
     namespaced: true,
+    propagationPolicy: 'Foreground'
   },
   Job: {
     label: 'Job',
@@ -79,6 +83,7 @@ export const k8sKinds = {
     plural: 'jobs',
     abbr: 'J',
     namespaced: true,
+    propagationPolicy: 'Foreground',
   },
   Node: {
     label: 'Node',
@@ -207,6 +212,7 @@ export const k8sKinds = {
     label: 'Petset',
     plural: 'petsets',
     abbr: 'PS',
+    propagationPolicy: 'Foreground',
   },
   StatefulSet: {
     label: 'Stateful Set',
@@ -216,6 +222,7 @@ export const k8sKinds = {
     plural: 'statefulsets',
     abbr: 'SS',
     namespaced: true,
+    propagationPolicy: 'Foreground',
   },
   ResourceQuota: {
     label: 'Resource Quota',

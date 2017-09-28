@@ -16,3 +16,4 @@ export * from './configure-update-strategy-modal';
 export * from './configure-revision-history-limit-modal';
 export * from './tags';
 export * from './token-info-modal';
+export * from './delete-modal';
