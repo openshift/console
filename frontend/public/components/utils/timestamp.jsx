@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import {SafetyFirst} from '../safety-first';
 
+/** @augments {React.Component<{timestamp: string}>} */
 export class Timestamp extends SafetyFirst {
   constructor (props) {
     super(props);

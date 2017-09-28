@@ -168,8 +168,8 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-const Rows = ({data, expand, Row}) => <div className="co-m-table-grid__body">
-  {data.map(obj => <Row key={obj.rowKey || getQN(obj)} obj={obj} expand={expand} />)}
+const Rows = ({data, expand, Row, kindObj}) => <div className="co-m-table-grid__body">
+  {data.map(obj => <Row key={obj.rowKey || getQN(obj)} obj={obj} expand={expand} kindObj={kindObj} />)}
 </div>;
 
 Rows.propTypes = {
@@ -208,23 +208,25 @@ const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, rowSplitt
   return {currentSortField, currentSortFunc, currentSortOrder, data: newData, listId};
 };
 
-export const List = connect(stateToProps, {sortList: UIActions.sortList})(function ListInner (props) {
-  const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList} = props;
-  const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match']);
+export const List = connect(stateToProps, {sortList: UIActions.sortList})(
+  /** @param props {{Header: React.ComponentType, Row: React.ComponentType, data: any[]}} */
+  function ListInner (props) {
+    const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList} = props;
+    const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
-  return <div className="co-m-table-grid co-m-table-grid--bordered">
-    <StatusBox {...props}>
-      <Header
-        applySort={_.partial(sortList, listId)}
-        currentSortField={currentSortField}
-        currentSortFunc={currentSortFunc}
-        currentSortOrder={currentSortOrder}
-        {...componentProps}
-      />
-      <Rows expand={expand} Row={Row} {...componentProps}/>
-    </StatusBox>
-  </div>;
-});
+    return <div className="co-m-table-grid co-m-table-grid--bordered">
+      <StatusBox {...props}>
+        <Header
+          applySort={_.partial(sortList, listId)}
+          currentSortField={currentSortField}
+          currentSortFunc={currentSortFunc}
+          currentSortOrder={currentSortOrder}
+          {...componentProps}
+        />
+        <Rows expand={expand} Row={Row} {...componentProps} />
+      </StatusBox>
+    </div>;
+  });
 
 List.propTypes = {
   data: PropTypes.array,

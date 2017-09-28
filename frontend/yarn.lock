@@ -39,6 +39,10 @@
     "@types/cheerio" "*"
     "@types/react" "*"
 
+"@types/history@*":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@types/history/-/history-4.6.0.tgz#093d67ed780d889c9543f6dca24ebee0b6b9fc45"
+
 "@types/immutable@3.x":
   version "3.8.7"
   resolved "https://registry.yarnpkg.com/@types/immutable/-/immutable-3.8.7.tgz#536d33d30f3f3d9a6d4642a219419fd82af633fb"
@@ -71,12 +75,27 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-redux@5.0.7":
-  version "5.0.7"
-  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-5.0.7.tgz#01a5181ff6757724a4b59c13852ee6c49f65c101"
+"@types/react-redux@^5.0.9":
+  version "5.0.9"
+  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-5.0.9.tgz#9bfe915356aa0b10d1b9211df0121a06aa7ec9af"
   dependencies:
     "@types/react" "*"
     redux "^3.6.0"
+
+"@types/react-router-dom@^4.0.8":
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-4.0.8.tgz#a9731bf35d053cdd27053baacc19e505d74514f3"
+  dependencies:
+    "@types/history" "*"
+    "@types/react" "*"
+    "@types/react-router" "*"
+
+"@types/react-router@*":
+  version "4.0.15"
+  resolved "https://registry.yarnpkg.com/@types/react-router/-/react-router-4.0.15.tgz#be8aaefc20afd968a5dbcffcf09060e6c2e8746e"
+  dependencies:
+    "@types/history" "*"
+    "@types/react" "*"
 
 "@types/react@*", "@types/react@16.x":
   version "16.0.5"
