@@ -4,3 +4,4 @@ window.SERVER_FLAGS = {
 };
 
 window._ = require('lodash');
+require('url-search-params-polyfill');
