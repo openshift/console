@@ -17,6 +17,7 @@ const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div
   </label>
 </div>;
 
+/** @type {React.StatelessComponent<{label: string, onChange: React.ChangeEventHandler<any>, defaultValue: string}}>} */
 export const TextFilter = ({label, onChange, defaultValue}) => <input
   type="text"
   className="form-control text-filter pull-right"
@@ -28,7 +29,8 @@ export const TextFilter = ({label, onChange, defaultValue}) => <input
 
 TextFilter.displayName = 'TextFilter';
 
-const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
+export const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
+  /** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kind: string, filterLabel: string, title: string, showTitle: boolean, dropdownFilters?: any[]}>} */
   class BaseListPage_ extends React.PureComponent {
     constructor (props) {
       super(props);
@@ -148,7 +150,7 @@ BaseListPage.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.StatelessComponent<{ListComponent: React.ComponentType<any>, kind: string, filterLabel: string, title: string, showTitle: boolean, dropdownFilters?: any[]}>} */
+/** @type {React.StatelessComponent<{ListComponent: React.ComponentType<any>, kind: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[]}>} */
 export const ListPage = props => {
   const {createHandler, filterLabel, kind, namespace, showTitle = true} = props;
   const {label, labelPlural, plural} = kindObj(kind);
@@ -171,6 +173,7 @@ export const ListPage = props => {
 ListPage.displayName = 'ListPage';
 
 export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace')}))(
+  /** @type {React.StatelessComponent<{createButtonText?: string, ns: string, resources: any[]}>} */
   props => {
     const {createButtonText, ns, resources} = props;
     const firehoseResources = resources.map(r => ({
