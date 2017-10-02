@@ -14,13 +14,8 @@
 
 .cluster-overview-cell__info-row {
   border-bottom: solid 1px $color-grey-border;
-  margin: 0;
   padding: 10px 0;
   line-height: 20px;
-}
-
-.cluster-overview-cell__info-row--first {
-  border-top: solid 1px $color-grey-border;
 }
 
 .cluster-overview-cell__info-row__first-cell {

@@ -47,16 +47,16 @@ const NodeIPList = ({ips, expand = false}) => <div>
 </div>;
 
 const Header = props => {
-  if (props.data) {
-    const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(props.data[0]);
-    return <ListHeader>
-      <ColHead {...props} className="col-xs-4" sortField="metadata.name">Node Name</ColHead>
-      <ColHead {...props} className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'} sortFunc="nodeReadiness">Status</ColHead>
-      { isOperatorInstalled && <ColHead {...props} className="col-xs-3" sortFunc="nodeUpdateStatus">OS Update</ColHead> }
-      <ColHead {...props} className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'} sortField="status.addresses">Node Addresses</ColHead>
-    </ListHeader>;
+  if (!props.data) {
+    return null;
   }
-  return null;
+  const isOperatorInstalled = !!_.find(props.data, n => containerLinuxUpdateOperator.isOperatorInstalled(n));
+  return <ListHeader>
+    <ColHead {...props} className="col-xs-4" sortField="metadata.name">Node Name</ColHead>
+    <ColHead {...props} className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'} sortFunc="nodeReadiness">Status</ColHead>
+    { isOperatorInstalled && <ColHead {...props} className="col-xs-3" sortFunc="nodeUpdateStatus">OS Update</ColHead> }
+    <ColHead {...props} className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'} sortField="status.addresses">Node Addresses</ColHead>
+  </ListHeader>;
 };
 
 const HeaderSearch = props => <ListHeader>
@@ -100,13 +100,13 @@ const NodeRow = ({obj: node, expand}) => {
         <NodeCog node={node} />
         <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
       </div>
-      <div className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'}>
+      <div className="col-xs-2">
         <NodeStatus node={node} />
       </div>
-      { isOperatorInstalled && <div className="col-xs-3">
-        <NodeCLStatusRow node={node} />
-      </div>}
-      <div className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'}>
+      <div className="col-xs-3">
+        {isOperatorInstalled ? <NodeCLStatusRow node={node} /> : <span className="text-muted">Not configured</span>}
+      </div>
+      <div className="col-xs-3">
         <NodeIPList ips={node.status.addresses} expand={expand} />
       </div>
     </div>
