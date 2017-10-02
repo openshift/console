@@ -5,7 +5,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('v1beta1.DaemonSet', `apiVersion: extensions/v1beta1
+registerTemplate('v1beta2.DaemonSet', `apiVersion: extensions/v1beta2
 kind: Daemonset
 metadata:
   name: example

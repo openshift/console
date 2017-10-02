@@ -27,7 +27,7 @@ export const k8sKinds = {
     path: 'daemonsets',
     plural: 'daemonsets',
     isExtension: true,
-    apiVersion: 'v1beta1',
+    apiVersion: 'v1beta2',
     abbr: 'DS',
     namespaced: true,
     propagationPolicy: 'Foreground',
@@ -58,7 +58,7 @@ export const k8sKinds = {
   ReplicaSet: {
     label: 'Replica Set',
     isExtension: true,
-    apiVersion: 'v1beta1',
+    apiVersion: 'v1beta2',
     path: 'replicasets',
     plural: 'replicasets',
     abbr: 'RS',
@@ -68,7 +68,7 @@ export const k8sKinds = {
   Deployment: {
     label: 'Deployment',
     isExtension: true,
-    apiVersion: 'v1beta1',
+    apiVersion: 'v1beta2',
     path: 'deployments',
     plural: 'deployments',
     abbr: 'D',
@@ -220,7 +220,7 @@ export const k8sKinds = {
   StatefulSet: {
     label: 'Stateful Set',
     basePath: '/apis/',
-    apiVersion: 'apps/v1beta1',
+    apiVersion: 'apps/v1beta2',
     path: 'statefulsets',
     plural: 'statefulsets',
     abbr: 'SS',

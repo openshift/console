@@ -4,7 +4,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('v1beta1.ReplicaSet', `apiVersion: extensions/v1beta1
+registerTemplate('v1beta2.ReplicaSet', `apiVersion: extensions/v1beta2
 kind: ReplicaSet
 metadata:
   name: example
