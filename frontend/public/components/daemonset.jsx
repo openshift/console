@@ -21,7 +21,7 @@ spec:
         ports:
         - containerPort: 80`);
 
-const menuActions = [Cog.factory.ModifyPodSelector, Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
+const menuActions = [Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
 
 const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
