@@ -166,11 +166,11 @@ const samples = [
 const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
   const {highlightText, subheader, img, details, templateName} = sample;
   return <li className="co-resource-sidebar-item">
-    <h5 className="co-resource-item__header">
+    <h5 className="co-resource-sidebar-item__header">
       <span className="text-uppercase">{highlightText}</span> {subheader}
     </h5>
-    <img src={img} />
-    <p className="co-resource-item__details">
+    <img src={img} className="co-resource-sidebar-item__img"/>
+    <p className="co-resource-sidebar-item__details">
       {details}
     </p>
     <button className="btn btn-link" onClick={() => loadSampleYaml(templateName)}>
