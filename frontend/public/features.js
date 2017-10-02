@@ -12,6 +12,7 @@ export const FLAGS = {
   MULTI_CLUSTER: 'MULTI_CLUSTER',
   SECURITY_LABELLER: 'SECURITY_LABELLER',
   CLOUD_SERVICES: 'CLOUD_SERVICES',
+  CALICO: 'CALICO',
 };
 
 const DEFAULTS = {
@@ -22,6 +23,7 @@ const DEFAULTS = {
   [FLAGS.MULTI_CLUSTER]: undefined,
   [FLAGS.SECURITY_LABELLER]: undefined,
   [FLAGS.CLOUD_SERVICES]: undefined,
+  [FLAGS.CALICO]: undefined,
 };
 
 const SET_FLAGS = 'SET_FLAGS';
@@ -73,6 +75,9 @@ const CLOUD_SERVICES_FLAGS = {
   [FLAGS.CLOUD_SERVICES]: 'apptype-v1s',
 };
 
+const CALICO_FLAGS = {
+  [FLAGS.CALICO]: 'kube-calico',
+};
 
 const tcoPath = `${k8sBasePath}/apis/tco.coreos.com/v1`;
 const detectTectonicChannelOperatorFlags = dispatch => {
@@ -107,6 +112,11 @@ const detectCloudServicesFlags = dispatch => coFetchJSON(cloudServicesPath)
   .then(res => setFlags(dispatch, _.mapValues(CLOUD_SERVICES_FLAGS, name => _.find(res.resources, {name}))),
     (res) => handleError(res, CLOUD_SERVICES_FLAGS, dispatch, detectCloudServicesFlags));
 
+const calicoDaemonSetPath = `${k8sBasePath}/apis/extensions/v1beta1/daemonsets`;
+const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
+  .then(res => setFlags(dispatch, _.mapValues(CALICO_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
+    (res) => handleError(res, CALICO_FLAGS, dispatch, detectCalicoFlags));
+
 export const featureActions = {
   detectTectonicChannelOperatorFlags,
   detectEtcdOperatorFlags,
@@ -114,6 +124,7 @@ export const featureActions = {
   detectMultiClusterFlags,
   detectSecurityLabellerFlags,
   detectCloudServicesFlags,
+  detectCalicoFlags,
   handleError,
 };
 

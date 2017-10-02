@@ -154,6 +154,7 @@ store.dispatch(featureActions.detectPrometheusFlags);
 store.dispatch(featureActions.detectMultiClusterFlags);
 store.dispatch(featureActions.detectSecurityLabellerFlags);
 store.dispatch(featureActions.detectCloudServicesFlags);
+store.dispatch(featureActions.detectCalicoFlags);
 store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});

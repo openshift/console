@@ -153,7 +153,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
 
     <NavSection text="Routing" img={routingImg}>
       <NavLink resource="ingresses" name="Ingress" />
-      <NavLink resource="networkpolicies" name="Network Policies" />
+      <NavLink resource="networkpolicies" name="Network Policies" required="CALICO" />
       <NavLink resource="services" name="Services" />
     </NavSection>
 
