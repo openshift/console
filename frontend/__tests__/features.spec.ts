@@ -57,6 +57,7 @@ describe('featureReducer', () => {
     [FLAGS.MULTI_CLUSTER]: undefined,
     [FLAGS.SECURITY_LABELLER]: undefined,
     [FLAGS.CLOUD_SERVICES]: undefined,
+    [FLAGS.CALICO]: undefined,
   };
 
   it('returns default values if state is uninitialized', () => {
