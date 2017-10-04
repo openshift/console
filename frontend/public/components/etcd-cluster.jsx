@@ -266,14 +266,21 @@ export class EtcdClusterDetails extends SafetyFirst {
   }
 }
 
+class EtcdPodsComponent extends React.PureComponent {
+  render() {
+    const {metadata: {namespace, name}} = this.props.obj;
+    return <PodsPage showTitle={false} namespace={namespace} selector={{matchLabels: {'etcd_cluster': name}}} />;
+  }
+}
+
 const {details, editYaml, pods} = navFactory;
 export const EtcdClustersDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
   pages={[
     details(EtcdClusterDetails),
-    editYaml((props) => <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={props} kind="EtcdCluster" />),
-    pods(({obj: {metadata: {name}}}) => <PodsPage showTitle={false} selector={{matchLabels: {'etcd_cluster': name}}} />)
+    editYaml((props) => <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={props.obj} kind="EtcdCluster" />),
+    pods(EtcdPodsComponent)
   ]}
 />;
 

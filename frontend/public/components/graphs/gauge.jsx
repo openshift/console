@@ -112,7 +112,15 @@ export class Gauge extends BaseGraph {
     }];
   }
 
-  updateGraph (data) {
+  updateGraph (data, err) {
+    if (err) {
+      this.data[0].marker.colors[1] = colors.gray;
+      this.data[0].values[1] = 0;
+      this.data[0].values[2] = 1;
+      this.layout.annotations[0].text = '?';
+      relayout(this.node, this.layout);
+      return;
+    }
     data = parseInt(_.get(data, '[0].data.result[0].value[1]'), 10);
     if (isNaN(data)) {
       // eslint-disable-next-line no-console
