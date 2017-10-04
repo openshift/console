@@ -8,6 +8,7 @@ const colors = {
   error: 'rgb(213,69,89)',
 };
 
+/** @augments {React.Component<{fetch: () => Promise<any>, title: string}}>} */
 export class Status extends SafetyFirst {
   constructor (props) {
     super(props);

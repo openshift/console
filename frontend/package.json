@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
     "test-gui": "nightwatch --test integration-tests/tests/crud.js",
-    "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>7)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
+    "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>5)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
   },
   "jest": {
     "moduleFileExtensions": [

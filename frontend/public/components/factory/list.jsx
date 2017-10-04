@@ -12,6 +12,7 @@ import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
 import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
 
+// TODO(alecmerdler): Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
 const filters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
 
@@ -72,6 +73,13 @@ const filters = {
            filters.selected.has('Fixables') && (fixables ? true : false) ||
            filters.selected.has('NotScanned') && (!scanned || !supported) ||
            filters.selected.has('Passed') && !P0 && !P1 && !P2 && !P3 && isSupported(podvuln);
+  },
+
+  'apptype-resource-kind': (filters, resource) => {
+    if (!filters || !filters.selected || !filters.selected.size) {
+      return true;
+    }
+    return filters.selected.has(resource.kind);
   },
 };
 

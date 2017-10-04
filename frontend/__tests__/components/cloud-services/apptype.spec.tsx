@@ -4,12 +4,11 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { AppTypesDetailsPage, AppTypesDetailsPageProps, AppTypeDetails, AppTypeDetailsProps, AppTypesPage, AppTypesPageProps, AppTypeList, AppTypeListProps, AppTypeListItem, AppTypeListItemProps, AppTypeLogo, AppTypeLogoProps, AppTypeHeader, AppTypeRow } from '../../../public/components/cloud-services/apptype';
-import { AppTypeResources } from '../../../public/components/cloud-services/apptype-resource';
-import { AppTypeKind } from '../../../public/components/cloud-services';
+import { AppTypesDetailsPage, AppTypesDetailsPageProps, AppTypeDetails, AppTypeDetailsProps, AppTypesPage, AppTypesPageProps, AppTypeList, AppTypeListProps, AppTypeListItem, AppTypeListItemProps, AppTypeHeader, AppTypeRow } from '../../../public/components/cloud-services/apptype';
+import { AppTypeKind, AppTypeLogo, AppTypeLogoProps } from '../../../public/components/cloud-services';
 import { DetailsPage, ListPage, List } from '../../../public/components/factory';
 import { testAppType, localAppType } from '../../../__mocks__/k8sResourcesMocks';
-import { FirehoseHoC, StatusBox, LoadingBox, Timestamp, Overflow } from '../../../public/components/utils';
+import { StatusBox, LoadingBox, Timestamp, Overflow } from '../../../public/components/utils';
 
 describe('AppTypeLogo', () => {
   let wrapper: ReactWrapper<AppTypeLogoProps>;
@@ -21,7 +20,7 @@ describe('AppTypeLogo', () => {
 
   it('renders logo image from given base64 encoded image string', () => {
     const image: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
-
+ 
     expect(image.exists()).toBe(true);
     expect(image.props().height).toEqual('40');
     expect(image.props().width).toEqual('40');
@@ -84,7 +83,7 @@ describe('AppTypeList', () => {
     expect(sections.length).toEqual(1);
 
     sections.forEach((section) => {
-      expect(section.find('.co-apptype-list__section__title').text()).toContain('open-cloud-services.coreos.com');
+      expect(section.find('.co-section-title').text()).toContain('open-cloud-services.coreos.com');
       expect(section.find(AppTypeListItem).length).toEqual(apps.filter(appType => appType.spec.labels['alm-catalog'] === 'open-cloud-services.coreos.com').length);
 
       apps.filter(appType => appType.spec.labels['alm-catalog'] === 'open-cloud-services.coreos.com')
@@ -101,7 +100,7 @@ describe('AppTypeList', () => {
     const section = wrapper.find('.co-apptype-list__section').not('.co-apptype-list__section--catalog');
     const list: ShallowWrapper<any> = section.find(List);
 
-    expect(section.find('.co-apptype-list__section__title').text()).toContain('Local Applications');
+    expect(section.find('.co-section-title').text()).toContain('Local Applications');
     expect(list.exists()).toBe(true);
     expect(list.props().data.length).toEqual(apps.filter(appType => appType.spec.labels['alm-catalog'] === undefined).length);
     expect(list.props().Header).toEqual(AppTypeHeader);
@@ -179,15 +178,6 @@ describe('AppTypeDetails', () => {
 
     expect(section.find('h1').text()).toEqual('Description');
     expect(section.text()).toContain(testAppType.spec.description);
-  });
-
-  it('renders resources section for AppType', () => {
-    const section = wrapper.find('.co-apptype-details__section--resources');
-
-    expect(section.find('h1').text()).toEqual('Resources');
-    expect(section.find(FirehoseHoC).props().Component).toEqual(AppTypeResources);
-    expect(section.find(FirehoseHoC).props().Component).toEqual(AppTypeResources);
-    expect(section.find(FirehoseHoC).props().Component).toEqual(AppTypeResources);
   });
 
   it('renders creation date from AppType', () => {

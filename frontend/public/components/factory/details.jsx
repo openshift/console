@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Firehose, VertNav, NavTitle} from '../utils';
+import { Firehose, VertNav, NavTitle } from '../utils';
 
 /** @type {React.StatelessComponent<{name: string, menuActions?: any[], pages: any[], kind: string}>} */
 export const DetailsPage = (props) => <Firehose {...props}>

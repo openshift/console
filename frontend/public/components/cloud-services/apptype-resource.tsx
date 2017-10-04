@@ -1,13 +1,13 @@
 /* eslint-disable no-undef, no-unused-vars, no-case-declarations */
 
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { AppTypeResourceKind, CustomResourceDefinitionKind, ALMCapabilites } from './index';
-import { List, ListHeader, ColHead } from '../factory';
-import { FirehoseHoC, ResourceLink, StatusBox } from '../utils';
-
-const maxOutputs = 4;
+import { AppTypeResourceKind, CustomResourceDefinitionKind, ALMCapabilites, AppTypeKind } from './index';
+import { List, MultiListPage, ListHeader, ColHead, DetailsPage } from '../factory';
+import { ResourceLink, StatusBox, navFactory, Timestamp, LabelList } from '../utils';
+import { connectToPlural, K8sKind } from '../../kinds';
 
 export const AppTypeResourceOutput = (props: AppTypeResourceOutputProps) => {
   const {outputDefinition, outputValue} = props;
@@ -32,62 +32,111 @@ export const AppTypeResourceOutput = (props: AppTypeResourceOutputProps) => {
   }, <span>{outputValue || 'None'}</span>);
 };
 
-export const AppTypeResourceHeader = (props: AppTypeResourceHeaderProps) => {
-  const outputs = JSON.parse(_.get<string>(props.kindObj, 'metadata.annotations.outputs', '{}'));
-
-  return <ListHeader>
-    <ColHead {...props} className="col-sm-8 col-md-2" sortField="metadata.name">Name</ColHead>
-    { Object.keys(outputs).slice(0, maxOutputs).map((name, i) => (
-      <ColHead key={i} className="hidden-sm col-md-2" {...props}>{outputs[name].displayName}</ColHead>
-    )) }
-    { Object.keys(outputs).length > maxOutputs && (
-      <ColHead {...props} className="hidden-sm col-md-1">{`${Object.keys(outputs).length - maxOutputs} more...`}</ColHead>)
-    }
-  </ListHeader>;
-};
+export const AppTypeResourceHeader = (props: AppTypeResourceHeaderProps) => <ListHeader>
+  <ColHead {...props} className="col-xs-2" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-2" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
+  <ColHead {...props} className="col-xs-2">Status</ColHead>
+  <ColHead {...props} className="col-xs-2">Version</ColHead>
+  <ColHead {...props} className="col-xs-2">Last Updated</ColHead>
+</ListHeader>;
 
 export const AppTypeResourceRow = (props: AppTypeResourceRowProps) => {
-  const {obj, kindObj} = props;
-  const outputs = JSON.parse(_.get<string>(kindObj, 'metadata.annotations.outputs', '{}'));
+  const {obj} = props;
   
   return <div className="row co-resource-list__item">
-    <div className="col-sm-8 col-md-2">
+    <div className="col-xs-2">
       <ResourceLink kind={obj.kind} namespace={obj.metadata.namespace} title={obj.metadata.name} name={obj.metadata.name} />
     </div>
-    { Object.keys(outputs).slice(0, maxOutputs).map((name, i) => (<div className="hidden-sm col-md-2" key={i}>
-      { obj.outputs && obj.outputs[name]
-        ? <AppTypeResourceOutput outputDefinition={outputs[name]} outputValue={obj.outputs[name]} /> 
-        : <div>None</div> }
+    <div className="col-xs-2">
+      <LabelList kind={obj.kind} labels={obj.metadata.labels} />
     </div>
-    )) } 
+    <div className="col-xs-2">
+      {obj.kind}
+    </div>
+    <div className="col-xs-2">
+      {'Running'}
+    </div>
+    <div className="col-xs-2">
+      {obj.spec.version || 'None'}
+    </div>
+    <div className="col-xs-2">
+      <Timestamp timestamp={obj.metadata.creationTimestamp} />
+    </div>
   </div>;
 };
 
-export const AppTypeResourceList = (props: AppTypeResourceListProps) => {
-  return <List {...props} kindObj={props.kindObj} Header={AppTypeResourceHeader} Row={AppTypeResourceRow} />;
-};
+export const AppTypeResourceList = (props: AppTypeResourceListProps) => (
+  <List {...props} Header={AppTypeResourceHeader} Row={AppTypeResourceRow} />
+);
 
-export const AppTypeResources = (props: AppTypeResourcesProps) => {
+export const AppTypeResourcesPage = (props: AppTypeResourcesPageProps) => {
+  const resources = props.data ? props.data.map((resource) => ({kind: resource.spec.names.kind, namespaced: true})) : [];
+
   return props.loaded && props.data.length > 0
-    ? <div>
-      { props.data.map((resource, i) => (
-        <div key={i}>
-          <h4 style={{marginBottom: '15px'}}>{`${resource.metadata.annotations.displayName}`}</h4>
-          <FirehoseHoC kind={resource.spec.names.kind} Component={(props) => <AppTypeResourceList {...props} kindObj={resource} />} isList={true} />
-        </div>
-      )) }
-    </div>
+    ? <MultiListPage
+      {...props}
+      createButtonText="New resource"
+      ListComponent={AppTypeResourceList}
+      filterLabel="Resources by name"
+      resources={resources}
+      rowFilters={[{
+        type: 'apptype-resource-kind',
+        selected: props.data.map((resource) => resource.spec.names.kind),
+        reducer: (obj) => obj.kind,
+        items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
+      }]}
+    />
     : <StatusBox label="Application Resources" loaded={props.loaded} />;
 };
 
-export type AppTypeResourcesProps = {
-  loaded: boolean;
-  data: CustomResourceDefinitionKind[];  
-};   
+export const AppTypeResourceDetails = connectToPlural((props: AppTypeResourcesDetailsProps) => {
+  const {kind, metadata, spec} = props.obj;
+  const matchLabels = spec.selector ? _.map(spec.selector.matchLabels, (val, key) => `${key}=${val}`) : [];
+
+  const customOutputs = _.map(JSON.parse(_.get(props.kindObj, 'annotations.outputs', '{}')), (outputDefinition, name) => {
+    return Object.assign({}, outputDefinition, {value: _.get(props.obj, 'outputs', {})[name]});
+  });
+
+  return <div className="co-apptype-resource-details co-m-pane">
+    <div className="co-m-pane__body">
+      <h1 className="co-section-title">{`${kind} Overview`}</h1>
+      <div className="co-apptype-resource-details__section co-apptype-resource-details__section--info">
+        <div className="co-apptype-resource-details__section--info__item"> 
+          <dt>Name</dt>
+          <dd>{metadata.name}</dd> 
+          <dt>Created At</dt>
+          <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
+        </div>
+        { matchLabels.length > 0 && <div className="co-apptype-resource-details__section--info__item">
+          <dt>Resources</dt>
+          <dd>
+            <Link to={`/ns/${metadata.namespace}/search?q=${matchLabels.map(pair => `${pair},`)}`} title="View resources">
+              View resources
+            </Link>
+          </dd>
+        </div> }
+        <div className="co-apptype-resource-details__section--info__item">
+          <dt>Important Metrics</dt>
+          { customOutputs.filter(output => output['x-alm-capabilities'].indexOf(ALMCapabilites.metrics) !== -1).map((output: any, i) => <dd key={i}>
+            <AppTypeResourceOutput outputDefinition={output} outputValue={output.value} />
+          </dd>) }  
+        </div> 
+      </div>
+    </div>
+  </div>;
+});
+
+export const AppTypeResourcesDetailsPage = (props: AppTypeResourcesDetailsPageProps) => <DetailsPage 
+  {...props} 
+  pages={[
+    navFactory.details(AppTypeResourceDetails),
+    navFactory.editYaml(),
+  ]} 
+/>;  
  
 export type AppTypeResourceListProps = {
   loaded: boolean;
-  kindObj: CustomResourceDefinitionKind;
   data: AppTypeResourceKind[];
   filters: {[key: string]: any};
   reduxID?: string;
@@ -97,13 +146,11 @@ export type AppTypeResourceListProps = {
 };
 
 export type AppTypeResourceHeaderProps = {
-  kindObj: CustomResourceDefinitionKind;
   data: AppTypeResourceKind[];
 };
 
 export type AppTypeResourceRowProps = {
   obj: AppTypeResourceKind;
-  kindObj: CustomResourceDefinitionKind;
 };
 
 export type AppTypeResourceOutputProps = {
@@ -114,5 +161,22 @@ export type AppTypeResourceOutputProps = {
     'x-alm-capabilities': string[];
   };
   outputValue: any;
+};
 
+export type AppTypeResourcesPageProps = {
+  data: CustomResourceDefinitionKind[]
+  loaded: boolean;
+  appType: AppTypeKind;
+};
+
+export type AppTypeResourcesDetailsProps = {
+  obj: AppTypeResourceKind;
+  kindObj: K8sKind;
+  kindsInFlight: boolean;
+};
+
+export type AppTypeResourcesDetailsPageProps = {
+  kind: string;
+  name: string;
+  namespace: string;
 };

@@ -5,32 +5,16 @@ import { Link } from 'react-router-dom';
 import * as Immutable from 'immutable';
 import * as _ from 'lodash';
 
-import { AppTypeKind } from './index';
-import { AppTypeResources } from './apptype-resource';
+import { AppTypeKind, AppTypeLogo } from './index';
+import { AppTypeResourcesPage } from './apptype-resource';
 import { DetailsPage, ListPage, List, ListHeader, ColHead } from '../factory';
 import { navFactory, FirehoseHoC, StatusBox, Timestamp, ResourceLink, Overflow } from '../utils';
 
 const localCatalogName = 'local';
 
-export const AppTypeLogo = (props: AppTypeLogoProps) => {
-  const {icon, displayName, provider} = props;
-  
-  return <div className="co-apptype-logo">
-    <div>
-      { _.isEmpty(icon)
-        ? <span className="fa ci-appcube" style={{fontSize: '40px'}} />
-        : <img src={`data:${icon.mediatype};base64,${icon.base64data}`} height="40" width="40" /> }
-    </div>
-    <div className="co-apptype-logo__name">
-      <h1 style={{margin: 0}}>{displayName}</h1>
-      { provider && <span className="co-apptype-logo__provider">{`by ${provider.name}`}</span> }
-    </div>
-  </div>;
-};
-
 export const AppTypeListItem = (props: AppTypeListItemProps) => {
   const {appType} = props;
-  const route = `/ns/${appType.metadata.namespace}/apptype-v1s/${appType.metadata.name}`;
+  const route = `/ns/${appType.metadata.namespace}/clusterserviceversion-v1s/${appType.metadata.name}`;
 
   return <div className="co-apptype-list-item">
     <div className="co-apptype-list-item__heading">
@@ -38,7 +22,6 @@ export const AppTypeListItem = (props: AppTypeListItemProps) => {
         <AppTypeLogo icon={_.get(appType, 'spec.icon', [])[0]} displayName={appType.spec.displayName} provider={appType.spec.provider} />
       </div>
     </div>
-    {/* FIXME(alecmerdler): Figure out how to create a short description to avoid overflow */}
     <div className="co-apptype-list-item__actions"> 
       <Link to={`${route}/details`} title="View details" className="btn btn-default">View details</Link>
       <Link to={`${route}/resources`} title="View resources">View resources</Link> 
@@ -52,7 +35,7 @@ export const AppTypeHeader = () => <ListHeader>
 </ListHeader>;
 
 export const AppTypeRow = ({obj: appType}) => {
-  const route = `/ns/${appType.metadata.namespace}/apptype-v1s/${appType.metadata.name}`;
+  const route = `/ns/${appType.metadata.namespace}/clusterserviceversion-v1s/${appType.metadata.name}`;
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-8">
@@ -97,7 +80,7 @@ export const AppTypeList = (props: AppTypeListProps) => {
     ? <div className="co-apptype-list">
       { apps.filter((_, key) => key !== localCatalogName).map((appsForCatalog, key) => <div className="co-apptype-list__section co-apptype-list__section--catalog" key={key}>
         <div>
-          <h1 className="co-apptype-list__section__title">{key}</h1>
+          <h1 className="co-section-title">{key}</h1>
         </div>
         <div className="co-apptype-list__section--catalog__items">
           { appsForCatalog.map((appType, i) => <div className="co-apptype-list__section--catalog__items__item" key={i}>
@@ -106,7 +89,7 @@ export const AppTypeList = (props: AppTypeListProps) => {
         </div>
       </div>) }
       <div className="co-apptype-list__section">
-        <div className="co-apptype-list__section__title">
+        <div className="co-section-title">
           <h1>Local Applications</h1>
         </div>
         <List {...props} label="Local Applications" data={apps.get(localCatalogName)} Header={AppTypeHeader} Row={AppTypeRow} />
@@ -153,26 +136,18 @@ export const AppTypeDetails = (props: AppTypeDetailsProps) => {
         {spec.description || 'Not available'}
       </span>
     </div>
-    <div className="co-apptype-details__section co-apptype-details__section--resources">
-      <h1>Resources</h1>
-      <FirehoseHoC Component={AppTypeResources} kind="CustomResourceDefinition" selector={spec.selector} isList={true} />
-    </div>
   </div>;
 };
 
-const Resources = ({obj}) => <div className="co-m-pane__body">
-  <FirehoseHoC Component={AppTypeResources} kind="CustomResourceDefinition" selector={obj.spec.selector} isList={true} />
-</div>;
- 
+const Resources = ({obj}) => <FirehoseHoC Component={AppTypeResourcesPage} kind="CustomResourceDefinition" selector={obj.spec.selector} isList={true} />;
+
 const pages = [
   navFactory.details(AppTypeDetails),
   navFactory.editYaml(),
   {href: 'resources', name: 'Resources', component: Resources},
 ];
 
-export const AppTypesDetailsPage = (props: AppTypesDetailsPageProps) => (
-  <DetailsPage {...props} pages={pages} />
-);
+export const AppTypesDetailsPage = (props: AppTypesDetailsPageProps) => <DetailsPage {...props} pages={pages} />;
 
 export type AppTypesPageProps = {
   kind: string;
@@ -186,12 +161,6 @@ export type AppTypeListProps = {
 
 export type AppTypeListItemProps = {
   appType: AppTypeKind; 
-};
-
-export type AppTypeLogoProps = {
-  displayName: string;
-  icon: {base64data: string, mediatype: string};
-  provider: {name: string; website: string}
 };
 
 export type AppTypesDetailsPageProps = {

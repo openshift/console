@@ -9,7 +9,6 @@ import { k8sBasePath } from './module/k8s';
 import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
 
-/* eslint-disable no-unused-vars,no-undef */
 export type K8sKind = {
   abbr: string;
   kind: string;
@@ -21,8 +20,10 @@ export type K8sKind = {
   apiVersion?: string;
   basePath?: string;
   namespaced?: boolean;
+  selector?: {matchLabels: {[key: string]: string}};
+  labels?: {[key: string]: string};
+  annotations?: {[key: string]: string};
 };
-/* eslint-enable no-unused-vars,no-undef */
 
 export const kindReducerName: string = 'KINDS';
 export const inFlight: string = 'inFlight';
@@ -39,7 +40,9 @@ export const kindReducer = (state, action) => {
     case 'addCRDs':
       _.each(action.kinds, (resource: any) => {
         const { plural, singular, kind, shortNames } = resource.spec.names;
-        const { version, scope, group } = resource.spec;
+        const { version, scope, group, selector } = resource.spec;
+        const { labels, annotations } = resource.metadata;
+
         const label = kind.replace(/([A-Z]+)/g, ' $1').slice(1);
         const abbr = shortNames
           ? shortNames[0].toUpperCase()
@@ -53,7 +56,7 @@ export const kindReducer = (state, action) => {
         }
 
         k8sKinds[kind] = {
-          kind, label, plural, abbr, namespaced,
+          kind, label, plural, abbr, namespaced, labels, annotations, selector,
           labelPlural: `${label}${label.endsWith('s') ? 'es' : 's'}`,
           id: singular,
           apiVersion: version,

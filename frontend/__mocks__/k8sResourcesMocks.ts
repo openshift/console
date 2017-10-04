@@ -91,7 +91,7 @@ export const testAppTypeResource: CustomResourceDefinitionKind = {
     version: 'v1alpha1',
     names: {
       kind: 'TestResource'
-    }
+    },
   }
 };
 
@@ -100,10 +100,18 @@ export const testResourceInstance: AppTypeResourceKind = {
   kind: 'TestResource',
   metadata: {
     name: 'my-test-resource',
+    uid: 'c02c0a8f-88e0-12e7-851b-081027b424ef',
+    creationTimestamp: '2017-06-20T18:19:49Z',
   },
   spec: {
     labels: {
       'owner-testapp': 'testapp.apptype-v1s.app.coreos.com',
+    },
+    selector: {
+      matchLabels: {
+        'peanut': 'butter',
+        'jelly': 'time',
+      }
     }
   },
   outputs: {
