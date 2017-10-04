@@ -60,26 +60,32 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
-// TODO: (ggreer) handle 403
+const errorStatus = err => {
+  if (_.get(err.response, 'ok') === false) {
+    return {
+      short: '?',
+      status: '', // Gray
+      long: err.message,
+    };
+  }
+  // Generic network error handling.
+  return {
+    short: 'ERROR',
+    long: err.message,
+    status: 'ERROR',
+  };
+};
+
 const fetchHealth = () => coFetchJSON(`${k8sBasePath}/`)
   .then(() => ({short: 'UP', long: 'All good', status: 'OK'}))
-  .catch(() => ({short: 'ERROR', long: 'API server connection has a problem', status: 'ERROR'}));
+  .catch(errorStatus);
 
-// TODO: (ggreer) handle 403
 const fetchTectonicHealth = () => coFetchJSON('health')
   .then(() => ({short: 'UP', long: 'All good', status: 'OK'}))
   .catch(() => ({short: 'ERROR', long: 'The console service cannot be reached', status: 'ERROR'}));
 
-
 const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
   .then(res => {
-    if (_.get(res, 'status') !== 'success') {
-      return {
-        short: res.status,
-        status: 'ERROR',
-        long: name,
-      };
-    }
     const value = parseInt(_.get(res, 'data.result[0].value[1]'), 10) || 0;
     return {
       short: value,
@@ -87,7 +93,7 @@ const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
       long: name,
     };
   })
-  .catch(() => ({short: 'ERROR', long: 'The console service cannot be reached', status: 'ERROR'}));
+  .catch(errorStatus);
 
 
 const DashboardLink = ({to}) => <div className="col-lg-3 text-right" style={{marginTop: 16}}>
