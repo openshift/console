@@ -146,6 +146,13 @@ class InstanceDetails extends SafetyFirst {
   }
 }
 
+class PromServiceMonitorsPage extends React.PureComponent {
+  render() {
+    const {spec: {serviceMonitorSelector}, metadata: {namespace}} = this.props.obj;
+    return <ServiceMonitorsPage namespace={namespace} selector={_.isEmpty(serviceMonitorSelector) ? { matchExpressions:[{ key:'undefined', operator:'Exists' }]} : serviceMonitorSelector} />;
+  }
+}
+
 const {details, editYaml, serviceMonitors} = navFactory;
 export const PrometheusInstancesDetailsPage = props => <DetailsPage
   {...props}
@@ -153,9 +160,7 @@ export const PrometheusInstancesDetailsPage = props => <DetailsPage
   pages={[
     details(InstanceDetails),
     editYaml(),
-    serviceMonitors(({spec: {serviceMonitorSelector}, metadata: {namespace}}) => <ServiceMonitorsPage
-      namespace={namespace}
-      selector={_.isEmpty(serviceMonitorSelector) ? { matchExpressions:[{ key:'undefined', operator:'Exists' }]} : serviceMonitorSelector}/>)
+    serviceMonitors(PromServiceMonitorsPage)
   ]}
 />;
 
