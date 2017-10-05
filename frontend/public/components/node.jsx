@@ -40,7 +40,7 @@ const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="Node" resou
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
     {(expand || ip.type === 'InternalIP') && <p>
-      <span className="co-ip-type">{ip.type}: </span>
+      <span className="co-ip-type">{ip.type.replace(/([a-z])([A-Z])/g, '$1 $2')}: </span>
       <span className="co-ip-addr">{ip.address}</span>
     </p>}
   </div>)}
