@@ -8,6 +8,9 @@
 }
 
 .co-m-page-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-bottom: 0px;
   margin-bottom: 0px;
 }
