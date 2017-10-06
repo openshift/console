@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
 
-import { LoadingInline } from './';
+import { LoadingInline } from './status-box';
 
 const injectDisabled = (children, disabled) => {
   return React.Children.map(children, c => {

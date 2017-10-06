@@ -6,7 +6,8 @@ import * as PropTypes from 'prop-types';
 import { Router } from 'react-router-dom';
 
 import store from '../../redux';
-import { ButtonBar, history } from '../utils';
+import { ButtonBar } from '../utils/button-bar';
+import { history } from '../utils/router';
 
 export const createModalLauncher = (Component) => (props = {}) => {
   const modalContainer = document.getElementById('modal-container');
