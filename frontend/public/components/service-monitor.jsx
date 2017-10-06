@@ -4,8 +4,7 @@ import { ColHead, List, ListHeader, ListPage, ResourceRow, DetailsPage } from '.
 import { Cog, LabelList, navFactory, ResourceCog, ResourceLink, Selector, ResourceIcon } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('v1alpha1.ServiceMonitor', `apiVersion: monitoring.coreos.com/v1alpha1
-kind: ServiceMonitor
+const template = `kind: ServiceMonitor
 metadata:
   name: example
   labels:
@@ -19,7 +18,12 @@ spec:
     - monitoring
   endpoints:
   - port: web
-    interval: 30s`);
+    interval: 30s`;
+
+registerTemplate('v1alpha1.ServiceMonitor', `apiVersion: monitoring.coreos.com/v1alpha1
+${template}`);
+registerTemplate('v1.ServiceMonitor', `apiVersion: monitoring.coreos.com/v1
+${template}`);
 
 const {Edit, Delete} = Cog.factory;
 const menuActions = [Edit, Delete];
