@@ -20,8 +20,6 @@ spec:
   - port: web
     interval: 30s`;
 
-registerTemplate('v1alpha1.ServiceMonitor', `apiVersion: monitoring.coreos.com/v1alpha1
-${template}`);
 registerTemplate('v1.ServiceMonitor', `apiVersion: monitoring.coreos.com/v1
 ${template}`);
 

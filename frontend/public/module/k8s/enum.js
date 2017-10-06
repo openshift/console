@@ -265,7 +265,7 @@ export const k8sKinds = {
   ServiceMonitor: {
     label: 'Service Monitor',
     labelPlural: 'Service Monitors',
-    apiVersion: 'v1alpha1',
+    apiVersion: 'v1',
     basePath: '/apis/monitoring.coreos.com/',
     path: 'servicemonitors',
     plural: 'servicemonitors',
@@ -274,7 +274,7 @@ export const k8sKinds = {
   Alertmanager: {
     label: 'Alert Manager',
     labelPlural: 'Alert Managers',
-    apiVersion: 'v1alpha1',
+    apiVersion: 'v1',
     basePath: '/apis/monitoring.coreos.com/',
     path: 'alertmanagers',
     plural: 'alertmanagers',
