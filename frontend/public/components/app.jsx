@@ -49,6 +49,15 @@ const LoadingScreen = () => <div className="loading-screen">
   <div>Loading your Tectonic Console</div>
 </div>;
 
+// eslint-disable-next-line react/display-name
+const boundResourceListPage = plural => props => <ResourceListPage {...props} plural={plural} />;
+
+const namespacesListPage = boundResourceListPage('namespaces');
+const crdsListPage = boundResourceListPage('customresourcedefinitions');
+const nodesListPage = boundResourceListPage('nodes');
+const rolesListPage = boundResourceListPage('roles');
+const pvsListPage = boundResourceListPage('persistentvolumes');
+
 class App extends React.PureComponent {
   onRouteChange (props) {
     if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
@@ -67,7 +76,10 @@ class App extends React.PureComponent {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (_.isEqual(nextProps.location, this.props.location) && _.isEqual(nextProps.match, this.props.match)) {
+    // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
+    const oldLocation = _.omit(this.props.location, ['key']);
+    const newLocation = _.omit(nextProps.location, ['key']);
+    if (_.isEqual(newLocation, oldLocation) && _.isEqual(nextProps.match, this.props.match)) {
       return;
     }
     this.onRouteChange(nextProps);
@@ -99,7 +111,7 @@ class App extends React.PureComponent {
             <Route path="/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
             <Route path="/ns/:ns/roles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="Role" />} />
-            <Route path="/ns/:ns/roles" exact component={props => <ResourceListPage {...props} plural="roles" />} />
+            <Route path="/ns/:ns/roles" exact component={rolesListPage} />
 
             <Route path="/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
             <Route path="/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
@@ -111,14 +123,14 @@ class App extends React.PureComponent {
             <Redirect from="/ns/:ns/rolebindings/:name/details" to="/all-namespaces/rolebindings" />
 
             <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} plural="namespaces" />} />
-            <Route path="/namespaces" exact component={props => <ResourceListPage {...props} plural="namespaces" />} />
-            <Route path="/crds" exact component={props => <ResourceListPage {...props} plural="customresourcedefinitions" />} />
+            <Route path="/namespaces" exact component={namespacesListPage} />
+            <Route path="/crds" exact component={crdsListPage} />
 
             <Route path="/nodes/:name" component={props => <ResourceDetailsPage {...props} plural="nodes" />} />
-            <Route path="/nodes" exact component={props => <ResourceListPage {...props} plural="nodes" />} />
+            <Route path="/nodes" exact component={nodesListPage} />
 
             <Route path="/persistentvolumes/:name" exact component={props => <ResourceDetailsPage {...props} plural="persistentvolumes" />} />
-            <Route path="/persistentvolumes" exact component={props => <ResourceListPage {...props} plural="persistentvolumes" />} />
+            <Route path="/persistentvolumes" exact component={pvsListPage} />
 
             <Route path="/settings/profile" exact component={ProfilePage} />
             <Route path="/settings/ldap" exact component={LDAPPage} />
