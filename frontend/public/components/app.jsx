@@ -50,13 +50,16 @@ const LoadingScreen = () => <div className="loading-screen">
 </div>;
 
 // eslint-disable-next-line react/display-name
-const boundResourceListPage = plural => props => <ResourceListPage {...props} plural={plural} />;
+const boundResourcePage = (Page, plural) => props => <Page {...props} plural={plural} />;
 
-const namespacesListPage = boundResourceListPage('namespaces');
-const crdsListPage = boundResourceListPage('customresourcedefinitions');
-const nodesListPage = boundResourceListPage('nodes');
-const rolesListPage = boundResourceListPage('roles');
-const pvsListPage = boundResourceListPage('persistentvolumes');
+// React router will destroy & recreate components if these are passed in as anonymous functions. Bind them here.
+const namespacesListPage = boundResourcePage(ResourceListPage, 'namespaces');
+const crdsListPage = boundResourcePage(ResourceListPage, 'customresourcedefinitions');
+const nodesListPage = boundResourcePage(ResourceListPage, 'nodes');
+const rolesListPage = boundResourcePage(ResourceListPage, 'roles');
+const pvsListPage = boundResourcePage(ResourceListPage, 'persistentvolumes');
+
+const nodeDetailsPage = boundResourcePage(ResourceDetailsPage, 'nodes');
 
 class App extends React.PureComponent {
   onRouteChange (props) {
@@ -126,7 +129,7 @@ class App extends React.PureComponent {
             <Route path="/namespaces" exact component={namespacesListPage} />
             <Route path="/crds" exact component={crdsListPage} />
 
-            <Route path="/nodes/:name" component={props => <ResourceDetailsPage {...props} plural="nodes" />} />
+            <Route path="/nodes/:name" component={nodeDetailsPage} />
             <Route path="/nodes" exact component={nodesListPage} />
 
             <Route path="/persistentvolumes/:name" exact component={props => <ResourceDetailsPage {...props} plural="persistentvolumes" />} />
