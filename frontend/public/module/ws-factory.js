@@ -186,8 +186,11 @@ WebSocketWrapper.prototype._connect = function() {
     that._triggerEvent({ type: 'error', args: [code, reason] });
   };
   this.ws.onmessage = function(e) {
-    const msg = that.options.jsonParse ? JSON.parse(e.data) : e.data;
-    that._state = 'open';
+    const msg = (that.options && that.options.jsonParse) ? JSON.parse(e.data) : e.data;
+    // In some browsers, onmessage can fire after onclose/error. Don't update state to be incorrect.
+    if (!_.includes(['destroyed', 'closed'], that._state)) {
+      that._state = 'open';
+    }
     that._triggerEvent({ type: 'message', args: [msg] });
   };
 };
