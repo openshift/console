@@ -4,11 +4,14 @@ const token = authSvc.getToken();
 
 export const stream = (url, loadStart, notify) => {
   const xhr = new XMLHttpRequest();
-  let offset = 0;
 
   const promise = new Promise((resolve, reject) => {
+    let offset = 0;
+
     const nextChunk = () => {
-      const remainder = xhr.responseText.substr(offset);
+      let remainder = xhr.responseText.substr(offset);
+      // Work around a bug in v8 that causes excessive memory usage (https://bugs.chromium.org/p/v8/issues/detail?id=2869)
+      remainder = `.${remainder}`.substr(1);
       offset = xhr.responseText.length;
       notify(remainder);
     };
