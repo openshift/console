@@ -6,3 +6,9 @@ export const registerTemplate = (kindString, template, templateName = 'default')
   }
   TEMPLATES[kindString][templateName] = template;
 };
+
+registerTemplate('DEFAULT', `apiVersion: ''
+kind: ''
+metadata:
+  name: example
+`);
