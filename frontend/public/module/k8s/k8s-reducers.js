@@ -78,9 +78,6 @@ export default (state, action) => {
   let newList;
 
   switch (action.type) {
-    case 'models':
-      return state.set('MODELS', action.models);
-
     case types.resources:
       return state.set('RESOURCES', action.resources);
 
