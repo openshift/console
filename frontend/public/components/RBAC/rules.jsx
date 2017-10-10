@@ -97,7 +97,7 @@ const DeleteRule = (name, namespace, i) => ({
 
 const EditRule = (name, namespace, i) => ({
   label: 'Edit Rule...',
-  href: namespace ? `ns/${namespace}/roles/${name}/${i}/edit` : `clusterroles/${name}/${i}/edit`,
+  href: namespace ? `/ns/${namespace}/roles/${name}/${i}/edit` : `/clusterroles/${name}/${i}/edit`,
 });
 
 const RuleCog = ({name, namespace, i}) => {
