@@ -5,8 +5,8 @@
 // If more than one service is found, it chooses the first.
 
 import { coFetch, coFetchUtils } from '../../co-fetch';
+import { k8sBasePath } from './k8s';
 
-const k8sBasePath = 'api/kubernetes/api/v1';
 const cacheExpireThreshold = 2 * 60 * 1000; // 2 minutes
 const serviceCache = {};
 
@@ -69,13 +69,13 @@ const apiPath = (service, k8sService) => {
     return null;
   }
 
-  return `${k8sBasePath}/proxy/namespaces/${k8sService.metadata.namespace}/services/${k8sService.metadata.name}:${port.port}`;
+  return `${k8sBasePath}/api/v1/proxy/namespaces/${k8sService.metadata.namespace}/services/${k8sService.metadata.name}:${port.port}`;
 };
 
 const check = (service) => {
   const namespaceQuery = service.namespace ? `/namespaces/${service.namespace}` : '';
   const labelQuery = service.labelSelector ? `?labelSelector=${encodeURIComponent(service.labelSelector)}` : '';
-  coFetch(`${k8sBasePath}${namespaceQuery}/services/${labelQuery}`)
+  coFetch(`${k8sBasePath}/api/v1${namespaceQuery}/services/${labelQuery}`)
     .then(coFetchUtils.parseJson)
     .then((json) => {
       if (!json || !json.items || json.items.length < 1) {
