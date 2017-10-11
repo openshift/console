@@ -77,7 +77,7 @@ describe('AppTypeResourceHeader', () => {
 
     expect(colHeader.props().sortField).toEqual('metadata.labels');
     expect(colHeader.childAt(0).text()).toEqual('Labels');
-  }); 
+  });
 
   it('renders column header for resource type', () => {
     const colHeader = wrapper.find(ListHeader).find(ColHead).at(2);
@@ -197,7 +197,7 @@ describe('AppTypeResourcesDetails', () => {
   it('renders info section', () => {
     const section = wrapper.find('.co-apptype-resource-details__section--info');
 
-    expect(section.exists()).toBe(true); 
+    expect(section.exists()).toBe(true);
   });
 
   it('renders creation date from CRD metadata', () => {
@@ -229,7 +229,7 @@ describe('AppTypeResourcesDetails', () => {
 
     metricsOutputs.forEach((output, i) => {
       const resourceOutput = links.at(i).find(AppTypeResourceOutput);
-      
+
       expect(resourceOutput.exists()).toBe(true);
       expect(resourceOutput.props().outputDefinition).toEqual(output);
       expect(resourceOutput.props().outputValue).toEqual(output.value);

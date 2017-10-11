@@ -21,12 +21,12 @@ export const AppTypeResourceOutput = (props: AppTypeResourceOutputProps) => {
       case ALMCapabilites.metrics:
         const metricsData = JSON.parse(props.outputValue);
         const metrics = metricsData.metrics || [];
-        
+
         return <div className="co-apptype-resource-output--metrics">
           { metrics.map((value, i) => <a href={`${metricsData.endpoint}/graphs?g0.expr=${value.query}`} key={i}>{value.name}</a>) }
         </div>;
 
-      default: 
+      default:
         return result;
     }
   }, <span>{outputValue || 'None'}</span>);
@@ -43,7 +43,7 @@ export const AppTypeResourceHeader = (props: AppTypeResourceHeaderProps) => <Lis
 
 export const AppTypeResourceRow = (props: AppTypeResourceRowProps) => {
   const {obj} = props;
-  
+
   return <div className="row co-resource-list__item">
     <div className="col-xs-2">
       <ResourceLink kind={obj.kind} namespace={obj.metadata.namespace} title={obj.metadata.name} name={obj.metadata.name} />
@@ -102,9 +102,9 @@ export const AppTypeResourceDetails = connectToPlural((props: AppTypeResourcesDe
     <div className="co-m-pane__body">
       <h1 className="co-section-title">{`${kind} Overview`}</h1>
       <div className="co-apptype-resource-details__section co-apptype-resource-details__section--info">
-        <div className="co-apptype-resource-details__section--info__item"> 
+        <div className="co-apptype-resource-details__section--info__item">
           <dt>Name</dt>
-          <dd>{metadata.name}</dd> 
+          <dd>{metadata.name}</dd>
           <dt>Created At</dt>
           <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
         </div>
@@ -120,21 +120,21 @@ export const AppTypeResourceDetails = connectToPlural((props: AppTypeResourcesDe
           <dt>Important Metrics</dt>
           { customOutputs.filter(output => output['x-alm-capabilities'].indexOf(ALMCapabilites.metrics) !== -1).map((output: any, i) => <dd key={i}>
             <AppTypeResourceOutput outputDefinition={output} outputValue={output.value} />
-          </dd>) }  
-        </div> 
+          </dd>) }
+        </div>
       </div>
     </div>
   </div>;
 });
 
-export const AppTypeResourcesDetailsPage = (props: AppTypeResourcesDetailsPageProps) => <DetailsPage 
-  {...props} 
+export const AppTypeResourcesDetailsPage = (props: AppTypeResourcesDetailsPageProps) => <DetailsPage
+  {...props}
   pages={[
     navFactory.details(AppTypeResourceDetails),
     navFactory.editYaml(),
-  ]} 
-/>;  
- 
+  ]}
+/>;
+
 export type AppTypeResourceListProps = {
   loaded: boolean;
   data: AppTypeResourceKind[];
@@ -142,7 +142,7 @@ export type AppTypeResourceListProps = {
   reduxID?: string;
   reduxIDs?: string[];
   rowSplitter?: any;
-  staticFilters?: any; 
+  staticFilters?: any;
 };
 
 export type AppTypeResourceHeaderProps = {

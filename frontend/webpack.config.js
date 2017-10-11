@@ -47,7 +47,7 @@ let config = {
             {
               loader: 'resolve-url-loader',
               options: {
-                sourceMap: true, 
+                sourceMap: true,
               }
             },
             {
@@ -65,7 +65,7 @@ let config = {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
         loader: 'file-loader',
         options: {
-          name: 'assets/[name].[ext]', 
+          name: 'assets/[name].[ext]',
         },
       },
     ]
@@ -78,7 +78,7 @@ let config = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: ({resource}) => /node_modules/.test(resource),
-    }), 
+    }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',

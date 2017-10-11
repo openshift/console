@@ -34,5 +34,5 @@ describe('Readiness', () => {
 
       expect(wrapper.hasClass('co-error')).toBe(false);
     });
-  }); 
+  });
 });

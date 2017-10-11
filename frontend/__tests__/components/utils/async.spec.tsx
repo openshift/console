@@ -29,7 +29,7 @@ describe('AsyncComponent', () => {
       setTimeout(() => {
         expect(wrapper.find(loadingBoxSelector).exists()).toBe(true);
         done();
-      }, 10);      
+      }, 10);
     });
 
     wrapper = mount(<AsyncComponent loader={loader} />);

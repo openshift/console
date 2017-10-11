@@ -104,7 +104,7 @@ export const severityBreakdownInfo = (podvuln) => {
   if (passed(podvuln)) {
     return [{'index': 0, 'value': 1, 'colorClass': 'PassedFill'}];
   }
-  
+
   let severityBreakdown = [];
   let vulns = [];
 

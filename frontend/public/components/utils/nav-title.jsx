@@ -19,7 +19,7 @@ export const NavTitle = ({kind, detail, title, menuActions, data}) => {
         { menuActions && !_.isEmpty(data) && !_.has(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj(kind), data))} /> }
       </h1>
     </div>
-  </div>; 
+  </div>;
 };
 
 NavTitle.displayName = 'NavTitle';

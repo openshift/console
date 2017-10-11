@@ -43,7 +43,7 @@ export class AsyncComponent extends SafetyFirst {
   render() {
     const {Component} = this.state;
     const rest = _.omit(this.props, 'loader');
-    return Component != null 
+    return Component != null
       ? <Component {...rest} />
       : <LoadingBox />;
   }
