@@ -52,9 +52,9 @@ export const MultiConnectToState = connect(({k8s}, {reduxes, flatten}) => {
     resources[redux.prop] = processReduxId({k8s}, redux);
   });
 
-  // If any resources loaded, display them and ignore errors for resources that didn't load
-  const loaded = _.some(resources, 'loaded');
-  const loadError = loaded ? '' : _.map(resources, 'loadError').filter(Boolean).join(', ');
+  const required = _.filter(resources, r => !r.optional);
+  const loaded = _.every(required, 'loaded');
+  const loadError = _.map(required, 'loadError').filter(Boolean).join(', ');
 
   return Object.assign({}, resources, {
     data: flatten ? flatten(resources) : [],
@@ -69,5 +69,15 @@ export const MultiConnectToState = connect(({k8s}, {reduxes, flatten}) => {
 </div>);
 
 MultiConnectToState.propTypes = {
-  reduxes: PropTypes.array
+  flatten: PropTypes.func,
+  reduxes: PropTypes.arrayOf(
+    PropTypes.shape({
+      kind: PropTypes.string.isRequired,
+      namespace: PropTypes.string,
+      name: PropTypes.string,
+      prop: PropTypes.string,
+      isList: PropTypes.bool,
+      optional: PropTypes.bool,
+    })
+  ).isRequired,
 };
