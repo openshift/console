@@ -177,12 +177,15 @@ const resources = [
   {kind: 'ClusterRole', namespaced: false},
 ];
 
+const flatten = resources => _.flatMap(resources, 'data').filter(r => !!r);
+
 export const RolesPage = ({namespace}) => <MultiListPage
   ListComponent={RolesList}
   canCreate={true}
   createButtonText="Create Role"
   createProps={{to: `/ns/${namespace || 'default'}/roles/new`}}
   filterLabel="Roles by name"
+  flatten={flatten}
   resources={resources}
   rowFilters={[{
     type: 'role-kind',
