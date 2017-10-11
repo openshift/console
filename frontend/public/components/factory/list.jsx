@@ -189,11 +189,7 @@ Rows.propTypes = {
   Row: PropTypes.func.isRequired,
 };
 
-const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, rowSplitter, staticFilters}) => {
-  if (rowSplitter) {
-    data = _.flatMap(data, rowSplitter);
-  }
-
+const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, staticFilters}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, data);
 
@@ -252,7 +248,6 @@ List.propTypes = {
   reduxID: PropTypes.string,
   reduxIDs: PropTypes.array,
   Row: PropTypes.func.isRequired,
-  rowSplitter: PropTypes.func,
   selector: PropTypes.object,
   staticFilters: PropTypes.array,
 };
