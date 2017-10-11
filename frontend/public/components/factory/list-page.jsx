@@ -71,7 +71,7 @@ export const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
     }
 
     render () {
-      const {data, kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, rowSplitter, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro, loaded, loadError} = this.props;
+      const {data, kinds, ListComponent, createButtonText, dropdownFilters, rowFilters, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro, loaded, loadError} = this.props;
       const resources = _.pick(this.props, kinds);
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
@@ -84,7 +84,7 @@ export const BaseListPage = connect(null, {filterList: k8sActions.filterList})(
           key={i}
           applyFilter={this.applyFilter}
           items={_.isFunction(items) ? items(resources) : items}
-          numbers={count || _.countBy(_.flatMap(data, rowSplitter), reducer)}
+          numbers={count || _.countBy(data, reducer)}
           selected={selected}
           type={type}
         />;
@@ -144,7 +144,6 @@ BaseListPage.propTypes = {
   kinds: PropTypes.array.isRequired,
   ListComponent: PropTypes.func.isRequired,
   rowFilters: PropTypes.array,
-  rowSplitter: PropTypes.func,
   selector: PropTypes.object,
   textFilter: PropTypes.string,
   title: PropTypes.string,
@@ -175,16 +174,17 @@ ListPage.displayName = 'ListPage';
 // FIXME(alecmerdler): Fix this typing
 /** @type {React.StatelessComponent<any>} */
 export const MultiListPage = connect(({UI}) => ({ns: UI.get('activeNamespace')}))(
-  /** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, ns: string, resources: any[], ListComponent: React.ComponentType<any>}>} */
+  /** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, ns: string, resources: any[], ListComponent: React.ComponentType<any>}>, flatten?: function} */
   props => {
-    const {createButtonText, ns, resources} = props;
+    const {createButtonText, ns, resources, flatten} = props;
     const firehoseResources = resources.map(r => ({
       kind: r.kind,
       isList: true,
       namespace: r.namespaced ? ns : undefined,
       prop: r.kind,
     }));
-    return <MultiFirehose resources={firehoseResources}>
+
+    return <MultiFirehose resources={firehoseResources} flatten={flatten}>
       <BaseListPage
         {...props}
         createButtonText={createButtonText || 'Create'}

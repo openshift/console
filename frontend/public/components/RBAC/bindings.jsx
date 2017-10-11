@@ -35,20 +35,28 @@ const bindingKind = binding => binding.metadata.namespace ? 'RoleBinding' : 'Clu
 const k8sKind = kindId => _.get(k8sKinds, `${kindId}.kind`);
 
 // Split each binding into one row per subject
-const rowSplitter = binding => {
-  if (!binding) {
-    return undefined;
-  }
-  if (_.isEmpty(binding.subjects)) {
-    const subject = {kind: '-', name: '-'};
-    return [Object.assign({}, binding, {subject})];
-  }
-  return binding.subjects.map((subject, subjectIndex) => Object.assign({}, binding, {
-    subject,
-    subjectIndex,
-    rowKey: `${getQN(binding)}|${subject.kind}|${subject.name}`,
-  }));
-};
+const flatten = resources => _.flatMap(resources, resource => {
+  const ret = [];
+
+  _.each(resource.data, binding => {
+    if (!binding) {
+      return undefined;
+    }
+    if (_.isEmpty(binding.subjects)) {
+      const subject = {kind: '-', name: '-'};
+      return ret.push(Object.assign({}, binding, {subject}));
+    }
+    _.each(binding.subjects, (subject, subjectIndex) => {
+      ret.push(Object.assign({}, binding, {
+        subject,
+        subjectIndex,
+        rowKey: `${getQN(binding)}|${subject.kind}|${subject.name}`,
+      }));
+    });
+  });
+
+  return ret;
+});
 
 const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
   const subject = subjects[subjectIndex];
@@ -130,7 +138,7 @@ const Row = ({obj: binding}) => <ResourceRow obj={binding}>
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
-export const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} rowSplitter={rowSplitter} Header={Header} Row={Row} />;
+export const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
 
 export const bindingType = binding => {
   if (!binding) {
@@ -169,7 +177,7 @@ export const RoleBindingsPage = () => <MultiListPage
       return items;
     },
   }]}
-  rowSplitter={rowSplitter}
+  flatten={flatten}
   textFilter="role-binding"
   title="Role Bindings"
 />;
@@ -203,7 +211,7 @@ const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange,
   </div>;
 };
 
-const ListDropdown = props => <MultiFirehose resources={props.kinds.map(kind => ({kind, isList: true, prop: kind}))}>
+const ListDropdown = props => <MultiFirehose resources={props.kinds.map(kind => ({kind, isList: true, prop: kind}))} flatten={flatten}>
   <ListDropdown_ {...props} />
 </MultiFirehose>;
 

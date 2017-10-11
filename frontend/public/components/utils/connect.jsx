@@ -45,7 +45,7 @@ export const ConnectToState = connect(processReduxId)(function GenericConnectToS
 
 // Same as ConnectToState, but takes in multiple reduxIDs,
 // and maps their data to a specified prop instead.
-export const MultiConnectToState = connect(({k8s}, {reduxes}) => {
+export const MultiConnectToState = connect(({k8s}, {reduxes, flatten}) => {
   const resources = {};
 
   reduxes.forEach(redux => {
@@ -57,7 +57,7 @@ export const MultiConnectToState = connect(({k8s}, {reduxes}) => {
   const loadError = loaded ? '' : _.map(resources, 'loadError').filter(Boolean).join(', ');
 
   return Object.assign({}, resources, {
-    data: _.flatMap(resources, 'data').filter(d => d !== undefined),
+    data: flatten ? flatten(resources) : [],
     filters: Object.assign({}, ..._.map(resources, 'filters')),
     loaded,
     loadError,

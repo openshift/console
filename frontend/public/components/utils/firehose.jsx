@@ -126,7 +126,7 @@ export class MultiFirehose extends FirehoseBase {
       return _.defaults({}, { reduxID: this.firehoses[i].id }, resource);
     });
 
-    return <MultiConnectToState reduxes={reduxes}>
+    return <MultiConnectToState reduxes={reduxes} flatten={this.props.flatten}>
       {this.props.children}
     </MultiConnectToState>;
   }
