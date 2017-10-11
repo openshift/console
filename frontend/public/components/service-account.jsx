@@ -60,7 +60,7 @@ const KubeConfigify = (kind, sa) => ({
     });
   },
 });
-const menuActions = [Cog.factory.Delete, KubeConfigify];
+const menuActions = [KubeConfigify, Cog.factory.Delete];
 
 registerTemplate('v1.ServiceAccount', `apiVersion: v1
 kind: ServiceAccount
