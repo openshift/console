@@ -29,6 +29,7 @@ import { history, Loading, getNamespace } from './utils';
 import { UIActions } from '../ui/ui-actions';
 import { Clusters } from './federation/cluster';
 import { ClusterHealth } from './cluster-health';
+import { CatalogsDetailsPage } from './cloud-services/catalog';
 import '../style.scss';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
@@ -153,6 +154,8 @@ class App extends React.PureComponent {
             <Route path="/ns/:ns/:plural/new" exact component={CreateYAML} />
             <Route path="/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/ns/:ns/:plural" exact component={ResourceListPage} />
+
+            <Route path="/catalog" exact component={CatalogsDetailsPage} />
 
             <Route path="/error" exact component={ErrorPage} />
             <Route component={ErrorPage404} />

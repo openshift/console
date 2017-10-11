@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 export { AppTypesDetailsPage, AppTypesPage } from './apptype';
 export { AppTypeResourcesDetailsPage } from './apptype-resource';
+export { CatalogsDetailsPage } from './catalog';
 
 export enum ALMCapabilites {
   metrics = 'urn:alm:capability:com.tectonic.ui:metrics',
@@ -12,31 +13,75 @@ export enum ALMCapabilites {
   tectonicLink = 'urn:alm:capability:com.tectonic.ui:important.link',
 }
 
+export enum ClusterServiceVersionPhase {
+  CSVPhaseNone = '',
+  CSVPhasePending = 'Pending',
+  CSVPhaseInstalling = 'Installing', 
+  CSVPhaseSucceeded = 'Succeeded', 
+  CSVPhaseFailed = 'Failed', 
+  CSVPhaseUnknown = 'Unknown',
+}
+
+export enum CSVConditionReason {
+  CSVReasonRequirementsUnknown = 'RequirementsUnknown',
+  CSVReasonRequirementsNotMet = 'RequirementsNotMet', 
+  CSVReasonRequirementsMet = 'AllRequirementsMet',
+  CSVReasonComponentFailed = 'InstallComponentFailed',
+  CSVReasonInstallSuccessful = 'InstallSucceeded', 
+  CSVReasonInstallCheckFailed = 'InstallCheckFailed',
+}
+
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
   metadata: {
     annotations?: {[key: string]: string},
+    name: string,
+    namespace?: string,
+    labels?: {[key: string]: string},
     [key: string]: any,
   };
-  spec: {
+  spec?: {
     selector?: {
       matchLabels?: {[key: string]: any},
     },
     [key: string]: any
   }; 
+  status?: {[key: string]: any};
 };
 
 export type CustomResourceDefinitionKind = {
 
 } & K8sResourceKind;
 
+// TODO(alecmerdler): Change this to `ClusterServiceVersion`
 export type AppTypeKind = {
-
-} & CustomResourceDefinitionKind;
+  status?: {
+    phase: ClusterServiceVersionPhase;
+    reason: CSVConditionReason;
+  };
+} & K8sResourceKind;
 
 export type AppTypeResourceKind = {
   outputs: {[name: string]: any};
+} & K8sResourceKind;
+
+export type CatalogEntryKind = {
+ 
+} & K8sResourceKind;
+
+export type InstallPlanKind = {
+  spec: {
+    clusterServiceVersions: string[];
+    approval: 'Automatic' | 'Manual' | 'Update-Only';
+  };
+  status?: {
+    status: 'Planning' | 'Requires Approval' | 'Installing' | 'Complete';
+    plan: {
+      resolving: string;
+      resource: CustomResourceDefinitionKind;
+    }[];
+  }
 } & K8sResourceKind;
 
 export const AppTypeLogo = (props: AppTypeLogoProps) => {
@@ -57,5 +102,5 @@ export const AppTypeLogo = (props: AppTypeLogoProps) => {
 export type AppTypeLogoProps = {
   displayName: string;
   icon: {base64data: string, mediatype: string};
-  provider: {name: string; website: string}
+  provider: {name: string}
 };

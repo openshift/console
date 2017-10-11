@@ -70,6 +70,7 @@ export const NavBar = ({pages}) => {
 };
 NavBar.displayName = 'NavBar';
 
+/** @augments {React.PureComponent<any>} */
 export class VertNav extends React.PureComponent {
   render () {
     const props = this.props;

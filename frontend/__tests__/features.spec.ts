@@ -57,6 +57,7 @@ describe('featureReducer', () => {
     [FLAGS.MULTI_CLUSTER]: undefined,
     [FLAGS.SECURITY_LABELLER]: undefined,
     [FLAGS.CLOUD_SERVICES]: undefined,
+    [FLAGS.CLOUD_CATALOGS]: undefined,
     [FLAGS.CALICO]: undefined,
   };
 

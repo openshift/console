@@ -12,6 +12,7 @@ export const FLAGS = {
   MULTI_CLUSTER: 'MULTI_CLUSTER',
   SECURITY_LABELLER: 'SECURITY_LABELLER',
   CLOUD_SERVICES: 'CLOUD_SERVICES',
+  CLOUD_CATALOGS: 'CLOUD_CATALOGS',
   CALICO: 'CALICO',
 };
 
@@ -23,6 +24,7 @@ const DEFAULTS = {
   [FLAGS.MULTI_CLUSTER]: undefined,
   [FLAGS.SECURITY_LABELLER]: undefined,
   [FLAGS.CLOUD_SERVICES]: undefined,
+  [FLAGS.CLOUD_CATALOGS]: undefined,
   [FLAGS.CALICO]: undefined,
 };
 
@@ -73,6 +75,7 @@ const SECURITY_LABELLER_FLAGS = {
 
 const CLOUD_SERVICES_FLAGS = {
   [FLAGS.CLOUD_SERVICES]: 'clusterserviceversion-v1s',
+  [FLAGS.CLOUD_CATALOGS]: 'alphacatalogentry-v1s',
 };
 
 const CALICO_FLAGS = {
