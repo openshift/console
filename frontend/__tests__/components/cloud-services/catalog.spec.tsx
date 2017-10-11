@@ -50,7 +50,7 @@ describe(CatalogAppRow.name, () => {
 
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.childAt(1);
-    
+
     expect(col.childAt(0).shallow().text()).toEqual('Installing...');
   });
 
@@ -60,7 +60,7 @@ describe(CatalogAppRow.name, () => {
 
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.childAt(1);
-    
+
     expect(col.childAt(0).shallow().text()).toEqual('Installation Error');
   });
 

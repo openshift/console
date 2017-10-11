@@ -19,7 +19,7 @@ export const CatalogAppHeader = (props: CatalogAppHeaderProps) => <ListHeader>
 </ListHeader>;
 
 const stateToProps = ({k8s}, {obj}) => ({
-  namespaces: k8s.get('namespaces').toJS(), 
+  namespaces: k8s.get('namespaces').toJS(),
   clusterServiceVersions: _.values(k8s.getIn(['clusterserviceversion-v1s', 'data'], Map()).toJS())
     .filter((csv: any) => csv.metadata.name === obj.metadata.name),
 });
@@ -54,8 +54,8 @@ export const CatalogAppRow = connect(stateToProps)((props: CatalogAppRowProps) =
       <Breakdown clusterServiceVersions={clusterServiceVersions} />
     </div>
     <div className="col-xs-2">
-      <button 
-        className="btn btn-primary" 
+      <button
+        className="btn btn-primary"
         disabled={true}
         onClick={() => createInstallApplicationModal({clusterServiceVersion: obj.metadata.name, k8sCreate, namespaces, clusterServiceVersions})}>
         Install
@@ -70,14 +70,14 @@ export const CatalogAppList = (props: CatalogAppListProps) => (
 
 export const CatalogAppsPage = () => <div>
   {/* FIXME(alecmerdler): Just adds `ClusterServiceVersion-v1s` to Redux store to be used in Row component, not sure if best solution */}
-  <Firehose kind="ClusterServiceVersion-v1" isList={true} /> 
+  <Firehose kind="ClusterServiceVersion-v1" isList={true} />
   <Firehose kind="Namespace" isList={true} />
-  <ListPage 
-    kind="AlphaCatalogEntry-v1" 
-    ListComponent={CatalogAppList} 
-    filterLabel="Applications by name" 
-    title="Applications" 
-    showTitle={true} 
+  <ListPage
+    kind="AlphaCatalogEntry-v1"
+    ListComponent={CatalogAppList}
+    filterLabel="Applications by name"
+    title="Applications"
+    showTitle={true}
   />
 </div>;
 
@@ -120,11 +120,11 @@ export type CatalogAppHeaderProps = {
 };
 
 export type CatalogAppListProps = {
-  loaded: boolean; 
+  loaded: boolean;
   data: CatalogEntryKind[];
   filters: {[key: string]: any};
 };
 
 export type CatalogDetailsProps = {
-  
+
 };

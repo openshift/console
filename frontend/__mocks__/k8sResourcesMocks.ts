@@ -32,7 +32,7 @@ export const testAppType: AppTypeKind = {
       {name: 'John Doe', email: 'johndoe@example.com'},
     ],
     icon: [
-      {base64data: '', mediatype: 'image/png',} 
+      {base64data: '', mediatype: 'image/png',}
     ],
     labels: {
       'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1',
@@ -155,7 +155,7 @@ export const testCatalogApp: CatalogEntryKind = {
       {name: 'John Doe', email: 'johndoe@example.com'},
     ],
     icon: [
-      {base64data: '', mediatype: 'image/png',} 
+      {base64data: '', mediatype: 'image/png',}
     ],
     labels: {
       'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1',

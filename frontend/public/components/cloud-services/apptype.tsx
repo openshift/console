@@ -22,16 +22,16 @@ export const AppTypeListItem = (props: AppTypeListItemProps) => {
         <AppTypeLogo icon={_.get(appType, 'spec.icon', [])[0]} displayName={appType.spec.displayName} provider={appType.spec.provider} />
       </div>
     </div>
-    <div className="co-apptype-list-item__actions"> 
+    <div className="co-apptype-list-item__actions">
       <Link to={`${route}/details`} title="View details" className="btn btn-default">View details</Link>
-      <Link to={`${route}/resources`} title="View resources">View resources</Link> 
+      <Link to={`${route}/resources`} title="View resources">View resources</Link>
     </div>
   </div>;
 };
 
 export const AppTypeHeader = () => <ListHeader>
-  <ColHead className="col-xs-8">Name</ColHead> 
-  <ColHead className="col-xs-4">Actions</ColHead> 
+  <ColHead className="col-xs-8">Name</ColHead>
+  <ColHead className="col-xs-4">Actions</ColHead>
 </ListHeader>;
 
 export const AppTypeRow = ({obj: appType}) => {
@@ -41,7 +41,7 @@ export const AppTypeRow = ({obj: appType}) => {
     <div className="col-xs-8">
       <ResourceLink kind={appType.kind} namespace={appType.metadata.namespace} title={appType.metadata.name} name={appType.metadata.name} />
     </div>
-    <div className="col-xs-4"> 
+    <div className="col-xs-4">
       <Link to={`${route}/details`} title="View details" className="btn btn-default">View details</Link>
       <Link to={`${route}/resources`} title="View resources">View resources</Link>
     </div>
@@ -51,16 +51,16 @@ export const AppTypeRow = ({obj: appType}) => {
 const filterAppTypes = (data: AppTypeKind[] = [], filters = {}) => {
   return Object.keys(filters).reduce((filteredData, filterName) => {
     switch (filterName) {
-      case 'name': 
+      case 'name':
         return filteredData.filter((appType) => appType.spec.displayName.toLowerCase().includes(filters[filterName]));
-      default: 
+      default:
         return filteredData;
     }
   }, data);
 };
 
 const appsByCatalog = (appTypes: AppTypeKind[]) => {
-  return appTypes.reduce((acc, appType) => { 
+  return appTypes.reduce((acc, appType) => {
     const catalogName: string = appType.spec.labels['alm-catalog'];
 
     if (catalogName) {
@@ -84,8 +84,8 @@ export const AppTypeList = (props: AppTypeListProps) => {
         </div>
         <div className="co-apptype-list__section--catalog__items">
           { appsForCatalog.map((appType, i) => <div className="co-apptype-list__section--catalog__items__item" key={i}>
-            <AppTypeListItem appType={appType} /> 
-          </div>) }  
+            <AppTypeListItem appType={appType} />
+          </div>) }
         </div>
       </div>) }
       <div className="co-apptype-list__section">
@@ -109,17 +109,17 @@ export const AppTypeDetails = (props: AppTypeDetailsProps) => {
     <div className="co-apptype-details__section co-apptype-details__section--info">
       <dl className="co-apptype-details__section--info__item">
         <dt>Provider</dt>
-        <dd>{spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}</dd> 
+        <dd>{spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}</dd>
         <dt>Created At</dt>
-        <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>  
+        <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
       </dl>
       <dl className="co-apptype-details__section--info__item">
         <dt>Links</dt>
-        { spec.links && spec.links.length > 0 
+        { spec.links && spec.links.length > 0
           ? spec.links.map((link, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
             {link.name} <a href={link.url}>{link.url}</a>
           </dd>)
-          : <dd>Not available</dd> } 
+          : <dd>Not available</dd> }
       </dl>
       <dl className="co-apptype-details__section--info__item">
         <dt>Maintainers</dt>
@@ -127,10 +127,10 @@ export const AppTypeDetails = (props: AppTypeDetailsProps) => {
           ? spec.maintainers.map((maintainer, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
             {maintainer.name} <a href={`mailto:${maintainer.email}`}><Overflow value={maintainer.email} /></a>
           </dd>)
-          : <dd>Not available</dd> }  
+          : <dd>Not available</dd> }
       </dl>
     </div>
-    <div className="co-apptype-details__section co-apptype-details__section--description">  
+    <div className="co-apptype-details__section co-apptype-details__section--description">
       <h1>Description</h1>
       <span style={{color: spec.description ? '' : '#999'}}>
         {spec.description || 'Not available'}
@@ -154,13 +154,13 @@ export type AppTypesPageProps = {
 };
 
 export type AppTypeListProps = {
-  loaded: boolean; 
+  loaded: boolean;
   data: AppTypeKind[];
   filters: {[key: string]: any};
 };
 
 export type AppTypeListItemProps = {
-  appType: AppTypeKind; 
+  appType: AppTypeKind;
 };
 
 export type AppTypesDetailsPageProps = {

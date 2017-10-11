@@ -21,12 +21,12 @@ export const SelectNamespaceRow = (props: SelectNamespaceRowProps) => {
     <div className="col-xs-6">
       {/* TODO(alecmerdler): Determine how to 'uninstall' apps from a namespace */}
       { preSelected && <i style={{color: '#2fc98e'}} className="fa fa-check" /> }
-      { !preSelected && <input 
-        type="checkbox" 
-        value={obj.metadata.name} 
-        checked={selected || preSelected} 
+      { !preSelected && <input
+        type="checkbox"
+        value={obj.metadata.name}
+        checked={selected || preSelected}
         disabled={preSelected}
-        onChange={() => selected ? onDeselect({namespace: obj.metadata.name}) : onSelect({namespace: obj.metadata.name})} 
+        onChange={() => selected ? onDeselect({namespace: obj.metadata.name}) : onSelect({namespace: obj.metadata.name})}
       /> }
       <ResourceLink kind="Namespace" name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
     </div>
@@ -69,17 +69,17 @@ export class InstallApplicationModal extends PromiseComponent {
       <ModalBody>
         <div>
           <p className="modal-body__field">Select the namespaces where you want to install and run the application.</p>
-          <List 
-            loaded={loaded} 
-            loadError={loadError} 
-            data={_.values(data)} 
+          <List
+            loaded={loaded}
+            loadError={loadError}
+            data={_.values(data)}
             Header={SelectNamespaceHeader}
-            Row={(props) => <SelectNamespaceRow 
+            Row={(props) => <SelectNamespaceRow
               obj={props.obj}
               selected={this.state.selectedNamespaces.find(ns => ns === props.obj.metadata.name) !== undefined}
               preSelected={this.props.clusterServiceVersions.find(ns => ns.metadata.namespace === props.obj.metadata.name) !== undefined}
-              onSelect={(e) => this.setState({selectedNamespaces: this.state.selectedNamespaces.concat([e.namespace])})} 
-              onDeselect={(e) => this.setState({selectedNamespaces: this.state.selectedNamespaces.filter(({metadata}) => metadata.name !== e.namespace)})} />} 
+              onSelect={(e) => this.setState({selectedNamespaces: this.state.selectedNamespaces.concat([e.namespace])})}
+              onDeselect={(e) => this.setState({selectedNamespaces: this.state.selectedNamespaces.filter(({metadata}) => metadata.name !== e.namespace)})} />}
           />
         </div>
       </ModalBody>

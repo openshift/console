@@ -119,7 +119,7 @@ describe(InstallApplicationModal.name, () => {
       loaded: true,
       loadError: '',
     };
-    
+
     wrapper = shallow(<InstallApplicationModal clusterServiceVersion={clusterServiceVersion} namespaces={namespaces} clusterServiceVersions={[]} k8sCreate={k8sCreate} watchK8sList={watchK8sList} close={close} cancel={cancel} />);
   });
 

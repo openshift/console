@@ -20,7 +20,7 @@ describe('AppTypeLogo', () => {
 
   it('renders logo image from given base64 encoded image string', () => {
     const image: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
- 
+
     expect(image.exists()).toBe(true);
     expect(image.props().height).toEqual('40');
     expect(image.props().width).toEqual('40');
@@ -135,7 +135,7 @@ describe('AppTypeList', () => {
 
     expect(list.exists()).toBe(true);
     expect(list.children().length).toEqual(1);
-    
+
     list.children().forEach((listItem) => {
       expect(listItem.props().appType).not.toEqual(testAppType);
     });
@@ -188,7 +188,7 @@ describe('AppTypeDetails', () => {
     const maintainers = wrapper.findWhere(node => node.equals(<dt>Maintainers</dt>)).parent().find('dd');
 
     expect(maintainers.length).toEqual(testAppType.spec.maintainers.length);
-    
+
     testAppType.spec.maintainers.forEach((maintainer, i) => {
       expect(maintainers.at(i).text()).toContain(maintainer.name);
       expect(maintainers.at(i).find(Overflow).props().value).toEqual(maintainer.email);

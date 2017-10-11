@@ -24,7 +24,7 @@ class Chart {
 
     const chartM = width / 2 * 0.14;
     const chartR = width / 2 * 0.85;
-    
+
     let adjustedData = [];
     const total = _.sumBy(data, 'value');
 
@@ -40,7 +40,7 @@ class Chart {
       copy.value = value;
       return copy;
     });
-    
+
     let topG = svg
       .attr('width', (chartR + chartM) * 2)
       .attr('height', (chartR + chartM) * 2)
@@ -90,7 +90,7 @@ export class DonutChart extends React.Component {
       data: this.props.data
     });
   }
-  
+
   render () {
     return <span className="donut-chart" ref={node => this.node = node}>
       <svg className="donut"></svg>

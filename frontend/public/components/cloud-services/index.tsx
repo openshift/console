@@ -16,18 +16,18 @@ export enum ALMCapabilites {
 export enum ClusterServiceVersionPhase {
   CSVPhaseNone = '',
   CSVPhasePending = 'Pending',
-  CSVPhaseInstalling = 'Installing', 
-  CSVPhaseSucceeded = 'Succeeded', 
-  CSVPhaseFailed = 'Failed', 
+  CSVPhaseInstalling = 'Installing',
+  CSVPhaseSucceeded = 'Succeeded',
+  CSVPhaseFailed = 'Failed',
   CSVPhaseUnknown = 'Unknown',
 }
 
 export enum CSVConditionReason {
   CSVReasonRequirementsUnknown = 'RequirementsUnknown',
-  CSVReasonRequirementsNotMet = 'RequirementsNotMet', 
+  CSVReasonRequirementsNotMet = 'RequirementsNotMet',
   CSVReasonRequirementsMet = 'AllRequirementsMet',
   CSVReasonComponentFailed = 'InstallComponentFailed',
-  CSVReasonInstallSuccessful = 'InstallSucceeded', 
+  CSVReasonInstallSuccessful = 'InstallSucceeded',
   CSVReasonInstallCheckFailed = 'InstallCheckFailed',
 }
 
@@ -46,7 +46,7 @@ export type K8sResourceKind = {
       matchLabels?: {[key: string]: any},
     },
     [key: string]: any
-  }; 
+  };
   status?: {[key: string]: any};
 };
 
@@ -67,7 +67,7 @@ export type AppTypeResourceKind = {
 } & K8sResourceKind;
 
 export type CatalogEntryKind = {
- 
+
 } & K8sResourceKind;
 
 export type InstallPlanKind = {
@@ -86,14 +86,14 @@ export type InstallPlanKind = {
 
 export const AppTypeLogo = (props: AppTypeLogoProps) => {
   const {icon, displayName, provider} = props;
-  
+
   return <div className="co-apptype-logo">
     <div className="co-apptype-logo__icon">{ _.isEmpty(icon)
       ? <span className="fa ci-appcube" style={{fontSize: '40px'}} />
       : <img src={`data:${icon.mediatype};base64,${icon.base64data}`} height="40" width="40" /> }
-    </div> 
+    </div>
     <div className="co-apptype-logo__name">
-      <h1 className="co-apptype-logo__name__apptype">{displayName}</h1> 
+      <h1 className="co-apptype-logo__name__apptype">{displayName}</h1>
       { provider && <span className="co-apptype-logo__name__provider">{`by ${provider.name}`}</span> }
     </div>
   </div>;

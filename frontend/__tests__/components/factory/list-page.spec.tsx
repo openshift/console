@@ -53,7 +53,7 @@ describe(BaseListPage.displayName, () => {
 
     const title = 'My pods';
     wrapper.setProps({title});
-    
+
     expect(wrapper.find(NavTitle).props().title).toEqual(title);
   });
 
@@ -120,7 +120,7 @@ describe(BaseListPage.displayName, () => {
     wrapper.setProps({dropdownFilters});
 
     const dropdowns = wrapper.find(Dropdown);
-    
+
     expect(dropdowns.length).toEqual(dropdownFilters.length);
     dropdowns.forEach((dropdown, i) => {
       expect(dropdown.props().items).toEqual(dropdownFilters[i].items);
