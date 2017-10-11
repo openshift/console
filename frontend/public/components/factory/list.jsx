@@ -91,7 +91,10 @@ const getFilteredRows = (_filters, objects) => {
   let chain = _.chain(objects);
 
   _.each(_filters, (value, name) => {
-    chain = chain.filter(filters[name].bind({}, value));
+    const filter = filters[name];
+    if (_.isFunction(filter)) {
+      chain = chain.filter(filter.bind({}, value));
+    }
   });
 
   return chain.value();
