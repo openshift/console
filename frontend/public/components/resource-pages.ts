@@ -6,7 +6,7 @@ import { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
 import { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
 import { JobsPage, JobsDetailsPage } from './job';
 import { NamespacesPage, NamespacesDetailsPage } from './namespace';
-import { NetworkPoliciesList, NetworkPoliciesPage, NetworkPoliciesDetailsPage } from './network-policy';
+import { NetworkPoliciesPage, NetworkPoliciesDetailsPage } from './network-policy';
 import { NodesPage, NodesDetailsPage } from './node';
 import { PodsPage, PodsDetailsPage } from './pod';
 import { ReplicaSetsPage, ReplicaSetsDetailsPage } from './replicaset';
@@ -31,12 +31,11 @@ import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
 
 export const resourceListPages = new Map<string, React.ComponentType<any>>()
-  .set('ConfigMaps',ConfigMapsPage)
+  .set('ConfigMaps', ConfigMapsPage)
   .set('DaemonSets', DaemonSetsPage)
   .set('Deployments', DeploymentsPage)
   .set('Jobs', JobsPage)
   .set('Namespaces', NamespacesPage)
-  .set('NetworkPoliciesList', NetworkPoliciesList)
   .set('NetworkPolicies', NetworkPoliciesPage)
   .set('Nodes', NodesPage)
   .set('Pods', PodsPage)

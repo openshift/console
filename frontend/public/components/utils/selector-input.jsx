@@ -9,6 +9,7 @@ export class SelectorInput extends React.Component {
   constructor(props) {
     super(props);
     this.isBasic = !!_.get(this.props.options, 'basic');
+    this.setRef = ref => this.ref_ = ref;
     this.state = {
       inputValue: '',
       isInputValid: true,
@@ -27,6 +28,10 @@ export class SelectorInput extends React.Component {
       result[key] = value;
     });
     return result;
+  }
+
+  focus () {
+    this.ref_ && this.ref_.focus();
   }
 
   isTagValid (tag) {
@@ -97,7 +102,7 @@ export class SelectorInput extends React.Component {
 
     return <div className="co-m-selector-input">
       <tags-input>
-        <TagsInput className="tags" value={tags} addKeys={addKeys} removeKeys={removeKeys} inputProps={inputProps} renderTag={renderTag} onChange={this.handleChange.bind(this)} addOnPaste={true} />
+        <TagsInput ref={this.setRef} className="tags" value={tags} addKeys={addKeys} removeKeys={removeKeys} inputProps={inputProps} renderTag={renderTag} onChange={this.handleChange.bind(this)} addOnPaste={true} />
       </tags-input>
     </div>;
   }

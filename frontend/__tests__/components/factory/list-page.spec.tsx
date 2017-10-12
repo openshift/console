@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { Map } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
-import { TextFilter, BaseListPage, ListPage, MultiListPage } from '../../../public/components/factory/list-page';
-import { NavTitle, Dropdown, Firehose, MultiFirehose } from '../../../public/components/utils';
+import { TextFilter, ListPageWrapper_, FireMan_, ListPage } from '../../../public/components/factory/list-page';
+import { NavTitle, Dropdown, Firehose } from '../../../public/components/utils';
 import { CheckBoxes } from '../../../public/components/row-filter';
 
 describe(TextFilter.displayName, () => {
@@ -32,20 +32,14 @@ describe(TextFilter.displayName, () => {
   });
 });
 
-describe(BaseListPage.displayName, () => {
+describe(FireMan_.displayName, () => {
   let wrapper: ShallowWrapper<any>;
-  let data: any[];
-  const ListComponent = () => <div />;
 
   beforeEach(() => {
-    data = [
-      {kind: 'Pod'},
-      {kind: 'Pod'},
-      {kind: 'Node'},
-    ];
+    const resources = [{kind: 'nodes'}];
     // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
-    const Component = (BaseListPage as any).WrappedComponent;
-    wrapper = shallow(<Component loaded={true} data={data} ListComponent={ListComponent} />);
+    const Component = (FireMan_ as any).WrappedComponent;
+    wrapper = shallow(<Component resources={resources} />);
   });
 
   it('renders `NavTitle` if given `title`', () => {
@@ -80,33 +74,6 @@ describe(BaseListPage.displayName, () => {
     });
   });
 
-  it('does not render create button if loading or load error', () => {
-    wrapper.setProps({canCreate: true, createProps: {}, loaded: false});
-
-    expect(wrapper.find('#yaml-create').exists()).toBe(false);
-
-    wrapper.setProps({canCreate: true, createProps: {}, loaded: true, loadError: 'an error occurred'});
-
-    expect(wrapper.find('#yaml-create').exists()).toBe(false);
-  });
-
-  it('renders expand button if given `canExpand` true', () => {
-    const button = wrapper.find('.co-m-pane__heading').find('.col-xs-12').childAt(0);
-    expect(button.dive().find('.compaction-btn').exists()).toBe(false);
-
-    wrapper.setProps({canExpand: true});
-
-    expect(wrapper.find('.co-m-pane__heading').find('.col-xs-12').childAt(0).dive().find('.compaction-btn').exists()).toBe(true);
-  });
-
-  it('renders `TextFilter` with given props', () => {
-    const filterLabel = 'My filter';
-    wrapper.setProps({filterLabel});
-    const filter = wrapper.find(TextFilter);
-
-    expect(filter.props().label).toEqual(filterLabel);
-  });
-
   it('renders dropdown filters if given `dropdownFilters`', () => {
     const dropdownFilters = [{
       type: 'app-status',
@@ -128,6 +95,33 @@ describe(BaseListPage.displayName, () => {
     });
   });
 
+  it('renders expand button if given `canExpand` true', () => {
+    const button = wrapper.find('.co-m-pane__heading').find('.col-xs-12').childAt(0);
+    expect(button.dive().find('.compaction-btn').exists()).toBe(false);
+
+    wrapper.setProps({canExpand: true});
+
+    expect(wrapper.find('.co-m-pane__heading').find('.col-xs-12').childAt(0).dive().find('.compaction-btn').exists()).toBe(true);
+  });
+
+  it('renders `TextFilter` with given props', () => {
+    const filterLabel = 'My filter';
+    wrapper.setProps({filterLabel});
+    const filter = wrapper.find(TextFilter);
+
+    expect(filter.props().label).toEqual(filterLabel);
+  });
+});
+
+describe(ListPageWrapper_.displayName, () => {
+  const data: any[] = [
+    {kind: 'Pod'},
+    {kind: 'Pod'},
+    {kind: 'Node'},
+  ];
+  const ListComponent = () => <div />;
+  const wrapper: ShallowWrapper = shallow(<ListPageWrapper_ data={data} ListComponent={ListComponent} kinds={['pods']} rowFilters={[]} />);
+
   it('renders row filters if given `rowFilters`', () => {
     const rowFilters = [{
       type: 'app-type',
@@ -139,11 +133,11 @@ describe(BaseListPage.displayName, () => {
       ]
     }];
     wrapper.setProps({rowFilters: rowFilters});
-    const checkboxes = wrapper.find(CheckBoxes);
+    const checkboxes = wrapper.find(CheckBoxes) as any;
 
     expect(checkboxes.length).toEqual(rowFilters.length);
     checkboxes.forEach((checkbox, i) => {
-      const expectedNumbers = data.reduce((acc, item) => acc.update(item.kind, 0, (value) => value + 1), Map<string, number>());
+      const expectedNumbers = data.reduce((acc, item) => acc.update(item.kind, 0, (value) => value + 1), ImmutableMap<string, number>());
 
       expect(checkbox.props().items).toEqual(rowFilters[i].items);
       expect(checkbox.props().numbers).toEqual(expectedNumbers.toJS());
@@ -158,38 +152,10 @@ describe(BaseListPage.displayName, () => {
 });
 
 describe(ListPage.displayName, () => {
-  let wrapper: ShallowWrapper;
   const ListComponent = () => <div />;
+  const wrapper: ShallowWrapper = shallow(<ListPage ListComponent={ListComponent} kind="Pod" filterLabel="Pods by name" />);
 
-  beforeEach(() => {
-    wrapper = shallow(<ListPage ListComponent={ListComponent} kind="Pod" filterLabel="Pods by name" />);
-  });
-
-  it('renders a `Firehose` wrapped `BaseListPage`', () => {
+  it('renders a `Firehose` wrapped `ListPageWrapper_`', () => {
     expect(wrapper.find(Firehose).exists()).toBe(true);
-    expect(wrapper.find(BaseListPage).exists()).toBe(true);
-  });
-});
-
-describe(MultiListPage.displayName, () => {
-  let wrapper: ShallowWrapper;
-  let resources: any[];
-
-  beforeEach(() => {
-    resources = [
-      {kind: 'Pod', namespaced: true},
-      {kind: 'Node', namespaced: true},
-    ];
-    // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
-    const Component = (MultiListPage as any).WrappedComponent;
-    wrapper = shallow(<Component resources={resources} ns="default" />);
-  });
-
-  it('renders a `MultiFirehose` wrapped `BaseListPage`', () => {
-    const multiFirehose = wrapper.find(MultiFirehose);
-    const listPage: ShallowWrapper<any> = wrapper.find(BaseListPage);
-
-    expect(multiFirehose.props().resources).toEqual(resources.map(({kind}) => ({kind: kind, namespace: 'default', prop: kind, isList: true})));
-    expect(listPage.props().kinds).toEqual(resources.map(({kind}) => kind));
   });
 });

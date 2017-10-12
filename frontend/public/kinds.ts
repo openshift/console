@@ -61,6 +61,7 @@ export const kindReducer = (state, action) => {
           id: singular,
           apiVersion: version,
           path: plural,
+          crd: true,
           basePath: `/apis/${group}/`,
         };
       });

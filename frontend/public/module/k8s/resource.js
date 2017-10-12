@@ -107,7 +107,10 @@ export const k8sWatch = (kind, query={}) => {
 
   const labelSelector = query.labelSelector || kind.labelSelector;
   if (labelSelector) {
-    queryParams.labelSelector = encodeURIComponent(selectorToString(labelSelector));
+    const encodedSelector = encodeURIComponent(selectorToString(labelSelector));
+    if (encodedSelector) {
+      queryParams.labelSelector = encodedSelector;
+    }
   }
 
   if (query.fieldSelector) {

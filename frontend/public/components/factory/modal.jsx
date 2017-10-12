@@ -59,7 +59,7 @@ export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, su
     cancel(e);
   };
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
-    <button type="submit" className="btn btn-primary" disabled={submitDisabled}>{submitText}</button>
+    <button type="submit" className="btn btn-primary" disabled={submitDisabled} id="confirm-delete">{submitText}</button>
     <button type="button" onClick={onCancelClick} className="btn btn-link">Cancel</button>
   </ModalFooter>;
 };

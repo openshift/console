@@ -12,8 +12,7 @@ module.exports = {
       locateStrategy: 'xpath'
     },
     deleteModalConfirmButton: {
-      selector: '//button[starts-with(text(), "Delete ")]',
-      locateStrategy: 'xpath'
+      selector: '#confirm-delete',
     },
     saveYAMLButton: {
       selector: '#save-changes',

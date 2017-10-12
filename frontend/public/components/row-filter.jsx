@@ -1,5 +1,8 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import * as classNames from'classnames';
+
+import k8sActions from '../module/k8s/k8s-actions';
 
 const CheckBox = ({title, active, number, toggle}) => {
   const klass = classNames('row-filter--box clickable', {
@@ -11,7 +14,7 @@ const CheckBox = ({title, active, number, toggle}) => {
   </div>;
 };
 
-export class CheckBoxes extends React.Component {
+class CheckBoxes_ extends React.Component {
   constructor (props) {
     super(props);
     this.state = {selected: []};
@@ -22,6 +25,7 @@ export class CheckBoxes extends React.Component {
   }
 
   componentDidMount () {
+    // TODO: (kans) this goes in the URL, not localstorage :-/
     let selected;
     try {
       selected = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
@@ -37,7 +41,7 @@ export class CheckBoxes extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    if (!_.isEqual(this.props.items, prevProps.items)) {
+    if (!_.isEqual(this.props.items, prevProps.items) || !_.isEqual(this.props.reduxIDs, prevProps.reduxIDs)) {
       this.applyFilter();
     }
   }
@@ -46,7 +50,7 @@ export class CheckBoxes extends React.Component {
     const all = _.map(this.props.items, 'id');
     const recognized = _.intersection(this.state.selected, all);
     if (!_.isEmpty(recognized)) {
-      this.props.applyFilter(this.props.type, {selected: new Set(recognized), all});
+      this.props.reduxIDs.forEach(id => this.props.filterList(id, this.props.type, {selected: new Set(recognized), all}));
     }
   }
 
@@ -82,3 +86,5 @@ export class CheckBoxes extends React.Component {
     </div>;
   }
 }
+
+export const CheckBoxes = connect(null, {filterList: k8sActions.filterList})(CheckBoxes_);
