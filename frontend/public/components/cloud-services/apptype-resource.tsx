@@ -80,6 +80,7 @@ export const AppTypeResourcesPage = (props: AppTypeResourcesPageProps) => {
       ListComponent={AppTypeResourceList}
       filterLabel="Resources by name"
       resources={resources}
+      flatten={(resources) => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item))}
       rowFilters={[{
         type: 'apptype-resource-kind',
         selected: props.data.map((resource) => resource.spec.names.kind),
