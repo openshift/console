@@ -180,3 +180,50 @@ $apptype-list-border: #ccc;
     width: 100%;
   }
 }
+
+// Taken directly from Bootstrap 4
+@keyframes progress-bar-stripes {
+  from { background-position: 4px 0; }
+  to { background-position: 0 0; }
+}
+
+.co-catalog-install-progress-bar {
+  display: flex;
+  overflow: hidden; 
+  font-size: .75rem;
+  line-height: 4px;
+  text-align: center;
+  border-radius: 0.25rem;
+  height: 4px;
+  color: #fff;
+  transition: width 0.6s ease;
+  background-size: 4px 4px;
+  background-color: #52a3d9;
+  margin: 15px 0;
+}
+
+.co-catalog-install-progress-bar--failures {
+  background-color: #D64456;
+}
+
+.co-catalog-install-progress-bar--active {
+  background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+.co-catalog-spinner--downloading {
+  color: $color-highlight-blue;
+}
+
+.co-catalog-breakdown__ns-list {
+  margin-top: 15px;
+}
+
+.co-catalog-breakdown__ns-list__item {
+  margin-top: 10px;
+}
+
+.co-catalog-details {
+  display: flex;
+  flex-direction: column;
+}
