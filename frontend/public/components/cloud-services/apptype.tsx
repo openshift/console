@@ -2,15 +2,12 @@
 
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as Immutable from 'immutable';
 import * as _ from 'lodash';
 
 import { AppTypeKind, AppTypeLogo } from './index';
 import { AppTypeResourcesPage } from './apptype-resource';
-import { DetailsPage, ListPage, List, ListHeader, ColHead } from '../factory';
+import { DetailsPage, ListPage, ListHeader, ColHead } from '../factory';
 import { navFactory, FirehoseHoC, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history } from '../utils';
-
-const localCatalogName = 'local';
 
 export const AppTypeListItem: React.StatelessComponent<AppTypeListItemProps> = (props) => {
   const {appType, namespaces = []} = props;
@@ -23,12 +20,12 @@ export const AppTypeListItem: React.StatelessComponent<AppTypeListItemProps> = (
       </div>
     </div>
     <div className="co-apptype-list-item__actions">
-      { namespaces.length > 0
-        ? <Dropdown 
-            title="View details" 
-            items={namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {})} onChange={(ns) => history.push(`${route(appType.metadata.name, ns)}/details`)} />
+      { namespaces.length > 1
+        ? <Dropdown
+          title="View namespace"
+          items={namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {})} onChange={(ns) => history.push(`${route(appType.metadata.name, ns)}/details`)} />
         : <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/details`} title="View details" className="btn btn-default">View details</Link> }
-      { namespaces.length === 0 && <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/resources`} title="View resources">View resources</Link> }
+      { namespaces.length === 1 && <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/resources`} title="View resources">View resources</Link> }
     </div>
   </div>;
 };
@@ -52,55 +49,33 @@ export const AppTypeRow: React.StatelessComponent<AppTypeRowProps> = ({obj: appT
   </div>;
 };
 
-const filterAppTypes = (data: AppTypeKind[] = [], filters = {}) => {
-  return Object.keys(filters).reduce((filteredData, filterName) => {
+export const AppTypeList: React.StatelessComponent<AppTypeListProps> = (props) => {
+  const apps = Object.keys(props.filters).reduce((filteredData, filterName) => {
     switch (filterName) {
       case 'name':
-        return filteredData.filter((appType) => appType.spec.displayName.toLowerCase().includes(filters[filterName]));
+        return filteredData.filter((appType) => appType.spec.displayName.toLowerCase().includes(props.filters[filterName].toLowerCase()));
       default:
         return filteredData;
     }
-  }, data);
-};
+  }, props.data || []);
 
-const appsByCatalog = (appTypes: AppTypeKind[]) => {
-  return appTypes.reduce((acc, appType) => {
-    const catalogName: string = appType.spec.labels['alm-catalog'];
-
-    if (catalogName) {
-      return acc.update(catalogName, (apps = []) => apps.concat([appType]));
-    }
-
-    return acc.update(localCatalogName, (apps = []) => apps.concat([appType]));
-  }, Immutable.Map<string, AppTypeKind[]>());
-};
-
-export const AppTypeList: React.StatelessComponent<AppTypeListProps> = (props) => {
-  const {filters} = props;
-  const data = filterAppTypes(props.data, filters);
-  const apps = appsByCatalog(data);
-
-  const namespacesForApp = data.reduce((namespaces, app) => {
+  const namespacesForApp = apps.reduce((namespaces, app) => {
     return namespaces.set(app.metadata.name, (namespaces.get(app.metadata.name) || []).concat([app.metadata.namespace]));
   }, new Map<string, string[]>());
 
-  return props.loaded && data.length > 0
+  return props.loaded && apps.length > 0
     ? <div className="co-apptype-list">
-      { apps.filter((_, key) => key !== localCatalogName).map((appsForCatalog, key) => <div className="co-apptype-list__section co-apptype-list__section--catalog" key={key}>
+      <div className="co-apptype-list__section co-apptype-list__section--catalog">
         <div>
-          <h1 className="co-section-title">{key}</h1>
+          <h1 className="co-section-title">Open Cloud Services</h1>
         </div>
         <div className="co-apptype-list__section--catalog__items">
-          { appsForCatalog.map((appType, i) => <div className="co-apptype-list__section--catalog__items__item" key={i}>
+          { apps.reduce((visibleApps: AppTypeKind[], app) => {
+            return (visibleApps.find(csv => csv.metadata.name === app.metadata.name) === undefined) ? visibleApps.concat([app]) : visibleApps;
+          }, []).map((appType, i) => <div className="co-apptype-list__section--catalog__items__item" key={i}>
             <AppTypeListItem appType={appType} namespaces={namespacesForApp.get(appType.metadata.name)} />
           </div>) }
         </div>
-      </div>) }
-      <div className="co-apptype-list__section">
-        <div className="co-section-title">
-          <h1>Local Applications</h1>
-        </div>
-        <List {...props} label="Local Applications" data={apps.get(localCatalogName)} Header={AppTypeHeader} Row={AppTypeRow} />
       </div>
     </div>
     : <StatusBox label="Applications" loaded={props.loaded} />;
@@ -165,7 +140,6 @@ export type AppTypeListProps = {
   loaded: boolean;
   data: AppTypeKind[];
   filters: {[key: string]: any};
-  match?: {params: {[key: string]: string}};
 };
 
 export type AppTypeListItemProps = {
