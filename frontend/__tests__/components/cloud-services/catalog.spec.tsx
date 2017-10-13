@@ -5,14 +5,14 @@ import * as _ from 'lodash';
 import { ShallowWrapper, shallow } from 'enzyme';
 import { Helmet } from 'react-helmet';
 
-import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage } from '../../../public/components/cloud-services/catalog';
+import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
 import { AppTypeLogo, AppTypeKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
 import { ListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
 import { NavTitle } from '../../../public/components/utils';
 import { testCatalogApp, testAppType, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 
-describe(CatalogAppRow.name, () => {
-  let wrapper: ShallowWrapper<CatalogAppRowProps>;
+describe('CatalogAppRow', () => {
+  let wrapper: ShallowWrapper<CatalogAppRowProps, CatalogAppRowState>;
   let namespaces: CatalogAppRowProps['namespaces'];
   let clusterServiceVersions: AppTypeKind[];
 
@@ -38,10 +38,16 @@ describe(CatalogAppRow.name, () => {
     expect(logo.props().icon).toEqual(testCatalogApp.spec.icon[0]);
   });
 
+  it('renders link to expand/hide the row', () => {
+    const col = wrapper.childAt(1);
+
+    expect(col.find('a').text()).toEqual('Show Details');
+  });
+
   it('renders empty state for column if given empty list of `ClusterServiceVersions`', () => {
     const col = wrapper.childAt(1);
 
-    expect(col.childAt(0).shallow().text()).toEqual('Not installed');
+    expect(col.childAt(0).childAt(0).shallow().text()).toEqual('Not installed');
   });
 
   it('renders installing state if at least one given `ClusterServiceVersion` status phase is `Installing`', () => {
@@ -51,17 +57,105 @@ describe(CatalogAppRow.name, () => {
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.childAt(1);
 
-    expect(col.childAt(0).shallow().text()).toEqual('Installing...');
+    expect(col.childAt(0).childAt(0).shallow().text()).toEqual(`Installing... (2 of ${clusterServiceVersions.length} namespaces)`);
   });
 
   it('renders error state if at least one given `ClusterServiceVersion` status phase is `Failed`', () => {
     clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
+    clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.childAt(1);
 
-    expect(col.childAt(0).shallow().text()).toEqual('Installation Error');
+    expect(col.childAt(0).childAt(0).shallow().text()).toEqual('Installation Error (1 namespace failed, 1 namespace pending, 1 namespace installed)');
+  });
+
+  it('renders success state if all `ClusterServiceVersions` statuses are `Succeeded`', () => {
+    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+
+    wrapper.setProps({clusterServiceVersions});
+    const col = wrapper.childAt(1);
+
+    expect(col.childAt(0).childAt(0).shallow().text()).toEqual(`Installed (${clusterServiceVersions.length} namespaces)`);
+  });
+
+  it('renders error progress bar in expanded state if at least one `ClusterServiceVersion` status is `Failed`', () => {
+    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
+
+    wrapper.setProps({clusterServiceVersions});
+    const col = wrapper.childAt(1);
+    const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--failures');
+
+    expect(progressBar.exists()).toBe(true);
+  });
+
+  it('renders active progress bar in expanded state if at least one `ClusterServiceVersion` status is `Pending` or `Installing`', () => {
+    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
+
+    wrapper.setProps({clusterServiceVersions});
+    const col = wrapper.childAt(1);
+    const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--active');
+
+    expect(progressBar.exists()).toBe(true);
+  });
+
+  it('does not render progress bar in expanded state if all `ClusterServiceVersion` status are `Succeeded`', () => {
+    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+
+    wrapper.setProps({clusterServiceVersions});
+    wrapper.setState({expand: true});
+    const col = wrapper.childAt(1);
+    const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--active');
+
+    expect(progressBar.exists()).toBe(false);
+  });
+
+  it('renders list of namespace statuses in correct priority order in expanded state', () => {
+    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
+    clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
+
+    wrapper.setProps({clusterServiceVersions});
+    const col = wrapper.childAt(1);
+    const namespaceList = col.childAt(1).childAt(0).shallow().find('ul').find('li');
+
+    expect(namespaceList.length).toEqual(clusterServiceVersions.length);
+    expect(namespaceList.at(0).text()).toContain(clusterServiceVersions[0].metadata.namespace);
+    expect(namespaceList.at(1).text()).toContain(clusterServiceVersions[1].metadata.namespace);
+    expect(namespaceList.at(2).text()).toContain(clusterServiceVersions[2].metadata.namespace);
+  });
+
+  it('renders status reason next to failed namespaces', () => {
+    clusterServiceVersions = [_.cloneDeep(testAppType)];
+    clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
+
+    wrapper.setProps({clusterServiceVersions});
+    const col = wrapper.childAt(1);
+    const namespaceList = col.childAt(1).childAt(0).shallow().find('ul').find('li');
+
+    namespaceList.forEach((item, i) => {
+      expect(item.text()).toEqual(`${clusterServiceVersions[i].metadata.namespace}: ${clusterServiceVersions[i].status.reason}`);
+    });
+  });
+
+  it('shows collapsed row by default', () => {
+    const col = wrapper.childAt(1);
+
+    expect(col.children().length).toEqual(1);
+  });
+
+  it('shows expanded state if at least one `ClusterServiceVersion` status is not `Succeeded`', () => {
+    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
+    clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
+
+    wrapper.setProps({clusterServiceVersions});
+    const col = wrapper.childAt(1);
+
+    expect(col.childAt(2).exists()).toBe(true);
   });
 
   it('renders column for actions', () => {
@@ -144,8 +238,12 @@ describe(CatalogDetails.name, () => {
 
   it('renders info section', () => {
     const section = wrapper.find('.co-m-pane__body');
+    const name = wrapper.findWhere(node => node.equals(<dt>Name</dt>)).parent().find('dd');
+    const provider = wrapper.findWhere(node => node.equals(<dt>Provider</dt>)).parent().find('dd');
 
     expect(section.exists()).toBe(true);
+    expect(name.text()).toEqual('Open Cloud Services');
+    expect(provider.text()).toEqual('CoreOS, Inc');
   });
 
   it('renders section with list of available applications from the catalog', () => {

@@ -2,13 +2,14 @@
 
 import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
+import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
 import { AppTypesDetailsPage, AppTypesDetailsPageProps, AppTypeDetails, AppTypeDetailsProps, AppTypesPage, AppTypesPageProps, AppTypeList, AppTypeListProps, AppTypeListItem, AppTypeListItemProps, AppTypeHeader, AppTypeRow } from '../../../public/components/cloud-services/apptype';
 import { AppTypeKind, AppTypeLogo, AppTypeLogoProps } from '../../../public/components/cloud-services';
 import { DetailsPage, ListPage, List } from '../../../public/components/factory';
 import { testAppType, localAppType } from '../../../__mocks__/k8sResourcesMocks';
-import { StatusBox, LoadingBox, Timestamp, Overflow } from '../../../public/components/utils';
+import { StatusBox, LoadingBox, Timestamp, Overflow, Dropdown } from '../../../public/components/utils';
 
 describe('AppTypeLogo', () => {
   let wrapper: ReactWrapper<AppTypeLogoProps>;
@@ -45,7 +46,7 @@ describe('AppTypeListItem', () => {
   let wrapper: ShallowWrapper<AppTypeListItemProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<AppTypeListItem appType={testAppType} />);
+    wrapper = shallow(<AppTypeListItem appType={testAppType} namespaces={[]} />);
   });
 
   it('renders AppType logo', () => {
@@ -58,11 +59,34 @@ describe('AppTypeListItem', () => {
     expect(logo.props().provider).toEqual(testAppType.spec.provider);
   });
 
-  xit('renders AppType description', () => {
-    const info = wrapper.find('.co-apptype-list-item__body');
+  it('renders button to view details for given application', () => {
+    const detailsButton = wrapper.find('.co-apptype-list-item__actions').find(Link).at(0);
 
-    expect(info.exists()).toBe(true);
-    expect(info.text()).toEqual(testAppType.spec.description);
+    expect(detailsButton.props().title).toEqual('View details');
+    expect(detailsButton.childAt(0).text()).toEqual('View details');
+    expect(detailsButton.props().to).toEqual(`/ns/${testAppType.metadata.namespace}/clusterserviceversion-v1s/${testAppType.metadata.name}/details`);
+    expect(detailsButton.hasClass('btn')).toBe(true);
+  });
+
+  it('renders dropdown of installed namespaces if given', () => {
+    const namespaces = ['default', 'my-testapp-ns', 'other-ns'];
+    wrapper.setProps({namespaces});
+
+    const dropdown = wrapper.find('.co-apptype-list-item__actions').find(Dropdown);
+    const detailsButton = wrapper.find('.co-apptype-list-item__actions').find(Link);
+
+    expect(dropdown.exists()).toBe(true);
+    expect(dropdown.props().title).toEqual('View details');
+    expect(dropdown.props().items).toEqual(namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {}));
+    expect(detailsButton.exists()).toBe(false);
+  });
+
+  it('renders link to application resources', () => {
+    const link = wrapper.find('.co-apptype-list-item__actions').find(Link).at(1);
+
+    expect(link.props().title).toEqual('View resources');
+    expect(link.childAt(0).text()).toEqual('View resources');
+    expect(link.props().to).toEqual(`/ns/${testAppType.metadata.namespace}/clusterserviceversion-v1s/${testAppType.metadata.name}/resources`);
   });
 });
 

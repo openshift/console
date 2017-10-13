@@ -8,13 +8,13 @@ import * as _ from 'lodash';
 import { AppTypeKind, AppTypeLogo } from './index';
 import { AppTypeResourcesPage } from './apptype-resource';
 import { DetailsPage, ListPage, List, ListHeader, ColHead } from '../factory';
-import { navFactory, FirehoseHoC, StatusBox, Timestamp, ResourceLink, Overflow } from '../utils';
+import { navFactory, FirehoseHoC, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history } from '../utils';
 
 const localCatalogName = 'local';
 
-export const AppTypeListItem = (props: AppTypeListItemProps) => {
-  const {appType} = props;
-  const route = `/ns/${appType.metadata.namespace}/clusterserviceversion-v1s/${appType.metadata.name}`;
+export const AppTypeListItem: React.StatelessComponent<AppTypeListItemProps> = (props) => {
+  const {appType, namespaces = []} = props;
+  const route = (name, namespace) => `/ns/${namespace}/clusterserviceversion-v1s/${name}`;
 
   return <div className="co-apptype-list-item">
     <div className="co-apptype-list-item__heading">
@@ -23,18 +23,22 @@ export const AppTypeListItem = (props: AppTypeListItemProps) => {
       </div>
     </div>
     <div className="co-apptype-list-item__actions">
-      <Link to={`${route}/details`} title="View details" className="btn btn-default">View details</Link>
-      <Link to={`${route}/resources`} title="View resources">View resources</Link>
+      { namespaces.length > 0
+        ? <Dropdown 
+            title="View details" 
+            items={namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {})} onChange={(ns) => history.push(`${route(appType.metadata.name, ns)}/details`)} />
+        : <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/details`} title="View details" className="btn btn-default">View details</Link> }
+      { namespaces.length === 0 && <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/resources`} title="View resources">View resources</Link> }
     </div>
   </div>;
 };
 
-export const AppTypeHeader = () => <ListHeader>
+export const AppTypeHeader: React.StatelessComponent = () => <ListHeader>
   <ColHead className="col-xs-8">Name</ColHead>
   <ColHead className="col-xs-4">Actions</ColHead>
 </ListHeader>;
 
-export const AppTypeRow = ({obj: appType}) => {
+export const AppTypeRow: React.StatelessComponent<AppTypeRowProps> = ({obj: appType}) => {
   const route = `/ns/${appType.metadata.namespace}/clusterserviceversion-v1s/${appType.metadata.name}`;
 
   return <div className="row co-resource-list__item">
@@ -71,10 +75,14 @@ const appsByCatalog = (appTypes: AppTypeKind[]) => {
   }, Immutable.Map<string, AppTypeKind[]>());
 };
 
-export const AppTypeList = (props: AppTypeListProps) => {
+export const AppTypeList: React.StatelessComponent<AppTypeListProps> = (props) => {
   const {filters} = props;
   const data = filterAppTypes(props.data, filters);
   const apps = appsByCatalog(data);
+
+  const namespacesForApp = data.reduce((namespaces, app) => {
+    return namespaces.set(app.metadata.name, (namespaces.get(app.metadata.name) || []).concat([app.metadata.namespace]));
+  }, new Map<string, string[]>());
 
   return props.loaded && data.length > 0
     ? <div className="co-apptype-list">
@@ -84,7 +92,7 @@ export const AppTypeList = (props: AppTypeListProps) => {
         </div>
         <div className="co-apptype-list__section--catalog__items">
           { appsForCatalog.map((appType, i) => <div className="co-apptype-list__section--catalog__items__item" key={i}>
-            <AppTypeListItem appType={appType} />
+            <AppTypeListItem appType={appType} namespaces={namespacesForApp.get(appType.metadata.name)} />
           </div>) }
         </div>
       </div>) }
@@ -98,11 +106,11 @@ export const AppTypeList = (props: AppTypeListProps) => {
     : <StatusBox label="Applications" loaded={props.loaded} />;
 };
 
-export const AppTypesPage = (props: AppTypesPageProps) => (
+export const AppTypesPage: React.StatelessComponent<AppTypesPageProps> = (props) => (
   <ListPage {...props} ListComponent={AppTypeList} filterLabel="Applications by name" title="Installed Applications" showTitle={true} />
 );
 
-export const AppTypeDetails = (props: AppTypeDetailsProps) => {
+export const AppTypeDetails: React.StatelessComponent<AppTypeDetailsProps> = (props) => {
   const {spec, metadata} = props.obj;
 
   return <div className="co-apptype-details co-m-pane__body">
@@ -147,7 +155,7 @@ const pages = [
   {href: 'resources', name: 'Resources', component: Resources},
 ];
 
-export const AppTypesDetailsPage = (props: AppTypesDetailsPageProps) => <DetailsPage {...props} pages={pages} />;
+export const AppTypesDetailsPage: React.StatelessComponent<AppTypesDetailsPageProps> = (props) => <DetailsPage {...props} pages={pages} />;
 
 export type AppTypesPageProps = {
   kind: string;
@@ -157,10 +165,12 @@ export type AppTypeListProps = {
   loaded: boolean;
   data: AppTypeKind[];
   filters: {[key: string]: any};
+  match?: {params: {[key: string]: string}};
 };
 
 export type AppTypeListItemProps = {
   appType: AppTypeKind;
+  namespaces: string[];
 };
 
 export type AppTypesDetailsPageProps = {
@@ -172,3 +182,14 @@ export type AppTypesDetailsPageProps = {
 export type AppTypeDetailsProps = {
   obj: AppTypeKind;
 };
+
+export type AppTypeRowProps = {
+  obj: AppTypeKind;
+};
+
+AppTypeListItem.displayName = 'AppTypeListItem';
+AppTypesPage.displayName = 'AppTypesPage';
+AppTypeList.displayName = 'AppTypeList';
+AppTypesDetailsPage.displayName = 'AppTypesDetailsPage';
+AppTypeRow.displayName = 'AppTypeRow';
+AppTypeHeader.displayName = 'AppTypeHeader';
