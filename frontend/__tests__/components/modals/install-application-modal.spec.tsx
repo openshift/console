@@ -10,8 +10,10 @@ import { ListHeader, ColHead, List } from '../../../public/components/factory';
 import { ResourceLink, LabelList } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { k8sKinds } from '../../../public/module/k8s';
+import { testAppType, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
+import { AppTypeLogo, AppTypeKind } from '../../../public/components/cloud-services';
 
-describe(SelectNamespaceHeader.name, () => {
+describe('SelectNamespaceHeader', () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;
 
   beforeEach(() => {
@@ -30,9 +32,15 @@ describe(SelectNamespaceHeader.name, () => {
 
     expect(colHeader.childAt(0).text()).toEqual('Labels');
   });
+
+  it('renders a column header for namespace install status', () => {
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(2);
+
+    expect(colHeader.childAt(0).text()).toEqual('Status');
+  });
 });
 
-describe(SelectNamespaceRow.name, () => {
+describe('SelectNamespaceRow', () => {
   let wrapper: ShallowWrapper<SelectNamespaceRowProps>;
   let namespace: {metadata: {name: string, namespace: string, uid: string, labels: {[key: string]: string}}};
   let onSelect: Spy;
@@ -42,26 +50,17 @@ describe(SelectNamespaceRow.name, () => {
     onSelect = jasmine.createSpy('onSelect');
     onDeselect = jasmine.createSpy('onDeselect');
     namespace = {metadata: {name: 'default', namespace: 'default', uid: 'abcd', labels: {}}};
-    wrapper = shallow(<SelectNamespaceRow obj={namespace} selected={false} preSelected={false} onDeselect={onDeselect} onSelect={onSelect} />);
+    wrapper = shallow(<SelectNamespaceRow obj={namespace} selected={false} onDeselect={onDeselect} onSelect={onSelect} />);
   });
 
-  it('renders column with checkbox if not pre-selected', () => {
+  it('renders column with checkbox', () => {
     const col = wrapper.childAt(0);
     const checkbox = col.find('input');
 
     expect(checkbox.props().type).toEqual('checkbox');
     expect(checkbox.props().value).toEqual(namespace.metadata.name);
     expect(checkbox.props().checked).toEqual(false);
-    expect(checkbox.props().disabled).toEqual(false);
     expect(col.find('.fa-check').exists()).toBe(false);
-  });
-
-  it('renders a checkmark instead of checkbox if pre-selected', () => {
-    wrapper.setProps({preSelected: true});
-    const col = wrapper.childAt(0);
-
-    expect(col.find('input').exists()).toBe(false);
-    expect(col.find('.fa-check').exists()).toBe(true);
   });
 
   it('renders column for namespace name', () => {
@@ -81,6 +80,12 @@ describe(SelectNamespaceRow.name, () => {
     expect(col.find(LabelList).props().labels).toEqual(namespace.metadata.labels);
   });
 
+  it('renders column for namespace install status', () => {
+    const col = wrapper.childAt(2);
+
+    expect(col.text()).toEqual('Not installed');
+  });
+
   it('calls `props.onSelect` when checkbox is clicked and not checked', () => {
     wrapper.find('input').simulate('change');
 
@@ -97,10 +102,10 @@ describe(SelectNamespaceRow.name, () => {
   });
 });
 
-describe(InstallApplicationModal.name, () => {
-  const clusterServiceVersion = 'test';
+describe('InstallApplicationModal', () => {
   let wrapper: ShallowWrapper<InstallApplicationModalProps, any>;
   let namespaces: InstallApplicationModalProps['namespaces'];
+  let clusterServiceVersions: AppTypeKind[];
   let watchK8sList: Spy;
   let k8sCreate: Spy;
   let close: Spy;
@@ -111,6 +116,7 @@ describe(InstallApplicationModal.name, () => {
     k8sCreate = jasmine.createSpy('k8sCreate');
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
+    clusterServiceVersions = [_.cloneDeep(testAppType)];
     namespaces = {
       data: {
         'default': {metadata: {name: 'default', labels: {}}},
@@ -120,28 +126,38 @@ describe(InstallApplicationModal.name, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<InstallApplicationModal clusterServiceVersion={clusterServiceVersion} namespaces={namespaces} clusterServiceVersions={[]} k8sCreate={k8sCreate} watchK8sList={watchK8sList} close={close} cancel={cancel} />);
+    wrapper = shallow(<InstallApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} watchK8sList={watchK8sList} close={close} cancel={cancel} />);
   });
 
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
-    expect(wrapper.find(ModalTitle).childAt(0).text()).toEqual('Application Namespaces');
+    expect(wrapper.find(ModalTitle).exists()).toBe(true);
     expect(wrapper.find(ModalBody).find('.modal-body__field').text()).toEqual('Select the namespaces where you want to install and run the application.');
     expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save Changes');
   });
 
-  it('renders a list of available namespaces', () => {
+  it('renders application logo in modal title', () => {
+    const logo = wrapper.find(ModalTitle).find(AppTypeLogo);
+
+    expect(logo.exists()).toBe(true);
+    expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
+    expect(logo.props().provider).toEqual(testCatalogApp.spec.provider);
+    expect(logo.props().icon).toEqual(testCatalogApp.spec.icon[0]);
+  });
+
+  it('renders a list of only available namespaces', () => {
+    const availableNamespaces = [namespaces.data['other-ns']];
+
     const list: ShallowWrapper<any> = wrapper.find(ModalBody).find(List);
     const Row = list.props().Row;
     const row = shallow(<Row obj={namespaces.data.default} />).find(SelectNamespaceRow);
 
     expect(list.props().loaded).toEqual(namespaces.loaded);
     expect(list.props().loadError).toEqual(namespaces.loadError);
-    expect(list.props().data).toEqual(_.values(namespaces.data));
+    expect(list.props().data).toEqual(availableNamespaces);
     expect(list.props().Header).toEqual(SelectNamespaceHeader);
     expect(row.props().obj).toEqual(namespaces.data.default);
     expect(row.props().selected).toBe(false);
-    expect(row.props().preSelected).toBe(false);
   });
 
   it('calls `props.k8sCreate` for each selected namespace when form is submitted', (done) => {
@@ -156,11 +172,11 @@ describe(InstallApplicationModal.name, () => {
           apiVersion: 'app.coreos.com/v1alpha1',
           kind: 'InstallPlan-v1',
           metadata: {
-            name: clusterServiceVersion,
+            generateName: `${testAppType.metadata.name}-`,
             namespace,
           },
           spec: {
-            clusterServiceVersions: [clusterServiceVersion],
+            clusterServiceVersionNames: [testAppType.metadata.name],
           },
         });
       });

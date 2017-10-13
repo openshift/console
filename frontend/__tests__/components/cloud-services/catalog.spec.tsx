@@ -34,7 +34,7 @@ describe('CatalogAppRow', () => {
     const logo = col.find(AppTypeLogo);
 
     expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
-    expect(logo.props().provider.name).toEqual(testCatalogApp.spec.provider);
+    expect(logo.props().provider).toEqual(testCatalogApp.spec.provider);
     expect(logo.props().icon).toEqual(testCatalogApp.spec.icon[0]);
   });
 
@@ -147,7 +147,7 @@ describe('CatalogAppRow', () => {
     expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(true);
   });
 
-  it('shows expanded state if at least one `ClusterServiceVersion` status is not `Succeeded`', () => {
+  it('shows expanded state if at least one `ClusterServiceVersion` status is not `Succeeded` when first mounted', () => {
     clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};

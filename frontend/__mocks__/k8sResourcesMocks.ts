@@ -178,7 +178,7 @@ export const testInstallPlan: InstallPlanKind = {
     name: 'etcd',
   },
   spec: {
-    clusterServiceVersions: ['etcd'],
+    clusterServiceVersionNames: ['etcd'],
     approval: 'Automatic',
   },
   status: {
