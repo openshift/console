@@ -27,23 +27,34 @@ export class Line extends BaseGraph {
         rangemode: 'tozero',
         zeroline: false,
         color: '#333',
+        ticks: 'inside',
+        tickcolor: '#666',
+        linecolor: '#666',
+        linewidth: 1,
+        mirror: true
       },
       xaxis: {
         zeroline: false,
         tickformat:'%H:%M',
         color: '#333',
+        ticks: 'inside',
+        tickcolor: '#666',
+        linecolor: '#666',
+        linewidth: 1,
+        mirror: true
       },
       legend: {
         x: 0, y: 1,
-        bgcolor: 'rgba(255, 255, 255, 0)',
+        bgcolor: 'rgba(255, 255, 255, 0.5)',
+        size: '12px',
         orientation: 'h'
       },
       margin: {
         l: 50,
         b: 30,
         r: 10,
-        t: 10,
-        pad: 10,
+        t: 0,
+        pad: 0,
       },
     };
     this.style={width: '100%'};

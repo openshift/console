@@ -2,9 +2,9 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding-top: 15px; // So graph title doesn't abut border
-  padding-bottom: 10px; // So graphs don't intersect with rounded corners
   margin-top: 8px;
   margin-bottom: 8px;
+  overflow: hidden;
 }
 
 .graph-title {
