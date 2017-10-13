@@ -37,7 +37,8 @@ export class SelectorInput extends React.Component {
   handleInputChange (e) {
     // We track the input field value in state so we can retain the input value when an invalid tag is entered.
     // Otherwise, the default behaviour of TagsInput is to clear the input field.
-    this.setState({inputValue: e.target.value, isInputValid: true});
+    const inputValue = e.target.value;
+    this.setState({inputValue, isInputValid: this.isTagValid(inputValue)});
   }
 
   handleChange (tags, changed) {
@@ -72,8 +73,8 @@ export class SelectorInput extends React.Component {
   render () {
     const {inputValue, isInputValid, tags} = this.state;
 
-    // Keys that add tags: Tab, enter, space, comma
-    const addKeys = [9, 13, 32, 188];
+    // Keys that add tags: Enter
+    const addKeys = [13];
 
     // Backspace deletes tags, but not if there is text being edited in the input field
     const removeKeys = inputValue.length ? [] : [8];
