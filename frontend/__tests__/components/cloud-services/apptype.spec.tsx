@@ -5,7 +5,7 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { AppTypesDetailsPage, AppTypesDetailsPageProps, AppTypeDetails, AppTypeDetailsProps, AppTypesPage, AppTypesPageProps, AppTypeList, AppTypeListProps, AppTypeListItem, AppTypeListItemProps, } from '../../../public/components/cloud-services/apptype';
+import { AppTypesDetailsPage, AppTypesDetailsPageProps, AppTypeDetails, AppTypeDetailsProps, AppTypesPage, AppTypesPageProps, AppTypeList, AppTypeListProps, AppTypeListItem, AppTypeListItemProps, AppTypeListState } from '../../../public/components/cloud-services/apptype';
 import { AppTypeKind, AppTypeLogo, AppTypeLogoProps } from '../../../public/components/cloud-services';
 import { DetailsPage, ListPage } from '../../../public/components/factory';
 import { testAppType, localAppType } from '../../../__mocks__/k8sResourcesMocks';
@@ -91,7 +91,7 @@ describe('AppTypeListItem', () => {
 });
 
 describe('AppTypeList', () => {
-  let wrapper: ShallowWrapper<AppTypeListProps>;
+  let wrapper: ShallowWrapper<AppTypeListProps, AppTypeListState>;
   let apps: AppTypeKind[];
 
   beforeEach(() => {
@@ -136,12 +136,28 @@ describe('AppTypeList', () => {
     expect(statusBox.find(LoadingBox).exists()).toBe(false);
   });
 
-  it('filters visible AppTypes by `spec.displayName`', () => {
+  it('filters visible AppTypes by `name`', () => {
     const searchFilter = apps[0].spec.displayName.slice(0, 2);
     wrapper = wrapper.setProps({filters: {name: searchFilter}});
-    const list: ShallowWrapper = wrapper.find('.co-apptype-list__section--catalog__items');
+    const list = wrapper.find('.co-apptype-list__section--catalog__items');
 
     expect(list.children().length).toEqual(apps.filter(app => app.spec.displayName.toLowerCase().includes(searchFilter.toLowerCase())).length);
+  });
+
+  it('filters visible AppTypes by `running status`', () => {
+    const resourceExists = new Map<string, boolean>();
+    resourceExists.set('prometheuses.monitoring.coreos.com', true);
+    apps[0].spec.customresourcedefinitions.owned = [...resourceExists.keys()].map(name => Object.assign({}, {name}));
+
+    wrapper.setProps({data: apps, filters: {'apptype-status': 'notRunning'}});
+    wrapper.setState({resourceExists});
+    const list = wrapper.find('.co-apptype-list__section--catalog__items');
+
+    expect(list.children().length).toEqual(apps.filter(({spec}) => spec.customresourcedefinitions.owned.map(({name}) => resourceExists.get(name) || false).indexOf(true) === -1).length);
+  });
+
+  it('filters visible AppTypes by `catalog source`', () => {
+    // TODO(alecmerdler)
   });
 
   it('does not render duplicate AppTypes', () => {
