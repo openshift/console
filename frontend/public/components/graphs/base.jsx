@@ -59,12 +59,11 @@ export class BaseGraph extends SafetyFirst {
         }
       })
       .catch(error => this.updateGraph(null, error))
-      .then(() => {
+      .then(() => this.interval = setTimeout(() => {
         if (this.isMounted_) {
-          return;
+          this.fetch();
         }
-        this.interval = setTimeout(() => this.fetch(), pollInterval);
-      });
+      }, pollInterval));
   }
 
   componentWillMount () {
