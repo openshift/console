@@ -92,8 +92,15 @@ export class Line extends BaseGraph {
   }
 
   updateGraph (data) {
+    let queries = this.props.query;
+    if (!_.isArray(queries)) {
+      queries = [{
+        query: queries,
+        name: this.props.title,
+      }];
+    }
     _.each(data, (result, i) => {
-      const query = this.props.query[i];
+      const query = queries[i];
       const name = query && query.name;
       if (result.data.result.length === 0) {
         // eslint-disable-next-line no-console
