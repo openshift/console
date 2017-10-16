@@ -5,58 +5,12 @@ import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { AppTypeResourceList, AppTypeResourceListProps, AppTypeResourceHeaderProps, AppTypeResourceRowProps, AppTypeResourceHeader, AppTypeResourceRow, AppTypeResourceOutput, AppTypeResourceOutputProps, AppTypeResourceDetails, AppTypeResourcesDetailsPage, AppTypeResourcesDetailsPageProps, AppTypeResourcesDetailsProps } from '../../../public/components/cloud-services/apptype-resource';
-import { AppTypeResourceKind, ALMCapabilites } from '../../../public/components/cloud-services';
-import { testAppTypeResource, testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { AppTypeResourceList, AppTypeResourceListProps, AppTypeResourceHeaderProps, AppTypeResourcesDetailsState, AppTypeResourceRowProps, AppTypeResourceHeader, AppTypeResourceRow, AppTypeResourceDetails, AppTypePrometheusGraph, AppTypeResourcesDetailsPageProps, AppTypeResourcesDetailsProps, AppTypeResourceStatus, AppTypeResourcesDetailsPage, PrometheusQueryTypes } from '../../../public/components/cloud-services/apptype-resource';
+import { AppTypeResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
+import { testAppTypeResource, testResourceInstance, testAppType } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage } from '../../../public/components/factory';
-import { ResourceLink, Timestamp, LabelList } from '../../../public/components/utils';
-
-describe('AppTypeResourceOutput', () => {
-  let wrapper: ShallowWrapper<AppTypeResourceOutputProps>;
-  let outputDefinition: AppTypeResourceOutputProps['outputDefinition'];
-  let outputValue: any;
-
-  beforeEach(() => {
-    outputDefinition = JSON.parse(testAppTypeResource.metadata.annotations.outputs)['testapp-dashboard'];
-    outputValue = testResourceInstance.outputs['testapp-dashboard'];
-    wrapper = shallow(<AppTypeResourceOutput outputDefinition={outputDefinition} outputValue={outputValue} />);
-  });
-
-  it('renders output value as string', () => {
-    expect(wrapper.text()).toEqual(outputValue.toString());
-  });
-
-  it('renders a formatted link if output definition capabilities contain `w3Link`', () => {
-    wrapper.setProps({outputDefinition: Object.assign({}, outputDefinition, {'x-alm-capabilities': [ALMCapabilites.w3Link]})});
-    const link = wrapper.find('a');
-
-    expect(link.exists()).toBe(true);
-    expect(link.text()).toEqual(outputValue.toString().replace(/https?:\/\//, ''));
-  });
-
-  it('renders a formatted link if output definition capabilities contain `tectonicLink`', () => {
-    wrapper.setProps({outputDefinition: Object.assign({}, outputDefinition, {'x-alm-capabilities': [ALMCapabilites.tectonicLink]})});
-    const link = wrapper.find('a');
-
-    expect(link.exists()).toBe(true);
-    expect(link.text()).toEqual(outputValue.toString().replace(/https?:\/\//, ''));
-  });
-
-  it('renders formatted link to each Prometheus query based on output value if output definition capabilites contain `metrics`', () => {
-    outputDefinition = JSON.parse(testAppTypeResource.metadata.annotations.outputs)['testapp-metrics'];
-    outputValue = testResourceInstance.outputs['testapp-metrics'];
-    wrapper.setProps({outputDefinition, outputValue});
-
-    const metricsData = JSON.parse(outputValue);
-    metricsData.metrics.forEach((metrics, i) => {
-      const link = wrapper.find('a').at(i);
-
-      expect(link.exists()).toBe(true);
-      expect(link.text()).toEqual(metrics.name);
-      expect(link.props().href).toEqual(`${metricsData.endpoint}/graphs?g0.expr=${metrics.query}`);
-    });
-  });
-});
+import { ResourceLink, Timestamp, LabelList, ResourceSummary } from '../../../public/components/utils';
+import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 
 describe('AppTypeResourceHeader', () => {
   let wrapper: ShallowWrapper<AppTypeResourceHeaderProps>;
@@ -176,22 +130,26 @@ describe('AppTypeResourceList', () => {
 });
 
 describe('AppTypeResourcesDetails', () => {
-  let wrapper: ShallowWrapper<AppTypeResourcesDetailsProps>;
+  let wrapper: ShallowWrapper<AppTypeResourcesDetailsProps, AppTypeResourcesDetailsState>;
   let resourceDefinition: any;
 
   beforeEach(() => {
     resourceDefinition = {
+      path: testAppTypeResource.metadata.name.split('.')[0],
       annotations: testAppTypeResource.metadata.annotations,
     };
     // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
     const Component: React.StatelessComponent<AppTypeResourcesDetailsProps> = (AppTypeResourceDetails as any).WrappedComponent;
     wrapper = shallow(<Component obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} />);
+    wrapper.setState({
+      'clusterServiceVersion': testAppType,
+      'expanded': false,
+    });
   });
 
   it('renders description title', () => {
     const title = wrapper.find('.co-section-title');
-
-    expect(title.text()).toEqual(`${testResourceInstance.kind} Overview`);
+    expect(title.text()).toEqual('Test Resource Overview');
   });
 
   it('renders info section', () => {
@@ -212,28 +170,174 @@ describe('AppTypeResourcesDetails', () => {
     expect(link.props().title).toEqual('View resources');
   });
 
+  it('renders the specified important prometheus metrics as graphs', () => {
+    wrapper.setState({
+      'clusterServiceVersion': testAppType,
+      'expanded': false,
+    });
+
+    const metric = wrapper.find('.co-apptype-resource-details__section__metric');
+    expect(metric.exists()).toBe(true);
+  });
+
+  it('does not render the extended information unless in expanded mode', () => {
+    expect(wrapper.find(ResourceSummary).exists()).toBe(false);
+  });
+
+  it('renders the extended information when in expanded mode', () => {
+    wrapper.setState({
+      'clusterServiceVersion': null,
+      'expanded': true,
+    });
+
+    expect(wrapper.find(ResourceSummary).exists()).toBe(true);
+  });
+
+  it('renders the filled in status field', () => {
+    const value = testResourceInstance.status['some-filled-path'];
+    const statusView = wrapper.find(AppTypeResourceStatus);
+    expect(statusView.exists()).toBe(true);
+    expect(statusView.props().statusValue).toEqual(value);
+  });
+
+  it('does not render the non-filled in status field when in expanded mode', () => {
+    const crd = testAppType.spec.customresourcedefinitions.owned.find((crd) => {
+      return crd.name === 'testresource.testapp.coreos.com';
+    });
+
+    const unfilledDescriptor = crd.statusDescriptors.find((sd) => {
+      return sd.path === 'some-unfilled-path';
+    });
+
+    const statusView = wrapper.find(AppTypeResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+    expect(statusView.exists()).toBe(false);
+  });
+
+  it('renders the non-filled in status field when in expanded mode', () => {
+    wrapper.setState({
+      'clusterServiceVersion': wrapper.state().clusterServiceVersion,
+      'expanded': true,
+    });
+
+    const crd = testAppType.spec.customresourcedefinitions.owned.find((crd) => {
+      return crd.name === 'testresource.testapp.coreos.com';
+    });
+
+    const unfilledDescriptor = crd.statusDescriptors.find((sd) => {
+      return sd.path === 'some-unfilled-path';
+    });
+
+    const statusView = wrapper.find(AppTypeResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+    expect(statusView.exists()).toBe(true);
+  });
+
   it('does not render link to search page if `spec.selector.matchLabels` is not present on resource', () => {
     wrapper.setProps({obj: {...testResourceInstance, spec: {}}});
 
     expect(wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).exists()).toBe(false);
   });
+});
 
-  it('renders list of metrics links if resource contains metrics output(s)', () => {
-    const outputs = JSON.parse(testAppTypeResource.metadata.annotations.outputs);
-    const metricsOutputs = Object.keys(outputs)
-      .filter(name => outputs[name]['x-alm-capabilities'].indexOf(ALMCapabilites.metrics) !== -1)
-      .map(name => Object.assign({}, outputs[name], {value: testResourceInstance.outputs[name]}));
-    const links = wrapper.findWhere(node => node.equals(<dt>Important Metrics</dt>)).parent().find('dd');
+describe('AppTypePrometheusGraph', () => {
+  it('renders a counter', () => {
+    const query = {
+      'name': 'foo',
+      'unit': 'blargs',
+      'query': 'somequery',
+      'type': PrometheusQueryTypes.Counter,
+    };
 
-    expect(links.length).toEqual(metricsOutputs.length);
+    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    expect(wrapper.is(Scalar)).toBe(true);
+  });
 
-    metricsOutputs.forEach((output, i) => {
-      const resourceOutput = links.at(i).find(AppTypeResourceOutput);
+  it('renders a gauge', () => {
+    const query = {
+      'name': 'foo',
+      'query': 'somequery',
+      'type': PrometheusQueryTypes.Gauge,
+    };
 
-      expect(resourceOutput.exists()).toBe(true);
-      expect(resourceOutput.props().outputDefinition).toEqual(output);
-      expect(resourceOutput.props().outputValue).toEqual(output.value);
-    });
+    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    expect(wrapper.is(Gauge)).toBe(true);
+  });
+
+  it('renders a line', () => {
+    const query = {
+      'name': 'foo',
+      'query': 'somequery',
+      'type': PrometheusQueryTypes.Line,
+    };
+
+    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    expect(wrapper.is(Line)).toBe(true);
+  });
+
+  it('renders a bar', () => {
+    const query = {
+      'name': 'foo',
+      'query': 'somequery',
+      'type': PrometheusQueryTypes.Bar,
+    };
+
+    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    expect(wrapper.is(Bar)).toBe(true);
+  });
+
+  it('handles unknown kinds of metrics', () => {
+    const query: any = {
+      'name': 'foo',
+      'query': 'somequery',
+      'type': 'unknown',
+    };
+
+    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    expect(wrapper.html()).toBe('<span>Unknown graph type: unknown</span>');
+  });
+});
+
+describe('AppTypeResourceStatus', () => {
+  it('renders a null value', () => {
+    const statusDescriptor = {
+      'path': '',
+      'displayName': 'Some Thing',
+      'description': '',
+      'x-descriptors': [ALMStatusDescriptors.conditions]
+    };
+
+    const statusValue = null;
+    const wrapper = shallow(<AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd>None</dd></dl>');
+  });
+
+  it('renders a conditions status', () => {
+    const statusDescriptor = {
+      'path': '',
+      'displayName': 'Some Thing',
+      'description': '',
+      'x-descriptors': [ALMStatusDescriptors.conditions]
+    };
+
+    const statusValue = [{
+      'lastUpdateTime': '2017-10-16 12:00:00',
+      'phase': 'somephase',
+    }];
+
+    const wrapper = shallow(<AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd><span>somephase</span></dd></dl>');
+  });
+
+  it('renders a link status', () => {
+    const statusDescriptor = {
+      'path': '',
+      'displayName': 'Some Link',
+      'description': '',
+      'x-descriptors': [ALMStatusDescriptors.w3Link]
+    };
+
+    const statusValue = 'https://example.com';
+    const wrapper = shallow(<AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    expect(wrapper.html()).toBe('<dl><dt>Some Link</dt><dd><a href="https://example.com">example.com</a></dd></dl>');
   });
 });
 

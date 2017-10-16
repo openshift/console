@@ -8,7 +8,7 @@ import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes } from '../row-filter';
 import { Dropdown, Firehose, kindObj, MultiFirehose, NavTitle, history } from '../utils';
 
-const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
+export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-unselected' : 'btn-selected')}>
     <input type="radio" onClick={() => onExpandChange(false)} /> Compact
   </label>
