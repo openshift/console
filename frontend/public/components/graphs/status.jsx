@@ -12,6 +12,7 @@ const colors = {
 export class Status extends SafetyFirst {
   constructor (props) {
     super(props);
+    this.interval = null;
     this.state = {
       status: '...',
     };
@@ -21,10 +22,15 @@ export class Status extends SafetyFirst {
     this.props.fetch()
       .then(({short, long, status}) => this.setState({short, long, status}))
       .catch(() => this.setState({short: 'BAD', long: 'Error', status: 'ERROR'}))
-      .then(() => setTimeout(() => this.fetch(), 30000));
+      .then(() => this.interval = setTimeout(() => {
+        if (this.isMounted_) {
+          this.fetch();
+        }
+      }, 30000));
   }
 
   componentWillMount () {
+    super.componentWillUnmount();
     this.fetch();
   }
 
