@@ -42,7 +42,7 @@ $apptype-list-border: #ccc;
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
-  height: 150px;
+  height: 200px;
 }
 
 .co-apptype-logo {
@@ -52,12 +52,15 @@ $apptype-list-border: #ccc;
 
 .co-apptype-logo__icon {
   background: #fff;
-  border: 1px solid #e5e5e5;
   width: 60px;
   height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.co-m-page-title--logo .co-apptype-logo__icon {
+  border: 1px solid #e5e5e5;
 }
 
 .co-apptype-logo__name {
@@ -90,6 +93,13 @@ $apptype-list-border: #ccc;
   align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+.co-apptype-list-item__description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 10px 0;
 }
 
 .co-apptype-resource-details__section--info {
@@ -179,6 +189,20 @@ $apptype-list-border: #ccc;
     display: flex;
     width: 100%;
   }
+}
+
+.co-catalog-app-row {
+  transition: max-height 0.25s;
+  overflow: hidden;
+}
+
+.co-catalog-app-row__details {
+  margin-left: 15px;
+  transition: opacity 0.25s;
+}
+
+.co-catalog-app-row__details--collapsed {
+  opacity: 0;
 }
 
 // Taken directly from Bootstrap 4

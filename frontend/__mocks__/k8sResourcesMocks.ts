@@ -42,7 +42,10 @@ export const testAppType: AppTypeKind = {
       matchLabels: {
         'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1'
       }
-    }
+    },
+    customresourcedefinitions: {
+      owned: [],
+    },
   },
   status: {
     phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
@@ -69,7 +72,10 @@ export const localAppType: AppTypeKind = {
       matchLabels: {
         'alm-owner-local-testapp': 'local-testapp.apptype-v1s.app.coreos.com.v1alpha1'
       }
-    }
+    },
+    customresourcedefinitions: {
+      owned: [],
+    },
   },
 };
 

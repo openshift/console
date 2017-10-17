@@ -30,7 +30,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders column for app logo', () => {
-    const col = wrapper.childAt(0);
+    const col = wrapper.find('.co-catalog-app-row').childAt(0);
     const logo = col.find(AppTypeLogo);
 
     expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
@@ -39,13 +39,13 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders link to expand/hide the row', () => {
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
     expect(col.find('a').text()).toEqual('Show Details');
   });
 
   it('renders empty state for column if given empty list of `ClusterServiceVersions`', () => {
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
     expect(col.childAt(0).childAt(0).shallow().text()).toEqual('Not installed');
   });
@@ -55,7 +55,7 @@ describe('CatalogAppRow', () => {
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseInstalling, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
     expect(col.childAt(0).childAt(0).shallow().text()).toEqual(`Installing... (2 of ${clusterServiceVersions.length} namespaces)`);
   });
@@ -66,7 +66,7 @@ describe('CatalogAppRow', () => {
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
     expect(col.childAt(0).childAt(0).shallow().text()).toEqual('Installation Error (1 namespace failed, 1 namespace pending, 1 namespace installed)');
   });
@@ -75,7 +75,7 @@ describe('CatalogAppRow', () => {
     clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
     expect(col.childAt(0).childAt(0).shallow().text()).toEqual(`Installed (${clusterServiceVersions.length} namespaces)`);
   });
@@ -85,7 +85,7 @@ describe('CatalogAppRow', () => {
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
     const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--failures');
 
     expect(progressBar.exists()).toBe(true);
@@ -96,7 +96,7 @@ describe('CatalogAppRow', () => {
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
     const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--active');
 
     expect(progressBar.exists()).toBe(true);
@@ -107,19 +107,19 @@ describe('CatalogAppRow', () => {
 
     wrapper.setProps({clusterServiceVersions});
     wrapper.setState({expand: true});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
     const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--active');
 
     expect(progressBar.exists()).toBe(false);
   });
 
-  it('renders list of namespace statuses in correct priority order in expanded state', () => {
+  it('renders list of namespace statuses in expanded state', () => {
     clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
     const namespaceList = col.childAt(1).childAt(0).shallow().find('ul').find('li');
 
     expect(namespaceList.length).toEqual(clusterServiceVersions.length);
@@ -133,7 +133,7 @@ describe('CatalogAppRow', () => {
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
     const namespaceList = col.childAt(1).childAt(0).shallow().find('ul').find('li');
 
     namespaceList.forEach((item, i) => {
@@ -142,9 +142,9 @@ describe('CatalogAppRow', () => {
   });
 
   it('shows collapsed row by default', () => {
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.children().length).toEqual(1);
+    expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(true);
   });
 
   it('shows expanded state if at least one `ClusterServiceVersion` status is not `Succeeded`', () => {
@@ -153,13 +153,13 @@ describe('CatalogAppRow', () => {
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.childAt(1);
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(2).exists()).toBe(true);
+    expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(false);
   });
 
   it('renders column for actions', () => {
-    const col = wrapper.childAt(2);
+    const col = wrapper.find('.co-catalog-app-row').childAt(2);
     const button: ShallowWrapper<any> = col.find('button.btn-primary');
 
     expect(button.exists()).toBe(true);

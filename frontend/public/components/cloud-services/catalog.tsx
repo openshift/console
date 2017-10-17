@@ -13,7 +13,7 @@ import { AppTypeLogo, CatalogEntryKind, K8sResourceKind, AppTypeKind, ClusterSer
 import { createInstallApplicationModal } from '../modals/install-application-modal';
 import { k8sCreate } from '../../module/k8s';
 
-export const CatalogAppHeader = (props: CatalogAppHeaderProps) => <ListHeader>
+export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-6">Status</ColHead>
   <ColHead {...props} className="col-xs-2">Actions</ColHead>
@@ -86,33 +86,43 @@ export const CatalogAppRow = connect(stateToProps)(
               {'co-catalog-install-progress-bar--active': pending.length > 0},
               {'co-catalog-install-progress-bar--failures': failed.length > 0} )}
           /> }
-          <ul className="co-catalog-breakdown__ns-list">
-            { failed.map((csv, i) => <li className="co-catalog-breakdown__ns-list__item co-error" key={i}>{`${csv.metadata.namespace}: ${csv.status.reason}`}</li>) }
-            { pending.map((csv, i) => <li className="co-catalog-breakdown__ns-list__item text-muted" key={i}>{csv.metadata.namespace}</li>) }
-            { succeeded.map((csv, i) => <li className="co-catalog-breakdown__ns-list__item" key={i}>{csv.metadata.namespace}</li>) }
-          </ul>
+          <ul className="co-catalog-breakdown__ns-list">{ clusterServiceVersions.map((csv, i) => {
+            switch (csv.status.phase) {
+              case ClusterServiceVersionPhase.CSVPhaseSucceeded:
+                return <li className="co-catalog-breakdown__ns-list__item" key={i}>{csv.metadata.namespace}</li>;
+              case ClusterServiceVersionPhase.CSVPhaseFailed:
+                return <li className="co-catalog-breakdown__ns-list__item co-error" key={i}>{`${csv.metadata.namespace}: ${csv.status.reason}`}</li>;
+              case ClusterServiceVersionPhase.CSVPhasePending:
+              case ClusterServiceVersionPhase.CSVPhaseInstalling:
+                return <li className="co-catalog-breakdown__ns-list__item text-muted" key={i}>{csv.metadata.namespace}</li>;
+              default:
+                return <li key={i}>{csv.metadata.namespace}</li>;
+            }
+          }) }</ul>
         </div>;
       };
 
       return <ResourceRow obj={obj}>
-        <div className="col-xs-4">
-          <AppTypeLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} provider={{name: obj.spec.provider}} />
-        </div>
-        <div className="col-xs-6">
-          <div style={{display: 'flex', alignItems: 'center'}}>
-            <Breakdown clusterServiceVersions={clusterServiceVersions} />
-            <a style={{marginLeft: 'auto'}} onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} Details`}</a>
+        <div className="co-catalog-app-row" style={{maxHeight: this.state.expand ? clusterServiceVersions.length * 50 : 60}}>
+          <div className="col-xs-4">
+            <AppTypeLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} provider={{name: obj.spec.provider}} />
           </div>
-          { this.state.expand && <div style={{marginLeft: '15px'}}>
-            <BreakdownDetail clusterServiceVersions={clusterServiceVersions} />
-          </div> }
-        </div>
-        <div className="col-xs-2">
-          <button
-            className="btn btn-primary"
-            onClick={() => createInstallApplicationModal({clusterServiceVersion: obj.metadata.name, k8sCreate, namespaces, clusterServiceVersions})}>
-            Install
-          </button>
+          <div className="col-xs-6">
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <Breakdown clusterServiceVersions={clusterServiceVersions} />
+              <a style={{marginLeft: 'auto'}} onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} Details`}</a>
+            </div>
+            <div className={classNames('co-catalog-app-row__details', {'co-catalog-app-row__details--collapsed': !this.state.expand})}>
+              <BreakdownDetail clusterServiceVersions={clusterServiceVersions} />
+            </div>
+          </div>
+          <div className="col-xs-2">
+            <button
+              className="btn btn-primary"
+              onClick={() => createInstallApplicationModal({clusterServiceVersion: obj.metadata.name, k8sCreate, namespaces, clusterServiceVersions})}>
+              Install
+            </button>
+          </div>
         </div>
       </ResourceRow>;
     }
@@ -128,18 +138,18 @@ export const CatalogAppRow = connect(stateToProps)(
     }
   });
 
-export const CatalogAppList = (props: CatalogAppListProps) => (
+export const CatalogAppList: React.StatelessComponent<CatalogAppListProps> = (props) => (
   <List {...props} Row={CatalogAppRow} Header={CatalogAppHeader} isList={true} label="Applications" />
 );
 
-export const CatalogAppsPage = () => <div>
+export const CatalogAppsPage: React.StatelessComponent = () => <div>
   {/* Firehoses used here to add resources to Redux store */}
   <Firehose kind="ClusterServiceVersion-v1" isList={true} />
   <Firehose kind="Namespace" isList={true} />
   <ListPage kind="AlphaCatalogEntry-v1" ListComponent={CatalogAppList} filterLabel="Applications by name" title="Applications" showTitle={true} />
 </div>;
 
-export const CatalogDetails = () => <div className="co-catalog-details co-m-pane">
+export const CatalogDetails: React.StatelessComponent = () => <div className="co-catalog-details co-m-pane">
   <div className="co-m-pane__body">
     <div className="col-sm-2 col-xs-12">
       <dl>
@@ -159,7 +169,7 @@ export const CatalogDetails = () => <div className="co-catalog-details co-m-pane
   </div>
 </div>;
 
-export const CatalogsDetailsPage = () => <div>
+export const CatalogsDetailsPage: React.StatelessComponent = () => <div>
   <Helmet>
     <title>Open Cloud Services</title>
   </Helmet>
@@ -193,3 +203,11 @@ export type CatalogAppListProps = {
 export type CatalogDetailsProps = {
 
 };
+
+// TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
+CatalogDetails.displayName = 'CatalogDetails';
+CatalogsDetailsPage.displayName = 'CatalogDetailsPage';
+CatalogAppHeader.displayName = 'CatalogAppHeader';
+CatalogAppRow.displayName = 'CatalogAppRow';
+CatalogAppList.displayName = 'CatalogAppList';
+CatalogAppsPage.displayName = 'CatalogAppsPage';

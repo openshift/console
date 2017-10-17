@@ -2,13 +2,14 @@
 
 import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
+import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { AppTypesDetailsPage, AppTypesDetailsPageProps, AppTypeDetails, AppTypeDetailsProps, AppTypesPage, AppTypesPageProps, AppTypeList, AppTypeListProps, AppTypeListItem, AppTypeListItemProps, AppTypeHeader, AppTypeRow } from '../../../public/components/cloud-services/apptype';
+import { AppTypesDetailsPage, AppTypesDetailsPageProps, AppTypeDetails, AppTypeDetailsProps, AppTypesPage, AppTypesPageProps, AppTypeList, AppTypeListProps, AppTypeListItem, AppTypeListItemProps, AppTypeListState } from '../../../public/components/cloud-services/apptype';
 import { AppTypeKind, AppTypeLogo, AppTypeLogoProps } from '../../../public/components/cloud-services';
-import { DetailsPage, ListPage, List } from '../../../public/components/factory';
+import { DetailsPage, ListPage } from '../../../public/components/factory';
 import { testAppType, localAppType } from '../../../__mocks__/k8sResourcesMocks';
-import { StatusBox, LoadingBox, Timestamp, Overflow } from '../../../public/components/utils';
+import { StatusBox, LoadingBox, Timestamp, Overflow, Dropdown } from '../../../public/components/utils';
 
 describe('AppTypeLogo', () => {
   let wrapper: ReactWrapper<AppTypeLogoProps>;
@@ -45,7 +46,7 @@ describe('AppTypeListItem', () => {
   let wrapper: ShallowWrapper<AppTypeListItemProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<AppTypeListItem appType={testAppType} />);
+    wrapper = shallow(<AppTypeListItem appType={testAppType} namespaces={[testAppType.metadata.namespace]} />);
   });
 
   it('renders AppType logo', () => {
@@ -58,53 +59,59 @@ describe('AppTypeListItem', () => {
     expect(logo.props().provider).toEqual(testAppType.spec.provider);
   });
 
-  xit('renders AppType description', () => {
-    const info = wrapper.find('.co-apptype-list-item__body');
+  it('renders button to view details for given application', () => {
+    const detailsButton = wrapper.find('.co-apptype-list-item__actions').find(Link).at(0);
 
-    expect(info.exists()).toBe(true);
-    expect(info.text()).toEqual(testAppType.spec.description);
+    expect(detailsButton.props().title).toEqual('View details');
+    expect(detailsButton.childAt(0).text()).toEqual('View details');
+    expect(detailsButton.props().to).toEqual(`/ns/${testAppType.metadata.namespace}/clusterserviceversion-v1s/${testAppType.metadata.name}/details`);
+    expect(detailsButton.hasClass('btn')).toBe(true);
+  });
+
+  it('renders dropdown of installed namespaces if given', () => {
+    const namespaces = ['default', 'my-testapp-ns', 'other-ns'];
+    wrapper.setProps({namespaces});
+
+    const dropdown = wrapper.find('.co-apptype-list-item__actions').find(Dropdown);
+    const detailsButton = wrapper.find('.co-apptype-list-item__actions').find(Link);
+
+    expect(dropdown.exists()).toBe(true);
+    expect(dropdown.props().title).toEqual('View namespace');
+    expect(dropdown.props().items).toEqual(namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {}));
+    expect(detailsButton.exists()).toBe(false);
+  });
+
+  it('renders link to application resources', () => {
+    const link = wrapper.find('.co-apptype-list-item__actions').find(Link).at(1);
+
+    expect(link.props().title).toEqual('View resources');
+    expect(link.childAt(0).text()).toEqual('View resources');
+    expect(link.props().to).toEqual(`/ns/${testAppType.metadata.namespace}/clusterserviceversion-v1s/${testAppType.metadata.name}/resources`);
   });
 });
 
 describe('AppTypeList', () => {
-  let wrapper: ShallowWrapper<AppTypeListProps>;
+  let wrapper: ShallowWrapper<AppTypeListProps, AppTypeListState>;
   let apps: AppTypeKind[];
 
   beforeEach(() => {
     let otherAppType = _.cloneDeep(testAppType);
-    otherAppType.spec.displayName = 'Etcd';
+    otherAppType.metadata.name = 'vault';
     apps = [testAppType, localAppType, otherAppType];
     wrapper = shallow(<AppTypeList loaded={true} data={apps} filters={{}} />);
   });
 
-  it('renders section for each AppType catalog', () => {
+  it('renders section for applications installed from Open Cloud Services', () => {
     const sections = wrapper.find('.co-apptype-list__section--catalog');
 
     expect(sections.length).toEqual(1);
+    expect(sections.at(0).find('.co-section-title').text()).toContain('Open Cloud Services');
+    expect(sections.at(0).find(AppTypeListItem).length).toEqual(apps.length);
 
-    sections.forEach((section) => {
-      expect(section.find('.co-section-title').text()).toContain('open-cloud-services.coreos.com');
-      expect(section.find(AppTypeListItem).length).toEqual(apps.filter(appType => appType.spec.labels['alm-catalog'] === 'open-cloud-services.coreos.com').length);
-
-      apps.filter(appType => appType.spec.labels['alm-catalog'] === 'open-cloud-services.coreos.com')
-        .forEach((appType, i) => {
-          const listItem = section.find(AppTypeListItem).at(i);
-
-          expect(listItem.exists()).toBe(true);
-          expect(listItem.props().appType).toEqual(appType);
-        });
+    sections.at(0).find(AppTypeListItem).forEach((listItem) => {
+      expect(apps).toContain(listItem.props().appType);
+      expect(listItem.props().namespaces).toEqual(apps.filter(app => app.metadata.name === listItem.props().appType.metadata.name).map(app => app.metadata.namespace));
     });
-  });
-
-  it('renders section for AppTypes installed without a catalog', () => {
-    const section = wrapper.find('.co-apptype-list__section').not('.co-apptype-list__section--catalog');
-    const list: ShallowWrapper<any> = section.find(List);
-
-    expect(section.find('.co-section-title').text()).toContain('Local Applications');
-    expect(list.exists()).toBe(true);
-    expect(list.props().data.length).toEqual(apps.filter(appType => appType.spec.labels['alm-catalog'] === undefined).length);
-    expect(list.props().Header).toEqual(AppTypeHeader);
-    expect(list.props().Row).toEqual(AppTypeRow);
   });
 
   it('renders empty state if `props.data` is empty', () => {
@@ -129,15 +136,37 @@ describe('AppTypeList', () => {
     expect(statusBox.find(LoadingBox).exists()).toBe(false);
   });
 
-  it('filters visible AppTypes by `spec.displayName`', () => {
-    wrapper = wrapper.setProps({filters: {name: 'etcd'}});
-    const list: ShallowWrapper = wrapper.find('.co-apptype-list__section--catalog__items');
+  it('filters visible AppTypes by `name`', () => {
+    const searchFilter = apps[0].spec.displayName.slice(0, 2);
+    wrapper = wrapper.setProps({filters: {name: searchFilter}});
+    const list = wrapper.find('.co-apptype-list__section--catalog__items');
 
-    expect(list.exists()).toBe(true);
-    expect(list.children().length).toEqual(1);
+    expect(list.children().length).toEqual(apps.filter(app => app.spec.displayName.toLowerCase().includes(searchFilter.toLowerCase())).length);
+  });
 
-    list.children().forEach((listItem) => {
-      expect(listItem.props().appType).not.toEqual(testAppType);
+  it('filters visible AppTypes by `running status`', () => {
+    const resourceExists = new Map<string, boolean>();
+    resourceExists.set('prometheuses.monitoring.coreos.com', true);
+    apps[0].spec.customresourcedefinitions.owned = [...resourceExists.keys()].map(name => Object.assign({}, {name}));
+
+    wrapper.setProps({data: apps, filters: {'apptype-status': 'notRunning'}});
+    wrapper.setState({resourceExists});
+    const list = wrapper.find('.co-apptype-list__section--catalog__items');
+
+    expect(list.children().length).toEqual(apps.filter(({spec}) => spec.customresourcedefinitions.owned.map(({name}) => resourceExists.get(name) || false).indexOf(true) === -1).length);
+  });
+
+  it('filters visible AppTypes by `catalog source`', () => {
+    // TODO(alecmerdler)
+  });
+
+  it('does not render duplicate AppTypes', () => {
+    apps[0].metadata.name = apps[1].metadata.name;
+    wrapper.setProps({data: apps});
+    const list = wrapper.find('.co-apptype-list__section--catalog__items').find(AppTypeListItem);
+
+    list.forEach((listItem) => {
+      expect(listItem.props().appType).not.toEqual(apps[1]);
     });
   });
 });
