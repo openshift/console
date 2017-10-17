@@ -205,26 +205,26 @@ $apptype-list-border: #ccc;
   to { background-position: 0 0; }
 }
 
-.co-catalog-install-progress-bar {
+.co-catalog-install-progress {
   display: flex;
-  overflow: hidden; 
-  font-size: .75rem;
+  overflow: hidden;
+  font-size: 3px;
   line-height: 4px;
   text-align: center;
-  border-radius: 0.25rem;
+  background-color: #efefef;
+  border-radius: .25rem;
+}
+
+.co-catalog-install-progress-bar {
+  line-height: 4px;
   height: 4px;
   color: #fff;
   transition: width 0.6s ease;
-  background-size: 4px 4px;
-  background-color: #52a3d9;
-  margin: 15px 0;
-}
-
-.co-catalog-install-progress-bar--failures {
-  background-color: #D64456;
+  background-color: #cccccc;
 }
 
 .co-catalog-install-progress-bar--active {
+  background-color: #2fc98e;
   background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
   animation: progress-bar-stripes 1s linear infinite;
 }

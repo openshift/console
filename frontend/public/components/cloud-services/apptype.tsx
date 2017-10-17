@@ -17,7 +17,7 @@ export const AppTypeListItem: React.StatelessComponent<AppTypeListItemProps> = (
   return <div className="co-apptype-list-item">
     <div className="co-apptype-list-item__heading">
       <div className="co-apptype-list-item__heading__logo">
-        <AppTypeLogo icon={_.get(appType, 'spec.icon', [])[0]} displayName={appType.spec.displayName} provider={appType.spec.provider} />
+        <AppTypeLogo icon={_.get(appType, 'spec.icon', [])[0]} displayName={appType.spec.displayName} version={appType.spec.version} provider={appType.spec.provider} />
       </div>
     </div>
     <div className="co-apptype-list-item__description">{_.get(appType.spec, 'description', 'No description available')}</div>

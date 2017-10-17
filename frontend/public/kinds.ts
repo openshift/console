@@ -71,7 +71,7 @@ export const kindReducer = (state, action) => {
   }
 };
 
-export const stateToProps = function (state, props): {kindObj: K8sKind | {}, kindsInFlight: boolean } {
+export const stateToProps = (state, props): any => {
   const ns = state[kindReducerName];
   const raw = ns.getIn(['kinds', props.kind]);
   return {kindObj: raw ? raw.toJSON() : {}, kindsInFlight: ns.get(inFlight)};

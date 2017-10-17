@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { AppTypeResourceList, AppTypeResourceListProps, AppTypeResourceHeaderProps, AppTypeResourcesDetailsState, AppTypeResourceRowProps, AppTypeResourceHeader, AppTypeResourceRow, AppTypeResourceDetails, AppTypePrometheusGraph, AppTypeResourcesDetailsPageProps, AppTypeResourcesDetailsProps, AppTypeResourceStatus, AppTypeResourcesDetailsPage, PrometheusQueryTypes } from '../../../public/components/cloud-services/apptype-resource';
+import { AppTypeResourceList, AppTypeResourceListProps, AppTypeResourceHeaderProps, AppTypeResourcesDetailsState, AppTypeResourceRowProps, AppTypeResourceHeader, AppTypeResourceRow, AppTypeResourceDetails, AppTypePrometheusGraph, AppTypeResourcesDetailsPageProps, AppTypeResourcesDetailsProps, AppTypeResourceStatus, AppTypeResourcesDetailsPage, PrometheusQueryTypes, AppTypeResourceLink } from '../../../public/components/cloud-services/apptype-resource';
 import { AppTypeResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
 import { testAppTypeResource, testResourceInstance, testAppType } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage } from '../../../public/components/factory';
-import { ResourceLink, Timestamp, LabelList, ResourceSummary } from '../../../public/components/utils';
+import { Timestamp, LabelList, ResourceSummary } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 
 describe('AppTypeResourceHeader', () => {
@@ -68,12 +68,10 @@ describe('AppTypeResourceRow', () => {
 
   it('renders column for resource name', () => {
     const col = wrapper.childAt(0);
-    const link = col.find(ResourceLink);
+    const link = col.find(AppTypeResourceLink);
 
-    expect(link.props().name).toEqual(testResourceInstance.metadata.name);
-    expect(link.props().title).toEqual(testResourceInstance.metadata.name);
+    expect(link.props().obj).toEqual(testResourceInstance);
     expect(link.props().kind).toEqual(testResourceInstance.kind);
-    expect(link.props().namespace).toEqual(testResourceInstance.metadata.namespace);
   });
 
   it('renders column for resource labels', () => {
@@ -141,10 +139,7 @@ describe('AppTypeResourcesDetails', () => {
     // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
     const Component: React.StatelessComponent<AppTypeResourcesDetailsProps> = (AppTypeResourceDetails as any).WrappedComponent;
     wrapper = shallow(<Component obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} />);
-    wrapper.setState({
-      'clusterServiceVersion': testAppType,
-      'expanded': false,
-    });
+    wrapper.setState({clusterServiceVersion: testAppType, expanded: false});
   });
 
   it('renders description title', () => {

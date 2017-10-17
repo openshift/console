@@ -39,15 +39,21 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders link to expand/hide the row', () => {
+    const link = wrapper.find('a');
+
+    expect(link.text()).toEqual('Show Details');
+
+    link.simulate('click');
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.find('a').text()).toEqual('Show Details');
+    expect(wrapper.find('a').text()).toEqual('Hide Details');
+    expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(false);
   });
 
   it('renders empty state for column if given empty list of `ClusterServiceVersions`', () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).shallow().text()).toEqual('Not installed');
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual('Not installed');
   });
 
   it('renders installing state if at least one given `ClusterServiceVersion` status phase is `Installing`', () => {
@@ -57,7 +63,7 @@ describe('CatalogAppRow', () => {
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).shallow().text()).toEqual(`Installing... (2 of ${clusterServiceVersions.length} namespaces)`);
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual(`Installing... (2 of ${clusterServiceVersions.length} namespaces)`);
   });
 
   it('renders error state if at least one given `ClusterServiceVersion` status phase is `Failed`', () => {
@@ -68,7 +74,7 @@ describe('CatalogAppRow', () => {
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).shallow().text()).toEqual('Installation Error (1 namespace failed, 1 namespace pending, 1 namespace installed)');
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual('Installation Error (1 namespace failed, 1 namespace pending, 1 namespace installed)');
   });
 
   it('renders success state if all `ClusterServiceVersions` statuses are `Succeeded`', () => {
@@ -77,18 +83,7 @@ describe('CatalogAppRow', () => {
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).shallow().text()).toEqual(`Installed (${clusterServiceVersions.length} namespaces)`);
-  });
-
-  it('renders error progress bar in expanded state if at least one `ClusterServiceVersion` status is `Failed`', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
-    clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
-
-    wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.find('.co-catalog-app-row').childAt(1);
-    const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--failures');
-
-    expect(progressBar.exists()).toBe(true);
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual(`Installed (${clusterServiceVersions.length} namespaces)`);
   });
 
   it('renders active progress bar in expanded state if at least one `ClusterServiceVersion` status is `Pending` or `Installing`', () => {
@@ -102,15 +97,16 @@ describe('CatalogAppRow', () => {
     expect(progressBar.exists()).toBe(true);
   });
 
-  it('does not render progress bar in expanded state if all `ClusterServiceVersion` status are `Succeeded`', () => {
+  it('renders completed progress bar in expanded state if all `ClusterServiceVersion` status are `Succeeded`', () => {
     clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
 
     wrapper.setProps({clusterServiceVersions});
     wrapper.setState({expand: true});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
-    const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar--active');
+    const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar');
 
-    expect(progressBar.exists()).toBe(false);
+    expect(progressBar.exists()).toBe(true);
+    expect(progressBar.hasClass('co-catalog-install-progress-bar--active')).toBe(false);
   });
 
   it('renders list of namespace statuses in expanded state', () => {
@@ -145,17 +141,6 @@ describe('CatalogAppRow', () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
     expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(true);
-  });
-
-  it('shows expanded state if at least one `ClusterServiceVersion` status is not `Succeeded` when first mounted', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
-    clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
-    clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
-
-    wrapper.setProps({clusterServiceVersions});
-    const col = wrapper.find('.co-catalog-app-row').childAt(1);
-
-    expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(false);
   });
 
   it('renders column for actions', () => {
