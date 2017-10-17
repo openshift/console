@@ -22,18 +22,22 @@ export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> =
 const stateToProps = ({k8s}, {obj}) => ({
   namespaces: k8s.get('namespaces').toJS(),
   clusterServiceVersions: _.values(k8s.getIn(['clusterserviceversion-v1s', 'data'], Map()).toJS())
-    .filter((csv: any) => csv.metadata.name === obj.metadata.name),
+    .filter((csv: AppTypeKind) => csv.status !== undefined)
+    .filter((csv: AppTypeKind) => csv.metadata.name === obj.metadata.name),
 });
 
 export const CatalogAppRow = connect(stateToProps)(
   class extends React.Component<CatalogAppRowProps, CatalogAppRowState> {
     constructor(props) {
       super(props);
-      this.state = this.propsToState(props);
+      this.state = {...this.propsToState(props), expand: null};
     }
 
     componentWillReceiveProps(nextProps: CatalogAppRowProps) {
       this.setState(this.propsToState(nextProps));
+      if (this.state.expand === null && nextProps.clusterServiceVersions.length > 0) {
+        this.setState({expand: this.state.succeeded.length !== nextProps.clusterServiceVersions.length});
+      }
     }
 
     render() {
@@ -103,9 +107,9 @@ export const CatalogAppRow = connect(stateToProps)(
       };
 
       return <ResourceRow obj={obj}>
-        <div className="co-catalog-app-row" style={{maxHeight: this.state.expand ? clusterServiceVersions.length * 50 : 60}}>
+        <div className="co-catalog-app-row" style={{maxHeight: 60 + (this.state.expand ? clusterServiceVersions.length * 50 : 0)}}>
           <div className="col-xs-4">
-            <AppTypeLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} provider={{name: obj.spec.provider}} />
+            <AppTypeLogo icon={_.get(obj.spec, 'icon', [])[0]} version={obj.spec.version} displayName={obj.spec.displayName} provider={obj.spec.provider} />
           </div>
           <div className="col-xs-6">
             <div style={{display: 'flex', alignItems: 'center'}}>
@@ -119,7 +123,7 @@ export const CatalogAppRow = connect(stateToProps)(
           <div className="col-xs-2">
             <button
               className="btn btn-primary"
-              onClick={() => createInstallApplicationModal({clusterServiceVersion: obj.metadata.name, k8sCreate, namespaces, clusterServiceVersions})}>
+              onClick={() => createInstallApplicationModal({catalogEntry: obj, k8sCreate, namespaces, clusterServiceVersions})}>
               Install
             </button>
           </div>
@@ -127,9 +131,8 @@ export const CatalogAppRow = connect(stateToProps)(
       </ResourceRow>;
     }
 
-    private propsToState(props: CatalogAppRowProps): CatalogAppRowState {
+    private propsToState(props: CatalogAppRowProps) {
       return {
-        expand: props.clusterServiceVersions.find(csv => _.get(csv, ['status', 'phase']) !== ClusterServiceVersionPhase.CSVPhaseSucceeded) !== undefined,
         failed: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseFailed),
         pending: props.clusterServiceVersions
           .filter(csv => [ClusterServiceVersionPhase.CSVPhasePending, ClusterServiceVersionPhase.CSVPhaseInstalling].indexOf(_.get(csv, ['status', 'phase'])) !== -1),

@@ -57,7 +57,9 @@ export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Ob
 export const k8sCreate = (kind, data) => {
   // Lowercase the resource name
   // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
-  data.metadata.name = data.metadata.name.toLowerCase();
+  if (!data.metadata.generateName) {
+    data.metadata.name = data.metadata.name.toLowerCase();
+  }
 
   return coFetchJSON.post(resourceURL(kind, {ns: data.metadata.namespace}), data);
 };

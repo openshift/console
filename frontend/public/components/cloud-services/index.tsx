@@ -72,7 +72,7 @@ export type CatalogEntryKind = {
 
 export type InstallPlanKind = {
   spec: {
-    clusterServiceVersions: string[];
+    clusterServiceVersionNames: string[];
     approval: 'Automatic' | 'Manual' | 'Update-Only';
   };
   status?: {
@@ -85,7 +85,7 @@ export type InstallPlanKind = {
 } & K8sResourceKind;
 
 export const AppTypeLogo = (props: AppTypeLogoProps) => {
-  const {icon, displayName, provider} = props;
+  const {icon, displayName, provider, version} = props;
 
   return <div className="co-apptype-logo">
     <div className="co-apptype-logo__icon">{ _.isEmpty(icon)
@@ -94,7 +94,7 @@ export const AppTypeLogo = (props: AppTypeLogoProps) => {
     </div>
     <div className="co-apptype-logo__name">
       <h1 className="co-apptype-logo__name__apptype">{displayName}</h1>
-      { provider && <span className="co-apptype-logo__name__provider">{`by ${provider.name}`}</span> }
+      { provider && <span className="co-apptype-logo__name__provider">{`${version || ''} by ${_.get(provider, 'name', provider)}`}</span> }
     </div>
   </div>;
 };
@@ -102,5 +102,6 @@ export const AppTypeLogo = (props: AppTypeLogoProps) => {
 export type AppTypeLogoProps = {
   displayName: string;
   icon: {base64data: string, mediatype: string};
-  provider: {name: string}
+  provider: {name: string} | string;
+  version?: string;
 };
