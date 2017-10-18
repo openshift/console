@@ -102,14 +102,8 @@ $apptype-list-border: #ccc;
   padding: 10px 0;
 }
 
-.co-apptype-resource-details__section--info {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.co-apptype-resource-details__section--info__item {
-  width: 25%;
+.co-apptype-resource-details__section--info dd {
+  margin-bottom: 20px;
 }
 
 .co-apptype-resource-output--metrics {

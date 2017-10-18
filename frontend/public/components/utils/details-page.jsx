@@ -14,6 +14,7 @@ export const Heading = ({text}) => <div className="co-m-pane__heading">
   <h1 className="co-m-pane__title">{text}</h1>
 </div>;
 
+/** @type {React.StatelessComponent<any>} */
 export const ResourceSummary = ({children, resource, showPodSelector = true, showNodeSelector = true, podSelector = 'spec.selector'}) => {
   const { metadata } = resource;
   const owners = _.get(metadata, 'ownerReferences', [])

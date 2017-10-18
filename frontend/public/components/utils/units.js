@@ -129,6 +129,7 @@ const humanize = (value, typeName, useRound = false) => {
 
 export const humanizeMem = v => humanize(v, 'binaryBytes', true).string;
 export const humanizeCPU = v => humanize(v, 'numeric', true).string;
+export const humanizeNumber = v => humanize(v, 'numeric', true).string;
 
 const dehumanize = (value, typeName) => {
   const type = getType(typeName);

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { AppTypeKind, AppTypeResourceKind, CustomResourceDefinitionKind, K8sResourceKind, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
+import { AppTypeKind, AppTypeResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, K8sResourceKind, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
 
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',
@@ -44,8 +44,36 @@ export const testAppType: AppTypeKind = {
       }
     },
     customresourcedefinitions: {
-      owned: [],
-    },
+      owned: [{
+        'name': 'testresource.testapp.coreos.com',
+        'displayName': 'Test Resource',
+        'statusDescriptors': [{
+          'path': 'importantMetrics',
+          'displayName': 'Important Metrics',
+          'description': 'Important prometheus metrics ',
+          'x-descriptors': [ALMStatusDescriptors.importantMetrics],
+          'value': {
+            'queries': [{
+              'query': 'foobarbaz',
+              'name': 'something',
+              'type': 'gauge',
+            }],
+          }
+        },
+        {
+          'path': 'some-unfilled-path',
+          'displayName': 'Some Unfilled Path',
+          'description': 'This status is unfilled in the tests',
+          'x-descriptors': [ALMStatusDescriptors.text],
+        },
+        {
+          'path': 'some-filled-path',
+          'displayName': 'Some Status',
+          'description': 'This status is filled',
+          'x-descriptors': [ALMStatusDescriptors.text],
+        }]
+      }]
+    }
   },
   status: {
     phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
@@ -90,18 +118,6 @@ export const testAppTypeResource: CustomResourceDefinitionKind = {
     annotations: {
       displayName: 'Dashboard',
       description: 'Test Dashboard',
-      outputs: JSON.stringify({
-        'testapp-dashboard': {
-          'displayName': 'TestApp Dashboard',
-          'description': 'GUI service dashboard',
-          'x-alm-capabilities': [],
-        },
-        'testapp-metrics': {
-          'displayName': 'Prometheus Metrics',
-          'description': 'Prometheus Metrics chart',
-          'x-alm-capabilities': ['urn:alm:capability:com.tectonic.ui:metrics'],
-        }
-      }),
     }
   },
   spec: {
@@ -120,6 +136,7 @@ export const testResourceInstance: AppTypeResourceKind = {
     name: 'my-test-resource',
     uid: 'c02c0a8f-88e0-12e7-851b-081027b424ef',
     creationTimestamp: '2017-06-20T18:19:49Z',
+    labels: {},
   },
   spec: {
     labels: {
@@ -132,12 +149,8 @@ export const testResourceInstance: AppTypeResourceKind = {
       }
     }
   },
-  outputs: {
-    'testapp-dashboard': 'https://testapp.io/dashboard',
-    'testapp-metrics': JSON.stringify({
-      metrics: [{query: 'has_leader', name: 'Has Active Leader', type: 'Gauge', subtype: 'boolean'}],
-      endpoint: 'https://prometheus.testapp.com',
-    })
+  status: {
+    'some-filled-path': 'this is filled!',
   },
 };
 

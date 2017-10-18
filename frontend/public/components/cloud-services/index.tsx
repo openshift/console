@@ -7,10 +7,13 @@ export { AppTypesDetailsPage, AppTypesPage } from './apptype';
 export { AppTypeResourcesDetailsPage } from './apptype-resource';
 export { CatalogsDetailsPage } from './catalog';
 
-export enum ALMCapabilites {
-  metrics = 'urn:alm:capability:com.tectonic.ui:metrics',
-  w3Link = 'urn:alm:capability:org.w3:link',
-  tectonicLink = 'urn:alm:capability:com.tectonic.ui:important.link',
+export enum ALMStatusDescriptors {
+  metrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
+  w3Link = 'urn:alm:descriptor:org.w3:link',
+  tectonicLink = 'urn:alm:descriptor:com.tectonic.ui:important.link',
+  conditions = 'urn:alm:descriptor:io.kubernetes.conditions',
+  importantMetrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
+  text = 'urn:alm:descriptor:text',
 }
 
 export enum ClusterServiceVersionPhase {
@@ -63,7 +66,7 @@ export type AppTypeKind = {
 } & K8sResourceKind;
 
 export type AppTypeResourceKind = {
-  outputs: {[name: string]: any};
+  status: {[name: string]: any};
 } & K8sResourceKind;
 
 export type CatalogEntryKind = {
