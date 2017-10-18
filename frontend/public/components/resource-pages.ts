@@ -5,6 +5,7 @@ import { ContainersDetailsPage } from './container';
 import { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
 import { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
 import { JobsPage, JobsDetailsPage } from './job';
+import { CronJobsPage, CronJobsDetailsPage } from './cron-job';
 import { NamespacesPage, NamespacesDetailsPage } from './namespace';
 import { NetworkPoliciesPage, NetworkPoliciesDetailsPage } from './network-policy';
 import { NodesPage, NodesDetailsPage } from './node';
@@ -35,6 +36,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('DaemonSets', DaemonSetsPage)
   .set('Deployments', DeploymentsPage)
   .set('Jobs', JobsPage)
+  .set('CronJobs', CronJobsPage)
   .set('Namespaces', NamespacesPage)
   .set('NetworkPolicies', NetworkPoliciesPage)
   .set('Nodes', NodesPage)
@@ -67,6 +69,7 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('DaemonSets', DaemonSetsDetailsPage)
   .set('Deployments', DeploymentsDetailsPage)
   .set('Jobs', JobsDetailsPage)
+  .set('CronJobs', CronJobsDetailsPage)
   .set('Namespaces', NamespacesDetailsPage)
   .set('NetworkPolicies', NetworkPoliciesDetailsPage)
   .set('Nodes', NodesDetailsPage)

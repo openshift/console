@@ -82,11 +82,11 @@ const Details = ({obj: cronjob}) => {
               <dt>Deadline</dt>
               <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
               <dt>Status</dt>
-              <dd>{job.status.conditions ? job.status.conditions[0].type : 'In Progress'}</dd>
+              <dd>{_.get(job, 'status.conditions[0].type', 'In Progress')}</dd>
               <dt>Start Time</dt>
-              <dd><Timestamp timestamp={job.status.startTime} /></dd>
+              <dd><Timestamp timestamp={_.get(job, 'status.startTime')} /></dd>
               <dt>Completion Time</dt>
-              <dd><Timestamp timestamp={job.status.completionTime} /></dd>
+              <dd><Timestamp timestamp={_.get(job, 'status.completionTime')} /></dd>
             </ResourceSummary>
           </div>
         </div>
