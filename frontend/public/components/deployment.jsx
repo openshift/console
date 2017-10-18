@@ -25,7 +25,7 @@ spec:
         ports:
         - containerPort: 80`);
 
-const {ModifyCount, ModifyPodSelector, ModifyNodeSelector, common} = Cog.factory;
+const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
 
 const RevisionHistory = (kind, deployment) => ({
   label: 'Revision History...',
@@ -41,7 +41,6 @@ const menuActions = [
   ModifyCount,
   RevisionHistory,
   UpdateStrategy,
-  ModifyPodSelector,
   ModifyNodeSelector,
   ...common,
 ];
