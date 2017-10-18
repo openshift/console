@@ -9,7 +9,7 @@ import * as classNames from 'classnames';
 
 import { ListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { Firehose, NavTitle } from '../utils';
-import { AppTypeLogo, CatalogEntryKind, K8sResourceKind, AppTypeKind, ClusterServiceVersionPhase } from './index';
+import { ClusterServiceVersionLogo, CatalogEntryKind, K8sResourceKind, ClusterServiceVersionKind, ClusterServiceVersionPhase } from './index';
 import { createInstallApplicationModal } from '../modals/install-application-modal';
 import { k8sCreate } from '../../module/k8s';
 
@@ -21,7 +21,7 @@ export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> =
 
 export const Breakdown: React.StatelessComponent<BreakdownProps> = (props) => {
   const {failed, pending, succeeded} = props.status;
-  const pluralizeNS = (count: number) => count > 1 ? 'namespaces' : 'namespace';
+  const pluralizeNS = (count: number) => count !== 1 ? 'namespaces' : 'namespace';
 
   if (props.clusterServiceVersions.length === 0) {
     return <span>Not installed</span>;
@@ -63,7 +63,7 @@ export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (
       <div className="co-catalog-install-progress">
         <div
           style={{width: `${(succeeded.length / props.clusterServiceVersions.length) * 100}%`}}
-          className={classNames('co-catalog-install-progress-bar', {'co-catalog-install-progress-bar--active': pending.length > 0})} /> 
+          className={classNames('co-catalog-install-progress-bar', {'co-catalog-install-progress-bar--active': pending.length > 0})} />
       </div>
     </div>
     <ul className="co-catalog-breakdown__ns-list">{ props.clusterServiceVersions.map((csv, i) => {
@@ -85,8 +85,8 @@ export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (
 const stateToProps = ({k8s}, {obj}) => ({
   namespaces: k8s.get('namespaces').toJS(),
   clusterServiceVersions: _.values(k8s.getIn(['clusterserviceversion-v1s', 'data'], Map()).toJS())
-    .filter((csv: AppTypeKind) => csv.status !== undefined)
-    .filter((csv: AppTypeKind) => csv.metadata.name === obj.metadata.name),
+    .filter((csv: ClusterServiceVersionKind) => csv.status !== undefined)
+    .filter((csv: ClusterServiceVersionKind) => csv.metadata.name === obj.metadata.name),
 });
 
 export const CatalogAppRow = connect(stateToProps)(
@@ -106,7 +106,7 @@ export const CatalogAppRow = connect(stateToProps)(
       return <ResourceRow obj={obj}>
         <div className="co-catalog-app-row" style={{maxHeight: 60 + (this.state.expand ? clusterServiceVersions.length * 50 : 0)}}>
           <div className="col-xs-4">
-            <AppTypeLogo icon={_.get(obj.spec, 'icon', [])[0]} version={obj.spec.version} displayName={obj.spec.displayName} provider={obj.spec.provider} />
+            <ClusterServiceVersionLogo icon={_.get(obj.spec, 'icon', [])[0]} version={obj.spec.version} displayName={obj.spec.displayName} provider={obj.spec.provider} />
           </div>
           <div className="col-xs-6">
             <div>
@@ -180,14 +180,14 @@ export const CatalogsDetailsPage: React.StatelessComponent = () => <div>
 export type CatalogAppRowProps = {
   obj: CatalogEntryKind;
   namespaces: {data: {[name: string]: K8sResourceKind}, loaded: boolean, loadError: Object | string};
-  clusterServiceVersions: AppTypeKind[];
+  clusterServiceVersions: ClusterServiceVersionKind[];
 };
 
 export type CatalogAppRowState = {
   expand: boolean;
-  failed: AppTypeKind[];
-  pending: AppTypeKind[];
-  succeeded: AppTypeKind[];
+  failed: ClusterServiceVersionKind[];
+  pending: ClusterServiceVersionKind[];
+  succeeded: ClusterServiceVersionKind[];
 };
 
 export type CatalogAppHeaderProps = {
@@ -205,13 +205,13 @@ export type CatalogDetailsProps = {
 };
 
 export type BreakdownProps = {
-  clusterServiceVersions: AppTypeKind[];
-  status: {failed: AppTypeKind[], pending: AppTypeKind[], succeeded: AppTypeKind[]};
+  clusterServiceVersions: ClusterServiceVersionKind[];
+  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[]};
 };
 
 export type BreakdownDetailProps = {
-  clusterServiceVersions: AppTypeKind[];
-  status: {failed: AppTypeKind[], pending: AppTypeKind[], succeeded: AppTypeKind[]};
+  clusterServiceVersions: ClusterServiceVersionKind[];
+  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[]};
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically

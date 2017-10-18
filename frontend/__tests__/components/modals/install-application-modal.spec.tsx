@@ -10,8 +10,8 @@ import { ListHeader, ColHead, List } from '../../../public/components/factory';
 import { ResourceLink, LabelList } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { k8sKinds } from '../../../public/module/k8s';
-import { testAppType, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
-import { AppTypeLogo, AppTypeKind } from '../../../public/components/cloud-services';
+import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind } from '../../../public/components/cloud-services';
 
 describe('SelectNamespaceHeader', () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;
@@ -105,7 +105,7 @@ describe('SelectNamespaceRow', () => {
 describe('InstallApplicationModal', () => {
   let wrapper: ShallowWrapper<InstallApplicationModalProps, any>;
   let namespaces: InstallApplicationModalProps['namespaces'];
-  let clusterServiceVersions: AppTypeKind[];
+  let clusterServiceVersions: ClusterServiceVersionKind[];
   let watchK8sList: Spy;
   let k8sCreate: Spy;
   let close: Spy;
@@ -116,7 +116,7 @@ describe('InstallApplicationModal', () => {
     k8sCreate = jasmine.createSpy('k8sCreate');
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
-    clusterServiceVersions = [_.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion)];
     namespaces = {
       data: {
         'default': {metadata: {name: 'default', labels: {}}},
@@ -137,7 +137,7 @@ describe('InstallApplicationModal', () => {
   });
 
   it('renders application logo in modal title', () => {
-    const logo = wrapper.find(ModalTitle).find(AppTypeLogo);
+    const logo = wrapper.find(ModalTitle).find(ClusterServiceVersionLogo);
 
     expect(logo.exists()).toBe(true);
     expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
@@ -172,11 +172,11 @@ describe('InstallApplicationModal', () => {
           apiVersion: 'app.coreos.com/v1alpha1',
           kind: 'InstallPlan-v1',
           metadata: {
-            generateName: `${testAppType.metadata.name}-`,
+            generateName: `${testClusterServiceVersion.metadata.name}-`,
             namespace,
           },
           spec: {
-            clusterServiceVersionNames: [testAppType.metadata.name],
+            clusterServiceVersionNames: [testClusterServiceVersion.metadata.name],
           },
         });
       });

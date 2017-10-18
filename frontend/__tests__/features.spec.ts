@@ -68,7 +68,7 @@ describe('featureReducer', () => {
   });
 
   it('returns updated state with new flags if `SET_FLAGS` action', () => {
-    const action = {type: 'SET_FLAGS', flags: {[FLAGS.CLOUD_SERVICES]: {name: 'apptypes'}}};
+    const action = {type: 'SET_FLAGS', flags: {[FLAGS.CLOUD_SERVICES]: {name: 'clusterserviceversions'}}};
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 

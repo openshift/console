@@ -3,13 +3,13 @@ import * as classNames from'classnames';
 import * as _ from 'lodash';
 
 import { ActionsMenu, kindObj, ResourceIcon } from './index';
-import { AppTypeLogo } from '../cloud-services';
+import { ClusterServiceVersionLogo } from '../cloud-services';
 
 /** @type {React.StatelessComponent.<{kind?: string, detail?: boolean, title?: string, menuActions?: any[], data?: any[] | any}}> */
 export const NavTitle = ({kind, detail, title, menuActions, data}) => {
   const hasLogo = !_.isEmpty(data) && _.has(data, 'spec.icon');
   const logo = hasLogo
-    ? <AppTypeLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
+    ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
     : <div>{ kind && <ResourceIcon kind={kind} className="co-m-page-title__icon" /> } <span>{title}</span></div>;
 
   return <div className={classNames('row', detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')}>

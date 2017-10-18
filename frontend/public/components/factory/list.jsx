@@ -75,7 +75,7 @@ const filters = {
            filters.selected.has('Passed') && !P0 && !P1 && !P2 && !P3 && isSupported(podvuln);
   },
 
-  'apptype-resource-kind': (filters, resource) => {
+  'clusterserviceversion-resource-kind': (filters, resource) => {
     if (!filters || !filters.selected || !filters.selected.size) {
       return true;
     }

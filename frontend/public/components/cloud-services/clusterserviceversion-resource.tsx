@@ -4,14 +4,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { AppTypeResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, AppTypeKind } from './index';
+import { ClusterServiceVersionResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon } from '../utils';
 import { connectToPlural, K8sKind, connectToKinds } from '../../kinds';
 import { k8sGet, k8sKinds } from '../../module/k8s';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
 
-export const AppTypeResourceStatus: React.StatelessComponent<AppTypeResourceStatusProps> = (props) => {
+export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
   const {statusDescriptor, statusValue} = props;
   const descriptors = statusDescriptor['x-descriptors'] || [];
   if (statusValue === null || statusValue === undefined) {
@@ -41,7 +41,7 @@ export const AppTypeResourceStatus: React.StatelessComponent<AppTypeResourceStat
   </dl>;
 };
 
-export const AppTypeResourceHeader: React.StatelessComponent<AppTypeResourceHeaderProps> = (props) => <ListHeader>
+export const ClusterServiceVersionResourceHeader: React.StatelessComponent<ClusterServiceVersionResourceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="metadata.labels">Labels</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
@@ -50,21 +50,21 @@ export const AppTypeResourceHeader: React.StatelessComponent<AppTypeResourceHead
   <ColHead {...props} className="col-xs-2">Last Updated</ColHead>
 </ListHeader>;
 
-export const AppTypeResourceLink = connectToKinds()((props: AppTypeResourceLinkProps) => {
+export const ClusterServiceVersionResourceLink = connectToKinds()((props: ClusterServiceVersionResourceLinkProps) => {
   const {namespace, labels, name} = props.obj.metadata;
 
   return <span className="co-resource-link">
     <ResourceIcon kind={props.obj.kind} />
     <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${labels['operated-by']}/${props.kindObj.plural}/${name}/details`}>{name}</Link>
-  </span>
+  </span>;
 });
 
-export const AppTypeResourceRow: React.StatelessComponent<AppTypeResourceRowProps> = (props) => {
+export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterServiceVersionResourceRowProps> = (props) => {
   const {obj} = props;
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-2">
-      <AppTypeResourceLink obj={obj} kind={obj.kind} />
+      <ClusterServiceVersionResourceLink obj={obj} kind={obj.kind} />
     </div>
     <div className="col-xs-2">
       <LabelList kind={obj.kind} labels={obj.metadata.labels} />
@@ -85,11 +85,11 @@ export const AppTypeResourceRow: React.StatelessComponent<AppTypeResourceRowProp
   </div>;
 };
 
-export const AppTypeResourceList: React.StatelessComponent<AppTypeResourceListProps> = (props) => (
-  <List {...props} Header={AppTypeResourceHeader} Row={AppTypeResourceRow} />
+export const ClusterServiceVersionResourceList: React.StatelessComponent<ClusterServiceVersionResourceListProps> = (props) => (
+  <List {...props} Header={ClusterServiceVersionResourceHeader} Row={ClusterServiceVersionResourceRow} />
 );
 
-export const AppTypePrometheusGraph: React.StatelessComponent<AppTypePrometheusGraphProps> = (props) => {
+export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<ClusterServiceVersionPrometheusGraphProps> = (props) => {
   switch (props.query.type) {
     case PrometheusQueryTypes.Counter:
       return <Scalar title={props.query.name} unit={props.query.unit} query={props.query.query} />;
@@ -104,19 +104,19 @@ export const AppTypePrometheusGraph: React.StatelessComponent<AppTypePrometheusG
   }
 };
 
-export const AppTypeResourcesPage: React.StatelessComponent<AppTypeResourcesPageProps> = (props) => {
+export const ClusterServiceVersionResourcesPage: React.StatelessComponent<ClusterServiceVersionResourcesPageProps> = (props) => {
   const resources = props.data ? props.data.map((resource) => ({kind: resource.spec.names.kind, namespaced: true})) : [];
 
   return props.loaded && props.data.length > 0
     ? <MultiListPage
       {...props}
       createButtonText="New resource"
-      ListComponent={AppTypeResourceList}
+      ListComponent={ClusterServiceVersionResourceList}
       filterLabel="Resources by name"
       resources={resources}
       flatten={(resources) => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item))}
       rowFilters={[{
-        type: 'apptype-resource-kind',
+        type: 'clusterserviceversion-resource-kind',
         selected: props.data.map((resource) => resource.spec.names.kind),
         reducer: (obj) => obj.kind,
         items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
@@ -125,8 +125,8 @@ export const AppTypeResourcesPage: React.StatelessComponent<AppTypeResourcesPage
     : <StatusBox label="Application Resources" loaded={props.loaded} />;
 };
 
-export const AppTypeResourceDetails = connectToPlural(
-  class AppTypeResourceDetailsComponent extends React.Component<AppTypeResourcesDetailsProps, AppTypeResourcesDetailsState> {
+export const ClusterServiceVersionResourceDetails = connectToPlural(
+  class ClusterServiceVersionResourceDetailsComponent extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
     constructor(props) {
       super(props);
       this.state = {clusterServiceVersion: null, expanded: false};
@@ -141,7 +141,7 @@ export const AppTypeResourceDetails = connectToPlural(
     }
 
     public render() {
-      const getStatusValue = (statusDescriptor: AppTypeResourceStatusDescriptor, statusBlock) => {
+      const getStatusValue = (statusDescriptor: ClusterServiceVersionResourceStatusDescriptor, statusBlock) => {
         if (statusDescriptor === undefined) {
           return undefined;
         }
@@ -167,23 +167,23 @@ export const AppTypeResourceDetails = connectToPlural(
         return _.find(descriptor['x-descriptors'], (cap) => cap === ALMStatusDescriptors.importantMetrics) === undefined;
       });
 
-      const metricsDescriptor = _.find<AppTypeResourceStatusDescriptor>(statusDescriptors, (descriptor) => {
+      const metricsDescriptor = _.find<ClusterServiceVersionResourceStatusDescriptor>(statusDescriptors, (descriptor) => {
         return _.find(descriptor['x-descriptors'], (cap) => cap === ALMStatusDescriptors.importantMetrics) !== undefined;
       });
 
       const metricsValue = getStatusValue(metricsDescriptor, status);
 
-      return <div className="co-apptype-resource-details co-m-pane">
+      return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
           <h1 className="co-section-title">{`${title} Overview`}</h1>
-          { metricsValue 
-            ? <div className="row">{ metricsValue.queries.map((query: AppTypePrometheusQuery) => (
-              <div key={query.query} className="col-xs-3 co-apptype-resource-details__section__metric"><AppTypePrometheusGraph query={query} /></div>)) }
-            </div> 
+          { metricsValue
+            ? <div className="row">{ metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery) => (
+              <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric"><ClusterServiceVersionPrometheusGraph query={query} /></div>)) }
+            </div>
             : <div className="text-muted">No metrics defined</div> }
         </div>
         <div className="co-m-pane__body">
-          <div className="co-apptype-resource-details__section co-apptype-resource-details__section--info">
+          <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
             <div className="row">
               <div className="col-xs-12" style={{paddingBottom: '20px'}}>
                 <div className="pull-right">
@@ -213,15 +213,15 @@ export const AppTypeResourceDetails = connectToPlural(
                   </Link>
                 </dd>
               </div> }
-              { filteredStatusDescriptors.map((statusDescriptor: AppTypeResourceStatusDescriptor) => {
+              { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
                 const showStatus = statusValue != null;
-                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
+                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
-              { filteredStatusDescriptors.map((statusDescriptor: AppTypeResourceStatusDescriptor) => {
+              { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
                 const showStatus = statusValue === undefined && this.state.expanded;
-                return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
+                return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
             </div>
           </div>
@@ -230,17 +230,17 @@ export const AppTypeResourceDetails = connectToPlural(
     }
   });
 
-export const AppTypeResourcesDetailsPage: React.StatelessComponent<AppTypeResourcesDetailsPageProps> = (props) => <DetailsPage
+export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
   {...props}
   pages={[
-    navFactory.details(AppTypeResourceDetails),
+    navFactory.details(ClusterServiceVersionResourceDetails),
     navFactory.editYaml(),
   ]}
 />;
 
-export type AppTypeResourceListProps = {
+export type ClusterServiceVersionResourceListProps = {
   loaded: boolean;
-  data: AppTypeResourceKind[];
+  data: ClusterServiceVersionResourceKind[];
   filters: {[key: string]: any};
   reduxID?: string;
   reduxIDs?: string[];
@@ -248,12 +248,12 @@ export type AppTypeResourceListProps = {
   staticFilters?: any;
 };
 
-export type AppTypeResourceHeaderProps = {
-  data: AppTypeResourceKind[];
+export type ClusterServiceVersionResourceHeaderProps = {
+  data: ClusterServiceVersionResourceKind[];
 };
 
-export type AppTypeResourceRowProps = {
-  obj: AppTypeResourceKind;
+export type ClusterServiceVersionResourceRowProps = {
+  obj: ClusterServiceVersionResourceKind;
 };
 
 export enum PrometheusQueryTypes {
@@ -263,7 +263,7 @@ export enum PrometheusQueryTypes {
   Bar = 'Bar',
 }
 
-export type AppTypePrometheusQuery = {
+export type ClusterServiceVersionPrometheusQuery = {
   query: string;
   name: string;
   type: PrometheusQueryTypes;
@@ -271,11 +271,11 @@ export type AppTypePrometheusQuery = {
   metric?: string;
 };
 
-export type AppTypePrometheusGraphProps = {
-  query: AppTypePrometheusQuery;
+export type ClusterServiceVersionPrometheusGraphProps = {
+  query: ClusterServiceVersionPrometheusQuery;
 };
 
-export type AppTypeResourceStatusDescriptor = {
+export type ClusterServiceVersionResourceStatusDescriptor = {
   path: string;
   displayName: string;
   description: string;
@@ -283,47 +283,47 @@ export type AppTypeResourceStatusDescriptor = {
   value?: any;
 };
 
-export type AppTypeResourceStatusProps = {
-  statusDescriptor: AppTypeResourceStatusDescriptor;
+export type ClusterServiceVersionResourceStatusProps = {
+  statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
   statusValue: any;
 };
 
-export type AppTypeResourcesPageProps = {
+export type ClusterServiceVersionResourcesPageProps = {
   data: CustomResourceDefinitionKind[]
   loaded: boolean;
-  appType: AppTypeKind;
+  appType: ClusterServiceVersionKind;
 };
 
-export type AppTypeResourcesDetailsProps = {
-  obj: AppTypeResourceKind;
+export type ClusterServiceVersionResourcesDetailsProps = {
+  obj: ClusterServiceVersionResourceKind;
   kindObj: K8sKind;
   kindsInFlight: boolean;
 };
 
-export type AppTypeResourcesDetailsPageProps = {
+export type ClusterServiceVersionResourcesDetailsPageProps = {
   kind: string;
   name: string;
   namespace: string;
 };
 
-export type AppTypeResourcesDetailsState = {
-  clusterServiceVersion: AppTypeKind;
+export type ClusterServiceVersionResourcesDetailsState = {
+  clusterServiceVersion: ClusterServiceVersionKind;
   expanded: boolean;
 };
 
-export type AppTypeResourceLinkProps = {
-  obj: AppTypeResourceKind;
+export type ClusterServiceVersionResourceLinkProps = {
+  obj: ClusterServiceVersionResourceKind;
   kindObj: K8sKind;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
-AppTypeResourceList.displayName = 'AppTypeResourceList';
-AppTypeResourceHeader.displayName = 'AppTypeResourceHeader';
-AppTypeResourceRow.displayName = 'AppTypeResourceRow';
-AppTypeResourceStatus.displayName = 'AppTypeResourceStatus';
-AppTypeResourceDetails.displayName = 'AppTypeResourceDetails';
-AppTypeResourcesDetailsPage.displayName = 'AppTypeResourcesDetailsPage';
-AppTypeResourceList.displayName = 'AppTypeResourceList';
-AppTypePrometheusGraph.displayName = 'AppTypePrometheusGraph';
-AppTypeResourceLink.displayName = 'AppTypeResourceLink';
+ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
+ClusterServiceVersionResourceHeader.displayName = 'ClusterServiceVersionResourceHeader';
+ClusterServiceVersionResourceRow.displayName = 'ClusterServiceVersionResourceRow';
+ClusterServiceVersionResourceStatus.displayName = 'ClusterServiceVersionResourceStatus';
+ClusterServiceVersionResourceDetails.displayName = 'ClusterServiceVersionResourceDetails';
+ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';
+ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
+ClusterServiceVersionPrometheusGraph.displayName = 'ClusterServiceVersionPrometheusGraph';
+ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';
 

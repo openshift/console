@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { AppTypeKind, AppTypeResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, K8sResourceKind, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, K8sResourceKind, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
 
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',
@@ -10,9 +10,9 @@ export const testNamespace: K8sResourceKind = {
   }
 };
 
-export const testAppType: AppTypeKind = {
+export const testClusterServiceVersion: ClusterServiceVersionKind = {
   apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'AppType-v1',
+  kind: 'ClusterServiceVersion-v1',
   metadata: {
     name: 'testapp',
     uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
@@ -35,12 +35,12 @@ export const testAppType: AppTypeKind = {
       {base64data: '', mediatype: 'image/png',}
     ],
     labels: {
-      'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1',
+      'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
       'alm-catalog': 'open-cloud-services.coreos.com',
     },
     selector: {
       matchLabels: {
-        'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1'
+        'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1'
       }
     },
     customresourcedefinitions: {
@@ -81,9 +81,9 @@ export const testAppType: AppTypeKind = {
   },
 };
 
-export const localAppType: AppTypeKind = {
+export const localClusterServiceVersion: ClusterServiceVersionKind = {
   apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'AppType-v1',
+  kind: 'ClusterServiceVersion-v1',
   metadata: {
     name: 'local-testapp',
     uid: 'c02c0a8f-88e0-12e7-851b-080027b424ef',
@@ -94,11 +94,11 @@ export const localAppType: AppTypeKind = {
     displayName: 'Local Test App',
     description: 'This app does cool stuff - locally',
     labels: {
-      'alm-owner-local-testapp': 'local-testapp.apptype-v1s.app.coreos.com.v1alpha1',
+      'alm-owner-local-testapp': 'local-testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
     },
     selector: {
       matchLabels: {
-        'alm-owner-local-testapp': 'local-testapp.apptype-v1s.app.coreos.com.v1alpha1'
+        'alm-owner-local-testapp': 'local-testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1'
       }
     },
     customresourcedefinitions: {
@@ -107,13 +107,13 @@ export const localAppType: AppTypeKind = {
   },
 };
 
-export const testAppTypeResource: CustomResourceDefinitionKind = {
+export const testClusterServiceVersionResource: CustomResourceDefinitionKind = {
   apiVersion: 'apiextensions.k8s.io/v1beta1',
   kind: 'CustomResourceDefinition',
   metadata: {
     name: 'testresource.testapp.coreos.com',
     labels: {
-      'owner-testapp': 'testapp.apptype-v1s.coreos.com',
+      'owner-testapp': 'testapp.clusterserviceversion-v1s.coreos.com',
     },
     annotations: {
       displayName: 'Dashboard',
@@ -129,7 +129,7 @@ export const testAppTypeResource: CustomResourceDefinitionKind = {
   }
 };
 
-export const testResourceInstance: AppTypeResourceKind = {
+export const testResourceInstance: ClusterServiceVersionResourceKind = {
   apiVersion: 'testapp.coreos.com',
   kind: 'TestResource',
   metadata: {
@@ -140,7 +140,7 @@ export const testResourceInstance: AppTypeResourceKind = {
   },
   spec: {
     labels: {
-      'owner-testapp': 'testapp.apptype-v1s.app.coreos.com',
+      'owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com',
     },
     selector: {
       matchLabels: {
@@ -177,7 +177,7 @@ export const testCatalogApp: CatalogEntryKind = {
       {base64data: '', mediatype: 'image/png',}
     ],
     labels: {
-      'alm-owner-testapp': 'testapp.apptype-v1s.app.coreos.com.v1alpha1',
+      'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
       'alm-catalog': 'open-cloud-services.coreos.com',
     },
   },

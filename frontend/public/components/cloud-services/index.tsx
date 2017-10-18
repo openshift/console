@@ -3,8 +3,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 
-export { AppTypesDetailsPage, AppTypesPage } from './apptype';
-export { AppTypeResourcesDetailsPage } from './apptype-resource';
+export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
+export { ClusterServiceVersionResourcesDetailsPage } from './clusterserviceversion-resource';
 export { CatalogsDetailsPage } from './catalog';
 
 export enum ALMStatusDescriptors {
@@ -58,14 +58,14 @@ export type CustomResourceDefinitionKind = {
 } & K8sResourceKind;
 
 // TODO(alecmerdler): Change this to `ClusterServiceVersion`
-export type AppTypeKind = {
+export type ClusterServiceVersionKind = {
   status?: {
     phase: ClusterServiceVersionPhase;
     reason: CSVConditionReason;
   };
 } & K8sResourceKind;
 
-export type AppTypeResourceKind = {
+export type ClusterServiceVersionResourceKind = {
   status: {[name: string]: any};
 } & K8sResourceKind;
 
@@ -87,22 +87,22 @@ export type InstallPlanKind = {
   }
 } & K8sResourceKind;
 
-export const AppTypeLogo = (props: AppTypeLogoProps) => {
+export const ClusterServiceVersionLogo = (props: ClusterServiceVersionLogoProps) => {
   const {icon, displayName, provider, version} = props;
 
-  return <div className="co-apptype-logo">
-    <div className="co-apptype-logo__icon">{ _.isEmpty(icon)
+  return <div className="co-clusterserviceversion-logo">
+    <div className="co-clusterserviceversion-logo__icon">{ _.isEmpty(icon)
       ? <span className="fa ci-appcube" style={{fontSize: '40px'}} />
       : <img src={`data:${icon.mediatype};base64,${icon.base64data}`} height="40" width="40" /> }
     </div>
-    <div className="co-apptype-logo__name">
-      <h1 className="co-apptype-logo__name__apptype">{displayName}</h1>
-      { provider && <span className="co-apptype-logo__name__provider">{`${version || ''} by ${_.get(provider, 'name', provider)}`}</span> }
+    <div className="co-clusterserviceversion-logo__name">
+      <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">{displayName}</h1>
+      { provider && <span className="co-clusterserviceversion-logo__name__provider">{`${version || ''} by ${_.get(provider, 'name', provider)}`}</span> }
     </div>
   </div>;
 };
 
-export type AppTypeLogoProps = {
+export type ClusterServiceVersionLogoProps = {
   displayName: string;
   icon: {base64data: string, mediatype: string};
   provider: {name: string} | string;

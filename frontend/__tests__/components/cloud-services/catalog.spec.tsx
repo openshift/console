@@ -6,15 +6,15 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import { Helmet } from 'react-helmet';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
-import { AppTypeLogo, AppTypeKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
 import { ListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
 import { NavTitle } from '../../../public/components/utils';
-import { testCatalogApp, testAppType, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
+import { testCatalogApp, testClusterServiceVersion, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 
 describe('CatalogAppRow', () => {
   let wrapper: ShallowWrapper<CatalogAppRowProps, CatalogAppRowState>;
   let namespaces: CatalogAppRowProps['namespaces'];
-  let clusterServiceVersions: AppTypeKind[];
+  let clusterServiceVersions: ClusterServiceVersionKind[];
 
   beforeEach(() => {
     namespaces = {
@@ -31,7 +31,7 @@ describe('CatalogAppRow', () => {
 
   it('renders column for app logo', () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(0);
-    const logo = col.find(AppTypeLogo);
+    const logo = col.find(ClusterServiceVersionLogo);
 
     expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
     expect(logo.props().provider).toEqual(testCatalogApp.spec.provider);
@@ -57,7 +57,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders installing state if at least one given `ClusterServiceVersion` status phase is `Installing`', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseInstalling, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
@@ -67,7 +67,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders error state if at least one given `ClusterServiceVersion` status phase is `Failed`', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
@@ -78,7 +78,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders success state if all `ClusterServiceVersions` statuses are `Succeeded`', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
 
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
@@ -87,7 +87,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders active progress bar in expanded state if at least one `ClusterServiceVersion` status is `Pending` or `Installing`', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
     wrapper.setProps({clusterServiceVersions});
@@ -98,7 +98,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders completed progress bar in expanded state if all `ClusterServiceVersion` status are `Succeeded`', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
 
     wrapper.setProps({clusterServiceVersions});
     wrapper.setState({expand: true});
@@ -110,7 +110,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders list of namespace statuses in expanded state', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType), _.cloneDeep(testAppType), _.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
 
@@ -125,7 +125,7 @@ describe('CatalogAppRow', () => {
   });
 
   it('renders status reason next to failed namespaces', () => {
-    clusterServiceVersions = [_.cloneDeep(testAppType)];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
 
     wrapper.setProps({clusterServiceVersions});

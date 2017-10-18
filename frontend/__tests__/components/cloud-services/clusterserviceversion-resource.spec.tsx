@@ -5,18 +5,18 @@ import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { AppTypeResourceList, AppTypeResourceListProps, AppTypeResourceHeaderProps, AppTypeResourcesDetailsState, AppTypeResourceRowProps, AppTypeResourceHeader, AppTypeResourceRow, AppTypeResourceDetails, AppTypePrometheusGraph, AppTypeResourcesDetailsPageProps, AppTypeResourcesDetailsProps, AppTypeResourceStatus, AppTypeResourcesDetailsPage, PrometheusQueryTypes, AppTypeResourceLink } from '../../../public/components/cloud-services/apptype-resource';
-import { AppTypeResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
-import { testAppTypeResource, testResourceInstance, testAppType } from '../../../__mocks__/k8sResourcesMocks';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourceStatus, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
+import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 
-describe('AppTypeResourceHeader', () => {
-  let wrapper: ShallowWrapper<AppTypeResourceHeaderProps>;
+describe('ClusterServiceVersionResourceHeader', () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourceHeaderProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<AppTypeResourceHeader data={[]} />);
+    wrapper = shallow(<ClusterServiceVersionResourceHeader data={[]} />);
   });
 
   it('renders column header for resource name', () => {
@@ -59,16 +59,16 @@ describe('AppTypeResourceHeader', () => {
   });
 });
 
-describe('AppTypeResourceRow', () => {
-  let wrapper: ShallowWrapper<AppTypeResourceRowProps>;
+describe('ClusterServiceVersionResourceRow', () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourceRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<AppTypeResourceRow obj={testResourceInstance} />);
+    wrapper = shallow(<ClusterServiceVersionResourceRow obj={testResourceInstance} />);
   });
 
   it('renders column for resource name', () => {
     const col = wrapper.childAt(0);
-    const link = col.find(AppTypeResourceLink);
+    const link = col.find(ClusterServiceVersionResourceLink);
 
     expect(link.props().obj).toEqual(testResourceInstance);
     expect(link.props().kind).toEqual(testResourceInstance.kind);
@@ -108,13 +108,13 @@ describe('AppTypeResourceRow', () => {
   });
 });
 
-describe('AppTypeResourceList', () => {
-  let wrapper: ShallowWrapper<AppTypeResourceListProps>;
-  let resources: AppTypeResourceKind[];
+describe('ClusterServiceVersionResourceList', () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourceListProps>;
+  let resources: ClusterServiceVersionResourceKind[];
 
   beforeEach(() => {
     resources = [testResourceInstance];
-    wrapper = shallow(<AppTypeResourceList loaded={true} data={resources} filters={{}} />);
+    wrapper = shallow(<ClusterServiceVersionResourceList loaded={true} data={resources} filters={{}} />);
   });
 
   it('renders a `List` of the custom resource instances of the given kind', () => {
@@ -122,24 +122,24 @@ describe('AppTypeResourceList', () => {
 
     expect(list.exists()).toBe(true);
     expect(Object.keys(wrapper.props()).reduce((_, prop) => list.prop(prop) === wrapper.prop(prop), false)).toBe(true);
-    expect(list.props().Header).toEqual(AppTypeResourceHeader);
-    expect(list.props().Row).toEqual(AppTypeResourceRow);
+    expect(list.props().Header).toEqual(ClusterServiceVersionResourceHeader);
+    expect(list.props().Row).toEqual(ClusterServiceVersionResourceRow);
   });
 });
 
-describe('AppTypeResourcesDetails', () => {
-  let wrapper: ShallowWrapper<AppTypeResourcesDetailsProps, AppTypeResourcesDetailsState>;
+describe('ClusterServiceVersionResourcesDetails', () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState>;
   let resourceDefinition: any;
 
   beforeEach(() => {
     resourceDefinition = {
-      path: testAppTypeResource.metadata.name.split('.')[0],
-      annotations: testAppTypeResource.metadata.annotations,
+      path: testClusterServiceVersionResource.metadata.name.split('.')[0],
+      annotations: testClusterServiceVersionResource.metadata.annotations,
     };
     // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
-    const Component: React.StatelessComponent<AppTypeResourcesDetailsProps> = (AppTypeResourceDetails as any).WrappedComponent;
+    const Component: React.StatelessComponent<ClusterServiceVersionResourcesDetailsProps> = (ClusterServiceVersionResourceDetails as any).WrappedComponent;
     wrapper = shallow(<Component obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} />);
-    wrapper.setState({clusterServiceVersion: testAppType, expanded: false});
+    wrapper.setState({clusterServiceVersion: testClusterServiceVersion, expanded: false});
   });
 
   it('renders description title', () => {
@@ -148,7 +148,7 @@ describe('AppTypeResourcesDetails', () => {
   });
 
   it('renders info section', () => {
-    const section = wrapper.find('.co-apptype-resource-details__section--info');
+    const section = wrapper.find('.co-clusterserviceversion-resource-details__section--info');
 
     expect(section.exists()).toBe(true);
   });
@@ -167,11 +167,11 @@ describe('AppTypeResourcesDetails', () => {
 
   it('renders the specified important prometheus metrics as graphs', () => {
     wrapper.setState({
-      'clusterServiceVersion': testAppType,
+      'clusterServiceVersion': testClusterServiceVersion,
       'expanded': false,
     });
 
-    const metric = wrapper.find('.co-apptype-resource-details__section__metric');
+    const metric = wrapper.find('.co-clusterserviceversion-resource-details__section__metric');
     expect(metric.exists()).toBe(true);
   });
 
@@ -190,13 +190,13 @@ describe('AppTypeResourcesDetails', () => {
 
   it('renders the filled in status field', () => {
     const value = testResourceInstance.status['some-filled-path'];
-    const statusView = wrapper.find(AppTypeResourceStatus);
+    const statusView = wrapper.find(ClusterServiceVersionResourceStatus);
     expect(statusView.exists()).toBe(true);
     expect(statusView.props().statusValue).toEqual(value);
   });
 
   it('does not render the non-filled in status field when in expanded mode', () => {
-    const crd = testAppType.spec.customresourcedefinitions.owned.find((crd) => {
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => {
       return crd.name === 'testresource.testapp.coreos.com';
     });
 
@@ -204,7 +204,7 @@ describe('AppTypeResourcesDetails', () => {
       return sd.path === 'some-unfilled-path';
     });
 
-    const statusView = wrapper.find(AppTypeResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+    const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
     expect(statusView.exists()).toBe(false);
   });
 
@@ -214,7 +214,7 @@ describe('AppTypeResourcesDetails', () => {
       'expanded': true,
     });
 
-    const crd = testAppType.spec.customresourcedefinitions.owned.find((crd) => {
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => {
       return crd.name === 'testresource.testapp.coreos.com';
     });
 
@@ -222,7 +222,7 @@ describe('AppTypeResourcesDetails', () => {
       return sd.path === 'some-unfilled-path';
     });
 
-    const statusView = wrapper.find(AppTypeResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+    const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
     expect(statusView.exists()).toBe(true);
   });
 
@@ -233,7 +233,7 @@ describe('AppTypeResourcesDetails', () => {
   });
 });
 
-describe('AppTypePrometheusGraph', () => {
+describe('ClusterServiceVersionPrometheusGraph', () => {
   it('renders a counter', () => {
     const query = {
       'name': 'foo',
@@ -242,7 +242,7 @@ describe('AppTypePrometheusGraph', () => {
       'type': PrometheusQueryTypes.Counter,
     };
 
-    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
     expect(wrapper.is(Scalar)).toBe(true);
   });
 
@@ -253,7 +253,7 @@ describe('AppTypePrometheusGraph', () => {
       'type': PrometheusQueryTypes.Gauge,
     };
 
-    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
     expect(wrapper.is(Gauge)).toBe(true);
   });
 
@@ -264,7 +264,7 @@ describe('AppTypePrometheusGraph', () => {
       'type': PrometheusQueryTypes.Line,
     };
 
-    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
     expect(wrapper.is(Line)).toBe(true);
   });
 
@@ -275,7 +275,7 @@ describe('AppTypePrometheusGraph', () => {
       'type': PrometheusQueryTypes.Bar,
     };
 
-    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
     expect(wrapper.is(Bar)).toBe(true);
   });
 
@@ -286,12 +286,12 @@ describe('AppTypePrometheusGraph', () => {
       'type': 'unknown',
     };
 
-    const wrapper = shallow(<AppTypePrometheusGraph query={query} />);
+    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
     expect(wrapper.html()).toBe('<span>Unknown graph type: unknown</span>');
   });
 });
 
-describe('AppTypeResourceStatus', () => {
+describe('ClusterServiceVersionResourceStatus', () => {
   it('renders a null value', () => {
     const statusDescriptor = {
       'path': '',
@@ -301,7 +301,7 @@ describe('AppTypeResourceStatus', () => {
     };
 
     const statusValue = null;
-    const wrapper = shallow(<AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
     expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd>None</dd></dl>');
   });
 
@@ -318,7 +318,7 @@ describe('AppTypeResourceStatus', () => {
       'phase': 'somephase',
     }];
 
-    const wrapper = shallow(<AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
     expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd><span>somephase</span></dd></dl>');
   });
 
@@ -331,16 +331,16 @@ describe('AppTypeResourceStatus', () => {
     };
 
     const statusValue = 'https://example.com';
-    const wrapper = shallow(<AppTypeResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
     expect(wrapper.html()).toBe('<dl><dt>Some Link</dt><dd><a href="https://example.com">example.com</a></dd></dl>');
   });
 });
 
-describe('AppTypeResourcesDetailsPage', () => {
-  let wrapper: ShallowWrapper<AppTypeResourcesDetailsPageProps>;
+describe('ClusterServiceVersionResourcesDetailsPage', () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<AppTypeResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} />);
+    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} />);
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -349,7 +349,7 @@ describe('AppTypeResourcesDetailsPage', () => {
     expect(detailsPage.exists()).toBe(true);
     expect(detailsPage.props().pages[0].name).toEqual('Overview');
     expect(detailsPage.props().pages[0].href).toEqual('details');
-    expect(detailsPage.props().pages[0].component).toEqual(AppTypeResourceDetails);
+    expect(detailsPage.props().pages[0].component).toEqual(ClusterServiceVersionResourceDetails);
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
   });
