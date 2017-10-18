@@ -60,12 +60,12 @@ export const CRDS_ = {
   'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
 };
 
-const labellerDeploymentPath = `${k8sBasePath}/apis/extensions/v1beta2/deployments`;
+const labellerDeploymentPath = `${k8sBasePath}/apis/apps/v1beta2/deployments`;
 const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPath)
   .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
     (res) => handleError(res, SECURITY_LABELLER_FLAGS, dispatch, detectSecurityLabellerFlags));
 
-const calicoDaemonSetPath = `${k8sBasePath}/apis/extensions/v1beta2/daemonsets`;
+const calicoDaemonSetPath = `${k8sBasePath}/apis/apps/v1beta2/daemonsets`;
 const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
   .then(res => setFlags(dispatch, _.mapValues(CALICO_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
     (res) => handleError(res, CALICO_FLAGS, dispatch, detectCalicoFlags));
