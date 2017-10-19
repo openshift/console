@@ -11,7 +11,7 @@ import { ListPage, List, ListHeader, ColHead } from '../../../public/components/
 import { NavTitle } from '../../../public/components/utils';
 import { testCatalogApp, testClusterServiceVersion, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 
-describe('CatalogAppRow', () => {
+describe(CatalogAppRow.displayName, () => {
   let wrapper: ShallowWrapper<CatalogAppRowProps, CatalogAppRowState>;
   let namespaces: CatalogAppRowProps['namespaces'];
   let clusterServiceVersions: ClusterServiceVersionKind[];
@@ -38,7 +38,8 @@ describe('CatalogAppRow', () => {
     expect(logo.props().icon).toEqual(testCatalogApp.spec.icon[0]);
   });
 
-  it('renders link to expand/hide the row', () => {
+  it('renders link to expand/hide the row if `props.clusterServiceVersions` length is not zero', () => {
+    wrapper.setProps({clusterServiceVersions: [testClusterServiceVersion]});
     const link = wrapper.find('a');
 
     expect(link.text()).toEqual('Show Details');
@@ -48,6 +49,12 @@ describe('CatalogAppRow', () => {
 
     expect(wrapper.find('a').text()).toEqual('Hide Details');
     expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(false);
+  });
+
+  it('does not render expand/hide link if `props.clusterServiceVersions` length is zero', () => {
+    const link = wrapper.find('a');
+
+    expect(link.exists()).toBe(false);
   });
 
   it('renders empty state for column if given empty list of `ClusterServiceVersions`', () => {
@@ -151,7 +158,7 @@ describe('CatalogAppRow', () => {
   });
 });
 
-describe(CatalogAppHeader.name, () => {
+describe(CatalogAppHeader.displayName, () => {
   let wrapper: ShallowWrapper<CatalogAppHeaderProps>;
 
   beforeEach(() => {
@@ -178,7 +185,7 @@ describe(CatalogAppHeader.name, () => {
   });
 });
 
-describe(CatalogAppList.name, () => {
+describe(CatalogAppList.displayName, () => {
   let wrapper: ShallowWrapper<CatalogAppListProps>;
 
   beforeEach(() => {
@@ -195,7 +202,7 @@ describe(CatalogAppList.name, () => {
   });
 });
 
-describe(CatalogAppsPage.name, () => {
+describe(CatalogAppsPage.displayName, () => {
   let wrapper: ShallowWrapper;
 
   beforeEach(() => {
@@ -207,6 +214,7 @@ describe(CatalogAppsPage.name, () => {
 
     expect(listPage.exists()).toBe(true);
     expect(listPage.props().kind).toEqual('AlphaCatalogEntry-v1');
+    expect(listPage.props().namespace).toEqual('tectonic-system');
     expect(listPage.props().ListComponent).toEqual(CatalogAppList);
     expect(listPage.props().filterLabel).toEqual('Applications by name');
     expect(listPage.props().title).toEqual('Applications');
@@ -214,7 +222,7 @@ describe(CatalogAppsPage.name, () => {
   });
 });
 
-describe(CatalogDetails.name, () => {
+describe(CatalogDetails.displayName, () => {
   let wrapper: ShallowWrapper<CatalogDetailsProps>;
 
   beforeEach(() => {
@@ -238,7 +246,7 @@ describe(CatalogDetails.name, () => {
   });
 });
 
-describe(CatalogsDetailsPage.name, () => {
+describe(CatalogsDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper;
 
   beforeEach(() => {
