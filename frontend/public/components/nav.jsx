@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
+import * as _ from 'lodash';
 
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespaceRoute } from '../ui/ui-actions';
@@ -35,7 +36,7 @@ const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
 };
 
 const NavLink = connect(navLinkStateToProps, null, mergeProps, {pure: true, areStatesEqual})(
-  class NavLink_ extends React.PureComponent {
+  class NavLink extends React.PureComponent {
     componentDidMount () {
       const {isActive, openSection, sectionId} = this.props;
       if (isActive) {
@@ -69,50 +70,43 @@ const logout = e => {
   authSvc.logout();
 };
 
-const navSectionStateToProps = (state, {required}) => {
-  let canRender = true;
-  if (required) {
-    canRender = _.some(required, r => featuresStateToProps(Object.keys(FLAGS), state).flags[r]);
-  }
-  return {
-    canRender,
-  };
-};
+const navSectionStateToProps = (state, {required}) => ({
+  canRender: required ? _.some(required, r => featuresStateToProps(Object.keys(FLAGS), state).flags[r]) : true
+});
 
-class NavSection_ extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {isOpen: false};
-    this.openSection = () => this.setState({isOpen: true});
-    this.toggle = () => this.setState({isOpen: !this.state.isOpen});
-  }
-
-  render () {
-    if (!this.props.canRender) {
-      return null;
+const NavSection = connect(navSectionStateToProps)(
+  class NavSection extends React.PureComponent {
+    constructor(props) {
+      super(props);
+      this.state = {isOpen: false};
+      this.openSection = () => this.setState({isOpen: true});
+      this.toggle = () => this.setState({isOpen: !this.state.isOpen});
     }
-    const { icon, img, text, children } = this.props;
-    const Children = React.Children.map(children, c => React.cloneElement(c, {sectionId: text, key: c.props.name, openSection: this.openSection}));
 
-    // WARNING:
-    // we transition on max-height because you can't transition to height 'inherit'
-    // however, the transition animiation is calculated on the actual max-height, so it must be roughly equal to the actual height
-    // we could use scaleY, but that literally scales along the Y axis, ie shrinks
-    // we could use flexbox or the equivalent to get an actual height, but this is the easiest solution :-/
-    const maxHeight = this.state.isOpen ? ((this.props.children.length || 1) * 29) : 0;
+    render () {
+      if (!this.props.canRender) {
+        return null;
+      }
+      const { icon, img, text, children } = this.props;
+      const Children = React.Children.map(children, c => React.cloneElement(c, {sectionId: text, key: c.props.name, openSection: this.openSection}));
 
-    return <div className="navigation-container__section">
-      <div className="navigation-container__section__title" onClick={this.toggle}>
-        {icon && <i className={`fa ${icon} navigation-container__section__title__icon`}></i>}
-        {img && <img src={img} />}
-        {text}
-      </div>
-      <ul className="navigation-container__list" style={{maxHeight}}>{Children}</ul>
-    </div>;
-  }
-}
+      // WARNING:
+      // we transition on max-height because you can't transition to height 'inherit'
+      // however, the transition animiation is calculated on the actual max-height, so it must be roughly equal to the actual height
+      // we could use scaleY, but that literally scales along the Y axis, ie shrinks
+      // we could use flexbox or the equivalent to get an actual height, but this is the easiest solution :-/
+      const maxHeight = this.state.isOpen ? ((this.props.children.length || 1) * 29) : 0;
 
-const NavSection = connect(navSectionStateToProps)(NavSection_);
+      return <div className="navigation-container__section">
+        <div className="navigation-container__section__title" onClick={this.toggle}>
+          {icon && <i className={`fa ${icon} navigation-container__section__title__icon`}></i>}
+          {img && <img src={img} />}
+          {text}
+        </div>
+        <ul className="navigation-container__list" style={{maxHeight}}>{Children}</ul>
+      </div>;
+    }
+  });
 
 const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 'clusterroles');
 const isRoleBindingsActive = path => _.startsWith(path, 'rolebindings') || _.startsWith(path, 'clusterrolebindings');
@@ -148,22 +142,22 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="resourcequotas" name="Resource Quotas" />
     </NavSection>
 
-    <NavSection required={['ETCD_OPERATOR', 'PROMETHEUS']} text="Open Cloud Services" img={operatorLogoImg}>
-      <NavLink resource="etcdclusters" name="etcd" required="ETCD_OPERATOR" />
-      <NavLink resource="prometheuses" name="Prometheus" required="PROMETHEUS" />
+    <NavSection required={[FLAGS.ETCD_OPERATOR, FLAGS.PROMETHEUS]} text="Open Cloud Services" img={operatorLogoImg}>
+      <NavLink resource="etcdclusters" name="etcd" required={FLAGS.ETCD_OPERATOR} />
+      <NavLink resource="prometheuses" name="Prometheus" required={FLAGS.PROMETHEUS} />
     </NavSection>
 
     <NavSection text="Routing" img={routingImg}>
       <NavLink resource="ingresses" name="Ingress" />
-      <NavLink resource="networkpolicies" name="Network Policies" required="CALICO" />
+      <NavLink resource="networkpolicies" name="Network Policies" required={FLAGS.CALICO} />
       <NavLink resource="services" name="Services" />
     </NavSection>
 
     <NavSection text="Troubleshooting" icon="fa-life-ring">
       <NavLink resource="search" name="Search" />
       <NavLink resource="events" name="Events" />
-      <NavLink href="/prometheus" target="_blank" name="Prometheus" required="PROMETHEUS" />
-      <NavLink href="/alertmanager" target="_blank" name="Prometheus Alerts" required="PROMETHEUS" />
+      <NavLink href="/prometheus" target="_blank" name="Prometheus" required={FLAGS.PROMETHEUS} />
+      <NavLink href="/alertmanager" target="_blank" name="Prometheus Alerts" required={FLAGS.PROMETHEUS} />
     </NavSection>
 
     <NavSection text="Administration" icon="fa-cog">
@@ -174,13 +168,13 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="serviceaccounts" name="Service Accounts" />
       <NavLink resource="roles" name="Roles" isActive={isRolesActive} />
       <NavLink resource="rolebindings" name="Role Bindings" isActive={isRoleBindingsActive} />
-      <NavLink resource="podvulns" name="Security Report" required="SECURITY_LABELLER" />
+      <NavLink resource="podvulns" name="Security Report" required={FLAGS.SECURITY_LABELLER} />
       <NavLink href="/crds" name="CRDs" />
     </NavSection>
 
     {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user">
       <NavLink href="/settings/profile" name="My Account" />
-      <NavLink href="#" name="Log Out" required="AUTH_ENABLED" onClick={logout} />
+      <NavLink href="#" name="Log Out" required={FLAGS.AUTH_ENABLED} onClick={logout} />
     </NavSection>}
   </div>
 </div>;

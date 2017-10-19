@@ -111,7 +111,7 @@ export const CatalogAppRow = connect(stateToProps)(
           <div className="col-xs-6">
             <div>
               <div style={{marginBottom: '15px'}}><Breakdown clusterServiceVersions={clusterServiceVersions} status={this.state} /></div>
-              <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} Details`}</a>
+              { clusterServiceVersions.length > 0 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} Details`}</a> }
             </div>
             <div className={classNames('co-catalog-app-row__details', {'co-catalog-app-row__details--collapsed': !this.state.expand})}>
               <BreakdownDetail clusterServiceVersions={clusterServiceVersions} status={this.state} />
@@ -146,7 +146,7 @@ export const CatalogAppsPage: React.StatelessComponent = () => <div>
   {/* Firehoses used here to add resources to Redux store */}
   <Firehose kind="ClusterServiceVersion-v1" isList={true} />
   <Firehose kind="Namespace" isList={true} />
-  <ListPage kind="AlphaCatalogEntry-v1" ListComponent={CatalogAppList} filterLabel="Applications by name" title="Applications" showTitle={true} />
+  <ListPage kind="AlphaCatalogEntry-v1" namespace="tectonic-system" ListComponent={CatalogAppList} filterLabel="Applications by name" title="Applications" showTitle={true} />
 </div>;
 
 export const CatalogDetails: React.StatelessComponent = () => <div className="co-catalog-details co-m-pane">

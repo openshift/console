@@ -149,7 +149,7 @@ BaseListPage.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.StatelessComponent<{ListComponent: React.ComponentType<any>, kind: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[]}>} */
+/** @type {React.StatelessComponent<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[]}>} */
 export const ListPage = props => {
   const {createHandler, filterLabel, kind, namespace, showTitle = true} = props;
   const {label, labelPlural, plural} = kindObj(kind);
