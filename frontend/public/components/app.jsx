@@ -107,6 +107,9 @@ class App extends React.PureComponent {
 
             <Route path="/start-guide" exact component={StartGuidePage} />
 
+            <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name" component={ResourceDetailsPage} />
+            <Route path="/catalog" exact component={CatalogsDetailsPage} />
+
             <Route path="/clusterroles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/clusterroles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="ClusterRole" />} />
             <Route path="/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
@@ -154,8 +157,6 @@ class App extends React.PureComponent {
             <Route path="/ns/:ns/:plural/new" exact component={CreateYAML} />
             <Route path="/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/ns/:ns/:plural" exact component={ResourceListPage} />
-
-            <Route path="/catalog" exact component={CatalogsDetailsPage} />
 
             <Route path="/error" exact component={ErrorPage} />
             <Route component={ErrorPage404} />

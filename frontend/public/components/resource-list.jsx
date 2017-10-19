@@ -48,7 +48,7 @@ export const ResourceDetailsPage = connectToPlural(props => {
 
   // FIXME(alecmerdler): Remove this hackiness to locate ClusterServiceVersion-managed CRDs
   if (kindObj.labels && Object.keys(kindObj.labels).find(key => key.indexOf('alm-owner') !== -1)) {
-    PageComponent = resourceDetailPages.get('AppTypeResources');
+    PageComponent = resourceDetailPages.get('ClusterServiceVersionResources');
   }
 
   if (!PageComponent) {

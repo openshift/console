@@ -7,7 +7,7 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, LabelList, ResourceLink } from '../utils';
 import { k8sKinds } from '../../module/k8s';
-import { AppTypeKind, AppTypeLogo, CatalogEntryKind } from '../cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind } from '../cloud-services';
 
 export const SelectNamespaceHeader = (props: SelectNamespaceHeaderProps) => <ListHeader>
   <ColHead {...props} className="col-xs-5" sortField="metadata.name">Name</ColHead>
@@ -72,7 +72,7 @@ export class InstallApplicationModal extends PromiseComponent {
 
     return <form onSubmit={this.submit.bind(this)} name="form">
       <ModalTitle>
-        <AppTypeLogo displayName={spec.displayName} provider={spec.provider} icon={spec.icon[0]} />
+        <ClusterServiceVersionLogo displayName={spec.displayName} provider={spec.provider} icon={spec.icon[0]} />
       </ModalTitle>
       <ModalBody>
         <div>
@@ -103,7 +103,7 @@ export type InstallApplicationModalProps = {
   watchK8sList: (id: string, query: any, kind: any) => void;
   k8sCreate: (kind, data) => Promise<any>;
   namespaces: {data: {[name: string]: any}, loaded: boolean, loadError: Object | string};
-  clusterServiceVersions: AppTypeKind[];
+  clusterServiceVersions: ClusterServiceVersionKind[];
   catalogEntry: CatalogEntryKind;
 };
 
