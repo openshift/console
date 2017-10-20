@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "rm -rf ./public/dist/ && webpack --watch",
-    "build": "rm -rf ./public/dist && NODE_ENV=production webpack --progress",
+    "dev": "rm -rf ./public/dist/ && webpack --watch --progress",
+    "build": "rm -rf ./public/dist && NODE_ENV=production webpack",
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
