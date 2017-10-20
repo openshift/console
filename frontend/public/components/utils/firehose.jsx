@@ -42,6 +42,33 @@ export class Firehose extends FirehoseBase {
     return this.firehose && this.firehose.id;
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    const props = this.props;
+
+    if (nextProps.expand !== props.expand) {
+      return true;
+    }
+
+    const needsNewFirehose = nextProps.fieldSelector === props.fieldSelector &&
+      nextProps.namespace === props.namespace &&
+      nextProps.name === props.name &&
+      _.isEqual(nextProps.selector, props.selector);
+
+    if (needsNewFirehose) {
+      const locationChanged = _.get(nextContext, 'router.route.location.pathname') !== _.get(this.context, 'router.route.location.pathname');
+      if (locationChanged) {
+        console.log(_.get(nextContext, 'router.route.location.pathname'), _.get(this.context, 'router.route.location.pathname'));
+        return true;
+      }
+      return false;
+    }
+
+    this.componentWillUnmount();
+    this.firehose = this._initFirehose(nextProps);
+    this.componentDidMount();
+    return true;
+  }
+
   render () {
     const {props, props: {children, isList, kind}} = this;
 
@@ -77,8 +104,13 @@ export class Firehose extends FirehoseBase {
     this.firehose = null;
   }
 }
+
+Firehose.contextTypes = {
+  router: PropTypes.object
+};
+
 Firehose.propTypes = {
-  kind: PropTypes.string,
+  kind: PropTypes.string.isRequired,
   name: PropTypes.string,
   namespace: PropTypes.string,
   selector: PropTypes.object,
@@ -98,14 +130,18 @@ export class MultiFirehose extends FirehoseBase {
     this.firehoses = props.resources.map(r => this._initFirehose(r));
   }
 
-  componentDidUpdate({resources}) {
+  shouldComponentUpdate({resources}, nextState, nextContext) {
     const currentResources = this.props.resources;
     if (_.intersectionWith(resources, currentResources, _.isEqual).length === resources.length) {
-      return;
+      if (_.get(nextContext, 'router.route.location.pathname') !== _.get(this.context, 'router.route.location.pathname')) {
+        return true;
+      }
+      return false;
     }
     this.componentWillUnmount();
-    this.firehoses = this.props.resources.map(r => this._initFirehose(r));
+    this.firehoses = resources.map(r => this._initFirehose(r));
     this.componentDidMount();
+    return true;
   }
 
   componentDidMount() {
@@ -126,11 +162,25 @@ export class MultiFirehose extends FirehoseBase {
       return _.defaults({}, { reduxID: this.firehoses[i].id }, resource);
     });
 
-    return <MultiConnectToState reduxes={reduxes} flatten={this.props.flatten}>
+    const newProps = _.omit(this.props, [
+      'children',
+      'namespace',
+      'selector',
+      'fieldSelector',
+      'name',
+      'className',
+    ]);
+
+    return <MultiConnectToState reduxes={reduxes} flatten={this.props.flatten} {...newProps}>
       {this.props.children}
     </MultiConnectToState>;
   }
 }
+
+MultiFirehose.contextTypes = {
+  router: PropTypes.object
+};
+
 MultiFirehose.propTypes = {
   children: PropTypes.node,
   resources: PropTypes.array

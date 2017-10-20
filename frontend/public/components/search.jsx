@@ -1,50 +1,16 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import * as ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
 
-import {ConfigMaps} from './configmap';
-import {DaemonSets} from './daemonset';
-import {DeploymentsList} from './deployment';
-import {JobsList} from './job';
-import {NamespacesList} from './namespace';
-import {NodesListSearch} from './node';
-import {PodList} from './pod';
-import {ReplicaSetsList} from './replicaset';
-import {ReplicationControllersList} from './replication-controller';
-import {SecretsList} from './secret';
-import {ServiceAccountsList} from './service-account';
-import {ServicesList} from './service';
-import {IngressesList} from './ingress';
-import {PrometheusInstancesList} from './prometheus';
-import {ServiceMonitorsList} from './service-monitor';
-import {AlertManagersList} from './alert-manager';
 import {getActiveNamespace} from '../ui/ui-actions';
-import {NetworkPoliciesList} from './network-policy';
-import {Dropdown, Firehose, kindObj, history, NavTitle, ResourceIcon, SelectorInput} from './utils';
+import {Dropdown, kindObj, history, NavTitle, ResourceIcon, SelectorInput, LoadingBox} from './utils';
 
+import { k8sKinds } from '../module/k8s';
 import {split, selectorFromString} from '../module/k8s/selector';
 import {requirementFromString} from '../module/k8s/selector-requirement';
-
-// Map resource kind IDs to their list components
-const resources = {
-  Alertmanager: AlertManagersList,
-  ConfigMap: ConfigMaps,
-  DaemonSet: DaemonSets,
-  Deployment: DeploymentsList,
-  Ingress: IngressesList,
-  Job: JobsList,
-  Namespace: NamespacesList,
-  NetworkPolicy: NetworkPoliciesList,
-  Node: NodesListSearch,
-  Pod: PodList,
-  Prometheus: PrometheusInstancesList,
-  ReplicaSet: ReplicaSetsList,
-  ReplicationController: ReplicationControllersList,
-  Secret: SecretsList,
-  Service: ServicesList,
-  ServiceAccount: ServiceAccountsList,
-  ServiceMonitor: ServiceMonitorsList,
-};
+import { resourceListPages } from './resource-pages';
+import { kindReducerName } from '../kinds';
 
 const DropdownItem = ({kind}) => <span>
   <div className="co-type-selector__icon-wrapper">
@@ -53,24 +19,51 @@ const DropdownItem = ({kind}) => <span>
   {kindObj(kind).labelPlural}
 </span>;
 
-const ResourceListDropdown = ({selected, onChange}) => {
-  const kinds = _.mapValues(resources, (v, k) => <DropdownItem kind={k} />);
-  return <Dropdown className="co-type-selector" items={kinds} title={kinds[selected]} onChange={onChange} />;
-};
+const ResourceListDropdown = connect(state => ({ allkinds: state[kindReducerName].get('kinds').toJSON()}))(
+  function ResourceListDropdown ({selected, onChange, allkinds}) {
+    const items = {};
+    const kinds = {};
+    _.each(k8sKinds, ko => kinds[ko.labelPlural.replace(/ /g, '')] = ko.kind);
 
-const ResourceList = connect(() => ({namespace: getActiveNamespace()}))(
-  ({kind, namespace, selector}) => {
-    const List = resources[kind];
+    Array.from(resourceListPages.keys())
+      .sort()
+      .forEach(k => {
+        const kind = kinds[k];
+        if (!kind) {
+          return;
+        }
+        if (allkinds[kind].crd) {
+          return;
+        }
+        items[kind] = <DropdownItem kind={kind} />;
+      });
+
+    // If user somehow gets to the search page with Kind=(a CRD kind), show something in the dropdown
+    if (!items[selected]) {
+      items[selected] = <DropdownItem kind={selected} />;
+    }
+
+    return <Dropdown className="co-type-selector" items={items} title={items[selected]} onChange={onChange} selectedKey={selected} />;
+  });
+
+const ResourceList = connect(state => ({
+  namespace: getActiveNamespace(),
+  allkinds: state[kindReducerName].get('kinds').toJSON(),
+}))(
+  function ConnectedResourceList ({kind, namespace, selector, allkinds}) {
+    const kindObj = _.get(allkinds, kind, {});
+    let ListPage = resourceListPages.get('Default');
+    if (kindObj && kindObj.labelPlural) {
+      ListPage = resourceListPages.get(kindObj.labelPlural.replace(/ /g, '')) || ListPage;
+    } else {
+      return <LoadingBox />;
+    }
+
     const ns = kind === 'Node' || kind === 'Namespace' ? undefined : namespace;
 
-    return <div className="co-m-pane__body">
-      {List && <div className="co-m-resource-list">
-        <Firehose isList={true} kind={kind} namespace={ns} selector={selector}>
-          <List />
-        </Firehose>
-      </div>}
-    </div>;
+    return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} />;
   });
+ResourceList.displayName = 'ResourceList';
 
 const updateUrlParams = (k, v) => {
   const url = new URL(window.location);
@@ -82,40 +75,48 @@ const updateUrlParams = (k, v) => {
 const updateKind = kind => updateUrlParams('kind', encodeURIComponent(kind));
 const updateTags = tags => updateUrlParams('q', tags.map(encodeURIComponent).join(','));
 
-export const SearchPage = ({match, location}) => {
-  const { params } = match;
-  let kind, q;
-  if (location.search) {
-    const sp = new URLSearchParams(window.location.search);
-    kind = sp.get('kind');
-    q = sp.get('q');
+export class SearchPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.setRef = ref => this.ref = ref;
+    this.onSelectorChange = k => {
+      updateKind(k);
+      this.ref && this.ref.focus();
+    };
   }
 
-  // Ensure that the "kind" route parameter is a valid resource kind ID
-  kind = kind ? decodeURIComponent(kind) : 'Service';
+  render() {
+    const {location} = this.props;
+    let kind, q;
+    if (location.search) {
+      const sp = new URLSearchParams(window.location.search);
+      kind = sp.get('kind');
+      q = sp.get('q');
+    }
 
-  const tags = split(_.isString(q) ? decodeURIComponent(q) : '');
-  const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
-  const selector = selectorFromString(validTags.join(','));
+    // Ensure that the "kind" route parameter is a valid resource kind ID
+    kind = kind ? decodeURIComponent(kind) : 'Service';
 
-  // Ensure the list is reloaded whenever the search options are changed
-  const key = `${params.ns}-${kind}-${validTags.join(',')}`;
+    const tags = split(_.isString(q) ? decodeURIComponent(q) : '');
+    const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
+    const selector = selectorFromString(validTags.join(','));
+    const labelClassName = `co-text-${_.toLower(kind)}`;
 
-  return <div className="co-p-search">
-    <Helmet>
-      <title>Search</title>
-    </Helmet>
-    <NavTitle title="Search" />
-    <div className="co-m-pane" key={key}>
-      <div className="co-m-pane__body">
-        <div className="input-group">
-          <div className="input-group-btn">
-            <ResourceListDropdown selected={kind} onChange={updateKind} />
+    return <div className="co-p-search">
+      <Helmet>
+        <title>Search</title>
+      </Helmet>
+      <NavTitle detail={true} title="Search" >
+        <div style={{padding: 15, paddingTop: 0, paddingBottom: 30}}>
+          <div className="input-group">
+            <div className="input-group-btn">
+              <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
+            </div>
+            <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus />
           </div>
-          <SelectorInput labelClassName={`co-text-${_.toLower(kind)}`} tags={validTags} onChange={updateTags} autoFocus/>
         </div>
-      </div>
+      </NavTitle>
       <ResourceList kind={kind} selector={selector} />
-    </div>
-  </div>;
-};
+    </div>;
+  }
+}

@@ -183,7 +183,7 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
   </div>;
 };
 
-const Resources = ({obj}) => <FirehoseHoC Component={ClusterServiceVersionResourcesPage} kind="CustomResourceDefinition" selector={obj.spec.selector} isList={true} />;
+const Resources = ({obj}) => <FirehoseHoC Component={props => <ClusterServiceVersionResourcesPage {...props} namespace={obj.metadata.namespace} />} kind="CustomResourceDefinition" selector={obj.spec.selector} isList={true} />;
 
 const pages = [
   navFactory.details(ClusterServiceVersionDetails),

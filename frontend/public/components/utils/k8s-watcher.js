@@ -1,6 +1,6 @@
 import actions from '../../module/k8s/k8s-actions';
 
-const id_ = (k8sKind, query) => {
+export const makeReduxID = (k8sKind, query) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
@@ -9,7 +9,7 @@ const id_ = (k8sKind, query) => {
   return `${k8sKind.plural}${qs}`;
 };
 
-const makeQuery_ = (namespace, labelSelector, fieldSelector, name) => {
+export const makeQuery = (namespace, labelSelector, fieldSelector, name) => {
   const query = {};
 
   if (!_.isEmpty(labelSelector)) {
@@ -33,8 +33,8 @@ const makeQuery_ = (namespace, labelSelector, fieldSelector, name) => {
 export class K8sWatcher {
   constructor (k8sKind, namespace, labelSelector, fieldSelector, name, store) {
     this.k8sKind = k8sKind;
-    this.query = makeQuery_(namespace, labelSelector, fieldSelector, name);
-    this.id = id_(k8sKind, this.query);
+    this.query = makeQuery(namespace, labelSelector, fieldSelector, name);
+    this.id = makeReduxID(k8sKind, this.query);
     this.namespace = namespace;
     this.name = name;
     this.dispatch = store.dispatch;

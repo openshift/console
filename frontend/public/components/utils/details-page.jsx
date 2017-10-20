@@ -10,6 +10,8 @@ export const detailsPage = Component => props =>
     <Component {...props} />
   </div>;
 
+detailsPage.displayName = 'detailsPage';
+
 export const Heading = ({text}) => <div className="co-m-pane__heading">
   <h1 className="co-m-pane__title">{text}</h1>
 </div>;

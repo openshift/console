@@ -35,7 +35,7 @@ const bindingKind = binding => binding.metadata.namespace ? 'RoleBinding' : 'Clu
 const k8sKind = kindId => _.get(k8sKinds, `${kindId}.kind`);
 
 // Split each binding into one row per subject
-const flatten = resources => _.flatMap(resources, resource => {
+export const flatten = resources => _.flatMap(resources, resource => {
   const ret = [];
 
   _.each(resource.data, binding => {

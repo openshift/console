@@ -7,6 +7,7 @@ import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, Tex
 import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingsList, RulesList } from './index';
 import { registerTemplate } from '../../yaml-templates';
+import { flatten as bindingsFlatten } from './bindings';
 
 registerTemplate('v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
@@ -152,7 +153,8 @@ export const BindingsForRolePage = ({match: {params: {name, ns}}, kind}) => <div
     ]}
     textFilter="role-binding"
     filterLabel="Role Bindings by role or subject"
-  />
+    namespace={ns}
+    flatten={bindingsFlatten} />
 </div>;
 
 export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages()} menuActions={menuActions} />;
@@ -179,9 +181,11 @@ const resources = [
 
 const flatten = resources => _.flatMap(resources, 'data').filter(r => !!r);
 
-export const RolesPage = ({namespace}) => <MultiListPage
+export const RolesPage = ({namespace, showTitle}) => <MultiListPage
   ListComponent={RolesList}
   canCreate={true}
+  showTitle={showTitle}
+  namespace={namespace}
   createButtonText="Create Role"
   createProps={{to: `/ns/${namespace || 'default'}/roles/new`}}
   filterLabel="Roles by name"

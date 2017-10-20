@@ -55,7 +55,7 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-export const NetworkPoliciesList = props => <List {...props} Header={Header} Row={Row} />;
+const NetworkPoliciesList = props => <List {...props} Header={Header} Row={Row} />;
 export const NetworkPoliciesPage = props => <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />;
 
 

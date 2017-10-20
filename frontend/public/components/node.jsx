@@ -134,7 +134,7 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
 
 // We have different list layouts for the Nodes page list and the Search page list
 const NodesList = props => <List {...props} Header={Header} Row={NodeRow} />;
-export const NodesListSearch = props => <List {...props} Header={HeaderSearch} Row={NodeRowSearch} />;
+export const NodesListSearch = props => <List {...props} Header={HeaderSearch} Row={NodeRowSearch} kind="node" />;
 
 const dropdownFilters = [{
   type: 'node-status',

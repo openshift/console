@@ -49,6 +49,10 @@ export const MultiConnectToState = connect(({k8s}, {reduxes, flatten}) => {
   const resources = {};
 
   reduxes.forEach(redux => {
+    if (!redux.isList && flatten) {
+      // eslint-disable-next-line no-console
+      console.warn('You can\'t flatten a nonList.');
+    }
     resources[redux.prop] = processReduxId({k8s}, redux);
   });
 
@@ -57,6 +61,7 @@ export const MultiConnectToState = connect(({k8s}, {reduxes, flatten}) => {
   const loadError = _.map(required, 'loadError').filter(Boolean).join(', ');
 
   return Object.assign({}, resources, {
+    // TODO: (kans) MultiConnectToState should not flatten anything. MultiListPage is the only thing that cares to flatten.
     data: flatten ? flatten(resources) : [],
     filters: Object.assign({}, ..._.map(resources, 'filters')),
     loaded,
