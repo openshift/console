@@ -57,7 +57,6 @@ export class Firehose extends FirehoseBase {
     if (needsNewFirehose) {
       const locationChanged = _.get(nextContext, 'router.route.location.pathname') !== _.get(this.context, 'router.route.location.pathname');
       if (locationChanged) {
-        console.log(_.get(nextContext, 'router.route.location.pathname'), _.get(this.context, 'router.route.location.pathname'));
         return true;
       }
       return false;

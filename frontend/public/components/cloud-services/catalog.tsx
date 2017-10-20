@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Map } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
@@ -84,7 +84,7 @@ export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (
 
 const stateToProps = ({k8s}, {obj}) => ({
   namespaces: k8s.get('namespaces').toJS(),
-  clusterServiceVersions: _.values(k8s.getIn(['clusterserviceversion-v1s', 'data'], Map()).toJS())
+  clusterServiceVersions: _.values(k8s.getIn(['clusterserviceversion-v1s', 'data'], ImmutableMap()).toJS())
     .filter((csv: ClusterServiceVersionKind) => csv.status !== undefined)
     .filter((csv: ClusterServiceVersionKind) => csv.metadata.name === obj.metadata.name),
 });

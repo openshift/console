@@ -8,11 +8,17 @@ import { BaseGraph } from './base';
 
 const colors = {
   ok: 'rgb(46,201,141)',
-  warn: 'rgb(246,167,37)',
+  warn: '#f9c97b',
   error: 'rgb(226,78,114)',
   clear: 'rgba(255, 255, 255, 0)',
   white: 'rgb(255, 255, 255)',
   gray: 'rgb(230,230,230)',
+};
+
+const fontColors = {
+  ok: '#2fc98e',
+  warn: 'rgb(246,167,37)',
+  error: '#d64456',
 };
 
 export class Gauge extends BaseGraph {
@@ -121,7 +127,7 @@ export class Gauge extends BaseGraph {
       relayout(this.node, this.layout);
       return;
     }
-    data = parseInt(_.get(data, '[0].data.result[0].value[1]'), 10);
+    data = parseFloat(_.get(data, '[0].data.result[0].value[1]'), 10);
     if (isNaN(data)) {
       // eslint-disable-next-line no-console
       console.error('data is NaN!', data);
@@ -133,23 +139,32 @@ export class Gauge extends BaseGraph {
 
     const { invert, thresholds } = this.props;
 
-    let color = colors.ok;
+    let errorState = 'ok';
     if (invert) {
-      if (percent < thresholds.error) {
-        color = colors.error;
-      } else if (percent < thresholds.warn) {
-        color = colors.warn;
+      if (percent <= 100 - thresholds.error) {
+        errorState = 'error';
+      } else if (percent <= 100 - thresholds.warn) {
+        errorState = 'warn';
       }
     } else {
       if (percent >= thresholds.error) {
-        color = colors.error;
+        errorState = 'error';
       } else if (percent >= thresholds.warn) {
-        color = colors.warn;
+        errorState = 'warn';
       }
     }
 
+    const color = colors[errorState];
+    const fontColor = fontColors[errorState];
+
     this.data[0].marker.colors[1] = color;
+    if (data < 1) {
+      data = data.toFixed(1);
+    } else {
+      data = Math.round(data);
+    }
     this.layout.annotations[0].text = `${data}%`;
+    this.layout.annotations[0].font.color = fontColor;
     relayout(this.node, this.layout);
   }
 }
