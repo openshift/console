@@ -3,12 +3,13 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
+import { Map as ImmutableMap } from 'immutable';
+import { connect } from 'react-redux';
 
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, K8sResourceKind } from './index';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CustomResourceDefinitionKind, ClusterServiceVersionResourceKind } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListPage, ListHeader, ColHead } from '../factory';
-import { navFactory, FirehoseHoC, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history } from '../utils';
-import { k8sList, k8sKinds } from '../../module/k8s';
+import { navFactory, Firehose, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox } from '../utils';
 
 export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServiceVersionListItemProps> = (props) => {
   const {appType, namespaces = []} = props;
@@ -52,45 +53,54 @@ export const ClusterServiceVersionRow: React.StatelessComponent<ClusterServiceVe
   </div>;
 };
 
-export class ClusterServiceVersionList extends React.Component<ClusterServiceVersionListProps, ClusterServiceVersionListState> {
-  constructor(props: ClusterServiceVersionListProps) {
-    super(props);
-    this.state = {resourceExists: new Map()};
-    this.getCustomResources(props.data);
-  }
+const stateToProps = ({k8s}, {data}) => {
+  const appCRDs = _.values<CustomResourceDefinitionKind>(k8s.getIn(['customresourcedefinitions', 'data'], ImmutableMap()).toJS())
+    .filter((crd: CustomResourceDefinitionKind) => {
+      const owned = data.reduce((names, csv) => names.concat(csv.spec.customresourcedefinitions.owned.map(crd => crd.name)), []);
+      return owned.indexOf(crd.metadata.name) > -1;
+    });
 
-  componentWillReceiveProps(nextProps: ClusterServiceVersionListProps) {
-    this.getCustomResources(nextProps.data);
-  }
+  const appCRs = appCRDs.map(crd => ({name: crd.metadata.name, data: _.values<any>(k8s.getIn([crd.metadata.name.split('.')[0], 'data'], ImmutableMap()).toJS())}))
+    .reduce((allCRs, resource) => allCRs.set(resource.name, resource.data), new Map<string, ClusterServiceVersionResourceKind[]>());
 
-  render() {
-    const {loaded, filters} = this.props;
-    const {resourceExists, loadError} = this.state;
+  return {appCRDs, appCRs};
+};
 
-    const apps = Object.keys(filters).reduce((filteredData, filterName) => {
-      // FIXME(alecmerdler): Make these cases into TypeScript `enum` values
-      switch (filterName) {
-        case 'name':
-          return filteredData.filter((appType) => appType.spec.displayName.toLowerCase().includes(filters[filterName].toLowerCase()));
-        case 'clusterserviceversion-status':
-          if (filters[filterName] === 'running') {
-            return filteredData.filter(({spec}) => spec.customresourcedefinitions.owned.map(({name}) => resourceExists.get(name) || false).indexOf(true) > -1);
-          } else if (filters[filterName] === 'notRunning') {
-            return filteredData.filter(({spec}) => spec.customresourcedefinitions.owned.map(({name}) => resourceExists.get(name) || false).indexOf(true) === -1);
-          }
-          return filteredData;
-        case 'clusterserviceversion-catalog':
-          return filteredData.filter((appType) => filters[filterName] === 'all' || appType.spec.labels['alm-catalog'] === filters[filterName]);
-        default:
-          return filteredData;
-      }
-    }, this.props.data || []);
+export const ClusterServiceVersionList = connect(stateToProps)((props: ClusterServiceVersionListProps) => {
+  const {loaded, loadError, filters, appCRs} = props;
 
-    const namespacesForApp = apps.reduce((namespaces, app) => {
-      return namespaces.set(app.metadata.name, (namespaces.get(app.metadata.name) || []).concat([app.metadata.namespace]));
-    }, new Map<string, string[]>());
+  const apps = Object.keys(filters).reduce((filteredData, filterName) => {
+    // FIXME(alecmerdler): Make these cases into TypeScript `enum` values
+    switch (filterName) {
+      case 'name':
+        return filteredData.filter((appType) => appType.spec.displayName.toLowerCase().includes(filters[filterName].toLowerCase()));
+      case 'clusterserviceversion-status':
+        if (filters[filterName] === 'running') {
+          return filteredData.filter(({spec}) => spec.customresourcedefinitions.owned.map(({name}) => (appCRs.get(name) || []).length > 0).reduce((running, cur) => running || cur, false));
+        } else if (filters[filterName] === 'notRunning') {
+          return filteredData.filter(({spec}) => {
+            const owned = spec.customresourcedefinitions.owned.map(({name}) => (appCRs.get(name) || []).length === 0);
+            return owned.reduce((notRunning, cur) => notRunning && cur, true);
+          });
+        }
+        return filteredData;
+      case 'clusterserviceversion-catalog':
+        return filteredData.filter((appType) => filters[filterName] === 'all' || appType.spec.labels['alm-catalog'] === filters[filterName]);
+      default:
+        return filteredData;
+    }
+  }, props.data || []);
 
-    return loaded && apps.length > 0
+  const namespacesForApp = apps.reduce((namespaces, app) => {
+    return namespaces.set(app.metadata.name, (namespaces.get(app.metadata.name) || []).concat([app.metadata.namespace]));
+  }, new Map<string, string[]>());
+
+  const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Applications are installed per namespace from the Open Cloud Catalog." />;
+
+  return <div>
+    {/* Retrieve list of instances for each app resource to determine if app is running */}
+    { props.appCRDs.map((crd, i) => <Firehose kind={crd.spec.names.kind} isList={true} key={i} />) }
+    { loaded && apps.length > 0
       ? <div className="co-clusterserviceversion-list">
         <div className="co-clusterserviceversion-list__section co-clusterserviceversion-list__section--catalog">
           <h1 className="co-section-title">Open Cloud Services</h1>
@@ -103,28 +113,9 @@ export class ClusterServiceVersionList extends React.Component<ClusterServiceVer
           </div>
         </div>
       </div>
-      : <StatusBox label="Applications" loaded={loaded} loadError={loadError} />;
-  }
-
-  private getCustomResources(data: ClusterServiceVersionKind[] = []) {
-    const kindToName = new Map<string, string>();
-
-    Promise.all((data || []).map((appType) => k8sList(k8sKinds.CustomResourceDefinition, {labelSelector: appType.spec.selector.matchLabels})))
-      .then((items) => items.filter(list => list.length > 0)
-        .reduce((allCRDs, list) => allCRDs.concat(list), [])
-        .map((crd) => {
-          kindToName.set(crd.spec.names.kind, crd.metadata.name);
-          return crd;
-        })
-        .map(crd => k8sList(k8sKinds[crd.spec.names.kind])))
-      .then(requests => Promise.all(requests))
-      .then(allCustomResources => allCustomResources.reduce((resourceExists: Map<string, boolean>, resources: K8sResourceKind[]) => {
-        return resources.length > 0 ? resourceExists.set(kindToName.get(resources[0].kind), true) : resourceExists;
-      }, new Map()))
-      .then((resourceExists: Map<string, boolean>) => this.setState({resourceExists}))
-      .catch(loadError => this.setState({loadError}));
-  }
-}
+      : <StatusBox label="Applications" loaded={loaded} loadError={loadError} EmptyMsg={EmptyMsg} /> }
+  </div>;
+});
 
 export const ClusterServiceVersionsPage: React.StatelessComponent<ClusterServiceVersionsPageProps> = (props) => {
   const dropdownFilters = [{
@@ -143,7 +134,10 @@ export const ClusterServiceVersionsPage: React.StatelessComponent<ClusterService
     title: 'Catalog',
   }];
 
-  return <ListPage {...props} dropdownFilters={dropdownFilters} ListComponent={ClusterServiceVersionList} filterLabel="Applications by name" title="Installed Applications" showTitle={true} />;
+  return <div>
+    <Firehose kind="CustomResourceDefinition" isList={true} />
+    <ListPage {...props} dropdownFilters={dropdownFilters} ListComponent={ClusterServiceVersionList} filterLabel="Applications by name" title="Installed Applications" showTitle={true} />
+  </div>;
 };
 
 export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServiceVersionDetailsProps> = (props) => {
@@ -183,15 +177,16 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
   </div>;
 };
 
-const Resources = ({obj}) => <FirehoseHoC Component={props => <ClusterServiceVersionResourcesPage {...props} namespace={obj.metadata.namespace} />} kind="CustomResourceDefinition" selector={obj.spec.selector} isList={true} />;
+export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => {
+  const {details, editYaml} = navFactory;
 
-const pages = [
-  navFactory.details(ClusterServiceVersionDetails),
-  navFactory.editYaml(),
-  {href: 'resources', name: 'Resources', component: Resources},
-];
+  const Resources = ({obj}) => <div>
+    <Firehose kind="CustomResourceDefinition" isList={true} />
+    <ClusterServiceVersionResourcesPage loaded={true} obj={obj} />
+  </div>;
 
-export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => <DetailsPage {...props} pages={pages} />;
+  return <DetailsPage {...props} pages={[details(ClusterServiceVersionDetails), editYaml(), {href: 'resources', name: 'Resources', component: Resources}]} />;
+};
 
 export type ClusterServiceVersionsPageProps = {
   kind: string;
@@ -199,13 +194,11 @@ export type ClusterServiceVersionsPageProps = {
 
 export type ClusterServiceVersionListProps = {
   loaded: boolean;
+  loadError?: string;
   data: ClusterServiceVersionKind[];
   filters: {[key: string]: any};
-};
-
-export type ClusterServiceVersionListState = {
-  resourceExists: Map<string, boolean>;
-  loadError?: any;
+  appCRDs: CustomResourceDefinitionKind[];
+  appCRs: Map<string, ClusterServiceVersionResourceKind[]>;
 };
 
 export type ClusterServiceVersionListItemProps = {
@@ -228,6 +221,7 @@ export type ClusterServiceVersionRowProps = {
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
+ClusterServiceVersionList.displayName = 'ClusterServiceVersionList';
 ClusterServiceVersionListItem.displayName = 'ClusterServiceVersionListItem';
 ClusterServiceVersionsPage.displayName = 'ClusterServiceVersionsPage';
 ClusterServiceVersionsDetailsPage.displayName = 'ClusterServiceVersionsDetailsPage';

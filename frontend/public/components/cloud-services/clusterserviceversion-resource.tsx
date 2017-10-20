@@ -3,10 +3,12 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
+import { connect } from 'react-redux';
+import { Map as ImmutableMap } from 'immutable';
 
 import { ClusterServiceVersionResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox } from '../utils';
 import { connectToPlural, K8sKind, connectToKinds } from '../../kinds';
 import { k8sGet, k8sKinds } from '../../module/k8s';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
@@ -51,7 +53,7 @@ export const ClusterServiceVersionResourceHeader: React.StatelessComponent<Clust
 </ListHeader>;
 
 export const ClusterServiceVersionResourceLink = connectToKinds()((props: ClusterServiceVersionResourceLinkProps) => {
-  const {namespace, labels, name} = props.obj.metadata;
+  const {namespace, labels = {}, name} = props.obj.metadata;
 
   return <span className="co-resource-link">
     <ResourceIcon kind={props.obj.kind} />
@@ -85,9 +87,11 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
   </div>;
 };
 
-export const ClusterServiceVersionResourceList: React.StatelessComponent<ClusterServiceVersionResourceListProps> = (props) => (
-  <List {...props} Header={ClusterServiceVersionResourceHeader} Row={ClusterServiceVersionResourceRow} />
-);
+export const ClusterServiceVersionResourceList: React.StatelessComponent<ClusterServiceVersionResourceListProps> = (props) => {
+  const EmptyMsg = () => <MsgBox title="No Application Resources Found" detail="Application resources are declarative components used to define the behavior of the application." />;
+
+  return <List {...props} EmptyMsg={EmptyMsg} Header={ClusterServiceVersionResourceHeader} Row={ClusterServiceVersionResourceRow} label="Application Resources" />;
+};
 
 export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<ClusterServiceVersionPrometheusGraphProps> = (props) => {
   switch (props.query.type) {
@@ -104,13 +108,22 @@ export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<Clus
   }
 };
 
-export const ClusterServiceVersionResourcesPage: React.StatelessComponent<ClusterServiceVersionResourcesPageProps> = (props) => {
+const stateToProps = ({k8s}, {obj}) => ({
+  data: _.values(k8s.getIn(['customresourcedefinitions', 'data'], ImmutableMap()).toJS())
+    .filter((crd: CustomResourceDefinitionKind) => {
+      const required = (obj.spec.customresourcedefinitions.required || []).map(crd => crd.name);
+      const owned = (obj.spec.customresourcedefinitions.owned || []).map(crd => crd.name);
+      return required.concat(owned).indexOf(crd.metadata.name) > -1;
+    }),
+});
+
+export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: ClusterServiceVersionResourcesPageProps) => {
   const resources = props.data ? props.data.map((resource) => ({kind: resource.spec.names.kind, namespaced: true})) : [];
+  const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
 
   return props.loaded && props.data.length > 0
     ? <MultiListPage
       {...props}
-      createButtonText="New resource"
       ListComponent={ClusterServiceVersionResourceList}
       filterLabel="Resources by name"
       resources={resources}
@@ -122,8 +135,8 @@ export const ClusterServiceVersionResourcesPage: React.StatelessComponent<Cluste
         items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
       }]}
     />
-    : <StatusBox label="Application Resources" loaded={props.loaded} />;
-};
+    : <StatusBox loaded={props.loaded} EmptyMsg={EmptyMsg} />;
+});
 
 export const ClusterServiceVersionResourceDetails = connectToPlural(
   class ClusterServiceVersionResourceDetailsComponent extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
@@ -133,7 +146,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 
       // Fetch CSV that defines metadata associated with current app resource using the `alm-status-descriptors` label.
       const {metadata} = props.obj;
-      if (metadata.labels['alm-status-descriptors']) {
+      if (!_.isEmpty(metadata.labels['alm-status-descriptors'])) {
         k8sGet(k8sKinds['ClusterServiceVersion-v1'], metadata.labels['alm-status-descriptors'], metadata.namespace).then((result) => {
           this.setState({clusterServiceVersion: result, expanded: this.state.expanded});
         });
@@ -289,9 +302,9 @@ export type ClusterServiceVersionResourceStatusProps = {
 };
 
 export type ClusterServiceVersionResourcesPageProps = {
-  data: CustomResourceDefinitionKind[]
+  data: CustomResourceDefinitionKind[];
   loaded: boolean;
-  appType: ClusterServiceVersionKind;
+  obj: ClusterServiceVersionKind;
 };
 
 export type ClusterServiceVersionResourcesDetailsProps = {
@@ -326,4 +339,5 @@ ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionRe
 ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
 ClusterServiceVersionPrometheusGraph.displayName = 'ClusterServiceVersionPrometheusGraph';
 ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';
+ClusterServiceVersionResourcesPage.displayName = 'ClusterServiceVersionResourcesPage';
 

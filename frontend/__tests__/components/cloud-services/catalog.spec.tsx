@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { ShallowWrapper, shallow } from 'enzyme';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
 import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
@@ -104,7 +105,7 @@ describe(CatalogAppRow.displayName, () => {
     expect(progressBar.exists()).toBe(true);
   });
 
-  it('renders completed progress bar in expanded state if all `ClusterServiceVersion` status are `Succeeded`', () => {
+  it('does not render progress bar in expanded state if all `ClusterServiceVersion` status are `Succeeded`', () => {
     clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
 
     wrapper.setProps({clusterServiceVersions});
@@ -112,8 +113,7 @@ describe(CatalogAppRow.displayName, () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
     const progressBar = col.childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar');
 
-    expect(progressBar.exists()).toBe(true);
-    expect(progressBar.hasClass('co-catalog-install-progress-bar--active')).toBe(false);
+    expect(progressBar.exists()).toBe(false);
   });
 
   it('renders list of namespace statuses in expanded state', () => {
@@ -127,11 +127,22 @@ describe(CatalogAppRow.displayName, () => {
 
     expect(namespaceList.length).toEqual(clusterServiceVersions.length);
     expect(namespaceList.at(0).text()).toContain(clusterServiceVersions[0].metadata.namespace);
-    expect(namespaceList.at(1).text()).toContain(clusterServiceVersions[1].metadata.namespace);
-    expect(namespaceList.at(2).text()).toContain(clusterServiceVersions[2].metadata.namespace);
   });
 
-  it('renders status reason next to failed namespaces', () => {
+  it('renders link to namespaced app details view for successfully installed namespaces in expanded state', () => {
+    wrapper.setProps({clusterServiceVersions: [_.cloneDeep(testClusterServiceVersion)]});
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
+    const succeededNamespaces = col.childAt(1).childAt(0).shallow().find('ul').find('.co-catalog-breakdown__ns-list__item');
+
+    expect(succeededNamespaces.length).not.toEqual(0);
+    succeededNamespaces.forEach((ns, i) => {
+      const csv = clusterServiceVersions[i];
+
+      expect(ns.find(Link).props().to).toEqual(`/ns/${csv.metadata.namespace}/clusterserviceversion-v1s/${csv.metadata.name}/details`);
+    });
+  });
+
+  it('renders status reason next to failed namespaces in expanded state', () => {
     clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
 
@@ -192,13 +203,14 @@ describe(CatalogAppList.displayName, () => {
     wrapper = shallow(<CatalogAppList data={[]} loaded={true} filters={{}} />);
   });
 
-  it('renders a `List` with the correct header and row components', () => {
+  it('renders a `List` with the correct header, row, and empty message components', () => {
     const list: ShallowWrapper<any> = wrapper.find(List);
 
     expect(list.props().Header).toEqual(CatalogAppHeader);
     expect(list.props().Row).toEqual(CatalogAppRow);
     expect(list.props().isList).toBe(true);
     expect(list.props().label).toEqual('Applications');
+    expect(list.props().EmptyMsg).toBeDefined();
   });
 });
 

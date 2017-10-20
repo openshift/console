@@ -253,8 +253,7 @@ export const ListPage = props => {
 ListPage.displayName = 'ListPage';
 
 // FIXME(alecmerdler): Fix this typing
-/** @type {React.StatelessComponent<any>} */
-/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, ns: string, resources: any[], ListComponent: React.ComponentType<any>}>, flatten?: function} */
+/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, ns?: string, flatten?: Function, filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>}>} */
 export const MultiListPage = props => {
   const {createButtonText, resources, flatten, filterLabel, createProps, showTitle = true, title, namespace} = props;
 
