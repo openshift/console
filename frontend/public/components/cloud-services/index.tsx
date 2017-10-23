@@ -87,7 +87,7 @@ export type InstallPlanKind = {
   }
 } & K8sResourceKind;
 
-export const ClusterServiceVersionLogo = (props: ClusterServiceVersionLogoProps) => {
+export const ClusterServiceVersionLogo: React.StatelessComponent<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;
 
   return <div className="co-clusterserviceversion-logo">
@@ -108,3 +108,5 @@ export type ClusterServiceVersionLogoProps = {
   provider: {name: string} | string;
   version?: string;
 };
+
+ClusterServiceVersionLogo.displayName = 'ClusterServiceVersionLogo';

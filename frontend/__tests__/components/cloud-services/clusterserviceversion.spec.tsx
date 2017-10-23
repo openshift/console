@@ -5,13 +5,14 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps, ClusterServiceVersionListState } from '../../../public/components/cloud-services/clusterserviceversion';
+import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps } from '../../../public/components/cloud-services/clusterserviceversion';
+import { ClusterServiceVersionResourceKind } from '../../../public/components/cloud-services';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps } from '../../../public/components/cloud-services';
 import { DetailsPage, ListPage } from '../../../public/components/factory';
-import { testClusterServiceVersion, localClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
+import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { StatusBox, LoadingBox, Timestamp, Overflow, Dropdown } from '../../../public/components/utils';
 
-describe('ClusterServiceVersionLogo', () => {
+describe(ClusterServiceVersionLogo.displayName, () => {
   let wrapper: ReactWrapper<ClusterServiceVersionLogoProps>;
 
   beforeEach(() => {
@@ -42,7 +43,7 @@ describe('ClusterServiceVersionLogo', () => {
   });
 });
 
-describe('ClusterServiceVersionListItem', () => {
+describe(ClusterServiceVersionListItem.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionListItemProps>;
 
   beforeEach(() => {
@@ -90,15 +91,15 @@ describe('ClusterServiceVersionListItem', () => {
   });
 });
 
-describe('ClusterServiceVersionList', () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionListProps, ClusterServiceVersionListState>;
+describe(ClusterServiceVersionList.displayName, () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionListProps>;
   let apps: ClusterServiceVersionKind[];
 
   beforeEach(() => {
     let otherClusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
     otherClusterServiceVersion.metadata.name = 'vault';
     apps = [testClusterServiceVersion, localClusterServiceVersion, otherClusterServiceVersion];
-    wrapper = shallow(<ClusterServiceVersionList loaded={true} data={apps} filters={{}} />);
+    wrapper = shallow(<ClusterServiceVersionList.WrappedComponent loaded={true} data={apps} filters={{}} appCRDs={[]} appCRs={new Map()} />);
   });
 
   it('renders section for applications installed from Open Cloud Services', () => {
@@ -121,8 +122,8 @@ describe('ClusterServiceVersionList', () => {
     expect(wrapper.find('.co-clusterserviceversion-list').exists()).toBe(false);
     expect(statusBox.exists()).toBe(true);
     expect(statusBox.props().label).toEqual('Applications');
-    expect(statusBox.props().loaded).toEqual(wrapper.props().loaded);
-    expect(statusBox.render().text()).toEqual('No Applications Found');
+    expect(statusBox.props().loaded).toEqual(true);
+    expect(statusBox.render().text()).toContain('No Applications Found');
   });
 
   it('renders loading status if `props.loaded` is false', () => {
@@ -145,18 +146,17 @@ describe('ClusterServiceVersionList', () => {
   });
 
   it('filters visible ClusterServiceVersions by `running status`', () => {
-    const resourceExists = new Map<string, boolean>();
-    resourceExists.set('prometheuses.monitoring.coreos.com', true);
-    apps[0].spec.customresourcedefinitions.owned = [...resourceExists.keys()].map(name => Object.assign({}, {name}));
+    const appCRs = new Map<string, ClusterServiceVersionResourceKind[]>();
+    appCRs.set('prometheuses.monitoring.coreos.com', [testResourceInstance]);
+    apps[0].spec.customresourcedefinitions.owned = [...appCRs.keys()].map(name => Object.assign({}, {name}));
 
-    wrapper.setProps({data: apps, filters: {'clusterserviceversion-status': 'notRunning'}});
-    wrapper.setState({resourceExists});
-    const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items');
+    wrapper.setProps({data: apps, appCRs, filters: {'clusterserviceversion-status': 'running'}});
+    const items = wrapper.find(ClusterServiceVersionListItem);
 
-    expect(list.children().length).toEqual(apps.filter(({spec}) => spec.customresourcedefinitions.owned.map(({name}) => resourceExists.get(name) || false).indexOf(true) === -1).length);
+    expect(items.length).toEqual(1);
   });
 
-  it('filters visible ClusterServiceVersions by `catalog source`', () => {
+  xit('filters visible ClusterServiceVersions by `catalog source`', () => {
     // TODO(alecmerdler)
   });
 
@@ -171,7 +171,7 @@ describe('ClusterServiceVersionList', () => {
   });
 });
 
-describe('ClusterServiceVersionsPage', () => {
+describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
@@ -189,7 +189,7 @@ describe('ClusterServiceVersionsPage', () => {
   });
 });
 
-describe('ClusterServiceVersionDetails', () => {
+describe(ClusterServiceVersionDetails.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionDetailsProps>;
 
   beforeEach(() => {
@@ -251,7 +251,7 @@ describe('ClusterServiceVersionDetails', () => {
   });
 });
 
-describe('ClusterServiceVersionsDetailsPage', () => {
+describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsDetailsPageProps>;
 
   beforeEach(() => {

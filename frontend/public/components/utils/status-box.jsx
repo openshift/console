@@ -26,7 +26,7 @@ export const EmptyBox = ({label}) => <Box>
 </Box>;
 EmptyBox.displayName = 'EmptyBox';
 
-export const MsgBox = ({title, detail, className}) => <Box className={className}>
+export const MsgBox = ({title, detail, className = ''}) => <Box className={className}>
   {title && <div className="cos-status-box__title">{title}</div>}
   {detail && <div className="cos-text-center cos-status-box__detail">{detail}</div>}
 </Box>;

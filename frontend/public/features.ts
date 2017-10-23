@@ -1,23 +1,26 @@
+/* eslint-disable no-undef */
+
 import { connect } from 'react-redux';
 import * as Immutable from 'immutable';
+import * as _ from 'lodash';
 
 import { k8sBasePath } from './module/k8s';
 import { coFetchJSON } from './co-fetch';
 
-export const FLAGS = {
-  AUTH_ENABLED: 'AUTH_ENABLED',
-  CLUSTER_UPDATES: 'CLUSTER_UPDATES',
-  ETCD_OPERATOR: 'ETCD_OPERATOR',
-  PROMETHEUS: 'PROMETHEUS',
-  MULTI_CLUSTER: 'MULTI_CLUSTER',
-  SECURITY_LABELLER: 'SECURITY_LABELLER',
-  CLOUD_SERVICES: 'CLOUD_SERVICES',
-  CLOUD_CATALOGS: 'CLOUD_CATALOGS',
-  CALICO: 'CALICO',
-};
+export enum FLAGS {
+  AUTH_ENABLED = 'AUTH_ENABLED',
+  CLUSTER_UPDATES = 'CLUSTER_UPDATES',
+  ETCD_OPERATOR = 'ETCD_OPERATOR',
+  PROMETHEUS = 'PROMETHEUS',
+  MULTI_CLUSTER = 'MULTI_CLUSTER',
+  SECURITY_LABELLER = 'SECURITY_LABELLER',
+  CLOUD_SERVICES = 'CLOUD_SERVICES',
+  CLOUD_CATALOGS = 'CLOUD_CATALOGS',
+  CALICO = 'CALICO',
+}
 
 const DEFAULTS = {
-  [FLAGS.AUTH_ENABLED]: !window.SERVER_FLAGS.authDisabled,
+  [FLAGS.AUTH_ENABLED]: !(window as any).SERVER_FLAGS.authDisabled,
   [FLAGS.CLUSTER_UPDATES]: undefined,
   [FLAGS.ETCD_OPERATOR]: undefined,
   [FLAGS.PROMETHEUS]: undefined,
@@ -89,8 +92,8 @@ const detectTectonicChannelOperatorFlags = dispatch => {
       (res) => handleError(res, TCO_FLAGS, dispatch, detectTectonicChannelOperatorFlags));
 };
 
-const etdPath = `${k8sBasePath}/apis/etcd.database.coreos.com/v1beta2`;
-const detectEtcdOperatorFlags = dispatch => coFetchJSON(etdPath)
+const etcdPath = `${k8sBasePath}/apis/etcd.database.coreos.com/v1beta2`;
+const detectEtcdOperatorFlags = dispatch => coFetchJSON(etcdPath)
   .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
     (res) => handleError(res, ETCD_OPERATOR_FLAGS, dispatch, detectEtcdOperatorFlags));
 
@@ -107,7 +110,7 @@ const detectMultiClusterFlags = dispatch => {
 
 const labellerDeploymentPath = `${k8sBasePath}/apis/extensions/v1beta1/deployments`;
 const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPath)
-  .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
+  .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
     (res) => handleError(res, SECURITY_LABELLER_FLAGS, dispatch, detectSecurityLabellerFlags));
 
 const cloudServicesPath = `${k8sBasePath}/apis/app.coreos.com/v1alpha1`;
@@ -117,7 +120,7 @@ const detectCloudServicesFlags = dispatch => coFetchJSON(cloudServicesPath)
 
 const calicoDaemonSetPath = `${k8sBasePath}/apis/extensions/v1beta1/daemonsets`;
 const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
-  .then(res => setFlags(dispatch, _.mapValues(CALICO_FLAGS, name => _.find(_.map(res.items, item => item.metadata), {name}))),
+  .then(res => setFlags(dispatch, _.mapValues(CALICO_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
     (res) => handleError(res, CALICO_FLAGS, dispatch, detectCalicoFlags));
 
 export const featureActions = {

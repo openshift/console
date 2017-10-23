@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourceStatus, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourceStatus, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
-import { List, ColHead, ListHeader, DetailsPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary } from '../../../public/components/utils';
+import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
+import { Timestamp, LabelList, ResourceSummary, StatusBox } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 
-describe('ClusterServiceVersionResourceHeader', () => {
+describe(ClusterServiceVersionResourceHeader.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourceHeaderProps>;
 
   beforeEach(() => {
@@ -59,7 +59,7 @@ describe('ClusterServiceVersionResourceHeader', () => {
   });
 });
 
-describe('ClusterServiceVersionResourceRow', () => {
+describe(ClusterServiceVersionResourceRow.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourceRowProps>;
 
   beforeEach(() => {
@@ -108,7 +108,7 @@ describe('ClusterServiceVersionResourceRow', () => {
   });
 });
 
-describe('ClusterServiceVersionResourceList', () => {
+describe(ClusterServiceVersionResourceList.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourceListProps>;
   let resources: ClusterServiceVersionResourceKind[];
 
@@ -127,7 +127,7 @@ describe('ClusterServiceVersionResourceList', () => {
   });
 });
 
-describe('ClusterServiceVersionResourcesDetails', () => {
+describe(ClusterServiceVersionResourceDetails.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState>;
   let resourceDefinition: any;
 
@@ -233,7 +233,7 @@ describe('ClusterServiceVersionResourcesDetails', () => {
   });
 });
 
-describe('ClusterServiceVersionPrometheusGraph', () => {
+describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
   it('renders a counter', () => {
     const query = {
       'name': 'foo',
@@ -291,7 +291,7 @@ describe('ClusterServiceVersionPrometheusGraph', () => {
   });
 });
 
-describe('ClusterServiceVersionResourceStatus', () => {
+describe(ClusterServiceVersionResourceStatus.displayName, () => {
   it('renders a null value', () => {
     const statusDescriptor = {
       'path': '',
@@ -336,7 +336,7 @@ describe('ClusterServiceVersionResourceStatus', () => {
   });
 });
 
-describe('ClusterServiceVersionResourcesDetailsPage', () => {
+describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
 
   beforeEach(() => {
@@ -352,5 +352,30 @@ describe('ClusterServiceVersionResourcesDetailsPage', () => {
     expect(detailsPage.props().pages[0].component).toEqual(ClusterServiceVersionResourceDetails);
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
+  });
+});
+
+describe(ClusterServiceVersionResourcesPage.displayName, () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesPageProps>;
+
+  beforeEach(() => {
+    wrapper = shallow(<ClusterServiceVersionResourcesPage.WrappedComponent loaded={true} data={[testClusterServiceVersionResource]} obj={testClusterServiceVersion} />);
+  });
+
+  it('renders a `StatusBox` if data is not loaded or empty', () => {
+    wrapper.setProps({loaded: false});
+
+    expect(wrapper.find(MultiListPage).exists()).toBe(false);
+    expect(wrapper.find(StatusBox).props().loaded).toBe(false);
+    expect(wrapper.find(StatusBox).props().EmptyMsg).toBeDefined();
+  });
+
+  it('renders a `MultiListPage` with correct props', () => {
+    const listPage = wrapper.find(MultiListPage);
+
+    expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
+    expect(listPage.props().filterLabel).toEqual('Resources by name');
+    expect(listPage.props().resources).toEqual([{kind: testClusterServiceVersionResource.spec.names.kind, namespaced: true}]);
+    expect(listPage.props().rowFilters[0].type).toEqual('clusterserviceversion-resource-kind');
   });
 });

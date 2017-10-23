@@ -5,10 +5,11 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
 import { ListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
-import { Firehose, NavTitle } from '../utils';
+import { Firehose, NavTitle, MsgBox } from '../utils';
 import { ClusterServiceVersionLogo, CatalogEntryKind, K8sResourceKind, ClusterServiceVersionKind, ClusterServiceVersionPhase } from './index';
 import { createInstallApplicationModal } from '../modals/install-application-modal';
 import { k8sCreate } from '../../module/k8s';
@@ -57,19 +58,20 @@ export const Breakdown: React.StatelessComponent<BreakdownProps> = (props) => {
 
 export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (props) => {
   const {pending, succeeded} = props.status;
+  const percent = (succeeded.length / props.clusterServiceVersions.length) * 100;
 
   return <div>
     <div style={{margin: '15px 0'}}>
-      <div className="co-catalog-install-progress">
-        <div
-          style={{width: `${(succeeded.length / props.clusterServiceVersions.length) * 100}%`}}
-          className={classNames('co-catalog-install-progress-bar', {'co-catalog-install-progress-bar--active': pending.length > 0})} />
-      </div>
+      { percent < 100 && <div className="co-catalog-install-progress">
+        <div style={{width: `${percent}%`}} className={classNames('co-catalog-install-progress-bar', {'co-catalog-install-progress-bar--active': pending.length > 0})} />
+      </div> }
     </div>
     <ul className="co-catalog-breakdown__ns-list">{ props.clusterServiceVersions.map((csv, i) => {
       switch (csv.status.phase) {
         case ClusterServiceVersionPhase.CSVPhaseSucceeded:
-          return <li className="co-catalog-breakdown__ns-list__item" key={i}>{csv.metadata.namespace}</li>;
+          return <li className="co-catalog-breakdown__ns-list__item" key={i}>
+            <Link className="text-muted" to={`/ns/${csv.metadata.namespace}/clusterserviceversion-v1s/${csv.metadata.name}/details`}>{csv.metadata.namespace}</Link>
+          </li>;
         case ClusterServiceVersionPhase.CSVPhaseFailed:
           return <li className="co-catalog-breakdown__ns-list__item co-error" key={i}>{`${csv.metadata.namespace}: ${csv.status.reason}`}</li>;
         case ClusterServiceVersionPhase.CSVPhasePending:
@@ -138,12 +140,12 @@ export const CatalogAppRow = connect(stateToProps)(
     }
   });
 
-export const CatalogAppList: React.StatelessComponent<CatalogAppListProps> = (props) => (
-  <List {...props} Row={CatalogAppRow} Header={CatalogAppHeader} isList={true} label="Applications" />
-);
+export const CatalogAppList: React.StatelessComponent<CatalogAppListProps> = (props) => {
+  const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Application entries are supplied by the Open Cloud Catalog." />;
+  return <List {...props} Row={CatalogAppRow} Header={CatalogAppHeader} isList={true} label="Applications" EmptyMsg={EmptyMsg} />;
+};
 
 export const CatalogAppsPage: React.StatelessComponent = () => <div>
-  {/* Firehoses used here to add resources to Redux store */}
   <Firehose kind="ClusterServiceVersion-v1" isList={true} />
   <Firehose kind="Namespace" isList={true} />
   <ListPage kind="AlphaCatalogEntry-v1" namespace="tectonic-system" ListComponent={CatalogAppList} filterLabel="Applications by name" title="Applications" showTitle={true} />
