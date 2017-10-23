@@ -165,6 +165,24 @@ describe('ClusterServiceVersionResourcesDetails', () => {
     expect(link.props().title).toEqual('View resources');
   });
 
+  it('does not render filtered status fields', () => {
+    wrapper.setState({
+      'clusterServiceVersion': testClusterServiceVersion,
+      'expanded': false,
+    });
+
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => {
+      return crd.name === 'testresource.testapp.coreos.com';
+    });
+
+    const filteredDescriptor = crd.statusDescriptors.find((sd) => {
+      return sd.path === 'importantMetrics';
+    });
+
+    const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === filteredDescriptor);
+    expect(statusView.exists()).toBe(false);
+  });
+
   it('renders the specified important prometheus metrics as graphs', () => {
     wrapper.setState({
       'clusterServiceVersion': testClusterServiceVersion,
