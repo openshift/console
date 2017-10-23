@@ -41,12 +41,13 @@ export class BaseGraph extends SafetyFirst {
       }];
     }
 
+    const basePath = this.props.basePath || prometheusBasePath;
     const pollInterval = timeSpan / 120 || 15000;
     const stepSize = pollInterval / 1000;
     const promises = queries.map(q => {
       const url = this.timeSpan
-        ? `${prometheusBasePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`
-        : `${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q.query)}`;
+        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`
+        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}`;
       return coFetchJSON(url);
     });
     Promise.all(promises)
@@ -108,4 +109,5 @@ BaseGraph.PropTypes = {
   query: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   timeSpan: PropTypes.number,
+  basePath: PropTypes.string,
 };
