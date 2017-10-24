@@ -11,7 +11,7 @@ import { ResourceLink, LabelList } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { k8sKinds } from '../../../public/module/k8s';
 import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval } from '../../../public/components/cloud-services';
 
 describe('SelectNamespaceHeader', () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;
@@ -177,6 +177,7 @@ describe('InstallApplicationModal', () => {
           },
           spec: {
             clusterServiceVersionNames: [testClusterServiceVersion.metadata.name],
+            approval: InstallPlanApproval.Automatic,
           },
         });
       });

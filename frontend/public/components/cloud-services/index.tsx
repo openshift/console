@@ -35,6 +35,12 @@ export enum CSVConditionReason {
   CSVReasonInstallCheckFailed = 'InstallCheckFailed',
 }
 
+export enum InstallPlanApproval {
+  Automatic = 'Automatic',
+  Manual = 'Manual',
+  UpdateOnly = 'Update-Only',
+}
+
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
