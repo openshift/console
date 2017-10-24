@@ -17,3 +17,9 @@ const reducers = combineReducers({
 
 const store = createStore(reducers, {}, applyMiddleware(thunk));
 export default store;
+
+// eslint-disable-next-line no-undef
+if (process.env.NODE_ENV !== 'production') {
+  // Expose Redux store for debugging
+  window.store = store;
+}

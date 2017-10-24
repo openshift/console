@@ -138,7 +138,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     };
     // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
     const Component: React.StatelessComponent<ClusterServiceVersionResourcesDetailsProps> = (ClusterServiceVersionResourceDetails as any).WrappedComponent;
-    wrapper = shallow(<Component obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} />);
+    wrapper = shallow(<Component obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} appName={testClusterServiceVersion.metadata.name} />);
     wrapper.setState({clusterServiceVersion: testClusterServiceVersion, expanded: false});
   });
 
@@ -367,7 +367,6 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     expect(detailsPage.exists()).toBe(true);
     expect(detailsPage.props().pages[0].name).toEqual('Overview');
     expect(detailsPage.props().pages[0].href).toEqual('details');
-    expect(detailsPage.props().pages[0].component).toEqual(ClusterServiceVersionResourceDetails);
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
   });
@@ -394,6 +393,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().resources).toEqual([{kind: testClusterServiceVersionResource.spec.names.kind, namespaced: true}]);
+    expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
     expect(listPage.props().rowFilters[0].type).toEqual('clusterserviceversion-resource-kind');
   });
 });
