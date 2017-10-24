@@ -7,7 +7,7 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, LabelList, ResourceLink } from '../utils';
 import { k8sKinds } from '../../module/k8s';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind } from '../cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval } from '../cloud-services';
 
 export const SelectNamespaceHeader = (props: SelectNamespaceHeaderProps) => <ListHeader>
   <ColHead {...props} className="col-xs-5" sortField="metadata.name">Name</ColHead>
@@ -58,6 +58,7 @@ export class InstallApplicationModal extends PromiseComponent {
         },
         spec: {
           clusterServiceVersionNames: [this.props.catalogEntry.metadata.name],
+          approval: InstallPlanApproval.Automatic,
         },
       }))
       .map(installPlan => this.props.k8sCreate(k8sKinds['InstallPlan-v1'], installPlan))))
