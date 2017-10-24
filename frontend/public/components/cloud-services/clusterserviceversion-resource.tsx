@@ -127,6 +127,7 @@ export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: 
       ListComponent={ClusterServiceVersionResourceList}
       filterLabel="Resources by name"
       resources={resources}
+      namespace={props.obj.metadata.namespace}
       flatten={(resources) => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item))}
       rowFilters={[{
         type: 'clusterserviceversion-resource-kind',

@@ -394,6 +394,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().resources).toEqual([{kind: testClusterServiceVersionResource.spec.names.kind, namespaced: true}]);
+    expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
     expect(listPage.props().rowFilters[0].type).toEqual('clusterserviceversion-resource-kind');
   });
 });
