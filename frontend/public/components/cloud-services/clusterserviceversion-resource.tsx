@@ -96,13 +96,13 @@ export const ClusterServiceVersionResourceList: React.StatelessComponent<Cluster
 export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<ClusterServiceVersionPrometheusGraphProps> = (props) => {
   switch (props.query.type) {
     case PrometheusQueryTypes.Counter:
-      return <Scalar title={props.query.name} unit={props.query.unit} query={props.query.query} />;
+      return <Scalar title={props.query.name} unit={props.query.unit} query={props.query.query} basePath={props.basePath} />;
     case PrometheusQueryTypes.Gauge:
-      return <Gauge title={props.query.name} query={props.query.query} />;
+      return <Gauge title={props.query.name} query={props.query.query} basePath={props.basePath} />;
     case PrometheusQueryTypes.Line:
-      return <Line title={props.query.name} query={props.query.query} />;
+      return <Line title={props.query.name} query={props.query.query} basePath={props.basePath} />;
     case PrometheusQueryTypes.Bar:
-      return <Bar title={props.query.name} query={props.query.query} metric={props.query.metric} humanize={humanizeNumber} />;
+      return <Bar title={props.query.name} query={props.query.query} metric={props.query.metric} humanize={humanizeNumber} basePath={props.basePath} />;
     default:
       return <span>Unknown graph type: {props.query.type}</span>;
   }
@@ -154,6 +154,16 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
     }
 
     public render() {
+      const isFilteredDescriptor = (kind: ALMStatusDescriptors) => {
+        switch (kind) {
+          case ALMStatusDescriptors.importantMetrics:
+          case ALMStatusDescriptors.prometheus:
+            return true;
+        }
+
+        return false;
+      };
+
       const getStatusValue = (statusDescriptor: ClusterServiceVersionResourceStatusDescriptor, statusBlock) => {
         if (statusDescriptor === undefined) {
           return undefined;
@@ -167,6 +177,12 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
         return statusValue;
       };
 
+      const findStatusDescriptorWithCapability = (statusDescriptors, capability) => {
+        return _.find<ClusterServiceVersionResourceStatusDescriptor>(statusDescriptors, (descriptor) => {
+          return _.find(descriptor['x-descriptors'], (cap) => cap === capability) !== undefined;
+        });
+      };
+
       const {kind, metadata, spec, status} = this.props.obj;
       const matchLabels = spec.selector ? _.map(spec.selector.matchLabels, (val, key) => `${key}=${val}`) : [];
 
@@ -177,21 +193,24 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       const title = thisDefinition ? thisDefinition.displayName : kind;
 
       const filteredStatusDescriptors = _.filter(statusDescriptors, (descriptor) => {
-        return _.find(descriptor['x-descriptors'], (cap) => cap === ALMStatusDescriptors.importantMetrics) === undefined;
+        return _.find(descriptor['x-descriptors'], isFilteredDescriptor) === undefined;
       });
 
-      const metricsDescriptor = _.find<ClusterServiceVersionResourceStatusDescriptor>(statusDescriptors, (descriptor) => {
-        return _.find(descriptor['x-descriptors'], (cap) => cap === ALMStatusDescriptors.importantMetrics) !== undefined;
-      });
+      // Find the important metrics and prometheus endpoints, if any.
+      const metricsDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.importantMetrics);
+      const promDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.prometheus);
 
       const metricsValue = getStatusValue(metricsDescriptor, status);
+      const promBasePath = getStatusValue(promDescriptor, status);
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
           <h1 className="co-section-title">{`${title} Overview`}</h1>
           { metricsValue
             ? <div className="row">{ metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery) => (
-              <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric"><ClusterServiceVersionPrometheusGraph query={query} /></div>)) }
+              <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
+                <ClusterServiceVersionPrometheusGraph query={query} basePath={promBasePath} />
+              </div>)) }
             </div>
             : <div className="text-muted">No metrics defined</div> }
         </div>
@@ -286,6 +305,7 @@ export type ClusterServiceVersionPrometheusQuery = {
 
 export type ClusterServiceVersionPrometheusGraphProps = {
   query: ClusterServiceVersionPrometheusQuery;
+  basePath?: string;
 };
 
 export type ClusterServiceVersionResourceStatusDescriptor = {

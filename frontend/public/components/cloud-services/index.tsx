@@ -14,6 +14,7 @@ export enum ALMStatusDescriptors {
   conditions = 'urn:alm:descriptor:io.kubernetes.conditions',
   importantMetrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   text = 'urn:alm:descriptor:text',
+  prometheus = 'urn:alm:descriptor:io.prometheus:api.v1',
 }
 
 export enum ClusterServiceVersionPhase {
