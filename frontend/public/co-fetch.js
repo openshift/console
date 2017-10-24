@@ -58,9 +58,9 @@ const validateStatus = (response) => {
 export const coFetch = (url, options = {}) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
 
-  // If the URL being requested is not under the configured base path, make sure to not send the
-  // default Bearer token.
-  if (url.indexOf(window.SERVER_FLAGS.basePath) !== 0) {
+  // If the URL being requested is absolute (and therefore, not a local request),
+  // remove the authorization header to prevent credentials from leaking.
+  if (url.indexOf('://') >= 0) {
     delete allOptions.headers.Authorization;
   }
 
