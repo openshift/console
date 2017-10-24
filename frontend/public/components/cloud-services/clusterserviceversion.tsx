@@ -142,9 +142,20 @@ export const ClusterServiceVersionsPage: React.StatelessComponent<ClusterService
 
 export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata} = props.obj;
+  const createLink = (name: string) => `/ns/${metadata.namespace}/clusterserviceversion-v1s/${metadata.name}/${name.split('.')[0]}/new`;
 
   return <div className="co-clusterserviceversion-details co-m-pane__body">
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
+      <div style={{marginBottom: '15px'}}>
+        { spec.customresourcedefinitions.owned.length > 1
+          ? <Dropdown
+            noButton={true}
+            className="btn btn-primary"
+            title="Create New"
+            items={spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
+            onChange={(name) => history.push(createLink(name))} />
+          : <Link to={createLink(spec.customresourcedefinitions.owned[0].name)} className="btn btn-primary">{`Create ${spec.customresourcedefinitions.owned[0].displayName}`}</Link> }
+      </div>
       <dl className="co-clusterserviceversion-details__section--info__item">
         <dt>Provider</dt>
         <dd>{spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}</dd>

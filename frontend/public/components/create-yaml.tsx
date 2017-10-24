@@ -1,19 +1,24 @@
+/* eslint-disable no-undef */
+
 import * as React from 'react';
+import { match } from 'react-router-dom';
+import * as _ from 'lodash';
 
 import { safeLoad } from 'js-yaml';
 import { TEMPLATES } from '../yaml-templates';
 import { kindFromPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 
-export class CreateYAML extends React.PureComponent {
+declare const System: any;
+
+export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
   render () {
-    const {match} = this.props;
-    const {params} = match;
+    const {params} = this.props.match;
 
     const kind = kindFromPlural(params.plural);
     if (!kind) {
       // <base href=...> makes this OK
-      window.location = '404';
+      (window as any).location = '404';
     }
 
     const apiVersion = kind.apiVersion || 'v1';
@@ -31,7 +36,7 @@ export class CreateYAML extends React.PureComponent {
 
     // The code below strips the basePath (etcd.coreos.com, etc.) from the apiVersion that is being set in the template
     // and causes creation to fail for some resource kinds, hence adding a check here to skip for those kinds.
-    if (!['EtcdCluster', 'Role', 'RoleBinding', 'Prometheus', 'ServiceMonitor', 'AlertManager', 'NetworkPolicy'].includes(obj.kind)) {
+    if (['EtcdCluster', 'Role', 'RoleBinding', 'Prometheus', 'ServiceMonitor', 'AlertManager', 'VaultService', 'NetworkPolicy'].indexOf(obj.kind) === -1) {
       obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     }
     obj.metadata = obj.metadata || {};
@@ -39,6 +44,12 @@ export class CreateYAML extends React.PureComponent {
       obj.metadata.namespace = namespace;
     }
 
-    return <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} />;
+    const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/resources` : null;
+
+    return <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} />;
   }
 }
+
+export type CreateYAMLProps = {
+  match: match<{ns: string, plural: string, appName?: string}>;
+};

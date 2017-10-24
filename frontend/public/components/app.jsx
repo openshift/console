@@ -107,6 +107,7 @@ class App extends React.PureComponent {
 
             <Route path="/start-guide" exact component={StartGuidePage} />
 
+            <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/new" exact component={CreateYAML} />
             <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />
 

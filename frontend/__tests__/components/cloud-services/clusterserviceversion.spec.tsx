@@ -46,7 +46,7 @@ describe(ClusterServiceVersionListItem.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionListItemProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionListItem appType={testClusterServiceVersion} namespaces={[testClusterServiceVersion.metadata.namespace]} />);
+    wrapper = shallow(<ClusterServiceVersionListItem appType={_.cloneDeep(testClusterServiceVersion)} namespaces={[testClusterServiceVersion.metadata.namespace]} />);
   });
 
   it('renders ClusterServiceVersion logo', () => {
@@ -97,7 +97,7 @@ describe(ClusterServiceVersionList.displayName, () => {
   beforeEach(() => {
     let otherClusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
     otherClusterServiceVersion.metadata.name = 'vault';
-    apps = [testClusterServiceVersion, localClusterServiceVersion, otherClusterServiceVersion];
+    apps = [_.cloneDeep(testClusterServiceVersion), localClusterServiceVersion, otherClusterServiceVersion];
     wrapper = shallow(<ClusterServiceVersionList.WrappedComponent loaded={true} data={apps} filters={{}} appCRDs={[]} appCRs={new Map()} />);
   });
 
@@ -192,13 +192,32 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionDetailsProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionDetails obj={testClusterServiceVersion} />);
+    wrapper = shallow(<ClusterServiceVersionDetails obj={_.cloneDeep(testClusterServiceVersion)} />);
   });
 
   it('renders info section for ClusterServiceVersion', () => {
     const section = wrapper.find('.co-clusterserviceversion-details__section--info');
 
     expect(section.exists()).toBe(true);
+  });
+
+  it('renders create `Link` if only one `owned` app resource', () => {
+    const createButton = wrapper.find('.btn-primary');
+
+    expect(createButton.type()).toEqual(Link);
+  });
+
+  it('renders a create dropdown button if more than one `owned` app resource', () => {
+    let obj = _.cloneDeep(testClusterServiceVersion);
+    obj.spec.customresourcedefinitions.owned.push({name: 'foobars.testapp.coreos.com', displayName: 'Foo Bars'});
+    wrapper.setProps({obj});
+    const createButton: ShallowWrapper<any> = wrapper.find('.btn-primary');
+
+    expect(createButton.type()).toEqual(Dropdown);
+    expect(createButton.props().title).toEqual('Create New');
+    expect(createButton.props().noButton).toEqual(true);
+    expect(createButton.props().items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
+    expect(createButton.props().onChange).toBeDefined();
   });
 
   it('renders description section for ClusterServiceVersion', () => {
