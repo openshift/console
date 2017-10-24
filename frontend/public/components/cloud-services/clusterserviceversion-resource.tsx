@@ -53,11 +53,13 @@ export const ClusterServiceVersionResourceHeader: React.StatelessComponent<Clust
 </ListHeader>;
 
 export const ClusterServiceVersionResourceLink = connectToKinds()((props: ClusterServiceVersionResourceLinkProps) => {
-  const {namespace, labels = {}, name} = props.obj.metadata;
+  const {namespace, name} = props.obj.metadata;
+  // FIXME(alecmerdler): Hack to pass the CSV name without using labels (/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name)
+  const appName = location.pathname.split('/')[4];
 
   return <span className="co-resource-link">
     <ResourceIcon kind={props.obj.kind} />
-    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${labels['operated-by']}/${props.kindObj.plural}/${name}/details`}>{name}</Link>
+    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${props.kindObj.plural}/${name}/details`}>{name}</Link>
   </span>;
 });
 
@@ -147,8 +149,8 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 
       // Fetch CSV that defines metadata associated with current app resource using the `alm-status-descriptors` label.
       const {metadata} = props.obj;
-      if (!_.isEmpty(metadata.labels['alm-status-descriptors'])) {
-        k8sGet(k8sKinds['ClusterServiceVersion-v1'], metadata.labels['alm-status-descriptors'], metadata.namespace).then((result) => {
+      if (!_.isEmpty(props.appName)) {
+        k8sGet(k8sKinds['ClusterServiceVersion-v1'], this.props.appName, metadata.namespace).then((result) => {
           this.setState({clusterServiceVersion: result, expanded: this.state.expanded});
         });
       }
@@ -266,7 +268,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
   {...props}
   pages={[
-    navFactory.details(ClusterServiceVersionResourceDetails),
+    navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
     navFactory.editYaml(),
   ]}
 />;
@@ -330,6 +332,7 @@ export type ClusterServiceVersionResourcesPageProps = {
 
 export type ClusterServiceVersionResourcesDetailsProps = {
   obj: ClusterServiceVersionResourceKind;
+  appName: string;
   kindObj: K8sKind;
   kindsInFlight: boolean;
 };
