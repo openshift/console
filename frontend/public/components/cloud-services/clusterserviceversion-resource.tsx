@@ -123,6 +123,11 @@ export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: 
   const resources = props.data ? props.data.map((resource) => ({kind: resource.spec.names.kind, namespaced: true})) : [];
   const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
 
+  const createLink = (name: string) => `/ns/${props.obj.metadata.namespace}/clusterserviceversion-v1s/${props.obj.metadata.name}/${name.split('.')[0]}/new`;
+  const createProps = props.obj.spec.customresourcedefinitions.owned.length > 1
+    ? {items: props.obj.spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
+    : {to: createLink(props.obj.spec.customresourcedefinitions.owned[0].name)};
+
   return props.loaded && props.data.length > 0
     ? <MultiListPage
       {...props}
@@ -130,6 +135,9 @@ export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: 
       filterLabel="Resources by name"
       resources={resources}
       namespace={props.obj.metadata.namespace}
+      canCreate={true}
+      createProps={createProps}
+      createButtonText={props.obj.spec.customresourcedefinitions.owned.length > 1 ? 'Create New' : `Create ${props.obj.spec.customresourcedefinitions.owned[0].displayName}`}
       flatten={(resources) => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item))}
       rowFilters={[{
         type: 'clusterserviceversion-resource-kind',
@@ -147,11 +155,9 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       super(props);
       this.state = {clusterServiceVersion: null, expanded: false};
 
-      // Fetch CSV that defines metadata associated with current app resource using the `alm-status-descriptors` label.
-      const {metadata} = props.obj;
       if (!_.isEmpty(props.appName)) {
-        k8sGet(k8sKinds['ClusterServiceVersion-v1'], this.props.appName, metadata.namespace).then((result) => {
-          this.setState({clusterServiceVersion: result, expanded: this.state.expanded});
+        k8sGet(k8sKinds['ClusterServiceVersion-v1'], this.props.appName, props.obj.metadata.namespace).then((clusterServiceVersion) => {
+          this.setState({clusterServiceVersion, expanded: this.state.expanded});
         });
       }
     }
@@ -162,9 +168,9 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
           case ALMStatusDescriptors.importantMetrics:
           case ALMStatusDescriptors.prometheus:
             return true;
+          default:
+            return false;
         }
-
-        return false;
       };
 
       const getStatusValue = (statusDescriptor: ClusterServiceVersionResourceStatusDescriptor, statusBlock) => {

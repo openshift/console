@@ -3,6 +3,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 
+import './ocs-templates';
+
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage } from './clusterserviceversion-resource';
 export { CatalogsDetailsPage } from './catalog';
@@ -64,8 +66,10 @@ export type CustomResourceDefinitionKind = {
 
 } & K8sResourceKind;
 
-// TODO(alecmerdler): Change this to `ClusterServiceVersion`
 export type ClusterServiceVersionKind = {
+  spec: {
+    customresourcedefinitions: {owned?: any[], required?: any[]};
+  };
   status?: {
     phase: ClusterServiceVersionPhase;
     reason: CSVConditionReason;

@@ -392,8 +392,29 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
 
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
     expect(listPage.props().filterLabel).toEqual('Resources by name');
+    expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual([{kind: testClusterServiceVersionResource.spec.names.kind, namespaced: true}]);
     expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
     expect(listPage.props().rowFilters[0].type).toEqual('clusterserviceversion-resource-kind');
+  });
+
+  it('passes `createProps` for dropdown create button if app has multiple owned CRDs', () => {
+    let obj = _.cloneDeep(testClusterServiceVersion);
+    obj.spec.customresourcedefinitions.owned.push({name: 'foobars.testapp.coreos.com', displayName: 'Foo Bars'});
+    wrapper.setProps({obj});
+    const listPage = wrapper.find(MultiListPage);
+
+    expect(listPage.props().createButtonText).toEqual('Create New');
+    expect(listPage.props().createProps.to).not.toBeDefined();
+    expect(listPage.props().createProps.items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
+    expect(listPage.props().createProps.createLink).toBeDefined();
+  });
+
+  it('passes `createProps` for single create button if app has only one owned CRD', () => {
+    const listPage = wrapper.find(MultiListPage);
+
+    expect(listPage.props().createButtonText).toEqual(`Create ${testClusterServiceVersion.spec.customresourcedefinitions.owned[0].displayName}`);
+    expect(listPage.props().createProps.items).not.toBeDefined();
+    expect(listPage.props().createProps.createLink).not.toBeDefined();
   });
 });

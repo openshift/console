@@ -184,7 +184,7 @@ export class EditYAML extends SafetyFirst {
       action(ko, obj, namespace, name)
         .then(o => {
           if (redirect) {
-            history.push(`${resourcePath(ko.kind, newName, newNamespace)}/details`);
+            history.push(this.props.redirectURL || `${resourcePath(ko.kind, newName, newNamespace)}/details`);
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }

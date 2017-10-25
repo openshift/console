@@ -142,6 +142,8 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
           createLink = <Link className="co-m-primary-action pull-left" {...createProps} tabIndex={-1}>
             <button className="btn btn-primary" id="yaml-create" tabIndex={-1}>{createButtonText}</button>
           </Link>;
+        } else if (createProps.items) {
+          createLink = <Dropdown noButton={true} className="btn btn-primary" id="yaml-create" title={createButtonText} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />;
         } else {
           createLink = <button className="btn btn-primary" id="yaml-create" tabIndex={-1} {...createProps}>{createButtonText}</button>;
         }
@@ -252,8 +254,7 @@ export const ListPage = props => {
 
 ListPage.displayName = 'ListPage';
 
-// FIXME(alecmerdler): Fix this typing
-/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, ns?: string, flatten?: Function, filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, createProps?: any, ns?: string, flatten?: Function, filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
   const {createButtonText, resources, flatten, filterLabel, createProps, showTitle = true, title, namespace} = props;
 
