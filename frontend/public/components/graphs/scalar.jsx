@@ -21,9 +21,9 @@ export class Scalar extends BaseGraph {
   updateGraph (data, error) {
     const value = parseFloat(_.get(data, '[0].data.result[0].value[1]'), 10);
     if (isNaN(value)) {
-      // eslint-disable-next-line no-console
-      console.error('data is NaN!', data);
       this.setState({error});
+      // eslint-disable-next-line no-console
+      console.warn('Graph error: No data from query', this.query);
       return;
     }
     this.setState({value, error});
