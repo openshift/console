@@ -102,7 +102,7 @@ Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, C
 
 export const ResourceCog = ({actions, kind, resource, isDisabled}) => {
   //Don't show the resource cog if deletionTimestamp is set which means the resources is in 'deletion in progress' state
-  return _.has(resource.metadata, 'deletionTimestamp') ? null : <Cog
+  return _.get(resource.metadata, 'deletionTimestamp') ? null : <Cog
     options={actions.map(a => a(kindObj(kind), resource))}
     key={resource.metadata.uid}
     isDisabled={isDisabled}

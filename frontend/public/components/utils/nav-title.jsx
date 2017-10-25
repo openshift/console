@@ -6,7 +6,8 @@ import { ActionsMenu, kindObj, ResourceIcon } from './index';
 import { ClusterServiceVersionLogo } from '../cloud-services';
 
 /** @type {React.StatelessComponent.<{kind?: string, detail?: boolean, title?: string, menuActions?: any[], data?: any[] | any, children?: any[] | any}}> */
-export const NavTitle = ({kind, detail, title, menuActions, data, children}) => {
+export const NavTitle = ({kind, detail, title, menuActions, obj, children}) => {
+  const data = _.get(obj, 'data');
   const hasLogo = !_.isEmpty(data) && _.has(data, 'spec.icon');
   const logo = hasLogo
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
@@ -16,7 +17,7 @@ export const NavTitle = ({kind, detail, title, menuActions, data, children}) => 
     <div className="col-xs-12">
       <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': hasLogo})}>
         {logo}
-        { menuActions && !_.isEmpty(data) && !_.has(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj(kind), data))} /> }
+        { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj(kind), data))} /> }
       </h1>
       { children }
     </div>

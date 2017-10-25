@@ -5,7 +5,7 @@ import { safeDump } from 'js-yaml';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { k8sKinds, k8sGet } from '../module/k8s';
-import { SecretsList, withSecretsList } from './secret';
+import { SecretsPage, withSecretsList } from './secret';
 import { registerTemplate } from '../yaml-templates';
 import { saveAs } from 'file-saver';
 import { errorModal } from './modals';
@@ -111,14 +111,7 @@ const Details = ({obj: serviceaccount}) => {
           </div>
         </div>
       </div>
-      <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-xs-12">
-            <h1 className="co-section-title">Secrets</h1>
-          </div>
-        </div>
-        <SecretsList namespace={namespace} filters={filters} />
-      </div>
+      <SecretsPage kind="Secret" canCreate={false} namespace={namespace} filters={filters} autoFocus={false} />
     </div>
   );
 };

@@ -1,27 +1,28 @@
 import * as React from 'react';
 
 import { ContainerLinuxUpdateDetails } from './container-linux-update-details';
-import { LoadingInline, MultiFirehose, containerLinuxUpdateOperator, StatusBox } from '../utils';
+import { LoadingInline, Firehose, containerLinuxUpdateOperator, StatusBox } from '../utils';
 
-export const ContainerLinuxUpdates = (props) => {
-  const firehoseResources = [
-    {
-      kind: 'Node',
-      isList: true,
-      prop: 'nodes'
-    },
-    {
-      kind: 'ConfigMap',
-      namespace: 'tectonic-system',
-      name: 'tectonic-config',
-      prop: 'configMap'
+const firehoseResources = [
+  {
+    kind: 'Node',
+    isList: true,
+    prop: 'nodes'
+  },
+  {
+    kind: 'ConfigMap',
+    namespace: 'tectonic-system',
+    name: 'tectonic-config',
+    prop: 'configMap'
 
-    },
-  ];
-  return <MultiFirehose resources={firehoseResources}>
-    <ContainerLinuxUpdatesWithData {...props} />
-  </MultiFirehose>;
-};
+  },
+];
+
+export const ContainerLinuxUpdates = () =>
+  <Firehose resources={firehoseResources}>
+    <ContainerLinuxUpdatesWithData />
+  </Firehose>;
+
 
 export const ContainerLinuxUpdatesWithData = (props) => {
   if (props.loadError) {

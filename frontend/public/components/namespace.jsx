@@ -9,7 +9,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { SafetyFirst } from './safety-first';
 import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
-import { BindingName, BindingsList, RoleLink } from './RBAC';
+import { RoleBindingsPage } from './RBAC';
 import { AsyncComponent } from './utils/async';
 // import { Bar } from './graphs';
 
@@ -143,50 +143,12 @@ const Details = ({obj: ns}) => <div>
   </div>
 </div>;
 
-const BindingHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="roleRef.name">Role Ref</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="subject.kind">Subject Kind</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="subject.name">Subject Name</ColHead>
-</ListHeader>;
+const RolesPage = ({obj: {metadata}}) => <RoleBindingsPage namespace={metadata.name} showTitle={false} />;
 
-const BindingRow = ({obj: binding}) => <div className="row co-resource-list__item">
-  <div className="col-xs-3">
-    <BindingName binding={binding} />
-  </div>
-  <div className="col-xs-3">
-    <RoleLink binding={binding} />
-  </div>
-  <div className="col-xs-2">
-    {binding.subject.kind}
-  </div>
-  <div className="col-xs-4">
-    {binding.subject.name}
-  </div>
-</div>;
+const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}))(props => {
+  const { activeNamespace, dispatch } = props;
 
-const RolesPage = ({obj: {metadata}}) => {
-  const Intro = <div>
-    <h1 className="co-m-pane__title">Namespace Role Bindings</h1>
-    <div className="co-m-pane__explanation">These subjects have access to resources specifically within this namespace.</div>
-  </div>;
-  return <ListPage
-    canCreate={true}
-    createButtonText="Create Binding"
-    createProps={{to: `/rolebindings/new?ns=${metadata.name}`}}
-    filterLabel="Role Bindings by role or subject"
-    Intro={Intro}
-    kind="RoleBinding"
-    ListComponent={props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />}
-    namespace={metadata.name}
-    showTitle={false}
-    textFilter="role-binding"
-  />;
-};
-
-const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(props => {
-  const {data, loaded, namespace, dispatch} = props;
-
+  const {loaded, data} = props.namespace;
   // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
   const allNamespacesKey = '#ALL_NS#';
 
@@ -194,7 +156,7 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
   items[allNamespacesKey] = 'all';
   _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
 
-  let title = namespace || 'all';
+  let title = activeNamespace || 'all';
 
   // If the currently active namespace is not found in the list of all namespaces, default to "all"
   if (loaded && !_.has(items, title)) {
@@ -206,11 +168,17 @@ const NamespaceDropdown = connect(() => ({namespace: getActiveNamespace()}))(pro
   };
 
   return <div className="co-namespace-selector">
-    Namespace: <Dropdown className="co-namespace-selector__dropdown" noButton={true} items={items} title={title} onChange={onChange} selectedKey={namespace} />
+    Namespace: <Dropdown className="co-namespace-selector__dropdown" noButton={true} items={items} title={title} onChange={onChange} selectedKey={activeNamespace} />
   </div>;
 });
 
-export const NamespaceSelector = () => <Firehose kind="Namespace" isList={true}>
+const resources = [{
+  kind: 'Namespace',
+  prop: 'namespace',
+  isList: true,
+}];
+
+export const NamespaceSelector = () => <Firehose resources={resources}>
   <NamespaceDropdown />
 </Firehose>;
 

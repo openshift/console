@@ -11,7 +11,7 @@ import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
 import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox,
-  MultiFirehose, OverflowYFade, ResourceCog, ResourceName, ResourceLink,
+  OverflowYFade, ResourceCog, ResourceName, ResourceLink,
   resourceObjPath, StatusBox, getQueryArgument, injectChild } from '../utils';
 import { isSystemRole } from './index';
 import { registerTemplate } from '../../yaml-templates';
@@ -155,7 +155,7 @@ const resources = [
   {kind: 'ClusterRoleBinding', namespaced: false},
 ];
 
-export const RoleBindingsPage = () => <MultiListPage
+export const RoleBindingsPage = ({namespace, showTitle=true}) => <MultiListPage
   ListComponent={BindingsList}
   canCreate={true}
   createButtonText="Create Binding"
@@ -177,9 +177,11 @@ export const RoleBindingsPage = () => <MultiListPage
       return items;
     },
   }]}
+  namespace={namespace}
   flatten={flatten}
   textFilter="role-binding"
   title="Role Bindings"
+  showTitle={showTitle}
 />;
 
 const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
@@ -211,9 +213,9 @@ const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange,
   </div>;
 };
 
-const ListDropdown = props => <MultiFirehose resources={props.kinds.map(kind => ({kind, isList: true, prop: kind}))} flatten={flatten}>
+const ListDropdown = props => <Firehose resources={props.kinds.map(kind => ({kind, isList: true, prop: kind}))}>
   <ListDropdown_ {...props} />
-</MultiFirehose>;
+</Firehose>;
 
 const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['Namespace']} placeholder="Select namespace" />;
 
@@ -439,18 +441,18 @@ const EditBinding = props => {
 
 const Inject = (props) => {
   const componentProps = _.pick(props, ['filters', 'selected', 'match']);
-  componentProps.obj = props.data;
+  componentProps.obj = props.obj.data;
   const child = injectChild(props.children, componentProps);
   return <StatusBox {...props}>{child}</StatusBox>;
 };
 
-export const EditRoleBinding = ({match: {params}, kind}) => <Firehose kind={kind} name={params.name} namespace={params.ns}>
+export const EditRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false}]}>
   <Inject>
     <EditBinding subjectIndex={getSubjectIndex()} titleVerb="Edit" />
   </Inject>
 </Firehose>;
 
-export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose kind={kind} name={params.name} namespace={params.ns}>
+export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false}]}>
   <Inject>
     <BaseEditRoleBinding isCreate={true} subjectIndex={getSubjectIndex()} titleVerb="Duplicate" />
   </Inject>

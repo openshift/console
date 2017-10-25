@@ -102,8 +102,6 @@ const PodLink = ({pod, text}) => {
   </div>;
 };
 
-const SubHeaderRow = ({header, href, link}) => <div className="col-md-6 subheader-row">{header} <a href={href}>{link}</a></div>;
-
 const VulnLink = ({vuln}) => {
   return <span className="co-resource-link">
     <a href={vuln.Link} target="_blank">{vuln.Name}</a>
@@ -254,13 +252,6 @@ export const PodVulnsPage = props => <ListPage
   ListComponent={PodVulnList}
   title="Security Scan Report"
   filterLabel="vulnerabilities by name"
-  Intro={
-    <SubHeaderRow
-      header="All supported container images are scanned for known vulnerabilities and CVEs."
-      href="https://quay.io"
-      link="Learn more about Tectonic Security Scanning."
-    />
-  }
   rowFilters={[{
     type: 'podvuln-filter',
     selected: ['P0', 'P1', 'P2', 'P3'],

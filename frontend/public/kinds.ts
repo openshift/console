@@ -40,6 +40,13 @@ export const kindReducer = (state, action) => {
     case 'addCRDs':
       _.each(action.kinds, (resource: any) => {
         const { plural, singular, kind, shortNames } = resource.spec.names;
+
+        // Always favor the static definitions
+        // TODO: (kans) do not map to resource.spec.names.kind, since it isn't unique!
+        if (k8sKinds[kind]) {
+          return;
+        }
+
         const { version, scope, group, selector } = resource.spec;
         const { labels, annotations } = resource.metadata;
 

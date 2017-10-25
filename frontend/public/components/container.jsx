@@ -203,7 +203,13 @@ const Details = (props) => {
 
 export const ContainersDetailsPage = (props) => <div>
   <NavTitle detail={true} title={props.match.params.name} kind="Container" />
-  <Firehose {...props} namespace={props.match.params.ns} kind="Pod" name={props.match.params.podName}>
-    <VertNav hideNav={true} pages={[{name: 'container', href: 'details', component: Details}]} />
+  <Firehose resources={[{
+    name: props.match.params.podName,
+    namespace: props.match.params.ns,
+    kind: 'Pod',
+    isList: false,
+    prop: 'obj',
+  }]}>
+    <VertNav hideNav={true} pages={[{name: 'container', href: 'details', component: Details}]} match={props.match}/>
   </Firehose>
 </div>;

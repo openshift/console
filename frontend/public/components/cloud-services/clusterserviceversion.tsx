@@ -99,7 +99,10 @@ export const ClusterServiceVersionList = connect(stateToProps)((props: ClusterSe
 
   return <div>
     {/* Retrieve list of instances for each app resource to determine if app is running */}
-    { props.appCRDs.map((crd, i) => <Firehose kind={crd.spec.names.kind} isList={true} key={i} />) }
+    { props.appCRDs.map((crd, i) => <Firehose resources={[{
+      kind: crd.spec.names.kind,
+      isList: true,
+    }]} key={i} />) }
     { loaded && apps.length > 0
       ? <div className="co-clusterserviceversion-list">
         <div className="co-clusterserviceversion-list__section co-clusterserviceversion-list__section--catalog">
@@ -135,7 +138,10 @@ export const ClusterServiceVersionsPage: React.StatelessComponent<ClusterService
   }];
 
   return <div>
-    <Firehose kind="CustomResourceDefinition" isList={true} />
+    <Firehose resources={[{
+      kind: 'CustomResourceDefinition',
+      isList: true,
+    }]} />
     <ListPage {...props} dropdownFilters={dropdownFilters} ListComponent={ClusterServiceVersionList} filterLabel="Applications by name" title="Installed Applications" showTitle={true} />
   </div>;
 };
@@ -192,7 +198,10 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
   const {details, editYaml} = navFactory;
 
   const Resources = ({obj}) => <div>
-    <Firehose kind="CustomResourceDefinition" isList={true} />
+    <Firehose resources={[{
+      kind: 'CustomResourceDefinition',
+      isList: true,
+    }]} />
     <ClusterServiceVersionResourcesPage loaded={true} obj={obj} />
   </div>;
 

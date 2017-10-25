@@ -105,7 +105,10 @@ const AlertManagersNameList = (props) => {
 };
 
 
-export const AlertManagersListContainer = props => <Firehose kind="Alertmanager" isList={true}>
+export const AlertManagersListContainer = props => <Firehose resources={[{
+  kind: 'Alertmanager',
+  isList: true,
+}]}>
   <AlertManagersNameList {...props} />
 </Firehose>;
 

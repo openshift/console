@@ -37,14 +37,15 @@ const DetailsForKind = kind => function DetailsForKind ({obj}) {
 };
 
 export const DefaultList = props => {
-  const { kind } = props;
-  const Row = RowForKind(kind);
+  const { kinds } = props;
+  const Row = RowForKind(kinds[0]);
   Row.displayName = 'RowForKind';
   return <List {...props} Header={Header} Row={Row} />;
 };
 DefaultList.displayName = DefaultList;
 
-export const DefaultPage = props => <ListPage {...props} ListComponent={DefaultList} />;
+export const DefaultPage = props =>
+  <ListPage {...props} ListComponent={DefaultList} />;
 DefaultPage.displayName = DefaultPage;
 
 
