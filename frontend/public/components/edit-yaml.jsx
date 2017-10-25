@@ -106,7 +106,11 @@ export class EditYAML extends SafetyFirst {
 
   reload() {
     this.loadYaml(true);
-    this.setState({ sampleObj: null });
+    this.setState({
+      sampleObj: null,
+      error: null,
+      success: null,
+    });
   }
 
   loadYaml(reload=false, obj=this.props.obj) {
