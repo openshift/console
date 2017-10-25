@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {k8sKinds} from '../../module/k8s';
 
 export const inject = (children, props) => {
   const safeProps = _.omit(props, ['children']);
@@ -14,3 +15,5 @@ export const injectChild = (children, props) => {
   const onlyChild = React.Children.only(children);
   return React.cloneElement(onlyChild, props);
 };
+
+export const kindObj = kind => _.isString(kind) && k8sKinds[kind] || {};

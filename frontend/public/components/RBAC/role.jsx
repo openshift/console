@@ -137,7 +137,7 @@ export const BindingsForRolePage = ({match: {params: {name, ns}}, kind}) => <div
   <Helmet>
     <title>{`${name} · Bindings`}</title>
   </Helmet>
-  <Firehose kind={kind} name={name} namespace={ns}>
+  <Firehose resources={[{kind: kind, name: name, namespace: ns, isList: false}]}>
     <NavTitle detail={true} kind={kind} menuActions={menuActions} title={name} />
   </Firehose>
   <NavBar pages={pages()} />

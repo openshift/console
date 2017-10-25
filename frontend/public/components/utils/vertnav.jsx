@@ -76,7 +76,7 @@ export class VertNav extends React.PureComponent {
     const props = this.props;
 
     const componentProps = _.pick(props, ['filters', 'selected', 'match']);
-    componentProps.obj = props.data;
+    componentProps.obj = props.obj.data;
 
     const routes = props.pages.map(p => {
       const path = `${props.match.url}/${p.href}`;
@@ -92,7 +92,7 @@ export class VertNav extends React.PureComponent {
         {!props.hideNav && <NavBar pages={props.pages} />}
 
         <div className="co-m-vert-nav__body">
-          <StatusBox {...props}>
+          <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>
             <Switch location={window.location.pathName}> {routes} </Switch>
           </StatusBox>
         </div>

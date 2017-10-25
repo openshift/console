@@ -4,7 +4,7 @@ import * as classNames from'classnames';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
-import { Cog, Firehose, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
+import { Cog, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('v1.Secret', `apiVersion: v1
@@ -83,9 +83,8 @@ const withSecretsList = (Row) => {
   };
 };
 
-const SecretsList = props => <Firehose {...props} kind="Secret" isList={true}>
-  <List {...props} Header={SecretHeader} Row={SecretRow} />
-</Firehose>;
+const SecretsList = props => <List {...props} Header={SecretHeader} Row={SecretRow} />;
+SecretsList.displayName = 'SecretsList';
 
 const SecretsPage = props => <ListPage ListComponent={SecretsList} canCreate={true} {...props} />;
 const SecretsDetailsPage = props => <DetailsPage

@@ -145,9 +145,12 @@ export const CatalogAppList: React.StatelessComponent<CatalogAppListProps> = (pr
   return <List {...props} Row={CatalogAppRow} Header={CatalogAppHeader} isList={true} label="Applications" EmptyMsg={EmptyMsg} />;
 };
 
+const serviceResources = [{kind: 'ClusterServiceVersion-v1', isList: true}];
+const namespaceResource = [{kind: 'Namespace', isList: true}];
 export const CatalogAppsPage: React.StatelessComponent = () => <div>
-  <Firehose kind="ClusterServiceVersion-v1" isList={true} />
-  <Firehose kind="Namespace" isList={true} />
+  {/* Firehoses used here to add resources to Redux store */}
+  <Firehose resources={serviceResources} />
+  <Firehose resources={namespaceResource} />
   <ListPage kind="AlphaCatalogEntry-v1" namespace="tectonic-system" ListComponent={CatalogAppList} filterLabel="Applications by name" title="Applications" showTitle={true} />
 </div>;
 

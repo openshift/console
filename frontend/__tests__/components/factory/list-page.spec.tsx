@@ -2,9 +2,8 @@
 
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { Map as ImmutableMap } from 'immutable';
 
-import { TextFilter, ListPageWrapper_, FireMan_, ListPage } from '../../../public/components/factory/list-page';
+import { TextFilter, ListPageWrapper_, FireMan_, MultiListPage } from '../../../public/components/factory/list-page';
 import { NavTitle, Dropdown, Firehose } from '../../../public/components/utils';
 import { CheckBoxes } from '../../../public/components/row-filter';
 
@@ -49,16 +48,6 @@ describe(FireMan_.displayName, () => {
     wrapper.setProps({title});
 
     expect(wrapper.find(NavTitle).props().title).toEqual(title);
-  });
-
-  it('renders `Intro` if given', () => {
-    const Intro = <h1 className="co-m-intro">My Intro</h1>;
-
-    expect(wrapper.contains(Intro)).toBe(false);
-
-    wrapper.setProps({Intro});
-
-    expect(wrapper.contains(Intro)).toBe(true);
   });
 
   it('renders create button if given `canCreate` true', () => {
@@ -119,8 +108,9 @@ describe(ListPageWrapper_.displayName, () => {
     {kind: 'Pod'},
     {kind: 'Node'},
   ];
+  const flatten = () => data;
   const ListComponent = () => <div />;
-  const wrapper: ShallowWrapper = shallow(<ListPageWrapper_ data={data} ListComponent={ListComponent} kinds={['pods']} rowFilters={[]} />);
+  const wrapper: ShallowWrapper = shallow(<ListPageWrapper_ flatten={flatten} ListComponent={ListComponent} kinds={['pods']} rowFilters={[]} />);
 
   it('renders row filters if given `rowFilters`', () => {
     const rowFilters = [{
@@ -137,10 +127,8 @@ describe(ListPageWrapper_.displayName, () => {
 
     expect(checkboxes.length).toEqual(rowFilters.length);
     checkboxes.forEach((checkbox, i) => {
-      const expectedNumbers = data.reduce((acc, item) => acc.update(item.kind, 0, (value) => value + 1), ImmutableMap<string, number>());
-
       expect(checkbox.props().items).toEqual(rowFilters[i].items);
-      expect(checkbox.props().numbers).toEqual(expectedNumbers.toJS());
+      expect(checkbox.props().numbers).toEqual({ Pod: 2, Node: 1 });
       expect(checkbox.props().selected).toEqual(rowFilters[i].selected);
       expect(checkbox.props().type).toEqual(rowFilters[i].type);
     });
@@ -151,9 +139,12 @@ describe(ListPageWrapper_.displayName, () => {
   });
 });
 
-describe(ListPage.displayName, () => {
+describe(MultiListPage.displayName, () => {
   const ListComponent = () => <div />;
-  const wrapper: ShallowWrapper = shallow(<ListPage ListComponent={ListComponent} kind="Pod" filterLabel="Pods by name" />);
+  const wrapper: ShallowWrapper = shallow(<MultiListPage ListComponent={ListComponent} resources={[{
+    kind: 'Pod',
+    filterLabel: 'Pods by name',
+  }]} />);
 
   it('renders a `Firehose` wrapped `ListPageWrapper_`', () => {
     expect(wrapper.find(Firehose).exists()).toBe(true);

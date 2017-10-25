@@ -6,7 +6,7 @@ import * as PropTypes from 'prop-types';
 
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes } from '../row-filter';
-import { Dropdown, Firehose, kindObj, MultiFirehose, NavTitle, history, inject} from '../utils';
+import { Dropdown, Firehose, kindObj, NavTitle, history, inject} from '../utils';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 
 
@@ -33,18 +33,18 @@ export const TextFilter = ({label, onChange, defaultValue, style, className, aut
 
 TextFilter.displayName = 'TextFilter';
 
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], data?: any[], rowFilters?: any[]}>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], flatten?: function, data?: any[], rowFilters?: any[]}>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render () {
-    const {data, kinds, ListComponent, rowFilters, reduxIDs} = this.props;
-    const resources = _.pick(this.props, kinds);
+    const {kinds, ListComponent, rowFilters, reduxIDs, flatten} = this.props;
+    const data = flatten ? flatten(this.props.resources) : [];
 
     const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type, numbers}, i) => {
       const count = _.isFunction(numbers) ? numbers(data) : undefined;
       return <CheckBoxes
         key={i}
         applyFilter={this.props.applyFilter}
-        items={_.isFunction(items) ? items(resources) : items}
+        items={_.isFunction(items) ? items(_.pick(this.props, kinds)) : items}
         numbers={count || _.countBy(data, reducer)}
         selected={selected}
         type={type}
@@ -58,7 +58,7 @@ export class ListPageWrapper_ extends React.PureComponent {
       </div>
       <div className="row">
         <div className="col-xs-12">
-          <ListComponent {...this.props} />
+          <ListComponent {...this.props} data={data} />
         </div>
       </div>
     </div>;
@@ -130,7 +130,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
     }
 
     render () {
-      const {createButtonText, dropdownFilters, textFilter, filterLabel, title, canExpand, canCreate, createProps, Intro, autoFocus, resources} = this.props;
+      const {createButtonText, dropdownFilters, textFilter, filterLabel, title, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
         return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
@@ -155,7 +155,6 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
           <div className="co-m-pane__heading">
             <div className="row">
               <div className="col-xs-12">
-                {Intro}
                 {createLink}
                 {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
                 <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter, e.target.value)} defaultValue={this.defaultValue} tabIndex={1} autoFocus={autoFocus} />
@@ -167,9 +166,6 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
             {inject(this.props.children, {
               resources,
               expand: this.state.expand,
-              selector: resources[0].selector,
-              fieldSelector: resources[0].fieldSelector,
-              namespace: resources[0].namespace,
               reduxIDs: this.state.reduxIDs,
             })}
           </div>
@@ -193,7 +189,6 @@ FireMan_.propTypes = {
   fieldSelector: PropTypes.string,
   selectorFilterLabel: PropTypes.string,
   filterLabel: PropTypes.string,
-  Intro: PropTypes.element,
   textFilter: PropTypes.string,
   title: PropTypes.string,
   resources: PropTypes.arrayOf(
@@ -208,36 +203,26 @@ FireMan_.propTypes = {
       name: PropTypes.string,
       isList: PropTypes.bool,
       namespaced: PropTypes.bool,
+      filters: PropTypes.object,
     })
   ).isRequired,
 };
 
 /** @type {React.StatelessComponent<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], fieldSelector?: string}>} */
 export const ListPage = props => {
-  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, showTitle = true} = props;
+  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true} = props;
   const {labelPlural, plural, namespaced, label} = kindObj(kind);
   const title = props.title || labelPlural;
-
   const href = `/ns/${namespace || 'default'}/${plural}/new`;
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
+  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters }];
 
-  const resources = [{
-    isList: true,
-    kind,
-    name,
-    namespace: namespaced ? namespace : undefined,
-    prop: name || kind,
-    namespaced,
-    selector,
-    fieldSelector,
-  }];
-
-  // TODO (kans): Unify Firehose/MultiFirehose - they should only consume the same resource object including kind, namespace, name, etc
-  return <FireMan_
+  return <MultiListPage
     filterLabel={filterLabel || `${labelPlural} by name`}
     selectorFilterLabel="Filter by selector (app=nginx) ..."
     createProps={createProps}
-    title={showTitle ? title : undefined}
+    title={title}
+    showTitle={showTitle}
     canCreate={props.canCreate}
     canExpand={props.canExpand}
     createButtonText={createButtonText || `Create ${label}`}
@@ -245,18 +230,25 @@ export const ListPage = props => {
     resources={resources}
     autoFocus={props.autoFocus}
     dropdownFilters={props.dropdownFilters}
-  >
-    <Firehose isList={true} kind={props.kind}>
-      <ListPageWrapper_ ListComponent={props.ListComponent} kinds={[kind]} rowFilters={props.rowFilters}/>
-    </Firehose>
-  </FireMan_>;
+    ListComponent={props.ListComponent}
+    rowFilters={props.rowFilters}
+    label={labelPlural}
+    flatten={resources => resources[name || kind].data}
+    namespace={namespace}
+  />;
 };
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, createProps?: any, ns?: string, flatten?: Function, filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
-  const {createButtonText, resources, flatten, filterLabel, createProps, showTitle = true, title, namespace} = props;
+  const {createButtonText, flatten, filterLabel, createProps, showTitle = true, title, namespace} = props;
+  const resources = _.map(props.resources, (r) => ({
+    ...r,
+    isList: true,
+    prop: r.prop || r.kind,
+    namespace: r.namespaced ? namespace : r.namespace,
+  }));
 
   return <FireMan_
     filterLabel={filterLabel}
@@ -267,18 +259,13 @@ export const MultiListPage = props => {
     canExpand={props.canExpand}
     createButtonText={createButtonText || 'Create'}
     textFilter={props.textFilter}
-    resources={_.map(resources, (r) => ({
-      ...r,
-      isList: true,
-      prop: r.prop || r.kind,
-      namespace: r.namespaced ? namespace : r.namespace,
-    }))}
+    resources={resources}
     autoFocus={props.autoFocus}
     dropdownFilters={props.dropdownFilters}
   >
-    <MultiFirehose flatten={flatten}>
-      <ListPageWrapper_ ListComponent={props.ListComponent} kinds={_.map(resources, 'kind')} rowFilters={props.rowFilters} staticFilters={props.staticFilters} />
-    </MultiFirehose>
+    <Firehose resources={resources}>
+      <ListPageWrapper_ ListComponent={props.ListComponent} kinds={_.map(resources, 'kind')} rowFilters={props.rowFilters} staticFilters={props.staticFilters} flatten={flatten} label={props.label} />
+    </Firehose>
   </FireMan_>;
 };
 

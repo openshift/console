@@ -272,8 +272,8 @@ export const k8sKinds = {
     abbr: 'SM',
   },
   Alertmanager: {
-    label: 'Alert Manager',
-    labelPlural: 'Alert Managers',
+    label: 'Alertmanager',
+    labelPlural: 'Alertmanagers',
     apiVersion: 'v1',
     basePath: '/apis/monitoring.coreos.com/',
     path: 'alertmanagers',

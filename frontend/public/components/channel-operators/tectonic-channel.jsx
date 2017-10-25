@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {LoadingInline, MultiFirehose, determineOperatorState, StatusBox} from '../utils';
+import {LoadingInline, Firehose, determineOperatorState, StatusBox} from '../utils';
 import {AppVersionDetails} from './app-version';
 import {SafetyFirst} from '../safety-first';
 import * as k8sSelector from '../../module/k8s/selector';
@@ -91,17 +91,13 @@ export class TectonicChannel extends SafetyFirst {
   }
 
   render() {
-    return <MultiFirehose resources={this.firehoseResources}>
-      <TectonicChannelWithData {...this.props} />
-    </MultiFirehose>;
+    return <Firehose resources={this.firehoseResources}>
+      <TectonicChannelWithData />
+    </Firehose>;
   }
 }
 
 class TectonicChannelWithData extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   _getConfig(configs) {
     if (configs.loaded) {
       return _.get(configs, 'data[0]');

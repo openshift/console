@@ -1,186 +1,174 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import store from '../../redux';
-import {K8sWatcher} from './k8s-watcher';
-import {EmptyBox, ConnectToState, kindObj, MultiConnectToState} from './index';
+import { kindObj, inject } from './index';
+import actions from '../../module/k8s/k8s-actions';
 
-/** @augments {React.Component<{kind?: string, isList: boolean, selector?: any, fieldSelector?: any, name?: string, namespace?: string}>} */
-class FirehoseBase extends React.Component {
-  _initFirehose(props) {
-    const {kind, namespace, name, fieldSelector, selector} = props;
-    const k8sKind = kindObj(kind);
-    return new K8sWatcher(k8sKind, namespace, selector, fieldSelector, name, store);
-  }
-
-  _mountFirehose(firehose, props) {
-    if (!firehose) {
-      return;
-    }
-    if (props.isList) {
-      firehose.watchList();
-      return;
-    }
-    firehose.watchObject();
-  }
-
-  _unmountFirehose(firehose) {
-    if (!firehose) {
-      return;
-    }
-    firehose.unwatchList();
-  }
-}
-
-export class Firehose extends FirehoseBase {
-  constructor (props) {
-    super(props);
-    this.firehose = this._initFirehose(props);
-  }
-
-  get id () {
-    return this.firehose && this.firehose.id;
-  }
-
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    const props = this.props;
-
-    if (nextProps.expand !== props.expand) {
-      return true;
-    }
-
-    const needsNewFirehose = nextProps.fieldSelector === props.fieldSelector &&
-      nextProps.namespace === props.namespace &&
-      nextProps.name === props.name &&
-      _.isEqual(nextProps.selector, props.selector);
-
-    if (needsNewFirehose) {
-      const locationChanged = _.get(nextContext, 'router.route.location.pathname') !== _.get(this.context, 'router.route.location.pathname');
-      if (locationChanged) {
-        return true;
-      }
-      return false;
-    }
-
-    this.componentWillUnmount();
-    this.firehose = this._initFirehose(nextProps);
-    this.componentDidMount();
-    return true;
-  }
-
-  render () {
-    const {props, props: {children, isList, kind}} = this;
-
-    const {label, labelPlural} = kindObj(kind);
-    const newLabel = isList ? labelPlural : label;
-
-    if (!this.firehose) {
-      return <EmptyBox label={newLabel} />;
-    }
-
-    const newProps = _.omit(props, [
-      'children',
-      'namespace',
-      'selector',
-      'fieldSelector',
-      'name',
-      'className',
-    ]);
-
-    newProps.label = newLabel;
-
-    return <ConnectToState className={this.props.className} reduxID={this.id} {...newProps}>
-      {children}
-    </ConnectToState>;
-  }
-
-  componentDidMount() {
-    this._mountFirehose(this.firehose, this.props);
-  }
-
-  componentWillUnmount() {
-    this._unmountFirehose(this.firehose);
-    this.firehose = null;
-  }
-}
-
-Firehose.contextTypes = {
-  router: PropTypes.object
-};
-
-Firehose.propTypes = {
-  kind: PropTypes.string.isRequired,
-  name: PropTypes.string,
-  namespace: PropTypes.string,
-  selector: PropTypes.object,
-  fieldSelector: PropTypes.string,
-  className: PropTypes.string,
-  isList: PropTypes.bool,
-};
+const { stopK8sWatch, watchK8sObject, watchK8sList } = actions;
 
 /** @type {React.StatelessComponent<{Component: React.ComponentType<any>, kind: string, namespace?: string, isList: boolean, selector?: any}>} */
-export const FirehoseHoC = (props) => <Firehose {...props}>
+export const FirehoseHoC = (props) => <Firehose resources={[{kind: props.kind, name: props.name, namespace: props.namespace, isList: props.isList, selector: props.selector}]}>
   <props.Component />
 </Firehose>;
 
-export class MultiFirehose extends FirehoseBase {
-  constructor(props) {
-    super(props);
-    this.firehoses = props.resources.map(r => this._initFirehose(r));
+export const makeReduxID = (k8sKind, query) => {
+  let qs = '';
+  if (!_.isEmpty(query)) {
+    qs = `---${JSON.stringify(query)}`;
   }
 
-  shouldComponentUpdate({resources}, nextState, nextContext) {
-    const currentResources = this.props.resources;
-    if (_.intersectionWith(resources, currentResources, _.isEqual).length === resources.length) {
-      if (_.get(nextContext, 'router.route.location.pathname') !== _.get(this.context, 'router.route.location.pathname')) {
-        return true;
-      }
-      return false;
-    }
-    this.componentWillUnmount();
-    this.firehoses = resources.map(r => this._initFirehose(r));
-    this.componentDidMount();
-    return true;
-  }
-
-  componentDidMount() {
-    this.props.resources.forEach((resource, i) => {
-      this._mountFirehose(this.firehoses[i], resource);
-    });
-  }
-
-  componentWillUnmount() {
-    this.props.resources.forEach((resource, i) => {
-      this._unmountFirehose(this.firehoses[i]);
-    });
-    this.firehoses = [];
-  }
-
-  render() {
-    const reduxes = this.props.resources.map((resource, i) => {
-      return _.defaults({}, { reduxID: this.firehoses[i].id }, resource);
-    });
-
-    const newProps = _.omit(this.props, [
-      'children',
-      'namespace',
-      'selector',
-      'fieldSelector',
-      'name',
-      'className',
-    ]);
-
-    return <MultiConnectToState reduxes={reduxes} flatten={this.props.flatten} {...newProps}>
-      {this.props.children}
-    </MultiConnectToState>;
-  }
-}
-
-MultiFirehose.contextTypes = {
-  router: PropTypes.object
+  return `${k8sKind.plural}${qs}`;
 };
 
-MultiFirehose.propTypes = {
+export const makeQuery = (namespace, labelSelector, fieldSelector, name) => {
+  const query = {};
+
+  if (!_.isEmpty(labelSelector)) {
+    query.labelSelector = labelSelector;
+  }
+
+  if (!_.isEmpty(namespace)) {
+    query.ns = namespace;
+  }
+
+  if (!_.isEmpty(name)) {
+    query.name = name;
+  }
+
+  if (fieldSelector) {
+    query.fieldSelector = fieldSelector;
+  }
+  return query;
+};
+
+const processReduxId = ({k8s}, props) => {
+  const {reduxID, isList, filters} = props;
+
+  if (!reduxID) {
+    return {};
+  }
+
+  if (!isList) {
+    const stuff = k8s.get(reduxID);
+    return stuff ? stuff.toJS() : {};
+  }
+
+  const data = k8s.getIn([reduxID, 'data']);
+  const _filters = k8s.getIn([reduxID, 'filters']);
+  const selected = k8s.getIn([reduxID, 'selected']);
+
+  return {
+    data: data && data.toArray().map(p => p.toJSON()),
+    // This is a hack to allow filters passed down from props to make it to
+    // the injected component. Ideally filters should all come from redux.
+    filters: _.extend({}, _filters && _filters.toJS(), filters),
+    kind: props.kind,
+    loadError: k8s.getIn([reduxID, 'loadError']),
+    loaded: k8s.getIn([reduxID, 'loaded']),
+    selected,
+  };
+};
+
+// A wrapper Component that takes data out of redux for a list or object at some reduxID ...
+// passing it to children
+const ConnectToState = connect(({k8s}, {reduxes}) => {
+  const resources = {};
+
+  reduxes.forEach(redux => {
+    resources[redux.prop] = processReduxId({k8s}, redux);
+  });
+
+  const required = _.filter(resources, r => !r.optional);
+  const loaded = _.every(required, 'loaded');
+  const loadError = _.map(required, 'loadError').filter(Boolean).join(', ');
+
+  return Object.assign({}, resources, {
+    filters: Object.assign({}, ..._.map(resources, 'filters')),
+    loaded,
+    loadError,
+    reduxIDs: _.map(reduxes, 'reduxID'),
+    resources,
+  });
+})(props => <div className={props.className}>
+  {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
+</div>);
+
+
+/** @type {React.StatelessComponent<{resources: any[] }>} */
+export const Firehose = connect(null, {stopK8sWatch, watchK8sObject, watchK8sList})(
+  class Firehose extends React.PureComponent {
+    componentWillMount (props=this.props) {
+      const { watchK8sList, watchK8sObject, resources } = props;
+
+      this.firehoses = resources.map(resource => {
+        const query = makeQuery(resource.namespace, resource.selector, resource.fieldSelector, resource.name);
+        const k8sKind = kindObj(resource.kind);
+        const id = makeReduxID(k8sKind, query);
+        return _.extend({}, resource, {query, id, k8sKind});
+      });
+
+      this.firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) => isList
+        ? watchK8sList(id, query, k8sKind)
+        : watchK8sObject(id, name, namespace, query, k8sKind)
+      );
+    }
+
+    componentWillUnmount () {
+      const { stopK8sWatch } = this.props;
+
+      this.firehoses.forEach(({id}) => stopK8sWatch(id));
+      this.firehoses = [];
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+      const currentResources = this.props.resources;
+
+      const { resources, expand } = nextProps;
+
+      if (_.intersectionWith(resources, currentResources, _.isEqual).length === resources.length) {
+        if (_.get(nextContext, 'router.route.location.pathname') !== _.get(this.context, 'router.route.location.pathname')) {
+          return true;
+        }
+        if (expand !== this.props.expand) {
+          return true;
+        }
+        return false;
+      }
+      this.componentWillUnmount();
+      this.componentWillMount(nextProps);
+      return true;
+    }
+
+    render () {
+      const reduxes = this.firehoses.map(({id, prop, isList, filters}) => ({reduxID: id, prop, isList, filters}));
+      const children = inject(this.props.children, _.omit(this.props, [
+        'children',
+        'className',
+      ]));
+
+      return <ConnectToState reduxes={reduxes}> {children} </ConnectToState>;
+    }
+  }
+);
+Firehose.WrappedComponent.contextTypes = {
+  router: PropTypes.object,
+};
+
+Firehose.contextTypes = {
+  store: PropTypes.object,
+};
+
+Firehose.propTypes = {
   children: PropTypes.node,
-  resources: PropTypes.array
+  expand: PropTypes.bool,
+  resources: PropTypes.arrayOf(PropTypes.shape({
+    kind: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    namespace: PropTypes.string,
+    selector: PropTypes.object,
+    fieldSelector: PropTypes.string,
+    className: PropTypes.string,
+    isList: PropTypes.bool,
+  })).isRequired,
 };
