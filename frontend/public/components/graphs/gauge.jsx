@@ -130,7 +130,7 @@ export class Gauge extends BaseGraph {
     data = parseFloat(_.get(data, '[0].data.result[0].value[1]'), 10);
     if (isNaN(data)) {
       // eslint-disable-next-line no-console
-      console.error('data is NaN!', data);
+      console.warn('Graph error: No data from query', this.query);
       return;
     }
     const percent = Math.min(data, 100);
