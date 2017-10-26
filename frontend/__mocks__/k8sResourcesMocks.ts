@@ -45,34 +45,36 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
     },
     customresourcedefinitions: {
       owned: [{
-        'name': 'testresource.testapp.coreos.com',
-        'displayName': 'Test Resource',
-        'statusDescriptors': [{
-          'path': 'importantMetrics',
-          'displayName': 'Important Metrics',
-          'description': 'Important prometheus metrics ',
+        name: 'testresource.testapp.coreos.com',
+        kind: 'TestResource',
+        version: 'v1',
+        displayName: 'Test Resource',
+        statusDescriptors: [{
+          path: 'importantMetrics',
+          displayName: 'Important Metrics',
+          description: 'Important prometheus metrics ',
           'x-descriptors': [ALMStatusDescriptors.importantMetrics],
-          'value': {
-            'queries': [{
-              'query': 'foobarbaz',
-              'name': 'something',
-              'type': 'gauge',
+          value: {
+            queries: [{
+              query: 'foobarbaz',
+              name: 'something',
+              type: 'gauge',
             }],
           }
         },
         {
-          'path': 'some-unfilled-path',
-          'displayName': 'Some Unfilled Path',
-          'description': 'This status is unfilled in the tests',
+          path: 'some-unfilled-path',
+          displayName: 'Some Unfilled Path',
+          description: 'This status is unfilled in the tests',
           'x-descriptors': [ALMStatusDescriptors.text],
         },
         {
-          'path': 'some-filled-path',
-          'displayName': 'Some Status',
-          'description': 'This status is filled',
+          path: 'some-filled-path',
+          displayName: 'Some Status',
+          description: 'This status is filled',
           'x-descriptors': [ALMStatusDescriptors.text],
         }]
-      }]
+      }],
     }
   },
   status: {
@@ -102,9 +104,19 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
       }
     },
     customresourcedefinitions: {
-      owned: [],
+      owned: [{
+        name: 'testresource.testapp.coreos.com',
+        kind: 'TestResource',
+        version: 'v1',
+        displayName: 'Test Resource',
+        statusDescriptors: [],
+      }],
     },
   },
+  status: {
+    phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
+    reason: CSVConditionReason.CSVReasonInstallSuccessful,
+  }
 };
 
 export const testClusterServiceVersionResource: CustomResourceDefinitionKind = {
@@ -136,19 +148,34 @@ export const testResourceInstance: ClusterServiceVersionResourceKind = {
     name: 'my-test-resource',
     uid: 'c02c0a8f-88e0-12e7-851b-081027b424ef',
     creationTimestamp: '2017-06-20T18:19:49Z',
-    labels: {},
   },
   spec: {
-    labels: {
-      'owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com',
-    },
     selector: {
       matchLabels: {
-        'peanut': 'butter',
-        'jelly': 'time',
-      }
-    }
+        'fizz': 'buzz',
+      },
+    },
   },
+  status: {
+    'some-filled-path': 'this is filled!',
+  },
+};
+
+export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
+  apiVersion: 'ownedapp.coreos.com',
+  kind: 'TestOwnedResource',
+  metadata: {
+    name: 'owned-test-resource',
+    uid: '62fa5eac-3df4-448d-a576-916dd5b432f2',
+    creationTimestamp: '2005-02-20T18:13:42Z',
+    ownerReferences: [{
+      name: testResourceInstance.metadata.name,
+      kind: 'TestResource',
+      apiVersion: testResourceInstance.apiVersion,
+      uid: testResourceInstance.metadata.uid,
+    }]
+  },
+  spec: {},
   status: {
     'some-filled-path': 'this is filled!',
   },

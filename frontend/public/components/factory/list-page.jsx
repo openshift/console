@@ -240,7 +240,7 @@ export const ListPage = props => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
   const {createButtonText, flatten, filterLabel, createProps, showTitle = true, title, namespace} = props;
   const resources = _.map(props.resources, (r) => ({

@@ -50,6 +50,13 @@ export enum InstallPlanApproval {
   UpdateOnly = 'Update-Only',
 }
 
+export type OwnerReference = {
+  name: string;
+  kind: string;
+  uid: string;
+  apiVersion: string;
+};
+
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
@@ -58,6 +65,7 @@ export type K8sResourceKind = {
     name: string,
     namespace?: string,
     labels?: {[key: string]: string},
+    ownerReferences?: OwnerReference[],
     [key: string]: any,
   };
   spec?: {
@@ -73,9 +81,24 @@ export type CustomResourceDefinitionKind = {
 
 } & K8sResourceKind;
 
+export type CRDDescription = {
+  name: string;
+  version: string;
+  kind: string;
+  displayName: string;
+  description?: string;
+  statusDescriptors?: {
+    path: string;
+    displayName: string;
+    description?: string;
+    'x-descriptors': ALMStatusDescriptors[];
+    value?: any;
+  }[];
+};
+
 export type ClusterServiceVersionKind = {
   spec: {
-    customresourcedefinitions: {owned?: any[], required?: any[]};
+    customresourcedefinitions: {owned?: CRDDescription[], required?: CRDDescription[]};
   };
   status?: {
     phase: ClusterServiceVersionPhase;
@@ -84,7 +107,7 @@ export type ClusterServiceVersionKind = {
 } & K8sResourceKind;
 
 export type ClusterServiceVersionResourceKind = {
-  status: {[name: string]: any};
+
 } & K8sResourceKind;
 
 export type CatalogEntryKind = {

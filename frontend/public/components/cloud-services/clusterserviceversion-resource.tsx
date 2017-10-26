@@ -3,10 +3,8 @@
 import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 
-import { ClusterServiceVersionResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
+import { ClusterServiceVersionResourceKind, K8sResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, OwnerReference } from './index';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToPlural, K8sKind, connectToKinds } from '../../kinds';
@@ -71,8 +69,7 @@ export const ClusterServiceVersionResourceHeader: React.StatelessComponent<Clust
 
 export const ClusterServiceVersionResourceLink = connectToKinds()((props: ClusterServiceVersionResourceLinkProps) => {
   const {namespace, name} = props.obj.metadata;
-  // FIXME(alecmerdler): Hack to pass the CSV name without using labels (/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name)
-  const appName = location.pathname.split('/')[4];
+  const appName = location.pathname.split('/')[location.pathname.split('/').indexOf('clusterserviceversion-v1s') + 1];
 
   return <span className="co-resource-link">
     <ResourceIcon kind={props.obj.kind} />
@@ -127,45 +124,43 @@ export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<Clus
   }
 };
 
-const stateToProps = ({k8s}, {obj}) => ({
-  data: _.values(k8s.getIn(['customresourcedefinitions', 'data'], ImmutableMap()).toJS())
-    .filter((crd: CustomResourceDefinitionKind) => {
-      const required = (obj.spec.customresourcedefinitions.required || []).map(crd => crd.name);
-      const owned = (obj.spec.customresourcedefinitions.owned || []).map(crd => crd.name);
-      return required.concat(owned).indexOf(crd.metadata.name) > -1;
-    }),
-});
+export const ClusterServiceVersionResourcesPage: React.StatelessComponent<ClusterServiceVersionResourcesPageProps> = (props) => {
+  const {obj} = props;
+  const {owned = [], required = []} = obj.spec.customresourcedefinitions;
+  const firehoseResources = owned.concat(required).map((crdDesc) => ({kind: crdDesc.kind, namespaced: true}));
 
-export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: ClusterServiceVersionResourcesPageProps) => {
-  const resources = props.data ? props.data.map((resource) => ({kind: resource.spec.names.kind, namespaced: true})) : [];
   const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
+  const createLink = (name: string) => `/ns/${obj.metadata.namespace}/clusterserviceversion-v1s/${obj.metadata.name}/${name.split('.')[0]}/new`;
+  const createProps = owned.length > 1
+    ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
+    : {to: createLink(owned.length > 0 ? owned[0].name : '')};
 
-  const createLink = (name: string) => `/ns/${props.obj.metadata.namespace}/clusterserviceversion-v1s/${props.obj.metadata.name}/${name.split('.')[0]}/new`;
-  const createProps = props.obj.spec.customresourcedefinitions.owned.length > 1
-    ? {items: props.obj.spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
-    : {to: createLink(props.obj.spec.customresourcedefinitions.owned[0].name)};
+  const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) => ownerRefs.filter(({uid}) => items.filter(({metadata}) => metadata.uid === uid).length > 0);
+  const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item))
+    .filter(({kind, metadata}, _, allResources) => owned.filter(item => item.kind === kind).length > 0 || owners(metadata.ownerReferences || [], allResources).length > 0);
+
   const rowFilters = [{
     type: 'clusterserviceversion-resource-kind',
-    selected: props.data.map((resource) => resource.spec.names.kind),
+    selected: firehoseResources.map(({kind}) => kind),
     reducer: (obj) => obj.kind,
-    items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
+    items: firehoseResources.map(({kind}) => ({id: kind, title: kind})),
   }];
 
-  return props.loaded && props.data.length > 0
+  return firehoseResources.length > 0
     ? <MultiListPage
       {...props}
       ListComponent={ClusterServiceVersionResourceList}
       filterLabel="Resources by name"
-      resources={resources}
-      namespace={props.obj.metadata.namespace}
-      canCreate={true}
+      resources={firehoseResources}
+      namespace={obj.metadata.namespace}
+      canCreate={owned.length > 0}
       createProps={createProps}
-      createButtonText={props.obj.spec.customresourcedefinitions.owned.length > 1 ? 'Create New' : `Create ${props.obj.spec.customresourcedefinitions.owned[0].displayName}`}
-      flatten={(resources) => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item))}
-      rowFilters={props.data.length > 1 ? rowFilters : null}
+      createButtonText={owned.length > 1 ? 'Create New' : `Create ${owned[0].displayName}`}
+      flatten={flatten}
+      rowFilters={firehoseResources.length > 1 ? rowFilters : null}
     />
-    : <StatusBox loaded={props.loaded} EmptyMsg={EmptyMsg} />;
-});
+    : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
+};
 
 export const ClusterServiceVersionResourceDetails = connectToPlural(
   class ClusterServiceVersionResourceDetailsComponent extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
@@ -361,8 +356,6 @@ export type ClusterServiceVersionResourceStatusProps = {
 };
 
 export type ClusterServiceVersionResourcesPageProps = {
-  data: CustomResourceDefinitionKind[];
-  loaded: boolean;
   obj: ClusterServiceVersionKind;
 };
 
