@@ -40,7 +40,7 @@ export class StartGuide extends SafetyFirst {
       <p style={{marginBottom: 20}}>
         &apos;kubectl&apos; is a command-line program for interacting with the Kubernetes API.
         <br />
-        <a href="https://coreos.com/tectonic/docs/latest/tutorials/first-app.html#configuring-credentials" target="_blank" rel="noopener">
+        <a href="https://coreos.com/tectonic/docs/latest/tutorials/kubernetes/configure-kubectl.html" target="_blank" rel="noopener">
           <button className="btn btn-default" style={{marginTop: 10}}>
             Configure kubectl&nbsp;&nbsp;<i className="fa fa-external-link" />
           </button>
@@ -51,7 +51,7 @@ export class StartGuide extends SafetyFirst {
       <p>
         You can choose to deploy your application with &apos;kubectl&apos; or with Tectonic Console.
         <br />
-        <a href="https://coreos.com/tectonic/docs/latest/tutorials/first-app.html#deploying-a-simple-application" target="_blank" rel="noopener">
+        <a href="https://coreos.com/tectonic/docs/latest/tutorials/sandbox/first-app.html#deploying-a-simple-application" target="_blank" rel="noopener">
           <button className="btn btn-default" style={{marginTop: 10}}>
             Deploy Application&nbsp;&nbsp;<i className="fa fa-external-link" />
           </button>
