@@ -78,8 +78,7 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
       {obj.kind}
     </div>
     <div className="col-xs-2">
-      {/* FIXME(alecmerdler): Get actual status */}
-      {'Running'}
+      {obj.status.phase || <div className="text-muted">Unknown</div>}
     </div>
     <div className="col-xs-2">
       {obj.spec.version || 'None'}
