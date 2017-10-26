@@ -11,7 +11,19 @@ import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandBut
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToPlural, K8sKind, connectToKinds } from '../../kinds';
 import { k8sGet, k8sKinds } from '../../module/k8s';
-import { Gauge, Scalar, Line, Bar } from '../graphs';
+import { Gauge, Scalar, Line, Bar, Donut } from '../graphs';
+
+export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (props) => {
+  const {statusDescriptor, fetcher} = props;
+  const donutFetcher = () => {
+    const fetched = fetcher();
+    const values = Object.keys(fetched).map((key) => fetched[key].length);
+    const labels = Object.keys(fetched);
+    return Promise.resolve([values, labels]);
+  };
+
+  return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
+};
 
 export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
   const {statusDescriptor, statusValue, namespace} = props;
@@ -174,6 +186,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
         switch (kind) {
           case ALMStatusDescriptors.importantMetrics:
           case ALMStatusDescriptors.prometheus:
+          case ALMStatusDescriptors.podStatuses:
             return true;
           default:
             return false;
@@ -215,20 +228,26 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       // Find the important metrics and prometheus endpoints, if any.
       const metricsDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.importantMetrics);
       const promDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.prometheus);
+      const podStatusesDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.podStatuses);
 
       const metricsValue = getStatusValue(metricsDescriptor, status);
       const promBasePath = getStatusValue(promDescriptor, status);
+      const podStatusesFetcher = () => {
+        return getStatusValue(podStatusesDescriptor, status);
+      };
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
           <h1 className="co-section-title">{`${title} Overview`}</h1>
-          { metricsValue
-            ? <div className="row">{ metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery) => (
-              <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
-                <ClusterServiceVersionPrometheusGraph query={query} basePath={promBasePath} />
-              </div>)) }
-            </div>
-            : <div className="text-muted">No metrics defined</div> }
+          <div className="row">
+            { !podStatusesDescriptor && !metricsValue ? <div className="text-muted">No metrics defined</div> : null }
+            { podStatusesDescriptor ? <div className="col-xs-3"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={podStatusesFetcher} /></div> : null }
+            { metricsValue
+              ? metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery) => (
+                <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
+                  <ClusterServiceVersionPrometheusGraph query={query} basePath={promBasePath} />
+                </div>)) : null }
+          </div>
         </div>
         <div className="co-m-pane__body">
           <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
@@ -331,6 +350,11 @@ export type ClusterServiceVersionResourceStatusDescriptor = {
   description: string;
   'x-descriptors': string[];
   value?: any;
+};
+
+export type PodStatusChartProps = {
+  statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
+  fetcher: any;
 };
 
 export type ClusterServiceVersionResourceStatusProps = {

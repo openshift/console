@@ -10,3 +10,4 @@ export const Bar = props => <AsyncComponent loader={() => System.import('./graph
 export const Gauge = props => <AsyncComponent loader={() => System.import('./graph-loader').then(c => c.Gauge)} {...props} />;
 export const Line = props => <AsyncComponent loader={() => System.import('./graph-loader').then(c => c.Line)} {...props} />;
 export const Scalar = props => <AsyncComponent loader={() => System.import('./graph-loader').then(c => c.Scalar)} {...props} />;
+export const Donut = props => <AsyncComponent loader={() => System.import('./graph-loader').then(c => c.Donut)} {...props} />;
