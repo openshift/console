@@ -100,8 +100,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
 
   it('renders column for resource status', () => {
     const col = wrapper.childAt(3);
-
-    expect(col.text()).toEqual('Running');
+    expect(col.text()).toEqual('Unknown');
   });
 
   it('renders column for resource version', () => {
@@ -411,7 +410,6 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual([{kind: testClusterServiceVersionResource.spec.names.kind, namespaced: true}]);
     expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
-    expect(listPage.props().rowFilters[0].type).toEqual('clusterserviceversion-resource-kind');
   });
 
   it('passes `createProps` for dropdown create button if app has multiple owned CRDs', () => {

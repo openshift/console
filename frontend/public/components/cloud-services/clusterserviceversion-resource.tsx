@@ -127,6 +127,12 @@ export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: 
   const createProps = props.obj.spec.customresourcedefinitions.owned.length > 1
     ? {items: props.obj.spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
     : {to: createLink(props.obj.spec.customresourcedefinitions.owned[0].name)};
+  const rowFilters = [{
+    type: 'clusterserviceversion-resource-kind',
+    selected: props.data.map((resource) => resource.spec.names.kind),
+    reducer: (obj) => obj.kind,
+    items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
+  }];
 
   return props.loaded && props.data.length > 0
     ? <MultiListPage
@@ -139,12 +145,7 @@ export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: 
       createProps={createProps}
       createButtonText={props.obj.spec.customresourcedefinitions.owned.length > 1 ? 'Create New' : `Create ${props.obj.spec.customresourcedefinitions.owned[0].displayName}`}
       flatten={(resources) => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item))}
-      rowFilters={[{
-        type: 'clusterserviceversion-resource-kind',
-        selected: props.data.map((resource) => resource.spec.names.kind),
-        reducer: (obj) => obj.kind,
-        items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
-      }]}
+      rowFilters={props.data.length > 1 ? rowFilters : null}
     />
     : <StatusBox loaded={props.loaded} EmptyMsg={EmptyMsg} />;
 });
