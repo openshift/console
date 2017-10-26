@@ -9,7 +9,7 @@ import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListPro
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox } from '../../../public/components/utils';
+import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 
 describe(ClusterServiceVersionResourceHeader.displayName, () => {
@@ -72,6 +72,16 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
 
     expect(link.props().obj).toEqual(testResourceInstance);
     expect(link.props().kind).toEqual(testResourceInstance.kind);
+  });
+
+  it('renders a `ResourceCog` for common actions', () => {
+    const col = wrapper.childAt(0);
+    const cog = col.find(ResourceCog);
+
+    expect(cog.props().actions).toEqual(Cog.factory.common);
+    expect(cog.props().kind).toEqual(testResourceInstance.kind);
+    expect(cog.props().resource).toEqual(testResourceInstance);
+    expect(cog.props().isDisabled).toBe(false);
   });
 
   it('renders column for resource labels', () => {
@@ -369,6 +379,12 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     expect(detailsPage.props().pages[0].href).toEqual('details');
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
+  });
+
+  it('passes common menu actions to `DetailsPage`', () => {
+    const detailsPage = wrapper.find(DetailsPage);
+
+    expect(detailsPage.props().menuActions).toEqual(Cog.factory.common);
   });
 });
 

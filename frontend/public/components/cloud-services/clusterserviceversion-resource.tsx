@@ -8,7 +8,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { ClusterServiceVersionResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToPlural, K8sKind, connectToKinds } from '../../kinds';
 import { k8sGet, k8sKinds } from '../../module/k8s';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
@@ -68,6 +68,7 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-2">
+      <ResourceCog actions={Cog.factory.common} kind={obj.kind} resource={obj} isDisabled={false} />
       <ClusterServiceVersionResourceLink obj={obj} kind={obj.kind} />
     </div>
     <div className="col-xs-2">
@@ -273,6 +274,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 
 export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
   {...props}
+  menuActions={Cog.factory.common}
   pages={[
     navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
     navFactory.editYaml(),
