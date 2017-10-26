@@ -14,7 +14,7 @@ import { k8sGet, k8sKinds } from '../../module/k8s';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
 
 export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
-  const {statusDescriptor, statusValue} = props;
+  const {statusDescriptor, statusValue, namespace} = props;
   const descriptors = statusDescriptor['x-descriptors'] || [];
   if (statusValue === null || statusValue === undefined) {
     return <dl>
@@ -33,6 +33,12 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
       case ALMStatusDescriptors.w3Link:
         return <a href={statusValue}>{statusValue.replace(/https?:\/\//, '')}</a>;
       default:
+        if (statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)) {
+          let kind = statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length);
+          kind = kind[0].toUpperCase() + kind.substr(1);
+          return <ResourceLink kind={kind} name={statusValue} namespace={namespace} title={statusValue}/>;
+        }
+
         return result;
     }
   }, <span>{statusValue || 'None'}</span>);
@@ -258,12 +264,12 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
                 const showStatus = statusValue != null;
-                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
+                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
                 const showStatus = statusValue === undefined && this.state.expanded;
-                return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
+                return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
             </div>
           </div>
@@ -330,6 +336,7 @@ export type ClusterServiceVersionResourceStatusDescriptor = {
 export type ClusterServiceVersionResourceStatusProps = {
   statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
   statusValue: any;
+  namespace?: string;
 };
 
 export type ClusterServiceVersionResourcesPageProps = {

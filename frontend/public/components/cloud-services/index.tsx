@@ -17,6 +17,9 @@ export enum ALMStatusDescriptors {
   importantMetrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   text = 'urn:alm:descriptor:text',
   prometheus = 'urn:alm:descriptor:io.prometheus:api.v1',
+
+  // Prefix for all kubernetes resource status descriptors.
+  k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
 }
 
 export enum ClusterServiceVersionPhase {

@@ -9,7 +9,7 @@ import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListPro
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
+import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, ResourceLink } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 
 describe(ClusterServiceVersionResourceHeader.displayName, () => {
@@ -360,6 +360,22 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
     const statusValue = 'https://example.com';
     const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
     expect(wrapper.html()).toBe('<dl><dt>Some Link</dt><dd><a href="https://example.com">example.com</a></dd></dl>');
+  });
+
+  it('renders a resource status', () => {
+    const statusDescriptor = {
+      'path': '',
+      'displayName': 'Some Service',
+      'description': '',
+      'x-descriptors': [ALMStatusDescriptors.k8sResourcePrefix + 'service']
+    };
+
+    const statusValue = 'someservice';
+    const wrapper = shallow(<ClusterServiceVersionResourceStatus namespace="foo" statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    const link = wrapper.find(ResourceLink);
+    expect(link.exists()).toBe(true);
+    expect(link.props()['kind']).toBe('Service');
+    expect(link.props()['namespace']).toBe('foo');
   });
 });
 
