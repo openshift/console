@@ -5,7 +5,7 @@ import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 
 export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
 
-export const LoadError = ({label}) => <Box>
+export const LoadError = ({label, className}) => <Box className={className}>
   <div className="cos-text-center cos-error-title">Error Loading {label}</div>
   <div className="cos-text-center">Please <a onClick={window.location.reload.bind(window.location)}>try again</a>.</div>
 </Box>;
@@ -18,7 +18,8 @@ export const Loading = ({className}) => <div className={classNames('co-m-loader 
 
 export const LoadingInline = () => <Loading className="co-m-loader--inline" />;
 
-export const LoadingBox = () => <Box><Loading /></Box>;
+/** @type {React.StatelessComponent<{className?: string}>} */
+export const LoadingBox = ({className}) => <Box className={className}><Loading /></Box>;
 LoadingBox.displayName = 'LoadingBox';
 
 export const EmptyBox = ({label}) => <Box>
@@ -42,20 +43,21 @@ export const StatusBox = props => {
   const {EmptyMsg, label, loadError, loaded} = props;
 
   if (loadError) {
-    return _.get(loadError, 'response.status') === 403 || _.includes(_.toLower(loadError), 'access denied') ? <AccessDenied /> : <LoadError label={label} />;
+    return _.get(loadError, 'response.status') === 403 || _.includes(_.toLower(loadError), 'access denied') ? <AccessDenied /> : <LoadError label={label} className="loading-box loading-box__errored" />;
   }
 
   if (!loaded) {
-    return <LoadingBox />;
+    return <LoadingBox className="loading-box loading-box__loading" />;
   }
 
   const {data} = props;
 
   if (!data || _.isEmpty(data)) {
-    return EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />;
+    const component = EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />;
+    return <div className="loading-box loading-box__loaded">{component}</div>;
   }
 
-  return <div>{props.children}</div>;
+  return <div className="loading-box loading-box__loaded">{props.children}</div>;
 };
 
 StatusBox.displayName = 'StatusBox';

@@ -22,14 +22,14 @@ export class Cog extends DropdownMixin {
       this.hide();
     };
 
-    let {options, size, anchor, isDisabled} = this.props;
+    let {options, size, anchor, isDisabled, id} = this.props;
 
     const shownOptions = _.reject(options, o => _.get(o, 'hidden', false));
     const lis = _.map(shownOptions, (o, i) => <li key={i}><a onClick={onClick_.bind({}, o)}>{o.label}</a></li>);
     const style = {display: this.state.active ? 'block' : 'none'};
 
     return (
-      <div className="co-m-cog-wrapper">
+      <div className="co-m-cog-wrapper" id={id}>
         { isDisabled ?
           <Tooltip content="disabled">
             <div ref={this.setNode} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
@@ -106,6 +106,7 @@ export const ResourceCog = ({actions, kind, resource, isDisabled}) => {
     options={actions.map(a => a(kindObj(kind), resource))}
     key={resource.metadata.uid}
     isDisabled={isDisabled}
+    id={`cog-for-${resource.metadata.uid}`}
   />;
 };
 
