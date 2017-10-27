@@ -11,12 +11,17 @@ export { CatalogsDetailsPage } from './catalog';
 
 export enum ALMStatusDescriptors {
   metrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
+  podStatuses = 'urn:alm:descriptor:com.tectonic.ui:podStatuses',
+
   w3Link = 'urn:alm:descriptor:org.w3:link',
   tectonicLink = 'urn:alm:descriptor:com.tectonic.ui:important.link',
   conditions = 'urn:alm:descriptor:io.kubernetes.conditions',
   importantMetrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   text = 'urn:alm:descriptor:text',
   prometheus = 'urn:alm:descriptor:io.prometheus:api.v1',
+
+  // Prefix for all kubernetes resource status descriptors.
+  k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
 }
 
 export enum ClusterServiceVersionPhase {

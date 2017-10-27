@@ -11,10 +11,22 @@ import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandBut
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToPlural, K8sKind, connectToKinds } from '../../kinds';
 import { k8sGet, k8sKinds } from '../../module/k8s';
-import { Gauge, Scalar, Line, Bar } from '../graphs';
+import { Gauge, Scalar, Line, Bar, Donut } from '../graphs';
+
+export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (props) => {
+  const {statusDescriptor, fetcher} = props;
+  const donutFetcher = () => {
+    const fetched = fetcher();
+    const values = Object.keys(fetched).map((key) => fetched[key].length);
+    const labels = Object.keys(fetched);
+    return Promise.resolve([values, labels]);
+  };
+
+  return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
+};
 
 export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
-  const {statusDescriptor, statusValue} = props;
+  const {statusDescriptor, statusValue, namespace} = props;
   const descriptors = statusDescriptor['x-descriptors'] || [];
   if (statusValue === null || statusValue === undefined) {
     return <dl>
@@ -33,6 +45,11 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
       case ALMStatusDescriptors.w3Link:
         return <a href={statusValue}>{statusValue.replace(/https?:\/\//, '')}</a>;
       default:
+        if (statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)) {
+          let kind = statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length);
+          return <ResourceLink kind={kind} name={statusValue} namespace={namespace} title={statusValue}/>;
+        }
+
         return result;
     }
   }, <span>{statusValue || 'None'}</span>);
@@ -78,8 +95,7 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
       {obj.kind}
     </div>
     <div className="col-xs-2">
-      {/* FIXME(alecmerdler): Get actual status */}
-      {'Running'}
+      {obj.status.phase || <div className="text-muted">Unknown</div>}
     </div>
     <div className="col-xs-2">
       {obj.spec.version || 'None'}
@@ -128,6 +144,12 @@ export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: 
   const createProps = props.obj.spec.customresourcedefinitions.owned.length > 1
     ? {items: props.obj.spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
     : {to: createLink(props.obj.spec.customresourcedefinitions.owned[0].name)};
+  const rowFilters = [{
+    type: 'clusterserviceversion-resource-kind',
+    selected: props.data.map((resource) => resource.spec.names.kind),
+    reducer: (obj) => obj.kind,
+    items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
+  }];
 
   return props.loaded && props.data.length > 0
     ? <MultiListPage
@@ -140,12 +162,7 @@ export const ClusterServiceVersionResourcesPage = connect(stateToProps)((props: 
       createProps={createProps}
       createButtonText={props.obj.spec.customresourcedefinitions.owned.length > 1 ? 'Create New' : `Create ${props.obj.spec.customresourcedefinitions.owned[0].displayName}`}
       flatten={(resources) => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item))}
-      rowFilters={[{
-        type: 'clusterserviceversion-resource-kind',
-        selected: props.data.map((resource) => resource.spec.names.kind),
-        reducer: (obj) => obj.kind,
-        items: props.data.map((resource) => ({id: resource.spec.names.kind, title: resource.spec.names.kind})),
-      }]}
+      rowFilters={props.data.length > 1 ? rowFilters : null}
     />
     : <StatusBox loaded={props.loaded} EmptyMsg={EmptyMsg} />;
 });
@@ -168,6 +185,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
         switch (kind) {
           case ALMStatusDescriptors.importantMetrics:
           case ALMStatusDescriptors.prometheus:
+          case ALMStatusDescriptors.podStatuses:
             return true;
           default:
             return false;
@@ -209,31 +227,31 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       // Find the important metrics and prometheus endpoints, if any.
       const metricsDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.importantMetrics);
       const promDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.prometheus);
+      const podStatusesDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.podStatuses);
 
       const metricsValue = getStatusValue(metricsDescriptor, status);
       const promBasePath = getStatusValue(promDescriptor, status);
+      const podStatusesFetcher = () => getStatusValue(podStatusesDescriptor, status);
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
           <h1 className="co-section-title">{`${title} Overview`}</h1>
-          { metricsValue
-            ? <div className="row">{ metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery) => (
-              <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
-                <ClusterServiceVersionPrometheusGraph query={query} basePath={promBasePath} />
-              </div>)) }
-            </div>
-            : <div className="text-muted">No metrics defined</div> }
+          <div className="row">
+            { !podStatusesDescriptor && !metricsValue ? <div className="text-muted">No metrics defined</div> : null }
+            { podStatusesDescriptor ? <div className="col-xs-3"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={podStatusesFetcher} /></div> : null }
+            { metricsValue
+              ? metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery) => (
+                <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
+                  <ClusterServiceVersionPrometheusGraph query={query} basePath={promBasePath} />
+                </div>)) : null }
+          </div>
         </div>
         <div className="co-m-pane__body">
           <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
             <div className="row">
-              <div className="col-xs-12" style={{paddingBottom: '20px'}}>
-                <div className="pull-right">
-                  <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
-                </div>
+              <div className="pull-right">
+                <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
               </div>
-            </div>
-            <div className="row">
               <div className="col-xs-6">
                 { this.state.expanded ?
                   <ResourceSummary resource={this.props.obj} showPodSelector={false} /> :
@@ -258,12 +276,12 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
                 const showStatus = statusValue != null;
-                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
+                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
                 const showStatus = statusValue === undefined && this.state.expanded;
-                return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
+                return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
             </div>
           </div>
@@ -327,9 +345,15 @@ export type ClusterServiceVersionResourceStatusDescriptor = {
   value?: any;
 };
 
+export type PodStatusChartProps = {
+  statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
+  fetcher: () => any;
+};
+
 export type ClusterServiceVersionResourceStatusProps = {
   statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
   statusValue: any;
+  namespace?: string;
 };
 
 export type ClusterServiceVersionResourcesPageProps = {

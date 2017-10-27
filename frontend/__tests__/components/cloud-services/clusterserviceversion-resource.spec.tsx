@@ -9,7 +9,7 @@ import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListPro
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
+import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, ResourceLink } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 
 describe(ClusterServiceVersionResourceHeader.displayName, () => {
@@ -100,8 +100,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
 
   it('renders column for resource status', () => {
     const col = wrapper.childAt(3);
-
-    expect(col.text()).toEqual('Running');
+    expect(col.text()).toEqual('Unknown');
   });
 
   it('renders column for resource version', () => {
@@ -362,6 +361,22 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
     const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
     expect(wrapper.html()).toBe('<dl><dt>Some Link</dt><dd><a href="https://example.com">example.com</a></dd></dl>');
   });
+
+  it('renders a resource status', () => {
+    const statusDescriptor = {
+      'path': '',
+      'displayName': 'Some Service',
+      'description': '',
+      'x-descriptors': [ALMStatusDescriptors.k8sResourcePrefix + 'Service']
+    };
+
+    const statusValue = 'someservice';
+    const wrapper = shallow(<ClusterServiceVersionResourceStatus namespace="foo" statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+    const link = wrapper.find(ResourceLink);
+    expect(link.exists()).toBe(true);
+    expect(link.props()['kind']).toBe('Service');
+    expect(link.props()['namespace']).toBe('foo');
+  });
 });
 
 describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
@@ -411,7 +426,6 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual([{kind: testClusterServiceVersionResource.spec.names.kind, namespaced: true}]);
     expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
-    expect(listPage.props().rowFilters[0].type).toEqual('clusterserviceversion-resource-kind');
   });
 
   it('passes `createProps` for dropdown create button if app has multiple owned CRDs', () => {
