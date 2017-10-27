@@ -114,6 +114,8 @@ export class Donut extends SafetyFirst {
     if (err) {
       this.data[0]['values'] = [];
       this.data[0]['labels'] = [];
+      this.layout.annotations[0]['text'] = 'Could not load data';
+      this.layout.annotations[0]['font']['color'] = '#ccc';
       relayout(this.node, this.layout);
       return;
     }
@@ -124,7 +126,14 @@ export class Donut extends SafetyFirst {
     const colorIndex = Math.min(3, Math.max(values.length, 9));
     this.data[0]['marker']['colors'] = colors[colorIndex.toString()];
 
-    this.layout.annotations[0]['text'] = values.reduce((total, num) => total + num) + ' ' + this.props.kind;
+    if (values.length === 0) {
+      this.layout.annotations[0]['text'] = 'No data found';
+      this.layout.annotations[0]['font']['color'] = '#ccc';
+    } else {
+      this.layout.annotations[0]['text'] = `${values.reduce((total, num) => total + num)} ${this.props.kind}`;
+      this.layout.annotations[0]['font']['color'] = '#000';
+    }
+
     relayout(this.node, this.layout);
   }
 

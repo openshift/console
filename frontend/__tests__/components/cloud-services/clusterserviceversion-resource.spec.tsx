@@ -367,7 +367,7 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
       'path': '',
       'displayName': 'Some Service',
       'description': '',
-      'x-descriptors': [ALMStatusDescriptors.k8sResourcePrefix + 'service']
+      'x-descriptors': [ALMStatusDescriptors.k8sResourcePrefix + 'Service']
     };
 
     const statusValue = 'someservice';

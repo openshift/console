@@ -47,7 +47,6 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
       default:
         if (statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)) {
           let kind = statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length);
-          kind = kind[0].toUpperCase() + kind.substr(1);
           return <ResourceLink kind={kind} name={statusValue} namespace={namespace} title={statusValue}/>;
         }
 
@@ -232,9 +231,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 
       const metricsValue = getStatusValue(metricsDescriptor, status);
       const promBasePath = getStatusValue(promDescriptor, status);
-      const podStatusesFetcher = () => {
-        return getStatusValue(podStatusesDescriptor, status);
-      };
+      const podStatusesFetcher = () => getStatusValue(podStatusesDescriptor, status);
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
@@ -350,7 +347,7 @@ export type ClusterServiceVersionResourceStatusDescriptor = {
 
 export type PodStatusChartProps = {
   statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
-  fetcher: any;
+  fetcher: () => any;
 };
 
 export type ClusterServiceVersionResourceStatusProps = {
