@@ -167,7 +167,7 @@ const Details = (props) => {
           <h1 className="co-section-title">Network</h1>
           <dl>
             <dt>Node</dt>
-            <dd><Link to={`/nodes/${pod.spec.nodeName}/details`}>{pod.spec.nodeName}</Link></dd>
+            <dd><Link to={`/nodes/${pod.spec.nodeName}`}>{pod.spec.nodeName}</Link></dd>
             <dt>Pod IP</dt>
             <dd>{pod.status.podIP || '-'}</dd>
           </dl>
@@ -208,8 +208,8 @@ export const ContainersDetailsPage = (props) => <div>
     title={props.match.params.name}
     kind="Container"
     breadcrumbs={[
-      {name: props.match.params.podName, path: `${props.match.url.split('/').slice(0, 5).join('/')}/details`},
-      {name: 'Container Details', path: `${props.match.url}/details`},
+      {name: props.match.params.podName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':podName')).join('/')}`},
+      {name: 'Container Details', path: `${props.match.url}`},
     ]} />
   <Firehose resources={[{
     name: props.match.params.podName,
@@ -218,6 +218,6 @@ export const ContainersDetailsPage = (props) => <div>
     isList: false,
     prop: 'obj',
   }]}>
-    <VertNav hideNav={true} pages={[{name: 'container', href: 'details', component: Details}]} match={props.match}/>
+    <VertNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match}/>
   </Firehose>
 </div>;

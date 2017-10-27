@@ -27,8 +27,8 @@ export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServ
         ? <Dropdown
           title="View namespace"
           items={namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {})}
-          onChange={(ns) => history.push(`${route(appType.metadata.name, ns)}/details`)} />
-        : <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/details`} title="View details" className="btn btn-default">View details</Link> }
+          onChange={(ns) => history.push(`${route(appType.metadata.name, ns)}`)} />
+        : <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}`} title="View details" className="btn btn-default">View details</Link> }
       { namespaces.length === 1 && <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/resources`} title="View resources">View resources</Link> }
     </div>
   </div>;
@@ -47,7 +47,7 @@ export const ClusterServiceVersionRow: React.StatelessComponent<ClusterServiceVe
       <ResourceLink kind={appType.kind} namespace={appType.metadata.namespace} title={appType.metadata.name} name={appType.metadata.name} />
     </div>
     <div className="col-xs-4">
-      <Link to={`${route}/details`} title="View details" className="btn btn-default">View details</Link>
+      <Link to={`${route}`} title="View details" className="btn btn-default">View details</Link>
       <Link to={`${route}/resources`} title="View resources">View resources</Link>
     </div>
   </div>;
@@ -205,7 +205,7 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     <ClusterServiceVersionResourcesPage loaded={true} obj={obj} />
   </div>;
 
-  return <DetailsPage {...props} isList={false} pages={[details(ClusterServiceVersionDetails), editYaml(), {href: 'resources', name: 'Resources', component: Resources}]} />;
+  return <DetailsPage {...props} pages={[details(ClusterServiceVersionDetails), editYaml(), {href: 'resources', name: 'Resources', component: Resources}]} />;
 };
 
 export type ClusterServiceVersionsPageProps = {

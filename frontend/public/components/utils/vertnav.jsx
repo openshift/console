@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Link } from 'react-router-dom';
 
-import { StatusBox, RelativeLink } from './index';
+import { StatusBox } from './index';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from '../utils/async';
 
@@ -18,7 +18,7 @@ class PodsComponent extends React.PureComponent {
 
 export const navFactory = {
   details: (component = undefined) => ({
-    href: 'details',
+    href: '',
     name: 'Overview',
     component,
   }),
@@ -54,17 +54,17 @@ export const navFactory = {
   }),
 };
 
-const activeSlug = () => location.pathname.split('/').pop();
-
-export const NavBar = ({pages}) => {
+/** @type {React.StatelessComponent<{pages: {href: string, name: string, component: React.ComponentType}, basePath: string}>} */
+export const NavBar = ({pages, basePath}) => {
   const divider = <li className="co-m-vert-nav__menu-item co-m-vert-nav__menu-item--divider" key="_divider" />;
+  basePath = basePath.replace(/\/$/, '');
 
   return <ul className="co-m-vert-nav__menu">{_.flatten(_.map(pages, ({name, href}, i) => {
-    const klass = classNames('co-m-vert-nav__menu-item', {'co-m-vert-nav-item--active': href === activeSlug()});
-    const tab = <li className={klass} key={name}><RelativeLink to={href}>{name}</RelativeLink></li>;
+    const klass = classNames('co-m-vert-nav__menu-item', {'co-m-vert-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
+    const tab = <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
 
     // These tabs go before the divider
-    const before = ['details', 'edit', 'yaml'];
+    const before = ['', 'edit', 'yaml'];
     return (!before.includes(href) && i !== 0 && before.includes(pages[i - 1].href)) ? [divider, tab] : [tab];
   }))}</ul>;
 };
@@ -89,7 +89,7 @@ export class VertNav extends React.PureComponent {
     return <div className={props.className}>
       <div className="co-m-pane co-m-vert-nav">
 
-        {!props.hideNav && <NavBar pages={props.pages} />}
+        {!props.hideNav && <NavBar pages={props.pages} basePath={props.match.url} />}
 
         <div className="co-m-vert-nav__body">
           <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>

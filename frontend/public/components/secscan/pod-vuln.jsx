@@ -96,7 +96,7 @@ const PodLink = ({pod, text}) => {
   const podname = _.get(pod, 'metadata.name');
   return <div>
     {text ? (`${text}: `) : ''}
-    <Link to={`/ns/${pod.metadata.namespace}/pods/${podname}/details`}>
+    <Link to={`/ns/${pod.metadata.namespace}/pods/${podname}`}>
       {podname}
     </Link>
   </div>;
@@ -113,7 +113,7 @@ const ContainerLink = ({podvuln, name}) => {
 
   return <span className="co-resource-link">
     <ResourceIcon kind="Container" />
-    <Link to={`/ns/${podvuln.metadata.namespace}/pods/${podname}/containers/${name}/details`}>{name}</Link>
+    <Link to={`/ns/${podvuln.metadata.namespace}/pods/${podname}/containers/${name}`}>{name}</Link>
   </span>;
 };
 

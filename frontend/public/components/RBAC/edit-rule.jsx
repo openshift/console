@@ -157,7 +157,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResource
       }
       this.handlePromise(k8sUpdate(this.kind, role))
         .then(() => {
-          history.push(`${resourceObjPath(role, this.kind.kind)}/details`);
+          history.push(`${resourceObjPath(role, this.kind.kind)}`);
         });
     }
 
@@ -412,7 +412,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResource
               <div className="col-xs-12">
                 <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
                   <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
-                  {role && <Link to={`${resourceObjPath(role, this.kind.kind)}/details`}>Cancel</Link>}
+                  {role && <Link to={`${resourceObjPath(role, this.kind.kind)}`}>Cancel</Link>}
                 </ButtonBar>
               </div>
             </div>

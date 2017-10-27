@@ -18,7 +18,7 @@ export const ResourceLink = ({kind, name, namespace, title, displayName}) => {
   return (
     <span className="co-resource-link">
       <ResourceIcon kind={kind} />
-      {path ? <Link to={`${path}/details`} title={title}>{value}</Link> : <span>{value}</span>}
+      {path ? <Link to={`${path}`} title={title}>{value}</Link> : <span>{value}</span>}
     </span>
   );
 };

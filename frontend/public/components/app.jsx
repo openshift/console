@@ -22,7 +22,7 @@ import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { BindingsForRolePage, CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
+import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, Loading, getNamespace } from './utils';
@@ -112,13 +112,11 @@ class App extends React.PureComponent {
             <Route path="/catalog" exact component={CatalogsDetailsPage} />
 
             <Route path="/clusterroles/:name/add-rule" exact component={EditRulePage} />
-            <Route path="/clusterroles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="ClusterRole" />} />
             <Route path="/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
             <Route path="/clusterroles/:name" component={props => <ResourceDetailsPage {...props} plural="clusterroles" />} />
 
             <Route path="/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
-            <Route path="/ns/:ns/roles/:name/bindings" exact component={props => <BindingsForRolePage {...props} kind="Role" />} />
             <Route path="/ns/:ns/roles" exact component={rolesListPage} />
 
             <Route path="/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
@@ -128,7 +126,7 @@ class App extends React.PureComponent {
             <Route path="/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
             <Route path="/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
 
-            <Redirect from="/ns/:ns/rolebindings/:name/details" to="/all-namespaces/rolebindings" />
+            <Redirect from="/ns/:ns/rolebindings/:name" to="/all-namespaces/rolebindings" />
 
             <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} plural="namespaces" />} />
             <Route path="/namespaces" exact component={namespacesListPage} />

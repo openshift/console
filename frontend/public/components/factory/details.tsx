@@ -25,7 +25,6 @@ export type DetailsPageProps = {
   label?: string;
   name?: string;
   namespace?: string;
-  isList: boolean;
   breadcrumbs?: {name: string, path: string}[];
 };
 

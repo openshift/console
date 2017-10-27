@@ -64,7 +64,7 @@ describe(ClusterServiceVersionListItem.displayName, () => {
 
     expect(detailsButton.props().title).toEqual('View details');
     expect(detailsButton.childAt(0).text()).toEqual('View details');
-    expect(detailsButton.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/clusterserviceversion-v1s/${testClusterServiceVersion.metadata.name}/details`);
+    expect(detailsButton.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/clusterserviceversion-v1s/${testClusterServiceVersion.metadata.name}`);
     expect(detailsButton.hasClass('btn')).toBe(true);
   });
 
@@ -281,7 +281,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
 
     expect(detailsPage.exists()).toBe(true);
     expect(detailsPage.props().pages[0].name).toEqual('Overview');
-    expect(detailsPage.props().pages[0].href).toEqual('details');
+    expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[0].component).toEqual(ClusterServiceVersionDetails);
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');

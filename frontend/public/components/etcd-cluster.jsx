@@ -39,7 +39,7 @@ const menuActions = [UpdateCount, Edit, Delete];
 
 const EtcdClusterLink = (props) => {
   const {uid, name, namespace} = props.metadata;
-  const path = `/ns/${namespace}/etcdclusters/${name}/details`;
+  const path = `/ns/${namespace}/etcdclusters/${name}`;
 
   return <span className="co-resource-link">
     <ResourceIcon kind="EtcdCluster" />

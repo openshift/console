@@ -76,7 +76,7 @@ export const ClusterServiceVersionResourceLink = connectToKinds()((props: Cluste
 
   return <span className="co-resource-link">
     <ResourceIcon kind={props.obj.kind} />
-    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${props.kindObj.plural}/${name}/details`}>{name}</Link>
+    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${props.kindObj.plural}/${name}`}>{name}</Link>
   </span>;
 });
 
@@ -293,10 +293,9 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
   {...props}
   menuActions={Cog.factory.common}
-  isList={false}
   breadcrumbs={[
-    {name: props.match.params.appName, path: `${props.match.url.split('/').slice(0, 5).join('/')}/details`},
-    {name: `${props.kind} Details`, path: `${props.match.url}/details`},
+    {name: props.match.params.appName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}`},
+    {name: `${props.kind} Details`, path: `${props.match.url}`},
   ]}
   pages={[
     navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
