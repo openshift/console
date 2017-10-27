@@ -2,7 +2,7 @@
 # (and committing your edits) you should run ./push-builder to
 # push a new version of your image to quay.io/coreos/tectonic-console-builder
 
-FROM golang:1.8.3-stretch
+FROM golang:1.9.2-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
@@ -11,8 +11,8 @@ RUN go get -u github.com/golang/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v8.2.0"
-ENV YARN_VERSION="v0.27.5"
+ENV NODE_VERSION="v8.8.1"
+ENV YARN_VERSION="v1.2.1"
 
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home
@@ -21,7 +21,7 @@ RUN chmod 777 -R ${HOME}
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
-    curl wget git unzip libfontconfig1 bzip2
+    curl wget git unzip bzip2
 
 RUN cd /tmp && \
     wget --quiet -O /tmp/node.tar.gz http://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.gz && \
@@ -40,5 +40,13 @@ RUN cd /tmp && \
     wget --quiet -O /tmp/yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/${YARN_VERSION}/yarn-${YARN_VERSION}.tar.gz && \
     tar xf yarn.tar.gz && \
     rm -f /tmp/yarn.tar.gz && \
-    mv /tmp/dist /usr/local/yarn && \
+    mv /tmp/yarn-${YARN_VERSION} /usr/local/yarn && \
     ln -s /usr/local/yarn/bin/yarn /usr/local/bin/yarn
+
+# Install Chrome for installer gui tests
+# Use Chrome beta because v60 or higher is needed for headless mode
+RUN wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y -q \
+    google-chrome-beta ca-certificates
