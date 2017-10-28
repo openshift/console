@@ -10,7 +10,7 @@ const navigate = (browser, path, cb) => {
   });
 };
 
-const TIMEOUT = 10000;
+const TIMEOUT = 30000;
 
 
 const asyncLoad = (browser, i, cb) => {

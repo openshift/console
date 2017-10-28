@@ -2,5 +2,20 @@
 
 set -euo pipefail
 
+# TODO: remove hard-coded url. eventually test auth
+echo "$TECTONIC_LICENSE" > license.txt
+
+./bin/bridge \
+  --k8s-mode="off-cluster" \
+  --user-auth="disabled" \
+  --k8s-mode-off-cluster-skip-verify-tls=true \
+  --k8s-auth="bearer-token" \
+  --k8s-mode-off-cluster-endpoint=https://teamui-api.soggytec.com:443 \
+  --license-file=license.txt &
+
+echo $$! > bridge.pid
+
 cd frontend
 yarn run test-gui
+
+kill "../$(cat bridge.pid)"
