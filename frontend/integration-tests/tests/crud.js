@@ -81,11 +81,7 @@ const createExamples = (page, browser) => {
     .click('@CreateYAMLButton')
     .waitForElementVisible('@saveYAMLButton', TIMEOUT)
     .click('@saveYAMLButton')
-    .waitForElementVisible('@actionsDropdownButton', TIMEOUT, false, ({value}) => {
-      if (value) {
-        console.error('Resource creation failed');
-        return;
-      }
+    .waitForElementVisible('@actionsDropdownButton', TIMEOUT, false, () => {
       console.log('Resource created');
       //with verify(), when an assertion fails, the test logs the failure and continues with other assertions.
       browser.verify.urlContains('/example');
