@@ -88,7 +88,7 @@ const createExamples = (page, browser) => {
       }
       console.log('Resource created');
       //with verify(), when an assertion fails, the test logs the failure and continues with other assertions.
-      browser.verify.urlContains('/example/details');
+      browser.verify.urlContains('/example');
     });
 };
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
@@ -76,7 +76,7 @@ export const ClusterServiceVersionResourceLink = connectToKinds()((props: Cluste
 
   return <span className="co-resource-link">
     <ResourceIcon kind={props.obj.kind} />
-    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${props.kindObj.plural}/${name}/details`}>{name}</Link>
+    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${props.kindObj.plural}/${name}`}>{name}</Link>
   </span>;
 });
 
@@ -293,6 +293,10 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
   {...props}
   menuActions={Cog.factory.common}
+  breadcrumbs={[
+    {name: props.match.params.appName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}`},
+    {name: `${props.kind} Details`, path: `${props.match.url}`},
+  ]}
   pages={[
     navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
     navFactory.editYaml(),
@@ -373,6 +377,7 @@ export type ClusterServiceVersionResourcesDetailsPageProps = {
   kind: string;
   name: string;
   namespace: string;
+  match: match<any>;
 };
 
 export type ClusterServiceVersionResourcesDetailsState = {

@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
-import { Cog, Firehose, Heading, MsgBox, NavBar, navFactory, NavTitle, ResourceCog, ResourceLink, Timestamp } from '../utils';
+import { Cog, Heading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingsList, RulesList } from './index';
 import { registerTemplate } from '../../yaml-templates';
 import { flatten as bindingsFlatten } from './bindings';
@@ -109,8 +108,6 @@ class Details extends React.Component {
   }
 }
 
-const pages = () => [navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings'}];
-
 const BindingHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="subject.kind">Subject Kind</ColHead>
@@ -133,15 +130,9 @@ const BindingRow = ({obj: binding}) => <ResourceRow obj={binding}>
   </div>
 </ResourceRow>;
 
-export const BindingsForRolePage = ({match: {params: {name, ns}}, kind}) => <div>
-  <Helmet>
-    <title>{`${name} · Bindings`}</title>
-  </Helmet>
-  <Firehose resources={[{kind: kind, name: name, namespace: ns, isList: false}]}>
-    <NavTitle detail={true} kind={kind} menuActions={menuActions} title={name} />
-  </Firehose>
-  <NavBar pages={pages()} />
-  <MultiListPage
+export const BindingsForRolePage = (props) => {
+  const {match: {params: {name, ns}}, kind} = props;
+  return <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
     createProps={{to: `/rolebindings/new?${ns ? `ns=${ns}&` : ''}rolekind=${kind}&rolename=${name}`}}
@@ -154,10 +145,14 @@ export const BindingsForRolePage = ({match: {params: {name, ns}}, kind}) => <div
     textFilter="role-binding"
     filterLabel="Role Bindings by role or subject"
     namespace={ns}
-    flatten={bindingsFlatten} />
-</div>;
+    flatten={bindingsFlatten} />;
+};
 
-export const RolesDetailsPage = props => <DetailsPage {...props} pages={pages()} menuActions={menuActions} />;
+export const RolesDetailsPage = props => <DetailsPage
+  {...props}
+  pages={[navFactory.details(Details), navFactory.editYaml(), {href: 'bindings', name: 'Role Bindings', component: BindingsForRolePage}]}
+  menuActions={menuActions} />;
+
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
@@ -174,13 +169,6 @@ export const roleType = role => {
   return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const resources = [
-  {kind: 'Role', namespaced: true},
-  {kind: 'ClusterRole', namespaced: false},
-];
-
-const flatten = resources => _.flatMap(resources, 'data').filter(r => !!r);
-
 export const RolesPage = ({namespace, showTitle}) => <MultiListPage
   ListComponent={RolesList}
   canCreate={true}
@@ -189,8 +177,11 @@ export const RolesPage = ({namespace, showTitle}) => <MultiListPage
   createButtonText="Create Role"
   createProps={{to: `/ns/${namespace || 'default'}/roles/new`}}
   filterLabel="Roles by name"
-  flatten={flatten}
-  resources={resources}
+  flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
+  resources={[
+    {kind: 'Role', namespaced: true},
+    {kind: 'ClusterRole', namespaced: false},
+  ]}
   rowFilters={[{
     type: 'role-kind',
     selected: ['cluster', 'namespace'],

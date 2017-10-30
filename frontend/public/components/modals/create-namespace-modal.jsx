@@ -46,7 +46,7 @@ class CreateNamespaceModal extends PromiseComponent {
 
     this.handlePromise(promise).then(() => {
       this.props.close();
-      history.push(`namespaces/${name}/details`);
+      history.push(`namespaces/${name}`);
     });
   }
 

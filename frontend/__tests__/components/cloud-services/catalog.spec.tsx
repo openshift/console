@@ -138,7 +138,7 @@ describe(CatalogAppRow.displayName, () => {
     succeededNamespaces.forEach((ns, i) => {
       const csv = clusterServiceVersions[i];
 
-      expect(ns.find(Link).props().to).toEqual(`/ns/${csv.metadata.namespace}/clusterserviceversion-v1s/${csv.metadata.name}/details`);
+      expect(ns.find(Link).props().to).toEqual(`/ns/${csv.metadata.namespace}/clusterserviceversion-v1s/${csv.metadata.name}`);
     });
   });
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
@@ -27,8 +27,8 @@ export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServ
         ? <Dropdown
           title="View namespace"
           items={namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {})}
-          onChange={(ns) => history.push(`${route(appType.metadata.name, ns)}/details`)} />
-        : <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/details`} title="View details" className="btn btn-default">View details</Link> }
+          onChange={(ns) => history.push(`${route(appType.metadata.name, ns)}`)} />
+        : <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}`} title="View details" className="btn btn-default">View details</Link> }
       { namespaces.length === 1 && <Link to={`${route(appType.metadata.name, appType.metadata.namespace)}/resources`} title="View resources">View resources</Link> }
     </div>
   </div>;
@@ -47,7 +47,7 @@ export const ClusterServiceVersionRow: React.StatelessComponent<ClusterServiceVe
       <ResourceLink kind={appType.kind} namespace={appType.metadata.namespace} title={appType.metadata.name} name={appType.metadata.name} />
     </div>
     <div className="col-xs-4">
-      <Link to={`${route}/details`} title="View details" className="btn btn-default">View details</Link>
+      <Link to={`${route}`} title="View details" className="btn btn-default">View details</Link>
       <Link to={`${route}/resources`} title="View resources">View resources</Link>
     </div>
   </div>;
@@ -230,6 +230,7 @@ export type ClusterServiceVersionsDetailsPageProps = {
   kind: string;
   name: string;
   namespace: string;
+  match: match<any>;
 };
 
 export type ClusterServiceVersionDetailsProps = {

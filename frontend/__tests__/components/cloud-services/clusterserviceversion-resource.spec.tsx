@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
@@ -381,9 +381,17 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
 
 describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
+  let match: match<any>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} />);
+    match = {
+      params: {appName: 'etcd', plural: 'etcdclusters', name: 'my-etcd', ns: 'example'},
+      isExact: false,
+      url: '/ns/example/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd',
+      path: '/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name',
+    };
+
+    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -391,7 +399,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
 
     expect(detailsPage.exists()).toBe(true);
     expect(detailsPage.props().pages[0].name).toEqual('Overview');
-    expect(detailsPage.props().pages[0].href).toEqual('details');
+    expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
   });
@@ -400,6 +408,28 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     const detailsPage = wrapper.find(DetailsPage);
 
     expect(detailsPage.props().menuActions).toEqual(Cog.factory.common);
+  });
+
+  it('passes breadcrumbs to `DetailsPage`', () => {
+    const detailsPage = wrapper.find(DetailsPage);
+
+    expect(detailsPage.props().breadcrumbs).toEqual([
+      {name: 'etcd', path: '/ns/example/clusterserviceversion-v1s/etcd'},
+      {name: `${testResourceInstance.kind} Details`, path: '/ns/example/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd'},
+    ]);
+  });
+
+  it('passes correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
+    match.params = Object.keys(match.params).reduce((params, name) => Object.assign(params, {[name]: 'example'}), {});
+    match.url = '/ns/example/clusterserviceversion-v1s/example/example/example';
+
+    wrapper.setProps({match});
+    const detailsPage = wrapper.find(DetailsPage);
+
+    expect(detailsPage.props().breadcrumbs).toEqual([
+      {name: 'example', path: '/ns/example/clusterserviceversion-v1s/example'},
+      {name: `${testResourceInstance.kind} Details`, path: '/ns/example/clusterserviceversion-v1s/example/example/example'},
+    ]);
   });
 });
 

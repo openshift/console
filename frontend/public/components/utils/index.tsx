@@ -11,7 +11,6 @@ export * from './volume-icon';
 export * from './timestamp';
 export * from './vertnav';
 export * from './details-page';
-export * from './relative-link';
 export * from './inject';
 export * from './firehose';
 export * from './dropdown';
