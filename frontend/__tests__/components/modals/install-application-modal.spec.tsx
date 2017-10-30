@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 
 import { InstallApplicationModal, InstallApplicationModalProps, SelectNamespaceHeader, SelectNamespaceHeaderProps, SelectNamespaceRow, SelectNamespaceRowProps } from '../../../public/components/modals/install-application-modal';
 import { ListHeader, ColHead, List } from '../../../public/components/factory';
-import { ResourceLink, LabelList } from '../../../public/components/utils';
+import { ResourceLink } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { k8sKinds } from '../../../public/module/k8s';
 import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
@@ -27,14 +27,8 @@ describe('SelectNamespaceHeader', () => {
     expect(colHeader.childAt(0).text()).toEqual('Name');
   });
 
-  it('renders column header for namespace labels', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(1);
-
-    expect(colHeader.childAt(0).text()).toEqual('Labels');
-  });
-
   it('renders a column header for namespace install status', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(2);
+    const colHeader = wrapper.find(ListHeader).find(ColHead).at(1);
 
     expect(colHeader.childAt(0).text()).toEqual('Status');
   });
@@ -42,14 +36,18 @@ describe('SelectNamespaceHeader', () => {
 
 describe('SelectNamespaceRow', () => {
   let wrapper: ShallowWrapper<SelectNamespaceRowProps>;
-  let namespace: {metadata: {name: string, namespace: string, uid: string, labels: {[key: string]: string}}};
+  let namespace: {metadata: {name: string, namespace: string, uid: string, annotations: {[key: string]: string}, labels: {[key: string]: string}}};
   let onSelect: Spy;
   let onDeselect: Spy;
 
   beforeEach(() => {
+    const annotations = {
+      'alm-manager': 'foobar',
+    };
+
     onSelect = jasmine.createSpy('onSelect');
     onDeselect = jasmine.createSpy('onDeselect');
-    namespace = {metadata: {name: 'default', namespace: 'default', uid: 'abcd', labels: {}}};
+    namespace = {metadata: {name: 'default', namespace: 'default', uid: 'abcd', labels: {}, annotations: annotations}};
     wrapper = shallow(<SelectNamespaceRow obj={namespace} selected={false} onDeselect={onDeselect} onSelect={onSelect} />);
   });
 
@@ -60,6 +58,21 @@ describe('SelectNamespaceRow', () => {
     expect(checkbox.props().type).toEqual('checkbox');
     expect(checkbox.props().value).toEqual(namespace.metadata.name);
     expect(checkbox.props().checked).toEqual(false);
+    expect(checkbox.props().disabled).toEqual(false);
+    expect(col.find('.fa-check').exists()).toBe(false);
+  });
+
+  it('renders column with checkbox that is disabled when OCS is not enabled', () => {
+    namespace.metadata.annotations = {};
+    wrapper.setProps({obj: namespace});
+
+    const col = wrapper.childAt(0);
+    const checkbox = col.find('input');
+
+    expect(checkbox.props().type).toEqual('checkbox');
+    expect(checkbox.props().value).toEqual(namespace.metadata.name);
+    expect(checkbox.props().checked).toEqual(false);
+    expect(checkbox.props().disabled).toEqual(true);
     expect(col.find('.fa-check').exists()).toBe(false);
   });
 
@@ -73,17 +86,16 @@ describe('SelectNamespaceRow', () => {
     expect(link.props().title).toEqual(namespace.metadata.uid);
   });
 
-  it('renders column for namespace labels', () => {
+  it('renders column for namespace install status when OCS is enabled', () => {
     const col = wrapper.childAt(1);
-
-    expect(col.find(LabelList).props().kind).toEqual('Namespace');
-    expect(col.find(LabelList).props().labels).toEqual(namespace.metadata.labels);
+    expect(col.text()).toEqual('Not installed');
   });
 
-  it('renders column for namespace install status', () => {
-    const col = wrapper.childAt(2);
-
-    expect(col.text()).toEqual('Not installed');
+  it('renders column for namespace install status when OCS is not enabled', () => {
+    namespace.metadata.annotations = {};
+    wrapper.setProps({obj: namespace});
+    const col = wrapper.childAt(1);
+    expect(col.text()).toEqual('OCS not enabled');
   });
 
   it('calls `props.onSelect` when checkbox is clicked and not checked', () => {
