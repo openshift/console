@@ -13,9 +13,9 @@ echo "$TECTONIC_LICENSE" > license.txt
   --k8s-mode-off-cluster-endpoint=https://teamui-api.soggytec.com:443 \
   --license-file=license.txt &
 
-echo $$! > bridge.pid
+echo $! > bridge.pid
 
 cd frontend
 yarn run test-gui
 
-kill "../$(cat bridge.pid)"
+kill "$(cat ../bridge.pid)"

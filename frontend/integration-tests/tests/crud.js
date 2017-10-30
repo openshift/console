@@ -12,7 +12,7 @@ const navigate = (browser, path, cb) => {
   });
 };
 
-const TIMEOUT = 30000;
+const TIMEOUT = 15000;
 
 
 const asyncLoad = (browser, i, cb) => {
@@ -54,13 +54,17 @@ const deleteExamples = (page, browser) => {
     const css = `${selector} li:last-child a`;
     browser.pause(100);
     // TODO: fail if all deletes fail
-    page.waitForElementVisible(selector, TIMEOUT, false, () => {
+    browser.isVisible(selector, ({status}) => {
+      if (status) {
+        console.error('No delete dropdown for ', selector);
+        return deleteExample(ids.slice(1));
+      }
       page.click(selector)
-        .waitForElementVisible(css, TIMEOUT)
+        .waitForElementPresent(css, TIMEOUT)
         .click(css)
-        .waitForElementVisible('@deleteModalConfirmButton', TIMEOUT)
+        .waitForElementPresent('@deleteModalConfirmButton', TIMEOUT)
         .click('@deleteModalConfirmButton')
-        .waitForElementVisible('@CreateYAMLButton', TIMEOUT, () => {
+        .waitForElementPresent('@CreateYAMLButton', TIMEOUT, () => {
           deleteExample(ids.slice(1));
         });
     });
@@ -81,11 +85,11 @@ const deleteExamples = (page, browser) => {
 
 const createExamples = (page, browser) => {
   page
-    .waitForElementVisible('@CreateYAMLButton', TIMEOUT)
+    .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
     .click('@CreateYAMLButton')
-    .waitForElementVisible('@saveYAMLButton', TIMEOUT)
+    .waitForElementPresent('@saveYAMLButton', TIMEOUT)
     .click('@saveYAMLButton')
-    .waitForElementVisible('@actionsDropdownButton', TIMEOUT, false, () => {
+    .waitForElementPresent('@actionsDropdownButton', TIMEOUT, false, () => {
       console.log('Resource created');
       //with verify(), when an assertion fails, the test logs the failure and continues with other assertions.
       browser.verify.urlContains('/example');
