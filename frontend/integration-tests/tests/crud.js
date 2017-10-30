@@ -53,15 +53,17 @@ const deleteExamples = (page, browser) => {
     const selector = `#${ids[0]}`;
     const css = `${selector} li:last-child a`;
     browser.pause(100);
-    page.waitForElementVisible(selector, TIMEOUT)
-      .click(selector)
-      .waitForElementVisible(css, TIMEOUT)
-      .click(css)
-      .waitForElementVisible('@deleteModalConfirmButton', TIMEOUT)
-      .click('@deleteModalConfirmButton')
-      .waitForElementVisible('@CreateYAMLButton', TIMEOUT, () => {
-        deleteExample(ids.slice(1));
-      });
+    // TODO: fail if all deletes fail
+    page.waitForElementVisible(selector, TIMEOUT, false, () => {
+      page.click(selector)
+        .waitForElementVisible(css, TIMEOUT)
+        .click(css)
+        .waitForElementVisible('@deleteModalConfirmButton', TIMEOUT)
+        .click('@deleteModalConfirmButton')
+        .waitForElementVisible('@CreateYAMLButton', TIMEOUT, () => {
+          deleteExample(ids.slice(1));
+        });
+    });
   };
 
   asyncLoad(browser, 0, (value, error) => {
