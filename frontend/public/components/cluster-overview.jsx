@@ -157,7 +157,7 @@ export const ClusterOverviewPage = props => {
           <div className="col-lg-9">
             <h4>Capacity Planning</h4>
           </div>
-          <DashboardLink to="/grafana/dashboard/db/kubernetes-capacity-planing?orgId=1" />
+          <DashboardLink to="/grafana/dashboard/db/kubernetes-capacity-planning?orgId=1" />
         </div>
         <div className="row">
           <div className="col-lg-3 col-md-6">
