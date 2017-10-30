@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const navigate = (browser, path, cb) => {
   const url = browser.launch_url + path;
   browser.url(url, ({error, value}) => {
@@ -139,6 +141,31 @@ k8sObjs.forEach(resource => {
   };
 });
 
-crudTests_.after = browser => browser.end();
+const logger = logs => {
+  console.log('==== BEGIN BROWSER LOGS ====');
+  _.each(logs, log => {
+    const { level, message } = log;
+    const messageStr = _.isArray(message) ? message.join(' ') : message;
+
+    switch (level) {
+      case 'DEBUG':
+        console.log(level, messageStr);
+        break;
+      case 'SEVERE':
+        console.warn(level, messageStr);
+        break;
+      case 'INFO':
+      default:
+        // eslint-disable-next-line no-console
+        console.info(level, messageStr);
+    }
+  });
+  console.log('==== END BROWSER LOGS ====');
+};
+
+crudTests_.after = browser => {
+  browser.getLog('browser', logger);
+  browser.end();
+};
 
 module.exports = crudTests_;
