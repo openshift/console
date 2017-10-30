@@ -226,6 +226,11 @@ $clusterserviceversion-list-border: #ccc;
   animation: progress-bar-stripes 1s linear infinite;
 }
 
+.co-catalog-instal--alm-not-enabled {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
 .co-catalog-spinner--downloading {
   color: $color-highlight-blue;
 }

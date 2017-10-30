@@ -1,38 +1,39 @@
 /* eslint-disable no-undef */
 
 import * as React from 'react';
+import * as classNames from 'classnames';
 import * as _ from 'lodash';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
-import { PromiseComponent, LabelList, ResourceLink } from '../utils';
+import { PromiseComponent, ResourceLink } from '../utils';
 import { k8sKinds } from '../../module/k8s';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval } from '../cloud-services';
 
 export const SelectNamespaceHeader = (props: SelectNamespaceHeaderProps) => <ListHeader>
-  <ColHead {...props} className="col-xs-5" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-4">Labels</ColHead>
+  <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-3">Status</ColHead>
 </ListHeader>;
 
 export const SelectNamespaceRow = (props: SelectNamespaceRowProps) => {
   const {obj, onSelect, onDeselect, selected} = props;
+  const almEnabled = obj.metadata.annotations && obj.metadata.annotations['alm-manager'];
 
   return <ResourceRow obj={obj}>
-    <div className="col-xs-5">
+    <div className={classNames('col-xs-9', {'co-catalog-instal--alm-not-enabled': !almEnabled})}>
       <input
         type="checkbox"
         value={obj.metadata.name}
         checked={selected}
         onChange={() => selected ? onDeselect({namespace: obj.metadata.name}) : onSelect({namespace: obj.metadata.name})}
+        disabled={!almEnabled}
       />
       <ResourceLink kind="Namespace" name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
     </div>
-    <div className="col-xs-4">
-      <LabelList kind="Namespace" labels={obj.metadata.labels} />
-    </div>
     <div className="col-xs-3">
-      { selected ? <span>To be installed</span> : <span className="text-muted">Not installed</span> }
+      { almEnabled ?
+        (selected ? <span>To be installed</span> : <span className="text-muted">Not installed</span>) :
+        (<span className="text-muted">OCS not enabled</span>) }
     </div>
   </ResourceRow>;
 };
