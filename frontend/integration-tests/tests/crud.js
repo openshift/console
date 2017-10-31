@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const navigate = (browser, path, cb) => {
   const url = browser.launch_url + path;
   browser.url(url, ({error, value}) => {
@@ -10,7 +12,7 @@ const navigate = (browser, path, cb) => {
   });
 };
 
-const TIMEOUT = 10000;
+const TIMEOUT = 15000;
 
 
 const asyncLoad = (browser, i, cb) => {
@@ -51,15 +53,21 @@ const deleteExamples = (page, browser) => {
     const selector = `#${ids[0]}`;
     const css = `${selector} li:last-child a`;
     browser.pause(100);
-    page.waitForElementVisible(selector, TIMEOUT)
-      .click(selector)
-      .waitForElementVisible(css, TIMEOUT)
-      .click(css)
-      .waitForElementVisible('@deleteModalConfirmButton', TIMEOUT)
-      .click('@deleteModalConfirmButton')
-      .waitForElementVisible('@CreateYAMLButton', TIMEOUT, () => {
-        deleteExample(ids.slice(1));
-      });
+    // TODO: fail if all deletes fail
+    browser.isVisible(selector, ({status}) => {
+      if (status) {
+        console.error('No delete dropdown for ', selector);
+        return deleteExample(ids.slice(1));
+      }
+      page.click(selector)
+        .waitForElementPresent(css, TIMEOUT)
+        .click(css)
+        .waitForElementPresent('@deleteModalConfirmButton', TIMEOUT)
+        .click('@deleteModalConfirmButton')
+        .waitForElementPresent('@CreateYAMLButton', TIMEOUT, () => {
+          deleteExample(ids.slice(1));
+        });
+    });
   };
 
   asyncLoad(browser, 0, (value, error) => {
@@ -77,15 +85,11 @@ const deleteExamples = (page, browser) => {
 
 const createExamples = (page, browser) => {
   page
-    .waitForElementVisible('@CreateYAMLButton', TIMEOUT)
+    .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
     .click('@CreateYAMLButton')
-    .waitForElementVisible('@saveYAMLButton', TIMEOUT)
+    .waitForElementPresent('@saveYAMLButton', TIMEOUT)
     .click('@saveYAMLButton')
-    .waitForElementVisible('@actionsDropdownButton', TIMEOUT, false, ({value}) => {
-      if (value) {
-        console.error('Resource creation failed');
-        return;
-      }
+    .waitForElementPresent('@actionsDropdownButton', TIMEOUT, false, () => {
       console.log('Resource created');
       //with verify(), when an assertion fails, the test logs the failure and continues with other assertions.
       browser.verify.urlContains('/example');
@@ -143,6 +147,31 @@ k8sObjs.forEach(resource => {
   };
 });
 
-crudTests_.after = browser => browser.end();
+const logger = logs => {
+  console.log('==== BEGIN BROWSER LOGS ====');
+  _.each(logs, log => {
+    const { level, message } = log;
+    const messageStr = _.isArray(message) ? message.join(' ') : message;
+
+    switch (level) {
+      case 'DEBUG':
+        console.log(level, messageStr);
+        break;
+      case 'SEVERE':
+        console.warn(level, messageStr);
+        break;
+      case 'INFO':
+      default:
+        // eslint-disable-next-line no-console
+        console.info(level, messageStr);
+    }
+  });
+  console.log('==== END BROWSER LOGS ====');
+};
+
+crudTests_.after = browser => {
+  browser.getLog('browser', logger);
+  browser.end();
+};
 
 module.exports = crudTests_;

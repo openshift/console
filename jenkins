@@ -18,10 +18,57 @@ else
     exit 1
 fi
 
+status() {
+    # Hide output so we don't leak creds
+    set +x
+    data=$(cat << EOF
+{
+  "context": "$1",
+  "state": "$2",
+  "description": "$1 $2.",
+  "target_url": "${BUILD_URL}console"
+}
+EOF
+)
+    # shellcheck disable=SC2154
+    curl -o /dev/null --silent -X POST --user "${GITHUB_CREDENTIALS}" \
+    --data "$data" \
+    "https://api.github.com/repos/coreos-inc/bridge/statuses/${ghprbActualCommit}"
+    set -x
+}
+
 set -x
 ./clean
-./builder-run ./build
-./builder-run ./test
+
+set +e
+
+status 'Build' 'pending'
+if ./builder-run ./build
+then
+    status 'Build' 'success'
+else
+    status 'Build' 'error'
+    exit 1
+fi
+
+status 'Tests' 'pending'
+if ./builder-run ./test
+then
+    status 'Tests' 'success'
+else
+    status 'Tests' 'error'
+    exit 1
+fi
+
+status 'GUI Tests' 'pending'
+if DOCKER_ENV="TECTONIC_LICENSE,BRIDGE_K8S_AUTH_BEARER_TOKEN" ./builder-run ./test-gui
+then
+    status 'GUI Tests' 'success'
+else
+    status 'GUI Tests' 'error'
+fi
+
+set -e
 
 GIT_SHA_HEAD=$(git rev-parse HEAD)
 GIT_SHA_MASTER=$(git rev-parse origin/master)

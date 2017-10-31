@@ -32,7 +32,7 @@ export const NavTitle: React.StatelessComponent<NavTitleProps> = ({kind, detail,
       { breadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs} />}
       <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': hasLogo}, {'co-m-page-title--breadcrumbs': breadcrumbs})}>
         {logo}
-        { menuActions && !_.isEmpty(data) && !_.has(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj(kind), data))} /> }
+        { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj(kind), data))} /> }
       </h1>
       {children}
     </div>

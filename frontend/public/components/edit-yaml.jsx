@@ -30,6 +30,7 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
  * This component loads the entire Ace editor library (~100kB) with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
+/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string}>} */
 export class EditYAML extends SafetyFirst {
   constructor(props) {
     super(props);
