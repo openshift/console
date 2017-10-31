@@ -13,6 +13,7 @@ import { ClusterPicker } from './federation/cluster-picker';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 import * as operatorLogoImg from '../imgs/operator-logo.svg';
 import * as routingImg from '../imgs/routing.svg';
+import * as appsLogoImg from '../imgs/apps-logo.svg';
 
 const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 
@@ -121,7 +122,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <ClusterPicker />
     </div>
 
-    <NavSection required={[FLAGS.CLOUD_SERVICES]} text="Applications" icon="ci-appcube">
+    <NavSection required={[FLAGS.CLOUD_SERVICES]} text="Applications" img={appsLogoImg}>
       <NavLink required={FLAGS.CLOUD_CATALOGS} href="/catalog" name="Open Cloud Catalog" />
       <Sep />
       <NavLink resource="clusterserviceversion-v1s" name="Installed Applications" />
