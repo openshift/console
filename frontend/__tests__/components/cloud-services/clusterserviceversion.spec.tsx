@@ -11,6 +11,8 @@ import { DetailsPage, ListPage } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { StatusBox, LoadingBox, Timestamp, Overflow, Dropdown } from '../../../public/components/utils';
 
+import * as appsLogoImg from '../../../public/imgs/apps-logo.svg';
+
 describe(ClusterServiceVersionLogo.displayName, () => {
   let wrapper: ReactWrapper<ClusterServiceVersionLogoProps>;
 
@@ -30,10 +32,11 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 
   it('renders fallback image if given icon is invalid', () => {
     wrapper.setProps({icon: null});
-    const fallbackImg = wrapper.find('.ci-appcube');
+    const fallbackImg: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
 
-    expect(wrapper.find('img').exists()).toBe(false);
-    expect(fallbackImg.exists()).toBe(true);
+    expect(fallbackImg.props().src).toEqual(appsLogoImg);
+    expect(fallbackImg.props().height).toEqual('40');
+    expect(fallbackImg.props().width).toEqual('40');
   });
 
   it('renders ClusterServiceVersion name and provider from given spec', () => {

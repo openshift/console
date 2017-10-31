@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 
 import './ocs-templates';
 
+import * as appsLogoImg from '../../imgs/apps-logo.svg';
+
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage } from './clusterserviceversion-resource';
 export { CatalogsDetailsPage } from './catalog';
@@ -108,7 +110,7 @@ export const ClusterServiceVersionLogo: React.StatelessComponent<ClusterServiceV
 
   return <div className="co-clusterserviceversion-logo">
     <div className="co-clusterserviceversion-logo__icon">{ _.isEmpty(icon)
-      ? <span className="fa ci-appcube" style={{fontSize: '40px'}} />
+      ? <img src={appsLogoImg} height="40" width="40" />
       : <img src={`data:${icon.mediatype};base64,${icon.base64data}`} height="40" width="40" /> }
     </div>
     <div className="co-clusterserviceversion-logo__name">
