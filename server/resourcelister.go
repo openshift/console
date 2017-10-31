@@ -11,13 +11,15 @@ import (
 	"strconv"
 )
 
-const namespacesPath = "/api/v1/namespaces"
+// ResourceLister determines the list of resources (of a particular kind) that a particular user
+// can view.
+type ResourceLister struct {
+	// The path at which the resources can be found under the Kubernetes API.
+	ResourcesPath string
 
-// NamespaceLister determines the list of namespaces that a particular user can view.
-type NamespaceLister struct {
-	// If the user's bearer token doesn't have the ability to list namespaces, this
+	// If the user's bearer token doesn't have the ability to list the resources, this
 	// token is used instead to perform the list request. The user will still only
-	// see the subset of namespaces they have access to.
+	// see the subset of resources they have access to.
 	BearerToken string
 
 	// Endpoint of the API server.
@@ -32,7 +34,7 @@ type NamespaceLister struct {
 
 // get performs an HTTP request on the following path, using the provided bearer
 // token for authentication.
-func (l *NamespaceLister) get(ctx context.Context, bearerToken, path string) (*http.Response, error) {
+func (l *ResourceLister) get(ctx context.Context, bearerToken, path string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", l.K8sEndpoint+path, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create request: %v", err)
@@ -56,16 +58,16 @@ func forwardResponse(w http.ResponseWriter, r *http.Response) {
 	r.Body.Close()
 }
 
-// handleNamespaces is proxy to the /api/v1/namespaces path but handles cases where
+// handleResources is proxy to the given resource path but handles cases where
 // the provided bearer token doesn't have permission to view that endpoint. In these
-// cases the method will list all the namespaces, then filter the ones the bearer
+// cases the method will list all the resources, then filter the ones the bearer
 // token can view.
-func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.ResponseWriter, r *http.Request) {
+func (l *ResourceLister) handleResources(requestBearerToken string, w http.ResponseWriter, r *http.Request) {
 	// dev mode of some sort most likely
-	nsURL := namespacesPath + "?" + r.URL.RawQuery
+	rsURL := l.ResourcesPath + "?" + r.URL.RawQuery
 	if requestBearerToken == "" {
 		plog.Printf("no request bearer token")
-		resp, err := l.get(r.Context(), l.BearerToken, nsURL)
+		resp, err := l.get(r.Context(), l.BearerToken, rsURL)
 		if err != nil {
 			sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
 			return
@@ -74,7 +76,7 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 		return
 	}
 
-	resp, err := l.get(r.Context(), requestBearerToken, nsURL)
+	resp, err := l.get(r.Context(), requestBearerToken, rsURL)
 	if err != nil {
 		sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
 		return
@@ -90,21 +92,21 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 	io.Copy(ioutil.Discard, resp.Body)
 	resp.Body.Close()
 
-	// List all namespaces using bridge's root credentials.
-	resp, err = l.get(r.Context(), l.BearerToken, nsURL)
+	// List all resources using bridge's root credentials.
+	resp, err = l.get(r.Context(), l.BearerToken, rsURL)
 	if err != nil {
 		sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
 		return
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		err := fmt.Errorf("bridge's service account cannot list namespaces: %s", resp.Status)
+		err := fmt.Errorf("bridge's service account cannot list resources via %s: %s", l.ResourcesPath, resp.Status)
 		sendResponse(w, http.StatusInternalServerError, apiError{err.Error()})
 		return
 	}
 
-	// Decode the response so we can iterate through the namespaces.
-	var namespaces struct {
+	// Decode the response so we can iterate through the resources.
+	var resources struct {
 		Kind       string `json:"kind,omitempty"`
 		APIVersion string `json:"apiVersion,omitempty"`
 		Metadata   struct {
@@ -116,7 +118,7 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 		// Items user doesn't have access to. One day we may expose this
 		RestrictedItems []*json.RawMessage `json:"restrictedItems"`
 	}
-	err = json.NewDecoder(resp.Body).Decode(&namespaces)
+	err = json.NewDecoder(resp.Body).Decode(&resources)
 	resp.Body.Close()
 	if err != nil {
 		sendResponse(w, http.StatusInternalServerError, apiError{err.Error()})
@@ -124,35 +126,35 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 	}
 
 	// TODO: (ggreer) use goroutine here
-	// Filter any namespaces the user can't see.
+	// Filter any resources the user can't see.
 	n := 0
-	for _, item := range namespaces.Items {
-		var ns struct {
+	for _, item := range resources.Items {
+		var rs struct {
 			Metadata struct {
 				Name string `json:"name"`
 			} `json:"metadata"`
 		}
-		if err := json.Unmarshal([]byte(*item), &ns); err != nil {
+		if err := json.Unmarshal([]byte(*item), &rs); err != nil {
 			sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
 			return
 		}
 
-		ok, err := l.canAccessNamespace(r.Context(), requestBearerToken, ns.Metadata.Name)
+		ok, err := l.canAccessResource(r.Context(), requestBearerToken, rs.Metadata.Name)
 		if err != nil {
 			// TODO: (ggreer) early return if error is 500/502/etc. continue if 401/403
-			plog.Printf("error accessing namespace %v: %v", ns.Metadata.Name, err.Error())
+			plog.Printf("error accessing resource %v: %v", rs.Metadata.Name, err.Error())
 		}
 		if ok {
-			namespaces.Items[n] = item
+			resources.Items[n] = item
 			n++
 		} else {
-			namespaces.RestrictedItems = append(namespaces.RestrictedItems, item)
+			resources.RestrictedItems = append(resources.RestrictedItems, item)
 		}
 	}
-	namespaces.Items = namespaces.Items[:n]
+	resources.Items = resources.Items[:n]
 
 	// Rewrite the body.
-	body, err := json.Marshal(namespaces)
+	body, err := json.Marshal(resources)
 	if err != nil {
 		sendResponse(w, http.StatusInternalServerError, apiError{err.Error()})
 		return
@@ -163,14 +165,13 @@ func (l *NamespaceLister) handleNamespaces(requestBearerToken string, w http.Res
 	forwardResponse(w, resp)
 }
 
-// canAccessNamespace determines if the lister can access resources in the
-// provided namespace.
-func (l *NamespaceLister) canAccessNamespace(ctx context.Context, bearerToken, namespace string) (bool, error) {
-	if namespace == "" {
-		return false, fmt.Errorf("no namespace provided")
+// canAccessResource determines if the lister can access the specified resource.
+func (l *ResourceLister) canAccessResource(ctx context.Context, bearerToken, resource string) (bool, error) {
+	if resource == "" {
+		return false, fmt.Errorf("no resource provided")
 	}
 
-	resp, err := l.get(ctx, bearerToken, namespacesPath+"/"+namespace)
+	resp, err := l.get(ctx, bearerToken, l.ResourcesPath+"/"+resource)
 	if err != nil {
 		return false, fmt.Errorf("GET request failed: %v", err)
 	}

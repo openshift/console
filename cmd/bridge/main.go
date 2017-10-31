@@ -292,8 +292,10 @@ func main() {
 		flagFatalf("user-auth", "must be one of: oidc, disabled")
 	}
 
-	srv.NamespaceLister = &server.NamespaceLister{
-		K8sEndpoint: strings.TrimSuffix(srv.K8sProxyConfig.Endpoint.String(), "/"),
+	srv.NamespaceLister = &server.ResourceLister{
+		BearerToken:   k8sAuthServiceAccountBearerToken,
+		ResourcesPath: "/api/v1/namespaces",
+		K8sEndpoint:   strings.TrimSuffix(srv.K8sProxyConfig.Endpoint.String(), "/"),
 		Client: &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
@@ -301,9 +303,16 @@ func main() {
 		},
 	}
 
-	// Setting the namespace lister's bearer token only makes sense if the
-	// token extract can return a different token than the lister will use.
-	srv.NamespaceLister.BearerToken = k8sAuthServiceAccountBearerToken
+	srv.CustomResourceDefinitionLister = &server.ResourceLister{
+		BearerToken:   k8sAuthServiceAccountBearerToken,
+		ResourcesPath: "/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions",
+		K8sEndpoint:   strings.TrimSuffix(srv.K8sProxyConfig.Endpoint.String(), "/"),
+		Client: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
+			},
+		},
+	}
 
 	switch *fK8sAuth {
 	case "service-account":
@@ -313,6 +322,7 @@ func main() {
 		validateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
 		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ConstantTokenExtractor(*fK8sAuthBearerToken))
 		srv.NamespaceLister.BearerToken = string(*fK8sAuthBearerToken)
+		srv.CustomResourceDefinitionLister.BearerToken = string(*fK8sAuthBearerToken)
 	case "oidc":
 		validateFlagIs("user-auth", *fUserAuth, "oidc")
 		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ExtractTokenFromRequest)

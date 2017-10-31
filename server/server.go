@@ -77,10 +77,11 @@ type Server struct {
 	KubeAPIServerURL    string
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
-	KubectlAuther   *auth.Authenticator
-	KubeConfigTmpl  *KubeConfigTmpl
-	DexClient       api.DexClient
-	NamespaceLister *NamespaceLister
+	KubectlAuther                  *auth.Authenticator
+	KubeConfigTmpl                 *KubeConfigTmpl
+	DexClient                      api.DexClient
+	NamespaceLister                *ResourceLister
+	CustomResourceDefinitionLister *ResourceLister
 }
 
 func (s *Server) AuthDisabled() bool {
@@ -163,6 +164,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/license/validate", useValidateLicenseHandler)
 	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
 	handleFunc("/api/tectonic/namespaces", s.handleListNamespaces)
+	handleFunc("/api/tectonic/crds", s.handleListCRDs)
 	mux.HandleFunc("/tectonic/certs", useCertsHandler)
 	mux.HandleFunc("/tectonic/clients", useClientsHandler)
 	mux.HandleFunc("/tectonic/revoke-token", useTokenRevocationHandler)
@@ -355,12 +357,20 @@ func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
+func (s *Server) handleListCRDs(w http.ResponseWriter, r *http.Request) {
+	bearerToken, err := auth.ExtractTokenFromRequest(r)
+	if err != nil {
+		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
+	}
+	s.CustomResourceDefinitionLister.handleResources(bearerToken, w, r)
+}
+
 func (s *Server) handleListNamespaces(w http.ResponseWriter, r *http.Request) {
 	bearerToken, err := auth.ExtractTokenFromRequest(r)
 	if err != nil {
 		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
 	}
-	s.NamespaceLister.handleNamespaces(bearerToken, w, r)
+	s.NamespaceLister.handleResources(bearerToken, w, r)
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
