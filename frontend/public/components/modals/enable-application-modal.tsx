@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
-import { PromiseComponent, ResourceLink } from '../utils';
+import { PromiseComponent, ResourceIcon } from '../utils';
 import { k8sKinds } from '../../module/k8s';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval } from '../cloud-services';
 
@@ -17,31 +17,30 @@ export const SelectNamespaceHeader = (props: SelectNamespaceHeaderProps) => <Lis
 
 export const SelectNamespaceRow = (props: SelectNamespaceRowProps) => {
   const {obj, onSelect, onDeselect, selected} = props;
-  const almEnabled = obj.metadata.annotations && obj.metadata.annotations['alm-manager'];
+  const toggle = () => selected ? onDeselect({namespace: obj.metadata.name}) : onSelect({namespace: obj.metadata.name});
 
   return <ResourceRow obj={obj}>
-    <div className={classNames('col-xs-9', {'co-catalog-instal--alm-not-enabled': !almEnabled})}>
+    <div className={classNames('col-xs-9', 'co-catalog-install__row')} onClick={toggle}>
       <input
         type="checkbox"
         value={obj.metadata.name}
         checked={selected}
-        onChange={() => selected ? onDeselect({namespace: obj.metadata.name}) : onSelect({namespace: obj.metadata.name})}
-        disabled={!almEnabled}
+        onChange={toggle}
+        style={{'margin-right': '4px'}}
       />
-      <ResourceLink kind="Namespace" name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
+      <ResourceIcon kind="Namespace" />
+      <span>{obj.metadata.name}</span>
     </div>
     <div className="col-xs-3">
-      { almEnabled ?
-        (selected ? <span>To be installed</span> : <span className="text-muted">Not installed</span>) :
-        (<span className="text-muted">OCS not enabled</span>) }
+      {selected ? <span>Will be enabled</span> : <span className="text-muted">Not enabled</span>}
     </div>
   </ResourceRow>;
 };
 
-export class InstallApplicationModal extends PromiseComponent {
-  public state: InstallApplicationModalState;
+export class EnableApplicationModal extends PromiseComponent {
+  public state: EnableApplicationModalState;
 
-  constructor(public props: InstallApplicationModalProps) {
+  constructor(public props: EnableApplicationModalProps) {
     super(props);
     this.state.selectedNamespaces = [];
   }
@@ -72,17 +71,20 @@ export class InstallApplicationModal extends PromiseComponent {
     const {clusterServiceVersions} = this.props;
     const {selectedNamespaces} = this.state;
 
-    return <form onSubmit={this.submit.bind(this)} name="form">
-      <ModalTitle>
+    return <form onSubmit={this.submit.bind(this)} name="form" className="co-catalog-install-modal">
+      <ModalTitle className="modal-header co-m-nav-title__detail co-catalog-install-modal__header">
         <ClusterServiceVersionLogo displayName={spec.displayName} provider={spec.provider} icon={spec.icon[0]} />
       </ModalTitle>
       <ModalBody>
+        <h4 className="co-catalog-install-modal__h4">Enable Application</h4>
         <div>
-          <p className="modal-body__field">Select the namespaces where you want to install and run the application.</p>
+          <p className="co-catalog-install-modal__description modal-body__field">Select the deployable namespaces where you want to make the application available.</p>
           <List
             loaded={loaded}
             loadError={loadError}
-            data={_.values(data).filter(ns => clusterServiceVersions.find(csv => csv.metadata.namespace === ns.metadata.name) === undefined)}
+            data={_.values(data)
+              .filter(ns => clusterServiceVersions.find(csv => csv.metadata.namespace === ns.metadata.name) === undefined)
+              .filter(ns => ns.metadata.annotations && ns.metadata.annotations['alm-manager'])}
             Header={SelectNamespaceHeader}
             Row={(props) => <SelectNamespaceRow
               obj={props.obj}
@@ -92,14 +94,14 @@ export class InstallApplicationModal extends PromiseComponent {
           />
         </div>
       </ModalBody>
-      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Save Changes" />
+      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Enable" submitDisabled={selectedNamespaces.length === 0}/>
     </form>;
   }
 }
 
-export const createInstallApplicationModal = createModalLauncher(InstallApplicationModal);
+export const createEnableApplicationModal = createModalLauncher(EnableApplicationModal);
 
-export type InstallApplicationModalProps = {
+export type EnableApplicationModalProps = {
   cancel: (e: Event) => void;
   close: () => void;
   watchK8sList: (id: string, query: any, kind: any) => void;
@@ -109,7 +111,7 @@ export type InstallApplicationModalProps = {
   catalogEntry: CatalogEntryKind;
 };
 
-export type InstallApplicationModalState = {
+export type EnableApplicationModalState = {
   selectedNamespaces: string[];
   inProgress: boolean;
   errorMessage: string;

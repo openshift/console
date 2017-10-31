@@ -11,45 +11,46 @@ import * as classNames from 'classnames';
 import { ListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { Firehose, NavTitle, MsgBox } from '../utils';
 import { ClusterServiceVersionLogo, CatalogEntryKind, K8sResourceKind, ClusterServiceVersionKind, ClusterServiceVersionPhase } from './index';
-import { createInstallApplicationModal } from '../modals/install-application-modal';
+
+import { createEnableApplicationModal } from '../modals/enable-application-modal';
 import { k8sCreate } from '../../module/k8s';
 
 export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-6">Status</ColHead>
-  <ColHead {...props} className="col-xs-2">Actions</ColHead>
+  <ColHead {...props} className="col-xs-2" />
 </ListHeader>;
 
 export const Breakdown: React.StatelessComponent<BreakdownProps> = (props) => {
-  const {failed, pending, succeeded} = props.status;
+  const {failed, pending, succeeded, awaiting} = props.status;
   const pluralizeNS = (count: number) => count !== 1 ? 'namespaces' : 'namespace';
 
   if (props.clusterServiceVersions.length === 0) {
-    return <span>Not installed</span>;
+    return <span className="text-muted">Not enabled</span>;
   }
   if (failed.length > 0) {
     return <div>
       <span style={{marginRight: '5px'}}>
         <i className="fa fa-ban co-error" />
       </span>
-      <span>Installation Error </span>
+      <span>Error </span>
       <span className="text-muted">
-        ({`${failed.length} ${pluralizeNS(failed.length)} failed`}{pending.length > 0 && `, ${pending.length} ${pluralizeNS(pending.length)} pending`}{succeeded.length > 0 && `, ${succeeded.length} ${pluralizeNS(succeeded.length)} installed`})
+        ({`${failed.length} ${pluralizeNS(failed.length)} failed`}{awaiting.length > 0 && `, ${awaiting.length} ${pluralizeNS(awaiting.length)} not supported`}{pending.length > 0 && `, ${pending.length} ${pluralizeNS(pending.length)} pending`}{succeeded.length > 0 && `, ${succeeded.length} ${pluralizeNS(succeeded.length)} enabled`})
       </span>
     </div>;
   }
-  if (pending.length > 0) {
+  if (pending.length > 0 || awaiting.length > 0) {
     return <div>
       <span style={{marginRight: '5px'}}>
         <i className="fa fa-spin fa-circle-o-notch co-catalog-spinner--downloading" />
       </span>
-      <span>Installing... </span>
+      <span>Enabling... </span>
       <span className="text-muted">({succeeded.length} of {props.clusterServiceVersions.length} {pluralizeNS(props.clusterServiceVersions.length)})</span>
     </div>;
   }
   if (succeeded.length > 0) {
     return <div>
-      <span>Installed </span>
+      <span>Enabled </span>
       <span className="text-muted">({succeeded.length} {pluralizeNS(succeeded.length)})</span>
     </div>;
   }
@@ -70,15 +71,21 @@ export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (
       switch (csv.status.phase) {
         case ClusterServiceVersionPhase.CSVPhaseSucceeded:
           return <li className="co-catalog-breakdown__ns-list__item" key={i}>
-            <Link className="text-muted" to={`/ns/${csv.metadata.namespace}/clusterserviceversion-v1s/${csv.metadata.name}`} tabIndex={-1}>{csv.metadata.namespace}</Link>
+            <Link to={`/ns/${csv.metadata.namespace}/clusterserviceversion-v1s/${csv.metadata.name}`} tabIndex={-1}>{csv.metadata.namespace}</Link>
           </li>;
         case ClusterServiceVersionPhase.CSVPhaseFailed:
-          return <li className="co-catalog-breakdown__ns-list__item co-error" key={i}>{`${csv.metadata.namespace}: ${csv.status.reason}`}</li>;
+          return <li className="co-catalog-breakdown__ns-list__item co-error" key={i}>
+            <strong>{csv.metadata.namespace}</strong>: {csv.status.reason}
+          </li>;
         case ClusterServiceVersionPhase.CSVPhasePending:
         case ClusterServiceVersionPhase.CSVPhaseInstalling:
-          return <li className="co-catalog-breakdown__ns-list__item text-muted" key={i}>{csv.metadata.namespace}</li>;
+          return <li className="co-catalog-breakdown__ns-list__item text-muted" key={i}>
+            {csv.metadata.namespace}
+          </li>;
         default:
-          return <li key={i}>{csv.metadata.namespace}</li>;
+          return <li className="co-catalog-breakdown__ns-list__item text-muted" key={i}>
+            <strong>{csv.metadata.namespace}</strong>: Namespace not supported
+          </li>;
       }
     }) }</ul>
   </div>;
@@ -110,20 +117,21 @@ export const CatalogAppRow = connect(stateToProps)(
           <div className="col-xs-4">
             <ClusterServiceVersionLogo icon={_.get(obj.spec, 'icon', [])[0]} version={obj.spec.version} displayName={obj.spec.displayName} provider={obj.spec.provider} />
           </div>
-          <div className="col-xs-6">
+          <div className="col-xs-6 col">
             <div>
               <div style={{marginBottom: '15px'}}><Breakdown clusterServiceVersions={clusterServiceVersions} status={this.state} /></div>
-              { clusterServiceVersions.length > 0 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} Details`}</a> }
+              { clusterServiceVersions.length === 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} namespace`}</a> }
+              { clusterServiceVersions.length > 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} all ${clusterServiceVersions.length} namespaces`}</a> }
             </div>
             <div className={classNames('co-catalog-app-row__details', {'co-catalog-app-row__details--collapsed': !this.state.expand})}>
               <BreakdownDetail clusterServiceVersions={clusterServiceVersions} status={this.state} />
             </div>
           </div>
-          <div className="col-xs-2">
+          <div className="col-xs-2 col">
             <button
               className="btn btn-primary pull-right"
-              onClick={() => createInstallApplicationModal({catalogEntry: obj, k8sCreate, namespaces, clusterServiceVersions})}>
-              Install
+              onClick={() => createEnableApplicationModal({catalogEntry: obj, k8sCreate, namespaces, clusterServiceVersions})}>
+              Enable
             </button>
           </div>
         </div>
@@ -136,6 +144,7 @@ export const CatalogAppRow = connect(stateToProps)(
         pending: props.clusterServiceVersions
           .filter(csv => [ClusterServiceVersionPhase.CSVPhasePending, ClusterServiceVersionPhase.CSVPhaseInstalling].indexOf(_.get(csv, ['status', 'phase'])) !== -1),
         succeeded: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseSucceeded),
+        awaiting: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === undefined),
       };
     }
   });
@@ -156,13 +165,13 @@ export const CatalogAppsPage: React.StatelessComponent = () => <div>
 
 export const CatalogDetails: React.StatelessComponent = () => <div className="co-catalog-details co-m-pane">
   <div className="co-m-pane__body">
-    <div className="col-sm-2 col-xs-12">
+    <div className="col-xs-4">
       <dl>
         <dt>Name</dt>
         <dd>Open Cloud Services</dd>
       </dl>
     </div>
-    <div className="col-sm-2 col-xs-12">
+    <div className="col-xs-4">
       <dl>
         <dt>Provider</dt>
         <dd>CoreOS, Inc</dd>
@@ -193,6 +202,7 @@ export type CatalogAppRowState = {
   failed: ClusterServiceVersionKind[];
   pending: ClusterServiceVersionKind[];
   succeeded: ClusterServiceVersionKind[];
+  awaiting: ClusterServiceVersionKind[];
 };
 
 export type CatalogAppHeaderProps = {
@@ -211,12 +221,12 @@ export type CatalogDetailsProps = {
 
 export type BreakdownProps = {
   clusterServiceVersions: ClusterServiceVersionKind[];
-  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[]};
+  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[], awaiting: ClusterServiceVersionKind[]};
 };
 
 export type BreakdownDetailProps = {
   clusterServiceVersions: ClusterServiceVersionKind[];
-  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[]};
+  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[], awaiting: ClusterServiceVersionKind[]};
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically

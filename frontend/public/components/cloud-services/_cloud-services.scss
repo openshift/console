@@ -76,7 +76,7 @@ $clusterserviceversion-list-border: #ccc;
 }
 
 .co-clusterserviceversion-logo__name__clusterserviceversion {
-  font-size: 26px;
+  font-size: 16px;
   font-weight: 400;
   margin: 0;
 }
@@ -191,6 +191,10 @@ $clusterserviceversion-list-border: #ccc;
   overflow: hidden;
 }
 
+.co-catalog-app-row .col {
+  padding-top: 10px;
+}
+
 .co-catalog-app-row__details {
   margin-left: 15px;
   transition: opacity 0.25s;
@@ -204,6 +208,27 @@ $clusterserviceversion-list-border: #ccc;
 @keyframes progress-bar-stripes {
   from { background-position: 4px 0; }
   to { background-position: 0 0; }
+}
+
+.co-catalog-breakdown__ns-listco-catalog-install-modal .modal-footer {
+  padding: 30px;
+}
+
+.co-catalog-install-modal__header {
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.co-catalog-install-modal__h4 {
+  margin-bottom: 20px;
+}
+
+.co-catalog-install-modal__description {
+  margin-bottom: 30px;
+}
+
+.co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
+  border: 1px solid #ddd;  
 }
 
 .co-catalog-install-progress {
@@ -226,7 +251,11 @@ $clusterserviceversion-list-border: #ccc;
   animation: progress-bar-stripes 1s linear infinite;
 }
 
-.co-catalog-instal--alm-not-enabled {
+.co-catalog-install__row {
+  cursor: pointer;
+}
+
+.co-catalog-install--alm-not-enabled {
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
 }
@@ -237,9 +266,12 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-catalog-breakdown__ns-list {
   margin-top: 15px;
+  padding-left: 0px;
 }
 
 .co-catalog-breakdown__ns-list__item {
+  margin: 0px;
+  padding: 0px;
   margin-top: 10px;
 }
 

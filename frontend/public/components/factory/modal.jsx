@@ -42,7 +42,7 @@ export const createModalLauncher = (Component) => (props = {}) => {
   return {result};
 };
 
-export const ModalTitle = ({children}) => <div className="modal-header"><h4 className="modal-title">{children}</h4></div>;
+export const ModalTitle = ({children, className='modal-header'}) => <div className={className}><h4 className="modal-title">{children}</h4></div>;
 
 export const ModalBody = ({children}) => <div className="modal-body">{children}</div>;
 

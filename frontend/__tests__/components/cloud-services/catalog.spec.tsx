@@ -43,12 +43,25 @@ describe(CatalogAppRow.displayName, () => {
     wrapper.setProps({clusterServiceVersions: [testClusterServiceVersion]});
     const link = wrapper.find('a');
 
-    expect(link.text()).toEqual('Show Details');
+    expect(link.text()).toEqual('Show namespace');
 
     link.simulate('click');
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(wrapper.find('a').text()).toEqual('Hide Details');
+    expect(wrapper.find('a').text()).toEqual('Hide namespace');
+    expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(false);
+  });
+
+  it('renders link to expand/hide the row if `props.clusterServiceVersions` length is greater than 1', () => {
+    wrapper.setProps({clusterServiceVersions: [testClusterServiceVersion, testClusterServiceVersion]});
+    const link = wrapper.find('a');
+
+    expect(link.text()).toEqual('Show all 2 namespaces');
+
+    link.simulate('click');
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
+
+    expect(wrapper.find('a').text()).toEqual('Hide all 2 namespaces');
     expect(col.find('.co-catalog-app-row__details--collapsed').exists()).toBe(false);
   });
 
@@ -61,7 +74,7 @@ describe(CatalogAppRow.displayName, () => {
   it('renders empty state for column if given empty list of `ClusterServiceVersions`', () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual('Not installed');
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual('Not enabled');
   });
 
   it('renders installing state if at least one given `ClusterServiceVersion` status phase is `Installing`', () => {
@@ -71,7 +84,7 @@ describe(CatalogAppRow.displayName, () => {
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual(`Installing... (2 of ${clusterServiceVersions.length} namespaces)`);
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual(`Enabling... (2 of ${clusterServiceVersions.length} namespaces)`);
   });
 
   it('renders error state if at least one given `ClusterServiceVersion` status phase is `Failed`', () => {
@@ -82,7 +95,7 @@ describe(CatalogAppRow.displayName, () => {
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual('Installation Error (1 namespace failed, 1 namespace pending, 1 namespace installed)');
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual('Error (1 namespace failed, 1 namespace pending, 1 namespace enabled)');
   });
 
   it('renders success state if all `ClusterServiceVersions` statuses are `Succeeded`', () => {
@@ -91,7 +104,7 @@ describe(CatalogAppRow.displayName, () => {
     wrapper.setProps({clusterServiceVersions});
     const col = wrapper.find('.co-catalog-app-row').childAt(1);
 
-    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual(`Installed (${clusterServiceVersions.length} namespaces)`);
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual(`Enabled (${clusterServiceVersions.length} namespaces)`);
   });
 
   it('renders active progress bar in expanded state if at least one `ClusterServiceVersion` status is `Pending` or `Installing`', () => {
@@ -191,8 +204,7 @@ describe(CatalogAppHeader.displayName, () => {
 
   it('renders column header for actions', () => {
     const colHeader = wrapper.find(ListHeader).find(ColHead).at(2);
-
-    expect(colHeader.childAt(0).text()).toEqual('Actions');
+    expect(colHeader.childAt(0).text()).toEqual('');
   });
 });
 
