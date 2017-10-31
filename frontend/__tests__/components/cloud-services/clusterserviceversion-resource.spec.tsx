@@ -367,15 +367,15 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
       'path': '',
       'displayName': 'Some Service',
       'description': '',
-      'x-descriptors': [ALMStatusDescriptors.k8sResourcePrefix + 'Service']
+      'x-descriptors': [`${ALMStatusDescriptors.k8sResourcePrefix}Service`]
     };
 
     const statusValue = 'someservice';
     const wrapper = shallow(<ClusterServiceVersionResourceStatus namespace="foo" statusDescriptor={statusDescriptor} statusValue={statusValue} />);
     const link = wrapper.find(ResourceLink);
     expect(link.exists()).toBe(true);
-    expect(link.props()['kind']).toBe('Service');
-    expect(link.props()['namespace']).toBe('foo');
+    expect(link.props().kind).toBe('Service');
+    expect(link.props().namespace).toBe('foo');
   });
 });
 
