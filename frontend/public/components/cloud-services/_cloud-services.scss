@@ -247,3 +247,10 @@ $clusterserviceversion-list-border: #ccc;
   display: flex;
   flex-direction: column;
 }
+
+.co-clusterserviceversion-list__disabled-icon {
+  margin: 10px;
+  width: 100px;
+  height: 100px;
+  filter: grayscale(100%);
+}

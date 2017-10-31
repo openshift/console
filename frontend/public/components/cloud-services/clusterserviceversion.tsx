@@ -6,10 +6,12 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CustomResourceDefinitionKind, ClusterServiceVersionResourceKind } from './index';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CustomResourceDefinitionKind, ClusterServiceVersionResourceKind, K8sResourceKind } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListPage, ListHeader, ColHead } from '../factory';
-import { navFactory, Firehose, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox } from '../utils';
+import { navFactory, Firehose, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox, Box } from '../utils';
+
+import * as appsLogo from '../../imgs/apps-logo.svg';
 
 export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServiceVersionListItemProps> = (props) => {
   const {appType, namespaces = []} = props;
@@ -120,7 +122,20 @@ export const ClusterServiceVersionList = connect(stateToProps)((props: ClusterSe
   </div>;
 });
 
-export const ClusterServiceVersionsPage: React.StatelessComponent<ClusterServiceVersionsPageProps> = (props) => {
+const csvStateToProps = ({k8s}, {namespace}) => ({
+  namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())
+    .filter((ns) => ns.metadata.name === namespace && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
+    .length === 1,
+});
+
+export const ClusterServiceVersionsPage = connect(csvStateToProps)((props: ClusterServiceVersionsPageProps) => {
+  if (props.namespace && !props.namespaceEnabled) {
+    return <Box className="cos-text-center">
+      <img className="co-clusterserviceversion-list__disabled-icon" src={appsLogo} />
+      <MsgBox title="Open Cloud Services not enabled for this namespace" detail="Please contact a system administrator and ask them to enable OCS to continue." />
+    </Box>;
+  }
+
   const dropdownFilters = [{
     type: 'clusterserviceversion-status',
     items: {
@@ -144,7 +159,7 @@ export const ClusterServiceVersionsPage: React.StatelessComponent<ClusterService
     }]} />
     <ListPage {...props} dropdownFilters={dropdownFilters} ListComponent={ClusterServiceVersionList} filterLabel="Applications by name" title="Installed Applications" showTitle={true} />
   </div>;
-};
+});
 
 export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata} = props.obj;
@@ -210,6 +225,8 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 
 export type ClusterServiceVersionsPageProps = {
   kind: string;
+  namespace: string;
+  namespaceEnabled: boolean;
 };
 
 export type ClusterServiceVersionListProps = {
