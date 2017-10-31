@@ -9,7 +9,7 @@ import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPagePro
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionResourceKind } from '../../../public/components/cloud-services';
 import { DetailsPage, ListPage } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import { StatusBox, LoadingBox, Timestamp, Overflow, Dropdown } from '../../../public/components/utils';
+import { StatusBox, LoadingBox, Timestamp, Overflow, Dropdown, MsgBox } from '../../../public/components/utils';
 
 import * as appsLogoImg from '../../../public/imgs/apps-logo.svg';
 
@@ -177,7 +177,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsPage kind="ClusterServiceVersion-v1" />);
+    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind="ClusterServiceVersion-v1" namespace="foo" namespaceEnabled={true} />);
   });
 
   it('renders a list page with correct props', () => {
@@ -188,6 +188,16 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().kind).toEqual('ClusterServiceVersion-v1');
     expect(listPage.props().filterLabel).toEqual('Applications by name');
     expect(listPage.props().title).toEqual('Installed Applications');
+  });
+
+  it('renders an error page if the namespace is not enabled', () => {
+    wrapper.setProps({namespaceEnabled: false});
+
+    const listPage = wrapper.find<any>(ListPage);
+    expect(listPage.exists()).toBe(false);
+
+    const msgBox = wrapper.find<any>(MsgBox);
+    expect(msgBox.exists()).toBe(true);
   });
 });
 
