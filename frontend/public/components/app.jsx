@@ -178,12 +178,7 @@ class App extends React.PureComponent {
   }
 }
 
-store.dispatch(featureActions.detectTectonicChannelOperatorFlags);
-store.dispatch(featureActions.detectEtcdOperatorFlags);
-store.dispatch(featureActions.detectPrometheusFlags);
-store.dispatch(featureActions.detectMultiClusterFlags);
 store.dispatch(featureActions.detectSecurityLabellerFlags);
-store.dispatch(featureActions.detectCloudServicesFlags);
 store.dispatch(featureActions.detectCalicoFlags);
 store.dispatch(getCRDs);
 
