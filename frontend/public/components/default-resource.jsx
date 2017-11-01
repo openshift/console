@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
@@ -8,17 +9,24 @@ const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Co
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Created</ColHead>
 </ListHeader>;
 
 const RowForKind = kind => function RowForKind ({obj}) {
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
       <ResourceCog actions={menuActions} kind={kind} resource={obj} />
-      <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} prefix={obj.metadata.namespace ? 'k8s/' : 'k8s/cluster/'} />
     </div>
-    <div className="col-xs-3">
-      <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+    <div className="col-xs-4">
+      { obj.metadata.namespace
+        ? <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+        : 'None'
+      }
+    </div>
+    <div className="col-xs-4">
+      { moment(obj.metadata.creationTimestamp).fromNow() }
     </div>
   </div>;
 };

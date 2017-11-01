@@ -100,7 +100,12 @@ class App extends React.PureComponent {
       <div id="reflex">
         <Nav />
         <div id="content">
-          <Route path={['/all-namespaces', '/ns/:ns']} component={NamespaceSelector} />
+          <Route path={[
+            '/all-namespaces',
+            '/ns/:ns',
+            '/k8s/all-namespaces',
+            '/k8s/ns/:ns',
+          ]} component={NamespaceSelector} />
           <Switch>
             <Route path="/" exact component={ClusterOverviewContainer} />
             <Route path="/cluster-health" exact component={ClusterHealth} />
@@ -127,6 +132,13 @@ class App extends React.PureComponent {
             <Route path="/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
 
             <Redirect from="/ns/:ns/rolebindings/:name" to="/all-namespaces/rolebindings" />
+
+            <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
+            <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
+            <Route path="/k8s/ns/:ns/:plural/new" exact component={CreateYAML} />
+            <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
+            <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
+            <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
 
             <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} plural="namespaces" />} />
             <Route path="/namespaces" exact component={namespacesListPage} />

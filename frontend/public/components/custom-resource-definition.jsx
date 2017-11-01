@@ -18,7 +18,7 @@ const isEstablished = conditions => {
 
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-xs-3">
-    <ResourceIcon kind={crd.spec.names.kind} /> <Link to={`/all-namespaces/${crd.spec.names.plural}`} title={crd.spec.names.kind}>{crd.spec.names.kind}</Link>
+    <ResourceIcon kind={crd.spec.names.kind} /> <Link to={`/k8s/${crd.spec.scope === 'Namespaced' ? 'all-namespaces' : 'cluster'}/${crd.spec.names.plural}`} title={crd.spec.names.kind}>{crd.spec.names.kind}</Link>
   </div>
   <div className="col-xs-3">
     { crd.spec.version }
