@@ -1,14 +1,16 @@
 module.exports = {
   elements: {
     expandClusterUpdatesLink: {
-      selector: '#expand-cluster-updates'
+      selector: '#expand-cluster-updates',
+      locateStrategy: 'css selector',
     },
     showDetailsLink: {
       selector: '//button[contains(@class, "co-cluster-updates__operator-show-details")]',
       locateStrategy: 'xpath'
     },
     channelState: {
-      selector: '#channel-state'
+      selector: '#channel-state',
+      locateStrategy: 'css selector',
     },
     updatesButton: {
       selector: '//button[contains(@class, "co-cluster-updates__action-button")]',
