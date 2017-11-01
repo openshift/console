@@ -1,7 +1,8 @@
 module.exports = {
   elements: {
     CreateYAMLButton: {
-      selector: '#yaml-create'
+      selector: '#yaml-create',
+      locateStrategy: 'css selector',
     },
     actionsDropdownButton: {
       selector: '//span[contains(@class, "btn--actions__label")]',
@@ -13,9 +14,11 @@ module.exports = {
     },
     deleteModalConfirmButton: {
       selector: '#confirm-delete',
+      locateStrategy: 'css selector',
     },
     saveYAMLButton: {
       selector: '#save-changes',
+      locateStrategy: 'css selector',
     }
   }
 };

@@ -144,7 +144,7 @@ WebSocketWrapper.prototype._reconnect = function() {
     that._connect();
     delay = expBackoff(delay, max);
     that._connectionAttempt = setTimeout(attempt, delay);
-    console.log('attempting reconnect in', delay / 1000, 'seconds...');
+    console.log(`attempting reconnect in ${delay / 1000} seconds...`);
   }
   this._connectionAttempt = setTimeout(attempt, delay);
 };
@@ -164,7 +164,7 @@ WebSocketWrapper.prototype._connect = function() {
   this.ws = new WebSocket(this.url, auth);
 
   this.ws.onopen = function() {
-    console.log('websocket open: ', that.id);
+    console.log(`websocket open: ${that.id}`);
     that._state = 'open';
     that._triggerEvent({ type: 'open' });
     if (that._connectionAttempt) {
@@ -173,7 +173,7 @@ WebSocketWrapper.prototype._connect = function() {
     }
   };
   this.ws.onclose = function() {
-    console.log('websocket closed: ', that.id);
+    console.log(`websocket closed: ${that.id}`);
     that._state = 'closed';
     that._triggerEvent({ type: 'close' });
     if (!that._connectionAttempt) {
@@ -181,7 +181,7 @@ WebSocketWrapper.prototype._connect = function() {
     }
   };
   this.ws.onerror = function(code, reason) {
-    console.log('websocket error: ', that.id);
+    console.log(`websocket error: ${that.id}`);
     that._state = 'error';
     that._triggerEvent({ type: 'error', args: [code, reason] });
   };
@@ -294,7 +294,7 @@ WebSocketWrapper.prototype.bufferSize = function() {
 };
 
 WebSocketWrapper.prototype.destroy = function() {
-  console.log('websocket destroy: ', this.id);
+  console.log(`websocket destroy: ${this.id}`);
   if (this._state === 'destroyed') {
     return;
   }
