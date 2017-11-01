@@ -176,6 +176,7 @@ export const k8sKinds = {
     path: 'tectonicversions',
     plural: 'tectonicversions',
     abbr: 'TV',
+    namespaced: true,
   },
   ChannelOperatorConfig: {
     label: 'Channel Operator Config',
@@ -184,6 +185,7 @@ export const k8sKinds = {
     path: 'channeloperatorconfigs',
     plural: 'channeloperatorconfigs',
     abbr: 'COC',
+    namespaced: true,
   },
   AppVersion: {
     label: 'AppVersion',
@@ -192,6 +194,7 @@ export const k8sKinds = {
     path: 'appversions',
     plural: 'appversions',
     abbr: 'AV',
+    namespaced: true,
   },
   PersistentVolume: {
     label: 'Persistent Volume',
@@ -270,8 +273,10 @@ export const k8sKinds = {
     path: 'servicemonitors',
     plural: 'servicemonitors',
     abbr: 'SM',
+    namespaced: true,
   },
   Alertmanager: {
+    namespaced: true,
     label: 'Alertmanager',
     labelPlural: 'Alertmanagers',
     apiVersion: 'v1',
