@@ -101,6 +101,14 @@ export const getCRDs = dispatch => {
   dispatch({type: 'getCRDsinflight'});
 
   return coFetchJSON(crdPath)
-    .then(res => dispatch({type: 'addCRDs', kinds: res.items}))
-    .catch(() => setTimeout(() => getCRDs(dispatch), 5000));
+    .then(
+      res => dispatch({type: 'addCRDs', kinds: res.items}),
+      res => {
+        const status = _.get(res, 'response.status');
+        if (status === 403 || status === 502) {
+          return;
+        }
+        setTimeout(() => getCRDs(dispatch), 5000);
+      }
+    );
 };

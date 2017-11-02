@@ -43,69 +43,21 @@ const handleError = (res, flags, dispatch, cb) => {
   }
 };
 
-//These flags are currently being set on the client side for Phase 0 of this
-//feature, the plan is to move them to the backend eventually.
-const determineMultiClusterFlag = () => {
-  const fedApiUrl = localStorage.getItem('federation-apiserver-url') || null;
-  const token = localStorage.getItem('federation-apiserver-token') || null;
-
-  if (fedApiUrl && token) {
-    return {
-      [FLAGS.MULTI_CLUSTER]: {
-        'federation-apiserver-url': fedApiUrl,
-        'federation-apiserver-token': token,
-      }
-    };
-  }
-  return { [FLAGS.MULTI_CLUSTER]: undefined };
-};
-
-const TCO_FLAGS = {
-  [FLAGS.CLUSTER_UPDATES]: 'channeloperatorconfigs',
-};
-
-const ETCD_OPERATOR_FLAGS = {
-  [FLAGS.ETCD_OPERATOR]: 'etcdclusters',
-};
-
-const PROMETHEUS_FLAGS = {
-  [FLAGS.PROMETHEUS]: 'prometheuses'
-};
-
 const SECURITY_LABELLER_FLAGS = {
   [FLAGS.SECURITY_LABELLER]: 'security-labeller-app',
-};
-
-const CLOUD_SERVICES_FLAGS = {
-  [FLAGS.CLOUD_SERVICES]: 'clusterserviceversion-v1s',
-  [FLAGS.CLOUD_CATALOGS]: 'alphacatalogentry-v1s',
 };
 
 const CALICO_FLAGS = {
   [FLAGS.CALICO]: 'kube-calico',
 };
 
-const tcoPath = `${k8sBasePath}/apis/tco.coreos.com/v1`;
-const detectTectonicChannelOperatorFlags = dispatch => {
-  coFetchJSON(tcoPath)
-    .then(res => setFlags(dispatch, _.mapValues(TCO_FLAGS, name => _.find(res.resources, {name}))),
-      (res) => handleError(res, TCO_FLAGS, dispatch, detectTectonicChannelOperatorFlags));
-};
-
-const etcdPath = `${k8sBasePath}/apis/etcd.database.coreos.com/v1beta2`;
-const detectEtcdOperatorFlags = dispatch => coFetchJSON(etcdPath)
-  .then(res => setFlags(dispatch, _.mapValues(ETCD_OPERATOR_FLAGS, name => _.find(res.resources, {name}))),
-    (res) => handleError(res, ETCD_OPERATOR_FLAGS, dispatch, detectEtcdOperatorFlags));
-
-
-const monitoringPath = `${k8sBasePath}/apis/monitoring.coreos.com/v1`;
-const detectPrometheusFlags = dispatch => coFetchJSON(monitoringPath)
-  .then(res => setFlags(dispatch, _.mapValues(PROMETHEUS_FLAGS, name => _.find(res.resources, {name}))),
-    (res) => handleError(res, PROMETHEUS_FLAGS, dispatch, detectPrometheusFlags));
-
-const detectMultiClusterFlags = dispatch => {
-  const multiCluster = determineMultiClusterFlag();
-  setFlags(dispatch, multiCluster);
+export const CRDS_ = {
+  'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
+  'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
+  'etcdclusters.etcd.database.coreos.com': FLAGS.ETCD_OPERATOR, // v1beta2
+  'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
+  'alphacatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
+  'registeredclusters.ui.coreos.com': FLAGS.MULTI_CLUSTER,
 };
 
 const labellerDeploymentPath = `${k8sBasePath}/apis/extensions/v1beta1/deployments`;
@@ -113,25 +65,15 @@ const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPa
   .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
     (res) => handleError(res, SECURITY_LABELLER_FLAGS, dispatch, detectSecurityLabellerFlags));
 
-const cloudServicesPath = `${k8sBasePath}/apis/app.coreos.com/v1alpha1`;
-const detectCloudServicesFlags = dispatch => coFetchJSON(cloudServicesPath)
-  .then(res => setFlags(dispatch, _.mapValues(CLOUD_SERVICES_FLAGS, name => _.find(res.resources, {name}))),
-    (res) => handleError(res, CLOUD_SERVICES_FLAGS, dispatch, detectCloudServicesFlags));
-
 const calicoDaemonSetPath = `${k8sBasePath}/apis/extensions/v1beta1/daemonsets`;
 const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
   .then(res => setFlags(dispatch, _.mapValues(CALICO_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
     (res) => handleError(res, CALICO_FLAGS, dispatch, detectCalicoFlags));
 
+
 export const featureActions = {
-  detectTectonicChannelOperatorFlags,
-  detectEtcdOperatorFlags,
-  detectPrometheusFlags,
-  detectMultiClusterFlags,
   detectSecurityLabellerFlags,
-  detectCloudServicesFlags,
   detectCalicoFlags,
-  handleError,
 };
 
 export const featureReducerName = 'FLAGS';
@@ -140,15 +82,28 @@ export const featureReducer = (state, action) => {
     return Immutable.Map(DEFAULTS);
   }
 
-  if (action.type === SET_FLAGS) {
-    _.each(action.flags, (v, k) => {
-      if (!FLAGS[k]) {
-        throw new Error(`unknown key for reducer ${k}`);
-      }
-    });
-    return state.merge(action.flags);
+  switch (action.type) {
+    case SET_FLAGS:
+      _.each(action.flags, (v, k) => {
+        if (!FLAGS[k]) {
+          throw new Error(`unknown key for reducer ${k}`);
+        }
+      });
+      return state.merge(action.flags);
+    case 'addCRDs':
+      _.each(action.kinds, (k: any) => {
+        const flag = CRDS_[k.metadata.name];
+        if (!flag) {
+          return;
+        }
+        // eslint-disable-next-line no-console
+        console.log(`${flag} was detected.`);
+        state = state.set(flag, true);
+      });
+      return state;
+    default:
+      return state;
   }
-  return state;
 };
 
 export const stateToProps = (flags, state) => {
