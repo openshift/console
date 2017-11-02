@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 
 import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourceStatus, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
-import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
+import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, ResourceLink } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
@@ -129,7 +129,6 @@ describe(ClusterServiceVersionResourceList.displayName, () => {
   it('renders a `List` of the custom resource instances of the given kind', () => {
     const list: ShallowWrapper<any> = wrapper.find(List);
 
-    expect(list.exists()).toBe(true);
     expect(Object.keys(wrapper.props()).reduce((_, prop) => list.prop(prop) === wrapper.prop(prop), false)).toBe(true);
     expect(list.props().Header).toEqual(ClusterServiceVersionResourceHeader);
     expect(list.props().Row).toEqual(ClusterServiceVersionResourceRow);
@@ -167,38 +166,33 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('renders link to search page with resource `spec.selector.matchLabels` in query parameter', () => {
-    const matchLabels = testResourceInstance.spec.selector ? _.map(testResourceInstance.spec.selector.matchLabels, (val, key) => `${key}=${val}`) : [];
+    const matchLabels = _.map(testResourceInstance.spec.selector.matchLabels, (val, key) => `${key}=${val}`);
     const link: ShallowWrapper<any> = wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).parent().find('dd').find(Link);
 
     expect(link.props().to).toEqual(`/ns/${testResourceInstance.metadata.namespace}/search?q=${matchLabels.map(pair => `${pair},`)}`);
     expect(link.props().title).toEqual('View resources');
   });
 
+  it('does not render link to search page if resource does not have `spec.selector.matchLabels`', () => {
+    wrapper.setProps({obj: testOwnedResourceInstance});
+
+    expect(wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).exists()).toBe(false);
+  });
+
   it('does not render filtered status fields', () => {
-    wrapper.setState({
-      'clusterServiceVersion': testClusterServiceVersion,
-      'expanded': false,
-    });
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => crd.name === 'testresource.testapp.coreos.com');
+    const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
 
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => {
-      return crd.name === 'testresource.testapp.coreos.com';
-    });
-
-    const filteredDescriptor = crd.statusDescriptors.find((sd) => {
-      return sd.path === 'importantMetrics';
-    });
-
+    wrapper.setState({expanded: false});
     const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === filteredDescriptor);
+
     expect(statusView.exists()).toBe(false);
   });
 
   it('renders the specified important prometheus metrics as graphs', () => {
-    wrapper.setState({
-      'clusterServiceVersion': testClusterServiceVersion,
-      'expanded': false,
-    });
-
+    wrapper.setState({expanded: false});
     const metric = wrapper.find('.co-clusterserviceversion-resource-details__section__metric');
+
     expect(metric.exists()).toBe(true);
   });
 
@@ -207,10 +201,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('renders the extended information when in expanded mode', () => {
-    wrapper.setState({
-      'clusterServiceVersion': null,
-      'expanded': true,
-    });
+    wrapper.setState({expanded: true});
 
     expect(wrapper.find(ResourceSummary).exists()).toBe(true);
   });
@@ -218,49 +209,31 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   it('renders the filled in status field', () => {
     const value = testResourceInstance.status['some-filled-path'];
     const statusView = wrapper.find(ClusterServiceVersionResourceStatus);
-    expect(statusView.exists()).toBe(true);
+
     expect(statusView.props().statusValue).toEqual(value);
   });
 
   it('does not render the non-filled in status field when in expanded mode', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => {
-      return crd.name === 'testresource.testapp.coreos.com';
-    });
-
-    const unfilledDescriptor = crd.statusDescriptors.find((sd) => {
-      return sd.path === 'some-unfilled-path';
-    });
-
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => crd.name === 'testresource.testapp.coreos.com');
+    const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
     const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+
     expect(statusView.exists()).toBe(false);
   });
 
   it('renders the non-filled in status field when in expanded mode', () => {
-    wrapper.setState({
-      'clusterServiceVersion': wrapper.state().clusterServiceVersion,
-      'expanded': true,
-    });
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => crd.name === 'testresource.testapp.coreos.com');
+    const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
 
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => {
-      return crd.name === 'testresource.testapp.coreos.com';
-    });
-
-    const unfilledDescriptor = crd.statusDescriptors.find((sd) => {
-      return sd.path === 'some-unfilled-path';
-    });
-
+    wrapper.setState({expanded: true});
     const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+
     expect(statusView.exists()).toBe(true);
-  });
-
-  it('does not render link to search page if `spec.selector.matchLabels` is not present on resource', () => {
-    wrapper.setProps({obj: {...testResourceInstance, spec: {}}});
-
-    expect(wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).exists()).toBe(false);
   });
 });
 
 describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
+
   it('renders a counter', () => {
     const query = {
       'name': 'foo',
@@ -268,8 +241,8 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
       'query': 'somequery',
       'type': PrometheusQueryTypes.Counter,
     };
-
     const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
+
     expect(wrapper.is(Scalar)).toBe(true);
   });
 
@@ -279,8 +252,8 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
       'query': 'somequery',
       'type': PrometheusQueryTypes.Gauge,
     };
-
     const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
+
     expect(wrapper.is(Gauge)).toBe(true);
   });
 
@@ -290,8 +263,8 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
       'query': 'somequery',
       'type': PrometheusQueryTypes.Line,
     };
-
     const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
+
     expect(wrapper.is(Line)).toBe(true);
   });
 
@@ -301,8 +274,8 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
       'query': 'somequery',
       'type': PrometheusQueryTypes.Bar,
     };
-
     const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
+
     expect(wrapper.is(Bar)).toBe(true);
   });
 
@@ -312,13 +285,14 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
       'query': 'somequery',
       'type': 'unknown',
     };
-
     const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
+
     expect(wrapper.html()).toBe('<span>Unknown graph type: unknown</span>');
   });
 });
 
 describe(ClusterServiceVersionResourceStatus.displayName, () => {
+
   it('renders a null value', () => {
     const statusDescriptor = {
       'path': '',
@@ -326,9 +300,9 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
       'description': '',
       'x-descriptors': [ALMStatusDescriptors.conditions]
     };
-
     const statusValue = null;
     const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+
     expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd>None</dd></dl>');
   });
 
@@ -339,13 +313,12 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
       'description': '',
       'x-descriptors': [ALMStatusDescriptors.conditions]
     };
-
     const statusValue = [{
       'lastUpdateTime': '2017-10-16 12:00:00',
       'phase': 'somephase',
     }];
-
     const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+
     expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd><span>somephase</span></dd></dl>');
   });
 
@@ -356,9 +329,9 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
       'description': '',
       'x-descriptors': [ALMStatusDescriptors.w3Link]
     };
-
     const statusValue = 'https://example.com';
     const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
+
     expect(wrapper.html()).toBe('<dl><dt>Some Link</dt><dd><a href="https://example.com">example.com</a></dd></dl>');
   });
 
@@ -373,7 +346,7 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
     const statusValue = 'someservice';
     const wrapper = shallow(<ClusterServiceVersionResourceStatus namespace="foo" statusDescriptor={statusDescriptor} statusValue={statusValue} />);
     const link = wrapper.find(ResourceLink);
-    expect(link.exists()).toBe(true);
+
     expect(link.props().kind).toBe('Service');
     expect(link.props().namespace).toBe('foo');
   });
@@ -397,7 +370,6 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.exists()).toBe(true);
     expect(detailsPage.props().pages[0].name).toEqual('Overview');
     expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
@@ -437,30 +409,33 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionResourcesPage.WrappedComponent loaded={true} data={[testClusterServiceVersionResource]} obj={testClusterServiceVersion} />);
+    wrapper = shallow(<ClusterServiceVersionResourcesPage obj={testClusterServiceVersion} />);
   });
 
-  it('renders a `StatusBox` if data is not loaded or empty', () => {
-    wrapper.setProps({loaded: false});
+  it('renders a `StatusBox` if given app has no owned or required custom resources', () => {
+    let obj = _.cloneDeep(testClusterServiceVersion);
+    obj.spec.customresourcedefinitions = {};
+    wrapper.setProps({obj});
 
     expect(wrapper.find(MultiListPage).exists()).toBe(false);
-    expect(wrapper.find(StatusBox).props().loaded).toBe(false);
+    expect(wrapper.find(StatusBox).props().loaded).toBe(true);
     expect(wrapper.find(StatusBox).props().EmptyMsg).toBeDefined();
   });
 
   it('renders a `MultiListPage` with correct props', () => {
+    const {owned = [], required = []} = testClusterServiceVersion.spec.customresourcedefinitions;
     const listPage = wrapper.find(MultiListPage);
 
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().canCreate).toBe(true);
-    expect(listPage.props().resources).toEqual([{kind: testClusterServiceVersionResource.spec.names.kind, namespaced: true}]);
+    expect(listPage.props().resources).toEqual(owned.concat(required).map(({kind}) => ({kind, namespaced: true})));
     expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
   });
 
   it('passes `createProps` for dropdown create button if app has multiple owned CRDs', () => {
     let obj = _.cloneDeep(testClusterServiceVersion);
-    obj.spec.customresourcedefinitions.owned.push({name: 'foobars.testapp.coreos.com', displayName: 'Foo Bars'});
+    obj.spec.customresourcedefinitions.owned.push({name: 'foobars.testapp.coreos.com', displayName: 'Foo Bars', version: 'v1', kind: 'FooBar'});
     wrapper.setProps({obj});
     const listPage = wrapper.find(MultiListPage);
 
@@ -476,5 +451,23 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().createButtonText).toEqual(`Create ${testClusterServiceVersion.spec.customresourcedefinitions.owned[0].displayName}`);
     expect(listPage.props().createProps.items).not.toBeDefined();
     expect(listPage.props().createProps.createLink).not.toBeDefined();
+  });
+
+  it('passes `flatten` function which removes `required` resources with owner references to items not in the same list', () => {
+    let otherResourceInstance = _.cloneDeep(testOwnedResourceInstance);
+    otherResourceInstance.metadata.ownerReferences[0].uid = 'abfcd938-b991-11e7-845d-0eb774f2814a';
+    const resources = {
+      TestOwnedResource: {
+        data: [testOwnedResourceInstance, otherResourceInstance],
+      },
+      TestResource: {
+        data: [testResourceInstance],
+      },
+    };
+
+    const flatten = wrapper.find(MultiListPage).props().flatten;
+    const data = flatten(resources);
+
+    expect(data.length).toEqual(2);
   });
 });

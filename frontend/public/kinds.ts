@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import * as Immutable from 'immutable';
 
 import { k8sKinds } from './module/k8s/enum';
-import { k8sBasePath } from './module/k8s';
 import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
 
@@ -96,7 +95,7 @@ export const connectToPlural = Component => connect((state, props: any) => {
 
 export const kindFromPlural = plural => _.find(k8sKinds, {plural});
 
-const crdPath = `${k8sBasePath}/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions`;
+const crdPath = `${(window as any).SERVER_FLAGS.basePath}api/tectonic/crds`;
 export const getCRDs = dispatch => {
   dispatch({type: 'getCRDsinflight'});
 

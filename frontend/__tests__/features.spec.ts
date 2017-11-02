@@ -29,7 +29,7 @@ describe('featureActions', () => {
       spyOn(store, 'getState').and.returnValue({UI: new Map()});
     });
 
-    it('detects cloud services and updates Redux store', (done) => {
+    xit('detects cloud services and updates Redux store', (done) => {
       coFetchSpy = spyOn(coFetch, 'coFetchJSON').and.returnValue(Promise.resolve(apiResourceList));
 
       getCRDs(dispatchMock).then(() => {

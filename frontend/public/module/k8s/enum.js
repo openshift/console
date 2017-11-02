@@ -285,7 +285,7 @@ export const k8sKinds = {
     plural: 'alertmanagers',
     abbr: 'AM',
   },
-  'PodVuln': {
+  PodVuln: {
     label: 'Pod Vuln',
     labelPlural: 'Pod Vulns',
     path: 'podvulns',
@@ -325,6 +325,15 @@ export const k8sKinds = {
     abbr: 'CSV',
     namespaced: true,
     plural: 'clusterserviceversion-v1s',
+  },
+  'InstallPlan-v1': {
+    label: 'InstallPlan-v1',
+    basePath: '/apis/app.coreos.com/',
+    apiVersion: 'v1alpha1',
+    path: 'installplan-v1s',
+    abbr: 'IP',
+    namespaced: true,
+    plural: 'installplan-v1s',
   },
 };
 
