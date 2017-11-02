@@ -1,0 +1,12 @@
+.cluster-picker {
+  background-color: $color-tectonic-darkest-blue;
+  border-radius: 3px;
+  color: #fff;
+  margin: 12px 10px 0 10px;
+  padding-left: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.cluster-picker:hover {
+  background-color: $color-tectonic-dark-blue-hover;
+}

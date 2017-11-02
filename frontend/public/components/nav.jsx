@@ -8,7 +8,7 @@ import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps
 import { formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
-import { ClusterPicker } from './federation/cluster-picker';
+import { ClusterPicker } from './cluster-picker';
 
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 import * as operatorLogoImg from '../imgs/operator-logo.svg';
