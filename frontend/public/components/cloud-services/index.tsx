@@ -22,6 +22,9 @@ export enum ALMStatusDescriptors {
   text = 'urn:alm:descriptor:text',
   prometheus = 'urn:alm:descriptor:io.prometheus:api.v1',
 
+  k8sPhase = 'urn:alm:descriptor:io.kubernetes.phase',
+  k8sPhaseReason = 'urn:alm:descriptor:io.kubernetes.phase:reason',
+
   // Prefix for all kubernetes resource status descriptors.
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
 }

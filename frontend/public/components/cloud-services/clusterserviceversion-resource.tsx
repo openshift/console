@@ -25,10 +25,23 @@ export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (pr
   return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
 };
 
+export const isFilledStatusValue = (value: string) => {
+  return value !== undefined && value !== null && value !== '';
+};
+
+export const Phase: React.StatelessComponent<PhaseProps> = ({status}) => {
+  if (status) {
+    if (status === 'Failed') {
+      return <span><i className="fa fa-ban phase-failed-icon" />&nbsp;{status}</span>;
+    }
+    return <span>{status}</span>;
+  }
+};
+
 export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
   const {statusDescriptor, statusValue, namespace} = props;
   const descriptors = statusDescriptor['x-descriptors'] || [];
-  if (statusValue === null || statusValue === undefined) {
+  if (!isFilledStatusValue(statusValue)) {
     return <dl>
       <dt>{statusDescriptor.displayName}</dt>
       <dd>None</dd>
@@ -44,6 +57,10 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
       case ALMStatusDescriptors.tectonicLink:
       case ALMStatusDescriptors.w3Link:
         return <a href={statusValue}>{statusValue.replace(/https?:\/\//, '')}</a>;
+      case ALMStatusDescriptors.k8sPhase:
+        return <Phase status={statusValue} />;
+      case ALMStatusDescriptors.k8sPhaseReason:
+        return <pre>{statusValue}</pre>;
       default:
         if (statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)) {
           let kind = statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length);
@@ -275,12 +292,12 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
               </div> }
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
-                const showStatus = statusValue != null;
+                const showStatus = isFilledStatusValue(statusValue);
                 return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getStatusValue(statusDescriptor, status);
-                const showStatus = statusValue === undefined && this.state.expanded;
+                const showStatus = !isFilledStatusValue(statusValue) && this.state.expanded;
                 return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
             </div>
@@ -388,6 +405,10 @@ export type ClusterServiceVersionResourcesDetailsState = {
 export type ClusterServiceVersionResourceLinkProps = {
   obj: ClusterServiceVersionResourceKind;
   kindObj: K8sKind;
+};
+
+export type PhaseProps = {
+  status: string;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
