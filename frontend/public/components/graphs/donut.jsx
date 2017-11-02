@@ -27,7 +27,7 @@ export class Donut extends SafetyFirst {
       overflow: 'hidden',
       margin: {
         l: 10,
-        b: 10,
+        b: 30,
         r: 10,
         t: 20,
         pad: 20,
@@ -35,7 +35,7 @@ export class Donut extends SafetyFirst {
       annotations: [
         {
           font: {
-            size: 12
+            size: 11
           },
           showarrow: false,
           text: '',
