@@ -97,7 +97,7 @@ const AlertManagersNameList = (props) => {
       <SettingsLabel>AlertManager:</SettingsLabel>
       <SettingsContent>
         <div className="alert-manager-list">
-          {props.loaded ? _.map(props.data, (alertManager, i) => <div className="alert-manager-row" key={i}><ResourceLink kind="Alertmanager" name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid}/></div>) : <LoadingInline />}
+          {props.loaded ? _.map(props.alertmanagers.data, (alertManager, i) => <div className="alert-manager-row" key={i}><ResourceLink kind="Alertmanager" name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid}/></div>) : <LoadingInline />}
         </div>
       </SettingsContent>
     </SettingsRow>
@@ -108,6 +108,7 @@ const AlertManagersNameList = (props) => {
 export const AlertManagersListContainer = props => <Firehose resources={[{
   kind: 'Alertmanager',
   isList: true,
+  prop: 'alertmanagers',
 }]}>
   <AlertManagersNameList {...props} />
 </Firehose>;
