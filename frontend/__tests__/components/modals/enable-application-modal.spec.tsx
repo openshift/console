@@ -5,9 +5,9 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
 import * as _ from 'lodash';
 
-import { InstallApplicationModal, InstallApplicationModalProps, SelectNamespaceHeader, SelectNamespaceHeaderProps, SelectNamespaceRow, SelectNamespaceRowProps } from '../../../public/components/modals/install-application-modal';
+import { EnableApplicationModal, EnableApplicationModalProps, SelectNamespaceHeader, SelectNamespaceHeaderProps, SelectNamespaceRow, SelectNamespaceRowProps } from '../../../public/components/modals/enable-application-modal';
 import { ListHeader, ColHead, List } from '../../../public/components/factory';
-import { ResourceLink } from '../../../public/components/utils';
+import { ResourceIcon } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { k8sKinds } from '../../../public/module/k8s';
 import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
@@ -27,7 +27,7 @@ describe('SelectNamespaceHeader', () => {
     expect(colHeader.childAt(0).text()).toEqual('Name');
   });
 
-  it('renders a column header for namespace install status', () => {
+  it('renders a column header for namespace enabled status', () => {
     const colHeader = wrapper.find(ListHeader).find(ColHead).at(1);
 
     expect(colHeader.childAt(0).text()).toEqual('Status');
@@ -58,44 +58,23 @@ describe('SelectNamespaceRow', () => {
     expect(checkbox.props().type).toEqual('checkbox');
     expect(checkbox.props().value).toEqual(namespace.metadata.name);
     expect(checkbox.props().checked).toEqual(false);
-    expect(checkbox.props().disabled).toEqual(false);
-    expect(col.find('.fa-check').exists()).toBe(false);
-  });
-
-  it('renders column with checkbox that is disabled when OCS is not enabled', () => {
-    namespace.metadata.annotations = {};
-    wrapper.setProps({obj: namespace});
-
-    const col = wrapper.childAt(0);
-    const checkbox = col.find('input');
-
-    expect(checkbox.props().type).toEqual('checkbox');
-    expect(checkbox.props().value).toEqual(namespace.metadata.name);
-    expect(checkbox.props().checked).toEqual(false);
-    expect(checkbox.props().disabled).toEqual(true);
     expect(col.find('.fa-check').exists()).toBe(false);
   });
 
   it('renders column for namespace name', () => {
     const col = wrapper.childAt(0);
-    const link = col.find(ResourceLink);
+    const icon = col.find(ResourceIcon);
+    expect(icon.exists()).toEqual(true);
+    expect(icon.props().kind).toEqual('Namespace');
 
-    expect(link.props().kind).toEqual('Namespace');
-    expect(link.props().name).toEqual(namespace.metadata.name);
-    expect(link.props().namespace).toEqual(namespace.metadata.namespace);
-    expect(link.props().title).toEqual(namespace.metadata.uid);
+    const nameSpan = col.find('span');
+    expect(nameSpan.exists()).toEqual(true);
+    expect(nameSpan.text()).toEqual('default');
   });
 
-  it('renders column for namespace install status when OCS is enabled', () => {
+  it('renders column for namespace enabled status', () => {
     const col = wrapper.childAt(1);
-    expect(col.text()).toEqual('Not installed');
-  });
-
-  it('renders column for namespace install status when OCS is not enabled', () => {
-    namespace.metadata.annotations = {};
-    wrapper.setProps({obj: namespace});
-    const col = wrapper.childAt(1);
-    expect(col.text()).toEqual('OCS not enabled');
+    expect(col.text()).toEqual('Not enabled');
   });
 
   it('calls `props.onSelect` when checkbox is clicked and not checked', () => {
@@ -114,9 +93,9 @@ describe('SelectNamespaceRow', () => {
   });
 });
 
-describe('InstallApplicationModal', () => {
-  let wrapper: ShallowWrapper<InstallApplicationModalProps, any>;
-  let namespaces: InstallApplicationModalProps['namespaces'];
+describe('EnableApplicationModal', () => {
+  let wrapper: ShallowWrapper<EnableApplicationModalProps, any>;
+  let namespaces: EnableApplicationModalProps['namespaces'];
   let clusterServiceVersions: ClusterServiceVersionKind[];
   let watchK8sList: Spy;
   let k8sCreate: Spy;
@@ -132,20 +111,20 @@ describe('InstallApplicationModal', () => {
     namespaces = {
       data: {
         'default': {metadata: {name: 'default', labels: {}}},
-        'other-ns': {metadata: {name: 'other-ns', labels: {}}},
+        'other-ns': {metadata: {name: 'other-ns', labels: {}, annotations: {'alm-manager': 'foo'}}},
       },
       loaded: true,
       loadError: '',
     };
 
-    wrapper = shallow(<InstallApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} watchK8sList={watchK8sList} close={close} cancel={cancel} />);
+    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} watchK8sList={watchK8sList} close={close} cancel={cancel} />);
   });
 
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalBody).find('.modal-body__field').text()).toEqual('Select the namespaces where you want to install and run the application.');
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save Changes');
+    expect(wrapper.find(ModalBody).find('.modal-body__field').text()).toEqual('Select the deployable namespaces where you want to make the application available.');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Enable');
   });
 
   it('renders application logo in modal title', () => {
