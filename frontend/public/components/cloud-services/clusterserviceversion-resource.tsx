@@ -25,17 +25,14 @@ export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (pr
   return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
 };
 
-export const isFilledStatusValue = (value: string) => {
-  return value !== undefined && value !== null && value !== '';
-};
+export const isFilledStatusValue = (value: string) => value !== undefined && value !== null && value !== '';
 
 export const Phase: React.StatelessComponent<PhaseProps> = ({status}) => {
-  if (status) {
-    if (status === 'Failed') {
-      return <span><i className="fa fa-ban phase-failed-icon" />&nbsp;{status}</span>;
-    }
-    return <span>{status}</span>;
+  if (status === 'Failed') {
+    return <span><i className="fa fa-ban phase-failed-icon" />&nbsp;{status}</span>;
   }
+
+  return <span>{status}</span>;
 };
 
 export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
