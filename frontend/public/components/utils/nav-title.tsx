@@ -25,7 +25,7 @@ export const NavTitle: React.StatelessComponent<NavTitleProps> = ({kind, detail,
   const hasLogo = !_.isEmpty(data) && _.has(data, 'spec.icon');
   const logo = hasLogo
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
-    : <div>{ kind && <ResourceIcon kind={kind} className="co-m-page-title__icon" /> } <span>{title}</span></div>;
+    : <div>{ kind && <ResourceIcon kind={kind} className="co-m-page-title__icon" /> } <span id="resource-title">{title}</span></div>;
 
   return <div className={classNames('row', detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')}>
     <div className="col-xs-12">
