@@ -87,7 +87,7 @@ let config = {
     new HtmlWebpackPlugin({
       filename: './index.html',
       template: './public/index.html',
-      production: process.env.NODE_ENV === 'production',
+      production: process.env && process.env.NODE_ENV === 'production',
     }),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
   ],
@@ -96,7 +96,7 @@ let config = {
 };
 
 /* Production settings */
-if (process.env.NODE_ENV === 'production') {
+if (process.env && process.env.NODE_ENV === 'production') {
   config.output.filename = `[name]-bundle.${gitHash()}.min.js`;
   config.output.chunkFilename = `[name]-[chunkhash].${gitHash()}.min.js`;
   extractSass.filename = `app-bundle.${gitHash()}.min.css`;
