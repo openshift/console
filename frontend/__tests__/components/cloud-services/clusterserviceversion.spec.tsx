@@ -53,13 +53,19 @@ describe(ClusterServiceVersionListItem.displayName, () => {
   });
 
   it('renders ClusterServiceVersion logo', () => {
-    const heading = wrapper.find('.co-clusterserviceversion-list-item__heading');
-    const logo = heading.childAt(0).find(ClusterServiceVersionLogo);
+    const logo = wrapper.find(ClusterServiceVersionLogo);
 
     expect(logo.exists());
     expect(logo.props().icon).toEqual(testClusterServiceVersion.spec.icon[0]);
     expect(logo.props().displayName).toEqual(testClusterServiceVersion.spec.displayName);
     expect(logo.props().provider).toEqual(testClusterServiceVersion.spec.provider);
+  });
+
+  it('renders clickable header to navigate to namespace if only one', () => {
+    const header = wrapper.find('.co-clusterserviceversion-list-item').childAt(0);
+
+    expect(header.props().style).toEqual({cursor: 'pointer'});
+    expect(header.props().onClick).not.toBe(null);
   });
 
   it('renders button to view details for given application', () => {
@@ -83,12 +89,12 @@ describe(ClusterServiceVersionListItem.displayName, () => {
     expect(detailsButton.exists()).toBe(false);
   });
 
-  it('renders link to application resources', () => {
+  it('renders link to application instances', () => {
     const link = wrapper.find('.co-clusterserviceversion-list-item__actions').find(Link).at(1);
 
-    expect(link.props().title).toEqual('View resources');
-    expect(link.childAt(0).text()).toEqual('View resources');
-    expect(link.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/clusterserviceversion-v1s/${testClusterServiceVersion.metadata.name}/resources`);
+    expect(link.props().title).toEqual('View instances');
+    expect(link.childAt(0).text()).toEqual('View instances');
+    expect(link.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/clusterserviceversion-v1s/${testClusterServiceVersion.metadata.name}/instances`);
   });
 });
 
@@ -183,7 +189,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().dropdownFilters).toBeDefined();
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().filterLabel).toEqual('Applications by name');
-    expect(listPage.props().title).toEqual('Installed Applications');
+    expect(listPage.props().title).toEqual('Available Applications');
     expect(listPage.props().showTitle).toBe(true);
   });
 
@@ -302,9 +308,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
     expect(detailsPage.props().pages[0].name).toEqual('Overview');
     expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[0].component).toEqual(ClusterServiceVersionDetails);
-    expect(detailsPage.props().pages[1].name).toEqual('YAML');
-    expect(detailsPage.props().pages[1].href).toEqual('yaml');
-    expect(detailsPage.props().pages[2].name).toEqual('Resources');
-    expect(detailsPage.props().pages[2].href).toEqual('resources');
+    expect(detailsPage.props().pages[1].name).toEqual('Instances');
+    expect(detailsPage.props().pages[1].href).toEqual('instances');
   });
 });

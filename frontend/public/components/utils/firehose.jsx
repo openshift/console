@@ -7,11 +7,6 @@ import actions from '../../module/k8s/k8s-actions';
 
 const { stopK8sWatch, watchK8sObject, watchK8sList } = actions;
 
-/** @type {React.StatelessComponent<{Component: React.ComponentType<any>, kind: string, namespace?: string, isList: boolean, selector?: any}>} */
-export const FirehoseHoC = (props) => <Firehose resources={[{kind: props.kind, name: props.name, namespace: props.namespace, isList: props.isList, selector: props.selector}]}>
-  <props.Component />
-</Firehose>;
-
 export const makeReduxID = (k8sKind, query) => {
   let qs = '';
   if (!_.isEmpty(query)) {

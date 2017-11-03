@@ -8,8 +8,11 @@ import { safeLoad } from 'js-yaml';
 import { TEMPLATES } from '../yaml-templates';
 import { kindFromPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
+import { Firehose } from './utils';
 
 export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
+  private readonly skipKinds = ['EtcdCluster', 'Role', 'RoleBinding', 'Prometheus', 'ServiceMonitor', 'AlertManager', 'VaultService', 'NetworkPolicy'];
+
   render () {
     const {params} = this.props.match;
 
@@ -34,7 +37,7 @@ export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
 
     // The code below strips the basePath (etcd.coreos.com, etc.) from the apiVersion that is being set in the template
     // and causes creation to fail for some resource kinds, hence adding a check here to skip for those kinds.
-    if (['EtcdCluster', 'Role', 'RoleBinding', 'Prometheus', 'ServiceMonitor', 'AlertManager', 'VaultService', 'NetworkPolicy'].indexOf(obj.kind) === -1) {
+    if (this.skipKinds.indexOf(obj.kind) === -1) {
       obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
     }
     obj.metadata = obj.metadata || {};
@@ -42,12 +45,26 @@ export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
       obj.metadata.namespace = namespace;
     }
 
-    const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/resources` : null;
+    const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/instances` : null;
 
-    return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} />;
+    return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} showHeader={true} />;
   }
 }
+
+export const EditYAMLPage: React.StatelessComponent<EditYAMLPageProps> = (props) => {
+  const Wrapper = (props) => <AsyncComponent {...props} obj={props.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} showHeader={true} />;
+  return <Firehose resources={[{kind: props.kind, name: props.match.params.name, namespace: props.match.params.ns, isList: false, prop: 'obj'}]}>
+    <Wrapper />
+  </Firehose>;
+};
 
 export type CreateYAMLProps = {
   match: match<{ns: string, plural: string, appName?: string}>;
 };
+
+export type EditYAMLPageProps = {
+  match: match<{ns: string, name: string}>;
+  kind: string;
+};
+
+EditYAMLPage.displayName = 'EditYAMLPage';
