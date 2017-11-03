@@ -18,12 +18,7 @@ metadata:
 spec:
   size: 3
   version: 3.1.4
-  backup:
-    backupIntervalInSecond: 30
-    maxBackups: 5
-    storageType: PersistentVolume
-    pv:
-      volumeSizeInMB: 512`);
+`);
 
 const {Edit, Delete} = Cog.factory;
 
