@@ -8,10 +8,9 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
-import { ListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
-import { Firehose, NavTitle, MsgBox } from '../utils';
-import { ClusterServiceVersionLogo, CatalogEntryKind, K8sResourceKind, ClusterServiceVersionKind, ClusterServiceVersionPhase } from './index';
-
+import { MultiListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
+import { NavTitle, MsgBox } from '../utils';
+import { ClusterServiceVersionLogo, CatalogEntryKind, K8sResourceKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled } from './index';
 import { createEnableApplicationModal } from '../modals/enable-application-modal';
 import { k8sCreate } from '../../module/k8s';
 
@@ -130,6 +129,7 @@ export const CatalogAppRow = connect(stateToProps)(
           <div className="col-xs-2 col">
             <button
               className="btn btn-primary pull-right"
+              disabled={_.values(namespaces.data).filter((ns) => isEnabled(ns)).length <= clusterServiceVersions.length}
               onClick={() => createEnableApplicationModal({catalogEntry: obj, k8sCreate, namespaces, clusterServiceVersions})}>
               Enable
             </button>
@@ -154,14 +154,15 @@ export const CatalogAppList: React.StatelessComponent<CatalogAppListProps> = (pr
   return <List {...props} Row={CatalogAppRow} Header={CatalogAppHeader} isList={true} label="Applications" EmptyMsg={EmptyMsg} />;
 };
 
-const serviceResources = [{kind: 'ClusterServiceVersion-v1', isList: true}];
-const namespaceResource = [{kind: 'Namespace', isList: true}];
-export const CatalogAppsPage: React.StatelessComponent = () => <div>
-  {/* Firehoses used here to add resources to Redux store */}
-  <Firehose resources={serviceResources} />
-  <Firehose resources={namespaceResource} />
-  <ListPage kind="AlphaCatalogEntry-v1" namespace="tectonic-system" ListComponent={CatalogAppList} filterLabel="Applications by name" title="Applications" showTitle={true} />
-</div>;
+export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
+  ListComponent={CatalogAppList}
+  filterLabel="Applications by name"
+  title="Applications"
+  showTitle={true}
+  namespace="tectonic-system"
+  flatten={resources => _.flatMap(resources, (resource: any) => _.map(resource.data, item => item)).filter(({kind}) => kind === 'AlphaCatalogEntry-v1')}
+  resources={[{kind: 'ClusterServiceVersion-v1', isList: true}, {kind: 'Namespace', isList: true}, {kind: 'AlphaCatalogEntry-v1', isList: true, namespaced: true}]}
+/>;
 
 export const CatalogDetails: React.StatelessComponent = () => <div className="co-catalog-details co-m-pane">
   <div className="co-m-pane__body">

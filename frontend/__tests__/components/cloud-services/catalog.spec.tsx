@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
 import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
-import { ListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
+import { MultiListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
 import { NavTitle } from '../../../public/components/utils';
 import { testCatalogApp, testClusterServiceVersion, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 
@@ -20,8 +20,8 @@ describe(CatalogAppRow.displayName, () => {
   beforeEach(() => {
     namespaces = {
       data: {
-        'default': {...testNamespace},
-        'other-ns': {...testNamespace, metadata: {name: 'other-ns'}},
+        'default': _.cloneDeep(testNamespace),
+        'other-ns': {..._.cloneDeep(testNamespace), metadata: {name: 'other-ns'}},
       },
       loaded: true,
       loadError: '',
@@ -176,9 +176,15 @@ describe(CatalogAppRow.displayName, () => {
 
   it('renders column for actions', () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(2);
-    const button: ShallowWrapper<any> = col.find('button.btn-primary');
 
-    expect(button.exists()).toBe(true);
+    expect(col.find('button.btn-primary').props().disabled).toBe(false);
+  });
+
+  it('renders disabled `Enable` button if no available namespaces', () => {
+    wrapper.setProps({clusterServiceVersions: [testClusterServiceVersion]});
+    const button: ShallowWrapper<any> = wrapper.find('.co-catalog-app-row').childAt(2).find('button.btn-primary');
+
+    expect(button.props().disabled).toBe(true);
   });
 });
 
@@ -227,22 +233,32 @@ describe(CatalogAppList.displayName, () => {
 });
 
 describe(CatalogAppsPage.displayName, () => {
-  let wrapper: ShallowWrapper;
+  let wrapper: ShallowWrapper<{}>;
 
   beforeEach(() => {
     wrapper = shallow(<CatalogAppsPage />);
   });
 
-  it('renders a `ListPage` with the correct props', () => {
-    const listPage = wrapper.find(ListPage);
+  it('renders a `MultiListPage` with the correct props', () => {
+    const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.exists()).toBe(true);
-    expect(listPage.props().kind).toEqual('AlphaCatalogEntry-v1');
+    expect(listPage.props().resources).toEqual([{kind: 'ClusterServiceVersion-v1', isList: true}, {kind: 'Namespace', isList: true}, {kind: 'AlphaCatalogEntry-v1', isList: true, namespaced: true}]);
     expect(listPage.props().namespace).toEqual('tectonic-system');
     expect(listPage.props().ListComponent).toEqual(CatalogAppList);
     expect(listPage.props().filterLabel).toEqual('Applications by name');
     expect(listPage.props().title).toEqual('Applications');
     expect(listPage.props().showTitle).toBe(true);
+  });
+
+  it('passes `flatten` function which returns only list of `AlphaCatalogEntry-v1s`', () => {
+    const flatten = wrapper.find(MultiListPage).props().flatten;
+    const data = flatten({
+      'AlphaCatalogEntry-v1': {data: [testCatalogApp]},
+      'Namespace': {data: [testNamespace]},
+    });
+
+    expect(data.length).toEqual(1);
+    expect(data.some(({kind}) => kind !== 'AlphaCatalogEntry-v1')).toBe(false);
   });
 });
 
