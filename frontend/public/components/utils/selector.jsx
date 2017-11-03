@@ -11,7 +11,7 @@ const Requirement = ({kind, requirements, namespace=''}) => {
 
   let to = `/search?kind=${kind}&q=${requirementAsUrlEncodedString}`;
   if (namespace) {
-    to = `/ns/${namespace}/${to}`;
+    to = `/ns/${namespace}${to}`;
   }
 
   return (
