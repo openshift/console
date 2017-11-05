@@ -313,8 +313,8 @@ describe(CatalogDetails.displayName, () => {
 
   it('renders info section', () => {
     const section = wrapper.find('.co-m-pane__body');
-    const name = wrapper.findWhere(node => node.equals(<dt>Name</dt>)).parent().find('dd');
-    const provider = wrapper.findWhere(node => node.equals(<dt>Provider</dt>)).parent().find('dd');
+    const name = wrapper.findWhere(node => node.equals(<dt>Name</dt>)).parents().at(0).find('dd');
+    const provider = wrapper.findWhere(node => node.equals(<dt>Provider</dt>)).parents().at(0).find('dd');
 
     expect(section.exists()).toBe(true);
     expect(name.text()).toEqual('Open Cloud Services');

@@ -18,7 +18,7 @@ const Label: React.StatelessComponent<LabelProps> = ({kind, name, value, expand}
   );
 };
 
-export class LabelList extends React.PureComponent<LabelListProps> {
+export class LabelList extends React.Component<LabelListProps> {
   shouldComponentUpdate(nextProps) {
     return !_.isEqual(nextProps, this.props);
   }

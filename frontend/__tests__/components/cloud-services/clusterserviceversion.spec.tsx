@@ -11,7 +11,6 @@ import { DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
 import { StatusBox, Timestamp, Overflow, Dropdown, MsgBox } from '../../../public/components/utils';
 import { K8sResourceKind } from '../../../public/module/k8s';
-import Spy = jasmine.Spy;
 
 import * as appsLogoImg from '../../../public/imgs/apps-logo.svg';
 
@@ -187,10 +186,8 @@ describe(ClusterServiceVersionList.displayName, () => {
 
 describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
-  let addCRDs: Spy;
 
   beforeEach(() => {
-    addCRDs = jasmine.createSpy('addCRDs').and.returnValue(null);
     wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind="ClusterServiceVersion-v1" namespace="foo" namespaceEnabled={true} resourceDescriptions={[]} match={null} />);
   });
 
@@ -272,7 +269,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders list of maintainers from ClusterServiceVersion', () => {
-    const maintainers = wrapper.findWhere(node => node.equals(<dt>Maintainers</dt>)).parent().find('dd');
+    const maintainers = wrapper.findWhere(node => node.equals(<dt>Maintainers</dt>)).parents().at(0).find('dd');
 
     expect(maintainers.length).toEqual(testClusterServiceVersion.spec.maintainers.length);
 
@@ -284,7 +281,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders important links from ClusterServiceVersion', () => {
-    const links = wrapper.findWhere(node => node.equals(<dt>Links</dt>)).parent().find('dd');
+    const links = wrapper.findWhere(node => node.equals(<dt>Links</dt>)).parents().at(0).find('dd');
 
     expect(links.length).toEqual(testClusterServiceVersion.spec.links.length);
   });
@@ -297,9 +294,9 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     emptyClusterServiceVersion.spec.maintainers = [];
     wrapper.setProps({obj: emptyClusterServiceVersion});
 
-    const provider = wrapper.findWhere(node => node.equals(<dt>Provider</dt>)).parent().find('dd').at(0);
-    const links = wrapper.findWhere(node => node.equals(<dt>Links</dt>)).parent().find('dd');
-    const maintainers = wrapper.findWhere(node => node.equals(<dt>Maintainers</dt>)).parent().find('dd');
+    const provider = wrapper.findWhere(node => node.equals(<dt>Provider</dt>)).parents().at(0).find('dd').at(0);
+    const links = wrapper.findWhere(node => node.equals(<dt>Links</dt>)).parents().at(0).find('dd');
+    const maintainers = wrapper.findWhere(node => node.equals(<dt>Maintainers</dt>)).parents().at(0).find('dd');
 
     expect(provider.text()).toEqual('Not available');
     expect(links.text()).toEqual('Not available');
