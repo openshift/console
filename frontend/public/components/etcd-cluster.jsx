@@ -274,7 +274,7 @@ export const EtcdClustersDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[
     details(EtcdClusterDetails),
-    editYaml((props) => <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={props.obj} kind="EtcdCluster" />),
+    editYaml((props) => <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={props.obj} kind="EtcdCluster" />),
     pods(EtcdPodsComponent)
   ]}
 />;

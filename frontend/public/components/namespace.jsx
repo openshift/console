@@ -14,7 +14,7 @@ import { AsyncComponent } from './utils/async';
 // import { Bar } from './graphs';
 
 const SparklineWidget = (props) => (
-  <AsyncComponent loader={() => System.import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
+  <AsyncComponent loader={() => import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
 );
 
 const deleteModal = (kind, ns) => {

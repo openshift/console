@@ -9,8 +9,6 @@ import { TEMPLATES } from '../yaml-templates';
 import { kindFromPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 
-declare const System: any;
-
 export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
   render () {
     const {params} = this.props.match;
@@ -46,7 +44,7 @@ export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
 
     const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/resources` : null;
 
-    return <AsyncComponent loader={() => System.import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} />;
+    return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} />;
   }
 }
 
