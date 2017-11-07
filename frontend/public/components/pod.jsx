@@ -12,7 +12,7 @@ import { registerTemplate } from '../yaml-templates';
 import { AsyncComponent } from './utils/async';
 
 const SparklineWidget = (props) => (
-  <AsyncComponent loader={() => System.import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
+  <AsyncComponent loader={() => import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
 );
 
 const menuActions = Cog.factory.common;

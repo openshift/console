@@ -8,7 +8,7 @@ import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVul
 import { AsyncComponent } from '../utils/async';
 
 const DonutChart = (props) => (
-  <AsyncComponent loader={() => System.import('./donut-chart/donut-chart').then(c => c.DonutChart)} {...props} />
+  <AsyncComponent loader={() => import('./donut-chart/donut-chart').then(c => c.DonutChart)} {...props} />
 );
 
 const severityMap = {

@@ -8,7 +8,7 @@ import { Cog, navFactory, kindObj, LabelList, ResourceCog, Heading, ResourceLink
 import { AsyncComponent } from './utils/async';
 
 const SparklineWidget = (props) => (
-  <AsyncComponent loader={() => System.import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
+  <AsyncComponent loader={() => import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
 );
 
 const makeNodeScheduable = (resourceKind, resource) => {
