@@ -168,7 +168,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   };
 
   return <div className="co-namespace-selector">
-    Namespace: <Dropdown className="co-namespace-selector__dropdown" noButton={true} items={items} title={title} onChange={onChange} selectedKey={activeNamespace} />
+    Namespace: <Dropdown className="co-namespace-selector__dropdown" noButton={true} items={items} title={title} onChange={onChange} selectedKey={activeNamespace || allNamespacesKey} />
   </div>;
 });
 
