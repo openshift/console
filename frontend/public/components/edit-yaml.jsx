@@ -237,13 +237,13 @@ export class EditYAML extends SafetyFirst {
     */
 
     const {error, success, stale} = this.state;
-    const {create, obj, showHeader=true} = this.props;
+    const {create, obj, showHeader = false} = this.props;
     const kind = obj.kind;
     const kindObj = _.get(k8sKinds, kind, {});
 
     return <div>
-      {create && showHeader && <div className="yaml-editor-header">
-        Create {_.get(kindObj, 'label', kind)}
+      {showHeader && <div className="yaml-editor-header">
+        {`${create ? 'Create' : 'Edit'} ${_.get(kindObj, 'label', kind)}`}
       </div>}
       <div className="co-p-cluster">
         <div className="co-p-cluster__body">

@@ -14,7 +14,7 @@ import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';
 import { ContainersDetailsPage } from './container';
-import { CreateYAML } from './create-yaml';
+import { CreateYAML, EditYAMLPage } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
@@ -112,6 +112,7 @@ class App extends React.PureComponent {
 
             <Route path="/start-guide" exact component={StartGuidePage} />
 
+            <Route path="/ns/:ns/clusterserviceversion-v1s/:name/edit" exact component={props => <EditYAMLPage {...props} kind="ClusterServiceVersion-v1" />}/>
             <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/new" exact component={CreateYAML} />
             <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />

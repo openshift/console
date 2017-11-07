@@ -16,13 +16,11 @@ import * as appsLogo from '../../imgs/apps-logo.svg';
 
 export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServiceVersionListItemProps> = (props) => {
   const {obj, namespaces = []} = props;
-  const route = (name, namespace) => `/ns/${namespace}/clusterserviceversion-v1s/${name}`;
+  const route = (namespace) => `/ns/${namespace}/clusterserviceversion-v1s/${obj.metadata.name}`;
 
   return <div className="co-clusterserviceversion-list-item">
-    <div className="co-clusterserviceversion-list-item__heading">
-      <div className="co-clusterserviceversion-list-item__heading__logo">
-        <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
-      </div>
+    <div style={{cursor: namespaces.length === 1 ? 'pointer' : ''}} onClick={() => namespaces.length === 1 ? history.push(route(obj.metadata.namespace)) : null}>
+      <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
     </div>
     <div className="co-clusterserviceversion-list-item__description">{_.get(obj.spec, 'description', 'No description available')}</div>
     <div className="co-clusterserviceversion-list-item__actions">
@@ -30,9 +28,9 @@ export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServ
         ? <Dropdown
           title="View namespace"
           items={namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {})}
-          onChange={(ns) => history.push(`${route(obj.metadata.name, ns)}`)} />
-        : <Link to={`${route(obj.metadata.name, obj.metadata.namespace)}`} title="View details" className="btn btn-default">View details</Link> }
-      { namespaces.length === 1 && <Link to={`${route(obj.metadata.name, obj.metadata.namespace)}/resources`} title="View resources">View resources</Link> }
+          onChange={(ns) => history.push(`${route(ns)}`)} />
+        : <Link to={`${route(obj.metadata.namespace)}`} title="View details" className="btn btn-default">View details</Link> }
+      { namespaces.length === 1 && <Link to={`${route(obj.metadata.namespace)}/instances`} title="View instances">View instances</Link> }
     </div>
   </div>;
 };
@@ -51,7 +49,7 @@ export const ClusterServiceVersionRow: React.StatelessComponent<ClusterServiceVe
     </div>
     <div className="col-xs-4">
       <Link to={`${route}`} title="View details" className="btn btn-default">View details</Link>
-      <Link to={`${route}/resources`} title="View resources">View resources</Link>
+      <Link to={`${route}/instances`} title="View instances">View instances</Link>
     </div>
   </div>;
 };
@@ -148,7 +146,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
           dropdownFilters={dropdownFilters}
           ListComponent={ClusterServiceVersionList}
           filterLabel="Applications by name"
-          title="Installed Applications"
+          title="Available Applications"
           showTitle={true} />;
     }
 
@@ -213,13 +211,15 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
 };
 
 export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => {
-  const {details, editYaml} = navFactory;
-
-  const Resources = ({obj}) => <div>
+  const Instances: React.StatelessComponent<{obj: ClusterServiceVersionKind}> = ({obj}) => <div>
     <ClusterServiceVersionResourcesPage obj={obj} />
   </div>;
+  Instances.displayName = 'Instances';
 
-  return <DetailsPage {...props} pages={[details(ClusterServiceVersionDetails), editYaml(), {href: 'resources', name: 'Resources', component: Resources}]} />;
+  return <DetailsPage
+    {...props}
+    pages={[navFactory.details(ClusterServiceVersionDetails), {href: 'instances', name: 'Instances', component: Instances}]}
+    menuActions={[() => ({label: 'Edit Application Definition...', href: `/ns/${props.namespace}/clusterserviceversion-v1s/${props.name}/edit`})]} />;
 };
 
 export type ClusterServiceVersionsPageProps = {

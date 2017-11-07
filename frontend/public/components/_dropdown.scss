@@ -91,6 +91,7 @@
 
   & > li > a {
     cursor: pointer;
+    text-shadow: none;
   }
 
   & > li.dropdown__selected > a {
