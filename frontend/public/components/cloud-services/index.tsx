@@ -131,6 +131,8 @@ export type InstallPlanKind = {
   }
 } & K8sResourceKind;
 
+export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
+
 export const ClusterServiceVersionLogo: React.StatelessComponent<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;
 

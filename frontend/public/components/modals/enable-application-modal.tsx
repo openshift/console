@@ -8,7 +8,7 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, ResourceIcon } from '../utils';
 import { k8sKinds } from '../../module/k8s';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval } from '../cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval, isEnabled } from '../cloud-services';
 
 export const SelectNamespaceHeader = (props: SelectNamespaceHeaderProps) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
@@ -84,7 +84,7 @@ export class EnableApplicationModal extends PromiseComponent {
             loadError={loadError}
             data={_.values(data)
               .filter(ns => clusterServiceVersions.find(csv => csv.metadata.namespace === ns.metadata.name) === undefined)
-              .filter(ns => ns.metadata.annotations && ns.metadata.annotations['alm-manager'])}
+              .filter(ns => isEnabled(ns))}
             Header={SelectNamespaceHeader}
             Row={(props) => <SelectNamespaceRow
               obj={props.obj}
