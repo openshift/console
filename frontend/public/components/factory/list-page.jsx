@@ -68,7 +68,7 @@ export class ListPageWrapper_ extends React.PureComponent {
 ListPageWrapper_.displayName = 'ListPageWrapper_';
 ListPageWrapper_.propTypes = {
   data: PropTypes.array,
-  kinds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  kinds: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
   ListComponent: PropTypes.func.isRequired,
   rowFilters: PropTypes.array,
   staticFilters: PropTypes.array,
@@ -193,7 +193,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
   resources: PropTypes.arrayOf(
     PropTypes.shape({
-      kind: PropTypes.string.isRequired,
+      kind: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
       selector: PropTypes.shape({
         matchLabels: PropTypes.objectOf(PropTypes.string),
         matchExpressions: PropTypes.arrayOf(PropTypes.object),

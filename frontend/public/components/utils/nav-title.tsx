@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 import * as _ from 'lodash';
 
-import { ActionsMenu, kindObj, ResourceIcon } from './index';
-import { ClusterServiceVersionLogo, K8sResourceKind } from '../cloud-services';
+import { ActionsMenu, ResourceIcon } from './index';
+import { ClusterServiceVersionLogo } from '../cloud-services';
+import { K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
+import { connectToModel } from '../../kinds';
 
 export const BreadCrumbs: React.StatelessComponent<BreadCrumbsProps> = ({breadcrumbs}) => (
   <div className="co-m-nav-title__breadcrumbs">
@@ -20,7 +22,8 @@ export const BreadCrumbs: React.StatelessComponent<BreadCrumbsProps> = ({breadcr
     }) }
   </div>);
 
-export const NavTitle: React.StatelessComponent<NavTitleProps> = ({kind, detail, title, menuActions, obj, breadcrumbs, children}) => {
+export const NavTitle = connectToModel((props: NavTitleProps) => {
+  const {kind, kindObj, detail, title, menuActions, obj, breadcrumbs} = props;
   const data = _.get<K8sResourceKind>(obj, 'data');
   const hasLogo = !_.isEmpty(data) && _.has(data, 'spec.icon');
   const logo = hasLogo
@@ -32,20 +35,22 @@ export const NavTitle: React.StatelessComponent<NavTitleProps> = ({kind, detail,
       { breadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs} />}
       <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': hasLogo}, {'co-m-page-title--breadcrumbs': breadcrumbs})}>
         {logo}
-        { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj(kind), data))} /> }
+        { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
       </h1>
-      {children}
+      {props.children}
     </div>
   </div>;
-};
+});
 
 export type NavTitleProps = {
-  kind?: string;
+  kind?: K8sResourceKindReference;
+  kindObj?: K8sKind;
   detail?: boolean;
   title?: string | JSX.Element;
   menuActions?: any[];
   obj?: {data: K8sResourceKind};
   breadcrumbs?: {name: string, path: string}[];
+  children?: React.ReactChildren;
 };
 
 export type BreadCrumbsProps = {

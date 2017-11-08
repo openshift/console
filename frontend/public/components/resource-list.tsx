@@ -1,21 +1,26 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import * as _ from 'lodash';
+import { match } from 'react-router-dom';
 
 import { resourceListPages, resourceDetailPages } from './resource-pages';
 import { connectToPlural } from '../kinds';
 import { LoadingBox } from './utils';
+import { K8sResourceKindReference } from '../module/k8s';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
 
-export const ResourceListPage = connectToPlural(props => {
+export const ResourceListPage = connectToPlural((props: ResourceListPageProps) => {
   const { ns, kindObj, kindsInFlight } = allParams(props);
 
   if (!kindObj) {
     if (kindsInFlight) {
       return <LoadingBox />;
     }
-    window.location = '404';
+    window.location.href = '404';
     return null;
   }
 
@@ -27,20 +32,18 @@ export const ResourceListPage = connectToPlural(props => {
     <Helmet>
       <title>{kindObj.labelPlural}</title>
     </Helmet>
-    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} />}
+    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={props.modelRef} />}
   </div>;
 });
 
-ResourceListPage.displayName = 'ResourceListPage';
-
-export const ResourceDetailsPage = connectToPlural(props => {
+export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
 
   if (!name || !kindObj) {
     if (kindsInFlight) {
       return <LoadingBox />;
     }
-    window.location = '404';
+    window.location.href = '404';
     return null;
   }
 
@@ -57,8 +60,19 @@ export const ResourceDetailsPage = connectToPlural(props => {
     <Helmet>
       <title>{`${name} · Details`}</title>
     </Helmet>
-    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={kindObj.kind} name={name} />}
+    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={props.modelRef} name={name} />}
   </div>;
 });
 
+export type ResourceListPageProps = {
+  modelRef: K8sResourceKindReference;
+  match: match<any>;
+};
+
+export type ResourceDetailsPageProps = {
+  modelRef: K8sResourceKindReference;
+  match: match<any>;
+};
+
+ResourceListPage.displayName = 'ResourceListPage';
 ResourceDetailsPage.displayName = 'ResourceDetailsPage';

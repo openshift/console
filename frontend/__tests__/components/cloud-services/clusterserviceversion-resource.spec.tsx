@@ -11,6 +11,7 @@ import { testClusterServiceVersionResource, testResourceInstance, testClusterSer
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, ResourceLink } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
+import { resourceReferenceFor } from '../../../public/module/k8s';
 
 describe(ClusterServiceVersionResourceHeader.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourceHeaderProps>;
@@ -71,7 +72,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
     const link = col.find(ClusterServiceVersionResourceLink);
 
     expect(link.props().obj).toEqual(testResourceInstance);
-    expect(link.props().kind).toEqual(testResourceInstance.kind);
+    expect(link.props().kind).toEqual(resourceReferenceFor(testResourceInstance));
   });
 
   it('renders a `ResourceCog` for common actions', () => {
@@ -403,7 +404,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
       path: '/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name',
     };
 
-    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
+    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={resourceReferenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -468,7 +469,12 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().canCreate).toBe(true);
-    expect(listPage.props().resources).toEqual(owned.concat(required).map(({kind}) => ({kind, namespaced: true})));
+    expect(listPage.props().resources).toEqual(owned.concat(required).map((crdDesc) => ({
+      kind: {kind: crdDesc.kind, group: crdDesc.name.slice(crdDesc.name.indexOf('.') + 1), version: crdDesc.version},
+      namespaced: true,
+      optional: true,
+      prop: crdDesc.kind,
+    })));
     expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
   });
 

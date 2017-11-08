@@ -1,6 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, CustomResourceDefinitionKind, ALMStatusDescriptors, K8sResourceKind, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
+import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
 
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',
@@ -137,13 +138,16 @@ export const testClusterServiceVersionResource: CustomResourceDefinitionKind = {
     group: 'testapp.coreos.com',
     version: 'v1alpha1',
     names: {
-      kind: 'TestResource'
+      kind: 'TestResource',
+      plural: 'testresources',
+      singular: 'testresource',
+      listKind: 'TestResourceList',
     },
   }
 };
 
 export const testResourceInstance: ClusterServiceVersionResourceKind = {
-  apiVersion: 'testapp.coreos.com',
+  apiVersion: 'testapp.coreos.com/v1alpha1',
   kind: 'TestResource',
   metadata: {
     name: 'my-test-resource',
@@ -163,7 +167,7 @@ export const testResourceInstance: ClusterServiceVersionResourceKind = {
 };
 
 export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
-  apiVersion: 'ownedapp.coreos.com',
+  apiVersion: 'ownedapp.coreos.com/v1alpha1',
   kind: 'TestOwnedResource',
   metadata: {
     name: 'owned-test-resource',

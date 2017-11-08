@@ -7,15 +7,15 @@ import * as _ from 'lodash';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, ResourceIcon } from '../utils';
-import { k8sKinds } from '../../module/k8s';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval, isEnabled } from '../cloud-services';
+import { modelFor } from '../../module/k8s';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval, isEnabled, IPReference } from '../cloud-services';
 
-export const SelectNamespaceHeader = (props: SelectNamespaceHeaderProps) => <ListHeader>
+export const SelectNamespaceHeader: React.StatelessComponent<SelectNamespaceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-3">Status</ColHead>
 </ListHeader>;
 
-export const SelectNamespaceRow = (props: SelectNamespaceRowProps) => {
+export const SelectNamespaceRow: React.StatelessComponent<SelectNamespaceRowProps> = (props) => {
   const {obj, onSelect, onDeselect, selected} = props;
   const toggle = () => selected ? onDeselect({namespace: obj.metadata.name}) : onSelect({namespace: obj.metadata.name});
 
@@ -26,7 +26,7 @@ export const SelectNamespaceRow = (props: SelectNamespaceRowProps) => {
         value={obj.metadata.name}
         checked={selected}
         onChange={toggle}
-        style={{'margin-right': '4px'}}
+        style={{marginRight: '4px'}}
       />
       <ResourceIcon kind="Namespace" />
       <span>{obj.metadata.name}</span>
@@ -61,7 +61,7 @@ export class EnableApplicationModal extends PromiseComponent {
           approval: InstallPlanApproval.Automatic,
         },
       }))
-      .map(installPlan => this.props.k8sCreate(k8sKinds['InstallPlan-v1'], installPlan))))
+      .map(installPlan => this.props.k8sCreate(modelFor(IPReference), installPlan))))
       .then(() => this.props.close());
   }
 
@@ -127,3 +127,6 @@ export type SelectNamespaceRowProps = {
   onDeselect: (e: {namespace: string}) => void;
   onSelect: (e: {namespace: string}) => void;
 };
+
+SelectNamespaceHeader.displayName = 'SelectNamespaceHeader';
+SelectNamespaceRow.displayName = 'SelectNamespaceRow';

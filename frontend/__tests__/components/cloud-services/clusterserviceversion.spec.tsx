@@ -185,7 +185,9 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   it('renders a `MultiListPage` with correct props', () => {
     const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.props().resources).toEqual([{kind: 'ClusterServiceVersion-v1', namespaced: true}]);
+    expect(listPage.props().resources).toEqual([
+      {kind: {kind: 'ClusterServiceVersion-v1', group: 'app.coreos.com', version: 'v1alpha1'}, namespaced: true, prop: 'ClusterServiceVersion-v1'}
+    ]);
     expect(listPage.props().dropdownFilters).toBeDefined();
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().filterLabel).toEqual('Applications by name');

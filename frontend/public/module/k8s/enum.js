@@ -1,3 +1,7 @@
+/**
+ * @deprecated: Use `modelFor`, `allModels`, or `connectToModel`
+ * TODO(alecmerdler): Remove this and replace calls
+ */ 
 export const k8sKinds = {
   Service: {
     // singular label
@@ -310,36 +314,6 @@ export const k8sKinds = {
     abbr: 'CRD',
     namespaced: false,
     plural: 'customresourcedefinitions',
-  },
-  'AlphaCatalogEntry-v1': {
-    label: 'AlphaCatalogEntry-v1',
-    basePath: '/apis/app.coreos.com/',
-    apiVersion: 'v1alpha1',
-    path: 'alphacatalogentry-v1s',
-    abbr: 'CE',
-    namespaced: true,
-    crd: true,
-    plural: 'alphacatalogentry-v1s',
-  },
-  'ClusterServiceVersion-v1': {
-    label: 'ClusterServiceVersion-v1',
-    basePath: '/apis/app.coreos.com/',
-    apiVersion: 'v1alpha1',
-    path: 'clusterserviceversion-v1s',
-    abbr: 'CSV',
-    namespaced: true,
-    crd: true,
-    plural: 'clusterserviceversion-v1s',
-  },
-  'InstallPlan-v1': {
-    label: 'InstallPlan-v1',
-    basePath: '/apis/app.coreos.com/',
-    apiVersion: 'v1alpha1',
-    path: 'installplan-v1s',
-    abbr: 'IP',
-    namespaced: true,
-    crd: true,
-    plural: 'installplan-v1s',
   },
   CronJob: {
     label: 'Cron Job',

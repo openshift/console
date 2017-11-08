@@ -3,6 +3,9 @@ import * as React from 'react';
 import { FLAGS, connectToFlags } from '../features';
 import { Firehose, Dropdown } from './utils';
 
+/** @type {K8sFullyQualifiedResourceReference} */
+export const ClusterReference = {kind: 'Cluster', group: 'multicluster.coreos.com', version: 'v1alpha1'};
+
 // Trim trailing slash from URLs to make matching more likely
 const normalizeURL = url => url.replace(/\/$/g, '');
 
@@ -42,7 +45,7 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
 };
 
 const resources = [{
-  kind: 'Cluster',
+  kind: ClusterReference,
   prop: 'clusters',
   isList: true,
 }];

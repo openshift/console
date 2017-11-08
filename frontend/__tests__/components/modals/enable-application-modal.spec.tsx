@@ -9,11 +9,11 @@ import { EnableApplicationModal, EnableApplicationModalProps, SelectNamespaceHea
 import { ListHeader, ColHead, List } from '../../../public/components/factory';
 import { ResourceIcon } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
-import { k8sKinds } from '../../../public/module/k8s';
+import { modelFor } from '../../../public/module/k8s';
 import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval, IPReference } from '../../../public/components/cloud-services';
 
-describe('SelectNamespaceHeader', () => {
+describe(SelectNamespaceHeader.displayName, () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;
 
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe('SelectNamespaceHeader', () => {
   });
 });
 
-describe('SelectNamespaceRow', () => {
+describe(SelectNamespaceRow.displayName, () => {
   let wrapper: ShallowWrapper<SelectNamespaceRowProps>;
   let namespace: {metadata: {name: string, namespace: string, uid: string, annotations: {[key: string]: string}, labels: {[key: string]: string}}};
   let onSelect: Spy;
@@ -93,7 +93,7 @@ describe('SelectNamespaceRow', () => {
   });
 });
 
-describe('EnableApplicationModal', () => {
+describe(EnableApplicationModal.name, () => {
   let wrapper: ShallowWrapper<EnableApplicationModalProps, any>;
   let namespaces: EnableApplicationModalProps['namespaces'];
   let clusterServiceVersions: ClusterServiceVersionKind[];
@@ -158,7 +158,7 @@ describe('EnableApplicationModal', () => {
 
     close.and.callFake(() => {
       selectedNamespaces.forEach((namespace, i) => {
-        expect(k8sCreate.calls.argsFor(i)[0]).toEqual(k8sKinds['InstallPlan-v1']);
+        expect(k8sCreate.calls.argsFor(i)[0]).toEqual(modelFor(IPReference));
         expect(k8sCreate.calls.argsFor(i)[1]).toEqual({
           apiVersion: 'app.coreos.com/v1alpha1',
           kind: 'InstallPlan-v1',

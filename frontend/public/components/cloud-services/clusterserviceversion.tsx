@@ -6,11 +6,11 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, K8sResourceKind, ClusterServiceVersionPhase } from './index';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, CSVReference } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage } from '../factory';
 import { navFactory, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
-import { k8sKinds } from '../../module/k8s';
+import { K8sResourceKind, modelFor, K8sFullyQualifiedResourceReference } from '../../module/k8s';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
 
@@ -98,7 +98,7 @@ export const ClusterServiceVersionList: React.StatelessComponent<ClusterServiceV
 };
 
 const stateToProps = ({k8s}, {match, namespace}) => ({
-  resourceDescriptions: _.values(k8s.getIn([makeReduxID(k8sKinds['ClusterServiceVersion-v1'], makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
+  resourceDescriptions: _.values(k8s.getIn([makeReduxID(modelFor(CSVReference), makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
     .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', []))
     .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), []),
   namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())
@@ -114,8 +114,13 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
 
     render() {
-      const resources = [{kind: this.props.kind, namespaced: true}]
-        .concat(this.state.resourceDescriptions.map(crdDesc => ({kind: crdDesc.kind, namespaced: true, optional: true})));
+      const resources = [{kind: CSVReference, namespaced: true, prop: 'ClusterServiceVersion-v1'}]
+        .concat(this.state.resourceDescriptions.map(crdDesc => ({
+          kind: {kind: crdDesc.kind, group: crdDesc.name.slice(crdDesc.name.indexOf('.') + 1), version: crdDesc.version} as K8sFullyQualifiedResourceReference,
+          namespaced: true,
+          optional: true,
+          prop: crdDesc.kind,
+        })));
 
       const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item));
       const dropdownFilters = [{
@@ -157,14 +162,15 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
 
     shouldComponentUpdate(nextProps) {
-      return !_.isEqual(_.omit(nextProps, 'resourceDescriptions'), _.omit(this.props, 'resourceDescriptions'))
+      const should = !_.isEqual(_.omit(nextProps, 'resourceDescriptions'), _.omit(this.props, 'resourceDescriptions'))
         || nextProps.resourceDescriptions.length > 0 && this.state.resourceDescriptions.length === 0;
+      return should;
     }
   });
 
 export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata} = props.obj;
-  const createLink = (name: string) => `/ns/${metadata.namespace}/clusterserviceversion-v1s/${metadata.name}/${name.split('.')[0]}/new`;
+  const route = (name: string) => `/ns/${metadata.namespace}/clusterserviceversion-v1s/${metadata.name}/${name.split('.')[0]}/new`;
 
   return <div className="co-clusterserviceversion-details co-m-pane__body">
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
@@ -175,8 +181,8 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
             className="btn btn-primary"
             title="Create New"
             items={spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
-            onChange={(name) => history.push(createLink(name))} />
-          : <Link to={createLink(spec.customresourcedefinitions.owned[0].name)} className="btn btn-primary">{`Create ${spec.customresourcedefinitions.owned[0].displayName}`}</Link> }
+            onChange={(name) => history.push(route(name))} />
+          : <Link to={route(spec.customresourcedefinitions.owned[0].name)} className="btn btn-primary">{`Create ${spec.customresourcedefinitions.owned[0].displayName}`}</Link> }
       </div>
       <dl className="co-clusterserviceversion-details__section--info__item">
         <dt>Provider</dt>
