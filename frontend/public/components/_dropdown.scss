@@ -20,6 +20,12 @@
         color: white;
       }
     }
+    .dropdown-menu > li.dropdown__selected > a {
+      color: black;
+      &:hover {
+        color: white;
+      }
+    }
   }
 }
 

@@ -30,7 +30,7 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
     selected = clusterName;
   }
 
-  items['/k8s/cluster/clusters'] = <span style={{borderTop: '1px solid black'}}>Manage Cluster Directory</span>;
+  items['/k8s/cluster/clusters'] = <div style={{borderTop: '1px solid black', paddingTop: 10}}>Manage Cluster Directory…</div>;
 
   return <Dropdown title="Clusters" items={items} selectedKey={selected} noButton={true} className="cluster-picker" menuClassName="dropdown--dark" onChange={url => window.location = url}/>;
 };
