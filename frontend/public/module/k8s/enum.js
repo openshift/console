@@ -315,6 +315,7 @@ export const k8sKinds = {
     path: 'alphacatalogentry-v1s',
     abbr: 'CE',
     namespaced: true,
+    crd: true,
     plural: 'alphacatalogentry-v1s',
   },
   'ClusterServiceVersion-v1': {
@@ -324,6 +325,7 @@ export const k8sKinds = {
     path: 'clusterserviceversion-v1s',
     abbr: 'CSV',
     namespaced: true,
+    crd: true,
     plural: 'clusterserviceversion-v1s',
   },
   'InstallPlan-v1': {
@@ -333,6 +335,7 @@ export const k8sKinds = {
     path: 'installplan-v1s',
     abbr: 'IP',
     namespaced: true,
+    crd: true,
     plural: 'installplan-v1s',
   },
 };
