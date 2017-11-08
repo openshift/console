@@ -69,7 +69,7 @@ const RulesHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-2">Service Port</div>
 </div>;
 
-const RulesRow = ({rule}) => {
+const RulesRow = ({rule, namespace}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-3">
@@ -79,7 +79,7 @@ const RulesRow = ({rule}) => {
       <div>{rule.path}</div>
     </div>
     <div className="col-xs-3">
-      <div><ResourceIcon kind="Service" className="co-m-resource-icon--align-left" />{rule.serviceName}</div>
+      <ResourceLink kind="Service" name={rule.serviceName} namespace={namespace} />
     </div>
     <div className="col-xs-2">
       <div>{rule.servicePort}</div>
@@ -103,7 +103,7 @@ const RulesRows = (props) => {
     });
 
     const rows = _.map(rules, rule => {
-      return <RulesRow rule={rule} key={rule.serviceName} />;
+      return <RulesRow rule={rule} key={rule.serviceName} namespace={props.namespace} />;
     });
 
     return <div className="co-m-table-grid__body"> {rows} </div>;
@@ -132,7 +132,7 @@ const Details = ({obj: ingress}) => <div className="col-md-12">
         <div className="col-md-12">
           <div className="co-m-table-grid co-m-table-grid--bordered">
             <RulesHeader />
-            <RulesRows spec={ingress.spec} />
+            <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
           </div>
         </div>
       </div>
