@@ -11,8 +11,6 @@ import { AsyncComponent } from './utils/async';
 import { Firehose } from './utils';
 
 export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
-  private readonly skipKinds = ['EtcdCluster', 'Role', 'RoleBinding', 'Prometheus', 'ServiceMonitor', 'AlertManager', 'VaultService', 'NetworkPolicy'];
-
   render () {
     const {params} = this.props.match;
 
@@ -34,12 +32,6 @@ export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
 
     const obj = safeLoad(template);
     obj.kind = kind.kind;
-
-    // The code below strips the basePath (etcd.coreos.com, etc.) from the apiVersion that is being set in the template
-    // and causes creation to fail for some resource kinds, hence adding a check here to skip for those kinds.
-    if (this.skipKinds.indexOf(obj.kind) === -1) {
-      obj.apiVersion = `${kind.isExtension ? 'extensions/' : ''}${apiVersion}`;
-    }
     obj.metadata = obj.metadata || {};
     if (kind.namespaced) {
       obj.metadata.namespace = namespace;
