@@ -29,15 +29,3 @@ func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
 		hdlr.ServeHTTP(w, r)
 	}
 }
-
-// federationMiddleware wraps the given handler and adds a federation configuration to the contexts of all served requests.
-func federationMiddleware(h http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ctx, err := withFederationConfig(r.Context(), r)
-		if err != nil {
-			sendError(w, http.StatusBadRequest, err)
-			return
-		}
-		h.ServeHTTP(w, r.WithContext(ctx))
-	}
-}

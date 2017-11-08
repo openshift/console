@@ -1,6 +1,4 @@
 .dropdown {
-  display: inline-block;
-
   &__autocomplete {
     border: none;
     line-height: 18px;
@@ -19,6 +17,12 @@
 
       &:hover {
         background-color: $dark;
+        color: white;
+      }
+    }
+    .dropdown-menu > li.dropdown__selected > a {
+      color: black;
+      &:hover {
         color: white;
       }
     }

@@ -27,7 +27,6 @@ import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, Loading, getNamespace } from './utils';
 import { UIActions } from '../ui/ui-actions';
-import { Clusters } from './federation/cluster';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage } from './cloud-services/catalog';
 import '../style.scss';
@@ -154,8 +153,6 @@ class App extends React.PureComponent {
             <Route path="/settings/profile" exact component={ProfilePage} />
             <Route path="/settings/ldap" exact component={LDAPPage} />
             <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
-
-            <Route path="/federation/clusters" exact component={Clusters} />
 
             <Route path="/all-namespaces/events" exact component={EventStreamPage} />
             <Route path="/ns/:ns/events" exact component={EventStreamPage} />

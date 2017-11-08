@@ -57,7 +57,7 @@ export const CRDS_ = {
   'etcdclusters.etcd.database.coreos.com': FLAGS.ETCD_OPERATOR, // v1beta2
   'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
   'alphacatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
-  'registeredclusters.ui.coreos.com': FLAGS.MULTI_CLUSTER,
+  'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
 };
 
 const labellerDeploymentPath = `${k8sBasePath}/apis/extensions/v1beta1/deployments`;
