@@ -8,6 +8,23 @@ import { k8sKinds } from './module/k8s/enum';
 import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
 
+export type K8sFullyQualifiedResourceReference = {
+    qualified: true;
+    group: string;
+    version: string;
+    kind: string;
+};
+
+export type K8sResourceKindReference = string | K8sFullyQualifiedResourceReference;
+
+export const getKindForResourceReference = (ref: K8sResourceKindReference) => {
+  if ((ref as K8sFullyQualifiedResourceReference).qualified) {
+    return (ref as K8sFullyQualifiedResourceReference).kind;
+  }
+
+  return (ref as string);
+};
+
 export type K8sKind = {
   abbr: string;
   kind: string;
@@ -80,7 +97,9 @@ export const kindReducer = (state, action) => {
 
 export const stateToProps = (state, props): any => {
   const ns = state[kindReducerName];
-  const raw = ns.getIn(['kinds', props.kind]);
+
+  // TODO(jschorr): make this handle CRDs properly.
+  const raw = ns.getIn(['kinds', getKindForResourceReference(props.kind)]);
   return {kindObj: raw ? raw.toJSON() : {}, kindsInFlight: ns.get(inFlight)};
 };
 
