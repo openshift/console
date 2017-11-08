@@ -83,6 +83,7 @@ export class EditYAML extends SafetyFirst {
       this.ace.destroy();
       this.ace.container.remove();
       this.ace = null;
+      window.ace = null;
     }
     window.removeEventListener('resize', this.resize_);
     this.doc = null;
@@ -125,6 +126,8 @@ export class EditYAML extends SafetyFirst {
 
     if (!this.ace) {
       this.ace = ace.edit(this.id);
+      // TODO (kans) not this!
+      window.ace = this.ace;
       // Squelch warning from Ace
       this.ace.$blockScrolling = Infinity;
       const es = this.ace.getSession();

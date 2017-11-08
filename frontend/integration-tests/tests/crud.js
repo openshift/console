@@ -1,4 +1,9 @@
 const _ = require('lodash');
+const async = require('async');
+const { safeLoad, safeDump } = require('js-yaml');
+
+const TIMEOUT = 15000;
+const TEST_LABEL = 'automatedTestName';
 
 const navigate = (browser, path, cb) => {
   const url = browser.launch_url + path;
@@ -12,12 +17,37 @@ const navigate = (browser, path, cb) => {
   });
 };
 
-const TIMEOUT = 15000;
+const generateName = (prefix, length) => {
+  let s = prefix || '';
+  while (s.length < length) {
+    s += Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+  }
+  return s.substr(0, length);
+};
+
+const NAME = generateName(process.env.NAME || 'qa-test-', 18);
+
+console.log(`
+======================
+
+  Using Name=${NAME}
+
+======================
+`);
+
+const seriesCB = browser => err => {
+  if (err) {
+    console.log('\n\n\n----', err, '----\n\n\n');
+  }
+
+  browser.assert.equal(err, undefined, 'No Errors were thrown.');
+};
 
 
+// Will cb() after a <StatusBox /> has "loaded" its contents.
 const asyncLoad = (browser, i, cb) => {
   if (i > 10) {
-    return (null, new Error('Did not load list in time.'));
+    return new Error('Did not load list in time.');
   }
 
   /* This is literally execing in the browser!
@@ -27,8 +57,12 @@ const asyncLoad = (browser, i, cb) => {
     - Top-level function can't be fat arrow. (because `this`)
    */
   browser.execute(function () {
-    const loadingStatus = document.getElementsByClassName('loading-box')[0].getAttribute('class');
-    return loadingStatus.split(' ').map(css => css.split('__')[1]).filter(x => x)[0];
+    const loadingBox = document.getElementsByClassName('loading-box')[0];
+    if (!loadingBox) {
+      return 'loading';
+    }
+    const loadingBoxClass = loadingBox.getAttribute('class');
+    return loadingBoxClass.split(' ').map(css => css.split('__')[1]).filter(x => x)[0];
   }, ({value}) => {
     switch (value) {
       case 'loading':
@@ -36,19 +70,19 @@ const asyncLoad = (browser, i, cb) => {
         asyncLoad(browser, i+1, cb);
         return;
       case 'loaded':
-        return cb(value);
+        return cb(null, value);
       case 'errored':
-        return cb(value, new Error('Error loading list'));
+        return cb(new Error('Error loading list'));
       default:
-        return cb(value, new Error('Unknown error loading list.'));
+        return cb(new Error(`Unknown error loading list:\n${value.message}\n`));
     }
   });
 };
 
-const deleteExamples = (page, browser) => {
+const deleteExamples = (page, browser, cb) => {
   const deleteExample = ids => {
     if (ids.length === 0) {
-      return;
+      return cb();
     }
     const selector = `#${ids[0]}`;
     const css = `${selector} li:last-child a`;
@@ -70,107 +104,184 @@ const deleteExamples = (page, browser) => {
     });
   };
 
-  asyncLoad(browser, 0, (value, error) => {
+  asyncLoad(browser, 0, error => {
     if (error) {
-      throw error;
+      return cb(error);
     }
 
     browser.execute(function () {
       return Array.from(document.querySelectorAll('div.co-m-cog-wrapper')).map(d => d.getAttribute('id'));
-    }, ({value}) => {
-      deleteExample(value);
+    }, ({value}) => deleteExample(value));
+  });
+};
+
+const updateYamlEditor = (browser, cb) => {
+  browser.execute(function () {
+    return window.ace.getValue();
+  }, ({value}) => {
+    const json = safeLoad(value);
+    json.metadata.name = NAME;
+    json.metadata.labels = json.metadata.labels || {};
+    // Apply "automatedTest" label for easier manual cleanup :-/
+    json.metadata.labels.automatedTest = 'true';
+    json.metadata.labels[TEST_LABEL] = NAME;
+    const yaml = safeDump(json);
+    browser.execute(function (yaml) {
+      return window.ace.setValue(yaml);
+    }, [yaml], result => {
+      browser.assert.equal(result.status, 0, 'Updated name and label via ace.');
+      cb();
     });
   });
 };
 
-const createExamples = (page, browser) => {
-  page
-    .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
-    .click('@CreateYAMLButton')
-    .waitForElementPresent('@saveYAMLButton', TIMEOUT)
-    .click('@saveYAMLButton')
-    .waitForElementPresent('@actionsDropdownButton', TIMEOUT, true, () => {
-      console.log('Resource created');
-      browser.verify.urlContains('/example');
-    });
+const createExamples = (page, browser, cb) =>
+  async.series([
+    cb => page
+      .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
+      .click('@CreateYAMLButton')
+      .waitForElementPresent('@saveYAMLButton', TIMEOUT, true, () =>cb()),
+    cb => updateYamlEditor(browser, cb),
+    cb => page
+      .click('@saveYAMLButton')
+      .waitForElementPresent('@actionsDropdownButton', TIMEOUT, true, () => cb()),
+    cb => {
+      browser.verify.urlContains(`/${NAME}`);
+      cb();
+    },
+  ], cb);
+
+const k8sObjs = {
+  'pods': 'Pod',
+  'services': 'Service',
+  'serviceaccounts': 'ServiceAccount',
+  'secrets': 'Secret',
+  'configmaps': 'ConfigMap',
+  'persistentvolumes': 'PersistentVolume',
+  'ingresses': 'Ingress',
+  // Meta resources
+  'jobs': 'Job',
+  'daemonsets': 'DaemonSet',
+  'deployments': 'Deployment',
+  'replicasets': 'ReplicaSet',
+  'replicationcontrollers': 'ReplicationController',
+  'etcdclusters': 'EtcdCluster',
+  'prometheuses': 'Prometheus',
+  'persistentvolumeclaims': 'PersistentVolumeClaim',
+  'statefulsets': 'StatefulSet',
+  'resourcequotas': 'ResourceQuota',
+  'networkpolicies': 'NetworkPolicy',
+  'roles': 'Role',
 };
 
-const crudTests_ = {};
+const namespacedResourcesTests = {};
 
-const k8sObjs = [
-  'pods',
-  'networkpolicies',
-  'services',
-  'serviceaccounts',
-  'secrets',
-  'configmaps',
-  'persistentvolumes',
-  'ingresses',
-  // Things that create the resources above will cause test flakes if we create/destroy them first.
-  'jobs',
-  'daemonsets',
-  'deployments',
-  'replicasets',
-  'replicationcontrollers',
-  'etcdclusters',
-  'prometheuses',
-  'persistentvolumeclaims',
-  'resourcequotas',
-  // 'namespaces', // TODO: (kans) special case. namespaces don't use the same UI for creation
-  'statefulsets',
-  'roles',
-];
-
-k8sObjs.forEach(resource => {
-  crudTests_[`Delete ${resource}`] = browser => {
-    const crudPage = browser.page.crudPage();
-    navigate(browser, `/all-namespaces/${resource}?name=example`, () => deleteExamples(crudPage, browser));
-  };
-});
-
-k8sObjs.forEach(resource => {
-  crudTests_[`YAML - create ${resource}`] = browser => {
-    const crudPage = browser.page.crudPage();
-    navigate(browser, `/all-namespaces/${resource}`, () => createExamples(crudPage, browser));
-  };
-});
-
-k8sObjs.forEach(resource => {
-  crudTests_[`Delete (cleanup) ${resource}`] = browser => {
-    if (resource === k8sObjs[0]) {
-      console.log('Waiting for recently-created stuff to exist');
-      browser.pause(10000);
+namespacedResourcesTests.before = browser => {
+  console.log(`creating namespace ${NAME}`);
+  async.series([
+    cb => navigate(browser, '/namespaces', cb),
+    cb => browser.page.crudPage()
+      .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
+      .click('@CreateYAMLButton')
+      .waitForElementPresent('.modal-body__field', TIMEOUT, true, () => cb()),
+    cb => browser
+      .keys(NAME)
+      .keys(browser.Keys.ENTER)
+      .perform(() => cb()),
+    // detect redirect to the namespaces detail page :-/
+    cb => browser.waitForElementPresent('.co-m-nav-title__detail', TIMEOUT, true, () => cb()),
+    cb => browser
+      .assert.urlContains(`/namespaces/${NAME}`)
+      .assert.containsText('#resource-title', NAME)
+      .perform(() => cb()),
+  ], err => {
+    if (err) {
+      console.log('\n\n\n----', err, '----\n\n\n');
     }
-    const crudPage = browser.page.crudPage();
-    navigate(browser, `/all-namespaces/${resource}?name=example`, () => deleteExamples(crudPage, browser));
-  };
-});
-
-const logger = logs => {
-  console.log('==== BEGIN BROWSER LOGS ====');
-  _.each(logs, log => {
-    const { level, message } = log;
-    const messageStr = _.isArray(message) ? message.join(' ') : message;
-
-    switch (level) {
-      case 'DEBUG':
-        console.log(level, messageStr);
-        break;
-      case 'SEVERE':
-        console.warn(level, messageStr);
-        break;
-      case 'INFO':
-      default:
-        // eslint-disable-next-line no-console
-        console.info(level, messageStr);
-    }
+    browser.assert.equal(err, undefined, 'No Errors were thrown.');
   });
-  console.log('==== END BROWSER LOGS ====');
 };
 
-crudTests_.after = browser => {
-  browser.getLog('browser', logger);
+Object.keys(k8sObjs).forEach(resource => {
+  namespacedResourcesTests[`${resource}`] = function (browser) {
+    const crudPage = browser.page.crudPage();
+    const kind = k8sObjs[resource];
+    const series = [
+      cb => navigate(browser, `/ns/${NAME}/${resource}?name=${NAME}`, cb),
+      cb => createExamples(crudPage, browser, cb),
+      cb => navigate(browser, `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`, cb),
+      cb => asyncLoad(browser, 0, cb),
+      cb => browser
+        // tab to filter box
+        .keys(browser.Keys.TAB)
+        // tab to fist item in list
+        .keys(browser.Keys.TAB)
+        // go to the details page...
+        .keys(browser.Keys.ENTER)
+        // Could use xpath instead...
+        // .useXpath()
+        // .click('//div[contains(@class, "loading-box__loaded")]//span[contains(@class, "co-resource-link")]/a[contains(@title, *)][1]')
+        // .useCss()
+        .waitForElementPresent('#resource-title', TIMEOUT, true, () => cb()),
+      cb => {
+        // Roles list page is composite (without applying filters)
+        if (resource !== 'roles') {
+          browser.assert.urlContains(`/${NAME}`);
+          browser.assert.containsText('#resource-title', NAME);
+        }
+        navigate(browser, `/ns/${NAME}/${resource}?name=${NAME}`, cb);
+      },
+      cb => deleteExamples(crudPage, browser, cb),
+    ];
+    async.series(series, seriesCB(browser));
+  };
+});
+
+// NOTE: This should always be the final test!
+namespacedResourcesTests.deleteNamespace = browser => {
+  console.log(`deleting namespace: ${NAME}`);
+  const series = [
+    cb => navigate(browser, `/namespaces/${NAME}`, cb),
+    cb => browser.page.crudPage()
+      .waitForElementPresent('@actionsDropdownButton', TIMEOUT)
+      .click('@actionsDropdownButton')
+      .waitForElementPresent('@actionsDropdownDeleteLink', TIMEOUT)
+      .click('@actionsDropdownDeleteLink')
+      .waitForElementPresent('@deleteModalConfirmButton', TIMEOUT, true, () => cb()),
+    cb => browser
+      .keys(NAME)
+      .pause(200)
+      .keys(browser.Keys.ENTER)
+      .pause(1000)
+      .perform(() => cb()),
+  ];
+  async.series(series, seriesCB(browser));
+};
+
+namespacedResourcesTests.after = browser => {
+  browser.getLog('browser', logs => {
+    console.log('==== BEGIN BROWSER LOGS ====');
+    _.each(logs, log => {
+      const { level, message } = log;
+      const messageStr = _.isArray(message) ? message.join(' ') : message;
+
+      switch (level) {
+        case 'DEBUG':
+          console.log(level, messageStr);
+          break;
+        case 'SEVERE':
+          console.warn(level, messageStr);
+          break;
+        case 'INFO':
+        default:
+          // eslint-disable-next-line no-console
+          console.info(level, messageStr);
+      }
+    });
+    console.log('==== END BROWSER LOGS ====');
+  });
+
   browser.end();
 };
 
-module.exports = crudTests_;
+module.exports = namespacedResourcesTests;

@@ -75,6 +75,7 @@
     "whatwg-fetch": "2.x"
   },
   "devDependencies": {
+    "async": "^2.5.0",
     "@types/enzyme": "^2.8.6",
     "@types/immutable": "3.x",
     "@types/jest": "20.x",
