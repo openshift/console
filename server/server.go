@@ -95,7 +95,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		k8sHandler = authMiddleware(s.Auther, k8sHandler)
 	}
-	var federationHandler http.Handler = proxy.NewProxy(federationProxyConfig)
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
@@ -103,7 +102,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
 
 	handle("/api/kubernetes/", http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), k8sHandler))
-	handle("/api/federation/", federationMiddleware(http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/federation/"), federationHandler)))
 	fn := func(loginInfo auth.LoginJSON, successURL string, w http.ResponseWriter) {
 		jsg := struct {
 			auth.LoginJSON  `json:",inline"`
