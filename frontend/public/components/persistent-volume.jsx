@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, LabelList, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('v1.PersistentVolume', `apiVersion: v1
@@ -24,7 +24,8 @@ const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Co
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const kind = 'PersistentVolume';
@@ -33,8 +34,11 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
     <ResourceCog actions={menuActions} kind={kind} resource={obj} />
     <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-xs-3">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+  <div className="col-xs-4">
+    <LabelList kind={kind} labels={obj.metadata.labels} />
+  </div>
+  <div classNaTme="col-xs-4">
+    <Timestamp timestamp={obj.metadata.creationTimestamp} />
   </div>
 </div>;
 
