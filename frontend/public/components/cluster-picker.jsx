@@ -4,7 +4,7 @@ import { FLAGS, connectToFlags } from '../features';
 import { Firehose, Dropdown } from './utils';
 
 // Trim trailing slash from URLs to make matching more likely
-const normalizeURL = (url='') => url.replace(/\/$/g, '');
+const normalizeURL = url => url.replace(/\/$/g, '');
 
 const FirehoseToDropdown = ({clusters, loaded}) => {
   if (!loaded) {
@@ -13,7 +13,7 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
   let selected;
   const ourURL = normalizeURL(window.location.origin + window.SERVER_FLAGS.basePath);
   const items = _.reduce(clusters.data, (obj, cluster) => {
-    const consoleURL = normalizeURL(_.get(cluster, ['metadata', 'annotations', 'multicluster.coreos.com/console-url']));
+    const consoleURL = normalizeURL(_.get(cluster, ['metadata', 'annotations', 'multicluster.coreos.com/console-url'], ''));
     if (!consoleURL) {
       return obj;
     }
