@@ -447,7 +447,7 @@ clusters:
   name: {{ .TectonicClusterName }}
 
 users:
-- name: tectonic-oidc
+- name: {{ .TectonicClusterName }}-user
   user:
     auth-provider:
       config:
@@ -465,10 +465,10 @@ preferences: {}
 contexts:
 - context:
     cluster: {{ .TectonicClusterName }}
-    user: tectonic-oidc
-  name: tectonic
+    user: {{ .TectonicClusterName }}-user
+  name: {{ .TectonicClusterName }}-context
 
-current-context: tectonic
+current-context: {{ .TectonicClusterName }}-context
 `))
 
 // DirectorFromTokenExtractor creates a new reverse proxy director
