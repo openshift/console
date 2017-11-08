@@ -7,7 +7,7 @@ import { configureJobParallelismModal } from './modals';
 import { Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('batch/v1.Job', `apiVersion: extensions/v1beta1
+registerTemplate('batch/v1.Job', `apiVersion: batch/v1
 kind: Job
 metadata:
   name: example
