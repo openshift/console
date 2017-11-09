@@ -137,12 +137,15 @@ class App extends React.PureComponent {
             <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/ns/:ns/:plural/new" exact component={CreateYAML} />
             <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
+            <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
+
             <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
             <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
 
             <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} plural="namespaces" />} />
             <Route path="/namespaces" exact component={namespacesListPage} />
             <Route path="/crds" exact component={crdsListPage} />
+            <Redirect from="/customresourcedefinitions/:name" to="/crds" />
 
             <Route path="/nodes/:name" component={nodeDetailsPage} />
             <Route path="/nodes" exact component={nodesListPage} />
