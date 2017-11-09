@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, kindObj } from './utils';
 
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
@@ -17,7 +17,7 @@ const RowForKind = kind => function RowForKind ({obj}) {
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
       <ResourceCog actions={menuActions} kind={kind} resource={obj} />
-      <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} prefix={obj.metadata.namespace ? 'k8s/' : 'k8s/cluster/'} />
+      <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-xs-4">
       { obj.metadata.namespace
@@ -53,7 +53,7 @@ export const DefaultList = props => {
 DefaultList.displayName = DefaultList;
 
 export const DefaultPage = props =>
-  <ListPage {...props} ListComponent={DefaultList} />;
+  <ListPage {...props} ListComponent={DefaultList} canCreate={props.canCreate || _.get(kindObj(props.kind), 'crd')} />;
 DefaultPage.displayName = DefaultPage;
 
 
