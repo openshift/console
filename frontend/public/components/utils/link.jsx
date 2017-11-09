@@ -16,7 +16,11 @@ const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 const nsPathPattern = new RegExp(`^/?ns/(${legalNamePattern.source})/?(.*)$`);
 const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 
-export const stripBasePath = path => path.replace(basePathPattern, '/');
+const stripBasePath = path => {
+  path = path.replace(basePathPattern, '/');
+  path = path.replace(/^\/?k8s\//, '');
+  return path;
+};
 
 export const isNamespaced = path => {
   const subpath = stripBasePath(path);

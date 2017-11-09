@@ -25,6 +25,10 @@ export const getActiveNamespace = () => store.getState().UI.get('activeNamespace
 // re-namespaced, so register your prefixes here as you define the
 // associated routes.
 export const formatNamespaceRoute = (activeNamespace, originalPath) => {
+  const isk8s = originalPath.startsWith('/k8s/');
+  if (isk8s) {
+    originalPath = originalPath.substr(4);
+  }
   const match = isNamespaced(originalPath);
   if (match) {
     // The resource is the first URL slug that matches a prefix (e.g. for "/ns/test-ns/jobs/test-job/pods", the resource
@@ -44,6 +48,9 @@ export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   }
 
   const namespacePrefix = activeNamespace ? `ns/${activeNamespace}/` : 'all-namespaces/';
+  if (isk8s) {
+    return `/k8s/${namespacePrefix}${originalPath}`;
+  }
   return `/${namespacePrefix}${originalPath}`;
 };
 
