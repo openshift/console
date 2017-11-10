@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom';
 
 import {kindObj, ResourceIcon} from './index';
 
-export const resourcePath = (kind, name, namespace = undefined, prefix = undefined) => {
-  const {path, namespaced} = kindObj(kind);
+export const resourcePath = (kind, name, namespace = undefined) => {
+  const {path, namespaced, crd} = kindObj(kind);
 
   let url = '/';
 
-  if (prefix) {
-    url += prefix;
+  if (crd) {
+    url += 'k8s/';
+    if (!namespaced) {
+      url += 'cluster/';
+    }
   }
 
   if (namespaced) {
@@ -29,8 +32,8 @@ export const resourcePath = (kind, name, namespace = undefined, prefix = undefin
 export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
 /** @type {React.StatelessComponent<{kind: K8sResourceKindReference, name: string, namespace: string, title: string, displayName?: string}>} */
-export const ResourceLink = ({kind, name, namespace, title, displayName, prefix}) => {
-  const path = resourcePath(kind, name, namespace, prefix);
+export const ResourceLink = ({kind, name, namespace, title, displayName}) => {
+  const path = resourcePath(kind, name, namespace);
   const value = displayName ? displayName : name;
 
   return (

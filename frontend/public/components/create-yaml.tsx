@@ -6,42 +6,48 @@ import * as _ from 'lodash';
 
 import { safeLoad } from 'js-yaml';
 import { TEMPLATES } from '../yaml-templates';
-import { kindFromPlural } from '../kinds';
+import { connectToPlural, kindFromPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
-import { Firehose } from './utils';
+import { Firehose, LoadingBox } from './utils';
 
-export class CreateYAML extends React.PureComponent<CreateYAMLProps> {
-  render () {
-    const {params} = this.props.match;
+export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
+  const {match, kindsInFlight} = props;
+  const {params} = match;
 
-    const kind = kindFromPlural(params.plural);
-    if (!kind) {
-      // <base href=...> makes this OK
-      (window as any).location = '404';
+  const kind = kindFromPlural(params.plural);
+  if (!kind) {
+    if (kindsInFlight) {
+      return <LoadingBox />;
     }
-
-    const apiVersion = kind.apiVersion || 'v1';
-    const namespace = params.ns || 'default';
-    const kindStr = `${apiVersion}.${kind.kind}`;
-    let template = _.get(TEMPLATES, [kindStr, 'default']);
-    if (!template) {
-      // eslint-disable-next-line no-console
-      console.warn(`No template found for ${kindStr}. Falling back to default template.`);
-      template = TEMPLATES.DEFAULT.default;
-    }
-
-    const obj = safeLoad(template);
-    obj.kind = kind.kind;
-    obj.metadata = obj.metadata || {};
-    if (kind.namespaced) {
-      obj.metadata.namespace = namespace;
-    }
-
-    const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/instances` : null;
-
-    return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} showHeader={true} />;
+    // <base href=...> makes this OK
+    (window as any).location = '404';
   }
-}
+
+  const apiVersion = kind.apiVersion || 'v1';
+  const namespace = params.ns || 'default';
+  const kindStr = `${apiVersion}.${kind.kind}`;
+  let template = _.get(TEMPLATES, [kindStr, 'default']);
+  if (!template) {
+    // eslint-disable-next-line no-console
+    console.warn(`No template found for ${kindStr}. Falling back to default template.`);
+    template = TEMPLATES.DEFAULT.default;
+  }
+
+  const obj = safeLoad(template);
+  obj.kind = kind.kind;
+  obj.metadata = obj.metadata || {};
+  if (kind.namespaced) {
+    obj.metadata.namespace = namespace;
+  }
+  if (kind.crd && template === TEMPLATES.DEFAULT.default) {
+    obj.apiVersion = kind.basePath.replace(/^\/apis\//, '') + kind.apiVersion;
+    obj.spec = obj.spec || {};
+  }
+
+  const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/instances` : null;
+
+  return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} showHeader={true} />;
+});
 
 export const EditYAMLPage: React.StatelessComponent<EditYAMLPageProps> = (props) => {
   const Wrapper = (props) => <AsyncComponent {...props} obj={props.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} showHeader={true} />;
@@ -52,6 +58,7 @@ export const EditYAMLPage: React.StatelessComponent<EditYAMLPageProps> = (props)
 
 export type CreateYAMLProps = {
   match: match<{ns: string, plural: string, appName?: string}>;
+  kindsInFlight: boolean;
 };
 
 export type EditYAMLPageProps = {
