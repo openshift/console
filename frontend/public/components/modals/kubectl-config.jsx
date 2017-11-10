@@ -23,7 +23,7 @@ const getConfiguration = code => {
 
 const downloadConfiguration = config => {
   const blob = new Blob([config], { type: 'text/yaml;charset=utf-8' });
-  saveAs(blob, 'kubectl-config');
+  saveAs(blob, `kubectl-config-${window.SERVER_FLAGS.clusterName}`);
 };
 
 const steps = {
