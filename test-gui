@@ -10,7 +10,7 @@ echo "$TECTONIC_LICENSE" > license.txt
   --user-auth="disabled" \
   --k8s-mode-off-cluster-skip-verify-tls=true \
   --k8s-auth="bearer-token" \
-  --k8s-mode-off-cluster-endpoint=https://teamui-api.soggytec.com:443 \
+  --k8s-mode-off-cluster-endpoint=https://teamui18-api.console.team.coreos.systems:443 \
   --license-file=license.txt &
 
 echo $! > bridge.pid
