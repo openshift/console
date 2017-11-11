@@ -4,13 +4,16 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('apps/v1beta1.StatefulSet', `apiVersion: apps/v1beta1
+registerTemplate('apps/v1beta2.StatefulSet', `apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
   name: example
 spec:
   serviceName: "nginx"
   replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
   template:
     metadata:
       labels:

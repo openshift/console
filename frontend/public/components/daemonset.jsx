@@ -5,11 +5,14 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('v1beta1.DaemonSet', `apiVersion: extensions/v1beta1
-kind: Daemonset
+registerTemplate('apps/v1beta2.DaemonSet', `apiVersion: apps/v1beta2
+kind: DaemonSet
 metadata:
   name: example
 spec:
+  selector:
+    matchLabels:
+      app: nginx
   template:
     metadata:
       labels:
