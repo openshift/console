@@ -6,10 +6,13 @@ import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, n
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('apps/v1beta2.DaemonSet', `apiVersion: apps/v1beta2
-kind: Daemonset
+kind: DaemonSet
 metadata:
   name: example
 spec:
+  selector:
+    matchLabels:
+      app: nginx
   template:
     metadata:
       labels:

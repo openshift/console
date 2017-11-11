@@ -13,6 +13,9 @@ kind: Deployment
 metadata:
   name: example
 spec:
+  selector:
+    matchLabels:
+      app: nginx
   replicas: 3
   template:
     metadata:
