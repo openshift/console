@@ -11,11 +11,16 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
     return null;
   }
   let selected;
+  let masterURL;
   const ourURL = normalizeURL(window.location.origin + window.SERVER_FLAGS.basePath);
   const items = _.reduce(clusters.data, (obj, cluster) => {
     const consoleURL = normalizeURL(_.get(cluster, ['metadata', 'annotations', 'multicluster.coreos.com/console-url'], ''));
     if (!consoleURL) {
       return obj;
+    }
+    const isMaster = _.get(cluster, ['metadata', 'annotations', 'multicluster.coreos.com/directory']);
+    if (isMaster && !masterURL) {
+      masterURL = consoleURL;
     }
     if (!selected && consoleURL === ourURL) {
       selected = consoleURL;
@@ -30,7 +35,8 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
     selected = clusterName;
   }
 
-  items['/k8s/cluster/clusters'] = <div style={{borderTop: '1px solid black', paddingTop: 10}}>Manage Cluster Directory…</div>;
+  masterURL = `${masterURL || ourURL}/k8s/cluster/clusters`;
+  items[masterURL] = <div style={{borderTop: '1px solid black', paddingTop: 10}}>Manage Cluster Directory…</div>;
 
   return <Dropdown title="Clusters" items={items} selectedKey={selected} noButton={true} className="cluster-picker" menuClassName="dropdown--dark" onChange={url => window.location = url}/>;
 };
