@@ -2,15 +2,35 @@
 
 set -euo pipefail
 
-# TODO: remove hard-coded url. eventually test auth
+source ./contrib/environment.sh
+
+if [ -z "$BRIDGE_K8S_AUTH_BEARER_TOKEN" ];
+then 
+	echo "no BRIDGE_K8S_AUTH_BEARER_TOKEN!?"
+	exit 1
+fi
+
+if [ -z "$BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT" ]; 
+then 
+	echo "no BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT!?"
+	exit 1
+fi
+
+if [ -z "$TECTONIC_LICENSE" ]; 
+then 
+  echo "no TECTONIC_LICENSE!?"
+  exit 1
+fi
 echo "$TECTONIC_LICENSE" > license.txt
 
+# TODO: eventually test auth
 ./bin/bridge \
   --k8s-mode="off-cluster" \
   --user-auth="disabled" \
   --k8s-mode-off-cluster-skip-verify-tls=true \
   --k8s-auth="bearer-token" \
-  --k8s-mode-off-cluster-endpoint=https://teamui18-api.console.team.coreos.systems:443 \
+  --k8s-mode-off-cluster-endpoint="$BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT" \
+  --k8s-auth-bearer-token="$BRIDGE_K8S_AUTH_BEARER_TOKEN" \
   --license-file=license.txt &
 
 echo $! > bridge.pid
