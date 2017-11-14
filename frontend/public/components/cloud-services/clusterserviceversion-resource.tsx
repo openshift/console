@@ -4,11 +4,12 @@ import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceKind, K8sResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, OwnerReference } from './index';
+import { ClusterServiceVersionResourceKind, K8sResourceKind, ALMStatusDescriptors, ALMSpecDescriptors, ClusterServiceVersionKind, OwnerReference } from './index';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, LoadingInline } from '../utils';
 import { connectToPlural, K8sKind, connectToKinds } from '../../kinds';
 import { k8sGet, k8sKinds } from '../../module/k8s';
+import { configureCountModal } from '../modals';
 import { Gauge, Scalar, Line, Bar, Donut } from '../graphs';
 
 export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (props) => {
@@ -33,6 +34,51 @@ export const Phase: React.StatelessComponent<PhaseProps> = ({status}) => {
   return <span>{status}</span>;
 };
 
+const configureSizeModal = (kindObj, resource, specDescriptor, specValue, wasChanged) => {
+  return configureCountModal({
+    resourceKind: kindObj,
+    resource: resource,
+    defaultValue: specValue || 0,
+    title: `Modify ${specDescriptor.displayName}`,
+    message: specDescriptor.description,
+    path: `/spec/${specDescriptor.path}`,
+    buttonText: `Update ${specDescriptor.displayName}`,
+    invalidateState: (isInvalid) => {
+      // NOTE: Necessary until https://github.com/kubernetes/kubernetes/pull/53345 fixes
+      // WebSocket loading of the custom resources.
+      if (isInvalid) {
+        wasChanged();
+      }
+    },
+  });
+};
+
+export class ClusterServiceVersionResourceModifier extends React.Component<ClusterServiceVersionResourceModifierProps, ClusterServiceVersionResourceModifierState> {
+  constructor(props) {
+    super(props);
+    this.state = {changing: false};
+  }
+
+  render() {
+    const {kindObj, resource, specDescriptor, specValue} = this.props;
+    const descriptors = specDescriptor['x-descriptors'] || [];
+    const wasChanged = () => this.setState({changing: true, });
+    const controlElm = descriptors.reduce((result, specCapability) => {
+      switch (specCapability) {
+        case ALMSpecDescriptors.podCount:
+          return <a onClick={() => configureSizeModal(kindObj, resource, specDescriptor, specValue, wasChanged)} className="co-m-modal-link">{specValue} pods</a>;
+        default:
+          return <span>(Unsupported)</span>;
+      }
+    }, <span />);
+
+    return <dl>
+      <dt>{specDescriptor.displayName}</dt>
+      <dd>{this.state.changing ? <LoadingInline /> : controlElm}</dd>
+    </dl>;
+  }
+}
+
 export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
   const {statusDescriptor, statusValue, namespace} = props;
   const descriptors = statusDescriptor['x-descriptors'] || [];
@@ -56,6 +102,8 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
         return <Phase status={statusValue} />;
       case ALMStatusDescriptors.k8sPhaseReason:
         return <pre>{statusValue}</pre>;
+      case ALMSpecDescriptors.podCount:
+        return <span>{statusValue} pods</span>;
       default:
         if (statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)) {
           let kind = statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length);
@@ -201,17 +249,17 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
         }
       };
 
-      const getStatusValue = (statusDescriptor: ClusterServiceVersionResourceStatusDescriptor, statusBlock) => {
-        if (statusDescriptor === undefined) {
+      const getBlockValue = (descriptor: ClusterServiceVersionResourceDescriptor, block) => {
+        if (descriptor === undefined) {
           return undefined;
         }
 
-        const statusValue = _.get(statusBlock, statusDescriptor.path);
-        if (statusValue === undefined) {
-          return statusDescriptor.value;
+        const value = _.get(block, descriptor.path);
+        if (value === undefined) {
+          return descriptor.value;
         }
 
-        return statusValue;
+        return value;
       };
 
       const findStatusDescriptorWithCapability = (statusDescriptors, capability) => {
@@ -227,20 +275,25 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       const ownedDefinitions = _.get(this.state.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
       const thisDefinition = _.find(ownedDefinitions, (def) => def.name.split('.')[0] === this.props.kindObj.path);
       const statusDescriptors = thisDefinition ? thisDefinition.statusDescriptors : [];
+      const specDescriptors = thisDefinition ? thisDefinition.specDescriptors : [];
       const title = thisDefinition ? thisDefinition.displayName : kind;
 
       const filteredStatusDescriptors = _.filter(statusDescriptors, (descriptor) => {
         return _.find(descriptor['x-descriptors'], isFilteredDescriptor) === undefined;
       });
 
+      const findAssociatedSpecDescriptor = (statusDescriptor) => {
+        return _.find<ClusterServiceVersionResourceSpecDescriptor>(specDescriptors, (descriptor) => descriptor.path === statusDescriptor.path);
+      };
+
       // Find the important metrics and prometheus endpoints, if any.
       const metricsDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.importantMetrics);
       const promDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.prometheus);
       const podStatusesDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.podStatuses);
 
-      const metricsValue = getStatusValue(metricsDescriptor, status);
-      const promBasePath = getStatusValue(promDescriptor, status);
-      const podStatusesFetcher = () => getStatusValue(podStatusesDescriptor, status);
+      const metricsValue = getBlockValue(metricsDescriptor, status);
+      const promBasePath = getBlockValue(promDescriptor, status);
+      const podStatusesFetcher = () => getBlockValue(podStatusesDescriptor, status);
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
@@ -283,12 +336,18 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
                 </dd>
               </div> }
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
-                const statusValue = getStatusValue(statusDescriptor, status);
+                const statusValue = getBlockValue(statusDescriptor, status);
                 const showStatus = isFilledStatusValue(statusValue);
-                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
+                const specDescriptor = findAssociatedSpecDescriptor(statusDescriptor);
+                const specValue = getBlockValue(specDescriptor, spec);
+
+                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}>
+                  <ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} />
+                  { specDescriptor ? <ClusterServiceVersionResourceModifier namespace={metadata.namespace} resource={this.props.obj} kindObj={this.props.kindObj} specValue={specValue} specDescriptor={specDescriptor} /> : null }
+                </div> : null;
               }) }
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
-                const statusValue = getStatusValue(statusDescriptor, status);
+                const statusValue = getBlockValue(statusDescriptor, status);
                 const showStatus = !isFilledStatusValue(statusValue) && this.state.expanded;
                 return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
               }) }
@@ -358,6 +417,16 @@ export type ClusterServiceVersionResourceStatusDescriptor = {
   value?: any;
 };
 
+export type ClusterServiceVersionResourceSpecDescriptor = {
+  path: string;
+  displayName: string;
+  description: string;
+  'x-descriptors': string[];
+  value?: any;
+};
+
+export type ClusterServiceVersionResourceDescriptor = ClusterServiceVersionResourceStatusDescriptor | ClusterServiceVersionResourceSpecDescriptor;
+
 export type PodStatusChartProps = {
   statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
   fetcher: () => any;
@@ -366,6 +435,14 @@ export type PodStatusChartProps = {
 export type ClusterServiceVersionResourceStatusProps = {
   statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
   statusValue: any;
+  namespace?: string;
+};
+
+export type ClusterServiceVersionResourceModifierProps = {
+  kindObj: K8sKind;
+  resource: ClusterServiceVersionResourceKind;
+  specDescriptor: ClusterServiceVersionResourceSpecDescriptor;
+  specValue?: any;
   namespace?: string;
 };
 
@@ -395,6 +472,10 @@ export type ClusterServiceVersionResourcesDetailsState = {
 export type ClusterServiceVersionResourceLinkProps = {
   obj: ClusterServiceVersionResourceKind;
   kindObj: K8sKind;
+};
+
+export type ClusterServiceVersionResourceModifierState = {
+  changing: boolean;
 };
 
 export type PhaseProps = {

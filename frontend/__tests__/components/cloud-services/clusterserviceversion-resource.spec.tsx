@@ -5,8 +5,8 @@ import { Link, match } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourceStatus, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink, Phase } from '../../../public/components/cloud-services/clusterserviceversion-resource';
-import { ClusterServiceVersionResourceKind, ALMStatusDescriptors } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourceStatus, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink, ClusterServiceVersionResourceModifier, Phase } from '../../../public/components/cloud-services/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ALMSpecDescriptors } from '../../../public/components/cloud-services';
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, ResourceLink } from '../../../public/components/utils';
@@ -364,6 +364,30 @@ describe(ClusterServiceVersionResourceStatus.displayName, () => {
 
     expect(link.props().kind).toBe('Service');
     expect(link.props().namespace).toBe('foo');
+  });
+
+  it('renders a resource spec control', () => {
+    const specDescriptor = {
+      'path': '',
+      'displayName': 'Some Spec Control',
+      'description': '',
+      'x-descriptors': [ALMSpecDescriptors.podCount]
+    };
+
+    const resourceDefinition = {
+      abbr: '',
+      kind: '',
+      label: '',
+      labelPlural: '',
+      path: '',
+      plural: '',
+    };
+
+    const specValue = 124;
+    const wrapper = shallow(<ClusterServiceVersionResourceModifier kindObj={resourceDefinition} resource={testResourceInstance} namespace="foo" specDescriptor={specDescriptor} specValue={specValue} />);
+    const link = wrapper.find('a');
+    expect(link.exists()).toBe(true);
+    expect(link.text()).toBe('124 pods');
   });
 });
 

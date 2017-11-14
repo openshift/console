@@ -11,9 +11,14 @@ export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from '.
 export { ClusterServiceVersionResourcesDetailsPage } from './clusterserviceversion-resource';
 export { CatalogsDetailsPage } from './catalog';
 
+export enum ALMSpecDescriptors {
+  podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
+}
+
 export enum ALMStatusDescriptors {
   metrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   podStatuses = 'urn:alm:descriptor:com.tectonic.ui:podStatuses',
+  podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
 
   w3Link = 'urn:alm:descriptor:org.w3:link',
   tectonicLink = 'urn:alm:descriptor:com.tectonic.ui:important.link',
