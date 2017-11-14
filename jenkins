@@ -85,3 +85,9 @@ elif [ -n "$IS_RELEASE_TAG" ]; then
 else
     echo "skipping image push. HEAD sha does not appear to be master, nor is it a release tag: $GIT_SHA_HEAD"
 fi
+
+echo "Cleaning up old Docker images..."
+docker rm $(docker ps -a -q) || true                                   # delete stopped containeres
+docker rmi $(docker images -q) || true                                 # delete images (fails on images currently used)
+docker volume ls -qf dangling=true | xargs -r docker volume rm || true # delete orphaned volumes
+echo "Done!"
