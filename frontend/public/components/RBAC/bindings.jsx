@@ -12,7 +12,7 @@ import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
 import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, MsgBox,
   OverflowYFade, ResourceCog, ResourceName, ResourceLink,
-  resourceObjPath, StatusBox, getQueryArgument, injectChild } from '../utils';
+  resourceObjPath, StatusBox, getQueryArgument } from '../utils';
 import { isSystemRole } from './index';
 import { registerTemplate } from '../../yaml-templates';
 
@@ -434,26 +434,18 @@ const getSubjectIndex = () => {
   return parseInt(subjectIndex, 10);
 };
 
-const EditBinding = props => {
-  const {kind, metadata, roleRef} = props.obj;
-  return <BaseEditRoleBinding {...props} fixed={{kind, metadata, roleRef}} saveButtonText="Save Binding" />;
+const BindingLoadingWrapper = props => {
+  const fixed = {};
+  _.each(props.fixedKeys, k => fixed[k] = _.get(props.obj.data, k));
+  return <StatusBox {...props.obj}>
+    <BaseEditRoleBinding {...props} obj={props.obj.data} fixed={fixed} />
+  </StatusBox>;
 };
 
-const Inject = (props) => {
-  const componentProps = _.pick(props, ['filters', 'selected', 'match']);
-  componentProps.obj = props.obj.data;
-  const child = injectChild(props.children, componentProps);
-  return <StatusBox {...props}>{child}</StatusBox>;
-};
-
-export const EditRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false}]}>
-  <Inject>
-    <EditBinding subjectIndex={getSubjectIndex()} titleVerb="Edit" />
-  </Inject>
+export const EditRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
+  <BindingLoadingWrapper fixedKeys={['kind', 'metadata', 'roleRef']} subjectIndex={getSubjectIndex()} titleVerb="Edit" saveButtonText="Save Binding" />
 </Firehose>;
 
-export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false}]}>
-  <Inject>
-    <BaseEditRoleBinding isCreate={true} subjectIndex={getSubjectIndex()} titleVerb="Duplicate" />
-  </Inject>
+export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
+  <BindingLoadingWrapper isCreate={true} subjectIndex={getSubjectIndex()} titleVerb="Duplicate" />
 </Firehose>;
