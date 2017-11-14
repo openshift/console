@@ -60,7 +60,7 @@ export class StartGuide extends SafetyFirst {
       <hr />
       <h4>You may also be interested in</h4>
       <ul>
-        <li>Grant and manage user access with Tectonic Identity. See <a href="https://coreos.com/tectonic/docs/latest/admin/user-management.html" target="_blank" rel="noopener">User Management through Tectonic Identity <i className="fa fa-external-link" /></a>.</li>
+        <li>Grant and manage user access with Tectonic Identity. See <a href="https://coreos.com/tectonic/docs/latest/users/tectonic-identity-config.html" target="_blank" rel="noopener">User Management through Tectonic Identity <i className="fa fa-external-link" /></a>.</li>
         <li>Troubleshoot your Tectonic clusters. See <a href="https://coreos.com/tectonic/docs/latest/troubleshooting/troubleshooting.html" target="_blank" rel="noopener">Troubleshooting Tectonic <i className="fa fa-external-link" /></a>.</li>
       </ul>
     </div>;
