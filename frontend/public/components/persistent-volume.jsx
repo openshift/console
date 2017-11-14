@@ -37,7 +37,7 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
   <div className="col-xs-4">
     <LabelList kind={kind} labels={obj.metadata.labels} />
   </div>
-  <div classNaTme="col-xs-4">
+  <div className="col-xs-4">
     <Timestamp timestamp={obj.metadata.creationTimestamp} />
   </div>
 </div>;
