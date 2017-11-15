@@ -5,11 +5,12 @@ import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 
 import { configureCountModal } from '../modals';
-import { ClusterServiceVersionResourceKind, ALMSpecDescriptors, ALMStatusDescriptors, ClusterServiceVersionKind, CSVReference } from './index';
+import { ClusterServiceVersionResourceKind, ALMSpecDescriptors, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, LoadingInline } from '../utils';
-import { connectToPlural, connectToModel } from '../../kinds';
-import { k8sGet, K8sResourceKind, OwnerReference, K8sKind, modelFor, K8sFullyQualifiedResourceReference, modelKeyFor, resourceReferenceFor } from '../../module/k8s';
+import { connectToPlural } from '../../kinds';
+import { k8sGet, K8sResourceKind, OwnerReference, K8sKind, K8sFullyQualifiedResourceReference, referenceFor, kindForReference } from '../../module/k8s';
+import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar, Donut } from '../graphs';
 
 export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (props) => {
@@ -44,8 +45,7 @@ const configureSizeModal = (kindObj, resource, specDescriptor, specValue, wasCha
     path: `/spec/${specDescriptor.path}`,
     buttonText: `Update ${specDescriptor.displayName}`,
     invalidateState: (isInvalid) => {
-      // NOTE: Necessary until https://github.com/kubernetes/kubernetes/pull/53345 fixes
-      // WebSocket loading of the custom resources.
+      // NOTE: Necessary until https://github.com/kubernetes/kubernetes/pull/53345 fixes WebSocket loading of the custom resources.
       if (isInvalid) {
         wasChanged();
       }
@@ -129,23 +129,23 @@ export const ClusterServiceVersionResourceHeader: React.StatelessComponent<Clust
   <ColHead {...props} className="col-xs-2">Last Updated</ColHead>
 </ListHeader>;
 
-export const ClusterServiceVersionResourceLink = connectToModel((props: ClusterServiceVersionResourceLinkProps) => {
+export const ClusterServiceVersionResourceLink: React.StatelessComponent<ClusterServiceVersionResourceLinkProps> = (props) => {
   const {namespace, name} = props.obj.metadata;
   const appName = location.pathname.split('/')[location.pathname.split('/').indexOf('clusterserviceversion-v1s') + 1];
 
   return <span className="co-resource-link">
-    <ResourceIcon kind={resourceReferenceFor(props.obj)} />
-    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${modelKeyFor(resourceReferenceFor(props.obj))}/${name}`}>{name}</Link>
+    <ResourceIcon kind={referenceFor(props.obj)} />
+    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${referenceFor(props.obj)}/${name}`}>{name}</Link>
   </span>;
-});
+};
 
 export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterServiceVersionResourceRowProps> = (props) => {
   const {obj} = props;
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-2">
-      <ResourceCog actions={Cog.factory.common} kind={obj.kind} resource={obj} isDisabled={false} />
-      <ClusterServiceVersionResourceLink obj={obj} kind={resourceReferenceFor(obj)} />
+      <ResourceCog actions={Cog.factory.common} kind={referenceFor(obj)} resource={obj} isDisabled={false} />
+      <ClusterServiceVersionResourceLink obj={obj} />
     </div>
     <div className="col-xs-2">
       <LabelList kind={obj.kind} labels={obj.metadata.labels} />
@@ -190,7 +190,7 @@ export const ClusterServiceVersionResourcesPage: React.StatelessComponent<Cluste
   const {obj} = props;
   const {owned = [], required = []} = obj.spec.customresourcedefinitions;
   const firehoseResources = owned.concat(required).map((crdDesc) => ({
-    kind: {kind: crdDesc.kind, group: crdDesc.name.slice(crdDesc.name.indexOf('.') + 1), version: crdDesc.version} as K8sFullyQualifiedResourceReference,
+    kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
     namespaced: true,
     optional: true,
     prop: crdDesc.kind,
@@ -210,7 +210,7 @@ export const ClusterServiceVersionResourcesPage: React.StatelessComponent<Cluste
     type: 'clusterserviceversion-resource-kind',
     selected: firehoseResources.map(({kind}) => kind),
     reducer: (obj) => obj.kind,
-    items: firehoseResources.map(({kind}) => ({id: kind.kind, title: kind.kind})),
+    items: firehoseResources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
   }];
 
   return firehoseResources.length > 0
@@ -236,7 +236,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       this.state = {clusterServiceVersion: null, expanded: false};
 
       if (!_.isEmpty(props.appName)) {
-        k8sGet(modelFor(CSVReference), this.props.appName, props.obj.metadata.namespace).then((clusterServiceVersion) => {
+        k8sGet(ClusterServiceVersionModel, this.props.appName, props.obj.metadata.namespace).then((clusterServiceVersion) => {
           this.setState({clusterServiceVersion, expanded: this.state.expanded});
         });
       }
@@ -368,7 +368,7 @@ export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent
   menuActions={Cog.factory.common}
   breadcrumbs={[
     {name: props.match.params.appName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}`},
-    {name: `${props.kind.kind} Details`, path: `${props.match.url}`},
+    {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
   ]}
   pages={[
     navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
@@ -476,7 +476,6 @@ export type ClusterServiceVersionResourcesDetailsState = {
 
 export type ClusterServiceVersionResourceLinkProps = {
   obj: ClusterServiceVersionResourceKind;
-  kindObj: K8sKind;
 };
 
 export type ClusterServiceVersionResourceModifierState = {

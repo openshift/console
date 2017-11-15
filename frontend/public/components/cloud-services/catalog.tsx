@@ -10,9 +10,10 @@ import * as classNames from 'classnames';
 
 import { MultiListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { NavTitle, MsgBox } from '../utils';
-import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled, CSVReference, ACEReference } from './index';
+import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled } from './index';
 import { createEnableApplicationModal } from '../modals/enable-application-modal';
-import { k8sCreate, K8sResourceKind } from '../../module/k8s';
+import { k8sCreate, K8sResourceKind, referenceForModel } from '../../module/k8s';
+import { ClusterServiceVersionModel, AlphaCatalogEntryModel } from '../../models';
 
 export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
@@ -160,8 +161,12 @@ export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
   title="Applications"
   showTitle={true}
   namespace="tectonic-system"
-  flatten={resources => _.flatMap(resources, (resource: any) => resource.data.filter(({kind}) => kind === ACEReference.kind))}
-  resources={[{kind: CSVReference, isList: true, namespaced: false}, {kind: 'Namespace', isList: true}, {kind: ACEReference, isList: true, namespaced: true}]}
+  flatten={resources => _.flatMap(_.filter(resources, (_, k: string) => k === referenceForModel(AlphaCatalogEntryModel)), (resource: any) => resource.data)}
+  resources={[
+    {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
+    {kind: 'Namespace', isList: true},
+    {kind: referenceForModel(AlphaCatalogEntryModel), isList: true, namespaced: true}
+  ]}
 />;
 
 export const CatalogDetails: React.StatelessComponent = () => <div className="co-catalog-details co-m-pane">

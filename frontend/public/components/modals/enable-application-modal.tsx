@@ -7,8 +7,8 @@ import * as _ from 'lodash';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, ResourceIcon } from '../utils';
-import { modelFor } from '../../module/k8s';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval, isEnabled, IPReference } from '../cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval, isEnabled } from '../cloud-services';
+import { InstallPlanModel } from '../../models';
 
 export const SelectNamespaceHeader: React.StatelessComponent<SelectNamespaceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
@@ -61,7 +61,7 @@ export class EnableApplicationModal extends PromiseComponent {
           approval: InstallPlanApproval.Automatic,
         },
       }))
-      .map(installPlan => this.props.k8sCreate(modelFor(IPReference), installPlan))))
+      .map(installPlan => this.props.k8sCreate(InstallPlanModel, installPlan))))
       .then(() => this.props.close());
   }
 

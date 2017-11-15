@@ -5,7 +5,7 @@ import { allModels } from '../module/k8s/k8s-models';
 
 export const prefixes = new Set(['search']);
 
-_.each(allModels().toJS(), v => {
+allModels().forEach((v) => {
   if (v.namespaced) {
     prefixes.add(v.plural);
   }

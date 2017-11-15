@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 import { match } from 'react-router-dom';
 
-import { k8sKinds, CustomResourceDefinitionKind, K8sKind, K8sResourceKindReference, resourceReferenceForCRD } from './module/k8s';
-import { allModels, modelKeyFor, referenceForKey } from './module/k8s/k8s-models';
+import { k8sKinds, CustomResourceDefinitionKind, K8sKind, K8sResourceKindReference, referenceForCRD } from './module/k8s';
+import { allModels } from './module/k8s/k8s-models';
 import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
 
@@ -24,7 +24,7 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
 
     case 'addCRDs':
       return (action.kinds as CustomResourceDefinitionKind[])
-        .filter((crd) => !state.get('kinds').has(modelKeyFor(resourceReferenceForCRD(crd))))
+        .filter((crd) => !state.get('kinds').has(referenceForCRD(crd)))
         .map((crd): K8sKind => {
           const {plural, singular, kind, shortNames} = crd.spec.names;
           const {version, scope, group, selector} = crd.spec;
@@ -35,9 +35,9 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
 
           const namespaced = scope === 'Namespaced';
           if (namespaced) {
-            prefixes.add(modelKeyFor(resourceReferenceForCRD(crd)));
+            prefixes.add(referenceForCRD(crd));
           } else {
-            prefixes.delete(modelKeyFor(resourceReferenceForCRD(crd)));
+            prefixes.delete(referenceForCRD(crd));
           }
 
           return {
@@ -62,7 +62,7 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
 
 export const connectToModel = connect((state, props: {kind: K8sResourceKindReference} & any) => {
   const ns: ImmutableMap<string, any> = state[kindReducerName];
-  const kindObj = ns.getIn(['kinds', modelKeyFor(props.kind)], {});
+  const kindObj = ns.getIn(['kinds', props.kind], {});
 
   return {kindObj, kindsInFlight: ns.get(inFlight)} as any;
 });
@@ -75,7 +75,7 @@ export const connectToPlural = connect((state, props: {plural?: string, match: m
   const ns: ImmutableMap<string, any> = state[kindReducerName];
   const [refKey, kindObj] = ns.get('kinds').findEntry((v, k) => v.plural === plural || k === plural) || ['', undefined];
 
-  return {kindObj, modelRef: referenceForKey(refKey), kindsInFlight: ns.get(inFlight)} as any;
+  return {kindObj, modelRef: refKey, kindsInFlight: ns.get(inFlight)} as any;
 });
 
 /**

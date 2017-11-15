@@ -4,17 +4,13 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import './ocs-templates';
-import { K8sResourceKind, CustomResourceDefinitionKind, K8sFullyQualifiedResourceReference } from '../../module/k8s';
+import { K8sResourceKind, CustomResourceDefinitionKind } from '../../module/k8s';
 
 import * as appsLogoImg from '../../imgs/apps-logo.svg';
 
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage } from './clusterserviceversion-resource';
 export { CatalogsDetailsPage } from './catalog';
-
-export const CSVReference: K8sFullyQualifiedResourceReference = {group: 'app.coreos.com', version: 'v1alpha1', kind: 'ClusterServiceVersion-v1'};
-export const ACEReference: K8sFullyQualifiedResourceReference = {group: 'app.coreos.com', version: 'v1alpha1', kind: 'AlphaCatalogEntry-v1'};
-export const IPReference: K8sFullyQualifiedResourceReference = {group: 'app.coreos.com', version: 'v1alpha1', kind: 'InstallPlan-v1'};
 
 export enum ALMSpecDescriptors {
   podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',

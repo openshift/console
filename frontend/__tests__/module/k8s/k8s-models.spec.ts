@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { modelFor, modelKeyFor, allModels } from '../../../public/module/k8s/k8s-models';
-import { K8sResourceKindReference } from '../../../public/module/k8s';
+import { modelFor, allModels } from '../../../public/module/k8s/k8s-models';
+import { K8sResourceKindReference, kindForReference } from '../../../public/module/k8s';
 
 describe('modelFor', () => {
   let ref: K8sResourceKindReference;
@@ -13,33 +13,25 @@ describe('modelFor', () => {
   });
 
   it('returns k8s model for fully qualified reference', () => {
-    ref = {
-      kind: 'AlphaCatalogEntry-v1',
-      group: 'app.coreos.com',
-      version: 'v1alpha1',
-    };
+    ref = 'AlphaCatalogEntry-v1:app.coreos.com:v1alpha1';
 
     expect(modelFor(ref)).toBeDefined();
   });
 });
 
-describe('modelKeyFor', () => {
+describe('kindForReference', () => {
   let ref: K8sResourceKindReference;
 
   it('returns given string reference', () => {
     ref = 'Pod';
 
-    expect(modelKeyFor(ref)).toEqual(ref);
+    expect(kindForReference(ref)).toEqual(ref);
   });
 
-  it('returns unique string key if given fully qualified reference', () => {
-    ref = {
-      kind: 'AlphaCatalogEntry-v1',
-      group: 'app.coreos.com',
-      version: 'v1alpha1',
-    };
+  it('returns `kind` string if given fully qualified reference', () => {
+    ref = 'AlphaCatalogEntry-v1:app.coreos.com:v1alpha1';
 
-    expect(modelKeyFor(ref)).toEqual(`${ref.kind}:${ref.group}:${ref.version}`);
+    expect(kindForReference(ref)).toEqual('AlphaCatalogEntry-v1');
   });
 });
 

@@ -6,11 +6,12 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, CSVReference } from './index';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage } from '../factory';
 import { navFactory, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
-import { K8sResourceKind, modelFor, K8sFullyQualifiedResourceReference } from '../../module/k8s';
+import { K8sResourceKind, referenceForModel, K8sFullyQualifiedResourceReference } from '../../module/k8s';
+import { ClusterServiceVersionModel } from '../../models';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
 
@@ -98,9 +99,10 @@ export const ClusterServiceVersionList: React.StatelessComponent<ClusterServiceV
 };
 
 const stateToProps = ({k8s}, {match, namespace}) => ({
-  resourceDescriptions: _.values(k8s.getIn([makeReduxID(modelFor(CSVReference), makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
+  resourceDescriptions: _.values(k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
     .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', []))
-    .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), []),
+    .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), [])
+    .filter((crdDesc, i, allDescriptions) => i === _.findIndex(allDescriptions, ({name}) => name === crdDesc.name)),
   namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())
     .filter((ns) => ns.metadata.name === namespace && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
     .length === 1,
@@ -114,9 +116,9 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
 
     render() {
-      const resources = [{kind: CSVReference, namespaced: true, prop: 'ClusterServiceVersion-v1'}]
+      const resources = [{kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'}]
         .concat(this.state.resourceDescriptions.map(crdDesc => ({
-          kind: {kind: crdDesc.kind, group: crdDesc.name.slice(crdDesc.name.indexOf('.') + 1), version: crdDesc.version} as K8sFullyQualifiedResourceReference,
+          kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
           namespaced: true,
           optional: true,
           prop: crdDesc.kind,

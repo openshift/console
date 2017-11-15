@@ -7,7 +7,7 @@ export * from './k8s';
 export * from './node';
 export * from './pods';
 export * from './resource';
-export { modelFor, modelKeyFor, allModels } from './k8s-models';
+export { modelFor, allModels, referenceFor, referenceForCRD, referenceForModel, kindForReference } from './k8s-models';
 
 export type OwnerReference = {
   name: string;
@@ -51,30 +51,6 @@ export type CustomResourceDefinitionKind = {
   }
 } & K8sResourceKind;
 
-export type K8sFullyQualifiedResourceReference = {
-  group: string;
-  version: string;
-  kind: string;
-};
-
-/**
- * The canonical, unique identifier for a Kubernetes resource type.
- * Maintains backwards-compatibility with references using the `kind` string field.
- */
-export type K8sResourceKindReference = K8sFullyQualifiedResourceReference | string;
-
-export const resourceReferenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceReference => ({
-  group: obj.apiVersion.split('/')[0],
-  version: obj.apiVersion.split('/')[1],
-  kind: obj.kind
-});
-
-export const resourceReferenceForCRD = (obj: CustomResourceDefinitionKind): K8sFullyQualifiedResourceReference => ({
-  group: obj.spec.group,
-  version: obj.spec.version,
-  kind: obj.spec.names.kind
-});
-
 export type K8sKind = {
   abbr: string;
   kind: string;
@@ -93,3 +69,12 @@ export type K8sKind = {
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
 };
+
+// Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
+export type K8sFullyQualifiedResourceReference = string;
+
+/**
+ * The canonical, unique identifier for a Kubernetes resource type.
+ * Maintains backwards-compatibility with references using the `kind` string field.
+ */
+export type K8sResourceKindReference = K8sFullyQualifiedResourceReference | string;

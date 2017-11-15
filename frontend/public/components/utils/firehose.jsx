@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import { inject } from './index';
 import actions from '../../module/k8s/k8s-actions';
-import { modelKeyFor } from '../../module/k8s';
 
 const { stopK8sWatch, watchK8sObject, watchK8sList } = actions;
 
@@ -90,15 +89,19 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
   {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
 </div>);
 
-/** @type {React.StatelessComponent<{resources: any[] }>} */
-export const Firehose = connect((state) => ({k8sModels: state.KINDS.get('kinds').toJS()}), {stopK8sWatch, watchK8sObject, watchK8sList})(
+const stateToProps = ({KINDS}, {resources}) => ({
+  k8sModels: KINDS.get('kinds').filter((_, k) => resources.find(({kind}) => kind === k))
+});
+
+export const Firehose = connect(stateToProps, {stopK8sWatch, watchK8sObject, watchK8sList})(
+  /** @augments {React.PureComponent<{k8sModels: Map<string, K8sKind}>} */
   class Firehose extends React.PureComponent {
     componentWillMount (props=this.props) {
       const { watchK8sList, watchK8sObject, resources, k8sModels } = props;
 
       this.firehoses = resources.map(resource => {
         const query = makeQuery(resource.namespace, resource.selector, resource.fieldSelector, resource.name);
-        const k8sKind = k8sModels[modelKeyFor(resource.kind)];
+        const k8sKind = k8sModels.get(resource.kind);
         const id = makeReduxID(k8sKind, query);
         return _.extend({}, resource, {query, id, k8sKind});
       });

@@ -9,9 +9,9 @@ import { EnableApplicationModal, EnableApplicationModalProps, SelectNamespaceHea
 import { ListHeader, ColHead, List } from '../../../public/components/factory';
 import { ResourceIcon } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
-import { modelFor } from '../../../public/module/k8s';
 import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval, IPReference } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval } from '../../../public/components/cloud-services';
+import { InstallPlanModel } from '../../../public/models';
 
 describe(SelectNamespaceHeader.displayName, () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;
@@ -158,7 +158,7 @@ describe(EnableApplicationModal.name, () => {
 
     close.and.callFake(() => {
       selectedNamespaces.forEach((namespace, i) => {
-        expect(k8sCreate.calls.argsFor(i)[0]).toEqual(modelFor(IPReference));
+        expect(k8sCreate.calls.argsFor(i)[0]).toEqual(InstallPlanModel);
         expect(k8sCreate.calls.argsFor(i)[1]).toEqual({
           apiVersion: 'app.coreos.com/v1alpha1',
           kind: 'InstallPlan-v1',
