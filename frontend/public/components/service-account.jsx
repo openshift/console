@@ -53,7 +53,7 @@ const KubeConfigify = (kind, sa) => ({
       };
       const dump = safeDump(config);
       const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
-      saveAs(blob, `sa-${name}-${clusterName}-kubeconfig`);
+      saveAs(blob, `kube-config-sa-${name}-${clusterName}`);
     }).catch(err => {
       const error = err.message;
       errorModal({error});
