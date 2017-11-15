@@ -87,7 +87,13 @@ else
 fi
 
 echo "Cleaning up old Docker images..."
-docker rm $(docker ps -a -q) || true                                   # delete stopped containeres
-docker rmi $(docker images -q) || true                                 # delete images (fails on images currently used)
-docker volume ls -qf dangling=true | xargs -r docker volume rm || true # delete orphaned volumes
+# delete stopped containers
+docker rm $(docker ps -a -q) || true
+
+# delete images except for console builder (fails on images currently used)
+TO_DELETE=$(docker images | grep -F -v quay.io/coreos/tectonic-console-builder | awk '{print $3}' | grep -v IMAGE)
+docker rmi $TO_DELETE || true
+
+# delete orphaned volumes
+docker volume ls -qf dangling=true | xargs -r docker volume rm || true
 echo "Done!"
