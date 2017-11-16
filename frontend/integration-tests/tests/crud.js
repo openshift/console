@@ -1,3 +1,6 @@
+// eslint-disable-next-line camelcase
+const child_process = require('child_process');
+
 const _ = require('lodash');
 const async = require('async');
 const { safeLoad, safeDump } = require('js-yaml');
@@ -27,17 +30,19 @@ const generateName = (prefix, length) => {
 
 const NAME = generateName(process.env.NAME || 'qa-test-', 18);
 
-console.log(`
-======================
+const h1 = text => console.log(`
+============================================
 
-  Using Name=${NAME}
+  ${text}
 
-======================
+============================================
 `);
+
+h1(`Using Name ${NAME}`);
 
 const seriesCB = browser => err => {
   if (err) {
-    console.log('\n\n\n----', err, '----\n\n\n');
+    console.error('\n\n\n----', err, '----\n\n\n');
   }
 
   browser.assert.equal(err, undefined, 'No Errors were thrown.');
@@ -45,7 +50,7 @@ const seriesCB = browser => err => {
 
 
 // Will cb() after a <StatusBox /> has "loaded" its contents.
-const asyncLoad = (browser, i, cb) => {
+const loadStatusBox = (browser, i, cb) => {
   if (i > 10) {
     return new Error('Did not load list in time.');
   }
@@ -67,7 +72,7 @@ const asyncLoad = (browser, i, cb) => {
     switch (value) {
       case 'loading':
         browser.pause(500);
-        asyncLoad(browser, i+1, cb);
+        loadStatusBox(browser, i+1, cb);
         return;
       case 'loaded':
         return cb(null, value);
@@ -104,7 +109,7 @@ const deleteExamples = (page, browser, cb) => {
     });
   };
 
-  asyncLoad(browser, 0, error => {
+  loadStatusBox(browser, 0, error => {
     if (error) {
       return cb(error);
     }
@@ -175,12 +180,35 @@ const k8sObjs = {
   'roles': 'Role',
 };
 
+const LEAKED_RESOURCES = new Set();
+let RESOURCES_CREATED = 0;
+const onCreatedResource = (name, plural, namespace, cb) => {
+  const resource = {name, plural};
+  if (namespace) {
+    resource.namespace = namespace;
+  }
+  LEAKED_RESOURCES.add(JSON.stringify(resource));
+  RESOURCES_CREATED += 1;
+  cb();
+};
+
+const onDeletedResource = (name, plural, namespace, cb) => {
+  const resource = {name, plural};
+  if (namespace) {
+    resource.namespace = namespace;
+  }
+  LEAKED_RESOURCES.delete(JSON.stringify(resource));
+  cb();
+};
+
 const namespacedResourcesTests = {};
 
 namespacedResourcesTests.before = browser => {
   console.log(`creating namespace ${NAME}`);
+
   async.series([
     cb => navigate(browser, '/namespaces', cb),
+    cb => onCreatedResource(NAME, 'namespaces', undefined, cb),
     cb => browser.page.crudPage()
       .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
       .click('@CreateYAMLButton')
@@ -195,12 +223,7 @@ namespacedResourcesTests.before = browser => {
       .assert.urlContains(`/namespaces/${NAME}`)
       .assert.containsText('#resource-title', NAME)
       .perform(() => cb()),
-  ], err => {
-    if (err) {
-      console.log('\n\n\n----', err, '----\n\n\n');
-    }
-    browser.assert.equal(err, undefined, 'No Errors were thrown.');
-  });
+  ], seriesCB);
 };
 
 Object.keys(k8sObjs).forEach(resource => {
@@ -209,9 +232,10 @@ Object.keys(k8sObjs).forEach(resource => {
     const kind = k8sObjs[resource];
     const series = [
       cb => navigate(browser, `/ns/${NAME}/${resource}?name=${NAME}`, cb),
+      cb => onCreatedResource(NAME, resource, NAME, cb),
       cb => createExamples(crudPage, browser, cb),
       cb => navigate(browser, `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`, cb),
-      cb => asyncLoad(browser, 0, cb),
+      cb => loadStatusBox(browser, 0, cb),
       cb => browser
         // tab to filter box
         .keys(browser.Keys.TAB)
@@ -233,12 +257,12 @@ Object.keys(k8sObjs).forEach(resource => {
         navigate(browser, `/ns/${NAME}/${resource}?name=${NAME}`, cb);
       },
       cb => deleteExamples(crudPage, browser, cb),
+      cb => onDeletedResource(NAME, resource, NAME, cb),
     ];
     async.series(series, seriesCB(browser));
   };
 });
 
-// NOTE: This should always be the final test!
 namespacedResourcesTests.deleteNamespace = browser => {
   console.log(`deleting namespace: ${NAME}`);
   const series = [
@@ -254,14 +278,40 @@ namespacedResourcesTests.deleteNamespace = browser => {
       .pause(200)
       .keys(browser.Keys.ENTER)
       .pause(1000)
-      .perform(() => cb()),
+      .perform(() => onDeletedResource(NAME, 'namespaces', undefined, cb)),
   ];
   async.series(series, seriesCB(browser));
 };
 
 namespacedResourcesTests.after = browser => {
+  h1(`Leaked ${LEAKED_RESOURCES.size} resources out of ${RESOURCES_CREATED} (maybe)!`);
+
+  new Array(...LEAKED_RESOURCES).forEach(resource => {
+    const {name, namespace, plural} = JSON.parse(resource);
+    if (namespace) {
+      // These resources will be deleted when we delete the namespace itself...
+      return;
+    }
+
+    let command = `kubectl delete ${plural} ${name}`;
+    if (namespace) {
+      command = `${command} -n ${namespace}`;
+    }
+
+    console.log(`running: ${command} ...`);
+
+    try {
+      // eslint-disable-next-line camelcase
+      const stdout = child_process.execSync(command, {timeout: TIMEOUT});
+      console.log(stdout.toString('utf-8'));
+    } catch (e) {
+      console.error(e.message);
+      return;
+    }
+  });
+
   browser.getLog('browser', logs => {
-    console.log('==== BEGIN BROWSER LOGS ====');
+    h1('BEGIN BROWSER LOGS');
     _.each(logs, log => {
       const { level, message } = log;
       const messageStr = _.isArray(message) ? message.join(' ') : message;
@@ -279,7 +329,7 @@ namespacedResourcesTests.after = browser => {
           console.info(level, messageStr);
       }
     });
-    console.log('==== END BROWSER LOGS ====');
+    h1('END BROWSER LOGS');
   });
 
   browser.end();

@@ -61,7 +61,7 @@ else
 fi
 
 status 'GUI Tests' 'pending'
-if DOCKER_ENV="TECTONIC_LICENSE,BRIDGE_K8S_AUTH_BEARER_TOKEN" ./builder-run ./test-gui
+if DOCKER_ENV="TECTONIC_LICENSE,KUBECONFIG" ./builder-run ./test-gui
 then
     status 'GUI Tests' 'success'
 else
