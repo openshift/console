@@ -6,16 +6,16 @@ import * as _ from 'lodash';
 
 import { safeLoad } from 'js-yaml';
 import { TEMPLATES } from '../yaml-templates';
-import { connectToPlural, kindFromPlural } from '../kinds';
+import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
+import { K8sKind } from '../module/k8s';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
-  const {match, kindsInFlight} = props;
+  const {match, kindsInFlight, kindObj} = props;
   const {params} = match;
 
-  const kind = kindFromPlural(params.plural);
-  if (!kind) {
+  if (!kindObj) {
     if (kindsInFlight) {
       return <LoadingBox />;
     }
@@ -23,9 +23,9 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     (window as any).location = '404';
   }
 
-  const apiVersion = kind.apiVersion || 'v1';
+  const apiVersion = kindObj.apiVersion || 'v1';
   const namespace = params.ns || 'default';
-  const kindStr = `${apiVersion}.${kind.kind}`;
+  const kindStr = `${apiVersion}.${kindObj.kind}`;
   let template = _.get(TEMPLATES, [kindStr, 'default']);
   if (!template) {
     // eslint-disable-next-line no-console
@@ -34,19 +34,19 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   }
 
   const obj = safeLoad(template);
-  obj.kind = kind.kind;
+  obj.kind = kindObj.kind;
   obj.metadata = obj.metadata || {};
-  if (kind.namespaced) {
+  if (kindObj.namespaced) {
     obj.metadata.namespace = namespace;
   }
-  if (kind.crd && template === TEMPLATES.DEFAULT.default) {
-    obj.apiVersion = kind.basePath.replace(/^\/apis\//, '') + kind.apiVersion;
+  if (kindObj.crd && template === TEMPLATES.DEFAULT.default) {
+    obj.apiVersion = kindObj.basePath.replace(/^\/apis\//, '') + kindObj.apiVersion;
     obj.spec = obj.spec || {};
   }
 
   const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/instances` : null;
 
-  return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kind.kind} redirectURL={redirectURL} showHeader={true} />;
+  return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} showHeader={true} />;
 });
 
 export const EditYAMLPage: React.StatelessComponent<EditYAMLPageProps> = (props) => {
@@ -59,6 +59,7 @@ export const EditYAMLPage: React.StatelessComponent<EditYAMLPageProps> = (props)
 export type CreateYAMLProps = {
   match: match<{ns: string, plural: string, appName?: string}>;
   kindsInFlight: boolean;
+  kindObj: K8sKind;
 };
 
 export type EditYAMLPageProps = {

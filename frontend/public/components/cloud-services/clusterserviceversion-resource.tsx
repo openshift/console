@@ -4,121 +4,15 @@ import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { configureCountModal } from '../modals';
-import { ClusterServiceVersionResourceKind, ALMSpecDescriptors, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
+import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
+import { isFilledStatusValue, ClusterServiceVersionResourceStatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
+import { ClusterServiceVersionResourceSpecDescriptor, ClusterServiceVersionResourceModifier } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, LoadingInline } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToPlural } from '../../kinds';
-import { k8sGet, K8sResourceKind, OwnerReference, K8sKind, K8sFullyQualifiedResourceReference, referenceFor, kindForReference } from '../../module/k8s';
+import { k8sGet, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, K8sFullyQualifiedResourceReference } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
-import { Gauge, Scalar, Line, Bar, Donut } from '../graphs';
-
-export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (props) => {
-  const {statusDescriptor, fetcher} = props;
-  const donutFetcher = () => {
-    const fetched = fetcher();
-    const values = Object.keys(fetched).map((key) => fetched[key].length);
-    const labels = Object.keys(fetched);
-    return Promise.resolve([values, labels]);
-  };
-
-  return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
-};
-
-export const isFilledStatusValue = (value: string) => value !== undefined && value !== null && value !== '';
-
-export const Phase: React.StatelessComponent<PhaseProps> = ({status}) => {
-  if (status === 'Failed') {
-    return <span><i className="fa fa-ban phase-failed-icon" />&nbsp;{status}</span>;
-  }
-
-  return <span>{status}</span>;
-};
-
-const configureSizeModal = (kindObj, resource, specDescriptor, specValue, wasChanged) => {
-  return configureCountModal({
-    resourceKind: kindObj,
-    resource: resource,
-    defaultValue: specValue || 0,
-    title: `Modify ${specDescriptor.displayName}`,
-    message: specDescriptor.description,
-    path: `/spec/${specDescriptor.path}`,
-    buttonText: `Update ${specDescriptor.displayName}`,
-    invalidateState: (isInvalid) => {
-      // NOTE: Necessary until https://github.com/kubernetes/kubernetes/pull/53345 fixes WebSocket loading of the custom resources.
-      if (isInvalid) {
-        wasChanged();
-      }
-    },
-  });
-};
-
-export class ClusterServiceVersionResourceModifier extends React.Component<ClusterServiceVersionResourceModifierProps, ClusterServiceVersionResourceModifierState> {
-  constructor(props) {
-    super(props);
-    this.state = {changing: false};
-  }
-
-  render() {
-    const {kindObj, resource, specDescriptor, specValue} = this.props;
-    const descriptors = specDescriptor['x-descriptors'] || [];
-    const wasChanged = () => this.setState({changing: true, });
-    const controlElm = descriptors.reduce((result, specCapability) => {
-      switch (specCapability) {
-        case ALMSpecDescriptors.podCount:
-          return <a onClick={() => configureSizeModal(kindObj, resource, specDescriptor, specValue, wasChanged)} className="co-m-modal-link">{specValue} pods</a>;
-        default:
-          return <span>(Unsupported)</span>;
-      }
-    }, <span />);
-
-    return <dl>
-      <dt>{specDescriptor.displayName}</dt>
-      <dd>{this.state.changing ? <LoadingInline /> : controlElm}</dd>
-    </dl>;
-  }
-}
-
-export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
-  const {statusDescriptor, statusValue, namespace} = props;
-  const descriptors = statusDescriptor['x-descriptors'] || [];
-  if (!isFilledStatusValue(statusValue)) {
-    return <dl>
-      <dt>{statusDescriptor.displayName}</dt>
-      <dd>None</dd>
-    </dl>;
-  }
-
-  const valueElm = descriptors.reduce((result, statusCapability) => {
-    switch (statusCapability) {
-      case ALMStatusDescriptors.conditions:
-        return <span>
-          {statusValue.reduce((latest, next) => new Date(latest.lastUpdateTime) < new Date(next.lastUpdateTime) ? latest : next).phase}
-        </span>;
-      case ALMStatusDescriptors.tectonicLink:
-      case ALMStatusDescriptors.w3Link:
-        return <a href={statusValue}>{statusValue.replace(/https?:\/\//, '')}</a>;
-      case ALMStatusDescriptors.k8sPhase:
-        return <Phase status={statusValue} />;
-      case ALMStatusDescriptors.k8sPhaseReason:
-        return <pre>{statusValue}</pre>;
-      case ALMSpecDescriptors.podCount:
-        return <span>{statusValue} pods</span>;
-      default:
-        if (statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)) {
-          let kind = statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length);
-          return <ResourceLink kind={kind} name={statusValue} namespace={namespace} title={statusValue}/>;
-        }
-
-        return result;
-    }
-  }, <span>{statusValue || 'None'}</span>);
-
-  return <dl>
-    <dt>{statusDescriptor.displayName}</dt>
-    <dd>{valueElm}</dd>
-  </dl>;
-};
+import { Gauge, Scalar, Line, Bar } from '../graphs';
 
 export const ClusterServiceVersionResourceHeader: React.StatelessComponent<ClusterServiceVersionResourceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="metadata.name">Name</ColHead>
@@ -144,7 +38,7 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-2">
-      <ResourceCog actions={Cog.factory.common} kind={referenceFor(obj)} resource={obj} isDisabled={false} />
+      <ResourceCog actions={Cog.factory.common} kind={referenceFor(obj)} resource={obj} />
       <ClusterServiceVersionResourceLink obj={obj} />
     </div>
     <div className="col-xs-2">
@@ -154,7 +48,7 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
       {obj.kind}
     </div>
     <div className="col-xs-2">
-      {obj.status.phase || <div className="text-muted">Unknown</div>}
+      {_.get(obj.status, 'phase') || <div className="text-muted">Unknown</div>}
     </div>
     <div className="col-xs-2">
       {obj.spec.version || 'None'}
@@ -254,7 +148,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
         }
       };
 
-      const getBlockValue = (descriptor: ClusterServiceVersionResourceDescriptor, block) => {
+      const getBlockValue = (descriptor: ClusterServiceVersionResourceStatusDescriptor | ClusterServiceVersionResourceSpecDescriptor, block) => {
         if (descriptor === undefined) {
           return undefined;
         }
@@ -307,8 +201,8 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
             { !podStatusesDescriptor && !metricsValue ? <div className="text-muted">No metrics defined</div> : null }
             { podStatusesDescriptor ? <div className="col-xs-3"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={podStatusesFetcher} /></div> : null }
             { metricsValue
-              ? metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery) => (
-                <div key={query.query} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
+              ? metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (
+                <div key={i} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
                   <ClusterServiceVersionPrometheusGraph query={query} basePath={promBasePath} />
                 </div>)) : null }
           </div>
@@ -363,18 +257,71 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
     }
   });
 
-export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
-  {...props}
-  menuActions={Cog.factory.common}
-  breadcrumbs={[
-    {name: props.match.params.appName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}`},
-    {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
-  ]}
-  pages={[
-    navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
-    navFactory.editYaml(),
-  ]}
-/>;
+export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => {
+  const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: {data: K8sResourceKind[]}}) => {
+    return _.flatMap(resources, (resource, kind) => resource.data.map(item => ({...item, kind})))
+      .reduce((owned, resource) => {
+        return (resource.metadata.ownerReferences || []).some(ref => ref.uid === parentObj.metadata.uid || owned.some(({metadata}) => metadata.uid === ref.uid))
+          ? owned.concat([resource])
+          : owned;
+      }, [] as K8sResourceKind[]);
+  };
+
+  const Resources: React.StatelessComponent<{obj: ClusterServiceVersionResourceKind}> = ({obj}) => {
+    const resources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'].map(kind => ({kind, namespaced: true}));
+
+    const ResourceHeader: React.StatelessComponent<ResourceHeaderProps> = (props) => <ListHeader>
+      <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
+      <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
+      <ColHead {...props} className="col-xs-2" sortField="status.phase">Status</ColHead>
+      <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
+    </ListHeader>;
+
+    const ResourceRow: React.StatelessComponent<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
+      <div className="col-xs-4">
+        <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </div>
+      <div className="col-xs-2">{obj.kind}</div>
+      <div className="col-xs-2">{_.get(obj.status, 'phase', 'Created')}</div>
+      <div className="col-xs-4"><Timestamp timestamp={obj.metadata.creationTimestamp} /></div>
+    </div>;
+
+    return <MultiListPage
+      filterLabel="Resources by name"
+      resources={resources}
+      rowFilters={[{
+        type: 'clusterserviceversion-resource-kind',
+        selected: resources.map(({kind}) => kind),
+        reducer: (obj) => obj.kind,
+        items: resources.map(({kind}) => ({id: kind, title: kind})),
+      }]}
+      flatten={flattenFor(obj)}
+      namespace={obj.metadata.namespace}
+      ListComponent={(props) => <List
+        {...props}
+        data={props.data.map(obj => ({...obj, rowKey: obj.metadata.uid}))}
+        EmptyMsg={() => <MsgBox title="No Resources Found" detail="Resources are Kubernetes primitives used by this instance." />}
+        Header={ResourceHeader}
+        Row={ResourceRow} />}
+    />;
+  };
+  Resources.displayName = 'Resources';
+
+  // TODO(alecmerdler): Make first breadcrumb `name` the `displayName` of ClusterServiceVersion
+  return <DetailsPage
+    {...props}
+    menuActions={Cog.factory.common}
+    breadcrumbs={[
+      {name: props.match.params.appName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
+      {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
+    ]}
+    pages={[
+      navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
+      navFactory.editYaml(),
+      {name: 'Resources', href: 'resources', component: Resources},
+    ]}
+  />;
+};
 
 export type ClusterServiceVersionResourceListProps = {
   loaded: boolean;
@@ -392,63 +339,6 @@ export type ClusterServiceVersionResourceHeaderProps = {
 
 export type ClusterServiceVersionResourceRowProps = {
   obj: ClusterServiceVersionResourceKind;
-};
-
-export enum PrometheusQueryTypes {
-  Gauge = 'Gauge',
-  Counter = 'Counter',
-  Line = 'Line',
-  Bar = 'Bar',
-}
-
-export type ClusterServiceVersionPrometheusQuery = {
-  query: string;
-  name: string;
-  type: PrometheusQueryTypes;
-  unit?: string;
-  metric?: string;
-};
-
-export type ClusterServiceVersionPrometheusGraphProps = {
-  query: ClusterServiceVersionPrometheusQuery;
-  basePath?: string;
-};
-
-export type ClusterServiceVersionResourceStatusDescriptor = {
-  path: string;
-  displayName: string;
-  description: string;
-  'x-descriptors': string[];
-  value?: any;
-};
-
-export type ClusterServiceVersionResourceSpecDescriptor = {
-  path: string;
-  displayName: string;
-  description: string;
-  'x-descriptors': string[];
-  value?: any;
-};
-
-export type ClusterServiceVersionResourceDescriptor = ClusterServiceVersionResourceStatusDescriptor | ClusterServiceVersionResourceSpecDescriptor;
-
-export type PodStatusChartProps = {
-  statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
-  fetcher: () => any;
-};
-
-export type ClusterServiceVersionResourceStatusProps = {
-  statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
-  statusValue: any;
-  namespace?: string;
-};
-
-export type ClusterServiceVersionResourceModifierProps = {
-  kindObj: K8sKind;
-  resource: ClusterServiceVersionResourceKind;
-  specDescriptor: ClusterServiceVersionResourceSpecDescriptor;
-  specValue?: any;
-  namespace?: string;
 };
 
 export type ClusterServiceVersionResourcesPageProps = {
@@ -478,19 +368,42 @@ export type ClusterServiceVersionResourceLinkProps = {
   obj: ClusterServiceVersionResourceKind;
 };
 
-export type ClusterServiceVersionResourceModifierState = {
-  changing: boolean;
+export type ResourceHeaderProps = {
+  data: K8sResourceKind[];
 };
 
-export type PhaseProps = {
-  status: string;
+export type ResourceRowProps = {
+  obj: K8sResourceKind;
+};
+
+export type ResourceListProps = {
+
+};
+
+export enum PrometheusQueryTypes {
+  Gauge = 'Gauge',
+  Counter = 'Counter',
+  Line = 'Line',
+  Bar = 'Bar',
+}
+
+export type ClusterServiceVersionPrometheusQuery = {
+  query: string;
+  name: string;
+  type: PrometheusQueryTypes;
+  unit?: string;
+  metric?: string;
+};
+
+export type ClusterServiceVersionPrometheusGraphProps = {
+  query: ClusterServiceVersionPrometheusQuery;
+  basePath?: string;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
 ClusterServiceVersionResourceHeader.displayName = 'ClusterServiceVersionResourceHeader';
 ClusterServiceVersionResourceRow.displayName = 'ClusterServiceVersionResourceRow';
-ClusterServiceVersionResourceStatus.displayName = 'ClusterServiceVersionResourceStatus';
 ClusterServiceVersionResourceDetails.displayName = 'ClusterServiceVersionResourceDetails';
 ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';
 ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
