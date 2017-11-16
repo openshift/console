@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 
 import { ConfigMapsPage, ConfigMapsDetailsPage } from './configmap';
+import { ClustersPage, ClustersDetailsPage } from './clusters';
 import { ContainersDetailsPage } from './container';
 import { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
 import { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
@@ -32,6 +33,7 @@ import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
 
 export const resourceListPages = new Map<string, React.ComponentType<any>>()
+  .set('Clusters', ClustersPage)
   .set('ConfigMaps', ConfigMapsPage)
   .set('DaemonSets', DaemonSetsPage)
   .set('Deployments', DeploymentsPage)
@@ -64,6 +66,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('ClusterServiceVersion-v1s', ClusterServiceVersionsPage);
 
 export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
+  .set('Clusters', ClustersDetailsPage)
   .set('ConfigMaps', ConfigMapsDetailsPage)
   .set('Containers', ContainersDetailsPage)
   .set('DaemonSets', DaemonSetsDetailsPage)
