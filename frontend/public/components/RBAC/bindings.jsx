@@ -104,7 +104,8 @@ const Header = props => <ListHeader>
 
 export const BindingName = connect(null, {startImpersonate: UIActions.startImpersonate})(
   ({binding, startImpersonate}) => <span>
-    <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />
+    {binding.subjects &&
+      <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
     <ResourceName kind={bindingKind(binding)} name={binding.metadata.name} />
   </span>);
 
