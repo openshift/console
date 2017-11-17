@@ -25,7 +25,7 @@ const ClustersRow: React.StatelessComponent<ClustersRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
       <ResourceCog actions={menuActions} kind="Cluster" resource={obj} />
-      <ResourceLink kind="Cluster" name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      <ResourceLink kind="Cluster" name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
     </div>
     <div className="col-xs-3">
       { clusterType ? 'Directory': 'Replica' } Cluster
@@ -52,7 +52,7 @@ const ClustersDetails: React.StatelessComponent<ClustersDetailsProps> = ({obj}) 
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
+        <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
       </div>
     </div>
   </div>

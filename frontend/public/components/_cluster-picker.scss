@@ -6,8 +6,21 @@
   padding-left: 10px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 
-  .dropdown > ul.dropdown-menu > li > a:hover {
-    background-color: $color-tectonic-dark-blue;
+  .dropdown {
+    .dropdown__not-btn {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      padding-right: 20px;
+      .caret {
+        position: absolute;
+        right: 9px;
+        top: 9px;
+      }
+    }
+    ul.dropdown-menu > li > a:hover {
+      background-color: $color-tectonic-dark-blue;
+    }
   }
 }
 
