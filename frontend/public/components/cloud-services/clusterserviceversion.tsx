@@ -10,7 +10,7 @@ import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, C
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage } from '../factory';
 import { navFactory, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
-import { K8sResourceKind, referenceForModel, K8sFullyQualifiedResourceReference } from '../../module/k8s';
+import { K8sResourceKind, referenceForModel, K8sFullyQualifiedResourceReference, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
@@ -58,7 +58,7 @@ export const ClusterServiceVersionRow: React.StatelessComponent<ClusterServiceVe
 export const ClusterServiceVersionList: React.StatelessComponent<ClusterServiceVersionListProps> = (props) => {
   const {loaded, loadError, filters} = props;
   const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Applications are installed per namespace from the Open Cloud Catalog." />;
-  const clusterServiceVersions = (props.data.filter(res => res.kind === 'ClusterServiceVersion-v1') as ClusterServiceVersionKind[])
+  const clusterServiceVersions = (props.data.filter(res => referenceFor(res) === referenceForModel(ClusterServiceVersionModel)) as ClusterServiceVersionKind[])
     .filter(csv => csv.status && csv.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded);
 
   const apps = Object.keys(filters).reduce((filteredData, filterName) => {
@@ -81,16 +81,18 @@ export const ClusterServiceVersionList: React.StatelessComponent<ClusterServiceV
   }, clusterServiceVersions);
 
   const namespacesForApp = (name) => apps.filter(({metadata}) => metadata.name === name).map(({metadata}) => metadata.namespace);
+  const hasDeployment = (csvUID: string) => props.data.some(obj => _.get(obj.metadata, 'ownerReferences', []).some(({uid}) => uid === csvUID));
 
   return <div>{ apps.length > 0
     ? <div className="co-clusterserviceversion-list">
       <div className="co-clusterserviceversion-list__section co-clusterserviceversion-list__section--catalog">
         <h1 className="co-section-title">Open Cloud Services</h1>
         <div className="co-clusterserviceversion-list__section--catalog__items">
-          { apps.filter(({metadata}, i, allCSVs) => i === _.findIndex(allCSVs, (csv => csv.metadata.name === metadata.name))).map((csv, i) => (
-            <div className="co-clusterserviceversion-list__section--catalog__items__item" key={i}>
+          { apps.filter(({metadata}, i, allCSVs) => i === _.findIndex(allCSVs, (csv => csv.metadata.name === metadata.name)))
+            .filter((csv) => hasDeployment(csv.metadata.uid))
+            .map((csv, i) => <div className="co-clusterserviceversion-list__section--catalog__items__item" key={i}>
               <ClusterServiceVersionListItem obj={csv} namespaces={namespacesForApp(csv.metadata.name)} />
-            </div>)) }
+            </div>) }
         </div>
       </div>
     </div>
@@ -116,13 +118,15 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
 
     render() {
-      const resources = [{kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'}]
-        .concat(this.state.resourceDescriptions.map(crdDesc => ({
-          kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
-          namespaced: true,
-          optional: true,
-          prop: crdDesc.kind,
-        })));
+      const resources = [
+        {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'},
+        {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
+      ].concat(this.state.resourceDescriptions.map(crdDesc => ({
+        kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
+        namespaced: true,
+        optional: true,
+        prop: crdDesc.kind,
+      })));
 
       const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item));
       const dropdownFilters = [{
@@ -164,9 +168,8 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
 
     shouldComponentUpdate(nextProps) {
-      const should = !_.isEqual(_.omit(nextProps, 'resourceDescriptions'), _.omit(this.props, 'resourceDescriptions'))
+      return !_.isEqual(_.omit(nextProps, ['resourceDescriptions']), _.omit(this.props, ['resourceDescriptions']))
         || nextProps.resourceDescriptions.length > 0 && this.state.resourceDescriptions.length === 0;
-      return should;
     }
   });
 
@@ -196,7 +199,7 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
         <dt>Links</dt>
         { spec.links && spec.links.length > 0
           ? spec.links.map((link, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
-            {link.name} <a href={link.url}>{link.url}</a>
+            {link.name} <a href={link.url}><Overflow value={link.url} /></a>
           </dd>)
           : <dd>Not available</dd> }
       </dl>
