@@ -100,6 +100,7 @@ Cog.factory = {
 // The common menu actions that most resource share
 Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
+/** @type {React.StatelessComponent<{actions: any[], kind: string, resource: any, isDisabled?: boolean}>} */
 export const ResourceCog = ({actions, kind, resource, isDisabled}) => {
   //Don't show the resource cog if deletionTimestamp is set which means the resources is in 'deletion in progress' state
   return _.get(resource.metadata, 'deletionTimestamp') ? null : <Cog
