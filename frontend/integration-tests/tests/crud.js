@@ -8,16 +8,45 @@ const { safeLoad, safeDump } = require('js-yaml');
 const TIMEOUT = 15000;
 const TEST_LABEL = 'automatedTestName';
 
-const navigate = (browser, path, cb) => {
-  const url = browser.launch_url + path;
-  browser.url(url, ({error, value}) => {
-    if (error) {
-      console.error(value);
-      process.exit(1);
+const checkForErrors = (browser, cb) => {
+  browser.execute(function () {
+    return window.windowErrors || [];
+  }, result => {
+    const windowErrors = result.value;
+    browser.assert.equal(windowErrors.length, 0, 'No unhandled JavaScript errors.');
+    if (windowErrors.length) {
+      console.error('Unhandled JavaScript errors:');
+      _.each(windowErrors, e => console.log(e));
     }
-    console.log('navigated to ', url);
     cb();
   });
+};
+
+const navigate = (browser, path, cb) => {
+  async.series([
+    // Check for existing errors before navigating away
+    cb => checkForErrors(browser, cb),
+    cb => {
+      const url = browser.launch_url + path;
+      browser.url(url, ({error, value}) => {
+        console.log('navigated to ', url);
+        cb(error, value);
+      });
+    },
+    // Check for unhandled js errors
+    cb => browser.execute(function () {
+      if (window.windowErrors) {
+        console.warn('windowErrors already exists');
+        return;
+      }
+      const onerror = window.onerror;
+      window.windowErrors = [];
+      window.onerror = function (...args) {
+        window.windowErrors.push(args);
+        onerror(...args);
+      };
+    }, ({status}) => cb(status)),
+  ], cb);
 };
 
 const generateName = (prefix, length) => {
@@ -223,8 +252,11 @@ namespacedResourcesTests.before = browser => {
       .assert.urlContains(`/namespaces/${NAME}`)
       .assert.containsText('#resource-title', NAME)
       .perform(() => cb()),
+    cb => checkForErrors(browser, cb),
   ], seriesCB);
 };
+
+namespacedResourcesTests.afterEach = (browser, done) => checkForErrors(browser, done);
 
 Object.keys(k8sObjs).forEach(resource => {
   namespacedResourcesTests[`${resource}`] = function (browser) {
