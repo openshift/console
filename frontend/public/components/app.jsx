@@ -29,6 +29,8 @@ import { history, Loading, getNamespace } from './utils';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage } from './cloud-services/catalog';
+import { ClusterServiceVersionModel } from '../models';
+import { referenceForModel } from '../module/k8s';
 import '../style.scss';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
@@ -58,7 +60,6 @@ const crdsListPage = boundResourcePage(ResourceListPage, 'customresourcedefiniti
 const nodesListPage = boundResourcePage(ResourceListPage, 'nodes');
 const rolesListPage = boundResourcePage(ResourceListPage, 'roles');
 const pvsListPage = boundResourcePage(ResourceListPage, 'persistentvolumes');
-
 const nodeDetailsPage = boundResourcePage(ResourceDetailsPage, 'nodes');
 
 class App extends React.PureComponent {
@@ -111,7 +112,7 @@ class App extends React.PureComponent {
 
             <Route path="/start-guide" exact component={StartGuidePage} />
 
-            <Route path="/ns/:ns/clusterserviceversion-v1s/:name/edit" exact component={props => <EditYAMLPage {...props} kind="ClusterServiceVersion-v1" />}/>
+            <Route path="/ns/:ns/clusterserviceversion-v1s/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
             <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/new" exact component={CreateYAML} />
             <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />

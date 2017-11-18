@@ -11,6 +11,7 @@ import { testClusterServiceVersionResource, testResourceInstance, testClusterSer
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, ResourceLink } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
+import { referenceFor } from '../../../public/module/k8s';
 
 describe(ClusterServiceVersionResourceHeader.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourceHeaderProps>;
@@ -71,7 +72,6 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
     const link = col.find(ClusterServiceVersionResourceLink);
 
     expect(link.props().obj).toEqual(testResourceInstance);
-    expect(link.props().kind).toEqual(testResourceInstance.kind);
   });
 
   it('renders a `ResourceCog` for common actions', () => {
@@ -79,7 +79,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
     const cog = col.find(ResourceCog);
 
     expect(cog.props().actions).toEqual(Cog.factory.common);
-    expect(cog.props().kind).toEqual(testResourceInstance.kind);
+    expect(cog.props().kind).toEqual('TestResource:testapp.coreos.com:v1alpha1');
     expect(cog.props().resource).toEqual(testResourceInstance);
     expect(cog.props().isDisabled).toBe(false);
   });
@@ -403,7 +403,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
       path: '/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name',
     };
 
-    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={testResourceInstance.kind} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
+    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={referenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -468,7 +468,12 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().canCreate).toBe(true);
-    expect(listPage.props().resources).toEqual(owned.concat(required).map(({kind}) => ({kind, namespaced: true})));
+    expect(listPage.props().resources).toEqual(owned.concat(required).map((crdDesc) => ({
+      kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}`,
+      namespaced: true,
+      optional: true,
+      prop: crdDesc.kind,
+    })));
     expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
   });
 

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { FLAGS, connectToFlags } from '../features';
 import { Firehose, Dropdown } from './utils';
+import { ClusterReference } from './clusters';
 
 // Trim trailing slash from URLs to make matching more likely
 const normalizeURL = url => url.replace(/\/$/g, '');
@@ -42,7 +43,7 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
 };
 
 const resources = [{
-  kind: 'Cluster',
+  kind: ClusterReference,
   prop: 'clusters',
   isList: true,
 }];

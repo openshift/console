@@ -1,11 +1,11 @@
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { isNamespaced } from '../components/utils/link';
-import { k8sKinds } from '../module/k8s';
+import { allModels } from '../module/k8s/k8s-models';
 
 export const prefixes = new Set(['search']);
 
-_.each(k8sKinds, v => {
+allModels().forEach((v) => {
   if (v.namespaced) {
     prefixes.add(v.plural);
   }

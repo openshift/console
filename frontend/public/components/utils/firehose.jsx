@@ -2,12 +2,12 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { kindObj, inject } from './index';
+import { inject } from './index';
 import actions from '../../module/k8s/k8s-actions';
 
 const { stopK8sWatch, watchK8sObject, watchK8sList } = actions;
 
-export const makeReduxID = (k8sKind, query) => {
+export const makeReduxID = (k8sKind = {}, query) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
@@ -89,16 +89,19 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
   {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
 </div>);
 
+const stateToProps = ({KINDS}, {resources}) => ({
+  k8sModels: KINDS.get('kinds').filter((_, k) => resources.find(({kind}) => kind === k))
+});
 
-/** @type {React.StatelessComponent<{resources: any[] }>} */
-export const Firehose = connect(null, {stopK8sWatch, watchK8sObject, watchK8sList})(
+export const Firehose = connect(stateToProps, {stopK8sWatch, watchK8sObject, watchK8sList})(
+  /** @augments {React.PureComponent<{k8sModels: Map<string, K8sKind}>} */
   class Firehose extends React.PureComponent {
     componentWillMount (props=this.props) {
-      const { watchK8sList, watchK8sObject, resources } = props;
+      const { watchK8sList, watchK8sObject, resources, k8sModels } = props;
 
       this.firehoses = resources.map(resource => {
         const query = makeQuery(resource.namespace, resource.selector, resource.fieldSelector, resource.name);
-        const k8sKind = kindObj(resource.kind);
+        const k8sKind = k8sModels.get(resource.kind);
         const id = makeReduxID(k8sKind, query);
         return _.extend({}, resource, {query, id, k8sKind});
       });
@@ -158,7 +161,7 @@ Firehose.propTypes = {
   children: PropTypes.node,
   expand: PropTypes.bool,
   resources: PropTypes.arrayOf(PropTypes.shape({
-    kind: PropTypes.string.isRequired,
+    kind: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     name: PropTypes.string,
     namespace: PropTypes.string,
     selector: PropTypes.object,

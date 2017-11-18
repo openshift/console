@@ -1,9 +1,10 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
 import * as _ from 'lodash';
 
 import './ocs-templates';
+import { K8sResourceKind, CustomResourceDefinitionKind } from '../../module/k8s';
 
 import * as appsLogoImg from '../../imgs/apps-logo.svg';
 
@@ -57,37 +58,6 @@ export enum InstallPlanApproval {
   Manual = 'Manual',
   UpdateOnly = 'Update-Only',
 }
-
-export type OwnerReference = {
-  name: string;
-  kind: string;
-  uid: string;
-  apiVersion: string;
-};
-
-export type K8sResourceKind = {
-  apiVersion: string;
-  kind: string;
-  metadata: {
-    annotations?: {[key: string]: string},
-    name: string,
-    namespace?: string,
-    labels?: {[key: string]: string},
-    ownerReferences?: OwnerReference[],
-    [key: string]: any,
-  };
-  spec?: {
-    selector?: {
-      matchLabels?: {[key: string]: any},
-    },
-    [key: string]: any
-  };
-  status?: {[key: string]: any};
-};
-
-export type CustomResourceDefinitionKind = {
-
-} & K8sResourceKind;
 
 export type CRDDescription = {
   name: string;

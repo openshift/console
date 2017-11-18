@@ -45,7 +45,7 @@ describe(NavTitle.displayName, () => {
   let wrapper: ShallowWrapper<NavTitleProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<NavTitle obj={null} />);
+    wrapper = shallow(<NavTitle.WrappedComponent obj={null} />);
   });
 
   it('renders resource icon if given `kind`', () => {

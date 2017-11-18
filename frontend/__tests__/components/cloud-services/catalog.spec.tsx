@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
 import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
+import { ClusterServiceVersionModel, AlphaCatalogEntryModel } from '../../../public/models';
+import { referenceForModel } from '../../../public/module/k8s';
 import { MultiListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
 import { NavTitle } from '../../../public/components/utils';
 import { testCatalogApp, testClusterServiceVersion, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
@@ -242,7 +244,11 @@ describe(CatalogAppsPage.displayName, () => {
   it('renders a `MultiListPage` with the correct props', () => {
     const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.props().resources).toEqual([{kind: 'ClusterServiceVersion-v1', isList: true}, {kind: 'Namespace', isList: true}, {kind: 'AlphaCatalogEntry-v1', isList: true, namespaced: true}]);
+    expect(listPage.props().resources).toEqual([
+      {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
+      {kind: 'Namespace', isList: true},
+      {kind: referenceForModel(AlphaCatalogEntryModel), isList: true, namespaced: true}
+    ]);
     expect(listPage.props().namespace).toEqual('tectonic-system');
     expect(listPage.props().ListComponent).toEqual(CatalogAppList);
     expect(listPage.props().filterLabel).toEqual('Applications by name');
@@ -253,8 +259,9 @@ describe(CatalogAppsPage.displayName, () => {
   it('passes `flatten` function which returns only list of `AlphaCatalogEntry-v1s`', () => {
     const flatten = wrapper.find(MultiListPage).props().flatten;
     const data = flatten({
-      'AlphaCatalogEntry-v1': {data: [testCatalogApp]},
+      [referenceForModel(AlphaCatalogEntryModel)]: {data: [testCatalogApp]},
       'Namespace': {data: [testNamespace]},
+      [referenceForModel(ClusterServiceVersionModel)]: {data: [testClusterServiceVersion]}
     });
 
     expect(data.length).toEqual(1);
