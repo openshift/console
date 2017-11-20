@@ -3,7 +3,7 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
-import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind } from './index';
+import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
 import { ClusterServiceVersionModel, AlphaCatalogEntryModel, InstallPlanModel } from '../../models';
 import { k8sKinds } from './enum';
 
@@ -13,6 +13,10 @@ export const referenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceRef
 
 export const referenceForCRD = (obj: CustomResourceDefinitionKind): K8sFullyQualifiedResourceReference => (
   `${obj.spec.names.kind}:${obj.spec.group}:${obj.spec.version}`
+);
+
+export const referenceForOwnerRef = (ownerRef: OwnerReference): K8sFullyQualifiedResourceReference => (
+  `${ownerRef.kind}:${ownerRef.apiVersion.split('/')[0]}:${ownerRef.apiVersion.split('/')[1]}`
 );
 
 export const referenceForModel = (model: K8sKind): K8sFullyQualifiedResourceReference => (
@@ -40,7 +44,6 @@ const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelFor = (ref: K8sResourceKindReference) => k8sModels.get(ref) || k8sModels.get(kindForReference(ref));
-
 /**
  * Provides a synchronous way to acquire all statically-defined Kubernetes models. 
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
