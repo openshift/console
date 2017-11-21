@@ -38,7 +38,7 @@ const kind = 'CronJob';
 const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
   <div className="col-xs-3">
     <ResourceCog actions={menuActions} kind={kind} resource={cronjob} />
-    <ResourceLink kind={kind} name={cronjob.metadata.name} title={cronjob.metadata.name} />
+    <ResourceLink kind={kind} name={cronjob.metadata.name} title={cronjob.metadata.name} namespace={cronjob.metadata.namespace} />
   </div>
   <div className="col-xs-3">
     {cronjob.spec.schedule}
