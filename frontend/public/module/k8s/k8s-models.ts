@@ -4,7 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
 import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
-import { ClusterServiceVersionModel, AlphaCatalogEntryModel, InstallPlanModel } from '../../models';
+import { ClusterServiceVersionModel, AlphaCatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel } from '../../models';
 import { k8sKinds } from './enum';
 
 export const referenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceReference => obj.kind && obj.apiVersion
@@ -36,6 +36,11 @@ const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
   .set(referenceForModel(AlphaCatalogEntryModel), AlphaCatalogEntryModel)
   .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionModel)
   .set(referenceForModel(InstallPlanModel), InstallPlanModel)
+  .set(referenceForModel(EtcdClusterModel), EtcdClusterModel)
+  .set(referenceForModel(AlertmanagerModel), AlertmanagerModel)
+  .set(referenceForModel(PrometheusModel), PrometheusModel)
+  .set(referenceForModel(ServiceMonitorModel), ServiceMonitorModel)
+  .set(referenceForModel(VaultServiceModel), VaultServiceModel)
   // TODO(alecmerdler): Kill the Enum and move definitions to this module with `K8sFullyQualifiedResourceReference` as keys
   .withMutations((models) => _.forEach(k8sKinds, (kind, kindName) => models.set(kindName, kind)));
 

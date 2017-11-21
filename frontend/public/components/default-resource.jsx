@@ -3,6 +3,7 @@ import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, kindObj } from './utils';
+import { referenceFor } from '../module/k8s';
 
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
@@ -16,7 +17,7 @@ const Header = props => <ListHeader>
 const RowForKind = kind => function RowForKind ({obj}) {
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
-      <ResourceCog actions={menuActions} kind={kind} resource={obj} />
+      <ResourceCog actions={menuActions} kind={referenceFor(obj)} resource={obj} />
       <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-xs-4">

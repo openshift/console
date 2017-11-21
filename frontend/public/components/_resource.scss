@@ -33,8 +33,7 @@ $height: 18px;
 .co-m-resource-job,
 .co-m-resource-petset,
 .co-m-resource-replicaset,
-.co-m-resource-replicationcontroller,
-.co-m-resource-etcdCluster {
+.co-m-resource-replicationcontroller {
   background-color: $color-pod-overlord;
 }
 
@@ -67,8 +66,7 @@ $height: 18px;
   background-color: $color-alertmanager-dark;
 }
 
-.co-m-resource-service,
-.co-m-resource-servicemonitor {
+.co-m-resource-service {
   background-color: $color-service-dark;
 }
 

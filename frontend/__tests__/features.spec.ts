@@ -45,7 +45,6 @@ describe('featureReducer', () => {
   const defaults: {[name: string]: any} = {
     [FLAGS.AUTH_ENABLED]: !((window as any).SERVER_FLAGS.authDisabled),
     [FLAGS.CLUSTER_UPDATES]: undefined,
-    [FLAGS.ETCD_OPERATOR]: undefined,
     [FLAGS.PROMETHEUS]: undefined,
     [FLAGS.MULTI_CLUSTER]: undefined,
     [FLAGS.SECURITY_LABELLER]: undefined,

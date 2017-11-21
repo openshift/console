@@ -116,7 +116,6 @@ const filterPropType = (props, propName, componentName) => {
 const sorts = {
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
-  etcdClusterPodSelector: cluster => `etcd_cluster=${cluster.metadata.name}`,
   ingressValidHosts,
   jobCompletions: job => getJobTypeAndCompletions(job).completions,
   jobType: job => getJobTypeAndCompletions(job).type,

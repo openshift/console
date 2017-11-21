@@ -11,7 +11,6 @@ import { authSvc } from '../module/auth';
 import { ClusterPicker } from './cluster-picker';
 
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
-import * as operatorLogoImg from '../imgs/operator-logo.svg';
 import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
 
@@ -141,11 +140,6 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="configmaps" name="Config Maps" />
       <NavLink resource="secrets" name="Secrets" />
       <NavLink resource="resourcequotas" name="Resource Quotas" />
-    </NavSection>
-
-    <NavSection required={[FLAGS.ETCD_OPERATOR, FLAGS.PROMETHEUS]} text="Open Cloud Services" img={operatorLogoImg}>
-      <NavLink resource="etcdclusters" name="etcd" required={FLAGS.ETCD_OPERATOR} />
-      <NavLink resource="prometheuses" name="Prometheus" required={FLAGS.PROMETHEUS} />
     </NavSection>
 
     <NavSection text="Routing" img={routingImg}>

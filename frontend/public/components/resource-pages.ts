@@ -19,9 +19,9 @@ import { ServicesPage, ServicesDetailsPage } from './service';
 import { IngressesPage, IngressesDetailsPage } from './ingress';
 import { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
 import { RoleBindingsPage } from './RBAC/bindings';
-import { EtcdClustersPage, EtcdClustersDetailsPage } from './etcd-cluster';
-import { PrometheusInstancesPage, PrometheusInstancesDetailsPage } from './prometheus';
-import { ServiceMonitorsPage, ServiceMonitorsDetailsPage } from './service-monitor';
+import { EtcdClustersPage } from './etcd-cluster';
+import { PrometheusInstancesPage } from './prometheus';
+import { ServiceMonitorsPage } from './service-monitor';
 import { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
 import { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
 import { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';
@@ -85,9 +85,6 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('Ingresses', IngressesDetailsPage)
   .set('ClusterRoles', ClusterRolesDetailsPage)
   .set('Roles', RolesDetailsPage)
-  .set('EtcdClusters', EtcdClustersDetailsPage)
-  .set('Prometheuses', PrometheusInstancesDetailsPage)
-  .set('ServiceMonitors', ServiceMonitorsDetailsPage)
   .set('Alertmanagers', AlertManagersDetailsPage)
   .set('PodVulns', PodVulnsDetailsPage)
   .set('StatefulSets', StatefulSetsDetailsPage)

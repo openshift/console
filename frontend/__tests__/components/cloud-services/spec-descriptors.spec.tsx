@@ -4,11 +4,11 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 
 import { ALMSpecDescriptors } from '../../../public/components/cloud-services';
-import { ClusterServiceVersionResourceModifier, ClusterServiceVersionResourceModifierProps } from '../../../public/components/cloud-services/spec-descriptors';
+import { SpecDescriptor, SpecDescriptorProps } from '../../../public/components/cloud-services/spec-descriptors';
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 
-describe(ClusterServiceVersionResourceModifier.name, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourceModifierProps>;
+describe(SpecDescriptor.name, () => {
+  let wrapper: ShallowWrapper<SpecDescriptorProps>;
 
   it('renders a resource spec control', () => {
     const specDescriptor = {
@@ -28,7 +28,7 @@ describe(ClusterServiceVersionResourceModifier.name, () => {
     };
 
     const specValue = 124;
-    wrapper = shallow(<ClusterServiceVersionResourceModifier kindObj={resourceDefinition} resource={testResourceInstance} namespace="foo" specDescriptor={specDescriptor} specValue={specValue} />);
+    wrapper = shallow(<SpecDescriptor kindObj={resourceDefinition} resource={testResourceInstance} namespace="foo" specDescriptor={specDescriptor} specValue={specValue} />);
     const link = wrapper.find('a');
 
     expect(link.exists()).toBe(true);

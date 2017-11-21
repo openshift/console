@@ -38,6 +38,6 @@ describe('kindForReference', () => {
 describe('allModels', () => {
 
   it('returns immutable map of all models', () => {
-    expect(allModels().count()).toEqual(41);
+    expect(allModels().count()).toEqual(42);
   });
 });

@@ -1,38 +1,43 @@
 import * as React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
 
-import {getActiveNamespace} from '../ui/ui-actions';
-import {Dropdown, kindObj, history, NavTitle, ResourceIcon, SelectorInput, LoadingBox} from './utils';
+import { getActiveNamespace} from '../ui/ui-actions';
+import { Dropdown, history, NavTitle, ResourceIcon, SelectorInput, LoadingBox } from './utils';
 
-import { k8sKinds } from '../module/k8s';
-import {split, selectorFromString} from '../module/k8s/selector';
-import {requirementFromString} from '../module/k8s/selector-requirement';
+import { allModels } from '../module/k8s';
+import { split, selectorFromString } from '../module/k8s/selector';
+import { requirementFromString } from '../module/k8s/selector-requirement';
 import { resourceListPages } from './resource-pages';
 import { kindReducerName } from '../kinds';
+import { ClusterServiceVersionModel, EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../models';
 
-const DropdownItem = ({kind}) => <span>
-  <div className="co-type-selector__icon-wrapper">
-    <ResourceIcon kind={kind} />
-  </div>
-  {kindObj(kind).labelPlural}
-</span>;
+const DropdownItem = ({kind}) => {
+  const [modelRef, kindObj] = allModels().findEntry((v) => v.kind === kind);
+  return <span>
+    <div className="co-type-selector__icon-wrapper">
+      <ResourceIcon kind={modelRef} />
+    </div>
+    {kindObj.labelPlural}
+  </span>;
+};
 
 const ResourceListDropdown = connect(state => ({ allkinds: state[kindReducerName].get('kinds').toJSON()}))(
   function ResourceListDropdown ({selected, onChange, allkinds}) {
     const items = {};
     const kinds = {};
-    _.each(k8sKinds, ko => kinds[ko.labelPlural.replace(/ /g, '')] = ko.kind);
+    _.each(allModels().toJS(), ko => kinds[ko.labelPlural.replace(/ /g, '')] = ko.kind);
 
     Array.from(resourceListPages.keys())
+      .filter(k => k !== ClusterServiceVersionModel.labelPlural)
       .sort()
       .forEach(k => {
         const kind = kinds[k];
         if (!kind) {
           return;
         }
-        if (allkinds[kind].crd) {
+        if (allkinds[kind] && allkinds[kind].crd && ![EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel].some(m => m.kind === k)) {
           return;
         }
         items[kind] = <DropdownItem kind={kind} />;
@@ -46,12 +51,11 @@ const ResourceListDropdown = connect(state => ({ allkinds: state[kindReducerName
     return <Dropdown className="co-type-selector" items={items} title={items[selected]} onChange={onChange} selectedKey={selected} />;
   });
 
-const ResourceList = connect(state => ({
+const ResourceList = connect(() => ({
   namespace: getActiveNamespace(),
-  allkinds: state[kindReducerName].get('kinds').toJSON(),
 }))(
-  function ConnectedResourceList ({kind, namespace, selector, allkinds}) {
-    const kindObj = _.get(allkinds, kind, {});
+  function ConnectedResourceList ({kind, namespace, selector}) {
+    const kindObj = allModels().find((v) => v.kind === kind) || {};
     let ListPage = resourceListPages.get('Default');
     if (kindObj && kindObj.labelPlural) {
       ListPage = resourceListPages.get(kindObj.labelPlural.replace(/ /g, '')) || ListPage;
