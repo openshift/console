@@ -279,8 +279,9 @@ Object.keys(k8sObjs).forEach(resource => {
         // .useXpath()
         // .click('//div[contains(@class, "loading-box__loaded")]//span[contains(@class, "co-resource-link")]/a[contains(@title, *)][1]')
         // .useCss()
-        .waitForElementPresent('#resource-title', TIMEOUT, true, () => cb()),
+        .waitForElementPresent('.co-m-vert-nav__menu-item.co-m-vert-nav-item--active', TIMEOUT, true, () => cb()),
       cb => {
+        browser.assert.elementNotPresent('.loading-box__errored', `Error loading ${resource} details page`);
         // Roles list page is composite (without applying filters)
         if (resource !== 'roles') {
           browser.assert.urlContains(`/${NAME}`);

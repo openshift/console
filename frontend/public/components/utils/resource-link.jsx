@@ -16,7 +16,7 @@ export const resourcePath = (kind, name, namespace = undefined) => {
   }
 
   if (namespaced) {
-    url += `ns/${namespace ? namespace : 'all-namespaces'}/`;
+    url += namespace ? `ns/${namespace}/` : 'all-namespaces/';
   }
 
   if (path) {
