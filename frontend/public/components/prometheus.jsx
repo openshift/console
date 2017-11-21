@@ -46,25 +46,29 @@ const PrometheusRow = ({obj: instance}) => {
   const kind = 'Prometheus';
 
   return <ResourceRow obj={instance}>
-    <div className="col-md-3 col-sm-3 col-xs-6">
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind={kind} resource={instance} />
       <ResourceLink kind={kind} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
-    <div className="col-md-4 col-sm-5 hidden-xs">
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+      <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+    </div>
+    <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
       <LabelList kind={kind} labels={metadata.labels} />
     </div>
-    <div className="col-md-2 hidden-sm hidden-xs">{spec.version}</div>
-    <div className="col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-1 col-md-2 hidden-sm">{spec.version}</div>
+    <div className="col-lg-2 hidden-md">
       <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor"/>
     </div>
   </ResourceRow>;
 };
 
 const PrometheusHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-4 col-sm-5 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="spec.version">Version</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="spec.serviceMonitorSelector">
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-lg-1 col-md-2 hidden-sm" sortField="spec.version">Version</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md" sortField="spec.serviceMonitorSelector">
     Service Monitor Selector
   </ColHead>
 </ListHeader>;

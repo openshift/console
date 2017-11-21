@@ -19,9 +19,10 @@ data:
 const menuActions = Cog.factory.common;
 
 const SecretHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Secret Name</ColHead>
-  <ColHead {...props} className="col-xs-4" sortFunc="dataSize">Secret Data</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Secret Age</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortFunc="dataSize">Size</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const SecretRow = ({obj: secret}) => {
@@ -29,12 +30,15 @@ const SecretRow = ({obj: secret}) => {
   const age = moment(secret.metadata.creationTimestamp).fromNow();
 
   return <ResourceRow obj={secret}>
-    <div className="col-xs-4">
+    <div className="col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind="Secret" resource={secret} />
       <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
-    <div className="col-xs-4">{data}</div>
-    <div className="col-xs-4">{age}</div>
+    <div className="col-sm-4 col-xs-6">
+      <ResourceLink kind="Namespace" name={secret.metadata.namespace} title={secret.metadata.namespace} />
+    </div>
+    <div className="col-sm-2 hidden-xs">{data}</div>
+    <div className="col-sm-2 hidden-xs">{age}</div>
   </ResourceRow>;
 };
 

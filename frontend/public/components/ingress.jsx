@@ -45,21 +45,25 @@ const getTLSCert = (ingress) => {
 };
 
 const IngressListHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Ingress Name</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Ingress Labels</ColHead>
-  <ColHead {...props} className="col-xs-5" sortFunc="ingressValidHosts">Hosts</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm" sortFunc="ingressValidHosts">Hosts</ColHead>
 </ListHeader>;
 
 const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
-  <div className="col-xs-3">
+  <div className="col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
     <ResourceLink kind="Ingress" name={ingress.metadata.name}
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
   </div>
-  <div className="col-xs-4">
+  <div className="col-md-3 col-sm-4 col-xs-6">
+    <ResourceLink kind="Namespace" name={ingress.metadata.namespace} title={ingress.metadata.namespace} />
+  </div>
+  <div className="col-md-3 col-sm-4 hidden-xs">
     <LabelList kind="Ingress" labels={ingress.metadata.labels} />
   </div>
-  <div className="col-xs-5">{getHosts(ingress)}</div>
+  <div className="col-md-3 hidden-sm">{getHosts(ingress)}</div>
 </ResourceRow>;
 
 const RulesHeader = () => <div className="row co-m-table-grid__head">

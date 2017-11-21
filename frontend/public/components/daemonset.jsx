@@ -27,26 +27,30 @@ spec:
 const menuActions = [Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
 
 const DaemonSetHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-5 col-xs-6" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="daemonsetNumScheduled">Status</ColHead>
-  <ColHead {...props} className="col-md-4 hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortFunc="daemonsetNumScheduled">Status</ColHead>
+  <ColHead {...props} className="col-lg-3 hidden-md" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
 const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
-  <div className="col-md-3 col-sm-3 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="DaemonSet" resource={daemonset} />
     <ResourceLink kind="DaemonSet" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>
-  <div className="col-md-3 col-sm-5 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} title={daemonset.metadata.namespace} />
+  </div>
+  <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
     <LabelList kind="DaemonSet" labels={daemonset.metadata.labels} />
   </div>
-  <div className="col-md-2 col-sm-4 hidden-xs">
+  <div className="col-lg-2 col-md-2 hidden-sm">
     <Link to={`/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
       {daemonset.status.currentNumberScheduled} of {daemonset.status.desiredNumberScheduled} pods
     </Link>
   </div>
-  <div className="col-md-4 hidden-sm hidden-xs">
+  <div className="col-lg-3 hidden-md">
     <Selector selector={daemonset.spec.selector} />
   </div>
 </ResourceRow>;

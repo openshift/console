@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { getJobTypeAndCompletions } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureJobParallelismModal } from './modals';
-import { Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, Timestamp, navFactory } from './utils';
+import { Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('batch/v1.Job', `apiVersion: batch/v1
@@ -33,34 +33,34 @@ const ModifyJobParallelism = (kind, obj) => ({
 const menuActions = [ModifyJobParallelism, ...Cog.factory.common];
 
 const JobHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortFunc="jobCompletions">Completions</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortFunc="jobType">Type</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-4 col-md-4 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortFunc="jobCompletions">Completions</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md" sortFunc="jobType">Type</ColHead>
 </ListHeader>;
 
 const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
     <ResourceRow obj={job}>
-      <div className="col-lg-2 col-md-2 col-sm-3 col-xs-6">
+      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
         <ResourceCog actions={menuActions} kind="Job" resource={job} />
         <ResourceLink kind="Job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
       </div>
-      <div className="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+        <ResourceLink kind="Namespace" name={job.metadata.namespace} title={job.metadata.namespace} />
+      </div>
+      <div className="col-lg-4 col-md-4 col-sm-4 hidden-xs">
         <LabelList kind="Job" labels={job.metadata.labels} />
       </div>
-      <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
+      <div className="col-lg-2 col-md-2 hidden-sm">
         <Link to={`/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
           {job.status.succeeded || 0} of {completions}
         </Link>
       </div>
-      <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
+      <div className="col-lg-2 hidden-md">
         {type}
-      </div>
-      <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-        <Selector selector={job.spec.selector} />
       </div>
     </ResourceRow>
   );
