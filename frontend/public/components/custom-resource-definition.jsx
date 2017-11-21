@@ -2,9 +2,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { ColHead, List, ListHeader, ListPage } from './factory';
-import { ResourceIcon } from './utils';
+import { Cog, ResourceCog, ResourceIcon } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { referenceForCRD } from '../module/k8s';
+
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
 const CRD = `apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -45,6 +47,7 @@ const isEstablished = conditions => {
 
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-xs-3">
+    <ResourceCog actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
     <ResourceIcon kind={referenceForCRD(crd)} /> <Link to={`/k8s/${crd.spec.scope === 'Namespaced' ? 'all-namespaces' : 'cluster'}/${crd.spec.names.plural}`} title={crd.spec.names.kind}>{crd.spec.names.kind}</Link>
   </div>
   <div className="col-xs-3">
