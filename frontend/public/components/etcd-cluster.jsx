@@ -7,7 +7,7 @@ import { SafetyFirst } from './safety-first';
 import { configureClusterSizeModal } from './modals';
 import { ColHead, List, ListHeader, ListPage, DetailsPage, ResourceRow } from './factory';
 import { PodsPage } from './pod';
-import { Cog, navFactory, ResourceCog, ResourceIcon, Timestamp, Selector, resourcePath, pluralize, LoadingInline} from './utils';
+import { Cog, navFactory, ResourceCog, ResourceIcon, Timestamp, Selector, resourcePath, pluralize, LoadingInline, ResourceLink} from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { AsyncComponent } from './utils/async';
 
@@ -54,19 +54,22 @@ const EtcdClusterRow = ({obj: cluster}) => {
   const backup = _.get(cluster.spec, 'backup', null);
 
   return <ResourceRow obj={cluster}>
-    <div className="col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind="EtcdCluster" resource={cluster} />
       <EtcdClusterLink metadata={metadata} />
     </div>
-    <div className="col-md-2 col-sm-3 col-xs-6">
-      {<Link to={`${resourcePath('etcdcluster', metadata.name, metadata.namespace)}/pods`} title="pods">
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+      <ResourceLink kind="Namespace" name={cluster.metadata.namespace} title={cluster.metadata.namespace} />
+    </div>
+    <div className="col-lg-1 col-md-2 col-sm-3 hidden-xs">
+      {<Link to={`${resourcePath('EtcdCluster', metadata.name, metadata.namespace)}/pods`} title="pods">
         {status ? `${status.size} of ${spec.size}` : spec.size}
       </Link>}
     </div>
-    <div className="col-md-4 col-sm-5 hidden-xs">
+    <div className="col-lg-3 col-md-4 hidden-sm">
       <Selector selector={selector} />
     </div>
-    <div className="col-md-3 hidden-sm hidden-xs">
+    <div className="col-lg-2 hidden-md">
       {backup === null && <div className="text-muted">No backup policy</div>}
       {backup && <div>{_.has(status, 'backupServiceStatus') ? <Timestamp timestamp={status.backupServiceStatus.recentBackup.creationTime} /> : '-'}</div>}
     </div>
@@ -74,10 +77,11 @@ const EtcdClusterRow = ({obj: cluster}) => {
 };
 
 const EtcdClusterHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="status.size">Size</ColHead>
-  <ColHead {...props} className="col-md-4 col-sm-5 hidden-xs" sortFunc="etcdClusterPodSelector">Pod Selector</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="status.backupServiceStatus.recentBackup.creationTime">Last Backup Date</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-1 col-md-2 col-sm-3 hidden-xs" sortField="status.size">Size</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 hidden-sm" sortFunc="etcdClusterPodSelector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md" sortField="status.backupServiceStatus.recentBackup.creationTime">Last Backup Date</ColHead>
 </ListHeader>;
 
 const Phase = ({status}) => {

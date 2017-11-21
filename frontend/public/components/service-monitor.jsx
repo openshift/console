@@ -105,15 +105,18 @@ const ServiceMonitorRow = ({obj: sm}) => {
   const kind = 'ServiceMonitor';
 
   return <ResourceRow obj={sm}>
-    <div className="col-md-4 col-sm-3 col-xs-6">
+    <div className="col-md-3 col-sm-3 col-xs-6">
       <ResourceCog actions={menuActions} kind={kind} resource={sm} />
       <ResourceLink kind={kind} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
-    <div className="col-md-5 col-sm-5 col-xs-6">
+    <div className="col-md-3 col-sm-3 col-xs-6">
+      <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+    </div>
+    <div className="col-md-3 col-sm-6 hidden-xs">
       <Selector selector={spec.selector} kind="Service"
         namespace={_.get(spec, ['namespaceSelector', 'matchNames', 0], '')} />
     </div>
-    <div className="col-md-3 col-sm-4 hidden-xs">
+    <div className="col-md-3 hidden-sm">
       <p>
         {_.has(spec, 'namespaceSelector') ? <ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /> : <span className="text-muted">--</span> }
       </p>
@@ -122,9 +125,10 @@ const ServiceMonitorRow = ({obj: sm}) => {
 };
 
 const ServiceMonitorHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-4 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-5 col-sm-5 col-xs-6 " sortField="spec.selector">Service Selector</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="spec.namespaceSelector">
+  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-6 hidden-xs" sortField="spec.selector">Service Selector</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.namespaceSelector">
     Monitoring Namespace
   </ColHead>
 </ListHeader>;

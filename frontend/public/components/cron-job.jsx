@@ -28,25 +28,29 @@ spec:
 const menuActions = [Cog.factory.Edit, Cog.factory.Delete];
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.schedule">Schedule</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.schedule">Concurrency Policy</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.schedule">Starting Deadline Seconds</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 hidden-xs" sortField="spec.schedule">Schedule</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm" sortField="spec.schedule">Concurrency Policy</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md" sortField="spec.schedule">Starting Deadline Seconds</ColHead>
 </ListHeader>;
 
 const kind = 'CronJob';
 const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
-  <div className="col-xs-3">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind={kind} resource={cronjob} />
     <ResourceLink kind={kind} name={cronjob.metadata.name} title={cronjob.metadata.name} namespace={cronjob.metadata.namespace} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+    <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} title={cronjob.metadata.namespace} />
+  </div>
+  <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">
     {cronjob.spec.schedule}
   </div>
-  <div className="col-xs-3">
+  <div className="col-lg-2 col-md-3 hidden-sm">
     {_.get(cronjob.spec, 'concurrencyPolicy', '-')}
   </div>
-  <div className="col-xs-3">
+  <div className="col-lg-2 hidden-md">
     {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
   </div>
 </div>;

@@ -23,18 +23,22 @@ data:
 const menuActions = Cog.factory.common;
 
 const ConfigMapHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Config Map Name</ColHead>
-  <ColHead {...props} className="col-xs-4" sortFunc="dataSize">Config Map Data</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Config Map Age</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortFunc="dataSize">Size</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
-  <div className="col-xs-4">
+  <div className="col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="ConfigMap" resource={configMap} />
     <ResourceLink kind="ConfigMap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
   </div>
-  <div className="col-xs-4">{_.size(configMap.data)}</div>
-  <div className="col-xs-4">{moment(configMap.metadata.creationTimestamp).fromNow()}</div>
+  <div className="col-sm-4 col-xs-6">
+    <ResourceLink kind="Namespace" name={configMap.metadata.namespace} title={configMap.metadata.namespace} />
+  </div>
+  <div className="col-sm-2 hidden-xs">{_.size(configMap.data)}</div>
+  <div className="col-sm-2 hidden-xs">{moment(configMap.metadata.creationTimestamp).fromNow()}</div>
 </ResourceRow>;
 
 const ConfigMapDetails = ({obj: configMap}) => {
