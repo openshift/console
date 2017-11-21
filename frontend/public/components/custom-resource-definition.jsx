@@ -34,30 +34,40 @@ spec:
 registerTemplate('v1beta1.CustomResourceDefinition', CRD);
 
 const CRDHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="spec.names.kind">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.version">Version</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.group">Group</ColHead>
-  <ColHead {...props} className="col-xs-3">Established</ColHead>
+  <ColHead {...props} className="col-lg-4 col-md-4 col-sm-4 col-xs-6" sortField="spec.names.kind">Name</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="spec.group">Group</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 hidden-xs" sortField="spec.version">Version</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortField="spec.scope">Namespaced</ColHead>
+  <ColHead {...props} className="col-lg-1 hidden-md">Established</ColHead>
 </ListHeader>;
 
 const isEstablished = conditions => {
   const condition = _.find(conditions, c => c.type === 'Established');
-  return condition ? condition.status : 'False';
+  return condition && condition.status === 'True';
 };
 
+const namespaced = crd => crd.spec.scope === 'Namespaced';
+
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
-  <div className="col-xs-3">
+  <div className="col-lg-4 col-md-4 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
-    <ResourceIcon kind={referenceForCRD(crd)} /> <Link to={`/k8s/${crd.spec.scope === 'Namespaced' ? 'all-namespaces' : 'cluster'}/${crd.spec.names.plural}`} title={crd.spec.names.kind}>{crd.spec.names.kind}</Link>
+    <ResourceIcon kind={referenceForCRD(crd)} /> <Link to={`/k8s/${namespaced(crd) ? 'all-namespaces' : 'cluster'}/${crd.spec.names.plural}`} title={crd.spec.names.kind}>{crd.spec.names.kind}</Link>
   </div>
-  <div className="col-xs-3">
-    { crd.spec.version }
-  </div>
-  <div className="col-xs-3">
+  <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
     { crd.spec.group }
   </div>
-  <div className="col-xs-3">
-    { isEstablished(crd.status.conditions) }
+  <div className="col-lg-2 col-md-2 col-sm-4 hidden-xs">
+    { crd.spec.version }
+  </div>
+  <div className="col-lg-2 col-md-2 hidden-sm">
+    { namespaced(crd) ? 'Yes' : 'No' }
+  </div>
+  <div className="col-lg-1 hidden-md">
+    {
+      isEstablished(crd.status.conditions)
+        ? <span className="node-ready"><i className="fa fa-check-circle"></i></span>
+        : <span className="node-not-ready"><i className="fa fa-minus-circle"></i></span>
+    }
   </div>
 </div>;
 
