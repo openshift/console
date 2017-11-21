@@ -6,6 +6,11 @@ storage:
 
 web:
   http: 127.0.0.1:5556
+grpc:
+  addr: 127.0.0.1:5557
+
+logger:
+  level: debug
 
 frontend:
   theme: 'tectonic'
