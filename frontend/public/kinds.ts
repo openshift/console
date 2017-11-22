@@ -6,7 +6,7 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 import { match } from 'react-router-dom';
 
 import { k8sKinds, CustomResourceDefinitionKind, K8sKind, K8sResourceKindReference, referenceForCRD } from './module/k8s';
-import { allModels } from './module/k8s/k8s-models';
+import { allModels, kindForReference } from './module/k8s/k8s-models';
 import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
 
@@ -62,7 +62,9 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
 
 export const connectToModel = connect((state, props: {kind: K8sResourceKindReference} & any) => {
   const ns: ImmutableMap<string, any> = state[kindReducerName];
-  const kindObj = ns.getIn(['kinds', props.kind], {});
+  const kindObj = !_.isEmpty(props.kind)
+    ? ns.getIn(['kinds', props.kind]) || ns.getIn(['kinds', kindForReference(props.kind)]) || {}
+    : {};
 
   return {kindObj, kindsInFlight: ns.get(inFlight)} as any;
 });
