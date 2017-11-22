@@ -56,8 +56,12 @@ export class Line extends BaseGraph {
         t: 0,
         pad: 0,
       },
+      shapes: [],
     };
-    this.style={width: '100%'};
+    this.options = {
+      displaylogo: false,
+    };
+    this.style = { width: '100%' };
     this.onPlotlyRelayout = e => {
       if (!e) {
         return;
