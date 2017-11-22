@@ -34,7 +34,7 @@ export class Bar extends BaseGraph {
       yaxis: {zeroline: false, showticklabels: false, showgrid: false},
       margin: {
         l: 10,
-        b: 0,
+        b: 18,
         r: 0,
         t: 15,
         pad: 0,
@@ -86,16 +86,19 @@ export class Bar extends BaseGraph {
     const newX = [];
     const newY = [];
     const metricName = this.props.metric;
-    _.each(data[0].data.result, ({metric, value}) => {
-      newY.push(metric[metricName]);
-      newX.push(value[1]);
+    _.each(data[0].data.result, ({metric, value}, i) => {
+      newY.push(metric[metricName] || `(unknown #${i})`);
+      newX.push(parseFloat(value[1], 10));
     });
 
     restyle(this.node, {
       x: [newX],
       y: [newY],
       name,
-    }, [0]);
+    }, [0]).catch(e => {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    });
 
     this.layout.annotations = this.annotate(newY, newX.map(this.props.humanize));
     relayout(this.node, this.layout);
