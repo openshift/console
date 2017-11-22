@@ -166,6 +166,9 @@ const Details = ({obj: pod}) => {
             <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
           </div>
         </div>
+
+        <br />
+
         <div className="row no-gutter">
           <div className="col-sm-8 col-xs-12">
             <div className="row">

@@ -53,7 +53,7 @@ export class Line extends BaseGraph {
         l: 50,
         b: 30,
         r: 10,
-        t: 0,
+        t: 3,
         pad: 0,
       },
       shapes: [],

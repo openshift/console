@@ -139,6 +139,9 @@ const Details = ({obj: ns}) => <div>
         ]} />
       </div>
     </div>
+
+    <br />
+
     <div className="row">
       <div className="col-sm-12 col-xs-12">
         <Bar title="Memory Usage by Pod (Top 10)" query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`} humanize={humanizeMem} metric="pod_name" />
