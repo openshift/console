@@ -7,15 +7,10 @@ import { k8sGet, k8sKinds } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, humanizeMem } from './utils';
 import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
-import { AsyncComponent } from './utils/async';
-// import { Bar } from './graphs';
-
-const SparklineWidget = (props) => (
-  <AsyncComponent loader={() => import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
-);
+import { Bar, Line } from './graphs';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -127,19 +122,31 @@ const Details = ({obj: ns}) => <div>
       </div>
     </div>
     <div className="row">
-      <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
-        <SparklineWidget heading="CPU Shares" query={`namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'} * 1000000`} limitQuery="sum(namespace:container_spec_cpu_shares:sum) * 1000000" limitText="cluster" units="numeric" />
+      <div className="col-sm-6 col-xs-12">
+        <Line title="CPU Shares" query={[
+          {
+            name: 'Used',
+            query: `namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'}`,
+          },
+        ]} />
       </div>
-      <div className="col-sm-6 col-xs-12 co-namespace-sparkline">
-        <SparklineWidget heading="RAM" query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`} limitQuery="sum(namespace:container_memory_usage_bytes:sum)" limitText="cluster" units="binaryBytes" />
+      <div className="col-sm-6 col-xs-12">
+        <Line title="RAM" query={[
+          {
+            name: 'Used',
+            query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,
+          },
+        ]} />
       </div>
     </div>
-    {/* TODO: (ggreer) show this once UX team has given input
+
+    <br />
+
     <div className="row">
       <div className="col-sm-12 col-xs-12">
         <Bar title="Memory Usage by Pod (Top 10)" query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`} humanize={humanizeMem} metric="pod_name" />
       </div>
-    </div>*/}
+    </div>
   </div>
 </div>;
 

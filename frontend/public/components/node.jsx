@@ -5,11 +5,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { Cog, navFactory, kindObj, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
-import { AsyncComponent } from './utils/async';
-
-const SparklineWidget = (props) => (
-  <AsyncComponent loader={() => import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
-);
+import { Line } from './graphs';
 
 const makeNodeScheduable = (resourceKind, resource) => {
   const patch = [{ op: 'replace', path: '/spec/unschedulable', value: false }];
@@ -158,31 +154,29 @@ const Details = ({obj: node}) => {
     <Heading text="Node Overview" />
     <div className="co-m-pane__body">
       <div className="row">
-        <div className="col-xs-12">
-          <div className="co-sparkline-wrapper">
-            <div className="row no-gutter">
-              <div className="col-md-4">
-                <SparklineWidget heading="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
-              </div>
-              <div className="col-md-4">
-                <SparklineWidget heading="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
-              </div>
-              <div className="col-md-4">
-                <SparklineWidget heading="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
-              </div>
-              <div className="col-md-4">
-                <SparklineWidget heading="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
-              </div>
-              <div className="col-md-4">
-                <SparklineWidget heading="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
-              </div>
-              <div className="col-md-4">
-                <SparklineWidget heading="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
-              </div>
-            </div>
-          </div>
+        <div className="col-md-4">
+          <Line title="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
         </div>
+        <div className="col-md-4">
+          <Line title="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
+        </div>
+        <div className="col-md-4">
+          <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
+        </div>
+        <div className="col-md-4">
+          <Line title="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+        </div>
+        <div className="col-md-4">
+          <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+        </div>
+        <div className="col-md-4">
+          <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
+        </div>
+      </div>
 
+      <br />
+
+      <div className="row">
         <div className="col-md-6 col-xs-12">
           <dl>
             <dt>Node Name</dt>
