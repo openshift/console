@@ -136,10 +136,10 @@ export const ClusterHealth = () => <div>
         <Bar title="API Reads Req/sec (Top 10 Clients)" query={'sort(topk(10, sum by (client)(rate(apiserver_request_count{verb!="POST", verb!="PUT", verb!="PATCH"}[5m]))))'} humanize={humanizeCPU} metric="client" />
       </div>
       <div className="col-lg-9">
-        <Bar title="Top 10 Pod Memory" query={'sort(topk(10, container_memory_usage_bytes{pod_name!=""}))'} humanize={humanizeMem} metric="pod_name" />
+        <Bar title="Top 10 Pod Memory" query={'sort(topk(10, sum by (pod_name) (container_memory_usage_bytes{pod_name!=""})))'} humanize={humanizeMem} metric="pod_name" />
       </div>
       <div className="col-lg-9">
-        <Bar title="Top 10 Pod Memory (non-system)" query={'sort(topk(10, container_memory_usage_bytes{pod_name!="", namespace!="kube-system", namespace!="tectonic-system"}))'} humanize={humanizeMem} metric="pod_name" />
+        <Bar title="Top 10 Pod Memory (non-system)" query={'sort(topk(10, sum by (pod_name) (container_memory_usage_bytes{pod_name!="", namespace!="kube-system", namespace!="tectonic-system"})))'} humanize={humanizeMem} metric="pod_name" />
       </div>
     </div>
   </div>

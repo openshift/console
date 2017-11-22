@@ -26,22 +26,14 @@ export class Line extends BaseGraph {
       yaxis: {
         rangemode: 'tozero',
         zeroline: false,
-        color: '#333',
-        ticks: 'inside',
-        tickcolor: '#666',
-        linecolor: '#666',
-        linewidth: 1,
-        mirror: true
+        ticks: '',
+        showline: false,
       },
       xaxis: {
         zeroline: false,
         tickformat:'%H:%M',
-        color: '#333',
-        ticks: 'inside',
-        tickcolor: '#666',
-        linecolor: '#666',
-        linewidth: 1,
-        mirror: true
+        ticks: '',
+        showline: false,
       },
       legend: {
         x: 0, y: 1,
@@ -50,10 +42,10 @@ export class Line extends BaseGraph {
         orientation: 'h'
       },
       margin: {
-        l: 50,
+        l: 30,
         b: 30,
         r: 10,
-        t: 3,
+        t: 0,
         pad: 0,
       },
       shapes: [],
@@ -115,6 +107,8 @@ export class Line extends BaseGraph {
       restyle(this.node, {
         x: [data.map(v => new Date(v[0] * 1000))],
         y: [data.map(v => v[1])],
+        // Use a lighter fill color on first line in graphs
+        fillcolor: i === 0 ? 'rgba(31, 119, 190, 0.3)': undefined,
         name,
       }, [i]).catch(e => {
         // eslint-disable-next-line no-console
