@@ -57,7 +57,7 @@
     "js-yaml": "3.x",
     "lodash": "4.x",
     "moment": "2.x",
-    "plotly.js": "1.x",
+    "plotly.js": "1.28.x",
     "prop-types": "15.x",
     "react": "15.6.x",
     "react-addons-css-transition-group": "15.6.x",
@@ -75,7 +75,6 @@
     "whatwg-fetch": "2.x"
   },
   "devDependencies": {
-    "async": "^2.5.0",
     "@types/enzyme": "^2.8.6",
     "@types/immutable": "3.x",
     "@types/jest": "20.x",
@@ -86,6 +85,7 @@
     "@types/react-helmet": "5.x",
     "@types/react-redux": "^5.0.9",
     "@types/react-router-dom": "^4.0.8",
+    "async": "^2.5.0",
     "awesome-typescript-loader": "^3.2.3",
     "chromedriver": "2.x",
     "css-loader": "0.28.x",
