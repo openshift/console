@@ -144,7 +144,7 @@ const deleteExamples = (page, browser, cb) => {
     }
 
     browser.execute(function () {
-      return Array.from(document.querySelectorAll('div.co-m-cog-wrapper')).map(d => d.getAttribute('id'));
+      return Array.from(document.querySelectorAll('div.co-m-cog-wrapper--enabled')).map(d => d.getAttribute('id'));
     }, ({value}) => deleteExample(value));
   });
 };

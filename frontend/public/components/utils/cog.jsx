@@ -29,7 +29,7 @@ export class Cog extends DropdownMixin {
     const style = {display: this.state.active ? 'block' : 'none'};
 
     return (
-      <div className="co-m-cog-wrapper" id={id}>
+      <div className={classNames('co-m-cog-wrapper', {'co-m-cog-wrapper--enabled': !isDisabled})} id={id}>
         { isDisabled ?
           <Tooltip content="disabled">
             <div ref={this.setNode} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
@@ -101,14 +101,11 @@ Cog.factory = {
 Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
 /** @type {React.StatelessComponent<{actions: any[], kind: string, resource: any, isDisabled?: boolean}>} */
-export const ResourceCog = ({actions, kind, resource, isDisabled}) => {
-  //Don't show the resource cog if deletionTimestamp is set which means the resources is in 'deletion in progress' state
-  return _.get(resource.metadata, 'deletionTimestamp') ? null : <Cog
-    options={actions.map(a => a(kindObj(kind), resource))}
-    key={resource.metadata.uid}
-    isDisabled={isDisabled}
-    id={`cog-for-${resource.metadata.uid}`}
-  />;
-};
+export const ResourceCog = ({actions, kind, resource, isDisabled}) => <Cog
+  options={actions.map(a => a(kindObj(kind), resource))}
+  key={resource.metadata.uid}
+  isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
+  id={`cog-for-${resource.metadata.uid}`}
+/>;
 
 ResourceCog.displayName = 'ResourceCog';
