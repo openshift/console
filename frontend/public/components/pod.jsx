@@ -9,11 +9,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
-import { AsyncComponent } from './utils/async';
-
-const SparklineWidget = (props) => (
-  <AsyncComponent loader={() => import('./sparkline-widget/sparkline-widget').then(c => c.SparklineWidget)} {...props} />
-);
+import { Line } from './graphs';
 
 const menuActions = Cog.factory.common;
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);
@@ -159,17 +155,15 @@ const Details = ({obj: pod}) => {
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
         <h1 className="co-section-title">Pod Overview</h1>
-        <div className="co-sparkline-wrapper">
-          <div className="row no-gutter">
-            <div className="col-md-4">
-              <SparklineWidget heading="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} limit={limits.memory} units="binaryBytes" />
-            </div>
-            <div className="col-md-4">
-              <SparklineWidget heading="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}'} * 1000`} limit={limits.cpu} units="numeric" />
-            </div>
-            <div className="col-md-4">
-              <SparklineWidget heading="Filesystem" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} units="decimalBytes" />
-            </div>
+        <div className="row">
+          <div className="col-md-4">
+            <Line title="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
+          </div>
+          <div className="col-md-4">
+            <Line title="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}'} * 1000`} />
+          </div>
+          <div className="col-md-4">
+            <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
           </div>
         </div>
         <div className="row no-gutter">
