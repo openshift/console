@@ -8,20 +8,6 @@ Data is collected by a Prometheus deployment. The Prometheus API is exposed thro
 
 Most of the queries used for the graphs are captured by recording rules in the [monitoring configmap](https://github.com/coreos-inc/tectonic/blob/master/installer/assets/monitoring/prometheus-configmap.yaml). These rules are used by nodes, namespaces, and pods, and get aggregated as such.
 
-## Sparkline Graphs
-
-### Components
-
-All sparkline (graphing) components can be found in [components/sparkline-widget](https://github.com/coreos-inc/bridge/tree/master/frontend/public/components/sparkline-widget). Each file includes documentation describing its use.
-
-The rendering logic is split between React and D3.js, though React is used everywhere possible. D3 is primarily used for parsing the data, generating SVG points, attaching mouse events, and calculating statistics.
-
-### Feature detection / service discovery
-
-In order to retrieve data from Prometheus, the UI must determine if the Prometheus service is available and, if it is, the URL for this service. This discovery is done by [k8s/discover-service](https://github.com/coreos-inc/bridge/blob/master/frontend/public/module/k8s/discover-service.js). The sparkline searches for any service named `prometheus` in the `tectonic-system` namespace and, if it is successful, attempts a basic health check. If the service is found and the health check is successful, discover-service provides the sparkline with the appropriate URL to query. If something fails, the sparkline is notified and renders an appropriate error.
-
-Simultaneous requests to discover-service are combined such that only one HTTP request goes out. Furthermore, discover-service caches the response of the service discovery request with a TTL of 2 minutes. 
-
 ## Local Testing
 
 Testing UI changes locally is best done by spinning up a cluster via the installer, pointing your local kubectl at it, and running the console locally. This way the configuration of Prometheus and data labeling are consistent with those of production clusters.
