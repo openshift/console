@@ -5,11 +5,14 @@ import { Link, match } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourceStatus, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink, ClusterServiceVersionResourceModifier, Phase } from '../../../public/components/cloud-services/clusterserviceversion-resource';
-import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ALMSpecDescriptors } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceKind } from '../../../public/components/cloud-services';
+
+import { ClusterServiceVersionResourceStatus } from '../../../public/components/cloud-services/status-descriptors';
+
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, ResourceLink } from '../../../public/components/utils';
+import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 import { referenceFor } from '../../../public/module/k8s';
 
@@ -81,7 +84,6 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
     expect(cog.props().actions).toEqual(Cog.factory.common);
     expect(cog.props().kind).toEqual('TestResource:testapp.coreos.com:v1alpha1');
     expect(cog.props().resource).toEqual(testResourceInstance);
-    expect(cog.props().isDisabled).toBe(false);
   });
 
   it('renders column for resource labels', () => {
@@ -100,6 +102,16 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
 
   it('renders column for resource status', () => {
     const col = wrapper.childAt(3);
+
+    expect(col.text()).toEqual('Unknown');
+  });
+
+  it('renders column for resource status if unknown', () => {
+    let obj = _.cloneDeep(testResourceInstance);
+    obj.status = null;
+    wrapper.setProps({obj});
+    const col = wrapper.childAt(3);
+
     expect(col.text()).toEqual('Unknown');
   });
 
@@ -291,106 +303,6 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
   });
 });
 
-describe(ClusterServiceVersionResourceStatus.displayName, () => {
-
-  it('renders a null value', () => {
-    const statusDescriptor = {
-      'path': '',
-      'displayName': 'Some Thing',
-      'description': '',
-      'x-descriptors': [ALMStatusDescriptors.conditions]
-    };
-    const statusValue = null;
-    const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
-
-    expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd>None</dd></dl>');
-  });
-
-  it('renders a conditions status', () => {
-    const statusDescriptor = {
-      'path': '',
-      'displayName': 'Some Thing',
-      'description': '',
-      'x-descriptors': [ALMStatusDescriptors.conditions]
-    };
-    const statusValue = [{
-      'lastUpdateTime': '2017-10-16 12:00:00',
-      'phase': 'somephase',
-    }];
-    const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
-
-    expect(wrapper.html()).toBe('<dl><dt>Some Thing</dt><dd><span>somephase</span></dd></dl>');
-  });
-
-  it('renders a link status', () => {
-    const statusDescriptor = {
-      'path': '',
-      'displayName': 'Some Link',
-      'description': '',
-      'x-descriptors': [ALMStatusDescriptors.w3Link]
-    };
-    const statusValue = 'https://example.com';
-    const wrapper = shallow(<ClusterServiceVersionResourceStatus statusDescriptor={statusDescriptor} statusValue={statusValue} />);
-
-    expect(wrapper.html()).toBe('<dl><dt>Some Link</dt><dd><a href="https://example.com">example.com</a></dd></dl>');
-  });
-
-  it('renders a phase status', () => {
-    const statusDescriptor = {
-      'path': '',
-      'displayName': 'Some Service',
-      'description': '',
-      'x-descriptors': [ALMStatusDescriptors.k8sPhase]
-    };
-
-    const statusValue = 'someservice';
-    const wrapper = shallow(<ClusterServiceVersionResourceStatus namespace="foo" statusDescriptor={statusDescriptor} statusValue={statusValue} />);
-    const phase = wrapper.find(Phase);
-    expect(phase.exists()).toBe(true);
-    expect(phase.props().status).toBe(statusValue);
-  });
-
-  it('renders a resource status', () => {
-    const statusDescriptor = {
-      'path': '',
-      'displayName': 'Some Service',
-      'description': '',
-      'x-descriptors': [`${ALMStatusDescriptors.k8sResourcePrefix}Service`]
-    };
-
-    const statusValue = 'someservice';
-    const wrapper = shallow(<ClusterServiceVersionResourceStatus namespace="foo" statusDescriptor={statusDescriptor} statusValue={statusValue} />);
-    const link = wrapper.find(ResourceLink);
-
-    expect(link.props().kind).toBe('Service');
-    expect(link.props().namespace).toBe('foo');
-  });
-
-  it('renders a resource spec control', () => {
-    const specDescriptor = {
-      'path': '',
-      'displayName': 'Some Spec Control',
-      'description': '',
-      'x-descriptors': [ALMSpecDescriptors.podCount]
-    };
-
-    const resourceDefinition = {
-      abbr: '',
-      kind: '',
-      label: '',
-      labelPlural: '',
-      path: '',
-      plural: '',
-    };
-
-    const specValue = 124;
-    const wrapper = shallow(<ClusterServiceVersionResourceModifier kindObj={resourceDefinition} resource={testResourceInstance} namespace="foo" specDescriptor={specDescriptor} specValue={specValue} />);
-    const link = wrapper.find('a');
-    expect(link.exists()).toBe(true);
-    expect(link.text()).toBe('124 pods');
-  });
-});
-
 describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
   let match: match<any>;
@@ -413,6 +325,8 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
+    expect(detailsPage.props().pages[2].name).toEqual('Resources');
+    expect(detailsPage.props().pages[2].href).toEqual('resources');
   });
 
   it('passes common menu actions to `DetailsPage`', () => {
@@ -425,7 +339,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     const detailsPage = wrapper.find(DetailsPage);
 
     expect(detailsPage.props().breadcrumbs).toEqual([
-      {name: 'etcd', path: '/ns/example/clusterserviceversion-v1s/etcd'},
+      {name: 'etcd', path: '/ns/example/clusterserviceversion-v1s/etcd/instances'},
       {name: `${testResourceInstance.kind} Details`, path: '/ns/example/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd'},
     ]);
   });
@@ -438,9 +352,42 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     const detailsPage = wrapper.find(DetailsPage);
 
     expect(detailsPage.props().breadcrumbs).toEqual([
-      {name: 'example', path: '/ns/example/clusterserviceversion-v1s/example'},
+      {name: 'example', path: '/ns/example/clusterserviceversion-v1s/example/instances'},
       {name: `${testResourceInstance.kind} Details`, path: '/ns/example/clusterserviceversion-v1s/example/example/example'},
     ]);
+  });
+
+  it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
+    const Resources = wrapper.find(DetailsPage).props().pages[2].component;
+    const flatten = shallow(<Resources obj={testResourceInstance} />).find(MultiListPage).props().flatten;
+    const pod = {
+      kind: 'Pod',
+      metadata: {
+        uid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+        ownerReferences: [{uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}]
+      }
+    };
+    const deployment = {
+      kind: 'Deployment',
+      metadata: {
+        uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        ownerReferences: [{uid: testResourceInstance.metadata.uid}]
+      }
+    };
+    const secret = {
+      kind: 'Secret',
+      metadata: {uid: 'cccccccc-cccc-cccc-cccc-cccccccccccc'},
+    };
+    const resources = {
+      Deployment: {data: [deployment]},
+      Secret: {data: [secret]},
+      Pod: {data: [pod]},
+    };
+    const data = flatten(resources);
+
+    expect(data.map(obj => obj.metadata.uid)).not.toContain(secret.metadata.uid);
+    expect(data.map(obj => obj.metadata.uid)).toContain(pod.metadata.uid);
+    expect(data.map(obj => obj.metadata.uid)).toContain(deployment.metadata.uid);
   });
 });
 
