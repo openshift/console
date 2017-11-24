@@ -37,5 +37,6 @@ echo $! > bridge.pid
 
 cd frontend
 yarn run test-gui
+yarn run alm-e2e
 
 kill "$(cat ../bridge.pid)"

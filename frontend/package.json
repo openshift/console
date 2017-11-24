@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
     "test-gui": "nightwatch --test integration-tests/tests/crud.js",
+    "alm-e2e": "webdriver-manager update && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>5)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
   },
   "jest": {
@@ -107,11 +108,14 @@
     "nightwatch": "0.9.x",
     "node-sass": "4.x",
     "react-test-renderer": "16.x",
+    "protractor": "^5.2.0",
+    "protractor-jasmine2-screenshot-reporter": "^0.5.0",
     "resolve-url-loader": "2.x",
     "sass-loader": "6.x",
     "style-loader": "0.19.x",
     "ts-jest": "20.x",
     "ts-loader": "2.x",
+    "ts-node": "^3.3.0",
     "typescript": "2.6.x",
     "typescript-eslint-parser": "10.x",
     "uglifyjs-webpack-plugin": "1.x",
