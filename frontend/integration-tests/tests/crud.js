@@ -22,7 +22,7 @@ const checkForErrors = (browser, cb) => {
   });
 };
 
-const navigate = (browser, path, cb) => {
+const navigate = ({browser, path, wait=0}, cb) => {
   async.series([
     // Check for existing errors before navigating away
     cb => checkForErrors(browser, cb),
@@ -39,13 +39,14 @@ const navigate = (browser, path, cb) => {
         console.warn('windowErrors already exists');
         return;
       }
-      const onerror = window.onerror;
+      // Error handlers in app.jsx check for windowErrors & append if it exists.
       window.windowErrors = [];
-      window.onerror = function (...args) {
-        window.windowErrors.push(args);
-        onerror(...args);
-      };
     }, ({status}) => cb(status)),
+    cb => {
+      // TODO (ggreer): wait for some element to be visible instead of sitting on the page for x seconds
+      wait && browser.pause(wait);
+      cb();
+    }
   ], cb);
 };
 
@@ -236,7 +237,7 @@ namespacedResourcesTests.before = browser => {
   console.log(`creating namespace ${NAME}`);
 
   async.series([
-    cb => navigate(browser, '/namespaces', cb),
+    cb => navigate({browser, path: '/namespaces'}, cb),
     cb => onCreatedResource(NAME, 'namespaces', undefined, cb),
     cb => browser.page.crudPage()
       .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
@@ -263,10 +264,10 @@ Object.keys(k8sObjs).forEach(resource => {
     const crudPage = browser.page.crudPage();
     const kind = k8sObjs[resource];
     const series = [
-      cb => navigate(browser, `/ns/${NAME}/${resource}?name=${NAME}`, cb),
+      cb => navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb),
       cb => onCreatedResource(NAME, resource, NAME, cb),
       cb => createExamples(crudPage, browser, cb),
-      cb => navigate(browser, `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`, cb),
+      cb => navigate({browser, path: `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`}, cb),
       cb => loadStatusBox(browser, 0, cb),
       cb => browser
         // tab to filter box
@@ -287,7 +288,7 @@ Object.keys(k8sObjs).forEach(resource => {
           browser.assert.urlContains(`/${NAME}`);
           browser.assert.containsText('#resource-title', NAME);
         }
-        navigate(browser, `/ns/${NAME}/${resource}?name=${NAME}`, cb);
+        navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb);
       },
       cb => deleteExamples(crudPage, browser, cb),
       cb => onDeletedResource(NAME, resource, NAME, cb),
@@ -299,7 +300,7 @@ Object.keys(k8sObjs).forEach(resource => {
 namespacedResourcesTests.deleteNamespace = browser => {
   console.log(`deleting namespace: ${NAME}`);
   const series = [
-    cb => navigate(browser, `/namespaces/${NAME}`, cb),
+    cb => navigate({browser, path: `/namespaces/${NAME}`}, cb),
     cb => browser.page.crudPage()
       .waitForElementPresent('@actionsDropdownButton', TIMEOUT)
       .click('@actionsDropdownButton')
@@ -315,6 +316,18 @@ namespacedResourcesTests.deleteNamespace = browser => {
   ];
   async.series(series, seriesCB(browser));
 };
+
+[
+  '/clusterroles/view',
+  '/nodes',
+  '/settings/cluster',
+  '/all-namespaces/events',
+  '/crds',
+  '/k8s/all-namespaces/alertmanagers',
+  '/ns/tectonic-system/alertmanagers/main',
+].forEach(url => namespacedResourcesTests[url] = browser =>
+  navigate({browser, path: url, wait: 5000}, () => console.log(`visited }${url}`))
+);
 
 namespacedResourcesTests.after = browser => {
   h1(`Leaked ${LEAKED_RESOURCES.size} resources out of ${RESOURCES_CREATED} (maybe)!`);
