@@ -5,13 +5,13 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
 import * as _ from 'lodash';
 
-import { EnableApplicationModal, EnableApplicationModalProps, SelectNamespaceHeader, SelectNamespaceHeaderProps, SelectNamespaceRow, SelectNamespaceRowProps } from '../../../public/components/modals/enable-application-modal';
+import { DisableApplicationModal, DisableApplicationModalProps, SelectNamespaceHeader, SelectNamespaceHeaderProps, SelectNamespaceRow, SelectNamespaceRowProps } from '../../../public/components/modals/disable-application-modal';
 import { ListHeader, ColHead, List, ResourceRow } from '../../../public/components/factory';
 import { ResourceIcon } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval } from '../../../public/components/cloud-services';
-import { InstallPlanModel } from '../../../public/models';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionModel } from '../../../public/models';
 
 describe(SelectNamespaceHeader.displayName, () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;
@@ -74,7 +74,7 @@ describe(SelectNamespaceRow.displayName, () => {
 
   it('renders column for namespace enabled status', () => {
     const col = wrapper.find(ResourceRow).childAt(1);
-    expect(col.text()).toEqual('Not enabled');
+    expect(col.text()).toEqual('Enabled');
   });
 
   it('calls `props.onSelect` when checkbox is clicked and not checked', () => {
@@ -93,16 +93,16 @@ describe(SelectNamespaceRow.displayName, () => {
   });
 });
 
-describe(EnableApplicationModal.name, () => {
-  let wrapper: ShallowWrapper<EnableApplicationModalProps, any>;
-  let namespaces: EnableApplicationModalProps['namespaces'];
+describe(DisableApplicationModal.name, () => {
+  let wrapper: ShallowWrapper<DisableApplicationModalProps, any>;
+  let namespaces: DisableApplicationModalProps['namespaces'];
   let clusterServiceVersions: ClusterServiceVersionKind[];
-  let k8sCreate: Spy;
+  let k8sKill: Spy;
   let close: Spy;
   let cancel: Spy;
 
   beforeEach(() => {
-    k8sCreate = jasmine.createSpy('k8sCreate');
+    k8sKill = jasmine.createSpy('k8sKill');
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
     clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion)];
@@ -110,19 +110,20 @@ describe(EnableApplicationModal.name, () => {
       data: {
         'default': {metadata: {name: 'default', labels: {}}},
         'other-ns': {metadata: {name: 'other-ns', labels: {}, annotations: {'alm-manager': 'foo'}}},
+        [testClusterServiceVersion.metadata.namespace]: {metadata: {name: testClusterServiceVersion.metadata.namespace, labels: {}, annotations: {'alm-manager': 'foo'}},}
       },
       loaded: true,
       loadError: '',
     };
 
-    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} close={close} cancel={cancel} />);
+    wrapper = shallow(<DisableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sKill={k8sKill} close={close} cancel={cancel} />);
   });
 
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalBody).find('.modal-body__field').text()).toEqual('Select the deployable namespaces where you want to make the application available.');
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Enable');
+    expect(wrapper.find(ModalBody).find('.modal-body__field').text()).toEqual('Select the namespaces where you want to disable the service. Resources created by the service will be deleted as well.');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Disable');
   });
 
   it('renders application logo in modal title', () => {
@@ -135,7 +136,7 @@ describe(EnableApplicationModal.name, () => {
   });
 
   it('renders a list of only available namespaces', () => {
-    const availableNamespaces = [namespaces.data['other-ns']];
+    const availableNamespaces = [namespaces.data[testClusterServiceVersion.metadata.namespace]];
 
     const list: ShallowWrapper<any> = wrapper.find(ModalBody).find(List);
     const Row = list.props().Row;
@@ -149,27 +150,17 @@ describe(EnableApplicationModal.name, () => {
     expect(row.props().selected).toBe(false);
   });
 
-  it('calls `props.k8sCreate` for each selected namespace when form is submitted', (done) => {
-    const selectedNamespaces = [namespaces.data.default.metadata.name];
+  it('calls `props.k8sKill` for each selected namespace when form is submitted', (done) => {
+    const selectedNamespaces = [namespaces.data[testClusterServiceVersion.metadata.namespace]];
+    const csvForNamespace = (namespace: string) => clusterServiceVersions.find(({metadata}) => metadata.namespace === namespace);
     // FIXME(alecmerdler): `setState` isn't updating state for some reason, this is hacky
     wrapper.instance().state.selectedNamespaces = selectedNamespaces;
 
     close.and.callFake(() => {
-      expect(k8sCreate.calls.count()).toEqual(selectedNamespaces.length);
+      expect(k8sKill.calls.count()).toEqual(selectedNamespaces.length);
       selectedNamespaces.forEach((namespace, i) => {
-        expect(k8sCreate.calls.argsFor(i)[0]).toEqual(InstallPlanModel);
-        expect(k8sCreate.calls.argsFor(i)[1]).toEqual({
-          apiVersion: 'app.coreos.com/v1alpha1',
-          kind: 'InstallPlan-v1',
-          metadata: {
-            generateName: `${testClusterServiceVersion.metadata.name}-`,
-            namespace,
-          },
-          spec: {
-            clusterServiceVersionNames: [testClusterServiceVersion.metadata.name],
-            approval: InstallPlanApproval.Automatic,
-          },
-        });
+        expect(k8sKill.calls.argsFor(i)[0]).toEqual(ClusterServiceVersionModel);
+        expect(k8sKill.calls.argsFor(i)[1]).toEqual(csvForNamespace(namespace));
       });
       done();
     });

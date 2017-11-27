@@ -6,8 +6,9 @@ import * as _ from 'lodash';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, ResourceIcon } from '../utils';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval, isEnabled } from '../cloud-services';
-import { InstallPlanModel } from '../../models';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, isEnabled } from '../cloud-services';
+import { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { ClusterServiceVersionModel } from '../../models';
 
 export const SelectNamespaceHeader: React.StatelessComponent<SelectNamespaceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
@@ -32,16 +33,16 @@ export const SelectNamespaceRow: React.StatelessComponent<SelectNamespaceRowProp
         <span>{obj.metadata.name}</span>
       </div>
       <div className="col-xs-3">
-        {selected ? <span>Will be enabled</span> : <span className="text-muted">Not enabled</span>}
+        {selected ? <span>To be disabled</span> : <span className="text-muted">Enabled</span>}
       </div>
     </ResourceRow>
   </div>;
 };
 
-export class EnableApplicationModal extends PromiseComponent {
-  public state: EnableApplicationModalState;
+export class DisableApplicationModal extends PromiseComponent {
+  public state: DisableApplicationModalState;
 
-  constructor(public props: EnableApplicationModalProps) {
+  constructor(public props: DisableApplicationModalProps) {
     super(props);
     this.state.selectedNamespaces = [];
   }
@@ -50,19 +51,7 @@ export class EnableApplicationModal extends PromiseComponent {
     event.preventDefault();
 
     this.handlePromise(Promise.all(this.state.selectedNamespaces
-      .map((namespace) => ({
-        apiVersion: 'app.coreos.com/v1alpha1',
-        kind: 'InstallPlan-v1',
-        metadata: {
-          generateName: `${this.props.catalogEntry.metadata.name}-`,
-          namespace,
-        },
-        spec: {
-          clusterServiceVersionNames: [this.props.catalogEntry.metadata.name],
-          approval: InstallPlanApproval.Automatic,
-        },
-      }))
-      .map(installPlan => this.props.k8sCreate(InstallPlanModel, installPlan))))
+      .map(namespace => this.props.k8sKill(ClusterServiceVersionModel, this.props.clusterServiceVersions.find(csv => csv.metadata.namespace === namespace)))))
       .then(() => this.props.close());
   }
 
@@ -77,14 +66,14 @@ export class EnableApplicationModal extends PromiseComponent {
         <ClusterServiceVersionLogo displayName={spec.displayName} provider={spec.provider} icon={spec.icon[0]} />
       </ModalTitle>
       <ModalBody>
-        <h4 className="co-catalog-install-modal__h4">Enable Application</h4>
+        <h4 className="co-catalog-install-modal__h4">Disable Service</h4>
         <div>
-          <p className="co-catalog-install-modal__description modal-body__field">Select the deployable namespaces where you want to make the application available.</p>
+          <p className="co-catalog-install-modal__description modal-body__field">Select the namespaces where you want to disable the service. Resources created by the service will be deleted as well.</p>
           <List
             loaded={loaded}
             loadError={loadError}
             data={_.values(data)
-              .filter(ns => clusterServiceVersions.find(csv => csv.metadata.namespace === ns.metadata.name) === undefined)
+              .filter(ns => clusterServiceVersions.find(csv => csv.metadata.namespace === ns.metadata.name) !== undefined)
               .filter(ns => isEnabled(ns))}
             Header={SelectNamespaceHeader}
             Row={(props) => <SelectNamespaceRow
@@ -95,23 +84,23 @@ export class EnableApplicationModal extends PromiseComponent {
           />
         </div>
       </ModalBody>
-      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Enable" submitDisabled={selectedNamespaces.length === 0}/>
+      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Disable" submitDisabled={selectedNamespaces.length === 0}/>
     </form>;
   }
 }
 
-export const createEnableApplicationModal: (props: ModalProps) => {result: Promise<void>} = createModalLauncher(EnableApplicationModal);
+export const createDisableApplicationModal: (props: ModalProps) => {result: Promise<void>} = createModalLauncher(DisableApplicationModal);
 
-export type EnableApplicationModalProps = {
+export type DisableApplicationModalProps = {
   cancel: (e: Event) => void;
   close: () => void;
-  k8sCreate: (kind, data) => Promise<any>;
+  k8sKill: (kind: K8sKind, resource: K8sResourceKind) => Promise<any>;
   namespaces: {data: {[name: string]: any}, loaded: boolean, loadError: Object | string};
   clusterServiceVersions: ClusterServiceVersionKind[];
   catalogEntry: CatalogEntryKind;
 };
 
-export type EnableApplicationModalState = {
+export type DisableApplicationModalState = {
   selectedNamespaces: string[];
   inProgress: boolean;
   errorMessage: string;
@@ -128,7 +117,7 @@ export type SelectNamespaceRowProps = {
   onSelect: (e: {namespace: string}) => void;
 };
 
-type ModalProps = Omit<EnableApplicationModalProps, 'cancel' | 'close'>;
+type ModalProps = Omit<DisableApplicationModalProps, 'cancel' | 'close'>;
 
 SelectNamespaceHeader.displayName = 'SelectNamespaceHeader';
 SelectNamespaceRow.displayName = 'SelectNamespaceRow';
