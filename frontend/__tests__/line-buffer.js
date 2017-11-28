@@ -52,4 +52,10 @@ describe('lineBuffer', () => {
     buffer.push('three');
     expect(buffer.lines()).toEqual(['one\n', 'two\n', 'three']);
   });
+
+  it('should not crash when appending a newline', () => {
+    buffer.push('blah');
+    buffer.push('\n');
+    expect(buffer.lines()).toEqual(['blah\n']);
+  });
 });
