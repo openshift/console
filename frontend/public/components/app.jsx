@@ -186,19 +186,11 @@ store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});
 
-render((
-  <Provider store={store}>
-    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Route path="/" component={App} />
-    </Router>
-  </Provider>
-), document.getElementById('app'));
-
 window.onerror = function (message, source, lineno, colno, optError={}) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
     analyticsSvc.error(e, null, optError.stack);
-  } catch(err) {
+  } catch (err) {
     try {
       // eslint-disable-next-line no-console
       console.error(err);
@@ -206,4 +198,30 @@ window.onerror = function (message, source, lineno, colno, optError={}) {
       // ignore
     }
   }
+  // window.windowErrors only exists if we're running in gui tests
+  window.windowErrors && window.windowErrors.push([message, source, lineno, colno, optError]);
 };
+
+window.onunhandledrejection = function (e) {
+  try {
+    analyticsSvc.error(e, null);
+  } catch (err) {
+    try {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    } catch (ignored) {
+      // ignore
+    }
+  }
+  const {promise, reason} = event;
+  // window.windowErrors only exists if we're running in gui tests
+  window.windowErrors && window.windowErrors.push([reason, promise]);
+};
+
+render((
+  <Provider store={store}>
+    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+      <Route path="/" component={App} />
+    </Router>
+  </Provider>
+), document.getElementById('app'));
