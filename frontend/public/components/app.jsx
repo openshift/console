@@ -198,6 +198,7 @@ window.onerror = function (message, source, lineno, colno, optError={}) {
       // ignore
     }
   }
+  // window.windowErrors only exists if we're running in gui tests
   window.windowErrors && window.windowErrors.push([message, source, lineno, colno, optError]);
 };
 
@@ -213,6 +214,7 @@ window.onunhandledrejection = function (e) {
     }
   }
   const {promise, reason} = event;
+  // window.windowErrors only exists if we're running in gui tests
   window.windowErrors && window.windowErrors.push([reason, promise]);
 };
 
