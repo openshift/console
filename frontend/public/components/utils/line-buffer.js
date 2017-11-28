@@ -17,7 +17,7 @@ export const lineBuffer = (maxSize) => {
       }
 
       let overflow = 0;
-      let lines = data.match(LINE_PATTERN);
+      let lines = data.match(LINE_PATTERN) || [data];
       let trailer = buffer.pop() || '';
 
       if (trailer.substr(-1) !== '\n') {
