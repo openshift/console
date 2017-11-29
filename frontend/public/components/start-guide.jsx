@@ -32,7 +32,7 @@ export class StartGuide extends SafetyFirst {
       return null;
     }
     /* eslint-disable react/jsx-no-target-blank */
-    return <div className="co-well">
+    return <div className="co-well" id="tectonic-start-guide">
       {this.state.dismissible && <button className="btn btn-link pull-right" onClick={() => this.dismiss()}>Dismiss</button>}
       <h3 style={{marginBottom: 20}}>Tectonic Quick Start Guide</h3>
 
