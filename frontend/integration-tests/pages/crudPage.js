@@ -12,6 +12,10 @@ module.exports = {
       selector: '//a[starts-with(text(), "Delete ")]',
       locateStrategy: 'xpath'
     },
+    actionsDropdownModifyLabelsLink: {
+      selector: '//a[starts-with(text(), "Modify Labels")]',
+      locateStrategy: 'xpath'
+    },
     deleteModalConfirmButton: {
       selector: '#confirm-delete',
       locateStrategy: 'css selector',
