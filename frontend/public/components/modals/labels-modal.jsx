@@ -13,9 +13,11 @@ class BaseLabelsModal extends PromiseComponent {
     super(props);
     this._submit = this._submit.bind(this);
     this._cancel = props.cancel.bind(this);
+    const labels = SelectorInput.arrayify(_.get(props.resource, props.path.split('/').slice(1)));
     this.state = Object.assign(this.state, {
-      labels: SelectorInput.arrayify(_.get(props.resource, props.path.split('/').slice(1))),
+      labels,
     });
+    this.createPath = !labels.length;
   }
 
   _submit (e) {
@@ -24,8 +26,8 @@ class BaseLabelsModal extends PromiseComponent {
     const { kind, path, resource, isPodSelector } = this.props;
 
     const patch = [{
+      op: this.createPath ? 'add' : 'replace',
       path,
-      op: 'replace',
       value: SelectorInput.objectify(this.state.labels),
     }];
 
