@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
-import { coFetchJSON } from '../co-fetch';
+import { coFetch, coFetchJSON } from '../co-fetch';
 import { NavTitle, LoadingInline, DocumentationSidebar, cloudProviderNames} from './utils';
 import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
@@ -76,8 +76,14 @@ const errorStatus = err => {
   };
 };
 
-const fetchHealth = () => coFetchJSON(`${k8sBasePath}/`)
-  .then(() => ({short: 'UP', long: 'All good', status: 'OK'}))
+const fetchHealth = () => coFetch(`${k8sBasePath}/healthz`)
+  .then(response => response.text())
+  .then(body => {
+    if (body === 'ok') {
+      return {short: 'UP', long: 'All good', status: 'OK'};
+    }
+    return {short: 'ERROR', long: body, status: 'ERROR'};
+  })
   .catch(errorStatus);
 
 const fetchTectonicHealth = () => coFetchJSON('health')
