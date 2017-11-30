@@ -387,6 +387,7 @@ namespacedResourcesTests.deleteNamespace = browser => {
   '/settings/cluster',
   '/all-namespaces/events',
   '/crds',
+  '/',
   '/k8s/all-namespaces/alertmanagers',
   '/ns/tectonic-system/alertmanagers/main',
 ].forEach(url => namespacedResourcesTests[url] = browser =>
