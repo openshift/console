@@ -342,8 +342,11 @@ namespacedResourcesTests.EditLabels = browser => {
       .waitForElementPresent('@actionsDropdownModifyLabelsLink', TIMEOUT)
       .click('@actionsDropdownModifyLabelsLink')
       .waitForElementPresent('@deleteModalConfirmButton', TIMEOUT, true, () => {
-        browser.keys(labelValue);
-        cb();
+        browser
+          .keys(labelValue)
+          .pause(500)
+          .perform(() => cb())
+        ;
       }),
     cb => browser.page.crudPage()
       .click('@deleteModalConfirmButton')
