@@ -27,9 +27,16 @@ const navigate = ({browser, path, wait=0}, cb) => {
     // Check for existing errors before navigating away
     cb => checkForErrors(browser, cb),
     cb => {
-      const url = browser.launch_url + path;
+      let url;
+
+      const {BRIDGE_BASE_PATH, BRIDGE_BASE_ADDRESS} = process.env;
+      if (BRIDGE_BASE_PATH && BRIDGE_BASE_ADDRESS) {
+        url = `${BRIDGE_BASE_ADDRESS}${BRIDGE_BASE_PATH}${path}`;
+      } else {
+        url = browser.launch_url + path;
+      }
       browser.url(url, ({error, value}) => {
-        console.log('navigated to ', url);
+        console.log('navigated to', url);
         cb(error, value);
       });
     },
@@ -150,16 +157,18 @@ const deleteExamples = (page, browser, cb) => {
   });
 };
 
-const updateYamlEditor = (browser, cb) => {
+const updateYamlEditor = (browser, addLabels, name, cb) => {
   browser.execute(function () {
     return window.ace.getValue();
   }, ({value}) => {
     const json = safeLoad(value);
-    json.metadata.name = NAME;
+    json.metadata.name = name;
     json.metadata.labels = json.metadata.labels || {};
     // Apply "automatedTest" label for easier manual cleanup :-/
-    json.metadata.labels.automatedTest = 'true';
-    json.metadata.labels[TEST_LABEL] = NAME;
+    if (addLabels) {
+      json.metadata.labels.automatedTest = 'true';
+      json.metadata.labels[TEST_LABEL] = NAME;
+    }
     const yaml = safeDump(json);
     browser.execute(function (yaml) {
       return window.ace.setValue(yaml);
@@ -170,18 +179,18 @@ const updateYamlEditor = (browser, cb) => {
   });
 };
 
-const createExamples = (page, browser, cb) =>
+const createExamples = ({crudPage, browser, addLabels, name=NAME}, cb) =>
   async.series([
-    cb => page
+    cb => crudPage
       .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
       .click('@CreateYAMLButton')
       .waitForElementPresent('@saveYAMLButton', TIMEOUT, true, () =>cb()),
-    cb => updateYamlEditor(browser, cb),
-    cb => page
+    cb => updateYamlEditor(browser, addLabels, name, cb),
+    cb => crudPage
       .click('@saveYAMLButton')
       .waitForElementPresent('@actionsDropdownButton', TIMEOUT, true, () => cb()),
     cb => {
-      browser.verify.urlContains(`/${NAME}`);
+      browser.verify.urlContains(`/${name}`);
       cb();
     },
   ], cb);
@@ -233,10 +242,31 @@ const onDeletedResource = (name, plural, namespace, cb) => {
 
 const namespacedResourcesTests = {};
 
+const login = (browser, cb) => {
+  const {BRIDGE_AUTH_USERNAME, BRIDGE_AUTH_PASSWORD} = process.env;
+  if (!BRIDGE_AUTH_USERNAME || !BRIDGE_AUTH_PASSWORD) {
+    return cb();
+  }
+  browser.waitForElementPresent('input[name=login]', TIMEOUT)
+    .setValue('input[name=login]', BRIDGE_AUTH_USERNAME)
+    .setValue('input[name=password]', BRIDGE_AUTH_PASSWORD)
+    .submitForm('form')
+    // TODO: replace with #tectonic-start-guide
+    .useXpath()
+    .waitForElementPresent('//h3[contains(text(), "Tectonic Quick Start Guide")]', TIMEOUT)
+    .useCss()
+    .perform(() => {
+      console.log(`Logged in to #{BRIDGE_BASE_ADDRESS} as ${BRIDGE_AUTH_USERNAME}!`);
+      cb();
+    });
+};
+
 namespacedResourcesTests.before = browser => {
   console.log(`creating namespace ${NAME}`);
 
   async.series([
+    cb => navigate({browser, path: ''}, cb),
+    cb => login(browser, cb),
     cb => navigate({browser, path: '/namespaces'}, cb),
     cb => onCreatedResource(NAME, 'namespaces', undefined, cb),
     cb => browser.page.crudPage()
@@ -266,7 +296,7 @@ Object.keys(k8sObjs).forEach(resource => {
     const series = [
       cb => navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb),
       cb => onCreatedResource(NAME, resource, NAME, cb),
-      cb => createExamples(crudPage, browser, cb),
+      cb => createExamples({crudPage, browser, addLabels: true}, cb),
       cb => navigate({browser, path: `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`}, cb),
       cb => loadStatusBox(browser, 0, cb),
       cb => browser
@@ -296,6 +326,40 @@ Object.keys(k8sObjs).forEach(resource => {
     async.series(series, seriesCB(browser));
   };
 });
+
+namespacedResourcesTests.EditLabels = browser => {
+  const resourceName = `${NAME}-editlabels`;
+  const resourceType = 'configmaps';
+
+  const labelValue = 'appblah';
+  const series = [
+    cb => navigate({browser, path: `/ns/${NAME}/${resourceType}`}, cb),
+    cb => onCreatedResource(NAME, resourceType, resourceName, cb),
+    cb => createExamples({crudPage: browser.page.crudPage(), browser, addLabels: false, name: resourceName}, cb),
+    cb => browser.page.crudPage()
+      .waitForElementPresent('@actionsDropdownButton', TIMEOUT)
+      .click('@actionsDropdownButton')
+      .waitForElementPresent('@actionsDropdownModifyLabelsLink', TIMEOUT)
+      .click('@actionsDropdownModifyLabelsLink')
+      .waitForElementPresent('@deleteModalConfirmButton', TIMEOUT, true, () => {
+        browser
+          .keys(labelValue)
+          .pause(500)
+          .perform(() => cb())
+        ;
+      }),
+    cb => browser.page.crudPage()
+      .click('@deleteModalConfirmButton')
+      .waitForElementNotPresent('@deleteModalConfirmButton', TIMEOUT)
+      .waitForElementPresent('.co-m-label .co-m-label__key', TIMEOUT, true, () => {
+        browser.assert.containsText('.co-m-label .co-m-label__key', labelValue);
+        cb();
+      }),
+    cb => deleteExamples(browser.page.crudPage(), browser, cb),
+    cb => onDeletedResource(NAME, resourceType, resourceName, cb),
+  ];
+  async.series(series, seriesCB(browser));
+};
 
 namespacedResourcesTests.deleteNamespace = browser => {
   console.log(`deleting namespace: ${NAME}`);
