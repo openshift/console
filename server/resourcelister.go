@@ -115,8 +115,6 @@ func (l *ResourceLister) handleResources(requestBearerToken string, w http.Respo
 		} `json:"metadata"`
 
 		Items []*json.RawMessage `json:"items"`
-		// Items user doesn't have access to. One day we may expose this
-		RestrictedItems []*json.RawMessage `json:"restrictedItems"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&resources)
 	resp.Body.Close()
@@ -124,34 +122,6 @@ func (l *ResourceLister) handleResources(requestBearerToken string, w http.Respo
 		sendResponse(w, http.StatusInternalServerError, apiError{err.Error()})
 		return
 	}
-
-	// TODO: (ggreer) use goroutine here
-	// Filter any resources the user can't see.
-	n := 0
-	for _, item := range resources.Items {
-		var rs struct {
-			Metadata struct {
-				Name string `json:"name"`
-			} `json:"metadata"`
-		}
-		if err := json.Unmarshal([]byte(*item), &rs); err != nil {
-			sendResponse(w, http.StatusBadGateway, apiError{err.Error()})
-			return
-		}
-
-		ok, err := l.canAccessResource(r.Context(), requestBearerToken, rs.Metadata.Name)
-		if err != nil {
-			// TODO: (ggreer) early return if error is 500/502/etc. continue if 401/403
-			plog.Printf("error accessing resource %v: %v", rs.Metadata.Name, err.Error())
-		}
-		if ok {
-			resources.Items[n] = item
-			n++
-		} else {
-			resources.RestrictedItems = append(resources.RestrictedItems, item)
-		}
-	}
-	resources.Items = resources.Items[:n]
 
 	// Rewrite the body.
 	body, err := json.Marshal(resources)
@@ -163,31 +133,4 @@ func (l *ResourceLister) handleResources(requestBearerToken string, w http.Respo
 	resp.Header.Set("Content-Length", strconv.Itoa(len(body)))
 
 	forwardResponse(w, resp)
-}
-
-// canAccessResource determines if the lister can access the specified resource.
-func (l *ResourceLister) canAccessResource(ctx context.Context, bearerToken, resource string) (bool, error) {
-	if resource == "" {
-		return false, fmt.Errorf("no resource provided")
-	}
-
-	resp, err := l.get(ctx, bearerToken, l.ResourcesPath+"/"+resource)
-	if err != nil {
-		return false, fmt.Errorf("GET request failed: %v", err)
-	}
-
-	defer func() {
-		// Drain response body so the connection gets reused.
-		io.Copy(ioutil.Discard, resp.Body)
-		resp.Body.Close()
-	}()
-
-	if resp.StatusCode == http.StatusOK {
-		return true, nil
-	}
-	if resp.StatusCode == http.StatusForbidden {
-		return false, nil
-	}
-
-	return false, fmt.Errorf("bad response from kubernetes API: %s", resp.Status)
 }
