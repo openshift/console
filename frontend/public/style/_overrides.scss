@@ -256,7 +256,12 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .navigation-container {
-  background-color: #154A6D;
+  background: url("../imgs/cells.png") left top repeat, linear-gradient(30deg, #0A2C41, #316383) no-repeat left top fixed;
+  background-color: #0A3957;
+  background-size: auto, 100% 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
 .navigation-container__list {
@@ -267,6 +272,7 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .navigation-container__section, .navigation-container__section__separator {
+  background-color: #154A6D;
   border-bottom: 1px solid rgba(255,255,255,.1);
   color: white;
 }
