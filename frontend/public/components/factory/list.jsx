@@ -5,7 +5,7 @@ import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { getJobTypeAndCompletions, getQN, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
+import { getJobTypeAndCompletions, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
@@ -181,7 +181,7 @@ export const WorkloadListHeader = props => <ListHeader>
 </ListHeader>;
 
 const Rows = ({data, expand, Row, kindObj}) => <div className="co-m-table-grid__body">
-  {data.map(obj => <Row key={obj.rowKey || getQN(obj)} obj={obj} expand={expand} kindObj={kindObj} />)}
+  {data.map(obj => <Row key={obj.rowKey || obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} />)}
 </div>;
 
 Rows.propTypes = {
