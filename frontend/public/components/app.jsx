@@ -61,6 +61,7 @@ const nodesListPage = boundResourcePage(ResourceListPage, 'nodes');
 const rolesListPage = boundResourcePage(ResourceListPage, 'roles');
 const pvsListPage = boundResourcePage(ResourceListPage, 'persistentvolumes');
 const nodeDetailsPage = boundResourcePage(ResourceDetailsPage, 'nodes');
+const crdDetailsPage = boundResourcePage(ResourceDetailsPage, 'customresourcedefinitions');
 
 class App extends React.PureComponent {
   onRouteChange (props) {
@@ -146,7 +147,7 @@ class App extends React.PureComponent {
             <Route path="/namespaces/:name" component={props => <ResourceDetailsPage {...props} plural="namespaces" />} />
             <Route path="/namespaces" exact component={namespacesListPage} />
             <Route path="/crds" exact component={crdsListPage} />
-            <Redirect from="/customresourcedefinitions/:name" to="/crds" />
+            <Route from="/customresourcedefinitions/:name" component={crdDetailsPage} />
 
             <Route path="/nodes/:name" component={nodeDetailsPage} />
             <Route path="/nodes" exact component={nodesListPage} />

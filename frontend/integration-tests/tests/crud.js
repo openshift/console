@@ -161,18 +161,16 @@ const deleteExamples = (page, browser, cb) => {
   });
 };
 
-const updateYamlEditor = (browser, addLabels, name, cb) => {
+
+const updateYamlEditor = (browser, override, addLabels, cb) => {
   browser.execute(function () {
     return window.ace.getValue();
   }, ({value}) => {
-    const json = safeLoad(value);
-    json.metadata.name = name;
-    json.metadata.labels = json.metadata.labels || {};
-    // Apply "automatedTest" label for easier manual cleanup :-/
+    const defaultExtends = {metadata: {name: NAME}};
     if (addLabels) {
-      json.metadata.labels.automatedTest = 'true';
-      json.metadata.labels[TEST_LABEL] = NAME;
+      defaultExtends.metadata.labels = {automatedTest: 'yes', [TEST_LABEL]: NAME};
     }
+    const json = _.defaultsDeep({}, override, defaultExtends, safeLoad(value));
     const yaml = safeDump(json);
     browser.execute(function (yaml) {
       return window.ace.setValue(yaml);
@@ -183,21 +181,25 @@ const updateYamlEditor = (browser, addLabels, name, cb) => {
   });
 };
 
-const createExamples = ({crudPage, browser, addLabels, name=NAME}, cb) =>
+const createYAML = ({browser, override, addLabels=true}, cb) => {
+  const crudPage = browser.page.crudPage();
+
   async.series([
     cb => crudPage
       .waitForElementPresent('@CreateYAMLButton', TIMEOUT)
       .click('@CreateYAMLButton')
       .waitForElementPresent('@saveYAMLButton', TIMEOUT, true, () =>cb()),
-    cb => updateYamlEditor(browser, addLabels, name, cb),
+    cb => updateYamlEditor(browser, override, addLabels, cb),
     cb => crudPage
       .click('@saveYAMLButton')
       .waitForElementPresent('@actionsDropdownButton', TIMEOUT, true, () => cb()),
     cb => {
+      const name = _.get(override, 'metadata.name', NAME);
       browser.verify.urlContains(`/${name}`);
       cb();
     },
   ], cb);
+};
 
 const k8sObjs = {
   'pods': 'Pod',
@@ -244,7 +246,7 @@ const onDeletedResource = (name, plural, namespace, cb) => {
   cb();
 };
 
-const namespacedResourcesTests = {};
+const TESTS = {};
 
 const login = (browser, cb) => {
   const {BRIDGE_AUTH_USERNAME, BRIDGE_AUTH_PASSWORD} = process.env;
@@ -265,7 +267,7 @@ const login = (browser, cb) => {
     });
 };
 
-namespacedResourcesTests.before = browser => {
+TESTS.before = browser => {
   console.log(`creating namespace ${NAME}`);
 
   async.series([
@@ -288,19 +290,69 @@ namespacedResourcesTests.before = browser => {
       .assert.containsText('#resource-title', NAME)
       .perform(() => cb()),
     cb => checkForErrors(browser, cb),
-  ], seriesCB);
+  ], seriesCB(browser));
 };
 
-namespacedResourcesTests.afterEach = (browser, done) => checkForErrors(browser, done);
+TESTS.afterEach = (browser, done) => checkForErrors(browser, done);
+
+TESTS.CRDs = browser => {
+  const plural = `crd${NAME}s`;
+  const group = 'test.example.com';
+  const name = `${plural}.${group}`;
+  async.auto({
+    load: cb => navigate({browser, path: '/crds'}, cb),
+    gc: ['load', (res, cb) => onCreatedResource(name, 'customresourcedefinitions', undefined, cb)],
+    create: ['gc', (res, cb) => {
+      const override = {
+        metadata: {
+          name,
+        },
+        spec: {
+          group,
+          version: 'v1',
+          names: {
+            plural,
+            singular: `crd${NAME}`,
+            kind: `CRD${NAME}`,
+          }
+        }
+      };
+      createYAML({browser, override, addLabels: false}, cb);
+    }],
+    navigate: ['create', (res, cb) => navigate({browser, path: `/crds?name=${name}`}, cb)],
+    list: ['navigate', (res, cb) => loadStatusBox(browser, 0, error => {
+      if (error) {
+        return cb(error);
+      }
+
+      browser.execute(function () {
+        return Array.from(document.querySelectorAll('div.co-m-cog-wrapper--enabled')).map(d => d.getAttribute('id'));
+      }, ({value}) => cb(null, value));
+    })],
+    edit: ['list', ({list: ids}, cb) => {
+      const selector = `#${ids[0]}`;
+      const css = `${selector} li:nth-child(3) a`;
+      browser.pause(100)
+        .click(selector)
+        .waitForElementPresent(css, TIMEOUT)
+        .click(css)
+        .waitForElementPresent('.yaml-editor', TIMEOUT, true, () => cb());
+    }],
+    checkTitle: ['edit', (res, cb) => {
+      browser.assert.containsText('#resource-title', name);
+      cb();
+    }],
+  }, seriesCB(browser));
+};
 
 Object.keys(k8sObjs).forEach(resource => {
-  namespacedResourcesTests[`${resource}`] = function (browser) {
+  TESTS[`${resource}`] = function (browser) {
     const crudPage = browser.page.crudPage();
     const kind = k8sObjs[resource];
     const series = [
       cb => navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb),
       cb => onCreatedResource(NAME, resource, NAME, cb),
-      cb => createExamples({crudPage, browser, addLabels: true}, cb),
+      cb => createYAML({crudPage, browser}, cb),
       cb => navigate({browser, path: `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`}, cb),
       cb => loadStatusBox(browser, 0, cb),
       cb => browser
@@ -331,7 +383,7 @@ Object.keys(k8sObjs).forEach(resource => {
   };
 });
 
-namespacedResourcesTests.EditLabels = browser => {
+TESTS.EditLabels = browser => {
   const resourceName = `${NAME}-editlabels`;
   const resourceType = 'configmaps';
 
@@ -339,7 +391,7 @@ namespacedResourcesTests.EditLabels = browser => {
   const series = [
     cb => navigate({browser, path: `/ns/${NAME}/${resourceType}`}, cb),
     cb => onCreatedResource(NAME, resourceType, resourceName, cb),
-    cb => createExamples({crudPage: browser.page.crudPage(), browser, addLabels: false, name: resourceName}, cb),
+    cb => createYAML({browser, override: {metadata: {name: resourceName, namespace: NAME}}}, cb),
     cb => browser.page.crudPage()
       .waitForElementPresent('@actionsDropdownButton', TIMEOUT)
       .click('@actionsDropdownButton')
@@ -365,7 +417,7 @@ namespacedResourcesTests.EditLabels = browser => {
   async.series(series, seriesCB(browser));
 };
 
-namespacedResourcesTests.deleteNamespace = browser => {
+TESTS.deleteNamespace = browser => {
   console.log(`deleting namespace: ${NAME}`);
   const series = [
     cb => navigate({browser, path: `/namespaces/${NAME}`}, cb),
@@ -394,11 +446,11 @@ namespacedResourcesTests.deleteNamespace = browser => {
   '/',
   '/k8s/all-namespaces/alertmanagers',
   '/ns/tectonic-system/alertmanagers/main',
-].forEach(url => namespacedResourcesTests[url] = browser =>
+].forEach(url => TESTS[url] = browser =>
   navigate({browser, path: url, wait: 5000}, () => console.log(`visited }${url}`))
 );
 
-namespacedResourcesTests.after = browser => {
+TESTS.after = browser => {
   h1(`Leaked ${LEAKED_RESOURCES.size} resources out of ${RESOURCES_CREATED} (maybe)!`);
 
   new Array(...LEAKED_RESOURCES).forEach(resource => {
@@ -450,4 +502,4 @@ namespacedResourcesTests.after = browser => {
   browser.end();
 };
 
-module.exports = namespacedResourcesTests;
+module.exports = TESTS;

@@ -65,7 +65,7 @@ class Details extends SafetyFirst {
                     <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#"
                       onClick={this._openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>}</dd>
                     <dt>Resource Request</dt>
-                    <dd><span className="text-muted">Memory:</span> {spec.resources.requests.memory}</dd>
+                    <dd><span className="text-muted">Memory:</span> {_.get(spec, 'resources.requests.memory')}</dd>
                   </dl>
                 </div>
               </div>
