@@ -129,10 +129,18 @@ export const ClusterOverviewPage = props => {
             <Status title="Tectonic Console" fetch={fetchTectonicHealth} />
           </div>
           <div className="col-lg-3 col-md-6">
-            <Status title="Alerts Firing" fetch={() => fetchQuery('Alerts', 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})')} />
+            <Status
+              title="Alerts Firing"
+              fetch={() => fetchQuery('Alerts', 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})')}
+              href="/alertmanager/#/alerts" target="_blank" rel="noopener"
+            />
           </div>
           <div className="col-lg-3 col-md-6">
-            <Status title="Crashlooping Pods" fetch={() => fetchQuery('Pods', 'count(increase(kube_pod_container_status_restarts[1h]) > 5)')} />
+            <Status
+              title="Crashlooping Pods"
+              fetch={() => fetchQuery('Pods', 'count(increase(kube_pod_container_status_restarts[1h]) > 5)')}
+              href="/all-namespaces/pods?pod-status=CrashLoopBackOff"
+            />
           </div>
         </div>
         <br />
