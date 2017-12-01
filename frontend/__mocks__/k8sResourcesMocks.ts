@@ -231,3 +231,21 @@ export const testInstallPlan: InstallPlanKind = {
     plan: [],
   },
 };
+
+export const testOperatorDeployment: K8sResourceKind = {
+  apiVersion: 'apps/v1beta2',
+  kind: 'Deployment',
+  metadata: {
+    namespace: testClusterServiceVersion.metadata.namespace,
+    name: 'test-operator',
+    ownerReferences: [{
+      name: testClusterServiceVersion.metadata.name,
+      uid: testClusterServiceVersion.metadata.uid,
+      kind: testClusterServiceVersion.kind,
+      apiVersion: testClusterServiceVersion.apiVersion
+    }],
+    spec: {
+
+    }
+  }
+};

@@ -77,6 +77,7 @@ export type CRDDescription = {
 export type ClusterServiceVersionKind = {
   spec: {
     customresourcedefinitions: {owned?: CRDDescription[], required?: CRDDescription[]};
+    replaces?: string;
   };
   status?: {
     phase: ClusterServiceVersionPhase;

@@ -7,9 +7,9 @@ import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomRes
 import { ClusterServiceVersionModel, AlphaCatalogEntryModel, InstallPlanModel } from '../../models';
 import { k8sKinds } from './enum';
 
-export const referenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceReference => (
-  `${obj.kind}:${obj.apiVersion.split('/')[0]}:${obj.apiVersion.split('/')[1]}`
-);
+export const referenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceReference => obj.kind && obj.apiVersion
+  ? `${obj.kind}:${obj.apiVersion.split('/')[0]}:${obj.apiVersion.split('/')[1]}`
+  : '';
 
 export const referenceForCRD = (obj: CustomResourceDefinitionKind): K8sFullyQualifiedResourceReference => (
   `${obj.spec.names.kind}:${obj.spec.group}:${obj.spec.version}`

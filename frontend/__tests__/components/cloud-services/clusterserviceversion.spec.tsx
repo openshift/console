@@ -8,8 +8,9 @@ import * as _ from 'lodash';
 import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps } from '../../../public/components/cloud-services/clusterserviceversion';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase } from '../../../public/components/cloud-services';
 import { DetailsPage, MultiListPage } from '../../../public/components/factory';
-import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
 import { StatusBox, Timestamp, Overflow, Dropdown, MsgBox } from '../../../public/components/utils';
+import { K8sResourceKind } from '../../../public/module/k8s';
 import Spy = jasmine.Spy;
 
 import * as appsLogoImg from '../../../public/imgs/apps-logo.svg';
@@ -101,12 +102,18 @@ describe(ClusterServiceVersionListItem.displayName, () => {
 describe(ClusterServiceVersionList.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionListProps>;
   let apps: ClusterServiceVersionKind[];
+  let deployments: K8sResourceKind[];
 
   beforeEach(() => {
     let otherClusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
     otherClusterServiceVersion.metadata.name = 'vault';
-    apps = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(localClusterServiceVersion), otherClusterServiceVersion];
-    wrapper = shallow(<ClusterServiceVersionList loaded={true} data={apps} filters={{}} />);
+    apps = [_.cloneDeep(testClusterServiceVersion), otherClusterServiceVersion];
+    deployments = new Array(apps.length).fill(_.cloneDeep(testOperatorDeployment)).map((deployment, i) => {
+      deployment.metadata.ownerReferences[0].uid = apps[i].metadata.uid;
+      return deployment;
+    });
+
+    wrapper = shallow(<ClusterServiceVersionList loaded={true} data={[].concat(apps).concat(deployments)} filters={{}} />);
   });
 
   it('renders section for applications installed from Open Cloud Services', () => {
@@ -133,13 +140,13 @@ describe(ClusterServiceVersionList.displayName, () => {
   });
 
   it('does not display ClusterServiceVersions with non-succeeded `status.phase`', () => {
-    let nullCSV = _.cloneDeep(testClusterServiceVersion);
-    let failedCSV = _.cloneDeep(testClusterServiceVersion);
+    let nullCSV = _.cloneDeep(apps[0]);
+    let failedCSV = _.cloneDeep(apps[1]);
     nullCSV.status.phase = null;
     failedCSV.status.phase = ClusterServiceVersionPhase.CSVPhaseFailed;
-    wrapper.setProps({data: [...apps, nullCSV, failedCSV]});
+    wrapper.setProps({data: [].concat([nullCSV, failedCSV]).concat(deployments)});
 
-    expect(wrapper.find(ClusterServiceVersionListItem).length).toEqual(apps.length);
+    expect(wrapper.find(ClusterServiceVersionListItem).length).toEqual(0);
   });
 
   it('filters visible ClusterServiceVersions by `name`', () => {
@@ -147,7 +154,7 @@ describe(ClusterServiceVersionList.displayName, () => {
     wrapper = wrapper.setProps({filters: {name: searchFilter}});
     const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items');
 
-    expect(list.children().length).toEqual(3);
+    expect(list.children().length).toEqual(2);
   });
 
   it('filters visible ClusterServiceVersions by `Running Status`', () => {
@@ -164,12 +171,17 @@ describe(ClusterServiceVersionList.displayName, () => {
   it('does not render duplicate ClusterServiceVersions with the same `metadata.name` in different namespaces', () => {
     apps[0].metadata.name = 'repeat';
     apps[1].metadata.name = 'repeat';
-    wrapper.setProps({data: apps});
+    wrapper.setProps({data: [].concat(apps).concat(deployments)});
+    const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items').find(ClusterServiceVersionListItem);
+
+    expect(list.length).toEqual(1);
+    expect(list.at(0).props().obj.metadata.name).toEqual('repeat');
+  });
+
+  it('only renders ClusterServiceVersions that have an associated `Deployment` using owner references', () => {
     const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items').find(ClusterServiceVersionListItem);
 
     expect(list.length).toEqual(2);
-    expect(list.at(0).props().obj.metadata.name).toEqual('repeat');
-    expect(list.at(1).props().obj.metadata.name).not.toEqual('repeat');
   });
 });
 
@@ -185,7 +197,10 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   it('renders a `MultiListPage` with correct props', () => {
     const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.props().resources).toEqual([{kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1'}]);
+    expect(listPage.props().resources).toEqual([
+      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1'},
+      {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
+    ]);
     expect(listPage.props().dropdownFilters).toBeDefined();
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().filterLabel).toEqual('Applications by name');
