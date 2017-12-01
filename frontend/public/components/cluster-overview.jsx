@@ -139,7 +139,7 @@ export const ClusterOverviewPage = props => {
             <Status
               title="Crashlooping Pods"
               fetch={() => fetchQuery('Pods', 'count(increase(kube_pod_container_status_restarts[1h]) > 5)')}
-              href="/all-namespaces/pods?pod-status=CrashLoopBackOff"
+              href="/all-namespaces/pods?rowFilter-pod-status=CrashLoopBackOff"
             />
           </div>
         </div>

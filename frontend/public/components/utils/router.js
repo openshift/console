@@ -29,3 +29,10 @@ history.__push__ = history.push;
 history.push = url => history.__push__(removeBasePath(url));
 
 export const getQueryArgument = arg => new URLSearchParams(window.location.search).get(arg);
+
+export const setQueryArgument = (k, v) => {
+  const params = new URLSearchParams(window.location.search);
+  params.set(k, v);
+  const url = new URL(window.location);
+  history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+};
