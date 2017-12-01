@@ -10,9 +10,13 @@ const TEST_LABEL = 'automatedTestName';
 
 const checkForErrors = (browser, cb) => {
   browser.execute(function () {
-    return window.windowErrors || [];
+    return {
+      windowErrors: window.windowErrors || [],
+      windowError: window.windowError,
+    };
   }, result => {
-    const windowErrors = result.value;
+    const {windowError, windowErrors} = result.value;
+    browser.assert.notEqual(windowError, true, 'No unhandled JavaScript errors.');
     browser.assert.equal(windowErrors.length, 0, 'No unhandled JavaScript errors.');
     if (windowErrors.length) {
       console.error('Unhandled JavaScript errors:');
