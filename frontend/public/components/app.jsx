@@ -186,6 +186,9 @@ store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});
 
+// For GUI tests. Set this flag if any unhandled errors
+window.windowError = false;
+
 window.onerror = function (message, source, lineno, colno, optError={}) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
@@ -198,6 +201,7 @@ window.onerror = function (message, source, lineno, colno, optError={}) {
       // ignore
     }
   }
+  window.windowError = true;
   // window.windowErrors only exists if we're running in gui tests
   window.windowErrors && window.windowErrors.push([message, source, lineno, colno, optError]);
 };
@@ -213,6 +217,7 @@ window.onunhandledrejection = function (e) {
       // ignore
     }
   }
+  window.windowError = true;
   const {promise, reason} = event;
   // window.windowErrors only exists if we're running in gui tests
   window.windowErrors && window.windowErrors.push([reason, promise]);
