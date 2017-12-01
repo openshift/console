@@ -116,12 +116,11 @@ const isClusterSettingsActive = path => _.startsWith(path, 'settings/cluster') |
 const Sep = () => <div className="navigation-container__section__separator" />;
 
 export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
+  <div className="navigation-container__section navigation-container__section--logo">
+    <Link to="/"><img src={tectonicLogoImg} id="logo" /></Link>
+    <ClusterPicker />
+  </div>
   <div className="navigation-container">
-    <div className="navigation-container__section navigation-container__section--logo">
-      <Link to="/"><img src={tectonicLogoImg} id="logo" /></Link>
-      <ClusterPicker />
-    </div>
-
     <NavSection required={[FLAGS.CLOUD_SERVICES]} text="Applications" img={appsLogoImg}>
       <NavLink resource="clusterserviceversion-v1s" name="Available Applications" />
       <Sep />

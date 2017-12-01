@@ -31,9 +31,8 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
   }, {});
 
   if (!selected) {
-    const clusterName = window.SERVER_FLAGS.clusterName;
-    items[clusterName] = clusterName;
-    selected = clusterName;
+    items[ourURL] = window.SERVER_FLAGS.clusterName;
+    selected = ourURL;
   }
 
   masterURL = `${masterURL || ourURL}/k8s/cluster/clusters`;

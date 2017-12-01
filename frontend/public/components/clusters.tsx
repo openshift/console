@@ -7,6 +7,18 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { K8sFullyQualifiedResourceReference } from '../module/k8s';
 
+import { registerTemplate } from '../yaml-templates';
+
+registerTemplate('v1alpha1.Cluster', `apiVersion: multicluster.coreos.com/v1alpha1
+kind: Cluster
+metadata:
+  name: example
+  annotations:
+    'multicluster.coreos.com/console-url': 'http://localhost:9000'
+    'multicluster.coreos.com/directory': true
+spec: {}
+`);
+
 export const ClusterReference: K8sFullyQualifiedResourceReference = 'Cluster:multicluster.coreos.com:v1alpha1';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
@@ -57,7 +69,7 @@ export const ClustersPage: React.StatelessComponent<ClustersPageProps> = props =
   <div className="co-well" style={{marginBottom: 0}}>
     Thanks for trying out the Multi-Cluster Directory. Future updates will enable add/remove and other policy features. Feedback and questions are encouraged: <a href="mailto:tectonic-alpha-feedback@coreos.com">tectonic-alpha-feedback@coreos.com</a>
   </div>
-  <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={false} filterLabel={props.filterLabel} />
+  <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={true} filterLabel={props.filterLabel} />
 </div>;
 
 const pages = [navFactory.details(detailsPage(ClustersDetails)), navFactory.editYaml()];
