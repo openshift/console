@@ -12,7 +12,8 @@ import { MultiListPage, List, ListHeader, ColHead, ResourceRow } from '../factor
 import { NavTitle, MsgBox } from '../utils';
 import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled } from './index';
 import { createEnableApplicationModal } from '../modals/enable-application-modal';
-import { k8sCreate, K8sResourceKind, referenceForModel } from '../../module/k8s';
+import { createDisableApplicationModal } from '../modals/disable-application-modal';
+import { k8sCreate, k8sKill, K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel, AlphaCatalogEntryModel } from '../../models';
 
 export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> = (props) => <ListHeader>
@@ -63,8 +64,8 @@ export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (
 
   return <div>
     <div style={{margin: '15px 0'}}>
-      { percent < 100 && <div className="co-catalog-install-progress">
-        <div style={{width: `${percent}%`}} className={classNames('co-catalog-install-progress-bar', {'co-catalog-install-progress-bar--active': pending.length > 0})} />
+      { percent < 100 && pending.length > 0 && <div className="co-catalog-install-progress">
+        <div style={{width: `${percent}%`}} className="co-catalog-install-progress-bar co-catalog-install-progress-bar--active" />
       </div> }
     </div>
     <ul className="co-catalog-breakdown__ns-list">{ props.clusterServiceVersions.map((csv, i) => {
@@ -128,12 +129,20 @@ export const CatalogAppRow = connect(stateToProps)(
             </div>
           </div>
           <div className="col-xs-2 col">
-            <button
-              className="btn btn-primary pull-right"
-              disabled={_.values(namespaces.data).filter((ns) => isEnabled(ns)).length <= clusterServiceVersions.length}
-              onClick={() => createEnableApplicationModal({catalogEntry: obj, k8sCreate, namespaces, clusterServiceVersions})}>
-              Enable
-            </button>
+            <div className="pull-right">
+              <button
+                className="btn btn-primary"
+                disabled={_.values(namespaces.data).filter((ns) => isEnabled(ns)).length <= clusterServiceVersions.length}
+                onClick={() => createEnableApplicationModal({catalogEntry: obj, k8sCreate, namespaces, clusterServiceVersions})}>
+                Enable
+              </button>
+              <button
+                className="btn btn-default co-catalog-disable-btn"
+                disabled={clusterServiceVersions.length === 0}
+                onClick={() => createDisableApplicationModal({catalogEntry: obj, k8sKill, namespaces, clusterServiceVersions})}>
+                Disable
+              </button>
+            </div>
           </div>
         </div>
       </ResourceRow>;

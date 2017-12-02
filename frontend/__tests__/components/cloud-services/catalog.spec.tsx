@@ -180,6 +180,7 @@ describe(CatalogAppRow.displayName, () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(2);
 
     expect(col.find('button.btn-primary').props().disabled).toBe(false);
+    expect(col.find('button.btn-default').props().disabled).toBe(true);
   });
 
   it('renders disabled `Enable` button if no available namespaces', () => {
@@ -187,6 +188,13 @@ describe(CatalogAppRow.displayName, () => {
     const button: ShallowWrapper<any> = wrapper.find('.co-catalog-app-row').childAt(2).find('button.btn-primary');
 
     expect(button.props().disabled).toBe(true);
+  });
+
+  it('renders `Disable` button if passed at least 1 ClusterServiceVersion', () => {
+    wrapper.setProps({clusterServiceVersions: [testClusterServiceVersion]});
+    const button: ShallowWrapper<any> = wrapper.find('.co-catalog-app-row').childAt(2).find('button.btn-default');
+
+    expect(button.props().disabled).toBe(false);
   });
 });
 
