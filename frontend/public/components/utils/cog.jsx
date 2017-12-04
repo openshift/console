@@ -5,6 +5,7 @@ import { Tooltip } from 'react-lightweight-tooltip';
 import { annotationsModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { history, kindObj, resourceObjPath } from './index';
+import { referenceForModel } from '../../module/k8s';
 
 export class Cog extends DropdownMixin {
   render () {
@@ -58,7 +59,7 @@ Cog.factory = {
   }),
   Edit: (kind, obj) => ({
     label: `Edit ${kind.label}...`,
-    href: `${resourceObjPath(obj, kind.kind)}/yaml`,
+    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
   }),
   ModifyLabels: (kind, obj) => ({
     label: 'Modify Labels...',
