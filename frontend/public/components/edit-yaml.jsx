@@ -9,7 +9,7 @@ import 'brace/mode/yaml';
 import 'brace/theme/clouds';
 
 import { k8sCreate, k8sUpdate, referenceFor, modelFor } from '../module/k8s';
-import { history, Loading, resourcePath } from './utils';
+import { history, Loading, resourceObjPath } from './utils';
 import { SafetyFirst } from './safety-first';
 
 import { ResourceSidebar } from './sidebars/resource-sidebar';
@@ -198,7 +198,7 @@ export const EditYAML = connect(stateToProps)(
         action(ko, obj, namespace, name)
           .then(o => {
             if (redirect) {
-              history.push(this.props.redirectURL || `${resourcePath(ko.kind, newName, newNamespace)}`);
+              history.push(this.props.redirectURL || resourceObjPath(o, referenceFor(obj)));
               // TODO: (ggreer). show message on new page. maybe delete old obj?
               return;
             }
