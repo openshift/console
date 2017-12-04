@@ -23,7 +23,7 @@ export class Scalar extends BaseGraph {
     if (isNaN(value)) {
       this.setState({error});
       // eslint-disable-next-line no-console
-      console.warn(`Graph error: No data from query ${this.query}`);
+      console.warn(`Graph error: No data from query ${this.props.query}`);
       return;
     }
     this.setState({value, error});

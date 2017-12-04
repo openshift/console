@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as classNames from'classnames';
 
 import k8sActions from '../module/k8s/k8s-actions';
+import { getQueryArgument, setQueryArgument } from './utils';
 
 const CheckBox = ({title, active, number, toggle}) => {
   const klass = classNames('row-filter--box clickable', {
@@ -21,14 +22,13 @@ class CheckBoxes_ extends React.Component {
   }
 
   get storageKey () {
-    return `row-filter--${this.props.type}`;
+    return `rowFilter-${this.props.type}`;
   }
 
   componentDidMount () {
-    // TODO: (kans) this goes in the URL, not localstorage :-/
     let selected;
     try {
-      selected = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+      selected = (getQueryArgument(this.storageKey)).split(',');
     } catch (ignored) {
       // ignore
     }
@@ -61,7 +61,7 @@ class CheckBoxes_ extends React.Component {
     if (!_.isEmpty(selected)) {
       try {
         const recognized = _.filter(selected, id => _.find(this.props.items, {id}));
-        localStorage.setItem(this.storageKey, JSON.stringify(recognized));
+        setQueryArgument(this.storageKey, recognized.join(','));
       } catch (ignored) {
         // ignore
       }

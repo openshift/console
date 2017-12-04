@@ -255,12 +255,13 @@ PodList.displayName = 'PodList';
 
 const filters = [{
   type: 'pod-status',
-  selected: ['Running', 'Pending', 'Terminating'],
+  selected: ['Running', 'Pending', 'Terminating', 'CrashLoopBackOff'],
   reducer: podPhase,
   items: [
     {id: 'Running', title: 'Running'},
     {id: 'Pending', title: 'Pending'},
     {id: 'Terminating', title: 'Terminating'},
+    {id: 'CrashLoopBackOff', title: 'CrashLoopBackOff'},
     {id: 'Completed', title: 'Job Completed'},
   ],
 }];
