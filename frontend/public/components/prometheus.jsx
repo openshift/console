@@ -58,7 +58,7 @@ const PrometheusRow = ({obj: instance}) => {
     </div>
     <div className="col-lg-1 col-md-2 hidden-sm">{spec.version}</div>
     <div className="col-lg-2 hidden-md">
-      <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor"/>
+      <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" namespace={metadata.namespace} />
     </div>
   </ResourceRow>;
 };
@@ -120,7 +120,7 @@ class InstanceDetails extends SafetyFirst {
                     <dt>Labels</dt>
                     <dd><LabelList kind="Prometheus" labels={metadata.labels} /></dd>
                     <dt>Service Monitor Selector</dt>
-                    <dd><Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" /></dd>
+                    <dd><Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" namespace={instance.metadata.namespace} /></dd>
                     <dt>Rule Config Map Selector</dt>
                     <dd><Selector selector={spec.ruleSelector} kind="ConfigMap" /></dd>
                   </dl>

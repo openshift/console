@@ -61,8 +61,26 @@ const EndpointRow = ({endpoint}) => {
   </div>;
 };
 
+const namespaceSelectorLinks = ({spec}) => {
+  const namespaces = _.get(spec, 'namespaceSelector.matchNames', []);
+  if (namespaces.length) {
+    return _.map(namespaces, n => <span><ResourceLink key={n} kind="Namespace" name={n} title={n} />&nbsp;&nbsp;</span>);
+  }
+  return <span className="text-muted">--</span>;
+};
+
+const serviceSelectorLinks = ({spec}) => {
+  const namespaces = _.get(spec, 'namespaceSelector.matchNames', []);
+  if (namespaces.length) {
+    return _.map(namespaces, n => <span><Selector key={n} selector={spec.selector} kind="Service" namespace={n} />&nbsp;&nbsp;</span>);
+  }
+  return <Selector selector={spec.selector} kind="Service" />;
+};
+
+
 const Details = ({obj: sm}) => {
   const {metadata, spec} = sm;
+
   return <div>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-section--bordered">
@@ -78,9 +96,9 @@ const Details = ({obj: sm}) => {
                   <dt>Labels</dt>
                   <dd><LabelList kind="ServiceMonitor" labels={metadata.labels} /></dd>
                   <dt>Service Selector</dt>
-                  <dd><Selector selector={spec.selector} kind="Service" /></dd>
-                  {spec.namespaceSelector && <dt>Monitoring Namespace</dt>}
-                  {spec.namespaceSelector && <dd><ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /></dd>}
+                  <dd>{ serviceSelectorLinks(sm) }</dd>
+                  <dt>Monitoring Namespaces</dt>
+                  <dd>{ namespaceSelectorLinks(sm) }</dd>
                 </dl>
               </div>
               <div className="col-sm-6 col-xs-12">
@@ -101,7 +119,7 @@ const Details = ({obj: sm}) => {
 };
 
 const ServiceMonitorRow = ({obj: sm}) => {
-  const {metadata, spec} = sm;
+  const {metadata} = sm;
   const kind = 'ServiceMonitor';
 
   return <ResourceRow obj={sm}>
@@ -113,12 +131,11 @@ const ServiceMonitorRow = ({obj: sm}) => {
       <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
     </div>
     <div className="col-md-3 col-sm-6 hidden-xs">
-      <Selector selector={spec.selector} kind="Service"
-        namespace={_.get(spec, ['namespaceSelector', 'matchNames', 0], '')} />
+      { serviceSelectorLinks(sm) }
     </div>
     <div className="col-md-3 hidden-sm">
       <p>
-        {_.has(spec, 'namespaceSelector') ? <ResourceLink kind="Namespace" name={spec.namespaceSelector.matchNames[0]} title={spec.namespaceSelector.matchNames[0]} /> : <span className="text-muted">--</span> }
+        { namespaceSelectorLinks(sm) }
       </p>
     </div>
   </ResourceRow>;
