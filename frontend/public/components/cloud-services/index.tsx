@@ -71,12 +71,23 @@ export type CRDDescription = {
   kind: string;
   displayName: string;
   description?: string;
+  specDescriptors?: {
+    path: string;
+    displayName: string;
+    description?: string;
+    'x-descriptors': ALMStatusDescriptors[];
+  }[];
   statusDescriptors?: {
     path: string;
     displayName: string;
     description?: string;
     'x-descriptors': ALMStatusDescriptors[];
     value?: any;
+  }[];
+  resources?: {
+    name?: string;
+    version: string;
+    kind: string;
   }[];
 };
 

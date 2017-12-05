@@ -51,6 +51,10 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
         kind: 'TestResource',
         version: 'v1',
         displayName: 'Test Resource',
+        resources: [{
+          kind: 'Pod',
+          version: 'v1',
+        }],
         statusDescriptors: [{
           path: 'importantMetrics',
           displayName: 'Important Metrics',

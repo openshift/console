@@ -51,7 +51,7 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
       {_.get(obj.status, 'phase') || <div className="text-muted">Unknown</div>}
     </div>
     <div className="col-xs-2">
-      {obj.spec.version || 'None'}
+      {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
     </div>
     <div className="col-xs-2">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
@@ -80,15 +80,17 @@ export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<Clus
   }
 };
 
+const resourceForCRD = (crdDesc) => ({
+  kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
+  namespaced: true,
+  optional: true,
+  prop: crdDesc.kind,
+});
+
 export const ClusterServiceVersionResourcesPage: React.StatelessComponent<ClusterServiceVersionResourcesPageProps> = (props) => {
   const {obj} = props;
-  const {owned = [], required = []} = obj.spec.customresourcedefinitions;
-  const firehoseResources = owned.concat(required).map((crdDesc) => ({
-    kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
-    namespaced: true,
-    optional: true,
-    prop: crdDesc.kind,
-  }));
+  const {owned = []} = obj.spec.customresourcedefinitions;
+  const firehoseResources = owned.map(resourceForCRD);
 
   const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
   const createLink = (name: string) => `/ns/${obj.metadata.namespace}/clusterserviceversion-v1s/${obj.metadata.name}/${name.split('.')[0]}/new`;
@@ -127,13 +129,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
   class ClusterServiceVersionResourceDetailsComponent extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
     constructor(props) {
       super(props);
-      this.state = {clusterServiceVersion: null, expanded: false};
-
-      if (!_.isEmpty(props.appName)) {
-        k8sGet(ClusterServiceVersionModel, this.props.appName, props.obj.metadata.namespace).then((clusterServiceVersion) => {
-          this.setState({clusterServiceVersion, expanded: this.state.expanded});
-        });
-      }
+      this.state = {expanded: false};
     }
 
     public render() {
@@ -170,7 +166,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       const {kind, metadata, spec, status} = this.props.obj;
 
       // Find the matching CRD spec for the kind of this resource in the CSV.
-      const ownedDefinitions = _.get(this.state.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
+      const ownedDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
       const thisDefinition = _.find(ownedDefinitions, (def) => def.name.split('.')[0] === this.props.kindObj.path);
       const statusDescriptors = _.get(thisDefinition, 'statusDescriptors', []);
       const specDescriptors = _.get(thisDefinition, 'specDescriptors', []);
@@ -240,71 +236,110 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
     }
   });
 
-export const ClusterServiceVersionResourcesDetailsPage: React.StatelessComponent<ClusterServiceVersionResourcesDetailsPageProps> = (props) => {
-  const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: {data: K8sResourceKind[]}}) => {
-    return _.flatMap(resources, (resource, kind) => resource.data.map(item => ({...item, kind})))
-      .reduce((owned, resource) => {
-        return (resource.metadata.ownerReferences || []).some(ref => ref.uid === parentObj.metadata.uid || owned.some(({metadata}) => metadata.uid === ref.uid))
-          ? owned.concat([resource])
-          : owned;
-      }, [] as K8sResourceKind[]);
-  };
-
-  const Resources: React.StatelessComponent<{obj: ClusterServiceVersionResourceKind}> = ({obj}) => {
-    const resources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'].map(kind => ({kind, namespaced: true}));
-
-    const ResourceHeader: React.StatelessComponent<ResourceHeaderProps> = (props) => <ListHeader>
-      <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-      <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
-      <ColHead {...props} className="col-xs-2" sortField="status.phase">Status</ColHead>
-      <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
-    </ListHeader>;
-
-    const ResourceRow: React.StatelessComponent<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
-      <div className="col-xs-4">
-        <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </div>
-      <div className="col-xs-2">{obj.kind}</div>
-      <div className="col-xs-2">{_.get(obj.status, 'phase', 'Created')}</div>
-      <div className="col-xs-4"><Timestamp timestamp={obj.metadata.creationTimestamp} /></div>
-    </div>;
-
-    return <MultiListPage
-      filterLabel="Resources by name"
-      resources={resources}
-      rowFilters={[{
-        type: 'clusterserviceversion-resource-kind',
-        selected: resources.map(({kind}) => kind),
-        reducer: (obj) => obj.kind,
-        items: resources.map(({kind}) => ({id: kind, title: kind})),
-      }]}
-      flatten={flattenFor(obj)}
-      namespace={obj.metadata.namespace}
-      ListComponent={(props) => <List
-        {...props}
-        data={props.data.map(obj => ({...obj, rowKey: obj.metadata.uid}))}
-        EmptyMsg={() => <MsgBox title="No Resources Found" detail="Resources are Kubernetes primitives used by this instance." />}
-        Header={ResourceHeader}
-        Row={ResourceRow} />}
-    />;
-  };
-  Resources.displayName = 'Resources';
-
-  // TODO(alecmerdler): Make first breadcrumb `name` the `displayName` of ClusterServiceVersion
-  return <DetailsPage
-    {...props}
-    menuActions={Cog.factory.common}
-    breadcrumbs={[
-      {name: props.match.params.appName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
-      {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
-    ]}
-    pages={[
-      navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} appName={props.match.params.appName} />),
-      navFactory.editYaml(),
-      {name: 'Resources', href: 'resources', component: Resources},
-    ]}
-  />;
+const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: {data: K8sResourceKind[]}}) => {
+  return _.flatMap(resources, (resource, kind) => resource.data.map(item => ({...item, kind})))
+    .reduce((owned, resource) => {
+      return (resource.metadata.ownerReferences || []).some(ref => ref.uid === parentObj.metadata.uid || owned.some(({metadata}) => metadata.uid === ref.uid))
+        ? owned.concat([resource])
+        : owned;
+    }, [] as K8sResourceKind[]);
 };
+
+export const Resources = connectToPlural((resourceprops: ResourceProps) => {
+  const kindObj = resourceprops.kindObj;
+  const clusterServiceVersion = resourceprops.clusterServiceVersion;
+  const obj = resourceprops.obj;
+
+  // If the CSV defines a resources list under the CRD, then we use that instead of the default.
+  const ownedDefinitions = _.get(clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
+  const thisDefinition = _.find(ownedDefinitions, (def) => def.name.split('.')[0] === kindObj ? kindObj.path : '(none)');
+
+  let resources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'].map(kind => ({kind, namespaced: true}));
+  let crds = [];
+
+  if (thisDefinition && thisDefinition.resources) {
+    resources = thisDefinition.resources.map(ref => {
+      if (ref.name) {
+        return resourceForCRD(ref);
+      }
+      return {kind: ref.kind, namespaced: true};
+    });
+
+    crds = thisDefinition.resources.filter(ref => ref.name).map(ref => ref.kind);
+  }
+
+  const isCR = (obj) => crds.find((kind) => kind === obj.kind);
+
+  const ResourceHeader: React.StatelessComponent<ResourceHeaderProps> = (props) => <ListHeader>
+    <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
+    <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
+    <ColHead {...props} className="col-xs-2" sortField="status.phase">Status</ColHead>
+    <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
+  </ListHeader>;
+
+  const ResourceRow: React.StatelessComponent<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
+    <div className="col-xs-4">
+      { isCR(obj) ? <ClusterServiceVersionResourceLink obj={obj} /> :
+        <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      }
+    </div>
+    <div className="col-xs-2">{obj.kind}</div>
+    <div className="col-xs-2">{_.get(obj.status, 'phase', 'Created')}</div>
+    <div className="col-xs-4"><Timestamp timestamp={obj.metadata.creationTimestamp} /></div>
+  </div>;
+
+  return <MultiListPage
+    filterLabel="Resources by name"
+    resources={resources}
+    rowFilters={[{
+      type: 'clusterserviceversion-resource-kind',
+      selected: resources.map(({kind}) => kind),
+      reducer: (obj) => obj.kind,
+      items: resources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
+    }]}
+    flatten={flattenFor(obj)}
+    namespace={obj.metadata.namespace}
+    ListComponent={(props) => <List
+      {...props}
+      data={props.data.map(obj => ({...obj, rowKey: obj.metadata.uid}))}
+      EmptyMsg={() => <MsgBox title="No Resources Found" detail="Resources are dependent servcies and Kubernetes primitives used by this instance." />}
+      Header={ResourceHeader}
+      Row={ResourceRow} />}
+  />;
+});
+Resources.displayName = 'Resources';
+
+export const ClusterServiceVersionResourcesDetailsPage =
+  class ClusterServiceVersionResourcesDetailsComponent extends React.Component<ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsPageState> {
+    constructor(props) {
+      super(props);
+      this.state = {clusterServiceVersion: null};
+
+      const appName = props.match.params.appName;
+      if (!_.isEmpty(appName)) {
+        k8sGet(ClusterServiceVersionModel, appName, props.namespace).then((clusterServiceVersion) => {
+          this.setState({clusterServiceVersion});
+        });
+      }
+    }
+
+    render() {
+      // TODO(alecmerdler): Make first breadcrumb `name` the `displayName` of ClusterServiceVersion
+      return <DetailsPage
+        {...this.props}
+        menuActions={Cog.factory.common}
+        breadcrumbs={[
+          {name: this.props.match.params.appName, path: `${this.props.match.url.split('/').filter((_, i) => i <= this.props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
+          {name: `${kindForReference(this.props.kind)} Details`, path: `${this.props.match.url}`},
+        ]}
+        pages={[
+          navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} clusterServiceVersion={this.state.clusterServiceVersion} appName={props.match.params.appName} />),
+          navFactory.editYaml(),
+          {name: 'Resources', href: 'resources', component: (props) => <Resources {...props} clusterServiceVersion={this.state.clusterServiceVersion} />},
+        ]}
+      />;
+    }
+  };
 
 export type ClusterServiceVersionResourceListProps = {
   loaded: boolean;
@@ -333,6 +368,7 @@ export type ClusterServiceVersionResourcesDetailsProps = {
   appName: string;
   kindObj: K8sKind;
   kindsInFlight: boolean;
+  clusterServiceVersion: ClusterServiceVersionKind;
 };
 
 export type ClusterServiceVersionResourcesDetailsPageProps = {
@@ -342,8 +378,11 @@ export type ClusterServiceVersionResourcesDetailsPageProps = {
   match: match<any>;
 };
 
-export type ClusterServiceVersionResourcesDetailsState = {
+export type ClusterServiceVersionResourcesDetailsPageState = {
   clusterServiceVersion: ClusterServiceVersionKind;
+};
+
+export type ClusterServiceVersionResourcesDetailsState = {
   expanded: boolean;
 };
 
@@ -353,6 +392,13 @@ export type ClusterServiceVersionResourceLinkProps = {
 
 export type ResourceHeaderProps = {
   data: K8sResourceKind[];
+};
+
+export type ResourceProps = {
+  obj: ClusterServiceVersionResourceKind;
+  kindObj: K8sKind;
+  kindsInFlight: boolean;
+  clusterServiceVersion: ClusterServiceVersionKind;
 };
 
 export type ResourceRowProps = {
@@ -388,7 +434,6 @@ ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceLi
 ClusterServiceVersionResourceHeader.displayName = 'ClusterServiceVersionResourceHeader';
 ClusterServiceVersionResourceRow.displayName = 'ClusterServiceVersionResourceRow';
 ClusterServiceVersionResourceDetails.displayName = 'ClusterServiceVersionResourceDetails';
-ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';
 ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
 ClusterServiceVersionPrometheusGraph.displayName = 'ClusterServiceVersionPrometheusGraph';
 ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';

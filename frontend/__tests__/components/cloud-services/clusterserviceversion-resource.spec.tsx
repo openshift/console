@@ -5,7 +5,7 @@ import { match } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink, Resources } from '../../../public/components/cloud-services/clusterserviceversion-resource';
 import { ClusterServiceVersionResourceKind } from '../../../public/components/cloud-services';
 
 import { ClusterServiceVersionResourceStatus } from '../../../public/components/cloud-services/status-descriptors';
@@ -14,7 +14,7 @@ import { testClusterServiceVersionResource, testResourceInstance, testClusterSer
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
-import { referenceFor } from '../../../public/module/k8s';
+import { referenceFor, K8sKind } from '../../../public/module/k8s';
 
 describe(ClusterServiceVersionResourceHeader.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourceHeaderProps>;
@@ -118,7 +118,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
   it('renders column for resource version', () => {
     const col = wrapper.childAt(4);
 
-    expect(col.text()).toEqual(testResourceInstance.spec.version || 'None');
+    expect(col.text()).toEqual(testResourceInstance.spec.version || 'Unknown');
   });
 
   it('renders column for last updated timestamp', () => {
@@ -158,8 +158,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     };
     // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
     const Component: React.StatelessComponent<ClusterServiceVersionResourcesDetailsProps> = (ClusterServiceVersionResourceDetails as any).WrappedComponent;
-    wrapper = shallow(<Component obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} appName={testClusterServiceVersion.metadata.name} />);
-    wrapper.setState({clusterServiceVersion: testClusterServiceVersion, expanded: false});
+    wrapper = shallow(<Component clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} appName={testClusterServiceVersion.metadata.name} />);
   });
 
   it('renders description title', () => {
@@ -282,7 +281,28 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
   });
 });
 
-describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
+describe('ResourcesList', () => {
+  it('uses the resources defined in the CSV', () => {
+    const kindObj: K8sKind = {
+      abbr: '',
+      kind: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].kind,
+      path: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].name.split('.')[0],
+      label: '',
+      labelPlural: '',
+      plural: '',
+    };
+
+    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={kindObj} kindsInFlight={false} obj={testResourceInstance} />);
+    expect(resourceComponent.props().resources).toEqual(testClusterServiceVersion.spec.customresourcedefinitions.owned[0].resources.map((resource) => ({ kind: resource.kind, namespaced: true })));
+  });
+
+  it('uses the default resources if the kind is not found in the CSV', () => {
+    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={null} kindObj={null} kindsInFlight={false} obj={testResourceInstance} />);
+    expect(resourceComponent.props().resources.length > 5).toEqual(true);
+  });
+});
+
+describe('ClusterServiceVersionResourcesDetailsPage', () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
   let match: match<any>;
 
@@ -337,8 +357,8 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   });
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
-    const Resources = wrapper.find(DetailsPage).props().pages[2].component;
-    const flatten = shallow(<Resources obj={testResourceInstance} />).find(MultiListPage).props().flatten;
+    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={null} kindsInFlight={false} obj={testResourceInstance} />);
+    const flatten = resourceComponent.find(MultiListPage).props().flatten;
     const pod = {
       kind: 'Pod',
       metadata: {
