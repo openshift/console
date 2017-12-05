@@ -44,6 +44,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     obj.spec = obj.spec || {};
   }
 
+  // TODO: if someone edits namespace, we'll redirect to old namespace
   const redirectURL = params.appName ? `/ns/${params.ns}/clusterserviceversion-v1s/${params.appName}/instances` : null;
 
   return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} showHeader={true} />;
