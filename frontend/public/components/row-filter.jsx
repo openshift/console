@@ -15,6 +15,8 @@ const CheckBox = ({title, active, number, toggle}) => {
   </div>;
 };
 
+export const storagePrefix = 'rowFilter-';
+
 class CheckBoxes_ extends React.Component {
   constructor (props) {
     super(props);
@@ -22,7 +24,7 @@ class CheckBoxes_ extends React.Component {
   }
 
   get storageKey () {
-    return `rowFilter-${this.props.type}`;
+    return `${storagePrefix}${this.props.type}`;
   }
 
   componentDidMount () {

@@ -5,7 +5,7 @@ import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
 
 import k8sActions from '../../module/k8s/k8s-actions';
-import { CheckBoxes } from '../row-filter';
+import { CheckBoxes, storagePrefix } from '../row-filter';
 import { Dropdown, Firehose, kindObj, NavTitle, history, inject} from '../utils';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 
@@ -116,7 +116,11 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
     }
 
     applyFilter (filterName, options) {
+      // TODO: (ggreer) lame blacklist of query args. Use a whitelist based on resource filters
       if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
+        return;
+      }
+      if (filterName.indexOf(storagePrefix) === 0) {
         return;
       }
       this.state.reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
