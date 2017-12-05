@@ -10,7 +10,7 @@ import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
 import { K8sKind } from '../module/k8s';
-import { ErrorPage404 } from './error'
+import { ErrorPage404 } from './error';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   const {match, kindsInFlight, kindObj} = props;
