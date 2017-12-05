@@ -12,6 +12,7 @@ import { DetailsPage, ListHeader, ColHead, MultiListPage } from '../factory';
 import { navFactory, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
 import { K8sResourceKind, referenceForModel, K8sFullyQualifiedResourceReference, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
+import { AsyncComponent } from '../utils/async';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
 
@@ -173,6 +174,10 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
   });
 
+export const MarkdownView = (props: {content: string}) => {
+  return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
+};
+
 export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata} = props.obj;
   const route = (name: string) => `/ns/${metadata.namespace}/clusterserviceversion-v1s/${metadata.name}/${name.split('.')[0]}/new`;
@@ -214,9 +219,7 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
     </div>
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--description">
       <h1>Description</h1>
-      <span style={{color: spec.description ? '' : '#999'}}>
-        {spec.description || 'Not available'}
-      </span>
+      <MarkdownView content={spec.description || 'Not available'} />
     </div>
   </div>;
 };

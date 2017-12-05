@@ -70,6 +70,8 @@
     "redux": "3.x",
     "redux-form": "6.x",
     "redux-thunk": "2.x",
+    "sanitize-html": "^1.16.1",
+    "showdown": "^1.8.3",
     "url-search-params-polyfill": "2.x",
     "whatwg-fetch": "2.x"
   },

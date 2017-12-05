@@ -265,7 +265,6 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     const section = wrapper.find('.co-clusterserviceversion-details__section--description');
 
     expect(section.find('h1').text()).toEqual('Description');
-    expect(section.text()).toContain(testClusterServiceVersion.spec.description);
   });
 
   it('renders creation date from ClusterServiceVersion', () => {
@@ -298,12 +297,10 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     emptyClusterServiceVersion.spec.maintainers = [];
     wrapper.setProps({obj: emptyClusterServiceVersion});
 
-    const description = wrapper.find('.co-clusterserviceversion-details__section--description');
     const provider = wrapper.findWhere(node => node.equals(<dt>Provider</dt>)).parent().find('dd').at(0);
     const links = wrapper.findWhere(node => node.equals(<dt>Links</dt>)).parent().find('dd');
     const maintainers = wrapper.findWhere(node => node.equals(<dt>Maintainers</dt>)).parent().find('dd');
 
-    expect(description.text()).toContain('Not available');
     expect(provider.text()).toEqual('Not available');
     expect(links.text()).toEqual('Not available');
     expect(maintainers.text()).toEqual('Not available');
