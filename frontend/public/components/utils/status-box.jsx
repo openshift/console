@@ -43,7 +43,19 @@ export const StatusBox = props => {
   const {EmptyMsg, label, loadError, loaded} = props;
 
   if (loadError) {
-    return _.get(loadError, 'response.status') === 403 || _.includes(_.toLower(loadError), 'access denied') ? <AccessDenied /> : <LoadError label={label} className="loading-box loading-box__errored" />;
+    const status = _.get(loadError, 'response.status');
+    if (status === 404) {
+      return <div className="co-m-pane__heading">
+        <h1 className="co-m-pane__title text-center">404: Not Found</h1>
+        <div className="row">
+          <div className="col-sm-12 co-error-bg-img"></div>
+        </div>
+      </div>;
+    }
+    if (status === 403 || _.includes(_.toLower(loadError), 'access denied')) {
+      return <AccessDenied />;
+    }
+    return <LoadError label={label} className="loading-box loading-box__errored" />;
   }
 
   if (!loaded) {

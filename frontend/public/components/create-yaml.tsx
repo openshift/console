@@ -10,6 +10,7 @@ import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
 import { K8sKind } from '../module/k8s';
+import { ErrorPage404 } from './error';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   const {match, kindsInFlight, kindObj} = props;
@@ -19,8 +20,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     if (kindsInFlight) {
       return <LoadingBox />;
     }
-    // <base href=...> makes this OK
-    (window as any).location = '404';
+    return <ErrorPage404 />;
   }
 
   const apiVersion = kindObj.apiVersion || 'v1';

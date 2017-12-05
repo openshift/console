@@ -35,7 +35,7 @@ const getErrMessage = () => {
   return '';
 };
 
-const Error = ({title, message, errMessage}) => <div>
+const ErrorComponent = ({title, message, errMessage}) => <div>
   <NavTitle detail={true} title="Error" />
   <div className="co-m-pane">
     <div className="co-m-pane__heading">
@@ -59,12 +59,12 @@ export const ErrorPage = () => <div>
   <Helmet>
     <title>Error</title>
   </Helmet>
-  <Error title="Oh no! Something went wrong." message={urlMessage()} errMessage={getErrMessage()}/>
+  <ErrorComponent title="Oh no! Something went wrong." message={urlMessage()} errMessage={getErrMessage()}/>
 </div>;
 
 export const ErrorPage404 = () => <div>
   <Helmet>
     <title>Page Not Found (404)</title>
   </Helmet>
-  <Error title="404: Page Not Found" />
+  <ErrorComponent title="404: Page Not Found" />
 </div>;

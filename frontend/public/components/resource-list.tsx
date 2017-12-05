@@ -9,6 +9,7 @@ import { resourceListPages, resourceDetailPages } from './resource-pages';
 import { connectToPlural } from '../kinds';
 import { LoadingBox } from './utils';
 import { K8sResourceKindReference } from '../module/k8s';
+import { ErrorPage404 } from './error';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
@@ -20,8 +21,7 @@ export const ResourceListPage = connectToPlural((props: ResourceListPageProps) =
     if (kindsInFlight) {
       return <LoadingBox />;
     }
-    window.location.href = '404';
-    return null;
+    return <ErrorPage404 />;
   }
 
   let PageComponent = resourceListPages.get(kindObj.labelPlural.replace(/ /g, ''));
@@ -43,8 +43,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     if (kindsInFlight) {
       return <LoadingBox />;
     }
-    window.location.href = '404';
-    return null;
+    return <ErrorPage404 />;
   }
 
   let PageComponent = resourceDetailPages.get(kindObj.labelPlural.replace(/ /g, ''));
