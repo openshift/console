@@ -47,11 +47,6 @@ export const navFactory = {
     name: 'Role Bindings',
     component,
   }),
-  serviceMonitors: (component = undefined) => ({
-    href: 'servicemonitors',
-    name: 'Service Monitor',
-    component,
-  }),
 };
 
 /** @type {React.StatelessComponent<{pages: {href: string, name: string, component: React.ComponentType}, basePath: string}>} */

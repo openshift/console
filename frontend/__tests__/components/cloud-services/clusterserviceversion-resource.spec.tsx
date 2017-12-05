@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link, match } from 'react-router-dom';
+import { match } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
@@ -177,20 +177,6 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     expect(wrapper.find(Timestamp).props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
   });
 
-  it('renders link to search page with resource `spec.selector.matchLabels` in query parameter', () => {
-    const matchLabels = _.map(testResourceInstance.spec.selector.matchLabels, (val, key) => `${key}=${val}`);
-    const link: ShallowWrapper<any> = wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).parent().find('dd').find(Link);
-
-    expect(link.props().to).toEqual(`/ns/${testResourceInstance.metadata.namespace}/search?q=${matchLabels.map(pair => `${pair},`)}`);
-    expect(link.props().title).toEqual('View resources');
-  });
-
-  it('does not render link to search page if resource does not have `spec.selector.matchLabels`', () => {
-    wrapper.setProps({obj: testOwnedResourceInstance});
-
-    expect(wrapper.findWhere(node => node.equals(<dt>Resources</dt>)).exists()).toBe(false);
-  });
-
   it('does not render filtered status fields', () => {
     const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => crd.name === 'testresource.testapp.coreos.com');
     const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
@@ -216,13 +202,6 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     wrapper.setState({expanded: true});
 
     expect(wrapper.find(ResourceSummary).exists()).toBe(true);
-  });
-
-  it('renders the filled in status field', () => {
-    const value = testResourceInstance.status['some-filled-path'];
-    const statusView = wrapper.find(ClusterServiceVersionResourceStatus);
-
-    expect(statusView.props().statusValue).toEqual(value);
   });
 
   it('does not render the non-filled in status field when in expanded mode', () => {

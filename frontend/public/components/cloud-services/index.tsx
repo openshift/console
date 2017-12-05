@@ -14,6 +14,12 @@ export { CatalogsDetailsPage } from './catalog';
 
 export enum ALMSpecDescriptors {
   podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
+  endpointList = 'urn:alm:descriptor:com.tectonic.ui:endpointList',
+  label = 'urn:alm:descriptor:com.tectonic.ui:label',
+  resourceRequirements = 'urn:alm:descriptor:com.tectonic.ui:resourceRequirements',
+  selector = 'urn:alm:descriptor:com.tectonic.ui:selector:',
+  namespaceSelector = 'urn:alm:descriptor:com.tectonic.ui:namespaceSelector',
+  k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
 }
 
 export enum ALMStatusDescriptors {

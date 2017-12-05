@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-import { k8sKinds } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { ColHead, List, ListHeader, ListPage, ResourceRow, DetailsPage } from './factory';
 import { LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
 import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings/cluster-settings';
 import { configureReplicaCountModal } from './modals';
+import { AlertmanagerModel } from '../models';
 
 class Details extends SafetyFirst {
   constructor(props) {
@@ -26,7 +27,7 @@ class Details extends SafetyFirst {
     event.preventDefault();
     event.target.blur();
     configureReplicaCountModal({
-      resourceKind: k8sKinds.Alertmanager,
+      resourceKind: AlertmanagerModel,
       resource: this.props.obj,
       invalidateState: (isInvalid) => {
         this.setState({
@@ -97,7 +98,7 @@ const AlertManagersNameList = (props) => {
       <SettingsLabel>AlertManager:</SettingsLabel>
       <SettingsContent>
         <div className="alert-manager-list">
-          {props.loaded ? _.map(props.alertmanagers.data, (alertManager, i) => <div className="alert-manager-row" key={i}><ResourceLink kind="Alertmanager" name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid}/></div>) : <LoadingInline />}
+          {props.loaded ? _.map(props.alertmanagers.data, (alertManager, i) => <div className="alert-manager-row" key={i}><ResourceLink kind={referenceForModel(AlertmanagerModel)} name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid}/></div>) : <LoadingInline />}
         </div>
       </SettingsContent>
     </SettingsRow>
@@ -106,7 +107,7 @@ const AlertManagersNameList = (props) => {
 
 
 export const AlertManagersListContainer = props => <Firehose resources={[{
-  kind: 'Alertmanager',
+  kind: referenceForModel(AlertmanagerModel),
   isList: true,
   prop: 'alertmanagers',
 }]}>
@@ -115,14 +116,13 @@ export const AlertManagersListContainer = props => <Firehose resources={[{
 
 const AlertManagerRow = ({obj: alertManager}) => {
   const {metadata, spec} = alertManager;
-  const kind = 'Alertmanager';
 
   return <ResourceRow obj={alertManager}>
     <div className="col-md-3 col-sm-3 col-xs-6">
-      <ResourceLink kind={kind} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
+      <ResourceLink kind={referenceForModel(AlertmanagerModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
     <div className="col-md-4 col-sm-5 hidden-xs">
-      <LabelList kind={kind} labels={metadata.labels} />
+      <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />
     </div>
     <div className="col-md-2 hidden-sm hidden-xs">{spec.version}</div>
     <div className="col-md-3 col-sm-4 col-xs-6">
@@ -141,4 +141,4 @@ const AlertManagerHeader = props => <ListHeader>
 </ListHeader>;
 
 export const AlertManagersList = props => <List {...props} Header={AlertManagerHeader} Row={AlertManagerRow} />;
-export const AlertManagersPage = props => <ListPage {...props} ListComponent={AlertManagersList} canCreate={false} {...props} />;
+export const AlertManagersPage = props => <ListPage {...props} ListComponent={AlertManagersList} canCreate={false} kind={referenceForModel(AlertmanagerModel)} />;

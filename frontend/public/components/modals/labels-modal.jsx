@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { k8sPatch } from '../../module/k8s';
+import { k8sPatch, referenceForModel } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, ResourceIcon, SelectorInput } from '../utils';
 
@@ -59,7 +59,7 @@ class BaseLabelsModal extends PromiseComponent {
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label className="control-label">
-              {_.capitalize(description) || 'Labels'} for <ResourceIcon kind={kind.kind} /> {resource.metadata.name}
+              {_.capitalize(description) || 'Labels'} for <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} /> {resource.metadata.name}
             </label>
             <SelectorInput onChange={labels => this.setState({labels})} tags={this.state.labels} labelClassName={labelClassName || `co-text-${kind.id}`} autoFocus/>
           </div>

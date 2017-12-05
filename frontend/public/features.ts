@@ -10,7 +10,6 @@ import { coFetchJSON } from './co-fetch';
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
   CLUSTER_UPDATES = 'CLUSTER_UPDATES',
-  ETCD_OPERATOR = 'ETCD_OPERATOR',
   PROMETHEUS = 'PROMETHEUS',
   MULTI_CLUSTER = 'MULTI_CLUSTER',
   SECURITY_LABELLER = 'SECURITY_LABELLER',
@@ -22,7 +21,6 @@ export enum FLAGS {
 const DEFAULTS = {
   [FLAGS.AUTH_ENABLED]: !(window as any).SERVER_FLAGS.authDisabled,
   [FLAGS.CLUSTER_UPDATES]: undefined,
-  [FLAGS.ETCD_OPERATOR]: undefined,
   [FLAGS.PROMETHEUS]: undefined,
   [FLAGS.MULTI_CLUSTER]: undefined,
   [FLAGS.SECURITY_LABELLER]: undefined,
@@ -54,7 +52,6 @@ const CALICO_FLAGS = {
 export const CRDS_ = {
   'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
   'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
-  'etcdclusters.etcd.database.coreos.com': FLAGS.ETCD_OPERATOR, // v1beta2
   'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
   'alphacatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
   'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,

@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
 import { isFilledStatusValue, ClusterServiceVersionResourceStatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
-import { ClusterServiceVersionResourceSpecDescriptor, ClusterServiceVersionResourceModifier } from './spec-descriptors';
+import { ClusterServiceVersionResourceSpecDescriptor, SpecDescriptor } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToPlural } from '../../kinds';
@@ -168,22 +168,17 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       };
 
       const {kind, metadata, spec, status} = this.props.obj;
-      const matchLabels = spec.selector ? _.map(spec.selector.matchLabels, (val, key) => `${key}=${val}`) : [];
 
       // Find the matching CRD spec for the kind of this resource in the CSV.
       const ownedDefinitions = _.get(this.state.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
       const thisDefinition = _.find(ownedDefinitions, (def) => def.name.split('.')[0] === this.props.kindObj.path);
-      const statusDescriptors = thisDefinition ? thisDefinition.statusDescriptors : [];
-      const specDescriptors = thisDefinition ? thisDefinition.specDescriptors : [];
+      const statusDescriptors = _.get(thisDefinition, 'statusDescriptors', []);
+      const specDescriptors = _.get(thisDefinition, 'specDescriptors', []);
       const title = thisDefinition ? thisDefinition.displayName : kind;
 
       const filteredStatusDescriptors = _.filter(statusDescriptors, (descriptor) => {
         return _.find(descriptor['x-descriptors'], isFilteredDescriptor) === undefined;
       });
-
-      const findAssociatedSpecDescriptor = (statusDescriptor) => {
-        return _.find<ClusterServiceVersionResourceSpecDescriptor>(specDescriptors, (descriptor) => descriptor.path === statusDescriptor.path);
-      };
 
       // Find the important metrics and prometheus endpoints, if any.
       const metricsDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.importantMetrics);
@@ -198,7 +193,6 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
         <div className="co-m-pane__body">
           <h1 className="co-section-title">{`${title} Overview`}</h1>
           <div className="row">
-            { !podStatusesDescriptor && !metricsValue ? <div className="text-muted">No metrics defined</div> : null }
             { podStatusesDescriptor ? <div className="col-xs-3"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={podStatusesFetcher} /></div> : null }
             { metricsValue
               ? metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (
@@ -226,25 +220,14 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
                   </div>
                 }
               </div>
-              { matchLabels.length > 0 && <div className="col-xs-6">
-                <dt>Resources</dt>
-                <dd>
-                  <Link to={`/ns/${metadata.namespace}/search?q=${matchLabels.map(pair => `${pair},`)}`} title="View resources">
-                    View resources
-                  </Link>
-                </dd>
-              </div> }
-              { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
-                const statusValue = getBlockValue(statusDescriptor, status);
-                const showStatus = isFilledStatusValue(statusValue);
-                const specDescriptor = findAssociatedSpecDescriptor(statusDescriptor);
+              { specDescriptors.map((specDescriptor: ClusterServiceVersionResourceSpecDescriptor, i) => {
                 const specValue = getBlockValue(specDescriptor, spec);
 
-                return showStatus ? <div className="col-xs-6" key={statusDescriptor.path}>
-                  <ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} />
-                  { specDescriptor ? <ClusterServiceVersionResourceModifier namespace={metadata.namespace} resource={this.props.obj} kindObj={this.props.kindObj} specValue={specValue} specDescriptor={specDescriptor} /> : null }
-                </div> : null;
+                return <div key={i} className="col-xs-6">
+                  <SpecDescriptor namespace={metadata.namespace} resource={this.props.obj} kindObj={this.props.kindObj} specValue={specValue} specDescriptor={specDescriptor} />
+                </div>;
               }) }
+
               { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
                 const statusValue = getBlockValue(statusDescriptor, status);
                 const showStatus = !isFilledStatusValue(statusValue) && this.state.expanded;

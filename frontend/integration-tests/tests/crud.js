@@ -216,8 +216,6 @@ const k8sObjs = {
   'deployments': 'Deployment',
   'replicasets': 'ReplicaSet',
   'replicationcontrollers': 'ReplicationController',
-  'etcdclusters': 'EtcdCluster',
-  'prometheuses': 'Prometheus',
   'persistentvolumeclaims': 'PersistentVolumeClaim',
   'statefulsets': 'StatefulSet',
   'resourcequotas': 'ResourceQuota',

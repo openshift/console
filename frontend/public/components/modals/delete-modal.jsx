@@ -34,8 +34,7 @@ class DeleteModal extends PromiseComponent {
       // If we are currently on the deleted resource's page, redirect to the resource list page
       const re = new RegExp(`/${resource.metadata.name}/.*$`);
       if (re.test(window.location.pathname)) {
-        const path = kind.kind === 'EtcdCluster' ? 'etcdclusters' : kind.path;
-        history.push(getNamespacedRoute(path));
+        history.push(getNamespacedRoute(kind.path));
       }
     });
   }
