@@ -4,7 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
 import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
-import { ClusterServiceVersionModel, AlphaCatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel } from '../../models';
+import { ClusterServiceVersionModel, UICatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel } from '../../models';
 import { k8sKinds } from './enum';
 
 export const referenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceReference => obj.kind && obj.apiVersion
@@ -33,7 +33,7 @@ export const kindForReference = (ref: K8sResourceKindReference) => ref.split(':'
  * Will eventually replace The Enum.
  */
 const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
-  .set(referenceForModel(AlphaCatalogEntryModel), AlphaCatalogEntryModel)
+  .set(referenceForModel(UICatalogEntryModel), UICatalogEntryModel)
   .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionModel)
   .set(referenceForModel(InstallPlanModel), InstallPlanModel)
   .set(referenceForModel(EtcdClusterModel), EtcdClusterModel)

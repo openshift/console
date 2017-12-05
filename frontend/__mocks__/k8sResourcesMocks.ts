@@ -188,7 +188,7 @@ export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
 
 export const testCatalogApp: CatalogEntryKind = {
   apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'AlphaCatalogEntry-v1',
+  kind: 'UICatalogEntry-v1',
   metadata: {
     name: 'testapp',
     uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
