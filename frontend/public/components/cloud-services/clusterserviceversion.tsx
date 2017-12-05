@@ -5,8 +5,6 @@ import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
-import { Converter } from 'showdown';
-import * as sanitizeHtml from 'sanitize-html';
 
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
@@ -14,6 +12,7 @@ import { DetailsPage, ListHeader, ColHead, MultiListPage } from '../factory';
 import { navFactory, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
 import { K8sResourceKind, referenceForModel, K8sFullyQualifiedResourceReference, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
+import { AsyncComponent } from '../utils/async';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
 
@@ -175,23 +174,8 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
   });
 
-const markdownConvert = (markdown) => {
-  const unsafeHtml = new Converter({
-    openLinksInNewWindow: true,
-    strikethrough: true,
-    emoji: true,
-  }).makeHtml(markdown);
-
-  return sanitizeHtml(unsafeHtml, {
-    allowedTags: ['b', 'i', 'strike', 's', 'del', 'em', 'strong', 'a', 'p', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'code', 'pre'],
-    allowedAttributes: {
-      'a': ['href', 'target', 'rel'],
-    },
-    allowedSchemes: ['http', 'https', 'mailto'],
-    transformTags: {
-      'a': sanitizeHtml.simpleTransform('a', {rel: 'noopener noreferrer'}, true),
-    },
-  });
+export const MarkdownView = (props: {content: string}) => {
+  return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
 export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServiceVersionDetailsProps> = (props) => {
@@ -235,8 +219,7 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
     </div>
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--description">
       <h1>Description</h1>
-      <span style={{color: spec.description ? '' : '#999'}} dangerouslySetInnerHTML={{__html: markdownConvert(spec.description || 'Not available')}}>
-      </span>
+      <MarkdownView content={spec.description || 'Not available'} />
     </div>
   </div>;
 };
