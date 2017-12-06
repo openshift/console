@@ -23,10 +23,18 @@ const markdownConvert = (markdown) => {
 
 export const SyncMarkdownView = (props: {content: string}) => {
   const contents = `
-    <link href="static/app-bundle.css" rel="stylesheet">
     <style type="text/css">
+    @font-face {
+      font-family: "Source Sans Pro";
+      src: url(./assets/sourcesanspro-regular-webfont.eot);
+      src: url(./assets/sourcesanspro-regular-webfont.eot) format("embedded-opentype"),url(./assets/sourcesanspro-regular-webfont.woff) format("woff"),url(./assets/sourcesanspro-regular-webfont.ttf) format("truetype"),url(./assets/sourcesanspro-regular-webfont.svg) format("svg");
+      font-weight: 400;
+      font-style: normal;
+      font-stretch: normal;
+    }
+    
     body {
-        font-family: "Source Sans Pro", Helvetica, sans-serif';
+        font-family: "Source Sans Pro", Helvetica, sans-serif;
         font-size: 16px;
         color: ${props.content ? 'black' : '#999'};
         background-color: transparent !important;
