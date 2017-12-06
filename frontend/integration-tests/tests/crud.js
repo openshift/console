@@ -312,6 +312,7 @@ TESTS.CRDs = browser => {
             plural,
             singular: `crd${NAME}`,
             kind: `CRD${NAME}`,
+            shortNames: [NAME],
           }
         }
       };
