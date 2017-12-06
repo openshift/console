@@ -102,8 +102,8 @@ const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
   .catch(errorStatus);
 
 
-const DashboardLink = ({to}) => <div className="col-lg-3 text-right" style={{marginTop: 16}}>
-  <Link target="_blank" to={to}>View Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
+const DashboardLink = ({to, id}) => <div className="col-lg-3 text-right" style={{marginTop: 16}}>
+  <Link id={id} target="_blank" to={to}>View Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
 </div>;
 
 export const ClusterOverviewPage = props => {
@@ -119,7 +119,7 @@ export const ClusterOverviewPage = props => {
           <div className="col-lg-9">
             <h4>Cluster Health</h4>
           </div>
-          <DashboardLink to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1" />
+          <DashboardLink id="qa_dashboard_k8s_health" to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1" />
         </div>
         <div className="row">
           <div className="col-lg-3 col-md-6">
