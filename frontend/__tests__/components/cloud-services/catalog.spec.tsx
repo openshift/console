@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
 import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
-import { ClusterServiceVersionModel, AlphaCatalogEntryModel } from '../../../public/models';
+import { ClusterServiceVersionModel, UICatalogEntryModel } from '../../../public/models';
 import { referenceForModel } from '../../../public/module/k8s';
 import { MultiListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
 import { NavTitle } from '../../../public/components/utils';
@@ -255,7 +255,7 @@ describe(CatalogAppsPage.displayName, () => {
     expect(listPage.props().resources).toEqual([
       {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
       {kind: 'Namespace', isList: true},
-      {kind: referenceForModel(AlphaCatalogEntryModel), isList: true, namespaced: true}
+      {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true}
     ]);
     expect(listPage.props().namespace).toEqual('tectonic-system');
     expect(listPage.props().ListComponent).toEqual(CatalogAppList);
@@ -264,16 +264,16 @@ describe(CatalogAppsPage.displayName, () => {
     expect(listPage.props().showTitle).toBe(true);
   });
 
-  it('passes `flatten` function which returns only list of `AlphaCatalogEntry-v1s`', () => {
+  it('passes `flatten` function which returns only list of `UICatalogEntry-v1s`', () => {
     const flatten = wrapper.find(MultiListPage).props().flatten;
     const data = flatten({
-      [referenceForModel(AlphaCatalogEntryModel)]: {data: [testCatalogApp]},
+      [referenceForModel(UICatalogEntryModel)]: {data: [testCatalogApp]},
       'Namespace': {data: [testNamespace]},
       [referenceForModel(ClusterServiceVersionModel)]: {data: [testClusterServiceVersion]}
     });
 
     expect(data.length).toEqual(1);
-    expect(data.some(({kind}) => kind !== 'AlphaCatalogEntry-v1')).toBe(false);
+    expect(data.some(({kind}) => kind !== 'UICatalogEntry-v1')).toBe(false);
   });
 });
 

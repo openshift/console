@@ -13,7 +13,7 @@ describe('modelFor', () => {
   });
 
   it('returns k8s model for fully qualified reference', () => {
-    ref = 'AlphaCatalogEntry-v1:app.coreos.com:v1alpha1';
+    ref = 'UICatalogEntry-v1:app.coreos.com:v1alpha1';
 
     expect(modelFor(ref)).toBeDefined();
   });
@@ -29,9 +29,9 @@ describe('kindForReference', () => {
   });
 
   it('returns `kind` string if given fully qualified reference', () => {
-    ref = 'AlphaCatalogEntry-v1:app.coreos.com:v1alpha1';
+    ref = 'UICatalogEntry-v1:app.coreos.com:v1alpha1';
 
-    expect(kindForReference(ref)).toEqual('AlphaCatalogEntry-v1');
+    expect(kindForReference(ref)).toEqual('UICatalogEntry-v1');
   });
 });
 

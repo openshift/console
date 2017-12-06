@@ -53,7 +53,7 @@ export const CRDS_ = {
   'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
   'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
   'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
-  'alphacatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
+  'uicatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
   'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
 };
 

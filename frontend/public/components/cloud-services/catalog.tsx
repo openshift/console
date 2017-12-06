@@ -14,7 +14,7 @@ import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind,
 import { createEnableApplicationModal } from '../modals/enable-application-modal';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { k8sCreate, k8sKill, K8sResourceKind, referenceForModel } from '../../module/k8s';
-import { ClusterServiceVersionModel, AlphaCatalogEntryModel } from '../../models';
+import { ClusterServiceVersionModel, UICatalogEntryModel } from '../../models';
 
 export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
@@ -170,11 +170,11 @@ export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
   title="Applications"
   showTitle={true}
   namespace="tectonic-system"
-  flatten={resources => _.flatMap(_.filter(resources, (_, k: string) => k === referenceForModel(AlphaCatalogEntryModel)), (resource: any) => resource.data)}
+  flatten={resources => _.flatMap(_.filter(resources, (_, k: string) => k === referenceForModel(UICatalogEntryModel)), (resource: any) => resource.data)}
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
     {kind: 'Namespace', isList: true},
-    {kind: referenceForModel(AlphaCatalogEntryModel), isList: true, namespaced: true}
+    {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true}
   ]}
 />;
 

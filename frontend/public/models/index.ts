@@ -2,17 +2,17 @@
 
 import { K8sKind } from '../module/k8s';
 
-export const AlphaCatalogEntryModel: K8sKind = {
-  kind: 'AlphaCatalogEntry-v1',
-  label: 'AlphaCatalogEntry-v1',
-  labelPlural: 'AlphaCatalogEntry-v1s',
+export const UICatalogEntryModel: K8sKind = {
+  kind: 'UICatalogEntry-v1',
+  label: 'UICatalogEntry-v1',
+  labelPlural: 'UICatalogEntry-v1s',
   basePath: '/apis/app.coreos.com/',
   apiVersion: 'v1alpha1',
-  path: 'alphacatalogentry-v1s',
+  path: 'uicatalogentry-v1s',
   abbr: 'CE',
   namespaced: true,
   crd: true,
-  plural: 'alphacatalogentry-v1s',
+  plural: 'uicatalogentry-v1s',
 };
 
 export const ClusterServiceVersionModel: K8sKind = {
