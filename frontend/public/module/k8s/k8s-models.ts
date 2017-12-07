@@ -1,8 +1,7 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
+// eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
 import { ClusterServiceVersionModel, UICatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel } from '../../models';
 import { k8sKinds } from './enum';

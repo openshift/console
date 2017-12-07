@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import * as _ from 'lodash';
 
@@ -104,6 +102,7 @@ export class SpecDescriptor extends React.Component<SpecDescriptorProps, SpecDes
   }
 }
 
+/* eslint-disable no-undef */
 export type ClusterServiceVersionResourceSpecDescriptor = {
   path: string;
   displayName: string;
@@ -131,3 +130,4 @@ export type EndpointRowProps = {
 export type EndpointListProps = {
   endpoints: any[];
 };
+/* eslint-enable no-undef */

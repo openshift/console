@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import * as _ from 'lodash';
 
@@ -51,6 +49,7 @@ export const ResourcePodCount: React.SFC<ResourcePodCountProps> = ({resource}) =
   <dd>{resource.spec.replicas || 0}</dd>
 </dl>;
 
+/* eslint-disable no-undef */
 export type HeadingProps = {
   text: string;
 };
@@ -67,6 +66,7 @@ export type ResourceSummaryProps = {
 export type ResourcePodCountProps = {
   resource: K8sResourceKind;
 };
+/* eslint-enable no-undef */
 
 Heading.displayName = 'Heading';
 ResourceSummary.displayName = 'ResourceSummary';

@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import { connect } from 'react-redux';
 import * as Immutable from 'immutable';
 import * as _ from 'lodash';
@@ -7,6 +5,17 @@ import * as _ from 'lodash';
 import { k8sBasePath } from './module/k8s';
 import { coFetchJSON } from './co-fetch';
 
+/* global
+  FLAGS: false,
+  AUTH_ENABLED: false,
+  CLUSTER_UPDATES: false,
+  PROMETHEUS: false,
+  MULTI_CLUSTER: false,
+  SECURITY_LABELLER: false,
+  CLOUD_SERVICES: false,
+  CLOUD_CATALOGS: false,
+  CALICO: false,
+ */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
   CLUSTER_UPDATES = 'CLUSTER_UPDATES',

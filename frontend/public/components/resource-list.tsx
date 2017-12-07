@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash';
@@ -63,6 +61,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   </div>;
 });
 
+/* eslint-disable no-undef, no-unused-vars */
 export type ResourceListPageProps = {
   modelRef: K8sResourceKindReference;
   match: match<any>;
@@ -72,6 +71,7 @@ export type ResourceDetailsPageProps = {
   modelRef: K8sResourceKindReference;
   match: match<any>;
 };
+/* eslint-enable no-undef, no-unused-vars */
 
 ResourceListPage.displayName = 'ResourceListPage';
 ResourceDetailsPage.displayName = 'ResourceDetailsPage';

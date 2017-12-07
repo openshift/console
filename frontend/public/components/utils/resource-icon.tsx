@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 import * as classNames from 'classnames';
 
@@ -14,17 +12,19 @@ export const ResourceIcon = connectToModel((props: ResourceIconProps) => {
   return <span className={klass}>{iconLabel}</span>;
 });
 
+/* eslint-disable no-undef */
 export type ResourceIconProps = {
   className: string;
   kindObj: K8sKind;
 };
 
-export const ResourceName: React.StatelessComponent<ResourceNameProps> = (props) => <span><ResourceIcon kind={props.kind} /> {props.name}</span>;
-
 export type ResourceNameProps = {
   kind: K8sResourceKindReference;
   name: string;
 };
+/* eslint-enable no-undef */
+
+export const ResourceName: React.StatelessComponent<ResourceNameProps> = (props) => <span><ResourceIcon kind={props.kind} /> {props.name}</span>;
 
 ResourceIcon.displayName = 'ResourceIcon';
 ResourceName.displayName = 'ResourceName';

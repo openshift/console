@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars, no-undef */
-
 import * as React from 'react';
 import * as _ from 'lodash';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+// eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference } from '../module/k8s';
 
 import { registerTemplate } from '../yaml-templates';
@@ -78,6 +77,7 @@ export const ClustersDetailsPage: React.StatelessComponent<ClustersDetailsPagePr
   return <DetailsPage {...props} kind={ClusterReference} menuActions={menuActions} pages={pages} />;
 };
 
+/* eslint-disable no-undef */
 export type ClustersRowProps = {
   obj: any,
 };
@@ -93,6 +93,7 @@ export type ClustersPageProps = {
 export type ClustersDetailsPageProps = {
   match: any,
 };
+/* eslint-enable no-undef */
 
 ClustersRow.displayName = 'ClustersRow';
 ClustersDetails.displayName = 'ClustersDetails';

@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash';
@@ -235,6 +233,7 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     menuActions={[() => ({label: 'Edit Application Definition...', href: `/ns/${props.namespace}/clusterserviceversion-v1s/${props.name}/edit`})]} />;
 };
 
+/* eslint-disable no-undef */
 export type ClusterServiceVersionsPageProps = {
   kind: string;
   namespace: string;
@@ -273,6 +272,7 @@ export type ClusterServiceVersionDetailsProps = {
 export type ClusterServiceVersionRowProps = {
   obj: ClusterServiceVersionKind;
 };
+/* eslint-enable no-undef */
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 ClusterServiceVersionList.displayName = 'ClusterServiceVersionList';

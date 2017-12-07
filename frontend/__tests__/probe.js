@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks */
 import { parseCmd, flattenCmd } from '../public/module/k8s/probe';
 
 describe('k8sProbe', () => {

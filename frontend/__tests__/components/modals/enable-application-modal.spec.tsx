@@ -1,9 +1,9 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
-import { ShallowWrapper, shallow } from 'enzyme';
-import Spy = jasmine.Spy;
 import * as _ from 'lodash';
+// eslint-disable-next-line no-undef
+import Spy = jasmine.Spy;
+/* eslint-disable no-unused-vars */
+import { ShallowWrapper, shallow } from 'enzyme';
 
 import { EnableApplicationModal, EnableApplicationModalProps, SelectNamespaceHeader, SelectNamespaceHeaderProps, SelectNamespaceRow, SelectNamespaceRowProps } from '../../../public/components/modals/enable-application-modal';
 import { ListHeader, ColHead, List, ResourceRow } from '../../../public/components/factory';
@@ -12,6 +12,8 @@ import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/compon
 import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
 import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval } from '../../../public/components/cloud-services';
 import { InstallPlanModel } from '../../../public/models';
+/* eslint-enable no-unused-vars */
+
 
 describe(SelectNamespaceHeader.displayName, () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;

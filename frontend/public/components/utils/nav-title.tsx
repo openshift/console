@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
@@ -42,6 +40,7 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
   </div>;
 });
 
+/* eslint-disable no-undef */
 export type NavTitleProps = {
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
@@ -56,6 +55,7 @@ export type NavTitleProps = {
 export type BreadCrumbsProps = {
   breadcrumbs: {name: string, path: string}[];
 };
+/* eslint-enable no-undef */
 
 NavTitle.displayName = 'NavTitle';
 BreadCrumbs.displayName = 'BreadCrumbs';

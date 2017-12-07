@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import { ConfigMapsPage, ConfigMapsDetailsPage } from './configmap';
 import { ClustersPage, ClustersDetailsPage } from './clusters';
 import { ContainersDetailsPage } from './container';

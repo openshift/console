@@ -1,8 +1,8 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
+// eslint-disable-next-line no-unused-vars
 import { shallow, ShallowWrapper } from 'enzyme';
 
+// eslint-disable-next-line no-unused-vars
 import { ClusterServiceVersionResourceStatus, ClusterServiceVersionResourceStatusProps, Phase, PhaseProps } from '../../../public/components/cloud-services/status-descriptors';
 import { ALMStatusDescriptors } from '../../../public/components/cloud-services';
 import { ResourceLink } from '../../../public/components/utils';

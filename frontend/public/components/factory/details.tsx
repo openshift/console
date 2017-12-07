@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash';
@@ -18,6 +16,7 @@ export const DetailsPage: React.StatelessComponent<DetailsPageProps> = (props) =
   <VertNav pages={props.pages} className={`co-m-${_.get(props.kind, 'kind', props.kind)}`} match={props.match} label={props.label || (props.kind as any).label} />
 </Firehose>;
 
+/* eslint-disable no-undef */
 export type DetailsPageProps = {
   match: match<any>;
   title?: string | JSX.Element;
@@ -29,5 +28,6 @@ export type DetailsPageProps = {
   namespace?: string;
   breadcrumbs?: {name: string, path: string}[];
 };
+/* eslint-enable no-undef */
 
 DetailsPage.displayName = 'DetailsPage';
