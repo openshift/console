@@ -17,7 +17,7 @@ try {
 
 export const history = createHistory({basename: window.SERVER_FLAGS.basePath});
 
-const removeBasePath = (url ='/') => _.startsWith(url, window.SERVER_FLAGS.basePath)
+const removeBasePath = (url = '/') => _.startsWith(url, window.SERVER_FLAGS.basePath)
   ? url.slice(window.SERVER_FLAGS.basePath.length - 1)
   : url;
 
@@ -27,6 +27,7 @@ history.replace = url => history.__replace__(removeBasePath(url));
 
 history.__push__ = history.push;
 history.push = url => history.__push__(removeBasePath(url));
+history.pushPath = path => history.__push__(path);
 
 export const getQueryArgument = arg => new URLSearchParams(window.location.search).get(arg);
 

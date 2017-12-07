@@ -78,9 +78,7 @@ export const UIActions = {
     if (namespace !== getActiveNamespace()) {
       const oldPath = window.location.pathname;
       if (isNamespaced(oldPath)) {
-        const location = Object.assign({}, window.location);
-        location.pathname = formatNamespaceRoute(namespace, oldPath);
-        history.push(location);
+        history.pushPath(formatNamespaceRoute(namespace, oldPath));
       }
     }
 
