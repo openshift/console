@@ -45,10 +45,10 @@ const updateList = (list, nextJS) => {
   return list.set(qualifiedName, next);
 };
 
-const loadList = (list, resources) => {
+const loadList = (oldList, resources) => {
   // TODO: not supported in ie :(
-  const existingKeys = new Set(list.keys());
-  return list.withMutations(list => {
+  const existingKeys = new Set(oldList.keys());
+  return oldList.withMutations(list => {
     (resources || []).forEach(r => {
       const qualifiedName = getQN(r);
       existingKeys.delete(qualifiedName);

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { inject } from './index';
 import actions from '../../module/k8s/k8s-actions';
 
-const { stopK8sWatch, watchK8sObject, watchK8sList } = actions;
 
 export const makeReduxID = (k8sKind = {}, query) => {
   let qs = '';
@@ -93,7 +92,12 @@ const stateToProps = ({KINDS}, {resources}) => ({
   k8sModels: KINDS.get('kinds').filter((_, k) => resources.find(({kind}) => kind === k))
 });
 
-export const Firehose = connect(stateToProps, {stopK8sWatch, watchK8sObject, watchK8sList})(
+export const Firehose = connect(
+  stateToProps, {
+    stopK8sWatch: actions.stopK8sWatch,
+    watchK8sObject: actions.watchK8sObject,
+    watchK8sList: actions.watchK8sList,
+  })(
   /** @augments {React.PureComponent<{k8sModels: Map<string, K8sKind}>} */
   class Firehose extends React.PureComponent {
     componentWillMount (props=this.props) {

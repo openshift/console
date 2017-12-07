@@ -100,12 +100,12 @@ export const ClusterServiceVersionResourcesPage: React.StatelessComponent<Cluste
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) => ownerRefs.filter(({uid}) => items.filter(({metadata}) => metadata.uid === uid).length > 0);
   const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item))
-    .filter(({kind, metadata}, _, allResources) => owned.filter(item => item.kind === kind).length > 0 || owners(metadata.ownerReferences || [], allResources).length > 0);
+    .filter(({kind, metadata}, i, allResources) => owned.filter(item => item.kind === kind).length > 0 || owners(metadata.ownerReferences || [], allResources).length > 0);
 
   const rowFilters = [{
     type: 'clusterserviceversion-resource-kind',
     selected: firehoseResources.map(({kind}) => kind),
-    reducer: (obj) => obj.kind,
+    reducer: ({kind}) => kind,
     items: firehoseResources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
   }];
 
@@ -248,7 +248,6 @@ const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: 
 export const Resources = connectToPlural((resourceprops: ResourceProps) => {
   const kindObj = resourceprops.kindObj;
   const clusterServiceVersion = resourceprops.clusterServiceVersion;
-  const obj = resourceprops.obj;
 
   // If the CSV defines a resources list under the CRD, then we use that instead of the default.
   const ownedDefinitions = _.get(clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
@@ -288,20 +287,21 @@ export const Resources = connectToPlural((resourceprops: ResourceProps) => {
     <div className="col-xs-4"><Timestamp timestamp={obj.metadata.creationTimestamp} /></div>
   </div>;
 
+  const obj = resourceprops.obj;
   return <MultiListPage
     filterLabel="Resources by name"
     resources={resources}
     rowFilters={[{
       type: 'clusterserviceversion-resource-kind',
       selected: resources.map(({kind}) => kind),
-      reducer: (obj) => obj.kind,
+      reducer: ({kind}) => kind,
       items: resources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
     }]}
     flatten={flattenFor(obj)}
     namespace={obj.metadata.namespace}
     ListComponent={(props) => <List
       {...props}
-      data={props.data.map(obj => ({...obj, rowKey: obj.metadata.uid}))}
+      data={props.data.map(o => ({...o, rowKey: o.metadata.uid}))}
       EmptyMsg={() => <MsgBox title="No Resources Found" detail="Resources are dependent servcies and Kubernetes primitives used by this instance." />}
       Header={ResourceHeader}
       Row={ResourceRow} />}
@@ -329,7 +329,7 @@ export const ClusterServiceVersionResourcesDetailsPage =
         {...this.props}
         menuActions={Cog.factory.common}
         breadcrumbs={[
-          {name: this.props.match.params.appName, path: `${this.props.match.url.split('/').filter((_, i) => i <= this.props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
+          {name: this.props.match.params.appName, path: `${this.props.match.url.split('/').filter((v, i) => i <= this.props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
           {name: `${kindForReference(this.props.kind)} Details`, path: `${this.props.match.url}`},
         ]}
         pages={[

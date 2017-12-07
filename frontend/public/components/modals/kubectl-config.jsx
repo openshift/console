@@ -97,8 +97,7 @@ class KubectlConfigModal extends PromiseComponent {
           return;
         }
 
-        const k8sVersion = resp.gitVersion.split('+')[0];
-        const prefix = `https://storage.googleapis.com/kubernetes-release/release/${k8sVersion}`;
+        const prefix = `https://storage.googleapis.com/kubernetes-release/release/${resp.gitVersion.split('+')[0]}`;
         const postfix = '/amd64/kubectl';
 
         this.setState({

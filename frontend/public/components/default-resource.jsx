@@ -14,7 +14,7 @@ const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Created</ColHead>
 </ListHeader>;
 
-const RowForKind = kind => function RowForKind ({obj}) {
+const RowForKind = kind => function RowForKind_ ({obj}) {
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
       <ResourceCog actions={menuActions} kind={referenceFor(obj)} resource={obj} />
@@ -32,7 +32,7 @@ const RowForKind = kind => function RowForKind ({obj}) {
   </div>;
 };
 
-const DetailsForKind = kind => function DetailsForKind ({obj}) {
+const DetailsForKind = kind => function DetailsForKind_ ({obj}) {
   return <div>
     <Heading text={`${kind} Overview`} />
     <div className="co-m-pane__body">

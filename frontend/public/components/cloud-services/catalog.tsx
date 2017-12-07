@@ -170,7 +170,7 @@ export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
   title="Applications"
   showTitle={true}
   namespace="tectonic-system"
-  flatten={resources => _.flatMap(_.filter(resources, (_, k: string) => k === referenceForModel(UICatalogEntryModel)), (resource: any) => resource.data)}
+  flatten={resources => _.flatMap(_.filter(resources, (v, k: string) => k === referenceForModel(UICatalogEntryModel)), (resource: any) => resource.data)}
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
     {kind: 'Namespace', isList: true},

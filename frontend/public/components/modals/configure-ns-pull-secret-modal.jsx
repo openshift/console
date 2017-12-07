@@ -104,8 +104,8 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
     }
 
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const input = event.target.result;
+    reader.onload = e => {
+      const input = e.target.result;
       try {
         JSON.parse(input);
       } catch (error) {

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { Link, match } from 'react-router-dom';
+import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
@@ -119,16 +119,6 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
     }
 
     render() {
-      const resources = [
-        {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'},
-        {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
-      ].concat(this.state.resourceDescriptions.map(crdDesc => ({
-        kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
-        namespaced: true,
-        optional: true,
-        prop: crdDesc.kind,
-      })));
-
       const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item));
       const dropdownFilters = [{
         type: 'clusterserviceversion-status',
@@ -145,6 +135,15 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         },
         title: 'Catalog',
       }];
+      const resources = [
+        {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'},
+        {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
+      ].concat(this.state.resourceDescriptions.map(crdDesc => ({
+        kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
+        namespaced: true,
+        optional: true,
+        prop: crdDesc.kind,
+      })));
 
       return this.props.namespace && !this.props.namespaceEnabled
         ? <Box className="cos-text-center">
@@ -240,7 +239,7 @@ export type ClusterServiceVersionsPageProps = {
   kind: string;
   namespace: string;
   namespaceEnabled: boolean;
-  match: match<any>;
+  match: RouterMatch<any>;
   resourceDescriptions: CRDDescription[];
 };
 
@@ -264,7 +263,7 @@ export type ClusterServiceVersionsDetailsPageProps = {
   kind: string;
   name: string;
   namespace: string;
-  match: match<any>;
+  match: RouterMatch<any>;
 };
 
 export type ClusterServiceVersionDetailsProps = {

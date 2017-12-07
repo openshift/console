@@ -151,7 +151,7 @@ export const bindingType = binding => {
   return binding.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const resources = [
+const roleResources = [
   {kind: 'RoleBinding', namespaced: true},
   {kind: 'ClusterRoleBinding', namespaced: false},
 ];
@@ -162,7 +162,7 @@ export const RoleBindingsPage = ({namespace, showTitle=true}) => <MultiListPage
   createButtonText="Create Binding"
   createProps={{to: '/rolebindings/new'}}
   filterLabel="Role Bindings by role or subject"
-  resources={resources}
+  resources={roleResources}
   rowFilters={[{
     type: 'role-binding-kind',
     selected: ['cluster', 'namespace'],
@@ -344,7 +344,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           }
           history.push(getNamespacedRoute('rolebindings'));
         },
-        e => this.setState({error: e.message, inProgress: false})
+        err => this.setState({error: err.message, inProgress: false})
       );
     }
 

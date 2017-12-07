@@ -63,6 +63,7 @@
     "no-global-strict": 0,
     "no-irregular-whitespace": ["error"],
     "no-multi-spaces": [2],
+    "no-shadow": ["error"],
     "no-trailing-spaces": ["error"],
     "no-underscore-dangle": 0,
     "no-unused-vars": ["error", {"varsIgnorePattern": "React"}],

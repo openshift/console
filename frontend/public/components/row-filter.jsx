@@ -56,8 +56,8 @@ class CheckBoxes_ extends React.Component {
     }
   }
 
-  toggle (id) {
-    const selected = _.xor(this.state.selected, [id]);
+  toggle (itemId) {
+    const selected = _.xor(this.state.selected, [itemId]);
 
     // Ensure something is always active
     if (!_.isEmpty(selected)) {

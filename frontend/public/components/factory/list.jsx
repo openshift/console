@@ -13,7 +13,7 @@ import { bindingType, roleType } from '../RBAC';
 import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
 
 // TODO(alecmerdler): Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
-const filters = {
+const listFilters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
 
   // Filter role by role kind
@@ -91,7 +91,7 @@ const getFilteredRows = (_filters, objects) => {
   let chain = _.chain(objects);
 
   _.each(_filters, (value, name) => {
-    const filter = filters[name];
+    const filter = listFilters[name];
     if (_.isFunction(filter)) {
       chain = chain.filter(filter.bind({}, value));
     }
@@ -106,7 +106,7 @@ const filterPropType = (props, propName, componentName) => {
   }
 
   for (let key of _.keys(props[propName])) {
-    if (key in filters) {
+    if (key in listFilters) {
       continue;
     }
     return new Error(`Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`);

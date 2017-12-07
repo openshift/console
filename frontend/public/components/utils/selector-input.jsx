@@ -5,6 +5,10 @@ import * as TagsInput from 'react-tagsinput';
 import * as k8sSelector from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
 
+// Helpers for cleaning up tags by running them through the selector parser
+const cleanSelectorStr = (tag) => k8sSelector.selectorToString(k8sSelector.selectorFromString(tag));
+const cleanTags = (tags) => k8sSelector.split(cleanSelectorStr(tags.join(',')));
+
 export class SelectorInput extends React.Component {
   constructor(props) {
     super(props);
@@ -54,10 +58,6 @@ export class SelectorInput extends React.Component {
       this.setState({isInputValid: false});
       return;
     }
-
-    // Helpers for cleaning up tags by running them through the selector parser
-    const cleanSelectorStr = (tag) => k8sSelector.selectorToString(k8sSelector.selectorFromString(tag));
-    const cleanTags = (tags) => k8sSelector.split(cleanSelectorStr(tags.join(',')));
 
     // Clean up the new tag by running it through the selector parser
     const cleanNewTag = cleanSelectorStr(newTag);

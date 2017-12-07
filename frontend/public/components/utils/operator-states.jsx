@@ -122,7 +122,7 @@ export const calculateChannelState = (allComponents, primaryComponent, config) =
     return state;
   }, {});
 
-  channelState = _.find(priority, (priority) => aggregateState[priority] > 0);
+  channelState = _.find(priority, (p) => aggregateState[p] > 0);
 
   // "pending" doesn't match a channel state
   if (channelState === 'Pending') {

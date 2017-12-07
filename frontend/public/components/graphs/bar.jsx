@@ -46,9 +46,9 @@ export class Bar extends BaseGraph {
     this.timeSpan = 0;
   }
 
-  annotate (text, values) {
+  annotate (texts, values) {
     const annotations = [];
-    _.each(text, (text, i) => {
+    _.each(texts, (text, i) => {
       annotations.push({
         x: 0,
         y: i,
