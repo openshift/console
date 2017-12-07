@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import * as _ from 'lodash';
 
 const getRestartPolicy = pod => _.find({
@@ -129,8 +127,10 @@ export const getVolumeLocation = volume => {
 
 export const getRestartPolicyLabel = pod => _.get(getRestartPolicy(pod), 'label', '');
 
+/* eslint-disable no-undef */
 export type PodReadiness = string;
 export type PodPhase = string;
+/* eslint-enable no-undef */
 
 export const getVolumeMountPermissions = v => {
   if (!v) {
