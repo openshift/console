@@ -56,11 +56,11 @@ const NavLink = connect(navLinkStateToProps, null, mergeProps, {pure: true, areS
         return null;
       }
 
-      const {isActive, href, name, onClick = undefined, target= undefined} = this.props;
+      const {isActive, href, id, name, onClick = undefined, target= undefined} = this.props;
       const klass = classNames('co-m-nav-link', {active: isActive});
 
       return <li className={klass} key={href}>
-        <Link to={href} onClick={onClick} target={target}>{name}</Link>
+        <Link id={id} to={href} onClick={onClick} target={target}>{name}</Link>
       </li>;
     }
   });
@@ -87,7 +87,7 @@ const NavSection = connect(navSectionStateToProps)(
       if (!this.props.canRender) {
         return null;
       }
-      const { icon, img, text, children } = this.props;
+      const { id, icon, img, text, children } = this.props;
       const Children = React.Children.map(children, c => React.cloneElement(c, {sectionId: text, key: c.props.name, openSection: this.openSection}));
 
       // WARNING:
@@ -98,7 +98,7 @@ const NavSection = connect(navSectionStateToProps)(
       const maxHeight = this.state.isOpen ? ((this.props.children.length || 1) * 29) : 0;
 
       return <div className="navigation-container__section">
-        <div className="navigation-container__section__title" onClick={this.toggle}>
+        <div id={id} className="navigation-container__section__title" onClick={this.toggle}>
           {icon && <i className={`fa ${icon} navigation-container__section__title__icon`}></i>}
           {img && <img src={img} />}
           {text}
@@ -167,9 +167,9 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink href="/crds" name="CRDs" />
     </NavSection>
 
-    {authSvc.userID() && <NavSection text={authSvc.name()} icon="fa-user">
+    {authSvc.userID() && <NavSection id="qa_admin" text={authSvc.name()} icon="fa-user">
       <NavLink href="/settings/profile" name="My Account" />
-      <NavLink href="#" name="Log Out" required={FLAGS.AUTH_ENABLED} onClick={logout} />
+      <NavLink id="qa_logout" href="#" name="Log Out" required={FLAGS.AUTH_ENABLED} onClick={logout} />
     </NavSection>}
   </div>
 </div>;

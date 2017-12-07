@@ -42,7 +42,7 @@ source ./contrib/environment.sh
 
 The script in `contrib/environment.sh` sets sensible defaults in the environment, and uses `kubectl` to query your cluster for endpoint and authentication information.
 
-To configure the application to run by hand, (or if `enironment.sh` doesn't work for some reason) you can manually provide a Kubernetes bearer token with the following steps.
+To configure the application to run by hand, (or if `environment.sh` doesn't work for some reason) you can manually provide a Kubernetes bearer token with the following steps.
 
 First get the secret ID that has a type of `kubernetes.io/service-account-token` by running:
 ```
