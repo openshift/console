@@ -57,12 +57,10 @@ const addCallbackToQueue = (opts, service) => {
 
 const apiPath = (service, k8sService) => {
   let port;
-  if (!service.portName) {
-    port = k8sService.spec.ports[0];
+  if (service.portName) {
+    port = _.find(k8sService.spec.ports, p => p.name === service.portName);
   } else {
-    port = _.find(k8sService.spec.ports, (port) => {
-      return port.name === service.portName;
-    });
+    port = k8sService.spec.ports[0];
   }
 
   if (!port) {

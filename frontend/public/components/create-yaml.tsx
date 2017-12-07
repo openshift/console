@@ -1,7 +1,5 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
-import { match } from 'react-router-dom';
+import { match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash';
 
 import { safeLoad } from 'js-yaml';
@@ -51,21 +49,23 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
 });
 
 export const EditYAMLPage: React.StatelessComponent<EditYAMLPageProps> = (props) => {
-  const Wrapper = (props) => <AsyncComponent {...props} obj={props.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} showHeader={true} />;
+  const Wrapper = (wrapperProps) => <AsyncComponent {...wrapperProps} obj={wrapperProps.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} showHeader={true} />;
   return <Firehose resources={[{kind: props.kind, name: props.match.params.name, namespace: props.match.params.ns, isList: false, prop: 'obj'}]}>
     <Wrapper />
   </Firehose>;
 };
 
+/* eslint-disable no-undef */
 export type CreateYAMLProps = {
-  match: match<{ns: string, plural: string, appName?: string}>;
+  match: RouterMatch<{ns: string, plural: string, appName?: string}>;
   kindsInFlight: boolean;
   kindObj: K8sKind;
 };
 
 export type EditYAMLPageProps = {
-  match: match<{ns: string, name: string}>;
+  match: RouterMatch<{ns: string, name: string}>;
   kind: string;
 };
+/* eslint-enable no-undef */
 
 EditYAMLPage.displayName = 'EditYAMLPage';

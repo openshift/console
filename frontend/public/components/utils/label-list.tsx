@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
@@ -37,6 +35,7 @@ export class LabelList extends React.PureComponent<LabelListProps> {
   }
 }
 
+/* eslint-disable no-undef */
 export type LabelProps = {
   kind: string;
   name: string;
@@ -49,3 +48,4 @@ export type LabelListProps = {
   kind: string;
   expand?: boolean;
 };
+/* eslint-enable no-undef */

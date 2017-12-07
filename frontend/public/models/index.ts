@@ -1,5 +1,4 @@
-/* eslint-disable no-undef, no-unused-vars */
-
+// eslint-disable-next-line no-unused-vars
 import { K8sKind } from '../module/k8s';
 
 export const UICatalogEntryModel: K8sKind = {

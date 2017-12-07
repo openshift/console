@@ -59,11 +59,11 @@ class Details extends React.Component {
   }
 
   render () {
-    const rule = this.props.obj;
-    const {creationTimestamp, name, namespace} = rule.metadata;
+    const ruleObj = this.props.obj;
+    const {creationTimestamp, name, namespace} = ruleObj.metadata;
     const {ruleFilter} = this.state;
 
-    let rules = rule.rules;
+    let rules = ruleObj.rules;
     if (ruleFilter) {
       const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
       const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];
@@ -130,13 +130,15 @@ const BindingRow = ({obj: binding}) => <ResourceRow obj={binding}>
   </div>
 </ResourceRow>;
 
+const BindingsListComponent = props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />;
+
 export const BindingsForRolePage = (props) => {
   const {match: {params: {name, ns}}, kind} = props;
   return <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
     createProps={{to: `/rolebindings/new?${ns ? `ns=${ns}&` : ''}rolekind=${kind}&rolename=${name}`}}
-    ListComponent={props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />}
+    ListComponent={BindingsListComponent}
     staticFilters={[{'role-binding-roleRef': name}]}
     resources={[
       {kind: 'RoleBinding', namespaced: true},

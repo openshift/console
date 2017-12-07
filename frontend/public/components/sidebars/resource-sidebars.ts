@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import { NetworkPolicySidebar } from './network-policy-sidebar';
 import { RoleSidebar } from './role-sidebar';
 

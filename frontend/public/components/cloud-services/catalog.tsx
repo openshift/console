@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
@@ -170,7 +168,7 @@ export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
   title="Applications"
   showTitle={true}
   namespace="tectonic-system"
-  flatten={resources => _.flatMap(_.filter(resources, (_, k: string) => k === referenceForModel(UICatalogEntryModel)), (resource: any) => resource.data)}
+  flatten={resources => _.flatMap(_.filter(resources, (v, k: string) => k === referenceForModel(UICatalogEntryModel)), (resource: any) => resource.data)}
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
     {kind: 'Namespace', isList: true},
@@ -206,6 +204,7 @@ export const CatalogsDetailsPage: React.StatelessComponent = () => <div>
   <CatalogDetails />
 </div>;
 
+/* eslint-disable no-undef */
 export type CatalogAppRowProps = {
   obj: CatalogEntryKind;
   namespaces: {data: {[name: string]: K8sResourceKind}, loaded: boolean, loadError: Object | string};
@@ -243,6 +242,7 @@ export type BreakdownDetailProps = {
   clusterServiceVersions: ClusterServiceVersionKind[];
   status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[], awaiting: ClusterServiceVersionKind[]};
 };
+/* eslint-enable no-undef */
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 CatalogDetails.displayName = 'CatalogDetails';

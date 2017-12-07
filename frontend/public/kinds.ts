@@ -1,5 +1,4 @@
-/* eslint-disable no-undef, no-unused-vars */
-
+/* eslint-disable no-unused-vars */
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, fromJS } from 'immutable';
@@ -9,6 +8,7 @@ import { k8sKinds, CustomResourceDefinitionKind, K8sKind, K8sResourceKindReferen
 import { allModels, kindForReference } from './module/k8s/k8s-models';
 import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
+/* eslint-enable no-unused-vars */
 
 export const kindReducerName = 'KINDS';
 export const inFlight = 'inFlight';

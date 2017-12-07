@@ -1,7 +1,7 @@
-/* eslint-disable no-undef, no-unused-vars */
-
+/* eslint-disable no-unused-vars */
 import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
 import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
+/* eslint-enable no-unused-vars */
 
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',

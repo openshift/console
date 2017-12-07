@@ -28,14 +28,14 @@ export const entitlementTitles = {
   }
 };
 
-export const entitlementTitle = (entitlement, count) => {
-  const entitlementTitle = entitlementTitles[entitlement];
-  if (!entitlementTitle) {
+export const entitlementTitle = (name, count) => {
+  const entitlement = entitlementTitles[name];
+  if (!entitlement) {
     return 'Tectonic';
   }
 
-  let title = entitlementTitle.uppercase;
-  if (entitlementTitle.inPairs) {
+  let title = entitlement.uppercase;
+  if (entitlement.inPairs) {
     title = `${title} Pair`;
     count = Math.floor(count / 2);
   }

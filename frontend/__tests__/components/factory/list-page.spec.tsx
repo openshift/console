@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-
 import * as React from 'react';
+// eslint-disable-next-line no-unused-vars
 import { shallow, ShallowWrapper } from 'enzyme';
 
 import { TextFilter, ListPageWrapper_, FireMan_, MultiListPage } from '../../../public/components/factory/list-page';

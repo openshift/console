@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import * as classNames from 'classnames';
 
@@ -66,6 +64,7 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
   </dl>;
 };
 
+/* eslint-disable no-undef */
 export type ClusterServiceVersionResourceStatusDescriptor = {
   path: string;
   displayName: string;
@@ -88,6 +87,7 @@ export type ClusterServiceVersionResourceStatusProps = {
 export type PhaseProps = {
   status: string;
 };
+/* eslint-enable no-undef */
 
 ClusterServiceVersionResourceStatus.displayName = 'ClusterServiceVersionResourceStatus';
 Phase.displayName = 'Phase';

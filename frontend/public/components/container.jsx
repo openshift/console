@@ -208,7 +208,7 @@ export const ContainersDetailsPage = (props) => <div>
     title={props.match.params.name}
     kind="Container"
     breadcrumbs={[
-      {name: props.match.params.podName, path: `${props.match.url.split('/').filter((_, i) => i <= props.match.path.split('/').indexOf(':podName')).join('/')}`},
+      {name: props.match.params.podName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':podName')).join('/')}`},
       {name: 'Container Details', path: `${props.match.url}`},
     ]} />
   <Firehose resources={[{

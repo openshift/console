@@ -16,8 +16,8 @@ export const stream = (url, loadStart, notify) => {
       notify(remainder);
     };
 
-    const processResponse = (e) => {
-      const response = e.target;
+    const processResponse = (evt) => {
+      const response = evt.target;
 
       if (response.status === 200) {
         resolve();
@@ -26,7 +26,7 @@ export const stream = (url, loadStart, notify) => {
         if (response.responseText) {
           try {
             msg = JSON.parse(response.responseText).message;
-          } catch(e) {
+          } catch (e) {
             throw new Error(e);
           }
         }

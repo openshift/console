@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks */
 import { createEquals, requirementFromString, requirementToString } from '../public/module/k8s/selector-requirement';
 
 describe('k8sSelectorRequirement', () => {

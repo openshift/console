@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import { podReadiness, podPhase } from '../../../public/module/k8s/pods';
 
 describe('podPhase', () => {

@@ -34,7 +34,7 @@ const HelpText = (props) => <span className="help-text">
 
 const Checkbox = ({value, checked, onChange}) => <div>
   <label className="checkbox-label">
-    <input type="checkbox" onChange={({target: {checked}}) => onChange(value, checked)} checked={!!checked} />
+    <input type="checkbox" onChange={({target: {checked: newChecked}}) => onChange(value, newChecked)} checked={!!checked} />
     &nbsp;&nbsp;{value}
   </label>
 </div>;

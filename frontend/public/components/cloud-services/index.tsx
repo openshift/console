@@ -1,4 +1,4 @@
-/* eslint-disable no-undef, no-unused-vars */
+/* eslint-disable no-undef */
 
 import * as React from 'react';
 import * as _ from 'lodash';

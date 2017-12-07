@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Readiness } from '../../public/components/pod';

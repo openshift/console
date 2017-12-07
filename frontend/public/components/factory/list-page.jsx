@@ -134,7 +134,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
     }
 
     render () {
-      const {createButtonText, dropdownFilters, textFilter, filterLabel, title, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
+      const {createButtonText, dropdownFilters, textFilter, filterLabel, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
         return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
@@ -153,6 +153,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
         }
       }
 
+      const {title} = this.props;
       return <div>
         {title && <NavTitle title={title} />}
         <div className="co-m-pane">
@@ -237,7 +238,7 @@ export const ListPage = props => {
     ListComponent={props.ListComponent}
     rowFilters={props.rowFilters}
     label={labelPlural}
-    flatten={resources => resources[name || kind].data}
+    flatten={_resources => _resources[name || kind].data}
     namespace={namespace}
   />;
 };

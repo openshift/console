@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import { match } from 'react-router-dom';
+import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
@@ -141,7 +141,7 @@ describe(ClusterServiceVersionResourceList.displayName, () => {
   it('renders a `List` of the custom resource instances of the given kind', () => {
     const list: ShallowWrapper<any> = wrapper.find(List);
 
-    expect(Object.keys(wrapper.props()).reduce((_, prop) => list.prop(prop) === wrapper.prop(prop), false)).toBe(true);
+    expect(Object.keys(wrapper.props()).reduce((k, prop) => list.prop(prop) === wrapper.prop(prop), false)).toBe(true);
     expect(list.props().Header).toEqual(ClusterServiceVersionResourceHeader);
     expect(list.props().Row).toEqual(ClusterServiceVersionResourceRow);
   });
@@ -177,7 +177,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('does not render filtered status fields', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => crd.name === 'testresource.testapp.coreos.com');
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
     const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
 
     wrapper.setState({expanded: false});
@@ -204,7 +204,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('does not render the non-filled in status field when in expanded mode', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => crd.name === 'testresource.testapp.coreos.com');
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
     const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
     const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
 
@@ -212,7 +212,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('renders the non-filled in status field when in expanded mode', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find((crd) => crd.name === 'testresource.testapp.coreos.com');
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
     const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
 
     wrapper.setState({expanded: true});
@@ -304,7 +304,7 @@ describe('ResourcesList', () => {
 
 describe('ClusterServiceVersionResourcesDetailsPage', () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
-  let match: match<any>;
+  let match: RouterMatch<any>;
 
   beforeEach(() => {
     match = {

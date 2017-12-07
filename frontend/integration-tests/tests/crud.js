@@ -26,7 +26,7 @@ const checkForErrors = (browser, cb) => {
   });
 };
 
-const navigate = ({browser, path, wait=0}, cb) => {
+const navigate = ({browser, path, wait=0}, navCB) => {
   async.series([
     // Check for existing errors before navigating away
     cb => checkForErrors(browser, cb),
@@ -58,7 +58,7 @@ const navigate = ({browser, path, wait=0}, cb) => {
       wait && browser.pause(wait);
       cb();
     }
-  ], cb);
+  ], navCB);
 };
 
 const generateName = (prefix, length) => {
@@ -172,8 +172,8 @@ const updateYamlEditor = (browser, override, addLabels, cb) => {
     }
     const json = _.defaultsDeep({}, override, defaultExtends, safeLoad(value));
     const yaml = safeDump(json);
-    browser.execute(function (yaml) {
-      return window.ace.setValue(yaml);
+    browser.execute(function (text) {
+      return window.ace.setValue(text);
     }, [yaml], result => {
       browser.assert.equal(result.status, 0, 'Updated name and label via ace.');
       cb();
@@ -181,7 +181,7 @@ const updateYamlEditor = (browser, override, addLabels, cb) => {
   });
 };
 
-const createYAML = ({browser, override, addLabels=true}, cb) => {
+const createYAML = ({browser, override, addLabels=true}, createCB) => {
   const crudPage = browser.page.crudPage();
 
   async.series([
@@ -198,7 +198,7 @@ const createYAML = ({browser, override, addLabels=true}, cb) => {
       browser.verify.urlContains(`/${name}`);
       cb();
     },
-  ], cb);
+  ], createCB);
 };
 
 const k8sObjs = {

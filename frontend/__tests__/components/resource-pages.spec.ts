@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import { resourceDetailPages, resourceListPages } from '../../public/components/resource-pages';
 
 describe('resourceDetailPages', () => {

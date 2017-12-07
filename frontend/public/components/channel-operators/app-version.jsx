@@ -15,46 +15,45 @@ const calculateAppVersionState = (statuses) => {
   return _.find(orderedTaskStatuses, (s) => _.includes(overallState.value(), s));
 };
 
-const groupTaskStatuses = (taskStatuses) => {
-  if (taskStatuses && taskStatuses.length) {
-    const operatorTaskStatuses = {
-      name: 'Update Tectonic Operators',
-      reason: '',
-      state: '',
-      type: 'operator',
-      statuses: []
-    };
-
-    const appVersionTaskStatuses = {
-      name: 'Update AppVersion components',
-      reason: '',
-      state: '',
-      type: 'appversion',
-      statuses: []
-    };
-
-    const groupedTaskStatuses = [operatorTaskStatuses, appVersionTaskStatuses];
-    _.forEach(taskStatuses, (status) => {
-      if (_.get(status, 'type') === 'operator' || status.name.startsWith('Update deployment')) {
-        operatorTaskStatuses.statuses.push(status);
-      } else if (_.get(status, 'type') === 'appversion' || status.name.startsWith('Update AppVersion')) {
-        if (!_.has(status, 'type')) {
-          status.type = 'appversion';
-        }
-        appVersionTaskStatuses.statuses.push(status);
-      } else {
-        groupedTaskStatuses.push(status);
-      }
-    });
-
-    //Set status for parent tasks
-    operatorTaskStatuses.state = calculateAppVersionState(operatorTaskStatuses.statuses);
-    appVersionTaskStatuses.state = calculateAppVersionState(appVersionTaskStatuses.statuses);
-
-    return groupedTaskStatuses;
+const groupTaskStatuses = tss => {
+  if (_.isEmpty(tss)) {
+    return null;
   }
+  const operatorTaskStatuses = {
+    name: 'Update Tectonic Operators',
+    reason: '',
+    state: '',
+    type: 'operator',
+    statuses: []
+  };
 
-  return null;
+  const appVersionTaskStatuses = {
+    name: 'Update AppVersion components',
+    reason: '',
+    state: '',
+    type: 'appversion',
+    statuses: []
+  };
+
+  const groupedTaskStatuses = [operatorTaskStatuses, appVersionTaskStatuses];
+  _.forEach(tss, (status) => {
+    if (_.get(status, 'type') === 'operator' || status.name.startsWith('Update deployment')) {
+      operatorTaskStatuses.statuses.push(status);
+    } else if (_.get(status, 'type') === 'appversion' || status.name.startsWith('Update AppVersion')) {
+      if (!_.has(status, 'type')) {
+        status.type = 'appversion';
+      }
+      appVersionTaskStatuses.statuses.push(status);
+    } else {
+      groupedTaskStatuses.push(status);
+    }
+  });
+
+  //Set status for parent tasks
+  operatorTaskStatuses.state = calculateAppVersionState(operatorTaskStatuses.statuses);
+  appVersionTaskStatuses.state = calculateAppVersionState(appVersionTaskStatuses.statuses);
+
+  return groupedTaskStatuses;
 };
 
 const Header = ({channelState, tcAppVersion, expanded, onClick}) => {

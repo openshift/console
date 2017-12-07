@@ -73,11 +73,11 @@ export class Timestamp extends SafetyFirst {
     const now = moment();
     const minutesAgo = now.diff(this.mdate, 'minutes', /* return floating point value */true);
     if (minutesAgo >= 10.5) {
-      let format = 'MMM DD, h:mm a';
+      let formatStr = 'MMM DD, h:mm a';
       if (this.mdate.year() !== now.year()) {
-        format = 'MMM DD, YYYY h:mm a';
+        formatStr = 'MMM DD, YYYY h:mm a';
       }
-      this.upsertState(this.mdate.format(format));
+      this.upsertState(this.mdate.format(formatStr));
       clearInterval(this.interval);
       return;
     }

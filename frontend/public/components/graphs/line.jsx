@@ -103,10 +103,10 @@ export class Line extends BaseGraph {
         console.warn(`Graph error: No data from query ${query}`);
         return;
       }
-      const data = result.data.result[0].values;
+      const lineValues = result.data.result[0].values;
       restyle(this.node, {
-        x: [data.map(v => new Date(v[0] * 1000))],
-        y: [data.map(v => v[1])],
+        x: [lineValues.map(v => new Date(v[0] * 1000))],
+        y: [lineValues.map(v => v[1])],
         // Use a lighter fill color on first line in graphs
         fillcolor: i === 0 ? 'rgba(31, 119, 190, 0.3)': undefined,
         name,
