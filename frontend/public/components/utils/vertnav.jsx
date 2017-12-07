@@ -88,7 +88,7 @@ export class VertNav extends React.PureComponent {
 
         <div className="co-m-vert-nav__body">
           <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>
-            <Switch location={window.location.pathName}> {routes} </Switch>
+            <Switch> {routes} </Switch>
           </StatusBox>
         </div>
       </div>
