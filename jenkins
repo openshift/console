@@ -66,6 +66,7 @@ then
     status 'GUI Tests' 'success'
 else
     status 'GUI Tests' 'error'
+    exit 1
 fi
 
 set -e
