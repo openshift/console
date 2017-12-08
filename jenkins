@@ -91,11 +91,11 @@ echo "Cleaning up old Docker images..."
 
 set +e
 # delete stopped containers
-docker rm $(docker ps -a -q)
+docker ps -a -q | xargs docker rm
+# docker rm $(docker ps -a -q)
 
 # delete images except for console builder (fails on images currently used)
-TO_DELETE=$(docker images | grep -F -v quay.io/coreos/tectonic-console-builder | awk '{print $3}' | grep -v IMAGE)
-docker rmi $TO_DELETE
+docker images | grep -F -v quay.io/coreos/tectonic-console-builder | awk '{print $3}' | grep -v IMAGE | xargs docker rmi
 
 # delete orphaned volumes
 docker volume ls -qf dangling=true | xargs -r docker volume rm
