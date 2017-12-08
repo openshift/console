@@ -131,6 +131,20 @@ describe(CatalogAppRow.displayName, () => {
     expect(progressBar.exists()).toBe(false);
   });
 
+  it('does not render progress bar in expanded state for `ClusterServiceVersions` that are being deleted', () => {
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
+    clusterServiceVersions[0].metadata.deletionTimestamp = '2017-12-08T20:55:08Z';
+    clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
+    clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
+    clusterServiceVersions[2].status = {phase: ClusterServiceVersionPhase.CSVPhaseSucceeded, reason: CSVConditionReason.CSVReasonInstallSuccessful};
+
+    wrapper.setProps({clusterServiceVersions});
+    wrapper.setState({expand: true});
+    const progressBar = wrapper.find('.co-catalog-app-row').childAt(1).childAt(1).childAt(0).shallow().find('.co-catalog-install-progress-bar');
+
+    expect(progressBar.props().style.width).toEqual('50%');
+  });
+
   it('renders list of namespace statuses in expanded state', () => {
     clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[0].status = {phase: ClusterServiceVersionPhase.CSVPhaseFailed, reason: CSVConditionReason.CSVReasonComponentFailed};
@@ -167,6 +181,19 @@ describe(CatalogAppRow.displayName, () => {
 
     namespaceList.forEach((item, i) => {
       expect(item.text()).toEqual(`${clusterServiceVersions[i].metadata.namespace}: ${clusterServiceVersions[i].status.reason}`);
+    });
+  });
+
+  it('renders disabling namespaces in expanded state', () => {
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion)];
+    clusterServiceVersions[0].metadata.deletionTimestamp = '2017-12-08T20:55:08Z';
+
+    wrapper.setProps({clusterServiceVersions});
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
+    const namespaceList = col.childAt(1).childAt(0).shallow().find('ul').find('li');
+
+    namespaceList.forEach((item, i) => {
+      expect(item.text()).toEqual(`${clusterServiceVersions[i].metadata.namespace}: Disabling...`);
     });
   });
 

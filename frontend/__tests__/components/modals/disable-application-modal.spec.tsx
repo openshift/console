@@ -116,13 +116,13 @@ describe(DisableApplicationModal.name, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<DisableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sKill={k8sKill} close={close} cancel={cancel} />);
+    wrapper = shallow(<DisableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sKill={k8sKill} close={close} cancel={cancel} />, {lifecycleExperimental: true});
   });
 
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalBody).find('.modal-body__field').text()).toEqual('Select the namespaces where you want to disable the service. Resources created by the service will be deleted as well.');
+    expect(wrapper.find(ModalBody).find('.modal-body__field').text()).toEqual('Select the namespaces where you want to disable the service.');
     expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Disable');
   });
 
@@ -150,17 +150,37 @@ describe(DisableApplicationModal.name, () => {
     expect(row.props().selected).toBe(false);
   });
 
+  it('renders checkbox for setting cascading delete', () => {
+    expect(wrapper.find('.co-delete-modal-checkbox-label').find('input').props().checked).toBe(true);
+    expect(wrapper.find('.co-delete-modal-checkbox-label').text()).toContain('Completely remove application instances and resources from every selected namespace');
+  });
+
   it('calls `props.k8sKill` for each selected namespace when form is submitted', (done) => {
     const selectedNamespaces = [namespaces.data[testClusterServiceVersion.metadata.namespace]];
     const csvForNamespace = (namespace: string) => clusterServiceVersions.find(({metadata}) => metadata.namespace === namespace);
-    // FIXME(alecmerdler): `setState` isn't updating state for some reason, this is hacky
-    wrapper.instance().state.selectedNamespaces = selectedNamespaces;
+    wrapper = wrapper.setState({selectedNamespaces, cascadeDelete: false});
 
     close.and.callFake(() => {
       expect(k8sKill.calls.count()).toEqual(selectedNamespaces.length);
       selectedNamespaces.forEach((namespace, i) => {
         expect(k8sKill.calls.argsFor(i)[0]).toEqual(ClusterServiceVersionModel);
         expect(k8sKill.calls.argsFor(i)[1]).toEqual(csvForNamespace(namespace));
+        expect(k8sKill.calls.argsFor(i)[2]).toEqual({});
+        expect(k8sKill.calls.argsFor(i)[3]).toBe(null);
+      });
+      done();
+    });
+
+    wrapper.find('form').simulate('submit', new Event('submit'));
+  });
+
+  it('adds delete options with `propagationPolicy` if cascading delete checkbox is checked', (done) => {
+    const selectedNamespaces = [namespaces.data[testClusterServiceVersion.metadata.namespace]];
+    wrapper = wrapper.setState({selectedNamespaces, cascadeDelete: true});
+
+    close.and.callFake(() => {
+      selectedNamespaces.forEach((namespace, i) => {
+        expect(k8sKill.calls.argsFor(i)[3]).toEqual({kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'});
       });
       done();
     });

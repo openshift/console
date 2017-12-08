@@ -115,7 +115,7 @@ describe(EnableApplicationModal.name, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} close={close} cancel={cancel} />);
+    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} close={close} cancel={cancel} />, {lifecycleExperimental: true});
   });
 
   it('renders a modal form', () => {
@@ -151,8 +151,7 @@ describe(EnableApplicationModal.name, () => {
 
   it('calls `props.k8sCreate` for each selected namespace when form is submitted', (done) => {
     const selectedNamespaces = [namespaces.data.default.metadata.name];
-    // FIXME(alecmerdler): `setState` isn't updating state for some reason, this is hacky
-    wrapper.instance().state.selectedNamespaces = selectedNamespaces;
+    wrapper = wrapper.setState({selectedNamespaces});
 
     close.and.callFake(() => {
       expect(k8sCreate.calls.count()).toEqual(selectedNamespaces.length);
