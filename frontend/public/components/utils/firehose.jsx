@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -89,7 +90,7 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
 </div>);
 
 const stateToProps = ({KINDS}, {resources}) => ({
-  k8sModels: KINDS.get('kinds').filter((_, k) => resources.find(({kind}) => kind === k))
+  k8sModels: KINDS.get('kinds').filter((v, k) => resources.find(({kind}) => kind === k))
 });
 
 export const Firehose = connect(

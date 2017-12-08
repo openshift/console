@@ -11,7 +11,6 @@
     "plugin:react/recommended",
   ],
   "globals": {
-    "_": true,
     "ace": true,
     "afterEach": true,
     "beforeEach": true,

@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { Helmet } from 'react-helmet';

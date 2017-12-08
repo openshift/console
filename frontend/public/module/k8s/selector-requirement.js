@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 const toArray = value => Array.isArray(value) ? value : [value];
 
 export const createEquals = (key, value) => ({

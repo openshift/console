@@ -1,7 +1,10 @@
 /**
  * @deprecated: Use `modelFor`, `allModels`, or `connectToModel`
  * TODO(alecmerdler): Remove this and replace calls
- */ 
+ */
+
+import * as _ from 'lodash';
+
 export const k8sKinds = {
   Service: {
     // singular label

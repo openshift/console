@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { isNamespaced } from '../components/utils/link';

@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export const TEMPLATES = {};
 
 export const registerTemplate = (kindString, template, templateName = 'default') => {

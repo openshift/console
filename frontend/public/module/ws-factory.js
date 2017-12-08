@@ -4,6 +4,7 @@
  *
  */
 /* eslint-disable no-console */
+import * as _ from 'lodash';
 
 import { authSvc } from './auth';
 

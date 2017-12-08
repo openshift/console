@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as Immutable from 'immutable';
 
 import { types } from './ui-actions';
