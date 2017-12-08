@@ -18,7 +18,7 @@
         "enabled": true,
         "on_error": true,
         "on_failure": true,
-        "path": ""
+        "path": "gui_test_screenshots"
       },
       "desiredCapabilities": {
         "browserName": "chrome",
