@@ -36,7 +36,7 @@ import '../style.scss';
 import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
 // Edge lacks URLSearchParams
-require('url-search-params-polyfill');
+import 'url-search-params-polyfill';
 
 // React Router's proptypes are incorrect. See https://github.com/ReactTraining/react-router/pull/5393
 Route.propTypes.path = PropTypes.oneOfType([

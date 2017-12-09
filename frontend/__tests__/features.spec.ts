@@ -26,7 +26,7 @@ describe('featureActions', () => {
           {metadata: { name: 'clusterserviceversion-v1s.app.coreos.com'}}
         ],
       };
-      spyOn(store, 'getState').and.returnValue({UI: new Map()});
+      spyOn(store, 'getState').and.returnValue({UI: Immutable.Map()});
     });
 
     xit('detects cloud services and updates Redux store', (done) => {
