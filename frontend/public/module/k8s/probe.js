@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 const HookAction = {
   exec: {
     id: 'exec',

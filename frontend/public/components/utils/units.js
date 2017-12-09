@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 const TYPES = {
   numeric: {
     units: ['', 'k', 'm', 'b'],

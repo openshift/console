@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import actions from '../../module/k8s/k8s-actions';
 
 export const makeReduxID = (k8sKind, query) => {

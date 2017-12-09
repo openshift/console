@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 
 import { k8sPatch } from '../../module/k8s';

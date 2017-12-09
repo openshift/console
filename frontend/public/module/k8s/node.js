@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export const isNodeReady = (node) => {
   if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {
     return false;

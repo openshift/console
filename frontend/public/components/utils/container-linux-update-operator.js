@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 /** https://github.com/coreos-inc/container-linux-update-operator/blob/master/internal/constants/constants.go **/
 const containerLinuxUpdateOperatorPrefix = 'container-linux-update.v1.coreos.com/';
 

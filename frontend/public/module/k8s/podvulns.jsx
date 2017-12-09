@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 
 export const parsePodAnnotation = pod => {
   return _.attempt(JSON.parse.bind(null, _.get(pod, 'metadata.annotations.secscan/imageVulns')));

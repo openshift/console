@@ -4,6 +4,7 @@
 // Results are cached, so we don't have to keep re-determining availability with each request.
 // If more than one service is found, it chooses the first.
 
+import * as _ from 'lodash';
 import { coFetch, coFetchUtils } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
 

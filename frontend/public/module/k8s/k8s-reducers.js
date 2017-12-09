@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const Immutable = require('immutable');
+import * as _ from 'lodash';
+import * as Immutable from 'immutable';
 
 import {types} from './k8s-actions';
 import {getQN} from './k8s';

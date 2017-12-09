@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';

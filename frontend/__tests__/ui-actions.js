@@ -1,4 +1,6 @@
+/* eslint-env node */
 /* global jest */
+import * as _ from 'lodash';
 import '../__mocks__/localStorage';
 
 import store from '../public/redux';

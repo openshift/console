@@ -1,10 +1,12 @@
-/* global __dirname, process */
+/* eslint-env node */
 
 const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+const NODE_ENV = process.env.NODE_ENV;
 
 /* Helpers */
 const gitHash = () => require('child_process').execSync('git rev-parse --short HEAD').toString().trim();
@@ -71,14 +73,17 @@ let config = {
     ]
   },
   plugins: [
-    extractSass,
-    new webpack.ProvidePlugin({
-      _: 'lodash',
-    }),
+    new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(NODE_ENV)}),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      minChunks: ({resource}) => /node_modules/.test(resource),
+      minChunks: ({resource}) => {
+        if (resource && (/^.*\.(css|scss)$/).test(resource)) {
+          return false;
+        }
+        return /node_modules/.test(resource);
+      },
     }),
+    extractSass,
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',
@@ -87,7 +92,7 @@ let config = {
     new HtmlWebpackPlugin({
       filename: './index.html',
       template: './public/index.html',
-      production: process.env && process.env.NODE_ENV === 'production',
+      production: NODE_ENV === 'production',
     }),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
   ],
@@ -96,13 +101,12 @@ let config = {
 };
 
 /* Production settings */
-if (process.env && process.env.NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
   config.output.filename = `[name]-bundle.${gitHash()}.min.js`;
   config.output.chunkFilename = `[name]-[chunkhash].${gitHash()}.min.js`;
   extractSass.filename = `app-bundle.${gitHash()}.min.css`;
   config.plugins = config.plugins.concat([
     new UglifyJsPlugin({sourceMap: true}),
-    new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify('production')}),
   ]);
   config.stats = 'normal';
 }

@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 const PullPolicy = {
   Always: {
     id: 'Always',
