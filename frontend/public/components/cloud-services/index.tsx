@@ -136,7 +136,7 @@ export const ClusterServiceVersionLogo: React.StatelessComponent<ClusterServiceV
     </div>
     <div className="co-clusterserviceversion-logo__name">
       <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">{displayName}</h1>
-      { provider && <span className="co-clusterserviceversion-logo__name__provider">{`${version || ''} by ${_.get(provider, 'name', provider)}`}</span> }
+      { provider && <span className="co-clusterserviceversion-logo__name__provider">{`${version || ''} provided by ${_.get(provider, 'name', provider)}`}</span> }
     </div>
   </div>;
 };
