@@ -60,7 +60,7 @@ const actions = {
       return nop;
     }
     dispatch({id, type: types.watchK8sObject});
-    REF_COUNTS[id] += 1;
+    REF_COUNTS[id] = 1;
 
     if (query.name) {
       query.fieldSelector = `metadata.name=${query.name}`;
