@@ -15,7 +15,6 @@ export const DocumentationSidebar = props => <div className="co-p-cluster__sideb
     <p><Link to="/start-guide" className="co-p-cluster__sidebar-link"><span className="fa fa-fw fa-info-circle co-p-cluster__sidebar-link-icon"></span>Quick Start Guide</Link></p>
     <p><a href="https://coreos.com/tectonic/docs/latest/" target="_blank" rel="noopener" className="co-p-cluster__sidebar-link"><span className="fa fa-fw fa-book co-p-cluster__sidebar-link-icon"></span>Full Documentation</a></p>
     <p><a href="https://github.com/coreos/tectonic-forum" target="_blank" rel="noopener noreferrer" className="co-p-cluster__sidebar-link"><span className="fa fa-fw fa-comments-o co-p-cluster__sidebar-link-icon"></span>Tectonic Forum</a></p>
-    <p><a href="mailto:tectonic-feedback@coreos.com" className="co-p-cluster__sidebar-link"><span className="fa fa-fw fa-envelope-o co-p-cluster__sidebar-link-icon"></span>tectonic-feedback@coreos.com</a></p>
   </div>
   {props.children}
 </div>;
