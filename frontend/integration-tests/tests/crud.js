@@ -452,6 +452,7 @@ TESTS.deleteNamespace = browser => {
 TESTS.after = browser => {
   h1(`Leaked ${LEAKED_RESOURCES.size} resources out of ${RESOURCES_CREATED} (maybe)!`);
 
+  const failed = [];
   new Array(...LEAKED_RESOURCES).forEach(resource => {
     const {name, namespace, plural} = JSON.parse(resource);
     if (namespace) {
@@ -471,7 +472,11 @@ TESTS.after = browser => {
       const stdout = child_process.execSync(command, {timeout: TIMEOUT});
       console.log(stdout.toString('utf-8'));
     } catch (e) {
-      console.error(e.message);
+      console.error(`error running "${command}": `, e.message);
+      // NotFound means we don't care
+      if (e.message.indexOf('NotFound') < 0) {
+        failed.push({command, error: e});
+      }
       return;
     }
   });
@@ -497,6 +502,16 @@ TESTS.after = browser => {
     });
     h1('END BROWSER LOGS');
   });
+
+
+  if (failed.length > 0) {
+    console.error('Failed to clean up leaked resources!');
+    _.each(failed, f => {
+      console.error(`cmd: "${f.command}"`);
+      console.error('err: ', f.error.message);
+    });
+    process.exit(1);
+  }
 
   browser.end();
 };
