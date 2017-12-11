@@ -45,13 +45,16 @@ export class DisableApplicationModal extends PromiseComponent {
   constructor(public props: DisableApplicationModalProps) {
     super(props);
     this.state.selectedNamespaces = [];
+    this.state.cascadeDelete = true;
   }
 
   private submit(event): void {
     event.preventDefault();
 
+    const deleteOptions = this.state.cascadeDelete ? {kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'} : null;
+
     this.handlePromise(Promise.all(this.state.selectedNamespaces
-      .map(namespace => this.props.k8sKill(ClusterServiceVersionModel, this.props.clusterServiceVersions.find(csv => csv.metadata.namespace === namespace)))))
+      .map(ns => this.props.k8sKill(ClusterServiceVersionModel, this.props.clusterServiceVersions.find(csv => csv.metadata.namespace === ns), {}, deleteOptions))))
       .then(() => this.props.close());
   }
 
@@ -68,7 +71,7 @@ export class DisableApplicationModal extends PromiseComponent {
       <ModalBody>
         <h4 className="co-catalog-install-modal__h4">Disable Service</h4>
         <div>
-          <p className="co-catalog-install-modal__description modal-body__field">Select the namespaces where you want to disable the service. Resources created by the service will be deleted as well.</p>
+          <p className="co-catalog-install-modal__description modal-body__field">Select the namespaces where you want to disable the service.</p>
           <List
             loaded={loaded}
             loadError={loadError}
@@ -83,6 +86,12 @@ export class DisableApplicationModal extends PromiseComponent {
               onDeselect={(e) => this.setState({selectedNamespaces: selectedNamespaces.filter((ns) => ns !== e.namespace)})} />}
           />
         </div>
+        <div style={{padding: '20px 0'}}>
+          <label className="co-delete-modal-checkbox-label">
+            <input type="checkbox" checked={this.state.cascadeDelete} onChange={() => this.setState({cascadeDelete: !this.state.cascadeDelete})} />
+            &nbsp;&nbsp; <strong>Completely remove application instances and resources from every selected namespace</strong>
+          </label>
+        </div>
       </ModalBody>
       <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Disable" submitDisabled={selectedNamespaces.length === 0}/>
     </form>;
@@ -94,7 +103,7 @@ export const createDisableApplicationModal: (props: ModalProps) => {result: Prom
 export type DisableApplicationModalProps = {
   cancel: (e: Event) => void;
   close: () => void;
-  k8sKill: (kind: K8sKind, resource: K8sResourceKind) => Promise<any>;
+  k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
   namespaces: {data: {[name: string]: any}, loaded: boolean, loadError: Object | string};
   clusterServiceVersions: ClusterServiceVersionKind[];
   catalogEntry: CatalogEntryKind;
@@ -104,6 +113,7 @@ export type DisableApplicationModalState = {
   selectedNamespaces: string[];
   inProgress: boolean;
   errorMessage: string;
+  cascadeDelete: boolean;
 };
 
 export type SelectNamespaceHeaderProps = {

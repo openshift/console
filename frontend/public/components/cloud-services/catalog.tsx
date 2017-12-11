@@ -57,8 +57,8 @@ export const Breakdown: React.StatelessComponent<BreakdownProps> = (props) => {
 };
 
 export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (props) => {
-  const {pending, succeeded} = props.status;
-  const percent = (succeeded.length / props.clusterServiceVersions.length) * 100;
+  const {pending, succeeded, failed, awaiting, deleting} = props.status;
+  const percent = (succeeded.length / [...pending, ...succeeded, ...failed, ...awaiting].length) * 100;
 
   return <div>
     <div style={{margin: '15px 0'}}>
@@ -66,7 +66,7 @@ export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (
         <div style={{width: `${percent}%`}} className="co-catalog-install-progress-bar co-catalog-install-progress-bar--active" />
       </div> }
     </div>
-    <ul className="co-catalog-breakdown__ns-list">{ props.clusterServiceVersions.map((csv, i) => {
+    <ul className="co-catalog-breakdown__ns-list">{ [...pending, ...succeeded, ...failed, ...awaiting].map((csv, i) => {
       switch (csv.status.phase) {
         case ClusterServiceVersionPhase.CSVPhaseSucceeded:
           return <li className="co-catalog-breakdown__ns-list__item" key={i}>
@@ -86,7 +86,10 @@ export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (
             <strong>{csv.metadata.namespace}</strong>: Namespace not supported
           </li>;
       }
-    }) }</ul>
+    }) }
+    { deleting.map((csv, i) => <li key={i} className="co-catalog-breakdown__ns-list__item text-muted">
+      <strong>{csv.metadata.namespace}</strong>: Disabling...
+    </li>) }</ul>
   </div>;
 };
 
@@ -149,10 +152,14 @@ export const CatalogAppRow = connect(stateToProps)(
     private propsToState(props: CatalogAppRowProps) {
       return {
         failed: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseFailed),
-        pending: props.clusterServiceVersions
-          .filter(csv => [ClusterServiceVersionPhase.CSVPhasePending, ClusterServiceVersionPhase.CSVPhaseInstalling].indexOf(_.get(csv, ['status', 'phase'])) !== -1),
-        succeeded: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseSucceeded),
-        awaiting: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === undefined),
+        pending: props.clusterServiceVersions.filter(csv => [ClusterServiceVersionPhase.CSVPhasePending, ClusterServiceVersionPhase.CSVPhaseInstalling]
+          .indexOf(_.get(csv, ['status', 'phase'])) !== -1)
+          .filter(csv => csv.metadata.deletionTimestamp === undefined),
+        succeeded: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseSucceeded)
+          .filter(csv => csv.metadata.deletionTimestamp === undefined),
+        awaiting: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === undefined)
+          .filter(csv => csv.metadata.deletionTimestamp === undefined),
+        deleting: props.clusterServiceVersions.filter(csv => csv.metadata.deletionTimestamp !== undefined),
       };
     }
   });
@@ -217,6 +224,7 @@ export type CatalogAppRowState = {
   pending: ClusterServiceVersionKind[];
   succeeded: ClusterServiceVersionKind[];
   awaiting: ClusterServiceVersionKind[];
+  deleting: ClusterServiceVersionKind[];
 };
 
 export type CatalogAppHeaderProps = {
@@ -240,7 +248,7 @@ export type BreakdownProps = {
 
 export type BreakdownDetailProps = {
   clusterServiceVersions: ClusterServiceVersionKind[];
-  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[], awaiting: ClusterServiceVersionKind[]};
+  status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[], awaiting: ClusterServiceVersionKind[], deleting: ClusterServiceVersionKind[]};
 };
 /* eslint-enable no-undef */
 
