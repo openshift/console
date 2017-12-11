@@ -459,7 +459,7 @@ TESTS.after = browser => {
       return;
     }
 
-    let command = `kubectl delete ${plural} ${name}`;
+    let command = `kubectl delete --cascade ${plural} ${name}`;
     if (namespace) {
       command = `${command} -n ${namespace}`;
     }
