@@ -9,7 +9,7 @@ import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPagePro
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase } from '../../../public/components/cloud-services';
 import { DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
-import { StatusBox, Timestamp, Overflow, Dropdown, MsgBox } from '../../../public/components/utils';
+import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox } from '../../../public/components/utils';
 import { K8sResourceKind } from '../../../public/module/k8s';
 
 import * as appsLogoImg from '../../../public/imgs/apps-logo.svg';
@@ -275,8 +275,8 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
     testClusterServiceVersion.spec.maintainers.forEach((maintainer, i) => {
       expect(maintainers.at(i).text()).toContain(maintainer.name);
-      expect(maintainers.at(i).find(Overflow).props().value).toEqual(maintainer.email);
-      expect(maintainers.at(i).find('a').props().href).toEqual(`mailto:${maintainer.email}`);
+      expect(maintainers.at(i).find(OverflowLink).props().value).toEqual(maintainer.email);
+      expect(maintainers.at(i).find(OverflowLink).props().href).toEqual(`mailto:${maintainer.email}`);
     });
   });
 
