@@ -9,7 +9,6 @@ import * as sidenavView from '../../views/sidenav.view';
 
 describe('Installing Vault OCS from catalog', () => {
   const testNamespace = `alm-e2e-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
-  const deleteRecoveryTime = 300000;
 
   beforeAll(async() => {
     // Create test namespace
@@ -29,7 +28,7 @@ describe('Installing Vault OCS from catalog', () => {
     await browser.get(`${appHost}/namespaces`);
     await crudView.isLoaded();
     await crudView.deleteRow('Namespace')(testNamespace);
-  }, deleteRecoveryTime);
+  });
 
   it('displays `Applications` tab in navigation sidebar', async() => {
     expect(sidenavView.navSectionFor('Applications').isDisplayed()).toBe(true);

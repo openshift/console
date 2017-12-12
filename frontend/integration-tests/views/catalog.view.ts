@@ -3,7 +3,6 @@
 import { browser, $, $$, ExpectedConditions as until } from 'protractor';
 
 export const entryRows = $$('.co-resource-list__item');
-
 export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText()
   .then(text => text === name)).first();
 
@@ -14,6 +13,9 @@ export const disableModal = $('.co-catalog-install-modal');
 
 export const selectNamespaceRows = enableModal.$$('.co-resource-list__item');
 
+/**
+ * Returns a promise that resolves to the row for a given namespace in the enable/disable modal.
+ */
 export const selectNamespaceRowFor = (namespace: string) => selectNamespaceRows.filter((row) => row.$('.co-m-resource-namespace + span').getText()
   .then(text => text === namespace)).first();
 

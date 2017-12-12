@@ -34,7 +34,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await browser.get(`${appHost}/namespaces`);
     await crudView.isLoaded();
     await crudView.deleteRow('Namespace')(testNamespace);
-  }, deleteRecoveryTime);
+  });
 
   it('can be enabled from the Open Cloud Catalog', async() => {
     await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);

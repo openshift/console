@@ -1,0 +1,17 @@
+/* eslint-disable no-undef, no-unused-vars */
+
+import { $, by, Key, browser, ExpectedConditions as until } from 'protractor';
+
+export const saveButton = $('.yaml-editor--buttons').$('#save-changes');
+export const cancelButton = $('.yaml-editor--buttons').element(by.buttonText('Cancel'));
+
+export const isLoaded = () => browser.wait(until.visibilityOf(saveButton));
+
+export const editorInput = $('textarea.ace_text-input');
+export const editorContent = $('div.ace_content');
+
+export const setContent = (text: string) => editorContent.click()
+  .then(() => editorInput.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE))
+  .then(() => text.split(/\n/g).map(line => editorInput.sendKeys(line, Key.ENTER, Key.HOME)));
+
+export const errorMessage = $('.co-m-message--error');

@@ -3,12 +3,15 @@
 import { Config, browser } from 'protractor';
 import * as request from 'request';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
+import * as _ from 'lodash';
 
-export const appHost = 'http://localhost:9000';
+const {BRIDGE_BASE_PATH, BRIDGE_BASE_ADDRESS} = process.env;
+
+export const appHost: string = BRIDGE_BASE_PATH && BRIDGE_BASE_ADDRESS ? `${BRIDGE_BASE_ADDRESS}${BRIDGE_BASE_PATH}` : _.get(browser, 'launch_url', 'http://localhost:9000');
 export const almDeploymentEndpoint = `${appHost}/api/kubernetes/apis/apps/v1beta2/namespaces/tectonic-system/deployments/alm-operator`;
 
 const reporter = new HtmlScreenshotReporter({
-  dest: '',
+  dest: './tests_output/alm-e2e',
   inlineImages: true,
   captureOnlyFailedSpecs: true,
   filename: 'alm-e2e-report.html',
@@ -35,9 +38,7 @@ export const config: Config = {
       }
     }
   },
-  beforeLaunch: () => {
-    return new Promise(resolve => reporter.beforeLaunch(resolve));
-  },
+  beforeLaunch: () => new Promise(resolve => reporter.beforeLaunch(resolve)),
   onPrepare: () => {
     browser.driver.manage().window().maximize();
     browser.waitForAngularEnabled(false);
@@ -54,13 +55,10 @@ export const config: Config = {
       });
     });
   },
-  onComplete: () => {
-    browser.close();
-  },
-  afterLaunch: (exitCode) => {
-    return new Promise(resolve => reporter.afterLaunch(resolve.bind(this, exitCode)));
-  },
+  onComplete: () => browser.close(),
+  afterLaunch: (exitCode) => new Promise(resolve => reporter.afterLaunch(resolve.bind(this, exitCode))),
   specs: [
-    './tests/**/*.scenario.ts',
+    // './tests/**/*.scenario.ts',
+    './tests/crud.scenario.ts',
   ],
 };
