@@ -51,7 +51,7 @@ export const PodRow = ({obj: pod}) => {
   let status = phase;
 
   if (!validStatuses.has(status)) {
-    status = <span className="co-error" >
+    status = <span className="co-error">
       <i className="fa fa-times-circle co-icon-space-r" />{phase}
     </span>;
   }
@@ -67,10 +67,10 @@ export const PodRow = ({obj: pod}) => {
     <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
       <LabelList kind="Pod" labels={pod.metadata.labels} />
     </div>
-    <div className="col-lg-3 col-md-2 hidden-sm">
+    <div className="col-lg-2 col-md-2 hidden-sm">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-    <div className="col-lg-1 col-md-1 hidden-sm">{status}</div>
+    <div className="col-lg-2 col-md-1 hidden-sm">{status}</div>
     <div className="col-lg-1 hidden-md"><Readiness pod={pod} /></div>
   </ResourceRow>;
 };
@@ -81,8 +81,8 @@ const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Pod Labels</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-2 hidden-sm" sortField="spec.nodeName">Node</ColHead>
-  <ColHead {...props} className="col-lg-1 col-md-1 hidden-sm" sortFunc="podPhase">Status</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortField="spec.nodeName">Node</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-1 hidden-sm" sortFunc="podPhase">Status</ColHead>
   <ColHead {...props} className="col-lg-1 hidden-md" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 
