@@ -155,6 +155,7 @@ export const testResourceInstance: ClusterServiceVersionResourceKind = {
   kind: 'TestResource',
   metadata: {
     name: 'my-test-resource',
+    namespace: 'default',
     uid: 'c02c0a8f-88e0-12e7-851b-081027b424ef',
     creationTimestamp: '2017-06-20T18:19:49Z',
   },

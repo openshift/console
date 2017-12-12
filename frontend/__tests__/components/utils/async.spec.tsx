@@ -74,7 +74,7 @@ describe('AsyncComponent', () => {
     const loader = () => new Promise<typeof Foo>((resolve) => {
       resolve(Foo);
       setTimeout(() => {
-        expect(wrapper.find(`#${fooId}`).exists()).toBe(true);
+        expect(wrapper.update().find(`#${fooId}`).exists()).toBe(true);
         done();
       }, 10);
     });
@@ -87,7 +87,7 @@ describe('AsyncComponent', () => {
     const loader = () => new Promise<typeof Foo>((resolve) => {
       resolve(Foo);
       setTimeout(() => {
-        expect(wrapper.find(`#${fooId}`).props().className).toEqual(className);
+        expect(wrapper.update().find(`#${fooId}`).props().className).toEqual(className);
         done();
       }, 10);
     });

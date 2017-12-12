@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -294,12 +294,11 @@ const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
                 </div>
               </div>
 
-              <ReactCSSTransitionGroup
-                transitionName="slide"
-                transitionEnterTimeout={250}
-                transitionLeave={false}>
-                { filteredMessages.map(m => <SysEvent {...m} key={m.metadata.uid} />) }
-              </ReactCSSTransitionGroup>
+              <TransitionGroup>
+                { filteredMessages.map((m, i) => <CSSTransition key={i} classNames="slide" exit={false} timeout={{enter: 250}}>
+                  <SysEvent {...m} key={m.metadata.uid} />
+                </CSSTransition>)}
+              </TransitionGroup>
 
               { sysEventStatus }
             </div>

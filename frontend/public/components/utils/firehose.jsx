@@ -99,8 +99,8 @@ export const Firehose = connect(
     watchK8sObject: actions.watchK8sObject,
     watchK8sList: actions.watchK8sList,
   })(
-  /** @augments {React.PureComponent<{k8sModels: Map<string, K8sKind}>} */
-  class Firehose extends React.PureComponent {
+  /** @augments {React.Component<{k8sModels: Map<string, K8sKind}>} */
+  class Firehose extends React.Component {
     componentWillMount (props=this.props) {
       const { watchK8sList, watchK8sObject, resources, k8sModels } = props;
 
