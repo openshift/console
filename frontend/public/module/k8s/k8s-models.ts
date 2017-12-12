@@ -44,12 +44,12 @@ const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
   .withMutations((models) => _.forEach(k8sKinds, (kind, kindName) => models.set(kindName, kind)));
 
 /**
- * Provides a synchronous way to acquire a statically-defined Kubernetes model. 
+ * Provides a synchronous way to acquire a statically-defined Kubernetes model.
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelFor = (ref: K8sResourceKindReference) => k8sModels.get(ref) || k8sModels.get(kindForReference(ref));
 /**
- * Provides a synchronous way to acquire all statically-defined Kubernetes models. 
+ * Provides a synchronous way to acquire all statically-defined Kubernetes models.
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const allModels = () => k8sModels;

@@ -106,7 +106,7 @@ export class BaseGraph extends SafetyFirst {
   }
 }
 
-BaseGraph.PropTypes = {
+BaseGraph.propTypes = {
   query: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   timeSpan: PropTypes.number,
