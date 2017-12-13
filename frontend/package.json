@@ -10,8 +10,7 @@
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
-    "test-gui": "nightwatch --test integration-tests/tests/crud.js",
-    "alm-e2e": "webdriver-manager update && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
+    "test-gui": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>5)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
   },
   "jest": {
@@ -47,6 +46,7 @@
     ]
   },
   "dependencies": {
+    "@types/jasminewd2": "^2.0.3",
     "blueimp-md5": "2.x",
     "brace": "0.11.x",
     "classnames": "2.x",
@@ -80,7 +80,7 @@
   "devDependencies": {
     "@types/enzyme": "3.x",
     "@types/immutable": "3.x",
-    "@types/jest": "20.x",
+    "@types/jasmine": "^2.8.2",
     "@types/lodash": "4.x",
     "@types/moment": "2.x",
     "@types/react": "16.x",
@@ -89,7 +89,6 @@
     "@types/react-redux": "5.x",
     "@types/react-router-dom": "4.x",
     "@types/react-transition-group": "2.x",
-    "async": "2.x",
     "awesome-typescript-loader": "3.x",
     "chromedriver": "2.x",
     "css-loader": "0.28.x",
@@ -103,13 +102,14 @@
     "glslify-loader": "1.x",
     "html-webpack-plugin": "2.x",
     "jasmine-core": "2.x",
+    "jasmine-reporters": "^2.2.1",
     "jest": "20.x",
     "jest-cli": "20.x",
-    "nightwatch": "0.9.x",
     "node-sass": "4.x",
-    "react-test-renderer": "16.x",
     "protractor": "^5.2.0",
+    "protractor-fail-fast": "^3.0.2",
     "protractor-jasmine2-screenshot-reporter": "^0.5.0",
+    "react-test-renderer": "16.x",
     "resolve-url-loader": "2.x",
     "sass-loader": "6.x",
     "style-loader": "0.19.x",

@@ -1,73 +1,64 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, $$, element, ExpectedConditions as until, by } from 'protractor';
+import { browser, $, element, ExpectedConditions as until, by } from 'protractor';
 
-import { appHost } from '../../protractor.conf';
+import { appHost, testName, checkLogs } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as appListView from '../../views/app-list.view';
 
 describe('Interacting with the Vault OCS', () => {
-  const testNamespace = `alm-e2e-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
   const vaultOperatorName = 'vault-operator';
   const vaultServiceResources = new Set(['EtcdCluster', 'Service', 'ConfigMap', 'Secret', 'Deployment', 'ReplicaSet', 'Pod']);
-  const deleteRecoveryTime = 300000;
+  const deleteRecoveryTime = 60000;
 
-  beforeAll(async() => {
-    // Create test namespace
-    await browser.get(`${appHost}/namespaces`);
-    await crudView.isLoaded();
-    await crudView.createYAMLButton.click();
-    await browser.wait(until.presenceOf($('.modal-body__field')));
-    await $$('.modal-body__field').get(0).$('input').sendKeys(testNamespace);
-    await $('#confirm-delete').click();
-    await browser.sleep(500);
-
-    expect(browser.getCurrentUrl()).toContain(`/namespaces/${testNamespace}`);
+  beforeAll(() => {
+    browser.get(appHost);
   });
 
-  afterAll(async() => {
-    // Destroy test namespace
-    await browser.get(`${appHost}/namespaces`);
-    await crudView.isLoaded();
-    await crudView.deleteRow('Namespace')(testNamespace);
+  afterEach(() => {
+    checkLogs();
   });
 
   it('can be enabled from the Open Cloud Catalog', async() => {
     await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
     await catalogView.isLoaded();
     await catalogView.entryRowFor('Vault').element(by.buttonText('Enable')).click();
-    await browser.wait(until.presenceOf(catalogView.enableModal));
-    await catalogView.selectNamespaceRowFor(testNamespace).click();
-    await catalogView.enableModal.element(by.buttonText('Enable')).click();
-    await browser.wait(until.invisibilityOf(catalogView.enableModal));
-    await catalogView.entryRowFor('Vault').$('a').click();
+    await browser.wait(until.presenceOf(catalogView.enableModal), 3000);
+    await browser.wait(until.presenceOf(catalogView.selectNamespaceRowFor(testName)), 5000);
+    await catalogView.selectNamespaceRowFor(testName).click();
+    await catalogView.enableModalConfirm();
+    await catalogView.entryRowFor('Vault').$$('a').first().click();
+    await catalogView.entryRowFor('etcd').$$('a').first().click();
     await browser.wait(until.visibilityOf(catalogView.detailedBreakdownFor('Vault')));
+    await browser.wait(until.visibilityOf(catalogView.detailedBreakdownFor('etcd')));
     await browser.sleep(500);
 
-    expect(catalogView.namespaceEnabledFor('Vault')(testNamespace)).toBe(true);
+    expect(catalogView.namespaceEnabledFor('Vault')(testName)).toBe(true);
+    expect(catalogView.namespaceEnabledFor('etcd')(testName)).toBe(true);
   });
 
   it('creates Vault Operator `Deployment`', async() => {
-    await browser.get(`${appHost}/ns/${testNamespace}/deployments`);
+    await browser.get(`${appHost}/ns/${testName}/deployments`);
     await crudView.isLoaded();
-
-    expect(crudView.rowForName(vaultOperatorName).isDisplayed()).toBe(true);
-    expect(crudView.rowForName(vaultOperatorName).$('a[title=pods]').getText()).toEqual('1 of 1 pods');
-  });
-
-  // TODO(alecmerdler): This test takes a long time
-  xit('recreates Vault Operator `Deployment` if manually deleted', async() => {
-    await crudView.deleteRow('Deployment')(vaultOperatorName);
     await browser.wait(until.textToBePresentInElement(crudView.rowForName(vaultOperatorName).$('a[title=pods]'), '1 of 1 pods'));
 
     expect(crudView.rowForName(vaultOperatorName).isDisplayed()).toBe(true);
-    expect(crudView.rowForName(vaultOperatorName).$('a[title=pods]').getText()).toEqual('1 of 1 pods');
+    expect(crudView.labelsForRow(vaultOperatorName).filter(l => l.getText().then(t => t === `alm-owner-name=${vaultOperatorName}`)).first()).toBeDefined();
+    expect(crudView.labelsForRow(vaultOperatorName).filter(l => l.getText().then(t => t === `alm-owner-namespace=${testName}`)).first()).toBeDefined();
+  });
+
+  xit('recreates Vault Operator `Deployment` if manually deleted', async() => {
+    await crudView.deleteRow('Deployment')(vaultOperatorName);
+    await browser.wait(until.textToBePresentInElement(crudView.rowForName(vaultOperatorName).$('a[title=pods]'), '0 of 1 pods'));
+    await browser.wait(until.textToBePresentInElement(crudView.rowForName(vaultOperatorName).$('a[title=pods]'), '1 of 1 pods'));
+
+    expect(crudView.rowForName(vaultOperatorName).isDisplayed()).toBe(true);
   }, deleteRecoveryTime);
 
   it('displays Vault OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/ns/${testNamespace}/clusterserviceversion-v1s`);
+    await browser.get(`${appHost}/ns/${testName}/clusterserviceversion-v1s`);
     await appListView.isLoaded();
     await browser.sleep(500);
 
@@ -76,9 +67,8 @@ describe('Interacting with the Vault OCS', () => {
 
   it('displays metadata about Vault OCS in the "Overview" section', async() => {
     await appListView.viewDetailsFor('Vault');
-    await browser.wait(until.presenceOf($('.loading-box__loaded')));
+    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    // TODO(alecmerdler): Create `appDetailView` view object and use here
     expect($('.co-clusterserviceversion-details__section--info').isDisplayed()).toBe(true);
     expect($('.co-clusterserviceversion-details__section--description').isDisplayed()).toBe(true);
   });
@@ -109,7 +99,7 @@ describe('Interacting with the Vault OCS', () => {
 
   it('displays metadata about the created `VaultService` in its "Overview" section', async() => {
     await crudView.rowForName('example').element(by.linkText('example')).click();
-    await browser.wait(until.presenceOf($('.loading-box__loaded')));
+    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
   });
@@ -118,14 +108,14 @@ describe('Interacting with the Vault OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')));
+    await browser.wait(until.visibilityOf($('.co-m-message--success')), 1000);
 
     expect($('.co-m-message--success').getText()).toContain('example has been updated to version');
   });
 
   it('displays Kubernetes objects associated with the `VaultService` in its "Resources" section', async() => {
     await element(by.linkText('Resources')).click();
-    await crudView.isLoaded();
+    await browser.wait(until.visibilityOf(crudView.rowFilters.first()), 3000);
 
     vaultServiceResources.forEach(kind => {
       expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);

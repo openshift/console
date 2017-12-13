@@ -2,7 +2,7 @@
 
 import { $, $$, by, browser, ExpectedConditions as until } from 'protractor';
 
-export const isLoaded = () => browser.wait(until.presenceOf($('.co-clusterserviceversion-list')));
+export const isLoaded = () => browser.wait(until.presenceOf($('.co-clusterserviceversion-list')), 10000);
 
 export const appTiles = $$('.co-clusterserviceversion-list-item');
 

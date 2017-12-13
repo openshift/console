@@ -15,4 +15,5 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.2/bi
 
 COPY . /opt/bridge/
 WORKDIR /opt/bridge/frontend
+RUN ./node_modules/.bin/webdriver-manager update
 CMD ./test-e2e.sh

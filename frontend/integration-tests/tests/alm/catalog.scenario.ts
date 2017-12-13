@@ -1,33 +1,20 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, $$, by, ExpectedConditions as until } from 'protractor';
+import { browser, by, ExpectedConditions as until } from 'protractor';
 
-import { appHost } from '../../protractor.conf';
-import * as crudView from '../../views/crud.view';
+import { appHost, testName, checkLogs } from '../../protractor.conf';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
-describe('Installing Vault OCS from catalog', () => {
-  const testNamespace = `alm-e2e-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
+describe('Installing a service from the Open Cloud Catalog', () => {
+  const openCloudServices = new Set(['etcd', 'Prometheus', 'Prometheus']);
 
-  beforeAll(async() => {
-    // Create test namespace
-    await browser.get(`${appHost}/namespaces`);
-    await crudView.isLoaded();
-    await crudView.createYAMLButton.click();
-    await browser.wait(until.presenceOf($('.modal-body__field')));
-    await $$('.modal-body__field').get(0).$('input').sendKeys(testNamespace);
-    await $('#confirm-delete').click();
-    await browser.sleep(500);
-
-    expect(browser.getCurrentUrl()).toContain(`/namespaces/${testNamespace}`);
+  beforeAll(() => {
+    browser.get(appHost);
   });
 
-  afterAll(async() => {
-    // Destroy test namespace
-    await browser.get(`${appHost}/namespaces`);
-    await crudView.isLoaded();
-    await crudView.deleteRow('Namespace')(testNamespace);
+  afterEach(() => {
+    checkLogs();
   });
 
   it('displays `Applications` tab in navigation sidebar', async() => {
@@ -38,51 +25,16 @@ describe('Installing Vault OCS from catalog', () => {
     await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
     await catalogView.isLoaded();
 
-    expect(catalogView.entryRows.count()).toEqual(3);
-    expect(catalogView.entryRowFor('Vault').isDisplayed()).toBe(true);
-    expect(catalogView.entryRowFor('etcd').isDisplayed()).toBe(true);
-    expect(catalogView.entryRowFor('Prometheus').isDisplayed()).toBe(true);
+    openCloudServices.forEach(name => {
+      expect(catalogView.entryRowFor(name).isDisplayed()).toBe(true);
+    });
   });
 
   it('displays available namespaces for service to be enabled in', async() => {
-    await catalogView.entryRowFor('Vault').element(by.buttonText('Enable')).click();
-    await browser.wait(until.presenceOf(catalogView.enableModal));
-    await catalogView.selectNamespaceRowFor(testNamespace).click();
+    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Enable')).click();
+    await browser.wait(until.presenceOf(catalogView.enableModal), 3000);
+    await catalogView.selectNamespaceRowFor(testName).click();
 
-    expect(catalogView.selectNamespaceRowFor(testNamespace).getText()).toContain('Will be enabled');
-  });
-
-  it('enables Vault and etcd in the selected namespace', async() => {
-    await catalogView.enableModal.element(by.buttonText('Enable')).click();
-    await browser.wait(until.invisibilityOf(catalogView.enableModal));
-    await browser.sleep(500);
-    await catalogView.entryRowFor('Vault').$('a').click();
-    await catalogView.entryRowFor('etcd').$('a').click();
-    await browser.wait(until.visibilityOf(catalogView.detailedBreakdownFor('Vault')));
-    await browser.wait(until.visibilityOf(catalogView.detailedBreakdownFor('etcd')));
-
-    expect(catalogView.namespaceEnabledFor('Vault')(testNamespace)).toBe(true);
-    expect(catalogView.namespaceEnabledFor('etcd')(testNamespace)).toBe(true);
-  });
-
-  it('displays namespaces where the service can be disabled', async() => {
-    await catalogView.entryRowFor('Vault').element(by.buttonText('Disable')).click();
-    await browser.wait(until.presenceOf(catalogView.disableModal));
-    await catalogView.selectNamespaceRowFor(testNamespace).click();
-
-    expect(catalogView.selectNamespaceRowFor(testNamespace).getText()).toContain('To be disabled');
-  });
-
-  it('displays option to delete all related resources when disabling an application from a namespace', async() => {
-    expect(catalogView.disableModal.$('.co-delete-modal-checkbox-label').$('input').isSelected()).toBe(true);
-  });
-
-  it('removes the namespace from the list of enabled namespaces for the selected application', async() => {
-    await catalogView.enableModal.element(by.buttonText('Disable')).click();
-    await browser.wait(until.invisibilityOf(catalogView.enableModal));
-    await browser.sleep(500);
-    await catalogView.entryRowFor('Vault').$('a').click();
-    await browser.wait(until.visibilityOf(catalogView.detailedBreakdownFor('Vault')));
-    expect(catalogView.namespaceEnabledFor('Vault')(testNamespace)).toBe(false);
+    expect(catalogView.selectNamespaceRowFor(testName).getText()).toContain('Will be enabled');
   });
 });

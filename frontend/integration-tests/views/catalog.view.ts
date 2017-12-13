@@ -1,15 +1,17 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, $$, ExpectedConditions as until } from 'protractor';
+import { browser, $, $$, by, ExpectedConditions as until } from 'protractor';
 
 export const entryRows = $$('.co-resource-list__item');
 export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText()
   .then(text => text === name)).first();
 
-export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')));
+export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000);
 
 export const enableModal = $('.co-catalog-install-modal');
 export const disableModal = $('.co-catalog-install-modal');
+
+export const enableModalConfirm = () => enableModal.element(by.buttonText('Enable')).click().then(() => browser.sleep(1000));
 
 export const selectNamespaceRows = enableModal.$$('.co-resource-list__item');
 
