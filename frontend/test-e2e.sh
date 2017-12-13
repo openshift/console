@@ -45,7 +45,7 @@ export BRIDGE_BASE_PATH
 
 set +e
 failed=0
-if yarn run test-gui --output /out; then
+if yarn run test-gui --output /out --reporter integration-tests/tap-reporter.js; then
   failed=1
 fi
 # Nightwatch has no a command line arg to change screenshot output path
