@@ -36,7 +36,8 @@ export class SyncMarkdownView extends React.Component<{content: string}, {}> {
   }
 
   updateHeight() {
-    if (!this.frame || !this.frame.contentWindow.document.body) {
+    if (!this.frame || !this.frame.contentWindow.document.body ||
+        !this.frame.contentWindow.document.body.firstChild) {
       return;
     }
     this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.offsetHeight + 50}px`;
