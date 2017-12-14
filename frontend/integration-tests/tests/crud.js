@@ -394,7 +394,7 @@ TESTS.EditLabels = browser => {
   const series = [
     cb => navigate({browser, path: `/ns/${NAME}/${resourceType}`}, cb),
     cb => onCreatedResource(NAME, resourceType, resourceName, cb),
-    cb => createYAML({browser, override: {metadata: {name: resourceName, namespace: NAME}}}, cb),
+    cb => createYAML({browser, addLabels: false, override: {metadata: {name: resourceName, namespace: NAME}}}, cb),
     cb => browser.page.crudPage()
       .waitForElementPresent('@actionsDropdownButton', TIMEOUT)
       .click('@actionsDropdownButton')
