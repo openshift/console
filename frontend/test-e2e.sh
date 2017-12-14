@@ -43,12 +43,14 @@ fi
 export BRIDGE_BASE_ADDRESS
 export BRIDGE_BASE_PATH
 
+out=/out
 set +e
+mkdir -p $out
 failed=0
-if yarn run test-gui --output /out --reporter integration-tests/tap-reporter.js; then
+if TAP_LOG="$out/tap.log" yarn run test-gui --output $out --reporter integration-tests/tap-reporter.js; then
   failed=1
 fi
 # Nightwatch has no a command line arg to change screenshot output path
-cp -a ./gui_test_screenshots /out/
+cp -a ./gui_test_screenshots $out/
 
 exit $failed
