@@ -6,8 +6,10 @@ import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 
 export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
 
-export const LoadError = ({label, className}) => <Box className={className}>
-  <div className="cos-text-center cos-error-title">Error Loading {label}</div>
+export const LoadError = ({label, className, message}) => <Box className={className}>
+  <div className="cos-text-center cos-error-title">
+    Error Loading {label}{message ? `: ${message}` : ''}
+  </div>
   <div className="cos-text-center">Please <a onClick={window.location.reload.bind(window.location)}>try again</a>.</div>
 </Box>;
 
@@ -56,7 +58,8 @@ export const StatusBox = props => {
     if (status === 403 || _.includes(_.toLower(loadError), 'access denied')) {
       return <AccessDenied />;
     }
-    return <LoadError label={label} className="loading-box loading-box__errored" />;
+
+    return <LoadError message={loadError.message} label={label} className="loading-box loading-box__errored" />;
   }
 
   if (!loaded) {

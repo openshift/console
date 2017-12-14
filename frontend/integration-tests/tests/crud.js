@@ -5,7 +5,7 @@ const _ = require('lodash');
 const async = require('async');
 const { safeLoad, safeDump } = require('js-yaml');
 
-const TIMEOUT = 15000;
+const TIMEOUT = parseInt(process.env.TIMEOUT, 10) || 15000;
 const TEST_LABEL = 'automatedTestName';
 
 const checkForErrors = (browser, cb) => {
@@ -33,8 +33,12 @@ const navigate = ({browser, path, wait=0}, navCB) => {
     cb => {
       let url;
 
-      const {BRIDGE_BASE_PATH, BRIDGE_BASE_ADDRESS} = process.env;
+      let {BRIDGE_BASE_PATH, BRIDGE_BASE_ADDRESS} = process.env;
       if (BRIDGE_BASE_PATH && BRIDGE_BASE_ADDRESS) {
+        // Paths start with /, so avoid // in urls.
+        if (BRIDGE_BASE_PATH.slice(-1) === '/') {
+          BRIDGE_BASE_PATH = BRIDGE_BASE_PATH.slice(0, -1);
+        }
         url = `${BRIDGE_BASE_ADDRESS}${BRIDGE_BASE_PATH}${path}`;
       } else {
         url = browser.launch_url + path;
@@ -247,7 +251,7 @@ const onDeletedResource = (name, plural, namespace, cb) => {
 const TESTS = {};
 
 const login = (browser, cb) => {
-  const {BRIDGE_AUTH_USERNAME, BRIDGE_AUTH_PASSWORD} = process.env;
+  const {BRIDGE_AUTH_USERNAME, BRIDGE_AUTH_PASSWORD, BRIDGE_BASE_ADDRESS} = process.env;
   if (!BRIDGE_AUTH_USERNAME || !BRIDGE_AUTH_PASSWORD) {
     return cb();
   }
@@ -260,7 +264,7 @@ const login = (browser, cb) => {
     .waitForElementPresent('//h3[contains(text(), "Tectonic Quick Start Guide")]', TIMEOUT)
     .useCss()
     .perform(() => {
-      console.log(`Logged in to #{BRIDGE_BASE_ADDRESS} as ${BRIDGE_AUTH_USERNAME}!`);
+      console.log(`Logged in to ${BRIDGE_BASE_ADDRESS} as ${BRIDGE_AUTH_USERNAME}!`);
       cb();
     });
 };
@@ -390,7 +394,7 @@ TESTS.EditLabels = browser => {
   const series = [
     cb => navigate({browser, path: `/ns/${NAME}/${resourceType}`}, cb),
     cb => onCreatedResource(NAME, resourceType, resourceName, cb),
-    cb => createYAML({browser, override: {metadata: {name: resourceName, namespace: NAME}}}, cb),
+    cb => createYAML({browser, addLabels: false, override: {metadata: {name: resourceName, namespace: NAME}}}, cb),
     cb => browser.page.crudPage()
       .waitForElementPresent('@actionsDropdownButton', TIMEOUT)
       .click('@actionsDropdownButton')
@@ -446,7 +450,7 @@ TESTS.deleteNamespace = browser => {
   '/k8s/all-namespaces/alertmanagers',
   '/ns/tectonic-system/alertmanagers/main',
 ].forEach(url => TESTS[url] = browser =>
-  navigate({browser, path: url, wait: 5000}, () => console.log(`visited }${url}`))
+  navigate({browser, path: url, wait: 5000}, () => console.log(`visited ${url}`))
 );
 
 TESTS.after = browser => {
