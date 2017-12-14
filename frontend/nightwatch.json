@@ -30,7 +30,10 @@
             "--disable-gpu",
             "--headless",
             "--no-sandbox",
-            "--window-size=1400,1050"
+            "--window-size=1400,1050",
+            "--disable-background-timer-throttling",
+            "--disable-renderer-backgrounding",
+            "--disable-raf-throttling"
           ]
         }
       },

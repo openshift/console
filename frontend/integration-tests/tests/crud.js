@@ -450,7 +450,7 @@ TESTS.deleteNamespace = browser => {
   '/k8s/all-namespaces/alertmanagers',
   '/ns/tectonic-system/alertmanagers/main',
 ].forEach(url => TESTS[url] = browser =>
-  navigate({browser, path: url, wait: 5000}, () => console.log(`visited }${url}`))
+  navigate({browser, path: url, wait: 5000}, () => console.log(`visited ${url}`))
 );
 
 TESTS.after = browser => {
