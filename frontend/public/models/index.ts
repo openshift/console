@@ -51,6 +51,7 @@ export const EtcdClusterModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'etcdclusters',
+  propagationPolicy : 'Foreground',
 };
 
 export const PrometheusModel: K8sKind = {
@@ -64,6 +65,7 @@ export const PrometheusModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'prometheuses',
+  propagationPolicy : 'Foreground',
 };
 
 export const ServiceMonitorModel: K8sKind = {
@@ -77,6 +79,7 @@ export const ServiceMonitorModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'servicemonitors',
+  propagationPolicy : 'Foreground',
 };
 
 export const AlertmanagerModel: K8sKind = {
@@ -90,6 +93,7 @@ export const AlertmanagerModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'alertmanagers',
+  propagationPolicy : 'Foreground',
 };
 
 export const VaultServiceModel: K8sKind = {
@@ -103,4 +107,5 @@ export const VaultServiceModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'vaultservices',
+  propagationPolicy : 'Foreground',
 };
