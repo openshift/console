@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage } from '../factory';
-import { navFactory, StatusBox, Timestamp, ResourceLink, Overflow, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
+import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
 import { K8sResourceKind, referenceForModel, K8sFullyQualifiedResourceReference, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
@@ -201,7 +201,7 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
         <dt>Links</dt>
         { spec.links && spec.links.length > 0
           ? spec.links.map((link, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
-            {link.name} <a href={link.url}><Overflow value={link.url} /></a>
+            {link.name} <OverflowLink value={link.url} href={link.url} />
           </dd>)
           : <dd>Not available</dd> }
       </dl>
@@ -209,7 +209,7 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
         <dt>Maintainers</dt>
         { spec.maintainers && spec.maintainers.length > 0
           ? spec.maintainers.map((maintainer, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
-            {maintainer.name} <a href={`mailto:${maintainer.email}`}><Overflow value={maintainer.email} /></a>
+            {maintainer.name} <OverflowLink value={maintainer.email} href={`mailto:${maintainer.email}`} />
           </dd>)
           : <dd>Not available</dd> }
       </dl>
