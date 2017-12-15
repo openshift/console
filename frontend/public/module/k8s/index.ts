@@ -58,6 +58,7 @@ export type K8sKind = {
   labelPlural: string;
   path: string;
   plural: string;
+  propagationPolicy?: 'Foreground' | 'Background';
 
   id?: string;
   crd?: boolean;
