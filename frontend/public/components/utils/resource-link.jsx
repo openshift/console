@@ -3,10 +3,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { ResourceIcon } from './index';
-import { modelFor } from '../../module/k8s';
+import { modelFor, referenceForModel } from '../../module/k8s';
 
 export const resourcePath = (kind, name, namespace = undefined) => {
-  const {path, namespaced, crd} = modelFor(kind) || {};
+  const model = modelFor(kind) || {};
+  const {path, namespaced, crd} = model;
 
   let url = '/';
 
@@ -21,9 +22,12 @@ export const resourcePath = (kind, name, namespace = undefined) => {
     url += namespace ? `ns/${namespace}/` : 'all-namespaces/';
   }
 
-  if (path) {
+  if (crd) {
+    url += referenceForModel(model);
+  } else if (path) {
     url += path;
   }
+
   if (name) {
     url += `/${name}`;
   }
