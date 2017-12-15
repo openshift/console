@@ -345,6 +345,9 @@ TESTS.CRDs = browser => {
       browser.assert.containsText('#resource-title', name);
       cb();
     }],
+    navigateToDelete: ['checkTitle', (res, cb) => navigate({browser, path: `/crds?name=${name}`}, cb)],
+    deleteCRD: ['navigateToDelete', (res, cb) => deleteExamples(browser.page.crudPage(), browser, cb)],
+    onDeletedResource: ['deleteCRD', (res, cb) => onDeletedResource(name, 'customresourcedefinitions', undefined, cb)],
   }, seriesCB(browser));
 };
 
