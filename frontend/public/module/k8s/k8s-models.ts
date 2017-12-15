@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
 import { ClusterServiceVersionModel, UICatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel } from '../../models';
 import { k8sKinds } from './enum';
+import store from '../../redux';
 
 export const referenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceReference => obj.kind && obj.apiVersion
   ? `${obj.kind}:${obj.apiVersion.split('/')[0]}:${obj.apiVersion.split('/')[1]}`
@@ -48,7 +49,26 @@ const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
  * Provides a synchronous way to acquire a statically-defined Kubernetes model. 
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
-export const modelFor = (ref: K8sResourceKindReference) => k8sModels.get(ref) || k8sModels.get(kindForReference(ref));
+export const modelFor = (ref: K8sResourceKindReference) => {
+  let m = k8sModels.get(ref);
+  if (m) {
+    return m;
+  }
+  m = k8sModels.get(kindForReference(ref));
+  if (m) {
+    return m;
+  }
+  // FIXME(alecmerdler): Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
+  m = store.getState().KINDS.get('kinds').get(ref);
+  if (m) {
+    return m;
+  }
+  m = store.getState().KINDS.get('kinds').get(kindForReference(ref));
+  if (m) {
+    return m;
+  }
+};
+
 /**
  * Provides a synchronous way to acquire all statically-defined Kubernetes models. 
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.

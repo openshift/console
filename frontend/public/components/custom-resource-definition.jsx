@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
 import { ColHead, List, ListHeader, ListPage } from './factory';
-import { Cog, ResourceCog, ResourceIcon } from './utils';
+import { Cog, ResourceCog, ResourceLink } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { referenceForCRD } from '../module/k8s';
 
@@ -51,7 +50,7 @@ const namespaced = crd => crd.spec.scope === 'Namespaced';
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-lg-4 col-md-4 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
-    <ResourceIcon kind={referenceForCRD(crd)} /> <Link to={`/k8s/${namespaced(crd) ? 'all-namespaces' : 'cluster'}/${crd.spec.names.plural}`} title={crd.spec.names.kind}>{crd.spec.names.kind}</Link>
+    <ResourceLink kind={referenceForCRD(crd)} displayName={_.get(crd, 'spec.names.kind', crd.metadata.name)} namespace={crd.metadata.namespace} title={crd.metadata.name} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
     { crd.spec.group }
