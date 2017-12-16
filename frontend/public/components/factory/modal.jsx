@@ -25,7 +25,7 @@ export const createModalLauncher = (Component) => (props = {}) => {
       ReactDOM.unmountComponentAtNode(modalContainer);
       resolve();
     };
-
+    Modal.setAppElement(modalContainer);
     ReactDOM.render(<Provider store={store}>
       <Router history={history} basename={window.SERVER_FLAGS.basePath}>
         <Modal

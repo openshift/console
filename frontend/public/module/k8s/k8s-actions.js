@@ -67,12 +67,6 @@ const actions = {
       delete query.name;
     }
 
-    // WebSocket can't send impersonate HTTP header
-    if (!isImpersonateEnabled()) {
-      const ws = k8sWatch(k8sType, query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
-      WS[id] = ws;
-    }
-
     const poller = () => {
       k8sGet(k8sType, name, namespace)
         .then(
@@ -82,6 +76,18 @@ const actions = {
     };
     POLLs[id] = setInterval(poller, pollInterval());
     poller();
+
+    if (isImpersonateEnabled()) {
+      // WebSocket can't send impersonate HTTP header
+      return;
+    }
+    if (k8sType.crd && name) {
+      // You can't watch a CRD with a fieldSelector as of 1.8
+      return;
+    }
+
+    const ws = k8sWatch(k8sType, query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
+    WS[id] = ws;
   },
 
   stopK8sWatch: id => {
