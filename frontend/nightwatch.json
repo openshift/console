@@ -30,7 +30,8 @@
             "--disable-gpu",
             "--headless",
             "--no-sandbox",
-            "--window-size=1400,1050",
+            "--start-fullscreen",
+            "--window-size=2880,1800",
             "--disable-background-timer-throttling",
             "--disable-renderer-backgrounding",
             "--disable-raf-throttling"
