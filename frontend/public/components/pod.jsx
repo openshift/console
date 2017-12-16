@@ -266,7 +266,7 @@ const filters = [{
   ],
 }];
 
-export class PodsPage extends React.PureComponent {
+export class PodsPage extends React.Component {
   shouldComponentUpdate(nextProps) {
     return !_.isEqual(nextProps, this.props);
   }
