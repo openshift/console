@@ -16,6 +16,7 @@ const checkForErrors = (browser, cb) => {
     };
   }, result => {
     const {windowError, windowErrors} = result.value;
+    browser.assert.equal(result.status, 0, 'Fetched windowErrors.');
     browser.assert.notEqual(windowError, true, 'No unhandled JavaScript errors.');
     browser.assert.equal(windowErrors.length, 0, 'No unhandled JavaScript errors.');
     if (windowErrors.length) {
@@ -113,7 +114,13 @@ const loadStatusBox = (browser, i, cb) => {
     }
     const loadingBoxClass = loadingBox.getAttribute('class');
     return loadingBoxClass.split(' ').map(css => css.split('__')[1]).filter(x => x)[0];
-  }, ({value}) => {
+  }, ({status, value}) => {
+    if (status) {
+      console.log('status is', status, i);
+      browser.pause(500);
+      loadStatusBox(browser, i+1, cb);
+      return;
+    }
     switch (value) {
       case 'loading':
         browser.pause(500);
@@ -161,7 +168,10 @@ const deleteExamples = (page, browser, cb) => {
 
     browser.execute(function () {
       return Array.from(document.querySelectorAll('div.co-m-cog-wrapper--enabled')).map(d => d.getAttribute('id'));
-    }, ({value}) => deleteExample(value));
+    }, ({status, value}) => {
+      browser.assert.equal(status, 0, 'Cogs for delete.');
+      deleteExample(value);
+    });
   });
 };
 
@@ -169,7 +179,8 @@ const deleteExamples = (page, browser, cb) => {
 const updateYamlEditor = (browser, override, addLabels, cb) => {
   browser.execute(function () {
     return window.ace.getValue();
-  }, ({value}) => {
+  }, ({value, status}) => {
+    browser.assert.equal(status, 0, 'Updated Yaml Editor.');
     const defaultExtends = {metadata: {name: NAME}};
     if (addLabels) {
       defaultExtends.metadata.labels = {automatedTest: 'yes', [TEST_LABEL]: NAME};
@@ -330,7 +341,10 @@ TESTS.CRDs = browser => {
 
       browser.execute(function () {
         return Array.from(document.querySelectorAll('div.co-m-cog-wrapper--enabled')).map(d => d.getAttribute('id'));
-      }, ({value}) => cb(null, value));
+      }, ({value, status}) => {
+        browser.assert.equal(status, 0, 'Fetched CRD cogs.');
+        return cb(null, value);
+      });
     })],
     edit: ['list', ({list: ids}, cb) => {
       const selector = `#${ids[0]}`;
