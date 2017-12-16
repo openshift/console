@@ -107,7 +107,14 @@ export class BaseGraph extends SafetyFirst {
 }
 
 BaseGraph.propTypes = {
-  query: PropTypes.string.isRequired,
+  query: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string,
+        query: PropTypes.string,
+      })),
+  ]).isRequired,
   title: PropTypes.string.isRequired,
   timeSpan: PropTypes.number,
   basePath: PropTypes.string,
