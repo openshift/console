@@ -199,7 +199,7 @@ export const EditYAML = connect(stateToProps)(
         action(ko, obj, namespace, name)
           .then(o => {
             if (redirect) {
-              history.push(this.props.redirectURL || resourceObjPath(o, referenceFor(obj)));
+              history.push(this.props.redirectURL || resourceObjPath(o, referenceFor(o)));
               // TODO: (ggreer). show message on new page. maybe delete old obj?
               return;
             }
