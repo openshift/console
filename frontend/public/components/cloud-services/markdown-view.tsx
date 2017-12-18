@@ -32,10 +32,10 @@ export class SyncMarkdownView extends React.Component<{content: string}, {}> {
   }
 
   componentDidMount() {
-    this.updateHeight();
+    this.updateDimensions();
   }
 
-  updateHeight() {
+  updateDimensions() {
     if (!this.frame || !this.frame.contentWindow.document.body ||
         !this.frame.contentWindow.document.body.firstChild) {
       return;
@@ -55,10 +55,11 @@ export class SyncMarkdownView extends React.Component<{content: string}, {}> {
           font-size: 16px;
           color: ${this.props.content ? 'black' : '#999'};
           background-color: transparent !important;
+          min-width: auto !important;
       }
       </style>
       <body><div>${markdownConvert(this.props.content || 'Not available')}</div></body>`;
 
-    return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', width: '100%', height: '100%'}} ref={(r) => this.frame = r} onLoad={() => this.updateHeight()} />;
+    return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', width: '100%', height: '100%'}} ref={(r) => this.frame = r} onLoad={() => this.updateDimensions()} />;
   }
 }

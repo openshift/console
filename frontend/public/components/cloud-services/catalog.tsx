@@ -15,9 +15,9 @@ import { k8sCreate, k8sKill, K8sResourceKind, referenceForModel } from '../../mo
 import { ClusterServiceVersionModel, UICatalogEntryModel } from '../../models';
 
 export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> = (props) => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-6">Status</ColHead>
-  <ColHead {...props} className="col-xs-2" />
+  <ColHead {...props} className="col-md-4 col-xs-8" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-5 hidden-sm">Status</ColHead>
+  <ColHead {...props} className="col-md-3 col-xs-4" />
 </ListHeader>;
 
 export const Breakdown: React.StatelessComponent<BreakdownProps> = (props) => {
@@ -116,11 +116,11 @@ export const CatalogAppRow = connect(stateToProps)(
 
       return <ResourceRow obj={obj}>
         <div className="co-catalog-app-row" style={{maxHeight: 60 + (this.state.expand ? clusterServiceVersions.length * 50 : 0)}}>
-          <div className="col-xs-4">
+          <div className="col-md-4 col-xs-8">
             <ClusterServiceVersionLogo icon={_.get(obj.spec, 'icon', [])[0]} version={obj.spec.version} displayName={obj.spec.displayName} provider={obj.spec.provider} />
           </div>
-          <div className="col-xs-6 col">
-            <div>
+          <div className="col-md-5 hidden-sm">
+            <div style={{marginTop: '10px'}}>
               <div style={{marginBottom: '15px'}}><Breakdown clusterServiceVersions={clusterServiceVersions} status={this.state} /></div>
               { clusterServiceVersions.length === 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} namespace`}</a> }
               { clusterServiceVersions.length > 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} all ${clusterServiceVersions.length} namespaces`}</a> }
@@ -129,8 +129,8 @@ export const CatalogAppRow = connect(stateToProps)(
               <BreakdownDetail clusterServiceVersions={clusterServiceVersions} status={this.state} />
             </div>
           </div>
-          <div className="col-xs-2 col">
-            <div className="pull-right">
+          <div className="col-md-3 col-xs-4">
+            <div className="co-catalog-app__row__actions">
               <button
                 className="btn btn-primary"
                 disabled={_.values(namespaces.data).filter((ns) => isEnabled(ns)).length <= clusterServiceVersions.length}
