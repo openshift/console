@@ -12,7 +12,7 @@
       "default_path_prefix": "",
       "selenium_port": 9515,
       "selenium_host": "localhost",
-      "end_session_on_fail": false,
+      "end_session_on_fail": true,
       "acceptSslCerts": true,
       "screenshots" : {
         "enabled": true,
@@ -31,7 +31,7 @@
             "--headless",
             "--no-sandbox",
             "--start-fullscreen",
-            "--window-size=2880,1800",
+            "--window-size=1400,1050",
             "--disable-background-timer-throttling",
             "--disable-renderer-backgrounding",
             "--disable-raf-throttling"
