@@ -18,16 +18,10 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-clusterserviceversion-list__section--catalog__items__item {
   @media (min-width: 768px) {
-    width: 100%;
+    width: 50%;
   }
   @media (min-width: 1024px) {
-    width: 45%;
-  }
-  @media (min-width: 1280px) {
-    width: 25%;
-  }
-  @media (min-width: 1440px) {
-    width: 25%;
+    width: 33%;
   }
   @media (min-width: 1920px) {
     width: 25%;
@@ -46,7 +40,6 @@ $clusterserviceversion-list-border: #ccc;
 }
 
 .co-clusterserviceversion-logo {
-  align-items: center;
   display: flex;
 }
 
@@ -66,6 +59,7 @@ $clusterserviceversion-list-border: #ccc;
 .co-clusterserviceversion-logo__name {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   margin: 0 10px;
 }
 
@@ -202,6 +196,12 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-catalog-app-row__details--collapsed {
   opacity: 0;
+}
+
+.co-catalog-app__row__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 0;
 }
 
 // Taken directly from Bootstrap 4

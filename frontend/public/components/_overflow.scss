@@ -17,3 +17,9 @@ $width: 35px;
     display: none;
   }
 }
+
+.co-m-overflow__link {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+}
