@@ -8,6 +8,7 @@ import * as PropTypes from 'prop-types';
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { Dropdown, Firehose, kindObj, NavTitle, history, inject} from '../utils';
+import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 
 
@@ -219,9 +220,13 @@ export const ListPage = props => {
   const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true} = props;
   const {labelPlural, plural, namespaced, label} = kindObj(kind);
   const title = props.title || labelPlural;
-  const href = `/ns/${namespace || 'default'}/${plural}/new`;
+  const href = namespaced ? `/ns/${namespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
   const resources = [{ kind, name, namespaced, selector, fieldSelector, filters }];
+
+  if (!namespaced && namespace) {
+    return <ErrorPage404 />;
+  }
 
   return <MultiListPage
     filterLabel={filterLabel || `${labelPlural} by name`}

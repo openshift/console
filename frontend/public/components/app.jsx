@@ -137,6 +137,7 @@ class App extends React.PureComponent {
             <Redirect from="/ns/:ns/rolebindings/:name" to="/all-namespaces/rolebindings" />
 
             <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
+            <Route path="/k8s/cluster/:plural/new" exact component={CreateYAML} />
             <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/ns/:ns/:plural/new" exact component={CreateYAML} />
             <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
