@@ -18,7 +18,7 @@ const checkForErrors = (browser, cb) => {
     const {windowError, windowErrors} = result.value;
     browser.assert.equal(result.status, 0, 'Fetched windowErrors.');
     if (result.status) {
-      return cb();
+      return cb(result);
     }
     browser.assert.notEqual(windowError, true, 'No unhandled JavaScript errors.');
     browser.assert.equal(windowErrors.length, 0, 'No unhandled JavaScript errors.');
@@ -226,25 +226,25 @@ const createYAML = ({browser, override, addLabels=true}, createCB) => {
 };
 
 const k8sObjs = {
-  'pods': 'Pod',
-  'services': 'Service',
-  'serviceaccounts': 'ServiceAccount',
-  'secrets': 'Secret',
-  'configmaps': 'ConfigMap',
-  'persistentvolumes': 'PersistentVolume',
-  'ingresses': 'Ingress',
+  'pods': {kind: 'Pod'},
+  'services': {kind: 'Service'},
+  'serviceaccounts': {kind: 'ServiceAccount'},
+  'secrets': {kind: 'Secret'},
+  'configmaps': {kind: 'ConfigMap'},
+  'persistentvolumes': {kind: 'PersistentVolume', namespaced: false},
+  'ingresses': {kind: 'Ingress'},
   // Meta resources
-  'cronjobs': 'CronJob',
-  'jobs': 'Job',
-  'daemonsets': 'DaemonSet',
-  'deployments': 'Deployment',
-  'replicasets': 'ReplicaSet',
-  'replicationcontrollers': 'ReplicationController',
-  'persistentvolumeclaims': 'PersistentVolumeClaim',
-  'statefulsets': 'StatefulSet',
-  'resourcequotas': 'ResourceQuota',
-  'networkpolicies': 'NetworkPolicy',
-  'roles': 'Role',
+  'cronjobs': {kind: 'CronJob'},
+  'jobs': {kind: 'Job'},
+  'daemonsets': {kind: 'DaemonSet'},
+  'deployments': {kind: 'Deployment'},
+  'replicasets': {kind: 'ReplicaSet'},
+  'replicationcontrollers': {kind: 'ReplicationController'},
+  'persistentvolumeclaims': {kind: 'PersistentVolumeClaim'},
+  'statefulsets': {kind: 'StatefulSet'},
+  'resourcequotas': {kind: 'ResourceQuota'},
+  'networkpolicies': {kind: 'NetworkPolicy'},
+  'roles': {kind: 'Role'},
 };
 
 const LEAKED_RESOURCES = new Set();
@@ -377,9 +377,10 @@ TESTS.CRDs = browser => {
 Object.keys(k8sObjs).forEach(resource => {
   TESTS[`${resource}`] = function (browser) {
     const crudPage = browser.page.crudPage();
-    const kind = k8sObjs[resource];
+    const {kind, namespaced} = k8sObjs[resource];
+    const path = namespaced === false ? `/${resource}?name=${NAME}` : `/ns/${NAME}/${resource}?name=${NAME}`;
     const series = [
-      cb => navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb),
+      cb => navigate({browser, path}, cb),
       cb => onCreatedResource(NAME, resource, NAME, cb),
       cb => createYAML({crudPage, browser}, cb),
       cb => navigate({browser, path: `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`}, cb),
@@ -403,7 +404,7 @@ Object.keys(k8sObjs).forEach(resource => {
           browser.assert.urlContains(`/${NAME}`);
           browser.assert.containsText('#resource-title', NAME);
         }
-        navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb);
+        navigate({browser, path}, cb);
       },
       cb => deleteExamples(crudPage, browser, cb),
       cb => onDeletedResource(NAME, resource, NAME, cb),
