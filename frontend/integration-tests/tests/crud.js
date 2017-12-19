@@ -17,6 +17,9 @@ const checkForErrors = (browser, cb) => {
   }, result => {
     const {windowError, windowErrors} = result.value;
     browser.assert.equal(result.status, 0, 'Fetched windowErrors.');
+    if (result.status) {
+      return cb(result);
+    }
     browser.assert.notEqual(windowError, true, 'No unhandled JavaScript errors.');
     browser.assert.equal(windowErrors.length, 0, 'No unhandled JavaScript errors.');
     if (windowErrors.length) {
@@ -170,6 +173,9 @@ const deleteExamples = (page, browser, cb) => {
       return Array.from(document.querySelectorAll('div.co-m-cog-wrapper--enabled')).map(d => d.getAttribute('id'));
     }, ({status, value}) => {
       browser.assert.equal(status, 0, 'Cogs for delete.');
+      if (status) {
+        return cb('Failed to get ids of delete cogs.');
+      }
       deleteExample(value);
     });
   });
@@ -181,6 +187,9 @@ const updateYamlEditor = (browser, override, addLabels, cb) => {
     return window.ace.getValue();
   }, ({value, status}) => {
     browser.assert.equal(status, 0, 'Updated Yaml Editor.');
+    if (status) {
+      return cb('Failed to get Yaml Editor value.');
+    }
     const defaultExtends = {metadata: {name: NAME}};
     if (addLabels) {
       defaultExtends.metadata.labels = {automatedTest: 'yes', [TEST_LABEL]: NAME};
@@ -191,7 +200,7 @@ const updateYamlEditor = (browser, override, addLabels, cb) => {
       return window.ace.setValue(text);
     }, [yaml], result => {
       browser.assert.equal(result.status, 0, 'Updated name and label via ace.');
-      cb();
+      cb(result.status || false);
     });
   });
 };
@@ -217,25 +226,25 @@ const createYAML = ({browser, override, addLabels=true}, createCB) => {
 };
 
 const k8sObjs = {
-  'pods': 'Pod',
-  'services': 'Service',
-  'serviceaccounts': 'ServiceAccount',
-  'secrets': 'Secret',
-  'configmaps': 'ConfigMap',
-  'persistentvolumes': 'PersistentVolume',
-  'ingresses': 'Ingress',
+  'pods': {kind: 'Pod'},
+  'services': {kind: 'Service'},
+  'serviceaccounts': {kind: 'ServiceAccount'},
+  'secrets': {kind: 'Secret'},
+  'configmaps': {kind: 'ConfigMap'},
+  'persistentvolumes': {kind: 'PersistentVolume', namespaced: false},
+  'ingresses': {kind: 'Ingress'},
   // Meta resources
-  'cronjobs': 'CronJob',
-  'jobs': 'Job',
-  'daemonsets': 'DaemonSet',
-  'deployments': 'Deployment',
-  'replicasets': 'ReplicaSet',
-  'replicationcontrollers': 'ReplicationController',
-  'persistentvolumeclaims': 'PersistentVolumeClaim',
-  'statefulsets': 'StatefulSet',
-  'resourcequotas': 'ResourceQuota',
-  'networkpolicies': 'NetworkPolicy',
-  'roles': 'Role',
+  'cronjobs': {kind: 'CronJob'},
+  'jobs': {kind: 'Job'},
+  'daemonsets': {kind: 'DaemonSet'},
+  'deployments': {kind: 'Deployment'},
+  'replicasets': {kind: 'ReplicaSet'},
+  'replicationcontrollers': {kind: 'ReplicationController'},
+  'persistentvolumeclaims': {kind: 'PersistentVolumeClaim'},
+  'statefulsets': {kind: 'StatefulSet'},
+  'resourcequotas': {kind: 'ResourceQuota'},
+  'networkpolicies': {kind: 'NetworkPolicy'},
+  'roles': {kind: 'Role'},
 };
 
 const LEAKED_RESOURCES = new Set();
@@ -343,7 +352,7 @@ TESTS.CRDs = browser => {
         return Array.from(document.querySelectorAll('div.co-m-cog-wrapper--enabled')).map(d => d.getAttribute('id'));
       }, ({value, status}) => {
         browser.assert.equal(status, 0, 'Fetched CRD cogs.');
-        return cb(null, value);
+        return cb(status || false, value);
       });
     })],
     edit: ['list', ({list: ids}, cb) => {
@@ -368,9 +377,10 @@ TESTS.CRDs = browser => {
 Object.keys(k8sObjs).forEach(resource => {
   TESTS[`${resource}`] = function (browser) {
     const crudPage = browser.page.crudPage();
-    const kind = k8sObjs[resource];
+    const {kind, namespaced} = k8sObjs[resource];
+    const path = namespaced === false ? `/${resource}?name=${NAME}` : `/ns/${NAME}/${resource}?name=${NAME}`;
     const series = [
-      cb => navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb),
+      cb => navigate({browser, path}, cb),
       cb => onCreatedResource(NAME, resource, NAME, cb),
       cb => createYAML({crudPage, browser}, cb),
       cb => navigate({browser, path: `/ns/${NAME}/search?kind=${kind}&q=${TEST_LABEL}%3d${NAME}`}, cb),
@@ -394,7 +404,7 @@ Object.keys(k8sObjs).forEach(resource => {
           browser.assert.urlContains(`/${NAME}`);
           browser.assert.containsText('#resource-title', NAME);
         }
-        navigate({browser, path: `/ns/${NAME}/${resource}?name=${NAME}`}, cb);
+        navigate({browser, path}, cb);
       },
       cb => deleteExamples(crudPage, browser, cb),
       cb => onDeletedResource(NAME, resource, NAME, cb),
