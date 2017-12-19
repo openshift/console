@@ -5,7 +5,7 @@ import { referenceForModel } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { ColHead, List, ListHeader, ListPage, ResourceRow, DetailsPage } from './factory';
 import { LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
-import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings/cluster-settings';
+import { SettingsRow, SettingsContent } from './cluster-settings/cluster-settings';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
 
@@ -94,16 +94,18 @@ const AlertManagersNameList = (props) => {
   if (props.loadError) {
     return null;
   }
-  return <div className="alert-manager-wrapper">
-    <SettingsRow>
-      <SettingsLabel>AlertManager:</SettingsLabel>
-      <SettingsContent>
-        <div className="alert-manager-list">
-          {props.loaded ? _.map(props.alertmanagers.data, (alertManager, i) => <div className="alert-manager-row" key={i}><ResourceLink kind={referenceForModel(AlertmanagerModel)} name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid}/></div>) : <LoadingInline />}
-        </div>
-      </SettingsContent>
-    </SettingsRow>
-  </div>;
+  return <SettingsRow>
+    <SettingsContent>
+      <div className="alert-manager-list">
+        {!props.loaded
+          ? <LoadingInline />
+          : _.map(props.alertmanagers.data, (alertManager, i) => <div className="alert-manager-row" key={i}>
+            <ResourceLink kind={referenceForModel(AlertmanagerModel)} name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid} />
+          </div>)
+        }
+      </div>
+    </SettingsContent>
+  </SettingsRow>;
 };
 
 
