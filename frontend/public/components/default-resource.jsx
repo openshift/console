@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, kindObj } from './utils';
-import { referenceFor } from '../module/k8s';
+import { referenceFor, kindForReference } from '../module/k8s';
 
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
@@ -35,7 +35,7 @@ const RowForKind = kind => function RowForKind_ ({obj}) {
 
 const DetailsForKind = kind => function DetailsForKind_ ({obj}) {
   return <div>
-    <Heading text={`${kind} Overview`} />
+    <Heading text={`${kindForReference(kind)} Overview`} />
     <div className="co-m-pane__body">
       <div className="row">
         <div className="col-sm-6 col-xs-12">
