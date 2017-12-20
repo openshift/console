@@ -232,6 +232,7 @@ const k8sObjs = {
   'secrets': {kind: 'Secret'},
   'configmaps': {kind: 'ConfigMap'},
   'persistentvolumes': {kind: 'PersistentVolume', namespaced: false},
+  'storageclasses': {kind: 'StorageClass', namespaced: false},
   'ingresses': {kind: 'Ingress'},
   // Meta resources
   'cronjobs': {kind: 'CronJob'},
