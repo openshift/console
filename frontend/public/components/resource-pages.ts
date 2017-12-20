@@ -29,6 +29,7 @@ import { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from '.
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
 import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
+import { StorageClassPage, StorageClassDetailsPage } from './storage-class';
 
 export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('Clusters', ClustersPage)
@@ -60,6 +61,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('PersistentVolumes', PersistentVolumesPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsPage)
   .set('Default', DefaultPage)
+  .set('StorageClasses', StorageClassPage)
   .set('CustomResourceDefinitions', CustomResourceDefinitionsPage)
   .set('ClusterServiceVersion-v1s', ClusterServiceVersionsPage);
 
@@ -90,5 +92,6 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('PersistentVolumes', PersistentVolumesDetailsPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsDetailsPage)
   .set('Default', DefaultDetailsPage)
+  .set('StorageClasses', StorageClassDetailsPage)
   .set('ClusterServiceVersion-v1s', ClusterServiceVersionsDetailsPage)
   .set('ClusterServiceVersionResources', ClusterServiceVersionResourcesDetailsPage);
