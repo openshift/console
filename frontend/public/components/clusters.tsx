@@ -51,7 +51,7 @@ const ClustersRow: React.StatelessComponent<ClustersRowProps> = ({obj}) => {
   </div>;
 };
 
-const ClustersDetails: React.StatelessComponent<ClustersDetailsProps> = ({obj}) => <div>
+const ClustersDetails: React.StatelessComponent<ClustersDetailsProps> = ({obj}) => <div className="col-md-12">
   <Heading text="Cluster Overview" />
   <div className="co-m-pane__body">
     <div className="row">
