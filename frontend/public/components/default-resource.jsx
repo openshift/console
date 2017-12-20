@@ -12,13 +12,13 @@ const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Co
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Created</ColHead>
+  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const RowForKind = kind => function RowForKind_ ({obj}) {
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
-      <ResourceCog actions={menuActions} kind={referenceFor(obj)} resource={obj} />
+      <ResourceCog actions={menuActions} kind={referenceFor(obj) || kind} resource={obj} />
       <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-xs-4">
