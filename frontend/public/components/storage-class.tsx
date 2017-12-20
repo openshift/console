@@ -46,7 +46,7 @@ const StorageClassRow: React.StatelessComponent<StorageClassRowProps> = ({obj}) 
   </div>;
 };
 
-const StorageClassDetails: React.StatelessComponent<StorageClassDetailsProps> = ({obj}) => <div>
+const StorageClassDetails: React.StatelessComponent<StorageClassDetailsProps> = ({obj}) => <div className="col-xs-12">
   <Heading text="StorageClass Overview" />
   <div className="co-m-pane__body">
     <div className="row">
