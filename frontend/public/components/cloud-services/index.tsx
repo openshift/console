@@ -12,6 +12,12 @@ export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from '.
 export { ClusterServiceVersionResourcesDetailsPage } from './clusterserviceversion-resource';
 export { CatalogsDetailsPage } from './catalog';
 
+export const catalogEntryVisibilityLabel = 'tectonic-visibility';
+export enum CatalogEntryVisibility {
+  catalogEntryVisibilityTectonicFeature = 'tectonic-feature',
+  catalogEntryVisibilityOCS = 'ocs',
+}
+
 export enum ALMSpecDescriptors {
   podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
   endpointList = 'urn:alm:descriptor:com.tectonic.ui:endpointList',
