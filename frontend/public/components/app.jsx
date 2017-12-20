@@ -61,6 +61,7 @@ const crdsListPage = boundResourcePage(ResourceListPage, 'customresourcedefiniti
 const nodesListPage = boundResourcePage(ResourceListPage, 'nodes');
 const rolesListPage = boundResourcePage(ResourceListPage, 'roles');
 const pvsListPage = boundResourcePage(ResourceListPage, 'persistentvolumes');
+const scsListPage = boundResourcePage(ResourceListPage, 'storageclasses');
 const nodeDetailsPage = boundResourcePage(ResourceDetailsPage, 'nodes');
 const crdDetailsPage = boundResourcePage(ResourceDetailsPage, 'customresourcedefinitions');
 
@@ -156,6 +157,9 @@ class App extends React.PureComponent {
 
             <Route path="/persistentvolumes/:name" component={props => <ResourceDetailsPage {...props} plural="persistentvolumes" />} />
             <Route path="/persistentvolumes" exact component={pvsListPage} />
+
+            <Route path="/storageclasses/:name" component={props => <ResourceDetailsPage {...props} plural="storageclasses" />} />
+            <Route path="/storageclasses" exact component={scsListPage} />
 
             <Route path="/settings/profile" exact component={ProfilePage} />
             <Route path="/settings/ldap" exact component={LDAPPage} />

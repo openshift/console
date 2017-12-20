@@ -287,6 +287,16 @@ export const k8sKinds = {
     abbr: 'CJ',
     namespaced: true,
   },
+  StorageClass: {
+    label: 'Storage Class',
+    labelPlural: 'Storage Classes',
+    apiVersion: 'v1',
+    path: 'storageclasses',
+    basePath: '/apis/storage.k8s.io/',
+    plural: 'storageclasses',
+    abbr: 'SC',
+    namespaced: false,
+  },
 };
 
 _.each(k8sKinds, (v, k) => {
