@@ -116,8 +116,8 @@ const Details = (props) => {
     return null;
   }
 
-  const status = getContainerStatus(pod, container.name);
-  const state = getContainerState(status);
+  const status = getContainerStatus(pod, container.name) || {};
+  const state = getContainerState(status) || {};
 
   // Split image string into the Docker image string and tag (aka version) portions. The tag defaults to 'latest'.
   const [containerImage, containerTag] = container.image ? container.image.split(':') : [null, 'latest'];
