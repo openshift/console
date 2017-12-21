@@ -39,14 +39,15 @@ describe('Kubernetes resource CRUD operations', () => {
   });
 
   afterAll(() => {
-    console.error(`Leaked ${leakedResources.size} resources out of ${k8sObjs.size}!`);
-    [...leakedResources].map(r => JSON.parse(r) as {name: string, plural: string, namespace?: string})
+    const leakedArray: Array<string> = [...leakedResources];
+    console.error(`Leaked ${leakedArray.length} resources out of ${k8sObjs.size}:\n${leakedArray.join('\n')}`);
+    leakedArray.map(r => JSON.parse(r) as {name: string, plural: string, namespace?: string})
       .filter(r => r.namespace === undefined)
       .forEach(({name, namespace, plural}) => {
         try {
           execSync(`kubectl delete --cascade ${plural} ${name}`);
         } catch (error) {
-          // TODO(alecmerdler)
+          console.error(`Failed to delete ${plural} ${name}:\n${error}`);
         }
       });
   });
@@ -72,13 +73,13 @@ describe('Kubernetes resource CRUD operations', () => {
       });
 
       it('creates a new resource instance', async() => {
+        leakedResources.add(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
         await yamlView.saveButton.click();
 
         expect(yamlView.errorMessage.isPresent()).toBe(false);
       });
 
       it('displays detail view for new resource instance', async() => {
-        leakedResources.add(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
         await browser.wait(until.presenceOf(crudView.actionsDropdown), 500);
 
         expect(browser.getCurrentUrl()).toContain(`/${testName}`);
@@ -120,6 +121,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.createYAMLButton.click();
       await browser.wait(until.presenceOf($('.modal-body__field')));
       await $$('.modal-body__field').get(0).$('input').sendKeys(name);
+      leakedResources.add(JSON.stringify({name, plural: 'namespaces'}));
       await $('#confirm-delete').click();
       await browser.wait(until.invisibilityOf($('.modal-content')), 2000);
 
@@ -127,7 +129,6 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     it('deletes the namespace', async() => {
-      leakedResources.add(JSON.stringify({name, plural: 'namespaces'}));
       await browser.get(`${appHost}/namespaces`);
       await crudView.isLoaded();
       await crudView.deleteRow('Namespace')(name);
@@ -187,21 +188,20 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     xit('creates a new custom resource instance', async() => {
+      leakedResources.add(JSON.stringify({name, plural: 'customresourcedefinitions'}));
       await yamlView.saveButton.click();
 
       expect(yamlView.errorMessage.isPresent()).toBe(false);
     });
 
     it('deletes the `CustomResourceDefinition`', async() => {
-      leakedResources.add(JSON.stringify({name, plural: 'customresourcedefinitions'}));
       await browser.get(`${appHost}/crds?name=${name}`);
       await crudView.isLoaded();
       await crudView.deleteRow('CustomResourceDefinition')(crd.spec.names.kind);
+      leakedResources.delete(JSON.stringify({name, plural: 'customresourcedefinitions'}));
       await browser.sleep(500);
 
       expect(crudView.rowDisabled(crd.spec.names.kind)).toBe(true);
-
-      leakedResources.delete(JSON.stringify({name, plural: 'customresourcedefinitions'}));
     });
   });
 
@@ -217,11 +217,11 @@ describe('Kubernetes resource CRUD operations', () => {
       const content = await yamlView.editorContent.getText();
       const newContent = _.defaultsDeep({}, {metadata: {name, namespace: testName}}, safeLoad(content));
       await yamlView.setContent(safeDump(newContent));
+      leakedResources.add(JSON.stringify({name, plural, namespace: testName}));
       await yamlView.saveButton.click();
     });
 
     it('displays modal for editing resource instance labels', async() => {
-      leakedResources.add(JSON.stringify({name, plural, namespace: testName}));
       await browser.wait(until.presenceOf(crudView.actionsDropdown), 500);
       await crudView.actionsDropdown.click();
       await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
@@ -230,11 +230,22 @@ describe('Kubernetes resource CRUD operations', () => {
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
       await browser.sleep(500);
       await $('.modal-footer #confirm-delete').click();
-      await browser.sleep(500);
     });
 
     it('updates the resource instance labels', async() => {
+      await browser.wait(until.presenceOf($('.co-m-label.co-m-label--expand')));
       expect($$('.co-m-label__key').first().getText()).toEqual(labelValue);
+
+      await crudView.actionsDropdown.click();
+    });
+
+    afterAll(async() => {
+      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
+      await crudView.actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
+      await browser.wait(until.presenceOf($('#confirm-delete')));
+      await $('.modal-footer #confirm-delete').click();
+
+      leakedResources.delete(JSON.stringify({name, plural, namespace: testName}));
     });
   });
 
