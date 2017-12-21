@@ -119,24 +119,28 @@ const AlertManagerRow = ({obj: alertManager}) => {
   const {metadata, spec} = alertManager;
 
   return <ResourceRow obj={alertManager}>
-    <div className="col-md-3 col-sm-3 col-xs-6">
+    <div className="col-md-2 col-sm-3 col-xs-6">
       <ResourceLink kind={referenceForModel(AlertmanagerModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
-    <div className="col-md-4 col-sm-5 hidden-xs">
+    <div className="col-md-2 col-sm-3 col-xs-6">
+      <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+    </div>
+    <div className="col-md-4 col-sm-3 hidden-xs">
       <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />
     </div>
-    <div className="col-md-2 hidden-sm hidden-xs">{spec.version}</div>
-    <div className="col-md-3 col-sm-4 col-xs-6">
+    <div className="col-md-1 hidden-sm hidden-xs">{spec.version}</div>
+    <div className="col-md-3 col-sm-3 hidden-xs">
       <Selector selector={spec.nodeSelector} kind="Node" />
     </div>
   </ResourceRow>;
 };
 
 const AlertManagerHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-4 col-sm-5 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="spec.version">Version</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="spec.nodeSelector">
+  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-4 col-sm-3 hidden-xs" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-md-1 hidden-sm hidden-xs" sortField="spec.version">Version</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-3 hidden-xs" sortField="spec.nodeSelector">
     Node Selector
   </ColHead>
 </ListHeader>;
