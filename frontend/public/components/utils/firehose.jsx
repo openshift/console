@@ -61,8 +61,30 @@ const processReduxId = ({k8s}, props) => {
     kind: props.kind,
     loadError: k8s.getIn([reduxID, 'loadError']),
     loaded: k8s.getIn([reduxID, 'loaded']),
+    optional: props.optional,
     selected,
   };
+};
+
+const worstError = errors => {
+  let worst = errors && errors[0];
+  for (let e of errors) {
+    if (e.status === 403) {
+      return e;
+    }
+    if (e.status === 401) {
+      worst = e;
+      continue;
+    }
+    if (worst.status === 401) {
+      continue;
+    }
+    if (e.status > worst.status) {
+      worst = e;
+      continue;
+    }
+  }
+  return worst;
 };
 
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
@@ -76,7 +98,7 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
 
   const required = _.filter(resources, r => !r.optional);
   const loaded = _.every(required, 'loaded');
-  const loadError = _.map(required, 'loadError').filter(Boolean).join(', ');
+  const loadError = worstError(_.map(required, 'loadError').filter(Boolean));
 
   return Object.assign({}, resources, {
     filters: Object.assign({}, ..._.map(resources, 'filters')),
@@ -173,5 +195,6 @@ Firehose.propTypes = {
     fieldSelector: PropTypes.string,
     className: PropTypes.string,
     isList: PropTypes.bool,
+    optional: PropTypes.bool,
   })).isRequired,
 };
