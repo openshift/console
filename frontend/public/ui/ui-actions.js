@@ -25,7 +25,7 @@ export const getActiveNamespace = () => store.getState().UI.get('activeNamespace
 // Only paths with registered namespace friendly prefixes can be
 // re-namespaced, so register your prefixes here as you define the
 // associated routes.
-export const formatNamespaceRoute = (activeNamespace, originalPath) => {
+export const formatNamespaceRoute = (activeNamespace, originalPath, location) => {
   const isk8s = originalPath.startsWith('/k8s/');
   if (isk8s) {
     originalPath = originalPath.substr(4);
@@ -49,10 +49,16 @@ export const formatNamespaceRoute = (activeNamespace, originalPath) => {
   }
 
   const namespacePrefix = activeNamespace ? `ns/${activeNamespace}/` : 'all-namespaces/';
-  if (isk8s) {
-    return `/k8s/${namespacePrefix}${originalPath}`;
+
+  let suffix = '';
+  if (location) {
+    suffix = `${location.search}${location.hash}`;
   }
-  return `/${namespacePrefix}${originalPath}`;
+
+  if (isk8s) {
+    return `/k8s/${namespacePrefix}${originalPath}${suffix}`;
+  }
+  return `/${namespacePrefix}${originalPath}${suffix}`;
 };
 
 export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
@@ -79,7 +85,7 @@ export const UIActions = {
     if (namespace !== getActiveNamespace()) {
       const oldPath = window.location.pathname;
       if (isNamespaced(oldPath)) {
-        history.pushPath(formatNamespaceRoute(namespace, oldPath));
+        history.pushPath(formatNamespaceRoute(namespace, oldPath, window.location));
       }
     }
 
