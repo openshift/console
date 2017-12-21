@@ -26,7 +26,7 @@ describe('Basic console test', () => {
     expect(browser.getCurrentUrl()).toContain(appHost);
   });
 
-  it('creates test namespace if necessary', async() => {
+  it(`creates test namespace ${testName} if necessary`, async() => {
     await browser.get(`${appHost}/namespaces`);
     await crudView.isLoaded();
     const exists = await crudView.rowForName(testName).isPresent();
