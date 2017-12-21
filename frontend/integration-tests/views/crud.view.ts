@@ -31,7 +31,13 @@ export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$
         break;
     }
 
-    return $('#confirm-delete').click();
+    await $('#confirm-delete').click();
+
+    const cogIsDisabled = until.presenceOf(rowForName(name).$('.co-m-cog--disabled'));
+    const listIsEmpty = until.textToBePresentInElement($('.cos-status-box > .cos-text-center'), 'No ');
+    const rowIsGone = until.not(until.presenceOf(rowForName(name).$('.co-m-cog')));
+    return browser.wait(until.or(cogIsDisabled, until.or(listIsEmpty, rowIsGone)));
+
   });
 
 export const rowFilters = $$('.row-filter--box');
