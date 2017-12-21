@@ -110,6 +110,8 @@ const AlertManagersNameList = (props) => {
 export const AlertManagersListContainer = props => <Firehose resources={[{
   kind: referenceForModel(AlertmanagerModel),
   isList: true,
+  namespaced: true,
+  namespace: 'tectonic-system',
   prop: 'alertmanagers',
 }]}>
   <AlertManagersNameList {...props} />
