@@ -8,6 +8,6 @@
   ],
   "globals": {},
   "rules": {
-    "no-console": ["error", { allow: ["warn", "error", "log"] }],
+    "no-console": ["error", { allow: ["warn", "error", "log", "info"] }],
   }
 }

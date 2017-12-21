@@ -3,6 +3,8 @@ kind: Pod
 metadata:
   name: tectonic-console-tester
   namespace: tectonic-system
+  labels: 
+    framework: protractor
 spec:
   restartPolicy: Never
   imagePullSecrets:
@@ -13,10 +15,10 @@ spec:
         claimName: test-output
   containers:
     - name: tectonic-console-tester
-      image: 'quay.io/coreos/tectonic-console-tester:v11'
+      image: 'quay.io/coreos/tectonic-console-tester:protractor'
       imagePullPolicy: Always
       volumeMounts:
-        - mountPath: "/opt/bridge/frontend/crud"
+        - mountPath: "/out"
           name: results
       env:
         - name: BRIDGE_AUTH_USERNAME

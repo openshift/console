@@ -36,6 +36,7 @@ echo "$TECTONIC_LICENSE" > license.txt
 echo $! > bridge.pid
 
 cd frontend
+./node_modules/.bin/webdriver-manager update --quiet > /dev/null 2>&1
 yarn run test-gui
 
 kill "$(cat ../bridge.pid)"
