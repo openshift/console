@@ -2,13 +2,12 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as classNames from'classnames';
 import { Tooltip } from 'react-lightweight-tooltip';
-import { connect } from 'react-redux';
 
 import { annotationsModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { history, resourceObjPath } from './index';
 import { referenceForModel } from '../../module/k8s';
-import { kindReducerName } from '../../kinds';
+import { connectToModel } from '../../kinds';
 
 export class Cog extends DropdownMixin {
   render () {
@@ -104,16 +103,17 @@ Cog.factory = {
 // The common menu actions that most resource share
 Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
-const stateToProps = (state, {kind}) => ({
-  kindObj: state[kindReducerName].get('kinds').find((v, k) => v.kind === kind || k === kind),
-});
-
 /** @type {React.StatelessComponent<{actions: any[], kind: string, resource: any, isDisabled?: boolean}>} */
-export const ResourceCog = connect(stateToProps)(({actions, kindObj, resource, isDisabled}) => <Cog
-  options={actions.map(a => a(kindObj, resource))}
-  key={resource.metadata.uid}
-  isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
-  id={`cog-for-${resource.metadata.uid}`}
-/>);
+export const ResourceCog = connectToModel(({actions, kindObj, resource, isDisabled}) => {
+  if (!kindObj) {
+    return null;
+  }
+  return <Cog
+    options={actions.map(a => a(kindObj, resource))}
+    key={resource.metadata.uid}
+    isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
+    id={`cog-for-${resource.metadata.uid}`}
+  />;
+});
 
 ResourceCog.displayName = 'ResourceCog';
