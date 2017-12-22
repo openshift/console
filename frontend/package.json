@@ -10,7 +10,8 @@
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
-    "test-gui": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
+    "test-gui": "yarn run test-suite --suite all",
+    "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production webpack --profile --json | awk '{if(NR>5)print}' > public/dist/stats.json && webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
   },
   "jest": {
