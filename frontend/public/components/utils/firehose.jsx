@@ -166,7 +166,7 @@ export const Firehose = connect(
     }
 
     render () {
-      const reduxes = this.firehoses.map(({id, prop, isList, filters}) => ({reduxID: id, prop, isList, filters}));
+      const reduxes = this.firehoses.map(({id, prop, isList, filters, optional}) => ({reduxID: id, prop, isList, filters, optional}));
       const children = inject(this.props.children, _.omit(this.props, [
         'children',
         'className',

@@ -183,7 +183,7 @@ export const RolesPage = ({namespace, showTitle}) => <MultiListPage
   flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
   resources={[
     {kind: 'Role', namespaced: true},
-    {kind: 'ClusterRole', namespaced: false},
+    {kind: 'ClusterRole', namespaced: false, optional: true},
   ]}
   rowFilters={[{
     type: 'role-kind',

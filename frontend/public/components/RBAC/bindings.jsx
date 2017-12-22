@@ -154,7 +154,7 @@ export const bindingType = binding => {
 
 const roleResources = [
   {kind: 'RoleBinding', namespaced: true},
-  {kind: 'ClusterRoleBinding', namespaced: false},
+  {kind: 'ClusterRoleBinding', namespaced: false, optional: true},
 ];
 
 export const RoleBindingsPage = ({namespace, showTitle=true}) => <MultiListPage
