@@ -8,7 +8,7 @@ import * as classNames from 'classnames';
 
 import { MultiListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { NavTitle, MsgBox } from '../utils';
-import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled } from './index';
+import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled, CatalogEntryVisibility, catalogEntryVisibilityLabel } from './index';
 import { createEnableApplicationModal } from '../modals/enable-application-modal';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { k8sCreate, k8sKill, K8sResourceKind, referenceForModel } from '../../module/k8s';
@@ -179,7 +179,7 @@ export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
     {kind: 'Namespace', isList: true},
-    {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true}
+    {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true, selector: {matchLabels: {[catalogEntryVisibilityLabel]: CatalogEntryVisibility.catalogEntryVisibilityOCS}}}
   ]}
 />;
 

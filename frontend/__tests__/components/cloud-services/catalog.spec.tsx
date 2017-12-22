@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason } from '../../../public/components/cloud-services/index';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason, CatalogEntryVisibility, catalogEntryVisibilityLabel } from '../../../public/components/cloud-services/index';
 import { ClusterServiceVersionModel, UICatalogEntryModel } from '../../../public/models';
 import { referenceForModel } from '../../../public/module/k8s';
 import { MultiListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
@@ -282,7 +282,7 @@ describe(CatalogAppsPage.displayName, () => {
     expect(listPage.props().resources).toEqual([
       {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
       {kind: 'Namespace', isList: true},
-      {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true}
+      {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true, selector: {matchLabels: {[catalogEntryVisibilityLabel]: CatalogEntryVisibility.catalogEntryVisibilityOCS}}}
     ]);
     expect(listPage.props().namespace).toEqual('tectonic-system');
     expect(listPage.props().ListComponent).toEqual(CatalogAppList);
