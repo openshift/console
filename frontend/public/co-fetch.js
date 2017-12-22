@@ -63,8 +63,8 @@ const validateStatus = (response) => {
 export class TimeoutError extends Error {
   constructor (url, ms, ...params) {
     super(`Call to ${url} timed out after ${ms}ms.`, ...params);
-    // Dumb hack because Babel breaks `instanceof TimeoutError`
-    this.timeout = ms;
+    // Dumb hack to fix `instanceof TimeoutError`
+    Object.setPrototypeOf(this, TimeoutError.prototype);
   }
 }
 
