@@ -72,7 +72,7 @@ export const coFetch = (url, options = {}) => {
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([
     fetch(url, allOptions).then(validateStatus),
-    new Promise((unused, reject) => setTimeout(() => reject(new Error(`Call to ${url} timed out`)), 5000)),
+    new Promise((unused, reject) => setTimeout(() => reject(new Error(`Call to ${url} timed out`)), 10000)),
   ]);
 };
 
