@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import * as _ from 'lodash';
 
 import { ALMStatusDescriptors, ALMSpecDescriptors } from './index';
 import { Donut } from '../graphs';
@@ -17,28 +17,24 @@ export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (pr
   return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
 };
 
-export const isFilledStatusValue = (value: string) => value !== undefined && value !== null && value !== '';
-
-export const Phase: React.StatelessComponent<PhaseProps> = ({status}) => <span>
-  <i className={classNames('fa', {'fa-ban phase-failed-icon': status === 'Failed'})} /> {status}
+export const Phase: React.StatelessComponent<PhaseProps> = ({status}) => <span className={status === 'Failed' ? 'co-error' : ''}>
+  { status === 'Failed' && <i className="fa fa-ban" /> } {status}
 </span>;
 
 export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
   const {statusDescriptor, statusValue, namespace} = props;
   const descriptors = statusDescriptor['x-descriptors'] || [];
-  if (!isFilledStatusValue(statusValue)) {
+  if (_.isEmpty(statusValue) && !_.isNumber(statusValue)) {
     return <dl>
       <dt>{statusDescriptor.displayName}</dt>
-      <dd>None</dd>
+      <dd className="text-muted">None</dd>
     </dl>;
   }
 
   const valueElm = descriptors.reduce((result, statusCapability) => {
     switch (statusCapability) {
       case ALMStatusDescriptors.conditions:
-        return <span>
-          {statusValue.reduce((latest, next) => new Date(latest.lastUpdateTime) < new Date(next.lastUpdateTime) ? latest : next).phase}
-        </span>;
+        return <span>{statusValue.reduce((latest, next) => new Date(latest.lastUpdateTime) < new Date(next.lastUpdateTime) ? latest : next).phase}</span>;
       case ALMStatusDescriptors.tectonicLink:
       case ALMStatusDescriptors.w3Link:
         return <a href={statusValue}>{statusValue.replace(/https?:\/\//, '')}</a>;
@@ -49,14 +45,11 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
       case ALMSpecDescriptors.podCount:
         return <span>{statusValue} pods</span>;
       default:
-        if (statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)) {
-          let kind = statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length);
-          return <ResourceLink kind={kind} name={statusValue} namespace={namespace} title={statusValue}/>;
-        }
-
-        return result;
+        return statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)
+          ? <ResourceLink kind={statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length)} name={statusValue} namespace={namespace} title={statusValue}/>
+          : result;
     }
-  }, <span>{statusValue || 'None'}</span>);
+  }, <span>{_.isEmpty(statusValue) && !_.isNumber(statusValue) ? 'None' : statusValue}</span>);
 
   return <dl>
     <dt>{statusDescriptor.displayName}</dt>
@@ -65,7 +58,7 @@ export const ClusterServiceVersionResourceStatus: React.StatelessComponent<Clust
 };
 
 /* eslint-disable no-undef */
-export type ClusterServiceVersionResourceStatusDescriptor = {
+export type StatusDescriptor = {
   path: string;
   displayName: string;
   description: string;
@@ -74,12 +67,12 @@ export type ClusterServiceVersionResourceStatusDescriptor = {
 };
 
 export type PodStatusChartProps = {
-  statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
+  statusDescriptor: StatusDescriptor;
   fetcher: () => any;
 };
 
 export type ClusterServiceVersionResourceStatusProps = {
-  statusDescriptor: ClusterServiceVersionResourceStatusDescriptor;
+  statusDescriptor: StatusDescriptor;
   statusValue: any;
   namespace?: string;
 };

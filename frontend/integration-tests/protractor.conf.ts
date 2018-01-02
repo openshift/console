@@ -88,6 +88,8 @@ const ignoredErrors = ImmutableSet<string>()
   .add('Warning: react-modal: App element is not defined')
   .add('Warning: Failed prop type: Invalid prop `query` of type `array` supplied to `Line`')
   .add('shouldComponentUpdate should not be used when extending React.PureComponent')
+  .add('Error: <path> attribute d: Expected number')
+  .add('Error: <text> attribute transform: Expected number')
   .add('/tectonic/certs - Failed to load resource: the server responded with a status of 500');
 
 export const checkLogs = async() => (await browser.manage().logs().get('browser'))

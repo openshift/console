@@ -5,11 +5,13 @@ import * as _ from 'lodash';
 
 import './ocs-templates';
 import { K8sResourceKind, CustomResourceDefinitionKind } from '../../module/k8s';
+import { SpecDescriptor } from './spec-descriptors';
+import { StatusDescriptor } from './status-descriptors';
 
 import * as appsLogoImg from '../../imgs/apps-logo.svg';
 
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
-export { ClusterServiceVersionResourcesDetailsPage } from './clusterserviceversion-resource';
+export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
 export { CatalogsDetailsPage } from './catalog';
 
 export const catalogEntryVisibilityLabel = 'tectonic-visibility';
@@ -32,17 +34,14 @@ export enum ALMStatusDescriptors {
   metrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   podStatuses = 'urn:alm:descriptor:com.tectonic.ui:podStatuses',
   podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
-
   w3Link = 'urn:alm:descriptor:org.w3:link',
   tectonicLink = 'urn:alm:descriptor:com.tectonic.ui:important.link',
   conditions = 'urn:alm:descriptor:io.kubernetes.conditions',
   importantMetrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   text = 'urn:alm:descriptor:text',
   prometheus = 'urn:alm:descriptor:io.prometheus:api.v1',
-
   k8sPhase = 'urn:alm:descriptor:io.kubernetes.phase',
   k8sPhaseReason = 'urn:alm:descriptor:io.kubernetes.phase:reason',
-
   // Prefix for all kubernetes resource status descriptors.
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
 }
@@ -77,19 +76,8 @@ export type CRDDescription = {
   kind: string;
   displayName: string;
   description?: string;
-  specDescriptors?: {
-    path: string;
-    displayName: string;
-    description?: string;
-    'x-descriptors': ALMStatusDescriptors[];
-  }[];
-  statusDescriptors?: {
-    path: string;
-    displayName: string;
-    description?: string;
-    'x-descriptors': ALMStatusDescriptors[];
-    value?: any;
-  }[];
+  specDescriptors?: SpecDescriptor[];
+  statusDescriptors?: StatusDescriptor[];
   resources?: {
     name?: string;
     version: string;
