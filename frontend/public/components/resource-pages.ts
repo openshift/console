@@ -27,6 +27,7 @@ import { ResourceQuotasPage, ResourceQuotasDetailsPage } from './resource-quota'
 import { PersistentVolumesPage, PersistentVolumesDetailsPage } from './persistent-volume';
 import { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from './persistent-volume-claim';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
+import { ReportsPage, ReportsDetailsPage } from './chargeback';
 import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
 import { StorageClassPage, StorageClassDetailsPage } from './storage-class';
@@ -60,6 +61,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('ResourceQuotas', ResourceQuotasPage)
   .set('PersistentVolumes', PersistentVolumesPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsPage)
+  .set('Reports', ReportsPage)
   .set('Default', DefaultPage)
   .set('StorageClasses', StorageClassPage)
   .set('CustomResourceDefinitions', CustomResourceDefinitionsPage)
@@ -91,6 +93,7 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('ResourceQuotas', ResourceQuotasDetailsPage)
   .set('PersistentVolumes', PersistentVolumesDetailsPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsDetailsPage)
+  .set('Reports', ReportsDetailsPage)
   .set('Default', DefaultDetailsPage)
   .set('StorageClasses', StorageClassDetailsPage)
   .set('ClusterServiceVersion-v1s', ClusterServiceVersionsDetailsPage)
