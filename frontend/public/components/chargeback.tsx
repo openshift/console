@@ -21,26 +21,33 @@ spec:
   runImmediately: true
 `);
 
-export const ReportReference: K8sFullyQualifiedResourceReference = 'Report';
+export const ReportReference: K8sFullyQualifiedResourceReference = 'Report:chargeback.coreos.com:v1alpha1';
+export const ReportGenerationQueryReference: K8sFullyQualifiedResourceReference = 'ReportGenerationQuery:chargeback.coreos.com:v1alpha1';
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const reportMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const reportGenerationQueryMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+
 
 const ReportsHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.status.phase">Status</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.reportingStart">Reporting Start</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="spec.reportingEnd">Reporting End</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-xs-4" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md">Report Generation Query</ColHead>
+  <ColHead {...props} className="col-lg-1 col-md-2 col-xs-4" sortField="spec.status.phase">Status</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortField="spec.reportingStart">Reporting Start</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortField="spec.reportingEnd">Reporting End</ColHead>
 </ListHeader>;
 
 const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-xs-3">
-      <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
+    <div className="col-lg-3 col-md-3 col-xs-4">
+      <ResourceCog actions={reportMenuActions} kind={ReportReference} resource={obj} />
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
-    <div className="col-xs-3">{_.get(obj, ['status', 'phase'])}</div>
-    <div className="col-xs-3"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
-    <div className="col-xs-3"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
+    <div className="col-lg-2 col-md-3 col-xs-4"><ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} /></div>
+    <div className="col-lg-2 hidden-md"><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
+    <div className="col-lg-1 col-md-2 col-xs-4">{_.get(obj, ['status', 'phase'])}</div>
+    <div className="col-lg-2 col-md-2 hidden-sm"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
+    <div className="col-lg-2 col-md-2 hidden-sm"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
   </div>;
 };
 
@@ -58,7 +65,7 @@ const ReportsDetails: React.StatelessComponent<ReportsDetailsProps> = ({obj}) =>
             <dt>Reporting End</dt>
             <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></dd>
             <dt>Generation Query</dt>
-            <dd>{_.get(obj, ['spec', 'generationQuery'])}</dd>
+            <dd><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></dd>
             <dt>Grace Period</dt>
             <dd>{_.get(obj, ['spec', 'gracePeriod'])}</dd>
             <dt>Run Immediately?</dt>

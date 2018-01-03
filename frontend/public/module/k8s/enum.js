@@ -297,17 +297,6 @@ export const k8sKinds = {
     abbr: 'SC',
     namespaced: false,
   },
-  Report: {
-    label: 'Report',
-    labelPlural: 'Reports',
-    apiVersion: 'v1alpha1',
-    path: 'reports',
-    basePath: '/apis/chargeback.coreos.com/',
-    plural: 'reports',
-    abbr: 'R',
-    namespaced: true,
-    crd: true,
-  },
 };
 
 _.each(k8sKinds, (v, k) => {
