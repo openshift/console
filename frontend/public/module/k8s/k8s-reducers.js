@@ -158,13 +158,10 @@ export default (state, action) => {
       if (!list) {
         return state;
       }
-      return state.mergeDeep({
-        [id]: {
-          'loadError': k8sObjects,
-          'data': {},
-          'loaded': false
-        }
-      });
+      /* Don't overwrite data or loaded state if there was an error. Better to
+       * keep stale data around than to suddenly have it disappear on a user.
+       */
+      return state.setIn([id, 'loadError'], k8sObjects);
     default:
       return state;
   }

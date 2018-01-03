@@ -60,6 +60,16 @@ const validateStatus = (response) => {
   });
 };
 
+export class TimeoutError extends Error {
+  constructor (url, ms, ...params) {
+    super(`Call to ${url} timed out after ${ms}ms.`, ...params);
+    // Dumb hack to fix `instanceof TimeoutError`
+    Object.setPrototypeOf(this, TimeoutError.prototype);
+  }
+}
+
+const FETCH_TIMEOUT = 10000;
+
 export const coFetch = (url, options = {}) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
 
@@ -72,7 +82,7 @@ export const coFetch = (url, options = {}) => {
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([
     fetch(url, allOptions).then(validateStatus),
-    new Promise((unused, reject) => setTimeout(() => reject(new Error(`Call to ${url} timed out`)), 10000)),
+    new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, FETCH_TIMEOUT)), FETCH_TIMEOUT)),
   ]);
 };
 

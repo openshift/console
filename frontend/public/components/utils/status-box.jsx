@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as classNames from'classnames';
 
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
+import { TimeoutError } from '../../co-fetch';
 
 export const Box = ({children, className}) => <div className={classNames('cos-status-box', className)}>{children}</div>;
 
@@ -42,8 +43,19 @@ export const AccessDenied = () => <Box className="cos-text-center">
 </Box>;
 AccessDenied.displayName = 'AccessDenied';
 
+const Data = props => {
+  const {EmptyMsg, label, data} = props;
+  let component = props.children;
+  if (!data || _.isEmpty(data)) {
+    component = EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />;
+    return <div className="loading-box loading-box__loaded">{component}</div>;
+  }
+
+  return <div className="loading-box loading-box__loaded">{props.children}</div>;
+};
+
 export const StatusBox = props => {
-  const {EmptyMsg, label, loadError, loaded} = props;
+  const {label, loadError, loaded} = props;
 
   if (loadError) {
     const status = _.get(loadError, 'response.status');
@@ -59,21 +71,22 @@ export const StatusBox = props => {
       return <AccessDenied />;
     }
 
+    if (loaded && loadError instanceof TimeoutError) {
+      return <Data {...props}>
+        <div className="row">
+          <div className="col-xs-12 text-center text-muted" style={{paddingBottom: 15}}>Timed out fetching new data. The data below is stale.</div>
+        </div>
+        {props.children}
+      </Data>;
+    }
+
     return <LoadError message={loadError.message} label={label} className="loading-box loading-box__errored" />;
   }
 
   if (!loaded) {
     return <LoadingBox className="loading-box loading-box__loading" />;
   }
-
-  const {data} = props;
-
-  if (!data || _.isEmpty(data)) {
-    const component = EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />;
-    return <div className="loading-box loading-box__loaded">{component}</div>;
-  }
-
-  return <div className="loading-box loading-box__loaded">{props.children}</div>;
+  return <Data {...props} />;
 };
 
 StatusBox.displayName = 'StatusBox';
