@@ -4,7 +4,8 @@ import { history } from '../components/utils/router';
 import { isNamespaced } from '../components/utils/link';
 import { allModels } from '../module/k8s/k8s-models';
 
-export const prefixes = new Set(['search']);
+// URL routes that can be namespaced
+export const prefixes = new Set(['search', 'applications']);
 
 allModels().forEach((v) => {
   if (v.namespaced) {

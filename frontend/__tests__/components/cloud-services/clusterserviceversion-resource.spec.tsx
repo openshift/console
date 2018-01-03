@@ -310,8 +310,8 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     match = {
       params: {appName: 'etcd', plural: 'etcdclusters', name: 'my-etcd', ns: 'default'},
       isExact: false,
-      url: '/ns/default/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd',
-      path: '/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name',
+      url: '/ns/default/applications/etcd/etcdclusters/my-etcd',
+      path: '/ns/:ns/applications/:appName/:plural/:name',
     };
 
     wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={referenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
@@ -332,8 +332,8 @@ describe(CSVResourceDetails.displayName, () => {
     match = {
       params: {appName: 'etcd', plural: 'etcdclusters', name: 'my-etcd', ns: 'default'},
       isExact: false,
-      url: '/ns/default/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd',
-      path: '/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name',
+      url: '/ns/default/applications/etcd/etcdclusters/my-etcd',
+      path: '/ns/:ns/applications/:appName/:plural/:name',
     };
 
     wrapper = shallow(<CSVResourceDetails kind={referenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} csv={{data: testClusterServiceVersion}} />);
@@ -366,21 +366,21 @@ describe(CSVResourceDetails.displayName, () => {
     const detailsPage = wrapper.find(DetailsPage);
 
     expect(detailsPage.props().breadcrumbs).toEqual([
-      {name: 'etcd', path: '/ns/default/clusterserviceversion-v1s/etcd/instances'},
-      {name: `${testResourceInstance.kind} Details`, path: '/ns/default/clusterserviceversion-v1s/etcd/etcdclusters/my-etcd'},
+      {name: 'etcd', path: '/ns/default/applications/etcd/instances'},
+      {name: `${testResourceInstance.kind} Details`, path: '/ns/default/applications/etcd/etcdclusters/my-etcd'},
     ]);
   });
 
   it('passes correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
     match.params = Object.keys(match.params).reduce((params, name) => Object.assign(params, {[name]: 'example'}), {});
-    match.url = '/ns/example/clusterserviceversion-v1s/example/example/example';
+    match.url = '/ns/example/applications/example/example/example';
 
     wrapper.setProps({match});
     const detailsPage = wrapper.find(DetailsPage);
 
     expect(detailsPage.props().breadcrumbs).toEqual([
-      {name: 'example', path: '/ns/example/clusterserviceversion-v1s/example/instances'},
-      {name: `${testResourceInstance.kind} Details`, path: '/ns/example/clusterserviceversion-v1s/example/example/example'},
+      {name: 'example', path: '/ns/example/applications/example/instances'},
+      {name: `${testResourceInstance.kind} Details`, path: '/ns/example/applications/example/example/example'},
     ]);
   });
 
@@ -460,7 +460,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().createButtonText).toEqual('Create New');
     expect(listPage.props().createProps.to).not.toBeDefined();
     expect(listPage.props().createProps.items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
-    expect(listPage.props().createProps.createLink).toBeDefined();
+    expect(listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name)).toEqual('/ns/default/applications/testapp/TestResource:testapp.coreos.com:v1/new');
   });
 
   it('passes `createProps` for single create button if app has only one owned CRD', () => {
@@ -469,6 +469,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().createButtonText).toEqual(`Create ${testClusterServiceVersion.spec.customresourcedefinitions.owned[0].displayName}`);
     expect(listPage.props().createProps.items).not.toBeDefined();
     expect(listPage.props().createProps.createLink).not.toBeDefined();
+    expect(listPage.props().createProps.to).toEqual('/ns/default/applications/testapp/TestResource:testapp.coreos.com:v1/new');
   });
 
   it('passes `flatten` function which removes `required` resources with owner references to items not in the same list', () => {

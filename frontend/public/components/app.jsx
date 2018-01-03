@@ -28,7 +28,7 @@ import { SearchPage } from './search';
 import { history, getNamespace } from './utils';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
-import { CatalogsDetailsPage } from './cloud-services/catalog';
+import { CatalogsDetailsPage, ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage } from './cloud-services';
 import { ClusterServiceVersionModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import '../style.scss';
@@ -96,12 +96,15 @@ class App extends React.PureComponent {
           <Switch>
             <Route path="/" exact component={ClusterOverviewContainer} />
             <Route path="/cluster-health" exact component={ClusterHealth} />
-
             <Route path="/start-guide" exact component={StartGuidePage} />
 
-            <Route path="/ns/:ns/clusterserviceversion-v1s/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
-            <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/new" exact component={CreateYAML} />
-            <Route path="/ns/:ns/clusterserviceversion-v1s/:appName/:plural/:name" component={ResourceDetailsPage} />
+            <Route path={`/k8s/ns/:ns/${referenceForModel(ClusterServiceVersionModel)}/:name`} render={({match}) => <Redirect to={`/ns/${match.params.ns}/applications/${match.params.name}`} />} />
+            <Route path="/all-namespaces/applications" exact component={ClusterServiceVersionsPage} />
+            <Route path="/ns/:ns/applications" exact component={ClusterServiceVersionsPage} />
+            <Route path="/ns/:ns/applications/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
+            <Route path="/ns/:ns/applications/:appName/:plural/new" exact component={CreateYAML} />
+            <Route path="/ns/:ns/applications/:appName/:plural/:name" component={ResourceDetailsPage} />
+            <Route path="/ns/:ns/applications/:name" component={ClusterServiceVersionsDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />
 
             <Route path="/clusterroles/:name/add-rule" exact component={EditRulePage} />

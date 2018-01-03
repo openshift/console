@@ -55,7 +55,7 @@ describe('Interacting with the etcd OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays etcd OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/ns/${testName}/clusterserviceversion-v1s`);
+    await browser.get(`${appHost}/ns/${testName}/applications`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

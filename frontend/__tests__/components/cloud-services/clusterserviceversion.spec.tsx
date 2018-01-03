@@ -10,7 +10,8 @@ import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVer
 import { DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
 import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox } from '../../../public/components/utils';
-import { K8sResourceKind } from '../../../public/module/k8s';
+import { K8sResourceKind, referenceForModel } from '../../../public/module/k8s';
+import { ClusterServiceVersionModel } from '../../../public/models';
 
 import * as appsLogoImg from '../../../public/imgs/apps-logo.svg';
 
@@ -73,7 +74,7 @@ describe(ClusterServiceVersionListItem.displayName, () => {
 
     expect(detailsButton.props().title).toEqual('View details');
     expect(detailsButton.childAt(0).text()).toEqual('View details');
-    expect(detailsButton.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/clusterserviceversion-v1s/${testClusterServiceVersion.metadata.name}`);
+    expect(detailsButton.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/applications/${testClusterServiceVersion.metadata.name}`);
     expect(detailsButton.hasClass('btn')).toBe(true);
   });
 
@@ -94,7 +95,7 @@ describe(ClusterServiceVersionListItem.displayName, () => {
 
     expect(link.props().title).toEqual('View instances');
     expect(link.childAt(0).text()).toEqual('View instances');
-    expect(link.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/clusterserviceversion-v1s/${testClusterServiceVersion.metadata.name}/instances`);
+    expect(link.props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/applications/${testClusterServiceVersion.metadata.name}/instances`);
   });
 });
 
@@ -188,7 +189,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind="ClusterServiceVersion-v1" namespace="foo" namespaceEnabled={true} resourceDescriptions={[]} match={null} />);
+    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} namespaceEnabled={true} resourceDescriptions={[]} match={{params: {ns: 'foo'}, isExact: true, path: '', url: ''}} />);
   });
 
   it('renders a `MultiListPage` with correct props', () => {
@@ -306,9 +307,19 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
 describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsDetailsPageProps>;
+  const name = 'example';
+  const ns = 'default';
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsDetailsPage kind={testClusterServiceVersion.kind} name={testClusterServiceVersion.metadata.name} namespace="default" match={null} />);
+    wrapper = shallow(<ClusterServiceVersionsDetailsPage match={{params: {ns, name}, isExact: true, url: '', path: ''}} />);
+  });
+
+  it('passes URL parameters to `DetailsPage`', () => {
+    const detailsPage = wrapper.find(DetailsPage);
+
+    expect(detailsPage.props().namespace).toEqual(ns);
+    expect(detailsPage.props().name).toEqual(name);
+    expect(detailsPage.props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
