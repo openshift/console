@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference } from '../module/k8s';
 
@@ -74,18 +74,87 @@ const ReportsDetails: React.StatelessComponent<ReportsDetailsProps> = ({obj}) =>
         </div>
       </div>
     </div>
-  </div>
+  </div>;
 };
 
 export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} />;
 
 export const ReportsPage: React.StatelessComponent<ReportsPageProps> = props => <ListPage {...props} title="Chargeback Reports" kind={ReportReference} ListComponent={ReportsList} canCreate={true} filterLabel={props.filterLabel} />;
 
-const pages = [navFactory.details(detailsPage(ReportsDetails)), navFactory.editYaml()];
+const reportsPages = [navFactory.details(detailsPage(ReportsDetails)), navFactory.editYaml()];
 
 export const ReportsDetailsPage: React.StatelessComponent<ReportsDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={pages} />;
+  return <DetailsPage {...props} kind={ReportReference} menuActions={reportMenuActions} pages={reportsPages} />;
 };
+
+
+const ReportGenerationQueriesHeader = props => <ListHeader>
+  <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm">Labels</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.creationTimestamp">Created At</ColHead>
+</ListHeader>;
+
+const ReportGenerationQueriesRow: React.StatelessComponent<ReportGenerationQueriesRowProps> = ({obj}) => {
+  return <div className="row co-resource-list__item">
+    <div className="col-md-3 col-sm-4">
+      <ResourceCog actions={reportGenerationQueryMenuActions} kind={ReportGenerationQueryReference} resource={obj} />
+      <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+    </div>
+    <div className="col-md-3 col-sm-4"><ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
+    <div className="col-md-3 hidden-sm"><LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} /></div>
+    <div className="col-md-3 col-sm-4"><Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} /></div>
+  </div>;
+};
+
+const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQueriesDetailsProps> = ({obj}) => {
+  const columns = _.get(obj, ['spec', 'columns'], []).map((column, i) => <tr key={i}>
+    <td>{column.name}</td>
+    <td>{column.type}</td>
+  </tr>);
+
+  return <div className="col-md-12">
+    <Heading text="Chargeback Report Generation Query" />
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-xs-12">
+          <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
+            <dt>Query</dt>
+            <dd><pre><code>{_.get(obj, ['spec', 'query'])}</code></pre></dd>
+            <div className="row">
+              <div className="col-xs-12">
+                <h3>Columns</h3>
+                <div className="co-table-container">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {columns}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </ResourceSummary>
+        </div>
+      </div>
+    </div>
+  </div>;
+};
+
+export const ReportGenerationQueriesList: React.StatelessComponent = props => <List {...props} Header={ReportGenerationQueriesHeader} Row={ReportGenerationQueriesRow} />;
+
+export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerationQueriesPageProps> = props => <ListPage {...props} title="Chargeback Report Generation Queries" kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />;
+
+const reportGenerationQueryPages = [navFactory.details(detailsPage(ReportGenerationQueriesDetails)), navFactory.editYaml()];
+export const ReportGenerationQueriesDetailsPage: React.StatelessComponent<ReportGenerationQueriesDetailsPageProps> = props => {
+  return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={reportGenerationQueryMenuActions} pages={reportGenerationQueryPages} />;
+};
+
 
 /* eslint-disable no-undef */
 export type ReportsRowProps = {
@@ -103,6 +172,22 @@ export type ReportsPageProps = {
 export type ReportsDetailsPageProps = {
   match: any,
 };
+
+export type ReportGenerationQueriesRowProps = {
+  obj: any,
+};
+
+export type ReportGenerationQueriesDetailsProps = {
+  obj: any,
+};
+
+export type ReportGenerationQueriesPageProps = {
+  filterLabel: string,
+};
+
+export type ReportGenerationQueriesDetailsPageProps = {
+  match: any,
+};
 /* eslint-enable no-undef */
 
 ReportsRow.displayName = 'ReportsRow';
@@ -110,3 +195,9 @@ ReportsDetails.displayName = 'ReportsDetails';
 ReportsList.displayName = 'ReportsList';
 ReportsPage.displayName = 'ReportsPage';
 ReportsDetailsPage.displayName = 'ReportsDetailsPage';
+
+ReportGenerationQueriesRow.displayName = 'ReportGenerationQueriesRow';
+ReportGenerationQueriesDetails.displayName = 'ReportGenerationQueriesDetails';
+ReportGenerationQueriesList.displayName = 'ReportGenerationQueriesList';
+ReportGenerationQueriesPage.displayName = 'ReportGenerationQueriesPage';
+ReportGenerationQueriesDetailsPage.displayName = 'ReportGenerationQueriesDetailsPage';
