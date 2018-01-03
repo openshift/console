@@ -147,6 +147,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	useVersionHandler := s.versionHandler
 	useValidateLicenseHandler := s.validateLicenseHandler
+	useListNamespaces := s.handleListNamespaces
 	useCertsHandler := s.certsHandler
 	useClientsHandler := s.handleListClients
 	useTokenRevocationHandler := s.handleTokenRevocation
@@ -154,6 +155,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
 		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.validateLicenseHandler))
+		useListNamespaces = authMiddleware(s.Auther, http.HandlerFunc(s.handleListNamespaces))
 		useCertsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.certsHandler))
 		useClientsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.handleListClients))
 		useTokenRevocationHandler = authMiddleware(s.Auther, http.HandlerFunc(s.handleTokenRevocation))
@@ -162,7 +164,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/version", useVersionHandler)
 	handleFunc("/license/validate", useValidateLicenseHandler)
 	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
-	handleFunc("/api/tectonic/namespaces", s.handleListNamespaces)
+	handleFunc("/api/tectonic/namespaces", useListNamespaces)
 	mux.HandleFunc("/tectonic/certs", useCertsHandler)
 	mux.HandleFunc("/tectonic/clients", useClientsHandler)
 	mux.HandleFunc("/tectonic/revoke-token", useTokenRevocationHandler)
