@@ -10,6 +10,8 @@ import { appHost, testName, checkLogs } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
+const K8S_CREATION_TIMEOUT = 15000;
+
 describe('Kubernetes resource CRUD operations', () => {
   const testLabel = 'automatedTestName';
   const leakedResources = new Set<string>();
@@ -123,7 +125,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await $$('.modal-body__field').get(0).$('input').sendKeys(name);
       leakedResources.add(JSON.stringify({name, plural: 'namespaces'}));
       await $('#confirm-delete').click();
-      await browser.wait(until.invisibilityOf($('.modal-content')), 2000);
+      await browser.wait(until.invisibilityOf($('.modal-content')), K8S_CREATION_TIMEOUT);
 
       expect(browser.getCurrentUrl()).toContain(`/namespaces/${testName}-ns`);
     });
@@ -171,7 +173,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await yamlView.isLoaded();
       await yamlView.setContent(safeDump(crd));
       await yamlView.saveButton.click();
-      await browser.wait(until.urlContains(name), 3000);
+      await browser.wait(until.urlContains(name), K8S_CREATION_TIMEOUT);
 
       expect(yamlView.errorMessage.isPresent()).toBe(false);
     });
