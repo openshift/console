@@ -131,6 +131,12 @@ export const Firehose = connect(
         const k8sKind = k8sModels.get(resource.kind);
         const id = makeReduxID(k8sKind, query);
         return _.extend({}, resource, {query, id, k8sKind});
+      }).filter(f => {
+        if (_.isEmpty(f.k8sKind)) {
+          // eslint-disable-next-line no-console
+          console.warn(`No model registered for ${f.kind}`);
+        }
+        return !_.isEmpty(f.k8sKind);
       });
 
       this.firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) => isList
