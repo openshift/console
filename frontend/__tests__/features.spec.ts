@@ -51,6 +51,7 @@ describe('featureReducer', () => {
     [FLAGS.CLOUD_SERVICES]: undefined,
     [FLAGS.CLOUD_CATALOGS]: undefined,
     [FLAGS.CALICO]: undefined,
+    [FLAGS.CHARGEBACK]: undefined,
   };
 
   it('returns default values if state is uninitialized', () => {
