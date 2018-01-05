@@ -4,6 +4,8 @@ import { appHost, testName } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as loginView from '../views/login.view';
 
+const BROWSER_TIMEOUT = 15000;
+
 describe('Basic console test', () => {
 
   afterAll(async() => {
@@ -16,11 +18,11 @@ describe('Basic console test', () => {
 
     const {BRIDGE_AUTH_USERNAME, BRIDGE_AUTH_PASSWORD} = process.env;
     if (BRIDGE_AUTH_USERNAME && BRIDGE_AUTH_PASSWORD) {
-      await browser.wait(until.visibilityOf(loginView.nameInput), 10000);
+      await browser.wait(until.visibilityOf(loginView.nameInput), BROWSER_TIMEOUT);
       await loginView.nameInput.sendKeys(BRIDGE_AUTH_USERNAME);
       await loginView.passwordInput.sendKeys(BRIDGE_AUTH_PASSWORD);
       await loginView.submitButton.click();
-      await browser.wait(until.visibilityOf($('#logo')), 10000);
+      await browser.wait(until.visibilityOf($('#logo')), BROWSER_TIMEOUT);
     }
 
     expect(browser.getCurrentUrl()).toContain(appHost);
@@ -35,7 +37,7 @@ describe('Basic console test', () => {
       await browser.wait(until.presenceOf($('.modal-body__field')));
       await $$('.modal-body__field').get(0).$('input').sendKeys(testName);
       await $('.modal-content').$('#confirm-delete').click();
-      await browser.wait(until.urlContains(`/namespaces/${testName}`), 2000);
+      await browser.wait(until.urlContains(`/namespaces/${testName}`), BROWSER_TIMEOUT);
     }
 
     expect(browser.getCurrentUrl()).toContain(appHost);
