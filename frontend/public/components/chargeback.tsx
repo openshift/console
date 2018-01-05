@@ -3,8 +3,10 @@ import * as _ from 'lodash';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList } from './utils';
+import { coFetch } from '../co-fetch';
+import { saveAs } from 'file-saver';
 // eslint-disable-next-line no-unused-vars
-import { K8sFullyQualifiedResourceReference } from '../module/k8s';
+import { K8sFullyQualifiedResourceReference, resourceURL, modelFor } from '../module/k8s';
 
 import { registerTemplate } from '../yaml-templates';
 
@@ -51,31 +53,58 @@ const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
   </div>;
 };
 
-const ReportsDetails: React.StatelessComponent<ReportsDetailsProps> = ({obj}) => {
-  return <div className="col-md-12">
-    <Heading text="Chargeback Report" />
-    <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
-          <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
-            <dt>Phase</dt>
-            <dd>{_.get(obj, ['status', 'phase'])}</dd>
-            <dt>Reporting Start</dt>
-            <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></dd>
-            <dt>Reporting End</dt>
-            <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></dd>
-            <dt>Generation Query</dt>
-            <dd><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></dd>
-            <dt>Grace Period</dt>
-            <dd>{_.get(obj, ['spec', 'gracePeriod'])}</dd>
-            <dt>Run Immediately?</dt>
-            <dd>{Boolean(_.get(obj, ['spec', 'runImmediately'])).toString()}</dd>
-          </ResourceSummary>
+class ReportsDetails extends React.Component<ReportsDetailsProps> {
+  download (obj, format='json') {
+    const serviceModel = modelFor('Service');
+    const name = _.get(obj, ['metadata', 'name']);
+    const url = resourceURL(serviceModel, {
+      ns: obj.metadata.namespace,
+      name: 'chargeback',
+      path: 'proxy/api/v1/reports/get',
+      queryParams: {
+        name: obj.metadata.name,
+        format,
+      },
+    });
+    coFetch(url).then(response => response.blob().then(blob => saveAs(blob, `${name}.${format}`)));
+  }
+
+  render () {
+    const {obj} = this.props;
+    return <div className="col-md-12">
+      <Heading text="Chargeback Report" />
+      <div className="co-m-pane__body">
+        <div className="row">
+          <div className="col-sm-6 col-xs-12">
+            <p>
+              <button className="btn btn-primary" type="button" onClick={() => this.download(obj, 'csv')}>
+                <i className="fa fa-download" />&nbsp;Download CSV
+              </button>
+            </p>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-6 col-xs-12">
+            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
+              <dt>Phase</dt>
+              <dd>{_.get(obj, ['status', 'phase'])}</dd>
+              <dt>Reporting Start</dt>
+              <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></dd>
+              <dt>Reporting End</dt>
+              <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></dd>
+              <dt>Generation Query</dt>
+              <dd><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></dd>
+              <dt>Grace Period</dt>
+              <dd>{_.get(obj, ['spec', 'gracePeriod'])}</dd>
+              <dt>Run Immediately?</dt>
+              <dd>{Boolean(_.get(obj, ['spec', 'runImmediately'])).toString()}</dd>
+            </ResourceSummary>
+          </div>
         </div>
       </div>
-    </div>
-  </div>;
-};
+    </div>;
+  }
+}
 
 export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} />;
 
@@ -191,7 +220,6 @@ export type ReportGenerationQueriesDetailsPageProps = {
 /* eslint-enable no-undef */
 
 ReportsRow.displayName = 'ReportsRow';
-ReportsDetails.displayName = 'ReportsDetails';
 ReportsList.displayName = 'ReportsList';
 ReportsPage.displayName = 'ReportsPage';
 ReportsDetailsPage.displayName = 'ReportsDetailsPage';
