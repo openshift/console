@@ -12,47 +12,28 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 
 const empty = 'none';
 
-const MemoryAndCPUFormName = 'MemoryAndCPUForm';
-const MemoryAndCPUForm = initialValues => reduxForm({form: MemoryAndCPUFormName, initialValues})(() => <div>
-  <div className="col-xs-5">
-    <label style={{fontWeight: 300}} className="text-muted" htmlFor="cpu">CPU cores</label>
-    <Field name="cpu" component="input" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
-  </div>
-  <div className="col-xs-5">
-    <label style={{fontWeight: 300}} className="text-muted" htmlFor="memory">Memory</label>
-    <Field name="memory" component="input" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
-  </div>
-</div>);
-
-
 class PromSettingsModal extends PromiseComponent {
-  constructor(props) {
-    super(props);
-    this.Form = MemoryAndCPUForm(this.props.initialValues);
-  }
-
   _submit (e) {
     e.preventDefault();
 
+    const { path, Form, obj, cancel} = this.props;
     // PromiseComponent handles submitting the form.
-    const formData = getFormValues(MemoryAndCPUFormName)(store.getState());
-    if (_.isEqual(formData, this.props.initialValues)) {
-      this.props.cancel();
+    const formData = getFormValues(Form.formName)(store.getState());
+    if (_.isEqual(formData, _.get(obj, path))) {
+      cancel();
       return;
     }
 
-    const { section, type, config } = this.props;
+    const newLimits = _.set({}, path, formData);
+    const newConfig = _.defaultsDeep(newLimits, this.props.config);
 
-    const newLimits = {[section]: {resources: {[type]: formData}}};
-    const newConfig = _.defaultsDeep(newLimits, config);
-
-    const promise = k8sPatch(k8sKinds.ConfigMap, this.props.obj, [{
+    const promise = k8sPatch(k8sKinds.ConfigMap, obj, [{
       op: 'replace',
       path: '/data/config.yaml',
       value: safeDump(newConfig),
     }]);
 
-    this.handlePromise(promise).then(this.props.cancel);
+    this.handlePromise(promise).then(cancel);
   }
 
   render () {
@@ -65,7 +46,7 @@ class PromSettingsModal extends PromiseComponent {
           <div className="col-sm-12">{description}</div>
         </div>
         <div className="row co-m-form-row">
-          <this.Form handleSubmit={this._submit} />
+          <this.props.Form handleSubmit={this._submit} />
         </div>
       </ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save Changes" cancel={e => this.props.cancel(e)} />
@@ -73,17 +54,61 @@ class PromSettingsModal extends PromiseComponent {
   }
 }
 
-const cpuMemModal = createModalLauncher(props => <PromSettingsModal {...props} />);
-
+const labelStyle = { fontWeight: 300 };
 const MemCPUModalLink = ({section, type, config, obj}) => {
-  const {cpu=null, memory=null} = _.get(config, [section, 'resources', type], {});
-  const initialValues = { cpu, memory };
+  const path = [section, 'resources', type];
+  const {cpu=null, memory=null} = _.get(config, path, {});
 
-  const description = `Define the ${type === 'limits' ? 'resource' : 'request'} limits for the cluster ${section === 'prometheusK8s' ? 'Prometheus instance' : 'Alertmanager'}.`;
-  const title = `Cluster Monitoring  ${type === 'limits' ? 'Resource' : 'Request'} Limits`;
+  const onClick = () => {
+    const modal = createModalLauncher(props => <PromSettingsModal {...props} />);
+    const initialValues = { cpu, memory };
+    const description = `Define the ${type === 'limits' ? 'resource' : 'request'} limits for the cluster ${section === 'prometheusK8s' ? 'Prometheus instance' : 'Alertmanager'}.`;
+    const title = `Cluster Monitoring  ${type === 'limits' ? 'Resource' : 'Request'} Limits`;
+    const CPUForm = () => <div>
+      <div className="col-xs-5">
+        <label style={labelStyle} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
+        <Field name="cpu" component="input" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
+      </div>
+      <div className="col-xs-5">
+        <label style={labelStyle} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
+        <Field name="memory" component="input" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
+      </div>
+    </div>;
+    const Form = reduxForm({form: 'MemoryAndCPU', initialValues})(CPUForm);
+    Form.formName = 'MemoryAndCPU';
 
-  return <a className="co-m-modal-link" onClick={() => cpuMemModal({title, description, initialValues, type, config, section, obj})}>
+    return modal({title, description, config, obj, Form, path});
+  };
+
+  return <a className="co-m-modal-link" onClick={onClick}>
     {`CPU: ${cpu || empty}, Memory: ${memory || empty}`}
+  </a>;
+};
+
+const RetentionModalLink = ({config, obj}) => {
+  const path = ['prometheusK8s'];
+  const { retention=null } = _.get(config, path, {});
+
+  const onClick = () => {
+    const modal = createModalLauncher(props => <PromSettingsModal {...props} />);
+    const initialValues = { retention };
+    const description = 'Specify the retention time of cluster monitoring samples.';
+    const title = 'Cluster Monitoring Sample Retention';
+    const RetentionForm = () => <div>
+      <div className="col-xs-5">
+        <label style={labelStyle} className="text-muted text-uppercase" htmlFor="retention">sample retention</label>
+        <Field name="retention" component="input" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="24h" />
+      </div>
+    </div>;
+
+    const Form = reduxForm({form: 'RetentionForm', initialValues})(RetentionForm);
+    Form.formName = 'RetentionForm';
+
+    return modal({title, description, config, obj, Form, path});
+  };
+
+  return <a className="co-m-modal-link" onClick={onClick}>
+    {retention || empty}
   </a>;
 };
 
@@ -137,7 +162,7 @@ class ClusterMonitoring_ extends React.PureComponent {
             <dl>
               <dt>Retention</dt>
               <dd>
-                {_.get(config, 'prometheusK8s.retention') || empty}
+                <RetentionModalLink config={config} obj={obj} />
               </dd>
             </dl>
           </div>
