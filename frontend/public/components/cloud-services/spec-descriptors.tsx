@@ -63,7 +63,7 @@ export const EndpointList: React.StatelessComponent<EndpointListProps> = (props)
   { props.endpoints.map((e, i) => <EndpointRow endpoint={e} key={i} />) }
 </div>;
 
-export class SpecDescriptor extends React.Component<SpecDescriptorProps, SpecDescriptorState> {
+export class ClusterServiceVersionResourceSpec extends React.Component<SpecDescriptorProps, SpecDescriptorState> {
   constructor(props) {
     super(props);
     this.state = {changing: false};
@@ -103,7 +103,7 @@ export class SpecDescriptor extends React.Component<SpecDescriptorProps, SpecDes
 }
 
 /* eslint-disable no-undef */
-export type ClusterServiceVersionResourceSpecDescriptor = {
+export type SpecDescriptor = {
   path: string;
   displayName: string;
   description: string;
@@ -118,7 +118,7 @@ export type SpecDescriptorState = {
 export type SpecDescriptorProps = {
   kindObj: K8sKind;
   resource: ClusterServiceVersionResourceKind;
-  specDescriptor: ClusterServiceVersionResourceSpecDescriptor;
+  specDescriptor: SpecDescriptor;
   specValue?: any;
   namespace?: string;
 };

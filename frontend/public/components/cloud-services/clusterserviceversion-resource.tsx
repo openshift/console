@@ -4,13 +4,14 @@ import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind } from './index';
-import { isFilledStatusValue, ClusterServiceVersionResourceStatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
-import { ClusterServiceVersionResourceSpecDescriptor, SpecDescriptor } from './spec-descriptors';
+import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, CRDDescription } from './index';
+import { Resources } from './k8s-resource';
+import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
+import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, Firehose } from '../utils';
 import { connectToPlural } from '../../kinds';
-import { k8sGet, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, K8sFullyQualifiedResourceReference } from '../../module/k8s';
+import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, K8sFullyQualifiedResourceReference, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
 
@@ -80,17 +81,15 @@ export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<Clus
   }
 };
 
-const resourceForCRD = (crdDesc) => ({
-  kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
-  namespaced: true,
-  optional: true,
-  prop: crdDesc.kind,
-});
-
 export const ClusterServiceVersionResourcesPage: React.StatelessComponent<ClusterServiceVersionResourcesPageProps> = (props) => {
   const {obj} = props;
   const {owned = []} = obj.spec.customresourcedefinitions;
-  const firehoseResources = owned.map(resourceForCRD);
+  const firehoseResources = owned.map((crdDesc) => ({
+    kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
+    namespaced: true,
+    optional: true,
+    prop: crdDesc.kind,
+  }));
 
   const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
   const createLink = (name: string) => `/ns/${obj.metadata.namespace}/clusterserviceversion-v1s/${obj.metadata.name}/${name.split('.')[0]}/new`;
@@ -126,75 +125,58 @@ export const ClusterServiceVersionResourcesPage: React.StatelessComponent<Cluste
 };
 
 export const ClusterServiceVersionResourceDetails = connectToPlural(
-  class ClusterServiceVersionResourceDetailsComponent extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
+  class ClusterServiceVersionResourceDetails extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
     constructor(props) {
       super(props);
       this.state = {expanded: false};
     }
 
-    public render() {
-      const isFilteredDescriptor = (kind: ALMStatusDescriptors) => {
-        switch (kind) {
-          case ALMStatusDescriptors.importantMetrics:
-          case ALMStatusDescriptors.prometheus:
-          case ALMStatusDescriptors.podStatuses:
-            return true;
-          default:
-            return false;
-        }
-      };
-
-      const getBlockValue = (descriptor: ClusterServiceVersionResourceStatusDescriptor | ClusterServiceVersionResourceSpecDescriptor, block) => {
-        if (descriptor === undefined) {
-          return undefined;
-        }
-
-        const value = _.get(block, descriptor.path);
-        if (value === undefined) {
-          return descriptor.value;
-        }
-
-        return value;
-      };
-
-      const findStatusDescriptorWithCapability = (statusDescriptors, capability) => {
-        return _.find<ClusterServiceVersionResourceStatusDescriptor>(statusDescriptors, (descriptor) => {
-          return _.find(descriptor['x-descriptors'], (cap) => cap === capability) !== undefined;
+    render() {
+      const isMainDescriptor = (descriptor: StatusDescriptor) => {
+        return (descriptor['x-descriptors'] || []).some((type: ALMStatusDescriptors) => {
+          switch (type) {
+            case ALMStatusDescriptors.importantMetrics:
+            case ALMStatusDescriptors.prometheus:
+            case ALMStatusDescriptors.podStatuses:
+              return true;
+            default:
+              return false;
+          }
         });
+      };
+
+      const blockValue = (descriptor: StatusDescriptor | SpecDescriptor, block: {[key: string]: any}) => !_.isEmpty(descriptor)
+        ? _.get(block, descriptor.path, descriptor.value)
+        : undefined;
+
+      const descriptorFor = (descriptors: StatusDescriptor[] = [], capability: ALMStatusDescriptors) => {
+        return descriptors.find((descriptor) => (descriptor['x-descriptors'] || []).some((cap) => cap === capability));
       };
 
       const {kind, metadata, spec, status} = this.props.obj;
 
       // Find the matching CRD spec for the kind of this resource in the CSV.
-      const ownedDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
+      const ownedDefinitions = _.get<CRDDescription[]>(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
       const thisDefinition = _.find(ownedDefinitions, (def) => def.name.split('.')[0] === this.props.kindObj.path);
-      const statusDescriptors = _.get(thisDefinition, 'statusDescriptors', []);
-      const specDescriptors = _.get(thisDefinition, 'specDescriptors', []);
-      const title = thisDefinition ? thisDefinition.displayName : kind;
-
-      const filteredStatusDescriptors = _.filter(statusDescriptors, (descriptor) => {
-        return _.find(descriptor['x-descriptors'], isFilteredDescriptor) === undefined;
-      });
+      const statusDescriptors = _.get<StatusDescriptor[]>(thisDefinition, 'statusDescriptors', []);
+      const specDescriptors = _.get<SpecDescriptor[]>(thisDefinition, 'specDescriptors', []);
 
       // Find the important metrics and prometheus endpoints, if any.
-      const metricsDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.importantMetrics);
-      const promDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.prometheus);
-      const podStatusesDescriptor = findStatusDescriptorWithCapability(statusDescriptors, ALMStatusDescriptors.podStatuses);
+      const metricsDescriptor = descriptorFor(statusDescriptors, ALMStatusDescriptors.importantMetrics);
+      const promDescriptor = descriptorFor(statusDescriptors, ALMStatusDescriptors.prometheus);
+      const podStatusesDescriptor = descriptorFor(statusDescriptors, ALMStatusDescriptors.podStatuses);
 
-      const metricsValue = getBlockValue(metricsDescriptor, status);
-      const promBasePath = getBlockValue(promDescriptor, status);
-      const podStatusesFetcher = () => getBlockValue(podStatusesDescriptor, status);
+      const metricsValue = blockValue(metricsDescriptor, status);
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
-          <h1 className="co-section-title">{`${title} Overview`}</h1>
+          <h1 className="co-section-title">{`${thisDefinition ? thisDefinition.displayName : kind} Overview`}</h1>
           <div className="row">
-            { podStatusesDescriptor ? <div className="col-xs-3"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={podStatusesFetcher} /></div> : null }
-            { metricsValue
-              ? metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (
-                <div key={i} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
-                  <ClusterServiceVersionPrometheusGraph query={query} basePath={promBasePath} />
-                </div>)) : null }
+            { podStatusesDescriptor && <div className="col-xs-3"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={() => blockValue(podStatusesDescriptor, status)} /></div> }
+            { metricsValue && metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (
+              <div key={i} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
+                <ClusterServiceVersionPrometheusGraph query={query} basePath={blockValue(promDescriptor, status)} />
+              </div>)) }
           </div>
         </div>
         <div className="co-m-pane__body">
@@ -204,31 +186,30 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
                 <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
               </div>
               <div className="col-xs-6">
-                { this.state.expanded ?
-                  <ResourceSummary resource={this.props.obj} showPodSelector={false} /> :
-                  <div>
+                { this.state.expanded
+                  ? <ResourceSummary resource={this.props.obj} showPodSelector={false} />
+                  : <div>
                     <dt>Name</dt>
                     <dd>{metadata.name}</dd>
                     <dt>Namespace</dt>
                     <dd><ResourceLink namespace="" kind="Namespace" name={metadata.namespace} title={metadata.namespace} /></dd>
                     <dt>Created At</dt>
                     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
-                  </div>
-                }
+                  </div> }
               </div>
-              { specDescriptors.map((specDescriptor: ClusterServiceVersionResourceSpecDescriptor, i) => {
-                const specValue = getBlockValue(specDescriptor, spec);
+              { specDescriptors.map((specDescriptor: SpecDescriptor, i) => <div key={i} className="col-xs-6">
+                <ClusterServiceVersionResourceSpec namespace={metadata.namespace} resource={this.props.obj} kindObj={this.props.kindObj} specValue={blockValue(specDescriptor, spec)} specDescriptor={specDescriptor} />
+              </div>) }
 
-                return <div key={i} className="col-xs-6">
-                  <SpecDescriptor namespace={metadata.namespace} resource={this.props.obj} kindObj={this.props.kindObj} specValue={specValue} specDescriptor={specDescriptor} />
-                </div>;
-              }) }
-
-              { filteredStatusDescriptors.map((statusDescriptor: ClusterServiceVersionResourceStatusDescriptor) => {
-                const statusValue = getBlockValue(statusDescriptor, status);
-                const showStatus = !isFilledStatusValue(statusValue) && this.state.expanded;
-                return showStatus ? <div className="col-xs-6 text-muted" key={statusDescriptor.path}><ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} /></div> : null;
-              }) }
+              { statusDescriptors.filter(descriptor => !isMainDescriptor(descriptor))
+                .map((statusDescriptor: StatusDescriptor) => {
+                  const statusValue = blockValue(statusDescriptor, status);
+                  return !_.isEmpty(statusValue) || _.isNumber(statusValue) || this.state.expanded
+                    ? <div className="col-xs-6" key={statusDescriptor.path}>
+                      <ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} />
+                    </div>
+                    : null;
+                }) }
             </div>
           </div>
         </div>
@@ -236,110 +217,29 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
     }
   });
 
-const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: {data: K8sResourceKind[]}}) => {
-  return _.flatMap(resources, (resource, kind) => resource.data.map(item => ({...item, kind})))
-    .reduce((owned, resource) => {
-      return (resource.metadata.ownerReferences || []).some(ref => ref.uid === parentObj.metadata.uid || owned.some(({metadata}) => metadata.uid === ref.uid))
-        ? owned.concat([resource])
-        : owned;
-    }, [] as K8sResourceKind[]);
-};
 
-export const Resources = connectToPlural((resourceprops: ResourceProps) => {
-  const kindObj = resourceprops.kindObj;
-  const clusterServiceVersion = resourceprops.clusterServiceVersion;
 
-  // If the CSV defines a resources list under the CRD, then we use that instead of the default.
-  const ownedDefinitions = _.get(clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
-  const thisDefinition = _.find(ownedDefinitions, (def) => def.name.split('.')[0] === kindObj ? kindObj.path : '(none)');
+export const CSVResourceDetails: React.SFC<CSVResourceDetailsProps> = (props) => <div>
+  { props.csv && !_.isEmpty(props.csv.data) && <DetailsPage
+    {...props}
+    menuActions={Cog.factory.common}
+    breadcrumbs={[
+      {name: props.match.params.appName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
+      {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
+    ]}
+    pages={[
+      navFactory.details((detailsProps) => <ClusterServiceVersionResourceDetails {...detailsProps} clusterServiceVersion={props.csv.data} appName={props.match.params.appName} />),
+      navFactory.editYaml(),
+      // eslint-disable-next-line react/display-name
+      {name: 'Resources', href: 'resources', component: (resourcesProps) => <Resources {...resourcesProps} clusterServiceVersion={props.csv.data} />},
+    ]}
+  /> }
+</div>;
 
-  let resources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'].map(kind => ({kind, namespaced: true}));
-  let crds = [];
-
-  if (thisDefinition && thisDefinition.resources) {
-    resources = thisDefinition.resources.map(ref => {
-      if (ref.name) {
-        return resourceForCRD(ref);
-      }
-      return {kind: ref.kind, namespaced: true};
-    });
-
-    crds = thisDefinition.resources.filter(ref => ref.name).map(ref => ref.kind);
-  }
-
-  const isCR = (obj) => crds.find((kind) => kind === obj.kind);
-
-  const ResourceHeader: React.StatelessComponent<ResourceHeaderProps> = (props) => <ListHeader>
-    <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-    <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
-    <ColHead {...props} className="col-xs-2" sortField="status.phase">Status</ColHead>
-    <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
-  </ListHeader>;
-
-  const ResourceRow: React.StatelessComponent<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
-    <div className="col-xs-4">
-      { isCR(obj) ? <ClusterServiceVersionResourceLink obj={obj} /> :
-        <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      }
-    </div>
-    <div className="col-xs-2">{obj.kind}</div>
-    <div className="col-xs-2">{_.get(obj.status, 'phase', 'Created')}</div>
-    <div className="col-xs-4"><Timestamp timestamp={obj.metadata.creationTimestamp} /></div>
-  </div>;
-
-  const obj = resourceprops.obj;
-  return <MultiListPage
-    filterLabel="Resources by name"
-    resources={resources}
-    rowFilters={[{
-      type: 'clusterserviceversion-resource-kind',
-      selected: resources.map(({kind}) => kind),
-      reducer: ({kind}) => kind,
-      items: resources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
-    }]}
-    flatten={flattenFor(obj)}
-    namespace={obj.metadata.namespace}
-    ListComponent={(props) => <List
-      {...props}
-      data={props.data.map(o => ({...o, rowKey: o.metadata.uid}))}
-      EmptyMsg={() => <MsgBox title="No Resources Found" detail="Resources are dependent servcies and Kubernetes primitives used by this instance." />}
-      Header={ResourceHeader}
-      Row={ResourceRow} />}
-  />;
-});
-Resources.displayName = 'Resources';
-
-export const ClusterServiceVersionResourcesDetailsPage =
-  class ClusterServiceVersionResourcesDetailsComponent extends React.Component<ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsPageState> {
-    constructor(props) {
-      super(props);
-      this.state = {clusterServiceVersion: null};
-
-      const appName = props.match.params.appName;
-      if (!_.isEmpty(appName)) {
-        k8sGet(ClusterServiceVersionModel, appName, props.namespace).then((clusterServiceVersion) => {
-          this.setState({clusterServiceVersion});
-        });
-      }
-    }
-
-    render() {
-      // TODO(alecmerdler): Make first breadcrumb `name` the `displayName` of ClusterServiceVersion
-      return <DetailsPage
-        {...this.props}
-        menuActions={Cog.factory.common}
-        breadcrumbs={[
-          {name: this.props.match.params.appName, path: `${this.props.match.url.split('/').filter((v, i) => i <= this.props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
-          {name: `${kindForReference(this.props.kind)} Details`, path: `${this.props.match.url}`},
-        ]}
-        pages={[
-          navFactory.details((props) => <ClusterServiceVersionResourceDetails {...props} clusterServiceVersion={this.state.clusterServiceVersion} appName={props.match.params.appName} />),
-          navFactory.editYaml(),
-          {name: 'Resources', href: 'resources', component: (props) => <Resources {...props} clusterServiceVersion={this.state.clusterServiceVersion} />},
-        ]}
-      />;
-    }
-  };
+export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterServiceVersionResourcesDetailsPageProps> = (props) => (
+  <Firehose resources={[{kind: referenceForModel(ClusterServiceVersionModel), name: props.match.params.appName, namespace: props.namespace, isList: false, prop: 'csv'}]}>
+    <CSVResourceDetails {...props} />
+  </Firehose>);
 
 export type ClusterServiceVersionResourceListProps = {
   loaded: boolean;
@@ -378,8 +278,12 @@ export type ClusterServiceVersionResourcesDetailsPageProps = {
   match: match<any>;
 };
 
-export type ClusterServiceVersionResourcesDetailsPageState = {
-  clusterServiceVersion: ClusterServiceVersionKind;
+export type CSVResourceDetailsProps = {
+  csv?: {data: ClusterServiceVersionKind};
+  kind: K8sFullyQualifiedResourceReference;
+  name: string;
+  namespace: string;
+  match: match<{appName: string}>;
 };
 
 export type ClusterServiceVersionResourcesDetailsState = {
@@ -388,25 +292,6 @@ export type ClusterServiceVersionResourcesDetailsState = {
 
 export type ClusterServiceVersionResourceLinkProps = {
   obj: ClusterServiceVersionResourceKind;
-};
-
-export type ResourceHeaderProps = {
-  data: K8sResourceKind[];
-};
-
-export type ResourceProps = {
-  obj: ClusterServiceVersionResourceKind;
-  kindObj: K8sKind;
-  kindsInFlight: boolean;
-  clusterServiceVersion: ClusterServiceVersionKind;
-};
-
-export type ResourceRowProps = {
-  obj: K8sResourceKind;
-};
-
-export type ResourceListProps = {
-
 };
 
 export enum PrometheusQueryTypes {
@@ -438,4 +323,6 @@ ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceLi
 ClusterServiceVersionPrometheusGraph.displayName = 'ClusterServiceVersionPrometheusGraph';
 ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';
 ClusterServiceVersionResourcesPage.displayName = 'ClusterServiceVersionResourcesPage';
-
+ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';
+CSVResourceDetails.displayName = 'CSVResourceDetails';
+Resources.displayName = 'Resources';
