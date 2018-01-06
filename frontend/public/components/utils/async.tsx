@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { LoadingBox } from './status-box';
 import { SafetyFirst } from '../safety-first';
 
-export class AsyncComponent extends SafetyFirst {
+export class AsyncComponent extends SafetyFirst<AsyncComponentProps, AsyncComponentState> {
   state: AsyncComponentState = {Component: null};
   props: AsyncComponentProps;
 

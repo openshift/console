@@ -2,7 +2,7 @@ import * as React from 'react';
 import { saveAs } from 'file-saver';
 
 import { coFetch } from '../../co-fetch';
-
+import { SafetyFirst } from '../safety-first';
 
 const buttonStyle = {
   marginBottom: 10,
@@ -10,7 +10,7 @@ const buttonStyle = {
   textOverflow: 'ellipsis',
 };
 
-export class DownloadButton extends React.Component<DownloadButtonProps, DownloadButtonState> {
+export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadButtonState> {
   constructor (props) {
     super(props);
     this.state = {

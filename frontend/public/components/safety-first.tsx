@@ -1,6 +1,11 @@
 import * as React from 'react';
 
-export class SafetyFirst extends React.Component {
+export class SafetyFirst<props, state> extends React.Component<props, state> {
+  /* eslint-disable no-undef */
+  isMounted_: boolean;
+  setState_: Function;
+  /* eslint-enable no-undef */
+
   constructor(props) {
     super(props);
     this.isMounted_ = false;
