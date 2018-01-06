@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, getFormValues } from 'redux-form';
@@ -12,20 +13,51 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 
 const empty = 'none';
 
+// Prom seems to die on bad settings
+const sanitizeForProm = obj => _.transform(obj, (o, v, k) => {
+  // drop non truthy non-zero values
+  if (!v && v !== 0) {
+    return;
+  }
+
+  // recurse
+  if (_.isObject(v)) {
+    o[k] = sanitizeForProm(v);
+    return;
+  }
+
+  // text inputs turn numbers into strings
+  if (_.isString(v)) {
+    // empty strings are invalid but we can just nuke the key...
+    if (v.length === 0) {
+      return;
+    }
+    const inted = parseFloat(k, 10);
+    if (!_.isNaN(inted)) {
+      o[k] = inted;
+      return;
+    }
+  }
+
+  o[k] = v;
+});
+
 class PromSettingsModal extends PromiseComponent {
   _submit (e) {
     e.preventDefault();
 
-    const { path, Form, obj, cancel} = this.props;
+    const { Form, obj, cancel, getNewConfig} = this.props;
     // PromiseComponent handles submitting the form.
     const formData = getFormValues(Form.formName)(store.getState());
-    if (_.isEqual(formData, _.get(obj, path))) {
-      cancel();
+    let newConfig;
+    try {
+      newConfig = _.defaultsDeep(getNewConfig(formData), this.props.config);
+    } catch (err) {
+      this.handlePromise(Promise.reject(err));
       return;
     }
 
-    const newLimits = _.set({}, path, formData);
-    const newConfig = _.defaultsDeep(newLimits, this.props.config);
+    newConfig = sanitizeForProm(newConfig);
 
     const promise = k8sPatch(k8sKinds.ConfigMap, obj, [{
       op: 'replace',
@@ -54,34 +86,64 @@ class PromSettingsModal extends PromiseComponent {
   }
 }
 
+PromSettingsModal.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  Form: PropTypes.func.isRequired,
+  obj: PropTypes.object.isRequired,
+  config: PropTypes.object.isRequired,
+  getNewConfig: PropTypes.func.isRequired,
+};
+
 const labelStyle = { fontWeight: 300 };
+const fieldStyle = { width: 150 };
+
 const MemCPUModalLink = ({section, type, config, obj}) => {
-  const path = [section, 'resources', type];
-  const {cpu=null, memory=null} = _.get(config, path, {});
+  const limit = _.get(config, [section, 'resources', 'limits', type], null);
+  const request = _.get(config, [section, 'resources', 'requests', type], null);
 
   const onClick = () => {
     const modal = createModalLauncher(props => <PromSettingsModal {...props} />);
-    const initialValues = { cpu, memory };
-    const description = `Define the ${type === 'limits' ? 'resource' : 'request'} limits for the cluster ${section === 'prometheusK8s' ? 'Prometheus instance' : 'Alertmanager'}.`;
-    const title = `Cluster Monitoring  ${type === 'limits' ? 'Resource' : 'Request'} Limits`;
+    const initialValues = { limit, request };
+    const description = `Define the ${
+      type === 'cpu' ? 'CPU' : 'memory'
+    } request and limit for the tectonic ${
+      section === 'prometheusK8s' ? 'Prometheus instance' : 'Alertmanager'
+    }.  The request may not exceed the limit.`;
+    const title = `Cluster Monitoring  ${type === 'cpu' ? 'CPU' : 'Memory'} Resource`;
+
     const CPUForm = () => <div>
       <div className="col-xs-5">
-        <label style={labelStyle} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
-        <Field name="cpu" component="input" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
+        <label style={labelStyle} className="text-muted text-uppercase" htmlFor="request">Request</label>
+        <Field name="request" component="input" type="text" className="form-control" style={fieldStyle} placeholder={type === 'cpu' ? '500m' : '2Gi'} autoFocus />
       </div>
       <div className="col-xs-5">
-        <label style={labelStyle} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
-        <Field name="memory" component="input" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
+        <label style={labelStyle} className="text-muted text-uppercase" htmlFor="limit">Limit</label>
+        <Field name="limit" component="input" type="text" className="form-control" style={fieldStyle} placeholder={type === 'cpu' ? '500m' : '2Gi'} />
       </div>
     </div>;
-    const Form = reduxForm({form: 'MemoryAndCPU', initialValues})(CPUForm);
-    Form.formName = 'MemoryAndCPU';
 
-    return modal({title, description, config, obj, Form, path});
+    const Form = reduxForm({form: 'MemoryOrCPU', initialValues})(CPUForm);
+    Form.formName = 'MemoryOrCPU';
+
+    const getNewConfig = formData => ({
+      [section]: {
+        resources: {
+          requests: {
+            [type]: formData.request,
+          },
+          limits: {
+            [type]: formData.limit,
+          },
+        }
+      }
+    });
+
+    return modal({title, description, config, obj, Form, getNewConfig});
   };
 
   return <a className="co-m-modal-link" onClick={onClick}>
-    {`CPU: ${cpu || empty}, Memory: ${memory || empty}`}
+    {`Request: ${request || empty}, Limit: ${limit || empty}`}
   </a>;
 };
 
@@ -97,14 +159,16 @@ const RetentionModalLink = ({config, obj}) => {
     const RetentionForm = () => <div>
       <div className="col-xs-5">
         <label style={labelStyle} className="text-muted text-uppercase" htmlFor="retention">sample retention</label>
-        <Field name="retention" component="input" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="24h" />
+        <Field name="retention" component="input" type="text" className="form-control" style={fieldStyle} autoFocus placeholder="24h" />
       </div>
     </div>;
 
     const Form = reduxForm({form: 'RetentionForm', initialValues})(RetentionForm);
     Form.formName = 'RetentionForm';
 
-    return modal({title, description, config, obj, Form, path});
+    const getNewConfig = formData => _.set({}, path, formData);
+
+    return modal({title, description, obj, Form, config, getNewConfig});
   };
 
   return <a className="co-m-modal-link" onClick={onClick}>
@@ -148,14 +212,16 @@ class ClusterMonitoring_ extends React.PureComponent {
         <div className="row">
           <div className="col-md-6">
             <dl>
-              <dt>Resource Limits</dt>
+              <dt>CPU Resources</dt>
               <dd>
-                <MemCPUModalLink section="prometheusK8s" type="limits" config={config} obj={obj} />
+                <MemCPUModalLink section="prometheusK8s" type="cpu" config={config} obj={obj} />
               </dd>
-              <dt>Request Limits</dt>
+              <dt>Memory Resources</dt>
               <dd>
-                <MemCPUModalLink section="prometheusK8s" type="requests" config={config} obj={obj} />
+                <MemCPUModalLink section="prometheusK8s" type="memory" config={config} obj={obj} />
               </dd>
+              <dt>Alert manager</dt>
+              <dd><AlertManagersListContainer /></dd>
             </dl>
           </div>
           <div className="col-md-6">
@@ -172,13 +238,13 @@ class ClusterMonitoring_ extends React.PureComponent {
         <div className="row">
           <div className="col-md-6">
             <dl>
-              <dt>Resource Limits</dt>
+              <dt>CPU Resources</dt>
               <dd>
-                <MemCPUModalLink section="alertmanagerMain" type="limits" config={config} obj={obj} />
+                <MemCPUModalLink section="alertmanagerMain" type="cpu" config={config} obj={obj} />
               </dd>
-              <dt>Request Limits</dt>
+              <dt>Memory Resources</dt>
               <dd>
-                <MemCPUModalLink section="alertmanagerMain" type="requests" config={config} obj={obj} />
+                <MemCPUModalLink section="alertmanagerMain" type="memory" config={config} obj={obj} />
               </dd>
             </dl>
           </div>
@@ -188,8 +254,6 @@ class ClusterMonitoring_ extends React.PureComponent {
               <dd>
                 {_.get(config, 'alertmanagerMain.volumeClaimTemplate') || empty}
               </dd>
-              <dt>Alert manager</dt>
-              <dd><AlertManagersListContainer /></dd>
             </dl>
           </div>
         </div>
