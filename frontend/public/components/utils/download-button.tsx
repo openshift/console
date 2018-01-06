@@ -23,10 +23,12 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
     const { filename, url } = this.props;
     this.setState({inFlight: true, error: null});
     coFetch(url)
-      .then(response => response.blob()
-        .then(blob => saveAs(blob, filename)))
-      .then(() => this.setState({error: null}))
-      .catch(e => this.setState({error: e}))
+      .then(response => response.blob())
+      .then(blob => saveAs(blob, filename))
+      .then(
+        () => this.setState({error: null}),
+        e => this.setState({error: e})
+      )
       .then(() => this.setState({inFlight: false}));
   }
 
