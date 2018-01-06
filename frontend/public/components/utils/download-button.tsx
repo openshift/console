@@ -22,7 +22,8 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
   download () {
     const { filename, url } = this.props;
     this.setState({inFlight: true, error: null});
-    coFetch(url)
+    // Increase default timeout to 30 seconds.
+    coFetch(url, {}, 30000)
       .then(response => response.blob())
       .then(blob => saveAs(blob, filename))
       .then(
