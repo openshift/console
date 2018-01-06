@@ -9,6 +9,10 @@ const buttonStyle = {
   maxWidth: 300,
   textOverflow: 'ellipsis',
 };
+const spanStyle = {
+  position: 'absolute' as 'absolute',
+  left: 0,
+};
 
 export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadButtonState> {
   constructor (props) {
@@ -36,12 +40,13 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
   render () {
     const { filename } = this.props;
     const { error, inFlight } = this.state;
+    // The position styling and always-hidden filename are so the button doesn't resize when its content changes.
     return <div>
       <button className="btn btn-primary" style={buttonStyle} disabled={inFlight} type="button" onClick={() => this.download()}>
         <i className="fa fa-fw fa-download" />&nbsp;Download
         <span style={{position: 'relative'}}>
-          { inFlight && <span style={{position: 'absolute', left: 0}}>ing...</span> }
-          <span style={{position: 'absolute', left: 0, visibility: inFlight ? 'hidden' : 'visible'}}>&nbsp;{filename}</span>
+          { inFlight && <span style={spanStyle}>ing...</span> }
+          <span style={Object.assign({}, spanStyle, {visibility: inFlight ? 'hidden' : 'visible'})}>&nbsp;{filename}</span>
         </span>
         <span style={{visibility: 'hidden'}}>&nbsp;{filename}</span>
       </button>
