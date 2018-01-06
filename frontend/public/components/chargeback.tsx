@@ -2,9 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList } from './utils';
-import { coFetch } from '../co-fetch';
-import { saveAs } from 'file-saver';
+import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference, resourceURL, modelFor } from '../module/k8s';
 
@@ -54,9 +52,11 @@ const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
 };
 
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
-  download (obj, format='json') {
+  render () {
+    const {obj} = this.props;
     const serviceModel = modelFor('Service');
     const name = _.get(obj, ['metadata', 'name']);
+    const format = 'csv';
     const url = resourceURL(serviceModel, {
       ns: obj.metadata.namespace,
       name: 'chargeback',
@@ -66,21 +66,12 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
         format,
       },
     });
-    coFetch(url).then(response => response.blob().then(blob => saveAs(blob, `${name}.${format}`)));
-  }
-
-  render () {
-    const {obj} = this.props;
     return <div className="col-md-12">
       <Heading text="Chargeback Report" />
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-sm-6 col-xs-12">
-            <p>
-              <button className="btn btn-primary" type="button" onClick={() => this.download(obj, 'csv')}>
-                <i className="fa fa-download" />&nbsp;Download CSV
-              </button>
-            </p>
+            <DownloadButton url={url} filename={`${name}.${format}`} />
           </div>
         </div>
         <div className="row">

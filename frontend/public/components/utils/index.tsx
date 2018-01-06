@@ -30,3 +30,4 @@ export * from './operator-states';
 export * from './container-linux-update-operator';
 export * from './link';
 export * from './async';
+export * from './download-button';
