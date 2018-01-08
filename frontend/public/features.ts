@@ -15,6 +15,7 @@ import { coFetchJSON } from './co-fetch';
   CLOUD_SERVICES: false,
   CLOUD_CATALOGS: false,
   CALICO: false,
+  CHARGEBACK: false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -25,6 +26,7 @@ export enum FLAGS {
   CLOUD_SERVICES = 'CLOUD_SERVICES',
   CLOUD_CATALOGS = 'CLOUD_CATALOGS',
   CALICO = 'CALICO',
+  CHARGEBACK = 'CHARGEBACK',
 }
 
 const DEFAULTS = {
@@ -36,6 +38,7 @@ const DEFAULTS = {
   [FLAGS.CLOUD_SERVICES]: undefined,
   [FLAGS.CLOUD_CATALOGS]: undefined,
   [FLAGS.CALICO]: undefined,
+  [FLAGS.CHARGEBACK]: undefined,
 };
 
 const SET_FLAGS = 'SET_FLAGS';
@@ -64,6 +67,7 @@ export const CRDS_ = {
   'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
   'uicatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
   'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
+  'reports.chargeback.coreos.com': FLAGS.CHARGEBACK,
 };
 
 const labellerDeploymentPath = `${k8sBasePath}/apis/apps/v1beta2/deployments`;

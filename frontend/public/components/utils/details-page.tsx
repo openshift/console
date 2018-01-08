@@ -60,7 +60,7 @@ export type ResourceSummaryProps = {
   showNodeSelector?: boolean;
   showAnnotations?: boolean;
   podSelector?: string;
-  children?: React.ReactChildren;
+  children?: JSX.Element[];
 };
 
 export type ResourcePodCountProps = {

@@ -68,9 +68,7 @@ export class TimeoutError extends Error {
   }
 }
 
-const FETCH_TIMEOUT = 10000;
-
-export const coFetch = (url, options = {}) => {
+export const coFetch = (url, options = {}, timeout=10000) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
 
   // If the URL being requested is absolute (and therefore, not a local request),
@@ -82,7 +80,7 @@ export const coFetch = (url, options = {}) => {
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([
     fetch(url, allOptions).then(validateStatus),
-    new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, FETCH_TIMEOUT)), FETCH_TIMEOUT)),
+    new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, timeout)), timeout)),
   ]);
 };
 
