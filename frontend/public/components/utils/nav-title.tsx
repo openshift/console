@@ -8,7 +8,7 @@ import { ClusterServiceVersionLogo } from '../cloud-services';
 import { K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 
-export const BreadCrumbs: React.StatelessComponent<BreadCrumbsProps> = ({breadcrumbs}) => (
+export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
   <div className="co-m-nav-title__breadcrumbs">
     { breadcrumbs.map((crumb, i, {length}) => {
       const isLast = i === length - 1;

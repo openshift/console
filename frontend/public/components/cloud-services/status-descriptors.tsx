@@ -5,7 +5,7 @@ import { ALMStatusDescriptors, ALMSpecDescriptors } from './index';
 import { Donut } from '../graphs';
 import { ResourceLink } from '../utils';
 
-export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (props) => {
+export const PodStatusChart: React.SFC<PodStatusChartProps> = (props) => {
   const {statusDescriptor, fetcher} = props;
   const donutFetcher = () => {
     const fetched = fetcher();
@@ -17,11 +17,11 @@ export const PodStatusChart: React.StatelessComponent<PodStatusChartProps> = (pr
   return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
 };
 
-export const Phase: React.StatelessComponent<PhaseProps> = ({status}) => <span className={status === 'Failed' ? 'co-error' : ''}>
+export const Phase: React.SFC<PhaseProps> = ({status}) => <span className={status === 'Failed' ? 'co-error' : ''}>
   { status === 'Failed' && <i className="fa fa-ban" /> } {status}
 </span>;
 
-export const ClusterServiceVersionResourceStatus: React.StatelessComponent<ClusterServiceVersionResourceStatusProps> = (props) => {
+export const ClusterServiceVersionResourceStatus: React.SFC<ClusterServiceVersionResourceStatusProps> = (props) => {
   const {statusDescriptor, statusValue, namespace} = props;
   const descriptors = statusDescriptor['x-descriptors'] || [];
   if (_.isEmpty(statusValue) && !_.isNumber(statusValue)) {

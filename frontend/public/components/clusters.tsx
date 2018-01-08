@@ -28,7 +28,7 @@ const ClustersHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-5">Addresses</ColHead>
 </ListHeader>;
 
-const ClustersRow: React.StatelessComponent<ClustersRowProps> = ({obj}) => {
+const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
   const clusterLink = _.get(obj, ['metadata', 'annotations', 'multicluster.coreos.com/console-url']);
   const clusterType = _.get(obj, ['metadata', 'annotations', 'multicluster.coreos.com/directory']);
 
@@ -51,7 +51,7 @@ const ClustersRow: React.StatelessComponent<ClustersRowProps> = ({obj}) => {
   </div>;
 };
 
-const ClustersDetails: React.StatelessComponent<ClustersDetailsProps> = ({obj}) => <div className="col-md-12">
+const ClustersDetails: React.SFC<ClustersDetailsProps> = ({obj}) => <div className="col-md-12">
   <Heading text="Cluster Overview" />
   <div className="co-m-pane__body">
     <div className="row">
@@ -62,9 +62,9 @@ const ClustersDetails: React.StatelessComponent<ClustersDetailsProps> = ({obj}) 
   </div>
 </div>;
 
-export const ClustersList: React.StatelessComponent = props => <List {...props} Header={ClustersHeader} Row={ClustersRow} />;
+export const ClustersList: React.SFC = props => <List {...props} Header={ClustersHeader} Row={ClustersRow} />;
 
-export const ClustersPage: React.StatelessComponent<ClustersPageProps> = props => <div>
+export const ClustersPage: React.SFC<ClustersPageProps> = props => <div>
   <div className="co-well" style={{marginBottom: 0}}>
     Thanks for trying out the Multi-Cluster Directory. Future updates will enable add/remove and other policy features. Feedback and questions are encouraged: <a href="mailto:tectonic-alpha-feedback@coreos.com">tectonic-alpha-feedback@coreos.com</a>
   </div>
@@ -73,7 +73,7 @@ export const ClustersPage: React.StatelessComponent<ClustersPageProps> = props =
 
 const pages = [navFactory.details(detailsPage(ClustersDetails)), navFactory.editYaml()];
 
-export const ClustersDetailsPage: React.StatelessComponent<ClustersDetailsPageProps> = props => {
+export const ClustersDetailsPage: React.SFC<ClustersDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ClusterReference} menuActions={menuActions} pages={pages} />;
 };
 

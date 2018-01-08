@@ -10,12 +10,12 @@ import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind,
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 
-export const SelectNamespaceHeader: React.StatelessComponent<SelectNamespaceHeaderProps> = (props) => <ListHeader>
+export const SelectNamespaceHeader: React.SFC<SelectNamespaceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-3">Status</ColHead>
 </ListHeader>;
 
-export const SelectNamespaceRow: React.StatelessComponent<SelectNamespaceRowProps> = (props) => {
+export const SelectNamespaceRow: React.SFC<SelectNamespaceRowProps> = (props) => {
   const {obj, onSelect, onDeselect, selected} = props;
   const toggle = () => selected ? onDeselect({namespace: obj.metadata.name}) : onSelect({namespace: obj.metadata.name});
 

@@ -21,7 +21,7 @@ export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) 
   </label>
 </div>;
 
-/** @type {React.StatelessComponent<{label: string, onChange: React.ChangeEventHandler<any>, defaultValue: string}}>} */
+/** @type {React.SFC<{label: string, onChange: React.ChangeEventHandler<any>, defaultValue: string}}>} */
 export const TextFilter = ({label, onChange, defaultValue, style, className, autoFocus=true}) => <input
   type="text"
   style={style}
@@ -215,7 +215,7 @@ FireMan_.propTypes = {
   ).isRequired,
 };
 
-/** @type {React.StatelessComponent<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], fieldSelector?: string, canCreate?: boolean}>} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], fieldSelector?: string, canCreate?: boolean}>} */
 export const ListPage = props => {
   const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true} = props;
   const {labelPlural, plural, namespaced, label} = kindObj(kind);
@@ -251,7 +251,7 @@ export const ListPage = props => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.StatelessComponent<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
   const {createButtonText, flatten, filterLabel, createProps, showTitle = true, title, namespace} = props;
   const resources = _.map(props.resources, (r) => ({

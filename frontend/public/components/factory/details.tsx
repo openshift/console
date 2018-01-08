@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { Firehose, VertNav, NavTitle } from '../utils';
 import { K8sResourceKindReference } from '../../module/k8s';
 
-export const DetailsPage: React.StatelessComponent<DetailsPageProps> = (props) => <Firehose resources={[{
+export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose resources={[{
   kind: props.kind,
   name: props.name,
   namespace: props.namespace,

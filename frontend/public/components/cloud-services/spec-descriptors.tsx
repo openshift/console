@@ -24,7 +24,7 @@ const configureSizeModal = (kindObj, resource, specDescriptor, specValue, wasCha
   });
 };
 
-export const EndpointRow: React.StatelessComponent<EndpointRowProps> = ({endpoint}) => {
+export const EndpointRow: React.SFC<EndpointRowProps> = ({endpoint}) => {
   let detail = <span className="text-muted">--</span>;
 
   if (_.has(endpoint, 'scheme')) {
@@ -59,7 +59,7 @@ export const EndpointRow: React.StatelessComponent<EndpointRowProps> = ({endpoin
   </div>;
 };
 
-export const EndpointList: React.StatelessComponent<EndpointListProps> = (props) => <div className="service-ips">
+export const EndpointList: React.SFC<EndpointListProps> = (props) => <div className="service-ips">
   { props.endpoints.map((e, i) => <EndpointRow endpoint={e} key={i} />) }
 </div>;
 

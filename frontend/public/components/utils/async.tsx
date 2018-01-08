@@ -53,5 +53,5 @@ enum AsyncComponentError {
   ComponentNotFound = 'COMPONENT_NOT_FOUND',
 }
 
-export type AsyncComponentProps = {loader: () => Promise<React.ComponentClass | React.StatelessComponent>} & any;
-export type AsyncComponentState = {Component: React.ComponentClass | React.StatelessComponent};
+export type AsyncComponentProps = {loader: () => Promise<React.ComponentClass | React.SFC>} & any;
+export type AsyncComponentState = {Component: React.ComponentClass | React.SFC};

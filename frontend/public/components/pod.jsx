@@ -29,7 +29,7 @@ spec:
         - containerPort: 6379`);
 
 
-/** @type {React.StatelessComponent.<{pod: string}>} */
+/** @type {React.SFC.<{pod: string}>} */
 export const Readiness = ({pod}) => {
   const readiness = podReadiness(pod);
   if (!readiness) {

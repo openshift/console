@@ -103,7 +103,7 @@ Cog.factory = {
 // The common menu actions that most resource share
 Cog.factory.common = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
-/** @type {React.StatelessComponent<{actions: any[], kind: string, resource: any, isDisabled?: boolean}>} */
+/** @type {React.SFC<{actions: any[], kind: string, resource: any, isDisabled?: boolean}>} */
 export const ResourceCog = connectToModel(({actions, kindObj, resource, isDisabled}) => {
   if (!kindObj) {
     return null;

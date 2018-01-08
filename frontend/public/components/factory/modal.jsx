@@ -53,7 +53,7 @@ export const ModalFooter = ({message, errorMessage, inProgress, children}) => {
   </ButtonBar>;
 };
 
-/** @type {React.StatelessComponent<{message?: string, errorMessage?: string, inProgress: boolean, cancel: (e: Event) => void, submitText: string, submitDisabled?: boolean}>} */
+/** @type {React.SFC<{message?: string, errorMessage?: string, inProgress: boolean, cancel: (e: Event) => void, submitText: string, submitDisabled?: boolean}>} */
 export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled}) => {
   const onCancelClick = e => {
     e.stopPropagation();

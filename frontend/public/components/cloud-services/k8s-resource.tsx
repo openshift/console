@@ -39,14 +39,14 @@ export const Resources = connectToPlural((props: ResourceProps) => {
   // FIXME: Comparing `kind` is not enough to determine if an object is a custom resource
   const isCR = (k8sObj) => crds.find((kind) => kind === k8sObj.kind);
 
-  const ResourceHeader: React.StatelessComponent<ResourceHeaderProps> = (headerProps) => <ListHeader>
+  const ResourceHeader: React.SFC<ResourceHeaderProps> = (headerProps) => <ListHeader>
     <ColHead {...headerProps} className="col-xs-4" sortField="metadata.name">Name</ColHead>
     <ColHead {...headerProps} className="col-xs-2" sortField="kind">Type</ColHead>
     <ColHead {...headerProps} className="col-xs-2" sortField="status.phase">Status</ColHead>
     <ColHead {...headerProps} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
   </ListHeader>;
 
-  const ResourceRow: React.StatelessComponent<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
+  const ResourceRow: React.SFC<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
     <div className="col-xs-4">
       { isCR(obj) ? <ClusterServiceVersionResourceLink obj={obj} /> : <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} /> }
     </div>

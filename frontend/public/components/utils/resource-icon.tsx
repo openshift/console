@@ -24,7 +24,7 @@ export type ResourceNameProps = {
 };
 /* eslint-enable no-undef */
 
-export const ResourceName: React.StatelessComponent<ResourceNameProps> = (props) => <span><ResourceIcon kind={props.kind} /> {props.name}</span>;
+export const ResourceName: React.SFC<ResourceNameProps> = (props) => <span><ResourceIcon kind={props.kind} /> {props.name}</span>;
 
 ResourceIcon.displayName = 'ResourceIcon';
 ResourceName.displayName = 'ResourceName';

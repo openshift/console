@@ -8,12 +8,12 @@ import { selectText } from './index';
 /**
  * Displays text that is not expected to fit within its container. Also adds an onClick handler that selects the text.
  */
-export const Overflow: React.StatelessComponent<OverflowProps> = ({className, value}) => <div className={classNames('co-m-overflow', className)}>
+export const Overflow: React.SFC<OverflowProps> = ({className, value}) => <div className={classNames('co-m-overflow', className)}>
   <input className="co-m-invisible-input co-m-overflow__input" value={value || '-'} readOnly spellCheck={false} onClick={selectText} />
   <div className="co-m-overflow__gradient"></div>
 </div>;
 
-export const OverflowLink: React.StatelessComponent<OverflowLinkProps> = ({className, href, value}) => <div className={classNames('co-m-overflow', className)}>
+export const OverflowLink: React.SFC<OverflowLinkProps> = ({className, href, value}) => <div className={classNames('co-m-overflow', className)}>
   <a className="co-m-overflow__link" href={href}>{value || '-'}</a>
   <div className="co-m-overflow__gradient"></div>
 </div>;
@@ -21,7 +21,7 @@ export const OverflowLink: React.StatelessComponent<OverflowLinkProps> = ({class
 /**
  * Displays text that is not expected to fit within its container.
  */
-export const OverflowYFade: React.StatelessComponent<OverflowYFadeProps> = ({className, children}) => <div className={classNames('co-overflow-y-fade', className)}>
+export const OverflowYFade: React.SFC<OverflowYFadeProps> = ({className, children}) => <div className={classNames('co-overflow-y-fade', className)}>
   {children}
   <div className="co-m-overflow__gradient"></div>
 </div>;

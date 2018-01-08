@@ -37,7 +37,7 @@ export const resourcePath = (kind, name, namespace = undefined) => {
 
 export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
-/** @type {React.StatelessComponent<{kind: K8sResourceKindReference, name: string, namespace: string, title: string, displayName?: string}>} */
+/** @type {React.SFC<{kind: K8sResourceKindReference, name: string, namespace: string, title: string, displayName?: string}>} */
 export const ResourceLink = ({kind, name, namespace, title, displayName}) => {
   const path = resourcePath(kind, name, namespace);
   const value = displayName ? displayName : name;

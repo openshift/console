@@ -157,7 +157,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
       annotations: testClusterServiceVersionResource.metadata.annotations,
     };
     // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
-    const Component: React.StatelessComponent<ClusterServiceVersionResourcesDetailsProps> = (ClusterServiceVersionResourceDetails as any).WrappedComponent;
+    const Component: React.SFC<ClusterServiceVersionResourcesDetailsProps> = (ClusterServiceVersionResourceDetails as any).WrappedComponent;
     wrapper = shallow(<Component clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} appName={testClusterServiceVersion.metadata.name} />);
   });
 
