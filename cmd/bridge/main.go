@@ -238,7 +238,8 @@ func main() {
 			err                      error
 			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
 			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
-			cookiePath               = proxy.SingleJoiningSlash(srv.BaseURL.Path, "/api/")
+			// Abstraction leak required by NewAuthenticator. We only want the browser to send the auth token for paths starting with basePath/api.
+			cookiePath = proxy.SingleJoiningSlash(srv.BaseURL.Path, "/api/")
 		)
 
 		if *fKubectlClientID != "" {

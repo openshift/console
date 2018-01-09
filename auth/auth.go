@@ -81,6 +81,7 @@ func GetTokenBySessionCookie(r *http.Request) (string, error) {
 	return ls.token.Encode(), nil
 }
 
+// NewAuthenticator initializes an Authenticator struct. cookiePath is an abstraction leak. (unfortunately, a necessary one.)
 func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
