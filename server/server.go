@@ -168,9 +168,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/api/tectonic/ldap/validate", handleLDAPVerification)
 	handleFunc("/api/tectonic/namespaces", useListNamespaces)
 	handleFunc("/api/tectonic/crds", useListCRDs)
-	mux.HandleFunc("/api/tectonic/certs", useCertsHandler)
-	mux.HandleFunc("/api/tectonic/clients", useClientsHandler)
-	mux.HandleFunc("/api/tectonic/revoke-token", useTokenRevocationHandler)
+	handleFunc("/api/tectonic/certs", useCertsHandler)
+	handleFunc("/api/tectonic/clients", useClientsHandler)
+	handleFunc("/api/tectonic/revoke-token", useTokenRevocationHandler)
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return http.Handler(mux)
