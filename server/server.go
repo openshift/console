@@ -127,6 +127,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	if !s.AuthDisabled() {
 		handleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
+		handleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
 		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc(fn))
 
 		if s.KubectlAuther != nil {

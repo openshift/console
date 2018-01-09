@@ -130,6 +130,26 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, oac.AuthCodeURL("", "", ""), http.StatusSeeOther)
 }
 
+// LogoutFunc cleans up session cookies.
+func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
+	ls, _ := getLoginState(r)
+	if ls != nil {
+		delete(sessions, ls.sessionToken)
+	}
+	// Delete session cookie
+	cookie := http.Cookie{
+		Name:     tectonicSessionCookieName,
+		Value:    "",
+		MaxAge:   0,
+		HttpOnly: true,
+		Path:     a.cookiePath,
+		// TODO: set secure true if we're in prod (serving over https)
+		// Secure:   true,
+	}
+	http.SetCookie(w, &cookie)
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // ExchangeAuthCode allows callers to return a raw token response given a OAuth2
 // code. This is useful for clients which need to request refresh tokens.
 func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, error) {
