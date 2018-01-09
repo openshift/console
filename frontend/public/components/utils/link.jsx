@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
 // long. This pattern checks the pattern but not the length.
