@@ -11,12 +11,13 @@ import (
 // None of the serializable fields contain any sensitive information,
 // and should be safe to send as a non-http-only cookie.
 type loginState struct {
-	UserID string
-	Name   string
-	Email  string
-	exp    time.Time
-	token  token
-	now    nowFunc
+	UserID       string
+	Name         string
+	Email        string
+	exp          time.Time
+	token        token
+	now          nowFunc
+	sessionToken string
 }
 
 type LoginJSON struct {

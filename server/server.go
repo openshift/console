@@ -360,7 +360,7 @@ func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *Server) handleListCRDs(w http.ResponseWriter, r *http.Request) {
-	bearerToken, err := auth.ExtractTokenFromRequest(r)
+	bearerToken, err := auth.GetTokenBySessionCookie(r)
 	if err != nil {
 		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
 	}
@@ -368,7 +368,7 @@ func (s *Server) handleListCRDs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleListNamespaces(w http.ResponseWriter, r *http.Request) {
-	bearerToken, err := auth.ExtractTokenFromRequest(r)
+	bearerToken, err := auth.GetTokenBySessionCookie(r)
 	if err != nil {
 		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
 	}

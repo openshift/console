@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/go-oidc/oauth2"
@@ -29,6 +31,11 @@ const (
 )
 
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
+
+const tectonicSessionCookieName = "tectonic-session-token"
+
+// TODO: prune this. (default to a max of 32k sessions or something)
+var sessions = make(map[string]*loginState)
 
 type Authenticator struct {
 	TokenExtractor oidc.RequestTokenExtractor
@@ -72,6 +79,23 @@ func ExtractTokenFromRequest(r *http.Request) (string, error) {
 	return "", errors.New("token not found in request (Sec-WebSocket-Protocol or Authorization Header)")
 }
 
+func GetTokenBySessionCookie(r *http.Request) (string, error) {
+	sessionCookie, err := r.Cookie(tectonicSessionCookieName)
+	if err != nil {
+		return "", err
+	}
+	sessionToken := sessionCookie.Value
+	ls := sessions[sessionToken]
+	if ls == nil {
+		return "", fmt.Errorf("No session found on server")
+	}
+	if ls.exp.Sub(time.Now()) < 0 {
+		delete(sessions, sessionToken)
+		return "", fmt.Errorf("Session is expired.")
+	}
+	return ls.token.Encode(), nil
+}
+
 func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL string) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
@@ -90,7 +114,7 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 
 	return &Authenticator{
 		TokenVerifier:  jwtVerifier(client),
-		TokenExtractor: ExtractTokenFromRequest,
+		TokenExtractor: GetTokenBySessionCookie,
 		oidcClient:     client,
 		issuerURL:      issuerURL,
 		errorURL:       errURL,
@@ -160,6 +184,34 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			a.redirectAuthError(w, errorInternal, nil)
 			return
 		}
+
+		// TODO: move this code to a saner place
+		const tokenLength = 128
+		sessionToken := make([]byte, tokenLength)
+		const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		for i := range sessionToken {
+			sessionToken[i] = letterBytes[rand.Intn(len(letterBytes))]
+		}
+
+		sessionTokenString := string(sessionToken)
+		ls.sessionToken = sessionTokenString
+		if sessions[sessionTokenString] != nil {
+			log.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionTokenString)
+			a.redirectAuthError(w, errorInternal, nil)
+			return
+		}
+		sessions[sessionTokenString] = ls
+		cookie := http.Cookie{
+			Name:   tectonicSessionCookieName,
+			Value:  sessionTokenString,
+			MaxAge: maxAge(ls.exp, time.Now()),
+			// TODO: set secure true if we're in prod (serving over https)
+			// Secure:   true,
+			HttpOnly: true,
+			// TODO: set path to basepath + api
+			Path: "/",
+		}
+		http.SetCookie(w, &cookie)
 
 		log.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)

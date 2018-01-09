@@ -325,7 +325,7 @@ func main() {
 		srv.CustomResourceDefinitionLister.BearerToken = string(*fK8sAuthBearerToken)
 	case "oidc":
 		validateFlagIs("user-auth", *fUserAuth, "oidc")
-		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ExtractTokenFromRequest)
+		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.GetTokenBySessionCookie)
 	default:
 		flagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc")
 	}
