@@ -286,9 +286,7 @@ const Details = ({obj: node}) => {
               </thead>
               <tbody>
                 {_.map(node.status.images, (image, i) => <tr key={i}>
-                  <td>
-                    {image.names.find(name => name.indexOf('@') === -1)}
-                  </td>
+                  <td>{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
                   <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
                 </tr>)}
               </tbody>
