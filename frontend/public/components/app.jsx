@@ -10,7 +10,6 @@ import store from '../redux';
 import { getCRDs } from '../kinds';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
-import { authSvc } from '../module/auth';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';

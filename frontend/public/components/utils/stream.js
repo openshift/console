@@ -1,5 +1,3 @@
-import { authSvc } from '../../module/auth';
-
 export const stream = (url, loadStart, notify) => {
   const xhr = new XMLHttpRequest();
 
