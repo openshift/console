@@ -26,14 +26,13 @@ import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
-import { history, Loading, getNamespace } from './utils';
+import { history, getNamespace } from './utils';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage } from './cloud-services/catalog';
 import { ClusterServiceVersionModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import '../style.scss';
-import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
@@ -43,14 +42,6 @@ Route.propTypes.path = PropTypes.oneOfType([
   PropTypes.string,
   PropTypes.arrayOf(PropTypes.string),
 ]);
-
-const LoadingScreen = () => <div className="loading-screen">
-  <div className="loading-screen__logo">
-    <img src={tectonicLogoImg} id="logo" />
-  </div>
-  <Loading className="loading-screen__loader" />
-  <div>Loading your Tectonic Console</div>
-</div>;
 
 // eslint-disable-next-line react/display-name
 const boundResourcePage = (Page, plural) => props => <Page {...props} plural={plural} />;
@@ -67,10 +58,6 @@ const crdDetailsPage = boundResourcePage(ResourceDetailsPage, 'customresourcedef
 
 class App extends React.PureComponent {
   onRouteChange (props) {
-    if (!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn()) {
-      authSvc.login();
-      return;
-    }
     if (props) {
       const namespace = getNamespace(props.location.pathname);
       store.dispatch(UIActions.setCurrentLocation(props.location.pathname, namespace));
@@ -95,8 +82,6 @@ class App extends React.PureComponent {
   render () {
     return <div className="co-container">
       <Helmet titleTemplate="%s · Tectonic" />
-
-      {!window.SERVER_FLAGS.authDisabled && !authSvc.isLoggedIn() && <LoadingScreen />}
 
       <GlobalNotifications />
 

@@ -25,7 +25,6 @@ type LoginJSON struct {
 	Name   string `json:"name"`
 	Email  string `json:"email"`
 	Exp    int64  `json:"exp"`
-	Token  string `json:"bearerToken"`
 }
 
 // newLoginState unpacks a token and generates a new loginState from it.
@@ -60,7 +59,6 @@ func (ls *loginState) toLoginJSON() LoginJSON {
 		UserID: ls.UserID,
 		Name:   ls.Name,
 		Email:  ls.Email,
-		Token:  ls.token.Encode(),
 		Exp:    ls.exp.Unix(),
 	}
 }
