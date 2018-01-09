@@ -3,13 +3,11 @@ package auth
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/coreos/dex/api"
@@ -45,6 +43,7 @@ type Authenticator struct {
 	issuerURL  *url.URL
 	errorURL   string
 	successURL string
+	cookiePath string
 }
 
 // The trivial token "extractor" always extracts a constant string.
@@ -56,47 +55,33 @@ func ConstantTokenExtractor(s string) func(*http.Request) (string, error) {
 	}
 }
 
-// ExtractTokenFromRequest is a RequestTokenExtractor which extracts a token from a WebSocket Subprotocol if needed
-// this is only needed until k8s supports subprotocol auth for WS
-func ExtractTokenFromRequest(r *http.Request) (string, error) {
-	header := r.Header.Get("Authorization")
-	if header != "" {
-		return oidc.ExtractBearerToken(r)
-	}
-
-	protocolKey := "Sec-WebSocket-Protocol"
-	protocolHeader := r.Header.Get(protocolKey)
-	protocols := strings.Split(protocolHeader, ",")
-
-	bearerTokenPrefix := "base64url.bearer.authorization.k8s.io."
-	for _, protocol := range protocols {
-		split := strings.Split(strings.TrimSpace(protocol), bearerTokenPrefix)
-		if len(split) == 2 {
-			return split[1], nil
-		}
-	}
-
-	return "", errors.New("token not found in request (Sec-WebSocket-Protocol or Authorization Header)")
-}
-
-func GetTokenBySessionCookie(r *http.Request) (string, error) {
+func getLoginState(r *http.Request) (*loginState, error) {
 	sessionCookie, err := r.Cookie(tectonicSessionCookieName)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	sessionToken := sessionCookie.Value
 	ls := sessions[sessionToken]
 	if ls == nil {
-		return "", fmt.Errorf("No session found on server")
+		return nil, fmt.Errorf("No session found on server")
 	}
 	if ls.exp.Sub(time.Now()) < 0 {
 		delete(sessions, sessionToken)
-		return "", fmt.Errorf("Session is expired.")
+		return nil, fmt.Errorf("Session is expired.")
+	}
+	return ls, nil
+}
+
+// GetTokenBySessionCookie gets the k8s bearer token from the session
+func GetTokenBySessionCookie(r *http.Request) (string, error) {
+	ls, err := getLoginState(r)
+	if err != nil {
+		return "", err
 	}
 	return ls.token.Encode(), nil
 }
 
-func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL string) (*Authenticator, error) {
+func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
 		return nil, err
@@ -112,6 +97,10 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		sucURL = successURL
 	}
 
+	if cookiePath == "" {
+		cookiePath = "/"
+	}
+
 	return &Authenticator{
 		TokenVerifier:  jwtVerifier(client),
 		TokenExtractor: GetTokenBySessionCookie,
@@ -119,6 +108,7 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		issuerURL:      issuerURL,
 		errorURL:       errURL,
 		successURL:     sucURL,
+		cookiePath:     cookiePath,
 	}, nil
 }
 
@@ -148,6 +138,16 @@ func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, err
 		return oauth2.TokenResponse{}, err
 	}
 	return oauth2Client.RequestToken(oauth2.GrantTypeAuthCode, code)
+}
+
+func randomString(length int) string {
+	bytes := make([]byte, length)
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	for i := range bytes {
+		bytes[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+
+	return string(bytes)
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
@@ -185,31 +185,22 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		// TODO: move this code to a saner place
-		const tokenLength = 128
-		sessionToken := make([]byte, tokenLength)
-		const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		for i := range sessionToken {
-			sessionToken[i] = letterBytes[rand.Intn(len(letterBytes))]
-		}
-
-		sessionTokenString := string(sessionToken)
-		ls.sessionToken = sessionTokenString
-		if sessions[sessionTokenString] != nil {
-			log.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionTokenString)
+		sessionToken := randomString(128)
+		ls.sessionToken = sessionToken
+		if sessions[sessionToken] != nil {
+			log.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 			a.redirectAuthError(w, errorInternal, nil)
 			return
 		}
-		sessions[sessionTokenString] = ls
+		sessions[sessionToken] = ls
 		cookie := http.Cookie{
-			Name:   tectonicSessionCookieName,
-			Value:  sessionTokenString,
-			MaxAge: maxAge(ls.exp, time.Now()),
+			Name:     tectonicSessionCookieName,
+			Value:    sessionToken,
+			MaxAge:   maxAge(ls.exp, time.Now()),
+			HttpOnly: true,
+			Path:     a.cookiePath,
 			// TODO: set secure true if we're in prod (serving over https)
 			// Secure:   true,
-			HttpOnly: true,
-			// TODO: set path to basepath + api
-			Path: "/",
 		}
 		http.SetCookie(w, &cookie)
 

@@ -238,6 +238,7 @@ func main() {
 			err                      error
 			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
 			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
+			cookiePath               = proxy.SingleJoiningSlash(srv.BaseURL.Path, "/api/")
 		)
 
 		if *fKubectlClientID != "" {
@@ -268,7 +269,7 @@ func main() {
 				Scope: []string{"openid", "email", "profile", "offline_access", "groups"},
 			}
 
-			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
+			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath); err != nil {
 				log.Fatalf("Error initializing kubectl authenticator: %v", err)
 			}
 
@@ -283,7 +284,7 @@ func main() {
 			)
 		}
 
-		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint); err != nil {
+		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath); err != nil {
 			log.Fatalf("Error initializing OIDC authenticator: %v", err)
 		}
 	case "disabled":
