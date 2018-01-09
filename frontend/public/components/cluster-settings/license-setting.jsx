@@ -33,7 +33,7 @@ export class LicenseSetting extends React.Component {
   }
 
   _queryLicense() {
-    coFetchJSON('version')
+    coFetchJSON('api/tectonic/version')
       .then(this._update.bind(this))
       .then(this._updateOutdated.bind(this))
       .catch((error) => {
