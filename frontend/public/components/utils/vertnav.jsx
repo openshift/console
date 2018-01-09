@@ -50,7 +50,7 @@ export const navFactory = {
   }),
 };
 
-/** @type {React.StatelessComponent<{pages: {href: string, name: string, component: React.ComponentType}, basePath: string}>} */
+/** @type {React.SFC<{pages: {href: string, name: string, component: React.ComponentType}, basePath: string}>} */
 export const NavBar = ({pages, basePath}) => {
   const divider = <li className="co-m-vert-nav__menu-item co-m-vert-nav__menu-item--divider" key="_divider" />;
   basePath = basePath.replace(/\/$/, '');

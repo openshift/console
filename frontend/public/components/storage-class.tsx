@@ -28,7 +28,7 @@ const StorageClassHeader = props => <ListHeader>
 </ListHeader>;
 
 
-const StorageClassRow: React.StatelessComponent<StorageClassRowProps> = ({obj}) => {
+const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-xs-3">
       <ResourceCog actions={menuActions} kind={StorageClassReference} resource={obj} />
@@ -46,7 +46,7 @@ const StorageClassRow: React.StatelessComponent<StorageClassRowProps> = ({obj}) 
   </div>;
 };
 
-const StorageClassDetails: React.StatelessComponent<StorageClassDetailsProps> = ({obj}) => <div className="col-xs-12">
+const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <div className="col-xs-12">
   <Heading text="StorageClass Overview" />
   <div className="co-m-pane__body">
     <div className="row">
@@ -57,17 +57,17 @@ const StorageClassDetails: React.StatelessComponent<StorageClassDetailsProps> = 
   </div>
 </div>;
 
-export const StorageClassList: React.StatelessComponent = props => <List {...props} Header={StorageClassHeader} Row={StorageClassRow} />;
+export const StorageClassList: React.SFC = props => <List {...props} Header={StorageClassHeader} Row={StorageClassRow} />;
 StorageClassList.displayName = 'StorageClassList';
 
-export const StorageClassPage: React.StatelessComponent<StorageClassPageProps> = props =>
+export const StorageClassPage: React.SFC<StorageClassPageProps> = props =>
   <ListPage {...props} title="Storage Classes" kind={StorageClassReference} ListComponent={StorageClassList} canCreate={true} filterLabel={props.filterLabel} />;
 StorageClassPage.displayName = 'StorageClassListPage';
 
 
 const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
 
-export const StorageClassDetailsPage: React.StatelessComponent<StorageClassDetailsPageProps> = props => {
+export const StorageClassDetailsPage: React.SFC<StorageClassDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={StorageClassReference} menuActions={menuActions} pages={pages} />;
 };
 StorageClassDetailsPage.displayName = 'StorageClassDetailsPage';

@@ -14,13 +14,13 @@ import { createDisableApplicationModal } from '../modals/disable-application-mod
 import { k8sCreate, k8sKill, K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel, UICatalogEntryModel } from '../../models';
 
-export const CatalogAppHeader: React.StatelessComponent<CatalogAppHeaderProps> = (props) => <ListHeader>
+export const CatalogAppHeader: React.SFC<CatalogAppHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-md-4 col-xs-8" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-5 hidden-sm">Status</ColHead>
   <ColHead {...props} className="col-md-3 col-xs-4" />
 </ListHeader>;
 
-export const Breakdown: React.StatelessComponent<BreakdownProps> = (props) => {
+export const Breakdown: React.SFC<BreakdownProps> = (props) => {
   const {failed, pending, succeeded, awaiting} = props.status;
   const pluralizeNS = (count: number) => count !== 1 ? 'namespaces' : 'namespace';
 
@@ -56,7 +56,7 @@ export const Breakdown: React.StatelessComponent<BreakdownProps> = (props) => {
   return <span />;
 };
 
-export const BreakdownDetail: React.StatelessComponent<BreakdownDetailProps> = (props) => {
+export const BreakdownDetail: React.SFC<BreakdownDetailProps> = (props) => {
   const {pending, succeeded, failed, awaiting, deleting} = props.status;
   const percent = (succeeded.length / [...pending, ...succeeded, ...failed, ...awaiting].length) * 100;
 
@@ -164,12 +164,12 @@ export const CatalogAppRow = connect(stateToProps)(
     }
   });
 
-export const CatalogAppList: React.StatelessComponent<CatalogAppListProps> = (props) => {
+export const CatalogAppList: React.SFC<CatalogAppListProps> = (props) => {
   const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Application entries are supplied by the Open Cloud Catalog." />;
   return <List {...props} Row={CatalogAppRow} Header={CatalogAppHeader} isList={true} label="Applications" EmptyMsg={EmptyMsg} />;
 };
 
-export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
+export const CatalogAppsPage: React.SFC = () => <MultiListPage
   ListComponent={CatalogAppList}
   filterLabel="Applications by name"
   title="Applications"
@@ -183,7 +183,7 @@ export const CatalogAppsPage: React.StatelessComponent = () => <MultiListPage
   ]}
 />;
 
-export const CatalogDetails: React.StatelessComponent = () => <div className="co-catalog-details co-m-pane">
+export const CatalogDetails: React.SFC = () => <div className="co-catalog-details co-m-pane">
   <div className="co-m-pane__body">
     <div className="col-xs-4">
       <dl>
@@ -203,7 +203,7 @@ export const CatalogDetails: React.StatelessComponent = () => <div className="co
   </div>
 </div>;
 
-export const CatalogsDetailsPage: React.StatelessComponent = () => <div>
+export const CatalogsDetailsPage: React.SFC = () => <div>
   <Helmet>
     <title>Open Cloud Services</title>
   </Helmet>

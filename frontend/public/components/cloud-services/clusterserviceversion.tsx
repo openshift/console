@@ -14,7 +14,7 @@ import { AsyncComponent } from '../utils/async';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
 
-export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServiceVersionListItemProps> = (props) => {
+export const ClusterServiceVersionListItem: React.SFC<ClusterServiceVersionListItemProps> = (props) => {
   const {obj, namespaces = []} = props;
   const route = (namespace) => `/ns/${namespace}/clusterserviceversion-v1s/${obj.metadata.name}`;
 
@@ -35,12 +35,12 @@ export const ClusterServiceVersionListItem: React.StatelessComponent<ClusterServ
   </div>;
 };
 
-export const ClusterServiceVersionHeader: React.StatelessComponent = () => <ListHeader>
+export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-xs-8">Name</ColHead>
   <ColHead className="col-xs-4">Actions</ColHead>
 </ListHeader>;
 
-export const ClusterServiceVersionRow: React.StatelessComponent<ClusterServiceVersionRowProps> = ({obj}) => {
+export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> = ({obj}) => {
   const route = `/ns/${obj.metadata.namespace}/clusterserviceversion-v1s/${obj.metadata.name}`;
 
   return <div className="row co-resource-list__item">
@@ -54,7 +54,7 @@ export const ClusterServiceVersionRow: React.StatelessComponent<ClusterServiceVe
   </div>;
 };
 
-export const ClusterServiceVersionList: React.StatelessComponent<ClusterServiceVersionListProps> = (props) => {
+export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
   const {loaded, loadError, filters} = props;
   const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Applications are installed per namespace from the Open Cloud Catalog." />;
   const clusterServiceVersions = (props.data.filter(res => referenceFor(res) === referenceForModel(ClusterServiceVersionModel)) as ClusterServiceVersionKind[])
@@ -175,7 +175,7 @@ export const MarkdownView = (props: {content: string}) => {
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
-export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServiceVersionDetailsProps> = (props) => {
+export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata} = props.obj;
   const route = (name: string) => `/ns/${metadata.namespace}/clusterserviceversion-v1s/${metadata.name}/${name.split('.')[0]}/new`;
 
@@ -221,8 +221,8 @@ export const ClusterServiceVersionDetails: React.StatelessComponent<ClusterServi
   </div>;
 };
 
-export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => {
-  const Instances: React.StatelessComponent<{obj: ClusterServiceVersionKind}> = ({obj}) => <div>
+export const ClusterServiceVersionsDetailsPage: React.SFC<ClusterServiceVersionsDetailsPageProps> = (props) => {
+  const Instances: React.SFC<{obj: ClusterServiceVersionKind}> = ({obj}) => <div>
     <ClusterServiceVersionResourcesPage obj={obj} />
   </div>;
   Instances.displayName = 'Instances';

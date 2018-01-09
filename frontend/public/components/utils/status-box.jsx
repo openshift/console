@@ -22,7 +22,7 @@ export const Loading = ({className}) => <div className={classNames('co-m-loader 
 
 export const LoadingInline = () => <Loading className="co-m-loader--inline" />;
 
-/** @type {React.StatelessComponent<{className?: string}>} */
+/** @type {React.SFC<{className?: string}>} */
 export const LoadingBox = ({className}) => <Box className={className}><Loading /></Box>;
 LoadingBox.displayName = 'LoadingBox';
 

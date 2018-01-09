@@ -15,7 +15,7 @@ import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFo
 import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
 
-export const ClusterServiceVersionResourceHeader: React.StatelessComponent<ClusterServiceVersionResourceHeaderProps> = (props) => <ListHeader>
+export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersionResourceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="metadata.labels">Labels</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
@@ -24,7 +24,7 @@ export const ClusterServiceVersionResourceHeader: React.StatelessComponent<Clust
   <ColHead {...props} className="col-xs-2">Last Updated</ColHead>
 </ListHeader>;
 
-export const ClusterServiceVersionResourceLink: React.StatelessComponent<ClusterServiceVersionResourceLinkProps> = (props) => {
+export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionResourceLinkProps> = (props) => {
   const {namespace, name} = props.obj.metadata;
   const appName = location.pathname.split('/')[location.pathname.split('/').indexOf('clusterserviceversion-v1s') + 1];
 
@@ -34,7 +34,7 @@ export const ClusterServiceVersionResourceLink: React.StatelessComponent<Cluster
   </span>;
 };
 
-export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterServiceVersionResourceRowProps> = (props) => {
+export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionResourceRowProps> = (props) => {
   const {obj} = props;
 
   return <div className="row co-resource-list__item">
@@ -60,13 +60,13 @@ export const ClusterServiceVersionResourceRow: React.StatelessComponent<ClusterS
   </div>;
 };
 
-export const ClusterServiceVersionResourceList: React.StatelessComponent<ClusterServiceVersionResourceListProps> = (props) => {
+export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionResourceListProps> = (props) => {
   const EmptyMsg = () => <MsgBox title="No Application Resources Found" detail="Application resources are declarative components used to define the behavior of the application." />;
 
   return <List {...props} EmptyMsg={EmptyMsg} Header={ClusterServiceVersionResourceHeader} Row={ClusterServiceVersionResourceRow} label="Application Resources" />;
 };
 
-export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<ClusterServiceVersionPrometheusGraphProps> = (props) => {
+export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersionPrometheusGraphProps> = (props) => {
   switch (props.query.type) {
     case PrometheusQueryTypes.Counter:
       return <Scalar title={props.query.name} unit={props.query.unit} query={props.query.query} basePath={props.basePath} />;
@@ -81,7 +81,7 @@ export const ClusterServiceVersionPrometheusGraph: React.StatelessComponent<Clus
   }
 };
 
-export const ClusterServiceVersionResourcesPage: React.StatelessComponent<ClusterServiceVersionResourcesPageProps> = (props) => {
+export const ClusterServiceVersionResourcesPage: React.SFC<ClusterServiceVersionResourcesPageProps> = (props) => {
   const {obj} = props;
   const {owned = []} = obj.spec.customresourcedefinitions;
   const firehoseResources = owned.map((crdDesc) => ({

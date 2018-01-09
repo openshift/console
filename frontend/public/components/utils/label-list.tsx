@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 import * as _ from 'lodash';
 
-const Label: React.StatelessComponent<LabelProps> = ({kind, name, value, expand}) => {
+const Label: React.SFC<LabelProps> = ({kind, name, value, expand}) => {
   const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
   const klass = classNames('co-m-label', {'co-m-label--expand': expand});
 
