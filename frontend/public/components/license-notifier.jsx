@@ -72,7 +72,7 @@ class LicenseNotifier extends React.Component {
   }
 
   _queryLicense() {
-    coFetchJSON('version')
+    coFetchJSON('api/tectonic/version')
       .then(this._update.bind(this))
       .catch((error) => {
         // fail silently

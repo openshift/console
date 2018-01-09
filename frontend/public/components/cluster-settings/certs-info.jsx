@@ -20,7 +20,7 @@ export class CertsInfoContainer extends SafetyFirst {
   }
 
   _getCertInfo() {
-    coFetchJSON('tectonic/certs')
+    coFetchJSON('api/tectonic/certs')
       .then((info) => {
         this.setState({ info });
       })

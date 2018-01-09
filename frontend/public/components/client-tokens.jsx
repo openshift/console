@@ -23,7 +23,7 @@ export class ClientTokensContainer extends SafetyFirst {
   }
 
   _getClients() {
-    coFetchJSON('tectonic/clients')
+    coFetchJSON('api/tectonic/clients')
       .then((clients) => {
         this.setState({ clients: _.get(clients, 'token_data') || [], resourceLoaded: true });
       })
@@ -49,7 +49,7 @@ const RevokeToken = (id, onTokenRevocation) => ({
     executeFn: () => {
       const data = new FormData();
       data.append('clientId', id);
-      const promise = coFetch('tectonic/revoke-token', {
+      const promise = coFetch('api/tectonic/revoke-token', {
         method: 'POST',
         body: data
       }).then(onTokenRevocation);

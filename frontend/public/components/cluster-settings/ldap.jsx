@@ -416,7 +416,7 @@ const LDAPs = reduxForm({
         const version = this.props.error;
         const connector = getFormValues(LDAPFormName)(store.getState());
         const json = reduxToConnector(connector);
-        coFetchJSON.post('tectonic/ldap/validate', json)
+        coFetchJSON.post('api/tectonic/ldap/validate', json)
           .then(data => {
             const state = {};
             if (data.error) {
