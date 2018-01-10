@@ -1,13 +1,15 @@
 package auth
 
 import (
+	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/coreos/dex/api"
@@ -163,12 +165,12 @@ func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, err
 
 func randomString(length int) string {
 	bytes := make([]byte, length)
-	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	for i := range bytes {
-		bytes[i] = letterBytes[rand.Intn(len(letterBytes))]
+	_, err := rand.Read(bytes)
+	if err != nil {
+		log.Errorf("FATAL ERROR: Unable to get random bytes for session token: %v", err)
+		os.Exit(1)
 	}
-
-	return string(bytes)
+	return base64.StdEncoding.EncodeToString(bytes)
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
