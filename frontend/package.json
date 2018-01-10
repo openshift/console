@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "rm -rf ./public/dist/ && webpack --watch --progress",
-    "build": "rm -rf ./public/dist && NODE_ENV=production webpack",
+    "dev": "rm -rf ./public/dist/ && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --watch --progress",
+    "build": "rm -rf ./public/dist && NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack",
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
@@ -42,8 +42,8 @@
       "text-summary"
     ],
     "collectCoverageFrom": [
-      "public/*.{js,jsx}",
-      "public/{components,module,ui}/**/*.{js,jsx}"
+      "public/*.{js,jsx,ts,tsx}",
+      "public/{components,module,ui}/**/*.{js,jsx,ts,tsx}"
     ]
   },
   "dependencies": {
@@ -90,6 +90,7 @@
     "@types/react-redux": "5.x",
     "@types/react-router-dom": "4.x",
     "@types/react-transition-group": "2.x",
+    "@types/webpack": "^3.8.2",
     "awesome-typescript-loader": "3.x",
     "chromedriver": "2.x",
     "css-loader": "0.28.x",

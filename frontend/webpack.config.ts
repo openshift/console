@@ -1,10 +1,10 @@
 /* eslint-env node */
 
-const webpack = require('webpack');
-const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+import * as webpack from 'webpack';
+import * as path from 'path';
+import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
+import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -12,7 +12,7 @@ const NODE_ENV = process.env.NODE_ENV;
 const gitHash = () => require('child_process').execSync('git rev-parse --short HEAD').toString().trim();
 const extractSass = new ExtractTextPlugin({filename: 'app-bundle.css'});
 
-let config = {
+let config: webpack.Configuration = {
   entry: {
     app:  './public/components/app.jsx',
   },
@@ -111,4 +111,4 @@ if (NODE_ENV === 'production') {
   config.stats = 'normal';
 }
 
-module.exports = config;
+export default config;
