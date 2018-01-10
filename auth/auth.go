@@ -1,14 +1,16 @@
 package auth
 
 import (
+	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
-	"errors"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
+	"os"
+	"time"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/go-oidc/oauth2"
@@ -30,6 +32,11 @@ const (
 
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 
+const tectonicSessionCookieName = "tectonic-session-token"
+
+// TODO: prune this. (default to a max of 32k sessions or something)
+var sessions = make(map[string]*loginState)
+
 type Authenticator struct {
 	TokenExtractor oidc.RequestTokenExtractor
 	TokenVerifier  tokenVerifier
@@ -38,6 +45,7 @@ type Authenticator struct {
 	issuerURL  *url.URL
 	errorURL   string
 	successURL string
+	cookiePath string
 }
 
 // The trivial token "extractor" always extracts a constant string.
@@ -49,30 +57,34 @@ func ConstantTokenExtractor(s string) func(*http.Request) (string, error) {
 	}
 }
 
-// ExtractTokenFromRequest is a RequestTokenExtractor which extracts a token from a WebSocket Subprotocol if needed
-// this is only needed until k8s supports subprotocol auth for WS
-func ExtractTokenFromRequest(r *http.Request) (string, error) {
-	header := r.Header.Get("Authorization")
-	if header != "" {
-		return oidc.ExtractBearerToken(r)
+func getLoginState(r *http.Request) (*loginState, error) {
+	sessionCookie, err := r.Cookie(tectonicSessionCookieName)
+	if err != nil {
+		return nil, err
 	}
-
-	protocolKey := "Sec-WebSocket-Protocol"
-	protocolHeader := r.Header.Get(protocolKey)
-	protocols := strings.Split(protocolHeader, ",")
-
-	bearerTokenPrefix := "base64url.bearer.authorization.k8s.io."
-	for _, protocol := range protocols {
-		split := strings.Split(strings.TrimSpace(protocol), bearerTokenPrefix)
-		if len(split) == 2 {
-			return split[1], nil
-		}
+	sessionToken := sessionCookie.Value
+	ls := sessions[sessionToken]
+	if ls == nil {
+		return nil, fmt.Errorf("No session found on server")
 	}
-
-	return "", errors.New("token not found in request (Sec-WebSocket-Protocol or Authorization Header)")
+	if ls.exp.Sub(time.Now()) < 0 {
+		delete(sessions, sessionToken)
+		return nil, fmt.Errorf("Session is expired.")
+	}
+	return ls, nil
 }
 
-func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL string) (*Authenticator, error) {
+// GetTokenBySessionCookie gets the k8s bearer token from the session
+func GetTokenBySessionCookie(r *http.Request) (string, error) {
+	ls, err := getLoginState(r)
+	if err != nil {
+		return "", err
+	}
+	return ls.token.Encode(), nil
+}
+
+// NewAuthenticator initializes an Authenticator struct. cookiePath is an abstraction leak. (unfortunately, a necessary one.)
+func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
 		return nil, err
@@ -88,13 +100,18 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		sucURL = successURL
 	}
 
+	if cookiePath == "" {
+		cookiePath = "/"
+	}
+
 	return &Authenticator{
 		TokenVerifier:  jwtVerifier(client),
-		TokenExtractor: ExtractTokenFromRequest,
+		TokenExtractor: GetTokenBySessionCookie,
 		oidcClient:     client,
 		issuerURL:      issuerURL,
 		errorURL:       errURL,
 		successURL:     sucURL,
+		cookiePath:     cookiePath,
 	}, nil
 }
 
@@ -116,6 +133,26 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, oac.AuthCodeURL("", "", ""), http.StatusSeeOther)
 }
 
+// LogoutFunc cleans up session cookies.
+func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
+	ls, _ := getLoginState(r)
+	if ls != nil {
+		delete(sessions, ls.sessionToken)
+	}
+	// Delete session cookie
+	cookie := http.Cookie{
+		Name:     tectonicSessionCookieName,
+		Value:    "",
+		MaxAge:   0,
+		HttpOnly: true,
+		Path:     a.cookiePath,
+		// TODO: set secure true if we're in prod (serving over https)
+		// Secure:   true,
+	}
+	http.SetCookie(w, &cookie)
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // ExchangeAuthCode allows callers to return a raw token response given a OAuth2
 // code. This is useful for clients which need to request refresh tokens.
 func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, error) {
@@ -124,6 +161,16 @@ func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, err
 		return oauth2.TokenResponse{}, err
 	}
 	return oauth2Client.RequestToken(oauth2.GrantTypeAuthCode, code)
+}
+
+func randomString(length int) string {
+	bytes := make([]byte, length)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		log.Errorf("FATAL ERROR: Unable to get random bytes for session token: %v", err)
+		os.Exit(1)
+	}
+	return base64.StdEncoding.EncodeToString(bytes)
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
@@ -160,6 +207,25 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			a.redirectAuthError(w, errorInternal, nil)
 			return
 		}
+
+		sessionToken := randomString(128)
+		ls.sessionToken = sessionToken
+		if sessions[sessionToken] != nil {
+			log.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
+			a.redirectAuthError(w, errorInternal, nil)
+			return
+		}
+		sessions[sessionToken] = ls
+		cookie := http.Cookie{
+			Name:     tectonicSessionCookieName,
+			Value:    sessionToken,
+			MaxAge:   maxAge(ls.exp, time.Now()),
+			HttpOnly: true,
+			Path:     a.cookiePath,
+			// TODO: set secure true if we're in prod (serving over https)
+			// Secure:   true,
+		}
+		http.SetCookie(w, &cookie)
 
 		log.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)

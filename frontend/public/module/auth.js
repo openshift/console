@@ -1,14 +1,27 @@
+import { coFetch } from '../co-fetch';
+import { stripBasePath } from '../components/utils/link';
+
 const loginState = key => localStorage.getItem(key);
 
 const loginStateItem = key => loginState(key);
 
-const bearerToken = 'bearerToken';
 const userID = 'userID';
 const name = 'name';
 const email = 'email';
 
+const setNext = next => {
+  if (!next) {
+    return;
+  }
+  try {
+    localStorage.setItem('next', stripBasePath(next));
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
+};
+
 export const authSvc = {
-  getToken: () => localStorage.getItem(bearerToken),
   userID: () => {
     const id = loginStateItem(userID);
     try {
@@ -22,8 +35,9 @@ export const authSvc = {
   name: () => loginStateItem(name),
   email: () => loginStateItem(email),
 
-  logout: () => {
-    [userID, name, email, bearerToken].forEach(key => {
+  logout: (next) => {
+    setNext(next);
+    [userID, name, email].forEach(key => {
       try {
         localStorage.removeItem(key);
       } catch (e) {
@@ -31,36 +45,17 @@ export const authSvc = {
         console.error(e);
       }
     });
-    authSvc.login();
+    coFetch(window.SERVER_FLAGS.logoutURL, {
+      method: 'POST',
+    }).then(() => authSvc.login()).catch(e => {
+      // eslint-disable-next-line no-console
+      console.error('ERROR LOGGING OUT', e);
+      authSvc.login();
+    });
   },
 
   login: () => {
-    try {
-      localStorage.setItem('next', window.location.pathname);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
+    setNext(window.location.pathname);
     window.location = window.SERVER_FLAGS.loginURL;
   },
-
-  // Infer user is logged-in by presence of valid state cookie.
-  isLoggedIn: () => {
-    const token = authSvc.getToken();
-    if (!token) {
-      return false;
-    }
-    const split = token.split('.');
-    if (split.length !== 3) {
-      return false;
-    }
-    const middle = split[1];
-
-    try {
-      JSON.parse(atob(middle));
-    } catch (ignored) {
-      return false;
-    }
-    return true;
-  }
 };

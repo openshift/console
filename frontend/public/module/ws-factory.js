@@ -6,8 +6,6 @@
 /* eslint-disable no-console */
 import * as _ from 'lodash';
 
-import { authSvc } from './auth';
-
 const wsCache = {};
 
 const HEARTBEAT_INTERVAL = 30000;
@@ -150,18 +148,11 @@ WebSocketWrapper.prototype._reconnect = function() {
   this._connectionAttempt = setTimeout(attempt, delay);
 };
 
-const token = authSvc.getToken();
-
 WebSocketWrapper.prototype._connect = function() {
   const that = this;
   this._state = 'init';
   this._buffer = [];
   const auth = [];
-  if (token) {
-    // https://github.com/kubernetes/kubernetes/pull/47740
-    auth.push(`base64url.bearer.authorization.k8s.io.${token}`);
-    auth.push('base64.binary.k8s.io');
-  }
   this.ws = new WebSocket(this.url, auth);
 
   this.ws.onopen = function() {

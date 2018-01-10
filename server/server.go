@@ -127,6 +127,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	if !s.AuthDisabled() {
 		handleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
+		handleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
 		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc(fn))
 
 		if s.KubectlAuther != nil {
@@ -162,14 +163,14 @@ func (s *Server) HTTPHandler() http.Handler {
 		useTokenRevocationHandler = authMiddleware(s.Auther, http.HandlerFunc(s.handleTokenRevocation))
 	}
 
-	handleFunc("/version", useVersionHandler)
-	handleFunc("/license/validate", useValidateLicenseHandler)
-	handleFunc("/tectonic/ldap/validate", handleLDAPVerification)
+	handleFunc("/api/tectonic/version", useVersionHandler)
+	handleFunc("/api/tectonic/license/validate", useValidateLicenseHandler)
+	handleFunc("/api/tectonic/ldap/validate", handleLDAPVerification)
 	handleFunc("/api/tectonic/namespaces", useListNamespaces)
 	handleFunc("/api/tectonic/crds", useListCRDs)
-	mux.HandleFunc("/tectonic/certs", useCertsHandler)
-	mux.HandleFunc("/tectonic/clients", useClientsHandler)
-	mux.HandleFunc("/tectonic/revoke-token", useTokenRevocationHandler)
+	handleFunc("/api/tectonic/certs", useCertsHandler)
+	handleFunc("/api/tectonic/clients", useClientsHandler)
+	handleFunc("/api/tectonic/revoke-token", useTokenRevocationHandler)
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return http.Handler(mux)
@@ -360,7 +361,7 @@ func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *Server) handleListCRDs(w http.ResponseWriter, r *http.Request) {
-	bearerToken, err := auth.ExtractTokenFromRequest(r)
+	bearerToken, err := auth.GetTokenBySessionCookie(r)
 	if err != nil {
 		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
 	}
@@ -368,7 +369,7 @@ func (s *Server) handleListCRDs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleListNamespaces(w http.ResponseWriter, r *http.Request) {
-	bearerToken, err := auth.ExtractTokenFromRequest(r)
+	bearerToken, err := auth.GetTokenBySessionCookie(r)
 	if err != nil {
 		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
 	}

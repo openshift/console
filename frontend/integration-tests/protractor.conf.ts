@@ -90,7 +90,7 @@ const ignoredErrors = ImmutableSet<string>()
   .add('shouldComponentUpdate should not be used when extending React.PureComponent')
   .add('Error: <path> attribute d: Expected number')
   .add('Error: <text> attribute transform: Expected number')
-  .add('/tectonic/certs - Failed to load resource: the server responded with a status of 500');
+  .add('/api/tectonic/certs - Failed to load resource: the server responded with a status of 500');
 
 export const checkLogs = async() => (await browser.manage().logs().get('browser'))
   .map(log => {

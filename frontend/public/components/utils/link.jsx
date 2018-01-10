@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
 // long. This pattern checks the pattern but not the length.
@@ -16,7 +14,7 @@ const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 const nsPathPattern = new RegExp(`^/?ns/(${legalNamePattern.source})/?(.*)$`);
 const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 
-const stripBasePath = path => {
+export const stripBasePath = path => {
   path = path.replace(basePathPattern, '/');
   path = path.replace(/^\/?k8s\//, '');
   return path;

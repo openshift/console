@@ -21,7 +21,7 @@ func TestRedirectAuthError(t *testing.T) {
 		},
 		RedirectURL: "http://example.com/callback",
 	}
-	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL)
+	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL, "/")
 
 	a.redirectAuthError(w, "fake_error", err)
 	if err != nil {

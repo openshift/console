@@ -11,12 +11,13 @@ import (
 // None of the serializable fields contain any sensitive information,
 // and should be safe to send as a non-http-only cookie.
 type loginState struct {
-	UserID string
-	Name   string
-	Email  string
-	exp    time.Time
-	token  token
-	now    nowFunc
+	UserID       string
+	Name         string
+	Email        string
+	exp          time.Time
+	token        token
+	now          nowFunc
+	sessionToken string
 }
 
 type LoginJSON struct {
@@ -24,7 +25,6 @@ type LoginJSON struct {
 	Name   string `json:"name"`
 	Email  string `json:"email"`
 	Exp    int64  `json:"exp"`
-	Token  string `json:"bearerToken"`
 }
 
 // newLoginState unpacks a token and generates a new loginState from it.
@@ -59,7 +59,6 @@ func (ls *loginState) toLoginJSON() LoginJSON {
 		UserID: ls.UserID,
 		Name:   ls.Name,
 		Email:  ls.Email,
-		Token:  ls.token.Encode(),
 		Exp:    ls.exp.Unix(),
 	}
 }

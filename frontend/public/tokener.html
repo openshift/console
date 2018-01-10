@@ -7,7 +7,7 @@
       var json = [[.]];
       var error;
       try {
-        ['exp', 'email', 'name', 'userID', 'bearerToken'].forEach(function (key) {
+        ['exp', 'email', 'name', 'userID'].forEach(function (key) {
           localStorage.setItem(key, json[key]);
         });
       } catch (e) {

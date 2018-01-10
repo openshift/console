@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { authSvc } from '../../module/auth';
 import { k8sBasePath } from '../../module/k8s';
 import { coFetchJSON } from '../../co-fetch';
 import { PromiseComponent } from '../utils';
@@ -15,9 +14,8 @@ class TokenInfoModal extends PromiseComponent {
   }
 
   componentWillMount () {
-    const token = authSvc.getToken();
     this.handlePromise(
-      coFetchJSON.post(`${k8sBasePath}/apis/authentication.k8s.io/v1beta1/tokenreviews`, { spec: {token} })
+      coFetchJSON.post(`${k8sBasePath}/apis/authentication.k8s.io/v1beta1/tokenreviews`)
     ).then(res => {
       try {
         /* Don't show bearer token. It's secret and we don't want a user to

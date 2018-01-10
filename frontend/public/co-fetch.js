@@ -5,18 +5,10 @@ import { analyticsSvc } from './module/analytics';
 import { authSvc } from './module/auth';
 import store from './redux';
 
-const token = authSvc.getToken();
-
 const initDefaults = {
+  headers: {},
   credentials: 'same-origin',
 };
-
-if (token) {
-  initDefaults.headers = {
-    // https://kubernetes.io/docs/admin/authentication/#putting-a-bearer-token-in-a-request
-    Authorization: `Bearer ${token}`,
-  };
-}
 
 const validateStatus = (response) => {
   if (response.ok) {
