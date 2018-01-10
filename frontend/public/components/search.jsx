@@ -57,14 +57,14 @@ const ResourceList = connect(() => ({
 }))(
   function ConnectedResourceList ({kind, namespace, selector}) {
     const kindObj = allModels().find((v) => v.kind === kind) || {};
-    let ListPage = resourceListPages.get('Default');
-    if (kindObj && kindObj.labelPlural) {
-      ListPage = resourceListPages.get(kindObj.labelPlural.replace(/ /g, '')) || ListPage;
-    } else {
+
+    if (!kindObj || !kindObj.labelPlural) {
       return <LoadingBox />;
     }
 
-    const ns = kind === 'Node' || kind === 'Namespace' ? undefined : namespace;
+    const name = kindObj.labelPlural.replace(/ /g, '');
+    const ListPage = resourceListPages.get(name) || resourceListPages.get('Default');
+    const ns = kindObj.namespaced ? namespace : undefined;
 
     return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} />;
   });
