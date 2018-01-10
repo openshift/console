@@ -180,6 +180,8 @@ store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});
 
+window.windowError = false;
+
 window.onerror = function (message, source, lineno, colno, optError={}) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
@@ -192,6 +194,7 @@ window.onerror = function (message, source, lineno, colno, optError={}) {
       // ignore
     }
   }
+  window.windowError = true;
 };
 
 window.onunhandledrejection = function (e) {
@@ -205,6 +208,7 @@ window.onunhandledrejection = function (e) {
       // ignore
     }
   }
+  window.windowError = true;
 };
 
 render((
