@@ -4,7 +4,6 @@ import { Config, browser, logging } from 'protractor';
 import { execSync } from 'child_process';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
 import * as _ from 'lodash';
-import { Set as ImmutableSet } from 'immutable';
 import { TapReporter } from 'jasmine-reporters';
 import * as failFast from 'protractor-fail-fast';
 
@@ -83,19 +82,8 @@ export const config: Config = {
   }
 };
 
-const ignoredErrors = ImmutableSet<string>()
-  .add('Error during WebSocket handshake: Unexpected response code: 502')
-  .add('Warning: react-modal: App element is not defined')
-  .add('Warning: Failed prop type: Invalid prop `query` of type `array` supplied to `Line`')
-  .add('shouldComponentUpdate should not be used when extending React.PureComponent')
-  .add('Error: <path> attribute d: Expected number')
-  .add('Error: <text> attribute transform: Expected number')
-  .add('/api/tectonic/certs - Failed to load resource: the server responded with a status of 500');
-
 export const checkLogs = async() => (await browser.manage().logs().get('browser'))
   .map(log => {
     browserLogs.push(log);
     return log;
-  })
-  .filter(log => log.level.name === 'SEVERE' && !ignoredErrors.some(msg => log.message.includes(msg)))
-  .forEach(log => fail(`Console error: ${log.message}`));
+  });
