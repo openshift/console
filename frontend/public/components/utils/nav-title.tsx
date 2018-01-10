@@ -5,8 +5,9 @@ import * as _ from 'lodash';
 
 import { ActionsMenu, ResourceIcon } from './index';
 import { ClusterServiceVersionLogo } from '../cloud-services';
-import { K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceFor, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
+import { ClusterServiceVersionModel } from '../../models';
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
   <div className="co-m-nav-title__breadcrumbs">
@@ -23,15 +24,15 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
 export const NavTitle = connectToModel((props: NavTitleProps) => {
   const {kind, kindObj, detail, title, menuActions, obj, breadcrumbs} = props;
   const data = _.get<K8sResourceKind>(obj, 'data');
-  const hasLogo = !_.isEmpty(data) && _.has(data, 'spec.icon');
-  const logo = hasLogo
+  const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
+  const logo = isCSV
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
     : <div>{ kind && <ResourceIcon kind={kind} className="co-m-page-title__icon" /> } <span id="resource-title">{title}</span></div>;
 
   return <div className={classNames('row', detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')}>
     <div className="col-xs-12">
       { breadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs} />}
-      <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': hasLogo}, {'co-m-page-title--breadcrumbs': breadcrumbs})}>
+      <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbs})}>
         {logo}
         { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
       </h1>

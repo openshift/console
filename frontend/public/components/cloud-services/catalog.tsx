@@ -70,7 +70,7 @@ export const BreakdownDetail: React.SFC<BreakdownDetailProps> = (props) => {
       switch (csv.status.phase) {
         case ClusterServiceVersionPhase.CSVPhaseSucceeded:
           return <li className="co-catalog-breakdown__ns-list__item" key={i}>
-            <Link to={`/ns/${csv.metadata.namespace}/clusterserviceversion-v1s/${csv.metadata.name}`} tabIndex={-1}>{csv.metadata.namespace}</Link>
+            <Link to={`/ns/${csv.metadata.namespace}/applications/${csv.metadata.name}`} tabIndex={-1}>{csv.metadata.namespace}</Link>
           </li>;
         case ClusterServiceVersionPhase.CSVPhaseFailed:
           return <li className="co-catalog-breakdown__ns-list__item co-error" key={i}>

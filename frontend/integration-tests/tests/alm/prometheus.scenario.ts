@@ -57,7 +57,7 @@ describe('Interacting with the Prometheus OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays Prometheus OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/ns/${testName}/clusterserviceversion-v1s`);
+    await browser.get(`${appHost}/ns/${testName}/applications`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

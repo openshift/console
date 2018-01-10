@@ -26,11 +26,11 @@ export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersio
 
 export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionResourceLinkProps> = (props) => {
   const {namespace, name} = props.obj.metadata;
-  const appName = location.pathname.split('/')[location.pathname.split('/').indexOf('clusterserviceversion-v1s') + 1];
+  const appName = location.pathname.split('/')[location.pathname.split('/').indexOf('applications') + 1];
 
   return <span className="co-resource-link">
     <ResourceIcon kind={referenceFor(props.obj)} />
-    <Link to={`/ns/${namespace}/clusterserviceversion-v1s/${appName}/${referenceFor(props.obj)}/${name}`}>{name}</Link>
+    <Link to={`/ns/${namespace}/applications/${appName}/${referenceFor(props.obj)}/${name}`}>{name}</Link>
   </span>;
 };
 
@@ -84,18 +84,14 @@ export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersi
 export const ClusterServiceVersionResourcesPage: React.SFC<ClusterServiceVersionResourcesPageProps> = (props) => {
   const {obj} = props;
   const {owned = []} = obj.spec.customresourcedefinitions;
-  const firehoseResources = owned.map((crdDesc) => ({
-    kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
-    namespaced: true,
-    optional: true,
-    prop: crdDesc.kind,
-  }));
+  const referenceForCRDDesc = (desc: CRDDescription): K8sFullyQualifiedResourceReference => `${desc.kind}:${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}`;
+  const firehoseResources = owned.map((desc) => ({kind: referenceForCRDDesc(desc), namespaced: true, optional: true, prop: desc.kind}));
 
   const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
-  const createLink = (name: string) => `/ns/${obj.metadata.namespace}/clusterserviceversion-v1s/${obj.metadata.name}/${name.split('.')[0]}/new`;
+  const createLink = (name: string) => `/ns/${obj.metadata.namespace}/applications/${obj.metadata.name}/${referenceForCRDDesc(_.find(owned, {name}))}/new`;
   const createProps = owned.length > 1
     ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
-    : {to: createLink(owned.length > 0 ? owned[0].name : '')};
+    : {to: owned.length === 1 ? createLink(owned[0].name) : null};
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) => ownerRefs.filter(({uid}) => items.filter(({metadata}) => metadata.uid === uid).length > 0);
   const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item))

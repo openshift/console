@@ -16,7 +16,7 @@ import * as appsLogo from '../../imgs/apps-logo.svg';
 
 export const ClusterServiceVersionListItem: React.SFC<ClusterServiceVersionListItemProps> = (props) => {
   const {obj, namespaces = []} = props;
-  const route = (namespace) => `/ns/${namespace}/clusterserviceversion-v1s/${obj.metadata.name}`;
+  const route = (namespace) => `/ns/${namespace}/applications/${obj.metadata.name}`;
 
   return <div className="co-clusterserviceversion-list-item">
     <div style={{cursor: namespaces.length === 1 ? 'pointer' : ''}} onClick={() => namespaces.length === 1 ? history.push(route(obj.metadata.namespace)) : null}>
@@ -41,12 +41,13 @@ export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
 </ListHeader>;
 
 export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> = ({obj}) => {
-  const route = `/ns/${obj.metadata.namespace}/clusterserviceversion-v1s/${obj.metadata.name}`;
+  const route = `/ns/${obj.metadata.namespace}/applications/${obj.metadata.name}`;
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-8">
       <ResourceLink kind={obj.kind} namespace={obj.metadata.namespace} title={obj.metadata.name} name={obj.metadata.name} />
     </div>
+    {/* TODO(alecmerdler): Show number of custom resources per application */}
     <div className="col-xs-4">
       <Link to={`${route}`} title="View details" className="btn btn-default">View details</Link>
       <Link to={`${route}/instances`} title="View instances">View instances</Link>
@@ -59,7 +60,6 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Applications are installed per namespace from the Open Cloud Catalog." />;
   const clusterServiceVersions = (props.data.filter(res => referenceFor(res) === referenceForModel(ClusterServiceVersionModel)) as ClusterServiceVersionKind[])
     .filter(csv => csv.status && csv.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded);
-
   const apps = Object.keys(filters).reduce((filteredData, filterName) => {
     // TODO(alecmerdler): Make these cases into TypeScript `enum` values
     switch (filterName) {
@@ -78,10 +78,8 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
         return filteredData;
     }
   }, clusterServiceVersions);
-
   const namespacesForApp = (name) => apps.filter(({metadata}) => metadata.name === name).map(({metadata}) => metadata.namespace);
   const hasDeployment = (csvUID: string) => props.data.some(obj => _.get(obj.metadata, 'ownerReferences', []).some(({uid}) => uid === csvUID));
-
   return <div>{ apps.length > 0
     ? <div className="co-clusterserviceversion-list">
       <div className="co-clusterserviceversion-list__section co-clusterserviceversion-list__section--catalog">
@@ -99,13 +97,14 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   </div>;
 };
 
-const stateToProps = ({k8s}, {match, namespace}) => ({
+const stateToProps = ({k8s}, {match}) => ({
   resourceDescriptions: _.values(k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
     .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', []))
     .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), [])
     .filter((crdDesc, i, allDescriptions) => i === _.findIndex(allDescriptions, ({name}) => name === crdDesc.name)),
   namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())
-    .filter((ns) => ns.metadata.name === namespace && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
+    .filter((ns) => ns.metadata.name === match.params.ns && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
+
     .length === 1,
 });
 
@@ -143,13 +142,14 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         prop: crdDesc.kind,
       })));
 
-      return this.props.namespace && !this.props.namespaceEnabled
+      return this.props.match.params.ns && !this.props.namespaceEnabled
         ? <Box className="cos-text-center">
           <img className="co-clusterserviceversion-list__disabled-icon" src={appsLogo} />
           <MsgBox title="Open Cloud Services not enabled for this namespace" detail="Please contact a system administrator and ask them to enable OCS to continue." />
         </Box>
         : <MultiListPage
           {...this.props}
+          namespace={this.props.match.params.ns}
           resources={resources}
           flatten={flatten}
           dropdownFilters={dropdownFilters}
@@ -177,7 +177,7 @@ export const MarkdownView = (props: {content: string}) => {
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata} = props.obj;
-  const route = (name: string) => `/ns/${metadata.namespace}/clusterserviceversion-v1s/${metadata.name}/${name.split('.')[0]}/new`;
+  const route = ({name, kind}) => `/ns/${metadata.namespace}/applications/${metadata.name}/${`${kind}:${name.split('.').slice(1).join('.')}`}/new`;
 
   return <div className="co-clusterserviceversion-details co-m-pane__body">
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
@@ -189,7 +189,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
             title="Create New"
             items={spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
             onChange={(name) => history.push(route(name))} />
-          : <Link to={route(spec.customresourcedefinitions.owned[0].name)} className="btn btn-primary">{`Create ${spec.customresourcedefinitions.owned[0].displayName}`}</Link> }
+          : <Link to={route(spec.customresourcedefinitions.owned[0])} className="btn btn-primary">{`Create ${spec.customresourcedefinitions.owned[0].displayName}`}</Link> }
       </div>
       <dl className="co-clusterserviceversion-details__section--info__item">
         <dt>Provider</dt>
@@ -221,24 +221,24 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   </div>;
 };
 
-export const ClusterServiceVersionsDetailsPage: React.SFC<ClusterServiceVersionsDetailsPageProps> = (props) => {
-  const Instances: React.SFC<{obj: ClusterServiceVersionKind}> = ({obj}) => <div>
-    <ClusterServiceVersionResourcesPage obj={obj} />
-  </div>;
+export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => {
+  const Instances: React.SFC<{obj: ClusterServiceVersionKind}> = ({obj}) => <ClusterServiceVersionResourcesPage obj={obj} />;
   Instances.displayName = 'Instances';
 
   return <DetailsPage
     {...props}
+    namespace={props.match.params.ns}
+    kind={referenceForModel(ClusterServiceVersionModel)}
+    name={props.match.params.name}
     pages={[navFactory.details(ClusterServiceVersionDetails), {href: 'instances', name: 'Instances', component: Instances}]}
-    menuActions={[() => ({label: 'Edit Application Definition...', href: `/ns/${props.namespace}/clusterserviceversion-v1s/${props.name}/edit`})]} />;
+    menuActions={[() => ({label: 'Edit Application Definition...', href: `/ns/${props.match.params.ns}/applications/${props.match.params.name}/edit`})]} />;
 };
 
 /* eslint-disable no-undef */
 export type ClusterServiceVersionsPageProps = {
   kind: string;
-  namespace: string;
   namespaceEnabled: boolean;
-  match: RouterMatch<any>;
+  match: RouterMatch<{ns?: string}>;
   resourceDescriptions: CRDDescription[];
 };
 
@@ -259,9 +259,6 @@ export type ClusterServiceVersionListItemProps = {
 };
 
 export type ClusterServiceVersionsDetailsPageProps = {
-  kind: string;
-  name: string;
-  namespace: string;
   match: RouterMatch<any>;
 };
 
