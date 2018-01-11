@@ -16,8 +16,8 @@ export const UICatalogEntryModel: K8sKind = {
 
 export const ClusterServiceVersionModel: K8sKind = {
   kind: 'ClusterServiceVersion-v1',
-  label: 'ClusterServiceVersion-v1',
-  labelPlural: 'ClusterServiceVersion-v1s',
+  label: 'Application',
+  labelPlural: 'Applications',
   basePath: '/apis/app.coreos.com/',
   apiVersion: 'v1alpha1',
   path: 'clusterserviceversion-v1s',
@@ -25,6 +25,7 @@ export const ClusterServiceVersionModel: K8sKind = {
   namespaced: true,
   crd: true,
   plural: 'clusterserviceversion-v1s',
+  propagationPolicy : 'Foreground',
 };
 
 export const InstallPlanModel: K8sKind = {
