@@ -60,7 +60,7 @@ export class TimeoutError extends Error {
   }
 }
 
-export const coFetch = (url, options = {}, timeout=10000) => {
+export const coFetch = (url, options = {}, timeout=20000) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
 
   // If the URL being requested is absolute (and therefore, not a local request),
