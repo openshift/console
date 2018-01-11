@@ -154,12 +154,12 @@ export const CatalogAppRow = connect(stateToProps)(
         failed: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseFailed),
         pending: props.clusterServiceVersions.filter(csv => [ClusterServiceVersionPhase.CSVPhasePending, ClusterServiceVersionPhase.CSVPhaseInstalling]
           .indexOf(_.get(csv, ['status', 'phase'])) !== -1)
-          .filter(csv => csv.metadata.deletionTimestamp === undefined),
+          .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
         succeeded: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseSucceeded)
-          .filter(csv => csv.metadata.deletionTimestamp === undefined),
-        awaiting: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === undefined)
-          .filter(csv => csv.metadata.deletionTimestamp === undefined),
-        deleting: props.clusterServiceVersions.filter(csv => csv.metadata.deletionTimestamp !== undefined),
+          .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
+        awaiting: props.clusterServiceVersions.filter(csv => !_.get(csv, ['status', 'phase']))
+          .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
+        deleting: props.clusterServiceVersions.filter(csv => _.get(csv.metadata, 'deletionTimestamp')),
       };
     }
   });

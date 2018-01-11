@@ -19,6 +19,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
     name: 'testapp',
     uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
     creationTimestamp: '2017-09-20T18:19:49Z',
+    deletionTimestamp: null,
     namespace: 'default',
   },
   spec: {
