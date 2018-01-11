@@ -2,7 +2,7 @@
 
 import { browser, $, element, ExpectedConditions as until, by } from 'protractor';
 
-import { appHost, testName, checkLogs } from '../../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
@@ -19,6 +19,7 @@ describe('Interacting with the Vault OCS', () => {
 
   afterEach(() => {
     checkLogs();
+    checkErrors();
   });
 
   it('can be enabled from the Open Cloud Catalog', async() => {
