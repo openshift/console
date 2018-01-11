@@ -281,7 +281,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().showTitle).toBe(true);
   });
 
-  it('passes `flatten` function to `MultiListPage` that returns list of all resources', () => {
+  it('passes `flatten` function to Open Cloud Catalog `MultiListPage` that returns list of all resources', () => {
     const resources = {
       TestResource: {data: [testResourceInstance]},
       'ClusterServiceVersion-v1': {data: [localClusterServiceVersion, testClusterServiceVersion]},
@@ -305,15 +305,14 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().showTitle).toBe(true);
   });
 
-  it('passes `flatten` function to `MultiListPage` that returns list of all resources', () => {
+  it('passes `flatten` function to custom apps `MultiListPage` that returns list of all resources', () => {
     const resources = {
-      TestResource: {data: [testResourceInstance]},
       'ClusterServiceVersion-v1': {data: [localClusterServiceVersion, testClusterServiceVersion]},
     };
     const flatten = wrapper.find(MultiListPage).at(1).props().flatten;
     const data = flatten(resources);
 
-    expect(data.length).toEqual(3);
+    expect(data.length).toEqual(2);
   });
 
   it('renders an error page if the namespace is not enabled', () => {

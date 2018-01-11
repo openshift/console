@@ -155,29 +155,17 @@ $clusterserviceversion-list-border: #ccc;
   }
 }
 
-.co-clusterserviceversion-details__section--resources {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  @media (min-width: 768px) {
-    display: none;
-  }
-  @media (min-width: 1024px) {
-    display: flex;
-    width: 100%;
-  }
-  @media (min-width: 1280px) {
-    display: flex;
-    width: 100%;
-  }
-  @media (min-width: 1440px) {
-    display: flex;
-    width: 100%;
-  }
-  @media (min-width: 1920px) {
-    display: flex;
-    width: 100%;
-  }
+.co-clusterserviceversion-details__section--status {
+  padding-top: 20px;
+  width: 100%;
+}
+
+.co-clusterserviceversion-detail__error-box {
+  padding: 10px;
+  border: 1px solid #dd1326;
+  background: #ffe6e6;
+  color: #dd1326;
+  font-size: 14px;
 }
 
 .co-catalog-app-row {
@@ -228,7 +216,7 @@ $clusterserviceversion-list-border: #ccc;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
-  border: 1px solid #ddd;  
+  border: 1px solid #ddd;
 }
 
 .co-catalog-install-progress {

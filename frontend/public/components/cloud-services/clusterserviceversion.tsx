@@ -45,6 +45,10 @@ export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
 export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> = ({obj}) => {
   const route = `/ns/${obj.metadata.namespace}/applications/${obj.metadata.name}`;
 
+  const installStatus = obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded
+    ? <span>Enabled</span>
+    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> {obj.status.reason}</span>;
+
   return <div className="row co-resource-list__item" style={{display: 'flex', alignItems: 'center'}}>
     <div className="col-xs-3" style={{display: 'flex', alignItems: 'center'}}>
       <ResourceCog resource={obj} kind={referenceFor(obj)} actions={[Cog.factory.Delete, () => ({label: 'Edit Application Definition...', href: `${route}/edit`})]} />
@@ -55,9 +59,8 @@ export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> 
     <div className="col-xs-3">
       <ResourceLink kind="Namespace" title={obj.metadata.namespace} name={obj.metadata.namespace} />
     </div>
-    {/* TODO(alecmerdler): Read status from associated Deployment */}
-    <div className="col-xs-3">{obj.metadata.deletionTimestamp ? 'Disabling' : 'Enabled'}</div>
-    <div className="col-xs-3">
+    <div className="col-xs-4">{ obj.metadata.deletionTimestamp ? 'Disabling' : installStatus }</div>
+    <div className="col-xs-2">
       <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
         <Link to={`${route}/instances`} title="View instances">View instances</Link>
       </div>
@@ -141,10 +144,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         },
         title: 'Catalog',
       }];
-      const resources = [
-        {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
-        {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
-      ].concat(this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})));
+      const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
 
       return this.props.match.params.ns && !this.props.namespaceEnabled
         ? <Box className="cos-text-center">
@@ -155,7 +155,11 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
           <MultiListPage
             {...this.props}
             namespace={this.props.match.params.ns}
-            resources={resources}
+            resources={[
+              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+              {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
+              ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
+            ]}
             flatten={flatten}
             dropdownFilters={dropdownFilters}
             ListComponent={ClusterServiceVersionList}
@@ -165,9 +169,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
           <MultiListPage
             {...this.props}
             namespace={this.props.match.params.ns}
-            resources={[
-              {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
-            ]}
+            resources={[{...csvResource, selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}}]}
             ListComponent={(props) => <List
               {...props}
               Row={ClusterServiceVersionRow}
@@ -199,20 +201,20 @@ export const MarkdownView = (props: {content: string}) => {
 };
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
-  const {spec, metadata} = props.obj;
+  const {spec, metadata, status} = props.obj;
+  const ownedCRDs = spec.customresourcedefinitions.owned || [];
   const route = ({name, kind}) => `/ns/${metadata.namespace}/applications/${metadata.name}/${`${kind}:${name.split('.').slice(1).join('.')}`}/new`;
 
   return <div className="co-clusterserviceversion-details co-m-pane__body">
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
       <div style={{marginBottom: '15px'}}>
-        { spec.customresourcedefinitions.owned.length > 1
-          ? <Dropdown
-            noButton={true}
-            className="btn btn-primary"
-            title="Create New"
-            items={spec.customresourcedefinitions.owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
-            onChange={(name) => history.push(route(name))} />
-          : <Link to={route(spec.customresourcedefinitions.owned[0])} className="btn btn-primary">{`Create ${spec.customresourcedefinitions.owned[0].displayName}`}</Link> }
+        { ownedCRDs.length > 1 && <Dropdown
+          noButton={true}
+          className="btn btn-primary"
+          title="Create New"
+          items={ownedCRDs.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
+          onChange={(name) => history.push(route(name))} /> }
+        { ownedCRDs.length === 1 && <Link to={route(ownedCRDs[0])} className="btn btn-primary">{`Create ${ownedCRDs[0].displayName}`}</Link> }
       </div>
       <dl className="co-clusterserviceversion-details__section--info__item">
         <dt>Provider</dt>
@@ -238,6 +240,9 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
       </dl>
     </div>
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--description">
+      { status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && <div className="co-clusterserviceversion-detail__error-box">
+        <strong>Install {status.phase}</strong>: {status.message}
+      </div> }
       <h1>Description</h1>
       <MarkdownView content={spec.description || 'Not available'} />
     </div>
