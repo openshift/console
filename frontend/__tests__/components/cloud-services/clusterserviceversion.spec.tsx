@@ -9,7 +9,7 @@ import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPagePro
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog } from '../../../public/components/cloud-services';
 import { DetailsPage, MultiListPage, ListHeader, ColHead } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
-import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink } from '../../../public/components/utils';
+import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink, ResourceCog } from '../../../public/components/utils';
 import { K8sResourceKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -35,8 +35,8 @@ describe(ClusterServiceVersionHeader.displayName, () => {
     expect(wrapper.find(ColHead).at(1).childAt(0).text()).toEqual('Namespace');
   });
 
-  xit('renders column header for app status', () => {
-    // TODO(alecmedler)
+  it('renders column header for app status', () => {
+    expect(wrapper.find(ColHead).at(2).childAt(0).text()).toEqual('Status');
   });
 });
 
@@ -45,6 +45,14 @@ describe(ClusterServiceVersionRow.displayName, () => {
 
   beforeEach(() => {
     wrapper = shallow(<ClusterServiceVersionRow obj={testClusterServiceVersion} />);
+  });
+
+  it('renders `ResourceCog` with actions', () => {
+    const col = wrapper.find('.row').childAt(0);
+
+    expect(col.find(ResourceCog).props().resource).toEqual(testClusterServiceVersion);
+    expect(col.find(ResourceCog).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
+    expect(col.find(ResourceCog).props().actions.length).toEqual(2);
   });
 
   it('renders clickable column for app logo and name', () => {
@@ -62,12 +70,21 @@ describe(ClusterServiceVersionRow.displayName, () => {
     expect(link.props().name).toEqual(testClusterServiceVersion.metadata.namespace);
   });
 
-  xit('renders column for app status', () => {
-    // TODO(alecmerdler)
+  it('renders column for app status', () => {
+    const col = wrapper.find('.row').childAt(2);
+
+    expect(col.childAt(0).text()).toEqual('Enabled');
   });
 
-  it('renders column which links to app instances', () => {
+  it('renders "disabling" status if CSV has `deletionTimestamp`', () => {
+    wrapper = wrapper.setProps({obj: _.cloneDeepWith(testClusterServiceVersion, (v, k) => k === 'metadata' ? {...v, deletionTimestamp: Date.now()} : undefined)});
     const col = wrapper.find('.row').childAt(2);
+
+    expect(col.childAt(0).text()).toEqual('Disabling');
+  });
+
+  it('renders column with links to app detail view and instances', () => {
+    const col = wrapper.find('.row').childAt(3);
 
     expect(col.find(Link).childAt(0).text()).toEqual('View instances');
   });

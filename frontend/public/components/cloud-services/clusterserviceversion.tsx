@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, referenceForCRDDesc, AppCatalog, appCatalogLabel } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage, List } from '../factory';
-import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
+import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog } from '../utils';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
@@ -38,14 +38,16 @@ export const ClusterServiceVersionListItem: React.SFC<ClusterServiceVersionListI
 export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-xs-3" sortField="metadata.name">Name</ColHead>
   <ColHead className="col-xs-3">Namespace</ColHead>
-  <ColHead className="col-xs-6" />
+  <ColHead className="col-xs-3">Status</ColHead>
+  <ColHead className="col-xs-3" />
 </ListHeader>;
 
 export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> = ({obj}) => {
   const route = `/ns/${obj.metadata.namespace}/applications/${obj.metadata.name}`;
 
   return <div className="row co-resource-list__item" style={{display: 'flex', alignItems: 'center'}}>
-    <div className="col-xs-3">
+    <div className="col-xs-3" style={{display: 'flex', alignItems: 'center'}}>
+      <ResourceCog resource={obj} kind={referenceFor(obj)} actions={[Cog.factory.Delete, () => ({label: 'Edit Application Definition...', href: `${route}/edit`})]} />
       <Link to={route}>
         <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
       </Link>
@@ -54,7 +56,8 @@ export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> 
       <ResourceLink kind="Namespace" title={obj.metadata.namespace} name={obj.metadata.namespace} />
     </div>
     {/* TODO(alecmerdler): Read status from associated Deployment */}
-    <div className="col-xs-6">
+    <div className="col-xs-3">{obj.metadata.deletionTimestamp ? 'Disabling' : 'Enabled'}</div>
+    <div className="col-xs-3">
       <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
         <Link to={`${route}/instances`} title="View instances">View instances</Link>
       </div>
