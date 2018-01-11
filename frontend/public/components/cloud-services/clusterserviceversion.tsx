@@ -4,11 +4,11 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase } from './index';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, referenceForCRDDesc, AppCatalog, appCatalogLabel } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
-import { DetailsPage, ListHeader, ColHead, MultiListPage } from '../factory';
+import { DetailsPage, ListHeader, ColHead, MultiListPage, List } from '../factory';
 import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box } from '../utils';
-import { K8sResourceKind, referenceForModel, K8sFullyQualifiedResourceReference, referenceFor } from '../../module/k8s';
+import { K8sResourceKind, referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 
@@ -36,21 +36,28 @@ export const ClusterServiceVersionListItem: React.SFC<ClusterServiceVersionListI
 };
 
 export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
-  <ColHead className="col-xs-8">Name</ColHead>
-  <ColHead className="col-xs-4">Actions</ColHead>
+  <ColHead className="col-xs-3" sortField="metadata.name">Name</ColHead>
+  <ColHead className="col-xs-3">Namespace</ColHead>
+  <ColHead className="col-xs-6" />
 </ListHeader>;
 
 export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> = ({obj}) => {
   const route = `/ns/${obj.metadata.namespace}/applications/${obj.metadata.name}`;
 
-  return <div className="row co-resource-list__item">
-    <div className="col-xs-8">
-      <ResourceLink kind={obj.kind} namespace={obj.metadata.namespace} title={obj.metadata.name} name={obj.metadata.name} />
+  return <div className="row co-resource-list__item" style={{display: 'flex', alignItems: 'center'}}>
+    <div className="col-xs-3">
+      <Link to={route}>
+        <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
+      </Link>
     </div>
-    {/* TODO(alecmerdler): Show number of custom resources per application */}
-    <div className="col-xs-4">
-      <Link to={`${route}`} title="View details" className="btn btn-default">View details</Link>
-      <Link to={`${route}/instances`} title="View instances">View instances</Link>
+    <div className="col-xs-3">
+      <ResourceLink kind="Namespace" title={obj.metadata.namespace} name={obj.metadata.namespace} />
+    </div>
+    {/* TODO(alecmerdler): Read status from associated Deployment */}
+    <div className="col-xs-6">
+      <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+        <Link to={`${route}/instances`} title="View instances">View instances</Link>
+      </div>
     </div>
   </div>;
 };
@@ -104,7 +111,6 @@ const stateToProps = ({k8s}, {match}) => ({
     .filter((crdDesc, i, allDescriptions) => i === _.findIndex(allDescriptions, ({name}) => name === crdDesc.name)),
   namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())
     .filter((ns) => ns.metadata.name === match.params.ns && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
-
     .length === 1,
 });
 
@@ -133,30 +139,43 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         title: 'Catalog',
       }];
       const resources = [
-        {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'},
+        {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
         {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
-      ].concat(this.state.resourceDescriptions.map(crdDesc => ({
-        kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
-        namespaced: true,
-        optional: true,
-        prop: crdDesc.kind,
-      })));
+      ].concat(this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})));
 
       return this.props.match.params.ns && !this.props.namespaceEnabled
         ? <Box className="cos-text-center">
           <img className="co-clusterserviceversion-list__disabled-icon" src={appsLogo} />
           <MsgBox title="Open Cloud Services not enabled for this namespace" detail="Please contact a system administrator and ask them to enable OCS to continue." />
         </Box>
-        : <MultiListPage
-          {...this.props}
-          namespace={this.props.match.params.ns}
-          resources={resources}
-          flatten={flatten}
-          dropdownFilters={dropdownFilters}
-          ListComponent={ClusterServiceVersionList}
-          filterLabel="Applications by name"
-          title="Available Applications"
-          showTitle={true} />;
+        : <div>
+          <MultiListPage
+            {...this.props}
+            namespace={this.props.match.params.ns}
+            resources={resources}
+            flatten={flatten}
+            dropdownFilters={dropdownFilters}
+            ListComponent={ClusterServiceVersionList}
+            filterLabel="Applications by name"
+            title="Available Applications"
+            showTitle={true} />
+          <MultiListPage
+            {...this.props}
+            namespace={this.props.match.params.ns}
+            resources={[
+              {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
+            ]}
+            ListComponent={(props) => <List
+              {...props}
+              Row={ClusterServiceVersionRow}
+              Header={ClusterServiceVersionHeader}
+              EmptyMsg={() => <MsgBox title="No Custom Applications Found" detail="Create custom applications by following the documentation at https://coreos.com." />} />
+            }
+            flatten={flatten}
+            filterLabel="Applications by name"
+            title="Custom Applications"
+            showTitle={true} />
+        </div>;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -165,6 +184,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
       }
     }
 
+    // FIXME(alecmerdler): This is a hack to prevent infinite re-render from depending on its own props to populate Redux
     shouldComponentUpdate(nextProps) {
       return !_.isEqual(_.omit(nextProps, ['resourceDescriptions']), _.omit(this.props, ['resourceDescriptions']))
         || nextProps.resourceDescriptions.length > 0 && this.state.resourceDescriptions.length === 0;

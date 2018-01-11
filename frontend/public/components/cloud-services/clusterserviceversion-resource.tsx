@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, CRDDescription } from './index';
+import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, CRDDescription, referenceForCRDDesc } from './index';
 import { Resources } from './k8s-resource';
 import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
 import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
@@ -84,7 +84,6 @@ export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersi
 export const ClusterServiceVersionResourcesPage: React.SFC<ClusterServiceVersionResourcesPageProps> = (props) => {
   const {obj} = props;
   const {owned = []} = obj.spec.customresourcedefinitions;
-  const referenceForCRDDesc = (desc: CRDDescription): K8sFullyQualifiedResourceReference => `${desc.kind}:${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}`;
   const firehoseResources = owned.map((desc) => ({kind: referenceForCRDDesc(desc), namespaced: true, optional: true, prop: desc.kind}));
 
   const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;

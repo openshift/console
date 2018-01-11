@@ -1,10 +1,10 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
 import * as _ from 'lodash';
 
 import './ocs-templates';
-import { K8sResourceKind, CustomResourceDefinitionKind } from '../../module/k8s';
+import { K8sResourceKind, CustomResourceDefinitionKind, K8sFullyQualifiedResourceReference } from '../../module/k8s';
 import { SpecDescriptor } from './spec-descriptors';
 import { StatusDescriptor } from './status-descriptors';
 
@@ -18,6 +18,11 @@ export const catalogEntryVisibilityLabel = 'tectonic-visibility';
 export enum CatalogEntryVisibility {
   catalogEntryVisibilityTectonicFeature = 'tectonic-feature',
   catalogEntryVisibilityOCS = 'ocs',
+}
+
+export const appCatalogLabel = 'alm-catalog';
+export enum AppCatalog {
+  tectonicOCS = 'tectonic-ocs',
 }
 
 export enum ALMSpecDescriptors {
@@ -119,6 +124,8 @@ export type InstallPlanKind = {
 } & K8sResourceKind;
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
+
+export const referenceForCRDDesc = (desc: CRDDescription): K8sFullyQualifiedResourceReference => `${desc.kind}:${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}`;
 
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;

@@ -5,15 +5,73 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps } from '../../../public/components/cloud-services/clusterserviceversion';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase } from '../../../public/components/cloud-services';
-import { DetailsPage, MultiListPage } from '../../../public/components/factory';
+import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps } from '../../../public/components/cloud-services/clusterserviceversion';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog } from '../../../public/components/cloud-services';
+import { DetailsPage, MultiListPage, ListHeader, ColHead } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
-import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox } from '../../../public/components/utils';
+import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink } from '../../../public/components/utils';
 import { K8sResourceKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
 import * as appsLogoImg from '../../../public/imgs/apps-logo.svg';
+
+describe(ClusterServiceVersionHeader.displayName, () => {
+  let wrapper: ShallowWrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<ClusterServiceVersionHeader />);
+  });
+
+  it('renders `ListHeader`', () => {
+    expect(wrapper.find(ListHeader).exists()).toBe(true);
+  });
+
+  it('renders column header for app name and logo', () => {
+    expect(wrapper.find(ColHead).at(0).childAt(0).text()).toEqual('Name');
+    expect(wrapper.find(ColHead).at(0).props().sortField).toEqual('metadata.name');
+  });
+
+  it('renders column header for app namespace', () => {
+    expect(wrapper.find(ColHead).at(1).childAt(0).text()).toEqual('Namespace');
+  });
+
+  xit('renders column header for app status', () => {
+    // TODO(alecmedler)
+  });
+});
+
+describe(ClusterServiceVersionRow.displayName, () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionRowProps>;
+
+  beforeEach(() => {
+    wrapper = shallow(<ClusterServiceVersionRow obj={testClusterServiceVersion} />);
+  });
+
+  it('renders clickable column for app logo and name', () => {
+    const col = wrapper.find('.row').childAt(0);
+
+    expect(col.find(Link).props().to).toEqual(`/ns/${testClusterServiceVersion.metadata.namespace}/applications/${testClusterServiceVersion.metadata.name}`);
+    expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
+  });
+
+  it('renders column for app namespace link', () => {
+    const link = wrapper.find('.row').childAt(1).find(ResourceLink);
+
+    expect(link.props().kind).toEqual('Namespace');
+    expect(link.props().title).toEqual(testClusterServiceVersion.metadata.namespace);
+    expect(link.props().name).toEqual(testClusterServiceVersion.metadata.namespace);
+  });
+
+  xit('renders column for app status', () => {
+    // TODO(alecmerdler)
+  });
+
+  it('renders column which links to app instances', () => {
+    const col = wrapper.find('.row').childAt(2);
+
+    expect(col.find(Link).childAt(0).text()).toEqual('View instances');
+  });
+});
 
 describe(ClusterServiceVersionLogo.displayName, () => {
   let wrapper: ReactWrapper<ClusterServiceVersionLogoProps>;
@@ -192,11 +250,11 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} namespaceEnabled={true} resourceDescriptions={[]} match={{params: {ns: 'foo'}, isExact: true, path: '', url: ''}} />);
   });
 
-  it('renders a `MultiListPage` with correct props', () => {
-    const listPage = wrapper.find(MultiListPage);
+  it('renders a `MultiListPage` for Open Cloud Catalog apps with correct props', () => {
+    const listPage = wrapper.find(MultiListPage).at(0);
 
     expect(listPage.props().resources).toEqual([
-      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1'},
+      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
       {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
     ]);
     expect(listPage.props().dropdownFilters).toBeDefined();
@@ -211,7 +269,31 @@ describe(ClusterServiceVersionsPage.displayName, () => {
       TestResource: {data: [testResourceInstance]},
       'ClusterServiceVersion-v1': {data: [localClusterServiceVersion, testClusterServiceVersion]},
     };
-    const flatten = wrapper.find(MultiListPage).props().flatten;
+    const flatten = wrapper.find(MultiListPage).at(0).props().flatten;
+    const data = flatten(resources);
+
+    expect(data.length).toEqual(3);
+  });
+
+  it('renders a `MultiListPage` for custom apps with correct props', () => {
+    const listPage = wrapper.find(MultiListPage).at(1);
+
+    expect(listPage.props().resources).toEqual([
+      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
+    ]);
+    // TODO(alecmerdler): Test custom applications list component
+    expect(listPage.props().ListComponent).toBeDefined();
+    expect(listPage.props().filterLabel).toEqual('Applications by name');
+    expect(listPage.props().title).toEqual('Custom Applications');
+    expect(listPage.props().showTitle).toBe(true);
+  });
+
+  it('passes `flatten` function to `MultiListPage` that returns list of all resources', () => {
+    const resources = {
+      TestResource: {data: [testResourceInstance]},
+      'ClusterServiceVersion-v1': {data: [localClusterServiceVersion, testClusterServiceVersion]},
+    };
+    const flatten = wrapper.find(MultiListPage).at(1).props().flatten;
     const data = flatten(resources);
 
     expect(data.length).toEqual(3);
