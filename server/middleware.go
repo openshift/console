@@ -2,9 +2,8 @@ package server
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/coreos-inc/bridge/auth"
+	"net/http"
 )
 
 // Middleware generates a middleware wrapper for request hanlders.
@@ -26,6 +25,33 @@ func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
 		}
 
 		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", encTok))
+
+		safe := false
+		switch r.Method {
+		case
+			"GET",
+			"HEAD",
+			"OPTIONS",
+			"TRACE":
+			safe = true
+		}
+
+		if !safe {
+			ref := r.Referer()
+			if len(ref) == 0 {
+				plog.Infof("No referer!")
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			err := a.VerifyReferer(ref)
+			if err != nil {
+				plog.Infof("Invalid referer %v", err)
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+
+		}
+
 		hdlr.ServeHTTP(w, r)
 	}
 }
