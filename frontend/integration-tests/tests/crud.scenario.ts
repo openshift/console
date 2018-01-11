@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { execSync } from 'child_process';
 import { OrderedMap } from 'immutable';
 
-import { appHost, testName, checkLogs } from '../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
@@ -38,6 +38,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
   afterEach(() => {
     checkLogs();
+    checkErrors();
   });
 
   afterAll(() => {

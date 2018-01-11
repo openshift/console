@@ -180,6 +180,7 @@ store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});
 
+// Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
 
 window.onerror = function (message, source, lineno, colno, optError={}) {

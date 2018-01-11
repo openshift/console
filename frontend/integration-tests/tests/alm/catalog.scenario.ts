@@ -2,7 +2,7 @@
 
 import { browser, by, ExpectedConditions as until } from 'protractor';
 
-import { appHost, testName, checkLogs } from '../../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
@@ -15,6 +15,7 @@ describe('Installing a service from the Open Cloud Catalog', () => {
 
   afterEach(() => {
     checkLogs();
+    checkErrors();
   });
 
   it('displays `Applications` tab in navigation sidebar', async() => {
