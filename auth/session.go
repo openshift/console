@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -17,14 +18,14 @@ type SessionStore struct {
 	byAge       []OldSession
 	maxSessions int
 	now         nowFunc
+	mux         sync.Mutex
 }
 
 func NewSessionStore(maxSessions int) *SessionStore {
 	return &SessionStore{
-		make(map[string]*loginState),
-		[]OldSession{},
-		maxSessions,
-		defaultNow,
+		byToken:     make(map[string]*loginState),
+		maxSessions: maxSessions,
+		now:         defaultNow,
 	}
 }
 
@@ -36,17 +37,23 @@ func (ss *SessionStore) addSession(ls *loginState) error {
 		return fmt.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
+	ss.mux.Lock()
 	ss.byToken[sessionToken] = ls
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, OldSession{sessionToken, ls.exp})
+	ss.mux.Unlock()
 	return nil
 }
 
 func (ss *SessionStore) getSession(token string) *loginState {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
 	return ss.byToken[token]
 }
 
 func (ss *SessionStore) deleteSession(token string) error {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
 	delete(ss.byToken, token)
 	for i := 0; i < len(ss.byAge); i++ {
 		s := ss.byAge[i]
@@ -60,6 +67,8 @@ func (ss *SessionStore) deleteSession(token string) error {
 }
 
 func (ss *SessionStore) PruneSessions() {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
 	expired := 0
 	for i := 0; i < len(ss.byAge); i++ {
 		s := ss.byAge[i]
