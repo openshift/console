@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, by, ExpectedConditions as until } from 'protractor';
+import { browser, by, $, ExpectedConditions as until } from 'protractor';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as catalogView from '../../views/catalog.view';
@@ -9,8 +9,9 @@ import * as sidenavView from '../../views/sidenav.view';
 describe('Installing a service from the Open Cloud Catalog', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus', 'Prometheus']);
 
-  beforeAll(() => {
+  beforeAll(async() => {
     browser.get(appHost);
+    await browser.wait(until.presenceOf($('#logo')));
   });
 
   afterEach(() => {

@@ -25,4 +25,7 @@ export const detailedBreakdownFor = (name: string) => entryRowFor(name).$('.co-c
 
 export const namespaceListFor = (name: string) => detailedBreakdownFor(name).$$('.co-catalog-breakdown__ns-list__item');
 
-export const namespaceEnabledFor = (name: string) => (namespace: string) => namespaceListFor(name).filter(e => e.getText().then(text => text === namespace)).isPresent();
+export const namespaceEnabledFor = (name: string) => (namespace: string) => browser.wait(until.presenceOf(namespaceListFor(name)
+  .filter(e => e.getText().then(text => text === namespace)).first()), 10000)
+  .then(() => true)
+  .catch(() => false);
