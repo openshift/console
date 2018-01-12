@@ -30,6 +30,8 @@ const (
 
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 
+var ss = NewSessionStore(32768)
+
 type Authenticator struct {
 	TokenExtractor oidc.RequestTokenExtractor
 	TokenVerifier  tokenVerifier
@@ -57,12 +59,12 @@ func getLoginState(r *http.Request) (*loginState, error) {
 		return nil, err
 	}
 	sessionToken := sessionCookie.Value
-	ls := sessionsByToken[sessionToken]
+	ls := ss.GetSession(sessionToken)
 	if ls == nil {
 		return nil, fmt.Errorf("No session found on server")
 	}
 	if ls.exp.Sub(time.Now()) < 0 {
-		deleteSession(sessionToken)
+		ss.DeleteSession(sessionToken)
 		return nil, fmt.Errorf("Session is expired.")
 	}
 	return ls, nil
@@ -137,7 +139,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	ls, _ := getLoginState(r)
 	if ls != nil {
-		deleteSession(ls.sessionToken)
+		ss.DeleteSession(ls.sessionToken)
 	}
 	// Delete session cookie
 	cookie := http.Cookie{
@@ -198,7 +200,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		err = addSession(ls)
+		err = ss.AddSession(ls)
 		if err != nil {
 			log.Errorf("addSession error: %v", err)
 			a.redirectAuthError(w, errorInternal, nil)
@@ -217,7 +219,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 
 		log.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)
-		pruneSessions()
+		ss.PruneSessions()
 	}
 }
 

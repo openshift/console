@@ -12,56 +12,70 @@ type OldSession struct {
 	exp   time.Time
 }
 
-var maxSessions = 16384
+type SessionStore struct {
+	byToken     map[string]*loginState
+	byAge       []OldSession
+	maxSessions int
+}
 
-var sessionsByToken = make(map[string]*loginState)
-var sessionsByAge []OldSession
+func NewSessionStore(maxSessions int) *SessionStore {
+	return &SessionStore{
+		make(map[string]*loginState),
+		[]OldSession{},
+		maxSessions,
+	}
+}
 
-// addSession sets sessionToken to a random value and adds loginState to session data structures
-func addSession(ls *loginState) error {
+// AddSession sets sessionToken to a random value and adds loginState to session data structures
+func (ss *SessionStore) AddSession(ls *loginState) error {
 	sessionToken := randomString(128)
-	if sessionsByToken[sessionToken] != nil {
-		deleteSession(sessionToken)
+	if ss.byToken[sessionToken] != nil {
+		ss.DeleteSession(sessionToken)
 		return fmt.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
-	sessionsByToken[sessionToken] = ls
-	sessionsByAge = append(sessionsByAge, OldSession{sessionToken, ls.exp})
+	ss.byToken[sessionToken] = ls
+	// Assume token expiration is always the same time in the future. Should be close enough for government work.
+	ss.byAge = append(ss.byAge, OldSession{sessionToken, ls.exp})
 	return nil
 }
 
-func deleteSession(token string) error {
-	delete(sessionsByToken, token)
-	for i := 0; i < len(sessionsByAge); i++ {
-		s := sessionsByAge[i]
+func (ss *SessionStore) GetSession(token string) *loginState {
+	return ss.byToken[token]
+}
+
+func (ss *SessionStore) DeleteSession(token string) error {
+	delete(ss.byToken, token)
+	for i := 0; i < len(ss.byAge); i++ {
+		s := ss.byAge[i]
 		if s.token == token {
-			sessionsByAge = append(sessionsByAge[:i], sessionsByAge[i+1:]...)
+			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
 			return nil
 		}
 	}
-	log.Errorf("sessionsByAge did not contain session %v", token)
-	return fmt.Errorf("sessionsByAge did not contain session %v", token)
+	log.Errorf("ss.byAge did not contain session %v", token)
+	return fmt.Errorf("ss.byAge did not contain session %v", token)
 }
 
-func pruneSessions() {
+func (ss *SessionStore) PruneSessions() {
 	expired := 0
-	for i := 0; i < len(sessionsByAge); i++ {
-		s := sessionsByAge[i]
+	for i := 0; i < len(ss.byAge); i++ {
+		s := ss.byAge[i]
 		if s.exp.Sub(time.Now()) < 0 {
-			delete(sessionsByToken, s.token)
-			sessionsByAge = append(sessionsByAge[:i], sessionsByAge[i+1:]...)
+			delete(ss.byToken, s.token)
+			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
 			expired++
 		}
 	}
 	log.Debugf("Pruned %v expired sessions.", expired)
-	toRemove := len(sessionsByAge) - maxSessions
+	toRemove := len(ss.byAge) - ss.maxSessions
 	if toRemove > 0 {
 		log.Debugf("Still too many sessions. Pruning oldest %v sessions...", toRemove)
 		// TODO: account for user ids when pruning old sessions. Otherwise one user could log in 16k times and boot out everyone else.
-		for _, s := range sessionsByAge[:toRemove] {
-			delete(sessionsByToken, s.token)
+		for _, s := range ss.byAge[:toRemove] {
+			delete(ss.byToken, s.token)
 		}
-		sessionsByAge = sessionsByAge[toRemove:]
+		ss.byAge = ss.byAge[toRemove:]
 	}
 	if expired+toRemove > 0 {
 		log.Debugf("Pruned %v old sessions.", expired+toRemove)

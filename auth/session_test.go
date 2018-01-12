@@ -7,20 +7,20 @@ import (
 	"github.com/coreos/go-oidc/jose"
 )
 
-func checkSessions(t *testing.T) {
-	if len(sessionsByAge) != len(sessionsByToken) {
-		t.Fatalf("age: %v != token %v", len(sessionsByAge), len(sessionsByToken))
+func checkSessions(t *testing.T, ss *SessionStore) {
+	if len(ss.byAge) != len(ss.byToken) {
+		t.Fatalf("age: %v != token %v", len(ss.byAge), len(ss.byToken))
 	}
-	for _, s := range sessionsByAge {
-		ls := sessionsByToken[s.token]
+	for _, s := range ss.byAge {
+		ls := ss.byToken[s.token]
 		if ls == nil {
-			t.Fatalf("sessionsByAge %v not in sessionsByToken", s.token)
+			t.Fatalf("ss.byAge %v not in ss.byToken", s.token)
 		}
 	}
 }
 
 func TestSessions(t *testing.T) {
-	maxSessions = 3
+	ss := NewSessionStore(3)
 	notExpired := time.Now().Add(time.Duration(3600) * time.Second)
 	expired := time.Now().Add(time.Duration(3600) * time.Second * -1)
 	fakeTokens := []fakeToken{
@@ -36,38 +36,38 @@ func TestSessions(t *testing.T) {
 			t.Fatalf("newLoginState error: %v", err)
 		}
 
-		err = addSession(ls)
+		err = ss.AddSession(ls)
 		if err != nil {
-			t.Fatalf("addSession error: %v", err)
+			t.Fatalf("AddSession error: %v", err)
 		}
 
 		sessionToken := ls.sessionToken
 		if sessionToken == "" {
 			t.Fatal("sessionToken is empty!")
 		}
-		checkSessions(t)
+		checkSessions(t, ss)
 	}
 
-	if len(sessionsByAge) != 4 {
-		t.Fatal("sessionsByAge != 4")
+	if len(ss.byAge) != 4 {
+		t.Fatal("ss.byAge != 4")
 	}
 
-	pruneSessions()
+	ss.PruneSessions()
 
-	if len(sessionsByAge) != 3 {
-		t.Fatal("sessionsByAge != 3")
+	if len(ss.byAge) != 3 {
+		t.Fatal("ss.byAge != 3")
 	}
 
-	checkSessions(t)
+	checkSessions(t, ss)
 
-	err := deleteSession(sessionsByAge[0].token)
+	err := ss.DeleteSession(ss.byAge[0].token)
 	if err != nil {
 		t.Fatalf("deleteSession error: %v", err)
 	}
 
-	checkSessions(t)
+	checkSessions(t, ss)
 
-	if len(sessionsByAge) != 2 {
-		t.Fatal("sessionsByAge != 2")
+	if len(ss.byAge) != 2 {
+		t.Fatal("ss.byAge != 2")
 	}
 }
