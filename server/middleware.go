@@ -37,19 +37,16 @@ func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
 		}
 
 		if !safe {
-			ref := r.Referer()
-			if len(ref) == 0 {
-				plog.Infof("No referer!")
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
-			err := a.VerifyReferer(ref)
-			if err != nil {
+			if err := a.VerifyReferer(r); err != nil {
 				plog.Infof("Invalid referer %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
-
+			if err := a.VerifyCSRFToken(r); err != nil {
+				plog.Infof("Invalid CSRFToken %v", err)
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
 		}
 
 		hdlr.ServeHTTP(w, r)
