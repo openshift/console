@@ -198,18 +198,15 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		sessionToken := randomString(128)
-		ls.sessionToken = sessionToken
-		if sessionsByToken[sessionToken] != nil {
-			log.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
-			deleteSession(sessionToken)
+		err = addSession(ls)
+		if err != nil {
+			log.Errorf("addSession error: %v", err)
 			a.redirectAuthError(w, errorInternal, nil)
 			return
 		}
-		addSession(ls)
 		cookie := http.Cookie{
 			Name:     tectonicSessionCookieName,
-			Value:    sessionToken,
+			Value:    ls.sessionToken,
 			MaxAge:   maxAge(ls.exp, time.Now()),
 			HttpOnly: true,
 			Path:     a.cookiePath,

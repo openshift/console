@@ -12,14 +12,22 @@ type OldSession struct {
 	exp   time.Time
 }
 
-const maxSessions = 16384
+var maxSessions = 16384
 
 var sessionsByToken = make(map[string]*loginState)
 var sessionsByAge []OldSession
 
-func addSession(ls *loginState) {
-	sessionsByToken[ls.sessionToken] = ls
-	sessionsByAge = append(sessionsByAge, OldSession{ls.sessionToken, ls.exp})
+// addSession sets sessionToken to a random value and adds loginState to session data structures
+func addSession(ls *loginState) error {
+	sessionToken := randomString(128)
+	if sessionsByToken[sessionToken] != nil {
+		deleteSession(sessionToken)
+		return fmt.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
+	}
+	ls.sessionToken = sessionToken
+	sessionsByToken[sessionToken] = ls
+	sessionsByAge = append(sessionsByAge, OldSession{sessionToken, ls.exp})
+	return nil
 }
 
 func deleteSession(token string) error {
