@@ -36,9 +36,9 @@ func TestSessions(t *testing.T) {
 			t.Fatalf("newLoginState error: %v", err)
 		}
 
-		err = ss.AddSession(ls)
+		err = ss.addSession(ls)
 		if err != nil {
-			t.Fatalf("AddSession error: %v", err)
+			t.Fatalf("addSession error: %v", err)
 		}
 
 		sessionToken := ls.sessionToken
@@ -60,7 +60,7 @@ func TestSessions(t *testing.T) {
 
 	checkSessions(t, ss)
 
-	err := ss.DeleteSession(ss.byAge[0].token)
+	err := ss.deleteSession(ss.byAge[0].token)
 	if err != nil {
 		t.Fatalf("deleteSession error: %v", err)
 	}

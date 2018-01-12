@@ -59,12 +59,12 @@ func getLoginState(r *http.Request) (*loginState, error) {
 		return nil, err
 	}
 	sessionToken := sessionCookie.Value
-	ls := ss.GetSession(sessionToken)
+	ls := ss.getSession(sessionToken)
 	if ls == nil {
 		return nil, fmt.Errorf("No session found on server")
 	}
-	if ls.exp.Sub(time.Now()) < 0 {
-		ss.DeleteSession(sessionToken)
+	if ls.exp.Sub(ls.now()) < 0 {
+		ss.deleteSession(sessionToken)
 		return nil, fmt.Errorf("Session is expired.")
 	}
 	return ls, nil
@@ -139,7 +139,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	ls, _ := getLoginState(r)
 	if ls != nil {
-		ss.DeleteSession(ls.sessionToken)
+		ss.deleteSession(ls.sessionToken)
 	}
 	// Delete session cookie
 	cookie := http.Cookie{
@@ -200,7 +200,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		err = ss.AddSession(ls)
+		err = ss.addSession(ls)
 		if err != nil {
 			log.Errorf("addSession error: %v", err)
 			a.redirectAuthError(w, errorInternal, nil)

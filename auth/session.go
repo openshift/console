@@ -16,6 +16,7 @@ type SessionStore struct {
 	byToken     map[string]*loginState
 	byAge       []OldSession
 	maxSessions int
+	now         nowFunc
 }
 
 func NewSessionStore(maxSessions int) *SessionStore {
@@ -23,14 +24,15 @@ func NewSessionStore(maxSessions int) *SessionStore {
 		make(map[string]*loginState),
 		[]OldSession{},
 		maxSessions,
+		defaultNow,
 	}
 }
 
-// AddSession sets sessionToken to a random value and adds loginState to session data structures
-func (ss *SessionStore) AddSession(ls *loginState) error {
+// addSession sets sessionToken to a random value and adds loginState to session data structures
+func (ss *SessionStore) addSession(ls *loginState) error {
 	sessionToken := randomString(128)
 	if ss.byToken[sessionToken] != nil {
-		ss.DeleteSession(sessionToken)
+		ss.deleteSession(sessionToken)
 		return fmt.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
@@ -40,11 +42,11 @@ func (ss *SessionStore) AddSession(ls *loginState) error {
 	return nil
 }
 
-func (ss *SessionStore) GetSession(token string) *loginState {
+func (ss *SessionStore) getSession(token string) *loginState {
 	return ss.byToken[token]
 }
 
-func (ss *SessionStore) DeleteSession(token string) error {
+func (ss *SessionStore) deleteSession(token string) error {
 	delete(ss.byToken, token)
 	for i := 0; i < len(ss.byAge); i++ {
 		s := ss.byAge[i]
@@ -61,7 +63,7 @@ func (ss *SessionStore) PruneSessions() {
 	expired := 0
 	for i := 0; i < len(ss.byAge); i++ {
 		s := ss.byAge[i]
-		if s.exp.Sub(time.Now()) < 0 {
+		if s.exp.Sub(ss.now()) < 0 {
 			delete(ss.byToken, s.token)
 			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
 			expired++

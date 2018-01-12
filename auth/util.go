@@ -3,7 +3,7 @@ package auth
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"os"
+	"fmt"
 	"time"
 
 	"github.com/coreos/go-oidc/jose"
@@ -49,8 +49,7 @@ func randomString(length int) string {
 	bytes := make([]byte, length)
 	_, err := rand.Read(bytes)
 	if err != nil {
-		log.Errorf("FATAL ERROR: Unable to get random bytes for session token: %v", err)
-		os.Exit(1)
+		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
 	}
 	return base64.StdEncoding.EncodeToString(bytes)
 }
