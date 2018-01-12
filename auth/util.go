@@ -1,6 +1,9 @@
 package auth
 
 import (
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
 	"time"
 
 	"github.com/coreos/go-oidc/jose"
@@ -40,4 +43,13 @@ func jwtVerifier(oidcClient *oidc.Client) tokenVerifier {
 
 		return &jwt, nil
 	}
+}
+
+func randomString(length int) string {
+	bytes := make([]byte, length)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
+	}
+	return base64.StdEncoding.EncodeToString(bytes)
 }

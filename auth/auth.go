@@ -1,15 +1,12 @@
 package auth
 
 import (
-	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 
@@ -33,10 +30,7 @@ const (
 
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 
-const tectonicSessionCookieName = "tectonic-session-token"
-
-// TODO: prune this. (default to a max of 32k sessions or something)
-var sessions = make(map[string]*loginState)
+var ss = NewSessionStore(32768)
 
 type Authenticator struct {
 	TokenExtractor oidc.RequestTokenExtractor
@@ -65,12 +59,12 @@ func getLoginState(r *http.Request) (*loginState, error) {
 		return nil, err
 	}
 	sessionToken := sessionCookie.Value
-	ls := sessions[sessionToken]
+	ls := ss.getSession(sessionToken)
 	if ls == nil {
 		return nil, fmt.Errorf("No session found on server")
 	}
-	if ls.exp.Sub(time.Now()) < 0 {
-		delete(sessions, sessionToken)
+	if ls.exp.Sub(ls.now()) < 0 {
+		ss.deleteSession(sessionToken)
 		return nil, fmt.Errorf("Session is expired.")
 	}
 	return ls, nil
@@ -145,7 +139,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	ls, _ := getLoginState(r)
 	if ls != nil {
-		delete(sessions, ls.sessionToken)
+		ss.deleteSession(ls.sessionToken)
 	}
 	// Delete session cookie
 	cookie := http.Cookie{
@@ -169,16 +163,6 @@ func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, err
 		return oauth2.TokenResponse{}, err
 	}
 	return oauth2Client.RequestToken(oauth2.GrantTypeAuthCode, code)
-}
-
-func randomString(length int) string {
-	bytes := make([]byte, length)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		log.Errorf("FATAL ERROR: Unable to get random bytes for session token: %v", err)
-		os.Exit(1)
-	}
-	return base64.StdEncoding.EncodeToString(bytes)
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
@@ -216,17 +200,15 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		sessionToken := randomString(128)
-		ls.sessionToken = sessionToken
-		if sessions[sessionToken] != nil {
-			log.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
+		err = ss.addSession(ls)
+		if err != nil {
+			log.Errorf("addSession error: %v", err)
 			a.redirectAuthError(w, errorInternal, nil)
 			return
 		}
-		sessions[sessionToken] = ls
 		cookie := http.Cookie{
 			Name:     tectonicSessionCookieName,
-			Value:    sessionToken,
+			Value:    ls.sessionToken,
 			MaxAge:   maxAge(ls.exp, time.Now()),
 			HttpOnly: true,
 			Path:     a.cookiePath,
@@ -237,6 +219,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 
 		log.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)
+		ss.PruneSessions()
 	}
 }
 
