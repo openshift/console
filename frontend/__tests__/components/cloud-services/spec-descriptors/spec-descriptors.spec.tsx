@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 
-import { ALMSpecDescriptors } from '../../../public/components/cloud-services';
-import { ClusterServiceVersionResourceSpec, SpecDescriptorProps } from '../../../public/components/cloud-services/spec-descriptors';
-import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { ALMSpecDescriptors } from '../../../../public/components/cloud-services';
+import { ClusterServiceVersionResourceSpec, SpecDescriptorProps } from '../../../../public/components/cloud-services/spec-descriptors';
+import { testResourceInstance } from '../../../../__mocks__/k8sResourcesMocks';
 
 describe(ClusterServiceVersionResourceSpec.name, () => {
   let wrapper: ShallowWrapper<SpecDescriptorProps>;
