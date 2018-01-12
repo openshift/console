@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/coreos/dex/api"
@@ -46,6 +47,7 @@ type Authenticator struct {
 	errorURL   string
 	successURL string
 	cookiePath string
+	refererURL *url.URL
 }
 
 // The trivial token "extractor" always extracts a constant string.
@@ -84,7 +86,7 @@ func GetTokenBySessionCookie(r *http.Request) (string, error) {
 }
 
 // NewAuthenticator initializes an Authenticator struct. cookiePath is an abstraction leak. (unfortunately, a necessary one.)
-func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string) (*Authenticator, error) {
+func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string, refererPath string) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
 		return nil, err
@@ -104,6 +106,11 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		cookiePath = "/"
 	}
 
+	refUrl, err := url.Parse(refererPath)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Authenticator{
 		TokenVerifier:  jwtVerifier(client),
 		TokenExtractor: GetTokenBySessionCookie,
@@ -112,6 +119,7 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		errorURL:       errURL,
 		successURL:     sucURL,
 		cookiePath:     cookiePath,
+		refererURL:     refUrl,
 	}, nil
 }
 
@@ -249,6 +257,23 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string,
 	u.RawQuery = q.Encode()
 	w.Header().Set("Location", u.String())
 	w.WriteHeader(http.StatusSeeOther)
+}
+
+func (a *Authenticator) VerifyReferer(referer string) (err error) {
+	u, err := url.Parse(referer)
+	if err != nil {
+		return err
+	}
+
+	isValid := a.refererURL.Hostname() == u.Hostname() &&
+		a.refererURL.Port() == u.Port() &&
+		a.refererURL.Scheme == u.Scheme &&
+		strings.HasPrefix(u.Path, a.refererURL.Path)
+
+	if !isValid {
+		return fmt.Errorf("invalid referer: %v (%v)", referer, a.refererURL)
+	}
+	return nil
 }
 
 func NewDexClient(hostAndPort string, caCrt, clientCrt, clientKey string) (api.DexClient, error) {

@@ -15,7 +15,7 @@ type loginState struct {
 	Name         string
 	Email        string
 	exp          time.Time
-	token        token
+	token        Token
 	now          nowFunc
 	sessionToken string
 }
@@ -28,7 +28,7 @@ type LoginJSON struct {
 }
 
 // newLoginState unpacks a token and generates a new loginState from it.
-func newLoginState(tok token) (*loginState, error) {
+func newLoginState(tok Token) (*loginState, error) {
 	ls := &loginState{
 		token: tok,
 		now:   defaultNow,
