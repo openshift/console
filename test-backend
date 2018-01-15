@@ -1,4 +1,7 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -e
+
 #
 # Run all tests (not including functional)
 #   ./test-backend

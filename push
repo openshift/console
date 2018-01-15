@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -e
 
 # Build, tag, and push container image to quay.io/coreos/tectonic-console
 # Will push a sha-named image at every run.

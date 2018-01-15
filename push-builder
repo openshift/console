@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -e
 
 # This script pushes the builder docker image to quay.io. You'll need
 # it when you introduce new build-time dependencies or change go

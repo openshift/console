@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -e
 
 # pull the current git commit hash
 COMMIT=`git rev-parse HEAD`
