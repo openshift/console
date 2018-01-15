@@ -125,6 +125,6 @@
     "webpack-bundle-analyzer": "2.x"
   },
   "engines": {
-    "node": "8.x"
+    "node": ">=8.x <10.0"
   }
 }
