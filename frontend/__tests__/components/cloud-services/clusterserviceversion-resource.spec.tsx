@@ -9,6 +9,7 @@ import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListPro
 import { Resources } from '../../../public/components/cloud-services/k8s-resource';
 import { ClusterServiceVersionResourceKind } from '../../../public/components/cloud-services';
 import { ClusterServiceVersionResourceStatus } from '../../../public/components/cloud-services/status-descriptors';
+import { ClusterServiceVersionResourceSpec } from '../../../public/components/cloud-services/spec-descriptors';
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, Firehose } from '../../../public/components/utils';
@@ -219,6 +220,27 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
 
     expect(statusView.exists()).toBe(true);
+  });
+
+  it('does not render any spec descriptor fields if there are none defined on the `ClusterServiceVersion`', () => {
+    let clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
+    clusterServiceVersion.spec.customresourcedefinitions.owned = [];
+    wrapper = wrapper.setProps({clusterServiceVersion});
+
+    expect(wrapper.find(ClusterServiceVersionResourceSpec).length).toEqual(0);
+  });
+
+  it('renders spec descriptor fields if the custom resource is `owned`', () => {
+    expect(wrapper.find(ClusterServiceVersionResourceSpec).length).toEqual(1);
+  });
+
+  it('renders spec descriptor fields if the custom resource is `required`', () => {
+    let clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
+    clusterServiceVersion.spec.customresourcedefinitions.required = _.cloneDeep(clusterServiceVersion.spec.customresourcedefinitions.owned);
+    clusterServiceVersion.spec.customresourcedefinitions.owned = [];
+    wrapper = wrapper.setProps({clusterServiceVersion});
+
+    expect(wrapper.find(ClusterServiceVersionResourceSpec).length).toEqual(1);
   });
 });
 

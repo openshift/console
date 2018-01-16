@@ -152,7 +152,8 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
 
       // Find the matching CRD spec for the kind of this resource in the CSV.
       const ownedDefinitions = _.get<CRDDescription[]>(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
-      const thisDefinition = _.find(ownedDefinitions, (def) => def.name.split('.')[0] === this.props.kindObj.path);
+      const reqDefinitions = _.get<CRDDescription[]>(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.required', []);
+      const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === this.props.kindObj.path);
       const statusDescriptors = _.get<StatusDescriptor[]>(thisDefinition, 'statusDescriptors', []);
       const specDescriptors = _.get<SpecDescriptor[]>(thisDefinition, 'specDescriptors', []);
 

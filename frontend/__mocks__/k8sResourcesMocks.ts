@@ -56,6 +56,12 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
           kind: 'Pod',
           version: 'v1',
         }],
+        specDescriptors: [{
+          path: 'size',
+          displayName: 'Size',
+          description: 'The desired number of Pods for the cluster',
+          'x-descriptors': ['urn:alm:descriptor:com.tectonic.ui:podCount'],
+        }],
         statusDescriptors: [{
           path: 'importantMetrics',
           displayName: 'Important Metrics',
