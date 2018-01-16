@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -e
 
 # This script contains all jenkins work.
 # This runs directly on the jenkins build host.
