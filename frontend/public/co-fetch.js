@@ -76,6 +76,7 @@ export const coFetch = (url, options = {}, timeout=20000) => {
   // remove the authorization header to prevent credentials from leaking.
   if (url.indexOf('://') >= 0) {
     delete allOptions.headers.Authorization;
+    delete allOptions.headers['X-CSRFToken'];
   }
 
   // Initiate both the fetch promise and a timeout promise
