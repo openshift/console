@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
+import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -34,12 +35,30 @@ let config: webpack.Configuration = {
       {
         test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules/,
-        loader: 'awesome-typescript-loader',
+        use: [
+          { loader: 'cache-loader' },
+          {
+            loader: 'thread-loader',
+            options: {
+              // Leave one core spare for fork-ts-checker-webpack-plugin
+              workers: require('os').cpus().length - 1,
+            }
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              happyPackMode: true, // This implicitly enables transpileOnly! No type checking!
+              transpileOnly: true, // fork-ts-checker-webpack-plugin takes care of type checking
+            }
+          },
+        ],
       },
       {
         test: /\.s?css$/,
         use: extractSass.extract({
           use: [
+            { loader: 'cache-loader' },
+            { loader: 'thread-loader' },
             {
               loader: 'css-loader',
               options: {
@@ -83,6 +102,7 @@ let config: webpack.Configuration = {
         return /node_modules/.test(resource);
       },
     }),
+    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
     extractSass,
     new HtmlWebpackPlugin({
       filename: './tokener.html',
