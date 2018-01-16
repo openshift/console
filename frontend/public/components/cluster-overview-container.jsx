@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 
+import { FLAGS, connectToFlags } from '../features';
 import {coFetchJSON} from '../co-fetch';
 import {k8sKinds, k8sGet} from '../module/k8s';
 import {k8sVersion} from '../module/status';
@@ -9,7 +10,7 @@ import {entitlementTitle} from './license-notifier';
 import {SafetyFirst} from './safety-first';
 import {clusterAppVersionName} from './channel-operators/tectonic-channel';
 
-export class ClusterOverviewContainer extends SafetyFirst {
+class ClusterOverviewContainer_ extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,12 +31,25 @@ export class ClusterOverviewContainer extends SafetyFirst {
     this._checkKubernetesVersion();
     this._checkCloudProvider();
     this._checkAppVersions();
+    if (this.props.flags.SECURITY_LABELLER) {
+      this._checkFixableIssues();
+      this._checkScannedPods();
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.flags.SECURITY_LABELLER || !nextProps.flags.SECURITY_LABELLER) {
+      return;
+    }
+    if (_.isFinite(this.state.fixableIssues) || _.isFinite(this.state.scannedPods)) {
+      return;
+    }
     this._checkFixableIssues();
     this._checkScannedPods();
   }
 
   _checkTectonicVersion() {
-    coFetchJSON('version')
+    coFetchJSON('api/tectonic/version')
       .then((data) => {
         const license = entitlementTitle(data.entitlementKind, data.entitlementCount);
         this.setState({ tectonicVersion: data.version, tectonicLicense: license, tectonicVersionObj: data });
@@ -102,3 +116,5 @@ export class ClusterOverviewContainer extends SafetyFirst {
     />;
   }
 }
+
+export const ClusterOverviewContainer = connectToFlags(FLAGS.SECURITY_LABELLER)(ClusterOverviewContainer_);
