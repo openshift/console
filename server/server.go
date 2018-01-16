@@ -62,6 +62,7 @@ type jsGlobals struct {
 	LogoutURL        string `json:"logoutURL"`
 	KubeAPIServerURL string `json:"kubeAPIServerURL"`
 	ClusterName      string `json:"clusterName"`
+	CSRFToken        string `json:"CSRFToken"`
 }
 
 type Server struct {
@@ -224,6 +225,11 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		ClusterName:      s.ClusterName,
 		KubeAPIServerURL: s.KubeAPIServerURL,
 	}
+
+	if !s.AuthDisabled() {
+		s.Auther.SetCSRFCookie(s.BaseURL.Path, &w)
+	}
+
 	tpl := template.New(IndexPageTemplateName)
 	tpl.Delims("[[", "]]")
 	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, IndexPageTemplateName))

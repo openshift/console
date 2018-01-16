@@ -22,16 +22,16 @@ func maxAge(exp time.Time, curr time.Time) int {
 }
 
 // token is an interface around JWTs for testing
-type Token interface {
+type token interface {
 	Claims() (jose.Claims, error)
 	Encode() string
 }
 
 // tokenVerifier funcs parse and verify an encoded token into an actual token object.
-type tokenVerifier func(string) (Token, error)
+type tokenVerifier func(string) (token, error)
 
 func jwtVerifier(oidcClient *oidc.Client) tokenVerifier {
-	return func(encodedToken string) (Token, error) {
+	return func(encodedToken string) (token, error) {
 		jwt, err := jose.ParseJWT(encodedToken)
 		if err != nil {
 			return nil, err

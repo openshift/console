@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"crypto/subtle"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -20,6 +21,8 @@ import (
 )
 
 const (
+	CSRFCookieName   = "csrf-token"
+	CSRFHeader       = "X-CSRFToken"
 	errorOAuth       = "oauth_error"
 	errorLoginState  = "login_state_error"
 	errorCookie      = "cookie_error"
@@ -242,7 +245,12 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string,
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (a *Authenticator) VerifyReferer(referer string) (err error) {
+func (a *Authenticator) VerifyReferer(r *http.Request) (err error) {
+	referer := r.Referer()
+	if len(referer) == 0 {
+		return fmt.Errorf("No referer!")
+	}
+
 	u, err := url.Parse(referer)
 	if err != nil {
 		return err
@@ -254,9 +262,38 @@ func (a *Authenticator) VerifyReferer(referer string) (err error) {
 		strings.HasPrefix(u.Path, a.refererURL.Path)
 
 	if !isValid {
-		return fmt.Errorf("invalid referer: %v (%v)", referer, a.refererURL)
+		return fmt.Errorf("invalid referer: %v expected `%v`", referer, a.refererURL)
 	}
 	return nil
+}
+
+func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
+	cookie := http.Cookie{
+		Name:     CSRFCookieName,
+		Value:    randomString(64),
+		HttpOnly: false,
+		Path:     path,
+		// TODO: set secure true if we're in prod (serving over https)
+		// Secure:   true,
+	}
+	http.SetCookie(*w, &cookie)
+}
+
+func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
+	CSRFToken := r.Header.Get(CSRFHeader)
+	CRSCookie, err := r.Cookie(CSRFCookieName)
+	if err != nil {
+		return fmt.Errorf("No CSRF Cookie!")
+	}
+
+	tokenBytes := []byte(CSRFToken)
+	cookieBytes := []byte(CRSCookie.Value)
+
+	if 1 == subtle.ConstantTimeCompare(tokenBytes, cookieBytes) {
+		return nil
+	}
+
+	return fmt.Errorf("CSRF token does not match CSRF cookie")
 }
 
 func NewDexClient(hostAndPort string, caCrt, clientCrt, clientKey string) (api.DexClient, error) {
