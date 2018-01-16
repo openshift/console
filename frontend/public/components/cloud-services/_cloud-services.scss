@@ -290,3 +290,10 @@ $clusterserviceversion-list-border: #ccc;
   height: 100px;
   filter: grayscale(100%);
 }
+
+.co-spec-descriptor--resource-requirements {
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 20px 0 5px 20px;
+  margin-top: 10px;
+}
