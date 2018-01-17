@@ -22,7 +22,7 @@ func TestRedirectAuthError(t *testing.T) {
 		},
 		RedirectURL: "http://example.com/callback",
 	}
-	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL, "/", "http://auth.example.com/")
+	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL, "/", "http://auth.example.com/", true)
 
 	a.redirectAuthError(w, "fake_error", err)
 	if err != nil {
@@ -59,7 +59,7 @@ func makeAuthenticator() (*Authenticator, error) {
 		},
 		RedirectURL: "https://example.com/callback",
 	}
-	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL, "/", validReferer)
+	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL, "/", validReferer, true)
 
 	if err != nil {
 		return nil, err

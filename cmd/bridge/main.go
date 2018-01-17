@@ -86,6 +86,7 @@ func main() {
 	if *fBaseAddress != "" {
 		baseURL = validateFlagIsURL("base-address", *fBaseAddress)
 	}
+
 	if *fDexClientCAFile == "" {
 		*fDexClientCAFile = *fCAFile
 	}
@@ -155,6 +156,15 @@ func main() {
 		if srv.DexClient, err = auth.NewDexClient(*fDexAPIHost, *fDexClientCAFile, *fDexClientCertFile, *fDexClientKeyFile); err != nil {
 			log.Fatalf("Failed to create a Dex API client: %v", err)
 		}
+	}
+
+	var secureCookies bool
+	if baseURL.Scheme == "https" {
+		secureCookies = true
+		log.Info("cookies are secure!")
+	} else {
+		secureCookies = false
+		log.Warning("cookies are not secure because base-address is not https!")
 	}
 
 	switch *fK8sMode {
@@ -271,7 +281,7 @@ func main() {
 				Scope: []string{"openid", "email", "profile", "offline_access", "groups"},
 			}
 
-			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath, refererPath); err != nil {
+			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath, refererPath, secureCookies); err != nil {
 				log.Fatalf("Error initializing kubectl authenticator: %v", err)
 			}
 
@@ -286,7 +296,7 @@ func main() {
 			)
 		}
 
-		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath, refererPath); err != nil {
+		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath, refererPath, secureCookies); err != nil {
 			log.Fatalf("Error initializing OIDC authenticator: %v", err)
 		}
 	case "disabled":

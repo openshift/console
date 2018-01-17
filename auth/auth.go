@@ -39,12 +39,13 @@ type Authenticator struct {
 	TokenExtractor oidc.RequestTokenExtractor
 	TokenVerifier  tokenVerifier
 
-	oidcClient *oidc.Client
-	issuerURL  *url.URL
-	errorURL   string
-	successURL string
-	cookiePath string
-	refererURL *url.URL
+	oidcClient    *oidc.Client
+	issuerURL     *url.URL
+	errorURL      string
+	successURL    string
+	cookiePath    string
+	refererURL    *url.URL
+	secureCookies bool
 }
 
 // The trivial token "extractor" always extracts a constant string.
@@ -83,7 +84,7 @@ func GetTokenBySessionCookie(r *http.Request) (string, error) {
 }
 
 // NewAuthenticator initializes an Authenticator struct. cookiePath is an abstraction leak. (unfortunately, a necessary one.)
-func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string, refererPath string) (*Authenticator, error) {
+func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string, refererPath string, secureCookies bool) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
 		return nil, err
@@ -117,6 +118,7 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 		successURL:     sucURL,
 		cookiePath:     cookiePath,
 		refererURL:     refUrl,
+		secureCookies:  secureCookies,
 	}, nil
 }
 
@@ -151,8 +153,7 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   0,
 		HttpOnly: true,
 		Path:     a.cookiePath,
-		// TODO: set secure true if we're in prod (serving over https)
-		// Secure:   true,
+		Secure:   a.secureCookies,
 	}
 	http.SetCookie(w, &cookie)
 	w.WriteHeader(http.StatusNoContent)
@@ -215,8 +216,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			MaxAge:   maxAge(ls.exp, time.Now()),
 			HttpOnly: true,
 			Path:     a.cookiePath,
-			// TODO: set secure true if we're in prod (serving over https)
-			// Secure:   true,
+			Secure:   a.secureCookies,
 		}
 		http.SetCookie(w, &cookie)
 
@@ -269,12 +269,12 @@ func (a *Authenticator) VerifyReferer(r *http.Request) (err error) {
 
 func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
 	cookie := http.Cookie{
-		Name:     CSRFCookieName,
-		Value:    randomString(64),
+		Name:  CSRFCookieName,
+		Value: randomString(64),
+		// JS needs to read this Cookie
 		HttpOnly: false,
 		Path:     path,
-		// TODO: set secure true if we're in prod (serving over https)
-		// Secure:   true,
+		Secure:   a.secureCookies,
 	}
 	http.SetCookie(*w, &cookie)
 }
