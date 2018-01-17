@@ -7,10 +7,16 @@ import { allModels } from '../module/k8s/k8s-models';
 // URL routes that can be namespaced
 export const prefixes = new Set(['search', 'applications']);
 
-allModels().forEach((v) => {
-  if (v.namespaced) {
-    prefixes.add(v.plural);
+allModels().forEach((v, k) => {
+  if (!v.namespaced) {
+    return;
   }
+  if (v.crd) {
+    prefixes.add(k);
+    return;
+  }
+
+  prefixes.add(v.plural);
 });
 
 export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
