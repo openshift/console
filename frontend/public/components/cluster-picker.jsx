@@ -37,9 +37,10 @@ const FirehoseToDropdown = ({clusters, loaded}) => {
   }
 
   masterURL = `${masterURL || ourURL}/k8s/cluster/clusters`;
-  items[masterURL] = <div style={{borderTop: '1px solid black', paddingTop: 10}}>Manage Cluster Directory…</div>;
+  const spacerBefore = new Set([masterURL]);
+  items[masterURL] = <div>Manage Cluster Directory…</div>;
 
-  return <Dropdown title="Clusters" items={items} selectedKey={selected} noButton={true} className="cluster-picker" menuClassName="dropdown--dark" onChange={url => window.location = url}/>;
+  return <Dropdown title="Clusters" items={items} selectedKey={selected} noButton={true} className="cluster-picker" menuClassName="dropdown--dark" onChange={url => window.location = url} spacerBefore={spacerBefore} />;
 };
 
 const resources = [{

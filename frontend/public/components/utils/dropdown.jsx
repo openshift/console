@@ -109,10 +109,16 @@ export class Dropdown extends DropdownMixin {
       </button>;
     }
 
-    const children = _.map(items, (html, key) => {
+    const spacerBefore = this.props.spacerBefore || new Set();
+
+    const children = [];
+    _.each(items, (html, key) => {
       const klass = classNames({'dropdown__selected': !noSelection && key === selectedKey});
       const onClick_ = this.onClick_.bind(this, key);
-      return <li className={klass} key={key}><a onClick={onClick_}>{html}</a></li>;
+      if (spacerBefore.has(key)) {
+        children.push(<li key={`${key}-spacer`}><div className="divider"></div></li>);
+      }
+      children.push(<li className={klass} key={key}><a onClick={onClick_}>{html}</a></li>);
     });
 
     return (
