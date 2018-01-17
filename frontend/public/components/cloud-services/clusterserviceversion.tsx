@@ -29,7 +29,7 @@ export const ClusterServiceVersionListItem: React.SFC<ClusterServiceVersionListI
           title="View namespace"
           items={namespaces.reduce((acc, ns) => ({...acc, [ns]: ns}), {})}
           onChange={(ns) => history.push(`${route(ns)}`)} />
-        : <Link to={`${route(obj.metadata.namespace)}`} title="View details" className="btn btn-default">View details</Link> }
+        : <Link to={route(obj.metadata.namespace)} title="View details" className="btn btn-default">View details</Link> }
       { namespaces.length === 1 && <Link to={`${route(obj.metadata.namespace)}/instances`} title="View instances">View instances</Link> }
     </div>
   </div>;
