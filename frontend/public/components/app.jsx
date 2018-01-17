@@ -25,12 +25,13 @@ import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
-import { history, getNamespace } from './utils';
+import { history, getNamespace, AsyncComponent } from './utils';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage, ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage } from './cloud-services';
 import { ClusterServiceVersionModel } from '../models';
 import { referenceForModel } from '../module/k8s';
+import { coFetch } from '../co-fetch';
 import '../style.scss';
 
 // Edge lacks URLSearchParams
@@ -212,10 +213,12 @@ window.onunhandledrejection = function (e) {
   window.windowError = true;
 };
 
+const AppGuard = (props) => <AsyncComponent loader={() => coFetch('api/tectonic/version').then(() => App)} {...props} />;
+
 render((
   <Provider store={store}>
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Route path="/" component={App} />
+      <Route path="/" component={AppGuard} />
     </Router>
   </Provider>
 ), document.getElementById('app'));
