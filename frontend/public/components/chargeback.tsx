@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
+import { Cog, detailsPage, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference, resourceURL, modelFor } from '../module/k8s';
 
@@ -22,10 +22,24 @@ spec:
 `);
 
 export const ReportReference: K8sFullyQualifiedResourceReference = 'Report:chargeback.coreos.com:v1alpha1';
+export const ScheduledReportReference: K8sFullyQualifiedResourceReference = 'ScheduledReport:chargeback.coreos.com:v1alpha1';
 export const ReportGenerationQueryReference: K8sFullyQualifiedResourceReference = 'ReportGenerationQuery:chargeback.coreos.com:v1alpha1';
+export const ReportPrometheusQueryReference: K8sFullyQualifiedResourceReference = 'ReportPrometheusQuery:chargeback.coreos.com:v1alpha1';
+
+const reportPages=[
+  {name: 'All Reports', href: ReportReference},
+  {name: 'Reporting Schedule', href: ScheduledReportReference},
+  {name: 'Generation Queries', href: ReportGenerationQueryReference},
+];
 
 const reportMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 const reportGenerationQueryMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+
+
+const ChargebackNavBar: React.StatelessComponent<{match: {url: string}}> = props => <div>
+  <NavTitle title="Chargeback Reporting" style={{paddingBottom: 15}} />
+  <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} />
+</div>;
 
 
 const ReportsHeader = props => <ListHeader>
@@ -97,11 +111,14 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
   }
 }
 
-export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} />;
-
-export const ReportsPage: React.StatelessComponent<ReportsPageProps> = props => <ListPage {...props} title="Chargeback Reports" kind={ReportReference} ListComponent={ReportsList} canCreate={true} filterLabel={props.filterLabel} />;
-
 const reportsPages = [navFactory.details(detailsPage(ReportsDetails)), navFactory.editYaml()];
+
+export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} pages={reportsPages} />;
+
+export const ReportsPage: React.StatelessComponent<ReportsPageProps> = props => <div>
+  <ChargebackNavBar match={props.match} />
+  <ListPage {...props} showTitle={false} kind={ReportReference} ListComponent={ReportsList} canCreate={true} filterLabel={props.filterLabel} />
+</div>;
 
 export const ReportsDetailsPage: React.StatelessComponent<ReportsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ReportReference} menuActions={reportMenuActions} pages={reportsPages} />;
@@ -168,7 +185,10 @@ const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQ
 
 export const ReportGenerationQueriesList: React.StatelessComponent = props => <List {...props} Header={ReportGenerationQueriesHeader} Row={ReportGenerationQueriesRow} />;
 
-export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerationQueriesPageProps> = props => <ListPage {...props} title="Chargeback Report Generation Queries" kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />;
+export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerationQueriesPageProps> = props => <div>
+  <ChargebackNavBar match={props.match} />
+  <ListPage {...props} showTitle={false} kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />
+</div>;
 
 const reportGenerationQueryPages = [navFactory.details(detailsPage(ReportGenerationQueriesDetails)), navFactory.editYaml()];
 export const ReportGenerationQueriesDetailsPage: React.StatelessComponent<ReportGenerationQueriesDetailsPageProps> = props => {
@@ -187,6 +207,7 @@ export type ReportsDetailsProps = {
 
 export type ReportsPageProps = {
   filterLabel: string,
+  match: {url: string},
 };
 
 export type ReportsDetailsPageProps = {
@@ -203,6 +224,7 @@ export type ReportGenerationQueriesDetailsProps = {
 
 export type ReportGenerationQueriesPageProps = {
   filterLabel: string,
+  match: {url: string},
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {
