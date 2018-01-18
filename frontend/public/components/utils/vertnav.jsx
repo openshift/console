@@ -50,7 +50,7 @@ export const navFactory = {
   }),
 };
 
-/** @type {React.SFC<{pages: {href: string, name: string, component: React.ComponentType}, basePath: string}>} */
+/** @type {React.SFC<{pages: {href: string, name: string}[], basePath: string}>} */
 export const NavBar = ({pages, basePath}) => {
   const divider = <li className="co-m-vert-nav__menu-item co-m-vert-nav__menu-item--divider" key="_divider" />;
   basePath = basePath.replace(/\/$/, '');
@@ -66,7 +66,7 @@ export const NavBar = ({pages, basePath}) => {
 };
 NavBar.displayName = 'NavBar';
 
-/** @augments {React.PureComponent<any>} */
+/** @augments {React.PureComponent<{className?: string, label?: string, pages: {href: string, name: string, component: React.ComponentType}[], match: any}>} */
 export class VertNav extends React.PureComponent {
   render () {
     const props = this.props;
