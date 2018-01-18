@@ -22,16 +22,26 @@ export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) 
 </div>;
 
 /** @type {React.SFC<{label: string, onChange: React.ChangeEventHandler<any>, defaultValue: string}}>} */
-export const TextFilter = ({label, onChange, defaultValue, style, className, autoFocus=true}) => <input
-  type="text"
-  style={style}
-  className={classNames('form-control text-filter pull-right', className)}
-  tabIndex={0}
-  placeholder={`Filter ${label}...`}
-  onChange={onChange}
-  autoFocus={autoFocus}
-  defaultValue={defaultValue}
-/>;
+export const TextFilter = ({label, onChange, defaultValue, style, className, autoFocus}) => {
+  if (_.isUndefined(autoFocus)) {
+    if (window.matchMedia('(min-width: 800px)').matches) {
+      autoFocus = true;
+    } else {
+      // likely a mobile device, & autofocus will cause keyboard to pop up
+      autoFocus = false;
+    }
+  }
+  return <input
+    type="text"
+    style={style}
+    className={classNames('form-control text-filter pull-right', className)}
+    tabIndex={0}
+    placeholder={`Filter ${label}...`}
+    onChange={onChange}
+    autoFocus={autoFocus}
+    defaultValue={defaultValue}
+  />;
+};
 
 TextFilter.displayName = 'TextFilter';
 
