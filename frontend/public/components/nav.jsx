@@ -161,7 +161,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink href="/persistentvolumes" name="Persistent Volumes" />
       <NavLink href="/settings/cluster" name="Cluster Settings" isActive={isClusterSettingsActive} />
       <NavLink resource="serviceaccounts" name="Service Accounts" />
-      <NavLink resource="storageclasses" name="Storage Classes" />
+      <NavLink href="/storageclasses" name="Storage Classes" />
       <NavLink resource="roles" name="Roles" isActive={isRolesActive} />
       <NavLink resource="rolebindings" name="Role Bindings" isActive={isRoleBindingsActive} />
       <NavLink resource="podvulns" name="Security Report" required={FLAGS.SECURITY_LABELLER} />
