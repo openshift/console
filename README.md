@@ -7,10 +7,11 @@ Codename: "Bridge"
 
 [quay.io/coreos/tectonic-console](https://quay.io/repository/coreos/tectonic-console?tab=tags)
 
-Console consists of a frontend webapp and a backend service which serves the following purposes:
-- Proxy the Kubernetes API
-- Provide additional non-Kubernetes APIs for interacting with the cluster
-- Serve all frontend static assets
+The Tectonic Console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other tectonic services like monitoring, chargeback, ALM, and identity.  Some things that go on behind the scenes include:
+
+- Proxying the Kubernetes API under `/api/kubernetes`
+- Providing additional non-Kubernetes APIs for interacting with the cluster (like validating the tectonic license)
+- Serving all frontend static assets
 - User Authentication
 - Some additional proxying to the Dex API
 
@@ -18,9 +19,10 @@ Console consists of a frontend webapp and a backend service which serves the fol
 
 ### Deps:
 
-1. nodejs >= 6.0 & yarn >= 0.23.1 (use of nvm is recommended)
+1. nodejs >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 0.23.1
 2. go >= 1.8 & glide >= 0.12.0
-3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release)
+3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release) and a k8s cluster
+4. Google Chrome >= 60 (needs --headless flag) for integration tests
 
 ### Build everything:
 
@@ -110,27 +112,26 @@ go, glide, nodejs/yarn, kubectl
 
 ### Frontend Development
 
-All frontend tasks are defined in `/frontend/package.json` and are aliased to `yarn run <cmd>`
+All frontend code lives in the `frontend` directory.  The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser.  These bundles are not commited to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
 
 #### Install Dependencies
 
-The frontend uses node and yarn to compile JS/JSX at build time. To install the build tools and dependencies:
+To install the build tools and dependencies:
 ```
 yarn install
 ```
-
-JS is compiled into one of two bundles - one strictly for external dependencies and the other for our source.  These bundles are not commited to git.  You must run this command once, and every time the dependencies change.
+You must run this command once, and every time the dependencies change. `node_modules` are not commited to git.
 
 #### Interactive Development
 
-The following build task will watch the source code for changes and compile automatically.  You must reload the page!
+The following build task will watch the source code for changes and compile automatically.  You must reload the page in your browser!
 ```
 yarn run dev
 ```
 
 ### Tests
 
-Run all tests:
+Run all unit tests:
 ```
 ./test
 ```
@@ -145,7 +146,26 @@ Run frontend tests:
 ./test-frontend
 ```
 
-#### Local Dex
+
+### Integration Tests
+
+Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).  
+
+Setup (or any time you change node_modules - `yarn add` or `yarn install`)
+```
+cd frontend && yarn run webdriver-update 
+```
+
+Run integration tests:
+```
+yarn run test-gui
+```
+
+#### Hacking Integration Tests
+
+Remove the `--headless` flag to Chrome (chromeOptions) in `frontend/integration-tests/protractor.conf.ts` to see what the tests are actually doing.
+
+### Local Dex
 
 Checkout and build [dex](https://github.com/coreos/dex/).
 
