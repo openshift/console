@@ -33,6 +33,7 @@
     "setupFiles": [
       "./__mocks__/requestAnimationFrame.js",
       "./__mocks__/localStorage.ts",
+      "./__mocks__/matchMedia.js",
       "./before-tests.js"
     ],
     "coverageDirectory": "__coverage__",
