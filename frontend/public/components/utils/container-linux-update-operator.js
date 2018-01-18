@@ -1,70 +1,32 @@
 import * as _ from 'lodash';
 
 /** https://github.com/coreos-inc/container-linux-update-operator/blob/master/internal/constants/constants.go **/
-const containerLinuxUpdateOperatorPrefix = 'container-linux-update.v1.coreos.com/';
+const CLUO_PREFIX = 'container-linux-update.v1.coreos.com/';
+const isOperatorInstalled = node => _.has(node.metadata.labels, `${CLUO_PREFIX}id`);
 
-const isOperatorInstalled = (node) => {
-  return _.has(node.metadata.labels, `${containerLinuxUpdateOperatorPrefix}id`);
-};
+const _labels = (node, label) => _.get(node.metadata.labels, label);
+const _annotations = (node, annotation) => _.get(node.metadata.annotations, annotation);
 
-const getStatus = (node) => {
-  return _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}status`);
-};
-
-const getVersion = (node) => {
-  return _.get(node.metadata.labels, `${containerLinuxUpdateOperatorPrefix}version`);
-};
-
-const getChannel = (node) => {
-  return _.get(node.metadata.labels, `${containerLinuxUpdateOperatorPrefix}group`);
-};
-
-const getLastCheckedTime = (node) => {
-  return _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}last-checked-time`);
-};
-
-const getNewVersion = (node) => {
-  return _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}new-version`);
-};
+const getStatus = node => _annotations(node, `${CLUO_PREFIX}status`);
+const getVersion = node => _labels(node, `${CLUO_PREFIX}version`);
+const getChannel = node => _labels(node, `${CLUO_PREFIX}group`);
+const getLastCheckedTime = node => _annotations(node, `${CLUO_PREFIX}last-checked-time`);
+const getNewVersion = node => _annotations(node, `${CLUO_PREFIX}new-version`);
 
 /** Whenever any node enters Downloading, Verifying, Finalizing **/
-const isDownloading = (status) => {
-  return status === 'UPDATE_STATUS_DOWNLOADING';
-};
-
-const isVerifying = (status) => {
-  return status === 'UPDATE_STATUS_VERIFYING';
-};
-
-const isFinalizing = (status) => {
-  return status === 'UPDATE_STATUS_FINALIZING';
-};
-
+const isDownloading = status => status === 'UPDATE_STATUS_DOWNLOADING';
+const isVerifying = status => status === 'UPDATE_STATUS_VERIFYING';
+const isFinalizing = status => status === 'UPDATE_STATUS_FINALIZING';
 /** Whenever any node enters Updated_Need_Reboot **/
-const isUpdatedNeedReboot = (status) => {
-  return status === 'UPDATE_STATUS_UPDATED_NEED_REBOOT';
-};
+const isUpdatedNeedReboot = status => status === 'UPDATE_STATUS_UPDATED_NEED_REBOOT';
+const isUpdateAvailable = status => status === 'UPDATE_STATUS_UPDATE_AVAILABLE';
+const isCheckingForUpdate = status => status === 'UPDATE_STATUS_CHECKING_FOR_UPDATE';
 
-const isUpdateAvailable = (status) => {
-  return status === 'UPDATE_STATUS_UPDATE_AVAILABLE';
-};
-
-const isCheckingForUpdate = (status) => {
-  return status === 'UPDATE_STATUS_CHECKING_FOR_UPDATE';
-};
-
-const isRebooting = (node) => {
-  const rebootInProgress = _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-in-progress`, 'false');
-  return rebootInProgress === 'true';
-};
-
-const isPendingReboot = (node) => {
-  const rebootNeeded = _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-needed`, 'false');
-  return rebootNeeded === 'true';
-};
+const isRebooting = node => 'true' === _annotations(node, `${CLUO_PREFIX}reboot-in-progress`, 'false');
+const isPendingReboot = node => 'true' === _annotations(node, `${CLUO_PREFIX}reboot-needed`, 'false');
 
 const isSoftwareUpToDate = (node) => {
-  const rebootNeeded = _.get(node.metadata.annotations, `${containerLinuxUpdateOperatorPrefix}reboot-needed`, 'false');
+  const rebootNeeded = _annotations(node, `${CLUO_PREFIX}reboot-needed`, 'false');
   return getStatus(node) === 'UPDATE_STATUS_IDLE' && rebootNeeded === 'false';
 };
 
@@ -72,7 +34,7 @@ const getUpdateStatus = (node) => {
   const status = getStatus(node);
 
   if (isSoftwareUpToDate(node)) {
-    return { className: null, text: 'Up to date'};
+    return { className: null, text: 'Up to date' };
   }
 
   if (isDownloading(status) || isVerifying(status) || isFinalizing(status)) {
