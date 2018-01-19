@@ -28,13 +28,23 @@ export const ReportPrometheusQueryReference: K8sFullyQualifiedResourceReference 
 
 const reportPages=[
   {name: 'All Reports', href: ReportReference},
-  {name: 'Reporting Schedule', href: ScheduledReportReference},
   {name: 'Generation Queries', href: ReportGenerationQueryReference},
 ];
 
-const reportMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
-const reportGenerationQueryMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
+const dataURL = (obj, format='json') => {
+  const serviceModel = modelFor('Service');
+  return resourceURL(serviceModel, {
+    ns: obj.metadata.namespace,
+    name: 'chargeback',
+    path: 'proxy/api/v1/reports/get',
+    queryParams: {
+      name: obj.metadata.name,
+      format,
+    },
+  });
+};
 
 const ChargebackNavBar: React.StatelessComponent<{match: {url: string}}> = props => <div>
   <NavTitle title="Chargeback Reporting" style={{paddingBottom: 15}} />
@@ -54,7 +64,7 @@ const ReportsHeader = props => <ListHeader>
 const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-xs-4">
-      <ResourceCog actions={reportMenuActions} kind={ReportReference} resource={obj} />
+      <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-lg-2 col-md-3 col-xs-4"><ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} /></div>
@@ -68,18 +78,10 @@ const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
   render () {
     const {obj} = this.props;
-    const serviceModel = modelFor('Service');
     const name = _.get(obj, ['metadata', 'name']);
     const format = 'csv';
-    const url = resourceURL(serviceModel, {
-      ns: obj.metadata.namespace,
-      name: 'chargeback',
-      path: 'proxy/api/v1/reports/get',
-      queryParams: {
-        name: obj.metadata.name,
-        format,
-      },
-    });
+    const url = dataURL(obj, format);
+    const phase = _.get(obj, ['status', 'phase']);
     return <div className="col-md-12">
       <Heading text="Chargeback Report" />
       <div className="co-m-pane__body">
@@ -92,7 +94,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
           <div className="col-sm-6 col-xs-12">
             <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
               <dt>Phase</dt>
-              <dd>{_.get(obj, ['status', 'phase'])}</dd>
+              <dd>{phase}</dd>
               <dt>Reporting Start</dt>
               <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></dd>
               <dt>Reporting End</dt>
@@ -121,7 +123,7 @@ export const ReportsPage: React.StatelessComponent<ReportsPageProps> = props => 
 </div>;
 
 export const ReportsDetailsPage: React.StatelessComponent<ReportsDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ReportReference} menuActions={reportMenuActions} pages={reportsPages} />;
+  return <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={reportsPages} />;
 };
 
 
@@ -135,7 +137,7 @@ const ReportGenerationQueriesHeader = props => <ListHeader>
 const ReportGenerationQueriesRow: React.StatelessComponent<ReportGenerationQueriesRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-md-3 col-sm-4">
-      <ResourceCog actions={reportGenerationQueryMenuActions} kind={ReportGenerationQueryReference} resource={obj} />
+      <ResourceCog actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
       <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-md-3 col-sm-4"><ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
@@ -192,7 +194,7 @@ export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerat
 
 const reportGenerationQueryPages = [navFactory.details(detailsPage(ReportGenerationQueriesDetails)), navFactory.editYaml()];
 export const ReportGenerationQueriesDetailsPage: React.StatelessComponent<ReportGenerationQueriesDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={reportGenerationQueryMenuActions} pages={reportGenerationQueryPages} />;
+  return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={menuActions} pages={reportGenerationQueryPages} />;
 };
 
 
