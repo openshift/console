@@ -24,6 +24,7 @@ const isCheckingForUpdate = status => status === 'UPDATE_STATUS_CHECKING_FOR_UPD
 
 const isRebooting = node => 'true' === _annotations(node, `${CLUO_PREFIX}reboot-in-progress`, 'false');
 const isPendingReboot = node => 'true' === _annotations(node, `${CLUO_PREFIX}reboot-needed`, 'false');
+const isUpdatingDocker = node => 'true' === _labels(node, `${CLUO_PREFIX}before-reboot`, 'false');
 
 const isSoftwareUpToDate = (node) => {
   const rebootNeeded = _annotations(node, `${CLUO_PREFIX}reboot-needed`, 'false');
@@ -45,8 +46,12 @@ const getUpdateStatus = (node) => {
     return { className: 'fa fa-info-circle co-cl-operator--pending', text: 'Rebooting...'};
   }
 
+  if (isUpdatingDocker(node)) {
+    return { className: 'fa fa-info-circle co-cl-operator--pending', text: 'Updating Docker...'};
+  }
+
   if (isPendingReboot(node)) {
-    return { className: 'fa fa-info-circle co-cl-operator--warning', text: 'Pending Reboot'};
+    return { className: 'fa fa-info-circle co-cl-operator--warning', text: 'Queued for update'};
   }
 
   if (isCheckingForUpdate(status)) {
