@@ -12,8 +12,8 @@ export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) => 
   </div>;
 };
 
-export const Heading: React.SFC<HeadingProps> = ({text}) => <div className="co-m-pane__heading">
-  <h1 className="co-m-pane__title">{text}</h1>
+export const Heading: React.SFC<HeadingProps> = ({text, children}) => <div className="co-m-pane__heading">
+  <h1 className="co-m-pane__title">{text}{children}</h1>
 </div>;
 
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = true, showNodeSelector = true, showAnnotations = true, podSelector = 'spec.selector'}) => {
@@ -52,6 +52,7 @@ export const ResourcePodCount: React.SFC<ResourcePodCountProps> = ({resource}) =
 /* eslint-disable no-undef */
 export type HeadingProps = {
   text: string;
+  children?: any;
 };
 
 export type ResourceSummaryProps = {
