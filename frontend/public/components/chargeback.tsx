@@ -80,18 +80,10 @@ const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
   render () {
     const {obj} = this.props;
-    const name = _.get(obj, ['metadata', 'name']);
-    const format = 'csv';
-    const url = dataURL(obj, format);
     const phase = _.get(obj, ['status', 'phase']);
     return <div className="col-md-12">
       <Heading text="Chargeback Report" />
       <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-sm-6 col-xs-12">
-            <DownloadButton url={url} filename={`${name}.${format}`} />
-          </div>
-        </div>
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
@@ -111,6 +103,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
           </div>
         </div>
       </div>
+      <ReportData obj={obj} />
     </div>;
   }
 }
@@ -169,8 +162,14 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       }
     }
 
-    return <div className="col-md-12">
-      <Heading text="Chargeback Report" />
+    const name = _.get(obj, ['metadata', 'name']);
+    const format = 'csv';
+    const downloadURL = dataURL(obj, format);
+
+    return <div>
+      <Heading text="Usage Report">
+        <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
+      </Heading>
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-sm-6 col-xs-12">
@@ -185,7 +184,6 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
 const reportsPages = [
   navFactory.details(detailsPage(ReportsDetails)),
   navFactory.editYaml(),
-  { name: 'Data', href: 'data', component: detailsPage(ReportData) },
 ];
 
 export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} pages={reportsPages} />;
