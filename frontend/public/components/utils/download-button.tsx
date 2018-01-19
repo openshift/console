@@ -38,10 +38,10 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
   }
 
   render () {
-    const { filename } = this.props;
+    const { className, filename } = this.props;
     const { error, inFlight } = this.state;
     // The position styling and always-hidden filename are so the button doesn't resize when its content changes.
-    return <div>
+    return <div className={className}>
       <button className="btn btn-primary" style={buttonStyle} disabled={inFlight} type="button" onClick={() => this.download()}>
         <i className="fa fa-fw fa-download" />&nbsp;Download
         <span style={{position: 'relative'}}>
@@ -59,6 +59,7 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
 export type DownloadButtonProps = {
   url: string,
   filename?: string,
+  className?: string,
 };
 
 export type DownloadButtonState = {
