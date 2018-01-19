@@ -13,32 +13,28 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 
 const empty = 'none';
 
-// Prom seems to die on bad settings
-const sanitizeForProm = obj => _.transform(obj, (o, v, k) => {
-  // drop non truthy non-zero values
-  if (!v && v !== 0) {
-    return;
-  }
-
-  // recurse
+// Remove all keys that map to non thruthy, non-top level values
+export const sanitizeForProm_ = (obj, _depth=0) => _.transform(obj, (o, v, k) => {
   if (_.isObject(v)) {
-    o[k] = sanitizeForProm(v);
-    return;
+    v = sanitizeForProm_(v, _depth+1);
   }
 
   // text inputs turn numbers into strings
   if (_.isString(v)) {
-    // empty strings are invalid but we can just nuke the key...
-    if (v.length === 0) {
-      return;
-    }
     const inted = parseFloat(k, 10);
     if (!_.isNaN(inted)) {
-      o[k] = inted;
-      return;
+      v = inted;
     }
   }
 
+  // drop non truthy non-zero values
+  if (_.isEmpty(v) && v !== 0 ) {
+    if (_depth > 0) {
+      return;
+    }
+    // turn non-zero non-truthy values into null
+    v = null;
+  }
   o[k] = v;
 });
 
@@ -57,7 +53,7 @@ class PromSettingsModal extends PromiseComponent {
       return;
     }
 
-    newConfig = sanitizeForProm(newConfig);
+    newConfig = sanitizeForProm_(newConfig);
 
     const promise = k8sPatch(k8sKinds.ConfigMap, obj, [{
       op: 'replace',
