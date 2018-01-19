@@ -3,15 +3,14 @@ import * as _ from 'lodash';
 /** https://github.com/coreos-inc/container-linux-update-operator/blob/master/internal/constants/constants.go **/
 const CLUO_PREFIX = 'container-linux-update.v1.coreos.com/';
 const isOperatorInstalled = node => _.has(node.metadata.labels, `${CLUO_PREFIX}id`);
+const _labels = (node, label) => _.get(node.metadata.labels, `${CLUO_PREFIX}${label}`);
+const _annotations = (node, annotation) => _.get(node.metadata.annotations, `${CLUO_PREFIX}${annotation}`);
 
-const _labels = (node, label) => _.get(node.metadata.labels, label);
-const _annotations = (node, annotation) => _.get(node.metadata.annotations, annotation);
-
-const getStatus = node => _annotations(node, `${CLUO_PREFIX}status`);
-const getVersion = node => _labels(node, `${CLUO_PREFIX}version`);
-const getChannel = node => _labels(node, `${CLUO_PREFIX}group`);
-const getLastCheckedTime = node => _annotations(node, `${CLUO_PREFIX}last-checked-time`);
-const getNewVersion = node => _annotations(node, `${CLUO_PREFIX}new-version`);
+const getStatus = node => _annotations(node, 'status');
+const getVersion = node => _labels(node, 'version');
+const getChannel = node => _labels(node, 'group');
+const getLastCheckedTime = node => _annotations(node, 'last-checked-time');
+const getNewVersion = node => _annotations(node, 'new-version');
 
 /** Whenever any node enters Downloading, Verifying, Finalizing **/
 const isDownloading = status => status === 'UPDATE_STATUS_DOWNLOADING';
@@ -22,14 +21,10 @@ const isUpdatedNeedReboot = status => status === 'UPDATE_STATUS_UPDATED_NEED_REB
 const isUpdateAvailable = status => status === 'UPDATE_STATUS_UPDATE_AVAILABLE';
 const isCheckingForUpdate = status => status === 'UPDATE_STATUS_CHECKING_FOR_UPDATE';
 
-const isRebooting = node => 'true' === _annotations(node, `${CLUO_PREFIX}reboot-in-progress`, 'false');
-const isPendingReboot = node => 'true' === _annotations(node, `${CLUO_PREFIX}reboot-needed`, 'false');
-const isUpdatingDocker = node => 'true' === _labels(node, `${CLUO_PREFIX}before-reboot`, 'false');
-
-const isSoftwareUpToDate = (node) => {
-  const rebootNeeded = _annotations(node, `${CLUO_PREFIX}reboot-needed`, 'false');
-  return getStatus(node) === 'UPDATE_STATUS_IDLE' && rebootNeeded === 'false';
-};
+const isRebooting = node => 'true' === _annotations(node, 'reboot-in-progress');
+const isPendingReboot = node => 'true' === _annotations(node, 'reboot-needed');
+const isUpdatingDocker = node => 'true' === _labels(node, 'before-reboot');
+const isSoftwareUpToDate = node => getStatus(node) === 'UPDATE_STATUS_IDLE' && !isPendingReboot(node);
 
 const getUpdateStatus = (node) => {
   const status = getStatus(node);
