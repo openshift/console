@@ -131,7 +131,7 @@ class UpdateProgress extends React.Component {
             textClass={nodeListUpdateStatus.downloading.length ? 'co-cl-operator--pending' : ''}
             total={upgradeCount} />
           {(updatedNeedsReboot.length > 0 || rebooting.length > 0) && <div>
-            <Breakdown text="Updated need reboot"
+            <Breakdown text="Queued for Update"
               iconClass={getProgressIconsClass(0, upgradeCount, updatedNeedsReboot)}
               style={style}
               count={updatedNeedsReboot.length}
