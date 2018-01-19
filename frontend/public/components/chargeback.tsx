@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
+import { LoadingBox } from './utils/status-box';
 import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference, resourceURL, modelFor } from '../module/k8s';
@@ -114,6 +115,8 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
   }
 }
 
+const colsWhitelist = new Set(['node', 'pod', 'namespace', 'pod_request_cpu_core_seconds']);
+
 class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   constructor (props) {
     super(props);
@@ -145,16 +148,33 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   render () {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
+
+    let dataElem = <p>Report not finished running.</p>;
+    if (phase === 'Finished') {
+      const data = this.state.data;
+      if (data) {
+        const keys = _.keys(data[0]).filter(k => colsWhitelist.has(k));
+        const cols = _.map(keys, k => <th key={k}>{k}</th>);
+        const rows = _.map(data, (row, i) => {
+          const elems = _.map(keys, k => <td key={k}>{_.isFinite(row[k]) ? _.round(row[k], 2) : row[k]}</td>);
+          return <tr key={i}>{elems}</tr>;
+        });
+        dataElem = <table>
+          <thead><tr>{cols}</tr></thead>
+          <tbody>{rows}</tbody>
+        </table>;
+        // dataElem = <pre>{JSON.stringify(data, null, 2)}</pre>;
+      } else {
+        dataElem = <LoadingBox />;
+      }
+    }
+
     return <div className="col-md-12">
       <Heading text="Chargeback Report" />
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-sm-6 col-xs-12">
-            { phase === 'Finished' ?
-              <pre>
-                {JSON.stringify(this.state.data, null, 2)}
-              </pre> :
-              <p>Report not finished running.</p> }
+            { dataElem }
           </div>
         </div>
       </div>
@@ -164,8 +184,8 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
 
 const reportsPages = [
   navFactory.details(detailsPage(ReportsDetails)),
-  { name: 'Data', href: 'data', component: detailsPage(ReportData) },
   navFactory.editYaml(),
+  { name: 'Data', href: 'data', component: detailsPage(ReportData) },
 ];
 
 export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} pages={reportsPages} />;
