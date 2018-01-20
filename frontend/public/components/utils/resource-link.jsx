@@ -37,15 +37,15 @@ export const resourcePath = (kind, name, namespace = undefined) => {
 
 export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
-/** @type {React.SFC<{kind: K8sResourceKindReference, name: string, namespace?: string, title: string, displayName?: string}>} */
-export const ResourceLink = ({kind, name, namespace, title, displayName}) => {
+/** @type {React.SFC<{kind: K8sResourceKindReference, name: string, namespace?: string, title: string, displayName?: string, linkTo?: boolean}>} */
+export const ResourceLink = ({kind, name, namespace, title, displayName, linkTo=true}) => {
   const path = resourcePath(kind, name, namespace);
   const value = displayName ? displayName : name;
 
   return (
     <span className="co-resource-link">
       <ResourceIcon kind={kind} />
-      {path ? <Link to={`${path}`} title={title}>{value}</Link> : <span>{value}</span>}
+      {(path && linkTo) ? <Link to={`${path}`} title={title}>{value}</Link> : <span>{value}</span>}
     </span>
   );
 };
