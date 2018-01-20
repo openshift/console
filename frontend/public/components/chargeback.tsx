@@ -116,6 +116,18 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
 const reducerCols = ['namespace', 'node', 'pod'];
 const colsBlacklist = new Set(['data_start', 'data_end']);
 
+const DataCell = ({name, value}) => {
+  if (_.isFinite(value)) {
+    return _.round(value, 2);
+  }
+  name = _.startCase(name);
+  const model = modelFor(name);
+  if (model) {
+    return <ResourceLink kind={name} name={value} title={value} linkTo={!model.namespaced} />;
+  }
+  return value;
+};
+
 class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   constructor (props) {
     super(props);
@@ -143,14 +155,12 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   componentWillMount () {
     const sortBy = getQueryArgument('sortBy') || 'namespace';
     const reduceBy = getQueryArgument('reduceBy') || 'namespace';
-    const orderBy = getQueryArgument('orderBy') || sortBy === 'namespace' ? 'asc' : 'desc';
-
+    const orderBy = getQueryArgument('orderBy') || (sortBy === 'namespace' ? 'asc' : 'desc');
     this.setState({
       sortBy,
       reduceBy,
       orderBy,
     });
-    // setQueryArgument('sortBy', this.state.sortBy);
     this.fetchData();
   }
 
@@ -203,7 +213,6 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
 
   transformData () {
     const {data, reduceBy, sortBy, orderBy} = this.state;
-
     const reducedData = {};
     _.each(data, row => {
       const key = row[reduceBy];
@@ -211,7 +220,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
         reducedData[key] = {};
       }
       _.each(row, (v, k) => {
-        if (!isFinite(v)) {
+        if (!isFinite(v as (any))) {
           return;
         }
         if (!reducedData[key][k]) {
@@ -220,8 +229,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
         reducedData[key][k] += v;
       });
     });
-    // TODO: use _.chain
-    const rows = _.orderBy(_.map(reducedData, (o, key) => ({[reduceBy]: key, ...o})), sortBy, orderBy);
+    const rows = _.chain(reducedData).map((o, key) => ({[reduceBy]: key, ...o})).orderBy(sortBy, orderBy).value();
     return rows;
   }
 
@@ -240,11 +248,14 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       if (data) {
         const keys = this.filterKeys();
         const rows = this.transformData();
-        dataElem = <div className="co-vert-margin">
-          <ListHeader>{_.map(keys, k => <ColHead className="col-xs-6" key={k} sortField={k} sortFunc={k} currentSortOrder={orderBy} currentSortField={sortBy} currentSortFunc={sortBy} applySort={applySort}>{k.replace(/_/g, ' ')}</ColHead>)}</ListHeader>
-          {_.map(rows, (r, i) => <div className="row" key={i}>
-            {_.map(r, (c, j) => <div className="col-xs-6" key={j}>{_.isFinite(c) ? _.round(c, 2) : c}</div>)}
-          </div>)}
+        const className = `col-xs-${Math.floor(12 / _.size(rows[0]))}`;
+        dataElem = <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20}}>
+          <ListHeader>{_.map(keys, k => <ColHead className={className} key={k} sortField={k} sortFunc={k} currentSortOrder={orderBy} currentSortField={sortBy} currentSortFunc={sortBy} applySort={applySort}>{k.replace(/_/g, ' ')}</ColHead>)}</ListHeader>
+          <div className="co-m-table-grid__body">
+            {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
+              {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} /></div>)}
+            </div>)}
+          </div>
         </div>;
       } else {
         dataElem = <LoadingInline />;
