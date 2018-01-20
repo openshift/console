@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
-import { LoadingInline } from './utils/status-box';
+import { LoadingInline, MsgBox } from './utils/status-box';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
@@ -243,7 +243,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     };
     const {data, reduceBy, sortBy, orderBy} = this.state;
 
-    let dataElem = <p>Report not finished running.</p>;
+    let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
     if (phase === 'Finished') {
       if (data) {
         const keys = this.filterKeys();
