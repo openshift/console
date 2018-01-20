@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as classNames from 'classnames';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
-import { LoadingBox } from './utils/status-box';
+import { LoadingInline } from './utils/status-box';
+import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference, resourceURL, modelFor } from '../module/k8s';
@@ -82,11 +84,14 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
     return <div className="col-md-12">
-      <Heading text="Chargeback Report" />
+      <Heading text="Report Overview" />
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-sm-6 col-xs-12">
-            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
+            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true} />
+          </div>
+          <div className="col-sm-6 col-xs-12">
+            <dl>
               <dt>Phase</dt>
               <dd>{phase}</dd>
               <dt>Reporting Start</dt>
@@ -99,7 +104,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
               <dd>{_.get(obj, ['spec', 'gracePeriod'])}</dd>
               <dt>Run Immediately?</dt>
               <dd>{Boolean(_.get(obj, ['spec', 'runImmediately'])).toString()}</dd>
-            </ResourceSummary>
+            </dl>
           </div>
         </div>
       </div>
@@ -108,7 +113,8 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
   }
 }
 
-const colsWhitelist = new Set(['node', 'pod', 'namespace', 'pod_request_cpu_core_seconds']);
+const reducerCols = ['namespace', 'node', 'pod'];
+const colsBlacklist = new Set(['data_start', 'data_end']);
 
 class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   constructor (props) {
@@ -117,6 +123,9 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       inFlight: false,
       error: null,
       data: null,
+      reduceBy: null,
+      sortBy: null,
+      orderBy: null,
     };
   }
 
@@ -131,34 +140,114 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       .then(() => this.setState({inFlight: false}));
   }
 
-  componentDidMount () {
-    const phase = _.get(this.props.obj, ['status', 'phase']);
+  componentWillMount () {
+    const sortBy = getQueryArgument('sortBy') || 'namespace';
+    const reduceBy = getQueryArgument('reduceBy') || 'namespace';
+    const orderBy = getQueryArgument('orderBy') || sortBy === 'namespace' ? 'asc' : 'desc';
+
+    this.setState({
+      sortBy,
+      reduceBy,
+      orderBy,
+    });
+    // setQueryArgument('sortBy', this.state.sortBy);
+    this.fetchData();
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.state.inFlight || this.state.data) {
+      return;
+    }
+    const phase = _.get(nextProps.obj, ['status', 'phase']);
+    // const oldPhase = _.get(this.props.obj, ['status', 'phase']);
     if (phase === 'Finished') {
       this.fetchData();
     }
+  }
+
+  orderBy (col) {
+    this.setState({orderBy: col});
+    setQueryArgument('orderBy', col);
+  }
+
+  reduceBy (col) {
+    if (reducerCols.indexOf(this.state.sortBy) >= 0) {
+      // Sort field is going away. Sort by new field.
+      this.sortBy(col);
+    }
+    setQueryArgument('reduceBy', col);
+    this.setState({reduceBy: col});
+  }
+
+  sortBy (col) {
+    this.setState({sortBy: col});
+    setQueryArgument('sortBy', col);
+  }
+
+  filterKeys () {
+    const {data=[], reduceBy} = this.state;
+    const keys = _.keys(data[0]).filter(k => {
+      if (k === reduceBy) {
+        return true;
+      }
+      if (colsBlacklist.has(k)) {
+        return false;
+      }
+      if (reducerCols.indexOf(k) >= 0) {
+        return false;
+      }
+      return true;
+    });
+    return keys;
+  }
+
+  transformData () {
+    const {data, reduceBy, sortBy, orderBy} = this.state;
+
+    const reducedData = {};
+    _.each(data, row => {
+      const key = row[reduceBy];
+      if (!reducedData[key]) {
+        reducedData[key] = {};
+      }
+      _.each(row, (v, k) => {
+        if (!isFinite(v)) {
+          return;
+        }
+        if (!reducedData[key][k]) {
+          reducedData[key][k] = 0;
+        }
+        reducedData[key][k] += v;
+      });
+    });
+    // TODO: use _.chain
+    const rows = _.orderBy(_.map(reducedData, (o, key) => ({[reduceBy]: key, ...o})), sortBy, orderBy);
+    return rows;
   }
 
   render () {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
 
+    const applySort = (sortBy, func, orderBy) => {
+      this.sortBy(sortBy);
+      this.orderBy(orderBy);
+    };
+    const {data, reduceBy, sortBy, orderBy} = this.state;
+
     let dataElem = <p>Report not finished running.</p>;
     if (phase === 'Finished') {
-      const data = this.state.data;
       if (data) {
-        const keys = _.keys(data[0]).filter(k => colsWhitelist.has(k));
-        const cols = _.map(keys, k => <th key={k}>{k}</th>);
-        const rows = _.map(data, (row, i) => {
-          const elems = _.map(keys, k => <td key={k}>{_.isFinite(row[k]) ? _.round(row[k], 2) : row[k]}</td>);
-          return <tr key={i}>{elems}</tr>;
-        });
-        dataElem = <table>
-          <thead><tr>{cols}</tr></thead>
-          <tbody>{rows}</tbody>
-        </table>;
-        // dataElem = <pre>{JSON.stringify(data, null, 2)}</pre>;
+        const keys = this.filterKeys();
+        const rows = this.transformData();
+        dataElem = <div className="co-vert-margin">
+          <ListHeader>{_.map(keys, k => <ColHead className="col-xs-6" key={k} sortField={k} sortFunc={k} currentSortOrder={orderBy} currentSortField={sortBy} currentSortFunc={sortBy} applySort={applySort}>{k.replace(/_/g, ' ')}</ColHead>)}</ListHeader>
+          {_.map(rows, (r, i) => <div className="row" key={i}>
+            {_.map(r, (c, j) => <div className="col-xs-6" key={j}>{_.isFinite(c) ? _.round(c, 2) : c}</div>)}
+          </div>)}
+        </div>;
       } else {
-        dataElem = <LoadingBox />;
+        dataElem = <LoadingInline />;
       }
     }
 
@@ -173,9 +262,12 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-sm-6 col-xs-12">
-            { dataElem }
+            <div className="btn-group">
+              {_.map(reducerCols, col => <button key={col} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy})}>By {_.startCase(col)}</button>)}
+            </div>
           </div>
         </div>
+        { dataElem }
       </div>
     </div>;
   }
@@ -285,6 +377,9 @@ export type ReportDataState = {
   error: any,
   data: any,
   inFlight: boolean,
+  reduceBy: string,
+  sortBy: string,
+  orderBy: string,
 };
 
 export type ReportsPageProps = {
