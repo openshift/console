@@ -2657,6 +2657,10 @@ button.close {
   .btn:active, .btn:focus, .btn:active:focus {
     outline: none; }
 
+.btn-group > .btn {
+  margin-right: 0;
+}
+
 .btn-primary {
   color: white;
   background-color: #f04c5c;
