@@ -117,7 +117,7 @@ const colsBlacklist = new Set(['data_start', 'data_end']);
 
 const DataCell = ({name, value}) => {
   if (_.isFinite(value)) {
-    return _.round(value, 2);
+    return <div className="text-right">{_.round(value, 2).toLocaleString()}</div>;
   }
   name = _.startCase(name);
   const model = modelFor(name);
@@ -273,7 +273,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <div className="btn-group">
-              {_.map(reducerCols, col => <button key={col} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy})}>By {_.startCase(col)}</button>)}
+              {_.map(reducerCols.filter(col => _.get(data, [0, col])), col => <button key={col} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy})}>By {_.startCase(col)}</button>)}
             </div>
           </div>
         </div>
