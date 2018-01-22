@@ -2,11 +2,10 @@ import * as _ from 'lodash';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { safeLoad, safeDump } from 'js-yaml';
-import { Field, reduxForm, getFormValues } from 'redux-form';
+import { Field, reduxForm } from 'redux-form';
 
-import store from '../../redux';
 import { k8sPatch, k8sKinds } from '../../module/k8s';
-import { Firehose, StatusBox, PromiseComponent } from '../utils';
+import { Firehose, StatusBox, PromiseComponent, validate } from '../utils';
 import { AlertManagersListContainer } from '../alert-manager';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 
@@ -39,12 +38,34 @@ export const sanitizeForProm_ = (obj, _depth=0) => _.transform(obj, (o, v, k) =>
 });
 
 class PromSettingsModal extends PromiseComponent {
-  _submit (e) {
-    e.preventDefault();
-
-    const { Form, obj, cancel, getNewConfig} = this.props;
+  constructor (props) {
+    super(props);
+    const { title, description, reduxFormWrapper, FormBody} = props;
+    // NOTE: redux forms assumes it owns the entire form ...
+    // including the submit button (ModalSubmitFooter)...
+    this.Form = reduxFormWrapper(({handleSubmit, invalid, errorMessage, inProgress}) =>
+      <form onSubmit={handleSubmit(e => this._submit(e))}>
+        <ModalTitle>{title}</ModalTitle>
+        <ModalBody>
+          <div className="row co-m-form-row">
+            <div className="col-sm-12">{description}</div>
+          </div>
+          <div className="row co-m-form-row">
+            <FormBody />
+          </div>
+        </ModalBody>
+        <ModalSubmitFooter
+          submitDisabled={invalid}
+          errorMessage={errorMessage}
+          inProgress={inProgress}
+          submitText="Save Changes"
+          cancel={e => this.props.cancel(e)} />
+      </form>
+    );
+  }
+  _submit (formData) {
+    const { obj, cancel, getNewConfig} = this.props;
     // PromiseComponent handles submitting the form.
-    const formData = getFormValues(Form.formName)(store.getState());
     let newConfig;
     try {
       newConfig = _.defaultsDeep(getNewConfig(formData), this.props.config);
@@ -61,38 +82,53 @@ class PromSettingsModal extends PromiseComponent {
       value: safeDump(newConfig),
     }]);
 
-    this.handlePromise(promise).then(cancel);
+    this.handlePromise(promise).then(cancel, () => {});
   }
 
   render () {
-    const { title, description } = this.props;
-
-    return <form onSubmit={e => this._submit(e)}>
-      <ModalTitle>{title}</ModalTitle>
-      <ModalBody>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">{description}</div>
-        </div>
-        <div className="row co-m-form-row">
-          <this.props.Form handleSubmit={this._submit} />
-        </div>
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save Changes" cancel={e => this.props.cancel(e)} />
-    </form>;
+    return <this.Form {...this.state}/>;
   }
 }
 
 PromSettingsModal.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  Form: PropTypes.func.isRequired,
+  reduxFormWrapper: PropTypes.func.isRequired,
   obj: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   getNewConfig: PropTypes.func.isRequired,
+  FormBody: PropTypes.func.isRequired,
 };
 
 const labelStyle = { fontWeight: 300 };
 const fieldStyle = { width: 150 };
+
+const renderField = ({
+  input,
+  type,
+  autoFocus,
+  placeholder,
+  meta: {
+    // touched,
+    error,
+    warning }
+}) => <div>
+  <input className="form-control" style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder}/>
+  {
+    (error && <div className="co-m-message co-m-message--error">{error}</div>) ||
+      (warning && <span>{warning}</span>)
+  }
+</div>;
+
+const validateForm = validator => values => {
+  const errors = {};
+
+  _.each(values, (v, k) => {
+    errors[k] = validator(v);
+  });
+
+  return errors;
+};
 
 const MemCPUModalLink = ({section, type, config, obj}) => {
   const limit = _.get(config, [section, 'resources', 'limits', type], null);
@@ -108,19 +144,20 @@ const MemCPUModalLink = ({section, type, config, obj}) => {
     }.  The request may not exceed the limit.`;
     const title = `Cluster Monitoring  ${type === 'cpu' ? 'CPU' : 'Memory'} Resource`;
 
-    const CPUForm = () => <div>
+    const validator = type === 'cpu' ? validate.CPU : validate.memory;
+    const FormBody = ({error}) => <div>
       <div className="col-xs-5">
         <label style={labelStyle} className="text-muted text-uppercase" htmlFor="request">Request</label>
-        <Field name="request" component="input" type="text" className="form-control" style={fieldStyle} placeholder={type === 'cpu' ? '500m' : '2Gi'} autoFocus />
+        <Field name="request" type="text" placeholder={type === 'cpu' ? '500m' : '2Gi'} component={renderField} autoFocus />
       </div>
       <div className="col-xs-5">
         <label style={labelStyle} className="text-muted text-uppercase" htmlFor="limit">Limit</label>
-        <Field name="limit" component="input" type="text" className="form-control" style={fieldStyle} placeholder={type === 'cpu' ? '500m' : '2Gi'} />
+        <Field name="limit" type="text" placeholder={type === 'cpu' ? '500m' : '2Gi'} component={renderField} />
       </div>
+      {error && <strong>{error}</strong>}
     </div>;
 
-    const Form = reduxForm({form: 'MemoryOrCPU', initialValues})(CPUForm);
-    Form.formName = 'MemoryOrCPU';
+    const reduxFormWrapper = reduxForm({form: 'MemoryOrCPU', initialValues, validate: validateForm(validator)});
 
     const getNewConfig = formData => ({
       [section]: {
@@ -135,7 +172,7 @@ const MemCPUModalLink = ({section, type, config, obj}) => {
       }
     });
 
-    return modal({title, description, config, obj, Form, getNewConfig});
+    return modal({title, description, config, obj, reduxFormWrapper, FormBody, getNewConfig});
   };
 
   return <a className="co-m-modal-link" onClick={onClick}>
@@ -152,19 +189,18 @@ const RetentionModalLink = ({config, obj}) => {
     const initialValues = { retention };
     const description = 'Specify the retention time of cluster monitoring samples.';
     const title = 'Cluster Monitoring Sample Retention';
-    const RetentionForm = () => <div>
+    const FormBody = () => <div>
       <div className="col-xs-5">
         <label style={labelStyle} className="text-muted text-uppercase" htmlFor="retention">sample retention</label>
-        <Field name="retention" component="input" type="text" className="form-control" style={fieldStyle} autoFocus placeholder="24h" />
+        <Field name="retention" type="text" component={renderField} autoFocus placeholder="24h" />
       </div>
     </div>;
 
-    const Form = reduxForm({form: 'RetentionForm', initialValues})(RetentionForm);
-    Form.formName = 'RetentionForm';
+    const reduxFormWrapper = reduxForm({form: 'RetentionForm', initialValues, validate: validateForm(validate.time)});
 
     const getNewConfig = formData => _.set({}, path, formData);
 
-    return modal({title, description, obj, Form, config, getNewConfig});
+    return modal({title, description, obj, reduxFormWrapper, config, FormBody, getNewConfig});
   };
 
   return <a className="co-m-modal-link" onClick={onClick}>
