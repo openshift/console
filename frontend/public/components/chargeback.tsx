@@ -18,10 +18,9 @@ metadata:
   name: example
   namespace: default
 spec:
-  generationQuery: aws-cluster-cost
-  gracePeriod: 5m0s
-  reportingEnd: '2017-12-30T23:59:59Z'
-  reportingStart: '2017-01-01T00:00:00Z'
+  generationQuery: pod-memory-usage-by-namespace
+  reportingStart: '2018-01-01T00:00:00Z'
+  reportingEnd: '2018-12-30T23:59:59Z'
   runImmediately: true
 `);
 
