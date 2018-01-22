@@ -243,13 +243,15 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     const {data, reduceBy, sortBy, orderBy} = this.state;
 
     let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
+    // TODO: investigate whether data can exist even if phase isn't Finished
     if (phase === 'Finished') {
       if (data) {
         const keys = this.filterKeys();
         const rows = this.transformData();
-        const className = `col-xs-${Math.floor(12 / _.size(rows[0]))}`;
+        const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
+        const className = `col-md-${size}`;
         dataElem = <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20}}>
-          <ListHeader>{_.map(keys, k => <ColHead className={className} key={k} sortField={k} sortFunc={k} currentSortOrder={orderBy} currentSortField={sortBy} currentSortFunc={sortBy} applySort={applySort}>{k.replace(/_/g, ' ')}</ColHead>)}</ListHeader>
+          <ListHeader>{_.map(keys, k => <ColHead className={classNames(className, {'text-right': reducerCols.indexOf(k) < 0})} key={k} sortField={k} sortFunc={k} currentSortOrder={orderBy} currentSortField={sortBy} currentSortFunc={sortBy} applySort={applySort}>{k.replace(/_/g, ' ')}</ColHead>)}</ListHeader>
           <div className="co-m-table-grid__body">
             {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
               {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} /></div>)}
@@ -273,7 +275,10 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <div className="btn-group">
-              {_.map(reducerCols.filter(col => _.get(data, [0, col])), col => <button key={col} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy})}>By {_.startCase(col)}</button>)}
+              {_.map(reducerCols, col => {
+                const disabled = !_.get(data, [0, col]);
+                return <button key={col} disabled={disabled} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy, disabled})}>By {_.startCase(col)}</button>;
+              })}
             </div>
           </div>
         </div>
