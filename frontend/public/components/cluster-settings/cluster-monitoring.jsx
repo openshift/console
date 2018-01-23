@@ -240,9 +240,9 @@ class ClusterMonitoring_ extends React.PureComponent {
     const config = safeLoad(_.get(obj, ['data', 'config.yaml']));
 
     return <div>
-      <Expander title="Cluster Monitoring" expanded={true}>
-        <div className="row">
-          <div className="col-md-6">
+      <Expander title="Cluster Monitoring">
+        <div className="co-cluster-updates__details">
+          <div className="co-cluster-updates__detail">
             <dl>
               <dt>CPU Resources</dt>
               <dd>
@@ -256,7 +256,7 @@ class ClusterMonitoring_ extends React.PureComponent {
               <dd><AlertManagersListContainer /></dd>
             </dl>
           </div>
-          <div className="col-md-6">
+          <div className="co-cluster-updates__detail">
             <dl>
               <dt>Retention</dt>
               <dd>
@@ -266,9 +266,9 @@ class ClusterMonitoring_ extends React.PureComponent {
           </div>
         </div>
       </Expander>
-      <Expander title="Cluster Alerting" expanded={true}>
-        <div className="row">
-          <div className="col-md-6">
+      <Expander title="Cluster Alerting">
+        <div className="co-cluster-updates__details">
+          <div className="co-cluster-updates__detail">
             <dl>
               <dt>CPU Resources</dt>
               <dd>
@@ -280,7 +280,7 @@ class ClusterMonitoring_ extends React.PureComponent {
               </dd>
             </dl>
           </div>
-          <div className="col-md-6">
+          <div className="co-cluster-updates__detail">
             <dl>
               <dt>Storage</dt>
               <dd>
