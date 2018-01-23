@@ -69,7 +69,6 @@ export class BaseGraph extends SafetyFirst {
   }
 
   componentWillMount () {
-    super.componentWillUnmount();
     this.fetch();
     window.addEventListener('resize', this.resize);
   }
