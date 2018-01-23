@@ -31,3 +31,4 @@ export * from './container-linux-update-operator';
 export * from './link';
 export * from './async';
 export * from './download-button';
+export * from './error-boundary';

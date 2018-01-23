@@ -8,6 +8,7 @@ import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, C
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage, List } from '../factory';
 import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog } from '../utils';
+import { withFallback } from '../utils/error-boundary';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
@@ -42,7 +43,7 @@ export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-xs-3" />
 </ListHeader>;
 
-export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> = ({obj}) => {
+export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowProps>(({obj}) => {
   const route = `/ns/${obj.metadata.namespace}/applications/${obj.metadata.name}`;
 
   const installStatus = obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded
@@ -66,7 +67,7 @@ export const ClusterServiceVersionRow: React.SFC<ClusterServiceVersionRowProps> 
       </div>
     </div>
   </div>;
-};
+});
 
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
   const {loaded, loadError, filters} = props;
