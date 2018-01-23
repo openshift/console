@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 
 import { SafetyFirst } from './safety-first';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
+import { Cog, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
 import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
@@ -84,7 +84,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
   render () {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
-    return <div className="col-md-12">
+    return <div>
       <Heading text="Report Overview" />
       <div className="co-m-pane__body">
         <div className="row">
@@ -138,7 +138,7 @@ const DataCell = ({name, value, maxValue, total}) => {
 const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:DataTableProps) => {
   const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
   const className = `col-md-${size}`;
-  return <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20}}>
+  return <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20, marginLeft: -15, marginRight: -15}}>
     <ListHeader>
       {_.map(keys, k => <ColHead
         className={classNames(className, {'text-right': REDUCER_COLS.indexOf(k) < 0})}
@@ -352,7 +352,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
 }
 
 const reportsPages = [
-  navFactory.details(detailsPage(ReportsDetails)),
+  navFactory.details(ReportsDetails),
   navFactory.editYaml(),
 ];
 
@@ -393,7 +393,7 @@ const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQ
     <td>{column.type}</td>
   </tr>);
 
-  return <div className="col-md-12">
+  return <div>
     <Heading text="Chargeback Report Generation Query" />
     <div className="co-m-pane__body">
       <div className="row">
@@ -433,7 +433,7 @@ export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerat
   <ListPage {...props} showTitle={false} kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />
 </div>;
 
-const reportGenerationQueryPages = [navFactory.details(detailsPage(ReportGenerationQueriesDetails)), navFactory.editYaml()];
+const reportGenerationQueryPages = [navFactory.details(ReportGenerationQueriesDetails), navFactory.editYaml()];
 export const ReportGenerationQueriesDetailsPage: React.StatelessComponent<ReportGenerationQueriesDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={menuActions} pages={reportGenerationQueryPages} />;
 };
