@@ -66,6 +66,7 @@ class PromSettingsModal extends PromiseComponent {
   _submit (formData) {
     const { obj, cancel, getNewConfig} = this.props;
     // PromiseComponent handles submitting the form.
+
     let newConfig;
     try {
       newConfig = _.defaultsDeep(getNewConfig(formData), this.props.config);
@@ -115,7 +116,7 @@ const renderField = ({
 }) => <div>
   <input className="form-control" style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder}/>
   {
-    (error && <div className="co-m-message co-m-message--error">{error}</div>) ||
+    (error && <div className="co-m-message co-m-message--error" style={{marginTop: 15}}>{error}</div>) ||
       (warning && <span>{warning}</span>)
   }
 </div>;
@@ -126,6 +127,18 @@ const validateForm = validator => values => {
   _.each(values, (v, k) => {
     errors[k] = validator(v);
   });
+
+
+  if (!values.request || !values.limit) {
+    return errors;
+  }
+
+  const [requestFloat, requestUnit] = validate.split(values.request);
+  const [limitFloat, limitUnit] = validate.split(values.limit);
+
+  if (requestUnit === limitUnit && requestFloat > limitFloat) {
+    errors.limit = 'limit must exceed request';
+  }
 
   return errors;
 };
