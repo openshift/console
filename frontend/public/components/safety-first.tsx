@@ -10,7 +10,13 @@ export class SafetyFirst<props, state> extends React.Component<props, state> {
     super(props);
     this.isMounted_ = false;
     this.setState_ = this.setState;
-    this.setState = (...args) => this.isMounted_ && this.setState_(...args);
+    this.setState = (...args) => {
+      if (this.isMounted_) {
+        return this.setState_(...args);
+      }
+      // eslint-disable-next-line no-console
+      console.debug('SafetyFirst: Not setting state because component is not mounted.');
+    };
   }
 
   componentWillUnmount() {
