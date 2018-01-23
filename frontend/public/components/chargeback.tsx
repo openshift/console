@@ -113,8 +113,8 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
   }
 }
 
-const reducerCols = ['namespace', 'node', 'pod'];
-const colsBlacklist = new Set(['data_start', 'data_end']);
+const REDUCER_COLS = ['namespace', 'node', 'pod'];
+const COLS_BLACK_LIST = new Set(['data_start', 'data_end']);
 
 const DataCell = ({name, value, maxValue, total}) => {
   if (_.isFinite(value)) {
@@ -134,6 +134,31 @@ const DataCell = ({name, value, maxValue, total}) => {
   return value;
 };
 
+const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:DataTableProps) => {
+  const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
+  const className = `col-md-${size}`;
+  return <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20}}>
+    <ListHeader>
+      {_.map(keys, k => <ColHead
+        className={classNames(className, {'text-right': REDUCER_COLS.indexOf(k) < 0})}
+        key={k}
+        sortField={k}
+        sortFunc={k}
+        currentSortOrder={orderBy}
+        currentSortField={sortBy}
+        currentSortFunc={sortBy}
+        applySort={applySort}>
+        {k.replace(/_/g, ' ')}
+      </ColHead>)}
+    </ListHeader>
+    <div className="co-m-table-grid__body">
+      {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
+        {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} maxValue={maxValues[k]} total={totals[k]} /></div>)}
+      </div>)}
+    </div>
+  </div>;
+};
+
 class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
   constructor (props) {
     super(props);
@@ -144,6 +169,10 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
       reduceBy: null,
       sortBy: null,
       orderBy: null,
+      keys: [],
+      rows: null,
+      maxValues: null,
+      totals: null,
     };
   }
 
@@ -153,17 +182,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
       error: null,
     });
     coFetchJSON(dataURL(this.props.obj))
-      .then(res => {
-        const reduceBy = getQueryArgument('reduceBy') || 'namespace';
-        this.setState({data: res, reduceBy});
-        const keys = this.filterKeys();
-        const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
-        const orderBy = getQueryArgument('orderBy') || (sortBy === 'namespace' ? 'asc' : 'desc');
-        this.setState({
-          sortBy,
-          orderBy,
-        });
-      })
+      .then(data => this.makeTable(data))
       .catch(e => this.setState({error: e}))
       .then(() => this.setState({inFlight: false}));
   }
@@ -176,42 +195,60 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     if (this.state.inFlight || this.state.data) {
       return;
     }
+    // phase is on the K8s object
     const phase = _.get(nextProps.obj, ['status', 'phase']);
-    // const oldPhase = _.get(this.props.obj, ['status', 'phase']);
     if (phase === 'Finished') {
       this.fetchData();
     }
   }
 
+  makeTable (data=this.state.data) {
+    const reduceBy = getQueryArgument('reduceBy') || 'namespace';
+    const keys = this.filterKeys(data, reduceBy);
+    const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
+    const orderBy = getQueryArgument('orderBy') || (sortBy === keys[0] ? 'asc' : 'desc');
+    const {rows, maxValues, totals} = this.transformData(data, reduceBy, sortBy, orderBy);
+
+    this.setState({
+      data,
+      reduceBy,
+      sortBy,
+      orderBy,
+      keys,
+      rows,
+      maxValues,
+      totals,
+    });
+  }
+
   orderBy (col) {
-    this.setState({orderBy: col});
     setQueryArgument('orderBy', col);
+    this.makeTable();
   }
 
   reduceBy (col) {
-    if (reducerCols.indexOf(this.state.sortBy) >= 0) {
+    if (REDUCER_COLS.indexOf(this.state.sortBy) >= 0) {
       // Sort field is going away. Sort by new field.
       this.sortBy(col);
     }
     setQueryArgument('reduceBy', col);
-    this.setState({reduceBy: col});
+    this.makeTable();
   }
 
   sortBy (col) {
-    this.setState({sortBy: col});
     setQueryArgument('sortBy', col);
+    this.makeTable();
   }
 
-  filterKeys () {
-    const {data=[], reduceBy} = this.state;
+  filterKeys (data=[], reduceBy) {
     const keys = _.keys(data[0]).filter(k => {
       if (k === reduceBy) {
         return true;
       }
-      if (colsBlacklist.has(k)) {
+      if (COLS_BLACK_LIST.has(k)) {
         return false;
       }
-      if (reducerCols.indexOf(k) >= 0) {
+      if (REDUCER_COLS.indexOf(k) >= 0) {
         return false;
       }
       return true;
@@ -219,8 +256,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     return keys;
   }
 
-  transformData () {
-    const {data, reduceBy, sortBy, orderBy} = this.state;
+  transformData (data, reduceBy, sortBy, orderBy) {
     const reducedData = {};
     const maxValues = {};
     const totals = {};
@@ -250,32 +286,21 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     return {rows, maxValues, totals};
   }
 
+  applySort (sortBy, func, orderBy) {
+    this.sortBy(sortBy);
+    this.orderBy(orderBy);
+  }
+
   render () {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
 
-    const applySort = (sortBy, func, orderBy) => {
-      this.sortBy(sortBy);
-      this.orderBy(orderBy);
-    };
-    const {data, reduceBy, sortBy, orderBy} = this.state;
+    const {data, reduceBy, sortBy, orderBy, keys, rows, maxValues, totals} = this.state;
 
     let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
-    // TODO: investigate whether data can exist even if phase isn't Finished
     if (phase === 'Finished') {
       if (data) {
-        const keys = this.filterKeys();
-        const {rows, maxValues, totals} = this.transformData();
-        const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
-        const className = `col-md-${size}`;
-        dataElem = <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20}}>
-          <ListHeader>{_.map(keys, k => <ColHead className={classNames(className, {'text-right': reducerCols.indexOf(k) < 0})} key={k} sortField={k} sortFunc={k} currentSortOrder={orderBy} currentSortField={sortBy} currentSortFunc={sortBy} applySort={applySort}>{k.replace(/_/g, ' ')}</ColHead>)}</ListHeader>
-          <div className="co-m-table-grid__body">
-            {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
-              {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} maxValue={maxValues[k]} total={totals[k]} /></div>)}
-            </div>)}
-          </div>
-        </div>;
+        dataElem = <DataTable sortBy={sortBy} orderBy={orderBy} keys={keys} rows={rows} maxValues={maxValues} totals={totals} applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
       } else {
         dataElem = <LoadingInline />;
       }
@@ -295,7 +320,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <div className="btn-group">
-              {_.map(reducerCols, col => {
+              {_.map(REDUCER_COLS, col => {
                 const disabled = !_.get(data, [0, col]);
                 return <button key={col} disabled={disabled} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy, disabled})}>By {_.startCase(col)}</button>;
               })}
@@ -415,6 +440,20 @@ export type ReportDataState = {
   reduceBy: string,
   sortBy: string,
   orderBy: string,
+  keys: string[],
+  rows: any[],
+  maxValues: {[_: string]: number},
+  totals: {[_: string]: number},
+};
+
+export type DataTableProps = {
+  rows: any[],
+  orderBy: string,
+  sortBy: string,
+  applySort: any,
+  keys: string[],
+  maxValues: {[_: string]: number},
+  totals: {[_: string]: number},
 };
 
 export type ReportsPageProps = {
