@@ -20,6 +20,7 @@ metadata:
   namespace: default
 spec:
   generationQuery: pod-memory-usage-by-namespace
+  gracePeriod: 5m0s
   reportingStart: '2018-01-01T00:00:00Z'
   reportingEnd: '2018-12-30T23:59:59Z'
   runImmediately: true
@@ -180,24 +181,25 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     this.setState({
       inFlight: true,
       error: null,
-    });
-    coFetchJSON(dataURL(this.props.obj))
+      // setState is async. Re-render with inFlight = true so that we don't show a "No data" msg while data is loading
+    }, () => coFetchJSON(dataURL(this.props.obj))
       .then(data => this.makeTable(data))
       .catch(e => this.setState({error: e}))
-      .then(() => this.setState({inFlight: false}));
+      .then(() => this.setState({inFlight: false})));
   }
 
-  componentWillMount () {
+  componentDidMount () {
+    super.componentDidMount();
     this.fetchData();
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.state.inFlight || this.state.data) {
+    if (this.state.inFlight) {
       return;
     }
-    // phase is on the K8s object
-    const phase = _.get(nextProps.obj, ['status', 'phase']);
-    if (phase === 'Finished') {
+    const nextPhase = _.get(nextProps.obj, ['status', 'phase']);
+    const phase = _.get(this.props.obj, ['status', 'phase']);
+    if (phase !== nextPhase && nextPhase === 'Finished') {
       this.fetchData();
     }
   }
@@ -260,8 +262,19 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     const reducedData = {};
     const maxValues = {};
     const totals = {};
+    /* Chargeback data is an array of objects. elements look like:
+      { "data_end": "2018-01-22T19:35:00Z",
+        "data_start": "2018-01-17T20:12:00Z",
+        "namespace": "chargeback",
+        "node": "ip-10-0-37-70.us-west-1.compute.internal",
+        "pod": "prometheus-operator-2227858411-z27rc",
+        "pod_memory_usage_percent": 0.0012751439966320259,
+        "pod_request_memory_byte_seconds": 23385341952000
+      },
+      All fields but start/end are optional. */
     _.each(data, row => {
       const key = row[reduceBy];
+      // key == 'namespace', 'pod', 'node' (whatever we're aggregating by)
       if (!reducedData[key]) {
         reducedData[key] = {};
       }
@@ -269,6 +282,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
         if (!isFinite(v as (any))) {
           return;
         }
+        // k == 'pod_memory_usage_percent', 'cost', etc (all columns in table except 1st)
         if (!reducedData[key][k]) {
           reducedData[key][k] = 0;
         }
@@ -295,17 +309,21 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
 
-    const {data, reduceBy, sortBy, orderBy, keys, rows, maxValues, totals} = this.state;
+    const {data, reduceBy, sortBy, orderBy, keys, rows, maxValues, totals, inFlight, error} = this.state;
 
     let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
-    if (phase === 'Finished') {
+    if (inFlight) {
+      dataElem = <div className="row"><div className="col-xs-12 text-center"><LoadingInline /></div></div>;
+    } else if (error) {
+      dataElem = <LoadError label="Report" message={error} />;
+    } else if (phase === 'Finished') {
       if (data) {
         dataElem = <DataTable sortBy={sortBy} orderBy={orderBy} keys={keys} rows={rows} maxValues={maxValues} totals={totals} applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
       } else {
-        dataElem = <LoadingInline />;
+        dataElem = <MsgBox title="No Data" detail="" />;
       }
     } else if (phase === 'Error') {
-      dataElem = <LoadError label="Report" message={_.get(obj, ['status', 'output'])} className="" />;
+      dataElem = <LoadError label="Report" message={_.get(obj, ['status', 'output'])} canRetry={false} />;
     }
 
     const name = _.get(obj, ['metadata', 'name']);
