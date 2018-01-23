@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 
+import { SafetyFirst } from './safety-first';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
-import { LoadingInline, MsgBox } from './utils/status-box';
+import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
@@ -115,9 +116,15 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
 const reducerCols = ['namespace', 'node', 'pod'];
 const colsBlacklist = new Set(['data_start', 'data_end']);
 
-const DataCell = ({name, value}) => {
+const DataCell = ({name, value, maxValue, total}) => {
   if (_.isFinite(value)) {
-    return <div className="text-right">{_.round(value, 2).toLocaleString()}</div>;
+    const percentage = 100 * value / maxValue;
+    return <div className="text-right" title={`${_.round(100 * value / total, 2)}%`}>
+      {_.round(value, 2).toLocaleString()}
+      <div>
+        <div style={{width: `${percentage}%`}} className="table-bar table-bar--active" />
+      </div>
+    </div>;
   }
   name = _.startCase(name);
   const model = modelFor(name);
@@ -127,7 +134,7 @@ const DataCell = ({name, value}) => {
   return value;
 };
 
-class ReportData extends React.Component<ReportDataProps, ReportDataState> {
+class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
   constructor (props) {
     super(props);
     this.state = {
@@ -146,20 +153,22 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       error: null,
     });
     coFetchJSON(dataURL(this.props.obj))
-      .then(res => this.setState({data: res}))
+      .then(res => {
+        const reduceBy = getQueryArgument('reduceBy') || 'namespace';
+        this.setState({data: res, reduceBy});
+        const keys = this.filterKeys();
+        const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
+        const orderBy = getQueryArgument('orderBy') || (sortBy === 'namespace' ? 'asc' : 'desc');
+        this.setState({
+          sortBy,
+          orderBy,
+        });
+      })
       .catch(e => this.setState({error: e}))
       .then(() => this.setState({inFlight: false}));
   }
 
   componentWillMount () {
-    const sortBy = getQueryArgument('sortBy') || 'namespace';
-    const reduceBy = getQueryArgument('reduceBy') || 'namespace';
-    const orderBy = getQueryArgument('orderBy') || (sortBy === 'namespace' ? 'asc' : 'desc');
-    this.setState({
-      sortBy,
-      reduceBy,
-      orderBy,
-    });
     this.fetchData();
   }
 
@@ -213,6 +222,8 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   transformData () {
     const {data, reduceBy, sortBy, orderBy} = this.state;
     const reducedData = {};
+    const maxValues = {};
+    const totals = {};
     _.each(data, row => {
       const key = row[reduceBy];
       if (!reducedData[key]) {
@@ -226,10 +237,17 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
           reducedData[key][k] = 0;
         }
         reducedData[key][k] += v;
+        if (!totals[k]) {
+          totals[k] = 0;
+        }
+        totals[k] += v;
+        if (reducedData[key][k] > (maxValues[k] || 0)) {
+          maxValues[k] = reducedData[key][k];
+        }
       });
     });
     const rows = _.chain(reducedData).map((o, key) => ({[reduceBy]: key, ...o})).orderBy(sortBy, orderBy).value();
-    return rows;
+    return {rows, maxValues, totals};
   }
 
   render () {
@@ -247,20 +265,22 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     if (phase === 'Finished') {
       if (data) {
         const keys = this.filterKeys();
-        const rows = this.transformData();
+        const {rows, maxValues, totals} = this.transformData();
         const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
         const className = `col-md-${size}`;
         dataElem = <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20}}>
           <ListHeader>{_.map(keys, k => <ColHead className={classNames(className, {'text-right': reducerCols.indexOf(k) < 0})} key={k} sortField={k} sortFunc={k} currentSortOrder={orderBy} currentSortField={sortBy} currentSortFunc={sortBy} applySort={applySort}>{k.replace(/_/g, ' ')}</ColHead>)}</ListHeader>
           <div className="co-m-table-grid__body">
             {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
-              {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} /></div>)}
+              {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} maxValue={maxValues[k]} total={totals[k]} /></div>)}
             </div>)}
           </div>
         </div>;
       } else {
         dataElem = <LoadingInline />;
       }
+    } else if (phase === 'Error') {
+      dataElem = <LoadError label="Report" message={_.get(obj, ['status', 'output'])} className="" />;
     }
 
     const name = _.get(obj, ['metadata', 'name']);

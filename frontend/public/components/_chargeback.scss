@@ -1,0 +1,13 @@
+.table-bar {
+  margin-top: 5px;
+  height: 4px;
+  color: #fff;
+  transition: width 0.6s ease;
+  background-color: #cccccc;
+}
+
+.table-bar--active {
+  float: right;
+  background-color: rgba(82,163,217, 0.5);
+  animation: progress-bar-stripes 1s linear infinite;
+}
