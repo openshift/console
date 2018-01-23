@@ -1,4 +1,6 @@
-import { units } from '../public/components/utils/units';
+import * as _ from 'lodash';
+
+import { units, validate } from '../public/components/utils/units';
 
 describe('units', () => {
   describe('round', () => {
@@ -257,3 +259,35 @@ describe('units', () => {
     test_('100 Ki', 102400);
   });
 });
+
+describe('validate', () => {
+  it('memory', () => {
+    ['32', '32M', '32Mi'].forEach(v => {
+      expect(validate.memory(v)).toEqual(undefined);
+    });
+
+    ['32m','32 Mi', ' 32Mi', '32Mii', '32e6', '32m4', 'a32m4'].forEach(v => {
+      expect(_.isString(validate.memory(v))).toEqual(true);
+    });
+  });
+
+  it('cpu', () => {
+    ['32', '32m', '32K'].forEach(v => {
+      expect(validate.CPU(v)).toEqual(undefined);
+    });
+
+    ['-1', '32mi','32 m', ' 32m', '32mm', '32e6', '32m4'].forEach(v => {
+      expect(_.isString(validate.CPU(v))).toEqual(true);
+    });
+  });
+  it('time', () => {
+    ['32h', '32s', '32m', '1h'].forEach(v => {
+      expect(validate.time(v)).toEqual(undefined);
+    });
+
+    ['-1', '32mi','32 m', ' 32m', '32mm', '32e6', '32m4'].forEach(v => {
+      expect(_.isString(validate.time(v))).toEqual(true);
+    });
+  });
+});
+
