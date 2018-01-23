@@ -1302,9 +1302,7 @@ select[multiple].input-lg,
   fieldset[disabled] .btn {
     cursor: not-allowed;
     opacity: 0.65;
-    filter: alpha(opacity=65);
-    -webkit-box-shadow: none;
-    box-shadow: none; }
+    filter: alpha(opacity=65); }
 
 a.btn.disabled,
 fieldset[disabled] a.btn {
@@ -1341,7 +1339,7 @@ fieldset[disabled] a.btn {
   fieldset[disabled] .btn-default:hover,
   fieldset[disabled] .btn-default:focus,
   fieldset[disabled] .btn-default.focus {
-    background-color: #fff;
+    background-color: #eee;
     border-color: #ccc; }
 
 .btn-primary {
@@ -1737,7 +1735,7 @@ tbody.collapse.in {
 .btn-group .btn + .btn-group,
 .btn-group .btn-group + .btn,
 .btn-group .btn-group + .btn-group {
-  margin-left: -1px; }
+  margin-left: 0px; }
 
 .btn-toolbar {
   margin-left: -5px; }
