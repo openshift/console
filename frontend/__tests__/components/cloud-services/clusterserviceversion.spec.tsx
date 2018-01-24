@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 
 import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps } from '../../../public/components/cloud-services/clusterserviceversion';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog, referenceForCRDDesc } from '../../../public/components/cloud-services';
 import { DetailsPage, MultiListPage, ListHeader, ColHead } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
 import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink, ResourceCog, ErrorBoundary } from '../../../public/components/utils';
@@ -348,6 +348,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     const createButton = wrapper.find('.btn-primary');
 
     expect(createButton.type()).toEqual(Link);
+    expect(createButton.props().to).toEqual(`/ns/default/applications/testapp/${referenceForCRDDesc(testClusterServiceVersion.spec.customresourcedefinitions.owned[0])}/new`);
   });
 
   it('renders a create dropdown button if more than one `owned` app resource', () => {
