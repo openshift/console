@@ -6,7 +6,11 @@ import { ResourceIcon } from './index';
 import { modelFor, referenceForModel } from '../../module/k8s';
 
 export const resourcePath = (kind, name, namespace = undefined) => {
-  const model = modelFor(kind) || {};
+  const model = modelFor(kind);
+  if (!model) {
+    // eslint-disable-next-line no-console
+    console.error('resourcePath: no model for', kind);
+  }
   const {path, namespaced, crd} = model;
 
   let url = '/';
