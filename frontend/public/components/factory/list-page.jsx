@@ -10,6 +10,7 @@ import { CheckBoxes, storagePrefix } from '../row-filter';
 import { Dropdown, Firehose, kindObj, NavTitle, history, inject} from '../utils';
 import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
+import { referenceForModel } from '../../module/k8s';
 
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
@@ -228,9 +229,14 @@ FireMan_.propTypes = {
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], fieldSelector?: string, canCreate?: boolean}>} */
 export const ListPage = props => {
   const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true} = props;
-  const {labelPlural, plural, namespaced, label} = kindObj(kind);
+  const ko = kindObj(kind);
+  const {labelPlural, plural, namespaced, label} = ko;
   const title = props.title || labelPlural;
-  const href = namespaced ? `/ns/${namespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
+  let href = namespaced ? `/ns/${namespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
+  try {
+    const ref = referenceForModel(ko);
+    href = namespaced ? `/ns/${namespace || 'default'}/${ref}/new` : `/k8s/cluster/${ref}/new`;
+  } catch (unused) { /**/ }
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
   const resources = [{ kind, name, namespaced, selector, fieldSelector, filters }];
 
