@@ -22,14 +22,14 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
   </div>);
 
 export const NavTitle = connectToModel((props: NavTitleProps) => {
-  const {kind, kindObj, detail, title, menuActions, obj, breadcrumbs} = props;
+  const {kind, kindObj, detail, title, menuActions, obj, breadcrumbs, style} = props;
   const data = _.get<K8sResourceKind>(obj, 'data');
   const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
   const logo = isCSV
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
     : <div>{ kind && <ResourceIcon kind={kind} className="co-m-page-title__icon" /> } <span id="resource-title">{title}</span></div>;
 
-  return <div className={classNames('row', detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')}>
+  return <div className={classNames('row', detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')} style={style}>
     <div className="col-xs-12">
       { breadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs} />}
       <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbs})}>
@@ -51,6 +51,7 @@ export type NavTitleProps = {
   obj?: {data: K8sResourceKind};
   breadcrumbs?: {name: string, path: string}[];
   children?: React.ReactChildren;
+  style?: object;
 };
 
 export type BreadCrumbsProps = {

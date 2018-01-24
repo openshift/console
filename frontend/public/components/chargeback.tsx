@@ -1,8 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as classNames from 'classnames';
 
+import { SafetyFirst } from './safety-first';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
+import { Cog, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
+import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
+import { getQueryArgument, setQueryArgument } from './utils/router';
+import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference, resourceURL, modelFor } from '../module/k8s';
 
@@ -14,18 +19,42 @@ metadata:
   name: example
   namespace: default
 spec:
-  generationQuery: aws-cluster-cost
+  generationQuery: pod-memory-usage-by-namespace
   gracePeriod: 5m0s
-  reportingEnd: '2017-12-30T23:59:59Z'
-  reportingStart: '2017-01-01T00:00:00Z'
+  reportingStart: '2018-01-01T00:00:00Z'
+  reportingEnd: '2018-12-30T23:59:59Z'
   runImmediately: true
 `);
 
 export const ReportReference: K8sFullyQualifiedResourceReference = 'Report:chargeback.coreos.com:v1alpha1';
+export const ScheduledReportReference: K8sFullyQualifiedResourceReference = 'ScheduledReport:chargeback.coreos.com:v1alpha1';
 export const ReportGenerationQueryReference: K8sFullyQualifiedResourceReference = 'ReportGenerationQuery:chargeback.coreos.com:v1alpha1';
+export const ReportPrometheusQueryReference: K8sFullyQualifiedResourceReference = 'ReportPrometheusQuery:chargeback.coreos.com:v1alpha1';
 
-const reportMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
-const reportGenerationQueryMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const reportPages=[
+  {name: 'All Reports', href: ReportReference},
+  {name: 'Generation Queries', href: ReportGenerationQueryReference},
+];
+
+const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+
+const dataURL = (obj, format='json') => {
+  const serviceModel = modelFor('Service');
+  return resourceURL(serviceModel, {
+    ns: obj.metadata.namespace,
+    name: 'chargeback',
+    path: 'proxy/api/v1/reports/get',
+    queryParams: {
+      name: obj.metadata.name,
+      format,
+    },
+  });
+};
+
+const ChargebackNavBar: React.StatelessComponent<{match: {url: string}}> = props => <div>
+  <NavTitle title="Chargeback Reporting" style={{paddingBottom: 15}} />
+  <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} />
+</div>;
 
 
 const ReportsHeader = props => <ListHeader>
@@ -40,7 +69,7 @@ const ReportsHeader = props => <ListHeader>
 const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-xs-4">
-      <ResourceCog actions={reportMenuActions} kind={ReportReference} resource={obj} />
+      <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-lg-2 col-md-3 col-xs-4"><ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} /></div>
@@ -54,31 +83,18 @@ const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
   render () {
     const {obj} = this.props;
-    const serviceModel = modelFor('Service');
-    const name = _.get(obj, ['metadata', 'name']);
-    const format = 'csv';
-    const url = resourceURL(serviceModel, {
-      ns: obj.metadata.namespace,
-      name: 'chargeback',
-      path: 'proxy/api/v1/reports/get',
-      queryParams: {
-        name: obj.metadata.name,
-        format,
-      },
-    });
-    return <div className="col-md-12">
-      <Heading text="Chargeback Report" />
+    const phase = _.get(obj, ['status', 'phase']);
+    return <div>
+      <Heading text="Report Overview" />
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-sm-6 col-xs-12">
-            <DownloadButton url={url} filename={`${name}.${format}`} />
+            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true} />
           </div>
-        </div>
-        <div className="row">
           <div className="col-sm-6 col-xs-12">
-            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
+            <dl>
               <dt>Phase</dt>
-              <dd>{_.get(obj, ['status', 'phase'])}</dd>
+              <dd>{phase}</dd>
               <dt>Reporting Start</dt>
               <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></dd>
               <dt>Reporting End</dt>
@@ -89,22 +105,266 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
               <dd>{_.get(obj, ['spec', 'gracePeriod'])}</dd>
               <dt>Run Immediately?</dt>
               <dd>{Boolean(_.get(obj, ['spec', 'runImmediately'])).toString()}</dd>
-            </ResourceSummary>
+            </dl>
           </div>
         </div>
+      </div>
+      <ReportData obj={obj} />
+    </div>;
+  }
+}
+
+const REDUCER_COLS = ['namespace', 'node', 'pod'];
+const COLS_BLACK_LIST = new Set(['data_start', 'data_end']);
+
+const DataCell = ({name, value, maxValue, total}) => {
+  if (_.isFinite(value)) {
+    const percentage = 100 * value / maxValue;
+    return <div className="text-right" title={`${_.round(100 * value / total, 2)}%`}>
+      {_.round(value, 2).toLocaleString()}
+      <div>
+        <div style={{width: `${percentage}%`}} className="table-bar table-bar--active" />
+      </div>
+    </div>;
+  }
+  name = _.startCase(name);
+  const model = modelFor(name);
+  if (model) {
+    return <ResourceLink kind={name} name={value} title={value} linkTo={!model.namespaced} />;
+  }
+  return value;
+};
+
+const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:DataTableProps) => {
+  const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
+  const className = `col-md-${size}`;
+  return <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20, marginLeft: -15, marginRight: -15}}>
+    <ListHeader>
+      {_.map(keys, k => <ColHead
+        className={classNames(className, {'text-right': REDUCER_COLS.indexOf(k) < 0})}
+        key={k}
+        sortField={k}
+        sortFunc={k}
+        currentSortOrder={orderBy}
+        currentSortField={sortBy}
+        currentSortFunc={sortBy}
+        applySort={applySort}>
+        {k.replace(/_/g, ' ')}
+      </ColHead>)}
+    </ListHeader>
+    <div className="co-m-table-grid__body">
+      {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
+        {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} maxValue={maxValues[k]} total={totals[k]} /></div>)}
+      </div>)}
+    </div>
+  </div>;
+};
+
+class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
+  constructor (props) {
+    super(props);
+    this.state = {
+      inFlight: false,
+      error: null,
+      data: null,
+      reduceBy: null,
+      sortBy: null,
+      orderBy: null,
+      keys: [],
+      rows: null,
+      maxValues: null,
+      totals: null,
+    };
+  }
+
+  fetchData () {
+    this.setState({
+      inFlight: true,
+      error: null,
+      // setState is async. Re-render with inFlight = true so that we don't show a "No data" msg while data is loading
+    }, () => coFetchJSON(dataURL(this.props.obj))
+      .then(data => this.makeTable(data))
+      .catch(e => this.setState({error: e}))
+      .then(() => this.setState({inFlight: false})));
+  }
+
+  componentDidMount () {
+    super.componentDidMount();
+    this.fetchData();
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.state.inFlight) {
+      return;
+    }
+    const nextPhase = _.get(nextProps.obj, ['status', 'phase']);
+    const phase = _.get(this.props.obj, ['status', 'phase']);
+    if (phase !== nextPhase && nextPhase === 'Finished') {
+      this.fetchData();
+    }
+  }
+
+  makeTable (data=this.state.data) {
+    const reduceBy = getQueryArgument('reduceBy') || 'namespace';
+    const keys = this.filterKeys(data, reduceBy);
+    const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
+    const orderBy = getQueryArgument('orderBy') || (sortBy === keys[0] ? 'asc' : 'desc');
+    const {rows, maxValues, totals} = this.transformData(data, reduceBy, sortBy, orderBy);
+
+    this.setState({
+      data,
+      reduceBy,
+      sortBy,
+      orderBy,
+      keys,
+      rows,
+      maxValues,
+      totals,
+    });
+  }
+
+  orderBy (col) {
+    setQueryArgument('orderBy', col);
+    this.makeTable();
+  }
+
+  reduceBy (col) {
+    if (REDUCER_COLS.indexOf(this.state.sortBy) >= 0) {
+      // Sort field is going away. Sort by new field.
+      this.sortBy(col);
+    }
+    setQueryArgument('reduceBy', col);
+    this.makeTable();
+  }
+
+  sortBy (col) {
+    setQueryArgument('sortBy', col);
+    this.makeTable();
+  }
+
+  filterKeys (data=[], reduceBy) {
+    const keys = _.keys(data[0]).filter(k => {
+      if (k === reduceBy) {
+        return true;
+      }
+      if (COLS_BLACK_LIST.has(k)) {
+        return false;
+      }
+      if (REDUCER_COLS.indexOf(k) >= 0) {
+        return false;
+      }
+      return true;
+    });
+    return keys;
+  }
+
+  transformData (data, reduceBy, sortBy, orderBy) {
+    const reducedData = {};
+    const maxValues = {};
+    const totals = {};
+    /* Chargeback data is an array of objects. elements look like:
+      { "data_end": "2018-01-22T19:35:00Z",
+        "data_start": "2018-01-17T20:12:00Z",
+        "namespace": "chargeback",
+        "node": "ip-10-0-37-70.us-west-1.compute.internal",
+        "pod": "prometheus-operator-2227858411-z27rc",
+        "pod_memory_usage_percent": 0.0012751439966320259,
+        "pod_request_memory_byte_seconds": 23385341952000
+      },
+      All fields but start/end are optional. */
+    _.each(data, row => {
+      const key = row[reduceBy];
+      // key == 'namespace', 'pod', 'node' (whatever we're aggregating by)
+      if (!reducedData[key]) {
+        reducedData[key] = {};
+      }
+      _.each(row, (v, k) => {
+        if (!isFinite(v as (any))) {
+          return;
+        }
+        // k == 'pod_memory_usage_percent', 'cost', etc (all columns in table except 1st)
+        if (!reducedData[key][k]) {
+          reducedData[key][k] = 0;
+        }
+        reducedData[key][k] += v;
+        if (!totals[k]) {
+          totals[k] = 0;
+        }
+        totals[k] += v;
+        if (reducedData[key][k] > (maxValues[k] || 0)) {
+          maxValues[k] = reducedData[key][k];
+        }
+      });
+    });
+    const rows = _.chain(reducedData).map((o, key) => ({[reduceBy]: key, ...o})).orderBy(sortBy, orderBy).value();
+    return {rows, maxValues, totals};
+  }
+
+  applySort (sortBy, func, orderBy) {
+    this.sortBy(sortBy);
+    this.orderBy(orderBy);
+  }
+
+  render () {
+    const {obj} = this.props;
+    const phase = _.get(obj, ['status', 'phase']);
+
+    const {data, reduceBy, sortBy, orderBy, keys, rows, maxValues, totals, inFlight, error} = this.state;
+
+    let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
+    if (inFlight) {
+      dataElem = <div className="row"><div className="col-xs-12 text-center"><LoadingInline /></div></div>;
+    } else if (error) {
+      dataElem = <LoadError label="Report" message={error} />;
+    } else if (phase === 'Finished') {
+      if (data) {
+        dataElem = <DataTable sortBy={sortBy} orderBy={orderBy} keys={keys} rows={rows} maxValues={maxValues} totals={totals} applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
+      } else {
+        dataElem = <MsgBox title="No Data" detail="" />;
+      }
+    } else if (phase === 'Error') {
+      dataElem = <LoadError label="Report" message={_.get(obj, ['status', 'output'])} canRetry={false} />;
+    }
+
+    const name = _.get(obj, ['metadata', 'name']);
+    const format = 'csv';
+    const downloadURL = dataURL(obj, format);
+
+    return <div>
+      <Heading text="Usage Report">
+        <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
+      </Heading>
+      <div className="co-m-pane__body">
+        <div className="row">
+          <div className="col-sm-6 col-xs-12">
+            <div className="btn-group">
+              {_.map(REDUCER_COLS, col => {
+                const disabled = !_.get(data, [0, col]);
+                return <button key={col} disabled={disabled} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy, disabled})}>By {_.startCase(col)}</button>;
+              })}
+            </div>
+          </div>
+        </div>
+        { dataElem }
       </div>
     </div>;
   }
 }
 
-export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} />;
+const reportsPages = [
+  navFactory.details(ReportsDetails),
+  navFactory.editYaml(),
+];
 
-export const ReportsPage: React.StatelessComponent<ReportsPageProps> = props => <ListPage {...props} title="Chargeback Reports" kind={ReportReference} ListComponent={ReportsList} canCreate={true} filterLabel={props.filterLabel} />;
+export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} pages={reportsPages} />;
 
-const reportsPages = [navFactory.details(detailsPage(ReportsDetails)), navFactory.editYaml()];
+export const ReportsPage: React.StatelessComponent<ReportsPageProps> = props => <div>
+  <ChargebackNavBar match={props.match} />
+  <ListPage {...props} showTitle={false} kind={ReportReference} ListComponent={ReportsList} canCreate={true} filterLabel={props.filterLabel} />
+</div>;
 
 export const ReportsDetailsPage: React.StatelessComponent<ReportsDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ReportReference} menuActions={reportMenuActions} pages={reportsPages} />;
+  return <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={reportsPages} />;
 };
 
 
@@ -118,7 +378,7 @@ const ReportGenerationQueriesHeader = props => <ListHeader>
 const ReportGenerationQueriesRow: React.StatelessComponent<ReportGenerationQueriesRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-md-3 col-sm-4">
-      <ResourceCog actions={reportGenerationQueryMenuActions} kind={ReportGenerationQueryReference} resource={obj} />
+      <ResourceCog actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
       <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-md-3 col-sm-4"><ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
@@ -133,7 +393,7 @@ const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQ
     <td>{column.type}</td>
   </tr>);
 
-  return <div className="col-md-12">
+  return <div>
     <Heading text="Chargeback Report Generation Query" />
     <div className="co-m-pane__body">
       <div className="row">
@@ -168,11 +428,14 @@ const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQ
 
 export const ReportGenerationQueriesList: React.StatelessComponent = props => <List {...props} Header={ReportGenerationQueriesHeader} Row={ReportGenerationQueriesRow} />;
 
-export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerationQueriesPageProps> = props => <ListPage {...props} title="Chargeback Report Generation Queries" kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />;
+export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerationQueriesPageProps> = props => <div>
+  <ChargebackNavBar match={props.match} />
+  <ListPage {...props} showTitle={false} kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />
+</div>;
 
-const reportGenerationQueryPages = [navFactory.details(detailsPage(ReportGenerationQueriesDetails)), navFactory.editYaml()];
+const reportGenerationQueryPages = [navFactory.details(ReportGenerationQueriesDetails), navFactory.editYaml()];
 export const ReportGenerationQueriesDetailsPage: React.StatelessComponent<ReportGenerationQueriesDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={reportGenerationQueryMenuActions} pages={reportGenerationQueryPages} />;
+  return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={menuActions} pages={reportGenerationQueryPages} />;
 };
 
 
@@ -185,8 +448,35 @@ export type ReportsDetailsProps = {
   obj: any,
 };
 
+export type ReportDataProps = {
+  obj: any,
+};
+export type ReportDataState = {
+  error: any,
+  data: any,
+  inFlight: boolean,
+  reduceBy: string,
+  sortBy: string,
+  orderBy: string,
+  keys: string[],
+  rows: any[],
+  maxValues: {[_: string]: number},
+  totals: {[_: string]: number},
+};
+
+export type DataTableProps = {
+  rows: any[],
+  orderBy: string,
+  sortBy: string,
+  applySort: any,
+  keys: string[],
+  maxValues: {[_: string]: number},
+  totals: {[_: string]: number},
+};
+
 export type ReportsPageProps = {
   filterLabel: string,
+  match: {url: string},
 };
 
 export type ReportsDetailsPageProps = {
@@ -203,6 +493,7 @@ export type ReportGenerationQueriesDetailsProps = {
 
 export type ReportGenerationQueriesPageProps = {
   filterLabel: string,
+  match: {url: string},
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {

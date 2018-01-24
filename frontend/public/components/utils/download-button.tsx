@@ -4,11 +4,6 @@ import { saveAs } from 'file-saver';
 import { coFetch } from '../../co-fetch';
 import { SafetyFirst } from '../safety-first';
 
-const buttonStyle = {
-  marginBottom: 10,
-  maxWidth: 300,
-  textOverflow: 'ellipsis',
-};
 const spanStyle = {
   position: 'absolute' as 'absolute',
   left: 0,
@@ -38,11 +33,11 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
   }
 
   render () {
-    const { filename } = this.props;
+    const { className, filename } = this.props;
     const { error, inFlight } = this.state;
     // The position styling and always-hidden filename are so the button doesn't resize when its content changes.
-    return <div>
-      <button className="btn btn-primary" style={buttonStyle} disabled={inFlight} type="button" onClick={() => this.download()}>
+    return <div className={className}>
+      <button className="btn btn-primary" style={{marginBottom: 10}} disabled={inFlight} type="button" onClick={() => this.download()}>
         <i className="fa fa-fw fa-download" />&nbsp;Download
         <span style={{position: 'relative'}}>
           { inFlight && <span style={spanStyle}>ing...</span> }
@@ -59,6 +54,7 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
 export type DownloadButtonProps = {
   url: string,
   filename?: string,
+  className?: string,
 };
 
 export type DownloadButtonState = {
