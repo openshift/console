@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { isNamespaced } from '../components/utils/link';
-import { allModels } from '../module/k8s/k8s-models';
+import { allModels, modelFor } from '../module/k8s/k8s-models';
 
 // URL routes that can be namespaced
 export const prefixes = new Set(['search', 'applications']);
@@ -46,7 +46,20 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location) =>
       .minBy(p => originalPath.indexOf(p));
 
     if (!resource) {
-      throw new Error(`Path can't be namespaced: ${originalPath}`);
+      const pathComponents = originalPath.split('/');
+      let found = false;
+      _.each(pathComponents, (pc, i) => {
+        pc = _.startCase(pc).slice(0, -1);
+        const m = modelFor(pc);
+        if (m) {
+          originalPath = pathComponents.slice(i).join('/');
+          found = true;
+          return false;
+        }
+      });
+      if (!found) {
+        throw new Error(`Path can't be namespaced: ${originalPath}`);
+      }
     }
     originalPath = resource;
   }
