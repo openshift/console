@@ -6,7 +6,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm } from 'redux-form';
 
 import { k8sPatch, k8sKinds } from '../../module/k8s';
-import { Firehose, StatusBox, PromiseComponent, validate } from '../utils';
+import { Firehose, StatusBox, PromiseComponent, validate, units } from '../utils';
 import { AlertManagersListContainer } from '../alert-manager';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 
@@ -122,6 +122,21 @@ const renderField = ({
   }
 </div>;
 
+const convertToBaseUnit = (value, unit) => {
+  if (!unit) {
+    return value;
+  }
+  if (unit === 'm') {
+    return value / 1000;
+  }
+
+  if (unit.endsWith('i')) {
+    return units.dehumanize(`${value}${unit}`, 'binaryBytesWithoutB').value;
+  }
+
+  return units.dehumanize(`${value}${unit}`, 'SI').value;
+};
+
 const validateForm = validator => values => {
   const errors = {};
 
@@ -134,10 +149,15 @@ const validateForm = validator => values => {
     return errors;
   }
 
-  const [requestFloat, requestUnit] = validate.split(values.request);
-  const [limitFloat, limitUnit] = validate.split(values.limit);
+  let [requestFloat, requestUnit] = validate.split(values.request);
+  let [limitFloat, limitUnit] = validate.split(values.limit);
 
-  if (requestUnit === limitUnit && requestFloat > limitFloat) {
+  if (requestUnit !== limitUnit) {
+    requestFloat = convertToBaseUnit(requestFloat, requestUnit);
+    limitFloat = convertToBaseUnit(limitFloat, limitUnit);
+  }
+
+  if (requestFloat > limitFloat) {
     errors.limit = 'limit must exceed request';
   }
 

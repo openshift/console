@@ -258,6 +258,25 @@ describe('units', () => {
     test_('100 i', 100);
     test_('100 Ki', 102400);
   });
+
+  describe('should de-humanize SI values', () => {
+    const test_ = (value, expected) => {
+      it(`${value} into ${expected}`, () => {
+        expect(units.dehumanize(value, 'SI').value).toEqual(expected);
+      });
+    };
+
+    test_(-1, -1);
+    test_(-0, -0);
+    test_(0, 0);
+    test_(1/0, 1/0);
+    test_(-1/0, -1/0);
+    test_(Number.MIN_VALUE, Number.MIN_VALUE);
+    test_('0', 0);
+    test_(NaN, NaN);
+    test_('100K', 100000);
+    test_('1M', 1000000);
+  });
 });
 
 describe('validate', () => {
