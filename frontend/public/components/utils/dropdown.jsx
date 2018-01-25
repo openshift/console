@@ -98,7 +98,7 @@ export class Dropdown extends DropdownMixin {
 
     let button;
     if (noButton) {
-      button = <div onClick={this.toggle} className="dropdown__not-btn">{buttonTitle}&nbsp;<Caret /></div>;
+      button = <div onClick={this.toggle} className="dropdown__not-btn"><span className="dropdown__not-btn__title">{buttonTitle}</span>&nbsp;<Caret /></div>;
     } else {
       button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
         <div className="btn--dropdown__content-wrap">
