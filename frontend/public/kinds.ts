@@ -62,10 +62,11 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
 
 export const connectToModel = connect((state, props: {kind: K8sResourceKindReference} & any) => {
   const ns: ImmutableMap<string, any> = state[kindReducerName];
-  const kindObj = !_.isEmpty(props.kind)
-    ? ns.getIn(['kinds', props.kind]) || ns.getIn(['kinds', kindForReference(props.kind)]) || {}
-    : {};
-
+  const kind = props.kind || _.get(props, 'match.params.plural');
+  let kindObj;
+  if (kind) {
+    kindObj = ns.getIn(['kinds', kind]) || ns.getIn(['kinds', kindForReference(kind)]);
+  }
   return {kindObj, kindsInFlight: ns.get(inFlight)} as any;
 });
 
