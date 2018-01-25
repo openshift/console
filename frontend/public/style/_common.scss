@@ -179,3 +179,10 @@ input[type=number]::-webkit-outer-spin-button {
   overflow: hidden;
   white-space: nowrap;
 }
+
+.error-message {
+  color: #fff;
+  font-size: 14px;
+  padding: 2px 12px;
+  background-color: #D64456;
+}

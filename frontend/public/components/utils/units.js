@@ -28,7 +28,7 @@ const TYPES = {
     units: ['i', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei'],
     space: true,
     divisor: 1024
-  }
+  },
 };
 
 const getType = (name) => {
@@ -142,20 +142,33 @@ units.dehumanize = (value, typeName) => {
   return convertValueWithUnitsToBaseValue(value, type.units, type.divisor);
 };
 
+validate.split = value => {
+  const index = value.search(/([a-zA-Z]+)/g);
+  let number, unit;
+  if (index === -1) {
+    number = value;
+  } else {
+    number = value.slice(0, index);
+    unit = value.slice(index);
+  }
+  return [parseFloat(number, 10), unit];
+};
 
-const validateNumber = (value='') => {
+const baseUnitedValidation = value => {
+  if (value === null || value.length === 0) {
+    return;
+  }
   if (value.search(/\s/g) !== -1) {
     return 'white space is not allowed';
   }
-  const float = parseFloat(value, 10);
-  if (isNaN(float)) {
-    return 'must be a number';
-  }
+};
+
+const validateNumber = (float='') => {
   if (float < 0) {
     return 'must be positive';
   }
   if (!isFinite(float)) {
-    return 'use a value smaller than infinity';
+    return 'must be a number';
   }
 };
 const validCPUUnits = new Set(['p', 'm', 'c', 'd', 'n', 'K', 'M', 'G']);
@@ -167,20 +180,20 @@ const validateCPUUnit = (value='') => {
 };
 
 validate.CPU = (value='') => {
-  if (value === null || value.length === 0) {
+  if (!value) {
     return;
   }
-  if (value.search(/\s/g) !== -1) {
-    return 'white space is not allowed';
+  const error = baseUnitedValidation(value);
+  if (error) {
+    return error;
   }
 
-  const index = value.search(/([a-zA-Z]+)/g);
-  if (index === -1) {
-    return validateNumber(value);
+  const [number, unit] = validate.split(value);
+
+  if (!unit) {
+    return validateNumber(number);
   }
 
-  const number = value.slice(0, index);
-  const unit = value.slice(index);
   return validateNumber(number) || validateCPUUnit(unit);
 };
 
@@ -201,35 +214,38 @@ const validateTimeUnit = (value='') => {
 };
 
 validate.time = (value='') => {
-  if (value === null || value.length === 0) {
+  if (!value) {
     return;
   }
-  if (value.search(/\s/g) !== -1) {
-    return 'white space is not allowed';
+  const error = baseUnitedValidation(value);
+  if (error) {
+    return error;
   }
-  const index = value.search(/([a-zA-Z]+)/g);
-  if (index === -1) {
+
+  const [number, unit] = validate.split(value);
+
+  if (!unit) {
     return 'number and unit required';
   }
-  const number = value.slice(0, index);
-  const unit = value.slice(index);
+
   return validateNumber(number) || validateTimeUnit(unit);
 };
 
 validate.memory = (value='') => {
-  if (value === null || value.length === 0) {
+  if (!value) {
     return;
   }
-  if (value.search(/\s/g) !== -1) {
-    return 'white space is not allowed';
+  const error = baseUnitedValidation(value);
+  if (error) {
+    return error;
   }
 
-  const index = value.search(/([a-zA-Z]+)/g);
-  if (index === -1) {
+  const [number, unit] = validate.split(value);
+
+  if (!unit) {
     return validateNumber(value);
   }
-  const number = value.slice(0, index);
-  const unit = value.slice(index);
+
   return validateNumber(number) || validateMemUnit(unit);
 };
 
