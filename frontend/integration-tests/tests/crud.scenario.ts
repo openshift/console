@@ -69,8 +69,6 @@ describe('Kubernetes resource CRUD operations', () => {
         it('has a working namespace dropdown on namespaced objects', async() => {
           expect(namespaceView.namespaceDropdown.isPresent()).toBe(true);
           await namespaceView.namespaceDropdown.click();
-          const ns = await namespaceView.selectedNamespace.getText();
-          console.log(`SELECTED NAMESPACE: '${ns}', '${testName}', ${ns === testName}`);
           expect(namespaceView.selectedNamespace.getText()).toEqual(testName);
         });
       } else {

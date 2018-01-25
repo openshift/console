@@ -112,7 +112,12 @@ const Details = ({obj: serviceaccount}) => {
           </div>
         </div>
       </div>
-      <SecretsPage kind="Secret" canCreate={false} namespace={namespace} filters={filters} autoFocus={false} />
+      <div className="row co-m-nav-title">
+        <div className="col-xs-12">
+          <h1 className="co-m-page-title">Secrets</h1>
+        </div>
+      </div>
+      <SecretsPage kind="Secret" canCreate={false} namespace={namespace} filters={filters} autoFocus={false} showTitle={false} />
     </div>
   );
 };
