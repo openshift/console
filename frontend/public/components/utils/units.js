@@ -28,7 +28,7 @@ const TYPES = {
     units: ['i', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei'],
     space: true,
     divisor: 1024
-  }
+  },
 };
 
 const getType = (name) => {
@@ -168,7 +168,7 @@ const validateNumber = (float='') => {
     return 'must be positive';
   }
   if (!isFinite(float)) {
-    return 'use a value smaller than infinity';
+    return 'must be a number';
   }
 };
 const validCPUUnits = new Set(['p', 'm', 'c', 'd', 'n', 'K', 'M', 'G']);

@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm } from 'redux-form';
 
@@ -102,7 +103,7 @@ PromSettingsModal.propTypes = {
 };
 
 const labelStyle = { fontWeight: 300 };
-const fieldStyle = { width: 150 };
+const fieldStyle = { width: '100%' };
 
 const renderField = ({
   input,
@@ -114,9 +115,9 @@ const renderField = ({
     error,
     warning }
 }) => <div>
-  <input className="form-control" style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder}/>
+  <input className={classNames('form-control', {'form-control--invalid': !!error})} style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder}/>
   {
-    (error && <div className="co-m-message co-m-message--error" style={{marginTop: 15}}>{error}</div>) ||
+    (error && <div className="error-message">{error}</div>) ||
       (warning && <span>{warning}</span>)
   }
 </div>;
