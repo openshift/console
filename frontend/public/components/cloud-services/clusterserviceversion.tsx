@@ -204,7 +204,7 @@ export const MarkdownView = (props: {content: string}) => {
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata, status} = props.obj;
   const ownedCRDs = spec.customresourcedefinitions.owned || [];
-  const route = ({name, kind}) => `/ns/${metadata.namespace}/applications/${metadata.name}/${`${kind}:${name.split('.').slice(1).join('.')}`}/new`;
+  const route = (name: string) => `/ns/${metadata.namespace}/applications/${metadata.name}/${referenceForCRDDesc(_.find(ownedCRDs, {name}))}/new`;
 
   return <div className="co-clusterserviceversion-details co-m-pane__body">
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
@@ -215,7 +215,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
           title="Create New"
           items={ownedCRDs.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
           onChange={(name) => history.push(route(name))} /> }
-        { ownedCRDs.length === 1 && <Link to={route(ownedCRDs[0])} className="btn btn-primary">{`Create ${ownedCRDs[0].displayName}`}</Link> }
+        { ownedCRDs.length === 1 && <Link to={route(ownedCRDs[0].name)} className="btn btn-primary">{`Create ${ownedCRDs[0].displayName}`}</Link> }
       </div>
       <dl className="co-clusterserviceversion-details__section--info__item">
         <dt>Provider</dt>
