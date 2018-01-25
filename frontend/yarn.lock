@@ -351,7 +351,7 @@ ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
 
-ansi-styles@^3.0.0, ansi-styles@^3.1.0:
+ansi-styles@^3.0.0, ansi-styles@^3.1.0, ansi-styles@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-3.2.0.tgz#c159b8d5be0f9e5a6f346dab94f16ce022161b88"
   dependencies:
@@ -4300,6 +4300,13 @@ istanbul-reports@^1.1.2:
   resolved "https://registry.yarnpkg.com/istanbul-reports/-/istanbul-reports-1.1.2.tgz#0fb2e3f6aa9922bd3ce45d05d8ab4d5e8e07bd4f"
   dependencies:
     handlebars "^4.0.3"
+
+jasmine-console-reporter@2.x:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/jasmine-console-reporter/-/jasmine-console-reporter-2.0.1.tgz#9cd85b4ba9bd81dd45817ebe016f283e8dbf6d7b"
+  dependencies:
+    ansi-styles "^3.2.0"
+    chalk "^2.1.0"
 
 jasmine-core@2.x, jasmine-core@~2.8.0:
   version "2.8.0"

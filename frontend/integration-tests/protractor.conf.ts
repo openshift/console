@@ -5,10 +5,15 @@ import { execSync } from 'child_process';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
 import * as _ from 'lodash';
 import { TapReporter } from 'jasmine-reporters';
+import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 
-// FIXME: Remove once https://github.com/angular/protractor/pull/4068 is merged
-require('protractor/built/logger').Logger.setWrite(3);
+let tap = !!process.env.TAP;
+
+if (tap) {
+  // FIXME: Remove once https://github.com/angular/protractor/pull/4068 is merged
+  require('protractor/built/logger').Logger.setWrite(3); // Disable all logging for TAP mode (otherwise output isn't valid TAP)
+}
 
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(process.env.BRIDGE_BASE_PATH || '/').replace(/\/$/, '')}`;
 export const testName = `test--${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
@@ -47,7 +52,11 @@ export const config: Config = {
     browser.waitForAngularEnabled(false);
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     jasmine.getEnv().addReporter(htmlReporter);
-    jasmine.getEnv().addReporter(new TapReporter());
+    if (tap) {
+      jasmine.getEnv().addReporter(new TapReporter());
+    } else {
+      jasmine.getEnv().addReporter(new ConsoleReporter());
+    }
   },
   onComplete: async() => {
     console.log('BEGIN BROWSER LOGS');
