@@ -29,6 +29,11 @@ const TYPES = {
     space: true,
     divisor: 1024
   },
+  SI: {
+    units: ['', 'K', 'M', 'G', 'T', 'P', 'E'],
+    space: false,
+    divisor: 1000
+  },
 };
 
 const getType = (name) => {
