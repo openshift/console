@@ -25,7 +25,10 @@ export const config: Config = {
   framework: 'jasmine',
   directConnect: true,
   skipSourceMapSupport: true,
-  jasmineNodeOpts: {print: () => null},
+  jasmineNodeOpts: {
+    print: () => null,
+    defaultTimeoutInterval: 10000,
+  },
   plugins: [failFast.init()],
   capabilities: {
     browserName: 'chrome',
@@ -50,7 +53,6 @@ export const config: Config = {
   beforeLaunch: () => new Promise(resolve => htmlReporter.beforeLaunch(resolve)),
   onPrepare: () => {
     browser.waitForAngularEnabled(false);
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     jasmine.getEnv().addReporter(htmlReporter);
     if (tap) {
       jasmine.getEnv().addReporter(new TapReporter());
