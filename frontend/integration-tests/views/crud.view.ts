@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 
 export const createYAMLButton = $('#yaml-create');

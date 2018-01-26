@@ -1,13 +1,15 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import * as _ from 'lodash';
 
 import { connectToModel } from '../../kinds';
 import { K8sResourceKindReference, K8sKind } from '../../module/k8s';
 
 export const ResourceIcon = connectToModel((props: ResourceIconProps) => {
-  const kindStr = props.kindObj.kind || '';
+  const kindObj = props.kindObj;
+  const kindStr = _.get(kindObj, ['kind'], '');
   const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, props.className);
-  const iconLabel = props.kindObj.abbr || kindStr.toUpperCase().slice(0, 2);
+  const iconLabel = (kindObj && kindObj.abbr) || kindStr.toUpperCase().slice(0, 2);
 
   return <span className={klass}>{iconLabel}</span>;
 });

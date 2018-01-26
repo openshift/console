@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 import { match } from 'react-router-dom';
 
-import { k8sKinds, CustomResourceDefinitionKind, K8sKind, K8sResourceKindReference, referenceForCRD } from './module/k8s';
+import { CustomResourceDefinitionKind, K8sKind, K8sResourceKindReference, referenceForCRD } from './module/k8s';
 import { allModels, kindForReference } from './module/k8s/k8s-models';
 import { coFetchJSON } from './co-fetch';
 import { prefixes } from './ui/ui-actions';
@@ -62,10 +62,11 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
 
 export const connectToModel = connect((state, props: {kind: K8sResourceKindReference} & any) => {
   const ns: ImmutableMap<string, any> = state[kindReducerName];
-  const kindObj = !_.isEmpty(props.kind)
-    ? ns.getIn(['kinds', props.kind]) || ns.getIn(['kinds', kindForReference(props.kind)]) || {}
-    : {};
-
+  const kind = props.kind || _.get(props, 'match.params.plural');
+  let kindObj;
+  if (kind) {
+    kindObj = ns.getIn(['kinds', kind]) || ns.getIn(['kinds', kindForReference(kind)]);
+  }
   return {kindObj, kindsInFlight: ns.get(inFlight)} as any;
 });
 
@@ -80,16 +81,10 @@ export const connectToPlural = connect((state, props: {plural?: string, match: m
   return {kindObj, modelRef: refKey, kindsInFlight: ns.get(inFlight)} as any;
 });
 
-/**
- * @deprecated TODO(alecmerdler): Remove this completely, `plural` is not guaranteed to be unique
- */
-export const kindFromPlural = plural => _.find(k8sKinds, {plural});
-
-const crdPath = `${(window as any).SERVER_FLAGS.basePath}api/tectonic/crds`;
 export const getCRDs = dispatch => {
   dispatch({type: 'getCRDsinflight'});
 
-  return coFetchJSON(crdPath)
+  return coFetchJSON('api/tectonic/crds')
     .then(
       res => dispatch({type: 'addCRDs', kinds: res.items}),
       res => {

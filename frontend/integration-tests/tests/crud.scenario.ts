@@ -9,6 +9,7 @@ import { OrderedMap } from 'immutable';
 import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
+import * as namespaceView from '../views/namespace.view';
 
 const K8S_CREATION_TIMEOUT = 15000;
 
@@ -63,6 +64,18 @@ describe('Kubernetes resource CRUD operations', () => {
         await browser.get(`${appHost}${namespaced ? `/ns/${testName}` : ''}/${resource}?name=${testName}`);
         await crudView.isLoaded();
       });
+
+      if (namespaced) {
+        it('has a working namespace dropdown on namespaced objects', async() => {
+          expect(namespaceView.namespaceDropdown.isPresent()).toBe(true);
+          await namespaceView.namespaceDropdown.click();
+          expect(namespaceView.selectedNamespace.getText()).toEqual(testName);
+        });
+      } else {
+        it('does not have a namespace dropdown on non-namespaced objects', async() => {
+          expect(namespaceView.namespaceDropdown.isPresent()).toBe(false);
+        });
+      }
 
       it('displays a YAML editor for creating a new resource instance', async() => {
         await crudView.createYAMLButton.click();

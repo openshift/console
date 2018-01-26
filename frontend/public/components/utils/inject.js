@@ -26,5 +26,10 @@ export const kindObj = (kind) => {
     console.warn(`Attempting to get Kubernetes object model using string kind: ${kind}, which is not guaranteed to be unique!`);
     lastKind.add(kind);
   }
-  return modelFor(kind) ||{};
+  const model = modelFor(kind);
+  if (!model) {
+    // eslint-disable-next-line no-console
+    console.warn('kindObj: no model for kind', kind);
+  }
+  return model || {};
 };
