@@ -8,7 +8,7 @@ import { K8sFullyQualifiedResourceReference } from '../module/k8s';
 
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('v1alpha1.Cluster', `apiVersion: multicluster.coreos.com/v1alpha1
+registerTemplate('v1.Cluster', `apiVersion: multicluster.coreos.com/v1
 kind: Cluster
 metadata:
   name: example
@@ -18,7 +18,7 @@ metadata:
 spec: {}
 `);
 
-export const ClusterReference: K8sFullyQualifiedResourceReference = 'Cluster:multicluster.coreos.com:v1alpha1';
+export const ClusterReference: K8sFullyQualifiedResourceReference = 'Cluster:multicluster.coreos.com:v1';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
