@@ -6,7 +6,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm } from 'redux-form';
 
 import { k8sPatch, k8sKinds } from '../../module/k8s';
-import { Firehose, StatusBox, PromiseComponent, validate, units } from '../utils';
+import { Firehose, StatusBox, PromiseComponent, ResourceLink, validate, units } from '../utils';
 import { AlertManagersListContainer } from '../alert-manager';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 
@@ -286,6 +286,15 @@ class ClusterMonitoring_ extends React.PureComponent {
     const { obj } = this.props;
     const config = safeLoad(_.get(obj, ['data', 'config.yaml']));
 
+    let vct = _.get(config, 'alertmanagerMain.volumeClaimTemplate', empty);
+    if (_.isObject(vct)) {
+      if (vct.metadata) {
+        vct = <ResourceLink kind={vct.kind} name={vct.metadata.name} namespace={vct.metadata.namespace} />;
+      } else {
+        vct = <pre>{JSON.stringify(vct, null, 2)}</pre>;
+      }
+    }
+
     return <div>
       <Expander title="Cluster Monitoring">
         <div className="co-cluster-updates__details">
@@ -331,7 +340,7 @@ class ClusterMonitoring_ extends React.PureComponent {
             <dl>
               <dt>Storage</dt>
               <dd>
-                {_.get(config, 'alertmanagerMain.volumeClaimTemplate') || empty}
+                {vct}
               </dd>
             </dl>
           </div>
