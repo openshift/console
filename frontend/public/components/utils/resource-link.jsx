@@ -9,7 +9,8 @@ export const resourcePath = (kind, name, namespace = undefined) => {
   const model = modelFor(kind);
   if (!model) {
     // eslint-disable-next-line no-console
-    console.error('resourcePath: no model for', kind);
+    console.error(`resourcePath: no model for "${kind}"`);
+    return;
   }
   const {path, namespaced, crd} = model;
 
@@ -49,7 +50,7 @@ export const ResourceLink = ({kind, name, namespace, title, displayName, linkTo=
   return (
     <span className="co-resource-link">
       <ResourceIcon kind={kind} />
-      {(path && linkTo) ? <Link to={`${path}`} title={title}>{value}</Link> : <span>{value}</span>}
+      {(path && linkTo) ? <Link to={path} title={title}>{value}</Link> : <span>{value}</span>}
     </span>
   );
 };
