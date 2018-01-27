@@ -165,7 +165,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="roles" name="Roles" isActive={isRolesActive} />
       <NavLink resource="rolebindings" name="Role Bindings" isActive={isRoleBindingsActive} />
       <NavLink resource="podvulns" name="Security Report" required={FLAGS.SECURITY_LABELLER} />
-      <NavLink resource="/k8s/Report:chargeback.coreos.com:v1alpha1" name="Chargeback" required={FLAGS.CHARGEBACK} />
+      <NavLink resource="/k8s/Report:chargeback.coreos.com:v1alpha1" name="Chargeback" />
       <NavLink href="/crds" name="CRDs" />
     </NavSection>
 

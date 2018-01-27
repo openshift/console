@@ -3,9 +3,10 @@ import * as _ from 'lodash';
 import * as classNames from 'classnames';
 
 import { SafetyFirst } from './safety-first';
+import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
-import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
+import { LoadError, LoadingBox, LoadingInline, MsgBox } from './utils/status-box';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
@@ -356,12 +357,41 @@ const reportsPages = [
   navFactory.editYaml(),
 ];
 
-export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} pages={reportsPages} />;
+const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more." />;
+export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} pages={reportsPages} EmptyMsg={EmptyMsg}/>;
 
-export const ReportsPage: React.StatelessComponent<ReportsPageProps> = props => <div>
-  <ChargebackNavBar match={props.match} />
-  <ListPage {...props} showTitle={false} kind={ReportReference} ListComponent={ReportsList} canCreate={true} filterLabel={props.filterLabel} />
-</div>;
+const ReportsPage_: React.StatelessComponent<ReportsPageProps> = props => {
+  if (props.flags[FLAGS.CHARGEBACK] === undefined) {
+    return <LoadingBox />;
+  }
+  if (props.flags[FLAGS.CHARGEBACK]) {
+    return <div>
+      <ChargebackNavBar match={props.match} />
+      <ListPage {...props} showTitle={false} kind={ReportReference} ListComponent={ReportsList} canCreate={true} />
+    </div>;
+  }
+  return <div>
+    <div className="co-well">
+      <h4>Getting Started</h4>
+      <p>
+      Chargeback is not yet installed and enabled.
+      See our documention for instructions on how to install Chargeback Report on your Tectonic Cluster.
+      </p>
+      <p>
+        Chargeback is an alpha feature.
+      </p>
+      <a href="https://coreos.com/tectonic/docs/latest/reporting/install-chargeback.html" target="_blank" rel="noopener noreferrer">
+        <button className="btn btn-info">Installing Chargeback Report <i className="fa fa-external-link" /></button>
+      </a>
+    </div>
+    <ListPage {...props} title="Chargeback Reporting" kind={ReportReference} ListComponent={ReportsList} canCreate={true} fake={true}/>
+    <div style={{marginTop: '-70px', textAlign: 'center'}}>
+      <EmptyMsg />
+    </div>
+  </div>;
+};
+
+export const ReportsPage = connectToFlags(FLAGS.CHARGEBACK)(ReportsPage_);
 
 export const ReportsDetailsPage: React.StatelessComponent<ReportsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={reportsPages} />;
@@ -476,6 +506,7 @@ export type DataTableProps = {
 
 export type ReportsPageProps = {
   filterLabel: string,
+  flags: {[_: string]: boolean},
   match: {url: string},
 };
 
