@@ -101,6 +101,9 @@ export const featureReducer = (state, action) => {
       });
       return state.merge(action.flags);
     case 'addCRDs':
+      // flip all flags to false to signify that we did not see them
+      _.each(CRDS_, v => state = state.set(v, false));
+      // flip the ones we see back to true
       _.each(action.kinds, (k: any) => {
         const flag = CRDS_[k.metadata.name];
         if (!flag) {
