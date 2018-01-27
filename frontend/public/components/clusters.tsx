@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 
+import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sFullyQualifiedResourceReference } from '../module/k8s';
 
@@ -62,14 +63,38 @@ const ClustersDetails: React.SFC<ClustersDetailsProps> = ({obj}) => <div classNa
   </div>
 </div>;
 
-export const ClustersList: React.SFC = props => <List {...props} Header={ClustersHeader} Row={ClustersRow} />;
+const EmptyMsg = () => <MsgBox title="No Clusters in Directory" detail="Adding clusters to the directory allows administrators to change configuration across many clusters at once" />;
+export const ClustersList: React.SFC = props => <List {...props} Header={ClustersHeader} Row={ClustersRow} EmptyMsg={EmptyMsg} />;
 
-export const ClustersPage: React.SFC<ClustersPageProps> = props => <div>
-  <div className="co-well" style={{marginBottom: 0}}>
-    Thanks for trying out the Multi-Cluster Directory. Future updates will enable add/remove and other policy features. Feedback and questions are encouraged: <a href="mailto:tectonic-alpha-feedback@coreos.com">tectonic-alpha-feedback@coreos.com</a>
-  </div>
-  <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={true} filterLabel={props.filterLabel} />
-</div>;
+const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
+  if (props.flags[FLAGS.MULTI_CLUSTER] === undefined) {
+    return <LoadingBox />;
+  }
+  if (props.flags[FLAGS.MULTI_CLUSTER]) {
+    return <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={true} />;
+  }
+  return <div>
+    <div className="co-well">
+      <h4>Getting Started</h4>
+      <p>
+      Multi-Cluster Directory is not yet installed and enabled.
+      See our documention for instructions on how to install Multi-Cluster Directory on your Tectonic Cluster.
+      </p>
+      <p>
+        Multi-Cluster is an alpha feature.
+      </p>
+      <a href="https://coreos.com/tectonic/docs/latest/admin/multi-cluster.html" target="_blank" rel="noopener noreferrer">
+        <button className="btn btn-info">Installing Multi-cluster Directory <i className="fa fa-external-link" /></button>
+      </a>
+    </div>
+    <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={true} fake={true} />
+    <div style={{marginTop: '-70px', textAlign: 'center'}}>
+      <EmptyMsg />
+    </div>
+  </div>;
+});
+
+export const ClustersPage: React.SFC<ClustersPageProps> = props => <div><FeatureFlagGate {...props}/></div>;
 
 const pages = [navFactory.details(detailsPage(ClustersDetails)), navFactory.editYaml()];
 

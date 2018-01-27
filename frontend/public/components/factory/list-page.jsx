@@ -226,9 +226,9 @@ FireMan_.propTypes = {
   ).isRequired,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], fieldSelector?: string, canCreate?: boolean}>} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], fieldSelector?: string, canCreate?: boolean, fake?: boolean}>} */
 export const ListPage = props => {
-  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true} = props;
+  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true, fake} = props;
   const ko = kindObj(kind);
   const {labelPlural, plural, namespaced, label} = ko;
   const title = props.title || labelPlural;
@@ -264,6 +264,7 @@ export const ListPage = props => {
     label={labelPlural}
     flatten={_resources => _resources[name || kind].data}
     namespace={namespace}
+    fake={fake}
   />;
 };
 
@@ -271,7 +272,7 @@ ListPage.displayName = 'ListPage';
 
 /** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
-  const {createButtonText, flatten, filterLabel, createProps, showTitle = true, title, namespace} = props;
+  const {createButtonText, flatten, filterLabel, createProps, showTitle = true, title, namespace, fake} = props;
   const resources = _.map(props.resources, (r) => ({
     ...r,
     isList: true,
@@ -279,7 +280,7 @@ export const MultiListPage = props => {
     namespace: r.namespaced ? namespace : r.namespace,
   }));
 
-  return <FireMan_
+  const elems = <FireMan_
     filterLabel={filterLabel}
     selectorFilterLabel="Filter by selector (app=nginx) ..."
     createProps={createProps}
@@ -289,13 +290,17 @@ export const MultiListPage = props => {
     createButtonText={createButtonText || 'Create'}
     textFilter={props.textFilter}
     resources={resources}
-    autoFocus={props.autoFocus}
+    autoFocus={fake ? false: props.autoFocus}
     dropdownFilters={props.dropdownFilters}
   >
     <Firehose resources={resources}>
-      <ListPageWrapper_ ListComponent={props.ListComponent} kinds={_.map(resources, 'kind')} rowFilters={props.rowFilters} staticFilters={props.staticFilters} flatten={flatten} label={props.label} />
+      <ListPageWrapper_ ListComponent={props.ListComponent} kinds={_.map(resources, 'kind')} rowFilters={props.rowFilters} staticFilters={props.staticFilters} flatten={flatten} label={props.label} fake={fake} />
     </Firehose>
   </FireMan_>;
+  if (fake) {
+    return <div><div className="fake-list" />{elems}</div>;
+  }
+  return elems;
 };
 
 MultiListPage.displayName = 'MultiListPage';

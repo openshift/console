@@ -87,6 +87,14 @@ describe('featureReducer', () => {
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
-    expect(newState).toEqual(initialState.set(flag, true));
+    expect(newState).toEqual(initialState.merge({
+      [FLAGS.CLUSTER_UPDATES]: false,
+      [FLAGS.PROMETHEUS]: false,
+      [FLAGS.MULTI_CLUSTER]: false,
+      [FLAGS.CLOUD_SERVICES]: false,
+      [FLAGS.CLOUD_CATALOGS]: false,
+      [FLAGS.CHARGEBACK]: false,
+      [flag]: true,
+    }));
   });
 });

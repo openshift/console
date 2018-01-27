@@ -219,20 +219,23 @@ const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, staticFil
 export const List = connect(stateToProps, {sortList: UIActions.sortList})(
   /** @param props {{Header: React.ComponentType, Row: React.ComponentType, data: any[]}} */
   function ListInner (props) {
-    const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList} = props;
+    const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = props;
     const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
+    const childrens = [
+      <Header
+        key="header"
+        applySort={_.partial(sortList, listId)}
+        currentSortField={currentSortField}
+        currentSortFunc={currentSortFunc}
+        currentSortOrder={currentSortOrder}
+        {...componentProps}
+      />,
+      <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
+    ];
+
     return <div className="co-m-table-grid co-m-table-grid--bordered">
-      <StatusBox {...props}>
-        <Header
-          applySort={_.partial(sortList, listId)}
-          currentSortField={currentSortField}
-          currentSortFunc={currentSortFunc}
-          currentSortOrder={currentSortOrder}
-          {...componentProps}
-        />
-        <Rows expand={expand} Row={Row} {...componentProps} />
-      </StatusBox>
+      {fake ? childrens : <StatusBox {...props}>{childrens}</StatusBox> }
     </div>;
   });
 
@@ -251,6 +254,7 @@ List.propTypes = {
   Row: PropTypes.func.isRequired,
   selector: PropTypes.object,
   staticFilters: PropTypes.array,
+  fake: PropTypes.bool,
 };
 
 /** @augments {React.Component<{obj: any>}} */

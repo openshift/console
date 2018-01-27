@@ -1,17 +1,13 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 
-import { FLAGS, connectToFlags } from '../features';
 import { Firehose, Dropdown } from './utils';
 import { ClusterReference } from './clusters';
 
 // Trim trailing slash from URLs to make matching more likely
 const normalizeURL = url => url.replace(/\/$/g, '');
 
-const FirehoseToDropdown = ({clusters, loaded}) => {
-  if (!loaded) {
-    return null;
-  }
+const FirehoseToDropdown = ({clusters={}}) => {
   let selected;
   let masterURL;
   const ourURL = normalizeURL(window.location.origin + window.SERVER_FLAGS.basePath);
@@ -49,13 +45,6 @@ const resources = [{
   isList: true,
 }];
 
-export const ClusterPicker = connectToFlags(FLAGS.MULTI_CLUSTER)(
-  props => {
-    if (!props.flags.MULTI_CLUSTER) {
-      return null;
-    }
-    return <Firehose resources={resources}>
-      <FirehoseToDropdown />
-    </Firehose>;
-  }
-);
+export const ClusterPicker = () => <Firehose resources={resources}>
+  <FirehoseToDropdown />
+</Firehose>;
