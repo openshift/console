@@ -110,3 +110,16 @@ export const VaultServiceModel: K8sKind = {
   plural: 'vaultservices',
   propagationPolicy : 'Foreground',
 };
+
+export const ClusterModel: K8sKind = {
+  kind: 'Cluster',
+  label: 'Cluster',
+  labelPlural: 'Clusters',
+  basePath: '/apis/multicluster.coreos.com/',
+  path: 'clusters',
+  apiVersion: 'v1',
+  crd: true,
+  plural: 'clusters',
+  abbr: 'C',
+  namespaced: false,
+};

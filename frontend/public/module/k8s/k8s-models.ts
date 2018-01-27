@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
-import { ClusterServiceVersionModel, UICatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel } from '../../models';
+import { ClusterServiceVersionModel, UICatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel, ClusterModel } from '../../models';
 import { k8sKinds } from './enum';
 import store from '../../redux';
 
@@ -41,6 +41,7 @@ const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
   .set(referenceForModel(PrometheusModel), PrometheusModel)
   .set(referenceForModel(ServiceMonitorModel), ServiceMonitorModel)
   .set(referenceForModel(VaultServiceModel), VaultServiceModel)
+  .set(referenceForModel(ClusterModel), ClusterModel)
   // TODO(alecmerdler): Kill the Enum and move definitions to this module with `K8sFullyQualifiedResourceReference` as keys
   .withMutations((models) => _.forEach(k8sKinds, (kind, kindName) => models.set(kindName, kind)));
 
