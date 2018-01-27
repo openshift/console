@@ -34,3 +34,14 @@
 .compaction-btn {
   margin-right: 1px;
 }
+
+.fake-list {
+  user-select: none;
+  position: absolute;
+  opacity: 0.4;
+  background-color: #fff;
+  height: 100%;
+  width: 100%;
+  z-index: 10000;
+  cursor: not-allowed;
+}
