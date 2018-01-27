@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 
 import {NavTitle, DocumentationSidebar} from '../utils';
 import {LicenseSetting} from './license-setting';
-import {ClusterMonitoring} from './cluster-monitoring';
+// import {ClusterMonitoring} from './cluster-monitoring';
 import {LDAPSetting} from './ldap';
 import {CertsInfoContainer} from './certs-info';
 import {SafetyFirst} from '../safety-first';
@@ -15,10 +15,10 @@ export const SettingsRow = ({children}) => <div className="row co-m-form-row">{c
 export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
 export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9">{children}</div>;
 
-export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES, FLAGS.PROMETHEUS)(
+export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
   class ClusterSettingsPage_ extends SafetyFirst {
     render() {
-      const { CLUSTER_UPDATES, PROMETHEUS } = this.props.flags;
+      const { CLUSTER_UPDATES} = this.props.flags;
 
       return <div className="co-p-cluster">
         <Helmet>
@@ -49,12 +49,6 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES, FLAGS.P
                 </div>
               </div>
             </div>
-            {PROMETHEUS &&
-            <div className="row" style={{marginBottom: 28}}>
-              <div className="col-md-12">
-                <ClusterMonitoring />
-              </div>
-            </div>}
           </div>
         </div>
         <DocumentationSidebar />
