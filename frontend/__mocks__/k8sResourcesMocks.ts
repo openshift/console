@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason } from '../public/components/cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind } from '../public/components/cloud-services';
 import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
 /* eslint-enable no-unused-vars */
 
@@ -198,7 +198,7 @@ export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
   },
 };
 
-export const testCatalogApp: CatalogEntryKind = {
+export const testCatalogEntry: CatalogEntryKind = {
   apiVersion: 'app.coreos.com/v1alpha1',
   kind: 'UICatalogEntry-v1',
   metadata: {
@@ -208,22 +208,29 @@ export const testCatalogApp: CatalogEntryKind = {
     namespace: 'default',
   },
   spec: {
-    displayName: 'Test App',
-    description: 'This app does cool stuff',
-    provider: 'MyCompany, Inc',
-    links: [
-      {name: 'Documentation', url: 'https://docs.testapp.com'},
-    ],
-    maintainers: [
-      {name: 'John Doe', email: 'johndoe@example.com'},
-    ],
-    icon: [
-      {base64data: '', mediatype: 'image/png',}
-    ],
-    labels: {
-      'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
-      'alm-catalog': 'open-cloud-services.coreos.com',
+    manifest: {
+      packageName: 'testapp-package',
+      channels: [{name: 'stable', currentCSV: 'testapp'}],
+      defaultChannel: 'stable',
     },
+    spec: {
+      displayName: 'Test App',
+      description: 'This app does cool stuff',
+      provider: 'MyCompany, Inc',
+      links: [
+        {name: 'Documentation', url: 'https://docs.testapp.com'},
+      ],
+      maintainers: [
+        {name: 'John Doe', email: 'johndoe@example.com'},
+      ],
+      icon: [
+        {base64data: '', mediatype: 'image/png',}
+      ],
+      labels: {
+        'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
+        'alm-catalog': 'open-cloud-services.coreos.com',
+      },
+    }
   },
 };
 
@@ -259,5 +266,18 @@ export const testOperatorDeployment: K8sResourceKind = {
     spec: {
 
     }
+  }
+};
+
+export const testSubscription: SubscriptionKind = {
+  apiVersion: 'app.coreos.com/v1alpha1',
+  kind: 'Subscription-v1',
+  metadata: {
+    namespace: 'default',
+    name: 'test-subscription',
+  },
+  spec: {
+    source: 'tectonic-ocs',
+    name: 'test-package',
   }
 };

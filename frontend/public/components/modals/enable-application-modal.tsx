@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, ResourceIcon } from '../utils';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, InstallPlanApproval, isEnabled } from '../cloud-services';
-import { InstallPlanModel } from '../../models';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, isEnabled } from '../cloud-services';
+import { SubscriptionModel } from '../../models';
 
 export const SelectNamespaceHeader: React.SFC<SelectNamespaceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
@@ -52,29 +52,32 @@ export class EnableApplicationModal extends PromiseComponent {
     this.handlePromise(Promise.all(this.state.selectedNamespaces
       .map((namespace) => ({
         apiVersion: 'app.coreos.com/v1alpha1',
-        kind: 'InstallPlan-v1',
+        kind: SubscriptionModel.kind,
         metadata: {
           generateName: `${this.props.catalogEntry.metadata.name}-`,
           namespace,
         },
         spec: {
-          clusterServiceVersionNames: [this.props.catalogEntry.metadata.name],
-          approval: InstallPlanApproval.Automatic,
+          source: 'tectonic-ocs',
+          name: this.props.catalogEntry.spec.manifest.packageName,
+          channel: this.props.catalogEntry.spec.manifest.defaultChannel || this.props.catalogEntry.spec.manifest.channels[0].name,
+          currentCSV: this.props.catalogEntry.spec.manifest.channels[0].currentCSV,
         },
       }))
-      .map(installPlan => this.props.k8sCreate(InstallPlanModel, installPlan))))
+      .map(subscription => this.props.k8sCreate(SubscriptionModel, subscription))))
       .then(() => this.props.close());
   }
 
   render() {
     const {data, loaded, loadError} = this.props.namespaces;
     const {spec} = this.props.catalogEntry;
+    const csvSpec = spec.spec;
     const {clusterServiceVersions} = this.props;
     const {selectedNamespaces} = this.state;
 
     return <form onSubmit={this.submit.bind(this)} name="form" className="co-catalog-install-modal">
       <ModalTitle className="modal-header co-m-nav-title__detail co-catalog-install-modal__header">
-        <ClusterServiceVersionLogo displayName={spec.displayName} provider={spec.provider} icon={spec.icon[0]} />
+        <ClusterServiceVersionLogo displayName={csvSpec.displayName} provider={csvSpec.provider} icon={csvSpec.icon[0]} />
       </ModalTitle>
       <ModalBody>
         <h4 className="co-catalog-install-modal__h4">Enable Application</h4>

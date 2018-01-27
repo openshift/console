@@ -106,7 +106,16 @@ export type ClusterServiceVersionResourceKind = {
 } & K8sResourceKind;
 
 export type CatalogEntryKind = {
-
+  spec: {
+    manifest: {
+      packageName: string;
+      channels: {
+        name: string;
+        currentCSV: string;
+      }[];
+      defaultChannel: string;
+    };
+  },
 } & K8sResourceKind;
 
 export type InstallPlanKind = {
@@ -121,6 +130,17 @@ export type InstallPlanKind = {
       resource: CustomResourceDefinitionKind;
     }[];
   }
+} & K8sResourceKind;
+
+export type SubscriptionKind = {
+  apiVersion: 'app.coreos.com/v1alpha1',
+  kind: 'Subscription-v1',
+  spec: {
+    source: string;
+    name: string;
+    channel?: string;
+    startingCSV?: string;
+  },
 } & K8sResourceKind;
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);

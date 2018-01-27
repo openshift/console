@@ -8,11 +8,11 @@ import { Link } from 'react-router-dom';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
 import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason, CatalogEntryVisibility, catalogEntryVisibilityLabel } from '../../../public/components/cloud-services/index';
-import { ClusterServiceVersionModel, UICatalogEntryModel } from '../../../public/models';
+import { ClusterServiceVersionModel, UICatalogEntryModel, SubscriptionModel } from '../../../public/models';
 import { referenceForModel } from '../../../public/module/k8s';
 import { MultiListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
 import { NavTitle } from '../../../public/components/utils';
-import { testCatalogApp, testClusterServiceVersion, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
+import { testCatalogEntry, testClusterServiceVersion, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 
 describe(CatalogAppRow.displayName, () => {
   let wrapper: ShallowWrapper<CatalogAppRowProps, CatalogAppRowState>;
@@ -29,16 +29,16 @@ describe(CatalogAppRow.displayName, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<CatalogAppRow.WrappedComponent obj={testCatalogApp} namespaces={namespaces} clusterServiceVersions={[]} />);
+    wrapper = shallow(<CatalogAppRow.WrappedComponent obj={testCatalogEntry} namespaces={namespaces} clusterServiceVersions={[]} />);
   });
 
   it('renders column for app logo', () => {
     const col = wrapper.find('.co-catalog-app-row').childAt(0);
     const logo = col.find(ClusterServiceVersionLogo);
 
-    expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
-    expect(logo.props().provider).toEqual(testCatalogApp.spec.provider);
-    expect(logo.props().icon).toEqual(testCatalogApp.spec.icon[0]);
+    expect(logo.props().displayName).toEqual(testCatalogEntry.spec.spec.displayName);
+    expect(logo.props().provider).toEqual(testCatalogEntry.spec.spec.provider);
+    expect(logo.props().icon).toEqual(testCatalogEntry.spec.spec.icon[0]);
   });
 
   it('renders link to expand/hide the row if `props.clusterServiceVersions` length is not zero', () => {
@@ -281,6 +281,7 @@ describe(CatalogAppsPage.displayName, () => {
 
     expect(listPage.props().resources).toEqual([
       {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
+      {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: false},
       {kind: 'Namespace', isList: true},
       {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true, selector: {matchLabels: {[catalogEntryVisibilityLabel]: CatalogEntryVisibility.catalogEntryVisibilityOCS}}}
     ]);
@@ -294,7 +295,7 @@ describe(CatalogAppsPage.displayName, () => {
   it('passes `flatten` function which returns only list of `UICatalogEntry-v1s`', () => {
     const flatten = wrapper.find(MultiListPage).props().flatten;
     const data = flatten({
-      [referenceForModel(UICatalogEntryModel)]: {data: [testCatalogApp]},
+      [referenceForModel(UICatalogEntryModel)]: {data: [testCatalogEntry]},
       'Namespace': {data: [testNamespace]},
       [referenceForModel(ClusterServiceVersionModel)]: {data: [testClusterServiceVersion]}
     });

@@ -1,17 +1,24 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, element, ExpectedConditions as until, by } from 'protractor';
+import { browser, $, $$, element, ExpectedConditions as until, by } from 'protractor';
+import { safeDump, safeLoad } from 'js-yaml';
+import * as _ from 'lodash';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as appListView from '../../views/app-list.view';
+import * as yamlView from '../../views/yaml.view';
 
 describe('Interacting with the etcd OCS', () => {
   const etcdClusterResources = new Set(['Service', 'Pod']);
   const deleteRecoveryTime = 60000;
   const etcdOperatorName = 'etcd-operator';
+  const testLabel = 'automatedTestName';
+  const etcdcluster = `${testName}-etcdcluster`;
+  const etcdbackup = `${testName}-etcdbackup`;
+  const etcdrestore = `${testName}-etcdrestore`;
 
   beforeAll(() => {
     browser.get(appHost);
@@ -80,8 +87,14 @@ describe('Interacting with the etcd OCS', () => {
   });
 
   it('displays YAML editor for creating a new `EtcdCluster` instance', async() => {
-    await element(by.buttonText('Create etcd Cluster')).click();
+    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
+    await $$('.dropdown-menu').first().element(by.linkText('etcd Cluster')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
+
+    const content = await yamlView.editorContent.getText();
+    const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-etcdcluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
+    await yamlView.setContent(safeDump(newContent));
 
     expect($('.yaml-editor-header').getText()).toEqual('Create etcd Cluster');
   });
@@ -89,14 +102,14 @@ describe('Interacting with the etcd OCS', () => {
   it('displays new `EtcdCluster` that was created from YAML editor', async() => {
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(crudView.rowForName('example')));
+    await browser.wait(until.visibilityOf(crudView.rowForName(etcdcluster)));
 
-    expect(crudView.rowFilters.count()).toEqual(0);
-    expect(crudView.rowForName('example').getText()).toContain('EtcdCluster');
+    expect(crudView.rowFilters.count()).toEqual(3);
+    expect(crudView.rowForName(etcdcluster).getText()).toContain('EtcdCluster');
   });
 
   it('displays metadata about the created `EtcdCluster` in its "Overview" section', async() => {
-    await crudView.rowForName('example').element(by.linkText('example')).click();
+    await crudView.rowForName(etcdcluster).element(by.linkText(etcdcluster)).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
@@ -108,10 +121,108 @@ describe('Interacting with the etcd OCS', () => {
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
     await browser.wait(until.visibilityOf($('.co-m-message--success')), 2000);
 
-    expect($('.co-m-message--success').getText()).toContain('example has been updated to version');
+    expect($('.co-m-message--success').getText()).toContain(`${etcdcluster} has been updated to version`);
   });
 
   it('displays Kubernetes objects associated with the `EtcdCluster` in its "Resources" section', async() => {
+    await element(by.linkText('Resources')).click();
+    await crudView.isLoaded();
+
+    etcdClusterResources.forEach(kind => {
+      expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
+    });
+  });
+
+  it('displays YAML editor for creating a new `EtcdBackup` instance', async() => {
+    await $$('.co-m-nav-title__breadcrumbs__link').get(0).click();
+    await crudView.isLoaded();
+    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
+    await $$('.dropdown-menu').first().element(by.linkText('etcd Backup')).click();
+    await browser.wait(until.presenceOf($('.ace_text-input')));
+
+    const content = await yamlView.editorContent.getText();
+    const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-etcdbackup`, labels: {[testLabel]: testName}}}, safeLoad(content));
+    await yamlView.setContent(safeDump(newContent));
+
+    expect($('.yaml-editor-header').getText()).toEqual('Create Etcd Backup');
+  });
+
+  it('displays new `EtcdBackup` that was created from YAML editor', async() => {
+    await $('#save-changes').click();
+    await crudView.isLoaded();
+    await browser.wait(until.visibilityOf(crudView.rowForName(etcdbackup)));
+
+    expect(crudView.rowFilters.count()).toEqual(3);
+    expect(crudView.rowForName(etcdbackup).getText()).toContain('EtcdBackup');
+  });
+
+  it('displays metadata about the created `EtcdBackup` in its "Overview" section', async() => {
+    await crudView.rowForName(etcdbackup).element(by.linkText(etcdbackup)).click();
+    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
+
+    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+  });
+
+  it('displays the raw YAML for the `EtcdBackup`', async() => {
+    await element(by.linkText('YAML')).click();
+    await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
+    await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
+    await browser.wait(until.visibilityOf($('.co-m-message--success')), 2000);
+
+    expect($('.co-m-message--success').getText()).toContain(`${etcdbackup} has been updated to version`);
+  });
+
+  it('displays Kubernetes objects associated with the `EtcdBackup` in its "Resources" section', async() => {
+    await element(by.linkText('Resources')).click();
+    await crudView.isLoaded();
+
+    etcdClusterResources.forEach(kind => {
+      expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
+    });
+  });
+
+  it('displays YAML editor for creating a new `EtcdRestore` instance', async() => {
+    await $$('.co-m-nav-title__breadcrumbs__link').get(0).click();
+    await crudView.isLoaded();
+    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
+    await $$('.dropdown-menu').first().element(by.linkText('etcd Restore')).click();
+    await browser.wait(until.presenceOf($('.ace_text-input')));
+
+    const content = await yamlView.editorContent.getText();
+    const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-etcdrestore`, labels: {[testLabel]: testName}}}, safeLoad(content));
+    await yamlView.setContent(safeDump(newContent));
+
+    expect($('.yaml-editor-header').getText()).toEqual('Create Etcd Restore');
+  });
+
+  it('displays new `EtcdRestore` that was created from YAML editor', async() => {
+    await $('#save-changes').click();
+    await crudView.isLoaded();
+    await browser.wait(until.visibilityOf(crudView.rowForName(etcdrestore)));
+
+    expect(crudView.rowFilters.count()).toEqual(3);
+    expect(crudView.rowForName(etcdrestore).getText()).toContain('EtcdRestore');
+  });
+
+  it('displays metadata about the created `EtcdRestore` in its "Overview" section', async() => {
+    await crudView.rowForName(etcdrestore).element(by.linkText(etcdrestore)).click();
+    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
+
+    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+  });
+
+  it('displays the raw YAML for the `EtcdRestore`', async() => {
+    await element(by.linkText('YAML')).click();
+    await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
+    await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
+    await browser.wait(until.visibilityOf($('.co-m-message--success')), 2000);
+
+    expect($('.co-m-message--success').getText()).toContain(`${etcdrestore} has been updated to version`);
+  });
+
+  it('displays Kubernetes objects associated with the `EtcdRestore` in its "Resources" section', async() => {
     await element(by.linkText('Resources')).click();
     await crudView.isLoaded();
 

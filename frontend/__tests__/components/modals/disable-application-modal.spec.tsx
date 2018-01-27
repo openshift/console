@@ -9,9 +9,9 @@ import { DisableApplicationModal, DisableApplicationModalProps, SelectNamespaceH
 import { ListHeader, ColHead, List, ResourceRow } from '../../../public/components/factory';
 import { ResourceIcon } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
-import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind } from '../../../public/components/cloud-services';
-import { ClusterServiceVersionModel } from '../../../public/models';
+import { testClusterServiceVersion, testCatalogEntry, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind, SubscriptionKind } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionModel, SubscriptionModel } from '../../../public/models';
 
 describe(SelectNamespaceHeader.displayName, () => {
   let wrapper: ShallowWrapper<SelectNamespaceHeaderProps>;
@@ -97,6 +97,7 @@ describe(DisableApplicationModal.name, () => {
   let wrapper: ShallowWrapper<DisableApplicationModalProps, any>;
   let namespaces: DisableApplicationModalProps['namespaces'];
   let clusterServiceVersions: ClusterServiceVersionKind[];
+  let subscriptions: SubscriptionKind[];
   let k8sKill: Spy;
   let close: Spy;
   let cancel: Spy;
@@ -106,6 +107,7 @@ describe(DisableApplicationModal.name, () => {
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
     clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion)];
+    subscriptions = [_.cloneDeep(testSubscription)];
     namespaces = {
       data: {
         'default': {metadata: {name: 'default', labels: {}}},
@@ -116,7 +118,7 @@ describe(DisableApplicationModal.name, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<DisableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sKill={k8sKill} close={close} cancel={cancel} />, {lifecycleExperimental: true});
+    wrapper = shallow(<DisableApplicationModal catalogEntry={testCatalogEntry} subscriptions={subscriptions} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sKill={k8sKill} close={close} cancel={cancel} />, {lifecycleExperimental: true});
   });
 
   it('renders a modal form', () => {
@@ -130,9 +132,9 @@ describe(DisableApplicationModal.name, () => {
     const logo = wrapper.find(ModalTitle).find(ClusterServiceVersionLogo);
 
     expect(logo.exists()).toBe(true);
-    expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
-    expect(logo.props().provider).toEqual(testCatalogApp.spec.provider);
-    expect(logo.props().icon).toEqual(testCatalogApp.spec.icon[0]);
+    expect(logo.props().displayName).toEqual(testCatalogEntry.spec.spec.displayName);
+    expect(logo.props().provider).toEqual(testCatalogEntry.spec.spec.provider);
+    expect(logo.props().icon).toEqual(testCatalogEntry.spec.spec.icon[0]);
   });
 
   it('renders a list of only available namespaces', () => {
@@ -155,13 +157,13 @@ describe(DisableApplicationModal.name, () => {
     expect(wrapper.find('.co-delete-modal-checkbox-label').text()).toContain('Completely remove application instances and resources from every selected namespace');
   });
 
-  it('calls `props.k8sKill` for each selected namespace when form is submitted', (done) => {
-    const selectedNamespaces = [namespaces.data[testClusterServiceVersion.metadata.namespace]];
+  it('calls `props.k8sKill` to delete `ClusterServiceVersions` from each selected namespace when form is submitted', (done) => {
+    const selectedNamespaces = [testClusterServiceVersion.metadata.namespace];
     const csvForNamespace = (namespace: string) => clusterServiceVersions.find(({metadata}) => metadata.namespace === namespace);
     wrapper = wrapper.setState({selectedNamespaces, cascadeDelete: false});
 
     close.and.callFake(() => {
-      expect(k8sKill.calls.count()).toEqual(selectedNamespaces.length);
+      expect(k8sKill.calls.all().filter(call => call.args[0] === ClusterServiceVersionModel).length).toEqual(selectedNamespaces.length);
       selectedNamespaces.forEach((namespace, i) => {
         expect(k8sKill.calls.argsFor(i)[0]).toEqual(ClusterServiceVersionModel);
         expect(k8sKill.calls.argsFor(i)[1]).toEqual(csvForNamespace(namespace));
@@ -175,12 +177,31 @@ describe(DisableApplicationModal.name, () => {
   });
 
   it('adds delete options with `propagationPolicy` if cascading delete checkbox is checked', (done) => {
-    const selectedNamespaces = [namespaces.data[testClusterServiceVersion.metadata.namespace]];
+    const selectedNamespaces = [testClusterServiceVersion.metadata.namespace];
     wrapper = wrapper.setState({selectedNamespaces, cascadeDelete: true});
 
     close.and.callFake(() => {
       selectedNamespaces.forEach((namespace, i) => {
         expect(k8sKill.calls.argsFor(i)[3]).toEqual({kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'});
+      });
+      done();
+    });
+
+    wrapper.find('form').simulate('submit', new Event('submit'));
+  });
+
+  it('calls `props.k8sKill` to delete `Subscriptions` from each selected namespace when form is submitted', (done) => {
+    const selectedNamespaces = [testClusterServiceVersion.metadata.namespace];
+    const subscriptionForNamespace = (namespace: string) => subscriptions.find(({metadata}) => metadata.namespace === namespace);
+    wrapper = wrapper.setState({selectedNamespaces, cascadeDelete: false});
+
+    close.and.callFake(() => {
+      expect(k8sKill.calls.all().filter(call => call.args[0] === SubscriptionModel).length).toEqual(selectedNamespaces.length);
+      selectedNamespaces.forEach((namespace, i) => {
+        expect(k8sKill.calls.argsFor(i + 1)[0]).toEqual(SubscriptionModel);
+        expect(k8sKill.calls.argsFor(i + 1)[1]).toEqual(subscriptionForNamespace(namespace));
+        expect(k8sKill.calls.argsFor(i + 1)[2]).toEqual({});
+        expect(k8sKill.calls.argsFor(i + 1)[3]).toBe(null);
       });
       done();
     });

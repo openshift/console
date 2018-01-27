@@ -41,6 +41,19 @@ export const InstallPlanModel: K8sKind = {
   plural: 'installplan-v1s',
 };
 
+export const SubscriptionModel: K8sKind = {
+  kind: 'Subscription-v1',
+  label: 'Subscription-v1',
+  labelPlural: 'Subscription-v1s',
+  basePath: '/apis/app.coreos.com/',
+  apiVersion: 'v1alpha1',
+  path: 'subscription-v1s',
+  abbr: 'SUB',
+  namespaced: true,
+  crd: true,
+  plural: 'subscription-v1s',
+};
+
 export const EtcdClusterModel: K8sKind = {
   kind: 'EtcdCluster',
   label: 'etcd Cluster',
