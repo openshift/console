@@ -123,3 +123,16 @@ export const ClusterModel: K8sKind = {
   abbr: 'C',
   namespaced: false,
 };
+
+export const ChargebackReportModel: K8sKind = {
+  kind: 'Report',
+  label: 'Report',
+  labelPlural: 'Reports',
+  basePath: '/apis/chargeback.coreos.com/',
+  path: 'reports',
+  apiVersion: 'v1alpha1',
+  crd: true,
+  plural: 'reports',
+  abbr: 'R',
+  namespaced: true,
+};
