@@ -215,8 +215,6 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.isLoaded();
       await crudView.deleteRow('CustomResourceDefinition')(crd.spec.names.kind);
       leakedResources.delete(JSON.stringify({name, plural: 'customresourcedefinitions'}));
-      await browser.sleep(500);
-
       expect(crudView.rowDisabled(crd.spec.names.kind)).toBe(true);
     });
   });
@@ -244,7 +242,8 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.actionsDropdownMenu.element(by.linkText('Modify Labels...')).click();
       await browser.wait(until.presenceOf($('.tags input')), 500);
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
-      await browser.sleep(500);
+      // This only works because there's only one label
+      await browser.wait(until.textToBePresentInElement($('.tags .tag-item'), labelValue), 1000);
       await $('.modal-footer #confirm-delete').click();
     });
 
