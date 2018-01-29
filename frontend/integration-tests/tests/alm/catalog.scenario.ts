@@ -20,6 +20,7 @@ describe('Installing a service from the Open Cloud Catalog', () => {
   });
 
   it('displays `Applications` tab in navigation sidebar', async() => {
+    await catalogView.isLoaded();
     expect(sidenavView.navSectionFor('Applications').isDisplayed()).toBe(true);
   });
 
