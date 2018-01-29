@@ -140,7 +140,7 @@ export const EditYAML = connect(stateToProps)(
         const es = this.ace.getSession();
         es.setMode('ace/mode/yaml');
         this.ace.setTheme('ace/theme/clouds');
-        es.setUseWrapMode(true);
+        es.setUseWrapMode(false);
         this.doc = es.getDocument();
       }
       let yaml;
