@@ -1,6 +1,21 @@
 Tectonic Console
 ================
 
+
+# External Service Integration Criteria
+
+Any external service that integrates with console should satisfy the following requirements:
+
+- The service can be installed on a 3 node cluster with 4GB of RAM per node.
+- The backend will refuse to create invalid resources. (eg: CPU/RAM requests exceeding limits will result in an HTTP 400 code)
+- API response time is less than 2 seconds for synchronous actions.
+- Errors and statuses are propagated to the correct k8s objects for async actions.
+- The service has basic documentation on debugging. (eg: How do we know if the service is working or not?)
+- Nice to have: Updates to objects finish on the order of seconds, not minutes.
+- Nice to have: Owned resources have ownerReferences.
+- There is an agreed-upon API before any console work is started.
+
+
 Codename: "Bridge"
 
 [![Build Status](https://jenkins-tectonic.prod.coreos.systems/buildStatus/icon?job=console-build)](https://jenkins-tectonic.prod.coreos.systems/job/console-build/)
