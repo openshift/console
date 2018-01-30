@@ -69,9 +69,12 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
   </div>;
 });
 
+const EmptyAppsMsg = () => <MsgBox title="No Applications Found" detail={<div>
+  Applications are installed per namespace from the Open Cloud Catalog. For more information, see <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" rel="noopener noreferrer">Using Open Cloud Services <i className="fa fa-external-link" /></a>.
+</div>} />;
+
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
   const {loaded, loadError, filters} = props;
-  const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Applications are installed per namespace from the Open Cloud Catalog." />;
   const clusterServiceVersions = (props.data.filter(res => referenceFor(res) === referenceForModel(ClusterServiceVersionModel)) as ClusterServiceVersionKind[])
     .filter(csv => csv.status && csv.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded);
   const apps = Object.keys(filters).reduce((filteredData, filterName) => {
@@ -107,7 +110,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
         </div>
       </div>
     </div>
-    : <StatusBox label="Applications" loaded={loaded} loadError={loadError} EmptyMsg={EmptyMsg} /> }
+    : <StatusBox label="Applications" loaded={loaded} loadError={loadError} EmptyMsg={EmptyAppsMsg} /> }
   </div>;
 };
 
@@ -120,6 +123,10 @@ const stateToProps = ({k8s}, {match}) => ({
     .filter((ns) => ns.metadata.name === match.params.ns && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
     .length === 1,
 });
+
+const EmptyCustomAppsMsg = () => <MsgBox title="No Custom Applications Found" detail={<div>
+  Create custom applications by following the documentation for <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" rel="noopener noreferrer">Using Open Cloud Services <i className="fa fa-external-link" /></a>.
+</div>} />;
 
 export const ClusterServiceVersionsPage = connect(stateToProps)(
   class ClusterServiceVersionsPage extends React.Component<ClusterServiceVersionsPageProps, ClusterServiceVersionsPageState> {
@@ -175,7 +182,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
               {...props}
               Row={ClusterServiceVersionRow}
               Header={ClusterServiceVersionHeader}
-              EmptyMsg={() => <MsgBox title="No Custom Applications Found" detail="Create custom applications by following the documentation at https://coreos.com." />} />
+              EmptyMsg={EmptyCustomAppsMsg} />
             }
             flatten={flatten}
             filterLabel="Applications by name"
