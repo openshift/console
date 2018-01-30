@@ -3,8 +3,7 @@ import * as _ from 'lodash';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, K8sFullyQualifiedResourceReference, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
-import { ClusterServiceVersionModel, UICatalogEntryModel, InstallPlanModel, EtcdClusterModel, PrometheusModel, AlertmanagerModel, ServiceMonitorModel, VaultServiceModel, ClusterModel, ChargebackReportModel, SubscriptionModel } from '../../models';
-import { k8sKinds } from './enum';
+import * as staticModels from '../../models';
 import store from '../../redux';
 
 export const referenceFor = (obj: K8sResourceKind): K8sFullyQualifiedResourceReference => obj.kind && obj.apiVersion
@@ -33,19 +32,14 @@ export const kindForReference = (ref: K8sResourceKindReference) => ref.split(':'
  * Will eventually replace The Enum.
  */
 const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
-  .set(referenceForModel(UICatalogEntryModel), UICatalogEntryModel)
-  .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionModel)
-  .set(referenceForModel(InstallPlanModel), InstallPlanModel)
-  .set(referenceForModel(EtcdClusterModel), EtcdClusterModel)
-  .set(referenceForModel(AlertmanagerModel), AlertmanagerModel)
-  .set(referenceForModel(PrometheusModel), PrometheusModel)
-  .set(referenceForModel(ServiceMonitorModel), ServiceMonitorModel)
-  .set(referenceForModel(VaultServiceModel), VaultServiceModel)
-  .set(referenceForModel(ClusterModel), ClusterModel)
-  .set(referenceForModel(ChargebackReportModel), ChargebackReportModel)
-  .set(referenceForModel(SubscriptionModel), SubscriptionModel)
-  // TODO(alecmerdler): Kill the Enum and move definitions to this module with `K8sFullyQualifiedResourceReference` as keys
-  .withMutations((models) => _.forEach(k8sKinds, (kind, kindName) => models.set(kindName, kind)));
+  .withMutations(models => _.forEach(staticModels, model => {
+    if (model.crd) {
+      models.set(referenceForModel(model), model);
+    } else {
+      models.set(model.kind, model);
+    }
+  }));
+// TODO(alecmerdler): Kill the Enum and move definitions to this module with `K8sFullyQualifiedResourceReference` as keys
 
 /**
  * Provides a synchronous way to acquire a statically-defined Kubernetes model.

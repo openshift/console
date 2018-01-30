@@ -9,9 +9,7 @@ const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
 const getK8sAPIPath = kind => {
   let p = k8sBasePath;
 
-  if (kind.isExtension) {
-    p += '/apis/extensions/';
-  } else if (kind.basePath) {
+  if (kind.basePath) {
     p += kind.basePath;
   } else {
     p += '/api/';

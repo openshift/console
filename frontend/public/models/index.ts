@@ -149,3 +149,423 @@ export const ChargebackReportModel: K8sKind = {
   abbr: 'R',
   namespaced: true,
 };
+
+export const ServiceModel: K8sKind = {
+  label: 'Service',
+  path: 'services',
+  plural: 'services',
+  abbr: 'S',
+  namespaced: true,
+  kind: 'Service',
+  id: 'service',
+  labelPlural: 'Services'
+};
+
+export const PodModel: K8sKind = {
+  label: 'Pod',
+  path: 'pods',
+  plural: 'pods',
+  abbr: 'P',
+  namespaced: true,
+  kind: 'Pod',
+  id: 'pod',
+  labelPlural: 'Pods'
+};
+
+export const ContainerModel: K8sKind = {
+  label: 'Container',
+  path: 'containers',
+  plural: 'containers',
+  abbr: 'C',
+  kind: 'Container',
+  id: 'container',
+  labelPlural: 'Containers'
+};
+
+export const DaemonSetModel: K8sKind = {
+  label: 'Daemon Set',
+  path: 'daemonsets',
+  basePath: '/apis/',
+  plural: 'daemonsets',
+  apiVersion: 'apps/v1beta2',
+  abbr: 'DS',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'DaemonSet',
+  id: 'daemonset',
+  labelPlural: 'Daemon Sets'
+};
+
+export const ReplicationControllerModel: K8sKind = {
+  label: 'Replication Controller',
+  path: 'replicationcontrollers',
+  plural: 'replicationcontrollers',
+  abbr: 'RC',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'ReplicationController',
+  id: 'replicationcontroller',
+  labelPlural: 'Replication Controllers'
+};
+
+export const HorizontalPodAutoscalerModel: K8sKind = {
+  label: 'Horizontal Pod Autoscaler',
+  path: 'horizontalpodautoscalers',
+  plural: 'horizontalpodautoscalers',
+  apiVersion: 'autoscaling/v1',
+  basePath: '/apis/',
+  abbr: 'HPA',
+  kind: 'HorizontalPodAutoscaler',
+  id: 'horizontalpodautoscaler',
+  labelPlural: 'Horizontal Pod Autoscalers'
+};
+
+export const ServiceAccountModel: K8sKind = {
+  label: 'Service Account',
+  path: 'serviceaccounts',
+  plural: 'serviceaccounts',
+  abbr: 'SA',
+  namespaced: true,
+  kind: 'ServiceAccount',
+  id: 'serviceaccount',
+  labelPlural: 'Service Accounts'
+};
+
+export const ReplicaSetModel: K8sKind = {
+  label: 'Replica Set',
+  apiVersion: 'apps/v1beta2',
+  path: 'replicasets',
+  basePath: '/apis/',
+  plural: 'replicasets',
+  abbr: 'RS',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'ReplicaSet',
+  id: 'replicaset',
+  labelPlural: 'Replica Sets'
+};
+
+export const DeploymentModel: K8sKind = {
+  label: 'Deployment',
+  apiVersion: 'apps/v1beta2',
+  path: 'deployments',
+  basePath: '/apis/',
+  plural: 'deployments',
+  abbr: 'D',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'Deployment',
+  id: 'deployment',
+  labelPlural: 'Deployments'
+};
+
+export const JobModel: K8sKind = {
+  label: 'Job',
+  apiVersion: 'batch/v1',
+  path: 'jobs',
+  basePath: '/apis/',
+  plural: 'jobs',
+  abbr: 'J',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'Job',
+  id: 'job',
+  labelPlural: 'Jobs'
+};
+
+export const NodeModel: K8sKind = {
+  label: 'Node',
+  path: 'nodes',
+  plural: 'nodes',
+  abbr: 'N',
+  kind: 'Node',
+  id: 'node',
+  labelPlural: 'Nodes'
+};
+
+export const EventModel: K8sKind = {
+  label: 'Event',
+  path: 'events',
+  plural: 'events',
+  abbr: 'E',
+  namespaced: true,
+  kind: 'Event',
+  id: 'event',
+  labelPlural: 'Events'
+};
+
+export const ComponentStatusModel: K8sKind = {
+  label: 'Component Status',
+  labelPlural: 'Component Statuses',
+  path: 'componentstatuses',
+  plural: 'componentstatuses',
+  abbr: 'CS',
+  kind: 'ComponentStatus',
+  id: 'componentstatus'
+};
+
+export const NamespaceModel: K8sKind = {
+  label: 'Namespace',
+  path: 'namespaces',
+  plural: 'namespaces',
+  abbr: 'N',
+  kind: 'Namespace',
+  id: 'namespace',
+  labelPlural: 'Namespaces'
+};
+
+export const IngressModel: K8sKind = {
+  label: 'Ingress',
+  labelPlural: 'Ingresses',
+  basePath: '/apis/extensions/',
+  apiVersion: 'v1beta1',
+  path: 'ingresses',
+  plural: 'ingresses',
+  abbr: 'I',
+  namespaced: true,
+  kind: 'Ingress',
+  id: 'ingress'
+};
+
+export const ConfigMapModel: K8sKind = {
+  label: 'Config Map',
+  path: 'configmaps',
+  plural: 'configmaps',
+  abbr: 'CM',
+  namespaced: true,
+  kind: 'ConfigMap',
+  id: 'configmap',
+  labelPlural: 'Config Maps'
+};
+
+export const SecretModel: K8sKind = {
+  label: 'Secret',
+  path: 'secrets',
+  plural: 'secrets',
+  abbr: 'S',
+  namespaced: true,
+  kind: 'Secret',
+  id: 'secret',
+  labelPlural: 'Secrets'
+};
+
+export const ClusterRoleBindingModel: K8sKind = {
+  label: 'Cluster Role Binding',
+  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiVersion: 'v1beta1',
+  path: 'clusterrolebindings',
+  plural: 'clusterrolebindings',
+  abbr: 'CRB',
+  kind: 'ClusterRoleBinding',
+  id: 'clusterrolebinding',
+  labelPlural: 'Cluster Role Bindings'
+};
+
+export const ClusterRoleModel: K8sKind = {
+  label: 'Cluster Role',
+  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiVersion: 'v1beta1',
+  path: 'clusterroles',
+  plural: 'clusterroles',
+  abbr: 'CR',
+  kind: 'ClusterRole',
+  id: 'clusterrole',
+  labelPlural: 'Cluster Roles'
+};
+
+export const RoleBindingModel: K8sKind = {
+  label: 'Role Binding',
+  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiVersion: 'v1beta1',
+  path: 'rolebindings',
+  plural: 'rolebindings',
+  abbr: 'RB',
+  namespaced: true,
+  kind: 'RoleBinding',
+  id: 'rolebinding',
+  labelPlural: 'Role Bindings'
+};
+
+export const RoleModel: K8sKind = {
+  label: 'Role',
+  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiVersion: 'v1beta1',
+  path: 'roles',
+  plural: 'roles',
+  abbr: 'R',
+  namespaced: true,
+  kind: 'Role',
+  id: 'role',
+  labelPlural: 'Roles'
+};
+
+export const TectonicVersionModel: K8sKind = {
+  label: 'Tectonic Version',
+  basePath: '/apis/tco.coreos.com/',
+  apiVersion: 'v1',
+  path: 'tectonicversions',
+  plural: 'tectonicversions',
+  abbr: 'TV',
+  namespaced: true,
+  kind: 'TectonicVersion',
+  id: 'tectonicversion',
+  labelPlural: 'Tectonic Versions'
+};
+
+export const ChannelOperatorConfigModel: K8sKind = {
+  label: 'Channel Operator Config',
+  basePath: '/apis/tco.coreos.com/',
+  apiVersion: 'v1',
+  path: 'channeloperatorconfigs',
+  plural: 'channeloperatorconfigs',
+  abbr: 'COC',
+  namespaced: true,
+  kind: 'ChannelOperatorConfig',
+  id: 'channeloperatorconfig',
+  labelPlural: 'Channel Operator Configs'
+};
+
+export const AppVersionModel: K8sKind = {
+  label: 'AppVersion',
+  basePath: '/apis/tco.coreos.com/',
+  apiVersion: 'v1',
+  path: 'appversions',
+  plural: 'appversions',
+  abbr: 'AV',
+  namespaced: true,
+  kind: 'AppVersion',
+  id: 'appversion',
+  labelPlural: 'AppVersions'
+};
+
+export const PersistentVolumeModel: K8sKind = {
+  label: 'Persistent Volume',
+  apiVersion: 'v1',
+  path: 'persistentvolumes',
+  plural: 'persistentvolumes',
+  abbr: 'PV',
+  kind: 'PersistentVolume',
+  id: 'persistentvolume',
+  labelPlural: 'Persistent Volumes'
+};
+
+export const PersistentVolumeClaimModel: K8sKind = {
+  label: 'Persistent Volume Claim',
+  apiVersion: 'v1',
+  path: 'persistentvolumeclaims',
+  plural: 'persistentvolumeclaims',
+  abbr: 'PVC',
+  namespaced: true,
+  kind: 'PersistentVolumeClaim',
+  id: 'persistentvolumeclaim',
+  labelPlural: 'Persistent Volume Claims'
+};
+
+export const PetsetModel: K8sKind = {
+  label: 'Petset',
+  plural: 'petsets',
+  abbr: 'PS',
+  path: 'petsets',
+  propagationPolicy: 'Foreground',
+  kind: 'Petset',
+  id: 'petset',
+  labelPlural: 'Petsets'
+};
+
+export const StatefulSetModel: K8sKind = {
+  label: 'Stateful Set',
+  basePath: '/apis/',
+  apiVersion: 'apps/v1beta2',
+  path: 'statefulsets',
+  plural: 'statefulsets',
+  abbr: 'SS',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'StatefulSet',
+  id: 'statefulset',
+  labelPlural: 'Stateful Sets'
+};
+
+export const ResourceQuotaModel: K8sKind = {
+  label: 'Resource Quota',
+  apiVersion: 'v1',
+  path: 'resourcequotas',
+  plural: 'resourcequotas',
+  abbr: 'RQ',
+  namespaced: true,
+  kind: 'ResourceQuota',
+  id: 'resourcequota',
+  labelPlural: 'Resource Quotas'
+};
+
+export const NetworkPolicyModel: K8sKind = {
+  label: 'Network Policy',
+  labelPlural: 'Network Policies',
+  apiVersion: 'v1',
+  basePath: '/apis/networking.k8s.io/',
+  path: 'networkpolicies',
+  plural: 'networkpolicies',
+  abbr: 'NP',
+  namespaced: true,
+  kind: 'NetworkPolicy',
+  id: 'networkpolicy'
+};
+
+export const PodVulnModel: K8sKind = {
+  label: 'Pod Vuln',
+  labelPlural: 'Pod Vulns',
+  path: 'podvulns',
+  plural: 'podvulns',
+  abbr: 'V',
+  namespaced: true,
+  kind: 'PodVuln',
+  id: 'podvuln'
+};
+
+// const starModel: K8sKind = {
+//   id: 'all',
+//   plural: 'all',
+//   labelPlural: 'All',
+//   abbr: '*',
+//   kind: '*'
+// };
+// export {starModel as '*Model'};
+
+export const CustomResourceDefinitionModel: K8sKind = {
+  label: 'Custom Resource Definition',
+  basePath: '/apis/apiextensions.k8s.io/',
+  apiVersion: 'v1beta1',
+  path: 'customresourcedefinitions',
+  abbr: 'CRD',
+  namespaced: false,
+  plural: 'customresourcedefinitions',
+  kind: 'CustomResourceDefinition',
+  id: 'customresourcedefinition',
+  labelPlural: 'Custom Resource Definitions'
+};
+
+export const CronJobModel: K8sKind = {
+  label: 'Cron Job',
+  apiVersion: 'batch/v1beta1',
+  path: 'cronjobs',
+  basePath: '/apis/',
+  plural: 'cronjobs',
+  abbr: 'CJ',
+  namespaced: true,
+  kind: 'CronJob',
+  id: 'cronjob',
+  labelPlural: 'Cron Jobs'
+};
+
+export const StorageClassModel: K8sKind = {
+  label: 'Storage Class',
+  labelPlural: 'Storage Classes',
+  apiVersion: 'v1',
+  path: 'storageclasses',
+  basePath: '/apis/storage.k8s.io/',
+  plural: 'storageclasses',
+  abbr: 'SC',
+  namespaced: false,
+  kind: 'StorageClass',
+  id: 'storageclass'
+};
