@@ -8,11 +8,11 @@ import * as classNames from 'classnames';
 
 import { MultiListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { NavTitle, MsgBox } from '../utils';
-import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled, CatalogEntryVisibility, catalogEntryVisibilityLabel } from './index';
+import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled, CatalogEntryVisibility, catalogEntryVisibilityLabel, SubscriptionKind } from './index';
 import { createEnableApplicationModal } from '../modals/enable-application-modal';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { k8sCreate, k8sKill, K8sResourceKind, referenceForModel } from '../../module/k8s';
-import { ClusterServiceVersionModel, UICatalogEntryModel } from '../../models';
+import { ClusterServiceVersionModel, UICatalogEntryModel, SubscriptionModel } from '../../models';
 
 export const CatalogAppHeader: React.SFC<CatalogAppHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-md-4 col-xs-8" sortField="metadata.name">Name</ColHead>
@@ -97,7 +97,9 @@ const stateToProps = ({k8s}, {obj}) => ({
   namespaces: k8s.get('namespaces').toJS(),
   clusterServiceVersions: _.values(k8s.getIn(['clusterserviceversion-v1s', 'data'], ImmutableMap()).toJS())
     .filter((csv: ClusterServiceVersionKind) => csv.status !== undefined)
-    .filter((csv: ClusterServiceVersionKind) => csv.metadata.name === obj.metadata.name),
+    .filter((csv: ClusterServiceVersionKind) => csv.metadata.name === obj.spec.manifest.channels[0].currentCSV),
+  subscriptions: _.values(k8s.getIn(['subscription-v1s', 'data'], ImmutableMap()).toJS())
+    .filter((sub: SubscriptionKind) => sub.spec.name === obj.spec.packageName),
 });
 
 export const CatalogAppRow = connect(stateToProps)(
@@ -112,12 +114,12 @@ export const CatalogAppRow = connect(stateToProps)(
     }
 
     render() {
-      const {namespaces, obj, clusterServiceVersions = []} = this.props;
+      const {namespaces, obj, clusterServiceVersions = [], subscriptions = []} = this.props;
 
       return <ResourceRow obj={obj}>
         <div className="co-catalog-app-row" style={{maxHeight: 60 + (this.state.expand ? clusterServiceVersions.length * 50 : 0)}}>
           <div className="col-md-4 col-xs-8">
-            <ClusterServiceVersionLogo icon={_.get(obj.spec, 'icon', [])[0]} version={obj.spec.version} displayName={obj.spec.displayName} provider={obj.spec.provider} />
+            <ClusterServiceVersionLogo icon={_.get(obj.spec, 'spec.icon', [])[0]} version={_.get(obj.spec, 'spec.version', '')} displayName={_.get(obj.spec, 'spec.displayName', '')} provider={_.get(obj.spec, 'spec.provider', '')} />
           </div>
           <div className="col-md-5 hidden-sm">
             <div style={{marginTop: '10px'}}>
@@ -140,7 +142,7 @@ export const CatalogAppRow = connect(stateToProps)(
               <button
                 className="btn btn-default co-catalog-disable-btn"
                 disabled={clusterServiceVersions.length === 0}
-                onClick={() => createDisableApplicationModal({catalogEntry: obj, k8sKill, namespaces, clusterServiceVersions})}>
+                onClick={() => createDisableApplicationModal({catalogEntry: obj, k8sKill, namespaces, clusterServiceVersions, subscriptions})}>
                 Disable
               </button>
             </div>
@@ -178,6 +180,7 @@ export const CatalogAppsPage: React.SFC = () => <MultiListPage
   flatten={resources => _.flatMap(_.filter(resources, (v, k: string) => k === referenceForModel(UICatalogEntryModel)), (resource: any) => resource.data)}
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
+    {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: false},
     {kind: 'Namespace', isList: true},
     {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true, selector: {matchLabels: {[catalogEntryVisibilityLabel]: CatalogEntryVisibility.catalogEntryVisibilityOCS}}}
   ]}
@@ -216,6 +219,7 @@ export type CatalogAppRowProps = {
   obj: CatalogEntryKind;
   namespaces: {data: {[name: string]: K8sResourceKind}, loaded: boolean, loadError: Object | string};
   clusterServiceVersions: ClusterServiceVersionKind[];
+  subscriptions: SubscriptionKind[];
 };
 
 export type CatalogAppRowState = {

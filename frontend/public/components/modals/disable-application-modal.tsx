@@ -6,9 +6,9 @@ import * as _ from 'lodash';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, ResourceIcon } from '../utils';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, isEnabled } from '../cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, isEnabled, SubscriptionKind } from '../cloud-services';
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
-import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 
 export const SelectNamespaceHeader: React.SFC<SelectNamespaceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
@@ -52,21 +52,24 @@ export class DisableApplicationModal extends PromiseComponent {
     event.preventDefault();
 
     const deleteOptions = this.state.cascadeDelete ? {kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'} : null;
+    const clusterServiceVersions = this.props.clusterServiceVersions.filter(csv => this.state.selectedNamespaces.indexOf(csv.metadata.namespace) > -1)
+      .map(csv => this.props.k8sKill(ClusterServiceVersionModel, csv, {}, deleteOptions));
+    const subscriptions = this.props.subscriptions.filter(sub => this.state.selectedNamespaces.indexOf(sub.metadata.namespace) > -1)
+      .map(sub => this.props.k8sKill(SubscriptionModel, sub, {}, deleteOptions));
 
-    this.handlePromise(Promise.all(this.state.selectedNamespaces
-      .map(ns => this.props.k8sKill(ClusterServiceVersionModel, this.props.clusterServiceVersions.find(csv => csv.metadata.namespace === ns), {}, deleteOptions))))
-      .then(() => this.props.close());
+    this.handlePromise(Promise.all(clusterServiceVersions.concat(subscriptions))).then(() => this.props.close());
   }
 
   render() {
     const {data, loaded, loadError} = this.props.namespaces;
     const {spec} = this.props.catalogEntry;
+    const csvSpec = spec.spec;
     const {clusterServiceVersions} = this.props;
     const {selectedNamespaces} = this.state;
 
     return <form onSubmit={this.submit.bind(this)} name="form" className="co-catalog-install-modal">
       <ModalTitle className="modal-header co-m-nav-title__detail co-catalog-install-modal__header">
-        <ClusterServiceVersionLogo displayName={spec.displayName} provider={spec.provider} icon={spec.icon[0]} />
+        <ClusterServiceVersionLogo displayName={csvSpec.displayName} provider={csvSpec.provider} icon={csvSpec.icon[0]} />
       </ModalTitle>
       <ModalBody>
         <h4 className="co-catalog-install-modal__h4">Disable Service</h4>
@@ -106,6 +109,7 @@ export type DisableApplicationModalProps = {
   k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
   namespaces: {data: {[name: string]: any}, loaded: boolean, loadError: Object | string};
   clusterServiceVersions: ClusterServiceVersionKind[];
+  subscriptions: SubscriptionKind[];
   catalogEntry: CatalogEntryKind;
 };
 

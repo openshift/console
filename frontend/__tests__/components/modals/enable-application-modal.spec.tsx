@@ -9,9 +9,9 @@ import { EnableApplicationModal, EnableApplicationModalProps, SelectNamespaceHea
 import { ListHeader, ColHead, List, ResourceRow } from '../../../public/components/factory';
 import { ResourceIcon } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
-import { testClusterServiceVersion, testCatalogApp } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind, InstallPlanApproval } from '../../../public/components/cloud-services';
-import { InstallPlanModel } from '../../../public/models';
+import { testClusterServiceVersion, testCatalogEntry } from '../../../__mocks__/k8sResourcesMocks';
+import { ClusterServiceVersionLogo, ClusterServiceVersionKind } from '../../../public/components/cloud-services';
+import { SubscriptionModel } from '../../../public/models';
 /* eslint-enable no-unused-vars */
 
 
@@ -117,7 +117,7 @@ describe(EnableApplicationModal.name, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogApp} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} close={close} cancel={cancel} />, {lifecycleExperimental: true});
+    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogEntry} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} close={close} cancel={cancel} />);
   });
 
   it('renders a modal form', () => {
@@ -131,9 +131,9 @@ describe(EnableApplicationModal.name, () => {
     const logo = wrapper.find(ModalTitle).find(ClusterServiceVersionLogo);
 
     expect(logo.exists()).toBe(true);
-    expect(logo.props().displayName).toEqual(testCatalogApp.spec.displayName);
-    expect(logo.props().provider).toEqual(testCatalogApp.spec.provider);
-    expect(logo.props().icon).toEqual(testCatalogApp.spec.icon[0]);
+    expect(logo.props().displayName).toEqual(testCatalogEntry.spec.spec.displayName);
+    expect(logo.props().provider).toEqual(testCatalogEntry.spec.spec.provider);
+    expect(logo.props().icon).toEqual(testCatalogEntry.spec.spec.icon[0]);
   });
 
   it('renders a list of only available namespaces', () => {
@@ -151,24 +151,26 @@ describe(EnableApplicationModal.name, () => {
     expect(row.props().selected).toBe(false);
   });
 
-  it('calls `props.k8sCreate` for each selected namespace when form is submitted', (done) => {
+  it('calls `props.k8sCreate` to create subscription for each selected namespace when form is submitted', (done) => {
     const selectedNamespaces = [namespaces.data.default.metadata.name];
     wrapper = wrapper.setState({selectedNamespaces});
 
     close.and.callFake(() => {
       expect(k8sCreate.calls.count()).toEqual(selectedNamespaces.length);
       selectedNamespaces.forEach((namespace, i) => {
-        expect(k8sCreate.calls.argsFor(i)[0]).toEqual(InstallPlanModel);
+        expect(k8sCreate.calls.argsFor(i)[0]).toEqual(SubscriptionModel);
         expect(k8sCreate.calls.argsFor(i)[1]).toEqual({
           apiVersion: 'app.coreos.com/v1alpha1',
-          kind: 'InstallPlan-v1',
+          kind: SubscriptionModel.kind,
           metadata: {
             generateName: `${testClusterServiceVersion.metadata.name}-`,
             namespace,
           },
           spec: {
-            clusterServiceVersionNames: [testClusterServiceVersion.metadata.name],
-            approval: InstallPlanApproval.Automatic,
+            source: 'tectonic-ocs',
+            name: 'testapp-package',
+            channel: 'stable',
+            currentCSV: 'testapp',
           },
         });
       });
