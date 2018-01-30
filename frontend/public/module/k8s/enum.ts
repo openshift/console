@@ -16,6 +16,7 @@ _.each(staticModels, (model, name) => {
 });
 
 const starModel: K8sKind = {
+  apiVersion: 'v1',
   id: 'all',
   plural: 'all',
   labelPlural: 'All',

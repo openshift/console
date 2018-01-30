@@ -307,6 +307,7 @@ describe('ResourcesList', () => {
   it('uses the resources defined in the CSV', () => {
     const kindObj: K8sKind = {
       abbr: '',
+      apiVersion: 'v1',
       kind: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].kind,
       path: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].name.split('.')[0],
       label: '',

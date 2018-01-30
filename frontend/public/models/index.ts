@@ -5,7 +5,7 @@ export const UICatalogEntryModel: K8sKind = {
   kind: 'UICatalogEntry-v1',
   label: 'UICatalogEntry-v1',
   labelPlural: 'UICatalogEntry-v1s',
-  basePath: '/apis/app.coreos.com/',
+  apiGroup: 'app.coreos.com',
   apiVersion: 'v1alpha1',
   path: 'uicatalogentry-v1s',
   abbr: 'CE',
@@ -18,7 +18,7 @@ export const ClusterServiceVersionModel: K8sKind = {
   kind: 'ClusterServiceVersion-v1',
   label: 'Application',
   labelPlural: 'Applications',
-  basePath: '/apis/app.coreos.com/',
+  apiGroup: 'app.coreos.com',
   apiVersion: 'v1alpha1',
   path: 'clusterserviceversion-v1s',
   abbr: 'CSV',
@@ -32,7 +32,7 @@ export const InstallPlanModel: K8sKind = {
   kind: 'InstallPlan-v1',
   label: 'InstallPlan-v1',
   labelPlural: 'InstallPlan-v1s',
-  basePath: '/apis/app.coreos.com/',
+  apiGroup: 'app.coreos.com',
   apiVersion: 'v1alpha1',
   path: 'installplan-v1s',
   abbr: 'IP',
@@ -45,7 +45,7 @@ export const SubscriptionModel: K8sKind = {
   kind: 'Subscription-v1',
   label: 'Subscription-v1',
   labelPlural: 'Subscription-v1s',
-  basePath: '/apis/app.coreos.com/',
+  apiGroup: 'app.coreos.com',
   apiVersion: 'v1alpha1',
   path: 'subscription-v1s',
   abbr: 'SUB',
@@ -58,7 +58,7 @@ export const EtcdClusterModel: K8sKind = {
   kind: 'EtcdCluster',
   label: 'etcd Cluster',
   labelPlural: 'Etcd Clusters',
-  basePath: '/apis/etcd.database.coreos.com/',
+  apiGroup: 'etcd.database.coreos.com',
   apiVersion: 'v1beta2',
   path: 'etcdclusters',
   abbr: 'EC',
@@ -72,7 +72,7 @@ export const PrometheusModel: K8sKind = {
   kind: 'Prometheus',
   label: 'Prometheus',
   labelPlural: 'Prometheuses',
-  basePath: '/apis/monitoring.coreos.com/',
+  apiGroup: 'monitoring.coreos.com',
   apiVersion: 'v1',
   path: 'prometheuses',
   abbr: 'PI',
@@ -86,7 +86,7 @@ export const ServiceMonitorModel: K8sKind = {
   kind: 'ServiceMonitor',
   label: 'Service Monitor',
   labelPlural: 'Service Monitors',
-  basePath: '/apis/monitoring.coreos.com/',
+  apiGroup: 'monitoring.coreos.com',
   apiVersion: 'v1',
   path: 'servicemonitors',
   abbr: 'SM',
@@ -100,7 +100,7 @@ export const AlertmanagerModel: K8sKind = {
   kind: 'Alertmanager',
   label: 'Alertmanager',
   labelPlural: 'Alertmanagers',
-  basePath: '/apis/monitoring.coreos.com/',
+  apiGroup: 'monitoring.coreos.com',
   apiVersion: 'v1',
   path: 'alertmanagers',
   abbr: 'AM',
@@ -114,7 +114,7 @@ export const VaultServiceModel: K8sKind = {
   kind: 'VaultService',
   label: 'VaultService',
   labelPlural: 'VaultServices',
-  basePath: '/apis/vault.security.coreos.com/',
+  apiGroup: 'vault.security.coreos.com',
   apiVersion: 'v1alpha1',
   path: 'vaultservices',
   abbr: 'VS',
@@ -128,7 +128,7 @@ export const ClusterModel: K8sKind = {
   kind: 'Cluster',
   label: 'Cluster',
   labelPlural: 'Clusters',
-  basePath: '/apis/multicluster.coreos.com/',
+  apiGroup: 'multicluster.coreos.com',
   path: 'clusters',
   apiVersion: 'v1',
   crd: true,
@@ -141,7 +141,7 @@ export const ChargebackReportModel: K8sKind = {
   kind: 'Report',
   label: 'Report',
   labelPlural: 'Reports',
-  basePath: '/apis/chargeback.coreos.com/',
+  apiGroup: 'chargeback.coreos.com',
   path: 'reports',
   apiVersion: 'v1alpha1',
   crd: true,
@@ -151,6 +151,8 @@ export const ChargebackReportModel: K8sKind = {
 };
 
 export const ServiceModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Service',
   path: 'services',
   plural: 'services',
@@ -162,6 +164,8 @@ export const ServiceModel: K8sKind = {
 };
 
 export const PodModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Pod',
   path: 'pods',
   plural: 'pods',
@@ -173,6 +177,8 @@ export const PodModel: K8sKind = {
 };
 
 export const ContainerModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Container',
   path: 'containers',
   plural: 'containers',
@@ -185,7 +191,7 @@ export const ContainerModel: K8sKind = {
 export const DaemonSetModel: K8sKind = {
   label: 'Daemon Set',
   path: 'daemonsets',
-  basePath: '/apis/',
+  apiGroup: '',
   plural: 'daemonsets',
   apiVersion: 'apps/v1beta2',
   abbr: 'DS',
@@ -197,6 +203,8 @@ export const DaemonSetModel: K8sKind = {
 };
 
 export const ReplicationControllerModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Replication Controller',
   path: 'replicationcontrollers',
   plural: 'replicationcontrollers',
@@ -213,7 +221,7 @@ export const HorizontalPodAutoscalerModel: K8sKind = {
   path: 'horizontalpodautoscalers',
   plural: 'horizontalpodautoscalers',
   apiVersion: 'autoscaling/v1',
-  basePath: '/apis/',
+  apiGroup: '',
   abbr: 'HPA',
   kind: 'HorizontalPodAutoscaler',
   id: 'horizontalpodautoscaler',
@@ -221,6 +229,8 @@ export const HorizontalPodAutoscalerModel: K8sKind = {
 };
 
 export const ServiceAccountModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Service Account',
   path: 'serviceaccounts',
   plural: 'serviceaccounts',
@@ -235,7 +245,7 @@ export const ReplicaSetModel: K8sKind = {
   label: 'Replica Set',
   apiVersion: 'apps/v1beta2',
   path: 'replicasets',
-  basePath: '/apis/',
+  apiGroup: '',
   plural: 'replicasets',
   abbr: 'RS',
   namespaced: true,
@@ -249,7 +259,7 @@ export const DeploymentModel: K8sKind = {
   label: 'Deployment',
   apiVersion: 'apps/v1beta2',
   path: 'deployments',
-  basePath: '/apis/',
+  apiGroup: '',
   plural: 'deployments',
   abbr: 'D',
   namespaced: true,
@@ -263,7 +273,7 @@ export const JobModel: K8sKind = {
   label: 'Job',
   apiVersion: 'batch/v1',
   path: 'jobs',
-  basePath: '/apis/',
+  apiGroup: '',
   plural: 'jobs',
   abbr: 'J',
   namespaced: true,
@@ -274,6 +284,8 @@ export const JobModel: K8sKind = {
 };
 
 export const NodeModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Node',
   path: 'nodes',
   plural: 'nodes',
@@ -284,6 +296,8 @@ export const NodeModel: K8sKind = {
 };
 
 export const EventModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Event',
   path: 'events',
   plural: 'events',
@@ -295,6 +309,8 @@ export const EventModel: K8sKind = {
 };
 
 export const ComponentStatusModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Component Status',
   labelPlural: 'Component Statuses',
   path: 'componentstatuses',
@@ -305,6 +321,8 @@ export const ComponentStatusModel: K8sKind = {
 };
 
 export const NamespaceModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Namespace',
   path: 'namespaces',
   plural: 'namespaces',
@@ -317,7 +335,7 @@ export const NamespaceModel: K8sKind = {
 export const IngressModel: K8sKind = {
   label: 'Ingress',
   labelPlural: 'Ingresses',
-  basePath: '/apis/extensions/',
+  apiGroup: 'extensions',
   apiVersion: 'v1beta1',
   path: 'ingresses',
   plural: 'ingresses',
@@ -328,6 +346,8 @@ export const IngressModel: K8sKind = {
 };
 
 export const ConfigMapModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Config Map',
   path: 'configmaps',
   plural: 'configmaps',
@@ -339,6 +359,8 @@ export const ConfigMapModel: K8sKind = {
 };
 
 export const SecretModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Secret',
   path: 'secrets',
   plural: 'secrets',
@@ -351,7 +373,7 @@ export const SecretModel: K8sKind = {
 
 export const ClusterRoleBindingModel: K8sKind = {
   label: 'Cluster Role Binding',
-  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiGroup: 'rbac.authorization.k8s.io',
   apiVersion: 'v1beta1',
   path: 'clusterrolebindings',
   plural: 'clusterrolebindings',
@@ -363,7 +385,7 @@ export const ClusterRoleBindingModel: K8sKind = {
 
 export const ClusterRoleModel: K8sKind = {
   label: 'Cluster Role',
-  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiGroup: 'rbac.authorization.k8s.io',
   apiVersion: 'v1beta1',
   path: 'clusterroles',
   plural: 'clusterroles',
@@ -375,7 +397,7 @@ export const ClusterRoleModel: K8sKind = {
 
 export const RoleBindingModel: K8sKind = {
   label: 'Role Binding',
-  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiGroup: 'rbac.authorization.k8s.io',
   apiVersion: 'v1beta1',
   path: 'rolebindings',
   plural: 'rolebindings',
@@ -388,7 +410,7 @@ export const RoleBindingModel: K8sKind = {
 
 export const RoleModel: K8sKind = {
   label: 'Role',
-  basePath: '/apis/rbac.authorization.k8s.io/',
+  apiGroup: 'rbac.authorization.k8s.io',
   apiVersion: 'v1beta1',
   path: 'roles',
   plural: 'roles',
@@ -401,7 +423,7 @@ export const RoleModel: K8sKind = {
 
 export const TectonicVersionModel: K8sKind = {
   label: 'Tectonic Version',
-  basePath: '/apis/tco.coreos.com/',
+  apiGroup: 'tco.coreos.com',
   apiVersion: 'v1',
   path: 'tectonicversions',
   plural: 'tectonicversions',
@@ -414,7 +436,7 @@ export const TectonicVersionModel: K8sKind = {
 
 export const ChannelOperatorConfigModel: K8sKind = {
   label: 'Channel Operator Config',
-  basePath: '/apis/tco.coreos.com/',
+  apiGroup: 'tco.coreos.com',
   apiVersion: 'v1',
   path: 'channeloperatorconfigs',
   plural: 'channeloperatorconfigs',
@@ -427,7 +449,7 @@ export const ChannelOperatorConfigModel: K8sKind = {
 
 export const AppVersionModel: K8sKind = {
   label: 'AppVersion',
-  basePath: '/apis/tco.coreos.com/',
+  apiGroup: 'tco.coreos.com',
   apiVersion: 'v1',
   path: 'appversions',
   plural: 'appversions',
@@ -441,6 +463,7 @@ export const AppVersionModel: K8sKind = {
 export const PersistentVolumeModel: K8sKind = {
   label: 'Persistent Volume',
   apiVersion: 'v1',
+  legacy: true,
   path: 'persistentvolumes',
   plural: 'persistentvolumes',
   abbr: 'PV',
@@ -452,6 +475,7 @@ export const PersistentVolumeModel: K8sKind = {
 export const PersistentVolumeClaimModel: K8sKind = {
   label: 'Persistent Volume Claim',
   apiVersion: 'v1',
+  legacy: true,
   path: 'persistentvolumeclaims',
   plural: 'persistentvolumeclaims',
   abbr: 'PVC',
@@ -462,6 +486,8 @@ export const PersistentVolumeClaimModel: K8sKind = {
 };
 
 export const PetsetModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Petset',
   plural: 'petsets',
   abbr: 'PS',
@@ -474,7 +500,7 @@ export const PetsetModel: K8sKind = {
 
 export const StatefulSetModel: K8sKind = {
   label: 'Stateful Set',
-  basePath: '/apis/',
+  apiGroup: '',
   apiVersion: 'apps/v1beta2',
   path: 'statefulsets',
   plural: 'statefulsets',
@@ -489,6 +515,7 @@ export const StatefulSetModel: K8sKind = {
 export const ResourceQuotaModel: K8sKind = {
   label: 'Resource Quota',
   apiVersion: 'v1',
+  legacy: true,
   path: 'resourcequotas',
   plural: 'resourcequotas',
   abbr: 'RQ',
@@ -502,7 +529,7 @@ export const NetworkPolicyModel: K8sKind = {
   label: 'Network Policy',
   labelPlural: 'Network Policies',
   apiVersion: 'v1',
-  basePath: '/apis/networking.k8s.io/',
+  apiGroup: 'networking.k8s.io',
   path: 'networkpolicies',
   plural: 'networkpolicies',
   abbr: 'NP',
@@ -512,6 +539,8 @@ export const NetworkPolicyModel: K8sKind = {
 };
 
 export const PodVulnModel: K8sKind = {
+  apiVersion: 'v1',
+  legacy: true,
   label: 'Pod Vuln',
   labelPlural: 'Pod Vulns',
   path: 'podvulns',
@@ -529,11 +558,11 @@ export const PodVulnModel: K8sKind = {
 //   abbr: '*',
 //   kind: '*'
 // };
-// export {starModel as '*Model'};
+// export {starModel as Model};
 
 export const CustomResourceDefinitionModel: K8sKind = {
   label: 'Custom Resource Definition',
-  basePath: '/apis/apiextensions.k8s.io/',
+  apiGroup: 'apiextensions.k8s.io',
   apiVersion: 'v1beta1',
   path: 'customresourcedefinitions',
   abbr: 'CRD',
@@ -548,7 +577,7 @@ export const CronJobModel: K8sKind = {
   label: 'Cron Job',
   apiVersion: 'batch/v1beta1',
   path: 'cronjobs',
-  basePath: '/apis/',
+  apiGroup: '',
   plural: 'cronjobs',
   abbr: 'CJ',
   namespaced: true,
@@ -562,7 +591,7 @@ export const StorageClassModel: K8sKind = {
   labelPlural: 'Storage Classes',
   apiVersion: 'v1',
   path: 'storageclasses',
-  basePath: '/apis/storage.k8s.io/',
+  apiGroup: 'storage.k8s.io',
   plural: 'storageclasses',
   abbr: 'SC',
   namespaced: false,

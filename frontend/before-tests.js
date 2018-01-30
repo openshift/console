@@ -8,7 +8,6 @@ configure({adapter: new Adapter()});
 
 window.SERVER_FLAGS = {
   basePath: '/',
-  k8sAPIVersion: 'v1',
 };
 
 require('url-search-params-polyfill');

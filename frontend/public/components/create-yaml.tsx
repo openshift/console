@@ -21,7 +21,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     return <ErrorPage404 />;
   }
 
-  const apiVersion = kindObj.apiVersion || 'v1';
+  const apiVersion = kindObj.apiVersion;
   const namespace = params.ns || 'default';
   const kindStr = `${apiVersion}.${kindObj.kind}`;
   let template = _.get(TEMPLATES, [kindStr, 'default']);
@@ -38,7 +38,8 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     obj.metadata.namespace = namespace;
   }
   if (kindObj.crd && template === TEMPLATES.DEFAULT.default) {
-    obj.apiVersion = kindObj.basePath.replace(/^\/apis\//, '') + kindObj.apiVersion;
+    const apiGroup = kindObj.apiGroup ? `${kindObj.apiGroup}/` : '';
+    obj.apiVersion = `${apiGroup}${kindObj.apiVersion}`;
     obj.spec = obj.spec || {};
   }
 

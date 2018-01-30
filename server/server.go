@@ -35,7 +35,6 @@ import (
 
 const (
 	BridgeAPIVersion          = "v1"
-	K8sAPIVersion             = "v1"
 	IndexPageTemplateName     = "index.html"
 	TokenizerPageTemplateName = "tokener.html"
 
@@ -52,7 +51,6 @@ var (
 
 type jsGlobals struct {
 	ConsoleVersion   string `json:"consoleVersion"`
-	K8sAPIVersion    string `json:"k8sAPIVersion"`
 	AuthDisabled     bool   `json:"authDisabled"`
 	KubectlClientID  string `json:"kubectlClientID"`
 	BasePath         string `json:"basePath"`
@@ -214,7 +212,6 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
 		ConsoleVersion:   version.Version,
-		K8sAPIVersion:    K8sAPIVersion,
 		AuthDisabled:     s.AuthDisabled(),
 		KubectlClientID:  s.KubectlClientID,
 		BasePath:         s.BaseURL.Path,

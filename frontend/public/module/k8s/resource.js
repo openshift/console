@@ -4,18 +4,20 @@ import {k8sBasePath} from './k8s';
 import {selectorToString} from './selector';
 import {wsFactory} from '../ws-factory';
 
-const apiVersion = window.SERVER_FLAGS.k8sAPIVersion;
-
 const getK8sAPIPath = kind => {
   let p = k8sBasePath;
 
-  if (kind.basePath) {
-    p += kind.basePath;
-  } else {
+  if (kind.legacy) {
     p += '/api/';
+  } else {
+    p += '/apis/';
   }
 
-  p += kind.apiVersion || apiVersion;
+  if (kind.apiGroup) {
+    p += `${kind.apiGroup}/`;
+  }
+
+  p += kind.apiVersion;
   return p;
 };
 
@@ -91,7 +93,8 @@ export const k8sList = (kind, params={}) => {
 
   const k = kind.kind === 'Namespace' ? {
     // hit our custom /namespaces path which better handles users with limited permissions
-    basePath: '../../',
+    legacy: true,
+    apiGroup: '../../',
     apiVersion: 'tectonic',
     path: 'namespaces',
   } : kind;

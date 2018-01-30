@@ -19,7 +19,7 @@ export const referenceForOwnerRef = (ownerRef: OwnerReference): K8sFullyQualifie
 );
 
 export const referenceForModel = (model: K8sKind): K8sFullyQualifiedResourceReference => (
-  `${model.kind}:${model.basePath.slice(6, -1)}:${model.apiVersion}`
+  `${model.kind}:${model.apiGroup || ''}:${model.apiVersion}`
 );
 
 export const kindForReference = (ref: K8sResourceKindReference) => ref.split(':').length === 3

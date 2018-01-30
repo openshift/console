@@ -41,17 +41,17 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
           }
 
           return {
-            kind, label, plural, abbr, namespaced, labels, annotations, selector, group,
+            kind, label, plural, abbr, namespaced, labels, annotations, selector,
+            apiGroup: group,
             labelPlural: `${label}${label.endsWith('s') ? 'es' : 's'}`,
             id: singular,
             apiVersion: version,
             path: plural,
             crd: true,
-            basePath: `/apis/${group}/`,
           };
         })
         .reduce((prevState, newModel) => {
-          return prevState.update('kinds', (kinds) => kinds.set(`${newModel.kind}:${newModel.group}:${newModel.apiVersion}`, newModel));
+          return prevState.update('kinds', (kinds) => kinds.set(`${newModel.kind}:${newModel.apiGroup}:${newModel.apiVersion}`, newModel));
         }, state)
         .set('inFlight', false);
 

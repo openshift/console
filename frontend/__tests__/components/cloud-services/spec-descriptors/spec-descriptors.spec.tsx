@@ -25,6 +25,7 @@ describe(ClusterServiceVersionResourceSpec.name, () => {
       labelPlural: '',
       path: '',
       plural: '',
+      apiVersion: 'v1',
     };
 
     const specValue = 124;
