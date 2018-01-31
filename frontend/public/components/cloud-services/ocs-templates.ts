@@ -7,7 +7,7 @@ registerTemplate('v1alpha1.VaultService', `
     name: example
   spec:
     nodes: 2
-    version: 0.8.3-0
+    version: 0.9.1-0
 `);
 
 registerTemplate('v1beta2.EtcdCluster', `

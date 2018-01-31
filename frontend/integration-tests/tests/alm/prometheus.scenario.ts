@@ -62,7 +62,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await appListView.isLoaded();
     await browser.sleep(500);
 
-    expect(appListView.appTileFor('Prometheus').isDisplayed()).toBe(true);
+    browser.wait(until.visibilityOf(appListView.appTileFor('Prometheus')), 5000);
   });
 
   it('displays metadata about Prometheus OCS in the "Overview" section', async() => {

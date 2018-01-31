@@ -63,7 +63,7 @@ describe('Interacting with the Vault OCS', () => {
     await appListView.isLoaded();
     await browser.sleep(500);
 
-    expect(appListView.appTileFor('Vault').isDisplayed()).toBe(true);
+    browser.wait(until.visibilityOf(appListView.appTileFor('Vault')), 5000);
   });
 
   it('displays metadata about Vault OCS in the "Overview" section', async() => {
