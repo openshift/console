@@ -67,7 +67,7 @@ describe('Interacting with the etcd OCS', () => {
     await appListView.isLoaded();
     await browser.sleep(500);
 
-    expect(appListView.appTileFor('etcd').isDisplayed()).toBe(true);
+    browser.wait(until.visibilityOf(appListView.appTileFor('etcd')), 5000);
   });
 
   it('displays metadata about etcd OCS in the "Overview" section', async() => {
