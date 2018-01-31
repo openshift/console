@@ -7,7 +7,7 @@ import { K8sResourceKindReference, K8sKind } from '../../module/k8s';
 
 export const ResourceIcon = connectToModel((props: ResourceIconProps) => {
   const kindObj = props.kindObj;
-  const kindStr = _.get(kindObj, ['kind'], '');
+  const kindStr = _.get(kindObj, ['kind'], props.kind);
   const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, props.className);
   const iconLabel = (kindObj && kindObj.abbr) || kindStr.toUpperCase().slice(0, 2);
 
@@ -18,6 +18,7 @@ export const ResourceIcon = connectToModel((props: ResourceIconProps) => {
 export type ResourceIconProps = {
   className: string;
   kindObj: K8sKind;
+  kind: K8sResourceKindReference;
 };
 
 export type ResourceNameProps = {
