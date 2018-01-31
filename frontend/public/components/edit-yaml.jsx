@@ -140,7 +140,8 @@ export const EditYAML = connect(stateToProps)(
         const es = this.ace.getSession();
         es.setMode('ace/mode/yaml');
         this.ace.setTheme('ace/theme/clouds');
-        es.setUseWrapMode(true);
+        // Disable line wrap so that our tests pass on small screens.
+        es.setUseWrapMode(false);
         this.doc = es.getDocument();
       }
       let yaml;
