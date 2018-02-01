@@ -73,41 +73,108 @@ export class DropdownMixin extends React.PureComponent {
   }
 }
 
-const AutocompleteInput = props => <input {...props} className="dropdown__autocomplete" autoFocus={true} type="text" />;
 const Caret = () => <span className="caret"></span>;
 
 /** @augments {React.Component<any>} */
 export class Dropdown extends DropdownMixin {
   constructor (props) {
     super(props);
-    this.changeTextFilter = e => this.setState({autocompleteText: e.target.value});
+    this.state.cursor = 0;
+    this.state.items = props.items;
+    this.onKeyDown = e => this.onKeyDown_(e);
+    this.changeTextFilter = e => {
+      const autocompleteText = e.target.value;
+      let { items, autocompleteFilter } = this.props;
+      if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
+        items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
+      }
+      this.setState({autocompleteText, items});
+    };
+  }
+
+  // window.addEventListener('keydown', e => {
+  //       if (e.key === 'n') {
+  //         this.show(e);
+  //         e.stopPropagation();
+  //       }
+  //     });
+
+  componentWillReceiveProps(nextProps) {
+    if (_.isEqual(nextProps.items, this.props.items)) {
+      return;
+    }
+
+    const { autocompleteText } = this.state;
+    let { items, autocompleteFilter } = nextProps;
+    if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
+      items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
+    }
+    this.setState({items});
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    // kans: we have to move the carret to the end for some presently unknown reason
+    if (!prevState.active && this.state.active && this.input) {
+      const position = this.state.autocompleteText && this.state.autocompleteText.length;
+      this.input.setSelectionRange(position, position);
+    }
+  }
+  onKeyDown_ (e) {
+    const { key } = e;
+    if (key === 'Escape') {
+      this.hide(e);
+      return;
+    }
+
+    if (key !== 'ArrowDown' && key !== 'ArrowUp' && key !== 'Enter') {
+      return;
+    }
+
+    const { items, selectedKey } = this.state;
+
+    if (key === 'Enter') {
+      this.onClick_(this.props.items[selectedKey], e);
+      return;
+    }
+
+    const keys = _.keys(items);
+    let index = _.indexOf(keys, selectedKey);
+
+    if (key === 'ArrowDown') {
+      index += 1;
+    } else {
+      index -= 1;
+    }
+
+    // periodic boundaries
+    if (index >= keys.length ) {
+      index = 0;
+    }
+    if (index < 0) {
+      index = keys.length - 1;
+    }
+
+
+    const newKey = keys[index];
+    this.setState({selectedKey: newKey});
+    e.stopPropagation();
   }
 
   render() {
-    const {active, autocompleteText, selectedKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName} = this.props;
-    const isAutocomplete = !!autocompleteFilter && active;
+    const {active, autocompleteText, selectedKey, items} = this.state;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, title} = this.props;
 
-    let items = this.props.items;
-    if (isAutocomplete && !_.isEmpty(autocompleteText)) {
-      items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
-    }
-
-    const title = _.isEmpty(autocompleteText) ? this.props.title : <span className="text-muted">{autocompleteText}</span>;
     const buttonTitle = noSelection ? title : _.get(items, selectedKey, title);
 
-    let button;
-    if (noButton) {
-      button = <div onClick={this.toggle} className="dropdown__not-btn"><span className="dropdown__not-btn__title">{buttonTitle}</span>&nbsp;<Caret /></div>;
-    } else {
-      button = <button onClick={this.toggle} type="button" className="btn btn--dropdown">
+    const button = noButton
+      ? <div onClick={this.toggle} className="dropdown__not-btn">
+        <span className="dropdown__not-btn__title">{buttonTitle}</span>&nbsp;<Caret />
+      </div>
+      : <button onClick={this.toggle} type="button" className="btn btn--dropdown">
         <div className="btn--dropdown__content-wrap">
-          {isAutocomplete
-            ? <AutocompleteInput onChange={this.changeTextFilter} placeholder={autocompletePlaceholder} value={autocompleteText || ''} />
-            : buttonTitle}&nbsp;&nbsp;<Caret />
+          {buttonTitle} <Caret />
         </div>
       </button>;
-    }
 
     const spacerBefore = this.props.spacerBefore || new Set();
 
@@ -125,7 +192,23 @@ export class Dropdown extends DropdownMixin {
       <div className={className} ref={this.setNode} style={this.props.style}>
         <div className="dropdown">
           {button}
-          {active && !_.isEmpty(children) && <ul className={classNames('dropdown-menu', menuClassName)}>{children}</ul>}
+          {
+            active && <div className={classNames('dropdown-menu', menuClassName)}>
+              {
+                autocompleteFilter && <input
+                  ref={input => this.input = input}
+                  onChange={this.changeTextFilter}
+                  placeholder={autocompletePlaceholder}
+                  value={autocompleteText || ''}
+                  onKeyDown={this.onKeyDown}
+                  autoFocus={true}
+                  type="text"
+                  style={{marginBottom: 15, color: '#000', padding: 2}}
+                  onClick={e => e.stopPropagation()} />
+              }
+              <ul style={{margin: 0, padding: 0}}>{children}</ul>
+            </div>
+          }
         </div>
       </div>
     );
@@ -141,6 +224,7 @@ Dropdown.propTypes = {
   noButton: PropTypes.bool,
   noSelection: PropTypes.bool,
   title: PropTypes.node,
+  textFilter: PropTypes.bool,
 };
 
 export const ActionsMenu = ({actions}) => {
