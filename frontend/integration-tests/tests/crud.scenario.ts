@@ -96,7 +96,7 @@ describe('Kubernetes resource CRUD operations', () => {
       });
 
       it('displays detail view for new resource instance', async() => {
-        await browser.wait(until.presenceOf(crudView.actionsDropdown), 500);
+        await browser.wait(until.presenceOf(crudView.actionsDropdown));
 
         expect(browser.getCurrentUrl()).toContain(`/${testName}`);
         expect(crudView.resourceTitle.getText()).toEqual(testName);
@@ -236,7 +236,7 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     it('displays modal for editing resource instance labels', async() => {
-      await browser.wait(until.presenceOf(crudView.actionsDropdown), 500);
+      await browser.wait(until.presenceOf(crudView.actionsDropdown));
       await crudView.actionsDropdown.click();
       await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
       await crudView.actionsDropdownMenu.element(by.linkText('Modify Labels...')).click();
@@ -255,7 +255,7 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     afterAll(async() => {
-      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
+      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 1000);
       await crudView.actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
       await browser.wait(until.presenceOf($('#confirm-delete')));
       await $('.modal-footer #confirm-delete').click();
