@@ -27,7 +27,7 @@ export const config: Config = {
   skipSourceMapSupport: true,
   jasmineNodeOpts: {
     print: () => null,
-    defaultTimeoutInterval: 10000,
+    defaultTimeoutInterval: 40000,
   },
   plugins: [failFast.init()],
   capabilities: {
