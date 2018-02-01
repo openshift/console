@@ -36,7 +36,7 @@ docker build -q --rm=true -f Dockerfile -t $REPO:$GIT_VERSION .
 docker push $REPO:$GIT_VERSION
 
 TAG=$(git describe --exact-match --abbrev=0 --tags ${COMMIT} 2> /dev/null || true)
-if [ -z "$TAG" ]; then
+if [ -n "$TAG" ]; then
   echo "Release tag is $TAG. Uploading test image to quay."
   docker build -q --rm=true -f e2e.Dockerfile -t $TESTER_REPO:$GIT_VERSION .
   docker push $TESTER_REPO:$GIT_VERSION
