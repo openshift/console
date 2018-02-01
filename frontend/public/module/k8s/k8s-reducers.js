@@ -60,8 +60,10 @@ const loadList = (oldList, resources) => {
     });
     existingKeys.forEach(k => {
       const r = list.get(k);
-      if (!r.getIn(['metadata', 'deletionTimestamp'])) {
-        return;
+      const metadata = r.get('metadata').toJSON();
+      if (!metadata.deletionTimestamp) {
+        // eslint-disable-next-line no-console
+        console.warn(`${metadata.namespace}-${metadata.name} is gone with no deletion timestamp!`);
       }
       list.delete(k);
     });
