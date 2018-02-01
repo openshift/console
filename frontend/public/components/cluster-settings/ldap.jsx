@@ -492,8 +492,8 @@ const LDAPs = reduxForm({
           <Row label="Test Results">
             { validationError
               ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {validationError}:
-                <br/>
-                <span>{validationData}</span>
+              <br/>
+              <span>{validationData}</span>
               </p>
               : <div>
                 <dl>
