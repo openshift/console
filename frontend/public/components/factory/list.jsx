@@ -260,18 +260,23 @@ List.propTypes = {
 /** @augments {React.Component<{obj: any>}} */
 export class ResourceRow extends React.Component {
   shouldComponentUpdate(nextProps) {
-    for (let key in nextProps) {
+    if (_.size(nextProps) !== _.size(this.props)) {
+      return true;
+    }
+    for (let key of Object.keys(nextProps)) {
       if (key === 'obj') {
         const oldVersion = _.get(this.props.obj, 'metadata.resourceVersion');
         const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
         if (!oldVersion || !newVersion || oldVersion !== newVersion) {
           return true;
         }
+        continue;
       }
       if (nextProps[key] !== this.props[key]) {
         return true;
       }
     }
+    return false;
   }
 
   render () {
