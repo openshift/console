@@ -6,7 +6,7 @@ import { safeDump } from 'js-yaml';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { k8sKinds, k8sGet } from '../module/k8s';
-import { SecretsPage, withSecretsList } from './secret';
+import { SecretsPage } from './secret';
 import { registerTemplate } from '../yaml-templates';
 import { saveAs } from 'file-saver';
 import { errorModal } from './modals';
@@ -127,6 +127,6 @@ const ServiceAccountsDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[navFactory.details(Details), navFactory.editYaml()]}
 />;
-const ServiceAccountsList = props => <List {...props} Header={Header} Row={withSecretsList(ServiceAccountRow)} />;
+const ServiceAccountsList = props => <List {...props} Header={Header} Row={ServiceAccountRow} />;
 const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true}/>;
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};

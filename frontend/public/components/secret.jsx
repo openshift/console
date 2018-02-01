@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as moment from 'moment';
-import * as classNames from'classnames';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
@@ -58,36 +57,6 @@ const SecretDetails = ({obj: secret}) => {
   </div>;
 };
 
-const withSecretsList = (Row) => {
-  return class WithSecretsList extends React.Component {
-    constructor (props) {
-      super(props);
-      this.state = {open: false};
-      this.onClick_ = this.onClick_.bind(this);
-    }
-
-    onClick_ (e) {
-      e.preventDefault();
-      this.setState({open: !this.state.open});
-    }
-
-    render () {
-      const {obj: {metadata: {namespace}, secrets}} = this.props;
-      const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
-
-      return (
-        <div onClick={this.onClick_} className={classNames({clickable: !!secrets})} >
-          <Row {...this.props} />
-          {
-            this.state.open && secrets &&
-            <SecretsList namespace={namespace} filters={filters} />
-          }
-        </div>
-      );
-    }
-  };
-};
-
 const SecretsList = props => <List {...props} Header={SecretHeader} Row={SecretRow} />;
 SecretsList.displayName = 'SecretsList';
 
@@ -98,4 +67,4 @@ const SecretsDetailsPage = props => <DetailsPage
   pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
 />;
 
-export {SecretsList, SecretsPage, SecretsDetailsPage, withSecretsList};
+export {SecretsList, SecretsPage, SecretsDetailsPage};
