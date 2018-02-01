@@ -101,7 +101,7 @@ export class Line extends BaseGraph {
       const name = query && query.name;
       if (result.data.result.length === 0) {
         // eslint-disable-next-line no-console
-        console.warn(`Graph error: No data from query ${query}`);
+        console.warn(`Graph error: No data from query for ${name || query}.`);
         return;
       }
       const lineValues = result.data.result[0].values;
