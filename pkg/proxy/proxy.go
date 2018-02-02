@@ -145,7 +145,18 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	backend, err := websocket.DialConfig(config)
 	if err != nil {
-		log.Printf("Failed to dial backend: %v", err)
+		if dialErr, ok := err.(*websocket.DialError); ok {
+			if herr, ok := dialErr.Err.(*websocket.HTTPStatusError); ok {
+				statusCode := herr.StatusCode
+				log.Printf("Failed to dial backend: '%v' statusCode: %v", dialErr, statusCode)
+				if statusCode == 0 {
+					statusCode = http.StatusBadGateway
+				}
+				http.Error(w, "bad gateway", statusCode)
+				return
+			}
+		}
+		log.Printf("Failed to dial backend: '%v'", err)
 		http.Error(w, "bad gateway", http.StatusBadGateway)
 		return
 	}
