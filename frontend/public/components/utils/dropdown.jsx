@@ -90,14 +90,35 @@ export class Dropdown extends DropdownMixin {
       }
       this.setState({autocompleteText, items});
     };
+    const {shortCut} = this.props;
+    this.globalKeyDown = e => {
+      const { nodeName } = e.target;
+
+      if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
+        return;
+      }
+
+      if (!shortCut || e.key !== shortCut) {
+        return;
+      }
+
+      e.stopPropagation();
+      e.preventDefault();
+      this.show(e);
+    };
   }
 
-  // window.addEventListener('keydown', e => {
-  //       if (e.key === 'n') {
-  //         this.show(e);
-  //         e.stopPropagation();
-  //       }
-  //     });
+  componentDidMount () {
+    super.componentDidMount();
+    if (this.props.shortCut) {
+      window.addEventListener('keydown', this.globalKeyDown);
+    }
+  }
+
+  componentWillUnmount () {
+    super.componentWillUnmount();
+    window.removeEventListener('keydown', this.globalKeyDown);
+  }
 
   componentWillReceiveProps(nextProps) {
     if (_.isEqual(nextProps.items, this.props.items)) {
@@ -203,7 +224,8 @@ export class Dropdown extends DropdownMixin {
                   onKeyDown={this.onKeyDown}
                   autoFocus={true}
                   type="text"
-                  style={{marginBottom: 15, color: '#000', padding: 2}}
+                  style={{marginBottom: 10, color: '#000'}}
+                  className="form-control text-filter"
                   onClick={e => e.stopPropagation()} />
               }
               <ul style={{margin: 0, padding: 0}}>{children}</ul>
