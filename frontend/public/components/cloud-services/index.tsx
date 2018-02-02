@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, CustomResourceDefinitionKind, GroupVersionKind } from '../../module/k8s';
+import { K8sResourceKind, CustomResourceDefinitionKind, GroupVersionKind, OwnerReference } from '../../module/k8s';
 import { SpecDescriptor } from './spec-descriptors';
 import { StatusDescriptor } from './status-descriptors';
 
@@ -11,7 +11,8 @@ import * as appsLogoImg from '../../imgs/apps-logo.svg';
 
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
-export { CatalogsDetailsPage } from './catalog';
+export { CatalogSourceDetailsPage, CreateSubscription } from './catalog-source';
+export { SubscriptionsPage } from './subscription';
 
 export const catalogEntryVisibilityLabel = 'tectonic-visibility';
 export enum CatalogEntryVisibility {
@@ -74,6 +75,13 @@ export enum InstallPlanApproval {
   UpdateOnly = 'Update-Only',
 }
 
+export enum SubscriptionState {
+  SubscriptionStateNone = '',
+  SubscriptionStateUpgradeAvailable = 'UpgradeAvailable',
+  SubscriptionStateUpgradePending = 'UpgradePending',
+  SubscriptionStateAtLatest = 'AtLatestKnown',
+}
+
 export type CRDDescription = {
   name: string;
   version: string;
@@ -104,26 +112,13 @@ export type ClusterServiceVersionResourceKind = {
 
 } & K8sResourceKind;
 
-export type CatalogEntryKind = {
-  spec: {
-    manifest: {
-      packageName: string;
-      channels: {
-        name: string;
-        currentCSV: string;
-      }[];
-      defaultChannel: string;
-    };
-  },
-} & K8sResourceKind;
-
 export type InstallPlanKind = {
   spec: {
     clusterServiceVersionNames: string[];
     approval: 'Automatic' | 'Manual' | 'Update-Only';
   };
   status?: {
-    status: 'Planning' | 'Requires Approval' | 'Installing' | 'Complete';
+    phase: 'Planning' | 'RequiresApproval' | 'Installing' | 'Complete' | 'Failed';
     plan: {
       resolving: string;
       resource: CustomResourceDefinitionKind;
@@ -140,7 +135,33 @@ export type SubscriptionKind = {
     channel?: string;
     startingCSV?: string;
   },
+  status?: {
+    installedCSV?: string;
+    installplan?: OwnerReference;
+    state?: SubscriptionState;
+  },
 } & K8sResourceKind;
+
+export type CatalogSourceKind = {
+  apiVersion: 'app.coreos.com/v1alpha1',
+  kind: 'CatalogSource-v1',
+  spec: {
+    name: string;
+    sourceType: 'internal';
+    configMap?: string;
+    secrets?: string[];
+    displayName?: string;
+    description?: string;
+    publisher?: string;
+    icon?: {mediatype: string, data: string};
+  },
+} & K8sResourceKind;
+
+export type Package = {
+  packageName: string;
+  channels: {name: string, currentCSV: string}[];
+  defaultChannel?: string;
+};
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 

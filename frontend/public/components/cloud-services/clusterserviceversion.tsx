@@ -17,7 +17,7 @@ import * as appsLogo from '../../imgs/apps-logo.svg';
 
 export const ClusterServiceVersionListItem: React.SFC<ClusterServiceVersionListItemProps> = (props) => {
   const {obj, namespaces = []} = props;
-  const route = (namespace) => `/applications/ns/${namespace}/${obj.metadata.name}`;
+  const route = (namespace) => `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}`;
 
   return <div className="co-clusterserviceversion-list-item">
     <div style={{cursor: namespaces.length === 1 ? 'pointer' : ''}} onClick={() => namespaces.length === 1 ? history.push(route(obj.metadata.namespace)) : null}>
@@ -44,7 +44,7 @@ export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
 </ListHeader>;
 
 export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowProps>(({obj}) => {
-  const route = `/applications/ns/${obj.metadata.namespace}/${obj.metadata.name}`;
+  const route = `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}`;
 
   const installStatus = obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded
     ? <span>Enabled</span>
@@ -217,7 +217,7 @@ export const MarkdownView = (props: {content: string}) => {
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata, status} = props.obj;
   const ownedCRDs = spec.customresourcedefinitions.owned || [];
-  const route = (name: string) => `/applications/ns/${metadata.namespace}/${metadata.name}/${referenceForCRDDesc(_.find(ownedCRDs, {name}))}/new`;
+  const route = (name: string) => `/k8s/ns/${metadata.namespace}/${ClusterServiceVersionModel.plural}/${metadata.name}/${referenceForCRDDesc(_.find(ownedCRDs, {name}))}/new`;
 
   return <div className="co-clusterserviceversion-details co-m-pane__body">
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
@@ -273,8 +273,11 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     namespace={props.match.params.ns}
     kind={referenceForModel(ClusterServiceVersionModel)}
     name={props.match.params.name}
-    pages={[navFactory.details(ClusterServiceVersionDetails), {href: 'instances', name: 'Instances', component: Instances}]}
-    menuActions={[() => ({label: 'Edit Application Definition...', href: `/applications/ns/${props.match.params.ns}/${props.match.params.name}/edit`})]} />;
+    pages={[
+      navFactory.details(ClusterServiceVersionDetails),
+      {href: 'instances', name: 'Instances', component: Instances}
+    ]}
+    menuActions={[() => ({label: 'Edit Application Definition...', href: `/k8s/ns/${props.match.params.ns}/${ClusterServiceVersionModel.plural}/${props.match.params.name}/edit`})]} />;
 };
 
 /* eslint-disable no-undef */

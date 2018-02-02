@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, CatalogEntryKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind } from '../public/components/cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, Package, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind, CatalogSourceKind } from '../public/components/cloud-services';
 import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
 /* eslint-enable no-unused-vars */
 
@@ -24,6 +24,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
   },
   spec: {
     displayName: 'Test App',
+    version: '1.0.0',
     description: 'This app does cool stuff',
     provider: {
       name: 'MyCompany, Inc',
@@ -198,40 +199,24 @@ export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
   },
 };
 
-export const testCatalogEntry: CatalogEntryKind = {
+export const testPackage: Package = {
+  packageName: 'testapp-package',
+  channels: [{name: 'stable', currentCSV: 'testapp'}],
+  defaultChannel: 'stable',
+};
+
+export const testCatalogSource: CatalogSourceKind = {
   apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'UICatalogEntry-v1',
+  kind: 'CatalogSource-v1',
   metadata: {
-    name: 'testapp',
-    uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
-    creationTimestamp: '2017-09-20T18:19:49Z',
-    namespace: 'default',
+    name: 'test-catalog',
+    namespace: 'tectonic-system',
   },
   spec: {
-    manifest: {
-      packageName: 'testapp-package',
-      channels: [{name: 'stable', currentCSV: 'testapp'}],
-      defaultChannel: 'stable',
-    },
-    spec: {
-      displayName: 'Test App',
-      description: 'This app does cool stuff',
-      provider: 'MyCompany, Inc',
-      replaces: 'testapp-old',
-      links: [
-        {name: 'Documentation', url: 'https://docs.testapp.com'},
-      ],
-      maintainers: [
-        {name: 'John Doe', email: 'johndoe@example.com'},
-      ],
-      icon: [
-        {base64data: '', mediatype: 'image/png',}
-      ],
-      labels: {
-        'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
-        'alm-catalog': 'open-cloud-services.coreos.com',
-      },
-    }
+    name: 'test-catalog',
+    sourceType: 'internal',
+    publisher: 'CoreOS, Inc',
+    displayName: 'Test Catalog',
   },
 };
 
@@ -241,13 +226,15 @@ export const testInstallPlan: InstallPlanKind = {
   metadata: {
     namespace: 'default',
     name: 'etcd',
+    uid: '042d62a9-63dd-4ece-b74a-95944ce78268',
+    ownerReferences: [{name: 'etcd-subscription', kind: 'Subscription-v1', uid: 'c0220a8f-88e0-12e7-83ed-081027b424ea', apiVersion: 'app.coreos.com/v1alpha1'}],
   },
   spec: {
     clusterServiceVersionNames: ['etcd'],
     approval: 'Automatic',
   },
   status: {
-    status: 'Complete',
+    phase: 'Complete',
     plan: [],
   },
 };
@@ -276,9 +263,11 @@ export const testSubscription: SubscriptionKind = {
   metadata: {
     namespace: 'default',
     name: 'test-subscription',
+    uid: '09232c51-ed3e-4e60-b58e-9bee576ee612',
   },
   spec: {
     source: 'tectonic-ocs',
     name: 'test-package',
+    channel: 'stable',
   }
 };

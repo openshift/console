@@ -1,0 +1,201 @@
+/* eslint-disable no-unused-vars, no-undef */
+
+import * as React from 'react';
+import { shallow, ShallowWrapper } from 'enzyme';
+import * as _ from 'lodash';
+import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
+import { safeLoad } from 'js-yaml';
+import Spy = jasmine.Spy;
+
+import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscription, CreateSubscriptionProps } from '../../../public/components/cloud-services/catalog-source';
+import { ClusterServiceVersionLogo } from '../../../public/components/cloud-services';
+import { referenceForModel } from '../../../public/module/k8s';
+import { SubscriptionModel, CatalogSourceModel } from '../../../public/models';
+import { ListHeader, ColHead, List } from '../../../public/components/factory';
+import { Firehose, NavTitle } from '../../../public/components/utils';
+import { CreateYAML } from '../../../public/components/create-yaml';
+import { testPackage, testCatalogSource, testClusterServiceVersion, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
+
+describe(PackageHeader.displayName, () => {
+  let wrapper: ShallowWrapper<PackageHeaderProps>;
+
+  beforeEach(() => {
+    wrapper = shallow(<PackageHeader />);
+  });
+
+  it('renders column header for package name', () => {
+    expect(wrapper.find(ListHeader).find(ColHead).at(0).childAt(0).text()).toEqual('Name');
+  });
+
+  it('renders column header for latest CSV version for package in catalog', () => {
+    expect(wrapper.find(ListHeader).find(ColHead).at(1).childAt(0).text()).toEqual('Latest Version');
+  });
+
+  it('renders column header for subscriptions', () => {
+    expect(wrapper.find(ListHeader).find(ColHead).at(2).childAt(0).text()).toEqual('Subscriptions');
+  });
+});
+
+describe(PackageRow.displayName, () => {
+  let wrapper: ShallowWrapper<PackageRowProps>;
+
+  beforeEach(() => {
+    wrapper = shallow(<PackageRow obj={testPackage} catalogSource={_.cloneDeep(testCatalogSource)} currentCSV={_.cloneDeep(testClusterServiceVersion)} allPkgSubscriptions={[_.cloneDeep(testSubscription)]} namespace="default" />);
+  });
+
+  it('renders column for package name and logo', () => {
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ClusterServiceVersionLogo).props().displayName).toEqual(testClusterServiceVersion.spec.displayName);
+  });
+
+  it('renders column for latest CSV version for package in catalog', () => {
+    expect(wrapper.find('.co-resource-list__item').childAt(1).text()).toEqual(`${testClusterServiceVersion.spec.version} (stable)`);
+  });
+
+  it('renders column with link to subscriptions if any', () => {
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).props().to).toEqual(`/k8s/ns/default/${SubscriptionModel.plural}?name=${testSubscription.spec.name}`);
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).childAt(0).text()).toEqual('View subscription');
+  });
+
+  it('renders column placeholder if no subscriptions exist for package', () => {
+    wrapper = wrapper.setProps({allPkgSubscriptions: []});
+
+    expect(wrapper.find('.co-resource-list__item').childAt(2).text()).toContain('Not subscribed');
+  });
+
+  it('renders button to create new subscription which triggers modal if no subscription exists', () => {
+    wrapper = wrapper.setProps({allPkgSubscriptions: []});
+
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find('button').text()).toEqual('Subscribe');
+  });
+
+  it('renders button to create new subscription which triggers modal if viewing "all-namespaces"', () => {
+    wrapper = wrapper.setProps({namespace: null});
+
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find('button').text()).toEqual('Subscribe');
+  });
+
+  it('does not render subscribe button if there is a subscription', () => {
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find('button').exists()).toBe(false);
+  });
+});
+
+describe(PackageList.displayName, () => {
+  let wrapper: ShallowWrapper<PackageListProps>;
+  let csvFor: Spy;
+  let subscriptionsFor: Spy;
+
+  beforeEach(() => {
+    csvFor = jasmine.createSpy('csvForSpy').and.returnValue(testClusterServiceVersion);
+    subscriptionsFor = jasmine.createSpy('subscriptionsForSpy').and.returnValue([testSubscription]);
+
+    wrapper = shallow(<PackageList packages={[testPackage]} catalogSource={testCatalogSource} namespace="default" csvFor={csvFor} subscriptionsFor={subscriptionsFor} />);
+  });
+
+  it('renders `List` component with correct props', () => {
+    expect(wrapper.find<any>(List).props().data.length).toEqual(1);
+    expect(wrapper.find<any>(List).props().Row).toBeDefined();
+    expect(wrapper.find<any>(List).props().Header).toEqual(PackageHeader);
+    expect(wrapper.find<any>(List).props().label).toEqual('Packages');
+    expect(wrapper.find<any>(List).props().loaded).toBe(true);
+    expect(wrapper.find<any>(List).props().EmptyMsg).toBeDefined();
+  });
+
+  it('adds `rowKey` to package data passed to `List` component', () => {
+    expect(wrapper.find<any>(List).props().data.some(pkg => _.isEmpty(pkg.rowKey))).toBe(false);
+  });
+
+  // TODO(alecmerdler): Test custom row logic with spies
+});
+
+describe(CatalogSourceDetails.displayName, () => {
+  let wrapper: ShallowWrapper<CatalogSourceDetailsProps>;
+  let catalogSource: CatalogSourceDetailsProps['catalogSource'];
+  let configMap: CatalogSourceDetailsProps['configMap'];
+  let subscription: CatalogSourceDetailsProps['subscription'];
+  const packages = `
+    - packageName: testapp-package
+      channels:
+      - name: alpha
+        currentCSV: testapp.v1.0.0
+  `;
+
+  beforeEach(() => {
+    catalogSource = {loaded: true, data: _.cloneDeep(testCatalogSource), loadError: ''};
+    configMap = {loaded: true, data: {data: {packages}}, loadError: ''};
+    subscription = {loaded: true, data: [], loadError: ''};
+
+    wrapper = shallow(<CatalogSourceDetails catalogSource={catalogSource} configMap={configMap} subscription={subscription} ns="default" />);
+  });
+
+  it('renders nothing if not all resources are loaded', () => {
+    catalogSource.loaded = false;
+    configMap.loaded = false;
+    subscription.loaded = false;
+    wrapper = wrapper.setProps({catalogSource, configMap, subscription});
+
+    expect(wrapper.find('.co-catalog-details').exists()).toBe(false);
+  });
+
+  it('renders name and publisher of the catalog', () => {
+    expect(wrapper.findWhere(node => node.equals(<dt>Name</dt>)).parents().at(0).find('dd').text()).toEqual(catalogSource.data.spec.displayName);
+    expect(wrapper.findWhere(node => node.equals(<dt>Publisher</dt>)).parents().at(0).find('dd').text()).toEqual(catalogSource.data.spec.publisher);
+  });
+
+  it('renders a `PackageList` component', () => {
+    expect(wrapper.find(PackageList).props().packages).toEqual(safeLoad(packages));
+    expect(wrapper.find(PackageList).props().namespace).toEqual('default');
+    expect(wrapper.find(PackageList).props().catalogSource).toEqual(catalogSource.data);
+  });
+});
+
+describe(CatalogSourceDetailsPage.displayName, () => {
+  let wrapper: ShallowWrapper<CatalogSourceDetailsPageProps>;
+
+  beforeEach(() => {
+    const match = {isExact: true, params: {ns: 'default'}, path: '', url: ''};
+    wrapper = shallow(<CatalogSourceDetailsPage match={match} />);
+  });
+
+  it('renders catalog display name', () => {
+    expect(wrapper.find(Helmet).find('title').text()).toEqual('Open Cloud Services');
+    expect(wrapper.find(NavTitle).props().detail).toBe(true);
+    expect(wrapper.find(NavTitle).props().title).toEqual('Open Cloud Services');
+  });
+
+  it('creates a `Firehose` component for the necessary resources', () => {
+    expect(wrapper.find<any>(Firehose).props().resources).toEqual([{
+      kind: referenceForModel(CatalogSourceModel),
+      name: 'tectonic-ocs',
+      namespace: 'tectonic-system',
+      isList: false,
+      prop: 'catalogSource',
+    }, {
+      kind: referenceForModel(SubscriptionModel),
+      isList: true,
+      prop: 'subscription',
+    }, {
+      kind: 'ConfigMap',
+      isList: false,
+      name: 'tectonic-ocs',
+      namespace: 'tectonic-system',
+      prop: 'configMap'}]);
+  });
+
+  it('renders `CatalogSourceDetails` component', () => {
+    expect(wrapper.find(Firehose).find(CatalogSourceDetails).exists()).toBe(true);
+  });
+});
+
+describe(CreateSubscription.displayName, () => {
+  let wrapper: ShallowWrapper<CreateSubscriptionProps>;
+
+  beforeEach(() => {
+    const match = {isExact: true, url: '', path: '', params: {ns: 'default', pkgName: testPackage.packageName}};
+    wrapper = shallow(<CreateSubscription match={match} />);
+  });
+
+  it('renders a YAML editor with correct props', () => {
+    expect(wrapper.find(CreateYAML).exists()).toBe(true);
+  });
+});

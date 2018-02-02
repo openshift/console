@@ -70,15 +70,6 @@ $clusterserviceversion-list-border: #ccc;
   margin: 0;
 }
 
-.co-clusterserviceversion-list-item__body {
-  margin: 20px 0;
-}
-
-.co-clusterserviceversion-list-item__body--empty {
-  color: #999;
-  font-style: italic;
-}
-
 .co-clusterserviceversion-list-item__actions {
   align-items: center;
   display: flex;
@@ -94,11 +85,6 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-clusterserviceversion-resource-details__section--info dd {
   margin-bottom: 20px;
-}
-
-.co-clusterserviceversion-resource-output--metrics {
-  display: flex;
-  flex-direction: column;
 }
 
 .co-clusterserviceversion-details {
@@ -150,11 +136,6 @@ $clusterserviceversion-list-border: #ccc;
   }
 }
 
-.co-clusterserviceversion-details__section--status {
-  padding-top: 20px;
-  width: 100%;
-}
-
 .co-clusterserviceversion-detail__error-box {
   padding: 10px;
   border: 1px solid #dd1326;
@@ -163,108 +144,22 @@ $clusterserviceversion-list-border: #ccc;
   font-size: 14px;
 }
 
-.co-catalog-app-row {
-  transition: max-height 0.25s;
-  overflow: hidden;
-}
-
-.co-catalog-app-row .col {
-  padding-top: 10px;
-}
-
-.co-catalog-app-row__details {
-  margin-left: 15px;
-  transition: opacity 0.25s;
-}
-
-.co-catalog-app-row__details--collapsed {
-  opacity: 0;
-}
-
-.co-catalog-app__row__actions {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 0;
-}
-
-// Taken directly from Bootstrap 4
-@keyframes progress-bar-stripes {
-  from { background-position: 4px 0; }
-  to { background-position: 0 0; }
-}
-
-.co-catalog-breakdown__ns-listco-catalog-install-modal .modal-footer {
-  padding: 30px;
-}
-
 .co-catalog-install-modal__header {
   padding: 15px;
   margin-bottom: 15px;
-}
-
-.co-catalog-install-modal__h4 {
-  margin-bottom: 20px;
-}
-
-.co-catalog-install-modal__description {
-  margin-bottom: 30px;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
   border: 1px solid #ddd;
 }
 
-.co-catalog-install-progress {
-  display: flex;
-  overflow: hidden;
-  background-color: #efefef;
-  border-radius: .25rem;
-}
-
-.co-catalog-install-progress-bar {
-  height: 4px;
-  color: #fff;
-  transition: width 0.6s ease;
-  background-color: #cccccc;
-}
-
-.co-catalog-install-progress-bar--active {
-  background-color: #2fc98e;
-  background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-  animation: progress-bar-stripes 1s linear infinite;
-}
-
-.co-catalog-install__row {
-  cursor: pointer;
-}
-
-.co-catalog-install--alm-not-enabled {
-  -webkit-filter: grayscale(100%);
-  filter: grayscale(100%);
-}
-
 .co-catalog-spinner--downloading {
   color: $color-highlight-blue;
-}
-
-.co-catalog-breakdown__ns-list {
-  margin-top: 15px;
-  padding-left: 0px;
-}
-
-.co-catalog-breakdown__ns-list__item {
-  margin: 0px;
-  padding: 0px;
-  margin-top: 10px;
 }
 
 .co-catalog-details {
   display: flex;
   flex-direction: column;
-}
-
-.co-catalog-disable-btn {
-  box-shadow: inset 0 1px 0px rgba(255,255,255,0.2), 0 1px 2px rgba(0,0,0,0.25), 0 0px 1px rgba(0,0,0,0.25);
 }
 
 .co-clusterserviceversion-list__disabled-icon {

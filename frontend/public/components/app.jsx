@@ -30,9 +30,9 @@ import { history, getNamespace, AsyncComponent } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
-import { CatalogsDetailsPage, ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage } from './cloud-services';
+import { CatalogSourceDetailsPage, CreateSubscription } from './cloud-services';
 import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
-import { ClusterServiceVersionModel } from '../models';
+import { ClusterServiceVersionModel, CatalogSourceModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { coFetch } from '../co-fetch';
 import '../style.scss';
@@ -139,14 +139,17 @@ class App extends React.PureComponent {
             <Route path="/cluster-health" exact component={ClusterHealth} />
             <Route path="/start-guide" exact component={StartGuidePage} />
 
-            <Route path={`/k8s/ns/:ns/${referenceForModel(ClusterServiceVersionModel)}/:name`} render={({match}) => <Redirect to={`/applications/ns/${match.params.ns}/${match.params.name}`} />} />
-            <Route path="/applications/all-namespaces" exact component={ClusterServiceVersionsPage} />
-            <Route path="/applications/ns/:ns" exact component={ClusterServiceVersionsPage} />
-            <Route path="/applications/ns/:ns/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
-            <Route path="/applications/ns/:ns/:appName/:plural/new" exact component={NamespaceFromURL(CreateCRDYAML)} />
-            <Route path="/applications/ns/:ns/:appName/:plural/:name" component={ResourceDetailsPage} />
-            <Route path="/applications/ns/:ns/:name" component={ClusterServiceVersionsDetailsPage} />
-            <Route path="/catalog" exact component={CatalogsDetailsPage} />
+            <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}`} exact render={() => <Redirect to={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
+            <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}`} exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
+            <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
+            <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
+            <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={CreateSubscription} />
+            <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={CreateSubscription} />
+
+
+            <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
+            <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact component={NamespaceFromURL(CreateCRDYAML)} />
+            <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
 
             <Route path="/k8s/all-namespaces/events" exact component={NamespaceFromURL(EventStreamPage)} />
             <Route path="/k8s/ns/:ns/events" exact component={NamespaceFromURL(EventStreamPage)} />
