@@ -11,6 +11,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
@@ -57,6 +58,15 @@ var (
 	ErrBadRequestMethod     = &ProtocolError{"bad method"}
 	ErrNotSupported         = &ProtocolError{"not supported"}
 )
+
+type HTTPStatusError struct {
+	ErrorString string
+	StatusCode  int
+}
+
+func (err *HTTPStatusError) Error() string {
+	return fmt.Sprintf("%v status %v", err.ErrorString, err.StatusCode)
+}
 
 // Addr is an implementation of net.Addr for WebSocket.
 type Addr struct {
