@@ -2,21 +2,10 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-clusterserviceversion-list {
   display: flex;
-  flex-direction: column;
-}
-
-.co-clusterserviceversion-list__section {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 30px;
-}
-
-.co-clusterserviceversion-list__section--catalog__items {
-  display: flex;
   flex-wrap: wrap;
 }
 
-.co-clusterserviceversion-list__section--catalog__items__item {
+.co-clusterserviceversion-list__tile {
   @media (min-width: 768px) {
     width: 50%;
   }
@@ -37,6 +26,12 @@ $clusterserviceversion-list-border: #ccc;
   justify-content: space-between;
   padding: 20px;
   height: 200px;
+}
+
+.co-clusterserviceversion-list__title {
+  font-weight: 500;
+  font-size: 18px;
+  padding: 0 10px 15px 15px;
 }
 
 .co-clusterserviceversion-logo {

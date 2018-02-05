@@ -97,18 +97,14 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   }, clusterServiceVersions);
   const namespacesForApp = (name) => apps.filter(({metadata}) => metadata.name === name).map(({metadata}) => metadata.namespace);
   const hasDeployment = (csvUID: string) => props.data.some(obj => _.get(obj.metadata, 'ownerReferences', []).some(({uid}) => uid === csvUID));
+
   return <div>{ apps.length > 0
     ? <div className="co-clusterserviceversion-list">
-      <div className="co-clusterserviceversion-list__section co-clusterserviceversion-list__section--catalog">
-        <h1 className="co-section-title">Open Cloud Services</h1>
-        <div className="co-clusterserviceversion-list__section--catalog__items">
-          { apps.filter(({metadata}, i, allCSVs) => i === _.findIndex(allCSVs, (csv => csv.metadata.name === metadata.name)))
-            .filter((csv) => hasDeployment(csv.metadata.uid))
-            .map((csv, i) => <div className="co-clusterserviceversion-list__section--catalog__items__item" key={i}>
-              <ClusterServiceVersionListItem obj={csv} namespaces={namespacesForApp(csv.metadata.name)} />
-            </div>) }
-        </div>
-      </div>
+      { apps.filter(({metadata}, i, allCSVs) => i === _.findIndex(allCSVs, (csv => csv.metadata.name === metadata.name)))
+        .filter((csv) => hasDeployment(csv.metadata.uid))
+        .map((csv, i) => <div className="co-clusterserviceversion-list__tile" key={i}>
+          <ClusterServiceVersionListItem obj={csv} namespaces={namespacesForApp(csv.metadata.name)} />
+        </div>) }
     </div>
     : <StatusBox label="Applications" loaded={loaded} loadError={loadError} EmptyMsg={EmptyAppsMsg} /> }
   </div>;
@@ -125,7 +121,7 @@ const stateToProps = ({k8s}, {match}) => ({
 });
 
 const EmptyCustomAppsMsg = () => <MsgBox title="No Custom Applications Found" detail={<div>
-  Create custom applications by following the documentation for <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" rel="noopener noreferrer">Using Open Cloud Services <i className="fa fa-external-link" /></a>.
+  Create custom applications by using the <a href="https://github.com/coreos/helm-app-operator-kit" target="_blank" rel="noopener noreferrer">Helm App Operator Kit <i className="fa fa-external-link" /></a>.
 </div>} />;
 
 export const ClusterServiceVersionsPage = connect(stateToProps)(
@@ -145,12 +141,14 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
           notRunning: 'Status: Not Running',
         },
         title: 'Running Status',
+        align: 'left',
       }, {
         type: 'clusterserviceversion-catalog',
         items: {
           all: 'Catalog: All',
         },
         title: 'Catalog',
+        align: 'left',
       }];
       const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
 
@@ -160,34 +158,42 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
           <MsgBox title="Open Cloud Services not enabled for this namespace" detail="Please contact a system administrator and ask them to enable OCS to continue." />
         </Box>
         : <div>
-          <MultiListPage
-            {...this.props}
-            namespace={this.props.match.params.ns}
-            resources={[
-              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
-              {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
-              ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
-            ]}
-            flatten={flatten}
-            dropdownFilters={dropdownFilters}
-            ListComponent={ClusterServiceVersionList}
-            filterLabel="Applications by name"
-            title="Available Applications"
-            showTitle={true} />
-          <MultiListPage
-            {...this.props}
-            namespace={this.props.match.params.ns}
-            resources={[{...csvResource, selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}}]}
-            ListComponent={(props) => <List
-              {...props}
-              Row={ClusterServiceVersionRow}
-              Header={ClusterServiceVersionHeader}
-              EmptyMsg={EmptyCustomAppsMsg} />
-            }
-            flatten={flatten}
-            filterLabel="Applications by name"
-            title="Custom Applications"
-            showTitle={true} />
+          <div className="col-xs-12">
+            <h1 className="co-m-page-title" style={{paddingBottom: '30px'}}>
+              <span id="resource-title">Available Applications</span>
+            </h1>
+          </div>
+          <div>
+            <div className="col-xs-12">
+              <h3 className="co-clusterserviceversion-list__title">Open Cloud Services</h3>
+            </div>
+            <MultiListPage
+              {...this.props}
+              namespace={this.props.match.params.ns}
+              resources={[
+                {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+                {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
+                ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
+              ]}
+              flatten={flatten}
+              dropdownFilters={dropdownFilters}
+              ListComponent={ClusterServiceVersionList}
+              filterLabel="Applications by name"
+              showTitle={false} />
+          </div>
+          <div>
+            <div className="col-xs-12">
+              <h3 className="co-clusterserviceversion-list__title">Custom Applications</h3>
+              <MultiListPage
+                {...this.props}
+                namespace={this.props.match.params.ns}
+                resources={[{...csvResource, selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}}]}
+                ListComponent={(props) => <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyCustomAppsMsg} />}
+                flatten={flatten}
+                filterLabel="Custom Applications by name"
+                showTitle={false} />
+            </div>
+          </div>
         </div>;
     }
 
