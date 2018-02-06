@@ -8,20 +8,6 @@ import * as _ from 'lodash';
 
 const wsCache = {};
 
-const HEARTBEAT_INTERVAL = 30000;
-setInterval(() => {
-  // proxy.go uses golang.org/x/net/websocket, which doesn't send pings: https://github.com/golang/go/issues/5958
-  // That means if our connection is idle for > 60 seconds, we get disconnected.
-  _.each(wsCache, (v) => {
-    const ws = v.ws;
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      return;
-    }
-    // k8s seems to disregard anything it doesn't understand. Yes, sending empty string sends data.
-    v.ws.send('');
-  });
-}, HEARTBEAT_INTERVAL);
-
 function validOptions(o) {
   if (!o.host) {
     console.error('missing required host argument');
