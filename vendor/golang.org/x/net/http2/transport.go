@@ -339,7 +339,7 @@ func shouldRetryRequest(req *http.Request, err error) bool {
 	return err == errClientConnUnusable
 }
 
-func (t *Transport) dialClientConn(addr string) (*ClientConn, error) {
+func (t *Transport) dialClientConn(addr string, singleUse bool) (*ClientConn, error) {
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
 		return nil, err
@@ -348,7 +348,7 @@ func (t *Transport) dialClientConn(addr string) (*ClientConn, error) {
 	if err != nil {
 		return nil, err
 	}
-	return t.NewClientConn(tconn)
+	return t.newClientConn(tconn, singleUse)
 }
 
 func (t *Transport) newTLSConfig(host string) *tls.Config {
@@ -409,6 +409,10 @@ func (t *Transport) expectContinueTimeout() time.Duration {
 }
 
 func (t *Transport) NewClientConn(c net.Conn) (*ClientConn, error) {
+	return t.newClientConn(c, false)
+}
+
+func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, error) {
 	if VerboseLogs {
 		t.vlogf("http2: Transport creating client conn to %v", c.RemoteAddr())
 	}
@@ -426,6 +430,7 @@ func (t *Transport) NewClientConn(c net.Conn) (*ClientConn, error) {
 		initialWindowSize:    65535,    // spec default
 		maxConcurrentStreams: 1000,     // "infinite", per spec. 1000 seems good enough.
 		streams:              make(map[uint32]*clientStream),
+		singleUse:            singleUse,
 	}
 	cc.cond = sync.NewCond(&cc.mu)
 	cc.flow.add(int32(initialWindowSize))
@@ -747,30 +752,34 @@ func (cc *ClientConn) RoundTrip(req *http.Request) (*http.Response, error) {
 	bodyWritten := false
 	ctx := reqContext(req)
 
+	handleReadLoopResponse := func(re resAndError) (*http.Response, error) {
+		res := re.res
+		if re.err != nil || res.StatusCode > 299 {
+			// On error or status code 3xx, 4xx, 5xx, etc abort any
+			// ongoing write, assuming that the server doesn't care
+			// about our request body. If the server replied with 1xx or
+			// 2xx, however, then assume the server DOES potentially
+			// want our body (e.g. full-duplex streaming:
+			// golang.org/issue/13444). If it turns out the server
+			// doesn't, they'll RST_STREAM us soon enough.  This is a
+			// heuristic to avoid adding knobs to Transport.  Hopefully
+			// we can keep it.
+			bodyWriter.cancel()
+			cs.abortRequestBodyWrite(errStopReqBodyWrite)
+		}
+		if re.err != nil {
+			cc.forgetStreamID(cs.ID)
+			return nil, re.err
+		}
+		res.Request = req
+		res.TLS = cc.tlsState
+		return res, nil
+	}
+
 	for {
 		select {
 		case re := <-readLoopResCh:
-			res := re.res
-			if re.err != nil || res.StatusCode > 299 {
-				// On error or status code 3xx, 4xx, 5xx, etc abort any
-				// ongoing write, assuming that the server doesn't care
-				// about our request body. If the server replied with 1xx or
-				// 2xx, however, then assume the server DOES potentially
-				// want our body (e.g. full-duplex streaming:
-				// golang.org/issue/13444). If it turns out the server
-				// doesn't, they'll RST_STREAM us soon enough.  This is a
-				// heuristic to avoid adding knobs to Transport.  Hopefully
-				// we can keep it.
-				bodyWriter.cancel()
-				cs.abortRequestBodyWrite(errStopReqBodyWrite)
-			}
-			if re.err != nil {
-				cc.forgetStreamID(cs.ID)
-				return nil, re.err
-			}
-			res.Request = req
-			res.TLS = cc.tlsState
-			return res, nil
+			return handleReadLoopResponse(re)
 		case <-respHeaderTimer:
 			cc.forgetStreamID(cs.ID)
 			if !hasBody || bodyWritten {
@@ -804,6 +813,12 @@ func (cc *ClientConn) RoundTrip(req *http.Request) (*http.Response, error) {
 			// forgetStreamID.
 			return nil, cs.resetErr
 		case err := <-bodyWriter.resc:
+			// Prefer the read loop's response, if available. Issue 16102.
+			select {
+			case re := <-readLoopResCh:
+				return handleReadLoopResponse(re)
+			default:
+			}
 			if err != nil {
 				return nil, err
 			}
@@ -1522,10 +1537,27 @@ var errClosedResponseBody = errors.New("http2: response body closed")
 
 func (b transportResponseBody) Close() error {
 	cs := b.cs
-	if cs.bufPipe.Err() != io.EOF {
-		// TODO: write test for this
-		cs.cc.writeStreamReset(cs.ID, ErrCodeCancel, nil)
+	cc := cs.cc
+
+	serverSentStreamEnd := cs.bufPipe.Err() == io.EOF
+	unread := cs.bufPipe.Len()
+
+	if unread > 0 || !serverSentStreamEnd {
+		cc.mu.Lock()
+		cc.wmu.Lock()
+		if !serverSentStreamEnd {
+			cc.fr.WriteRSTStream(cs.ID, ErrCodeCancel)
+		}
+		// Return connection-level flow control.
+		if unread > 0 {
+			cc.inflow.add(int32(unread))
+			cc.fr.WriteWindowUpdate(0, uint32(unread))
+		}
+		cc.bw.Flush()
+		cc.wmu.Unlock()
+		cc.mu.Unlock()
 	}
+
 	cs.bufPipe.BreakWithError(errClosedResponseBody)
 	return nil
 }
@@ -1533,6 +1565,7 @@ func (b transportResponseBody) Close() error {
 func (rl *clientConnReadLoop) processData(f *DataFrame) error {
 	cc := rl.cc
 	cs := cc.streamByID(f.StreamID, f.StreamEnded())
+	data := f.Data()
 	if cs == nil {
 		cc.mu.Lock()
 		neverSent := cc.nextStreamID
@@ -1546,9 +1579,17 @@ func (rl *clientConnReadLoop) processData(f *DataFrame) error {
 		// TODO: be stricter here? only silently ignore things which
 		// we canceled, but not things which were closed normally
 		// by the peer? Tough without accumulating too much state.
+
+		// But at least return their flow control:
+		if len(data) > 0 {
+			cc.wmu.Lock()
+			cc.fr.WriteWindowUpdate(0, uint32(len(data)))
+			cc.bw.Flush()
+			cc.wmu.Unlock()
+		}
 		return nil
 	}
-	if data := f.Data(); len(data) > 0 {
+	if len(data) > 0 {
 		if cs.bufPipe.b == nil {
 			// Data frame after it's already closed?
 			cc.logf("http2: Transport received DATA frame for closed stream; closing connection")
@@ -1593,7 +1634,7 @@ func (rl *clientConnReadLoop) endStreamError(cs *clientStream, err error) {
 	}
 	cs.bufPipe.closeWithErrorAndCode(err, code)
 	delete(rl.activeRes, cs.ID)
-	if cs.req.Close || cs.req.Header.Get("Connection") == "close" {
+	if isConnectionCloseRequest(cs.req) {
 		rl.closeWhenIdle = true
 	}
 }
@@ -1715,8 +1756,10 @@ func (rl *clientConnReadLoop) processPushPromise(f *PushPromiseFrame) error {
 }
 
 func (cc *ClientConn) writeStreamReset(streamID uint32, code ErrCode, err error) {
-	// TODO: do something with err? send it as a debug frame to the peer?
-	// But that's only in GOAWAY. Invent a new frame type? Is there one already?
+	// TODO: map err to more interesting error codes, once the
+	// HTTP community comes up with some. But currently for
+	// RST_STREAM there's no equivalent to GOAWAY frame's debug
+	// data, and the error codes are all pretty vague ("cancel").
 	cc.wmu.Lock()
 	cc.fr.WriteRSTStream(streamID, code)
 	cc.bw.Flush()
@@ -1865,4 +1908,10 @@ func (s bodyWriterState) scheduleBodyWrite() {
 	if s.timer.Stop() {
 		s.timer.Reset(s.delay)
 	}
+}
+
+// isConnectionCloseRequest reports whether req should use its own
+// connection for a single request and then close the connection.
+func isConnectionCloseRequest(req *http.Request) bool {
+	return req.Close || httplex.HeaderValuesContainsToken(req.Header["Connection"], "close")
 }

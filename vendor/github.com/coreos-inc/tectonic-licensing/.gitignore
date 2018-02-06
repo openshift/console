@@ -1,0 +1,5 @@
+vendor
+.glide
+license-cli
+license-decoded.json
+new-production-license.txt

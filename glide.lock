@@ -1,5 +1,5 @@
-hash: 0249f74b721bf23d6976c6c450e11a2999d0c5292b567d68c3b6370745087992
-updated: 2017-03-24T14:57:57.332599352-07:00
+hash: c0e0e13f26e9d239b634784b23b0d376a28da601c0bff3ab1457ed73b59ed79d
+updated: 2018-02-05T23:08:03.69012386-08:00
 imports:
 - name: github.com/coreos-inc/tectonic-licensing
   version: 7a015ea2b0220b5c844d69401181769bef6d18df
@@ -37,6 +37,8 @@ imports:
   subpackages:
   - proto
   - protoc-gen-go
+- name: github.com/gorilla/websocket
+  version: 4ac909741dfa57448bfadfdbca0cf7eeaa68f0e2
 - name: github.com/jonboulle/clockwork
   version: 3f831b65b61282ba6bece21b91beea2edc4c887a
 - name: github.com/kylelemons/godebug
@@ -47,7 +49,7 @@ imports:
 - name: github.com/Sirupsen/logrus
   version: d26492970760ca5d33129d2d799e34be5c4782eb
 - name: golang.org/x/net
-  version: e90d6d0afc4c315a0d87a568ae68577cc15149a0
+  version: 6a513affb38dc9788b449d59ffed099b8de18fa0
   subpackages:
   - context
   - http2
@@ -55,7 +57,6 @@ imports:
   - internal/timeseries
   - lex/httplex
   - trace
-  - websocket
 - name: golang.org/x/sys
   version: 833a04a10549a95dc34458c195cbad61bbb6cb4d
   subpackages:
