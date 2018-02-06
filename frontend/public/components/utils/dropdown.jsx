@@ -154,7 +154,7 @@ export class Dropdown extends DropdownMixin {
     const { items, selectedKey } = this.state;
 
     if (key === 'Enter') {
-      this.onClick_(this.props.items[selectedKey], e);
+      this.onClick_(selectedKey, e);
       return;
     }
 
