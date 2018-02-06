@@ -54,7 +54,7 @@ export class DropdownMixin extends React.PureComponent {
       onChange(key);
     }
 
-    this.setState({active: false, selectedKey: key});
+    this.setState({active: false, selectedKey: key, title: this.props.items[key]});
   }
 
   toggle (e) {
@@ -81,6 +81,7 @@ export class Dropdown extends DropdownMixin {
     super(props);
     this.state.cursor = 0;
     this.state.items = props.items;
+    this.state.title = props.noSelection ? props.title : _.get(props.items, props.selectedKey, props.title);
     this.onKeyDown = e => this.onKeyDown_(e);
     this.changeTextFilter = e => {
       const autocompleteText = e.target.value;
@@ -182,18 +183,16 @@ export class Dropdown extends DropdownMixin {
   }
 
   render() {
-    const {active, autocompleteText, selectedKey, items} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, title} = this.props;
-
-    const buttonTitle = noSelection ? title : _.get(items, selectedKey, title);
+    const {active, autocompleteText, selectedKey, items, title} = this.state;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName} = this.props;
 
     const button = noButton
       ? <div onClick={this.toggle} className="dropdown__not-btn">
-        <span className="dropdown__not-btn__title">{buttonTitle}</span>&nbsp;<Caret />
+        <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
       </div>
       : <button onClick={this.toggle} type="button" className="btn btn--dropdown">
         <div className="btn--dropdown__content-wrap">
-          {buttonTitle} <Caret />
+          {title} <Caret />
         </div>
       </button>;
 
