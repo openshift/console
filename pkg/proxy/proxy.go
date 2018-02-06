@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/net/websocket"
+	"github.com/gorilla/websocket"
 )
 
 type Config struct {
@@ -115,126 +115,82 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.URL.Scheme = "ws"
 	}
 
-	subProtocol := ""
 	proxiedHeader := make(http.Header, len(r.Header))
-	for key, value := range r.Header {
-		if key != "Sec-Websocket-Protocol" {
-			// Do not proxy the subprotocol to the API server because k8s does not understand it yet
-			proxiedHeader.Set(key, r.Header.Get(key))
-			continue
-		}
-
-		for _, protocols := range value {
-			for _, protocol := range strings.Split(protocols, ",") {
-				if strings.TrimSpace(protocol) == "base64.binary.k8s.io" {
-					subProtocol = "base64.binary.k8s.io"
-				}
-			}
-		}
+	for key := range r.Header {
+		proxiedHeader.Set(key, r.Header.Get(key))
 	}
 
-	config := &websocket.Config{
-		Location:  r.URL,
-		Version:   websocket.ProtocolVersionHybi13,
-		TlsConfig: p.config.TLSClientConfig,
-		Header:    proxiedHeader,
-		// NOTE (ericchiang): K8s might not enforce this but websockets requests are
-		// required to supply an origin.
-		Origin: &url.URL{Scheme: "http", Host: "localhost"},
+	// Filter websocket headers. Gorilla adds them automatically.
+	websocketHeaders := []string{
+		"Connection",
+		"Sec-Websocket-Extensions",
+		"Sec-Websocket-Key",
+		// Do not proxy the subprotocol to the API server because k8s does not understand it yet
+		"Sec-Websocket-Protocol",
+		"Sec-Websocket-Version",
+		"Upgrade",
+	}
+	for _, header := range websocketHeaders {
+		proxiedHeader.Del(header)
 	}
 
-	backend, err := websocket.DialConfig(config)
+	// NOTE (ericchiang): K8s might not enforce this but websockets requests are
+	// required to supply an origin.
+	proxiedHeader.Add("Origin", "http://localhost")
+
+	dialer := &websocket.Dialer{
+		TLSClientConfig: p.config.TLSClientConfig,
+	}
+
+	backend, resp, err := dialer.Dial(r.URL.String(), proxiedHeader)
 	if err != nil {
-		if dialErr, ok := err.(*websocket.DialError); ok {
-			if herr, ok := dialErr.Err.(*websocket.HTTPStatusError); ok {
-				statusCode := herr.StatusCode
-				log.Printf("Failed to dial backend: '%v' statusCode: %v", dialErr, statusCode)
-				if statusCode == 0 {
-					statusCode = http.StatusBadGateway
-				}
-				http.Error(w, "bad gateway", statusCode)
-				return
-			}
+		errMsg := fmt.Sprintf("Failed to dial backend: '%v'", err)
+		statusCode := http.StatusBadGateway
+		if resp != nil && resp.StatusCode != 0 {
+			statusCode = resp.StatusCode
+			// TODO: log path & request IP and stuff
+			log.Printf("%s StatusCode %v", errMsg, resp.StatusCode)
+		} else {
+			log.Println(errMsg)
 		}
-		log.Printf("Failed to dial backend: '%v'", err)
-		http.Error(w, "bad gateway", http.StatusBadGateway)
+		http.Error(w, errMsg, statusCode)
 		return
 	}
 	defer backend.Close()
 
-	h := websocket.Handler(func(frontend *websocket.Conn) {
-		defer frontend.Close()
-
-		errc := make(chan error, 2)
-
-		// Can't just use io.Copy here since browsers care about frame headers.
-		go func() { errc <- copyFrames(frontend, backend) }()
-		go func() { errc <- copyFrames(backend, frontend) }()
-
-		// K8s doesn't read websocket close frames, which browsers use to perform graceful
-		// shutdowns. This causes browsers to hold open connections through refreshes and
-		// navigation until a user shuts down the frontend connection forcefully (e.g. by
-		// closing the window).
-		//
-		// Our websocket handler does listen for this message, so if our connection to the
-		// frontend is closed also kill the connection to the backend.
-		//
-		// Only wait for a single error and let the defers close both connections.
-		<-errc
-
-	})
-	// We must reply with support for a given subprotocol or the client will bail
-	handshaker := func(config *websocket.Config, req *http.Request) (err error) {
-		if subProtocol != "" {
-			config.Protocol = []string{subProtocol}
-		}
-		return nil
+	upgrader := &websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			// TODO: actually check origin!
+			return true
+		},
 	}
-	s := websocket.Server{
-		Handler:   h,
-		Handshake: handshaker,
+	frontend, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("Failed to upgrade websocket to client: '%v'", err)
+		return
 	}
-	s.ServeHTTP(w, r)
+
+	defer frontend.Close()
+
+	errc := make(chan error, 2)
+
+	// Can't just use io.Copy here since browsers care about frame headers.
+	go func() { errc <- copyMsgs(frontend, backend) }()
+	go func() { errc <- copyMsgs(backend, frontend) }()
+
+	// Only wait for a single error and let the defers close both connections.
+	<-errc
 }
 
-func copyFrames(dest, src *websocket.Conn) error {
+func copyMsgs(dest, src *websocket.Conn) error {
 	for {
-		// Must use a websocket.Codec here since the Read method doesn't preserve frames.
-		frame := new(wsFrame)
-		if err := frameCodec.Receive(src, frame); err != nil {
+		messageType, msg, err := src.ReadMessage()
+		if err != nil {
 			return err
 		}
 
-		if err := frameCodec.Send(dest, frame); err != nil {
+		if err := dest.WriteMessage(messageType, msg); err != nil {
 			return err
 		}
 	}
-}
-
-// frameCodec is a websocket.Codec which preserves frame types for copying.
-
-//
-// This differs from websocket.Message which presents a different frame type for "[]byte" and "string".
-var frameCodec = websocket.Codec{Marshal: marshalFrame, Unmarshal: unmarshalFrame}
-
-type wsFrame struct {
-	payload     []byte
-	payloadType byte
-}
-
-func marshalFrame(v interface{}) (data []byte, payloadType byte, err error) {
-	frame, ok := v.(*wsFrame)
-	if !ok {
-		return nil, 0, fmt.Errorf("expected *wsFrame, got %t", v)
-	}
-	return frame.payload, frame.payloadType, nil
-}
-
-func unmarshalFrame(data []byte, payloadType byte, v interface{}) (err error) {
-	frame, ok := v.(*wsFrame)
-	if !ok {
-		return fmt.Errorf("expected *wsFrame, got %t", v)
-	}
-	*frame = wsFrame{data, payloadType}
-	return nil
 }

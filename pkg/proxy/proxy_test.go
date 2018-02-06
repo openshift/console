@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"golang.org/x/net/websocket"
+	"github.com/gorilla/websocket"
 )
 
 func TestProxyDirector(t *testing.T) {
@@ -116,14 +116,21 @@ func TestProxyWebsocket(t *testing.T) {
 	}
 	defer closer()
 
-	ws, err := websocket.Dial(toWSScheme(proxyURL)+"/proxy/lower", "base64.binary.k8s.io", "http://localhost")
+	dialer := &websocket.Dialer{
+		Subprotocols: []string{"base64.binary.k8s.io"},
+	}
+
+	headers := http.Header{}
+	headers.Add("Origin", "http://localhost")
+
+	ws, _, err := dialer.Dial(toWSScheme(proxyURL)+"/proxy/lower", headers)
 	if err != nil {
 		t.Fatalf("error connecting to /proxy/lower as websocket: %v", err)
 		return
 	}
 	defer ws.Close()
 
-	ws.Write([]byte("HI"))
+	ws.WriteMessage(websocket.TextMessage, []byte("HI"))
 	res, err := readStringFromWS(ws)
 	if err != nil {
 		t.Fatalf("error reading from websocket: %v", err)
@@ -164,7 +171,7 @@ func TestProxyHTTP(t *testing.T) {
 func startProxyServer(t *testing.T) (string, func(), error) {
 	// Setup the server we want to proxy.
 	mux := http.NewServeMux()
-	mux.Handle("/lower", websocket.Handler(lowercaseServer(t)))
+	mux.HandleFunc("/lower", lowercaseServer(t))
 	mux.HandleFunc("/static", staticServer)
 	server := httptest.NewServer(mux)
 
@@ -187,14 +194,26 @@ func startProxyServer(t *testing.T) (string, func(), error) {
 	}, nil
 }
 
-func lowercaseServer(t *testing.T) func(ws *websocket.Conn) {
-	return func(ws *websocket.Conn) {
+func lowercaseServer(t *testing.T) func(w http.ResponseWriter, r *http.Request) {
+	upgrader := &websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			// TODO: actually check origin!
+			return true
+		},
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		ws, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			t.Fatalf("Failed to upgrade websocket to client: '%v'", err)
+			return
+		}
 		for {
 			str, err := readStringFromWS(ws)
 			if err != nil {
 				t.Fatalf("err reading from websocket: %v", err)
 			}
-			_, err = ws.Write([]byte(strings.ToLower(str)))
+			err = ws.WriteMessage(websocket.TextMessage, []byte(strings.ToLower(str)))
 			if err != nil {
 				t.Fatalf("err reading to websocket: %v", err)
 			}
@@ -208,12 +227,12 @@ func staticServer(res http.ResponseWriter, req *http.Request) {
 }
 
 func readStringFromWS(ws *websocket.Conn) (string, error) {
-	buf := make([]byte, 512)
-	n, err := ws.Read(buf)
+	// buf := make([]byte, 512)
+	_, buf, err := ws.ReadMessage()
 	if err != nil {
 		return "", err
 	}
-	return string(buf[:n]), nil
+	return string(buf), nil
 }
 
 // toWSScheme changes the scheme of a valid URL to "ws".
