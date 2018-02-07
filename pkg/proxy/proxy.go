@@ -19,6 +19,7 @@ type Config struct {
 	Endpoint        *url.URL
 	TLSClientConfig *tls.Config
 	Director        func(*http.Request)
+	Origin          string
 }
 
 type Proxy struct {
@@ -146,12 +147,15 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to dial backend: '%v'", err)
 		statusCode := http.StatusBadGateway
-		if resp != nil && resp.StatusCode != 0 {
-			statusCode = resp.StatusCode
-			// TODO: log path & request IP and stuff
-			log.Printf("%s StatusCode %v", errMsg, resp.StatusCode)
-		} else {
+		if resp == nil || resp.StatusCode == 0 {
 			log.Println(errMsg)
+		} else {
+			statusCode = resp.StatusCode
+			if resp.Request == nil {
+				log.Printf("%s Status: '%v' (no request object)", errMsg, resp.Status)
+			} else {
+				log.Printf("%s Status: '%v' URL: '%v'", errMsg, resp.Status, resp.Request.URL)
+			}
 		}
 		http.Error(w, errMsg, statusCode)
 		return
@@ -160,8 +164,20 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	upgrader := &websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
-			// TODO: actually check origin!
-			return true
+			origin := r.Header["Origin"]
+			if p.config.Origin == "" {
+				log.Printf("CheckOrigin: Proxy has no configured Origin. Allowing origin %v to %v", origin, r.URL)
+				return true
+			}
+			if len(origin) == 0 {
+				log.Printf("CheckOrigin: No origin header. Denying request to %v", r.URL)
+				return false
+			}
+			if p.config.Origin == origin[0] {
+				return true
+			}
+			log.Printf("CheckOrigin '%v' != '%v'", p.config.Origin, origin[0])
+			return false
 		},
 	}
 	frontend, err := upgrader.Upgrade(w, r, nil)
