@@ -75,10 +75,7 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location) =>
     suffix = `${location.search}${location.hash}`;
   }
 
-  if (isk8s) {
-    return `/k8s/${namespacePrefix}${originalPath}${suffix}`;
-  }
-  return `/${namespacePrefix}${originalPath}${suffix}`;
+  return `/k8s/${namespacePrefix}${originalPath}${suffix}`;
 };
 
 export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);

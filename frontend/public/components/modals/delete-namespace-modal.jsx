@@ -23,7 +23,7 @@ class DeleteNamespaceModal extends PromiseComponent {
     event.preventDefault();
     this.handlePromise(k8sKill(k8sKinds.Namespace, this.props.resource)).then(() => {
       this._close();
-      history.push('/namespaces');
+      history.push('/k8s/cluster/namespaces');
     });
   }
 

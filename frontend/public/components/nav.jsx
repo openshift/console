@@ -14,7 +14,7 @@ import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
 
-const stripNS = href => href.replace(/^\/?(all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
+const stripNS = href => href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 
 const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
   const activeNamespace = state.UI.get('activeNamespace');
@@ -156,17 +156,17 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     </NavSection>
 
     <NavSection text="Administration" icon="fa-cog">
-      <NavLink href="/namespaces" name="Namespaces" />
-      <NavLink href="/nodes" name="Nodes" />
-      <NavLink href="/persistentvolumes" name="Persistent Volumes" />
+      <NavLink href="/k8s/cluster/namespaces" name="Namespaces" />
+      <NavLink href="/k8s/cluster/nodes" name="Nodes" />
+      <NavLink href="/k8s/cluster/persistentvolumes" name="Persistent Volumes" />
       <NavLink href="/settings/cluster" name="Cluster Settings" isActive={isClusterSettingsActive} />
       <NavLink resource="serviceaccounts" name="Service Accounts" />
-      <NavLink href="/storageclasses" name="Storage Classes" />
+      <NavLink href="/k8s/cluster/storageclasses" name="Storage Classes" />
       <NavLink resource="roles" name="Roles" isActive={isRolesActive} />
       <NavLink resource="rolebindings" name="Role Bindings" isActive={isRoleBindingsActive} />
       <NavLink resource="podvulns" name="Security Report" required={FLAGS.SECURITY_LABELLER} />
       <NavLink resource="/k8s/Report:chargeback.coreos.com:v1alpha1" name="Chargeback" />
-      <NavLink href="/crds" name="CRDs" />
+      <NavLink href="/k8s/cluster/customresourcedefinitions" name="CRDs" />
     </NavSection>
 
     {authSvc.userID() && <NavSection id="qa_admin" text={authSvc.name()} icon="fa-user">

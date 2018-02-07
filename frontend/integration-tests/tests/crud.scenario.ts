@@ -61,7 +61,7 @@ describe('Kubernetes resource CRUD operations', () => {
     describe(kind, () => {
 
       it('displays a list view for the resource', async() => {
-        await browser.get(`${appHost}${namespaced ? `/ns/${testName}` : ''}/${resource}?name=${testName}`);
+        await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`);
         await crudView.isLoaded();
       });
 
@@ -103,7 +103,7 @@ describe('Kubernetes resource CRUD operations', () => {
       });
 
       it('search view displays created resource instance', async() => {
-        await browser.get(`${appHost}${namespaced ? `/ns/${testName}` : ''}/search?kind=${kind}&q=${testLabel}%3d${testName}`);
+        await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : ''}/search?kind=${kind}&q=${testLabel}%3d${testName}`);
         await crudView.isLoaded();
         await crudView.rowForName(testName).element(by.linkText(testName)).click();
         await browser.wait(until.urlContains(`/${testName}`));
@@ -114,7 +114,7 @@ describe('Kubernetes resource CRUD operations', () => {
       });
 
       it('deletes the resource instance', async() => {
-        await browser.get(`${appHost}${namespaced ? `/ns/${testName}` : ''}/${resource}`);
+        await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
         await crudView.isLoaded();
         await crudView.deleteRow(kind)(testName);
 
@@ -127,7 +127,7 @@ describe('Kubernetes resource CRUD operations', () => {
     const name = `${testName}-ns`;
 
     it('displays `Namespace` list view', async() => {
-      await browser.get(`${appHost}/namespaces`);
+      await browser.get(`${appHost}/k8s/cluster/namespaces`);
       await crudView.isLoaded();
 
       expect(crudView.rowForName(name).isPresent()).toBe(false);
@@ -141,11 +141,11 @@ describe('Kubernetes resource CRUD operations', () => {
       await $('#confirm-delete').click();
       await browser.wait(until.invisibilityOf($('.modal-content')), K8S_CREATION_TIMEOUT);
 
-      expect(browser.getCurrentUrl()).toContain(`/namespaces/${testName}-ns`);
+      expect(browser.getCurrentUrl()).toContain(`/k8s/cluster/namespaces/${testName}-ns`);
     });
 
     it('deletes the namespace', async() => {
-      await browser.get(`${appHost}/namespaces`);
+      await browser.get(`${appHost}/k8s/cluster/namespaces`);
       await crudView.isLoaded();
       await crudView.deleteRow('Namespace')(name);
       leakedResources.delete(JSON.stringify({name, plural: 'namespaces'}));
@@ -176,7 +176,7 @@ describe('Kubernetes resource CRUD operations', () => {
     };
 
     it('displays `CustomResourceDefinitions` list view', async() => {
-      await browser.get(`${appHost}/crds`);
+      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions`);
       await crudView.isLoaded();
 
       expect(crudView.resourceRows.count()).not.toEqual(0);
@@ -193,7 +193,7 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     it('displays YAML editor for creating a new custom resource instance', async() => {
-      await browser.get(`${appHost}/crds?name=${name}`);
+      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.isLoaded();
       await crudView.resourceRows.first().element(by.linkText(crd.spec.names.kind)).click();
       await crudView.isLoaded();
@@ -211,7 +211,7 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     it('deletes the `CustomResourceDefinition`', async() => {
-      await browser.get(`${appHost}/crds?name=${name}`);
+      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.isLoaded();
       await crudView.deleteRow('CustomResourceDefinition')(crd.spec.names.kind);
       leakedResources.delete(JSON.stringify({name, plural: 'customresourcedefinitions'}));
@@ -225,7 +225,7 @@ describe('Kubernetes resource CRUD operations', () => {
     const labelValue = 'appblah';
 
     beforeAll(async() => {
-      await browser.get(`${appHost}/ns/${testName}/${plural}/new`);
+      await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/new`);
       await yamlView.isLoaded();
 
       const content = await yamlView.editorContent.getText();
@@ -266,14 +266,14 @@ describe('Kubernetes resource CRUD operations', () => {
 
   describe('Visiting special routes', () => {
     new Set([
-      '/clusterroles/view',
-      '/nodes',
+      '/k8s/cluster/clusterroles/view',
+      '/k8s/cluster/nodes',
       '/settings/cluster',
-      '/all-namespaces/events',
-      '/crds',
+      '/k8s/all-namespaces/events',
+      '/k8s/cluster/customresourcedefinitions',
       '/',
       '/k8s/all-namespaces/alertmanagers',
-      '/ns/tectonic-system/alertmanagers/main',
+      '/k8s/ns/tectonic-system/alertmanagers/main',
     ]).forEach(route => {
 
       it(`successfully displays view for route: ${route}`, async() => {

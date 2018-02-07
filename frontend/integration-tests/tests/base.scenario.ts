@@ -29,7 +29,7 @@ describe('Basic console test', () => {
   });
 
   it(`creates test namespace ${testName} if necessary`, async() => {
-    await browser.get(`${appHost}/namespaces`);
+    await browser.get(`${appHost}/k8s/cluster/namespaces`);
     await crudView.isLoaded();
     const exists = await crudView.rowForName(testName).isPresent();
     if (!exists) {

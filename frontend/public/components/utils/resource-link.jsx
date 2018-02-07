@@ -14,13 +14,10 @@ export const resourcePath = (kind, name, namespace = undefined) => {
   }
   const {path, namespaced, crd} = model;
 
-  let url = '/';
+  let url = '/k8s/';
 
-  if (crd) {
-    url += 'k8s/';
-    if (!namespaced) {
-      url += 'cluster/';
-    }
+  if (!namespaced) {
+    url += 'cluster/';
   }
 
   if (namespaced) {
