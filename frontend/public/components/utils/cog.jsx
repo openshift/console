@@ -41,9 +41,11 @@ export class Cog extends DropdownMixin {
           </Tooltip>
           : <div ref={this.setNode} onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
             <span className={classNames('co-m-cog', 'co-m-cog__icon', `co-m-cog__icon--size-${size || 'small'}`, 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
-            <ul className="co-m-cog__dropdown dropdown--dark dropdown-menu" style={style}>
-              {lis}
-            </ul>
+            <div className="dropdown-menu dropdown--dark" style={style}>
+              <ul className="co-m-cog__dropdown">
+                {lis}
+              </ul>
+            </div>
           </div>
         }
       </div>

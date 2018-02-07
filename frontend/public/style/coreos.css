@@ -1620,9 +1620,8 @@ tbody.collapse.in {
   display: none;
   float: left;
   min-width: 160px;
-  padding: 10px;
+  padding: 5px 0;
   margin: 2px 0 0;
-  list-style: none;
   font-size: 14px;
   text-align: left;
   background-color: #fff;
@@ -1631,7 +1630,11 @@ tbody.collapse.in {
   border-radius: 4px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  background-clip: padding-box; }
+  background-clip: padding-box;
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none; }}
   .dropdown-menu.pull-right {
     right: 0;
     left: auto; }
