@@ -122,11 +122,13 @@ export class Dropdown extends DropdownMixin {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (_.isEqual(nextProps.items, this.props.items)) {
+    const props = this.props;
+
+    if (_.isEqual(nextProps.items, props.items) && nextProps.title === props.title) {
       return;
     }
 
-    const title = nextProps.title || this.props.title;
+    const title = nextProps.title || props.title;
 
     const { autocompleteText } = this.state;
     let { items, autocompleteFilter } = nextProps;
