@@ -1,0 +1,21 @@
+language: go
+
+go:
+  - 1.7.5
+  - 1.8
+
+services:
+  - postgresql
+
+env:
+  - DEX_POSTGRES_DATABASE=postgres DEX_POSTGRES_USER=postgres DEX_POSTGRES_HOST="localhost"
+
+
+install:
+  - go get -u github.com/golang/lint/golint
+
+script:
+  - make testall
+
+notifications:
+  email: false

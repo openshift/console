@@ -90,6 +90,9 @@ func (s *Server) AuthDisabled() bool {
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 
+	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
+		s.K8sProxyConfig.Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
+	}
 	var k8sHandler http.Handler = proxy.NewProxy(s.K8sProxyConfig)
 	if !s.AuthDisabled() {
 		k8sHandler = authMiddleware(s.Auther, k8sHandler)
