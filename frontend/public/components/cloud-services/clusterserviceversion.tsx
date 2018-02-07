@@ -216,13 +216,14 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   return <div className="co-clusterserviceversion-details co-m-pane__body">
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
       <div style={{marginBottom: '15px'}}>
-        { ownedCRDs.length > 1 && <Dropdown
+        { status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <button disabled={true} className="btn btn-primary">Create New</button> }
+        { status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded && ownedCRDs.length > 1 && <Dropdown
           noButton={true}
           className="btn btn-primary"
           title="Create New"
           items={ownedCRDs.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
           onChange={(name) => history.push(route(name))} /> }
-        { ownedCRDs.length === 1 && <Link to={route(ownedCRDs[0].name)} className="btn btn-primary">{`Create ${ownedCRDs[0].displayName}`}</Link> }
+        { status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded && ownedCRDs.length === 1 && <Link to={route(ownedCRDs[0].name)} className="btn btn-primary">{`Create ${ownedCRDs[0].displayName}`}</Link> }
       </div>
       <dl className="co-clusterserviceversion-details__section--info__item">
         <dt>Provider</dt>
@@ -248,7 +249,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
       </dl>
     </div>
     <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--description">
-      { status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && <div className="co-clusterserviceversion-detail__error-box">
+      { status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <div className="co-clusterserviceversion-detail__error-box">
         <strong>Install {status.phase}</strong>: {status.message}
       </div> }
       <h1>Description</h1>

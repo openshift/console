@@ -6,8 +6,9 @@ import * as _ from 'lodash';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { PromiseComponent, ResourceIcon } from '../utils';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CatalogEntryKind, isEnabled } from '../cloud-services';
+import { SubscriptionKind, ClusterServiceVersionLogo, CatalogEntryKind, isEnabled } from '../cloud-services';
 import { SubscriptionModel } from '../../models';
+import { K8sResourceKind } from '../../module/k8s';
 
 export const SelectNamespaceHeader: React.SFC<SelectNamespaceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-9" sortField="metadata.name">Name</ColHead>
@@ -43,7 +44,7 @@ export class EnableApplicationModal extends PromiseComponent {
 
   constructor(public props: EnableApplicationModalProps) {
     super(props);
-    this.state.selectedNamespaces = [];
+    this.state.selectedNamespaces = props.preSelected || [];
   }
 
   private submit(event): void {
@@ -72,7 +73,6 @@ export class EnableApplicationModal extends PromiseComponent {
     const {data, loaded, loadError} = this.props.namespaces;
     const {spec} = this.props.catalogEntry;
     const csvSpec = spec.spec;
-    const {clusterServiceVersions} = this.props;
     const {selectedNamespaces} = this.state;
 
     return <form onSubmit={this.submit.bind(this)} name="form" className="co-catalog-install-modal">
@@ -87,7 +87,7 @@ export class EnableApplicationModal extends PromiseComponent {
             loaded={loaded}
             loadError={loadError}
             data={_.values(data)
-              .filter(ns => clusterServiceVersions.find(csv => csv.metadata.namespace === ns.metadata.name) === undefined)
+              .filter(ns => this.props.subscriptions.find(sub => sub.metadata.namespace === ns.metadata.name) === undefined)
               .filter(ns => isEnabled(ns))}
             Header={SelectNamespaceHeader}
             Row={(props) => <SelectNamespaceRow
@@ -110,7 +110,8 @@ export type EnableApplicationModalProps = {
   close: () => void;
   k8sCreate: (kind, data) => Promise<any>;
   namespaces: {data: {[name: string]: any}, loaded: boolean, loadError: Object | string};
-  clusterServiceVersions: ClusterServiceVersionKind[];
+  preSelected?: string[];
+  subscriptions: SubscriptionKind[];
   catalogEntry: CatalogEntryKind;
 };
 
@@ -125,7 +126,7 @@ export type SelectNamespaceHeaderProps = {
 };
 
 export type SelectNamespaceRowProps = {
-  obj: any;
+  obj: K8sResourceKind;
   selected: boolean;
   onDeselect: (e: {namespace: string}) => void;
   onSelect: (e: {namespace: string}) => void;
