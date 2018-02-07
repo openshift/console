@@ -182,6 +182,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
     Namespace: <Dropdown
       className="co-namespace-selector__dropdown"
       noButton={true}
+      menuClassName="co-namespace-selector__menu"
       items={items}
       title={title}
       onChange={onChange}

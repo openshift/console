@@ -194,7 +194,7 @@ export class Dropdown extends DropdownMixin {
       </div>
       : <button onClick={this.toggle} type="button" className="btn btn--dropdown">
         <div className="btn--dropdown__content-wrap">
-          {title} <Caret />
+          {title}&nbsp;&nbsp;<Caret />
         </div>
       </button>;
 
