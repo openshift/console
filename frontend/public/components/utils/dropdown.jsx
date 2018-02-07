@@ -126,12 +126,14 @@ export class Dropdown extends DropdownMixin {
       return;
     }
 
+    const title = nextProps.title || this.props.title;
+
     const { autocompleteText } = this.state;
     let { items, autocompleteFilter } = nextProps;
     if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
       items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
     }
-    this.setState({items});
+    this.setState({items, title});
   }
 
   componentDidUpdate (prevProps, prevState) {
