@@ -103,6 +103,10 @@ export class Dropdown extends DropdownMixin {
         return;
       }
 
+      if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
+        return;
+      }
+
       e.stopPropagation();
       e.preventDefault();
       this.show(e);
