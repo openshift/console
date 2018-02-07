@@ -12,7 +12,7 @@
     background-color: $dark;
     border: solid 1px $dark;
 
-    & > li > a {
+    li > a {
       color: white;
 
       &:hover {
@@ -20,7 +20,7 @@
         color: white;
       }
     }
-    .dropdown-menu > li.dropdown__selected > a {
+    .dropdown-menu li.dropdown__selected > a {
       color: black;
       &:hover {
         color: white;
@@ -93,12 +93,12 @@
 .dropdown-menu {
   display: block;
 
-  & > li > a {
+  & li > a {
     cursor: pointer;
     text-shadow: none;
   }
 
-  & > li.dropdown__selected > a {
+  & li.dropdown__selected > a {
     color: white;
     &:hover {
       color: black;

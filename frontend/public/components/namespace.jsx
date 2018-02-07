@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from 'react-lightweight-tooltip';
 import { Link } from 'react-router-dom';
+import * as fuzzy from 'fuzzysearch';
 
 import { k8sGet, k8sKinds } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
@@ -153,6 +154,8 @@ const Details = ({obj: ns}) => <div>
 
 const RolesPage = ({obj: {metadata}}) => <RoleBindingsPage namespace={metadata.name} showTitle={false} />;
 
+const autocompleteFilter = (text, item) => fuzzy(text, item);
+
 const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}))(props => {
   const { activeNamespace, dispatch } = props;
 
@@ -176,7 +179,17 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   };
 
   return <div className="co-namespace-selector">
-    Namespace: <Dropdown className="co-namespace-selector__dropdown" noButton={true} items={items} title={title} onChange={onChange} selectedKey={activeNamespace || allNamespacesKey} />
+    Namespace: <Dropdown
+      className="co-namespace-selector__dropdown"
+      noButton={true}
+      menuClassName="co-namespace-selector__menu"
+      items={items}
+      title={title}
+      onChange={onChange}
+      selectedKey={activeNamespace || allNamespacesKey}
+      autocompleteFilter={autocompleteFilter}
+      autocompletePlaceholder="Select namespace..."
+      shortCut="n" />
   </div>;
 });
 
