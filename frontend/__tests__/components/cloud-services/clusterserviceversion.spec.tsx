@@ -198,10 +198,9 @@ describe(ClusterServiceVersionList.displayName, () => {
   });
 
   it('renders section for applications installed from Open Cloud Services', () => {
-    const sections = wrapper.find('.co-clusterserviceversion-list__section--catalog');
+    const sections = wrapper.find('.co-clusterserviceversion-list');
 
     expect(sections.length).toEqual(1);
-    expect(sections.at(0).find('.co-section-title').text()).toContain('Open Cloud Services');
     expect(sections.at(0).find(ClusterServiceVersionListItem).length).toEqual(apps.length);
 
     sections.at(0).find(ClusterServiceVersionListItem).forEach((listItem) => {
@@ -233,14 +232,14 @@ describe(ClusterServiceVersionList.displayName, () => {
   it('filters visible ClusterServiceVersions by `name`', () => {
     const searchFilter = apps[0].spec.displayName.slice(0, 2);
     wrapper = wrapper.setProps({filters: {name: searchFilter}});
-    const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items');
+    const list = wrapper.find('.co-clusterserviceversion-list__tile');
 
     expect(list.children().length).toEqual(2);
   });
 
   it('filters visible ClusterServiceVersions by `Running Status`', () => {
     wrapper.setProps({filters: {'clusterserviceversion-status': 'running'}});
-    const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items').find(ClusterServiceVersionListItem);
+    const list = wrapper.find('.co-clusterserviceversion-list__tile').find(ClusterServiceVersionListItem);
 
     expect(list.length).toEqual(0);
   });
@@ -253,14 +252,14 @@ describe(ClusterServiceVersionList.displayName, () => {
     apps[0].metadata.name = 'repeat';
     apps[1].metadata.name = 'repeat';
     wrapper.setProps({data: [].concat(apps).concat(deployments)});
-    const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items').find(ClusterServiceVersionListItem);
+    const list = wrapper.find('.co-clusterserviceversion-list__tile').find(ClusterServiceVersionListItem);
 
     expect(list.length).toEqual(1);
     expect(list.at(0).props().obj.metadata.name).toEqual('repeat');
   });
 
   it('only renders ClusterServiceVersions that have an associated `Deployment` using owner references', () => {
-    const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items').find(ClusterServiceVersionListItem);
+    const list = wrapper.find('.co-clusterserviceversion-list__tile').find(ClusterServiceVersionListItem);
 
     expect(list.length).toEqual(2);
   });
@@ -283,8 +282,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().dropdownFilters).toBeDefined();
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().filterLabel).toEqual('Applications by name');
-    expect(listPage.props().title).toEqual('Available Applications');
-    expect(listPage.props().showTitle).toBe(true);
+    expect(listPage.props().showTitle).toBe(false);
   });
 
   it('passes `flatten` function to Open Cloud Catalog `MultiListPage` that returns list of all resources', () => {
@@ -306,9 +304,8 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     ]);
     // TODO(alecmerdler): Test custom applications list component
     expect(listPage.props().ListComponent).toBeDefined();
-    expect(listPage.props().filterLabel).toEqual('Applications by name');
-    expect(listPage.props().title).toEqual('Custom Applications');
-    expect(listPage.props().showTitle).toBe(true);
+    expect(listPage.props().filterLabel).toEqual('Custom Applications by name');
+    expect(listPage.props().showTitle).toBe(false);
   });
 
   it('passes `flatten` function to custom apps `MultiListPage` that returns list of all resources', () => {

@@ -149,8 +149,8 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
     render () {
       const {createButtonText, dropdownFilters, textFilter, filterLabel, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
 
-      const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
-        return <Dropdown key={title} className="pull-right" items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
+      const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title, align = 'right'}) => {
+        return <Dropdown key={title} className={`pull-${align}`} items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
       });
 
       let createLink;
