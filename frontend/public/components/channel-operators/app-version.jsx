@@ -127,7 +127,7 @@ class UpToDateTectonicCluster extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDetails: false
+      showDetails: true
     };
   }
 
@@ -167,7 +167,7 @@ class TectonicClusterAppVersion extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDetails: false
+      showDetails: true
     };
   }
 
@@ -331,7 +331,7 @@ export class AppVersionDetails extends SafetyFirst{
     super(props);
     this._toggleExpand = this._toggleExpand.bind(this);
     this.state = {
-      expanded: false
+      expanded: true
     };
   }
 

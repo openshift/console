@@ -40,7 +40,7 @@ class UpToDateState extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDetails: false
+      showDetails: true
     };
   }
 
@@ -79,7 +79,7 @@ class UpdateProgress extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDetails: false
+      showDetails: true
     };
   }
 
@@ -157,7 +157,7 @@ export class ContainerLinuxUpdateDetails extends SafetyFirst {
     super(props);
     this._toggleExpand = this._toggleExpand.bind(this);
     this.state = {
-      expanded: false
+      expanded: true
     };
   }
 
