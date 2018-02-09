@@ -298,7 +298,7 @@ export const MultiListPage = props => {
     </Firehose>
   </FireMan_>;
   if (fake) {
-    return <div><div className="fake-list" />{elems}</div>;
+    return <div style={{position: 'relative'}}><div className="fake-list" />{elems}</div>;
   }
   return elems;
 };

@@ -380,12 +380,12 @@ const ReportsPage_: React.StatelessComponent<ReportsPageProps> = props => {
       <p>
         Chargeback is an alpha feature.
       </p>
-      <a href="https://coreos.com/tectonic/docs/latest/reporting/install-chargeback.html" target="_blank" rel="noopener noreferrer">
+      <a href="https://coreos.com/tectonic/docs/latest/reports/install-chargeback.html" target="_blank" rel="noopener noreferrer">
         <button className="btn btn-info">Installing Chargeback Report <i className="fa fa-external-link" /></button>
       </a>
     </div>
     <ListPage {...props} title="Chargeback Reporting" kind={ReportReference} ListComponent={ReportsList} canCreate={true} fake={true}/>
-    <div style={{marginTop: '-70px', textAlign: 'center'}}>
+    <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>
   </div>;
