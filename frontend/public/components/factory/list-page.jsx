@@ -41,6 +41,7 @@ export const TextFilter = ({label, onChange, defaultValue, style, className, aut
     onChange={onChange}
     autoFocus={autoFocus}
     defaultValue={defaultValue}
+    onKeyDown={e => e.key === 'Escape' && e.target.blur()}
   />;
 };
 

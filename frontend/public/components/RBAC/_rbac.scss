@@ -72,12 +72,17 @@
   }
 
   .btn--dropdown {
-    width: 100%;
+    width: 400px;
   }
 
-  .dropdown, .form-control {
+  .form-control {
     max-width: 400px;
-    width: 100%;
+  }
+  .dropdown {
+    max-width: 400px;
+    .form-control {
+      width: 380px;
+    }
   }
 
   .dropdown {
@@ -88,7 +93,7 @@
     }
     .dropdown-menu {
       max-height: 190px;
-      min-width: 250px;
+      width: 400px;
       overflow-y: scroll;
     }
   }
