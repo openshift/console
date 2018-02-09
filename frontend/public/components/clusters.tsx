@@ -88,7 +88,7 @@ const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
       </a>
     </div>
     <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={true} fake={true} />
-    <div style={{marginTop: '-70px', textAlign: 'center'}}>
+    <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>
   </div>;

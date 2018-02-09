@@ -385,7 +385,7 @@ const ReportsPage_: React.StatelessComponent<ReportsPageProps> = props => {
       </a>
     </div>
     <ListPage {...props} title="Chargeback Reporting" kind={ReportReference} ListComponent={ReportsList} canCreate={true} fake={true}/>
-    <div style={{marginTop: '-70px', textAlign: 'center'}}>
+    <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>
   </div>;
