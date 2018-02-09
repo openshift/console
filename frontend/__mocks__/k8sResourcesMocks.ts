@@ -217,6 +217,7 @@ export const testCatalogEntry: CatalogEntryKind = {
       displayName: 'Test App',
       description: 'This app does cool stuff',
       provider: 'MyCompany, Inc',
+      replaces: 'testapp-old',
       links: [
         {name: 'Documentation', url: 'https://docs.testapp.com'},
       ],

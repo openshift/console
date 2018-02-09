@@ -9,9 +9,10 @@ import { EnableApplicationModal, EnableApplicationModalProps, SelectNamespaceHea
 import { ListHeader, ColHead, List, ResourceRow } from '../../../public/components/factory';
 import { ResourceIcon } from '../../../public/components/utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
-import { testClusterServiceVersion, testCatalogEntry } from '../../../__mocks__/k8sResourcesMocks';
-import { ClusterServiceVersionLogo, ClusterServiceVersionKind } from '../../../public/components/cloud-services';
+import { testSubscription, testCatalogEntry } from '../../../__mocks__/k8sResourcesMocks';
+import { ClusterServiceVersionLogo, SubscriptionKind } from '../../../public/components/cloud-services';
 import { SubscriptionModel } from '../../../public/models';
+import { K8sResourceKind } from '../../../public/module/k8s';
 /* eslint-enable no-unused-vars */
 
 
@@ -38,7 +39,7 @@ describe(SelectNamespaceHeader.displayName, () => {
 
 describe(SelectNamespaceRow.displayName, () => {
   let wrapper: ShallowWrapper<SelectNamespaceRowProps>;
-  let namespace: {metadata: {name: string, namespace: string, uid: string, annotations: {[key: string]: string}, labels: {[key: string]: string}}};
+  let namespace: K8sResourceKind;
   let onSelect: Spy;
   let onDeselect: Spy;
 
@@ -49,7 +50,7 @@ describe(SelectNamespaceRow.displayName, () => {
 
     onSelect = jasmine.createSpy('onSelect');
     onDeselect = jasmine.createSpy('onDeselect');
-    namespace = {metadata: {name: 'default', namespace: 'default', uid: 'abcd', labels: {}, annotations: annotations}};
+    namespace = {apiVersion: 'v1', kind: 'Namespace', metadata: {name: 'default', namespace: 'default', uid: 'abcd', labels: {}, annotations: annotations}};
     wrapper = shallow(<SelectNamespaceRow obj={namespace} selected={false} onDeselect={onDeselect} onSelect={onSelect} />);
   });
 
@@ -98,7 +99,7 @@ describe(SelectNamespaceRow.displayName, () => {
 describe(EnableApplicationModal.name, () => {
   let wrapper: ShallowWrapper<EnableApplicationModalProps, any>;
   let namespaces: EnableApplicationModalProps['namespaces'];
-  let clusterServiceVersions: ClusterServiceVersionKind[];
+  let subscriptions: SubscriptionKind[];
   let k8sCreate: Spy;
   let close: Spy;
   let cancel: Spy;
@@ -107,7 +108,7 @@ describe(EnableApplicationModal.name, () => {
     k8sCreate = jasmine.createSpy('k8sCreate');
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
-    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion)];
+    subscriptions = [_.cloneDeep(testSubscription)];
     namespaces = {
       data: {
         'default': {metadata: {name: 'default', labels: {}}},
@@ -117,7 +118,7 @@ describe(EnableApplicationModal.name, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogEntry} namespaces={namespaces} clusterServiceVersions={clusterServiceVersions} k8sCreate={k8sCreate} close={close} cancel={cancel} />);
+    wrapper = shallow(<EnableApplicationModal catalogEntry={testCatalogEntry} namespaces={namespaces} subscriptions={subscriptions} k8sCreate={k8sCreate} close={close} cancel={cancel} />);
   });
 
   it('renders a modal form', () => {
@@ -163,7 +164,7 @@ describe(EnableApplicationModal.name, () => {
           apiVersion: 'app.coreos.com/v1alpha1',
           kind: SubscriptionModel.kind,
           metadata: {
-            generateName: `${testClusterServiceVersion.metadata.name}-`,
+            generateName: 'testapp-',
             namespace,
           },
           spec: {

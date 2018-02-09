@@ -8,11 +8,12 @@ import { Link } from 'react-router-dom';
 
 import { CatalogsDetailsPage, CatalogDetails, CatalogDetailsProps, CatalogAppHeader, CatalogAppHeaderProps, CatalogAppRow, CatalogAppRowProps, CatalogAppList, CatalogAppListProps, CatalogAppsPage, CatalogAppRowState } from '../../../public/components/cloud-services/catalog';
 import { ClusterServiceVersionLogo, ClusterServiceVersionKind, ClusterServiceVersionPhase, CSVConditionReason, CatalogEntryVisibility, catalogEntryVisibilityLabel } from '../../../public/components/cloud-services/index';
-import { ClusterServiceVersionModel, UICatalogEntryModel, SubscriptionModel } from '../../../public/models';
+import { ClusterServiceVersionModel, UICatalogEntryModel, SubscriptionModel, InstallPlanModel } from '../../../public/models';
 import { referenceForModel } from '../../../public/module/k8s';
 import { MultiListPage, List, ListHeader, ColHead } from '../../../public/components/factory';
 import { NavTitle } from '../../../public/components/utils';
-import { testCatalogEntry, testClusterServiceVersion, testNamespace } from '../../../__mocks__/k8sResourcesMocks';
+import { testCatalogEntry, testClusterServiceVersion, testNamespace, testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
+import { ErrorBoundary } from '../../../public/components/utils/error-boundary';
 
 describe(CatalogAppRow.displayName, () => {
   let wrapper: ShallowWrapper<CatalogAppRowProps, CatalogAppRowState>;
@@ -29,7 +30,13 @@ describe(CatalogAppRow.displayName, () => {
       loadError: '',
     };
 
-    wrapper = shallow(<CatalogAppRow.WrappedComponent obj={testCatalogEntry} namespaces={namespaces} clusterServiceVersions={[]} />);
+    wrapper = shallow(<CatalogAppRow.WrappedComponent obj={testCatalogEntry} namespaces={namespaces} clusterServiceVersions={[]} soloInstallPlans={[]} subscriptions={[]} />).childAt(0).shallow();
+  });
+
+  it('renders a component wrapped in an error boundary', () => {
+    wrapper = shallow(<CatalogAppRow.WrappedComponent obj={testCatalogEntry} namespaces={namespaces} clusterServiceVersions={[]} soloInstallPlans={[]} subscriptions={[]} />);
+
+    expect(wrapper.type()).toBe(ErrorBoundary);
   });
 
   it('renders column for app logo', () => {
@@ -109,6 +116,18 @@ describe(CatalogAppRow.displayName, () => {
     expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toEqual(`Enabled (${clusterServiceVersions.length} namespaces)`);
   });
 
+  it('renders warning message if there is at least one `InstallPlan` without an owner reference to a `Subscription`', () => {
+    const soloInstallPlans = [_.cloneDeep(testInstallPlan)];
+    soloInstallPlans[0].spec.clusterServiceVersionNames = [testCatalogEntry.spec.spec.replaces];
+    clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
+    clusterServiceVersions[1].metadata.name = testCatalogEntry.spec.spec.replaces;
+
+    wrapper.setProps({clusterServiceVersions, soloInstallPlans});
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
+
+    expect(col.childAt(0).childAt(0).childAt(0).shallow().text()).toContain('Not subscribed to updates');
+  });
+
   it('renders active progress bar in expanded state if at least one `ClusterServiceVersion` status is `Pending` or `Installing`', () => {
     clusterServiceVersions = [_.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion), _.cloneDeep(testClusterServiceVersion)];
     clusterServiceVersions[1].status = {phase: ClusterServiceVersionPhase.CSVPhasePending, reason: CSVConditionReason.CSVReasonRequirementsNotMet};
@@ -165,9 +184,18 @@ describe(CatalogAppRow.displayName, () => {
 
     expect(succeededNamespaces.length).not.toEqual(0);
     succeededNamespaces.forEach((ns, i) => {
-      const csv = clusterServiceVersions[i];
+      expect(ns.find(Link).props().to).toEqual(`/ns/${clusterServiceVersions[i].metadata.namespace}/applications/${clusterServiceVersions[i].metadata.name}`);
+    });
+  });
 
-      expect(ns.find(Link).props().to).toEqual(`/ns/${csv.metadata.namespace}/applications/${csv.metadata.name}`);
+  it('renders link to open enable modal if namespace has `InstallPlan` but not `Subscription`', () => {
+    wrapper.setProps({clusterServiceVersions: [_.cloneDeep(testClusterServiceVersion)], soloInstallPlans: [_.cloneDeep(testInstallPlan)]});
+    const col = wrapper.find('.co-catalog-app-row').childAt(1);
+    const succeededNamespaces = col.childAt(1).childAt(0).shallow().find('ul').find('.co-catalog-breakdown__ns-list__item');
+
+    expect(succeededNamespaces.length).not.toEqual(0);
+    succeededNamespaces.forEach((ns, i) => {
+      expect(ns.find('.co-m-modal-link').text()).toContain('Subscribe to updates');
     });
   });
 
@@ -282,8 +310,9 @@ describe(CatalogAppsPage.displayName, () => {
     expect(listPage.props().resources).toEqual([
       {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: false},
+      {kind: referenceForModel(InstallPlanModel), isList: true, namespaced: false},
       {kind: 'Namespace', isList: true},
-      {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true, selector: {matchLabels: {[catalogEntryVisibilityLabel]: CatalogEntryVisibility.catalogEntryVisibilityOCS}}}
+      {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true, selector: {matchLabels: {[catalogEntryVisibilityLabel]: CatalogEntryVisibility.catalogEntryVisibilityOCS}}},
     ]);
     expect(listPage.props().namespace).toEqual('tectonic-system');
     expect(listPage.props().ListComponent).toEqual(CatalogAppList);

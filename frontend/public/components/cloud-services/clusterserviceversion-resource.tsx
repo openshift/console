@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, CRDDescription, referenceForCRDDesc } from './index';
+import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, CRDDescription, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
 import { Resources } from './k8s-resource';
 import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
 import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
@@ -110,7 +110,7 @@ export const ClusterServiceVersionResourcesPage: React.SFC<ClusterServiceVersion
       filterLabel="Resources by name"
       resources={firehoseResources}
       namespace={obj.metadata.namespace}
-      canCreate={owned.length > 0}
+      canCreate={owned.length > 0 && obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded}
       createProps={createProps}
       createButtonText={owned.length > 1 ? 'Create New' : `Create ${owned[0].displayName}`}
       flatten={flatten}

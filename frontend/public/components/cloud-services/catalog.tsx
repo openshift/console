@@ -8,11 +8,12 @@ import * as classNames from 'classnames';
 
 import { MultiListPage, List, ListHeader, ColHead, ResourceRow } from '../factory';
 import { NavTitle, MsgBox } from '../utils';
-import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled, CatalogEntryVisibility, catalogEntryVisibilityLabel, SubscriptionKind } from './index';
+import { ClusterServiceVersionLogo, CatalogEntryKind, ClusterServiceVersionKind, ClusterServiceVersionPhase, isEnabled, CatalogEntryVisibility, catalogEntryVisibilityLabel, SubscriptionKind, InstallPlanKind } from './index';
 import { createEnableApplicationModal } from '../modals/enable-application-modal';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { k8sCreate, k8sKill, K8sResourceKind, referenceForModel } from '../../module/k8s';
-import { ClusterServiceVersionModel, UICatalogEntryModel, SubscriptionModel } from '../../models';
+import { ClusterServiceVersionModel, UICatalogEntryModel, SubscriptionModel, InstallPlanModel } from '../../models';
+import { withFallback } from '../utils/error-boundary';
 
 export const CatalogAppHeader: React.SFC<CatalogAppHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-md-4 col-xs-8" sortField="metadata.name">Name</ColHead>
@@ -51,12 +52,14 @@ export const Breakdown: React.SFC<BreakdownProps> = (props) => {
     return <div>
       <span>Enabled </span>
       <span className="text-muted">({succeeded.length} {pluralizeNS(succeeded.length)})</span>
+      { props.warnSubscribe && <span style={{color: '#fca657'}}> <i className="fa fa-exclamation-triangle" /> Not subscribed to updates</span> }
     </div>;
   }
   return <span />;
 };
 
 export const BreakdownDetail: React.SFC<BreakdownDetailProps> = (props) => {
+  const {subscriptions = [], soloInstallPlans = []} = props;
   const {pending, succeeded, failed, awaiting, deleting} = props.status;
   const percent = (succeeded.length / [...pending, ...succeeded, ...failed, ...awaiting].length) * 100;
 
@@ -71,6 +74,9 @@ export const BreakdownDetail: React.SFC<BreakdownDetailProps> = (props) => {
         case ClusterServiceVersionPhase.CSVPhaseSucceeded:
           return <li className="co-catalog-breakdown__ns-list__item" key={i}>
             <Link to={`/ns/${csv.metadata.namespace}/applications/${csv.metadata.name}`} tabIndex={-1}>{csv.metadata.namespace}</Link>
+            { soloInstallPlans.some(({metadata}) => metadata.namespace === csv.metadata.namespace) && !subscriptions.some(({metadata}) => metadata.namespace === csv.metadata.namespace) && <span style={{marginLeft: '10px', display: 'inline-flex'}}>
+              <a className="co-m-modal-link" style={{color: '#fca657'}} tabIndex={-1} onClick={() => props.subscribe(csv.metadata.namespace)}>Subscribe to updates</a>
+            </span> }
           </li>;
         case ClusterServiceVersionPhase.CSVPhaseFailed:
           return <li className="co-catalog-breakdown__ns-list__item co-error" key={i}>
@@ -95,76 +101,92 @@ export const BreakdownDetail: React.SFC<BreakdownDetailProps> = (props) => {
 
 const stateToProps = ({k8s}, {obj}) => ({
   namespaces: k8s.get('namespaces').toJS(),
-  clusterServiceVersions: _.values(k8s.getIn(['clusterserviceversion-v1s', 'data'], ImmutableMap()).toJS())
-    .filter((csv: ClusterServiceVersionKind) => csv.status !== undefined)
-    .filter((csv: ClusterServiceVersionKind) => csv.metadata.name === obj.spec.manifest.channels[0].currentCSV),
-  subscriptions: _.values(k8s.getIn(['subscription-v1s', 'data'], ImmutableMap()).toJS())
-    .filter((sub: SubscriptionKind) => sub.spec.name === obj.spec.packageName),
+  soloInstallPlans: _.values<InstallPlanKind>(k8s.getIn(['installplan-v1s', 'data'], ImmutableMap()).toJS())
+    .filter((installPlan) => _.isEmpty(installPlan.metadata.ownerReferences))
+    // FIXME(alecmerdler): This only checks 1 level of `replaces` for install plans created from old catalog entries
+    .filter((installPlan) => (installPlan.spec.clusterServiceVersionNames || []).indexOf(_.get(obj.spec, 'spec.replaces')) > -1),
+  clusterServiceVersions: _.values<ClusterServiceVersionKind>(k8s.getIn(['clusterserviceversion-v1s', 'data'], ImmutableMap()).toJS())
+    .filter((csv) => csv.status !== undefined)
+    // FIXME(alecmerdler): This only checks 1 level of `replaces` for CSVs created from old catalog entries
+    .filter((csv) => csv.metadata.name === _.get(obj.spec, 'manifest.channels[0].currentCSV', '') || csv.metadata.name === _.get(obj.spec, 'spec.replaces', '')),
+  subscriptions: _.values<SubscriptionKind>(k8s.getIn(['subscription-v1s', 'data'], ImmutableMap()).toJS())
+    .filter((sub) => sub.spec.name === obj.spec.manifest.packageName),
 });
 
 export const CatalogAppRow = connect(stateToProps)(
-  class CatalogAppRow extends React.Component<CatalogAppRowProps, CatalogAppRowState> {
-    constructor(props) {
-      super(props);
-      this.state = {...this.propsToState(props), expand: false};
-    }
+  withFallback<CatalogAppRowProps>(
+    class CatalogAppRow extends React.Component<CatalogAppRowProps, CatalogAppRowState> {
+      constructor(props) {
+        super(props);
+        this.state = {...this.propsToState(props), expand: false};
+      }
 
-    componentWillReceiveProps(nextProps: CatalogAppRowProps) {
-      this.setState(this.propsToState(nextProps));
-    }
+      componentWillReceiveProps(nextProps: CatalogAppRowProps) {
+        this.setState(this.propsToState(nextProps));
+      }
 
-    render() {
-      const {namespaces, obj, clusterServiceVersions = [], subscriptions = []} = this.props;
+      render() {
+        const {namespaces, obj, clusterServiceVersions = [], subscriptions = [], soloInstallPlans = []} = this.props;
 
-      return <ResourceRow obj={obj}>
-        <div className="co-catalog-app-row" style={{maxHeight: 60 + (this.state.expand ? clusterServiceVersions.length * 50 : 0)}}>
-          <div className="col-md-4 col-xs-8">
-            <ClusterServiceVersionLogo icon={_.get(obj.spec, 'spec.icon', [])[0]} version={_.get(obj.spec, 'spec.version', '')} displayName={_.get(obj.spec, 'spec.displayName', '')} provider={_.get(obj.spec, 'spec.provider', '')} />
-          </div>
-          <div className="col-md-5 hidden-sm">
-            <div style={{marginTop: '10px'}}>
-              <div style={{marginBottom: '15px'}}><Breakdown clusterServiceVersions={clusterServiceVersions} status={this.state} /></div>
-              { clusterServiceVersions.length === 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} namespace`}</a> }
-              { clusterServiceVersions.length > 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} all ${clusterServiceVersions.length} namespaces`}</a> }
+        return <ResourceRow obj={obj}>
+          <div className="co-catalog-app-row" style={{maxHeight: 60 + (this.state.expand ? clusterServiceVersions.length * 50 : 0)}}>
+            <div className="col-md-4 col-xs-8">
+              <ClusterServiceVersionLogo icon={_.get(obj.spec, 'spec.icon', [])[0]} version={_.get(obj.spec, 'spec.version', '')} displayName={_.get(obj.spec, 'spec.displayName', '')} provider={_.get(obj.spec, 'spec.provider', '')} />
             </div>
-            <div className={classNames('co-catalog-app-row__details', {'co-catalog-app-row__details--collapsed': !this.state.expand})}>
-              <BreakdownDetail clusterServiceVersions={clusterServiceVersions} status={this.state} />
+            <div className="col-md-5 hidden-sm">
+              <div style={{marginTop: '10px'}}>
+                <div style={{marginBottom: '15px'}}>
+                  <Breakdown
+                    clusterServiceVersions={clusterServiceVersions}
+                    status={this.state}
+                    warnSubscribe={clusterServiceVersions.some(csv => _.flatMap(soloInstallPlans, ({spec}) => spec.clusterServiceVersionNames).indexOf(csv.metadata.name) > -1)} />
+                </div>
+                { clusterServiceVersions.length === 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} namespace`}</a> }
+                { clusterServiceVersions.length > 1 && <a onClick={() => this.setState({expand: !this.state.expand})}>{`${this.state.expand ? 'Hide' : 'Show'} all ${clusterServiceVersions.length} namespaces`}</a> }
+              </div>
+              <div className={classNames('co-catalog-app-row__details', {'co-catalog-app-row__details--collapsed': !this.state.expand})}>
+                <BreakdownDetail
+                  clusterServiceVersions={clusterServiceVersions}
+                  status={this.state}
+                  soloInstallPlans={soloInstallPlans}
+                  subscriptions={subscriptions}
+                  subscribe={(ns: string) => createEnableApplicationModal({catalogEntry: obj, k8sCreate, namespaces, subscriptions, preSelected: [ns]})} />
+              </div>
+            </div>
+            <div className="col-md-3 col-xs-4">
+              <div className="co-catalog-app__row__actions">
+                <button
+                  className="btn btn-primary"
+                  disabled={_.values(namespaces.data).filter((ns) => isEnabled(ns)).length <= clusterServiceVersions.length}
+                  onClick={() => createEnableApplicationModal({catalogEntry: obj, k8sCreate, namespaces, subscriptions})}>
+                  Enable
+                </button>
+                <button
+                  className="btn btn-default co-catalog-disable-btn"
+                  disabled={clusterServiceVersions.length === 0}
+                  onClick={() => createDisableApplicationModal({catalogEntry: obj, k8sKill, namespaces, clusterServiceVersions, subscriptions})}>
+                  Disable
+                </button>
+              </div>
             </div>
           </div>
-          <div className="col-md-3 col-xs-4">
-            <div className="co-catalog-app__row__actions">
-              <button
-                className="btn btn-primary"
-                disabled={_.values(namespaces.data).filter((ns) => isEnabled(ns)).length <= clusterServiceVersions.length}
-                onClick={() => createEnableApplicationModal({catalogEntry: obj, k8sCreate, namespaces, clusterServiceVersions})}>
-                Enable
-              </button>
-              <button
-                className="btn btn-default co-catalog-disable-btn"
-                disabled={clusterServiceVersions.length === 0}
-                onClick={() => createDisableApplicationModal({catalogEntry: obj, k8sKill, namespaces, clusterServiceVersions, subscriptions})}>
-                Disable
-              </button>
-            </div>
-          </div>
-        </div>
-      </ResourceRow>;
-    }
+        </ResourceRow>;
+      }
 
-    private propsToState(props: CatalogAppRowProps) {
-      return {
-        failed: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseFailed),
-        pending: props.clusterServiceVersions.filter(csv => [ClusterServiceVersionPhase.CSVPhasePending, ClusterServiceVersionPhase.CSVPhaseInstalling]
-          .indexOf(_.get(csv, ['status', 'phase'])) !== -1)
-          .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
-        succeeded: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseSucceeded)
-          .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
-        awaiting: props.clusterServiceVersions.filter(csv => !_.get(csv, ['status', 'phase']))
-          .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
-        deleting: props.clusterServiceVersions.filter(csv => _.get(csv.metadata, 'deletionTimestamp')),
-      };
-    }
-  });
+      private propsToState(props: CatalogAppRowProps) {
+        return {
+          failed: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseFailed),
+          pending: props.clusterServiceVersions.filter(csv => [ClusterServiceVersionPhase.CSVPhasePending, ClusterServiceVersionPhase.CSVPhaseInstalling]
+            .indexOf(_.get(csv, ['status', 'phase'])) !== -1)
+            .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
+          succeeded: props.clusterServiceVersions.filter(csv => _.get(csv, ['status', 'phase']) === ClusterServiceVersionPhase.CSVPhaseSucceeded)
+            .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
+          awaiting: props.clusterServiceVersions.filter(csv => !_.get(csv, ['status', 'phase']))
+            .filter(csv => !_.get(csv.metadata, 'deletionTimestamp')),
+          deleting: props.clusterServiceVersions.filter(csv => _.get(csv.metadata, 'deletionTimestamp')),
+        };
+      }
+    }));
 
 export const CatalogAppList: React.SFC<CatalogAppListProps> = (props) => {
   const EmptyMsg = () => <MsgBox title="No Applications Found" detail="Application entries are supplied by the Open Cloud Catalog." />;
@@ -181,6 +203,7 @@ export const CatalogAppsPage: React.SFC = () => <MultiListPage
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: false},
     {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: false},
+    {kind: referenceForModel(InstallPlanModel), isList: true, namespaced: false},
     {kind: 'Namespace', isList: true},
     {kind: referenceForModel(UICatalogEntryModel), isList: true, namespaced: true, selector: {matchLabels: {[catalogEntryVisibilityLabel]: CatalogEntryVisibility.catalogEntryVisibilityOCS}}}
   ]}
@@ -220,6 +243,7 @@ export type CatalogAppRowProps = {
   namespaces: {data: {[name: string]: K8sResourceKind}, loaded: boolean, loadError: Object | string};
   clusterServiceVersions: ClusterServiceVersionKind[];
   subscriptions: SubscriptionKind[];
+  soloInstallPlans: InstallPlanKind[];
 };
 
 export type CatalogAppRowState = {
@@ -248,11 +272,15 @@ export type CatalogDetailsProps = {
 export type BreakdownProps = {
   clusterServiceVersions: ClusterServiceVersionKind[];
   status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[], awaiting: ClusterServiceVersionKind[]};
+  warnSubscribe: boolean;
 };
 
 export type BreakdownDetailProps = {
   clusterServiceVersions: ClusterServiceVersionKind[];
   status: {failed: ClusterServiceVersionKind[], pending: ClusterServiceVersionKind[], succeeded: ClusterServiceVersionKind[], awaiting: ClusterServiceVersionKind[], deleting: ClusterServiceVersionKind[]};
+  soloInstallPlans: InstallPlanKind[];
+  subscriptions: SubscriptionKind[];
+  subscribe: (namespace: string) => void;
 };
 /* eslint-enable no-undef */
 
