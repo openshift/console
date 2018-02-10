@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 
-import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState, determineOperatorState, orderedTaskStatuses} from '../utils';
+import {LoadingInline, taskStatuses, operatorStates, calculateChannelState, determineOperatorState, orderedTaskStatuses} from '../utils';
 import {configureOperatorStrategyModal, configureOperatorChannelModal,} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
@@ -56,24 +56,13 @@ const groupTaskStatuses = tss => {
   return groupedTaskStatuses;
 };
 
-const Header = ({channelState, tcAppVersion}) => {
-  return <div className="co-cluster-updates__heading">
-    <div className="co-cluster-updates__heading--name-wrapper">
-      <span className="co-cluster-updates__heading--name">Tectonic</span>
-      <span className="co-cluster-updates__heading--version">{tcAppVersion.currentVersion}</span>
-    </div>
-    <div className="co-cluster-updates__heading--updates">
-      <OperatorState opState={channelState} version={tcAppVersion.desiredVersion} />
-    </div>
-  </div>;
-};
-
-const DetailWrapper = ({title, children}) => {
-  return <dl className="co-cluster-updates__detail">
+const DetailWrapper = ({title, children}) => <div className="col-xs-6 col-sm-4 col-md-3">
+  <dl>
     <dt>{title}</dt>
     <dd>{children}</dd>
-  </dl>;
-};
+  </dl>
+</div>;
+
 DetailWrapper.propTypes = {
   title: PropTypes.node,
   children: PropTypes.node
@@ -81,14 +70,14 @@ DetailWrapper.propTypes = {
 
 const Details = ({config, channelState, tcAppVersion}) => {
   if (config.loadError) {
-    return <div className="co-cluster-updates__details">
+    return <div className="row">
       <DetailWrapper title="Current Version">
         {tcAppVersion.currentVersion || <LoadingInline />}
       </DetailWrapper>
     </div>;
   }
 
-  return <div className="co-cluster-updates__details">
+  return <div className="row">
     <DetailWrapper title="Status">
       <DetailStatus config={config} channelState={channelState} version={tcAppVersion.desiredVersion} />
     </DetailWrapper>
@@ -122,19 +111,21 @@ const FailureStatus = ({failureStatus}) => {
 const UpToDateTectonicCluster = ({tcAppVersion, secondaryAppVersions}) => {
   const {currentVersion, name} = tcAppVersion;
 
-  return <div className="co-cluster-updates__operator-component col-xs-12">
-    <div className="co-cluster-updates__operator-step">
-      <div className="co-cluster-updates__operator-icon co-cluster-updates__operator-icon--up-to-date">
-        <span className="fa fa-fw fa-check-circle"></span>
+  return <div>
+    <div className="row">
+      <div className="col-xs-12">
+        <i className="fa fa-fw fa-check-circle co-cluster-updates__operator-icon co-cluster-updates__operator-icon--up-to-date"></i>
+        <span>{name} {currentVersion}</span>
       </div>
-      <div className="co-cluster-updates__operator-text" id="up-to-date-cluster"> <span>{name} {currentVersion}</span></div>
     </div>
-    <div className="co-cluster-updates__operator-details">
-      <ul className="co-cluster-updates__operator-list">
-        {_.map(secondaryAppVersions, (appVersion, index) => <li key={index}>
-          <span>{appVersion.name} {appVersion.currentVersion}</span>
-        </li>)}
-      </ul>
+    <br />
+    <div className="row">
+      {_.map(secondaryAppVersions, (appVersion, index) => <div className="col-xs-6 col-sm-4 col-md-3" key={index}>
+        <dl>
+          <dt>{appVersion.name}</dt>
+          <dd>{appVersion.currentVersion}</dd>
+        </dl>
+      </div>)}
     </div>
   </div>;
 };
@@ -166,7 +157,7 @@ const TectonicClusterAppVersion = ({tcAppVersion, secondaryAppVersions, tectonic
     <div className="co-cluster-updates__operator-logs">
       <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl} target="_blank">View Logs</a>
     </div>
-    {groupedTaskStatuses && _.map(groupedTaskStatuses, (taskStatus, index) => <TaskStatus taskStatus={taskStatus} key={index} isTCAppVersion={true} secondaryAppVersions={secondaryAppVersions} showDetails={this.state.showDetails}
+    {groupedTaskStatuses && _.map(groupedTaskStatuses, (taskStatus, index) => <TaskStatus taskStatus={taskStatus} key={index} isTCAppVersion={true} secondaryAppVersions={secondaryAppVersions}
       tcAppVersion={tcAppVersion}
       tectonicVersions={tectonicVersions} />
     )}
@@ -245,7 +236,7 @@ class TaskStatus extends React.Component {
       <div className={taskStatus.type === 'appversion' ? 'co-cluster-updates__appversion-ts col-xs-6' : 'col-xs-6'}>
         <TaskStatusStep status={taskStatus} style={{paddingBottom: '10px'}} />
 
-        {!_.isEmpty(_.get(taskStatus, 'statuses')) && this.props.showDetails && taskStatus.state !== 'Completed' &&
+        {!_.isEmpty(_.get(taskStatus, 'statuses')) && taskStatus.state !== 'Completed' &&
           _.map(taskStatus.statuses, (status, index) =>
             <TaskStatusStep status={status} key={index} style={{padding: '0 0 10px 20px'}}/>)
         }
@@ -305,27 +296,31 @@ export const AppVersionDetails = ({primaryOperatorName, appVersionList, config})
   const channelState = appVersionList.length === 0 ? 'Loading' : calculateChannelState(operators, tcAppVersion, config);
 
   return <div>
-    <Header channelState={channelState}
-      tcAppVersion={tcAppVersion} />
+    <div className="co-cluster-updates__heading">
+      <div className="co-cluster-updates__heading--name-wrapper">
+        <span className="co-cluster-updates__heading--name">Tectonic</span>
+      </div>
+    </div>
+    <br />
     <Details config={config}
       channelState={channelState}
       tcAppVersion={tcAppVersion} />
+    <br />
     <FailureStatus failureStatus={tcAppVersion.failureStatus} />
-    <div className="co-cluster-updates__operator">
-      {tcAppVersion && channelState === 'UpToDate' &&
-        <UpToDateTectonicCluster
-          tcAppVersion={tcAppVersion}
-          secondaryAppVersions={secondaryAppVersions}
-        />
-      }
-      {tcAppVersion && channelState !== 'UpToDate' &&
-        <TectonicClusterAppVersion
-          tcAppVersion={tcAppVersion}
-          secondaryAppVersions={secondaryAppVersions}
-          tectonicVersions={this.props.tectonicVersions}
-        />
-      }
-    </div>
+    {tcAppVersion && channelState === 'UpToDate' &&
+      <UpToDateTectonicCluster
+        tcAppVersion={tcAppVersion}
+        secondaryAppVersions={secondaryAppVersions}
+      />
+    }
+    <br />
+    {tcAppVersion && channelState !== 'UpToDate' &&
+      <TectonicClusterAppVersion
+        tcAppVersion={tcAppVersion}
+        secondaryAppVersions={secondaryAppVersions}
+        tectonicVersions={this.props.tectonicVersions}
+      />
+    }
   </div>;
 };
 

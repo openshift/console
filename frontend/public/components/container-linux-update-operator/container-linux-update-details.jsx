@@ -42,11 +42,14 @@ const UpToDateState = ({iconClass, text, total, textClass, versions}) => <div cl
       <div className={textClass}>
         {text}
       </div>
-      <ul className="co-cluster-updates__operator-list">
-        {_.map(_.countBy(versions.sort()), (count, version) => <li key={version}>
-          <span>{version} ({count} of {total})</span>
-        </li>)}
-      </ul>
+      <div className="row">
+        {_.map(_.countBy(versions.sort()), (count, version) => <div className="col-xs-6 col-sm-4 col-md-3" key={version}>
+          <dl>
+            <dt>{version}</dt>
+            <dd>({count} of {total})</dd>
+          </dl>
+        </div>)}
+      </div>
     </div>
   </div>
 </div>;
