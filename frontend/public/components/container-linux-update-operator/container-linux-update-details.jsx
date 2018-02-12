@@ -76,7 +76,7 @@ const UpdateProgress = ({nodeListUpdateStatus}) => {
       </div>
     </div>
     <div className="co-cluster-updates__operator-logs">
-      <Link to="/nodes" className="co-cluster-updates__breakdown-button btn btn-default" target="_blank">View Logs</Link>
+      <Link to="/k8s/cluster/nodes" className="co-cluster-updates__breakdown-button btn btn-default" target="_blank">View Logs</Link>
     </div>
     <div className="co-cluster-updates__operator-ts-component">
       <Breakdown text="Download and finalize updates"
