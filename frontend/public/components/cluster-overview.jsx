@@ -2,65 +2,14 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
-import { NavTitle, LoadingInline, DocumentationSidebar, cloudProviderNames, AsyncComponent } from './utils';
+import { NavTitle, AsyncComponent } from './utils';
 import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
 import { Gauge, Status, prometheusBasePath } from './graphs';
 import { EventStreamPage } from './events';
-
-const StatusIconRow = ({state, text}) => {
-  const iconClasses = {
-    ok: 'fa-check',
-    warning: 'fa-warning',
-    critical: 'fa-warning',
-    unknown: 'fa-question-circle',
-    'access-denied': 'fa-ban'
-  };
-  return <div className={classNames('co-m-status', [`co-m-status--${state}`])}>
-    <i className={classNames('co-m-status__icon', 'fa', iconClasses[state])}></i>
-    <span className="co-m-status__text">{text}</span>
-  </div>;
-};
-
-export const StatusIcon = ({state, text}) => {
-  if (['ok', 'warning', 'critical', 'unknown', 'access-denied'].includes(state)) {
-    return <StatusIconRow state={state} text={text} />;
-  }
-
-  return <div className="co-m-status">
-    <span className="co-m-status__text">{text}</span>
-  </div>;
-};
-
-export const SubHeaderRow = ({header, children}) => {
-  return <div className="row">
-    <div className="col-xs-12">
-      <h4 className="cluster-overview-cell__title">
-        {header}
-      </h4>
-      {children}
-    </div>
-  </div>;
-};
-
-const SoftwareDetailRow = ({title, detail, text, children}) => {
-  return <div className="row cluster-overview-cell__info-row">
-    <div className="col-xs-6 cluster-overview-cell__info-row__first-cell">
-      {title}
-    </div>
-    <div className="col-xs-6 cluster-overview-cell__info-row__last-cell">
-      <div>
-        {!detail && <LoadingInline />}
-        {detail === 'unknown' ? <StatusIcon state={detail} text={text} /> : detail}
-      </div>
-      {children}
-    </div>
-  </div>;
-};
 
 const errorStatus = err => {
   if (_.get(err.response, 'ok') === false) {
@@ -184,7 +133,13 @@ const Graphs = () => <div className="cluster-overview-cell co-m-pane">
   </div>
 </div>;
 
-const Events = props => <div>
+const AllGraphs = props => <div>
+  <Graphs {...props} />
+  <br />
+  <EventStreamPage {...props} />
+</div>;
+
+const LimitedGraphs = props => <div>
   <div className="cluster-overview-cell co-m-pane">
     <div className="row">
       <div className="col-lg-9">
@@ -204,17 +159,19 @@ const Events = props => <div>
   <EventStreamPage {...props} />
 </div>;
 
-const graphsOrEventsLoader = props => {
-  const events = () => <Events {...props} />;
+
+const permissionedLoader = props => {
+  const allGraphs = () => <AllGraphs {...props} />;
+  const limitedGraphs = () => <LimitedGraphs {...props} />;
   // Show events list if user lacks permission to view graphs.
   const q = 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})';
   return coFetch(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
-    .then(() => Graphs)
+    .then(() => allGraphs)
     .catch(err => {
       if (err.response && err.response.status && err.response.status === 403) {
-        return events;
+        return limitedGraphs;
       }
-      return Graphs;
+      return allGraphs;
     });
 };
 
@@ -226,40 +183,12 @@ export const ClusterOverviewPage = props => {
         <title>Cluster Status</title>
       </Helmet>
       <NavTitle title="Cluster Status" />
-      <AsyncComponent {...props} loader={graphsOrEventsLoader} />
+      <AsyncComponent {...props} loader={permissionedLoader} />
       <br />
       <SecurityScanningOverview
         {...props}
         required="SECURITY_LABELLER"
       />
     </div>
-
-    <DocumentationSidebar>
-      <div className="cluster-overview-cell co-m-pane">
-        <SubHeaderRow header="Software Details" />
-
-        <div className="cluster-overview-cell__info-row--first">
-          <SoftwareDetailRow title="Kubernetes"
-            detail={props.kubernetesVersion} text="Kubernetes version could not be determined." />
-        </div>
-
-        <SoftwareDetailRow title="Tectonic" detail={props.currentTectonicVersion || props.tectonicVersion}
-          text="Tectonic version could not be determined." >
-          <div>
-            {// eslint-disable-next-line react/jsx-no-target-blank
-            } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes</a>
-          </div>
-        </SoftwareDetailRow>
-
-        <SoftwareDetailRow title="License" detail={props.tectonicLicense}
-          text="Tectonic License could not be determined." />
-
-        {props.cloudProviders &&
-          <SoftwareDetailRow title="Cloud Provider" detail={cloudProviderNames(props.cloudProviders)}
-            text="Cloud Provider could not be determined." />
-        }
-
-      </div>
-    </DocumentationSidebar>
   </div>;
 };

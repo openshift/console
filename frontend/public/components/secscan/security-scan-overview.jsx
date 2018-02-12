@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { LoadingInline } from '../utils';
 import { stateToProps as featuresStateToProps, areStatesEqual, mergeProps } from '../../features';
-import { StatusIcon, SubHeaderRow } from '../cluster-overview';
+import { StatusIcon, SubHeaderRow } from '../software-details';
 
 const SecurityScanningRow = ({title, detail, text}) => {
   if (detail === null) {
