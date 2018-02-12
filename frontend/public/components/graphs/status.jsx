@@ -56,7 +56,6 @@ export class Status extends SafetyFirst {
       padding: 15,
       margin: '8px 0',
       height: 150,
-      backgroundColor: 'rgb(252,252,252)',
       overflow: 'hidden',
     };
 

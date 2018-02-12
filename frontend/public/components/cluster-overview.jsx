@@ -54,7 +54,7 @@ const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
 
 
 const DashboardLink = ({to, id}) => <div className="col-lg-3 text-right" style={{marginTop: 16}}>
-  <Link id={id} target="_blank" to={to}>View Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
+  <Link id={id} target="_blank" to={to}>View Grafana Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
 </div>;
 
 
