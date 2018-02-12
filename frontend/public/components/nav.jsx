@@ -169,6 +169,11 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink href="/k8s/cluster/customresourcedefinitions" name="CRDs" />
     </NavSection>
 
+    <NavSection text="Help" icon="fa-question-circle">
+      <NavLink href="/start-guide" name="Quick Start Guide" />
+      <NavLink href="/documentation" name="Documentation" />
+    </NavSection>
+
     {authSvc.userID() && <NavSection id="qa_admin" text={authSvc.name()} icon="fa-user">
       <NavLink href="/settings/profile" name="My Account" />
       <NavLink id="qa_logout" href="#" name="Log Out" required={FLAGS.AUTH_ENABLED} onClick={logout} />
