@@ -28,7 +28,15 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
         <div className="co-p-cluster__body">
           <NavTitle title="Cluster Settings" />
           <div className="co-m-pane__body">
-            <SoftwareDetails />
+            <div className="row" style={{marginBottom: 28}}>
+              <div className="col-md-12">
+                <div className="co-cluster-updates">
+                  <div className="co-cluster-updates__component">
+                    <SoftwareDetails />
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="row" style={{marginBottom: 28}}>
               <div className="col-md-12">
                 <div className="co-cluster-updates">
