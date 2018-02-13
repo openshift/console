@@ -1,3 +1,7 @@
+$color-dropdown-hover: rgba(0, 0, 0, .05);
+$color-bookmarker--hover: #AAA;
+$color-bookmarker: #DDD;
+
 .dropdown {
   position: relative;
 }
@@ -19,6 +23,7 @@
   height: 1px;
   margin: 9px 0;
   overflow: hidden;
+  flex-grow: 1;
   background-color: $color-grey-when-selected;
 }
 
@@ -57,6 +62,8 @@
 
   li {
     padding: 0;
+    display: flex;
+    flexDirection: row;
     a {
       display: block;
       padding: 6px 20px;
@@ -75,7 +82,7 @@
       &:hover,&:focus {
         text-decoration: none;
         color: #262626;
-        background-color: #f5f5f5;
+        background-color: $color-dropdown-hover;
       }
     }
     &.active > a, &.active > a:hover, &.active > a:focus {
@@ -86,9 +93,9 @@
     }
     &.dropdown__selected > a {
       color: white;
-      &:hover {
-        color: black;
-      }
+      // &:hover {
+      //   color: black;
+      // }
     }
   }
 }
@@ -126,51 +133,39 @@
 }
 
 .co-namespace-selector__menu.dropdown-menu {
-  padding: 0px;
   .dropdown__selected {
     background-color: inherit;
     color: inherit;
   }
-  li>a.bookmarker {
-    &:hover {
-      background-color: #f5f5f5;
-      // color: #757575;
-    }
-    display: inline-block;
-    padding-right: 5px;
-    padding-left: 12px;
-    color: #DDD;
-    flex-grow: 0;
-  }
-
-  $light-blue: $color-link;
-
   li {
     > a {
       text-decoration: none;
       &:hover,&.hover,&:focus {
-        // color: $light-blue;
-        // text-decoration: underline;
-        // background-color: inherit;
+        background-color: $color-dropdown-hover;
+      }
+      &.bookmarker {
+        display: inline-block;
+        padding-right: 5px;
+        padding-left: 12px;
+        color: $color-bookmarker;
+        flex-grow: 0;
+        &:hover {
+          background-color: $color-dropdown-hover;
+          color: $color-bookmarker--hover;
+        }
       }
     }
 
     &.dropdown__selected > a {
-      color: $light-blue;
-
-      &:hover {
-        color: #23527c;
+      color: $color-highlight-blue;
+      &.bookmarker {
+        color: $color-bookmarker;
+        &:hover {
+          color: $color-bookmarker--hover;
+        }
       }
       &.selected {
-        color: $light-blue;
-      }
-
-      &.bookmarker {
-        color: #DDD;
-        &:hover {
-          background-color: white;
-          color: #757575;
-        }
+        color: $color-highlight-blue;
       }
     }
   }

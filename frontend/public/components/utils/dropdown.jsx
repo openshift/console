@@ -85,8 +85,8 @@ class DropDownRow extends React.PureComponent {
     if (onBookmark) {
       prefix = <a className="bookmarker" onClick={e => onBookmark(e, itemKey, content)}><i className="fa fa-plus-circle" /></a>;
     }
-    return <li className={className} key={itemKey} style={{display: 'flex', flexDirection: 'row'}}>
-      {prefix}<a ref={ref => this.ref=ref} className={classNames({'next-to-bookmark': !!prefix,focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
+    return <li className={className} key={itemKey}>
+      {prefix}<a ref={ref => this.ref=ref} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
     </li>;
   }
 }
