@@ -29,6 +29,15 @@ export enum FLAGS {
   CHARGEBACK = 'CHARGEBACK',
 }
 
+export const CRDS_ = {
+  'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
+  'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
+  'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
+  'uicatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
+  'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
+  'reports.chargeback.coreos.com': FLAGS.CHARGEBACK,
+};
+
 const DEFAULTS = {
   [FLAGS.AUTH_ENABLED]: !(window as any).SERVER_FLAGS.authDisabled,
   [FLAGS.CLUSTER_UPDATES]: undefined,
@@ -41,44 +50,32 @@ const DEFAULTS = {
   [FLAGS.CHARGEBACK]: undefined,
 };
 
-const SET_FLAGS = 'SET_FLAGS';
-const setFlags = (dispatch, flags) => dispatch({flags, type: SET_FLAGS});
+const SET_FLAG = 'SET_FLAG';
+const setFlag = (dispatch, flag, value) => dispatch({flag, value, type: SET_FLAG});
 
-const handleError = (res, flags, dispatch, cb) => {
+const handleError = (res, flag, dispatch, cb) => {
   const status = _.get(res, 'response.status');
   if (status === 403 || status === 502) {
-    setFlags(dispatch, _.mapValues(flags, () => undefined));
-  } else {
+    setFlag(dispatch, flag, undefined);
+  }
+  if (!_.includes([401, 403, 500], status)) {
     setTimeout(() => cb(dispatch), 15000);
   }
 };
 
-const SECURITY_LABELLER_FLAGS = {
-  [FLAGS.SECURITY_LABELLER]: 'security-labeller-app',
-};
-
-const CALICO_FLAGS = {
-  [FLAGS.CALICO]: 'kube-calico',
-};
-
-export const CRDS_ = {
-  'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
-  'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
-  'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
-  'uicatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
-  'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
-  'reports.chargeback.coreos.com': FLAGS.CHARGEBACK,
-};
-
-const labellerDeploymentPath = `${k8sBasePath}/apis/apps/v1beta2/deployments`;
+const labellerDeploymentPath = `${k8sBasePath}/apis/apps/v1beta2/deployments?fieldSelector=metadata.name%3Dsecurity-labeller-app`;
 const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPath)
-  .then(res => setFlags(dispatch, _.mapValues(SECURITY_LABELLER_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
-    (res) => handleError(res, SECURITY_LABELLER_FLAGS, dispatch, detectSecurityLabellerFlags));
+  .then(
+    res => setFlag(dispatch, FLAGS.SECURITY_LABELLER, _.size(res.items) > 0),
+    err => handleError(err, FLAGS.SECURITY_LABELLER, dispatch, detectSecurityLabellerFlags)
+  );
 
-const calicoDaemonSetPath = `${k8sBasePath}/apis/apps/v1beta2/daemonsets`;
+const calicoDaemonSetPath = `${k8sBasePath}/apis/apps/v1beta2/daemonsets?fieldSelector=metadata.name%3Dkube-calico`;
 const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
-  .then(res => setFlags(dispatch, _.mapValues(CALICO_FLAGS, name => _.find(_.map(res.items, (item: any) => item.metadata), {name}))),
-    (res) => handleError(res, CALICO_FLAGS, dispatch, detectCalicoFlags));
+  .then(
+    res => setFlag(dispatch, FLAGS.CALICO, _.size(res.items) > 0),
+    err => handleError(err, FLAGS.CALICO, dispatch, detectCalicoFlags)
+  );
 
 
 export const featureActions = {
@@ -93,13 +90,11 @@ export const featureReducer = (state, action) => {
   }
 
   switch (action.type) {
-    case SET_FLAGS:
-      _.each(action.flags, (v, k) => {
-        if (!FLAGS[k]) {
-          throw new Error(`unknown key for reducer ${k}`);
-        }
-      });
-      return state.merge(action.flags);
+    case SET_FLAG:
+      if (!FLAGS[action.flag]) {
+        throw new Error(`unknown key for reducer ${action.flag}`);
+      }
+      return state.merge({[action.flag]: action.value});
     case 'addCRDs':
       // flip all flags to false to signify that we did not see them
       _.each(CRDS_, v => state = state.set(v, false));
