@@ -78,12 +78,13 @@ export class EventStreamPage extends React.Component {
 
   render () {
     const {category, kind} = this.state;
+    const { showTitle=true } = this.props;
     const types = Object.assign({all: 'All Types'}, _.zipObject(kinds, _.map(kinds, k => kindObj(k).labelPlural)));
     return <div>
-      <Helmet>
+      { showTitle && <Helmet>
         <title>Events</title>
-      </Helmet>
-      <NavTitle title="Events" />
+      </Helmet> }
+      { showTitle && <NavTitle title="Events" /> }
       <div className="co-m-pane">
         <div className="co-m-pane__heading">
           <div className="row">

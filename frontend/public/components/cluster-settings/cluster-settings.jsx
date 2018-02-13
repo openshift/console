@@ -10,7 +10,6 @@ import {SafetyFirst} from '../safety-first';
 import {FLAGS, connectToFlags} from '../../features';
 import {TectonicChannel} from '../channel-operators/tectonic-channel';
 import {ContainerLinuxUpdates} from '../container-linux-update-operator/container-linux-updates';
-import {SoftwareDetails} from '../software-details';
 
 export const SettingsRow = ({children}) => <div className="row co-m-form-row">{children}</div>;
 export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
@@ -28,15 +27,6 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
         <div className="co-p-cluster__body">
           <NavTitle title="Cluster Settings" />
           <div className="co-m-pane__body">
-            <div className="row" style={{marginBottom: 28}}>
-              <div className="col-md-12">
-                <div className="co-cluster-updates">
-                  <div className="co-cluster-updates__component">
-                    <SoftwareDetails />
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="row" style={{marginBottom: 28}}>
               <div className="col-md-12">
                 <div className="co-cluster-updates">

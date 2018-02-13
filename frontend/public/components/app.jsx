@@ -24,7 +24,6 @@ import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { StartGuidePage } from './start-guide';
-import { DocumentationPage } from './documentation';
 import { SearchPage } from './search';
 import { history, getNamespace, AsyncComponent } from './utils';
 import { UIActions } from '../ui/ui-actions';
@@ -96,7 +95,6 @@ class App extends React.PureComponent {
             <Route path="/" exact component={ClusterOverviewContainer} />
             <Route path="/cluster-health" exact component={ClusterHealth} />
             <Route path="/start-guide" exact component={StartGuidePage} />
-            <Route path="/documentation" exact component={DocumentationPage} />
 
             <Route path={`/k8s/ns/:ns/${referenceForModel(ClusterServiceVersionModel)}/:name`} render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/applications/${match.params.name}`} />} />
             <Route path="/k8s/all-namespaces/applications" exact component={ClusterServiceVersionsPage} />

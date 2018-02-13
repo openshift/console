@@ -121,12 +121,7 @@ export class SoftwareDetails extends SafetyFirst {
         detail={kubernetesVersion} text="Kubernetes version could not be determined." />
 
       <SoftwareDetailRow title="Tectonic" detail={currentTectonicVersion || tectonicVersion}
-        text="Tectonic version could not be determined." >
-        <div>
-          {// eslint-disable-next-line react/jsx-no-target-blank
-          } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes</a>
-        </div>
-      </SoftwareDetailRow>
+        text="Tectonic version could not be determined." />
 
       <SoftwareDetailRow title="License" detail={tectonicLicense}
         text="Tectonic License could not be determined." />
