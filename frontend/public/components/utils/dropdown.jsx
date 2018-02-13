@@ -202,6 +202,10 @@ export class Dropdown extends DropdownMixin {
     const { items, keyboardHoverKey } = this.state;
 
     if (key === 'Enter') {
+      if (!keyboardHoverKey) {
+        this.hide(e);
+        return;
+      }
       this.onClick_(keyboardHoverKey, e);
       return;
     }
