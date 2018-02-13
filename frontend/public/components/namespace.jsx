@@ -168,11 +168,11 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   items[allNamespacesKey] = 'all namespaces';
   _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
 
-  let title = activeNamespace || 'all';
+  let title = activeNamespace || 'all namespaces';
 
   // If the currently active namespace is not found in the list of all namespaces, default to "all"
   if (loaded && !_.has(items, title)) {
-    title = 'all';
+    title = 'all namespaces';
   }
 
   const onChange = (newNamespace) => {
