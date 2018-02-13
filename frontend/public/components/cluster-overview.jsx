@@ -230,7 +230,7 @@ const permissionedLoader = props => {
   const limitedGraphs = () => <GraphsPage {...props} limited={true} />;
   // Show events list if user lacks permission to view graphs.
   const q = 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})';
-  return coFetch(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
+  return coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
     .then(() => allGraphs)
     .catch(err => {
       if (err.response && err.response.status && err.response.status === 403) {
