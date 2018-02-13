@@ -316,7 +316,7 @@ export class Dropdown extends DropdownMixin {
                 { bookMarkRows }
                 {_.size(bookMarkRows) ? <li><div className="dropdown-menu__divider" /></li> : null}
               </ul>
-              <ul style={{margin: 0, padding: 0}}>{rows}</ul>
+              <ul style={{margin: 0, padding: 0, maxHeight: 500, overflowY: 'auto'}}>{rows}</ul>
             </div>
           }
         </div>

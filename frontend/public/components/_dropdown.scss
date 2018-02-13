@@ -54,6 +54,9 @@ $color-bookmarker: #DDD;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box;
 
+  max-height: 350px;
+  overflow-y: auto;
+
   ul {
     padding: 0;
     margin: 0;
@@ -133,6 +136,9 @@ $color-bookmarker: #DDD;
 }
 
 .co-namespace-selector__menu.dropdown-menu {
+  max-height: none;
+  overflow-y: inherit;
+
   .dropdown__selected {
     background-color: inherit;
     color: inherit;
