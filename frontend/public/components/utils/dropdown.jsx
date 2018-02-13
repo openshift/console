@@ -26,7 +26,7 @@ export class DropdownMixin extends React.PureComponent {
     if (!this.state.active) {
       return;
     }
-    if (event.target === this.dropdownElement || this.dropdownElement.contains(event.target)) {
+    if (event.target === this.dropdownElement || this.dropdownElement.contains && this.dropdownElement.contains(event.target)) {
       return;
     }
     this.hide();
@@ -106,9 +106,9 @@ export class Dropdown extends DropdownMixin {
         if (_.isPlainObject(loaded)) {
           bookmarks = loaded;
         }
-      } catch (ignored) {
+      } catch (e) {
         // eslint-disable-next-line no-console
-        console.warn(`could not load bookmarks for ${this.storageKey}`);
+        console.warn(`could not load bookmarks for ${this.storageKey}: ${e}`);
       }
     }
 
@@ -305,8 +305,7 @@ export class Dropdown extends DropdownMixin {
                   placeholder={autocompletePlaceholder}
                   value={autocompleteText || ''}
                   onKeyDown={this.onKeyDown}
-                  style={{marginBottom: 10, color: '#000'}}
-                  className="form-control text-filter"
+                  className="form-control dropdown--text-filter"
                   onClick={e => e.stopPropagation()} />
               }
               <ul>
