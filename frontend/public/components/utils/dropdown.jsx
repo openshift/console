@@ -26,7 +26,7 @@ export class DropdownMixin extends React.PureComponent {
     if (!this.state.active) {
       return;
     }
-    if (event.target === this.dropdownElement || this.dropdownElement.contains && this.dropdownElement.contains(event.target)) {
+    if (event.target === this.dropdownElement || this.dropdownElement && this.dropdownElement.contains(event.target)) {
       return;
     }
     this.hide();
