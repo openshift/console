@@ -156,6 +156,7 @@ const RolesPage = ({obj: {metadata}}) => <RoleBindingsPage namespace={metadata.n
 
 const autocompleteFilter = (text, item) => fuzzy(text, item);
 
+const defaultBookmarks = {default: 'default'};
 const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}))(props => {
   const { activeNamespace, dispatch } = props;
 
@@ -164,14 +165,14 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   const allNamespacesKey = '#ALL_NS#';
 
   const items = {};
-  items[allNamespacesKey] = 'all';
+  items[allNamespacesKey] = 'all namespaces';
   _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
 
-  let title = activeNamespace || 'all';
+  let title = activeNamespace || 'all namespaces';
 
   // If the currently active namespace is not found in the list of all namespaces, default to "all"
   if (loaded && !_.has(items, title)) {
-    title = 'all';
+    title = 'all namespaces';
   }
 
   const onChange = (newNamespace) => {
@@ -181,7 +182,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   return <div className="co-namespace-selector">
     Namespace: <Dropdown
       className="co-namespace-selector__dropdown"
-      noButton={true}
+      noButton
       menuClassName="co-namespace-selector__menu"
       items={items}
       title={title}
@@ -189,6 +190,8 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
       selectedKey={activeNamespace || allNamespacesKey}
       autocompleteFilter={autocompleteFilter}
       autocompletePlaceholder="Select namespace..."
+      defaultBookmarks={defaultBookmarks}
+      bookmarkKey="namespaces"
       shortCut="n" />
   </div>;
 });
