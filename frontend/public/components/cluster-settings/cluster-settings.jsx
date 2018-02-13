@@ -30,14 +30,6 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
             <div className="row" style={{marginBottom: 28}}>
               <div className="col-md-12">
                 <div className="co-cluster-updates">
-                  {CLUSTER_UPDATES && <TectonicChannel />}
-                  <ContainerLinuxUpdates />
-                </div>
-              </div>
-            </div>
-            <div className="row" style={{marginBottom: 28}}>
-              <div className="col-md-12">
-                <div className="co-cluster-updates">
                   <div className="co-cluster-updates__component">
                     <div className="co-cluster-updates__heading--name-wrapper">
                       <span className="co-cluster-updates__heading--name">General</span>
@@ -46,6 +38,14 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
                     <LDAPSetting />
                     <CertsInfoContainer />
                   </div>
+                </div>
+              </div>
+            </div>
+            <div className="row" style={{marginBottom: 28}}>
+              <div className="col-md-12">
+                <div className="co-cluster-updates">
+                  {CLUSTER_UPDATES && <TectonicChannel />}
+                  <ContainerLinuxUpdates />
                 </div>
               </div>
             </div>
