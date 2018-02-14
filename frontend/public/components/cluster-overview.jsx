@@ -72,7 +72,7 @@ const fetchQuery = (name, q) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
   .catch(errorStatus);
 
 
-const DashboardLink = ({to, id}) => <div className="pull-right" style={{marginTop: 10}}>
+const DashboardLink = ({to, id}) => <div className="pull-right" style={{marginTop: 12}}>
   <Link id={id} target="_blank" to={to}>View Grafana Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
 </div>;
 
@@ -193,11 +193,11 @@ const GraphsPage = props => <div>
       </div> }
     <div className={props.limited ? 'col-lg-6 col-md-12 group': 'col-lg-3 col-md-6 group'}>
       <div className="group__title">
-        <div className="pull-right" style={{marginTop: 10}}>
+        <div className="pull-right" style={{marginTop: 12}}>
           {// eslint-disable-next-line react/jsx-no-target-blank
           } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
         </div>
-        <h4>Software Details</h4>
+        <h4>Software Info</h4>
       </div>
       <div className="group__body">
         <SoftwareDetails />
@@ -213,7 +213,7 @@ const GraphsPage = props => <div>
     </div>
     <div className="col-lg-9 col-md-12 group">
       <div className="group__title">
-        <div className="pull-right" style={{marginTop: 10}}>
+        <div className="pull-right" style={{marginTop: 12}}>
           <a href="/k8s/all-namespaces/events">View All</a>
         </div>
         <h4>Events</h4>
