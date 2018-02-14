@@ -60,15 +60,15 @@ describe('featureReducer', () => {
     expect(newState).toEqual(Immutable.Map(defaults));
   });
 
-  it('returns updated state with new flags if `SET_FLAGS` action', () => {
-    const action = {type: 'SET_FLAGS', flags: {[FLAGS.CLOUD_SERVICES]: {name: 'clusterserviceversions'}}};
+  it('returns updated state with new flags if `SET_FLAG` action', () => {
+    const action = {type: 'SET_FLAG', flag: FLAGS.CLOUD_SERVICES, value:'clusterserviceversions'};
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
-    expect(newState).toEqual(initialState.merge(action.flags));
+    expect(newState).toEqual(initialState.merge({[action.flag]: action.value}));
   });
 
-  it('returns state if not `SET_FLAGS` action', () => {
+  it('returns state if not `SET_FLAG` action', () => {
     const action = {type: 'OTHER_ACTION'};
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
