@@ -3,11 +3,10 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 
-import {LoadingInline, taskStatuses, OperatorState, operatorStates, calculateChannelState, determineOperatorState, orderedTaskStatuses} from '../utils';
+import {LoadingInline, taskStatuses, operatorStates, calculateChannelState, determineOperatorState, orderedTaskStatuses} from '../utils';
 import {configureOperatorStrategyModal, configureOperatorChannelModal,} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
-import {SafetyFirst} from '../safety-first';
 
 const calculateAppVersionState = (statuses) => {
   const overallState = _(statuses)
@@ -57,27 +56,13 @@ const groupTaskStatuses = tss => {
   return groupedTaskStatuses;
 };
 
-const Header = ({channelState, tcAppVersion, expanded, onClick}) => {
-  return <div className="co-cluster-updates__heading">
-    <div className="co-cluster-updates__heading--name-wrapper">
-      <span className="co-cluster-updates__heading--name">Tectonic</span>
-      { !expanded && <span className="co-cluster-updates__heading--version">{tcAppVersion.currentVersion}</span> }
-    </div>
-    { !expanded &&
-      <div className="co-cluster-updates__heading--updates">
-        <OperatorState opState={channelState} version={tcAppVersion.desiredVersion} />
-      </div>
-    }
-    <a className="co-cluster-updates__toggle" id="expand-cluster-updates" onClick={onClick}>{expanded ? 'Collapse' : 'Expand'}</a>
-  </div>;
-};
-
-const DetailWrapper = ({title, children}) => {
-  return <dl className="co-cluster-updates__detail">
+const DetailWrapper = ({title, children}) => <div className="col-xs-6 col-sm-4 col-md-3">
+  <dl>
     <dt>{title}</dt>
     <dd>{children}</dd>
-  </dl>;
-};
+  </dl>
+</div>;
+
 DetailWrapper.propTypes = {
   title: PropTypes.node,
   children: PropTypes.node
@@ -85,14 +70,14 @@ DetailWrapper.propTypes = {
 
 const Details = ({config, channelState, tcAppVersion}) => {
   if (config.loadError) {
-    return <div className="co-cluster-updates__details">
+    return <div className="row">
       <DetailWrapper title="Current Version">
         {tcAppVersion.currentVersion || <LoadingInline />}
       </DetailWrapper>
     </div>;
   }
 
-  return <div className="co-cluster-updates__details">
+  return <div className="row">
     <DetailWrapper title="Status">
       <DetailStatus config={config} channelState={channelState} version={tcAppVersion.desiredVersion} />
     </DetailWrapper>
@@ -123,39 +108,27 @@ const FailureStatus = ({failureStatus}) => {
 };
 
 //Component used when the channel-state is UpToDate
-class UpToDateTectonicCluster extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showDetails: false
-    };
-  }
+const UpToDateTectonicCluster = ({tcAppVersion, secondaryAppVersions}) => {
+  const {currentVersion, name} = tcAppVersion;
 
-  render() {
-    const {tcAppVersion, secondaryAppVersions} = this.props;
-    const {currentVersion, name} = tcAppVersion;
-
-    return <div className="co-cluster-updates__operator-component col-xs-12">
-      <div className="co-cluster-updates__operator-step">
-        <div className="co-cluster-updates__operator-icon co-cluster-updates__operator-icon--up-to-date">
-          <span className="fa fa-fw fa-check-circle"></span>
-        </div>
-        <div className="co-cluster-updates__operator-text" id="up-to-date-cluster"> <span>{name} {currentVersion}</span></div>
+  return <div>
+    <div className="row">
+      <div className="col-xs-12">
+        <i className="fa fa-fw fa-check-circle co-cluster-updates__operator-icon co-cluster-updates__operator-icon--up-to-date"></i>
+        <span>{name} {currentVersion}</span>
       </div>
-      <div className="co-cluster-updates__operator-details">
-        <button className="btn btn-link" onClick={() => this.setState({showDetails: !this.state.showDetails})}>
-          {this.state.showDetails ? 'Hide Details' : 'Show Details'}
-        </button>
-
-        {this.state.showDetails && <ul className="co-cluster-updates__operator-list">
-          {_.map(secondaryAppVersions, (appVersion, index) => <li key={index}>
-            <span>{appVersion.name} {appVersion.currentVersion}</span>
-          </li>)}
-        </ul>}
-      </div>
-    </div>;
-  }
-}
+    </div>
+    <br />
+    <div className="row">
+      {_.map(secondaryAppVersions, (appVersion, index) => <div className="col-xs-6 col-sm-4 col-md-3" key={index}>
+        <dl>
+          <dt>{appVersion.name}</dt>
+          <dd>{appVersion.currentVersion}</dd>
+        </dl>
+      </div>)}
+    </div>
+  </div>;
+};
 
 UpToDateTectonicCluster.propTypes = {
   tcAppVersion: PropTypes.object,
@@ -163,57 +136,38 @@ UpToDateTectonicCluster.propTypes = {
 };
 
 //Component used when updates are available or in progress.
-class TectonicClusterAppVersion extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showDetails: false
-    };
-  }
+const TectonicClusterAppVersion = ({tcAppVersion, secondaryAppVersions, tectonicVersions}) => {
+  const {currentVersion, targetVersion, logsUrl, name} = tcAppVersion;
+  let desiredVersion = tcAppVersion.desiredVersion;
 
-  render() {
-    const {tcAppVersion, secondaryAppVersions, tectonicVersions, channelState} = this.props;
-    const {currentVersion, targetVersion, logsUrl, name} = tcAppVersion;
-    let desiredVersion = tcAppVersion.desiredVersion;
+  const headerText = currentVersion === desiredVersion ? <span>{name} {currentVersion}</span> :
+    <span className="co-cluster-updates__operator-subheader">{name} {currentVersion} &#10141; {desiredVersion || targetVersion}</span>;
 
-    const headerText = currentVersion === desiredVersion ? <span>{name} {currentVersion}</span> :
-      <span className="co-cluster-updates__operator-subheader">{name} {currentVersion} &#10141; {desiredVersion || targetVersion}</span>;
+  const state = determineOperatorState(_.defaults({desiredVersion: desiredVersion}, tcAppVersion));
+  const groupedTaskStatuses = groupTaskStatuses(tcAppVersion.taskStatuses);
 
-    const state = determineOperatorState(_.defaults({desiredVersion: desiredVersion}, tcAppVersion));
-    const groupedTaskStatuses = groupTaskStatuses(tcAppVersion.taskStatuses);
-
-    return <div className="co-cluster-updates__operator-component col-xs-12">
-      <div className="co-cluster-updates__operator-step">
-        {(state === 'Complete' || state === 'Pending') && <div className={`co-cluster-updates__operator-icon co-cluster-updates__operator-icon--${ _.get(operatorStates[state], 'suffix', '')}`}>
-          <span className={classNames('fa fa-fw', _.get(operatorStates[state], 'icon'))}></span>
-        </div>}
-        <div className="co-cluster-updates__operator-text">{headerText}</div>
-      </div>
-
-      {groupedTaskStatuses && channelState !== 'UpdateAvailable' &&
-        <button className="btn btn-link co-cluster-updates__operator-show-details" onClick={() => this.setState({showDetails: !this.state.showDetails})}>
-          {this.state.showDetails ? 'Hide Details' : 'Show Details'}
-        </button>
-      }
-
-      {this.state.showDetails && <div>
-        <div className="co-cluster-updates__operator-logs">
-          <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl} target="_blank">View Logs</a>
-        </div>
-        {groupedTaskStatuses && _.map(groupedTaskStatuses, (taskStatus, index) => <TaskStatus taskStatus={taskStatus} key={index} isTCAppVersion={true} secondaryAppVersions={secondaryAppVersions} showDetails={this.state.showDetails}
-          tcAppVersion={tcAppVersion}
-          tectonicVersions={tectonicVersions} />
-        )}
+  return <div className="co-cluster-updates__operator-component col-xs-12">
+    <div className="co-cluster-updates__operator-step">
+      {(state === 'Complete' || state === 'Pending') && <div className={`co-cluster-updates__operator-icon co-cluster-updates__operator-icon--${ _.get(operatorStates[state], 'suffix', '')}`}>
+        <span className={classNames('fa fa-fw', _.get(operatorStates[state], 'icon'))}></span>
       </div>}
-    </div>;
-  }
-}
+      <div className="co-cluster-updates__operator-text">{headerText}</div>
+    </div>
+
+    <div className="co-cluster-updates__operator-logs">
+      <a className="co-cluster-updates__breakdown-button btn btn-default" href={logsUrl} target="_blank">View Logs</a>
+    </div>
+    {groupedTaskStatuses && _.map(groupedTaskStatuses, (taskStatus, index) => <TaskStatus taskStatus={taskStatus} key={index} isTCAppVersion={true} secondaryAppVersions={secondaryAppVersions}
+      tcAppVersion={tcAppVersion}
+      tectonicVersions={tectonicVersions} />
+    )}
+  </div>;
+};
 
 TectonicClusterAppVersion.propTypes = {
   tcAppVersion: PropTypes.object,
   secondaryAppVersions: PropTypes.array,
   tectonicVersions: PropTypes.object,
-  channelState: PropTypes.string,
 };
 
 const SecondaryAppVersion = ({appVersion, tcAppVersion, tectonicVersions}) => {
@@ -282,7 +236,7 @@ class TaskStatus extends React.Component {
       <div className={taskStatus.type === 'appversion' ? 'co-cluster-updates__appversion-ts col-xs-6' : 'col-xs-6'}>
         <TaskStatusStep status={taskStatus} style={{paddingBottom: '10px'}} />
 
-        {!_.isEmpty(_.get(taskStatus, 'statuses')) && this.props.showDetails && taskStatus.state !== 'Completed' &&
+        {!_.isEmpty(_.get(taskStatus, 'statuses')) && taskStatus.state !== 'Completed' &&
           _.map(taskStatus.statuses, (status, index) =>
             <TaskStatusStep status={status} key={index} style={{padding: '0 0 10px 20px'}}/>)
         }
@@ -326,71 +280,49 @@ TaskStatus.propTypes = {
 
 //Displays details about Channel Operators
 //Primary operator is Tectonic Channel Operator
-export class AppVersionDetails extends SafetyFirst{
-  constructor(props) {
-    super(props);
-    this._toggleExpand = this._toggleExpand.bind(this);
-    this.state = {
-      expanded: false
-    };
-  }
+export const AppVersionDetails = ({primaryOperatorName, appVersionList, config}) => {
+  const tcAppVersion = _.get(appVersionList, primaryOperatorName, {});
+  const operators = Object.keys(appVersionList).reduce((ops, key) => {
+    ops.push(appVersionList[key]);
+    return ops;
+  }, []);
 
-  _toggleExpand(event) {
-    event.preventDefault();
-    this.setState({
-      expanded: !this.state.expanded
-    });
-    event.target.blur();
-  }
-
-  render() {
-    const {primaryOperatorName, appVersionList, config} = this.props;
-    const tcAppVersion = _.get(appVersionList, primaryOperatorName, {});
-    const operators = Object.keys(appVersionList).reduce((ops, key) => {
+  const secondaryAppVersions = Object.keys(appVersionList).reduce((ops, key) => {
+    if (key !== primaryOperatorName) {
       ops.push(appVersionList[key]);
-      return ops;
-    }, []);
+    }
+    return ops;
+  }, []);
+  const channelState = appVersionList.length === 0 ? 'Loading' : calculateChannelState(operators, tcAppVersion, config);
 
-    const secondaryAppVersions = Object.keys(appVersionList).reduce((ops, key) => {
-      if (key !== primaryOperatorName) {
-        ops.push(appVersionList[key]);
-      }
-      return ops;
-    }, []);
-    const channelState = appVersionList.length === 0 ? 'Loading' : calculateChannelState(operators, tcAppVersion, config);
-
-    return <div>
-      <Header channelState={channelState}
+  return <div>
+    <div className="co-cluster-updates__heading">
+      <div className="co-cluster-updates__heading--name-wrapper">
+        <span className="co-cluster-updates__heading--name">Tectonic</span>
+      </div>
+    </div>
+    <br />
+    <Details config={config}
+      channelState={channelState}
+      tcAppVersion={tcAppVersion} />
+    <br />
+    <FailureStatus failureStatus={tcAppVersion.failureStatus} />
+    {tcAppVersion && channelState === 'UpToDate' &&
+      <UpToDateTectonicCluster
         tcAppVersion={tcAppVersion}
-        expanded={this.state.expanded}
-        onClick={this._toggleExpand} />
-      { this.state.expanded &&
-        <div>
-          <Details config={config}
-            channelState={channelState}
-            tcAppVersion={tcAppVersion} />
-          <FailureStatus failureStatus={tcAppVersion.failureStatus} />
-          <div className="co-cluster-updates__operator">
-            {tcAppVersion && channelState === 'UpToDate' &&
-              <UpToDateTectonicCluster
-                tcAppVersion={tcAppVersion}
-                secondaryAppVersions={secondaryAppVersions}
-              />
-            }
-            {tcAppVersion && channelState !== 'UpToDate' &&
-              <TectonicClusterAppVersion
-                channelState={channelState}
-                tcAppVersion={tcAppVersion}
-                secondaryAppVersions={secondaryAppVersions}
-                tectonicVersions={this.props.tectonicVersions}
-              />
-            }
-          </div>
-        </div>
-      }
-    </div>;
-  }
-}
+        secondaryAppVersions={secondaryAppVersions}
+      />
+    }
+    <br />
+    {tcAppVersion && channelState !== 'UpToDate' &&
+      <TectonicClusterAppVersion
+        tcAppVersion={tcAppVersion}
+        secondaryAppVersions={secondaryAppVersions}
+        tectonicVersions={this.props.tectonicVersions}
+      />
+    }
+  </div>;
+};
 
 AppVersionDetails.propTypes = {
   primaryOperatorName: PropTypes.string,
