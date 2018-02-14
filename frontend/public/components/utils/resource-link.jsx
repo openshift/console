@@ -5,11 +5,15 @@ import { Link } from 'react-router-dom';
 import { ResourceIcon } from './index';
 import { modelFor, referenceForModel } from '../../module/k8s';
 
+const unknownKinds = new Set();
 export const resourcePath = (kind, name, namespace = undefined) => {
   const model = modelFor(kind);
   if (!model) {
-    // eslint-disable-next-line no-console
-    console.error(`resourcePath: no model for "${kind}"`);
+    if (!unknownKinds.has(kind)) {
+      unknownKinds.add(kind);
+      // eslint-disable-next-line no-console
+      console.error(`resourcePath: no model for "${kind}"`);
+    }
     return;
   }
   const {path, namespaced, crd} = model;
