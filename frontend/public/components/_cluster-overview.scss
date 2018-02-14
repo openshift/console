@@ -1,3 +1,23 @@
+.group {
+  margin-bottom: 30px;
+}
+.group__title {
+  border: 1px solid $color-grey-background-border;
+  border-radius: 8px 8px 0 0;
+  background-color: $color-grey-background;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.group__body {
+  min-height: 170px;
+  border: 1px solid $color-grey-background-border;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  overflow: hidden;
+}
+
 .cluster-overview-cell {
   padding: 24px;
   font-size: 13px;
@@ -13,9 +33,12 @@
 }
 
 .cluster-overview-cell__info-row {
-  border-bottom: solid 1px $color-grey-border;
+  border-bottom: solid 1px $color-grey-background-border;
   padding: 10px 0;
   line-height: 20px;
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .cluster-overview-cell__info-row__first-cell {
