@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 /* eslint-disable react/jsx-no-target-blank */
-export const DocumentationSidebar = props => <div className="co-p-cluster__sidebar--bordered">
+export const DocumentationSidebar = props => <div className="co-p-cluster__sidebar--bordered" style={{overflowY: 'hidden'}}>
   <div className="co-m-pane__body">
     <h1 className="co-p-cluster__sidebar-heading co-p-cluster__sidebar-heading--first">Documentation</h1>
     <dl>
