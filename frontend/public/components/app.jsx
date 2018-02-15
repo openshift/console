@@ -118,12 +118,12 @@ class App extends React.PureComponent {
             <Route path="/k8s/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
             <Route path="/k8s/ns/:ns/roles" exact component={rolesListPage} />
 
-            <Route path="/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/ns/:ns/rolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/ns/:ns/rolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
-            <Route path="/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
+            <Route path="/k8s/cluster/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/k8s/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/k8s/ns/:ns/rolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/k8s/ns/:ns/rolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="RoleBinding" />} />
+            <Route path="/k8s/cluster/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
+            <Route path="/k8s/cluster/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
 
             <Redirect from="/k8s/ns/:ns/rolebindings/:name" to="/k8s/all-namespaces/rolebindings" />
 
