@@ -114,7 +114,11 @@ const EventStream = connect(state => ({ns: state.UI.get('activeNamespace')}))(
         oldestTimestamp: new Date(),
       };
       this.boundToggleStream = this.toggleStream.bind(this);
-      this.wsInit(props.ns);
+    }
+
+    componentDidMount() {
+      super.componentDidMount();
+      this.wsInit(this.props.ns);
     }
 
     wsInit (ns) {
