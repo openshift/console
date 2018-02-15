@@ -7,15 +7,11 @@ $height: 18px;
   height: $height;
   min-width: $height;
   padding: 0 4px;
-  line-height: $height + 2px;
+  line-height: $height;
   color: #fff;
   font-size: 12px;
   margin: 0 4px;
   background-color: $color-container-dark;
-
-  &.co-m-resource-deployment {
-    padding: 0 4px 0 5px; // padding from .co-m-resource-icon isn't enough to center D letter
-  }
 }
 
 .co-m-resource-clusterrole,
