@@ -14,8 +14,6 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   render() {
     const FallbackComponent = this.props.FallbackComponent || (() => <div />);
-    FallbackComponent.displayName = 'FallbackComponent';
-
     return this.state.hasError
       ? <FallbackComponent />
       : <div>{this.props.children}</div>;

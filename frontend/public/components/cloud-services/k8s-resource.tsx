@@ -20,7 +20,7 @@ export const Resources = connectToPlural((props: ResourceProps) => {
   });
 
   // If the CSV defines a resources list under the CRD, then we use that instead of the default.
-  const thisDescription = _.get<CRDDescription[]>(clusterServiceVersion, 'spec.customresourcedefinitions.owned', [])
+  const thisDescription: CRDDescription[] = _.get(clusterServiceVersion, 'spec.customresourcedefinitions.owned', [])
     .find((def) => def.name.split('.')[0] === _.get(kindObj, 'path', ''));
 
   const crds = _.get(thisDescription, 'resources', []).filter(ref => ref.name).map(ref => ref.kind);
@@ -28,7 +28,7 @@ export const Resources = connectToPlural((props: ResourceProps) => {
     .map(ref => _.get(ref, 'name') ? resourceForCRD(ref) : {kind: ref.kind, namespaced: true});
 
   const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: {data: K8sResourceKind[]}}) => {
-    return _.flatMap(resources, (resource, kind) => resource.data.map(item => ({...item, kind})))
+    return _.flatMap(resources, (resource, kind: string) => resource.data.map(item => ({...item, kind})))
       .reduce((owned, resource) => {
         return (resource.metadata.ownerReferences || []).some(ref => ref.uid === parentObj.metadata.uid || owned.some(({metadata}) => metadata.uid === ref.uid))
           ? owned.concat([resource])

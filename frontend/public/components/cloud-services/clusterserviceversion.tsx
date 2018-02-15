@@ -96,7 +96,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
     }
   }, clusterServiceVersions);
   const namespacesForApp = (name) => apps.filter(({metadata}) => metadata.name === name).map(({metadata}) => metadata.namespace);
-  const hasDeployment = (csvUID: string) => props.data.some(obj => _.get(obj.metadata, 'ownerReferences', []).some(({uid}) => uid === csvUID));
+  const hasDeployment = (csvUID: string) => props.data.some(obj => (_.get(obj.metadata, 'ownerReferences') || []).some(({uid}) => uid === csvUID));
 
   return <div>{ apps.length > 0
     ? <div className="co-clusterserviceversion-list">
@@ -112,7 +112,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
 
 const stateToProps = ({k8s}, {match}) => ({
   resourceDescriptions: _.values(k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
-    .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', []))
+    .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', [] as CRDDescription[]))
     .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), [])
     .filter((crdDesc, i, allDescriptions) => i === _.findIndex(allDescriptions, ({name}) => name === crdDesc.name)),
   namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())

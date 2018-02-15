@@ -18,7 +18,7 @@ export const Heading: React.SFC<HeadingProps> = ({text, children}) => <div class
 
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = true, showNodeSelector = true, showAnnotations = true, podSelector = 'spec.selector'}) => {
   const { metadata } = resource;
-  const owners = _.get(metadata, 'ownerReferences', [])
+  const owners = (_.get(metadata, 'ownerReferences') || [])
     .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={metadata.namespace} title={o.uid} />);
 
   return <dl>

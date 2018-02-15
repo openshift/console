@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash';
 
-import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, CRDDescription, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
+import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
 import { Resources } from './k8s-resource';
 import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
 import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
@@ -152,8 +152,8 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
       const {kind, metadata, spec, status} = this.props.obj;
 
       // Find the matching CRD spec for the kind of this resource in the CSV.
-      const ownedDefinitions = _.get<CRDDescription[]>(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
-      const reqDefinitions = _.get<CRDDescription[]>(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.required', []);
+      const ownedDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
+      const reqDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.required', []);
       const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === this.props.kindObj.path);
       const statusDescriptors = _.get<StatusDescriptor[]>(thisDefinition, 'statusDescriptors', []);
       const specDescriptors = _.get<SpecDescriptor[]>(thisDefinition, 'specDescriptors', []);
