@@ -236,6 +236,8 @@ tags-input .autocomplete .suggestion-item em {
   line-height: 25px;
   font-weight: 300;
   font-size: 16px;
+  overflow-x: hidden;
+  white-space: nowrap;
 
   a {
     color: white;
