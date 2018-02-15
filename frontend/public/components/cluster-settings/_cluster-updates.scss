@@ -75,9 +75,6 @@ $cluster-updates-width: 800px;
 }
 
 .co-cluster-updates__heading {
-  align-items: baseline;
-  display: flex;
-  flex-direction: row;
   font-size: 13px;
   justify-content: space-between;
   line-height: 13px;
@@ -127,7 +124,6 @@ $cluster-updates-width: 800px;
 .co-cluster-updates__operator-component {
   flex: 1 1 auto;
   font-size: 14px;
-  padding: 0 5px;
 }
 
 .co-cluster-updates__operator-step {
@@ -233,6 +229,7 @@ $cluster-updates-width: 800px;
   border-left: 1px solid $cluster-updates-border;
   border-image: linear-gradient(#eee, #ccc, #eee);
   border-image-slice: 1;
+  margin-left: 22px;
 }
 
 .co-cluster-updates__operator-text--running {
