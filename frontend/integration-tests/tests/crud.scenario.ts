@@ -123,6 +123,33 @@ describe('Kubernetes resource CRUD operations', () => {
     });
   });
 
+  describe('Bindings', () => {
+    const bindingName = `${testName}-cluster-admin`;
+
+    it('clicks on the `create bindings` button', async() => {
+      await browser.get(`${appHost}/k8s/all-namespaces/rolebindings`);
+      await crudView.isLoaded();
+      await crudView.createYAMLButton.click();
+      await browser.wait(until.textToBePresentInElement($('.co-m-pane__title'), 'Create Role Binding'));
+    });
+
+    it('creates a RoleBinding', async() => {
+      await $('#test––role-binding-name').sendKeys(bindingName);
+      await $('#test--ns-dropdown').click().then(() => browser.actions().sendKeys(testName, Key.ARROW_DOWN, Key.ENTER).perform());
+      await $('#test--role-dropdown').click().then(() => browser.actions().sendKeys('cluster-admin', Key.ARROW_DOWN, Key.ENTER).perform());
+      await $('#test--subject-name').sendKeys('subject-name');
+      await crudView.createYAMLButton.click();
+      await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
+      await crudView.isLoaded();
+      expect(crudView.rowForName(bindingName).isPresent()).toBe(true);
+    });
+
+    it('deletes the RoleBinding', async() => {
+      await crudView.deleteRow('RoleBinding')(bindingName);
+      expect(crudView.rowForName(bindingName).isPresent()).toBe(false);
+    });
+  });
+
   describe('Namespace', () => {
     const name = `${testName}-ns`;
 

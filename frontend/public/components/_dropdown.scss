@@ -54,7 +54,6 @@ $color-bookmarker: #DDD;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box;
 
-  max-height: 350px;
   overflow-y: auto;
 
   ul {
@@ -82,17 +81,19 @@ $color-bookmarker: #DDD;
       &.next-to-bookmark {
         padding-left: 5px
       }
-      &:hover,&:focus {
+      &:hover,&:focus,&.hover  {
         text-decoration: none;
         color: #262626;
         background-color: $color-dropdown-hover;
       }
     }
-    &.active > a, &.active > a:hover, &.active > a:focus {
-      color: white;
-      text-decoration: none;
-      outline: 0;
-      background-color: #337ab7;
+    &.active > a {
+        &:hover, &:focus {
+        color: white;
+        text-decoration: none;
+        outline: 0;
+        background-color: #337ab7;
+      }
     }
     &.dropdown__selected > a {
       color: white;
