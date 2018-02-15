@@ -146,7 +146,7 @@ const TectonicClusterAppVersion = ({tcAppVersion, secondaryAppVersions, tectonic
   const state = determineOperatorState(_.defaults({desiredVersion: desiredVersion}, tcAppVersion));
   const groupedTaskStatuses = groupTaskStatuses(tcAppVersion.taskStatuses);
 
-  return <div className="co-cluster-updates__operator-component col-xs-12">
+  return <div className="row"><div className="co-cluster-updates__operator-component col-xs-12">
     <div className="co-cluster-updates__operator-step">
       {(state === 'Complete' || state === 'Pending') && <div className={`co-cluster-updates__operator-icon co-cluster-updates__operator-icon--${ _.get(operatorStates[state], 'suffix', '')}`}>
         <span className={classNames('fa fa-fw', _.get(operatorStates[state], 'icon'))}></span>
@@ -161,7 +161,7 @@ const TectonicClusterAppVersion = ({tcAppVersion, secondaryAppVersions, tectonic
       tcAppVersion={tcAppVersion}
       tectonicVersions={tectonicVersions} />
     )}
-  </div>;
+  </div></div>;
 };
 
 TectonicClusterAppVersion.propTypes = {
@@ -233,7 +233,7 @@ class TaskStatus extends React.Component {
     const {taskStatus, isTCAppVersion, secondaryAppVersions, tcAppVersion} = this.props;
     const reason = taskStatus.reason;
     return <div className="co-cluster-updates__operator-ts-component row">
-      <div className={taskStatus.type === 'appversion' ? 'co-cluster-updates__appversion-ts col-xs-6' : 'col-xs-6'}>
+      <div className={taskStatus.type === 'appversion' ? 'co-cluster-updates__appversion-ts col-xs-12' : 'col-xs-12'}>
         <TaskStatusStep status={taskStatus} style={{paddingBottom: '10px'}} />
 
         {!_.isEmpty(_.get(taskStatus, 'statuses')) && taskStatus.state !== 'Completed' &&
@@ -280,7 +280,7 @@ TaskStatus.propTypes = {
 
 //Displays details about Channel Operators
 //Primary operator is Tectonic Channel Operator
-export const AppVersionDetails = ({primaryOperatorName, appVersionList, config}) => {
+export const AppVersionDetails = ({primaryOperatorName, appVersionList, config, tectonicVersions}) => {
   const tcAppVersion = _.get(appVersionList, primaryOperatorName, {});
   const operators = Object.keys(appVersionList).reduce((ops, key) => {
     ops.push(appVersionList[key]);
@@ -318,7 +318,7 @@ export const AppVersionDetails = ({primaryOperatorName, appVersionList, config})
       <TectonicClusterAppVersion
         tcAppVersion={tcAppVersion}
         secondaryAppVersions={secondaryAppVersions}
-        tectonicVersions={this.props.tectonicVersions}
+        tectonicVersions={tectonicVersions}
       />
     }
   </div>;
@@ -328,4 +328,5 @@ AppVersionDetails.propTypes = {
   primaryOperatorName: PropTypes.string,
   config: PropTypes.object,
   appVersionList: PropTypes.object,
+  tectonicVersions: PropTypes.object,
 };
