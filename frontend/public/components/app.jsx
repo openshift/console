@@ -125,8 +125,6 @@ class App extends React.PureComponent {
             <Route path="/k8s/cluster/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
             <Route path="/k8s/cluster/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
 
-            <Redirect from="/k8s/ns/:ns/rolebindings/:name" to="/k8s/all-namespaces/rolebindings" />
-
             <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
             <Route path="/k8s/cluster/:plural/new" exact component={CreateYAML} />
             <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />

@@ -107,7 +107,7 @@ export const BindingName = connect(null, {startImpersonate: UIActions.startImper
   ({binding, startImpersonate}) => <span>
     {binding.subjects &&
       <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
-    <ResourceName kind={bindingKind(binding)} name={binding.metadata.name} />
+    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} />
   </span>);
 
 export const RoleLink = ({binding}) => {
@@ -186,7 +186,7 @@ export const RoleBindingsPage = ({namespace, showTitle=true}) => <MultiListPage
   showTitle={showTitle}
 />;
 
-const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey}) => {
+const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey, id}) => {
   const items = {};
   let autocompleteFilter, title, newOnChange;
   if (loadError) {
@@ -210,7 +210,7 @@ const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange,
     newOnChange = key => onChange(key, items[key].props.kind);
   }
   return <div>
-    {_.has(items, fixedKey) ? items[fixedKey] : <Dropdown autocompleteFilter={autocompleteFilter} autocompletePlaceholder={placeholder} items={items} selectedKey={selectedKey} title={title} onChange={newOnChange} />}
+    {_.has(items, fixedKey) ? items[fixedKey] : <Dropdown autocompleteFilter={autocompleteFilter} autocompletePlaceholder={placeholder} items={items} selectedKey={selectedKey} title={title} onChange={newOnChange} id={id} />}
     {loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p>}
   </div>;
 };
@@ -372,11 +372,11 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
             <p className="rbac-edit-binding__input-label">Name:</p>
             {_.get(fixed, 'metadata.name')
               ? <ResourceName kind={kind} name={metadata.name} />
-              : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required />}
+              : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required id="test––role-binding-name" />}
             {kind === 'RoleBinding' && <div>
               <div className="separator"></div>
               <p className="rbac-edit-binding__input-label">Namespace:</p>
-              <NsDropdown fixedKey={_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} />
+              <NsDropdown fixedKey={_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} id="test--ns-dropdown" />
             </div>}
           </Section>
 
@@ -390,6 +390,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
               namespace={metadata.namespace}
               onChange={this.changeRoleRef}
               selectedKey={roleRef.name}
+              id="test--role-dropdown"
             />
           </Section>
 
@@ -404,13 +405,13 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
             </div>}
             <div className="separator"></div>
             <p className="rbac-edit-binding__input-label">Subject Name:</p>
-            <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required />
+            <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required id="test--subject-name" />
           </Section>
 
           <div className="separator"></div>
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <button type="submit" className="btn btn-primary">{saveButtonText || 'Create Binding'}</button>
+            <button type="submit" className="btn btn-primary" id="yaml-create">{saveButtonText || 'Create Binding'}</button>
             <Link to={getNamespacedRoute('rolebindings')}>Cancel</Link>
           </ButtonBar>
         </form>
