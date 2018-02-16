@@ -73,7 +73,7 @@ export const BreakdownDetail: React.SFC<BreakdownDetailProps> = (props) => {
       switch (csv.status.phase) {
         case ClusterServiceVersionPhase.CSVPhaseSucceeded:
           return <li className="co-catalog-breakdown__ns-list__item" key={i}>
-            <Link to={`/ns/${csv.metadata.namespace}/applications/${csv.metadata.name}`} tabIndex={-1}>{csv.metadata.namespace}</Link>
+            <Link to={`/applications/ns/${csv.metadata.namespace}/${csv.metadata.name}`} tabIndex={-1}>{csv.metadata.namespace}</Link>
             { soloInstallPlans.some(({metadata}) => metadata.namespace === csv.metadata.namespace) && !subscriptions.some(({metadata}) => metadata.namespace === csv.metadata.namespace) && <span style={{marginLeft: '10px', display: 'inline-flex'}}>
               <a className="co-m-modal-link" style={{color: '#fca657'}} tabIndex={-1} onClick={() => props.subscribe(csv.metadata.namespace)}>Subscribe to updates</a>
             </span> }

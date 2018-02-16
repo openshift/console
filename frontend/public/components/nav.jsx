@@ -5,7 +5,7 @@ import * as classNames from'classnames';
 import * as _ from 'lodash';
 
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
-import { formatNamespaceRoute } from '../ui/ui-actions';
+import { formatNamespacedRouteForResource, formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
 
 import { ClusterPicker } from './cluster-picker';
@@ -16,11 +16,14 @@ import * as appsLogoImg from '../imgs/apps-logo.svg';
 
 const stripNS = href => href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 
-const navLinkStateToProps = (state, {required, resource, href, isActive}) => {
+const navLinkStateToProps = (state, {required, resource, href, prefix, isActive}) => {
   const activeNamespace = state.UI.get('activeNamespace');
   const pathname = state.UI.get('location');
   const resourcePath = pathname ? stripNS(pathname) : '';
-  href = resource ? formatNamespaceRoute(activeNamespace, resource) : href;
+  href = resource ? formatNamespacedRouteForResource(resource) : href;
+  if (prefix) {
+    href = formatNamespaceRoute(activeNamespace, prefix);
+  }
   const noNSHref = stripNS(href);
 
   let canRender = true;
@@ -121,7 +124,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
   </div>
   <div className="navigation-container">
     <NavSection required={[FLAGS.CLOUD_SERVICES]} text="Applications" img={appsLogoImg}>
-      <NavLink resource="applications" name="Available Applications" />
+      <NavLink prefix="/applications" name="Available Applications" />
       <Sep />
       <NavLink required={FLAGS.CLOUD_CATALOGS} href="/catalog" name="Open Cloud Catalog" />
     </NavSection>
@@ -149,7 +152,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     </NavSection>
 
     <NavSection text="Troubleshooting" icon="fa-life-ring">
-      <NavLink resource="search" name="Search" />
+      <NavLink prefix="/search" name="Search" />
       <NavLink resource="events" name="Events" />
       <NavLink href="/prometheus" target="_blank" name="Prometheus" required={FLAGS.PROMETHEUS} />
       <NavLink href="/alertmanager" target="_blank" name="Prometheus Alerts" required={FLAGS.PROMETHEUS} />

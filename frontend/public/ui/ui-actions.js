@@ -1,84 +1,72 @@
 import * as _ from 'lodash';
 import store from '../redux';
 import { history } from '../components/utils/router';
-import { isNamespaced } from '../components/utils/link';
-import { allModels, modelFor } from '../module/k8s/k8s-models';
+import { namespacedPrefixes, isNamespaced } from '../components/utils/link';
+import { allModels } from '../module/k8s/k8s-models';
 
 // URL routes that can be namespaced
-export const prefixes = new Set(['search', 'applications']);
+export const namespacedResources = new Set();
 
 allModels().forEach((v, k) => {
   if (!v.namespaced) {
     return;
   }
   if (v.crd) {
-    prefixes.add(k);
+    namespacedResources.add(k);
     return;
   }
 
-  prefixes.add(v.plural);
+  namespacedResources.add(v.plural);
 });
 
 export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
 
-// Most namespaced urls can't move from one namespace to another,
-// but happen to have prefixes that can - for example:
-//
-//   /ns/NS1/pods/MY_POD
-//
-// MY_POD is in general only associated with ns1, but /ns/$$/pods
-// is valid for all values of $$
-//
-// Only paths with registered namespace friendly prefixes can be
-// re-namespaced, so register your prefixes here as you define the
-// associated routes.
-export const formatNamespaceRoute = (activeNamespace, originalPath, location) => {
-  const isk8s = originalPath.startsWith('/k8s/');
-  if (isk8s) {
-    originalPath = originalPath.substr(4);
-  }
-  const match = isNamespaced(originalPath);
-  if (match) {
-    // The resource is the first URL slug that matches a prefix (e.g. for "/ns/test-ns/jobs/test-job/pods", the resource
-    // is "jobs", not "pods")
-    const resource = _([...prefixes])
-      .filter(p => originalPath.indexOf(p) !== -1)
-      .minBy(p => originalPath.indexOf(p));
-
-    if (!resource) {
-      const pathComponents = originalPath.split('/');
-      let found = false;
-      _.each(pathComponents, (pc, i) => {
-        pc = _.startCase(pc).slice(0, -1);
-        const m = modelFor(pc);
-        if (m) {
-          originalPath = pathComponents.slice(i).join('/');
-          found = true;
-          return false;
-        }
-      });
-      if (!found) {
-        throw new Error(`Path can't be namespaced: ${originalPath}`);
-      }
-    }
-    originalPath = resource;
-  }
-
-  while (originalPath[0] === '/') {
-    originalPath = originalPath.substr(1);
-  }
-
-  const namespacePrefix = activeNamespace ? `ns/${activeNamespace}/` : 'all-namespaces/';
-
-  let suffix = '';
-  if (location) {
-    suffix = `${location.search}${location.hash}`;
-  }
-
-  return `/k8s/${namespacePrefix}${originalPath}${suffix}`;
+export const formatNamespacedRouteForResource = resource => {
+  const activeNamespace = getActiveNamespace();
+  return activeNamespace
+    ? `/k8s/ns/${activeNamespace}/${resource}`
+    : `/k8s/all-namespaces/${resource}`;
 };
 
-export const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
+export const formatNamespaceRoute = (activeNamespace, originalPath, location) => {
+  if (!isNamespaced(originalPath)) {
+    return originalPath;
+  }
+
+  const prefix = _.find(namespacedPrefixes, p => originalPath.startsWith(p));
+  if (!prefix) {
+    throw new Error(`no prefix for path ${originalPath}?`);
+  }
+
+  originalPath = originalPath.substr(prefix.length);
+
+  let parts = originalPath.split('/').filter(p => p);
+  let previousNS = '';
+  if (parts[0] === 'all-namespaces') {
+    parts.shift();
+  } else if (parts[0] === 'ns') {
+    parts.shift();
+    previousNS = parts.shift();
+  }
+
+  if (previousNS !== activeNamespace) {
+    // a given resource will not exist when we switch namespaces, so pop off the tail end
+    parts = parts.slice(0, 1);
+  }
+
+  const namespacePrefix = activeNamespace ? `ns/${activeNamespace}` : 'all-namespaces';
+
+  let path = `${prefix}/${namespacePrefix}`;
+  if (parts.length) {
+    path += `/${parts.join('/')}`;
+  }
+
+  if (location) {
+    path += `${location.search}${location.hash}`;
+  }
+
+  return path;
+};
 
 export const types = {
   setActiveNamespace: 'setActiveNamespace',

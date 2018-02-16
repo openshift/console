@@ -40,7 +40,7 @@ describe('Interacting with the Prometheus OCS', () => {
   });
 
   it('creates Prometheus Operator `Deployment`', async() => {
-    await browser.get(`${appHost}/ns/${testName}/deployments`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await browser.wait(until.textToBePresentInElement(crudView.rowForName(prometheusOperatorName).$('a[title=pods]'), '1 of 1 pods'));
 
@@ -58,7 +58,7 @@ describe('Interacting with the Prometheus OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays Prometheus OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/ns/${testName}/applications`);
+    await browser.get(`${appHost}/applications/ns/${testName}`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

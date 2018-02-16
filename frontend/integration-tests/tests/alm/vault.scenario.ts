@@ -41,7 +41,7 @@ describe('Interacting with the Vault OCS', () => {
   });
 
   it('creates Vault Operator `Deployment`', async() => {
-    await browser.get(`${appHost}/ns/${testName}/deployments`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await browser.wait(until.textToBePresentInElement(crudView.rowForName(vaultOperatorName).$('a[title=pods]'), '1 of 1 pods'));
 
@@ -59,7 +59,7 @@ describe('Interacting with the Vault OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays Vault OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/ns/${testName}/applications`);
+    await browser.get(`${appHost}/applications/ns/${testName}`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

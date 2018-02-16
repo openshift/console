@@ -45,7 +45,7 @@ describe('Interacting with the etcd OCS', () => {
   });
 
   it('creates etcd Operator `Deployment`', async() => {
-    await browser.get(`${appHost}/ns/${testName}/deployments`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await browser.wait(until.textToBePresentInElement(crudView.rowForName(etcdOperatorName).$('a[title=pods]'), '1 of 1 pods'));
 
@@ -63,7 +63,7 @@ describe('Interacting with the etcd OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays etcd OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/ns/${testName}/applications`);
+    await browser.get(`${appHost}/applications/ns/${testName}`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

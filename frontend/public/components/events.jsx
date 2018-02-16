@@ -54,7 +54,7 @@ class SysEvent extends React.PureComponent {
           <small className="co-sysevent__meta-source">
             Generated from <span>{this.props.source.component}</span>
             {this.props.source.component === 'kubelet' &&
-              <span> on <Link to={`/nodes/${this.props.source.host}`}>{this.props.source.host}</Link></span>
+              <span> on <Link to={`/k8s/cluster/nodes/${this.props.source.host}`}>{this.props.source.host}</Link></span>
             }
           </small>
         </div>
