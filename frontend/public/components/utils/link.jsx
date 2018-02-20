@@ -11,8 +11,6 @@
 const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
 const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
-// const nsPathPattern = new RegExp(`^/?ns/(${legalNamePattern.source})/?(.*)$`);
-// const allNsPathPattern = /^\/?all-namespaces\/?(.*)$/;
 
 export const namespacedPrefixes = ['/search', '/applications', '/overview', '/k8s'];
 
@@ -22,15 +20,7 @@ export const stripBasePath = path => {
   return path;
 };
 
-export const isNamespaced = path => {
-  // path = normalizeURLPathBullshit(path);
-  if (namespacedPrefixes.filter(p => path.startsWith(p)).length) {
-    return true;
-  }
-  // const subpath = stripBasePath(path);
-  // return subpath.match(nsPathPattern) || subpath.match(allNsPathPattern);
-  return false;
-};
+export const isNamespaced = path => namespacedPrefixes.filter(p => path.startsWith(p)).length > 0;
 
 export const getNamespace = path => {
   const split = path.split('/')
