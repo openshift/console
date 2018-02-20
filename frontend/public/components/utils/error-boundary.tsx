@@ -2,6 +2,12 @@
 
 import * as React from 'react';
 
+class DefaultFallback extends React.Component {
+  render () {
+    return <div />;
+  }
+}
+
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props) {
     super(props);
@@ -13,7 +19,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   render() {
-    const FallbackComponent = this.props.FallbackComponent || (() => <div />);
+    const FallbackComponent = this.props.FallbackComponent || DefaultFallback;
     return this.state.hasError
       ? <FallbackComponent />
       : <div>{this.props.children}</div>;
