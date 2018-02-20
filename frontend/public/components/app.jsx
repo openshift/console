@@ -55,6 +55,12 @@ const RedirectComponent = props => {
   return <Redirect to={to} />;
 };
 
+function NamespaceFromURL (Component) {
+  return function NamespaceInjector({match, ...rest}) {
+    return <Component namespace={match.params.ns} {...rest} />;
+  };
+}
+
 const namespacedRoutes = [];
 _.each(namespacedPrefixes, p => {
   namespacedRoutes.push(`${p}/ns/:ns`);
@@ -112,10 +118,10 @@ class App extends React.PureComponent {
             <Route path="/applications/ns/:ns/:name" component={ClusterServiceVersionsDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />
 
-            <Route path="/k8s/all-namespaces/events" exact component={EventStreamPage} />
-            <Route path="/k8s/ns/:ns/events" exact component={EventStreamPage} />
-            <Route path="/search/all-namespaces" exact component={SearchPage} />
-            <Route path="/search/ns/:ns" exact component={SearchPage} />
+            <Route path="/k8s/all-namespaces/events" exact component={NamespaceFromURL(EventStreamPage)} />
+            <Route path="/k8s/ns/:ns/events" exact component={NamespaceFromURL(EventStreamPage)} />
+            <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
+            <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
 
             <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />

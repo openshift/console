@@ -3,10 +3,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
+import * as PropTypes from 'prop-types';
 
-import { getActiveNamespace} from '../ui/ui-actions';
 import { Dropdown, history, NavTitle, ResourceIcon, SelectorInput, LoadingBox } from './utils';
 
+import { namespaceProptype } from '../propTypes';
 import { allModels } from '../module/k8s';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -52,23 +53,20 @@ const ResourceListDropdown = connect(state => ({ allkinds: state[kindReducerName
     return <Dropdown className="co-type-selector" items={items} title={items[selected]} onChange={onChange} selectedKey={selected} />;
   });
 
-const ResourceList = connect(() => ({
-  namespace: getActiveNamespace(),
-}))(
-  function ConnectedResourceList ({kind, namespace, selector}) {
-    const kindObj = allModels().find((v) => v.kind === kind) || {};
 
-    if (!kindObj || !kindObj.labelPlural) {
-      return <LoadingBox />;
-    }
+function ResourceList ({kind, namespace, selector}) {
+  const kindObj = allModels().find((v) => v.kind === kind) || {};
 
-    const name = kindObj.labelPlural.replace(/ /g, '');
-    const ListPage = resourceListPages.get(name) || resourceListPages.get('Default');
-    const ns = kindObj.namespaced ? namespace : undefined;
+  if (!kindObj || !kindObj.labelPlural) {
+    return <LoadingBox />;
+  }
 
-    return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} />;
-  });
-ResourceList.displayName = 'ResourceList';
+  const name = kindObj.labelPlural.replace(/ /g, '');
+  const ListPage = resourceListPages.get(name) || resourceListPages.get('Default');
+  const ns = kindObj.namespaced ? namespace : undefined;
+
+  return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} />;
+}
 
 const updateUrlParams = (k, v) => {
   const url = new URL(window.location);
@@ -91,7 +89,7 @@ export class SearchPage extends React.PureComponent {
   }
 
   render() {
-    const {location} = this.props;
+    const {location, namespace} = this.props;
     let kind, q;
     if (location.search) {
       const sp = new URLSearchParams(window.location.search);
@@ -121,7 +119,12 @@ export class SearchPage extends React.PureComponent {
           </div>
         </div>
       </NavTitle>
-      <ResourceList kind={kind} selector={selector} />
+      <ResourceList kind={kind} selector={selector} namespace={namespace} />
     </div>;
   }
 }
+
+SearchPage.propTypes = {
+  namespace: namespaceProptype,
+  location: PropTypes.object.isRequired,
+};
