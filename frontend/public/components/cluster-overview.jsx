@@ -183,16 +183,16 @@ const LimitedGraphs = () => <div>
   </div>
 </div>;
 
-const GraphsPage = props => <div>
+const GraphsPage = ({limited, namespace}) => <div>
   <div className="row">
-    {props.limited ?
+    {limited ?
       <div className="col-lg-6 col-md-12">
         <LimitedGraphs />
       </div> :
       <div className="col-lg-9 col-md-12">
         <Graphs />
       </div> }
-    <div className={props.limited ? 'col-lg-6 col-md-12 group': 'col-lg-3 col-md-6 group'}>
+    <div className={limited ? 'col-lg-6 col-md-12 group': 'col-lg-3 col-md-6 group'}>
       <div className="group__title">
         <div className="pull-right" style={{marginTop: 12}}>
           {// eslint-disable-next-line react/jsx-no-target-blank
@@ -204,7 +204,7 @@ const GraphsPage = props => <div>
         <SoftwareDetails />
       </div>
     </div>
-    <div className={props.limited ? 'col-lg-6 col-md-12 group': 'col-lg-3 col-md-6 group'}>
+    <div className={limited ? 'col-lg-6 col-md-12 group': 'col-lg-3 col-md-6 group'}>
       <div className="group__title">
         <h4>Documentation</h4>
       </div>
@@ -220,25 +220,27 @@ const GraphsPage = props => <div>
         <h4>Events</h4>
       </div>
       <div className="group__body" style={{paddingLeft: 0, paddingRight: 0}}>
-        <EventStreamPage {...props} showTitle={false} />
+        <EventStreamPage namespace={namespace} showTitle={false} />
       </div>
     </div>
   </div>
 </div>;
 
-const permissionedLoader = props => {
-  const allGraphs = () => <GraphsPage {...props} limited={false} />;
-  const limitedGraphs = () => <GraphsPage {...props} limited={true} />;
+const permissionedLoader = () => {
+  const AllGraphs = ({namespace}) => <GraphsPage namespace={namespace} />;
+  const SomeGraphs = ({namespace}) => <GraphsPage namespace={namespace} limited />;
   // Show events list if user lacks permission to view graphs.
   const q = 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})';
   return coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
-    .then(() => allGraphs)
-    .catch(err => {
-      if (err.response && err.response.status && err.response.status === 403) {
-        return limitedGraphs;
+    .then(
+      () => AllGraphs,
+      err => {
+        if (err.response && err.response.status && err.response.status === 403) {
+          return SomeGraphs;
+        }
+        return AllGraphs;
       }
-      return allGraphs;
-    });
+    );
 };
 
 export const ClusterOverviewPage = props => {
@@ -250,7 +252,7 @@ export const ClusterOverviewPage = props => {
       </Helmet>
       <NavTitle title="Cluster Status" />
       <div className="cluster-overview-cell co-m-pane">
-        <AsyncComponent {...props} loader={permissionedLoader} />
+        <AsyncComponent namespace={_.get(props, 'match.params.ns')} loader={permissionedLoader} />
       </div>
       <br />
       <SecurityScanningOverview
