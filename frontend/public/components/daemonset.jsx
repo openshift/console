@@ -46,7 +46,7 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
     <LabelList kind="DaemonSet" labels={daemonset.metadata.labels} />
   </div>
   <div className="col-lg-2 col-md-2 hidden-sm">
-    <Link to={`/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
+    <Link to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
       {daemonset.status.currentNumberScheduled} of {daemonset.status.desiredNumberScheduled} pods
     </Link>
   </div>

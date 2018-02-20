@@ -26,6 +26,7 @@ import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } fro
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, getNamespace, AsyncComponent } from './utils';
+import { namespacedPrefixes } from './utils/link';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage, ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage } from './cloud-services';
@@ -54,9 +55,16 @@ const RedirectComponent = props => {
   return <Redirect to={to} />;
 };
 
+const namespacedRoutes = [];
+_.each(namespacedPrefixes, p => {
+  namespacedRoutes.push(`${p}/ns/:ns`);
+  namespacedRoutes.push(`${p}/all-namespaces`);
+});
+
 class App extends React.PureComponent {
   onRouteChange (props) {
     if (props) {
+      // two way data binding :-/
       const namespace = getNamespace(props.location.pathname);
       store.dispatch(UIActions.setCurrentLocation(props.location.pathname, namespace));
     }
@@ -64,6 +72,7 @@ class App extends React.PureComponent {
   }
 
   componentWillMount () {
+    // load the location from the window
     this.onRouteChange(this.props);
   }
 
@@ -86,29 +95,27 @@ class App extends React.PureComponent {
       <div id="reflex">
         <Nav />
         <div id="content">
-          <Route path={[
-            '/k8s/all-namespaces',
-            '/k8s/ns/:ns',
-          ]} component={NamespaceSelector} />
+          <Route path={namespacedRoutes} component={NamespaceSelector} />
           <Switch>
             <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
-            <Route path="/" exact component={ClusterOverviewContainer} />
+            <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
+            <Route path="/overview/ns/:ns" exact component={ClusterOverviewContainer} />
             <Route path="/cluster-health" exact component={ClusterHealth} />
             <Route path="/start-guide" exact component={StartGuidePage} />
 
-            <Route path={`/k8s/ns/:ns/${referenceForModel(ClusterServiceVersionModel)}/:name`} render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/applications/${match.params.name}`} />} />
-            <Route path="/k8s/all-namespaces/applications" exact component={ClusterServiceVersionsPage} />
-            <Route path="/k8s/ns/:ns/applications" exact component={ClusterServiceVersionsPage} />
-            <Route path="/k8s/ns/:ns/applications/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
-            <Route path="/k8s/ns/:ns/applications/:appName/:plural/new" exact component={CreateYAML} />
-            <Route path="/k8s/ns/:ns/applications/:appName/:plural/:name" component={ResourceDetailsPage} />
-            <Route path="/k8s/ns/:ns/applications/:name" component={ClusterServiceVersionsDetailsPage} />
+            <Route path={`/k8s/ns/:ns/${referenceForModel(ClusterServiceVersionModel)}/:name`} render={({match}) => <Redirect to={`/applications/ns/${match.params.ns}/${match.params.name}`} />} />
+            <Route path="/applications/all-namespaces" exact component={ClusterServiceVersionsPage} />
+            <Route path="/applications/ns/:ns" exact component={ClusterServiceVersionsPage} />
+            <Route path="/applications/ns/:ns/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
+            <Route path="/applications/ns/:ns/:appName/:plural/new" exact component={CreateYAML} />
+            <Route path="/applications/ns/:ns/:appName/:plural/:name" component={ResourceDetailsPage} />
+            <Route path="/applications/ns/:ns/:name" component={ClusterServiceVersionsDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />
 
             <Route path="/k8s/all-namespaces/events" exact component={EventStreamPage} />
             <Route path="/k8s/ns/:ns/events" exact component={EventStreamPage} />
-            <Route path="/k8s/all-namespaces/search" exact component={SearchPage} />
-            <Route path="/k8s/ns/:ns/search" exact component={SearchPage} />
+            <Route path="/search/all-namespaces" exact component={SearchPage} />
+            <Route path="/search/ns/:ns" exact component={SearchPage} />
 
             <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
@@ -140,9 +147,9 @@ class App extends React.PureComponent {
             <Route path="/settings/ldap" exact component={LDAPPage} />
             <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
 
-            <Route path="/search" exact component={props => <Redirect from="/search" to={{pathname: '/k8s/all-namespaces/search', search: props.location.search}} />} />
-
             <Route path="/error" exact component={ErrorPage} />
+            <Redirect from="/" to="/overview/all-namespaces" exact />
+
             <Route component={ErrorPage404} />
           </Switch>
         </div>

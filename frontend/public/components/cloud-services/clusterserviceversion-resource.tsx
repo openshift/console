@@ -26,11 +26,12 @@ export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersio
 
 export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionResourceLinkProps> = (props) => {
   const {namespace, name} = props.obj.metadata;
-  const appName = location.pathname.split('/')[location.pathname.split('/').indexOf('applications') + 1];
+  // XXXX HORRIBLE HACK
+  const appName = location.pathname.split('/').slice(-2, -1);
 
   return <span className="co-resource-link">
     <ResourceIcon kind={referenceFor(props.obj)} />
-    <Link to={`/ns/${namespace}/applications/${appName}/${referenceFor(props.obj)}/${name}`}>{name}</Link>
+    <Link to={`/applications/ns/${namespace}/${appName}/${referenceFor(props.obj)}/${name}`}>{name}</Link>
   </span>;
 };
 
@@ -87,7 +88,7 @@ export const ClusterServiceVersionResourcesPage: React.SFC<ClusterServiceVersion
   const firehoseResources = owned.map((desc) => ({kind: referenceForCRDDesc(desc), namespaced: true, optional: true, prop: desc.kind}));
 
   const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
-  const createLink = (name: string) => `/ns/${obj.metadata.namespace}/applications/${obj.metadata.name}/${referenceForCRDDesc(_.find(owned, {name}))}/new`;
+  const createLink = (name: string) => `/applications/ns/${obj.metadata.namespace}/${obj.metadata.name}/${referenceForCRDDesc(_.find(owned, {name}))}/new`;
   const createProps = owned.length > 1
     ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
     : {to: owned.length === 1 ? createLink(owned[0].name) : null};

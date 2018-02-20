@@ -7,7 +7,7 @@ import { match } from 'react-router-dom';
 import { CustomResourceDefinitionKind, K8sKind, K8sResourceKindReference, referenceForCRD } from './module/k8s';
 import { allModels, kindForReference } from './module/k8s/k8s-models';
 import { coFetchJSON } from './co-fetch';
-import { prefixes } from './ui/ui-actions';
+import { namespacedResources } from './ui/ui-actions';
 /* eslint-enable no-unused-vars */
 
 export const kindReducerName = 'KINDS';
@@ -35,9 +35,9 @@ export const kindReducer = (state: ImmutableMap<"kinds" | "inFlight", any>, acti
 
           const namespaced = scope === 'Namespaced';
           if (namespaced) {
-            prefixes.add(referenceForCRD(crd));
+            namespacedResources.add(referenceForCRD(crd));
           } else {
-            prefixes.delete(referenceForCRD(crd));
+            namespacedResources.delete(referenceForCRD(crd));
           }
 
           return {

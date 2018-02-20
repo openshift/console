@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { getQN, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
-import { getActiveNamespace, getNamespacedRoute, UIActions } from '../../ui/ui-actions';
+import { getActiveNamespace, formatNamespacedRouteForResource, UIActions } from '../../ui/ui-actions';
 import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
@@ -343,7 +343,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           if (metadata.namespace) {
             this.props.setActiveNamespace(metadata.namespace);
           }
-          history.push(getNamespacedRoute('rolebindings'));
+          history.push(formatNamespacedRouteForResource('rolebindings'));
         },
         err => this.setState({error: err.message, inProgress: false})
       );
@@ -412,7 +412,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit" className="btn btn-primary" id="yaml-create">{saveButtonText || 'Create Binding'}</button>
-            <Link to={getNamespacedRoute('rolebindings')}>Cancel</Link>
+            <Link to={formatNamespacedRouteForResource('rolebindings')}>Cancel</Link>
           </ButtonBar>
         </form>
       </div>;

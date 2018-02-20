@@ -536,7 +536,7 @@ const LDAPs = reduxForm({
             </pre>
 
             <p>
-            Next, trigger a rolling-update of the <Link target="_blank" to="/ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</Link>, which will read the new configuration.
+            Next, trigger a rolling-update of the <Link target="_blank" to="/k8s/ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</Link>, which will read the new configuration.
             </p>
 
             <pre className="ldap-pre" style={{marginBottom: 30}}>

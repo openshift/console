@@ -184,7 +184,7 @@ describe(CatalogAppRow.displayName, () => {
 
     expect(succeededNamespaces.length).not.toEqual(0);
     succeededNamespaces.forEach((ns, i) => {
-      expect(ns.find(Link).props().to).toEqual(`/ns/${clusterServiceVersions[i].metadata.namespace}/applications/${clusterServiceVersions[i].metadata.name}`);
+      expect(ns.find(Link).props().to).toEqual(`/applications/ns/${clusterServiceVersions[i].metadata.namespace}/${clusterServiceVersions[i].metadata.name}`);
     });
   });
 

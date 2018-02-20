@@ -111,7 +111,7 @@ const Details = ({obj: ns}) => <div>
           <dd><PullSecret namespace={ns} /></dd>
           <dt>Network Policies</dt>
           <dd>
-            <Link to={`/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
+            <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
           </dd>
         </dl>
       </div>

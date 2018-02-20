@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, history } from '../utils';
-import { getNamespacedRoute } from '../../ui/ui-actions';
+import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { k8sKill } from '../../module/k8s/';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
@@ -35,7 +35,7 @@ class DeleteModal extends PromiseComponent {
       // If we are currently on the deleted resource's page, redirect to the resource list page
       const re = new RegExp(`/${resource.metadata.name}/.*$`);
       if (re.test(window.location.pathname)) {
-        history.push(getNamespacedRoute(kind.path));
+        history.push(formatNamespacedRouteForResource(kind.path));
       }
     });
   }

@@ -103,7 +103,7 @@ describe('Kubernetes resource CRUD operations', () => {
       });
 
       it('search view displays created resource instance', async() => {
-        await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : ''}/search?kind=${kind}&q=${testLabel}%3d${testName}`);
+        await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
         await crudView.isLoaded();
         await crudView.rowForName(testName).element(by.linkText(testName)).click();
         await browser.wait(until.urlContains(`/${testName}`));

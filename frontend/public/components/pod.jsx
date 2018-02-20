@@ -88,10 +88,10 @@ const PodHeader = props => <ListHeader>
 
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">
   <ResourceIcon kind="Container" />
-  <Link to={`/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
+  <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
 </span>;
 
-const NodeLink = ({name}) => name ? <Link to={`/nodes/${name}`}>{name}</Link> : <span>-</span>;
+const NodeLink = ({name}) => name ? <Link to={`/k8s/cluster/nodes/${name}`}>{name}</Link> : <span>-</span>;
 
 export const ContainerRow = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);
