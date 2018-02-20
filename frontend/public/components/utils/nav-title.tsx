@@ -23,7 +23,7 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
 
 export const NavTitle = connectToModel((props: NavTitleProps) => {
   const {kind, kindObj, detail, title, menuActions, obj, breadcrumbs, style} = props;
-  const data = _.get<K8sResourceKind>(obj, 'data');
+  const data = _.get(obj, 'data');
   const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
   const logo = isCSV
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
