@@ -4,7 +4,9 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
+import * as PropTypes from 'prop-types';
 
+import { namespaceProptype } from '../propTypes';
 import { k8sKinds, watchURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { Dropdown, ResourceLink, Box, kindObj, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
@@ -315,5 +317,14 @@ EventStream.defaultProps = {
   kind: 'all',
   category: 'all',
 };
+
+EventStream.propTypes = {
+  namespace: namespaceProptype,
+  kind: PropTypes.string.isRequired,
+  category: PropTypes.string,
+  filter: PropTypes.object,
+  showTitle: PropTypes.bool,
+};
+
 
 export const ResourceEventStream = ({obj: {metadata: {name, namespace}}}) => <EventStream filter={{name}} namespace={namespace} />;

@@ -3,9 +3,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
+import * as PropTypes from 'prop-types';
 
 import { Dropdown, history, NavTitle, ResourceIcon, SelectorInput, LoadingBox } from './utils';
 
+import { namespaceProptype } from '../propTypes';
 import { allModels } from '../module/k8s';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -121,3 +123,8 @@ export class SearchPage extends React.PureComponent {
     </div>;
   }
 }
+
+SearchPage.propTypes = {
+  namespace: namespaceProptype,
+  location: PropTypes.object.isRequired,
+};
