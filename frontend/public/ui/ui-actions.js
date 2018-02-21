@@ -49,7 +49,7 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location) =>
     previousNS = parts.shift();
   }
 
-  if (previousNS !== activeNamespace) {
+  if (previousNS !== activeNamespace && (parts[1] !== 'new' || !activeNamespace)) {
     // a given resource will not exist when we switch namespaces, so pop off the tail end
     parts = parts.slice(0, 1);
   }
