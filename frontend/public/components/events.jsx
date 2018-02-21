@@ -9,8 +9,9 @@ import * as PropTypes from 'prop-types';
 import { namespaceProptype } from '../propTypes';
 import { k8sKinds, watchURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
-import { Dropdown, ResourceLink, Box, kindObj, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
+import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
 import { wsFactory } from '../module/ws-factory';
+import { ResourceListDropdown } from './resource-dropdown';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -26,7 +27,7 @@ const categoryFilter = (category, {reason}) => {
 };
 
 const kindFilter = (kind, {involvedObject}) => {
-  return kind === 'all' || involvedObject.kind.toLowerCase() === kind;
+  return kind === 'all' || involvedObject.kind === kind;
 };
 
 class SysEvent extends React.PureComponent {
@@ -66,8 +67,6 @@ class SysEvent extends React.PureComponent {
 
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
-const kinds = ['DaemonSet', 'Deployment', 'Ingress', 'Job', 'Node', 'Pod', 'ReplicaSet', 'ReplicationController'];
-
 export class EventStreamPage extends React.Component {
   constructor (props) {
     super(props);
@@ -80,7 +79,6 @@ export class EventStreamPage extends React.Component {
   render () {
     const {category, kind} = this.state;
     const { showTitle=true } = this.props;
-    const types = Object.assign({all: 'All Types'}, _.zipObject(kinds, _.map(kinds, k => kindObj(k).labelPlural)));
     return <div>
       { showTitle && <Helmet>
         <title>Events</title>
@@ -90,8 +88,8 @@ export class EventStreamPage extends React.Component {
         <div className="co-m-pane__heading">
           <div className="row">
             <div className="col-xs-12">
-              <Dropdown title="All Types" className="pull-left" items={types} onChange={v => this.setState({kind: v})} />
-              <Dropdown title="All Categories" className="pull-left" items={categories} onChange={v => this.setState({category: v})} />
+              <ResourceListDropdown title="All Types" className="pull-left right-grouped" onChange={v => this.setState({kind: v})} showAll selected={kind} />
+              <Dropdown title="All Categories" className="pull-left btn--dropdown left-grouped" items={categories} onChange={v => this.setState({category: v})} />
             </div>
           </div>
         </div>

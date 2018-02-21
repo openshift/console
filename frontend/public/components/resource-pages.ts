@@ -66,7 +66,14 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('Default', DefaultPage)
   .set('StorageClasses', StorageClassPage)
   .set('CustomResourceDefinitions', CustomResourceDefinitionsPage)
-  .set('ClusterServiceVersion-v1s', ClusterServiceVersionsPage);
+  .set('ClusterServiceVersion-v1s', ClusterServiceVersionsPage)
+  /*  ------------------------------- NOTE -------------------------------
+
+  To avoid circular imports, the keys in this list are manually duplicated in ./resource-dropdown.tsx !
+
+  ------------------------------------------------------------------------
+  */
+  ;
 
 export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('Clusters', ClustersDetailsPage)

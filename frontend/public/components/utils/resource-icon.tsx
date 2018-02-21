@@ -9,7 +9,7 @@ export const ResourceIcon = connectToModel((props: ResourceIconProps) => {
   const kindObj = props.kindObj;
   const kindStr = _.get(kindObj, ['kind'], props.kind);
   const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, props.className);
-  const iconLabel = (kindObj && kindObj.abbr) || kindStr.toUpperCase().slice(0, 2);
+  const iconLabel = (kindObj && kindObj.abbr) || kindStr.toUpperCase().slice(0, 3);
 
   return <span className={klass}>{iconLabel}</span>;
 });
