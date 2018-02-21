@@ -11,8 +11,8 @@ RUN go get -u github.com/golang/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v8.8.1"
-ENV YARN_VERSION="v1.2.1"
+ENV NODE_VERSION="v9.5.0"
+ENV YARN_VERSION="v1.3.2"
 
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home
