@@ -56,8 +56,8 @@ const RedirectComponent = props => {
 };
 
 function NamespaceFromURL (Component) {
-  return function NamespaceInjector({match, ...rest}) {
-    return <Component namespace={match.params.ns} {...rest} />;
+  return function NamespaceInjector(props) {
+    return <Component namespace={props.match.params.ns} {...props} />;
   };
 }
 
@@ -113,7 +113,7 @@ class App extends React.PureComponent {
             <Route path="/applications/all-namespaces" exact component={ClusterServiceVersionsPage} />
             <Route path="/applications/ns/:ns" exact component={ClusterServiceVersionsPage} />
             <Route path="/applications/ns/:ns/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
-            <Route path="/applications/ns/:ns/:appName/:plural/new" exact component={CreateYAML} />
+            <Route path="/applications/ns/:ns/:appName/:plural/new" exact component={NamespaceFromURL(CreateYAML)} />
             <Route path="/applications/ns/:ns/:appName/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/applications/ns/:ns/:name" component={ClusterServiceVersionsDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />
@@ -142,7 +142,7 @@ class App extends React.PureComponent {
             <Route path="/k8s/cluster/:plural/new" exact component={CreateYAML} />
             <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/ns/:ns/pods/:podName/containers/:name" component={ContainersDetailsPage} />
-            <Route path="/k8s/ns/:ns/:plural/new" exact component={CreateYAML} />
+            <Route path="/k8s/ns/:ns/:plural/new" exact component={NamespaceFromURL(CreateYAML)} />
             <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
 
