@@ -10,6 +10,12 @@ import { kindReducerName } from '../kinds';
 import * as classNames from 'classnames';
 import { ClusterServiceVersionModel, EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../models';
 
+/*  ------------------------------- NOTE -------------------------------
+
+To avoid circular imports, the keys in this list are manually duplicated in ./resource-pages.tsx !
+
+------------------------------------------------------------------------
+*/
 const resources = [
   'Clusters', 'ConfigMaps', 'DaemonSets', 'Deployments', 'Jobs', 'CronJobs',
   'Namespaces', 'NetworkPolicies', 'Nodes', 'Pods', 'ReplicaSets', 'ReplicationControllers',
@@ -39,7 +45,6 @@ const ResourceListDropdown_: React.StatelessComponent<ResourceListDropdownProps>
       <span className="co-type-selector__icon-wrapper">
         <ResourceIcon kind="All" />
       </span>All Types</span>;
-    //<DropdownItem kind={'All Categories'} />;
   }
 
   resources.filter(k => k !== ClusterServiceVersionModel.labelPlural)
