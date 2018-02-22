@@ -185,14 +185,25 @@ const LimitedGraphs = () => <div>
 
 const GraphsPage = ({limited, namespace}) => <div>
   <div className="row">
-    {limited ?
-      <div className="col-lg-6 col-md-12">
-        <LimitedGraphs />
-      </div> :
-      <div className="col-lg-9 col-md-12">
-        <Graphs />
-      </div> }
-    <div className={limited ? 'col-lg-6 col-md-12 group': 'col-lg-3 col-md-6 group'}>
+    <div className="col-xs-12">
+      {limited ? <LimitedGraphs /> : <Graphs /> }
+    </div>
+  </div>
+  <div className="row">
+    <div className="col-xs-12 group">
+      <div className="group__title">
+        <div className="pull-right" style={{marginTop: 12}}>
+          <a href="/k8s/all-namespaces/events">View All</a>
+        </div>
+        <h4>Events</h4>
+      </div>
+      <div className="group__body" style={{paddingLeft: 0, paddingRight: 0}}>
+        <EventStreamPage namespace={namespace} showTitle={false} />
+      </div>
+    </div>
+  </div>
+  <div className="row">
+    <div className="col-md-6 group">
       <div className="group__title">
         <div className="pull-right" style={{marginTop: 12}}>
           {// eslint-disable-next-line react/jsx-no-target-blank
@@ -204,23 +215,16 @@ const GraphsPage = ({limited, namespace}) => <div>
         <SoftwareDetails />
       </div>
     </div>
-    <div className={limited ? 'col-lg-6 col-md-12 group': 'col-lg-3 col-md-6 group'}>
+    <div className="col-md-6 group">
       <div className="group__title">
+        <div className="pull-right" style={{marginTop: 12}}>
+          {// eslint-disable-next-line react/jsx-no-target-blank
+          } <a href="https://coreos.com/tectonic/docs/latest/" target="_blank" rel="noopener">Full Documentation&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
+        </div>
         <h4>Documentation</h4>
       </div>
       <div className="group__body">
         <Documentation />
-      </div>
-    </div>
-    <div className="col-lg-9 col-md-12 group">
-      <div className="group__title">
-        <div className="pull-right" style={{marginTop: 12}}>
-          <a href="/k8s/all-namespaces/events">View All</a>
-        </div>
-        <h4>Events</h4>
-      </div>
-      <div className="group__body" style={{paddingLeft: 0, paddingRight: 0}}>
-        <EventStreamPage namespace={namespace} showTitle={false} />
       </div>
     </div>
   </div>
