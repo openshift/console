@@ -50,7 +50,9 @@ Backend binaries are output to `/bin`.
 
 ### Configure the application
 
-If you've got a working `kubectl` on your path, you can run the application with
+#### Tectonic
+
+If you've got a working `kubectl` on your path, you can run the application with:
 
 ```
 source ./contrib/environment.sh
@@ -72,6 +74,18 @@ kubectl describe secrets/<secret-id-obtained-previously>
 ```
 
 Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable when running Bridge.
+
+#### OpenShift
+
+If you've got a working `kubectl` and `oc` on your path, you can run the application with:
+
+```
+oc login -u system:admin
+oc adm policy  --as system:admin add-cluster-role-to-user cluster-admin developer
+oc login -u developer
+source ./contrib/oc-environment.sh
+./bin/bridge
+```
 
 ## Docker
 
