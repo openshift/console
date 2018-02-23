@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 import * as React from 'react';
 
 import { SafetyFirst } from '../safety-first';
+import { coFetchJSON } from '../../co-fetch';
+import { prometheusBasePath } from './index';
 
 const colors = {
   ok: 'rgb(57,200,143)',
@@ -9,7 +11,35 @@ const colors = {
   error: 'rgb(213,69,89)',
 };
 
-/** @augments {React.Component<{fetch: () => Promise<any>, title: string, href?: string, rel?: string, target?: string}}>} */
+
+export const errorStatus = err => {
+  if (_.get(err.response, 'ok') === false) {
+    return {
+      short: '?',
+      status: '', // Gray
+      long: err.message,
+    };
+  }
+  // Generic network error handling.
+  return {
+    short: 'ERROR',
+    long: err.message,
+    status: 'ERROR',
+  };
+};
+
+const fetchQuery = (q, long) => coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
+  .then(res => {
+    const short = parseInt(_.get(res, 'data.result[0].value[1]'), 10) || 0;
+    return {
+      short,
+      long,
+      status: short === 0 ? 'OK' : 'WARN',
+    };
+  })
+  .catch(errorStatus);
+
+/** @augments {React.Component<{fetch?: () => Promise<any>, query?: string, title: string, href?: string, rel?: string, target?: string}}>} */
 export class Status extends SafetyFirst {
   constructor (props) {
     super(props);
@@ -17,17 +47,41 @@ export class Status extends SafetyFirst {
     this.state = {
       status: '...',
     };
+    this.clock = 0;
   }
 
-  fetch () {
-    this.props.fetch()
-      .then(({short, long, status}) => this.setState({short, long, status}))
-      .catch(() => this.setState({short: 'BAD', long: 'Error', status: 'ERROR'}))
-      .then(() => this.interval = setTimeout(() => {
+  fetch (props=this.props) {
+    const clock = this.clock;
+    const promise = props.query ? fetchQuery(props.query, props.name) : props.fetch();
+
+    const ignorePromise = cb => (...args) => {
+      if (clock !== this.clock) {
+        return;
+      }
+      cb(...args);
+    };
+    promise
+      .then(ignorePromise(({short, long, status}) => this.setState({short, long, status})))
+      .catch(ignorePromise(() => this.setState({short: 'BAD', long: 'Error', status: 'ERROR'})))
+      .then(ignorePromise(() => this.interval = setTimeout(() => {
         if (this.isMounted_) {
           this.fetch();
         }
-      }, 30000));
+      }, 30000)));
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (_.isEqual(nextProps, this.props)) {
+      return;
+    }
+    this.clock += 1;
+    // Don't show stale data if we changed the query.
+    this.setState({
+      'status': '...',
+      'short': undefined,
+      'long': undefined,
+    });
+    this.fetch(nextProps);
   }
 
   componentWillMount () {
