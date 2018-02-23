@@ -232,7 +232,7 @@ export const ClusterOverviewPage = props => {
   if (namespace) {
     title = `Status of ${ namespace }`;
   }
-  return <div className="co-p-cluster">
+  return <div>
     <div className="co-p-cluster__body">
       <StartGuide dismissible={true} />
       <Helmet>
