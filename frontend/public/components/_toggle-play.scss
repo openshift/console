@@ -17,19 +17,6 @@
   }
 
   &.co-toggle-play--active {
-    @include co-x-animation(
-      $name: pulse,
-      $duration: 2s,
-      $iterationCount: infinite
-    );
-  }
-}
-
-@include co-x-keyframes(pulse) {
-  0%, 100% {
-    border-color: $color-grey-border;
-  }
-  50% {
     border-color: $color-tectonic-green;
   }
 }
