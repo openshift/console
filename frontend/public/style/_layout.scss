@@ -44,6 +44,7 @@ body {
   flex-direction: column;
   display: flex;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 #co-l-view-container {
