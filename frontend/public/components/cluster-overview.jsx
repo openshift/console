@@ -56,7 +56,7 @@ const Graphs = ({namespace}) => <div>
     <div className="col-xs-12 group">
       <div className="group__title">
         <DashboardLink id="qa_dashboard_k8s_health" to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1" />
-        <h4>Cluster Health</h4>
+        <h4>Health</h4>
       </div>
       <div className="group__body">
         <div className="row">
@@ -146,7 +146,7 @@ const LimitedGraphs = () => <div>
   <div className="row">
     <div className="col-xs-12 group">
       <div className="group__title">
-        <h4>Cluster Health</h4>
+        <h4>Health</h4>
       </div>
       <div className="group__body">
         <div className="row">
@@ -227,15 +227,20 @@ const permissionedLoader = () => {
 };
 
 export const ClusterOverviewPage = props => {
+  const namespace = _.get(props, 'match.params.ns');
+  let title = 'Cluster Status';
+  if (namespace) {
+    title = `Status of ${ namespace }`;
+  }
   return <div className="co-p-cluster">
     <div className="co-p-cluster__body">
       <StartGuide dismissible={true} />
       <Helmet>
-        <title>Cluster Status</title>
+        <title>{title}</title>
       </Helmet>
-      <NavTitle title="Cluster Status" />
+      <NavTitle title={title} />
       <div className="cluster-overview-cell co-m-pane">
-        <AsyncComponent namespace={_.get(props, 'match.params.ns')} loader={permissionedLoader} />
+        <AsyncComponent namespace={namespace} loader={permissionedLoader} />
       </div>
       <br />
       <SecurityScanningOverview
