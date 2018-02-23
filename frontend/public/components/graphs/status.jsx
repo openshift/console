@@ -54,16 +54,16 @@ export class Status extends SafetyFirst {
     const clock = this.clock;
     const promise = props.query ? fetchQuery(props.query, props.name) : props.fetch();
 
-    const decorator = cb => (...args) => {
+    const ignorePromise = cb => (...args) => {
       if (clock !== this.clock) {
         return;
       }
       cb(...args);
     };
     promise
-      .then(decorator(({short, long, status}) => this.setState({short, long, status})))
-      .catch(decorator(() => this.setState({short: 'BAD', long: 'Error', status: 'ERROR'})))
-      .then(decorator(() => this.interval = setTimeout(() => {
+      .then(ignorePromise(({short, long, status}) => this.setState({short, long, status})))
+      .catch(ignorePromise(() => this.setState({short: 'BAD', long: 'Error', status: 'ERROR'})))
+      .then(ignorePromise(() => this.interval = setTimeout(() => {
         if (this.isMounted_) {
           this.fetch();
         }
@@ -75,6 +75,7 @@ export class Status extends SafetyFirst {
       return;
     }
     this.clock += 1;
+    // Don't show stale data if we changed the query.
     this.setState({
       'status': '...',
       'short': undefined,
