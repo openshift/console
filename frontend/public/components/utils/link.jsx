@@ -8,7 +8,7 @@
 //    new RegExp("PREFIX" + legalNamePattern.source + "(SUFFIX)")
 //
 // And it's ok for users to make assumptions about capturing groups.
-const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
+export const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
 const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 

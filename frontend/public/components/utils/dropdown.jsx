@@ -76,7 +76,7 @@ const Caret = () => <span className="caret" />;
 
 class DropDownRow extends React.PureComponent {
   render () {
-    const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover} = this.props;
+    const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey} = this.props;
     let prefix;
     if (onUnBookmark) {
       prefix = <a className="bookmarker" onClick={e => onUnBookmark(e, itemKey)}><i className="fa fa-minus-circle" /></a>;
@@ -84,8 +84,16 @@ class DropDownRow extends React.PureComponent {
     if (onBookmark) {
       prefix = <a className="bookmarker" onClick={e => onBookmark(e, itemKey, content)}><i className="fa fa-plus-circle" /></a>;
     }
+
+    let suffix;
+    if (onUnBookmark && canFavorite) {
+      const isFavorite = favoriteKey === itemKey;
+      suffix = <a className="bookmarker" onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
+    }
     return <li className={className} key={itemKey}>
-      {prefix}<a ref={ref => this.ref=ref} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
+      {prefix}
+      <a ref={ref => this.ref=ref} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
+      {suffix}
     </li>;
   }
 }
@@ -96,21 +104,27 @@ export class Dropdown extends DropdownMixin {
     super(props);
     this.onUnBookmark = (...args) => this.onUnBookmark_(...args);
     this.onBookmark = (...args) => this.onBookmark_(...args);
+    this.onFavorite = (...args) => this.onFavorite_(...args);
     this.onClick = (...args) => this.onClick_(...args);
 
     let bookmarks = props.defaultBookmarks || {};
-    if (props.bookmarkKey) {
+    let favoriteKey;
+    if (props.storageKey) {
       try {
-        const loaded = JSON.parse(localStorage.getItem(this.storageKey));
-        if (_.isPlainObject(loaded)) {
-          bookmarks = loaded;
+        const parsedBookmarks = JSON.parse(localStorage.getItem(this.bookmarkStorageKey));
+        if (_.isPlainObject(parsedBookmarks)) {
+          bookmarks = parsedBookmarks;
+        }
+        const parsedFavorite = localStorage.getItem(props.storageKey);
+        if (props.canFavorite && _.isString(parsedFavorite)) {
+          favoriteKey = parsedFavorite;
         }
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.warn(`could not load bookmarks for ${this.storageKey}: ${e}`);
+        console.warn(`could not load bookmarks for ${props.storageKey}: ${e}`);
       }
     }
-
+    this.state.favoriteKey = favoriteKey;
     this.state.bookmarks = bookmarks;
 
     this.state.items = props.items;
@@ -146,8 +160,8 @@ export class Dropdown extends DropdownMixin {
     };
   }
 
-  get storageKey () {
-    return `bookmarks-${this.props.bookmarkKey}`;
+  get bookmarkStorageKey () {
+    return `${this.props.storageKey}-bookmarks`;
   }
 
   componentDidMount () {
@@ -242,13 +256,16 @@ export class Dropdown extends DropdownMixin {
     this.setState({keyboardHoverKey: newKey});
     e.stopPropagation();
   }
-  onUnBookmark_ (e, key) {
-    e.stopPropagation();
 
-    const bookmarks = Object.assign({}, this.state.bookmarks);
-    delete bookmarks[key];
-    this.setState({bookmarks});
-    localStorage.setItem(this.storageKey, JSON.stringify(bookmarks));
+  onFavorite_ (e, favoriteKey) {
+    e.stopPropagation();
+    this.setState({favoriteKey});
+    if (favoriteKey) {
+      localStorage.setItem(this.props.storageKey, favoriteKey);
+    } else {
+      // do not set `undefined` as a value in localstorage
+      localStorage.removeItem(this.props.storageKey, favoriteKey);
+    }
   }
 
   onBookmark_ (e, key, value) {
@@ -257,12 +274,21 @@ export class Dropdown extends DropdownMixin {
     const bookmarks = Object.assign({}, this.state.bookmarks);
     bookmarks[key] = value;
     this.setState({bookmarks});
-    localStorage.setItem(this.storageKey, JSON.stringify(bookmarks));
+    localStorage.setItem(this.bookmarkStorageKey, JSON.stringify(bookmarks));
+  }
+
+  onUnBookmark_ (e, key) {
+    e.stopPropagation();
+
+    const bookmarks = Object.assign({}, this.state.bookmarks);
+    delete bookmarks[key];
+    this.setState({bookmarks});
+    localStorage.setItem(this.bookmarkStorageKey, JSON.stringify(bookmarks));
   }
 
   render() {
-    const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, bookmarkKey} = this.props;
+    const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, storageKey, canFavorite} = this.props;
 
     const button = noButton
       ? <div onClick={this.toggle} className="dropdown__not-btn" id={this.props.id}>
@@ -283,14 +309,14 @@ export class Dropdown extends DropdownMixin {
       const selected = !noSelection && key === selectedKey;
       const hover = key === keyboardHoverKey;
       const klass = classNames({'dropdown__selected': selected});
-      if (bookmarkKey && bookmarks && bookmarks[key]) {
-        bookMarkRows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onUnBookmark={this.onUnBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
+      if (storageKey && bookmarks && bookmarks[key]) {
+        bookMarkRows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onUnBookmark={this.onUnBookmark} onclick={this.onClick} selected={selected} hover={hover} canFavorite={canFavorite} onFavorite={this.onFavorite} favoriteKey={favoriteKey} />);
         return;
       }
       if (spacerBefore.has(key)) {
         rows.push(<li key={`${key}-spacer`}><div className="dropdown-menu__divider" /></li>);
       }
-      rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={bookmarkKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
+      rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
     });
 
     return (
@@ -336,7 +362,8 @@ Dropdown.propTypes = {
   textFilter: PropTypes.string,
   enableBookmarks: PropTypes.bool,
   defaultBookmarks: PropTypes.objectOf(PropTypes.string),
-  bookmarkKey: PropTypes.string,
+  storageKey: PropTypes.string,
+  canFavorite: PropTypes.bool,
 };
 
 export const ActionsMenu = ({actions}) => {

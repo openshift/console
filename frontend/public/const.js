@@ -14,3 +14,5 @@ export const CONST = {
 export const EVENTS = {
   CONTAINER_REMOVE: 'container-remove',
 };
+
+export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';

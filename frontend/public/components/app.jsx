@@ -7,6 +7,7 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
 import store from '../redux';
+import { NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
 import { getCRDs } from '../kinds';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
@@ -26,7 +27,7 @@ import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } fro
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, getNamespace, AsyncComponent } from './utils';
-import { namespacedPrefixes } from './utils/link';
+import { namespacedPrefixes, legalNamePattern } from './utils/link';
 import { UIActions } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage, ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage } from './cloud-services';
@@ -66,6 +67,18 @@ _.each(namespacedPrefixes, p => {
   namespacedRoutes.push(`${p}/ns/:ns`);
   namespacedRoutes.push(`${p}/all-namespaces`);
 });
+
+const NamespaceRedirect = () => {
+  let to = '/overview/all-namespaces';
+
+  const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
+  if (_.isString(parsedFavorite) && parsedFavorite.match(legalNamePattern)) {
+    to = `/overview/ns/${parsedFavorite}`;
+  }
+  // TODO: check if namespace exists
+  return <Redirect to={to} />;
+};
+
 
 class App extends React.PureComponent {
   onRouteChange (props) {
@@ -154,7 +167,7 @@ class App extends React.PureComponent {
             <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
 
             <Route path="/error" exact component={ErrorPage} />
-            <Redirect from="/" to="/overview/all-namespaces" exact />
+            <Route path="/" exact component={NamespaceRedirect} />
 
             <Route component={ErrorPage404} />
           </Switch>
