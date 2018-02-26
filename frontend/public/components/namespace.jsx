@@ -13,6 +13,7 @@ import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, Resource
 import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line } from './graphs';
+import { NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -182,8 +183,9 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   return <div className="co-namespace-selector">
     Namespace: <Dropdown
       className="co-namespace-selector__dropdown"
-      noButton
       menuClassName="co-namespace-selector__menu"
+      noButton
+      canFavorite
       items={items}
       title={title}
       onChange={onChange}
@@ -191,7 +193,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
       autocompleteFilter={autocompleteFilter}
       autocompletePlaceholder="Select namespace..."
       defaultBookmarks={defaultBookmarks}
-      bookmarkKey="namespaces"
+      storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
       shortCut="n" />
   </div>;
 });
