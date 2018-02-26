@@ -333,6 +333,7 @@ export class Dropdown extends DropdownMixin {
                   onChange={this.changeTextFilter}
                   placeholder={autocompletePlaceholder}
                   value={autocompleteText || ''}
+                  autoCapitalize="none"
                   onKeyDown={this.onKeyDown}
                   className="form-control dropdown--text-filter"
                   onClick={e => e.stopPropagation()} />
