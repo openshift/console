@@ -164,25 +164,23 @@ const LimitedGraphs = () => <div>
 
 const GraphsPage = ({limited, namespace}) => <div>
   <div className="row">
-    <div className="col-xs-12">
+    <div className="col-lg-8 col-md-12">
       {limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} /> }
-    </div>
-  </div>
-  <div className="row">
-    <div className="col-xs-12 group">
-      <div className="group__title">
-        <div className="pull-right" style={{marginTop: 12}}>
-          <a href="/k8s/all-namespaces/events">View All</a>
+      <div className="row">
+        <div className="col-xs-12 group">
+          <div className="group__title">
+            <div className="pull-right" style={{marginTop: 12}}>
+              <a href="/k8s/all-namespaces/events">View All</a>
+            </div>
+            <h4>Events</h4>
+          </div>
+          <div className="group__body" style={{paddingLeft: 0, paddingRight: 0}}>
+            <EventStreamPage namespace={namespace} showTitle={false} />
+          </div>
         </div>
-        <h4>Events</h4>
-      </div>
-      <div className="group__body" style={{paddingLeft: 0, paddingRight: 0}}>
-        <EventStreamPage namespace={namespace} showTitle={false} />
       </div>
     </div>
-  </div>
-  <div className="row">
-    <div className="col-md-6 group">
+    <div className="col-lg-4 col-md-12 group">
       <div className="group__title">
         <div className="pull-right" style={{marginTop: 12}}>
           {// eslint-disable-next-line react/jsx-no-target-blank
@@ -194,7 +192,7 @@ const GraphsPage = ({limited, namespace}) => <div>
         <SoftwareDetails />
       </div>
     </div>
-    <div className="col-md-6 group">
+    <div className="col-lg-4 col-md-12 group">
       <div className="group__title">
         <div className="pull-right" style={{marginTop: 12}}>
           {// eslint-disable-next-line react/jsx-no-target-blank
@@ -234,7 +232,7 @@ export const ClusterOverviewPage = props => {
   }
   return <div>
     <div className="co-p-cluster__body">
-      <StartGuide dismissible={true} />
+      <StartGuide dismissible={true} style={{margin: 15}} />
       <Helmet>
         <title>{title}</title>
       </Helmet>

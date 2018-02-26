@@ -15,4 +15,5 @@ export const EVENTS = {
   CONTAINER_REMOVE: 'container-remove',
 };
 
+export const ALL_NAMESPACES_KEY = '#ALL_NS#';
 export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';

@@ -30,7 +30,6 @@ export class Gauge extends BaseGraph {
     this.style = {
       height: 150,
       minWidth: 150,
-      overflow: 'hidden',
     };
 
     this.options = { staticPlot: true };

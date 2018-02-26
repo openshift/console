@@ -32,7 +32,7 @@ export class StartGuide extends SafetyFirst {
       return null;
     }
     /* eslint-disable react/jsx-no-target-blank */
-    return <div className="co-well" id="tectonic-start-guide">
+    return <div className="co-well" id="tectonic-start-guide" style={this.props.style}>
       {this.state.dismissible && <button className="btn btn-link pull-right" onClick={() => this.dismiss()}>Dismiss</button>}
       <h3 style={{marginBottom: 20}}>Tectonic Quick Start Guide</h3>
 
@@ -41,7 +41,7 @@ export class StartGuide extends SafetyFirst {
         &apos;kubectl&apos; is a command-line program for interacting with the Kubernetes API.
         <br />
         <a href="https://coreos.com/tectonic/docs/latest/tutorials/kubernetes/configure-kubectl.html" target="_blank" rel="noopener">
-          <button className="btn btn-default" style={{marginTop: 10}}>
+          <button className="btn btn-info" style={{marginTop: 10}}>
             Configure kubectl&nbsp;&nbsp;<i className="fa fa-external-link" />
           </button>
         </a>
@@ -52,7 +52,7 @@ export class StartGuide extends SafetyFirst {
         You can choose to deploy your application with &apos;kubectl&apos; or with Tectonic Console.
         <br />
         <a href="https://coreos.com/tectonic/docs/latest/tutorials/sandbox/first-app.html#deploying-a-simple-application" target="_blank" rel="noopener">
-          <button className="btn btn-default" style={{marginTop: 10}}>
+          <button className="btn btn-info" style={{marginTop: 10}}>
             Deploy Application&nbsp;&nbsp;<i className="fa fa-external-link" />
           </button>
         </a>

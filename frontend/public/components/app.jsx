@@ -7,7 +7,7 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
 import store from '../redux';
-import { NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
 import { getCRDs } from '../kinds';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
@@ -69,11 +69,15 @@ _.each(namespacedPrefixes, p => {
 });
 
 const NamespaceRedirect = () => {
-  let to = '/overview/all-namespaces';
+  let to = '/overview/ns/default';
 
   const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
-  if (_.isString(parsedFavorite) && parsedFavorite.match(legalNamePattern)) {
-    to = `/overview/ns/${parsedFavorite}`;
+  if (_.isString(parsedFavorite)) {
+    if (parsedFavorite.match(legalNamePattern)) {
+      to = `/overview/ns/${parsedFavorite}`;
+    } else if (parsedFavorite === ALL_NAMESPACES_KEY) {
+      to = '/overview/all-namespaces';
+    }
   }
   // TODO: check if namespace exists
   return <Redirect to={to} />;

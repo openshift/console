@@ -110,7 +110,6 @@ export class Status extends SafetyFirst {
       padding: 15,
       margin: '8px 0',
       height: 150,
-      overflow: 'hidden',
     };
 
     const statusElem = <div className="graph-wrapper" style={Object.assign({}, defaultStyle, this.style)} >
