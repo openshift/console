@@ -9,4 +9,7 @@
   margin: 0;
   text-align: center;
   color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

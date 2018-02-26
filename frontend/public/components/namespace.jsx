@@ -13,7 +13,7 @@ import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, Resource
 import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line } from './graphs';
-import { NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -163,10 +163,10 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
 
   const {loaded, data} = props.namespace;
   // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
-  const allNamespacesKey = '#ALL_NS#';
+
 
   const items = {};
-  items[allNamespacesKey] = 'all namespaces';
+  items[ALL_NAMESPACES_KEY] = 'all namespaces';
   _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
 
   let title = activeNamespace || 'all namespaces';
@@ -177,7 +177,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   }
 
   const onChange = (newNamespace) => {
-    dispatch(UIActions.setActiveNamespace(newNamespace === allNamespacesKey ? undefined : newNamespace));
+    dispatch(UIActions.setActiveNamespace(newNamespace === ALL_NAMESPACES_KEY ? undefined : newNamespace));
   };
 
   return <div className="co-namespace-selector">
@@ -189,7 +189,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
       items={items}
       title={title}
       onChange={onChange}
-      selectedKey={activeNamespace || allNamespacesKey}
+      selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
       autocompleteFilter={autocompleteFilter}
       autocompletePlaceholder="Select namespace..."
       defaultBookmarks={defaultBookmarks}
