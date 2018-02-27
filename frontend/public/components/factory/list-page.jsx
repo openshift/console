@@ -34,6 +34,7 @@ export const TextFilter = ({label, onChange, defaultValue, style, className, aut
   }
   return <input
     type="text"
+    autoCapitalize="none"
     style={style}
     className={classNames('form-control text-filter pull-right', className)}
     tabIndex={0}
