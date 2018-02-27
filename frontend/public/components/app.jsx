@@ -7,7 +7,7 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
 import store from '../redux';
-import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
+import { ALL_NAMESPACES_KEY } from '../const';
 import { getCRDs } from '../kinds';
 import { featureActions } from '../features';
 import { analyticsSvc } from '../module/analytics';
@@ -27,8 +27,8 @@ import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } fro
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, getNamespace, AsyncComponent } from './utils';
-import { namespacedPrefixes, legalNamePattern } from './utils/link';
-import { UIActions } from '../ui/ui-actions';
+import { namespacedPrefixes } from './utils/link';
+import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage, ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage } from './cloud-services';
 import { ClusterServiceVersionModel } from '../models';
@@ -69,17 +69,29 @@ _.each(namespacedPrefixes, p => {
 });
 
 const NamespaceRedirect = () => {
-  let to = '/overview/ns/default';
+  const activeNamespace = getActiveNamespace();
 
-  const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
-  if (_.isString(parsedFavorite)) {
-    if (parsedFavorite.match(legalNamePattern)) {
-      to = `/overview/ns/${parsedFavorite}`;
-    } else if (parsedFavorite === ALL_NAMESPACES_KEY) {
-      to = '/overview/all-namespaces';
-    }
+  let to;
+  if (activeNamespace === ALL_NAMESPACES_KEY) {
+    to = '/overview/all-namespaces';
+  } else if (activeNamespace) {
+    to = `/overview/ns/${activeNamespace}`;
   }
   // TODO: check if namespace exists
+  return <Redirect to={to} />;
+};
+
+const ActiveNamespaceRedirect = ({location}) => {
+  const activeNamespace = getActiveNamespace();
+
+  let to;
+  if (activeNamespace === ALL_NAMESPACES_KEY) {
+    to = '/search/all-namespaces';
+  } else if (activeNamespace) {
+    to = `/search/ns/${activeNamespace}`;
+  }
+
+  to += location.search;
   return <Redirect to={to} />;
 };
 
@@ -139,6 +151,7 @@ class App extends React.PureComponent {
             <Route path="/k8s/ns/:ns/events" exact component={NamespaceFromURL(EventStreamPage)} />
             <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
             <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
+            <Route path="/search" exact component={ActiveNamespaceRedirect} />
 
             <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
             <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />

@@ -1,6 +1,7 @@
 /* eslint-env node */
 /* global jest */
 import * as _ from 'lodash';
+import { ALL_NAMESPACES_KEY } from '../public/const';
 import '../__mocks__/localStorage';
 
 import store from '../public/redux';
@@ -46,11 +47,11 @@ describe('ui-actions', () => {
       expect(getActiveNamespace()).toEqual('test2');
     });
 
-    it('clears active namespace in memory', () => {
+    it('sets active namespace in memory to all-namespaces', () => {
       setActiveNamespace('test');
-      setActiveNamespace(undefined);
-      expect(_.isUndefined(getActiveNamespace())).toBe(true);
-      expect(getActiveNamespace()).toEqual(undefined);
+      setActiveNamespace(ALL_NAMESPACES_KEY);
+      expect(_.isUndefined(getActiveNamespace())).toBe(false);
+      expect(getActiveNamespace()).toEqual(ALL_NAMESPACES_KEY);
     });
 
     it('should redirect namespaced location paths for known namespace-friendly prefixes', () => {
@@ -61,13 +62,13 @@ describe('ui-actions', () => {
 
     it('should redirect namespaced location paths to their prefixes', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods/new-shimmer';
-      setActiveNamespace(); // reset active namespace
+      setActiveNamespace(ALL_NAMESPACES_KEY); // reset active namespace
       expect(formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
     });
 
     it('should redirect to all if no namespaces is selected', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods';
-      setActiveNamespace();
+      setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
     });
 
@@ -81,7 +82,7 @@ describe('ui-actions', () => {
 
   describe('getNamespacedRoute', () => {
     it('formats a route correctly without an active namespace', () => {
-      setActiveNamespace();
+      setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(getNamespacedRoute('/k8s/ns/hello/pods')).toEqual('/k8s/all-namespaces/pods');
       expect(getNamespacedRoute('/k8s/ns/hello/pods/GRIBBL')).toEqual('/k8s/all-namespaces/pods');
     });
@@ -93,14 +94,14 @@ describe('ui-actions', () => {
     });
 
     it('preserves paths that aren\'t namespaced', () => {
-      setActiveNamespace();
+      setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(getNamespacedRoute('/')).toEqual('/');
       expect(getNamespacedRoute('/gribbl')).toEqual('/gribbl');
       expect(getNamespacedRoute('/pods')).toEqual('/pods');
     });
 
     it('parses resource from path', () => {
-      setActiveNamespace();
+      setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(getNamespacedRoute('/k8s/ns/foo/pods')).toEqual('/k8s/all-namespaces/pods');
       expect(getNamespacedRoute('/applications/ns/foo/pods')).toEqual('/applications/all-namespaces/pods');
       expect(getNamespacedRoute('/k8s/ns/foo/pods/WACKY_SUFFIX')).toEqual('/k8s/all-namespaces/pods');

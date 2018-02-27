@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import store from '../redux';
 import { history } from '../components/utils/router';
+import { ALL_NAMESPACES_KEY } from '../const';
 import { namespacedPrefixes, isNamespaced } from '../components/utils/link';
 import { allModels } from '../module/k8s/k8s-models';
 
@@ -23,9 +24,9 @@ export const getActiveNamespace = () => store.getState().UI.get('activeNamespace
 
 export const formatNamespacedRouteForResource = resource => {
   const activeNamespace = getActiveNamespace();
-  return activeNamespace
-    ? `/k8s/ns/${activeNamespace}/${resource}`
-    : `/k8s/all-namespaces/${resource}`;
+  return activeNamespace === ALL_NAMESPACES_KEY
+    ? `/k8s/all-namespaces/${resource}`
+    : `/k8s/ns/${activeNamespace}/${resource}`;
 };
 
 export const formatNamespaceRoute = (activeNamespace, originalPath, location) => {
@@ -44,17 +45,18 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location) =>
   let previousNS = '';
   if (parts[0] === 'all-namespaces') {
     parts.shift();
+    previousNS = ALL_NAMESPACES_KEY;
   } else if (parts[0] === 'ns') {
     parts.shift();
     previousNS = parts.shift();
   }
 
-  if (previousNS !== activeNamespace && (parts[1] !== 'new' || !activeNamespace)) {
+  if (previousNS !== activeNamespace && (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) {
     // a given resource will not exist when we switch namespaces, so pop off the tail end
     parts = parts.slice(0, 1);
   }
 
-  const namespacePrefix = activeNamespace ? `ns/${activeNamespace}` : 'all-namespaces';
+  const namespacePrefix = activeNamespace === ALL_NAMESPACES_KEY ? 'all-namespaces' : `ns/${activeNamespace}`;
 
   let path = `${prefix}/${namespacePrefix}`;
   if (parts.length) {
