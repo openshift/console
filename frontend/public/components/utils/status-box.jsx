@@ -10,7 +10,7 @@ export const Box = ({children, className}) => <div className={classNames('cos-st
 /** @type {React.SFC<{className?: string, label: string, message?: string, canRetry?: boolean}>} */
 export const LoadError = ({label, className, message, canRetry=true}) => <Box className={className}>
   <div className="text-center cos-error-title">
-    Error Loading {label}{message ? `: ${message}` : ''}
+    Error Loading {label}{_.isString(message) ? `: ${message}` : ''}
   </div>
   {canRetry && <div className="text-center">Please <a onClick={window.location.reload.bind(window.location)}>try again</a>.</div>}
 </Box>;
@@ -41,7 +41,7 @@ MsgBox.displayName = 'MsgBox';
 export const AccessDenied = ({message}) => <Box className="text-center">
   <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
   <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy." />
-  { message && <div className="alert text-danger bg-danger text-left">{ message }</div>}
+  { _.isString(message) && <div className="alert text-danger bg-danger text-left">{ message }</div>}
 </Box>;
 AccessDenied.displayName = 'AccessDenied';
 
