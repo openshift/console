@@ -277,11 +277,17 @@ describe('Kubernetes resource CRUD operations', () => {
     it('updates the resource instance labels', async() => {
       await browser.wait(until.presenceOf($('.co-m-label.co-m-label--expand')));
       expect($$('.co-m-label__key').first().getText()).toEqual(labelValue);
+    });
 
-      await crudView.actionsDropdown.click();
+    it('sees if label links still work', async() => {
+      await $$('.co-m-label').first().click();
+      await browser.wait(until.urlContains(`/search/ns/${testName}?kind=ConfigMap&q=${labelValue}`));
     });
 
     afterAll(async() => {
+      await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/${name}`);
+      await browser.wait(until.presenceOf(crudView.actionsDropdown));
+      await crudView.actionsDropdown.click();
       await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 1000);
       await crudView.actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
       await browser.wait(until.presenceOf($('#confirm-delete')));
