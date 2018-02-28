@@ -94,7 +94,7 @@ export const k8sList = (kind, params={}) => {
   const k = kind.kind === 'Namespace' ? {
     // hit our custom /namespaces path which better handles users with limited permissions
     legacy: true,
-    apiGroup: '../../',
+    apiGroup: '../..',
     apiVersion: 'tectonic',
     path: 'namespaces',
   } : kind;
