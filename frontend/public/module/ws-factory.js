@@ -113,7 +113,7 @@ wsFactory.destroyAll = function() {
 
 WebSocketWrapper.prototype._reconnect = function() {
   const that = this;
-  const max = 30000;
+  const max = 60000;
   let delay = 2000;
 
   if (this._connectionAttempt) {
