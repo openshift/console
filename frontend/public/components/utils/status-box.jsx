@@ -9,10 +9,10 @@ export const Box = ({children, className}) => <div className={classNames('cos-st
 
 /** @type {React.SFC<{className?: string, label: string, message?: string, canRetry?: boolean}>} */
 export const LoadError = ({label, className, message, canRetry=true}) => <Box className={className}>
-  <div className="cos-text-center cos-error-title">
+  <div className="text-center cos-error-title">
     Error Loading {label}{message ? `: ${message}` : ''}
   </div>
-  {canRetry && <div className="cos-text-center">Please <a onClick={window.location.reload.bind(window.location)}>try again</a>.</div>}
+  {canRetry && <div className="text-center">Please <a onClick={window.location.reload.bind(window.location)}>try again</a>.</div>}
 </Box>;
 
 export const Loading = ({className}) => <div className={classNames('co-m-loader co-an-fade-in-out', className)}>

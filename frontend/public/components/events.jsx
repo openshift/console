@@ -239,7 +239,7 @@ class EventStream extends SafetyFirst {
     if (allCount === 0 && this.ws && this.ws.bufferSize() === 0) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
-          <div className="cos-text-center cos-status-box__detail">
+          <div className="text-center cos-status-box__detail">
           No Events in the past hour
           </div>
         </Box>
@@ -249,7 +249,7 @@ class EventStream extends SafetyFirst {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-status-box__title">No Matching Events</div>
-          <div className="cos-text-center cos-status-box__detail">
+          <div className="text-center cos-status-box__detail">
             {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
           </div>
         </Box>
@@ -262,7 +262,7 @@ class EventStream extends SafetyFirst {
       sysEventStatus = (
         <Box>
           <div className="cos-status-box__title cos-error-title">Error Loading Events</div>
-          <div className="cos-status-box__detail cos-text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
+          <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
         </Box>
       );
     } else if (loading) {

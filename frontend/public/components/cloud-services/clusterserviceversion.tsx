@@ -153,7 +153,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
       const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
 
       return this.props.match.params.ns && !this.props.namespaceEnabled
-        ? <Box className="cos-text-center">
+        ? <Box className="text-center">
           <img className="co-clusterserviceversion-list__disabled-icon" src={appsLogo} />
           <MsgBox title="Open Cloud Services not enabled for this namespace" detail="Please contact a system administrator and ask them to enable OCS to continue." />
         </Box>
