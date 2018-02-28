@@ -127,18 +127,12 @@ export class Dropdown extends DropdownMixin {
     this.state.favoriteKey = favoriteKey;
     this.state.bookmarks = bookmarks;
 
-    this.state.items = props.items;
+    this.state.items = Object.assign({}, bookmarks, props.items);
+
     this.state.title = props.noSelection ? props.title : _.get(props.items, props.selectedKey, props.title);
     this.onKeyDown = e => this.onKeyDown_(e);
-    this.changeTextFilter = e => {
-      const autocompleteText = e.target.value;
-      let { items, autocompleteFilter } = this.props;
-      if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
-        items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
-      }
-      this.setState({autocompleteText, items});
-    };
-    const {shortCut} = this.props;
+    this.changeTextFilter = e => this.applyTextFilter_(e.target.value, this.props.items);
+    const { shortCut } = this.props;
     this.globalKeyDown = e => {
       const { nodeName } = e.target;
 
@@ -182,15 +176,10 @@ export class Dropdown extends DropdownMixin {
     if (_.isEqual(nextProps.items, props.items) && nextProps.title === props.title) {
       return;
     }
-
     const title = nextProps.title || props.title;
+    this.setState({title});
 
-    const { autocompleteText } = this.state;
-    let { items, autocompleteFilter } = nextProps;
-    if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
-      items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
-    }
-    this.setState({items, title});
+    this.applyTextFilter_(this.state.autocompleteText, nextProps.items);
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -200,6 +189,16 @@ export class Dropdown extends DropdownMixin {
       this.input.setSelectionRange(position, position);
     }
   }
+
+  applyTextFilter_(autocompleteText, items) {
+    const { autocompleteFilter } = this.props;
+    items = Object.assign({}, this.state.bookmarks, items);
+    if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
+      items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
+    }
+    this.setState({autocompleteText, items});
+  }
+
 
   onKeyDown_ (e) {
     const { key } = e;
@@ -223,17 +222,7 @@ export class Dropdown extends DropdownMixin {
       return;
     }
 
-    // reconstruct the correct order (bookmarks go first)
-    const { bookmarks } = this.state;
-    // put the visible, bookmarked items in the front of the list and sort it
-    const keys = _.intersection(_.keys(items), _.keys(bookmarks)).sort();
-    _.keys(items).forEach(b => {
-      if (bookmarks[b]) {
-        return;
-      }
-      // push the rest of the non-bookmarked items to the end
-      keys.push(b);
-    });
+    const keys = Object.keys(items);
 
     let index = _.indexOf(keys, keyboardHoverKey);
 
