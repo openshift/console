@@ -8,6 +8,8 @@
 //    new RegExp("PREFIX" + legalNamePattern.source + "(SUFFIX)")
 //
 // And it's ok for users to make assumptions about capturing groups.
+import { ALL_NAMESPACES_KEY } from '../../const';
+
 export const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
 const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
@@ -29,6 +31,11 @@ export const getNamespace = path => {
   if (split.length < 3) {
     return;
   }
+
+  if (split[1] === 'all-namespaces') {
+    return ALL_NAMESPACES_KEY;
+  }
+
   if (split[1] !== 'ns') {
     return;
   }
