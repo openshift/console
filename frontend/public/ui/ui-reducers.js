@@ -23,6 +23,11 @@ export default (state, action) => {
 
   switch (action.type) {
     case types.setActiveNamespace:
+      if (!action.value) {
+        // eslint-disable-next-line no-console
+        console.warn('setActiveNamespace: Not setting to falsy!');
+        return state;
+      }
       return state.set('activeNamespace', action.value);
 
     case types.setCurrentLocation:
