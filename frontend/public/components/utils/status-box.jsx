@@ -28,19 +28,20 @@ export const LoadingBox = ({className}) => <Box className={className}><Loading /
 LoadingBox.displayName = 'LoadingBox';
 
 export const EmptyBox = ({label}) => <Box>
-  <div className="cos-text-center">No {label} Found</div>
+  <div className="text-center">No {label} Found</div>
 </Box>;
 EmptyBox.displayName = 'EmptyBox';
 
 export const MsgBox = ({title, detail, className = ''}) => <Box className={className}>
   {title && <div className="cos-status-box__title">{title}</div>}
-  {detail && <div className="cos-text-center cos-status-box__detail">{detail}</div>}
+  {detail && <div className="text-center cos-status-box__detail">{detail}</div>}
 </Box>;
 MsgBox.displayName = 'MsgBox';
 
-export const AccessDenied = () => <Box className="cos-text-center">
+export const AccessDenied = ({message}) => <Box className="text-center">
   <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
-  <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy" />
+  <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy." />
+  { message && <div className="alert text-danger bg-danger text-left">{ message }</div>}
 </Box>;
 AccessDenied.displayName = 'AccessDenied';
 
@@ -69,7 +70,7 @@ export const StatusBox = props => {
       </div>;
     }
     if (status === 403 || _.includes(_.toLower(loadError), 'access denied')) {
-      return <AccessDenied />;
+      return <AccessDenied message={loadError.message} />;
     }
 
     if (loaded && loadError instanceof TimeoutError) {
