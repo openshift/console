@@ -25,12 +25,7 @@ export const stripBasePath = path => {
 export const isNamespaced = path => namespacedPrefixes.filter(p => path.startsWith(p)).length > 0;
 
 export const getNamespace = path => {
-  const split = path.split('/')
-    .filter(x => x);
-
-  if (split.length < 3) {
-    return;
-  }
+  const split = path.split('/').filter(x => x);
 
   if (split[1] === 'all-namespaces') {
     return ALL_NAMESPACES_KEY;
@@ -39,6 +34,13 @@ export const getNamespace = path => {
   if (split[1] !== 'ns') {
     return;
   }
-  const match = split[2].match(legalNamePattern);
+
+  const ns = split[2];
+
+  if (!ns) {
+    return;
+  }
+
+  const match = ns.match(legalNamePattern);
   return match && match.length > 0 && match[0];
 };
