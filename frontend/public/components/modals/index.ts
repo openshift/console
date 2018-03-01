@@ -7,7 +7,6 @@ export * from './create-namespace-modal';
 export * from './delete-namespace-modal';
 export * from './error-modal';
 export * from './kubectl-config';
-export * from './license-enforcement-modal';
 export * from './update-license-modal';
 export * from './configure-unschedulable-modal';
 export * from './configure-ns-pull-secret-modal';

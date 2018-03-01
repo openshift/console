@@ -7,7 +7,6 @@ import {k8sKinds, k8sList} from '../module/k8s';
 import {coFetchJSON} from '../co-fetch';
 import {pluralize} from './utils';
 import {GlobalNotification} from './global-notification';
-import {licenseEnforcementModal} from './modals';
 
 const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
 
@@ -47,7 +46,6 @@ export const entitlementTitle = (name, count) => {
 class LicenseNotifier extends React.Component {
   constructor() {
     super();
-    this._modalTriggered = false;
     this.state = {
       expiration: null,
       graceExpiration: null,
@@ -109,40 +107,7 @@ class LicenseNotifier extends React.Component {
       entitlementKind: json.entitlementKind,
       entitlementCount: json.entitlementCount,
       errorMessage: json.errorMessage
-    }, this._triggerModal);
-  }
-
-  _triggerModal() {
-    if (this._modalTriggered) {
-      return;
-    }
-    this._modalTriggered = true;
-
-    if (this._errored()) {
-      licenseEnforcementModal({
-        type: 'invalid',
-        blocking: true,
-        message: this.state.errorMessage
-      });
-    } else if (this._expired()) {
-      licenseEnforcementModal({
-        type: 'expired',
-        blocking: this._graceExpired(),
-        expiration: this.state.expiration
-      });
-    } else if (this._entitlementExceeded()) {
-      const current = this.state.current[this.state.entitlementKind];
-      const entitled = this.state.entitlementCount;
-      licenseEnforcementModal({
-        type: 'entitlement',
-        blocking: this.state.entitlementKind === 'nodes',
-        entitlement: this.state.entitlementKind,
-        current,
-        entitled
-      });
-    } else {
-      this._modalTriggered = false;
-    }
+    });
   }
 
   _errored() {
