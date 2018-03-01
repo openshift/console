@@ -97,11 +97,30 @@ export class BaseGraph extends SafetyFirst {
     });
   }
 
+  prometheusURL () {
+    let queries = this.props.query;
+    if (!_.isArray(queries)) {
+      queries = [{
+        query: queries,
+      }];
+    }
+    const params = new URLSearchParams();
+    _.each(queries, (q, i) => {
+      params.set(`g${i}.range_input`, '1h');
+      params.set(`g${i}.expr`, q.query);
+      params.set(`g${i}.tab`, '0');
+    });
+
+    return `/prometheus/graph?${params.toString()}`;
+  }
+
   render () {
-    return <div className="graph-wrapper" style={this.style}>
-      <h5 className="graph-title">{this.props.title}</h5>
-      <div ref={this.setNode} style={{width: '100%'}}/>
-    </div>;
+    return <a href={this.prometheusURL()} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
+      <div className="graph-wrapper" style={this.style}>
+        <h5 className="graph-title">{this.props.title}</h5>
+        <div ref={this.setNode} style={{width: '100%'}}/>
+      </div>
+    </a>;
   }
 }
 
