@@ -27,7 +27,7 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent-stream__connection-error {
-  color: $color-red-failure;
+  color: $color-red-error;
 }
 
 .co-sysevent-stream__timeline {
@@ -35,7 +35,6 @@ $color-dark-border: #ddd;
   position: absolute;
   top: 35px;
   bottom: 30px;
-  width: 40px;
   border-style: solid;
   border-color: $color-grey-border;
   border-width: 0;
@@ -66,7 +65,7 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent-stream__timeline__btn-text {
-  width: 320px;
+  min-width: 320px;
   -webkit-transform: translate(50px, -60px);
   transform: translate(50px, -60px);
 }

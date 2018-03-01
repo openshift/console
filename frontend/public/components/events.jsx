@@ -162,7 +162,10 @@ class EventStream extends SafetyFirst {
       .onopen(() => {
         this.setState({error: false, loading: false, sortedMessages: []});
       })
-      .onclose(() => {
+      .onclose(evt => {
+        if (evt && evt.wasClean === false) {
+          this.setState({error: evt.reason || 'WebSocket closed uncleanly.'});
+        }
         this.setState({sortedMessages: []});
       })
       .onerror(() => {
@@ -258,7 +261,7 @@ class EventStream extends SafetyFirst {
 
     let statusBtnTxt;
     if (error) {
-      statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream</span>;
+      statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
       sysEventStatus = (
         <Box>
           <div className="cos-status-box__title cos-error-title">Error Loading Events</div>

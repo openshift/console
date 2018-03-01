@@ -150,18 +150,18 @@ WebSocketWrapper.prototype._connect = function() {
       that._connectionAttempt = null;
     }
   };
-  this.ws.onclose = function() {
-    console.log(`websocket closed: ${that.id}`);
+  this.ws.onclose = function (evt) {
+    console.log(`websocket closed: ${that.id}`, evt);
     that._state = 'closed';
-    that._triggerEvent({ type: 'close' });
+    that._triggerEvent({ type: 'close', args: [evt] });
     if (!that._connectionAttempt) {
       that._reconnect();
     }
   };
-  this.ws.onerror = function(code, reason) {
+  this.ws.onerror = function (evt) {
     console.log(`websocket error: ${that.id}`);
     that._state = 'error';
-    that._triggerEvent({ type: 'error', args: [code, reason] });
+    that._triggerEvent({ type: 'error', args: [evt] });
   };
   this.ws.onmessage = function(e) {
     const msg = (that.options && that.options.jsonParse) ? JSON.parse(e.data) : e.data;
