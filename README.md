@@ -32,12 +32,12 @@ The Tectonic Console is a more friendly `kubectl` in the form of a single page w
 
 ## Quickstart
 
-### Deps:
+### Dependencies:
 
-1. nodejs >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 0.23.1
+1. node.js >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
 2. go >= 1.8 & glide >= 0.12.0
 3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release) and a k8s cluster
-4. Google Chrome >= 60 (needs --headless flag) for integration tests
+4. Google Chrome/Chromium >= 60 (needs --headless flag) for integration tests
 
 ### Build everything:
 
@@ -52,9 +52,10 @@ Backend binaries are output to `/bin`.
 
 #### Tectonic
 
-If you've got a working `kubectl` on your path, you can run the application with:
+If you have a working `kubectl` on your path, you can run the application with:
 
 ```
+export KUBECONFIG=/path/to/kubeconfig
 source ./contrib/environment.sh
 ./bin/bridge
 ```
@@ -141,7 +142,7 @@ go, glide, nodejs/yarn, kubectl
 
 ### Frontend Development
 
-All frontend code lives in the `frontend` directory.  The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser.  These bundles are not commited to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
+All frontend code lives in the `frontend/` directory.  The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser.  These bundles are not commited to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
 
 #### Install Dependencies
 
