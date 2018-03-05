@@ -117,33 +117,43 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    // WebSocket can't send impersonate HTTP header
-    if (!isImpersonateEnabled()) {
-      const ws = k8sWatch(k8skind, query).onmessage(msg => {
-        let theAction;
-        switch (msg.type) {
-          case 'ADDED':
-            theAction = actions.addToList;
-            break;
-          case 'MODIFIED':
-            theAction = actions.modifyList;
-            break;
-          case 'DELETED':
-            theAction = actions.deleteFromList;
-            break;
-          default:
-            return;
+    let startedWS;
+    const poller = () => k8sList(k8skind, query, true)
+      .then(res => {
+        dispatch(actions.loaded(id, res.items));
+        if (startedWS) {
+          return;
         }
-        dispatch(theAction(id, msg.object));
-      });
 
-      WS[id] = ws;
-    }
-    const poller = () => k8sList(k8skind, query)
-      .then(
-        o => dispatch(actions.loaded(id, o)),
-        e => dispatch(actions.errored(id, e))
-      );
+        // WebSocket can't send impersonate HTTP header
+        if (isImpersonateEnabled()) {
+          return;
+        }
+        const resourceVersion = res.metadata.resourceVersion;
+        startedWS = true;
+        const ws = k8sWatch(k8skind, {...query, resourceVersion}).onmessage(msg => {
+          let theAction;
+          switch (msg.type) {
+            case 'ADDED':
+              theAction = actions.addToList;
+              break;
+            case 'MODIFIED':
+              theAction = actions.modifyList;
+              break;
+            case 'DELETED':
+              theAction = actions.deleteFromList;
+              break;
+            default:
+              // eslint-disable-next-line no-console
+              console.warn('unknown websocket action', msg.type);
+              return;
+          }
+          dispatch(theAction(id, msg.object));
+        });
+
+        WS[id] = ws;
+      },
+      e => dispatch(actions.errored(id, e)));
 
     POLLs[id] = setInterval(poller, pollInterval());
     poller();
