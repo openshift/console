@@ -169,11 +169,12 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   items[ALL_NAMESPACES_KEY] = 'all namespaces';
   _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
 
-  let title = activeNamespace === ALL_NAMESPACES_KEY ? 'all namespaces' : activeNamespace;
-
-  // If the currently active namespace is not found in the list of all namespaces, default to "all"
-  if (loaded && !_.has(items, title)) {
+  let title = activeNamespace;
+  if (activeNamespace === ALL_NAMESPACES_KEY) {
     title = 'all namespaces';
+  } else if (loaded && !_.has(items, title)) {
+    // If the currently active namespace is not found in the list of all namespaces, put it in anyway
+    items[title] = title;
   }
 
   const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
