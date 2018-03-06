@@ -110,7 +110,7 @@ export class SoftwareDetails extends SafetyFirst {
   _checkCloudProvider() {
     k8sGet(k8sKinds.ConfigMap, 'tectonic-config', 'tectonic-system').then((configMap) => {
       this.setState({ cloudProviders: [_.get(configMap, 'data.installerPlatform', null)]});
-    });
+    }, () => this.setState({ cloudProviders: ['UNKNOWN']}));
   }
 
   render () {
