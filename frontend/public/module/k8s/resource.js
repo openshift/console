@@ -79,7 +79,7 @@ export const k8sKill = (kind, resource, opts = {}, json = null) => coFetchJSON.d
   resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts)), opts, json
 );
 
-export const k8sList = (kind, params={}) => {
+export const k8sList = (kind, params={}, raw=false) => {
   const query = _(params)
     .omit('ns')
     .map((v, k) => {
@@ -100,7 +100,7 @@ export const k8sList = (kind, params={}) => {
   } : kind;
 
   const listURL = resourceURL(k, {ns: params.ns});
-  return coFetchJSON(`${listURL}?${query}`).then(result => result.items);
+  return coFetchJSON(`${listURL}?${query}`).then(result => raw ? result : result.items);
 };
 
 export const k8sWatch = (kind, query={}) => {
@@ -121,6 +121,10 @@ export const k8sWatch = (kind, query={}) => {
 
   if (query.ns) {
     opts.ns = query.ns;
+  }
+
+  if (query.resourceVersion) {
+    queryParams.resourceVersion = encodeURIComponent(query.resourceVersion);
   }
 
   const path = resourceURL(kind, opts);
