@@ -103,9 +103,17 @@ export const k8sList = (kind, params={}, raw=false) => {
   return coFetchJSON(`${listURL}?${query}`).then(result => raw ? result : result.items);
 };
 
-export const k8sWatch = (kind, query={}) => {
+export const k8sWatch = (kind, query={}, wsOptions={}) => {
   const queryParams = {watch: true};
   const opts = {queryParams};
+  wsOptions = Object.assign({
+    host: 'auto',
+    reconnect: true,
+    jsonParse: true,
+    bufferEnabled: true,
+    bufferFlushInterval: 500,
+    bufferMax: 1000,
+  }, wsOptions);
 
   const labelSelector = query.labelSelector || kind.labelSelector;
   if (labelSelector) {
@@ -128,13 +136,6 @@ export const k8sWatch = (kind, query={}) => {
   }
 
   const path = resourceURL(kind, opts);
-  return wsFactory(path, {
-    host: 'auto',
-    reconnect: true,
-    path: path,
-    jsonParse: true,
-    bufferEnabled: true,
-    bufferFlushInterval: 500,
-    bufferMax: 1000,
-  });
+  wsOptions.path = path;
+  return wsFactory(path, wsOptions);
 };

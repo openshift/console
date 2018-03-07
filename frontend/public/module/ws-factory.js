@@ -4,7 +4,6 @@
  *
  */
 /* eslint-disable no-console */
-import * as _ from 'lodash';
 
 const wsCache = {};
 
@@ -72,16 +71,6 @@ function WebSocketWrapper(id, options) {
   ];
 }
 
-function expBackoff(prev, max) {
-  if (!prev) {
-    return 1000;
-  }
-  if (prev > max / 2) {
-    return max;
-  }
-  return 2 * prev;
-}
-
 // id must uniquely identify the WebSocket, otherwise this could return the "wrong" WebSocket
 export const wsFactory = (id, options) => {
   // get by id
@@ -107,30 +96,31 @@ wsFactory.destroy = function(id) {
   ws.destroy();
 };
 
-wsFactory.destroyAll = function() {
-  Object.keys(wsCache).forEach(wsFactory.destroy);
-};
-
 WebSocketWrapper.prototype._reconnect = function() {
-  const that = this;
-  const max = 60000;
-  let delay = 2000;
-
   if (this._connectionAttempt) {
     return;
   }
 
-  function attempt() {
-    if (!that.options.reconnect || that._state === 'open') {
-      clearTimeout(that._connectionAttempt);
-      that._connectionAttempt = null;
+  let delay = 1000;
+
+  const attempt = () => {
+    if (!this.options.reconnect || this._state === 'open') {
+      clearTimeout(this._connectionAttempt);
+      this._connectionAttempt = null;
       return;
     }
-    that._connect();
-    delay = expBackoff(delay, max);
-    that._connectionAttempt = setTimeout(attempt, delay);
+    if (this.options.timeout && delay > this.options.timeout) {
+      clearTimeout(this._connectionAttempt);
+      this._connectionAttempt = null;
+      this.destroy(true);
+      return;
+    }
+
+    this._connect();
+    delay = Math.round(Math.min(1.5 * delay, 60000));
+    this._connectionAttempt = setTimeout(attempt, delay);
     console.log(`attempting reconnect in ${delay / 1000} seconds...`);
-  }
+  };
   this._connectionAttempt = setTimeout(attempt, delay);
 };
 
@@ -160,10 +150,10 @@ WebSocketWrapper.prototype._connect = function() {
     that._state = 'error';
     that._triggerEvent({ type: 'error', args: [evt] });
   };
-  this.ws.onmessage = function(e) {
-    const msg = (that.options && that.options.jsonParse) ? JSON.parse(e.data) : e.data;
+  this.ws.onmessage = function(evt) {
+    const msg = (that.options && that.options.jsonParse) ? JSON.parse(evt.data) : evt.data;
     // In some browsers, onmessage can fire after onclose/error. Don't update state to be incorrect.
-    if (!_.includes(['destroyed', 'closed'], that._state)) {
+    if (that._state !== 'destroyed' && that._state !== 'closed'){
       that._state = 'open';
     }
     that._triggerEvent({ type: 'message', args: [msg] });
@@ -268,7 +258,7 @@ WebSocketWrapper.prototype.bufferSize = function() {
   return this._buffer.length;
 };
 
-WebSocketWrapper.prototype.destroy = function() {
+WebSocketWrapper.prototype.destroy = function(timedout) {
   console.log(`websocket destroy: ${this.id}`);
   if (this._state === 'destroyed') {
     return;
@@ -278,7 +268,7 @@ WebSocketWrapper.prototype.destroy = function() {
   this.ws.onclose = null;
   this.ws.onerror = null;
   this.ws.onmessage = null;
-  this._triggerEvent({ type: 'destroy' });
+  this._triggerEvent({ type: 'destroy', args: [timedout]});
   this._state = 'destroyed';
   this._cleanupFns.forEach(function(fn) {
     fn();
