@@ -117,46 +117,60 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    let startedWS;
-    const poller = () => k8sList(k8skind, query, true)
+    // Fetch entire list then starting listening on WS...
+    //  at the resource version of the list to avoid rendering churn
+    const pollAndWatch = () => k8sList(k8skind, query, true)
       .then(res => {
         dispatch(actions.loaded(id, res.items));
-        if (startedWS) {
+        if (WS[id]) {
           return;
         }
 
         // WebSocket can't send impersonate HTTP header
+        // TODO: send subprotocol that the backend unpacks
         if (isImpersonateEnabled()) {
           return;
         }
         const resourceVersion = res.metadata.resourceVersion;
-        startedWS = true;
-        const ws = k8sWatch(k8skind, {...query, resourceVersion}).onmessage(msg => {
-          let theAction;
-          switch (msg.type) {
-            case 'ADDED':
-              theAction = actions.addToList;
-              break;
-            case 'MODIFIED':
-              theAction = actions.modifyList;
-              break;
-            case 'DELETED':
-              theAction = actions.deleteFromList;
-              break;
-            default:
-              // eslint-disable-next-line no-console
-              console.warn('unknown websocket action', msg.type);
+        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {timeout: 60 * 1000})
+          .ondestroy(timedout => {
+            if (!timedout) {
               return;
-          }
-          dispatch(theAction(id, msg.object));
-        });
+            }
+            // If the WS is unsucessful for timeout duration, assume it is less work
+            //  to update the entire list and then start the WS again
 
-        WS[id] = ws;
+            // eslint-disable-next-line no-console
+            console.log('timed out. polling and watching');
+            delete WS[id];
+            pollAndWatch();
+          })
+          .onmessage(msg => {
+            let theAction;
+            switch (msg.type) {
+              case 'ADDED':
+                theAction = actions.addToList;
+                break;
+              case 'MODIFIED':
+                theAction = actions.modifyList;
+                break;
+              case 'DELETED':
+                theAction = actions.deleteFromList;
+                break;
+              default:
+                // eslint-disable-next-line no-console
+                console.warn('unknown websocket action', msg.type);
+                return;
+            }
+            dispatch(theAction(id, msg.object));
+          });
       },
-      e => dispatch(actions.errored(id, e)));
+      e => {
+        dispatch(actions.errored(id, e));
+        POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+      });
 
-    POLLs[id] = setInterval(poller, pollInterval());
-    poller();
+    pollAndWatch();
   },
 };
 
