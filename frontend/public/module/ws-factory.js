@@ -242,7 +242,7 @@ WebSocketWrapper.prototype.flushBuffer = function() {
     return;
   }
   while (this._buffer.length) {
-    this._invokeHandlers(this._buffer.shift());
+    this._invokeHandlers(this._buffer.pop());
   }
 };
 
