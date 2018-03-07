@@ -138,6 +138,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await $('#test--ns-dropdown').click().then(() => browser.actions().sendKeys(testName, Key.ARROW_DOWN, Key.ENTER).perform());
       await $('#test--role-dropdown').click().then(() => browser.actions().sendKeys('cluster-admin', Key.ARROW_DOWN, Key.ENTER).perform());
       await $('#test--subject-name').sendKeys('subject-name');
+      leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
       await crudView.createYAMLButton.click();
       await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
       await crudView.isLoaded();
@@ -146,7 +147,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('deletes the RoleBinding', async() => {
       await crudView.deleteRow('RoleBinding')(bindingName);
-      expect(crudView.rowForName(bindingName).isPresent()).toBe(false);
+      leakedResources.delete(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
     });
   });
 
@@ -242,7 +243,6 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.isLoaded();
       await crudView.deleteRow('CustomResourceDefinition')(crd.spec.names.kind);
       leakedResources.delete(JSON.stringify({name, plural: 'customresourcedefinitions'}));
-      expect(crudView.rowDisabled(crd.spec.names.kind)).toBe(true);
     });
   });
 
