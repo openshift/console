@@ -138,8 +138,7 @@ WebSocketWrapper.prototype._connect = function() {
   const that = this;
   this._state = 'init';
   this._buffer = [];
-  const auth = [];
-  this.ws = new WebSocket(this.url, auth);
+  this.ws = new WebSocket(this.url);
 
   this.ws.onopen = function() {
     console.log(`websocket open: ${that.id}`);
@@ -154,9 +153,7 @@ WebSocketWrapper.prototype._connect = function() {
     console.log(`websocket closed: ${that.id}`, evt);
     that._state = 'closed';
     that._triggerEvent({ type: 'close', args: [evt] });
-    if (!that._connectionAttempt) {
-      that._reconnect();
-    }
+    that._reconnect();
   };
   this.ws.onerror = function (evt) {
     console.log(`websocket error: ${that.id}`);
@@ -245,7 +242,7 @@ WebSocketWrapper.prototype.flushBuffer = function() {
     return;
   }
   while (this._buffer.length) {
-    this._invokeHandlers(this._buffer.shift());
+    this._invokeHandlers(this._buffer.pop());
   }
 };
 

@@ -9,7 +9,6 @@ export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loa
 
 export const resourceRows = $$('.co-resource-list__item');
 export const rowForName = (name: string) => resourceRows.filter((row) => row.$$('.co-m-resource-icon + a').first().getText().then(text => text === name)).first();
-export const rowDisabled = (name: string) => rowForName(name).$('.co-m-cog--disabled').isPresent();
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
 
 /**
