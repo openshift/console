@@ -34,9 +34,9 @@ The Tectonic Console is a more friendly `kubectl` in the form of a single page w
 
 ### Dependencies:
 
-1. node.js >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
-2. go >= 1.8 & glide >= 0.12.0
-3. [kubectl](http://kubernetes.io/docs/getting-started-guides/binary_release/#prebuilt-binary-release) and a k8s cluster
+1. [node.js](https://nodejs.org/) >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
+2. [go](https://golang.org/) >= 1.8 & [glide](https://glide.sh/) >= 0.12.0 (`go get glide-vc`)
+3. [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and a k8s cluster
 4. Google Chrome/Chromium >= 60 (needs --headless flag) for integration tests
 
 ### Build everything:
