@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -78,6 +79,21 @@ func SingleJoiningSlash(a, b string) string {
 	return a + b
 }
 
+// decodeSubprotocol decodes the impersonation "headers" on a websocket.
+// See k8s-actions.js for how this is encoded.
+func decodeSubprotocol(encodedProtocol string) (string, error) {
+	split := strings.Split(encodedProtocol, "_")
+	var bytes []byte
+	for _, i := range split {
+		thing, err := strconv.Atoi(i)
+		if err != nil {
+			return "", err
+		}
+		bytes = append(bytes, byte(thing))
+	}
+	return string(bytes), nil
+}
+
 // director is a default function to rewrite the request being
 // proxied. If the user does not supply a custom director function,
 // then this will be used.
@@ -116,9 +132,41 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.URL.Scheme = "ws"
 	}
 
+	subProtocol := ""
 	proxiedHeader := make(http.Header, len(r.Header))
-	for key := range r.Header {
-		proxiedHeader.Set(key, r.Header.Get(key))
+	for key, value := range r.Header {
+		if key != "Sec-Websocket-Protocol" {
+			// Do not proxy the subprotocol to the API server because k8s does not understand what we're sending
+			proxiedHeader.Set(key, r.Header.Get(key))
+			continue
+		}
+
+		for _, protocols := range value {
+			for _, protocol := range strings.Split(protocols, ",") {
+				protocol = strings.TrimSpace(protocol)
+				// TODO: secure by stripping newlines & other invalid stuff
+				if strings.HasPrefix(protocol, "Impersonate-User.") {
+					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-User.")
+					decodedProtocol, err := decodeSubprotocol(encodedProtocol)
+					if err != nil {
+						log.Printf("Error decoding Impersonate-User subprotocol: %v", err)
+						continue
+					}
+					proxiedHeader.Set("Impersonate-User", decodedProtocol)
+					subProtocol = protocol
+				} else if strings.HasPrefix(protocol, "Impersonate-Group.") {
+					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-Group.")
+					decodedProtocol, err := decodeSubprotocol(encodedProtocol)
+					if err != nil {
+						log.Printf("Error decoding Impersonate-Group subprotocol: %v", err)
+						continue
+					}
+					proxiedHeader.Set("Impersonate-User", string(decodedProtocol))
+					proxiedHeader.Set("Impersonate-Group", string(decodedProtocol))
+					subProtocol = protocol
+				}
+			}
+		}
 	}
 
 	// Filter websocket headers. Gorilla adds them automatically.
@@ -163,6 +211,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer backend.Close()
 
 	upgrader := &websocket.Upgrader{
+		Subprotocols: []string{subProtocol},
 		CheckOrigin: func(r *http.Request) bool {
 			origin := r.Header["Origin"]
 			if p.config.Origin == "" {
