@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
-import { NavTitle, AsyncComponent } from './utils';
+import { NavTitle, AsyncComponent, Firehose, StatusBox } from './utils';
 import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
@@ -162,8 +162,8 @@ const LimitedGraphs = () => <div>
   </div>
 </div>;
 
-const GraphsPage = ({limited, namespace}) => <div>
-  <div className="row">
+const GraphsPage = ({limited, namespace}) => {
+  const body = <div className="row">
     <div className="col-lg-8 col-md-12">
       {limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} /> }
       <div className="row">
@@ -204,8 +204,17 @@ const GraphsPage = ({limited, namespace}) => <div>
         <Documentation />
       </div>
     </div>
-  </div>
-</div>;
+  </div>;
+
+  if (!namespace) {
+    return body;
+  }
+  return <Firehose resources={[{kind: 'Namespace', name: namespace, isList: false, prop: 'data'}]}>
+    <StatusBox label="Namespaces">
+      { body }
+    </StatusBox>
+  </Firehose>;
+};
 
 const permissionedLoader = () => {
   const AllGraphs = ({namespace}) => <GraphsPage namespace={namespace} />;
