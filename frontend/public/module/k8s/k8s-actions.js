@@ -29,9 +29,42 @@ const REF_COUNTS = {};
 const nop = () => {};
 
 const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
-
-// User impersonation can't use WebSockets, so let's poll more frequently
-const pollInterval = () => (isImpersonateEnabled() ? 15 : 30) * 1000;
+const getImpersonateSubprotocols = () => {
+  const {kind, name} = store.getState().UI.get('impersonate', {});
+  if (!name) {
+    return;
+  }
+  /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
+   * isn't allowed, so base64/32 encoding won't work. To work around these
+   * constraints, use underscore-delimited char codes.
+   */
+  let enc;
+  try {
+    enc = new TextEncoder('utf-8').encode(name).toString();
+    enc = enc.replace(/,/g, '_');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.info('Error using TextEncoder on impersonation subprotocol:', e);
+    enc = [];
+    // Edge & old Safari lack TextEncoder. Fall back to charCodeAt
+    for (let c of name) {
+      const code = c.charCodeAt(0);
+      if (code > 127) {
+        // eslint-disable-next-line no-console
+        console.error('non-ASCII charcode found:', code, '... bailing');
+        break;
+      }
+      enc.push(code);
+    }
+    enc = enc.join('_');
+  }
+  if (kind === 'User' ) {
+    return [`Impersonate-User.${enc}`];
+  }
+  if (kind === 'Group') {
+    return [`Impersonate-Group.${enc}`];
+  }
+};
 
 const actions = {
   [types.deleteFromList]: action_(types.deleteFromList),
@@ -74,7 +107,7 @@ const actions = {
           e => dispatch(actions.errored(id, e))
         );
     };
-    POLLs[id] = setInterval(poller, pollInterval());
+    POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
 
     if (isImpersonateEnabled()) {
@@ -126,13 +159,10 @@ const actions = {
           return;
         }
 
-        // WebSocket can't send impersonate HTTP header
-        // TODO: send subprotocol that the backend unpacks
-        if (isImpersonateEnabled()) {
-          return;
-        }
+        const subProtocols = getImpersonateSubprotocols();
+
         const resourceVersion = res.metadata.resourceVersion;
-        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {timeout: 60 * 1000})
+        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000})
           .ondestroy(timedout => {
             if (!timedout) {
               return;
