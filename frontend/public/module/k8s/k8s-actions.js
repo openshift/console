@@ -35,29 +35,12 @@ const getImpersonateSubprotocols = () => {
     return;
   }
   /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
-   * isn't allowed, so base64/32 encoding won't work. To work around these
-   * constraints, use underscore-delimited char codes.
+   * and "/" aren't allowed, so base64 but replace illegal chars.
    */
-  let enc;
-  try {
-    enc = new TextEncoder('utf-8').encode(name).toString();
-    enc = enc.replace(/,/g, '_');
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.info('Error using TextEncoder on impersonation subprotocol:', e);
-    enc = [];
-    // Edge & old Safari lack TextEncoder. Fall back to charCodeAt
-    for (let c of name) {
-      const code = c.charCodeAt(0);
-      if (code > 127) {
-        // eslint-disable-next-line no-console
-        console.error('non-ASCII charcode found:', code, '... bailing');
-        break;
-      }
-      enc.push(code);
-    }
-    enc = enc.join('_');
-  }
+  let enc = new TextEncoder('utf-8').encode(name);
+  enc = window.btoa(String.fromCharCode.apply(String, enc));
+  enc = enc.replace(/=/g, '_').replace(/\//g, '-');
+
   if (kind === 'User' ) {
     return [`Impersonate-User.${enc}`];
   }

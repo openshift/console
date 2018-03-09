@@ -2,13 +2,13 @@ package proxy
 
 import (
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 
@@ -80,18 +80,12 @@ func SingleJoiningSlash(a, b string) string {
 }
 
 // decodeSubprotocol decodes the impersonation "headers" on a websocket.
-// See k8s-actions.js for how this is encoded.
+// Subprotocols don't allow '=' or '/'
 func decodeSubprotocol(encodedProtocol string) (string, error) {
-	split := strings.Split(encodedProtocol, "_")
-	var bytes []byte
-	for _, i := range split {
-		thing, err := strconv.Atoi(i)
-		if err != nil {
-			return "", err
-		}
-		bytes = append(bytes, byte(thing))
-	}
-	return string(bytes), nil
+	encodedProtocol = strings.Replace(encodedProtocol, "_", "=", -1)
+	encodedProtocol = strings.Replace(encodedProtocol, "-", "/", -1)
+	decodedProtocol, err := base64.StdEncoding.DecodeString(encodedProtocol)
+	return string(decodedProtocol), err
 }
 
 // director is a default function to rewrite the request being
