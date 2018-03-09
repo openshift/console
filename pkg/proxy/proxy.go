@@ -149,8 +149,9 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-User.")
 					decodedProtocol, err := decodeSubprotocol(encodedProtocol)
 					if err != nil {
-						log.Printf("Error decoding Impersonate-User subprotocol: %v", err)
-						continue
+						errMsg := fmt.Sprintf("Error decoding Impersonate-User subprotocol: %v", err)
+						http.Error(w, errMsg, http.StatusBadRequest)
+						return
 					}
 					proxiedHeader.Set("Impersonate-User", decodedProtocol)
 					subProtocol = protocol
@@ -158,8 +159,9 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-Group.")
 					decodedProtocol, err := decodeSubprotocol(encodedProtocol)
 					if err != nil {
-						log.Printf("Error decoding Impersonate-Group subprotocol: %v", err)
-						continue
+						errMsg := fmt.Sprintf("Error decoding Impersonate-Group subprotocol: %v", err)
+						http.Error(w, errMsg, http.StatusBadRequest)
+						return
 					}
 					proxiedHeader.Set("Impersonate-User", string(decodedProtocol))
 					proxiedHeader.Set("Impersonate-Group", string(decodedProtocol))
