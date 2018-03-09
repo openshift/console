@@ -1,3 +1,5 @@
+import { TextEncoder as TextEncoderPoly } from 'text-encoding';
+
 import { getResources as getResources_} from './get-resources';
 import store from '../../redux';
 import { k8sList, k8sWatch, k8sGet } from './resource';
@@ -34,14 +36,14 @@ const getImpersonateSubprotocols = () => {
   if (!name) {
     return;
   }
+
   let encoder;
   try {
     encoder = new TextEncoder('utf-8');
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.info('Browser lacks TextEncoder. Falling back to polyfill.');
-    const TextEncodingPoly = import('text-encoding');
-    encoder = new TextEncodingPoly('utf-8');
+    console.info('Browser lacks TextEncoder. Falling back to polyfill.', e);
+    encoder = new TextEncoderPoly('utf-8');
   }
   /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
    * and "/" aren't allowed, so base64 but replace illegal chars.
