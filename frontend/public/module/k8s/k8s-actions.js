@@ -34,10 +34,19 @@ const getImpersonateSubprotocols = () => {
   if (!name) {
     return;
   }
+  let encoder;
+  try {
+    encoder = new TextEncoder('utf-8');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.info('Browser lacks TextEncoder. Falling back to polyfill.');
+    const TextEncodingPoly = import('text-encoding');
+    encoder = new TextEncodingPoly('utf-8');
+  }
   /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
    * and "/" aren't allowed, so base64 but replace illegal chars.
    */
-  let enc = new TextEncoder('utf-8').encode(name);
+  let enc = encoder.encode(name);
   enc = window.btoa(String.fromCharCode.apply(String, enc));
   enc = enc.replace(/=/g, '_').replace(/\//g, '-');
 

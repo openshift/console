@@ -76,6 +76,7 @@
     "redux-thunk": "2.x",
     "sanitize-html": "1.x",
     "showdown": "1.8.x",
+    "text-encoding": "0.x",
     "url-search-params-polyfill": "2.x",
     "whatwg-fetch": "2.x"
   },
