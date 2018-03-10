@@ -161,6 +161,35 @@ func TestProxyHTTP(t *testing.T) {
 
 }
 
+func TestProxyDecodeSubprotocol(t *testing.T) {
+	tests := []struct {
+		encoded string
+		decoded string
+	}{
+		{
+			encoded: "8J2SnPCdkpzwnZKc8J2SnA__",
+			decoded: "𝒜𝒜𝒜𝒜",
+		},
+		{
+			encoded: "bm9uLXByaXY_",
+			decoded: "non-priv",
+		},
+		{
+			encoded: "8J2SnPCfjYbwn42RQPCfjYbwn42R4oiGw6XLhs+GzrHOtc+Czr-Ouc6xz4nOp86oz4zOufCdkpzOm86azqPOs8+BzrvOus+DzpLOps6+4oiC",
+			decoded: "𝒜🍆🍑@🍆🍑∆åˆφαεςοιαωΧΨόι𝒜ΛΚΣγρλκσΒΦξ∂",
+		},
+	}
+	for _, test := range tests {
+		decoded, err := decodeSubprotocol(test.encoded)
+		if err != nil {
+			t.Fatalf("err decoding subprotocol %v: %v", test.encoded, err)
+		}
+		if decoded != test.decoded {
+			t.Errorf("decoded %v as %v but expected %v", test.encoded, decoded, test.decoded)
+		}
+	}
+}
+
 // startProxyServer starts a server, and a proxy server that proxies requests to it.
 // The URL to the server and a function which closes the servers is returned.
 // The underlying server has two endpoints: /static which always returns

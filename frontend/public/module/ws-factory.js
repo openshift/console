@@ -128,7 +128,7 @@ WebSocketWrapper.prototype._connect = function() {
   const that = this;
   this._state = 'init';
   this._buffer = [];
-  this.ws = new WebSocket(this.url);
+  this.ws = new WebSocket(this.url, this.options.subProtocols);
 
   this.ws.onopen = function() {
     console.log(`websocket open: ${that.id}`);

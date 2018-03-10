@@ -1,3 +1,5 @@
+import { TextEncoder as TextEncoderPoly } from 'text-encoding';
+
 import { getResources as getResources_} from './get-resources';
 import store from '../../redux';
 import { k8sList, k8sWatch, k8sGet } from './resource';
@@ -29,9 +31,34 @@ const REF_COUNTS = {};
 const nop = () => {};
 
 const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
+const getImpersonateSubprotocols = () => {
+  const {kind, name} = store.getState().UI.get('impersonate', {});
+  if (!name) {
+    return;
+  }
 
-// User impersonation can't use WebSockets, so let's poll more frequently
-const pollInterval = () => (isImpersonateEnabled() ? 15 : 30) * 1000;
+  let encoder;
+  try {
+    encoder = new TextEncoder('utf-8');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.info('Browser lacks TextEncoder. Falling back to polyfill.', e);
+    encoder = new TextEncoderPoly('utf-8');
+  }
+  /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
+   * and "/" aren't allowed, so base64 but replace illegal chars.
+   */
+  let enc = encoder.encode(name);
+  enc = window.btoa(String.fromCharCode.apply(String, enc));
+  enc = enc.replace(/=/g, '_').replace(/\//g, '-');
+
+  if (kind === 'User' ) {
+    return [`Impersonate-User.${enc}`];
+  }
+  if (kind === 'Group') {
+    return [`Impersonate-Group.${enc}`];
+  }
+};
 
 const actions = {
   [types.deleteFromList]: action_(types.deleteFromList),
@@ -74,7 +101,7 @@ const actions = {
           e => dispatch(actions.errored(id, e))
         );
     };
-    POLLs[id] = setInterval(poller, pollInterval());
+    POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
 
     if (isImpersonateEnabled()) {
@@ -126,13 +153,10 @@ const actions = {
           return;
         }
 
-        // WebSocket can't send impersonate HTTP header
-        // TODO: send subprotocol that the backend unpacks
-        if (isImpersonateEnabled()) {
-          return;
-        }
+        const subProtocols = getImpersonateSubprotocols();
+
         const resourceVersion = res.metadata.resourceVersion;
-        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {timeout: 60 * 1000})
+        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000})
           .ondestroy(timedout => {
             if (!timedout) {
               return;
