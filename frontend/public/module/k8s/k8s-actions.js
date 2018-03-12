@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { TextEncoder as TextEncoderPoly } from 'text-encoding';
 
 import { getResources as getResources_} from './get-resources';
@@ -144,9 +145,12 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    // Fetch entire list then starting listening on WS...
-    //  at the resource version of the list to avoid rendering churn
-    const pollAndWatch = () => k8sList(k8skind, query, true)
+    // Fetch entire list (XHR) then use its resourceVersion to
+    //  start listening on a WS (?resourceVersion=$resourceVersion)
+    //  start the process over when:
+    //   1. the WS closes abnormally
+    //   2. the WS can not establish a connection within $TIMEOUT
+    const pollAndWatch = () => (delete POLLs[id]) && k8sList(k8skind, query, true)
       .then(res => {
         dispatch(actions.loaded(id, res.items));
         if (WS[id]) {
@@ -157,17 +161,32 @@ const actions = {
 
         const resourceVersion = res.metadata.resourceVersion;
         WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000})
-          .ondestroy(timedout => {
-            if (!timedout) {
+          .onclose(event => {
+            // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
+            if (event.code !== 1006) {
+              return;
+            }
+            // eslint-disable-next-line no-console
+            console.log('WS closed abnormally - starting polling loop over!');
+            const ws = WS[id];
+            const timedOut = true;
+            ws && ws.destroy(timedOut);
+          })
+          .ondestroy(timedOut => {
+            if (!timedOut) {
               return;
             }
             // If the WS is unsucessful for timeout duration, assume it is less work
             //  to update the entire list and then start the WS again
 
             // eslint-disable-next-line no-console
-            console.log('timed out. polling and watching');
+            console.log(`${id} timed out - restarting polling`);
             delete WS[id];
-            pollAndWatch();
+
+            if (POLLs[id]) {
+              return;
+            }
+            POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
           })
           .onmessage(msg => {
             let theAction;
@@ -183,7 +202,7 @@ const actions = {
                 break;
               default:
                 // eslint-disable-next-line no-console
-                console.warn('unknown websocket action', msg.type);
+                console.warn(`unknown websocket action: ${msg.type} (${ _.get(msg, 'object.message')})`);
                 return;
             }
             dispatch(theAction(id, msg.object));
@@ -191,6 +210,9 @@ const actions = {
       },
       e => {
         dispatch(actions.errored(id, e));
+        if (POLLs[id]) {
+          return;
+        }
         POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
       });
 
