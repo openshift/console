@@ -170,7 +170,11 @@ WebSocketWrapper.prototype._invokeHandlers = function(evt) {
     return;
   }
   handlers.forEach(function(h) {
-    h.apply(null, evt.args || []);
+    try {
+      h.apply(null, evt.args || []);
+    } catch(e) {
+      console.error(e);
+    }
   });
 };
 
@@ -244,24 +248,37 @@ WebSocketWrapper.prototype.bufferSize = function() {
 };
 
 WebSocketWrapper.prototype.destroy = function(timedout) {
-  console.log(`websocket destroy: ${this.id}`);
+  console.log(`destroying websocket: ${this.id}`);
   if (this._state === 'destroyed') {
     return;
   }
 
-  this.ws.close();
+  try {
+    this.ws.close();
+  } catch (e) {
+    console.error(e);
+  }
 
   clearInterval(this.flushCanceler);
   clearTimeout(this._connectionAttempt);
 
-  this.ws.onopen = null;
-  this.ws.onclose = null;
-  this.ws.onerror = null;
-  this.ws.onmessage = null;
-  this._triggerEvent({ type: 'destroy', args: [timedout]});
+  if (this.ws) {
+    this.ws.onopen = null;
+    this.ws.onclose = null;
+    this.ws.onerror = null;
+    this.ws.onmessage = null;
+    delete this.ws;
+  }
+
+  try {
+    this._triggerEvent({ type: 'destroy', args: [timedout]});
+  } catch (e) {
+    console.error(e);
+  }
+
   this._state = 'destroyed';
 
-  delete wsCache[this.id];
-  delete this.ws;
   delete this.options;
+  delete this._buffer;
+  delete wsCache[this.id];
 };
