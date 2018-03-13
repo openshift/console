@@ -36,8 +36,6 @@ function createURL(host, path) {
 }
 
 function WebSocketWrapper(id, options) {
-  const that = this;
-
   this.id = id;
   this.options = options;
   this.url = createURL(options.host, options.path);
@@ -52,23 +50,9 @@ function WebSocketWrapper(id, options) {
 
   this._connect();
 
-  let flushCanceler;
   if (this.options.bufferEnabled) {
-    flushCanceler = setInterval(this.flushBuffer.bind(this), this.options.bufferFlushInterval);
+    this.flushCanceler = setInterval(this.flushBuffer.bind(this), this.options.bufferFlushInterval);
   }
-
-  // Array of cleanup functions that get called ondestroy.
-  this._cleanupFns = [
-    // Kill interval flusher.
-    function() {
-      if (flushCanceler) {
-        clearInterval(flushCanceler);
-      }
-    },
-    function () {
-      clearTimeout(that._connectionAttempt);
-    },
-  ];
 }
 
 // id must uniquely identify the WebSocket, otherwise this could return the "wrong" WebSocket
@@ -97,7 +81,7 @@ wsFactory.destroy = function(id) {
 };
 
 WebSocketWrapper.prototype._reconnect = function() {
-  if (this._connectionAttempt) {
+  if (this._connectionAttempt || this._state === 'destroyed') {
     return;
   }
 
@@ -121,6 +105,7 @@ WebSocketWrapper.prototype._reconnect = function() {
     this._connectionAttempt = setTimeout(attempt, delay);
     console.log(`attempting reconnect in ${delay / 1000} seconds...`);
   };
+
   this._connectionAttempt = setTimeout(attempt, delay);
 };
 
@@ -263,16 +248,19 @@ WebSocketWrapper.prototype.destroy = function(timedout) {
   if (this._state === 'destroyed') {
     return;
   }
+
   this.ws.close();
+
+  clearInterval(this.flushCanceler);
+  clearTimeout(this._connectionAttempt);
+
   this.ws.onopen = null;
   this.ws.onclose = null;
   this.ws.onerror = null;
   this.ws.onmessage = null;
   this._triggerEvent({ type: 'destroy', args: [timedout]});
   this._state = 'destroyed';
-  this._cleanupFns.forEach(function(fn) {
-    fn();
-  });
+
   delete wsCache[this.id];
   delete this.ws;
   delete this.options;
