@@ -93,7 +93,6 @@
     "@types/react-redux": "5.x",
     "@types/react-router-dom": "4.x",
     "@types/react-transition-group": "2.x",
-    "@types/webpack": "3.8.x",
     "cache-loader": "1.x",
     "chromedriver": "2.x",
     "css-loader": "0.28.x",
