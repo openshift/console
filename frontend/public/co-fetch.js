@@ -46,6 +46,9 @@ const validateStatus = (response) => {
     if (!reason) {
       reason = response.statusText;
     }
+    if (!reason) {
+      reason = json.error;
+    }
     const error = new Error(reason);
     error.response = response;
     throw error;
