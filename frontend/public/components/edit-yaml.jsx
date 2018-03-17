@@ -189,10 +189,22 @@ export const EditYAML = connect(stateToProps)(
       }
       const { namespace, name } = this.props.obj.metadata;
       const { namespace: newNamespace, name: newName } = obj.metadata;
+
+      if (!this.props.create) {
+        if (name !== newName) {
+          this.handleError(`Cannot change resource name (original: "${name}", updated: "${newName}").`);
+          return;
+        }
+        if (namespace !== newNamespace) {
+          this.handleError(`Cannot change resource namespace (original: "${namespace}", updated: "${newNamespace}").`);
+          return;
+        }
+      }
+
       this.setState({success: null, error: null}, () => {
         let action = k8sUpdate;
         let redirect = false;
-        if (this.props.create || newNamespace !== namespace || newName !== name) {
+        if (this.props.create) {
           action = k8sCreate;
           delete obj.metadata.resourceVersion;
           redirect = true;
