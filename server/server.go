@@ -141,7 +141,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/api/", notFoundHandler)
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
-	handle("/static/", staticHandler)
+	handle("/static/", securityHeadersMiddleware(staticHandler))
 
 	handleFunc("/health", health.Checker{
 		Checks: []health.Checkable{},
@@ -175,7 +175,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/api/tectonic/revoke-token", useTokenRevocationHandler)
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
-	return http.Handler(mux)
+	return securityHeadersMiddleware(http.Handler(mux))
 }
 
 type apiError struct {

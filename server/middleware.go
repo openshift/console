@@ -52,3 +52,19 @@ func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
 		hdlr.ServeHTTP(w, r)
 	}
 }
+
+func securityHeadersMiddleware(hdlr http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Prevent MIME sniffing (https://en.wikipedia.org/wiki/Content_sniffing)
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		// Ancient weak protection against reflected XSS (equivalent to CSP no unsafe-inline)
+		w.Header().Set("X-XSS-Protection", "1; mode=block")
+		// Prevent clickjacking attacks involving iframes
+		w.Header().Set("X-Frame-Options", "DENY")
+		// Less information leakage about what domains we link to
+		w.Header().Set("X-DNS-Prefetch-Control", "off")
+		// Less information leakage about what domains we link to
+		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		hdlr.ServeHTTP(w, r)
+	}
+}
