@@ -26,6 +26,8 @@ export const kindForReference = (ref: K8sResourceKindReference) => ref.split(':'
   ? ref.split(':')[0]
   : ref;
 
+export const versionForReference = (ref: K8sFullyQualifiedResourceReference) => ref.split(':')[2];
+
 /**
  * Contains static resource definitions for Kubernetes objects.
  * Keys are `Kind:group:version`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).

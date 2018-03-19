@@ -3,7 +3,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 
-import './ocs-templates';
 import { K8sResourceKind, CustomResourceDefinitionKind, K8sFullyQualifiedResourceReference } from '../../module/k8s';
 import { SpecDescriptor } from './spec-descriptors';
 import { StatusDescriptor } from './status-descriptors';
