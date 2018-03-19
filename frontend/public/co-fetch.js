@@ -10,11 +10,31 @@ const initDefaults = {
   credentials: 'same-origin',
 };
 
-const validateStatus = (response) => {
+// TODO: url can be url or path, but shouldLogout only handles paths
+export const shouldLogout = url => {
+  const k8sRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/`);
+  // 401 from k8s. show logout screen
+  if (k8sRegex.test(url)) {
+    // Don't let 401s from proxied services log out users
+    const proxyRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/proxy/`);
+    if (proxyRegex.test(url)) {
+      return false;
+    }
+    const serviceRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/namespaces/\\w+/services/\\w+/proxy/`);
+    if (serviceRegex.test(url)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+};
+
+const validateStatus = (response, url) => {
   if (response.ok) {
     return response;
   }
-  if (response.status === 401) {
+
+  if (response.status === 401 && shouldLogout(url)) {
     authSvc.logout(window.location.pathname);
   }
 
@@ -84,7 +104,7 @@ export const coFetch = (url, options = {}, timeout=20000) => {
 
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([
-    fetch(url, allOptions).then(validateStatus),
+    fetch(url, allOptions).then(response => validateStatus(response, url)),
     new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, timeout)), timeout)),
   ]);
 };
