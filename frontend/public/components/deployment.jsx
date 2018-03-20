@@ -8,7 +8,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { Cog, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('apps/v1beta2.Deployment', `apiVersion: apps/v1beta2
+registerTemplate('apps/v1.Deployment', `apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: example

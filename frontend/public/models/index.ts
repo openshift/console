@@ -193,7 +193,7 @@ export const DaemonSetModel: K8sKind = {
   path: 'daemonsets',
   apiGroup: '',
   plural: 'daemonsets',
-  apiVersion: 'apps/v1beta2',
+  apiVersion: 'apps/v1',
   abbr: 'DS',
   namespaced: true,
   propagationPolicy: 'Foreground',
@@ -243,7 +243,7 @@ export const ServiceAccountModel: K8sKind = {
 
 export const ReplicaSetModel: K8sKind = {
   label: 'Replica Set',
-  apiVersion: 'apps/v1beta2',
+  apiVersion: 'apps/v1',
   path: 'replicasets',
   apiGroup: '',
   plural: 'replicasets',
@@ -257,7 +257,7 @@ export const ReplicaSetModel: K8sKind = {
 
 export const DeploymentModel: K8sKind = {
   label: 'Deployment',
-  apiVersion: 'apps/v1beta2',
+  apiVersion: 'apps/v1',
   path: 'deployments',
   apiGroup: '',
   plural: 'deployments',
@@ -501,7 +501,7 @@ export const PetsetModel: K8sKind = {
 export const StatefulSetModel: K8sKind = {
   label: 'Stateful Set',
   apiGroup: '',
-  apiVersion: 'apps/v1beta2',
+  apiVersion: 'apps/v1',
   path: 'statefulsets',
   plural: 'statefulsets',
   abbr: 'SS',
