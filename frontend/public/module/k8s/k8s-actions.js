@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { TextEncoder as TextEncoderPoly } from 'text-encoding';
 
 import { getResources as getResources_} from './get-resources';
 import store from '../../redux';
@@ -35,30 +34,39 @@ const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
 const getImpersonateSubprotocols = () => {
   const {kind, name} = store.getState().UI.get('impersonate', {});
   if (!name) {
-    return;
+    return Promise.resolve();
   }
 
-  let encoder;
+  let textEncoder;
   try {
-    encoder = new TextEncoder('utf-8');
+    textEncoder = new TextEncoder('utf-8');
   } catch (e) {
     // eslint-disable-next-line no-console
     console.info('Browser lacks TextEncoder. Falling back to polyfill.', e);
-    encoder = new TextEncoderPoly('utf-8');
   }
-  /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
-   * and "/" aren't allowed, so base64 but replace illegal chars.
-   */
-  let enc = encoder.encode(name);
-  enc = window.btoa(String.fromCharCode.apply(String, enc));
-  enc = enc.replace(/=/g, '_').replace(/\//g, '-');
 
-  if (kind === 'User' ) {
-    return [`Impersonate-User.${enc}`];
+  let promise;
+  if (textEncoder) {
+    promise = Promise.resolve(textEncoder);
+  } else {
+    promise = import('text-encoding').then(module => new module.TextEncoder('utf-8'));
   }
-  if (kind === 'Group') {
-    return [`Impersonate-Group.${enc}`];
-  }
+
+  return promise.then(encoder => {
+    /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
+     * and "/" aren't allowed, so base64 but replace illegal chars.
+     */
+    let enc = encoder.encode(name);
+    enc = window.btoa(String.fromCharCode.apply(String, enc));
+    enc = enc.replace(/=/g, '_').replace(/\//g, '-');
+
+    if (kind === 'User' ) {
+      return [`Impersonate-User.${enc}`];
+    }
+    if (kind === 'Group') {
+      return [`Impersonate-Group.${enc}`];
+    }
+  });
 };
 
 const actions = {
@@ -150,71 +158,73 @@ const actions = {
     //  start the process over when:
     //   1. the WS closes abnormally
     //   2. the WS can not establish a connection within $TIMEOUT
-    const pollAndWatch = () => (delete POLLs[id]) && k8sList(k8skind, query, true)
-      .then(res => {
+    const pollAndWatch = () => (delete POLLs[id]) && Promise.all([
+      getImpersonateSubprotocols(),
+      k8sList(k8skind, query, true).then(res => {
         dispatch(actions.loaded(id, res.items));
         if (WS[id]) {
           return;
         }
-
-        const subProtocols = getImpersonateSubprotocols();
-
-        const resourceVersion = res.metadata.resourceVersion;
-        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000})
-          .onclose(event => {
-            // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
-            if (event.code !== 1006) {
-              return;
-            }
-            // eslint-disable-next-line no-console
-            console.log('WS closed abnormally - starting polling loop over!');
-            const ws = WS[id];
-            const timedOut = true;
-            ws && ws.destroy(timedOut);
-          })
-          .ondestroy(timedOut => {
-            if (!timedOut) {
-              return;
-            }
-            // If the WS is unsucessful for timeout duration, assume it is less work
-            //  to update the entire list and then start the WS again
-
-            // eslint-disable-next-line no-console
-            console.log(`${id} timed out - restarting polling`);
-            delete WS[id];
-
-            if (POLLs[id]) {
-              return;
-            }
-            POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
-          })
-          .onmessage(msg => {
-            let theAction;
-            switch (msg.type) {
-              case 'ADDED':
-                theAction = actions.addToList;
-                break;
-              case 'MODIFIED':
-                theAction = actions.modifyList;
-                break;
-              case 'DELETED':
-                theAction = actions.deleteFromList;
-                break;
-              default:
-                // eslint-disable-next-line no-console
-                console.warn(`unknown websocket action: ${msg.type} (${ _.get(msg, 'object.message')})`);
-                return;
-            }
-            dispatch(theAction(id, msg.object));
-          });
-      },
-      e => {
-        dispatch(actions.errored(id, e));
-        if (POLLs[id]) {
+        const { resourceVersion } = res.metadata;
+        return resourceVersion;
+      })
+    ]).then(([subProtocols, resourceVersion]) => {
+      WS[id] = WS[id] || k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
+      WS[id].onclose(event => {
+        // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
+        if (event.code !== 1006) {
           return;
         }
-        POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
-      });
+        // eslint-disable-next-line no-console
+        console.log('WS closed abnormally - starting polling loop over!');
+        const ws = WS[id];
+        const timedOut = true;
+        ws && ws.destroy(timedOut);
+      })
+        .ondestroy(timedOut => {
+          if (!timedOut) {
+            return;
+          }
+          // If the WS is unsucessful for timeout duration, assume it is less work
+          //  to update the entire list and then start the WS again
+
+          // eslint-disable-next-line no-console
+          console.log(`${id} timed out - restarting polling`);
+          delete WS[id];
+
+          if (POLLs[id]) {
+            return;
+          }
+
+          POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+        })
+        .onmessage(msg => {
+          let theAction;
+          switch (msg.type) {
+            case 'ADDED':
+              theAction = actions.addToList;
+              break;
+            case 'MODIFIED':
+              theAction = actions.modifyList;
+              break;
+            case 'DELETED':
+              theAction = actions.deleteFromList;
+              break;
+            default:
+              // eslint-disable-next-line no-console
+              console.warn(`unknown websocket action: ${msg.type} (${ _.get(msg, 'object.message')})`);
+              return;
+          }
+          dispatch(theAction(id, msg.object));
+        });
+    },
+    e => {
+      dispatch(actions.errored(id, e));
+      if (POLLs[id]) {
+        return;
+      }
+      POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+    });
 
     pollAndWatch();
   },
