@@ -247,3 +247,14 @@ Update existing frontend dependencies:
 ```
 yarn upgrade <package@version>
 ```
+
+
+#### Supported Browsers
+
+We support the latest versions of the following browsers:
+
+- Edge
+- Chrome
+- Safari
+- Firefox
+- TODO: IE 11. Needs polyfills. Also, IE 11 can't open more than 6 websockets.
