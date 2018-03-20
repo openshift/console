@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 
-import { K8sResourceKind, CustomResourceDefinitionKind, K8sFullyQualifiedResourceReference } from '../../module/k8s';
+import { K8sResourceKind, CustomResourceDefinitionKind, GroupVersionKind } from '../../module/k8s';
 import { SpecDescriptor } from './spec-descriptors';
 import { StatusDescriptor } from './status-descriptors';
 
@@ -144,7 +144,7 @@ export type SubscriptionKind = {
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 
-export const referenceForCRDDesc = (desc: CRDDescription): K8sFullyQualifiedResourceReference => `${desc.kind}:${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}`;
+export const referenceForCRDDesc = (desc: CRDDescription): GroupVersionKind => `${desc.kind}:${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}`;
 
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;
