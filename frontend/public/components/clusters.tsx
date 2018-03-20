@@ -5,7 +5,7 @@ import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { K8sFullyQualifiedResourceReference } from '../module/k8s';
+import { GroupVersionKind } from '../module/k8s';
 
 import { registerTemplate } from '../yaml-templates';
 
@@ -19,7 +19,7 @@ metadata:
 spec: {}
 `);
 
-export const ClusterReference: K8sFullyQualifiedResourceReference = 'Cluster:multicluster.coreos.com:v1';
+export const ClusterReference: GroupVersionKind = 'Cluster:multicluster.coreos.com:v1';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 

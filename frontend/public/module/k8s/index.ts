@@ -74,10 +74,10 @@ export type K8sKind = {
 };
 
 // Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
-export type K8sFullyQualifiedResourceReference = string;
+export type GroupVersionKind = string;
 
 /**
  * The canonical, unique identifier for a Kubernetes resource type.
  * Maintains backwards-compatibility with references using the `kind` string field.
  */
-export type K8sResourceKindReference = K8sFullyQualifiedResourceReference | string;
+export type K8sResourceKindReference = GroupVersionKind | string;

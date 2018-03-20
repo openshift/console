@@ -7,13 +7,13 @@ import { connectToPlural } from '../../kinds';
 import { CRDDescription, ClusterServiceVersionKind, ClusterServiceVersionResourceLink, ClusterServiceVersionResourceKind } from './index';
 import { ResourceLink, Timestamp, MsgBox } from '../utils';
 import { ColHead, ListHeader, MultiListPage, List } from '../factory';
-import { K8sResourceKind, K8sFullyQualifiedResourceReference, kindForReference, K8sKind } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, kindForReference, K8sKind } from '../../module/k8s';
 
 export const Resources = connectToPlural((props: ResourceProps) => {
   const {kindObj, clusterServiceVersion} = props;
 
   const resourceForCRD = (crdDesc) => ({
-    kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as K8sFullyQualifiedResourceReference,
+    kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as GroupVersionKind,
     namespaced: true,
     optional: true,
     prop: crdDesc.kind,

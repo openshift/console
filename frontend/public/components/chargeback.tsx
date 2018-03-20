@@ -10,7 +10,7 @@ import { LoadError, LoadingBox, LoadingInline, MsgBox } from './utils/status-box
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
-import { K8sFullyQualifiedResourceReference, resourceURL, modelFor } from '../module/k8s';
+import { GroupVersionKind, resourceURL, modelFor } from '../module/k8s';
 
 import { registerTemplate } from '../yaml-templates';
 
@@ -27,10 +27,10 @@ spec:
   runImmediately: true
 `);
 
-export const ReportReference: K8sFullyQualifiedResourceReference = 'Report:chargeback.coreos.com:v1alpha1';
-export const ScheduledReportReference: K8sFullyQualifiedResourceReference = 'ScheduledReport:chargeback.coreos.com:v1alpha1';
-export const ReportGenerationQueryReference: K8sFullyQualifiedResourceReference = 'ReportGenerationQuery:chargeback.coreos.com:v1alpha1';
-export const ReportPrometheusQueryReference: K8sFullyQualifiedResourceReference = 'ReportPrometheusQuery:chargeback.coreos.com:v1alpha1';
+export const ReportReference: GroupVersionKind = 'Report:chargeback.coreos.com:v1alpha1';
+export const ScheduledReportReference: GroupVersionKind = 'ScheduledReport:chargeback.coreos.com:v1alpha1';
+export const ReportGenerationQueryReference: GroupVersionKind = 'ReportGenerationQuery:chargeback.coreos.com:v1alpha1';
+export const ReportPrometheusQueryReference: GroupVersionKind = 'ReportPrometheusQuery:chargeback.coreos.com:v1alpha1';
 
 const reportPages=[
   {name: 'All Reports', href: ReportReference},

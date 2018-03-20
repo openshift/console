@@ -11,7 +11,7 @@ import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descri
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, Firehose } from '../utils';
 import { connectToPlural } from '../../kinds';
-import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, K8sFullyQualifiedResourceReference, referenceForModel } from '../../module/k8s';
+import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
 
@@ -269,7 +269,7 @@ export type ClusterServiceVersionResourcesDetailsProps = {
 };
 
 export type ClusterServiceVersionResourcesDetailsPageProps = {
-  kind: K8sFullyQualifiedResourceReference;
+  kind: GroupVersionKind;
   name: string;
   namespace: string;
   match: match<any>;
@@ -277,7 +277,7 @@ export type ClusterServiceVersionResourcesDetailsPageProps = {
 
 export type CSVResourceDetailsProps = {
   csv?: {data: ClusterServiceVersionKind};
-  kind: K8sFullyQualifiedResourceReference;
+  kind: GroupVersionKind;
   name: string;
   namespace: string;
   match: match<{appName: string}>;
