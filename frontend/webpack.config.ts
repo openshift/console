@@ -55,6 +55,7 @@ let config: webpack.Configuration = {
       },
       {
         test: /\.s?css$/,
+        exclude: /node_modules/,
         use: extractSass.extract({
           use: [
             { loader: 'cache-loader' },
