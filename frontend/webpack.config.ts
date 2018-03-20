@@ -14,9 +14,10 @@ const gitHash = () => require('child_process').execSync('git rev-parse --short H
 const extractSass = new ExtractTextPlugin({filename: 'app-bundle.css'});
 
 let config: webpack.Configuration = {
-  entry: {
-    app:  './public/components/app.jsx',
-  },
+  entry: [
+    './polyfills.js',
+    './public/components/app.jsx',
+  ],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
