@@ -31,6 +31,7 @@ import { namespacedPrefixes } from './utils/link';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogsDetailsPage, ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage } from './cloud-services';
+import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
 import { ClusterServiceVersionModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { coFetch } from '../co-fetch';
@@ -142,7 +143,7 @@ class App extends React.PureComponent {
             <Route path="/applications/all-namespaces" exact component={ClusterServiceVersionsPage} />
             <Route path="/applications/ns/:ns" exact component={ClusterServiceVersionsPage} />
             <Route path="/applications/ns/:ns/:name/edit" exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
-            <Route path="/applications/ns/:ns/:appName/:plural/new" exact component={NamespaceFromURL(CreateYAML)} />
+            <Route path="/applications/ns/:ns/:appName/:plural/new" exact component={NamespaceFromURL(CreateCRDYAML)} />
             <Route path="/applications/ns/:ns/:appName/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/applications/ns/:ns/:name" component={ClusterServiceVersionsDetailsPage} />
             <Route path="/catalog" exact component={CatalogsDetailsPage} />
