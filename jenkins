@@ -77,7 +77,6 @@ then
     status 'GUI Tests (ALM)' 'success'
 else
     status 'GUI Tests (ALM)' 'error'
-    exit 1
 fi
 
 set -e
