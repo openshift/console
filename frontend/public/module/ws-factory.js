@@ -113,7 +113,13 @@ WebSocketWrapper.prototype._connect = function() {
   const that = this;
   this._state = 'init';
   this._buffer = [];
-  this.ws = new WebSocket(this.url, this.options.subProtocols);
+  try {
+    this.ws = new WebSocket(this.url, this.options.subProtocols);
+  } catch (e) {
+    console.error('Error creating websocket:', e);
+    this._reconnect();
+    return;
+  }
 
   this.ws.onopen = function() {
     console.log(`websocket open: ${that.id}`);
