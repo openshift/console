@@ -20,7 +20,6 @@ import (
 	"github.com/coreos/dex/api"
 	"github.com/coreos/dex/connector"
 	"github.com/coreos/dex/connector/ldap"
-	"github.com/coreos/go-oidc/jose"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
 
@@ -152,8 +151,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	useListNamespaces := s.handleListNamespaces
 	useListCRDs := s.handleListCRDs
 	useCertsHandler := s.certsHandler
-	useClientsHandler := s.handleListClients
-	useTokenRevocationHandler := s.handleTokenRevocation
 
 	if !s.AuthDisabled() {
 		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
@@ -161,8 +158,11 @@ func (s *Server) HTTPHandler() http.Handler {
 		useListNamespaces = authMiddleware(s.Auther, http.HandlerFunc(s.handleListNamespaces))
 		useListCRDs = authMiddleware(s.Auther, http.HandlerFunc(s.handleListCRDs))
 		useCertsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.certsHandler))
-		useClientsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.handleListClients))
-		useTokenRevocationHandler = authMiddleware(s.Auther, http.HandlerFunc(s.handleTokenRevocation))
+
+		useClientsHandler := authMiddlewareWithUser(s.Auther, s.handleListClients)
+		useTokenRevocationHandler := authMiddlewareWithUser(s.Auther, s.handleTokenRevocation)
+		handleFunc("/api/tectonic/clients", useClientsHandler)
+		handleFunc("/api/tectonic/revoke-token", useTokenRevocationHandler)
 	}
 
 	handleFunc("/api/tectonic/version", useVersionHandler)
@@ -171,8 +171,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/api/tectonic/namespaces", useListNamespaces)
 	handleFunc("/api/tectonic/crds", useListCRDs)
 	handleFunc("/api/tectonic/certs", useCertsHandler)
-	handleFunc("/api/tectonic/clients", useClientsHandler)
-	handleFunc("/api/tectonic/revoke-token", useTokenRevocationHandler)
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
@@ -195,12 +193,12 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 			return http.StatusBadRequest, errors.New("No 'code' form value provided.")
 		}
 
-		token, err := s.KubectlAuther.ExchangeAuthCode(oauth2Code)
+		idToken, refreshToken, err := s.KubectlAuther.ExchangeAuthCode(oauth2Code)
 		if err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("Failed to exchange auth token: %v", err)
 		}
 		buff := new(bytes.Buffer)
-		if err := s.KubeConfigTmpl.Execute(buff, token.IDToken, token.RefreshToken); err != nil {
+		if err := s.KubeConfigTmpl.Execute(buff, idToken, refreshToken); err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("Failed to render kubeconfig: %v", err)
 		}
 		w.Header().Set("Content-Length", strconv.Itoa(buff.Len()))
@@ -298,37 +296,6 @@ func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendResponse(w, http.StatusOK, info)
-}
-
-// This method extracts the JWT encoded token from a request, parses it and
-// returns 'sub' from the payload as user Id.
-func extractUserIdFromRequest(a *auth.Authenticator, r *http.Request) (string, error) {
-	userId := ""
-	token, err := a.TokenExtractor(r)
-	if err != nil {
-		plog.Errorf("Received an error while extracting token: %v", err)
-		return userId, err
-	}
-
-	jwt, err := jose.ParseJWT(token)
-	if err != nil {
-		plog.Errorf("Received an error while parsing token: %v", err)
-		return userId, err
-	}
-
-	claims, err := jwt.Claims()
-	if err != nil {
-		plog.Errorf("Received an error while extracting claims: %v", err)
-		return userId, err
-	}
-
-	userId, _, err = claims.StringClaim("sub")
-	if err != nil {
-		plog.Errorf("Received an error while extracting userId: %v", err)
-		return userId, err
-	}
-
-	return userId, err
 }
 
 // Validate that a license should be used, purely based on it being
@@ -594,7 +561,7 @@ func verifyLDAP(ctx context.Context, req ldapReq) (*ldapResp, *ldapError) {
 	}, nil
 }
 
-func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleTokenRevocation(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if s.DexClient == nil {
 		sendResponse(w, http.StatusNotImplemented, apiError{"Failed to revoke refresh token: Dex API access not configured"})
 		return
@@ -606,19 +573,8 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := extractUserIdFromRequest(s.Auther, r)
-	if err != nil {
-		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: cannot extract user id from cookie: %v", err)})
-		return
-	}
-
-	if userID == "" {
-		sendResponse(w, http.StatusBadRequest, apiError{"Failed to revoke refresh token: user_id not provided"})
-		return
-	}
-
 	req := &api.RevokeRefreshReq{
-		UserId:   userID,
+		UserId:   user.ID,
 		ClientId: clientID,
 	}
 
@@ -635,25 +591,14 @@ func (s *Server) handleTokenRevocation(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusOK, apiError{})
 }
 
-func (s *Server) handleListClients(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleListClients(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if s.DexClient == nil {
 		sendResponse(w, http.StatusNotImplemented, apiError{"Failed to List Client: Dex API access not configured."})
 		return
 	}
 
-	userID, err := extractUserIdFromRequest(s.Auther, r)
-	if err != nil {
-		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to List Client: cannot extract user id from cookie: %v", err)})
-		return
-	}
-
-	if userID == "" {
-		sendResponse(w, http.StatusBadRequest, apiError{"Failed to list clients: user_id not provided"})
-		return
-	}
-
 	req := &api.ListRefreshReq{
-		UserId: userID,
+		UserId: user.ID,
 	}
 
 	resp, err := s.DexClient.ListRefresh(r.Context(), req)

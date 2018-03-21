@@ -22,7 +22,7 @@ func TestRedirectAuthError(t *testing.T) {
 		},
 		RedirectURL: "http://example.com/callback",
 	}
-	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL, "/", "http://auth.example.com/", true)
+	a, err := newAuthenticator(ccfg, "http://auth.example.com", errURL, sucURL, "/", "http://auth.example.com/", true)
 
 	a.redirectAuthError(w, "fake_error", err)
 	if err != nil {
@@ -59,15 +59,15 @@ func makeAuthenticator() (*Authenticator, error) {
 		},
 		RedirectURL: "https://example.com/callback",
 	}
-	a, err := NewAuthenticator(ccfg, &url.URL{Scheme: "http", Host: "auth.example.com"}, errURL, sucURL, "/", validReferer, true)
+	a, err := newAuthenticator(ccfg, "http://auth.example.com", errURL, sucURL, "/", validReferer, true)
 
 	if err != nil {
 		return nil, err
 	}
 
 	// We don't care about jwt validity for these tests
-	a.TokenExtractor = ConstantTokenExtractor("invalid token")
-	a.TokenVerifier = func(bearer string) (token, error) {
+	a.tokenExtractor = ConstantTokenExtractor("invalid token")
+	a.tokenVerifier = func(bearer string) (token, error) {
 		jwt, _ := jose.ParseJWT(bearer)
 		return &jwt, nil
 	}

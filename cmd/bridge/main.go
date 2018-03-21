@@ -10,9 +10,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"time"
 
-	"github.com/coreos/go-oidc/oidc"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
 
@@ -129,9 +127,6 @@ func main() {
 		// Hold on to raw certificates so we can render them in kubeconfig files.
 		dexCertPEM []byte
 		k8sCertPEM []byte
-		// If caFile is unspecified and certPool is nil, net/tls will default to
-		// using the host's certs.
-		certPool *x509.CertPool
 	)
 	if *fCAFile != "" {
 		var err error
@@ -140,10 +135,6 @@ func main() {
 			log.Fatalf("Failed to read cert file: %v", err)
 		}
 
-		certPool = x509.NewCertPool()
-		if !certPool.AppendCertsFromPEM(dexCertPEM) {
-			log.Fatalf("No certs found in %q", *fCAFile)
-		}
 	}
 
 	var (
@@ -224,26 +215,6 @@ func main() {
 		validateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
 		validateFlagNotEmpty("user-auth-oidc-client-secret", *fUserAuthOIDCClientSecret)
 
-		httpClient := &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					RootCAs: certPool,
-				},
-			},
-			Timeout: time.Second * 5,
-		}
-
-		// oidcClientConfig for logging into console.
-		oidcClientConfig := oidc.ClientConfig{
-			HTTPClient: httpClient,
-			Credentials: oidc.ClientCredentials{
-				ID:     *fUserAuthOIDCClientID,
-				Secret: *fUserAuthOIDCClientSecret,
-			},
-			RedirectURL: proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
-			Scope:       []string{"openid", "email", "profile", "groups"},
-		}
-
 		var (
 			err                      error
 			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
@@ -252,6 +223,23 @@ func main() {
 			cookiePath  = proxy.SingleJoiningSlash(srv.BaseURL.Path, "/api/")
 			refererPath = srv.BaseURL.String()
 		)
+
+		// Config for logging into console.
+		oidcClientConfig := &auth.Config{
+			IssuerURL:    userAuthOIDCIssuerURL.String(),
+			IssuerCA:     *fCAFile,
+			ClientID:     *fUserAuthOIDCClientID,
+			ClientSecret: *fUserAuthOIDCClientSecret,
+			RedirectURL:  proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
+			Scope:        []string{"openid", "email", "profile", "groups"},
+
+			ErrorURL:   authLoginErrorEndpoint,
+			SuccessURL: authLoginSuccessEndpoint,
+
+			CookiePath:    cookiePath,
+			RefererPath:   refererPath,
+			SecureCookies: secureCookies,
+		}
 
 		if *fKubectlClientID != "" {
 			srv.KubectlClientID = *fKubectlClientID
@@ -269,19 +257,25 @@ func main() {
 
 			// Configure an OpenID Connect config for kubectl. This lets us issue
 			// refresh tokens that kubectl can redeem using its own credentials.
-			kubectlOIDCCientConfig := oidc.ClientConfig{
-				HTTPClient: httpClient,
-				Credentials: oidc.ClientCredentials{
-					ID:     *fKubectlClientID,
-					Secret: *fKubectlClientSecret,
-				},
+			kubectlAuthConfig := &auth.Config{
+				IssuerURL:    userAuthOIDCIssuerURL.String(),
+				IssuerCA:     *fCAFile,
+				ClientID:     *fKubectlClientID,
+				ClientSecret: *fKubectlClientSecret,
 				// The magic "out of band" redirect URL.
 				RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
 				// Request a refresh token with the "offline_access" scope.
 				Scope: []string{"openid", "email", "profile", "offline_access", "groups"},
+
+				ErrorURL:   authLoginErrorEndpoint,
+				SuccessURL: authLoginSuccessEndpoint,
+
+				CookiePath:    cookiePath,
+				RefererPath:   refererPath,
+				SecureCookies: secureCookies,
 			}
 
-			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlOIDCCientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath, refererPath, secureCookies); err != nil {
+			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlAuthConfig); err != nil {
 				log.Fatalf("Error initializing kubectl authenticator: %v", err)
 			}
 
@@ -296,7 +290,7 @@ func main() {
 			)
 		}
 
-		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig, userAuthOIDCIssuerURL, authLoginErrorEndpoint, authLoginSuccessEndpoint, cookiePath, refererPath, secureCookies); err != nil {
+		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig); err != nil {
 			log.Fatalf("Error initializing OIDC authenticator: %v", err)
 		}
 	case "disabled":
