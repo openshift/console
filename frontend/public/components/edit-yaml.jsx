@@ -88,7 +88,8 @@ export const EditYAML = connect(stateToProps)(
       super.componentWillUnmount();
       if (this.ace) {
         this.ace.destroy();
-        this.ace.container.remove();
+        // Avoid the use of .remove() to be compatible with IE 11
+        this.ace.container.parentNode.removeChild(this.ace.container);
         this.ace = null;
         window.ace = null;
       }
