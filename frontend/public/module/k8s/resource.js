@@ -80,16 +80,12 @@ export const k8sKill = (kind, resource, opts = {}, json = null) => coFetchJSON.d
 );
 
 export const k8sList = (kind, params={}, raw=false) => {
-  const query = _(params)
-    .omit('ns')
-    .map((v, k) => {
-      if (k === 'labelSelector') {
-        v = selectorToString(v);
-      }
-      return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
-    })
-    .value()
-    .join('&');
+  const query = _.map(_.omit(params, 'ns'), (v, k) => {
+    if (k === 'labelSelector') {
+      v = selectorToString(v);
+    }
+    return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+  }).join('&');
 
   const k = kind.kind === 'Namespace' ? {
     // hit our custom /namespaces path which better handles users with limited permissions

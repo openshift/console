@@ -20,7 +20,7 @@ spec:
           serviceName: test
           servicePort: 80`);
 
-export const ingressValidHosts = ingress => _.chain(ingress).get('spec.rules').map('host').filter(_.isString).value();
+export const ingressValidHosts = ingress => _.get(ingress, 'spec.rules', []).map('host').filter(_.isString);
 
 const getHosts = (ingress) => {
   const hosts = ingressValidHosts(ingress);

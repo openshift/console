@@ -9,10 +9,8 @@ import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
 
 const calculateAppVersionState = (statuses) => {
-  const overallState = _(statuses)
-    .map('state')
-    .uniq();
-  return _.find(orderedTaskStatuses, (s) => _.includes(overallState.value(), s));
+  const overallState = _.uniq(_.map(statuses, 'state'));
+  return _.find(orderedTaskStatuses, s => _.includes(overallState, s));
 };
 
 const groupTaskStatuses = tss => {

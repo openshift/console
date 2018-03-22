@@ -297,7 +297,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
         }
       });
     });
-    const rows = _.chain(reducedData).map((o, key) => ({[reduceBy]: key, ...o})).orderBy(sortBy, orderBy).value();
+    const rows = _.orderBy(_.map(reducedData, (o, key) => ({[reduceBy]: key, ...o})), sortBy, orderBy);
     return {rows, maxValues, totals};
   }
 
