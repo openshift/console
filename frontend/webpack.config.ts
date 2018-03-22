@@ -2,16 +2,15 @@
 
 import * as webpack from 'webpack';
 import * as path from 'path';
-import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const NODE_ENV = process.env.NODE_ENV;
 
 /* Helpers */
 const gitHash = () => require('child_process').execSync('git rev-parse --short HEAD').toString().trim();
-const extractSass = new ExtractTextPlugin({filename: 'app-bundle.css'});
+const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
 
 let config: webpack.Configuration = {
   entry: [
@@ -20,7 +19,7 @@ let config: webpack.Configuration = {
   ],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
-    publicPath: 'static/',
+    publicPath: '/static/',
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
   },
@@ -57,32 +56,30 @@ let config: webpack.Configuration = {
       {
         test: /\.s?css$/,
         exclude: /node_modules/,
-        use: extractSass.extract({
-          use: [
-            { loader: 'cache-loader' },
-            { loader: 'thread-loader' },
-            {
-              loader: 'css-loader',
-              options: {
-                sourceMap: true,
-              }
-            },
-            {
-              loader: 'resolve-url-loader',
-              options: {
-                sourceMap: true,
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                sourceMap: true,
-                outputStyle: 'compressed',
-              }
-            },
-          ],
-          publicPath: './',
-        })
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'cache-loader' },
+          { loader: 'thread-loader' },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            }
+          },
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              sourceMap: true,
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+              outputStyle: 'compressed',
+            }
+          },
+        ],
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
@@ -93,29 +90,27 @@ let config: webpack.Configuration = {
       },
     ]
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+    runtimeChunk: true,
+  },
   plugins: [
-    new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(NODE_ENV)}),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: ({resource}) => {
-        if (resource && (/^.*\.(css|scss)$/).test(resource)) {
-          return false;
-        }
-        return /node_modules/.test(resource);
-      },
-    }),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
-    extractSass,
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',
       inject: false,
+      chunksSortMode: 'none',
     }),
     new HtmlWebpackPlugin({
       filename: './index.html',
       template: './public/index.html',
       production: NODE_ENV === 'production',
+      chunksSortMode: 'none',
     }),
+    extractCSS,
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
   ],
   devtool: 'cheap-module-source-map',
@@ -126,10 +121,9 @@ let config: webpack.Configuration = {
 if (NODE_ENV === 'production') {
   config.output.filename = `[name]-bundle.${gitHash()}.min.js`;
   config.output.chunkFilename = `[name]-[chunkhash].${gitHash()}.min.js`;
-  extractSass.filename = `app-bundle.${gitHash()}.min.css`;
-  config.plugins = config.plugins.concat([
-    new UglifyJsPlugin({sourceMap: true}),
-  ]);
+  extractCSS.filename = `[name]-[chunkhash].${gitHash()}.min.css`;
+  // FIXME(alecmerdler): Causes error in --mode=production due to scope hoisting
+  config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }
 
