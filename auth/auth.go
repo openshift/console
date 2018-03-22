@@ -36,11 +36,11 @@ var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 var ss = NewSessionStore(32768)
 
 type Authenticator struct {
-	TokenExtractor oidc.RequestTokenExtractor
-	TokenVerifier  tokenVerifier
+	tokenExtractor oidc.RequestTokenExtractor
+	tokenVerifier  tokenVerifier
 
 	oidcClient    *oidc.Client
-	issuerURL     *url.URL
+	issuerURL     string
 	errorURL      string
 	successURL    string
 	cookiePath    string
@@ -83,8 +83,64 @@ func GetTokenBySessionCookie(r *http.Request) (string, error) {
 	return ls.token.Encode(), nil
 }
 
-// NewAuthenticator initializes an Authenticator struct. cookiePath is an abstraction leak. (unfortunately, a necessary one.)
-func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, successURL, cookiePath string, refererPath string, secureCookies bool) (*Authenticator, error) {
+type Config struct {
+	IssuerURL    string
+	IssuerCA     string
+	RedirectURL  string
+	ClientID     string
+	ClientSecret string
+	Scope        []string
+
+	SuccessURL  string
+	ErrorURL    string
+	RefererPath string
+	// cookiePath is an abstraction leak. (unfortunately, a necessary one.)
+	CookiePath    string
+	SecureCookies bool
+}
+
+func newHTTPClient(issuerCA string) (*http.Client, error) {
+	if issuerCA == "" {
+		return http.DefaultClient, nil
+	}
+	data, err := ioutil.ReadFile(issuerCA)
+	if err != nil {
+		return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
+	}
+
+	certPool := x509.NewCertPool()
+	if !certPool.AppendCertsFromPEM(data) {
+		return nil, fmt.Errorf("file %s contained no CA data", issuerCA)
+	}
+	return &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: certPool,
+			},
+		},
+		Timeout: time.Second * 5,
+	}, nil
+}
+
+// NewAuthenticator initializes an Authenticator struct.
+func NewAuthenticator(c *Config) (*Authenticator, error) {
+	client, err := newHTTPClient(c.IssuerCA)
+	if err != nil {
+		return nil, err
+	}
+	cc := oidc.ClientConfig{
+		HTTPClient: client,
+		Credentials: oidc.ClientCredentials{
+			ID:     c.ClientID,
+			Secret: c.ClientSecret,
+		},
+		RedirectURL: c.RedirectURL,
+		Scope:       c.Scope,
+	}
+	return newAuthenticator(cc, c.IssuerURL, c.ErrorURL, c.SuccessURL, c.CookiePath, c.RefererPath, c.SecureCookies)
+}
+
+func newAuthenticator(ccfg oidc.ClientConfig, issuerURL, errorURL, successURL, cookiePath, refererPath string, secureCookies bool) (*Authenticator, error) {
 	client, err := oidc.NewClient(ccfg)
 	if err != nil {
 		return nil, err
@@ -110,8 +166,8 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 	}
 
 	return &Authenticator{
-		TokenVerifier:  jwtVerifier(client),
-		TokenExtractor: GetTokenBySessionCookie,
+		tokenVerifier:  jwtVerifier(client),
+		tokenExtractor: GetTokenBySessionCookie,
 		oidcClient:     client,
 		issuerURL:      issuerURL,
 		errorURL:       errURL,
@@ -122,9 +178,39 @@ func NewAuthenticator(ccfg oidc.ClientConfig, issuerURL *url.URL, errorURL, succ
 	}, nil
 }
 
+// User holds fields representing a user.
+type User struct {
+	ID       string
+	Username string
+	Token    string
+}
+
+func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
+	rawToken, err := a.tokenExtractor(r)
+	if err != nil {
+		return nil, fmt.Errorf("no token found for %v: %v", r.URL.String(), err)
+	}
+
+	token, err := a.tokenVerifier(rawToken)
+	if err != nil {
+		return nil, fmt.Errorf("no token found for %v: %v", r.URL.String(), err)
+	}
+
+	loginState, err := newLoginState(token)
+	if err != nil {
+		return nil, fmt.Errorf("extracting user info: %v", err)
+	}
+
+	return &User{
+		ID:       loginState.UserID,
+		Username: loginState.Name,
+		Token:    rawToken,
+	}, nil
+}
+
 // Start starts the authenticator's provider sync, and blocks until the initial sync has completed successfully.
 func (a *Authenticator) Start() {
-	a.oidcClient.SyncProviderConfig(a.issuerURL.String())
+	a.oidcClient.SyncProviderConfig(a.issuerURL)
 }
 
 // LoginFunc redirects to the OIDC provider for user login.
@@ -161,12 +247,16 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 
 // ExchangeAuthCode allows callers to return a raw token response given a OAuth2
 // code. This is useful for clients which need to request refresh tokens.
-func (a *Authenticator) ExchangeAuthCode(code string) (oauth2.TokenResponse, error) {
+func (a *Authenticator) ExchangeAuthCode(code string) (idToken, refreshToken string, err error) {
 	oauth2Client, err := a.oidcClient.OAuthClient()
 	if err != nil {
-		return oauth2.TokenResponse{}, err
+		return "", "", err
 	}
-	return oauth2Client.RequestToken(oauth2.GrantTypeAuthCode, code)
+	token, err := oauth2Client.RequestToken(oauth2.GrantTypeAuthCode, code)
+	if err != nil {
+		return "", "", fmt.Errorf("request token: %v", err)
+	}
+	return token.IDToken, token.RefreshToken, nil
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.

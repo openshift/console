@@ -2,29 +2,30 @@ package server
 
 import (
 	"fmt"
-	"github.com/coreos-inc/bridge/auth"
 	"net/http"
+
+	"github.com/coreos-inc/bridge/auth"
 )
 
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
 func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
+	f := func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		hdlr.ServeHTTP(w, r)
+	}
+	return authMiddlewareWithUser(a, f)
+}
+
+func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		encTok, err := a.TokenExtractor(r)
+		user, err := a.Authenticate(r)
 		if err != nil {
-			plog.Infof("no token found for %v: %v", r.URL.String(), err)
+			plog.Infof("authentication failed: %v", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		_, err = a.TokenVerifier(encTok)
-		if err != nil {
-			plog.Infof("error verifying token: %v", err)
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", encTok))
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 
 		safe := false
 		switch r.Method {
@@ -49,7 +50,7 @@ func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
 			}
 		}
 
-		hdlr.ServeHTTP(w, r)
+		handlerFunc(user, w, r)
 	}
 }
 
