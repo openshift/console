@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {coFetch} from '../../co-fetch';
 import {configureYamlFieldModal} from './configure-yaml-field-modal';
 

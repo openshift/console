@@ -3,7 +3,7 @@
 import { Config, browser, logging } from 'protractor';
 import { execSync } from 'child_process';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { TapReporter } from 'jasmine-reporters';
 import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';

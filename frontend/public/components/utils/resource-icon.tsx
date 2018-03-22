@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { connectToModel } from '../../kinds';
 import { K8sResourceKindReference, K8sKind } from '../../module/k8s';

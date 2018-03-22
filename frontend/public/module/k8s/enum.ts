@@ -3,7 +3,7 @@
  * TODO(alecmerdler): Remove this and replace calls
  */
 
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import * as staticModels from '../../models';
 // eslint-disable-next-line no-unused-vars

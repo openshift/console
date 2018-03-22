@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 const getRestartPolicy = pod => _.find({
   Always: {

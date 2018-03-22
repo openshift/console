@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 // eslint-disable-next-line no-undef
 import Spy = jasmine.Spy;
 /* eslint-disable no-unused-vars */

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import * as Immutable from 'immutable';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { k8sBasePath } from './module/k8s';
 import { coFetchJSON } from './co-fetch';

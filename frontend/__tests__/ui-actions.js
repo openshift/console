@@ -1,6 +1,6 @@
 /* eslint-env node */
 /* global jest */
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ALL_NAMESPACES_KEY } from '../public/const';
 import '../__mocks__/localStorage';
 

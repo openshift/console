@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { connectToPlural } from '../../kinds';
 import { CRDDescription, ClusterServiceVersionKind, ClusterServiceVersionResourceLink, ClusterServiceVersionResourceKind } from './index';

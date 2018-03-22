@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { safeLoad } from 'js-yaml';
 import { TEMPLATES } from '../yaml-templates';

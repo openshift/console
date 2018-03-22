@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 /** https://github.com/coreos-inc/container-linux-update-operator/blob/master/internal/constants/constants.go **/
 const CLUO_PREFIX = 'container-linux-update.v1.coreos.com/';

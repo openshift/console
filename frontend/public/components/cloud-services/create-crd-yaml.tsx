@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { safeDump } from 'js-yaml';
 import { match } from 'react-router-dom';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { Firehose, LoadingBox } from '../utils';
 import { CreateYAML } from '../create-yaml';
