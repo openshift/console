@@ -282,6 +282,20 @@ export const DeploymentModel: K8sKind = {
   labelPlural: 'Deployments'
 };
 
+export const DeploymentConfigModel: K8sKind = {
+  label: 'Deployment Config',
+  apiVersion: 'apps.openshift.io/v1',
+  path: 'deploymentconfigs',
+  apiGroup: '',
+  plural: 'deploymentconfigs',
+  abbr: 'DC',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'DeploymentConfig',
+  id: 'deploymentconfig',
+  labelPlural: 'Deployment Configs'
+};
+
 export const JobModel: K8sKind = {
   label: 'Job',
   apiVersion: 'batch/v1',

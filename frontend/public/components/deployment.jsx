@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Tooltip } from 'react-lightweight-tooltip';
 
 import { k8sKinds } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { configureReplicaCountModal, configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
+import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('apps/v1beta2.Deployment', `apiVersion: apps/v1beta2
@@ -82,47 +81,7 @@ export class Details extends SafetyFirst {
     const isRecreate = (deployment.spec.strategy.type === 'Recreate');
 
     return <div className="co-m-pane__body">
-      <div className="co-m-pane__body-group">
-        <div className="row no-gutter">
-          <div className="co-detail-table">
-            <div className="co-detail-table__row row">
-              <div className="co-detail-table__section col-sm-3">
-                <dl>
-                  <dt className="co-detail-table__section-header">Desired Count</dt>
-                  <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#" onClick={this._openReplicaCountModal}>{pluralize(deployment.spec.replicas, 'pod')}</a>}</dd>
-                </dl>
-              </div>
-              <div className="co-detail-table__section col-sm-3">
-                <dl>
-                  <dt className="co-detail-table__section-header">Up-to-date Count</dt>
-                  <dd>
-                    <Tooltip content="Total number of non-terminated pods targeted by this deployment that have the desired template spec.">
-                      {pluralize(deployment.status.updatedReplicas, 'pod')}
-                    </Tooltip>
-                  </dd>
-                </dl>
-              </div>
-              <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
-                <dl>
-                  <dt className="co-detail-table__section-header">Matching Pods</dt>
-                  <dd>
-                    <Tooltip content="Total number of non-terminated pods targeted by this deployment (their labels match the selector)">
-                      {pluralize(deployment.status.replicas, 'pod')}
-                    </Tooltip>
-                  </dd>
-                </dl>
-                <div className="co-detail-table__bracket"></div>
-                <div className="co-detail-table__breakdown">
-                  <Tooltip content="Total number of available pods (ready for at least minReadySeconds) targeted by this deployment">
-                    {deployment.status.availableReplicas || 0} available
-                  </Tooltip>
-                  <Tooltip content="Total number of unavailable pods targeted by this deployment">{deployment.status.unavailableReplicas || 0} unavailable</Tooltip>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <DeploymentPodCounts resource={deployment} resourceKind={k8sKinds.Deployment} openReplicaCountModal={this._openReplicaCountModal} desiredCountOutdated={this.state.desiredCountOutdated} />
 
       <div className="co-m-pane__body-group">
         <div className="row no-gutter">

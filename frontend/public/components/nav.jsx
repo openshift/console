@@ -7,7 +7,7 @@ import * as _ from 'lodash-es';
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespacedRouteForResource, formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
-import { ClusterServiceVersionModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
+import { ClusterServiceVersionModel, DeploymentConfigModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
 
@@ -135,6 +135,7 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
     <NavSection text="Workloads" icon="fa-folder-open-o">
       <NavLink resource="daemonsets" name="Daemon Sets" />
       <NavLink resource="deployments" name="Deployments" />
+      <NavLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
       <NavLink resource="replicasets" name="Replica Sets" />
       <NavLink resource="replicationcontrollers" name="Replication Controllers" />
       <NavLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />

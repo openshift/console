@@ -32,3 +32,4 @@ export * from './link';
 export * from './async';
 export * from './download-button';
 export * from './error-boundary';
+export * from './deployment-pod-counts';
