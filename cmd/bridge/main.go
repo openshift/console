@@ -324,15 +324,16 @@ func main() {
 	switch *fK8sAuth {
 	case "service-account":
 		validateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
-		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ConstantTokenExtractor(k8sAuthServiceAccountBearerToken))
+		srv.StaticUser = &auth.User{
+			Token: k8sAuthServiceAccountBearerToken,
+		}
 	case "bearer-token":
 		validateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
-		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.ConstantTokenExtractor(*fK8sAuthBearerToken))
-		srv.NamespaceLister.BearerToken = string(*fK8sAuthBearerToken)
-		srv.CustomResourceDefinitionLister.BearerToken = string(*fK8sAuthBearerToken)
+		srv.StaticUser = &auth.User{
+			Token: *fK8sAuthBearerToken,
+		}
 	case "oidc":
 		validateFlagIs("user-auth", *fUserAuth, "oidc")
-		srv.K8sProxyConfig.Director = server.DirectorFromTokenExtractor(srv.K8sProxyConfig, auth.GetTokenBySessionCookie)
 	default:
 		flagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc")
 	}

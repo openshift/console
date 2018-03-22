@@ -9,15 +9,15 @@ import (
 
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
-func authMiddleware(a *auth.Authenticator, hdlr http.Handler) http.HandlerFunc {
+func authMiddleware(a *auth.Authenticator, hdlr http.HandlerFunc) http.Handler {
 	f := func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		hdlr.ServeHTTP(w, r)
 	}
 	return authMiddlewareWithUser(a, f)
 }
 
-func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user, err := a.Authenticate(r)
 		if err != nil {
 			plog.Infof("authentication failed: %v", err)
@@ -51,7 +51,7 @@ func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.U
 		}
 
 		handlerFunc(user, w, r)
-	}
+	})
 }
 
 func securityHeadersMiddleware(hdlr http.Handler) http.HandlerFunc {

@@ -66,7 +66,9 @@ func makeAuthenticator() (*Authenticator, error) {
 	}
 
 	// We don't care about jwt validity for these tests
-	a.tokenExtractor = ConstantTokenExtractor("invalid token")
+	a.tokenExtractor = func(_ *http.Request) (string, error) {
+		return "invalid-token", nil
+	}
 	a.tokenVerifier = func(bearer string) (token, error) {
 		jwt, _ := jose.ParseJWT(bearer)
 		return &jwt, nil
