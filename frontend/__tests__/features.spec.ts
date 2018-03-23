@@ -3,7 +3,7 @@
 import store from '../public/redux';
 import * as Immutable from 'immutable';
 
-import { FLAGS, featureReducer, CRDS_ } from '../public/features';
+import { FLAGS, featureReducer, CRDS_, DEFAULTS_ } from '../public/features';
 import { k8sBasePath } from '../public/module/k8s';
 import * as coFetch from '../public/co-fetch';
 
@@ -42,27 +42,15 @@ describe('featureActions', () => {
 });
 
 describe('featureReducer', () => {
-  const defaults: {[name: string]: any} = {
-    [FLAGS.AUTH_ENABLED]: !((window as any).SERVER_FLAGS.authDisabled),
-    [FLAGS.CLUSTER_UPDATES]: undefined,
-    [FLAGS.PROMETHEUS]: undefined,
-    [FLAGS.MULTI_CLUSTER]: undefined,
-    [FLAGS.SECURITY_LABELLER]: undefined,
-    [FLAGS.CLOUD_SERVICES]: undefined,
-    [FLAGS.CLOUD_CATALOGS]: undefined,
-    [FLAGS.CALICO]: undefined,
-    [FLAGS.CHARGEBACK]: undefined,
-  };
-
   it('returns default values if state is uninitialized', () => {
     const newState = featureReducer(null, null);
 
-    expect(newState).toEqual(Immutable.Map(defaults));
+    expect(newState).toEqual(Immutable.Map(DEFAULTS_));
   });
 
   it('returns updated state with new flags if `SET_FLAG` action', () => {
-    const action = {type: 'SET_FLAG', flag: FLAGS.CLOUD_SERVICES, value:'clusterserviceversions'};
-    const initialState = Immutable.Map(defaults);
+    const action = {type: 'SET_FLAG', flag: FLAGS.CLOUD_SERVICES, value: true};
+    const initialState = Immutable.Map(DEFAULTS_);
     const newState = featureReducer(initialState, action);
 
     expect(newState).toEqual(initialState.merge({[action.flag]: action.value}));
@@ -70,7 +58,7 @@ describe('featureReducer', () => {
 
   it('returns state if not `SET_FLAG` action', () => {
     const action = {type: 'OTHER_ACTION'};
-    const initialState = Immutable.Map(defaults);
+    const initialState = Immutable.Map(DEFAULTS_);
     const newState = featureReducer(initialState, action);
 
     expect(newState).toEqual(initialState);
@@ -84,7 +72,7 @@ describe('featureReducer', () => {
     CRDS_[name] = flag;
     const action = {type: 'addCRDs', kinds};
 
-    const initialState = Immutable.Map(defaults);
+    const initialState = Immutable.Map(DEFAULTS_);
     const newState = featureReducer(initialState, action);
 
     expect(newState).toEqual(initialState.merge({

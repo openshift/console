@@ -16,6 +16,7 @@ import { coFetchJSON } from './co-fetch';
   CLOUD_CATALOGS: false,
   CALICO: false,
   CHARGEBACK: false,
+  OPENSHIFT: false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -27,7 +28,13 @@ export enum FLAGS {
   CLOUD_CATALOGS = 'CLOUD_CATALOGS',
   CALICO = 'CALICO',
   CHARGEBACK = 'CHARGEBACK',
+  OPENSHIFT = 'OPENSHIFT',
 }
+
+export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
+  ? !(window as any).SERVER_FLAGS.authDisabled
+  : undefined
+);
 
 export const CRDS_ = {
   'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
@@ -36,18 +43,6 @@ export const CRDS_ = {
   'uicatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
   'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
   'reports.chargeback.coreos.com': FLAGS.CHARGEBACK,
-};
-
-const DEFAULTS = {
-  [FLAGS.AUTH_ENABLED]: !(window as any).SERVER_FLAGS.authDisabled,
-  [FLAGS.CLUSTER_UPDATES]: undefined,
-  [FLAGS.PROMETHEUS]: undefined,
-  [FLAGS.MULTI_CLUSTER]: undefined,
-  [FLAGS.SECURITY_LABELLER]: undefined,
-  [FLAGS.CLOUD_SERVICES]: undefined,
-  [FLAGS.CLOUD_CATALOGS]: undefined,
-  [FLAGS.CALICO]: undefined,
-  [FLAGS.CHARGEBACK]: undefined,
 };
 
 const SET_FLAG = 'SET_FLAG';
@@ -77,16 +72,26 @@ const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
     err => handleError(err, FLAGS.CALICO, dispatch, detectCalicoFlags)
   );
 
+// TODO: figure out more reliable way to detect openshift. oapi might not be openshift
+const openShiftPath = `${k8sBasePath}/oapi/v1`;
+const detectOpenShift = dispatch => coFetchJSON(openShiftPath)
+  .then(
+    res => setFlag(dispatch, FLAGS.OPENSHIFT, _.size(res.resources) > 0),
+    err => _.get(err, 'response.status') === 404
+      ? setFlag(dispatch, FLAGS.OPENSHIFT, false)
+      : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift)
+  );
 
 export const featureActions = {
   detectSecurityLabellerFlags,
   detectCalicoFlags,
+  detectOpenShift,
 };
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state, action) => {
   if (!state) {
-    return Immutable.Map(DEFAULTS);
+    return Immutable.Map(DEFAULTS_);
   }
 
   switch (action.type) {
