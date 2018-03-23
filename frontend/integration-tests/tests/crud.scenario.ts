@@ -2,7 +2,7 @@
 
 import { browser, $, $$, by, ExpectedConditions as until, Key } from 'protractor';
 import { safeLoad, safeDump } from 'js-yaml';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { execSync } from 'child_process';
 import { OrderedMap } from 'immutable';
 

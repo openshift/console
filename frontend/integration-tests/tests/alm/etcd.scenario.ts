@@ -2,7 +2,7 @@
 
 import { browser, $, $$, element, ExpectedConditions as until, by } from 'protractor';
 import { safeDump, safeLoad } from 'js-yaml';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
