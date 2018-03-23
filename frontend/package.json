@@ -31,7 +31,7 @@
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(lodash-es))"
+      "<rootDir>/node_modules/(?!lodash-es/.*)"
     ],
     "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
     "setupFiles": [
