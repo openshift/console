@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps } from '../../../public/components/cloud-services/clusterserviceversion';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog, referenceForCRDDesc } from '../../../public/components/cloud-services';

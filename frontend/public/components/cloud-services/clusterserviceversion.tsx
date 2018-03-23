@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 

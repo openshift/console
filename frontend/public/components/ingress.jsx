@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
@@ -20,7 +20,7 @@ spec:
           serviceName: test
           servicePort: 80`);
 
-export const ingressValidHosts = ingress => _.chain(ingress).get('spec.rules').map('host').filter(_.isString).value();
+export const ingressValidHosts = ingress => _.map(_.get(ingress, 'spec.rules', []), 'host').filter(_.isString);
 
 const getHosts = (ingress) => {
   const hosts = ingressValidHosts(ingress);

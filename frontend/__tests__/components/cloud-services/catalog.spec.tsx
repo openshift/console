@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ShallowWrapper, shallow } from 'enzyme';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';

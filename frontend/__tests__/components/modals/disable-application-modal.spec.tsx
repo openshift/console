@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { DisableApplicationModal, DisableApplicationModalProps, SelectNamespaceHeader, SelectNamespaceHeaderProps, SelectNamespaceRow, SelectNamespaceRowProps } from '../../../public/components/modals/disable-application-modal';
 import { ListHeader, ColHead, List, ResourceRow } from '../../../public/components/factory';

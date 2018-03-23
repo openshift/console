@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { Cog, kindObj, LabelList, ResourceLink, Selector, Timestamp } from './index';
 import { referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { ResourceIcon } from '../../utils';
 

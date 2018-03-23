@@ -30,6 +30,9 @@
     "transform": {
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
     },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!lodash-es/.*)"
+    ],
     "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
     "setupFiles": [
       "./__mocks__/requestAnimationFrame.js",
@@ -59,7 +62,7 @@
     "history": "4.x",
     "immutable": "3.8.x",
     "js-yaml": "3.x",
-    "lodash": "4.x",
+    "lodash-es": "4.x",
     "moment": "2.x",
     "plotly.js": "1.28.x",
     "prop-types": "15.6.x",
@@ -86,7 +89,7 @@
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
     "@types/jasminewd2": "2.0.x",
-    "@types/lodash": "4.x",
+    "@types/lodash-es": "4.x",
     "@types/moment": "2.x",
     "@types/react": "16.x",
     "@types/react-dom": "16.x",

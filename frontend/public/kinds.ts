@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 import { match } from 'react-router-dom';

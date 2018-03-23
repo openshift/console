@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { ALL_NAMESPACES_KEY } from '../const';

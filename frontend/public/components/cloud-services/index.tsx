@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { K8sResourceKind, CustomResourceDefinitionKind, GroupVersionKind } from '../../module/k8s';
 import { SpecDescriptor } from './spec-descriptors';

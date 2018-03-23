@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { match } from 'react-router-dom';
 
 import { resourceListPages, resourceDetailPages } from './resource-pages';

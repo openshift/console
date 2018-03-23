@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export const isNodeReady = (node) => {
   if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {

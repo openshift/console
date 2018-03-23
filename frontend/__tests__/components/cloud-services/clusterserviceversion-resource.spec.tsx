@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink, CSVResourceDetails, CSVResourceDetailsProps } from '../../../public/components/cloud-services/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/cloud-services/k8s-resource';

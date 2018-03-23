@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Link, match } from 'react-router-dom';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
 import { Resources } from './k8s-resource';

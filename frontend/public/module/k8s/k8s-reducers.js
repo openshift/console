@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import * as Immutable from 'immutable';
 
 import {types} from './k8s-actions';

@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, GroupVersionKind, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';

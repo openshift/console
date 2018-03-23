@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { shallow, ShallowWrapper } from 'enzyme';
 
 import { ResourceRequirementsModal, ResourceRequirementsModalProps, ResourceRequirementsModalLink, ResourceRequirementsModalLinkProps } from '../../../../public/components/cloud-services/spec-descriptors/resource-requirements';

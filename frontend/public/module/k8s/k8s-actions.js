@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 import { getResources as getResources_} from './get-resources';
 import store from '../../redux';

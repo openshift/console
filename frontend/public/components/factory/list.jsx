@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as classNames from'classnames';
@@ -89,16 +89,14 @@ const getFilteredRows = (_filters, objects) => {
     return objects;
   }
 
-  let chain = _.chain(objects);
-
   _.each(_filters, (value, name) => {
     const filter = listFilters[name];
     if (_.isFunction(filter)) {
-      chain = chain.filter(filter.bind({}, value));
+      objects = _.filter(objects, o => filter(value, o));
     }
   });
 
-  return chain.value();
+  return objects;
 };
 
 const filterPropType = (props, propName, componentName) => {
@@ -120,7 +118,11 @@ const sorts = {
   ingressValidHosts,
   jobCompletions: job => getJobTypeAndCompletions(job).completions,
   jobType: job => getJobTypeAndCompletions(job).type,
-  nodeReadiness: node => _.chain(node).get('status.conditions').find({type: 'Ready'}).get('status').value(),
+  nodeReadiness: node => {
+    let readiness = _.get(node, 'status.conditions');
+    readiness = _.find(readiness, {type: 'Ready'});
+    return _.get(readiness, 'status');
+  },
   nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
   podPhase,
