@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, kindObj } from './utils';
+import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
 
 
@@ -28,7 +28,7 @@ const RowForKind = kind => function RowForKind_ ({obj}) {
       }
     </div>
     <div className="col-xs-4">
-      { moment(obj.metadata.creationTimestamp).fromNow() }
+      { fromNow(obj.metadata.creationTimestamp) }
     </div>
   </div>;
 };

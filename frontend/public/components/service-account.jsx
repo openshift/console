@@ -1,10 +1,10 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as moment from 'moment';
 import { safeDump } from 'js-yaml';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { fromNow } from './utils/datetime';
 import { k8sKinds, k8sGet } from '../module/k8s';
 import { SecretsPage } from './secret';
 import { registerTemplate } from '../yaml-templates';
@@ -91,7 +91,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
         {secrets ? secrets.length : 0}
       </div>
       <div className="col-xs-3">
-        {moment(creationTimestamp).fromNow()}
+        {fromNow(creationTimestamp)}
       </div>
     </ResourceRow>
   );

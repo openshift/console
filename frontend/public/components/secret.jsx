@@ -1,10 +1,10 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import { Cog, Heading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
+import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('v1.Secret', `apiVersion: v1
@@ -27,7 +27,7 @@ const SecretHeader = props => <ListHeader>
 
 const SecretRow = ({obj: secret}) => {
   const data = _.size(secret.data);
-  const age = moment(secret.metadata.creationTimestamp).fromNow();
+  const age = fromNow(secret.metadata.creationTimestamp);
 
   return <ResourceRow obj={secret}>
     <div className="col-sm-4 col-xs-6">

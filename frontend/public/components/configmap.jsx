@@ -1,11 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import ConfigMapAndSecretData from './configmap-and-secret-data';
 import { Cog, Heading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { fromNow } from './utils/datetime';
 
 registerTemplate('v1.ConfigMap', `apiVersion: v1
 kind: ConfigMap
@@ -39,7 +39,7 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
     <ResourceLink kind="Namespace" name={configMap.metadata.namespace} title={configMap.metadata.namespace} />
   </div>
   <div className="col-sm-2 hidden-xs">{_.size(configMap.data)}</div>
-  <div className="col-sm-2 hidden-xs">{moment(configMap.metadata.creationTimestamp).fromNow()}</div>
+  <div className="col-sm-2 hidden-xs">{fromNow(configMap.metadata.creationTimestamp)}</div>
 </ResourceRow>;
 
 const ConfigMapDetails = ({obj: configMap}) => {

@@ -1,11 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as moment from 'moment';
 import { Link } from 'react-router-dom';
 
 import {k8sKinds, k8sList} from '../module/k8s';
 import {coFetchJSON} from '../co-fetch';
 import {pluralize} from './utils';
+import { fromNow } from './utils/datetime';
 import {GlobalNotification} from './global-notification';
 
 const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -148,7 +148,7 @@ class LicenseNotifier extends React.Component {
         title: 'Cluster License Expired'
       };
     } else if (this._expiresSoon()) {
-      const timeRemaining = moment(this.state.expiration).fromNow();
+      const timeRemaining = fromNow(this.state.expiration);
       notification = {
         content: <span>Your license will expire {timeRemaining}. {actions}</span>,
         title: 'Cluster License Expires Soon'
