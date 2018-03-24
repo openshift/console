@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Tooltip } from 'react-lightweight-tooltip';
-import * as moment from 'moment';
 
 import {SafetyFirst} from '../safety-first';
+import * as dateTime from './datetime';
 
 /** @augments {React.Component<{timestamp: string}>} */
 export class Timestamp extends SafetyFirst {
@@ -17,7 +17,7 @@ export class Timestamp extends SafetyFirst {
   }
 
   initialize (props = this.props) {
-    this.mdate = props.isUnix ? moment(new Date(props.timestamp * 1000)) : moment(new Date(props.timestamp));
+    this.mdate = props.isUnix ? new Date(props.timestamp * 1000) : new Date(props.timestamp);
     this.timeStr(this.props.format || null);
   }
 
@@ -59,57 +59,54 @@ export class Timestamp extends SafetyFirst {
   }
 
   timeStr (format) {
-    if (!this.mdate.isValid()) {
+    if (!dateTime.isValid(this.mdate)) {
       this.upsertState('-');
       clearInterval(this.interval);
       return;
     }
 
     if (format) {
-      this.upsertState(this.mdate.format(format));
+      this.upsertState(dateTime.format(this.mdate, format));
       return;
     }
 
-    const now = moment();
-    const minutesAgo = now.diff(this.mdate, 'minutes', /* return floating point value */true);
-    if (minutesAgo >= 10.5) {
+    const now = new Date();
+    const timeAgo = now - this.mdate;
+    if (timeAgo >= 630000) { // 10.5 minutes
       let formatStr = 'MMM DD, h:mm a';
-      if (this.mdate.year() !== now.year()) {
+      if (this.mdate.getYear() !== now.getYear()) {
         formatStr = 'MMM DD, YYYY h:mm a';
       }
-      this.upsertState(this.mdate.format(formatStr));
+      this.upsertState(dateTime.format(this.mdate, formatStr));
       clearInterval(this.interval);
       return;
     }
     // 0-14:  a few seconds ago
     // 15-44: less than a minute ago
     // 45-89: a minute ago
-    const secondsAgo = now.diff(this.mdate, 'seconds', /* return floating point value */true);
-    if (secondsAgo < 45 && secondsAgo >= 15) {
+    if (timeAgo < 45000 && timeAgo >= 15000) {
       this.upsertState('less than a minute ago');
       return;
     }
 
-    this.upsertState(this.mdate.fromNow());
+    this.upsertState(dateTime.fromNow(this.mdate));
   }
 
   render () {
     const mdate = this.mdate;
-    // Calling mdate.utc() modifies mdate to be UTC. :(
-    // eslint-disable-next-line import/namespace
-    const utcdate = moment.utc(mdate);
 
-    if (!mdate.isValid()) {
+    if (!dateTime.isValid(mdate)) {
       return (
         <div className="co-timestamp">-</div>
       );
     }
 
+    const utcdate = dateTime.utc(mdate);
     return (
       <div>
         <i className="fa fa-globe" />
         <div className="co-timestamp">
-          <Tooltip content={utcdate.format('MMM DD, YYYY HH:mm z')}>
+          <Tooltip content={dateTime.format(utcdate, 'MMM DD, YYYY HH:mm z')}>
             {this.state.timestamp}
           </Tooltip>
         </div>
