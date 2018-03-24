@@ -4,6 +4,8 @@ import { Tooltip } from 'react-lightweight-tooltip';
 import {SafetyFirst} from '../safety-first';
 import * as dateTime from './datetime';
 
+const monthAbbrs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 /** @augments {React.Component<{timestamp: string}>} */
 export class Timestamp extends SafetyFirst {
   constructor (props) {
@@ -58,38 +60,38 @@ export class Timestamp extends SafetyFirst {
     }
   }
 
-  timeStr (format) {
-    if (!dateTime.isValid(this.mdate)) {
+  timeStr () {
+    const mdate = this.mdate;
+    if (!dateTime.isValid(mdate)) {
       this.upsertState('-');
       clearInterval(this.interval);
       return;
     }
 
-    if (format) {
-      this.upsertState(dateTime.format(this.mdate, format));
-      return;
-    }
-
     const now = new Date();
-    const timeAgo = now - this.mdate;
-    if (timeAgo >= 630000) { // 10.5 minutes
-      let formatStr = 'MMM DD, h:mm a';
-      if (this.mdate.getYear() !== now.getYear()) {
-        formatStr = 'MMM DD, YYYY h:mm a';
-      }
-      this.upsertState(dateTime.format(this.mdate, formatStr));
-      clearInterval(this.interval);
-      return;
-    }
-    // 0-14:  a few seconds ago
-    // 15-44: less than a minute ago
-    // 45-89: a minute ago
-    if (timeAgo < 45000 && timeAgo >= 15000) {
-      this.upsertState('less than a minute ago');
+    const timeAgo = now - mdate;
+    if (timeAgo < 630000) { // 10.5 minutes
+      this.upsertState(dateTime.fromNow(this.mdate));
       return;
     }
 
-    this.upsertState(dateTime.fromNow(this.mdate));
+    let a = 'am';
+    let hours = mdate.getHours();
+    if (hours > 12) {
+      hours -= 12;
+      a = 'pm';
+    }
+
+    const minuteStr = mdate.getMinutes().toString().padStart(2, '00');
+    let timeStr = `${hours}:${minuteStr} ${a}`;
+    if (this.mdate.getFullYear() !== now.getFullYear()) {
+      timeStr = `${mdate.getFullYear()} ${timeStr}`;
+    }
+
+    const monthStr = monthAbbrs[mdate.getMonth()];
+    this.upsertState(`${monthStr} ${mdate.getDate()}, ${timeStr}`);
+
+    clearInterval(this.interval);
   }
 
   render () {
@@ -101,12 +103,11 @@ export class Timestamp extends SafetyFirst {
       );
     }
 
-    const utcdate = dateTime.utc(mdate);
     return (
       <div>
         <i className="fa fa-globe" />
         <div className="co-timestamp">
-          <Tooltip content={dateTime.format(utcdate, 'MMM DD, YYYY HH:mm z')}>
+          <Tooltip content={mdate.toISOString()}>
             {this.state.timestamp}
           </Tooltip>
         </div>
