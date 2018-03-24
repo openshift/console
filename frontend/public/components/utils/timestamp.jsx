@@ -18,7 +18,7 @@ export class Timestamp extends SafetyFirst {
 
   initialize (props = this.props) {
     this.mdate = props.isUnix ? new Date(props.timestamp * 1000) : new Date(props.timestamp);
-    this.timeStr(this.props.format || null);
+    this.timeStr();
   }
 
   componentWillReceiveProps (nextProps) {
@@ -47,7 +47,7 @@ export class Timestamp extends SafetyFirst {
 
   startInterval () {
     clearInterval(this.interval);
-    this.interval = setInterval(() => this.timeStr(this.props.format || null), this.props.interval || 5000);
+    this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
   }
 
   upsertState (timestamp) {
