@@ -1,6 +1,8 @@
 // Behaves like moment.js's fromNow
-export const fromNow = dateTime => {
-  const now = new Date();
+export const fromNow = (dateTime, now=undefined) => {
+  if (!now) {
+    now = new Date();
+  }
   dateTime = new Date(dateTime);
   const secondsAgo = (now.getTime() - dateTime.getTime()) / 1000;
   const minutesAgo = secondsAgo / 60;
