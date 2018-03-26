@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import * as Immutable from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
 import { k8sBasePath } from './module/k8s';
@@ -91,7 +91,7 @@ export const featureActions = {
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state, action) => {
   if (!state) {
-    return Immutable.Map(DEFAULTS_);
+    return ImmutableMap(DEFAULTS_);
   }
 
   switch (action.type) {

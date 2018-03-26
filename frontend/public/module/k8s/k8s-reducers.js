@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as Immutable from 'immutable';
+import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import {types} from './k8s-actions';
 import {getQN} from './k8s';
@@ -23,7 +23,7 @@ const removeFromList = (list, resource) => {
 const updateList = (list, nextJS) => {
   const qualifiedName = getQN(nextJS);
   const current = list.get(qualifiedName);
-  const next = Immutable.fromJS(nextJS);
+  const next = fromJS(nextJS);
 
   if (!current) {
     return list.set(qualifiedName, next);
@@ -52,7 +52,7 @@ const loadList = (oldList, resources) => {
     (resources || []).forEach(r => {
       const qualifiedName = getQN(r);
       existingKeys.delete(qualifiedName);
-      const next = Immutable.fromJS(r);
+      const next = fromJS(r);
       const current = list.get(qualifiedName);
       if (!current || moreRecent(next, current)) {
         list.set(qualifiedName, next);
@@ -72,7 +72,7 @@ const loadList = (oldList, resources) => {
 
 export default (state, action) => {
   if (!state) {
-    return Immutable.Map();
+    return ImmutableMap();
   }
   const {k8sObjects, id} = action;
   const list = state.getIn([id, 'data']);
@@ -87,7 +87,7 @@ export default (state, action) => {
       return state.setIn([id, 'filters', action.name], action.value);
 
     case types.watchK8sObject:
-      return state.set(id, Immutable.Map({
+      return state.set(id, ImmutableMap({
         loadError: '',
         loaded: false,
         data: {},
@@ -122,9 +122,9 @@ export default (state, action) => {
         // has the data set been loaded successfully
         loaded: false,
         // Canonical data
-        data: Immutable.Map(),
+        data: ImmutableMap(),
         // client side filters to be applied externally (ie, we keep all data intact)
-        filters: Immutable.Map(),
+        filters: ImmutableMap(),
         // The name of an element in the list that has been "selected"
         selected: null,
       }});

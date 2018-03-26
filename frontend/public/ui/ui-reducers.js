@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as Immutable from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
 import { ALL_NAMESPACES_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
@@ -15,7 +15,7 @@ if (_.isString(parsedFavorite)) {
 
 export default (state, action) => {
   if (!state) {
-    return Immutable.Map({
+    return ImmutableMap({
       activeNavSectionId: 'workloads',
       activeNamespace,
     });
