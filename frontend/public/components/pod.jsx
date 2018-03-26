@@ -67,11 +67,11 @@ export const PodRow = ({obj: pod}) => {
     <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
       <LabelList kind="Pod" labels={pod.metadata.labels} />
     </div>
-    <div className="col-lg-2 col-md-2 hidden-sm">
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-    <div className="col-lg-2 col-md-1 hidden-sm">{status}</div>
-    <div className="col-lg-1 hidden-md"><Readiness pod={pod} /></div>
+    <div className="col-lg-2 col-md-1 hidden-sm hidden-xs">{status}</div>
+    <div className="col-lg-1 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
   </ResourceRow>;
 };
 
@@ -81,9 +81,9 @@ const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Pod Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortField="spec.nodeName">Node</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-1 hidden-sm" sortFunc="podPhase">Status</ColHead>
-  <ColHead {...props} className="col-lg-1 hidden-md" sortFunc="podReadiness">Readiness</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-1 hidden-sm hidden-xs" sortFunc="podPhase">Status</ColHead>
+  <ColHead {...props} className="col-lg-1 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">

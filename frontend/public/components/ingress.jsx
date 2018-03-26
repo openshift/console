@@ -49,7 +49,7 @@ const IngressListHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm" sortFunc="ingressValidHosts">Hosts</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortFunc="ingressValidHosts">Hosts</ColHead>
 </ListHeader>;
 
 const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
@@ -64,7 +64,7 @@ const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
   <div className="col-md-3 col-sm-4 hidden-xs">
     <LabelList kind="Ingress" labels={ingress.metadata.labels} />
   </div>
-  <div className="col-md-3 hidden-sm">{getHosts(ingress)}</div>
+  <div className="col-md-3 hidden-sm hidden-xs">{getHosts(ingress)}</div>
 </ResourceRow>;
 
 const RulesHeader = () => <div className="row co-m-table-grid__head">

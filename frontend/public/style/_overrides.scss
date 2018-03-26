@@ -4,13 +4,6 @@
    rather than overriding or bringing in built assets.
    The coreos-web project is no longer actively maintained */
 
-a {
-  color: $color-link;
-  cursor: pointer;
-}
-
-$color-text-muted: #999;
-
 .text-muted {
   color: $color-text-muted;
 }
@@ -80,11 +73,6 @@ small {
 
 .no-padding {
   padding: 0;
-}
-
-h1,
-.h1 {
-  font-size: 20px;
 }
 
 tags-input:focus,
@@ -166,7 +154,7 @@ tags-input .tags .input {
   padding: 0;
   float: left;
   //keeps placeholder same size as tag's text
-  font-size: $font-size-small;
+  font-size: $co-font-size-small;
 }
 tags-input .tags .input.invalid-tag {
   color: $red-invalid;

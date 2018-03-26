@@ -285,7 +285,7 @@ export const EditYAML = connect(stateToProps)(
                     {!create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>}
                     {!create && <button type="submit" className="btn btn-default" onClick={() => this.reload()}>Reload</button>}
                     <button className="btn btn-default" onClick={() => this.onCancel()}>Cancel</button>
-                    <button type="submit" className="btn btn-default pull-right hidden-sm" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
+                    <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
                   </div>
                 </div>
               </div>

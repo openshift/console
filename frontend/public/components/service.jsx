@@ -32,8 +32,8 @@ const ServiceHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm" sortField="spec.selector">Pod Selector</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md" sortField="spec.clusterIP">Location</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="spec.clusterIP">Location</ColHead>
 </ListHeader>;
 
 const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
@@ -47,10 +47,10 @@ const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
   <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
     <LabelList kind="Service" labels={s.metadata.labels} />
   </div>
-  <div className="col-lg-2 col-md-3 hidden-sm">
+  <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
     <Selector selector={s.spec.selector} />
   </div>
-  <div className="col-lg-2 hidden-md">
+  <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
     <ServiceIP s={s} />
   </div>
 </ResourceRow>;

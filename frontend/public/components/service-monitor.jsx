@@ -39,7 +39,7 @@ const ServiceMonitorRow = ({obj: sm}) => {
     <div className="col-md-3 col-sm-6 hidden-xs">
       { serviceSelectorLinks(sm) }
     </div>
-    <div className="col-md-3 hidden-sm">
+    <div className="col-md-3 hidden-sm hidden-xs">
       <p>
         { namespaceSelectorLinks(sm) }
       </p>
@@ -51,7 +51,7 @@ const ServiceMonitorHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-6 hidden-xs" sortField="spec.selector">Service Selector</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm" sortField="spec.namespaceSelector">
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.namespaceSelector">
     Monitoring Namespace
   </ColHead>
 </ListHeader>;

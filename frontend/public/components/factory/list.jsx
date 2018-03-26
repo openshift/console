@@ -178,8 +178,8 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortFunc="numReplicas">Status</ColHead>
-  <ColHead {...props} className="col-lg-3 hidden-md" sortField="spec.selector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortFunc="numReplicas">Status</ColHead>
+  <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
 const Rows = ({data, expand, Row, kindObj}) => <div className="co-m-table-grid__body">
@@ -297,12 +297,12 @@ export const WorkloadListRow = ({kind, actions, obj: o}) => <ResourceRow obj={o}
   <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
     <LabelList kind={kind} labels={o.metadata.labels} />
   </div>
-  <div className="col-lg-2 col-md-2 hidden-sm">
+  <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
     <Link to={`${resourcePath(kind, o.metadata.name, o.metadata.namespace)}/pods`} title="pods">
       {o.status.replicas || 0} of {o.spec.replicas} pods
     </Link>
   </div>
-  <div className="col-lg-3 hidden-md">
+  <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     <Selector selector={o.spec.selector} />
   </div>
 </ResourceRow>;

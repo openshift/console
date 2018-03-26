@@ -1,7 +1,3 @@
-/**
- * Site-wide variables go here.
- */
-
 // Configure static paths.
 // Root path where you plan to host coreos-web.
 $coreosWebDistPath: './';
@@ -15,47 +11,31 @@ $font-path: $coreosWebFontPath;
 // CoreOS-web image path.
 $img-path: $coreosWebDistPath + 'img';
 
-
-/* LAYOUT DIMENSIONS */
-$height-footer: 40px;
-
-/* MEDIA QUERY BREAKPOITNS */
-$screen-xs:     480px !default;
-$screen-xs-min: $screen-xs !default;
-$screen-sm:     768px !default;
-$screen-sm-min: $screen-sm !default;
-$screen-md:     992px !default;
-$screen-md-min: $screen-md !default;
-$screen-lg:     1200px !default;
-$screen-lg-min: $screen-lg !default;
+// Bootstrap variable overrides
+$btn-primary-bg: $color-tectonic-button-green;
+$font-family-base: "Source Sans Pro", Helvetica, sans-serif;
+$font-size-h1: 20px;
+$font-size-h5: 14px;
+$headings-font-weight: 600;
+$link-color: $color-link;
 
 /* THEME COLORS */
 $color-bg-primary: $white;
-$color-bg-mute: $gray-lightest;
+$color-bg-mute: $co-gray-lightest;
 $color-bg-highlight: $highlight;
 $color-icon-light: $white;
 $color-icon-dark: $black;
-$color-icon-gray: $gray;
+$color-icon-gray: $co-gray;
 $color-text-light: $white;
-$color-text-muted: $gray;
-$color-border: $gray-lighter;
+$color-text-muted: $co-gray;
+$color-border: $co-gray-lighter;
 $color-bg-translucent-dark: $translucent-black;
-$color-table-header: $gray;
+$color-table-header: $co-gray;
 $color-table-active: $blue-bg;
-$color-table-border: $gray-lighter;
+$color-table-border: $co-gray-lighter;
 $color-footer-icons: $blue-dark;
-$color-header-toggle: $gray-darker;
+$color-header-toggle: $co-gray-darker;
 $color-message-error-bg: $red-dark;
 $color-message-info-bg: $blue-dark;
 $color-cog-active: $blue-dark;
 $color-inline-loader: $blue;
-
-/* Fonts */
-$font-family-primary: 'Source Sans Pro', Helvetica, sans-serif;
-$font-family-code: Monaco, Menlo, Consolas, 'Courier New', monospace;
-$font-size-base: 16px;
-$font-size-xs: 80%;
-$font-size-sm: 85%;
-$font-size-md: 90%;
-$font-size-lg: 110%;
-$font-size-xl: 120%;
