@@ -1,7 +1,7 @@
 .cluster-picker {
-  background-color: $color-tectonic-darkest-blue;
+  background-color: $color-os-nav-active;
   border-radius: 3px;
-  color: #fff;
+  color: $color-os-nav-title;
   margin: 12px 10px 0 10px;
   padding-left: 10px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
@@ -19,11 +19,11 @@
       }
     }
     ul.dropdown-menu > li > a:hover {
-      background-color: $color-tectonic-dark-blue;
+      background-color: #2A2E34;
     }
   }
 }
 
 .cluster-picker:hover {
-  background-color: $color-tectonic-dark-blue-hover;
+  background-color: $color-os-nav-active;
 }
