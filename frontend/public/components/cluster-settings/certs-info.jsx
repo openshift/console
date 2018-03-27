@@ -53,8 +53,8 @@ export const CertsInfo = (props) => {
           <ResourceLink kind="Secret" name="tectonic-ca-cert-secret" namespace="tectonic-system" displayName="Tectonic CA certificate"/>
         </div>
         <div>
-          Expires on <div className="certs-info-exp">
-            <Timestamp timestamp={caCertDate} isUnix={true} format="MMM DD, YYYY h:mm a" />
+          Expires: <div className="certs-info-exp">
+            <Timestamp timestamp={caCertDate} isUnix={true} />
           </div>
         </div>
       </SettingsContent>

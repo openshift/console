@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as moment from 'moment';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { fromNow } from './utils/datetime';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference } from '../module/k8s';
 
@@ -41,7 +41,7 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
       {obj.reclaimPolicy}
     </div>
     <div className="col-xs-3">
-      { moment(obj.metadata.creationTimestamp).fromNow() }
+      { fromNow(obj.metadata.creationTimestamp) }
     </div>
   </div>;
 };

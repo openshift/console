@@ -1,5 +1,6 @@
 /* eslint-env node */
 
+// eslint-disable-next-line no-unused-vars
 import * as webpack from 'webpack';
 import * as path from 'path';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -111,7 +112,6 @@ let config: webpack.Configuration = {
       chunksSortMode: 'none',
     }),
     extractCSS,
-    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
