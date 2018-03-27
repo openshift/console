@@ -1,3 +1,5 @@
+import * as _ from 'lodash-es';
+
 // Behaves like moment.js's fromNow
 export const fromNow = (dateTime, now=undefined) => {
   if (!now) {
@@ -80,4 +82,4 @@ export const fromNow = (dateTime, now=undefined) => {
   return `${-Math.round(daysAgo / 365)} years from now`;
 };
 
-export const isValid = (dateTime: Date) => dateTime instanceof Date && !Number.isNaN(dateTime.valueOf());
+export const isValid = (dateTime: Date) => dateTime instanceof Date && !_.isNaN(dateTime.valueOf());
