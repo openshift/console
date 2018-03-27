@@ -9,6 +9,7 @@ import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
 import { K8sKind } from '../module/k8s';
 import { ErrorPage404 } from './error';
+import { ClusterServiceVersionModel } from '../models';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   const {match, kindsInFlight, kindObj} = props;
@@ -44,7 +45,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   }
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
-  const redirectURL = params.appName ? `/applications/ns/${namespace}/${params.appName}/instances` : null;
+  const redirectURL = params.appName ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${params.appName}/instances` : null;
 
   return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} showHeader={true} />;
 });

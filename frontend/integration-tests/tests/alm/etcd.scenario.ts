@@ -2,7 +2,7 @@
 
 import { browser, $, $$, element, ExpectedConditions as until, by } from 'protractor';
 import { safeDump, safeLoad } from 'js-yaml';
-import * as _ from 'lodash';
+import { defaultsDeep } from 'lodash';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
@@ -20,8 +20,9 @@ describe('Interacting with the etcd OCS', () => {
   const etcdbackup = `${testName}-etcdbackup`;
   const etcdrestore = `${testName}-etcdrestore`;
 
-  beforeAll(() => {
-    browser.get(appHost);
+  beforeAll(async() => {
+    browser.get(`${appHost}/overview/all-namespaces`);
+    await browser.wait(until.presenceOf($('#logo')));
   });
 
   afterEach(() => {
@@ -32,16 +33,17 @@ describe('Interacting with the etcd OCS', () => {
   it('can be enabled from the Open Cloud Catalog', async() => {
     await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor('etcd').element(by.buttonText('Enable')).click();
-    await browser.wait(until.presenceOf(catalogView.enableModal), 3000);
-    await browser.wait(until.presenceOf(catalogView.selectNamespaceRowFor(testName)), 5000);
-    await catalogView.selectNamespaceRowFor(testName).click();
-    await catalogView.enableModalConfirm();
-    await catalogView.entryRowFor('etcd').$$('a').first().click();
-    await browser.wait(until.visibilityOf(catalogView.detailedBreakdownFor('etcd')), 1000);
-    await browser.sleep(1000);
+    await catalogView.entryRowFor('etcd').element(by.buttonText('Subscribe')).click();
+    await browser.wait(until.presenceOf($('.ace_text-input')));
+    const content = await yamlView.editorContent.getText();
+    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'tectonic-ocs', name: 'etcd'}}, safeLoad(content));
+    await yamlView.setContent(safeDump(newContent));
+    await $('#save-changes').click();
+    await crudView.isLoaded();
+    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+    await catalogView.isLoaded();
 
-    expect(catalogView.namespaceEnabledFor('etcd')(testName)).toBe(true);
+    expect(catalogView.hasSubscription('etcd')).toBe(true);
   });
 
   it('creates etcd Operator `Deployment`', async() => {
@@ -63,7 +65,7 @@ describe('Interacting with the etcd OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays etcd OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/applications/ns/${testName}`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversion-v1s`);
     await appListView.isLoaded();
     await browser.sleep(500);
 
@@ -93,7 +95,7 @@ describe('Interacting with the etcd OCS', () => {
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     const content = await yamlView.editorContent.getText();
-    const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-etcdcluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdcluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
     expect($('.yaml-editor-header').getText()).toEqual('Create etcd Cluster');
@@ -142,7 +144,7 @@ describe('Interacting with the etcd OCS', () => {
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     const content = await yamlView.editorContent.getText();
-    const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-etcdbackup`, labels: {[testLabel]: testName}}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdbackup`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
     expect($('.yaml-editor-header').getText()).toEqual('Create Etcd Backup');
@@ -191,7 +193,7 @@ describe('Interacting with the etcd OCS', () => {
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     const content = await yamlView.editorContent.getText();
-    const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-etcdrestore`, labels: {[testLabel]: testName}}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdrestore`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
     expect($('.yaml-editor-header').getText()).toEqual('Create Etcd Restore');

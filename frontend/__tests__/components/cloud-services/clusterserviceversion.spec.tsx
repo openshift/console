@@ -64,7 +64,7 @@ describe(ClusterServiceVersionRow.displayName, () => {
   it('renders clickable column for app logo and name', () => {
     const col = wrapper.find('.row').childAt(0);
 
-    expect(col.find(Link).props().to).toEqual(`/applications/ns/${testClusterServiceVersion.metadata.namespace}/${testClusterServiceVersion.metadata.name}`);
+    expect(col.find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}`);
     expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
   });
 
@@ -155,7 +155,7 @@ describe(ClusterServiceVersionListItem.displayName, () => {
 
     expect(detailsButton.props().title).toEqual('View details');
     expect(detailsButton.childAt(0).text()).toEqual('View details');
-    expect(detailsButton.props().to).toEqual(`/applications/ns/${testClusterServiceVersion.metadata.namespace}/${testClusterServiceVersion.metadata.name}`);
+    expect(detailsButton.props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}`);
     expect(detailsButton.hasClass('btn')).toBe(true);
   });
 
@@ -176,7 +176,7 @@ describe(ClusterServiceVersionListItem.displayName, () => {
 
     expect(link.props().title).toEqual('View instances');
     expect(link.childAt(0).text()).toEqual('View instances');
-    expect(link.props().to).toEqual(`/applications/ns/${testClusterServiceVersion.metadata.namespace}/${testClusterServiceVersion.metadata.name}/instances`);
+    expect(link.props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}/instances`);
   });
 });
 
@@ -345,7 +345,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     const createButton = wrapper.find('.btn-primary');
 
     expect(createButton.type()).toEqual(Link);
-    expect(createButton.props().to).toEqual(`/applications/ns/default/testapp/${referenceForCRDDesc(testClusterServiceVersion.spec.customresourcedefinitions.owned[0])}/new`);
+    expect(createButton.props().to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/${referenceForCRDDesc(testClusterServiceVersion.spec.customresourcedefinitions.owned[0])}/new`);
   });
 
   it('renders a create dropdown button if more than one `owned` app resource', () => {

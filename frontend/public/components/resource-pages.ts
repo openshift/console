@@ -30,6 +30,9 @@ import { DefaultPage, DefaultDetailsPage } from './default-resource';
 import { ReportsPage, ReportsDetailsPage, ReportGenerationQueriesPage, ReportGenerationQueriesDetailsPage } from './chargeback';
 import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
+import { SubscriptionsPage } from './cloud-services/subscription';
+import { InstallPlansPage } from './cloud-services/install-plan';
+import { CatalogSourceDetailsPage } from './cloud-services/catalog-source';
 import { StorageClassPage, StorageClassDetailsPage } from './storage-class';
 
 export const resourceListPages = new Map<string, React.ComponentType<any>>()
@@ -66,6 +69,8 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('StorageClasses', StorageClassPage)
   .set('CustomResourceDefinitions', CustomResourceDefinitionsPage)
   .set('ClusterServiceVersion-v1s', ClusterServiceVersionsPage)
+  .set('Subscription-v1s', SubscriptionsPage)
+  .set('InstallPlan-v1s', InstallPlansPage)
   /*  ------------------------------- NOTE -------------------------------
 
   To avoid circular imports, the keys in this list are manually duplicated in ./resource-dropdown.tsx !
@@ -105,4 +110,5 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('Default', DefaultDetailsPage)
   .set('StorageClasses', StorageClassDetailsPage)
   .set('ClusterServiceVersion-v1s', ClusterServiceVersionsDetailsPage)
+  .set('CatalogSource-v1s', CatalogSourceDetailsPage)
   .set('ClusterServiceVersionResources', ClusterServiceVersionResourcesDetailsPage);

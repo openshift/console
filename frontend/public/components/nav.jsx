@@ -7,6 +7,7 @@ import * as _ from 'lodash-es';
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespacedRouteForResource, formatNamespaceRoute } from '../ui/ui-actions';
 import { authSvc } from '../module/auth';
+import { ClusterServiceVersionModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
 
@@ -124,9 +125,11 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
   </div>
   <div className="navigation-container">
     <NavSection required={[FLAGS.CLOUD_SERVICES]} text="Applications" img={appsLogoImg}>
-      <NavLink prefix="/applications" name="Available Applications" />
+      <NavLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" />
       <Sep />
-      <NavLink required={FLAGS.CLOUD_CATALOGS} href="/catalog" name="Open Cloud Catalog" />
+      <NavLink required={FLAGS.CLOUD_CATALOGS} resource={CatalogSourceModel.plural} name="Open Cloud Catalog" />
+      <NavLink resource={SubscriptionModel.plural} name="Subscriptions" />
+      <NavLink resource={InstallPlanModel.plural} name="Install Plans" />
     </NavSection>
 
     <NavSection text="Workloads" icon="fa-folder-open-o">

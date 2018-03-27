@@ -14,10 +14,23 @@ export const UICatalogEntryModel: K8sKind = {
   plural: 'uicatalogentry-v1s',
 };
 
+export const CatalogSourceModel: K8sKind = {
+  kind: 'CatalogSource-v1',
+  label: 'CatalogSource-v1',
+  labelPlural: 'CatalogSource-v1s',
+  apiGroup: 'app.coreos.com',
+  apiVersion: 'v1alpha1',
+  path: 'catalogsource-v1s',
+  abbr: 'CS',
+  namespaced: true,
+  crd: true,
+  plural: 'catalogsource-v1s',
+};
+
 export const ClusterServiceVersionModel: K8sKind = {
   kind: 'ClusterServiceVersion-v1',
-  label: 'Application',
-  labelPlural: 'Applications',
+  label: 'ClusterServiceVersion-v1',
+  labelPlural: 'ClusterServiceVersion-v1s',
   apiGroup: 'app.coreos.com',
   apiVersion: 'v1alpha1',
   path: 'clusterserviceversion-v1s',

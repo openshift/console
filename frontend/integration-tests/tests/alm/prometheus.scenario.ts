@@ -1,12 +1,15 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import { browser, $, $$, element, ExpectedConditions as until, by } from 'protractor';
+import { defaultsDeep } from 'lodash';
+import { safeDump, safeLoad } from 'js-yaml';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as appListView from '../../views/app-list.view';
+import * as yamlView from '../../views/yaml.view';
 
 describe('Interacting with the Prometheus OCS', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
@@ -14,9 +17,11 @@ describe('Interacting with the Prometheus OCS', () => {
   const serviceMonitorResources = new Set(['Pod']);
   const deleteRecoveryTime = 60000;
   const prometheusOperatorName = 'prometheus-operator';
+  const testLabel = 'automatedTestName';
 
-  beforeAll(() => {
-    browser.get(appHost);
+  beforeAll(async() => {
+    browser.get(`${appHost}/overview/all-namespaces`);
+    await browser.wait(until.presenceOf($('#logo')));
   });
 
   afterEach(() => {
@@ -27,16 +32,17 @@ describe('Interacting with the Prometheus OCS', () => {
   it('can be enabled from the Open Cloud Catalog', async() => {
     await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Enable')).click();
-    await browser.wait(until.presenceOf(catalogView.enableModal), 3000);
-    await browser.wait(until.presenceOf(catalogView.selectNamespaceRowFor(testName)), 5000);
-    await catalogView.selectNamespaceRowFor(testName).click();
-    await catalogView.enableModalConfirm();
-    await catalogView.entryRowFor('Prometheus').$('a').click();
-    await browser.wait(until.visibilityOf(catalogView.detailedBreakdownFor('Prometheus')), 1000);
-    await browser.sleep(500);
+    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Subscribe')).click();
+    await browser.wait(until.presenceOf($('.ace_text-input')));
+    const content = await yamlView.editorContent.getText();
+    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'tectonic-ocs', name: 'prometheus'}}, safeLoad(content));
+    await yamlView.setContent(safeDump(newContent));
+    await $('#save-changes').click();
+    await crudView.isLoaded();
+    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+    await catalogView.isLoaded();
 
-    expect(catalogView.namespaceEnabledFor('Prometheus')(testName)).toBe(true);
+    expect(catalogView.hasSubscription('Prometheus')).toBe(true);
   });
 
   it('creates Prometheus Operator `Deployment`', async() => {
@@ -58,7 +64,7 @@ describe('Interacting with the Prometheus OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays Prometheus OCS in "Available Applications" view for the namespace', async() => {
-    await browser.get(`${appHost}/applications/ns/${testName}`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversion-v1s`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

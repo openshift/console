@@ -103,7 +103,6 @@ describe('ui-actions', () => {
     it('parses resource from path', () => {
       setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(getNamespacedRoute('/k8s/ns/foo/pods')).toEqual('/k8s/all-namespaces/pods');
-      expect(getNamespacedRoute('/applications/ns/foo/pods')).toEqual('/applications/all-namespaces/pods');
       expect(getNamespacedRoute('/k8s/ns/foo/pods/WACKY_SUFFIX')).toEqual('/k8s/all-namespaces/pods');
     });
   });

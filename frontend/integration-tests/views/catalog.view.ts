@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, $$, by, ExpectedConditions as until } from 'protractor';
+import { browser, $, $$, by, ExpectedConditions as until, Key } from 'protractor';
 
 export const entryRows = $$('.co-resource-list__item');
 export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText()
@@ -8,24 +8,20 @@ export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.c
 
 export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000);
 
-export const enableModal = $('.co-catalog-install-modal');
-export const disableModal = $('.co-catalog-install-modal');
+export const hasSubscription = (name: string) => browser.getCurrentUrl().then(url => {
+  if (url.indexOf('all-namespaces') > -1) {
+    throw new Error('Cannot call `hasSubscription` for all namespaces');
+  }
+  return entryRowFor(name).element(by.buttonText('Subscribe')).isPresent();
+}).then(canSubscribe => !canSubscribe);
 
-export const enableModalConfirm = () => enableModal.element(by.buttonText('Enable')).click().then(() => browser.sleep(1000));
-
-export const selectNamespaceRows = enableModal.$$('.co-resource-list__item');
+export const createSubscriptionView = $('.co-create-subscription');
+export const confirmSubscriptionBtn = createSubscriptionView.element(by.buttonText('Subscribe'));
+export const subscriptionNSDropdown = createSubscriptionView.$$('.btn.btn--dropdown').first();
+export const confirmSubscription = () => confirmSubscriptionBtn.click().then(() => browser.sleep(1000));
 
 /**
  * Returns a promise that resolves to the row for a given namespace in the enable/disable modal.
  */
-export const selectNamespaceRowFor = (namespace: string) => selectNamespaceRows.filter((row) => row.$('.co-m-resource-namespace + span').getText()
-  .then(text => text === namespace)).first();
-
-export const detailedBreakdownFor = (name: string) => entryRowFor(name).$('.co-catalog-app-row__details');
-
-export const namespaceListFor = (name: string) => detailedBreakdownFor(name).$$('.co-catalog-breakdown__ns-list__item');
-
-export const namespaceEnabledFor = (name: string) => (namespace: string) => browser.wait(until.presenceOf(namespaceListFor(name)
-  .filter(e => e.getText().then(text => text === namespace)).first()), 10000)
-  .then(() => true)
-  .catch(() => false);
+export const selectNamespace = (namespace: string) => subscriptionNSDropdown.click()
+  .then(() => browser.actions().sendKeys(namespace, Key.ARROW_DOWN, Key.ENTER).perform());
