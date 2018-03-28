@@ -19,7 +19,6 @@ type Config struct {
 	HeaderBlacklist []string
 	Endpoint        *url.URL
 	TLSClientConfig *tls.Config
-	Director        func(*http.Request)
 	Origin          string
 }
 
@@ -38,7 +37,7 @@ func filterHeaders(r *http.Response) error {
 
 func NewProxy(cfg *Config) *Proxy {
 	// Copy of http.DefaultTransport with TLSClientConfig added
-	insecureTransport := &http.Transport{
+	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		Dial: (&net.Dialer{
 			Timeout:   30 * time.Second,
@@ -48,21 +47,15 @@ func NewProxy(cfg *Config) *Proxy {
 		TLSHandshakeTimeout: 10 * time.Second,
 	}
 
-	reverseProxy := &httputil.ReverseProxy{
-		FlushInterval:  time.Millisecond * 500,
-		Transport:      insecureTransport,
-		ModifyResponse: filterHeaders,
-	}
+	reverseProxy := httputil.NewSingleHostReverseProxy(cfg.Endpoint)
+	reverseProxy.FlushInterval = time.Millisecond * 500
+	reverseProxy.Transport = transport
+	reverseProxy.ModifyResponse = filterHeaders
 
 	proxy := &Proxy{
 		reverseProxy: reverseProxy,
 		config:       cfg,
 	}
-
-	if cfg.Director == nil {
-		cfg.Director = proxy.director
-	}
-	reverseProxy.Director = cfg.Director
 
 	return proxy
 }
@@ -88,19 +81,7 @@ func decodeSubprotocol(encodedProtocol string) (string, error) {
 	return string(decodedProtocol), err
 }
 
-// director is a default function to rewrite the request being
-// proxied. If the user does not supply a custom director function,
-// then this will be used.
-func (p *Proxy) director(r *http.Request) {
-	for _, h := range p.config.HeaderBlacklist {
-		r.Header.Del(h)
-	}
-
-	r.Host = p.config.Endpoint.Host
-	r.URL.Host = p.config.Endpoint.Host
-	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
-	r.URL.Scheme = p.config.Endpoint.Scheme
-}
+var headerBlacklist = []string{"Cookie"}
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	isWebsocket := false
@@ -113,12 +94,19 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	for _, h := range headerBlacklist {
+		r.Header.Del(h)
+	}
+
 	if !isWebsocket {
 		p.reverseProxy.ServeHTTP(w, r)
 		return
 	}
 
-	p.config.Director(r)
+	r.Host = p.config.Endpoint.Host
+	r.URL.Host = p.config.Endpoint.Host
+	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
+	r.URL.Scheme = p.config.Endpoint.Scheme
 
 	if r.URL.Scheme == "https" {
 		r.URL.Scheme = "wss"

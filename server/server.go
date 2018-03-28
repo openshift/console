@@ -70,6 +70,7 @@ type Server struct {
 	TectonicLicenseFile string
 	TectonicCACertFile  string
 	Auther              *auth.Authenticator
+	StaticUser          *auth.User
 	KubectlClientID     string
 	ClusterName         string
 	KubeAPIServerURL    string
@@ -92,17 +93,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
 		s.K8sProxyConfig.Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
 	}
-	var k8sHandler http.Handler = proxy.NewProxy(s.K8sProxyConfig)
-	if !s.AuthDisabled() {
-		k8sHandler = authMiddleware(s.Auther, k8sHandler)
-	}
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
 
 	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
 
-	handle("/api/kubernetes/", http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"), k8sHandler))
 	fn := func(loginInfo auth.LoginJSON, successURL string, w http.ResponseWriter) {
 		jsg := struct {
 			auth.LoginJSON  `json:",inline"`
@@ -126,6 +122,24 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 
+	authHandler := func(hf http.HandlerFunc) http.Handler {
+		return authMiddleware(s.Auther, hf)
+	}
+	authHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
+		return authMiddlewareWithUser(s.Auther, hf)
+	}
+
+	if s.AuthDisabled() {
+		authHandler = func(hf http.HandlerFunc) http.Handler {
+			return hf
+		}
+		authHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				hf(s.StaticUser, w, r)
+			})
+		}
+	}
+
 	if !s.AuthDisabled() {
 		handleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
 		handleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
@@ -135,6 +149,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			handleFunc("/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
 			handleFunc("/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
 		}
+		handle("/api/tectonic/clients", authHandlerWithUser(s.handleListClients))
+		handle("/api/tectonic/revoke-token", authHandlerWithUser(s.handleTokenRevocation))
 	}
 
 	handleFunc("/api/", notFoundHandler)
@@ -146,31 +162,20 @@ func (s *Server) HTTPHandler() http.Handler {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
-	useVersionHandler := s.versionHandler
-	useValidateLicenseHandler := s.validateLicenseHandler
-	useListNamespaces := s.handleListNamespaces
-	useListCRDs := s.handleListCRDs
-	useCertsHandler := s.certsHandler
-
-	if !s.AuthDisabled() {
-		useVersionHandler = authMiddleware(s.Auther, http.HandlerFunc(s.versionHandler))
-		useValidateLicenseHandler = authMiddleware(s.Auther, http.HandlerFunc(s.validateLicenseHandler))
-		useListNamespaces = authMiddleware(s.Auther, http.HandlerFunc(s.handleListNamespaces))
-		useListCRDs = authMiddleware(s.Auther, http.HandlerFunc(s.handleListCRDs))
-		useCertsHandler = authMiddleware(s.Auther, http.HandlerFunc(s.certsHandler))
-
-		useClientsHandler := authMiddlewareWithUser(s.Auther, s.handleListClients)
-		useTokenRevocationHandler := authMiddlewareWithUser(s.Auther, s.handleTokenRevocation)
-		handleFunc("/api/tectonic/clients", useClientsHandler)
-		handleFunc("/api/tectonic/revoke-token", useTokenRevocationHandler)
-	}
-
-	handleFunc("/api/tectonic/version", useVersionHandler)
-	handleFunc("/api/tectonic/license/validate", useValidateLicenseHandler)
-	handleFunc("/api/tectonic/ldap/validate", handleLDAPVerification)
-	handleFunc("/api/tectonic/namespaces", useListNamespaces)
-	handleFunc("/api/tectonic/crds", useListCRDs)
-	handleFunc("/api/tectonic/certs", useCertsHandler)
+	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
+	handle("/api/kubernetes/", http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"),
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+			k8sProxy.ServeHTTP(w, r)
+		})),
+	)
+	handle("/api/tectonic/version", authHandler(s.versionHandler))
+	handle("/api/tectonic/license/validate", authHandler(s.validateLicenseHandler))
+	handle("/api/tectonic/ldap/validate", authHandler(handleLDAPVerification))
+	handle("/api/tectonic/namespaces", authHandlerWithUser(s.handleListNamespaces))
+	handle("/api/tectonic/crds", authHandlerWithUser(s.handleListCRDs))
+	handle("/api/tectonic/certs", authHandler(s.certsHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
@@ -333,20 +338,12 @@ func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
-func (s *Server) handleListCRDs(w http.ResponseWriter, r *http.Request) {
-	bearerToken, err := auth.GetTokenBySessionCookie(r)
-	if err != nil {
-		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
-	}
-	s.CustomResourceDefinitionLister.handleResources(bearerToken, w, r)
+func (s *Server) handleListCRDs(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	s.CustomResourceDefinitionLister.handleResources(user.Token, w, r)
 }
 
-func (s *Server) handleListNamespaces(w http.ResponseWriter, r *http.Request) {
-	bearerToken, err := auth.GetTokenBySessionCookie(r)
-	if err != nil {
-		plog.Printf("no bearer token found for %v: %v", r.URL.String(), err)
-	}
-	s.NamespaceLister.handleResources(bearerToken, w, r)
+func (s *Server) handleListNamespaces(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	s.NamespaceLister.handleResources(user.Token, w, r)
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
@@ -446,37 +443,6 @@ contexts:
 
 current-context: {{ .TectonicClusterName }}-context
 `))
-
-// DirectorFromTokenExtractor creates a new reverse proxy director
-// that rewrites the Authorization header of the request using the
-// tokenExtractor parameter.
-// (see https://golang.org/src/net/http/httputil/reverseproxy.go?s=778:806)
-func DirectorFromTokenExtractor(config *proxy.Config, tokenExtractor func(*http.Request) (string, error)) func(*http.Request) {
-	return func(r *http.Request) {
-		// At this writing, the only errors we can get from TokenExtractor
-		// are benign and correct variations on "no token found"
-		token, err := tokenExtractor(r)
-
-		if err != nil {
-			plog.Errorf("Received an error while extracting token: %v", err)
-		} else {
-			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-		}
-
-		// The header removal must happen after the token extraction
-		// because the token extraction relies on the `Cookie` header,
-		// which also happens to be the header that is removed.
-		// TODO: don't blacklist the cookie
-		for _, h := range config.HeaderBlacklist {
-			r.Header.Del(h)
-		}
-
-		r.Host = config.Endpoint.Host
-		r.URL.Host = config.Endpoint.Host
-		r.URL.Path = proxy.SingleJoiningSlash(config.Endpoint.Path, r.URL.Path)
-		r.URL.Scheme = config.Endpoint.Scheme
-	}
-}
 
 // ldapReq is an attempt to test an LDAP configuration object for dex.
 // It takes a username, password, and config object, then attempts to

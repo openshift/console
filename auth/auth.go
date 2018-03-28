@@ -48,15 +48,6 @@ type Authenticator struct {
 	secureCookies bool
 }
 
-// The trivial token "extractor" always extracts a constant string.
-// s should not be the empty string, or else the Authorization header
-// may end up as "Bearer ".
-func ConstantTokenExtractor(s string) func(*http.Request) (string, error) {
-	return func(_ *http.Request) (string, error) {
-		return s, nil
-	}
-}
-
 func getLoginState(r *http.Request) (*loginState, error) {
 	sessionCookie, err := r.Cookie(tectonicSessionCookieName)
 	if err != nil {
@@ -74,8 +65,8 @@ func getLoginState(r *http.Request) (*loginState, error) {
 	return ls, nil
 }
 
-// GetTokenBySessionCookie gets the k8s bearer token from the session
-func GetTokenBySessionCookie(r *http.Request) (string, error) {
+// getTokenBySessionCookie gets the k8s bearer token from the session
+func getTokenBySessionCookie(r *http.Request) (string, error) {
 	ls, err := getLoginState(r)
 	if err != nil {
 		return "", err
@@ -167,7 +158,7 @@ func newAuthenticator(ccfg oidc.ClientConfig, issuerURL, errorURL, successURL, c
 
 	return &Authenticator{
 		tokenVerifier:  jwtVerifier(client),
-		tokenExtractor: GetTokenBySessionCookie,
+		tokenExtractor: getTokenBySessionCookie,
 		oidcClient:     client,
 		issuerURL:      issuerURL,
 		errorURL:       errURL,
