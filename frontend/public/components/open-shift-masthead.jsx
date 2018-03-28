@@ -7,7 +7,7 @@ export const OpenShiftMasthead = () => <div className="os-masthead">
     <div className="os-header">
       <div className="os-header__logo">
         <Link to="/">
-          <img src={headerLogoImg} id="logo" />
+          <img src={headerLogoImg} id="header-logo" />
         </Link>
       </div>
       <div className="os-header__console-picker">

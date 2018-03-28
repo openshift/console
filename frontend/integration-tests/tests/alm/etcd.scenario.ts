@@ -22,7 +22,7 @@ describe('Interacting with the etcd OCS', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/overview/all-namespaces`);
-    await browser.wait(until.presenceOf($('#logo')));
+    await browser.wait(until.presenceOf($('#header-logo')));
   });
 
   afterEach(() => {
