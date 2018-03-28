@@ -22,7 +22,7 @@ describe('Basic console test', () => {
       await loginView.nameInput.sendKeys(BRIDGE_AUTH_USERNAME);
       await loginView.passwordInput.sendKeys(BRIDGE_AUTH_PASSWORD);
       await loginView.submitButton.click();
-      await browser.wait(until.visibilityOf($('#logo')), BROWSER_TIMEOUT);
+      await browser.wait(until.visibilityOf($('#header-logo')), BROWSER_TIMEOUT);
     }
 
     expect(browser.getCurrentUrl()).toContain(appHost);
