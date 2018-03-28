@@ -61,10 +61,10 @@ const ChargebackNavBar: React.StatelessComponent<{match: {url: string}}> = props
 const ReportsHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-3 col-xs-4" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md">Report Generation Query</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs">Report Generation Query</ColHead>
   <ColHead {...props} className="col-lg-1 col-md-2 col-xs-4" sortField="spec.status.phase">Status</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortField="spec.reportingStart">Reporting Start</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortField="spec.reportingEnd">Reporting End</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingStart">Reporting Start</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingEnd">Reporting End</ColHead>
 </ListHeader>;
 
 const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
@@ -74,10 +74,10 @@ const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-lg-2 col-md-3 col-xs-4"><ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} /></div>
-    <div className="col-lg-2 hidden-md"><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
     <div className="col-lg-1 col-md-2 col-xs-4">{_.get(obj, ['status', 'phase'])}</div>
-    <div className="col-lg-2 col-md-2 hidden-sm"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
-    <div className="col-lg-2 col-md-2 hidden-sm"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
   </div>;
 };
 
@@ -401,7 +401,7 @@ export const ReportsDetailsPage: React.StatelessComponent<ReportsDetailsPageProp
 const ReportGenerationQueriesHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm">Labels</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs">Labels</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.creationTimestamp">Created At</ColHead>
 </ListHeader>;
 
@@ -412,7 +412,7 @@ const ReportGenerationQueriesRow: React.StatelessComponent<ReportGenerationQueri
       <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-md-3 col-sm-4"><ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
-    <div className="col-md-3 hidden-sm"><LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} /></div>
+    <div className="col-md-3 hidden-sm hidden-xs"><LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} /></div>
     <div className="col-md-3 col-sm-4"><Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} /></div>
   </div>;
 };

@@ -72,28 +72,12 @@
     margin-bottom: 20px;
 }
 
-.btn-primary {
-    background-color: $color-tectonic-button-green;
-    &:hover,
-    &:focus,
-    &.focus,
-    &:active,
-    &.active,
-    &.disabled,
-    &[disabled],
-    &[disabled]:active,
-    &[disabled]:hover,
-    &[disabled]:focus {
-        background-color: darken($color-tectonic-button-green, 10%);
-    }
-}
-
 label {
     margin: 0px;
 }
 
 .modal-body {
-    font-size: $font-size-small;
+    font-size: $co-font-size-small;
 }
 
 .modal-body__field {
@@ -103,7 +87,7 @@ label {
 
 .modal-body__static-control-value {
     line-height: 30px;
-    font-size: $font-size-small;
+    font-size: $co-font-size-small;
 }
 
 .co-m-pane__explanation {

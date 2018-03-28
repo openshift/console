@@ -54,10 +54,10 @@ const EtcdClusterRow = ({obj: cluster}) => {
         {status ? `${status.size} of ${spec.size}` : spec.size}
       </Link>}
     </div>
-    <div className="col-lg-3 col-md-4 hidden-sm">
+    <div className="col-lg-3 col-md-4 hidden-sm hidden-xs">
       <Selector selector={selector} />
     </div>
-    <div className="col-lg-2 hidden-md">
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       {backup === null && <div className="text-muted">No backup policy</div>}
       {backup && <div>{_.has(status, 'backupServiceStatus') ? <Timestamp timestamp={status.backupServiceStatus.recentBackup.creationTime} /> : '-'}</div>}
     </div>
@@ -68,8 +68,8 @@ const EtcdClusterHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-1 col-md-2 col-sm-3 hidden-xs" sortField="status.size">Size</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-4 hidden-sm" sortFunc="etcdClusterPodSelector">Pod Selector</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md" sortField="status.backupServiceStatus.recentBackup.creationTime">Last Backup Date</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 hidden-sm hidden-xs" sortFunc="etcdClusterPodSelector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="status.backupServiceStatus.recentBackup.creationTime">Last Backup Date</ColHead>
 </ListHeader>;
 
 export const EtcdClusterList = props => <List {...props} Header={EtcdClusterHeader} Row={EtcdClusterRow} />;

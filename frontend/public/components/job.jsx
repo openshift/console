@@ -36,8 +36,8 @@ const JobHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-4 col-md-4 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm" sortFunc="jobCompletions">Completions</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md" sortFunc="jobType">Type</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortFunc="jobCompletions">Completions</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="jobType">Type</ColHead>
 </ListHeader>;
 
 const JobRow = ({obj: job}) => {
@@ -54,12 +54,12 @@ const JobRow = ({obj: job}) => {
       <div className="col-lg-4 col-md-4 col-sm-4 hidden-xs">
         <LabelList kind="Job" labels={job.metadata.labels} />
       </div>
-      <div className="col-lg-2 col-md-2 hidden-sm">
+      <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
         <Link to={`/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
           {job.status.succeeded || 0} of {completions}
         </Link>
       </div>
-      <div className="col-lg-2 hidden-md">
+      <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
         {type}
       </div>
     </ResourceRow>

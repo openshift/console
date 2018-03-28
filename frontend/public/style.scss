@@ -1,18 +1,34 @@
-// These must come before coreos-web b/c they were a part of it.
-@import "style/reset";
+// Config
+@import "style/color-pallette";
+@import "style/vars";
+@import "style/config";
+
+// External dependencies (tilde tells Webpack not to use relative path)
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/normalize";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/type";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/code";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/grid";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/tables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/forms";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/buttons";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/component-animations";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/button-groups";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/labels";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/close";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/modals";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
+@import "~font-awesome/scss/font-awesome";
+
 @import "style/base";
 
 // TODO: refactor this away
 @import "style/coreos";
-
-// External dependencies (tilde tells Webpack not to use relative path)
-$fa-font-path: "~font-awesome/fonts";
-@import "~font-awesome/scss/font-awesome";
-
-// Config
-@import "style/color-pallette";
-@import "style/config";
-@import "style/vars";
 
 // Overrides
 @import "style/overrides";

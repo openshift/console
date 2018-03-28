@@ -22,8 +22,8 @@ const PrometheusRow = ({obj: instance}) => {
     <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
       <LabelList kind={PrometheusModel.kind} labels={metadata.labels} />
     </div>
-    <div className="col-lg-1 col-md-2 hidden-sm">{spec.version}</div>
-    <div className="col-lg-2 hidden-md">
+    <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{spec.version}</div>
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" namespace={metadata.namespace} />
     </div>
   </ResourceRow>;
@@ -33,8 +33,8 @@ const PrometheusHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-lg-1 col-md-2 hidden-sm" sortField="spec.version">Version</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md" sortField="spec.serviceMonitorSelector">
+  <ColHead {...props} className="col-lg-1 col-md-2 hidden-sm hidden-xs" sortField="spec.version">Version</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="spec.serviceMonitorSelector">
     Service Monitor Selector
   </ColHead>
 </ListHeader>;
