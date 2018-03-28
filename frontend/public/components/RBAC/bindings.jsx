@@ -4,6 +4,7 @@ import * as fuzzy from 'fuzzysearch';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import * as PropTypes from 'prop-types';
 
 import { getQN, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
 import { getActiveNamespace, formatNamespacedRouteForResource, UIActions } from '../../ui/ui-actions';
@@ -186,40 +187,119 @@ export const RoleBindingsPage = ({namespace, showTitle=true}) => <MultiListPage
   showTitle={showTitle}
 />;
 
-const ListDropdown_ = ({dataFilter, desc, fixedKey, loaded, loadError, onChange, placeholder, resources, selectedKey, id}) => {
-  const items = {};
-  let autocompleteFilter, title, newOnChange;
-  if (loadError) {
-    title = <div className="cos-error-title">Error Loading {desc}</div>;
-  } else if (!loaded) {
-    title = <LoadingInline />;
-  } else {
-    _.each(resources, ({data}, kind) => {
-      _.each(data, resource => {
-        if (!dataFilter || dataFilter(resource)) {
-          items[resource.metadata.name] = <ResourceName kind={kind} name={resource.metadata.name} />;
-        }
+class ListDropdown_ extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      items: {},
+    };
+
+    if (props.selectedKey) {
+      this.state.selectedKey = props.selectedKeyKind ? `${props.selectedKey}-${props.selectedKeyKind}` : props.selectedKey;
+    }
+
+    this.state.title = props.loaded ? <span className="text-muted">{props.placeholder}</span> : <LoadingInline />;
+
+    this.autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
+    // Pass both the resource name and the resource kind to onChange()
+    this.onChange = key => {
+      const {name, kindLabel} = _.get(this.state, ['items', key], {});
+      this.setState({selectedKey: key, title: <ResourceName kind={kindLabel} name={name} />});
+      this.props.onChange(name, kindLabel);
+    };
+  }
+
+  componentWillMount () {
+    // we need to trigger state changes to get past shouldComponentUpdate...
+    //   but the entire working set of data can be loaded in memory at this point in time
+    //   in which case componentWillReceiveProps would not be called for a while...
+    this.componentWillReceiveProps(this.props);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const {loaded, loadError} = nextProps;
+
+    if (loadError) {
+      this.setState({
+        title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>
       });
+      return;
+    }
+
+    if (!loaded) {
+      return;
+    }
+
+    const state = {};
+
+    const { resources, dataFilter } = nextProps;
+    state.items = {};
+    _.each(resources, ({data}, kindLabel) => {
+      _.reduce(data, (acc, resource) => {
+        if (!dataFilter || dataFilter(resource)) {
+          acc[`${resource.metadata.name}-${kindLabel}`] = {kindLabel, name: resource.metadata.name};
+        }
+        return acc;
+      }, state.items);
     });
 
-    title = <span className="text-muted">{placeholder}</span>;
+    const { selectedKey } = this.state;
+    // did we switch from !loaded -> loaded ?
+    if (!this.props.loaded && !selectedKey) {
+      state.title = <span className="text-muted">{nextProps.placeholder}</span>;
+    }
 
-    autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
+    if (selectedKey) {
+      const item = state.items[selectedKey];
+      state.title = <ResourceName kind={item.kindLabel} name={item.name} />;
+    }
 
-    // Pass both the resource name and the resource kind to onChange()
-    newOnChange = key => onChange(key, items[key].props.kind);
+    this.setState(state);
   }
-  return <div>
-    {_.has(items, fixedKey) ? items[fixedKey] : <Dropdown autocompleteFilter={autocompleteFilter} autocompletePlaceholder={placeholder} items={items} selectedKey={selectedKey} title={title} onChange={newOnChange} id={id} />}
-    {loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p>}
-  </div>;
-};
+
+  shouldComponentUpdate (nextProps, nextState) {
+    if (_.isEqual(this.state, nextState)) {
+      return false;
+    }
+    return true;
+  }
+
+  render () {
+    const {desc, fixed, placeholder, id, loaded} = this.props;
+    const items = {};
+
+    _.each(this.state.items, (v, key) => items[key] = <ResourceName kind={v.kindLabel} name={v.name} />);
+
+    const {selectedKey} = this.state;
+
+    const Component = fixed
+      ? items[selectedKey]
+      : <Dropdown autocompleteFilter={this.autocompleteFilter} autocompletePlaceholder={placeholder} items={items}
+        selectedKey={selectedKey} title={this.state.title} onChange={this.onChange} id={id} />;
+
+    return <div>
+      { Component }
+      { loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p> }
+    </div>;
+  }
+}
 
 const ListDropdown = props => <Firehose resources={props.kinds.map(kind => ({kind, isList: true, prop: kind}))}>
   <ListDropdown_ {...props} />
 </Firehose>;
 
-const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['Namespace']} placeholder="Select namespace" />;
+ListDropdown.propTypes = {
+  dataFilter: PropTypes.func,
+  desc: PropTypes.string,
+  // specify both key/kind
+  selectedKey: PropTypes.string,
+  selectedKeyKind: PropTypes.string,
+  fixed: PropTypes.bool,
+  kinds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  placeholder: PropTypes.string,
+};
+
+const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['Namespace']} selectedKeyKind="Namespace" placeholder="Select namespace" />;
 
 const NsRoleDropdown = props => {
   const roleFilter = role => !isSystemRole(role) && (!props.namespace || !role.metadata.namespace || role.metadata.namespace === props.namespace);
@@ -227,7 +307,7 @@ const NsRoleDropdown = props => {
     {...props}
     dataFilter={roleFilter}
     desc="Namespace Roles (Role)"
-    kinds={props.fixedKind ? [props.fixedKind] : ['Role', 'ClusterRole']}
+    kinds={props.fixed ? [props.selectedKeyKind] : ['Role', 'ClusterRole']}
     placeholder="Select role name"
   />;
 };
@@ -292,7 +372,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       this.setData = patch => this.setState({data: _.defaultsDeep({}, patch, this.state.data)});
       this.changeName = e => this.setData({metadata: {name: e.target.value}});
       this.changeNamespace = namespace => this.setData({metadata: {namespace}});
-      this.changeRoleRef = (name, kindId) => this.setData({roleRef: {name, kind: k8sKind(kindId)}});
+      this.changeRoleRef = (name, kindId) => this.setData({roleRef: {name, kind: kindId}});
       this.changeSubjectKind = e => this.setSubject({kind: e.target.value});
       this.changeSubjectName = e => this.setSubject({name: e.target.value});
       this.changeSubjectNamespace = namespace => this.setSubject({namespace});
@@ -376,7 +456,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
             {kind === 'RoleBinding' && <div>
               <div className="separator"></div>
               <p className="rbac-edit-binding__input-label">Namespace:</p>
-              <NsDropdown fixedKey={_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} id="test--ns-dropdown" />
+              <NsDropdown fixed={!!_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} id="test--ns-dropdown" />
             </div>}
           </Section>
 
@@ -385,11 +465,11 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           <Section label="Role">
             <p className="rbac-edit-binding__input-label">Role Name:</p>
             <RoleDropdown
-              fixedKey={_.get(fixed, 'roleRef.name')}
-              fixedKind={_.get(fixed, 'roleRef.kind')}
+              fixed={!!_.get(fixed, 'roleRef.name')}
               namespace={metadata.namespace}
               onChange={this.changeRoleRef}
-              selectedKey={roleRef.name}
+              selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
+              selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
               id="test--role-dropdown"
             />
           </Section>

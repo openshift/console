@@ -171,6 +171,7 @@ export class Dropdown extends DropdownMixin {
   }
 
   componentWillReceiveProps(nextProps) {
+    super.componentWillReceiveProps(nextProps);
     const props = this.props;
 
     if (_.isEqual(nextProps.items, props.items) && nextProps.title === props.title) {
