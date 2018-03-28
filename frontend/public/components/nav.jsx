@@ -11,7 +11,6 @@ import { ClusterServiceVersionModel, SubscriptionModel, InstallPlanModel, Catalo
 
 import { ClusterPicker } from './cluster-picker';
 
-import * as tectonicLogoImg from '../imgs/tectonic-bycoreos-whitegrn.svg';
 import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
 
@@ -120,7 +119,6 @@ const Sep = () => <div className="navigation-container__section__separator" />;
 
 export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
   <div className="navigation-container__section navigation-container__section--logo">
-    <Link to="/"><img src={tectonicLogoImg} id="logo" /></Link>
     <ClusterPicker />
   </div>
   <div className="navigation-container">

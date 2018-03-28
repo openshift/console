@@ -19,6 +19,7 @@ import { CreateYAML, EditYAMLPage } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
+import { OpenShiftMasthead } from './open-shift-masthead';
 import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
@@ -127,6 +128,7 @@ class App extends React.PureComponent {
       <Helmet titleTemplate="%s · Tectonic" />
 
       <GlobalNotifications />
+      <OpenShiftMasthead />
 
       <div id="reflex">
         <Nav />
