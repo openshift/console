@@ -2,6 +2,7 @@ import { ConfigMapsPage, ConfigMapsDetailsPage } from './configmap';
 import { ClustersPage, ClustersDetailsPage } from './clusters';
 import { ContainersDetailsPage } from './container';
 import { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
+import { DeploymentConfigsPage, DeploymentConfigsDetailsPage } from './deployment-config';
 import { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
 import { JobsPage, JobsDetailsPage } from './job';
 import { CronJobsPage, CronJobsDetailsPage } from './cron-job';
@@ -39,6 +40,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('Clusters', ClustersPage)
   .set('ConfigMaps', ConfigMapsPage)
   .set('DaemonSets', DaemonSetsPage)
+  .set('DeploymentConfigs', DeploymentConfigsPage)
   .set('Deployments', DeploymentsPage)
   .set('Jobs', JobsPage)
   .set('CronJobs', CronJobsPage)
@@ -84,6 +86,7 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('ConfigMaps', ConfigMapsDetailsPage)
   .set('Containers', ContainersDetailsPage)
   .set('DaemonSets', DaemonSetsDetailsPage)
+  .set('DeploymentConfigs', DeploymentConfigsDetailsPage)
   .set('Deployments', DeploymentsDetailsPage)
   .set('Jobs', JobsDetailsPage)
   .set('CronJobs', CronJobsDetailsPage)
