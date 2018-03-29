@@ -58,13 +58,7 @@ let config: webpack.Configuration = {
         test: /\.s?css$/,
         exclude: /node_modules/,
         use: [
-          // FIXME: Replace `style-loader` with `MiniCssExtractPlugin` once https://github.com/webpack-contrib/mini-css-extract-plugin/issues/23# is fixed
-          {
-            loader: 'style-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
+          MiniCssExtractPlugin.loader,
           { loader: 'cache-loader' },
           { loader: 'thread-loader' },
           {
@@ -128,7 +122,6 @@ if (NODE_ENV === 'production') {
   config.output.filename = `[name]-bundle.${gitHash()}.min.js`;
   config.output.chunkFilename = `[name]-[chunkhash].${gitHash()}.min.js`;
   extractCSS.filename = `[name]-[chunkhash].${gitHash()}.min.css`;
-  (config.module.rules[2] as webpack.NewUseRule).use[0] = MiniCssExtractPlugin.loader;
   // FIXME(alecmerdler): Causes error in --mode=production due to scope hoisting
   config.optimization.concatenateModules = false;
   config.stats = 'normal';
