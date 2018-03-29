@@ -10,19 +10,6 @@ import { ClusterServiceVersionLogo, SubscriptionKind, ClusterServiceVersionKind,
 import { referenceForModel, k8sKill } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
-import { registerTemplate } from '../../yaml-templates';
-
-registerTemplate(`${SubscriptionModel.apiVersion}.${SubscriptionModel.kind}`, `
-  apiVersion: ${SubscriptionModel.apiGroup}/${SubscriptionModel.apiVersion}
-  kind: ${SubscriptionModel.kind},
-  metadata:
-    generateName: example-
-    namespace: default
-  spec:
-    source: tectonic-ocs
-    name: example
-    channel: alpha
-`);
 
 const subscriptionState = (state: SubscriptionState) => {
   switch (state) {

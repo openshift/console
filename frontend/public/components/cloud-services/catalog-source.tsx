@@ -6,12 +6,13 @@ import { match, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 
-import { NavTitle, Firehose, MsgBox } from '../utils';
+import { NavTitle, Firehose, MsgBox, LoadingBox, withFallback } from '../utils';
 import { CreateYAML } from '../create-yaml';
 import { ClusterServiceVersionLogo, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionKind, Package } from './index';
 import { SubscriptionModel, CatalogSourceModel } from '../../models';
-import { referenceForModel } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { List, ListHeader, ColHead } from '../factory';
+import { registerTemplate } from '../../yaml-templates';
 
 export const PackageHeader: React.SFC<PackageHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-md-4">Name</ColHead>
@@ -125,8 +126,42 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
   </Firehose>
 </div>;
 
-// TODO(alecmerdler): Load channel, package name, etc. and register YAML template?
-export const CreateSubscription: React.SFC<CreateSubscriptionProps> = (props) => <CreateYAML {...props as any} plural={SubscriptionModel.plural} />;
+export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (props) => {
+  type CreateProps = {ConfigMap: {loaded: boolean, data: K8sResourceKind}};
+  const Create = withFallback<CreateProps>((createProps) => {
+    if (createProps.ConfigMap.loaded && createProps.ConfigMap.data) {
+      const pkg: Package = (_.get(createProps.ConfigMap.data, 'data.packages') ? safeLoad(_.get(createProps.ConfigMap.data, 'data.packages')) : [])
+        .find(({packageName}) => packageName === props.match.params.pkgName);
+      const channel = _.get(pkg, 'channels[0]');
+
+      registerTemplate(`${SubscriptionModel.apiVersion}.${SubscriptionModel.kind}`, `
+        apiVersion: ${SubscriptionModel.apiGroup}/${SubscriptionModel.apiVersion}
+        kind: ${SubscriptionModel.kind},
+        metadata:
+          generateName: ${pkg.packageName}-
+          namespace: default
+        spec:
+          source: tectonic-ocs
+          name: ${pkg.packageName}
+          startingCSV: ${channel.currentCSV}
+          channel: ${channel.name}
+      `);
+      return <CreateYAML {...props as any} plural={SubscriptionModel.plural} />;
+    }
+    return <LoadingBox />;
+  }, () => <MsgBox title="Package Not Found" detail="Cannot create a Subscription to a non-existent package." />);
+
+  return <Firehose resources={[{
+    kind: 'ConfigMap',
+    isList: false,
+    name: 'tectonic-ocs',
+    namespace: 'tectonic-system',
+    prop: 'ConfigMap'
+  }]}>
+    {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
+    <Create {...props as any} />
+  </Firehose>;
+};
 
 export type PackageHeaderProps = {
 
@@ -159,7 +194,7 @@ export type CatalogSourceDetailsPageProps = {
   match: match<{ns?: string}>;
 };
 
-export type CreateSubscriptionProps = {
+export type CreateSubscriptionYAMLProps = {
   match: match<{ns: string, pkgName: string}>
 };
 
@@ -168,4 +203,4 @@ PackageRow.displayName = 'PackageRow';
 PackageList.displayName = 'PackageList';
 CatalogSourceDetails.displayName = 'CatalogSourceDetails';
 CatalogSourceDetailsPage.displayName = 'CatalogSourceDetailPage';
-CreateSubscription.displayName = 'CreateSubscription';
+CreateSubscriptionYAML.displayName = 'CreateSubscriptionYAML';
