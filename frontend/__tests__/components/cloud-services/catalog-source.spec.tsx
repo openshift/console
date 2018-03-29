@@ -5,17 +5,18 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { safeLoad } from 'js-yaml';
+import { safeLoad, safeDump } from 'js-yaml';
 import Spy = jasmine.Spy;
 
-import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscription, CreateSubscriptionProps } from '../../../public/components/cloud-services/catalog-source';
-import { ClusterServiceVersionLogo } from '../../../public/components/cloud-services';
+import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps } from '../../../public/components/cloud-services/catalog-source';
+import { ClusterServiceVersionLogo, SubscriptionKind } from '../../../public/components/cloud-services';
 import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, CatalogSourceModel } from '../../../public/models';
 import { ListHeader, ColHead, List } from '../../../public/components/factory';
-import { Firehose, NavTitle } from '../../../public/components/utils';
+import { Firehose, NavTitle, LoadingBox, ErrorBoundary } from '../../../public/components/utils';
 import { CreateYAML } from '../../../public/components/create-yaml';
 import { testPackage, testCatalogSource, testClusterServiceVersion, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
+import * as yamlTemplates from '../../../public/yaml-templates';
 
 describe(PackageHeader.displayName, () => {
   let wrapper: ShallowWrapper<PackageHeaderProps>;
@@ -113,12 +114,7 @@ describe(CatalogSourceDetails.displayName, () => {
   let catalogSource: CatalogSourceDetailsProps['catalogSource'];
   let configMap: CatalogSourceDetailsProps['configMap'];
   let subscription: CatalogSourceDetailsProps['subscription'];
-  const packages = `
-    - packageName: testapp-package
-      channels:
-      - name: alpha
-        currentCSV: testapp.v1.0.0
-  `;
+  const packages = safeDump([testPackage]);
 
   beforeEach(() => {
     catalogSource = {loaded: true, data: _.cloneDeep(testCatalogSource), loadError: ''};
@@ -187,15 +183,47 @@ describe(CatalogSourceDetailsPage.displayName, () => {
   });
 });
 
-describe(CreateSubscription.displayName, () => {
-  let wrapper: ShallowWrapper<CreateSubscriptionProps>;
+describe(CreateSubscriptionYAML.displayName, () => {
+  let wrapper: ShallowWrapper<CreateSubscriptionYAMLProps>;
+  let registerTemplateSpy: Spy;
 
   beforeEach(() => {
-    const match = {isExact: true, url: '', path: '', params: {ns: 'default', pkgName: testPackage.packageName}};
-    wrapper = shallow(<CreateSubscription match={match} />);
+    registerTemplateSpy = spyOn(yamlTemplates, 'registerTemplate');
+
+    wrapper = shallow(<CreateSubscriptionYAML match={{isExact: true, url: '', path: '', params: {ns: 'default', pkgName: testPackage.packageName}}} />);
   });
 
-  it('renders a YAML editor with correct props', () => {
-    expect(wrapper.find(CreateYAML).exists()).toBe(true);
+  it('renders a `Firehose` for the catalog ConfigMap', () => {
+    expect(wrapper.find<any>(Firehose).props().resources).toEqual([
+      {kind: 'ConfigMap', name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'ConfigMap'}
+    ]);
+  });
+
+  it('renders YAML editor component wrapped by an error boundary component', () => {
+    wrapper = wrapper.setProps({ConfigMap: {loaded: true, data: {data: {packages: safeDump([testPackage])}}}} as any);
+
+    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).exists()).toBe(true);
+    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
+  });
+
+  it('registers example YAML templates using the package default channel', () => {
+    wrapper = wrapper.setProps({ConfigMap: {loaded: true, data: {data: {packages: safeDump([testPackage])}}}} as any);
+
+    wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive();
+    const subTemplate: SubscriptionKind = safeLoad(registerTemplateSpy.calls.argsFor(0)[1]);
+
+    expect(registerTemplateSpy.calls.count()).toEqual(1);
+    expect(subTemplate.kind).toContain(SubscriptionModel.kind);
+    expect(subTemplate.spec.name).toEqual(testPackage.packageName);
+    expect(subTemplate.spec.channel).toEqual(testPackage.channels[0].name);
+    expect(subTemplate.spec.startingCSV).toEqual(testPackage.channels[0].currentCSV);
+    expect(subTemplate.spec.source).toEqual('tectonic-ocs');
+  });
+
+  it('does not render YAML editor component if ConfigMap has not loaded yet', () => {
+    wrapper = wrapper.setProps({ConfigMap: {loaded: false}} as any);
+
+    expect(wrapper.find(Firehose).childAt(0).dive().find(CreateYAML).exists()).toBe(false);
+    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
   });
 });

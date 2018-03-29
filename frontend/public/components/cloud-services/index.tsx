@@ -11,7 +11,7 @@ import * as appsLogoImg from '../../imgs/apps-logo.svg';
 
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
-export { CatalogSourceDetailsPage, CreateSubscription } from './catalog-source';
+export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-source';
 export { SubscriptionsPage } from './subscription';
 
 export const catalogEntryVisibilityLabel = 'tectonic-visibility';
