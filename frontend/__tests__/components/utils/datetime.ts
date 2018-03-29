@@ -1,4 +1,4 @@
-import { fromNow, isValid } from '../../../public/components/utils/datetime';
+import { fromNow, isValid, formatDuration } from '../../../public/components/utils/datetime';
 
 describe('fromNow', () => {
   it('prints past dates correctly', () => {
@@ -41,3 +41,41 @@ describe('isValid', () => {
     expect(isValid(new Date())).toEqual(true);
   });
 });
+
+describe('formatDuration', () => {
+  const toMS = (h: number, m: number, s: number) => ((h * 60 * 60) + (m * 60) + s) * 1000;
+
+  it('prints durations correctly', () => {
+    expect(formatDuration(toMS(0, 0, 1))).toEqual('1s');
+    expect(formatDuration(toMS(0, 0, 23))).toEqual('23s');
+    expect(formatDuration(toMS(0, 3, 42))).toEqual('3m42s');
+    expect(formatDuration(toMS(2, 0, 0))).toEqual('2h0m0s');
+    expect(formatDuration(toMS(1, 0, 4))).toEqual('1h0m4s');
+    expect(formatDuration(toMS(13, 10, 23))).toEqual('13h10m23s');
+  });
+
+  it('handles hours greater than 24', () => {
+    expect(formatDuration(toMS(273, 18, 3))).toEqual('273h18m3s');
+  });
+
+  it('handles 0 values', () => {
+    expect(formatDuration(0)).toEqual('0s');
+  });
+
+  it('returns the empty string for negative values', () => {
+    expect(formatDuration(-88210)).toEqual('');
+  });
+
+  it('handles null and undefined values', () => {
+    expect(formatDuration(null)).toEqual('');
+    expect(formatDuration(undefined)).toEqual('');
+  });
+
+  it('rounds seconds correctly', () => {
+    expect(formatDuration(499)).toEqual('0s');
+    expect(formatDuration(500)).toEqual('1s');
+    expect(formatDuration(toMS(0, 3, 42) + 499)).toEqual('3m42s');
+    expect(formatDuration(toMS(0, 3, 42) + 500)).toEqual('3m43s');
+  });
+});
+

@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespacedRouteForResource, formatNamespaceRoute } from '../ui/ui-actions';
-import { ClusterServiceVersionModel, DeploymentConfigModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
+import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
 
@@ -136,6 +136,8 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink resource="jobs" name="Jobs" />
       <NavLink resource="cronjobs" name="Cron Jobs" />
       <NavLink resource="pods" name="Pods" />
+      <NavLink resource="buildconfigs" name={BuildConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
+      <NavLink resource="builds" name={BuildModel.labelPlural} required={FLAGS.OPENSHIFT} />
       <NavLink resource="configmaps" name="Config Maps" />
       <NavLink resource="secrets" name="Secrets" />
       <NavLink resource="resourcequotas" name="Resource Quotas" />

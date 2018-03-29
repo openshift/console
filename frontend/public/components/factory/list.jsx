@@ -82,6 +82,15 @@ const listFilters = {
     }
     return filters.selected.has(resource.kind);
   },
+
+  'build-status': (phases, build) => {
+    if (!phases || !phases.selected || !phases.selected.size) {
+      return true;
+    }
+
+    const phase = build.status.phase;
+    return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {

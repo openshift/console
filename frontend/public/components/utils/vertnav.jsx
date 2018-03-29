@@ -18,17 +18,17 @@ class PodsComponent extends React.PureComponent {
 }
 
 export const navFactory = {
-  details: (component = undefined) => ({
+  details: component => ({
     href: '',
     name: 'Overview',
     component,
   }),
-  events: (component = undefined) => ({
+  events: component => ({
     href: 'events',
     name: 'Events',
     component,
   }),
-  logs: (component = undefined) => ({
+  logs: component => ({
     href: 'logs',
     name: 'Logs',
     component,
@@ -38,14 +38,19 @@ export const navFactory = {
     name: 'YAML',
     component: component,
   }),
-  pods: (component = undefined) => ({
+  pods: component => ({
     href: 'pods',
     name: 'Pods',
     component: component || PodsComponent,
   }),
-  roles: (component = undefined) => ({
+  roles: component => ({
     href: 'roles',
     name: 'Role Bindings',
+    component,
+  }),
+  builds: component => ({
+    href: 'builds',
+    name: 'Builds',
     component,
   }),
 };
