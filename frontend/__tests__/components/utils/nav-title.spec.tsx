@@ -6,6 +6,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 
 import { NavTitle, NavTitleProps, BreadCrumbs, BreadCrumbsProps } from '../../../public/components/utils/nav-title';
 import { ResourceIcon } from '../../../public/components/utils';
+import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 
 describe(BreadCrumbs.displayName, () => {
   let wrapper: ShallowWrapper<BreadCrumbsProps>;
@@ -64,11 +65,17 @@ describe(NavTitle.displayName, () => {
     expect(wrapper.find('.co-m-page-title').contains(title)).toBe(true);
   });
 
-  it('renders breadcrumbs if given `breadcrumbs`', () => {
+  it('renders breadcrumbs if given `breadcrumbsFor` function', () => {
     const breadcrumbs = [];
-    wrapper.setProps({breadcrumbs});
+    wrapper = wrapper.setProps({breadcrumbsFor: () => breadcrumbs, obj: {data: testResourceInstance}});
 
     expect(wrapper.find(BreadCrumbs).exists()).toBe(true);
     expect(wrapper.find(BreadCrumbs).props().breadcrumbs).toEqual(breadcrumbs);
+  });
+
+  it('does not render breadcrumbs if object has not loaded', () => {
+    wrapper = wrapper.setProps({breadcrumbsFor: () => [], obj: null});
+
+    expect(wrapper.find(BreadCrumbs).exists()).toBe(false);
   });
 });

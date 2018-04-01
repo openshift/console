@@ -220,7 +220,7 @@ export const CSVResourceDetails: React.SFC<CSVResourceDetailsProps> = (props) =>
   { props.csv && !_.isEmpty(props.csv.data) && <DetailsPage
     {...props}
     menuActions={Cog.factory.common}
-    breadcrumbs={[
+    breadcrumbsFor={() => [
       {name: props.match.params.appName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
       {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
     ]}

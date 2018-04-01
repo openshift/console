@@ -207,7 +207,7 @@ export const ContainersDetailsPage = (props) => <div>
     detail={true}
     title={props.match.params.name}
     kind="Container"
-    breadcrumbs={[
+    breadcrumbsFor={() => [
       {name: props.match.params.podName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':podName')).join('/')}`},
       {name: 'Container Details', path: `${props.match.url}`},
     ]} />
