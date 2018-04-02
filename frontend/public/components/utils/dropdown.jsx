@@ -386,7 +386,12 @@ export const ActionsMenu = (props) => {
 };
 
 ActionsMenu.propTypes = {
-  actions: PropTypes.object.isRequired,
+  actions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      href: PropTypes.string,
+      callback: PropTypes.func,
+    })).isRequired,
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   title: PropTypes.node,
