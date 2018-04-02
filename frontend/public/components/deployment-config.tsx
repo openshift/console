@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference } from '../module/k8s';
