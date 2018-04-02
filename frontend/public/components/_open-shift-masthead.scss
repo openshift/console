@@ -1,7 +1,6 @@
 .os-masthead {
-  background-color: #030303;
+  background-color: $color-pf-black;
   color: $color-os-nav-title;
-  font-size: 14px;
 }
 
 .os-header {
@@ -23,25 +22,12 @@
 }
 
 .os-header__user {
+  font-weight: 300;
   margin-left: auto;
   margin-right: 20px;
 }
 
 .os-header__user-icon {
+  font-size: 14px;
   margin-right: 5px;
-}
-
-.os-header__user-menu {
-  left: auto;
-  letter-spacing: normal;
-  right: 3px;
-  ul > li {
-    padding: 2px 0;
-    a {
-      &:hover {
-        background-color: #def3ff;
-        border: 1px solid #bee1f4;
-      }
-    }
-  }
 }

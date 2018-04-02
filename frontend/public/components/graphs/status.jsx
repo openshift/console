@@ -107,7 +107,7 @@ export class Status extends SafetyFirst {
     }
 
     const defaultStyle = {
-      padding: 15,
+      padding: '15px 0',
       margin: '8px 0',
       height: 150,
     };

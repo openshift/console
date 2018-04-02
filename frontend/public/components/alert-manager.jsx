@@ -50,7 +50,7 @@ class Details extends SafetyFirst {
             <div className="col-sm-12 col-xs-12">
               <div className="row">
                 <div className="col-sm-6 col-xs-12">
-                  <dl>
+                  <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{metadata.name}</dd>
                     <dt>Labels</dt>
@@ -60,7 +60,7 @@ class Details extends SafetyFirst {
                   </dl>
                 </div>
                 <div className="col-sm-6 col-xs-12">
-                  <dl>
+                  <dl className="co-m-pane__details">
                     <dt>Version</dt>
                     <dd>{spec.version}</dd>
                     <dt>Replicas</dt>

@@ -185,14 +185,14 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
               <div className="col-xs-6">
                 { this.state.expanded
                   ? <ResourceSummary resource={this.props.obj} showPodSelector={false} />
-                  : <div>
+                  : <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{metadata.name}</dd>
                     <dt>Namespace</dt>
                     <dd><ResourceLink namespace="" kind="Namespace" name={metadata.namespace} title={metadata.namespace} /></dd>
                     <dt>Created At</dt>
                     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
-                  </div> }
+                  </dl> }
               </div>
               { specDescriptors.map((specDescriptor: SpecDescriptor, i) => <div key={i} className="col-xs-6">
                 <ClusterServiceVersionResourceSpec namespace={metadata.namespace} resource={this.props.obj} kindObj={this.props.kindObj} specValue={blockValue(specDescriptor, spec)} specDescriptor={specDescriptor} />

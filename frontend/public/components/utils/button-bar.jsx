@@ -15,8 +15,8 @@ const injectDisabled = (children, disabled) => {
   });
 };
 
-const ErrorMessage = ({message}) => <div className="co-m-message co-m-message--error">{message}</div>;
-const InfoMessage = ({message}) => <div className="co-m-message co-m-message--info">{message}</div>;
+const ErrorMessage = ({message}) => <div className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{message}</div>;
+const InfoMessage = ({message}) => <div className="alert alert-info"><span className="pficon pficon-info"></span>{message}</div>;
 
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore

@@ -58,7 +58,7 @@ export class ClusterServiceVersionResourceSpec extends React.Component<SpecDescr
       }
     }, <span />);
 
-    return <dl>
+    return <dl className="co-m-pane__details">
       <dt>{specDescriptor.displayName}</dt>
       <dd>{this.state.changing ? <LoadingInline /> : controlElm}</dd>
     </dl>;

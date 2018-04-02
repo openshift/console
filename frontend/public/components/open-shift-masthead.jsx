@@ -61,7 +61,7 @@ export const OpenShiftMasthead = connect(logoStateToProps)(({logoImg}) => {
         </div>
         <div className="os-header__console-picker">
         </div>
-        <div className="os-header__user">
+        <div className="os-header__user navbar-right">
           <UserMenu />
         </div>
       </div>

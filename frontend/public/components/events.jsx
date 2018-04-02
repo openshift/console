@@ -86,11 +86,9 @@ export class EventStreamPage extends React.Component {
       { showTitle && <NavTitle title="Events" /> }
       <div className="co-m-pane">
         <div className="co-m-pane__heading">
-          <div className="row">
-            <div className="col-xs-12">
-              <ResourceListDropdown title="All Types" className="pull-left right-grouped" onChange={v => this.setState({kind: v})} showAll selected={kind} />
-              <Dropdown title="All Categories" className="pull-left btn--dropdown left-grouped" items={categories} onChange={v => this.setState({category: v})} />
-            </div>
+          <div className="btn-group">
+            <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
+            <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
           </div>
         </div>
         <EventStream {...this.props} category={category} kind={kind} />

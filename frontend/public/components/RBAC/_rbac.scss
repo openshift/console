@@ -32,7 +32,7 @@
   .help-text {
     font-weight: 300;
     position: relative;
-    top: -10px;
+    top: -3px;
     left: 20px;
   }
   .checkbox-label {
@@ -60,7 +60,6 @@
 }
 
 .rbac-edit-binding {
-  font-size: 14px;
 
   .co-m-resource-icon {
     margin-left: 0;
@@ -68,7 +67,6 @@
 
   .alert {
     margin-top: 20px;
-    width: 100%;
   }
 
   .btn--dropdown {

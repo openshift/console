@@ -93,7 +93,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
             <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true} />
           </div>
           <div className="col-sm-6 col-xs-12">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt>Phase</dt>
               <dd>{phase}</dd>
               <dt>Reporting Start</dt>

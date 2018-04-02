@@ -29,7 +29,7 @@ export class ProfilePage extends SafetyFirst {
       <div className="co-m-pane">
         <div className="co-m-pane__body">
           <div className="co-m-pane__body-section--bordered">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt>Name</dt>
               <dd>{authSvc.name() || '-'}</dd>
               <dt>Email Address</dt>

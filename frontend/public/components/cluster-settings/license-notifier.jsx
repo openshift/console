@@ -5,7 +5,6 @@ import {k8sKinds, k8sList} from '../../module/k8s';
 import {coFetchJSON} from '../../co-fetch';
 import { entitlementTitles, pluralize } from '../utils';
 import { fromNow } from '../utils/datetime';
-import {SettingsRow} from './cluster-settings';
 
 const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
 
@@ -124,11 +123,7 @@ class LicenseNotifier extends React.Component {
       return null;
     }
 
-    return <SettingsRow>
-      <div className="col-xs-12">
-        <div className="alert text-warning bg-warning" style={{marginTop: 16}}>{notification}</div>
-      </div>
-    </SettingsRow>;
+    return <div className="alert alert-warning"><span className="pficon pficon-warning-triangle-o"></span>{notification}</div>;
   }
 }
 

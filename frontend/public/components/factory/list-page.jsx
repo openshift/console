@@ -14,10 +14,10 @@ import { referenceForModel } from '../../module/k8s';
 
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
-  <label className={classNames('btn compaction-btn', expand ? 'btn-unselected' : 'btn-selected')}>
+  <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
     <input type="radio" onClick={() => onExpandChange(false)} /> Compact
   </label>
-  <label className={classNames('btn compaction-btn', expand ? 'btn-selected' : 'btn-unselected')}>
+  <label className={classNames('btn compaction-btn', expand ? 'btn-primary' : 'btn-default')}>
     <input type="radio" onClick={() => onExpandChange(true)} /> Expand
   </label>
 </div>;

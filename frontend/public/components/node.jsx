@@ -169,7 +169,7 @@ const Details = ({obj: node}) => {
 
       <div className="row">
         <div className="col-md-6 col-xs-12">
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Node Name</dt>
             <dd>{node.metadata.name || '-'}</dd>
             <dt>External ID</dt>
@@ -190,7 +190,7 @@ const Details = ({obj: node}) => {
           </dl>
         </div>
         <div className="col-md-6 col-xs-12">
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Operating System</dt>
             <dd className="text-capitalize">{_.get(node, 'status.nodeInfo.operatingSystem', '-')}</dd>
             <dt>Architecture</dt>
@@ -216,7 +216,7 @@ const Details = ({obj: node}) => {
           <h1 className="co-section-title">Container Linux</h1>
         </div>
         <div className="col-md-6 col-xs-12">
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Current Version</dt>
             <dd>{containerLinuxUpdateOperator.getVersion(node)}</dd>
             <dt>Channel</dt>
@@ -224,7 +224,7 @@ const Details = ({obj: node}) => {
           </dl>
         </div>
         <div className="col-md-6 col-xs-12">
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Update Status</dt>
             <dd><NodeCLUpdateStatus node={node} /></dd>
           </dl>

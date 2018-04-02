@@ -19,6 +19,7 @@
 }
 
 .co-m-table-grid {
+  line-height: 1;
   &__sort-arrow {
     margin-left: 10px;
   }
@@ -32,7 +33,7 @@
 }
 
 .compaction-btn {
-  margin-right: 1px;
+  margin-right: 0 !important;
 }
 
 .fake-list {

@@ -44,7 +44,7 @@ const UpToDateState = ({iconClass, text, total, textClass, versions}) => <div cl
       </div>
       <div className="row">
         {_.map(_.countBy(versions.sort()), (count, version) => <div className="col-xs-6 col-sm-4 col-md-3" key={version}>
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>{version}</dt>
             <dd>({count} of {total})</dd>
           </dl>

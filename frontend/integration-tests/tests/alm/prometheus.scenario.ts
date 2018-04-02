@@ -118,9 +118,9 @@ describe('Interacting with the Prometheus OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')), 1000);
+    await browser.wait(until.visibilityOf($('.alert-success')), 1000);
 
-    expect($('.co-m-message--success').getText()).toContain('example has been updated to version');
+    expect($('.alert-success').getText()).toContain('example has been updated to version');
   });
 
   it('displays Kubernetes objects associated with the `Prometheus` in its "Resources" section', async() => {
@@ -133,7 +133,7 @@ describe('Interacting with the Prometheus OCS', () => {
   });
 
   it('displays YAML editor for creating a new `Alertmanager` instance', async() => {
-    await $$('.co-m-nav-title__breadcrumbs__link').first().click();
+    await $$('.breadcrumb-link').first().click();
     await crudView.isLoaded();
     await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
@@ -163,9 +163,9 @@ describe('Interacting with the Prometheus OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')), 1000);
+    await browser.wait(until.visibilityOf($('.alert-success')), 1000);
 
-    expect($('.co-m-message--success').getText()).toContain('alertmanager-main has been updated to version');
+    expect($('.alert-success').getText()).toContain('alertmanager-main has been updated to version');
   });
 
   it('displays Kubernetes objects associated with the `Alertmanager` in its "Resources" section', async() => {
@@ -178,7 +178,7 @@ describe('Interacting with the Prometheus OCS', () => {
   });
 
   it('displays YAML editor for creating a new `ServiceMonitor` instance', async() => {
-    await $$('.co-m-nav-title__breadcrumbs__link').first().click();
+    await $$('.breadcrumb-link').first().click();
     await crudView.isLoaded();
     await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
@@ -207,9 +207,9 @@ describe('Interacting with the Prometheus OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')), 1000);
+    await browser.wait(until.visibilityOf($('.alert-success')), 1000);
 
-    expect($('.co-m-message--success').getText()).toContain('example has been updated to version');
+    expect($('.alert-success').getText()).toContain('example has been updated to version');
   });
 
   it('displays Kubernetes objects associated with the `ServiceMonitor` in its "Resources" section', async() => {

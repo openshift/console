@@ -279,7 +279,7 @@ class ListDropdown_ extends React.Component {
 
     return <div>
       { Component }
-      { loaded && _.isEmpty(items) && <p className="alert alert-info">No {desc} found or defined.</p> }
+      { loaded && _.isEmpty(items) && <p className="alert alert-info"><span className="pficon pficon-info"></span>No {desc} found or defined.</p> }
     </div>;
   }
 }
@@ -492,7 +492,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit" className="btn btn-primary" id="yaml-create">{saveButtonText || 'Create Binding'}</button>
-            <Link to={formatNamespacedRouteForResource('rolebindings')}>Cancel</Link>
+            <Link to={formatNamespacedRouteForResource('rolebindings')} className="btn btn-default">Cancel</Link>
           </ButtonBar>
         </form>
       </div>;

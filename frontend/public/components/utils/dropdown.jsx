@@ -289,7 +289,7 @@ export class Dropdown extends DropdownMixin {
       ? <div onClick={this.toggle} className="dropdown__not-btn" id={this.props.id}>
         <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
       </div>
-      : <button onClick={this.toggle} type="button" className="btn btn--dropdown" id={this.props.id}>
+      : <button onClick={this.toggle} type="button" className="btn btn-default btn--dropdown" id={this.props.id}>
         <div className="btn--dropdown__content-wrap">
           {title}&nbsp;&nbsp;<Caret />
         </div>
@@ -303,7 +303,7 @@ export class Dropdown extends DropdownMixin {
     _.each(items, (content, key) => {
       const selected = !noSelection && key === selectedKey;
       const hover = key === keyboardHoverKey;
-      const klass = classNames({'dropdown__selected': selected});
+      const klass = classNames({'active': selected});
       if (storageKey && bookmarks && bookmarks[key]) {
         bookMarkRows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onUnBookmark={this.onUnBookmark} onclick={this.onClick} selected={selected} hover={hover} canFavorite={canFavorite} onFavorite={this.onFavorite} favoriteKey={favoriteKey} />);
         return;
@@ -319,7 +319,7 @@ export class Dropdown extends DropdownMixin {
         <div className="dropdown">
           {button}
           {
-            active && <div className={classNames('dropdown-menu', menuClassName)}>
+            active && <ul className={classNames('dropdown-menu', menuClassName)}>
               {
                 autocompleteFilter && <input
                   autoFocus
@@ -333,12 +333,10 @@ export class Dropdown extends DropdownMixin {
                   className="form-control dropdown--text-filter"
                   onClick={e => e.stopPropagation()} />
               }
-              <ul>
-                { bookMarkRows }
-                {_.size(bookMarkRows) ? <li><div className="dropdown-menu__divider" /></li> : null}
-              </ul>
-              <ul style={{margin: 0, padding: 0, maxHeight: 500, overflowY: 'auto'}}>{rows}</ul>
-            </div>
+              { bookMarkRows }
+              {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}
+              {rows}
+            </ul>
           }
         </div>
       </div>
@@ -366,7 +364,7 @@ export const ActionsMenu = (props) => {
   const {actions, title = undefined, menuClassName = undefined, noButton = false} = props;
   const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
-  const btnTitle = title || <span className="btn--actions__title"><i className="fa fa-cog btn--actions__cog"></i><span className="btn--actions__label" id="action-dropdown">Actions</span></span>;
+  const btnTitle = title || <span id="action-dropdown">Actions</span>;
   const onChange = (key, e) => {
     const action = shownActions[key];
     if (action.callback) {
@@ -377,7 +375,7 @@ export const ActionsMenu = (props) => {
     }
   };
   return <Dropdown className="btn--actions"
-    menuClassName={menuClassName || 'btn--actions__menu dropdown--dark'}
+    menuClassName={menuClassName || 'dropdown-menu-right'}
     items={items}
     title={btnTitle}
     onChange={onChange}

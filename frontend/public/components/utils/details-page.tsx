@@ -21,7 +21,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
   const owners = (_.get(metadata, 'ownerReferences') || [])
     .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={metadata.namespace} title={o.uid} />);
 
-  return <dl>
+  return <dl className="co-m-pane__details">
     <dt>Name</dt>
     <dd>{metadata.name || '-'}</dd>
     { metadata.namespace ? <dt>Namespace</dt> : null }

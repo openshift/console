@@ -49,11 +49,9 @@ export class SyncMarkdownView extends React.Component<{content: string}, {}> {
 
     const contents = `
       <link rel="stylesheet" href="${filteredLinks[0].href}">
-      <style type="text/css">    
+      <style type="text/css">
       body {
-          font-family: "Source Sans Pro", Helvetica, sans-serif;
-          font-size: 16px;
-          color: ${this.props.content ? 'black' : '#999'};
+          color: ${this.props.content ? '#333' : '#999'};
           background-color: transparent !important;
           min-width: auto !important;
       }

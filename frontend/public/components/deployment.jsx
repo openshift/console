@@ -92,7 +92,7 @@ export class Details extends SafetyFirst {
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt>Update Strategy</dt>
               <dd>{deployment.spec.strategy.type || 'RollingUpdate'}</dd>
               {isRecreate || <dt>Max Unavailable</dt>}
