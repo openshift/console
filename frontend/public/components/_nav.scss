@@ -1,5 +1,6 @@
 // nav stuff
 $link-padding-left: 40px;
+$section-padding-left: 13px;
 $active-border: 3px;
 
 .co-m-nav-link {
@@ -22,16 +23,16 @@ $active-border: 3px;
   }
 
   &.active {
-    padding-left: $link-padding-left  - $active-border;
+    padding-left: $link-padding-left - $active-border;
     background-color: #383F47;
-    border-left: $active-border solid #39a5dc;
+    border-left: $active-border solid $color-os-nav-border-left-active;
     a {
       color: #fff;
     }
   }
 
   &:hover {
-   background-color: #383F47;
+   background-color: $color-os-nav-background-active;
   }
 
   &:focus {
@@ -64,6 +65,15 @@ $active-border: 3px;
   font-weight: 300;
 }
 
+.navigation-container__section--active {
+  border-left: $active-border solid $color-os-nav-border-left-active;
+  background-color: $color-os-nav-background-active;
+
+  .navigation-container__section__title {
+    padding-left: $section-padding-left - $active-border;
+  }
+}
+
 .navigation-container__section__separator {
   margin: 8px 20px 8px 40px;
   padding: 0;
@@ -78,7 +88,7 @@ $active-border: 3px;
   cursor: pointer;
 
   width: 100%;
-  padding: 20px 0px 20px 13px;
+  padding: 20px 0px 20px $section-padding-left;
   span {
     display: inline-block;
     margin: 0 15px 0 11px;
@@ -88,12 +98,24 @@ $active-border: 3px;
     margin-right: 10px;
   }
 }
+.navigation-container__section__title__link,
+.navigation-container__section__title__link:hover,
+.navigation-container__section__title__link:focus  {
+  color: $color-os-nav-title;
+  cursor: pointer;
+  text-decoration: none;
+  vertical-align: middle;
+}
 
 .navigation-container__section__title__icon {
   color: #72767b;
   margin-right: 10px;
   vertical-align: middle;
   width: 18px;
+}
+
+.navigation-container__section__title__icon--active {
+  color: $color-os-nav-border-left-active;
 }
 
 .navigation-container__section--logo {
