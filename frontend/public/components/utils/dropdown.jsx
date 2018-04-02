@@ -46,15 +46,20 @@ export class DropdownMixin extends React.PureComponent {
     window.removeEventListener('click', this.listener);
   }
 
-  onClick_ (key, e) {
+  onClick_ (selectedKey, e) {
     e.stopPropagation();
 
-    const {onChange} = this.props;
+    const {onChange, noSelection, title} = this.props;
+
     if (onChange) {
-      onChange(key);
+      onChange(selectedKey, e);
     }
 
-    this.setState({active: false, selectedKey: key, title: this.props.items[key]});
+    this.setState({
+      active: false,
+      selectedKey: selectedKey,
+      title: noSelection ? title : this.props.items[selectedKey]
+    });
   }
 
   toggle () {
@@ -357,18 +362,32 @@ Dropdown.propTypes = {
   canFavorite: PropTypes.bool,
 };
 
-export const ActionsMenu = ({actions}) => {
+export const ActionsMenu = (props) => {
+  const {actions, title = undefined, menuClassName = undefined, noButton = false} = props;
   const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
-  const title = <span className="btn--actions__title"><i className="fa fa-cog btn--actions__cog"></i><span className="btn--actions__label" id="action-dropdown">Actions</span></span>;
-  const onChange = key => {
+  const btnTitle = title || <span className="btn--actions__title"><i className="fa fa-cog btn--actions__cog"></i><span className="btn--actions__label" id="action-dropdown">Actions</span></span>;
+  const onChange = (key, e) => {
     const action = shownActions[key];
     if (action.callback) {
-      return action.callback();
+      return action.callback(e);
     }
     if (action.href) {
       history.push(action.href);
     }
   };
-  return <Dropdown className="btn--actions" menuClassName="btn--actions__menu dropdown--dark" items={items} title={title} onChange={onChange} noSelection={true} />;
+  return <Dropdown className="btn--actions"
+    menuClassName={menuClassName || 'btn--actions__menu dropdown--dark'}
+    items={items}
+    title={btnTitle}
+    onChange={onChange}
+    noSelection={true}
+    noButton={noButton} />;
+};
+
+ActionsMenu.propTypes = {
+  actions: PropTypes.object.isRequired,
+  menuClassName: PropTypes.string,
+  noButton: PropTypes.bool,
+  title: PropTypes.node,
 };

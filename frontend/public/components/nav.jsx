@@ -6,7 +6,6 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespacedRouteForResource, formatNamespaceRoute } from '../ui/ui-actions';
-import { authSvc } from '../module/auth';
 import { ClusterServiceVersionModel, DeploymentConfigModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
@@ -67,11 +66,6 @@ const NavLink = connect(navLinkStateToProps, null, mergeProps, {pure: true, areS
       </li>;
     }
   });
-
-const logout = e => {
-  e.preventDefault();
-  authSvc.logout();
-};
 
 const navSectionStateToProps = (state, {required}) => ({
   canRender: required ? _.some(required, r => featuresStateToProps(Object.keys(FLAGS), state).flags[r]) : true
@@ -174,9 +168,5 @@ export const Nav = () => <div id="sidebar" className="co-img-bg-cells">
       <NavLink href="/k8s/cluster/customresourcedefinitions" name="CRDs" />
     </NavSection>
 
-    {authSvc.userID() && <NavSection id="qa_admin" text={authSvc.name()} icon="fa-user">
-      <NavLink href="/settings/profile" name="My Account" />
-      <NavLink id="qa_logout" href="#" name="Log Out" required={FLAGS.AUTH_ENABLED} onClick={logout} />
-    </NavSection>}
   </div>
 </div>;
