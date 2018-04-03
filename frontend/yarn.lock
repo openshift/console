@@ -10282,6 +10282,10 @@ url-parse-lax@^3.0.0:
   dependencies:
     prepend-http "^2.0.0"
 
+url-polyfill@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/url-polyfill/-/url-polyfill-1.0.12.tgz#a9c12444637a15d36b3c4faa8dc8d4876e6fad17"
+
 url-search-params-polyfill@2.x:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/url-search-params-polyfill/-/url-search-params-polyfill-2.0.3.tgz#466b451df7e707f9a0de601fa39b0a5816402dcd"
