@@ -379,29 +379,29 @@ describe(CSVResourceDetails.displayName, () => {
     expect(detailsPage.props().pages[2].href).toEqual('resources');
   });
 
-  xit('passes common menu actions to `DetailsPage`', () => {
+  it('passes common menu actions to `DetailsPage`', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
     expect(detailsPage.props().menuActions).toEqual(Cog.factory.common);
   });
 
-  it('passes breadcrumbs to `DetailsPage`', () => {
+  it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.props().breadcrumbs).toEqual([
+    expect(detailsPage.props().breadcrumbsFor(null)).toEqual([
       {name: 'etcd', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/instances`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`},
     ]);
   });
 
-  it('passes correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
+  it('creates correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
     match.params = Object.keys(match.params).reduce((params, name) => Object.assign(params, {[name]: 'example'}), {});
     match.url = `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`;
 
     wrapper.setProps({match});
     const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.props().breadcrumbs).toEqual([
+    expect(detailsPage.props().breadcrumbsFor(null)).toEqual([
       {name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/instances`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`},
     ]);

@@ -10,6 +10,7 @@ import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, Resour
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line } from './graphs';
+import { modelFor, referenceForOwnerRef } from '../module/k8s/k8s-models';
 
 const menuActions = Cog.factory.common;
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);
@@ -239,8 +240,12 @@ const Details = ({obj: pod}) => {
   </div>;
 };
 
+/** @type {React.SFC<any>} */
 export const PodsDetailsPage = props => <DetailsPage
   {...props}
+  breadcrumbsFor={(obj) => (obj.metadata.ownerReferences || []).map(ref => ({
+    name: ref.name, path: `/k8s/ns/${obj.metadata.namespace}/${modelFor(referenceForOwnerRef(ref)).plural}/${ref.name}`
+  })).concat([{name: 'Pod Details', path: props.match.url}])}
   menuActions={menuActions}
   pages={[
     navFactory.details(Details),
@@ -249,6 +254,7 @@ export const PodsDetailsPage = props => <DetailsPage
     navFactory.events(ResourceEventStream)
   ]}
 />;
+PodsDetailsPage.displayName = 'PodsDetailsPage';
 
 export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
 PodList.displayName = 'PodList';

@@ -22,7 +22,7 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
   </div>);
 
 export const NavTitle = connectToModel((props: NavTitleProps) => {
-  const {kind, kindObj, detail, title, menuActions, obj, breadcrumbs, style} = props;
+  const {kind, kindObj, detail, title, menuActions, obj, breadcrumbsFor, style} = props;
   const data = _.get(obj, 'data');
   const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
   const logo = isCSV
@@ -31,8 +31,8 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
 
   return <div className={classNames('row', detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')} style={style}>
     <div className="col-xs-12">
-      { breadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs} />}
-      <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbs})}>
+      { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
+      <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbsFor})}>
         {logo}
         { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
       </h1>
@@ -49,7 +49,7 @@ export type NavTitleProps = {
   title?: string | JSX.Element;
   menuActions?: any[];
   obj?: {data: K8sResourceKind};
-  breadcrumbs?: {name: string, path: string}[];
+  breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];
   children?: React.ReactChildren;
   style?: object;
 };

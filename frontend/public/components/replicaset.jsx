@@ -3,6 +3,7 @@ import * as React from 'react';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { modelFor, referenceForOwnerRef } from '../module/k8s/k8s-models';
 
 registerTemplate('apps/v1beta2.ReplicaSet', `apiVersion: apps/v1beta2
 kind: ReplicaSet
@@ -47,6 +48,9 @@ const Details = ({obj: replicaSet}) => <div>
 const {details, editYaml, pods} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage
   {...props}
+  breadcrumbsFor={(obj) => (obj.metadata.ownerReferences || []).map(ref => ({
+    name: ref.name, path: `/k8s/ns/${obj.metadata.namespace}/${modelFor(referenceForOwnerRef(ref)).plural}/${ref.name}`
+  })).concat([{name: 'ReplicaSet Details', path: props.match.url}])}
   menuActions={replicaSetMenuActions}
   pages={[details(Details), editYaml(), pods()]}
 />;
