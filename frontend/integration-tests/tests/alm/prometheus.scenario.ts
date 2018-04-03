@@ -21,7 +21,7 @@ describe('Interacting with the Prometheus OCS', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/overview/all-namespaces`);
-    await browser.wait(until.presenceOf($('#header-logo')));
+    await browser.wait(until.presenceOf($('#sidebar')));
   });
 
   afterEach(() => {

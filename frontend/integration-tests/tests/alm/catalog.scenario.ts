@@ -11,7 +11,7 @@ describe('Installing a service from the Open Cloud Catalog', () => {
 
   beforeAll(async() => {
     browser.get(appHost);
-    await browser.wait(until.presenceOf($('#header-logo')));
+    await browser.wait(until.presenceOf($('#sidebar')));
   });
 
   afterEach(() => {
