@@ -1,18 +1,10 @@
-/* eslint-env node */
-/* global jest */
 import * as _ from 'lodash-es';
 import { ALL_NAMESPACES_KEY } from '../public/const';
 import '../__mocks__/localStorage';
 
 import store from '../public/redux';
 import { UIActions, getActiveNamespace, formatNamespaceRoute, formatNamespacedRouteForResource } from '../public/ui/ui-actions';
-
-// Mock history's createHistory() using createMemoryHistory() so the tests can run outside the browser
-jest.mock('history', () => {
-  const original = require.requireActual('history');
-  original.createHistory = jest.fn(original.createMemoryHistory);
-  return original;
-});
+import * as router from '../public/components/utils/router';
 
 const setActiveNamespace = ns => store.dispatch(UIActions.setActiveNamespace(ns));
 const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
@@ -77,6 +69,13 @@ describe('ui-actions', () => {
       setActiveNamespace('dessert-topping');
       expect(window.location.pathname).toEqual('/not-a-namespaced-path');
       expect(getActiveNamespace()).toEqual('dessert-topping');
+    });
+
+    it('should redirect to list view if current path is "new" and setting to "all-namespaces"', () => {
+      const spy = spyOn(router.history, 'pushPath');
+      window.location.pathname = '/k8s/ns/floorwax/pods/new';
+      setActiveNamespace(ALL_NAMESPACES_KEY);
+      expect(spy.calls.argsFor(0)[0]).toEqual('/k8s/all-namespaces/pods');
     });
   });
 
