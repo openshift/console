@@ -19,7 +19,7 @@ describe('Interacting with the Vault OCS', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/overview/all-namespaces`);
-    await browser.wait(until.presenceOf($('#header-logo')));
+    await browser.wait(until.presenceOf($('#sidebar')));
   });
 
   afterEach(() => {
