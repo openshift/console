@@ -58,10 +58,17 @@ const RedirectComponent = props => {
   return <Redirect to={to} />;
 };
 
+// Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
+const Memoized = new Map();
 function NamespaceFromURL (Component) {
-  return function NamespaceInjector(props) {
-    return <Component namespace={props.match.params.ns} {...props} />;
-  };
+  let C = Memoized.get(Component);
+  if (!C) {
+    C = function NamespaceInjector(props) {
+      return <Component namespace={props.match.params.ns} {...props} />;
+    };
+    Memoized.set(Component, C);
+  }
+  return C;
 }
 
 const namespacedRoutes = [];
