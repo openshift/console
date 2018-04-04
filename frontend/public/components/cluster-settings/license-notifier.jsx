@@ -1,47 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
-import {k8sKinds, k8sList} from '../module/k8s';
-import {coFetchJSON} from '../co-fetch';
-import {pluralize} from './utils';
-import { fromNow } from './utils/datetime';
-import {GlobalNotification} from './global-notification';
+import {k8sKinds, k8sList} from '../../module/k8s';
+import {coFetchJSON} from '../../co-fetch';
+import { entitlementTitles, pluralize } from '../utils';
+import { fromNow } from '../utils/datetime';
+import {SettingsRow} from './cluster-settings';
 
 const expWarningThreshold = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-export const entitlementTitles = {
-  nodes: {
-    uppercase: 'Node',
-    lowercase: 'node',
-    inPairs: false
-  },
-  vCPUs: {
-    uppercase: 'vCPU',
-    lowercase: 'vCPU',
-    inPairs: true
-  },
-  sockets: {
-    uppercase: 'Socket',
-    lowercase: 'socket',
-    inPairs: true
-  }
-};
 
-export const entitlementTitle = (name, count) => {
-  const entitlement = entitlementTitles[name];
-  if (!entitlement) {
-    return 'Tectonic';
-  }
-
-  let title = entitlement.uppercase;
-  if (entitlement.inPairs) {
-    title = `${title} Pair`;
-    count = Math.floor(count / 2);
-  }
-
-  return pluralize(count, title);
-};
 
 class LicenseNotifier extends React.Component {
   constructor() {
@@ -132,35 +100,35 @@ class LicenseNotifier extends React.Component {
 
   render() {
     // eslint-disable-next-line react/jsx-no-target-blank
-    const actions = <span><Link to="/settings/cluster">View the cluster settings</Link> or <a href="https://account.coreos.com" target="_blank" rel="noopener">log in to your Tectonic account</a></span>;
+    const actions = <span>To retrieve a new license file, <a href="https://account.coreos.com" target="_blank" rel="noopener">log in to your Tectonic account</a>.</span>;
 
-    let notification;
+    let notification = null;
     if (this._errored()) {
-      notification = {
-        content: <span>You have an invalid license. {actions}</span>,
-        title: 'Invalid Cluster License'
-      };
+      notification = <span>You have an invalid license. {actions}</span>;
     } else if (!this.state.expiration) {
       notification = null;
     } else if (this._expired()) {
-      notification = {
-        content: <span>Your license has expired. {actions}</span>,
-        title: 'Cluster License Expired'
-      };
+      notification = <span>Your license has expired. {actions}</span>;
     } else if (this._expiresSoon()) {
       const timeRemaining = fromNow(this.state.expiration);
-      notification = {
-        content: <span>Your license will expire {timeRemaining}. {actions}</span>,
-        title: 'Cluster License Expires Soon'
-      };
+      notification = <span>Your license will expire {timeRemaining}. {actions}</span>;
     } else if (this._entitlementExceeded()) {
-      notification = {
-        content: <span>Please disconnect {pluralize(this.state.current[this.state.entitlementKind] - this.state.entitlementCount, entitlementTitles[this.state.entitlementKind].lowercase)} from your cluster, or contact <a href="mailto:sales@tectonic.com">sales@tectonic.com</a> to upgrade.</span>,
-        title: `Licensed ${entitlementTitles[this.state.entitlementKind].uppercase}s Exceeded`
-      };
+      notification = <div>
+        Licensed {entitlementTitles[this.state.entitlementKind].uppercase}s Exceeded
+        <br />
+        Please disconnect {pluralize(this.state.current[this.state.entitlementKind] - this.state.entitlementCount, entitlementTitles[this.state.entitlementKind].lowercase)} from your cluster, or contact <a href="mailto:sales@tectonic.com">sales@tectonic.com</a> to upgrade.
+      </div>;
     }
 
-    return notification ? <GlobalNotification content={notification.content} title={notification.title} /> : null;
+    if (!notification) {
+      return null;
+    }
+
+    return <SettingsRow>
+      <div className="col-xs-12">
+        <div className="alert text-warning bg-warning" style={{marginTop: 16}}>{notification}</div>
+      </div>
+    </SettingsRow>;
   }
 }
 

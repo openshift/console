@@ -6,8 +6,7 @@ import { k8sKinds, k8sGet } from '../module/k8s';
 import { k8sVersion } from '../module/status';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
-import { entitlementTitle } from './license-notifier';
-import { LoadingInline, cloudProviderNames } from './utils';
+import { LoadingInline, cloudProviderNames, entitlementTitle } from './utils';
 import { clusterAppVersionName } from './channel-operators/tectonic-channel';
 
 

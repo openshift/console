@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {coFetchJSON} from '../../co-fetch';
-import {entitlementTitle} from '../license-notifier';
+import {entitlementTitle} from '../utils';
 import {updateLicenseModal} from '../modals';
 import {SettingsRow, SettingsLabel, SettingsContent} from './cluster-settings';
 import {SettingsModalLink} from './settings-modal-link';

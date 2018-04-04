@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
 import {NavTitle, DocumentationSidebar} from '../utils';
+import { LicenseNotifier } from './license-notifier';
 import {LicenseSetting} from './license-setting';
 // import {ClusterMonitoring} from './cluster-monitoring';
 import {LDAPSetting} from './ldap';
@@ -34,6 +35,7 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
                     <div className="co-cluster-updates__heading--name-wrapper">
                       <span className="co-cluster-updates__heading--name">General</span>
                     </div>
+                    <LicenseNotifier />
                     <LicenseSetting />
                     <LDAPSetting />
                     <CertsInfoContainer />
