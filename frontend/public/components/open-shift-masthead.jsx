@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as openShiftLogoImg from '../imgs/header-logo.svg';
+import * as openShiftOriginLogoImg from '../imgs/os-origin-logo.svg';
+import * as tectonicLogoImg from '../imgs/tectonic-logo.svg';
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
 import { authSvc } from '../module/auth';
 import { ActionsMenu } from './utils';
@@ -31,6 +32,14 @@ const actionsStateToProps = (state) => {
   return { actions };
 };
 
+const logoStateToProps = (state) => {
+  //This should make logo images configurable for other logos
+  const openShiftOriginFlag = featuresStateToProps([FLAGS.OPENSHIFT], state).flags;
+  const logoImg = openShiftOriginFlag[FLAGS.OPENSHIFT] ? openShiftOriginLogoImg : tectonicLogoImg;
+
+  return { logoImg };
+};
+
 const UserMenu = connect(actionsStateToProps)(({actions}) => {
   const title = <span>
     <i className="fa fa-user os-header__user-icon"></i>{authSvc.name()}
@@ -41,17 +50,16 @@ const UserMenu = connect(actionsStateToProps)(({actions}) => {
     noButton={true} /> : null;
 });
 
-export const OpenShiftMasthead = () => {
+export const OpenShiftMasthead = connect(logoStateToProps)(({logoImg}) => {
   return <div className="os-masthead">
     <header role="banner">
       <div className="os-header">
         <div className="os-header__logo">
           <Link to="/">
-            <img src={openShiftLogoImg} className="os-header__logo-img"/>
+            <img src={logoImg} className="os-header__logo-img"/>
           </Link>
         </div>
         <div className="os-header__console-picker">
-          <span>Cluster Console</span>
         </div>
         <div className="os-header__user">
           <UserMenu />
@@ -59,4 +67,4 @@ export const OpenShiftMasthead = () => {
       </div>
     </header>
   </div>;
-};
+});
