@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { k8sPatch, isNodeReady } from '../module/k8s';
+import { isNodeReady, makeNodeSchedulable } from '../module/k8s/node';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
@@ -8,26 +8,16 @@ import { PodsPage } from './pod';
 import { Cog, navFactory, kindObj, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 import { Line } from './graphs';
 
-const makeNodeScheduable = (resourceKind, resource) => {
-  const patch = [{ op: 'replace', path: '/spec/unschedulable', value: false }];
-  k8sPatch(resourceKind, resource, patch).catch((error) => {
-    throw error;
-  });
-};
-
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable...',
-  hidden: _.has(obj, 'spec.unschedulable') && obj.spec.unschedulable,
-  callback: () => configureUnschedulableModal({
-    resourceKind: kind,
-    resource: obj,
-  })
+  hidden: _.get(obj, 'spec.unschedulable'),
+  callback: () => configureUnschedulableModal({resource: obj}),
 });
 
 const MarkAsSchedulable = (kind, obj) => ({
   label: 'Mark as Schedulable',
-  hidden: !_.has(obj, 'spec.unschedulable'),
-  callback: () => makeNodeScheduable(kind, obj)
+  hidden: !_.get(obj, 'spec.unschedulable', false),
+  callback: () => makeNodeSchedulable(obj),
 });
 
 const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit];

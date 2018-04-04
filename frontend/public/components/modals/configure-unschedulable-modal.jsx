@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import {k8sKinds, k8sPatch} from '../../module/k8s';
+import { makeNodeUnschedulable } from '../../module/k8s/node';
 import {createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter} from '../factory/modal';
 import {PromiseComponent} from '../utils';
 
@@ -15,10 +15,7 @@ class UnscheduleNodeModal extends PromiseComponent {
   _submit(event) {
     event.preventDefault();
 
-    const patch = [{ op: 'replace', path: '/spec/unschedulable', value: true }];
-    this.handlePromise(
-      k8sPatch(k8sKinds.Node, this.props.resource, patch)
-    )
+    this.handlePromise(makeNodeUnschedulable(this.props.resource))
       .then(this.props.close)
       .catch((error) => {
         throw error;
