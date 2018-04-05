@@ -17,15 +17,17 @@ body {
 }
 
 .co-container {
+  display: flex;
   height: 100%;
+  flex-direction: column;
+  flex: 1 0 auto;
+  overflow: hidden;
 }
 
 #reflex {
   display: flex;
   flex-direction: row;
-  flex: 1 0 auto;
   height: 100%;
-  overflow: hidden;
 }
 
 #sidebar {
@@ -63,6 +65,11 @@ body {
   margin: 0 auto;
   display: block;
 }
+
+.co-m-list {
+  overflow: auto;
+}
+
 .co-m-form-row--tall {
   min-height: 225px;
 }
