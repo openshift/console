@@ -26,7 +26,7 @@ export const ResourceListPage = connectToPlural((props: ResourceListPageProps) =
   if (!PageComponent) {
     PageComponent = resourceListPages.get('Default');
   }
-  return <div>
+  return <div className="co-m-list">
     <Helmet>
       <title>{kindObj.labelPlural}</title>
     </Helmet>
