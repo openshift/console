@@ -6,6 +6,8 @@ import { DeploymentConfigsPage, DeploymentConfigsDetailsPage } from './deploymen
 import { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
 import { BuildConfigsPage, BuildConfigsDetailsPage } from './build-config';
 import { BuildsPage, BuildsDetailsPage } from './build';
+import { ImageStreamsPage, ImageStreamsDetailsPage } from './image-stream';
+import { ImageStreamTagsDetailsPage } from './image-stream-tag';
 import { JobsPage, JobsDetailsPage } from './job';
 import { CronJobsPage, CronJobsDetailsPage } from './cron-job';
 import { NamespacesPage, NamespacesDetailsPage } from './namespace';
@@ -46,6 +48,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('Deployments', DeploymentsPage)
   .set('BuildConfigs', BuildConfigsPage)
   .set('Builds', BuildsPage)
+  .set('ImageStreams', ImageStreamsPage)
   .set('Jobs', JobsPage)
   .set('CronJobs', CronJobsPage)
   .set('Namespaces', NamespacesPage)
@@ -94,6 +97,8 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('Deployments', DeploymentsDetailsPage)
   .set('BuildConfigs', BuildConfigsDetailsPage)
   .set('Builds', BuildsDetailsPage)
+  .set('ImageStreams', ImageStreamsDetailsPage)
+  .set('ImageStreamTags', ImageStreamTagsDetailsPage)
   .set('Jobs', JobsDetailsPage)
   .set('CronJobs', CronJobsDetailsPage)
   .set('Namespaces', NamespacesDetailsPage)

@@ -324,6 +324,34 @@ export const BuildModel: K8sKind = {
   labelPlural: 'Builds'
 };
 
+export const ImageStreamModel: K8sKind = {
+  label: 'Image Stream',
+  apiVersion: 'image.openshift.io/v1',
+  path: 'imagestreams',
+  apiGroup: '',
+  plural: 'imagestreams',
+  abbr: 'IS',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'ImageStream',
+  id: 'imagestream',
+  labelPlural: 'Image Streams'
+};
+
+export const ImageStreamTagModel: K8sKind = {
+  label: 'Image Stream Tag',
+  apiVersion: 'image.openshift.io/v1',
+  path: 'imagestreamtags',
+  apiGroup: '',
+  plural: 'imagestreamtags',
+  abbr: 'IST',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'ImageStreamTag',
+  id: 'imagestreamtag',
+  labelPlural: 'Image Stream Tags'
+};
+
 export const JobModel: K8sKind = {
   label: 'Job',
   apiVersion: 'batch/v1',
