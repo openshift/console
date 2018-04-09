@@ -303,7 +303,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 
 		log.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)
-		ss.PruneSessions()
+		ss.pruneSessions()
 	}
 }
 

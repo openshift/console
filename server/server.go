@@ -33,15 +33,14 @@ import (
 )
 
 const (
-	BridgeAPIVersion          = "v1"
-	IndexPageTemplateName     = "index.html"
-	TokenizerPageTemplateName = "tokener.html"
+	indexPageTemplateName     = "index.html"
+	tokenizerPageTemplateName = "tokener.html"
 
-	AuthLoginEndpoint         = "/auth/login"
+	authLoginEndpoint         = "/auth/login"
 	AuthLoginCallbackEndpoint = "/auth/callback"
 	AuthLoginSuccessEndpoint  = "/"
 	AuthLoginErrorEndpoint    = "/error"
-	AuthLogoutEndpoint        = "/auth/logout"
+	authLogoutEndpoint        = "/auth/logout"
 )
 
 var (
@@ -83,7 +82,7 @@ type Server struct {
 	CustomResourceDefinitionLister *ResourceLister
 }
 
-func (s *Server) AuthDisabled() bool {
+func (s *Server) authDisabled() bool {
 	return s.Auther == nil
 }
 
@@ -108,15 +107,15 @@ func (s *Server) HTTPHandler() http.Handler {
 			LoginSuccessURL: successURL,
 		}
 
-		tpl := template.New(TokenizerPageTemplateName)
+		tpl := template.New(tokenizerPageTemplateName)
 		tpl.Delims("[[", "]]")
-		tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, TokenizerPageTemplateName))
+		tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, tokenizerPageTemplateName))
 		if err != nil {
-			fmt.Printf("%v not found in configured public-dir path: %v", TokenizerPageTemplateName, err)
+			fmt.Printf("%v not found in configured public-dir path: %v", tokenizerPageTemplateName, err)
 			os.Exit(1)
 		}
 
-		if err := tpls.ExecuteTemplate(w, TokenizerPageTemplateName, jsg); err != nil {
+		if err := tpls.ExecuteTemplate(w, tokenizerPageTemplateName, jsg); err != nil {
 			fmt.Printf("%v", err)
 			os.Exit(1)
 		}
@@ -129,7 +128,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		return authMiddlewareWithUser(s.Auther, hf)
 	}
 
-	if s.AuthDisabled() {
+	if s.authDisabled() {
 		authHandler = func(hf http.HandlerFunc) http.Handler {
 			return hf
 		}
@@ -140,9 +139,9 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 
-	if !s.AuthDisabled() {
-		handleFunc(AuthLoginEndpoint, s.Auther.LoginFunc)
-		handleFunc(AuthLogoutEndpoint, s.Auther.LogoutFunc)
+	if !s.authDisabled() {
+		handleFunc(authLoginEndpoint, s.Auther.LoginFunc)
+		handleFunc(authLogoutEndpoint, s.Auther.LogoutFunc)
 		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc(fn))
 
 		if s.KubectlAuther != nil {
@@ -218,30 +217,30 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
 		ConsoleVersion:   version.Version,
-		AuthDisabled:     s.AuthDisabled(),
+		AuthDisabled:     s.authDisabled(),
 		KubectlClientID:  s.KubectlClientID,
 		BasePath:         s.BaseURL.Path,
-		LoginURL:         proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginEndpoint),
+		LoginURL:         proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
 		LoginSuccessURL:  proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:    proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLogoutEndpoint),
+		LogoutURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
 		ClusterName:      s.ClusterName,
 		KubeAPIServerURL: s.KubeAPIServerURL,
 	}
 
-	if !s.AuthDisabled() {
+	if !s.authDisabled() {
 		s.Auther.SetCSRFCookie(s.BaseURL.Path, &w)
 	}
 
-	tpl := template.New(IndexPageTemplateName)
+	tpl := template.New(indexPageTemplateName)
 	tpl.Delims("[[", "]]")
-	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, IndexPageTemplateName))
+	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, indexPageTemplateName))
 	if err != nil {
 		fmt.Printf("index.html not found in configured public-dir path: %v", err)
 		os.Exit(1)
 	}
 
-	if err := tpls.ExecuteTemplate(w, IndexPageTemplateName, jsg); err != nil {
+	if err := tpls.ExecuteTemplate(w, indexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

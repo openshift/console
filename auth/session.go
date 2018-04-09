@@ -8,14 +8,14 @@ import (
 
 const tectonicSessionCookieName = "tectonic-session-token"
 
-type OldSession struct {
+type oldSession struct {
 	token string
 	exp   time.Time
 }
 
 type SessionStore struct {
 	byToken     map[string]*loginState
-	byAge       []OldSession
+	byAge       []oldSession
 	maxSessions int
 	now         nowFunc
 	mux         sync.Mutex
@@ -40,7 +40,7 @@ func (ss *SessionStore) addSession(ls *loginState) error {
 	ss.mux.Lock()
 	ss.byToken[sessionToken] = ls
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
-	ss.byAge = append(ss.byAge, OldSession{sessionToken, ls.exp})
+	ss.byAge = append(ss.byAge, oldSession{sessionToken, ls.exp})
 	ss.mux.Unlock()
 	return nil
 }
@@ -66,7 +66,7 @@ func (ss *SessionStore) deleteSession(token string) error {
 	return fmt.Errorf("ss.byAge did not contain session %v", token)
 }
 
-func (ss *SessionStore) PruneSessions() {
+func (ss *SessionStore) pruneSessions() {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
 	expired := 0
