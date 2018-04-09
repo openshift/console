@@ -5,7 +5,7 @@ import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './u
 import { registerTemplate } from '../yaml-templates';
 import { modelFor, referenceForOwnerRef } from '../module/k8s/k8s-models';
 
-registerTemplate('apps/v1beta2.ReplicaSet', `apiVersion: apps/v1beta2
+registerTemplate('apps/v1.ReplicaSet', `apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: example

@@ -58,14 +58,14 @@ const handleError = (res, flag, dispatch, cb) => {
   }
 };
 
-const labellerDeploymentPath = `${k8sBasePath}/apis/apps/v1beta2/deployments?fieldSelector=metadata.name%3Dsecurity-labeller-app`;
+const labellerDeploymentPath = `${k8sBasePath}/apis/apps/v1/deployments?fieldSelector=metadata.name%3Dsecurity-labeller-app`;
 const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPath)
   .then(
     res => setFlag(dispatch, FLAGS.SECURITY_LABELLER, _.size(res.items) > 0),
     err => handleError(err, FLAGS.SECURITY_LABELLER, dispatch, detectSecurityLabellerFlags)
   );
 
-const calicoDaemonSetPath = `${k8sBasePath}/apis/apps/v1beta2/daemonsets?fieldSelector=metadata.name%3Dkube-calico`;
+const calicoDaemonSetPath = `${k8sBasePath}/apis/apps/v1/daemonsets?fieldSelector=metadata.name%3Dkube-calico`;
 const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
   .then(
     res => setFlag(dispatch, FLAGS.CALICO, _.size(res.items) > 0),

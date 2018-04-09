@@ -4,7 +4,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('apps/v1beta2.StatefulSet', `apiVersion: apps/v1beta2
+registerTemplate('apps/v1.StatefulSet', `apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: example
