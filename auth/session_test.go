@@ -52,7 +52,7 @@ func TestSessions(t *testing.T) {
 		t.Fatal("ss.byAge != 4")
 	}
 
-	ss.PruneSessions()
+	ss.pruneSessions()
 
 	if len(ss.byAge) != 3 {
 		t.Fatal("ss.byAge != 3")
