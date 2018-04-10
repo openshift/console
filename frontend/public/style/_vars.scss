@@ -66,6 +66,8 @@ $color-grey-when-selected: #e5e5e5;
 //OpenShift color variables
 $color-os-nav-title: #d1d1d1;
 $color-os-nav-background: #2A2E34;
+$color-os-nav-background-active: #383f47;
 $color-os-nav-item-seperator: #050505;
 $color-os-nav-active: #383f47;
-$color-os-nav-hover: lighten($color-os-nav-active, 8%)
+$color-os-nav-hover: lighten($color-os-nav-active, 8%);
+$color-os-nav-border-left-active: #39a5dc;
