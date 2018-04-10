@@ -71,7 +71,7 @@ func getTokenBySessionCookie(r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return ls.token.Encode(), nil
+	return ls.rawToken, nil
 }
 
 type Config struct {
@@ -187,7 +187,7 @@ func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
 		return nil, fmt.Errorf("no token found for %v: %v", r.URL.String(), err)
 	}
 
-	loginState, err := newLoginState(token)
+	loginState, err := newLoginState(rawToken, token)
 	if err != nil {
 		return nil, fmt.Errorf("extracting user info: %v", err)
 	}
@@ -278,7 +278,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		ls, err := newLoginState(&jwt)
+		ls, err := newLoginState(jwt.Encode(), jwt.Payload)
 		if err != nil {
 			log.Errorf("error constructing login state: %v", err)
 			a.redirectAuthError(w, errorInternal, nil)
