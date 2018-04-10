@@ -4,6 +4,8 @@ import { ContainersDetailsPage } from './container';
 import { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
 import { DeploymentConfigsPage, DeploymentConfigsDetailsPage } from './deployment-config';
 import { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
+import { BuildConfigsPage, BuildConfigsDetailsPage } from './build-config';
+import { BuildsPage, BuildsDetailsPage } from './build';
 import { JobsPage, JobsDetailsPage } from './job';
 import { CronJobsPage, CronJobsDetailsPage } from './cron-job';
 import { NamespacesPage, NamespacesDetailsPage } from './namespace';
@@ -42,6 +44,8 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('DaemonSets', DaemonSetsPage)
   .set('DeploymentConfigs', DeploymentConfigsPage)
   .set('Deployments', DeploymentsPage)
+  .set('BuildConfigs', BuildConfigsPage)
+  .set('Builds', BuildsPage)
   .set('Jobs', JobsPage)
   .set('CronJobs', CronJobsPage)
   .set('Namespaces', NamespacesPage)
@@ -88,6 +92,8 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('DaemonSets', DaemonSetsDetailsPage)
   .set('DeploymentConfigs', DeploymentConfigsDetailsPage)
   .set('Deployments', DeploymentsDetailsPage)
+  .set('BuildConfigs', BuildConfigsDetailsPage)
+  .set('Builds', BuildsDetailsPage)
   .set('Jobs', JobsDetailsPage)
   .set('CronJobs', CronJobsDetailsPage)
   .set('Namespaces', NamespacesDetailsPage)

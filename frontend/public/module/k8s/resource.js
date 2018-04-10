@@ -55,14 +55,14 @@ export const watchURL = (kind, options) => {
 
 export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ns, name}, opts)));
 
-export const k8sCreate = (kind, data) => {
+export const k8sCreate = (kind, data, opts = {}) => {
   // Lowercase the resource name
   // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
   if (!data.metadata.generateName) {
     data.metadata.name = data.metadata.name.toLowerCase();
   }
 
-  return coFetchJSON.post(resourceURL(kind, {ns: data.metadata.namespace}), data);
+  return coFetchJSON.post(resourceURL(kind, Object.assign({ns: data.metadata.namespace}, opts)), data);
 };
 
 export const k8sUpdate = (kind, data, ns, name) => coFetchJSON.put(

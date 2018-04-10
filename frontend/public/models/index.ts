@@ -296,6 +296,34 @@ export const DeploymentConfigModel: K8sKind = {
   labelPlural: 'Deployment Configs'
 };
 
+export const BuildConfigModel: K8sKind = {
+  label: 'Build Config',
+  apiVersion: 'build.openshift.io/v1',
+  path: 'buildconfigs',
+  apiGroup: '',
+  plural: 'buildconfigs',
+  abbr: 'BC',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'BuildConfig',
+  id: 'buildconfig',
+  labelPlural: 'Build Configs'
+};
+
+export const BuildModel: K8sKind = {
+  label: 'Build',
+  apiVersion: 'build.openshift.io/v1',
+  path: 'builds',
+  apiGroup: '',
+  plural: 'builds',
+  abbr: 'B',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'Build',
+  id: 'build',
+  labelPlural: 'Builds'
+};
+
 export const JobModel: K8sKind = {
   label: 'Job',
   apiVersion: 'batch/v1',

@@ -34,3 +34,4 @@ export * from './download-button';
 export * from './error-boundary';
 export * from './deployment-pod-counts';
 export * from './entitlements';
+export * from './build-strategy';
