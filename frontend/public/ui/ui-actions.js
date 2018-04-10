@@ -79,7 +79,7 @@ export const types = {
 };
 
 export const UIActions = {
-  [types.setCurrentLocation]: (location, ns) => ({location, ns, type: types.setCurrentLocation}),
+  [types.setCurrentLocation]: location => ({location, type: types.setCurrentLocation}),
 
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {

@@ -3,21 +3,27 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
 import { ALL_NAMESPACES_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
-import { legalNamePattern } from '../components/utils/link';
-
-const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
-let activeNamespace = 'default';
-if (_.isString(parsedFavorite)) {
-  if (parsedFavorite.match(legalNamePattern) || parsedFavorite === ALL_NAMESPACES_KEY) {
-    activeNamespace = parsedFavorite;
-  }
-}
+import { legalNamePattern, getNamespace } from '../components/utils/link';
 
 export default (state, action) => {
   if (!state) {
+    const { pathname } = window.location;
+
+    let activeNamespace = getNamespace(pathname);
+    if (!activeNamespace) {
+      const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
+      if (_.isString(parsedFavorite)) {
+        if (parsedFavorite.match(legalNamePattern) || parsedFavorite === ALL_NAMESPACES_KEY) {
+          activeNamespace = parsedFavorite;
+        }
+      }
+    }
+
+
     return ImmutableMap({
       activeNavSectionId: 'workloads',
-      activeNamespace,
+      location: pathname,
+      activeNamespace: activeNamespace || 'default',
     });
   }
 
@@ -30,13 +36,14 @@ export default (state, action) => {
       }
       return state.set('activeNamespace', action.value);
 
-    case types.setCurrentLocation:
+    case types.setCurrentLocation: {
       state = state.set('location', action.location);
-      if (_.isUndefined(action.ns)) {
+      const ns = getNamespace(action.location);
+      if (_.isUndefined(ns)) {
         return state;
       }
-      return state.set('activeNamespace', action.ns);
-
+      return state.set('activeNamespace', ns);
+    }
     case types.startImpersonate:
       return state.set('impersonate', {kind: action.kind, name: action.name});
 
