@@ -1,48 +1,47 @@
 package auth
 
 import (
+	"fmt"
 	"testing"
 	"time"
-
-	"github.com/coreos/go-oidc/jose"
 )
 
-type fakeToken struct {
-	encoded string
-	claims  jose.Claims
-}
-
-func (f fakeToken) Encode() string {
-	return f.encoded
-}
-
-func (f fakeToken) Claims() (jose.Claims, error) {
-	return f.claims, nil
-}
-
 func TestNewLoginState(t *testing.T) {
+	exp := time.Now().Unix()
 	tests := []struct {
-		encoded string
-		claims  jose.Claims
-		wantErr bool
+		encoded   string
+		claims    string
+		wantErr   bool
+		wantEmail string
+		wantID    string
+		wantExp   int64
 	}{
 		// happy case
 		{
 			encoded: "rando-token-string",
-			claims:  jose.Claims{"sub": "user-id", "email": "penny@example.com", "exp": time.Now().Unix()},
-			wantErr: false,
+			claims: fmt.Sprintf(`{
+				"sub": "user-id",
+				"email": "penny@example.com",
+				"exp": %d
+			}`, exp),
+			wantErr:   false,
+			wantEmail: "penny@example.com",
+			wantID:    "user-id",
+			wantExp:   exp,
 		},
 		// missing sub
 		{
 			encoded: "rando-token-string",
-			claims:  jose.Claims{"email": "penny@example.com", "exp": time.Now().Unix()},
+			claims: fmt.Sprintf(`{
+				"email": "penny@example.com",
+				"exp": %d
+			}`, time.Now().Unix()),
 			wantErr: true,
 		},
 	}
 
 	for i, tt := range tests {
-		tok := fakeToken{tt.encoded, tt.claims}
-		ls, err := newLoginState(tok)
+		ls, err := newLoginState(tt.encoded, []byte(tt.claims))
 		if err != nil {
 			if tt.wantErr {
 				continue
@@ -50,23 +49,20 @@ func TestNewLoginState(t *testing.T) {
 			t.Errorf("case %d: unexpected error: %v", i, err)
 		}
 
-		if ls.token.Encode() != tt.encoded {
-			t.Errorf("case %d: encoded token mismatch, want: %s, got: %s", i, tt.encoded, ls.token.Encode())
+		if ls.rawToken != tt.encoded {
+			t.Errorf("case %d: encoded token mismatch, want: %s, got: %s", i, tt.encoded, ls.rawToken)
 		}
 
-		cEmail := tt.claims["email"]
-		if ls.Email != cEmail {
-			t.Errorf("case %d: email mismatch, want: %s, got: %s", i, ls.Email, cEmail)
+		if ls.Email != tt.wantEmail {
+			t.Errorf("case %d: email mismatch, want: %s, got: %s", i, tt.wantEmail, ls.Email)
 		}
 
-		cSub := tt.claims["sub"]
-		if ls.UserID != cSub {
-			t.Errorf("case %d: user id mismatch, want: %s, got: %s", i, ls.UserID, cSub)
+		if ls.UserID != tt.wantID {
+			t.Errorf("case %d: user id mismatch, want: %s, got: %s", i, tt.wantID, ls.UserID)
 		}
 
-		cExp := tt.claims["exp"]
-		if ls.exp.Unix() != cExp {
-			t.Errorf("case %d: exp mismatch, want: %v, got: %v", i, ls.exp.Unix(), cExp)
+		if ls.exp.Unix() != tt.wantExp {
+			t.Errorf("case %d: exp mismatch, want: %v, got: %v", i, tt.wantExp, ls.exp.Unix())
 		}
 	}
 }

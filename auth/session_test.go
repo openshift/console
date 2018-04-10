@@ -1,10 +1,9 @@
 package auth
 
 import (
+	"fmt"
 	"testing"
 	"time"
-
-	"github.com/coreos/go-oidc/jose"
 )
 
 func checkSessions(t *testing.T, ss *SessionStore) {
@@ -23,15 +22,18 @@ func TestSessions(t *testing.T) {
 	ss := NewSessionStore(3)
 	notExpired := time.Now().Add(time.Duration(3600) * time.Second)
 	expired := time.Now().Add(time.Duration(3600) * time.Second * -1)
-	fakeTokens := []fakeToken{
-		{"rando-token-string", jose.Claims{"sub": "user-id-0", "email": "user-0@example.com", "exp": notExpired.Unix()}},
-		{"rando-token-string", jose.Claims{"sub": "user-id-1", "email": "user-1@example.com", "exp": notExpired.Unix()}},
-		{"rando-token-string", jose.Claims{"sub": "user-id-2", "email": "user-2@example.com", "exp": notExpired.Unix()}},
-		{"rando-token-string", jose.Claims{"sub": "user-id-3", "email": "user-3@example.com", "exp": expired.Unix()}},
+	fakeTokens := []struct {
+		raw    string
+		claims string
+	}{
+		{"rando-token-string", fmt.Sprintf(`{"sub": "user-id-0", "email": "user-0@example.com", "exp": %d}`, notExpired.Unix())},
+		{"rando-token-string", fmt.Sprintf(`{"sub": "user-id-1", "email": "user-1@example.com", "exp": %d}`, notExpired.Unix())},
+		{"rando-token-string", fmt.Sprintf(`{"sub": "user-id-2", "email": "user-2@example.com", "exp": %d}`, notExpired.Unix())},
+		{"rando-token-string", fmt.Sprintf(`{"sub": "user-id-3", "email": "user-3@example.com", "exp": %d}`, expired.Unix())},
 	}
 
 	for _, ft := range fakeTokens {
-		ls, err := newLoginState(ft)
+		ls, err := newLoginState(ft.raw, []byte(ft.claims))
 		if err != nil {
 			t.Fatalf("newLoginState error: %v", err)
 		}

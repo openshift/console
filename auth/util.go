@@ -28,10 +28,10 @@ type token interface {
 }
 
 // tokenVerifier funcs parse and verify an encoded token into an actual token object.
-type tokenVerifier func(string) (token, error)
+type tokenVerifier func(string) (claims []byte, err error)
 
 func jwtVerifier(oidcClient *oidc.Client) tokenVerifier {
-	return func(encodedToken string) (token, error) {
+	return func(encodedToken string) ([]byte, error) {
 		jwt, err := jose.ParseJWT(encodedToken)
 		if err != nil {
 			return nil, err
@@ -40,8 +40,7 @@ func jwtVerifier(oidcClient *oidc.Client) tokenVerifier {
 		if err = oidcClient.VerifyJWT(jwt); err != nil {
 			return nil, err
 		}
-
-		return &jwt, nil
+		return jwt.Payload, nil
 	}
 }
 

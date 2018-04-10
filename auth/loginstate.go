@@ -1,10 +1,9 @@
 package auth
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/coreos/go-oidc/oidc"
 )
 
 // loginState represents the current login state of a user.
@@ -15,9 +14,9 @@ type loginState struct {
 	Name         string
 	Email        string
 	exp          time.Time
-	token        token
 	now          nowFunc
 	sessionToken string
+	rawToken     string
 }
 
 type LoginJSON struct {
@@ -28,29 +27,31 @@ type LoginJSON struct {
 }
 
 // newLoginState unpacks a token and generates a new loginState from it.
-func newLoginState(tok token) (*loginState, error) {
+func newLoginState(rawToken string, claims []byte) (*loginState, error) {
 	ls := &loginState{
-		token: tok,
-		now:   defaultNow,
+		now:      defaultNow,
+		rawToken: rawToken,
 	}
 
-	claims, err := tok.Claims()
-	if err != nil {
+	var c struct {
+		Subject string   `json:"sub"`
+		Expiry  jsonTime `json:"exp"`
+		Email   string   `json:"email"`
+		Name    string   `json:"name"`
+	}
+
+	if err := json.Unmarshal(claims, &c); err != nil {
 		return nil, fmt.Errorf("error getting claims from token: %v", err)
 	}
 
-	id, err := oidc.IdentityFromClaims(claims)
-	if err != nil {
-		return nil, err
+	if c.Subject == "" {
+		return nil, fmt.Errorf("token missing require claim 'sub'")
 	}
 
-	if ls.Name, _, err = claims.StringClaim("name"); err != nil {
-		return nil, err
-	}
-
-	ls.UserID = id.ID
-	ls.Email = id.Email
-	ls.exp = id.ExpiresAt
+	ls.UserID = c.Subject
+	ls.Email = c.Email
+	ls.exp = time.Time(c.Expiry)
+	ls.Name = c.Name
 	return ls, nil
 }
 
@@ -61,4 +62,28 @@ func (ls *loginState) toLoginJSON() LoginJSON {
 		Email:  ls.Email,
 		Exp:    ls.exp.Unix(),
 	}
+}
+
+// jsonTime copied from github.com/coreos/go-oidc
+
+type jsonTime time.Time
+
+func (j *jsonTime) UnmarshalJSON(b []byte) error {
+	var n json.Number
+	if err := json.Unmarshal(b, &n); err != nil {
+		return err
+	}
+	var unix int64
+
+	if t, err := n.Int64(); err == nil {
+		unix = t
+	} else {
+		f, err := n.Float64()
+		if err != nil {
+			return err
+		}
+		unix = int64(f)
+	}
+	*j = jsonTime(time.Unix(unix, 0))
+	return nil
 }

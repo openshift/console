@@ -1,28 +1,45 @@
 package auth
 
 import (
+	"encoding/base64"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
-
-	"github.com/coreos/go-oidc/jose"
-	"github.com/coreos/go-oidc/oidc"
 )
+
+func insecureParsePayload(jwt string) ([]byte, error) {
+	parts := strings.Split(jwt, ".")
+	if len(parts) < 2 {
+		return nil, fmt.Errorf("malformed jwt, expected 3 parts got %d", len(parts))
+	}
+	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return nil, fmt.Errorf("malformed jwt payload: %v", err)
+	}
+	return payload, nil
+}
 
 func TestRedirectAuthError(t *testing.T) {
 	errURL := "http://example.com/error"
 	sucURL := "http://example.com/success"
 	w := httptest.NewRecorder()
 
-	ccfg := oidc.ClientConfig{
-		Credentials: oidc.ClientCredentials{
-			ID:     "fake-client-id",
-			Secret: "fake-secret",
-		},
-		RedirectURL: "http://example.com/callback",
+	ccfg := &Config{
+		ClientID:      "fake-client-id",
+		ClientSecret:  "fake-secret",
+		RedirectURL:   "http://example.com/callback",
+		IssuerURL:     "http://auth.example.com",
+		ErrorURL:      errURL,
+		SuccessURL:    sucURL,
+		CookiePath:    "/",
+		RefererPath:   "http://auth.example.com/",
+		SecureCookies: true,
 	}
-	a, err := newAuthenticator(ccfg, "http://auth.example.com", errURL, sucURL, "/", "http://auth.example.com/", true)
+
+	a, err := NewAuthenticator(ccfg)
 
 	a.redirectAuthError(w, "fake_error", err)
 	if err != nil {
@@ -52,15 +69,19 @@ func makeAuthenticator() (*Authenticator, error) {
 	errURL := "https://example.com/error"
 	sucURL := "https://example.com/success"
 
-	ccfg := oidc.ClientConfig{
-		Credentials: oidc.ClientCredentials{
-			ID:     "fake-client-id",
-			Secret: "fake-secret",
-		},
-		RedirectURL: "https://example.com/callback",
+	ccfg := &Config{
+		ClientID:      "fake-client-id",
+		ClientSecret:  "fake-secret",
+		RedirectURL:   "http://example.com/callback",
+		IssuerURL:     "http://auth.example.com",
+		ErrorURL:      errURL,
+		SuccessURL:    sucURL,
+		CookiePath:    "/",
+		RefererPath:   validReferer,
+		SecureCookies: true,
 	}
-	a, err := newAuthenticator(ccfg, "http://auth.example.com", errURL, sucURL, "/", validReferer, true)
 
+	a, err := NewAuthenticator(ccfg)
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +90,7 @@ func makeAuthenticator() (*Authenticator, error) {
 	a.tokenExtractor = func(_ *http.Request) (string, error) {
 		return "invalid-token", nil
 	}
-	a.tokenVerifier = func(bearer string) (token, error) {
-		jwt, _ := jose.ParseJWT(bearer)
-		return &jwt, nil
-	}
+	a.tokenVerifier = insecureParsePayload
 	return a, nil
 }
 
