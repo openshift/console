@@ -185,6 +185,7 @@ export class Nav extends React.Component {
 
         <NavSection text="Routing" img={routingImg} activeImg={routingActiveImg} activeSectionId={this.state.activeSectionId} setActiveSectionId={this.setActiveSectionId}>
           <NavLink resource="ingresses" name="Ingress" />
+          <NavLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
           <NavLink resource="networkpolicies" name="Network Policies" required={FLAGS.CALICO} />
           <NavLink resource="services" name="Services" />
         </NavSection>

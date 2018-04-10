@@ -20,6 +20,7 @@ import { SecretsPage, SecretsDetailsPage } from './secret';
 import { ServiceAccountsPage, ServiceAccountsDetailsPage } from './service-account';
 import { ServicesPage, ServicesDetailsPage } from './service';
 import { IngressesPage, IngressesDetailsPage } from './ingress';
+import { RoutesPage, RoutesDetailsPage } from './routes';
 import { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
 import { RoleBindingsPage } from './RBAC/bindings';
 import { EtcdClustersPage } from './etcd-cluster';
@@ -61,6 +62,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('ServiceAccounts', ServiceAccountsPage)
   .set('Services', ServicesPage)
   .set('Ingresses', IngressesPage)
+  .set('Routes', RoutesPage)
   .set('Roles', RolesPage)
   .set('RoleBindings', RoleBindingsPage)
   .set('EtcdClusters', EtcdClustersPage)
@@ -111,6 +113,7 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('ServiceAccounts', ServiceAccountsDetailsPage)
   .set('Services', ServicesDetailsPage)
   .set('Ingresses', IngressesDetailsPage)
+  .set('Routes', RoutesDetailsPage)
   .set('ClusterRoles', ClusterRolesDetailsPage)
   .set('Roles', RolesDetailsPage)
   .set('Alertmanagers', AlertManagersDetailsPage)

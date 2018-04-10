@@ -428,6 +428,19 @@ export const IngressModel: K8sKind = {
   id: 'ingress'
 };
 
+export const RouteModel: K8sKind = {
+  label: 'Route',
+  labelPlural: 'Routes',
+  apiGroup: '',
+  apiVersion: 'route.openshift.io/v1',
+  path: 'routes',
+  plural: 'routes',
+  abbr: 'R',
+  namespaced: true,
+  kind: 'Route',
+  id: 'route'
+};
+
 export const ConfigMapModel: K8sKind = {
   apiVersion: 'v1',
   legacy: true,
