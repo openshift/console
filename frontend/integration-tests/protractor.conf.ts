@@ -87,9 +87,9 @@ export const config: Config = {
     return new Promise(resolve => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
   suites: {
-    crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts'],
+    crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/filter.scenario.ts'],
     alm: ['tests/base.scenario.ts', 'tests/alm/**/*.scenario.ts'],
-    all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/alm/**/*.scenario.ts'],
+    all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/alm/**/*.scenario.ts', 'tests/filter.scenario.ts'],
   }
 };
 

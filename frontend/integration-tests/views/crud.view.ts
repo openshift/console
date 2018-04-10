@@ -8,6 +8,7 @@ export const createYAMLButton = $('#yaml-create');
 export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(500));
 
 export const resourceRows = $$('.co-resource-list__item');
+export const resourceRowNamesAndNs = $$('.co-m-resource-icon + a');
 export const rowForName = (name: string) => resourceRows.filter((row) => row.$$('.co-m-resource-icon + a').first().getText().then(text => text === name)).first();
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
 
@@ -48,3 +49,7 @@ export const actionsDropdown = $('.btn--actions').$('button');
 export const actionsDropdownMenu = $('.btn--actions').$$('.dropdown-menu').first();
 
 export const resourceTitle = $('#resource-title');
+
+export const saveChangesBtn = $('#save-changes');
+export const nameFilter = $('.form-control.text-filter');
+export const messageLbl = $('.cos-status-box');
