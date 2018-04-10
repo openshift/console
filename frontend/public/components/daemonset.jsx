@@ -66,7 +66,7 @@ const Details = ({obj: daemonset}) => <div>
   <div className="col-lg-6">
     <div className="co-m-pane">
       <div className="co-m-pane__body">
-        <dl>
+        <dl className="co-m-pane__details">
           <dt>Current Count</dt>
           <dd>{daemonset.status.currentNumberScheduled || '-'}</dd>
           <dt>Desired Count</dt>

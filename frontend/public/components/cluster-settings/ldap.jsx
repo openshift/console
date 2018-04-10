@@ -191,13 +191,11 @@ const Steps = [
 const Help = ({children}) => <div><small className="text-muted">{children}</small></div>;
 
 const Row = ({children, name, label}) =>
-  <div className="row co-m-form-row">
-    <div className="col-sm-2">
-      {label
-        ? <label className="control-label" htmlFor={name}>{label}:</label>
-        : <div className="col-sm-3 control-label"></div>
-      }
-    </div>
+  <div className="form-group co-m-form-row">
+    {label
+      ? <label className="col-sm-2 control-label" htmlFor={name}>{label}:</label>
+      : <div className="col-sm-3 control-label"></div>
+    }
     <div className="co-m-form-col col-sm-10">
       {children}
     </div>
@@ -491,7 +489,7 @@ const LDAPs = reduxForm({
           { (stateMachine === STATES.valid || stateMachine === STATES.invalid) &&
           <Row label="Test Results">
             { validationError
-              ? <p className="co-m-message co-m-message--error co-an-fade-in-out">Error - {validationError}:
+              ? <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>Error - {validationError}:
                 <br/>
                 <span>{validationData}</span>
               </p>
@@ -524,23 +522,23 @@ const LDAPs = reduxForm({
             <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
             <p>
             The last step is to apply the updated configuration to the cluster.
-            This is done via <code className="ldap-code"> kubectl </code> to avoid locking yourself out if something goes wrong.
+            This is done via <code>kubectl</code> to avoid locking yourself out if something goes wrong.
               <br/><br/>
-            During installation, an assets bundle was generated which included a kubeconfig (users name <code className="ldap-code"> kubelet </code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
+            During installation, an assets bundle was generated which included a kubeconfig (users name <code>kubelet</code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
               <br/><br/>
               <b>It is highly recommended you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
             </p>
 
-            <pre className="ldap-pre">
-              <code className="ldap-code">{INSTRUCTIONS_APPLY}</code>
+            <pre>
+              <code>{INSTRUCTIONS_APPLY}</code>
             </pre>
 
             <p>
             Next, trigger a rolling-update of the <Link target="_blank" to="/k8s/ns/tectonic-system/deployments/tectonic-identity/pods">Identity pods</Link>, which will read the new configuration.
             </p>
 
-            <pre className="ldap-pre" style={{marginBottom: 30}}>
-              <code className="ldap-code">{INSTRUCTIONS_PATCH}</code>
+            <pre style={{marginBottom: 30}}>
+              <code>{INSTRUCTIONS_PATCH}</code>
             </pre>
 
             <p className="row col-sm-12">

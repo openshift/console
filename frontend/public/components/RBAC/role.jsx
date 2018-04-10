@@ -76,7 +76,7 @@ class Details extends React.Component {
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-xs-6">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt>Role Name</dt>
               <dd>{name}</dd>
               {namespace && <div>
@@ -86,7 +86,7 @@ class Details extends React.Component {
             </dl>
           </div>
           <div className="col-xs-6">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt>Created At</dt>
               <dd><Timestamp timestamp={creationTimestamp} /></dd>
             </dl>

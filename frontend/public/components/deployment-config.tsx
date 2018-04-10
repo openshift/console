@@ -84,7 +84,7 @@ export class DeploymentConfigsDetails extends SafetyFirst<DeploymentConfigsDetai
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt>Update Strategy</dt>
               <dd>{_.get(deploymentConfig, 'spec.strategy.type', 'Rolling')}</dd>
               {isRecreate || <dt>Max Unavailable</dt>}

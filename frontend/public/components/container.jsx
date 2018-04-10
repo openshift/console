@@ -127,7 +127,7 @@ const Details = (props) => {
       <div className="row">
         <div className="col-sm-4">
           <h1 className="co-section-title">Container Overview</h1>
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>State</dt>
             <dd>{state.label}</dd>
             <dt>ID</dt>
@@ -149,7 +149,7 @@ const Details = (props) => {
 
         <div className="col-sm-4">
           <h1 className="co-section-title">Image Details</h1>
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Image</dt>
             <dd><Overflow value={containerImage || '-'} /></dd>
             <dt>Image Version/Tag</dt>
@@ -165,7 +165,7 @@ const Details = (props) => {
 
         <div className="col-sm-4">
           <h1 className="co-section-title">Network</h1>
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Node</dt>
             <dd><Link to={`/nodes/${pod.spec.nodeName}`}>{pod.spec.nodeName}</Link></dd>
             <dt>Pod IP</dt>

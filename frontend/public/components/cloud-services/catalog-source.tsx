@@ -72,13 +72,13 @@ export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({cata
     <div className="co-catalog-details co-m-pane">
       <div className="co-m-pane__body">
         <div className="col-xs-4">
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Name</dt>
             <dd>{catalogSource.data.spec.displayName}</dd>
           </dl>
         </div>
         <div className="col-xs-4">
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Publisher</dt>
             <dd>{catalogSource.data.spec.publisher}</dd>
           </dl>
@@ -87,7 +87,7 @@ export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({cata
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-xs-12">
-            <h3 style={{fontWeight: 400}}>Applications</h3>
+            <h2>Applications</h2>
           </div>
         </div>
         <div style={{marginTop: '15px'}}>

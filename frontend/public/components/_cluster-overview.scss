@@ -6,22 +6,24 @@
   border: 1px solid $color-grey-background-border;
   border-radius: 5px 5px 0 0;
   background-color: $color-grey-background;
-  padding-left: 15px;
-  padding-right: 15px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  h2 {
+    margin: 0;
+  }
 }
 .group__body {
-  min-height: 170px;
   border: 1px solid $color-grey-background-border;
   border-top: none;
   border-radius: 0 0 5px 5px;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: ($grid-gutter-width / 2);
+  padding-right: ($grid-gutter-width / 2);
   overflow: hidden;
 }
 
 .cluster-overview-cell {
   padding: 15px;
-  font-size: 13px;
   margin-bottom: 15px;
   margin-right: 15px;
 }

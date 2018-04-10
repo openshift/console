@@ -46,17 +46,15 @@ const fetchTectonicHealth = () => coFetchJSON('health')
   .catch(() => ({short: 'ERROR', long: 'The console service cannot be reached', status: 'ERROR'}));
 
 
-const DashboardLink = ({to, id}) => <div className="pull-right" style={{marginTop: 12}}>
-  <Link id={id} target="_blank" to={to}>View Grafana Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>
-</div>;
+const DashboardLink = ({to, id}) => <Link id={id} target="_blank" to={to}>View Grafana Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>;
 
 
 const Graphs = ({namespace}) => <div>
   <div className="row">
     <div className="col-xs-12 group">
       <div className="group__title">
+        <h2 className="h3">Health</h2>
         <DashboardLink id="qa_dashboard_k8s_health" to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1" />
-        <h4>Health</h4>
       </div>
       <div className="group__body">
         <div className="row">
@@ -91,8 +89,8 @@ const Graphs = ({namespace}) => <div>
     <div className="row">
       <div className="col-xs-12 group">
         <div className="group__title">
+          <h2 className="h3">Control Plane Status</h2>
           <DashboardLink to="/grafana/dashboard/db/kubernetes-control-plane-status?orgId=1" />
-          <h4>Control Plane Status</h4>
         </div>
         <div className="group__body">
           <div className="row">
@@ -118,8 +116,8 @@ const Graphs = ({namespace}) => <div>
     <div className="row">
       <div className="col-xs-12 group">
         <div className="group__title">
+          <h2 className="h3">Capacity Planning</h2>
           <DashboardLink to="/grafana/dashboard/db/kubernetes-capacity-planning?orgId=1" />
-          <h4>Capacity Planning</h4>
         </div>
         <div className="group__body">
           <div className="row">
@@ -146,7 +144,7 @@ const LimitedGraphs = () => <div>
   <div className="row">
     <div className="col-xs-12 group">
       <div className="group__title">
-        <h4>Health</h4>
+        <h2 className="h3">Health</h2>
       </div>
       <div className="group__body">
         <div className="row">
@@ -169,10 +167,8 @@ const GraphsPage = ({limited, namespace}) => {
       <div className="row">
         <div className="col-xs-12 group">
           <div className="group__title">
-            <div className="pull-right" style={{marginTop: 12}}>
-              <a href="/k8s/all-namespaces/events">View All</a>
-            </div>
-            <h4>Events</h4>
+            <h2 className="h3">Events</h2>
+            <a href="/k8s/all-namespaces/events">View All</a>
           </div>
           <div className="group__body" style={{paddingLeft: 0, paddingRight: 0}}>
             <EventStreamPage namespace={namespace} showTitle={false} />
@@ -182,11 +178,9 @@ const GraphsPage = ({limited, namespace}) => {
     </div>
     <div className="col-lg-4 col-md-12 group">
       <div className="group__title">
-        <div className="pull-right" style={{marginTop: 12}}>
-          {// eslint-disable-next-line react/jsx-no-target-blank
-          } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
-        </div>
-        <h4>Software Info</h4>
+        <h2 className="h3">Software Info</h2>
+        {// eslint-disable-next-line react/jsx-no-target-blank
+        } <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener">Release Notes&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
       </div>
       <div className="group__body">
         <SoftwareDetails />
@@ -194,11 +188,9 @@ const GraphsPage = ({limited, namespace}) => {
     </div>
     <div className="col-lg-4 col-md-12 group">
       <div className="group__title">
-        <div className="pull-right" style={{marginTop: 12}}>
-          {// eslint-disable-next-line react/jsx-no-target-blank
-          } <a href="https://coreos.com/tectonic/docs/latest/" target="_blank" rel="noopener">Full Documentation&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
-        </div>
-        <h4>Documentation</h4>
+        <h2 className="h3">Documentation</h2>
+        {// eslint-disable-next-line react/jsx-no-target-blank
+        } <a href="https://coreos.com/tectonic/docs/latest/" target="_blank" rel="noopener">Full Documentation&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
       </div>
       <div className="group__body">
         <Documentation />

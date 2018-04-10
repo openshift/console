@@ -34,9 +34,9 @@ export class StartGuide extends SafetyFirst {
     /* eslint-disable react/jsx-no-target-blank */
     return <div className="co-well" id="tectonic-start-guide" style={this.props.style}>
       {this.state.dismissible && <button className="btn btn-link pull-right" onClick={() => this.dismiss()}>Dismiss</button>}
-      <h3 style={{marginBottom: 20}}>Tectonic Quick Start Guide</h3>
+      <h1 style={{ marginTop: 0 }}>Tectonic Quick Start Guide</h1>
 
-      <h4>1. Set up kubectl</h4>
+      <h2>1. Set up kubectl</h2>
       <p style={{marginBottom: 20}}>
         &apos;kubectl&apos; is a command-line program for interacting with the Kubernetes API.
         <br />
@@ -47,7 +47,7 @@ export class StartGuide extends SafetyFirst {
         </a>
       </p>
 
-      <h4>2. Deploy an Application</h4>
+      <h2>2. Deploy an Application</h2>
       <p>
         You can choose to deploy your application with &apos;kubectl&apos; or with Tectonic Console.
         <br />
@@ -58,7 +58,7 @@ export class StartGuide extends SafetyFirst {
         </a>
       </p>
       <hr />
-      <h4>You may also be interested in</h4>
+      <h2>You may also be interested in</h2>
       <ul>
         <li>Grant and manage user access with Tectonic Identity. See <a href="https://coreos.com/tectonic/docs/latest/users/tectonic-identity-config.html" target="_blank" rel="noopener">User Management through Tectonic Identity <i className="fa fa-external-link" /></a>.</li>
         <li>Troubleshoot your Tectonic clusters. See <a href="https://coreos.com/tectonic/docs/latest/troubleshooting/troubleshooting.html" target="_blank" rel="noopener">Troubleshooting Tectonic <i className="fa fa-external-link" /></a>.</li>

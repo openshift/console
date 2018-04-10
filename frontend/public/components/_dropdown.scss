@@ -6,10 +6,6 @@ $color-bookmarker: #DDD;
   position: relative;
 }
 
-.dropdown__selected {
-  background-color: $color-os-nav-active;
-}
-
 .dropdown__disabled {
   color: #666;
   cursor: not-allowed;
@@ -39,25 +35,7 @@ $color-bookmarker: #DDD;
 }
 
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 1000;
   display: block;
-  float: left;
-  min-width: 160px;
-  margin: 2px 0 0;
-  font-size: 14px;
-  text-align: left;
-  background-color: white;
-  border: 1px solid #ccc;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  background-clip: padding-box;
-
-  overflow-y: auto;
 
   ul {
     padding: 0;
@@ -68,65 +46,43 @@ $color-bookmarker: #DDD;
   li {
     padding: 0;
     display: flex;
-    flexDirection: row;
     a {
-      display: block;
-      padding: 6px 20px;
-      clear: both;
-      font-weight: normal;
-      line-height: 1.42857;
-      color: #333333;
-      white-space: nowrap;
       cursor: pointer;
-      text-shadow: none;
-      display: inline-block;
       flex-grow: 1;
       &.next-to-bookmark {
         padding-left: 5px
       }
-      &:hover,&:focus,&.hover  {
-        text-decoration: none;
-        color: #262626;
-        background-color: $color-dropdown-hover;
-      }
-    }
-    &.active > a {
-        &:hover, &:focus {
-        color: white;
-        text-decoration: none;
-        outline: 0;
-        background-color: $color-os-nav-active;
-      }
-    }
-    &.dropdown__selected > a {
-      color: white;
-      // &:hover {
-      //   color: black;
-      // }
     }
   }
 }
 
 .dropdown--dark {
-  $dark: rgba(33, 33, 33, 0.95);
+  $dark: rgba(33, 33, 33, 1);
   background-color: $dark;
   border: solid 1px $dark;
 
-  li > a {
+  li {
+    .dropdown-menu__divider {
+      background-color: $color-pf-black-900;
+    }
+
+    > a {
     color: white;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.15);
+      border-color: transparent;
       color: white;
     }
   }
+}
 }
 
 .co-namespace-selector {
   background-color: #292E34;
   color: $color-os-nav-title;
   font-weight: 300;
-  font-size: 18px;
+  font-size: 17px;
   padding: 5px;
   padding-left: 10px;
   height: 39px;
@@ -148,11 +104,49 @@ $color-bookmarker: #DDD;
     background-color: inherit;
     color: inherit;
   }
+  // Mimic PatternFly dropdown-menu visual states.
+  // Since namespace selector has multiple <a> tags within each list item,
+  // target the <li> except the one containing the list divider.
   li {
+    &:not(.co-namespace-selector__divider) {
+      &:after,
+      &:before {
+        content: '';
+        background-color: $dropdown-link-hover-border-color;
+        left: 0;
+        position: absolute;
+        width: 100%;
+      }
+      &:after {
+        top: 0;
+      }
+      &:before {
+        bottom: 0;
+      }
+      &:hover {
+        background-color: $dropdown-link-hover-bg;
+        color: $dropdown-link-hover-color;
+        position: relative;
+        &:after,
+        &:before {
+          height: 1px;
+        }
+      }
+      &.active:hover:after,
+      &.active:hover:before {
+        height: 0;
+      }
+    }
     > a {
+      font-weight: normal;
+      padding: 6px;
       text-decoration: none;
-      &:hover,&.hover,&:focus {
-        background-color: $color-dropdown-hover;
+      &:hover,&.active,&:focus {
+        border-color: transparent;
+      }
+      &:active {
+        background-color: transparent;
+        color: inherit !important;
       }
       &.bookmarker {
         display: inline-block;
@@ -161,7 +155,7 @@ $color-bookmarker: #DDD;
         color: $color-bookmarker;
         flex-grow: 0;
         &:hover {
-          background-color: $color-dropdown-hover;
+          background-color: transparent;
           color: $color-bookmarker--hover;
         }
       }
@@ -182,46 +176,11 @@ $color-bookmarker: #DDD;
   }
 }
 
-.btn--dropdown {
-  color: black;
-  background-color: white;
-
-  &__content-wrap {
-    display: flex;
-    align-items: center;
-  }
-}
-.btn--actions__menu {
-  left: auto;
-  letter-spacing: normal;
-  right: 9px;
+.btn--dropdown__content-wrap {
+  display: flex;
+  align-items: center;
 }
 
 .btn--actions {
-  float: right;
-  margin-top: -3px;
-
-  &__title {
-    display: flex;
-    align-items: center;
-  }
-
-  &__cog {
-    margin-right: 5px;
-  }
-
-  &__label {
-    margin-bottom: -1px;
-  }
-
-  &__menu {
-    left: auto;
-    letter-spacing: normal;
-    right: 9px;
-  }
-
-  .btn--dropdown {
-    margin-right: 5px;
-  }
+  margin-top: -1px;
 }
-

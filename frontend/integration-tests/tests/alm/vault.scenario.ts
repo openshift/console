@@ -112,9 +112,9 @@ describe('Interacting with the Vault OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')), 1000);
+    await browser.wait(until.visibilityOf($('.alert-success')), 1000);
 
-    expect($('.co-m-message--success').getText()).toContain('example has been updated to version');
+    expect($('.alert-success').getText()).toContain('example has been updated to version');
   });
 
   it('displays Kubernetes objects associated with the `VaultService` in its "Resources" section', async() => {

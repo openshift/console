@@ -38,7 +38,7 @@ class TokenInfoModal extends PromiseComponent {
       <ModalTitle>Token Information</ModalTitle>
       <ModalBody><pre style={{whiteSpace: 'pre-wrap'}}>{this.state.tokenReview}</pre></ModalBody>
       <ModalFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage}>
-        <button type="button" onClick={onCloseClick} className="btn btn-link">Close</button>
+        <button type="button" onClick={onCloseClick} className="btn btn-default">Close</button>
       </ModalFooter>
     </div>;
   }

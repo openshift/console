@@ -1,6 +1,5 @@
 .co-p-cluster {
   display: flex;
-  font-size: 14px;
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
@@ -97,40 +96,6 @@
 
 .ldap-group {
   padding-top: 10px;
-}
-
-.ldap-code {
-  background: rgba(0, 0, 0, 0.03);
-  border-radius: 3px;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.075);
-  color: rgba(0, 0, 0, 0.75);
-  display: inline-block;
-  font-family: "Source Code Pro", Menlo, monospace;
-  font-size: 85%;
-  font-weight: 400;
-  padding: 0px 4px;
-}
-
-.ldap-pre {
-  border: none;
-  background: rgba(0,0,0,0.05);
-  box-shadow: inset 0 0 8px rgba(0,0,0,0.075);
-  padding: 2px 4px;
-  color: rgba(0, 0, 0, 0.75);
-  .ldap-code{
-    background: none;
-    box-shadow: none;
-  }
-}
-
-.alert {
-  padding: 10px;
-}
-
-.alert-info {
-  background-color: rgba(82, 163, 217, 0.05);
-  border: 1px solid #52A3D9;
-  color: #52A3D9;
 }
 
 .certs-info-exp {

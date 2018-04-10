@@ -58,28 +58,27 @@ class CreateNamespaceModal extends PromiseComponent {
     return <form onSubmit={this._submit.bind(this)} name="form" className="co-p-new-user-modal">
       <ModalTitle>Create New Namespace</ModalTitle>
       <ModalBody>
-        <div>
+        <div className="form-group">
           <label htmlFor="input-name" className="control-label">Name</label>
+          <div className="modal-body__field">
+            <input type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.name || ''} autoFocus required />
+          </div>
         </div>
-        <div className="modal-body__field">
-          <input type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.name || ''} autoFocus required />
-        </div>
-        <div>
+        <div className="form-group">
           <label className="control-label">Labels</label>
+          <div className="modal-body__field">
+            <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels.bind(this)} tags={[]} />
+          </div>
         </div>
-        <div className="modal-body__field">
-          <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels.bind(this)} tags={[]} />
-        </div>
-        <div>
+        <div className="form-group">
           <label className="control-label">Default Network Policy</label>
+          <div className="modal-body__field ">
+            <select onChange={e => this.setState({np: e.target.value})} value={this.state.np} className="form-control">
+              <option value={allow}>No restrictions (default)</option>
+              <option value={deny}>Deny all inbound traffic.</option>
+            </select>
+          </div>
         </div>
-        <div className="modal-body__field ">
-          <select onChange={e => this.setState({np: e.target.value})} value={this.state.np} className="form-control">
-            <option value={allow}>No restrictions (default)</option>
-            <option value={deny}>Deny all inbound traffic.</option>
-          </select>
-        </div>
-
       </ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
     </form>;
@@ -87,4 +86,3 @@ class CreateNamespaceModal extends PromiseComponent {
 }
 
 export const createNamespaceModal = createModalLauncher(CreateNamespaceModal);
-

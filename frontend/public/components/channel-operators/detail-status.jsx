@@ -52,7 +52,7 @@ export class DetailStatus extends SafetyFirst {
       if (this.props.channelState === 'Paused' || this.props.channelState === 'Pausing') {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'app-version', 'spec/paused', false)}>Resume Updates</button>;
       } else if (this.props.channelState === 'UpdateAvailable') {
-        return <button className="co-cluster-updates__action-button co-cluster-updates__action-button--update btn btn-primary" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', true)}>Start Upgrade</button>;
+        return <button className="co-cluster-updates__action-button btn btn-primary" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', true)}>Start Upgrade</button>;
       } else if (this.props.channelState === 'Requested') {
         return <button className="co-cluster-updates__action-button btn btn-default" onClick={this._doAction.bind(this, 'config', 'triggerUpdate', false)}>Request to Cancel</button>;
       } else if (this.props.channelState === 'Updating') {

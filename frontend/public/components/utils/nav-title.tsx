@@ -10,16 +10,19 @@ import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
-  <div className="co-m-nav-title__breadcrumbs">
+  <ol className="breadcrumb">
     { breadcrumbs.map((crumb, i, {length}) => {
       const isLast = i === length - 1;
 
-      return <div key={i}>
-        <Link className={classNames('co-m-nav-title__breadcrumbs__link', {'co-m-nav-title__breadcrumbs__link--end': isLast})} to={crumb.path}>{crumb.name}</Link>
-        { !isLast && <span className="co-m-nav-title__breadcrumbs__seperator">/</span> }
-      </div>;
+      return <li key={i} className={classNames({'active': isLast})}>
+        {isLast ? (
+          crumb.name
+        ) : (
+          <Link className="breadcrumb-link" to={crumb.path}>{crumb.name}</Link>
+        )}
+      </li>;
     }) }
-  </div>);
+  </ol>);
 
 export const NavTitle = connectToModel((props: NavTitleProps) => {
   const {kind, kindObj, detail, title, menuActions, obj, breadcrumbsFor, style} = props;
@@ -29,15 +32,13 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
     : <div>{ kind && <ResourceIcon kind={kind} className="co-m-page-title__icon" /> } <span id="resource-title">{title}</span></div>;
 
-  return <div className={classNames('row', detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')} style={style}>
-    <div className="col-xs-12">
-      { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
-      <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbsFor})}>
-        {logo}
-        { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
-      </h1>
-      {props.children}
-    </div>
+  return <div className={classNames(detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')} style={style}>
+    { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
+    <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbsFor})}>
+      {logo}
+      { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
+    </h1>
+    {props.children}
   </div>;
 });
 

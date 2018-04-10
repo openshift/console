@@ -173,7 +173,7 @@ const Details = ({obj: pod}) => {
                 <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false} />
               </div>
               <div className="col-sm-6 col-xs-12">
-                <dl>
+                <dl className="co-m-pane__details">
                   <dt>Pod</dt>
                   <dd><PodLink pod={pod} /></dd>
                   <dt>Fixables</dt>

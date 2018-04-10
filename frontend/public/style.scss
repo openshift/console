@@ -4,8 +4,12 @@
 @import "style/config";
 
 // External dependencies (tilde tells Webpack not to use relative path)
+@import "~font-awesome/scss/font-awesome";
+@import '~patternfly/dist/sass/patternfly/variables';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import '~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides';
+@import '~patternfly/dist/sass/patternfly/fonts';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/normalize";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/type";
@@ -15,16 +19,26 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/forms";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/buttons";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/component-animations";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/dropdowns";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/button-groups";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/input-groups";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/breadcrumbs";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/labels";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/alerts";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/close";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/modals";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
-@import "~font-awesome/scss/font-awesome";
+@import "~patternfly/dist/sass/patternfly/mixins";
+@import '~patternfly/dist/sass/patternfly/icons';
+@import '~patternfly/dist/sass/patternfly/type';
+@import '~patternfly/dist/sass/patternfly/buttons';
+@import '~patternfly/dist/sass/patternfly/dropdowns';
+@import '~patternfly/dist/sass/patternfly/breadcrumbs';
+@import '~patternfly/dist/sass/patternfly/modals';
+@import '~patternfly/dist/sass/patternfly/alerts';
 
 @import "style/base";
 

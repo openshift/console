@@ -20,24 +20,19 @@ describe(BreadCrumbs.displayName, () => {
     wrapper = shallow(<BreadCrumbs breadcrumbs={breadcrumbs} />);
   });
 
-  it('renders link for each given breadcrumb', () => {
+  it('renders each given breadcrumb', () => {
     const links: ShallowWrapper<any> = wrapper.find(Link);
+    const nonLink: ShallowWrapper<any> = wrapper.find('li.active');
 
-    expect(links.length).toEqual(breadcrumbs.length);
+    expect(links.length + nonLink.length).toEqual(breadcrumbs.length);
 
     breadcrumbs.forEach((crumb, i) => {
-      expect(links.at(i).props().to).toEqual(crumb.path);
-      expect(links.at(i).childAt(0).text()).toEqual(crumb.name);
-    });
-  });
-
-  it('renders separator between each breadcrumb link', () => {
-    const separators = wrapper.find('.co-m-nav-title__breadcrumbs__seperator');
-
-    expect(separators.length).toEqual(breadcrumbs.length - 1);
-
-    separators.forEach((separator) => {
-      expect(separator.text()).toEqual('/');
+      if(i < links.length) {
+        expect(links.at(i).props().to).toEqual(crumb.path);
+        expect(links.at(i).childAt(0).text()).toEqual(crumb.name);
+      } else {
+        expect(nonLink.text()).toEqual(crumb.name);
+      }
     });
   });
 });

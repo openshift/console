@@ -57,16 +57,6 @@ $cluster-updates-width: 800px;
 .co-cluster-updates__action-button {
   display: block;
   margin-top: 5px;
-  padding: 7px 17px 5px;
-}
-
-.co-cluster-updates__action-button--update {
-  color: #dffdf1;
-  font-weight: 300;
-
-  &:hover, &:focus, &:active, &:focus:active {
-    color: #e5fff5;
-  }
 }
 
 .co-cluster-updates__component {
@@ -123,7 +113,6 @@ $cluster-updates-width: 800px;
 
 .co-cluster-updates__operator-component {
   flex: 1 1 auto;
-  font-size: 14px;
 }
 
 .co-cluster-updates__operator-step {
@@ -192,7 +181,6 @@ $cluster-updates-width: 800px;
 }
 
 .co-cluster-updates__message-box {
-  font-size: 16px;
   margin: 15px 0 0 5px;
   padding: 10px;
   overflow: auto;

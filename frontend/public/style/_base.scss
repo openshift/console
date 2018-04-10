@@ -17,68 +17,10 @@ dl {
 dt {
   text-transform: uppercase;
   font-weight: 300;
-  font-size: 80%; }
+  font-size: 11px; }
 
 dd {
   margin-bottom: 20px; }
 
 dd:last-child {
   margin-bottom: 0px; }
-
-label {
-  font-weight: 600;
-}
-
-// orphaned?  Bootstrap should be sizing headings
-h2 {
-  font-size: 110%; }
-
-// FONTS
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: italic;
-  font-weight: 300;
-  src: local('Source Sans Pro Light Italic'), local('SourceSansPro-LightItalic'), url(./fonts/SourceSansPro-LightItalic.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: italic;
-  font-weight: 400;
-  src: local('Source Sans Pro Italic'), local('SourceSansPro-Italic'), url(./fonts/SourceSansPro-Italic.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: italic;
-  font-weight: 600;
-  src: local('Source Sans Pro SemiBold Italic'), local('SourceSansPro-SemiBoldItalic'), url(./fonts/SourceSansPro-SemiBoldItalic.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: italic;
-  font-weight: 700;
-  src: local('Source Sans Pro Bold Italic'), local('SourceSansPro-BoldItalic'), url(./fonts/SourceSansPro-BoldItalic.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: normal;
-  font-weight: 300;
-  src: local('Source Sans Pro Light'), local('SourceSansPro-Light'), url(./fonts/SourceSansPro-Light.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Source Sans Pro Regular'), local('SourceSansPro-Regular'), url(./fonts/SourceSansPro-Regular.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: normal;
-  font-weight: 600;
-  src: local('Source Sans Pro SemiBold'), local('SourceSansPro-SemiBold'), url(./fonts/SourceSansPro-SemiBold.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Source Sans Pro Bold'), local('SourceSansPro-Bold'), url(./fonts/SourceSansPro-Bold.woff2) format('woff2');
-}

@@ -87,7 +87,7 @@ const Details = ({obj: job}) => <div>
       <Heading text="Job Status" />
       <div className="co-m-pane__body-group">
         <div className="co-m-pane__body-section--bordered">
-          <dl>
+          <dl className="co-m-pane__details">
             <dt>Status</dt>
             <dd>{job.status.conditions ? job.status.conditions[0].type : 'In Progress'}</dd>
             <dt>Start Time</dt>

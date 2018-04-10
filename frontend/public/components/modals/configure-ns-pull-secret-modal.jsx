@@ -175,7 +175,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull secret.
         </p>
 
-        {existingData.invalidData && <p className="co-m-message co-m-message--error">A default pull secret exists, but can&rsquo;t be parsed. Saving this will overwrite it.</p>}
+        {existingData.invalidData && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>A default pull secret exists, but can&rsquo;t be parsed. Saving this will overwrite it.</p>}
 
         <div className="row co-m-form-row">
           <div className="col-xs-3">
@@ -206,7 +206,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
             <label>Method:</label>
           </div>
           <div className="col-xs-9">
-            <div>
+            <div className="radio">
               <label className="control-label">
                 <input type="radio" id="namespace-pull-secret-method--form"
                   checked={this.state.method === 'form'}
@@ -214,7 +214,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                   Enter Username/Password
               </label>
             </div>
-            <div>
+            <div className="radio">
               <label className="control-label">
                 <input type="radio"
                   checked={this.state.method === 'upload'}
@@ -274,7 +274,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           { this.state.invalidJson || existingData.invalidJson && <div className="row co-m-form-row">
             <div className="col-xs-9 col-sm-offset-3">
-              <div className="co-m-message co-m-message--error">Invalid format. Uploaded file is not properly formatted json.</div>
+              <div className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>Invalid format. Uploaded file is not properly formatted json.</div>
             </div>
           </div> }
           { this.state.fileData &&<div className="row co-m-form-row">

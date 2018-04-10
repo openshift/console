@@ -121,9 +121,9 @@ describe('Interacting with the etcd OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')), 2000);
+    await browser.wait(until.visibilityOf($('.alert-success')), 2000);
 
-    expect($('.co-m-message--success').getText()).toContain(`${etcdcluster} has been updated to version`);
+    expect($('.alert-success').getText()).toContain(`${etcdcluster} has been updated to version`);
   });
 
   it('displays Kubernetes objects associated with the `EtcdCluster` in its "Resources" section', async() => {
@@ -136,7 +136,7 @@ describe('Interacting with the etcd OCS', () => {
   });
 
   it('displays YAML editor for creating a new `EtcdBackup` instance', async() => {
-    await $$('.co-m-nav-title__breadcrumbs__link').get(0).click();
+    await $$('.breadcrumb-link').get(0).click();
     await crudView.isLoaded();
     await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
@@ -170,9 +170,9 @@ describe('Interacting with the etcd OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')), 2000);
+    await browser.wait(until.visibilityOf($('.alert-success')), 2000);
 
-    expect($('.co-m-message--success').getText()).toContain(`${etcdbackup} has been updated to version`);
+    expect($('.alert-success').getText()).toContain(`${etcdbackup} has been updated to version`);
   });
 
   it('displays Kubernetes objects associated with the `EtcdBackup` in its "Resources" section', async() => {
@@ -185,7 +185,7 @@ describe('Interacting with the etcd OCS', () => {
   });
 
   it('displays YAML editor for creating a new `EtcdRestore` instance', async() => {
-    await $$('.co-m-nav-title__breadcrumbs__link').get(0).click();
+    await $$('.breadcrumb-link').get(0).click();
     await crudView.isLoaded();
     await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
@@ -219,9 +219,9 @@ describe('Interacting with the etcd OCS', () => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
     await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
-    await browser.wait(until.visibilityOf($('.co-m-message--success')), 2000);
+    await browser.wait(until.visibilityOf($('.alert-success')), 2000);
 
-    expect($('.co-m-message--success').getText()).toContain(`${etcdrestore} has been updated to version`);
+    expect($('.alert-success').getText()).toContain(`${etcdrestore} has been updated to version`);
   });
 
   it('displays Kubernetes objects associated with the `EtcdRestore` in its "Resources" section', async() => {

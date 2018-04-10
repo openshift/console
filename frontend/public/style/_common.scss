@@ -1,3 +1,7 @@
+.co-m-pane__heading .btn {
+  margin-right: 10px;
+}
+
 .co-block {
   display: block;
 }
@@ -68,26 +72,8 @@
   padding: 6px 6px 6px 0;
 }
 
-.co-m-btn-bar .co-m-message {
-    margin-bottom: 20px;
-}
-
-label {
-    margin: 0px;
-}
-
-.modal-body {
-    font-size: $co-font-size-small;
-}
-
-.modal-body__field {
-    margin: 0 0 13px 0;
-    max-width: 448px;
-}
-
-.modal-body__static-control-value {
-    line-height: 30px;
-    font-size: $co-font-size-small;
+.co-m-pane__details dd {
+  font-size: 14px;
 }
 
 .co-m-pane__explanation {

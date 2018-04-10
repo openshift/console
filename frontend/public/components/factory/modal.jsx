@@ -32,7 +32,7 @@ export const createModalLauncher = (Component) => (props = {}) => {
           isOpen={true}
           contentLabel="Modal"
           onRequestClose={closeModal}
-          className="modal-content"
+          className="modal-dialog modal-content"
           overlayClassName="co-overlay"
           shouldCloseOnOverlayClick={!props.blocking}>
           <Component {...props} cancel={closeModal} close={closeModal} />
@@ -60,8 +60,8 @@ export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, su
     cancel(e);
   };
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
+    <button type="button" onClick={onCancelClick} className="btn btn-default">Cancel</button>
     <button type="submit" className="btn btn-primary" disabled={submitDisabled} id="confirm-delete">{submitText}</button>
-    <button type="button" onClick={onCancelClick} className="btn btn-link">Cancel</button>
   </ModalFooter>;
 };
 

@@ -105,7 +105,7 @@ const Details = ({obj: ns}) => <div>
         <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false} />
       </div>
       <div className="col-sm-6 col-xs-12">
-        <dl>
+        <dl className="co-m-pane__details">
           <dt>Status</dt>
           <dd>{ns.status.phase}</dd>
           <dt>Default Pull Secret</dt>

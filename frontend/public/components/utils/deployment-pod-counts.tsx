@@ -13,13 +13,13 @@ export const DeploymentPodCounts: React.SFC<DeploymentPodCountsProps> = ({ resou
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section col-sm-3">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Desired Count</dt>
               <dd>{desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#" onClick={openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>}</dd>
             </dl>
           </div>
           <div className="co-detail-table__section col-sm-3">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Up-to-date Count</dt>
               <dd>
                 <Tooltip content={`Total number of non-terminated pods targeted by this ${resourceKind.label} that have the desired template spec.`}>
@@ -29,7 +29,7 @@ export const DeploymentPodCounts: React.SFC<DeploymentPodCountsProps> = ({ resou
             </dl>
           </div>
           <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
-            <dl>
+            <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Matching Pods</dt>
               <dd>
                 <Tooltip content={`Total number of non-terminated pods targeted by this ${resourceKind.label} (their labels match the selector).`}>

@@ -60,12 +60,11 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-clusterserviceversion-logo__name__provider {
   color: #999;
-  font-size: 14px;
   font-weight: 400;
 }
 
 .co-clusterserviceversion-logo__name__clusterserviceversion {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
   margin: 0;
 }
@@ -142,11 +141,6 @@ $clusterserviceversion-list-border: #ccc;
   background: #ffe6e6;
   color: #dd1326;
   font-size: 14px;
-}
-
-.co-catalog-install-modal__header {
-  padding: 15px;
-  margin-bottom: 15px;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {

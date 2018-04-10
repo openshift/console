@@ -70,10 +70,10 @@ export class SearchPage extends React.PureComponent {
         <title>Search</title>
       </Helmet>
       <NavTitle detail={true} title="Search" >
-        <div style={{padding: 15, paddingTop: 0, paddingBottom: 30}}>
+        <div style={{paddingBottom: 30}}>
           <div className="input-group">
             <div className="input-group-btn">
-              <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} className="right-grouped" />
+              <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
             </div>
             <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus />
           </div>

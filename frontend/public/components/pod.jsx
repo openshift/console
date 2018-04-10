@@ -180,7 +180,7 @@ const Details = ({obj: pod}) => {
                 </ResourceSummary>
               </div>
               <div className="col-sm-6 col-xs-12">
-                <dl>
+                <dl className="co-m-pane__details">
                   <dt>Status</dt>
                   <dd>{podPhase(pod)}</dd>
                   <dt>Pod IP</dt>

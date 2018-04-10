@@ -6,18 +6,10 @@ $coreosWebFontPath: $coreosWebDistPath + 'fonts';
 $fa-font-path: $coreosWebFontPath;
 // Override bootstrap font paths.
 $icon-font-path: $coreosWebFontPath + '/';
-// CoreOS-web font path.
-$font-path: $coreosWebFontPath;
+// PatternFly font path.
+$font-path: '~patternfly/dist/fonts/';
 // CoreOS-web image path.
 $img-path: $coreosWebDistPath + 'img';
-
-// Bootstrap variable overrides
-$btn-primary-bg: $color-tectonic-button-green;
-$font-family-base: "Source Sans Pro", Helvetica, sans-serif;
-$font-size-h1: 20px;
-$font-size-h5: 14px;
-$headings-font-weight: 600;
-$link-color: $color-link;
 
 /* THEME COLORS */
 $color-bg-primary: $white;
