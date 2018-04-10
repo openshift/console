@@ -34,7 +34,7 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
 
   return <div className={classNames(detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')} style={style}>
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
-    <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbsFor})}>
+    <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})}>
       {logo}
       { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
     </h1>
