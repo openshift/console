@@ -1,9 +1,11 @@
 package auth
 
 import (
+	"context"
 	"crypto/subtle"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -12,9 +14,9 @@ import (
 	"time"
 
 	"github.com/coreos/dex/api"
-	"github.com/coreos/go-oidc/oauth2"
-	"github.com/coreos/go-oidc/oidc"
+	oidc "github.com/coreos/go-oidc"
 	"github.com/coreos/pkg/capnslog"
+	"golang.org/x/oauth2"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -36,11 +38,13 @@ var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 var ss = NewSessionStore(32768)
 
 type Authenticator struct {
-	tokenExtractor oidc.RequestTokenExtractor
-	tokenVerifier  tokenVerifier
+	tokenExtractor func(r *http.Request) (string, error)
+	tokenVerifier  func(string) (claims []byte, err error)
 
-	oidcClient    *oidc.Client
-	issuerURL     string
+	oauth2Client *oauth2.Config
+
+	client *http.Client
+
 	errorURL      string
 	successURL    string
 	cookiePath    string
@@ -113,59 +117,97 @@ func newHTTPClient(issuerCA string) (*http.Client, error) {
 	}, nil
 }
 
-// NewAuthenticator initializes an Authenticator struct.
-func NewAuthenticator(c *Config) (*Authenticator, error) {
+// NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
+// able to contact the provider.
+func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
+	a, err := newUnstartedAuthenticator(c)
+	if err != nil {
+		return nil, err
+	}
+
+	// Retry connecting to the identity provider a few times
+	backoff := time.Second * 2
+	maxSteps := 5
+	steps := 0
+
+	for {
+		p, err := oidc.NewProvider(ctx, c.IssuerURL)
+		if err != nil {
+			steps++
+			if steps > maxSteps {
+				log.Errorf("error contacting openid connect provider: %v", err)
+				return nil, err
+			}
+
+			log.Errorf("error contacting openid connect provider (retrying in %s): %v", backoff, err)
+
+			time.Sleep(backoff)
+			backoff *= 2
+			continue
+		}
+
+		a.oauth2Client.Endpoint = p.Endpoint()
+
+		verifier := p.Verifier(&oidc.Config{
+			ClientID: c.ClientID,
+		})
+
+		a.tokenVerifier = func(token string) (claims []byte, err error) {
+			idToken, err := verifier.Verify(context.Background(), token)
+			if err != nil {
+				return nil, err
+			}
+			var c json.RawMessage
+			if err := idToken.Claims(&c); err != nil {
+				return nil, fmt.Errorf("parsing claims: %v", err)
+			}
+			return []byte(c), nil
+		}
+		return a, nil
+	}
+}
+
+func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
 	client, err := newHTTPClient(c.IssuerCA)
 	if err != nil {
 		return nil, err
 	}
-	cc := oidc.ClientConfig{
-		HTTPClient: client,
-		Credentials: oidc.ClientCredentials{
-			ID:     c.ClientID,
-			Secret: c.ClientSecret,
-		},
-		RedirectURL: c.RedirectURL,
-		Scope:       c.Scope,
-	}
-	return newAuthenticator(cc, c.IssuerURL, c.ErrorURL, c.SuccessURL, c.CookiePath, c.RefererPath, c.SecureCookies)
-}
 
-func newAuthenticator(ccfg oidc.ClientConfig, issuerURL, errorURL, successURL, cookiePath, refererPath string, secureCookies bool) (*Authenticator, error) {
-	client, err := oidc.NewClient(ccfg)
-	if err != nil {
-		return nil, err
+	oauth2Client := &oauth2.Config{
+		ClientID:     c.ClientID,
+		ClientSecret: c.ClientSecret,
+		RedirectURL:  c.RedirectURL,
+		Scopes:       c.Scope,
 	}
 
 	errURL := "/"
-	if errorURL != "" {
-		errURL = errorURL
+	if c.ErrorURL != "" {
+		errURL = c.ErrorURL
 	}
 
 	sucURL := "/"
-	if successURL != "" {
-		sucURL = successURL
+	if c.SuccessURL != "" {
+		sucURL = c.SuccessURL
 	}
 
-	if cookiePath == "" {
-		cookiePath = "/"
+	if c.CookiePath == "" {
+		c.CookiePath = "/"
 	}
 
-	refUrl, err := url.Parse(refererPath)
+	refUrl, err := url.Parse(c.RefererPath)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Authenticator{
-		tokenVerifier:  jwtVerifier(client),
 		tokenExtractor: getTokenBySessionCookie,
-		oidcClient:     client,
-		issuerURL:      issuerURL,
+		oauth2Client:   oauth2Client,
+		client:         client,
 		errorURL:       errURL,
 		successURL:     sucURL,
-		cookiePath:     cookiePath,
+		cookiePath:     c.CookiePath,
 		refererURL:     refUrl,
-		secureCookies:  secureCookies,
+		secureCookies:  c.SecureCookies,
 	}, nil
 }
 
@@ -199,22 +241,9 @@ func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
 	}, nil
 }
 
-// Start starts the authenticator's provider sync, and blocks until the initial sync has completed successfully.
-func (a *Authenticator) Start() {
-	a.oidcClient.SyncProviderConfig(a.issuerURL)
-}
-
 // LoginFunc redirects to the OIDC provider for user login.
 func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
-	oac, err := a.oidcClient.OAuthClient()
-	if err != nil {
-		log.Errorf("error generating OAuth client from OIDC client: %v", err)
-		a.redirectAuthError(w, errorOAuth, err)
-		return
-	}
-
-	// TODO(sym3tri): handle deep linking via state arg
-	http.Redirect(w, r, oac.AuthCodeURL("", "", ""), http.StatusSeeOther)
+	http.Redirect(w, r, a.oauth2Client.AuthCodeURL(""), http.StatusSeeOther)
 }
 
 // LogoutFunc cleans up session cookies.
@@ -239,15 +268,16 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 // ExchangeAuthCode allows callers to return a raw token response given a OAuth2
 // code. This is useful for clients which need to request refresh tokens.
 func (a *Authenticator) ExchangeAuthCode(code string) (idToken, refreshToken string, err error) {
-	oauth2Client, err := a.oidcClient.OAuthClient()
-	if err != nil {
-		return "", "", err
-	}
-	token, err := oauth2Client.RequestToken(oauth2.GrantTypeAuthCode, code)
+	ctx := oidc.ClientContext(context.TODO(), a.client)
+	token, err := a.oauth2Client.Exchange(ctx, code)
 	if err != nil {
 		return "", "", fmt.Errorf("request token: %v", err)
 	}
-	return token.IDToken, token.RefreshToken, nil
+	rawIDToken, ok := token.Extra("id_token").(string)
+	if !ok {
+		return "", "", fmt.Errorf("token response did not contain an id_token")
+	}
+	return rawIDToken, token.RefreshToken, nil
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
@@ -270,15 +300,20 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		// NOTE: token is verified here
-		jwt, err := a.oidcClient.ExchangeAuthCode(code)
+		rawIDToken, _, err := a.ExchangeAuthCode(code)
+		if err != nil {
+			log.Infof("unable to verify auth code with issuer: %v", err)
+			a.redirectAuthError(w, errorInvalidCode, err)
+			return
+		}
+		claims, err := a.tokenVerifier(rawIDToken)
 		if err != nil {
 			log.Infof("unable to verify auth code with issuer: %v", err)
 			a.redirectAuthError(w, errorInvalidCode, err)
 			return
 		}
 
-		ls, err := newLoginState(jwt.Encode(), jwt.Payload)
+		ls, err := newLoginState(rawIDToken, claims)
 		if err != nil {
 			log.Errorf("error constructing login state: %v", err)
 			a.redirectAuthError(w, errorInternal, nil)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
@@ -275,7 +276,7 @@ func main() {
 				SecureCookies: secureCookies,
 			}
 
-			if srv.KubectlAuther, err = auth.NewAuthenticator(kubectlAuthConfig); err != nil {
+			if srv.KubectlAuther, err = auth.NewAuthenticator(context.Background(), kubectlAuthConfig); err != nil {
 				log.Fatalf("Error initializing kubectl authenticator: %v", err)
 			}
 
@@ -290,7 +291,7 @@ func main() {
 			)
 		}
 
-		if srv.Auther, err = auth.NewAuthenticator(oidcClientConfig); err != nil {
+		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
 			log.Fatalf("Error initializing OIDC authenticator: %v", err)
 		}
 	case "disabled":
@@ -346,14 +347,6 @@ func main() {
 		validateFlagNotEmpty("tls-key-file", *fTlSKeyFile)
 	default:
 		flagFatalf("listen", "scheme must be one of: http, https")
-	}
-
-	if srv.Auther != nil {
-		srv.Auther.Start()
-	}
-
-	if srv.KubectlAuther != nil {
-		srv.KubectlAuther.Start()
 	}
 
 	httpsrv := &http.Server{
