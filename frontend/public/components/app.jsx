@@ -27,7 +27,7 @@ import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
-import { history, getNamespace, AsyncComponent } from './utils';
+import { history, AsyncComponent } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
@@ -106,28 +106,18 @@ const ActiveNamespaceRedirect = ({location}) => {
 
 
 class App extends React.PureComponent {
-  onRouteChange (props) {
-    if (props) {
-      // two way data binding :-/
-      const namespace = getNamespace(props.location.pathname);
-      store.dispatch(UIActions.setCurrentLocation(props.location.pathname, namespace));
-    }
-    analyticsSvc.route(window.location.pathname);
-  }
-
-  componentWillMount () {
-    // load the location from the window
-    this.onRouteChange(this.props);
-  }
-
-  componentWillReceiveProps (nextProps) {
+  componentDidUpdate (prevProps) {
+    const props = this.props;
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
-    const oldLocation = _.omit(this.props.location, ['key']);
-    const newLocation = _.omit(nextProps.location, ['key']);
-    if (_.isEqual(newLocation, oldLocation) && _.isEqual(nextProps.match, this.props.match)) {
+    const oldLocation = _.omit(prevProps.location, ['key']);
+    const newLocation = _.omit(props.location, ['key']);
+    if (_.isEqual(newLocation, oldLocation) && _.isEqual(props.match, prevProps.match)) {
       return;
     }
-    this.onRouteChange(nextProps);
+    // two way data binding :-/
+    const { pathname } = props.location;
+    store.dispatch(UIActions.setCurrentLocation(pathname));
+    analyticsSvc.route(pathname);
   }
 
   render () {
