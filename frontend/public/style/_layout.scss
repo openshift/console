@@ -47,34 +47,8 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-#co-l-view-container {
-  flex: 1;
-}
-
-#namespace-bar {
-  background: $color-highlight-blue-dark;
-  height: 30px;
-  color: white;
-  padding-left: 20px;
-  padding-top: 4px;
-  text-size: 12px;
-}
-
-#header-logo {
-  margin: 0 auto;
-  display: block;
-}
-
 .co-m-list {
   overflow: auto;
-}
-
-.co-m-form-row--tall {
-  min-height: 225px;
-}
-
-.co-m-table-grid__footer {
-  padding: 10px 10px 0 0;
 }
 
 .row.no-gutter {
@@ -98,41 +72,4 @@ body {
 .full-width-and-height {
   width: 100%;
   height: 100%;
-}
-
-.loading-screen {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  align-items: center;
-  background-color: #0A2C41;
-  color: #8cbfe4;
-  display: flex;
-  flex-direction: column;
-  font-size: 22px;
-  justify-content: center;
-  text-align: center;
-  z-index: 999;
-
-  &__logo {
-    position: absolute;
-    top: 16px;
-    left: 40px;
-  }
-
-  &__loader {
-    position: initial;
-    margin: 0 0 20px 0;
-
-    .co-m-loader-dot__one, .co-m-loader-dot__two, .co-m-loader-dot__three {
-      background-color: #8cbfe4;
-      height: 16px;
-      width: 16px;
-    }
-    .co-m-loader-dot__one, .co-m-loader-dot__two {
-      margin-right: 18px;
-    }
-  }
 }

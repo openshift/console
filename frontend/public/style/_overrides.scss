@@ -42,16 +42,9 @@ small {
     color: black;
   }
 }
-.co-img-icon-light {
-  fill: white;
-}
 
 .no-margin {
   margin: 0 !important;
-}
-
-.no-padding {
-  padding: 0;
 }
 
 tags-input:focus,
@@ -185,10 +178,6 @@ tags-input .autocomplete .suggestion-item em {
   font: normal bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: black;
   background-color: white;
-}
-
-.monospace {
-  font-family: monospace;
 }
 
 .clickable {
