@@ -57,15 +57,10 @@ $clusterserviceversion-list-border: #ccc;
   margin: 0 10px;
 }
 
-.co-clusterserviceversion-logo__name__provider {
-  color: #999;
-  font-weight: 400;
-}
-
 .co-clusterserviceversion-logo__name__clusterserviceversion {
   font-size: 15px;
-  font-weight: 400;
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 5px;
 }
 
 .co-clusterserviceversion-list-item__actions {
