@@ -5,9 +5,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"time"
-
-	"github.com/coreos/go-oidc/jose"
-	"github.com/coreos/go-oidc/oidc"
 )
 
 type nowFunc func() time.Time
@@ -19,29 +16,6 @@ func defaultNow() time.Time {
 func maxAge(exp time.Time, curr time.Time) int {
 	age := exp.Sub(curr)
 	return int(age.Seconds())
-}
-
-// token is an interface around JWTs for testing
-type token interface {
-	Claims() (jose.Claims, error)
-	Encode() string
-}
-
-// tokenVerifier funcs parse and verify an encoded token into an actual token object.
-type tokenVerifier func(string) (claims []byte, err error)
-
-func jwtVerifier(oidcClient *oidc.Client) tokenVerifier {
-	return func(encodedToken string) ([]byte, error) {
-		jwt, err := jose.ParseJWT(encodedToken)
-		if err != nil {
-			return nil, err
-		}
-
-		if err = oidcClient.VerifyJWT(jwt); err != nil {
-			return nil, err
-		}
-		return jwt.Payload, nil
-	}
 }
 
 func randomString(length int) string {

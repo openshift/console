@@ -10,13 +10,11 @@ import:
 - package: gopkg.in/square/go-jose.v2
   version: 296c7f1463ec9b712176dc804dea0173d06dc728
 - package: github.com/coreos/go-oidc
-  version: 5cf2aa52da8c574d3aa4458f471ad6ae2240fe6b
-  subpackages:
-  - http
-  - jose
-  - key
-  - oauth2
-  - oidc
+  version: 065b426bd41667456c1a924468f507673629c46b
+- package: golang.org/x/oauth2
+  version: 921ae394b9430ed4fb549668d7b087601bd60a81
+- package: github.com/pquerna/cachecontrol
+  version: c97913dcbd76de40b051a9b4cd827f7eaeb7a868
 - package: github.com/coreos/pkg
   version: 7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3
   subpackages:

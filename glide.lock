@@ -1,5 +1,5 @@
-hash: c0e0e13f26e9d239b634784b23b0d376a28da601c0bff3ab1457ed73b59ed79d
-updated: 2018-02-05T23:08:03.69012386-08:00
+hash: 74b206d665ab721f00c8d3783bbe1149706b16c37fbeeacef1373d172d2b2b72
+updated: 2018-04-10T13:57:09.979905843-07:00
 imports:
 - name: github.com/coreos-inc/tectonic-licensing
   version: 7a015ea2b0220b5c844d69401181769bef6d18df
@@ -16,13 +16,7 @@ imports:
   - connector
   - connector/ldap
 - name: github.com/coreos/go-oidc
-  version: 5cf2aa52da8c574d3aa4458f471ad6ae2240fe6b
-  subpackages:
-  - http
-  - jose
-  - key
-  - oauth2
-  - oidc
+  version: 065b426bd41667456c1a924468f507673629c46b
 - name: github.com/coreos/pkg
   version: 7373797ee9cd9f7bcfa6a19632c2f66a1183ebb3
   subpackages:
@@ -46,21 +40,40 @@ imports:
   subpackages:
   - diff
   - pretty
+- name: github.com/pquerna/cachecontrol
+  version: c97913dcbd76de40b051a9b4cd827f7eaeb7a868
+  subpackages:
+  - cacheobject
 - name: github.com/Sirupsen/logrus
   version: d26492970760ca5d33129d2d799e34be5c4782eb
 - name: golang.org/x/net
   version: 6a513affb38dc9788b449d59ffed099b8de18fa0
   subpackages:
   - context
+  - context/ctxhttp
   - http2
   - http2/hpack
   - internal/timeseries
   - lex/httplex
   - trace
+- name: golang.org/x/oauth2
+  version: 921ae394b9430ed4fb549668d7b087601bd60a81
+  subpackages:
+  - internal
 - name: golang.org/x/sys
   version: 833a04a10549a95dc34458c195cbad61bbb6cb4d
   subpackages:
   - unix
+- name: google.golang.org/appengine
+  version: 267c27e7492265b84fc6719503b14a1e17975d79
+  subpackages:
+  - internal
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
 - name: google.golang.org/grpc
   version: b1a2821ca5a4fd6b6e48ddfbb7d6d7584d839d21
   subpackages:
