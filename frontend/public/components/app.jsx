@@ -36,6 +36,7 @@ import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
 import { ClusterServiceVersionModel, CatalogSourceModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { coFetch } from '../co-fetch';
+import '../vendor.scss';
 import '../style.scss';
 
 // Edge lacks URLSearchParams
