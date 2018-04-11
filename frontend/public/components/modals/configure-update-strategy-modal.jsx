@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { Tooltip } from 'react-lightweight-tooltip';
+import { Tooltip } from '../utils/tooltip';
 
 import { k8sPatch, k8sKinds } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';

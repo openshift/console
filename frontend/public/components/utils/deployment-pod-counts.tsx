@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip } from 'react-lightweight-tooltip';
+import { Tooltip } from './tooltip';
 
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { LoadingInline, pluralize } from './';
