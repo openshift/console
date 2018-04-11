@@ -1,14 +1,8 @@
 $min-height: 200px;
 
 .co-m-vert-nav {
-  // TODO: mixin for vendor prefixes.
-  display: -ms-flexbox;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-flex-flow: column nowrap;
   flex-flow: column nowrap;
-
   &.co-m-pane {
     background-color: transparent;
   }
@@ -16,19 +10,14 @@ $min-height: 200px;
 
 .co-m-vert-nav__menu {
   border-bottom: 1px solid $color-grey-background-border;
-  -webkit-box-flex: none;
-  -webkit-flex: none;
   flex: none;
-  font-weight: 300;
   -webkit-box-ordinal-group: 1;
-  -webkit-order: 1;
   order: 1;
 
   display: flex;
   padding-left: 12px;
   list-style: none;
   margin: 0;
-  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .co-m-vert-nav-item--active {
@@ -61,11 +50,8 @@ $min-height: 200px;
 }
 
 .co-m-vert-nav__body {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
   flex: 1;
   -webkit-box-ordinal-group: 2;
-  -webkit-order: 2;
   order: 2;
 
   min-height: $min-height;
