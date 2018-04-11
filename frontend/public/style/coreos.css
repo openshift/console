@@ -94,9 +94,7 @@
   .table thead > tr > th {
     border-bottom: 0px; }
   .table th {
-    color: #999;
     text-transform: uppercase;
-    font-weight: 300;
     padding-top: 0px !important; }
   .table tr:last-child {
     border-bottom: 1px solid #eee; }
@@ -199,16 +197,13 @@
 
 .co-m-red-head {
   color: #f04c5c;
-  font-weight: 400;
   text-shadow: 0 1px 0 white; }
 
 .co-btn-text {
   margin: 0 10px 0 0; }
 
 .co-m-field-head, .co-m-table-grid__head {
-  color: #999;
-  text-transform: uppercase;
-  font-weight: 300; }
+  text-transform: uppercase; }
 
 .co-m-code,
 .co-m-code-box {
@@ -505,8 +500,7 @@ input[type="radio"] {
 
 .co-m-navbar-link {
   cursor: pointer;
-  font-size: 110%;
-  font-weight: 400; }
+  font-size: 110%; }
 
 .co-m-loader,
 .co-m-inline-loader {
@@ -684,9 +678,7 @@ input[type="radio"] {
 
 .co-m-facet-menu__title {
   text-transform: uppercase;
-  color: #999;
-  padding: 4px;
-  font-weight: 300; }
+  padding: 4px; }
 
 .co-m-facet-menu__option-list {
   list-style: none;

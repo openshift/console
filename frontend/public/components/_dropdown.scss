@@ -81,7 +81,6 @@ $color-bookmarker: #DDD;
 .co-namespace-selector {
   background-color: #292E34;
   color: $color-os-nav-title;
-  font-weight: 300;
   font-size: 17px;
   padding: 5px;
   padding-left: 10px;
@@ -138,7 +137,6 @@ $color-bookmarker: #DDD;
       }
     }
     > a {
-      font-weight: normal;
       padding: 6px;
       text-decoration: none;
       &:hover,&.active,&:focus {
