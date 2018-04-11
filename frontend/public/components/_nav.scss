@@ -9,7 +9,6 @@ $active-border: 3px;
   padding: 2px 0;
   padding-left: $link-padding-left;
   line-height: 25px;
-  font-weight: 300;
   font-size: 14px;
   overflow-x: hidden;
   white-space: nowrap;
@@ -62,7 +61,6 @@ $active-border: 3px;
 }
 
 .navigation-container__section {
-  font-weight: 300;
 }
 
 .navigation-container__section--active {
@@ -83,7 +81,6 @@ $active-border: 3px;
   font-size: 15px;
   line-height: 20px;
   display: inline-block;
-  font-weight: 300;
   color: $color-os-nav-title;
   cursor: pointer;
 
