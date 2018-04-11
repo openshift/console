@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Tooltip } from 'react-lightweight-tooltip';
+import { Tooltip } from './utils/tooltip';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 

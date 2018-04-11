@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from'classnames';
-import { Tooltip } from 'react-lightweight-tooltip';
+import { Tooltip } from './tooltip';
 
 import { annotationsModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';

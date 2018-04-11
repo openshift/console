@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip } from 'react-lightweight-tooltip';
+import { Tooltip } from './tooltip';
 
 import {SafetyFirst} from '../safety-first';
 import * as dateTime from './datetime';
@@ -102,12 +102,11 @@ export class Timestamp extends SafetyFirst {
         <div className="co-timestamp">-</div>
       );
     }
-
     return (
       <div>
         <i className="fa fa-globe" />
         <div className="co-timestamp">
-          <Tooltip content={mdate.toISOString()}>
+          <Tooltip content={[<span className="co-nowrap" key="nowrap">{ mdate.toISOString() }</span>]}>
             {this.state.timestamp}
           </Tooltip>
         </div>

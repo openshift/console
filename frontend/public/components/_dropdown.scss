@@ -7,7 +7,7 @@ $color-bookmarker: #DDD;
 }
 
 .dropdown__disabled {
-  color: #666;
+  color: $dropdown-link-disabled-color;
   cursor: not-allowed;
 }
 
