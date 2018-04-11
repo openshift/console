@@ -466,8 +466,10 @@ input[type="radio"] {
   border-bottom: solid 1px #eee; }
 
 .co-m-table-grid__head {
-  cursor: pointer;
+  font-size: 12px;
   padding: 10px 0; }
+.co-m-table-grid__head a {
+  cursor: pointer; }
 
 .co-m-navbar {
   background-color: white;
