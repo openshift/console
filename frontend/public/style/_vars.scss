@@ -33,7 +33,7 @@ $color-ingress-dark: #872C6C;
 $color-grey-lightest: #efefef;
 $color-grey-medium: #666;
 $color-grey-dark: #3D3D3D;
-$color-grey-text: #999;
+$color-grey-text: #777;
 $color-grey-border: #eee;
 $color-grey-highlight: #353535;
 $color-grey-background: #f5f5f5;
@@ -71,3 +71,9 @@ $color-os-nav-item-seperator: #050505;
 $color-os-nav-active: #383f47;
 $color-os-nav-hover: lighten($color-os-nav-active, 8%);
 $color-os-nav-border-left-active: #39a5dc;
+
+// Patternfly defaults to dark gray body text. Override with black.
+$color-pf-black: black;
+// Patternfly uses Bootstrap, which also defaults to dark gray text.
+$text-color: black;
+$text-muted: $color-grey-text;

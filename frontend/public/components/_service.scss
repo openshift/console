@@ -1,8 +1,5 @@
 .service-ips {
   .co-ip-header {
-    color: #999;
-    font-weight: 300;
-    font-size: 14px;
     padding: 10px 0 5px 20px;
   }
 
@@ -15,11 +12,6 @@
 
     .ip-name {
       margin-bottom: 5px;
-    }
-
-    .ip-desc {
-      color: #999;
-      font-size: 12px;
     }
 
     &:only-child {

@@ -177,7 +177,7 @@ export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps
     </div>
     <div className="co-clusterserviceversion-logo__name">
       <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">{displayName}</h1>
-      { provider && <span className="co-clusterserviceversion-logo__name__provider">{`${version || ''} provided by ${_.get(provider, 'name', provider)}`}</span> }
+      { provider && <span className="co-clusterserviceversion-logo__name__provider text-muted">{`${version || ''} provided by ${_.get(provider, 'name', provider)}`}</span> }
     </div>
   </div>;
 };

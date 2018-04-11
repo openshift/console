@@ -4,7 +4,6 @@
 }
 .group__title {
   border: 1px solid $color-grey-background-border;
-  border-radius: 5px 5px 0 0;
   background-color: $color-grey-background;
   display: flex;
   justify-content: space-between;
@@ -16,7 +15,6 @@
 .group__body {
   border: 1px solid $color-grey-background-border;
   border-top: none;
-  border-radius: 0 0 5px 5px;
   padding-left: ($grid-gutter-width / 2);
   padding-right: ($grid-gutter-width / 2);
   overflow: hidden;
@@ -30,7 +28,6 @@
 
 .cluster-overview-cell__title {
   font-size: 16px;
-  font-weight: 600;
   margin-top: 0;
   margin-bottom: 18px;
   line-height: 25px;

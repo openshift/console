@@ -4,8 +4,12 @@
    rather than overriding or bringing in built assets.
    The coreos-web project is no longer actively maintained */
 
-.text-muted {
-  color: $color-text-muted;
+// override patternfly's extra thin font weight for headers
+h1,
+.h1,
+h2,
+.h2 {
+  font-weight: normal;
 }
 
 small {
