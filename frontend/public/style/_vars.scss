@@ -69,3 +69,9 @@ $text-muted: $color-grey-text;
 $font-size-base: 13px;
 // Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to
 $grid-gutter-width: 30px;
+
+$contextselector-pf-dropdown-toggle-padding-bottom: 20px;
+$contextselector-pf-dropdown-toggle-padding-top: 20px;
+$contextselector-pf-margin-left: 20px;
+$contextselector-pf-bootstrap-select-width-desktop: 145px;
+$contextselector-pf-bootstrap-select-width-mobile: $contextselector-pf-bootstrap-select-width-desktop;
