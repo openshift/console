@@ -72,8 +72,11 @@ $color-os-nav-active: #383f47;
 $color-os-nav-hover: lighten($color-os-nav-active, 8%);
 $color-os-nav-border-left-active: #39a5dc;
 
-// Patternfly defaults to dark gray body text. Override with black.
+// Patternfly defaults to dark gray. Override with black. Body text color is lighten()ed to #333
 $color-pf-black: black;
-// Patternfly uses Bootstrap, which also defaults to dark gray text.
-$text-color: black;
+// Bootstrap/Patternfly muted text is #999. Use #777 for better contrast.
 $text-muted: $color-grey-text;
+// Patternfly defaults to 12px, which is too small in many cases
+$font-size-base: 13px;
+// Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to
+$grid-gutter-width: 30px;
