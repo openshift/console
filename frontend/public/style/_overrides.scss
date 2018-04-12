@@ -125,7 +125,7 @@ tags-input .remove-button:hover {
 tags-input .tags .input {
   border: 0;
   outline: none;
-  padding: 0;
+  padding: 1px 0 0;
   float: left;
   height: ($input-height-base - ($padding-base-vertical * 2) - 2);
 }
