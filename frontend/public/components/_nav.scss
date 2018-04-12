@@ -45,6 +45,7 @@ $active-border: 3px;
   overflow-x: hidden;
   overflow-y: auto;
   flex-grow: 1;
+  -webkit-overflow-scrolling: touch;
 }
 
 .navigation-container__list {
