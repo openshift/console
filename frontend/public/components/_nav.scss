@@ -60,15 +60,15 @@ $active-border: 3px;
   color: white;
 }
 
-.navigation-container__section {
-}
-
 .navigation-container__section--active {
-  border-left: $active-border solid $color-os-nav-border-left-active;
   background-color: $color-os-nav-background-active;
-
-  .navigation-container__section__title {
-    padding-left: $section-padding-left - $active-border;
+  position: relative;
+  &:before {
+    background: $color-os-nav-border-left-active;
+    content: "";
+    height: 100%;
+    position: absolute;
+    width: $active-border;
   }
 }
 
@@ -78,21 +78,26 @@ $active-border: 3px;
 }
 
 .navigation-container__section__title {
-  font-size: 15px;
-  line-height: 20px;
-  display: inline-block;
+  align-items: center;
   color: $color-os-nav-title;
   cursor: pointer;
-
-  width: 100%;
+  display: flex;
+  font-size: 15px;
+  line-height: 20px;
   padding: 20px 0px 20px $section-padding-left;
+  width: 100%;
+  img {
+    margin-right: 12px;
+    width: 15px;
+    &[src^="/static/assets/routing"] {
+      margin-left: -1px;
+      margin-right: 10px;
+      width: 18px;
+    }
+  }
   span {
     display: inline-block;
     margin: 0 15px 0 11px;
-  }
-  img {
-    width: 18px;
-    margin-right: 10px;
   }
 }
 .navigation-container__section__title__link,
@@ -106,9 +111,17 @@ $active-border: 3px;
 
 .navigation-container__section__title__icon {
   color: #72767b;
-  margin-right: 10px;
-  vertical-align: middle;
+  margin-right: 9px;
   width: 18px;
+  &.fa {
+    font-size: 15px;
+  }
+  &.fa-cog {
+    font-size: 18px;
+  }
+  &.fa-folder-open-o {
+    font-size: 16px;
+  }
 }
 
 .navigation-container__section__title__icon--active {
