@@ -115,8 +115,8 @@ export class Status extends SafetyFirst {
     const statusElem = <div className="graph-wrapper" style={Object.assign({}, defaultStyle, this.style)} >
       { title && <h5 className="graph-title">{title}</h5> }
       <div className="text-center">
-        <h1 style={{color, fontSize: 26, fontWeight: 'semibold', padding: '16px 0 0', marginBottom: 0}}>{short}</h1>
-        <div className="text-muted" style={{fontSize: 14}}>{long}</div>
+        <h1 style={{color, fontSize: 26, fontWeight: 'semibold', padding: '12px 0 0', marginBottom: 2}}>{short}</h1>
+        <div className="text-muted" style={{fontSize: 14, lineHeight: 1.3}}>{long}</div>
       </div>
     </div>;
     const props = _.pick(this.props, ['href', 'rel', 'target']);
