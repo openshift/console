@@ -89,6 +89,7 @@ export const config: Config = {
   suites: {
     crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/filter.scenario.ts'],
     alm: ['tests/base.scenario.ts', 'tests/alm/**/*.scenario.ts'],
+    performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
     all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/alm/**/*.scenario.ts', 'tests/filter.scenario.ts'],
   }
 };

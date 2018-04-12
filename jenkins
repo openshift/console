@@ -23,11 +23,12 @@ fi
 status() {
     # Hide output so we don't leak creds
     set +x
+    description=${3:-"$1 $2."}
     data=$(cat << EOF
 {
   "context": "$1",
   "state": "$2",
-  "description": "$1 $2.",
+  "description": "${description}",
   "target_url": "${BUILD_URL}console"
 }
 EOF
@@ -77,6 +78,17 @@ then
     status 'GUI Tests (ALM)' 'success'
 else
     status 'GUI Tests (ALM)' 'error'
+fi
+
+status 'Performance' 'pending'
+if DOCKER_ENV="TECTONIC_LICENSE,KUBECONFIG" ./builder-run ./test-gui performance
+then
+    description=$(cat ./frontend/gui_test_screenshots/bundle-analysis.txt)
+    status 'Performance' 'success' "${description}"
+else
+    description=$(cat ./frontend/gui_test_screenshots/bundle-analysis.txt)
+    status 'Performance' 'error' "${description}"
+    exit 1
 fi
 
 set -e
