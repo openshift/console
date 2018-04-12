@@ -30,12 +30,9 @@ $color-alertmanager-dark: #F77454;
 
 $color-ingress-dark: #872C6C;
 
-$color-grey-lightest: #efefef;
 $color-grey-medium: #666;
-$color-grey-dark: #3D3D3D;
 $color-grey-text: #777;
 $color-grey-border: #eee;
-$color-grey-highlight: #353535;
 $color-grey-background: #f5f5f5;
 $color-grey-background-border: #ccc;
 
@@ -47,21 +44,12 @@ $color-highlight-blue: #52a3d9;
 $color-highlight-blue-dark: #2276AD;
 
 $color-tectonic-green: #68C28D;
-$color-tectonic-button-green: $color-green-success;
 
 $color-border-brown: #947663;
 
-$z-plane-1: 100;
-$z-plane-2: 200;
-$z-plane-3: 300;
-$z-plane-4: 400;
-
-$color-tectonic-dark-blue: #154A6D;
-$color-tectonic-dark-blue-hover: #19547B;
-$color-tectonic-darkest-blue: #0A2C41;
-
 $color-grey-when-selected: #e5e5e5;
 
+$color-text-muted: $co-gray;
 
 //OpenShift color variables
 $color-os-nav-title: #d1d1d1;

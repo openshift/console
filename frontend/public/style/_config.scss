@@ -10,24 +10,3 @@ $icon-font-path: $coreosWebFontPath + '/';
 $font-path: '~patternfly/dist/fonts/';
 // CoreOS-web image path.
 $img-path: $coreosWebDistPath + 'img';
-
-/* THEME COLORS */
-$color-bg-primary: $white;
-$color-bg-mute: $co-gray-lightest;
-$color-bg-highlight: $highlight;
-$color-icon-light: $white;
-$color-icon-dark: $black;
-$color-icon-gray: $co-gray;
-$color-text-light: $white;
-$color-text-muted: $co-gray;
-$color-border: $co-gray-lighter;
-$color-bg-translucent-dark: $translucent-black;
-$color-table-header: $co-gray;
-$color-table-active: $blue-bg;
-$color-table-border: $co-gray-lighter;
-$color-footer-icons: $blue-dark;
-$color-header-toggle: $co-gray-darker;
-$color-message-error-bg: $red-dark;
-$color-message-info-bg: $blue-dark;
-$color-cog-active: $blue-dark;
-$color-inline-loader: $blue;

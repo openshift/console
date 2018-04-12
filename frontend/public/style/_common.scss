@@ -2,59 +2,16 @@
   margin-right: 10px;
 }
 
-.co-block {
-  display: block;
-}
-
 .co-inline-block {
   display: inline-block;
-}
-
-.co-indent {
-  margin-left: 20px;
-}
-
-.co-vert-margin {
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 .co-no-bold {
   font-weight: normal;
 }
 
-.co-click-target {
-  cursor: default;
-}
-
-.co-btn-drop-input {
-  margin-bottom: 5px;
-  .btn.dropdown-toggle {
-    height: 30px;
-  }
-
-  // Override display attribute of .dropdown class to preserve correct alignment within .input-group
-  .dropdown {
-    display: table-cell;
-  }
-}
-
-.co-m-code-box, .co-m-code-box.form-control[readonly] {
-    background-color: #fff;
-    color: #000;
-}
-
-.co-m-code-box--copy {
-    cursor: copy;
-}
-
 .cos-error-title {
   color: $red;
-}
-
-.co-loader-wrapper {
-  position: relative;
-  min-height: 50px;
 }
 
 .co-section-title {
@@ -68,10 +25,6 @@
   margin-bottom: 30px;
 }
 
-.co-user-avatar {
-  padding: 6px 6px 6px 0;
-}
-
 .co-m-pane__details dd {
   font-size: 14px;
 }
@@ -81,14 +34,6 @@
   font-size: 14px;
   padding-top: 14px;
   margin-bottom: 20px;
-}
-
-.co-m-pane__title__btn {
-  margin-bottom: 15px;
-}
-
-.break-all {
-  word-break: break-all;
 }
 
 .co-btn--download {
@@ -107,13 +52,6 @@
   white-space: pre-wrap;
 }
 
-.co-tooltip {
-  line-height: 1.35;
-  padding: 4px 8px !important;
-  text-align: center;
-  max-width: 200px;
-}
-
 .co-well {
   color: $blue-darker;
   background-color: $blue-bg;
@@ -129,11 +67,6 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-.co-success {
-  color: $color-green-success;
-  white-space: nowrap;
 }
 
 .co-error {
