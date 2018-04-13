@@ -16,7 +16,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   const outputTo = _.get(resource, 'spec.output.to');
 
   // TODO: Make outputTo a link when we have an image stream page.
-  return <dl>
+  return <dl className="co-m-pane__details">
     {children}
     <dt>Type</dt>
     <dd>{strategy.type}</dd>
