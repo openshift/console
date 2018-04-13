@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKindReference } from '../module/k8s';
-import { configureReplicaCountModal } from './modals';
+import { k8sCreate, K8sResourceKindReference } from '../module/k8s';
+import { configureReplicaCountModal, errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { SafetyFirst } from './safety-first';
@@ -33,7 +33,32 @@ export const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentC
 
 const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
 
+const rollout = dc => {
+  const req = {
+    kind: 'DeploymentRequest',
+    apiVersion: 'apps.openshift.io/v1',
+    name: dc.metadata.name,
+    latest: true,
+    force: true,
+  };
+  const opts = {
+    name: dc.metadata.name,
+    ns: dc.metadata.namespace,
+    path: 'instantiate',
+  };
+  return k8sCreate(DeploymentConfigModel, req, opts);
+};
+
+const rolloutAction = (kind, obj) => ({
+  label: 'Rollout',
+  callback: () => rollout(obj).catch(err => {
+    const error = err.message;
+    errorModal({error});
+  }),
+});
+
 const menuActions = [
+  rolloutAction,
   ModifyCount,
   ModifyNodeSelector,
   ...common,
@@ -71,6 +96,7 @@ export class DeploymentConfigsDetails extends SafetyFirst<DeploymentConfigsDetai
   render() {
     const deploymentConfig = this.props.obj;
     const isRecreate = (_.get(deploymentConfig, 'spec.strategy.type') === 'Recreate');
+    const reason = _.get(deploymentConfig, 'status.details.message');
 
     return <div className="co-m-pane__body">
       <DeploymentPodCounts resource={deploymentConfig} resourceKind={DeploymentConfigModel} openReplicaCountModal={this._openReplicaCountModal} desiredCountOutdated={this.state.desiredCountOutdated} />
@@ -85,6 +111,10 @@ export class DeploymentConfigsDetails extends SafetyFirst<DeploymentConfigsDetai
           </div>
           <div className="col-sm-6">
             <dl className="co-m-pane__details">
+              <dt>Latest Version</dt>
+              <dd>{_.get(deploymentConfig, 'status.latestVersion', '-')}</dd>
+              {reason && <dt>Reason</dt>}
+              {reason && <dd>{reason}</dd>}
               <dt>Update Strategy</dt>
               <dd>{_.get(deploymentConfig, 'spec.strategy.type', 'Rolling')}</dd>
               {isRecreate || <dt>Max Unavailable</dt>}
