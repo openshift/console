@@ -20,7 +20,6 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-clusterserviceversion-list-item {
   border: 1px solid $clusterserviceversion-list-border;
-  border-radius: 4px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -159,7 +158,6 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-spec-descriptor--resource-requirements {
   border: 1px solid #eee;
-  border-radius: 5px;
   padding: 20px 0 5px 20px;
   margin-top: 10px;
 }
