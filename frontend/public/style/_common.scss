@@ -25,8 +25,15 @@
   margin-bottom: 30px;
 }
 
-.co-m-pane__details dd {
-  font-size: 14px;
+.co-m-pane__details {
+  // TODO: refactor so <dl>s have margin-bottom by default
+  margin-bottom: 20px;
+  .co-detail-table__row & {
+    margin-bottom: 0;
+  }
+  dd {
+    font-size: 14px;
+  }
 }
 
 .co-m-pane__explanation {
