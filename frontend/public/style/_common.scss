@@ -23,6 +23,14 @@
 .co-table-container {
   overflow: auto;
   margin-bottom: 30px;
+  table {
+    thead {
+      th {
+        color: $color-text-secondary;
+        font-weight: 400;
+      }
+    }
+  }
 }
 
 .co-m-pane__details {
