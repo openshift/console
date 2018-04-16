@@ -169,9 +169,9 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
         <div className="co-m-pane__body">
           <h1 className="co-section-title">{`${thisDefinition ? thisDefinition.displayName : kind} Overview`}</h1>
           <div className="row">
-            { podStatusesDescriptor && <div className="col-xs-3"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={() => blockValue(podStatusesDescriptor, status)} /></div> }
+            { podStatusesDescriptor && <div className="col-sm-6 col-md-4"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={() => blockValue(podStatusesDescriptor, status)} /></div> }
             { metricsValue && metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (
-              <div key={i} className="col-xs-3 co-clusterserviceversion-resource-details__section__metric">
+              <div key={i} className="col-sm-6 col-md-4 co-clusterserviceversion-resource-details__section__metric">
                 <ClusterServiceVersionPrometheusGraph query={query} basePath={blockValue(promDescriptor, status)} />
               </div>)) }
           </div>
