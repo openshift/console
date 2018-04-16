@@ -44,7 +44,7 @@ const Details = ({obj: replicationController}) => <div>
   </div>
 </div>;
 
-const {details, editYaml, pods, events} = navFactory;
+const {details, editYaml, pods, envEditor, events} = navFactory;
 
 export const ReplicationControllersDetailsPage = props => <DetailsPage
   {...props}
@@ -53,7 +53,7 @@ export const ReplicationControllersDetailsPage = props => <DetailsPage
     path: props.match.url,
   })}
   menuActions={replicaSetMenuActions}
-  pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
+  pages={[details(Details), editYaml(), pods(), envEditor(), events(ResourceEventStream)]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="ReplicationController" actions={replicaSetMenuActions} />;

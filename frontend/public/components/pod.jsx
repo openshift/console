@@ -251,6 +251,7 @@ export const PodsDetailsPage = props => <DetailsPage
   pages={[
     navFactory.details(Details),
     navFactory.editYaml(),
+    navFactory.envEditor(),
     navFactory.logs(PodLogs),
     navFactory.events(ResourceEventStream)
   ]}

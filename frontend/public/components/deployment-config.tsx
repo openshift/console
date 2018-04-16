@@ -101,7 +101,7 @@ export class DeploymentConfigsDetails extends SafetyFirst<DeploymentConfigsDetai
   }
 }
 
-const pages = [navFactory.details(DeploymentConfigsDetails), navFactory.editYaml(), navFactory.pods()];
+const pages = [navFactory.details(DeploymentConfigsDetails), navFactory.editYaml(), navFactory.pods(), navFactory.envEditor()];
 export const DeploymentConfigsDetailsPage: React.SFC<DeploymentConfigsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={DeploymentConfigsReference} menuActions={menuActions} pages={pages} />;
 };

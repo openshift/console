@@ -6,6 +6,7 @@ import { Route, Switch, Link } from 'react-router-dom';
 
 import { StatusBox } from './index';
 import { PodsPage } from '../pod';
+import { EnvironmentPage } from '../environment';
 import { AsyncComponent } from '../utils/async';
 
 const editYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
@@ -14,6 +15,13 @@ class PodsComponent extends React.PureComponent {
   render() {
     const {metadata: {namespace}, spec: {selector}} = this.props.obj;
     return <PodsPage showTitle={false} namespace={namespace} selector={selector} />;
+  }
+}
+
+class EnvironmentComponent extends React.PureComponent {
+  render() {
+    const {obj} = this.props;
+    return <EnvironmentPage obj={obj}/>;
   }
 }
 
@@ -53,6 +61,11 @@ export const navFactory = {
     name: 'Builds',
     component,
   }),
+  envEditor: (component = undefined) => ({
+    href: 'environment',
+    name: 'Environment',
+    component: component || EnvironmentComponent
+  })
 };
 
 /** @type {React.SFC<{pages: {href: string, name: string}[], basePath: string}>} */

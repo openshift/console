@@ -76,5 +76,5 @@ export const StatefulSetsPage = props => <ListPage {...props} ListComponent={Sta
 export const StatefulSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml()]}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.envEditor()]}
 />;

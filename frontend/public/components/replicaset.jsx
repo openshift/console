@@ -45,7 +45,7 @@ const Details = ({obj: replicaSet}) => <div>
   </div>
 </div>;
 
-const {details, editYaml, pods} = navFactory;
+const {details, editYaml, pods, envEditor} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage
   {...props}
   breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
@@ -53,7 +53,7 @@ const ReplicaSetsDetailsPage = props => <DetailsPage
     path: props.match.url,
   })}
   menuActions={replicaSetMenuActions}
-  pages={[details(Details), editYaml(), pods()]}
+  pages={[details(Details), editYaml(), pods(), envEditor()]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="ReplicaSet" actions={replicaSetMenuActions} />;

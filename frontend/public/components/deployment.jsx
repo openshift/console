@@ -109,11 +109,11 @@ export class Details extends SafetyFirst {
   }
 }
 
-const {details, editYaml, pods} = navFactory;
+const {details, editYaml, pods, envEditor} = navFactory;
 const DeploymentsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(Details), editYaml(), pods()]}
+  pages={[details(Details), editYaml(), pods(), envEditor()]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="Deployment" actions={menuActions} />;
