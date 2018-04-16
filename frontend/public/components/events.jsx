@@ -284,7 +284,7 @@ class EventStream extends SafetyFirst {
       <div className="row">
         <div className="col-xs-12"><p></p>
           <div className="co-sysevent-stream">
-            <div className="co-sysevent-stream__totals">
+            <div className="co-sysevent-stream__totals text-muted">
               { messageCount }
             </div>
 

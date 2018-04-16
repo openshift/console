@@ -20,12 +20,15 @@
 
 .co-m-table-grid {
   line-height: 1;
-  &__sort-arrow {
-    margin-left: 10px;
-    color: $color-grey-medium;
+  &__head {
+    color: $color-text-secondary;
+    text-transform: uppercase;
   }
   &__sort-link--unsorted {
-    color: $color-grey-medium;
+    color: $color-text-secondary;
+  }
+  &__sort-arrow {
+    margin-left: 10px;
   }
 }
 
