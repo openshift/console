@@ -92,7 +92,7 @@ const Graphs = ({namespace}) => <div>
           <h2 className="h3">Control Plane Status</h2>
           <DashboardLink to="/grafana/dashboard/db/kubernetes-control-plane-status?orgId=1" />
         </div>
-        <div className="group__body">
+        <div className="group__body group__graphs">
           <div className="row">
             <div className="col-lg-3 col-md-6">
               <Gauge title="API Servers Up" query={'(sum(up{job="apiserver"} == 1) / count(up{job="apiserver"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
@@ -119,7 +119,7 @@ const Graphs = ({namespace}) => <div>
           <h2 className="h3">Capacity Planning</h2>
           <DashboardLink to="/grafana/dashboard/db/kubernetes-capacity-planning?orgId=1" />
         </div>
-        <div className="group__body">
+        <div className="group__body group__graphs">
           <div className="row">
             <div className="col-lg-3 col-md-6">
               <Gauge title="CPU Usage" query={'100 - (sum(rate(node_cpu{job="node-exporter",mode="idle"}[2m])) / count(node_cpu{job="node-exporter", mode="idle"})) * 100'} />
