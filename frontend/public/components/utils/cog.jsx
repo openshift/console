@@ -9,27 +9,36 @@ import { history, resourceObjPath } from './index';
 import { referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 
+const CogItems = ({options, onClick}) => {
+  const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
+  const lis = _.map(visibleOptions, (o, i) => <li key={i}><a onClick={e =>onClick(e, o)}>{o.label}</a></li>);
+  return <ul className="dropdown-menu co-m-cog__dropdown">
+    {lis}
+  </ul>;
+};
+
 export class Cog extends DropdownMixin {
+  constructor(props) {
+    super(props);
+    this.onClick = (...args) => this.onClick_(...args);
+  }
+
+  onClick_ (event, option) {
+    event.preventDefault();
+
+    if (option.callback) {
+      option.callback();
+    }
+
+    if (option.href) {
+      history.push(option.href);
+    }
+
+    this.hide();
+  }
+
   render () {
-    const onClick_ = (option, event) => {
-      event.preventDefault();
-
-      if (option.callback) {
-        option.callback();
-      }
-
-      if (option.href) {
-        history.push(option.href);
-      }
-
-      this.hide();
-    };
-
-    let {options, anchor, isDisabled, id} = this.props;
-
-    const shownOptions = _.reject(options, o => _.get(o, 'hidden', false));
-    const lis = _.map(shownOptions, (o, i) => <li key={i}><a onClick={onClick_.bind({}, o)}>{o.label}</a></li>);
-    const style = {display: this.state.active ? 'block' : 'none'};
+    const {options, anchor, isDisabled, id} = this.props;
 
     return (
       <div className={classNames('co-m-cog-wrapper', {'co-m-cog-wrapper--enabled': !isDisabled})} id={id}>
@@ -38,12 +47,10 @@ export class Cog extends DropdownMixin {
             <div ref={this.setNode} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
               <span className={classNames('co-m-cog', 'co-m-cog__icon', 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
             </div>
-          </Tooltip>
-          : <div ref={this.setNode} onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
+          </Tooltip> :
+          <div ref={this.setNode} onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
             <span className={classNames('co-m-cog', 'co-m-cog__icon', 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
-            <ul className="dropdown-menu co-m-cog__dropdown" style={style}>
-              {lis}
-            </ul>
+            { this.state.active && <CogItems options={options} onClick={this.onClick} /> }
           </div>
         }
       </div>
