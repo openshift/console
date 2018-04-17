@@ -63,7 +63,7 @@
     "immutable": "3.x",
     "js-yaml": "3.x",
     "lodash-es": "4.x",
-    "patternfly": "^3.42.0",
+    "patternfly": "^3.45.0",
     "plotly.js": "1.28.x",
     "prop-types": "15.6.x",
     "react": "16.x",
