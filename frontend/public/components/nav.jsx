@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, areStatesEqual, mergeProps, stateToProps as featuresStateToProps } from '../features';
 import { formatNamespacedRouteForResource, formatNamespaceRoute } from '../ui/ui-actions';
-import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
+import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
 
@@ -124,6 +124,7 @@ const NavSection = connect(navSectionStateToProps)(
     }
   });
 
+const isImageStreamsActive = path => _.startsWith(path, 'imagestreams') || _.startsWith(path, 'imagestreamtags');
 const isRolesActive = path => _.startsWith(path, 'roles') || _.startsWith(path, 'clusterroles');
 const isRoleBindingsActive = path => _.startsWith(path, 'rolebindings') || _.startsWith(path, 'clusterrolebindings');
 const isClusterSettingsActive = path => _.startsWith(path, 'settings/cluster') || _.startsWith(path, 'settings/ldap');
@@ -176,6 +177,7 @@ export class Nav extends React.Component {
           <NavLink resource="pods" name="Pods" />
           <NavLink resource="buildconfigs" name={BuildConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
           <NavLink resource="builds" name={BuildModel.labelPlural} required={FLAGS.OPENSHIFT} />
+          <NavLink resource="imagestreams" name={ImageStreamModel.labelPlural} required={FLAGS.OPENSHIFT} isActive={isImageStreamsActive} />
           <NavLink resource="configmaps" name="Config Maps" />
           <NavLink resource="secrets" name="Secrets" />
           <NavLink resource="resourcequotas" name="Resource Quotas" />

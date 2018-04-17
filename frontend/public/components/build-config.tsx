@@ -10,15 +10,16 @@ import { BuildsPage } from './build';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
 
+// Pushes to the image stream created by the image stream YAML template.
 registerTemplate('build.openshift.io/v1.BuildConfig', `apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  name: ruby-ex
+  name: example
 spec:
   output:
     to:
       kind: ImageStreamTag
-      name: ruby-ex:latest
+      name: example:latest
   source:
     git:
       ref: master
@@ -37,7 +38,7 @@ spec:
     imageChange: {}
   - type: ConfigChange`);
 
-export const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
+const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
 const { common } = Cog.factory;
 

@@ -10,8 +10,7 @@ import { BuildStrategy, Cog, history, navFactory, ResourceCog, ResourceLink, res
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
 
-export const BuildsReference: K8sResourceKindReference = 'Build';
-export const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
+const BuildsReference: K8sResourceKindReference = 'Build';
 
 const { common } = Cog.factory;
 

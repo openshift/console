@@ -28,7 +28,7 @@ spec:
         ports:
         - containerPort: 8080`);
 
-export const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
+const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
 const rollout = dc => {
   const req = {
