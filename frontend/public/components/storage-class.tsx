@@ -8,7 +8,7 @@ import { K8sResourceKindReference } from '../module/k8s';
 
 import { registerTemplate } from '../yaml-templates';
 
-registerTemplate('v1.StorageClass', `apiVersion: storage.k8s.io/v1
+registerTemplate('storage.k8s.io/v1.StorageClass', `apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: example

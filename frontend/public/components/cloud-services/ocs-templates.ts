@@ -1,7 +1,10 @@
 import { Map as ImmutableMap } from 'immutable';
 
+import { VaultServiceModel, EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../../models';
+import { apiVersionForModel } from '../../module/k8s';
+
 export const ocsTemplates = ImmutableMap()
-  .set('v1alpha1.VaultService', `
+  .set(`${apiVersionForModel(VaultServiceModel)}.VaultService`, `
     apiVersion: vault.security.coreos.com/v1alpha1
     kind: VaultService
     metadata:
@@ -9,7 +12,7 @@ export const ocsTemplates = ImmutableMap()
     spec:
       nodes: 2
       version: 0.9.1-0
-  `).set('v1beta2.EtcdCluster', `
+  `).set(`${apiVersionForModel(EtcdClusterModel)}.EtcdCluster`, `
     apiVersion: etcd.database.coreos.com/v1beta2
     kind: EtcdCluster
     metadata:
@@ -17,7 +20,7 @@ export const ocsTemplates = ImmutableMap()
     spec:
       size: 3
       version: 3.1.4
-  `).set('v1.Prometheus', `
+  `).set(`${apiVersionForModel(PrometheusModel)}.Prometheus`, `
     apiVersion: monitoring.coreos.com/v1
     kind: Prometheus
     metadata:
@@ -47,7 +50,7 @@ export const ocsTemplates = ImmutableMap()
         - namespace: monitoring
           name: alertmanager-main
           port: web
-  `).set('v1.ServiceMonitor', `
+  `).set(`${apiVersionForModel(ServiceMonitorModel)}.ServiceMonitor`, `
     apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
     metadata:
@@ -64,7 +67,7 @@ export const ocsTemplates = ImmutableMap()
       endpoints:
       - port: web
         interval: 30s
-  `).set('v1.Alertmanager', `
+  `).set(`${apiVersionForModel(AlertmanagerModel)}.Alertmanager`, `
     apiVersion: monitoring.coreos.com/v1
     kind: Alertmanager
     metadata:

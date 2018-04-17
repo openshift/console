@@ -204,9 +204,9 @@ export const ContainerModel: K8sKind = {
 export const DaemonSetModel: K8sKind = {
   label: 'Daemon Set',
   path: 'daemonsets',
-  apiGroup: '',
+  apiGroup: 'apps',
   plural: 'daemonsets',
-  apiVersion: 'apps/v1',
+  apiVersion: 'v1',
   abbr: 'DS',
   namespaced: true,
   propagationPolicy: 'Foreground',
@@ -233,8 +233,8 @@ export const HorizontalPodAutoscalerModel: K8sKind = {
   label: 'Horizontal Pod Autoscaler',
   path: 'horizontalpodautoscalers',
   plural: 'horizontalpodautoscalers',
-  apiVersion: 'autoscaling/v1',
-  apiGroup: '',
+  apiVersion: 'v1',
+  apiGroup: 'autoscaling',
   abbr: 'HPA',
   kind: 'HorizontalPodAutoscaler',
   id: 'horizontalpodautoscaler',
@@ -256,9 +256,9 @@ export const ServiceAccountModel: K8sKind = {
 
 export const ReplicaSetModel: K8sKind = {
   label: 'Replica Set',
-  apiVersion: 'apps/v1',
+  apiVersion: 'v1',
   path: 'replicasets',
-  apiGroup: '',
+  apiGroup: 'apps',
   plural: 'replicasets',
   abbr: 'RS',
   namespaced: true,
@@ -270,9 +270,9 @@ export const ReplicaSetModel: K8sKind = {
 
 export const DeploymentModel: K8sKind = {
   label: 'Deployment',
-  apiVersion: 'apps/v1',
+  apiVersion: 'v1',
   path: 'deployments',
-  apiGroup: '',
+  apiGroup: 'apps',
   plural: 'deployments',
   abbr: 'D',
   namespaced: true,
@@ -284,9 +284,9 @@ export const DeploymentModel: K8sKind = {
 
 export const DeploymentConfigModel: K8sKind = {
   label: 'Deployment Config',
-  apiVersion: 'apps.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'deploymentconfigs',
-  apiGroup: '',
+  apiGroup: 'apps.openshift.io',
   plural: 'deploymentconfigs',
   abbr: 'DC',
   namespaced: true,
@@ -298,9 +298,9 @@ export const DeploymentConfigModel: K8sKind = {
 
 export const BuildConfigModel: K8sKind = {
   label: 'Build Config',
-  apiVersion: 'build.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'buildconfigs',
-  apiGroup: '',
+  apiGroup: 'build.openshift.io',
   plural: 'buildconfigs',
   abbr: 'BC',
   namespaced: true,
@@ -312,9 +312,9 @@ export const BuildConfigModel: K8sKind = {
 
 export const BuildModel: K8sKind = {
   label: 'Build',
-  apiVersion: 'build.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'builds',
-  apiGroup: '',
+  apiGroup: 'build.openshift.io',
   plural: 'builds',
   abbr: 'B',
   namespaced: true,
@@ -326,9 +326,9 @@ export const BuildModel: K8sKind = {
 
 export const ImageStreamModel: K8sKind = {
   label: 'Image Stream',
-  apiVersion: 'image.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'imagestreams',
-  apiGroup: '',
+  apiGroup: 'image.openshift.io',
   plural: 'imagestreams',
   abbr: 'IS',
   namespaced: true,
@@ -340,9 +340,9 @@ export const ImageStreamModel: K8sKind = {
 
 export const ImageStreamTagModel: K8sKind = {
   label: 'Image Stream Tag',
-  apiVersion: 'image.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'imagestreamtags',
-  apiGroup: '',
+  apiGroup: 'image.openshift.io',
   plural: 'imagestreamtags',
   abbr: 'IST',
   namespaced: true,
@@ -354,9 +354,9 @@ export const ImageStreamTagModel: K8sKind = {
 
 export const JobModel: K8sKind = {
   label: 'Job',
-  apiVersion: 'batch/v1',
+  apiVersion: 'v1',
   path: 'jobs',
-  apiGroup: '',
+  apiGroup: 'batch',
   plural: 'jobs',
   abbr: 'J',
   namespaced: true,
@@ -443,8 +443,8 @@ export const IngressModel: K8sKind = {
 export const RouteModel: K8sKind = {
   label: 'Route',
   labelPlural: 'Routes',
-  apiGroup: '',
-  apiVersion: 'route.openshift.io/v1',
+  apiGroup: 'route.openshift.io',
+  apiVersion: 'v1',
   path: 'routes',
   plural: 'routes',
   abbr: 'R',
@@ -608,8 +608,8 @@ export const PetsetModel: K8sKind = {
 
 export const StatefulSetModel: K8sKind = {
   label: 'Stateful Set',
-  apiGroup: '',
-  apiVersion: 'apps/v1',
+  apiGroup: 'apps',
+  apiVersion: 'v1',
   path: 'statefulsets',
   plural: 'statefulsets',
   abbr: 'SS',
@@ -659,15 +659,6 @@ export const PodVulnModel: K8sKind = {
   id: 'podvuln'
 };
 
-// const starModel: K8sKind = {
-//   id: 'all',
-//   plural: 'all',
-//   labelPlural: 'All',
-//   abbr: '*',
-//   kind: '*'
-// };
-// export {starModel as Model};
-
 export const CustomResourceDefinitionModel: K8sKind = {
   label: 'Custom Resource Definition',
   apiGroup: 'apiextensions.k8s.io',
@@ -683,9 +674,9 @@ export const CustomResourceDefinitionModel: K8sKind = {
 
 export const CronJobModel: K8sKind = {
   label: 'Cron Job',
-  apiVersion: 'batch/v1beta1',
+  apiVersion: 'v1beta1',
   path: 'cronjobs',
-  apiGroup: '',
+  apiGroup: 'batch',
   plural: 'cronjobs',
   abbr: 'CJ',
   namespaced: true,

@@ -8,7 +8,7 @@ export * from './node';
 export * from './pods';
 export * from './resource';
 export * from './autocomplete';
-export { modelFor, allModels, referenceFor, referenceForCRD, referenceForModel, kindForReference, referenceForOwnerRef, versionForReference } from './k8s-models';
+export { modelFor, allModels, referenceFor, referenceForCRD, referenceForModel, kindForReference, referenceForOwnerRef, versionForReference, groupVersionFor, apiVersionForModel, apiVersionForReference } from './k8s-models';
 
 export type OwnerReference = {
   name: string;
@@ -74,7 +74,11 @@ export type K8sKind = {
   annotations?: {[key: string]: string};
 };
 
-// Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
+/**
+ * GroupVersionKind unambiguously identifies a kind.
+ * https://godoc.org/k8s.io/apimachinery/pkg/runtime/schema#GroupVersionKind
+ * TODO: Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
+ */
 export type GroupVersionKind = string;
 
 /**
