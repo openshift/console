@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as openShiftOriginLogoImg from '../imgs/os-origin-logo.svg';
+import * as openshiftOriginLogoImg from '../imgs/openshift-origin-logo.svg';
 import * as tectonicLogoImg from '../imgs/tectonic-logo.svg';
 import { FLAGS, stateToProps as featuresStateToProps } from '../features';
 import { authSvc } from '../module/auth';
@@ -34,8 +34,8 @@ const actionsStateToProps = (state) => {
 
 const logoStateToProps = (state) => {
   //This should make logo images configurable for other logos
-  const openShiftOriginFlag = featuresStateToProps([FLAGS.OPENSHIFT], state).flags;
-  const logoImg = openShiftOriginFlag[FLAGS.OPENSHIFT] ? openShiftOriginLogoImg : tectonicLogoImg;
+  const openshiftOriginFlag = featuresStateToProps([FLAGS.OPENSHIFT], state).flags;
+  const logoImg = openshiftOriginFlag[FLAGS.OPENSHIFT] ? openshiftOriginLogoImg : tectonicLogoImg;
 
   return { logoImg };
 };

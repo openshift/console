@@ -34,11 +34,6 @@
 .table-hover > tbody > tr:hover > th {
   background-color: #EAF3FF; }
 
-.co-img-bg-cells {
-  background: url("./imgs/cells.png") left top repeat, linear-gradient(30deg, #2276ad, #144768) no-repeat left top fixed;
-  background-color: #2276ad;
-  background-size: auto, 100% 100%; }
-
 /**
  * Reusable non-layout effects styles used across many modules.
  */

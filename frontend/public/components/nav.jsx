@@ -148,8 +148,8 @@ export class Nav extends React.Component {
   }
 
   render() {
-    return <div id="sidebar" className="co-img-bg-cells">
-      <div className="navigation-container__section navigation-container__section--logo">
+    return <div id="sidebar">
+      <div className="navigation-container__section navigation-container__section--cluster-picker">
         <ClusterPicker />
       </div>
       <div className="navigation-container">
