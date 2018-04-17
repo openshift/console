@@ -3,10 +3,9 @@ import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
 import { k8sCreate, K8sResourceKindReference } from '../module/k8s';
-import { configureReplicaCountModal, errorModal } from './modals';
+import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { SafetyFirst } from './safety-first';
 import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
@@ -30,8 +29,6 @@ spec:
         - containerPort: 8080`);
 
 export const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
-
-const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
 
 const rollout = dc => {
   const req = {
@@ -57,6 +54,8 @@ const rolloutAction = (kind, obj) => ({
   }),
 });
 
+const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
+
 const menuActions = [
   rolloutAction,
   ModifyCount,
@@ -64,72 +63,41 @@ const menuActions = [
   ...common,
 ];
 
-export class DeploymentConfigsDetails extends SafetyFirst<DeploymentConfigsDetailsProps, DeploymentConfigsDetailsState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      desiredCountOutdated: false
-    };
-    this._openReplicaCountModal = this._openReplicaCountModal.bind(this);
-  }
+export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deploymentConfig}) => {
+  const isRecreate = 'Recreate' === _.get(deploymentConfig, 'spec.strategy.type');
+  const reason = _.get(deploymentConfig, 'status.details.message');
 
-  componentWillReceiveProps() {
-    this.setState({
-      desiredCountOutdated: false
-    });
-  }
+  return <div className="co-m-pane__body">
+    <DeploymentPodCounts resource={deploymentConfig} resourceKind={DeploymentConfigModel} />
 
-  _openReplicaCountModal(event) {
-    event.preventDefault();
-    event.target.blur();
-    configureReplicaCountModal({
-      resourceKind: DeploymentConfigModel,
-      resource: this.props.obj,
-      invalidateState: (isInvalid) => {
-        this.setState({
-          desiredCountOutdated: isInvalid
-        });
-      }
-    });
-  }
-
-  render() {
-    const deploymentConfig = this.props.obj;
-    const isRecreate = (_.get(deploymentConfig, 'spec.strategy.type') === 'Recreate');
-    const reason = _.get(deploymentConfig, 'status.details.message');
-
-    return <div className="co-m-pane__body">
-      <DeploymentPodCounts resource={deploymentConfig} resourceKind={DeploymentConfigModel} openReplicaCountModal={this._openReplicaCountModal} desiredCountOutdated={this.state.desiredCountOutdated} />
-
-      <div className="co-m-pane__body-group">
-        <div className="row no-gutter">
-          <div className="col-sm-6">
-            <ResourceSummary resource={deploymentConfig}>
-              <dt>Status</dt>
-              <dd>{deploymentConfig.status.availableReplicas === deploymentConfig.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
-            </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt>Latest Version</dt>
-              <dd>{_.get(deploymentConfig, 'status.latestVersion', '-')}</dd>
-              {reason && <dt>Reason</dt>}
-              {reason && <dd>{reason}</dd>}
-              <dt>Update Strategy</dt>
-              <dd>{_.get(deploymentConfig, 'spec.strategy.type', 'Rolling')}</dd>
-              {isRecreate || <dt>Max Unavailable</dt>}
-              {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxUnavailable', 1)} of {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
-              {isRecreate || <dt>Max Surge</dt>}
-              {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxSurge', 1)} greater than {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
-              <dt>Min Ready Seconds</dt>
-              <dd>{deploymentConfig.spec.minReadySeconds ? pluralize(deploymentConfig.spec.minReadySeconds, 'second') : 'Not Configured'}</dd>
-            </dl>
-          </div>
+    <div className="co-m-pane__body-group">
+      <div className="row no-gutter">
+        <div className="col-sm-6">
+          <ResourceSummary resource={deploymentConfig}>
+            <dt>Status</dt>
+            <dd>{deploymentConfig.status.availableReplicas === deploymentConfig.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <dl className="co-m-pane__details">
+            <dt>Latest Version</dt>
+            <dd>{_.get(deploymentConfig, 'status.latestVersion', '-')}</dd>
+            {reason && <dt>Reason</dt>}
+            {reason && <dd>{reason}</dd>}
+            <dt>Update Strategy</dt>
+            <dd>{_.get(deploymentConfig, 'spec.strategy.type', 'Rolling')}</dd>
+            {isRecreate || <dt>Max Unavailable</dt>}
+            {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxUnavailable', 1)} of {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
+            {isRecreate || <dt>Max Surge</dt>}
+            {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxSurge', 1)} greater than {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
+            <dt>Min Ready Seconds</dt>
+            <dd>{deploymentConfig.spec.minReadySeconds ? pluralize(deploymentConfig.spec.minReadySeconds, 'second') : 'Not Configured'}</dd>
+          </dl>
         </div>
       </div>
-    </div>;
-  }
-}
+    </div>
+  </div>;
+};
 
 const pages = [navFactory.details(DeploymentConfigsDetails), navFactory.editYaml(), navFactory.pods()];
 export const DeploymentConfigsDetailsPage: React.SFC<DeploymentConfigsDetailsPageProps> = props => {
@@ -150,14 +118,6 @@ DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
 /* eslint-disable no-undef */
 export type DeploymentConfigsRowProps = {
   obj: any,
-};
-
-export type DeploymentConfigsDetailsProps = {
-  obj: any,
-};
-
-export type DeploymentConfigsDetailsState = {
-  desiredCountOutdated: boolean,
 };
 
 export type DeploymentConfigsPageProps = {
