@@ -1,0 +1,8 @@
+apiVersion: oauth.openshift.io/v1
+grantMethod: auto
+kind: OAuthClient
+metadata:
+  name: tectonic-console
+secret: OAUTH_SECRET
+redirectURIs:
+- http://localhost:9000/auth/callback
