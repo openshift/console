@@ -85,7 +85,7 @@ export class Status extends SafetyFirst {
   }
 
   componentWillMount () {
-    super.componentWillUnmount();
+    clearInterval(this.interval);
     this.fetch();
   }
 
