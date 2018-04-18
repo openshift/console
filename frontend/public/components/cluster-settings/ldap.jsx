@@ -194,7 +194,7 @@ const Row = ({children, name, label}) =>
   <div className="form-group co-m-form-row">
     {label
       ? <label className="col-sm-2 control-label" htmlFor={name}>{label}:</label>
-      : <div className="col-sm-3 control-label"></div>
+      : <div className="col-sm-2 control-label"></div>
     }
     <div className="co-m-form-col col-sm-10">
       {children}
