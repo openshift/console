@@ -6,73 +6,44 @@ import * as dateTime from './datetime';
 
 const monthAbbrs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+
 /** @augments {React.Component<{timestamp: string}>} */
 export class Timestamp extends SafetyFirst {
   constructor (props) {
     super(props);
 
     this.interval = null;
-    this.state = {
-      timestamp: null,
-    };
-    this.initialize();
+    this.reset(props.timestamp);
   }
 
-  initialize (props = this.props) {
-    this.mdate = props.isUnix ? new Date(props.timestamp * 1000) : new Date(props.timestamp);
-    this.timeStr();
-  }
+  reset (timestamp) {
+    const mdate = this.props.isUnix ? new Date(timestamp * 1000) : new Date(timestamp);
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.timestamp === this.props.timestamp) {
-      return;
-    }
-    this.initialize(nextProps);
-    if (this.isMounted_) {
-      this.startInterval();
-    }
-  }
+    this.setState({
+      mdate, timestamp: this.getTimestamp(mdate),
+    });
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return nextProps.timestamp !== this.props.timestamp || nextState.timestamp !== this.state.timestamp;
-  }
-
-  componentDidMount () {
-    super.componentDidMount();
     this.startInterval();
-  }
-
-  componentWillUnmount () {
-    super.componentWillUnmount();
-    clearInterval(this.interval);
   }
 
   startInterval () {
     clearInterval(this.interval);
-    this.interval = setInterval(() => this.timeStr(), this.props.interval || 5000);
+
+    this.interval = setInterval(() => this.setState({
+      timestamp: this.getTimestamp(this.state.mdate)
+    }), 5000);
   }
 
-  upsertState (timestamp) {
-    if (this.isMounted_) {
-      this.setState({timestamp});
-    } else {
-      this.state.timestamp = timestamp;
-    }
-  }
-
-  timeStr () {
-    const mdate = this.mdate;
+  getTimestamp (mdate) {
     if (!dateTime.isValid(mdate)) {
-      this.upsertState('-');
       clearInterval(this.interval);
-      return;
+      return '-';
     }
 
     const now = new Date();
     const timeAgo = now - mdate;
     if (timeAgo < 630000) { // 10.5 minutes
-      this.upsertState(dateTime.fromNow(this.mdate));
-      return;
+      return dateTime.fromNow(mdate);
     }
 
     let a = 'am';
@@ -84,33 +55,50 @@ export class Timestamp extends SafetyFirst {
 
     const minuteStr = mdate.getMinutes().toString().padStart(2, '00');
     let timeStr = `${hours}:${minuteStr} ${a}`;
-    if (this.mdate.getFullYear() !== now.getFullYear()) {
+    if (mdate.getFullYear() !== now.getFullYear()) {
       timeStr = `${mdate.getFullYear()} ${timeStr}`;
     }
 
     const monthStr = monthAbbrs[mdate.getMonth()];
-    this.upsertState(`${monthStr} ${mdate.getDate()}, ${timeStr}`);
 
+    clearInterval(this.interval);
+    return `${monthStr} ${mdate.getDate()}, ${timeStr}`;
+  }
+
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps ({timestamp}) {
+    // sometimes the timestamp prop changes...
+    // and we need to trigger a side effect
+    if (timestamp && timestamp === this.props.timestamp) {
+      return null;
+    }
+    this.reset(timestamp);
+  }
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return nextState.timestamp !== this.state.timestamp
+        || nextState.mdate !== this.state.mdate;
+  }
+
+  componentWillUnmount () {
+    super.componentWillUnmount();
     clearInterval(this.interval);
   }
 
   render () {
-    const mdate = this.mdate;
+    const { mdate, timestamp } = this.state;
 
     if (!dateTime.isValid(mdate)) {
-      return (
-        <div className="co-timestamp">-</div>
-      );
+      return <div className="co-timestamp">-</div>;
     }
-    return (
-      <div>
-        <i className="fa fa-globe" />
-        <div className="co-timestamp">
-          <Tooltip content={[<span className="co-nowrap" key="nowrap">{ mdate.toISOString() }</span>]}>
-            {this.state.timestamp}
-          </Tooltip>
-        </div>
+
+    return <div>
+      <i className="fa fa-globe" />
+      <div className="co-timestamp">
+        <Tooltip content={[<span className="co-nowrap" key="nowrap">{ mdate.toISOString() }</span>]}>
+          { timestamp }
+        </Tooltip>
       </div>
-    );
+    </div>;
   }
 }
