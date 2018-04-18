@@ -136,7 +136,7 @@ export const ImageStreamsPage: React.SFC<ImageStreamsPageProps> = props =>
     title="Image Streams"
     kind={ImageStreamsReference}
     ListComponent={ImageStreamsList}
-    canCreate={false}
+    canCreate={true}
   />;
 ImageStreamsPage.displayName = 'ImageStreamsListPage';
 
