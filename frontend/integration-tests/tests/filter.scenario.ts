@@ -2,7 +2,7 @@ import { browser, ExpectedConditions as until, Key} from 'protractor';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 
-import { appHost, testName } from '../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as search from '../views/search.view';
 import * as yamlView from '../views/yaml.view';
@@ -24,15 +24,17 @@ describe('Filter', () => {
     await crudView.saveChangesBtn.click();
   });
 
+  afterEach(() => {
+    checkLogs();
+    checkErrors();
+  });
+
   afterAll(async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
     await crudView.deleteRow('daemonset')(WORKLOAD_NAME);
-    await browser.wait(until.elementToBeClickable(crudView.messageLbl), 60000);
-    expect(crudView.messageLbl.isPresent()).toBe(true);
-    await browser.manage().logs().get('browser');
   });
 
   // Scenario: Filter Pod from object detail
