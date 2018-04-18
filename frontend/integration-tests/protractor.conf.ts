@@ -16,7 +16,7 @@ if (tap) {
 }
 
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(process.env.BRIDGE_BASE_PATH || '/').replace(/\/$/, '')}`;
-export const testName = `test--${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
+export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
 
 const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html'});
 const browserLogs: logging.Entry[] = [];
@@ -91,6 +91,12 @@ export const config: Config = {
     alm: ['tests/base.scenario.ts', 'tests/alm/**/*.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
     all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/alm/**/*.scenario.ts', 'tests/filter.scenario.ts'],
+  },
+  params: {
+    // Set to 'true' to enable OpenShift resources in the crud scenario.
+    // Use a string rather than boolean so it can be specified on the command line:
+    // $ yarn run test-gui --params.openshift true
+    openshift: 'false'
   }
 };
 

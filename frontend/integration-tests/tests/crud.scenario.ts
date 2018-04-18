@@ -36,6 +36,11 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('resourcequotas', {kind: 'ResourceQuota'})
     .set('networkpolicies', {kind: 'NetworkPolicy'})
     .set('roles', {kind: 'Role'});
+  const openshiftObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
+    .set('deploymentconfigs', {kind: 'DeploymentConfig'})
+    .set('buildconfigs', {kind: 'BuildConfig'})
+    .set('imagestreams', {kind: 'ImageStream'});
+  const testObjs = browser.params.openshift === 'true' ? k8sObjs.merge(openshiftObjs) : k8sObjs;
 
   afterEach(() => {
     checkLogs();
@@ -44,7 +49,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
   afterAll(() => {
     const leakedArray: Array<string> = [...leakedResources];
-    console.error(`Leaked ${leakedArray.length} resources out of ${k8sObjs.size}:\n${leakedArray.join('\n')}`);
+    console.error(`Leaked ${leakedArray.length} resources out of ${testObjs.size}:\n${leakedArray.join('\n')}`);
     leakedArray.map(r => JSON.parse(r) as {name: string, plural: string, namespace?: string})
       .filter(r => r.namespace === undefined)
       .forEach(({name, namespace, plural}) => {
@@ -56,7 +61,7 @@ describe('Kubernetes resource CRUD operations', () => {
       });
   });
 
-  k8sObjs.forEach(({kind, namespaced = true}, resource) => {
+  testObjs.forEach(({kind, namespaced = true}, resource) => {
 
     describe(kind, () => {
 
