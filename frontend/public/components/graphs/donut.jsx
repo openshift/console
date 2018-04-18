@@ -81,7 +81,7 @@ export class Donut extends SafetyFirst {
   }
 
   componentWillMount () {
-    super.componentWillUnmount();
+    clearInterval(this.interval);
     this.fetch();
     window.addEventListener('resize', this.resize);
   }
