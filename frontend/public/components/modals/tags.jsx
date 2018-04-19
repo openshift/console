@@ -41,7 +41,9 @@ class TagsModal extends PromiseComponent {
     // Convert any blank values to null
     _.each(tags, t => t[1] = _.isEmpty(t[1]) ? null : t[1]);
 
-    const patch = [{path: this.props.path, op: 'replace', value: _.fromPairs(tags)}];
+    // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
+    const op = this.props.tags ? 'replace' : 'add';
+    const patch = [{path: this.props.path, op, value: _.fromPairs(tags)}];
     const promise = k8sPatch(this.props.kind, this.props.resource, patch);
     this.handlePromise(promise).then(this.props.close);
   }
