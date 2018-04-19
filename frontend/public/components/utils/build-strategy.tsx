@@ -1,7 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind } from '../../module/k8s';
+// eslint-disable-next-line no-unused-vars
+import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
+import { ResourceLink } from './';
+
+const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
 export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, children }) => {
   const strategy = _.get(resource, 'spec.strategy', {});
@@ -15,7 +19,6 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   const buildFrom = _.get(resource, 'spec.strategy.sourceStrategy.from');
   const outputTo = _.get(resource, 'spec.output.to');
 
-  // TODO: Make outputTo a link when we have an image stream page.
   return <dl className="co-m-pane__details">
     {children}
     <dt>Type</dt>
@@ -35,9 +38,13 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
     {jenkinsfilePath && <dt>Jenkinsfile Path</dt>}
     {jenkinsfilePath && <dd>{jenkinsfilePath}</dd>}
     {buildFrom && buildFrom.kind === 'ImageStreamTag' && <dt>Builder Image</dt>}
-    {buildFrom && buildFrom.kind === 'ImageStreamTag' && <dd>{buildFrom.namespace || resource.metadata.namespace}/{outputTo.name}</dd>}
+    {buildFrom && buildFrom.kind === 'ImageStreamTag' && <dd>
+      <ResourceLink kind={ImageStreamTagsReference} name={buildFrom.name} namespace={buildFrom.namespace || resource.metadata.namespace} title={buildFrom.name} />
+    </dd>}
     {outputTo && <dt>Output To</dt>}
-    {outputTo && <dd>{outputTo.namespace || resource.metadata.namespace}/{outputTo.name}</dd>}
+    {outputTo && <dd>
+      <ResourceLink kind={ImageStreamTagsReference} name={outputTo.name} namespace={outputTo.namespace || resource.metadata.namespace} title={outputTo.name} />
+    </dd>}
     <dt>Run Policy</dt>
     <dd>{resource.spec.runPolicy || 'Serial'}</dd>
   </dl>;

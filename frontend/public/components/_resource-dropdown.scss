@@ -9,7 +9,12 @@
     margin-right: -2px;
   }
 
-  .dropdown-menu a {
-    padding: 4px 20px 4px 6px;
+  .dropdown-menu {
+    max-height: 80vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    a {
+      padding: 4px 20px 4px 6px;
+    }
   }
 }

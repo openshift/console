@@ -32,9 +32,9 @@ class ConfigureCountModal extends PromiseComponent {
     });
   }
 
-  _invalidateState(isInvalid) {
+  _invalidateState(isInvalid, count) {
     if (this.props.invalidateState) {
-      this.props.invalidateState(isInvalid);
+      this.props.invalidateState(isInvalid, count);
     }
   }
 
@@ -43,7 +43,7 @@ class ConfigureCountModal extends PromiseComponent {
 
     const patch = [{ op: 'replace', path: this.props.path, value: _.toInteger(this.state.value) }];
 
-    this._invalidateState(true);
+    this._invalidateState(true, _.toInteger(this.state.value));
     this.handlePromise(
       k8sPatch(this.props.resourceKind, this.props.resource, patch)
     )

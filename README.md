@@ -192,6 +192,15 @@ Run integration tests:
 yarn run test-gui
 ```
 
+Run integration tests on an OpenShift cluster:
+```
+yarn run test-gui-openshift
+```
+This will include the normal k8s CRUD tests and CRUD tests for OpenShift
+resources. It doesn't include ALM tests since it assumes ALM is not
+set up on an OpenShift cluster.
+
+
 #### Hacking Integration Tests
 
 Remove the `--headless` flag to Chrome (chromeOptions) in `frontend/integration-tests/protractor.conf.ts` to see what the tests are actually doing.
