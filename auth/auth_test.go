@@ -2,14 +2,33 @@ package auth
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"strings"
 	"testing"
 )
+
+// mockOpenShiftProvider is test OpenShift provider that only supports discovery
+//
+// https://openid.net/specs/openid-connect-discovery-1_0.html
+type mockOpenShiftProvider struct {
+	issuer string
+}
+
+func (m *mockOpenShiftProvider) handleDiscovery(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/.well-known/oauth-authorization-server" {
+		http.NotFound(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, `{
+ "issuer": "%s",
+ "authorization_endpoint": "%s/auth",
+ "token_endpoint": "%s/token"
+}`, m.issuer, m.issuer, m.issuer)
+}
 
 // mockOIDICProvider is test provider that only supports discovery
 //
@@ -81,16 +100,52 @@ func TestNewAuthenticator(t *testing.T) {
 	}
 }
 
-func insecureParsePayload(jwt string) ([]byte, error) {
-	parts := strings.Split(jwt, ".")
-	if len(parts) < 2 {
-		return nil, fmt.Errorf("malformed jwt, expected 3 parts got %d", len(parts))
+func TestNewOpenShiftAuthenticator(t *testing.T) {
+	errURL := "http://example.com/error"
+	sucURL := "http://example.com/success"
+
+	p := &mockOpenShiftProvider{}
+
+	s := httptest.NewServer(http.HandlerFunc(p.handleDiscovery))
+	defer s.Close()
+	p.issuer = s.URL
+
+	ccfg := &Config{
+		AuthSource:    AuthSourceOpenShift,
+		ClientID:      "fake-client-id",
+		ClientSecret:  "fake-secret",
+		Scope:         []string{"foo", "bar"},
+		RedirectURL:   "http://example.com/callback",
+		IssuerURL:     p.issuer,
+		ErrorURL:      errURL,
+		SuccessURL:    sucURL,
+		CookiePath:    "/",
+		RefererPath:   "http://auth.example.com/",
+		SecureCookies: true,
 	}
-	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	a, err := NewAuthenticator(ctx, ccfg)
 	if err != nil {
-		return nil, fmt.Errorf("malformed jwt payload: %v", err)
+		t.Fatal(err)
 	}
-	return payload, nil
+
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "http://example.com/", nil)
+
+	a.LoginFunc(rr, req)
+
+	u, err := url.Parse(rr.HeaderMap.Get("Location"))
+	if err != nil {
+		t.Fatalf("failed to parse location header: %v", err)
+	}
+
+	got := (&url.URL{Scheme: u.Scheme, Host: u.Host, Path: u.Path}).String()
+	if got != p.issuer+"/auth" {
+		t.Errorf("redirect didn't go to %s/auth, got %s", p.issuer+"/auth", u)
+	}
 }
 
 func TestRedirectAuthError(t *testing.T) {
@@ -152,17 +207,7 @@ func makeAuthenticator() (*Authenticator, error) {
 		SecureCookies: true,
 	}
 
-	a, err := newUnstartedAuthenticator(ccfg)
-	if err != nil {
-		return nil, err
-	}
-
-	// We don't care about jwt validity for these tests
-	a.tokenExtractor = func(_ *http.Request) (string, error) {
-		return "invalid-token", nil
-	}
-	a.tokenVerifier = insecureParsePayload
-	return a, nil
+	return newUnstartedAuthenticator(ccfg)
 }
 
 func testReferer(t *testing.T, referer string, accept bool) {

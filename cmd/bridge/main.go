@@ -41,7 +41,7 @@ func main() {
 
 	fTectonicClusterName := fs.String("tectonic-cluster-name", "tectonic", "The Tectonic cluster name.")
 
-	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc")
+	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc | openshift")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
 	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
 	fUserAuthOIDCClientSecret := fs.String("user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
@@ -50,7 +50,7 @@ func main() {
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 
-	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc")
+	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
@@ -209,7 +209,7 @@ func main() {
 	srv.KubeAPIServerURL = apiServerEndpoint
 
 	switch *fUserAuth {
-	case "oidc":
+	case "oidc", "openshift":
 		validateFlagNotEmpty("base-address", *fBaseAddress)
 
 		userAuthOIDCIssuerURL := validateFlagIsURL("user-auth-oidc-client-id", *fUserAuthOIDCIssuerURL)
@@ -225,14 +225,27 @@ func main() {
 			refererPath = srv.BaseURL.String()
 		)
 
+		scopes := []string{"openid", "email", "profile", "groups"}
+		authSource := auth.AuthSourceTectonic
+
+		if *fUserAuth == "openshift" {
+			// Scopes come from OpenShift documentation
+			// https://docs.openshift.com/container-platform/3.9/architecture/additional_concepts/authentication.html#service-accounts-as-oauth-clients
+			//
+			// TODO(ericchiang): Support other scopes like view only permissions.
+			scopes = []string{"user:full"}
+			authSource = auth.AuthSourceOpenShift
+		}
+
 		// Config for logging into console.
 		oidcClientConfig := &auth.Config{
+			AuthSource:   authSource,
 			IssuerURL:    userAuthOIDCIssuerURL.String(),
 			IssuerCA:     *fCAFile,
 			ClientID:     *fUserAuthOIDCClientID,
 			ClientSecret: *fUserAuthOIDCClientSecret,
 			RedirectURL:  proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
-			Scope:        []string{"openid", "email", "profile", "groups"},
+			Scope:        scopes,
 
 			ErrorURL:   authLoginErrorEndpoint,
 			SuccessURL: authLoginSuccessEndpoint,
@@ -242,6 +255,7 @@ func main() {
 			SecureCookies: secureCookies,
 		}
 
+		// NOTE: This won't work when using the OpenShift auth mode.
 		if *fKubectlClientID != "" {
 			srv.KubectlClientID = *fKubectlClientID
 
@@ -333,8 +347,8 @@ func main() {
 		srv.StaticUser = &auth.User{
 			Token: *fK8sAuthBearerToken,
 		}
-	case "oidc":
-		validateFlagIs("user-auth", *fUserAuth, "oidc")
+	case "oidc", "openshift":
+		validateFlagIs("user-auth", *fUserAuth, "oidc", "openshift")
 	default:
 		flagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc")
 	}
@@ -387,9 +401,17 @@ func validateFlagNotEmpty(name string, value string) string {
 	return value
 }
 
-func validateFlagIs(name string, value string, expectedValue string) string {
-	if value != expectedValue {
-		flagFatalf(name, "value must be %s, not %s", expectedValue, value)
+func validateFlagIs(name string, value string, expectedValues ...string) string {
+	if len(expectedValues) != 1 {
+		for _, v := range expectedValues {
+			if v == value {
+				return value
+			}
+		}
+		flagFatalf(name, "value must be one of %s, not %s", expectedValues, value)
+	}
+	if value != expectedValues[0] {
+		flagFatalf(name, "value must be %s, not %s", expectedValues[0], value)
 	}
 
 	return value

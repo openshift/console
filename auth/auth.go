@@ -2,11 +2,13 @@ package auth
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/subtle"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -35,11 +37,8 @@ const (
 
 var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
 
-var ss = NewSessionStore(32768)
-
 type Authenticator struct {
-	tokenExtractor func(r *http.Request) (string, error)
-	tokenVerifier  func(string) (claims []byte, err error)
+	tokenVerifier func(string) (*loginState, error)
 
 	oauth2Client *oauth2.Config
 
@@ -50,35 +49,36 @@ type Authenticator struct {
 	cookiePath    string
 	refererURL    *url.URL
 	secureCookies bool
+
+	loginMethod loginMethod
 }
 
-func getLoginState(r *http.Request) (*loginState, error) {
-	sessionCookie, err := r.Cookie(tectonicSessionCookieName)
-	if err != nil {
-		return nil, err
-	}
-	sessionToken := sessionCookie.Value
-	ls := ss.getSession(sessionToken)
-	if ls == nil {
-		return nil, fmt.Errorf("No session found on server")
-	}
-	if ls.exp.Sub(ls.now()) < 0 {
-		ss.deleteSession(sessionToken)
-		return nil, fmt.Errorf("Session is expired.")
-	}
-	return ls, nil
+// loginMethod is used to handle OAuth2 responses and associate bearer tokens
+// with a user.
+//
+// This interface is largely a hack to allow both OpenShift and generic Tectonic
+// support. It should not be made public or exposed to other packages.
+type loginMethod interface {
+	// login turns on oauth2 token response into a user session and associates a
+	// cookie with the user.
+	login(http.ResponseWriter, *oauth2.Token) (*loginState, error)
+	// logout deletes any cookies associated with the user.
+	logout(http.ResponseWriter, *http.Request)
+	// authenticate fetches the bearer token from the cookie of a request.
+	authenticate(*http.Request) (*User, error)
 }
 
-// getTokenBySessionCookie gets the k8s bearer token from the session
-func getTokenBySessionCookie(r *http.Request) (string, error) {
-	ls, err := getLoginState(r)
-	if err != nil {
-		return "", err
-	}
-	return ls.rawToken, nil
-}
+// AuthSource allows callers to switch between Tectonic and OpenShift login support.
+type AuthSource int
+
+const (
+	AuthSourceTectonic  AuthSource = 0
+	AuthSourceOpenShift AuthSource = 1
+)
 
 type Config struct {
+	AuthSource AuthSource
+
 	IssuerURL    string
 	IssuerCA     string
 	RedirectURL  string
@@ -131,7 +131,28 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 	steps := 0
 
 	for {
-		p, err := oidc.NewProvider(ctx, c.IssuerURL)
+		var (
+			lm       loginMethod
+			endpoint oauth2.Endpoint
+			err      error
+		)
+		switch c.AuthSource {
+		case AuthSourceOpenShift:
+			endpoint, lm, err = newOpenShiftAuth(ctx, &openShiftConfig{
+				client:        a.client,
+				issuerURL:     c.IssuerURL,
+				cookiePath:    c.CookiePath,
+				secureCookies: c.SecureCookies,
+			})
+		default:
+			endpoint, lm, err = newOIDCAuth(ctx, &oidcConfig{
+				client:        a.client,
+				issuerURL:     c.IssuerURL,
+				clientID:      c.ClientID,
+				cookiePath:    c.CookiePath,
+				secureCookies: c.SecureCookies,
+			})
+		}
 		if err != nil {
 			steps++
 			if steps > maxSteps {
@@ -146,23 +167,8 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			continue
 		}
 
-		a.oauth2Client.Endpoint = p.Endpoint()
-
-		verifier := p.Verifier(&oidc.Config{
-			ClientID: c.ClientID,
-		})
-
-		a.tokenVerifier = func(token string) (claims []byte, err error) {
-			idToken, err := verifier.Verify(context.Background(), token)
-			if err != nil {
-				return nil, err
-			}
-			var c json.RawMessage
-			if err := idToken.Claims(&c); err != nil {
-				return nil, fmt.Errorf("parsing claims: %v", err)
-			}
-			return []byte(c), nil
-		}
+		a.loginMethod = lm
+		a.oauth2Client.Endpoint = endpoint
 		return a, nil
 	}
 }
@@ -200,14 +206,13 @@ func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
 	}
 
 	return &Authenticator{
-		tokenExtractor: getTokenBySessionCookie,
-		oauth2Client:   oauth2Client,
-		client:         client,
-		errorURL:       errURL,
-		successURL:     sucURL,
-		cookiePath:     c.CookiePath,
-		refererURL:     refUrl,
-		secureCookies:  c.SecureCookies,
+		oauth2Client:  oauth2Client,
+		client:        client,
+		errorURL:      errURL,
+		successURL:    sucURL,
+		cookiePath:    c.CookiePath,
+		refererURL:    refUrl,
+		secureCookies: c.SecureCookies,
 	}, nil
 }
 
@@ -219,50 +224,23 @@ type User struct {
 }
 
 func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
-	rawToken, err := a.tokenExtractor(r)
-	if err != nil {
-		return nil, fmt.Errorf("no token found for %v: %v", r.URL.String(), err)
-	}
-
-	token, err := a.tokenVerifier(rawToken)
-	if err != nil {
-		return nil, fmt.Errorf("no token found for %v: %v", r.URL.String(), err)
-	}
-
-	loginState, err := newLoginState(rawToken, token)
-	if err != nil {
-		return nil, fmt.Errorf("extracting user info: %v", err)
-	}
-
-	return &User{
-		ID:       loginState.UserID,
-		Username: loginState.Name,
-		Token:    rawToken,
-	}, nil
+	return a.loginMethod.authenticate(r)
 }
 
 // LoginFunc redirects to the OIDC provider for user login.
 func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, a.oauth2Client.AuthCodeURL(""), http.StatusSeeOther)
+	// TODO(ericchiang): actually start using the "state" parameter correctly
+	var randData [4]byte
+	if _, err := io.ReadFull(rand.Reader, randData[:]); err != nil {
+		panic(err)
+	}
+	state := hex.EncodeToString(randData[:])
+	http.Redirect(w, r, a.oauth2Client.AuthCodeURL(state), http.StatusSeeOther)
 }
 
 // LogoutFunc cleans up session cookies.
 func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
-	ls, _ := getLoginState(r)
-	if ls != nil {
-		ss.deleteSession(ls.sessionToken)
-	}
-	// Delete session cookie
-	cookie := http.Cookie{
-		Name:     tectonicSessionCookieName,
-		Value:    "",
-		MaxAge:   0,
-		HttpOnly: true,
-		Path:     a.cookiePath,
-		Secure:   a.secureCookies,
-	}
-	http.SetCookie(w, &cookie)
-	w.WriteHeader(http.StatusNoContent)
+	a.loginMethod.logout(w, r)
 }
 
 // ExchangeAuthCode allows callers to return a raw token response given a OAuth2
@@ -273,10 +251,7 @@ func (a *Authenticator) ExchangeAuthCode(code string) (idToken, refreshToken str
 	if err != nil {
 		return "", "", fmt.Errorf("request token: %v", err)
 	}
-	rawIDToken, ok := token.Extra("id_token").(string)
-	if !ok {
-		return "", "", fmt.Errorf("token response did not contain an id_token")
-	}
+	rawIDToken, _ := token.Extra("id_token").(string)
 	return rawIDToken, token.RefreshToken, nil
 }
 
@@ -300,45 +275,23 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		rawIDToken, _, err := a.ExchangeAuthCode(code)
-		if err != nil {
-			log.Infof("unable to verify auth code with issuer: %v", err)
-			a.redirectAuthError(w, errorInvalidCode, err)
-			return
-		}
-		claims, err := a.tokenVerifier(rawIDToken)
+		ctx := oidc.ClientContext(context.TODO(), a.client)
+		token, err := a.oauth2Client.Exchange(ctx, code)
 		if err != nil {
 			log.Infof("unable to verify auth code with issuer: %v", err)
 			a.redirectAuthError(w, errorInvalidCode, err)
 			return
 		}
 
-		ls, err := newLoginState(rawIDToken, claims)
+		ls, err := a.loginMethod.login(w, token)
 		if err != nil {
 			log.Errorf("error constructing login state: %v", err)
 			a.redirectAuthError(w, errorInternal, nil)
 			return
 		}
 
-		err = ss.addSession(ls)
-		if err != nil {
-			log.Errorf("addSession error: %v", err)
-			a.redirectAuthError(w, errorInternal, nil)
-			return
-		}
-		cookie := http.Cookie{
-			Name:     tectonicSessionCookieName,
-			Value:    ls.sessionToken,
-			MaxAge:   maxAge(ls.exp, time.Now()),
-			HttpOnly: true,
-			Path:     a.cookiePath,
-			Secure:   a.secureCookies,
-		}
-		http.SetCookie(w, &cookie)
-
 		log.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)
-		ss.pruneSessions()
 	}
 }
 
