@@ -54,6 +54,10 @@
 .co-nowrap {
   white-space: nowrap; }
 
+.co-break-word {
+  overflow-wrap: break-word;
+}
+
 /* Animations */
 .co-an-fade-in-out {
   -webkit-transition-property: compact(opacity, false, false, false, false, false, false, false, false, false);
