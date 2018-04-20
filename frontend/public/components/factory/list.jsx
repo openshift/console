@@ -114,7 +114,7 @@ const filterPropType = (props, propName, componentName) => {
   }
 
   for (let key of _.keys(props[propName])) {
-    if (key in listFilters) {
+    if (key in listFilters || key === 'loadTest') {
       continue;
     }
     return new Error(`Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`);

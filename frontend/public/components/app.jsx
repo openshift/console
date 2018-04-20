@@ -236,6 +236,16 @@ window.onunhandledrejection = function (e) {
   window.windowError = true;
 };
 
+if ('serviceWorker' in navigator) {
+  if (window.location.search.indexOf('loadTest') > -1) {
+    import('file-loader?name=load-test.sw.js!../load-test.sw.js')
+      .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
+      .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: Number(new URLSearchParams(window.location.search).get('loadTest'))}));
+  } else {
+    navigator.serviceWorker.getRegistrations().then((registrations) => registrations.forEach(reg => reg.unregister()));
+  }
+}
+
 const AppGuard = (props) => <AsyncComponent loader={() => coFetch('api/tectonic/version').then(() => App)} {...props} />;
 
 render((
