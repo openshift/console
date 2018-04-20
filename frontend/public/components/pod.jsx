@@ -125,7 +125,7 @@ const Volume = ({pod, volume}) => {
       <Overflow className="col-sm-3 col-xs-4 co-truncate" value={volume.name} />
       <div className="col-sm-3 col-xs-4">
         <VolumeIcon kind={kind} />
-        <span>{loc && ` (${loc})`}</span>
+        <span className="co-break-word">{loc && ` (${loc})`}</span>
       </div>
       <div className="col-sm-3 hidden-xs">{mountPermissions}</div>
       <div className="col-sm-3 col-xs-4">
