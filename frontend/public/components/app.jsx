@@ -19,7 +19,7 @@ import { CreateYAML, EditYAMLPage } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
-import { OpenShiftMasthead } from './open-shift-masthead';
+import { OpenShiftMasthead } from './openshift-masthead';
 import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
