@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-
 import { pluralize } from './';
 
 const FUDGE_FACTOR = 70;
@@ -13,26 +12,32 @@ export class LogWindow extends React.PureComponent {
     this.state = {
       pausedAt: 0,
       lineCount: 0,
-      contents: '',
+      content: '',
       height: ''
     };
 
     this._unpause = this._unpause.bind(this);
     this._handleScroll = _.throttle(this._handleScroll.bind(this), 100);
     this._handleResize = _.debounce(this._handleResize.bind(this), 50);
-    this._setScrollPane = (div) => this.scrollPane = div;
-    this._setLogContents = (div) => this.logContents = div;
+    this._setScrollPane = (element) => this.scrollPane = element;
+    this._setLogContents = (element) => this.logContents = element;
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.logState === 'paused') {
+      // If paused, make sure pausedAt state is accurate. This makes the "Resume stream and show X lines"
+      // footer consistent whether the log is paused via scrolling or a parent control (like the pause button in
+      // pod logs).
+      const pausedAt = this.state.pausedAt > 0 ? this.state.pausedAt : this.props.buffer.totalLineCount;
+      this.setState({ pausedAt: pausedAt });
       return;
     }
 
     const lines = this.props.buffer.lines();
     this.setState({
+      pausedAt: 0, // Streaming, so reset pausedAt
       lineCount: lines.length,
-      contents: lines.join('')
+      content: lines.join('')
     });
   }
 
@@ -71,7 +76,8 @@ export class LogWindow extends React.PureComponent {
     if (!this.scrollPane) {
       return;
     }
-    const targetHeight = Math.floor(document.body.getBoundingClientRect().bottom - this.scrollPane.getBoundingClientRect().top - FUDGE_FACTOR);
+
+    const targetHeight = Math.floor(window.innerHeight - this.scrollPane.getBoundingClientRect().top - FUDGE_FACTOR);
     this.setState({
       height: targetHeight
     });
@@ -99,30 +105,24 @@ export class LogWindow extends React.PureComponent {
     }
     const hasLinesBehind = linesBehind > 0;
 
-    return <div className="log-pane">
-      <div className="log-pane__header">
-        <div className="log-pane__header__message">
-          { this.state.lineCount < this.props.buffer.maxSize ? pluralize(this.state.lineCount, 'line') : `last ${pluralize(this.props.buffer.maxSize, 'line')}` }
-        </div>
+    return <div className="log-window">
+      <div className="log-window__header">
+        { this.state.lineCount < this.props.buffer.maxSize ? pluralize(this.state.lineCount, 'line') : `last ${pluralize(this.props.buffer.maxSize, 'line')}` }
       </div>
-      <div className="log-pane__body">
-        <div className="tec-log-window">
-          <div className="log-area">
-            <div className="log-scroll-pane" ref={this._setScrollPane}>
-              <div className="log-contents" ref={this._setLogContents} style={{ height: this.state.height }}>
-                <div className="log-contents__block">{this.state.contents}</div>
-              </div>
+      <div className="log-window__body">
+        <div className="log-window__scroll-pane" ref={this._setScrollPane}>
+          <div className="log-window__contents" ref={this._setLogContents} style={{ height: this.state.height }}>
+            <div className="log-window__contents__text">
+              {this.state.content}
             </div>
           </div>
-          <div className="log-paused-pane">
-            { !['streaming', 'loading'].includes(this.props.logState) && <div onClick={this._unpause} className="log-paused-pane__contents">
-              { !hasLinesBehind && <div><span className="fa fa-play-circle-o"></span> Resume stream</div> }
-              { hasLinesBehind && linesBehind < this.props.buffer.maxSize && <div><span className="fa fa-play-circle-o"></span> Resume stream and show {pluralize(linesBehind, 'line')}</div> }
-              { hasLinesBehind && linesBehind > this.props.buffer.maxSize && <div><span className="fa fa-play-circle-o"></span> Resume stream and show last {pluralize(this.props.buffer.maxSize, 'line')}</div> }
-            </div> }
-          </div>
         </div>
       </div>
+      { !['streaming', 'loading'].includes(this.props.logState) && <div onClick={this._unpause} className="log-window__footer">
+        { !hasLinesBehind && <div><span className="fa fa-play-circle-o"></span> Resume stream</div> }
+        { hasLinesBehind && linesBehind < this.props.buffer.maxSize && <div><span className="fa fa-play-circle-o"></span> Resume stream and show {pluralize(linesBehind, 'line')}</div> }
+        { hasLinesBehind && linesBehind > this.props.buffer.maxSize && <div><span className="fa fa-play-circle-o"></span> Resume stream and show last {pluralize(this.props.buffer.maxSize, 'line')}</div> }
+      </div> }
     </div>;
   }
 }
