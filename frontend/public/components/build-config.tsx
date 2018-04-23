@@ -40,7 +40,7 @@ spec:
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
-const { common } = Cog.factory;
+const { EditEnvironment, common } = Cog.factory;
 
 const startBuildAction = (kind, buildConfig) => ({
   label: 'Start Build',
@@ -54,6 +54,7 @@ const startBuildAction = (kind, buildConfig) => ({
 
 const menuActions = [
   startBuildAction,
+  EditEnvironment,
   ...common,
 ];
 
@@ -72,7 +73,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
 
 const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
 
-const pages = [navFactory.details(BuildConfigsDetails), navFactory.editYaml(), navFactory.builds(BuildsTabPage)];
+const pages = [navFactory.details(BuildConfigsDetails), navFactory.editYaml(), navFactory.envEditor(), navFactory.builds(BuildsTabPage)];
 export const BuildConfigsDetailsPage: React.SFC<BuildConfigsDetailsPageProps> = props =>
   <DetailsPage
     {...props}

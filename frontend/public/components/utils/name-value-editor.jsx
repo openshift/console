@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+
 import { ValueFromPair } from './value-from-pair';
 
 export const NAME = 0;
@@ -8,25 +9,30 @@ export const VALUE = 1;
 export class NameValueEditor extends React.Component {
   constructor (props) {
     super(props);
+    this._append = this._append.bind(this);
+    this._remove = this._remove.bind(this);
+    this._change = this._change.bind(this);
 
-    this._append = () => {
-      const {updateParentData, nameValuePairs} = this.props;
+  }
 
-      updateParentData({nameValuePairs: nameValuePairs.concat([['', '']])});
-    };
+  _append() {
+    const {updateParentData, nameValuePairs, nameValueId} = this.props;
 
-    this._remove = (i) => {
-      const {updateParentData, nameValuePairs} = this.props;
-      nameValuePairs.splice(i, 1);
-      updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '']]});
-    };
+    updateParentData({nameValuePairs: nameValuePairs.concat([['', '']])}, nameValueId);
+  }
 
-    this._change = (e, i, type) => {
-      const {updateParentData, nameValuePairs} = this.props;
+  _remove(i) {
+    const {updateParentData, nameValuePairs, nameValueId} = this.props;
 
-      nameValuePairs[i][type === NAME ? NAME : VALUE] = e.target.value;
-      updateParentData({nameValuePairs});
-    };
+    nameValuePairs.splice(i, 1);
+    updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '']]}, nameValueId);
+  }
+
+  _change(e, i, type) {
+    const {updateParentData, nameValuePairs, nameValueId} = this.props;
+
+    nameValuePairs[i][type === NAME ? NAME : VALUE] = e.target.value;
+    updateParentData({nameValuePairs}, nameValueId);
   }
 
   render () {
@@ -39,7 +45,7 @@ export class NameValueEditor extends React.Component {
         <div className="col-xs-6 pairs-list__field">
           {
             (pair[VALUE] instanceof Object) ?
-              <ValueFromPair props={...this.props} pair={pair[VALUE]}/> :
+              <ValueFromPair pair={pair[VALUE]}/> :
               <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[VALUE] || ''} onChange={e => this._change(e, i, VALUE)} disabled={readOnly}/>
           }
         </div>
@@ -61,8 +67,8 @@ export class NameValueEditor extends React.Component {
 
     return (<div>
       <div className="row">
-        <div className="col-xs-5 pairs-list__heading">{nameString}</div>
-        <div className="col-xs-6 pairs-list__heading">{valueString}</div>
+        <div className="col-xs-5 text-secondary">{nameString.toUpperCase()}</div>
+        <div className="col-xs-6 text-secondary">{valueString.toUpperCase()}</div>
       </div>
       {pairElems}
       <div className="row">
@@ -85,6 +91,7 @@ NameValueEditor.propTypes = {
   addString: PropTypes.string,
   allowSorting: PropTypes.bool,
   readOnly: PropTypes.bool,
+  nameValueId: PropTypes.number,
   nameValuePairs: PropTypes.array.isRequired,
   updateParentData: PropTypes.func.isRequired
 };
@@ -93,5 +100,6 @@ NameValueEditor.defaultProps = {
   valueString: 'Value',
   addString: 'Add More',
   allowSorting: false,
-  readOnly: false
+  readOnly: false,
+  nameValueId: 0
 };

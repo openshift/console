@@ -1,38 +1,29 @@
-.pairs-list {
-  &__row {
-    padding-bottom: 15px;
-  }
+.pairs-list__row {
+  padding-bottom: 15px;
+}
 
-  &__field {
-    padding-right: 0;
-  }
+.pairs-list__field {
+  padding-right: 0;
+}
 
-  &__heading {
-    color: #999;
-    font-weight: 300;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-  }
+.pairs-list__btn {
+  cursor: pointer;
+}
 
-  &__btn {
-    cursor: pointer;
-  }
+.pairs-list__delete-icon {
+  line-height: 32px;
+}
 
-  &__delete-icon {
-    line-height: 32px;
-  }
+.pairs-list__reorder-icon {
+  line-height: 32px;
+  padding-right: 10px;
+  cursor: move;
+}
 
-  &__reorder-icon {
-    line-height: 32px;
-    padding-right: 10px;
-    cursor: move;
-  }
+.pairs-list__add-icon {
+  margin-right: 6px;
+}
 
-  &__add-icon {
-    margin-right: 6px;
-  }
-
-  &__span-btns {
-    white-space: pre;
-  }
+.pairs-list__span-btns {
+  white-space: pre;
 }

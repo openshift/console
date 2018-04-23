@@ -1,8 +1,9 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
+import * as PropTypes from 'prop-types';
+
 import { modelFor, k8sPatch } from '../module/k8s';
 import { NameValueEditor, NAME, VALUE } from './utils/name-value-editor';
-import * as PropTypes from 'prop-types';
 import { PromiseComponent } from './utils';
 
 /**
@@ -12,24 +13,47 @@ import { PromiseComponent } from './utils';
  * @returns {*}
  * @private
  */
-const envVarsToArray = (initialPairObjects) => {
+const getPairsFromObject = (element) => {
+  let leafPairs = [];
+  if (typeof element.env === 'undefined') {
+    leafPairs.push(['', '']);
+  } else {
+    element.env.forEach((leafNode) => {
+      leafPairs.push(Object.values(leafNode));
+    });
+  }
+  return leafPairs;
+};
+
+/**
+ * Get name/value pairs from an array source
+ *
+ * @param initialPairObjects
+ * @returns {Array}
+ */
+const envVarsToArrayForArray = (initialPairObjects) => {
   let initialPairs = [];
   initialPairObjects.forEach((element) => {
-    let leafPairs = [];
-    if (typeof element.env === 'undefined') {
-      leafPairs.push(['', '']);
-    } else {
-      element.env.forEach((leafNode) => {
-        leafPairs.push(Object.values(leafNode));
-      });
-    }
-    initialPairs.push(leafPairs);
+    initialPairs.push(getPairsFromObject(element));
   });
   return initialPairs;
 };
 
 /**
+ * Get name/value pairs from an object source
+ *
+ * @param initialPairObjects
+ * @returns {Array}
+ */
+const envVarsToArrayForObject = (initialPairObjects) => {
+  let initialPairs = [];
+  initialPairs.push(getPairsFromObject(initialPairObjects));
+  return initialPairs;
+};
+
+/**
  * Env setup utility function.
+ * TODO: JCC use referenceForModel and referenceFor when these have been adjusted for v1 k8s resources
  *
  * @type {function()}
  * @private
@@ -38,16 +62,25 @@ const getEnvForKind = (obj) => {
   let envSourceObject = {};
   switch(obj.kind) {
     case 'Pod':
-      envSourceObject.envVars = envVarsToArray(obj.spec.containers);
+      envSourceObject.envVars = envVarsToArrayForArray(obj.spec.containers);
       envSourceObject.rawEnvData = obj.spec.containers;
       envSourceObject.envPath = '/spec/containers';
       envSourceObject.readOnly = true;
+      envSourceObject.isBuildObject = false;
+      break;
+    case 'BuildConfig':
+      envSourceObject.envVars = envVarsToArrayForObject(obj.spec.strategy.sourceStrategy);
+      envSourceObject.rawEnvData = obj.spec.strategy.sourceStrategy;
+      envSourceObject.envPath = '/spec/strategy/sourceStrategy';
+      envSourceObject.readOnly = false;
+      envSourceObject.isBuildObject = true;
       break;
     default:
-      envSourceObject.envVars = envVarsToArray(obj.spec.template.spec.containers);
+      envSourceObject.envVars = envVarsToArrayForArray(obj.spec.template.spec.containers);
       envSourceObject.rawEnvData = obj.spec.template.spec.containers;
       envSourceObject.envPath = '/spec/template/spec/containers';
       envSourceObject.readOnly = false;
+      envSourceObject.isBuildObject = false;
       break;
 
   }
@@ -63,141 +96,147 @@ export class EnvironmentPage extends PromiseComponent {
   constructor(props) {
     super(props);
 
+    this.clearChanges = () => this._clearChanges();
+    this.saveChanges = (...args) => this._saveChanges(...args);
+    this.updateEnvVars = (...args) => this._updateEnvVars(...args);
+
     let objTypeEnv = getEnvForKind(this.props.obj);
 
     this.state = {
       ...objTypeEnv,
       success: null
     };
+  }
 
-    /**
-     * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
-     * Also stripping out empty VALUE entries...
-     * TODO: should we validate here instead of just ignore?
-     *
-     * @param finalEnvPairs
-     * @returns {Array}
-     * @private
-     */
-    this._envVarsToNameVal = (finalEnvPairs) => {
-      let pairsToSave = [];
-      finalEnvPairs.forEach((finalPairForContainer) => {
-        if(!_.isEmpty(finalPairForContainer[NAME]) && !_.isEmpty(finalPairForContainer[VALUE])) {
-          if(finalPairForContainer[VALUE] instanceof Object) {
-            pairsToSave.push({
-              'name': finalPairForContainer[NAME],
-              'valueFrom': {
-                ...finalPairForContainer[VALUE]
-              }
-            });
-          } else {
-            pairsToSave.push({
-              'name': finalPairForContainer[NAME],
-              'value': finalPairForContainer[VALUE]
-            });
-          }
-        }
-      });
-      return pairsToSave;
-    };
-
-    /**
-     * Check for modified values/added/removed rows
-     *
-     * @returns {boolean}
-     * @private
-     */
-    this._isModified = () => {
-      const {envVars, rawEnvData} = this.state;
-      return !_.isEqual(envVars, envVarsToArray(rawEnvData));
-    };
-
-    /**
-     * Callback for NVEditor update our state with new values
-     * @param env
-     * @param i
-     */
-    this.updateEnvVars = (env, i=0) => {
-      const {envVars} = this.state;
-      const currentEnv = envVars;
-      currentEnv[i] = env.nameValuePairs;
-      this.setState({
-        envVars: currentEnv,
-        errorMessage: null,
-        success: null
-      });
-    };
-
-    /**
-     * Make it so. Patch the values for the env var changes made on the page.
-     * 1. Validate for dup keys
-     * 2. Throw out empty rows
-     * 3. Use add command if we are adding new env vars, and replace if we are modifying
-     * 4. Send the patch command down to REST, and update with response
-     *
-     * @param e
-     */
-    this.save = (e) => {
-      const {obj} = this.props;
-      const {envPath, envVars, rawEnvData} = this.state;
-      let validationError = null;
-      e.preventDefault();
-
-      // Convert any blank values to null
-      let patch = [];
-      const kind = modelFor(obj.kind);
-
-      envVars.forEach((finalPairsForContainer, i) => {
-        const keys = finalPairsForContainer.map(t => t[NAME]);
-        if (_.uniq(keys).length !== keys.length) {
-          validationError = 'Duplicate keys found.';
-          return;
-        }
-        const patchPath = `${envPath}/${i}/env`;
-        const operation = (typeof rawEnvData[i].env === 'undefined') ? 'add' : 'replace';
-        patch.push({path: patchPath, op: operation, value: this._envVarsToNameVal(finalPairsForContainer)});
-      });
-
-      if(!validationError) {
-        const promise = k8sPatch(kind, obj, patch);
-        this.handlePromise(promise).then((res) => {
-          objTypeEnv = getEnvForKind(res);
-
-          this.setState({
-            success: 'Successfully updated the environment variables.',
-            errorMessage: null,
-            ...objTypeEnv
+  /**
+   * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
+   * Also stripping out empty VALUE entries...
+   * TODO: should we validate here instead of just ignore?
+   *
+   * @param finalEnvPairs
+   * @returns {Array}
+   * @private
+   */
+  _envVarsToNameVal(finalEnvPairs) {
+    let pairsToSave = [];
+    finalEnvPairs.forEach((finalPairForContainer) => {
+      if(!_.isEmpty(finalPairForContainer[NAME]) && !_.isEmpty(finalPairForContainer[VALUE])) {
+        if(finalPairForContainer[VALUE] instanceof Object) {
+          pairsToSave.push({
+            'name': finalPairForContainer[NAME],
+            'valueFrom': {
+              ...finalPairForContainer[VALUE]
+            }
           });
-        });
-      } else {
-        this.setState({
-          errorMessage: validationError
-        });
+        } else {
+          pairsToSave.push({
+            'name': finalPairForContainer[NAME],
+            'value': finalPairForContainer[VALUE]
+          });
+        }
       }
-    };
+    });
+    return pairsToSave;
+  }
 
-    /**
-     * Reset the page to initial state
-     * @private
-     */
-    this._clearChanges = () => {
-      const {rawEnvData} = this.state;
-      this.setState({
-        envVars: envVarsToArray(rawEnvData),
-        errorMessage: null,
-        success: null
+  /**
+   * Callback for NVEditor update our state with new values
+   * @param env
+   * @param i
+   */
+  _updateEnvVars(env, i=0) {
+    const {envVars} = this.state;
+    const currentEnv = envVars;
+    currentEnv[i] = env.nameValuePairs;
+    this.setState({
+      envVars: currentEnv,
+      errorMessage: null,
+      success: null
+    });
+  }
+
+  /**
+   * Check for modified values/added/removed rows
+   *
+   * @returns {boolean}
+   * @private
+   */
+  _isModified() {
+    const {envVars, rawEnvData, isBuildObject} = this.state;
+    return !_.isEqual(envVars, (isBuildObject ? envVarsToArrayForObject(rawEnvData) :envVarsToArrayForArray(rawEnvData)));
+  }
+
+  /**
+   * Reset the page to initial state
+   * @private
+   */
+  _clearChanges() {
+    const {rawEnvData, isBuildObject} = this.state;
+    this.setState({
+      envVars: isBuildObject ? envVarsToArrayForObject(rawEnvData) :envVarsToArrayForArray(rawEnvData),
+      errorMessage: null,
+      success: null
+    });
+  }
+
+  /**
+   * Make it so. Patch the values for the env var changes made on the page.
+   * 1. Validate for dup keys
+   * 2. Throw out empty rows
+   * 3. Use add command if we are adding new env vars, and replace if we are modifying
+   * 4. Send the patch command down to REST, and update with response
+   *
+   * @param e
+   */
+  _saveChanges(e) {
+    const {obj} = this.props;
+    const {envPath, envVars, rawEnvData, isBuildObject} = this.state;
+    let validationError = null;
+    e.preventDefault();
+
+    // Convert any blank values to null
+    let patch = [];
+    const kind = modelFor(obj.kind);
+
+    envVars.forEach((finalPairsForContainer, i) => {
+      const keys = finalPairsForContainer.map(t => t[NAME]);
+      if (_.uniq(keys).length !== keys.length) {
+        validationError = 'Duplicate keys found.';
+        return;
+      }
+      const patchPath = isBuildObject ? `${envPath}/env` : `${envPath}/${i}/env`;
+      const operation = (isBuildObject ? !rawEnvData.env : typeof rawEnvData[i].env === 'undefined') ? 'add' : 'replace';
+      patch.push({path: patchPath, op: operation, value: this._envVarsToNameVal(finalPairsForContainer)});
+    });
+
+    if(!validationError) {
+      const promise = k8sPatch(kind, obj, patch);
+      this.handlePromise(promise).then((res) => {
+        let objTypeEnv = getEnvForKind(res);
+
+        this.setState({
+          success: 'Successfully updated the environment variables.',
+          errorMessage: null,
+          ...objTypeEnv
+        });
       });
-    };
-
+    } else {
+      this.setState({
+        errorMessage: validationError
+      });
+    }
   }
 
   render() {
-    const {envVars, rawEnvData, errorMessage, success, readOnly, inProgress} = this.state;
-    const containerVars = envVars.map((envVar, i) =>
-      <div key={`div_${i}`}>
-        <h1 key={`h1_${i}`} className="co-section-title">Container {rawEnvData[i].name}</h1>
-        <NameValueEditor key={`nve_${i}`} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString={'Name'} allowSorting={true} readOnly={readOnly}/>
-      </div>);
+    const {envVars, rawEnvData, errorMessage, success, readOnly, inProgress, isBuildObject} = this.state;
+
+    const containerVars = envVars.map((envVar, i) => {
+      let keyString = isBuildObject ? rawEnvData.from.name : rawEnvData[i].name;
+      return <div key={keyString}>
+        { !isBuildObject && <h1 className={`co-section-title${i > 0 ? ' environment-section-spacer' : ''}`}>Container {keyString}</h1> }
+        <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString={'Name'} allowSorting={true} readOnly={readOnly}/>
+      </div>;
+    });
 
     return <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
@@ -206,11 +245,11 @@ export class EnvironmentPage extends PromiseComponent {
         </div>
       </div>
       <div className="co-m-pane__body-group">
-        <div className="environment--buttons">
-          {errorMessage && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--error">{errorMessage}</p>}
-          {success && <p style={{fontSize: '100%'}} className="co-m-message co-m-message--success">{success}</p>}
-          {!readOnly && <button disabled={!this._isModified() || inProgress} type="submit" className="btn btn-primary" onClick={(e) => this.save(e)}>Save Changes</button>}
-          {this._isModified() && <button type="button" className="btn btn-link" onClick={() => this._clearChanges()}>Clear Changes</button>}
+        <div className="environment-buttons">
+          {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{errorMessage}</p>}
+          {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
+          {!readOnly && <button disabled={!this._isModified() || inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
+          {this._isModified() && <button type="button" className="btn btn-link" onClick={this.clearChanges}>Clear Changes</button>}
         </div>
       </div>
     </div>;

@@ -41,7 +41,7 @@ spec:
 `);
 
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>

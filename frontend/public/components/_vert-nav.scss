@@ -35,10 +35,9 @@ $min-height: 200px;
     color: $color-highlight-blue;
   }
   a {
-    color: black;
+    color: inherit;
     text-decoration: none;
     padding: 10px;
-    font-weight: 300;
   }
 }
 

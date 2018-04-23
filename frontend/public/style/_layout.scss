@@ -25,24 +25,21 @@ body {
 
 #reflex {
   display: flex;
-  flex-direction: row;
   height: 100%;
 }
 
 #sidebar {
+  background-color: $color-os-nav-background;
   display: flex;
+  flex: 0 0 auto;
   flex-direction: column;
-  height: 100%;
   width: 220px;
-  min-width: 220px;
-  max-width: 220px;
 }
 
 #content {
-  flex: 1 1 auto;
-  background: white;
-  flex-direction: column;
   display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

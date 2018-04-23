@@ -15,31 +15,36 @@ class TagsModal extends PromiseComponent {
     this.state = Object.assign(this.state, {tags: _.isEmpty(props.tags) ? [['', '']] : _.toPairs(props.tags)});
 
     this._cancel = props.cancel.bind(this);
+    this._updateTags = this._updateTags.bind(this);
+    this._submit = this._submit.bind(this);
 
-    this.updateTags = (tags) => {
-      this.setState({
-        tags: tags.nameValuePairs
-      });
-    };
+  };
 
-    this._submit = (e) => {
-      e.preventDefault();
+  _updateTags(tags) {
+    this.setState({
+      tags: tags.nameValuePairs
+    });
+  }
 
-      // We just throw away any rows where the key is blank
-      const tags = _.reject(this.state.tags, t => _.isEmpty(t[NAME]));
+  _submit(e) {
+    e.preventDefault();
 
-      const keys = tags.map(t => t[NAME]);
-      if (_.uniq(keys).length !== keys.length) {
-        this.setState({errorMessage: 'Duplicate keys found.'});
-        return;
-      }
+    // We just throw away any rows where the key is blank
+    const tags = _.reject(this.state.tags, t => _.isEmpty(t[NAME]));
 
-      // Convert any blank values to null
-      _.each(tags, t => t[VALUE] = _.isEmpty(t[VALUE]) ? null : t[VALUE]);
-      const patch = [{path: this.props.path, op: 'replace', value: _.fromPairs(tags)}];
-      const promise = k8sPatch(this.props.kind, this.props.resource, patch);
-      this.handlePromise(promise).then(this.props.close);
-    };
+    const keys = tags.map(t => t[NAME]);
+    if (_.uniq(keys).length !== keys.length) {
+      this.setState({errorMessage: 'Duplicate keys found.'});
+      return;
+    }
+
+    // Convert any blank values to null
+    _.each(tags, t => t[VALUE] = _.isEmpty(t[VALUE]) ? null : t[VALUE]);
+    // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
+    const op = this.props.tags ? 'replace' : 'add';
+    const patch = [{path: this.props.path, op, value: _.fromPairs(tags)}];
+    const promise = k8sPatch(this.props.kind, this.props.resource, patch);
+    this.handlePromise(promise).then(this.props.close);
   }
 
   render() {
@@ -48,7 +53,7 @@ class TagsModal extends PromiseComponent {
     return <form onSubmit={this._submit}>
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
-        <NameValueEditor nameValuePairs={tags} submit={this._submit} updateParentData={this.updateTags}/>
+        <NameValueEditor nameValuePairs={tags} submit={this._submit} updateParentData={this._updateTags}/>
       </ModalBody>
       <ModalSubmitFooter submitText="Save Changes" cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
     </form>;

@@ -26,8 +26,8 @@ spec:
         ports:
         - containerPort: 80`);
 
-const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
-export const replicaSetMenuActions = [ModifyCount, ModifyNodeSelector, ...common];
+const {ModifyCount, ModifyNodeSelector, EditEnvironment, common} = Cog.factory;
+export const replicaSetMenuActions = [ModifyCount, ModifyNodeSelector, EditEnvironment, ...common];
 
 const Details = ({obj: replicaSet}) => <div>
   <Heading text="Replica Set Overview" />

@@ -79,14 +79,39 @@ Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable w
 
 #### OpenShift
 
-If you've got a working `kubectl` and `oc` on your path, you can run the application with:
+Registering an OpenShift OAuth client requires administrative privileges for the entire cluster not just a local project. If you've got a working `kubectl` and `oc` on your path, but aren't a system administrator, run the following command to attempt to elevate privileges:
 
 ```
 oc login -u system:admin
 oc adm policy  --as system:admin add-cluster-role-to-user cluster-admin admin
 oc login -u admin
-source ./contrib/oc-environment.sh
-./bin/bridge
+```
+
+To run bridge locally connected to a remote OpenShift cluster, create an `OAuthClient` resource with a generated secret and read that secret:
+
+```
+oc process -f examples/tectonic-console-oauth-client.yaml | oc apply -f -
+export OAUTH_SECRET=$( oc get oauthclient tectonic-console -o jsonpath='{.secret}' )
+```
+
+If the CA bundle of the OpenShift API server is unavailable, fetch the CA certificates from a service account secret. Otherwise copy the CA bundle to `examples/ca.crt`:
+
+```
+oc get secrets -n default --field-selector type=kubernetes.io/service-account-token -o json | \
+    jq '.items[0].data."service-ca.crt"' -r | openssl base64 -d > examples/ca.crt
+# Note: use "openssl base64" because the "base64" tool is different between mac and linux
+```
+
+Set the `OPENSHIFT_API` environment variable to tell the script the API endpoint:
+
+```
+export OPENSHIFT_API="https://127.0.0.1:8443"
+```
+
+Finally run the Console and visit [localhost:9000](http://localhost:9000):
+
+```
+./examples/run-bridge.sh
 ```
 
 ## Docker

@@ -18,12 +18,7 @@ class PodsComponent extends React.PureComponent {
   }
 }
 
-class EnvironmentComponent extends React.PureComponent {
-  render() {
-    const {obj} = this.props;
-    return <EnvironmentPage obj={obj}/>;
-  }
-}
+const environmentComponent = (props) => <EnvironmentPage obj={props.obj}/>;
 
 export const navFactory = {
   details: component => ({
@@ -61,10 +56,10 @@ export const navFactory = {
     name: 'Builds',
     component,
   }),
-  envEditor: (component = undefined) => ({
+  envEditor: (component = environmentComponent) => ({
     href: 'environment',
     name: 'Environment',
-    component: component || EnvironmentComponent
+    component: component,
   })
 };
 

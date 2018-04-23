@@ -105,6 +105,10 @@ Cog.factory = {
       resource: obj,
     }),
   }),
+  EditEnvironment: (kind, obj) => ({
+    label: `${kind.kind === 'Pod' ? 'View' : 'Edit'} Environment...`,
+    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/environment`,
+  }),
 };
 
 // The common menu actions that most resource share
