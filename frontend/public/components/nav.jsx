@@ -21,41 +21,77 @@ import { history } from './utils';
 const stripNS = href => href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 
 class NavLink extends React.PureComponent {
-  static isActive (props, resourcePath, activeNamespace) {
-    let { href } = props;
-    const { startsWith, resource } = props;
+  static isActive () {
+    throw new Error('not implemented');
+  }
 
-    if (startsWith) {
-      return _.some(startsWith, s => _.startsWith(resourcePath, s));
-    }
+  get to () {
+    throw new Error('not implemented');
+  }
 
-    href = resource
-      ? formatNamespacedRouteForResource(resource, activeNamespace)
-      : href;
-
-    const noNSHref = stripNS(href);
-    return resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`);
+  static startsWith (resourcePath, someStrings) {
+    return _.some(someStrings, s => resourcePath.startsWith(s));
   }
 
   render () {
-    const { isActive, href, id, name, resource, activeNamespace, target=undefined } = this.props;
-    const className = classNames('co-m-nav-link', {active: isActive});
+    const { isActive, id, name, target } = this.props;
 
-    const to = resource
-      ? formatNamespacedRouteForResource(resource, activeNamespace)
-      : href;
-
-    return <li className={className}>
-      <Link id={id} to={to} target={target}>{name}</Link>
+    return <li className={classNames('co-m-nav-link', {active: isActive})}>
+      <Link id={id} to={this.to} target={target}>{name}</Link>
     </li>;
   }
 }
 
-NavLink.propTypes = {
+class ResourceNSLink extends NavLink {
+  static isActive (props, resourcePath, activeNamespace) {
+    const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
+    return resourcePath === href || _.startsWith(resourcePath, `${href}/`);
+  }
+
+  get to () {
+    const { resource, activeNamespace } = this.props;
+    return formatNamespacedRouteForResource(resource, activeNamespace);
+  }
+}
+
+ResourceNSLink.propTypes = {
+  name: PropTypes.string.isRequired,
   startsWith: PropTypes.arrayOf(PropTypes.string),
-  href: PropTypes.string,
-  resource: PropTypes.string,
-  to: PropTypes.string,
+  resource: PropTypes.string.isRequired,
+  activeNamespace: PropTypes.string,
+};
+
+class ResourceClusterLink extends NavLink {
+  static isActive (props, resourcePath) {
+    return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`);
+  }
+
+  get to () {
+    return `/k8s/cluster/${this.props.resource}`;
+  }
+}
+
+ResourceClusterLink.propTypes = {
+  name: PropTypes.string.isRequired,
+  startsWith: PropTypes.arrayOf(PropTypes.string),
+  resource: PropTypes.string.isRequired,
+};
+
+class HrefLink extends NavLink {
+  static isActive (props, resourcePath) {
+    const noNSHref = stripNS(props.href);
+    return resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`);
+  }
+
+  get to () {
+    return this.props.href;
+  }
+}
+
+HrefLink.propTypes = {
+  name: PropTypes.string.isRequired,
+  startsWith: PropTypes.arrayOf(PropTypes.string),
+  href: PropTypes.string.isRequired,
 };
 
 const navSectionStateToProps = (state, {required}) => {
@@ -102,10 +138,17 @@ const NavSection = connect(navSectionStateToProps)(
       const { activeNamespace, location, children } = this.props;
 
       if (!children) {
-        return location.includes('/overview/');
+        return location.startsWith(this.props.activePath);
       }
+
       const resourcePath = location ? stripNS(location) : '';
-      return children.filter(c => c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace)).map(c => c.props.name)[0];
+
+      return children.filter(c => {
+        if (c.props.startsWith) {
+          return c.type.startsWith(resourcePath, c.props.startsWith);
+        }
+        return c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace);
+      }).map(c => c.props.name)[0];
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -168,18 +211,18 @@ const NavSection = connect(navSectionStateToProps)(
           {img && <img src={isActive && activeImg ? activeImg : img} />}
           { !href
             ? text
-            : <Link className="navigation-container__section__title__link" to="/" onClick={this.open}>{text}</Link>
+            : <Link className="navigation-container__section__title__link" to={href} onClick={this.open}>{text}</Link>
           }
         </div>
         {Children && <ul className="navigation-container__list" style={{maxHeight}}>{Children}</ul>}
       </div>;
     }
-  });
-
+  }
+);
 
 const Sep = () => <div className="navigation-container__section__separator" />;
 
-// NavLinks are PureComponents...
+// HrefLinks are PureComponents...
 const searchStartsWith = ['search'];
 const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
@@ -192,61 +235,61 @@ export const Nav = () =>
       <ClusterPicker />
     </div>
     <div className="navigation-container">
-      <NavSection text="Overview" icon="fa-tachometer" href="/" />
+      <NavSection text="Overview" icon="fa-tachometer" href="/" activePath="/overview/" />
       <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
-        <NavLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" />
+        <ResourceNSLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" />
         <Sep />
-        <NavLink required={FLAGS.CLOUD_CATALOGS} resource={CatalogSourceModel.plural} name="Open Cloud Catalog" />
-        <NavLink resource={SubscriptionModel.plural} name="Subscriptions" />
-        <NavLink resource={InstallPlanModel.plural} name="Install Plans" />
+        <ResourceNSLink resource={CatalogSourceModel.plural} required={FLAGS.CLOUD_CATALOGS} name="Open Cloud Catalog" />
+        <ResourceNSLink resource={SubscriptionModel.plural} name="Subscriptions" />
+        <ResourceNSLink resource={InstallPlanModel.plural} name="Install Plans" />
       </NavSection>
 
       <NavSection text="Workloads" icon="fa-folder-open-o" >
-        <NavLink resource="daemonsets" name="Daemon Sets" />
-        <NavLink resource="deployments" name="Deployments" />
-        <NavLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
-        <NavLink resource="replicasets" name="Replica Sets" />
-        <NavLink resource="replicationcontrollers" name="Replication Controllers" />
-        <NavLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
-        <NavLink resource="statefulsets" name="Stateful Sets" />
+        <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
+        <ResourceNSLink resource="deployments" name="Deployments" />
+        <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
+        <ResourceNSLink resource="replicasets" name="Replica Sets" />
+        <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" />
+        <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
+        <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
         <Sep />
-        <NavLink resource="jobs" name="Jobs" />
-        <NavLink resource="cronjobs" name="Cron Jobs" />
-        <NavLink resource="pods" name="Pods" />
-        <NavLink resource="buildconfigs" name={BuildConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
-        <NavLink resource="builds" name={BuildModel.labelPlural} required={FLAGS.OPENSHIFT} />
-        <NavLink resource="imagestreams" name={ImageStreamModel.labelPlural} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
-        <NavLink resource="configmaps" name="Config Maps" />
-        <NavLink resource="secrets" name="Secrets" />
-        <NavLink resource="resourcequotas" name="Resource Quotas" />
+        <ResourceNSLink resource="jobs" name="Jobs" />
+        <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
+        <ResourceNSLink resource="pods" name="Pods" />
+        <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
+        <ResourceNSLink resource="builds" name={BuildModel.labelPlural} required={FLAGS.OPENSHIFT} />
+        <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
+        <ResourceNSLink resource="configmaps" name="Config Maps" />
+        <ResourceNSLink resource="secrets" name="Secrets" />
+        <ResourceNSLink resource="resourcequotas" name="Resource Quotas" />
       </NavSection>
 
       <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
-        <NavLink resource="ingresses" name="Ingress" />
-        <NavLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
-        <NavLink resource="networkpolicies" name="Network Policies" required={FLAGS.CALICO} />
-        <NavLink resource="services" name="Services" />
+        <ResourceNSLink resource="ingresses" name="Ingress" />
+        <ResourceNSLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
+        <ResourceNSLink resource="networkpolicies" name="Network Policies" required={FLAGS.CALICO} />
+        <ResourceNSLink resource="services" name="Services" />
       </NavSection>
 
       <NavSection text="Troubleshooting" icon="fa-life-ring" >
-        <NavLink href="/search" name="Search" startsWith={searchStartsWith} />
-        <NavLink resource="events" name="Events" />
-        <NavLink href="/prometheus" target="_blank" name="Prometheus" required={FLAGS.PROMETHEUS} />
-        <NavLink href="/alertmanager" target="_blank" name="Prometheus Alerts" required={FLAGS.PROMETHEUS} />
+        <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
+        <ResourceNSLink resource="events" name="Events" />
+        <HrefLink href="/prometheus" target="_blank" name="Prometheus" required={FLAGS.PROMETHEUS} />
+        <HrefLink href="/alertmanager" target="_blank" name="Prometheus Alerts" required={FLAGS.PROMETHEUS} />
       </NavSection>
 
       <NavSection text="Administration" icon="fa-cog" >
-        <NavLink href="/k8s/cluster/namespaces" name="Namespaces" />
-        <NavLink href="/k8s/cluster/nodes" name="Nodes" />
-        <NavLink href="/k8s/cluster/persistentvolumes" name="Persistent Volumes" />
-        <NavLink href="/settings/cluster" name="Cluster Settings" startsWith={clusterSettingsStartsWith} />
-        <NavLink resource="serviceaccounts" name="Service Accounts" />
-        <NavLink href="/k8s/cluster/storageclasses" name="Storage Classes" />
-        <NavLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
-        <NavLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
-        <NavLink resource="podvulns" name="Security Report" required={FLAGS.SECURITY_LABELLER} />
-        <NavLink resource="Report:chargeback.coreos.com:v1alpha1" name="Chargeback" />
-        <NavLink href="/k8s/cluster/customresourcedefinitions" name="CRDs" />
+        <ResourceClusterLink resource="namespaces" name="Namespaces" />
+        <ResourceClusterLink resource="nodes" name="Nodes" />
+        <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" />
+        <HrefLink href="/settings/cluster" name="Cluster Settings" startsWith={clusterSettingsStartsWith} />
+        <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
+        <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
+        <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
+        <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
+        <ResourceNSLink resource="podvulns" name="Security Report" required={FLAGS.SECURITY_LABELLER} />
+        <ResourceNSLink resource="Report:chargeback.coreos.com:v1alpha1" name="Chargeback" />
+        <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" />
       </NavSection>
     </div>
   </div>;
