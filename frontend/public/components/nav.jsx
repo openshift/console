@@ -15,10 +15,13 @@ import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
 import * as routingActiveImg from '../imgs/routing-active.svg';
 import * as appsLogoActiveImg from '../imgs/apps-logo-active.svg';
-import { history } from './utils';
+import { history, stripBasePath } from './utils';
 
 
-const stripNS = href => href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
+const stripNS = href => {
+  href = stripBasePath(href);
+  return href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
+};
 
 class NavLink extends React.PureComponent {
   static isActive () {
@@ -138,7 +141,7 @@ const NavSection = connect(navSectionStateToProps)(
       const { activeNamespace, location, children } = this.props;
 
       if (!children) {
-        return location.startsWith(this.props.activePath);
+        return stripBasePath(location).startsWith(this.props.activePath);
       }
 
       const resourcePath = location ? stripNS(location) : '';

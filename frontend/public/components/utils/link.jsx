@@ -16,15 +16,15 @@ const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 
 export const namespacedPrefixes = ['/search', '/overview', '/k8s'];
 
-export const stripBasePath = path => {
-  path = path.replace(basePathPattern, '/');
-  path = path.replace(/^\/?k8s\//, '');
-  return path;
+export const stripBasePath = path => path.replace(basePathPattern, '/');
+
+export const getNSPrefix = path => {
+  path = stripBasePath(path);
+  return namespacedPrefixes.filter(p => path.startsWith(p))[0];
 };
 
-export const isNamespaced = path => namespacedPrefixes.filter(p => path.startsWith(p)).length > 0;
-
 export const getNamespace = path => {
+  path = stripBasePath(path);
   const split = path.split('/').filter(x => x);
 
   if (split[1] === 'all-namespaces') {
