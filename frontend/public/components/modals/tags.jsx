@@ -18,7 +18,7 @@ class TagsModal extends PromiseComponent {
     this._updateTags = this._updateTags.bind(this);
     this._submit = this._submit.bind(this);
 
-  };
+  }
 
   _updateTags(tags) {
     this.setState({
