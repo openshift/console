@@ -22,8 +22,7 @@ allModels().forEach((v, k) => {
 
 export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
 
-export const formatNamespacedRouteForResource = resource => {
-  const activeNamespace = getActiveNamespace();
+export const formatNamespacedRouteForResource = (resource, activeNamespace=getActiveNamespace()) => {
   return activeNamespace === ALL_NAMESPACES_KEY
     ? `/k8s/all-namespaces/${resource}`
     : `/k8s/ns/${activeNamespace}/${resource}`;
