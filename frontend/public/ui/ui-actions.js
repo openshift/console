@@ -1,8 +1,7 @@
-import * as _ from 'lodash-es';
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { ALL_NAMESPACES_KEY } from '../const';
-import { namespacedPrefixes, isNamespaced } from '../components/utils/link';
+import { getNSPrefix } from '../components/utils/link';
 import { allModels } from '../module/k8s/k8s-models';
 
 // URL routes that can be namespaced
@@ -22,24 +21,19 @@ allModels().forEach((v, k) => {
 
 export const getActiveNamespace = () => store.getState().UI.get('activeNamespace');
 
-export const formatNamespacedRouteForResource = resource => {
-  const activeNamespace = getActiveNamespace();
+export const formatNamespacedRouteForResource = (resource, activeNamespace=getActiveNamespace()) => {
   return activeNamespace === ALL_NAMESPACES_KEY
     ? `/k8s/all-namespaces/${resource}`
     : `/k8s/ns/${activeNamespace}/${resource}`;
 };
 
 export const formatNamespaceRoute = (activeNamespace, originalPath, location) => {
-  if (!isNamespaced(originalPath)) {
+  const prefix = getNSPrefix(originalPath);
+  if (!prefix) {
     return originalPath;
   }
 
-  const prefix = _.find(namespacedPrefixes, p => originalPath.startsWith(p));
-  if (!prefix) {
-    throw new Error(`no prefix for path ${originalPath}?`);
-  }
-
-  originalPath = originalPath.substr(prefix.length);
+  originalPath = originalPath.substr(prefix.length + window.SERVER_FLAGS.basePath.length);
 
   let parts = originalPath.split('/').filter(p => p);
   let previousNS = '';
@@ -91,7 +85,7 @@ export const UIActions = {
     // broken direct links and bookmarks
     if (namespace !== getActiveNamespace()) {
       const oldPath = window.location.pathname;
-      if (isNamespaced(oldPath)) {
+      if (getNSPrefix(oldPath)) {
         history.pushPath(formatNamespaceRoute(namespace, oldPath, window.location));
       }
     }

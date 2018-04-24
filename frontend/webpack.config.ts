@@ -20,7 +20,7 @@ let config: webpack.Configuration = {
   ],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
-    publicPath: '/static/',
+    publicPath: 'static/',
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
   },
@@ -83,10 +83,19 @@ let config: webpack.Configuration = {
         ],
       },
       {
-        test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
+        test: /\.(png|jpg|jpeg|gif|svg)(\?.*$|$)/,
         loader: 'file-loader',
         options: {
           name: 'assets/[name].[ext]',
+        },
+      },
+      // Something's shoving 'static/' onto web fonts already. I have no clue what. - ggreer
+      {
+        test: /\.(woff2?|ttf|eot|otf)(\?.*$|$)/,
+        loader: 'file-loader',
+        options: {
+          name: 'assets/[name].[ext]',
+          publicPath: './',
         },
       },
     ]

@@ -23,6 +23,9 @@ then
 fi
 echo "$TECTONIC_LICENSE" > license.txt
 
+BRIDGE_BASE_PATH="/path-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)/"
+export BRIDGE_BASE_PATH
+
 # TODO: eventually test auth
 ./bin/bridge \
   --k8s-mode="off-cluster" \
