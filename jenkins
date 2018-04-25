@@ -64,7 +64,7 @@ else
 fi
 
 status 'GUI Tests' 'pending'
-if DOCKER_ENV="TECTONIC_LICENSE,KUBECONFIG" ./builder-run ./test-gui crud
+if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui crud
 then
     status 'GUI Tests' 'success'
 else
@@ -73,7 +73,7 @@ else
 fi
 
 status 'GUI Tests (ALM)' 'pending'
-if DOCKER_ENV="TECTONIC_LICENSE,KUBECONFIG" ./builder-run ./test-gui alm
+if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui alm
 then
     status 'GUI Tests (ALM)' 'success'
 else
@@ -81,7 +81,7 @@ else
 fi
 
 status 'Performance' 'pending'
-if DOCKER_ENV="TECTONIC_LICENSE,KUBECONFIG" ./builder-run ./test-gui performance
+if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui performance
 then
     description=$(cat ./frontend/gui_test_screenshots/bundle-analysis.txt)
     status 'Performance' 'success' "${description}"

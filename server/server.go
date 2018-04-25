@@ -48,17 +48,18 @@ var (
 )
 
 type jsGlobals struct {
-	ConsoleVersion   string `json:"consoleVersion"`
-	AuthDisabled     bool   `json:"authDisabled"`
-	KubectlClientID  string `json:"kubectlClientID"`
-	BasePath         string `json:"basePath"`
-	LoginURL         string `json:"loginURL"`
-	LoginSuccessURL  string `json:"loginSuccessURL"`
-	LoginErrorURL    string `json:"loginErrorURL"`
-	LogoutURL        string `json:"logoutURL"`
-	KubeAPIServerURL string `json:"kubeAPIServerURL"`
-	ClusterName      string `json:"clusterName"`
-	CSRFToken        string `json:"CSRFToken"`
+	ConsoleVersion      string `json:"consoleVersion"`
+	AuthDisabled        bool   `json:"authDisabled"`
+	KubectlClientID     string `json:"kubectlClientID"`
+	BasePath            string `json:"basePath"`
+	LoginURL            string `json:"loginURL"`
+	LoginSuccessURL     string `json:"loginSuccessURL"`
+	LoginErrorURL       string `json:"loginErrorURL"`
+	LogoutURL           string `json:"logoutURL"`
+	KubeAPIServerURL    string `json:"kubeAPIServerURL"`
+	OpenshiftConsoleURL string `json:"openshiftConsoleURL"`
+	ClusterName         string `json:"clusterName"`
+	CSRFToken           string `json:"CSRFToken"`
 }
 
 type Server struct {
@@ -73,6 +74,7 @@ type Server struct {
 	KubectlClientID     string
 	ClusterName         string
 	KubeAPIServerURL    string
+	OpenshiftConsoleURL string
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
 	KubectlAuther                  *auth.Authenticator
@@ -233,16 +235,17 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		ConsoleVersion:   version.Version,
-		AuthDisabled:     s.authDisabled(),
-		KubectlClientID:  s.KubectlClientID,
-		BasePath:         s.BaseURL.Path,
-		LoginURL:         proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:  proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:    proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		ClusterName:      s.ClusterName,
-		KubeAPIServerURL: s.KubeAPIServerURL,
+		ConsoleVersion:      version.Version,
+		AuthDisabled:        s.authDisabled(),
+		KubectlClientID:     s.KubectlClientID,
+		BasePath:            s.BaseURL.Path,
+		LoginURL:            proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LoginSuccessURL:     proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		ClusterName:         s.ClusterName,
+		KubeAPIServerURL:    s.KubeAPIServerURL,
+		OpenshiftConsoleURL: s.OpenshiftConsoleURL,
 	}
 
 	if !s.authDisabled() {

@@ -30,7 +30,7 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/modals";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities"; 
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
 @import "~patternfly/dist/sass/patternfly/mixins";  // FIXME(alecmerdler): Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/icons';  // FIXME(alecmerdler): Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/type';
@@ -39,3 +39,4 @@
 @import '~patternfly/dist/sass/patternfly/breadcrumbs';
 @import '~patternfly/dist/sass/patternfly/modals';
 @import '~patternfly/dist/sass/patternfly/alerts';
+@import '~patternfly/dist/sass/patternfly/context-selector';

@@ -30,3 +30,15 @@
   font-size: 14px;
   margin-right: 5px;
 }
+
+.contextselector-pf .bootstrap-select > .dropdown-toggle {
+  width: 100%;
+  &:focus {
+    outline: 0 !important;
+  }
+}
+
+.contextselector-pf .bootstrap-select > .dropdown-menu {
+  min-width: 100%;
+  box-sizing: border-box;
+}

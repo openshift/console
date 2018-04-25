@@ -5,6 +5,7 @@ import { Tooltip } from './utils/tooltip';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 
+import { NamespaceModel, ProjectModel } from '../models';
 import { k8sGet, k8sKinds } from '../module/k8s';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
@@ -14,6 +15,9 @@ import { createNamespaceModal, deleteNamespaceModal, configureNamespacePullSecre
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line } from './graphs';
 import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
+import { FLAGS, connectToFlags } from '../features';
+
+const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 
 const deleteModal = (kind, ns) => {
   let {label, weight} = Cog.factory.Delete(kind, ns);
@@ -157,21 +161,19 @@ const RolesPage = ({obj: {metadata}}) => <RoleBindingsPage namespace={metadata.n
 
 const autocompleteFilter = (text, item) => fuzzy(text, item);
 
-const defaultBookmarks = {default: 'default'};
+const defaultBookmarks = {};
 const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}))(props => {
-  const { activeNamespace, dispatch } = props;
-
-  const {loaded, data} = props.namespace;
-  // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
-
-
+  const { activeNamespace, dispatch, useProjects } = props;
+  const { loaded, data } = props.namespace;
+  const model = getModel(useProjects);
+  const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
   const items = {};
-  items[ALL_NAMESPACES_KEY] = 'all namespaces';
+  items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
   _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
 
   let title = activeNamespace;
   if (activeNamespace === ALL_NAMESPACES_KEY) {
-    title = 'all namespaces';
+    title = allNamespacesTitle;
   } else if (loaded && !_.has(items, title)) {
     // If the currently active namespace is not found in the list of all namespaces, put it in anyway
     items[title] = title;
@@ -180,7 +182,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
   return <div className="co-namespace-selector">
-    Namespace: <Dropdown
+    {model.label}: <Dropdown
       className="co-namespace-selector__dropdown"
       menuClassName="co-namespace-selector__menu"
       noButton
@@ -190,22 +192,28 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
       onChange={onChange}
       selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
       autocompleteFilter={autocompleteFilter}
-      autocompletePlaceholder="Select namespace..."
+      autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
       defaultBookmarks={defaultBookmarks}
       storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
       shortCut="n" />
   </div>;
 });
 
-const resources = [{
-  kind: 'Namespace',
-  prop: 'namespace',
-  isList: true,
-}];
+const NamespaceSelector_ = props => {
+  if (props.flags.OPENSHIFT === undefined) {
+    // Wait until the flag is initialized.
+    return null;
+  }
 
-export const NamespaceSelector = () => <Firehose resources={resources}>
-  <NamespaceDropdown />
-</Firehose>;
+  const model = getModel(props.flags.OPENSHIFT);
+  const resources = [{ kind: model.kind, prop: 'namespace', isList: true }];
+
+  return <Firehose resources={resources}>
+    <NamespaceDropdown useProjects={props.flags.OPENSHIFT} />
+  </Firehose>;
+};
+
+export const NamespaceSelector = connectToFlags(FLAGS.OPENSHIFT)(NamespaceSelector_);
 
 export const NamespacesDetailsPage = props => <DetailsPage
   {...props}
