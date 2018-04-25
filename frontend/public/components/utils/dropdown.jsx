@@ -283,13 +283,13 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, storageKey, canFavorite} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, storageKey, canFavorite, dropDownClassName} = this.props;
 
     const button = noButton
       ? <div onClick={this.toggle} className="dropdown__not-btn" id={this.props.id}>
         <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
       </div>
-      : <button onClick={this.toggle} type="button" className="btn btn-default btn--dropdown" id={this.props.id}>
+      : <button onClick={this.toggle} type="button" className="btn btn-default btn--dropdown dropdown-toggle" id={this.props.id}>
         <div className="btn--dropdown__content-wrap">
           {title}&nbsp;&nbsp;<Caret />
         </div>
@@ -314,9 +314,10 @@ export class Dropdown extends DropdownMixin {
       rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
     });
 
+    //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
     return (
       <div className={className} ref={this.setNode} style={this.props.style}>
-        <div className="dropdown">
+        <div className={classNames('dropdown', dropDownClassName)}>
           {button}
           {
             active && <ul className={classNames('dropdown-menu', menuClassName)}>
@@ -349,6 +350,7 @@ Dropdown.propTypes = {
   autocompletePlaceholder: PropTypes.string,
   className: PropTypes.string,
   items: PropTypes.object.isRequired,
+  dropDownClassName: PropTypes.string,
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   noSelection: PropTypes.bool,

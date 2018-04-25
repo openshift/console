@@ -67,6 +67,8 @@ func main() {
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
 	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
 
+	fOpenshiftConsoleURL := fs.String("openshift-console-url", "", "URL for OpenShift console used in context switcher")
+
 	fLicenseFile := fs.String("license-file", "", "Path to the Tectonic license file.")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
@@ -100,6 +102,10 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
+	if *fOpenshiftConsoleURL != "" && !strings.HasSuffix(*fOpenshiftConsoleURL, "/") {
+		flagFatalf("openshift-console-url", "value must end with slash")
+	}
+
 	srv := &server.Server{
 		PublicDir:           *fPublicDir,
 		TectonicVersion:     *fTectonicVersion,
@@ -107,6 +113,7 @@ func main() {
 		TectonicLicenseFile: *fLicenseFile,
 		TectonicCACertFile:  caCertFilePath,
 		ClusterName:         *fTectonicClusterName,
+		OpenshiftConsoleURL: *fOpenshiftConsoleURL,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
