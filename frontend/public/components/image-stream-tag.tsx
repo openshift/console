@@ -74,7 +74,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
         </div>
       </div>
     </div>
-    <div className="co-m-pane__body-section--bordered">
+    <div className="co-m-pane__body-group">
       <h1 className="co-section-title">Image Labels</h1>
       {_.isEmpty(labels)
         ? <span className="text-muted">No labels</span>
@@ -95,7 +95,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
           </table>
         </div>}
     </div>
-    <div className="co-m-pane__body-section--bordered">
+    <div className="co-m-pane__body-group">
       <h1 className="co-section-title">Environment Variables</h1>
       {_.isEmpty(config.Env)
         ? <span className="text-muted">No environment variables</span>

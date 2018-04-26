@@ -43,18 +43,15 @@ const SecretRow = ({obj: secret}) => {
 };
 
 const SecretDetails = ({obj: secret}) => {
-  return <div className="col-md-12">
-    <div className="co-m-pane">
-      <div className="co-m-pane__body">
-        <ResourceSummary resource={secret} showPodSelector={false} showNodeSelector={false} />
-      </div>
-
-      <Heading text="Data" />
-      <div className="co-m-pane__body">
-        <ConfigMapAndSecretData data={secret.data} decode={window.atob} />
-      </div>
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <ResourceSummary resource={secret} showPodSelector={false} showNodeSelector={false} />
     </div>
-  </div>;
+    <div className="co-m-pane__body">
+      <Heading text="Data" />
+      <ConfigMapAndSecretData data={secret.data} decode={window.atob} />
+    </div>
+  </React.Fragment>;
 };
 
 const SecretsList = props => <List {...props} Header={SecretHeader} Row={SecretRow} />;

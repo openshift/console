@@ -55,24 +55,18 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   </div>
 </ResourceRow>;
 
-const Details = ({obj: daemonset}) => <div>
-  <div className="col-lg-6">
-    <div className="co-m-pane">
-      <div className="co-m-pane__body">
-        <ResourceSummary resource={daemonset} />
-      </div>
+const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
+  <div className="row">
+    <div className="col-lg-6">
+      <ResourceSummary resource={daemonset} />
     </div>
-  </div>
-  <div className="col-lg-6">
-    <div className="co-m-pane">
-      <div className="co-m-pane__body">
-        <dl className="co-m-pane__details">
-          <dt>Current Count</dt>
-          <dd>{daemonset.status.currentNumberScheduled || '-'}</dd>
-          <dt>Desired Count</dt>
-          <dd>{daemonset.status.desiredNumberScheduled || '-'}</dd>
-        </dl>
-      </div>
+    <div className="col-lg-6">
+      <dl className="co-m-pane__details">
+        <dt>Current Count</dt>
+        <dd>{daemonset.status.currentNumberScheduled || '-'}</dd>
+        <dt>Desired Count</dt>
+        <dd>{daemonset.status.desiredNumberScheduled || '-'}</dd>
+      </dl>
     </div>
   </div>
 </div>;

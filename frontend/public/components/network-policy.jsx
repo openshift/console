@@ -112,41 +112,31 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
   </div>;
 };
 
-const Details = ({obj: np}) => <div>
+const Details = ({obj: np}) => <React.Fragment>
   <Heading text="Namespace Overview" />
   <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={np} podSelector={'spec.podSelector'} showNodeSelector={false} />
-      </div>
-    </div>
+    <ResourceSummary resource={np} podSelector={'spec.podSelector'} showNodeSelector={false} />
   </div>
   <Heading text="Ingress Rules" />
   <div className="co-m-pane__body">
-    <div className="row co-m-form-row">
-      <div className="col-md-12 text-muted">
-        Pods accept all traffic by default.
-        They can be isolated via Network Policies which specify a whitelist of ingress rules.
-        When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.
-        See more details in <a target="_blank" rel="noopener noreferrer" href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Network Policies Documentation</a>.
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-md-12">
-        {
-          _.isEmpty(_.get(np, 'spec.ingress[0]', [])) ?
-            `All traffic is allowed to Pods in ${np.metadata.namespace}.` :
-            <div className="co-m-table-grid co-m-table-grid--bordered">
-              <IngressHeader />
-              <div className="co-m-table-grid__body">
-                { _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} podSelector={np.spec.podSelector} namespace={np.metadata.namespace} />) }
-              </div>
-            </div>
-        }
-      </div>
-    </div>
+    <p className="text-muted">
+      Pods accept all traffic by default.
+      They can be isolated via Network Policies which specify a whitelist of ingress rules.
+      When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.
+      See more details in <a target="_blank" rel="noopener noreferrer" href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Network Policies Documentation</a>.
+    </p>
+    {
+      _.isEmpty(_.get(np, 'spec.ingress[0]', [])) ?
+        `All traffic is allowed to Pods in ${np.metadata.namespace}.` :
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <IngressHeader />
+          <div className="co-m-table-grid__body">
+            { _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} podSelector={np.spec.podSelector} namespace={np.metadata.namespace} />) }
+          </div>
+        </div>
+    }
   </div>
-</div>;
+</React.Fragment>;
 
 export const NetworkPoliciesDetailsPage = props => <DetailsPage
   {...props}

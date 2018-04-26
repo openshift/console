@@ -74,11 +74,11 @@ const ClientRow = ({client, onTokenRevocation}) => {
 };
 
 const ClientTokens = ({clients, onTokenRevocation, resourceLoaded, loadingError}) => {
-  return <div className="co-m-pane">
+  return <React.Fragment>
     <div className="co-m-pane__heading">
       <h1 className="co-p-cluster--heading">Access Management</h1>
       <p>
-          Each user of Tectonic gets a single kubectl CLI refresh token for use in their kubeconfig file. This token never expires, unless revoked here.
+        Each user of Tectonic gets a single kubectl CLI refresh token for use in their kubeconfig file. This token never expires, unless revoked here.
       </p>
     </div>
     <div className="co-m-pane__body">
@@ -97,5 +97,5 @@ const ClientTokens = ({clients, onTokenRevocation, resourceLoaded, loadingError}
         </div>
       </div>
     </div>
-  </div>;
+  </React.Fragment>;
 };

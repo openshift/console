@@ -3,9 +3,6 @@ $min-height: 200px;
 .co-m-vert-nav {
   display: flex;
   flex-flow: column nowrap;
-  &.co-m-pane {
-    background-color: transparent;
-  }
 }
 
 .co-m-vert-nav__menu {

@@ -66,43 +66,35 @@ const JobRow = ({obj: job}) => {
   );
 };
 
-const Details = ({obj: job}) => <div>
-  <div className="row no-gutter">
+const Details = ({obj: job}) => <div className="co-m-pane__body">
+  <div className="row">
     <div className="col-md-6">
       <Heading text="Job Overview" />
-      <div className="co-m-pane__body-group">
-        <div className="co-m-pane__body-section--bordered">
-          <ResourceSummary resource={job} showNodeSelector={false}>
-            <dt>Desired Completions</dt>
-            <dd>{job.spec.completions || '-'}</dd>
-            <dt>Parallelism</dt>
-            <dd>{job.spec.parallelism || '-'}</dd>
-            <dt>Deadline</dt>
-            <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
-          </ResourceSummary>
-        </div>
-      </div>
+      <ResourceSummary resource={job} showNodeSelector={false}>
+        <dt>Desired Completions</dt>
+        <dd>{job.spec.completions || '-'}</dd>
+        <dt>Parallelism</dt>
+        <dd>{job.spec.parallelism || '-'}</dd>
+        <dt>Deadline</dt>
+        <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
+      </ResourceSummary>
     </div>
     <div className="col-md-6">
       <Heading text="Job Status" />
-      <div className="co-m-pane__body-group">
-        <div className="co-m-pane__body-section--bordered">
-          <dl className="co-m-pane__details">
-            <dt>Status</dt>
-            <dd>{job.status.conditions ? job.status.conditions[0].type : 'In Progress'}</dd>
-            <dt>Start Time</dt>
-            <dd><Timestamp timestamp={job.status.startTime} /></dd>
-            <dt>Completion Time</dt>
-            <dd><Timestamp timestamp={job.status.completionTime} /></dd>
-            <dt>Succeeded Pods</dt>
-            <dd>{job.status.succeeded || 0}</dd>
-            <dt>Active Pods</dt>
-            <dd>{job.status.active || 0}</dd>
-            <dt>Failed Pods</dt>
-            <dd>{job.status.failed || 0}</dd>
-          </dl>
-        </div>
-      </div>
+      <dl className="co-m-pane__details">
+        <dt>Status</dt>
+        <dd>{job.status.conditions ? job.status.conditions[0].type : 'In Progress'}</dd>
+        <dt>Start Time</dt>
+        <dd><Timestamp timestamp={job.status.startTime} /></dd>
+        <dt>Completion Time</dt>
+        <dd><Timestamp timestamp={job.status.completionTime} /></dd>
+        <dt>Succeeded Pods</dt>
+        <dd>{job.status.succeeded || 0}</dd>
+        <dt>Active Pods</dt>
+        <dd>{job.status.active || 0}</dd>
+        <dt>Failed Pods</dt>
+        <dd>{job.status.failed || 0}</dd>
+      </dl>
     </div>
   </div>
 </div>;

@@ -88,7 +88,7 @@ export class VertNav extends React.PureComponent {
     });
 
     return <div className={props.className}>
-      <div className="co-m-pane co-m-vert-nav">
+      <div className="co-m-vert-nav">
 
         {!props.hideNav && <NavBar pages={props.pages} basePath={props.match.url} />}
 

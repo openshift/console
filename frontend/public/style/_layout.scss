@@ -48,16 +48,6 @@ body {
   height: 100%;
 }
 
-.row.no-gutter {
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.row.no-gutter > [class*='col-'] {
-  padding-right: 0;
-  padding-left: 0;
-}
-
 .absolute-zero {
   position: absolute;
   top: 0px;

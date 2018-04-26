@@ -141,9 +141,9 @@ const Details = ({obj: node}) => {
 
   const integerLimit = input => parseInt(input, 10);
 
-  return <div>
-    <Heading text="Node Overview" />
+  return <React.Fragment>
     <div className="co-m-pane__body">
+      <Heading text="Node Overview" />
       <div className="row">
         <div className="col-md-4">
           <Line title="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
@@ -211,10 +211,8 @@ const Details = ({obj: node}) => {
     </div>
 
     { containerLinuxUpdateOperator.isOperatorInstalled(node) && <div className="co-m-pane__body">
+      <h1 className="co-section-title">Container Linux</h1>
       <div className="row">
-        <div className="col-xs-12">
-          <h1 className="co-section-title">Container Linux</h1>
-        </div>
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
             <dt>Current Version</dt>
@@ -233,59 +231,51 @@ const Details = ({obj: node}) => {
     </div> }
 
     <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-xs-12">
-          <h1 className="co-section-title">Node Conditions</h1>
-          <div className="co-table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Reason</th>
-                  <th>Updated</th>
-                  <th>Changed</th>
-                </tr>
-              </thead>
-              <tbody>
-                {_.map(node.status.conditions, (c, i) => <tr key={i}>
-                  <td>{c.type}</td>
-                  <td>{c.status || '-'}</td>
-                  <td>{c.reason || '-'}</td>
-                  <td><Timestamp timestamp={c.lastHeartbeatTime} /></td>
-                  <td><Timestamp timestamp={c.lastTransitionTime} /></td>
-                </tr>)}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <h1 className="co-section-title">Node Conditions</h1>
+      <div className="co-table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>Updated</th>
+              <th>Changed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {_.map(node.status.conditions, (c, i) => <tr key={i}>
+              <td>{c.type}</td>
+              <td>{c.status || '-'}</td>
+              <td>{c.reason || '-'}</td>
+              <td><Timestamp timestamp={c.lastHeartbeatTime} /></td>
+              <td><Timestamp timestamp={c.lastTransitionTime} /></td>
+            </tr>)}
+          </tbody>
+        </table>
       </div>
     </div>
 
     <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-xs-12">
-          <h1 className="co-section-title">Images</h1>
-          <div className="co-table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                {_.map(node.status.images, (image, i) => <tr key={i}>
-                  <td>{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
-                  <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
-                </tr>)}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <h1 className="co-section-title">Images</h1>
+      <div className="co-table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            {_.map(node.status.images, (image, i) => <tr key={i}>
+              <td>{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
+              <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
+            </tr>)}
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>;
+  </React.Fragment>;
 };
 
 const {details, editYaml, events, pods} = navFactory;

@@ -36,16 +36,12 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const Details = ({obj: rq}) => <div>
+const Details = ({obj: rq}) => <React.Fragment>
   <Heading text="ResourceQuota Overview" />
   <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={rq} podSelector="spec.podSelector" showNodeSelector={false} />
-      </div>
-    </div>
+    <ResourceSummary resource={rq} podSelector="spec.podSelector" showNodeSelector={false} />
   </div>
-</div>;
+</React.Fragment>;
 
 export const ResourceQuotasList = props => <List {...props} Header={Header} Row={Row} />;
 export const ResourceQuotasPage = props => <ListPage {...props} ListComponent={ResourceQuotasList} kind={kind} canCreate={true} />;

@@ -123,79 +123,77 @@ const Details = (props) => {
   const [containerImage, containerTag] = container.image ? container.image.split(':') : [null, 'latest'];
 
   return <div className="co-m-pane__body">
-    <div className="co-m-pane__body-section--bordered">
-      <div className="row">
-        <div className="col-sm-4">
-          <h1 className="co-section-title">Container Overview</h1>
-          <dl className="co-m-pane__details">
-            <dt>State</dt>
-            <dd>{state.label}</dd>
-            <dt>ID</dt>
-            <dd><Overflow value={status.containerID} /></dd>
-            <dt>Restart Count</dt>
-            <dd>{status.restartCount}</dd>
-            <dt>Resource Limits</dt>
-            <dd>{getResourceLimitValue(container) || '-'}</dd>
-            <dt>Lifecycle Hooks</dt>
-            <dd><Lifecycle lifecycle={container.lifecycle} /></dd>
-            <dt>Liveness Probe</dt>
-            <dd><Liveness liveness={container.livenessProbe} podIP={pod.status.podIP || '-'} /></dd>
-            <dt>Started</dt>
-            <dd><Timestamp timestamp={state.startedAt} /></dd>
-            <dt>Finished</dt>
-            <dd><Timestamp timestamp={state.finishedAt} /></dd>
-          </dl>
-        </div>
+    <div className="row">
+      <div className="col-sm-4">
+        <h1 className="co-section-title">Container Overview</h1>
+        <dl className="co-m-pane__details">
+          <dt>State</dt>
+          <dd>{state.label}</dd>
+          <dt>ID</dt>
+          <dd><Overflow value={status.containerID} /></dd>
+          <dt>Restart Count</dt>
+          <dd>{status.restartCount}</dd>
+          <dt>Resource Limits</dt>
+          <dd>{getResourceLimitValue(container) || '-'}</dd>
+          <dt>Lifecycle Hooks</dt>
+          <dd><Lifecycle lifecycle={container.lifecycle} /></dd>
+          <dt>Liveness Probe</dt>
+          <dd><Liveness liveness={container.livenessProbe} podIP={pod.status.podIP || '-'} /></dd>
+          <dt>Started</dt>
+          <dd><Timestamp timestamp={state.startedAt} /></dd>
+          <dt>Finished</dt>
+          <dd><Timestamp timestamp={state.finishedAt} /></dd>
+        </dl>
+      </div>
 
-        <div className="col-sm-4">
-          <h1 className="co-section-title">Image Details</h1>
-          <dl className="co-m-pane__details">
-            <dt>Image</dt>
-            <dd><Overflow value={containerImage || '-'} /></dd>
-            <dt>Image Version/Tag</dt>
-            <dd>{containerTag || '-'}</dd>
-            <dt>Command</dt>
-            <dd>{container.command ? <pre><code>{container.command.join(' ')}</code></pre> : <span>-</span>}</dd>
-            <dt>Args</dt>
-            <dd>{container.args ? <pre><code>{container.args.join(' ')}</code></pre> : <span>-</span>}</dd>
-            <dt>Pull Policy</dt>
-            <dd>{getPullPolicyLabel(container)}</dd>
-          </dl>
-        </div>
+      <div className="col-sm-4">
+        <h1 className="co-section-title">Image Details</h1>
+        <dl className="co-m-pane__details">
+          <dt>Image</dt>
+          <dd><Overflow value={containerImage || '-'} /></dd>
+          <dt>Image Version/Tag</dt>
+          <dd>{containerTag || '-'}</dd>
+          <dt>Command</dt>
+          <dd>{container.command ? <pre><code>{container.command.join(' ')}</code></pre> : <span>-</span>}</dd>
+          <dt>Args</dt>
+          <dd>{container.args ? <pre><code>{container.args.join(' ')}</code></pre> : <span>-</span>}</dd>
+          <dt>Pull Policy</dt>
+          <dd>{getPullPolicyLabel(container)}</dd>
+        </dl>
+      </div>
 
-        <div className="col-sm-4">
-          <h1 className="co-section-title">Network</h1>
-          <dl className="co-m-pane__details">
-            <dt>Node</dt>
-            <dd><Link to={`/nodes/${pod.spec.nodeName}`}>{pod.spec.nodeName}</Link></dd>
-            <dt>Pod IP</dt>
-            <dd>{pod.status.podIP || '-'}</dd>
-          </dl>
+      <div className="col-sm-4">
+        <h1 className="co-section-title">Network</h1>
+        <dl className="co-m-pane__details">
+          <dt>Node</dt>
+          <dd><Link to={`/nodes/${pod.spec.nodeName}`}>{pod.spec.nodeName}</Link></dd>
+          <dt>Pod IP</dt>
+          <dd>{pod.status.podIP || '-'}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <hr />
+
+    <div className="row">
+      <div className="col-sm-4">
+        <h1 className="co-section-title">Ports</h1>
+        <div className="co-table-container">
+          <Ports ports={container.ports} />
         </div>
       </div>
 
-      <hr />
-
-      <div className="row">
-        <div className="col-sm-4">
-          <h1 className="co-section-title">Ports</h1>
-          <div className="co-table-container">
-            <Ports ports={container.ports} />
-          </div>
+      <div className="col-sm-4">
+        <h1 className="co-section-title">Mounted Volumes</h1>
+        <div className="co-table-container">
+          <Volumes volumes={container.volumeMounts} />
         </div>
+      </div>
 
-        <div className="col-sm-4">
-          <h1 className="co-section-title">Mounted Volumes</h1>
-          <div className="co-table-container">
-            <Volumes volumes={container.volumeMounts} />
-          </div>
-        </div>
-
-        <div className="col-sm-4">
-          <h1 className="co-section-title">Environment Variables</h1>
-          <div className="co-table-container">
-            <Env env={container.env} />
-          </div>
+      <div className="col-sm-4">
+        <h1 className="co-section-title">Environment Variables</h1>
+        <div className="co-table-container">
+          <Env env={container.env} />
         </div>
       </div>
     </div>

@@ -29,21 +29,19 @@ spec:
 const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
 export const replicaSetMenuActions = [ModifyCount, ModifyNodeSelector, ...common];
 
-const Details = ({obj: replicaSet}) => <div>
+const Details = ({obj: replicaSet}) => <React.Fragment>
   <Heading text="Replica Set Overview" />
-  <div className="co-m-pane__body-group">
-    <div className="co-m-pane__body-section--bordered">
-      <div className="row no-gutter">
-        <div className="col-md-6">
-          <ResourceSummary resource={replicaSet} />
-        </div>
-        <div className="col-md-6">
-          <ResourcePodCount resource={replicaSet} />
-        </div>
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-md-6">
+        <ResourceSummary resource={replicaSet} />
+      </div>
+      <div className="col-md-6">
+        <ResourcePodCount resource={replicaSet} />
       </div>
     </div>
   </div>
-</div>;
+</React.Fragment>;
 
 const {details, editYaml, pods} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage

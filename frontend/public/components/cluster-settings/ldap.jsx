@@ -561,9 +561,7 @@ export const LDAPPage = () => <div>
     <title>LDAP</title>
   </Helmet>
   <NavTitle title="LDAP" />
-  <div className="co-m-pane">
-    <div className="co-m-pane__body">
-      <LDAPs />
-    </div>
+  <div className="co-m-pane__body">
+    <LDAPs />
   </div>
 </div>;
