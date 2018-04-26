@@ -45,7 +45,7 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
         </span>
         <span style={{visibility: 'hidden'}}>&nbsp;{filename}</span>
       </button>
-      { error && <p className="alert text-danger bg-danger" style={{wordBreak: 'break-word'}}>{error.toString()}</p> }
+      { error && <p className="alert alert-danger" style={{wordBreak: 'break-word'}}><span className="pficon pficon-error-circle-o"></span>{error.toString()}</p> }
     </div>;
   }
 }
