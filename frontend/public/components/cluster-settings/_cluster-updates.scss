@@ -60,6 +60,7 @@ $cluster-updates-width: 800px;
 
 .co-cluster-updates__component {
   border-bottom: 1px solid $cluster-updates-border;
+  margin-bottom: -1px;
   padding: 20px;
 }
 
