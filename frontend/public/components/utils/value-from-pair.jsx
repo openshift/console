@@ -49,19 +49,5 @@ export class ValueFromPair extends React.Component {
   }
 }
 ValueFromPair.propTypes = {
-  nameString: PropTypes.string,
-  valueString: PropTypes.string,
-  addString: PropTypes.string,
-  allowSorting: PropTypes.bool,
-  readOnly: PropTypes.bool,
-  pair: PropTypes.object.isRequired,
-  nameValuePairs: PropTypes.array.isRequired,
-  updateParentData: PropTypes.func.isRequired
-};
-ValueFromPair.defaultProps = {
-  nameString: 'Key',
-  valueString: 'Value',
-  addString: 'Add More',
-  allowSorting: false,
-  readOnly: false
+  pair: PropTypes.object.isRequired
 };
