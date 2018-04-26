@@ -200,16 +200,17 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
 });
 
 const NamespaceSelector_ = props => {
-  if (props.flags.OPENSHIFT === undefined) {
+  const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
+  if (openshiftFlag === undefined) {
     // Wait until the flag is initialized.
     return <div className="co-namespace-selector" />;
   }
 
-  const model = getModel(props.flags.OPENSHIFT);
+  const model = getModel(openshiftFlag);
   const resources = [{ kind: model.kind, prop: 'namespace', isList: true }];
 
   return <Firehose resources={resources}>
-    <NamespaceDropdown useProjects={props.flags.OPENSHIFT} />
+    <NamespaceDropdown useProjects={openshiftFlag} />
   </Firehose>;
 };
 
