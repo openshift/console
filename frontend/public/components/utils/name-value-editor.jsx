@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import * as _ from 'lodash-es';
 
 import { ValueFromPair } from './value-from-pair';
 
@@ -10,9 +11,6 @@ export class NameValueEditor extends React.Component {
   constructor (props) {
     super(props);
     this._append = this._append.bind(this);
-    this._remove = this._remove.bind(this);
-    this._change = this._change.bind(this);
-
   }
 
   _append() {
@@ -22,14 +20,16 @@ export class NameValueEditor extends React.Component {
   }
 
   _remove(i) {
-    const {updateParentData, nameValuePairs, nameValueId} = this.props;
-
+    const {updateParentData, nameValueId} = this.props;
+    const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
     nameValuePairs.splice(i, 1);
+
     updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '']]}, nameValueId);
   }
 
   _change(e, i, type) {
-    const {updateParentData, nameValuePairs, nameValueId} = this.props;
+    const {updateParentData, nameValueId} = this.props;
+    const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
 
     nameValuePairs[i][type === NAME ? NAME : VALUE] = e.target.value;
     updateParentData({nameValuePairs}, nameValueId);
@@ -37,35 +37,39 @@ export class NameValueEditor extends React.Component {
 
   render () {
     const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly} = this.props;
-    const pairElems = nameValuePairs.map((pair, i) =>
-      <div className="row pairs-list__row" key={i}>
+
+    const pairElems = nameValuePairs.map((pair, i) => {
+
+      let iconSection = null;
+      if (!readOnly) {
+        iconSection = allowSorting ?
+          <div className="col-xs-1">
+            <span className="pairs-list__span-btns">
+              <i className="fa fa-bars pairs-list__reorder-icon" />
+              <i className="fa fa-minus-circle pairs-list__btn pairs-list__delete-icon" onClick={() => this._remove(i)}></i>
+            </span>
+          </div> :
+          <div className="col-xs-1">
+            <i className="fa fa-minus-circle pairs-list__btn pairs-list__delete-icon" onClick={() => this._remove(i)}></i>
+          </div>;
+      }
+
+      return <div className="row pairs-list__row" key={i}>
         <div className="col-xs-5 pairs-list__field">
           <input type="text" className="form-control" placeholder={nameString.toLowerCase()} value={pair[NAME]} onChange={e => this._change(e, i, NAME)} disabled={readOnly} />
         </div>
         <div className="col-xs-6 pairs-list__field">
           {
-            (pair[VALUE] instanceof Object) ?
-              <ValueFromPair pair={pair[VALUE]}/> :
+            _.isPlainObject(pair[VALUE]) ?
+              <ValueFromPair pair={pair[VALUE]} /> :
               <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[VALUE] || ''} onChange={e => this._change(e, i, VALUE)} disabled={readOnly}/>
           }
         </div>
-        {
-          readOnly ?
-            null :
-            allowSorting ?
-              <div className="col-xs-1">
-                <span className="pairs-list__span-btns">
-                  <i className="fa fa-bars pairs-list__reorder-icon"></i>
-                  <i className="fa fa-minus-circle pairs-list__btn pairs-list__delete-icon" onClick={() => this._remove(i)}></i>
-                </span>
-              </div> :
-              <div className="col-xs-1">
-                <i className="fa fa-minus-circle pairs-list__btn pairs-list__delete-icon" onClick={() => this._remove(i)}></i>
-              </div>
-        }
-      </div>);
+        { iconSection }
+      </div>;
+    });
 
-    return (<div>
+    return <div>
       <div className="row">
         <div className="col-xs-5 text-secondary">{nameString.toUpperCase()}</div>
         <div className="col-xs-6 text-secondary">{valueString.toUpperCase()}</div>
@@ -82,9 +86,10 @@ export class NameValueEditor extends React.Component {
           }
         </div>
       </div>
-    </div>);
+    </div>;
   }
 }
+
 NameValueEditor.propTypes = {
   nameString: PropTypes.string,
   valueString: PropTypes.string,
@@ -92,7 +97,12 @@ NameValueEditor.propTypes = {
   allowSorting: PropTypes.bool,
   readOnly: PropTypes.bool,
   nameValueId: PropTypes.number,
-  nameValuePairs: PropTypes.array.isRequired,
+  nameValuePairs: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
+    ])
+  ).isRequired,
   updateParentData: PropTypes.func.isRequired
 };
 NameValueEditor.defaultProps = {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-
+import * as classNames from'classnames';
 import { modelFor, k8sPatch } from '../module/k8s';
 import { NameValueEditor, NAME, VALUE } from './utils/name-value-editor';
 import { PromiseComponent } from './utils';
@@ -145,25 +145,17 @@ export class EnvironmentPage extends PromiseComponent {
    * @param i
    */
   _updateEnvVars(env, i=0) {
-    const {envVars} = this.state;
+    const {envVars, rawEnvData, isBuildObject} = this.state;
     const currentEnv = envVars;
     currentEnv[i] = env.nameValuePairs;
+
+    const modified = !_.isEqual(currentEnv, (isBuildObject ? envVarsToArrayForObject(rawEnvData) : envVarsToArrayForArray(rawEnvData)));
     this.setState({
       envVars: currentEnv,
       errorMessage: null,
-      success: null
+      success: null,
+      modified,
     });
-  }
-
-  /**
-   * Check for modified values/added/removed rows
-   *
-   * @returns {boolean}
-   * @private
-   */
-  _isModified() {
-    const {envVars, rawEnvData, isBuildObject} = this.state;
-    return !_.isEqual(envVars, (isBuildObject ? envVarsToArrayForObject(rawEnvData) :envVarsToArrayForArray(rawEnvData)));
   }
 
   /**
@@ -195,46 +187,48 @@ export class EnvironmentPage extends PromiseComponent {
     e.preventDefault();
 
     // Convert any blank values to null
-    let patch = [];
     const kind = modelFor(obj.kind);
 
-    envVars.forEach((finalPairsForContainer, i) => {
+    const patch = envVars.map((finalPairsForContainer, i) => {
       const keys = finalPairsForContainer.map(t => t[NAME]);
       if (_.uniq(keys).length !== keys.length) {
         validationError = 'Duplicate keys found.';
         return;
       }
-      const patchPath = isBuildObject ? `${envPath}/env` : `${envPath}/${i}/env`;
-      const operation = (isBuildObject ? !rawEnvData.env : typeof rawEnvData[i].env === 'undefined') ? 'add' : 'replace';
-      patch.push({path: patchPath, op: operation, value: this._envVarsToNameVal(finalPairsForContainer)});
+      const path = isBuildObject ? `${envPath}/env` : `${envPath}/${i}/env`;
+      const op = (isBuildObject
+        ? !rawEnvData.env : typeof rawEnvData[i].env === 'undefined')
+        ? 'add' : 'replace';
+      return {path, op, value: this._envVarsToNameVal(finalPairsForContainer)};
     });
 
-    if(!validationError) {
-      const promise = k8sPatch(kind, obj, patch);
-      this.handlePromise(promise).then((res) => {
-        let objTypeEnv = getEnvForKind(res);
-
-        this.setState({
-          success: 'Successfully updated the environment variables.',
-          errorMessage: null,
-          ...objTypeEnv
-        });
-      });
-    } else {
+    if (validationError) {
       this.setState({
         errorMessage: validationError
       });
+      return;
     }
+
+    const promise = k8sPatch(kind, obj, patch);
+    this.handlePromise(promise).then((res) => {
+      const objTypeEnv = getEnvForKind(res);
+
+      this.setState({
+        success: 'Successfully updated the environment variables.',
+        errorMessage: null,
+        ...objTypeEnv
+      });
+    });
   }
 
   render() {
     const {envVars, rawEnvData, errorMessage, success, readOnly, inProgress, isBuildObject} = this.state;
 
     const containerVars = envVars.map((envVar, i) => {
-      let keyString = isBuildObject ? rawEnvData.from.name : rawEnvData[i].name;
+      const keyString = isBuildObject ? rawEnvData.from.name : rawEnvData[i].name;
       return <div key={keyString}>
-        { !isBuildObject && <h1 className={`co-section-title${i > 0 ? ' environment-section-spacer' : ''}`}>Container {keyString}</h1> }
-        <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString={'Name'} allowSorting={true} readOnly={readOnly}/>
+        { !isBuildObject && <h1 className={classNames('co-section-title', {'environment-section-spacer': i > 0})}>Container {keyString}</h1> }
+        <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" allowSorting={true} readOnly={readOnly}/>
       </div>;
     });
 
@@ -248,8 +242,8 @@ export class EnvironmentPage extends PromiseComponent {
         <div className="environment-buttons">
           {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{errorMessage}</p>}
           {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
-          {!readOnly && <button disabled={!this._isModified() || inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
-          {this._isModified() && <button type="button" className="btn btn-link" onClick={this.clearChanges}>Clear Changes</button>}
+          {!readOnly && <button disabled={!this.state.modified || inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
+          {this.state.modified && <button type="button" className="btn btn-link" onClick={this.clearChanges}>Clear Changes</button>}
         </div>
       </div>
     </div>;
