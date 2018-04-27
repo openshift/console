@@ -1,14 +1,13 @@
-$global-notification-dark: #FCA657;
-$global-notification-light: #FFCFA4;
-$global-notification-text: #98440D;
+$global-notification-text: #fff;
 
 .co-global-notification {
-  display: flex;
-  flex-direction: row;
-  font-size: 14px;
+  background-color: #0088ce;
+  color: $global-notification-text;
+  text-align: center;
 
   a {
     color: $global-notification-text;
+    cursor: pointer;
     text-decoration: underline;
   }
 }
@@ -17,21 +16,11 @@ $global-notification-text: #98440D;
   margin: 0;
 }
 
-.co-global-notification__sidebar {
-  color: $global-notification-text;
-  background: $global-notification-dark;
+.co-global-notification__impersonate-name {
   font-weight: 600;
-  text-align: center;
-  width: 220px;
-  min-width: 220px;
 }
 
-.co-global-notification__content {
-  color: $global-notification-text;
-  background: $global-notification-light;
-  flex: 1 1 auto;
-}
-
-.co-global-notification__sidebar, .co-global-notification__content {
-  padding: 10px 12px;
+.co-global-notification__impersonate-kind {
+  font-weight: 500;
+  padding-right: 20px;
 }
