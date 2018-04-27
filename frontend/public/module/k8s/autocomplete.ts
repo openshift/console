@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 
 import { ServiceAccountModel, SecretModel, ServiceModel, ConfigMapModel } from '../../models';
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
-import { k8sList } from '../../module/k8s/resource';
+import { k8sListPartialMetadata } from '../../module/k8s/resource';
 
 /**
  * Defines a bunch of possibilities for property value completion, defined in the OpenAPI/Swagger spec.
@@ -87,7 +87,7 @@ export const getPropertyValueCompletions = async(state: Editor, session: IEditSe
       meta: field,
     })));
   } else if (clusterStateCompletions.has(field)) {
-    const results = (await k8sList(clusterStateCompletions.get(field)) as K8sResourceKind[]).map(obj => ({
+    const results = (await k8sListPartialMetadata(clusterStateCompletions.get(field)) as K8sResourceKind[]).map(obj => ({
       name: obj.metadata.name,
       score: 10000,
       value: obj.metadata.name,
@@ -95,7 +95,7 @@ export const getPropertyValueCompletions = async(state: Editor, session: IEditSe
     }));
     callback(null, results);
   } else if (clusterStateCompletions.has(parentPropertyFor(pos.row))) {
-    const results = (await k8sList(clusterStateCompletions.get(parentPropertyFor(pos.row))) as K8sResourceKind[]).map(obj => ({
+    const results = (await k8sListPartialMetadata(clusterStateCompletions.get(parentPropertyFor(pos.row))) as K8sResourceKind[]).map(obj => ({
       name: obj.metadata.name,
       score: 10000,
       value: obj.metadata.name,
