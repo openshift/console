@@ -12,6 +12,7 @@ import { Gauge, prometheusBasePath } from './graphs';
 import { Status, errorStatus } from './graphs/status';
 import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
+import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 
 
 /* eslint-disable react/jsx-no-target-blank */
@@ -168,7 +169,7 @@ const GraphsPage = ({limited, namespace}) => {
         <div className="col-xs-12 group">
           <div className="group__title">
             <h2 className="h3">Events</h2>
-            <a href="/k8s/all-namespaces/events">View All</a>
+            <a href={formatNamespacedRouteForResource('events', namespace)}>View All</a>
           </div>
           <div className="group__body" style={{paddingLeft: 0, paddingRight: 0}}>
             <EventStreamPage namespace={namespace} showTitle={false} />
