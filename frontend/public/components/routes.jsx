@@ -104,8 +104,8 @@ const RouteListRow = ({obj: route}) => <ResourceRow obj={route}>
   <div className="col-md-2 col-sm-4 hidden-xs">
     <ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} />
   </div>
-  <div className="col-md-2 hidden-sm hidden-xs">{route.spec.port.targetPort}</div>
-  <div className="col-md-2 hidden-sm hidden-xs">{route.spec.tls ? route.spec.tls.termination : ''}</div>
+  <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.port.targetPort', '')}</div>
+  <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.tls.termination', '')}</div>
 </ResourceRow>;
 
 const TLSSettings = props => <span>
