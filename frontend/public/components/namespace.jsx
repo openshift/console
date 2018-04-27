@@ -202,7 +202,7 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
 const NamespaceSelector_ = props => {
   if (props.flags.OPENSHIFT === undefined) {
     // Wait until the flag is initialized.
-    return null;
+    return <div className="co-namespace-selector" />;
   }
 
   const model = getModel(props.flags.OPENSHIFT);
