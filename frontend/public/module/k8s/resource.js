@@ -84,7 +84,7 @@ export const k8sKill = (kind, resource, opts = {}, json = null) => coFetchJSON.d
   resourceURL(kind, Object.assign({ns: resource.metadata.namespace, name: resource.metadata.name}, opts)), opts, json
 );
 
-export const k8sList = (kind, params={}, raw=false) => {
+export const k8sList = (kind, params={}, raw=false, options = {}) => {
   const query = _.map(_.omit(params, 'ns'), (v, k) => {
     if (k === 'labelSelector') {
       v = selectorToString(v);
@@ -101,7 +101,12 @@ export const k8sList = (kind, params={}, raw=false) => {
   } : kind;
 
   const listURL = resourceURL(k, {ns: params.ns});
-  return coFetchJSON(`${listURL}?${query}`).then(result => raw ? result : result.items);
+  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then(result => raw ? result : result.items);
+};
+
+export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
+  // FIXME: Use v1beta1 in kube 1.10
+  return k8sList(kind, params, raw, {headers: {Accept: 'application/json;as=PartialObjectMetadataList;v=v1alpha1;g=meta.k8s.io,application/json'}});
 };
 
 export const k8sWatch = (kind, query={}, wsOptions={}) => {

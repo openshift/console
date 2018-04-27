@@ -33,7 +33,7 @@ describe('getCompletions', () => {
   it('invokes callback with appropriate completions for property values which are retrieved from cluster state', (done) => {
     sessionMock.getLine = jasmine.createSpy('getLineSpy').and.returnValue('serviceName: ');
     position = {row: 0, column: 'serviceName: '.length};
-    spyOn(k8sResource, 'k8sList').and.returnValue(Promise.resolve([testResourceInstance]));
+    spyOn(k8sResource, 'k8sListPartialMetadata').and.returnValue(Promise.resolve([testResourceInstance]));
 
     getCompletions(editorMock, sessionMock, position, '', (error, results) => {
       expect(results.length).toEqual(1);
@@ -59,7 +59,7 @@ describe('getCompletions', () => {
       }
     });
     position = {row: 1, column: '  - name: '.length};
-    spyOn(k8sResource, 'k8sList').and.returnValue(Promise.resolve([testResourceInstance]));
+    spyOn(k8sResource, 'k8sListPartialMetadata').and.returnValue(Promise.resolve([testResourceInstance]));
 
     getCompletions(editorMock, sessionMock, position, '', (error, results) => {
       expect(results.length).toEqual(1);
