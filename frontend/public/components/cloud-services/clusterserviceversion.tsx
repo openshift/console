@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, referenceForCRDDesc, AppCatalog, appCatalogLabel } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage, List } from '../factory';
-import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog } from '../utils';
+import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog, NavTitle } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
@@ -157,44 +157,32 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
           <img className="co-clusterserviceversion-list__disabled-icon" src={appsLogo} />
           <MsgBox title="Open Cloud Services not enabled for this namespace" detail="Please contact a system administrator and ask them to enable OCS to continue." />
         </Box>
-        : <div>
-          <div className="col-xs-12">
-            <h1 className="co-m-page-title" style={{paddingBottom: '30px'}}>
-              <span id="resource-title">Available Applications</span>
-            </h1>
-          </div>
-          <div>
-            <div className="col-xs-12">
-              <h3 className="co-clusterserviceversion-list__title">Open Cloud Services</h3>
-            </div>
-            <MultiListPage
-              {...this.props}
-              namespace={this.props.match.params.ns}
-              resources={[
-                {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
-                {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
-                ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
-              ]}
-              flatten={flatten}
-              dropdownFilters={dropdownFilters}
-              ListComponent={ClusterServiceVersionList}
-              filterLabel="Applications by name"
-              showTitle={false} />
-          </div>
-          <div>
-            <div className="col-xs-12">
-              <h3 className="co-clusterserviceversion-list__title">Custom Applications</h3>
-              <MultiListPage
-                {...this.props}
-                namespace={this.props.match.params.ns}
-                resources={[{...csvResource, selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}}]}
-                ListComponent={(props) => <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyCustomAppsMsg} />}
-                flatten={flatten}
-                filterLabel="Custom Applications by name"
-                showTitle={false} />
-            </div>
-          </div>
-        </div>;
+        : <React.Fragment>
+          <NavTitle title="Available Applications" />
+          <h3 className="co-clusterserviceversion-list__title">Open Cloud Services</h3>
+          <MultiListPage
+            {...this.props}
+            namespace={this.props.match.params.ns}
+            resources={[
+              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+              {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
+              ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
+            ]}
+            flatten={flatten}
+            dropdownFilters={dropdownFilters}
+            ListComponent={ClusterServiceVersionList}
+            filterLabel="Applications by name"
+            showTitle={false} />
+          <h3 className="co-clusterserviceversion-list__title">Custom Applications</h3>
+          <MultiListPage
+            {...this.props}
+            namespace={this.props.match.params.ns}
+            resources={[{...csvResource, selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}}]}
+            ListComponent={(props) => <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyCustomAppsMsg} />}
+            flatten={flatten}
+            filterLabel="Custom Applications by name"
+            showTitle={false} />
+        </React.Fragment>;
     }
 
     componentWillReceiveProps(nextProps) {
