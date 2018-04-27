@@ -7,6 +7,7 @@ export * from './k8s';
 export * from './node';
 export * from './pods';
 export * from './resource';
+export * from './autocomplete';
 export { modelFor, allModels, referenceFor, referenceForCRD, referenceForModel, kindForReference, referenceForOwnerRef, versionForReference } from './k8s-models';
 
 export type OwnerReference = {
