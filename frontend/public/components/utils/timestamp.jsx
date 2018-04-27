@@ -6,41 +6,74 @@ import * as dateTime from './datetime';
 
 const monthAbbrs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+const intervalCBs = new Set();
+let interval;
+
+const updateTimestamps = () => {
+  const now = new Date();
+  for (let cb of intervalCBs) {
+    try {
+      cb(now);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating timestamp:', e);
+    }
+  }
+  if (!intervalCBs.size) {
+    clearInterval(interval);
+    interval = null;
+  }
+};
 
 /** @augments {React.Component<{timestamp: string}>} */
 export class Timestamp extends SafetyFirst {
   constructor (props) {
     super(props);
 
-    this.interval = null;
+    this.intervalCB = null;
     this.reset(props.timestamp);
+  }
+
+  componentWillUnmount () {
+    super.componentWillUnmount();
+
+    intervalCBs.delete(this.intervalCB);
+    if (!intervalCBs.size) {
+      clearInterval(interval);
+      interval = null;
+    }
   }
 
   reset (timestamp) {
     const mdate = this.props.isUnix ? new Date(timestamp * 1000) : new Date(timestamp);
 
-    this.setState({
-      mdate, timestamp: this.getTimestamp(mdate),
+    if (this.intervalCB) {
+      intervalCBs.delete(this.intervalCB);
+    }
+
+    intervalCBs.add(now => {
+      const nextTimestamp = this.getTimestamp(this.state.mdate, now);
+      if (nextTimestamp === this.state.timestamp) {
+        return;
+      }
+      this.setState({timestamp: nextTimestamp});
     });
 
-    this.startInterval();
+    this.setState({
+      mdate, timestamp: this.getTimestamp(mdate, new Date()),
+    });
+
+    if (intervalCBs.size && !interval) {
+      interval = setInterval(updateTimestamps, 10000);
+    }
   }
 
-  startInterval () {
-    clearInterval(this.interval);
-
-    this.interval = setInterval(() => this.setState({
-      timestamp: this.getTimestamp(this.state.mdate)
-    }), 5000);
-  }
-
-  getTimestamp (mdate) {
+  getTimestamp (mdate, now) {
     if (!dateTime.isValid(mdate)) {
-      clearInterval(this.interval);
+      intervalCBs.delete(this.intervalCB);
       return '-';
     }
 
-    const now = new Date();
     const timeAgo = now - mdate;
     if (timeAgo < 630000) { // 10.5 minutes
       return dateTime.fromNow(mdate);
@@ -61,7 +94,7 @@ export class Timestamp extends SafetyFirst {
 
     const monthStr = monthAbbrs[mdate.getMonth()];
 
-    clearInterval(this.interval);
+    intervalCBs.delete(this.intervalCB);
     return `${monthStr} ${mdate.getDate()}, ${timeStr}`;
   }
 
@@ -78,11 +111,6 @@ export class Timestamp extends SafetyFirst {
   shouldComponentUpdate (nextProps, nextState) {
     return nextState.timestamp !== this.state.timestamp
         || nextState.mdate !== this.state.mdate;
-  }
-
-  componentWillUnmount () {
-    super.componentWillUnmount();
-    clearInterval(this.interval);
   }
 
   render () {
