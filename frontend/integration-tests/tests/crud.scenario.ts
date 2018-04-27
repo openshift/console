@@ -39,7 +39,8 @@ describe('Kubernetes resource CRUD operations', () => {
   const openshiftObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
     .set('deploymentconfigs', {kind: 'DeploymentConfig'})
     .set('buildconfigs', {kind: 'BuildConfig'})
-    .set('imagestreams', {kind: 'ImageStream'});
+    .set('imagestreams', {kind: 'ImageStream'})
+    .set('routes', {kind: 'Route'});
   const testObjs = browser.params.openshift === 'true' ? k8sObjs.merge(openshiftObjs) : k8sObjs;
 
   afterEach(() => {
