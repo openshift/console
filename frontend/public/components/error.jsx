@@ -36,25 +36,16 @@ const getErrMessage = () => {
   return '';
 };
 
-const ErrorComponent = ({title, message, errMessage}) => <div>
+const ErrorComponent = ({title, message, errMessage}) => <React.Fragment>
   <NavTitle detail={true} title="Error" />
-  <div className="co-m-pane">
-    <div className="co-m-pane__heading">
-      <h1 className="co-m-pane__title text-center">{title}</h1>
-    </div>
-    <div className="co-m-pane__body">
-      {message && <div className="row">
-        <div className="col-sm-12 text-center">{message}</div>
-      </div>}
-      {errMessage && <div className="row">
-        <div className="col-sm-12 text-center text-muted">{errMessage}</div>
-      </div>}
-      <div className="row">
-        <div className="col-sm-12 co-error-bg-img"></div>
-      </div>
-    </div>
+  <div className="co-m-pane__heading">
+    <h1 className="co-m-pane__title text-center">{title}</h1>
   </div>
-</div>;
+  <div className="co-m-pane__body">
+    {message && <div className="text-center">{message}</div>}
+    {errMessage && <div className="text-center text-muted">{errMessage}</div>}
+  </div>
+</React.Fragment>;
 
 export const ErrorPage = () => <div>
   <Helmet>
