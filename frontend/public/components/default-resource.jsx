@@ -34,16 +34,12 @@ const RowForKind = kind => function RowForKind_ ({obj}) {
 };
 
 const DetailsForKind = kind => function DetailsForKind_ ({obj}) {
-  return <div>
+  return <React.Fragment>
     <Heading text={`${kindForReference(kind)} Overview`} />
     <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
-          <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
-        </div>
-      </div>
+      <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
     </div>
-  </div>;
+  </React.Fragment>;
 };
 
 export const DefaultList = props => {

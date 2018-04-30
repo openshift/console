@@ -71,7 +71,7 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deployment
     <DeploymentPodCounts resource={deploymentConfig} resourceKind={DeploymentConfigModel} />
 
     <div className="co-m-pane__body-group">
-      <div className="row no-gutter">
+      <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={deploymentConfig}>
             <dt>Status</dt>

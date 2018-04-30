@@ -3,17 +3,6 @@
 .help-block {
   margin-bottom: 0px; }
 
-.container {
-  width: 100%;
-  padding-left: 0px;
-  padding-right: 0px; }
-
-@media (min-width: 480px) {
-  .container {
-    width: 99%;
-    padding-left: 15px;
-    padding-right: 15px; } }
-
 .table {
   margin-bottom: 0px; }
   .table thead > tr > th {
@@ -37,10 +26,6 @@
 /**
  * Reusable non-layout effects styles used across many modules.
  */
-.co-m-pane {
-  -webkit-box-shadow: compact(0px 2px 2px rgba(0, 0, 0, 0.4), false, false, false, false, false, false, false, false, false);
-  -moz-box-shadow: compact(0px 2px 2px rgba(0, 0, 0, 0.4), false, false, false, false, false, false, false, false, false);
-  box-shadow: compact(0px 2px 2px rgba(0, 0, 0, 0.4), false, false, false, false, false, false, false, false, false); }
 
 .co-truncate {
   overflow: hidden;
@@ -146,47 +131,28 @@ input[type="radio"] {
   .co-m-primary-action:hover, .co-m-primary-action:visited {
     color: white; }
 
-.co-m-pane {
-  background-color: white;
-  min-height: 200px; }
-
-.co-m-pane__heading,
-.co-m-pane__heading--bordered {
+.co-m-pane__heading {
   padding: 30px; }
 
-.co-m-pane__heading--bordered {
-  border-bottom: solid 1px #eee; }
+[class*='col-'] > .co-m-pane__heading,
+.co-m-pane__body > .co-m-pane__heading {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+}
 
 .co-m-pane__title {
   line-height: 24px;
   margin: 0; }
 
 .co-m-pane__body {
-  padding: 30px 30px 30px 30px; }
+  padding: 30px; }
 
 .co-m-pane__body-group {
   padding: 0 0 30px 0; }
-  .co-m-pane__body-group .co-m-pane__body-section,
-  .co-m-pane__body-group .co-m-pane__body-section--bordered {
-    padding: 15px 30px; }
-    .co-m-pane__body-group .co-m-pane__body-section:first-child,
-    .co-m-pane__body-group .co-m-pane__body-section--bordered:first-child {
-      padding-top: 0; }
-    .co-m-pane__body-group .co-m-pane__body-section:last-child,
-    .co-m-pane__body-group .co-m-pane__body-section--bordered:last-child {
-      padding-bottom: 0; }
-  .co-m-pane__body-group .co-m-pane__body-section--bordered {
-    border-top: solid 1px #eee; }
-    .co-m-pane__body-group .co-m-pane__body-section--bordered:first-child {
-      border-top: none; }
 
-.co-m-pane__heading + .co-m-pane__body,
-.co-m-pane__heading--bordered + .co-m-pane__body {
+.co-m-pane__heading + .co-m-pane__body {
   padding-top: 0; }
-
-.co-m-pane__heading--bordered + .co-m-pane__body-group > .co-m-pane__body-section:first-child,
-.co-m-pane__heading--bordered + .co-m-pane__body-group > .co-m-pane__body-section--bordered:first-child {
-  padding-top: 15px; }
 
 .co-m-table-grid .row {
   margin: 0; }

@@ -162,28 +162,26 @@ const Details = ({obj: pod}) => {
     })
   );
 
-  return <div>
+  return <React.Fragment>
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
-        <h1 className="co-section-title">Pod Vulnerability Overview</h1>
-        <div className="row no-gutter">
-          <div className="col-sm-8 col-xs-12">
-            <div className="row">
-              <div className="col-sm-6 col-xs-12">
-                <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false} />
-              </div>
-              <div className="col-sm-6 col-xs-12">
-                <dl className="co-m-pane__details">
-                  <dt>Pod</dt>
-                  <dd><PodLink pod={pod} /></dd>
-                  <dt>Fixables</dt>
-                  <dd>{_.get(pod, 'metadata.labels.secscan/fixables')}</dd>
-                  <dt>Highest</dt>
-                  <dd>{_.get(pod, 'metadata.labels.secscan/highest')}</dd>
-                  <dt>Last Update</dt>
-                  <dd><Timestamp timestamp={_.get(pod, 'metadata.annotations.secscan/lastScan')} /></dd>
-                </dl>
-              </div>
+      <h1 className="co-section-title">Pod Vulnerability Overview</h1>
+      <div className="row">
+        <div className="col-sm-8 col-xs-12">
+          <div className="row">
+            <div className="col-sm-6 col-xs-12">
+              <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false} />
+            </div>
+            <div className="col-sm-6 col-xs-12">
+              <dl className="co-m-pane__details">
+                <dt>Pod</dt>
+                <dd><PodLink pod={pod} /></dd>
+                <dt>Fixables</dt>
+                <dd>{_.get(pod, 'metadata.labels.secscan/fixables')}</dd>
+                <dt>Highest</dt>
+                <dd>{_.get(pod, 'metadata.labels.secscan/highest')}</dd>
+                <dt>Last Update</dt>
+                <dd><Timestamp timestamp={_.get(pod, 'metadata.annotations.secscan/lastScan')} /></dd>
+              </dl>
             </div>
           </div>
         </div>
@@ -191,49 +189,41 @@ const Details = ({obj: pod}) => {
     </div>
 
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
-        <h1 className="co-section-title">Containers</h1>
-        <div className="row no-gutter">
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <div className="row co-m-table-grid__head">
-              <div className="col-sm-2 col-xs-4">Name</div>
-              <div className="col-sm-2 hidden-xs">Id</div>
-              <div className="col-sm-2 col-xs-8">Image</div>
-              <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
-              <div className="col-md-1 col-sm-2 hidden-xs">State</div>
-              <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
-              <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
-            </div>
-            <div className="co-m-table-grid__body">
-              {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
-            </div>
-          </div>
+      <h1 className="co-section-title">Containers</h1>
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-sm-2 col-xs-4">Name</div>
+          <div className="col-sm-2 hidden-xs">Id</div>
+          <div className="col-sm-2 col-xs-8">Image</div>
+          <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
+          <div className="col-md-1 col-sm-2 hidden-xs">State</div>
+          <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
+          <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
         </div>
       </div>
     </div>
 
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
-        <h1 className="co-section-title">Container Vulnerabilities</h1>
-        <div className="row no-gutter">
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <div className="row co-m-table-grid__head">
-              <div className="col-sm-2 col-xs-4">CVE</div>
-              <div className="col-sm-1 hidden-xs">Severity</div>
-              <div className="col-md-1 col-sm-2 hidden-xs">Package</div>
-              <div className="col-md-2 col-sm-2 hidden-xs">Current Version</div>
-              <div className="col-md-2 col-sm-2 hidden-xs">Fixed In Version</div>
-              <div className="col-sm-2 col-xs-8">Image</div>
-              <div className="col-md-2 hidden-sm hidden-xs">Container</div>
-            </div>
-            <div className="co-m-table-grid__body">
-              { containerVulnRows }
-            </div>
-          </div>
+      <h1 className="co-section-title">Container Vulnerabilities</h1>
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-sm-2 col-xs-4">CVE</div>
+          <div className="col-sm-1 hidden-xs">Severity</div>
+          <div className="col-md-1 col-sm-2 hidden-xs">Package</div>
+          <div className="col-md-2 col-sm-2 hidden-xs">Current Version</div>
+          <div className="col-md-2 col-sm-2 hidden-xs">Fixed In Version</div>
+          <div className="col-sm-2 col-xs-8">Image</div>
+          <div className="col-md-2 hidden-sm hidden-xs">Container</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          { containerVulnRows }
         </div>
       </div>
     </div>
-  </div>;
+  </React.Fragment>;
 };
 
 export const PodVulnsDetailsPage = props => <DetailsPage

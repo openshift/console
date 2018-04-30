@@ -39,6 +39,9 @@
   .co-detail-table__row & {
     margin-bottom: 0;
   }
+  .co-m-pane__heading + & {
+    margin-bottom: 30px;
+  }
   dd {
     font-size: 14px;
   }

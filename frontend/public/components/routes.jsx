@@ -129,26 +129,22 @@ const TLSSettings = props => <span>
   }
 </span>;
 
-const RouteDetails = ({obj: route}) => <div className="col-md-12">
-  <div className="co-m-pane">
-    <div className="co-m-pane__body">
-      <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
-        <dt>Path</dt>
-        <dd>{route.spec.path || '-'}</dd>
-        <dt>{route.spec.to.kind || 'Routes To'}</dt>
-        <dd><ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} /></dd>
-        <dt>Target Port</dt>
-        <dd>{_.get(route, 'spec.port.targetPort') ? _.get(route, 'spec.port.targetPort') : <em>any</em>}</dd>
-      </ResourceSummary>
-    </div>
-    <Heading text="TLS Settings" />
-    <div className="co-m-pane__body">
-      <div className="col-md-6 col-xs-12">
-        <TLSSettings tls={route.spec.tls} />
-      </div>
-    </div>
+const RouteDetails = ({obj: route}) => <React.Fragment>
+  <div className="co-m-pane__body">
+    <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
+      <dt>Path</dt>
+      <dd>{route.spec.path || '-'}</dd>
+      <dt>{route.spec.to.kind || 'Routes To'}</dt>
+      <dd><ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} /></dd>
+      <dt>Target Port</dt>
+      <dd>{_.get(route, 'spec.port.targetPort') ? _.get(route, 'spec.port.targetPort') : <em>any</em>}</dd>
+    </ResourceSummary>
   </div>
-</div>;
+  <div className="co-m-pane__body">
+    <Heading text="TLS Settings" />
+    <TLSSettings tls={route.spec.tls} />
+  </div>
+</React.Fragment>;
 
 export const RoutesDetailsPage = props => <DetailsPage
   {...props}

@@ -58,43 +58,35 @@ const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
 
 const Details = ({obj: cronjob}) => {
   const job = cronjob.spec.jobTemplate;
-  return <div>
-    <div className="row no-gutter">
+  return <div className="co-m-pane__body">
+    <div className="row">
       <div className="col-md-6">
         <Heading text="CronJob Overview" />
-        <div className="co-m-pane__body-group">
-          <div className="co-m-pane__body-section--bordered">
-            <ResourceSummary resource={cronjob} showNodeSelector={false} showPodSelector={false} showAnnotations={false}>
-              <dt>Schedule</dt>
-              <dd>{cronjob.spec.schedule}</dd>
-              <dt>Concurrency Policy</dt>
-              <dd>{_.get(cronjob.spec, 'concurrencyPolicy', '-')}</dd>
-              <dt>Starting Deadline Seconds</dt>
-              <dd>{_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}</dd>
-            </ResourceSummary>
-          </div>
-        </div>
+        <ResourceSummary resource={cronjob} showNodeSelector={false} showPodSelector={false} showAnnotations={false}>
+          <dt>Schedule</dt>
+          <dd>{cronjob.spec.schedule}</dd>
+          <dt>Concurrency Policy</dt>
+          <dd>{_.get(cronjob.spec, 'concurrencyPolicy', '-')}</dd>
+          <dt>Starting Deadline Seconds</dt>
+          <dd>{_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}</dd>
+        </ResourceSummary>
       </div>
       <div className="col-md-6">
         <Heading text="Job Overview" />
-        <div className="co-m-pane__body-group">
-          <div className="co-m-pane__body-section--bordered">
-            <ResourceSummary resource={cronjob} showNodeSelector={false}>
-              <dt>Desired Completions</dt>
-              <dd>{job.spec.completions || '-'}</dd>
-              <dt>Parallelism</dt>
-              <dd>{job.spec.parallelism || '-'}</dd>
-              <dt>Deadline</dt>
-              <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
-              <dt>Status</dt>
-              <dd>{_.get(job, 'status.conditions[0].type', 'In Progress')}</dd>
-              <dt>Start Time</dt>
-              <dd><Timestamp timestamp={_.get(job, 'status.startTime')} /></dd>
-              <dt>Completion Time</dt>
-              <dd><Timestamp timestamp={_.get(job, 'status.completionTime')} /></dd>
-            </ResourceSummary>
-          </div>
-        </div>
+        <ResourceSummary resource={cronjob} showNodeSelector={false}>
+          <dt>Desired Completions</dt>
+          <dd>{job.spec.completions || '-'}</dd>
+          <dt>Parallelism</dt>
+          <dd>{job.spec.parallelism || '-'}</dd>
+          <dt>Deadline</dt>
+          <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
+          <dt>Status</dt>
+          <dd>{_.get(job, 'status.conditions[0].type', 'In Progress')}</dd>
+          <dt>Start Time</dt>
+          <dd><Timestamp timestamp={_.get(job, 'status.startTime')} /></dd>
+          <dt>Completion Time</dt>
+          <dd><Timestamp timestamp={_.get(job, 'status.completionTime')} /></dd>
+        </ResourceSummary>
       </div>
     </div>
   </div>;

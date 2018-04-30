@@ -152,45 +152,43 @@ const Details = ({obj: pod}) => {
     return sum + value;
   }, 0);
 
-  return <div>
+  return <React.Fragment>
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
-        <h1 className="co-section-title">Pod Overview</h1>
-        <div className="row">
-          <div className="col-md-4">
-            <Line title="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
-          </div>
-          <div className="col-md-4">
-            <Line title="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}'} * 1000`} />
-          </div>
-          <div className="col-md-4">
-            <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
-          </div>
+      <h1 className="co-section-title">Pod Overview</h1>
+      <div className="row">
+        <div className="col-md-4">
+          <Line title="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
         </div>
+        <div className="col-md-4">
+          <Line title="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}'} * 1000`} />
+        </div>
+        <div className="col-md-4">
+          <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
+        </div>
+      </div>
 
-        <br />
+      <br />
 
-        <div className="row no-gutter">
-          <div className="col-sm-8 col-xs-12">
-            <div className="row">
-              <div className="col-sm-6 col-xs-12">
-                <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
-                  <dt>Node Selector</dt>
-                  <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
-                </ResourceSummary>
-              </div>
-              <div className="col-sm-6 col-xs-12">
-                <dl className="co-m-pane__details">
-                  <dt>Status</dt>
-                  <dd>{podPhase(pod)}</dd>
-                  <dt>Pod IP</dt>
-                  <dd>{pod.status.podIP || '-'}</dd>
-                  <dt>Node</dt>
-                  <dd><NodeLink name={pod.spec.nodeName} /></dd>
-                  <dt>Restart Policy</dt>
-                  <dd>{getRestartPolicyLabel(pod)}</dd>
-                </dl>
-              </div>
+      <div className="row">
+        <div className="col-sm-8 col-xs-12">
+          <div className="row">
+            <div className="col-sm-6 col-xs-12">
+              <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
+                <dt>Node Selector</dt>
+                <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
+              </ResourceSummary>
+            </div>
+            <div className="col-sm-6 col-xs-12">
+              <dl className="co-m-pane__details">
+                <dt>Status</dt>
+                <dd>{podPhase(pod)}</dd>
+                <dt>Pod IP</dt>
+                <dd>{pod.status.podIP || '-'}</dd>
+                <dt>Node</dt>
+                <dd><NodeLink name={pod.spec.nodeName} /></dd>
+                <dt>Restart Policy</dt>
+                <dd>{getRestartPolicyLabel(pod)}</dd>
+              </dl>
             </div>
           </div>
         </div>
@@ -198,46 +196,42 @@ const Details = ({obj: pod}) => {
     </div>
 
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
-        <h1 className="co-section-title">Containers</h1>
-        <div className="row no-gutter">
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <div className="row co-m-table-grid__head">
-              <div className="col-sm-2 col-xs-4">Name</div>
-              <div className="col-sm-2 hidden-xs">Id</div>
-              <div className="col-sm-2 col-xs-8">Image</div>
-              <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
-              <div className="col-md-1 col-sm-2 hidden-xs">State</div>
-              <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
-              <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
-            </div>
-            <div className="co-m-table-grid__body">
-              {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
-            </div>
+      <h1 className="co-section-title">Containers</h1>
+      <div className="row">
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <div className="row co-m-table-grid__head">
+            <div className="col-sm-2 col-xs-4">Name</div>
+            <div className="col-sm-2 hidden-xs">Id</div>
+            <div className="col-sm-2 col-xs-8">Image</div>
+            <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
+            <div className="col-md-1 col-sm-2 hidden-xs">State</div>
+            <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
+            <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
+          </div>
+          <div className="co-m-table-grid__body">
+            {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
           </div>
         </div>
       </div>
     </div>
 
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
-        <h1 className="co-section-title">Pod Volumes</h1>
-        <div className="row no-gutter">
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <div className="row co-m-table-grid__head">
-              <div className="col-sm-3 col-xs-4">Name</div>
-              <div className="col-sm-3 col-xs-4">Type</div>
-              <div className="col-sm-3 hidden-xs">Permissions</div>
-              <div className="col-sm-3 col-xs-4">Utilized By</div>
-            </div>
-            <div className="co-m-table-grid__body">
-              {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
-            </div>
+      <h1 className="co-section-title">Pod Volumes</h1>
+      <div className="row">
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <div className="row co-m-table-grid__head">
+            <div className="col-sm-3 col-xs-4">Name</div>
+            <div className="col-sm-3 col-xs-4">Type</div>
+            <div className="col-sm-3 hidden-xs">Permissions</div>
+            <div className="col-sm-3 col-xs-4">Utilized By</div>
+          </div>
+          <div className="co-m-table-grid__body">
+            {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
           </div>
         </div>
       </div>
     </div>
-  </div>;
+  </React.Fragment>;
 };
 
 /** @type {React.SFC<any>} */

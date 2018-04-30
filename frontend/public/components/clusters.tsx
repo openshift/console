@@ -52,16 +52,12 @@ const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
   </div>;
 };
 
-const ClustersDetails: React.SFC<ClustersDetailsProps> = ({obj}) => <div className="col-md-12">
+const ClustersDetails: React.SFC<ClustersDetailsProps> = ({obj}) => <React.Fragment>
   <Heading text="Cluster Overview" />
   <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
-      </div>
-    </div>
+    <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
   </div>
-</div>;
+</React.Fragment>;
 
 const EmptyMsg = () => <MsgBox title="No Clusters in Directory" detail="Adding clusters to the directory allows administrators to change configuration across many clusters at once" />;
 export const ClustersList: React.SFC = props => <List {...props} Header={ClustersHeader} Row={ClustersRow} EmptyMsg={EmptyMsg} />;

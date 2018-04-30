@@ -46,16 +46,12 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
   </div>;
 };
 
-const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <div className="col-xs-12">
+const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <React.Fragment>
   <Heading text="StorageClass Overview" />
   <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
-      </div>
-    </div>
+    <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
   </div>
-</div>;
+</React.Fragment>;
 
 export const StorageClassList: React.SFC = props => <List {...props} Header={StorageClassHeader} Row={StorageClassRow} />;
 StorageClassList.displayName = 'StorageClassList';
@@ -89,4 +85,3 @@ export type StorageClassDetailsPageProps = {
   match: any,
 };
 /* eslint-enable no-undef */
-

@@ -58,37 +58,33 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
 
   return <div>
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-group">
-        <ResourceSummary resource={imageStream} showPodSelector={false} showNodeSelector={false}>
-          {imageRepository && <dt>Image Repository</dt>}
-          {imageRepository && <dd>{imageRepository}</dd>}
-        </ResourceSummary>
-      </div>
+      <ResourceSummary resource={imageStream} showPodSelector={false} showNodeSelector={false}>
+        {imageRepository && <dt>Image Repository</dt>}
+        {imageRepository && <dd>{imageRepository}</dd>}
+      </ResourceSummary>
     </div>
     <div className="co-m-pane__body">
-      <div className="co-m-pane__body-section--bordered">
-        <h1 className="co-section-title">Tags</h1>
-        {_.isEmpty(imageStream.status.tags)
-          ? <span className="text-muted">No tags</span>
-          : <div className="row no-gutter">
-            <div className="co-m-table-grid co-m-table-grid--bordered">
-              <div className="row co-m-table-grid__head">
-                <div className="col-md-2 col-sm-4 col-xs-4">Name</div>
-                <div className="col-md-3 col-sm-4 col-xs-8">From</div>
-                <div className="col-md-4 col-sm-4 hidden-xs">Identifier</div>
-                <div className="col-md-3 hidden-sm hidden-xs">Last Updated</div>
-              </div>
-              <div className="co-m-table-grid__body">
-                {_.map(imageStream.status.tags, (statusTag) =>
-                  <ImageStreamTagsRow
-                    key={statusTag.tag}
-                    imageStream={imageStream}
-                    specTag={specTagByName[statusTag.tag]}
-                    statusTag={statusTag} />)}
-              </div>
+      <h1 className="co-section-title">Tags</h1>
+      {_.isEmpty(imageStream.status.tags)
+        ? <span className="text-muted">No tags</span>
+        : <div className="row">
+          <div className="co-m-table-grid co-m-table-grid--bordered">
+            <div className="row co-m-table-grid__head">
+              <div className="col-md-2 col-sm-4 col-xs-4">Name</div>
+              <div className="col-md-3 col-sm-4 col-xs-8">From</div>
+              <div className="col-md-4 col-sm-4 hidden-xs">Identifier</div>
+              <div className="col-md-3 hidden-sm hidden-xs">Last Updated</div>
             </div>
-          </div>}
-      </div>
+            <div className="co-m-table-grid__body">
+              {_.map(imageStream.status.tags, (statusTag) =>
+                <ImageStreamTagsRow
+                  key={statusTag.tag}
+                  imageStream={imageStream}
+                  specTag={specTagByName[statusTag.tag]}
+                  statusTag={statusTag} />)}
+            </div>
+          </div>
+        </div>}
     </div>
   </div>;
 };

@@ -117,33 +117,22 @@ const RulesRows = (props) => {
   return <EmptyBox label="Rule" />;
 };
 
-const Details = ({obj: ingress}) => <div className="col-md-12">
-  <div className="co-m-pane">
-    <div className="co-m-pane__body">
-      <ResourceSummary resource={ingress} showPodSelector={false} showNodeSelector={false}>
-        <dt>Tls Certificate</dt>
-        <dd>{getTLSCert(ingress)}</dd>
-      </ResourceSummary>
-    </div>
-
+const Details = ({obj: ingress}) => <React.Fragment>
+  <div className="co-m-pane__body">
+    <ResourceSummary resource={ingress} showPodSelector={false} showNodeSelector={false}>
+      <dt>Tls Certificate</dt>
+      <dd>{getTLSCert(ingress)}</dd>
+    </ResourceSummary>
+  </div>
+  <div className="co-m-pane__body">
     <Heading text="Ingress Rules" />
-    <div className="co-m-pane__body">
-      <div className="row co-m-form-row">
-        <div className="col-md-12">
-          These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated.
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-12">
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <RulesHeader />
-            <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
-          </div>
-        </div>
-      </div>
+    <p>These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated.</p>
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <RulesHeader />
+      <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
     </div>
   </div>
-</div>;
+</React.Fragment>;
 
 const IngressesDetailsPage = props => <DetailsPage
   {...props}

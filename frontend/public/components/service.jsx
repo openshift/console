@@ -111,33 +111,27 @@ const ServicePortMapping = ({s}) => <div>
   </div>
 </div>;
 
-const Details = ({obj: s}) => <div className="row no-gutter">
-  <div className="col-sm-6">
-    <Heading text="Service Overview" />
-    <div className="co-m-pane__body-group">
-      <div className="co-m-pane__body-section--bordered">
-        <ResourceSummary resource={s} showNodeSelector={false}>
-          <dt>Session Affinity</dt>
-          <dd>{s.spec.sessionAffinity || '-'}</dd>
-        </ResourceSummary>
-      </div>
+const Details = ({obj: s}) => <div className="co-m-pane__body">
+  <div className="row">
+    <div className="col-sm-6">
+      <Heading text="Service Overview" />
+      <ResourceSummary resource={s} showNodeSelector={false}>
+        <dt>Session Affinity</dt>
+        <dd>{s.spec.sessionAffinity || '-'}</dd>
+      </ResourceSummary>
     </div>
-  </div>
-  <div className="col-sm-6">
-    <Heading text="Service Routing" />
-    <div className="co-m-pane__body-group">
-      <div className="co-m-pane__body-section--bordered">
-        <dl>
-          <dt>Service Address</dt>
-          <dd className="service-ips">
-            <ServiceAddress s={s} />
-          </dd>
-          <dt>Service Port Mapping</dt>
-          <dd className="service-ips">
-            <ServicePortMapping s={s} />
-          </dd>
-        </dl>
-      </div>
+    <div className="col-sm-6">
+      <Heading text="Service Routing" />
+      <dl>
+        <dt>Service Address</dt>
+        <dd className="service-ips">
+          <ServiceAddress s={s} />
+        </dd>
+        <dt>Service Port Mapping</dt>
+        <dd className="service-ips">
+          <ServicePortMapping s={s} />
+        </dd>
+      </dl>
     </div>
   </div>
 </div>;
