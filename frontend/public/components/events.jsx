@@ -14,8 +14,8 @@ import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, 
 import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
 
-const maxMessages = 15000;
-const flushInterval = 1000;
+const maxMessages = 500;
+const flushInterval = 500;
 
 // Predicate function to filter by event "category" (info, error, or all)
 const categoryFilter = (category, {reason}) => {
@@ -41,14 +41,6 @@ class SysEvent extends React.Component {
       return false;
     }
     return true;
-  }
-
-  componentDidMount () {
-    this.props.measure && this.props.measure();
-  }
-
-  componentDidUpdate () {
-    this.props.measure && this.props.measure();
   }
 
   render () {
@@ -121,44 +113,25 @@ export class EventStreamPage extends React.Component {
   }
 }
 
-// const cache = new CellMeasurerCache({
-//   defaultHeight: 135,
-//   fixedWidth: true
-// });
-
-let filteredMessages;
-const rowRenderer = ({key, index, style}) => {
-  const event = filteredMessages[index];
-  /* TODO keyMapper */
-  // return <CellMeasurer
-  //   cache={cache}
-  //   columnIndex={0}
-  //   key={key}
-  //   parent={parent}
-  //   rowIndex={index}
-  // >
-  //   {({ measure }) => <div style={{marginBottom: 20}}><SysEvent {...event} key={key} style={style} measure={measure} /></div>}
-  // </CellMeasurer>;
-  return <SysEvent {...event} key={key} style={style} />;
-};
-
 class EventStream extends SafetyFirst {
   constructor (props) {
     super(props);
     this.messages = {};
-    this.flushMessages = _.throttle(this.flushMessages, flushInterval);
     this.state = {
       active: true,
       sortedMessages: [],
+      filteredMessages: [],
       error: null,
       loading: true,
       oldestTimestamp: new Date(),
     };
-    this.boundToggleStream = this.toggleStream.bind(this);
-  }
+    this.toggleStream = this.toggleStream_.bind(this);
+    this.rowRenderer = function rowRenderer ({key, index, style}) {
+      const event = this.state.filteredMessages[index];
+      /* TODO keyMapper */
+      return <SysEvent {...event} key={key} style={style} />;
+    }.bind(this);
 
-  componentDidMount() {
-    super.componentDidMount();
     this.wsInit(this.props.namespace);
   }
 
@@ -203,16 +176,16 @@ class EventStream extends SafetyFirst {
         this.flushMessages();
       })
       .onopen(() => {
-        this.setState({error: false, loading: false, sortedMessages: []});
+        this.setState({error: false, loading: false, sortedMessages: [], filteredMessages: []});
       })
       .onclose(evt => {
         if (evt && evt.wasClean === false) {
           this.setState({error: evt.reason || 'WebSocket closed uncleanly.'});
         }
-        this.setState({sortedMessages: []});
+        this.setState({sortedMessages: [], filteredMessages: []});
       })
       .onerror(() => {
-        this.setState({error: true, sortedMessages: []});
+        this.setState({error: true, sortedMessages: [], filteredMessages: []});
       });
   }
 
@@ -221,34 +194,7 @@ class EventStream extends SafetyFirst {
     this.ws.destroy();
   }
 
-  componentWillReceiveProps (nextProps) {
-    // If the namespace has changed, created a new WebSocket with the new namespace
-    if (this.props.namespace !== nextProps.namespace) {
-      this.ws.destroy();
-      this.wsInit(nextProps.namespace);
-    }
-  }
-
-  // Messages can come in extremely fast when the buffer flushes.
-  // Instead of calling setState() on every single message, let onmessage()
-  // update an instance variable, and throttle the actual UI update (see constructor)
-  flushMessages () {
-    if (!_.isEmpty(this.messages)) {
-      // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
-      // the same timestamp
-      const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
-      const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
-      sorted.splice(maxMessages);
-      this.setState({sortedMessages: sorted, oldestTimestamp});
-
-      // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
-      this.messages = _.keyBy(sorted, 'metadata.uid');
-    }
-  }
-
-  filterMessages () {
-    const {kind, category, filter} = this.props;
-
+  static filterMessages (messages, {kind, category, filter}) {
     const f = (obj) => {
       if (category && !categoryFilter(category, obj)) {
         return false;
@@ -262,10 +208,56 @@ class EventStream extends SafetyFirst {
       return true;
     };
 
-    return _.filter(this.state.sortedMessages, f);
+    return _.filter(messages, f);
   }
 
-  toggleStream () {
+  static getDerivedStateFromProps (nextProps, prevState) {
+    const {filter, kind, category} = prevState;
+
+    if (_.isEqual(filter, nextProps.filter) && kind === nextProps.kind && category === nextProps.category) {
+      return {};
+    }
+
+    return {
+      // update the filteredMessages
+      filteredMessages: EventStream.filterMessages(prevState.sortedMessages, nextProps),
+      // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
+      kind: nextProps.kind,
+      category: nextProps.category,
+      filter: nextProps.filter,
+    };
+  }
+
+  componentDidUpdate (prevProps) {
+    // If the namespace has changed, created a new WebSocket with the new namespace
+    if (prevProps.namespace !== this.props.namespace) {
+      this.ws && this.ws.destroy();
+      this.wsInit(this.props.namespace);
+    }
+  }
+
+  // Messages can come in extremely fast when the buffer flushes.
+  // Instead of calling setState() on every single message, let onmessage()
+  // update an instance variable, and throttle the actual UI update (see constructor)
+  flushMessages () {
+    if (!_.isEmpty(this.messages)) {
+      // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
+      // the same timestamp
+      const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
+      const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
+      sorted.splice(maxMessages);
+      this.setState({
+        oldestTimestamp,
+        sortedMessages: sorted,
+        filteredMessages: EventStream.filterMessages(sorted, this.props),
+      });
+
+      // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
+      this.messages = _.keyBy(sorted, 'metadata.uid');
+    }
+  }
+
+  toggleStream_ () {
     this.setState({active: !this.state.active}, () => {
       if (this.state.active) {
         this.ws.unpause();
@@ -276,8 +268,7 @@ class EventStream extends SafetyFirst {
   }
 
   render () {
-    const {active, error, loading, sortedMessages} = this.state;
-    filteredMessages = this.filterMessages();
+    const {active, error, loading, filteredMessages, sortedMessages} = this.state;
     const count = filteredMessages.length;
     const allCount = sortedMessages.length;
     let sysEventStatus;
@@ -334,7 +325,7 @@ class EventStream extends SafetyFirst {
             </div>
 
             <div className={klass}>
-              <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
+              <TogglePlay active={active} onClick={this.toggleStream} className="co-sysevent-stream__timeline__btn" />
               <div className="co-sysevent-stream__timeline__btn-text">
                 {statusBtnTxt}
               </div>
@@ -344,25 +335,17 @@ class EventStream extends SafetyFirst {
             </div>
             <WindowScroller>
               {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-                <AutoSizer disableHeight
-                  onResize={({ width }) => {
-                    if (width !== this._mostRecentWidth) {
-                      // cache.clearAll();
-                      // this._resetMeasurementForRow && this._resetMeasurementForRow();
-                      this.virtualList && this.virtualList.recomputeRowHeights();
-                    }
-                  }}>
+                <AutoSizer disableHeight>
                   {({width}) => {
                     this._mostRecentWidth = width;
                     return <div ref={registerChild}>
                       <VirtualList
-                        ref={(ref) => this.virtualList = ref}
                         data={filteredMessages}
                         autoHeight
                         height={height}
                         isScrolling={isScrolling}
                         onScroll={onChildScroll}
-                        rowRenderer={rowRenderer}
+                        rowRenderer={this.rowRenderer}
                         scrollTop={scrollTop}
                         width={width}
                         rowCount={count}
