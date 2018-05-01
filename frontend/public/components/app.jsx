@@ -122,76 +122,72 @@ class App extends React.PureComponent {
   }
 
   render () {
-    return <div className="co-container">
+    return <div id="reflex">
       <Helmet titleTemplate="%s · Tectonic" />
-
       <GlobalNotifications />
-      <OpenShiftMasthead />
+      <Nav />
+      <div id="content">
+        <OpenShiftMasthead />
+        <Route path={namespacedRoutes} component={NamespaceSelector} />
+        <Switch>
+          <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
+          <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
+          <Route path="/overview/ns/:ns" exact component={ClusterOverviewContainer} />
+          <Route path="/cluster-health" exact component={ClusterHealth} />
+          <Route path="/start-guide" exact component={StartGuidePage} />
 
-      <div id="reflex">
-        <Nav />
-        <div id="content">
-          <Route path={namespacedRoutes} component={NamespaceSelector} />
-          <Switch>
-            <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
-            <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
-            <Route path="/overview/ns/:ns" exact component={ClusterOverviewContainer} />
-            <Route path="/cluster-health" exact component={ClusterHealth} />
-            <Route path="/start-guide" exact component={StartGuidePage} />
+          <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}`} exact render={() => <Redirect to={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
+          <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}`} exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
+          <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
+          <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
+          <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={CreateSubscriptionYAML} />
+          <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={NamespaceFromURL(CreateSubscriptionYAML)} />
 
-            <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}`} exact render={() => <Redirect to={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
-            <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}`} exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
-            <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
-            <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
-            <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={CreateSubscriptionYAML} />
-            <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={NamespaceFromURL(CreateSubscriptionYAML)} />
+          <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
+          <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact component={NamespaceFromURL(CreateCRDYAML)} />
+          <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
 
-            <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
-            <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact component={NamespaceFromURL(CreateCRDYAML)} />
-            <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
+          <Route path="/k8s/all-namespaces/events" exact component={NamespaceFromURL(EventStreamPage)} />
+          <Route path="/k8s/ns/:ns/events" exact component={NamespaceFromURL(EventStreamPage)} />
+          <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
+          <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
+          <Route path="/search" exact component={ActiveNamespaceRedirect} />
 
-            <Route path="/k8s/all-namespaces/events" exact component={NamespaceFromURL(EventStreamPage)} />
-            <Route path="/k8s/ns/:ns/events" exact component={NamespaceFromURL(EventStreamPage)} />
-            <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
-            <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
-            <Route path="/search" exact component={ActiveNamespaceRedirect} />
+          <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
+          <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
+          <Route path="/k8s/cluster/clusterroles/:name" component={props => <ResourceDetailsPage {...props} plural="clusterroles" />} />
 
-            <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
-            <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
-            <Route path="/k8s/cluster/clusterroles/:name" component={props => <ResourceDetailsPage {...props} plural="clusterroles" />} />
+          <Route path="/k8s/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
+          <Route path="/k8s/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
+          <Route path="/k8s/ns/:ns/roles" exact component={rolesListPage} />
 
-            <Route path="/k8s/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
-            <Route path="/k8s/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
-            <Route path="/k8s/ns/:ns/roles" exact component={rolesListPage} />
+          <Route path="/k8s/cluster/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
+          <Route path="/k8s/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
+          <Route path="/k8s/ns/:ns/rolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="RoleBinding" />} />
+          <Route path="/k8s/ns/:ns/rolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="RoleBinding" />} />
+          <Route path="/k8s/cluster/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
+          <Route path="/k8s/cluster/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
 
-            <Route path="/k8s/cluster/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/k8s/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/k8s/ns/:ns/rolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/k8s/ns/:ns/rolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="RoleBinding" />} />
-            <Route path="/k8s/cluster/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
-            <Route path="/k8s/cluster/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
+          <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
+          <Route path="/k8s/cluster/:plural/new" exact component={CreateYAML} />
+          <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
+          <Route path="/k8s/ns/:ns/pods/:podName/containers/:name" component={ContainersDetailsPage} />
+          <Route path="/k8s/ns/:ns/:plural/new" exact component={NamespaceFromURL(CreateYAML)} />
+          <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
+          <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
 
-            <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
-            <Route path="/k8s/cluster/:plural/new" exact component={CreateYAML} />
-            <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
-            <Route path="/k8s/ns/:ns/pods/:podName/containers/:name" component={ContainersDetailsPage} />
-            <Route path="/k8s/ns/:ns/:plural/new" exact component={NamespaceFromURL(CreateYAML)} />
-            <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
-            <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
+          <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
+          <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
 
-            <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
-            <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
+          <Route path="/settings/profile" exact component={ProfilePage} />
+          <Route path="/settings/ldap" exact component={LDAPPage} />
+          <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
 
-            <Route path="/settings/profile" exact component={ProfilePage} />
-            <Route path="/settings/ldap" exact component={LDAPPage} />
-            <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
+          <Route path="/error" exact component={ErrorPage} />
+          <Route path="/" exact component={NamespaceRedirect} />
 
-            <Route path="/error" exact component={ErrorPage} />
-            <Route path="/" exact component={NamespaceRedirect} />
-
-            <Route component={ErrorPage404} />
-          </Switch>
-        </div>
+          <Route component={ErrorPage404} />
+        </Switch>
       </div>
     </div>;
   }

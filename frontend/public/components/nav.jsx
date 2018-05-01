@@ -6,10 +6,11 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { FLAGS, featureReducerName } from '../features';
-import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
+import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
+import { OpenShiftLogo } from './openshift-masthead';
 
 import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
@@ -236,76 +237,146 @@ const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
 
-const navStateToProps = state => ({
-  sidebarOpen: state.UI.get('sidebarOpen'),
-});
+const preventBodyScroll = e => {
+  const elem = document.getElementById('sidescroll');
 
-const navDispatchToProps = dispatch => ({
-  closeSidebar: () => dispatch(UIActions.setSidebarOpen(false)),
-});
+  const scrollTop = elem.scrollTop;
+  const scrollHeight = elem.scrollHeight;
+  const height = elem.offsetHeight; // probably incorrect
+  const delta = e.deltaY;
 
-export const Nav = connect(navStateToProps, navDispatchToProps)(({sidebarOpen, closeSidebar}) =>
-  <div id="sidebar" className={sidebarOpen ? 'open' : ''}>
-    <div className="navigation-container__section navigation-container__section--cluster-picker">
-      <ClusterPicker />
-    </div>
-    <div className="navigation-container">
-      <NavSection text="Overview" icon="fa-tachometer" href="/" activePath="/overview/" onClick={closeSidebar} />
-      <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
-        <ResourceNSLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={closeSidebar} />
-        <Sep />
-        <ResourceNSLink resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={closeSidebar} />
-        <ResourceNSLink resource={SubscriptionModel.plural} name="Subscriptions" onClick={closeSidebar} />
-        <ResourceNSLink resource={InstallPlanModel.plural} name="Install Plans" onClick={closeSidebar} />
-      </NavSection>
+  function prevent () {
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  }
 
-      <NavSection text="Workloads" icon="fa-folder-open-o">
-        <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={closeSidebar} />
-        <ResourceNSLink resource="deployments" name="Deployments" onClick={closeSidebar} />
-        <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
-        <ResourceNSLink resource="replicasets" name="Replica Sets" onClick={closeSidebar} />
-        <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" onClick={closeSidebar} />
-        <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={closeSidebar} />
-        <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={closeSidebar} />
-        <Sep />
-        <ResourceNSLink resource="jobs" name="Jobs" onClick={closeSidebar} />
-        <ResourceNSLink resource="cronjobs" name="Cron Jobs" onClick={closeSidebar} />
-        <ResourceNSLink resource="pods" name="Pods" onClick={closeSidebar} />
-        <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
-        <ResourceNSLink resource="builds" name={BuildModel.labelPlural} onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
-        <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={closeSidebar} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
-        <ResourceNSLink resource="configmaps" name="Config Maps" onClick={closeSidebar} />
-        <ResourceNSLink resource="secrets" name="Secrets" onClick={closeSidebar} />
-        <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={closeSidebar} />
-      </NavSection>
+  if (delta > 0 && delta + scrollTop + height >= scrollHeight) {
+    // At bottom. Prevent downscroll on body
+    return prevent();
+  }
 
-      <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
-        <ResourceNSLink resource="ingresses" name="Ingress" onClick={closeSidebar} />
-        <ResourceNSLink resource="routes" name="Routes" onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
-        <ResourceNSLink resource="networkpolicies" name="Network Policies" onClick={closeSidebar} required={FLAGS.CALICO} />
-        <ResourceNSLink resource="services" name="Services" onClick={closeSidebar} />
-      </NavSection>
+  if (delta < 0 && scrollTop + delta <= 0) {
+    // At top. Prevent upscroll on body
+    return prevent();
+  }
+};
 
-      <NavSection text="Troubleshooting" icon="fa-life-ring">
-        <HrefLink href="/search" name="Search" onClick={closeSidebar} startsWith={searchStartsWith} />
-        <ResourceNSLink resource="events" name="Events" onClick={closeSidebar} />
-        <HrefLink href="/prometheus" target="_blank" name="Prometheus" onClick={closeSidebar} required={FLAGS.PROMETHEUS} />
-        <HrefLink href="/alertmanager" target="_blank" name="Prometheus Alerts" onClick={closeSidebar} required={FLAGS.PROMETHEUS} />
-      </NavSection>
+export class Nav extends React.Component {
+  constructor (props) {
+    super(props);
+    const bigScreen = window.matchMedia('(min-width: 768px)');
+    this.state = {
+      isOpen: !!bigScreen.matches,
+    };
+    this.close = () => this.close_();
+    this.toggle = () => this.toggle_();
+  }
 
-      <NavSection text="Administration" icon="fa-cog">
-        <ResourceClusterLink resource="projects" name="Projects" onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
-        <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={closeSidebar} required={FLAGS.CAN_LIST_NS} />
-        <ResourceClusterLink resource="nodes" name="Nodes" onClick={closeSidebar} />
-        <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={closeSidebar} />
-        <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={closeSidebar} startsWith={clusterSettingsStartsWith} />
-        <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={closeSidebar} />
-        <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={closeSidebar} />
-        <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={closeSidebar} />
-        <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={closeSidebar} startsWith={rolebindingsStartsWith} />
-        <ResourceNSLink resource="podvulns" name="Security Report" onClick={closeSidebar} required={FLAGS.SECURITY_LABELLER} />
-        <ResourceNSLink resource="Report:chargeback.coreos.com:v1alpha1" name="Chargeback" onClick={closeSidebar} />
-        <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={closeSidebar} />
-      </NavSection>
-    </div>
-  </div>);
+  close_ () {
+    const bigScreen = window.matchMedia('(min-width: 768px)');
+    if (bigScreen.matches) {
+      return;
+    }
+    this.setState({isOpen: false});
+    const content = document.getElementById('content');
+    content.style.marginLeft = 0;
+  }
+
+  toggle_ () {
+    const { isOpen } = this.state;
+    this.setState({isOpen: !isOpen});
+    const bigScreen = window.matchMedia('(min-width: 768px)');
+    if (!bigScreen.matches) {
+      return;
+    }
+    const content = document.getElementById('content');
+    content.style.marginLeft = isOpen ? 0 : '220px';
+  }
+
+  render () {
+    const { isOpen } = this.state;
+
+    const header = <div className="sidebar__header">
+      <button type="button" className="sidebar__toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={this.toggle}>
+        <span className="sr-only">Toggle navigation</span>
+        <span className="icon-bar" aria-hidden="true"></span>
+        <span className="icon-bar" aria-hidden="true"></span>
+        <span className="icon-bar" aria-hidden="true"></span>
+      </button>
+      <OpenShiftLogo />
+    </div>;
+
+    if (!isOpen) {
+      return <div id="sidebar" className={classNames({'open': isOpen})}>
+        { header }
+      </div>;
+    }
+
+    return <div id="sidebar" className={classNames({'open': isOpen})}>
+      { header }
+      <div className="navigation-container__section navigation-container__section--cluster-picker">
+        <ClusterPicker />
+      </div>
+      <div id="sidescroll" className="navigation-container" onWheel={preventBodyScroll}>
+        <NavSection text="Overview" icon="fa-tachometer" href="/" activePath="/overview/" onClick={this.close} />
+        <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
+          <ResourceNSLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
+          <Sep />
+          <ResourceNSLink resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={this.close} />
+          <ResourceNSLink resource={SubscriptionModel.plural} name="Subscriptions" onClick={this.close} />
+          <ResourceNSLink resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
+        </NavSection>
+
+        <NavSection text="Workloads" icon="fa-folder-open-o">
+          <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={this.close} />
+          <ResourceNSLink resource="deployments" name="Deployments" onClick={this.close} />
+          <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
+          <ResourceNSLink resource="replicasets" name="Replica Sets" onClick={this.close} />
+          <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" onClick={this.close} />
+          <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={this.close} />
+          <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={this.close} />
+          <Sep />
+          <ResourceNSLink resource="jobs" name="Jobs" onClick={this.close} />
+          <ResourceNSLink resource="cronjobs" name="Cron Jobs" onClick={this.close} />
+          <ResourceNSLink resource="pods" name="Pods" onClick={this.close} />
+          <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
+          <ResourceNSLink resource="builds" name={BuildModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
+          <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
+          <ResourceNSLink resource="configmaps" name="Config Maps" onClick={this.close} />
+          <ResourceNSLink resource="secrets" name="Secrets" onClick={this.close} />
+          <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} />
+        </NavSection>
+
+        <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
+          <ResourceNSLink resource="ingresses" name="Ingress" onClick={this.close} />
+          <ResourceNSLink resource="routes" name="Routes" onClick={this.close} required={FLAGS.OPENSHIFT} />
+          <ResourceNSLink resource="networkpolicies" name="Network Policies" onClick={this.close} required={FLAGS.CALICO} />
+          <ResourceNSLink resource="services" name="Services" onClick={this.close} />
+        </NavSection>
+
+        <NavSection text="Troubleshooting" icon="fa-life-ring">
+          <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
+          <ResourceNSLink resource="events" name="Events" onClick={this.close} />
+          <HrefLink href="/prometheus" target="_blank" name="Prometheus" onClick={this.close} required={FLAGS.PROMETHEUS} />
+          <HrefLink href="/alertmanager" target="_blank" name="Prometheus Alerts" onClick={this.close} required={FLAGS.PROMETHEUS} />
+        </NavSection>
+
+        <NavSection text="Administration" icon="fa-cog">
+          <ResourceClusterLink resource="projects" name="Projects" onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
+          <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
+          <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} />
+          <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} />
+          <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} />
+          <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
+          <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} />
+          <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
+          <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="podvulns" name="Security Report" onClick={this.close} required={FLAGS.SECURITY_LABELLER} />
+          <ResourceNSLink resource="Report:chargeback.coreos.com:v1alpha1" name="Chargeback" onClick={this.close} />
+          <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} />
+        </NavSection>
+      </div>
+    </div>;
+  }
+}
