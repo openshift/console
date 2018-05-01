@@ -82,6 +82,10 @@
   version "6.0.102"
   resolved "http://registry.npmjs.org/@types/node/-/node-6.0.102.tgz#a6cf3b9843286b63eb362a8522bc382d96fe68d1"
 
+"@types/prop-types@*":
+  version "15.5.2"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.2.tgz#3c6b8dceb2906cc87fe4358e809f9d20c8d59be1"
+
 "@types/q@^0.0.32":
   version "0.0.32"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-0.0.32.tgz#bd284e57c84f1325da702babfc82a5328190c0c5"
@@ -125,6 +129,13 @@
   version "2.0.8"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-2.0.8.tgz#1ea86f6d8288e4bba8d743317ba9cc61cdacc1ad"
   dependencies:
+    "@types/react" "*"
+
+"@types/react-virtualized@9.x":
+  version "9.18.3"
+  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.18.3.tgz#777b3c28bd2b972d0a402f2f9d11bacef550be1c"
+  dependencies:
+    "@types/prop-types" "*"
     "@types/react" "*"
 
 "@types/react@*", "@types/react@16.x":

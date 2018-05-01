@@ -96,6 +96,7 @@
     "@types/react": "16.x",
     "@types/react-dom": "16.x",
     "@types/react-helmet": "5.x",
+    "@types/react-virtualized": "9.x",
     "@types/react-redux": "5.x",
     "@types/react-router-dom": "4.x",
     "@types/react-transition-group": "2.x",
