@@ -76,6 +76,7 @@
     "react-router-dom": "4.x",
     "react-tagsinput": "3.19.x",
     "react-transition-group": "2.3.x",
+    "react-virtualized": "9.x",
     "redux": "3.x",
     "redux-form": "7.x",
     "redux-thunk": "2.x",
