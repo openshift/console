@@ -1,10 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+// import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
+import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualized';
 
 import { namespaceProptype } from '../propTypes';
 import { k8sKinds, watchURL } from '../module/k8s';
@@ -13,8 +14,8 @@ import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, 
 import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
 
-const maxMessages = 500;
-const flushInterval = 500;
+const maxMessages = 15000;
+const flushInterval = 1000;
 
 // Predicate function to filter by event "category" (info, error, or all)
 const categoryFilter = (category, {reason}) => {
@@ -30,14 +31,39 @@ const kindFilter = (kind, {involvedObject}) => {
   return kind === 'all' || involvedObject.kind === kind;
 };
 
-class SysEvent extends React.PureComponent {
-  render() {
+class SysEvent extends React.Component {
+  shouldComponentUpdate (nextProps) {
+    if (this.props.lastTimestamp !== nextProps.lastTimestamp) {
+      // Timestamps can be modified because events can be combined.
+      return true;
+    }
+    if (_.isEqual(this.props.style, nextProps.style)) {
+      return false;
+    }
+    return true;
+  }
+
+  componentDidMount () {
+    this.props.measure && this.props.measure();
+  }
+
+  componentDidUpdate () {
+    this.props.measure && this.props.measure();
+  }
+
+  render () {
+    const { style, reason, message, source, lastTimestamp, involvedObject: obj} = this.props;
     const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
-    const obj = this.props.involvedObject;
-    const tooltipMsg = `${this.props.reason} (${obj.kind.toLowerCase()})`;
+    const tooltipMsg = `${reason} (${obj.kind.toLowerCase()})`;
+
+    // TODO: (kans)
+    const s = Object.assign({}, style);
+    delete s.width;
+    s.right = 0;
+    s.height = s.height - 20;
 
     return (
-      <div className={klass}>
+      <div className={klass} style={s}>
         <div className="co-sysevent__icon-box">
           <i className="co-sysevent-icon" title={tooltipMsg} />
           <div className="co-sysevent__icon-line"></div>
@@ -49,14 +75,14 @@ class SysEvent extends React.PureComponent {
             name={obj.name}
             title={obj.uid}
           />
-          <div className="co-sysevent__main-message">{this.props.message}</div>
+          <div className="co-sysevent__main-message">{message}</div>
         </div>
         <div className="co-sysevent__meta-box">
-          <div><Timestamp timestamp={this.props.lastTimestamp} /></div>
+          <div><Timestamp timestamp={lastTimestamp} /></div>
           <small className="co-sysevent__meta-source">
-            Generated from <span>{this.props.source.component}</span>
-            {this.props.source.component === 'kubelet' &&
-              <span> on <Link to={`/k8s/cluster/nodes/${this.props.source.host}`}>{this.props.source.host}</Link></span>
+            Generated from <span>{source.component}</span>
+            {source.component === 'kubelet' &&
+              <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
             }
           </small>
         </div>
@@ -94,6 +120,27 @@ export class EventStreamPage extends React.Component {
     </React.Fragment>;
   }
 }
+
+// const cache = new CellMeasurerCache({
+//   defaultHeight: 135,
+//   fixedWidth: true
+// });
+
+let filteredMessages;
+const rowRenderer = ({key, index, style}) => {
+  const event = filteredMessages[index];
+  /* TODO keyMapper */
+  // return <CellMeasurer
+  //   cache={cache}
+  //   columnIndex={0}
+  //   key={key}
+  //   parent={parent}
+  //   rowIndex={index}
+  // >
+  //   {({ measure }) => <div style={{marginBottom: 20}}><SysEvent {...event} key={key} style={style} measure={measure} /></div>}
+  // </CellMeasurer>;
+  return <SysEvent {...event} key={key} style={style} />;
+};
 
 class EventStream extends SafetyFirst {
   constructor (props) {
@@ -187,8 +234,8 @@ class EventStream extends SafetyFirst {
   // update an instance variable, and throttle the actual UI update (see constructor)
   flushMessages () {
     if (!_.isEmpty(this.messages)) {
-    // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
-    // the same timestamp
+      // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
+      // the same timestamp
       const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
       const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
       sorted.splice(maxMessages);
@@ -230,7 +277,7 @@ class EventStream extends SafetyFirst {
 
   render () {
     const {active, error, loading, sortedMessages} = this.state;
-    const filteredMessages = this.filterMessages();
+    filteredMessages = this.filterMessages();
     const count = filteredMessages.length;
     const allCount = sortedMessages.length;
     let sysEventStatus;
@@ -279,29 +326,59 @@ class EventStream extends SafetyFirst {
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
     return <div className="co-m-pane__body">
-      <div className="co-sysevent-stream">
-        <div className="co-sysevent-stream__status">
-          <div>
-            {statusBtnTxt}
-          </div>
-          <div className="text-muted">
-            { messageCount }
+      <div className="row">
+        <div className="col-xs-12">
+          <div className="co-sysevent-stream">
+            <div className="co-sysevent-stream__totals text-muted">
+              { messageCount }
+            </div>
+
+            <div className={klass}>
+              <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
+              <div className="co-sysevent-stream__timeline__btn-text">
+                {statusBtnTxt}
+              </div>
+              <div className="co-sysevent-stream__timeline__end-message">
+              There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+              </div>
+            </div>
+            <WindowScroller>
+              {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+                <AutoSizer disableHeight
+                  onResize={({ width }) => {
+                    if (width !== this._mostRecentWidth) {
+                      // cache.clearAll();
+                      // this._resetMeasurementForRow && this._resetMeasurementForRow();
+                      this.virtualList && this.virtualList.recomputeRowHeights();
+                    }
+                  }}>
+                  {({width}) => {
+                    this._mostRecentWidth = width;
+                    return <div ref={registerChild}>
+                      <VirtualList
+                        ref={(ref) => this.virtualList = ref}
+                        data={filteredMessages}
+                        autoHeight
+                        height={height}
+                        isScrolling={isScrolling}
+                        onScroll={onChildScroll}
+                        rowRenderer={rowRenderer}
+                        scrollTop={scrollTop}
+                        width={width}
+                        rowCount={count}
+                        // TODO: set rowHeight based on media query
+                        // @media screen and (min-width: 768px)...
+                        rowHeight={135}
+                      />
+                    </div>;
+                  }
+                  }
+                </AutoSizer>
+              }
+            </WindowScroller>
+            { sysEventStatus }
           </div>
         </div>
-        <div className={klass}>
-          <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
-          <div className="co-sysevent-stream__timeline__end-message">
-          There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
-          </div>
-        </div>
-
-        <TransitionGroup>
-          { filteredMessages.map((m, i) => <CSSTransition key={i} classNames="slide" exit={false} timeout={{enter: 250}}>
-            <SysEvent {...m} key={m.metadata.uid} />
-          </CSSTransition>)}
-        </TransitionGroup>
-
-        { sysEventStatus }
       </div>
     </div>;
   }
