@@ -237,40 +237,38 @@ const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
 
-const preventBodyScroll = e => {
-  const elem = document.getElementById('sidescroll');
-
-  const scrollTop = elem.scrollTop;
-  const scrollHeight = elem.scrollHeight;
-  const height = elem.offsetHeight; // probably incorrect
-  const delta = e.deltaY;
-
-  function prevent () {
-    e.stopPropagation();
-    e.preventDefault();
-    return false;
-  }
-
-  if (delta > 0 && delta + scrollTop + height >= scrollHeight) {
-    // At bottom. Prevent downscroll on body
-    return prevent();
-  }
-
-  if (delta < 0 && scrollTop + delta <= 0) {
-    // At top. Prevent upscroll on body
-    return prevent();
-  }
-};
-
 export class Nav extends React.Component {
   constructor (props) {
     super(props);
+    this.scroller = React.createRef();
+    this.preventScroll = e => this.preventScroll_(e);
+    this.close = () => this.close_();
+    this.toggle = () => this.toggle_();
+
     const bigScreen = window.matchMedia('(min-width: 768px)');
     this.state = {
       isOpen: !!bigScreen.matches,
     };
-    this.close = () => this.close_();
-    this.toggle = () => this.toggle_();
+  }
+
+  // Edge disobeys the spec and doesn't fire off wheel events: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7134034/
+  // TODO maybe bind to touch events or something? (onpointermove)
+  preventScroll_ (e) {
+    const elem = this.scroller.current;
+
+    const scrollTop = elem.scrollTop; // scroll position
+    const scrollHeight = elem.scrollHeight; // height of entire area
+    const height = elem.offsetHeight; // height of visible area
+    const delta = e.deltaY; // how far we scrolled up/down
+
+    const atBottom = delta > 0 && delta + scrollTop + height >= scrollHeight;
+    const atTop = delta < 0 && scrollTop + delta <= 0;
+    if (atTop || atBottom) {
+      // Prevent scroll on body
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }
   }
 
   close_ () {
@@ -318,7 +316,7 @@ export class Nav extends React.Component {
       <div className="navigation-container__section navigation-container__section--cluster-picker">
         <ClusterPicker />
       </div>
-      <div id="sidescroll" className="navigation-container" onWheel={preventBodyScroll}>
+      <div id="sidescroll" className="navigation-container" onWheel={this.preventScroll}>
         <NavSection text="Overview" icon="fa-tachometer" href="/" activePath="/overview/" onClick={this.close} />
         <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
           <ResourceNSLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
