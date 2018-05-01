@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('apps/v1.DaemonSet', `apiVersion: apps/v1
@@ -77,6 +78,15 @@ const Details = ({obj: daemonset}) => <div>
   </div>
 </div>;
 
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
 const {details, pods, editYaml, envEditor} = navFactory;
 
 const DaemonSets = props => <List {...props} Header={DaemonSetHeader} Row={DaemonSetRow} />;
@@ -84,7 +94,7 @@ const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={Daemon
 const DaemonSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(detailsPage(Details)), editYaml(), pods(), envEditor()]}
+  pages={[details(detailsPage(Details)), editYaml(), pods(), envEditor(environmentComponent)]}
 />;
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

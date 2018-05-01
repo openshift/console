@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as classNames from'classnames';
+
 import { modelFor, k8sPatch } from '../module/k8s';
 import { NameValueEditor, NAME, VALUE } from './utils/name-value-editor';
 import { PromiseComponent } from './utils';
@@ -31,7 +32,7 @@ const getPairsFromObject = (element) => {
  * @param initialPairObjects
  * @returns {Array}
  */
-const envVarsToArrayForArray = (initialPairObjects) => {
+export const envVarsToArrayForArray = (initialPairObjects) => {
   let initialPairs = [];
   initialPairObjects.forEach((element) => {
     initialPairs.push(getPairsFromObject(element));
@@ -45,46 +46,10 @@ const envVarsToArrayForArray = (initialPairObjects) => {
  * @param initialPairObjects
  * @returns {Array}
  */
-const envVarsToArrayForObject = (initialPairObjects) => {
+export const envVarsToArrayForObject = (initialPairObjects) => {
   let initialPairs = [];
   initialPairs.push(getPairsFromObject(initialPairObjects));
   return initialPairs;
-};
-
-/**
- * Env setup utility function.
- * TODO: JCC use referenceForModel and referenceFor when these have been adjusted for v1 k8s resources
- *
- * @type {function()}
- * @private
- */
-const getEnvForKind = (obj) => {
-  let envSourceObject = {};
-  switch(obj.kind) {
-    case 'Pod':
-      envSourceObject.envVars = envVarsToArrayForArray(obj.spec.containers);
-      envSourceObject.rawEnvData = obj.spec.containers;
-      envSourceObject.envPath = '/spec/containers';
-      envSourceObject.readOnly = true;
-      envSourceObject.isBuildObject = false;
-      break;
-    case 'BuildConfig':
-      envSourceObject.envVars = envVarsToArrayForObject(obj.spec.strategy.sourceStrategy);
-      envSourceObject.rawEnvData = obj.spec.strategy.sourceStrategy;
-      envSourceObject.envPath = '/spec/strategy/sourceStrategy';
-      envSourceObject.readOnly = false;
-      envSourceObject.isBuildObject = true;
-      break;
-    default:
-      envSourceObject.envVars = envVarsToArrayForArray(obj.spec.template.spec.containers);
-      envSourceObject.rawEnvData = obj.spec.template.spec.containers;
-      envSourceObject.envPath = '/spec/template/spec/containers';
-      envSourceObject.readOnly = false;
-      envSourceObject.isBuildObject = false;
-      break;
-
-  }
-  return envSourceObject;
 };
 
 export class EnvironmentPage extends PromiseComponent {
@@ -100,10 +65,9 @@ export class EnvironmentPage extends PromiseComponent {
     this.saveChanges = (...args) => this._saveChanges(...args);
     this.updateEnvVars = (...args) => this._updateEnvVars(...args);
 
-    let objTypeEnv = getEnvForKind(this.props.obj);
-
+    let currentEnvVars = this.props.toArrayFn(this.props.rawEnvData);
     this.state = {
-      ...objTypeEnv,
+      currentEnvVars,
       success: null
     };
   }
@@ -145,13 +109,13 @@ export class EnvironmentPage extends PromiseComponent {
    * @param i
    */
   _updateEnvVars(env, i=0) {
-    const {envVars, rawEnvData, isBuildObject} = this.state;
-    const currentEnv = envVars;
+    const {rawEnvData, toArrayFn} = this.props;
+    const {currentEnvVars} = this.state;
+    const currentEnv = currentEnvVars;
     currentEnv[i] = env.nameValuePairs;
-
-    const modified = !_.isEqual(currentEnv, (isBuildObject ? envVarsToArrayForObject(rawEnvData) : envVarsToArrayForArray(rawEnvData)));
+    const modified = !_.isEqual(currentEnv, toArrayFn(rawEnvData));
     this.setState({
-      envVars: currentEnv,
+      currentEnvVars: currentEnv,
       errorMessage: null,
       success: null,
       modified,
@@ -163,11 +127,12 @@ export class EnvironmentPage extends PromiseComponent {
    * @private
    */
   _clearChanges() {
-    const {rawEnvData, isBuildObject} = this.state;
+    const {rawEnvData, toArrayFn} = this.props;
     this.setState({
-      envVars: isBuildObject ? envVarsToArrayForObject(rawEnvData) :envVarsToArrayForArray(rawEnvData),
+      currentEnvVars: toArrayFn(rawEnvData),
       errorMessage: null,
-      success: null
+      success: null,
+      modified: false
     });
   }
 
@@ -181,15 +146,15 @@ export class EnvironmentPage extends PromiseComponent {
    * @param e
    */
   _saveChanges(e) {
-    const {obj} = this.props;
-    const {envPath, envVars, rawEnvData, isBuildObject} = this.state;
+    const {envPath, rawEnvData, isBuildObject, obj, toArrayFn} = this.props;
+    const {currentEnvVars} = this.state;
     let validationError = null;
     e.preventDefault();
 
     // Convert any blank values to null
     const kind = modelFor(obj.kind);
 
-    const patch = envVars.map((finalPairsForContainer, i) => {
+    const patch = currentEnvVars.map((finalPairsForContainer, i) => {
       const keys = finalPairsForContainer.map(t => t[NAME]);
       if (_.uniq(keys).length !== keys.length) {
         validationError = 'Duplicate keys found.';
@@ -211,20 +176,22 @@ export class EnvironmentPage extends PromiseComponent {
 
     const promise = k8sPatch(kind, obj, patch);
     this.handlePromise(promise).then((res) => {
-      const objTypeEnv = getEnvForKind(res);
 
       this.setState({
         success: 'Successfully updated the environment variables.',
         errorMessage: null,
-        ...objTypeEnv
+        currentEnvVars: toArrayFn(_.get(res, _.replace(envPath, /\//g, '.').substring(1))),
+        rawEnvData: _.get(res, _.replace(envPath, /\//g, '.').substring(1)),
+        modified: false
       });
     });
   }
 
   render() {
-    const {envVars, rawEnvData, errorMessage, success, readOnly, inProgress, isBuildObject} = this.state;
+    const {errorMessage, success, inProgress, currentEnvVars} = this.state;
+    const {rawEnvData, readOnly, isBuildObject} = this.props;
 
-    const containerVars = envVars.map((envVar, i) => {
+    const containerVars = currentEnvVars.map((envVar, i) => {
       const keyString = isBuildObject ? rawEnvData.from.name : rawEnvData[i].name;
       return <div key={keyString}>
         { !isBuildObject && <h1 className={classNames('co-section-title', {'environment-section-spacer': i > 0})}>Container {keyString}</h1> }
@@ -250,5 +217,10 @@ export class EnvironmentPage extends PromiseComponent {
   }
 }
 EnvironmentPage.propTypes = {
-  obj: PropTypes.object.isRequired
+  obj: PropTypes.object.isRequired,
+  rawEnvData: PropTypes.object.isRequired,
+  envPath: PropTypes.string.isRequired,
+  readOnly: PropTypes.bool.isRequired,
+  isBuildObject: PropTypes.bool.isRequired,
+  toArrayFn: PropTypes.func.isRequired
 };

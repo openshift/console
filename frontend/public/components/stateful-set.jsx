@@ -3,6 +3,7 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 
 registerTemplate('apps/v1.StatefulSet', `apiVersion: apps/v1
 kind: StatefulSet
@@ -70,11 +71,20 @@ const Details = ({obj: ss}) => <div>
   </div>
 </div>;
 
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
 export const StatefulSetsList = props => <List {...props} Header={Header} Row={Row} />;
 export const StatefulSetsPage = props => <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />;
 
 export const StatefulSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.envEditor()]}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.envEditor(environmentComponent)]}
 />;

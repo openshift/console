@@ -5,6 +5,7 @@ import { configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 
 registerTemplate('apps/v1.Deployment', `apiVersion: apps/v1
 kind: Deployment
@@ -78,11 +79,20 @@ const DeploymentDetails = ({obj: deployment}) => {
   </div>;
 };
 
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
 const {details, editYaml, pods, envEditor} = navFactory;
 const DeploymentsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(DeploymentDetails), editYaml(), pods(), envEditor()]}
+  pages={[details(DeploymentDetails), editYaml(), pods(), envEditor(environmentComponent)]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="Deployment" actions={menuActions} />;

@@ -4,6 +4,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { registerTemplate } from '../yaml-templates';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 
 registerTemplate('apps/v1.ReplicaSet', `apiVersion: apps/v1
 kind: ReplicaSet
@@ -45,6 +46,15 @@ const Details = ({obj: replicaSet}) => <div>
   </div>
 </div>;
 
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
 const {details, editYaml, pods, envEditor} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage
   {...props}
@@ -53,7 +63,7 @@ const ReplicaSetsDetailsPage = props => <DetailsPage
     path: props.match.url,
   })}
   menuActions={replicaSetMenuActions}
-  pages={[details(Details), editYaml(), pods(), envEditor()]}
+  pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent)]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="ReplicaSet" actions={replicaSetMenuActions} />;

@@ -9,6 +9,7 @@ import { BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, Resour
 import { BuildsPage } from './build';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
+import { EnvironmentPage, envVarsToArrayForObject } from './environment';
 
 // Pushes to the image stream created by the image stream YAML template.
 registerTemplate('build.openshift.io/v1.BuildConfig', `apiVersion: build.openshift.io/v1
@@ -73,7 +74,16 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
 
 const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
 
-const pages = [navFactory.details(BuildConfigsDetails), navFactory.editYaml(), navFactory.envEditor(), navFactory.builds(BuildsTabPage)];
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.strategy.sourceStrategy}
+  envPath="/spec/strategy/sourceStrategy"
+  readOnly={false}
+  isBuildObject={true}
+  toArrayFn={envVarsToArrayForObject}
+/>;
+
+const pages = [navFactory.details(BuildConfigsDetails), navFactory.editYaml(), navFactory.envEditor(environmentComponent), navFactory.builds(BuildsTabPage)];
 export const BuildConfigsDetailsPage: React.SFC<BuildConfigsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
