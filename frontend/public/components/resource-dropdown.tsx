@@ -7,6 +7,7 @@ import { Dropdown, ResourceIcon } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { allModels, K8sKind } from '../module/k8s';
 import { kindReducerName } from '../kinds';
+import { FLAGS, featureReducerName } from '../features';
 import * as classNames from 'classnames';
 import { ClusterServiceVersionModel, EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../models';
 
@@ -17,12 +18,49 @@ To avoid circular imports, the keys in this list are manually duplicated in ./re
 ------------------------------------------------------------------------
 */
 const resources = [
-  'Clusters', 'ConfigMaps', 'DaemonSets', 'Deployments', 'Jobs', 'CronJobs',
-  'Namespaces', 'NetworkPolicies', 'Nodes', 'Pods', 'ReplicaSets', 'ReplicationControllers',
-  'Secrets', 'ServiceAccounts', 'ServiceAccounts', 'Services', 'Ingresses', 'Roles', 'RoleBindings',
-  'EtcdClusters', 'Prometheuses', 'ServiceMonitors', 'Alertmanagers', 'PodVulns', 'StatefulSets',
-  'ResourceQuotas', 'PersistentVolumes', 'PersistentVolumeClaims', 'Reports',
-  'ReportGenerationQuerys', 'Default', 'StorageClasses', 'CustomResourceDefinitions', 'ClusterServiceVersion-v1s'];
+  'Alertmanagers',
+  'ClusterServiceVersion-v1s',
+  'Clusters',
+  'ConfigMaps',
+  'CronJobs',
+  'CustomResourceDefinitions',
+  'DaemonSets',
+  'Default',
+  'Deployments',
+  'EtcdClusters',
+  'Ingresses',
+  'Jobs',
+  'Namespaces',
+  'NetworkPolicies',
+  'Nodes',
+  'PersistentVolumeClaims',
+  'PersistentVolumes',
+  'PodVulns',
+  'Pods',
+  'Prometheuses',
+  'ReplicaSets',
+  'ReplicationControllers',
+  'ReportGenerationQuerys',
+  'Reports',
+  'ResourceQuotas',
+  'RoleBindings',
+  'Roles',
+  'Secrets',
+  'ServiceAccounts',
+  'ServiceMonitors',
+  'Services',
+  'StatefulSets',
+  'StorageClasses',
+];
+
+const openshiftResources = [
+  'BuildConfigs',
+  'Builds',
+  'DeploymentConfigs',
+  'ImageStreamTags',
+  'ImageStreams',
+  'Projects',
+];
 
 const DropdownItem = ({kind}) => {
   const [modelRef, kindObj] = allModels().findEntry((v) => v.kind === kind);
@@ -35,8 +73,12 @@ const DropdownItem = ({kind}) => {
 };
 
 const ResourceListDropdown_: React.StatelessComponent<ResourceListDropdownProps> = props => {
-  const {selected, onChange, allkinds, showAll, className} = props;
-  const items: {[s: string]: JSX.Element } = {};
+  const { selected, onChange, allkinds, openshiftFlag, showAll, className } = props;
+  if (openshiftFlag === undefined) {
+    return null;
+  }
+
+  const items: {[s: string]: JSX.Element} = {};
   const kinds = {};
   _.each(allModels().toJS(), (ko: K8sKind) => kinds[ko.labelPlural.replace(/ /g, '')] = ko.kind);
 
@@ -47,14 +89,16 @@ const ResourceListDropdown_: React.StatelessComponent<ResourceListDropdownProps>
       </span>All Types</span>;
   }
 
-  resources.filter(k => k !== ClusterServiceVersionModel.labelPlural)
+  const allResources = openshiftFlag ? _.concat(resources, openshiftResources) : resources;
+  allResources.filter(k => k !== ClusterServiceVersionModel.labelPlural)
     .sort()
     .forEach(k => {
       const kind: string = kinds[k];
       if (!kind) {
         return;
       }
-      if (allkinds[kind] && allkinds[kind].crd && ![EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel].some(m => m.kind === k)) {
+      const model = allkinds[kind];
+      if (model && model.crd && ![EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel].some(m => m.kind === k)) {
         return;
       }
       items[kind] = <DropdownItem kind={kind} />;
@@ -67,7 +111,14 @@ const ResourceListDropdown_: React.StatelessComponent<ResourceListDropdownProps>
   return <Dropdown className={classNames('co-type-selector', {[className]: className})} items={items} title={items[selected]} onChange={onChange} selectedKey={selected} />;
 };
 
-export const ResourceListDropdown = connect(state => ({ allkinds: state[kindReducerName].get('kinds').toJSON()}))(ResourceListDropdown_);
+const resourceListDropdownStateToProps = (state): any => {
+  const allkinds = state[kindReducerName].get('kinds').toJSON();
+  const openshiftFlag = state[featureReducerName].get(FLAGS.OPENSHIFT);
+
+  return { allkinds, openshiftFlag };
+};
+
+export const ResourceListDropdown = connect(resourceListDropdownStateToProps)(ResourceListDropdown_);
 
 ResourceListDropdown.propTypes = {
   onChange: PropTypes.func.isRequired,
@@ -82,8 +133,9 @@ export type ResourceListDropdownProps = {
   selected: string,
   onChange: Function,
   allkinds: {[s: string]: K8sKind},
+  openshiftFlag?: boolean,
   className?: string,
   id?: string,
-  showAll?: boolean
+  showAll?: boolean,
 };
 /* eslint-enable no-undef */
