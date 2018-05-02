@@ -7,7 +7,7 @@ import { TEMPLATES } from '../yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
-import { K8sKind } from '../module/k8s';
+import { K8sKind, apiVersionForModel } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { ClusterServiceVersionModel } from '../models';
 
@@ -22,9 +22,8 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     return <ErrorPage404 />;
   }
 
-  const apiVersion = kindObj.apiVersion;
   const namespace = params.ns || 'default';
-  const kindStr = `${apiVersion}.${kindObj.kind}`;
+  const kindStr = `${apiVersionForModel(kindObj)}.${kindObj.kind}`;
   let template = _.get(TEMPLATES, [kindStr, 'default']);
   if (!template) {
     // eslint-disable-next-line no-console

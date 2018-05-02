@@ -10,7 +10,7 @@ import 'brace/mode/yaml';
 import 'brace/theme/clouds';
 import 'brace/ext/language_tools';
 
-import { k8sCreate, k8sUpdate, referenceFor, modelFor, getCompletions } from '../module/k8s';
+import { k8sCreate, k8sUpdate, referenceFor, modelFor, getCompletions, apiVersionForModel } from '../module/k8s';
 import { history, Loading, resourceObjPath } from './utils';
 import { SafetyFirst } from './safety-first';
 import { coFetchJSON } from '../co-fetch';
@@ -24,7 +24,7 @@ ace.acequire('ace/ext/language_tools').addCompleter({getCompletions});
 
 const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   const kindObj = modelFor(kind) || {};
-  const kindStr = `${kindObj.apiVersion}.${kind}`;
+  const kindStr = `${apiVersionForModel(kindObj)}.${kind}`;
   const sampleObj = safeLoad(TEMPLATES[kindStr][templateName]);
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;

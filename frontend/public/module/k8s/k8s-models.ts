@@ -6,42 +6,54 @@ import { K8sResourceKindReference, GroupVersionKind, CustomResourceDefinitionKin
 import * as staticModels from '../../models';
 import store from '../../redux';
 
+export const groupVersionFor = (apiVersion: string) => ({
+  group: apiVersion.split('/').length === 2 ? apiVersion.split('/')[0] : 'core',
+  version: apiVersion.split('/').length === 2 ? apiVersion.split('/')[1] : apiVersion,
+});
+
 export const referenceFor = (obj: K8sResourceKind): GroupVersionKind => obj.kind && obj.apiVersion
-  ? `${obj.kind}:${obj.apiVersion.split('/')[0]}:${obj.apiVersion.split('/')[1]}`
+  ? `${groupVersionFor(obj.apiVersion).group}:${groupVersionFor(obj.apiVersion).version}:${obj.kind}`
   : '';
 
 export const referenceForCRD = (obj: CustomResourceDefinitionKind): GroupVersionKind => (
-  `${obj.spec.names.kind}:${obj.spec.group}:${obj.spec.version}`
+  `${obj.spec.group}:${obj.spec.version}:${obj.spec.names.kind}`
 );
 
 export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind => (
-  `${ownerRef.kind}:${ownerRef.apiVersion.split('/')[0]}:${ownerRef.apiVersion.split('/')[1]}`
+  `${groupVersionFor(ownerRef.apiVersion).group}:${groupVersionFor(ownerRef.apiVersion).version}:${ownerRef.kind}`
 );
 
 export const referenceForModel = (model: K8sKind): GroupVersionKind => (
-  `${model.kind}:${model.apiGroup || ''}:${model.apiVersion}`
+  `${model.apiGroup || 'core'}:${model.apiVersion}:${model.kind}`
 );
 
 export const kindForReference = (ref: K8sResourceKindReference) => ref.split(':').length === 3
-  ? ref.split(':')[0]
+  ? ref.split(':')[2]
   : ref;
 
-export const versionForReference = (ref: GroupVersionKind) => ref.split(':')[2];
+export const versionForReference = (ref: GroupVersionKind) => ref.split(':')[1];
+
+export const apiVersionForModel = (model: K8sKind) => _.isEmpty(model.apiGroup)
+  ? model.apiVersion
+  : `${model.apiGroup}/${model.apiVersion}`;
+
+export const apiVersionForReference = (ref: GroupVersionKind) => ref.split(':').length === 3
+  ? `${ref.split(':')[0]}/${ref.split(':')[1]}`
+  : ref;
 
 /**
  * Contains static resource definitions for Kubernetes objects.
- * Keys are `Kind:group:version`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).
- * Will eventually replace The Enum.
+ * Keys are of type `group:version:Kind`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).
  */
 const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
   .withMutations(models => _.forEach(staticModels, model => {
     if (model.crd) {
       models.set(referenceForModel(model), model);
     } else {
+      // TODO: Use `referenceForModel` even for known API objects
       models.set(model.kind, model);
     }
   }));
-// TODO(alecmerdler): Kill the Enum and move definitions to this module with `GroupVersionKind` as keys
 
 /**
  * Provides a synchronous way to acquire a statically-defined Kubernetes model.

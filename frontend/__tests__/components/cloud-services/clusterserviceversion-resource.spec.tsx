@@ -83,7 +83,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
     const cog = col.find(ResourceCog);
 
     expect(cog.props().actions).toEqual(Cog.factory.common);
-    expect(cog.props().kind).toEqual('TestResource:testapp.coreos.com:v1alpha1');
+    expect(cog.props().kind).toEqual(referenceFor(testResourceInstance));
     expect(cog.props().resource).toEqual(testResourceInstance);
   });
 

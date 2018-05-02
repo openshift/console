@@ -276,7 +276,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage).at(0);
 
     expect(listPage.props().resources).toEqual([
-      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
       {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
     ]);
     expect(listPage.props().dropdownFilters).toBeDefined();
@@ -300,7 +300,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage).at(1);
 
     expect(listPage.props().resources).toEqual([
-      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
     ]);
     // TODO(alecmerdler): Test custom applications list component
     expect(listPage.props().ListComponent).toBeDefined();
