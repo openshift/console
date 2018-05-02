@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
-import { NavTitle, AsyncComponent, Firehose, StatusBox } from './utils';
+import { NavTitle, AsyncComponent, Firehose, StatusBox, tectonicHelpBase, OpenShiftDocumentationLinks, TectonicDocumentationLinks, OpenShiftAdditionalSupportLinks, TectonicAdditionalSupportLinks } from './utils';
 import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
@@ -13,24 +13,7 @@ import { Status, errorStatus } from './graphs/status';
 import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
-
-
-/* eslint-disable react/jsx-no-target-blank */
-const Documentation = () => <React.Fragment>
-  <dl>
-    <dt className="co-p-cluster__doc-title"><a href="https://coreos.com/tectonic/docs/latest/account/manage-account.html" target="_blank" rel="noopener">Manage Your Account</a></dt>
-    <dd className="co-p-cluster__doc-description">You can manage your Tectonic account at <a href="https://account.coreos.com" target="_blank" rel="noopener">account.coreos.com</a> for access to licenses, billing details, invoices, and account users.</dd>
-    <dt className="co-p-cluster__doc-title"><a href="https://coreos.com/tectonic/docs/latest/usage/" target="_blank" rel="noopener">End User Guide</a></dt>
-    <dd className="co-p-cluster__doc-description">End-users of Tectonic are expected to deploy applications directly in Kubernetes. Your application&rsquo;s architecture will drive how you assemble these components together.</dd>
-    <dt className="co-p-cluster__doc-title">Additional Support</dt>
-    <dd className="co-p-cluster__doc-description">
-      <p><Link to="/start-guide"><span className="fa fa-fw fa-info-circle"></span>Quick Start Guide</Link></p>
-      <p><a href="https://coreos.com/tectonic/docs/latest/" target="_blank" rel="noopener"><span className="fa fa-fw fa-book"></span>Full Documentation</a></p>
-      <p><a href="https://github.com/coreos/tectonic-forum" target="_blank" rel="noopener noreferrer"><span className="fa fa-fw fa-comments-o"></span>Tectonic Forum</a></p>
-    </dd>
-  </dl>
-</React.Fragment>;
-/* eslint-enable react/jsx-no-target-blank */
+import { FLAGS, connectToFlags } from '../features';
 
 const fetchHealth = () => coFetch(`${k8sBasePath}/healthz`)
   .then(response => response.text())
@@ -153,10 +136,15 @@ const LimitedGraphs = () => <React.Fragment>
   </div>
 </React.Fragment>;
 
-const GraphsPage = ({limited, namespace}) => {
+const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({limited, namespace, flags}) => {
+  const openshiftFlag = flags[FLAGS.OPENSHIFT];
+  if (openshiftFlag === undefined) {
+    return null;
+  }
+
   const body = <div className="row">
     <div className="col-lg-8 col-md-12">
-      {limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} /> }
+      {!openshiftFlag && (limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} />)}
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Events</h2>
@@ -171,7 +159,7 @@ const GraphsPage = ({limited, namespace}) => {
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Software Info</h2>
-          <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener noreferrer">Release Notes&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
+          {!openshiftFlag && <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener noreferrer">Release Notes&nbsp;&nbsp;<i className="fa fa-external-link" /></a>}
         </div>
         <div className="container-fluid group__body">
           <SoftwareDetails />
@@ -180,10 +168,18 @@ const GraphsPage = ({limited, namespace}) => {
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Documentation</h2>
-          <a href="https://coreos.com/tectonic/docs/latest/" target="_blank" rel="noopener noreferrer">Full Documentation&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
+          {!openshiftFlag && <a href={tectonicHelpBase} target="_blank" rel="noopener noreferrer">Full Documentation&nbsp;&nbsp;<i className="fa fa-external-link" /></a>}
         </div>
-        <div className="container-fluid group__body">
-          <Documentation />
+        <div className="container-fluid group__body group__documentation">
+          {openshiftFlag ? <OpenShiftDocumentationLinks /> : <TectonicDocumentationLinks />}
+        </div>
+      </div>
+      <div className="group">
+        <div className="group__title">
+          <h2 className="h3">Additional Support</h2>
+        </div>
+        <div className="container-fluid group__body group__additional-support">
+          {openshiftFlag ? <OpenShiftAdditionalSupportLinks /> : <TectonicAdditionalSupportLinks />}
         </div>
       </div>
     </div>
@@ -197,7 +193,7 @@ const GraphsPage = ({limited, namespace}) => {
       { body }
     </StatusBox>
   </Firehose>;
-};
+});
 
 const permissionedLoader = () => {
   const AllGraphs = ({namespace}) => <GraphsPage namespace={namespace} />;
