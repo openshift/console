@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-// import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
@@ -31,6 +31,40 @@ const kindFilter = (kind, {involvedObject}) => {
   return kind === 'all' || involvedObject.kind === kind;
 };
 
+class Inner extends React.PureComponent {
+  render () {
+    const {klass, status, tooltipMsg, obj, lastTimestamp, message, source} = this.props;
+
+    return <div className={`${klass} slide-${status}`}>
+      <div className="co-sysevent__icon-box">
+        <i className="co-sysevent-icon" title={tooltipMsg} />
+        <div className="co-sysevent__icon-line"></div>
+      </div>
+      <div className="co-sysevent__main-box">
+        <ResourceLink
+          kind={obj.kind}
+          namespace={obj.namespace}
+          name={obj.name}
+          title={obj.uid}
+        />
+        <div className="co-sysevent__main-message">{message}</div>
+      </div>
+      <div className="co-sysevent__meta-box">
+        <div><Timestamp timestamp={lastTimestamp} /></div>
+        <small className="co-sysevent__meta-source">
+          Generated from <span>{source.component}</span>
+          {source.component === 'kubelet' &&
+            <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
+          }
+        </small>
+      </div>
+    </div>;
+  }
+}
+
+const seen = new Set();
+const timeout = {enter: 150};
+
 class SysEvent extends React.Component {
   shouldComponentUpdate (nextProps) {
     if (this.props.lastTimestamp !== nextProps.lastTimestamp) {
@@ -43,8 +77,12 @@ class SysEvent extends React.Component {
     return true;
   }
 
+  componentWillUnmount () {
+    seen.delete(this.props.metadata.name);
+  }
+
   render () {
-    const { style, reason, message, source, lastTimestamp, involvedObject: obj} = this.props;
+    const { index, style, reason, message, source, metadata, lastTimestamp, involvedObject: obj} = this.props;
     const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
     const tooltipMsg = `${reason} (${obj.kind.toLowerCase()})`;
 
@@ -54,32 +92,21 @@ class SysEvent extends React.Component {
     s.right = 0;
     s.height = s.height - 20;
 
-    return (
-      <div className={klass} style={s}>
-        <div className="co-sysevent__icon-box">
-          <i className="co-sysevent-icon" title={tooltipMsg} />
-          <div className="co-sysevent__icon-line"></div>
-        </div>
-        <div className="co-sysevent__main-box">
-          <ResourceLink
-            kind={obj.kind}
-            namespace={obj.namespace}
-            name={obj.name}
-            title={obj.uid}
-          />
-          <div className="co-sysevent__main-message">{message}</div>
-        </div>
-        <div className="co-sysevent__meta-box">
-          <div><Timestamp timestamp={lastTimestamp} /></div>
-          <small className="co-sysevent__meta-source">
-            Generated from <span>{source.component}</span>
-            {source.component === 'kubelet' &&
-              <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
-            }
-          </small>
-        </div>
-      </div>
-    );
+    let shouldAnimate;
+    const key = metadata.name;
+    if (key in seen) {
+      shouldAnimate = false;
+    } else if (index < 6) {
+      seen.add(key);
+      shouldAnimate = true;
+    }
+
+    // console.log('shouldAnimate', shouldAnimate);
+    return <div style={s}>
+      <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
+        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} lastTimestamp={lastTimestamp} message={message} source={source} />}
+      </CSSTransition>
+    </div>;
   }
 }
 
@@ -126,10 +153,12 @@ class EventStream extends SafetyFirst {
       oldestTimestamp: new Date(),
     };
     this.toggleStream = this.toggleStream_.bind(this);
-    this.rowRenderer = function rowRenderer ({key, index, style}) {
+    this.rowRenderer = function rowRenderer ({index, style}) {
       const event = this.state.filteredMessages[index];
       /* TODO keyMapper */
-      return <SysEvent {...event} key={key} style={style} />;
+      // console.log('index', index);
+      const key = event.metadata.name;
+      return <SysEvent {...event} key={key} style={style} index={index} />;
     }.bind(this);
 
     this.wsInit(this.props.namespace);

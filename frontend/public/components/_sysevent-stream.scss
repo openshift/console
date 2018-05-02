@@ -2,17 +2,17 @@ $color-dark-border: #ddd;
 
 .co-sysevent-stream {
   padding: 60px 0 50px 0;
+}
 
-  .slide-enter {
-    left: 100%;
-    opacity: 0;
+.slide-entering {
+  left: 100%;
+  opacity: 0;
+}
 
-    &.slide-enter-active {
-      left: 0;
-      opacity: 1;
-      transition: all 0.5s;
-    }
-  }
+.slide-entered {
+  left: 0;
+  opacity: 1;
+  transition: all 0.5s;
 }
 
 .co-sysevent-stream__connection-error {
