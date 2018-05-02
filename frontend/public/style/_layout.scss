@@ -1,3 +1,5 @@
+$sidebar-width: 220px;
+
 html {
   height: 100%;
 }
@@ -26,14 +28,31 @@ body {
 #reflex {
   display: flex;
   height: 100%;
+  position: relative;
 }
 
 #sidebar {
   background-color: $color-os-nav-background;
+  bottom: 0;
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  width: 220px;
+  left: -($sidebar-width);
+  position: absolute;
+  top: 0;
+  width: $sidebar-width;
+  z-index: $zindex-navbar;
+
+  @media (min-width: $grid-float-breakpoint) {
+    box-shadow: none !important;
+    position: static;
+  }
+
+  &.open {
+    box-shadow: 2px 0 3px rgba(0,0,0,.3);
+    left: 0;
+    transition: left .1s ease-in-out;
+  }
 }
 
 #content {

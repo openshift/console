@@ -171,7 +171,8 @@ const NamespaceDropdown = connect(() => ({activeNamespace: getActiveNamespace()}
   const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
   return <div className="co-namespace-selector">
-    {model.label}: <Dropdown
+    <span>{model.label}:</span>
+    <Dropdown
       className="co-namespace-selector__dropdown"
       menuClassName="co-namespace-selector__menu"
       noButton
