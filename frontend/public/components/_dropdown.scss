@@ -23,11 +23,8 @@ $color-bookmarker: #DDD;
   background-color: $color-grey-when-selected;
 }
 
-.dropdown--text-filter {
-  margin: 10px;
-  width: 200px;
-  min-width: 150px;
-  color: black;
+.dropdown-menu__filter {
+  padding: 5px 10px 10px;
 }
 
 .favorite {
@@ -81,23 +78,47 @@ $color-bookmarker: #DDD;
 .co-namespace-selector {
   background-color: #292E34;
   color: $color-os-nav-title;
-  font-size: 16px;
-  padding: 5px;
-  padding-left: 10px;
-  height: 40px;
-  flex: 0 0 auto;
-  border-bottom: solid 1px $color-os-nav-item-seperator;
-  border-left: solid 1px $color-os-nav-item-seperator;
+  display: flex;
+  font-size: ($font-size-base + 1);
+  height: 27px;
+  white-space: nowrap;
+  padding: 0 15px;
+
+  @media (min-width: $grid-float-breakpoint) {
+    border-left: 1px solid $color-os-nav-item-seperator;
+    font-size: ($font-size-base + 3);
+    height: 40px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+  }
 
   &__dropdown {
-    display: inline-block;
+    flex: 0 1 auto;
+    max-width: 70%;
     padding-left: 5px;
+  }
+
+  .dropdown__not-btn {
+    align-items: baseline;
+    display: flex;
+
+    &__title {
+      flex: 0 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 
 .co-namespace-selector__menu.dropdown-menu {
-  max-height: none;
+  max-width: 100%;
+  min-width: 210px;
   overflow-y: inherit;
+
+  @media (min-width: $grid-float-breakpoint) {
+    min-width: 250px;
+  }
 
   .dropdown__selected {
     background-color: inherit;
@@ -156,6 +177,10 @@ $color-bookmarker: #DDD;
           background-color: transparent;
           color: $color-bookmarker--hover;
         }
+      }
+      &.next-to-bookmark {
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 
