@@ -722,3 +722,68 @@ export const StorageClassModel: K8sKind = {
   kind: 'StorageClass',
   id: 'storageclass'
 };
+
+export const ClusterServiceBrokerModel: K8sKind = {
+  label: 'Cluster Service Broker',
+  labelPlural: 'Cluster Service Brokers',
+  apiVersion: 'v1beta1',
+  path: 'clusterservicebrokers',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterservicebrokers',
+  abbr: 'CSB',
+  namespaced: false,
+  kind: 'ClusterServiceBroker',
+  id: 'clusterservicebroker'
+};
+
+export const ClusterServiceClassModel: K8sKind = {
+  label: 'Cluster Service Class',
+  labelPlural: 'Cluster Service Classes',
+  apiVersion: 'v1beta1',
+  path: 'clusterserviceclasses',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterserviceclasses',
+  abbr: 'CSC',
+  namespaced: false,
+  kind: 'ClusterServiceClass',
+  id: 'clusterserviceclass'
+};
+
+export const ClusterServicePlanModel: K8sKind = {
+  label: 'Cluster Service Plan',
+  labelPlural: 'Cluster Service Plans',
+  apiVersion: 'v1beta1',
+  path: 'clusterserviceplans',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterserviceplans',
+  abbr: 'CSP',
+  namespaced: false,
+  kind: 'ClusterServicePlan',
+  id: 'clusterserviceplan'
+};
+
+export const ServiceInstanceModel: K8sKind = {
+  label: 'Service Instance',
+  labelPlural: 'Service Instances',
+  apiVersion: 'v1beta1',
+  path: 'serviceinstances',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'serviceinstances',
+  abbr: 'SI',
+  namespaced: true,
+  kind: 'ServiceInstance',
+  id: 'serviceinstance'
+};
+
+export const ServiceBindingModel: K8sKind = {
+  label: 'Service Binding',
+  labelPlural: 'Service Bindings',
+  apiVersion: 'v1beta1',
+  path: 'servicebindings',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'servicebindings',
+  abbr: 'SB',
+  namespaced: true,
+  kind: 'ServiceBinding',
+  id: 'servicebinding'
+};
