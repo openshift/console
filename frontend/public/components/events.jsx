@@ -346,51 +346,49 @@ class EventStream extends SafetyFirst {
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
     return <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-xs-12">
-          <div className="co-sysevent-stream">
-            <div className="co-sysevent-stream__totals text-muted">
-              { messageCount }
-            </div>
-
-            <div className={klass}>
-              <TogglePlay active={active} onClick={this.toggleStream} className="co-sysevent-stream__timeline__btn" />
-              <div className="co-sysevent-stream__timeline__btn-text">
-                {statusBtnTxt}
-              </div>
-              <div className="co-sysevent-stream__timeline__end-message">
-              There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
-              </div>
-            </div>
-            <WindowScroller>
-              {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-                <AutoSizer disableHeight>
-                  {({width}) => {
-                    this._mostRecentWidth = width;
-                    return <div ref={registerChild}>
-                      <VirtualList
-                        data={filteredMessages}
-                        autoHeight
-                        height={height}
-                        isScrolling={isScrolling}
-                        onScroll={onChildScroll}
-                        rowRenderer={this.rowRenderer}
-                        scrollTop={scrollTop}
-                        width={width}
-                        rowCount={count}
-                        // TODO: set rowHeight based on media query
-                        // @media screen and (min-width: 768px)...
-                        rowHeight={135}
-                      />
-                    </div>;
-                  }
-                  }
-                </AutoSizer>
-              }
-            </WindowScroller>
-            { sysEventStatus }
+      <div className="co-sysevent-stream">
+        <div className="co-sysevent-stream__status">
+          <div className="co-sysevent-stream__timeline__btn-text">
+            { statusBtnTxt }
+          </div>
+          <div className="co-sysevent-stream__totals">
+            { messageCount }
           </div>
         </div>
+
+        <div className={klass}>
+          <TogglePlay active={active} onClick={this.toggleStream} className="co-sysevent-stream__timeline__btn" />
+          <div className="co-sysevent-stream__timeline__end-message">
+          There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+          </div>
+        </div>
+        <WindowScroller>
+          {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+            <AutoSizer disableHeight>
+              {({width}) => {
+                this._mostRecentWidth = width;
+                return <div ref={registerChild}>
+                  <VirtualList
+                    data={filteredMessages}
+                    autoHeight
+                    height={height}
+                    isScrolling={isScrolling}
+                    onScroll={onChildScroll}
+                    rowRenderer={this.rowRenderer}
+                    scrollTop={scrollTop}
+                    width={width}
+                    rowCount={count}
+                    // TODO: set rowHeight based on media query
+                    // @media screen and (min-width: 768px)...
+                    rowHeight={135}
+                  />
+                </div>;
+              }
+              }
+            </AutoSizer>
+          }
+        </WindowScroller>
+        { sysEventStatus }
       </div>
     </div>;
   }
