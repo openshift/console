@@ -427,6 +427,18 @@ export const ProjectModel: K8sKind = {
   labelPlural: 'Projects'
 };
 
+export const ProjectRequestModel: K8sKind = {
+  apiVersion: 'v1',
+  apiGroup: 'project.openshift.io',
+  label: 'Project Request',
+  path: 'projectrequests',
+  plural: 'projectrequests',
+  abbr: '',
+  kind: 'ProjectRequest',
+  id: 'projectrequest',
+  labelPlural: 'Project Requests'
+};
+
 export const IngressModel: K8sKind = {
   label: 'Ingress',
   labelPlural: 'Ingresses',
@@ -527,6 +539,19 @@ export const RoleModel: K8sKind = {
   kind: 'Role',
   id: 'role',
   labelPlural: 'Roles'
+};
+
+export const SelfSubjectAccessReviewModel: K8sKind = {
+  label: 'SelfSubjectAccessReview',
+  apiGroup: 'authorization.k8s.io',
+  apiVersion: 'v1',
+  path: 'selfsubjectaccessreviews',
+  plural: 'selfsubjectaccessreviews',
+  abbr: 'SSAR',
+  namespaced: true,
+  kind: 'SelfSubjectAccessReview',
+  id: 'selfsubjectaccessreview',
+  labelPlural: 'Self Subject Access Reviews'
 };
 
 export const TectonicVersionModel: K8sKind = {

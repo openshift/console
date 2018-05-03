@@ -294,7 +294,8 @@ export const Nav = connect(navStateToProps, navDispatchToProps)(({sidebarOpen, c
       </NavSection>
 
       <NavSection text="Administration" icon="fa-cog">
-        <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={closeSidebar} />
+        <ResourceClusterLink resource="projects" name="Projects" onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
+        <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={closeSidebar} required={FLAGS.CAN_LIST_NS} />
         <ResourceClusterLink resource="nodes" name="Nodes" onClick={closeSidebar} />
         <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={closeSidebar} />
         <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={closeSidebar} startsWith={clusterSettingsStartsWith} />

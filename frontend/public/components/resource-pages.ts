@@ -10,7 +10,7 @@ import { ImageStreamsPage, ImageStreamsDetailsPage } from './image-stream';
 import { ImageStreamTagsDetailsPage } from './image-stream-tag';
 import { JobsPage, JobsDetailsPage } from './job';
 import { CronJobsPage, CronJobsDetailsPage } from './cron-job';
-import { NamespacesPage, NamespacesDetailsPage } from './namespace';
+import { NamespacesPage, NamespacesDetailsPage, ProjectsPage, ProjectsDetailsPage } from './namespace';
 import { NetworkPoliciesPage, NetworkPoliciesDetailsPage } from './network-policy';
 import { NodesPage, NodesDetailsPage } from './node';
 import { PodsPage, PodsDetailsPage } from './pod';
@@ -52,6 +52,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('ImageStreams', ImageStreamsPage)
   .set('Jobs', JobsPage)
   .set('CronJobs', CronJobsPage)
+  .set('Projects', ProjectsPage)
   .set('Namespaces', NamespacesPage)
   .set('NetworkPolicies', NetworkPoliciesPage)
   .set('Nodes', NodesPage)
@@ -103,6 +104,7 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('ImageStreamTags', ImageStreamTagsDetailsPage)
   .set('Jobs', JobsDetailsPage)
   .set('CronJobs', CronJobsDetailsPage)
+  .set('Projects', ProjectsDetailsPage)
   .set('Namespaces', NamespacesDetailsPage)
   .set('NetworkPolicies', NetworkPoliciesDetailsPage)
   .set('Nodes', NodesDetailsPage)

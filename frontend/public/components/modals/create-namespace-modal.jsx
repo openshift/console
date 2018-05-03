@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { k8sCreate, k8sKinds } from '../../module/k8s';
+import { k8sCreate, k8sKinds, referenceFor } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { history, PromiseComponent, SelectorInput } from '../utils';
+import { history, PromiseComponent, resourceObjPath, SelectorInput } from '../utils';
 
 const allow = 'allow';
 const deny = 'deny';
@@ -22,12 +22,14 @@ class CreateNamespaceModal extends PromiseComponent {
   }
 
   handleChange (e) {
-    this.setState({name: e.target.value});
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({
+      [name]: value
+    });
   }
 
-  _submit(event) {
-    event.preventDefault();
-
+  createNamespace() {
     const {name, labels} = this.state;
     const namespace = {
       metadata: {
@@ -35,18 +37,35 @@ class CreateNamespaceModal extends PromiseComponent {
         labels: SelectorInput.objectify(labels),
       },
     };
-    let promise = k8sCreate(k8sKinds.Namespace, namespace);
+    return k8sCreate(k8sKinds.Namespace, namespace);
+  }
+
+  createProject() {
+    const {name, displayName, description} = this.state;
+    const project = {
+      metadata: {
+        name,
+      },
+      displayName,
+      description,
+    };
+    return k8sCreate(k8sKinds.ProjectRequest, project);
+  }
+
+  _submit(event) {
+    event.preventDefault();
+
+    let promise = this.props.createProject ? this.createProject() : this.createNamespace();
     if (this.state.np === deny) {
-      promise = promise.then(() => {
-        const policy = Object.assign({}, defaultDeny, {metadata: {namespace: name, name: 'default-deny'}});
+      promise = promise.then(ns => {
+        const policy = Object.assign({}, defaultDeny, {metadata: {namespace: ns.metadata.name, name: 'default-deny'}});
         return k8sCreate(k8sKinds.NetworkPolicy, policy);
       });
     }
 
-
-    this.handlePromise(promise).then(() => {
+    this.handlePromise(promise).then(obj => {
       this.props.close();
-      history.push(`namespaces/${name}`);
+      history.push(resourceObjPath(obj, referenceFor(obj)));
     });
   }
 
@@ -55,21 +74,34 @@ class CreateNamespaceModal extends PromiseComponent {
   }
 
   render() {
+    const label = this.props.createProject ? 'Project' : 'Namespace';
     return <form onSubmit={this._submit.bind(this)} name="form" className="co-p-new-user-modal">
-      <ModalTitle>Create New Namespace</ModalTitle>
+      <ModalTitle>Create New {label}</ModalTitle>
       <ModalBody>
         <div className="form-group">
           <label htmlFor="input-name" className="control-label">Name</label>
           <div className="modal-body__field">
-            <input type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.name || ''} autoFocus required />
+            <input id="input-name" name="name" type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.name || ''} autoFocus required />
           </div>
         </div>
-        <div className="form-group">
+        {this.props.createProject && <div className="form-group">
+          <label htmlFor="input-display-name" className="control-label">Display Name</label>
+          <div className="modal-body__field">
+            <input id="input-display-name" name="displayName" type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.displayName || ''} />
+          </div>
+        </div>}
+        {this.props.createProject && <div className="form-group">
+          <label htmlFor="input-description" className="control-label">Description</label>
+          <div className="modal-body__field">
+            <textarea id="input-description" name="description" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.description || ''} />
+          </div>
+        </div>}
+        {!this.props.createProject && <div className="form-group">
           <label className="control-label">Labels</label>
           <div className="modal-body__field">
             <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels.bind(this)} tags={[]} />
           </div>
-        </div>
+        </div>}
         <div className="form-group">
           <label className="control-label">Default Network Policy</label>
           <div className="modal-body__field ">
@@ -80,9 +112,10 @@ class CreateNamespaceModal extends PromiseComponent {
           </div>
         </div>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Create Namespace" cancel={this.props.cancel.bind(this)} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={`Create ${label}`} cancel={this.props.cancel.bind(this)} />
     </form>;
   }
 }
 
 export const createNamespaceModal = createModalLauncher(CreateNamespaceModal);
+export const createProjectModal = createModalLauncher(props => <CreateNamespaceModal {...props} createProject={true} />);

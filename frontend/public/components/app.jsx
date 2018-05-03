@@ -200,6 +200,7 @@ class App extends React.PureComponent {
 store.dispatch(featureActions.detectSecurityLabellerFlags);
 store.dispatch(featureActions.detectCalicoFlags);
 store.dispatch(featureActions.detectOpenShift);
+store.dispatch(featureActions.detectCanListNS);
 store.dispatch(getCRDs);
 
 analyticsSvc.push({tier: 'tectonic'});
