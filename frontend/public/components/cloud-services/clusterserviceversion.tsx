@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, referenceForCRDDesc, AppCatalog, appCatalogLabel } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage, List } from '../factory';
-import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog, NavTitle } from '../utils';
+import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog, NavTitle, LoadingBox } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
@@ -116,9 +116,9 @@ const stateToProps = ({k8s, FLAGS}, {match}) => ({
     .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', [] as CRDDescription[]))
     .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), [])
     .filter((crdDesc, i, allDescriptions) => i === _.findIndex(allDescriptions, ({name}) => name === crdDesc.name)),
-  namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn([FLAGS.has(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'data'], ImmutableMap()).toJS())
-    .filter((ns) => ns.metadata.name === match.params.ns && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
-    .length === 1,
+  loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded']),
+  namespaceEnabled: k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'data'], ImmutableMap())
+    .find((objMap) => objMap.getIn(['metadata', 'name']) === match.params.ns && objMap.getIn(['metadata', 'annotations', 'alm-manager'])) !== undefined,
 });
 
 const EmptyCustomAppsMsg = () => <MsgBox title="No Custom Applications Found" detail={<div>
@@ -152,6 +152,11 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         align: 'left',
       }];
       const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
+
+      // Wait for OpenShift feature detection to prevent flash of "disabled" UI
+      if (this.props.loading) {
+        return <LoadingBox />;
+      }
 
       return this.props.match.params.ns && !this.props.namespaceEnabled
         ? <Box className="text-center">
@@ -272,6 +277,7 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 /* eslint-disable no-undef */
 export type ClusterServiceVersionsPageProps = {
   kind: string;
+  loading?: boolean;
   namespaceEnabled: boolean;
   match: RouterMatch<{ns?: string}>;
   resourceDescriptions: CRDDescription[];
