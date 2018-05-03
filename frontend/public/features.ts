@@ -14,7 +14,6 @@ import { coFetchJSON } from './co-fetch';
   MULTI_CLUSTER: false,
   SECURITY_LABELLER: false,
   CLOUD_SERVICES: false,
-  CLOUD_CATALOGS: false,
   CALICO: false,
   CHARGEBACK: false,
   OPENSHIFT: false,
@@ -27,7 +26,6 @@ export enum FLAGS {
   MULTI_CLUSTER = 'MULTI_CLUSTER',
   SECURITY_LABELLER = 'SECURITY_LABELLER',
   CLOUD_SERVICES = 'CLOUD_SERVICES',
-  CLOUD_CATALOGS = 'CLOUD_CATALOGS',
   CALICO = 'CALICO',
   CHARGEBACK = 'CHARGEBACK',
   OPENSHIFT = 'OPENSHIFT',
@@ -43,7 +41,6 @@ export const CRDS_ = {
   'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
   'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
   'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
-  'uicatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
   'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
   'reports.chargeback.coreos.com': FLAGS.CHARGEBACK,
 };

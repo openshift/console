@@ -80,7 +80,6 @@ describe('featureReducer', () => {
       [FLAGS.PROMETHEUS]: false,
       [FLAGS.MULTI_CLUSTER]: false,
       [FLAGS.CLOUD_SERVICES]: false,
-      [FLAGS.CLOUD_CATALOGS]: false,
       [FLAGS.CHARGEBACK]: false,
       [flag]: true,
     }));
