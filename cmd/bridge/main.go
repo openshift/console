@@ -69,8 +69,6 @@ func main() {
 
 	fOpenshiftConsoleURL := fs.String("openshift-console-url", "", "URL for OpenShift console used in context switcher")
 
-	fLicenseFile := fs.String("license-file", "", "Path to the Tectonic license file.")
-
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
 	fLogoImageName := fs.String("logo-image-name", "", "Logo image used in the masthead")
 
@@ -111,7 +109,6 @@ func main() {
 		PublicDir:           *fPublicDir,
 		TectonicVersion:     *fTectonicVersion,
 		BaseURL:             baseURL,
-		TectonicLicenseFile: *fLicenseFile,
 		TectonicCACertFile:  caCertFilePath,
 		ClusterName:         *fTectonicClusterName,
 		OpenshiftConsoleURL: *fOpenshiftConsoleURL,

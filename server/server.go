@@ -9,13 +9,11 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"strconv"
-	"time"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/dex/connector"
@@ -25,9 +23,7 @@ import (
 
 	"github.com/coreos-inc/bridge/auth"
 	"github.com/coreos-inc/bridge/pkg/proxy"
-	"github.com/coreos-inc/bridge/verify"
 	"github.com/coreos-inc/bridge/version"
-	"github.com/coreos-inc/tectonic-licensing/license"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -68,7 +64,6 @@ type Server struct {
 	BaseURL             *url.URL
 	PublicDir           string
 	TectonicVersion     string
-	TectonicLicenseFile string
 	TectonicCACertFile  string
 	Auther              *auth.Authenticator
 	StaticUser          *auth.User
@@ -174,7 +169,6 @@ func (s *Server) HTTPHandler() http.Handler {
 		})),
 	)
 	handle("/api/tectonic/version", authHandler(s.versionHandler))
-	handle("/api/tectonic/license/validate", authHandler(s.validateLicenseHandler))
 	handle("/api/tectonic/ldap/validate", authHandler(handleLDAPVerification))
 	handle("/api/tectonic/namespaces", authHandlerWithUser(s.handleListNamespaces))
 	handle("/api/tectonic/crds", authHandlerWithUser(s.handleListCRDs))
@@ -268,40 +262,13 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) readLicense() (expiration time.Time, graceExpiration time.Time, entitlementKind string, entitlementCount int64, licenseError error) {
-	licenseBytes, err := ioutil.ReadFile(s.TectonicLicenseFile)
-	if err != nil {
-		plog.Warning("Could not open license file.")
-		return
-	}
-
-	expiration, graceExpiration, entitlementKind, entitlementCount, licenseError = verify.Verify(license.ProductionSigningPublicKey, string(licenseBytes), time.Now())
-	return
-}
-
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
-	expiration, graceExpiration, entitlementKind, entitlementCount, licenseError := s.readLicense()
-	licenseErrorString := ""
-	if licenseError != nil {
-		licenseErrorString = licenseError.Error()
-	}
-
 	sendResponse(w, http.StatusOK, struct {
-		Version          string    `json:"version"`
-		ConsoleVersion   string    `json:"consoleVersion"`
-		Expiration       time.Time `json:"expiration"`
-		GraceExpiration  time.Time `json:"graceExpiration"`
-		EntitlementKind  string    `json:"entitlementKind"`
-		EntitlementCount int64     `json:"entitlementCount"`
-		ErrorMessage     string    `json:"errorMessage"`
+		Version        string `json:"version"`
+		ConsoleVersion string `json:"consoleVersion"`
 	}{
-		Version:          s.TectonicVersion,
-		ConsoleVersion:   version.Version,
-		Expiration:       expiration,
-		GraceExpiration:  graceExpiration,
-		EntitlementKind:  entitlementKind,
-		EntitlementCount: entitlementCount,
-		ErrorMessage:     licenseErrorString,
+		Version:        s.TectonicVersion,
+		ConsoleVersion: version.Version,
 	})
 }
 
@@ -323,41 +290,6 @@ func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendResponse(w, http.StatusOK, info)
-}
-
-// Validate that a license should be used, purely based on it being
-// a valid, unexpired license. Does not factor in entitlements.
-func (s *Server) validateLicenseHandler(w http.ResponseWriter, r *http.Request) {
-	badLicense := func(message string) {
-		err := errors.New(message)
-		sendResponse(w, http.StatusOK, apiError{err.Error()})
-	}
-
-	licenseBytesInBase64 := r.FormValue("license")
-	licenseBytes, err := base64.StdEncoding.DecodeString(licenseBytesInBase64)
-	if err != nil {
-		badLicense("Invalid license encoding")
-		return
-	}
-	licenseString := string(licenseBytes)
-
-	now := time.Now()
-	expiration, _, _, _, licenseError := verify.Verify(license.ProductionSigningPublicKey, licenseString, now)
-	if licenseError != nil {
-		badLicense(licenseError.Error())
-		return
-	}
-
-	if expiration.Before(now) || expiration == now {
-		badLicense(fmt.Sprintf("License expired on %s", expiration.Format("January 1, 2006")))
-		return
-	}
-
-	sendResponse(w, http.StatusOK, struct {
-		Message string `json:"message"`
-	}{
-		Message: "Valid license",
-	})
 }
 
 func (s *Server) handleListCRDs(user *auth.User, w http.ResponseWriter, r *http.Request) {
