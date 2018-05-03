@@ -29,7 +29,6 @@ export class Gauge extends BaseGraph {
     this.timeSpan = 0;
     this.style = {
       height: 150,
-      minWidth: 150,
     };
 
     this.options = { staticPlot: true };
