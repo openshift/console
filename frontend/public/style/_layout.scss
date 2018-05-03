@@ -20,13 +20,26 @@ body {
 
 #reflex {
   display: flex;
-// <<<<<<< HEAD
-//   height: 100%;
-//   position: relative;
-// =======
   flex-direction: row;
   flex: 1 1 auto;
-// >>>>>>> Fix scrolling issues with react-virtualized.
+}
+
+#content {
+  background: white;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+}
+
+.os-masthead {
+  @media (max-width: $grid-float-breakpoint) {
+    position: fixed;
+    top: 0;
+    left: $sidebar-width;
+    right: 0;
+    height: 40px;
+    z-index: $zindex-navbar;
+  }
 }
 
 #sidebar {
@@ -38,15 +51,28 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  // width: 0;
   width: $sidebar-width;
 
+  .sidebar__body {
+    @media (min-width: $grid-float-breakpoint) {
+      display: flex;
+    }
+    display: none;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow-y: auto;
+  }
   &.open {
     bottom: 0;
-    // box-shadow: 2px 0 3px rgba(0,0,0,.3);
-    width: $sidebar-width;
-    // display: block;
+    box-shadow: 2px 0 3px rgba(0,0,0,.3);
+    .sidebar__body {
+      display: flex;
+    }
   }
+  @media (min-width: $grid-float-breakpoint) {
+    bottom: 0;
+  }
+
   .sidebar__header {
     height: 40px;
     display: flex;
@@ -63,9 +89,9 @@ body {
     height: 100%;
     margin-left: 0;
     margin-right: 20px;
-    // @media (min-width: $grid-float-breakpoint) {
-    //   margin-left: 20px;
-    // }
+    @media (min-width: $grid-float-breakpoint) {
+      margin-left: 20px;
+    }
     max-width: 100%;
   }
   .sidebar__toggle {
@@ -73,11 +99,10 @@ body {
     border: 0;
     margin: 0;
     padding: 9px 15px;
-    position: relative;
 
-    // @media (min-width: $grid-float-breakpoint) {
-    //   display: none;
-    // }
+    @media (min-width: $grid-float-breakpoint) {
+      display: none;
+    }
 
     &:focus,
     &:hover {
@@ -99,11 +124,7 @@ body {
   }
 }
 
-#content {
-  background: white;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  flex: 1 1 auto;
+#sidebar + #content {
   @media (min-width: $grid-float-breakpoint) {
     margin-left: $sidebar-width;
   }
