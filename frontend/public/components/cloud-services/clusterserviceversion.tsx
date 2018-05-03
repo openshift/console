@@ -12,6 +12,7 @@ import { withFallback } from '../utils/error-boundary';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
+import { FLAGS as featureFlags } from '../../features';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
 
@@ -110,12 +111,12 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   </div>;
 };
 
-const stateToProps = ({k8s}, {match}) => ({
+const stateToProps = ({k8s, FLAGS}, {match}) => ({
   resourceDescriptions: _.values(k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
     .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', [] as CRDDescription[]))
     .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), [])
     .filter((crdDesc, i, allDescriptions) => i === _.findIndex(allDescriptions, ({name}) => name === crdDesc.name)),
-  namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())
+  namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn([FLAGS.has(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'data'], ImmutableMap()).toJS())
     .filter((ns) => ns.metadata.name === match.params.ns && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
     .length === 1,
 });
