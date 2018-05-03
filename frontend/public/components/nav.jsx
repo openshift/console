@@ -341,7 +341,7 @@ export class Nav extends React.Component {
           </NavSection>
 
           <NavSection text="Administration" icon="fa-cog">
-            <ResourceClusterLink resource="projects" name="Projects" onClick={closeSidebar} required={FLAGS.OPENSHIFT} />
+            <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} />
             <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} />
