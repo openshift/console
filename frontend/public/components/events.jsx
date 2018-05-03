@@ -102,7 +102,6 @@ class SysEvent extends React.Component {
       shouldAnimate = true;
     }
 
-    // console.log('shouldAnimate', shouldAnimate);
     return <div style={s}>
       <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
         {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} lastTimestamp={lastTimestamp} message={message} source={source} />}
@@ -161,7 +160,6 @@ class EventStream extends SafetyFirst {
 
     // TODO: (ggreer) add an onBufferFlush or other batch API to ws-factory.
     this.flushMessages = _.throttle(this.flushMessages_, 500);
-    this.wsInit(this.props.namespace);
   }
 
   wsInit (ns) {
@@ -213,6 +211,11 @@ class EventStream extends SafetyFirst {
       .onerror(() => {
         this.setState({error: true, sortedMessages: [], filteredMessages: []});
       });
+  }
+
+  componentDidMount () {
+    super.componentDidMount();
+    this.wsInit(this.props.namespace);
   }
 
   componentWillUnmount () {
