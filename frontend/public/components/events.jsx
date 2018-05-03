@@ -78,7 +78,8 @@ class SysEvent extends React.Component {
   }
 
   componentWillUnmount () {
-    seen.delete(this.props.metadata.name);
+    // TODO: this is not correct, but don't memory leak :-/
+    seen.delete(this.props.metadata.uid);
   }
 
   render () {
@@ -93,7 +94,7 @@ class SysEvent extends React.Component {
     s.height = s.height - 20;
 
     let shouldAnimate;
-    const key = metadata.name;
+    const key = metadata.uid;
     if (key in seen) {
       shouldAnimate = false;
     } else if (index < 6) {
@@ -153,14 +154,13 @@ class EventStream extends SafetyFirst {
       oldestTimestamp: new Date(),
     };
     this.toggleStream = this.toggleStream_.bind(this);
-    this.rowRenderer = function rowRenderer ({index, style}) {
+    this.rowRenderer = function rowRenderer ({index, style, key}) {
       const event = this.state.filteredMessages[index];
-      /* TODO keyMapper */
-      // console.log('index', index);
-      const key = event.metadata.name;
       return <SysEvent {...event} key={key} style={style} index={index} />;
     }.bind(this);
 
+    // TODO: (ggreer) add an onBufferFlush or other batch API to ws-factory.
+    this.flushMessages = _.throttle(this.flushMessages_, 500);
     this.wsInit(this.props.namespace);
   }
 
@@ -170,7 +170,7 @@ class EventStream extends SafetyFirst {
       fieldSelector: this.props.fieldSelector,
     };
 
-    this.ws = new WSFactory('sysevents', {
+    this.ws = new WSFactory(`${ns || 'all'}-sysevents`, {
       host: 'auto',
       reconnect: true,
       path: watchURL(k8sKinds.Event, params),
@@ -179,7 +179,7 @@ class EventStream extends SafetyFirst {
       bufferFlushInterval: flushInterval,
       bufferMax: maxMessages,
     })
-      .onmessage((data) => {
+      .onmessage(data => {
         const uid = data.object.metadata.uid;
 
         switch (data.type) {
@@ -188,9 +188,6 @@ class EventStream extends SafetyFirst {
             if (this.messages[uid] && this.messages[uid].count > data.object.count) {
               // We already have a more recent version of this message stored, so skip this one
               return;
-            }
-            if (data.object.message) {
-              data.object.message = data.object.message.replace(/\\"/g, '\'');
             }
             this.messages[uid] = data.object;
             break;
@@ -268,7 +265,7 @@ class EventStream extends SafetyFirst {
   // Messages can come in extremely fast when the buffer flushes.
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
-  flushMessages () {
+  flushMessages_ () {
     if (!_.isEmpty(this.messages)) {
       // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
       // the same timestamp
