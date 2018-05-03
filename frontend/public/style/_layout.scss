@@ -27,11 +27,16 @@ body {
 #content {
   background: white;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch; // Scroll with momentum
   flex: 1 1 auto;
+  @media (max-width: $grid-float-breakpoint) {
+    overflow-y: visible;
+  }
 }
 
 .os-masthead {
+  background-color: $color-pf-black;
+  color: $color-os-nav-title;
   @media (max-width: $grid-float-breakpoint) {
     position: fixed;
     top: 0;
@@ -127,7 +132,9 @@ body {
 #sidebar + #content {
   @media (min-width: $grid-float-breakpoint) {
     margin-left: $sidebar-width;
+    margin-top: 0;
   }
+  margin-top: 40px;
 }
 
 .absolute-zero {
