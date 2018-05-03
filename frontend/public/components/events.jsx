@@ -279,32 +279,29 @@ class EventStream extends SafetyFirst {
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
     return <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-xs-12"><p></p>
-          <div className="co-sysevent-stream">
-            <div className="co-sysevent-stream__totals text-muted">
-              { messageCount }
-            </div>
-
-            <div className={klass}>
-              <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
-              <div className="co-sysevent-stream__timeline__btn-text">
-                {statusBtnTxt}
-              </div>
-              <div className="co-sysevent-stream__timeline__end-message">
-              There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
-              </div>
-            </div>
-
-            <TransitionGroup>
-              { filteredMessages.map((m, i) => <CSSTransition key={i} classNames="slide" exit={false} timeout={{enter: 250}}>
-                <SysEvent {...m} key={m.metadata.uid} />
-              </CSSTransition>)}
-            </TransitionGroup>
-
-            { sysEventStatus }
+      <div className="co-sysevent-stream">
+        <div className="co-sysevent-stream__status">
+          <div>
+            {statusBtnTxt}
+          </div>
+          <div className="text-muted">
+            { messageCount }
           </div>
         </div>
+        <div className={klass}>
+          <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
+          <div className="co-sysevent-stream__timeline__end-message">
+          There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+          </div>
+        </div>
+
+        <TransitionGroup>
+          { filteredMessages.map((m, i) => <CSSTransition key={i} classNames="slide" exit={false} timeout={{enter: 250}}>
+            <SysEvent {...m} key={m.metadata.uid} />
+          </CSSTransition>)}
+        </TransitionGroup>
+
+        { sysEventStatus }
       </div>
     </div>;
   }

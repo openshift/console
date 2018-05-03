@@ -1,6 +1,5 @@
 .group {
-  margin-bottom: 15px;
-  padding-right: 0;
+  margin-bottom: ($grid-gutter-width / 2);
 }
 .group__title {
   border: 1px solid $color-grey-background-border;
@@ -8,6 +7,9 @@
   display: flex;
   justify-content: space-between;
   padding: 10px 15px;
+  @media(max-width: $screen-xs) {
+    flex-direction: column;
+  }
   h2 {
     margin: 0;
   }
@@ -15,8 +17,6 @@
 .group__body {
   border: 1px solid $color-grey-background-border;
   border-top: none;
-  padding-left: ($grid-gutter-width / 2);
-  padding-right: ($grid-gutter-width / 2);
 }
 
 .group__graphs {
@@ -24,9 +24,12 @@
 }
 
 .cluster-overview-cell {
-  padding: 15px;
-  margin-bottom: 15px;
-  margin-right: 15px;
+  padding-top: 15px;
+  @media(min-width: $screen-lg-min) {
+    .col-lg-8 {
+      padding-right: 0;
+    }
+  }
 }
 
 .cluster-overview-cell__title {
