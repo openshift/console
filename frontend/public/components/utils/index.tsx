@@ -24,7 +24,7 @@ export * from './button-bar';
 export * from './number-spinner';
 export * from './stream';
 export * from './cloud-provider';
-export * from './documentation-sidebar';
+export * from './documentation';
 export * from './router';
 export * from './operator-states';
 export * from './container-linux-update-operator';
