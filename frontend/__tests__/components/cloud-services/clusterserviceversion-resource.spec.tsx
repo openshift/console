@@ -466,7 +466,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual(owned.concat(required).map((crdDesc) => ({
-      kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}`,
+      kind: `${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}:${crdDesc.kind}`,
       namespaced: true,
       optional: true,
       prop: crdDesc.kind,
@@ -483,7 +483,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().createButtonText).toEqual('Create New');
     expect(listPage.props().createProps.to).not.toBeDefined();
     expect(listPage.props().createProps.items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
-    expect(listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name)).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResource:testapp.coreos.com:v1/new`);
+    expect(listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name)).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com:v1:TestResource/new`);
   });
 
   it('passes `createProps` for single create button if app has only one owned CRD', () => {
@@ -492,7 +492,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().createButtonText).toEqual(`Create ${testClusterServiceVersion.spec.customresourcedefinitions.owned[0].displayName}`);
     expect(listPage.props().createProps.items).not.toBeDefined();
     expect(listPage.props().createProps.createLink).not.toBeDefined();
-    expect(listPage.props().createProps.to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResource:testapp.coreos.com:v1/new`);
+    expect(listPage.props().createProps.to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com:v1:TestResource/new`);
   });
 
   it('passes `flatten` function which removes `required` resources with owner references to items not in the same list', () => {

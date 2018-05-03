@@ -122,7 +122,7 @@ const stateToProps = ({k8s, FLAGS}, {match}) => ({
 });
 
 const EmptyCustomAppsMsg = () => <MsgBox title="No Custom Applications Found" detail={<div>
-  Create custom applications by using the <a href="https://github.com/coreos/helm-app-operator-kit" target="_blank" rel="noopener noreferrer">Helm App Operator Kit <i className="fa fa-external-link" /></a>.
+  Create custom applications by using the <a href="https://github.com/operator-framework/helm-app-operator-kit" target="_blank" rel="noopener noreferrer">Helm App Operator Kit <i className="fa fa-external-link" /></a>.
 </div>} />;
 
 export const ClusterServiceVersionsPage = connect(stateToProps)(

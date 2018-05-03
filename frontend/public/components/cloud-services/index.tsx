@@ -165,7 +165,7 @@ export type Package = {
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 
-export const referenceForCRDDesc = (desc: CRDDescription): GroupVersionKind => `${desc.kind}:${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}`;
+export const referenceForCRDDesc = (desc: CRDDescription): GroupVersionKind => `${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}:${desc.kind}`;
 
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;
