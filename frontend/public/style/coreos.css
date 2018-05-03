@@ -146,7 +146,13 @@ input[type="radio"] {
   margin: 0; }
 
 .co-m-pane__body {
-  padding: 30px; }
+  padding: 5px;
+}
+@media (min-width: 768px) {
+  .co-m-pane__body {
+    padding: 30px;
+  }
+}
 
 .co-m-pane__body-group {
   padding: 0 0 30px 0; }
