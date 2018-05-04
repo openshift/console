@@ -1,4 +1,6 @@
 $sidebar-width: 220px;
+$masthead-height-mobile: 40px;
+$masthead-height-desktop: 60px;
 
 html {
   height: 100%;
@@ -37,13 +39,14 @@ body {
 .os-masthead {
   background-color: $color-pf-black;
   color: $color-os-nav-title;
+  position: fixed;
+  top: 0;
+  left: $sidebar-width;
+  right: 0;
+  height: $masthead-height-desktop;
+  z-index: $zindex-navbar;
   @media (max-width: $grid-float-breakpoint) {
-    position: fixed;
-    top: 0;
-    left: $sidebar-width;
-    right: 0;
-    height: 40px;
-    z-index: $zindex-navbar;
+    height: $masthead-height-mobile;
   }
 }
 
@@ -65,7 +68,7 @@ body {
     display: none;
     flex: 1 1 auto;
     flex-direction: column;
-    overflow-y: auto;
+    overflow-y: visible;
   }
   &.open {
     bottom: 0;
@@ -79,13 +82,13 @@ body {
   }
 
   .sidebar__header {
-    height: 40px;
+    height: $masthead-height-mobile;
     display: flex;
     flex-direction: row;
     flex: 0 0 auto;
     background-color: $color-pf-black;
     @media (min-width: $grid-float-breakpoint) {
-      height: 60px;
+      height: $masthead-height-desktop;
     }
   }
   .sidebar__logo {
@@ -132,9 +135,9 @@ body {
 #sidebar + #content {
   @media (min-width: $grid-float-breakpoint) {
     margin-left: $sidebar-width;
-    margin-top: 0;
+    margin-top: $masthead-height-desktop;
   }
-  margin-top: 40px;
+  margin-top: $masthead-height-mobile;
 }
 
 .absolute-zero {
