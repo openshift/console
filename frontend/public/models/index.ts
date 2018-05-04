@@ -446,7 +446,7 @@ export const RouteModel: K8sKind = {
   apiVersion: 'v1',
   path: 'routes',
   plural: 'routes',
-  abbr: 'R',
+  abbr: 'RT',
   namespaced: true,
   kind: 'Route',
   id: 'route'
