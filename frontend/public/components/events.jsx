@@ -40,23 +40,30 @@ class Inner extends React.PureComponent {
         <i className="co-sysevent-icon" title={tooltipMsg} />
         <div className="co-sysevent__icon-line"></div>
       </div>
-      <div className="co-sysevent__main-box">
-        <ResourceLink
-          kind={obj.kind}
-          namespace={obj.namespace}
-          name={obj.name}
-          title={obj.uid}
-        />
-        <div className="co-sysevent__main-message">{message}</div>
-      </div>
-      <div className="co-sysevent__meta-box">
-        <div><Timestamp timestamp={lastTimestamp} /></div>
-        <small className="co-sysevent__meta-source">
+      <div className="co-sysevent__box">
+        <div className="co-sysevent__header">
+          <div className="co-sysevent__header__link">
+            <ResourceLink
+              kind={obj.kind}
+              namespace={obj.namespace}
+              name={obj.name}
+              title={obj.uid}
+            />
+          </div>
+          <div className="co-sysevent__timestamp">
+            <Timestamp timestamp={lastTimestamp} />
+          </div>
+        </div>
+
+        <small className="co-sysevent__source">
           Generated from <span>{source.component}</span>
           {source.component === 'kubelet' &&
             <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
           }
         </small>
+        <div className="co-sysevent__message">
+          {message}
+        </div>
       </div>
     </div>;
   }
@@ -78,7 +85,7 @@ class SysEvent extends React.Component {
   }
 
   componentWillUnmount () {
-    // TODO: this is not correct, but don't memory leak :-/
+    // TODO (kans): this is not correct, but don't memory leak :-/
     seen.delete(this.props.metadata.uid);
   }
 
@@ -87,24 +94,16 @@ class SysEvent extends React.Component {
     const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
     const tooltipMsg = `${reason} (${obj.kind.toLowerCase()})`;
 
-    // TODO: (kans)
-    const s = Object.assign({}, style);
-    delete s.width;
-    s.right = 0;
-    s.height = s.height - 20;
-
     let shouldAnimate;
     const key = metadata.uid;
-    if (key in seen) {
-      shouldAnimate = false;
-    } else if (index < 6) {
+    if (!seen.has(key) && index < 6) {
       seen.add(key);
       shouldAnimate = true;
     }
 
-    return <div style={s}>
+    return <div style={style}>
       <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
-        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} lastTimestamp={lastTimestamp} message={message} source={source} />}
+        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} lastTimestamp={lastTimestamp} message={message} source={source} width={style.width}/>}
       </CSSTransition>
     </div>;
   }
@@ -365,28 +364,24 @@ class EventStream extends SafetyFirst {
         <WindowScroller>
           {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
             <AutoSizer disableHeight>
-              {({width}) => {
-                this._mostRecentWidth = width;
-                return <div ref={registerChild}>
-                  <VirtualList
-                    data={filteredMessages}
-                    autoHeight
-                    height={height}
-                    isScrolling={isScrolling}
-                    onScroll={onChildScroll}
-                    rowRenderer={this.rowRenderer}
-                    scrollTop={scrollTop}
-                    width={width}
-                    rowCount={count}
-                    // TODO: set rowHeight based on media query
-                    // @media screen and (min-width: 768px)...
-                    rowHeight={135}
-                  />
-                </div>;
-              }
-              }
-            </AutoSizer>
-          }
+              {({width}) => <div ref={registerChild}>
+                <VirtualList
+                  autoHeight
+                  data={filteredMessages}
+                  height={height}
+                  isScrolling={isScrolling}
+                  onScroll={onChildScroll}
+                  rowRenderer={this.rowRenderer}
+                  scrollTop={scrollTop}
+                  width={width}
+                  rowCount={count}
+                  // TODO: set rowHeight based on media query
+                  // @media screen and (min-width: 768px)...
+                  // rowHeight={width > 548 ? 135 : 250}
+                  rowHeight={135}
+                />
+              </div>}
+            </AutoSizer> }
         </WindowScroller>
         { sysEventStatus }
       </div>

@@ -145,9 +145,6 @@ input[type="radio"] {
   line-height: 24px;
   margin: 0; }
 
-.co-m-pane__body {
-  padding: 5px;
-}
 @media (min-width: 768px) {
   .co-m-pane__body {
     padding: 30px;
