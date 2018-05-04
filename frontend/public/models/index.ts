@@ -1,19 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { K8sKind } from '../module/k8s';
 
-export const UICatalogEntryModel: K8sKind = {
-  kind: 'UICatalogEntry-v1',
-  label: 'UICatalogEntry-v1',
-  labelPlural: 'UICatalogEntry-v1s',
-  apiGroup: 'app.coreos.com',
-  apiVersion: 'v1alpha1',
-  path: 'uicatalogentry-v1s',
-  abbr: 'CE',
-  namespaced: true,
-  crd: true,
-  plural: 'uicatalogentry-v1s',
-};
-
 export const CatalogSourceModel: K8sKind = {
   kind: 'CatalogSource-v1',
   label: 'CatalogSource-v1',

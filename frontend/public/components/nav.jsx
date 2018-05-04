@@ -254,7 +254,7 @@ export const Nav = connect(navStateToProps, navDispatchToProps)(({sidebarOpen, c
       <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
         <ResourceNSLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={closeSidebar} />
         <Sep />
-        <ResourceNSLink resource={CatalogSourceModel.plural} required={FLAGS.CLOUD_CATALOGS} name="Open Cloud Catalog" onClick={closeSidebar} />
+        <ResourceNSLink resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={closeSidebar} />
         <ResourceNSLink resource={SubscriptionModel.plural} name="Subscriptions" onClick={closeSidebar} />
         <ResourceNSLink resource={InstallPlanModel.plural} name="Install Plans" onClick={closeSidebar} />
       </NavSection>

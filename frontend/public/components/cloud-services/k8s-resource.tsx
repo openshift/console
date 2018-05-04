@@ -13,7 +13,7 @@ export const Resources = connectToPlural((props: ResourceProps) => {
   const {kindObj, clusterServiceVersion} = props;
 
   const resourceForCRD = (crdDesc) => ({
-    kind: `${crdDesc.kind}:${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}` as GroupVersionKind,
+    kind: `${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}:${crdDesc.kind}` as GroupVersionKind,
     namespaced: true,
     optional: true,
     prop: crdDesc.kind,
