@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash-es';
+import { connect } from 'react-redux';
 
 import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
 import { Resources } from './k8s-resource';
@@ -10,7 +11,7 @@ import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus }
 import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, Firehose } from '../utils';
-import { connectToPlural } from '../../kinds';
+import { connectToPlural, kindReducerName, inFlight } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
@@ -82,43 +83,50 @@ export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersi
   }
 };
 
-export const ClusterServiceVersionResourcesPage: React.SFC<ClusterServiceVersionResourcesPageProps> = (props) => {
-  const {obj} = props;
-  const {owned = []} = obj.spec.customresourcedefinitions;
-  const firehoseResources = owned.map((desc) => ({kind: referenceForCRDDesc(desc), namespaced: true, optional: true, prop: desc.kind}));
+const inFlightStateToProps = ({[kindReducerName]: ns}) => ({inFlight: ns.get(inFlight)});
 
-  const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
-  const createLink = (name: string) => `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}/${referenceForCRDDesc(_.find(owned, {name}))}/new`;
-  const createProps = owned.length > 1
-    ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
-    : {to: owned.length === 1 ? createLink(owned[0].name) : null};
+export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps, null)(
+  (props: ClusterServiceVersionResourcesPageProps) => {
+    const {obj} = props;
+    const {owned = []} = obj.spec.customresourcedefinitions;
+    const firehoseResources = owned.map((desc) => ({kind: referenceForCRDDesc(desc), namespaced: true, prop: desc.kind}));
 
-  const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) => ownerRefs.filter(({uid}) => items.filter(({metadata}) => metadata.uid === uid).length > 0);
-  const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item))
-    .filter(({kind, metadata}, i, allResources) => owned.filter(item => item.kind === kind).length > 0 || owners(metadata.ownerReferences || [], allResources).length > 0);
+    const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
+    const createLink = (name: string) => `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}/${referenceForCRDDesc(_.find(owned, {name}))}/new`;
+    const createProps = owned.length > 1
+      ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
+      : {to: owned.length === 1 ? createLink(owned[0].name) : null};
 
-  const rowFilters = [{
-    type: 'clusterserviceversion-resource-kind',
-    selected: firehoseResources.map(({kind}) => kind),
-    reducer: ({kind}) => kind,
-    items: firehoseResources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
-  }];
+    const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) => ownerRefs.filter(({uid}) => items.filter(({metadata}) => metadata.uid === uid).length > 0);
+    const flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => _.flatMap(resources, (resource) => _.map(resource.data, item => item))
+      .filter(({kind, metadata}, i, allResources) => owned.filter(item => item.kind === kind).length > 0 || owners(metadata.ownerReferences || [], allResources).length > 0);
 
-  return firehoseResources.length > 0
-    ? <MultiListPage
-      {...props}
-      ListComponent={ClusterServiceVersionResourceList}
-      filterLabel="Resources by name"
-      resources={firehoseResources}
-      namespace={obj.metadata.namespace}
-      canCreate={owned.length > 0 && obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded}
-      createProps={createProps}
-      createButtonText={owned.length > 1 ? 'Create New' : `Create ${owned[0].displayName}`}
-      flatten={flatten}
-      rowFilters={firehoseResources.length > 1 ? rowFilters : null}
-    />
-    : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
-};
+    const rowFilters = [{
+      type: 'clusterserviceversion-resource-kind',
+      selected: firehoseResources.map(({kind}) => kind),
+      reducer: ({kind}) => kind,
+      items: firehoseResources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
+    }];
+
+    if (props.inFlight) {
+      return null;
+    }
+
+    return firehoseResources.length > 0
+      ? <MultiListPage
+        {...props}
+        ListComponent={ClusterServiceVersionResourceList}
+        filterLabel="Resources by name"
+        resources={firehoseResources}
+        namespace={obj.metadata.namespace}
+        canCreate={owned.length > 0 && obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded}
+        createProps={createProps}
+        createButtonText={owned.length > 1 ? 'Create New' : `Create ${owned[0].displayName}`}
+        flatten={flatten}
+        rowFilters={firehoseResources.length > 1 ? rowFilters : null}
+      />
+      : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
+  });
 
 export const ClusterServiceVersionResourceDetails = connectToPlural(
   class ClusterServiceVersionResourceDetails extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
@@ -258,6 +266,7 @@ export type ClusterServiceVersionResourceRowProps = {
 
 export type ClusterServiceVersionResourcesPageProps = {
   obj: ClusterServiceVersionKind;
+  inFlight?: boolean;
 };
 
 export type ClusterServiceVersionResourcesDetailsProps = {

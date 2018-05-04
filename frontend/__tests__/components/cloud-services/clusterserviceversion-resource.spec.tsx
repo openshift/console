@@ -445,7 +445,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionResourcesPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionResourcesPage obj={testClusterServiceVersion} />);
+    wrapper = shallow(<ClusterServiceVersionResourcesPage.WrappedComponent obj={testClusterServiceVersion} />);
   });
 
   it('renders a `StatusBox` if given app has no owned or required custom resources', () => {
@@ -468,7 +468,6 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().resources).toEqual(owned.concat(required).map((crdDesc) => ({
       kind: `${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}:${crdDesc.kind}`,
       namespaced: true,
-      optional: true,
       prop: crdDesc.kind,
     })));
     expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
