@@ -5,16 +5,6 @@
  */
 /* eslint-disable no-console */
 
-const wsCache = {};
-
-function validOptions(o) {
-  if (!o.host) {
-    console.error('missing required host argument');
-    return false;
-  }
-  return true;
-}
-
 function createURL(host, path) {
   let url;
 
@@ -35,7 +25,7 @@ function createURL(host, path) {
   return url;
 }
 
-function WebSocketWrapper(id, options) {
+export function WSFactory(id, options) {
   this.id = id;
   this.options = options;
   this.url = createURL(options.host, options.path);
@@ -55,32 +45,7 @@ function WebSocketWrapper(id, options) {
   }
 }
 
-// id must uniquely identify the WebSocket, otherwise this could return the "wrong" WebSocket
-export const wsFactory = (id, options) => {
-  // get by id
-  if (!options) {
-    return wsCache[id];
-  }
-  // websocket with id already exists
-  if (wsCache[id]) {
-    return wsCache[id];
-  }
-  // create new websocket
-  if (validOptions(options)) {
-    wsCache[id] = new WebSocketWrapper(id, options);
-    return wsCache[id];
-  }
-};
-
-wsFactory.destroy = function(id) {
-  const ws = wsCache[id];
-  if (!ws) {
-    return;
-  }
-  ws.destroy();
-};
-
-WebSocketWrapper.prototype._reconnect = function() {
+WSFactory.prototype._reconnect = function() {
   if (this._connectionAttempt || this._state === 'destroyed') {
     return;
   }
@@ -109,7 +74,7 @@ WebSocketWrapper.prototype._reconnect = function() {
   this._connectionAttempt = setTimeout(attempt, delay);
 };
 
-WebSocketWrapper.prototype._connect = function() {
+WSFactory.prototype._connect = function() {
   const that = this;
   this._state = 'init';
   this._buffer = [];
@@ -151,7 +116,7 @@ WebSocketWrapper.prototype._connect = function() {
   };
 };
 
-WebSocketWrapper.prototype._registerHandler = function(type, fn) {
+WSFactory.prototype._registerHandler = function(type, fn) {
   if (this._state === 'destroyed') {
     return;
   }
@@ -159,7 +124,7 @@ WebSocketWrapper.prototype._registerHandler = function(type, fn) {
 };
 
 // Addds an event to the buffer.
-WebSocketWrapper.prototype._bufferEvent = function(evt) {
+WSFactory.prototype._bufferEvent = function(evt) {
   this._buffer.unshift(evt);
   // If max is reached, remove oldest mevents.
   if (this.options.bufferMax) {
@@ -170,7 +135,7 @@ WebSocketWrapper.prototype._bufferEvent = function(evt) {
 };
 
 // Invoke all registered handler callbacks for a given event type.
-WebSocketWrapper.prototype._invokeHandlers = function(evt) {
+WSFactory.prototype._invokeHandlers = function(evt) {
   const handlers = this._handlers[evt.type];
   if (!handlers) {
     return;
@@ -185,7 +150,7 @@ WebSocketWrapper.prototype._invokeHandlers = function(evt) {
 };
 
 // Triggers event to be buffered or invoked depending on config.
-WebSocketWrapper.prototype._triggerEvent = function(evt) {
+WSFactory.prototype._triggerEvent = function(evt) {
   if (this._state === 'destroyed') {
     return;
   }
@@ -197,32 +162,32 @@ WebSocketWrapper.prototype._triggerEvent = function(evt) {
   }
 };
 
-WebSocketWrapper.prototype.onmessage = function(fn) {
+WSFactory.prototype.onmessage = function(fn) {
   this._registerHandler('message', fn);
   return this;
 };
 
-WebSocketWrapper.prototype.onerror = function(fn) {
+WSFactory.prototype.onerror = function(fn) {
   this._registerHandler('error', fn);
   return this;
 };
 
-WebSocketWrapper.prototype.onopen = function(fn) {
+WSFactory.prototype.onopen = function(fn) {
   this._registerHandler('open', fn);
   return this;
 };
 
-WebSocketWrapper.prototype.onclose = function(fn) {
+WSFactory.prototype.onclose = function(fn) {
   this._registerHandler('close', fn);
   return this;
 };
 
-WebSocketWrapper.prototype.ondestroy = function(fn) {
+WSFactory.prototype.ondestroy = function(fn) {
   this._registerHandler('destroy', fn);
   return this;
 };
 
-WebSocketWrapper.prototype.flushBuffer = function() {
+WSFactory.prototype.flushBuffer = function() {
   if (this._paused) {
     return;
   }
@@ -232,28 +197,28 @@ WebSocketWrapper.prototype.flushBuffer = function() {
 };
 
 // Pausing prevents any buffer flushing until unpaused.
-WebSocketWrapper.prototype.pause = function() {
+WSFactory.prototype.pause = function() {
   this._paused = true;
 };
 
-WebSocketWrapper.prototype.unpause = function() {
+WSFactory.prototype.unpause = function() {
   this._paused = false;
   this.flushBuffer();
 };
 
-WebSocketWrapper.prototype.isPaused = function() {
+WSFactory.prototype.isPaused = function() {
   return this._paused;
 };
 
-WebSocketWrapper.prototype.state = function() {
+WSFactory.prototype.state = function() {
   return this._state;
 };
 
-WebSocketWrapper.prototype.bufferSize = function() {
+WSFactory.prototype.bufferSize = function() {
   return this._buffer.length;
 };
 
-WebSocketWrapper.prototype.destroy = function(timedout) {
+WSFactory.prototype.destroy = function(timedout) {
   console.log(`destroying websocket: ${this.id}`);
   if (this._state === 'destroyed') {
     return;
@@ -286,5 +251,4 @@ WebSocketWrapper.prototype.destroy = function(timedout) {
 
   delete this.options;
   delete this._buffer;
-  delete wsCache[this.id];
 };

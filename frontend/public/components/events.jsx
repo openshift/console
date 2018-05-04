@@ -10,7 +10,7 @@ import { namespaceProptype } from '../propTypes';
 import { k8sKinds, watchURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
-import { wsFactory } from '../module/ws-factory';
+import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
 
 const maxMessages = 500;
@@ -121,7 +121,7 @@ class EventStream extends SafetyFirst {
       fieldSelector: this.props.fieldSelector,
     };
 
-    this.ws = wsFactory('sysevents', {
+    this.ws = new WSFactory('sysevents', {
       host: 'auto',
       reconnect: true,
       path: watchURL(k8sKinds.Event, params),
@@ -171,13 +171,13 @@ class EventStream extends SafetyFirst {
 
   componentWillUnmount () {
     super.componentWillUnmount();
-    wsFactory.destroy('sysevents');
+    this.ws.destroy();
   }
 
   componentWillReceiveProps (nextProps) {
     // If the namespace has changed, created a new WebSocket with the new namespace
     if (this.props.namespace !== nextProps.namespace) {
-      wsFactory.destroy('sysevents');
+      this.ws.destroy();
       this.wsInit(nextProps.namespace);
     }
   }
