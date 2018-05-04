@@ -124,7 +124,7 @@ const Details = (props) => {
 
   return <div className="co-m-pane__body">
     <div className="row">
-      <div className="col-sm-4">
+      <div className="col-lg-4">
         <h1 className="co-section-title">Container Overview</h1>
         <dl className="co-m-pane__details">
           <dt>State</dt>
@@ -146,7 +146,7 @@ const Details = (props) => {
         </dl>
       </div>
 
-      <div className="col-sm-4">
+      <div className="col-lg-4">
         <h1 className="co-section-title">Image Details</h1>
         <dl className="co-m-pane__details">
           <dt>Image</dt>
@@ -162,7 +162,7 @@ const Details = (props) => {
         </dl>
       </div>
 
-      <div className="col-sm-4">
+      <div className="col-lg-4">
         <h1 className="co-section-title">Network</h1>
         <dl className="co-m-pane__details">
           <dt>Node</dt>
@@ -176,21 +176,21 @@ const Details = (props) => {
     <hr />
 
     <div className="row">
-      <div className="col-sm-4">
+      <div className="col-lg-4">
         <h1 className="co-section-title">Ports</h1>
         <div className="co-table-container">
           <Ports ports={container.ports} />
         </div>
       </div>
 
-      <div className="col-sm-4">
+      <div className="col-lg-4">
         <h1 className="co-section-title">Mounted Volumes</h1>
         <div className="co-table-container">
           <Volumes volumes={container.volumeMounts} />
         </div>
       </div>
 
-      <div className="col-sm-4">
+      <div className="col-lg-4">
         <h1 className="co-section-title">Environment Variables</h1>
         <div className="co-table-container">
           <Env env={container.env} />
