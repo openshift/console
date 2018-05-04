@@ -23,7 +23,7 @@ export const CreateCRDYAML: React.SFC<CreateCRDYAMLProps> = (props) => {
     if (createProps.ClusterServiceVersion.loaded && createProps.ClusterServiceVersion.data) {
       try {
         (JSON.parse(_.get(createProps.ClusterServiceVersion.data.metadata.annotations, annotationKey)) as K8sResourceKind[] || [])
-          .forEach((template) => registerTemplate(`${template.apiVersion.split('/')[1]}.${template.kind}`, safeDump(template)));
+          .forEach((template) => registerTemplate(`${template.apiVersion}.${template.kind}`, safeDump(template)));
       } catch (err) {
         const key = `${apiVersionForReference(props.match.params.plural)}.${kindForReference(props.match.params.plural)}`;
         registerTemplate(key, ocsTemplates.get(key));
