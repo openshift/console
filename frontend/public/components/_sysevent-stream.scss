@@ -39,17 +39,16 @@ $color-dark-border: #ddd;
 
 .co-sysevent-stream__status {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   position: absolute;
   top: 9px;
   left: 40px;
-  right: 0;
-  @media(min-width: $screen-xs-min) {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+  right: 4px;
   @media(min-width: $screen-sm-min) {
+    padding-left: 25px;
     left: 45px;
+    right: 0;
   }
 }
 
@@ -71,10 +70,6 @@ $color-dark-border: #ddd;
   margin: 0;
   transform: translate(0%, -100%);
   margin-left: 2px;
-}
-
-.co-sysevent-stream__timeline__btn-text {
-  padding-left: 25px;
 }
 
 .co-sysevent {
@@ -108,6 +103,15 @@ $color-dark-border: #ddd;
 
 .co-sysevent__header__link {
   flex: 1 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+
+.co-sysevent__source {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
 }
 
 .co-sysevent__message {
@@ -115,7 +119,6 @@ $color-dark-border: #ddd;
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: break-word;
-  overflow: hidden;
   height: 45px;
 }
 
