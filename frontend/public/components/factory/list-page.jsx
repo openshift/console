@@ -13,7 +13,7 @@ import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
 
 
-export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm pull-left" data-toggle="buttons">
+export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
     <input type="radio" onClick={() => onExpandChange(false)} /> Compact
   </label>
@@ -36,7 +36,7 @@ export const TextFilter = ({label, onChange, defaultValue, style, className, aut
     type="text"
     autoCapitalize="none"
     style={style}
-    className={classNames('form-control text-filter pull-right', className)}
+    className={classNames('form-control text-filter', className)}
     tabIndex={0}
     placeholder={`Filter ${label}...`}
     onChange={onChange}
@@ -151,14 +151,14 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
     render () {
       const {createButtonText, dropdownFilters, textFilter, filterLabel, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
 
-      const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title, align = 'right'}) => {
-        return <Dropdown key={title} className={`pull-${align}`} items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
+      const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
+        return <Dropdown key={title} items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
       });
 
       let createLink;
       if (canCreate) {
         if (createProps.to) {
-          createLink = <Link className="co-m-primary-action pull-left" {...createProps} tabIndex={-1}>
+          createLink = <Link className="co-m-primary-action" {...createProps} tabIndex={-1}>
             <button className="btn btn-primary" id="yaml-create" tabIndex={-1}>{createButtonText}</button>
           </Link>;
         } else if (createProps.items) {
@@ -171,14 +171,18 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       const {title} = this.props;
       return <div>
         {title && <NavTitle title={title} />}
-        <div className="co-m-pane__heading">
-          <div className="row">
-            <div className="col-xs-12">
-              {createLink}
-              {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
-              <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter, e.target.value)} defaultValue={this.defaultValue} tabIndex={1} autoFocus={autoFocus} />
+        <div className="co-m-pane__filter-bar">
+          {createLink && <div className="co-m-pane__filter-bar-group">
+            {createLink}
+          </div>}
+          {canExpand && <div className="co-m-pane__filter-bar-group">
+            <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />
+          </div>}
+          <div className={classNames('co-m-pane__filter-bar-group', DropdownFilters ? 'co-m-pane__filter-bar-group--filters' : 'co-m-pane__filter-bar-group--filter')}>
+            {DropdownFilters && <div className="btn-group">
               {DropdownFilters}
-            </div>
+            </div>}
+            <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter, e.target.value)} defaultValue={this.defaultValue} tabIndex={1} autoFocus={autoFocus} />
           </div>
         </div>
         <div className="co-m-pane__body">
