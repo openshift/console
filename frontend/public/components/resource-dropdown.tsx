@@ -60,6 +60,7 @@ const openshiftResources = [
   'ImageStreamTags',
   'ImageStreams',
   'Projects',
+  'Routes',
 ];
 
 const DropdownItem = ({kind}) => {
