@@ -72,14 +72,13 @@ else
     exit 1
 fi
 
-# Disabled because they fail 100% of the time. Re-enable whenever ALM tests are stable again.
-#status 'GUI Tests (ALM)' 'pending'
-#if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui alm
-#then
-#    status 'GUI Tests (ALM)' 'success'
-#else
-#    status 'GUI Tests (ALM)' 'error'
-#fi
+status 'GUI Tests (ALM)' 'pending'
+if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui alm
+then
+   status 'GUI Tests (ALM)' 'success'
+else
+   status 'GUI Tests (ALM)' 'error'
+fi
 
 status 'Performance' 'pending'
 if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui performance
