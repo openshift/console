@@ -39,7 +39,6 @@ $color-dark-border: #ddd;
 
 .co-sysevent-stream__status {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   position: absolute;
   top: 9px;
@@ -75,7 +74,6 @@ $color-dark-border: #ddd;
 .co-sysevent {
   display: flex;
   justify-content: flex-start;
-  flex-direction: row;
   flex-wrap: wrap;
   height: 115px;
   .co-m-resource-icon {
