@@ -69,6 +69,7 @@ class Inner extends React.PureComponent {
   }
 }
 
+// Keep track of seen events so we only animate new ones.
 const seen = new Set();
 const timeout = {enter: 150};
 
@@ -96,6 +97,7 @@ class SysEvent extends React.Component {
 
     let shouldAnimate;
     const key = metadata.uid;
+    // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
     if (!seen.has(key) && index < 6) {
       seen.add(key);
       shouldAnimate = true;
