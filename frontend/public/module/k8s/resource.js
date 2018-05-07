@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import {coFetchJSON} from '../../co-fetch';
 import {k8sBasePath} from './k8s';
 import {selectorToString} from './selector';
-import {wsFactory} from '../ws-factory';
+import {WSFactory} from '../ws-factory';
 
 const getK8sAPIPath = kind => {
   let p = k8sBasePath;
@@ -143,5 +143,5 @@ export const k8sWatch = (kind, query={}, wsOptions={}) => {
 
   const path = resourceURL(kind, opts);
   wsOptions.path = path;
-  return wsFactory(path, wsOptions);
+  return new WSFactory(path, wsOptions);
 };
