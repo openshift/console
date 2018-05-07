@@ -145,10 +145,8 @@ input[type="radio"] {
   line-height: 24px;
   margin: 0; }
 
-@media (min-width: 768px) {
-  .co-m-pane__body {
-    padding: 30px;
-  }
+.co-m-pane__body {
+  padding: 30px;
 }
 
 .co-m-pane__body-group {
