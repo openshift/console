@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { Firehose, Dropdown } from './utils';
 import { referenceForModel } from '../module/k8s';
+import { connectToFlags, FLAGS } from '../features';
 import { ClusterModel } from '../models';
 
 // Trim trailing slash from URLs to make matching more likely
@@ -46,6 +47,11 @@ const resources = [{
   isList: true,
 }];
 
-export const ClusterPicker = () => <Firehose resources={resources}>
-  <FirehoseToDropdown />
-</Firehose>;
+export const ClusterPicker = connectToFlags(FLAGS.MULTI_CLUSTER)((props) => props.flags[FLAGS.MULTI_CLUSTER]
+  ? <Firehose resources={resources}>
+    <FirehoseToDropdown />
+  </Firehose>
+  : <FirehoseToDropdown />);
+
+FirehoseToDropdown.displayName = 'FirehoseToDropdown';
+ClusterPicker.displayName = 'ClusterPicker';
