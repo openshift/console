@@ -22,12 +22,10 @@ body {
 
 #reflex {
   display: flex;
-  flex-direction: row;
   flex: 1 1 auto;
 }
 
 #content {
-  background: white;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; // Scroll with momentum
   flex: 1 1 auto;
@@ -72,7 +70,9 @@ body {
   }
   &.open {
     bottom: 0;
-    box-shadow: 2px 0 3px rgba(0,0,0,.3);
+    @media (max-width: $grid-float-breakpoint) {
+      box-shadow: 2px 0 3px rgba(0,0,0,.3);
+    }
     .sidebar__body {
       display: flex;
     }
@@ -84,7 +84,6 @@ body {
   .sidebar__header {
     height: $masthead-height-mobile;
     display: flex;
-    flex-direction: row;
     flex: 0 0 auto;
     background-color: $color-pf-black;
     @media (min-width: $grid-float-breakpoint) {
@@ -95,12 +94,13 @@ body {
     align-items: center;
     display: flex;
     height: 100%;
-    margin-left: 0;
-    margin-right: 20px;
     @media (min-width: $grid-float-breakpoint) {
-      margin-left: 20px;
+      margin-left: 10px;
+      margin-right: 10px;
     }
-    max-width: 100%;
+    img {
+      max-width: 100%;
+    }
   }
   .sidebar__toggle {
     background-color: transparent;
