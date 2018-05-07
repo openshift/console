@@ -30,11 +30,11 @@ body {
   -webkit-overflow-scrolling: touch; // Scroll with momentum
   flex: 1 1 auto;
   @media (max-width: $grid-float-breakpoint) {
-    margin-top: $masthead-height-mobile;
+    padding-top: $masthead-height-mobile;
   }
   @media (min-width: $grid-float-breakpoint) {
-    margin-left: $sidebar-width;
-    margin-top: $masthead-height-desktop;
+    padding-left: $sidebar-width;
+    padding-top: $masthead-height-desktop;
   }
 }
 
