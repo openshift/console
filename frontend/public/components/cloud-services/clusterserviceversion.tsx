@@ -142,14 +142,12 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
           notRunning: 'Status: Not Running',
         },
         title: 'Running Status',
-        align: 'left',
       }, {
         type: 'clusterserviceversion-catalog',
         items: {
           all: 'Catalog: All',
         },
         title: 'Catalog',
-        align: 'left',
       }];
       const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
 
