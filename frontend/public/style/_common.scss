@@ -1,7 +1,10 @@
 .co-m-pane__filter-bar {
   display: flex;
   flex-wrap: wrap;
-  padding: 30px 30px 20px;
+  padding: 10px;
+  @media (min-width: $grid-float-breakpoint) {
+    padding: 30px 30px 20px 30px;
+  }
   .btn-group,
   .co-m-primary-action,
   .form-control {

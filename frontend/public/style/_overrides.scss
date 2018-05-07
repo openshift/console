@@ -31,6 +31,12 @@ small {
 
 .co-m-pane__body {
   border-bottom: 1px solid $color-grey-background-border;
+  padding: 30px 10px;
+}
+@media (min-width: $screen-sm-min) {
+  .co-m-pane__body {
+    padding: 30px;
+  }
 }
 
 .co-m-pane__body:last-child {

@@ -1,5 +1,8 @@
 .co-m-nav-title, .co-m-nav-title__detail {
-  padding: 0 30px;
+  padding: 0 10px;
+  @media (min-width: $grid-float-breakpoint) {
+    padding: 0 30px;
+  }
 }
 
 .co-m-nav-title__detail {
