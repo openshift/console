@@ -42,7 +42,7 @@ export class PodLogs extends SafetyFirst {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(this._initialState(nextProps));
+    this.setState(this._initialState(nextProps.obj));
   }
 
   componentWillUnmount() {
@@ -50,10 +50,10 @@ export class PodLogs extends SafetyFirst {
     this._endStreaming();
   }
 
-  _initialState(props = this.props.obj) {
+  _initialState(obj = this.props.obj) {
     const newState = {};
 
-    const containers = _.get(props, 'spec.containers', []);
+    const containers = _.get(obj, 'spec.containers', []);
     newState.containerNames = _.map(containers, 'name');
 
     if (!this.state.currentContainer && newState.containerNames.length > 0) {
@@ -61,15 +61,15 @@ export class PodLogs extends SafetyFirst {
     }
 
     const currentContainer = newState.currentContainer || this.state.currentContainer;
-    newState.logURL = this._logURL(props, currentContainer);
+    newState.logURL = this._logURL(obj, currentContainer);
 
     return newState;
   }
 
-  _logURL(props, currentContainer) {
+  _logURL(obj, currentContainer) {
     return resourceURL(k8sKinds.Pod, {
-      ns: _.get(props, 'metadata.namespace'),
-      name: _.get(props, 'metadata.name'),
+      ns: _.get(obj, 'metadata.namespace'),
+      name: _.get(obj, 'metadata.name'),
       path: 'log',
       queryParams: {
         container: currentContainer,

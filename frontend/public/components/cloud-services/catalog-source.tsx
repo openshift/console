@@ -10,7 +10,7 @@ import { NavTitle, Firehose, MsgBox, LoadingBox, withFallback } from '../utils';
 import { CreateYAML } from '../create-yaml';
 import { ClusterServiceVersionLogo, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionKind, Package } from './index';
 import { SubscriptionModel, CatalogSourceModel } from '../../models';
-import { referenceForModel, K8sResourceKind } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind, apiVersionForModel } from '../../module/k8s';
 import { List, ListHeader, ColHead } from '../factory';
 import { registerTemplate } from '../../yaml-templates';
 
@@ -134,7 +134,7 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
         .find(({packageName}) => packageName === props.match.params.pkgName);
       const channel = _.get(pkg, 'channels[0]');
 
-      registerTemplate(`${SubscriptionModel.apiVersion}.${SubscriptionModel.kind}`, `
+      registerTemplate(`${apiVersionForModel(SubscriptionModel)}.${SubscriptionModel.kind}`, `
         apiVersion: ${SubscriptionModel.apiGroup}/${SubscriptionModel.apiVersion}
         kind: ${SubscriptionModel.kind},
         metadata:

@@ -171,24 +171,22 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       const {title} = this.props;
       return <div>
         {title && <NavTitle title={title} />}
-        <div className="co-m-pane">
-          <div className="co-m-pane__heading">
-            <div className="row">
-              <div className="col-xs-12">
-                {createLink}
-                {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
-                <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter, e.target.value)} defaultValue={this.defaultValue} tabIndex={1} autoFocus={autoFocus} />
-                {DropdownFilters}
-              </div>
+        <div className="co-m-pane__heading">
+          <div className="row">
+            <div className="col-xs-12">
+              {createLink}
+              {canExpand && <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />}
+              <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter, e.target.value)} defaultValue={this.defaultValue} tabIndex={1} autoFocus={autoFocus} />
+              {DropdownFilters}
             </div>
           </div>
-          <div className="co-m-pane__body">
-            {inject(this.props.children, {
-              resources,
-              expand: this.state.expand,
-              reduxIDs: this.state.reduxIDs,
-            })}
-          </div>
+        </div>
+        <div className="co-m-pane__body">
+          {inject(this.props.children, {
+            resources,
+            expand: this.state.expand,
+            reduxIDs: this.state.reduxIDs,
+          })}
         </div>
       </div>;
     }

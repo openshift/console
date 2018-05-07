@@ -426,32 +426,28 @@ const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQ
   return <div>
     <Heading text="Chargeback Report Generation Query" />
     <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-xs-12">
-          <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
-            <dt>Query</dt>
-            <dd><pre><code>{_.get(obj, ['spec', 'query'])}</code></pre></dd>
-            <div className="row">
-              <div className="col-xs-12">
-                <h3>Columns</h3>
-                <div className="co-table-container">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Column</th>
-                        <th>Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {columns}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+      <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
+        <dt>Query</dt>
+        <dd><pre><code>{_.get(obj, ['spec', 'query'])}</code></pre></dd>
+        <div className="row">
+          <div className="col-xs-12">
+            <h3>Columns</h3>
+            <div className="co-table-container">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {columns}
+                </tbody>
+              </table>
             </div>
-          </ResourceSummary>
+          </div>
         </div>
-      </div>
+      </ResourceSummary>
     </div>
   </div>;
 };

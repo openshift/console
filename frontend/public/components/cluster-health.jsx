@@ -48,7 +48,7 @@ export const ClusterHealth = () => <div>
 
   <NavTitle title="Cluster Health" />
 
-  <div className="cluster-overview-cell co-m-pane">
+  <div className="cluster-overview-cell container-fluid">
     <div className="row">
       <div className="col-lg-3 col-md-6">
         <Gauge title="CPU Usage" query={'100 - (sum(rate(node_cpu{job="node-exporter",mode="idle"}[2m])) / count(node_cpu{job="node-exporter", mode="idle"})) * 100'} />

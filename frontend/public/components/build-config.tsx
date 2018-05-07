@@ -60,14 +60,12 @@ const menuActions = [
 ];
 
 export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: buildConfig}) => <div className="co-m-pane__body">
-  <div className="co-m-pane__body-group">
-    <div className="row no-gutter">
-      <div className="col-sm-6">
-        <ResourceSummary resource={buildConfig} showPodSelector={false} showNodeSelector={false} />
-      </div>
-      <div className="col-sm-6">
-        <BuildStrategy resource={buildConfig} />
-      </div>
+  <div className="row">
+    <div className="col-sm-6">
+      <ResourceSummary resource={buildConfig} showPodSelector={false} showNodeSelector={false} />
+    </div>
+    <div className="col-sm-6">
+      <BuildStrategy resource={buildConfig} />
     </div>
   </div>
 </div>;

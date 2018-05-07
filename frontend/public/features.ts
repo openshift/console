@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { k8sBasePath } from './module/k8s';
+import { SelfSubjectAccessReviewModel } from './models';
+import { k8sBasePath, k8sCreate } from './module/k8s';
 import { coFetchJSON } from './co-fetch';
 
 /* global
@@ -13,10 +14,10 @@ import { coFetchJSON } from './co-fetch';
   MULTI_CLUSTER: false,
   SECURITY_LABELLER: false,
   CLOUD_SERVICES: false,
-  CLOUD_CATALOGS: false,
   CALICO: false,
   CHARGEBACK: false,
   OPENSHIFT: false,
+  CAN_LIST_NS: false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -25,10 +26,10 @@ export enum FLAGS {
   MULTI_CLUSTER = 'MULTI_CLUSTER',
   SECURITY_LABELLER = 'SECURITY_LABELLER',
   CLOUD_SERVICES = 'CLOUD_SERVICES',
-  CLOUD_CATALOGS = 'CLOUD_CATALOGS',
   CALICO = 'CALICO',
   CHARGEBACK = 'CHARGEBACK',
   OPENSHIFT = 'OPENSHIFT',
+  CAN_LIST_NS = 'CAN_LIST_NS',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -40,7 +41,6 @@ export const CRDS_ = {
   'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
   'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
   'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
-  'uicatalogentry-v1s.app.coreos.com': FLAGS.CLOUD_CATALOGS,
   'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
   'reports.chargeback.coreos.com': FLAGS.CHARGEBACK,
 };
@@ -72,9 +72,9 @@ const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
     err => handleError(err, FLAGS.CALICO, dispatch, detectCalicoFlags)
   );
 
-// TODO: figure out more reliable way to detect openshift. oapi might not be openshift
-const openShiftPath = `${k8sBasePath}/oapi/v1`;
-const detectOpenShift = dispatch => coFetchJSON(openShiftPath)
+// FIXME: /oapi is deprecated. What else can we use to detect OpenShift?
+const openshiftPath = `${k8sBasePath}/oapi/v1`;
+const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
   .then(
     res => setFlag(dispatch, FLAGS.OPENSHIFT, _.size(res.resources) > 0),
     err => _.get(err, 'response.status') === 404
@@ -82,10 +82,27 @@ const detectOpenShift = dispatch => coFetchJSON(openShiftPath)
       : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift)
   );
 
+const detectCanListNS = dispatch => {
+  const req = {
+    spec: {
+      resourceAttributes: {
+        name: 'namespaces',
+        verb: 'list',
+      },
+    },
+  };
+  k8sCreate(SelfSubjectAccessReviewModel, req)
+    .then(
+      res => setFlag(dispatch, FLAGS.CAN_LIST_NS, res.status.allowed),
+      err => handleError(err, FLAGS.CAN_LIST_NS, dispatch, detectCanListNS)
+    );
+};
+
 export const featureActions = {
   detectSecurityLabellerFlags,
   detectCalicoFlags,
   detectOpenShift,
+  detectCanListNS,
 };
 
 export const featureReducerName = 'FLAGS';

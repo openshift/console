@@ -43,20 +43,15 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
 </ResourceRow>;
 
 const ConfigMapDetails = ({obj: configMap}) => {
-  return <div className="row">
-    <div className="col-md-12">
-      <div className="co-m-pane">
-        <div className="co-m-pane__body">
-          <ResourceSummary resource={configMap} showPodSelector={false} showNodeSelector={false} />
-        </div>
-
-        <Heading text="Data" />
-        <div className="co-m-pane__body">
-          <ConfigMapAndSecretData data={configMap.data} />
-        </div>
-      </div>
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <ResourceSummary resource={configMap} showPodSelector={false} showNodeSelector={false} />
     </div>
-  </div>;
+    <div className="co-m-pane__body">
+      <Heading text="Data" />
+      <ConfigMapAndSecretData data={configMap.data} />
+    </div>
+  </React.Fragment>;
 };
 
 const ConfigMaps = props => <List {...props} Header={ConfigMapHeader} Row={ConfigMapRow} />;

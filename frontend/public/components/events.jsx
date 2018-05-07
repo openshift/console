@@ -10,7 +10,7 @@ import { namespaceProptype } from '../propTypes';
 import { k8sKinds, watchURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
-import { wsFactory } from '../module/ws-factory';
+import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
 
 const maxMessages = 500;
@@ -79,21 +79,19 @@ export class EventStreamPage extends React.Component {
   render () {
     const {category, kind} = this.state;
     const { showTitle=true } = this.props;
-    return <div>
+    return <React.Fragment>
       { showTitle && <Helmet>
         <title>Events</title>
       </Helmet> }
       { showTitle && <NavTitle title="Events" /> }
-      <div className="co-m-pane">
-        <div className="co-m-pane__heading">
-          <div className="btn-group">
-            <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
-            <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
-          </div>
+      <div className="co-m-pane__heading">
+        <div className="btn-group">
+          <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
+          <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
         </div>
-        <EventStream {...this.props} category={category} kind={kind} />
       </div>
-    </div>;
+      <EventStream {...this.props} category={category} kind={kind} />
+    </React.Fragment>;
   }
 }
 
@@ -123,7 +121,7 @@ class EventStream extends SafetyFirst {
       fieldSelector: this.props.fieldSelector,
     };
 
-    this.ws = wsFactory('sysevents', {
+    this.ws = new WSFactory('sysevents', {
       host: 'auto',
       reconnect: true,
       path: watchURL(k8sKinds.Event, params),
@@ -173,13 +171,13 @@ class EventStream extends SafetyFirst {
 
   componentWillUnmount () {
     super.componentWillUnmount();
-    wsFactory.destroy('sysevents');
+    this.ws.destroy();
   }
 
   componentWillReceiveProps (nextProps) {
     // If the namespace has changed, created a new WebSocket with the new namespace
     if (this.props.namespace !== nextProps.namespace) {
-      wsFactory.destroy('sysevents');
+      this.ws.destroy();
       this.wsInit(nextProps.namespace);
     }
   }
@@ -281,32 +279,29 @@ class EventStream extends SafetyFirst {
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
     return <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-xs-12"><p></p>
-          <div className="co-sysevent-stream">
-            <div className="co-sysevent-stream__totals text-muted">
-              { messageCount }
-            </div>
-
-            <div className={klass}>
-              <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
-              <div className="co-sysevent-stream__timeline__btn-text">
-                {statusBtnTxt}
-              </div>
-              <div className="co-sysevent-stream__timeline__end-message">
-              There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
-              </div>
-            </div>
-
-            <TransitionGroup>
-              { filteredMessages.map((m, i) => <CSSTransition key={i} classNames="slide" exit={false} timeout={{enter: 250}}>
-                <SysEvent {...m} key={m.metadata.uid} />
-              </CSSTransition>)}
-            </TransitionGroup>
-
-            { sysEventStatus }
+      <div className="co-sysevent-stream">
+        <div className="co-sysevent-stream__status">
+          <div>
+            {statusBtnTxt}
+          </div>
+          <div className="text-muted">
+            { messageCount }
           </div>
         </div>
+        <div className={klass}>
+          <TogglePlay active={active} onClick={this.boundToggleStream} className="co-sysevent-stream__timeline__btn" />
+          <div className="co-sysevent-stream__timeline__end-message">
+          There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+          </div>
+        </div>
+
+        <TransitionGroup>
+          { filteredMessages.map((m, i) => <CSSTransition key={i} classNames="slide" exit={false} timeout={{enter: 250}}>
+            <SysEvent {...m} key={m.metadata.uid} />
+          </CSSTransition>)}
+        </TransitionGroup>
+
+        { sysEventStatus }
       </div>
     </div>;
   }

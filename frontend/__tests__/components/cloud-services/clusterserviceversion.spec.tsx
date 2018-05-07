@@ -9,7 +9,7 @@ import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPagePro
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog, referenceForCRDDesc } from '../../../public/components/cloud-services';
 import { DetailsPage, MultiListPage, ListHeader, ColHead } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
-import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink, ResourceCog, ErrorBoundary } from '../../../public/components/utils';
+import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink, ResourceCog, ErrorBoundary, LoadingBox } from '../../../public/components/utils';
 import { K8sResourceKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -276,7 +276,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage).at(0);
 
     expect(listPage.props().resources).toEqual([
-      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
       {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
     ]);
     expect(listPage.props().dropdownFilters).toBeDefined();
@@ -300,7 +300,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage).at(1);
 
     expect(listPage.props().resources).toEqual([
-      {kind: 'ClusterServiceVersion-v1:app.coreos.com:v1alpha1', namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
     ]);
     // TODO(alecmerdler): Test custom applications list component
     expect(listPage.props().ListComponent).toBeDefined();
@@ -325,6 +325,16 @@ describe(ClusterServiceVersionsPage.displayName, () => {
 
     expect(listPage.exists()).toBe(false);
     expect(msgBox.exists()).toBe(true);
+  });
+
+  it('renders `LoadingBox` if still detecting OpenShift or namespaces/projects are loading', () => {
+    wrapper = wrapper.setProps({namespaceEnabled: false, loading: true});
+    const msgBox = wrapper.find(MsgBox);
+    const listPage = wrapper.find(MultiListPage);
+
+    expect(listPage.exists()).toBe(false);
+    expect(msgBox.exists()).toBe(false);
+    expect(wrapper.find(LoadingBox).exists()).toBe(true);
   });
 });
 

@@ -2,10 +2,11 @@ import * as React from 'react';
 
 import { SafetyFirst } from './safety-first';
 import { DocumentationSidebar } from './utils';
+import { FLAGS, connectToFlags } from '../features';
 
 const seenGuide = 'seenGuide';
 
-export class StartGuide extends SafetyFirst {
+class StartGuide_ extends SafetyFirst {
   constructor (props) {
     super(props);
     let {dismissible, visible} = props;
@@ -28,7 +29,8 @@ export class StartGuide extends SafetyFirst {
   }
 
   render () {
-    if (!this.state.visible) {
+    const openshiftFlag = this.props.flags.OPENSHIFT;
+    if (openshiftFlag === undefined || openshiftFlag || !this.state.visible) {
       return null;
     }
     /* eslint-disable react/jsx-no-target-blank */
@@ -67,6 +69,7 @@ export class StartGuide extends SafetyFirst {
     /* eslint-enable react/jsx-no-target-blank */
   }
 }
+export const StartGuide = connectToFlags(FLAGS.OPENSHIFT)(StartGuide_);
 
 export const StartGuidePage = () => <div className="co-p-cluster">
   <div className="co-p-cluster__body">

@@ -26,21 +26,17 @@ export class ProfilePage extends SafetyFirst {
         <title>Profile</title>
       </Helmet>
       <NavTitle detail={true} title="Profile" />
-      <div className="co-m-pane">
-        <div className="co-m-pane__body">
-          <div className="co-m-pane__body-section--bordered">
-            <dl className="co-m-pane__details">
-              <dt>Name</dt>
-              <dd>{authSvc.name() || '-'}</dd>
-              <dt>Email Address</dt>
-              <dd>{authSvc.email() || '-'}</dd>
-              <dt>kubectl</dt>
-              <dd><button className="btn btn-default" type="button" onClick={() => kubectlConfigModal({ callback: this._onKubeCtlDownloaded })}>Download Configuration</button></dd>
-            </dl>
-          </div>
-        </div>
-        <ClientTokensContainer isKubeCtlDownloaded={this.state.kubectl} />
+      <div className="co-m-pane__body">
+        <dl className="co-m-pane__details">
+          <dt>Name</dt>
+          <dd>{authSvc.name() || '-'}</dd>
+          <dt>Email Address</dt>
+          <dd>{authSvc.email() || '-'}</dd>
+          <dt>kubectl</dt>
+          <dd><button className="btn btn-default" type="button" onClick={() => kubectlConfigModal({ callback: this._onKubeCtlDownloaded })}>Download Configuration</button></dd>
+        </dl>
       </div>
+      <ClientTokensContainer isKubeCtlDownloaded={this.state.kubectl} />
     </div>;
   }
 }

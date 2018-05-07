@@ -25,7 +25,7 @@ Codename: "Bridge"
 The Tectonic Console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other tectonic services like monitoring, chargeback, ALM, and identity.  Some things that go on behind the scenes include:
 
 - Proxying the Kubernetes API under `/api/kubernetes`
-- Providing additional non-Kubernetes APIs for interacting with the cluster (like validating the tectonic license)
+- Providing additional non-Kubernetes APIs for interacting with the cluster
 - Serving all frontend static assets
 - User Authentication
 - Some additional proxying to the Dex API
@@ -205,11 +205,11 @@ Run frontend tests:
 
 ### Integration Tests
 
-Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).  
+Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
 
 Setup (or any time you change node_modules - `yarn add` or `yarn install`)
 ```
-cd frontend && yarn run webdriver-update 
+cd frontend && yarn run webdriver-update
 ```
 
 Run integration tests:

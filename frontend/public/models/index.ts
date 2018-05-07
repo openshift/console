@@ -1,19 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { K8sKind } from '../module/k8s';
 
-export const UICatalogEntryModel: K8sKind = {
-  kind: 'UICatalogEntry-v1',
-  label: 'UICatalogEntry-v1',
-  labelPlural: 'UICatalogEntry-v1s',
-  apiGroup: 'app.coreos.com',
-  apiVersion: 'v1alpha1',
-  path: 'uicatalogentry-v1s',
-  abbr: 'CE',
-  namespaced: true,
-  crd: true,
-  plural: 'uicatalogentry-v1s',
-};
-
 export const CatalogSourceModel: K8sKind = {
   kind: 'CatalogSource-v1',
   label: 'CatalogSource-v1',
@@ -204,9 +191,9 @@ export const ContainerModel: K8sKind = {
 export const DaemonSetModel: K8sKind = {
   label: 'Daemon Set',
   path: 'daemonsets',
-  apiGroup: '',
+  apiGroup: 'apps',
   plural: 'daemonsets',
-  apiVersion: 'apps/v1',
+  apiVersion: 'v1',
   abbr: 'DS',
   namespaced: true,
   propagationPolicy: 'Foreground',
@@ -233,8 +220,8 @@ export const HorizontalPodAutoscalerModel: K8sKind = {
   label: 'Horizontal Pod Autoscaler',
   path: 'horizontalpodautoscalers',
   plural: 'horizontalpodautoscalers',
-  apiVersion: 'autoscaling/v1',
-  apiGroup: '',
+  apiVersion: 'v1',
+  apiGroup: 'autoscaling',
   abbr: 'HPA',
   kind: 'HorizontalPodAutoscaler',
   id: 'horizontalpodautoscaler',
@@ -256,9 +243,9 @@ export const ServiceAccountModel: K8sKind = {
 
 export const ReplicaSetModel: K8sKind = {
   label: 'Replica Set',
-  apiVersion: 'apps/v1',
+  apiVersion: 'v1',
   path: 'replicasets',
-  apiGroup: '',
+  apiGroup: 'apps',
   plural: 'replicasets',
   abbr: 'RS',
   namespaced: true,
@@ -270,9 +257,9 @@ export const ReplicaSetModel: K8sKind = {
 
 export const DeploymentModel: K8sKind = {
   label: 'Deployment',
-  apiVersion: 'apps/v1',
+  apiVersion: 'v1',
   path: 'deployments',
-  apiGroup: '',
+  apiGroup: 'apps',
   plural: 'deployments',
   abbr: 'D',
   namespaced: true,
@@ -284,9 +271,9 @@ export const DeploymentModel: K8sKind = {
 
 export const DeploymentConfigModel: K8sKind = {
   label: 'Deployment Config',
-  apiVersion: 'apps.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'deploymentconfigs',
-  apiGroup: '',
+  apiGroup: 'apps.openshift.io',
   plural: 'deploymentconfigs',
   abbr: 'DC',
   namespaced: true,
@@ -298,9 +285,9 @@ export const DeploymentConfigModel: K8sKind = {
 
 export const BuildConfigModel: K8sKind = {
   label: 'Build Config',
-  apiVersion: 'build.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'buildconfigs',
-  apiGroup: '',
+  apiGroup: 'build.openshift.io',
   plural: 'buildconfigs',
   abbr: 'BC',
   namespaced: true,
@@ -312,9 +299,9 @@ export const BuildConfigModel: K8sKind = {
 
 export const BuildModel: K8sKind = {
   label: 'Build',
-  apiVersion: 'build.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'builds',
-  apiGroup: '',
+  apiGroup: 'build.openshift.io',
   plural: 'builds',
   abbr: 'B',
   namespaced: true,
@@ -326,9 +313,9 @@ export const BuildModel: K8sKind = {
 
 export const ImageStreamModel: K8sKind = {
   label: 'Image Stream',
-  apiVersion: 'image.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'imagestreams',
-  apiGroup: '',
+  apiGroup: 'image.openshift.io',
   plural: 'imagestreams',
   abbr: 'IS',
   namespaced: true,
@@ -340,9 +327,9 @@ export const ImageStreamModel: K8sKind = {
 
 export const ImageStreamTagModel: K8sKind = {
   label: 'Image Stream Tag',
-  apiVersion: 'image.openshift.io/v1',
+  apiVersion: 'v1',
   path: 'imagestreamtags',
-  apiGroup: '',
+  apiGroup: 'image.openshift.io',
   plural: 'imagestreamtags',
   abbr: 'IST',
   namespaced: true,
@@ -354,9 +341,9 @@ export const ImageStreamTagModel: K8sKind = {
 
 export const JobModel: K8sKind = {
   label: 'Job',
-  apiVersion: 'batch/v1',
+  apiVersion: 'v1',
   path: 'jobs',
-  apiGroup: '',
+  apiGroup: 'batch',
   plural: 'jobs',
   abbr: 'J',
   namespaced: true,
@@ -427,6 +414,18 @@ export const ProjectModel: K8sKind = {
   labelPlural: 'Projects'
 };
 
+export const ProjectRequestModel: K8sKind = {
+  apiVersion: 'v1',
+  apiGroup: 'project.openshift.io',
+  label: 'Project Request',
+  path: 'projectrequests',
+  plural: 'projectrequests',
+  abbr: '',
+  kind: 'ProjectRequest',
+  id: 'projectrequest',
+  labelPlural: 'Project Requests'
+};
+
 export const IngressModel: K8sKind = {
   label: 'Ingress',
   labelPlural: 'Ingresses',
@@ -443,11 +442,11 @@ export const IngressModel: K8sKind = {
 export const RouteModel: K8sKind = {
   label: 'Route',
   labelPlural: 'Routes',
-  apiGroup: '',
-  apiVersion: 'route.openshift.io/v1',
+  apiGroup: 'route.openshift.io',
+  apiVersion: 'v1',
   path: 'routes',
   plural: 'routes',
-  abbr: 'R',
+  abbr: 'RT',
   namespaced: true,
   kind: 'Route',
   id: 'route'
@@ -529,6 +528,19 @@ export const RoleModel: K8sKind = {
   labelPlural: 'Roles'
 };
 
+export const SelfSubjectAccessReviewModel: K8sKind = {
+  label: 'SelfSubjectAccessReview',
+  apiGroup: 'authorization.k8s.io',
+  apiVersion: 'v1',
+  path: 'selfsubjectaccessreviews',
+  plural: 'selfsubjectaccessreviews',
+  abbr: 'SSAR',
+  namespaced: true,
+  kind: 'SelfSubjectAccessReview',
+  id: 'selfsubjectaccessreview',
+  labelPlural: 'Self Subject Access Reviews'
+};
+
 export const TectonicVersionModel: K8sKind = {
   label: 'Tectonic Version',
   apiGroup: 'tco.coreos.com',
@@ -608,8 +620,8 @@ export const PetsetModel: K8sKind = {
 
 export const StatefulSetModel: K8sKind = {
   label: 'Stateful Set',
-  apiGroup: '',
-  apiVersion: 'apps/v1',
+  apiGroup: 'apps',
+  apiVersion: 'v1',
   path: 'statefulsets',
   plural: 'statefulsets',
   abbr: 'SS',
@@ -659,15 +671,6 @@ export const PodVulnModel: K8sKind = {
   id: 'podvuln'
 };
 
-// const starModel: K8sKind = {
-//   id: 'all',
-//   plural: 'all',
-//   labelPlural: 'All',
-//   abbr: '*',
-//   kind: '*'
-// };
-// export {starModel as Model};
-
 export const CustomResourceDefinitionModel: K8sKind = {
   label: 'Custom Resource Definition',
   apiGroup: 'apiextensions.k8s.io',
@@ -683,9 +686,9 @@ export const CustomResourceDefinitionModel: K8sKind = {
 
 export const CronJobModel: K8sKind = {
   label: 'Cron Job',
-  apiVersion: 'batch/v1beta1',
+  apiVersion: 'v1beta1',
   path: 'cronjobs',
-  apiGroup: '',
+  apiGroup: 'batch',
   plural: 'cronjobs',
   abbr: 'CJ',
   namespaced: true,
@@ -705,4 +708,69 @@ export const StorageClassModel: K8sKind = {
   namespaced: false,
   kind: 'StorageClass',
   id: 'storageclass'
+};
+
+export const ClusterServiceBrokerModel: K8sKind = {
+  label: 'Cluster Service Broker',
+  labelPlural: 'Cluster Service Brokers',
+  apiVersion: 'v1beta1',
+  path: 'clusterservicebrokers',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterservicebrokers',
+  abbr: 'CSB',
+  namespaced: false,
+  kind: 'ClusterServiceBroker',
+  id: 'clusterservicebroker'
+};
+
+export const ClusterServiceClassModel: K8sKind = {
+  label: 'Cluster Service Class',
+  labelPlural: 'Cluster Service Classes',
+  apiVersion: 'v1beta1',
+  path: 'clusterserviceclasses',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterserviceclasses',
+  abbr: 'CSC',
+  namespaced: false,
+  kind: 'ClusterServiceClass',
+  id: 'clusterserviceclass'
+};
+
+export const ClusterServicePlanModel: K8sKind = {
+  label: 'Cluster Service Plan',
+  labelPlural: 'Cluster Service Plans',
+  apiVersion: 'v1beta1',
+  path: 'clusterserviceplans',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterserviceplans',
+  abbr: 'CSP',
+  namespaced: false,
+  kind: 'ClusterServicePlan',
+  id: 'clusterserviceplan'
+};
+
+export const ServiceInstanceModel: K8sKind = {
+  label: 'Service Instance',
+  labelPlural: 'Service Instances',
+  apiVersion: 'v1beta1',
+  path: 'serviceinstances',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'serviceinstances',
+  abbr: 'SI',
+  namespaced: true,
+  kind: 'ServiceInstance',
+  id: 'serviceinstance'
+};
+
+export const ServiceBindingModel: K8sKind = {
+  label: 'Service Binding',
+  labelPlural: 'Service Bindings',
+  apiVersion: 'v1beta1',
+  path: 'servicebindings',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'servicebindings',
+  abbr: 'SB',
+  namespaced: true,
+  kind: 'ServiceBinding',
+  id: 'servicebinding'
 };

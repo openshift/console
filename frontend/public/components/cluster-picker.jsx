@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { Firehose, Dropdown } from './utils';
-import { ClusterReference } from './clusters';
+import { referenceForModel } from '../module/k8s';
+import { ClusterModel } from '../models';
 
 // Trim trailing slash from URLs to make matching more likely
 const normalizeURL = url => url.replace(/\/$/g, '');
@@ -40,7 +41,7 @@ const FirehoseToDropdown = ({clusters={}}) => {
 };
 
 const resources = [{
-  kind: ClusterReference,
+  kind: referenceForModel(ClusterModel),
   prop: 'clusters',
   isList: true,
 }];

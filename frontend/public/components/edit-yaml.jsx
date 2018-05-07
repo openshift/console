@@ -8,19 +8,23 @@ import * as ace from 'brace';
 import 'brace/ext/searchbox';
 import 'brace/mode/yaml';
 import 'brace/theme/clouds';
+import 'brace/ext/language_tools';
 
-import { k8sCreate, k8sUpdate, referenceFor, modelFor } from '../module/k8s';
+import { k8sCreate, k8sUpdate, referenceFor, modelFor, getCompletions, apiVersionForModel } from '../module/k8s';
 import { history, Loading, resourceObjPath } from './utils';
 import { SafetyFirst } from './safety-first';
+import { coFetchJSON } from '../co-fetch';
 
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { TEMPLATES } from '../yaml-templates';
 
 let id = 0;
 
+ace.acequire('ace/ext/language_tools').addCompleter({getCompletions});
+
 const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   const kindObj = modelFor(kind) || {};
-  const kindStr = `${kindObj.apiVersion}.${kind}`;
+  const kindStr = `${apiVersionForModel(kindObj)}.${kind}`;
   const sampleObj = safeLoad(TEMPLATES[kindStr][templateName]);
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
@@ -59,6 +63,11 @@ export const EditYAML = connect(stateToProps)(
       this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
       this.loadSampleYaml_ = this.loadSampleYaml_.bind(this);
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
+
+      // Retrieve k8s API spec for autocompletion
+      if (!window.localStorage.getItem('swagger.json')) {
+        coFetchJSON('api/kubernetes/swagger.json').then(swagger => window.localStorage.setItem('swagger.json', JSON.stringify(swagger)));
+      }
     }
 
     handleError(error) {
@@ -158,6 +167,8 @@ export const EditYAML = connect(stateToProps)(
       this.ace.setOption('scrollPastEnd', 0.1);
       this.ace.setOption('tabSize', 2);
       this.ace.setOption('showPrintMargin', false);
+      this.ace.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: !window.navigator.webdriver});
+
       // Allow undo after saving but not after first loading the document
       if (!this.state.initialized) {
         this.ace.getSession().setUndoManager(new ace.UndoManager());
@@ -282,7 +293,7 @@ export const EditYAML = connect(stateToProps)(
                       <span className="pficon pficon-info"></span>This object has been updated. Click reload to see the new version.
                     </p>}
                     {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
-                    {!create && <button type="submit" className="btn btn-primary" onClick={() => this.save()}>Save Changes</button>}
+                    {!create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save Changes</button>}
                     {!create && <button type="submit" className="btn btn-default" onClick={() => this.reload()}>Reload</button>}
                     <button className="btn btn-default" onClick={() => this.onCancel()}>Cancel</button>
                     <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>

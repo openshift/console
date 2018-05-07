@@ -60,16 +60,12 @@ const Row = ({obj: ss}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const Details = ({obj: ss}) => <div>
+const Details = ({obj: ss}) => <React.Fragment>
   <Heading text="StatefulSet Overview" />
   <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={ss} podSelector="spec.podSelector" showNodeSelector={false} />
-      </div>
-    </div>
+    <ResourceSummary resource={ss} podSelector="spec.podSelector" showNodeSelector={false} />
   </div>
-</div>;
+</React.Fragment>;
 
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}

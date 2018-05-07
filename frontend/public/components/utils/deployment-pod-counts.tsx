@@ -64,47 +64,45 @@ export class DeploymentPodCounts extends SafetyFirst<DPCProps, DPCState> {
     const { spec, status } = resource;
 
     return <div className="co-m-pane__body-group">
-      <div className="row no-gutter">
-        <div className="co-detail-table">
-          <div className="co-detail-table__row row">
-            <div className="co-detail-table__section col-sm-3">
-              <dl className="co-m-pane__details">
-                <dt className="co-detail-table__section-header">Desired Count</dt>
-                <dd>
-                  {
-                    this.state.waitingForUpdate
-                      ? <LoadingInline />
-                      : <a className="co-m-modal-link" href="#" onClick={this.openReplicaCountModal}>{ pluralize(spec.replicas, 'pod') }</a>
-                  }
-                </dd>
-              </dl>
-            </div>
-            <div className="co-detail-table__section col-sm-3">
-              <dl className="co-m-pane__details">
-                <dt className="co-detail-table__section-header">Up-to-date Count</dt>
-                <dd>
-                  <Tooltip content={`Total number of non-terminated pods targeted by this ${resourceKind.label} that have the desired template spec.`}>
-                    {pluralize(status.updatedReplicas, 'pod')}
-                  </Tooltip>
-                </dd>
-              </dl>
-            </div>
-            <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt className="co-detail-table__section-header">Matching Pods</dt>
-                <dd>
-                  <Tooltip content={`Total number of non-terminated pods targeted by this ${resourceKind.label} (their labels match the selector).`}>
-                    {pluralize(status.replicas, 'pod')}
-                  </Tooltip>
-                </dd>
-              </dl>
-              <div className="co-detail-table__bracket"></div>
-              <div className="co-detail-table__breakdown">
-                <Tooltip content="Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.">
-                  {status.availableReplicas || 0} available
+      <div className="co-detail-table">
+        <div className="co-detail-table__row row">
+          <div className="co-detail-table__section col-sm-3">
+            <dl className="co-m-pane__details">
+              <dt className="co-detail-table__section-header">Desired Count</dt>
+              <dd>
+                {
+                  this.state.waitingForUpdate
+                    ? <LoadingInline />
+                    : <a className="co-m-modal-link" href="#" onClick={this.openReplicaCountModal}>{ pluralize(spec.replicas, 'pod') }</a>
+                }
+              </dd>
+            </dl>
+          </div>
+          <div className="co-detail-table__section col-sm-3">
+            <dl className="co-m-pane__details">
+              <dt className="co-detail-table__section-header">Up-to-date Count</dt>
+              <dd>
+                <Tooltip content={`Total number of non-terminated pods targeted by this ${resourceKind.label} that have the desired template spec.`}>
+                  {pluralize(status.updatedReplicas, 'pod')}
                 </Tooltip>
-                <Tooltip content={`Total number of unavailable pods targeted by this ${resourceKind.label}.`}>{status.unavailableReplicas || 0} unavailable</Tooltip>
-              </div>
+              </dd>
+            </dl>
+          </div>
+          <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
+            <dl className="co-m-pane__details">
+              <dt className="co-detail-table__section-header">Matching Pods</dt>
+              <dd>
+                <Tooltip content={`Total number of non-terminated pods targeted by this ${resourceKind.label} (their labels match the selector).`}>
+                  {pluralize(status.replicas, 'pod')}
+                </Tooltip>
+              </dd>
+            </dl>
+            <div className="co-detail-table__bracket"></div>
+            <div className="co-detail-table__breakdown">
+              <Tooltip content="Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.">
+                {status.availableReplicas || 0} available
+              </Tooltip>
+              <Tooltip content={`Total number of unavailable pods targeted by this ${resourceKind.label}.`}>{status.unavailableReplicas || 0} unavailable</Tooltip>
             </div>
           </div>
         </div>

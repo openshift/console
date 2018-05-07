@@ -17,14 +17,14 @@ class ClusterOverviewContainer_ extends SafetyFirst {
 
   componentDidMount() {
     super.componentDidMount();
-    if (this.props.flags.SECURITY_LABELLER) {
+    if (this.props.flags[FLAGS.SECURITY_LABELLER]) {
       this._checkFixableIssues();
       this._checkScannedPods();
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.flags.SECURITY_LABELLER || !nextProps.flags.SECURITY_LABELLER) {
+    if (this.props.flags[FLAGS.SECURITY_LABELLER] || !nextProps.flags[FLAGS.SECURITY_LABELLER]) {
       return;
     }
     if (_.isFinite(this.state.fixableIssues) || _.isFinite(this.state.scannedPods)) {

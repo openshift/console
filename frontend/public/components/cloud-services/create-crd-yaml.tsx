@@ -7,7 +7,7 @@ import * as _ from 'lodash-es';
 
 import { Firehose, LoadingBox } from '../utils';
 import { CreateYAML } from '../create-yaml';
-import { referenceForModel, K8sResourceKind, K8sResourceKindReference, kindForReference, versionForReference } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind, K8sResourceKindReference, kindForReference, apiVersionForReference } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from './index';
 import { registerTemplate } from '../../yaml-templates';
@@ -23,9 +23,9 @@ export const CreateCRDYAML: React.SFC<CreateCRDYAMLProps> = (props) => {
     if (createProps.ClusterServiceVersion.loaded && createProps.ClusterServiceVersion.data) {
       try {
         (JSON.parse(_.get(createProps.ClusterServiceVersion.data.metadata.annotations, annotationKey)) as K8sResourceKind[] || [])
-          .forEach((template) => registerTemplate(`${template.apiVersion.split('/')[1]}.${template.kind}`, safeDump(template)));
+          .forEach((template) => registerTemplate(`${template.apiVersion}.${template.kind}`, safeDump(template)));
       } catch (err) {
-        const key = `${versionForReference(props.match.params.plural)}.${kindForReference(props.match.params.plural)}`;
+        const key = `${apiVersionForReference(props.match.params.plural)}.${kindForReference(props.match.params.plural)}`;
         registerTemplate(key, ocsTemplates.get(key));
       }
       return <CreateYAML {...props as any} />;

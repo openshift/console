@@ -2,11 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import {
-  Cog, ResourceCog, detailsPage, navFactory, ResourceLink, ResourceSummary, Heading
-} from './utils';
+import { Cog, ResourceCog, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
+// eslint-disable-next-line no-unused-vars
+import {K8sResourceKind, K8sResourceKindReference} from '../module/k8s';
 
+const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = Cog.factory.common;
 
 registerTemplate('route.openshift.io/v1.Route', `apiVersion: route.openshift.io/v1
@@ -44,7 +45,7 @@ const isWebRoute = (route) => {
 
 const getRouteWebURL = (route) => {
   const scheme = _.get(route, 'spec.tls.termination') ? 'https' : 'http';
-  let url = `${scheme }://${getRouteHost(route)}`;
+  let url = `${scheme }://${getRouteHost(route, false)}`;
   if (route.spec.path) {
     url += route.spec.path;
   }
@@ -61,7 +62,7 @@ const getRouteLabel = (route) => {
     return getRouteWebURL(route);
   }
 
-  let label = getRouteHost(route);
+  let label = getRouteHost(route, false);
   if (!label) {
     return '<unknown host>';
   }
@@ -76,15 +77,15 @@ const getRouteLabel = (route) => {
   return label;
 };
 
-export const RouteHostname = ({route}) => <div>
-  {isWebRoute(route) ? <a href={getRouteWebURL(route)} target="_blank">
-    {getRouteLabel(route)}
+export const RouteHostname: React.SFC<RouteHostnameProps> = ({obj}) => <div>
+  {isWebRoute(obj) ? <a href={getRouteWebURL(obj)} target="_blank" rel="noopener noreferrer">
+    {getRouteLabel(obj)}
     <i className="fa fa-external-link" style={{paddingLeft: '4px'}} aria-hidden="true"/>
-  </a> : getRouteLabel(route)
+  </a> : getRouteLabel(obj)
   }
 </div>;
 
-const RouteListHeader = props => <ListHeader>
+const RouteListHeader: React.SFC<RouteHeaderProps> = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="spec.host">Hostname</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortField="spec.to.name">Service</ColHead>
@@ -92,20 +93,20 @@ const RouteListHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="spec.tls.termination">TLS Termination</ColHead>
 </ListHeader>;
 
-const RouteListRow = ({obj: route}) => <ResourceRow obj={route}>
+const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow obj={route}>
   <div className="col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="Route" resource={route} />
     <ResourceLink kind="Route" name={route.metadata.name}
       namespace={route.metadata.namespace} title={route.metadata.uid} />
   </div>
   <div className="col-md-3 col-sm-4 col-xs-6">
-    <RouteHostname route={route} />
+    <RouteHostname obj={route} />
   </div>
   <div className="col-md-2 col-sm-4 hidden-xs">
     <ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} />
   </div>
-  <div className="col-md-2 hidden-sm hidden-xs">{route.spec.port.targetPort}</div>
-  <div className="col-md-2 hidden-sm hidden-xs">{route.spec.tls ? route.spec.tls.termination : ''}</div>
+  <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.port.targetPort', '')}</div>
+  <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.tls.termination', '')}</div>
 </ResourceRow>;
 
 const TLSSettings = props => <span>
@@ -129,31 +130,60 @@ const TLSSettings = props => <span>
   }
 </span>;
 
-const RouteDetails = ({obj: route}) => <div className="col-md-12">
-  <div className="co-m-pane">
-    <div className="co-m-pane__body">
-      <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
-        <dt>Path</dt>
-        <dd>{route.spec.path || '-'}</dd>
-        <dt>{route.spec.to.kind || 'Routes To'}</dt>
-        <dd><ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} /></dd>
-        <dt>Target Port</dt>
-        <dd>{_.get(route, 'spec.port.targetPort') ? _.get(route, 'spec.port.targetPort') : <em>any</em>}</dd>
-      </ResourceSummary>
-    </div>
-    <Heading text="TLS Settings" />
-    <div className="co-m-pane__body">
-      <div className="col-md-6 col-xs-12">
-        <TLSSettings tls={route.spec.tls} />
-      </div>
-    </div>
+const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
+  <div className="co-m-pane__body">
+    <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
+      <dt>Path</dt>
+      <dd>{route.spec.path || '-'}</dd>
+      <dt>{route.spec.to.kind || 'Routes To'}</dt>
+      <dd><ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} /></dd>
+      <dt>Target Port</dt>
+      <dd>{_.get(route, 'spec.port.targetPort') ? _.get(route, 'spec.port.targetPort') : <em>any</em>}</dd>
+    </ResourceSummary>
   </div>
-</div>;
+  <div className="co-m-pane__body">
+    <h1 className="co-section-title">TLS Settings</h1>
+    <TLSSettings tls={route.spec.tls} />
+  </div>
+</React.Fragment>;
 
-export const RoutesDetailsPage = props => <DetailsPage
+export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = props => <DetailsPage
   {...props}
+  kind={RoutesReference}
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}
 />;
-export const RoutesList = props => <List {...props} Header={RouteListHeader} Row={RouteListRow} />;
-export const RoutesPage = props => <ListPage ListComponent={RoutesList} canCreate={true} {...props} />;
+export const RoutesList: React.SFC = props => <List {...props} Header={RouteListHeader} Row={RouteListRow} />;
+export const RoutesPage: React.SFC<RoutesPageProps> = props =>
+  <ListPage
+    ListComponent={RoutesList}
+    kind={RoutesReference}
+    canCreate={true}
+    {...props}
+  />;
+
+/* eslint-disable no-undef */
+export type RouteHostnameProps = {
+  obj: K8sResourceKind
+};
+
+export type RoutesRowProps = {
+  obj: K8sResourceKind
+};
+
+export type RouteHeaderProps = {
+  obj: K8sResourceKind
+};
+
+export type RoutesPageProps = {
+  obj: K8sResourceKind
+};
+
+export type RoutesDetailsProps = {
+  obj: K8sResourceKind
+};
+
+export type RoutesDetailsPageProps = {
+  match: any
+};
+/* eslint-enable no-undef */

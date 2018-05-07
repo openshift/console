@@ -7,11 +7,12 @@ import { connect } from 'react-redux';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, referenceForCRDDesc, AppCatalog, appCatalogLabel } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, MultiListPage, List } from '../factory';
-import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog } from '../utils';
+import { navFactory, StatusBox, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, makeReduxID, makeQuery, Box, Cog, ResourceCog, NavTitle, LoadingBox } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
+import { FLAGS as featureFlags } from '../../features';
 
 import * as appsLogo from '../../imgs/apps-logo.svg';
 
@@ -110,18 +111,18 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   </div>;
 };
 
-const stateToProps = ({k8s}, {match}) => ({
+const stateToProps = ({k8s, FLAGS}, {match}) => ({
   resourceDescriptions: _.values(k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(match.params.ns)), 'data'], ImmutableMap()).toJS())
     .map((csv: ClusterServiceVersionKind) => _.get(csv.spec.customresourcedefinitions, 'owned', [] as CRDDescription[]))
     .reduce((descriptions, crdDesc) => descriptions.concat(crdDesc), [])
     .filter((crdDesc, i, allDescriptions) => i === _.findIndex(allDescriptions, ({name}) => name === crdDesc.name)),
-  namespaceEnabled: _.values<K8sResourceKind>(k8s.getIn(['namespaces', 'data'], ImmutableMap()).toJS())
-    .filter((ns) => ns.metadata.name === match.params.ns && _.get(ns, ['metadata', 'annotations', 'alm-manager']))
-    .length === 1,
+  loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded']),
+  namespaceEnabled: k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'data'], ImmutableMap())
+    .find((objMap) => objMap.getIn(['metadata', 'name']) === match.params.ns && objMap.getIn(['metadata', 'annotations', 'alm-manager'])) !== undefined,
 });
 
 const EmptyCustomAppsMsg = () => <MsgBox title="No Custom Applications Found" detail={<div>
-  Create custom applications by using the <a href="https://github.com/coreos/helm-app-operator-kit" target="_blank" rel="noopener noreferrer">Helm App Operator Kit <i className="fa fa-external-link" /></a>.
+  Create custom applications by using the <a href="https://github.com/operator-framework/helm-app-operator-kit" target="_blank" rel="noopener noreferrer">Helm App Operator Kit <i className="fa fa-external-link" /></a>.
 </div>} />;
 
 export const ClusterServiceVersionsPage = connect(stateToProps)(
@@ -152,49 +153,42 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
       }];
       const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
 
+      // Wait for OpenShift feature detection to prevent flash of "disabled" UI
+      if (this.props.loading) {
+        return <LoadingBox />;
+      }
+
       return this.props.match.params.ns && !this.props.namespaceEnabled
         ? <Box className="text-center">
           <img className="co-clusterserviceversion-list__disabled-icon" src={appsLogo} />
           <MsgBox title="Open Cloud Services not enabled for this namespace" detail="Please contact a system administrator and ask them to enable OCS to continue." />
         </Box>
-        : <div>
-          <div className="col-xs-12">
-            <h1 className="co-m-page-title" style={{paddingBottom: '30px'}}>
-              <span id="resource-title">Available Applications</span>
-            </h1>
-          </div>
-          <div>
-            <div className="col-xs-12">
-              <h3 className="co-clusterserviceversion-list__title">Open Cloud Services</h3>
-            </div>
-            <MultiListPage
-              {...this.props}
-              namespace={this.props.match.params.ns}
-              resources={[
-                {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
-                {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
-                ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
-              ]}
-              flatten={flatten}
-              dropdownFilters={dropdownFilters}
-              ListComponent={ClusterServiceVersionList}
-              filterLabel="Applications by name"
-              showTitle={false} />
-          </div>
-          <div>
-            <div className="col-xs-12">
-              <h3 className="co-clusterserviceversion-list__title">Custom Applications</h3>
-              <MultiListPage
-                {...this.props}
-                namespace={this.props.match.params.ns}
-                resources={[{...csvResource, selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}}]}
-                ListComponent={(props) => <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyCustomAppsMsg} />}
-                flatten={flatten}
-                filterLabel="Custom Applications by name"
-                showTitle={false} />
-            </div>
-          </div>
-        </div>;
+        : <React.Fragment>
+          <NavTitle title="Available Applications" />
+          <h3 className="co-clusterserviceversion-list__title">Open Cloud Services</h3>
+          <MultiListPage
+            {...this.props}
+            namespace={this.props.match.params.ns}
+            resources={[
+              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+              {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
+              ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
+            ]}
+            flatten={flatten}
+            dropdownFilters={dropdownFilters}
+            ListComponent={ClusterServiceVersionList}
+            filterLabel="Applications by name"
+            showTitle={false} />
+          <h3 className="co-clusterserviceversion-list__title">Custom Applications</h3>
+          <MultiListPage
+            {...this.props}
+            namespace={this.props.match.params.ns}
+            resources={[{...csvResource, selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}}]}
+            ListComponent={(props) => <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyCustomAppsMsg} />}
+            flatten={flatten}
+            filterLabel="Custom Applications by name"
+            showTitle={false} />
+        </React.Fragment>;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -283,6 +277,7 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 /* eslint-disable no-undef */
 export type ClusterServiceVersionsPageProps = {
   kind: string;
+  loading?: boolean;
   namespaceEnabled: boolean;
   match: RouterMatch<{ns?: string}>;
   resourceDescriptions: CRDDescription[];

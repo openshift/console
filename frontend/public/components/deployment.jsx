@@ -55,7 +55,7 @@ const DeploymentDetails = ({obj: deployment}) => {
     <DeploymentPodCounts resource={deployment} resourceKind={k8sKinds.Deployment} />
 
     <div className="co-m-pane__body-group">
-      <div className="row no-gutter">
+      <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={deployment}>
             <dt>Status</dt>

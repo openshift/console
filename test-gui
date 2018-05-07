@@ -5,21 +5,15 @@ set -euo pipefail
 source ./contrib/environment.sh
 
 if [ -z "$BRIDGE_K8S_AUTH_BEARER_TOKEN" ];
-then 
+then
 	echo "no BRIDGE_K8S_AUTH_BEARER_TOKEN!?"
 	exit 1
 fi
 
 if [ -z "$BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT" ];
-then 
+then
 	echo "no BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT!?"
 	exit 1
-fi
-
-if [ -n "${TECTONIC_LICENSE:-}" ];
-then 
-  echo "TECTONIC_LICENSE found."
-  echo "$TECTONIC_LICENSE" > license.txt
 fi
 
 BRIDGE_BASE_PATH="/path-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)/"
@@ -32,8 +26,7 @@ export BRIDGE_BASE_PATH
   --k8s-mode-off-cluster-skip-verify-tls=true \
   --k8s-auth="bearer-token" \
   --k8s-mode-off-cluster-endpoint="$BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT" \
-  --k8s-auth-bearer-token="$BRIDGE_K8S_AUTH_BEARER_TOKEN" \
-  --license-file=license.txt &
+  --k8s-auth-bearer-token="$BRIDGE_K8S_AUTH_BEARER_TOKEN" &
 
 echo $! > bridge.pid
 

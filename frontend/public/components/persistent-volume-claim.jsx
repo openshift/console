@@ -40,16 +40,12 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const Details = ({obj}) => <div>
+const Details = ({obj}) => <React.Fragment>
   <Heading text="PersistentVolumeClaim Overview" />
   <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
-      </div>
-    </div>
+    <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
   </div>
-</div>;
+</React.Fragment>;
 
 export const PersistentVolumeClaimsList = props => <List {...props} Header={Header} Row={Row} />;
 export const PersistentVolumeClaimsPage = props => <ListPage {...props} ListComponent={PersistentVolumeClaimsList} kind={kind} canCreate={true} />;

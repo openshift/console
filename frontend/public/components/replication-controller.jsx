@@ -29,21 +29,19 @@ spec:
         - containerPort: 80`);
 
 
-const Details = ({obj: replicationController}) => <div>
+const Details = ({obj: replicationController}) => <React.Fragment>
   <Heading text="Replication Controller Overview" />
-  <div className="co-m-pane__body-group">
-    <div className="co-m-pane__body-section--bordered">
-      <div className="row no-gutter">
-        <div className="col-md-6">
-          <ResourceSummary resource={replicationController} />
-        </div>
-        <div className="col-md-6">
-          <ResourcePodCount resource={replicationController} />
-        </div>
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-md-6">
+        <ResourceSummary resource={replicationController} />
+      </div>
+      <div className="col-md-6">
+        <ResourcePodCount resource={replicationController} />
       </div>
     </div>
   </div>
-</div>;
+</React.Fragment>;
 
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}

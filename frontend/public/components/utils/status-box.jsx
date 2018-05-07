@@ -41,7 +41,7 @@ MsgBox.displayName = 'MsgBox';
 export const AccessDenied = ({message}) => <Box className="text-center">
   <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
   <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy." />
-  { _.isString(message) && <div className="alert text-danger bg-danger text-left">{ message }</div>}
+  { _.isString(message) && <div className="alert alert-danger text-left"><span className="pficon pficon-error-circle-o"></span>{ message }</div>}
 </Box>;
 AccessDenied.displayName = 'AccessDenied';
 
@@ -64,9 +64,6 @@ export const StatusBox = props => {
     if (status === 404) {
       return <div className="co-m-pane__heading">
         <h1 className="co-m-pane__title text-center">404: Not Found</h1>
-        <div className="row">
-          <div className="col-sm-12 co-error-bg-img"></div>
-        </div>
       </div>;
     }
     if (status === 403 || _.includes(_.toLower(loadError), 'access denied')) {

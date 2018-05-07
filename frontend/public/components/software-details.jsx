@@ -6,7 +6,7 @@ import { k8sKinds, k8sGet } from '../module/k8s';
 import { k8sVersion } from '../module/status';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
-import { LoadingInline, cloudProviderNames, entitlementTitle } from './utils';
+import { LoadingInline, cloudProviderNames } from './utils';
 import { clusterAppVersionName } from './channel-operators/tectonic-channel';
 
 
@@ -66,7 +66,6 @@ export class SoftwareDetails extends SafetyFirst {
     super(props);
     this.state = {
       tectonicVersion: null,
-      tectonicLicense: null,
       kubernetesVersion: null,
       cloudProviders: null,
       tectonicVersionObj: null,
@@ -85,10 +84,9 @@ export class SoftwareDetails extends SafetyFirst {
   _checkTectonicVersion() {
     coFetchJSON('api/tectonic/version')
       .then((data) => {
-        const license = entitlementTitle(data.entitlementKind, data.entitlementCount);
-        this.setState({ tectonicVersion: data.version, tectonicLicense: license, tectonicVersionObj: data });
+        this.setState({ tectonicVersion: data.version, tectonicVersionObj: data });
       })
-      .catch(() => this.setState({ tectonicVersion: 'unknown', tectonicLicense: 'unknown' }));
+      .catch(() => this.setState({ tectonicVersion: 'unknown' }));
   }
 
   _checkAppVersions() {
@@ -113,7 +111,7 @@ export class SoftwareDetails extends SafetyFirst {
   }
 
   render () {
-    const {kubernetesVersion, currentTectonicVersion, tectonicVersion, tectonicLicense, cloudProviders } = this.state;
+    const {kubernetesVersion, currentTectonicVersion, tectonicVersion, cloudProviders } = this.state;
 
     return <div>
       <SoftwareDetailRow title="Kubernetes"
@@ -122,8 +120,6 @@ export class SoftwareDetails extends SafetyFirst {
       <SoftwareDetailRow title="Tectonic" detail={currentTectonicVersion || tectonicVersion}
         text="Tectonic version could not be determined." />
 
-      <SoftwareDetailRow title="License" detail={tectonicLicense}
-        text="Tectonic License could not be determined." />
 
       {cloudProviders &&
         <SoftwareDetailRow title="Cloud Provider" detail={cloudProviderNames(cloudProviders)}

@@ -7,9 +7,7 @@ import { referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';
 export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
 
 export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) => function DetailsPage(props: T) {
-  return <div className="row row-gutter">
-    <Component {...props} />
-  </div>;
+  return <Component {...props} />;
 };
 
 export const Heading: React.SFC<HeadingProps> = ({text, children}) => <div className="co-m-pane__heading">

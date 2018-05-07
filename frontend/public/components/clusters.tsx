@@ -5,11 +5,11 @@ import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { GroupVersionKind } from '../module/k8s';
-
+import { referenceForModel, apiVersionForModel } from '../module/k8s';
 import { registerTemplate } from '../yaml-templates';
+import { ClusterModel } from '../models';
 
-registerTemplate('v1.Cluster', `apiVersion: multicluster.coreos.com/v1
+registerTemplate(`${apiVersionForModel(ClusterModel)}.${ClusterModel.kind}`, `apiVersion: multicluster.coreos.com/v1
 kind: Cluster
 metadata:
   name: example
@@ -18,8 +18,6 @@ metadata:
     'multicluster.coreos.com/directory': true
 spec: {}
 `);
-
-export const ClusterReference: GroupVersionKind = 'Cluster:multicluster.coreos.com:v1';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
@@ -35,8 +33,8 @@ const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
-      <ResourceCog actions={menuActions} kind={ClusterReference} resource={obj} />
-      <ResourceLink kind={ClusterReference} name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
+      <ResourceCog actions={menuActions} kind={referenceForModel(ClusterModel)} resource={obj} />
+      <ResourceLink kind={referenceForModel(ClusterModel)} name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
     </div>
     <div className="col-xs-3">
       { clusterType ? 'Directory': 'Replica' } Cluster
@@ -52,16 +50,12 @@ const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
   </div>;
 };
 
-const ClustersDetails: React.SFC<ClustersDetailsProps> = ({obj}) => <div className="col-md-12">
+const ClustersDetails: React.SFC<ClustersDetailsProps> = ({obj}) => <React.Fragment>
   <Heading text="Cluster Overview" />
   <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
-      </div>
-    </div>
+    <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
   </div>
-</div>;
+</React.Fragment>;
 
 const EmptyMsg = () => <MsgBox title="No Clusters in Directory" detail="Adding clusters to the directory allows administrators to change configuration across many clusters at once" />;
 export const ClustersList: React.SFC = props => <List {...props} Header={ClustersHeader} Row={ClustersRow} EmptyMsg={EmptyMsg} />;
@@ -71,7 +65,7 @@ const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
     return <LoadingBox />;
   }
   if (props.flags[FLAGS.MULTI_CLUSTER]) {
-    return <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={true} />;
+    return <ListPage {...props} title="Cluster Directory" kind={referenceForModel(ClusterModel)} ListComponent={ClustersList} canCreate={true} />;
   }
   return <div>
     <div className="co-well">
@@ -87,7 +81,7 @@ const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
         <button className="btn btn-info">Installing Multi-cluster Directory <i className="fa fa-external-link" /></button>
       </a>
     </div>
-    <ListPage {...props} title="Cluster Directory" kind={ClusterReference} ListComponent={ClustersList} canCreate={true} fake={true} />
+    <ListPage {...props} title="Cluster Directory" kind={referenceForModel(ClusterModel)} ListComponent={ClustersList} canCreate={true} fake={true} />
     <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>
@@ -99,7 +93,7 @@ export const ClustersPage: React.SFC<ClustersPageProps> = props => <div><Feature
 const pages = [navFactory.details(detailsPage(ClustersDetails)), navFactory.editYaml()];
 
 export const ClustersDetailsPage: React.SFC<ClustersDetailsPageProps> = props => {
-  return <DetailsPage {...props} kind={ClusterReference} menuActions={menuActions} pages={pages} />;
+  return <DetailsPage {...props} kind={referenceForModel(ClusterModel)} menuActions={menuActions} pages={pages} />;
 };
 
 /* eslint-disable no-undef */

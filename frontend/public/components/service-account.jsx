@@ -102,23 +102,15 @@ const Details = ({obj: serviceaccount}) => {
   const filters = {selector: {field: 'metadata.name', values: new Set(_.map(secrets, 'name'))}};
 
   return (
-    <div>
+    <React.Fragment>
       <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-md-6">
-            <div className="co-m-pane__body-group">
-              <ResourceSummary resource={serviceaccount} showPodSelector={false} showNodeSelector={false} />
-            </div>
-          </div>
-        </div>
+        <ResourceSummary resource={serviceaccount} showPodSelector={false} showNodeSelector={false} />
       </div>
-      <div className="row co-m-nav-title">
-        <div className="col-xs-12">
-          <h1 className="co-m-page-title">Secrets</h1>
-        </div>
+      <div className="co-m-nav-title">
+        <h1 className="co-m-page-title">Secrets</h1>
       </div>
       <SecretsPage kind="Secret" canCreate={false} namespace={namespace} filters={filters} autoFocus={false} showTitle={false} />
-    </div>
+    </React.Fragment>
   );
 };
 

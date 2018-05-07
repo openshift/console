@@ -322,17 +322,19 @@ export class Dropdown extends DropdownMixin {
           {
             active && <ul className={classNames('dropdown-menu', menuClassName)}>
               {
-                autocompleteFilter && <input
-                  autoFocus
-                  type="text"
-                  ref={input => this.input = input}
-                  onChange={this.changeTextFilter}
-                  placeholder={autocompletePlaceholder}
-                  value={autocompleteText || ''}
-                  autoCapitalize="none"
-                  onKeyDown={this.onKeyDown}
-                  className="form-control dropdown--text-filter"
-                  onClick={e => e.stopPropagation()} />
+                autocompleteFilter && <div className="dropdown-menu__filter">
+                  <input
+                    autoFocus
+                    type="text"
+                    ref={input => this.input = input}
+                    onChange={this.changeTextFilter}
+                    placeholder={autocompletePlaceholder}
+                    value={autocompleteText || ''}
+                    autoCapitalize="none"
+                    onKeyDown={this.onKeyDown}
+                    className="form-control dropdown--text-filter"
+                    onClick={e => e.stopPropagation()} />
+                </div>
               }
               { bookMarkRows }
               {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}

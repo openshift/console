@@ -43,38 +43,32 @@ class Details extends SafetyFirst {
     const {metadata, spec} = alertManager;
     return <div>
       <div className="co-m-pane__body">
-        <div className="co-m-pane__body-section--bordered">
-          <h1 className="co-section-title">Alert Manager Overview</h1>
+        <h1 className="co-section-title">Alert Manager Overview</h1>
 
-          <div className="row no-gutter">
-            <div className="col-sm-12 col-xs-12">
-              <div className="row">
-                <div className="col-sm-6 col-xs-12">
-                  <dl className="co-m-pane__details">
-                    <dt>Name</dt>
-                    <dd>{metadata.name}</dd>
-                    <dt>Labels</dt>
-                    <dd><LabelList kind="Alertmanager" labels={metadata.labels} /></dd>
-                    {spec.nodeSelector && <dt>Alert Manager Node Selector</dt>}
-                    {spec.nodeSelector && <dd><Selector selector={spec.nodeSelector} kind="Node" /></dd>}
-                  </dl>
-                </div>
-                <div className="col-sm-6 col-xs-12">
-                  <dl className="co-m-pane__details">
-                    <dt>Version</dt>
-                    <dd>{spec.version}</dd>
-                    <dt>Replicas</dt>
-                    <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#"
-                      onClick={this._openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>}</dd>
-                    <dt>Resource Request</dt>
-                    <dd><span className="text-muted">Memory:</span> {_.get(spec, 'resources.requests.memory')}</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
+        <div className="row">
+          <div className="col-sm-6 col-xs-12">
+            <dl className="co-m-pane__details">
+              <dt>Name</dt>
+              <dd>{metadata.name}</dd>
+              <dt>Labels</dt>
+              <dd><LabelList kind="Alertmanager" labels={metadata.labels} /></dd>
+              {spec.nodeSelector && <dt>Alert Manager Node Selector</dt>}
+              {spec.nodeSelector && <dd><Selector selector={spec.nodeSelector} kind="Node" /></dd>}
+            </dl>
           </div>
-
+          <div className="col-sm-6 col-xs-12">
+            <dl className="co-m-pane__details">
+              <dt>Version</dt>
+              <dd>{spec.version}</dd>
+              <dt>Replicas</dt>
+              <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#"
+                onClick={this._openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>}</dd>
+              <dt>Resource Request</dt>
+              <dd><span className="text-muted">Memory:</span> {_.get(spec, 'resources.requests.memory')}</dd>
+            </dl>
+          </div>
         </div>
+
       </div>
     </div>;
   }
