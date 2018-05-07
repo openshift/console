@@ -65,7 +65,7 @@ export class EnvironmentPage extends PromiseComponent {
     this.saveChanges = (...args) => this._saveChanges(...args);
     this.updateEnvVars = (...args) => this._updateEnvVars(...args);
 
-    let currentEnvVars = this.props.toArrayFn(this.props.rawEnvData);
+    const currentEnvVars = this.props.toArrayFn(this.props.rawEnvData);
     this.state = {
       currentEnvVars,
       success: null
@@ -74,8 +74,7 @@ export class EnvironmentPage extends PromiseComponent {
 
   /**
    * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
-   * Also stripping out empty VALUE entries...
-   * TODO: should we validate here instead of just ignore?
+   *
    *
    * @param finalEnvPairs
    * @returns {Array}
@@ -84,20 +83,19 @@ export class EnvironmentPage extends PromiseComponent {
   _envVarsToNameVal(finalEnvPairs) {
     let pairsToSave = [];
     finalEnvPairs.forEach((finalPairForContainer) => {
-      if(!_.isEmpty(finalPairForContainer[NAME]) && !_.isEmpty(finalPairForContainer[VALUE])) {
-        if(finalPairForContainer[VALUE] instanceof Object) {
-          pairsToSave.push({
-            'name': finalPairForContainer[NAME],
-            'valueFrom': {
-              ...finalPairForContainer[VALUE]
-            }
-          });
-        } else {
-          pairsToSave.push({
-            'name': finalPairForContainer[NAME],
-            'value': finalPairForContainer[VALUE]
-          });
-        }
+      if(_.isEmpty(finalPairForContainer[NAME])) {
+        return;
+      }
+      if(finalPairForContainer[VALUE] instanceof Object) {
+        pairsToSave.push({
+          'name': finalPairForContainer[NAME],
+          'valueFrom': finalPairForContainer[VALUE]
+        });
+      } else {
+        pairsToSave.push({
+          'name': finalPairForContainer[NAME],
+          'value': finalPairForContainer[VALUE]
+        });
       }
     });
     return pairsToSave;
@@ -116,7 +114,6 @@ export class EnvironmentPage extends PromiseComponent {
     const modified = !_.isEqual(currentEnv, toArrayFn(rawEnvData));
     this.setState({
       currentEnvVars: currentEnv,
-      errorMessage: null,
       success: null,
       modified,
     });
@@ -155,15 +152,17 @@ export class EnvironmentPage extends PromiseComponent {
     const kind = modelFor(obj.kind);
 
     const patch = currentEnvVars.map((finalPairsForContainer, i) => {
-      const keys = finalPairsForContainer.map(t => t[NAME]);
-      if (_.uniq(keys).length !== keys.length) {
-        validationError = 'Duplicate keys found.';
-        return;
-      }
+      let op = 'add';
       const path = isBuildObject ? `${envPath}/env` : `${envPath}/${i}/env`;
-      const op = (isBuildObject
-        ? !rawEnvData.env : typeof rawEnvData[i].env === 'undefined')
-        ? 'add' : 'replace';
+      if (isBuildObject) {
+        if (rawEnvData.env) {
+          op = 'replace';
+        }
+      } else {
+        if (rawEnvData[i].env) {
+          op = 'replace';
+        }
+      }
       return {path, op, value: this._envVarsToNameVal(finalPairsForContainer)};
     });
 
@@ -176,12 +175,12 @@ export class EnvironmentPage extends PromiseComponent {
 
     const promise = k8sPatch(kind, obj, patch);
     this.handlePromise(promise).then((res) => {
-
+      const newEnvData = _.get(res, _.trimStart(envPath, '/').split('/'));
       this.setState({
         success: 'Successfully updated the environment variables.',
         errorMessage: null,
-        currentEnvVars: toArrayFn(_.get(res, _.replace(envPath, /\//g, '.').substring(1))),
-        rawEnvData: _.get(res, _.replace(envPath, /\//g, '.').substring(1)),
+        currentEnvVars: toArrayFn(newEnvData),
+        rawEnvData: newEnvData,
         modified: false
       });
     });
@@ -195,7 +194,7 @@ export class EnvironmentPage extends PromiseComponent {
       const keyString = isBuildObject ? rawEnvData.from.name : rawEnvData[i].name;
       return <div key={keyString}>
         { !isBuildObject && <h1 className={classNames('co-section-title', {'environment-section-spacer': i > 0})}>Container {keyString}</h1> }
-        <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" allowSorting={true} readOnly={readOnly}/>
+        <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly}/>
       </div>;
     });
 
@@ -209,7 +208,7 @@ export class EnvironmentPage extends PromiseComponent {
         <div className="environment-buttons">
           {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{errorMessage}</p>}
           {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
-          {!readOnly && <button disabled={!this.state.modified || inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
+          {!readOnly && <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
           {this.state.modified && <button type="button" className="btn btn-link" onClick={this.clearChanges}>Clear Changes</button>}
         </div>
       </div>
@@ -218,7 +217,7 @@ export class EnvironmentPage extends PromiseComponent {
 }
 EnvironmentPage.propTypes = {
   obj: PropTypes.object.isRequired,
-  rawEnvData: PropTypes.object.isRequired,
+  rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   envPath: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   isBuildObject: PropTypes.bool.isRequired,

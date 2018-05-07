@@ -23,7 +23,8 @@ import * as PropTypes from 'prop-types';
 //       divisor: 1 // 1 is default
 
 const FieldRef = ({data: {fieldPath}}) => <span>
-  FieldRef
+
+  <input type="text" className="form-control value-from-pair" value="FieldRef" disabled />
   <input type="text" className="form-control value-from-pair" value={fieldPath} disabled />
 </span>;
 
