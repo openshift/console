@@ -201,15 +201,18 @@ class EventStream extends SafetyFirst {
         this.flushMessages();
       })
       .onopen(() => {
+        this.messages = {};
         this.setState({error: false, loading: false, sortedMessages: [], filteredMessages: []});
       })
       .onclose(evt => {
         if (evt && evt.wasClean === false) {
           this.setState({error: evt.reason || 'WebSocket closed uncleanly.'});
         }
+        this.messages = {};
         this.setState({sortedMessages: [], filteredMessages: []});
       })
       .onerror(() => {
+        this.messages = {};
         this.setState({error: true, sortedMessages: [], filteredMessages: []});
       });
   }
@@ -270,21 +273,22 @@ class EventStream extends SafetyFirst {
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
   flushMessages_ () {
-    if (!_.isEmpty(this.messages)) {
-      // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
-      // the same timestamp
-      const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
-      const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
-      sorted.splice(maxMessages);
-      this.setState({
-        oldestTimestamp,
-        sortedMessages: sorted,
-        filteredMessages: EventStream.filterMessages(sorted, this.props),
-      });
-
-      // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
-      this.messages = _.keyBy(sorted, 'metadata.uid');
+    if (_.isEmpty(this.messages)) {
+      return;
     }
+    // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
+    // the same timestamp
+    const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
+    const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
+    sorted.splice(maxMessages);
+    this.setState({
+      oldestTimestamp,
+      sortedMessages: sorted,
+      filteredMessages: EventStream.filterMessages(sorted, this.props),
+    });
+
+    // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
+    this.messages = _.keyBy(sorted, 'metadata.uid');
   }
 
   toggleStream_ () {
