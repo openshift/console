@@ -137,15 +137,16 @@ class TectonicChannelWithData extends React.Component {
   // of the one on individual operator resources.
   _createComponentFromData(components, component) {
     const name = component.metadata.name;
+    const { spec, status } = component;
 
     components[name] = {
-      currentVersion: component.status.currentVersion,
-      desiredVersion: _.get(component.spec, 'desiredVersion', null),
-      targetVersion: component.status.targetVersion,
-      pausedSpec: component.spec.paused,
-      pausedStatus: component.status.paused,
-      failureStatus: _.get(component.status, 'failureStatus', null),
-      taskStatuses: _.get(component.status, 'taskStatuses', [])
+      currentVersion: _.get(status, 'currentVersion'),
+      desiredVersion: _.get(spec, 'desiredVersion', null),
+      targetVersion: _.get(status, 'targetVersion'),
+      pausedSpec: _.get(spec, 'paused'),
+      pausedStatus: _.get(status, 'paused'),
+      failureStatus: _.get(status, 'failureStatus', null),
+      taskStatuses: _.get(status, 'taskStatuses', [])
     };
 
     return components;
