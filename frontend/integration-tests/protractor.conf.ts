@@ -37,7 +37,6 @@ export const config: Config = {
         '--disable-gpu',
         '--headless',
         '--no-sandbox',
-        '--start-fullscreen',
         '--window-size=1400,1050',
         '--disable-background-timer-throttling',
         '--disable-renderer-backgrounding',

@@ -1,4 +1,6 @@
 $sidebar-width: 220px;
+$masthead-height-mobile: 40px;
+$masthead-height-desktop: 60px;
 
 html {
   height: 100%;
@@ -7,15 +9,10 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: hidden;
+  min-height: 100vh;
 }
 
 #app {
-  height: 100%;
-}
-
-.co-container {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -25,44 +22,118 @@ body {
 
 #reflex {
   display: flex;
-  height: 100%;
-  position: relative;
+  flex: 1 1 auto;
+}
+
+#content {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; // Scroll with momentum
+  flex: 1 1 auto;
+  @media (max-width: $grid-float-breakpoint) {
+    padding-top: $masthead-height-mobile;
+  }
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: $sidebar-width;
+    padding-top: $masthead-height-desktop;
+  }
+}
+
+.os-masthead {
+  background-color: $color-pf-black;
+  color: $color-os-nav-title;
+  position: fixed;
+  top: 0;
+  left: $sidebar-width;
+  right: 0;
+  height: $masthead-height-desktop;
+  z-index: $zindex-navbar;
+  @media (max-width: $grid-float-breakpoint) {
+    height: $masthead-height-mobile;
+  }
 }
 
 #sidebar {
   background-color: $color-os-nav-background;
-  bottom: 0;
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  left: -($sidebar-width);
-  position: absolute;
-  top: 0;
-  width: $sidebar-width;
   z-index: $zindex-navbar;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: $sidebar-width;
 
-  @media (min-width: $grid-float-breakpoint) {
-    box-shadow: none !important;
-    position: static;
+  .sidebar__body {
+    @media (min-width: $grid-float-breakpoint) {
+      display: flex;
+    }
+    display: none;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow-y: visible;
   }
-
   &.open {
-    box-shadow: 2px 0 3px rgba(0,0,0,.3);
-    left: 0;
-    transition: left .1s ease-in-out;
+    bottom: 0;
+    @media (max-width: $grid-float-breakpoint) {
+      box-shadow: 2px 0 3px rgba(0,0,0,.3);
+    }
+    .sidebar__body {
+      display: flex;
+    }
   }
-}
+  @media (min-width: $grid-float-breakpoint) {
+    bottom: 0;
+  }
 
-#content {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
+  .sidebar__header {
+    height: $masthead-height-mobile;
+    display: flex;
+    flex: 0 0 auto;
+    background-color: $color-pf-black;
+    @media (min-width: $grid-float-breakpoint) {
+      height: $masthead-height-desktop;
+    }
+  }
+  .sidebar__logo {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    @media (min-width: $grid-float-breakpoint) {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    img {
+      max-width: 100%;
+    }
+  }
+  .sidebar__toggle {
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    padding: 9px 15px;
 
-.co-m-list {
-  height: 100%;
+    @media (min-width: $grid-float-breakpoint) {
+      display: none;
+    }
+
+    &:focus,
+    &:hover {
+      .icon-bar {
+        background: $navbar-pf-vertical-navbar-toggle-icon-bar-hover-bg;
+      }
+    }
+
+    .icon-bar {
+      background: $navbar-pf-vertical-color;
+      border-radius: 1px;
+      display: block;
+      height: 2px;
+      width: 22px;
+    }
+    .icon-bar + .icon-bar {
+      margin-top: 4px;
+    }
+  }
 }
 
 .absolute-zero {

@@ -84,12 +84,8 @@ describe(FireMan_.displayName, () => {
   });
 
   it('renders expand button if given `canExpand` true', () => {
-    const button = wrapper.find('.co-m-pane__heading').find('.col-xs-12').childAt(0);
-    expect(button.dive().find('.compaction-btn').exists()).toBe(false);
-
     wrapper.setProps({canExpand: true});
-
-    expect(wrapper.find('.co-m-pane__heading').find('.col-xs-12').childAt(0).dive().find('.compaction-btn').exists()).toBe(true);
+    expect(wrapper.find('.co-m-pane__filter-bar-group').not('.co-m-pane__filter-bar-group--filter').childAt(0).dive().find('.compaction-btn').exists()).toBe(true);
   });
 
   it('renders `TextFilter` with given props', () => {

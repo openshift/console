@@ -1,5 +1,41 @@
-.co-m-pane__heading .btn {
-  margin-right: 10px;
+.co-m-pane__filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px 30px 20px;
+  .btn-group,
+  .co-m-primary-action,
+  .form-control {
+    margin-bottom: 10px;
+  }
+  .btn-group {
+    margin-right: 10px;
+  }
+}
+
+.co-m-pane__filter-bar-group {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.co-m-pane__filter-bar-group--filter {
+  @media(min-width: $screen-xs-min) {
+    justify-content: flex-end;
+  }
+}
+
+.co-m-pane__filter-bar-group--filters {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .btn-group {
+    display: flex;
+    .btn {
+      // necessary since .btn is a grandchild of .btn-group and not a child
+      margin-left: -1px;
+    }
+  }
+  .co-m-pane__filter-bar-group + & {
+    flex-grow: 0;
+  }
 }
 
 .co-inline-block {
