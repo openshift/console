@@ -1,4 +1,4 @@
-.os-header {
+.co-header {
   display: flex;
   height: 40px;
   @media (min-width: $grid-float-breakpoint) {
@@ -10,16 +10,16 @@
   align-items: center;
 }
 
-.os-header__console-picker {
+.co-header__console-picker {
   margin-left: 10px;
 }
 
-.os-header__user {
+.co-header__user {
   margin-left: auto;
   margin-right: 20px;
 }
 
-.os-header__user-icon {
+.co-header__user-icon {
   font-size: 14px;
   margin-right: 5px;
 }

@@ -19,7 +19,7 @@ import { CreateYAML, EditYAMLPage } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
-import { OpenShiftMasthead } from './openshift-masthead';
+import { Masthead } from './masthead';
 import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { ProfilePage } from './profile';
@@ -127,7 +127,7 @@ class App extends React.PureComponent {
       <GlobalNotifications />
       <Nav />
       <div id="content">
-        <OpenShiftMasthead />
+        <Masthead />
         <Route path={namespacedRoutes} component={NamespaceSelector} />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
