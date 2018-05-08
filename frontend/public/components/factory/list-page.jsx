@@ -162,9 +162,13 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
             <button className="btn btn-primary" id="yaml-create" tabIndex={-1}>{createButtonText}</button>
           </Link>;
         } else if (createProps.items) {
-          createLink = <Dropdown noButton={true} className="btn btn-primary" id="yaml-create" title={createButtonText} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />;
+          createLink = <div className="co-m-primary-action">
+            <Dropdown noButton={true} className="btn btn-primary" id="yaml-create" title={createButtonText} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />
+          </div>;
         } else {
-          createLink = <button className="btn btn-primary" id="yaml-create" tabIndex={-1} {...createProps}>{createButtonText}</button>;
+          createLink = <div className="co-m-primary-action">
+            <button className="btn btn-primary" id="yaml-create" tabIndex={-1} {...createProps}>{createButtonText}</button>
+          </div>;
         }
       }
 
