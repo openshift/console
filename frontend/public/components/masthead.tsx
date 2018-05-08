@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { Link } from 'react-router-dom';
 import * as openshiftOriginLogoImg from '../imgs/openshift-origin-logo.svg';
 import * as openshiftPlatformLogoImg from '../imgs/openshift-platform-logo.svg';
@@ -13,8 +14,8 @@ const logout = e => {
   authSvc.logout();
 };
 
-const UserMenu = connectToFlags(FLAGS.AUTH_ENABLED)((props) => {
-  const actions = [
+const UserMenu = connectToFlags(FLAGS.AUTH_ENABLED)((props: FlagsProps) => {
+  const actions: { label: string, href?: string, callback?: any }[] = [
     {
       label: 'My Account',
       href: '/settings/profile'
@@ -37,26 +38,26 @@ const UserMenu = connectToFlags(FLAGS.AUTH_ENABLED)((props) => {
 });
 
 const ContextSwitcher = () => {
-  const openshiftConsoleURL = window.SERVER_FLAGS.openshiftConsoleURL;
+  const openshiftConsoleURL = (window as any).SERVER_FLAGS.openshiftConsoleURL;
 
   const items = {
     [`${openshiftConsoleURL}catalog`]: 'Service Catalog',
     [`${openshiftConsoleURL}projects`]: 'Application Console',
-    [window.SERVER_FLAGS.basePath]: 'Cluster Console'
+    [(window as any).SERVER_FLAGS.basePath]: 'Cluster Console'
   };
 
   return <div className="contextselector-pf">
-    <Dropdown title="Cluster Console" items={items} selectedKey={window.SERVER_FLAGS.basePath}
-      dropDownClassName="bootstrap-select btn-group" onChange={url => window.location = url} />
+    <Dropdown title="Cluster Console" items={items} selectedKey={(window as any).SERVER_FLAGS.basePath}
+      dropDownClassName="bootstrap-select btn-group" onChange={url => window.location.href = url} />
   </div>;
 };
 
-export const OpenShiftLogo = connectToFlags(FLAGS.OPENSHIFT)(props => {
+export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => {
   const isOpenShiftCluster = props.flags[FLAGS.OPENSHIFT];
   let logoImg;
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
-  switch(window.SERVER_FLAGS.logoImageName) {
+  switch((window as any).SERVER_FLAGS.logoImageName) {
     case 'os-origin':
       logoImg = openshiftOriginLogoImg;
       break;
@@ -75,15 +76,20 @@ export const OpenShiftLogo = connectToFlags(FLAGS.OPENSHIFT)(props => {
   </div>;
 });
 
-export const OpenShiftMasthead = () => <div className="os-masthead">
+export const Masthead = () => <div className="co-masthead">
   <header role="banner">
-    <div className="os-header">
-      <div className="os-header__console-picker">
-        { window.SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
+    <div className="co-header">
+      <div className="co-header__console-picker">
+        { (window as any).SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
       </div>
-      <div className="os-header__user navbar-right">
+      <div className="co-header__user navbar-right">
         <UserMenu />
       </div>
     </div>
   </header>
 </div>;
+
+/* eslint-disable no-undef */
+export type FlagsProps = {
+  flags: {[name: string]: boolean};
+};

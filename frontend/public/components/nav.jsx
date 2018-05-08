@@ -10,7 +10,7 @@ import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
-import { OpenShiftLogo } from './openshift-masthead';
+import { LogoImage } from './masthead';
 
 import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
@@ -290,7 +290,7 @@ export class Nav extends React.Component {
           <span className="icon-bar" aria-hidden="true"></span>
           <span className="icon-bar" aria-hidden="true"></span>
         </button>
-        <OpenShiftLogo />
+        <LogoImage />
       </div>
       <div className="sidebar__body">
         <div className="navigation-container__section navigation-container__section--cluster-picker">
