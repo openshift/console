@@ -15,15 +15,12 @@ import { PromiseComponent } from './utils';
  * @private
  */
 const getPairsFromObject = (element) => {
-  let leafPairs = [];
   if (typeof element.env === 'undefined') {
-    leafPairs.push(['', '']);
-  } else {
-    element.env.forEach((leafNode) => {
-      leafPairs.push(Object.values(leafNode));
-    });
+    return ['', ''];
   }
-  return leafPairs;
+  return _.map(element.env, (leafNode) => {
+    return Object.values(leafNode);
+  });
 };
 
 /**
