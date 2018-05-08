@@ -16,7 +16,7 @@ import { PromiseComponent } from './utils';
  */
 const getPairsFromObject = (element) => {
   if (typeof element.env === 'undefined') {
-    return ['', ''];
+    return [['', '']];
   }
   return _.map(element.env, (leafNode) => {
     return Object.values(leafNode);
