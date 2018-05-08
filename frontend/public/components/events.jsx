@@ -356,7 +356,7 @@ class EventStream extends SafetyFirst {
           <div className="co-sysevent-stream__timeline__btn-text">
             { statusBtnTxt }
           </div>
-          <div className="co-sysevent-stream__totals">
+          <div className="co-sysevent-stream__totals text-secondary">
             { messageCount }
           </div>
         </div>
