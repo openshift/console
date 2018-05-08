@@ -71,6 +71,7 @@ func main() {
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
 	fLogoImageName := fs.String("logo-image-name", "", "Logo image used in the masthead")
+	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -113,6 +114,7 @@ func main() {
 		ClusterName:         *fTectonicClusterName,
 		OpenshiftConsoleURL: *fOpenshiftConsoleURL,
 		LogoImageName:       *fLogoImageName,
+		GoogleTagManagerID:  *fGoogleTagManagerID,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {

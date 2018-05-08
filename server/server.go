@@ -57,6 +57,7 @@ type jsGlobals struct {
 	LogoImageName       string `json:"logoImageName"`
 	ClusterName         string `json:"clusterName"`
 	CSRFToken           string `json:"CSRFToken"`
+	GoogleTagManagerID  string `json:"googleTagManagerID"`
 }
 
 type Server struct {
@@ -72,6 +73,7 @@ type Server struct {
 	KubeAPIServerURL    string
 	OpenshiftConsoleURL string
 	LogoImageName       string
+	GoogleTagManagerID  string
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
 	KubectlAuther                  *auth.Authenticator
@@ -243,6 +245,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		KubeAPIServerURL:    s.KubeAPIServerURL,
 		OpenshiftConsoleURL: s.OpenshiftConsoleURL,
 		LogoImageName:       s.LogoImageName,
+		GoogleTagManagerID:  s.GoogleTagManagerID,
 	}
 
 	if !s.authDisabled() {
