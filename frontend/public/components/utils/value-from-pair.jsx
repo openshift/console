@@ -56,42 +56,10 @@ export class ValueFromPair extends React.PureComponent {
 
     this.valueFromKey = Object.keys(this.props.pair)[0];
     this.Component = keyStringToComponent[this.valueFromKey];
-
-    // const valueFromType = valueFromKey.substring(0, valueFromKey.indexOf('KeyRef'));
-
-    // this.state = {
-    //   valueFromText: valueFromType,
-    //   valueFromKey: valueFromKey
-    // };
   }
-
-  /*
-   *
-   *  Add These actions on next pr for valueFrom edit functionality
-   *
-   *
-  _change (e, i, type) {
-    const {updateParentData, nameValuePairs} = this.props;
-
-    nameValuePairs[i][type === NAME ? NAME : VALUE] = e.target.value;
-    updateParentData({nameValuePairs});
-  }
-
-  _append = () => {
-    const {updateParentData, nameValuePairs} = this.props;
-
-    updateParentData({nameValuePairs: nameValuePairs.concat([['', '']])});
-  };
-
-  _remove = (i) => {
-    const {updateParentData, nameValuePairs} = this.props;
-    nameValuePairs.splice(i, 1);
-    updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '']]});
-  };*/
 
   render () {
     const data = this.props.pair[this.valueFromKey];
-    // const {valueFromKey, valueFromText} = this.state;
 
     return <this.Component data={data} />;
   }
