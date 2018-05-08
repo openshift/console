@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import * as openshiftOriginLogoImg from '../imgs/openshift-origin-logo.svg';
 import * as openshiftPlatformLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as openshiftOnlineLogoImg from '../imgs/openshift-online-logo.svg';
@@ -8,7 +7,6 @@ import * as tectonicLogoImg from '../imgs/tectonic-logo.svg';
 import { FLAGS, connectToFlags } from '../features';
 import { authSvc } from '../module/auth';
 import { Dropdown, ActionsMenu } from './utils';
-import { UIActions } from '../ui/ui-actions';
 
 const logout = e => {
   e.preventDefault();
@@ -53,32 +51,11 @@ const ContextSwitcher = () => {
   </div>;
 };
 
-const navbarToggleStateToProps = state => {
-  const sidebarOpen = state.UI.get('sidebarOpen');
-
-  return { sidebarOpen };
-};
-
-const navbarToggleDispatchToProps = dispatch => ({
-  setSidebarOpen: open => dispatch(UIActions.setSidebarOpen(open)),
-});
-
-const NavbarToggle = connect(navbarToggleStateToProps, navbarToggleDispatchToProps)(({sidebarOpen, setSidebarOpen}) => {
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  return (
-    <button type="button" className="os-header__navbar-toggle" aria-controls="sidebar" aria-expanded={sidebarOpen} onClick={toggleSidebar}>
-      <span className="sr-only">Toggle navigation</span>
-      <span className="icon-bar" aria-hidden="true"></span>
-      <span className="icon-bar" aria-hidden="true"></span>
-      <span className="icon-bar" aria-hidden="true"></span>
-    </button>
-  );
-});
-
-export const OpenShiftMasthead = connectToFlags(FLAGS.OPENSHIFT)((props) => {
+export const OpenShiftLogo = connectToFlags(FLAGS.OPENSHIFT)(props => {
   const isOpenShiftCluster = props.flags[FLAGS.OPENSHIFT];
   let logoImg;
 
+  // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch(window.SERVER_FLAGS.logoImageName) {
     case 'os-origin':
       logoImg = openshiftOriginLogoImg;
@@ -93,22 +70,20 @@ export const OpenShiftMasthead = connectToFlags(FLAGS.OPENSHIFT)((props) => {
       logoImg = isOpenShiftCluster ? openshiftOriginLogoImg : tectonicLogoImg;
   }
 
-  return <div className="os-masthead">
-    <header role="banner">
-      <div className="os-header">
-        <NavbarToggle />
-        <div className="os-header__logo">
-          <Link to="/">
-            <img src={logoImg} className="os-header__logo-img"/>
-          </Link>
-        </div>
-        <div className="os-header__console-picker">
-          { isOpenShiftCluster && !!window.SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
-        </div>
-        <div className="os-header__user navbar-right">
-          <UserMenu />
-        </div>
-      </div>
-    </header>
+  return <div className="sidebar__logo">
+    <Link to="/"><img src={logoImg} /></Link>
   </div>;
 });
+
+export const OpenShiftMasthead = () => <div className="os-masthead">
+  <header role="banner">
+    <div className="os-header">
+      <div className="os-header__console-picker">
+        { window.SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
+      </div>
+      <div className="os-header__user navbar-right">
+        <UserMenu />
+      </div>
+    </div>
+  </header>
+</div>;

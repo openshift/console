@@ -250,5 +250,5 @@ WSFactory.prototype.destroy = function(timedout) {
   this._state = 'destroyed';
 
   delete this.options;
-  delete this._buffer;
+  this._buffer = [];
 };
