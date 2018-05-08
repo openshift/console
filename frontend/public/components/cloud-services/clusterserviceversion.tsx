@@ -47,7 +47,7 @@ export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
 export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowProps>(({obj}) => {
   const route = `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}`;
 
-  const installStatus = obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded
+  const installStatus = obj.status && obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded
     ? <span>Enabled</span>
     : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> {obj.status.reason}</span>;
 
