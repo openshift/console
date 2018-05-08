@@ -280,8 +280,8 @@ export const EditYAML = connect(stateToProps)(
         {showHeader && <div className="yaml-editor-header">
           {`${create ? 'Create' : 'Edit'} ${_.get(kindObj, 'label', kind)}`}
         </div>}
-        <div className="co-p-cluster">
-          <div className="co-p-cluster__body">
+        <div className="co-p-has-sidebar">
+          <div className="co-p-has-sidebar__body">
             <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
               <div className="absolute-zero">
                 <div className="full-width-and-height yaml-editor--flexbox">

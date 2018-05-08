@@ -1,84 +1,5 @@
-.co-p-cluster {
-  display: flex;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.co-p-cluster--heading {
-  margin-bottom: 22px;
-}
-
-.co-p-cluster--heading:first-child {
-  margin-top: 0;
-}
-
-.co-p-cluster__body {
-  flex: 1 1 700px;
-}
-
-.co-p-cluster__sidebar {
-  flex: 0 2 350px;
-  min-width: 340px;
-  overflow-y: auto;
-}
-
-.co-p-cluster__sidebar--bordered {
-  @extend .co-p-cluster__sidebar;
-  border-left: 1px solid #ccc;
-}
-
-.co-p-cluster__sidebar-heading {
-  margin-top: 45px;
-  margin-bottom: 20px;
-  font-size: 18px;
-}
-
-.co-p-cluster__sidebar-heading--first {
-  margin-top: 0;
-}
-
-.co-p-cluster__sidebar--visible {
-  border-left: none;
-  border-bottom: 1px solid #ccc;
-  height: 45px;
-  padding: 10px;
-}
-
-.co-p-cluster__sidebar--hidden {
-  border-left: none;
-  height: 45px;
-  padding: 10px;
-  position: absolute;
-  right: 0%;
-}
-
-// todo: name
-.co-p-cluser__sha {
-  font-size: 10px;
-  line-height: 10px;
-  margin-bottom: 5px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-
-  code {
-    background: none;
-    color: #aaa;
-    padding: 0;
-  }
-}
-
-.co-p-cluser__expires > div {
-  display: inline;
-  margin-left: 3px;
-}
-
 .ldap-group {
   padding-top: 10px;
-}
-
-.certs-info-exp {
-  display: inline-block;
 }
 
 .certs-info-cert {
@@ -89,8 +10,6 @@
     }
   }
 }
-
-
 
 .alert-manager-list {
   display: flex;

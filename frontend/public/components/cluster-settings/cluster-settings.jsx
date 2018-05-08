@@ -18,11 +18,11 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
     render() {
       const { CLUSTER_UPDATES} = this.props.flags;
 
-      return <div className="co-p-cluster">
+      return <div className="co-p-cluster co-p-has-sidebar">
         <Helmet>
           <title>Cluster</title>
         </Helmet>
-        <div className="co-p-cluster__body">
+        <div className="co-p-has-sidebar__body">
           <NavTitle title="Cluster Settings" />
           <div className="co-m-pane__body">
             <div className="row" style={{marginBottom: 28}}>

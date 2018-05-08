@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import * as closeBtnImg from '../../imgs/close-button.svg';
 import { resourceSidebars } from './resource-sidebars';
 
 export class ResourceSidebarWrapper extends React.Component {
@@ -17,19 +16,19 @@ export class ResourceSidebarWrapper extends React.Component {
     const {showSidebar} = this.state;
 
     if (!showSidebar) {
-      return <div className="co-p-cluster__sidebar--hidden pull-right hidden-xs">
+      return <div className="co-p-has-sidebar__sidebar--hidden hidden-sm">
         <button className="btn btn-link" onClick={() => this.setState({showSidebar: !showSidebar})}>
-          <span className="fa fa-fw fa-info-circle co-p-cluster__sidebar-link-icon"></span>View samples
+          <span className="fa fa-fw fa-info-circle co-p-has-sidebar__sidebar-link-icon"></span>View samples
         </button>
       </div>;
     }
 
-    return <div className="co-p-cluster__sidebar" style={{height}}>
-      <div className="co-resource-sidebar co-m-pane__body">
-        <div className="pull-right co-resource-sidebar__close-btn" onClick={() => this.setState({showSidebar: !showSidebar})}>
-          <img src={closeBtnImg} className="co-resource-sidebar__close-btn"/>
-        </div>
-        <h1 className="co-p-cluster__sidebar-heading co-resource-sidebar-header text-capitalize">
+    return <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm" style={{height}}>
+      <div className="co-m-pane__body">
+        <button type="button" className="close" aria-hidden="true" aria-label="Close" onClick={() => this.setState({showSidebar: !showSidebar})}>
+          <span className="pficon pficon-close"></span>
+        </button>
+        <h1 className="co-p-has-sidebar__sidebar-heading co-resource-sidebar-header text-capitalize">
           {label} samples
         </h1>
         { this.props.children }
@@ -49,4 +48,3 @@ export const ResourceSidebar = props => {
   }
   return null;
 };
-
