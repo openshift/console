@@ -4,7 +4,7 @@ import { IEditSession, Editor, Position } from 'brace';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { ServiceAccountModel, SecretModel, ServiceModel, ConfigMapModel } from '../../models';
+import { ServiceAccountModel, SecretModel, ServiceModel, ConfigMapModel, AlertmanagerModel } from '../../models';
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { k8sListPartialMetadata } from '../../module/k8s/resource';
 import { getActiveNamespace } from '../../ui/ui-actions';
@@ -46,7 +46,10 @@ export const clusterStateCompletions = ImmutableMap<string, K8sKind>()
   .set('configMapName', ConfigMapModel)
   .set('clientTLSSecret', SecretModel)
   .set('awsSecret', SecretModel)
-  .set('absSecret', SecretModel);
+  .set('absSecret', SecretModel)
+  .set('peerSecret', SecretModel)
+  .set('serverSecret', SecretModel)
+  .set('alertmanagers', AlertmanagerModel);
 
 export const getPropertyCompletions = async(state: Editor, session: IEditSession, pos: Position, prefix: string, callback: CompletionCallback) => {
   const valueFor = (property: string) => session.getLines(0, session.getLength()).reduce((foundKind, cur) => {
