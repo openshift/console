@@ -4,11 +4,16 @@ let activeRoute;
 
 export const analyticsSvc = {
   unsetRoute: () => activeRoute = null,
-  push: (...args) => dataLayer.push(...args),
+  push: (...args) => {
+    if (!window.SERVER_FLAGS.googleTagManagerID) {
+      return;
+    }
+    dataLayer.push(...args);
+  },
 
   error: (message, route, stack='') => {
     route = route || activeRoute || location.pathname;
-    dataLayer.push({
+    analyticsSvc.push({
       event: 'tectonicError',
       attributes: {
         consoleVersion: window.SERVER_FLAGS.consoleVersion,
@@ -21,7 +26,7 @@ export const analyticsSvc = {
 
   route: (route) => {
     activeRoute = route;
-    dataLayer.push({
+    analyticsSvc.push({
       event: 'tectonicRouteChange',
       attributes: {
         route: route,
