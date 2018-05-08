@@ -33,11 +33,9 @@ const getPairsFromObject = (element) => {
  * @returns {Array}
  */
 export const envVarsToArrayForArray = (initialPairObjects) => {
-  let initialPairs = [];
-  initialPairObjects.forEach((element) => {
-    initialPairs.push(getPairsFromObject(element));
+  return _.map(initialPairObjects, (element) => {
+    return getPairsFromObject(element);
   });
-  return initialPairs;
 };
 
 /**
@@ -47,9 +45,7 @@ export const envVarsToArrayForArray = (initialPairObjects) => {
  * @returns {Array}
  */
 export const envVarsToArrayForObject = (initialPairObjects) => {
-  let initialPairs = [];
-  initialPairs.push(getPairsFromObject(initialPairObjects));
-  return initialPairs;
+  return [getPairsFromObject(initialPairObjects)];
 };
 
 export class EnvironmentPage extends PromiseComponent {
@@ -81,24 +77,19 @@ export class EnvironmentPage extends PromiseComponent {
    * @private
    */
   _envVarsToNameVal(finalEnvPairs) {
-    let pairsToSave = [];
-    finalEnvPairs.forEach((finalPairForContainer) => {
-      if(_.isEmpty(finalPairForContainer[NAME])) {
-        return;
-      }
-      if(finalPairForContainer[VALUE] instanceof Object) {
-        pairsToSave.push({
-          'name': finalPairForContainer[NAME],
-          'valueFrom': finalPairForContainer[VALUE]
-        });
-      } else {
-        pairsToSave.push({
+    return _.filter(finalEnvPairs, finalEnvPair => !_.isEmpty(finalEnvPair[NAME]))
+      .map(finalPairForContainer => {
+        if(finalPairForContainer[VALUE] instanceof Object) {
+          return {
+            'name': finalPairForContainer[NAME],
+            'valueFrom': finalPairForContainer[VALUE]
+          };
+        }
+        return {
           'name': finalPairForContainer[NAME],
           'value': finalPairForContainer[VALUE]
-        });
-      }
-    });
-    return pairsToSave;
+        };
+      });
   }
 
   /**
