@@ -4,6 +4,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { registerTemplate } from '../yaml-templates';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 
 registerTemplate('apps/v1.ReplicaSet', `apiVersion: apps/v1
 kind: ReplicaSet
@@ -26,8 +27,8 @@ spec:
         ports:
         - containerPort: 80`);
 
-const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
-export const replicaSetMenuActions = [ModifyCount, ModifyNodeSelector, ...common];
+const {ModifyCount, ModifyNodeSelector, EditEnvironment, common} = Cog.factory;
+export const replicaSetMenuActions = [ModifyCount, ModifyNodeSelector, EditEnvironment, ...common];
 
 const Details = ({obj: replicaSet}) => <React.Fragment>
   <Heading text="Replica Set Overview" />
@@ -43,7 +44,16 @@ const Details = ({obj: replicaSet}) => <React.Fragment>
   </div>
 </React.Fragment>;
 
-const {details, editYaml, pods} = navFactory;
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
+const {details, editYaml, pods, envEditor} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage
   {...props}
   breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
@@ -51,7 +61,7 @@ const ReplicaSetsDetailsPage = props => <DetailsPage
     path: props.match.url,
   })}
   menuActions={replicaSetMenuActions}
-  pages={[details(Details), editYaml(), pods()]}
+  pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent)]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="ReplicaSet" actions={replicaSetMenuActions} />;

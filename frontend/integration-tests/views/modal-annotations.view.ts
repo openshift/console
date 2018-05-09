@@ -5,10 +5,10 @@ const BROWSER_TIMEOUT = 15000;
 const addMoreBtn = $('.btn-link');
 export const cancelBtn = $$('.btn-default').filter(link => link.getText().then(text => text.startsWith('Cancel'))).first();
 export const saveChangesBtn = $('#confirm-delete');
-const annotationRows = $$('.tags-list__row');
+const annotationRows = $$('.pairs-list__row');
 export const annotationRowsKey = $$('[placeholder="key"]');
 export const annotationRowsValue = $$('[placeholder="value"]');
-export const annotationRowsDelete = $$('.tags-list__delete-icon');
+export const annotationRowsDelete = $$('.pairs-list__delete-icon');
 
 export const isLoaded = () => browser.wait(until.presenceOf(addMoreBtn), BROWSER_TIMEOUT);
 

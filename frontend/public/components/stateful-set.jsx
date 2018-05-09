@@ -3,6 +3,7 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 
 registerTemplate('apps/v1.StatefulSet', `apiVersion: apps/v1
 kind: StatefulSet
@@ -41,7 +42,7 @@ spec:
 `);
 
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
@@ -66,11 +67,20 @@ const Details = ({obj: ss}) => <React.Fragment>
   </div>
 </React.Fragment>;
 
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
 export const StatefulSetsList = props => <List {...props} Header={Header} Row={Row} />;
 export const StatefulSetsPage = props => <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />;
 
 export const StatefulSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml()]}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.envEditor(environmentComponent)]}
 />;

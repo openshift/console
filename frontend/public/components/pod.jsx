@@ -11,8 +11,9 @@ import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 
-const menuActions = Cog.factory.common;
+const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);
 const validStatuses = new Set(['Running', 'Completed']);
 
@@ -234,6 +235,15 @@ const Details = ({obj: pod}) => {
   </React.Fragment>;
 };
 
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.containers}
+  envPath="/spec/containers"
+  readOnly={true}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
 /** @type {React.SFC<any>} */
 export const PodsDetailsPage = props => <DetailsPage
   {...props}
@@ -245,6 +255,7 @@ export const PodsDetailsPage = props => <DetailsPage
   pages={[
     navFactory.details(Details),
     navFactory.editYaml(),
+    navFactory.envEditor(environmentComponent),
     navFactory.logs(PodLogs),
     navFactory.events(ResourceEventStream)
   ]}

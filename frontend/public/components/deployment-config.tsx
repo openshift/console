@@ -8,6 +8,7 @@ import { DeploymentConfigModel } from '../models';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 
 registerTemplate('apps.openshift.io/v1.DeploymentConfig', `apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
@@ -54,12 +55,13 @@ const rolloutAction = (kind, obj) => ({
   }),
 });
 
-const {ModifyCount, ModifyNodeSelector, common} = Cog.factory;
+const {ModifyCount, ModifyNodeSelector, EditEnvironment, common} = Cog.factory;
 
 const menuActions = [
   rolloutAction,
   ModifyCount,
   ModifyNodeSelector,
+  EditEnvironment,
   ...common,
 ];
 
@@ -99,7 +101,16 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deployment
   </div>;
 };
 
-const pages = [navFactory.details(DeploymentConfigsDetails), navFactory.editYaml(), navFactory.pods()];
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
+const pages = [navFactory.details(DeploymentConfigsDetails), navFactory.editYaml(), navFactory.pods(), navFactory.envEditor(environmentComponent)];
 export const DeploymentConfigsDetailsPage: React.SFC<DeploymentConfigsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={DeploymentConfigsReference} menuActions={menuActions} pages={pages} />;
 };

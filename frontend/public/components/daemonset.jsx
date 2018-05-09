@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
+import { EnvironmentPage, envVarsToArrayForArray } from './environment';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('apps/v1.DaemonSet', `apiVersion: apps/v1
@@ -24,7 +25,7 @@ spec:
         ports:
         - containerPort: 80`);
 
-const menuActions = [Cog.factory.ModifyNodeSelector, ...Cog.factory.common];
+const menuActions = [Cog.factory.ModifyNodeSelector, Cog.factory.EditEnvironment, ...Cog.factory.common];
 
 const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -71,14 +72,23 @@ const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
   </div>
 </div>;
 
-const {details, pods, editYaml} = navFactory;
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.template.spec.containers}
+  envPath="/spec/template/spec/containers"
+  readOnly={false}
+  isBuildObject={false}
+  toArrayFn={envVarsToArrayForArray}
+/>;
+
+const {details, pods, editYaml, envEditor} = navFactory;
 
 const DaemonSets = props => <List {...props} Header={DaemonSetHeader} Row={DaemonSetRow} />;
 const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />;
 const DaemonSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(detailsPage(Details)), editYaml(), pods()]}
+  pages={[details(detailsPage(Details)), editYaml(), pods(), envEditor(environmentComponent)]}
 />;
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

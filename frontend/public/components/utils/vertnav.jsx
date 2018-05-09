@@ -53,6 +53,11 @@ export const navFactory = {
     name: 'Builds',
     component,
   }),
+  envEditor: (component) => ({
+    href: 'environment',
+    name: 'Environment',
+    component: component,
+  })
 };
 
 /** @type {React.SFC<{pages: {href: string, name: string}[], basePath: string}>} */

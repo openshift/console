@@ -1,0 +1,29 @@
+.pairs-list__row {
+  padding-bottom: 15px;
+}
+
+.pairs-list__field {
+  padding-right: 0;
+}
+
+.pairs-list__btn {
+  cursor: pointer;
+}
+
+.pairs-list__delete-icon {
+  line-height: 32px;
+}
+
+.pairs-list__reorder-icon {
+  line-height: 32px;
+  padding-right: 10px;
+  cursor: move;
+}
+
+.pairs-list__add-icon {
+  margin-right: 6px;
+}
+
+.pairs-list__span-btns {
+  white-space: pre;
+}
