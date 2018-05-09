@@ -65,7 +65,7 @@ export const EditYAML = connect(stateToProps)(
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
 
       // Retrieve k8s API spec for autocompletion
-      if (!window.localStorage.getItem(`${window.SERVER_FLAGS.consoleVersion}--swagger.json`)) {
+      if (!window.sessionStorage.getItem(`${window.SERVER_FLAGS.consoleVersion}--swagger.json`)) {
         coFetchJSON('api/kubernetes/swagger.json')
           .then(swagger => window.localStorage.setItem(`${window.SERVER_FLAGS.consoleVersion}--swagger.json`, JSON.stringify(swagger)));
       }
