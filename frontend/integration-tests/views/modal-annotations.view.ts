@@ -25,8 +25,11 @@ export const addAnnotation = async function ( key: string, value: string) {
 export const updateAnnotation = async function ( annotationKey: string, annotationValue: string) {
   let found = false;
   await annotationRowsKey.each( async function (item, index) {
+    if (found) {
+      return;
+    }
     const annKey = await item.getAttribute('value');
-    if(annKey === annotationKey){
+    if (annKey === annotationKey) {
       await annotationRowsValue.get(index).clear();
       await annotationRowsValue.get(index).sendKeys(annotationValue);
       found = true;
@@ -40,14 +43,17 @@ export const updateAnnotation = async function ( annotationKey: string, annotati
 export const deleteAnnotation = async function ( annotationKey: string) {
   let found = false;
   await annotationRowsKey.each( async function (item, index) {
+    if (found) {
+      return;
+    }
     const annKey = await item.getAttribute('value');
-    if(annKey === annotationKey){
+    if (annKey === annotationKey) {
       await annotationRowsDelete.get(index).click();
       await isLoaded();
       found = true;
     }
   });
-  if (!found){
+  if (!found) {
     throw new Error(`Key not found [${annotationKey}]`);
   }
 };
