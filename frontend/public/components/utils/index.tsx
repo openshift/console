@@ -7,6 +7,7 @@ export * from './line-buffer';
 export * from './log-window';
 export * from './resource-icon';
 export * from './resource-link';
+export * from './resource-log';
 export * from './volume-icon';
 export * from './timestamp';
 export * from './vertnav';

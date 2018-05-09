@@ -3,7 +3,8 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { pluralize } from './';
 
-const FUDGE_FACTOR = 70;
+// Subtracted from log window height to prevent scroll bar from appearing when footer is shown.
+const FUDGE_FACTOR = 105;
 
 export class LogWindow extends React.PureComponent {
   constructor(props) {
@@ -23,22 +24,21 @@ export class LogWindow extends React.PureComponent {
     this._setLogContents = (element) => this.logContents = element;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.logState === 'paused') {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.status === 'paused') {
       // If paused, make sure pausedAt state is accurate. This makes the "Resume stream and show X lines"
       // footer consistent whether the log is paused via scrolling or a parent control (like the pause button in
       // pod logs).
-      const pausedAt = this.state.pausedAt > 0 ? this.state.pausedAt : this.props.buffer.totalLineCount;
-      this.setState({ pausedAt: pausedAt });
-      return;
+      const pausedAt = prevState.pausedAt > 0 ? prevState.pausedAt : nextProps.buffer.totalLineCount;
+      return {pausedAt};
     }
 
-    const lines = this.props.buffer.lines();
-    this.setState({
+    const lines = nextProps.buffer.lines();
+    return {
       pausedAt: 0, // Streaming, so reset pausedAt
       lineCount: lines.length,
       content: lines.join('')
-    });
+    };
   }
 
   componentDidMount() {
@@ -48,7 +48,7 @@ export class LogWindow extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.logState !== this.props.logState || prevProps.buffer.totalLineCount || this.props.buffer.totalLineCount) {
+    if (prevProps.status !== this.props.status || prevProps.buffer.totalLineCount || this.props.buffer.totalLineCount) {
       this._scrollToBottom();
     }
   }
@@ -59,15 +59,21 @@ export class LogWindow extends React.PureComponent {
   }
 
   _handleScroll() {
+
+    // Stream is finished, take no action on scroll
+    if (this.props.status === 'eof') {
+      return;
+    }
+
     // 1px fudge for fractional heights
     const scrollTarget = this.scrollPane.scrollHeight - (this.scrollPane.clientHeight + 1);
     if (this.scrollPane.scrollTop < scrollTarget) {
-      if (this.props.logState !== 'paused') {
-        this.props.updateLogState('paused');
+      if (this.props.status !== 'paused') {
+        this.props.updateStatus('paused');
         this.setState({ pausedAt: this.props.buffer.totalLineCount });
       }
     } else {
-      this.props.updateLogState('streaming');
+      this.props.updateStatus('streaming');
       this.setState({ pausedAt: 0 });
     }
   }
@@ -84,10 +90,10 @@ export class LogWindow extends React.PureComponent {
   }
 
   _scrollToBottom() {
-    if (this.props.logState === 'streaming') {
+    if (['streaming', 'eof'].includes(this.props.status)) {
       // Async because scrollHeight depends on the size of the rendered pane
       setTimeout(() => {
-        if (this.scrollPane && this.props.logState === 'streaming') {
+        if (this.scrollPane && ['streaming', 'eof'].includes(this.props.status)) {
           this.scrollPane.scrollTop = this.scrollPane.scrollHeight;
         }
       }, 0);
@@ -95,12 +101,12 @@ export class LogWindow extends React.PureComponent {
   }
 
   _unpause() {
-    this.props.updateLogState('streaming');
+    this.props.updateStatus('streaming');
   }
 
   render() {
     let linesBehind = 0;
-    if (this.props.logState === 'paused') {
+    if (this.props.status === 'paused') {
       linesBehind = this.props.buffer.totalLineCount - this.state.pausedAt;
     }
     const hasLinesBehind = linesBehind > 0;
@@ -118,7 +124,7 @@ export class LogWindow extends React.PureComponent {
           </div>
         </div>
       </div>
-      { !['streaming', 'loading'].includes(this.props.logState) && <div onClick={this._unpause} className="log-window__footer">
+      { !['streaming', 'loading', 'eof'].includes(this.props.status) && <div onClick={this._unpause} className="log-window__footer">
         { !hasLinesBehind && <div><span className="fa fa-play-circle-o"></span> Resume stream</div> }
         { hasLinesBehind && linesBehind < this.props.buffer.maxSize && <div><span className="fa fa-play-circle-o"></span> Resume stream and show {pluralize(linesBehind, 'line')}</div> }
         { hasLinesBehind && linesBehind > this.props.buffer.maxSize && <div><span className="fa fa-play-circle-o"></span> Resume stream and show last {pluralize(this.props.buffer.maxSize, 'line')}</div> }
@@ -128,7 +134,7 @@ export class LogWindow extends React.PureComponent {
 }
 LogWindow.propTypes = {
   buffer: PropTypes.object.isRequired,
-  logState: PropTypes.string.isRequired,
-  updateLogState: PropTypes.func.isRequired,
-  loadGeneration: PropTypes.number.isRequired // loadGeneration is used as a signal that props.buffer has changed
+  status: PropTypes.string.isRequired,
+  updateStatus: PropTypes.func.isRequired,
+  touched: PropTypes.number.isRequired // touched is used as a signal that props.buffer has changed
 };

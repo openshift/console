@@ -4,9 +4,10 @@
 @import "style/config";
 
 // External dependencies that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
-@import '~patternfly/dist/sass/patternfly/variables';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
+@import '~patternfly/dist/sass/patternfly/variables';
 
 @import "style/base";
 
@@ -35,6 +36,8 @@
 @import "components/utils/number-spinner";
 @import "components/utils/status-box";
 @import "components/utils/selector";
+@import "components/utils/resource-log";
+@import "components/utils/log-window";
 @import "components/chargeback";
 @import "components/cluster-overview";
 @import "components/cluster-settings/cluster-settings";
@@ -47,8 +50,6 @@
 @import "components/nav-title";
 @import "components/node-ip-list";
 @import "components/overflow";
-@import "components/pod-logs";
-@import "components/log-window";
 @import "components/RBAC/rbac";
 @import "components/resource";
 @import "components/resource-dropdown";
