@@ -58,7 +58,7 @@ export const getPropertyCompletions = async(state: Editor, session: IEditSession
 
   const kind = valueFor('kind');
   const apiVersion = valueFor('apiVersion');
-  const swagger: SwaggerAPISpec = JSON.parse(window.localStorage.getItem('swagger.json'));
+  const swagger: SwaggerAPISpec = JSON.parse(window.sessionStorage.getItem(`${(window as any).SERVER_FLAGS.consoleVersion}--swagger.json`));
 
   if (kind.length && apiVersion.length && swagger) {
     const defKey = Object.keys(swagger.definitions).find(key => key.endsWith(`${apiVersion.replace('/', '.')}.${kind}`));
