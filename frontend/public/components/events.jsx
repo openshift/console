@@ -164,9 +164,6 @@ class EventStream extends SafetyFirst {
       const event = this.state.filteredMessages[index];
       return <SysEvent {...event} key={key} style={style} index={index} />;
     }.bind(this);
-
-    // TODO: (ggreer) add an onBufferFlush or other batch API to ws-factory.
-    this.flushMessages = _.throttle(this.flushMessages_, 500);
   }
 
   wsInit (ns) {
@@ -180,30 +177,31 @@ class EventStream extends SafetyFirst {
       reconnect: true,
       path: watchURL(k8sKinds.Event, params),
       jsonParse: true,
-      bufferEnabled: true,
       bufferFlushInterval: flushInterval,
       bufferMax: maxMessages,
     })
-      .onmessage(data => {
-        const uid = data.object.metadata.uid;
+      .onbulkmessage(events => {
+        events.forEach(({object, type}) => {
+          const uid = object.metadata.uid;
 
-        switch (data.type) {
-          case 'ADDED':
-          case 'MODIFIED':
-            if (this.messages[uid] && this.messages[uid].count > data.object.count) {
-              // We already have a more recent version of this message stored, so skip this one
+          switch (type) {
+            case 'ADDED':
+            case 'MODIFIED':
+              if (this.messages[uid] && this.messages[uid].count > object.count) {
+                // We already have a more recent version of this message stored, so skip this one
+                return;
+              }
+              this.messages[uid] = object;
+              break;
+            case 'DELETED':
+              delete this.messages[uid];
+              break;
+            default:
+              // eslint-disable-next-line no-console
+              console.error(`UNHANDLED EVENT: ${type}`);
               return;
-            }
-            this.messages[uid] = data.object;
-            break;
-          case 'DELETED':
-            delete this.messages[uid];
-            break;
-          default:
-            // eslint-disable-next-line no-console
-            console.error(`UNHANDLED EVENT: ${data.type}`);
-            return;
-        }
+          }
+        });
         this.flushMessages();
       })
       .onopen(() => {
@@ -285,10 +283,7 @@ class EventStream extends SafetyFirst {
   // Messages can come in extremely fast when the buffer flushes.
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
-  flushMessages_ () {
-    if (_.isEmpty(this.messages)) {
-      return;
-    }
+  flushMessages () {
     // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
     // the same timestamp
     const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);

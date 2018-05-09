@@ -28,6 +28,7 @@ function createURL(host, path) {
 export function WSFactory(id, options) {
   this.id = id;
   this.options = options;
+  this.bufferMax = options.bufferMax || 0;
   this.url = createURL(options.host, options.path);
   this._paused = false;
   this._handlers = {
@@ -36,12 +37,14 @@ export function WSFactory(id, options) {
     error: [],
     message: [],
     destroy: [],
+    // psuedo event :-/
+    bulkmessage: [],
   };
 
   this._connect();
 
-  if (this.options.bufferEnabled) {
-    this.flushCanceler = setInterval(this.flushBuffer.bind(this), this.options.bufferFlushInterval);
+  if (this.bufferMax) {
+    this.flushCanceler = setInterval(this.flushMessageBuffer.bind(this), this.options.bufferFlushInterval || 500);
   }
 }
 
@@ -77,7 +80,7 @@ WSFactory.prototype._reconnect = function() {
 WSFactory.prototype._connect = function() {
   const that = this;
   this._state = 'init';
-  this._buffer = [];
+  this._messageBuffer = [];
   try {
     this.ws = new WebSocket(this.url, this.options.subProtocols);
   } catch (e) {
@@ -89,7 +92,7 @@ WSFactory.prototype._connect = function() {
   this.ws.onopen = function() {
     console.log(`websocket open: ${that.id}`);
     that._state = 'open';
-    that._triggerEvent({ type: 'open' });
+    that._triggerEvent('open');
     if (that._connectionAttempt) {
       clearTimeout(that._connectionAttempt);
       that._connectionAttempt = null;
@@ -98,13 +101,13 @@ WSFactory.prototype._connect = function() {
   this.ws.onclose = function (evt) {
     console.log(`websocket closed: ${that.id}`, evt);
     that._state = 'closed';
-    that._triggerEvent({ type: 'close', args: [evt] });
+    that._triggerEvent('close', evt);
     that._reconnect();
   };
   this.ws.onerror = function (evt) {
     console.log(`websocket error: ${that.id}`);
     that._state = 'error';
-    that._triggerEvent({ type: 'error', args: [evt] });
+    that._triggerEvent('error', evt);
   };
   this.ws.onmessage = function(evt) {
     const msg = (that.options && that.options.jsonParse) ? JSON.parse(evt.data) : evt.data;
@@ -112,7 +115,7 @@ WSFactory.prototype._connect = function() {
     if (that._state !== 'destroyed' && that._state !== 'closed'){
       that._state = 'open';
     }
-    that._triggerEvent({ type: 'message', args: [msg] });
+    that._triggerEvent('message', msg);
   };
 };
 
@@ -123,26 +126,15 @@ WSFactory.prototype._registerHandler = function(type, fn) {
   this._handlers[type].push(fn);
 };
 
-// Addds an event to the buffer.
-WSFactory.prototype._bufferEvent = function(evt) {
-  this._buffer.unshift(evt);
-  // If max is reached, remove oldest mevents.
-  if (this.options.bufferMax) {
-    while(this._buffer.length > this.options.bufferMax) {
-      this._buffer.pop();
-    }
-  }
-};
-
 // Invoke all registered handler callbacks for a given event type.
-WSFactory.prototype._invokeHandlers = function(evt) {
-  const handlers = this._handlers[evt.type];
+WSFactory.prototype._invokeHandlers = function(type, data) {
+  const handlers = this._handlers[type];
   if (!handlers) {
     return;
   }
   handlers.forEach(function(h) {
     try {
-      h.apply(null, evt.args || []);
+      h(data);
     } catch(e) {
       console.error(e);
     }
@@ -150,22 +142,35 @@ WSFactory.prototype._invokeHandlers = function(evt) {
 };
 
 // Triggers event to be buffered or invoked depending on config.
-WSFactory.prototype._triggerEvent = function(evt) {
+WSFactory.prototype._triggerEvent = function(type, event) {
   if (this._state === 'destroyed') {
     return;
   }
-  // Only bufer "message" events, so "error" and "close" etc can pass thru.
-  if (this.options.bufferEnabled && evt.type === 'message') {
-    this._bufferEvent(evt);
-  } else {
-    this._invokeHandlers(evt);
+
+  // Only buffer "message" events, so "error" and "close" etc can pass thru.
+  if (this.bufferMax && type === 'message') {
+    this._messageBuffer.unshift(event);
+
+    if (this._messageBuffer.length > this.bufferMax) {
+      this._messageBuffer.pop();
+    }
+
+    return;
   }
+
+  this._invokeHandlers(type, event);
 };
 
 WSFactory.prototype.onmessage = function(fn) {
   this._registerHandler('message', fn);
   return this;
 };
+
+WSFactory.prototype.onbulkmessage = function(fn) {
+  this._registerHandler('bulkmessage', fn);
+  return this;
+};
+
 
 WSFactory.prototype.onerror = function(fn) {
   this._registerHandler('error', fn);
@@ -187,13 +192,22 @@ WSFactory.prototype.ondestroy = function(fn) {
   return this;
 };
 
-WSFactory.prototype.flushBuffer = function() {
+WSFactory.prototype.flushMessageBuffer = function() {
   if (this._paused) {
     return;
   }
-  while (this._buffer.length) {
-    this._invokeHandlers(this._buffer.pop());
+
+  if (!this._messageBuffer.length) {
+    return;
   }
+
+  if (this._handlers.bulkmessage.length) {
+    this._invokeHandlers('bulkmessage', this._messageBuffer);
+  } else {
+    this._messageBuffer.forEach(e => this._invokeHandlers('message', e));
+  }
+
+  this._messageBuffer = [];
 };
 
 // Pausing prevents any buffer flushing until unpaused.
@@ -203,7 +217,7 @@ WSFactory.prototype.pause = function() {
 
 WSFactory.prototype.unpause = function() {
   this._paused = false;
-  this.flushBuffer();
+  this.flushMessageBuffer();
 };
 
 WSFactory.prototype.isPaused = function() {
@@ -215,7 +229,7 @@ WSFactory.prototype.state = function() {
 };
 
 WSFactory.prototype.bufferSize = function() {
-  return this._buffer.length;
+  return this._messageBuffer.length;
 };
 
 WSFactory.prototype.destroy = function(timedout) {
@@ -242,7 +256,7 @@ WSFactory.prototype.destroy = function(timedout) {
   }
 
   try {
-    this._triggerEvent({ type: 'destroy', args: [timedout]});
+    this._triggerEvent('destroy', timedout);
   } catch (e) {
     console.error(e);
   }
@@ -250,5 +264,5 @@ WSFactory.prototype.destroy = function(timedout) {
   this._state = 'destroyed';
 
   delete this.options;
-  this._buffer = [];
+  this._messageBuffer = [];
 };
