@@ -151,7 +151,7 @@ const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({limited, namespace, flags})
           <a href={formatNamespacedRouteForResource('events', namespace)}>View All</a>
         </div>
         <div className="group__body">
-          <EventStreamPage namespace={namespace} showTitle={false} />
+          <EventStreamPage namespace={namespace} showTitle={false} autoFocus={false} />
         </div>
       </div>
     </div>

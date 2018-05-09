@@ -6,10 +6,12 @@ import { Link } from 'react-router-dom';
 import * as classNames from'classnames';
 import * as PropTypes from 'prop-types';
 import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualized';
+import * as fuzzy from 'fuzzysearch';
 
 import { namespaceProptype } from '../propTypes';
 import { k8sKinds, watchURL } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
+import { TextFilter } from './factory';
 import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
 import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -119,24 +121,28 @@ export class EventStreamPage extends React.Component {
     this.state = {
       category: 'all',
       kind: 'all',
+      textFilter: '',
     };
   }
 
   render () {
-    const {category, kind} = this.state;
-    const { showTitle=true } = this.props;
+    const { category, kind, textFilter } = this.state;
+    const { showTitle=true, autoFocus=true } = this.props;
     return <React.Fragment>
       { showTitle && <Helmet>
         <title>Events</title>
       </Helmet> }
       { showTitle && <NavTitle title="Events" /> }
-      <div className="co-m-pane__heading">
-        <div className="btn-group">
+      <div className="co-m-pane__filter-bar">
+        <div className="co-m-pane__filter-bar-group">
           <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
           <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
+          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+            <TextFilter label="Events by message (fuzzy)" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
+          </div>
         </div>
       </div>
-      <EventStream {...this.props} category={category} kind={kind} />
+      <EventStream {...this.props} category={category} kind={kind} textFilter={textFilter} />
     </React.Fragment>;
   }
 }
@@ -227,7 +233,7 @@ class EventStream extends SafetyFirst {
     this.ws.destroy();
   }
 
-  static filterMessages (messages, {kind, category, filter}) {
+  static filterMessages (messages, {kind, category, filter, textFilter}) {
     const f = (obj) => {
       if (category && !categoryFilter(category, obj)) {
         return false;
@@ -238,6 +244,9 @@ class EventStream extends SafetyFirst {
       if (filter && !_.isMatch(obj.involvedObject, filter)) {
         return false;
       }
+      if (textFilter && !fuzzy(textFilter, obj.message)) {
+        return false;
+      }
       return true;
     };
 
@@ -245,9 +254,12 @@ class EventStream extends SafetyFirst {
   }
 
   static getDerivedStateFromProps (nextProps, prevState) {
-    const {filter, kind, category} = prevState;
+    const {filter, kind, category, textFilter} = prevState;
 
-    if (_.isEqual(filter, nextProps.filter) && kind === nextProps.kind && category === nextProps.category) {
+    if (_.isEqual(filter, nextProps.filter)
+      && kind === nextProps.kind
+      && category === nextProps.category
+      && textFilter === nextProps.textFilter) {
       return {};
     }
 
@@ -255,6 +267,7 @@ class EventStream extends SafetyFirst {
       // update the filteredMessages
       filteredMessages: EventStream.filterMessages(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
+      textFilter: nextProps.textFilter,
       kind: nextProps.kind,
       category: nextProps.category,
       filter: nextProps.filter,
@@ -405,6 +418,7 @@ EventStream.propTypes = {
   kind: PropTypes.string.isRequired,
   category: PropTypes.string,
   filter: PropTypes.object,
+  textFilter: PropTypes.string,
   showTitle: PropTypes.bool,
 };
 
