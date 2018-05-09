@@ -30,6 +30,10 @@
   &__sort-arrow {
     margin-left: 10px;
   }
+  [class^="col-"] {
+    word-wrap: break-word; // IE 11/16/17 requires legacy name "word-wrap" rather than "overflow-wrap".
+    overflow-wrap: break-word; // new name as per the CSS3 spec
+  }
 }
 
 .co-resource-list__item {
