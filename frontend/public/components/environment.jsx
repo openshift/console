@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import * as classNames from'classnames';
 
 import { modelFor, k8sPatch } from '../module/k8s';
 import { NameValueEditor, NAME, VALUE } from './utils/name-value-editor';
@@ -133,7 +132,6 @@ export class EnvironmentPage extends PromiseComponent {
   _saveChanges(e) {
     const {envPath, rawEnvData, isBuildObject, obj, toArrayFn} = this.props;
     const {currentEnvVars} = this.state;
-    let validationError = null;
     e.preventDefault();
 
     // Convert any blank values to null
@@ -154,13 +152,6 @@ export class EnvironmentPage extends PromiseComponent {
       return {path, op, value: this._envVarsToNameVal(finalPairsForContainer)};
     });
 
-    if (validationError) {
-      this.setState({
-        errorMessage: validationError
-      });
-      return;
-    }
-
     const promise = k8sPatch(kind, obj, patch);
     this.handlePromise(promise).then((res) => {
       const newEnvData = _.get(res, _.trimStart(envPath, '/').split('/'));
@@ -180,18 +171,14 @@ export class EnvironmentPage extends PromiseComponent {
 
     const containerVars = currentEnvVars.map((envVar, i) => {
       const keyString = isBuildObject ? rawEnvData.from.name : rawEnvData[i].name;
-      return <div key={keyString}>
-        { !isBuildObject && <h1 className={classNames('co-section-title', {'environment-section-spacer': i > 0})}>Container {keyString}</h1> }
+      return <div key={keyString} className="co-m-pane__body-group">
+        { !isBuildObject && <h1 className="co-section-title">Container {keyString}</h1> }
         <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly}/>
       </div>;
     });
 
     return <div className="co-m-pane__body">
-      <div className="co-m-pane__body-group">
-        <div className="row no-gutter">
-          {containerVars}
-        </div>
-      </div>
+      {containerVars}
       <div className="co-m-pane__body-group">
         <div className="environment-buttons">
           {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{errorMessage}</p>}
