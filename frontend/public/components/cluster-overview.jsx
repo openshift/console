@@ -218,21 +218,19 @@ export const ClusterOverviewPage = props => {
   if (namespace) {
     title = `Status of ${ namespace }`;
   }
-  return <div>
-    <div className="co-p-cluster__body">
-      <StartGuide dismissible={true} style={{margin: 15}} />
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <NavTitle title={title} />
-      <div className="cluster-overview-cell container-fluid">
-        <AsyncComponent namespace={namespace} loader={permissionedLoader} />
-      </div>
-      <br />
-      <SecurityScanningOverview
-        {...props}
-        required="SECURITY_LABELLER"
-      />
+  return <React.Fragment>
+    <StartGuide dismissible={true} style={{margin: 15}} />
+    <Helmet>
+      <title>{title}</title>
+    </Helmet>
+    <NavTitle title={title} />
+    <div className="cluster-overview-cell container-fluid">
+      <AsyncComponent namespace={namespace} loader={permissionedLoader} />
     </div>
-  </div>;
+    <br />
+    <SecurityScanningOverview
+      {...props}
+      required="SECURITY_LABELLER"
+    />
+  </React.Fragment>;
 };

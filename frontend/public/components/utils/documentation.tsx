@@ -70,11 +70,11 @@ const DocumentationSidebar_ = props => {
   if (openshiftFlag === undefined) {
     return null;
   }
-  return <div className="co-p-cluster__sidebar--bordered" style={{overflowY: 'hidden'}}>
+  return <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered">
     <div className="co-m-pane__body">
-      <h1 className="co-p-cluster__sidebar-heading co-p-cluster__sidebar-heading--first">Documentation</h1>
+      <h1 className="co-p-has-sidebar__sidebar-heading co-p-has-sidebar__sidebar-heading--first">Documentation</h1>
       {openshiftFlag ? <OpenShiftDocumentationLinks /> : <TectonicDocumentationLinks />}
-      <h1 className="co-p-cluster__sidebar-heading">Additional Support</h1>
+      <h1 className="co-p-has-sidebar__sidebar-heading">Additional Support</h1>
       {openshiftFlag ? <OpenShiftAdditionalSupportLinks /> : <TectonicAdditionalSupportLinks />}
     </div>
     {props.children}

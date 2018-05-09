@@ -71,8 +71,8 @@ class StartGuide_ extends SafetyFirst {
 }
 export const StartGuide = connectToFlags(FLAGS.OPENSHIFT)(StartGuide_);
 
-export const StartGuidePage = () => <div className="co-p-cluster">
-  <div className="co-p-cluster__body">
+export const StartGuidePage = () => <div className="co-p-has-sidebar">
+  <div className="co-p-has-sidebar__body">
     <StartGuide visible={true} dismissible={false} />
   </div>
   <DocumentationSidebar />
