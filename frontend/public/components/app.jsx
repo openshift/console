@@ -9,7 +9,7 @@ import * as PropTypes from 'prop-types';
 import store from '../redux';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { getCRDs } from '../kinds';
-import { featureActions } from '../features';
+import { connectToFlags, featureActions, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
@@ -27,7 +27,7 @@ import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
-import { history, AsyncComponent } from './utils';
+import { history, AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
@@ -105,6 +105,19 @@ const ActiveNamespaceRedirect = ({location}) => {
   return <Redirect to={to} />;
 };
 
+// The default page component lets us connect to flags without connecting the entire App.
+const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
+  const openshiftFlag = flags[FLAGS.OPENSHIFT];
+  if (openshiftFlag === undefined) {
+    return <Loading />;
+  }
+
+  if (openshiftFlag) {
+    return <Redirect to="/k8s/cluster/projects" />;
+  }
+
+  return <NamespaceRedirect />;
+});
 
 class App extends React.PureComponent {
   componentDidUpdate (prevProps) {
@@ -133,6 +146,7 @@ class App extends React.PureComponent {
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
           <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
           <Route path="/overview/ns/:ns" exact component={ClusterOverviewContainer} />
+          <Route path="/overview" exact component={NamespaceRedirect} />
           <Route path="/cluster-health" exact component={ClusterHealth} />
           <Route path="/start-guide" exact component={StartGuidePage} />
 
@@ -184,7 +198,7 @@ class App extends React.PureComponent {
           <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
 
           <Route path="/error" exact component={ErrorPage} />
-          <Route path="/" exact component={NamespaceRedirect} />
+          <Route path="/" exact component={DefaultPage} />
 
           <Route component={ErrorPage404} />
         </Switch>
