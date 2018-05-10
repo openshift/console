@@ -3,7 +3,8 @@ import * as React from 'react';
 
 import { FLAGS, connectToFlags } from '../features';
 import { SafetyFirst } from './safety-first';
-import { k8sKinds, k8sGet } from '../module/k8s';
+import { k8sGet } from '../module/k8s';
+import { PodModel } from '../models';
 import { ClusterOverviewPage } from './cluster-overview';
 
 class ClusterOverviewContainer_ extends SafetyFirst {
@@ -35,7 +36,7 @@ class ClusterOverviewContainer_ extends SafetyFirst {
   }
 
   _checkFixableIssues() {
-    k8sGet(k8sKinds.Pod).then((pods) => {
+    k8sGet(PodModel).then((pods) => {
       let count = 0;
       _.forEach(pods.items, (pod) => {
         const fixables = _.get(pod, 'metadata.labels.secscan/fixables', '0');
@@ -46,7 +47,7 @@ class ClusterOverviewContainer_ extends SafetyFirst {
   }
 
   _checkScannedPods() {
-    k8sGet(k8sKinds.Pod).then((pods) => {
+    k8sGet(PodModel).then((pods) => {
       let count = 0;
       _.forEach(pods.items, (pod) => {
         const scanned = _.get(pod, 'metadata.annotations.secscan/lastScan');

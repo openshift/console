@@ -5,7 +5,8 @@ import { safeDump } from 'js-yaml';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
-import { k8sKinds, k8sGet } from '../module/k8s';
+import { k8sGet } from '../module/k8s';
+import { SecretModel } from '../models';
 import { SecretsPage } from './secret';
 import { registerTemplate } from '../yaml-templates';
 import { saveAs } from 'file-saver';
@@ -18,7 +19,7 @@ const KubeConfigify = (kind, sa) => ({
     const name = _.get(sa, 'secrets[0].name');
     const namespace = sa.metadata.namespace;
 
-    k8sGet(k8sKinds.Secret, name, namespace).then(({data}) => {
+    k8sGet(SecretModel, name, namespace).then(({data}) => {
       const server = window.SERVER_FLAGS.kubeAPIServerURL;
       const clusterName = window.SERVER_FLAGS.clusterName;
 

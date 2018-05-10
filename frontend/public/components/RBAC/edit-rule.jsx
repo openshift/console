@@ -4,7 +4,8 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { k8sKinds, k8sGet, k8sUpdate } from '../../module/k8s';
+import { k8sGet, k8sUpdate } from '../../module/k8s';
+import { RoleModel, ClusterRoleModel } from '../../models';
 import { errorModal } from '../modals';
 import { Heading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar, LoadingBox } from '../utils';
 import k8sActions from '../../module/k8s/k8s-actions';
@@ -79,7 +80,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResource
       this.toggleVerb = (name, checked) => this.toggleVerb_(name, checked);
       this.toggleResource = (name, checked) => this.toggleResource_(name, checked);
 
-      this.kind = props.namespace ? k8sKinds.Role : k8sKinds.ClusterRole;
+      this.kind = props.namespace ? RoleModel : ClusterRoleModel;
       this.getResource();
     }
 

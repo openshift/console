@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import { k8sKinds, k8sPatch } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
+import { ChannelOperatorConfigModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
 import { RadioInput } from '../radio';
@@ -37,7 +38,7 @@ class ConfigureOperatorModal extends PromiseComponent {
     const patch = [{ op: 'replace', path: this.props.path, value: value }];
 
     this.handlePromise(
-      k8sPatch(k8sKinds.ChannelOperatorConfig, this.props.config, patch)
+      k8sPatch(ChannelOperatorConfigModel, this.props.config, patch)
     ).then(this.props.close);
   }
 

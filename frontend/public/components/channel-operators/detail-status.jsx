@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import {k8sKinds, k8sPatch} from '../../module/k8s';
-import {LoadingInline, OperatorState} from '../utils';
-import {SafetyFirst} from '../safety-first';
+import { k8sPatch } from '../../module/k8s';
+import { ChannelOperatorConfigModel, AppVersionModel } from '../../models';
+import { LoadingInline, OperatorState } from '../utils';
+import { SafetyFirst } from '../safety-first';
 
 export class DetailStatus extends SafetyFirst {
   constructor(props) {
@@ -26,10 +27,10 @@ export class DetailStatus extends SafetyFirst {
 
     let k8skind, resource;
     if (kind === 'config') {
-      k8skind = k8sKinds.ChannelOperatorConfig;
+      k8skind = ChannelOperatorConfigModel;
       resource = this.props.config;
     } else if (kind === 'app-version') {
-      k8skind = k8sKinds.AppVersion;
+      k8skind = AppVersionModel;
       resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-cluster' } };
     }
 

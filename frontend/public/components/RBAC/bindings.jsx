@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
-import { getQN, k8sCreate, k8sKinds, k8sPatch } from '../../module/k8s';
+import { getQN, k8sCreate, k8sPatch } from '../../module/k8s';
 import { getActiveNamespace, formatNamespacedRouteForResource, UIActions } from '../../ui/ui-actions';
 import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
 import { RadioGroup } from '../radio';
@@ -18,7 +18,7 @@ import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, Ms
 import { isSystemRole } from './index';
 import { registerTemplate } from '../../yaml-templates';
 
-registerTemplate('v1beta1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1beta1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: example
@@ -33,8 +33,6 @@ roleRef:
 
 
 const bindingKind = binding => binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';
-
-const k8sKind = kindId => _.get(k8sKinds, `${kindId}.kind`);
 
 // Split each binding into one row per subject
 export const flatten = resources => _.flatMap(resources, resource => {
@@ -504,9 +502,9 @@ export const CreateRoleBinding = ({match: {params}}) => <BaseEditRoleBinding
     namespace: getActiveNamespace(),
   }}
   fixed={{
-    kind: (params.ns || params.rolekind === 'role') ? 'RoleBinding' : undefined,
+    kind: (params.ns || params.rolekind === 'Role') ? 'RoleBinding' : undefined,
     metadata: {namespace: params.ns},
-    roleRef: {kind: k8sKind(params.rolekind), name: params.rolename},
+    roleRef: {kind: params.rolekind, name: params.rolename},
   }}
   isCreate={true}
   titleVerb="Create"

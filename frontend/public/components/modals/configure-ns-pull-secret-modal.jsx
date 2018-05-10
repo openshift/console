@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import { k8sKinds, k8sPatch, k8sCreate } from '../../module/k8s';
+import { k8sPatch, k8sCreate } from '../../module/k8s';
+import { SecretModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, ResourceIcon } from '../utils';
 import { CONST } from '../../const';
@@ -144,7 +145,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         path: `/data/${CONST.PULL_SECRET_DATA}`,
         value: secretData
       }];
-      promise = k8sPatch(k8sKinds.Secret, pullSecret, patch);
+      promise = k8sPatch(SecretModel, pullSecret, patch);
     } else {
       const data = {};
       data[CONST.PULL_SECRET_DATA] = secretData;
@@ -157,7 +158,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         data: data,
         type: CONST.PULL_SECRET_TYPE
       };
-      promise = k8sCreate(k8sKinds.Secret, secret);
+      promise = k8sCreate(SecretModel, secret);
     }
 
     this.handlePromise(promise).then(this.props.close);

@@ -9,7 +9,8 @@ import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualize
 import * as fuzzy from 'fuzzysearch';
 
 import { namespaceProptype } from '../propTypes';
-import { k8sKinds, watchURL } from '../module/k8s';
+import { watchURL } from '../module/k8s';
+import { EventModel } from '../models';
 import { SafetyFirst } from './safety-first';
 import { TextFilter } from './factory';
 import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
@@ -178,7 +179,7 @@ class EventStream extends SafetyFirst {
     this.ws = new WSFactory(`${ns || 'all'}-sysevents`, {
       host: 'auto',
       reconnect: true,
-      path: watchURL(k8sKinds.Event, params),
+      path: watchURL(EventModel, params),
       jsonParse: true,
       bufferEnabled: true,
       bufferFlushInterval: flushInterval,

@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { k8sKinds, resourceURL } from '../module/k8s';
+import { resourceURL } from '../module/k8s';
+import { PodModel } from '../models';
 import { SafetyFirst } from './safety-first';
 import { Dropdown, LoadingInline, LogWindow, ResourceIcon, TogglePlay, lineBuffer, stream } from './utils';
 
@@ -67,7 +68,7 @@ export class PodLogs extends SafetyFirst {
   }
 
   _logURL(obj, currentContainer) {
-    return resourceURL(k8sKinds.Pod, {
+    return resourceURL(PodModel, {
       ns: _.get(obj, 'metadata.namespace'),
       name: _.get(obj, 'metadata.name'),
       path: 'log',

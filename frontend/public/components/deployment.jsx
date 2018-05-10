@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { k8sKinds } from '../module/k8s';
+import { DeploymentModel } from '../models';
 import { configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
@@ -52,7 +52,7 @@ const DeploymentDetails = ({obj: deployment}) => {
   const isRecreate = (deployment.spec.strategy.type === 'Recreate');
 
   return <div className="co-m-pane__body">
-    <DeploymentPodCounts resource={deployment} resourceKind={k8sKinds.Deployment} />
+    <DeploymentPodCounts resource={deployment} resourceKind={DeploymentModel} />
 
     <div className="co-m-pane__body-group">
       <div className="row">
