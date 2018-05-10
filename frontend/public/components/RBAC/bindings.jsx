@@ -249,7 +249,10 @@ class ListDropdown_ extends React.Component {
 
     if (selectedKey) {
       const item = state.items[selectedKey];
-      state.title = <ResourceName kind={item.kindLabel} name={item.name} />;
+      // item may not exist if selectedKey is a role and then user switches to creating a ClusterRoleBinding
+      if (item) {
+        state.title = <ResourceName kind={item.kindLabel} name={item.name} />;
+      }
     }
 
     this.setState(state);
