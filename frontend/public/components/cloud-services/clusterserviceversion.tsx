@@ -79,7 +79,6 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   const clusterServiceVersions = (props.data.filter(res => referenceFor(res) === referenceForModel(ClusterServiceVersionModel)) as ClusterServiceVersionKind[])
     .filter(csv => csv.status && csv.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded);
   const apps = Object.keys(filters).reduce((filteredData, filterName) => {
-    // TODO(alecmerdler): Make these cases into TypeScript `enum` values
     switch (filterName) {
       case 'name':
         return filteredData.filter((csv) => csv.spec.displayName.toLowerCase().includes(filters[filterName].toLowerCase()));

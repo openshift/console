@@ -67,7 +67,6 @@ export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({cata
   const csvFor = (name: string) => csvs.find(({metadata}) => metadata.name === name);
   const subscriptionsFor = (pkgName: string) => subscription.loaded ? subscription.data.filter(sub => sub.spec.name === pkgName) : [];
 
-  // FIXME(alecmerdler): `metadata.resourceVersion` sometimes is updated a lot for `Subscriptions`, causing unnecessary rerendering of this component
   return catalogSource.loaded && configMap.loaded && subscription.loaded ?
     <div className="co-catalog-details co-m-pane">
       <div className="co-m-pane__body">

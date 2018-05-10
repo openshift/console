@@ -71,7 +71,8 @@ export const connectToModel = connect((state, props: {kind: K8sResourceKindRefer
 });
 
 /**
- * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this
+ * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
+ * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
  */
 export const connectToPlural = connect((state, props: {plural?: string, match: match<{plural: string}>}) => {
   const plural = props.plural || _.get(props, 'match.params.plural');

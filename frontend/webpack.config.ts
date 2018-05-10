@@ -131,7 +131,7 @@ if (NODE_ENV === 'production') {
   config.output.filename = `[name]-bundle.${gitHash()}.min.js`;
   config.output.chunkFilename = `[name]-[chunkhash].${gitHash()}.min.js`;
   extractCSS.filename = `[name]-[chunkhash].${gitHash()}.min.css`;
-  // FIXME(alecmerdler): Causes error in --mode=production due to scope hoisting
+  // Causes error in --mode=production due to scope hoisting
   config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }

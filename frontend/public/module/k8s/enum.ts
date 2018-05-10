@@ -6,7 +6,7 @@ import { K8sKind } from './index';
 
 /**
  * @deprecated: Use `modelFor`, `allModels`, or `connectToModel`
- * TODO(alecmerdler): Remove this and replace calls
+ * TODO: Remove this and replace calls
  */
 export const k8sKinds = {};
 

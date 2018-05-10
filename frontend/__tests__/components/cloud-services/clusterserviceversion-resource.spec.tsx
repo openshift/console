@@ -157,9 +157,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
       path: testClusterServiceVersionResource.metadata.name.split('.')[0],
       annotations: testClusterServiceVersionResource.metadata.annotations,
     };
-    // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
-    const Component: React.SFC<ClusterServiceVersionResourcesDetailsProps> = (ClusterServiceVersionResourceDetails as any).WrappedComponent;
-    wrapper = shallow(<Component clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} appName={testClusterServiceVersion.metadata.name} />);
+    wrapper = shallow(<ClusterServiceVersionResourceDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} appName={testClusterServiceVersion.metadata.name} />);
   });
 
   it('renders description title', () => {
