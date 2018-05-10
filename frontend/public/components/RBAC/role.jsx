@@ -95,11 +95,13 @@ class Details extends React.Component {
       </div>
       <Heading text="Rules" />
       <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-xs-12">
+        <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
+          <div className="co-m-pane__filter-bar-group">
             <Link to={addHref(name, namespace)}>
               <button className="btn btn-primary">Add Rule</button>
             </Link>
+          </div>
+          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
             <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
           </div>
         </div>
