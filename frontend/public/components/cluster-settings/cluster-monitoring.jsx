@@ -5,7 +5,8 @@ import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm } from 'redux-form';
 
-import { k8sPatch, k8sKinds } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
+import { ConfigMapModel } from '../../models';
 import { Firehose, StatusBox, PromiseComponent, ResourceLink, validate, units } from '../utils';
 import { AlertManagersListContainer } from '../alert-manager';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -78,7 +79,7 @@ class PromSettingsModal extends PromiseComponent {
 
     newConfig = sanitizeForProm_(newConfig);
 
-    const promise = k8sPatch(k8sKinds.ConfigMap, obj, [{
+    const promise = k8sPatch(ConfigMapModel, obj, [{
       op: 'replace',
       path: '/data/config.yaml',
       value: safeDump(newConfig),

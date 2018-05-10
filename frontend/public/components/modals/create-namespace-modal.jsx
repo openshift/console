@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { k8sCreate, k8sKinds, referenceFor } from '../../module/k8s';
+import { k8sCreate, referenceFor } from '../../module/k8s';
+import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { history, PromiseComponent, resourceObjPath, SelectorInput } from '../utils';
 
@@ -37,7 +38,7 @@ class CreateNamespaceModal extends PromiseComponent {
         labels: SelectorInput.objectify(labels),
       },
     };
-    return k8sCreate(k8sKinds.Namespace, namespace);
+    return k8sCreate(NamespaceModel, namespace);
   }
 
   createProject() {
@@ -49,7 +50,7 @@ class CreateNamespaceModal extends PromiseComponent {
       displayName,
       description,
     };
-    return k8sCreate(k8sKinds.ProjectRequest, project);
+    return k8sCreate(ProjectRequestModel, project);
   }
 
   _submit(event) {
@@ -59,7 +60,7 @@ class CreateNamespaceModal extends PromiseComponent {
     if (this.state.np === deny) {
       promise = promise.then(ns => {
         const policy = Object.assign({}, defaultDeny, {metadata: {namespace: ns.metadata.name, name: 'default-deny'}});
-        return k8sCreate(k8sKinds.NetworkPolicy, policy);
+        return k8sCreate(NetworkPolicyModel, policy);
       });
     }
 

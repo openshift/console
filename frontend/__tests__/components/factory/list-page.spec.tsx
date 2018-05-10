@@ -35,9 +35,7 @@ describe(FireMan_.displayName, () => {
 
   beforeEach(() => {
     const resources = [{kind: 'nodes'}];
-    // FIXME(alecmerdler): Remove this once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/19672 is shipped
-    const Component = (FireMan_ as any).WrappedComponent;
-    wrapper = shallow(<Component resources={resources} />);
+    wrapper = shallow(<FireMan_.WrappedComponent resources={resources} />);
   });
 
   it('renders `NavTitle` if given `title`', () => {

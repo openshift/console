@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-import { k8sKinds, k8sGet } from '../module/k8s';
+import { k8sGet } from '../module/k8s';
+import { ConfigMapModel, AppVersionModel } from '../models';
 import { k8sVersion } from '../module/status';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
@@ -90,7 +91,7 @@ export class SoftwareDetails extends SafetyFirst {
   }
 
   _checkAppVersions() {
-    k8sGet(k8sKinds.AppVersion).then((appversions) => {
+    k8sGet(AppVersionModel).then((appversions) => {
       const tectonicTPR = _.find(appversions.items, (a) => a.metadata.name === clusterAppVersionName);
       if (tectonicTPR) {
         this.setState({ currentTectonicVersion: tectonicTPR.status.currentVersion });
@@ -105,7 +106,7 @@ export class SoftwareDetails extends SafetyFirst {
   }
 
   _checkCloudProvider() {
-    k8sGet(k8sKinds.ConfigMap, 'tectonic-config', 'tectonic-system').then((configMap) => {
+    k8sGet(ConfigMapModel, 'tectonic-config', 'tectonic-system').then((configMap) => {
       this.setState({ cloudProviders: [_.get(configMap, 'data.installerPlatform', null)]});
     }, () => this.setState({ cloudProviders: ['UNKNOWN']}));
   }

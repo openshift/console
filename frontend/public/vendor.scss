@@ -3,8 +3,8 @@
 @import "style/vars";
 @import "style/config";
 
-// External dependencies (tilde tells Webpack not to use relative path)
-@import "~font-awesome/scss/font-awesome";  // FIXME(alecmerdler): Including this file breaks sourcemaps
+// External dependencies (tilde tells Webpack not to use relative path). Seperate SCSS entrypoint here because some modules break sourcemaps.
+@import "~font-awesome/scss/font-awesome";  // Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/variables';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
@@ -12,7 +12,7 @@
 @import '~patternfly/dist/sass/patternfly/fonts';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/normalize";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/type";  // FIXME(alecmerdler): Including this file breaks sourcemaps
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/type";  // Including this file breaks sourcemaps
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/code";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/grid";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/tables";
@@ -31,8 +31,8 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
-@import "~patternfly/dist/sass/patternfly/mixins";  // FIXME(alecmerdler): Including this file breaks sourcemaps
-@import '~patternfly/dist/sass/patternfly/icons';  // FIXME(alecmerdler): Including this file breaks sourcemaps
+@import "~patternfly/dist/sass/patternfly/mixins";  // Including this file breaks sourcemaps
+@import '~patternfly/dist/sass/patternfly/icons';  // Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/type';
 @import '~patternfly/dist/sass/patternfly/buttons';
 @import '~patternfly/dist/sass/patternfly/dropdowns';

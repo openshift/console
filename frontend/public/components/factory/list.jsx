@@ -13,7 +13,7 @@ import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
 import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
 
-// TODO(alecmerdler): Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
+// TODO: Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
 const listFilters = {
   'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
 

@@ -68,7 +68,7 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   if (m) {
     return m;
   }
-  // FIXME(alecmerdler): Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
+  // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
   m = store.getState().KINDS.get('kinds').get(ref);
   if (m) {
     return m;

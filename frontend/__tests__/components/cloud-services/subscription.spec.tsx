@@ -143,7 +143,7 @@ describe(SubscriptionsPage.displayName, () => {
     ]);
   });
 
-  it('passes `flatten` function to `MultiListPage` that filters out subscriptions that do not match `props.packageName`', () => {
+  xit('passes `flatten` function to `MultiListPage` that filters out subscriptions that do not match `props.packageName`', () => {
     // TODO(alecmerdler)
   });
 });

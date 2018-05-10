@@ -8,7 +8,8 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
 
 import store from '../../redux';
-import { k8sKinds, k8sGet } from '../../module/k8s';
+import { k8sGet } from '../../module/k8s';
+import { ConfigMapModel } from '../../models';
 import { SafetyFirst } from '../safety-first';
 import { coFetchJSON } from '../../co-fetch';
 import { LoadingInline, LoadError, NavTitle } from '../utils';
@@ -344,7 +345,7 @@ const LDAPs = reduxForm({
 
     componentDidMount() {
       super.componentDidMount();
-      k8sGet(k8sKinds.ConfigMap, 'tectonic-identity', 'tectonic-system')
+      k8sGet(ConfigMapModel, 'tectonic-identity', 'tectonic-system')
         .then(d => {
           const configDotYaml = safeLoad(d.data['config.yaml']) || {};
           const connectorIndex = _.findIndex(configDotYaml.connectors, connector => connector.type === 'ldap' && connector.id === 'tectonic-ldap');

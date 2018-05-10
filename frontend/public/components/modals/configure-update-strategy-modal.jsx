@@ -3,7 +3,8 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Tooltip } from '../utils/tooltip';
 
-import { k8sPatch, k8sKinds } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
+import { DeploymentModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, pluralize } from '../utils';
 import { RadioInput } from '../radio';
@@ -52,7 +53,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     }
 
     this.handlePromise(
-      k8sPatch(k8sKinds.Deployment, this.deployment, [patch, {path: '/spec/strategy/type', value: type, op: 'replace'}])
+      k8sPatch(DeploymentModel, this.deployment, [patch, {path: '/spec/strategy/type', value: type, op: 'replace'}])
     ).then(this.props.close, () => {});
   }
 

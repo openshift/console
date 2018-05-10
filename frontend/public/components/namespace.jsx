@@ -5,8 +5,8 @@ import { Tooltip } from './utils/tooltip';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 
-import { NamespaceModel, ProjectModel } from '../models';
-import { k8sGet, k8sKinds } from '../module/k8s';
+import { NamespaceModel, ProjectModel, SecretModel } from '../models';
+import { k8sGet } from '../module/k8s';
 import { UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
@@ -113,7 +113,7 @@ class PullSecret extends SafetyFirst {
     if (!namespaceName) {
       return;
     }
-    k8sGet(k8sKinds.Secret, null, namespaceName, {queryParams: {fieldSelector: 'type=kubernetes.io/dockerconfigjson'}})
+    k8sGet(SecretModel, null, namespaceName, {queryParams: {fieldSelector: 'type=kubernetes.io/dockerconfigjson'}})
       .then((pullSecrets) => {
         this.setState({isLoading: false, data: _.get(pullSecrets, 'items[0]')});
       })

@@ -1,9 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { connect } from 'react-redux';
 
-import {k8sKinds, k8sPatch} from '../../module/k8s';
-import {Cog, ResourceIcon} from '../utils';
-import {confirmModal} from '../modals';
+import { k8sPatch } from '../../module/k8s';
+import { RoleModel, ClusterRoleModel } from '../../models';
+import { Cog, ResourceIcon } from '../utils';
+import { confirmModal } from '../modals';
 
 export const RulesList = ({rules, name, namespace}) => <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
   <div className="row co-m-table-grid__head">
@@ -49,37 +51,38 @@ const Groups = ({apiGroups}) => {
   return <div>{groups}</div>;
 };
 
-const Resources = ({resources, nonResourceURLs}) => {
-  let allResources = [];
-  resources && _.each([...new Set(resources)].sort(), r => {
-    if (r === '*') {
-      allResources = [<span key={r} className="rbac-rule-resource rbac-rule-row">All Resources</span>];
-      return false;
-    }
-    const base = r.split('/')[0];
-    const kind = _.find(k8sKinds, k => k.plural === base);
-
-    allResources.push(<span key={r} className="rbac-rule-resource rbac-rule-row">
-      <ResourceIcon kind={kind ? kind.kind : r} /> {r}
-    </span>);
-  });
-
-  if (nonResourceURLs && nonResourceURLs.length) {
-    if (allResources.length) {
-      allResources.push(<hr key="hr" className="resource-separator" />);
-    }
-    let URLs = [];
-    _.each(nonResourceURLs.sort(), r => {
+const Resources = connect(({KINDS}) => ({allModels: KINDS.get('kinds')}))(
+  ({resources, nonResourceURLs, allModels}) => {
+    let allResources = [];
+    resources && _.each([...new Set(resources)].sort(), r => {
       if (r === '*') {
-        URLs = [<div className="rbac-rule-row" key={r}>All Non-resource URLs</div>];
+        allResources = [<span key={r} className="rbac-rule-resource rbac-rule-row">All Resources</span>];
         return false;
       }
-      URLs.push(<div className="rbac-rule-row" key={r}>{r}</div>);
+      const base = r.split('/')[0];
+      const kind = allModels.find(model => model.plural === base);
+
+      allResources.push(<span key={r} className="rbac-rule-resource rbac-rule-row">
+        <ResourceIcon kind={kind ? kind.kind : r} /> {r}
+      </span>);
     });
-    allResources.push.apply(allResources, URLs);
-  }
-  return <div>{allResources}</div>;
-};
+
+    if (nonResourceURLs && nonResourceURLs.length) {
+      if (allResources.length) {
+        allResources.push(<hr key="hr" className="resource-separator" />);
+      }
+      let URLs = [];
+      _.each(nonResourceURLs.sort(), r => {
+        if (r === '*') {
+          URLs = [<div className="rbac-rule-row" key={r}>All Non-resource URLs</div>];
+          return false;
+        }
+        URLs.push(<div className="rbac-rule-row" key={r}>{r}</div>);
+      });
+      allResources.push.apply(allResources, URLs);
+    }
+    return <div>{allResources}</div>;
+  });
 
 const DeleteRule = (name, namespace, i) => ({
   label: 'Delete Rule...',
@@ -88,7 +91,7 @@ const DeleteRule = (name, namespace, i) => ({
     message: `Are you sure you want to delete Rule #${i}?`,
     btnText: 'Delete Rule',
     executeFn: () => {
-      const kind = namespace ? k8sKinds.Role : k8sKinds.Clusterrole;
+      const kind = namespace ? RoleModel : ClusterRoleModel;
       return k8sPatch(kind, {metadata: {name, namespace}}, [{
         op: 'remove', path: `/rules/${i}`,
       }]);
