@@ -143,6 +143,27 @@ export default (state, action) => {
       });
       newList = loadList(list, k8sObjects);
       break;
+
+    case types.updateListFromWS:
+      newList = list;
+      // k8sObjects is an array of k8s WS Events
+      for (let {type, object} of k8sObjects) {
+        switch (type) {
+          case 'DELETED':
+            newList = removeFromList(newList, object);
+            continue;
+          case 'ADDED':
+          case 'MODIFIED':
+            newList = updateList(newList, object);
+            continue;
+          default:
+            // possible `ERROR` type or other
+            // eslint-disable-next-line no-console
+            console.warn(`unknown websocket action: ${type} (${ _.get(event, 'object.message')})`);
+            continue;
+        }
+      }
+      break;
     case types.deleteFromList:
       if (!list) {
         return state;
