@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as openshiftOriginLogoImg from '../imgs/openshift-origin-logo.svg';
 import * as openshiftPlatformLogoImg from '../imgs/openshift-platform-logo.svg';
@@ -9,18 +10,29 @@ import { FLAGS, connectToFlags } from '../features';
 import { authSvc } from '../module/auth';
 import { Dropdown, ActionsMenu } from './utils';
 
+import { coFetchJSON } from '../co-fetch';
+import { SafetyFirst } from './safety-first';
+
 const logout = e => {
   e.preventDefault();
   authSvc.logout();
 };
 
-const UserMenu = connectToFlags(FLAGS.AUTH_ENABLED)((props: FlagsProps) => {
-  const actions: { label: string, href?: string, callback?: any }[] = [
-    {
-      label: 'My Account',
-      href: '/settings/profile'
-    },
-  ];
+const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) => {
+  const title = <span>
+    <i className="fa fa-user co-header__user-icon" aria-hidden="true"></i>{username}
+  </span>;
+  return <ActionsMenu actions={actions}
+    title={title}
+    noButton={true} />;
+};
+
+const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((props: FlagsProps) => {
+  if (props.flags[FLAGS.OPENSHIFT] === undefined || props.flags[FLAGS.AUTH_ENABLED] === undefined) {
+    return null;
+  }
+
+  const actions: Actions = [];
 
   if (props.flags[FLAGS.AUTH_ENABLED]) {
     actions.push({
@@ -29,13 +41,43 @@ const UserMenu = connectToFlags(FLAGS.AUTH_ENABLED)((props: FlagsProps) => {
     });
   }
 
-  const title = <span>
-    <i className="fa fa-user os-header__user-icon"></i>{authSvc.name()}
-  </span>;
-  return authSvc.userID() ? <ActionsMenu actions={actions}
-    title={title}
-    noButton={true} /> : null;
+  if (props.flags[FLAGS.OPENSHIFT]) {
+    return <OSUserMenu actions={actions} />;
+  }
+
+  actions.unshift({
+    label: 'My Account',
+    href: '/settings/profile'
+  });
+
+  return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.userID()} /> : null;
 });
+
+export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: undefined
+    };
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+    this._getUserInfo();
+  }
+
+  _getUserInfo() {
+    coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~')
+      .then((user) => {
+        this.setState({ username: _.get(user, 'fullName') || user.metadata.name });
+      }).catch(() => this.setState({ username: null }));
+  }
+
+  render () {
+    const username = this.state.username;
+    return username ? <UserMenu actions={this.props.actions} username={username} /> : null;
+  }
+}
 
 const ContextSwitcher = () => {
   const openshiftConsoleURL = (window as any).SERVER_FLAGS.openshiftConsoleURL;
@@ -83,7 +125,7 @@ export const Masthead = () => <div className="co-masthead">
         { (window as any).SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
       </div>
       <div className="co-header__user navbar-right">
-        <UserMenu />
+        <UserMenuWrapper />
       </div>
     </div>
   </header>
@@ -91,5 +133,20 @@ export const Masthead = () => <div className="co-masthead">
 
 /* eslint-disable no-undef */
 export type FlagsProps = {
-  flags: {[name: string]: boolean};
+  flags: {[name: string]: boolean},
+};
+
+export type Actions = { label: string, href?: string, callback?: any }[];
+
+export type UserMenuProps = {
+  actions: Actions,
+  username: any,
+};
+
+export type OSUserMenuProps = {
+  actions: Actions,
+};
+
+export type OSUserMenuState = {
+  username: string,
 };
