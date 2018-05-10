@@ -116,7 +116,6 @@ export const k8sWatch = (kind, query={}, wsOptions={}) => {
     host: 'auto',
     reconnect: true,
     jsonParse: true,
-    bufferEnabled: true,
     bufferFlushInterval: 500,
     bufferMax: 1000,
   }, wsOptions);
