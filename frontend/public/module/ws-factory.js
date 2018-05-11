@@ -149,10 +149,10 @@ WSFactory.prototype._triggerEvent = function(type, event) {
 
   // Only buffer "message" events, so "error" and "close" etc can pass thru.
   if (this.bufferMax && type === 'message') {
-    this._messageBuffer.unshift(event);
+    this._messageBuffer.push(event);
 
     if (this._messageBuffer.length > this.bufferMax) {
-      this._messageBuffer.pop();
+      this._messageBuffer.shift();
     }
 
     return;

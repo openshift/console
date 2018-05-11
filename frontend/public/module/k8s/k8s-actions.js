@@ -1,5 +1,3 @@
-import * as _ from 'lodash-es';
-
 import { getResources as getResources_} from './get-resources';
 import store from '../../redux';
 import { k8sList, k8sWatch, k8sGet } from './resource';
@@ -20,6 +18,7 @@ const types = {
   deleteFromList: 'deleteFromList',
   modifyList: 'modifyList',
   filterList: 'filterList',
+  updateListFromWS: 'updateListFromWS',
 };
 
 const action_ = (type) => (id, k8sObjects) => ({type, id, k8sObjects});
@@ -71,6 +70,7 @@ const getImpersonateSubprotocols = () => {
 
 const actions = {
   [types.deleteFromList]: action_(types.deleteFromList),
+  [types.updateListFromWS]: action_(types.updateListFromWS),
   [types.addToList]: action_(types.addToList),
   [types.modifyList]: action_(types.modifyList),
   [types.loaded]: action_(types.loaded),
@@ -122,7 +122,9 @@ const actions = {
       return;
     }
 
-    const ws = k8sWatch(k8sType, query).onmessage(msg => dispatch(actions.modifyObject(id, msg.object)));
+    const ws = k8sWatch(k8sType, query).onbulkmessage(events =>
+      events.forEach(e => dispatch(actions.modifyObject(id, e.object)))
+    );
     WS[id] = ws;
   },
 
@@ -198,25 +200,7 @@ const actions = {
 
           POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
         })
-        .onmessage(msg => {
-          let theAction;
-          switch (msg.type) {
-            case 'ADDED':
-              theAction = actions.addToList;
-              break;
-            case 'MODIFIED':
-              theAction = actions.modifyList;
-              break;
-            case 'DELETED':
-              theAction = actions.deleteFromList;
-              break;
-            default:
-              // eslint-disable-next-line no-console
-              console.warn(`unknown websocket action: ${msg.type} (${ _.get(msg, 'object.message')})`);
-              return;
-          }
-          dispatch(theAction(id, msg.object));
-        });
+        .onbulkmessage(events => dispatch(actions.updateListFromWS(id, events)));
     },
     e => {
       dispatch(actions.errored(id, e));
