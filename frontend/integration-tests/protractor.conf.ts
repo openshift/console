@@ -91,7 +91,6 @@ export const config: Config = {
     alm: ['tests/base.scenario.ts', 'tests/alm/**/*.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
     all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/alm/**/*.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts', 'tests/role-bindings.scenario.ts'],
-    tmp: ['tests/base.scenario.ts', 'tests/role-bindings.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
