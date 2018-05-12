@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/coreos-inc/bridge/auth"
+	"github.com/openshift/console/auth"
 )
 
 // Middleware generates a middleware wrapper for request hanlders.

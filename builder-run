@@ -29,6 +29,6 @@ done
 docker run $ENV_STR --rm --net=host \
        --user="${BUILDER_RUN_USER}" \
        $VOLUME_MOUNT \
-       -v "$(pwd)":/go/src/github.com/coreos-inc/bridge \
-       -w /go/src/github.com/coreos-inc/bridge \
+       -v "$(pwd)":/go/src/github.com/openshift/console \
+       -w /go/src/github.com/openshift/console \
        $BUILDER_IMAGE "$@"

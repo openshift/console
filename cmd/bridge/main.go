@@ -15,13 +15,13 @@ import (
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
 
-	"github.com/coreos-inc/bridge/auth"
-	"github.com/coreos-inc/bridge/pkg/proxy"
-	"github.com/coreos-inc/bridge/server"
+	"github.com/openshift/console/auth"
+	"github.com/openshift/console/pkg/proxy"
+	"github.com/openshift/console/server"
 )
 
 var (
-	log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "cmd/main")
+	log = capnslog.NewPackageLogger("github.com/openshift/console", "cmd/main")
 )
 
 const (
@@ -30,7 +30,7 @@ const (
 )
 
 func main() {
-	rl := capnslog.MustRepoLogger("github.com/coreos-inc/bridge")
+	rl := capnslog.MustRepoLogger("github.com/openshift/console")
 	capnslog.SetFormatter(capnslog.NewStringFormatter(os.Stderr))
 
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)

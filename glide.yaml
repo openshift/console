@@ -1,4 +1,4 @@
-package: github.com/coreos-inc/bridge
+package: github.com/openshift/console
 testImports: []
 import:
 - package: gopkg.in/square/go-jose.v2

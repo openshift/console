@@ -21,9 +21,9 @@ import (
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
 
-	"github.com/coreos-inc/bridge/auth"
-	"github.com/coreos-inc/bridge/pkg/proxy"
-	"github.com/coreos-inc/bridge/version"
+	"github.com/openshift/console/auth"
+	"github.com/openshift/console/pkg/proxy"
+	"github.com/openshift/console/version"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -40,7 +40,7 @@ const (
 )
 
 var (
-	plog = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "server")
+	plog = capnslog.NewPackageLogger("github.com/openshift/console", "server")
 )
 
 type jsGlobals struct {

@@ -37,7 +37,7 @@ fi
 
 # split TEST into an array and prepend repo path to each local package
 split=(${TEST// / })
-TEST=${split[@]/#/github.com/coreos-inc/bridge/}
+TEST=${split[@]/#/github.com/openshift/console/}
 
 echo "Running tests..."
 go test ${COVER} $@ ${TEST}

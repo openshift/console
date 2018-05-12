@@ -35,7 +35,7 @@ const (
 	errorInvalidCode = "invalid_code"
 )
 
-var log = capnslog.NewPackageLogger("github.com/coreos-inc/bridge", "auth")
+var log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
 
 type Authenticator struct {
 	tokenVerifier func(string) (*loginState, error)
