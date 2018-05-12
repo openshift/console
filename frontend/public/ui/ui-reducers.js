@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
-import { ALL_NAMESPACES_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 
 export default (state, action) => {
@@ -12,10 +12,10 @@ export default (state, action) => {
     let activeNamespace = getNamespace(pathname);
     if (!activeNamespace) {
       const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
-      if (_.isString(parsedFavorite)) {
-        if (parsedFavorite.match(legalNamePattern) || parsedFavorite === ALL_NAMESPACES_KEY) {
-          activeNamespace = parsedFavorite;
-        }
+      if (_.isString(parsedFavorite) && (parsedFavorite.match(legalNamePattern) || parsedFavorite === ALL_NAMESPACES_KEY)) {
+        activeNamespace = parsedFavorite;
+      } else {
+        activeNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
       }
     }
 
