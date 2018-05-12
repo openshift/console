@@ -14,9 +14,7 @@ const types = {
   errored: 'errored',
 
   watchK8sList: 'watchK8sList',
-  addToList: 'addToList',
-  deleteFromList: 'deleteFromList',
-  modifyList: 'modifyList',
+  bulkAddToList: 'bulkAddToList',
   filterList: 'filterList',
   updateListFromWS: 'updateListFromWS',
 };
@@ -28,6 +26,7 @@ const POLLs = {};
 const REF_COUNTS = {};
 
 const nop = () => {};
+const paginationLimit = 100;
 
 const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
 const getImpersonateSubprotocols = () => {
@@ -69,10 +68,8 @@ const getImpersonateSubprotocols = () => {
 };
 
 const actions = {
-  [types.deleteFromList]: action_(types.deleteFromList),
   [types.updateListFromWS]: action_(types.updateListFromWS),
-  [types.addToList]: action_(types.addToList),
-  [types.modifyList]: action_(types.modifyList),
+  [types.bulkAddToList]: action_(types.bulkAddToList),
   [types.loaded]: action_(types.loaded),
   [types.errored]: action_(types.errored),
   [types.modifyObject]: action_(types.modifyObject),
@@ -155,21 +152,25 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    // Fetch entire list (XHR) then use its resourceVersion to
-    //  start listening on a WS (?resourceVersion=$resourceVersion)
-    //  start the process over when:
-    //   1. the WS closes abnormally
-    //   2. the WS can not establish a connection within $TIMEOUT
+    const incrementallyLoad = async(continueToken = '') => {
+      const response = await k8sList(k8skind, {...query, limit: paginationLimit, continue: continueToken}, true);
+      continueToken === '' ? dispatch(actions.loaded(id, response.items)) : dispatch(actions.bulkAddToList(id, response.items));
+
+      return response.metadata.continue !== undefined
+        ? incrementallyLoad(response.metadata.continue)
+        : response.metadata.resourceVersion;
+    };
+
+    /**
+     * Incrementally fetch list (XHR) using k8s pagination then use its resourceVersion to
+     *  start listening on a WS (?resourceVersion=$resourceVersion)
+     *  start the process over when:
+     *   1. the WS closes abnormally
+     *   2. the WS can not establish a connection within $TIMEOUT
+     */
     const pollAndWatch = () => (delete POLLs[id]) && Promise.all([
       getImpersonateSubprotocols(),
-      k8sList(k8skind, query, true).then(res => {
-        dispatch(actions.loaded(id, res.items));
-        if (WS[id]) {
-          return;
-        }
-        const { resourceVersion } = res.metadata;
-        return resourceVersion;
-      })
+      incrementallyLoad(),
     ]).then(([subProtocols, resourceVersion]) => {
       WS[id] = WS[id] || k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
       WS[id].onclose(event => {

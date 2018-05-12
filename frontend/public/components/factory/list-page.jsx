@@ -236,7 +236,7 @@ FireMan_.propTypes = {
 
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: string, fieldSelector?: string, canCreate?: boolean, fake?: boolean}>} */
 export const ListPage = props => {
-  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true, fake} = props;
+  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, limit, showTitle = true, fake} = props;
   const ko = kindObj(kind);
   const {labelPlural, plural, namespaced, label} = ko;
   const title = props.title || labelPlural;
@@ -248,7 +248,7 @@ export const ListPage = props => {
     } catch (unused) { /**/ }
   }
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
-  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters }];
+  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters, limit }];
 
   if (!namespaced && namespace) {
     return <ErrorPage404 />;
