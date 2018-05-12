@@ -36,7 +36,7 @@ EOF
     # shellcheck disable=SC2154
     curl -o /dev/null --silent -X POST --user "${GITHUB_CREDENTIALS}" \
     --data "$data" \
-    "https://api.github.com/repos/coreos-inc/bridge/statuses/${ghprbActualCommit}"
+    "https://api.github.com/repos/openshift/console/statuses/${ghprbActualCommit}"
     set -x
 }
 

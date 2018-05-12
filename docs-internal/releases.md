@@ -8,7 +8,7 @@ Decide on an incremented release semantic $VERSION.
 
 ## Docs
 
-Add changes to the [changelog](https://github.com/coreos-inc/bridge/blob/master/CHANGES.md) for the new version.
+Add changes to the [changelog](https://github.com/openshift/console/blob/master/CHANGES.md) for the new version.
 Make note of any newly introduced known issues, breaking changes or removed features.
 
 ## Tag
@@ -33,7 +33,7 @@ docker push quay.io/coreos/tectonic-console:$VERSION
 
 ## Github
 
-Create a [release](https://github.com/coreos-inc/bridge/releases) on Github with release notes by copying the changelog.
+Create a [release](https://github.com/openshift/console/releases) on Github with release notes by copying the changelog.
 
 ## Update Installer
 

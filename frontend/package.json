@@ -1,7 +1,7 @@
 {
   "name": "bridge",
   "description": "CoreOS Tectonic Dashboard",
-  "repository": "https://github.com/coreos-inc/bridge",
+  "repository": "https://github.com/openshift/console",
   "version": "0.1.0",
   "private": true,
   "scripts": {

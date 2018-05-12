@@ -234,7 +234,7 @@ Remove the `--headless` flag to Chrome (chromeOptions) in `frontend/integration-
 
 Checkout and build [dex](https://github.com/coreos/dex/).
 
-`./bin/dex serve ../../coreos-inc/bridge/contrib/dex-config-dev.yaml`
+`./bin/dex serve ../../openshift/console/contrib/dex-config-dev.yaml`
 
 Run bridge with the following options:
 

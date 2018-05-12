@@ -4,13 +4,13 @@ The UI detects if operators are installed in the cluster and conditionally enabl
 
 ## Operator feature detection
 
-We determine if the feature is enabled by first checking if the operator feature exists. For more information, see [k8s/k8s.js](https://github.com/coreos-inc/bridge/blob/master/frontend/public/module/k8s/k8s.js).
+We determine if the feature is enabled by first checking if the operator feature exists. For more information, see [k8s/k8s.js](https://github.com/openshift/console/blob/master/frontend/public/module/k8s/k8s.js).
 
 ## UI Components
 
 The update UI is divided into several key components and is abstracted such that additional channels could be added in the future e.g. Tectonic channel, Container Linux channel, etc.
 
-All components live in [components/cluster-updates](https://github.com/coreos-inc/bridge/blob/master/frontend/public/components/cluster-updates). Each major component has a description in the file of how it's intended to be used.
+All components live in [components/cluster-updates](https://github.com/openshift/console/blob/master/frontend/public/components/cluster-updates). Each major component has a description in the file of how it's intended to be used.
 
 ## Data flow
 

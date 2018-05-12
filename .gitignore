@@ -3,7 +3,7 @@
 .vscode
 /bin
 /gopath
-/Godeps/_workspace/src/github.com/coreos-inc/bridge
+/Godeps/_workspace/src/github.com/openshift/console
 /frontend/.cache-loader
 /frontend/__coverage__
 /frontend/public/bower_components
