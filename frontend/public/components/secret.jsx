@@ -19,10 +19,11 @@ data:
 const menuActions = Cog.factory.common;
 
 const SecretHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortFunc="dataSize">Size</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="type">Type</ColHead>
+  <ColHead {...props} className="col-md-1 hidden-sm hidden-xs" sortFunc="dataSize">Size</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const SecretRow = ({obj: secret}) => {
@@ -30,15 +31,16 @@ const SecretRow = ({obj: secret}) => {
   const age = fromNow(secret.metadata.creationTimestamp);
 
   return <ResourceRow obj={secret}>
-    <div className="col-sm-4 col-xs-6">
+    <div className="col-md-3 col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind="Secret" resource={secret} />
       <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
-    <div className="col-sm-4 col-xs-6">
+    <div className="col-md-3 col-sm-4 col-xs-6">
       <ResourceLink kind="Namespace" name={secret.metadata.namespace} title={secret.metadata.namespace} />
     </div>
-    <div className="col-sm-2 hidden-xs">{data}</div>
-    <div className="col-sm-2 hidden-xs">{age}</div>
+    <div className="col-md-3 col-sm-4 hidden-xs">{secret.type}</div>
+    <div className="col-md-1 hidden-sm hidden-xs">{data}</div>
+    <div className="col-md-2 hidden-sm hidden-xs">{age}</div>
   </ResourceRow>;
 };
 

@@ -34,6 +34,7 @@ export type K8sResourceKind = {
     [key: string]: any
   };
   status?: {[key: string]: any};
+  type?: {[key: string]: any};
 };
 
 export type CustomResourceDefinitionKind = {
