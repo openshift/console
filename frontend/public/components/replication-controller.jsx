@@ -6,7 +6,7 @@ import { replicaSetMenuActions } from './replicaset';
 import { navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { registerTemplate } from '../yaml-templates';
-import { EnvironmentPage, envVarsToArrayForArray } from './environment';
+import { EnvironmentPage } from './environment';
 
 registerTemplate('v1.ReplicationController', `apiVersion: v1
 kind: ReplicationController
@@ -43,13 +43,12 @@ const Details = ({obj: replicationController}) => <React.Fragment>
   </div>
 </React.Fragment>;
 
+const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
   rawEnvData={props.obj.spec.template.spec.containers}
-  envPath="/spec/template/spec/containers"
+  envPath={envPath}
   readOnly={false}
-  isBuildObject={false}
-  toArrayFn={envVarsToArrayForArray}
 />;
 
 const {details, editYaml, pods, envEditor, events} = navFactory;

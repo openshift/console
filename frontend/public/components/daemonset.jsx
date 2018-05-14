@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
-import { EnvironmentPage, envVarsToArrayForArray } from './environment';
+import { EnvironmentPage } from './environment';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('apps/v1.DaemonSet', `apiVersion: apps/v1
@@ -72,13 +72,12 @@ const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
   </div>
 </div>;
 
+const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
   rawEnvData={props.obj.spec.template.spec.containers}
-  envPath="/spec/template/spec/containers"
+  envPath={envPath}
   readOnly={false}
-  isBuildObject={false}
-  toArrayFn={envVarsToArrayForArray}
 />;
 
 const {details, pods, editYaml, envEditor} = navFactory;

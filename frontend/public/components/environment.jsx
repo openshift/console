@@ -14,7 +14,7 @@ import { PromiseComponent } from './utils';
  * @private
  */
 const getPairsFromObject = (element) => {
-  if (typeof element.env === 'undefined') {
+  if (_.isUndefined(element.env)) {
     return [['', '']];
   }
   return _.map(element.env, (leafNode) => {
@@ -23,24 +23,17 @@ const getPairsFromObject = (element) => {
 };
 
 /**
- * Get name/value pairs from an array source
+ * Get name/value pairs from an array or object source
  *
  * @param initialPairObjects
  * @returns {Array}
  */
-export const envVarsToArrayForArray = (initialPairObjects) => {
-  return _.map(initialPairObjects, (element) => {
-    return getPairsFromObject(element);
-  });
-};
-
-/**
- * Get name/value pairs from an object source
- *
- * @param initialPairObjects
- * @returns {Array}
- */
-export const envVarsToArrayForObject = (initialPairObjects) => {
+export const envVarsToArray = (initialPairObjects) => {
+  if (_.isArray(initialPairObjects)) {
+    return _.map(initialPairObjects, (element) => {
+      return getPairsFromObject(element);
+    });
+  }
   return [getPairsFromObject(initialPairObjects)];
 };
 
@@ -57,7 +50,7 @@ export class EnvironmentPage extends PromiseComponent {
     this.saveChanges = (...args) => this._saveChanges(...args);
     this.updateEnvVars = (...args) => this._updateEnvVars(...args);
 
-    const currentEnvVars = this.props.toArrayFn(this.props.rawEnvData);
+    const currentEnvVars = envVarsToArray(this.props.rawEnvData);
     this.state = {
       currentEnvVars,
       success: null
@@ -94,11 +87,11 @@ export class EnvironmentPage extends PromiseComponent {
    * @param i
    */
   _updateEnvVars(env, i=0) {
-    const {rawEnvData, toArrayFn} = this.props;
+    const {rawEnvData} = this.props;
     const {currentEnvVars} = this.state;
     const currentEnv = currentEnvVars;
     currentEnv[i] = env.nameValuePairs;
-    const modified = !_.isEqual(currentEnv, toArrayFn(rawEnvData));
+    const modified = !_.isEqual(currentEnv, envVarsToArray(rawEnvData));
     this.setState({
       currentEnvVars: currentEnv,
       success: null,
@@ -111,9 +104,9 @@ export class EnvironmentPage extends PromiseComponent {
    * @private
    */
   _clearChanges() {
-    const {rawEnvData, toArrayFn} = this.props;
+    const {rawEnvData} = this.props;
     this.setState({
-      currentEnvVars: toArrayFn(rawEnvData),
+      currentEnvVars: envVarsToArray(rawEnvData),
       errorMessage: null,
       success: null,
       modified: false
@@ -130,7 +123,7 @@ export class EnvironmentPage extends PromiseComponent {
    * @param e
    */
   _saveChanges(e) {
-    const {envPath, rawEnvData, isBuildObject, obj, toArrayFn} = this.props;
+    const {envPath, rawEnvData, obj} = this.props;
     const {currentEnvVars} = this.state;
     e.preventDefault();
 
@@ -139,13 +132,13 @@ export class EnvironmentPage extends PromiseComponent {
 
     const patch = currentEnvVars.map((finalPairsForContainer, i) => {
       let op = 'add';
-      const path = isBuildObject ? `${envPath}/env` : `${envPath}/${i}/env`;
-      if (isBuildObject) {
-        if (rawEnvData.env) {
+      const path = _.isArray(rawEnvData) ? `/${envPath.join('/')}/${i}/env` : `/${envPath.join('/')}/env`;
+      if (_.isArray(rawEnvData)) {
+        if (rawEnvData[i].env) {
           op = 'replace';
         }
       } else {
-        if (rawEnvData[i].env) {
+        if (rawEnvData.env) {
           op = 'replace';
         }
       }
@@ -154,11 +147,11 @@ export class EnvironmentPage extends PromiseComponent {
 
     const promise = k8sPatch(kind, obj, patch);
     this.handlePromise(promise).then((res) => {
-      const newEnvData = _.get(res, _.trimStart(envPath, '/').split('/'));
+      const newEnvData = _.get(res, envPath);
       this.setState({
         success: 'Successfully updated the environment variables.',
         errorMessage: null,
-        currentEnvVars: toArrayFn(newEnvData),
+        currentEnvVars: envVarsToArray(newEnvData),
         rawEnvData: newEnvData,
         modified: false
       });
@@ -167,12 +160,12 @@ export class EnvironmentPage extends PromiseComponent {
 
   render() {
     const {errorMessage, success, inProgress, currentEnvVars} = this.state;
-    const {rawEnvData, readOnly, isBuildObject} = this.props;
+    const {rawEnvData, readOnly} = this.props;
 
     const containerVars = currentEnvVars.map((envVar, i) => {
-      const keyString = isBuildObject ? rawEnvData.from.name : rawEnvData[i].name;
+      const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : rawEnvData.from.name;
       return <div key={keyString} className="co-m-pane__body-group">
-        { !isBuildObject && <h1 className="co-section-title">Container {keyString}</h1> }
+        { _.isArray(rawEnvData) && <h1 className="co-section-title">Container {keyString}</h1> }
         <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly}/>
       </div>;
     });
@@ -193,8 +186,6 @@ export class EnvironmentPage extends PromiseComponent {
 EnvironmentPage.propTypes = {
   obj: PropTypes.object.isRequired,
   rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  envPath: PropTypes.string.isRequired,
-  readOnly: PropTypes.bool.isRequired,
-  isBuildObject: PropTypes.bool.isRequired,
-  toArrayFn: PropTypes.func.isRequired
+  envPath: PropTypes.array.isRequired,
+  readOnly: PropTypes.bool.isRequired
 };
