@@ -1,5 +1,5 @@
-Tectonic Console
-================
+OpenShift Cluster Console
+=========================
 
 
 # External Service Integration Criteria
@@ -22,7 +22,7 @@ Codename: "Bridge"
 
 [quay.io/coreos/tectonic-console](https://quay.io/repository/coreos/tectonic-console?tab=tags)
 
-The Tectonic Console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other tectonic services like monitoring, chargeback, ALM, and identity.  Some things that go on behind the scenes include:
+The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, ALM, and identity.  Some things that go on behind the scenes include:
 
 - Proxying the Kubernetes API under `/api/kubernetes`
 - Providing additional non-Kubernetes APIs for interacting with the cluster
