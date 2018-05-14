@@ -9,10 +9,11 @@ import { errorModal } from './modals';
 import { BuildStrategy, Cog, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
+import { EnvironmentPage } from './environment';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
-const { common } = Cog.factory;
+const { common, EditEnvironment } = Cog.factory;
 
 const cloneBuildAction = (kind, build) => ({
   label: 'Rebuild',
@@ -26,6 +27,7 @@ const cloneBuildAction = (kind, build) => ({
 
 const menuActions = [
   cloneBuildAction,
+  EditEnvironment,
   ...common,
 ];
 
@@ -58,7 +60,15 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({obj: build}) => {
   </div>;
 };
 
-const pages = [navFactory.details(BuildsDetails), navFactory.editYaml()];
+const envPath = ['spec', 'strategy', 'sourceStrategy'];
+const environmentComponent = (props) => <EnvironmentPage
+  obj={props.obj}
+  rawEnvData={props.obj.spec.strategy.sourceStrategy}
+  envPath={envPath}
+  readOnly={true}
+/>;
+
+const pages = [navFactory.details(BuildsDetails), navFactory.editYaml(), navFactory.envEditor(environmentComponent)];
 export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
