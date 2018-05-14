@@ -8,6 +8,7 @@ import { k8sVersion } from '../module/status';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 import { LoadingInline, cloudProviderNames } from './utils';
+import { FLAGS, connectToFlags } from '../features';
 import { clusterAppVersionName } from './channel-operators/tectonic-channel';
 
 
@@ -61,71 +62,124 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
+export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
+  class SoftwareDetails extends SafetyFirst {
+    constructor(props) {
+      super(props);
+      this.state = {
+        openshiftVersion: null,
+        tectonicVersion: null,
+        currentTectonicVersion: null,
+        kubernetesVersion: null,
+        cloudProviders: null,
+        openshiftVersionObj: null,
+        tectonicVersionObj: null,
+      };
+    }
 
-export class SoftwareDetails extends SafetyFirst {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tectonicVersion: null,
-      kubernetesVersion: null,
-      cloudProviders: null,
-      tectonicVersionObj: null,
-      currentTectonicVersion: null,
-    };
-  }
+    componentDidMount() {
+      super.componentDidMount();
+      this._checkKubernetesVersion();
+      this._checkOpenShiftOrTectonicVersion();
+    }
 
-  componentDidMount() {
-    super.componentDidMount();
-    this._checkTectonicVersion();
-    this._checkKubernetesVersion();
-    this._checkCloudProvider();
-    this._checkAppVersions();
-  }
-
-  _checkTectonicVersion() {
-    coFetchJSON('api/tectonic/version')
-      .then((data) => {
-        this.setState({ tectonicVersion: data.version, tectonicVersionObj: data });
-      })
-      .catch(() => this.setState({ tectonicVersion: 'unknown' }));
-  }
-
-  _checkAppVersions() {
-    k8sGet(AppVersionModel).then((appversions) => {
-      const tectonicTPR = _.find(appversions.items, (a) => a.metadata.name === clusterAppVersionName);
-      if (tectonicTPR) {
-        this.setState({ currentTectonicVersion: tectonicTPR.status.currentVersion });
+    componentDidUpdate(prevProps) {
+      if (prevProps.flags[FLAGS.OPENSHIFT] !== this.props.flags[FLAGS.OPENSHIFT]) {
+        this._checkOpenShiftOrTectonicVersion();
       }
-    }).catch(() => this.setState({ currentTectonicVersion: null }));
-  }
+    }
 
-  _checkKubernetesVersion() {
-    k8sVersion()
-      .then((data) => this.setState({ kubernetesVersion: data.gitVersion }))
-      .catch(() => this.setState({ kubernetesVersion: 'unknown' }));
-  }
-
-  _checkCloudProvider() {
-    k8sGet(ConfigMapModel, 'tectonic-config', 'tectonic-system').then((configMap) => {
-      this.setState({ cloudProviders: [_.get(configMap, 'data.installerPlatform', null)]});
-    }, () => this.setState({ cloudProviders: ['UNKNOWN']}));
-  }
-
-  render () {
-    const {kubernetesVersion, currentTectonicVersion, tectonicVersion, cloudProviders } = this.state;
-
-    return <div>
-      <SoftwareDetailRow title="Kubernetes"
-        detail={kubernetesVersion} text="Kubernetes version could not be determined." />
-
-      <SoftwareDetailRow title="Tectonic" detail={currentTectonicVersion || tectonicVersion}
-        text="Tectonic version could not be determined." />
-
-
-      {cloudProviders &&
-        <SoftwareDetailRow title="Cloud Provider" detail={cloudProviderNames(cloudProviders)}
-          text="Cloud Provider could not be determined." />
+    _checkOpenShiftOrTectonicVersion() {
+      const openshiftFlag = this.props.flags[FLAGS.OPENSHIFT];
+      if (openshiftFlag === undefined) {
+        return;
       }
-    </div>;
-  }
-}
+
+      if (openshiftFlag) {
+        this._checkOpenshiftVersion();
+      } else {
+        this._checkTectonicVersion();
+        this._checkAppVersions();
+        this._checkCloudProvider();
+      }
+    }
+
+    _checkKubernetesVersion() {
+      k8sVersion()
+        .then((data) => this.setState({kubernetesVersion: data.gitVersion}))
+        .catch(() => this.setState({kubernetesVersion: 'unknown'}));
+    }
+
+    _checkTectonicVersion() {
+      coFetchJSON('api/tectonic/version')
+        .then((data) => {
+          this.setState({
+            tectonicVersion: data.version,
+            tectonicVersionObj: data
+          });
+        })
+        .catch(() => this.setState({tectonicVersion: 'unknown'}));
+    }
+
+    _checkAppVersions() {
+      k8sGet(AppVersionModel).then((appversions) => {
+        const tectonicTPR = _.find(appversions.items, (a) => a.metadata.name === clusterAppVersionName);
+        if (tectonicTPR) {
+          this.setState({currentTectonicVersion: tectonicTPR.status.currentVersion});
+        }
+      }).catch(() => this.setState({currentTectonicVersion: 'unknown'}));
+    }
+
+    _checkOpenshiftVersion() {
+      coFetchJSON('api/kubernetes/version/openshift')
+        .then((data) => {
+          this.setState({openshiftVersion: data.gitVersion, openshiftVersionObj: data});
+        }).catch(() => this.setState({openshiftVersion: 'unknown'}));
+    }
+
+    _checkCloudProvider() {
+      k8sGet(ConfigMapModel, 'tectonic-config', 'tectonic-system').then((configMap) => {
+        this.setState({cloudProviders: [_.get(configMap, 'data.installerPlatform', null)]});
+      }, () => this.setState({cloudProviders: ['UNKNOWN']}));
+    }
+
+    render() {
+      const {openshiftVersion, currentTectonicVersion, tectonicVersion, kubernetesVersion, cloudProviders} = this.state;
+      const isOpenShiftCluster = this.props.flags[FLAGS.OPENSHIFT];
+
+      if (isOpenShiftCluster === undefined) {
+        return null;
+      }
+
+      return <div>
+        <SoftwareDetailRow
+          title="Kubernetes"
+          detail={kubernetesVersion}
+          text="Kubernetes version could not be determined."
+        />
+        {isOpenShiftCluster ? (
+          <SoftwareDetailRow
+            title="OpenShift"
+            detail={openshiftVersion}
+            text="OpenShift version could not be determined."
+          />
+        ) : (
+          <React.Fragment>
+            <SoftwareDetailRow
+              title="Tectonic"
+              detail={currentTectonicVersion || tectonicVersion}
+              text="Tectonic version could not be determined."
+            />
+            {cloudProviders &&
+            <SoftwareDetailRow
+              title="Cloud Provider"
+              detail={cloudProviderNames(cloudProviders)}
+              text="Cloud Provider could not be determined."
+            />
+            }
+          </React.Fragment>
+        )}
+      </div>;
+    }
+
+  });
