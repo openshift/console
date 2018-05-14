@@ -1,0 +1,334 @@
+$pipeline-aborted-color: $color-pf-black-300;
+$pipeline-border-color: $color-pf-black-300;
+$pipeline-failed-color: $color-pf-red-100;
+$pipeline-font-base: 12px;
+$pipeline-in-progress-color: $color-pf-blue-400;
+$pipeline-new-color: $color-pf-blue-100;
+$pipeline-pending-color: $color-pf-black-300;
+$pipeline-success-color: $color-pf-green-400;
+$pipeline-require-attention-color: $color-pf-gold-400;
+$pipeline-circle-animation-time: 0.35s;
+$pipeline-circle-diameter: 18px;
+$pipeline-line-border-width: 8px;
+$pipeline-circle-border-width: ($pipeline-line-border-width / 2);
+$pipeline-circle-radius: ($pipeline-circle-diameter / 2);
+$pipeline-inner-circle-animation-time: 0.1s;
+$pipeline-icon-animation-time: $pipeline-inner-circle-animation-time;
+$pipeline-inner-circle-color: #fff;
+$pipeline-line-animation-time: $pipeline-circle-animation-time;
+$pipeline-line-border-width: 8px;
+$pipeline-line-grow-animation-time: 0.5s;
+$pipeline-line-height: ($pipeline-line-border-width / 2);
+$pipeline-padding: 10px;
+$pipeline-progress-line: 100%;
+$pipeline-progress-rail-animation-time: 5s;
+$pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time / 2);
+
+// Animations
+@keyframes build-progress-line {
+  to {width: $pipeline-progress-line}
+}
+
+@keyframes build-progress-rail {
+  to {transform: translateX(400%)}
+}
+
+@keyframes build-progress {
+  to {transform: rotate(180deg)}
+}
+
+@keyframes pipeline-stage-fadeIcon {
+  to {opacity: 1}
+}
+
+@keyframes pipeline-stage-fadeOut {
+  to {background-color: transparent}
+}
+
+.build-pipeline {
+  border: 1px solid $pipeline-border-color;
+  font-size: $pipeline-font-base;
+  margin-bottom: 30px;
+  &:first-child {
+    border-top-width: 1px;
+  }
+  // Switch summary from top to left placement
+  @media (min-width: 600px) {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: row;
+  }
+}
+
+.build-pipeline__container {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.build-pipeline__stages {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  padding: 0 ($pipeline-padding / 2);
+}
+
+.build-pipeline__stage {
+  // need to use flex-basis: auto and width because of IE11 bug
+  flex: 0 0 auto;
+  min-height: 96px;
+  padding: ($pipeline-padding + 5) $pipeline-padding  ($pipeline-padding * 3) $pipeline-padding;
+  position: relative;
+  width: 100%;
+  // add arrow after each stage
+  &:before {
+    bottom: 0;
+    color:  darken($pipeline-border-color, 5%);
+    content: '\2193';
+    font-size: 22px;
+    left: 0;
+    line-height: 1;
+    position: absolute;
+    right: 0;
+    text-align: center;
+  }
+  // hide arrow on last stage
+  &:last-child:before {
+    display: none;
+  }
+  @media (min-width: 480px) {
+    padding-right: ($pipeline-padding * 5.2);
+    padding-bottom: ($pipeline-padding + 5);
+    width: (100% / 3);
+    &:before {
+      bottom: auto;
+      content: '\2192';
+      left: auto;
+      right: 10px;
+      top: 37%;
+    }
+  }
+}
+
+// Set number of stages per row
+$pipelineStageScreenSize: (
+  4 $screen-md-min,
+  5 $screen-lg-min,
+  6 ($screen-lg-min + 200),
+  7 ($screen-lg-min + 400)
+);
+
+@each $screenSize in $pipelineStageScreenSize {
+  @media (min-width: nth($screenSize, 2)) {
+    .build-pipeline__stage {
+      width: (100% / nth($screenSize, 1));
+    }
+  }
+}
+
+.build-pipeline__stage--none {
+  align-items: center;
+  display: flex;
+  @media (max-width: $screen-xs-max) {
+    justify-content: center;
+  }
+  padding: 0 $pipeline-padding;
+}
+
+.build-pipeline__stage-name, .build-pipeline__stage-time, .build-pipeline__stage-actions {
+  font-size: $pipeline-font-base;
+  text-align: center;
+}
+.build-pipeline__stage-name {
+  @include text-overflow();
+  margin-bottom: $pipeline-padding + 3px;
+}
+.build-pipeline__stage-time, .build-pipeline__stage-actions {
+  margin-top: 12px;
+  &--in-progress {
+    color: #777;
+  }
+}
+
+.build-pipeline__status-icon--complete {
+  color: $pipeline-success-color;
+}
+.build-pipeline__status-icon--failed{
+  color: $pipeline-failed-color;
+}
+
+.build-pipeline__summary {
+  border-bottom: 1px solid $pipeline-border-color;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 5px;
+  position: relative;
+  text-align: center;
+  @media (min-width: 600px) {
+    border-bottom-width: 0;
+    border-right: 1px solid $pipeline-border-color;
+    flex: 0 0 125px;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.build-pipeline__status-bar  {
+  .build-pipeline__animation-line:before,
+  .build-pipeline__circle-clip1:before,
+  .build-pipeline__circle-clip2:before {
+    background-color: $pipeline-pending-color;
+  }
+  .build-pipeline__circle-inner-fill {
+    background-color: $pipeline-inner-circle-color;
+    opacity: 0;
+  }
+}
+
+$pipelineStageStatus: (
+  success              Success            $pipeline-success-color           "\f00c"   null,
+  failed               Failed             $pipeline-failed-color            "\f00d"   null,
+  not-executed         NotExecuted        $pipeline-pending-color           ""        null,
+  paused-pending-input null               $pipeline-require-attention-color "\f04c"   ($pipeline-font-base - 2),
+  aborted              Aborted            $pipeline-aborted-color           "\f05e"   null,
+  in-progress          InProgress         $pipeline-in-progress-color       "\f021"   null
+);
+
+@each $status in $pipelineStageStatus {
+  .build-pipeline__status-bar--#{nth($status,1)}  {
+    .build-pipeline__animation-line:before,
+    .build-pipeline__circle-clip1:before,
+    .build-pipeline__circle-clip2:before,
+    .build-pipeline__circle-inner-fill {
+      background-color: nth($status,3);
+    }
+    .build-pipeline__animation-circle {
+      @if(nth($status,2)) {
+        animation: pipeline-stage-fadeIn#{nth($status,2)} 0s ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
+      }
+      &:after {
+        content: nth($status,4);
+        @if(nth($status,5)) {
+          font-size: nth($status,5);
+        }
+      }
+    }
+  }
+}
+
+.build-pipeline__status-bar--in-progress  {
+  .build-pipeline__animation-line {
+    overflow: hidden;
+    &:before {
+      animation: build-progress-rail $pipeline-progress-rail-animation-time $pipeline-line-grow-animation-time linear infinite;
+      background-color: $pipeline-in-progress-color;
+      transform: translateX(-100%);
+      width: 25%;
+    }
+  }
+  .build-pipeline__circle-clip1:before,
+  .build-pipeline__circle-clip2:before,
+  .build-pipeline__circle-inner-fill {
+    background-color: $pipeline-in-progress-color;
+  }
+  .build-pipeline__animation-circle {
+    animation: pipeline-stage-fadeInProgress 0s ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
+    &:after {
+      content: "\f021";
+    }
+  }
+}
+
+.build-pipeline__status-bar {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: -($pipeline-circle-diameter / 2);
+}
+.build-pipeline__log-link,
+.build-pipeline__timestamp {
+  font-size: ($pipeline-font-base - 1);
+}
+.build-pipeline__animation-line {
+  background: $pipeline-pending-color;
+  height: $pipeline-line-height;
+  position: relative;
+  width: $pipeline-progress-line;
+  &:before {
+    animation: build-progress-line $pipeline-line-animation-time ease-in forwards;
+    content: '';
+    height: 100%;
+    position: absolute;
+    width: 0;
+  }
+}
+.build-pipeline__animation-circle {
+  background: $pipeline-pending-color;
+  border-radius: $pipeline-circle-radius;
+  height: $pipeline-circle-diameter;
+  margin-top: (-($pipeline-circle-diameter / 2) - ($pipeline-line-height / 2));
+  position: relative;
+  transform: rotate(-90deg);
+  width: $pipeline-circle-diameter;
+  &:after {
+    animation: pipeline-stage-fadeIcon $pipeline-icon-animation-time ($pipeline-line-grow-animation-time + $pipeline-semi-circle-animation-time + ($pipeline-inner-circle-animation-time * 2)) linear forwards;
+    color: $pipeline-inner-circle-color;
+    font-family: 'FontAwesome';
+    font-size: $pipeline-font-base;
+    left: 50%;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+}
+
+%circle-clip {
+  position: absolute;
+  z-index: -9;
+}
+
+%circle-clip-before {
+  border-radius: $pipeline-circle-radius;
+  content: '';
+  height: $pipeline-circle-diameter;
+  position: absolute;
+  transform: rotate(0);
+  width: $pipeline-circle-diameter;
+}
+
+.build-pipeline__circle-clip1 {
+  @extend %circle-clip;
+  clip: rect(0, $pipeline-circle-diameter, $pipeline-circle-diameter, $pipeline-circle-radius);
+  &:before {
+    @extend %circle-clip-before;
+    animation: build-progress $pipeline-semi-circle-animation-time $pipeline-line-animation-time linear forwards;
+    clip: rect(0, $pipeline-circle-radius, $pipeline-circle-diameter, 0);
+  }
+}
+.build-pipeline__circle-clip2 {
+  @extend %circle-clip;
+  clip: rect(0, $pipeline-circle-radius, $pipeline-circle-diameter, 0);
+  &:before {
+    @extend %circle-clip-before;
+    animation: build-progress $pipeline-semi-circle-animation-time ($pipeline-semi-circle-animation-time + $pipeline-line-animation-time) linear forwards;
+    clip: rect(0, $pipeline-circle-diameter, $pipeline-circle-diameter, $pipeline-circle-radius);
+  }
+}
+.build-pipeline__circle-inner {
+  animation: pipeline-stage-fadeOut $pipeline-inner-circle-animation-time ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
+  background-color: $pipeline-inner-circle-color;
+  border-radius: $pipeline-circle-radius;
+  height: ($pipeline-circle-diameter - $pipeline-circle-border-width * 2);
+  left: $pipeline-circle-border-width;
+  position: absolute;
+  top: $pipeline-circle-border-width;
+  width: ($pipeline-circle-diameter - $pipeline-circle-border-width * 2);
+}
+.build-pipeline__circle-inner-fill {
+  border-radius: 50%;
+  box-sizing: border-box;
+  height: 100%;
+  opacity: 0;
+  width: 100%;
+}
