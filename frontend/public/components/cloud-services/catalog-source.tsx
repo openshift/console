@@ -6,7 +6,7 @@ import { match, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 
-import { NavTitle, Firehose, MsgBox, LoadingBox, withFallback } from '../utils';
+import { NavTitle, MsgBox, LoadingBox, withFallback, firehoseFor } from '../utils';
 import { CreateYAML } from '../create-yaml';
 import { ClusterServiceVersionLogo, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionKind, Package } from './index';
 import { SubscriptionModel, CatalogSourceModel } from '../../models';
@@ -97,33 +97,25 @@ export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({cata
     : <div />;
 };
 
+export const CatalogSourceFirehose = firehoseFor({
+  catalogSource: {kind: referenceForModel(CatalogSourceModel), name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false},
+  subscription: {kind: referenceForModel(SubscriptionModel), isList: true},
+  configMap: {kind: 'ConfigMap', isList: false, name: 'tectonic-ocs', namespace: 'tectonic-system'},
+});
+
 export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> = (props) => <div>
   <Helmet>
     <title>Open Cloud Services</title>
   </Helmet>
   <NavTitle detail={true} title="Open Cloud Services" />
-  <Firehose
-    {...props}
-    resources={[{
-      kind: referenceForModel(CatalogSourceModel),
-      name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
-      isList: false,
-      prop: 'catalogSource',
-    }, {
-      kind: referenceForModel(SubscriptionModel),
-      isList: true,
-      prop: 'subscription',
-    }, {
-      kind: 'ConfigMap',
-      isList: false,
-      name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
-      prop: 'configMap'}]}>
-    {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-    <CatalogSourceDetails {...props as any} ns={props.match.params.ns} />
-  </Firehose>
+  <CatalogSourceFirehose render={({configMap, subscription, catalogSource}) =>
+    <CatalogSourceDetails ns={props.match.params.ns} catalogSource={catalogSource} configMap={configMap} subscription={subscription} />
+  } />
 </div>;
+
+export const CreateSubscriptionYAMLFirehose = firehoseFor({
+  ConfigMap: {kind: 'ConfigMap', isList: false, name: 'tectonic-ocs', namespace: 'tectonic-system'}
+});
 
 export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (props) => {
   type CreateProps = {ConfigMap: {loaded: boolean, data: K8sResourceKind}};
@@ -150,16 +142,9 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
     return <LoadingBox />;
   }, () => <MsgBox title="Package Not Found" detail="Cannot create a Subscription to a non-existent package." />);
 
-  return <Firehose resources={[{
-    kind: 'ConfigMap',
-    isList: false,
-    name: 'tectonic-ocs',
-    namespace: 'tectonic-system',
-    prop: 'ConfigMap'
-  }]}>
-    {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-    <Create {...props as any} />
-  </Firehose>;
+  return <CreateSubscriptionYAMLFirehose render={({ConfigMap}) =>
+    <Create ConfigMap={ConfigMap} />
+  } />;
 };
 
 export type PackageHeaderProps = {
@@ -203,3 +188,5 @@ PackageList.displayName = 'PackageList';
 CatalogSourceDetails.displayName = 'CatalogSourceDetails';
 CatalogSourceDetailsPage.displayName = 'CatalogSourceDetailPage';
 CreateSubscriptionYAML.displayName = 'CreateSubscriptionYAML';
+CatalogSourceFirehose.displayName = 'CatalogSourceFirehose';
+CreateSubscriptionYAMLFirehose.displayName = 'CreateSubscriptionYAMLFirehose';

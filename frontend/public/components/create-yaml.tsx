@@ -6,7 +6,7 @@ import { safeLoad } from 'js-yaml';
 import { TEMPLATES } from '../yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
-import { Firehose, LoadingBox } from './utils';
+import { LoadingBox, firehoseFor } from './utils';
 import { K8sKind, apiVersionForModel } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { ClusterServiceVersionModel } from '../models';
@@ -51,9 +51,14 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
 
 export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
   const Wrapper = (wrapperProps) => <AsyncComponent {...wrapperProps} obj={wrapperProps.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} showHeader={true} />;
-  return <Firehose resources={[{kind: props.kind, name: props.match.params.name, namespace: props.match.params.ns, isList: false, prop: 'obj'}]}>
-    <Wrapper />
-  </Firehose>;
+  const EditYAMLPageFirehose = firehoseFor({
+    obj: {kind: props.kind, name: props.match.params.name, namespace: props.match.params.ns, isList: false},
+  });
+  EditYAMLPageFirehose.displayName = 'EditYAMLPageFirehose';
+
+  return <EditYAMLPageFirehose render={({obj}) =>
+    <Wrapper obj={obj} />
+  } />;
 };
 
 /* eslint-disable no-undef */
