@@ -29,23 +29,6 @@ small {
   min-width: 150px;
 }
 
-.co-m-pane__body {
-  border-bottom: 1px solid $color-grey-background-border;
-  padding: 30px 15px;
-}
-@media (min-width: $screen-sm-min) {
-  .co-m-pane__body {
-    padding: 30px;
-  }
-}
-
-.co-m-pane__body:last-child {
- border-bottom: 0 none;
-}
-
-.co-m-pane__body__top-controls {
-  padding: 10px 0;
-}
 .co-m-primary-action {
   color: black;
   &:hover, &:visited {

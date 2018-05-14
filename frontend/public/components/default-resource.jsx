@@ -35,8 +35,8 @@ const RowForKind = kind => function RowForKind_ ({obj}) {
 
 const DetailsForKind = kind => function DetailsForKind_ ({obj}) {
   return <React.Fragment>
-    <Heading text={`${kindForReference(kind)} Overview`} />
     <div className="co-m-pane__body">
+      <Heading text={`${kindForReference(kind)} Overview`} />
       <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
     </div>
   </React.Fragment>;

@@ -47,8 +47,8 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
 };
 
 const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <React.Fragment>
-  <Heading text="StorageClass Overview" />
   <div className="co-m-pane__body">
+    <Heading text="StorageClass Overview" />
     <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
   </div>
 </React.Fragment>;

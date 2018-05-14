@@ -21,7 +21,11 @@
 .yaml-editor--buttons {
   background: white;
   border-top: 1px solid #ddd;
-  padding: 20px;
+  padding: 20px ($grid-gutter-width / 2);
   margin-top: auto;
   z-index: 10;
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: $grid-gutter-width;
+    padding-right: $grid-gutter-width;
+  }
 }

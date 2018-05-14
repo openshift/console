@@ -37,8 +37,8 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
 </div>;
 
 const Details = ({obj: rq}) => <React.Fragment>
-  <Heading text="ResourceQuota Overview" />
   <div className="co-m-pane__body">
+    <Heading text="ResourceQuota Overview" />
     <ResourceSummary resource={rq} podSelector="spec.podSelector" showNodeSelector={false} />
   </div>
 </React.Fragment>;

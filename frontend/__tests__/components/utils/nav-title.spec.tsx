@@ -57,7 +57,7 @@ describe(NavTitle.displayName, () => {
     const title = <span>My Custom Title</span>;
     wrapper.setProps({title});
 
-    expect(wrapper.find('.co-m-page-title').contains(title)).toBe(true);
+    expect(wrapper.find('.co-m-pane__heading').contains(title)).toBe(true);
   });
 
   it('renders breadcrumbs if given `breadcrumbsFor` function', () => {

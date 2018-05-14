@@ -12,6 +12,17 @@ $height: 18px;
   color: #fff;
   margin: 0 4px;
   background-color: $color-container-dark;
+  &--lg {
+    border-radius: 12px;
+    font-size: 16px;
+    height: 24px;
+    line-height: 24px;
+    margin-left: 0;
+    min-width: 24px;
+    padding: 0 7px;
+    position: relative;
+    top: -2px;
+  }
 }
 
 .co-m-resource-clusterrole,

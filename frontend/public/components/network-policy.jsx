@@ -113,13 +113,13 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
 };
 
 const Details = ({obj: np}) => <React.Fragment>
-  <Heading text="Namespace Overview" />
   <div className="co-m-pane__body">
+    <Heading text="Namespace Overview" />
     <ResourceSummary resource={np} podSelector={'spec.podSelector'} showNodeSelector={false} />
   </div>
-  <Heading text="Ingress Rules" />
   <div className="co-m-pane__body">
-    <p className="text-muted">
+    <Heading text="Ingress Rules" />
+    <p className="co-m-pane__explanation">
       Pods accept all traffic by default.
       They can be isolated via Network Policies which specify a whitelist of ingress rules.
       When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.

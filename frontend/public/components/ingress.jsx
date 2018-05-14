@@ -126,7 +126,7 @@ const Details = ({obj: ingress}) => <React.Fragment>
   </div>
   <div className="co-m-pane__body">
     <Heading text="Ingress Rules" />
-    <p>These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated.</p>
+    <p className="co-m-pane__explanation">These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated.</p>
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <RulesHeader />
       <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />

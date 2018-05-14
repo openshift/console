@@ -131,25 +131,8 @@ input[type="radio"] {
   .co-m-primary-action:hover, .co-m-primary-action:visited {
     color: white; }
 
-.co-m-pane__heading {
-  padding: 30px; }
-
-[class*='col-'] > .co-m-pane__heading,
-.co-m-pane__body > .co-m-pane__heading {
-  padding-left: 0;
-  padding-right: 0;
-  padding-top: 0;
-}
-
-.co-m-pane__title {
-  line-height: 24px;
-  margin: 0; }
-
 .co-m-pane__body-group {
   padding: 0 0 30px 0; }
-
-.co-m-pane__heading + .co-m-pane__body {
-  padding-top: 0; }
 
 .co-m-table-grid .row {
   margin: 0; }

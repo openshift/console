@@ -442,8 +442,8 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           <title>{title}</title>
         </Helmet>
         <form className="co-m-pane__body-group" onSubmit={this.save}>
-          <h1 className="co-m-pane__title">{title}</h1>
-          <div className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</div>
+          <h1 className="co-m-pane__heading">{title}</h1>
+          <p className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</p>
 
           {!_.get(fixed, 'kind') && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />}
 

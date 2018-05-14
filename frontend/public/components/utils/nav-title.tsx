@@ -30,11 +30,11 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
   const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
   const logo = isCSV
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
-    : <div>{ kind && <ResourceIcon kind={kind} className="co-m-page-title__icon" /> } <span id="resource-title">{title}</span></div>;
+    : <div>{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" /> } <span id="resource-title">{title}</span></div>;
 
-  return <div className={classNames(detail ? 'co-m-nav-title__detail' : 'co-m-nav-title')} style={style}>
+  return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
-    <h1 className={classNames('co-m-page-title', {'co-m-page-title--detail': detail}, {'co-m-page-title--logo': isCSV}, {'co-m-page-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})}>
+    <h1 className={classNames('co-m-pane__heading', {'co-m-pane__heading--logo': isCSV})}>
       {logo}
       { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
     </h1>

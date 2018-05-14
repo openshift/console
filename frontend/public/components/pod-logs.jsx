@@ -176,7 +176,7 @@ export class PodLogs extends SafetyFirst {
     const nameWithIcon = (name) => <span><span className="co-icon-space-r"><ResourceIcon kind="Container" /></span>{name}</span>;
 
     return <div className="co-m-pane__body">
-      <div className="co-m-pane__body__top-controls">
+      <div className="co-m-pane__top-controls">
         { this.state.logState === 'loading'
           ? <span className="co-icon-space-l"><LoadingInline /></span>
           : <TogglePlay active={this.state.logState === 'streaming'} onClick={this._toggleLogState} /> }
