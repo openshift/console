@@ -45,6 +45,7 @@ func main() {
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
 	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
 	fUserAuthOIDCClientSecret := fs.String("user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
+	fUserAuthOIDCClientSecretFile := fs.String("user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
 
 	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
@@ -65,6 +66,7 @@ func main() {
 
 	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
 	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
+	fKubectlClientSecretFile := fs.String("kubectl-client-secret-file", "", "File containing the OAuth2 client_secret of kubectl.")
 	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
 
 	fOpenshiftConsoleURL := fs.String("openshift-console-url", "", "URL for OpenShift console used in context switcher")
@@ -117,8 +119,13 @@ func main() {
 		GoogleTagManagerID:  *fGoogleTagManagerID,
 	}
 
-	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "") {
-		fmt.Fprintln(os.Stderr, "Must provide both --kubectl-client-id and --kubectl-client-secret")
+	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "" && *fKubectlClientSecretFile == "") {
+		fmt.Fprintln(os.Stderr, "Must provide both --kubectl-client-id and --kubectl-client-secret or --kubectrl-client-secret-file")
+		os.Exit(1)
+	}
+
+	if *fKubectlClientSecret != "" && *fKubectlClientSecretFile != "" {
+		fmt.Fprintln(os.Stderr, "Cannot provide both --kubectl-client-secret and --kubectrl-client-secret-file")
 		os.Exit(1)
 	}
 
@@ -222,12 +229,22 @@ func main() {
 
 		userAuthOIDCIssuerURL := validateFlagIsURL("user-auth-oidc-client-id", *fUserAuthOIDCIssuerURL)
 		validateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
-		validateFlagNotEmpty("user-auth-oidc-client-secret", *fUserAuthOIDCClientSecret)
+
+		if *fUserAuthOIDCClientSecret == "" && *fUserAuthOIDCClientSecretFile == "" {
+			fmt.Fprintln(os.Stderr, "Must provide either --user-auth-oidc-client-secret or --user-auth-oidc-client-secret-file")
+			os.Exit(1)
+		}
+
+		if *fUserAuthOIDCClientSecret != "" && *fUserAuthOIDCClientSecretFile != "" {
+			fmt.Fprintln(os.Stderr, "Cannot provide both --user-auth-oidc-client-secret and --user-auth-oidc-client-secret-file")
+			os.Exit(1)
+		}
 
 		var (
 			err                      error
 			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
 			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
+			oidcClientSecret         = *fUserAuthOIDCClientSecret
 			// Abstraction leak required by NewAuthenticator. We only want the browser to send the auth token for paths starting with basePath/api.
 			cookiePath  = proxy.SingleJoiningSlash(srv.BaseURL.Path, "/api/")
 			refererPath = srv.BaseURL.String()
@@ -245,13 +262,21 @@ func main() {
 			authSource = auth.AuthSourceOpenShift
 		}
 
+		if *fUserAuthOIDCClientSecretFile != "" {
+			buf, err := ioutil.ReadFile(*fUserAuthOIDCClientSecretFile)
+			if err != nil {
+				log.Fatalf("Failed to read client secret file: %v", err)
+			}
+			oidcClientSecret = string(buf)
+		}
+
 		// Config for logging into console.
 		oidcClientConfig := &auth.Config{
 			AuthSource:   authSource,
 			IssuerURL:    userAuthOIDCIssuerURL.String(),
 			IssuerCA:     *fCAFile,
 			ClientID:     *fUserAuthOIDCClientID,
-			ClientSecret: *fUserAuthOIDCClientSecret,
+			ClientSecret: oidcClientSecret,
 			RedirectURL:  proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
 			Scope:        scopes,
 
@@ -278,13 +303,22 @@ func main() {
 				"audience:server:client_id:"+*fKubectlClientID,
 			)
 
+			kubectlClientSecret := *fKubectlClientSecret
+			if *fKubectlClientSecretFile != "" {
+				buf, err := ioutil.ReadFile(*fKubectlClientSecretFile)
+				if err != nil {
+					log.Fatalf("Failed to read client secret file: %v", err)
+				}
+				kubectlClientSecret = string(buf)
+			}
+
 			// Configure an OpenID Connect config for kubectl. This lets us issue
 			// refresh tokens that kubectl can redeem using its own credentials.
 			kubectlAuthConfig := &auth.Config{
 				IssuerURL:    userAuthOIDCIssuerURL.String(),
 				IssuerCA:     *fCAFile,
 				ClientID:     *fKubectlClientID,
-				ClientSecret: *fKubectlClientSecret,
+				ClientSecret: kubectlClientSecret,
 				// The magic "out of band" redirect URL.
 				RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
 				// Request a refresh token with the "offline_access" scope.
