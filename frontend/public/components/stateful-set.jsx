@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
-import { EnvironmentPage, envVarsToArrayForArray } from './environment';
+import { EnvironmentPage } from './environment';
 
 registerTemplate('apps/v1.StatefulSet', `apiVersion: apps/v1
 kind: StatefulSet
@@ -67,13 +67,12 @@ const Details = ({obj: ss}) => <React.Fragment>
   </div>
 </React.Fragment>;
 
+const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
   rawEnvData={props.obj.spec.template.spec.containers}
-  envPath="/spec/template/spec/containers"
+  envPath={envPath}
   readOnly={false}
-  isBuildObject={false}
-  toArrayFn={envVarsToArrayForArray}
 />;
 
 export const StatefulSetsList = props => <List {...props} Header={Header} Row={Row} />;

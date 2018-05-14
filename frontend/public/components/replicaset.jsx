@@ -4,7 +4,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { registerTemplate } from '../yaml-templates';
-import { EnvironmentPage, envVarsToArrayForArray } from './environment';
+import { EnvironmentPage } from './environment';
 
 registerTemplate('apps/v1.ReplicaSet', `apiVersion: apps/v1
 kind: ReplicaSet
@@ -44,13 +44,12 @@ const Details = ({obj: replicaSet}) => <React.Fragment>
   </div>
 </React.Fragment>;
 
+const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
   rawEnvData={props.obj.spec.template.spec.containers}
-  envPath="/spec/template/spec/containers"
+  envPath={envPath}
   readOnly={false}
-  isBuildObject={false}
-  toArrayFn={envVarsToArrayForArray}
 />;
 
 const {details, editYaml, pods, envEditor} = navFactory;

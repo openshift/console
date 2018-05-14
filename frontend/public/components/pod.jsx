@@ -11,7 +11,7 @@ import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
-import { EnvironmentPage, envVarsToArrayForArray } from './environment';
+import { EnvironmentPage } from './environment';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);
@@ -235,13 +235,12 @@ const Details = ({obj: pod}) => {
   </React.Fragment>;
 };
 
+const envPath = ['spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
   rawEnvData={props.obj.spec.containers}
-  envPath="/spec/containers"
+  envPath={envPath}
   readOnly={true}
-  isBuildObject={false}
-  toArrayFn={envVarsToArrayForArray}
 />;
 
 /** @type {React.SFC<any>} */
