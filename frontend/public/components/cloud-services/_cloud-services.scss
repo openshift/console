@@ -32,7 +32,11 @@ $clusterserviceversion-list-border: #ccc;
 .co-clusterserviceversion-list__title {
   margin-bottom: 0;
   margin-top: 30px;
-  padding: 0 30px;
+  padding: 0 ($grid-gutter-width / 2);
+  @media(min-width: $grid-float-breakpoint) {
+    padding-left: $grid-gutter-width;
+    padding-right: $grid-gutter-width;
+  }
 }
 
 .co-clusterserviceversion-logo {
