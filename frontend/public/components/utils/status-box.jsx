@@ -62,8 +62,8 @@ export const StatusBox = props => {
   if (loadError) {
     const status = _.get(loadError, 'response.status');
     if (status === 404) {
-      return <div className="co-m-pane__heading">
-        <h1 className="co-m-pane__title text-center">404: Not Found</h1>
+      return <div className="co-m-pane__body">
+        <h1 className="co-m-pane__heading co-m-pane__heading--center">404: Not Found</h1>
       </div>;
     }
     if (status === 403 || _.includes(_.toLower(loadError), 'access denied')) {
@@ -72,8 +72,8 @@ export const StatusBox = props => {
 
     if (loaded && loadError instanceof TimeoutError) {
       return <Data {...props}>
-        <div className="row">
-          <div className="col-xs-12 text-center text-muted" style={{paddingBottom: 15}}>Timed out fetching new data. The data below is stale.</div>
+        <div className="co-m-pane__body">
+          <div className="text-center text-muted">Timed out fetching new data. The data below is stale.</div>
         </div>
         {props.children}
       </Data>;

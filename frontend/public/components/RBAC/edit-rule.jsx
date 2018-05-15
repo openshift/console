@@ -265,8 +265,8 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResource
           <Helmet>
             <title>{`${name} · ${heading}`}</title>
           </Helmet>
-          <Heading text={heading} />
           <div className="co-m-pane__body">
+            <Heading text={heading} />
             <div className="row">
               <div className="col-xs-12">
                 <p className="text-secondary">

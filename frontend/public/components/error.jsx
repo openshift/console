@@ -38,10 +38,8 @@ const getErrMessage = () => {
 
 const ErrorComponent = ({title, message, errMessage}) => <React.Fragment>
   <NavTitle detail={true} title="Error" />
-  <div className="co-m-pane__heading">
-    <h1 className="co-m-pane__title text-center">{title}</h1>
-  </div>
   <div className="co-m-pane__body">
+    <h1 className="co-m-pane__heading co-m-pane__heading--center">{title}</h1>
     {message && <div className="text-center">{message}</div>}
     {errMessage && <div className="text-center text-muted">{errMessage}</div>}
   </div>

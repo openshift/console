@@ -1,5 +1,5 @@
 $co-m-vert-nav__menu-item-link-padding-lr-desktop: 17px;
-$co-m-vert-nav__menu-item-link-padding-lr-mobile: 10px;
+$co-m-vert-nav__menu-item-link-padding-lr-mobile: 15px;
 
 .co-m-vert-nav {
   display: flex;
@@ -11,9 +11,10 @@ $co-m-vert-nav__menu-item-link-padding-lr-mobile: 10px;
   display: flex;
   flex-wrap: wrap;
   list-style: none;
+  margin: 0;
   padding: 0;
   @media (min-width: $grid-float-breakpoint) {
-    margin: 0 0 0 (-$co-m-vert-nav__menu-item-link-padding-lr-desktop);
+    margin-left: (-$co-m-vert-nav__menu-item-link-padding-lr-desktop);
     padding: 0 30px;
   }
 }

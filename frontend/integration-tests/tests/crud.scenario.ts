@@ -136,7 +136,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await browser.get(`${appHost}/k8s/all-namespaces/rolebindings`);
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
-      await browser.wait(until.textToBePresentInElement($('.co-m-pane__title'), 'Create Role Binding'));
+      await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), 'Create Role Binding'));
     });
 
     it('creates a RoleBinding', async() => {

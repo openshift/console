@@ -134,13 +134,13 @@ export class EventStreamPage extends React.Component {
         <title>Events</title>
       </Helmet> }
       { showTitle && <NavTitle title="Events" /> }
-      <div className="co-m-pane__filter-bar">
+      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--group__body">
         <div className="co-m-pane__filter-bar-group">
           <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
           <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
-          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-            <TextFilter label="Events by message (fuzzy)" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
-          </div>
+        </div>
+        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+          <TextFilter label="Events by message (fuzzy)" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
         </div>
       </div>
       <EventStream {...this.props} category={category} kind={kind} textFilter={textFilter} />

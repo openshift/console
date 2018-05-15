@@ -72,8 +72,8 @@ class Details extends React.Component {
     }
 
     return <div>
-      <Heading text="Role Overview" />
       <div className="co-m-pane__body">
+        <Heading text="Role Overview" />
         <div className="row">
           <div className="col-xs-6">
             <dl className="co-m-pane__details">
@@ -93,11 +93,11 @@ class Details extends React.Component {
           </div>
         </div>
       </div>
-      <Heading text="Rules" />
       <div className="co-m-pane__body">
+        <Heading text="Rules" />
         <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
           <div className="co-m-pane__filter-bar-group">
-            <Link to={addHref(name, namespace)}>
+            <Link to={addHref(name, namespace)} className="co-m-primary-action">
               <button className="btn btn-primary">Add Rule</button>
             </Link>
           </div>

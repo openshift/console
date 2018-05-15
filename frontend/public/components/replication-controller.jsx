@@ -30,8 +30,8 @@ spec:
 
 
 const Details = ({obj: replicationController}) => <React.Fragment>
-  <Heading text="Replication Controller Overview" />
   <div className="co-m-pane__body">
+    <Heading text="Replication Controller Overview" />
     <div className="row">
       <div className="col-md-6">
         <ResourceSummary resource={replicationController} />

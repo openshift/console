@@ -86,8 +86,8 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
     return <div>
-      <Heading text="Report Overview" />
       <div className="co-m-pane__body">
+        <Heading text="Report Overview" />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true} />
@@ -332,10 +332,10 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     const downloadURL = dataURL(obj, format);
 
     return <div>
-      <Heading text="Usage Report">
-        <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
-      </Heading>
       <div className="co-m-pane__body">
+        <Heading text="Usage Report">
+          <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
+        </Heading>
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <div className="btn-group">
@@ -424,8 +424,8 @@ const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQ
   </tr>);
 
   return <div>
-    <Heading text="Chargeback Report Generation Query" />
     <div className="co-m-pane__body">
+      <Heading text="Chargeback Report Generation Query" />
       <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
         <dt>Query</dt>
         <dd><pre><code>{_.get(obj, ['spec', 'query'])}</code></pre></dd>
