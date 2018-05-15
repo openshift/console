@@ -20,14 +20,9 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent-stream__timeline {
-  overflow: visible;
+  bottom: 30px;
   position: absolute;
   top: 35px;
-  bottom: 30px;
-  border-style: solid;
-  border-color: $color-grey-border;
-  border-width: 0;
-  left: 0;
 }
 
 .co-sysevent-stream__timeline--empty {
@@ -58,11 +53,11 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent-stream__timeline__end-message {
-  position: absolute;
   bottom: 0;
-  width: 400px;
-  left: 0;
+  position: absolute;
   transform: translateY(50%);
+  white-space: nowrap;
+  z-index: 1;
 }
 
 .co-sysevent-stream__timeline__btn {
@@ -141,7 +136,7 @@ $color-dark-border: #ddd;
   width: 50%;
 }
 
-@media screen and (min-width: 768px) {
+@media(min-width: $grid-float-breakpoint) {
   .co-sysevent {
     flex-wrap: nowrap;
     margin-left: -40px;
@@ -162,9 +157,8 @@ $color-dark-border: #ddd;
   }
 
   .co-sysevent-stream__timeline {
-    border-bottom-width: 3px;
-    border-left-width: 3px;
-    left: initial;
+    border-bottom: 3px solid $color-grey-border;
+    border-left: 3px solid $color-grey-border;
     margin-left: 10px;
   }
 
