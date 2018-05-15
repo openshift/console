@@ -53,13 +53,13 @@ $color-text-muted: $co-gray;
 $color-text-secondary: $color-grey-medium;
 
 //OpenShift color variables
-$color-os-nav-title: #d1d1d1;
-$color-os-nav-background: #2A2E34;
-$color-os-nav-background-active: #383f47;
-$color-os-nav-item-seperator: #050505;
-$color-os-nav-active: #383f47;
+$color-os-nav-title: #d1d1d1; // why not $color-pf-black-300
+$color-os-nav-background: #2A2E34; // why not $color-pf-black-900
+$color-os-nav-background-active: #383f47; // why not $color-pf-black-800
+$color-os-nav-item-seperator: #050505; // why not $color-pf-black
+$color-os-nav-active: #383f47; // why not $color-pf-black-800
 $color-os-nav-hover: lighten($color-os-nav-active, 8%);
-$color-os-nav-border-left-active: #39a5dc;
+$color-os-nav-border-left-active: #39a5dc; // why not $color-pf-blue-300
 
 // Patternfly defaults to dark gray. Override with black. Body text color is lighten()ed to #333
 $color-pf-black: black;

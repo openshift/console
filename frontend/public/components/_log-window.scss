@@ -1,33 +1,43 @@
-.log-area {
-  box-shadow: inset 0px 3px 5px 0px rgba(0,0,0,0.75);
-  font-size: 13px;
-  background-color: #333;
-  position: relative;
+// vars
+$color-log-window-body-bg: $color-pf-black;
+$color-log-window-header-bg: $color-pf-black-900;
+$color-log-window-text: $color-pf-black-150;
+$font-family-log-window-body: $font-family-monospace;
+$color-log-window-divider: $color-log-window-header-bg;
+
+.log-window {
+  color: $color-log-window-text;
 }
 
-.log-scroll-pane {
+.log-window__header {
+  background-color: $color-log-window-header-bg;
+  padding: 8px 10px 5px 10px;
+}
+
+.log-window__body {
+  background-color: $color-log-window-body-bg;
+  font-family: $font-family-log-window-body;
+}
+
+.log-window__scroll-pane {
   overflow: auto;
   padding-top: 10px;
 }
 
-.log-contents__block {
-  padding: 0px 10px;
+.log-window__contents__text{
+  padding-left: 10px;
+  padding-right: 10px;
   white-space: pre;
   width: 0;
 }
 
-.log-contents__block--divider {
-  border-bottom: 1px solid $color-border-brown;
+.log-window__contents__text--divider {
+  border-bottom: 1px solid $color-log-window-divider;
 }
 
-.log-paused-pane {
-  min-height: 30px;
-}
-
-.log-paused-pane__contents {
-  text-align: center;
-  background-color: #555;
-  padding: 4px 10px 4px 10px;
-  font-size: 13px;
+.log-window__footer {
+  background-color: $color-log-window-header-bg;
   cursor: pointer;
+  padding: 4px 10px;
+  text-align: center;
 }
