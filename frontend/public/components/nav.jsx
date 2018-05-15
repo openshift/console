@@ -64,7 +64,7 @@ ResourceNSLink.propTypes = {
   resource: PropTypes.string.isRequired,
   activeNamespace: PropTypes.string,
 };
-
+  
 class ResourceClusterLink extends NavLink {
   static isActive (props, resourcePath) {
     return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`);
