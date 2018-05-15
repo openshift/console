@@ -70,7 +70,6 @@ export const types = {
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
   sortList: 'sortList',
-  setSidebarOpen: 'setSidebarOpen',
 };
 
 export const UIActions = {
@@ -112,6 +111,4 @@ export const UIActions = {
     history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
     return {listId, field, func, orderBy, type: types.sortList};
   },
-
-  [types.setSidebarOpen]: open => ({ open, type: types.setSidebarOpen }),
 };

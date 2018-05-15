@@ -135,13 +135,13 @@ class App extends React.PureComponent {
   }
 
   render () {
-    return <div id="reflex">
+    return <React.Fragment>
       <Helmet titleTemplate="%s · Tectonic" />
-      <GlobalNotifications />
+      <Masthead />
       <Nav />
       <div id="content">
-        <Masthead />
         <Route path={namespacedRoutes} component={NamespaceSelector} />
+        <GlobalNotifications />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
           <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
@@ -203,7 +203,7 @@ class App extends React.PureComponent {
           <Route component={ErrorPage404} />
         </Switch>
       </div>
-    </div>;
+    </React.Fragment>;
   }
 }
 
