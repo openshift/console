@@ -46,7 +46,7 @@ export class EnvironmentPage extends PromiseComponent {
   constructor(props) {
     super(props);
 
-    this.clearChanges = () => this._clearChanges();
+    this.reload = () => this._reload();
     this.saveChanges = (...args) => this._saveChanges(...args);
     this.updateEnvVars = (...args) => this._updateEnvVars(...args);
 
@@ -103,15 +103,45 @@ export class EnvironmentPage extends PromiseComponent {
    * Reset the page to initial state
    * @private
    */
-  _clearChanges() {
+  _reload() {
     const {rawEnvData} = this.props;
     this.setState({
       currentEnvVars: envVarsToArray(rawEnvData),
       errorMessage: null,
       success: null,
-      modified: false
+      modified: false,
+      stale: false
     });
   }
+
+  /**
+   * Build out our currentEnvVars state object from our incoming props.
+   * If there is a change and are read/write let the user know we have updated vars otherwise just refresh the page.
+   * For no change return null
+   *
+   * @param nextProps
+   * @param prevState
+   */
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { currentEnvVars } = prevState;
+    const { rawEnvData, readOnly } = nextProps;
+    const incomingEnvVars = envVarsToArray(rawEnvData);
+    if (!_.isEqual(incomingEnvVars, currentEnvVars)) {
+      if(readOnly) {
+        return {
+          currentEnvVars: envVarsToArray(rawEnvData)
+        };
+      }
+      return {
+        stale: true,
+        success: null
+      };
+    }
+
+    return null;
+  }
+
+
 
   /**
    * Make it so. Patch the values for the env var changes made on the page.
@@ -144,7 +174,6 @@ export class EnvironmentPage extends PromiseComponent {
       }
       return {path, op, value: this._envVarsToNameVal(finalPairsForContainer)};
     });
-
     const promise = k8sPatch(kind, obj, patch);
     this.handlePromise(promise).then((res) => {
       const newEnvData = _.get(res, envPath);
@@ -152,14 +181,14 @@ export class EnvironmentPage extends PromiseComponent {
         success: 'Successfully updated the environment variables.',
         errorMessage: null,
         currentEnvVars: envVarsToArray(newEnvData),
-        rawEnvData: newEnvData,
-        modified: false
+        modified: false,
+        stale: false
       });
     });
   }
 
   render() {
-    const {errorMessage, success, inProgress, currentEnvVars} = this.state;
+    const {errorMessage, success, inProgress, currentEnvVars, stale} = this.state;
     const {rawEnvData, readOnly} = this.props;
 
     const containerVars = currentEnvVars.map((envVar, i) => {
@@ -175,9 +204,10 @@ export class EnvironmentPage extends PromiseComponent {
       <div className="co-m-pane__body-group">
         <div className="environment-buttons">
           {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{errorMessage}</p>}
+          {stale && <p className="alert alert-info"><span className="pficon pficon-info"></span>The information on this page is no longer current. Click Reload to update and lose edits, or Save Changes to overwrite.</p>}
           {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
           {!readOnly && <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
-          {this.state.modified && <button type="button" className="btn btn-link" onClick={this.clearChanges}>Clear Changes</button>}
+          {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
         </div>
       </div>
     </div>;
