@@ -10,7 +10,6 @@ import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 
 import { ClusterPicker } from './cluster-picker';
-import { LogoImage } from './masthead';
 
 import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
@@ -282,17 +281,15 @@ export class Nav extends React.Component {
   render () {
     const { isOpen } = this.state;
 
-    return <div id="sidebar" className={classNames({'open': isOpen})}>
-      <div className="sidebar__header">
-        <button type="button" className="sidebar__toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={this.toggle}>
-          <span className="sr-only">Toggle navigation</span>
-          <span className="icon-bar" aria-hidden="true"></span>
-          <span className="icon-bar" aria-hidden="true"></span>
-          <span className="icon-bar" aria-hidden="true"></span>
-        </button>
-        <LogoImage />
-      </div>
-      <div className="sidebar__body">
+
+    return <React.Fragment>
+      <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={this.toggle}>
+        <span className="sr-only">Toggle navigation</span>
+        <span className="icon-bar" aria-hidden="true"></span>
+        <span className="icon-bar" aria-hidden="true"></span>
+        <span className="icon-bar" aria-hidden="true"></span>
+      </button>
+      <div id="sidebar" className={classNames({'open': isOpen})}>
         <div className="navigation-container__section navigation-container__section--cluster-picker">
           <ClusterPicker />
         </div>
@@ -356,6 +353,6 @@ export class Nav extends React.Component {
           </NavSection>
         </div>
       </div>
-    </div>;
+    </React.Fragment>;
   }
 }

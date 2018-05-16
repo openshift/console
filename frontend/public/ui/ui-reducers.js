@@ -24,7 +24,6 @@ export default (state, action) => {
       activeNavSectionId: 'workloads',
       location: pathname,
       activeNamespace: activeNamespace || 'default',
-      sidebarOpen: false,
     });
   }
 
@@ -53,9 +52,6 @@ export default (state, action) => {
 
     case types.sortList:
       return state.mergeIn(['listSorts', action.listId], _.pick(action, ['field', 'func', 'orderBy']));
-
-    case types.setSidebarOpen:
-      return state.set('sidebarOpen', action.open);
 
     default:
       break;
