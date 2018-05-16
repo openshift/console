@@ -25,13 +25,6 @@ $color-dark-border: #ddd;
   top: 35px;
 }
 
-.co-sysevent-stream__timeline--empty {
-  border: none;
-  .co-sysevent-stream__timeline__end-message {
-    display: none;
-  }
-}
-
 .co-sysevent-stream__status {
   display: flex;
   justify-content: space-between;
@@ -58,6 +51,9 @@ $color-dark-border: #ddd;
   transform: translateY(50%);
   white-space: nowrap;
   z-index: 1;
+  .co-sysevent-stream__timeline--empty & {
+    display: none;
+  }
 }
 
 .co-sysevent-stream__timeline__btn {
@@ -160,6 +156,9 @@ $color-dark-border: #ddd;
     border-bottom: 3px solid $color-grey-border;
     border-left: 3px solid $color-grey-border;
     margin-left: 10px;
+    &--empty {
+      border: 0;
+    }
   }
 
   .co-sysevent-stream__timeline__btn {
