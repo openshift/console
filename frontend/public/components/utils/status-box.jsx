@@ -72,9 +72,7 @@ export const StatusBox = props => {
 
     if (loaded && loadError instanceof TimeoutError) {
       return <Data {...props}>
-        <div className="co-m-pane__body">
-          <div className="text-center text-muted">Timed out fetching new data. The data below is stale.</div>
-        </div>
+        <div className="co-m-timeout-error text-muted">Timed out fetching new data. The data below is stale.</div>
         {props.children}
       </Data>;
     }

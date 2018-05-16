@@ -29,3 +29,12 @@
   margin: 0;
   position: static;
 }
+
+.co-m-timeout-error {
+  margin-bottom: 30px;
+  text-align: center;
+  .co-cluster-updates__component &,
+  .co-m-vert-nav & {
+    margin-top: 30px;
+  }
+}
