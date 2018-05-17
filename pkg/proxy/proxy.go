@@ -127,6 +127,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			for _, protocol := range strings.Split(protocols, ",") {
 				protocol = strings.TrimSpace(protocol)
 				// TODO: secure by stripping newlines & other invalid stuff
+				// "Impersonate-User" and "Impersonate-Group" and bridge specific (not a k8s thing)
 				if strings.HasPrefix(protocol, "Impersonate-User.") {
 					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-User.")
 					decodedProtocol, err := decodeSubprotocol(encodedProtocol)
@@ -148,18 +149,21 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					proxiedHeader.Set("Impersonate-User", string(decodedProtocol))
 					proxiedHeader.Set("Impersonate-Group", string(decodedProtocol))
 					subProtocol = protocol
+				} else {
+					proxiedHeader.Set("Sec-Websocket-Protocol", protocol)
+					subProtocol = protocol
+					log.Printf("subprotol: %v", protocol)
 				}
 			}
 		}
 	}
 
-	// Filter websocket headers. Gorilla adds them automatically.
+	// Filter websocket headers.
 	websocketHeaders := []string{
 		"Connection",
 		"Sec-Websocket-Extensions",
 		"Sec-Websocket-Key",
-		// Do not proxy the subprotocol to the API server because k8s does not understand it yet
-		"Sec-Websocket-Protocol",
+		// NOTE: kans - Sec-Websocket-Protocol must be proxied in the headers
 		"Sec-Websocket-Version",
 		"Upgrade",
 	}

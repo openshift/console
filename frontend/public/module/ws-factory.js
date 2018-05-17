@@ -266,3 +266,7 @@ WSFactory.prototype.destroy = function(timedout) {
   delete this.options;
   this._messageBuffer = [];
 };
+
+WSFactory.prototype.send = function (data) {
+  this.ws && this.ws.send(data);
+};

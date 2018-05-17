@@ -6,7 +6,7 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
+import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent} from './utils';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line } from './graphs';
@@ -243,6 +243,17 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={true}
 />;
 
+const PodExecLoader = ({obj}) => <div className="co-m-pane__body">
+  <div className="row">
+    <div className="col-xs-12">
+      <div className="panel-body">
+        <AsyncComponent loader={() => import('./pod-exec').then(c => c.PodExec)} obj={obj} />
+      </div>
+    </div>
+  </div>
+</div>;
+
+
 /** @type {React.SFC<any>} */
 export const PodsDetailsPage = props => <DetailsPage
   {...props}
@@ -256,7 +267,12 @@ export const PodsDetailsPage = props => <DetailsPage
     navFactory.editYaml(),
     navFactory.envEditor(environmentComponent),
     navFactory.logs(PodLogs),
-    navFactory.events(ResourceEventStream)
+    navFactory.events(ResourceEventStream),
+    {
+      href: 'terminal',
+      name: 'Terminal',
+      component: PodExecLoader,
+    },
   ]}
 />;
 PodsDetailsPage.displayName = 'PodsDetailsPage';
