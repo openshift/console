@@ -191,3 +191,7 @@ tags-input .autocomplete .suggestion-item em {
 .modal-footer .alert {
   text-align: left;
 }
+
+.ReactVirtualized__List:focus {
+  outline: none;
+}
