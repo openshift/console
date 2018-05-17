@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 
 # This script contains all jenkins work.
 # This runs directly on the jenkins build host.
@@ -20,8 +20,11 @@ else
     exit 1
 fi
 
+S3_BUCKET="teamui-jenkins"
+S3_URL="https://s3.amazonaws.com/$S3_BUCKET/"
+
 status() {
-    # Hide output so we don't leak creds
+    # Hide output so we don't leak creds in Jenkins log
     set +x
     description=${3:-"$1 $2."}
     data=$(cat << EOF
@@ -29,10 +32,12 @@ status() {
   "context": "$1",
   "state": "$2",
   "description": "${description}",
-  "target_url": "${BUILD_URL}console"
+  "target_url": "${S3_URL}${BUILD_TAG}/${1}.log"
 }
 EOF
 )
+    # TODO: use correct target url for performance status
+    # "target_url": "${BUILD_URL}console"
     # shellcheck disable=SC2154
     curl -o /dev/null --silent -X POST --user "${GITHUB_CREDENTIALS}" \
     --data "$data" \
@@ -40,45 +45,70 @@ EOF
     set -x
 }
 
+s3_upload () {
+    # Hide output so we don't leak creds in Jenkins log
+    set +x
+    file=$1
+    dest=$2
+    content_type='text/plain'
+    datetime=$(TZ=utc date +"%a, %d %b %Y %T %z")
+    acl="x-amz-acl:public-read"
+    body="PUT\n\n${content_type}\n${datetime}\n${acl}\n/${S3_BUCKET}/${dest}"
+    signature=$(echo -en "${body}" | openssl sha1 -hmac "${AWS_SECRET_ACCESS_KEY}" -binary | base64)
+
+    curl -o /dev/null --silent -X PUT -T "${file}" \
+      -H "Host: ${S3_BUCKET}.s3.amazonaws.com" \
+      -H "Date: ${datetime}" \
+      -H "Content-Type: ${content_type}" \
+      -H "${acl}" \
+      -H "Authorization: AWS ${AWS_ACCESS_KEY_ID}:${signature}" \
+      "https://${S3_BUCKET}.s3.amazonaws.com/${dest}"
+    set -x
+}
+
+
+builder_run () {
+    name=$1
+    shift
+    needs_kubeconfig=$1
+    shift
+    exit_on_err=$1
+    shift
+    cmd=$*
+
+    status "$name" 'pending'
+
+    if [ "$needs_kubeconfig" -ne 0 ]
+    then
+        export DOCKER_ENV="KUBECONFIG"
+    fi
+
+    mkdir -p jenkins-logs
+    # shellcheck disable=SC2086
+    if ./builder-run $cmd 2>&1 | tee "jenkins-logs/$name.log"
+    then
+        status "$name" 'success'
+        s3_upload "jenkins-logs/$name.log" "$BUILD_TAG/$name.log"
+    else
+        status "$name" 'error'
+        s3_upload "jenkins-logs/$name.log" "$BUILD_TAG/$name.log"
+        if [ "$exit_on_err" -ne 0 ]
+        then
+            exit 1
+        fi
+    fi
+    unset DOCKER_ENV
+}
+
 set -x
 ./clean
 
 set +e
 
-status 'Build' 'pending'
-if ./builder-run ./build
-then
-    status 'Build' 'success'
-else
-    status 'Build' 'error'
-    exit 1
-fi
-
-status 'Tests' 'pending'
-if ./builder-run ./test
-then
-    status 'Tests' 'success'
-else
-    status 'Tests' 'error'
-    exit 1
-fi
-
-status 'GUI Tests' 'pending'
-if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui crud
-then
-    status 'GUI Tests' 'success'
-else
-    status 'GUI Tests' 'error'
-    exit 1
-fi
-
-status 'GUI Tests (ALM)' 'pending'
-if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui alm
-then
-   status 'GUI Tests (ALM)' 'success'
-else
-   status 'GUI Tests (ALM)' 'error'
-fi
+builder_run 'Build' 0 1 ./build
+builder_run 'Tests' 0 1 ./test
+builder_run 'GUI-Tests' 1 1 ./test-gui crud
+builder_run 'GUI-Tests-ALM' 1 0 ./test-gui alm
 
 status 'Performance' 'pending'
 if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui performance
