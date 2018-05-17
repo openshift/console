@@ -3,10 +3,10 @@
   background-color: $color-pf-black;
   color: $color-os-nav-title;
   display: flex;
-  position: fixed;
-  left: 0;
-  right: 0;
   height: $masthead-height-mobile;
+  left: 0;
+  position: fixed;
+  right: 0;
   z-index: $zindex-navbar;
   @media (max-width: $grid-float-breakpoint-max) {
     padding-left: 50px; // make space for .sidebar-toggle
