@@ -8,6 +8,7 @@ import * as PropTypes from 'prop-types';
 import { FLAGS, featureReducerName } from '../features';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
+import { referenceForModel } from '../module/k8s/k8s-models';
 
 import { ClusterPicker } from './cluster-picker';
 
@@ -48,7 +49,7 @@ class NavLink extends React.PureComponent {
 class ResourceNSLink extends NavLink {
   static isActive (props, resourcePath, activeNamespace) {
     const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
-    return resourcePath === href || _.startsWith(resourcePath, `${href}/`);
+    return resourcePath === href || _.startsWith(resourcePath, `${href}/`) || (props.model && resourcePath === referenceForModel(props.model));
   }
 
   get to () {
@@ -61,6 +62,7 @@ ResourceNSLink.propTypes = {
   name: PropTypes.string.isRequired,
   startsWith: PropTypes.arrayOf(PropTypes.string),
   resource: PropTypes.string.isRequired,
+  model: PropTypes.object,
   activeNamespace: PropTypes.string,
 };
 
@@ -296,11 +298,11 @@ export class Nav extends React.Component {
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Overview" icon="fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
           <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
-            <ResourceNSLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
+            <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
             <Sep />
-            <ResourceNSLink resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={this.close} />
-            <ResourceNSLink resource={SubscriptionModel.plural} name="Subscriptions" onClick={this.close} />
-            <ResourceNSLink resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
+            <ResourceNSLink model={CatalogSourceModel} resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={this.close} />
+            <ResourceNSLink model={SubscriptionModel} resource={SubscriptionModel.plural} name="Subscriptions" onClick={this.close} />
+            <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
           </NavSection>
 
           <NavSection text="Workloads" icon="fa-folder-open-o">
