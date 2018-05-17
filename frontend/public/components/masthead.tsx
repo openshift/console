@@ -50,7 +50,7 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
     href: '/settings/profile'
   });
 
-  return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.userID()} /> : null;
+  return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
 });
 
 export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
