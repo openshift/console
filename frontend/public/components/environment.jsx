@@ -126,19 +126,10 @@ export class EnvironmentPage extends PromiseComponent {
     const { currentEnvVars } = prevState;
     const { rawEnvData, readOnly } = nextProps;
     const incomingEnvVars = envVarsToArray(rawEnvData);
-    if (!_.isEqual(incomingEnvVars, currentEnvVars)) {
-      if(readOnly) {
-        return {
-          currentEnvVars: envVarsToArray(rawEnvData)
-        };
-      }
-      return {
-        stale: true,
-        success: null
-      };
+    if (_.isEqual(incomingEnvVars, currentEnvVars)) {
+      return null;
     }
-
-    return null;
+    return readOnly ? { currentEnvVars: incomingEnvVars } : { stale: true, success: null };
   }
 
 
