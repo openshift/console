@@ -1,5 +1,6 @@
 import { coFetch } from '../co-fetch';
 import { stripBasePath } from '../components/utils/link';
+import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '../const';
 
 const loginState = key => localStorage.getItem(key);
 
@@ -36,8 +37,8 @@ export const authSvc = {
   email: () => loginStateItem(email),
 
   logout: (next) => {
-    setNext(next);
-    [userID, name, email].forEach(key => {
+    setNext(next || window.SERVER_FLAGS.basePath);
+    [userID, name, email, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY].forEach(key => {
       try {
         localStorage.removeItem(key);
       } catch (e) {
@@ -55,7 +56,6 @@ export const authSvc = {
   },
 
   login: () => {
-    setNext(window.location.pathname);
     window.location = window.SERVER_FLAGS.loginURL;
   },
 };
