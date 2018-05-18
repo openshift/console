@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { inject } from './index';
 import actions from '../../module/k8s/k8s-actions';
 
-
 export const makeReduxID = (k8sKind = {}, query) => {
   let qs = '';
   if (!_.isEmpty(query)) {

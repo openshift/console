@@ -12,7 +12,6 @@ import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
 
-
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
     <input type="radio" onClick={() => onExpandChange(false)} /> Compact

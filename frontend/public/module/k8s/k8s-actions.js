@@ -1,4 +1,4 @@
-import { getResources as getResources_} from './get-resources';
+import { getResources as getResources_ } from './get-resources';
 import store from '../../redux';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 
@@ -21,12 +21,13 @@ const types = {
 
 const action_ = (type) => (id, k8sObjects) => ({type, id, k8sObjects});
 
+/** @type {{[id: string]: WebSocket}} */
 const WS = {};
 const POLLs = {};
 const REF_COUNTS = {};
 
 const nop = () => {};
-const paginationLimit = 100;
+const paginationLimit = 250;
 
 const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
 const getImpersonateSubprotocols = () => {
@@ -152,13 +153,20 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
+    /** @type {(continueToken: string) => Promise<string>} */
     const incrementallyLoad = async(continueToken = '') => {
-      const response = await k8sList(k8skind, {...query, limit: paginationLimit, continue: continueToken}, true);
-      continueToken === '' ? dispatch(actions.loaded(id, response.items)) : dispatch(actions.bulkAddToList(id, response.items));
+      // TODO: Check `REF_COUNTS[id]` here and throw special error if undefined
+      const response = await k8sList(k8skind, {...query, limit: paginationLimit, ...(continueToken ? {continue: continueToken} : {})}, true);
 
-      return response.metadata.continue !== undefined
-        ? incrementallyLoad(response.metadata.continue)
-        : response.metadata.resourceVersion;
+      if (!continueToken) {
+        dispatch(actions.loaded(id, response.items));
+      }
+
+      if (response.metadata.continue) {
+        dispatch(actions.bulkAddToList(id, response.items));
+        return incrementallyLoad(response.metadata.continue);
+      }
+      return response.metadata.resourceVersion;
     };
 
     /**
@@ -172,18 +180,20 @@ const actions = {
       getImpersonateSubprotocols(),
       incrementallyLoad(),
     ]).then(([subProtocols, resourceVersion]) => {
+      // TODO: Check `REF_COUNTS[id]` here and throw special error if undefined
       WS[id] = WS[id] || k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
-      WS[id].onclose(event => {
-        // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
-        if (event.code !== 1006) {
-          return;
-        }
-        // eslint-disable-next-line no-console
-        console.log('WS closed abnormally - starting polling loop over!');
-        const ws = WS[id];
-        const timedOut = true;
-        ws && ws.destroy(timedOut);
-      })
+      WS[id]
+        .onclose(event => {
+          // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
+          if (event.code !== 1006) {
+            return;
+          }
+          // eslint-disable-next-line no-console
+          console.log('WS closed abnormally - starting polling loop over!');
+          const ws = WS[id];
+          const timedOut = true;
+          ws && ws.destroy(timedOut);
+        })
         .ondestroy(timedOut => {
           if (!timedOut) {
             return;
