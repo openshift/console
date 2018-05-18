@@ -49,7 +49,9 @@ class NavLink extends React.PureComponent {
 class ResourceNSLink extends NavLink {
   static isActive (props, resourcePath, activeNamespace) {
     const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
-    return resourcePath === href || _.startsWith(resourcePath, `${href}/`) || (props.model && resourcePath === referenceForModel(props.model));
+    return props.model
+      ? resourcePath === referenceForModel(props.model) || _.startsWith(resourcePath, `${referenceForModel(props.model)}/`)
+      : resourcePath === href || _.startsWith(resourcePath, `${href}/`);
   }
 
   get to () {
