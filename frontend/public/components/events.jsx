@@ -390,6 +390,7 @@ class EventStream extends SafetyFirst {
                   scrollTop={scrollTop}
                   width={width}
                   rowCount={count}
+                  tabIndex={null}
                   // TODO: set rowHeight based on media query
                   // @media screen and (min-width: 768px)...
                   // rowHeight={width > 548 ? 135 : 250}
