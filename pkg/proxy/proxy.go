@@ -48,7 +48,7 @@ func NewProxy(cfg *Config) *Proxy {
 	}
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(cfg.Endpoint)
-	reverseProxy.FlushInterval = time.Millisecond * 500
+	reverseProxy.FlushInterval = time.Millisecond * 100
 	reverseProxy.Transport = transport
 	reverseProxy.ModifyResponse = filterHeaders
 
