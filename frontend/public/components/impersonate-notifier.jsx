@@ -3,7 +3,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { UIActions } from '../ui/ui-actions';
-import { history } from './utils';
 
 export const ImpersonateNotifier = connect(
   ({UI}) => ({impersonate: UI.get('impersonate')}),
@@ -12,16 +11,10 @@ export const ImpersonateNotifier = connect(
   if (!impersonate) {
     return null;
   }
-
-  const onClick = () => {
-    stopImpersonate();
-    history.push('/');
-  };
-
   return <div className="co-global-notification">
     <div className="co-global-notification__content">
       <p className="co-global-notification__text">
-        <span className="text-uppercase co-global-notification__impersonate-kind">{`Impersonating ${impersonate.kind}`}</span> You are impersonating <span className="co-global-notification__impersonate-name">{impersonate.name}</span>. You are viewing all resources and roles this {_.toLower(impersonate.kind)} can access. <a onClick={onClick}>Stop Impersonation</a>
+        <span className="text-uppercase co-global-notification__impersonate-kind">{`Impersonating ${impersonate.kind}`}</span> You are impersonating <span className="co-global-notification__impersonate-name">{impersonate.name}</span>. You are viewing all resources and roles this {_.toLower(impersonate.kind)} can access. <a onClick={stopImpersonate}>Stop Impersonation</a>
       </p>
     </div>
   </div>;

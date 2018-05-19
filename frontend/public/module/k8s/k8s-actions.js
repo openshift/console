@@ -29,45 +29,6 @@ const REF_COUNTS = {};
 const nop = () => {};
 const paginationLimit = 250;
 
-const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
-const getImpersonateSubprotocols = () => {
-  const {kind, name} = store.getState().UI.get('impersonate', {});
-  if (!name) {
-    return Promise.resolve();
-  }
-
-  let textEncoder;
-  try {
-    textEncoder = new TextEncoder('utf-8');
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.info('Browser lacks TextEncoder. Falling back to polyfill.', e);
-  }
-
-  let promise;
-  if (textEncoder) {
-    promise = Promise.resolve(textEncoder);
-  } else {
-    promise = import('text-encoding').then(module => new module.TextEncoder('utf-8'));
-  }
-
-  return promise.then(encoder => {
-    /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
-     * and "/" aren't allowed, so base64 but replace illegal chars.
-     */
-    let enc = encoder.encode(name);
-    enc = window.btoa(String.fromCharCode.apply(String, enc));
-    enc = enc.replace(/=/g, '_').replace(/\//g, '-');
-
-    if (kind === 'User' ) {
-      return [`Impersonate-User.${enc}`];
-    }
-    if (kind === 'Group') {
-      return [`Impersonate-Group.${enc}`];
-    }
-  });
-};
-
 const actions = {
   [types.updateListFromWS]: action_(types.updateListFromWS),
   [types.bulkAddToList]: action_(types.bulkAddToList),
@@ -111,7 +72,7 @@ const actions = {
     POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
 
-    if (isImpersonateEnabled()) {
+    if (store.getState().UI.get('impersonate')) {
       // WebSocket can't send impersonate HTTP header
       return;
     }
@@ -144,7 +105,7 @@ const actions = {
     return {type: types.stopK8sWatch, id};
   },
 
-  watchK8sList: (id, query, k8skind) => dispatch => {
+  watchK8sList: (id, query, k8skind) => (dispatch, getState) => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -152,6 +113,7 @@ const actions = {
 
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
+
 
     /** @type {(continueToken: string) => Promise<string>} */
     const incrementallyLoad = async(continueToken = '') => {
@@ -168,7 +130,6 @@ const actions = {
       }
       return response.metadata.resourceVersion;
     };
-
     /**
      * Incrementally fetch list (XHR) using k8s pagination then use its resourceVersion to
      *  start listening on a WS (?resourceVersion=$resourceVersion)
@@ -176,50 +137,48 @@ const actions = {
      *   1. the WS closes abnormally
      *   2. the WS can not establish a connection within $TIMEOUT
      */
-    const pollAndWatch = () => (delete POLLs[id]) && Promise.all([
-      getImpersonateSubprotocols(),
-      incrementallyLoad(),
-    ]).then(([subProtocols, resourceVersion]) => {
-      // TODO: Check `REF_COUNTS[id]` here and throw special error if undefined
-      WS[id] = WS[id] || k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
-      WS[id]
-        .onclose(event => {
-          // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
-          if (event.code !== 1006) {
-            return;
-          }
-          // eslint-disable-next-line no-console
-          console.log('WS closed abnormally - starting polling loop over!');
-          const ws = WS[id];
-          const timedOut = true;
-          ws && ws.destroy(timedOut);
-        })
-        .ondestroy(timedOut => {
-          if (!timedOut) {
-            return;
-          }
-          // If the WS is unsucessful for timeout duration, assume it is less work
-          //  to update the entire list and then start the WS again
+    const pollAndWatch = () => (delete POLLs[id]) && incrementallyLoad()
+      .then(resourceVersion => {
+        const {subProtocols} = getState().UI.get('impersonate', {});
+        WS[id] = WS[id] || k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
+        WS[id]
+          .onclose(event => {
+            // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
+            if (event.code !== 1006) {
+              return;
+            }
+            // eslint-disable-next-line no-console
+            console.log('WS closed abnormally - starting polling loop over!');
+            const ws = WS[id];
+            const timedOut = true;
+            ws && ws.destroy(timedOut);
+          })
+          .ondestroy(timedOut => {
+            if (!timedOut) {
+              return;
+            }
+            // If the WS is unsucessful for timeout duration, assume it is less work
+            //  to update the entire list and then start the WS again
 
-          // eslint-disable-next-line no-console
-          console.log(`${id} timed out - restarting polling`);
-          delete WS[id];
+            // eslint-disable-next-line no-console
+            console.log(`${id} timed out - restarting polling`);
+            delete WS[id];
 
-          if (POLLs[id]) {
-            return;
-          }
+            if (POLLs[id]) {
+              return;
+            }
 
-          POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
-        })
-        .onbulkmessage(events => dispatch(actions.updateListFromWS(id, events)));
-    },
-    e => {
-      dispatch(actions.errored(id, e));
-      if (POLLs[id]) {
-        return;
-      }
-      POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
-    });
+            POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+          })
+          .onbulkmessage(events => dispatch(actions.updateListFromWS(id, events)));
+      },
+      e => {
+        dispatch(actions.errored(id, e));
+        if (POLLs[id]) {
+          return;
+        }
+        POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+      });
 
     pollAndWatch();
   },
