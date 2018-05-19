@@ -25,6 +25,7 @@ export class Terminal extends React.Component {
       return;
     }
     terminal.reset();
+    terminal.clear();
     terminal.setOption('disableStdin', false);
   }
 

@@ -16,6 +16,8 @@ const nameWithIcon = (name) => <span><span className="co-icon-space-r"><Resource
 // The server only reads from STDIN, writes to the other three.
 // see also: https://github.com/kubernetes/kubernetes/pull/13885
 
+const NO_SH = 'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
+
 export class PodExec extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -44,7 +46,7 @@ export class PodExec extends React.PureComponent {
         stderr: 1,
         tty: 1,
         container: activeContainer,
-        command: ['/bin/sh', '-i', '-c', 'TERM=xterm /bin/sh'].map(c => encodeURIComponent(c)).join('&command='),
+        command: ['sh', '-i', '-c', 'TERM=xterm sh'].map(c => encodeURIComponent(c)).join('&command='),
       },
     };
 
@@ -53,7 +55,7 @@ export class PodExec extends React.PureComponent {
       const { current } = this.terminal;
       current && current.onConnectionClosed(`connecting to ${activeContainer}`);
     }
-
+    let previous;
     this.ws = new WSFactory(`${metadata.name}-terminal`, {
       host: 'auto',
       reconnect: true,
@@ -62,28 +64,36 @@ export class PodExec extends React.PureComponent {
       subProtocols: ['base64.channel.k8s.io'],
     })
       .onmessage(raw => {
-        const data = atob(raw.slice(1));
         const { current } = this.terminal;
+        // error channel
+        if (raw[0] === '3') {
+          if (previous.includes(NO_SH)) {
+            current.reset();
+            current.onConnectionClosed(`This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n  kubectl -n ${metadata.namespace} exec ${metadata.name} -ti <command>`);
+            this.ws.destroy();
+            previous = '';
+            return;
+          }
+        }
+        const data = atob(raw.slice(1));
         current && current.onDataReceived(data);
+        previous = data;
       })
       .onopen(() => {
         const { current } = this.terminal;
         current && current.reset();
-
+        previous = '';
         this.setState({open: true});
       })
       .onclose(evt => {
-        this.setState({open: false});
         if (!evt || evt.wasClean === true) {
           return;
         }
-        const error = evt.reason || 'WebSocket closed uncleanly.';
-        const { current } = this.terminal;
-        if (current) {
-          current.onConnectionClosed(error);
-        }
-      })
-      .onerror(() => this.setState({error: true}));
+        const error = evt.reason || 'Connection closed uncleanly.';
+        this.terminal.current && this.terminal.current.onConnectionClosed(error);
+        this.ws.destroy();
+      }) // eslint-disable-next-line no-console
+      .onerror(evt => console.error(`WS error?! ${evt}`));
   }
 
   componentDidMount () {
@@ -114,7 +124,10 @@ export class PodExec extends React.PureComponent {
     if (name === this.state.activeContainer) {
       return;
     }
-    this.setState({activeContainer: name}, () => this.connect_());
+    this.setState({activeContainer: name}, () => {
+      this.connect_();
+      this.terminal.current && this.terminal.current.focus();
+    });
   }
 
   onResize_ (rows, cols) {
