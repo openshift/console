@@ -67,14 +67,19 @@ export class InstallPlanDetails extends React.Component<InstallPlanDetailsProps,
     const {obj} = this.props;
     const needsApproval = obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
 
+    const approve = () => k8sUpdate(InstallPlanModel, {...obj, spec: {...obj.spec, approved: true}})
+      .then(() => this.setState({waitingForUpdate: true}))
+      .catch((error) => this.setState({error}));
+
     return <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
+        { this.state.error && <div style={{marginBottom: '10px'}} className="co-clusterserviceversion-detail__error-box">{this.state.error}</div> }
         { this.state.waitingForUpdate
           ? <span><LoadingInline /> Approving</span>
           : <button
             className={classNames('btn', needsApproval ? 'btn-primary' : 'btn-default')}
             disabled={!needsApproval}
-            onClick={() => k8sUpdate(InstallPlanModel, {...obj, spec: {...obj.spec, approved: true}}).then(() => this.setState({waitingForUpdate: true}))}>
+            onClick={() => approve()}>
             {needsApproval ? 'Approve' : 'Approved'}
           </button> }
       </div>
@@ -89,10 +94,10 @@ export class InstallPlanDetails extends React.Component<InstallPlanDetailsProps,
               <dd>{_.get(obj.status, 'phase', 'Unknown')}</dd>
               <dt>Components</dt>
               { (obj.spec.clusterServiceVersionNames || []).map((csvName, i) => <dd key={i}>
-                <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={csvName} namespace={obj.metadata.namespace} title={csvName} />
+                <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={csvName} namespace={obj.metadata.namespace} title={csvName} />
               </dd>) }
               <dt>Catalog Sources</dt>
-              { (obj.status.catalogSources || []).map((catalogName, i) => <dd key={i}>
+              { (_.get(obj.status, 'catalogSources') || []).map((catalogName, i) => <dd key={i}>
                 <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={catalogName} namespace="tectonic-system" title={catalogName} />
               </dd>) }
             </dl>
@@ -136,6 +141,7 @@ export type InstallPlanDetailsProps = {
 
 export type InstallPlanDetailsState = {
   waitingForUpdate: boolean;
+  error?: string;
 };
 
 export type InstallPlanDetailsPageProps = {

@@ -5,9 +5,9 @@ import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 import { safeLoad } from 'js-yaml';
 
-import { MultiListPage, List, ListHeader, ColHead, DetailsPage } from '../factory';
+import { List, ListHeader, ColHead, DetailsPage, ListPage } from '../factory';
 import { MsgBox, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, Firehose, LoadingInline } from '../utils';
-import { SubscriptionKind, ClusterServiceVersionKind, SubscriptionState, Package, InstallPlanKind } from './index';
+import { SubscriptionKind, ClusterServiceVersionKind, SubscriptionState, Package, InstallPlanApproval } from './index';
 import { referenceForModel, k8sKill, k8sUpdate, K8sResourceKind } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, ConfigMapModel, InstallPlanModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
@@ -38,9 +38,9 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
   });
   const viewCSVAction = () => ({
     label: `View ${ClusterServiceVersionModel.kind}...`,
-    href: `/k8s/ns/${props.obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${props.csv.metadata.name}`,
+    href: `/k8s/ns/${props.obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(props.obj.status, 'installedCSV')}`,
   });
-  const actions = [disableAction, ...(props.csv ? [viewCSVAction] : [])];
+  const actions = [disableAction, ...(_.get(props.obj.status, 'installedCSV') ? [viewCSVAction] : [])];
 
   return <div className="row co-resource-list__item">
     <div className="col-md-3">
@@ -62,110 +62,116 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
   </div>;
 };
 
-export const SubscriptionsList: React.SFC<SubscriptionsListProps> = (props) => {
-  const EmptyMsg = () => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel for automatic updates." />;
-  return <List
-    {...props}
-    Row={(rowProps) => <SubscriptionRow {...rowProps} csv={props[referenceForModel(ClusterServiceVersionModel)].data.find(({metadata}) => metadata.name === _.get(rowProps.obj, 'status.installedCSV'))} />}
-    Header={SubscriptionHeader}
-    label="Subscriptions"
-    EmptyMsg={EmptyMsg} />;
-};
+export const SubscriptionsList: React.SFC<SubscriptionsListProps> = (props) => <List
+  {...props}
+  Row={SubscriptionRow}
+  Header={SubscriptionHeader}
+  label="Subscriptions"
+  EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />} />;
 
-export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <MultiListPage
+export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <ListPage
+  {...props}
+  kind={referenceForModel(SubscriptionModel)}
   title="Subscriptions"
   showTitle={true}
   canCreate={true}
   createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${CatalogSourceModel.plural}` : `/k8s/all-namespaces/${CatalogSourceModel.plural}`}}
   createButtonText="New Subscription"
   ListComponent={SubscriptionsList}
-  filterLabel="Subscriptions by package"
-  flatten={resources => _.flatMap(_.filter(resources, (v, k: string) => k === referenceForModel(SubscriptionModel)), (resource: any) => resource.data)}
-  resources={[
-    {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true},
-    {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: true},
-  ]} />;
+  filterLabel="Subscriptions by package" />;
 
-export class SubscriptionDetails extends React.Component<SubscriptionDetailsProps, SubscriptionDetailsState> {
+export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) => {
+  const {obj, pkg, installedCSV} = props;
+
+  return <div className="co-m-pane__body">
+    <div className="co-m-pane__body-group">
+      <SubscriptionUpdates pkg={pkg} obj={obj} installedCSV={installedCSV} />
+    </div>
+    <div className="co-m-pane__body-group">
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={false} />
+        </div>
+        <div className="col-sm-6">
+          {/* TODO(alecmerdler): Show if InstallPlan needs approval */}
+          <dl className="co-m-pane__details">
+            <dt>Installed Version</dt>
+            <dd>
+              { _.get(obj.status, 'installedCSV') && !_.isEmpty(installedCSV)
+                ? <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={_.get(obj.status, 'installedCSV')} namespace={obj.metadata.namespace} title={_.get(obj.status, 'installedCSV')} />
+                : 'None' }
+            </dd>
+            <dt>Starting Version</dt>
+            <dd>{obj.spec.startingCSV || 'None'}</dd>
+            <dt>Catalog</dt>
+            <dd>
+              <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={obj.spec.source} namespace={obj.metadata.namespace} title={obj.spec.source} />
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>;
+};
+
+export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProps, SubscriptionUpdatesState> {
   constructor(props) {
     super(props);
-    this.state = {waitingForUpdate: false};
+    this.state = {
+      waitingForUpdate: false,
+      installPlanApproval: _.get(props.obj, 'spec.installPlanApproval'),
+      channel: _.get(props.obj, 'spec.channel'),
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return !prevState.waitingForUpdate ||
+      _.get(nextProps, 'spec.channel') !== prevState.channel ||
+      _.get(nextProps, 'spec.installPlanApproval') !== prevState.installPlanApproval
+      ? null
+      : {waitingForUpdate: false, channel: _.get(nextProps, 'spec.channel'), installPlanApproval: _.get(nextProps, 'spec.installPlanApproval')};
   }
 
   render() {
     const {obj, pkg, installedCSV} = this.props;
-    const modal = (e: React.MouseEvent<HTMLAnchorElement>, field: 'channel' | 'approval') => {
-      e.preventDefault();
 
-      return (
-        field === 'channel' && createSubscriptionChannelModal({subscription: obj, pkg, k8sUpdate}) ||
-        field === 'approval' && createInstallPlanApprovalModal({obj, k8sUpdate})
-      ).result.then(() => this.setState({waitingForUpdate: true}));
-    };
+    const k8sUpdateAndWait = (...args) => k8sUpdate(...args).then(() => this.setState({waitingForUpdate: true}));
+    const channelModal = () => createSubscriptionChannelModal({subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait});
+    const approvalModal = () => createInstallPlanApprovalModal({obj, k8sUpdate: k8sUpdateAndWait});
 
-    return <div className="co-m-pane__body">
-      <div className="co-m-pane__body-group">
-        <div className="co-detail-table">
-          <div className="co-detail-table__row row">
-            <div className="co-detail-table__section col-sm-3">
-              <dl className="co-m-pane__details">
-                <dt className="co-detail-table__section-header">Channel</dt>
-                <dd>{ this.state.waitingForUpdate
-                  // FIXME(alecmerdler): Spinner stays forever because new `props.obj` not received after modal calls `k8sUpdated`
-                  ? <LoadingInline />
-                  : <a className="co-m-modal-link" href="#" onClick={(e) => modal(e, 'channel')}>{obj.spec.channel || 'default'}</a>
-                }</dd>
-              </dl>
-            </div>
-            <div className="co-detail-table__section col-sm-3">
-              <dl className="co-m-pane__details">
-                <dt className="co-detail-table__section-header">Approval</dt>
-                <dd>{ this.state.waitingForUpdate
-                  // FIXME(alecmerdler): Spinner stays forever because new `props.obj` not received after modal calls `k8sUpdated`
-                  ? <LoadingInline />
-                  : <a className="co-m-modal-link" href="#" onClick={(e) => modal(e, 'approval')}>{obj.spec.installPlanApproval || 'Automatic'}</a>
-                }</dd>
-              </dl>
-            </div>
-            <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt className="co-detail-table__section-header">Upgrade Status</dt>
-                <dd>{subscriptionState(_.get(obj.status, 'state'))}</dd>
-              </dl>
-              <div className="co-detail-table__bracket"></div>
-              <div className="co-detail-table__breakdown">
-                { _.get(obj.status, 'installedCSV') && !_.isEmpty(installedCSV)
-                  ? <Link to={`/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(obj.status, 'installedCSV')}`}>1 installed</Link>
-                  : <span>0 installed</span> }
-                { _.get(obj.status, 'state') === SubscriptionState.SubscriptionStateUpgradePending && _.get(obj.status, 'installplan')
-                  ? <Link to={`/k8s/ns/${obj.metadata.namespace}/${InstallPlanModel.plural}/${_.get(obj.status, 'installplan.name')}`}>1 installing</Link>
-                  : <span>0 installing</span> }
-              </div>
-            </div>
-          </div>
+    return <div className="co-detail-table">
+      <div className="co-detail-table__row row">
+        <div className="co-detail-table__section col-sm-3">
+          <dl className="co-m-pane__details">
+            <dt className="co-detail-table__section-header">Channel</dt>
+            <dd>{ this.state.waitingForUpdate
+              ? <LoadingInline />
+              : <a className="co-m-modal-link" onClick={() => channelModal()}>{obj.spec.channel || 'default'}</a>
+            }</dd>
+          </dl>
         </div>
-      </div>
-      <div className="co-m-pane__body-group">
-        <div className="row">
-          <div className="col-sm-6">
-            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={false} />
-          </div>
-          <div className="col-sm-6">
-            {/* TODO(alecmerdler): Show if InstallPlan needs approval */}
-            <dl className="co-m-pane__details">
-              <dt>Installed Version</dt>
-              <dd>
-                { _.get(obj.status, 'installedCSV') && !_.isEmpty(installedCSV)
-                  ? <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={_.get(obj.status, 'installedCSV')} namespace={obj.metadata.namespace} title={_.get(obj.status, 'installedCSV')} />
-                  : 'None' }
-              </dd>
-              <dt>Starting Version</dt>
-              <dd>{obj.spec.startingCSV || 'None'}</dd>
-              <dt>Catalog</dt>
-              <dd>
-                <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={obj.spec.source} namespace={obj.metadata.namespace} title={obj.spec.source} />
-              </dd>
-            </dl>
+        <div className="co-detail-table__section col-sm-3">
+          <dl className="co-m-pane__details">
+            <dt className="co-detail-table__section-header">Approval</dt>
+            <dd>{ this.state.waitingForUpdate
+              ? <LoadingInline />
+              : <a className="co-m-modal-link" onClick={() => approvalModal()}>{obj.spec.installPlanApproval || 'Automatic'}</a>
+            }</dd>
+          </dl>
+        </div>
+        <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
+          <dl className="co-m-pane__details">
+            <dt className="co-detail-table__section-header">Upgrade Status</dt>
+            <dd>{subscriptionState(_.get(obj.status, 'state'))}</dd>
+          </dl>
+          <div className="co-detail-table__bracket"></div>
+          <div className="co-detail-table__breakdown">
+            { _.get(obj.status, 'installedCSV') && !_.isEmpty(installedCSV)
+              ? <Link to={`/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(obj.status, 'installedCSV')}`}>1 installed</Link>
+              : <span>0 installed</span> }
+            { _.get(obj.status, 'state') === SubscriptionState.SubscriptionStateUpgradePending && _.get(obj.status, 'installplan')
+              ? <Link to={`/k8s/ns/${obj.metadata.namespace}/${InstallPlanModel.plural}/${_.get(obj.status, 'installplan.name')}`}>1 installing</Link>
+              : <span>0 installing</span> }
           </div>
         </div>
       </div>
@@ -176,8 +182,7 @@ export class SubscriptionDetails extends React.Component<SubscriptionDetailsProp
 export const SubscriptionDetailsWrapper: React.SFC<SubscriptionDetailsWrapperProps> = ({obj}) => {
   const resources = [
     {kind: ConfigMapModel.kind, name: obj.spec.source, namespace: 'tectonic-system', isList: false, prop: 'configMap'},
-    {kind: referenceForModel(ClusterServiceVersionModel), name: obj.status.installedCSV, namespace: obj.metadata.namespace, isList: false, prop: 'installedCSV'},
-    ...(_.get(obj, 'status.installplan.name') ? [{kind: referenceForModel(InstallPlanModel), name: obj.status.installplan.name, namespace: obj.metadata.namespace, isList: false, prop: 'installPlan'}] : [])
+    ...(_.get(obj, 'status.installedCSV') ? [{kind: referenceForModel(ClusterServiceVersionModel), name: obj.status.installedCSV, namespace: obj.metadata.namespace, isList: false, prop: 'installedCSV'}] : [])
   ];
 
   const pkgFor = (configMap: {loaded: boolean, data: K8sResourceKind}) => (_.get(configMap, 'data.data.packages') ? safeLoad(_.get(configMap, 'data.data.packages')) : [])
@@ -185,10 +190,9 @@ export const SubscriptionDetailsWrapper: React.SFC<SubscriptionDetailsWrapperPro
 
   type InnerProps = {
     configMap: {loaded: boolean, data: K8sResourceKind},
-    installPlan: {loaded: boolean, data: InstallPlanKind},
-    installedCSV: {loaded: boolean, data: ClusterServiceVersionKind},
+    installedCSV?: {loaded: boolean, data: ClusterServiceVersionKind},
   };
-  const Inner = (props: InnerProps) => <SubscriptionDetails obj={obj} pkg={pkgFor(props.configMap)} installPlan={props.installPlan.data} installedCSV={props.installedCSV.data} />;
+  const Inner = (props: InnerProps) => <SubscriptionDetails obj={obj} pkg={pkgFor(props.configMap)} installedCSV={_.get(props.installedCSV, 'data')} />;
 
   return <Firehose resources={resources}>
     <Inner {...{} as any} />
@@ -223,7 +227,18 @@ export type SubscriptionHeaderProps = {
 
 export type SubscriptionRowProps = {
   obj: SubscriptionKind;
-  csv: ClusterServiceVersionKind;
+};
+
+export type SubscriptionUpdatesProps = {
+  obj: SubscriptionKind;
+  pkg: Package;
+  installedCSV?: ClusterServiceVersionKind;
+};
+
+export type SubscriptionUpdatesState = {
+  waitingForUpdate: boolean;
+  channel: string;
+  installPlanApproval: InstallPlanApproval;
 };
 
 export type SubscriptionDetailsWrapperProps = {
@@ -233,12 +248,7 @@ export type SubscriptionDetailsWrapperProps = {
 export type SubscriptionDetailsProps = {
   obj: SubscriptionKind;
   pkg: Package;
-  installPlan?: InstallPlanKind;
   installedCSV?: ClusterServiceVersionKind;
-};
-
-export type SubscriptionDetailsState = {
-  waitingForUpdate: boolean;
 };
 
 export type SubscriptionDetailsPageProps = {
@@ -249,5 +259,6 @@ SubscriptionHeader.displayName = 'SubscriptionHeader';
 SubscriptionRow.displayName = 'SubscriptionRow';
 SubscriptionsList.displayName = 'SubscriptionsList';
 SubscriptionsPage.displayName = 'SubscriptionsPage';
+SubscriptionDetails.displayName = 'SubscriptionDetails';
 SubscriptionDetailsPage.displayName = 'SubscriptionDetailsPage';
 SubscriptionDetailsWrapper.displayName = 'SubscriptionDetailsWrapper';

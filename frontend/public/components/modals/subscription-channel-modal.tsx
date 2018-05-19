@@ -15,7 +15,8 @@ export class SubscriptionChannelModal extends PromiseComponent {
 
   constructor(public props: SubscriptionChannelModalProps) {
     super(props);
-    this.state.selectedChannel = props.subscription.spec.channel;
+
+    this.state.selectedChannel = props.subscription.spec.channel || props.pkg.channels[0].name;
   }
 
   private submit(event): void {

@@ -16,14 +16,9 @@ export class InstallPlanApprovalModal extends PromiseComponent {
   constructor(public props: InstallPlanApprovalModalProps) {
     super(props);
 
-    const approvalStrategyFor = (obj: InstallPlanKind | SubscriptionKind) => {
-      switch (referenceFor(obj)) {
-        case referenceForModel(SubscriptionModel): return _.get(obj, 'spec.installPlanApproval');
-        case referenceForModel(InstallPlanModel): return _.get(obj, 'spec.approval');
-        default: return null;
-      }
-    };
-    this.state.selectedApprovalStrategy = approvalStrategyFor(props.obj) || InstallPlanApproval.Automatic;
+    this.state.selectedApprovalStrategy = referenceFor(props.obj) === referenceForModel(SubscriptionModel) && _.get(props.obj, 'spec.installPlanApproval')
+      || referenceFor(props.obj) === referenceForModel(InstallPlanModel) && _.get(props.obj, 'spec.approval')
+      || InstallPlanApproval.Automatic;
   }
 
   private submit(event): void {
