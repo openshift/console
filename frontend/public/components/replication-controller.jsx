@@ -15,18 +15,18 @@ metadata:
 spec:
   replicas: 2
   selector:
-    app: nginx
+    app: hello-openshift
   template:
     metadata:
-      name: nginx
+      name: hello-openshift
       labels:
-        app: nginx
+        app: hello-openshift
     spec:
       containers:
-      - name: nginx
-        image: nginx
+      - name: hello-openshift
+        image: openshift/hello-openshift
         ports:
-        - containerPort: 80`);
+        - containerPort: 8080`);
 
 
 const Details = ({obj: replicationController}) => <React.Fragment>
