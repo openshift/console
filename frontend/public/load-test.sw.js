@@ -16,11 +16,13 @@ let multiplicationFactor = 50;
  * Simple Service Worker which multiplies every `/api/kubernetes/api/v1/pods` response for load testing.
  */
 self.addEventListener('fetch', (event) => {
+  // TODO(alecmerdler): Make this work for all workload lists
   if (/\/api\/kubernetes\/api\/v1(\/namespaces\/.*)?\/pods/.test(event.request.url)) {
     event.respondWith((async() => {
       const response = await fetch(event.request);
       const json = await response.json();
 
+      // TODO(alecmerdler): Mock the k8s pagination implmentation (limit/continue)
       json.items = json.items.map(item => Array.from(Array(multiplicationFactor)).map((_, i) => clonePod(item, i)).concat([item]))
         .reduce((flattened, items) => flattened.concat(items), []);
 
