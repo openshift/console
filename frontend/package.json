@@ -69,6 +69,8 @@
     "prop-types": "15.6.x",
     "react": "16.x",
     "react-copy-to-clipboard": "5.x",
+    "react-dnd": "^2.6.0",
+    "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "16.x",
     "react-helmet": "5.x",
     "react-lightweight-tooltip": "1.x",
