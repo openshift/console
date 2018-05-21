@@ -79,12 +79,10 @@ Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable w
 
 #### OpenShift
 
-Registering an OpenShift OAuth client requires administrative privileges for the entire cluster not just a local project. If you've got a working `kubectl` and `oc` on your path, but aren't a system administrator, run the following command to attempt to elevate privileges:
+Registering an OpenShift OAuth client requires administrative privileges for the entire cluster, not just a local project. Run the following command to log in as cluster admin:
 
 ```
 oc login -u system:admin
-oc adm policy  --as system:admin add-cluster-role-to-user cluster-admin admin
-oc login -u admin
 ```
 
 To run bridge locally connected to a remote OpenShift cluster, create an `OAuthClient` resource with a generated secret and read that secret:
