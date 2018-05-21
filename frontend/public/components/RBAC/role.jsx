@@ -8,7 +8,7 @@ import { Cog, SectionHeading, MsgBox, navFactory, ResourceCog, ResourceLink, Tim
 import { BindingName, BindingsList, RulesList } from './index';
 import { registerTemplate } from '../../yaml-templates';
 import { flatten as bindingsFlatten } from './bindings';
-import { flagPending } from '../../features';
+import { flagPending, connectToFlags, FLAGS } from '../../features';
 
 registerTemplate('rbac.authorization.k8s.io/v1.Role', `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -176,7 +176,7 @@ export const roleType = role => {
   return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-export const RolesPage = ({namespace, showTitle, flags}) => {
+export const RolesPage = connectToFlags(FLAGS.PROJECTS_AVAILBLE, FLAGS.PROJECTS_AVAILBLE)(({namespace, showTitle, flags}) => {
   const projectsAvailable = !flagPending(flags.PROJECTS_AVAILBLE) && flags.PROJECTS_AVAILBLE;
   return <MultiListPage
     ListComponent={RolesList}
@@ -203,4 +203,4 @@ export const RolesPage = ({namespace, showTitle, flags}) => {
     }]}
     title="Roles"
   />;
-};
+});

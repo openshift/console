@@ -1,47 +1,8 @@
 /* eslint-disable no-unused-vars */
 
-import { ConfigMapsPage, ConfigMapsDetailsPage } from './configmap';
-import { ClustersPage, ClustersDetailsPage } from './clusters';
-import { ContainersDetailsPage } from './container';
-import { DaemonSetsPage, DaemonSetsDetailsPage } from './daemonset';
-import { DeploymentConfigsPage, DeploymentConfigsDetailsPage } from './deployment-config';
-import { DeploymentsPage, DeploymentsDetailsPage } from './deployment';
-import { BuildConfigsPage, BuildConfigsDetailsPage } from './build-config';
-import { BuildsPage, BuildsDetailsPage } from './build';
-import { ImageStreamsPage, ImageStreamsDetailsPage } from './image-stream';
-import { ImageStreamTagsDetailsPage } from './image-stream-tag';
-import { JobsPage, JobsDetailsPage } from './job';
-import { CronJobsPage, CronJobsDetailsPage } from './cron-job';
-import { NamespacesPage, NamespacesDetailsPage, ProjectsPage, ProjectsDetailsPage } from './namespace';
-import { NetworkPoliciesPage, NetworkPoliciesDetailsPage } from './network-policy';
-import { NodesPage, NodesDetailsPage } from './node';
-import { PodsPage, PodsDetailsPage } from './pod';
-import { ReplicaSetsPage, ReplicaSetsDetailsPage } from './replicaset';
-import { ReplicationControllersPage, ReplicationControllersDetailsPage } from './replication-controller';
-import { SecretsPage, SecretsDetailsPage } from './secret';
-import { ServiceAccountsPage, ServiceAccountsDetailsPage } from './service-account';
-import { ServicesPage, ServicesDetailsPage } from './service';
-import { IngressesPage, IngressesDetailsPage } from './ingress';
-import { RoutesPage, RoutesDetailsPage } from './routes';
-import { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
-import { RoleBindingsPage } from './RBAC/bindings';
-import { PrometheusInstancesPage } from './prometheus';
-import { ServiceMonitorsPage } from './service-monitor';
-import { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
-import { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';
-import { ResourceQuotasPage, ResourceQuotasDetailsPage } from './resource-quota';
-import { HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage } from './hpa';
-import { PersistentVolumesPage, PersistentVolumesDetailsPage } from './persistent-volume';
-import { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from './persistent-volume-claim';
-import { DefaultPage, DefaultDetailsPage } from './default-resource';
-import { ReportsPage, ReportsDetailsPage, ReportGenerationQueriesPage, ReportGenerationQueriesDetailsPage, ReportReference, ReportGenerationQueryReference } from './chargeback';
-import { CustomResourceDefinitionsPage } from './custom-resource-definition';
-import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
-import { SubscriptionsPage, SubscriptionDetailsPage } from './cloud-services/subscription';
-import { InstallPlansPage, InstallPlanDetailsPage } from './cloud-services/install-plan';
-import { CatalogSourceDetailsPage, CatalogSourcesPage } from './cloud-services/catalog-source';
-import { StorageClassPage, StorageClassDetailsPage } from './storage-class';
+import { Map as ImmutableMap } from 'immutable';
 
+import { ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { referenceForModel, GroupVersionKind } from '../module/k8s';
 import {
   ClusterModel,
@@ -87,95 +48,85 @@ import {
   CatalogSourceModel,
 } from '../models';
 
-export const resourceListPages = new Map<GroupVersionKind | string, React.ComponentType<any>>()
-  .set('Default', DefaultPage)
-  .set(referenceForModel(ClusterModel), ClustersPage)
-  .set(referenceForModel(ConfigMapModel), ConfigMapsPage)
-  .set(referenceForModel(DaemonSetModel), DaemonSetsPage)
-  .set(referenceForModel(DeploymentConfigModel), DeploymentConfigsPage)
-  .set(referenceForModel(DeploymentModel), DeploymentsPage)
-  .set(referenceForModel(BuildConfigModel), BuildConfigsPage)
-  .set(referenceForModel(BuildModel), BuildsPage)
-  .set(referenceForModel(ImageStreamModel), ImageStreamsPage)
-  .set(referenceForModel(JobModel), JobsPage)
-  .set(referenceForModel(CronJobModel), CronJobsPage)
-  .set(referenceForModel(ProjectModel), ProjectsPage)
-  .set(referenceForModel(NamespaceModel), NamespacesPage)
-  .set(referenceForModel(NetworkPolicyModel), NetworkPoliciesPage)
-  .set(referenceForModel(NodeModel), NodesPage)
-  .set(referenceForModel(PodModel), PodsPage)
-  .set(referenceForModel(ReplicaSetModel), ReplicaSetsPage)
-  .set(referenceForModel(ReplicationControllerModel), ReplicationControllersPage)
-  .set(referenceForModel(SecretModel), SecretsPage)
-  .set(referenceForModel(ServiceAccountModel), ServiceAccountsPage)
-  .set(referenceForModel(ServiceModel), ServicesPage)
-  .set(referenceForModel(IngressModel), IngressesPage)
-  .set(referenceForModel(RouteModel), RoutesPage)
-  .set(referenceForModel(RoleModel), RolesPage)
-  .set(referenceForModel(RoleBindingModel), RoleBindingsPage)
-  .set(referenceForModel(PrometheusModel), PrometheusInstancesPage)
-  .set(referenceForModel(ServiceMonitorModel), ServiceMonitorsPage)
-  .set(referenceForModel(AlertmanagerModel), AlertManagersPage)
-  .set(referenceForModel(StatefulSetModel), StatefulSetsPage)
-  .set(referenceForModel(ResourceQuotaModel), ResourceQuotasPage)
-  .set(referenceForModel(HorizontalPodAutoscalerModel), HorizontalPodAutoscalersPage)
-  .set(referenceForModel(PersistentVolumeModel), PersistentVolumesPage)
-  .set(referenceForModel(PersistentVolumeClaimModel), PersistentVolumeClaimsPage)
-  .set(ReportReference, ReportsPage)
-  .set(ReportGenerationQueryReference, ReportGenerationQueriesPage)
-  .set(referenceForModel(StorageClassModel), StorageClassPage)
-  .set(referenceForModel(CustomResourceDefinitionModel), CustomResourceDefinitionsPage)
-  .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionsPage)
-  .set(referenceForModel(CatalogSourceModel), CatalogSourcesPage)
-  .set(referenceForModel(SubscriptionModel), SubscriptionsPage)
-  .set(referenceForModel(InstallPlanModel), InstallPlansPage)
-  /*  ------------------------------- NOTE -------------------------------
+export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
+  .set(referenceForModel(ClusterModel), () => import('./clusters' /* webpackChunkName: "clusters" */).then(m => m.ClustersPage))
+  .set(referenceForModel(ConfigMapModel), () => import('./configmap' /* webpackChunkName: "configmap" */).then(m => m.ConfigMapsDetailsPage))
+  .set(referenceForModel(ContainerModel), () => import('./container' /* webpackChunkName: "container" */).then(m => m.ContainersDetailsPage))
+  .set(referenceForModel(DaemonSetModel), () => import('./daemonset' /* webpackChunkName: "daemonset" */).then(m => m.DaemonSetsDetailsPage))
+  .set(referenceForModel(DeploymentConfigModel), () => import('./deployment-config' /* webpackChunkName: "deployment-config" */).then(m => m.DeploymentConfigsDetailsPage))
+  .set(referenceForModel(DeploymentModel), () => import('./deployment' /* webpackChunkName: "deployment" */).then(m => m.DeploymentsDetailsPage))
+  .set(referenceForModel(BuildConfigModel), () => import('./build-config' /* webpackChunkName: "build-config" */).then(m => m.BuildConfigsDetailsPage))
+  .set(referenceForModel(BuildModel), () => import('./build' /* webpackChunkName: "build" */).then(m => m.BuildsDetailsPage))
+  .set(referenceForModel(ImageStreamModel), () => import('./image-stream' /* webpackChunkName: "image-stream" */).then(m => m.ImageStreamsDetailsPage))
+  .set(referenceForModel(ImageStreamTagModel), () => import('./image-stream-tag' /* webpackChunkName: "image-stream-tag" */).then(m => m.ImageStreamTagsDetailsPage))
+  .set(referenceForModel(JobModel), () => import('./job' /* webpackChunkName: "job" */).then(m => m.JobsDetailsPage))
+  .set(referenceForModel(CronJobModel), () => import('./cron-job' /* webpackChunkName: "cron-job" */).then(m => m.CronJobsDetailsPage))
+  .set(referenceForModel(ProjectModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.ProjectsDetailsPage))
+  .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesDetailsPage))
+  .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesDetailsPage))
+  .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesDetailsPage))
+  .set(referenceForModel(PodModel), () => import('./pod' /* webpackChunkName: "pod" */).then(m => m.PodsDetailsPage))
+  .set(referenceForModel(ReplicaSetModel), () => import('./replicaset' /* webpackChunkName: "replicaset" */).then(m => m.ReplicaSetsDetailsPage))
+  .set(referenceForModel(ReplicationControllerModel), () => import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(m => m.ReplicationControllersDetailsPage))
+  .set(referenceForModel(SecretModel), () => import('./secret' /* webpackChunkName: "secret" */).then(m => m.SecretsDetailsPage))
+  .set(referenceForModel(ServiceAccountModel), () => import('./service-account' /* webpackChunkName: "service-account" */).then(m => m.ServiceAccountsDetailsPage))
+  .set(referenceForModel(ServiceModel), () => import('./service' /* webpackChunkName: "service" */).then(m => m.ServicesDetailsPage))
+  .set(referenceForModel(IngressModel), () => import('./ingress' /* webpackChunkName: "ingress" */).then(m => m.IngressesDetailsPage))
+  .set(referenceForModel(RouteModel), () => import('./routes' /* webpackChunkName: "routes" */).then(m => m.RoutesDetailsPage))
+  .set(referenceForModel(ClusterRoleModel), () => import('./RBAC/role' /* webpackChunkName: "role" */).then(m => m.ClusterRolesDetailsPage))
+  .set(referenceForModel(RoleModel), () => import('./RBAC/role' /* webpackChunkName: "role" */).then(m => m.RolesDetailsPage))
+  .set(referenceForModel(AlertmanagerModel), () => import('./alert-manager' /* webpackChunkName: "alert-manager" */).then(m => m.AlertManagersDetailsPage))
+  .set(referenceForModel(StatefulSetModel), () => import('./stateful-set' /* webpackChunkName: "stateful-set" */).then(m => m.StatefulSetsDetailsPage))
+  .set(referenceForModel(ResourceQuotaModel), () => import('./resource-quota' /* webpackChunkName: "resource-quota" */).then(m => m.ResourceQuotasDetailsPage))
+  .set(referenceForModel(HorizontalPodAutoscalerModel), () => import('./hpa' /* webpackChunkName: "hpa" */).then(m => m.HorizontalPodAutoscalersDetailsPage))
+  .set(referenceForModel(PersistentVolumeModel), () => import('./persistent-volume' /* webpackChunkName: "persistent-volume" */).then(m => m.PersistentVolumesDetailsPage))
+  .set(referenceForModel(PersistentVolumeClaimModel), () => import('./persistent-volume-claim' /* webpackChunkName: "persistent-volume-claim" */).then(m => m.PersistentVolumeClaimsDetailsPage))
+  .set(ReportReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportsDetailsPage))
+  .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesDetailsPage))
+  .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassDetailsPage))
+  .set(referenceForModel(ClusterServiceVersionModel), () => import('./cloud-services/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsDetailsPage))
+  .set(referenceForModel(CatalogSourceModel), () => import('./cloud-services/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourceDetailsPage))
+  .set(referenceForModel(SubscriptionModel), () => import('./cloud-services/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionDetailsPage))
+  .set(referenceForModel(InstallPlanModel), () => import('./cloud-services/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlanDetailsPage));
 
-  To avoid circular imports, the keys in this list are manually duplicated in ./resource-dropdown.tsx !
-
-  ------------------------------------------------------------------------
-  */
-  ;
-
-export const resourceDetailPages = new Map<GroupVersionKind | string, React.ComponentType<any>>()
-  .set('Default', DefaultDetailsPage)
-  .set(referenceForModel(ClusterModel), ClustersDetailsPage)
-  .set(referenceForModel(ConfigMapModel), ConfigMapsDetailsPage)
-  .set(referenceForModel(ContainerModel), ContainersDetailsPage)
-  .set(referenceForModel(DaemonSetModel), DaemonSetsDetailsPage)
-  .set(referenceForModel(DeploymentConfigModel), DeploymentConfigsDetailsPage)
-  .set(referenceForModel(DeploymentModel), DeploymentsDetailsPage)
-  .set(referenceForModel(BuildConfigModel), BuildConfigsDetailsPage)
-  .set(referenceForModel(BuildModel), BuildsDetailsPage)
-  .set(referenceForModel(ImageStreamModel), ImageStreamsDetailsPage)
-  .set(referenceForModel(ImageStreamTagModel), ImageStreamTagsDetailsPage)
-  .set(referenceForModel(JobModel), JobsDetailsPage)
-  .set(referenceForModel(CronJobModel), CronJobsDetailsPage)
-  .set(referenceForModel(ProjectModel), ProjectsDetailsPage)
-  .set(referenceForModel(NamespaceModel), NamespacesDetailsPage)
-  .set(referenceForModel(NetworkPolicyModel), NetworkPoliciesDetailsPage)
-  .set(referenceForModel(NodeModel), NodesDetailsPage)
-  .set(referenceForModel(PodModel), PodsDetailsPage)
-  .set(referenceForModel(ReplicaSetModel), ReplicaSetsDetailsPage)
-  .set(referenceForModel(ReplicationControllerModel), ReplicationControllersDetailsPage)
-  .set(referenceForModel(SecretModel), SecretsDetailsPage)
-  .set(referenceForModel(ServiceAccountModel), ServiceAccountsDetailsPage)
-  .set(referenceForModel(ServiceModel), ServicesDetailsPage)
-  .set(referenceForModel(IngressModel), IngressesDetailsPage)
-  .set(referenceForModel(RouteModel), RoutesDetailsPage)
-  .set(referenceForModel(ClusterRoleModel), ClusterRolesDetailsPage)
-  .set(referenceForModel(RoleModel), RolesDetailsPage)
-  .set(referenceForModel(AlertmanagerModel), AlertManagersDetailsPage)
-  .set(referenceForModel(StatefulSetModel), StatefulSetsDetailsPage)
-  .set(referenceForModel(ResourceQuotaModel), ResourceQuotasDetailsPage)
-  .set(referenceForModel(HorizontalPodAutoscalerModel), HorizontalPodAutoscalersDetailsPage)
-  .set(referenceForModel(PersistentVolumeModel), PersistentVolumesDetailsPage)
-  .set(referenceForModel(PersistentVolumeClaimModel), PersistentVolumeClaimsDetailsPage)
-  .set(ReportReference, ReportsDetailsPage)
-  .set(ReportGenerationQueryReference, ReportGenerationQueriesDetailsPage)
-  .set(referenceForModel(StorageClassModel), StorageClassDetailsPage)
-  .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionsDetailsPage)
-  .set(referenceForModel(CatalogSourceModel), CatalogSourceDetailsPage)
-  .set('ClusterServiceVersionResources', ClusterServiceVersionResourcesDetailsPage)
-  .set(referenceForModel(SubscriptionModel), SubscriptionDetailsPage)
-  .set(referenceForModel(InstallPlanModel), InstallPlanDetailsPage);
+export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
+  .set(referenceForModel(ClusterModel), () => import('./clusters' /* webpackChunkName: "clusters" */).then(m => m.ClustersPage))
+  .set(referenceForModel(ConfigMapModel), () => import('./configmap' /* webpackChunkName: "configmap" */).then(m => m.ConfigMapsPage))
+  .set(referenceForModel(DaemonSetModel), () => import('./daemonset' /* webpackChunkName: "daemonset" */).then(m => m.DaemonSetsPage))
+  .set(referenceForModel(DeploymentConfigModel), () => import('./deployment-config' /* webpackChunkName: "deployment-config" */).then(m => m.DeploymentConfigsPage))
+  .set(referenceForModel(DeploymentModel), () => import('./deployment' /* webpackChunkName: "deployment" */).then(m => m.DeploymentsPage))
+  .set(referenceForModel(BuildConfigModel), () => import('./build-config' /* webpackChunkName: "build-config" */).then(m => m.BuildConfigsPage))
+  .set(referenceForModel(BuildModel), () => import('./build' /* webpackChunkName: "build" */).then(m => m.BuildsPage))
+  .set(referenceForModel(ImageStreamModel), () => import('./image-stream' /* webpackChunkName: "image-stream" */).then(m => m.ImageStreamsPage))
+  .set(referenceForModel(JobModel), () => import('./job' /* webpackChunkName: "job" */).then(m => m.JobsPage))
+  .set(referenceForModel(CronJobModel), () => import('./cron-job' /* webpackChunkName: "cron-job" */).then(m => m.CronJobsPage))
+  .set(referenceForModel(ProjectModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.ProjectsPage))
+  .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesPage))
+  .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesPage))
+  .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesPage))
+  .set(referenceForModel(PodModel), () => import('./pod' /* webpackChunkName: "pod" */).then(m => m.PodsPage))
+  .set(referenceForModel(ReplicaSetModel), () => import('./replicaset' /* webpackChunkName: "replicaset" */).then(m => m.ReplicaSetsPage))
+  .set(referenceForModel(ReplicationControllerModel), () => import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(m => m.ReplicationControllersPage))
+  .set(referenceForModel(SecretModel), () => import('./secret' /* webpackChunkName: "secret" */).then(m => m.SecretsPage))
+  .set(referenceForModel(ServiceAccountModel), () => import('./service-account' /* webpackChunkName: "service-account" */).then(m => m.ServiceAccountsPage))
+  .set(referenceForModel(ServiceModel), () => import('./service' /* webpackChunkName: "service" */).then(m => m.ServicesPage))
+  .set(referenceForModel(IngressModel), () => import('./ingress' /* webpackChunkName: "ingress" */).then(m => m.IngressesPage))
+  .set(referenceForModel(RouteModel), () => import('./routes' /* webpackChunkName: "routes" */).then(m => m.RoutesPage))
+  .set(referenceForModel(RoleModel), () => import('./RBAC/role' /* webpackChunkName: "role" */).then(m => m.RolesPage))
+  .set(referenceForModel(RoleBindingModel), () => import('./RBAC/bindings' /* webpackChunkName: "bindings" */).then(m => m.RoleBindingsPage))
+  .set(referenceForModel(PrometheusModel), () => import('./prometheus' /* webpackChunkName: "prometheus" */).then(m => m.PrometheusInstancesPage))
+  .set(referenceForModel(ServiceMonitorModel), () => import('./service-monitor' /* webpackChunkName: "service-monitor" */).then(m => m.ServiceMonitorsPage))
+  .set(referenceForModel(AlertmanagerModel), () => import('./alert-manager' /* webpackChunkName: "alert-manager" */).then(m => m.AlertManagersPage))
+  .set(referenceForModel(StatefulSetModel), () => import('./stateful-set' /* webpackChunkName: "stateful-set" */).then(m => m.StatefulSetsPage))
+  .set(referenceForModel(ResourceQuotaModel), () => import('./resource-quota' /* webpackChunkName: "resource-quota" */).then(m => m.ResourceQuotasPage))
+  .set(referenceForModel(HorizontalPodAutoscalerModel), () => import('./hpa' /* webpackChunkName: "hpa" */).then(m => m.HorizontalPodAutoscalersPage))
+  .set(referenceForModel(PersistentVolumeModel), () => import('./persistent-volume' /* webpackChunkName: "persistent-volume" */).then(m => m.PersistentVolumesPage))
+  .set(referenceForModel(PersistentVolumeClaimModel), () => import('./persistent-volume-claim' /* webpackChunkName: "persistent-volume-claim" */).then(m => m.PersistentVolumeClaimsPage))
+  .set(ReportReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportsPage))
+  .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesPage))
+  .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassPage))
+  .set(referenceForModel(CustomResourceDefinitionModel), () => import('./custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */).then(m => m.CustomResourceDefinitionsPage))
+  .set(referenceForModel(ClusterServiceVersionModel), () => import('./cloud-services/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsPage))
+  .set(referenceForModel(CatalogSourceModel), () => import('./cloud-services/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourcesPage))
+  .set(referenceForModel(SubscriptionModel), () => import('./cloud-services/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
+  .set(referenceForModel(InstallPlanModel), () => import('./cloud-services/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage));

@@ -1,15 +1,18 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as React from 'react';
 import { match } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
 
-import { resourceListPages, resourceDetailPages } from './resource-pages';
 import { connectToPlural } from '../kinds';
-import { LoadingBox } from './utils';
+import { LoadingBox, AsyncComponent } from './utils';
 import { K8sResourceKindReference, referenceForModel, K8sKind } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { OpenShiftGettingStarted } from './start-guide';
+import { resourceListPages, resourceDetailPages } from './resource-pages';
+import { DefaultPage, DefaultDetailsPage } from './default-resource';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
@@ -29,16 +32,14 @@ const ResourceListPage_ = connectToPlural((props: ResourceListPageProps) => {
   const noProjectsAvailable = !flagPending(flags.PROJECTS_AVAILABLE) && !flags.PROJECTS_AVAILABLE;
   const showGettingStarted = notProjectsListPage && isOpenShift && noProjectsAvailable;
 
-  let PageComponent = resourceListPages.get(referenceForModel(kindObj));
-  if (!PageComponent) {
-    PageComponent = resourceListPages.get('Default');
-  }
+  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+
   return <div className="co-m-list">
     {showGettingStarted && <OpenShiftGettingStarted />}
     <Helmet>
       <title>{kindObj.labelPlural}</title>
     </Helmet>
-    {PageComponent && <PageComponent fake={showGettingStarted} flags={flags} kind={modelRef} match={props.match} namespace={ns} />}
+    <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={modelRef} fake={showGettingStarted} />
   </div>;
 });
 
@@ -54,24 +55,18 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     return <ErrorPage404 />;
   }
 
-  let PageComponent = resourceDetailPages.get(referenceForModel(kindObj));
+  const componentLoader = props.match.params.appName
+    ? () => import('./cloud-services/clusterserviceversion-resource' /* webpackChunkName: "csv-resource" */).then(m => m.ClusterServiceVersionResourcesDetailsPage)
+    : resourceDetailPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultDetailsPage));
 
-  if (props.match.params.appName) {
-    PageComponent = resourceDetailPages.get('ClusterServiceVersionResources');
-  }
-
-  if (!PageComponent) {
-    PageComponent = resourceDetailPages.get('Default');
-  }
-  return <div>
+  return <React.Fragment>
     <Helmet>
       <title>{`${name} · Details`}</title>
     </Helmet>
-    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={props.modelRef} name={name} />}
-  </div>;
+    <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={props.modelRef} name={name} />
+  </React.Fragment>;
 });
 
-/* eslint-disable no-undef, no-unused-vars */
 export type ResourceListPageProps = {
   flags: any,
   modelRef: K8sResourceKindReference;
@@ -86,7 +81,6 @@ export type ResourceDetailsPageProps = {
   kindObj: K8sKind;
   kindsInFlight: boolean;
 };
-/* eslint-enable no-undef, no-unused-vars */
 
 ResourceListPage.displayName = 'ResourceListPage';
 ResourceDetailsPage.displayName = 'ResourceDetailsPage';
