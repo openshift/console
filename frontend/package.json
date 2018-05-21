@@ -68,6 +68,7 @@
     "plotly.js": "1.28.x",
     "prop-types": "15.6.x",
     "react": "16.x",
+    "react-copy-to-clipboard": "5.x",
     "react-dom": "16.x",
     "react-helmet": "5.x",
     "react-lightweight-tooltip": "1.x",

@@ -1,0 +1,16 @@
+.co-copy-to-clipboard {
+  font-family: $font-family-monospace;
+  position: relative;
+}
+
+.co-copy-to-clipboard__btn {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 42px;
+  height: 42px;
+}
+
+.co-copy-to-clipboard__text {
+  padding-right: 50px;
+}
