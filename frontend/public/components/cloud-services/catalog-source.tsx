@@ -15,9 +15,9 @@ import { List, ListHeader, ColHead } from '../factory';
 import { registerTemplate } from '../../yaml-templates';
 
 export const PackageHeader: React.SFC<PackageHeaderProps> = (props) => <ListHeader>
-  <ColHead {...props} className="col-md-4">Name</ColHead>
-  <ColHead {...props} className="col-md-4">Latest Version</ColHead>
-  <ColHead {...props} className="col-md-4">Subscriptions</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 hidden-xs">Latest Version</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6">Subscriptions</ColHead>
 </ListHeader>;
 
 export const PackageRow: React.SFC<PackageRowProps> = (props) => {
@@ -28,16 +28,16 @@ export const PackageRow: React.SFC<PackageRowProps> = (props) => {
   const subscriptions = allPkgSubscriptions.filter(sub => sub.metadata.namespace === namespace || _.isEmpty(namespace));
 
   return <div className="row co-resource-list__item" style={{display: 'flex', alignItems: 'center'}}>
-    <div className="col-md-4">
+    <div className="col-sm-4 col-xs-6">
       <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={catalogSource.spec.publisher} />
     </div>
-    <div className="col-md-4">{version} ({channel.name})</div>
-    <div className="col-md-4" style={{display: 'flex', justifyContent: 'space-between'}}>
+    <div className="col-xs-4 hidden-xs">{version} ({channel.name})</div>
+    <div className="col-sm-4 col-xs-6" style={{display: 'flex', justifyContent: 'space-between'}}>
       { subscriptions.length > 0
         ? <Link to={`/k8s/${_.isEmpty(namespace) ? 'all-namespaces' : `ns/${_.get(subscriptions[0], 'metadata.namespace')}`}/${SubscriptionModel.plural}?name=${subscriptions[0].spec.name}`}>
           { subscriptions.length > 1 ? `View ${subscriptions.length} subscriptions` : 'View subscription' }
         </Link>
-        : <span className="text-muted">Not subscribed</span> }
+        : <span className="text-muted hidden-xs">Not subscribed</span> }
       { _.isEmpty(namespace) || subscriptions.length === 0
         ? <Link to={`/k8s/${_.isEmpty(namespace) ? 'all-namespaces' : `ns/${namespace}`}/${CatalogSourceModel.plural}/tectonic-ocs/${obj.packageName}/subscribe`}>
           <button className="btn btn-primary">Subscribe</button>
