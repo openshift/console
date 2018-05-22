@@ -18,6 +18,8 @@ import * as routingActiveImg from '../imgs/routing-active.svg';
 import * as appsLogoActiveImg from '../imgs/apps-logo-active.svg';
 import { history, stripBasePath } from './utils';
 
+export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
+export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
 
 const stripNS = href => {
   href = stripBasePath(href);
@@ -49,9 +51,7 @@ class NavLink extends React.PureComponent {
 class ResourceNSLink extends NavLink {
   static isActive (props, resourcePath, activeNamespace) {
     const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
-    return props.model
-      ? resourcePath === referenceForModel(props.model) || _.startsWith(resourcePath, `${referenceForModel(props.model)}/`)
-      : resourcePath === href || _.startsWith(resourcePath, `${href}/`);
+    return matchesPath(resourcePath, href) || matchesModel(resourcePath, props.model);
   }
 
   get to () {
