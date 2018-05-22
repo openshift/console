@@ -79,8 +79,7 @@ const getRouteLabel = (route) => {
 
 export const RouteLocation: React.SFC<RouteHostnameProps> = ({obj}) => <div>
   {isWebRoute(obj) ? <a href={getRouteWebURL(obj)} target="_blank" rel="noopener noreferrer">
-    {getRouteLabel(obj)}
-    <i className="fa fa-external-link" style={{paddingLeft: '4px'}} aria-hidden="true"/>
+    {getRouteLabel(obj)}&nbsp;<i className="fa fa-external-link" aria-hidden="true"/>
   </a> : getRouteLabel(obj)
   }
 </div>;
@@ -206,25 +205,31 @@ const TLSSettings = props => <span>
 
 const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
-      <dt>Hostname</dt>
-      <dd>{route.spec.host}</dd>
-      <dt>Status</dt>
-      <dd>
-        <RouteStatus obj={route} />
-        <RouteWarnings obj={route} />
-      </dd>
-      <dt>Location</dt>
-      <dd><RouteLocation obj={route} /></dd>
-      <dt>Path</dt>
-      <dd>{route.spec.path || '-'}</dd>
-      <dt>{route.spec.to.kind}</dt>
-      <dd><ResourceLink kind={route.spec.to.kind} name={route.spec.to.name} namespace={route.metadata.namespace}
-        title={route.spec.to.name} />
-      </dd>
-      <dt>Target Port</dt>
-      <dd>{_.get(route, 'spec.port.targetPort') ? _.get(route, 'spec.port.targetPort') : '-'}</dd>
-    </ResourceSummary>
+    <div className="row">
+      <div className="col-sm-6">
+        <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
+          <dt>{route.spec.to.kind}</dt>
+          <dd><ResourceLink kind={route.spec.to.kind} name={route.spec.to.name} namespace={route.metadata.namespace}
+            title={route.spec.to.name} />
+          </dd>
+          <dt>Target Port</dt>
+          <dd>{_.get(route, 'spec.port.targetPort', '-')}</dd>
+        </ResourceSummary>
+      </div>
+      <div className="col-sm-6">
+        <dt>Location</dt>
+        <dd><RouteLocation obj={route} /></dd>
+        <dt>Status</dt>
+        <dd>
+          <RouteStatus obj={route} />
+          <RouteWarnings obj={route} />
+        </dd>
+        <dt>Hostname</dt>
+        <dd>{route.spec.host}</dd>
+        <dt>Path</dt>
+        <dd>{route.spec.path || '-'}</dd>
+      </div>
+    </div>
   </div>
   <div className="co-m-pane__body">
     <h1 className="co-section-title">TLS Settings</h1>
