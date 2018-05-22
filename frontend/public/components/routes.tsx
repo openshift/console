@@ -77,20 +77,95 @@ const getRouteLabel = (route) => {
   return label;
 };
 
-export const RouteHostname: React.SFC<RouteHostnameProps> = ({obj}) => <div>
+export const RouteLocation: React.SFC<RouteHostnameProps> = ({obj}) => <div>
   {isWebRoute(obj) ? <a href={getRouteWebURL(obj)} target="_blank" rel="noopener noreferrer">
     {getRouteLabel(obj)}
     <i className="fa fa-external-link" style={{paddingLeft: '4px'}} aria-hidden="true"/>
   </a> : getRouteLabel(obj)
   }
 </div>;
+RouteLocation.displayName = 'RouteLocation';
+
+export const RouteStatus: React.SFC<RouteHostnameProps> = ({obj: route}) => {
+  let atLeastOneAdmitted: boolean = false;
+
+  if (!route.status || !route.status.ingress) {
+    return <span>
+      <div className="fa fa-hourglass-half co-m-route-status-icon" aria-hidden="true"></div>
+      Pending
+    </span>;
+  }
+
+  _.each(route.status.ingress, (ingress) => {
+    const isAdmitted = _.some(ingress.conditions, {type: 'Admitted', status: 'True'});
+    if (isAdmitted) {
+      atLeastOneAdmitted = true;
+    }
+  });
+
+  return atLeastOneAdmitted
+    ? <span>
+      <div className="fa fa-check text-success co-m-route-status-icon" aria-hidden="true"></div>
+      Accepted
+    </span>
+    : <span>
+      <div className="fa fa-times text-danger co-m-route-status-icon" aria-hidden="true"></div>
+      Rejected
+    </span>;
+};
+RouteStatus.displayName = 'RouteStatus';
+
+const addTLSWarnings = (route: any, warnings: string[]) => {
+  if (!route.spec || !route.spec.tls) {
+    return;
+  }
+
+  if (!route.spec.tls.termination) {
+    warnings.push('Route has a TLS configuration, but no TLS termination type is specified. TLS will not be enabled until a termination type is set.');
+  }
+
+  if (route.spec.tls.termination === 'passthrough' && route.spec.path) {
+    warnings.push(`Route path "${ route.spec.path }" will be ignored since the route uses passthrough termination.`);
+  }
+};
+
+const addIngressWarnings = (route: any, warnings: string[]) => {
+  if (!route.status) {
+    return;
+  }
+
+  _.each(route.status.ingress, (ingress) => {
+    const condition: any = _.find(ingress.conditions, { type: 'Admitted', status: 'False' });
+    if (condition) {
+      let message = `Requested host '${ ingress.host || '<unknown host>' }' was rejected by the router.`;
+      if (condition.message || condition.reason) {
+        message += ` Reason: ${ condition.message || condition.reason }.`;
+      }
+      warnings.push(message);
+    }
+  });
+};
+
+export const RouteWarnings: React.SFC<RouteHostnameProps> = ({obj: route}) => {
+  const warnings: string[] = [];
+
+  if (!route) {
+    return;
+  }
+
+  addTLSWarnings(route, warnings);
+  addIngressWarnings(route, warnings);
+  return <React.Fragment>
+    {warnings.map((warning, index) => <div key={index} className="co-m-route-warnings">{warning}</div>)}
+  </React.Fragment>;
+};
+RouteWarnings.displayName = 'RouteWarnings';
 
 const RouteListHeader: React.SFC<RouteHeaderProps> = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="spec.host">Hostname</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="spec.host">Location</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortField="spec.to.name">Service</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="spec.port.targetPort">Target Port</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="spec.tls.termination">TLS Termination</ColHead>
+  <ColHead {...props} className="col-md-4 hidden-sm hidden-xs">Status</ColHead>
 </ListHeader>;
 
 const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow obj={route}>
@@ -100,13 +175,12 @@ const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow o
       namespace={route.metadata.namespace} title={route.metadata.uid} />
   </div>
   <div className="col-md-3 col-sm-4 col-xs-6">
-    <RouteHostname obj={route} />
+    <RouteLocation obj={route} />
   </div>
   <div className="col-md-2 col-sm-4 hidden-xs">
-    <ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} />
+    <ResourceLink kind="Service" name={route.spec.to.name} namespace={route.metadata.namespace} title={route.spec.to.name} />
   </div>
-  <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.port.targetPort', '')}</div>
-  <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.tls.termination', '')}</div>
+  <div className="col-md-4 hidden-sm hidden-xs"><RouteStatus obj={route} /></div>
 </ResourceRow>;
 
 const TLSSettings = props => <span>
@@ -133,12 +207,23 @@ const TLSSettings = props => <span>
 const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
   <div className="co-m-pane__body">
     <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
+      <dt>Hostname</dt>
+      <dd>{route.spec.host}</dd>
+      <dt>Status</dt>
+      <dd>
+        <RouteStatus obj={route} />
+        <RouteWarnings obj={route} />
+      </dd>
+      <dt>Location</dt>
+      <dd><RouteLocation obj={route} /></dd>
       <dt>Path</dt>
       <dd>{route.spec.path || '-'}</dd>
-      <dt>{route.spec.to.kind || 'Routes To'}</dt>
-      <dd><ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} /></dd>
+      <dt>{route.spec.to.kind}</dt>
+      <dd><ResourceLink kind={route.spec.to.kind} name={route.spec.to.name} namespace={route.metadata.namespace}
+        title={route.spec.to.name} />
+      </dd>
       <dt>Target Port</dt>
-      <dd>{_.get(route, 'spec.port.targetPort') ? _.get(route, 'spec.port.targetPort') : <em>any</em>}</dd>
+      <dd>{_.get(route, 'spec.port.targetPort') ? _.get(route, 'spec.port.targetPort') : '-'}</dd>
     </ResourceSummary>
   </div>
   <div className="co-m-pane__body">
