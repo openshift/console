@@ -161,25 +161,29 @@ export const RouteWarnings: React.SFC<RouteHostnameProps> = ({obj: route}) => {
 RouteWarnings.displayName = 'RouteWarnings';
 
 const RouteListHeader: React.SFC<RouteHeaderProps> = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="spec.host">Location</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortField="spec.to.name">Service</ColHead>
-  <ColHead {...props} className="col-md-4 hidden-sm hidden-xs">Status</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="spec.host">Location</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm hidden-xs" sortField="spec.to.name">Service</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs">Status</ColHead>
 </ListHeader>;
 
 const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow obj={route}>
-  <div className="col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="Route" resource={route} />
     <ResourceLink kind="Route" name={route.metadata.name}
       namespace={route.metadata.namespace} title={route.metadata.uid} />
   </div>
-  <div className="col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <ResourceLink kind="Namespace" name={route.metadata.namespace} title={route.metadata.namespace} />
+  </div>
+  <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
     <RouteLocation obj={route} />
   </div>
-  <div className="col-md-2 col-sm-4 hidden-xs">
+  <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
     <ResourceLink kind="Service" name={route.spec.to.name} namespace={route.metadata.namespace} title={route.spec.to.name} />
   </div>
-  <div className="col-md-4 hidden-sm hidden-xs"><RouteStatus obj={route} /></div>
+  <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><RouteStatus obj={route} /></div>
 </ResourceRow>;
 
 const TLSSettings = props => <span>
@@ -202,6 +206,19 @@ const TLSSettings = props => <span>
   </dl>
   }
 </span>;
+
+const calcTrafficPercentage = (weight: number, route: any) => {
+  let totalWeight = 0;
+  totalWeight += route.spec.to.weight;
+  _.each(route.spec.alternateBackends, alternate => totalWeight += alternate.weight);
+  return (weight/totalWeight*100).toFixed(1);
+};
+
+const RouteTargetRow = ({route, target}) => <tr>
+  <td><ResourceLink kind={target.kind} name={target.name} namespace={route.metadata.namespace} title={target.name} /></td>
+  <td>{target.weight}</td>
+  <td>{calcTrafficPercentage(target.weight, route)}%</td>
+</tr>;
 
 const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
   <div className="co-m-pane__body">
@@ -235,6 +252,27 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
     <h1 className="co-section-title">TLS Settings</h1>
     <TLSSettings tls={route.spec.tls} />
   </div>
+  { !_.isEmpty(route.spec.alternateBackends) && <div className="co-m-pane__body">
+    <h1 className="co-section-title">Traffic</h1>
+    <p className="co-m-pane__explanation">
+      This route splits traffic across multiple services.
+    </p>
+    <div className="co-table-container">
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Weight</th>
+            <th>Percent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <RouteTargetRow route={route} target={route.spec.to} />
+          {_.map(route.spec.alternateBackends, (alternate, i) => <RouteTargetRow key={i} route={route} target={alternate} />)}
+        </tbody>
+      </table>
+    </div>
+  </div> }
 </React.Fragment>;
 
 export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = props => <DetailsPage
