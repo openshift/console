@@ -60,7 +60,10 @@ export class BaseGraph extends SafetyFirst {
           console.error(e);
         }
       })
-      .catch(error => this.updateGraph(null, error))
+      .catch(error => {
+        this.setState({error});
+        this.updateGraph(null, error);
+      })
       .then(() => this.interval = setTimeout(() => {
         if (this.isMounted_) {
           this.fetch();
@@ -115,12 +118,13 @@ export class BaseGraph extends SafetyFirst {
   }
 
   render () {
-    return <a href={this.prometheusURL()} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
-      <div className="graph-wrapper" style={this.style}>
-        <h5 className="graph-title">{this.props.title}</h5>
-        <div ref={this.setNode} style={{width: '100%'}}/>
-      </div>
-    </a>;
+    return this.state.error ? null : (
+      <a href={this.prometheusURL()} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
+        <div className="graph-wrapper" style={this.style}>
+          <h5 className="graph-title">{this.props.title}</h5>
+          <div ref={this.setNode} style={{width: '100%'}}/>
+        </div>
+      </a>);
   }
 }
 
