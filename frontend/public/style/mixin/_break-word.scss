@@ -1,0 +1,6 @@
+// Generic mixin for break-word. Note if element is a flex child then min-width: 0% is necessary for it to wrap.
+
+@mixin co-break-word() {
+  overflow-wrap: break-word; // new name as per the CSS3 spec
+  word-wrap: break-word; // IE 11, Edge 16/17 requires legacy name "word-wrap" rather than "overflow-wrap".
+}

@@ -171,29 +171,26 @@ const Details = ({obj: pod}) => {
       <br />
 
       <div className="row">
-        <div className="col-lg-8">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
-                <dt>Node Selector</dt>
-                <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>Status</dt>
-                <dd>{podPhase(pod)}</dd>
-                <dt>Pod IP</dt>
-                <dd>{pod.status.podIP || '-'}</dd>
-                <dt>Node</dt>
-                <dd><NodeLink name={pod.spec.nodeName} /></dd>
-                <dt>Restart Policy</dt>
-                <dd>{getRestartPolicyLabel(pod)}</dd>
-              </dl>
-            </div>
-          </div>
+        <div className="col-sm-6">
+          <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
+            <dt>Node Selector</dt>
+            <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <dl className="co-m-pane__details">
+            <dt>Status</dt>
+            <dd>{podPhase(pod)}</dd>
+            <dt>Pod IP</dt>
+            <dd>{pod.status.podIP || '-'}</dd>
+            <dt>Node</dt>
+            <dd><NodeLink name={pod.spec.nodeName} /></dd>
+            <dt>Restart Policy</dt>
+            <dd>{getRestartPolicyLabel(pod)}</dd>
+          </dl>
         </div>
       </div>
+
     </div>
 
     <div className="co-m-pane__body">

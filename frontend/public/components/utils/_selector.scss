@@ -1,18 +1,5 @@
-$height: 18px;
-
-.co-m-selector {
-  display: inline-flex;
-  flex-wrap: nowrap;
-}
-
 .co-m-requirement {
-  display: inline-block;
   font-size: $font-size-base;
-  height: $height;
   line-height: $height;
   vertical-align: middle;
-
-  a {
-    display: inline-block;
-  }
 }

@@ -142,6 +142,7 @@ $color-dark-border: #ddd;
     padding: 20px;
     flex: 1 2 auto;
     border: solid 1px $color-grey-border;
+    min-width: 0%; // necessary for wrapping since its a flex child
   }
 
   .co-sysevent__icon-box {
