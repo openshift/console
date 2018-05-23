@@ -25,14 +25,17 @@ import (
 )
 
 const (
-	CSRFCookieName   = "csrf-token"
-	CSRFHeader       = "X-CSRFToken"
-	errorOAuth       = "oauth_error"
-	errorLoginState  = "login_state_error"
-	errorCookie      = "cookie_error"
-	errorInternal    = "internal_error"
-	errorMissingCode = "missing_code"
-	errorInvalidCode = "invalid_code"
+	CSRFCookieName    = "csrf-token"
+	CSRFHeader        = "X-CSRFToken"
+	stateCookieName   = "state-token"
+	errorOAuth        = "oauth_error"
+	errorLoginState   = "login_state_error"
+	errorCookie       = "cookie_error"
+	errorInternal     = "internal_error"
+	errorMissingCode  = "missing_code"
+	errorMissingState = "missing_state"
+	errorInvalidCode  = "invalid_code"
+	errorInvalidState = "invalid_state"
 )
 
 var log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
@@ -229,12 +232,19 @@ func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
 
 // LoginFunc redirects to the OIDC provider for user login.
 func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
-	// TODO(ericchiang): actually start using the "state" parameter correctly
 	var randData [4]byte
 	if _, err := io.ReadFull(rand.Reader, randData[:]); err != nil {
 		panic(err)
 	}
 	state := hex.EncodeToString(randData[:])
+
+	cookie := http.Cookie{
+		Name:     stateCookieName,
+		Value:    state,
+		HttpOnly: true,
+		Secure:   a.secureCookies,
+	}
+	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, a.oauth2Client.AuthCodeURL(state), http.StatusSeeOther)
 }
 
@@ -262,6 +272,14 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		q := r.URL.Query()
 		qErr := q.Get("error")
 		code := q.Get("code")
+		urlState := q.Get("state")
+
+		cookieState, err := r.Cookie(stateCookieName)
+		if err != nil {
+			log.Errorf("failed to parse state cookie: %v", err)
+			a.redirectAuthError(w, errorMissingState, err)
+			return
+		}
 
 		// Lack of both `error` and `code` indicates some other redirect with no params.
 		if qErr == "" && code == "" {
@@ -275,6 +293,11 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
+		if urlState != cookieState.Value {
+			log.Errorf("State in url does not match State cookie")
+			a.redirectAuthError(w, errorInvalidState, nil)
+			return
+		}
 		ctx := oidc.ClientContext(context.TODO(), a.client)
 		token, err := a.oauth2Client.Exchange(ctx, code)
 		if err != nil {
