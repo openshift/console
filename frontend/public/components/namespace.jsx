@@ -49,7 +49,7 @@ const NamespaceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Labels</ColHead>
 </ListHeader>;
 
-const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
+const NamespaceRow = ({obj: ns, style}) => <ResourceRow obj={ns} style={style}>
   <div className="col-xs-4">
     <ResourceCog actions={nsMenuActions} kind="Namespace" resource={ns} />
     <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />

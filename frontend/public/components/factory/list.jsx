@@ -5,6 +5,7 @@ import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
 import { getJobTypeAndCompletions, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
@@ -209,9 +210,62 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-const Rows = ({data, expand, Row, kindObj}) => <div className="co-m-table-grid__body">
-  {data.map(obj => <Row key={obj.rowKey || obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} />)}
-</div>;
+export class Rows extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.measurementCache = new CellMeasurerCache({
+      fixedWidth: true,
+      minHeight: 50,
+    });
+
+    this.rowRenderer = this._rowRenderer.bind(this);
+  }
+
+  _rowRenderer({index, style, key, parent}) {
+    const {data, expand, Row, kindObj} = this.props;
+
+    return (
+      <CellMeasurer
+        cache={this.measurementCache}
+        columnIndex={0}
+        key={key}
+        rowIndex={index}
+        parent={parent}>
+        <div style={style}>
+          <Row key={key} obj={data[index]} expand={expand} kindObj={kindObj} index={index} />
+        </div>
+      </CellMeasurer>
+    );
+  }
+
+  render () {
+    const data = this.props.data;
+    return <div className="co-m-table-grid__body">
+      <WindowScroller>
+        {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+          <AutoSizer disableHeight>
+            {({width}) => <div ref={registerChild}>
+              <VirtualList
+                autoHeight
+                data={data}
+                height={height}
+                deferredMeasurementCache={this.measurementCache}
+                rowHeight={this.measurementCache.rowHeight}
+                isScrolling={isScrolling}
+                onScroll={onChildScroll}
+                rowRenderer={this.rowRenderer}
+                rowCount={data.length}
+                scrollTop={scrollTop}
+                width={width}
+                tabIndex={null}
+              />
+            </div>}
+          </AutoSizer> }
+      </WindowScroller>
+    </div>;
+  }
+}
 
 Rows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
@@ -309,11 +363,11 @@ export class ResourceRow extends React.Component {
   }
 
   render () {
-    return <div className="row co-resource-list__item">{this.props.children}</div>;
+    return <div className="row co-resource-list__item" style={this.props.style}>{this.props.children}</div>;
   }
 }
 
-export const WorkloadListRow = ({kind, actions, obj: o}) => <ResourceRow obj={o}>
+export const WorkloadListRow = ({kind, actions, obj: o, style}) => <ResourceRow obj={o} style={style}>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={actions} kind={kind} resource={o} />
     <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />

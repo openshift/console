@@ -26,11 +26,11 @@ const SecretHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
-const SecretRow = ({obj: secret}) => {
+const SecretRow = ({obj: secret, style}) => {
   const data = _.size(secret.data);
   const age = fromNow(secret.metadata.creationTimestamp);
 
-  return <ResourceRow obj={secret}>
+  return <ResourceRow obj={secret} style={style}>
     <div className="col-md-3 col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind="Secret" resource={secret} />
       <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />

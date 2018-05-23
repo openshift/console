@@ -77,10 +77,10 @@ const NodeCLStatusRow = ({node}) => {
   return updateStatus ? <span>{updateStatus.className && <span><i className={updateStatus.className}></i>&nbsp;&nbsp;</span>}{updateStatus.text}</span> : null;
 };
 
-const NodeRow = ({obj: node, expand}) => {
+const NodeRow = ({obj: node, expand, style}) => {
   const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
-  return <ResourceRow obj={node} expand={expand}>
+  return <ResourceRow obj={node} expand={expand} style={style}>
     <div className="middler">
       <div className="col-xs-4">
         <NodeCog node={node} />
