@@ -52,7 +52,7 @@ const IngressListHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortFunc="ingressValidHosts">Hosts</ColHead>
 </ListHeader>;
 
-const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
+const IngressListRow = ({obj: ingress, style}) => <ResourceRow obj={ingress} style={style}>
   <div className="col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
     <ResourceLink kind="Ingress" name={ingress.metadata.name}

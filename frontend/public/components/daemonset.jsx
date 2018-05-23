@@ -35,7 +35,7 @@ const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
+const DaemonSetRow = ({obj: daemonset, style}) => <ResourceRow obj={daemonset} style={style}>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="DaemonSet" resource={daemonset} />
     <ResourceLink kind="DaemonSet" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
