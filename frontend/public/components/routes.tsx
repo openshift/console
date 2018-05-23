@@ -103,7 +103,7 @@ const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow o
     <RouteHostname obj={route} />
   </div>
   <div className="col-md-2 col-sm-4 hidden-xs">
-    <ResourceLink kind="Service" name={route.spec.to.name} title={route.spec.to.name} />
+    <ResourceLink kind="Service" name={route.spec.to.name} namespace={route.metadata.namespace} title={route.spec.to.name} />
   </div>
   <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.port.targetPort', '')}</div>
   <div className="col-md-2 hidden-sm hidden-xs">{_.get(route, 'spec.tls.termination', '')}</div>
