@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# This is a transitional file. Remove it once Jenkins is updated and all old PRs are merged or closed
+./jenkins.sh
