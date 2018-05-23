@@ -22,13 +22,13 @@ kind: Pod
 metadata:
   name: example
   labels:
-    app: redis
+    app: hello-openshift
 spec:
   containers:
-    - name: key-value-store
-      image: redis
+    - name: hello-openshift
+      image: openshift/hello-openshift
       ports:
-        - containerPort: 6379`);
+        - containerPort: 8080`);
 
 
 /** @type {React.SFC.<{pod: string}>} */

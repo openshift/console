@@ -13,17 +13,17 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: nginx
+      app: hello-openshift
   template:
     metadata:
       labels:
-        app: nginx
+        app: hello-openshift
     spec:
       containers:
-      - name: nginx
-        image: nginx
+      - name: hello-openshift
+        image: openshift/hello-openshift
         ports:
-        - containerPort: 80`);
+        - containerPort: 8080`);
 
 const menuActions = [Cog.factory.ModifyNodeSelector, Cog.factory.EditEnvironment, ...Cog.factory.common];
 
