@@ -185,11 +185,11 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
           </div>
         </div>
         <div className="co-m-pane__body">
+          <div className="co-clusterserviceversion-resource-details__compact-expand">
+            <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
+          </div>
           <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
             <div className="row">
-              <div className="pull-right">
-                <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
-              </div>
               <div className="col-xs-6">
                 { this.state.expanded
                   ? <ResourceSummary resource={this.props.obj} showPodSelector={false} />
