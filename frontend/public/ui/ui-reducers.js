@@ -45,7 +45,7 @@ export default (state, action) => {
       return state.set('activeNamespace', ns);
     }
     case types.startImpersonate:
-      return state.set('impersonate', {kind: action.kind, name: action.name});
+      return state.set('impersonate', {kind: action.kind, name: action.name, subprotocols: action.subprotocols});
 
     case types.stopImpersonate:
       return state.delete('impersonate');
