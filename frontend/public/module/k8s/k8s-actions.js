@@ -1,4 +1,4 @@
-import { getResources as getResources_} from './get-resources';
+import { getResources as getResources_ } from './get-resources';
 import store from '../../redux';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 
@@ -14,20 +14,20 @@ const types = {
   errored: 'errored',
 
   watchK8sList: 'watchK8sList',
-  addToList: 'addToList',
-  deleteFromList: 'deleteFromList',
-  modifyList: 'modifyList',
+  bulkAddToList: 'bulkAddToList',
   filterList: 'filterList',
   updateListFromWS: 'updateListFromWS',
 };
 
 const action_ = (type) => (id, k8sObjects) => ({type, id, k8sObjects});
 
+/** @type {{[id: string]: WebSocket}} */
 const WS = {};
 const POLLs = {};
 const REF_COUNTS = {};
 
 const nop = () => {};
+const paginationLimit = 250;
 
 const isImpersonateEnabled = () => !!store.getState().UI.get('impersonate');
 const getImpersonateSubprotocols = () => {
@@ -69,10 +69,8 @@ const getImpersonateSubprotocols = () => {
 };
 
 const actions = {
-  [types.deleteFromList]: action_(types.deleteFromList),
   [types.updateListFromWS]: action_(types.updateListFromWS),
-  [types.addToList]: action_(types.addToList),
-  [types.modifyList]: action_(types.modifyList),
+  [types.bulkAddToList]: action_(types.bulkAddToList),
   [types.loaded]: action_(types.loaded),
   [types.errored]: action_(types.errored),
   [types.modifyObject]: action_(types.modifyObject),
@@ -155,34 +153,47 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    // Fetch entire list (XHR) then use its resourceVersion to
-    //  start listening on a WS (?resourceVersion=$resourceVersion)
-    //  start the process over when:
-    //   1. the WS closes abnormally
-    //   2. the WS can not establish a connection within $TIMEOUT
+    /** @type {(continueToken: string) => Promise<string>} */
+    const incrementallyLoad = async(continueToken = '') => {
+      // TODO: Check `REF_COUNTS[id]` here and throw special error if undefined
+      const response = await k8sList(k8skind, {...query, limit: paginationLimit, ...(continueToken ? {continue: continueToken} : {})}, true);
+
+      if (!continueToken) {
+        dispatch(actions.loaded(id, response.items));
+      }
+
+      if (response.metadata.continue) {
+        dispatch(actions.bulkAddToList(id, response.items));
+        return incrementallyLoad(response.metadata.continue);
+      }
+      return response.metadata.resourceVersion;
+    };
+
+    /**
+     * Incrementally fetch list (XHR) using k8s pagination then use its resourceVersion to
+     *  start listening on a WS (?resourceVersion=$resourceVersion)
+     *  start the process over when:
+     *   1. the WS closes abnormally
+     *   2. the WS can not establish a connection within $TIMEOUT
+     */
     const pollAndWatch = () => (delete POLLs[id]) && Promise.all([
       getImpersonateSubprotocols(),
-      k8sList(k8skind, query, true).then(res => {
-        dispatch(actions.loaded(id, res.items));
-        if (WS[id]) {
-          return;
-        }
-        const { resourceVersion } = res.metadata;
-        return resourceVersion;
-      })
+      incrementallyLoad(),
     ]).then(([subProtocols, resourceVersion]) => {
+      // TODO: Check `REF_COUNTS[id]` here and throw special error if undefined
       WS[id] = WS[id] || k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
-      WS[id].onclose(event => {
-        // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
-        if (event.code !== 1006) {
-          return;
-        }
-        // eslint-disable-next-line no-console
-        console.log('WS closed abnormally - starting polling loop over!');
-        const ws = WS[id];
-        const timedOut = true;
-        ws && ws.destroy(timedOut);
-      })
+      WS[id]
+        .onclose(event => {
+          // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
+          if (event.code !== 1006) {
+            return;
+          }
+          // eslint-disable-next-line no-console
+          console.log('WS closed abnormally - starting polling loop over!');
+          const ws = WS[id];
+          const timedOut = true;
+          ws && ws.destroy(timedOut);
+        })
         .ondestroy(timedOut => {
           if (!timedOut) {
             return;

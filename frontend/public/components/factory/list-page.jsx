@@ -12,7 +12,6 @@ import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
 
-
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
     <input type="radio" onClick={() => onExpandChange(false)} /> Compact
@@ -236,7 +235,7 @@ FireMan_.propTypes = {
 
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: string, fieldSelector?: string, canCreate?: boolean, fake?: boolean}>} */
 export const ListPage = props => {
-  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true, fake} = props;
+  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, limit, showTitle = true, fake} = props;
   const ko = kindObj(kind);
   const {labelPlural, plural, namespaced, label} = ko;
   const title = props.title || labelPlural;
@@ -248,7 +247,7 @@ export const ListPage = props => {
     } catch (unused) { /**/ }
   }
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
-  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters }];
+  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters, limit }];
 
   if (!namespaced && namespace) {
     return <ErrorPage404 />;

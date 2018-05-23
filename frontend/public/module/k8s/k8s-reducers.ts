@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
+
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import {types} from './k8s-actions';
-import {getQN} from './k8s';
+import { types } from './k8s-actions';
+import { getQN } from './k8s';
+import { K8sResourceKind } from './index';
 
 const moreRecent = (a, b) => {
   const metaA = a.get('metadata').toJSON();
@@ -20,7 +23,7 @@ const removeFromList = (list, resource) => {
   return list.delete(qualifiedName);
 };
 
-const updateList = (list, nextJS) => {
+const updateList = (list: ImmutableMap<string, any>, nextJS: K8sResourceKind) => {
   const qualifiedName = getQN(nextJS);
   const current = list.get(qualifiedName);
   const next = fromJS(nextJS);
@@ -35,9 +38,7 @@ const updateList = (list, nextJS) => {
 
   // TODO: (kans) only store the data for things we display ...
   //  and then only do this comparison for the same stuff!
-  const currentJS = current.toJSON();
-  currentJS.metadata.resourceVersion = nextJS.metadata.resourceVersion;
-  if (_.isEqual(currentJS, nextJS)) {
+  if (current.deleteIn(['metadata', 'resourceVersion']).equals(next.deleteIn(['metadata', 'resourceVersion']))) {
     // If the only thing that differs is resource version, don't fire an update.
     return list;
   }
@@ -46,7 +47,6 @@ const updateList = (list, nextJS) => {
 };
 
 const loadList = (oldList, resources) => {
-  // TODO: not supported in ie :(
   const existingKeys = new Set(oldList.keys());
   return oldList.withMutations(list => {
     (resources || []).forEach(r => {
@@ -75,7 +75,7 @@ export default (state, action) => {
     return ImmutableMap();
   }
   const {k8sObjects, id} = action;
-  const list = state.getIn([id, 'data']);
+  const list: ImmutableMap<string, any> = state.getIn([id, 'data']);
 
   let newList;
 
@@ -164,18 +164,11 @@ export default (state, action) => {
         }
       }
       break;
-    case types.deleteFromList:
+    case types.bulkAddToList:
       if (!list) {
         return state;
       }
-      newList = removeFromList(list, k8sObjects);
-      break;
-    case types.addToList:
-    case types.modifyList:
-      if (!list) {
-        return state;
-      }
-      newList = updateList(list, k8sObjects);
+      newList = list.merge(k8sObjects.reduce((map, obj) => map.set(getQN(obj), fromJS(obj)), ImmutableMap()));
       break;
     case types.errored:
       if (!list) {
