@@ -1,5 +1,5 @@
 # Used for compiling the tectonic-console. After editing this file,
-# (and committing your edits) you should run ./push-builder to
+# (and committing your edits) you should run ./push-builder.sh to
 # push a new version of your image to quay.io/coreos/tectonic-console-builder
 
 FROM golang:1.9.2-stretch

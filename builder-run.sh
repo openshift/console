@@ -6,10 +6,10 @@ set -e
 # USAGE:
 #
 # With env vars:
-#   MYVAR=foo OTHERVAR=bar DOCKER_ENV=MYVAR,OTHERVAR ./builder-run ./my-script --my-script-arg1 --my-script-arg2
+#   MYVAR=foo OTHERVAR=bar DOCKER_ENV=MYVAR,OTHERVAR ./builder-run.sh ./my-script --my-script-arg1 --my-script-arg2
 #
 # Without env vars:
-#   ./builder-run ./my-script --my-script-arg1 --my-script-arg2
+#   ./builder-run.sh ./my-script --my-script-arg1 --my-script-arg2
 
 BUILDER_IMAGE="quay.io/coreos/tectonic-console-builder:v15"
 

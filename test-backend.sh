@@ -4,12 +4,12 @@ set -e
 
 #
 # Run all tests (not including functional)
-#   ./test-backend
-#   ./test-backend -v
+#   ./test-backend.sh
+#   ./test-backend.sh -v
 #
 # Run tests for one package
-#   PKG=./unit ./test-backend
-#   PKG=ssh ./test-backend
+#   PKG=./unit ./test-backend.sh
+#   PKG=ssh ./test-backend.sh
 #
 
 export GOBIN=${PWD}/bin:${GOBIN}

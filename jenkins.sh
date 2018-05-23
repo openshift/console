@@ -85,7 +85,7 @@ builder_run () {
 
     mkdir -p jenkins-logs
     # shellcheck disable=SC2086
-    if ./builder-run $cmd 2>&1 | tee "jenkins-logs/$name.log"
+    if ./builder-run.sh $cmd 2>&1 | tee "jenkins-logs/$name.log"
     then
         status "$name" 'success'
         s3_upload "jenkins-logs/$name.log" "$BUILD_TAG/$name.log"
@@ -101,17 +101,17 @@ builder_run () {
 }
 
 set -x
-./clean
+./clean.sh
 
 set +e
 
-builder_run 'Build' 0 1 ./build
-builder_run 'Tests' 0 1 ./test
-builder_run 'GUI-Tests' 1 1 ./test-gui crud
-builder_run 'GUI-Tests-ALM' 1 0 ./test-gui alm
+builder_run 'Build' 0 1 ./build.sh
+builder_run 'Tests' 0 1 ./test.sh
+builder_run 'GUI-Tests' 1 1 ./test-gui.sh crud
+builder_run 'GUI-Tests-ALM' 1 0 ./test-gui.sh alm
 
 status 'Performance' 'pending'
-if DOCKER_ENV="KUBECONFIG" ./builder-run ./test-gui performance
+if DOCKER_ENV="KUBECONFIG" ./builder-run.sh ./test-gui.sh performance
 then
     description=$(cat ./frontend/gui_test_screenshots/bundle-analysis.txt)
     status 'Performance' 'success' "${description}"
@@ -128,13 +128,13 @@ GIT_SHA_MASTER=$(git rev-parse origin/master)
 IS_RELEASE_TAG=$(git describe --exact-match --abbrev=0 --tags "${GIT_SHA_HEAD}" 2> /dev/null || :)
 if [ "$GIT_SHA_HEAD" == "$GIT_SHA_MASTER" ]; then
     echo "detected master build. building & pushing images..."
-    ./push
+    ./push.sh
 elif [ ! -z "$IMAGE_TAG" ]; then
     echo "detected request to push built image using tag ${IMAGE_TAG}. building & pushing images..."
-   ./push
+   ./push.sh
 elif [ -n "$IS_RELEASE_TAG" ]; then
     echo "detected release tag ${IS_RELEASE_TAG}. building & pushing images..."
-    ./push
+    ./push.sh
 else
     echo "skipping image push. HEAD sha does not appear to be master, nor is it a release tag: $GIT_SHA_HEAD"
 fi
