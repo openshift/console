@@ -36,7 +36,7 @@ const ServiceHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="spec.clusterIP">Location</ColHead>
 </ListHeader>;
 
-const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
+const ServiceRow = ({obj: s, style}) => <ResourceRow obj={s} style={style}>
   <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="Service" resource={s} />
     <ResourceLink kind="Service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
