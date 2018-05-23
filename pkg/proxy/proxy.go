@@ -10,10 +10,14 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
+
+var websocketPingInterval = 30 * time.Second
+var websocketTimeout = 30 * time.Second
 
 type Config struct {
 	HeaderBlacklist []string
@@ -223,26 +227,53 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer frontend.Close()
+	ticker := time.NewTicker(websocketPingInterval)
+	var writeMutex sync.Mutex // Needed because ticker & copy are writing to frontend in separate goroutines
+
+	defer func() {
+		ticker.Stop()
+		frontend.Close()
+	}()
 
 	errc := make(chan error, 2)
 
 	// Can't just use io.Copy here since browsers care about frame headers.
-	go func() { errc <- copyMsgs(frontend, backend) }()
-	go func() { errc <- copyMsgs(backend, frontend) }()
+	go func() { errc <- copyMsgs(nil, frontend, backend) }()
+	go func() { errc <- copyMsgs(&writeMutex, backend, frontend) }()
 
-	// Only wait for a single error and let the defers close both connections.
-	<-errc
+	for {
+		select {
+		case <-errc:
+			// Only wait for a single error and let the defers close both connections.
+			return
+		case <-ticker.C:
+			writeMutex.Lock()
+			// Send pings to client to prevent load balancers and other middlemen from closing the connection early
+			err := frontend.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(websocketTimeout))
+			writeMutex.Unlock()
+			if err != nil {
+				return
+			}
+		}
+	}
 }
 
-func copyMsgs(dest, src *websocket.Conn) error {
+func copyMsgs(writeMutex *sync.Mutex, dest, src *websocket.Conn) error {
 	for {
 		messageType, msg, err := src.ReadMessage()
 		if err != nil {
 			return err
 		}
 
-		if err := dest.WriteMessage(messageType, msg); err != nil {
+		if writeMutex == nil {
+			err = dest.WriteMessage(messageType, msg)
+		} else {
+			writeMutex.Lock()
+			err = dest.WriteMessage(messageType, msg)
+			writeMutex.Unlock()
+		}
+
+		if err != nil {
 			return err
 		}
 	}
