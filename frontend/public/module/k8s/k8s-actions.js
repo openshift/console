@@ -106,6 +106,7 @@ const actions = {
   },
 
   watchK8sList: (id, query, k8skind) => (dispatch, getState) => {
+    // Only one watch per unique list ID
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -114,11 +115,19 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-
     /** @type {(continueToken: string) => Promise<string>} */
     const incrementallyLoad = async(continueToken = '') => {
-      // TODO: Check `REF_COUNTS[id]` here and throw special error if undefined
+      // the list may not still be around...
+      if (!REF_COUNTS[id]) {
+        // let .then handle the cleanup
+        return;
+      }
+
       const response = await k8sList(k8skind, {...query, limit: paginationLimit, ...(continueToken ? {continue: continueToken} : {})}, true);
+
+      if (!REF_COUNTS[id]) {
+        return;
+      }
 
       if (!continueToken) {
         dispatch(actions.loaded(id, response.items));
@@ -139,8 +148,23 @@ const actions = {
      */
     const pollAndWatch = () => (delete POLLs[id]) && incrementallyLoad()
       .then(resourceVersion => {
+        // ensure this watch should still exist because pollAndWatch is recursiveish
+        if (!REF_COUNTS[id]) {
+          // eslint-disable-next-line no-console
+          console.log(`stopped watching ${id} before finishing incremental loading.`);
+          // call cleanup function out of abundance of caution...
+          dispatch(actions.stopK8sWatch(id));
+          return;
+        }
+
+        if (WS[id]) {
+          // eslint-disable-next-line no-console
+          console.warn(`Attempted to create multiple websockets for ${id}.  This should never happen.`);
+          return;
+        }
+
         const {subProtocols} = getState().UI.get('impersonate', {});
-        WS[id] = WS[id] || k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
+        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
         WS[id]
           .onclose(event => {
             // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
@@ -173,6 +197,13 @@ const actions = {
           .onbulkmessage(events => dispatch(actions.updateListFromWS(id, events)));
       },
       e => {
+        if (!REF_COUNTS[id]) {
+          // eslint-disable-next-line no-console
+          console.log(`stopped watching ${id} before finishing incremental loading with error ${e}!`);
+          // call cleanup function out of abundance of caution...
+          dispatch(actions.stopK8sWatch(id));
+          return;
+        }
         dispatch(actions.errored(id, e));
         if (POLLs[id]) {
           return;
