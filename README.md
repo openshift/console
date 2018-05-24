@@ -43,7 +43,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 ### Build everything:
 
 ```
-./build
+./build.sh
 ```
 
 Backend binaries are output to `/bin`.
@@ -114,10 +114,10 @@ Finally run the Console and visit [localhost:9000](http://localhost:9000):
 
 ## Docker
 
-The `builder-run` script will run any command from a docker container to ensure a consistent build environment.
+The `builder-run.sh` script will run any command from a docker container to ensure a consistent build environment.
 For example to build with docker run:
 ```
-./builder-run ./build
+./builder-run.sh ./build.sh
 ```
 
 The docker image used by builder-run is itself built and pushed by the
@@ -136,7 +136,7 @@ Build a docker image, tag it with the current git sha, and pushes it to the `qua
 
 Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercfg` file.
 ```
-./build-docker-push
+./build-docker-push.sh
 ```
 
 ### Jenkins automation
@@ -187,17 +187,17 @@ yarn run dev
 
 Run all unit tests:
 ```
-./test
+./test.sh
 ```
 
 Run backend tests:
 ```
-./test-backend
+./test-backend.sh
 ```
 
 Run frontend tests:
 ```
-./test-frontend
+./test-frontend.sh
 ```
 
 
@@ -261,11 +261,11 @@ Whenever making vendor changes:
 
 Add new backend dependencies:
  1. Edit `glide.yaml`
- 2. `./revendor`
+ 2. `./revendor.sh`
 
 Update existing backend dependencies:
  1. Edit the `glide.yaml` file to the desired verison (most likely a git hash)
- 2. Run `./revendor`
+ 2. Run `./revendor.sh`
  3. Verify update was successful. `glide.lock` will have been updated to reflect the changes to `glide.yaml` and the package will have been updated in `vendor`.
 
 #### Frontend

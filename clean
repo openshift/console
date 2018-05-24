@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-./clean-backend
-./clean-frontend
