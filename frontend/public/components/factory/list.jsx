@@ -12,6 +12,7 @@ import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
 import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
+import { routeStatus } from '../routes';
 
 // TODO: Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
 const listFilters = {
@@ -91,6 +92,14 @@ const listFilters = {
     const phase = build.status.phase;
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
+  'route-status': (statuses, route) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    let status = routeStatus(route);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  }
 };
 
 const getFilteredRows = (_filters, objects) => {
