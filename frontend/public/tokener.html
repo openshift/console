@@ -19,6 +19,11 @@
       if (!error) {
         var next = localStorage.getItem('next') || '';
         if (next) {
+          if (next[0] === '/' && json.loginSuccessURL.substr(-1) === '/') {
+            while (next[0] === '/') {
+              next = next.substr(1); //remove any slash in front of "next"
+            }
+          }
           localStorage.removeItem('next');
           window.location = json.loginSuccessURL + next;
         } else {
