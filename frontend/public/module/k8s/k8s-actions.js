@@ -116,7 +116,7 @@ const actions = {
     REF_COUNTS[id] = 1;
 
     /** @type {(continueToken: string) => Promise<string>} */
-    const incrementallyLoad = async(continueToken = '') => {
+    const incrementallyLoad = async (continueToken = '') => {
       // the list may not still be around...
       if (!REF_COUNTS[id]) {
         // let .then handle the cleanup
@@ -146,8 +146,11 @@ const actions = {
      *   1. the WS closes abnormally
      *   2. the WS can not establish a connection within $TIMEOUT
      */
-    const pollAndWatch = () => (delete POLLs[id]) && incrementallyLoad()
-      .then(resourceVersion => {
+    const pollAndWatch = async () => {
+      delete POLLs[id];
+
+      try {
+        const resourceVersion = await incrementallyLoad();
         // ensure this watch should still exist because pollAndWatch is recursiveish
         if (!REF_COUNTS[id]) {
           // eslint-disable-next-line no-console
@@ -165,38 +168,7 @@ const actions = {
 
         const {subProtocols} = getState().UI.get('impersonate', {});
         WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
-        WS[id]
-          .onclose(event => {
-            // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
-            if (event.code !== 1006) {
-              return;
-            }
-            // eslint-disable-next-line no-console
-            console.log('WS closed abnormally - starting polling loop over!');
-            const ws = WS[id];
-            const timedOut = true;
-            ws && ws.destroy(timedOut);
-          })
-          .ondestroy(timedOut => {
-            if (!timedOut) {
-              return;
-            }
-            // If the WS is unsucessful for timeout duration, assume it is less work
-            //  to update the entire list and then start the WS again
-
-            // eslint-disable-next-line no-console
-            console.log(`${id} timed out - restarting polling`);
-            delete WS[id];
-
-            if (POLLs[id]) {
-              return;
-            }
-
-            POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
-          })
-          .onbulkmessage(events => dispatch(actions.updateListFromWS(id, events)));
-      },
-      e => {
+      } catch (e) {
         if (!REF_COUNTS[id]) {
           // eslint-disable-next-line no-console
           console.log(`stopped watching ${id} before finishing incremental loading with error ${e}!`);
@@ -204,13 +176,46 @@ const actions = {
           dispatch(actions.stopK8sWatch(id));
           return;
         }
-        dispatch(actions.errored(id, e));
-        if (POLLs[id]) {
-          return;
-        }
-        POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
-      });
 
+        dispatch(actions.errored(id, e));
+
+        if (!POLLs[id]) {
+          POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+        }
+        return;
+      }
+
+      WS[id]
+        .onclose(event => {
+          // Close Frame Status Codes: https://tools.ietf.org/html/rfc6455#section-7.4.1
+          if (event.code !== 1006) {
+            return;
+          }
+          // eslint-disable-next-line no-console
+          console.log('WS closed abnormally - starting polling loop over!');
+          const ws = WS[id];
+          const timedOut = true;
+          ws && ws.destroy(timedOut);
+        })
+        .ondestroy(timedOut => {
+          if (!timedOut) {
+            return;
+          }
+          // If the WS is unsucessful for timeout duration, assume it is less work
+          //  to update the entire list and then start the WS again
+
+          // eslint-disable-next-line no-console
+          console.log(`${id} timed out - restarting polling`);
+          delete WS[id];
+
+          if (POLLs[id]) {
+            return;
+          }
+
+          POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+        })
+        .onbulkmessage(events => dispatch(actions.updateListFromWS(id, events)));
+    };
     pollAndWatch();
   },
 };
