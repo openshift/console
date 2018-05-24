@@ -160,11 +160,15 @@ export class PodExec extends React.PureComponent {
     }
 
     return <div>
-      <div className="co-m-pane__top-controls">
-        <span className="log-container-selector__text">
-          Connecting to
-        </span>
-        <Dropdown className="btn-group" items={_.mapValues(containers, nameWithIcon)} title={nameWithIcon(activeContainer || <LoadingInline />)} onChange={this.onChangeContainer} />
+      <div className="co-toolbar">
+        <div className="co-toolbar__group co-toolbar__group--left">
+          <div className="co-toolbar__item">
+            Connecting to
+          </div>
+          <div className="co-toolbar__item">
+            <Dropdown className="btn-group" items={_.mapValues(containers, nameWithIcon)} title={nameWithIcon(activeContainer || <LoadingInline />)} onChange={this.onChangeContainer} />
+          </div>
+        </div>
       </div>
       {contents}
     </div>;

@@ -85,13 +85,6 @@
   min-width: 0; // necessary for wrapping since its a flex child
 }
 
-.co-m-pane__top-controls {
-  margin: 0 0 10px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
 .co-inline-block {
   display: inline-block;
 }
@@ -210,4 +203,48 @@ input[type=number]::-webkit-outer-spin-button {
 .co-external-link {
   display: inline-block;
   padding-right: 25px;
+}
+
+.co-toolbar {
+  align-items: stretch;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.co-toolbar__item {
+  padding: 5px 0;
+}
+
+.co-toolbar__group {
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  @media (max-width: $screen-xs-max) {
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+}
+
+.co-toolbar__group--left {
+  justify-content: flex-start;
+  .co-toolbar__item {
+    padding-right: 15px;
+  }
+  @media (max-width: $screen-xs-max) {
+    align-items: flex-start;
+  }
+}
+
+.co-toolbar__group--right {
+  justify-content: flex-end;
+  .co-toolbar__item {
+    padding-left: 15px;
+  }
+  @media (max-width: $screen-xs-max) {
+    align-items: flex-end;
+  }
 }

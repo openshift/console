@@ -20,16 +20,22 @@ const streamStatusMessages = {
 // Component for log stream controls
 // TODO Fix styling for this. If no dropdown is there, the download button will not right-align
 const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
-  return <div className="co-m-pane__top-controls">
-    { status === 'loading' && <span className="co-icon-space-l"><LoadingInline />&nbsp;</span> }
-    { ['streaming', 'paused'].includes(status) && <span className="log-stream-control"><TogglePlay active={status === 'streaming'} onClick={toggleStreaming}/></span>}
-    <span className="log-container-selector__text">
-      {streamStatusMessages[status]}
-    </span>
-    {dropdown && <span style={{flexGrow: 1}}>{dropdown}</span>}
-    <button className="btn btn-default" onClick={onDownload}>
-      <i className="fa fa-download" aria-hidden="true"></i>&nbsp;Download
-    </button>
+  return <div className="co-toolbar">
+    <div className="co-toolbar__group co-toolbar__group--left">
+      <div className="co-toolbar__item">
+        { status === 'loading' && <React.Fragment><LoadingInline/>&nbsp;</React.Fragment> }
+        { ['streaming', 'paused'].includes(status) && <TogglePlay active={status === 'streaming'} onClick={toggleStreaming}/>}
+        {streamStatusMessages[status]}
+      </div>
+      {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
+    </div>
+    <div className="co-toolbar__group co-toolbar__group--right">
+      <div className="co-toolbar__item">
+        <button className="btn btn-default" onClick={onDownload}>
+          <i className="fa fa-download" aria-hidden="true"></i>&nbsp;Download
+        </button>
+      </div>
+    </div>
   </div>;
 };
 
