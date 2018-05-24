@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { saveAs } from 'file-saver';
 
 import { resourceURL, modelFor } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
@@ -22,14 +23,17 @@ const dataHasHTML = (data) => {
 };
 
 // Component for the streaming controls
-const LogControls = ({status, toggleStreaming, dropdown}) => {
+const LogControls = ({status, toggleStreaming, dropdown, onDownload}) => {
   return <div className="co-m-pane__top-controls">
     { status === 'loading' && <span className="co-icon-space-l"><LoadingInline /></span> }
     { ['streaming', 'paused'].includes(status) && <span className="log-stream-control"><TogglePlay active={status === 'streaming'} onClick={toggleStreaming}/></span>}
     <span className="log-container-selector__text">
       {logStatusMessages[status]}
     </span>
-    {dropdown && <span>{dropdown}</span>}
+    {dropdown && <span style={{flexGrow: 1}}>{dropdown}</span>}
+    <button className="btn btn-default" onClick={onDownload}>
+      <i className="fa fa-download"></i>&nbsp;Download
+    </button>
   </div>;
 };
 
@@ -43,6 +47,7 @@ export class ResourceLog extends SafetyFirst {
     this._retry = _.throttle(this._retry, 5000);
     this._toggleStreaming = this._toggleStreaming.bind(this);
     this._updateStatus = this._updateStatus.bind(this);
+    this._download = this._download.bind(this);
 
     this.state = {
       touched: Date.now(),
@@ -177,12 +182,23 @@ export class ResourceLog extends SafetyFirst {
     this._beginStreaming();
   }
 
+  _download () {
+    const blob = new Blob([this._buffer.lines().join('')], {type: 'text/plain;charset=utf-8'});
+    let filename = this.props.resourceName;
+    if (this.props.containerName) {
+      filename = `${filename}-${this.props.containerName}`;
+    }
+    saveAs(blob, `${filename}.log`);
+  }
+
   render() {
     return <React.Fragment>
       <LogControls
         dropdown={this.props.dropdown}
+        onClickDownload={this._download}
         status={this.state.status}
-        toggleStreaming={this._toggleStreaming} />
+        toggleStreaming={this._toggleStreaming}
+        onDownload={this._download} />
       <LogWindow
         buffer={this._buffer}
         touched={this.state.touched}
