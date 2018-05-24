@@ -45,6 +45,7 @@ func main() {
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://tectonic.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
+	fConfig := fs.String("config", "", "The YAML config file.")
 
 	fTectonicClusterName := fs.String("tectonic-cluster-name", "tectonic", "The Tectonic cluster name.")
 
@@ -94,6 +95,12 @@ func main() {
 	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
+	}
+
+	if *fConfig != "" {
+		if err := SetFlagsFromConfig(fs, *fConfig); err != nil {
+			log.Fatalf("Failed to load config: %v", err)
+		}
 	}
 
 	baseURL := &url.URL{}

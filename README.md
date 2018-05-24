@@ -85,11 +85,11 @@ Registering an OpenShift OAuth client requires administrative privileges for the
 oc login -u system:admin
 ```
 
-To run bridge locally connected to a remote OpenShift cluster, create an `OAuthClient` resource with a generated secret and read that secret:
+To run bridge locally connected to an OpenShift cluster, create an `OAuthClient` resource with a generated secret and read that secret:
 
 ```
-oc process -f examples/tectonic-console-oauth-client.yaml | oc apply -f -
-export OAUTH_SECRET=$( oc get oauthclient tectonic-console -o jsonpath='{.secret}' )
+oc process -f examples/console-oauth-client.yaml | oc apply -f -
+oc get oauthclient console-oauth-client -o jsonpath='{.secret}' > examples/console-client-secret
 ```
 
 If the CA bundle of the OpenShift API server is unavailable, fetch the CA certificates from a service account secret. Otherwise copy the CA bundle to `examples/ca.crt`:
@@ -100,16 +100,10 @@ oc get secrets -n default --field-selector type=kubernetes.io/service-account-to
 # Note: use "openssl base64" because the "base64" tool is different between mac and linux
 ```
 
-Set the `OPENSHIFT_API` environment variable to tell the script the API endpoint:
-
-```
-export OPENSHIFT_API="https://127.0.0.1:8443"
-```
-
 Finally run the Console and visit [localhost:9000](http://localhost:9000):
 
 ```
-./examples/run-bridge.sh
+./bin/bridge --config=examples/config.yaml
 ```
 
 #### OpenShift (without OAuth)

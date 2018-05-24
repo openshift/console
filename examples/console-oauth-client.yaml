@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: tectonic-console-oauth-client
+  name: console-oauth-client
 parameters:
   - name: OAUTH_SECRET
     generate: expression
@@ -13,7 +13,7 @@ objects:
   - apiVersion: oauth.openshift.io/v1
     kind: OAuthClient
     metadata:
-      name: tectonic-console
+      name: console-oauth-client
     grantMethod: auto
     secret: ${OAUTH_SECRET}
     redirectURIs:
