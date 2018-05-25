@@ -248,10 +248,11 @@ window.onunhandledrejection = function (e) {
 };
 
 if ('serviceWorker' in navigator) {
-  if (window.location.search.indexOf('loadTest') > -1) {
+  if (window.SERVER_FLAGS.loadTestFactor > 1) {
     import('file-loader?name=load-test.sw.js!../load-test.sw.js')
       .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-      .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: Number(new URLSearchParams(window.location.search).get('loadTest'))}));
+      .then(() => new Promise(r => navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r())))
+      .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: window.SERVER_FLAGS.loadTestFactor}));
   } else {
     navigator.serviceWorker.getRegistrations().then((registrations) => registrations.forEach(reg => reg.unregister()));
   }
