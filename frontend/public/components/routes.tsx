@@ -85,14 +85,12 @@ export const RouteLocation: React.SFC<RouteHostnameProps> = ({obj}) => <div>
 </div>;
 RouteLocation.displayName = 'RouteLocation';
 
-export const RouteStatus: React.SFC<RouteHostnameProps> = ({obj: route}) => {
+
+export const routeStatus = (route) => {
   let atLeastOneAdmitted: boolean = false;
 
   if (!route.status || !route.status.ingress) {
-    return <span>
-      <div className="fa fa-hourglass-half co-m-route-status-icon" aria-hidden="true"></div>
-      Pending
-    </span>;
+    return 'Pending';
   }
 
   _.each(route.status.ingress, (ingress) => {
@@ -102,15 +100,31 @@ export const RouteStatus: React.SFC<RouteHostnameProps> = ({obj: route}) => {
     }
   });
 
-  return atLeastOneAdmitted
-    ? <span>
-      <div className="fa fa-check text-success co-m-route-status-icon" aria-hidden="true"></div>
+  return atLeastOneAdmitted ? 'Accepted' : 'Rejected';
+};
+
+export const RouteStatus: React.SFC<RouteStatusProps> = ({obj: route}) => {
+  const status: string = routeStatus(route);
+
+  switch (status) {
+    case 'Pending':
+      return <React.Fragment>
+        <div className="fa fa-hourglass-half co-m-route-status-icon" aria-hidden="true"></div>
+        Pending
+      </React.Fragment>;
+    case 'Accepted':
+      return <React.Fragment>
+        <div className="fa fa-check text-success co-m-route-status-icon" aria-hidden="true"></div>
       Accepted
-    </span>
-    : <span>
-      <div className="fa fa-times text-danger co-m-route-status-icon" aria-hidden="true"></div>
+      </React.Fragment>;
+    case 'Rejected':
+      return <React.Fragment>
+        <div className="fa fa-times text-danger co-m-route-status-icon" aria-hidden="true"></div>
       Rejected
-    </span>;
+      </React.Fragment>;
+    default:
+      break;
+  }
 };
 RouteStatus.displayName = 'RouteStatus';
 
@@ -282,16 +296,33 @@ export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = props => <De
   pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}
 />;
 export const RoutesList: React.SFC = props => <List {...props} Header={RouteListHeader} Row={RouteListRow} />;
+
+const filters = [{
+  type: 'route-status',
+  selected: ['Accepted', 'Rejected', 'Pending'],
+  reducer: routeStatus,
+  items: [
+    {id: 'Accepted', title: 'Accepted'},
+    {id: 'Rejected', title: 'Rejected'},
+    {id: 'Pending', title: 'Pending'}
+  ],
+}];
+
 export const RoutesPage: React.SFC<RoutesPageProps> = props =>
   <ListPage
     ListComponent={RoutesList}
     kind={RoutesReference}
     canCreate={true}
+    rowFilters={filters}
     {...props}
   />;
 
 /* eslint-disable no-undef */
 export type RouteHostnameProps = {
+  obj: K8sResourceKind
+};
+
+export type RouteStatusProps = {
   obj: K8sResourceKind
 };
 

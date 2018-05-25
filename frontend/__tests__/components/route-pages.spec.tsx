@@ -198,7 +198,7 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = shallow(<RouteStatus obj={route} />);
     expect(wrapper.find('.fa-check').exists()).toBe(true);
-    expect(wrapper.find('span').text()).toEqual('Accepted');
+    expect(wrapper.text()).toEqual('Accepted');
   });
 
   it('renders Rejected status', () => {
@@ -225,7 +225,7 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = shallow(<RouteStatus obj={route} />);
     expect(wrapper.find('.fa-times').exists()).toBe(true);
-    expect(wrapper.find('span').text()).toEqual('Rejected');
+    expect(wrapper.text()).toEqual('Rejected');
   });
 
   it('renders Pending status', () => {
@@ -239,7 +239,7 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = shallow(<RouteStatus obj={route} />);
     expect(wrapper.find('.fa-hourglass-half').exists()).toBe(true);
-    expect(wrapper.find('span').text()).toEqual('Pending');
+    expect(wrapper.text()).toEqual('Pending');
   });
 });
 
