@@ -18,7 +18,7 @@ set -x
 : ${REPO:=quay.io/coreos/tectonic-console}
 : ${TESTER_REPO:=quay.io/coreos/tectonic-console-tester}
 
-GIT_VERSION=$(./git-version)
+GIT_VERSION=$(./git-version.sh)
 
 if [[ "$GIT_VERSION" == *dirty ]]; then
     echo "Won't push from a dirty git repo. Commit your changes before you push."
