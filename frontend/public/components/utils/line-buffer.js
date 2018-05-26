@@ -2,42 +2,45 @@
 // containing a newline (a logical "line")
 const LINE_PATTERN = /[^\n]+(?:\n|$)/g;
 
-export const lineBuffer = (maxSize) => {
-  let buffer = [];
+export class LineBuffer {
 
-  return {
-    totalLineCount: 0,
-    maxSize: maxSize,
-    clear: function() {
-      buffer.splice(0, buffer.length);
-    },
-    push: function(data) {
-      if (data === '') {
-        return;
-      }
+  constructor(maxSize){
+    this.totalLineCount = 0;
+    this.maxSize = maxSize;
+    this.buffer = [];
+  }
 
-      let overflow = 0;
-      let lines = data.match(LINE_PATTERN) || [data];
-      let trailer = buffer.pop() || '';
+  clear() {
+    this.buffer.splice(0, this.buffer.length);
+  }
 
-      if (trailer.substr(-1) !== '\n') {
-        trailer = trailer + (lines.shift() || '');
-        if (trailer !== '') {
-          this.totalLineCount = this.totalLineCount + 1;
-        }
-      }
-
-      this.totalLineCount = this.totalLineCount + lines.length;
-
-      buffer.push(trailer);
-      buffer = buffer.concat(lines);
-      overflow = buffer.length - maxSize;
-      if (overflow > 0) {
-        buffer.splice(0, overflow);
-      }
-    },
-    lines: function() {
-      return buffer;
+  push(data) {
+    if (data === '') {
+      return;
     }
-  };
-};
+
+    let overflow = 0;
+    let lines = data.match(LINE_PATTERN) || [data];
+    let trailer = this.buffer.pop() || '';
+
+    if (trailer.substr(-1) !== '\n') {
+      trailer = trailer + (lines.shift() || '');
+      if (trailer !== '') {
+        this.totalLineCount = this.totalLineCount + 1;
+      }
+    }
+
+    this.totalLineCount = this.totalLineCount + lines.length;
+
+    this.buffer.push(trailer);
+    this.buffer = this.buffer.concat(lines);
+    overflow = this.buffer.length - this.maxSize;
+    if (overflow > 0) {
+      this.buffer.splice(0, overflow);
+    }
+  }
+
+  lines() {
+    return this.buffer;
+  }
+}

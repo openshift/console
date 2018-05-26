@@ -8,11 +8,11 @@
 
   // play icon
   &.co-toggle-play--inactive:before {
-    content: "\f04b";
+    content: $fa-var-play;
   }
   // pause icon
   &.co-toggle-play--active:before {
-    content: "\f04c";
+    content: $fa-var-pause;
   }
 
   &.co-toggle-play--active {

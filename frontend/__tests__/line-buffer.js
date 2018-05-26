@@ -1,10 +1,10 @@
-import { lineBuffer } from '../public/components/utils/line-buffer';
+import { LineBuffer } from '../public/components/utils/line-buffer';
 
 describe('lineBuffer', () => {
   let buffer;
 
   beforeEach(() => {
-    buffer = lineBuffer(3);
+    buffer = new LineBuffer(3);
   });
 
   it('should allow no newlines', () => {
