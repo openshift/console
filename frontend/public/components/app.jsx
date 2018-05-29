@@ -8,7 +8,6 @@ import * as PropTypes from 'prop-types';
 
 import store from '../redux';
 import { ALL_NAMESPACES_KEY } from '../const';
-import { getCRDs } from '../kinds';
 import { connectToFlags, featureActions, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { ClusterOverviewContainer } from './cluster-overview-container';
@@ -35,6 +34,7 @@ import { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './cloud-servic
 import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
 import { ClusterServiceVersionModel, CatalogSourceModel } from '../models';
 import { referenceForModel } from '../module/k8s';
+import k8sActions from '../module/k8s/k8s-actions';
 import { coFetch } from '../co-fetch';
 import '../vendor.scss';
 import '../style.scss';
@@ -211,7 +211,7 @@ store.dispatch(featureActions.detectSecurityLabellerFlags);
 store.dispatch(featureActions.detectCalicoFlags);
 store.dispatch(featureActions.detectOpenShift);
 store.dispatch(featureActions.detectCanListNS);
-store.dispatch(getCRDs);
+store.dispatch(k8sActions.getResources());
 
 analyticsSvc.push({tier: 'tectonic'});
 

@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars, no-undef */
+
 import { getResources as getResources_ } from './get-resources';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 
 const types = {
   resources: 'resources',
-  swagger: 'swagger',
+  getResourcesInFlight: 'getResourcesInFlight',
 
   watchK8sObject: 'watchK8sObject',
   stopK8sWatch: 'stopK8sWatch',
@@ -18,10 +20,10 @@ const types = {
   updateListFromWS: 'updateListFromWS',
 };
 
-const action_ = (type) => (id, k8sObjects) => ({type, id, k8sObjects});
+type Action = (type: string) => (id: string, k8sObjects: any) => {type: string, id: string, k8sObjects: any};
+const action_: Action = (type) => (id, k8sObjects) => ({type, id, k8sObjects});
 
-/** @type {{[id: string]: WebSocket}} */
-const WS = {};
+const WS = {} as {[id: string]: WebSocket & any};
 const POLLs = {};
 const REF_COUNTS = {};
 
@@ -36,9 +38,9 @@ const actions = {
   [types.modifyObject]: action_(types.modifyObject),
 
   getResources: () => dispatch => {
-    const type = types.resources;
+    dispatch({type: types.getResourcesInFlight});
     getResources_()
-      .then(resources => dispatch({type, resources}))
+      .then(resources => dispatch({type: types.resources, resources}))
       // try again or something?
       // eslint-disable-next-line no-console
       .catch(err => console.error(err));
@@ -214,7 +216,7 @@ const actions = {
     };
     pollAndWatch();
   },
-};
+} as {[type: string]: Function};
 
 export {types};
 export default actions;

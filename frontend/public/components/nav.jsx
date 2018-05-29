@@ -8,7 +8,7 @@ import * as PropTypes from 'prop-types';
 import { FLAGS, featureReducerName } from '../features';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
-import { referenceForModel } from '../module/k8s/k8s-models';
+import { referenceForModel } from '../module/k8s';
 
 import { ClusterPicker } from './cluster-picker';
 

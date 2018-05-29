@@ -2,8 +2,10 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { SelfSubjectAccessReviewModel } from './models';
-import { k8sBasePath, k8sCreate } from './module/k8s';
+import { SelfSubjectAccessReviewModel, ChannelOperatorConfigModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel } from './models';
+import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
+import { k8sCreate } from './module/k8s/resource';
+import { types } from './module/k8s/k8s-actions';
 import { coFetchJSON } from './co-fetch';
 
 /* global
@@ -37,12 +39,13 @@ export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
   : undefined
 );
 
-export const CRDS_ = {
-  'channeloperatorconfigs.tco.coreos.com': FLAGS.CLUSTER_UPDATES,
-  'prometheuses.monitoring.coreos.com': FLAGS.PROMETHEUS,
-  'clusterserviceversion-v1s.app.coreos.com': FLAGS.CLOUD_SERVICES,
-  'clusters.multicluster.coreos.com': FLAGS.MULTI_CLUSTER,
-  'reports.chargeback.coreos.com': FLAGS.CHARGEBACK,
+export const CRDs = {
+  [referenceForModel(ChannelOperatorConfigModel)]: FLAGS.CLUSTER_UPDATES,
+  [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
+  // FIXME(alecmerdler): This should look for OLM+Catalog deployments instead of CRD
+  [referenceForModel(ClusterServiceVersionModel)]: FLAGS.CLOUD_SERVICES,
+  [referenceForModel(ClusterModel)]: FLAGS.MULTI_CLUSTER,
+  [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
 };
 
 const SET_FLAG = 'SET_FLAG';
@@ -106,7 +109,7 @@ export const featureActions = {
 };
 
 export const featureReducerName = 'FLAGS';
-export const featureReducer = (state, action) => {
+export const featureReducer = (state: ImmutableMap<string, any>, action) => {
   if (!state) {
     return ImmutableMap(DEFAULTS_);
   }
@@ -117,31 +120,28 @@ export const featureReducer = (state, action) => {
         throw new Error(`unknown key for reducer ${action.flag}`);
       }
       return state.merge({[action.flag]: action.value});
-    case 'addCRDs':
-      // flip all flags to false to signify that we did not see them
-      _.each(CRDS_, v => state = state.set(v, false));
-      // flip the ones we see back to true
-      _.each(action.kinds, (k: any) => {
-        const flag = CRDS_[k.metadata.name];
-        if (!flag) {
-          return;
-        }
-        // eslint-disable-next-line no-console
-        console.log(`${flag} was detected.`);
-        state = state.set(flag, true);
-      });
-      return state;
+
+    case types.resources:
+      // Flip all flags to false to signify that we did not see them
+      _.each(CRDs, v => state = state.set(v, false));
+
+      return action.resources.models.filter(model => CRDs[referenceForModel(model)] !== undefined)
+        .reduce((nextState, model) => {
+          const flag = CRDs[referenceForModel(model)];
+          // eslint-disable-next-line no-console
+          console.log(`${flag} was detected.`);
+
+          return nextState.set(flag, true);
+        }, state);
+
     default:
       return state;
   }
 };
 
-export const stateToProps = (flags, state) => {
-  const props = {flags: {}};
-  _.each(flags, f => {
-    props.flags[f] = _.get(state[featureReducerName].toJSON(), f);
-  });
-  return props;
+export const stateToProps = (desiredFlags: string[], state) => {
+  const flags = desiredFlags.reduce((allFlags, f) => ({...allFlags, [f]: state[featureReducerName].get(f)}), {});
+  return {flags};
 };
 
 export const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);

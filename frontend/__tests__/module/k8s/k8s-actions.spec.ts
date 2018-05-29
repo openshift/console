@@ -70,7 +70,7 @@ describe(types.watchK8sList, () => {
       }
     });
 
-    watchK8sList(id, {}, PodModel)(dispatch);
+    watchK8sList(id, {}, PodModel)(dispatch, jasmine.createSpy('getState'));
   });
 
   xit('stops incrementally fetching if `stopK8sWatch` action is dispatched', () => {

@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Map as ImmutableMap } from 'immutable';
 
 import { inject } from './index';
 import actions from '../../module/k8s/k8s-actions';
@@ -115,8 +116,8 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
   {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
 </div>);
 
-const stateToProps = ({KINDS}, {resources}) => ({
-  k8sModels: KINDS.get('kinds').filter((v, k) => resources.find(({kind}) => kind === k))
+const stateToProps = ({k8s}, {resources}) => ({
+  k8sModels: resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap()),
 });
 
 export const Firehose = connect(

@@ -4,8 +4,10 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { types } from './k8s-actions';
-import { getQN } from './k8s';
+import { getQN, referenceForModel } from './k8s';
 import { K8sResourceKind } from './index';
+import { allModels } from './k8s-models';
+import { namespacedResources } from '../../ui/ui-actions';
 
 const moreRecent = (a, b) => {
   const metaA = a.get('metadata').toJSON();
@@ -70,9 +72,9 @@ const loadList = (oldList, resources) => {
   });
 };
 
-export default (state, action) => {
+export default (state: ImmutableMap<string, any>, action) => {
   if (!state) {
-    return ImmutableMap();
+    return fromJS({RESOURCES: {inFlight: false, models: allModels()}});
   }
   const {k8sObjects, id} = action;
   const list: ImmutableMap<string, any> = state.getIn([id, 'data']);
@@ -80,8 +82,24 @@ export default (state, action) => {
   let newList;
 
   switch (action.type) {
+    case types.getResourcesInFlight:
+      return state.setIn(['RESOURCES', 'inFlight'], true);
     case types.resources:
-      return state.set('RESOURCES', action.resources);
+      return action.resources.models
+        .filter(model => !state.getIn(['RESOURCES', 'models']).has(referenceForModel(model)))
+        // FIXME: Need to remove duplicate `kinds` of static models because it breaks `connectToPlural()`. This means a CRD of `kind: Pod` cannot be defined!
+        .filter(model => !state.getIn(['RESOURCES', 'models']).find(({kind}) => kind === model.kind))
+        .map(model => {
+          model.namespaced ? namespacedResources.add(referenceForModel(model)) : namespacedResources.delete(referenceForModel(model));
+          return model;
+        })
+        .reduce((prevState, newModel) => prevState.updateIn(['RESOURCES', 'models'], models => models.set(referenceForModel(newModel), newModel)), state)
+        // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
+        .setIn(['RESOURCES', 'allResources'], action.resources.allResources)
+        .setIn(['RESOURCES', 'safeResources'], action.resources.safeResources)
+        .setIn(['RESOURCES', 'adminResources'], action.resources.adminResources)
+        .setIn(['RESOURCES', 'namespacedSet'], action.resources.namespacedSet)
+        .setIn(['RESOURCES', 'inFlight'], false);
 
     case types.filterList:
       return state.setIn([id, 'filters', action.name], action.value);
