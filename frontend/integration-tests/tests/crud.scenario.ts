@@ -85,7 +85,13 @@ describe('Kubernetes resource CRUD operations', () => {
       }
 
       it('displays a YAML editor for creating a new resource instance', async() => {
-        await crudView.createYAMLButton.click();
+        const exists = await crudView.createItemButton.isPresent();
+        if (exists) {
+          await crudView.createItemButton.click();
+          await crudView.createYAMLLink.click();
+        } else {
+          await crudView.createYAMLButton.click();
+        }
         await yamlView.isLoaded();
 
         const content = await yamlView.editorContent.getText();
