@@ -28,6 +28,7 @@ const resources = [
   'Default',
   'Deployments',
   'EtcdClusters',
+  'HorizontalPodAutoscalers',
   'Ingresses',
   'Jobs',
   'Namespaces',

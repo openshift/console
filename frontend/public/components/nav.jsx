@@ -325,6 +325,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="configmaps" name="Config Maps" onClick={this.close} />
             <ResourceNSLink resource="secrets" name="Secrets" onClick={this.close} />
             <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} />
+            <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" onClick={this.close} />
           </NavSection>
 
           <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
