@@ -4,10 +4,11 @@
 @import "style/config";
 
 // External dependencies that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
+// Patternfly variables must be imported before Bootstrap
+@import '~patternfly/dist/sass/patternfly/variables';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
-@import '~patternfly/dist/sass/patternfly/variables';
 
 @import "style/base";
 
