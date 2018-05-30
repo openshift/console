@@ -224,6 +224,7 @@ export class Rows extends React.Component {
 
   _rowRenderer({index, style, key, parent}) {
     const {data, expand, Row, kindObj} = this.props;
+    const obj = data[index];
 
     return (
       <CellMeasurer
@@ -233,7 +234,7 @@ export class Rows extends React.Component {
         rowIndex={index}
         parent={parent}>
         <div style={style}>
-          <Row key={key} obj={data[index]} expand={expand} kindObj={kindObj} index={index} />
+          <Row key={obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} index={index} />
         </div>
       </CellMeasurer>
     );
@@ -241,7 +242,7 @@ export class Rows extends React.Component {
 
   render () {
     const data = this.props.data;
-    return <div className="co-m-table-grid__body">
+    return <div className="co-m-table-grid__body" id="virtualized-list">
       <WindowScroller>
         {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
           <AutoSizer disableHeight>
