@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/cloud-services/subscription';
 import { SubscriptionKind, SubscriptionState } from '../../../public/components/cloud-services';
 import { referenceForModel } from '../../../public/module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel } from '../../../public/models';
+import { SubscriptionModel, ClusterServiceVersionModel, ConfigMapModel } from '../../../public/models';
 import { ListHeader, ColHead, List, ListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceCog, ResourceLink, Cog } from '../../../public/components/utils';
 import { testSubscription, testClusterServiceVersion, testPackage } from '../../../__mocks__/k8sResourcesMocks';
@@ -166,7 +166,7 @@ describe(SubscriptionDetails.displayName, () => {
   let wrapper: ShallowWrapper<SubscriptionDetailsProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<SubscriptionDetails obj={testSubscription} pkg={testPackage} />);
+    wrapper = shallow(<SubscriptionDetails.WrappedComponent obj={testSubscription} pkg={testPackage} />);
   });
 
   it('renders subscription update channel and approval component', () => {
@@ -195,10 +195,20 @@ describe(SubscriptionDetailsPage.displayName, () => {
 
   it('renders `DetailsPage` with correct props', () => {
     const match = {params: {ns: 'default', name: 'example-sub'}, url: '', isExact: true, path: ''};
-    const wrapper = shallow(<SubscriptionDetailsPage match={match} />);
+    const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
     expect(wrapper.find(DetailsPage).props().pages.length).toEqual(2);
     expect(wrapper.find(DetailsPage).props().menuActions).toEqual(Cog.factory.common);
+  });
+
+  it('passes additional resources to watch', () => {
+    const match = {params: {ns: 'default', name: 'example-sub'}, url: '', isExact: true, path: ''};
+    const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
+
+    expect(wrapper.find(DetailsPage).props().resources).toEqual([
+      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'configMap'},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersion'}
+    ]);
   });
 });

@@ -4,8 +4,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { shallow, ShallowWrapper } from 'enzyme';
 
-import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps } from '../../../public/components/cloud-services/install-plan';
-import { ListHeader, ColHead, ResourceRow, List, ListPage } from '../../../public/components/factory';
+import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage } from '../../../public/components/cloud-services/install-plan';
+import { ListHeader, ColHead, ResourceRow, List, ListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceCog, ResourceLink, ResourceIcon, Cog, MsgBox } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
 import { InstallPlanModel, ClusterServiceVersionModel } from '../../../public/models';
@@ -121,5 +121,22 @@ describe(InstallPlansPage.displayName, () => {
     expect(wrapper.find(ListPage).props().ListComponent).toEqual(InstallPlansList);
     expect(wrapper.find(ListPage).props().filterLabel).toEqual('Install Plans by name');
     expect(wrapper.find(ListPage).props().kind).toEqual(referenceForModel(InstallPlanModel));
+  });
+});
+
+describe(InstallPlanDetailsPage.displayName, () => {
+
+  it('passes `breadcrumbsFor` function for rendering a link back to the parent `Subscription-v1` if it has one', () => {
+    const match = {params: {ns: 'default', name: 'example-sub'}, url: '', isExact: true, path: ''};
+    const wrapper = shallow(<InstallPlanDetailsPage match={match} />);
+    const breadcrumbsFor = wrapper.find(DetailsPage).props().breadcrumbsFor;
+
+    expect(breadcrumbsFor(testInstallPlan)).toEqual([{
+      name: testInstallPlan.metadata.ownerReferences[0].name,
+      path: `/k8s/ns/default/subscription-v1s/${testInstallPlan.metadata.ownerReferences[0].name}`,
+    }, {
+      name: 'Install Plan Details',
+      path: match.url,
+    }]);
   });
 });

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, ExpectedConditions as until, $, $$, by, element } from 'protractor';
+import { browser, ExpectedConditions as until, $, by, element } from 'protractor';
 import { defaultsDeep } from 'lodash';
 import { safeDump, safeLoad } from 'js-yaml';
 
@@ -8,17 +8,16 @@ import { checkErrors, checkLogs, appHost, testName } from '../../protractor.conf
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
-import * as appListView from '../../views/app-list.view';
 import * as yamlView from '../../views/yaml.view';
 
 describe('Manually approving an install plan', () => {
+  const pkgName = 'etcd';
+  const subName = `${testName}-${pkgName}-manual`;
   const startingCSV = 'etcdoperator.v0.9.0';
   const testLabel = 'automatedTestName';
-  const BROWSER_TIMEOUT = 15000;
-  const testNamespace = `${testName}-olm-update`;
 
   beforeAll(async() => {
-    browser.get(`${appHost}/overview/all-namespaces`);
+    browser.get(`${appHost}/overview/${testName}`);
     await browser.wait(until.presenceOf(sidenavView.navSectionFor('Applications')));
   });
 
@@ -27,42 +26,44 @@ describe('Manually approving an install plan', () => {
     checkErrors();
   });
 
-  it(`creates test namespace ${testNamespace} if necessary`, async() => {
-    await browser.get(`${appHost}/k8s/cluster/namespaces`);
-    await crudView.isLoaded();
-    const exists = await crudView.rowForName(testNamespace).isPresent();
-    if (!exists) {
-      await crudView.createYAMLButton.click();
-      await browser.wait(until.presenceOf($('.modal-body__field')));
-      await $$('.modal-body__field').get(0).$('input').sendKeys(testNamespace);
-      await $('.modal-content').$('#confirm-delete').click();
-      await browser.wait(until.urlContains(`/namespaces/${testNamespace}`), BROWSER_TIMEOUT);
-    }
+  it('removes existing subscription if necessary', async() => {
+    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+    await catalogView.isLoaded();
 
-    expect(browser.getCurrentUrl()).toContain(appHost);
+    if (await catalogView.hasSubscription(pkgName)) {
+      await catalogView.entryRowFor(pkgName).element(by.linkText('View subscription')).click();
+      const existingSub = await crudView.resourceRows.first().$$('.co-m-resource-icon + a').first().getText();
+      await crudView.deleteRow('Subscription-v1')(existingSub);
+
+      expect(crudView.rowForName(existingSub).isDisplayed()).toBe(false);
+    }
   });
 
   it('creates a subscription with a `startingCSV` that is not latest and manual approval strategy', async() => {
     await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor('etcd').element(by.buttonText('Subscribe')).click();
+    await catalogView.entryRowFor(pkgName).element(by.buttonText('Subscribe')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
-    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testNamespace, labels: {[testLabel]: testName}}, spec: {startingCSV, installPlanApproval: 'Manual'}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {name: subName, namespace: testName, labels: {[testLabel]: testName}}, spec: {startingCSV, installPlanApproval: 'Manual'}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
     await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
     await catalogView.isLoaded();
 
-    expect(catalogView.hasSubscription('etcd')).toBe(true);
+    expect(catalogView.hasSubscription(pkgName)).toBe(true);
+  });
+
+  it('does not create a cluster service version', async() => {
+    await catalogView.entryRowFor(pkgName).element(by.linkText('View subscription')).click();
+    await crudView.selectOptionFromGear(subName, 'View ClusterServiceVersion-v1');
+
+    expect($('.co-m-pane__body').getText()).toContain('404: Not Found');
   });
 
   it('displays "Upgrading" for the subscription and a link to the active install plan', async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversion-v1s`);
-    await appListView.isLoaded();
-    await browser.wait(until.visibilityOf(appListView.appTileFor('etcd')), 5000);
-    await appListView.viewDetailsFor('etcd');
+    await browser.get(`${appHost}/k8s/ns/${testName}/subscription-v1s/${subName}`);
     await crudView.isLoaded();
 
     expect($('.co-detail-table__section--last').isDisplayed()).toBe(true);
@@ -82,13 +83,5 @@ describe('Manually approving an install plan', () => {
     expect(element(by.linkText('1 installed')).isDisplayed()).toBe(true);
     expect(element(by.linkText('1 installing')).isDisplayed()).toBe(true);
     expect(element(by.linkText(startingCSV)).isDisplayed()).toBe(true);
-  });
-
-  it('displays controls for changing the approval strategy to automatic', () => {
-
-  });
-
-  it('automatically installs the next version without approval after changing approval strategy', () => {
-
   });
 });

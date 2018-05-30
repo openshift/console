@@ -4,11 +4,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 import { safeLoad } from 'js-yaml';
+import { connect } from 'react-redux';
+import { Map as ImmutableMap } from 'immutable';
 
 import { List, ListHeader, ColHead, DetailsPage, ListPage } from '../factory';
-import { MsgBox, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, Firehose, LoadingInline } from '../utils';
-import { SubscriptionKind, ClusterServiceVersionKind, SubscriptionState, Package, InstallPlanApproval } from './index';
-import { referenceForModel, k8sKill, k8sUpdate, K8sResourceKind } from '../../module/k8s';
+import { MsgBox, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, LoadingInline, makeQuery, makeReduxID } from '../utils';
+import { SubscriptionKind, SubscriptionState, Package, InstallPlanApproval, ClusterServiceVersionKind } from './index';
+import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, ConfigMapModel, InstallPlanModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
@@ -80,7 +82,14 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <
   ListComponent={SubscriptionsList}
   filterLabel="Subscriptions by package" />;
 
-export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) => {
+const stateToProps = ({k8s}, {obj}) => ({
+  installedCSV: k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(obj.metadata.namespace)), 'data'], ImmutableMap())
+    .find((csv, key) => csv.getIn(['metadata', 'name']) === _.get(obj, 'status.installedCSV')),
+  pkg: (safeLoad(k8s.getIn([makeReduxID(ConfigMapModel, makeQuery('tectonic-system', null, null, obj.spec.source)), 'data', 'data', 'packages'], null)) || [])
+    .find((pkg: Package) => pkg.packageName === obj.spec.name),
+});
+
+export const SubscriptionDetails = connect(stateToProps, null)((props: SubscriptionDetailsProps) => {
   const {obj, pkg, installedCSV} = props;
 
   return <div className="co-m-pane__body">
@@ -93,12 +102,11 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
           <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={false} />
         </div>
         <div className="col-sm-6">
-          {/* TODO(alecmerdler): Show if InstallPlan needs approval */}
           <dl className="co-m-pane__details">
             <dt>Installed Version</dt>
             <dd>
-              { _.get(obj.status, 'installedCSV') && !_.isEmpty(installedCSV)
-                ? <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={_.get(obj.status, 'installedCSV')} namespace={obj.metadata.namespace} title={_.get(obj.status, 'installedCSV')} />
+              { _.get(obj.status, 'installedCSV') && installedCSV
+                ? <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={obj.status.installedCSV} namespace={obj.metadata.namespace} title={obj.status.installedCSV} />
                 : 'None' }
             </dd>
             <dt>Starting Version</dt>
@@ -112,7 +120,7 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
       </div>
     </div>
   </div>;
-};
+});
 
 export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProps, SubscriptionUpdatesState> {
   constructor(props) {
@@ -125,11 +133,12 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    return !prevState.waitingForUpdate ||
-      _.get(nextProps, 'spec.channel') !== prevState.channel ||
-      _.get(nextProps, 'spec.installPlanApproval') !== prevState.installPlanApproval
+    const stillWaiting = prevState.waitingForUpdate
+      && (_.get(nextProps, 'obj.spec.channel') === prevState.channel && _.get(nextProps, 'obj.spec.installPlanApproval') === prevState.installPlanApproval);
+
+    return stillWaiting
       ? null
-      : {waitingForUpdate: false, channel: _.get(nextProps, 'spec.channel'), installPlanApproval: _.get(nextProps, 'spec.installPlanApproval')};
+      : {waitingForUpdate: false, channel: _.get(nextProps, 'obj.spec.channel'), installPlanApproval: _.get(nextProps, 'obj.spec.installPlanApproval')};
   }
 
   render() {
@@ -166,7 +175,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
           </dl>
           <div className="co-detail-table__bracket"></div>
           <div className="co-detail-table__breakdown">
-            { _.get(obj.status, 'installedCSV') && !_.isEmpty(installedCSV)
+            { _.get(obj.status, 'installedCSV') && installedCSV
               ? <Link to={`/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(obj.status, 'installedCSV')}`}>1 installed</Link>
               : <span>0 installed</span> }
             { _.get(obj.status, 'state') === SubscriptionState.SubscriptionStateUpgradePending && _.get(obj.status, 'installplan')
@@ -179,35 +188,19 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
   }
 }
 
-export const SubscriptionDetailsWrapper: React.SFC<SubscriptionDetailsWrapperProps> = ({obj}) => {
-  const resources = [
-    {kind: ConfigMapModel.kind, name: obj.spec.source, namespace: 'tectonic-system', isList: false, prop: 'configMap'},
-    ...(_.get(obj, 'status.installedCSV') ? [{kind: referenceForModel(ClusterServiceVersionModel), name: obj.status.installedCSV, namespace: obj.metadata.namespace, isList: false, prop: 'installedCSV'}] : [])
-  ];
-
-  const pkgFor = (configMap: {loaded: boolean, data: K8sResourceKind}) => (_.get(configMap, 'data.data.packages') ? safeLoad(_.get(configMap, 'data.data.packages')) : [])
-    .find(pkg => pkg.packageName === obj.spec.name);
-
-  type InnerProps = {
-    configMap: {loaded: boolean, data: K8sResourceKind},
-    installedCSV?: {loaded: boolean, data: ClusterServiceVersionKind},
-  };
-  const Inner = (props: InnerProps) => <SubscriptionDetails obj={obj} pkg={pkgFor(props.configMap)} installedCSV={_.get(props.installedCSV, 'data')} />;
-
-  return <Firehose resources={resources}>
-    <Inner {...{} as any} />
-  </Firehose>;
-};
-
 export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => <DetailsPage
   {...props}
   namespace={props.match.params.ns}
   kind={referenceForModel(SubscriptionModel)}
   name={props.match.params.name}
   pages={[
-    navFactory.details(SubscriptionDetailsWrapper),
+    navFactory.details(SubscriptionDetails),
     navFactory.editYaml(),
-    // TODO(alecmerdler): List of InstallPlan-v1s with `ownerReferences` to Subscription-v1
+  ]}
+  resources={[
+    // FIXME: Only including `tectonic-ocs` catalog's configmap, need to revise when we support more catalog sources
+    {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'configMap'},
+    {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersion'},
   ]}
   menuActions={Cog.factory.common} />;
 
@@ -241,10 +234,6 @@ export type SubscriptionUpdatesState = {
   installPlanApproval: InstallPlanApproval;
 };
 
-export type SubscriptionDetailsWrapperProps = {
-  obj: SubscriptionKind;
-};
-
 export type SubscriptionDetailsProps = {
   obj: SubscriptionKind;
   pkg: Package;
@@ -253,6 +242,7 @@ export type SubscriptionDetailsProps = {
 
 export type SubscriptionDetailsPageProps = {
   match: match<{ns: string, name: string}>;
+  namespace: string;
 };
 
 SubscriptionHeader.displayName = 'SubscriptionHeader';
@@ -261,4 +251,3 @@ SubscriptionsList.displayName = 'SubscriptionsList';
 SubscriptionsPage.displayName = 'SubscriptionsPage';
 SubscriptionDetails.displayName = 'SubscriptionDetails';
 SubscriptionDetailsPage.displayName = 'SubscriptionDetailsPage';
-SubscriptionDetailsWrapper.displayName = 'SubscriptionDetailsWrapper';

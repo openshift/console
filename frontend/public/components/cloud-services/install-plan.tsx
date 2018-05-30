@@ -10,6 +10,7 @@ import { MsgBox, ResourceLink, ResourceCog, Cog, ResourceIcon, navFactory, Resou
 import { InstallPlanKind, InstallPlanApproval } from './index';
 import { referenceForModel, referenceForOwnerRef, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel } from '../../models';
+import { breadcrumbsForOwnerRefs } from '../utils/breadcrumbs';
 
 export const InstallPlanHeader: React.SFC<InstallPlanHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-md-3" sortField="metadata.name">Name</ColHead>
@@ -117,6 +118,10 @@ export const InstallPlanDetailsPage: React.SFC<InstallPlanDetailsPageProps> = (p
     navFactory.details(InstallPlanDetails),
     navFactory.editYaml(),
   ]}
+  breadcrumbsFor={(obj) => breadcrumbsForOwnerRefs(obj).concat({
+    name: 'Install Plan Details',
+    path: props.match.url,
+  })}
   menuActions={Cog.factory.common} />;
 
 export type InstallPlanHeaderProps = {
