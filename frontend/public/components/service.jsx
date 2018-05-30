@@ -25,7 +25,7 @@ const ServiceIP = ({s}) => {
     return <div key={i}>{clusterIP}</div>;
   });
 
-  return <p>{children}</p>;
+  return children;
 };
 
 const ServiceHeader = props => <ListHeader>
