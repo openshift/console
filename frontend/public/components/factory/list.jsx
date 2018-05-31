@@ -217,6 +217,7 @@ export class Rows extends React.Component {
     this.measurementCache = new CellMeasurerCache({
       fixedWidth: true,
       minHeight: 50,
+      keyMapper: rowIndex => this.props.data[rowIndex].metadata.uid,
     });
 
     this.rowRenderer = this._rowRenderer.bind(this);
@@ -226,18 +227,16 @@ export class Rows extends React.Component {
     const {data, expand, Row, kindObj} = this.props;
     const obj = data[index];
 
-    return (
-      <CellMeasurer
-        cache={this.measurementCache}
-        columnIndex={0}
-        key={key}
-        rowIndex={index}
-        parent={parent}>
-        <div style={style}>
-          <Row key={obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} index={index} />
-        </div>
-      </CellMeasurer>
-    );
+    return <CellMeasurer
+      cache={this.measurementCache}
+      columnIndex={0}
+      key={key}
+      rowIndex={index}
+      parent={parent}>
+      <div style={style}>
+        <Row key={obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} index={index} />
+      </div>
+    </CellMeasurer>;
   }
 
   render () {
@@ -249,7 +248,6 @@ export class Rows extends React.Component {
             {({width}) => <div ref={registerChild}>
               <VirtualList
                 autoHeight
-                data={data}
                 height={height}
                 deferredMeasurementCache={this.measurementCache}
                 rowHeight={this.measurementCache.rowHeight}
