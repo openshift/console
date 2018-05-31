@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, Package, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind, CatalogSourceKind } from '../public/components/cloud-services';
+import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, Package, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind, CatalogSourceKind, InstallPlanApproval } from '../public/components/cloud-services';
 import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
 /* eslint-enable no-unused-vars */
 
@@ -231,10 +231,11 @@ export const testInstallPlan: InstallPlanKind = {
   },
   spec: {
     clusterServiceVersionNames: ['etcd'],
-    approval: 'Automatic',
+    approval: InstallPlanApproval.Automatic,
   },
   status: {
     phase: 'Complete',
+    catalogSources: ['test-catalog'],
     plan: [],
   },
 };
