@@ -166,8 +166,8 @@ const actions = {
           return;
         }
 
-        const {subProtocols} = getState().UI.get('impersonate', {});
-        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subProtocols, timeout: 60 * 1000});
+        const {subprotocols} = getState().UI.get('impersonate', {});
+        WS[id] = k8sWatch(k8skind, {...query, resourceVersion}, {subprotocols, timeout: 60 * 1000});
       } catch (e) {
         if (!REF_COUNTS[id]) {
           // eslint-disable-next-line no-console
