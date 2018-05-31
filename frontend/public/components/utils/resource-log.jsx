@@ -178,7 +178,7 @@ export class ResourceLog extends SafetyFirst {
   }
 
   render() {
-    return <div className="co-m-pane__body">
+    return <React.Fragment>
       <LogControls
         dropdown={this.props.dropdown}
         status={this.state.status}
@@ -188,7 +188,7 @@ export class ResourceLog extends SafetyFirst {
         touched={this.state.touched}
         status={this.state.status}
         updateStatus={this._updateStatus} />
-    </div>;
+    </React.Fragment>;
   }
 }
 
