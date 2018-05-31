@@ -30,6 +30,7 @@ import { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
 import { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
 import { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';
 import { ResourceQuotasPage, ResourceQuotasDetailsPage } from './resource-quota';
+import { HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage } from './hpa';
 import { PersistentVolumesPage, PersistentVolumesDetailsPage } from './persistent-volume';
 import { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from './persistent-volume-claim';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
@@ -73,6 +74,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('PodVulns', PodVulnsPage)
   .set('StatefulSets', StatefulSetsPage)
   .set('ResourceQuotas', ResourceQuotasPage)
+  .set('HorizontalPodAutoscalers', HorizontalPodAutoscalersPage)
   .set('PersistentVolumes', PersistentVolumesPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsPage)
   .set('Reports', ReportsPage)
@@ -122,6 +124,7 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('PodVulns', PodVulnsDetailsPage)
   .set('StatefulSets', StatefulSetsDetailsPage)
   .set('ResourceQuotas', ResourceQuotasDetailsPage)
+  .set('HorizontalPodAutoscalers', HorizontalPodAutoscalersDetailsPage)
   .set('PersistentVolumes', PersistentVolumesDetailsPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsDetailsPage)
   .set('Reports', ReportsDetailsPage)
