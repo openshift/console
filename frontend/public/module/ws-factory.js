@@ -82,7 +82,7 @@ WSFactory.prototype._connect = function() {
   this._state = 'init';
   this._messageBuffer = [];
   try {
-    this.ws = new WebSocket(this.url, this.options.subProtocols);
+    this.ws = new WebSocket(this.url, this.options.subprotocols);
   } catch (e) {
     console.error('Error creating websocket:', e);
     this._reconnect();

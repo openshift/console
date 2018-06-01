@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
+import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
 import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
@@ -55,13 +56,17 @@ export class PodExec extends React.PureComponent {
       const { current } = this.terminal;
       current && current.onConnectionClosed(`connecting to ${activeContainer}`);
     }
+
+    const impersonate = store.getState().UI.get('impersonate', {});
+    const subprotocols = (impersonate.subprotocols || []).concat('base64.channel.k8s.io');
+
     let previous;
     this.ws = new WSFactory(`${metadata.name}-terminal`, {
       host: 'auto',
       reconnect: true,
       path: resourceURL(PodModel, params),
       jsonParse: false,
-      subProtocols: ['base64.channel.k8s.io'],
+      subprotocols,
     })
       .onmessage(raw => {
         const { current } = this.terminal;
@@ -83,13 +88,14 @@ export class PodExec extends React.PureComponent {
         const { current } = this.terminal;
         current && current.reset();
         previous = '';
-        this.setState({open: true});
+        this.setState({open: true, error: null});
       })
       .onclose(evt => {
         if (!evt || evt.wasClean === true) {
           return;
         }
         const error = evt.reason || 'Connection closed uncleanly.';
+        this.setState({error});
         this.terminal.current && this.terminal.current.onConnectionClosed(error);
         this.ws.destroy();
       }) // eslint-disable-next-line no-console
@@ -140,7 +146,18 @@ export class PodExec extends React.PureComponent {
   }
 
   render () {
-    const {containers, activeContainer } = this.state;
+    const { containers, activeContainer, open, error } = this.state;
+
+    let contents = <LoadingBox />;
+    if (error) {
+      contents = <div className="text-center cos-error-title">{error}</div>;
+    } else if (open) {
+      contents = <Terminal
+        onResize={this.onResize}
+        onData={this.onData}
+        ref={this.terminal}
+      />;
+    }
 
     return <div>
       <div className="co-m-pane__top-controls">
@@ -149,14 +166,7 @@ export class PodExec extends React.PureComponent {
         </span>
         <Dropdown className="btn-group" items={_.mapValues(containers, nameWithIcon)} title={nameWithIcon(activeContainer || <LoadingInline />)} onChange={this.onChangeContainer} />
       </div>
-      {this.state.open
-        ? <Terminal
-          onResize={this.onResize}
-          onData={this.onData}
-          ref={this.terminal}
-        />
-        : <LoadingBox />
-      }
+      {contents}
     </div>;
   }
 }
