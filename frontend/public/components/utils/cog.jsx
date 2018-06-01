@@ -1,9 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-
 import * as classNames from'classnames';
 import { Tooltip } from './tooltip';
+
 import { annotationsModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { history, resourceObjPath } from './index';
@@ -17,22 +16,6 @@ const CogItems = ({options, onClick}) => {
     {lis}
   </ul>;
 };
-
-// class CogItems extends React.Component {
-//   getListComponent() {
-//     const {options, onClick} = this.props;
-//     const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
-//     const lis = _.map(visibleOptions, (o, i) => <li key={i}><a onClick={e =>onClick(e, o)}>{o.label}</a></li>);
-//     return <ul className="dropdown-menu co-m-cog__dropdown">
-//       {lis}
-//     </ul>;
-//   }
-
-//   render() {
-//     return ReactDOM.createPortal(this.getListComponent(), document.querySelector('#virtualized-list'));
-//     //return ReactDOM.createPortal(this.getListComponent(), document.querySelector(`#${this.props.id}`));
-//   }
-// }
 
 export class Cog extends DropdownMixin {
   constructor(props) {
@@ -56,8 +39,8 @@ export class Cog extends DropdownMixin {
 
   render () {
     const {options, anchor, isDisabled, id} = this.props;
-    return (
 
+    return (
       <div className={classNames('co-m-cog-wrapper', {'co-m-cog-wrapper--enabled': !isDisabled})} id={id}>
         { isDisabled ?
           <Tooltip content="disabled">
@@ -67,11 +50,10 @@ export class Cog extends DropdownMixin {
           </Tooltip> :
           <div ref={this.dropdownElement} onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
             <span className={classNames('co-m-cog', 'co-m-cog__icon', 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
-            { this.state.active && <CogItems options={options} onClick={this.onClick} id={id} /> }
+            { this.state.active && <CogItems options={options} onClick={this.onClick} /> }
           </div>
         }
       </div>
-
     );
   }
 }

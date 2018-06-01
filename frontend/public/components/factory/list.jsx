@@ -241,13 +241,14 @@ export class Rows extends React.Component {
 
   render () {
     const data = this.props.data;
-    return <div className="co-m-table-grid__body" id="virtualized-list">
+    return <div className="co-m-table-grid__body">
       <WindowScroller>
         {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
           <AutoSizer disableHeight>
             {({width}) => <div ref={registerChild}>
               <VirtualList
                 autoHeight
+                data={data}
                 height={height}
                 deferredMeasurementCache={this.measurementCache}
                 rowHeight={this.measurementCache.rowHeight}
