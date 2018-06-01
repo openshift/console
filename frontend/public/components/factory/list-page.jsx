@@ -269,7 +269,7 @@ export const ListPage = props => {
     ListComponent={props.ListComponent}
     rowFilters={props.rowFilters}
     label={labelPlural}
-    flatten={_resources => _resources[name || kind].data}
+    flatten={_resources => _.get(_resources, (name || kind), {}).data}
     namespace={namespace}
     fake={fake}
   />;
