@@ -71,7 +71,7 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
 });
 
 const EmptyAppsMsg = () => <MsgBox title="No Applications Found" detail={<div>
-  Applications are installed per namespace from the Open Cloud Catalog. For more information, see <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" rel="noopener noreferrer">Using Open Cloud Services <i className="fa fa-external-link" /></a>.
+  Applications are installed per namespace from the Open Cloud Catalog. For more information, see <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" className="co-external-link" rel="noopener noreferrer">Using Open Cloud Services</a>.
 </div>} />;
 
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
@@ -121,7 +121,7 @@ const stateToProps = ({k8s, FLAGS}, {match}) => ({
 });
 
 const EmptyCustomAppsMsg = () => <MsgBox title="No Custom Applications Found" detail={<div>
-  Create custom applications by using the <a href="https://github.com/operator-framework/helm-app-operator-kit" target="_blank" rel="noopener noreferrer">Helm App Operator Kit <i className="fa fa-external-link" /></a>.
+  Create custom applications by using the <a href="https://github.com/operator-framework/helm-app-operator-kit" target="_blank" className="co-external-link" rel="noopener noreferrer">Helm App Operator Kit</a>.
 </div>} />;
 
 export const ClusterServiceVersionsPage = connect(stateToProps)(

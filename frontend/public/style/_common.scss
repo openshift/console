@@ -190,3 +190,21 @@ input[type=number]::-webkit-outer-spin-button {
 .co-break-word {
   @include co-break-word;
 }
+
+// append external-link icon to <a> so that it doesn't wrap without text
+// there must be no white space between the text and the closing </a> tag holding the pseudo element
+.co-external-link:after {
+  content: "\f08e";
+  display:inline-block;
+  font-family: 'FontAwesome';
+  height: 16px;
+  position:relative;
+  margin-left: 5px;
+  margin-right: -25px; // width + margin-left
+  top:0;
+  width: 20px;
+}
+.co-external-link {
+  display: inline-block;
+  padding-right: 25px;
+}

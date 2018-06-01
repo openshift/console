@@ -78,9 +78,8 @@ const getRouteLabel = (route) => {
 };
 
 export const RouteLocation: React.SFC<RouteHostnameProps> = ({obj}) => <div>
-  {isWebRoute(obj) ? <a href={getRouteWebURL(obj)} target="_blank" rel="noopener noreferrer">
-    {getRouteLabel(obj)}&nbsp;<i className="fa fa-external-link" aria-hidden="true"/>
-  </a> : getRouteLabel(obj)
+  {isWebRoute(obj) ? <a href={getRouteWebURL(obj)} target="_blank" className="co-external-link" rel="noopener noreferrer">
+    {getRouteLabel(obj)}</a> : getRouteLabel(obj)
   }
 </div>;
 RouteLocation.displayName = 'RouteLocation';

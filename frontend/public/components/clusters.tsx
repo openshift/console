@@ -42,7 +42,7 @@ const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
     <div className="col-xs-5">
       {clusterLink
         ? <span className="text-muted">Console:&nbsp;
-          <a href={clusterLink.toString()} target="_blank" rel="noopener noreferrer">{clusterLink} <i className="fa fa-external-link"></i></a>
+          <a href={clusterLink.toString()} target="_blank" className="co-external-link" rel="noopener noreferrer">{clusterLink}</a>
         </span>
         : '—'
       }
