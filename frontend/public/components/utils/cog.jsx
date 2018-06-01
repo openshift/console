@@ -44,11 +44,11 @@ export class Cog extends DropdownMixin {
       <div className={classNames('co-m-cog-wrapper', {'co-m-cog-wrapper--enabled': !isDisabled})} id={id}>
         { isDisabled ?
           <Tooltip content="disabled">
-            <div ref={this.setNode} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
+            <div ref={this.dropdownElement} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
               <span className={classNames('co-m-cog', 'co-m-cog__icon', 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
             </div>
           </Tooltip> :
-          <div ref={this.setNode} onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
+          <div ref={this.dropdownElement} onClick={this.toggle} className={classNames('co-m-cog', `co-m-cog--anchor-${anchor || 'left'}`, {'co-m-cog--disabled' : isDisabled})} >
             <span className={classNames('co-m-cog', 'co-m-cog__icon', 'fa', 'fa-cog', {'co-m-cog__icon--disabled' : isDisabled})}></span>
             { this.state.active && <CogItems options={options} onClick={this.onClick} /> }
           </div>
