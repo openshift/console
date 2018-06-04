@@ -2,10 +2,13 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, ResourceCog, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
+import { Cog, CopyToClipboard, ResourceCog, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
+import { MaskedData } from './configmap-and-secret-data';
+
 import { registerTemplate } from '../yaml-templates';
 // eslint-disable-next-line no-unused-vars
-import {K8sResourceKind, K8sResourceKindReference} from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { SafetyFirst } from './safety-first';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = Cog.factory.common;
@@ -200,38 +203,69 @@ const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow o
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><RouteStatus obj={route} /></div>
 </ResourceRow>;
 
-const TLSSettings = props => <span>
-  {!props.tls && 'TLS is not enabled.'}
-  {props.tls && <dl>
-    <dt>Termination Type</dt>
-    <dd>{props.tls.termination}</dd>
-    <dt>Insecure Traffic</dt>
-    <dd>{props.tls.insecureEdgeTerminationPolicy || '-'}</dd>
-    <dt>Certificate</dt>
-    <dd>{props.tls.certificate || '-'}</dd>
-    <dt>Key</dt>
-    <dd>{props.tls.key || '-'}</dd>
-    <dt>CA Certificate</dt>
-    <dd>{props.tls.caCertificate || '-'}</dd>
-    {_.get(props.tls, 'termination') === 'reencrypt' && <span>
-      <dt>Destination CA Cert</dt>
-      <dd>{props.tls.destinationCACertificate || '-'}</dd>
-    </span>}
-  </dl>
+class TLSSettings extends SafetyFirst<TLSDataProps, TLSDataState> {
+  constructor(props) {
+    super(props);
+    this.state = { showPrivateKey: false };
+    this.toggleKey = this.toggleKey.bind(this);
   }
-</span>;
+
+  toggleKey() {
+    this.setState({ showPrivateKey: !this.state.showPrivateKey });
+  }
+
+  render() {
+    const { showPrivateKey } = this.state;
+    const { tls } = this.props;
+    const visibleKeyValue = showPrivateKey ? tls.key : <MaskedData /> ;
+
+    return !tls ?
+      'TLS is not enabled.' :
+      <dl>
+        <dt>Termination Type</dt>
+        <dd>{tls.termination}</dd>
+        <dt>Insecure Traffic</dt>
+        <dd>{tls.insecureEdgeTerminationPolicy || '-'}</dd>
+        <dt>Certificate</dt>
+        <dd>{tls.certificate ? <CopyToClipboard value={tls.certificate}/> : '-'}</dd>
+        <dt className="co-m-route-tls-reveal__title">Key {tls.key &&
+          <button className="btn btn-link co-m-route-tls-reveal__btn" type="button" onClick={this.toggleKey}>
+            {
+              showPrivateKey
+                ? <React.Fragment><i className="fa fa-eye-slash" aria-hidden="true"></i> Hide</React.Fragment>
+                : <React.Fragment><i className="fa fa-eye" aria-hidden="true"></i> Reveal</React.Fragment>
+            }
+          </button>}
+        </dt>
+        <dd>{tls.key ? <CopyToClipboard value={tls.key} visibleValue={visibleKeyValue}/> : '-'}</dd>
+        <dt>CA Certificate</dt>
+        <dd>{tls.caCertificate ? <CopyToClipboard value={tls.caCertificate}/> : '-'}</dd>
+        {tls.termination === 'reencrypt' && <React.Fragment>
+          <dt>Destination CA Cert</dt>
+          <dd>{tls.destinationCACertificate ? <CopyToClipboard value={tls.destinationCACertificate}/> : '-'}</dd>
+        </React.Fragment>}
+      </dl>;
+  }
+}
 
 const calcTrafficPercentage = (weight: number, route: any) => {
-  let totalWeight = 0;
-  totalWeight += route.spec.to.weight;
-  _.each(route.spec.alternateBackends, alternate => totalWeight += alternate.weight);
-  return (weight/totalWeight*100).toFixed(1);
+  if (!weight) {
+    return '-';
+  }
+
+  const totalWeight = _.reduce(route.spec.alternateBackends, (result, alternate) => {
+    return result += alternate.weight;
+  }, route.spec.to.weight);
+
+  const percentage = (weight / totalWeight) * 100;
+
+  return `${percentage.toFixed(1)}%`;
 };
 
 const RouteTargetRow = ({route, target}) => <tr>
   <td><ResourceLink kind={target.kind} name={target.name} namespace={route.metadata.namespace} title={target.name} /></td>
   <td>{target.weight}</td>
-  <td>{calcTrafficPercentage(target.weight, route)}%</td>
+  <td>{calcTrafficPercentage(target.weight, route)}</td>
 </tr>;
 
 const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
@@ -344,5 +378,13 @@ export type RoutesDetailsProps = {
 
 export type RoutesDetailsPageProps = {
   match: any
+};
+
+export type TLSDataProps = {
+  tls: any
+};
+
+export type TLSDataState = {
+  showPrivateKey: boolean
 };
 /* eslint-enable no-undef */

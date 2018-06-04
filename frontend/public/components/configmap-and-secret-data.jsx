@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Heading, CopyToClipboard } from './utils';
 
-const MaskedData = () => <React.Fragment>
+export const MaskedData = () => <React.Fragment>
   <span className="sr-only">Value hidden</span>
   <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
 </React.Fragment>;
