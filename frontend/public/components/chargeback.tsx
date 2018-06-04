@@ -67,8 +67,8 @@ const ReportsHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingEnd">Reporting End</ColHead>
 </ListHeader>;
 
-const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
-  return <div className="row co-resource-list__item">
+const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj, style}) => {
+  return <div className="row co-resource-list__item" style={style}>
     <div className="col-lg-3 col-md-3 col-xs-4">
       <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
@@ -468,6 +468,7 @@ export const ReportGenerationQueriesDetailsPage: React.StatelessComponent<Report
 /* eslint-disable no-undef */
 export type ReportsRowProps = {
   obj: any,
+  style: any,
 };
 
 export type ReportsDetailsProps = {
