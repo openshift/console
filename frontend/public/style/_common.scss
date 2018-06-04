@@ -87,6 +87,9 @@
 
 .co-m-pane__top-controls {
   margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .co-inline-block {
