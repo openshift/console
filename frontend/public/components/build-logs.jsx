@@ -7,14 +7,14 @@ export class BuildLogs extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      eof: false
+      alive: true
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const eof = ['Complete', 'Failed', 'Error', 'Cancelled'].includes(_.get(nextProps.obj, 'status.phase'));
-    if (prevState.eof !== eof){
-      return {eof};
+    const alive = _.get(nextProps.obj, 'status.phase') === 'Running';
+    if (prevState.alive !== alive){
+      return {alive};
     }
     return null;
   }
@@ -24,7 +24,7 @@ export class BuildLogs extends React.Component {
     const buildName = _.get(this.props.obj, 'metadata.name');
     return <div className="co-m-pane__body">
       <ResourceLog
-        eof={this.state.eof}
+        alive={this.state.alive}
         kind="Build"
         namespace={namespace}
         resourceName={buildName} />

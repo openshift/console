@@ -1,189 +1,94 @@
-import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 
-import { resourceURL, modelFor } from '../../module/k8s';
+import { LoadingInline, LogWindow, TogglePlay } from './';
+import { modelFor, resourceURL } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
-import { LineBuffer, LoadingInline, LogWindow, stream, TogglePlay } from './';
+import { WSFactory } from '../../module/ws-factory';
 
-const logStatusMessages = {
+
+// Messages to display for corresponding log status
+const streamStatusMessages = {
   eof: 'Log stream ended.',
   loading: 'Loading log...',
   paused: 'Log stream paused.',
   streaming: 'Log streaming...'
 };
 
-const dataHasFailureMsg = (data) => {
-  return _.includes(data, '"status": "Failure"');
-};
-
-const dataHasHTML = (data) => {
-  return _.includes(data, '<html') || _.includes(data, '<HTML');
-};
-
-// Component for the streaming controls
-const LogControls = ({status, toggleStreaming, dropdown, onDownload}) => {
+// Component for log stream controls
+// TODO Fix styling for this. If no dropdown is there, the download button will not right-align
+const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
   return <div className="co-m-pane__top-controls">
-    { status === 'loading' && <span className="co-icon-space-l"><LoadingInline /></span> }
+    { status === 'loading' && <span className="co-icon-space-l"><LoadingInline />&nbsp;</span> }
     { ['streaming', 'paused'].includes(status) && <span className="log-stream-control"><TogglePlay active={status === 'streaming'} onClick={toggleStreaming}/></span>}
     <span className="log-container-selector__text">
-      {logStatusMessages[status]}
+      {streamStatusMessages[status]}
     </span>
     {dropdown && <span style={{flexGrow: 1}}>{dropdown}</span>}
     <button className="btn btn-default" onClick={onDownload}>
-      <i className="fa fa-download"></i>&nbsp;Download
+      <i className="fa fa-download" aria-hidden="true"></i>&nbsp;Download
     </button>
   </div>;
 };
 
+// Resource agnostic log component
 export class ResourceLog extends SafetyFirst {
   constructor(props) {
     super(props);
-
-    this._buffer = new LineBuffer(this.props.bufferSize);
-    this._loadStarted = this._loadStarted.bind(this);
-    this._processData = this._processData.bind(this);
-    this._retry = _.throttle(this._retry, 5000);
+    this._buffer = [];
+    this._download = this._download.bind(this);
+    this._onClose = this._onClose.bind(this);
+    this._onError = this._onError.bind(this);
+    this._onMessage = this._onMessage.bind(this);
+    this._onOpen = this._onOpen.bind(this);
+    this._restartStream = this._restartStream.bind(this);
     this._toggleStreaming = this._toggleStreaming.bind(this);
     this._updateStatus = this._updateStatus.bind(this);
-    this._download = this._download.bind(this);
-
     this.state = {
-      touched: Date.now(),
-      status: 'loading',
+      alive: true,
+      error: false,
+      lines: [],
+      linesBehind: 0,
+      stale: false,
+      status: 'loading'
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {};
-
-    if (nextProps.eof){
-      newState.status = prevState.status === 'paused' ? 'paused' : 'eof';
+    if (nextProps.alive !== prevState.alive) {
+      let newState = {};
+      newState.alive = nextProps.alive;
+      // Container changed from non-running to running state, so currently displayed logs are stale
+      if (nextProps.alive && !prevState.alive) {
+        newState.stale = true;
+      }
+      return newState;
     }
-    return newState;
+    return null;
   }
 
   componentDidMount() {
     super.componentDidMount();
-    this._beginStreaming();
+    this._wsInit(this.props);
   }
 
-  componentDidUpdate(prevProps){
-    // If container changed, restart streaming
-    if (this.props.containerName && this.props.containerName !== prevProps.containerName) {
-      this._restartStreaming();
+  componentDidUpdate(prevProps) {
+    // Container changed
+    if (prevProps.containerName !== this.props.containerName) {
+      this._restartStream();
     }
   }
 
   componentWillUnmount() {
     super.componentWillUnmount();
-    this._endStreaming();
+    this._wsDestroy();
   }
 
-  // Updates log status as long as eof has not been reached
-  _updateStatus(newStatus) {
-    // If log is at eof, don't update state to anything other than eof
-    this.setState((prevState, props) => {
-      return {
-        status: props.eof ? 'eof' : newStatus
-      };
-    });
-  }
-
-  // use _updateStatus toggle streaming/paused state instead of directly
-  // setting logState
-  _toggleStreaming() {
-    this._updateStatus(this.state.status === 'streaming' ? 'paused' : 'streaming');
-  }
-
-  // separate function so that it can be throttled
-  _touch() {
-    this.setState({
-      touched: Date.now()
-    });
-  }
-
-  _pushToBuffer(data){
-    this._buffer.push(data);
-    this._touch();
-  }
-
-  _clearBuffer(){
-    this._buffer.clear();
-    this._touch();
-  }
-
-  // Callback which handles the XMLHttpRequest "loadstart" event.
-  _loadStarted() {
-    this._updateStatus('streaming');
-  }
-
-  // Callback to process data from the XMLHttpRequest "progress" event
-  _processData(data) {
-    if (dataHasHTML(data)) {
-      this._pushToBuffer('Logs are currently unavailable');
-    } else if (!dataHasFailureMsg(data)) {
-      this._pushToBuffer(data);
-    }
-  }
-
-  // Retry loading logs every five seconds (see constructor where this function is throttled).
-  _retry() {
-    // If stream is paused, don't begin stream agian
-    if (this.state.status === 'paused') {
-      this._touch();
-      this._retry(); // Try to refresh again
-    } else {
-      this._beginStreaming();
-    }
-  }
-
-  // Resets buffer and starts a new stream.
-  _beginStreaming() {
-    const url = resourceURL(modelFor(this.props.kind), {
-      ns: this.props.namespace,
-      name: this.props.resourceName,
-      path: 'log',
-      queryParams: {
-        container: this.props.containerName || '',
-        follow: 'true',
-        tailLines: this.props.bufferSize
-      }
-    });
-    this._clearBuffer();
-    this._stream = stream(url, this._loadStarted, this._processData);
-    this._stream.promise
-      .then(() => {
-        // Resource is no longer running/generating new log content, so stop streaming
-        if (this.props.eof){
-          this._endStreaming();
-        } else {
-          // Request resolved, but resource is still in a non-terminated state, retry streaming
-          this._retry();
-        }
-      })
-      .catch((why) => { // Load failed/aborted
-        if (why !== 'abort') {
-          this._pushToBuffer(`Error: ${why}`);
-          this._retry();
-        }
-      });
-  }
-
-  // Abort XMLHttpRequest
-  _endStreaming() {
-    this._stream && this._stream.abort();
-  }
-
-  // Ends current stream and starts a new one.
-  _restartStreaming(){
-    this._endStreaming();
-    this._beginStreaming();
-  }
-
+  // Download currently displayed log content
   _download () {
-    const blob = new Blob([this._buffer.lines().join('')], {type: 'text/plain;charset=utf-8'});
+    const blob = new Blob([this._buffer.join('')], {type: 'text/plain;charset=utf-8'});
     let filename = this.props.resourceName;
     if (this.props.containerName) {
       filename = `${filename}-${this.props.containerName}`;
@@ -191,34 +96,152 @@ export class ResourceLog extends SafetyFirst {
     saveAs(blob, `${filename}.log`);
   }
 
+  // Handler for websocket onclose event
+  _onClose(){
+    this.setState({ status: 'eof'});
+  }
+
+  // Handler for websocket onerror event
+  _onError(){
+    this.setState({
+      error: true
+    });
+  }
+
+  // Handler for websocket onmessage event
+  _onMessage(msg){
+    const text = Base64.decode(msg);
+    const linesBehind = this.state.status === 'paused' ? this.state.linesBehind + 1 : 0;
+    if (text){
+      this._pushToBuffer(text);
+      this.setState({
+        linesBehind,
+        lines: this._buffer
+      });
+    }
+  }
+
+  // Handler for websocket onopen event
+  _onOpen(){
+    this._buffer = [];
+    this.setState({status: 'streaming'});
+  }
+
+  // Push one line to the buffer. First item is removed if buffer is at limit.
+  _pushToBuffer(text){
+    if (this._buffer.length === this.props.bufferSize) {
+      this._buffer.shift();
+    }
+    this._buffer.push(text);
+  }
+
+  // Destroy and reinitialize websocket connection
+  _restartStream() {
+    this.setState({
+      error: false,
+      stale: false
+    }, () => {
+      this._wsDestroy();
+      this._wsInit(this.props);
+    });
+  }
+
+  // Toggle streaming/paused status
+  _toggleStreaming() {
+    const newStatus = this.state.status === 'streaming' ? 'paused' : 'streaming';
+    this.setState({
+      status: newStatus
+    });
+  }
+
+  // Updates log status
+  _updateStatus(newStatus) {
+    let newState = {status: newStatus};
+
+    // Reset linesBehind when transitioning out of paused state
+    if (this.state.status === 'paused' && newStatus !== this.state.status) {
+      newState.linesBehind = 0;
+    }
+    this.setState(newState);
+  }
+
+  // Destroy websocket
+  _wsDestroy() {
+    this.ws && this.ws.destroy();
+  }
+
+  // Initialize websocket connection and wire up handlers
+  _wsInit ({kind, namespace, resourceName, containerName, bufferSize}) {
+    const urlOpts = {
+      ns: namespace,
+      name: resourceName,
+      path: 'log',
+      queryParams: {
+        container: containerName || '',
+        follow: 'true',
+        tailLines: bufferSize
+      }
+    };
+    const watchURL = resourceURL(modelFor(kind), urlOpts);
+    const wsOpts = {
+      host: 'auto',
+      path: watchURL,
+      subprotocols: ['base64.binary.k8s.io']
+    };
+
+    this.ws = new WSFactory(watchURL, wsOpts)
+      .onclose(this._onClose)
+      .onerror(this._onError)
+      .onmessage(this._onMessage)
+      .onopen(this._onOpen);
+  }
+
   render() {
+    const {dropdown, kind, bufferSize} = this.props;
+    const {error, lines, linesBehind, stale, status} = this.state;
+    const bufferFull = lines.length === bufferSize;
+
+    // TODO create alert component or use pf-react alerts here.
     return <React.Fragment>
+      {error && <p className="alert alert-danger">
+        <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>
+        An error occured while retrieving the requested logs.
+        <button className="btn btn-link" onClick={this._restartStream} >
+          Retry
+        </button>
+      </p>}
+      {stale && <p className="alert alert-info">
+        <span className="pficon pficon-info" aria-hidden="true"></span>
+        The logs for this {kind} may be stale.
+        <button className="btn btn-link" onClick={this._restartStream} >
+          Refresh
+        </button>
+      </p>}
       <LogControls
-        dropdown={this.props.dropdown}
-        onClickDownload={this._download}
-        status={this.state.status}
+        dropdown={dropdown}
+        status={status}
         toggleStreaming={this._toggleStreaming}
         onDownload={this._download} />
       <LogWindow
-        buffer={this._buffer}
-        touched={this.state.touched}
-        status={this.state.status}
+        lines={lines}
+        linesBehind={linesBehind}
+        bufferFull={bufferFull}
+        status={status}
         updateStatus={this._updateStatus} />
     </React.Fragment>;
   }
 }
 
 ResourceLog.defaultProps = {
-  bufferSize: 1000,
-  label: '',
+  bufferSize: 1000
 };
 
 ResourceLog.propTypes = {
+  alive: PropTypes.bool.isRequired,
   bufferSize: PropTypes.number.isRequired,
   containerName: PropTypes.string,
   dropdown: PropTypes.element,
-  eof: PropTypes.bool.isRequired,
   kind: PropTypes.string.isRequired,
   namespace: PropTypes.string.isRequired,
-  resourceName: PropTypes.string.isRequired,
+  resourceName: PropTypes.string.isRequired
 };

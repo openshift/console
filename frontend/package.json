@@ -62,6 +62,7 @@
     "fuzzysearch": "1.0.x",
     "history": "4.x",
     "immutable": "3.x",
+    "js-base64": "^2.4.5",
     "js-yaml": "3.x",
     "lodash-es": "4.x",
     "patternfly": "^3.45.0",
