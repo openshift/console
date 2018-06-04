@@ -14,9 +14,11 @@ import { bindingType, roleType } from '../RBAC';
 import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
 import { routeStatus } from '../routes';
 
+const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
+
 // TODO: Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
 const listFilters = {
-  'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
+  'name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
 
   // Filter role by role kind
   'role-kind': (filter, role) => filter.selected.has(roleType(role)),
@@ -26,7 +28,7 @@ const listFilters = {
 
   // Filter role bindings by text match
   'role-binding': (str, {metadata, roleRef, subject}) => {
-    const isMatch = val => fuzzy(str.toLowerCase(), val.toLowerCase());
+    const isMatch = val => fuzzyCaseInsensitive(str, val);
     return [metadata.name, roleRef.name, subject.kind, subject.name].some(isMatch);
   },
 
