@@ -1,5 +1,4 @@
 import { getResources as getResources_ } from './get-resources';
-import store from '../../redux';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 
 const types = {
@@ -49,7 +48,7 @@ const actions = {
     return {id, name, value, type: types.filterList};
   },
 
-  watchK8sObject: (id, name, namespace, query, k8sType) => dispatch => {
+  watchK8sObject: (id, name, namespace, query, k8sType) => (dispatch, getState) => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -72,19 +71,16 @@ const actions = {
     POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
 
-    if (store.getState().UI.get('impersonate')) {
-      // WebSocket can't send impersonate HTTP header
-      return;
-    }
     if (k8sType.crd && name) {
       // You can't watch a CRD with a fieldSelector as of 1.8
       return;
     }
 
-    const ws = k8sWatch(k8sType, query).onbulkmessage(events =>
+    const {subprotocols} = getState().UI.get('impersonate', {});
+
+    WS[id] = k8sWatch(k8sType, {...query, subprotocols}).onbulkmessage(events =>
       events.forEach(e => dispatch(actions.modifyObject(id, e.object)))
     );
-    WS[id] = ws;
   },
 
   stopK8sWatch: id => {
