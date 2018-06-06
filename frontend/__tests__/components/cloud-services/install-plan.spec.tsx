@@ -3,13 +3,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { Link } from 'react-router-dom';
 
-import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage } from '../../../public/components/cloud-services/install-plan';
+import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/cloud-services/install-plan';
+import { InstallPlanKind, InstallPlanApproval } from '../../../public/components/cloud-services';
 import { ListHeader, ColHead, ResourceRow, List, ListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceCog, ResourceLink, ResourceIcon, Cog, MsgBox } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
 import { InstallPlanModel, ClusterServiceVersionModel } from '../../../public/models';
-import { referenceForModel } from '../../../public/module/k8s';
+import * as k8s from '../../../public/module/k8s';
 
 describe(InstallPlanHeader.displayName, () => {
   let wrapper: ShallowWrapper<InstallPlanHeaderProps>;
@@ -54,7 +56,7 @@ describe(InstallPlanRow.displayName, () => {
   });
 
   it('renders column for install plan name', () => {
-    expect(wrapper.find(ResourceRow).childAt(0).find(ResourceLink).props().kind).toEqual(referenceForModel(InstallPlanModel));
+    expect(wrapper.find(ResourceRow).childAt(0).find(ResourceLink).props().kind).toEqual(k8s.referenceForModel(InstallPlanModel));
     expect(wrapper.find(ResourceRow).childAt(0).find(ResourceLink).props().namespace).toEqual(testInstallPlan.metadata.namespace);
     expect(wrapper.find(ResourceRow).childAt(0).find(ResourceLink).props().name).toEqual(testInstallPlan.metadata.name);
     expect(wrapper.find(ResourceRow).childAt(0).find(ResourceLink).props().title).toEqual(testInstallPlan.metadata.uid);
@@ -68,7 +70,7 @@ describe(InstallPlanRow.displayName, () => {
 
   it('render column for install plan components list', () => {
     expect(wrapper.find(ResourceRow).childAt(2).find(ResourceIcon).length).toEqual(1);
-    expect(wrapper.find(ResourceRow).childAt(2).find(ResourceIcon).at(0).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
+    expect(wrapper.find(ResourceRow).childAt(2).find(ResourceIcon).at(0).props().kind).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
   });
 
   it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
@@ -120,15 +122,97 @@ describe(InstallPlansPage.displayName, () => {
     expect(wrapper.find(ListPage).props().showTitle).toBe(true);
     expect(wrapper.find(ListPage).props().ListComponent).toEqual(InstallPlansList);
     expect(wrapper.find(ListPage).props().filterLabel).toEqual('Install Plans by name');
-    expect(wrapper.find(ListPage).props().kind).toEqual(referenceForModel(InstallPlanModel));
+    expect(wrapper.find(ListPage).props().kind).toEqual(k8s.referenceForModel(InstallPlanModel));
+  });
+});
+
+describe(InstallPlanPreview.name, () => {
+  let wrapper: ShallowWrapper<InstallPlanPreviewProps, InstallPlanPreviewState>;
+  let installPlan: InstallPlanKind;
+
+  beforeEach(() => {
+    installPlan = _.cloneDeep(testInstallPlan);
+    installPlan.status.plan = [
+      {
+        resolving: 'testoperator.v1.0.0',
+        status: 'Created',
+        resource: {
+          group: ClusterServiceVersionModel.apiGroup,
+          version: ClusterServiceVersionModel.apiVersion,
+          kind: ClusterServiceVersionModel.kind,
+          name: 'testoperator.v1.0.0',
+          manifest: '',
+        }
+      },
+    ];
+
+    wrapper = shallow(<InstallPlanPreview obj={installPlan} />);
+  });
+
+  it('renders empty message if `status.plan` is not filled', () => {
+    installPlan.status.plan = [];
+    wrapper = wrapper.setProps({obj: installPlan});
+
+    expect(wrapper.find(MsgBox).exists()).toBe(true);
+  });
+
+  it('renders button to approve install plan if requires approval', () => {
+    wrapper = wrapper.setState({needsApproval: true});
+
+    expect(wrapper.find('.co-well').find('button').text()).toEqual('Approve');
+  });
+
+  it('calls `k8sUpdate` to set `approved: true` when button is clicked', (done) => {
+    spyOn(k8s, 'k8sUpdate').and.callFake((model, obj) => {
+      expect(obj.spec.approved).toBe(true);
+
+      return Promise.resolve(testInstallPlan).then(() => done());
+    });
+
+    wrapper = wrapper.setState({needsApproval: true});
+    wrapper.find('.co-well').find('button').simulate('click');
+  });
+
+  it('renders section for each resolving `ClusterServiceVersion`', () => {
+    expect(wrapper.find('.co-m-pane__body').length).toEqual(installPlan.status.plan.length);
+  });
+});
+
+describe(InstallPlanDetails.displayName, () => {
+  let wrapper: ShallowWrapper<InstallPlanDetailsProps>;
+
+  beforeEach(() => {
+    wrapper = shallow(<InstallPlanDetails obj={testInstallPlan} />);
+  });
+
+  it('renders link to "Components" tab if install plan needs approval', () => {
+    let installPlan = _.cloneDeep(testInstallPlan);
+    installPlan.spec.approval = InstallPlanApproval.Manual;
+    installPlan.spec.approved = false;
+    wrapper = wrapper.setProps({obj: installPlan});
+
+    expect(wrapper.find('.co-well').find(Link).props().to).toEqual(`/k8s/ns/default/${k8s.referenceForModel(InstallPlanModel)}/${testInstallPlan.metadata.name}/components`);
+  });
+
+  it('does not render link to "Components" tab if install plan does not need approval"', () => {
+    expect(wrapper.find('.co-well').exists()).toBe(false);
   });
 });
 
 describe(InstallPlanDetailsPage.displayName, () => {
+  let wrapper: ShallowWrapper<InstallPlanDetailsPageProps>;
+  let match: InstallPlanDetailsPageProps['match'];
+
+  beforeEach(() => {
+    match = {isExact: true, path: '', url: '', params: {ns: 'default', name: testInstallPlan.metadata.name}};
+    wrapper = shallow(<InstallPlanDetailsPage match={match} />);
+  });
+
+  it('renders a `DetailsPage` with correct props', () => {
+    expect(wrapper.find(DetailsPage).props().pages.map(p => p.name)).toEqual(['Overview', 'YAML', 'Components']);
+  });
 
   it('passes `breadcrumbsFor` function for rendering a link back to the parent `Subscription-v1` if it has one', () => {
-    const match = {params: {ns: 'default', name: 'example-sub'}, url: '', isExact: true, path: ''};
-    const wrapper = shallow(<InstallPlanDetailsPage match={match} />);
     const breadcrumbsFor = wrapper.find(DetailsPage).props().breadcrumbsFor;
 
     expect(breadcrumbsFor(testInstallPlan)).toEqual([{
