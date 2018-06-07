@@ -58,7 +58,7 @@ export class ResourceLog extends SafetyFirst {
   static getDerivedStateFromProps(nextProps, prevState) {
     const newState = {};
 
-    if(nextProps.eof){
+    if (nextProps.eof){
       newState.status = prevState.status === 'paused' ? 'paused' : 'eof';
     }
     return newState;

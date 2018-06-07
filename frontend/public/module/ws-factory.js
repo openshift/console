@@ -135,7 +135,7 @@ WSFactory.prototype._invokeHandlers = function(type, data) {
   handlers.forEach(function(h) {
     try {
       h(data);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
   });

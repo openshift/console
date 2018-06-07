@@ -68,7 +68,7 @@ export class EnvironmentPage extends PromiseComponent {
   _envVarsToNameVal(finalEnvPairs) {
     return _.filter(finalEnvPairs, finalEnvPair => !_.isEmpty(finalEnvPair[NAME]))
       .map(finalPairForContainer => {
-        if(finalPairForContainer[VALUE] instanceof Object) {
+        if (finalPairForContainer[VALUE] instanceof Object) {
           return {
             'name': finalPairForContainer[NAME],
             'valueFrom': finalPairForContainer[VALUE]

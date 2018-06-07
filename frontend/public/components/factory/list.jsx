@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
