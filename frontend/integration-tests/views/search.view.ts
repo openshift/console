@@ -8,7 +8,7 @@ export const labelFilter = $('.co-m-selector-input input');
 
 export const selectSearchType = async (objectType: string) => {
   const isPresent = await dropdownLinks.isPresent();
-  if(!isPresent) {
+  if (!isPresent) {
     await dropdown.click();
     await browser.wait(until.elementToBeClickable(dropdownLinks.first()), BROWSER_TIMEOUT);
   }

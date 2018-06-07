@@ -3,7 +3,7 @@ import * as React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualized';
 import * as fuzzy from 'fuzzysearch';

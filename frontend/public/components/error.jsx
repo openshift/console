@@ -30,7 +30,7 @@ const getErrMessage = () => {
   if (msg) {
     try {
       return decodeURIComponent(msg);
-    } catch(e) {
+    } catch (e) {
       // eslint-disable-next-line no-console
       console.log(e);
     }

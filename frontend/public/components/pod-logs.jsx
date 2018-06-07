@@ -32,7 +32,7 @@ export class PodLogs extends React.Component {
     });
 
     newState.currentContainer = prevState.currentContainer || newState.containers[0];
-    if( !_.isEqual(prevState.currentContainer, newState.currentContainer)
+    if ( !_.isEqual(prevState.currentContainer, newState.currentContainer)
         || !_.isEqual(prevState.containers, newState.containers)) {
       return newState;
     }

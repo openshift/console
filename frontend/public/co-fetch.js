@@ -148,7 +148,7 @@ const coFetchSendJSON = (url, method, json = null, options = {}) => {
       'Content-Type': `application/${method === 'PATCH' ? 'json-patch+json' : 'json'};charset=UTF-8`,
     },
   };
-  if(json) {
+  if (json) {
     allOptions.body = JSON.stringify(json);
   }
   return coFetchJSON(url, method, _.defaultsDeep(allOptions, options));

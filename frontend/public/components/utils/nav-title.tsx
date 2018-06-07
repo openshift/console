@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
 import { ActionsMenu, ResourceIcon } from './index';

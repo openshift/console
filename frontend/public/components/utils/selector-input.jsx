@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as TagsInput from 'react-tagsinput';
 
 import * as k8sSelector from '../../module/k8s/selector';

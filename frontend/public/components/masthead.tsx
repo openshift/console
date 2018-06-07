@@ -99,7 +99,7 @@ export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => 
   let logoImg, logoAlt;
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
-  switch((window as any).SERVER_FLAGS.logoImageName) {
+  switch ((window as any).SERVER_FLAGS.logoImageName) {
     case 'os-origin':
       logoImg = openshiftOriginLogoImg;
       logoAlt = 'OpenShift Origin';
