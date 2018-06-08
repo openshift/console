@@ -89,7 +89,7 @@ const detectCanListNS = dispatch => {
   const req = {
     spec: {
       resourceAttributes: {
-        name: 'namespaces',
+        resource: 'namespaces',
         verb: 'list',
       },
     },
