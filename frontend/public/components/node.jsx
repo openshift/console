@@ -37,12 +37,11 @@ const Header = props => {
   if (!props.data) {
     return null;
   }
-  const isOperatorInstalled = !!_.find(props.data, n => containerLinuxUpdateOperator.isOperatorInstalled(n));
   return <ListHeader>
     <ColHead {...props} className="col-xs-4" sortField="metadata.name">Node Name</ColHead>
-    <ColHead {...props} className={isOperatorInstalled ? 'col-xs-2' : 'col-xs-4'} sortFunc="nodeReadiness">Status</ColHead>
-    { isOperatorInstalled && <ColHead {...props} className="col-xs-3" sortFunc="nodeUpdateStatus">OS Update</ColHead> }
-    <ColHead {...props} className={isOperatorInstalled ? 'col-xs-3' : 'col-xs-4'} sortField="status.addresses">Node Addresses</ColHead>
+    <ColHead {...props} className="col-sm-2 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
+    <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="nodeUpdateStatus">OS Update</ColHead>
+    <ColHead {...props} className="col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
   </ListHeader>;
 };
 
@@ -87,15 +86,11 @@ const NodeRow = ({obj: node, expand}) => {
         <NodeCog node={node} />
         <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
       </div>
-      <div className="col-xs-2">
-        <NodeStatus node={node} />
-      </div>
-      <div className="col-xs-3">
+      <div className="col-sm-2 col-xs-4"><NodeStatus node={node} /></div>
+      <div className="col-sm-3 col-xs-4">
         {isOperatorInstalled ? <NodeCLStatusRow node={node} /> : <span className="text-muted">Not configured</span>}
       </div>
-      <div className="col-xs-3">
-        <NodeIPList ips={node.status.addresses} expand={expand} />
-      </div>
+      <div className="col-sm-3 hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
     </div>
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
