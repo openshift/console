@@ -20,7 +20,7 @@ export class ResourceRequirementsModal extends PromiseComponent {
     const formData = getFormValues(Form.formName)(store.getState());
     let newObj = _.cloneDeep(obj);
     _.set(newObj, `spec.${path}.${type}`, formData);
-    const k8sModel = store.getState().KINDS.get('kinds').get(referenceFor(obj));
+    const k8sModel = store.getState().k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]);
 
     this.handlePromise(k8sUpdate(k8sModel, newObj)).then(cancel);
   }

@@ -5,14 +5,12 @@ import thunk from 'redux-thunk';
 import { featureReducer, featureReducerName } from './features';
 import k8sReducers from './module/k8s/k8s-reducers';
 import UIReducers from './ui/ui-reducers';
-import { kindReducer, kindReducerName } from './kinds';
 
 const reducers = combineReducers({
   k8s: k8sReducers, // data
   UI: UIReducers,
   form: formReducer,
   [featureReducerName]: featureReducer,
-  [kindReducerName]: kindReducer,
 });
 
 const store = createStore(reducers, {}, applyMiddleware(thunk));

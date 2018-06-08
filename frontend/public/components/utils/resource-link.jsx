@@ -4,8 +4,13 @@ import { Link } from 'react-router-dom';
 
 import { ResourceIcon } from './index';
 import { modelFor, referenceForModel } from '../../module/k8s';
+import { connectToModel } from '../../kinds';
 
 const unknownKinds = new Set();
+
+/**
+ * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
+ */
 export const resourcePath = (kind, name, namespace = undefined) => {
   const model = modelFor(kind);
   if (!model) {
@@ -43,17 +48,18 @@ export const resourcePath = (kind, name, namespace = undefined) => {
 
 export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
-/** @type {React.SFC<{kind: K8sResourceKindReference, name: string, namespace?: string, title: string, displayName?: string, linkTo?: boolean}>} */
-export const ResourceLink = ({kind, name, namespace, title, displayName, linkTo=true}) => {
-  const path = resourcePath(kind, name, namespace);
-  const value = displayName ? displayName : name;
+export const ResourceLink = connectToModel(
+  ({kind, name, namespace, title, displayName, linkTo = true, kindsInFlight}) => {
+    if (kindsInFlight) {
+      return null;
+    }
+    const path = resourcePath(kind, name, namespace);
+    const value = displayName ? displayName : name;
 
-  return (
-    <span className="co-resource-link">
+    return <span className="co-resource-link">
       <ResourceIcon kind={kind} />
       {(path && linkTo) ? <Link to={path} title={title}>{value}</Link> : <span>{value}</span>}
-    </span>
-  );
-};
+    </span>;
+  });
 
 ResourceLink.displayName = 'ResourceLink';

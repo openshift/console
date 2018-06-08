@@ -32,8 +32,8 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   return sampleObj;
 };
 
-const stateToProps = ({KINDS}) => ({
-  k8sModels: KINDS.get('kinds'),
+const stateToProps = ({k8s}) => ({
+  k8sModels: k8s.getIn(['RESOURCES', 'models']),
 });
 
 /**
