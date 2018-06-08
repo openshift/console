@@ -7,7 +7,7 @@
   left: 0;
   position: fixed;
   right: 0;
-  z-index: $zindex-navbar;
+  z-index: $zindex-navbar-fixed;
   @media (max-width: $grid-float-breakpoint-max) {
     padding-left: 50px; // make space for .sidebar-toggle
   }
