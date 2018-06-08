@@ -101,6 +101,13 @@ const listFilters = {
 
     let status = routeStatus(route);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
+  'secret-type': (types, secret) => {
+    if (!types || !types.selected || !types.selected.size) {
+      return true;
+    }
+    const type = secret.type;
+    return types.selected.has(type) || !_.includes(types.all, type);
   }
 };
 
