@@ -6,7 +6,7 @@ import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
 import { BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary } from './utils';
-import { BuildsPage } from './build';
+import { BuildsPage, getStrategyType, getEnvPath } from './build';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
@@ -72,11 +72,10 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
 
 const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
 
-const envPath = ['spec', 'strategy', 'sourceStrategy'];
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
-  rawEnvData={props.obj.spec.strategy.sourceStrategy}
-  envPath={envPath}
+  rawEnvData={props.obj.spec.strategy[getStrategyType(props.obj.spec.strategy)]}
+  envPath={getEnvPath(props)}
   readOnly={false}
 />;
 

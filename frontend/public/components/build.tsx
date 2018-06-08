@@ -61,11 +61,27 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({obj: build}) => {
   </div>;
 };
 
-const envPath = ['spec', 'strategy', 'sourceStrategy'];
+export const getStrategyType = (strategy) => {
+  switch (strategy.type) {
+    case 'Docker':
+      return 'dockerStrategy';
+    case 'Custom':
+      return 'customStrategy';
+    case 'JenkinsPipeline':
+      return 'jenkinsPipelineStrategy';
+    default:
+      return 'sourceStrategy';
+  }
+};
+
+export const getEnvPath = (props) => {
+  return ['spec', 'strategy', getStrategyType(props.obj.spec.strategy)];
+};
+
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
-  rawEnvData={props.obj.spec.strategy.sourceStrategy}
-  envPath={envPath}
+  rawEnvData={props.obj.spec.strategy[getStrategyType(props.obj.spec.strategy)]}
+  envPath={getEnvPath(props)}
   readOnly={true}
 />;
 

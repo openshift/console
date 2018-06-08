@@ -180,10 +180,10 @@ export class EnvironmentPage extends PromiseComponent {
 
   render() {
     const {errorMessage, success, inProgress, currentEnvVars, stale} = this.state;
-    const {rawEnvData, readOnly} = this.props;
+    const {rawEnvData, readOnly, obj} = this.props;
 
     const containerVars = currentEnvVars.map((envVar, i) => {
-      const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : rawEnvData.from.name;
+      const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : obj.metadata.name;
       return <div key={keyString} className="co-m-pane__body-group">
         { _.isArray(rawEnvData) && <h1 className="co-section-title">Container {keyString}</h1> }
         <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly}/>
