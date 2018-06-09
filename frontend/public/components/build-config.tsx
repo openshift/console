@@ -102,7 +102,7 @@ const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div classNa
     <ResourceLink kind={BuildConfigsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
   <div className="col-xs-3">
-    {obj.metadata.namespace}
+    <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
   <div className="col-xs-3">
     <LabelList kind={BuildConfigsReference} labels={obj.metadata.labels} />
