@@ -131,7 +131,7 @@ input[type="radio"] {
   padding: 0 0 30px 0; }
 
 .co-m-table-grid .row {
-  line-height: 1;
+  line-height: normal;
   margin: 0; }
 
 .co-m-table-grid .row,
