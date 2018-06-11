@@ -69,13 +69,16 @@ export const getStrategyType = (strategy) => {
       return 'customStrategy';
     case 'JenkinsPipeline':
       return 'jenkinsPipelineStrategy';
-    default:
+    case 'Source':
       return 'sourceStrategy';
+    default:
+      return null;
   }
 };
 
 export const getEnvPath = (props) => {
-  return ['spec', 'strategy', getStrategyType(props.obj.spec.strategy)];
+  const strategyType = getStrategyType(props.obj.spec.strategy);
+  return strategyType ? ['spec', 'strategy', strategyType] : null;
 };
 
 const environmentComponent = (props) => <EnvironmentPage
