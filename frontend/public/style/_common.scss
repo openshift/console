@@ -133,6 +133,11 @@
   margin-bottom: 20px;
 }
 
+.co-m-pane__explanation code {
+  background-color: $co-gray-lightest;
+  color: $co-gray;
+}
+
 .co-btn--download {
   padding: 15px;
   font-size: 18px;
