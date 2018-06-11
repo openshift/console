@@ -61,15 +61,45 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({obj: build}) => {
   </div>;
 };
 
-const envPath = ['spec', 'strategy', 'sourceStrategy'];
-const environmentComponent = (props) => <EnvironmentPage
-  obj={props.obj}
-  rawEnvData={props.obj.spec.strategy.sourceStrategy}
-  envPath={envPath}
-  readOnly={true}
-/>;
+export const getStrategyType = (strategy) => {
+  switch (strategy.type) {
+    case 'Docker':
+      return 'dockerStrategy';
+    case 'Custom':
+      return 'customStrategy';
+    case 'JenkinsPipeline':
+      return 'jenkinsPipelineStrategy';
+    case 'Source':
+      return 'sourceStrategy';
+    default:
+      return null;
+  }
+};
 
-const pages = [navFactory.details(BuildsDetails), navFactory.editYaml(), navFactory.envEditor(environmentComponent), navFactory.logs(BuildLogs)];
+export const getEnvPath = (props) => {
+  const strategyType = getStrategyType(props.obj.spec.strategy);
+  return strategyType ? ['spec', 'strategy', strategyType] : null;
+};
+
+export const BuildEnvironmentComponent = (props) => {
+  const {obj} = props;
+  const readOnly = obj.kind === 'Build';
+  const envPath = getEnvPath(props);
+  if (envPath) {
+    return <EnvironmentPage
+      obj={obj}
+      rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy)]}
+      envPath={getEnvPath(props)}
+      readOnly={readOnly}/>;
+  }
+  return <div className="cos-status-box">
+    <div className="text-center">The environment variable editor does not support build
+      strategy: {obj.spec.strategy.type}.
+    </div>
+  </div>;
+};
+
+const pages = [navFactory.details(BuildsDetails), navFactory.editYaml(), navFactory.envEditor(BuildEnvironmentComponent), navFactory.logs(BuildLogs)];
 export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
