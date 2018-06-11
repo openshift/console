@@ -10,7 +10,7 @@ kind: CronJob
 metadata:
   name: example
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "@daily"
   jobTemplate:
     spec:
       template:
