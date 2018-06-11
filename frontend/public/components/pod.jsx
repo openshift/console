@@ -286,7 +286,7 @@ const filters = [{
     {id: 'Pending', title: 'Pending'},
     {id: 'Terminating', title: 'Terminating'},
     {id: 'CrashLoopBackOff', title: 'CrashLoopBackOff'},
-    {id: 'Completed', title: 'Job Completed'},
+    {id: 'Completed', title: 'Completed'},
   ],
 }];
 
