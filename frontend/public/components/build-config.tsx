@@ -72,12 +72,23 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
 
 const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
 
-const environmentComponent = (props) => <EnvironmentPage
-  obj={props.obj}
-  rawEnvData={props.obj.spec.strategy[getStrategyType(props.obj.spec.strategy)]}
-  envPath={getEnvPath(props)}
-  readOnly={false}
-/>;
+const environmentComponent = (props) => {
+  const {obj} = props;
+  const envPath = getEnvPath(props);
+  if (envPath) {
+    return <EnvironmentPage
+      obj={obj}
+      rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy)]}
+      envPath={getEnvPath(props)}
+      readOnly={false}
+    />;
+  }
+  return <div className="cos-status-box">
+    <div className="text-center">{`The environment variable editor doesn't support build
+      strategy: ${obj.spec.strategy.type}.`}
+    </div>
+  </div>;
+};
 
 const pages = [navFactory.details(BuildConfigsDetails), navFactory.editYaml(), navFactory.envEditor(environmentComponent), navFactory.builds(BuildsTabPage)];
 export const BuildConfigsDetailsPage: React.SFC<BuildConfigsDetailsPageProps> = props =>

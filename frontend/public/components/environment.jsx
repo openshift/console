@@ -46,23 +46,16 @@ export class EnvironmentPage extends PromiseComponent {
   constructor(props) {
     super(props);
 
-    if (this.props.envPath) {
-      this.reload = () => this._reload();
-      this.saveChanges = (...args) => this._saveChanges(...args);
-      this.updateEnvVars = (...args) => this._updateEnvVars(...args);
+    this.reload = () => this._reload();
+    this.saveChanges = (...args) => this._saveChanges(...args);
+    this.updateEnvVars = (...args) => this._updateEnvVars(...args);
 
-      const currentEnvVars = envVarsToArray(this.props.rawEnvData);
-      this.state = {
-        currentEnvVars,
-        success: null
-      };
-    } else {
-      this.state = {
-        errorMessage: 'Error retrieving environment variables.'
-      };
-    }
+    const currentEnvVars = envVarsToArray(this.props.rawEnvData);
+    this.state = {
+      currentEnvVars,
+      success: null
+    };
   }
-
   /**
    * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
    *
@@ -130,15 +123,12 @@ export class EnvironmentPage extends PromiseComponent {
    */
   static getDerivedStateFromProps(nextProps, prevState) {
     const { currentEnvVars } = prevState;
-    const { rawEnvData, readOnly, envPath } = nextProps;
-    if (envPath) {
-      const incomingEnvVars = envVarsToArray(rawEnvData);
-      if (_.isEqual(incomingEnvVars, currentEnvVars)) {
-        return null;
-      }
-      return readOnly ? {currentEnvVars: incomingEnvVars} : {stale: true, success: null};
+    const { rawEnvData, readOnly } = nextProps;
+    const incomingEnvVars = envVarsToArray(rawEnvData);
+    if (_.isEqual(incomingEnvVars, currentEnvVars)) {
+      return null;
     }
-    return null;
+    return readOnly ? { currentEnvVars: incomingEnvVars } : { stale: true, success: null };
   }
 
 
@@ -189,16 +179,15 @@ export class EnvironmentPage extends PromiseComponent {
 
   render() {
     const {errorMessage, success, inProgress, currentEnvVars, stale} = this.state;
-    const {rawEnvData, readOnly, obj, envPath} = this.props;
+    const {rawEnvData, readOnly, obj} = this.props;
 
-    const showButtons = !readOnly && envPath;
-    const containerVars = envPath ? currentEnvVars.map((envVar, i) => {
+    const containerVars = currentEnvVars.map((envVar, i) => {
       const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : obj.metadata.name;
       return <div key={keyString} className="co-m-pane__body-group">
         { _.isArray(rawEnvData) && <h1 className="co-section-title">Container {keyString}</h1> }
         <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly}/>
       </div>;
-    }) : null;
+    });
 
     return <div className="co-m-pane__body">
       {containerVars}
@@ -207,8 +196,8 @@ export class EnvironmentPage extends PromiseComponent {
           {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{errorMessage}</p>}
           {stale && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>The information on this page is no longer current. Click Reload to update and lose edits, or Save Changes to overwrite.</p>}
           {success && <p className="alert alert-success"><span className="pficon pficon-ok" aria-hidden="true"></span>{success}</p>}
-          {showButtons && <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
-          {showButtons && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
+          {!readOnly && <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
+          {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
         </div>
       </div>
     </div>;
@@ -216,7 +205,7 @@ export class EnvironmentPage extends PromiseComponent {
 }
 EnvironmentPage.propTypes = {
   obj: PropTypes.object.isRequired,
-  rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  envPath: PropTypes.array,
+  rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  envPath: PropTypes.array.isRequired,
   readOnly: PropTypes.bool.isRequired
 };
