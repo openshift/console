@@ -224,7 +224,7 @@ describe(RouteStatus.displayName, () => {
     };
 
     const wrapper = shallow(<RouteStatus obj={route} />);
-    expect(wrapper.find('.fa-times').exists()).toBe(true);
+    expect(wrapper.find('.fa-times-circle').exists()).toBe(true);
     expect(wrapper.text()).toEqual('Rejected');
   });
 
