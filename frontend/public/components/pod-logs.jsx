@@ -29,7 +29,9 @@ export class PodLogs extends React.Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     const newState = {};
     const containers = _.get(nextProps.obj, 'status.containerStatuses', []);
-    newState.containers = _.reduce(containers, (accumulator, {name, state}, index) => {
+    const initContainers = _.get(nextProps.obj, 'status.initContainerStatuses', []);
+    const allContainers = containers.concat(initContainers);
+    newState.containers = _.reduce(allContainers, (accumulator, {name, state}, index) => {
       return {
         ...accumulator,
         [name]: {
