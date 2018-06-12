@@ -116,13 +116,13 @@ export const RouteStatus: React.SFC<RouteStatusProps> = ({obj: route}) => {
       </React.Fragment>;
     case 'Accepted':
       return <React.Fragment>
-        <div className="fa fa-check text-success co-m-route-status-icon" aria-hidden="true"></div>
-      Accepted
+        <div className="fa fa-check route-accepted co-m-route-status-icon" aria-hidden="true"></div>
+        <span className="route-accepted">Accepted</span>
       </React.Fragment>;
     case 'Rejected':
       return <React.Fragment>
-        <div className="fa fa-times text-danger co-m-route-status-icon" aria-hidden="true"></div>
-      Rejected
+        <div className="fa fa-times route-rejected co-m-route-status-icon" aria-hidden="true"></div>
+        <span className="route-rejected">Rejected</span>
       </React.Fragment>;
     default:
       break;
