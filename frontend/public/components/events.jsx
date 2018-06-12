@@ -140,7 +140,7 @@ export class EventStreamPage extends React.Component {
           <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter label="Events by message (fuzzy)" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
+          <TextFilter label="Events by message" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
         </div>
       </div>
       <EventStream {...this.props} category={category} kind={kind} textFilter={textFilter} />
