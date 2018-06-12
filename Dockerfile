@@ -1,7 +1,14 @@
+FROM quay.io/coreos/tectonic-console-builder:v16 AS build
+
+RUN mkdir -p /go/src/github.com/openshift/console/
+ADD . /go/src/github.com/openshift/console/
+WORKDIR /go/src/github.com/openshift/console/
+RUN ./build.sh
+
 FROM openshift/origin-base
 
-ADD frontend/public/dist /opt/bridge/static
-ADD bin/bridge /opt/bridge/bin/bridge
+COPY --from=build /go/src/github.com/openshift/console/frontend/public/dist /opt/bridge/static
+COPY --from=build /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin/bridge
 ADD etc/ssl /etc/ssl
 
 LABEL io.k8s.display-name="OpenShift Console" \
