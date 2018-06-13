@@ -45,11 +45,11 @@ export const envVarsToArray = (initialPairObjects) => {
   return [getPairsFromObject(initialPairObjects)];
 };
 
+/** @type {(state: any, props: {obj: object, rawEnvData: any, readOnly: boolean, envPath: any}) => {model: K8sKind}} */
 const stateToProps = ({k8s}, {obj}) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
 });
 
-/** @type {React.SFC<{obj: object, rawEnvData: any, readOnly: boolean, envPath: any}>} */
 export const EnvironmentPage = connect(stateToProps)(
   class EnvironmentPage extends PromiseComponent {
   /**
