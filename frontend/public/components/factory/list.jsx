@@ -213,12 +213,12 @@ export const WorkloadListHeader = props => <ListHeader>
 /**
  * Issues:
  * - "ContainersNotReady" in last Pod column ("Readiness") not aligned with icon (probably `overflow` issue)
- * - Outer row div height sometimes does not match inner `.co-resource-list__item` 
+ *     [FIXED] Removed `white-space: nowrap` from `.co-error`
+ * - Outer row div height sometimes does not match inner `.co-resource-list__item`
  *     [x] WebSocket updates messing up keyMapper
  *     [x] `<LabelList>`
  *     [x] `ResourceCog`
  *     [FIXED] Add `height: 100%` to `.co-resource-list__item` to match wrapper div
- * - Scrolling even with small lists is still not consistently smooth
  */
 export class Rows extends React.Component {
   constructor(props) {
@@ -376,7 +376,7 @@ export class ResourceRow extends React.Component {
   }
 }
 
-export const WorkloadListRow = ({kind, actions, obj: o, style}) => <ResourceRow obj={o} style={style}>
+export const WorkloadListRow = ({kind, actions, obj: o}) => <ResourceRow obj={o}>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
     <ResourceCog actions={actions} kind={kind} resource={o} />
     <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />

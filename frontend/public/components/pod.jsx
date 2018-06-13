@@ -48,7 +48,7 @@ export const Readiness = ({pod}) => {
 
 Readiness.displayName = 'Readiness';
 
-export const PodRow = ({obj: pod, style}) => {
+export const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
   let status = phase;
 
@@ -58,7 +58,7 @@ export const PodRow = ({obj: pod, style}) => {
     </span>;
   }
 
-  return <ResourceRow obj={pod} style={style}>
+  return <ResourceRow obj={pod}>
     <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
       <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />

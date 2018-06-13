@@ -28,8 +28,8 @@ const StorageClassHeader = props => <ListHeader>
 </ListHeader>;
 
 
-const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj, style}) => {
-  return <div className="row co-resource-list__item" style={style}>
+const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
+  return <div className="row co-resource-list__item">
     <div className="col-xs-3">
       <ResourceCog actions={menuActions} kind={StorageClassReference} resource={obj} />
       <ResourceLink kind={StorageClassReference} name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
@@ -71,7 +71,6 @@ StorageClassDetailsPage.displayName = 'StorageClassDetailsPage';
 /* eslint-disable no-undef */
 export type StorageClassRowProps = {
   obj: any,
-  style: any,
 };
 
 export type StorageClassDetailsProps = {

@@ -116,7 +116,7 @@ export const RoleLink = ({binding}) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const Row = ({obj: binding}, style) => <ResourceRow obj={binding} style={style}>
+const Row = ({obj: binding}) => <ResourceRow obj={binding}>
   <div className="col-xs-3">
     <BindingName binding={binding} />
   </div>

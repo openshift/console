@@ -128,7 +128,6 @@ DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
 /* eslint-disable no-undef */
 export type DeploymentConfigsRowProps = {
   obj: any,
-  style: any,
 };
 
 export type DeploymentConfigsPageProps = {

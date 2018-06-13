@@ -42,7 +42,7 @@ const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
 </ListHeader>;
 
-const Row = ({obj: role, style}) => <div className="row co-resource-list__item" style={style}>
+const Row = ({obj: role}) => <div className="row co-resource-list__item">
   <div className="col-xs-6">
     <ResourceCog actions={menuActions} kind={roleKind(role)} resource={role} />
     <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />

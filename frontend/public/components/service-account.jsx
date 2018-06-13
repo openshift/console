@@ -76,11 +76,11 @@ const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-3" sortField="metadata.creationTimestamp">Age</ColHead>
 </ListHeader>;
 
-const ServiceAccountRow = ({obj: serviceaccount, style}) => {
+const ServiceAccountRow = ({obj: serviceaccount}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;
 
   return (
-    <ResourceRow obj={serviceaccount} style={style}>
+    <ResourceRow obj={serviceaccount}>
       <div className="col-xs-3">
         <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
         <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
