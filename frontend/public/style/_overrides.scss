@@ -190,7 +190,7 @@ tags-input .autocomplete .suggestion-item em {
   text-align: left;
 }
 
-// FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876)
+// FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the cog menus' overflow.
 .ReactVirtualized__Grid.ReactVirtualized__List {
   overflow: visible !important;
 }

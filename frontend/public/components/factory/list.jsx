@@ -210,16 +210,6 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-/**
- * Issues:
- * - "ContainersNotReady" in last Pod column ("Readiness") not aligned with icon (probably `overflow` issue)
- *     [FIXED] Removed `white-space: nowrap` from `.co-error`
- * - Outer row div height sometimes does not match inner `.co-resource-list__item`
- *     [x] WebSocket updates messing up keyMapper
- *     [x] `<LabelList>`
- *     [x] `ResourceCog`
- *     [FIXED] Add `height: 100%` to `.co-resource-list__item` to match wrapper div
- */
 export class Rows extends React.Component {
   constructor(props) {
     super(props);
@@ -227,7 +217,7 @@ export class Rows extends React.Component {
     this.measurementCache = new CellMeasurerCache({
       fixedWidth: true,
       minHeight: 50,
-      keyMapper: rowIndex => this.props.data[rowIndex].metadata.uid,
+      keyMapper: rowIndex => _.get(this.props.data[rowIndex], 'metadata.uid', rowIndex),
     });
 
     this.rowRenderer = this._rowRenderer.bind(this);
@@ -244,7 +234,7 @@ export class Rows extends React.Component {
       rowIndex={index}
       parent={parent}>
       <div style={style}>
-        <Row key={obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} index={index} />
+        <Row key={_.get(obj, 'metadata.uid', index)} obj={obj} expand={expand} kindObj={kindObj} index={index} />
       </div>
     </CellMeasurer>;
   }
@@ -270,7 +260,7 @@ export class Rows extends React.Component {
                 tabIndex={null}
               />
             </div>}
-          </AutoSizer> }
+          </AutoSizer>}
       </WindowScroller>
     </div>;
   }
@@ -349,7 +339,7 @@ List.propTypes = {
   fake: PropTypes.bool,
 };
 
-/** @augments {React.Component<{obj: any>}} */
+/** @augments {React.Component<{obj: K8sResourceKind>}} */
 export class ResourceRow extends React.Component {
   shouldComponentUpdate(nextProps) {
     if (_.size(nextProps) !== _.size(this.props)) {
