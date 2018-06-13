@@ -70,6 +70,8 @@ $color-pf-black: black;
 $text-muted: $color-grey-text;
 // Patternfly defaults to 12px, which is too small in many cases
 $font-size-base: 13px;
+// Patternfly uses Open Sans. Use the one true font-family directive shared by Medium, GitHub, Wordpress, Bootstrap, etc. See: https://bitsofco.de/the-new-system-font-stack/
+$font-family-base: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, "Helvetica Neue", sans-serif;
 // Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to
 $grid-gutter-width: 30px;
 
