@@ -210,6 +210,16 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
+/**
+ * Issues:
+ * - "ContainersNotReady" in last Pod column ("Readiness") not aligned with icon (probably `overflow` issue)
+ * - Outer row div height sometimes does not match inner `.co-resource-list__item` 
+ *     [x] WebSocket updates messing up keyMapper
+ *     [x] `<LabelList>`
+ *     [x] `ResourceCog`
+ *     [FIXED] Add `height: 100%` to `.co-resource-list__item` to match wrapper div
+ * - Scrolling even with small lists is still not consistently smooth
+ */
 export class Rows extends React.Component {
   constructor(props) {
     super(props);
@@ -239,8 +249,7 @@ export class Rows extends React.Component {
     </CellMeasurer>;
   }
 
-  render () {
-    const data = this.props.data;
+  render() {
     return <div className="co-m-table-grid__body">
       <WindowScroller>
         {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
@@ -248,14 +257,14 @@ export class Rows extends React.Component {
             {({width}) => <div ref={registerChild}>
               <VirtualList
                 autoHeight
-                data={data}
+                data={this.props.data}
                 height={height}
                 deferredMeasurementCache={this.measurementCache}
                 rowHeight={this.measurementCache.rowHeight}
                 isScrolling={isScrolling}
                 onScroll={onChildScroll}
                 rowRenderer={this.rowRenderer}
-                rowCount={data.length}
+                rowCount={this.props.data.length}
                 scrollTop={scrollTop}
                 width={width}
                 tabIndex={null}
@@ -305,7 +314,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
     const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = props;
     const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
-    const childrens = [
+    const children = <React.Fragment>
       <Header
         key="header"
         applySort={_.partial(sortList, listId)}
@@ -313,12 +322,12 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
         currentSortFunc={currentSortFunc}
         currentSortOrder={currentSortOrder}
         {...componentProps}
-      />,
+      />
       <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
-    ];
+    </React.Fragment>;
 
     return <div className="co-m-table-grid co-m-table-grid--bordered">
-      {fake ? childrens : <StatusBox {...props}>{childrens}</StatusBox> }
+      { fake ? children : <StatusBox {...props}>{children}</StatusBox> }
     </div>;
   });
 
