@@ -25,6 +25,14 @@ $color-bookmarker: #DDD;
   background-color: $color-grey-when-selected;
 }
 
+.dropdown-menu__header {
+  color: $co-gray;
+  flex-grow: 1;
+  font-size: 11px;
+  padding: 3px 10px;
+  text-transform: uppercase;
+}
+
 .dropdown-menu__filter {
   padding: 5px 10px 10px;
 }
