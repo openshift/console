@@ -48,7 +48,7 @@ export const Readiness = ({pod}) => {
 
 Readiness.displayName = 'Readiness';
 
-export const PodRow = ({obj: pod}) => {
+export const PodRow = ({obj: pod, style}) => {
   const phase = podPhase(pod);
   let status = phase;
 
@@ -58,21 +58,18 @@ export const PodRow = ({obj: pod}) => {
     </span>;
   }
 
-  return <ResourceRow obj={pod}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+  return <ResourceRow obj={pod} style={style}>
+    <div className="col-lg-3 col-md-4 col-sm-6 col-xs-6">
       <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-3 col-md-3 col-sm-6 col-xs-6">
       <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
     </div>
-    <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-      <LabelList kind="Pod" labels={pod.metadata.labels} />
-    </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
+    <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-    <div className="col-lg-2 col-md-1 hidden-sm hidden-xs">{status}</div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{status}</div>
     <div className="col-lg-1 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
   </ResourceRow>;
 };
@@ -80,11 +77,10 @@ export const PodRow = ({obj: pod}) => {
 PodRow.displayName = 'PodRow';
 
 const PodHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Pod Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-1 hidden-sm hidden-xs" sortFunc="podPhase">Status</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-6 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-6 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortFunc="podPhase">Status</ColHead>
   <ColHead {...props} className="col-lg-1 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 

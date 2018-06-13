@@ -30,7 +30,7 @@ const ConfigMapHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
-const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
+const ConfigMapRow = ({obj: configMap, style}) => <ResourceRow obj={configMap} style={style}>
   <div className="col-sm-4 col-xs-6">
     <ResourceCog actions={menuActions} kind="ConfigMap" resource={configMap} />
     <ResourceLink kind="ConfigMap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />

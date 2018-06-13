@@ -50,7 +50,7 @@ const Header = props => <ListHeader>
 </ListHeader>;
 
 const kind = 'StatefulSet';
-const Row = ({obj: ss}) => <div className="row co-resource-list__item">
+const Row = ({obj: ss, style}) => <div className="row co-resource-list__item" style={style}>
   <div className="col-xs-4">
     <ResourceCog actions={menuActions} kind={kind} resource={ss} />
     <ResourceLink kind={kind} name={ss.metadata.name} namespace={ss.metadata.namespace} title={ss.metadata.name} />

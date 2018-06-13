@@ -40,10 +40,10 @@ const JobHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="jobType">Type</ColHead>
 </ListHeader>;
 
-const JobRow = ({obj: job}) => {
+const JobRow = ({obj: job, style}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
-    <ResourceRow obj={job}>
+    <ResourceRow obj={job} style={style}>
       <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
         <ResourceCog actions={menuActions} kind="Job" resource={job} />
         <ResourceLink kind="Job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
