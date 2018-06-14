@@ -110,7 +110,8 @@ const Env = ({env}) => {
 
 const Details = (props) => {
   const pod = props.obj;
-  const container = _.find(pod.spec.containers, {name: props.match.params.name});
+  const container = _.find(pod.spec.containers, {name: props.match.params.name}) ||
+                  _.find(pod.spec.initContainers, {name: props.match.params.name});
   if (!container) {
     return null;
   }
