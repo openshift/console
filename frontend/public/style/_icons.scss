@@ -1,8 +1,10 @@
-.node-ready {
+.node-ready,
+.route-accepted {
   color: $color-pf-green-400;
 }
 
-.node-not-ready {
+.node-not-ready,
+.route-rejected {
   color: $color-red-error;
 }
 
