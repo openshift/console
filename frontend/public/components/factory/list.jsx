@@ -5,6 +5,7 @@ import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
 import { getJobTypeAndCompletions, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
@@ -209,9 +210,61 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-const Rows = ({data, expand, Row, kindObj}) => <div className="co-m-table-grid__body">
-  {data.map(obj => <Row key={obj.rowKey || obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} />)}
-</div>;
+export class Rows extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.measurementCache = new CellMeasurerCache({
+      fixedWidth: true,
+      minHeight: 50,
+      keyMapper: rowIndex => _.get(this.props.data[rowIndex], 'metadata.uid', rowIndex),
+    });
+
+    this.rowRenderer = this._rowRenderer.bind(this);
+  }
+
+  _rowRenderer({index, style, key, parent}) {
+    const {data, expand, Row, kindObj} = this.props;
+    const obj = data[index];
+
+    return <CellMeasurer
+      cache={this.measurementCache}
+      columnIndex={0}
+      key={key}
+      rowIndex={index}
+      parent={parent}>
+      <div style={style}>
+        <Row key={_.get(obj, 'metadata.uid', index)} obj={obj} expand={expand} kindObj={kindObj} index={index} />
+      </div>
+    </CellMeasurer>;
+  }
+
+  render() {
+    return <div className="co-m-table-grid__body">
+      <WindowScroller>
+        {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+          <AutoSizer disableHeight>
+            {({width}) => <div ref={registerChild}>
+              <VirtualList
+                autoHeight
+                data={this.props.data}
+                height={height}
+                deferredMeasurementCache={this.measurementCache}
+                rowHeight={this.measurementCache.rowHeight}
+                isScrolling={isScrolling}
+                onScroll={onChildScroll}
+                rowRenderer={this.rowRenderer}
+                rowCount={this.props.data.length}
+                scrollTop={scrollTop}
+                width={width}
+                tabIndex={null}
+              />
+            </div>}
+          </AutoSizer>}
+      </WindowScroller>
+    </div>;
+  }
+}
 
 Rows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
@@ -251,7 +304,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
     const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = props;
     const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
-    const childrens = [
+    const children = <React.Fragment>
       <Header
         key="header"
         applySort={_.partial(sortList, listId)}
@@ -259,12 +312,12 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
         currentSortFunc={currentSortFunc}
         currentSortOrder={currentSortOrder}
         {...componentProps}
-      />,
+      />
       <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
-    ];
+    </React.Fragment>;
 
     return <div className="co-m-table-grid co-m-table-grid--bordered">
-      {fake ? childrens : <StatusBox {...props}>{childrens}</StatusBox> }
+      { fake ? children : <StatusBox {...props}>{children}</StatusBox> }
     </div>;
   });
 
@@ -286,7 +339,7 @@ List.propTypes = {
   fake: PropTypes.bool,
 };
 
-/** @augments {React.Component<{obj: any>}} */
+/** @augments {React.Component<{obj: K8sResourceKind>}} */
 export class ResourceRow extends React.Component {
   shouldComponentUpdate(nextProps) {
     if (_.size(nextProps) !== _.size(this.props)) {
@@ -309,7 +362,7 @@ export class ResourceRow extends React.Component {
   }
 
   render () {
-    return <div className="row co-resource-list__item">{this.props.children}</div>;
+    return <div className="row co-resource-list__item" style={this.props.style}>{this.props.children}</div>;
   }
 }
 
