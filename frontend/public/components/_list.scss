@@ -56,3 +56,38 @@
   right: 0;
   bottom: 0;
 }
+
+/* Make resource list (co-m-table-grid) scrollable
+--------------------------------------------------- */
+
+@media(max-width: $grid-float-breakpoint) {
+  .table-grid-wrapper {
+    overflow: hidden;
+    @include scroll-shadows-horizontal-other();
+  }
+  .co-m-table-grid--responsive {
+    .row {
+      display: flex;
+      // so scrollbar doesn't appear unless necessary, (tablet - left/right gutters)
+      min-width: ($screen-xs-max - ($grid-gutter-width * 2));
+      &--2col {
+        min-width: 320px;
+      }
+      &--3col,
+      &--4col {
+        min-width: ($screen-xs-max - ($grid-gutter-width * 2)); // 707
+      }
+      &--5col,
+      &--6col,
+      &--7col {
+        min-width: $screen-sm-max; // 991
+      }
+    }
+  }
+  .co-overflow-y-fade {
+    white-space: normal; // allow wrapping
+  }
+  .co-m-overflow__gradient {
+    background: none !important; // Prevent overlay with scroll-shadows
+  }
+}

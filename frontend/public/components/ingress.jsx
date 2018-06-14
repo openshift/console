@@ -46,37 +46,39 @@ const getTLSCert = (ingress) => {
 };
 
 const IngressListHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortFunc="ingressValidHosts">Hosts</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-3" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-3" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm col-xs-3" sortFunc="ingressValidHosts">Hosts</ColHead>
 </ListHeader>;
 
-const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
-  <div className="col-md-3 col-sm-4 col-xs-6">
+const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress} rowColumns="row--4col">
+  <div className="col-md-3 col-sm-4 col-xs-3">
     <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
     <ResourceLink kind="Ingress" name={ingress.metadata.name}
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
   </div>
-  <div className="col-md-3 col-sm-4 col-xs-6">
+  <div className="col-md-3 col-sm-4 col-xs-3">
     <ResourceLink kind="Namespace" name={ingress.metadata.namespace} title={ingress.metadata.namespace} />
   </div>
-  <div className="col-md-3 col-sm-4 hidden-xs">
+  <div className="col-md-3 col-sm-4 col-xs-3">
     <LabelList kind="Ingress" labels={ingress.metadata.labels} />
   </div>
-  <div className="col-md-3 hidden-sm hidden-xs">{getHosts(ingress)}</div>
+  <div className="col-md-3 hidden-sm col-xs-3">{getHosts(ingress)}</div>
 </ResourceRow>;
 
 const RulesHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-3">Host</div>
-  <div className="col-xs-3">Path</div>
-  <div className="col-xs-3">Service</div>
-  <div className="col-xs-2">Service Port</div>
+  <div className="row row--4col">
+    <div className="col-xs-3">Host</div>
+    <div className="col-xs-3">Path</div>
+    <div className="col-xs-3">Service</div>
+    <div className="col-xs-3">Service Port</div>
+  </div>
 </div>;
 
 const RulesRow = ({rule, namespace}) => {
 
-  return <div className="row co-resource-list__item">
+  return <div className="row row--4col co-resource-list__item">
     <div className="col-xs-3">
       <div>{rule.host}</div>
     </div>
@@ -86,7 +88,7 @@ const RulesRow = ({rule, namespace}) => {
     <div className="col-xs-3">
       <ResourceLink kind="Service" name={rule.serviceName} namespace={namespace} />
     </div>
-    <div className="col-xs-2">
+    <div className="col-xs-3">
       <div>{rule.servicePort}</div>
     </div>
   </div>;
@@ -127,9 +129,11 @@ const Details = ({obj: ingress}) => <React.Fragment>
   <div className="co-m-pane__body">
     <Heading text="Ingress Rules" />
     <p className="co-m-pane__explanation">These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated.</p>
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <RulesHeader />
-      <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
+    <div className="table-grid-wrapper">
+      <div className="co-m-table-grid co-m-table-grid--bordered scroll-shadows-cover">
+        <RulesHeader />
+        <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
+      </div>
     </div>
   </div>
 </React.Fragment>;
@@ -139,7 +143,7 @@ const IngressesDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(Details)), navFactory.editYaml()]}
 />;
-const IngressesList = props => <List {...props} Header={IngressListHeader} Row={IngressListRow} />;
+const IngressesList = props => <List {...props} Header={IngressListHeader} Row={IngressListRow} responsive={true} />;
 const IngressesPage = props => <ListPage ListComponent={IngressesList} canCreate={true} {...props} />;
 
 export {IngressesList, IngressesPage, IngressesDetailsPage};

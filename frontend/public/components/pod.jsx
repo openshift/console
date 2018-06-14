@@ -59,33 +59,33 @@ export const PodRow = ({obj: pod}) => {
   }
 
   return <ResourceRow obj={pod}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
       <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-2">
       <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
     </div>
-    <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-2">
       <LabelList kind="Pod" labels={pod.metadata.labels} />
     </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
+    <div className="col-lg-2 col-md-2 hidden-sm col-xs-2">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-    <div className="col-lg-2 col-md-1 hidden-sm hidden-xs">{status}</div>
-    <div className="col-lg-1 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
+    <div className="col-lg-2 col-md-1 hidden-sm col-xs-2">{status}</div>
+    <div className="col-lg-1 hidden-md hidden-sm col-xs-2"><Readiness pod={pod} /></div>
   </ResourceRow>;
 };
 
 PodRow.displayName = 'PodRow';
 
 const PodHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Pod Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-1 hidden-sm hidden-xs" sortFunc="podPhase">Status</ColHead>
-  <ColHead {...props} className="col-lg-1 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-2" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-2" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-2" sortField="metadata.labels">Pod Labels</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm col-xs-2" sortField="spec.nodeName">Node</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-1 hidden-sm col-xs-2" sortFunc="podPhase">Status</ColHead>
+  <ColHead {...props} className="col-lg-1 hidden-md hidden-sm col-xs-2" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">
@@ -278,7 +278,7 @@ export const PodsDetailsPage = props => <DetailsPage
 />;
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
+export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} responsive={true} />;
 PodList.displayName = 'PodList';
 
 const filters = [{

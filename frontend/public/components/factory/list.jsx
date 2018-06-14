@@ -210,8 +210,9 @@ ColHead.propTypes = {
   sortFunc: PropTypes.string,
 };
 
-export const ListHeader = ({children}) => <div className="row co-m-table-grid__head">{children}</div>;
-ListHeader.displayName = 'ListHeader';
+export const ListHeader = ({children}) => <div className={`co-m-table-grid__head row row--${React.Children.count(children)}col`}>
+  {children}
+</div>;
 
 export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -312,7 +313,7 @@ const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, staticFil
 export const List = connect(stateToProps, {sortList: UIActions.sortList})(
   /** @param props {{Header: React.ComponentType, Row: React.ComponentType, data: any[]}} */
   function ListInner (props) {
-    const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = props;
+    const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake, responsive} = props;
     const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
     const children = <React.Fragment>
@@ -327,9 +328,17 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
       <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
     </React.Fragment>;
 
-    return <div className="co-m-table-grid co-m-table-grid--bordered">
-      { fake ? children : <StatusBox {...props}>{children}</StatusBox> }
-    </div>;
+    const content = fake ? children : <StatusBox {...props}>{children}</StatusBox>;
+
+    return responsive
+      ? <div className="table-grid-wrapper">
+        <div className="co-m-table-grid co-m-table-grid--bordered co-m-table-grid--responsive scroll-shadows-cover">
+          {content}
+        </div>
+      </div>
+      : <div className="co-m-table-grid co-m-table-grid--bordered">
+        {content}
+      </div>;
   });
 
 List.propTypes = {
@@ -373,7 +382,8 @@ export class ResourceRow extends React.Component {
   }
 
   render () {
-    return <div className="row co-resource-list__item" style={this.props.style}>{this.props.children}</div>;
+    const {children, style} = this.props;
+    return <div className={`row co-resource-list__item row--${React.Children.count(children)}col`} style={style}>{children}</div>;
   }
 }
 

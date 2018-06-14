@@ -1,0 +1,38 @@
+$scroll-shadows-bg-color: rgba(255, 255, 255, 1);
+$scroll-shadows-bg-color-transparent: rgba(255, 255, 255, 0);
+
+// Horizontal scroll drop shadows
+// Adds drop shadows to left and right edges that display when scrollable content is hidden
+// $bg-color should be an rgba color with opacity at 1 (e.g., rgba(255,0,0,1))
+// $bg-color-transparent should be the same rgb color as $bg-color but with opacity at 0 (e.g., rgba(255,0,0,0))
+
+@mixin scroll-shadows-horizontal($bg-color: $scroll-shadows-bg-color) {
+  background-attachment: scroll;
+  background-color: $bg-color;
+  background-image:
+    radial-gradient(ellipse at left, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 75%), // left shadow
+    radial-gradient(ellipse at right, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 75%); // right shadow
+  background-position: 0 0, 100% 0;
+  background-repeat: no-repeat;
+  background-size: 8px 100%;
+  -ms-overflow-style: auto; // so Edge will scroll correctly
+  overflow-x: auto; // make horizontally scrollable
+}
+
+// use for elements that are not tables
+// IMPORTANT: requires application of .scroll-shadows-cover on the inner element; does not work on all elements
+// in IE11/Edge (e.g., <pre>) as IE/Edge fails to properly attach the right background (i.e., "local" is
+// rendered as "scroll" )
+@mixin scroll-shadows-horizontal-other($bg-color: $scroll-shadows-bg-color, $bg-color-transparent: $scroll-shadows-bg-color-transparent) {
+  @include scroll-shadows-horizontal($bg-color);
+  > .scroll-shadows-cover {
+    background-attachment: local;
+    background-color: transparent;
+    background-image:
+      linear-gradient(to left, $bg-color-transparent 30%, $bg-color 70%), // left shadow cover
+      linear-gradient(to right, $bg-color-transparent 30%, $bg-color 70%);  // right shadow cover
+    background-position:  0 0, 100% 0;
+    background-repeat: no-repeat;
+    background-size: 20px 100%;
+  }
+}
