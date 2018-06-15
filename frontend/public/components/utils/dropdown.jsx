@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 
-import { history } from './index';
+import { history, ResourceName } from './index';
 
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -301,7 +301,7 @@ export class Dropdown extends DropdownMixin {
       </button>;
 
     const spacerBefore = this.props.spacerBefore || new Set();
-
+    const headerBefore = this.props.headerBefore || {};
     const rows = [];
     const bookMarkRows = [];
 
@@ -315,6 +315,10 @@ export class Dropdown extends DropdownMixin {
       }
       if (spacerBefore.has(key)) {
         rows.push(<li key={`${key}-spacer`}><div className="dropdown-menu__divider" /></li>);
+      }
+
+      if (_.has(headerBefore, key)) {
+        rows.push(<li key={`${key}-header`}><div className="dropdown-menu__header" >{headerBefore[key]}</div></li>);
       }
       rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
     });
@@ -353,18 +357,20 @@ export class Dropdown extends DropdownMixin {
 Dropdown.propTypes = {
   autocompleteFilter: PropTypes.func,
   autocompletePlaceholder: PropTypes.string,
+  canFavorite: PropTypes.bool,
   className: PropTypes.string,
-  items: PropTypes.object.isRequired,
+  defaultBookmarks: PropTypes.objectOf(PropTypes.string),
   dropDownClassName: PropTypes.string,
+  enableBookmarks: PropTypes.bool,
+  headerBefore: PropTypes.objectOf(PropTypes.string),
+  items: PropTypes.object.isRequired,
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   noSelection: PropTypes.bool,
-  title: PropTypes.node,
-  textFilter: PropTypes.string,
-  enableBookmarks: PropTypes.bool,
-  defaultBookmarks: PropTypes.objectOf(PropTypes.string),
   storageKey: PropTypes.string,
-  canFavorite: PropTypes.bool,
+  spacerBefore: PropTypes.instanceOf(Set),
+  textFilter: PropTypes.string,
+  title: PropTypes.node,
 };
 
 export const ActionsMenu = (props) => {
@@ -400,4 +406,51 @@ ActionsMenu.propTypes = {
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   title: PropTypes.node,
+};
+
+const containerLabel = (container) =>
+  <ResourceName name={container.name} kind="Container" />;
+
+export class ContainerDropdown extends React.PureComponent {
+
+  getSpacer(container) {
+    const spacerBefore = new Set();
+    return container ? spacerBefore.add(container.name) : spacerBefore;
+  }
+
+  getHeaders(container, initContainer) {
+    return initContainer ? {
+      [container.name]: 'Containers',
+      [initContainer.name]: 'Init Containers'
+    } : {};
+  }
+
+  render() {
+    const {currentKey, containers, initContainers, onChange} = this.props;
+    const firstInitContainer = _.find(initContainers, {order: 0});
+    const firstContainer = _.find(containers, {order: 0});
+    const spacerBefore = this.getSpacer(firstInitContainer);
+    const headerBefore = this.getHeaders(firstContainer, firstInitContainer);
+    const dropdownItems = _.mapValues(_.merge(containers, initContainers), containerLabel);
+    const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
+    return <Dropdown
+      className="btn-group"
+      headerBefore={headerBefore}
+      items={dropdownItems}
+      spacerBefore={spacerBefore}
+      title={title}
+      onChange={onChange} />;
+  }
+}
+
+ContainerDropdown.propTypes = {
+  containers: PropTypes.object.isRequired,
+  currentKey: PropTypes.string,
+  initContainers: PropTypes.object,
+  onChange: PropTypes.func.isRequired
+};
+
+ContainerDropdown.defaultProps = {
+  currentKey: '',
+  initContainers: {}
 };

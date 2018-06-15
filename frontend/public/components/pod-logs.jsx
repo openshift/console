@@ -1,47 +1,30 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { Dropdown, ResourceLog, ResourceName } from './utils';
+import { ContainerDropdown, ResourceLog } from './utils';
 
-// Component to container dropdown or conatiner name if only one container in pod.
-const ContainerDropdown = ({currentContainer, containers, kind, onChange}) => {
-  const resourceName = (container) => {
-    return <ResourceName name={container.name} kind={kind} />;
-  };
-  const dropdownItems = _.mapValues(containers, resourceName);
-  return <Dropdown
-    className="btn-group"
-    items={dropdownItems}
-    title={resourceName(currentContainer)}
-    onChange={onChange} />;
-};
+const reduceContainerStatuses = (accumulator, container, order) => ({
+  ...accumulator,
+  [container.name]: { ...container, order }
+});
 
 export class PodLogs extends React.Component {
   constructor(props) {
     super(props);
     this._selectContainer = this._selectContainer.bind(this);
     this.state = {
-      containers: [],
-      currentKey: ''
+      containers: {},
+      currentKey: '',
+      initContainers: {},
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const newState = {};
-    const containers = _.get(nextProps.obj, 'status.containerStatuses', []);
-    const initContainers = _.get(nextProps.obj, 'status.initContainerStatuses', []);
-    const allContainers = containers.concat(initContainers);
-    newState.containers = _.reduce(allContainers, (accumulator, {name, state}, index) => {
-      return {
-        ...accumulator,
-        [name]: {
-          alive: _.has(state, 'running'),
-          name,
-          order: index
-        }
-      };
-    }, {});
-
+    const containerStatuses = _.get(nextProps.obj, 'status.containerStatuses', []);
+    const initContainerStatuses = _.get(nextProps.obj, 'status.initContainerStatuses', []);
+    newState.containers = _.reduce(containerStatuses, reduceContainerStatuses, {});
+    newState.initContainers = _.reduce(initContainerStatuses, reduceContainerStatuses, {});
     if (!prevState.currentKey) {
       const firstContainer = _.find(newState.containers, { order: 0 });
       newState.currentKey = firstContainer.name;
@@ -54,19 +37,20 @@ export class PodLogs extends React.Component {
   }
 
   render() {
-    const {containers, currentKey} = this.state;
+    const {containers, currentKey, initContainers} = this.state;
     const namespace = _.get(this.props.obj, 'metadata.namespace');
     const podName = _.get(this.props.obj, 'metadata.name');
-    const currentContainer = _.get(containers, currentKey);
+    const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
+    const currentContainerAlive = _.has(currentContainer.state, 'running');
     const containerDropdown = <ContainerDropdown
-      currentContainer={currentContainer}
+      currentKey={currentKey}
       containers={containers}
-      kind="Container"
+      initContainers={initContainers}
       onChange={this._selectContainer} />;
 
     return <div className="co-m-pane__body">
       <ResourceLog
-        alive={currentContainer.alive}
+        alive={currentContainerAlive}
         containerName={currentContainer.name}
         kind="Pod"
         dropdown={containerDropdown}
