@@ -85,7 +85,7 @@ export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersi
 
 const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', inFlight])});
 
-export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps, null)(
+export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
   (props: ClusterServiceVersionResourcesPageProps) => {
     const {obj} = props;
     const {owned = []} = obj.spec.customresourcedefinitions;

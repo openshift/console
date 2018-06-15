@@ -16,7 +16,7 @@ export const makeReduxID = (k8sKind = {}, query) => {
   return `${k8sKind.plural}${qs}`;
 };
 
-/** @type {(namespace: string, labelSelector: any, fieldSelector: any, name: string) => {[key: string]: string}} */
+/** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string) => {[key: string]: string}} */
 export const makeQuery = (namespace, labelSelector, fieldSelector, name, limit) => {
   const query = {};
 
@@ -126,7 +126,7 @@ export const Firehose = connect(
     watchK8sObject: actions.watchK8sObject,
     watchK8sList: actions.watchK8sList,
   })(
-  /** @augments {React.Component<{k8sModels: Map<string, K8sKind}>} */
+  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind}>} */
   class Firehose extends React.Component {
     componentWillMount (props=this.props) {
       const { watchK8sList, watchK8sObject, resources, k8sModels } = props;

@@ -52,7 +52,7 @@ DefaultList.displayName = DefaultList;
 
 export const DefaultPage = props =>
   <ListPage {...props} ListComponent={DefaultList} canCreate={props.canCreate || _.get(kindObj(props.kind), 'crd')} />;
-DefaultPage.displayName = DefaultPage;
+DefaultPage.displayName = 'DefaultPage';
 
 
 export const DefaultDetailsPage = props => {
@@ -60,4 +60,4 @@ export const DefaultDetailsPage = props => {
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };
 
-DefaultDetailsPage.displayName = DefaultDetailsPage;
+DefaultDetailsPage.displayName = 'DefaultDetailsPage';

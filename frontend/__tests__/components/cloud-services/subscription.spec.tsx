@@ -118,7 +118,6 @@ describe(SubscriptionsList.displayName, () => {
   it('renders a `List` component with correct props', () => {
     expect(wrapper.find<any>(List).props().Header).toEqual(SubscriptionHeader);
     expect(wrapper.find<any>(List).props().Row).toEqual(SubscriptionRow);
-    expect(wrapper.find<any>(List).props().label).toEqual('Subscriptions');
   });
 });
 

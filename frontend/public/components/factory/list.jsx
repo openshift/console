@@ -283,7 +283,7 @@ Rows.propTypes = {
   Row: PropTypes.func.isRequired,
 };
 
-const stateToProps = ({UI}, {data, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = {}}) => {
+const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = {}}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, data);
 
@@ -310,7 +310,7 @@ const stateToProps = ({UI}, {data, filters = {}, loaded = false, reduxID = null,
 };
 
 export const List = connect(stateToProps, {sortList: UIActions.sortList})(
-  /** @param props {{Header: React.ComponentType, Row: React.ComponentType, data: any[]}} */
+  /** @param props {{Header: React.ComponentType, Row: React.ComponentType<any>, data?: any[], label?: string, EmptyMsg?: React.ComponentType<{}>}} */
   function ListInner (props) {
     const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = props;
     const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);

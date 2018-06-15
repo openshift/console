@@ -68,7 +68,6 @@ export const SubscriptionsList: React.SFC<SubscriptionsListProps> = (props) => <
   {...props}
   Row={SubscriptionRow}
   Header={SubscriptionHeader}
-  label="Subscriptions"
   EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />} />;
 
 export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <ListPage
@@ -210,8 +209,9 @@ export type SubscriptionsPageProps = {
 };
 
 export type SubscriptionsListProps = {
-  data: SubscriptionKind[];
   loaded: boolean;
+  loadError?: string;
+  data: (SubscriptionKind)[];
 };
 
 export type SubscriptionHeaderProps = {
