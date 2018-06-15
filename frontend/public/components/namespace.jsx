@@ -68,27 +68,27 @@ export const NamespacesPage = props => <ListPage {...props} ListComponent={Names
 const projectMenuActions = [Cog.factory.Edit, deleteModal];
 
 const ProjectHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-3 col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-4" sortField="status.phase">Status</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-4" sortField="metadata.annotations.['openshift.io/requester']">Requester</ColHead>
-  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-6 col-xs-8" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-4" sortField="status.phase">Status</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-3 hidden-xs" sortField="metadata.annotations.['openshift.io/requester']">Requester</ColHead>
+  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="metadata.labels">Labels</ColHead>
 </ListHeader>;
 
 const ProjectRow = ({obj: project}) => {
   const displayName = getDisplayName(project);
   const requester = getRequester(project);
   return <ResourceRow obj={project}>
-    <div className="col-sm-3 col-xs-4">
+    <div className="col-md-3 col-sm-6 col-xs-8">
       <ResourceCog actions={projectMenuActions} kind="Project" resource={project} />
       <ResourceLink kind="Project" name={project.metadata.name} title={displayName || project.metadata.uid} />
     </div>
-    <div className="col-sm-3 col-xs-4">
+    <div className="col-md-3 col-sm-3 col-xs-4">
       {project.status.phase}
     </div>
-    <div className="col-sm-3 col-xs-4">
+    <div className="col-md-3 col-sm-3 hidden-xs">
       {requester || <span className="text-muted">No requester</span>}
     </div>
-    <div className="col-sm-3 hidden-xs">
+    <div className="col-md-3 hidden-sm hidden-xs">
       <LabelList kind="Project" labels={project.metadata.labels} />
     </div>
   </ResourceRow>;
