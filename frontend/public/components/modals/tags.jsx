@@ -3,8 +3,14 @@ import * as React from 'react';
 
 import { k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent } from '../utils';
-import { NameValueEditor, NAME, VALUE } from '../utils/name-value-editor';
+import { PromiseComponent, NameValueEditorPair } from '../utils';
+import { AsyncComponent } from '../utils/async';
+
+/**
+ * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
+ * vendor footprint size.
+ */
+const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor.jsx').then(c => c.NameValueEditor)} {...props} />;
 
 class TagsModal extends PromiseComponent {
   constructor (props) {
@@ -30,16 +36,16 @@ class TagsModal extends PromiseComponent {
     e.preventDefault();
 
     // We just throw away any rows where the key is blank
-    const tags = _.reject(this.state.tags, t => _.isEmpty(t[NAME]));
+    const tags = _.reject(this.state.tags, t => _.isEmpty(t[NameValueEditorPair.Name]));
 
-    const keys = tags.map(t => t[NAME]);
+    const keys = tags.map(t => t[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
       this.setState({errorMessage: 'Duplicate keys found.'});
       return;
     }
 
     // Convert any blank values to null
-    _.each(tags, t => t[VALUE] = _.isEmpty(t[VALUE]) ? null : t[VALUE]);
+    _.each(tags, t => t[NameValueEditorPair.Value] = _.isEmpty(t[NameValueEditorPair.Value]) ? null : t[NameValueEditorPair.Value]);
     // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
     const op = this.props.tags ? 'replace' : 'add';
     const patch = [{path: this.props.path, op, value: _.fromPairs(tags)}];
@@ -53,7 +59,7 @@ class TagsModal extends PromiseComponent {
     return <form onSubmit={this._submit}>
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
-        <NameValueEditor nameValuePairs={tags} submit={this._submit} updateParentData={this._updateTags}/>
+        <NameValueEditorComponent nameValuePairs={tags} submit={this._submit} updateParentData={this._updateTags}/>
       </ModalBody>
       <ModalSubmitFooter submitText="Save Changes" cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
     </form>;

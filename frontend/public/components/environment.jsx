@@ -3,8 +3,14 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { modelFor, k8sPatch } from '../module/k8s';
-import { NameValueEditor, NAME, VALUE } from './utils/name-value-editor';
-import { PromiseComponent } from './utils';
+import { PromiseComponent, NameValueEditorPair } from './utils';
+import { AsyncComponent } from './utils/async';
+
+/**
+ * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
+ * vendor footprint size.
+ */
+const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor.jsx').then(c => c.NameValueEditor)} {...props} />;
 
 /**
  * Set up initial value for the environment vars state. Use this in constructor or cancelChanges.
@@ -15,9 +21,10 @@ import { PromiseComponent } from './utils';
  */
 const getPairsFromObject = (element) => {
   if (_.isUndefined(element.env)) {
-    return [['', '']];
+    return [['', '', 0]];
   }
-  return _.map(element.env, (leafNode) => {
+  return _.map(element.env, (leafNode, i) => {
+    leafNode.ID = i;
     return Object.values(leafNode);
   });
 };
@@ -65,17 +72,17 @@ export class EnvironmentPage extends PromiseComponent {
    * @private
    */
   _envVarsToNameVal(finalEnvPairs) {
-    return _.filter(finalEnvPairs, finalEnvPair => !_.isEmpty(finalEnvPair[NAME]))
+    return _.filter(finalEnvPairs, finalEnvPair => !_.isEmpty(finalEnvPair[NameValueEditorPair.Name]))
       .map(finalPairForContainer => {
-        if (finalPairForContainer[VALUE] instanceof Object) {
+        if (finalPairForContainer[NameValueEditorPair.Value] instanceof Object) {
           return {
-            'name': finalPairForContainer[NAME],
-            'valueFrom': finalPairForContainer[VALUE]
+            'name': finalPairForContainer[NameValueEditorPair.Name],
+            'valueFrom': finalPairForContainer[NameValueEditorPair.Value]
           };
         }
         return {
-          'name': finalPairForContainer[NAME],
-          'value': finalPairForContainer[VALUE]
+          'name': finalPairForContainer[NameValueEditorPair.Name],
+          'value': finalPairForContainer[NameValueEditorPair.Value]
         };
       });
   }
@@ -185,7 +192,7 @@ export class EnvironmentPage extends PromiseComponent {
       const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : obj.metadata.name;
       return <div key={keyString} className="co-m-pane__body-group">
         { _.isArray(rawEnvData) && <h1 className="co-section-title">Container {keyString}</h1> }
-        <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly}/>
+        <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true}/>
       </div>;
     });
 

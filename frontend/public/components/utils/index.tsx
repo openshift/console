@@ -35,3 +35,15 @@ export * from './deployment-pod-counts';
 export * from './entitlements';
 export * from './build-strategy';
 export * from './copy-to-clipboard';
+
+/*
+  Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
+  loaded asynchronously in order not to bloat the vendor file. The enum reference into the editor
+  will cause it not to load asynchronously.
+ */
+/* eslint-disable no-undef */
+export const enum NameValueEditorPair {
+  Name = 0,
+  Value,
+  Index
+}
