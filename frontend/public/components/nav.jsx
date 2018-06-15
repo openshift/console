@@ -345,16 +345,16 @@ export class Nav extends React.Component {
           <NavSection text="Administration" icon="fa-cog">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
-            <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} />
-            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} />
+            <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
+            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
             <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
-            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} />
+            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
             <ResourceNSLink resource="podvulns" name="Security Report" onClick={this.close} required={FLAGS.SECURITY_LABELLER} />
             <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} />
-            <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} />
+            <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
         </div>
       </div>

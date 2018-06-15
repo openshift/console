@@ -20,6 +20,10 @@ import { coFetchJSON } from './co-fetch';
   CHARGEBACK: false,
   OPENSHIFT: false,
   CAN_LIST_NS: false,
+  CAN_LIST_NODE: false,
+  CAN_LIST_PV: false,
+  CAN_LIST_STORE: false,
+  CAN_LIST_CRD: false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -32,6 +36,10 @@ export enum FLAGS {
   CHARGEBACK = 'CHARGEBACK',
   OPENSHIFT = 'OPENSHIFT',
   CAN_LIST_NS = 'CAN_LIST_NS',
+  CAN_LIST_NODE = 'CAN_LIST_NODE',
+  CAN_LIST_PV = 'CAN_LIST_PV',
+  CAN_LIST_STORE = 'CAN_LIST_STORE',
+  CAN_LIST_CRD = 'CAN_LIST_CRD'
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -85,28 +93,39 @@ const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
       : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift)
   );
 
-const detectCanListNS = dispatch => {
-  const req = {
-    spec: {
-      resourceAttributes: {
-        resource: 'namespaces',
-        verb: 'list',
-      },
-    },
-  };
-  k8sCreate(SelfSubjectAccessReviewModel, req)
-    .then(
-      res => setFlag(dispatch, FLAGS.CAN_LIST_NS, res.status.allowed),
-      err => handleError(err, FLAGS.CAN_LIST_NS, dispatch, detectCanListNS)
-    );
-};
-
-export const featureActions = {
+export let featureActions = [
   detectSecurityLabellerFlags,
   detectCalicoFlags,
   detectOpenShift,
-  detectCanListNS,
-};
+];
+
+// generate additional featureActions
+[
+  [ FLAGS.CAN_LIST_NS, 'namespaces'],
+  [ FLAGS.CAN_LIST_NODE, 'nodes'],
+  [ FLAGS.CAN_LIST_PV, 'persistentvolumes'],
+  [ FLAGS.CAN_LIST_STORE, 'storageclasses'],
+  [ FLAGS.CAN_LIST_CRD, 'customresourcedefinitions'],
+].forEach((restriction) => {
+  const FLAG = _.head(restriction);
+  const resourceName = _.last(restriction);
+  const req = {
+    spec: {
+      resourceAttributes: {
+        resource: resourceName,
+        verb: 'list'
+      }
+    }
+  };
+  const fn = (dispatch) => {
+    return k8sCreate(SelfSubjectAccessReviewModel, req)
+      .then(
+        (res) => setFlag(dispatch, FLAG, res.status.allowed),
+        (err) => handleError(err, FLAG, dispatch, fn)
+      );
+  };
+  featureActions.push(fn);
+});
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: ImmutableMap<string, any>, action) => {
