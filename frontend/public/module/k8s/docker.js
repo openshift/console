@@ -43,8 +43,10 @@ export const getContainerState = function(containerStatus) {
 };
 
 export const getContainerStatus = function(pod, containerName) {
-  const statuses = _.get(pod, 'status.containerStatuses', []);
-  return _.find(statuses, {name: containerName});
+  const statuses = _.get(pod, 'status.containerStatuses');
+  const initStatuses = _.get(pod, 'status.initContainerStatuses');
+  const identity = { name: containerName };
+  return _.find(statuses, identity) || _.find(initStatuses, identity);
 };
 
 const getPullPolicy = container => _.find(PullPolicy, {id: _.get(container, 'imagePullPolicy')});
