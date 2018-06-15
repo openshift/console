@@ -283,7 +283,7 @@ Rows.propTypes = {
   Row: PropTypes.func.isRequired,
 };
 
-const stateToProps = ({UI}, {data, filters, loaded, reduxID, reduxIDs, staticFilters}) => {
+const stateToProps = ({UI}, {data, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = {}}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, data);
 
