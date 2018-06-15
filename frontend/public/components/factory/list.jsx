@@ -95,6 +95,16 @@ const listFilters = {
     const phase = build.status.phase;
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
+
+  'build-strategy': (strategies, buildConfig) => {
+    if (!strategies || !strategies.selected || !strategies.selected.size) {
+      return true;
+    }
+
+    const strategy = buildConfig.spec.strategy.type;
+    return strategies.selected.has(strategy) || !_.includes(strategies.all, strategy);
+  },
+
   'route-status': (statuses, route) => {
     if (!statuses || !statuses.selected || !statuses.selected.size) {
       return true;
@@ -103,6 +113,7 @@ const listFilters = {
     let status = routeStatus(route);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
+
   'secret-type': (types, secret) => {
     if (!types || !types.selected || !types.selected.size) {
       return true;

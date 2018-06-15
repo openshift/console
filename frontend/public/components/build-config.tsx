@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, referenceFor } from '../module/k8s';
@@ -103,11 +104,31 @@ const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div classNa
   </div>
 </div>;
 
+const buildStrategy = buildConfig => buildConfig.spec.strategy.type;
+
+const allStrategies = ['Docker', 'JenkinsPipeline', 'Source', 'Custom'];
+const filters = [{
+  type: 'build-strategy',
+  selected: allStrategies,
+  reducer: buildStrategy,
+  items: _.map(allStrategies, strategy => ({
+    id: strategy,
+    title: strategy,
+  })),
+}];
+
 export const BuildConfigsList: React.SFC = props => <List {...props} Header={BuildConfigsHeader} Row={BuildConfigsRow} />;
 BuildConfigsList.displayName = 'BuildConfigsList';
 
 export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = props =>
-  <ListPage {...props} title="Build Configs" kind={BuildConfigsReference} ListComponent={BuildConfigsList} canCreate={true} filterLabel={props.filterLabel} />;
+  <ListPage
+    {...props}
+    title="Build Configs"
+    kind={BuildConfigsReference}
+    ListComponent={BuildConfigsList}
+    canCreate={true}
+    filterLabel={props.filterLabel}
+    rowFilters={filters} />;
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
 /* eslint-disable no-undef */
