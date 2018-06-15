@@ -3,8 +3,9 @@
   border: 3px solid $color-grey-border;
   border-radius: 50%;
   height: 32px;
-  width: 32px;
+  margin-right: 15px;
   padding: 0;
+  width: 32px;
 
   // play icon
   &.co-toggle-play--inactive:before {
