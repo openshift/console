@@ -31,13 +31,12 @@ export const getNamespace = path => {
     return ALL_NAMESPACES_KEY;
   }
 
-  if (split[1] !== 'ns') {
-    return;
-  }
-
-  const ns = split[2];
-
-  if (!ns) {
+  let ns;
+  if (split[1] === 'cluster' && split[2] === 'namespaces' && split[3]) {
+    ns = split[3];
+  } else if (split[1] === 'ns') {
+    ns = split[2];
+  } else {
     return;
   }
 
