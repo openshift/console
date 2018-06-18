@@ -9,6 +9,7 @@ import { registerTemplate } from '../yaml-templates';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
+import { Conditions, conditionProps } from './conditions';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = Cog.factory.common;
@@ -130,52 +131,6 @@ export const RouteStatus: React.SFC<RouteStatusProps> = ({obj: route}) => {
 };
 RouteStatus.displayName = 'RouteStatus';
 
-const addTLSWarnings = (route: any, warnings: string[]) => {
-  if (!route.spec || !route.spec.tls) {
-    return;
-  }
-
-  if (!route.spec.tls.termination) {
-    warnings.push('Route has a TLS configuration, but no TLS termination type is specified. TLS will not be enabled until a termination type is set.');
-  }
-
-  if (route.spec.tls.termination === 'passthrough' && route.spec.path) {
-    warnings.push(`Route path "${ route.spec.path }" will be ignored since the route uses passthrough termination.`);
-  }
-};
-
-const addIngressWarnings = (route: any, warnings: string[]) => {
-  if (!route.status) {
-    return;
-  }
-
-  _.each(route.status.ingress, (ingress) => {
-    const condition: any = _.find(ingress.conditions, { type: 'Admitted', status: 'False' });
-    if (condition) {
-      let message = `Requested host '${ ingress.host || '<unknown host>' }' was rejected by the router.`;
-      if (condition.message || condition.reason) {
-        message += ` Reason: ${ condition.message || condition.reason }.`;
-      }
-      warnings.push(message);
-    }
-  });
-};
-
-export const RouteWarnings: React.SFC<RouteHostnameProps> = ({obj: route}) => {
-  const warnings: string[] = [];
-
-  if (!route) {
-    return;
-  }
-
-  addTLSWarnings(route, warnings);
-  addIngressWarnings(route, warnings);
-  return <React.Fragment>
-    {warnings.map((warning, index) => <div key={index} className="co-m-route-warnings">{warning}</div>)}
-  </React.Fragment>;
-};
-RouteWarnings.displayName = 'RouteWarnings';
-
 const RouteListHeader: React.SFC<RouteHeaderProps> = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
@@ -267,6 +222,22 @@ const RouteTargetRow = ({route, target}) => <tr>
   <td>{calcTrafficPercentage(target.weight, route)}</td>
 </tr>;
 
+const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
+  <span className="co-m-route__ingress-status-section">
+    {_.map(ingresses, (ingress) =>
+      <div key={ingress.routerName} className="co-m-route__ingress-status">
+        <h1 className="co-section-title">Router: {ingress.routerName}</h1>
+        <dl>
+          <dt>Hostname</dt>
+          <dd>{ingress.host}</dd>
+          <dt>Wildcard Policy</dt>
+          <dd>{ingress.wildcardPolicy}</dd>
+        </dl>
+        <h4 className="co-m-route__ingress-status__conditions-heading">Conditions</h4>
+        <Conditions conditions={ingress.conditions} />
+      </div>)}
+  </span>;
+
 const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
   <div className="co-m-pane__body">
     <div className="row">
@@ -286,7 +257,6 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
         <dt>Status</dt>
         <dd>
           <RouteStatus obj={route} />
-          <RouteWarnings obj={route} />
         </dd>
         <dt>Hostname</dt>
         <dd>{route.spec.host}</dd>
@@ -295,6 +265,13 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
       </div>
     </div>
   </div>
+  {_.isEmpty(route.status.ingress)
+    ? <div className="cos-status-box">
+      <div className="text-center">No Route Status</div>
+    </div>
+    : <div className="co-m-pane__body">
+      <RouteIngressStatus ingresses={route.status.ingress} />
+    </div>}
   <div className="co-m-pane__body">
     <h1 className="co-section-title">TLS Settings</h1>
     <TLSSettings tls={route.spec.tls} />
@@ -385,5 +362,16 @@ export type TLSDataProps = {
 
 export type TLSDataState = {
   showPrivateKey: boolean
+};
+
+export type IngressStatusProps = {
+  host: string,
+  routerName: string,
+  conditions: conditionProps[],
+  wildcardPolicy: string
+};
+
+export type RouteIngressStatusProps = {
+  ingresses: IngressStatusProps[]
 };
 /* eslint-enable no-undef */
