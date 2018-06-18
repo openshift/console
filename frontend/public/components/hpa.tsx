@@ -81,29 +81,32 @@ const podRow = (metric, current, key) => {
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
 
-const getUtilization = (current, metricUtilization) => {
-  const utilization = _.get(current, 'resource.currentAverageUtilization');
-  const currentAverageValue = _.get(current, 'resource.currentAverageValue');
-  const currentValueUtilization = _.isNumber(utilization)
-    ? `${utilization}% (${currentAverageValue})`
-    : currentAverageValue;
+const getResourceUtilization = currentMetric => {
+  const currentUtilization = _.get(currentMetric, 'resource.currentAverageUtilization');
 
-  return metricUtilization
-    ? currentValueUtilization
-    : currentAverageValue;
+  // Use _.isFinite so that 0 evaluates to true, but null / undefined / NaN don't
+  if (!_.isFinite(currentUtilization)) {
+    return null;
+  }
+
+  const currentAverageValue = _.get(currentMetric, 'resource.currentAverageValue');
+  // Only show currentAverageValue in parens if set and non-zero to avoid things like "0% (0)"
+  return currentAverageValue && currentAverageValue !== '0'
+    ? `${currentUtilization}% (${currentAverageValue})`
+    : `${currentUtilization}%`;
 };
 
 const resourceRow = (metric, current, key) => {
-  const metricUtilization = metric.resource.targetAverageUtilization;
-  const resource = `resource ${metric.resource.name}`;
-  const type = metricUtilization
-    ? <React.Fragment>{resource}&nbsp;<span className="small text-muted">(as a percentage of request)</span></React.Fragment>
-    : <React.Fragment>
-      {resource}
-    </React.Fragment>;
-  const currentValue = getUtilization(current, metricUtilization);
-  const targetValue = metricUtilization
-    ? `${metricUtilization}%`
+  const targetUtilization = metric.resource.targetAverageUtilization;
+  const resourceLabel = `resource ${metric.resource.name}`;
+  const type = targetUtilization
+    ? <React.Fragment>{resourceLabel}&nbsp;<span className="small text-muted">(as a percentage of request)</span></React.Fragment>
+    : resourceLabel;
+  const currentValue = targetUtilization
+    ? getResourceUtilization(current)
+    : _.get(current, 'resource.currentAverageValue');
+  const targetValue = targetUtilization
+    ? `${targetUtilization}%`
     : metric.resource.targetAverageValue;
 
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
