@@ -95,12 +95,11 @@ export class LogWindow extends React.PureComponent {
 
     // TODO maybe move these variables into state so they are only updated on changes
     const totalLineCount = pluralize(lines.length, 'line');
-    const linesBehindCount = pluralize(linesBehind, 'line');
+    const linesBehindCount = pluralize(linesBehind, 'new line');
     const headerText = bufferFull ? `last ${totalLineCount}` : totalLineCount;
-    let footerText = ' Resume stream';
-    if (linesBehind > 0) {
-      footerText += bufferFull ? ` and show last ${totalLineCount}` : ` and show ${linesBehindCount}`;
-    }
+    const resumeText = (linesBehind > 0)
+      ? ` Resume stream and show ${linesBehindCount}`
+      : ' Resume stream';
 
     return <div className="log-window">
       <div className="log-window__header">
@@ -115,10 +114,11 @@ export class LogWindow extends React.PureComponent {
           </div>
         </div>
       </div>
-      { status === 'paused' && <div onClick={this._unpause} className="log-window__footer">
-        <span className="fa fa-play-circle-o" aria-hidden="true"></span>
-        {footerText}
-      </div> }
+      { status === 'paused' &&
+        <button onClick={this._unpause} className="btn btn-block log-window__resume-btn">
+          <span className="fa fa-play-circle-o" aria-hidden="true"></span>
+          {resumeText}
+        </button> }
     </div>;
   }
 }
