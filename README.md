@@ -112,6 +112,20 @@ Finally run the Console and visit [localhost:9000](http://localhost:9000):
 ./examples/run-bridge.sh
 ```
 
+#### OpenShift (without OAuth)
+
+For local development, you can also disable OAuth and run bridge with an
+OpenShift user's access token. Run the following commands to create an admin
+user and start bridge for a cluster up environment:
+
+```
+oc login -u system:admin
+oc adm policy add-cluster-role-to-user cluster-admin admin
+oc login -u admin
+source ./contrib/oc-environment.sh
+./bin/bridge
+```
+
 ## Docker
 
 The `builder-run.sh` script will run any command from a docker container to ensure a consistent build environment.
@@ -204,6 +218,8 @@ Run frontend tests:
 ### Integration Tests
 
 Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
+
+Note: If you are running integration tests against OpenShift, you should start bridge using [oc-environment.sh](#openshift-without-oauth) to skip the login page.
 
 Setup (or any time you change node_modules - `yarn add` or `yarn install`)
 ```
