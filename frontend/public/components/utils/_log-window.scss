@@ -31,10 +31,6 @@ $color-log-window-divider: $color-log-window-header-bg;
   width: 0;
 }
 
-.log-window__contents__text--divider {
-  border-bottom: 1px solid $color-log-window-divider;
-}
-
 .log-window__footer {
   background-color: $color-log-window-header-bg;
   cursor: pointer;

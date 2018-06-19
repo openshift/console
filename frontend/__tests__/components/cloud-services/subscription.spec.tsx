@@ -3,15 +3,14 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
 
-import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps } from '../../../public/components/cloud-services/subscription';
-import { SubscriptionKind, SubscriptionState, ClusterServiceVersionLogo } from '../../../public/components/cloud-services';
+import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/cloud-services/subscription';
+import { SubscriptionKind, SubscriptionState } from '../../../public/components/cloud-services';
 import { referenceForModel } from '../../../public/module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel } from '../../../public/models';
-import { ListHeader, ColHead, List, MultiListPage } from '../../../public/components/factory';
-import { ResourceCog, ResourceLink } from '../../../public/components/utils';
-import { testSubscription, testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
+import { SubscriptionModel, ClusterServiceVersionModel, ConfigMapModel } from '../../../public/models';
+import { ListHeader, ColHead, List, ListPage, DetailsPage } from '../../../public/components/factory';
+import { ResourceCog, ResourceLink, Cog } from '../../../public/components/utils';
+import { testSubscription, testClusterServiceVersion, testPackage } from '../../../__mocks__/k8sResourcesMocks';
 
 describe(SubscriptionHeader.displayName, () => {
   let wrapper: ShallowWrapper<SubscriptionHeaderProps>;
@@ -20,9 +19,9 @@ describe(SubscriptionHeader.displayName, () => {
     wrapper = shallow(<SubscriptionHeader />);
   });
 
-  it('renders column header for package name', () => {
-    expect(wrapper.find(ListHeader).find(ColHead).at(0).props().sortField).toEqual('spec.name');
-    expect(wrapper.find(ListHeader).find(ColHead).at(0).childAt(0).text()).toEqual('Package');
+  it('renders column header for subscription name', () => {
+    expect(wrapper.find(ListHeader).find(ColHead).at(0).props().sortField).toEqual('metadata.name');
+    expect(wrapper.find(ListHeader).find(ColHead).at(0).childAt(0).text()).toEqual('Name');
   });
 
   it('renders column header for namespace name', () => {
@@ -49,19 +48,23 @@ describe(SubscriptionRow.displayName, () => {
 
   beforeEach(() => {
     subscription = {..._.cloneDeep(testSubscription), status: {installedCSV: 'testapp.v1.0.0'}};
-    wrapper = shallow(<SubscriptionRow obj={subscription} csv={_.cloneDeep(testClusterServiceVersion)} />);
+    wrapper = shallow(<SubscriptionRow obj={subscription} />);
   });
 
-  it('renders column for package name with actions cog', () => {
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[0]().label).toEqual('Remove Subscription...');
+  it('renders column for subscription name', () => {
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceLink).props().name).toEqual(subscription.metadata.name);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceLink).props().title).toEqual(subscription.metadata.name);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceLink).props().namespace).toEqual(subscription.metadata.namespace);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceLink).props().kind).toEqual(referenceForModel(SubscriptionModel));
+  });
+
+  it('renders actions cog', () => {
     expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().kind).toEqual(referenceForModel(SubscriptionModel));
     expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().resource).toEqual(subscription);
-
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(Link).props().to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp`);
-
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(Link).find(ClusterServiceVersionLogo).props().icon).toEqual(testClusterServiceVersion.spec.icon[0]);
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(Link).find(ClusterServiceVersionLogo).props().provider).toEqual(testClusterServiceVersion.spec.provider);
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(Link).find(ClusterServiceVersionLogo).props().displayName).toEqual(testClusterServiceVersion.spec.displayName);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[0]().label).toEqual('Remove Subscription...');
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[0]().callback).toBeDefined();
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().href).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${subscription.status.installedCSV}`);
   });
 
   it('renders column for namespace name', () => {
@@ -113,10 +116,8 @@ describe(SubscriptionsList.displayName, () => {
   });
 
   it('renders a `List` component with correct props', () => {
-    const Row = wrapper.find<any>(List).props().Row;
-
-    expect(shallow(<Row />).find(SubscriptionRow).exists()).toBe(true);
     expect(wrapper.find<any>(List).props().Header).toEqual(SubscriptionHeader);
+    expect(wrapper.find<any>(List).props().Row).toEqual(SubscriptionRow);
     expect(wrapper.find<any>(List).props().label).toEqual('Subscriptions');
   });
 });
@@ -126,24 +127,88 @@ describe(SubscriptionsPage.displayName, () => {
 
   beforeEach(() => {
     const match = {params: {ns: 'default'}, isExact: true, path: '', url: ''};
-    wrapper = shallow(<SubscriptionsPage packageName="testapp" match={match} />);
+    wrapper = shallow(<SubscriptionsPage match={match} namespace="default" />);
   });
 
-  it('renders a `MultiListPage` component with the correct props', () => {
-    expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(SubscriptionsList);
-    expect(wrapper.find(MultiListPage).props().title).toEqual('Subscriptions');
-    expect(wrapper.find(MultiListPage).props().showTitle).toBe(true);
-    expect(wrapper.find(MultiListPage).props().canCreate).toBe(true);
-    expect(wrapper.find(MultiListPage).props().createProps).toEqual({to: '/k8s/ns/default/catalogsource-v1s'});
-    expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('New Subscription');
-    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Subscriptions by package');
-    expect(wrapper.find(MultiListPage).props().resources).toEqual([
-      {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true},
-      {kind: referenceForModel(ClusterServiceVersionModel), isList: true, namespaced: true},
+  it('renders a `ListPage` component with the correct props', () => {
+    expect(wrapper.find(ListPage).props().ListComponent).toEqual(SubscriptionsList);
+    expect(wrapper.find(ListPage).props().title).toEqual('Subscriptions');
+    expect(wrapper.find(ListPage).props().showTitle).toBe(true);
+    expect(wrapper.find(ListPage).props().canCreate).toBe(true);
+    expect(wrapper.find(ListPage).props().createProps).toEqual({to: '/k8s/ns/default/catalogsource-v1s'});
+    expect(wrapper.find(ListPage).props().createButtonText).toEqual('New Subscription');
+    expect(wrapper.find(ListPage).props().filterLabel).toEqual('Subscriptions by package');
+    expect(wrapper.find(ListPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
+  });
+});
+
+describe(SubscriptionUpdates.name, () => {
+  let wrapper: ShallowWrapper<SubscriptionUpdatesProps, SubscriptionUpdatesState>;
+
+  beforeEach(() => {
+    wrapper = shallow(<SubscriptionUpdates obj={testSubscription} pkg={testPackage} />);
+  });
+
+  it('renders link to configure update channel', () => {
+    const channel = wrapper.findWhere(node => node.equals(<dt className="co-detail-table__section-header">Channel</dt>)).parents().at(0).find('dd').text();
+
+    expect(channel).toEqual(testSubscription.spec.channel);
+  });
+
+  it('renders link to set approval strategy', () => {
+    const strategy = wrapper.findWhere(node => node.equals(<dt className="co-detail-table__section-header">Approval</dt>)).parents().at(0).find('dd').text();
+
+    expect(strategy).toEqual(testSubscription.spec.installPlanApproval || 'Automatic');
+  });
+});
+
+describe(SubscriptionDetails.displayName, () => {
+  let wrapper: ShallowWrapper<SubscriptionDetailsProps>;
+
+  beforeEach(() => {
+    wrapper = shallow(<SubscriptionDetails.WrappedComponent obj={testSubscription} pkg={testPackage} />);
+  });
+
+  it('renders subscription update channel and approval component', () => {
+    expect(wrapper.find(SubscriptionUpdates).exists()).toBe(true);
+  });
+
+  it('renders link to `ClusterServiceVersion` if installed', () => {
+    let obj = _.cloneDeep(testSubscription);
+    obj.status = {installedCSV: testClusterServiceVersion.metadata.name};
+    wrapper = wrapper.setProps({obj, installedCSV: testClusterServiceVersion});
+
+    const link = wrapper.findWhere(node => node.equals(<dt>Installed Version</dt>)).parents().at(0).find('dd').find(ResourceLink).at(0);
+
+    expect(link.props().title).toEqual(obj.status.installedCSV);
+    expect(link.props().name).toEqual(obj.status.installedCSV);
+  });
+
+  it('renders link to catalog source', () => {
+    const link = wrapper.findWhere(node => node.equals(<dt>Catalog</dt>)).parents().at(0).find('dd').find(ResourceLink).at(0);
+
+    expect(link.props().name).toEqual(testSubscription.spec.source);
+  });
+});
+
+describe(SubscriptionDetailsPage.displayName, () => {
+
+  it('renders `DetailsPage` with correct props', () => {
+    const match = {params: {ns: 'default', name: 'example-sub'}, url: '', isExact: true, path: ''};
+    const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
+
+    expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
+    expect(wrapper.find(DetailsPage).props().pages.length).toEqual(2);
+    expect(wrapper.find(DetailsPage).props().menuActions).toEqual(Cog.factory.common);
+  });
+
+  it('passes additional resources to watch', () => {
+    const match = {params: {ns: 'default', name: 'example-sub'}, url: '', isExact: true, path: ''};
+    const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
+
+    expect(wrapper.find(DetailsPage).props().resources).toEqual([
+      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'configMap'},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersion'}
     ]);
-  });
-
-  xit('passes `flatten` function to `MultiListPage` that filters out subscriptions that do not match `props.packageName`', () => {
-    // TODO(alecmerdler)
   });
 });

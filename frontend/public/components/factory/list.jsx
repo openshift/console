@@ -1,10 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
 import { getJobTypeAndCompletions, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
@@ -12,10 +13,13 @@ import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
 import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
+import { routeStatus } from '../routes';
+
+const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
 // TODO: Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
 const listFilters = {
-  'name': (filter, obj) => fuzzy(filter, obj.metadata.name),
+  'name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
 
   // Filter role by role kind
   'role-kind': (filter, role) => filter.selected.has(roleType(role)),
@@ -25,7 +29,7 @@ const listFilters = {
 
   // Filter role bindings by text match
   'role-binding': (str, {metadata, roleRef, subject}) => {
-    const isMatch = val => fuzzy(str.toLowerCase(), val.toLowerCase());
+    const isMatch = val => fuzzyCaseInsensitive(str, val);
     return [metadata.name, roleRef.name, subject.kind, subject.name].some(isMatch);
   },
 
@@ -91,6 +95,32 @@ const listFilters = {
     const phase = build.status.phase;
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
+
+  'build-strategy': (strategies, buildConfig) => {
+    if (!strategies || !strategies.selected || !strategies.selected.size) {
+      return true;
+    }
+
+    const strategy = buildConfig.spec.strategy.type;
+    return strategies.selected.has(strategy) || !_.includes(strategies.all, strategy);
+  },
+
+  'route-status': (statuses, route) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    let status = routeStatus(route);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
+
+  'secret-type': (types, secret) => {
+    if (!types || !types.selected || !types.selected.size) {
+      return true;
+    }
+    const type = secret.type;
+    return types.selected.has(type) || !_.includes(types.all, type);
+  }
 };
 
 const getFilteredRows = (_filters, objects) => {
@@ -191,9 +221,61 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-const Rows = ({data, expand, Row, kindObj}) => <div className="co-m-table-grid__body">
-  {data.map(obj => <Row key={obj.rowKey || obj.metadata.uid} obj={obj} expand={expand} kindObj={kindObj} />)}
-</div>;
+export class Rows extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.measurementCache = new CellMeasurerCache({
+      fixedWidth: true,
+      minHeight: 50,
+      keyMapper: rowIndex => _.get(this.props.data[rowIndex], 'metadata.uid', rowIndex),
+    });
+
+    this.rowRenderer = this._rowRenderer.bind(this);
+  }
+
+  _rowRenderer({index, style, key, parent}) {
+    const {data, expand, Row, kindObj} = this.props;
+    const obj = data[index];
+
+    return <CellMeasurer
+      cache={this.measurementCache}
+      columnIndex={0}
+      key={key}
+      rowIndex={index}
+      parent={parent}>
+      <div style={style}>
+        <Row key={_.get(obj, 'metadata.uid', index)} obj={obj} expand={expand} kindObj={kindObj} index={index} />
+      </div>
+    </CellMeasurer>;
+  }
+
+  render() {
+    return <div className="co-m-table-grid__body">
+      <WindowScroller>
+        {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+          <AutoSizer disableHeight>
+            {({width}) => <div ref={registerChild}>
+              <VirtualList
+                autoHeight
+                data={this.props.data}
+                height={height}
+                deferredMeasurementCache={this.measurementCache}
+                rowHeight={this.measurementCache.rowHeight}
+                isScrolling={isScrolling}
+                onScroll={onChildScroll}
+                rowRenderer={this.rowRenderer}
+                rowCount={this.props.data.length}
+                scrollTop={scrollTop}
+                width={width}
+                tabIndex={null}
+              />
+            </div>}
+          </AutoSizer>}
+      </WindowScroller>
+    </div>;
+  }
+}
 
 Rows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
@@ -233,7 +315,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
     const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = props;
     const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
-    const childrens = [
+    const children = <React.Fragment>
       <Header
         key="header"
         applySort={_.partial(sortList, listId)}
@@ -241,12 +323,12 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
         currentSortFunc={currentSortFunc}
         currentSortOrder={currentSortOrder}
         {...componentProps}
-      />,
+      />
       <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
-    ];
+    </React.Fragment>;
 
     return <div className="co-m-table-grid co-m-table-grid--bordered">
-      {fake ? childrens : <StatusBox {...props}>{childrens}</StatusBox> }
+      { fake ? children : <StatusBox {...props}>{children}</StatusBox> }
     </div>;
   });
 
@@ -268,7 +350,7 @@ List.propTypes = {
   fake: PropTypes.bool,
 };
 
-/** @augments {React.Component<{obj: any>}} */
+/** @augments {React.Component<{obj: K8sResourceKind>}} */
 export class ResourceRow extends React.Component {
   shouldComponentUpdate(nextProps) {
     if (_.size(nextProps) !== _.size(this.props)) {
@@ -291,7 +373,7 @@ export class ResourceRow extends React.Component {
   }
 
   render () {
-    return <div className="row co-resource-list__item">{this.props.children}</div>;
+    return <div className="row co-resource-list__item" style={this.props.style}>{this.props.children}</div>;
   }
 }
 

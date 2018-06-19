@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, referenceFor } from '../module/k8s';
@@ -6,10 +7,9 @@ import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
 import { BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary } from './utils';
-import { BuildsPage } from './build';
+import { BuildsPage, BuildEnvironmentComponent } from './build';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
-import { EnvironmentPage } from './environment';
 
 // Pushes to the image stream created by the image stream YAML template.
 registerTemplate('build.openshift.io/v1.BuildConfig', `apiVersion: build.openshift.io/v1
@@ -72,15 +72,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
 
 const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
 
-const envPath = ['spec', 'strategy', 'sourceStrategy'];
-const environmentComponent = (props) => <EnvironmentPage
-  obj={props.obj}
-  rawEnvData={props.obj.spec.strategy.sourceStrategy}
-  envPath={envPath}
-  readOnly={false}
-/>;
-
-const pages = [navFactory.details(BuildConfigsDetails), navFactory.editYaml(), navFactory.envEditor(environmentComponent), navFactory.builds(BuildsTabPage)];
+const pages = [navFactory.details(BuildConfigsDetails), navFactory.editYaml(), navFactory.envEditor(BuildEnvironmentComponent), navFactory.builds(BuildsTabPage)];
 export const BuildConfigsDetailsPage: React.SFC<BuildConfigsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
@@ -102,7 +94,7 @@ const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div classNa
     <ResourceLink kind={BuildConfigsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
   <div className="col-xs-3">
-    {obj.metadata.namespace}
+    <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
   <div className="col-xs-3">
     <LabelList kind={BuildConfigsReference} labels={obj.metadata.labels} />
@@ -112,11 +104,31 @@ const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div classNa
   </div>
 </div>;
 
+const buildStrategy = buildConfig => buildConfig.spec.strategy.type;
+
+const allStrategies = ['Docker', 'JenkinsPipeline', 'Source', 'Custom'];
+const filters = [{
+  type: 'build-strategy',
+  selected: allStrategies,
+  reducer: buildStrategy,
+  items: _.map(allStrategies, strategy => ({
+    id: strategy,
+    title: strategy,
+  })),
+}];
+
 export const BuildConfigsList: React.SFC = props => <List {...props} Header={BuildConfigsHeader} Row={BuildConfigsRow} />;
 BuildConfigsList.displayName = 'BuildConfigsList';
 
 export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = props =>
-  <ListPage {...props} title="Build Configs" kind={BuildConfigsReference} ListComponent={BuildConfigsList} canCreate={true} filterLabel={props.filterLabel} />;
+  <ListPage
+    {...props}
+    title="Build Configs"
+    kind={BuildConfigsReference}
+    ListComponent={BuildConfigsList}
+    canCreate={true}
+    filterLabel={props.filterLabel}
+    rowFilters={filters} />;
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
 /* eslint-disable no-undef */

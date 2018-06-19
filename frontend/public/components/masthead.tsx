@@ -20,7 +20,7 @@ const logout = e => {
 
 const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) => {
   const title = <span>
-    <i className="fa fa-user co-header__user-icon" aria-hidden="true"></i>{username}
+    <i className="fa fa-user co-masthead__user-icon" aria-hidden="true"></i>{username}
   </span>;
   return <ActionsMenu actions={actions}
     title={title}
@@ -50,7 +50,7 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
     href: '/settings/profile'
   });
 
-  return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.userID()} /> : null;
+  return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
 });
 
 export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
@@ -96,40 +96,41 @@ const ContextSwitcher = () => {
 
 export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => {
   const isOpenShiftCluster = props.flags[FLAGS.OPENSHIFT];
-  let logoImg;
+  let logoImg, logoAlt;
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
-  switch((window as any).SERVER_FLAGS.logoImageName) {
+  switch ((window as any).SERVER_FLAGS.logoImageName) {
     case 'os-origin':
       logoImg = openshiftOriginLogoImg;
+      logoAlt = 'OpenShift Origin';
       break;
     case 'os-online':
       logoImg = openshiftOnlineLogoImg;
+      logoAlt = 'OpenShift Online';
       break;
     case 'os-platform':
       logoImg = openshiftPlatformLogoImg;
+      logoAlt = 'OpenShift Container Platform';
       break;
     default:
       logoImg = isOpenShiftCluster ? openshiftOriginLogoImg : tectonicLogoImg;
+      logoAlt = isOpenShiftCluster ? 'OpenShift Origin' : 'Tectonic';
   }
 
-  return <div className="sidebar__logo">
-    <Link to="/"><img src={logoImg} /></Link>
+  return <div className="co-masthead__logo">
+    <Link to="/" className="co-masthead__logo-link"><img src={logoImg} alt={logoAlt} /></Link>
   </div>;
 });
 
-export const Masthead = () => <div className="co-masthead">
-  <header role="banner">
-    <div className="co-header">
-      <div className="co-header__console-picker">
-        { (window as any).SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
-      </div>
-      <div className="co-header__user navbar-right">
-        <UserMenuWrapper />
-      </div>
-    </div>
-  </header>
-</div>;
+export const Masthead = () => <header role="banner" className="co-masthead">
+  <LogoImage />
+  <div className="co-masthead__console-picker">
+    { (window as any).SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
+  </div>
+  <div className="co-masthead__user navbar-right">
+    <UserMenuWrapper />
+  </div>
+</header>;
 
 /* eslint-disable no-undef */
 export type FlagsProps = {

@@ -115,10 +115,12 @@ export type ClusterServiceVersionResourceKind = {
 export type InstallPlanKind = {
   spec: {
     clusterServiceVersionNames: string[];
-    approval: 'Automatic' | 'Manual' | 'Update-Only';
+    approval: InstallPlanApproval;
+    approved?: boolean;
   };
   status?: {
     phase: 'Planning' | 'RequiresApproval' | 'Installing' | 'Complete' | 'Failed';
+    catalogSources: string[];
     plan: {
       resolving: string;
       resource: CustomResourceDefinitionKind;
@@ -134,6 +136,7 @@ export type SubscriptionKind = {
     name: string;
     channel?: string;
     startingCSV?: string;
+    installPlanApproval?: InstallPlanApproval;
   },
   status?: {
     installedCSV?: string;

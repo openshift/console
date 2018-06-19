@@ -62,8 +62,8 @@ class StartGuide_ extends SafetyFirst {
       <hr />
       <h2>You may also be interested in</h2>
       <ul>
-        <li>Grant and manage user access with Tectonic Identity. See <a href="https://coreos.com/tectonic/docs/latest/users/tectonic-identity-config.html" target="_blank" rel="noopener">User Management through Tectonic Identity <i className="fa fa-external-link" /></a>.</li>
-        <li>Troubleshoot your Tectonic clusters. See <a href="https://coreos.com/tectonic/docs/latest/troubleshooting/troubleshooting.html" target="_blank" rel="noopener">Troubleshooting Tectonic <i className="fa fa-external-link" /></a>.</li>
+        <li>Grant and manage user access with Tectonic Identity. See <a href="https://coreos.com/tectonic/docs/latest/users/tectonic-identity-config.html" target="_blank" className="co-external-link" rel="noopener">User Management through Tectonic Identity</a></li>
+        <li>Troubleshoot your Tectonic clusters. See <a href="https://coreos.com/tectonic/docs/latest/troubleshooting/troubleshooting.html" className="co-external-link" target="_blank" rel="noopener">Troubleshooting Tectonic</a></li>
       </ul>
     </div>;
     /* eslint-enable react/jsx-no-target-blank */

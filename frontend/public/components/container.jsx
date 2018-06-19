@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
 import { getContainerState, getContainerStatus, getPullPolicyLabel } from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import { Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav } from './utils';
+import { Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav, ResourceLink } from './utils';
 
 const getResourceLimitValue = container => {
   const limits = _.get(container, 'resources.limits');
@@ -111,7 +110,8 @@ const Env = ({env}) => {
 
 const Details = (props) => {
   const pod = props.obj;
-  const container = _.find(pod.spec.containers, {name: props.match.params.name});
+  const container = _.find(pod.spec.containers, {name: props.match.params.name}) ||
+                  _.find(pod.spec.initContainers, {name: props.match.params.name});
   if (!container) {
     return null;
   }
@@ -166,7 +166,7 @@ const Details = (props) => {
         <h1 className="co-section-title">Network</h1>
         <dl className="co-m-pane__details">
           <dt>Node</dt>
-          <dd><Link to={`/nodes/${pod.spec.nodeName}`}>{pod.spec.nodeName}</Link></dd>
+          <dd><ResourceLink kind="Node" name={pod.spec.nodeName} title={pod.spec.nodeName} /></dd>
           <dt>Pod IP</dt>
           <dd>{pod.status.podIP || '-'}</dd>
         </dl>

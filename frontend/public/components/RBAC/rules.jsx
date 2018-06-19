@@ -51,7 +51,7 @@ const Groups = ({apiGroups}) => {
   return <div>{groups}</div>;
 };
 
-const Resources = connect(({KINDS}) => ({allModels: KINDS.get('kinds')}))(
+const Resources = connect(({k8s}) => ({allModels: k8s.getIn(['RESOURCES', 'models'])}))(
   ({resources, nonResourceURLs, allModels}) => {
     let allResources = [];
     resources && _.each([...new Set(resources)].sort(), r => {

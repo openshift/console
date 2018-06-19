@@ -1,194 +1,61 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { resourceURL } from '../module/k8s';
-import { PodModel } from '../models';
-import { SafetyFirst } from './safety-first';
-import { Dropdown, LoadingInline, LogWindow, ResourceIcon, TogglePlay, lineBuffer, stream } from './utils';
+import { ContainerDropdown, ResourceLog } from './utils';
 
-const dataHasFailureMsg = (data) => {
-  return _.includes(data, '"status": "Failure"');
-};
+const reduceContainerStatuses = (accumulator, container, order) => ({
+  ...accumulator,
+  [container.name]: { ...container, order }
+});
 
-const dataHasHTML = (data) => {
-  return _.includes(data, '<html') || _.includes(data, '<HTML');
-};
-
-export class PodLogs extends SafetyFirst {
+export class PodLogs extends React.Component {
   constructor(props) {
     super(props);
-
-    this._buffer = lineBuffer(1000);
-    this._loadTime = Date.now();
-    this._pendingReload = null;
-
-    this._touchLoadTimeState = _.throttle(this._touchLoadTimeState, 100);
     this._selectContainer = this._selectContainer.bind(this);
-    this._updateLogState = this._updateLogState.bind(this);
-    this._toggleLogState = this._toggleLogState.bind(this);
-
     this.state = {
-      containerNames: [],
-      currentContainer: '',
-      logURL: '',
-      loadTime: 0,
-      logState: 'loading'
+      containers: {},
+      currentKey: '',
+      initContainers: {},
     };
-    this.state = _.defaults({}, this._initialState(), this.state);
   }
 
-  componentDidMount() {
-    super.componentDidMount();
-    this._beginStreaming();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState(this._initialState(nextProps.obj));
-  }
-
-  componentWillUnmount() {
-    super.componentWillUnmount();
-    this._endStreaming();
-  }
-
-  _initialState(obj = this.props.obj) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     const newState = {};
-
-    const containers = _.get(obj, 'spec.containers', []);
-    newState.containerNames = _.map(containers, 'name');
-
-    if (!this.state.currentContainer && newState.containerNames.length > 0) {
-      newState.currentContainer = newState.containerNames[0];
+    const containerStatuses = _.get(nextProps.obj, 'status.containerStatuses', []);
+    const initContainerStatuses = _.get(nextProps.obj, 'status.initContainerStatuses', []);
+    newState.containers = _.reduce(containerStatuses, reduceContainerStatuses, {});
+    newState.initContainers = _.reduce(initContainerStatuses, reduceContainerStatuses, {});
+    if (!prevState.currentKey) {
+      const firstContainer = _.find(newState.containers, { order: 0 });
+      newState.currentKey = firstContainer.name;
     }
-
-    const currentContainer = newState.currentContainer || this.state.currentContainer;
-    newState.logURL = this._logURL(obj, currentContainer);
-
     return newState;
   }
 
-  _logURL(obj, currentContainer) {
-    return resourceURL(PodModel, {
-      ns: _.get(obj, 'metadata.namespace'),
-      name: _.get(obj, 'metadata.name'),
-      path: 'log',
-      queryParams: {
-        container: currentContainer,
-        follow: 'true',
-        tailLines: this._buffer.maxSize
-      }
-    });
-  }
-
-  _selectContainer(index) {
-    this._endStreaming();
-    this._buffer = lineBuffer(1000);
-    const currentContainer = this.state.containerNames[index];
-    this.setState({
-      currentContainer,
-      logURL: this._logURL(this.props.obj, currentContainer),
-      logState: 'loading'
-    }, this._beginStreaming);
-  }
-
-  _updateLogState(newState) {
-    this.setState({
-      logState: newState
-    });
-  }
-
-  _toggleLogState() {
-    this.setState({
-      logState: this.state.logState === 'streaming' ? 'paused' : 'streaming'
-    });
-  }
-
-  _touchLoadTime() {
-    this._touchLoadTimeState();
-    this._loadTime = Date.now();
-  }
-
-  // separate function so that it can be throttled
-  _touchLoadTimeState() {
-    this.setState({
-      loadTime: this.state.loadTime + 1
-    });
-  }
-
-  _endStreaming() {
-    this._stream.abort();
-    clearTimeout(this._pendingReload);
-  }
-
-  _resetPendingReload() {
-    const sinceLastLoad = Date.now() - this._loadTime;
-    const wait = Math.max(0, (1000 * 5) - sinceLastLoad);
-    this._pendingReload = setTimeout(() => {
-      if (this.state.logState === 'paused') {
-        // don't reset stream if the user paused the stream
-        this._touchLoadTime();
-        this._resetPendingReload();
-        return;
-      }
-      this._beginStreaming();
-    }, wait);
-  }
-
-  _loadStarted() {
-    this.setState({
-      logState: 'streaming'
-    });
-  }
-
-  _processData(data) {
-    if (dataHasHTML(data)) {
-      this._buffer.push('Logs are currently unavailable');
-    } else if (!dataHasFailureMsg(data)) {
-      this._buffer.push(data);
-    }
-
-    this._touchLoadTime();
-  }
-
-  _beginStreaming() {
-    clearTimeout(this._pendingReload);
-    this._pendingReload = null;
-    this._buffer = lineBuffer(1000);
-
-    this._stream = stream(this.state.logURL, this._loadStarted.bind(this), this._processData.bind(this));
-    this._stream.promise
-      .then(() => !this._pendingReload && this._resetPendingReload()) // Load ended
-      .catch((why) => { // Load failed/aborted
-        if (why === 'abort') {
-          return;
-        }
-
-        this._loadStarted();
-        this._buffer.push(`Error: ${why}`);
-        this._touchLoadTime();
-        if (!this._pendingReload) {
-          this._resetPendingReload();
-        }
-      });
+  _selectContainer(name) {
+    this.setState({currentKey: name});
   }
 
   render() {
-    const nameWithIcon = (name) => <span><span className="co-icon-space-r"><ResourceIcon kind="Container" /></span>{name}</span>;
+    const {containers, currentKey, initContainers} = this.state;
+    const namespace = _.get(this.props.obj, 'metadata.namespace');
+    const podName = _.get(this.props.obj, 'metadata.name');
+    const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
+    const currentContainerAlive = _.has(currentContainer.state, 'running');
+    const containerDropdown = <ContainerDropdown
+      currentKey={currentKey}
+      containers={containers}
+      initContainers={initContainers}
+      onChange={this._selectContainer} />;
 
     return <div className="co-m-pane__body">
-      <div className="co-m-pane__top-controls">
-        { this.state.logState === 'loading'
-          ? <span className="co-icon-space-l"><LoadingInline /></span>
-          : <TogglePlay active={this.state.logState === 'streaming'} onClick={this._toggleLogState} /> }
-        <span className="log-container-selector__text">
-          { this.state.logState === 'streaming' && <span>Streaming logs from</span> }
-          { this.state.logState === 'paused' && <span>Log stream is paused.</span> }
-          { this.state.logState === 'loading' && <span>Loading log...</span> }
-        </span>
-        <Dropdown className="btn-group" items={_.mapValues(this.state.containerNames, nameWithIcon)} title={nameWithIcon(this.state.currentContainer || <LoadingInline />)} onChange={this._selectContainer} />
-      </div>
-
-      <LogWindow buffer={this._buffer} logName={this.state.currentContainer} logState={this.state.logState} updateLogState={this._updateLogState} loadGeneration={this.state.loadTime} />
+      <ResourceLog
+        alive={currentContainerAlive}
+        containerName={currentContainer.name}
+        kind="Pod"
+        dropdown={containerDropdown}
+        namespace={namespace}
+        resourceName={podName} />
     </div>;
   }
 }

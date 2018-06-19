@@ -11,7 +11,7 @@ import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus }
 import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, Firehose } from '../utils';
-import { connectToPlural, kindReducerName, inFlight } from '../../kinds';
+import { connectToPlural, inFlight } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
@@ -83,7 +83,7 @@ export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersi
   }
 };
 
-const inFlightStateToProps = ({[kindReducerName]: ns}) => ({inFlight: ns.get(inFlight)});
+const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', inFlight])});
 
 export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps, null)(
   (props: ClusterServiceVersionResourcesPageProps) => {
@@ -185,11 +185,11 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
           </div>
         </div>
         <div className="co-m-pane__body">
+          <div className="co-clusterserviceversion-resource-details__compact-expand">
+            <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
+          </div>
           <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
             <div className="row">
-              <div className="pull-right">
-                <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
-              </div>
               <div className="col-xs-6">
                 { this.state.expanded
                   ? <ResourceSummary resource={this.props.obj} showPodSelector={false} />
@@ -273,7 +273,6 @@ export type ClusterServiceVersionResourcesDetailsProps = {
   obj: ClusterServiceVersionResourceKind;
   appName: string;
   kindObj: K8sKind;
-  kindsInFlight: boolean;
   clusterServiceVersion: ClusterServiceVersionKind;
 };
 

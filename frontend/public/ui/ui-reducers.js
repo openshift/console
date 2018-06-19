@@ -24,7 +24,6 @@ export default (state, action) => {
       activeNavSectionId: 'workloads',
       location: pathname,
       activeNamespace: activeNamespace || 'default',
-      sidebarOpen: false,
     });
   }
 
@@ -46,16 +45,13 @@ export default (state, action) => {
       return state.set('activeNamespace', ns);
     }
     case types.startImpersonate:
-      return state.set('impersonate', {kind: action.kind, name: action.name});
+      return state.set('impersonate', {kind: action.kind, name: action.name, subprotocols: action.subprotocols});
 
     case types.stopImpersonate:
       return state.delete('impersonate');
 
     case types.sortList:
       return state.mergeIn(['listSorts', action.listId], _.pick(action, ['field', 'func', 'orderBy']));
-
-    case types.setSidebarOpen:
-      return state.set('sidebarOpen', action.open);
 
     default:
       break;

@@ -31,7 +31,7 @@ export BRIDGE_BASE_PATH
 echo $! > bridge.pid
 
 cd frontend
-./node_modules/.bin/webdriver-manager update --quiet > /dev/null 2>&1
+yarn run webdriver-update --quiet > /dev/null 2>&1
 
 if [ $# -gt 0 ] && [ -n "$1" ];
 then

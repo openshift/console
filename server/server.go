@@ -58,6 +58,7 @@ type jsGlobals struct {
 	ClusterName         string `json:"clusterName"`
 	CSRFToken           string `json:"CSRFToken"`
 	GoogleTagManagerID  string `json:"googleTagManagerID"`
+	LoadTestFactor      int    `json:"loadTestFactor"`
 }
 
 type Server struct {
@@ -74,6 +75,7 @@ type Server struct {
 	OpenshiftConsoleURL string
 	LogoImageName       string
 	GoogleTagManagerID  string
+	LoadTestFactor      int
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
 	KubectlAuther                  *auth.Authenticator
@@ -157,6 +159,11 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
 	handle("/static/", securityHeadersMiddleware(staticHandler))
+
+	// Scope of Service Worker needs to be higher than the requests it is intercepting (https://stackoverflow.com/a/35780776/6909941)
+	handleFunc("/load-test.sw.js", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, path.Join(s.PublicDir, "load-test.sw.js"))
+	})
 
 	handleFunc("/health", health.Checker{
 		Checks: []health.Checkable{},
@@ -246,6 +253,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		OpenshiftConsoleURL: s.OpenshiftConsoleURL,
 		LogoImageName:       s.LogoImageName,
 		GoogleTagManagerID:  s.GoogleTagManagerID,
+		LoadTestFactor:      s.LoadTestFactor,
 	}
 
 	if !s.authDisabled() {

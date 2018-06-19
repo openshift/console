@@ -3,16 +3,17 @@
   border: 3px solid $color-grey-border;
   border-radius: 50%;
   height: 32px;
-  width: 32px;
+  margin-right: 15px;
   padding: 0;
+  width: 32px;
 
   // play icon
   &.co-toggle-play--inactive:before {
-    content: "\f04b";
+    content: $fa-var-play;
   }
   // pause icon
   &.co-toggle-play--active:before {
-    content: "\f04c";
+    content: $fa-var-pause;
   }
 
   &.co-toggle-play--active {

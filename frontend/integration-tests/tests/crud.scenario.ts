@@ -35,6 +35,7 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('persistentvolumeclaims', {kind: 'PersistentVolumeClaim'})
     .set('statefulsets', {kind: 'StatefulSet'})
     .set('resourcequotas', {kind: 'ResourceQuota'})
+    .set('horizontalpodautoscalers', {kind: 'HorizontalPodAutoscaler'})
     .set('networkpolicies', {kind: 'NetworkPolicy'})
     .set('roles', {kind: 'Role'});
   const openshiftObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()

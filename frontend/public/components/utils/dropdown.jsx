@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 
-import { history } from './index';
+import { history, ResourceName } from './index';
 
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -11,35 +11,30 @@ export class DropdownMixin extends React.PureComponent {
     this.listener = this._onWindowClick.bind(this);
     this.state = {active: !!props.active, selectedKey: props.selectedKey};
     this.toggle = this.toggle.bind(this);
-    this.show = this.show.bind(this);
-    this.hide = this.hide.bind(this);
-    this.setNode = this.setNode.bind(this);
-  }
-
-  setNode (node) {
-    if (node) {
-      this.dropdownElement = node;
-    }
+    this.dropdownElement = React.createRef();
   }
 
   _onWindowClick (event) {
     if (!this.state.active) {
       return;
     }
-    if (event.target === this.dropdownElement || this.dropdownElement && this.dropdownElement.contains(event.target)) {
+
+    const { current } = this.dropdownElement;
+    if (!current) {
       return;
     }
-    this.hide();
+
+    if (event.target === current || current && current.contains(event.target)) {
+      return;
+    }
+
+    this.hide(event);
   }
 
   componentWillReceiveProps({selectedKey}) {
     if (selectedKey !== this.props.selectedKey) {
       this.setState({selectedKey});
     }
-  }
-
-  componentDidMount () {
-    window.addEventListener('click', this.listener);
   }
 
   componentWillUnmount () {
@@ -62,17 +57,28 @@ export class DropdownMixin extends React.PureComponent {
     });
   }
 
-  toggle () {
-    this.setState({active: !this.state.active});
+  toggle (e) {
+    if (this.state.active) {
+      this.hide(e);
+    } else {
+      this.show(e);
+    }
   }
 
   show (e) {
     e && e.stopPropagation();
+    /* If you're wondering why this isn't in componentDidMount, it's because
+     * cogs are dropdowns. A list of 200 pods would mean 200 global event
+     * listeners. This is bad for performance. - ggreer
+     */
+    window.removeEventListener('click', this.listener);
+    window.addEventListener('click', this.listener);
     this.setState({active: true});
   }
 
   hide (e) {
     e && e.stopPropagation();
+    window.removeEventListener('click', this.listener);
     this.setState({active: false});
   }
 }
@@ -164,7 +170,6 @@ export class Dropdown extends DropdownMixin {
   }
 
   componentDidMount () {
-    super.componentDidMount();
     if (this.props.shortCut) {
       window.addEventListener('keydown', this.globalKeyDown);
     }
@@ -296,7 +301,7 @@ export class Dropdown extends DropdownMixin {
       </button>;
 
     const spacerBefore = this.props.spacerBefore || new Set();
-
+    const headerBefore = this.props.headerBefore || {};
     const rows = [];
     const bookMarkRows = [];
 
@@ -311,57 +316,61 @@ export class Dropdown extends DropdownMixin {
       if (spacerBefore.has(key)) {
         rows.push(<li key={`${key}-spacer`}><div className="dropdown-menu__divider" /></li>);
       }
+
+      if (_.has(headerBefore, key)) {
+        rows.push(<li key={`${key}-header`}><div className="dropdown-menu__header" >{headerBefore[key]}</div></li>);
+      }
       rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
     });
 
     //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
-    return (
-      <div className={className} ref={this.setNode} style={this.props.style}>
-        <div className={classNames('dropdown', dropDownClassName)}>
-          {button}
-          {
-            active && <ul className={classNames('dropdown-menu', menuClassName)}>
-              {
-                autocompleteFilter && <div className="dropdown-menu__filter">
-                  <input
-                    autoFocus
-                    type="text"
-                    ref={input => this.input = input}
-                    onChange={this.changeTextFilter}
-                    placeholder={autocompletePlaceholder}
-                    value={autocompleteText || ''}
-                    autoCapitalize="none"
-                    onKeyDown={this.onKeyDown}
-                    className="form-control dropdown--text-filter"
-                    onClick={e => e.stopPropagation()} />
-                </div>
-              }
-              { bookMarkRows }
-              {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}
-              {rows}
-            </ul>
-          }
-        </div>
+    return <div className={className} ref={this.dropdownElement} style={this.props.style}>
+      <div className={classNames('dropdown', dropDownClassName)}>
+        {button}
+        {
+          active && <ul className={classNames('dropdown-menu', menuClassName)}>
+            {
+              autocompleteFilter && <div className="dropdown-menu__filter">
+                <input
+                  autoFocus
+                  type="text"
+                  ref={input => this.input = input}
+                  onChange={this.changeTextFilter}
+                  placeholder={autocompletePlaceholder}
+                  value={autocompleteText || ''}
+                  autoCapitalize="none"
+                  onKeyDown={this.onKeyDown}
+                  className="form-control dropdown--text-filter"
+                  onClick={e => e.stopPropagation()} />
+              </div>
+            }
+            { bookMarkRows }
+            {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}
+            {rows}
+          </ul>
+        }
       </div>
-    );
+    </div>;
   }
 }
 
 Dropdown.propTypes = {
   autocompleteFilter: PropTypes.func,
   autocompletePlaceholder: PropTypes.string,
+  canFavorite: PropTypes.bool,
   className: PropTypes.string,
-  items: PropTypes.object.isRequired,
+  defaultBookmarks: PropTypes.objectOf(PropTypes.string),
   dropDownClassName: PropTypes.string,
+  enableBookmarks: PropTypes.bool,
+  headerBefore: PropTypes.objectOf(PropTypes.string),
+  items: PropTypes.object.isRequired,
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   noSelection: PropTypes.bool,
-  title: PropTypes.node,
-  textFilter: PropTypes.string,
-  enableBookmarks: PropTypes.bool,
-  defaultBookmarks: PropTypes.objectOf(PropTypes.string),
   storageKey: PropTypes.string,
-  canFavorite: PropTypes.bool,
+  spacerBefore: PropTypes.instanceOf(Set),
+  textFilter: PropTypes.string,
+  title: PropTypes.node,
 };
 
 export const ActionsMenu = (props) => {
@@ -397,4 +406,51 @@ ActionsMenu.propTypes = {
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   title: PropTypes.node,
+};
+
+const containerLabel = (container) =>
+  <ResourceName name={container.name} kind="Container" />;
+
+export class ContainerDropdown extends React.PureComponent {
+
+  getSpacer(container) {
+    const spacerBefore = new Set();
+    return container ? spacerBefore.add(container.name) : spacerBefore;
+  }
+
+  getHeaders(container, initContainer) {
+    return initContainer ? {
+      [container.name]: 'Containers',
+      [initContainer.name]: 'Init Containers'
+    } : {};
+  }
+
+  render() {
+    const {currentKey, containers, initContainers, onChange} = this.props;
+    const firstInitContainer = _.find(initContainers, {order: 0});
+    const firstContainer = _.find(containers, {order: 0});
+    const spacerBefore = this.getSpacer(firstInitContainer);
+    const headerBefore = this.getHeaders(firstContainer, firstInitContainer);
+    const dropdownItems = _.mapValues(_.merge(containers, initContainers), containerLabel);
+    const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
+    return <Dropdown
+      className="btn-group"
+      headerBefore={headerBefore}
+      items={dropdownItems}
+      spacerBefore={spacerBefore}
+      title={title}
+      onChange={onChange} />;
+  }
+}
+
+ContainerDropdown.propTypes = {
+  containers: PropTypes.object.isRequired,
+  currentKey: PropTypes.string,
+  initContainers: PropTypes.object,
+  onChange: PropTypes.func.isRequired
+};
+
+ContainerDropdown.defaultProps = {
+  currentKey: '',
+  initContainers: {}
 };

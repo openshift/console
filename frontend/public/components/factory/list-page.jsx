@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 
 import k8sActions from '../../module/k8s/k8s-actions';
@@ -11,7 +11,6 @@ import { Dropdown, Firehose, kindObj, NavTitle, history, inject} from '../utils'
 import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
-
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
@@ -234,9 +233,9 @@ FireMan_.propTypes = {
   ).isRequired,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: string, fieldSelector?: string, canCreate?: boolean, fake?: boolean}>} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: string, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, fake?: boolean}>} */
 export const ListPage = props => {
-  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, showTitle = true, fake} = props;
+  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, limit, showTitle = true, fake} = props;
   const ko = kindObj(kind);
   const {labelPlural, plural, namespaced, label} = ko;
   const title = props.title || labelPlural;
@@ -248,7 +247,7 @@ export const ListPage = props => {
     } catch (unused) { /**/ }
   }
   const createProps = createHandler ? {onClick: createHandler} : {to: href};
-  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters }];
+  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters, limit }];
 
   if (!namespaced && namespace) {
     return <ErrorPage404 />;
@@ -270,7 +269,7 @@ export const ListPage = props => {
     ListComponent={props.ListComponent}
     rowFilters={props.rowFilters}
     label={labelPlural}
-    flatten={_resources => _resources[name || kind].data}
+    flatten={_resources => _.get(_resources, (name || kind), {}).data}
     namespace={namespace}
     fake={fake}
   />;

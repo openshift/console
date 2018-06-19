@@ -1,138 +1,69 @@
 $sidebar-width: 220px;
-$masthead-height-mobile: 40px;
-$masthead-height-desktop: 60px;
 
-html {
-  height: 100%;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-#app {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  flex: 1 0 auto;
-  overflow: hidden;
-}
-
-#reflex {
-  display: flex;
-  flex: 1 1 auto;
+html,
+body,
+#app,
+#content {
+  height: 100%; // so .co-p-has-sidebar, .yaml-editor are full height
 }
 
 #content {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; // Scroll with momentum
-  flex: 1 1 auto;
-  @media (max-width: $grid-float-breakpoint) {
-    padding-top: $masthead-height-mobile;
-  }
+  padding-top: $masthead-height-mobile;
   @media (min-width: $grid-float-breakpoint) {
     padding-left: $sidebar-width;
     padding-top: $masthead-height-desktop;
   }
 }
 
-.co-masthead {
-  background-color: $color-pf-black;
-  color: $color-os-nav-title;
-  position: fixed;
-  top: 0;
-  left: $sidebar-width;
-  right: 0;
-  height: $masthead-height-desktop;
-  z-index: $zindex-navbar;
-  @media (max-width: $grid-float-breakpoint) {
-    height: $masthead-height-mobile;
-  }
-}
-
 #sidebar {
   background-color: $color-os-nav-background;
+  bottom: 0;
   display: flex;
-  flex: 0 0 auto;
   flex-direction: column;
-  z-index: $zindex-navbar;
-  position: fixed;
-  top: 0;
   left: 0;
+  position: fixed;
+  top: $masthead-height-mobile;
   width: $sidebar-width;
-
-  .sidebar__body {
-    @media (min-width: $grid-float-breakpoint) {
-      display: flex;
-    }
-    display: none;
-    flex: 1 1 auto;
-    flex-direction: column;
-    overflow-y: visible;
-  }
-  &.open {
-    bottom: 0;
-    @media (max-width: $grid-float-breakpoint) {
+  z-index: $zindex-navbar-fixed;
+  @media (max-width: $grid-float-breakpoint-max) {
+    left: -($sidebar-width);
+    &.open {
       box-shadow: 2px 0 3px rgba(0,0,0,.3);
-    }
-    .sidebar__body {
-      display: flex;
+      left: 0;
+      transition: left .1s ease-in-out;
     }
   }
   @media (min-width: $grid-float-breakpoint) {
-    bottom: 0;
+    top: $masthead-height-desktop;
   }
+}
 
-  .sidebar__header {
-    height: $masthead-height-mobile;
-    display: flex;
-    flex: 0 0 auto;
-    background-color: $color-pf-black;
-    @media (min-width: $grid-float-breakpoint) {
-      height: $masthead-height-desktop;
-    }
+
+.sidebar-toggle {
+  background-color: transparent;
+  border: 0;
+  margin: 4px 5px;
+  padding: 9px 10px;
+  position: fixed;
+  z-index: $zindex-navbar-fixed;
+  @media (min-width: $grid-float-breakpoint) {
+    display: none;
   }
-  .sidebar__logo {
-    align-items: center;
-    display: flex;
-    height: 100%;
-    @media (min-width: $grid-float-breakpoint) {
-      margin-left: 10px;
-      margin-right: 10px;
-    }
-    img {
-      max-width: 100%;
-    }
-  }
-  .sidebar__toggle {
-    background-color: transparent;
-    border: 0;
-    margin: 0;
-    padding: 9px 15px;
-
-    @media (min-width: $grid-float-breakpoint) {
-      display: none;
-    }
-
-    &:focus,
-    &:hover {
-      .icon-bar {
-        background: $navbar-pf-vertical-navbar-toggle-icon-bar-hover-bg;
-      }
-    }
-
+  &:focus,
+  &:hover {
     .icon-bar {
-      background: $navbar-pf-vertical-color;
-      border-radius: 1px;
-      display: block;
-      height: 2px;
-      width: 22px;
+      background: $navbar-pf-vertical-navbar-toggle-icon-bar-hover-bg;
     }
-    .icon-bar + .icon-bar {
-      margin-top: 4px;
-    }
+  }
+  .icon-bar {
+    background: $navbar-pf-vertical-color;
+    border-radius: 1px;
+    display: block;
+    height: 2px;
+    width: 20px;
+  }
+  .icon-bar + .icon-bar {
+    margin-top: 4px;
   }
 }
 

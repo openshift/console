@@ -34,10 +34,6 @@
 .co-nowrap {
   white-space: nowrap; }
 
-.co-break-word {
-  overflow-wrap: break-word;
-}
-
 /* Animations */
 .co-an-fade-in-out {
   -webkit-transition-property: compact(opacity, false, false, false, false, false, false, false, false, false);
@@ -135,6 +131,7 @@ input[type="radio"] {
   padding: 0 0 30px 0; }
 
 .co-m-table-grid .row {
+  line-height: normal;
   margin: 0; }
 
 .co-m-table-grid .row,

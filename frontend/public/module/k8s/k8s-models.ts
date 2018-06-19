@@ -2,44 +2,10 @@ import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKindReference, GroupVersionKind, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
+import { K8sResourceKindReference, K8sKind } from './index';
 import * as staticModels from '../../models';
+import { referenceForModel, kindForReference } from './k8s';
 import store from '../../redux';
-
-export const groupVersionFor = (apiVersion: string) => ({
-  group: apiVersion.split('/').length === 2 ? apiVersion.split('/')[0] : 'core',
-  version: apiVersion.split('/').length === 2 ? apiVersion.split('/')[1] : apiVersion,
-});
-
-export const referenceFor = (obj: K8sResourceKind): GroupVersionKind => obj.kind && obj.apiVersion
-  ? `${groupVersionFor(obj.apiVersion).group}:${groupVersionFor(obj.apiVersion).version}:${obj.kind}`
-  : '';
-
-export const referenceForCRD = (obj: CustomResourceDefinitionKind): GroupVersionKind => (
-  `${obj.spec.group}:${obj.spec.version}:${obj.spec.names.kind}`
-);
-
-export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind => (
-  `${groupVersionFor(ownerRef.apiVersion).group}:${groupVersionFor(ownerRef.apiVersion).version}:${ownerRef.kind}`
-);
-
-export const referenceForModel = (model: K8sKind): GroupVersionKind => (
-  `${model.apiGroup || 'core'}:${model.apiVersion}:${model.kind}`
-);
-
-export const kindForReference = (ref: K8sResourceKindReference) => ref.split(':').length === 3
-  ? ref.split(':')[2]
-  : ref;
-
-export const versionForReference = (ref: GroupVersionKind) => ref.split(':')[1];
-
-export const apiVersionForModel = (model: K8sKind) => _.isEmpty(model.apiGroup)
-  ? model.apiVersion
-  : `${model.apiGroup}/${model.apiVersion}`;
-
-export const apiVersionForReference = (ref: GroupVersionKind) => ref.split(':').length === 3
-  ? `${ref.split(':')[0]}/${ref.split(':')[1]}`
-  : ref;
 
 /**
  * Contains static resource definitions for Kubernetes objects.
@@ -69,11 +35,11 @@ export const modelFor = (ref: K8sResourceKindReference) => {
     return m;
   }
   // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
-  m = store.getState().KINDS.get('kinds').get(ref);
+  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(ref);
   if (m) {
     return m;
   }
-  m = store.getState().KINDS.get('kinds').get(kindForReference(ref));
+  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(kindForReference(ref));
   if (m) {
     return m;
   }

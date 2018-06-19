@@ -11,7 +11,9 @@ const messages = {
     'login_state_error': 'There was an error generating login state.',
     'cookie_error': 'There was an error setting login state cookie',
     'missing_code': 'Auth code is missing in query param.',
+    'missing_state': 'There was an error parsing your state cookie',
     'invalid_code': 'There was an error logging you in. Please log out and try again.',
+    'invalid_state': 'There was an error verifying your session. Please log out and try again.',
     'default': 'There was an authentication error with the system. Please try again or contact support.',
     'logout_error': 'There was an error logging you out. Please try again.',
   },
@@ -28,7 +30,7 @@ const getErrMessage = () => {
   if (msg) {
     try {
       return decodeURIComponent(msg);
-    } catch(e) {
+    } catch (e) {
       // eslint-disable-next-line no-console
       console.log(e);
     }

@@ -1,8 +1,13 @@
+/* eslint-disable no-unused-vars */
+
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import {types} from './k8s-actions';
-import {getQN} from './k8s';
+import { types } from './k8s-actions';
+import { getQN, referenceForModel } from './k8s';
+import { K8sResourceKind } from './index';
+import { allModels } from './k8s-models';
+import { namespacedResources } from '../../ui/ui-actions';
 
 const moreRecent = (a, b) => {
   const metaA = a.get('metadata').toJSON();
@@ -20,7 +25,7 @@ const removeFromList = (list, resource) => {
   return list.delete(qualifiedName);
 };
 
-const updateList = (list, nextJS) => {
+const updateList = (list: ImmutableMap<string, any>, nextJS: K8sResourceKind) => {
   const qualifiedName = getQN(nextJS);
   const current = list.get(qualifiedName);
   const next = fromJS(nextJS);
@@ -35,9 +40,7 @@ const updateList = (list, nextJS) => {
 
   // TODO: (kans) only store the data for things we display ...
   //  and then only do this comparison for the same stuff!
-  const currentJS = current.toJSON();
-  currentJS.metadata.resourceVersion = nextJS.metadata.resourceVersion;
-  if (_.isEqual(currentJS, nextJS)) {
+  if (current.deleteIn(['metadata', 'resourceVersion']).equals(next.deleteIn(['metadata', 'resourceVersion']))) {
     // If the only thing that differs is resource version, don't fire an update.
     return list;
   }
@@ -46,7 +49,6 @@ const updateList = (list, nextJS) => {
 };
 
 const loadList = (oldList, resources) => {
-  // TODO: not supported in ie :(
   const existingKeys = new Set(oldList.keys());
   return oldList.withMutations(list => {
     (resources || []).forEach(r => {
@@ -70,18 +72,34 @@ const loadList = (oldList, resources) => {
   });
 };
 
-export default (state, action) => {
+export default (state: ImmutableMap<string, any>, action) => {
   if (!state) {
-    return ImmutableMap();
+    return fromJS({RESOURCES: {inFlight: false, models: allModels()}});
   }
   const {k8sObjects, id} = action;
-  const list = state.getIn([id, 'data']);
+  const list: ImmutableMap<string, any> = state.getIn([id, 'data']);
 
   let newList;
 
   switch (action.type) {
+    case types.getResourcesInFlight:
+      return state.setIn(['RESOURCES', 'inFlight'], true);
     case types.resources:
-      return state.set('RESOURCES', action.resources);
+      return action.resources.models
+        .filter(model => !state.getIn(['RESOURCES', 'models']).has(referenceForModel(model)))
+        // FIXME: Need to remove duplicate `kinds` of static models because it breaks `connectToPlural()`. This means a CRD of `kind: Pod` cannot be defined!
+        .filter(model => !state.getIn(['RESOURCES', 'models']).find(({kind}) => kind === model.kind))
+        .map(model => {
+          model.namespaced ? namespacedResources.add(referenceForModel(model)) : namespacedResources.delete(referenceForModel(model));
+          return model;
+        })
+        .reduce((prevState, newModel) => prevState.updateIn(['RESOURCES', 'models'], models => models.set(referenceForModel(newModel), newModel)), state)
+        // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
+        .setIn(['RESOURCES', 'allResources'], action.resources.allResources)
+        .setIn(['RESOURCES', 'safeResources'], action.resources.safeResources)
+        .setIn(['RESOURCES', 'adminResources'], action.resources.adminResources)
+        .setIn(['RESOURCES', 'namespacedSet'], action.resources.namespacedSet)
+        .setIn(['RESOURCES', 'inFlight'], false);
 
     case types.filterList:
       return state.setIn([id, 'filters', action.name], action.value);
@@ -164,18 +182,11 @@ export default (state, action) => {
         }
       }
       break;
-    case types.deleteFromList:
+    case types.bulkAddToList:
       if (!list) {
         return state;
       }
-      newList = removeFromList(list, k8sObjects);
-      break;
-    case types.addToList:
-    case types.modifyList:
-      if (!list) {
-        return state;
-      }
-      newList = updateList(list, k8sObjects);
+      newList = list.merge(k8sObjects.reduce((map, obj) => map.set(getQN(obj), fromJS(obj)), ImmutableMap()));
       break;
     case types.errored:
       if (!list) {

@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { FLAGS, featureReducerName } from '../features';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
+import { referenceForModel } from '../module/k8s';
 
 import { ClusterPicker } from './cluster-picker';
-import { LogoImage } from './masthead';
 
 import * as routingImg from '../imgs/routing.svg';
 import * as appsLogoImg from '../imgs/apps-logo.svg';
@@ -18,6 +18,8 @@ import * as routingActiveImg from '../imgs/routing-active.svg';
 import * as appsLogoActiveImg from '../imgs/apps-logo-active.svg';
 import { history, stripBasePath } from './utils';
 
+export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
+export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
 
 const stripNS = href => {
   href = stripBasePath(href);
@@ -49,7 +51,7 @@ class NavLink extends React.PureComponent {
 class ResourceNSLink extends NavLink {
   static isActive (props, resourcePath, activeNamespace) {
     const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
-    return resourcePath === href || _.startsWith(resourcePath, `${href}/`);
+    return matchesPath(resourcePath, href) || matchesModel(resourcePath, props.model);
   }
 
   get to () {
@@ -62,6 +64,7 @@ ResourceNSLink.propTypes = {
   name: PropTypes.string.isRequired,
   startsWith: PropTypes.arrayOf(PropTypes.string),
   resource: PropTypes.string.isRequired,
+  model: PropTypes.object,
   activeNamespace: PropTypes.string,
 };
 
@@ -282,28 +285,26 @@ export class Nav extends React.Component {
   render () {
     const { isOpen } = this.state;
 
-    return <div id="sidebar" className={classNames({'open': isOpen})}>
-      <div className="sidebar__header">
-        <button type="button" className="sidebar__toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={this.toggle}>
-          <span className="sr-only">Toggle navigation</span>
-          <span className="icon-bar" aria-hidden="true"></span>
-          <span className="icon-bar" aria-hidden="true"></span>
-          <span className="icon-bar" aria-hidden="true"></span>
-        </button>
-        <LogoImage />
-      </div>
-      <div className="sidebar__body">
+
+    return <React.Fragment>
+      <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={this.toggle}>
+        <span className="sr-only">Toggle navigation</span>
+        <span className="icon-bar" aria-hidden="true"></span>
+        <span className="icon-bar" aria-hidden="true"></span>
+        <span className="icon-bar" aria-hidden="true"></span>
+      </button>
+      <div id="sidebar" className={classNames({'open': isOpen})}>
         <div className="navigation-container__section navigation-container__section--cluster-picker">
           <ClusterPicker />
         </div>
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Overview" icon="fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
           <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
-            <ResourceNSLink resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
+            <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
             <Sep />
-            <ResourceNSLink resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={this.close} />
-            <ResourceNSLink resource={SubscriptionModel.plural} name="Subscriptions" onClick={this.close} />
-            <ResourceNSLink resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
+            <ResourceNSLink model={CatalogSourceModel} resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={this.close} />
+            <ResourceNSLink model={SubscriptionModel} resource={SubscriptionModel.plural} name="Subscriptions" onClick={this.close} />
+            <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
           </NavSection>
 
           <NavSection text="Workloads" icon="fa-folder-open-o">
@@ -324,6 +325,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="configmaps" name="Config Maps" onClick={this.close} />
             <ResourceNSLink resource="secrets" name="Secrets" onClick={this.close} />
             <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} />
+            <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" onClick={this.close} />
           </NavSection>
 
           <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
@@ -343,19 +345,19 @@ export class Nav extends React.Component {
           <NavSection text="Administration" icon="fa-cog">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
-            <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} />
-            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} />
+            <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
+            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
             <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
-            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} />
+            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
             <ResourceNSLink resource="podvulns" name="Security Report" onClick={this.close} required={FLAGS.SECURITY_LABELLER} />
-            <ResourceNSLink resource="Report:chargeback.coreos.com:v1alpha1" name="Chargeback" onClick={this.close} />
-            <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} />
+            <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} />
+            <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
         </div>
       </div>
-    </div>;
+    </React.Fragment>;
   }
 }

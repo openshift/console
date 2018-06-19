@@ -1,30 +1,56 @@
-.co-header {
-  display: flex;
-  height: 40px;
-  @media (min-width: $grid-float-breakpoint) {
-    height: 60px;
-  }
+.co-masthead {
+  align-items: center;
   background-color: $color-pf-black;
   color: $color-os-nav-title;
-  flex: 1 1 auto;
-  align-items: center;
-}
-
-.co-header__console-picker {
-  margin-left: 10px;
-}
-
-.co-header__user {
-  margin-left: auto;
-  margin-right: 20px;
-}
-
-.co-header__user-icon {
-  font-size: 14px;
-  margin-right: 5px;
+  display: flex;
+  height: $masthead-height-mobile;
+  left: 0;
+  position: fixed;
+  right: 0;
+  z-index: $zindex-navbar-fixed;
+  @media (max-width: $grid-float-breakpoint-max) {
+    padding-left: 50px; // make space for .sidebar-toggle
+  }
+  @media(min-width: $grid-float-breakpoint) {
+    height: $masthead-height-desktop;
+  }
+  &__console-picker {
+    margin-left: 10px;
+    @media(max-width: $grid-float-breakpoint-max) {
+      display: none;
+    }
+  }
+  &__logo {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    @media (min-width: $grid-float-breakpoint) {
+      margin-left: 20px;
+      margin-right: 10px;
+    }
+    img {
+      max-width: 100%;
+    }
+  }
+  &__logo-link {
+    display: flex;
+    height: 100%;
+  }
+  &__user {
+    margin-left: auto;
+    margin-right: 15px;
+    @media (min-width: $grid-float-breakpoint) {
+      margin-right: 20px;
+    }
+  }
+  &__user-icon {
+    font-size: 14px;
+    margin-right: 5px;
+  }
 }
 
 .contextselector-pf .bootstrap-select > .dropdown-toggle {
+  padding-top: 19px;
   width: 100%;
   &:focus {
     outline: 0 !important;
@@ -33,5 +59,4 @@
 
 .contextselector-pf .bootstrap-select > .dropdown-menu {
   min-width: 100%;
-  box-sizing: border-box;
 }

@@ -82,7 +82,6 @@ export type ResourceHeaderProps = {
 export type ResourceProps = {
   obj: ClusterServiceVersionResourceKind;
   kindObj: K8sKind;
-  kindsInFlight: boolean;
   clusterServiceVersion: ClusterServiceVersionKind;
 };
 

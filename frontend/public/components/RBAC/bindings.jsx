@@ -84,7 +84,6 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
   if (subject.kind === 'User' || subject.kind === 'Group') {
     actions.unshift(() => ({
       label: `Impersonate ${subject.kind} "${subject.name}"...`,
-      href: '/',
       callback: () => startImpersonate(subject.kind, subject.name),
     }));
   }

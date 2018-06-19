@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 import { TimeoutError } from '../../co-fetch';

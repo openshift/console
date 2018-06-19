@@ -1,8 +1,8 @@
 # Used for compiling the tectonic-console. After editing this file,
-# (and committing your edits) you should run ./push-builder to
+# (and committing your edits) you should run ./push-builder.sh to
 # push a new version of your image to quay.io/coreos/tectonic-console-builder
 
-FROM golang:1.9.2-stretch
+FROM golang:1.10-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
@@ -11,8 +11,8 @@ RUN go get -u github.com/golang/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v9.5.0"
-ENV YARN_VERSION="v1.3.2"
+ENV NODE_VERSION="v10.3.0"
+ENV YARN_VERSION="v1.7.0"
 
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home

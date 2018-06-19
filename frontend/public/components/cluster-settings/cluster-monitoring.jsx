@@ -184,12 +184,12 @@ const MemCPUModalLink = ({section, type, config, obj}) => {
       ? <div className="col-xs-12 text-muted" style={{paddingTop: 15, paddingBottom: 10}}>
         Requests and limits for CPU resources are measured in &ldquo;cpu units&rdquo; in absolute quantities.
         The expression &ldquo;100m&rdquo; can be read as &ldquo;one hundred millicpus&rdquo; or &ldquo;one hundred millicores&rdquo;.
-        See <a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-cpu" target="_blank" rel="noopener noreferrer">Meaning of CPU <i className="fa fa-external-link"/></a> for details.
+        See <a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-cpu" target="_blank" className="co-external-link" rel="noopener noreferrer">Meaning of CPU</a> for details.
       </div>
       : <div className="col-xs-12 text-muted" style={{paddingTop: 15, paddingBottom: 10}}>
         Requests and limits for memory are measured in bytes.
         For example, the following are roughly equivalent: 128974848 ≈ 129M ≈ 123Mi.
-        See <a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-memory" target="_blank" rel="noopener  noreferrer">Meaning of memory <i className="fa fa-external-link"/></a> for more details.
+        See <a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-memory" target="_blank" className="co-external-link" rel="noopener  noreferrer">Meaning of memory</a> for more details.
       </div>;
 
     const FormBody = ({error}) => <div>

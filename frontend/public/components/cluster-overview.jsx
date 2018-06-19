@@ -30,7 +30,7 @@ const fetchTectonicHealth = () => coFetchJSON('health')
   .catch(() => ({short: 'ERROR', long: 'The console service cannot be reached', status: 'ERROR'}));
 
 
-const DashboardLink = ({to, id}) => <Link id={id} target="_blank" to={to}>View Grafana Dashboard&nbsp;&nbsp;<i className="fa fa-external-link" /></Link>;
+const DashboardLink = ({to, id}) => <Link id={id} className="co-external-link" target="_blank" to={to}>View Grafana Dashboard</Link>;
 
 
 const Graphs = ({namespace}) => <React.Fragment>
@@ -159,7 +159,7 @@ const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({limited, namespace, flags})
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Software Info</h2>
-          {!openshiftFlag && <a href="https://coreos.com/tectonic/releases/" target="_blank" rel="noopener noreferrer">Release Notes&nbsp;&nbsp;<i className="fa fa-external-link" /></a>}
+          {!openshiftFlag && <a href="https://coreos.com/tectonic/releases/" target="_blank" className="co-external-link" rel="noopener noreferrer">Release Notes</a>}
         </div>
         <div className="container-fluid group__body">
           <SoftwareDetails />
@@ -168,7 +168,7 @@ const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({limited, namespace, flags})
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Documentation</h2>
-          {!openshiftFlag && <a href={tectonicHelpBase} target="_blank" rel="noopener noreferrer">Full Documentation&nbsp;&nbsp;<i className="fa fa-external-link" /></a>}
+          {!openshiftFlag && <a href={tectonicHelpBase} target="_blank" className="co-external-link" rel="noopener noreferrer">Full Documentation</a>}
         </div>
         <div className="container-fluid group__body group__documentation">
           {openshiftFlag ? <OpenShiftDocumentationLinks /> : <TectonicDocumentationLinks />}

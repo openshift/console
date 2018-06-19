@@ -43,7 +43,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 ### Build everything:
 
 ```
-./build
+./build.sh
 ```
 
 Backend binaries are output to `/bin`.
@@ -79,12 +79,10 @@ Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable w
 
 #### OpenShift
 
-Registering an OpenShift OAuth client requires administrative privileges for the entire cluster not just a local project. If you've got a working `kubectl` and `oc` on your path, but aren't a system administrator, run the following command to attempt to elevate privileges:
+Registering an OpenShift OAuth client requires administrative privileges for the entire cluster, not just a local project. Run the following command to log in as cluster admin:
 
 ```
 oc login -u system:admin
-oc adm policy  --as system:admin add-cluster-role-to-user cluster-admin admin
-oc login -u admin
 ```
 
 To run bridge locally connected to a remote OpenShift cluster, create an `OAuthClient` resource with a generated secret and read that secret:
@@ -98,7 +96,7 @@ If the CA bundle of the OpenShift API server is unavailable, fetch the CA certif
 
 ```
 oc get secrets -n default --field-selector type=kubernetes.io/service-account-token -o json | \
-    jq '.items[0].data."service-ca.crt"' -r | openssl base64 -d > examples/ca.crt
+    jq '.items[0].data."service-ca.crt"' -r | python -m base64 -d > examples/ca.crt
 # Note: use "openssl base64" because the "base64" tool is different between mac and linux
 ```
 
@@ -114,12 +112,26 @@ Finally run the Console and visit [localhost:9000](http://localhost:9000):
 ./examples/run-bridge.sh
 ```
 
+#### OpenShift (without OAuth)
+
+For local development, you can also disable OAuth and run bridge with an
+OpenShift user's access token. Run the following commands to create an admin
+user and start bridge for a cluster up environment:
+
+```
+oc login -u system:admin
+oc adm policy add-cluster-role-to-user cluster-admin admin
+oc login -u admin
+source ./contrib/oc-environment.sh
+./bin/bridge
+```
+
 ## Docker
 
-The `builder-run` script will run any command from a docker container to ensure a consistent build environment.
+The `builder-run.sh` script will run any command from a docker container to ensure a consistent build environment.
 For example to build with docker run:
 ```
-./builder-run ./build
+./builder-run.sh ./build.sh
 ```
 
 The docker image used by builder-run is itself built and pushed by the
@@ -138,7 +150,7 @@ Build a docker image, tag it with the current git sha, and pushes it to the `qua
 
 Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercfg` file.
 ```
-./build-docker-push
+./build-docker-push.sh
 ```
 
 ### Jenkins automation
@@ -189,23 +201,25 @@ yarn run dev
 
 Run all unit tests:
 ```
-./test
+./test.sh
 ```
 
 Run backend tests:
 ```
-./test-backend
+./test-backend.sh
 ```
 
 Run frontend tests:
 ```
-./test-frontend
+./test-frontend.sh
 ```
 
 
 ### Integration Tests
 
 Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
+
+Note: If you are running integration tests against OpenShift, you should start bridge using [oc-environment.sh](#openshift-without-oauth) to skip the login page.
 
 Setup (or any time you change node_modules - `yarn add` or `yarn install`)
 ```
@@ -263,11 +277,11 @@ Whenever making vendor changes:
 
 Add new backend dependencies:
  1. Edit `glide.yaml`
- 2. `./revendor`
+ 2. `./revendor.sh`
 
 Update existing backend dependencies:
  1. Edit the `glide.yaml` file to the desired verison (most likely a git hash)
- 2. Run `./revendor`
+ 2. Run `./revendor.sh`
  3. Verify update was successful. `glide.lock` will have been updated to reflect the changes to `glide.yaml` and the package will have been updated in `vendor`.
 
 #### Frontend

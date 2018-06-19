@@ -8,7 +8,6 @@ import * as PropTypes from 'prop-types';
 
 import store from '../redux';
 import { ALL_NAMESPACES_KEY } from '../const';
-import { getCRDs } from '../kinds';
 import { connectToFlags, featureActions, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { ClusterOverviewContainer } from './cluster-overview-container';
@@ -35,6 +34,7 @@ import { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './cloud-servic
 import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
 import { ClusterServiceVersionModel, CatalogSourceModel } from '../models';
 import { referenceForModel } from '../module/k8s';
+import k8sActions from '../module/k8s/k8s-actions';
 import { coFetch } from '../co-fetch';
 import '../vendor.scss';
 import '../style.scss';
@@ -135,13 +135,13 @@ class App extends React.PureComponent {
   }
 
   render () {
-    return <div id="reflex">
+    return <React.Fragment>
       <Helmet titleTemplate="%s · Tectonic" />
-      <GlobalNotifications />
+      <Masthead />
       <Nav />
       <div id="content">
-        <Masthead />
         <Route path={namespacedRoutes} component={NamespaceSelector} />
+        <GlobalNotifications />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
           <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
@@ -203,15 +203,13 @@ class App extends React.PureComponent {
           <Route component={ErrorPage404} />
         </Switch>
       </div>
-    </div>;
+    </React.Fragment>;
   }
 }
 
-store.dispatch(featureActions.detectSecurityLabellerFlags);
-store.dispatch(featureActions.detectCalicoFlags);
-store.dispatch(featureActions.detectOpenShift);
-store.dispatch(featureActions.detectCanListNS);
-store.dispatch(getCRDs);
+
+_.each(featureActions, store.dispatch);
+store.dispatch(k8sActions.getResources());
 
 analyticsSvc.push({tier: 'tectonic'});
 
@@ -248,10 +246,11 @@ window.onunhandledrejection = function (e) {
 };
 
 if ('serviceWorker' in navigator) {
-  if (window.location.search.indexOf('loadTest') > -1) {
+  if (window.SERVER_FLAGS.loadTestFactor > 1) {
     import('file-loader?name=load-test.sw.js!../load-test.sw.js')
       .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-      .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: Number(new URLSearchParams(window.location.search).get('loadTest'))}));
+      .then(() => new Promise(r => navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r())))
+      .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: window.SERVER_FLAGS.loadTestFactor}));
   } else {
     navigator.serviceWorker.getRegistrations().then((registrations) => registrations.forEach(reg => reg.unregister()));
   }

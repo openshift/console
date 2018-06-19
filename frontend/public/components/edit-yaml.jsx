@@ -32,8 +32,8 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   return sampleObj;
 };
 
-const stateToProps = ({KINDS}) => ({
-  k8sModels: KINDS.get('kinds'),
+const stateToProps = ({k8s}) => ({
+  k8sModels: k8s.getIn(['RESOURCES', 'models']),
 });
 
 /**
@@ -151,8 +151,7 @@ export const EditYAML = connect(stateToProps)(
         const es = this.ace.getSession();
         es.setMode('ace/mode/yaml');
         this.ace.setTheme('ace/theme/clouds');
-        // Disable line wrap so that our tests pass on small screens.
-        es.setUseWrapMode(false);
+        es.setUseWrapMode(true);
         this.doc = es.getDocument();
       }
       let yaml;

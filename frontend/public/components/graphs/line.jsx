@@ -53,6 +53,7 @@ export class Line extends BaseGraph {
     };
     this.options = {
       displaylogo: false,
+      displayModeBar: false,
     };
     this.style = { width: '100%' };
     this.onPlotlyRelayout = e => {

@@ -10,7 +10,7 @@
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
-    "webdriver-update": "webdriver-manager update",
+    "webdriver-update": "webdriver-manager update --versions.chrome=2.38",
     "test-gui-tap": "TAP=true yarn run test-gui",
     "test-gui-openshift": "yarn run test-suite --suite crud --params.openshift true",
     "test-gui": "yarn run test-suite --suite all",
@@ -62,12 +62,16 @@
     "fuzzysearch": "1.0.x",
     "history": "4.x",
     "immutable": "3.x",
+    "js-base64": "^2.4.5",
     "js-yaml": "3.x",
     "lodash-es": "4.x",
     "patternfly": "^3.45.0",
     "plotly.js": "1.28.x",
     "prop-types": "15.6.x",
     "react": "16.x",
+    "react-copy-to-clipboard": "5.x",
+    "react-dnd": "^2.6.0",
+    "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "16.x",
     "react-helmet": "5.x",
     "react-lightweight-tooltip": "1.x",
@@ -85,7 +89,8 @@
     "text-encoding": "0.x",
     "url-polyfill": "^1.0.12",
     "url-search-params-polyfill": "2.x",
-    "whatwg-fetch": "2.x"
+    "whatwg-fetch": "2.x",
+    "xterm": "^3.3.0"
   },
   "devDependencies": {
     "@types/enzyme": "3.x",
@@ -138,6 +143,6 @@
     "webpack-cli": "^2.0.12"
   },
   "engines": {
-    "node": ">=8.x <10.0"
+    "node": ">=8.x <=10.x"
   }
 }

@@ -3,8 +3,14 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { modelFor, k8sPatch } from '../module/k8s';
-import { NameValueEditor, NAME, VALUE } from './utils/name-value-editor';
-import { PromiseComponent } from './utils';
+import { PromiseComponent, NameValueEditorPair } from './utils';
+import { AsyncComponent } from './utils/async';
+
+/**
+ * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
+ * vendor footprint size.
+ */
+const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor.jsx').then(c => c.NameValueEditor)} {...props} />;
 
 /**
  * Set up initial value for the environment vars state. Use this in constructor or cancelChanges.
@@ -15,9 +21,10 @@ import { PromiseComponent } from './utils';
  */
 const getPairsFromObject = (element) => {
   if (_.isUndefined(element.env)) {
-    return [['', '']];
+    return [['', '', 0]];
   }
-  return _.map(element.env, (leafNode) => {
+  return _.map(element.env, (leafNode, i) => {
+    leafNode.ID = i;
     return Object.values(leafNode);
   });
 };
@@ -46,7 +53,7 @@ export class EnvironmentPage extends PromiseComponent {
   constructor(props) {
     super(props);
 
-    this.clearChanges = () => this._clearChanges();
+    this.reload = () => this._reload();
     this.saveChanges = (...args) => this._saveChanges(...args);
     this.updateEnvVars = (...args) => this._updateEnvVars(...args);
 
@@ -56,7 +63,6 @@ export class EnvironmentPage extends PromiseComponent {
       success: null
     };
   }
-
   /**
    * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
    *
@@ -66,17 +72,17 @@ export class EnvironmentPage extends PromiseComponent {
    * @private
    */
   _envVarsToNameVal(finalEnvPairs) {
-    return _.filter(finalEnvPairs, finalEnvPair => !_.isEmpty(finalEnvPair[NAME]))
+    return _.filter(finalEnvPairs, finalEnvPair => !_.isEmpty(finalEnvPair[NameValueEditorPair.Name]))
       .map(finalPairForContainer => {
-        if(finalPairForContainer[VALUE] instanceof Object) {
+        if (finalPairForContainer[NameValueEditorPair.Value] instanceof Object) {
           return {
-            'name': finalPairForContainer[NAME],
-            'valueFrom': finalPairForContainer[VALUE]
+            'name': finalPairForContainer[NameValueEditorPair.Name],
+            'valueFrom': finalPairForContainer[NameValueEditorPair.Value]
           };
         }
         return {
-          'name': finalPairForContainer[NAME],
-          'value': finalPairForContainer[VALUE]
+          'name': finalPairForContainer[NameValueEditorPair.Name],
+          'value': finalPairForContainer[NameValueEditorPair.Value]
         };
       });
   }
@@ -103,15 +109,36 @@ export class EnvironmentPage extends PromiseComponent {
    * Reset the page to initial state
    * @private
    */
-  _clearChanges() {
+  _reload() {
     const {rawEnvData} = this.props;
     this.setState({
       currentEnvVars: envVarsToArray(rawEnvData),
       errorMessage: null,
       success: null,
-      modified: false
+      modified: false,
+      stale: false
     });
   }
+
+  /**
+   * Build out our currentEnvVars state object from our incoming props.
+   * If there is a change and are read/write let the user know we have updated vars otherwise just refresh the page.
+   * For no change return null
+   *
+   * @param nextProps
+   * @param prevState
+   */
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { currentEnvVars } = prevState;
+    const { rawEnvData, readOnly } = nextProps;
+    const incomingEnvVars = envVarsToArray(rawEnvData);
+    if (_.isEqual(incomingEnvVars, currentEnvVars)) {
+      return null;
+    }
+    return readOnly ? { currentEnvVars: incomingEnvVars } : { stale: true, success: null };
+  }
+
+
 
   /**
    * Make it so. Patch the values for the env var changes made on the page.
@@ -144,7 +171,6 @@ export class EnvironmentPage extends PromiseComponent {
       }
       return {path, op, value: this._envVarsToNameVal(finalPairsForContainer)};
     });
-
     const promise = k8sPatch(kind, obj, patch);
     this.handlePromise(promise).then((res) => {
       const newEnvData = _.get(res, envPath);
@@ -152,21 +178,21 @@ export class EnvironmentPage extends PromiseComponent {
         success: 'Successfully updated the environment variables.',
         errorMessage: null,
         currentEnvVars: envVarsToArray(newEnvData),
-        rawEnvData: newEnvData,
-        modified: false
+        modified: false,
+        stale: false
       });
     });
   }
 
   render() {
-    const {errorMessage, success, inProgress, currentEnvVars} = this.state;
-    const {rawEnvData, readOnly} = this.props;
+    const {errorMessage, success, inProgress, currentEnvVars, stale} = this.state;
+    const {rawEnvData, readOnly, obj} = this.props;
 
     const containerVars = currentEnvVars.map((envVar, i) => {
-      const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : rawEnvData.from.name;
+      const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : obj.metadata.name;
       return <div key={keyString} className="co-m-pane__body-group">
         { _.isArray(rawEnvData) && <h1 className="co-section-title">Container {keyString}</h1> }
-        <NameValueEditor nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly}/>
+        <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true}/>
       </div>;
     });
 
@@ -174,10 +200,11 @@ export class EnvironmentPage extends PromiseComponent {
       {containerVars}
       <div className="co-m-pane__body-group">
         <div className="environment-buttons">
-          {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{errorMessage}</p>}
-          {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
+          {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{errorMessage}</p>}
+          {stale && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>The information on this page is no longer current. Click Reload to update and lose edits, or Save Changes to overwrite.</p>}
+          {success && <p className="alert alert-success"><span className="pficon pficon-ok" aria-hidden="true"></span>{success}</p>}
           {!readOnly && <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
-          {this.state.modified && <button type="button" className="btn btn-link" onClick={this.clearChanges}>Clear Changes</button>}
+          {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
         </div>
       </div>
     </div>;

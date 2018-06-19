@@ -220,9 +220,10 @@ export const HorizontalPodAutoscalerModel: K8sKind = {
   label: 'Horizontal Pod Autoscaler',
   path: 'horizontalpodautoscalers',
   plural: 'horizontalpodautoscalers',
-  apiVersion: 'v1',
+  apiVersion: 'v2beta1',
   apiGroup: 'autoscaling',
   abbr: 'HPA',
+  namespaced: true,
   kind: 'HorizontalPodAutoscaler',
   id: 'horizontalpodautoscaler',
   labelPlural: 'Horizontal Pod Autoscalers'

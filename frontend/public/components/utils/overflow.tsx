@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 import * as React from 'react';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 
 import { selectText } from './index';
 

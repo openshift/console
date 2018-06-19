@@ -31,7 +31,7 @@ spec:
     shortNames:
     - ct`;
 
-registerTemplate('v1beta1.CustomResourceDefinition', CRD);
+registerTemplate('apiextensions.k8s.io/v1beta1.CustomResourceDefinition', CRD);
 
 const CRDHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-4 col-md-4 col-sm-4 col-xs-6" sortField="spec.names.kind">Name</ColHead>

@@ -30,14 +30,15 @@ import { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
 import { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
 import { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';
 import { ResourceQuotasPage, ResourceQuotasDetailsPage } from './resource-quota';
+import { HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage } from './hpa';
 import { PersistentVolumesPage, PersistentVolumesDetailsPage } from './persistent-volume';
 import { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from './persistent-volume-claim';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
 import { ReportsPage, ReportsDetailsPage, ReportGenerationQueriesPage, ReportGenerationQueriesDetailsPage } from './chargeback';
 import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
-import { SubscriptionsPage } from './cloud-services/subscription';
-import { InstallPlansPage } from './cloud-services/install-plan';
+import { SubscriptionsPage, SubscriptionDetailsPage } from './cloud-services/subscription';
+import { InstallPlansPage, InstallPlanDetailsPage } from './cloud-services/install-plan';
 import { CatalogSourceDetailsPage } from './cloud-services/catalog-source';
 import { StorageClassPage, StorageClassDetailsPage } from './storage-class';
 
@@ -73,6 +74,7 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   .set('PodVulns', PodVulnsPage)
   .set('StatefulSets', StatefulSetsPage)
   .set('ResourceQuotas', ResourceQuotasPage)
+  .set('HorizontalPodAutoscalers', HorizontalPodAutoscalersPage)
   .set('PersistentVolumes', PersistentVolumesPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsPage)
   .set('Reports', ReportsPage)
@@ -122,6 +124,7 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('PodVulns', PodVulnsDetailsPage)
   .set('StatefulSets', StatefulSetsDetailsPage)
   .set('ResourceQuotas', ResourceQuotasDetailsPage)
+  .set('HorizontalPodAutoscalers', HorizontalPodAutoscalersDetailsPage)
   .set('PersistentVolumes', PersistentVolumesDetailsPage)
   .set('PersistentVolumeClaims', PersistentVolumeClaimsDetailsPage)
   .set('Reports', ReportsDetailsPage)
@@ -130,4 +133,6 @@ export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
   .set('StorageClasses', StorageClassDetailsPage)
   .set('ClusterServiceVersion-v1s', ClusterServiceVersionsDetailsPage)
   .set('CatalogSource-v1s', CatalogSourceDetailsPage)
-  .set('ClusterServiceVersionResources', ClusterServiceVersionResourcesDetailsPage);
+  .set('ClusterServiceVersionResources', ClusterServiceVersionResourcesDetailsPage)
+  .set('Subscription-v1s', SubscriptionDetailsPage)
+  .set('InstallPlan-v1s', InstallPlanDetailsPage);

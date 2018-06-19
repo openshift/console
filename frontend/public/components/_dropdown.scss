@@ -1,3 +1,5 @@
+$co-namespace-selector-desktop: 40px;
+$co-namespace-selector-mobile: 27px;
 $color-dropdown-hover: rgba(0, 0, 0, .05);
 $color-bookmarker--hover: #AAA;
 $color-bookmarker: #DDD;
@@ -21,6 +23,14 @@ $color-bookmarker: #DDD;
   overflow: hidden;
   flex-grow: 1;
   background-color: $color-grey-when-selected;
+}
+
+.dropdown-menu__header {
+  color: $co-gray;
+  flex-grow: 1;
+  font-size: 11px;
+  padding: 3px 10px;
+  text-transform: uppercase;
 }
 
 .dropdown-menu__filter {
@@ -80,14 +90,14 @@ $color-bookmarker: #DDD;
   color: $color-os-nav-title;
   display: flex;
   font-size: ($font-size-base + 1);
-  height: 27px;
+  height: $co-namespace-selector-mobile;
   white-space: nowrap;
   padding: 0 15px;
 
   @media (min-width: $grid-float-breakpoint) {
     border-left: 1px solid $color-os-nav-item-seperator;
     font-size: ($font-size-base + 3);
-    height: 40px;
+    height: $co-namespace-selector-desktop;
     padding-bottom: 5px;
     padding-top: 5px;
   }
@@ -112,11 +122,13 @@ $color-bookmarker: #DDD;
 }
 
 .co-namespace-selector__menu.dropdown-menu {
+  max-height: calc(100vh - (#{$masthead-height-mobile} + #{$co-namespace-selector-mobile}));
   max-width: 100%;
   min-width: 210px;
-  overflow-y: inherit;
+  overflow-y: auto;
 
   @media (min-width: $grid-float-breakpoint) {
+    max-height: calc(100vh - (#{$masthead-height-desktop} + #{$co-namespace-selector-desktop}));
     min-width: 250px;
   }
 

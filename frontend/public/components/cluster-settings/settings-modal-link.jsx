@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 
 import { LoadingInline } from '../utils';

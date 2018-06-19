@@ -22,10 +22,10 @@ const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
 const ServiceIP = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
     const clusterIP = s.spec.clusterIP === 'None' ? 'None' : `${s.spec.clusterIP}:${portObj.port}`;
-    return <span key={i}>{clusterIP}&nbsp;&nbsp;</span>;
+    return <div key={i}>{clusterIP}</div>;
   });
 
-  return <p>{children}</p>;
+  return children;
 };
 
 const ServiceHeader = props => <ListHeader>

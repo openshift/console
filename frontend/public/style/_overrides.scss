@@ -95,8 +95,6 @@ tags-input .tags .tag-item {
 tags-input .tags .tag-item.selected {
   border: solid 1px;
 }
-tags-input .tags .tag-item.selected .remove-button {
-}
 
 tags-input .tags .tag-item .remove-button {
   margin: 0 0 0 2px;
@@ -190,4 +188,12 @@ tags-input .autocomplete .suggestion-item em {
 
 .modal-footer .alert {
   text-align: left;
+}
+
+// FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the cog menus' overflow.
+.ReactVirtualized__Grid.ReactVirtualized__List {
+  overflow: visible !important;
+}
+.ReactVirtualized__Grid__innerScrollContainer {
+  overflow: visible !important;
 }

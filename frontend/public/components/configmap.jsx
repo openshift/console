@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import ConfigMapAndSecretData from './configmap-and-secret-data';
+import { ConfigMapData } from './configmap-and-secret-data';
 import { Cog, Heading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { fromNow } from './utils/datetime';
@@ -49,7 +49,7 @@ const ConfigMapDetails = ({obj: configMap}) => {
     </div>
     <div className="co-m-pane__body">
       <Heading text="Data" />
-      <ConfigMapAndSecretData data={configMap.data} />
+      <ConfigMapData data={configMap.data} />
     </div>
   </React.Fragment>;
 };

@@ -157,7 +157,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
       path: testClusterServiceVersionResource.metadata.name.split('.')[0],
       annotations: testClusterServiceVersionResource.metadata.annotations,
     };
-    wrapper = shallow(<ClusterServiceVersionResourceDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} kindsInFlight={false} appName={testClusterServiceVersion.metadata.name} />);
+    wrapper = shallow(<ClusterServiceVersionResourceDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} appName={testClusterServiceVersion.metadata.name} />);
   });
 
   it('renders description title', () => {
@@ -313,12 +313,12 @@ describe('ResourcesList', () => {
       plural: '',
     };
 
-    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={kindObj} kindsInFlight={false} obj={testResourceInstance} />);
+    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={kindObj} obj={testResourceInstance} />);
     expect(resourceComponent.props().resources).toEqual(testClusterServiceVersion.spec.customresourcedefinitions.owned[0].resources.map((resource) => ({ kind: resource.kind, namespaced: true })));
   });
 
   it('uses the default resources if the kind is not found in the CSV', () => {
-    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={null} kindObj={null} kindsInFlight={false} obj={testResourceInstance} />);
+    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={null} kindObj={null} obj={testResourceInstance} />);
     expect(resourceComponent.props().resources.length > 5).toEqual(true);
   });
 });
@@ -406,7 +406,7 @@ describe(CSVResourceDetails.displayName, () => {
   });
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
-    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={null} kindsInFlight={false} obj={testResourceInstance} />);
+    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={null} obj={testResourceInstance} />);
     const flatten = resourceComponent.find(MultiListPage).props().flatten;
     const pod = {
       kind: 'Pod',

@@ -134,13 +134,13 @@ describe('Filter', () => {
   //   And I select the namespace "all namespaces"
   //  When I select "Pods"
   //   And I type "example" in the name filter
-  //   And I type "app=nginx" in the label filter
+  //   And I type "app=hello-openshift" in the label filter
   //  Then I expect to see one object WORKLOAD_LABELlisted in the results with a name that starts with "example"
   it('Search pod by label and filtering by name', async() => {
     await browser.get(`${appHost}/search/all-namespaces?kind=Pod`);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
-    await search.labelFilter.sendKeys('app=nginx', Key.ENTER);
+    await search.labelFilter.sendKeys('app=hello-openshift', Key.ENTER);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
   });

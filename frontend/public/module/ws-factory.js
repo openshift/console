@@ -82,7 +82,7 @@ WSFactory.prototype._connect = function() {
   this._state = 'init';
   this._messageBuffer = [];
   try {
-    this.ws = new WebSocket(this.url, this.options.subProtocols);
+    this.ws = new WebSocket(this.url, this.options.subprotocols);
   } catch (e) {
     console.error('Error creating websocket:', e);
     this._reconnect();
@@ -135,7 +135,7 @@ WSFactory.prototype._invokeHandlers = function(type, data) {
   handlers.forEach(function(h) {
     try {
       h(data);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
   });
@@ -265,4 +265,8 @@ WSFactory.prototype.destroy = function(timedout) {
 
   delete this.options;
   this._messageBuffer = [];
+};
+
+WSFactory.prototype.send = function (data) {
+  this.ws && this.ws.send(data);
 };

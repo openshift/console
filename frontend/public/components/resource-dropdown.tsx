@@ -6,7 +6,6 @@ import * as PropTypes from 'prop-types';
 import { Dropdown, ResourceIcon } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { allModels, K8sKind } from '../module/k8s';
-import { kindReducerName } from '../kinds';
 import { FLAGS, featureReducerName } from '../features';
 import * as classNames from 'classnames';
 import { ClusterServiceVersionModel, EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../models';
@@ -28,6 +27,7 @@ const resources = [
   'Default',
   'Deployments',
   'EtcdClusters',
+  'HorizontalPodAutoscalers',
   'Ingresses',
   'Jobs',
   'Namespaces',
@@ -113,7 +113,7 @@ const ResourceListDropdown_: React.StatelessComponent<ResourceListDropdownProps>
 };
 
 const resourceListDropdownStateToProps = (state): any => {
-  const allkinds = state[kindReducerName].get('kinds').toJSON();
+  const allkinds = state.k8s.getIn(['RESOURCES', 'models']).toJSON();
   const openshiftFlag = state[featureReducerName].get(FLAGS.OPENSHIFT);
 
   return { allkinds, openshiftFlag };

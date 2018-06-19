@@ -66,7 +66,6 @@
 }
 
 .co-m-pane__heading {
-  align-items: center;
   display: flex;
   justify-content: space-between;
   margin: 0 0 $grid-gutter-width;
@@ -74,12 +73,16 @@
     justify-content: center;
   }
   &--logo {
+    align-items: center;
     margin-bottom: ($grid-gutter-width / 2);
   }
 }
 
-.co-m-pane__top-controls {
-  margin: 0 0 10px;
+.co-m-pane__name {
+  @include co-break-word;
+  flex: 1;
+  margin-right: 10px;
+  min-width: 0; // necessary for wrapping since its a flex child
 }
 
 .co-inline-block {
@@ -121,6 +124,7 @@
   }
   dd {
     font-size: 14px;
+    @include co-break-word;
   }
 }
 
@@ -177,4 +181,70 @@ input[type=number]::-webkit-outer-spin-button {
   font-size: 14px;
   padding: 2px 12px;
   background-color: #D64456;
+}
+
+.co-break-word {
+  @include co-break-word;
+}
+
+// append external-link icon to <a> so that it doesn't wrap without text
+// there must be no white space between the text and the closing </a> tag holding the pseudo element
+.co-external-link:after {
+  content: "\f08e";
+  display:inline-block;
+  font-family: 'FontAwesome';
+  height: 16px;
+  position:relative;
+  margin-left: 5px;
+  margin-right: -25px; // width + margin-left
+  top:0;
+  width: 20px;
+}
+.co-external-link {
+  display: inline-block;
+  padding-right: 25px;
+}
+
+.co-toolbar {
+  align-items: stretch;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.co-toolbar__item {
+  padding: 5px 0;
+}
+
+.co-toolbar__group {
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  @media (max-width: $screen-xs-max) {
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+}
+
+.co-toolbar__group--left {
+  justify-content: flex-start;
+  .co-toolbar__item {
+    padding-right: 15px;
+  }
+  @media (max-width: $screen-xs-max) {
+    align-items: flex-start;
+  }
+}
+
+.co-toolbar__group--right {
+  justify-content: flex-end;
+  .co-toolbar__item {
+    padding-left: 15px;
+  }
+  @media (max-width: $screen-xs-max) {
+    align-items: flex-end;
+  }
 }

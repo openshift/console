@@ -53,7 +53,7 @@ describe('Modal Annotations', () => {
 
     await modalAnnotationsView.annotationRowsKey.each( async function (item, index) {
       const annKey = await item.getAttribute('value');
-      if(annKey === annotationKey){
+      if (annKey === annotationKey){
         keyFound = keyFound + 1;
         expect( modalAnnotationsView.annotationRowsValue.get(index).getAttribute('value')).toBe(annotationValue);
       }
@@ -76,7 +76,7 @@ describe('Modal Annotations', () => {
     await crudView.modalAnnotationsLink.click();
     await modalAnnotationsView.isLoaded();
 
-    switch(action) {
+    switch (action) {
       case Actions.add: {
         await modalAnnotationsView.addAnnotation(annotationKey, annotationValue);
         break;

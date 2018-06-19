@@ -70,7 +70,6 @@ export const types = {
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
   sortList: 'sortList',
-  setSidebarOpen: 'setSidebarOpen',
 };
 
 export const UIActions = {
@@ -100,9 +99,49 @@ export const UIActions = {
     };
   },
 
-  [types.startImpersonate]: (kind, name) => ({kind, name, type: types.startImpersonate}),
+  [types.startImpersonate]: (kind, name) => async (dispatch, getState) => {
+    let textEncoder;
+    try {
+      textEncoder = new TextEncoder('utf-8');
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.info('Browser lacks TextEncoder. Falling back to polyfill.', e);
+    }
 
-  [types.stopImpersonate]: () => ({type: types.stopImpersonate}),
+    if (!textEncoder) {
+      textEncoder = await import('text-encoding').then(module => new module.TextEncoder('utf-8'));
+    }
+
+    const imp = getState().UI.get('impersonate', {});
+    if ((imp.name && imp.name !== name) || (imp.kin && imp.kind !== kind)) {
+      // eslint-disable-next-line no-console
+      console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
+      return;
+    }
+
+    /* Subprotocols are comma-separated, so commas aren't allowed. Also "="
+     * and "/" aren't allowed, so base64 but replace illegal chars.
+     */
+    let encodedName = textEncoder.encode(name);
+    encodedName = window.btoa(String.fromCharCode.apply(String, encodedName));
+    encodedName = encodedName.replace(/=/g, '_').replace(/\//g, '-');
+
+    let subprotocols;
+    if (kind === 'User' ) {
+      subprotocols = [`Impersonate-User.${encodedName}`];
+    }
+    if (kind === 'Group') {
+      subprotocols = [`Impersonate-Group.${encodedName}`];
+    }
+
+    dispatch({kind, name, subprotocols, type: types.startImpersonate});
+    history.push(window.SERVER_FLAGS.basePath);
+  },
+
+  [types.stopImpersonate]: () => dispatch => {
+    dispatch({type: types.stopImpersonate});
+    history.push(window.SERVER_FLAGS.basePath);
+  },
 
   [types.sortList]: (listId, field, func, orderBy, column) => {
     const url = new URL(window.location);
@@ -112,6 +151,4 @@ export const UIActions = {
     history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
     return {listId, field, func, orderBy, type: types.sortList};
   },
-
-  [types.setSidebarOpen]: open => ({ open, type: types.setSidebarOpen }),
 };

@@ -6,7 +6,7 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units } from './utils';
+import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent} from './utils';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line } from './graphs';
@@ -22,13 +22,13 @@ kind: Pod
 metadata:
   name: example
   labels:
-    app: redis
+    app: hello-openshift
 spec:
   containers:
-    - name: key-value-store
-      image: redis
+    - name: hello-openshift
+      image: openshift/hello-openshift
       ports:
-        - containerPort: 6379`);
+        - containerPort: 8080`);
 
 
 /** @type {React.SFC.<{pod: string}>} */
@@ -109,7 +109,7 @@ export const ContainerRow = ({pod, container}) => {
       <Overflow className="col-sm-2 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
       <Overflow className="col-sm-2 col-xs-8" value={container.image} />
       <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
+      <div className="col-md-1 col-sm-2 hidden-xs text-nowrap">{_.get(cstate, 'label', '-')}</div>
       <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
       <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
     </div>
@@ -138,6 +138,26 @@ const Volume = ({pod, volume}) => {
     </div>
   </div>;
 };
+
+const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane__body">
+  <h1 className="co-section-title">{heading}</h1>
+  <div className="row">
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-sm-2 col-xs-4">Name</div>
+        <div className="col-sm-2 hidden-xs">Id</div>
+        <div className="col-sm-2 col-xs-8">Image</div>
+        <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
+        <div className="col-md-1 col-sm-2 hidden-xs">State</div>
+        <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
+        <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
+      </div>
+    </div>
+  </div>
+</div>;
 
 const Details = ({obj: pod}) => {
   const limits = {
@@ -171,50 +191,31 @@ const Details = ({obj: pod}) => {
       <br />
 
       <div className="row">
-        <div className="col-lg-8">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
-                <dt>Node Selector</dt>
-                <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>Status</dt>
-                <dd>{podPhase(pod)}</dd>
-                <dt>Pod IP</dt>
-                <dd>{pod.status.podIP || '-'}</dd>
-                <dt>Node</dt>
-                <dd><NodeLink name={pod.spec.nodeName} /></dd>
-                <dt>Restart Policy</dt>
-                <dd>{getRestartPolicyLabel(pod)}</dd>
-              </dl>
-            </div>
-          </div>
+        <div className="col-sm-6">
+          <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
+            <dt>Node Selector</dt>
+            <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <dl className="co-m-pane__details">
+            <dt>Status</dt>
+            <dd>{podPhase(pod)}</dd>
+            <dt>Pod IP</dt>
+            <dd>{pod.status.podIP || '-'}</dd>
+            <dt>Node</dt>
+            <dd><NodeLink name={pod.spec.nodeName} /></dd>
+            <dt>Restart Policy</dt>
+            <dd>{getRestartPolicyLabel(pod)}</dd>
+          </dl>
         </div>
       </div>
+
     </div>
 
-    <div className="co-m-pane__body">
-      <h1 className="co-section-title">Containers</h1>
-      <div className="row">
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-2 col-xs-4">Name</div>
-            <div className="col-sm-2 hidden-xs">Id</div>
-            <div className="col-sm-2 col-xs-8">Image</div>
-            <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
-            <div className="col-md-1 col-sm-2 hidden-xs">State</div>
-            <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
-            <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
-          </div>
-          <div className="co-m-table-grid__body">
-            {pod.spec.containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
-          </div>
-        </div>
-      </div>
-    </div>
+    {pod.spec.initContainers && <ContainerTable heading="Init Containers" containers={pod.spec.initContainers} pod={pod} />}
+
+    <ContainerTable heading="Containers" containers={pod.spec.containers} pod={pod} />
 
     <div className="co-m-pane__body">
       <h1 className="co-section-title">Pod Volumes</h1>
@@ -243,6 +244,17 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={true}
 />;
 
+const PodExecLoader = ({obj}) => <div className="co-m-pane__body">
+  <div className="row">
+    <div className="col-xs-12">
+      <div className="panel-body">
+        <AsyncComponent loader={() => import('./pod-exec').then(c => c.PodExec)} obj={obj} />
+      </div>
+    </div>
+  </div>
+</div>;
+
+
 /** @type {React.SFC<any>} */
 export const PodsDetailsPage = props => <DetailsPage
   {...props}
@@ -256,7 +268,12 @@ export const PodsDetailsPage = props => <DetailsPage
     navFactory.editYaml(),
     navFactory.envEditor(environmentComponent),
     navFactory.logs(PodLogs),
-    navFactory.events(ResourceEventStream)
+    navFactory.events(ResourceEventStream),
+    {
+      href: 'terminal',
+      name: 'Terminal',
+      component: PodExecLoader,
+    },
   ]}
 />;
 PodsDetailsPage.displayName = 'PodsDetailsPage';
@@ -273,7 +290,7 @@ const filters = [{
     {id: 'Pending', title: 'Pending'},
     {id: 'Terminating', title: 'Terminating'},
     {id: 'CrashLoopBackOff', title: 'CrashLoopBackOff'},
-    {id: 'Completed', title: 'Job Completed'},
+    {id: 'Completed', title: 'Completed'},
   ],
 }];
 

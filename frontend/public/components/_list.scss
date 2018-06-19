@@ -19,7 +19,6 @@
 }
 
 .co-m-table-grid {
-  line-height: 1;
   &__head {
     color: $color-text-secondary;
     text-transform: uppercase;
@@ -31,13 +30,13 @@
     margin-left: 10px;
   }
   [class^="col-"] {
-    word-wrap: break-word; // IE 11/16/17 requires legacy name "word-wrap" rather than "overflow-wrap".
-    overflow-wrap: break-word; // new name as per the CSS3 spec
+    @include co-break-word;
   }
 }
 
 .co-resource-list__item {
   transition: all 0.25s;
+  height: 100%;
 }
 
 .compaction-btn {

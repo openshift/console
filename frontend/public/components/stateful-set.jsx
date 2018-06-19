@@ -63,7 +63,7 @@ const Row = ({obj: ss}) => <div className="row co-resource-list__item">
 const Details = ({obj: ss}) => <React.Fragment>
   <div className="co-m-pane__body">
     <Heading text="StatefulSet Overview" />
-    <ResourceSummary resource={ss} podSelector="spec.podSelector" showNodeSelector={false} />
+    <ResourceSummary resource={ss} showNodeSelector={false} />
   </div>
 </React.Fragment>;
 
@@ -81,5 +81,5 @@ export const StatefulSetsPage = props => <ListPage {...props} ListComponent={Sta
 export const StatefulSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.envEditor(environmentComponent)]}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.pods(), navFactory.envEditor(environmentComponent)]}
 />;

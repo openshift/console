@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 
 import k8sActions from '../module/k8s/k8s-actions';
 import { getQueryArgument, setQueryArgument } from './utils';

@@ -1,0 +1,14 @@
+@import "~xterm/dist/xterm.css";
+
+.console > .terminal {
+  color: $color-pf-white;
+  padding: 10px;
+  background-color: $color-pf-black;
+}
+
+.console {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background-color: $color-pf-black;
+}

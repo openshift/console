@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as classNames from'classnames';
+import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
 import { ActionsMenu, ResourceIcon } from './index';
@@ -30,7 +30,7 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
   const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
   const logo = isCSV
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
-    : <div>{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" /> } <span id="resource-title">{title}</span></div>;
+    : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg pull-left" /> } <span id="resource-title">{title}</span></div>;
 
   return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
