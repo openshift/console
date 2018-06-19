@@ -40,9 +40,9 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
 
 const BuildLogLink: React.SFC<BuildLogLinkProps> = ({ obj }) => {
   const link = getJenkinsLogURL(obj);
-  return link ? <div className="build-pipeline__link">
+  return link && <div className="build-pipeline__link">
     <a href={link} className="build-pipeline__log-link" target="_blank" rel="noopener noreferrer">View Log</a>
-  </div> : null;
+  </div>;
 };
 
 const StagesNotStarted: React.SFC = () => <div className="build-pipeline__stage build-pipeline__stage--none">
