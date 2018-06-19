@@ -13,11 +13,6 @@
   }
 }
 
-.middler {
-  display:flex;
-  align-items: center;
-}
-
 .co-m-table-grid {
   &__head {
     color: $color-text-secondary;
@@ -29,14 +24,13 @@
   &__sort-arrow {
     margin-left: 10px;
   }
-  [class^="col-"] {
-    @include co-break-word;
-  }
 }
 
 .co-resource-list__item {
-  transition: all 0.25s;
+  align-items: center;
+  display:flex;
   height: 100%;
+  transition: all 0.25s;
 }
 
 .compaction-btn {

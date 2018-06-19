@@ -36,11 +36,11 @@ const DaemonSetHeader = props => <ListHeader>
 </ListHeader>;
 
 const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind="DaemonSet" resource={daemonset} />
     <ResourceLink kind="DaemonSet" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} title={daemonset.metadata.namespace} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">

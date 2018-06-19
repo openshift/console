@@ -17,11 +17,11 @@ const Header = props => <ListHeader>
 
 const RowForKind = kind => function RowForKind_ ({obj}) {
   return <div className="row co-resource-list__item">
-    <div className="col-xs-4">
+    <div className="col-xs-4 co-break-word">
       <ResourceCog actions={menuActions} kind={referenceFor(obj) || kind} resource={obj} />
       <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
-    <div className="col-xs-4">
+    <div className="col-xs-4 co-break-word">
       { obj.metadata.namespace
         ? <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
         : 'None'

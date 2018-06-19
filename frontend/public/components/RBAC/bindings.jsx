@@ -117,7 +117,7 @@ export const RoleLink = ({binding}) => {
 };
 
 const Row = ({obj: binding}) => <ResourceRow obj={binding}>
-  <div className="col-xs-3">
+  <div className="col-xs-3 co-break-word">
     <BindingName binding={binding} />
   </div>
   <OverflowYFade className="col-xs-3">

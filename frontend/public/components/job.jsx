@@ -44,11 +44,11 @@ const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
     <ResourceRow obj={job}>
-      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
         <ResourceCog actions={menuActions} kind="Job" resource={job} />
         <ResourceLink kind="Job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
       </div>
-      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
         <ResourceLink kind="Namespace" name={job.metadata.namespace} title={job.metadata.namespace} />
       </div>
       <div className="col-lg-4 col-md-4 col-sm-4 hidden-xs">

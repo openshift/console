@@ -30,11 +30,11 @@ const StorageClassHeader = props => <ListHeader>
 
 const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-xs-3">
+    <div className="col-xs-3 co-break-word">
       <ResourceCog actions={menuActions} kind={StorageClassReference} resource={obj} />
       <ResourceLink kind={StorageClassReference} name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
     </div>
-    <div className="col-xs-3">
+    <div className="col-xs-3 co-break-word">
       {obj.provisioner}
     </div>
     <div className="col-xs-3">

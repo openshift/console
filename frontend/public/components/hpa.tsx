@@ -201,17 +201,17 @@ const HorizontalPodAutoscalersHeader = props => <ListHeader>
 </ListHeader>;
 
 const HorizontalPodAutoscalersRow: React.SFC<HorizontalPodAutoscalersRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind={HorizontalPodAutoscalersReference} resource={obj} />
     <ResourceLink kind={HorizontalPodAutoscalersReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
   </div>
   <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
     <LabelList kind="HorizontalPodAutoscaler" labels={obj.metadata.labels} />
   </div>
-  <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
+  <div className="col-lg-2 col-md-3 hidden-sm hidden-xs co-break-word">
     <ResourceLink kind={obj.spec.scaleTargetRef.kind} name={obj.spec.scaleTargetRef.name} namespace={obj.metadata.namespace} title={obj.spec.scaleTargetRef.name} />
   </div>
   <div className="col-lg-1 hidden-md hidden-sm hidden-xs">

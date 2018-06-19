@@ -119,19 +119,17 @@ const ContainerLink = ({podvuln, name}) => {
 };
 
 const ContainerVulnRow = ({podvuln, imgvuln, feature, vuln}) => {
-  return <div className="row">
-    <div className="middler">
-      <div className="col-sm-2 col-xs-4">
-        <VulnLink vuln={vuln} />
-      </div>
-      <div className="col-sm-1 hidden-xs">{vuln.Severity}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">{feature.Name}</div>
-      <div className="col-md-2 col-sm-2 hidden-xs">{feature.Version}</div>
-      <div className="col-md-2 col-sm-2 hidden-xs">{vuln.FixedBy}</div>
-      <Overflow className="col-sm-2 col-xs-8" value={imgvuln.Image} />
-      <div className="col-md-2 hidden-sm hidden-xs">
-        <ContainerLink podvuln={podvuln} name={imgvuln.Container} />
-      </div>
+  return <div className="row co-resource-list__item">
+    <div className="col-sm-2 col-xs-4 co-break-word">
+      <VulnLink vuln={vuln} />
+    </div>
+    <div className="col-sm-1 hidden-xs">{vuln.Severity}</div>
+    <div className="col-md-1 col-sm-2 hidden-xs">{feature.Name}</div>
+    <div className="col-md-2 col-sm-2 hidden-xs">{feature.Version}</div>
+    <div className="col-md-2 col-sm-2 hidden-xs">{vuln.FixedBy}</div>
+    <Overflow className="col-sm-2 col-xs-8" value={imgvuln.Image} />
+    <div className="col-md-2 hidden-sm hidden-xs">
+      <ContainerLink podvuln={podvuln} name={imgvuln.Container} />
     </div>
   </div>;
 };

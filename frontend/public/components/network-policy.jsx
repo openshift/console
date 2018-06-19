@@ -43,11 +43,11 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
     <ResourceCog actions={menuActions} kind={kind} resource={np} />
     <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} title={np.metadata.name} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-xs-3 co-break-word">
     <ResourceLink kind={'Namespace'} name={np.metadata.namespace} title={np.metadata.namespace} />
   </div>
 
-  <div className="col-xs-5">
+  <div className="col-xs-5 co-break-word">
     {
       _.isEmpty(np.spec.podSelector) ?
         <Link to={`/search/ns/${np.metadata.namespace}?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :

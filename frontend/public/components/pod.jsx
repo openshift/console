@@ -59,21 +59,21 @@ export const PodRow = ({obj: pod}) => {
   }
 
   return <ResourceRow obj={pod}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
       <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6 co-break-word">
       <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
     </div>
-    <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
+    <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">
       <LabelList kind="Pod" labels={pod.metadata.labels} />
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-    <div className="col-lg-2 col-md-1 hidden-sm hidden-xs">{status}</div>
-    <div className="col-lg-1 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{status}</div>
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
   </ResourceRow>;
 };
 
@@ -81,11 +81,11 @@ PodRow.displayName = 'PodRow';
 
 const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Pod Labels</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Pod Labels</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-1 hidden-sm hidden-xs" sortFunc="podPhase">Status</ColHead>
-  <ColHead {...props} className="col-lg-1 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortFunc="podPhase">Status</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 
 const ContainerLink = ({pod, name}) => <span className="co-resource-link">
@@ -102,17 +102,15 @@ export const ContainerRow = ({pod, container}) => {
   const fixes = _.get(pod.metadata, 'labels[secscan/fixables]');
 
   return <div className="row">
-    <div className="middler">
-      <div className="col-sm-2 col-xs-4">
-        <ContainerLink pod={pod} name={container.name} />
-      </div>
-      <Overflow className="col-sm-2 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
-      <Overflow className="col-sm-2 col-xs-8" value={container.image} />
-      <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs text-nowrap">{_.get(cstate, 'label', '-')}</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
-      <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
+    <div className="col-sm-2 col-xs-4">
+      <ContainerLink pod={pod} name={container.name} />
     </div>
+    <Overflow className="col-sm-2 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
+    <Overflow className="col-sm-2 col-xs-8" value={container.image} />
+    <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div>
+    <div className="col-md-1 col-sm-2 hidden-xs text-nowrap">{_.get(cstate, 'label', '-')}</div>
+    <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
+    <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
   </div>;
 };
 
@@ -122,19 +120,17 @@ const Volume = ({pod, volume}) => {
   const mountPermissions = getVolumeMountPermissions(volume);
 
   return <div className="row">
-    <div className="middler">
-      <Overflow className="col-sm-3 col-xs-4 co-truncate" value={volume.name} />
-      <div className="col-sm-3 col-xs-4">
-        <VolumeIcon kind={kind} />
-        <span className="co-break-word">{loc && ` (${loc})`}</span>
-      </div>
-      <div className="col-sm-3 hidden-xs">{mountPermissions}</div>
-      <div className="col-sm-3 col-xs-4">
-        {volume.mounts.map((m, i) => <div key={i}>
-          <ContainerLink pod={pod} name={m.container} />
-          {i < volume.mounts.length - 1 && ', '}
-        </div>)}
-      </div>
+    <Overflow className="col-sm-3 col-xs-4 co-truncate" value={volume.name} />
+    <div className="col-sm-3 col-xs-4">
+      <VolumeIcon kind={kind} />
+      <span className="co-break-word">{loc && ` (${loc})`}</span>
+    </div>
+    <div className="col-sm-3 hidden-xs">{mountPermissions}</div>
+    <div className="col-sm-3 col-xs-4">
+      {volume.mounts.map((m, i) => <div key={i}>
+        <ContainerLink pod={pod} name={m.container} />
+        {i < volume.mounts.length - 1 && ', '}
+      </div>)}
     </div>
   </div>;
 };

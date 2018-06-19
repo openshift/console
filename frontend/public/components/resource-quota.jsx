@@ -21,17 +21,17 @@ spec:
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-5 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-7 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
 </ListHeader>;
 
 const kind = 'ResourceQuota';
 const Row = ({obj: rq}) => <div className="row co-resource-list__item">
-  <div className="col-xs-4">
+  <div className="col-md-5 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind={kind} resource={rq} />
     <ResourceLink kind={kind} name={rq.metadata.name} namespace={rq.metadata.namespace} title={rq.metadata.name} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-md-7 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} />
   </div>
 </div>;

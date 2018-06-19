@@ -81,17 +81,15 @@ const NodeRow = ({obj: node, expand}) => {
   const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
   return <ResourceRow obj={node} expand={expand}>
-    <div className="middler">
-      <div className="col-xs-4">
-        <NodeCog node={node} />
-        <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
-      </div>
-      <div className="col-sm-2 col-xs-4"><NodeStatus node={node} /></div>
-      <div className="col-sm-3 col-xs-4">
-        {isOperatorInstalled ? <NodeCLStatusRow node={node} /> : <span className="text-muted">Not configured</span>}
-      </div>
-      <div className="col-sm-3 hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
+    <div className="col-xs-4 co-break-word">
+      <NodeCog node={node} />
+      <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
+    <div className="col-sm-2 col-xs-4"><NodeStatus node={node} /></div>
+    <div className="col-sm-3 col-xs-4">
+      {isOperatorInstalled ? <NodeCLStatusRow node={node} /> : <span className="text-muted">Not configured</span>}
+    </div>
+    <div className="col-sm-3 hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}

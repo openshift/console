@@ -140,15 +140,15 @@ const RouteListHeader: React.SFC<RouteHeaderProps> = props => <ListHeader>
 </ListHeader>;
 
 const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow obj={route}>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind="Route" resource={route} />
     <ResourceLink kind="Route" name={route.metadata.name}
       namespace={route.metadata.namespace} title={route.metadata.uid} />
   </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={route.metadata.namespace} title={route.metadata.namespace} />
   </div>
-  <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
+  <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs co-break-word">
     <RouteLocation obj={route} />
   </div>
   <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
