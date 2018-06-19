@@ -7,6 +7,7 @@ import { cloneBuild, formatBuildDuration } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
 import { BuildStrategy, Cog, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp } from './utils';
+import { BuildPipeline } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
 import { EnvironmentPage } from './environment';
@@ -22,7 +23,7 @@ const cloneBuildAction = (kind, build) => ({
     history.push(resourceObjPath(clone, referenceFor(clone)));
   }).catch(err => {
     const error = err.message;
-    errorModal({error});
+    errorModal({ error });
   }),
 });
 
@@ -32,12 +33,18 @@ const menuActions = [
   ...common,
 ];
 
-export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({obj: build}) => {
+export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const started = _.get(build, 'status.startTimestamp');
   const duration = formatBuildDuration(build);
+  const hasPipeline = build.spec.strategy.type === 'JenkinsPipeline';
 
   return <div className="co-m-pane__body">
+    {hasPipeline && <div className="row">
+      <div className="col-xs-12">
+        <BuildPipeline obj={build} />
+      </div>
+    </div>}
     <div className="row">
       <div className="col-sm-6">
         <ResourceSummary resource={build} showPodSelector={false} showNodeSelector={false}>
@@ -58,7 +65,8 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({obj: build}) => {
         </BuildStrategy>
       </div>
     </div>
-  </div>;
+  </div>
+  ;
 };
 
 export const getStrategyType = (strategy) => {
@@ -119,7 +127,7 @@ const BuildsHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-3" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
-const BuildsRow: React.SFC<BuildsRowProps> = ({obj}) => <div className="row co-resource-list__item">
+const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co-resource-list__item">
   <div className="col-xs-3">
     <ResourceCog actions={menuActions} kind={BuildsReference} resource={obj} />
     <ResourceLink kind={BuildsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
@@ -131,7 +139,7 @@ const BuildsRow: React.SFC<BuildsRowProps> = ({obj}) => <div className="row co-r
     {obj.status.phase}
   </div>
   <div className="col-xs-3">
-    { fromNow(obj.metadata.creationTimestamp) }
+    {fromNow(obj.metadata.creationTimestamp)}
   </div>
 </div>;
 
