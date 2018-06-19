@@ -7,7 +7,7 @@ import { FLAGS, connectToFlags } from '../../features';
 export const tectonicHelpBase = 'https://coreos.com/tectonic/docs/latest/';
 
 // TODO: This needs to change depending on the version.
-const openshiftHelpBase = 'https://docs.openshift.org/latest/';
+export const openshiftHelpBase = 'https://docs.openshift.org/latest/';
 /* global
   HELP_TOPICS: false,
   GET_STARTED_CLI: false,
