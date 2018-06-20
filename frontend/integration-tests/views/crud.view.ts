@@ -1,6 +1,8 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 
 export const createYAMLButton = $('#yaml-create');
+export const createItemButton = $('#item-create');
+export const createYAMLLink = $('#yaml-link');
 
 /**
  * Returns a promise that resolves after the loading spinner is not present.

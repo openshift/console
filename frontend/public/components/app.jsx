@@ -24,6 +24,7 @@ import { Nav } from './nav';
 import { ProfilePage } from './profile';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
+import { CreateSecret, EditSecret } from './secrets/create-secret';
 import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
 import { history, AsyncComponent, Loading } from './utils';
@@ -174,6 +175,10 @@ class App extends React.PureComponent {
           <Route path="/k8s/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
           <Route path="/k8s/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
           <Route path="/k8s/ns/:ns/roles" exact component={rolesListPage} />
+
+          <Route path="/k8s/ns/:ns/secrets/new/:type" exact component={props => <CreateSecret {...props} kind="Secret" />} />
+          <Route path="/k8s/ns/:ns/secrets/:name/edit" exact component={props => <EditSecret {...props} kind="Secret" />} />
+          <Route path="/k8s/ns/:ns/secrets/:name/edit-yaml" exact component={props => <EditYAMLPage {...props} kind="Secret" />} />
 
           <Route path="/k8s/cluster/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
           <Route path="/k8s/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />

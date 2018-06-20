@@ -21,6 +21,7 @@ const InfoMessage = ({message}) => <div className="alert alert-info"><span class
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore
 // can't be disabled during a pending promise/request.
+/** @type {React.SFC<{children: any, className?: string, errorMessage?: string, infoMessage?: string, inProgress: boolean}}>} */
 export const ButtonBar = ({children, className, errorMessage, infoMessage, inProgress}) => {
   return <div className={classNames(className, 'co-m-btn-bar')}>
     {errorMessage && <ErrorMessage message={errorMessage} />}
@@ -35,4 +36,5 @@ ButtonBar.propTypes = {
   errorMessage: PropTypes.string,
   infoMessage: PropTypes.string,
   inProgress: PropTypes.bool.isRequired,
+  className: PropTypes.string,
 };

@@ -103,7 +103,7 @@ class DropDownRow extends React.PureComponent {
     }
     return <li className={className} key={itemKey}>
       {prefix}
-      <a ref={ref => this.ref=ref} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
+      <a ref={ref => this.ref=ref} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
       {suffix}
     </li>;
   }
