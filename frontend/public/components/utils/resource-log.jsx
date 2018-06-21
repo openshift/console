@@ -55,6 +55,7 @@ export class ResourceLog extends SafetyFirst {
     this.state = {
       alive: true,
       error: false,
+      currentLine: '',
       lines: [],
       linesBehind: 0,
       stale: false,
@@ -104,7 +105,7 @@ export class ResourceLog extends SafetyFirst {
 
   // Handler for websocket onclose event
   _onClose(){
-    this.setState({ status: 'eof'});
+    this.setState({ status: 'eof' });
   }
 
   // Handler for websocket onerror event
@@ -116,12 +117,14 @@ export class ResourceLog extends SafetyFirst {
 
   // Handler for websocket onmessage event
   _onMessage(msg){
-    const text = Base64.decode(msg);
-    const linesBehind = this.state.status === 'paused' ? this.state.linesBehind + 1 : 0;
-    if (text){
-      this._pushToBuffer(text);
+    const { linesBehind } = this.state;
+    if (msg){
+      const text = Base64.decode(msg);
+      const currentLine = this._pushToBuffer(text);
+      const incrementLinesBehind = (this.state.status === 'paused' && currentLine.length === 0);
       this.setState({
-        linesBehind,
+        currentLine,
+        linesBehind: incrementLinesBehind ? linesBehind + 1 : linesBehind,
         lines: this._buffer
       });
     }
@@ -130,15 +133,21 @@ export class ResourceLog extends SafetyFirst {
   // Handler for websocket onopen event
   _onOpen(){
     this._buffer = [];
-    this.setState({status: 'streaming'});
+    this._updateStatus('streaming');
   }
 
   // Push one line to the buffer. First item is removed if buffer is at limit.
   _pushToBuffer(text){
-    if (this._buffer.length === this.props.bufferSize) {
-      this._buffer.shift();
+    const prev = this.state.currentLine;
+    const next = `${prev}${text}`;
+    if (/\n$/.test(text)) {
+      if (this._buffer.length === this.props.bufferSize) {
+        this._buffer.shift();
+      }
+      this._buffer.push(next);
+      return '';
     }
-    this._buffer.push(text);
+    return next;
   }
 
   // Destroy and reinitialize websocket connection
@@ -155,9 +164,7 @@ export class ResourceLog extends SafetyFirst {
   // Toggle streaming/paused status
   _toggleStreaming() {
     const newStatus = this.state.status === 'streaming' ? 'paused' : 'streaming';
-    this.setState({
-      status: newStatus
-    });
+    this._updateStatus(newStatus);
   }
 
   // Updates log status
@@ -165,7 +172,7 @@ export class ResourceLog extends SafetyFirst {
     let newState = {status: newStatus};
 
     // Reset linesBehind when transitioning out of paused state
-    if (this.state.status === 'paused' && newStatus !== this.state.status) {
+    if (this.state.status !== 'streaming' && newStatus === 'streaming') {
       newState.linesBehind = 0;
     }
     this.setState(newState);
