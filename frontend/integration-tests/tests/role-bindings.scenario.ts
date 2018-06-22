@@ -91,7 +91,7 @@ describe('Role Bindings', () => {
     }).first();
     await rbItem.click();
 
-    switch(subject) {
+    switch (subject) {
       case Subect.user: {
         await roleBindingsView.crbUserRad.click();
         subjectYaml = `${subjectYaml}User`;
