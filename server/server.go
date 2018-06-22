@@ -52,6 +52,7 @@ type jsGlobals struct {
 	LoginSuccessURL     string `json:"loginSuccessURL"`
 	LoginErrorURL       string `json:"loginErrorURL"`
 	LogoutURL           string `json:"logoutURL"`
+	LogoutRedirect      string `json:"logoutRedirect"`
 	KubeAPIServerURL    string `json:"kubeAPIServerURL"`
 	OpenshiftConsoleURL string `json:"openshiftConsoleURL"`
 	LogoImageName       string `json:"logoImageName"`
@@ -64,6 +65,7 @@ type jsGlobals struct {
 type Server struct {
 	K8sProxyConfig      *proxy.Config
 	BaseURL             *url.URL
+	LogoutRedirect      *url.URL
 	PublicDir           string
 	TectonicVersion     string
 	TectonicCACertFile  string
@@ -248,6 +250,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoginSuccessURL:     proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
 		LogoutURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		LogoutRedirect:      s.LogoutRedirect.String(),
 		ClusterName:         s.ClusterName,
 		KubeAPIServerURL:    s.KubeAPIServerURL,
 		OpenshiftConsoleURL: s.OpenshiftConsoleURL,

@@ -45,13 +45,22 @@ export const authSvc = {
         console.error(e);
       }
     });
+
     coFetch(window.SERVER_FLAGS.logoutURL, {
       method: 'POST',
-    }).then(() => authSvc.login()).catch(e => {
+    }).then(() => authSvc._onLogout()).catch(e => {
       // eslint-disable-next-line no-console
       console.error('ERROR LOGGING OUT', e);
-      authSvc.login();
+      authSvc._onLogout();
     });
+  },
+
+  _onLogout: () => {
+    if (window.SERVER_FLAGS.logoutRedirect) {
+      window.location = window.SERVER_FLAGS.logoutRedirect;
+    } else {
+      authSvc.login();
+    }
   },
 
   login: () => {

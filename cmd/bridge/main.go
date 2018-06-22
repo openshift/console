@@ -46,6 +46,7 @@ func main() {
 	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
 	fUserAuthOIDCClientSecret := fs.String("user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
 	fUserAuthOIDCClientSecretFile := fs.String("user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
+	fUserAuthLogoutRedirect := fs.String("user-auth-logout-redirect", "", "Optional redirect URL on logout needed for some single sign-on identity providers.")
 
 	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
@@ -106,6 +107,11 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
+	logoutRedirect := &url.URL{}
+	if *fUserAuthLogoutRedirect != "" {
+		logoutRedirect = validateFlagIsURL("user-auth-logout-redirect", *fUserAuthLogoutRedirect)
+	}
+
 	if *fOpenshiftConsoleURL != "" && !strings.HasSuffix(*fOpenshiftConsoleURL, "/") {
 		flagFatalf("openshift-console-url", "value must end with slash")
 	}
@@ -114,6 +120,7 @@ func main() {
 		PublicDir:           *fPublicDir,
 		TectonicVersion:     *fTectonicVersion,
 		BaseURL:             baseURL,
+		LogoutRedirect:      logoutRedirect,
 		TectonicCACertFile:  caCertFilePath,
 		ClusterName:         *fTectonicClusterName,
 		OpenshiftConsoleURL: *fOpenshiftConsoleURL,
