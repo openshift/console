@@ -233,7 +233,7 @@ const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
           <dt>Wildcard Policy</dt>
           <dd>{ingress.wildcardPolicy}</dd>
         </dl>
-        <h4 className="co-m-route__ingress-status__conditions-heading">Conditions</h4>
+        <h2 className="co-section-title-secondary">Conditions</h2>
         <Conditions conditions={ingress.conditions} />
       </div>)}
   </span>;
@@ -265,13 +265,6 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
       </div>
     </div>
   </div>
-  {_.isEmpty(route.status.ingress)
-    ? <div className="cos-status-box">
-      <div className="text-center">No Route Status</div>
-    </div>
-    : <div className="co-m-pane__body">
-      <RouteIngressStatus ingresses={route.status.ingress} />
-    </div>}
   <div className="co-m-pane__body">
     <h1 className="co-section-title">TLS Settings</h1>
     <TLSSettings tls={route.spec.tls} />
@@ -297,6 +290,13 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
       </table>
     </div>
   </div> }
+  {_.isEmpty(route.status.ingress)
+    ? <div className="cos-status-box">
+      <div className="text-center">No Route Status</div>
+    </div>
+    : <div className="co-m-pane__body">
+      <RouteIngressStatus ingresses={route.status.ingress} />
+    </div>}
 </React.Fragment>;
 
 export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = props => <DetailsPage

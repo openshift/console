@@ -11,26 +11,3 @@
 .co-m-route-tls-reveal__btn {
   padding-right: 0;
 }
-
-.co-m-route__ingress-status-section {
-  .co-m-route__ingress-status {
-    padding-bottom: 40px;
-
-    .co-m-table-grid {
-      .co-m-table-grid__head,
-      .co-m-table-grid__body {
-        div {
-          padding-left: 0;
-        }
-      }
-    }
-  }
-
-  .co-m-route-ingress-status:last-child {
-    padding-bottom: 0px;
-  }
-}
-
-.co-m-route__ingress-status__conditions-heading {
-  margin-top: 20px;
-}
