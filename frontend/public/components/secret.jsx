@@ -12,9 +12,9 @@ kind: Secret
 metadata:
   name: example
 type: Opaque
-data:
-  username: YWRtaW4=
-  password: MWYyZDFlMmU2N2Rm`);
+stringData:
+  username: admin
+  password: opensesame`);
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 
