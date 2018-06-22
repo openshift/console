@@ -197,6 +197,9 @@ export class EnvironmentPage extends PromiseComponent {
     });
 
     return <div className="co-m-pane__body">
+      { !readOnly &&
+          <p className="co-m-pane__explanation">Define environment variables as key-value pairs to store configuration settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</p>
+      }
       {containerVars}
       <div className="co-m-pane__body-group">
         <div className="environment-buttons">
