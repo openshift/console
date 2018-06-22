@@ -1,4 +1,3 @@
-// vars
 $color-log-window-body-bg: $color-pf-black;
 $color-log-window-header-bg: $color-pf-black-900;
 $color-log-window-text: $color-pf-black-150;
@@ -31,9 +30,15 @@ $color-log-window-divider: $color-log-window-header-bg;
   width: 0;
 }
 
-.log-window__footer {
+.log-window__resume-btn {
   background-color: $color-log-window-header-bg;
-  cursor: pointer;
+  color: $color-log-window-text;
   padding: 4px 10px;
-  text-align: center;
+}
+
+.log-window__resume-btn:hover,
+.log-window__resume-btn:focus,
+.log-window__resume-btn:active,
+{
+  color: $color-log-window-text;
 }

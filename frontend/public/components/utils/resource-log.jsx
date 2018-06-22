@@ -8,13 +8,17 @@ import { modelFor, resourceURL } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
 import { WSFactory } from '../../module/ws-factory';
 
+export const LOG_EOF = 'eof';
+export const LOG_LOADING = 'loading';
+export const LOG_PAUSED = 'paused';
+export const LOG_STREAMING = 'streaming';
 
 // Messages to display for corresponding log status
 const streamStatusMessages = {
-  eof: 'Log stream ended.',
-  loading: 'Loading log...',
-  paused: 'Log stream paused.',
-  streaming: 'Log streaming...'
+  [LOG_EOF]: 'Log stream ended.',
+  [LOG_LOADING]: 'Loading log...',
+  [LOG_PAUSED]: 'Log stream paused.',
+  [LOG_STREAMING]: 'Log streaming...'
 };
 
 // Component for log stream controls
@@ -24,7 +28,7 @@ const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
     <div className="co-toolbar__group co-toolbar__group--left">
       <div className="co-toolbar__item">
         { status === 'loading' && <React.Fragment><LoadingInline/>&nbsp;</React.Fragment> }
-        { ['streaming', 'paused'].includes(status) && <TogglePlay active={status === 'streaming'} onClick={toggleStreaming}/>}
+        { [LOG_STREAMING, LOG_PAUSED].includes(status) && <TogglePlay active={status === LOG_STREAMING} onClick={toggleStreaming}/>}
         {streamStatusMessages[status]}
       </div>
       {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
@@ -55,6 +59,7 @@ export class ResourceLog extends SafetyFirst {
     this.state = {
       alive: true,
       error: false,
+      currentLine: '',
       lines: [],
       linesBehind: 0,
       stale: false,
@@ -104,7 +109,7 @@ export class ResourceLog extends SafetyFirst {
 
   // Handler for websocket onclose event
   _onClose(){
-    this.setState({ status: 'eof'});
+    this.setState({ status: LOG_EOF });
   }
 
   // Handler for websocket onerror event
@@ -116,12 +121,14 @@ export class ResourceLog extends SafetyFirst {
 
   // Handler for websocket onmessage event
   _onMessage(msg){
-    const text = Base64.decode(msg);
-    const linesBehind = this.state.status === 'paused' ? this.state.linesBehind + 1 : 0;
-    if (text){
-      this._pushToBuffer(text);
+    const { linesBehind } = this.state;
+    if (msg){
+      const text = Base64.decode(msg);
+      const currentLine = this._pushToBuffer(text);
+      const incrementLinesBehind = (this.state.status === LOG_PAUSED && currentLine.length === 0);
       this.setState({
-        linesBehind,
+        currentLine,
+        linesBehind: incrementLinesBehind ? linesBehind + 1 : linesBehind,
         lines: this._buffer
       });
     }
@@ -130,15 +137,21 @@ export class ResourceLog extends SafetyFirst {
   // Handler for websocket onopen event
   _onOpen(){
     this._buffer = [];
-    this.setState({status: 'streaming'});
+    this._updateStatus(LOG_STREAMING);
   }
 
   // Push one line to the buffer. First item is removed if buffer is at limit.
   _pushToBuffer(text){
-    if (this._buffer.length === this.props.bufferSize) {
-      this._buffer.shift();
+    const prev = this.state.currentLine;
+    const next = `${prev}${text}`;
+    if (/\n$/.test(text)) {
+      if (this._buffer.length === this.props.bufferSize) {
+        this._buffer.shift();
+      }
+      this._buffer.push(next);
+      return '';
     }
-    this._buffer.push(text);
+    return next;
   }
 
   // Destroy and reinitialize websocket connection
@@ -154,10 +167,8 @@ export class ResourceLog extends SafetyFirst {
 
   // Toggle streaming/paused status
   _toggleStreaming() {
-    const newStatus = this.state.status === 'streaming' ? 'paused' : 'streaming';
-    this.setState({
-      status: newStatus
-    });
+    const newStatus = this.state.status === LOG_STREAMING ? LOG_PAUSED : LOG_STREAMING;
+    this._updateStatus(newStatus);
   }
 
   // Updates log status
@@ -165,7 +176,7 @@ export class ResourceLog extends SafetyFirst {
     let newState = {status: newStatus};
 
     // Reset linesBehind when transitioning out of paused state
-    if (this.state.status === 'paused' && newStatus !== this.state.status) {
+    if (this.state.status !== LOG_STREAMING && newStatus === LOG_STREAMING) {
       newState.linesBehind = 0;
     }
     this.setState(newState);

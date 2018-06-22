@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-export const Conditions: React.SFC<ConditionsProps> = ({obj}) => {
-  const conditions = _.get(obj, 'status.conditions');
+export const Conditions: React.SFC<ConditionsProps> = ({conditions}) => {
   const rows = _.map(conditions, condition => <div className="row" key={condition.type}>
     <div className="col-xs-3 col-sm-2">
       {condition.type}
@@ -11,15 +10,15 @@ export const Conditions: React.SFC<ConditionsProps> = ({obj}) => {
       {condition.status}
     </div>
     <div className="col-xs-3 col-sm-3">
-      {condition.reason}
+      {condition.reason || '-'}
     </div>
-    <div className="col-xs-3 col-sm-5">
-      {condition.message}
+    {/* remove initial newline which appears in route messages */}
+    <div className="col-xs-3 col-sm-5 co-pre-line">
+      {_.trim(condition.message) || '-'}
     </div>
   </div>);
 
   return <React.Fragment>
-    <h1 className="co-section-title">Conditions</h1>
     {conditions
       ? <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
@@ -39,7 +38,17 @@ export const Conditions: React.SFC<ConditionsProps> = ({obj}) => {
 };
 
 /* eslint-disable no-undef */
+export type conditionProps = {
+  type: string;
+  status: boolean | string;
+  reason?: string;
+  message?: string;
+  lastTransitionTime?: string;
+};
+
 export type ConditionsProps = {
-  obj: any,
+  conditions: conditionProps[],
+  title?: string,
+  subTitle?: string
 };
 /* eslint-enable no-undef */

@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SecretData } from './configmap-and-secret-data';
-import { Cog, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
+import { Cog, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
 
@@ -12,11 +12,24 @@ kind: Secret
 metadata:
   name: example
 type: Opaque
-data:
-  username: YWRtaW4=
-  password: MWYyZDFlMmU2N2Rm`);
+stringData:
+  username: admin
+  password: opensesame`);
 
-const menuActions = Cog.factory.common;
+export const WebHookSecretKey = 'WebHookSecretKey';
+
+// Edit in YAML if not editing a webhook secret with one key.
+const editInYaml = obj => !_.has(obj, ['data', WebHookSecretKey]) || _.size(obj.data) !== 1;
+
+const menuActions = [
+  Cog.factory.ModifyLabels,
+  Cog.factory.ModifyAnnotations,
+  (kind, obj) => ({
+    label: `Edit ${kind.label}...`,
+    href: editInYaml(obj) ? `${resourceObjPath(obj, kind.kind)}/edit-yaml` : `${resourceObjPath(obj, kind.kind)}/edit`,
+  }),
+  Cog.factory.Delete,
+];
 
 const SecretHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -75,7 +88,22 @@ const filters = [{
   ],
 }];
 
-const SecretsPage = props => <ListPage ListComponent={SecretsList} rowFilters={filters} canCreate={true} {...props} />;
+const SecretsPage = props => {
+  const createItems = {
+    // source: 'Create Source Secret',
+    // image: 'Create Image Pull Secret',
+    // generic: 'Create Key/Value Secret',
+    webhook: 'Webhook Secret',
+    yaml: 'Secret from YAML',
+  };
+
+  const createProps = {
+    items: createItems,
+    createLink: (type) => `/k8s/ns/${props.namespace}/secrets/new/${type !== 'yaml' ? type : ''}`
+  };
+
+  return <ListPage ListComponent={SecretsList} canCreate={true} rowFilters={filters} createButtonText="Create" createProps={createProps} {...props} />;
+};
 
 const SecretsDetailsPage = props => <DetailsPage
   {...props}

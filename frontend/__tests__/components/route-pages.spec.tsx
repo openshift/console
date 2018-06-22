@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import { RouteLocation, RouteStatus, RouteWarnings } from '../../public/components/routes';
+import { RouteLocation, RouteStatus } from '../../public/components/routes';
 import { K8sResourceKind } from '../../public/module/k8s';
 
 describe(RouteLocation.displayName, () => {
@@ -240,71 +240,5 @@ describe(RouteStatus.displayName, () => {
     const wrapper = shallow(<RouteStatus obj={route} />);
     expect(wrapper.find('.fa-hourglass-half').exists()).toBe(true);
     expect(wrapper.text()).toEqual('Pending');
-  });
-});
-
-describe(RouteWarnings.displayName, () => {
-  it('renders ingress warnings', () => {
-    const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
-        name: 'example',
-      },
-      'status': {
-        'ingress': [
-          {
-            'conditions': [
-              {
-                'type': 'Admitted',
-                'status': 'False',
-                'reason': 'ExtendedValidationFailed',
-                'message': 'spec.tls.caCertificate: Invalid value:'
-              }
-            ]
-          }
-        ]
-      }
-    };
-
-    const wrapper = shallow(<RouteWarnings obj={route} />);
-    expect(wrapper.find('div').text()).toContain('Requested host \'<unknown host>\' was rejected by the router');
-    expect(wrapper.find('div').text()).toContain('spec.tls.caCertificate: Invalid value:');
-  });
-
-  it('renders no tls termination warning', () => {
-    const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
-        name: 'example',
-      },
-      'spec': {
-        'host': 'www.example.com',
-        'tls': {}
-      }
-    };
-    const wrapper = shallow(<RouteWarnings obj={route} />);
-    expect(wrapper.find('div').text()).toContain('Route has a TLS configuration, but no TLS termination type');
-  });
-
-  it('renders tls passthrough & path warning', () => {
-    const route: K8sResourceKind = {
-      'apiVersion': 'v1',
-      'kind': 'Route',
-      'metadata': {
-        name: 'example',
-      },
-      'spec': {
-        'host': 'www.example.com',
-        'path': '/mypath',
-        'tls': {
-          'termination': 'passthrough'
-        }
-      }
-    };
-
-    const wrapper = shallow(<RouteWarnings obj={route} />);
-    expect(wrapper.find('div').text()).toContain('Route path "/mypath" will be ignored since the route uses passthrough termination.');
   });
 });

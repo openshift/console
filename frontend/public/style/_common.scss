@@ -100,7 +100,13 @@
 .co-section-title {
   font-size: 20px;
   font-weight: 600;
-  margin: 0 0 30px 0;
+  margin: 0 0 20px 0;
+}
+
+.co-section-title-secondary {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 30px 0;
 }
 
 .co-table-container {
@@ -130,7 +136,12 @@
 
 .co-m-pane__explanation {
   color: $color-grey-text;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.co-m-pane__explanation code {
+  background-color: $co-gray-lightest;
+  color: $co-gray;
 }
 
 .co-btn--download {
@@ -143,6 +154,10 @@
 .co-btn--download:hover {
   border: 1px solid #DDDDDD;
   border-radius: 2px;
+}
+
+.co-pre-line {
+  white-space: pre-line;
 }
 
 .co-pre-wrap {
