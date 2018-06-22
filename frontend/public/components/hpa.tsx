@@ -177,7 +177,8 @@ export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalers
     <MetricsTable obj={hpa} />
   </div>
   <div className="co-m-pane__body">
-    <Conditions obj={hpa} />
+    <h1 className="co-section-title">Conditions</h1>
+    <Conditions conditions={hpa.status.conditions} />
   </div>
 </React.Fragment>;
 
