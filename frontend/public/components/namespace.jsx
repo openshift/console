@@ -10,12 +10,13 @@ import { k8sGet } from '../module/k8s';
 import { UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, humanizeMem } from './utils';
+import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line } from './graphs';
 import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
 import { FLAGS, connectToFlags, featureReducerName } from '../features';
+import { openshiftHelpBase } from './utils/documentation';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -94,7 +95,11 @@ const ProjectRow = ({obj: project}) => {
   </ResourceRow>;
 };
 
-export const ProjectList = props => <List {...props} Header={ProjectHeader} Row={ProjectRow} />;
+const ProjectEmptyMessageDetail = <p>
+  Create a project for your application. To learn more, visit the OpenShift <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">documentation</a>.
+</p>;
+const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
+export const ProjectList = props => <List {...props} Header={ProjectHeader} Row={ProjectRow} EmptyMsg={ProjectEmptyMessage}/>;
 export const ProjectsPage = props => <ListPage {...props} ListComponent={ProjectList} canCreate={true} createHandler={createProjectModal} />;
 
 
