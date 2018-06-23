@@ -12,6 +12,7 @@ export * from './timestamp';
 export * from './vertnav';
 export * from './details-page';
 export * from './inject';
+export * from './file-input';
 export * from './firehose';
 export * from './dropdown';
 export * from './status-box';

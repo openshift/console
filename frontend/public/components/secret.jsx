@@ -6,6 +6,7 @@ import { SecretData } from './configmap-and-secret-data';
 import { Cog, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
+import { SecretType } from './secrets/create-secret';
 
 registerTemplate('v1.Secret', `apiVersion: v1
 kind: Secret
@@ -18,8 +19,20 @@ stringData:
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 
-// Edit in YAML if not editing a webhook secret with one key.
-const editInYaml = obj => !_.has(obj, ['data', WebHookSecretKey]) || _.size(obj.data) !== 1;
+// Edit in YAML if not editing:
+// - source secrets
+// - webhook secret with one key.
+const editInYaml = obj => {
+  switch (obj.type) {
+    case SecretType.basicAuth:
+    case SecretType.sshAuth:
+      return false;
+    case SecretType.opaque:
+      return !_.has(obj, ['data', WebHookSecretKey]) || _.size(obj.data) !== 1;
+    default:
+      return true;
+  }
+};
 
 const menuActions = [
   Cog.factory.ModifyLabels,
@@ -90,9 +103,9 @@ const filters = [{
 
 const SecretsPage = props => {
   const createItems = {
-    // source: 'Create Source Secret',
     // image: 'Create Image Pull Secret',
     // generic: 'Create Key/Value Secret',
+    source: 'Source Secret',
     webhook: 'Webhook Secret',
     yaml: 'Secret from YAML',
   };

@@ -33,6 +33,7 @@
 
 // React Components
 @import "components/utils/copy-to-clipboard";
+@import "components/utils/file-input";
 @import "components/utils/label";
 @import "components/utils/number-spinner";
 @import "components/utils/status-box";
@@ -56,6 +57,7 @@
 @import "components/resource-dropdown";
 @import "components/row-filter";
 @import "components/route";
+@import "components/secret";
 @import "components/service";
 @import "components/sysevent-icon";
 @import "components/sysevent-stream";
