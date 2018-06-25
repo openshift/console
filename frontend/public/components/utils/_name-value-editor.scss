@@ -13,6 +13,12 @@
 
 .pairs-list__btn {
   cursor: pointer;
+  padding-right: 8px;
+}
+
+.pairs-list__action-divider {
+  color: $color-pf-black-500;
+  padding-right: 10px;
 }
 
 .pairs-list__delete-icon {
