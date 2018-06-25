@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import * as _ from 'lodash-es';
 import { Heading, CopyToClipboard } from './utils';
 
 export const MaskedData = () => <React.Fragment>
@@ -28,15 +29,25 @@ export class SecretData extends React.PureComponent {
     this.setState({ showSecret: !this.state.showSecret });
   }
 
+  getValue(rawValue) {
+    if (_.isNil(rawValue)) {
+      return <span className="text-muted">No value</span>;
+    }
+
+    const { showSecret } = this.state;
+    const decodedValue = window.atob(rawValue);
+    const visibleValue = showSecret ? decodedValue : <MaskedData />;
+    return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} />;
+  }
+
   render() {
     const { data } = this.props;
     const { showSecret } = this.state;
     const dl = [];
     Object.keys(data || {}).sort().forEach(k => {
-      const value = window.atob(data[k]);
-      const visibleValue = showSecret ? value : <MaskedData /> ;
+      const value = this.getValue(data[k]);
       dl.push(<dt key={`${k}-k`}>{k}</dt>);
-      dl.push(<dd key={`${k}-v`}><CopyToClipboard value={value} visibleValue={visibleValue}/></dd>);
+      dl.push(<dd key={`${k}-v`}>{value}</dd>);
     });
     return <React.Fragment>
       <Heading text="Data">
