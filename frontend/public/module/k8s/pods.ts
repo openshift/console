@@ -165,9 +165,8 @@ export const getVolumeMountsByPermissions = pod => {
   return _.values(m);
 };
 
-
-// This logic (at this writing, Kubernetes 1.2.2) is replicated in kubeconfig
-// (See https://github.com/kubernetes/kubernetes/blob/v1.3.0-alpha.2/pkg/kubectl/resource_printer.go#L574 )
+// This logic is replicated from k8s (at this writing, Kubernetes 1.12)
+// (See https://github.com/kubernetes/kubernetes/blob/v1.12.0-alpha.0/pkg/printers/internalversion/printers.go#L527-L629 )
 export const podPhase = (pod): PodPhase => {
   if (!pod || !pod.status) {
     return '';
@@ -177,17 +176,29 @@ export const podPhase = (pod): PodPhase => {
     return 'Terminating';
   }
 
-  let ret = pod.status.phase;
-  if (pod.status.reason) {
-    ret = pod.status.reason;
-  }
+  let initializing = false;
+  let phase = pod.status.phase || pod.status.reason;
 
-  if (pod.status.containerStatuses) {
-    pod.status.containerStatuses.forEach(function(container) {
-      if (container.state.waiting && container.state.waiting.reason) {
-        ret = container.state.waiting.reason;
-      } else if (container.state.terminated && container.state.terminated.reason) {
-        ret = container.state.terminated.reason;
+  _.each(pod.status.initContainerStatuses, (container) => {
+    const {terminated, waiting} = container.state;
+    if (terminated && terminated.exitCode === 0) {
+      return;
+    }
+    if (terminated && terminated.reason) {
+      phase = `Init${terminated.reason}`;
+    } else if (waiting && waiting.reason && waiting.reason !== 'PodInitializing') {
+      phase = `Init${waiting.reason}`;
+    }
+    initializing=true;
+  });
+
+  if (!initializing) {
+    _.each(pod.status.containerStatuses, (container) => {
+      const {terminated, waiting} = container.state;
+      if (terminated && terminated.reason) {
+        phase = terminated.reason;
+      } else if (waiting && waiting.reason) {
+        phase = waiting.reason;
       }
       // kubectl has code here that populates the field if
       // terminated && !reason, but at this writing there appears to
@@ -195,8 +206,7 @@ export const podPhase = (pod): PodPhase => {
       // of the kubelet.
     });
   }
-
-  return ret;
+  return phase;
 };
 
 export const podReadiness = ({status}): PodReadiness => {
