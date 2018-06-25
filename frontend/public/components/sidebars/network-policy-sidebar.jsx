@@ -10,7 +10,7 @@ import * as webAllowExternalImg from '../../imgs/network-policy-samples/5-web-al
 import * as webDbAllowAllNsImg from '../../imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
 import * as webAllowProductionImg from '../../imgs/network-policy-samples/7-web-allow-production.svg';
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
+registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: deny-other-namespaces
@@ -22,7 +22,7 @@ spec:
     - podSelector: {}
 `, 'deny-other-namespaces');
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
+registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: db-or-api-allow-app
@@ -38,7 +38,7 @@ spec:
             app: mail
 `, 'db-or-api-allow-app');
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
+registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: api-allow-http-and-https
@@ -59,7 +59,7 @@ spec:
       port: 443
 `, 'api-allow-http-and-https');
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
+registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
@@ -68,7 +68,7 @@ spec:
   podSelector:
 `, 'default-deny-all');
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
+registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: web-allow-external
@@ -81,7 +81,7 @@ spec:
   - {}
 `, 'web-allow-external');
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
+registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: web-db-allow-all-ns
@@ -95,7 +95,7 @@ spec:
       - namespaceSelector: {}
 `, 'web-db-allow-all-ns');
 
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
+registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: web-allow-production
