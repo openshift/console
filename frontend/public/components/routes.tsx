@@ -223,9 +223,9 @@ const RouteTargetRow = ({route, target}) => <tr>
 </tr>;
 
 const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
-  <span className="co-m-route__ingress-status-section">
+  <React.Fragment>
     {_.map(ingresses, (ingress) =>
-      <div key={ingress.routerName} className="co-m-route__ingress-status">
+      <div key={ingress.routerName} className="co-m-route-ingress-status">
         <h1 className="co-section-title">Router: {ingress.routerName}</h1>
         <dl>
           <dt>Hostname</dt>
@@ -236,7 +236,7 @@ const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
         <h2 className="co-section-title-secondary">Conditions</h2>
         <Conditions conditions={ingress.conditions} />
       </div>)}
-  </span>;
+  </React.Fragment>;
 
 const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
   <div className="co-m-pane__body">
