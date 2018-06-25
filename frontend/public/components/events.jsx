@@ -64,7 +64,7 @@ class Inner extends React.PureComponent {
             <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
           }
         </small>
-        <div className="co-sysevent__message">
+        <div className="co-sysevent__message" title={_.trim(message)}>
           {message}
         </div>
       </div>

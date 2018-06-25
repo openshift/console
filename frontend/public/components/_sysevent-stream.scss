@@ -104,12 +104,25 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent__message {
+  cursor: help;
   margin-top: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: break-word;
-  height: 45px;
+  height: 40px;
+  position: relative;
 }
+.co-sysevent__message:after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+  bottom: 0;
+  content: "";
+  height: 1.2em;
+  position: absolute;
+  right: 0;
+  width: 15%;
+  text-align: right;
+}
+
 
 .co-sysevent__icon-box {
   flex: 0 0 100px;
