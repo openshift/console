@@ -143,6 +143,8 @@ const Details = (props) => {
           <dd><Timestamp timestamp={state.startedAt} /></dd>
           <dt>Finished</dt>
           <dd><Timestamp timestamp={state.finishedAt} /></dd>
+          <dt>Pod</dt>
+          <dd><ResourceLink kind="Pod" name={props.match.params.podName} namespace={props.match.params.ns} /></dd>
         </dl>
       </div>
 
