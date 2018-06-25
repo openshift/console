@@ -287,19 +287,7 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix} = this.props;
-
-    const button = noButton
-      ? <div onClick={this.toggle} className="dropdown__not-btn" id={this.props.id}>
-        {titlePrefix && `${titlePrefix}: `}
-        <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
-      </div>
-      : <button onClick={this.toggle} type="button" className="btn btn-default btn--dropdown dropdown-toggle" id={this.props.id}>
-        <div className="btn--dropdown__content-wrap">
-          {titlePrefix && `${titlePrefix}: `}
-          {title}&nbsp;&nbsp;<Caret />
-        </div>
-      </button>;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -327,7 +315,19 @@ export class Dropdown extends DropdownMixin {
     //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
     return <div className={className} ref={this.dropdownElement} style={this.props.style}>
       <div className={classNames('dropdown', dropDownClassName)}>
-        {button}
+        {
+          noButton
+            ? <div onClick={this.toggle} className="dropdown__not-btn" id={this.props.id}>
+              {titlePrefix && `${titlePrefix}: `}
+              <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
+            </div>
+            : <button onClick={this.toggle} type="button" className={classNames('btn', 'btn--dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
+              <div className="btn--dropdown__content-wrap">
+                {titlePrefix && `${titlePrefix}: `}
+                {title}&nbsp;&nbsp;<Caret />
+              </div>
+            </button>
+        }
         {
           active && <ul className={classNames('dropdown-menu', menuClassName)}>
             {
@@ -388,7 +388,8 @@ export const ActionsMenu = (props) => {
       history.push(action.href);
     }
   };
-  return <Dropdown className="btn--actions"
+  return <Dropdown
+    className="btn--actions"
     menuClassName={menuClassName || 'dropdown-menu-right'}
     items={items}
     title={btnTitle}

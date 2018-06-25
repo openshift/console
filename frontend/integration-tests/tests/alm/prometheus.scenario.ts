@@ -91,7 +91,7 @@ describe('Interacting with the Prometheus OCS', () => {
   });
 
   it('displays YAML editor for creating a new `Prometheus` instance', async() => {
-    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('Prometheus')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -135,7 +135,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('displays YAML editor for creating a new `Alertmanager` instance', async() => {
     await $$('.breadcrumb-link').first().click();
     await crudView.isLoaded();
-    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('Alert Manager')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -180,7 +180,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('displays YAML editor for creating a new `ServiceMonitor` instance', async() => {
     await $$('.breadcrumb-link').first().click();
     await crudView.isLoaded();
-    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('Service Monitor')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')), 10000);

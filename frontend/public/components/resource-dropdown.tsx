@@ -109,7 +109,7 @@ const ResourceListDropdown_: React.StatelessComponent<ResourceListDropdownProps>
   if (selected && !items[selected]) {
     items[selected] = <DropdownItem kind={selected} />;
   }
-  return <Dropdown className={classNames('co-type-selector', {[className]: className})} items={items} title={items[selected]} onChange={onChange} selectedKey={selected} />;
+  return <Dropdown className={classNames('co-type-selector', className)} items={items} title={items[selected]} onChange={onChange} selectedKey={selected} />;
 };
 
 const resourceListDropdownStateToProps = (state): any => {

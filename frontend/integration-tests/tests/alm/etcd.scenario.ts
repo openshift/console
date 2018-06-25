@@ -89,7 +89,7 @@ describe('Interacting with the etcd OCS', () => {
   });
 
   it('displays YAML editor for creating a new `EtcdCluster` instance', async() => {
-    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('etcd Cluster')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -138,7 +138,7 @@ describe('Interacting with the etcd OCS', () => {
   it('displays YAML editor for creating a new `EtcdBackup` instance', async() => {
     await $$('.breadcrumb-link').get(0).click();
     await crudView.isLoaded();
-    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('etcd Backup')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -187,7 +187,7 @@ describe('Interacting with the etcd OCS', () => {
   it('displays YAML editor for creating a new `EtcdRestore` instance', async() => {
     await $$('.breadcrumb-link').get(0).click();
     await crudView.isLoaded();
-    await $$('.dropdown__not-btn').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('etcd Restore')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
