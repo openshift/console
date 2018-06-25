@@ -44,40 +44,42 @@ var (
 )
 
 type jsGlobals struct {
-	ConsoleVersion      string `json:"consoleVersion"`
-	AuthDisabled        bool   `json:"authDisabled"`
-	KubectlClientID     string `json:"kubectlClientID"`
-	BasePath            string `json:"basePath"`
-	LoginURL            string `json:"loginURL"`
-	LoginSuccessURL     string `json:"loginSuccessURL"`
-	LoginErrorURL       string `json:"loginErrorURL"`
-	LogoutURL           string `json:"logoutURL"`
-	LogoutRedirect      string `json:"logoutRedirect"`
-	KubeAPIServerURL    string `json:"kubeAPIServerURL"`
-	OpenshiftConsoleURL string `json:"openshiftConsoleURL"`
-	LogoImageName       string `json:"logoImageName"`
-	ClusterName         string `json:"clusterName"`
-	CSRFToken           string `json:"CSRFToken"`
-	GoogleTagManagerID  string `json:"googleTagManagerID"`
-	LoadTestFactor      int    `json:"loadTestFactor"`
+	ConsoleVersion       string `json:"consoleVersion"`
+	AuthDisabled         bool   `json:"authDisabled"`
+	KubectlClientID      string `json:"kubectlClientID"`
+	BasePath             string `json:"basePath"`
+	LoginURL             string `json:"loginURL"`
+	LoginSuccessURL      string `json:"loginSuccessURL"`
+	LoginErrorURL        string `json:"loginErrorURL"`
+	LogoutURL            string `json:"logoutURL"`
+	LogoutRedirect       string `json:"logoutRedirect"`
+	KubeAPIServerURL     string `json:"kubeAPIServerURL"`
+	OpenshiftConsoleURL  string `json:"openshiftConsoleURL"`
+	LogoImageName        string `json:"logoImageName"`
+	DocumentationBaseURL string `json:"documentationBaseURL"`
+	ClusterName          string `json:"clusterName"`
+	CSRFToken            string `json:"CSRFToken"`
+	GoogleTagManagerID   string `json:"googleTagManagerID"`
+	LoadTestFactor       int    `json:"loadTestFactor"`
 }
 
 type Server struct {
-	K8sProxyConfig      *proxy.Config
-	BaseURL             *url.URL
-	LogoutRedirect      *url.URL
-	PublicDir           string
-	TectonicVersion     string
-	TectonicCACertFile  string
-	Auther              *auth.Authenticator
-	StaticUser          *auth.User
-	KubectlClientID     string
-	ClusterName         string
-	KubeAPIServerURL    string
-	OpenshiftConsoleURL string
-	LogoImageName       string
-	GoogleTagManagerID  string
-	LoadTestFactor      int
+	K8sProxyConfig       *proxy.Config
+	BaseURL              *url.URL
+	LogoutRedirect       *url.URL
+	PublicDir            string
+	TectonicVersion      string
+	TectonicCACertFile   string
+	Auther               *auth.Authenticator
+	StaticUser           *auth.User
+	KubectlClientID      string
+	ClusterName          string
+	KubeAPIServerURL     string
+	OpenshiftConsoleURL  string
+	DocumentationBaseURL *url.URL
+	LogoImageName        string
+	GoogleTagManagerID   string
+	LoadTestFactor       int
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
 	KubectlAuther                  *auth.Authenticator
@@ -242,21 +244,22 @@ func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) 
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		ConsoleVersion:      version.Version,
-		AuthDisabled:        s.authDisabled(),
-		KubectlClientID:     s.KubectlClientID,
-		BasePath:            s.BaseURL.Path,
-		LoginURL:            proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:     proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		LogoutRedirect:      s.LogoutRedirect.String(),
-		ClusterName:         s.ClusterName,
-		KubeAPIServerURL:    s.KubeAPIServerURL,
-		OpenshiftConsoleURL: s.OpenshiftConsoleURL,
-		LogoImageName:       s.LogoImageName,
-		GoogleTagManagerID:  s.GoogleTagManagerID,
-		LoadTestFactor:      s.LoadTestFactor,
+		ConsoleVersion:       version.Version,
+		AuthDisabled:         s.authDisabled(),
+		KubectlClientID:      s.KubectlClientID,
+		BasePath:             s.BaseURL.Path,
+		LoginURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LoginSuccessURL:      proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:            proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		LogoutRedirect:       s.LogoutRedirect.String(),
+		ClusterName:          s.ClusterName,
+		KubeAPIServerURL:     s.KubeAPIServerURL,
+		OpenshiftConsoleURL:  s.OpenshiftConsoleURL,
+		LogoImageName:        s.LogoImageName,
+		DocumentationBaseURL: s.DocumentationBaseURL.String(),
+		GoogleTagManagerID:   s.GoogleTagManagerID,
+		LoadTestFactor:       s.LoadTestFactor,
 	}
 
 	if !s.authDisabled() {

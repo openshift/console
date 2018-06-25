@@ -6,8 +6,9 @@ import { FLAGS, connectToFlags } from '../../features';
 
 export const tectonicHelpBase = 'https://coreos.com/tectonic/docs/latest/';
 
-// TODO: This needs to change depending on the version.
-export const openshiftHelpBase = 'https://docs.openshift.org/latest/';
+// Prefer the documentation base URL passed as a flag, but fall back to the latest docs if none was specified.
+export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseURL || 'https://docs.openshift.org/latest/';
+
 /* global
   HELP_TOPICS: false,
   GET_STARTED_CLI: false,

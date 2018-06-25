@@ -73,7 +73,8 @@ func main() {
 	fOpenshiftConsoleURL := fs.String("openshift-console-url", "", "URL for OpenShift console used in context switcher")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
-	fLogoImageName := fs.String("logo-image-name", "", "Logo image used in the masthead")
+	fLogoImageName := fs.String("logo-image-name", "", "Logo image used in the masthead.")
+	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
@@ -112,21 +113,30 @@ func main() {
 		logoutRedirect = validateFlagIsURL("user-auth-logout-redirect", *fUserAuthLogoutRedirect)
 	}
 
+	documentationBaseURL := &url.URL{}
+	if *fDocumentationBaseURL != "" {
+		if !strings.HasSuffix(*fDocumentationBaseURL, "/") {
+			flagFatalf("documentation-base-url", "value must end with slash")
+		}
+		documentationBaseURL = validateFlagIsURL("documentation-base-url", *fDocumentationBaseURL)
+	}
+
 	if *fOpenshiftConsoleURL != "" && !strings.HasSuffix(*fOpenshiftConsoleURL, "/") {
 		flagFatalf("openshift-console-url", "value must end with slash")
 	}
 
 	srv := &server.Server{
-		PublicDir:           *fPublicDir,
-		TectonicVersion:     *fTectonicVersion,
-		BaseURL:             baseURL,
-		LogoutRedirect:      logoutRedirect,
-		TectonicCACertFile:  caCertFilePath,
-		ClusterName:         *fTectonicClusterName,
-		OpenshiftConsoleURL: *fOpenshiftConsoleURL,
-		LogoImageName:       *fLogoImageName,
-		GoogleTagManagerID:  *fGoogleTagManagerID,
-		LoadTestFactor:      *fLoadTestFactor,
+		PublicDir:            *fPublicDir,
+		TectonicVersion:      *fTectonicVersion,
+		BaseURL:              baseURL,
+		LogoutRedirect:       logoutRedirect,
+		TectonicCACertFile:   caCertFilePath,
+		ClusterName:          *fTectonicClusterName,
+		OpenshiftConsoleURL:  *fOpenshiftConsoleURL,
+		LogoImageName:        *fLogoImageName,
+		DocumentationBaseURL: documentationBaseURL,
+		GoogleTagManagerID:   *fGoogleTagManagerID,
+		LoadTestFactor:       *fLoadTestFactor,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "" && *fKubectlClientSecretFile == "") {
