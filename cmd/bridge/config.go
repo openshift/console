@@ -45,10 +45,10 @@ type ClusterInfo struct {
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".
 type Auth struct {
-	IssuerURL        string `yaml:"issuerURL"`
-	ClientID         string `yaml:"clientID"`
-	ClientSecretFile string `yaml:"clientSecretFile"`
-	LogoutRedirect   string `yaml:"logoutRedirect"`
+	ClientID            string `yaml:"clientID"`
+	ClientSecretFile    string `yaml:"clientSecretFile"`
+	OAuthEndpointCAFile string `yaml:"oauthEndpointCAFile"`
+	LogoutRedirect      string `yaml:"logoutRedirect"`
 }
 
 // Customization holds configuration such as what logo to use.
@@ -151,16 +151,16 @@ func addAuth(fs *flag.FlagSet, auth *Auth) {
 	fs.Set("k8s-auth", "openshift")
 	fs.Set("user-auth", "openshift")
 
-	if auth.IssuerURL != "" {
-		fs.Set("user-auth-oidc-issuer-url", auth.IssuerURL)
-	}
-
 	if auth.ClientID != "" {
 		fs.Set("user-auth-oidc-client-id", auth.ClientID)
 	}
 
 	if auth.ClientSecretFile != "" {
 		fs.Set("user-auth-oidc-client-secret-file", auth.ClientSecretFile)
+	}
+
+	if auth.OAuthEndpointCAFile != "" {
+		fs.Set("user-auth-oidc-ca-file", auth.OAuthEndpointCAFile)
 	}
 
 	if auth.LogoutRedirect != "" {
