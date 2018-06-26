@@ -175,10 +175,10 @@ const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
       {details}
     </p>
     <button className="btn btn-link" onClick={() => loadSampleYaml(templateName)}>
-      <span className="fa fa-fw fa-paste"></span> Try policy
+      <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try policy
     </button>
     <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName)}>
-      <span className="fa fa-fw fa-download"></span> Download yaml
+      <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download yaml
     </button>
   </li>;
 };
