@@ -1,20 +1,37 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { ResourceLog, LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING } from './utils';
 
-import { ResourceLog } from './utils';
+const buildToLogSourceStatus = (phase) => {
+  switch (phase) {
+
+    case 'New':
+    case 'Pending':
+      return LOG_SOURCE_WAITING;
+    case 'Cancelled':
+    case 'Complete':
+    case 'Error':
+    case 'Failed':
+      return LOG_SOURCE_TERMINATED;
+
+    default:
+      return LOG_SOURCE_RUNNING;
+  }
+};
 
 export class BuildLogs extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      alive: true
+      status: LOG_SOURCE_WAITING
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const alive = _.get(nextProps.obj, 'status.phase') === 'Running';
-    if (prevState.alive !== alive){
-      return {alive};
+    const phase = _.get(nextProps.obj, 'status.phase');
+    const status = buildToLogSourceStatus(phase);
+    if (prevState.status !== status){
+      return {status};
     }
     return null;
   }
@@ -24,10 +41,11 @@ export class BuildLogs extends React.Component {
     const buildName = _.get(this.props.obj, 'metadata.name');
     return <div className="co-m-pane__body">
       <ResourceLog
-        alive={this.state.alive}
         kind="Build"
         namespace={namespace}
-        resourceName={buildName} />
+        resourceName={buildName}
+        resourceStatus={this.state.status}
+      />
     </div>;
   }
 }

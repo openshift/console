@@ -8,27 +8,31 @@ import { modelFor, resourceURL } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
 import { WSFactory } from '../../module/ws-factory';
 
-export const LOG_EOF = 'eof';
-export const LOG_LOADING = 'loading';
-export const LOG_PAUSED = 'paused';
-export const LOG_STREAMING = 'streaming';
+export const STREAM_EOF = 'eof';
+export const STREAM_LOADING = 'loading';
+export const STREAM_PAUSED = 'paused';
+export const STREAM_ACTIVE = 'streaming';
+
+export const LOG_SOURCE_RESTARTING = 'restarting';
+export const LOG_SOURCE_RUNNING = 'running';
+export const LOG_SOURCE_TERMINATED = 'terminated';
+export const LOG_SOURCE_WAITING = 'waiting';
 
 // Messages to display for corresponding log status
 const streamStatusMessages = {
-  [LOG_EOF]: 'Log stream ended.',
-  [LOG_LOADING]: 'Loading log...',
-  [LOG_PAUSED]: 'Log stream paused.',
-  [LOG_STREAMING]: 'Log streaming...'
+  [STREAM_EOF]: 'Log stream ended.',
+  [STREAM_LOADING]: 'Loading log...',
+  [STREAM_PAUSED]: 'Log stream paused.',
+  [STREAM_ACTIVE]: 'Log streaming...'
 };
 
 // Component for log stream controls
-// TODO Fix styling for this. If no dropdown is there, the download button will not right-align
 const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
   return <div className="co-toolbar">
     <div className="co-toolbar__group co-toolbar__group--left">
       <div className="co-toolbar__item">
-        { status === 'loading' && <React.Fragment><LoadingInline/>&nbsp;</React.Fragment> }
-        { [LOG_STREAMING, LOG_PAUSED].includes(status) && <TogglePlay active={status === LOG_STREAMING} onClick={toggleStreaming}/>}
+        { status === STREAM_LOADING && <React.Fragment><LoadingInline/>&nbsp;</React.Fragment> }
+        { [STREAM_ACTIVE, STREAM_PAUSED].includes(status) && <TogglePlay active={status === STREAM_ACTIVE} onClick={toggleStreaming}/>}
         {streamStatusMessages[status]}
       </div>
       {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
@@ -57,22 +61,22 @@ export class ResourceLog extends SafetyFirst {
     this._toggleStreaming = this._toggleStreaming.bind(this);
     this._updateStatus = this._updateStatus.bind(this);
     this.state = {
-      alive: true,
       error: false,
       currentLine: '',
       lines: [],
       linesBehind: 0,
+      resourceStatus: LOG_SOURCE_WAITING,
       stale: false,
-      status: 'loading'
+      status: STREAM_LOADING
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.alive !== prevState.alive) {
+    if (nextProps.resourceStatus !== prevState.resourcStatus) {
       let newState = {};
-      newState.alive = nextProps.alive;
+      newState.resourceStatus = nextProps.resourceStatus;
       // Container changed from non-running to running state, so currently displayed logs are stale
-      if (nextProps.alive && !prevState.alive) {
+      if (prevState.resourceStatus === LOG_SOURCE_RESTARTING && newState.resourceStatus !== LOG_SOURCE_RESTARTING) {
         newState.stale = true;
       }
       return newState;
@@ -85,9 +89,12 @@ export class ResourceLog extends SafetyFirst {
     this._wsInit(this.props);
   }
 
-  componentDidUpdate(prevProps) {
-    // Container changed
-    if (prevProps.containerName !== this.props.containerName) {
+  componentDidUpdate(prevProps, prevState) {
+    const containerChanged = prevProps.containerName !== this.props.containerName;
+    const resourceStarted = prevState.resourceStatus === LOG_SOURCE_WAITING && this.state.resourceStatus !== LOG_SOURCE_WAITING;
+
+    // Container changed or transitioned out of waiting state
+    if (containerChanged || resourceStarted) {
       this._restartStream();
     }
   }
@@ -109,7 +116,7 @@ export class ResourceLog extends SafetyFirst {
 
   // Handler for websocket onclose event
   _onClose(){
-    this.setState({ status: LOG_EOF });
+    this.setState({ status: STREAM_EOF });
   }
 
   // Handler for websocket onerror event
@@ -125,7 +132,7 @@ export class ResourceLog extends SafetyFirst {
     if (msg){
       const text = Base64.decode(msg);
       const currentLine = this._pushToBuffer(text);
-      const incrementLinesBehind = (this.state.status === LOG_PAUSED && currentLine.length === 0);
+      const incrementLinesBehind = (this.state.status === STREAM_PAUSED && currentLine.length === 0);
       this.setState({
         currentLine,
         linesBehind: incrementLinesBehind ? linesBehind + 1 : linesBehind,
@@ -137,7 +144,7 @@ export class ResourceLog extends SafetyFirst {
   // Handler for websocket onopen event
   _onOpen(){
     this._buffer = [];
-    this._updateStatus(LOG_STREAMING);
+    this._updateStatus(STREAM_ACTIVE);
   }
 
   // Push one line to the buffer. First item is removed if buffer is at limit.
@@ -157,8 +164,12 @@ export class ResourceLog extends SafetyFirst {
   // Destroy and reinitialize websocket connection
   _restartStream() {
     this.setState({
+      currentLine: '',
       error: false,
-      stale: false
+      lines: [],
+      linesBehind: 0,
+      stale: false,
+      status: STREAM_LOADING
     }, () => {
       this._wsDestroy();
       this._wsInit(this.props);
@@ -167,7 +178,7 @@ export class ResourceLog extends SafetyFirst {
 
   // Toggle streaming/paused status
   _toggleStreaming() {
-    const newStatus = this.state.status === LOG_STREAMING ? LOG_PAUSED : LOG_STREAMING;
+    const newStatus = this.state.status === STREAM_ACTIVE ? STREAM_PAUSED : STREAM_ACTIVE;
     this._updateStatus(newStatus);
   }
 
@@ -176,7 +187,7 @@ export class ResourceLog extends SafetyFirst {
     let newState = {status: newStatus};
 
     // Reset linesBehind when transitioning out of paused state
-    if (this.state.status !== LOG_STREAMING && newStatus === LOG_STREAMING) {
+    if (this.state.status !== STREAM_ACTIVE && newStatus === STREAM_ACTIVE) {
       newState.linesBehind = 0;
     }
     this.setState(newState);
@@ -189,28 +200,30 @@ export class ResourceLog extends SafetyFirst {
 
   // Initialize websocket connection and wire up handlers
   _wsInit ({kind, namespace, resourceName, containerName, bufferSize}) {
-    const urlOpts = {
-      ns: namespace,
-      name: resourceName,
-      path: 'log',
-      queryParams: {
-        container: containerName || '',
-        follow: 'true',
-        tailLines: bufferSize
-      }
-    };
-    const watchURL = resourceURL(modelFor(kind), urlOpts);
-    const wsOpts = {
-      host: 'auto',
-      path: watchURL,
-      subprotocols: ['base64.binary.k8s.io']
-    };
+    if ([LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_RESTARTING].includes(this.state.resourceStatus)) {
+      const urlOpts = {
+        ns: namespace,
+        name: resourceName,
+        path: 'log',
+        queryParams: {
+          container: containerName || '',
+          follow: 'true',
+          tailLines: bufferSize
+        }
+      };
+      const watchURL = resourceURL(modelFor(kind), urlOpts);
+      const wsOpts = {
+        host: 'auto',
+        path: watchURL,
+        subprotocols: ['base64.binary.k8s.io']
+      };
 
-    this.ws = new WSFactory(watchURL, wsOpts)
-      .onclose(this._onClose)
-      .onerror(this._onError)
-      .onmessage(this._onMessage)
-      .onopen(this._onOpen);
+      this.ws = new WSFactory(watchURL, wsOpts)
+        .onclose(this._onClose)
+        .onerror(this._onError)
+        .onmessage(this._onMessage)
+        .onopen(this._onOpen);
+    }
   }
 
   render() {
@@ -254,11 +267,11 @@ ResourceLog.defaultProps = {
 };
 
 ResourceLog.propTypes = {
-  alive: PropTypes.bool.isRequired,
   bufferSize: PropTypes.number.isRequired,
   containerName: PropTypes.string,
   dropdown: PropTypes.element,
   kind: PropTypes.string.isRequired,
   namespace: PropTypes.string.isRequired,
-  resourceName: PropTypes.string.isRequired
+  resourceName: PropTypes.string.isRequired,
+  resourceStatus: PropTypes.string.isRequired,
 };
