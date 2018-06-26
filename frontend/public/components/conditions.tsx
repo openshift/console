@@ -12,7 +12,7 @@ export const Conditions: React.SFC<ConditionsProps> = ({conditions}) => {
       {condition.status}
     </div>
     <div className="hidden-xs hidden-sm col-md-2">
-      <Timestamp timestamp={condition.lastTransitionTime} />
+      <Timestamp timestamp={condition.lastUpdateTime || condition.lastTransitionTime} />
     </div>
     <div className="col-xs-3 col-sm-3 col-md-2">
       {condition.reason || '-'}
@@ -46,9 +46,10 @@ export const Conditions: React.SFC<ConditionsProps> = ({conditions}) => {
 /* eslint-disable no-undef */
 export type conditionProps = {
   type: string;
-  status: boolean | string;
+  status: string;
   reason?: string;
   message?: string;
+  lastUpdateTime?: string;
   lastTransitionTime?: string;
 };
 
