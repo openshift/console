@@ -1,6 +1,6 @@
 .co-btn-file {
-  position: relative;
   overflow: hidden;
+  position: relative;
   input[type=file] {
     background: white;
     cursor: inherit;
@@ -16,4 +16,39 @@
     text-align: right;
     top: 0;
   }
+}
+
+.co-file-dropzone {
+  position: relative;
+  .co-file-dropzone-container {
+    border: 3px solid $color-grey-background-border;
+    background: rgba(0,0,0,0.3);
+    bottom: 0;
+    color: #fff;
+    left: 0;
+    margin: -3px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1001;
+    &.co-file-dropzone--drop-over {
+      border-color: $color-pf-blue-300;
+      color: $color-pf-blue-300;
+    }
+  }
+}
+
+.co-file-dropzone__textarea {
+  min-height: 300px;
+  width: 100%;
+}
+
+.co-file-dropzone__drop-text {
+  font-size: 20px;
+  font-weight: bolder;
+  left: 50%;
+  margin-right: -50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }

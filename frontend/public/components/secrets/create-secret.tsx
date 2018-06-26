@@ -5,9 +5,10 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind } from '../../module/k8s';
-import { ButtonBar, Firehose, history, kindObj, StatusBox, FileInput } from '../utils';
+import { ButtonBar, Firehose, history, kindObj, StatusBox } from '../utils';
 import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { WebHookSecretKey } from '../secret';
+import { AsyncComponent } from '../utils/async';
 
 enum SecretTypeAbstraction {
   generic = 'generic',
@@ -225,11 +226,7 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
   }
 }
 
-const secretFormFactory = secretType => {
-  return secretType === SecretTypeAbstraction.webhook ? withSecretForm(WebHookSecretForm) : withSecretForm(SourceSecretForm);
-};
-
-class BasicAuthSubform extends React.Component<BasicAuthSubformProps, BasicAuthSubformState> {
+export class BasicAuthSubform extends React.Component<BasicAuthSubformProps, BasicAuthSubformState> {
   constructor (props) {
     super(props);
     this.state = {
@@ -277,6 +274,8 @@ class BasicAuthSubform extends React.Component<BasicAuthSubformProps, BasicAuthS
   }
 }
 
+const DroppableFileInput = (props) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
+
 class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuthSubformState> {
   constructor (props) {
     super(props);
@@ -297,23 +296,19 @@ class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuthSubform
     }, () => this.props.onChange(this.state));
   }
   render() {
-    return <div className="form-group">
-      <label className="control-label" htmlFor="ssh-privatekey">SSH Private Key</label>
-      <div>
-        <FileInput onChange={this.onFileChange} />
-        <p className="help-block">Upload your private SSH key file.</p>
-        <textarea className="form-control co-create-secret-form__textarea"
-          id="ssh-privatekey"
-          name="privateKey"
-          onChange={this.changeData}
-          value={this.state['ssh-privatekey']}
-          aria-describedby="ssh-privatekey-help"
-          required />
-        <p className="help-block" id="ssh-privatekey-help">Private SSH key file for Git authentication.</p>
-      </div>
-    </div>;
+    return <DroppableFileInput
+      onChange={this.onFileChange}
+      inputFileData={this.state['ssh-privatekey']}
+      id="ssh-privatekey"
+      label="SSH Private Key"
+      inputFieldHelpText="Drag and drop your private SSH key here or browse to upload it."
+      textareaFieldHelpText="Private SSH key file for Git authentication." />;
   }
 }
+
+const secretFormFactory = secretType => {
+  return secretType === SecretTypeAbstraction.webhook ? withSecretForm(WebHookSecretForm) : withSecretForm(SourceSecretForm);
+};
 
 const SecretLoadingWrapper = props => {
   const secretTypeAbstraction = determineSecretTypeAbstraction(_.get(props.obj.data, 'data'));
@@ -343,13 +338,14 @@ export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{ki
   <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save Changes" />
 </Firehose>;
 
-
 export type BaseEditSecretState_ = {
   secretTypeAbstraction?: SecretTypeAbstraction,
   secret: K8sResourceKind,
   inProgress: boolean,
   type: SecretType,
-  stringData: {[key: string]: string},
+  stringData: {
+    [key: string]: string
+  },
   error?: any,
 };
 
@@ -364,22 +360,6 @@ export type BaseEditSecretProps_ = {
   explanation: string,
 };
 
-export type SourceSecretFormState = {
-  type: SecretType,
-  stringData: {
-    [key: string]: string
-  },
-};
-
-export type SourceSecretFormProps = {
-  onChange: Function;
-  stringData: {
-    [key: string]: string
-  },
-  secretType: SecretType,
-  isCreate: boolean,
-};
-
 export type BasicAuthSubformProps = {
   onChange: Function,
   stringData: {
@@ -392,10 +372,26 @@ export type SSHAuthSubformState = {
 };
 
 export type SSHAuthSubformProps = {
-  onChange: Function;
+  onChange: Function,
   stringData: {
     [key: string]: string
   },
+};
+
+export type SourceSecretFormState = {
+  type: SecretType,
+  stringData: {
+    [key: string]: string
+  },
+};
+
+export type SourceSecretFormProps = {
+  onChange: Function,
+  stringData: {
+    [key: string]: string
+  },
+  secretType: SecretType,
+  isCreate: boolean,
 };
 
 export type WebHookSecretFormState = {
@@ -405,7 +401,7 @@ export type WebHookSecretFormState = {
 };
 
 export type WebHookSecretFormProps = {
-  onChange: Function;
+  onChange: Function,
   stringData: {
     WebHookSecretKey: string
   },
