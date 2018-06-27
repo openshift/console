@@ -2,9 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { pluralize } from './';
-import { LOG_EOF, LOG_PAUSED, LOG_STREAMING } from './resource-log';
+import { STREAM_EOF, STREAM_PAUSED, STREAM_ACTIVE } from './resource-log';
 
-// Subtracted from log window height to prevent scroll bar from appearing when footer is shown.
+// Subtracted from log window height to prevent scroll bar from appearing when resume button is shown.
 const FUDGE_FACTOR = 105;
 
 export class LogWindow extends React.PureComponent {
@@ -22,7 +22,7 @@ export class LogWindow extends React.PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps) {
-    if (nextProps.status !== LOG_PAUSED) {
+    if (nextProps.status !== STREAM_PAUSED) {
       return {
         content: nextProps.lines.join(''),
       };
@@ -49,18 +49,18 @@ export class LogWindow extends React.PureComponent {
 
   _handleScroll() {
     // Stream is finished, take no action on scroll
-    if (this.props.status === LOG_EOF) {
+    if (this.props.status === STREAM_EOF) {
       return;
     }
 
     // 1px fudge for fractional heights
     const scrollTarget = this.scrollPane.scrollHeight - (this.scrollPane.clientHeight + 1);
     if (this.scrollPane.scrollTop < scrollTarget) {
-      if (this.props.status !== LOG_PAUSED) {
-        this.props.updateStatus(LOG_PAUSED);
+      if (this.props.status !== STREAM_PAUSED) {
+        this.props.updateStatus(STREAM_PAUSED);
       }
     } else {
-      this.props.updateStatus(LOG_STREAMING);
+      this.props.updateStatus(STREAM_ACTIVE);
     }
   }
 
@@ -76,10 +76,10 @@ export class LogWindow extends React.PureComponent {
   }
 
   _scrollToBottom() {
-    if (this.props.status === LOG_STREAMING) {
+    if (this.props.status === STREAM_ACTIVE) {
       // Async because scrollHeight depends on the size of the rendered pane
       setTimeout(() => {
-        if (this.scrollPane && this.props.status === LOG_STREAMING) {
+        if (this.scrollPane && this.props.status === STREAM_ACTIVE) {
           this.scrollPane.scrollTop = this.scrollPane.scrollHeight;
         }
       }, 0);
@@ -87,7 +87,7 @@ export class LogWindow extends React.PureComponent {
   }
 
   _unpause() {
-    this.props.updateStatus(LOG_STREAMING);
+    this.props.updateStatus(STREAM_ACTIVE);
   }
 
   render() {
@@ -115,7 +115,7 @@ export class LogWindow extends React.PureComponent {
           </div>
         </div>
       </div>
-      { status === LOG_PAUSED &&
+      { status === STREAM_PAUSED &&
         <button onClick={this._unpause} className="btn btn-block log-window__resume-btn">
           <span className="fa fa-play-circle-o" aria-hidden="true"></span>
           {resumeText}

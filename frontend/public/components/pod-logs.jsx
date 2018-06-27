@@ -1,12 +1,28 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { ContainerDropdown, ResourceLog } from './utils';
+import { ContainerDropdown, ResourceLog, LOG_SOURCE_RESTARTING, LOG_SOURCE_WAITING, LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED } from './utils';
 
 const reduceContainerStatuses = (accumulator, container, order) => ({
   ...accumulator,
   [container.name]: { ...container, order }
 });
+
+const containerToLogSourceStatus = ({state, lastState}) => {
+  if (state.waiting && !_.isEmpty(lastState)) {
+    return LOG_SOURCE_RESTARTING;
+  }
+
+  if (state.waiting) {
+    return LOG_SOURCE_WAITING;
+  }
+
+  if (state.terminated) {
+    return LOG_SOURCE_TERMINATED;
+  }
+
+  return LOG_SOURCE_RUNNING;
+};
 
 export class PodLogs extends React.Component {
   constructor(props) {
@@ -41,7 +57,7 @@ export class PodLogs extends React.Component {
     const namespace = _.get(this.props.obj, 'metadata.namespace');
     const podName = _.get(this.props.obj, 'metadata.name');
     const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
-    const currentContainerAlive = _.has(currentContainer.state, 'running');
+    const currentContainerStatus = containerToLogSourceStatus(currentContainer);
     const containerDropdown = <ContainerDropdown
       currentKey={currentKey}
       containers={containers}
@@ -50,12 +66,13 @@ export class PodLogs extends React.Component {
 
     return <div className="co-m-pane__body">
       <ResourceLog
-        alive={currentContainerAlive}
         containerName={currentContainer.name}
         kind="Pod"
         dropdown={containerDropdown}
         namespace={namespace}
-        resourceName={podName} />
+        resourceName={podName}
+        resourceStatus={currentContainerStatus}
+      />
     </div>;
   }
 }
