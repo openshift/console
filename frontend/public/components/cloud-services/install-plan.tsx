@@ -50,7 +50,7 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
 };
 export const InstallPlansList: React.SFC<InstallPlansListProps> = (props) => {
   const EmptyMsg = () => <MsgBox title="No Install Plans Found" detail="Install Plans are created automatically by subscriptions or manually using kubectl." />;
-  return <List {...props} Header={InstallPlanHeader} Row={InstallPlanRow} label="Install Plans" EmptyMsg={EmptyMsg} />;
+  return <List {...props} Header={InstallPlanHeader} Row={InstallPlanRow} EmptyMsg={EmptyMsg} />;
 };
 
 export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => <ListPage

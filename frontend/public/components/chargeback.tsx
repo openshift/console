@@ -52,7 +52,7 @@ const dataURL = (obj, format='json') => {
   });
 };
 
-const ChargebackNavBar: React.StatelessComponent<{match: {url: string}}> = props => <div>
+const ChargebackNavBar: React.SFC<{match: {url: string}}> = props => <div>
   <NavTitle title="Chargeback Reporting" style={{paddingBottom: 15}} />
   <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} />
 </div>;
@@ -67,7 +67,7 @@ const ReportsHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingEnd">Reporting End</ColHead>
 </ListHeader>;
 
-const ReportsRow: React.StatelessComponent<ReportsRowProps> = ({obj}) => {
+const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-3 col-xs-4">
       <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
@@ -297,7 +297,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
         }
       });
     });
-    const rows = _.orderBy(_.map(reducedData, (o, key) => ({[reduceBy]: key, ...o})), sortBy, orderBy);
+    const rows = _.orderBy(_.map<any>(reducedData, (o, key) => ({[reduceBy]: key, ...o})), sortBy, orderBy);
     return {rows, maxValues, totals};
   }
 
@@ -358,9 +358,9 @@ const reportsPages = [
 ];
 
 const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more." />;
-export const ReportsList: React.StatelessComponent = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} pages={reportsPages} EmptyMsg={EmptyMsg}/>;
+export const ReportsList: React.SFC = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} EmptyMsg={EmptyMsg}/>;
 
-const ReportsPage_: React.StatelessComponent<ReportsPageProps> = props => {
+const ReportsPage_: React.SFC<ReportsPageProps> = props => {
   if (props.flags[FLAGS.CHARGEBACK] === undefined) {
     return <LoadingBox />;
   }
@@ -393,7 +393,7 @@ const ReportsPage_: React.StatelessComponent<ReportsPageProps> = props => {
 
 export const ReportsPage = connectToFlags(FLAGS.CHARGEBACK)(ReportsPage_);
 
-export const ReportsDetailsPage: React.StatelessComponent<ReportsDetailsPageProps> = props => {
+export const ReportsDetailsPage: React.SFC<ReportsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={reportsPages} />;
 };
 
@@ -405,7 +405,7 @@ const ReportGenerationQueriesHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.creationTimestamp">Created At</ColHead>
 </ListHeader>;
 
-const ReportGenerationQueriesRow: React.StatelessComponent<ReportGenerationQueriesRowProps> = ({obj}) => {
+const ReportGenerationQueriesRow: React.SFC<ReportGenerationQueriesRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
     <div className="col-md-3 col-sm-4">
       <ResourceCog actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
@@ -417,7 +417,7 @@ const ReportGenerationQueriesRow: React.StatelessComponent<ReportGenerationQueri
   </div>;
 };
 
-const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQueriesDetailsProps> = ({obj}) => {
+const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsProps> = ({obj}) => {
   const columns = _.get(obj, ['spec', 'columns'], []).map((column, i) => <tr key={i}>
     <td>{column.name}</td>
     <td>{column.type}</td>
@@ -452,15 +452,15 @@ const ReportGenerationQueriesDetails: React.StatelessComponent<ReportGenerationQ
   </div>;
 };
 
-export const ReportGenerationQueriesList: React.StatelessComponent = props => <List {...props} Header={ReportGenerationQueriesHeader} Row={ReportGenerationQueriesRow} />;
+export const ReportGenerationQueriesList: React.SFC = props => <List {...props} Header={ReportGenerationQueriesHeader} Row={ReportGenerationQueriesRow} />;
 
-export const ReportGenerationQueriesPage: React.StatelessComponent<ReportGenerationQueriesPageProps> = props => <div>
+export const ReportGenerationQueriesPage: React.SFC<ReportGenerationQueriesPageProps> = props => <div>
   <ChargebackNavBar match={props.match} />
   <ListPage {...props} showTitle={false} kind={ReportGenerationQueryReference} ListComponent={ReportGenerationQueriesList} canCreate={true} filterLabel={props.filterLabel} />
 </div>;
 
 const reportGenerationQueryPages = [navFactory.details(ReportGenerationQueriesDetails), navFactory.editYaml()];
-export const ReportGenerationQueriesDetailsPage: React.StatelessComponent<ReportGenerationQueriesDetailsPageProps> = props => {
+export const ReportGenerationQueriesDetailsPage: React.SFC<ReportGenerationQueriesDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={menuActions} pages={reportGenerationQueryPages} />;
 };
 

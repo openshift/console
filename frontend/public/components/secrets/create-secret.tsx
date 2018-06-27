@@ -21,6 +21,11 @@ export enum SecretType {
   opaque = 'Opaque'
 }
 
+export type BasicAuthSubformState = {
+  username: string,
+  password: string,
+};
+
 const secretFormExplanation = {
   [SecretTypeAbstraction.source]: 'Source secrets allow you to authenticate against the SCM server.',
   [SecretTypeAbstraction.webhook]: 'Webhook secrets allow you to authenticate a webhook trigger.',
@@ -232,7 +237,7 @@ class BasicAuthSubform extends React.Component<BasicAuthSubformProps, BasicAuthS
   changeData(event) {
     this.setState({
       [event.target.name]: event.target.value
-    }, () => this.props.onChange(this.state));
+    } as BasicAuthSubformState, () => this.props.onChange(this.state));
   }
   render() {
     return <React.Fragment>
@@ -369,11 +374,6 @@ export type SourceSecretFormProps = {
   },
   secretType: SecretType,
   isCreate: boolean,
-};
-
-export type BasicAuthSubformState = {
-  username: string,
-  password: string,
 };
 
 export type BasicAuthSubformProps = {
