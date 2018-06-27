@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, CustomResourceDefinitionKind, GroupVersionKind, OwnerReference } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, OwnerReference } from '../../module/k8s';
 import { SpecDescriptor } from './spec-descriptors';
 import { StatusDescriptor } from './status-descriptors';
 
@@ -112,6 +112,20 @@ export type ClusterServiceVersionResourceKind = {
 
 } & K8sResourceKind;
 
+export type StepResource = {
+  group: string;
+  version: string;
+  kind: string;
+  name: string;
+  manifest?: string;
+};
+
+export type Step = {
+  resolving: string;
+  resource: StepResource;
+  status: 'Unknown' | 'NotPresent' | 'Present' | 'Created';
+};
+
 export type InstallPlanKind = {
   spec: {
     clusterServiceVersionNames: string[];
@@ -121,10 +135,7 @@ export type InstallPlanKind = {
   status?: {
     phase: 'Planning' | 'RequiresApproval' | 'Installing' | 'Complete' | 'Failed';
     catalogSources: string[];
-    plan: {
-      resolving: string;
-      resource: CustomResourceDefinitionKind;
-    }[];
+    plan: Step[];
   }
 } & K8sResourceKind;
 

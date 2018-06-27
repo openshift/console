@@ -151,6 +151,7 @@ $clusterserviceversion-list-border: #ccc;
   background: #ffe6e6;
   color: #dd1326;
   font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
@@ -177,4 +178,9 @@ $clusterserviceversion-list-border: #ccc;
   border: 1px solid #eee;
   padding: 20px 0 5px 20px;
   margin-top: 10px;
+}
+
+.step--present {
+  color: $color-pf-green-400;
+
 }
