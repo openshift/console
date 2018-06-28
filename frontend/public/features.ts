@@ -24,6 +24,7 @@ import { coFetchJSON } from './co-fetch';
   CAN_LIST_PV: false,
   CAN_LIST_STORE: false,
   CAN_LIST_CRD: false,
+  PROJECTS_AVAILABLE: false
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -39,7 +40,8 @@ export enum FLAGS {
   CAN_LIST_NODE = 'CAN_LIST_NODE',
   CAN_LIST_PV = 'CAN_LIST_PV',
   CAN_LIST_STORE = 'CAN_LIST_STORE',
-  CAN_LIST_CRD = 'CAN_LIST_CRD'
+  CAN_LIST_CRD = 'CAN_LIST_CRD',
+  PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE'
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -57,7 +59,7 @@ export const CRDs = {
 };
 
 const SET_FLAG = 'SET_FLAG';
-const setFlag = (dispatch, flag, value) => dispatch({flag, value, type: SET_FLAG});
+export const setFlag = (dispatch, flag, value) => dispatch({flag, value, type: SET_FLAG});
 
 const handleError = (res, flag, dispatch, cb) => {
   const status = _.get(res, 'response.status');
@@ -93,10 +95,20 @@ const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
       : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift)
   );
 
+const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;
+const detectProjectsAvailable = dispatch => coFetchJSON(projectListPath)
+  .then(
+    res => setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, !_.isEmpty(res.items)),
+    err => _.get(err, 'response.status') === 404
+      ? setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, false)
+      : handleError(err, FLAGS.PROJECTS_AVAILABLE, dispatch, detectProjectsAvailable)
+  );
+
 export let featureActions = [
   detectSecurityLabellerFlags,
   detectCalicoFlags,
   detectOpenShift,
+  detectProjectsAvailable
 ];
 
 // generate additional featureActions
