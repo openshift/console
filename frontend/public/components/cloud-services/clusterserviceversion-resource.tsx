@@ -11,7 +11,7 @@ import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus }
 import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, Firehose } from '../utils';
-import { connectToPlural, inFlight } from '../../kinds';
+import { connectToPlural } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
@@ -83,7 +83,7 @@ export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersi
   }
 };
 
-const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', inFlight])});
+const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
 
 export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
   (props: ClusterServiceVersionResourcesPageProps) => {
@@ -128,6 +128,7 @@ export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
       : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
   });
 
+// FIXME(alecmerdler): Don't use `connectToPlural` since we know this will be a GroupVersionKind string
 export const ClusterServiceVersionResourceDetails = connectToPlural(
   class ClusterServiceVersionResourceDetails extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
     constructor(props) {
@@ -222,9 +223,7 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
     }
   });
 
-
-
-export const CSVResourceDetails: React.SFC<CSVResourceDetailsProps> = (props) => <div>
+export const CSVResourceDetails: React.SFC<CSVResourceDetailsProps> = (props) => <React.Fragment>
   { props.csv && !_.isEmpty(props.csv.data) && <DetailsPage
     {...props}
     menuActions={Cog.factory.common}
@@ -239,12 +238,14 @@ export const CSVResourceDetails: React.SFC<CSVResourceDetailsProps> = (props) =>
       {name: 'Resources', href: 'resources', component: (resourcesProps) => <Resources {...resourcesProps} clusterServiceVersion={props.csv.data} />},
     ]}
   /> }
-</div>;
+</React.Fragment>;
 
-export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterServiceVersionResourcesDetailsPageProps> = (props) => (
-  <Firehose resources={[{kind: referenceForModel(ClusterServiceVersionModel), name: props.match.params.appName, namespace: props.namespace, isList: false, prop: 'csv'}]}>
-    <CSVResourceDetails {...props} />
-  </Firehose>);
+// TODO(alecmerdler): Can we reduce a component level and pass `props.resources` to DetailsPage?
+export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <Firehose resources={[
+  {kind: referenceForModel(ClusterServiceVersionModel), name: props.match.params.appName, namespace: props.namespace, isList: false, prop: 'csv'}
+]}>
+  <CSVResourceDetails {...props} />
+</Firehose>;
 
 export type ClusterServiceVersionResourceListProps = {
   loaded: boolean;

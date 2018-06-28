@@ -22,7 +22,7 @@ export const ResourceListPage = connectToPlural((props: ResourceListPageProps) =
     return <ErrorPage404 />;
   }
 
-  let PageComponent = resourceListPages.get(kindObj.labelPlural.replace(/ /g, ''));
+  let PageComponent = resourceListPages.get(kindObj);
   if (!PageComponent) {
     PageComponent = resourceListPages.get('Default');
   }
@@ -44,7 +44,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     return <ErrorPage404 />;
   }
 
-  let PageComponent = resourceDetailPages.get(kindObj.labelPlural.replace(/ /g, ''));
+  let PageComponent = resourceDetailPages.get(kindObj);
 
   if (props.match.params.appName) {
     PageComponent = resourceDetailPages.get('ClusterServiceVersionResources');
