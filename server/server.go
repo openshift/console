@@ -37,6 +37,9 @@ const (
 	AuthLoginSuccessEndpoint  = "/"
 	AuthLoginErrorEndpoint    = "/error"
 	authLogoutEndpoint        = "/auth/logout"
+
+	k8sProxyEndpoint        = "/api/kubernetes/"
+	prometheusProxyEndpoint = "/api/prometheus/"
 )
 
 var (
@@ -54,6 +57,7 @@ type jsGlobals struct {
 	LogoutURL            string `json:"logoutURL"`
 	LogoutRedirect       string `json:"logoutRedirect"`
 	KubeAPIServerURL     string `json:"kubeAPIServerURL"`
+	PrometheusBaseURL    string `json:"prometheusBaseURL"`
 	OpenshiftConsoleURL  string `json:"openshiftConsoleURL"`
 	LogoImageName        string `json:"logoImageName"`
 	DocumentationBaseURL string `json:"documentationBaseURL"`
@@ -87,10 +91,15 @@ type Server struct {
 	DexClient                      api.DexClient
 	NamespaceLister                *ResourceLister
 	CustomResourceDefinitionLister *ResourceLister
+	PrometheusProxyConfig          *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
 	return s.Auther == nil
+}
+
+func (s *Server) prometheusProxyEnabled() bool {
+	return s.PrometheusProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -174,13 +183,25 @@ func (s *Server) HTTPHandler() http.Handler {
 	}.ServeHTTP)
 
 	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
-	handle("/api/kubernetes/", http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/kubernetes/"),
+	handle(k8sProxyEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 			k8sProxy.ServeHTTP(w, r)
 		})),
 	)
+
+	if s.prometheusProxyEnabled() {
+		prometheusProxy := proxy.NewProxy(s.PrometheusProxyConfig)
+		handle(prometheusProxyEndpoint, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				prometheusProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
 	handle("/api/tectonic/version", authHandler(s.versionHandler))
 	handle("/api/tectonic/ldap/validate", authHandler(handleLDAPVerification))
 	handle("/api/tectonic/namespaces", authHandlerWithUser(s.handleListNamespaces))
@@ -260,6 +281,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		GoogleTagManagerID:   s.GoogleTagManagerID,
 		LoadTestFactor:       s.LoadTestFactor,
+	}
+
+	if s.prometheusProxyEnabled() {
+		jsg.PrometheusBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint)
 	}
 
 	if !s.authDisabled() {
