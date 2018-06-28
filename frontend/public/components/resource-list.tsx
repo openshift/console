@@ -6,7 +6,7 @@ import { match } from 'react-router-dom';
 import { resourceListPages, resourceDetailPages } from './resource-pages';
 import { connectToPlural } from '../kinds';
 import { LoadingBox } from './utils';
-import { K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKindReference, referenceForModel } from '../module/k8s';
 import { ErrorPage404 } from './error';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
@@ -22,7 +22,7 @@ export const ResourceListPage = connectToPlural((props: ResourceListPageProps) =
     return <ErrorPage404 />;
   }
 
-  let PageComponent = resourceListPages.get(kindObj);
+  let PageComponent = resourceListPages.get(referenceForModel(kindObj));
   if (!PageComponent) {
     PageComponent = resourceListPages.get('Default');
   }
@@ -44,7 +44,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     return <ErrorPage404 />;
   }
 
-  let PageComponent = resourceDetailPages.get(kindObj);
+  let PageComponent = resourceDetailPages.get(referenceForModel(kindObj));
 
   if (props.match.params.appName) {
     PageComponent = resourceDetailPages.get('ClusterServiceVersionResources');

@@ -25,12 +25,11 @@ export const connectToModel = connect((state: State, props: {kind: K8sResourceKi
 export const connectToPlural = connect((state: State, props: {plural?: GroupVersionKind | string, match: match<{plural: GroupVersionKind | string}>}) => {
   const plural = props.plural || _.get(props, 'match.params.plural');
 
-  // FIXME(alecmerdler): Not working with two CRDs with the same `kind`
-  const kindObj = !isGroupVersionKind(plural)
-    ? _.find(k8sModels, model => model.plural === plural)
-    : state.k8s.getIn(['RESOURCES', 'models']).get(plural);
+  const kindObj = isGroupVersionKind(plural)
+    ? state.k8s.getIn(['RESOURCES', 'models']).get(plural)
+    : _.find(k8sModels, model => model.plural === plural);
 
-  const modelRef = !isGroupVersionKind(plural) ? kindObj.kind : plural;
+  const modelRef = isGroupVersionKind(plural) ? plural : kindObj.kind;
 
   return {kindObj, modelRef, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight'])} as any;
 });

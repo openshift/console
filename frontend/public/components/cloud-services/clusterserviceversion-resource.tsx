@@ -10,8 +10,8 @@ import { Resources } from './k8s-resource';
 import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
 import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog, Firehose } from '../utils';
-import { connectToPlural } from '../../kinds';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
+import { connectToModel } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { Gauge, Scalar, Line, Bar } from '../graphs';
@@ -128,8 +128,7 @@ export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
       : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
   });
 
-// FIXME(alecmerdler): Don't use `connectToPlural` since we know this will be a GroupVersionKind string
-export const ClusterServiceVersionResourceDetails = connectToPlural(
+export const ClusterServiceVersionResourceDetails = connectToModel(
   class ClusterServiceVersionResourceDetails extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
     constructor(props) {
       super(props);
@@ -223,29 +222,23 @@ export const ClusterServiceVersionResourceDetails = connectToPlural(
     }
   });
 
-export const CSVResourceDetails: React.SFC<CSVResourceDetailsProps> = (props) => <React.Fragment>
-  { props.csv && !_.isEmpty(props.csv.data) && <DetailsPage
-    {...props}
-    menuActions={Cog.factory.common}
-    breadcrumbsFor={() => [
-      {name: props.match.params.appName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
-      {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
-    ]}
-    pages={[
-      navFactory.details((detailsProps) => <ClusterServiceVersionResourceDetails {...detailsProps} clusterServiceVersion={props.csv.data} appName={props.match.params.appName} />),
-      navFactory.editYaml(),
-      // eslint-disable-next-line react/display-name
-      {name: 'Resources', href: 'resources', component: (resourcesProps) => <Resources {...resourcesProps} clusterServiceVersion={props.csv.data} />},
-    ]}
-  /> }
-</React.Fragment>;
-
-// TODO(alecmerdler): Can we reduce a component level and pass `props.resources` to DetailsPage?
-export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <Firehose resources={[
-  {kind: referenceForModel(ClusterServiceVersionModel), name: props.match.params.appName, namespace: props.namespace, isList: false, prop: 'csv'}
-]}>
-  <CSVResourceDetails {...props} />
-</Firehose>;
+export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
+  {...props}
+  resources={[
+    {kind: referenceForModel(ClusterServiceVersionModel), name: props.match.params.appName, namespace: props.namespace, isList: false, prop: 'csv'},
+  ]}
+  menuActions={Cog.factory.common}
+  breadcrumbsFor={() => [
+    {name: props.match.params.appName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
+    {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
+  ]}
+  pages={[
+    navFactory.details((detailsProps) => <ClusterServiceVersionResourceDetails {...detailsProps} clusterServiceVersion={detailsProps.csv} appName={props.match.params.appName} />),
+    navFactory.editYaml(),
+    // eslint-disable-next-line react/display-name
+    {name: 'Resources', href: 'resources', component: (resourcesProps) => <Resources {...resourcesProps} clusterServiceVersion={resourcesProps.csv} />},
+  ]}
+/>;
 
 export type ClusterServiceVersionResourceListProps = {
   loaded: boolean;
@@ -330,5 +323,4 @@ ClusterServiceVersionPrometheusGraph.displayName = 'ClusterServiceVersionPrometh
 ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';
 ClusterServiceVersionResourcesPage.displayName = 'ClusterServiceVersionResourcesPage';
 ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';
-CSVResourceDetails.displayName = 'CSVResourceDetails';
 Resources.displayName = 'Resources';

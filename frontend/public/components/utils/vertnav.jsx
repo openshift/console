@@ -76,18 +76,19 @@ export const NavBar = ({pages, basePath}) => {
 };
 NavBar.displayName = 'NavBar';
 
-/** @augments {React.PureComponent<{className?: string, label?: string, pages: {href: string, name: string, component: React.ComponentType}[], match: any}>} */
+/** @augments {React.PureComponent<{className?: string, label?: string, pages: {href: string, name: string, component: React.ComponentType}[], match: any, resourceKeys?: string[]}>} */
 export class VertNav extends React.PureComponent {
   render () {
     const props = this.props;
 
     const componentProps = _.pick(props, ['filters', 'selected', 'match']);
     componentProps.obj = props.obj.data;
+    const extraResources = _.reduce(props.resourceKeys, (acc, key) => ({...acc, [key]: props[key].data}), {});
 
     const routes = props.pages.map(p => {
       const path = `${props.match.url}/${p.href}`;
       const render = () => {
-        return <p.component {...componentProps} />;
+        return <p.component {...componentProps} {...extraResources} />;
       };
       return <Route path={path} exact key={p.name} render={render} />;
     });
