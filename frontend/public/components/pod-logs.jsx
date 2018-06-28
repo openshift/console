@@ -3,12 +3,20 @@ import * as React from 'react';
 
 import { ContainerDropdown, ResourceLog, LOG_SOURCE_RESTARTING, LOG_SOURCE_WAITING, LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED } from './utils';
 
-const reduceContainerStatuses = (accumulator, container, order) => ({
-  ...accumulator,
-  [container.name]: { ...container, order }
-});
+const containersToStatuses = ({ status }, containers) => {
+  return _.reduce(containers, (accumulator, { name }, order) => {
+    const containerStatus = _.find(status.containerStatuses, { name }) || _.find(status.initContainerStatuses, { name });
+    if (containerStatus) {
+      return {
+        ...accumulator,
+        [name]: { ...containerStatus, order }
+      };
+    }
+    return accumulator;
+  }, {});
+};
 
-const containerToLogSourceStatus = ({state, lastState}) => {
+const containerToLogSourceStatus = ({ state, lastState }) => {
   if (state.waiting && !_.isEmpty(lastState)) {
     return LOG_SOURCE_RESTARTING;
   }
@@ -35,13 +43,13 @@ export class PodLogs extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps({ obj: build }, { currentKey }) {
     const newState = {};
-    const containerStatuses = _.get(nextProps.obj, 'status.containerStatuses', []);
-    const initContainerStatuses = _.get(nextProps.obj, 'status.initContainerStatuses', []);
-    newState.containers = _.reduce(containerStatuses, reduceContainerStatuses, {});
-    newState.initContainers = _.reduce(initContainerStatuses, reduceContainerStatuses, {});
-    if (!prevState.currentKey) {
+    const containers = _.get(build, 'spec.containers', []);
+    const initContainers = _.get(build, 'spec.initContainers', []);
+    newState.containers = containersToStatuses(build, containers);
+    newState.initContainers = containersToStatuses(build, initContainers);
+    if (!currentKey) {
       const firstContainer = _.find(newState.containers, { order: 0 });
       newState.currentKey = firstContainer.name;
     }
@@ -53,7 +61,7 @@ export class PodLogs extends React.Component {
   }
 
   render() {
-    const {containers, currentKey, initContainers} = this.state;
+    const { containers, currentKey, initContainers } = this.state;
     const namespace = _.get(this.props.obj, 'metadata.namespace');
     const podName = _.get(this.props.obj, 'metadata.name');
     const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
