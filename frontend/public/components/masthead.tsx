@@ -19,9 +19,10 @@ const logout = e => {
 };
 
 const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) => {
-  const title = <span>
-    <i className="fa fa-user co-masthead__user-icon" aria-hidden="true"></i>{username}
-  </span>;
+  const title = <React.Fragment>
+    <i className="fa fa-user co-masthead__user-icon" aria-hidden="true"></i>
+    <span className="co-masthead__username">{username}</span>
+  </React.Fragment>;
   return <ActionsMenu actions={actions}
     title={title}
     noButton={true} />;
@@ -127,7 +128,7 @@ export const Masthead = () => <header role="banner" className="co-masthead">
   <div className="co-masthead__console-picker">
     { (window as any).SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
   </div>
-  <div className="co-masthead__user navbar-right">
+  <div className="co-masthead__user">
     <UserMenuWrapper />
   </div>
 </header>;

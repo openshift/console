@@ -5,10 +5,11 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
-import { FLAGS, featureReducerName } from '../features';
+import { FLAGS, connectToFlags, featureReducerName } from '../features';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 import { referenceForModel } from '../module/k8s';
+import { authSvc } from '../module/auth';
 
 import { ClusterPicker } from './cluster-picker';
 
@@ -195,7 +196,7 @@ const NavSection = connect(navSectionStateToProps)(
         return null;
       }
 
-      const { id, icon, img, text, children, activeNamespace, flags, href = null, activeImg } = this.props;
+      const { id, icon, img, text, children, activeNamespace, flags, href = null, activeImg, klass } = this.props;
       const isActive = !!this.state.activeChild;
       // WARNING:
       // we transition on max-height because you can't transition to height 'inherit'
@@ -216,7 +217,7 @@ const NavSection = connect(navSectionStateToProps)(
         return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace});
       });
 
-      return <div className={sectionClassName}>
+      return <div className={classNames(sectionClassName, klass)}>
         <div id={id} className="navigation-container__section__title" onClick={this.toggle}>
           {icon && <i className={iconClassName}></i>}
           {img && <img src={isActive && activeImg ? activeImg : img} />}
@@ -232,6 +233,26 @@ const NavSection = connect(navSectionStateToProps)(
 );
 
 const Sep = () => <div className="navigation-container__section__separator" />;
+
+const logout = e => {
+  e && e.preventDefault();
+  authSvc.logout();
+};
+
+const UserNavSectionWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
+  if (!flags[FLAGS.AUTH_ENABLED] || flags[FLAGS.OPENSHIFT] === undefined) {
+    return null;
+  }
+
+  if (flags[FLAGS.OPENSHIFT]) {
+    return <NavSection text="Logout" icon="fa-user" klass="visible-xs-block" onClick={logout} />;
+  }
+
+  return <NavSection text="User" icon="fa-user" klass="visible-xs-block">
+    <HrefLink href="/settings/profile" name="My Account" onClick={closeMenu} key="myAccount" />
+    <HrefLink href="#" name="Logout" onClick={logout} key="logout" />
+  </NavSection>;
+});
 
 // HrefLinks are PureComponents...
 const searchStartsWith = ['search'];
@@ -356,6 +377,8 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} />
             <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
+
+          <UserNavSectionWrapper closeMenu={this.close} />
         </div>
       </div>
     </React.Fragment>;
