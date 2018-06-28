@@ -9,7 +9,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent} from './utils';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
-import { Line } from './graphs';
+import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { EnvironmentPage } from './environment';
 
@@ -159,6 +159,22 @@ const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane
   </div>
 </div>;
 
+const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
+  <div className="row">
+    <div className="col-md-4">
+      <Line title="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
+    </div>
+    <div className="col-md-4">
+      <Line title="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}'} * 1000`} />
+    </div>
+    <div className="col-md-4">
+      <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
+    </div>
+  </div>
+
+  <br />
+</React.Fragment>);
+
 const Details = ({obj: pod}) => {
   const limits = {
     cpu: null,
@@ -176,20 +192,7 @@ const Details = ({obj: pod}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <h1 className="co-section-title">Pod Overview</h1>
-      <div className="row">
-        <div className="col-md-4">
-          <Line title="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
-        </div>
-        <div className="col-md-4">
-          <Line title="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}'} * 1000`} />
-        </div>
-        <div className="col-md-4">
-          <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}'}`} />
-        </div>
-      </div>
-
-      <br />
-
+      <PodGraphs pod={pod} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>

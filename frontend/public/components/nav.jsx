@@ -338,6 +338,7 @@ export class Nav extends React.Component {
           <NavSection text="Troubleshooting" icon="fa-life-ring">
             <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
             <ResourceNSLink resource="events" name="Events" onClick={this.close} />
+            { /* FIXME: These links are wrong for OpenShift. */ }
             <HrefLink href="/prometheus" target="_blank" name="Prometheus" onClick={this.close} required={FLAGS.PROMETHEUS} />
             <HrefLink href="/alertmanager" target="_blank" name="Prometheus Alerts" onClick={this.close} required={FLAGS.PROMETHEUS} />
           </NavSection>
