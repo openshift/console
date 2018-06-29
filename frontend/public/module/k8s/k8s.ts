@@ -8,6 +8,8 @@ export const getQN: (obj: K8sResourceKind) => string = ({metadata: {name, namesp
 
 export const k8sBasePath = `${(window as any).SERVER_FLAGS.basePath}api/kubernetes`;
 
+export const isGroupVersionKind = (ref: GroupVersionKind | string) => ref.split(':').length === 3;
+
 export const groupVersionFor = (apiVersion: string) => ({
   group: apiVersion.split('/').length === 2 ? apiVersion.split('/')[0] : 'core',
   version: apiVersion.split('/').length === 2 ? apiVersion.split('/')[1] : apiVersion,
@@ -29,7 +31,7 @@ export const referenceForModel = (model: K8sKind): GroupVersionKind => (
   `${model.apiGroup || 'core'}:${model.apiVersion}:${model.kind}`
 );
 
-export const kindForReference = (ref: K8sResourceKindReference) => ref.split(':').length === 3
+export const kindForReference = (ref: K8sResourceKindReference) => isGroupVersionKind(ref)
   ? ref.split(':')[2]
   : ref;
 
@@ -39,6 +41,6 @@ export const apiVersionForModel = (model: K8sKind) => _.isEmpty(model.apiGroup)
   ? model.apiVersion
   : `${model.apiGroup}/${model.apiVersion}`;
 
-export const apiVersionForReference = (ref: GroupVersionKind) => ref.split(':').length === 3
+export const apiVersionForReference = (ref: GroupVersionKind) => isGroupVersionKind(ref)
   ? `${ref.split(':')[0]}/${ref.split(':')[1]}`
   : ref;

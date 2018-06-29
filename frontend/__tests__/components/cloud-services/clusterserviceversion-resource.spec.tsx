@@ -5,14 +5,14 @@ import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink, CSVResourceDetails, CSVResourceDetailsProps } from '../../../public/components/cloud-services/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/cloud-services/k8s-resource';
 import { ClusterServiceVersionResourceKind } from '../../../public/components/cloud-services';
 import { ClusterServiceVersionResourceStatus } from '../../../public/components/cloud-services/status-descriptors';
 import { ClusterServiceVersionResourceSpec } from '../../../public/components/cloud-services/spec-descriptors';
 import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog, Firehose } from '../../../public/components/utils';
+import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 import { referenceFor, K8sKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
@@ -338,34 +338,6 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={referenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
   });
 
-  it('renders a `Firehose` to watch the parent `ClusterServiceVersion`', () => {
-    expect(wrapper.find<any>(Firehose).props().resources).toEqual([
-      {kind: referenceForModel(ClusterServiceVersionModel), name: match.params.appName, namespace: match.params.ns, isList: false, prop: 'csv'}
-    ]);
-  });
-});
-
-describe(CSVResourceDetails.displayName, () => {
-  let wrapper: ShallowWrapper<CSVResourceDetailsProps>;
-  let match: RouterMatch<any>;
-
-  beforeEach(() => {
-    match = {
-      params: {appName: 'etcd', plural: 'etcdclusters', name: 'my-etcd', ns: 'default'},
-      isExact: false,
-      url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`,
-      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
-    };
-
-    wrapper = shallow(<CSVResourceDetails kind={referenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} csv={{data: testClusterServiceVersion}} />);
-  });
-
-  it('does not render `DetailsPage` if given CSV is not loaded', () => {
-    wrapper = wrapper.setProps({csv: null});
-
-    expect(wrapper.find(DetailsPage).exists()).toBe(false);
-  });
-
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
@@ -377,16 +349,18 @@ describe(CSVResourceDetails.displayName, () => {
     expect(detailsPage.props().pages[2].href).toEqual('resources');
   });
 
-  it('passes common menu actions to `DetailsPage`', () => {
-    const detailsPage = wrapper.find(DetailsPage);
+  it('renders a `DetailsPage` which also watches the parent CSV', () => {
+    expect(wrapper.find(DetailsPage).props().resources).toEqual([
+      {kind: referenceForModel(ClusterServiceVersionModel), name: match.params.appName, namespace: match.params.ns, isList: false, prop: 'csv'}
+    ]);
+  });
 
-    expect(detailsPage.props().menuActions).toEqual(Cog.factory.common);
+  it('passes common menu actions to `DetailsPage`', () => {
+    expect(wrapper.find(DetailsPage).props().menuActions).toEqual(Cog.factory.common);
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
-    const detailsPage = wrapper.find(DetailsPage);
-
-    expect(detailsPage.props().breadcrumbsFor(null)).toEqual([
+    expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
       {name: 'etcd', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/instances`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`},
     ]);
@@ -395,11 +369,9 @@ describe(CSVResourceDetails.displayName, () => {
   it('creates correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
     match.params = Object.keys(match.params).reduce((params, name) => Object.assign(params, {[name]: 'example'}), {});
     match.url = `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`;
-
     wrapper.setProps({match});
-    const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.props().breadcrumbsFor(null)).toEqual([
+    expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
       {name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/instances`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`},
     ]);

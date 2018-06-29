@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import { ConfigMapsPage, ConfigMapsDetailsPage } from './configmap';
 import { ClustersPage, ClustersDetailsPage } from './clusters';
 import { ContainersDetailsPage } from './container';
@@ -34,7 +36,7 @@ import { HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage } fro
 import { PersistentVolumesPage, PersistentVolumesDetailsPage } from './persistent-volume';
 import { PersistentVolumeClaimsPage, PersistentVolumeClaimsDetailsPage } from './persistent-volume-claim';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
-import { ReportsPage, ReportsDetailsPage, ReportGenerationQueriesPage, ReportGenerationQueriesDetailsPage } from './chargeback';
+import { ReportsPage, ReportsDetailsPage, ReportGenerationQueriesPage, ReportGenerationQueriesDetailsPage, ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
 import { SubscriptionsPage, SubscriptionDetailsPage } from './cloud-services/subscription';
@@ -42,49 +44,96 @@ import { InstallPlansPage, InstallPlanDetailsPage } from './cloud-services/insta
 import { CatalogSourceDetailsPage } from './cloud-services/catalog-source';
 import { StorageClassPage, StorageClassDetailsPage } from './storage-class';
 
-export const resourceListPages = new Map<string, React.ComponentType<any>>()
-  .set('Clusters', ClustersPage)
-  .set('ConfigMaps', ConfigMapsPage)
-  .set('DaemonSets', DaemonSetsPage)
-  .set('DeploymentConfigs', DeploymentConfigsPage)
-  .set('Deployments', DeploymentsPage)
-  .set('BuildConfigs', BuildConfigsPage)
-  .set('Builds', BuildsPage)
-  .set('ImageStreams', ImageStreamsPage)
-  .set('Jobs', JobsPage)
-  .set('CronJobs', CronJobsPage)
-  .set('Projects', ProjectsPage)
-  .set('Namespaces', NamespacesPage)
-  .set('NetworkPolicies', NetworkPoliciesPage)
-  .set('Nodes', NodesPage)
-  .set('Pods', PodsPage)
-  .set('ReplicaSets', ReplicaSetsPage)
-  .set('ReplicationControllers', ReplicationControllersPage)
-  .set('Secrets', SecretsPage)
-  .set('ServiceAccounts', ServiceAccountsPage)
-  .set('Services', ServicesPage)
-  .set('Ingresses', IngressesPage)
-  .set('Routes', RoutesPage)
-  .set('Roles', RolesPage)
-  .set('RoleBindings', RoleBindingsPage)
-  .set('EtcdClusters', EtcdClustersPage)
-  .set('Prometheuses', PrometheusInstancesPage)
-  .set('ServiceMonitors', ServiceMonitorsPage)
-  .set('Alertmanagers', AlertManagersPage)
-  .set('PodVulns', PodVulnsPage)
-  .set('StatefulSets', StatefulSetsPage)
-  .set('ResourceQuotas', ResourceQuotasPage)
-  .set('HorizontalPodAutoscalers', HorizontalPodAutoscalersPage)
-  .set('PersistentVolumes', PersistentVolumesPage)
-  .set('PersistentVolumeClaims', PersistentVolumeClaimsPage)
-  .set('Reports', ReportsPage)
-  .set('ReportGenerationQuerys', ReportGenerationQueriesPage)
+import { referenceForModel, GroupVersionKind } from '../module/k8s';
+import {
+  ClusterModel,
+  ConfigMapModel,
+  DaemonSetModel,
+  DeploymentModel,
+  DeploymentConfigModel,
+  BuildConfigModel,
+  BuildModel,
+  ImageStreamModel,
+  JobModel,
+  CronJobModel,
+  ProjectModel,
+  NamespaceModel,
+  NetworkPolicyModel,
+  NodeModel,
+  PodModel,
+  ReplicaSetModel,
+  ReplicationControllerModel,
+  SecretModel,
+  ServiceAccountModel,
+  ServiceModel,
+  IngressModel,
+  RouteModel,
+  RoleModel,
+  RoleBindingModel,
+  EtcdClusterModel,
+  PrometheusModel,
+  ServiceMonitorModel,
+  AlertmanagerModel,
+  PodVulnModel,
+  StatefulSetModel,
+  ResourceQuotaModel,
+  HorizontalPodAutoscalerModel,
+  PersistentVolumeModel,
+  PersistentVolumeClaimModel,
+  StorageClassModel,
+  CustomResourceDefinitionModel,
+  ClusterServiceVersionModel,
+  SubscriptionModel,
+  InstallPlanModel,
+  ImageStreamTagModel,
+  ClusterRoleModel,
+  ContainerModel,
+  CatalogSourceModel,
+} from '../models';
+
+export const resourceListPages = new Map<GroupVersionKind | string, React.ComponentType<any>>()
   .set('Default', DefaultPage)
-  .set('StorageClasses', StorageClassPage)
-  .set('CustomResourceDefinitions', CustomResourceDefinitionsPage)
-  .set('ClusterServiceVersion-v1s', ClusterServiceVersionsPage)
-  .set('Subscription-v1s', SubscriptionsPage)
-  .set('InstallPlan-v1s', InstallPlansPage)
+  .set(referenceForModel(ClusterModel), ClustersPage)
+  .set(referenceForModel(ConfigMapModel), ConfigMapsPage)
+  .set(referenceForModel(DaemonSetModel), DaemonSetsPage)
+  .set(referenceForModel(DeploymentConfigModel), DeploymentConfigsPage)
+  .set(referenceForModel(DeploymentModel), DeploymentsPage)
+  .set(referenceForModel(BuildConfigModel), BuildConfigsPage)
+  .set(referenceForModel(BuildModel), BuildsPage)
+  .set(referenceForModel(ImageStreamModel), ImageStreamsPage)
+  .set(referenceForModel(JobModel), JobsPage)
+  .set(referenceForModel(CronJobModel), CronJobsPage)
+  .set(referenceForModel(ProjectModel), ProjectsPage)
+  .set(referenceForModel(NamespaceModel), NamespacesPage)
+  .set(referenceForModel(NetworkPolicyModel), NetworkPoliciesPage)
+  .set(referenceForModel(NodeModel), NodesPage)
+  .set(referenceForModel(PodModel), PodsPage)
+  .set(referenceForModel(ReplicaSetModel), ReplicaSetsPage)
+  .set(referenceForModel(ReplicationControllerModel), ReplicationControllersPage)
+  .set(referenceForModel(SecretModel), SecretsPage)
+  .set(referenceForModel(ServiceAccountModel), ServiceAccountsPage)
+  .set(referenceForModel(ServiceModel), ServicesPage)
+  .set(referenceForModel(IngressModel), IngressesPage)
+  .set(referenceForModel(RouteModel), RoutesPage)
+  .set(referenceForModel(RoleModel), RolesPage)
+  .set(referenceForModel(RoleBindingModel), RoleBindingsPage)
+  .set(referenceForModel(EtcdClusterModel), EtcdClustersPage)
+  .set(referenceForModel(PrometheusModel), PrometheusInstancesPage)
+  .set(referenceForModel(ServiceMonitorModel), ServiceMonitorsPage)
+  .set(referenceForModel(AlertmanagerModel), AlertManagersPage)
+  .set(referenceForModel(PodVulnModel), PodVulnsPage)
+  .set(referenceForModel(StatefulSetModel), StatefulSetsPage)
+  .set(referenceForModel(ResourceQuotaModel), ResourceQuotasPage)
+  .set(referenceForModel(HorizontalPodAutoscalerModel), HorizontalPodAutoscalersPage)
+  .set(referenceForModel(PersistentVolumeModel), PersistentVolumesPage)
+  .set(referenceForModel(PersistentVolumeClaimModel), PersistentVolumeClaimsPage)
+  .set(ReportReference, ReportsPage)
+  .set(ReportGenerationQueryReference, ReportGenerationQueriesPage)
+  .set(referenceForModel(StorageClassModel), StorageClassPage)
+  .set(referenceForModel(CustomResourceDefinitionModel), CustomResourceDefinitionsPage)
+  .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionsPage)
+  .set(referenceForModel(SubscriptionModel), SubscriptionsPage)
+  .set(referenceForModel(InstallPlanModel), InstallPlansPage)
   /*  ------------------------------- NOTE -------------------------------
 
   To avoid circular imports, the keys in this list are manually duplicated in ./resource-dropdown.tsx !
@@ -93,46 +142,46 @@ export const resourceListPages = new Map<string, React.ComponentType<any>>()
   */
   ;
 
-export const resourceDetailPages = new Map<string, React.ComponentType<any>>()
-  .set('Clusters', ClustersDetailsPage)
-  .set('ConfigMaps', ConfigMapsDetailsPage)
-  .set('Containers', ContainersDetailsPage)
-  .set('DaemonSets', DaemonSetsDetailsPage)
-  .set('DeploymentConfigs', DeploymentConfigsDetailsPage)
-  .set('Deployments', DeploymentsDetailsPage)
-  .set('BuildConfigs', BuildConfigsDetailsPage)
-  .set('Builds', BuildsDetailsPage)
-  .set('ImageStreams', ImageStreamsDetailsPage)
-  .set('ImageStreamTags', ImageStreamTagsDetailsPage)
-  .set('Jobs', JobsDetailsPage)
-  .set('CronJobs', CronJobsDetailsPage)
-  .set('Projects', ProjectsDetailsPage)
-  .set('Namespaces', NamespacesDetailsPage)
-  .set('NetworkPolicies', NetworkPoliciesDetailsPage)
-  .set('Nodes', NodesDetailsPage)
-  .set('Pods', PodsDetailsPage)
-  .set('ReplicaSets', ReplicaSetsDetailsPage)
-  .set('ReplicationControllers', ReplicationControllersDetailsPage)
-  .set('Secrets', SecretsDetailsPage)
-  .set('ServiceAccounts', ServiceAccountsDetailsPage)
-  .set('Services', ServicesDetailsPage)
-  .set('Ingresses', IngressesDetailsPage)
-  .set('Routes', RoutesDetailsPage)
-  .set('ClusterRoles', ClusterRolesDetailsPage)
-  .set('Roles', RolesDetailsPage)
-  .set('Alertmanagers', AlertManagersDetailsPage)
-  .set('PodVulns', PodVulnsDetailsPage)
-  .set('StatefulSets', StatefulSetsDetailsPage)
-  .set('ResourceQuotas', ResourceQuotasDetailsPage)
-  .set('HorizontalPodAutoscalers', HorizontalPodAutoscalersDetailsPage)
-  .set('PersistentVolumes', PersistentVolumesDetailsPage)
-  .set('PersistentVolumeClaims', PersistentVolumeClaimsDetailsPage)
-  .set('Reports', ReportsDetailsPage)
-  .set('ReportGenerationQuerys', ReportGenerationQueriesDetailsPage)
+export const resourceDetailPages = new Map<GroupVersionKind | string, React.ComponentType<any>>()
   .set('Default', DefaultDetailsPage)
-  .set('StorageClasses', StorageClassDetailsPage)
-  .set('ClusterServiceVersion-v1s', ClusterServiceVersionsDetailsPage)
-  .set('CatalogSource-v1s', CatalogSourceDetailsPage)
+  .set(referenceForModel(ClusterModel), ClustersDetailsPage)
+  .set(referenceForModel(ConfigMapModel), ConfigMapsDetailsPage)
+  .set(referenceForModel(ContainerModel), ContainersDetailsPage)
+  .set(referenceForModel(DaemonSetModel), DaemonSetsDetailsPage)
+  .set(referenceForModel(DeploymentConfigModel), DeploymentConfigsDetailsPage)
+  .set(referenceForModel(DeploymentModel), DeploymentsDetailsPage)
+  .set(referenceForModel(BuildConfigModel), BuildConfigsDetailsPage)
+  .set(referenceForModel(BuildModel), BuildsDetailsPage)
+  .set(referenceForModel(ImageStreamModel), ImageStreamsDetailsPage)
+  .set(referenceForModel(ImageStreamTagModel), ImageStreamTagsDetailsPage)
+  .set(referenceForModel(JobModel), JobsDetailsPage)
+  .set(referenceForModel(CronJobModel), CronJobsDetailsPage)
+  .set(referenceForModel(ProjectModel), ProjectsDetailsPage)
+  .set(referenceForModel(NamespaceModel), NamespacesDetailsPage)
+  .set(referenceForModel(NetworkPolicyModel), NetworkPoliciesDetailsPage)
+  .set(referenceForModel(NodeModel), NodesDetailsPage)
+  .set(referenceForModel(PodModel), PodsDetailsPage)
+  .set(referenceForModel(ReplicaSetModel), ReplicaSetsDetailsPage)
+  .set(referenceForModel(ReplicationControllerModel), ReplicationControllersDetailsPage)
+  .set(referenceForModel(SecretModel), SecretsDetailsPage)
+  .set(referenceForModel(ServiceAccountModel), ServiceAccountsDetailsPage)
+  .set(referenceForModel(ServiceModel), ServicesDetailsPage)
+  .set(referenceForModel(IngressModel), IngressesDetailsPage)
+  .set(referenceForModel(RouteModel), RoutesDetailsPage)
+  .set(referenceForModel(ClusterRoleModel), ClusterRolesDetailsPage)
+  .set(referenceForModel(RoleModel), RolesDetailsPage)
+  .set(referenceForModel(AlertmanagerModel), AlertManagersDetailsPage)
+  .set(referenceForModel(PodVulnModel), PodVulnsDetailsPage)
+  .set(referenceForModel(StatefulSetModel), StatefulSetsDetailsPage)
+  .set(referenceForModel(ResourceQuotaModel), ResourceQuotasDetailsPage)
+  .set(referenceForModel(HorizontalPodAutoscalerModel), HorizontalPodAutoscalersDetailsPage)
+  .set(referenceForModel(PersistentVolumeModel), PersistentVolumesDetailsPage)
+  .set(referenceForModel(PersistentVolumeClaimModel), PersistentVolumeClaimsDetailsPage)
+  .set(ReportReference, ReportsDetailsPage)
+  .set(ReportGenerationQueryReference, ReportGenerationQueriesDetailsPage)
+  .set(referenceForModel(StorageClassModel), StorageClassDetailsPage)
+  .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionsDetailsPage)
+  .set(referenceForModel(CatalogSourceModel), CatalogSourceDetailsPage)
   .set('ClusterServiceVersionResources', ClusterServiceVersionResourcesDetailsPage)
-  .set('Subscription-v1s', SubscriptionDetailsPage)
-  .set('InstallPlan-v1s', InstallPlanDetailsPage);
+  .set(referenceForModel(SubscriptionModel), SubscriptionDetailsPage)
+  .set(referenceForModel(InstallPlanModel), InstallPlanDetailsPage);

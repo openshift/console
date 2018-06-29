@@ -32,8 +32,8 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   return sampleObj;
 };
 
-const stateToProps = ({k8s}) => ({
-  k8sModels: k8s.getIn(['RESOURCES', 'models']),
+const stateToProps = ({k8s}, {obj}) => ({
+  model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
 });
 
 /**
@@ -193,9 +193,7 @@ export const EditYAML = connect(stateToProps)(
         return;
       }
 
-      const ko = this.props.k8sModels.get(referenceFor(obj)) || this.props.k8sModels.get(obj.kind);
-
-      if (!ko) {
+      if (!this.props.model) {
         this.handleError(`"${obj.kind}" is not a valid kind.`);
         return;
       }
@@ -221,7 +219,7 @@ export const EditYAML = connect(stateToProps)(
           delete obj.metadata.resourceVersion;
           redirect = true;
         }
-        action(ko, obj, namespace, name)
+        action(this.props.model, obj, namespace, name)
           .then(o => {
             if (redirect) {
               history.push(this.props.redirectURL || resourceObjPath(o, referenceFor(o)));
@@ -272,13 +270,12 @@ export const EditYAML = connect(stateToProps)(
       */
 
       const {error, success, stale} = this.state;
-      const {create, obj, showHeader = false} = this.props;
+      const {create, obj, showHeader = false, model} = this.props;
       const kind = obj.kind;
-      const kindObj = this.props.k8sModels.get(referenceFor(obj)) || this.props.k8sModels.get(obj.kind) || {};
 
       return <div>
         {showHeader && <div className="yaml-editor-header">
-          {`${create ? 'Create' : 'Edit'} ${_.get(kindObj, 'label', kind)}`}
+          {`${create ? 'Create' : 'Edit'} ${_.get(model, 'label', kind)}`}
         </div>}
         <div className="co-p-has-sidebar">
           <div className="co-p-has-sidebar__body">
@@ -302,7 +299,7 @@ export const EditYAML = connect(stateToProps)(
               </div>
             </div>
           </div>
-          <ResourceSidebar isCreateMode={create} kindObj={kindObj} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
+          <ResourceSidebar isCreateMode={create} kindObj={model} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
         </div>
       </div>;
     }
