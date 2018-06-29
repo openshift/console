@@ -5,8 +5,9 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Cog, navFactory, kindObj, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
+import { Cog, navFactory, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 import { Line, requirePrometheus } from './graphs';
+import { NodeModel } from '../models';
 
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable...',
@@ -80,7 +81,7 @@ const NodeCLStatusRow = ({node}) => {
 const NodeRow = ({obj: node, expand}) => {
   const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
-  return <ResourceRow obj={node} expand={expand}>
+  return <ResourceRow obj={node}>
     <div className="col-xs-4 co-break-word">
       <NodeCog node={node} />
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
@@ -128,7 +129,7 @@ const dropdownFilters = [{
 export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
 
 const NodeGraphs = requirePrometheus(({node}) => {
-  const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
+  const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
   const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
   const memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
   const integerLimit = input => parseInt(input, 10);
@@ -176,7 +177,7 @@ const Details = ({obj: node}) => {
             <dt>Node Labels</dt>
             <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
             <dt>Annotations</dt>
-            <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj('node'), node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
+            <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}

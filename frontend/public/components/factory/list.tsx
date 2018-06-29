@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
@@ -7,7 +9,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
-import { getJobTypeAndCompletions, isNodeReady, podPhase, podReadiness } from '../../module/k8s';
+import { getJobTypeAndCompletions, isNodeReady, podPhase, podReadiness, K8sResourceKind, K8sKind, K8sResourceKindReference } from '../../module/k8s';
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
@@ -178,8 +180,18 @@ const sorts = {
   string: val => JSON.stringify(val),
 };
 
-/** @augments {React.Component<any>} */
-export class ColHead extends React.Component {
+export class ColHead extends React.Component<ColHeadProps> {
+  static propTypes = {
+    applySort: PropTypes.func,
+    children: PropTypes.string,
+    className: PropTypes.string,
+    currentSortField: PropTypes.string,
+    currentSortFunc: PropTypes.string,
+    currentSortOrder: PropTypes.string,
+    sortField: PropTypes.string,
+    sortFunc: PropTypes.string,
+  };
+
   componentWillMount() {
     const {applySort, children, sortField, sortFunc} = this.props;
 
@@ -208,18 +220,7 @@ export class ColHead extends React.Component {
   }
 }
 
-ColHead.propTypes = {
-  applySort: PropTypes.func,
-  children: PropTypes.string,
-  className: PropTypes.string,
-  currentSortField: PropTypes.string,
-  currentSortFunc: PropTypes.string,
-  currentSortOrder: PropTypes.string,
-  sortField: PropTypes.string,
-  sortFunc: PropTypes.string,
-};
-
-export const ListHeader = ({children}) => <div className="row co-m-table-grid__head">{children}</div>;
+export const ListHeader: React.SFC = ({children}) => <div className="row co-m-table-grid__head">{children}</div>;
 ListHeader.displayName = 'ListHeader';
 
 export const WorkloadListHeader = props => <ListHeader>
@@ -230,25 +231,19 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-export class Rows extends React.Component {
-  constructor(props) {
-    super(props);
+export const Rows: React.SFC<RowsProps> = (props) => {
+  const measurementCache = new CellMeasurerCache({
+    fixedWidth: true,
+    minHeight: 50,
+    keyMapper: rowIndex => `${_.get(props.data[rowIndex], 'metadata.uid', rowIndex)}-${props.expand ? 'expanded' : 'collapsed'}`,
+  });
 
-    this.measurementCache = new CellMeasurerCache({
-      fixedWidth: true,
-      minHeight: 50,
-      keyMapper: rowIndex => _.get(this.props.data[rowIndex], 'metadata.uid', rowIndex),
-    });
-
-    this.rowRenderer = this._rowRenderer.bind(this);
-  }
-
-  _rowRenderer({index, style, key, parent}) {
-    const {data, expand, Row, kindObj} = this.props;
+  const rowRenderer = ({index, style, key, parent}) => {
+    const {data, expand, Row, kindObj} = props;
     const obj = data[index];
 
     return <CellMeasurer
-      cache={this.measurementCache}
+      cache={measurementCache}
       columnIndex={0}
       key={key}
       rowIndex={index}
@@ -257,34 +252,33 @@ export class Rows extends React.Component {
         <Row key={_.get(obj, 'metadata.uid', index)} obj={obj} expand={expand} kindObj={kindObj} index={index} />
       </div>
     </CellMeasurer>;
-  }
+  };
 
-  render() {
-    return <div className="co-m-table-grid__body">
-      <WindowScroller>
-        {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-          <AutoSizer disableHeight>
-            {({width}) => <div ref={registerChild}>
-              <VirtualList
-                autoHeight
-                data={this.props.data}
-                height={height}
-                deferredMeasurementCache={this.measurementCache}
-                rowHeight={this.measurementCache.rowHeight}
-                isScrolling={isScrolling}
-                onScroll={onChildScroll}
-                rowRenderer={this.rowRenderer}
-                rowCount={this.props.data.length}
-                scrollTop={scrollTop}
-                width={width}
-                tabIndex={null}
-              />
-            </div>}
-          </AutoSizer>}
-      </WindowScroller>
-    </div>;
-  }
-}
+  return <div className="co-m-table-grid__body">
+    <WindowScroller>
+      {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+        <AutoSizer disableHeight>
+          {({width}) => <div ref={registerChild}>
+            <VirtualList
+              autoHeight
+              data={props.data}
+              expand={props.expand}
+              height={height}
+              deferredMeasurementCache={measurementCache}
+              rowHeight={measurementCache.rowHeight}
+              isScrolling={isScrolling}
+              onScroll={onChildScroll}
+              rowRenderer={rowRenderer}
+              rowCount={props.data.length}
+              scrollTop={scrollTop}
+              width={width}
+              tabIndex={null}
+            />
+          </div>}
+        </AutoSizer>}
+    </WindowScroller>
+  </div>;
+};
 
 Rows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
@@ -292,7 +286,7 @@ Rows.propTypes = {
   Row: PropTypes.func.isRequired,
 };
 
-const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = {}}) => {
+const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, data);
 
@@ -302,7 +296,7 @@ const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = 
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], 'asc');
 
   if (loaded) {
-    let sortBy = 'metadata.name';
+    let sortBy: string | Function = 'metadata.name';
     if (currentSortField) {
       // Sort resources by one of their fields as a string
       sortBy = resource => sorts.string(_.get(resource, currentSortField, ''));
@@ -319,48 +313,48 @@ const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = 
 };
 
 export const List = connect(stateToProps, {sortList: UIActions.sortList})(
-  /** @param props {{Header: React.ComponentType, Row: React.ComponentType<any>, data?: any[], label?: string, EmptyMsg?: React.ComponentType<{}>}} */
-  function ListInner (props) {
-    const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = props;
-    const componentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
+  class ListInner extends React.Component<ListInnerProps> {
+    static propTypes = {
+      data: PropTypes.array,
+      EmptyMsg: PropTypes.func,
+      expand: PropTypes.bool,
+      fieldSelector: PropTypes.string,
+      filters: filterPropType,
+      Header: PropTypes.func.isRequired,
+      loaded: PropTypes.bool,
+      loadError: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+      namespace: PropTypes.string,
+      reduxID: PropTypes.string,
+      reduxIDs: PropTypes.array,
+      Row: PropTypes.func.isRequired,
+      selector: PropTypes.object,
+      staticFilters: PropTypes.array,
+      fake: PropTypes.bool,
+    };
 
-    const children = <React.Fragment>
-      <Header
-        key="header"
-        applySort={_.partial(sortList, listId)}
-        currentSortField={currentSortField}
-        currentSortFunc={currentSortFunc}
-        currentSortOrder={currentSortOrder}
-        {...componentProps}
-      />
-      <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
-    </React.Fragment>;
+    render() {
+      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = this.props;
+      const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
-    return <div className="co-m-table-grid co-m-table-grid--bordered">
-      { fake ? children : <StatusBox {...props}>{children}</StatusBox> }
-    </div>;
+      const children = <React.Fragment>
+        <Header
+          key="header"
+          applySort={_.partial(sortList, listId)}
+          currentSortField={currentSortField}
+          currentSortFunc={currentSortFunc}
+          currentSortOrder={currentSortOrder}
+          {...componentProps}
+        />
+        <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
+      </React.Fragment>;
+
+      return <div className="co-m-table-grid co-m-table-grid--bordered">
+        { fake ? children : <StatusBox {...this.props}>{children}</StatusBox> }
+      </div>;
+    }
   });
 
-List.propTypes = {
-  data: PropTypes.array,
-  EmptyMsg: PropTypes.func,
-  expand: PropTypes.bool,
-  fieldSelector: PropTypes.string,
-  filters: filterPropType,
-  Header: PropTypes.func.isRequired,
-  loaded: PropTypes.bool,
-  loadError: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  namespace: PropTypes.string,
-  reduxID: PropTypes.string,
-  reduxIDs: PropTypes.array,
-  Row: PropTypes.func.isRequired,
-  selector: PropTypes.object,
-  staticFilters: PropTypes.array,
-  fake: PropTypes.bool,
-};
-
-/** @augments {React.Component<{obj: K8sResourceKind>}} */
-export class ResourceRow extends React.Component {
+export class ResourceRow extends React.Component<ResourceRowProps> {
   shouldComponentUpdate(nextProps) {
     if (_.size(nextProps) !== _.size(this.props)) {
       return true;
@@ -386,7 +380,7 @@ export class ResourceRow extends React.Component {
   }
 }
 
-export const WorkloadListRow = ({kind, actions, obj: o}) => <ResourceRow obj={o}>
+export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions, obj: o}) => <ResourceRow obj={o}>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={actions} kind={kind} resource={o} />
     <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
@@ -406,3 +400,59 @@ export const WorkloadListRow = ({kind, actions, obj: o}) => <ResourceRow obj={o}
     <Selector selector={o.spec.selector} />
   </div>
 </ResourceRow>;
+
+export type ColHeadProps = {
+  applySort?: Function;
+  children?: string;
+  className?: string;
+  currentSortField?: string;
+  currentSortFunc?: string;
+  currentSortOrder?: string;
+  sortField?: string;
+  sortFunc?: string;
+};
+
+export type ListInnerProps = {
+  Header: React.ComponentType<any>;
+  Row: React.ComponentType<any>;
+  data?: any[];
+  label?: string;
+  EmptyMsg?: React.ComponentType<{}>;
+  expand?: boolean;
+  fieldSelector?: string;
+  filters?: {[name: string]: any};
+  loaded?: boolean;
+  loadError?: string | Object;
+  namespace?: string;
+  reduxID?: string;
+  reduxIDs?: string[];
+  selector?: Object;
+  staticFilters?: any[];
+  fake?: boolean;
+  currentSortField?: string;
+  currentSortFunc?: Function;
+  currentSortOrder?: any;
+  listId?: string;
+  sortList?: (...args) => any;
+};
+
+export type ResourceRowProps = {
+  obj: K8sResourceKind;
+  style?: React.StyleHTMLAttributes<any>;
+};
+
+export type RowsProps = {
+  data?: any[];
+  expand?: boolean;
+  Row: React.ComponentType<any>;
+  kindObj?: K8sKind;
+};
+
+export type WorkloadListRowProps = {
+  kind: K8sResourceKindReference;
+  actions: any;
+  obj: K8sResourceKind;
+};
+
+Rows.displayName = 'Rows';
+WorkloadListRow.displayName = 'WorkloadListRow';

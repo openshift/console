@@ -28,7 +28,8 @@
 
 .co-resource-list__item {
   align-items: center;
-  display:flex;
+  display: flex;
+  flex-wrap: wrap;
   height: 100%;
   transition: all 0.25s;
 }
