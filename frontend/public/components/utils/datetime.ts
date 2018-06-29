@@ -100,10 +100,10 @@ export const formatDuration = (ms: number) => {
 
   let formatted = '';
   if (hours) {
-    formatted += `${hours}h`;
+    formatted += `${hours}h `;
   }
   if (hours || minutes) {
-    formatted += `${minutes}m`;
+    formatted += `${minutes}m `;
   }
   formatted += `${seconds}s`;
 

@@ -48,14 +48,14 @@ describe('formatDuration', () => {
   it('prints durations correctly', () => {
     expect(formatDuration(toMS(0, 0, 1))).toEqual('1s');
     expect(formatDuration(toMS(0, 0, 23))).toEqual('23s');
-    expect(formatDuration(toMS(0, 3, 42))).toEqual('3m42s');
-    expect(formatDuration(toMS(2, 0, 0))).toEqual('2h0m0s');
-    expect(formatDuration(toMS(1, 0, 4))).toEqual('1h0m4s');
-    expect(formatDuration(toMS(13, 10, 23))).toEqual('13h10m23s');
+    expect(formatDuration(toMS(0, 3, 42))).toEqual('3m 42s');
+    expect(formatDuration(toMS(2, 0, 0))).toEqual('2h 0m 0s');
+    expect(formatDuration(toMS(1, 0, 4))).toEqual('1h 0m 4s');
+    expect(formatDuration(toMS(13, 10, 23))).toEqual('13h 10m 23s');
   });
 
   it('handles hours greater than 24', () => {
-    expect(formatDuration(toMS(273, 18, 3))).toEqual('273h18m3s');
+    expect(formatDuration(toMS(273, 18, 3))).toEqual('273h 18m 3s');
   });
 
   it('handles 0 values', () => {
@@ -74,8 +74,8 @@ describe('formatDuration', () => {
   it('rounds seconds correctly', () => {
     expect(formatDuration(499)).toEqual('0s');
     expect(formatDuration(500)).toEqual('1s');
-    expect(formatDuration(toMS(0, 3, 42) + 499)).toEqual('3m42s');
-    expect(formatDuration(toMS(0, 3, 42) + 500)).toEqual('3m43s');
+    expect(formatDuration(toMS(0, 3, 42) + 499)).toEqual('3m 42s');
+    expect(formatDuration(toMS(0, 3, 42) + 500)).toEqual('3m 43s');
   });
 });
 

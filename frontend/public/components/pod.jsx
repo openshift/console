@@ -12,6 +12,7 @@ import { registerTemplate } from '../yaml-templates';
 import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { EnvironmentPage } from './environment';
+import { formatDuration } from './utils/datetime';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);
@@ -188,6 +189,7 @@ const Details = ({obj: pod}) => {
     const value = units.dehumanize(_.get(container, 'resources.limits.memory', 0), 'binaryBytesWithoutB').value;
     return sum + value;
   }, 0);
+  const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -204,12 +206,17 @@ const Details = ({obj: pod}) => {
           <dl className="co-m-pane__details">
             <dt>Status</dt>
             <dd>{podPhase(pod)}</dd>
+            <dt>Restart Policy</dt>
+            <dd>{getRestartPolicyLabel(pod)}</dd>
+            {activeDeadlineSeconds && <React.Fragment>
+              <dt>Active Deadline</dt>
+              {/* Convert to ms for formatDuration */}
+              <dd>{formatDuration(activeDeadlineSeconds * 1000)}</dd>
+            </React.Fragment>}
             <dt>Pod IP</dt>
             <dd>{pod.status.podIP || '-'}</dd>
             <dt>Node</dt>
             <dd><NodeLink name={pod.spec.nodeName} /></dd>
-            <dt>Restart Policy</dt>
-            <dd>{getRestartPolicyLabel(pod)}</dd>
           </dl>
         </div>
       </div>
