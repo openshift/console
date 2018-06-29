@@ -37,15 +37,30 @@
     height: 100%;
   }
   &__user {
-    margin-left: auto;
-    margin-right: 15px;
+    display: none;
     @media (min-width: $grid-float-breakpoint) {
+      display: block;
+      margin-left: auto;
       margin-right: 20px;
+    }
+    .dropdown__not-btn,
+    .dropdown__not-btn__title {
+      align-items: baseline;
+      display: flex;
     }
   }
   &__user-icon {
     font-size: 14px;
     margin-right: 5px;
+  }
+  &__username {
+    // truncate very long usernames
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    @media(min-width: $screen-md-min) {
+      max-width: 300px;
+    }
   }
 }
 
