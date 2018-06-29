@@ -113,7 +113,15 @@ export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => 
       logoImg = openshiftOnlineLogoImg;
       logoAlt = 'OpenShift Online';
       break;
+    case 'tectonic':
+      logoImg = tectonicLogoImg;
+      logoAlt = 'Tectonic';
+      break;
     default:
+      if (isOpenShiftCluster === undefined) {
+        // Don't flash the Tectonic logo if we're still detecting if this is OpenShift.
+        return null;
+      }
       logoImg = isOpenShiftCluster ? openshiftOriginLogoImg : tectonicLogoImg;
       logoAlt = isOpenShiftCluster ? 'OpenShift Origin' : 'Tectonic';
   }
