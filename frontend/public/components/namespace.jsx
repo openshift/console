@@ -13,7 +13,7 @@ import { SafetyFirst } from './safety-first';
 import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
-import { Bar, Line } from './graphs';
+import { Bar, Line, requirePrometheus } from './graphs';
 import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
 import { FLAGS, connectToFlags, featureReducerName } from '../features';
 import { openshiftHelpBase } from './utils/documentation';
@@ -141,6 +141,29 @@ class PullSecret extends SafetyFirst {
   }
 }
 
+const ResourceUsage = requirePrometheus(({ns}) => <div className="co-m-pane__body">
+  <Heading text="Resource Usage" />
+  <div className="row">
+    <div className="col-sm-6 col-xs-12">
+      <Line title="CPU Shares" query={[
+        {
+          name: 'Used',
+          query: `namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'}`,
+        },
+      ]} />
+    </div>
+    <div className="col-sm-6 col-xs-12">
+      <Line title="RAM" query={[
+        {
+          name: 'Used',
+          query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,
+        },
+      ]} />
+    </div>
+  </div>
+  <Bar title="Memory Usage by Pod (Top 10)" query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`} humanize={humanizeMem} metric="pod_name" />
+</div>);
+
 const Details = ({obj: ns}) => {
   const displayName = getDisplayName(ns);
   const requester = getRequester(ns);
@@ -170,28 +193,7 @@ const Details = ({obj: ns}) => {
         </div>
       </div>
     </div>
-    <div className="co-m-pane__body">
-      <Heading text="Resource Usage" />
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
-          <Line title="CPU Shares" query={[
-            {
-              name: 'Used',
-              query: `namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'}`,
-            },
-          ]} />
-        </div>
-        <div className="col-sm-6 col-xs-12">
-          <Line title="RAM" query={[
-            {
-              name: 'Used',
-              query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,
-            },
-          ]} />
-        </div>
-      </div>
-      <Bar title="Memory Usage by Pod (Top 10)" query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`} humanize={humanizeMem} metric="pod_name" />
-    </div>
+    <ResourceUsage ns={ns} />;
   </div>;
 };
 

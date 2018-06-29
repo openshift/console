@@ -6,7 +6,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { Cog, navFactory, kindObj, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
-import { Line } from './graphs';
+import { Line, requirePrometheus } from './graphs';
 
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable...',
@@ -129,39 +129,43 @@ const dropdownFilters = [{
 }];
 export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
 
-const Details = ({obj: node}) => {
+const NodeGraphs = requirePrometheus(({node}) => {
   const nodeIp = _.find(node.status.addresses, {type: 'InternalIP'});
   const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
   const memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
-
   const integerLimit = input => parseInt(input, 10);
 
   return <React.Fragment>
+    <div className="row">
+      <div className="col-md-4">
+        <Line title="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
+      </div>
+      <div className="col-md-4">
+        <Line title="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
+      </div>
+      <div className="col-md-4">
+        <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
+      </div>
+      <div className="col-md-4">
+        <Line title="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+      </div>
+      <div className="col-md-4">
+        <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+      </div>
+      <div className="col-md-4">
+        <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
+      </div>
+    </div>
+
+    <br />
+  </React.Fragment>;
+});
+
+const Details = ({obj: node}) => {
+  return <React.Fragment>
     <div className="co-m-pane__body">
       <Heading text="Node Overview" />
-      <div className="row">
-        <div className="col-md-4">
-          <Line title="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
-        </div>
-        <div className="col-md-4">
-          <Line title="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
-        </div>
-        <div className="col-md-4">
-          <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
-        </div>
-        <div className="col-md-4">
-          <Line title="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
-        </div>
-        <div className="col-md-4">
-          <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
-        </div>
-        <div className="col-md-4">
-          <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
-        </div>
-      </div>
-
-      <br />
-
+      <NodeGraphs node={node} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
