@@ -35,6 +35,9 @@ const splitEnv = (nameValue: string) => {
 export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({obj: imageStreamTag}) => {
   const config = _.get(imageStreamTag, 'image.dockerImageMetadata.Config', {});
   const labels = config.Labels || {};
+  // Convert to an array of objects with name and value properties, then sort the array for display.
+  const labelsArray = _.map(labels, (value, name) => ({ name, value }));
+  const sortedLabels = _.sortBy(labelsArray, 'name');
   const entrypoint = (config.Entrypoint || []).join(' ');
   const cmd = (config.Cmd || []).join(' ');
   const exposedPorts = _.keys(config.ExposedPorts).join(', ');
@@ -76,7 +79,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
     </div>
     <div className="co-m-pane__body-group">
       <h1 className="co-section-title">Image Labels</h1>
-      {_.isEmpty(labels)
+      {_.isEmpty(sortedLabels)
         ? <span className="text-muted">No labels</span>
         : <div className="co-table-container">
           <table className="table">
@@ -87,7 +90,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
               </tr>
             </thead>
             <tbody>
-              {_.map(labels, (value, name) => <tr key={name}>
+              {_.map(sortedLabels, ({name, value}) => <tr key={name}>
                 <td>{name}</td>
                 <td>{value}</td>
               </tr>)}
