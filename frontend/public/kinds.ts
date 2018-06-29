@@ -29,7 +29,7 @@ export const connectToPlural = connect((state: State, props: {plural?: GroupVers
     ? state.k8s.getIn(['RESOURCES', 'models']).get(plural)
     : _.find(k8sModels, model => model.plural === plural);
 
-  const modelRef = isGroupVersionKind(plural) ? plural : kindObj.kind;
+  const modelRef = isGroupVersionKind(plural) ? plural : _.get(kindObj, 'kind');
 
   return {kindObj, modelRef, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight'])} as any;
 });

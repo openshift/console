@@ -87,6 +87,10 @@ export default (state: ImmutableMap<string, any>, action) => {
     case types.resources:
       return action.resources.models
         .filter(model => !state.getIn(['RESOURCES', 'models']).has(referenceForModel(model)))
+        .filter(model => {
+          const existingModel = state.getIn(['RESOURCES', 'models', model.kind]);
+          return !existingModel || referenceForModel(existingModel) !== referenceForModel(model);
+        })
         .map(model => {
           model.namespaced ? namespacedResources.add(referenceForModel(model)) : namespacedResources.delete(referenceForModel(model));
           return model;
