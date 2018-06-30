@@ -1,9 +1,11 @@
 .node-ready,
+.pvc-bound,
 .route-accepted {
   color: $color-pf-green-400;
 }
 
 .node-not-ready,
+.pvc-lost,
 .route-rejected {
   color: $color-red-error;
 }

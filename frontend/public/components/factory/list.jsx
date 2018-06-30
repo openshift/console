@@ -120,7 +120,16 @@ const listFilters = {
     }
     const type = secret.type;
     return types.selected.has(type) || !_.includes(types.all, type);
-  }
+  },
+
+  'pvc-status': (phases, pvc) => {
+    if (!phases || !phases.selected || !phases.selected.size) {
+      return true;
+    }
+
+    const phase = pvc.status.phase;
+    return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {
