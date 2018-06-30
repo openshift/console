@@ -10,7 +10,6 @@
     --public-dir=./frontend/public/dist \
     --user-auth=openshift \
     --user-auth-oidc-client-id=console-oauth-client \
-    --user-auth-oidc-client-secret=$OAUTH_SECRET \
-    --user-auth-oidc-issuer-url=$OPENSHIFT_API
+    --user-auth-oidc-client-secret-file=examples/console-client-secret
     --user-auth-oidc-ca-file=examples/ca.crt
     --logo-image-name=origin

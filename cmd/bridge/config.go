@@ -141,8 +141,7 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	}
 
 	if clusterInfo.MasterPublicURL != "" {
-		fs.Set("k8s-mode", "off-cluster")
-		fs.Set("k8s-mode-off-cluster-endpoint", clusterInfo.MasterPublicURL)
+		fs.Set("k8s-public-endpoint", clusterInfo.MasterPublicURL)
 	}
 }
 

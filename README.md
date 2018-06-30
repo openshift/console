@@ -100,10 +100,16 @@ oc get secrets -n default --field-selector type=kubernetes.io/service-account-to
 # Note: use "openssl base64" because the "base64" tool is different between mac and linux
 ```
 
-Finally run the Console and visit [localhost:9000](http://localhost:9000):
+Set the `OPENSHIFT_API` environment variable to tell the script the API endpoint:
 
 ```
-./bin/bridge --config=examples/config.yaml
+export OPENSHIFT_API="https://127.0.0.1:8443"
+```
+
+Finally run the console and visit [localhost:9000](http://localhost:9000):
+
+```
+./examples/run-bridge.sh
 ```
 
 #### OpenShift (without OAuth)
