@@ -25,17 +25,17 @@ spec:
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-5 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-7 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
 </ListHeader>;
 
 const kind = 'PersistentVolumeClaim';
 const Row = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-4">
+  <div className="col-md-5 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind={kind} resource={obj} />
     <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-md-7 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
   </div>
 </div>;

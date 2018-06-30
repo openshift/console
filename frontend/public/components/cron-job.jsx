@@ -38,11 +38,11 @@ const Header = props => <ListHeader>
 
 const kind = 'CronJob';
 const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind={kind} resource={cronjob} />
     <ResourceLink kind={kind} name={cronjob.metadata.name} title={cronjob.metadata.name} namespace={cronjob.metadata.namespace} />
   </div>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} title={cronjob.metadata.namespace} />
   </div>
   <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">

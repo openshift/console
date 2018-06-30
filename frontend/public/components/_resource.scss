@@ -95,3 +95,7 @@ $height: 18px;
 .co-m-resource-icon--align-left {
   margin-left: 0;
 }
+
+.co-m-selector {
+  @include co-break-word;
+}

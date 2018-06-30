@@ -128,11 +128,11 @@ const BuildsHeader = props => <ListHeader>
 </ListHeader>;
 
 const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co-resource-list__item">
-  <div className="col-xs-3">
+  <div className="col-xs-3 co-break-word">
     <ResourceCog actions={menuActions} kind={BuildsReference} resource={obj} />
     <ResourceLink kind={BuildsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-xs-3 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
   <div className="col-xs-3">

@@ -45,17 +45,17 @@ spec:
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-5 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-7 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
 </ListHeader>;
 
 const kind = 'StatefulSet';
 const Row = ({obj: ss}) => <div className="row co-resource-list__item">
-  <div className="col-xs-4">
+  <div className="col-md-5 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind={kind} resource={ss} />
     <ResourceLink kind={kind} name={ss.metadata.name} namespace={ss.metadata.namespace} title={ss.metadata.name} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-md-7 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={ss.metadata.namespace} title={ss.metadata.namespace} />
   </div>
 </div>;

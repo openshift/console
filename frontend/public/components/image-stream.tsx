@@ -31,23 +31,21 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
   const image = _.get(latest, 'image');
   const created = _.get(latest, 'created');
   return <div className="row">
-    <div className="middler">
-      <div className="col-md-2 col-sm-4 col-xs-4">
-        <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)} namespace={imageStream.metadata.namespace} title={statusTag.tag} />
-      </div>
-      <span className="col-md-3 col-sm-4 col-xs-8">
-        {from && referencesTag && <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, from.name)} namespace={imageStream.metadata.namespace} title={from.name} />}
-        {from && !referencesTag && <Overflow value={from.name} />}
-        {!from && <span className="text-muted">pushed image</span>}
-      </span>
-      <span className="col-md-4 col-sm-4 hidden-xs">
-        {image && <Overflow value={image} />}
-        {!image && '-'}
-      </span>
-      <div className="col-md-3 hidden-sm hidden-xs">
-        {created && <Timestamp timestamp={created} />}
-        {!created && '-'}
-      </div>
+    <div className="col-md-2 col-sm-4 col-xs-4 co-break-word">
+      <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)} namespace={imageStream.metadata.namespace} title={statusTag.tag} />
+    </div>
+    <span className="col-md-3 col-sm-4 col-xs-8 co-break-word">
+      {from && referencesTag && <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, from.name)} namespace={imageStream.metadata.namespace} title={from.name} />}
+      {from && !referencesTag && <Overflow value={from.name} />}
+      {!from && <span className="text-muted">pushed image</span>}
+    </span>
+    <span className="col-md-4 col-sm-4 hidden-xs">
+      {image && <Overflow value={image} />}
+      {!image && '-'}
+    </span>
+    <div className="col-md-3 hidden-sm hidden-xs">
+      {created && <Timestamp timestamp={created} />}
+      {!created && '-'}
     </div>
   </div>;
 };
@@ -106,11 +104,11 @@ const ImageStreamsHeader = props => <ListHeader>
 </ListHeader>;
 
 const ImageStreamsRow: React.SFC<ImageStreamsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-3">
+  <div className="col-xs-3 co-break-word">
     <ResourceCog actions={menuActions} kind={ImageStreamsReference} resource={obj} />
     <ResourceLink kind={ImageStreamsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-xs-3 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
   <div className="col-xs-3">

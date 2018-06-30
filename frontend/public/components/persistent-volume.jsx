@@ -30,7 +30,7 @@ const Header = props => <ListHeader>
 
 const kind = 'PersistentVolume';
 const Row = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-4">
+  <div className="col-xs-4 co-break-word">
     <ResourceCog actions={menuActions} kind={kind} resource={obj} />
     <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>

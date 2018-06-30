@@ -43,11 +43,11 @@ const Header = props => <ListHeader>
 </ListHeader>;
 
 const Row = ({obj: role}) => <div className="row co-resource-list__item">
-  <div className="col-xs-6">
+  <div className="col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind={roleKind(role)} resource={role} />
     <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
   </div>
-  <div className="col-xs-6">
+  <div className="col-xs-6 co-break-word">
     {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
   </div>
 </div>;

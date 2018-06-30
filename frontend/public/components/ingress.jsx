@@ -53,12 +53,12 @@ const IngressListHeader = props => <ListHeader>
 </ListHeader>;
 
 const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
-  <div className="col-md-3 col-sm-4 col-xs-6">
+  <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
     <ResourceLink kind="Ingress" name={ingress.metadata.name}
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
   </div>
-  <div className="col-md-3 col-sm-4 col-xs-6">
+  <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={ingress.metadata.namespace} title={ingress.metadata.namespace} />
   </div>
   <div className="col-md-3 col-sm-4 hidden-xs">
@@ -77,10 +77,10 @@ const RulesHeader = () => <div className="row co-m-table-grid__head">
 const RulesRow = ({rule, namespace}) => {
 
   return <div className="row co-resource-list__item">
-    <div className="col-xs-3">
+    <div className="col-xs-3 co-break-word">
       <div>{rule.host}</div>
     </div>
-    <div className="col-xs-3">
+    <div className="col-xs-3 co-break-word">
       <div>{rule.path}</div>
     </div>
     <div className="col-xs-3">

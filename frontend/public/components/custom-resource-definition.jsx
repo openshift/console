@@ -49,11 +49,11 @@ const isEstablished = conditions => {
 const namespaced = crd => crd.spec.scope === 'Namespaced';
 
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
-  <div className="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+  <div className="col-lg-4 col-md-4 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
     <ResourceLink kind={referenceForCRD(crd)} displayName={_.get(crd, 'spec.names.kind', crd.metadata.name)} namespace={crd.metadata.namespace} title={crd.metadata.name} />
   </div>
-  <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
+  <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6 co-break-word">
     { crd.spec.group }
   </div>
   <div className="col-lg-2 col-md-2 col-sm-4 hidden-xs">

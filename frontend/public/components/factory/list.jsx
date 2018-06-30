@@ -378,11 +378,11 @@ export class ResourceRow extends React.Component {
 }
 
 export const WorkloadListRow = ({kind, actions, obj: o}) => <ResourceRow obj={o}>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceCog actions={actions} kind={kind} resource={o} />
     <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
   </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={o.metadata.namespace} title={o.metadata.namespace} />
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">

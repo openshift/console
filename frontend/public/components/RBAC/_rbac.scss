@@ -3,6 +3,7 @@
 }
 
 .rbac-rule {
+  width: 100%; // since its parent .co-resource-list__item is a flex container
   &__actions {
     align-items: baseline;
     display: flex;
