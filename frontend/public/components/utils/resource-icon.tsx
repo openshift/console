@@ -8,17 +8,19 @@ import { modelFor } from '../../module/k8s/k8s-models';
 const MEMO = {};
 
 export const ResourceIcon = (props: ResourceIconProps) => {
-  if (MEMO[props.kind]) {
-    return MEMO[props.kind];
+  const { kind, className } = props;
+  const memoKey = className ? `${kind}/${className}` : kind;
+  if (MEMO[memoKey]) {
+    return MEMO[memoKey];
   }
-  const kindObj = modelFor(props.kind);
-  const kindStr = _.get(kindObj, 'kind', props.kind);
-  const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, props.className);
+  const kindObj = modelFor(kind);
+  const kindStr = _.get(kindObj, 'kind', kind);
+  const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
   const iconLabel = (kindObj && kindObj.abbr) || kindStr.toUpperCase().slice(0, 3);
 
   const rendered = <span className={klass}>{iconLabel}</span>;
   if (kindObj) {
-    MEMO[props.kind] = rendered;
+    MEMO[memoKey] = rendered;
   }
 
   return rendered;
