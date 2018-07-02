@@ -6,7 +6,7 @@ import { K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary } from './utils';
+import { BuildHooks, BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Triggers } from './utils';
 import { BuildsPage, BuildEnvironmentComponent } from './build';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
@@ -59,16 +59,20 @@ const menuActions = [
   ...common,
 ];
 
-export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: buildConfig}) => <div className="co-m-pane__body">
-  <div className="row">
-    <div className="col-sm-6">
-      <ResourceSummary resource={buildConfig} showPodSelector={false} showNodeSelector={false} />
-    </div>
-    <div className="col-sm-6">
-      <BuildStrategy resource={buildConfig} />
+export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: buildConfig}) => <React.Fragment>
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-sm-6">
+        <ResourceSummary resource={buildConfig} showPodSelector={false} showNodeSelector={false} />
+      </div>
+      <div className="col-sm-6">
+        <BuildStrategy resource={buildConfig} />
+      </div>
     </div>
   </div>
-</div>;
+  <BuildHooks resource={buildConfig} />
+  <Triggers resource={buildConfig} />
+</React.Fragment>;
 
 const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
 
