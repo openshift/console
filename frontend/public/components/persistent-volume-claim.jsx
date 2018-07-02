@@ -5,6 +5,7 @@ import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Selector } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { ResourceEventStream } from './events';
 
 registerTemplate('v1.PersistentVolumeClaim', `kind: PersistentVolumeClaim
 apiVersion: v1
@@ -123,5 +124,5 @@ export const PersistentVolumeClaimsPage = props => <ListPage {...props} ListComp
 export const PersistentVolumeClaimsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml()]}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.events(ResourceEventStream)]}
 />;

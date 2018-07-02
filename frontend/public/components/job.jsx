@@ -6,6 +6,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { configureJobParallelismModal } from './modals';
 import { Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { ResourceEventStream } from './events';
 
 registerTemplate('batch/v1.Job', `apiVersion: batch/v1
 kind: Job
@@ -99,11 +100,11 @@ const Details = ({obj: job}) => <div className="co-m-pane__body">
   </div>
 </div>;
 
-const {details, pods, editYaml} = navFactory;
+const {details, pods, editYaml, events} = navFactory;
 const JobsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(Details), editYaml(), pods()]}
+  pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
 />;
 const JobsList = props => <List {...props} Header={JobHeader} Row={JobRow} />;
 const JobsPage = props => <ListPage ListComponent={JobsList} canCreate={true} {...props} />;

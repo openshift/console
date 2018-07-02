@@ -7,6 +7,7 @@ import { Conditions } from './conditions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, LabelList, navFactory, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { ResourceEventStream } from './events';
 
 // Pushes to the HPA created by the HPA YAML template.
 registerTemplate('autoscaling/v2beta1.HorizontalPodAutoscaler', `apiVersion: autoscaling/v2beta1
@@ -182,7 +183,7 @@ export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalers
   </div>
 </React.Fragment>;
 
-const pages = [navFactory.details(HorizontalPodAutoscalersDetails), navFactory.editYaml()];
+const pages = [navFactory.details(HorizontalPodAutoscalersDetails), navFactory.editYaml(), navFactory.events(ResourceEventStream)];
 export const HorizontalPodAutoscalersDetailsPage: React.SFC<HorizontalPodAutoscalersDetailsPageProps> = props =>
   <DetailsPage
     {...props}

@@ -5,6 +5,7 @@ import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './u
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
+import { ResourceEventStream } from './events';
 
 registerTemplate('apps/v1.ReplicaSet', `apiVersion: apps/v1
 kind: ReplicaSet
@@ -52,7 +53,7 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={false}
 />;
 
-const {details, editYaml, pods, envEditor} = navFactory;
+const {details, editYaml, pods, envEditor, events} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage
   {...props}
   breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
@@ -60,7 +61,7 @@ const ReplicaSetsDetailsPage = props => <DetailsPage
     path: props.match.url,
   })}
   menuActions={replicaSetMenuActions}
-  pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent)]}
+  pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="ReplicaSet" actions={replicaSetMenuActions} />;

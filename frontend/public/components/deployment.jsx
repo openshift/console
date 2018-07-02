@@ -7,6 +7,7 @@ import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, Resourc
 import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
+import { ResourceEventStream } from './events';
 
 registerTemplate('apps/v1.Deployment', `apiVersion: apps/v1
 kind: Deployment
@@ -94,11 +95,11 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={false}
 />;
 
-const {details, editYaml, pods, envEditor} = navFactory;
+const {details, editYaml, pods, envEditor, events} = navFactory;
 const DeploymentsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(DeploymentDetails), editYaml(), pods(), envEditor(environmentComponent)]}
+  pages={[details(DeploymentDetails), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
 
 const Row = props => <WorkloadListRow {...props} kind="Deployment" actions={menuActions} />;
