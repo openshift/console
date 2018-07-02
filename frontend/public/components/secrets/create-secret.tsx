@@ -206,14 +206,14 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
           <label className="control-label" htmlFor="secret-type" >Authentication Type</label>
           <div>
             <select onChange={this.changeAuthenticationType} value={this.state.type} className="form-control" id="secret-type">
-              <option value="kubernetes.io/basic-auth">Basic Authentication</option>
-              <option value="kubernetes.io/ssh-auth">SSH Key</option>
+              <option value={SecretType.basicAuth}>Basic Authentication</option>
+              <option value={SecretType.sshAuth}>SSH Key</option>
             </select>
           </div>
         </div>
         : null
       }
-      { this.state.type === 'kubernetes.io/basic-auth'
+      { this.state.type === SecretType.basicAuth
         ? <BasicAuthSubform onChange={this.onDataChanged} stringData={this.state.stringData} />
         : <SSHAuthSubform onChange={this.onDataChanged} stringData={this.state.stringData} />
       }
