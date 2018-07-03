@@ -135,7 +135,7 @@ describe(SubscriptionsPage.displayName, () => {
     expect(wrapper.find(ListPage).props().showTitle).toBe(true);
     expect(wrapper.find(ListPage).props().canCreate).toBe(true);
     expect(wrapper.find(ListPage).props().createProps).toEqual({to: '/k8s/ns/default/catalogsource-v1s'});
-    expect(wrapper.find(ListPage).props().createButtonText).toEqual('New Subscription');
+    expect(wrapper.find(ListPage).props().createButtonText).toEqual('Create Subscription');
     expect(wrapper.find(ListPage).props().filterLabel).toEqual('Subscriptions by package');
     expect(wrapper.find(ListPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
   });
