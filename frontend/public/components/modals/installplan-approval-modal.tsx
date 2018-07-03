@@ -49,7 +49,9 @@ export class InstallPlanApprovalModal extends PromiseComponent {
               title={InstallPlanApproval.Automatic}
               subTitle="(default)">
               <div className="co-m-radio-desc">
-                New updates will be installed as soon as they become available.
+                <p className="text-muted">
+                  New updates will be installed as soon as they become available.
+                </p>
               </div>
             </RadioInput>
           </div>
@@ -60,7 +62,9 @@ export class InstallPlanApprovalModal extends PromiseComponent {
               checked={this.state.selectedApprovalStrategy === InstallPlanApproval.Manual}
               title={InstallPlanApproval.Manual}>
               <div className="co-m-radio-desc">
-                New updates need to be manually approved before installation begins.
+                <p className="text-muted">
+                  New updates need to be manually approved before installation begins.
+                </p>
               </div>
             </RadioInput>
           </div>

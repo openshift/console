@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types';
 
 export const RadioInput = (props) => {
   const inputProps = _.omit(props, ['title', 'subTitle', 'desc', 'children']);
-  return <div className="radio-item">
+  return <div className="radio-item form-group">
     <label>
       <input type="radio" {...inputProps} />
       {props.title} { props.subTitle && <span className="co-no-bold">{props.subTitle}</span>}
