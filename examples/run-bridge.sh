@@ -13,3 +13,4 @@
     --user-auth-oidc-client-id=tectonic-console \
     --user-auth-oidc-client-secret=$OAUTH_SECRET \
     --user-auth-oidc-issuer-url=$OPENSHIFT_API
+    --logo-image-name=origin
