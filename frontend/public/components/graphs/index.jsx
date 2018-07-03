@@ -42,6 +42,7 @@ const canAccessPrometheus = (openshiftFlag, prometheusFlag, canListNS) => {
 };
 
 // HOC that will hide WrappedComponent when Prometheus isn't configured or the user doesn't have permission to query Prometheus.
+/** @type {(WrappedComponent: React.SFC<P>) => React.ComponentType<P & {isOpenShift: boolean}>} */
 export const requirePrometheus = WrappedComponent => connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROMETHEUS, FLAGS.CAN_LIST_NS)(props => {
   const { flags } = props;
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
