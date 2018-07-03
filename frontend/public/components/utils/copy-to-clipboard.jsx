@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from 'react-lightweight-tooltip';
@@ -60,9 +61,10 @@ export class CopyToClipboard extends React.PureComponent {
 
     const tooltipText = this.state.copied ? 'Copied' : 'Copy to Clipboard';
     const tooltipContent = [<span className="co-nowrap" key="nowrap">{tooltipText}</span>];
+    const value = _.isNil(this.props.visibleValue) ? this.props.value : this.props.visibleValue;
 
     return <div className="co-copy-to-clipboard">
-      <pre className="co-pre-wrap co-copy-to-clipboard__text">{this.props.visibleValue}</pre>
+      <pre className="co-pre-wrap co-copy-to-clipboard__text">{value}</pre>
       <Tooltip content={tooltipContent} styles={overrides}>
         <CTC text={this.props.value} onCopy={this.showCopied}>
           <button onMouseEnter={this.showDefault} className="btn btn-default co-copy-to-clipboard__btn fix" type="button">
