@@ -9,8 +9,9 @@ import 'brace/ext/searchbox';
 import 'brace/mode/yaml';
 import 'brace/theme/clouds';
 import 'brace/ext/language_tools';
+import 'brace/snippets/yaml';
 
-import { k8sCreate, k8sUpdate, referenceFor, modelFor, getCompletions, apiVersionForModel } from '../module/k8s';
+import { k8sCreate, k8sUpdate, referenceFor, modelFor, getCompletions, apiVersionForModel, snippets } from '../module/k8s';
 import { history, Loading, resourceObjPath } from './utils';
 import { SafetyFirst } from './safety-first';
 import { coFetchJSON } from '../co-fetch';
@@ -18,9 +19,11 @@ import { coFetchJSON } from '../co-fetch';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { TEMPLATES } from '../yaml-templates';
 
-let id = 0;
-
+const { snippetManager } = ace.acequire('ace/snippets');
+snippetManager.register([...snippets.values()], 'yaml');
 ace.acequire('ace/ext/language_tools').addCompleter({getCompletions});
+
+let id = 0;
 
 const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   const kindObj = modelFor(kind) || {};
@@ -167,7 +170,7 @@ export const EditYAML = connect(stateToProps)(
       this.ace.setOption('scrollPastEnd', 0.1);
       this.ace.setOption('tabSize', 2);
       this.ace.setOption('showPrintMargin', false);
-      this.ace.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: !window.navigator.webdriver});
+      this.ace.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: !window.navigator.webdriver, enableSnippets: true});
 
       // Allow undo after saving but not after first loading the document
       if (!this.state.initialized) {
