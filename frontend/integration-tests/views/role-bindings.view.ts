@@ -1,9 +1,7 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
+import { createYAMLButton } from './crud.view.ts';
 
 const BROWSER_TIMEOUT = 15000;
-
-export const titleLbl = $('#resource-title');
-export const createBtn = $('#yaml-create');
 
 //Create Role Binding
 export const crbTitleLbl = $('.co-m-pane__heading');
@@ -17,4 +15,4 @@ export const crbGroupRad = $('.radio-item input[value = Group]');
 export const crbServiceAccountRad = $('.radio-item input[value = ServiceAccount]');
 export const crbSubjectNsBtn = $('#test--subject-ns-dropdown');
 export const crbSubjectNameInp = $('#test--subject-name');
-export const isLoaded = () => browser.wait(until.presenceOf(createBtn), BROWSER_TIMEOUT);
+export const isLoaded = () => browser.wait(until.presenceOf(createYAMLButton), BROWSER_TIMEOUT);

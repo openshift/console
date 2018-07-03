@@ -115,7 +115,7 @@ describe('Role Bindings', () => {
     }
 
     await roleBindingsView.crbSubjectNameInp.sendKeys(subjectName);
-    await roleBindingsView.createBtn.click();
+    await crudView.createYAMLButton.click();
 
     await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
     await crudView.isLoaded();
