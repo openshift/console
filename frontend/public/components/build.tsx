@@ -12,6 +12,7 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
 import { EnvironmentPage } from './environment';
 import { BuildLogs } from './build-logs';
+import { ResourceEventStream } from './events';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -107,7 +108,14 @@ export const BuildEnvironmentComponent = (props) => {
   </div>;
 };
 
-const pages = [navFactory.details(BuildsDetails), navFactory.editYaml(), navFactory.envEditor(BuildEnvironmentComponent), navFactory.logs(BuildLogs)];
+const pages = [
+  navFactory.details(BuildsDetails),
+  navFactory.editYaml(),
+  navFactory.envEditor(BuildEnvironmentComponent),
+  navFactory.logs(BuildLogs),
+  navFactory.events(ResourceEventStream)
+];
+
 export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>
   <DetailsPage
     {...props}

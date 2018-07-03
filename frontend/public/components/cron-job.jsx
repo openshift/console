@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { registerTemplate } from '../yaml-templates';
+import { ResourceEventStream } from './events';
 
 registerTemplate('batch/v1beta1.CronJob', `apiVersion: batch/v1beta1
 kind: CronJob
@@ -98,5 +99,5 @@ export const CronJobsPage = props => <ListPage {...props} ListComponent={CronJob
 export const CronJobsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml()]}
+  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.events(ResourceEventStream)]}
 />;

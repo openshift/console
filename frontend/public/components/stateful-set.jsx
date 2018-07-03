@@ -4,6 +4,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
+import { ResourceEventStream } from './events';
 
 registerTemplate('apps/v1.StatefulSet', `apiVersion: apps/v1
 kind: StatefulSet
@@ -78,8 +79,16 @@ const environmentComponent = (props) => <EnvironmentPage
 export const StatefulSetsList = props => <List {...props} Header={Header} Row={Row} />;
 export const StatefulSetsPage = props => <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />;
 
+const pages = [
+  navFactory.details(Details),
+  navFactory.editYaml(),
+  navFactory.pods(),
+  navFactory.envEditor(environmentComponent),
+  navFactory.events(ResourceEventStream)
+];
+
 export const StatefulSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.pods(), navFactory.envEditor(environmentComponent)]}
+  pages={pages}
 />;

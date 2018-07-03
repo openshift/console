@@ -420,4 +420,4 @@ EventStream.propTypes = {
 };
 
 
-export const ResourceEventStream = ({obj: {metadata: {name, namespace}}}) => <EventStream filter={{name}} namespace={namespace} />;
+export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace}}}) => <EventStream filter={{name, kind}} namespace={namespace} />;

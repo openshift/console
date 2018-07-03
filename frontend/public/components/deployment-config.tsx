@@ -10,6 +10,7 @@ import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, Resourc
 import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
+import { ResourceEventStream } from './events';
 
 registerTemplate('apps.openshift.io/v1.DeploymentConfig', `apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
@@ -116,7 +117,14 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={false}
 />;
 
-const pages = [navFactory.details(DeploymentConfigsDetails), navFactory.editYaml(), navFactory.pods(), navFactory.envEditor(environmentComponent)];
+const pages = [
+  navFactory.details(DeploymentConfigsDetails),
+  navFactory.editYaml(),
+  navFactory.pods(),
+  navFactory.envEditor(environmentComponent),
+  navFactory.events(ResourceEventStream)
+];
+
 export const DeploymentConfigsDetailsPage: React.SFC<DeploymentConfigsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={DeploymentConfigsReference} menuActions={menuActions} pages={pages} />;
 };
