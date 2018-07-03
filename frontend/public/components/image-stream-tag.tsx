@@ -43,6 +43,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   const exposedPorts = _.keys(config.ExposedPorts).join(', ');
   const size = _.get(imageStreamTag, 'image.dockerImageMetadata.Size');
   const humanizedSize = _.isFinite(size) && humanizeMem(size);
+  const architecture = _.get(imageStreamTag, 'image.dockerImageMetadata.Architecture');
 
   return <div className="co-m-pane__body">
     <div className="co-m-pane__body-group">
@@ -71,8 +72,8 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
             {exposedPorts && <dd><Overflow value={exposedPorts} /></dd>}
             {config.User && <dt>User</dt>}
             {config.User && <dd>{config.User}</dd>}
-            {config.Architecture && <dt>Architecture</dt>}
-            {config.Architecture && <dd>{config.Architecture}</dd>}
+            {architecture && <dt>Architecture</dt>}
+            {architecture && <dd>{architecture}</dd>}
           </dl>
         </div>
       </div>
