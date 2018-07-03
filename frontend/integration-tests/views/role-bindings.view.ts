@@ -1,5 +1,5 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
-import { createYAMLButton } from './crud.view.ts';
+import { createYAMLButton } from './crud.view';
 
 const BROWSER_TIMEOUT = 15000;
 
