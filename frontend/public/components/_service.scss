@@ -6,27 +6,11 @@
   .co-ip-row {
     // Collapse borders when multiple consecutive rows.
     margin-top: -1px;
-
     padding: 20px 0 5px 20px;
     border: 1px solid #eee;
 
     .ip-name {
       margin-bottom: 5px;
-    }
-
-    &:only-child {
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-    }
-
-    &:first-child {
-      border-top-left-radius: 5px;
-      border-top-right-radius: 5px;
-    }
-
-    &:last-child {
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
     }
   }
 }
