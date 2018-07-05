@@ -9,6 +9,86 @@ import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { k8sListPartialMetadata } from '../../module/k8s/resource';
 import { getActiveNamespace } from '../../ui/ui-actions';
 
+export type AceSnippet = {
+  content: string;
+  name?: string;
+  guard?: string;
+  trigger?: string;
+  endTrigger?: string;
+  endGuard?: string;
+  tabTrigger?: string;
+};
+
+export const snippets = ImmutableMap<string, string>()
+  .set('metadata', `
+    metadata:
+      name: \${1}
+      namespace: \${2}
+      labels: 
+        \${3}
+      annotations:
+        \${4}
+  `)
+  .set('selector', `
+    selector:
+      matchLabels:
+        \${1}
+  `)
+  .set('containers', `
+    containers:
+      - name: \${1}
+        image: \${2}
+        ports:
+          - containerPort: \${3}
+        volumeMounts:
+          - name: \${4}
+            mountPath: \${5}
+        command:
+          - \${6}
+  `)
+  .set('volumeClaimTemplates', `
+    volumeClaimTemplates:
+      - metadata:
+          name: \${1}
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: \${2}
+          resources:
+            requests:
+              storage: 1Gi
+  `)
+  .set('rules', `
+    rules:
+      - http:
+          paths:
+            - path: /\${1}
+              backend:
+                serviceName: \${2}
+                servicePort: 80
+  `)
+  .set('ports', `
+    ports:
+      - protocol: TCP
+        port: 80
+        targetPort: \${1}
+  `)
+  .set('parameters', `
+    parameters:
+      - name: \${1}
+        value: \${2}
+        description: \${3}
+  `)
+  .set('triggers', `
+    triggers:
+      - imageChange:
+          from:
+            kind: ImageStreamTag
+            name: \${1}
+        type: ImageChange
+  `)
+  .map((content, name) => ({name, content: content.split('\n').slice(1, content.split('\n').length - 1).map(s => s.substring(4)).join('\n')} as AceSnippet));
+
 /**
  * Defines a bunch of possibilities for property value completion, defined in the OpenAPI/Swagger spec.
  */
