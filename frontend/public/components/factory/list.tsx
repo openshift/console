@@ -234,7 +234,7 @@ export const WorkloadListHeader = props => <ListHeader>
 export const Rows: React.SFC<RowsProps> = (props) => {
   const measurementCache = new CellMeasurerCache({
     fixedWidth: true,
-    minHeight: 50,
+    minHeight: 44,
     keyMapper: rowIndex => `${_.get(props.data[rowIndex], 'metadata.uid', rowIndex)}-${props.expand ? 'expanded' : 'collapsed'}`,
   });
 
