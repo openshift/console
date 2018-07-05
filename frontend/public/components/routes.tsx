@@ -181,7 +181,7 @@ class TLSSettings extends SafetyFirst<TLSDataProps, TLSDataState> {
         <dt>Insecure Traffic</dt>
         <dd>{tls.insecureEdgeTerminationPolicy || '-'}</dd>
         <dt>Certificate</dt>
-        <dd>{tls.certificate ? <CopyToClipboard value={tls.certificate}/> : '-'}</dd>
+        <dd>{tls.certificate ? <CopyToClipboard value={tls.certificate} visibleValue={tls.certificate}/> : '-'}</dd>
         <dt className="co-m-route-tls-reveal__title">Key {tls.key &&
           <button className="btn btn-link co-m-route-tls-reveal__btn" type="button" onClick={this.toggleKey}>
             {
@@ -193,10 +193,10 @@ class TLSSettings extends SafetyFirst<TLSDataProps, TLSDataState> {
         </dt>
         <dd>{tls.key ? <CopyToClipboard value={tls.key} visibleValue={visibleKeyValue}/> : '-'}</dd>
         <dt>CA Certificate</dt>
-        <dd>{tls.caCertificate ? <CopyToClipboard value={tls.caCertificate}/> : '-'}</dd>
+        <dd>{tls.caCertificate ? <CopyToClipboard value={tls.caCertificate} visibleValue={tls.caCertificate}/> : '-'}</dd>
         {tls.termination === 'reencrypt' && <React.Fragment>
           <dt>Destination CA Cert</dt>
-          <dd>{tls.destinationCACertificate ? <CopyToClipboard value={tls.destinationCACertificate}/> : '-'}</dd>
+          <dd>{tls.destinationCACertificate ? <CopyToClipboard value={tls.destinationCACertificate} visibleValue={tls.destinationCACertificate}/> : '-'}</dd>
         </React.Fragment>}
       </dl>;
   }
