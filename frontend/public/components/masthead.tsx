@@ -6,7 +6,7 @@ import * as openshiftOriginLogoImg from '../imgs/openshift-origin-logo.svg';
 import * as openshiftPlatformLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as openshiftOnlineLogoImg from '../imgs/openshift-online-logo.svg';
 import * as tectonicLogoImg from '../imgs/tectonic-logo.svg';
-import { FLAGS, connectToFlags } from '../features';
+import { FLAGS, connectToFlags, flagPending } from '../features';
 import { authSvc } from '../module/auth';
 import { Dropdown, ActionsMenu } from './utils';
 
@@ -29,7 +29,7 @@ const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) 
 };
 
 const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((props: FlagsProps) => {
-  if (props.flags[FLAGS.OPENSHIFT] === undefined || props.flags[FLAGS.AUTH_ENABLED] === undefined) {
+  if (flagPending(props.flags[FLAGS.OPENSHIFT]) || flagPending(props.flags[FLAGS.AUTH_ENABLED])) {
     return null;
   }
 
@@ -96,7 +96,7 @@ const ContextSwitcher = () => {
 };
 
 export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => {
-  const isOpenShiftCluster = props.flags[FLAGS.OPENSHIFT];
+  const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
   let logoImg, logoAlt;
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
@@ -118,12 +118,12 @@ export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => 
       logoAlt = 'Tectonic';
       break;
     default:
-      if (isOpenShiftCluster === undefined) {
+      if (flagPending(openshiftFlag)) {
         // Don't flash the Tectonic logo if we're still detecting if this is OpenShift.
         return null;
       }
-      logoImg = isOpenShiftCluster ? openshiftOriginLogoImg : tectonicLogoImg;
-      logoAlt = isOpenShiftCluster ? 'OpenShift Origin' : 'Tectonic';
+      logoImg = openshiftFlag ? openshiftOriginLogoImg : tectonicLogoImg;
+      logoAlt = openshiftFlag ? 'OpenShift Origin' : 'Tectonic';
   }
 
   return <div className="co-masthead__logo">

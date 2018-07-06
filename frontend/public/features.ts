@@ -170,3 +170,6 @@ export const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLA
   next.UI.get('location') === previous.UI.get('location');
 
 export const connectToFlags = (...flags) => connect(state => stateToProps(flags, state));
+
+// Flag detection is not complete if the flag's value is `undefined`.
+export const flagPending = flag => flag === undefined;

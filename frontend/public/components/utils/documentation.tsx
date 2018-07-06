@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
-import { FLAGS, connectToFlags } from '../../features';
+import { FLAGS, connectToFlags, flagPending } from '../../features';
 
 export const tectonicHelpBase = 'https://coreos.com/tectonic/docs/latest/';
 
@@ -68,7 +68,7 @@ export const OpenShiftAdditionalSupportLinks = () => <ul className="co-additiona
 
 const DocumentationSidebar_ = props => {
   const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
-  if (openshiftFlag === undefined) {
+  if (flagPending(openshiftFlag)) {
     return null;
   }
   return <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered">

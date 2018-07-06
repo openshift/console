@@ -16,7 +16,7 @@ export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9
 export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
   class ClusterSettingsPage_ extends SafetyFirst {
     render() {
-      const { CLUSTER_UPDATES} = this.props.flags;
+      const { CLUSTER_UPDATES } = this.props.flags;
 
       return <div className="co-p-cluster co-p-has-sidebar">
         <Helmet>
