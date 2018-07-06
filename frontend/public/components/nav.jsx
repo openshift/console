@@ -234,6 +234,19 @@ const NavSection = connect(navSectionStateToProps)(
 
 const Sep = () => <div className="navigation-container__section__separator" />;
 
+const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
+  // Hide the cluster picker on OpenShift clusters. Make sure flag detection is
+  // complete before showing the picker. The flag will be undefined if
+  // detection is not complete.
+  if (flags[FLAGS.OPENSHIFT] !== false) {
+    return null;
+  }
+
+  return <div className="navigation-container__section navigation-container__section--cluster-picker">
+    <ClusterPicker />
+  </div>;
+});
+
 const logout = e => {
   e && e.preventDefault();
   authSvc.logout();
@@ -315,9 +328,7 @@ export class Nav extends React.Component {
         <span className="icon-bar" aria-hidden="true"></span>
       </button>
       <div id="sidebar" className={classNames({'open': isOpen})}>
-        <div className="navigation-container__section navigation-container__section--cluster-picker">
-          <ClusterPicker />
-        </div>
+        <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Overview" icon="fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
           <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
