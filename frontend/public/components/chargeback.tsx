@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
 import { SafetyFirst } from './safety-first';
-import { FLAGS, connectToFlags } from '../features';
+import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
 import { LoadError, LoadingBox, LoadingInline, MsgBox } from './utils/status-box';
@@ -363,7 +363,7 @@ const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Re
 export const ReportsList: React.SFC = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} EmptyMsg={EmptyMsg}/>;
 
 const ReportsPage_: React.SFC<ReportsPageProps> = props => {
-  if (props.flags[FLAGS.CHARGEBACK] === undefined) {
+  if (flagPending(props.flags[FLAGS.CHARGEBACK])) {
     return <LoadingBox />;
   }
   if (props.flags[FLAGS.CHARGEBACK]) {

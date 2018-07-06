@@ -6,7 +6,7 @@ import * as PropTypes from 'prop-types';
 import { Dropdown, ResourceIcon } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { allModels, K8sKind } from '../module/k8s';
-import { FLAGS, featureReducerName } from '../features';
+import { FLAGS, featureReducerName, flagPending } from '../features';
 import * as classNames from 'classnames';
 import { ClusterServiceVersionModel, EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../models';
 
@@ -75,7 +75,7 @@ const DropdownItem = ({kind}) => {
 
 const ResourceListDropdown_: React.StatelessComponent<ResourceListDropdownProps> = props => {
   const { selected, onChange, allkinds, openshiftFlag, showAll, className } = props;
-  if (openshiftFlag === undefined) {
+  if (flagPending(openshiftFlag)) {
     return null;
   }
 

@@ -13,7 +13,7 @@ import { Status, errorStatus } from './graphs/status';
 import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
-import { FLAGS, connectToFlags } from '../features';
+import { FLAGS, connectToFlags, flagPending } from '../features';
 
 const fetchHealth = () => coFetch(`${k8sBasePath}/healthz`)
   .then(response => response.text())
@@ -159,13 +159,13 @@ const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({limited, namespace, flags})
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Software Info</h2>
-          {!openshiftFlag && <a href="https://coreos.com/tectonic/releases/" target="_blank" className="co-external-link" rel="noopener noreferrer">Release Notes</a>}
+          {!flagPending(openshiftFlag) && !openshiftFlag && <a href="https://coreos.com/tectonic/releases/" target="_blank" className="co-external-link" rel="noopener noreferrer">Release Notes</a>}
         </div>
         <div className="container-fluid group__body">
           <SoftwareDetails />
         </div>
       </div>
-      {openshiftFlag !== undefined && <React.Fragment>
+      {!flagPending(openshiftFlag) && <React.Fragment>
         <div className="group">
           <div className="group__title">
             <h2 className="h3">Documentation</h2>

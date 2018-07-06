@@ -15,7 +15,7 @@ import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configu
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
 import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
-import { FLAGS, connectToFlags, featureReducerName } from '../features';
+import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
 import { openshiftHelpBase } from './utils/documentation';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
@@ -256,7 +256,7 @@ const NamespaceDropdown = connect(namespaceDropdownStateToProps)(props => {
 
 const NamespaceSelector_ = ({flags}) => {
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
-  if (openshiftFlag === undefined) {
+  if (flagPending(openshiftFlag)) {
     // Wait until the flag is initialized.
     return <div className="co-namespace-selector" />;
   }

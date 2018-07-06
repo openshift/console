@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { FLAGS, connectToFlags } from '../features';
+import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
 // eslint-disable-next-line no-unused-vars
@@ -61,7 +61,7 @@ const EmptyMsg = () => <MsgBox title="No Clusters in Directory" detail="Adding c
 export const ClustersList: React.SFC = props => <List {...props} Header={ClustersHeader} Row={ClustersRow} EmptyMsg={EmptyMsg} />;
 
 const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
-  if (props.flags[FLAGS.MULTI_CLUSTER] === undefined) {
+  if (flagPending(props.flags[FLAGS.MULTI_CLUSTER])) {
     return <LoadingBox />;
   }
   if (props.flags[FLAGS.MULTI_CLUSTER]) {

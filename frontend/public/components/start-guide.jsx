@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { SafetyFirst } from './safety-first';
 import { DocumentationSidebar } from './utils';
-import { FLAGS, connectToFlags } from '../features';
+import { FLAGS, connectToFlags, flagPending } from '../features';
 
 const seenGuide = 'seenGuide';
 
@@ -30,7 +30,7 @@ class StartGuide_ extends SafetyFirst {
 
   render () {
     const openshiftFlag = this.props.flags.OPENSHIFT;
-    if (openshiftFlag === undefined || openshiftFlag || !this.state.visible) {
+    if (flagPending(openshiftFlag) || openshiftFlag || !this.state.visible) {
       return null;
     }
     /* eslint-disable react/jsx-no-target-blank */

@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
-import { FLAGS, connectToFlags, featureReducerName } from '../features';
+import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -236,9 +236,9 @@ const Sep = () => <div className="navigation-container__section__separator" />;
 
 const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
   // Hide the cluster picker on OpenShift clusters. Make sure flag detection is
-  // complete before showing the picker. The flag will be undefined if
-  // detection is not complete.
-  if (flags[FLAGS.OPENSHIFT] !== false) {
+  // complete before showing the picker.
+  const openshiftFlag = flags[FLAGS.OPENSHIFT];
+  if (flagPending(openshiftFlag) || openshiftFlag) {
     return null;
   }
 
@@ -253,7 +253,7 @@ const logout = e => {
 };
 
 const UserNavSectionWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
-  if (!flags[FLAGS.AUTH_ENABLED] || flags[FLAGS.OPENSHIFT] === undefined) {
+  if (!flags[FLAGS.AUTH_ENABLED] || flagPending(flags[FLAGS.OPENSHIFT])) {
     return null;
   }
 

@@ -8,7 +8,7 @@ import { k8sVersion } from '../module/status';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 import { LoadingInline, cloudProviderNames } from './utils';
-import { FLAGS, connectToFlags } from '../features';
+import { FLAGS, connectToFlags, flagPending } from '../features';
 import { clusterAppVersionName } from './channel-operators/tectonic-channel';
 
 
@@ -91,7 +91,7 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
 
     _checkOpenShiftOrTectonicVersion() {
       const openshiftFlag = this.props.flags[FLAGS.OPENSHIFT];
-      if (openshiftFlag === undefined) {
+      if (flagPending(openshiftFlag)) {
         return;
       }
 
@@ -145,9 +145,9 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
 
     render() {
       const {openshiftVersion, currentTectonicVersion, tectonicVersion, kubernetesVersion, cloudProviders} = this.state;
-      const isOpenShiftCluster = this.props.flags[FLAGS.OPENSHIFT];
+      const openshiftFlag = this.props.flags[FLAGS.OPENSHIFT];
 
-      if (isOpenShiftCluster === undefined) {
+      if (flagPending(openshiftFlag)) {
         return null;
       }
 
@@ -157,7 +157,7 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
           detail={kubernetesVersion}
           text="Kubernetes version could not be determined."
         />
-        {isOpenShiftCluster ? (
+        {openshiftFlag ? (
           <SoftwareDetailRow
             title="OpenShift"
             detail={openshiftVersion}

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { AsyncComponent } from '../utils/async';
 import { k8sBasePath } from '../../module/k8s';
 
-import { FLAGS, connectToFlags } from '../../features';
+import { FLAGS, connectToFlags, flagPending } from '../../features';
 export { Status, errorStatus } from './status';
 
 // Use the prometheus proxy if set up for OpenShift. Otherwise, fall back to the k8s API proxy for Tectonic installs.
@@ -18,7 +18,7 @@ export const Scalar = props => <AsyncComponent loader={() => import('./graph-loa
 export const Donut = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Donut)} {...props} />;
 
 const canAccessPrometheus = (openshiftFlag, prometheusFlag, canListNS) => {
-  if (prometheusFlag === undefined || openshiftFlag === undefined) {
+  if (flagPending(prometheusFlag) || flagPending(openshiftFlag)) {
     // Wait for feature detection to complete before showing graphs so we don't show them, then hide them.
     return false;
   }
