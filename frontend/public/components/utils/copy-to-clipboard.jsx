@@ -21,6 +21,7 @@ export class CopyToClipboard extends React.PureComponent {
   }
 
   render() {
+    // Use custom styles for this tooltip to position it to the left.
     const overrides = Object.freeze({
       wrapper: {
         position: 'absolute',
@@ -61,10 +62,12 @@ export class CopyToClipboard extends React.PureComponent {
 
     const tooltipText = this.state.copied ? 'Copied' : 'Copy to Clipboard';
     const tooltipContent = [<span className="co-nowrap" key="nowrap">{tooltipText}</span>];
-    const value = _.isNil(this.props.visibleValue) ? this.props.value : this.props.visibleValue;
+
+    // Default to value if no visible value was specified.
+    const visibleValue = _.isNil(this.props.visibleValue) ? this.props.value : this.props.visibleValue;
 
     return <div className="co-copy-to-clipboard">
-      <pre className="co-pre-wrap co-copy-to-clipboard__text">{value}</pre>
+      <pre className="co-pre-wrap co-copy-to-clipboard__text">{visibleValue}</pre>
       <Tooltip content={tooltipContent} styles={overrides}>
         <CTC text={this.props.value} onCopy={this.showCopied}>
           <button onMouseEnter={this.showDefault} className="btn btn-default co-copy-to-clipboard__btn fix" type="button">
