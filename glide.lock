@@ -1,5 +1,5 @@
-hash: cc6118b84bb0f67fc7ca3d0d15ab4339d7949528741bc7a5d5f0a30dee77f961
-updated: 2018-05-03T10:38:53.583509-07:00
+hash: 5b04f39ec1744e13afe09352201ffd09aa45396e0bcd673db06fb777f092173e
+updated: 2018-05-17T13:34:32.404729-04:00
 imports:
 - name: github.com/coreos/dex
   version: 6e50c18458842b8eec2f5219e3588fec918d5663
@@ -86,4 +86,6 @@ imports:
   subpackages:
   - cipher
   - json
+- name: gopkg.in/yaml.v2
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 testImports: []

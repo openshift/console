@@ -89,6 +89,10 @@ type Config struct {
 	ClientSecret string
 	Scope        []string
 
+	// DiscoveryCA is required for OpenShift OAuth metadata discovery. This is the CA
+	// used to talk to the master, which might be different than the issuer CA.
+	DiscoveryCA string
+
 	SuccessURL  string
 	ErrorURL    string
 	RefererPath string
@@ -141,8 +145,14 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		)
 		switch c.AuthSource {
 		case AuthSourceOpenShift:
+			// Use the k8s CA for OAuth metadata discovery.
+			client, err := newHTTPClient(c.DiscoveryCA)
+			if err != nil {
+				return nil, err
+			}
+
 			endpoint, lm, err = newOpenShiftAuth(ctx, &openShiftConfig{
-				client:        a.client,
+				client:        client,
 				issuerURL:     c.IssuerURL,
 				cookiePath:    c.CookiePath,
 				secureCookies: c.SecureCookies,

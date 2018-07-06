@@ -45,11 +45,13 @@ func main() {
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://tectonic.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
+	fConfig := fs.String("config", "", "The YAML config file.")
 
 	fTectonicClusterName := fs.String("tectonic-cluster-name", "tectonic", "The Tectonic cluster name.")
 
 	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc | openshift")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
+	fUserAuthOIDCCAFile := fs.String("user-auth-oidc-ca-file", "", "PEM file for the OIDC/OAuth2 issuer.")
 	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
 	fUserAuthOIDCClientSecret := fs.String("user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
 	fUserAuthOIDCClientSecretFile := fs.String("user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
@@ -94,6 +96,12 @@ func main() {
 	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
+	}
+
+	if *fConfig != "" {
+		if err := SetFlagsFromConfig(fs, *fConfig); err != nil {
+			log.Fatalf("Failed to load config: %v", err)
+		}
 	}
 
 	baseURL := &url.URL{}
@@ -201,12 +209,15 @@ func main() {
 		log.Warning("cookies are not secure because base-address is not https!")
 	}
 
+	var k8sEndpoint *url.URL
 	switch *fK8sMode {
 	case "in-cluster":
 		host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
 		if len(host) == 0 || len(port) == 0 {
 			log.Fatalf("unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined")
 		}
+		k8sEndpoint = &url.URL{Scheme: "https", Host: host + ":" + port}
+
 		var err error
 		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
 		if err != nil {
@@ -226,7 +237,7 @@ func main() {
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
 			HeaderBlacklist: []string{"Cookie"},
-			Endpoint:        &url.URL{Scheme: "https", Host: host + ":" + port},
+			Endpoint:        k8sEndpoint,
 		}
 
 		k8sAuthServiceAccountBearerToken = string(bearerToken)
@@ -253,14 +264,14 @@ func main() {
 		}
 
 	case "off-cluster":
-		k8sModeOffClusterEndpointURL := validateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
+		k8sEndpoint = validateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
 
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
 			},
 			HeaderBlacklist: []string{"Cookie"},
-			Endpoint:        k8sModeOffClusterEndpointURL,
+			Endpoint:        k8sEndpoint,
 		}
 	default:
 		flagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
@@ -275,8 +286,6 @@ func main() {
 	switch *fUserAuth {
 	case "oidc", "openshift":
 		validateFlagNotEmpty("base-address", *fBaseAddress)
-
-		userAuthOIDCIssuerURL := validateFlagIsURL("user-auth-oidc-client-id", *fUserAuthOIDCIssuerURL)
 		validateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
 
 		if *fUserAuthOIDCClientSecret == "" && *fUserAuthOIDCClientSecretFile == "" {
@@ -291,6 +300,7 @@ func main() {
 
 		var (
 			err                      error
+			userAuthOIDCIssuerURL    *url.URL
 			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
 			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
 			oidcClientSecret         = *fUserAuthOIDCClientSecret
@@ -309,6 +319,12 @@ func main() {
 			// TODO(ericchiang): Support other scopes like view only permissions.
 			scopes = []string{"user:full"}
 			authSource = auth.AuthSourceOpenShift
+			if *fUserAuthOIDCIssuerURL != "" {
+				flagFatalf("user-auth-oidc-issuer-url", "cannot be used with --user-auth=\"openshift\"")
+			}
+			userAuthOIDCIssuerURL = k8sEndpoint
+		} else {
+			userAuthOIDCIssuerURL = validateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
 		}
 
 		if *fUserAuthOIDCClientSecretFile != "" {
@@ -323,11 +339,15 @@ func main() {
 		oidcClientConfig := &auth.Config{
 			AuthSource:   authSource,
 			IssuerURL:    userAuthOIDCIssuerURL.String(),
-			IssuerCA:     *fCAFile,
+			IssuerCA:     *fUserAuthOIDCCAFile,
 			ClientID:     *fUserAuthOIDCClientID,
 			ClientSecret: oidcClientSecret,
 			RedirectURL:  proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginCallbackEndpoint),
 			Scope:        scopes,
+
+			// Use the k8s CA file for OpenShift OAuth metadata discovery.
+			// This might be different than IssuerCA.
+			DiscoveryCA: caCertFilePath,
 
 			ErrorURL:   authLoginErrorEndpoint,
 			SuccessURL: authLoginSuccessEndpoint,

@@ -48,3 +48,7 @@ import:
   version: b1a2821ca5a4fd6b6e48ddfbb7d6d7584d839d21
   subpackages:
   - credentials
+
+# Dependencies for YAML pararsing
+- package: gopkg.in/yaml.v2
+  version: v2.2.1

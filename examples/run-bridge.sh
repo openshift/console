@@ -6,11 +6,10 @@
     --k8s-auth=openshift \
     --k8s-mode=off-cluster \
     --k8s-mode-off-cluster-endpoint=$OPENSHIFT_API \
-    --k8s-mode-off-cluster-skip-verify-tls=true \
     --listen=http://127.0.0.1:9000 \
     --public-dir=./frontend/public/dist \
     --user-auth=openshift \
-    --user-auth-oidc-client-id=tectonic-console \
-    --user-auth-oidc-client-secret=$OAUTH_SECRET \
-    --user-auth-oidc-issuer-url=$OPENSHIFT_API
+    --user-auth-oidc-client-id=console-oauth-client \
+    --user-auth-oidc-client-secret-file=examples/console-client-secret
+    --user-auth-oidc-ca-file=examples/ca.crt
     --logo-image-name=origin
