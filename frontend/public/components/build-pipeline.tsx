@@ -16,8 +16,9 @@ const getJenkinsStatus = (resource: K8sResourceKind) => {
   const status = _.attempt(JSON.parse, json);
   return _.isError(status) ? {} : status;
 };
-const getJenkinsLogURL = (resource: K8sResourceKind): string => _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-log-url']);
-const getJenkinsBuildURL = (resource: K8sResourceKind): string => _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-build-uri']);
+
+export const getJenkinsLogURL = (resource: K8sResourceKind): string => _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-log-url']);
+export const getJenkinsBuildURL = (resource: K8sResourceKind): string => _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-build-uri']);
 
 const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status }) => {
   const statusClass = _.lowerCase(status);
@@ -40,9 +41,11 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
 
 const BuildLogLink: React.SFC<BuildLogLinkProps> = ({ obj }) => {
   const link = getJenkinsLogURL(obj);
-  return link && <div className="build-pipeline__link">
-    <a href={link} className="build-pipeline__log-link" target="_blank" rel="noopener noreferrer">View Log</a>
-  </div>;
+  return link
+    ? <div className="build-pipeline__link">
+      <a href={link} className="build-pipeline__log-link" target="_blank" rel="noopener noreferrer">View Log</a>
+    </div>
+    : null;
 };
 
 const StagesNotStarted: React.SFC = () => <div className="build-pipeline__stage build-pipeline__stage--none">
