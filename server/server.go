@@ -86,12 +86,10 @@ type Server struct {
 	LoadTestFactor       int
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
-	KubectlAuther                  *auth.Authenticator
-	KubeConfigTmpl                 *KubeConfigTmpl
-	DexClient                      api.DexClient
-	NamespaceLister                *ResourceLister
-	CustomResourceDefinitionLister *ResourceLister
-	PrometheusProxyConfig          *proxy.Config
+	KubectlAuther         *auth.Authenticator
+	KubeConfigTmpl        *KubeConfigTmpl
+	DexClient             api.DexClient
+	PrometheusProxyConfig *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -204,8 +202,6 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle("/api/tectonic/version", authHandler(s.versionHandler))
 	handle("/api/tectonic/ldap/validate", authHandler(handleLDAPVerification))
-	handle("/api/tectonic/namespaces", authHandlerWithUser(s.handleListNamespaces))
-	handle("/api/tectonic/crds", authHandlerWithUser(s.handleListCRDs))
 	handle("/api/tectonic/certs", authHandler(s.certsHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -332,14 +328,6 @@ func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendResponse(w, http.StatusOK, info)
-}
-
-func (s *Server) handleListCRDs(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	s.CustomResourceDefinitionLister.handleResources(user.Token, w, r)
-}
-
-func (s *Server) handleListNamespaces(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	s.NamespaceLister.handleResources(user.Token, w, r)
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
