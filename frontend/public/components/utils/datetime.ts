@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 
 // Behaves like moment.js's fromNow
-export const fromNow = (dateTime, now=undefined) => {
+export const fromNow = (dateTime, now=undefined, options = { omitSuffix: false }) => {
   if (!now) {
     now = new Date();
   }
@@ -12,41 +12,46 @@ export const fromNow = (dateTime, now=undefined) => {
   const daysAgo = hoursAgo / 24;
 
   if (daysAgo > 548) {
-    return `${Math.round(daysAgo / 365)} years ago`;
+    const count = Math.round(daysAgo / 365);
+    return (options.omitSuffix) ? `${count} years`:`${count} years ago`;
   }
   if (daysAgo > 320) {
-    return 'a year ago';
+    return (options.omitSuffix) ? 'year':'a year ago';
   }
   if (daysAgo > 45) {
-    return `${Math.round(daysAgo / 30)} months ago`;
+    const count = Math.round(daysAgo / 30);
+    return (options.omitSuffix) ? `${count} months`:`${count} months ago`;
   }
   if (daysAgo > 26) {
-    return 'a month ago';
+    return (options.omitSuffix) ? 'month':'a month ago';
   }
   if (hoursAgo > 36) {
-    return `${Math.round(daysAgo)} days ago`;
+    const count = Math.round(daysAgo);
+    return (options.omitSuffix) ? `${count} days`:`${count} days ago`;
   }
   if (hoursAgo > 22) {
-    return 'a day ago';
+    return (options.omitSuffix) ? 'day':'a day ago';
   }
   if (minutesAgo > 90) {
-    return `${Math.round(hoursAgo)} hours ago`;
+    const count = Math.round(hoursAgo);
+    return (options.omitSuffix) ? `${count} hours`:`${count} hours ago`;
   }
   if (minutesAgo > 45) {
-    return 'an hour ago';
+    return (options.omitSuffix) ? 'hour':'an hour ago';
   }
   if (secondsAgo > 90) {
-    return `${Math.round(minutesAgo)} minutes ago`;
+    const count = Math.round(minutesAgo);
+    return (options.omitSuffix) ? `${count} minutes`:`${count} minutes ago`;
   }
   if (secondsAgo > 45) {
-    return 'a minute ago';
+    return (options.omitSuffix) ? 'minute':'a minute ago';
   }
   if (secondsAgo > 15) {
-    return 'less than a minute ago';
+    return (options.omitSuffix) ? 'few seconds':'less than a minute ago';
   }
 
   if (secondsAgo >= 0) {
-    return 'a few seconds ago';
+    return (options.omitSuffix) ? 'few seconds':'a few seconds ago';
   }
 
   if (secondsAgo > -45) {
