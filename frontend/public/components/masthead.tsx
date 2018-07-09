@@ -23,6 +23,10 @@ const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) 
     <i className="fa fa-user co-masthead__user-icon" aria-hidden="true"></i>
     <span className="co-masthead__username">{username}</span>
   </React.Fragment>;
+  if (_.isEmpty(actions)) {
+    return title;
+  }
+
   return <ActionsMenu actions={actions}
     title={title}
     noButton={true} />;
