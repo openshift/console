@@ -425,28 +425,6 @@ func main() {
 		flagFatalf("user-auth", "must be one of: oidc, disabled")
 	}
 
-	srv.NamespaceLister = &server.ResourceLister{
-		BearerToken:   k8sAuthServiceAccountBearerToken,
-		ResourcesPath: "/api/v1/namespaces",
-		K8sEndpoint:   strings.TrimSuffix(srv.K8sProxyConfig.Endpoint.String(), "/"),
-		Client: &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
-			},
-		},
-	}
-
-	srv.CustomResourceDefinitionLister = &server.ResourceLister{
-		BearerToken:   k8sAuthServiceAccountBearerToken,
-		ResourcesPath: "/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions",
-		K8sEndpoint:   strings.TrimSuffix(srv.K8sProxyConfig.Endpoint.String(), "/"),
-		Client: &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
-			},
-		},
-	}
-
 	switch *fK8sAuth {
 	case "service-account":
 		validateFlagIs("k8s-mode", *fK8sMode, "in-cluster")

@@ -92,15 +92,7 @@ export const k8sList = (kind, params={}, raw=false, options = {}) => {
     return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
   }).join('&');
 
-  const k = kind.kind === 'Namespace' ? {
-    // hit our custom /namespaces path which better handles users with limited permissions
-    legacy: true,
-    apiGroup: '../..',
-    apiVersion: 'tectonic',
-    path: 'namespaces',
-  } : kind;
-
-  const listURL = resourceURL(k, {ns: params.ns});
+  const listURL = resourceURL(kind, {ns: params.ns});
   return coFetchJSON(`${listURL}?${query}`, 'GET', options).then(result => raw ? result : result.items);
 };
 
