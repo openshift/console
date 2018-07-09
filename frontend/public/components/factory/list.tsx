@@ -14,7 +14,7 @@ import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { bindingType, roleType } from '../RBAC';
-import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator } from '../utils';
+import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator, EmptyBox } from '../utils';
 import { routeStatus } from '../routes';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
@@ -232,6 +232,7 @@ export const WorkloadListHeader = props => <ListHeader>
 </ListHeader>;
 
 export const Rows: React.SFC<RowsProps> = (props) => {
+  const { fake, label } = props;
   const measurementCache = new CellMeasurerCache({
     fixedWidth: true,
     minHeight: 44,
@@ -255,28 +256,31 @@ export const Rows: React.SFC<RowsProps> = (props) => {
   };
 
   return <div className="co-m-table-grid__body">
-    <WindowScroller>
-      {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-        <AutoSizer disableHeight>
-          {({width}) => <div ref={registerChild}>
-            <VirtualList
-              autoHeight
-              data={props.data}
-              expand={props.expand}
-              height={height}
-              deferredMeasurementCache={measurementCache}
-              rowHeight={measurementCache.rowHeight}
-              isScrolling={isScrolling}
-              onScroll={onChildScroll}
-              rowRenderer={rowRenderer}
-              rowCount={props.data.length}
-              scrollTop={scrollTop}
-              width={width}
-              tabIndex={null}
-            />
-          </div>}
-        </AutoSizer>}
-    </WindowScroller>
+    { fake
+      ? <EmptyBox label={label}/>
+      : <WindowScroller>
+        {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+          <AutoSizer disableHeight>
+            {({width}) => <div ref={registerChild}>
+              <VirtualList
+                autoHeight
+                data={props.data}
+                expand={props.expand}
+                height={height}
+                deferredMeasurementCache={measurementCache}
+                rowHeight={measurementCache.rowHeight}
+                isScrolling={isScrolling}
+                onScroll={onChildScroll}
+                rowRenderer={rowRenderer}
+                rowCount={props.data.length}
+                scrollTop={scrollTop}
+                width={width}
+                tabIndex={null}
+              />
+            </div>}
+          </AutoSizer>}
+      </WindowScroller>
+    }
   </div>;
 };
 
@@ -333,7 +337,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
     };
 
     render() {
-      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, listId, Row, sortList, fake} = this.props;
+      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, Row, sortList, fake} = this.props;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
       const children = <React.Fragment>
@@ -345,7 +349,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
           currentSortOrder={currentSortOrder}
           {...componentProps}
         />
-        <Rows key="rows" expand={expand} Row={Row} {...componentProps} />
+        <Rows key="rows" expand={expand} Row={Row} fake={fake} label={label} {...componentProps} />
       </React.Fragment>;
 
       return <div className="co-m-table-grid co-m-table-grid--bordered">
@@ -444,6 +448,8 @@ export type ResourceRowProps = {
 export type RowsProps = {
   data?: any[];
   expand?: boolean;
+  fake?: boolean;
+  label?: string;
   Row: React.ComponentType<any>;
   kindObj?: K8sKind;
 };

@@ -15,7 +15,7 @@ import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configu
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
 import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
-import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
+import { FLAGS, connectToFlags, featureReducerName, flagPending, setFlag } from '../features';
 import { openshiftHelpBase } from './utils/documentation';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
@@ -101,7 +101,6 @@ const ProjectEmptyMessageDetail = <p>
 const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
 export const ProjectList = props => <List {...props} Header={ProjectHeader} Row={ProjectRow} EmptyMsg={ProjectEmptyMessage}/>;
 export const ProjectsPage = props => <ListPage {...props} ListComponent={ProjectList} canCreate={true} createHandler={createProjectModal} />;
-
 
 class PullSecret extends SafetyFirst {
   constructor (props) {
@@ -210,49 +209,64 @@ const namespaceDropdownStateToProps = state => {
   return { activeNamespace, canListNS };
 };
 
-const NamespaceDropdown = connect(namespaceDropdownStateToProps)(props => {
-  const { activeNamespace, dispatch, canListNS, useProjects } = props;
-  if (canListNS === undefined) {
-    return null;
+
+class NamespaceDropdown_ extends React.Component {
+
+  componentDidUpdate() {
+    const { namespace, dispatch } = this.props;
+    if (namespace.loaded) {
+      const projectsAvailable = !_.isEmpty(namespace.data);
+      setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, projectsAvailable);
+    }
   }
 
-  const { loaded, data } = props.namespace;
-  const model = getModel(useProjects);
-  const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
-  const items = {};
-  if (canListNS) {
-    items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
+  render() {
+    const { activeNamespace, dispatch, canListNS, useProjects } = this.props;
+    if (flagPending(canListNS)) {
+      return null;
+    }
+
+    const { loaded, data } = this.props.namespace;
+    const model = getModel(useProjects);
+    const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
+    const items = {};
+    if (canListNS) {
+      items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
+    }
+
+    _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
+
+    let title = activeNamespace;
+    if (activeNamespace === ALL_NAMESPACES_KEY) {
+      title = allNamespacesTitle;
+    } else if (loaded && !_.has(items, title)) {
+      // If the currently active namespace is not found in the list of all namespaces, put it in anyway
+      items[title] = title;
+    }
+
+    const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
+
+    return <div className="co-namespace-selector">
+      <span>{model.label}:</span>
+      <Dropdown
+        className="co-namespace-selector__dropdown"
+        menuClassName="co-namespace-selector__menu"
+        noButton
+        canFavorite
+        items={items}
+        title={title}
+        onChange={onChange}
+        selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
+        autocompleteFilter={autocompleteFilter}
+        autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
+        defaultBookmarks={defaultBookmarks}
+        storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
+        shortCut="n" />
+    </div>;
   }
-  _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
+}
 
-  let title = activeNamespace;
-  if (activeNamespace === ALL_NAMESPACES_KEY) {
-    title = allNamespacesTitle;
-  } else if (loaded && !_.has(items, title)) {
-    // If the currently active namespace is not found in the list of all namespaces, put it in anyway
-    items[title] = title;
-  }
-
-  const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
-
-  return <div className="co-namespace-selector">
-    <span>{model.label}:</span>
-    <Dropdown
-      className="co-namespace-selector__dropdown"
-      menuClassName="co-namespace-selector__menu"
-      noButton
-      canFavorite
-      items={items}
-      title={title}
-      onChange={onChange}
-      selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
-      autocompleteFilter={autocompleteFilter}
-      autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
-      defaultBookmarks={defaultBookmarks}
-      storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
-      shortCut="n" />
-  </div>;
-});
+const NamespaceDropdown = connect(namespaceDropdownStateToProps)(NamespaceDropdown_);
 
 const NamespaceSelector_ = ({flags}) => {
   const openshiftFlag = flags[FLAGS.OPENSHIFT];

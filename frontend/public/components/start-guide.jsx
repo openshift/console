@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 import { SafetyFirst } from './safety-first';
 import { DocumentationSidebar } from './utils';
@@ -76,4 +77,15 @@ export const StartGuidePage = () => <div className="co-p-has-sidebar">
     <StartGuide visible={true} dismissible={false} />
   </div>
   <DocumentationSidebar />
+</div>;
+
+
+export const OpenShiftGettingStarted = () => <div className="co-well">
+  <h4>Getting Started</h4>
+  <p>
+    OpenShift helps you quickly develop, host, and scale applications. Create a project for your application.
+  </p>
+  <Link to="/k8s/cluster/projects">
+    <button className="btn btn-info">View My Projects</button>
+  </Link>
 </div>;
