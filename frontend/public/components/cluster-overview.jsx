@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
@@ -140,18 +141,18 @@ const LimitedGraphs = requirePrometheus(({isOpenShift}) => {
   </div>;
 });
 
-const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({limited, namespace, flags}) => {
-  const openshiftFlag = flags[FLAGS.OPENSHIFT];
+const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
+  const graphs = limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} />;
   const body = <div className="row">
     <div className="col-lg-8 col-md-12">
-      {limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} />}
-      <div className="group">
+      {!fake && graphs}
+      <div className={classNames('group', {'group--fake': fake})}>
         <div className="group__title">
           <h2 className="h3">Events</h2>
           <a href={formatNamespacedRouteForResource('events', namespace)}>View All</a>
         </div>
         <div className="group__body">
-          <EventStreamPage namespace={namespace} showTitle={false} autoFocus={false} />
+          <EventStreamPage namespace={namespace} showTitle={false} autoFocus={false} fake={fake}/>
         </div>
       </div>
     </div>
@@ -187,19 +188,20 @@ const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({limited, namespace, flags})
     </div>
   </div>;
 
-  if (!namespace) {
+  if (!namespace || fake) {
     return body;
   }
+
   return <Firehose resources={[{kind: 'Namespace', name: namespace, isList: false, prop: 'data'}]}>
     <StatusBox label="Namespaces">
       { body }
     </StatusBox>
   </Firehose>;
-});
+};
 
 const permissionedLoader = () => {
-  const AllGraphs = ({namespace}) => <GraphsPage namespace={namespace} />;
-  const SomeGraphs = ({namespace}) => <GraphsPage namespace={namespace} limited />;
+  const AllGraphs = (props) => <GraphsPage {...props} />;
+  const SomeGraphs = (props) => <GraphsPage limited {...props} />;
   // Show events list if user lacks permission to view graphs.
   const q = 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})';
   return coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
@@ -214,20 +216,20 @@ const permissionedLoader = () => {
     );
 };
 
-export const ClusterOverviewPage = props => {
+const ClusterOverviewPage_ = props => {
+  const { OPENSHIFT: openshiftFlag, PROJECTS_AVAILABLE: projectsFlag } = props.flags;
+  const fake = !flagPending(openshiftFlag) && !flagPending(projectsFlag) && openshiftFlag && !projectsFlag;
   const namespace = _.get(props, 'match.params.ns');
-  let title = 'Cluster Status';
-  if (namespace) {
-    title = `Status of ${ namespace }`;
-  }
+  const title = namespace ? `Status of ${ namespace }` : 'Cluster Status';
+
   return <React.Fragment>
     <StartGuide dismissible={true} style={{margin: 15}} />
     <Helmet>
-      <title>{title}</title>
+      <title>{fake ? 'Overview' : title}</title>
     </Helmet>
-    <NavTitle title={title} />
+    <NavTitle title={fake ? 'Overview' : title} />
     <div className="cluster-overview-cell container-fluid">
-      <AsyncComponent namespace={namespace} loader={permissionedLoader} />
+      <AsyncComponent namespace={namespace} loader={permissionedLoader} openshiftFlag={openshiftFlag} fake={fake} />
     </div>
     <br />
     <SecurityScanningOverview
@@ -236,3 +238,5 @@ export const ClusterOverviewPage = props => {
     />
   </React.Fragment>;
 };
+
+export const ClusterOverviewPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(ClusterOverviewPage_);

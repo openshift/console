@@ -224,12 +224,14 @@ class EventStream extends SafetyFirst {
 
   componentDidMount () {
     super.componentDidMount();
-    this.wsInit(this.props.namespace);
+    if (!this.props.fake) {
+      this.wsInit(this.props.namespace);
+    }
   }
 
   componentWillUnmount () {
     super.componentWillUnmount();
-    this.ws.destroy();
+    this.ws && this.ws.destroy();
   }
 
   static filterMessages (messages, {kind, category, filter, textFilter}) {
@@ -263,6 +265,8 @@ class EventStream extends SafetyFirst {
     }
 
     return {
+      active: !nextProps.fake,
+      loading: !nextProps.fake,
       // update the filteredMessages
       filteredMessages: EventStream.filterMessages(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
@@ -303,20 +307,23 @@ class EventStream extends SafetyFirst {
   toggleStream_ () {
     this.setState({active: !this.state.active}, () => {
       if (this.state.active) {
-        this.ws.unpause();
+        this.ws && this.ws.unpause();
       } else {
-        this.ws.pause();
+        this.ws && this.ws.pause();
       }
     });
   }
 
   render () {
+    const { fake } = this.props;
     const {active, error, loading, filteredMessages, sortedMessages} = this.state;
     const count = filteredMessages.length;
     const allCount = sortedMessages.length;
-    let sysEventStatus;
+    const noEvents = allCount === 0 && this.ws && this.ws.bufferSize() === 0;
+    const noMatches = allCount > 0 && count === 0;
+    let sysEventStatus, statusBtnTxt;
 
-    if (allCount === 0 && this.ws && this.ws.bufferSize() === 0) {
+    if (noEvents || fake) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="text-center cos-status-box__detail">
@@ -325,7 +332,7 @@ class EventStream extends SafetyFirst {
         </Box>
       );
     }
-    if (allCount > 0 && count === 0) {
+    if (noMatches) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-status-box__title">No Matching Events</div>
@@ -336,7 +343,6 @@ class EventStream extends SafetyFirst {
       );
     }
 
-    let statusBtnTxt;
     if (error) {
       statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
       sysEventStatus = (
@@ -376,6 +382,7 @@ class EventStream extends SafetyFirst {
           There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
           </div>
         </div>
+
         <WindowScroller>
           {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
             <AutoSizer disableHeight>
@@ -406,11 +413,13 @@ class EventStream extends SafetyFirst {
 }
 
 EventStream.defaultProps = {
+  fake: false,
   kind: 'all',
   category: 'all',
 };
 
 EventStream.propTypes = {
+  fake: PropTypes.bool,
   namespace: namespaceProptype,
   kind: PropTypes.string.isRequired,
   category: PropTypes.string,
