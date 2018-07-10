@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import * as openshiftOriginLogoImg from '../imgs/openshift-origin-logo.svg';
-import * as openshiftPlatformLogoImg from '../imgs/openshift-platform-logo.svg';
-import * as openshiftOnlineLogoImg from '../imgs/openshift-online-logo.svg';
+import * as originLogoImg from '../imgs/openshift-origin-logo.svg';
+import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
+import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import * as tectonicLogoImg from '../imgs/tectonic-logo.svg';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { authSvc } from '../module/auth';
@@ -99,22 +99,17 @@ const ContextSwitcher = () => {
   </div>;
 };
 
-export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => {
-  const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
+export const LogoImage = () => {
   let logoImg, logoAlt;
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
-  switch ((window as any).SERVER_FLAGS.logoImageName) {
-    case 'origin':
-      logoImg = openshiftOriginLogoImg;
-      logoAlt = 'OpenShift Origin';
-      break;
+  switch ((window as any).SERVER_FLAGS.branding) {
     case 'ocp':
-      logoImg = openshiftPlatformLogoImg;
+      logoImg = ocpLogoImg;
       logoAlt = 'OpenShift Container Platform';
       break;
     case 'online':
-      logoImg = openshiftOnlineLogoImg;
+      logoImg = onlineLogoImg;
       logoAlt = 'OpenShift Online';
       break;
     case 'tectonic':
@@ -122,18 +117,14 @@ export const LogoImage = connectToFlags(FLAGS.OPENSHIFT)((props: FlagsProps) => 
       logoAlt = 'Tectonic';
       break;
     default:
-      if (flagPending(openshiftFlag)) {
-        // Don't flash the Tectonic logo if we're still detecting if this is OpenShift.
-        return null;
-      }
-      logoImg = openshiftFlag ? openshiftOriginLogoImg : tectonicLogoImg;
-      logoAlt = openshiftFlag ? 'OpenShift Origin' : 'Tectonic';
+      logoImg = originLogoImg;
+      logoAlt = 'OpenShift Origin';
   }
 
   return <div className="co-masthead__logo">
     <Link to="/" className="co-masthead__logo-link"><img src={logoImg} alt={logoAlt} /></Link>
   </div>;
-});
+};
 
 export const Masthead = () => <header role="banner" className="co-masthead">
   <LogoImage />

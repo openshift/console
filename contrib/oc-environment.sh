@@ -22,6 +22,6 @@ export BRIDGE_K8S_AUTH="bearer-token"
 
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(oc whoami --show-token)
 export BRIDGE_K8S_AUTH_BEARER_TOKEN
-export BRIDGE_LOGO_IMAGE_NAME="origin"
+export BRIDGE_BRANDING="origin"
 
 echo "Using $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT"

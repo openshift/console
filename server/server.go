@@ -59,7 +59,7 @@ type jsGlobals struct {
 	KubeAPIServerURL     string `json:"kubeAPIServerURL"`
 	PrometheusBaseURL    string `json:"prometheusBaseURL"`
 	OpenshiftConsoleURL  string `json:"openshiftConsoleURL"`
-	LogoImageName        string `json:"logoImageName"`
+	Branding             string `json:"branding"`
 	DocumentationBaseURL string `json:"documentationBaseURL"`
 	ClusterName          string `json:"clusterName"`
 	CSRFToken            string `json:"CSRFToken"`
@@ -81,7 +81,7 @@ type Server struct {
 	KubeAPIServerURL     string
 	OpenshiftConsoleURL  string
 	DocumentationBaseURL *url.URL
-	LogoImageName        string
+	Branding             string
 	GoogleTagManagerID   string
 	LoadTestFactor       int
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
@@ -273,7 +273,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		ClusterName:          s.ClusterName,
 		KubeAPIServerURL:     s.KubeAPIServerURL,
 		OpenshiftConsoleURL:  s.OpenshiftConsoleURL,
-		LogoImageName:        s.LogoImageName,
+		Branding:             s.Branding,
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		GoogleTagManagerID:   s.GoogleTagManagerID,
 		LoadTestFactor:       s.LoadTestFactor,

@@ -53,7 +53,7 @@ type Auth struct {
 
 // Customization holds configuration such as what logo to use.
 type Customization struct {
-	LogoImageName        string `yaml:"logoImageName"`
+	Branding             string `yaml:"branding"`
 	DocumentationBaseURL string `yaml:"documentationBaseURL"`
 }
 
@@ -168,8 +168,8 @@ func addAuth(fs *flag.FlagSet, auth *Auth) {
 }
 
 func addCustomization(fs *flag.FlagSet, customization *Customization) {
-	if customization.LogoImageName != "" {
-		fs.Set("logo-image-name", customization.LogoImageName)
+	if customization.Branding != "" {
+		fs.Set("branding", customization.Branding)
 	}
 
 	if customization.DocumentationBaseURL != "" {

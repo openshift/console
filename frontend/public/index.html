@@ -5,21 +5,31 @@
     <base href="[[ .BasePath ]]">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Tectonic Console</title>
+    [[ if eq .Branding "origin" ]]
+    <title>OpenShift Origin</title>
+    [[ end ]]
+    [[ if eq .Branding "ocp" ]]
+    <title>OpenShift Container Platform</title>
+    [[ end ]]
+    [[ if eq .Branding "online" ]]
+    <title>OpenShift Online</title>
+    [[ end ]]
+    [[ if eq .Branding "tectonic" ]]
+    <title>Tectonic</title>
+    [[ end ]]
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    [[ if eq .LogoImageName "origin" "ocp" "online" ]]
-    <link rel="shortcut icon" href="<%= require('./imgs/favicon.png') %>">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/apple-touch-icon-precomposed.png') %>">
-    <link rel="mask-icon" href="<%= require('./imgs/mask-icon.svg') %>" color="#DB242F">
-    [[ else ]]
+    [[ if eq .Branding "tectonic" ]]
     <link rel="shortcut icon" href="<%= require('./lib/mochi/img/favicons/tectonic/favicon-96x96.png') %>">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-114x114.png') %>">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-144x144.png') %>">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-72x72.png') %>">
     <link rel="apple-touch-icon-precomposed" sizes="57x57" href="<%= require('./lib/mochi/img/favicons/tectonic/apple-touch-icon-57x57.png') %>">
+    [[ else ]]
+    <link rel="shortcut icon" href="<%= require('./imgs/favicon.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/apple-touch-icon-precomposed.png') %>">
+    <link rel="mask-icon" href="<%= require('./imgs/mask-icon.svg') %>" color="#DB242F">
     [[ end ]]
-
     <script type="text/javascript">
       window.SERVER_FLAGS = [[.]];
     </script>
