@@ -1,5 +1,4 @@
 #!/bin/bash -e
-set -x
 ./bin/bridge \
     --base-address=http://localhost:9000 \
     --ca-file=examples/ca.crt \
