@@ -210,8 +210,10 @@ const NavSection = connect(navSectionStateToProps)(
       const sectionClassName = isActive && href ? 'navigation-container__section navigation-container__section--active' : 'navigation-container__section';
 
       const Children = React.Children.map(children, c => {
-        const {name, required} = c.props;
-        if (required && !flags.get(required)) {
+        const {name, required=false, disallowed=false} = c.props;
+        const meetsRequired = required ? !flagPending(flags.get(required)) && flags.get(required) : true;
+        const meetsDisallowed = disallowed ? !flagPending(flags.get(disallowed)) && !flags.get(disallowed) : true;
+        if (!meetsRequired || !meetsDisallowed) {
           return null;
         }
         return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace});
@@ -380,13 +382,13 @@ export class Nav extends React.Component {
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
             <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
-            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} />
+            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} disallowed={FLAGS.OPENSHIFT}/>
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
             <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
             <ResourceNSLink resource="podvulns" name="Security Report" onClick={this.close} required={FLAGS.SECURITY_LABELLER} />
-            <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} />
+            <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} disallowed={FLAGS.OPENSHIFT}/>
             <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
 
