@@ -32,7 +32,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('can be enabled from the Catalog Sources', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Subscribe')).click();
+    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
     const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'tectonic-ocs', name: 'prometheus'}}, safeLoad(content));
@@ -63,7 +63,7 @@ describe('Interacting with the Prometheus OCS', () => {
     expect(crudView.rowForName(prometheusOperatorName).isDisplayed()).toBe(true);
   }, deleteRecoveryTime);
 
-  it('displays Prometheus OCS in "Available Applications" view for the namespace', async() => {
+  it('displays Prometheus OCS in "Available Operators" view for the namespace', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversion-v1s`);
     await appListView.isLoaded();
     await browser.sleep(500);

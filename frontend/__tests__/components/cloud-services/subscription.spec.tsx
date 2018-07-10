@@ -5,7 +5,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
 import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/cloud-services/subscription';
-import { SubscriptionKind, SubscriptionState } from '../../../public/components/cloud-services';
+import { SubscriptionKind, SubscriptionState, olmNamespace } from '../../../public/components/cloud-services';
 import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, ConfigMapModel } from '../../../public/models';
 import { ListHeader, ColHead, List, ListPage, DetailsPage } from '../../../public/components/factory';
@@ -165,7 +165,7 @@ describe(SubscriptionDetails.displayName, () => {
   let wrapper: ShallowWrapper<SubscriptionDetailsProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<SubscriptionDetails.WrappedComponent obj={testSubscription} pkg={testPackage} />);
+    wrapper = shallow(<SubscriptionDetails obj={testSubscription} pkg={testPackage} />);
   });
 
   it('renders subscription update channel and approval component', () => {
@@ -206,8 +206,9 @@ describe(SubscriptionDetailsPage.displayName, () => {
     const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'operator-lifecycle-manager', isList: false, prop: 'configMap'},
-      {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersion'}
+      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: olmNamespace, isList: false, prop: 'ocsConfigMap'},
+      {kind: ConfigMapModel.kind, namespace: 'default', isList: true, prop: 'configMaps'},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersions'},
     ]);
   });
 });

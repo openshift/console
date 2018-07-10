@@ -10,7 +10,7 @@ describe('Installing a service from the Catalog Sources', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus', 'Prometheus']);
 
   beforeAll(async() => {
-    browser.get(appHost);
+    browser.get(`${appHost}/overview/all-namespaces`);
     await browser.wait(until.presenceOf($('#sidebar')));
   });
 
@@ -35,7 +35,7 @@ describe('Installing a service from the Catalog Sources', () => {
   });
 
   it('displays available namespaces for service to be enabled in', async() => {
-    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Subscribe')).click();
+    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     expect($('.yaml-editor-header').getText()).toEqual('Create Subscription-v1');
