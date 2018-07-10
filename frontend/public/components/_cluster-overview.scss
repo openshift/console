@@ -1,6 +1,22 @@
 .group {
   margin-bottom: ($grid-gutter-width / 2);
 }
+
+.group.group--fake::before {
+  background-color: #fff;
+  bottom: 0;
+  content: '';
+  cursor: not-allowed;
+  left: 0;
+  opacity: 0.4;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  user-select: none;
+  z-index: 10;
+}
+
 .group__title {
   border: 1px solid $color-grey-background-border;
   background-color: $color-grey-background;
@@ -32,8 +48,11 @@
   overflow: hidden;
 }
 
+
 .cluster-overview-cell {
   margin-top: -($grid-gutter-width / 2);
+  margin-left: $grid-gutter-width / 2;
+  margin-right: $grid-gutter-width / 2;
   @media(min-width: $screen-lg-min) {
     .col-lg-8 {
       padding-right: 0;
