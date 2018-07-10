@@ -49,6 +49,17 @@ class NavLink extends React.PureComponent {
   }
 }
 
+NavLink.defaultProps = {
+  required: '',
+  disallowed: ''
+};
+
+NavLink.propTypes = {
+  required: PropTypes.string,
+  disallowed: PropTypes.string
+};
+
+
 class ResourceNSLink extends NavLink {
   static isActive (props, resourcePath, activeNamespace) {
     const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
@@ -210,7 +221,7 @@ const NavSection = connect(navSectionStateToProps)(
       const sectionClassName = isActive && href ? 'navigation-container__section navigation-container__section--active' : 'navigation-container__section';
 
       const Children = React.Children.map(children, c => {
-        const {name, required=false, disallowed=false} = c.props;
+        const {name, required, disallowed} = c.props;
         const meetsRequired = required ? !flagPending(flags.get(required)) && flags.get(required) : true;
         const meetsDisallowed = disallowed ? !flagPending(flags.get(disallowed)) && !flags.get(disallowed) : true;
         if (!meetsRequired || !meetsDisallowed) {
