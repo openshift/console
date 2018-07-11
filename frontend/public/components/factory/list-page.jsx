@@ -251,6 +251,9 @@ export const ListPage = props => {
   createProps = createProps || (createHandler ? {onClick: createHandler} : {to: href});
   const resources = [{ kind, name, namespaced, selector, fieldSelector, filters, limit }];
 
+  // Don't show row filters if props.filters were passed. The content is already filtered and the row filters will have incorrect counts.
+  const rowFilters = _.isEmpty(filters) ? props.rowFilters : null;
+
   if (!namespaced && namespace) {
     return <ErrorPage404 />;
   }
@@ -269,7 +272,7 @@ export const ListPage = props => {
     autoFocus={props.autoFocus}
     dropdownFilters={props.dropdownFilters}
     ListComponent={props.ListComponent}
-    rowFilters={props.rowFilters}
+    rowFilters={rowFilters}
     label={labelPlural}
     flatten={_resources => _.get(_resources, (name || kind), {}).data}
     namespace={namespace}
