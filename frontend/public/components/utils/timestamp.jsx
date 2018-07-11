@@ -75,9 +75,13 @@ export class Timestamp extends SafetyFirst {
     }
 
     const timeAgo = now - mdate;
+    if (this.props.omitSuffix) {
+      return dateTime.fromNow(mdate, undefined, {omitSuffix: true});
+    }
     if (timeAgo < 630000) { // 10.5 minutes
       return dateTime.fromNow(mdate);
     }
+
 
     let a = 'am';
     let hours = mdate.getHours();
@@ -118,6 +122,10 @@ export class Timestamp extends SafetyFirst {
 
     if (!dateTime.isValid(mdate)) {
       return <div className="co-timestamp">-</div>;
+    }
+
+    if (this.props.simple) {
+      return timestamp;
     }
 
     return <div>

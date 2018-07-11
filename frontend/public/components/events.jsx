@@ -36,7 +36,7 @@ const kindFilter = (kind, {involvedObject}) => {
 
 class Inner extends React.PureComponent {
   render () {
-    const {klass, status, tooltipMsg, obj, lastTimestamp, message, source} = this.props;
+    const {klass, status, tooltipMsg, obj, lastTimestamp, firstTimestamp, message, source, count} = this.props;
 
     return <div className={`${klass} slide-${status}`}>
       <div className="co-sysevent__icon-box">
@@ -52,18 +52,21 @@ class Inner extends React.PureComponent {
               name={obj.name}
               title={obj.uid}
             />
+            <small className="co-sysevent__source">
+              Generated from <span>{source.component}</span>
+              {source.component === 'kubelet' &&
+                <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
+              }
+            </small>
           </div>
           <div className="co-sysevent__timestamp">
             <Timestamp timestamp={lastTimestamp} />
+            {count > 1 && <small className="co-sysevent__source text-secondary">
+              {count} times in the last <Timestamp timestamp={firstTimestamp} simple={true} omitSuffix={true} />
+            </small>}
           </div>
         </div>
 
-        <small className="co-sysevent__source">
-          Generated from <span>{source.component}</span>
-          {source.component === 'kubelet' &&
-            <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
-          }
-        </small>
         <div className="co-sysevent__message" title={_.trim(message)}>
           {message}
         </div>
@@ -94,7 +97,7 @@ class SysEvent extends React.Component {
   }
 
   render () {
-    const { index, style, reason, message, source, metadata, lastTimestamp, involvedObject: obj} = this.props;
+    const { index, style, reason, message, source, metadata, firstTimestamp, lastTimestamp, count, involvedObject: obj} = this.props;
     const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
     const tooltipMsg = `${reason} (${obj.kind.toLowerCase()})`;
 
@@ -108,7 +111,7 @@ class SysEvent extends React.Component {
 
     return <div style={style}>
       <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
-        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} lastTimestamp={lastTimestamp} message={message} source={source} width={style.width}/>}
+        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} firstTimestamp={firstTimestamp} lastTimestamp={lastTimestamp} count={count} message={message} source={source} width={style.width}/>}
       </CSSTransition>
     </div>;
   }
