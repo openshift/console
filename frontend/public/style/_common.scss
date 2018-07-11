@@ -219,6 +219,10 @@ input[type=number]::-webkit-outer-spin-button {
   display: inline-block;
   padding-right: 25px;
 }
+// Enable break word within co-m-table-grid
+.co-external-link--block {
+  display: block;
+}
 
 .co-toolbar {
   align-items: stretch;
