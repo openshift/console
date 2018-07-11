@@ -222,9 +222,10 @@ const NavSection = connect(navSectionStateToProps)(
 
       const Children = React.Children.map(children, c => {
         const {name, required, disallowed} = c.props;
-        const meetsRequired = required ? !flagPending(flags.get(required)) && flags.get(required) : true;
-        const meetsDisallowed = disallowed ? !flagPending(flags.get(disallowed)) && !flags.get(disallowed) : true;
-        if (!meetsRequired || !meetsDisallowed) {
+        if (required && (flagPending(flags.get(required)) || !flags.get(required))) {
+          return null;
+        }
+        if (disallowed && (flagPending(flags.get(disallowed)) || flags.get(disallowed))) {
           return null;
         }
         return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace});
