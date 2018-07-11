@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions, getRestartPolicyLabel, podPhase, podReadiness } from '../module/k8s/pods';
+import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions, getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent} from './utils';
+import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line, requirePrometheus } from './graphs';
@@ -51,13 +51,9 @@ Readiness.displayName = 'Readiness';
 
 export const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
-  let status = phase;
-
-  if (!validStatuses.has(status)) {
-    status = <span className="co-error">
-      <i className="fa fa-times-circle co-icon-space-r" />{phase}
-    </span>;
-  }
+  const status = validStatuses.has(phase)
+    ? phase
+    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" />{phase}</span>;
 
   return <ResourceRow obj={pod}>
     <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
@@ -289,15 +285,17 @@ PodList.displayName = 'PodList';
 
 const filters = [{
   type: 'pod-status',
-  selected: ['Running', 'Pending', 'Terminating', 'CrashLoopBackOff'],
-  reducer: podPhase,
+  selected: [ 'Running', 'Pending', 'Terminating', 'CrashLoopBackOff' ],
+  reducer: podPhaseFilterReducer,
   items: [
-    {id: 'Running', title: 'Running'},
-    {id: 'Pending', title: 'Pending'},
-    {id: 'Terminating', title: 'Terminating'},
-    {id: 'CrashLoopBackOff', title: 'CrashLoopBackOff'},
-    {id: 'Completed', title: 'Completed'},
-  ],
+    { id: 'Running', title: 'Running' },
+    { id: 'Pending', title: 'Pending' },
+    { id: 'Terminating', title: 'Terminating' },
+    { id: 'CrashLoopBackOff', title: 'CrashLoopBackOff' },
+    { id: 'Succeeded', title: 'Succeeded' },
+    { id: 'Failed', title: 'Failed' },
+    { id: 'Unknown', title: 'Unknown '}
+  ]
 }];
 
 export class PodsPage extends React.Component {
