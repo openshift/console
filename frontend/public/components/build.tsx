@@ -6,7 +6,7 @@ import { K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { cloneBuild, formatBuildDuration } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildStrategy, Cog, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp } from './utils';
+import { BuildHooks, BuildStrategy, Cog, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp } from './utils';
 import { BuildPipeline } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
@@ -40,34 +40,36 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
   const duration = formatBuildDuration(build);
   const hasPipeline = build.spec.strategy.type === 'JenkinsPipeline';
 
-  return <div className="co-m-pane__body">
-    {hasPipeline && <div className="row">
-      <div className="col-xs-12">
-        <BuildPipeline obj={build} />
-      </div>
-    </div>}
-    <div className="row">
-      <div className="col-sm-6">
-        <ResourceSummary resource={build} showPodSelector={false} showNodeSelector={false}>
-          {triggeredBy && <dt>Triggered By</dt>}
-          {triggeredBy && <dd>{triggeredBy}</dd>}
-          {started && <dt>Started</dt>}
-          {started && <dd><Timestamp timestamp={started} /></dd>}
-        </ResourceSummary>
-      </div>
-      <div className="col-sm-6">
-        <BuildStrategy resource={build}>
-          <dt>Status</dt>
-          <dd>{build.status.phase}</dd>
-          {build.status.message && <dt>Reason</dt>}
-          {build.status.message && <dd>{build.status.message}</dd>}
-          {duration && <dt>Duration</dt>}
-          {duration && <dd>{duration}</dd>}
-        </BuildStrategy>
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      {hasPipeline && <div className="row">
+        <div className="col-xs-12">
+          <BuildPipeline obj={build} />
+        </div>
+      </div>}
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={build} showPodSelector={false} showNodeSelector={false}>
+            {triggeredBy && <dt>Triggered By</dt>}
+            {triggeredBy && <dd>{triggeredBy}</dd>}
+            {started && <dt>Started</dt>}
+            {started && <dd><Timestamp timestamp={started} /></dd>}
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <BuildStrategy resource={build}>
+            <dt>Status</dt>
+            <dd>{build.status.phase}</dd>
+            {build.status.message && <dt>Reason</dt>}
+            {build.status.message && <dd>{build.status.message}</dd>}
+            {duration && <dt>Duration</dt>}
+            {duration && <dd>{duration}</dd>}
+          </BuildStrategy>
+        </div>
       </div>
     </div>
-  </div>
-  ;
+    <BuildHooks resource={build} />
+  </React.Fragment>;
 };
 
 export const getStrategyType = (strategy) => {
