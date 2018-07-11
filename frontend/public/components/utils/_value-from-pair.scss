@@ -1,4 +1,18 @@
 .value-from-pair {
   float: left;
   width: 50%;
+
+  .btn--dropdown {
+    width: 100%;
+  }
+
+  .caret {
+    position: absolute;
+    right: 14px;
+    top: 9px;
+  }
+
+  .dropdown-menu {
+    width: 100%;
+  }
 }

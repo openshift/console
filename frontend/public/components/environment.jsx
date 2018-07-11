@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
-import { modelFor, k8sPatch } from '../module/k8s';
-import { PromiseComponent, NameValueEditorPair } from './utils';
-import { AsyncComponent } from './utils/async';
+import { modelFor, k8sPatch, k8sGet } from '../module/k8s';
+import { PromiseComponent, NameValueEditorPair, LoadingBox, AsyncComponent } from './utils';
+import { ConfigMapModel, SecretModel } from '../models';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -62,6 +62,40 @@ export class EnvironmentPage extends PromiseComponent {
       currentEnvVars,
       success: null
     };
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+
+    const {readOnly} = this.props;
+    if (readOnly) {
+      const configMaps={}, secrets = {};
+      this.setState({configMaps, secrets});
+      return;
+    }
+    const envNamespace = _.get(this.props, 'obj.metadata.namespace');
+
+    Promise.all([
+      k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
+        if (err.response.status !== 403) {
+          const errorMessage = err.message || 'Could not load config maps.';
+          this.setState({ errorMessage });
+        }
+        return {
+          configMaps: {}
+        };
+      }),
+      k8sGet(SecretModel, null, envNamespace).catch((err) => {
+        if (err.response.status !== 403) {
+          const errorMessage = err.message || 'Could not load secrets.';
+          this.setState({ errorMessage });
+        }
+        return {
+          secrets: {}
+        };
+      })
+    ])
+      .then(_.spread((configMaps, secrets) => this.setState({configMaps, secrets})));
   }
   /**
    * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
@@ -185,14 +219,17 @@ export class EnvironmentPage extends PromiseComponent {
   }
 
   render() {
-    const {errorMessage, success, inProgress, currentEnvVars, stale} = this.state;
+    const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets} = this.state;
     const {rawEnvData, readOnly, obj} = this.props;
 
+    if (!configMaps || !currentEnvVars || !secrets) {
+      return <LoadingBox />;
+    }
     const containerVars = currentEnvVars.map((envVar, i) => {
       const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : obj.metadata.name;
       return <div key={keyString} className="co-m-pane__body-group">
         { _.isArray(rawEnvData) && <h1 className="co-section-title">Container {keyString}</h1> }
-        <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true}/>
+        <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
       </div>;
     });
 

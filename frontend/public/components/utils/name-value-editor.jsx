@@ -13,6 +13,7 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
   constructor (props) {
     super(props);
     this._append = this._append.bind(this);
+    this._appendConfigMapOrSecret = this._appendConfigMapOrSecret.bind(this);
     this._change = this._change.bind(this);
     this._move = this._move.bind(this);
     this._remove = this._remove.bind(this);
@@ -22,6 +23,12 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
     const {updateParentData, nameValuePairs, nameValueId, allowSorting} = this.props;
 
     updateParentData({nameValuePairs: allowSorting ? nameValuePairs.concat([['', '', nameValuePairs.length]]) : nameValuePairs.concat([['', '']])}, nameValueId);
+  }
+
+  _appendConfigMapOrSecret() {
+    const {updateParentData, nameValuePairs} = this.props;
+    const configMapSecretKeyRef = {name: '', key: ''};
+    updateParentData({nameValuePairs: nameValuePairs.concat([['', {configMapSecretKeyRef}, nameValuePairs.length]])});
   }
 
   _remove(i) {
@@ -51,11 +58,11 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
   }
 
   render () {
-    const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId} = this.props;
+    const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId, configMaps, secrets} = this.props;
     const pairElems = nameValuePairs.map((pair, i) => {
-      return <PairElement onChange={this._change} index={i} nameString={nameString} valueString={valueString} allowSorting={allowSorting} readOnly={readOnly} pair={pair} key={pair[NameValueEditorPair.Index]} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId}/>;
+      const key = _.get(pair, [NameValueEditorPair.Index], i);
+      return <PairElement onChange={this._change} index={i} nameString={nameString} valueString={valueString} allowSorting={allowSorting} readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
     });
-
     return <div>
       <div className="row">
         <div className="col-xs-5 text-secondary">{nameString.toUpperCase()}</div>
@@ -67,9 +74,20 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
           {
             readOnly ?
               null :
-              <div className="btn-link pairs-list__btn" onClick={this._append}>
-                <i className="fa fa-plus-circle pairs-list__add-icon"></i>{addString}
-              </div>
+              <React.Fragment>
+                <span className="btn-link pairs-list__btn" onClick={this._append}>
+                  <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />{addString}
+                </span>
+                {
+                  allowSorting &&
+                    <React.Fragment>
+                      <span aria-hidden="true" className="pairs-list__action-divider">|</span>
+                      <span className="btn-link pairs-list__btn" onClick={this._appendConfigMapOrSecret}>
+                        <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add Value from Config Map or Secret
+                      </span>
+                    </React.Fragment>
+                }
+              </React.Fragment>
           }
         </div>
       </div>
@@ -90,7 +108,9 @@ NameValueEditor.propTypes = {
       PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.number])),
     ])
   ).isRequired,
-  updateParentData: PropTypes.func.isRequired
+  updateParentData: PropTypes.func.isRequired,
+  configMaps: PropTypes.object,
+  secrets: PropTypes.object
 };
 NameValueEditor.defaultProps = {
   nameString: 'Key',
@@ -193,20 +213,20 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ROW, pairSource, collectSourcePair
   }
 
   render() {
-    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair} = this.props;
-    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__btn pairs-list__delete-icon" aria-hidden={true} onClick={this._onRemove}></i><span className="sr-only">Delete</span></React.Fragment>;
+    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets} = this.props;
+    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__btn pairs-list__delete-icon" aria-hidden="true" onClick={this._onRemove}></i><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           <div className="col-xs-5 pairs-list__field">
-            <input type="text" className="form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly}/>
+            <input type="text" className="form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly} />
           </div>
           <div className="col-xs-6 pairs-list__field">
             {
               _.isPlainObject(pair[NameValueEditorPair.Value]) ?
-                <ValueFromPair pair={pair[NameValueEditorPair.Value]}/> :
-                <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly}/>
+                <ValueFromPair pair={pair[NameValueEditorPair.Value]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeValue} disabled={readOnly} /> :
+                <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly} />
             }
           </div>
           {
@@ -216,7 +236,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ROW, pairSource, collectSourcePair
                   {
                     allowSorting ?
                       <React.Fragment>
-                        {connectDragSource(<i className="fa fa-bars pairs-list__reorder-icon"/>)}
+                        {connectDragSource(<i className="fa fa-bars pairs-list__reorder-icon" />)}
                         {deleteButton}
                       </React.Fragment>
                       :
@@ -245,6 +265,8 @@ PairElement.propTypes = {
   connectDropTarget: PropTypes.func,
   isDragging: PropTypes.bool,
   onMove: PropTypes.func.isRequired,
-  rowSourceId: PropTypes.number.isRequired
+  rowSourceId: PropTypes.number.isRequired,
+  configMaps: PropTypes.object,
+  secrets: PropTypes.object
 };
 
