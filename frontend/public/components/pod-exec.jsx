@@ -141,6 +141,10 @@ export class PodExec extends React.PureComponent {
     this.ws && this.ws.send(`4${data}`);
   }
 
+  setFullscreen(fullscreen) {
+    this.terminal.current.setFullscreen(fullscreen);
+  }
+
   onData_ (data) {
     this.ws && this.ws.send(`0${btoa(data)}`);
   }
@@ -169,6 +173,13 @@ export class PodExec extends React.PureComponent {
             <Dropdown className="btn-group" items={_.mapValues(containers, nameWithIcon)} title={nameWithIcon(activeContainer || <LoadingInline />)} onChange={this.onChangeContainer} />
           </div>
         </div>
+        {!error && <div className="co-toolbar__group co-toolbar__group--right">
+          <div className="co-toolbar__item">
+            <button className="btn btn-link" onClick={() => this.setFullscreen(true)}>
+              <i className="fa fa-expand" aria-hidden="true"/> Expand
+            </button>
+          </div>
+        </div>}
       </div>
       {contents}
     </div>;

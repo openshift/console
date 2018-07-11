@@ -1,5 +1,8 @@
 @import "~xterm/dist/xterm.css";
 
+$console-z-index: $zindex-navbar-fixed + 20;
+$console-collapse-link-z-index: $console-z-index + 20;
+
 .console > .terminal {
   color: $color-pf-white;
   padding: 10px;
@@ -11,4 +14,14 @@
   height: 100%;
   padding: 0;
   background-color: $color-pf-black;
+  position: relative;
+  z-index: $console-z-index; // in fullscreen mode, to get above 'xterm fullscreen's and $zindex-navbar-fixed
+}
+
+.console-collapse-link {
+  color: $color-pf-blue-300;
+  position: fixed;
+  right: 18px;
+  top: 4px;
+  z-index: $console-collapse-link-z-index;  // in fullscreen mode, to get above console's z-index
 }

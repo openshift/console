@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Terminal as XTerminal } from 'xterm';
 import * as fit from 'xterm/lib/addons/fit/fit';
+import * as full from 'xterm/lib/addons/fullscreen/fullscreen';
 
 XTerminal.applyAddon(fit);
+XTerminal.applyAddon(full);
 
 export class Terminal extends React.Component {
   constructor(props) {
@@ -12,6 +14,7 @@ export class Terminal extends React.Component {
     this.state = {height: 0, width: 0};
     this.innerRef = React.createRef();
     this.outerRef = React.createRef();
+    this.isFullscreen = false;
     this.onResize = () => this.onResize_();
     this.onDataReceived = data => this.terminal && this.terminal.write(data);
 
@@ -33,11 +36,19 @@ export class Terminal extends React.Component {
     this.terminal && this.terminal.focus();
   }
 
+  setFullscreen( fullscreen ) {
+    this.terminal.toggleFullScreen(fullscreen);
+    this.isFullscreen = fullscreen;
+    this.focus();
+    this.onResize();
+  }
+
   onConnectionClosed (reason) {
     const terminal = this.terminal;
     if (!terminal) {
       return;
     }
+    this.setFullscreen(false);
     terminal.write(`\x1b[31m${reason || 'disconnected'}\x1b[m\r\n`);
     terminal.cursorHidden = true;
     terminal.setOption('disableStdin', true);
@@ -68,9 +79,9 @@ export class Terminal extends React.Component {
 
     const { padding } = this.props;
 
-    // This assumes we want to fill everything below and to the right
-    const height = Math.floor(bodyRect.bottom - nodeRect.top - padding);
-    const width = Math.floor(bodyRect.width - nodeRect.left - padding);
+    // This assumes we want to fill everything below and to the right.  In full-screen, fill entire viewport
+    const height = Math.floor(bodyRect.bottom - (this.isFullscreen ? 0 : nodeRect.top) - padding);
+    const width = Math.floor(bodyRect.width - (this.isFullscreen ? 0 : nodeRect.left) - padding);
 
     if (height === this.state.height && width === this.state.width) {
       return;
@@ -91,7 +102,11 @@ export class Terminal extends React.Component {
 
   render () {
     return <div ref={this.outerRef} style={this.state} className={this.props.className}>
-      <div ref={this.innerRef} className="console" />
+      <div ref={this.innerRef} className="console">
+        { this.isFullscreen && <button className="btn btn-link console-collapse-link" onClick={() => this.setFullscreen(false)}>
+          <i className="fa fa-compress" aria-hidden="true"/> Collapse
+        </button> }
+      </div>
     </div>;
   }
 }
