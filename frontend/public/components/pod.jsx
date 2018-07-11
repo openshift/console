@@ -189,7 +189,7 @@ const Details = ({obj: pod}) => {
 
   return <React.Fragment>
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Pod Overview</h1>
+      <h1 className="co-m-pane__heading">Pod Overview</h1>
       <PodGraphs pod={pod} />
       <div className="row">
         <div className="col-sm-6">
