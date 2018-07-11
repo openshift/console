@@ -86,7 +86,7 @@ SecretsList.displayName = 'SecretsList';
 
 const secretType = secret => secret.type;
 
-const filters = [{
+const rowFilters = [{
   type: 'secret-type',
   selected: ['kubernetes.io/service-account-token', 'kubernetes.io/dockercfg', 'kubernetes.io/dockerconfigjson', 'kubernetes.io/basic-auth', 'kubernetes.io/ssh-auth', 'kubernetes.io/tls', 'Opaque'],
   reducer: secretType,
@@ -115,7 +115,11 @@ const SecretsPage = props => {
     createLink: (type) => `/k8s/ns/${props.namespace}/secrets/new/${type !== 'yaml' ? type : ''}`
   };
 
-  return <ListPage ListComponent={SecretsList} canCreate={true} rowFilters={filters} createButtonText="Create" createProps={createProps} {...props} />;
+  // Only show row filters if no props.filters were passed. We want to hide the
+  // filter bar when already filtering secrets for pages like the service
+  // account page.
+  const rf = _.isEmpty(props.filters) ? rowFilters : null;
+  return <ListPage ListComponent={SecretsList} canCreate={true} rowFilters={rf} createButtonText="Create" createProps={createProps} {...props} />;
 };
 
 const SecretsDetailsPage = props => <DetailsPage
