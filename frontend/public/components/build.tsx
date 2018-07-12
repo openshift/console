@@ -35,13 +35,14 @@ const menuActions = [
 ];
 
 export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
+  const { logSnippet, message, startTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
-  const started = _.get(build, 'status.startTimestamp');
   const duration = formatBuildDuration(build);
   const hasPipeline = build.spec.strategy.type === 'JenkinsPipeline';
 
   return <React.Fragment>
     <div className="co-m-pane__body">
+      <h1 className="co-m-pane__heading">Build Overview</h1>
       {hasPipeline && <div className="row">
         <div className="col-xs-12">
           <BuildPipeline obj={build} />
@@ -52,16 +53,18 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
           <ResourceSummary resource={build} showPodSelector={false} showNodeSelector={false}>
             {triggeredBy && <dt>Triggered By</dt>}
             {triggeredBy && <dd>{triggeredBy}</dd>}
-            {started && <dt>Started</dt>}
-            {started && <dd><Timestamp timestamp={started} /></dd>}
+            {startTimestamp && <dt>Started</dt>}
+            {startTimestamp && <dd><Timestamp timestamp={startTimestamp} /></dd>}
           </ResourceSummary>
         </div>
         <div className="col-sm-6">
           <BuildStrategy resource={build}>
             <dt>Status</dt>
             <dd>{build.status.phase}</dd>
-            {build.status.message && <dt>Reason</dt>}
-            {build.status.message && <dd>{build.status.message}</dd>}
+            {logSnippet && <dt>Log Snippet</dt>}
+            {logSnippet && <dd><pre>{logSnippet}</pre></dd>}
+            {message && <dt>Reason</dt>}
+            {message && <dd>{message}</dd>}
             {duration && <dt>Duration</dt>}
             {duration && <dd>{duration}</dd>}
           </BuildStrategy>
