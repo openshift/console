@@ -74,20 +74,20 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
           {
             readOnly ?
               null :
-              <React.Fragment>
-                <span className="btn-link pairs-list__btn" onClick={this._append}>
+              <div className="co-toolbar__group co-toolbar__group--left">
+                <button className="btn btn-link" onClick={this._append}>
                   <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />{addString}
-                </span>
+                </button>
                 {
                   allowSorting &&
                     <React.Fragment>
-                      <span aria-hidden="true" className="pairs-list__action-divider">|</span>
-                      <span className="btn-link pairs-list__btn" onClick={this._appendConfigMapOrSecret}>
+                      <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
+                      <button className="btn btn-link" onClick={this._appendConfigMapOrSecret}>
                         <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add Value from Config Map or Secret
-                      </span>
+                      </button>
                     </React.Fragment>
                 }
-              </React.Fragment>
+              </div>
           }
         </div>
       </div>

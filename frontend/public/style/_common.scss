@@ -223,6 +223,10 @@ input[type=number]::-webkit-outer-spin-button {
   background-color: #D64456;
 }
 
+.co-action-divider {
+  color: $color-pf-black-600;
+}
+
 .co-break-word {
   @include co-break-word;
 }

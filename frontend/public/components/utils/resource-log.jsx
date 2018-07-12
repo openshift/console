@@ -4,10 +4,12 @@ import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 
 import { LoadingInline, LogWindow, TogglePlay } from './';
+import * as classNames from 'classnames';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
+import * as screenfull from 'screenfull';
 
 export const STREAM_EOF = 'eof';
 export const STREAM_LOADING = 'loading';
@@ -28,7 +30,11 @@ const streamStatusMessages = {
 };
 
 // Component for log stream controls
-const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
+const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, status, toggleStreaming}) => {
+  const expandCompressClass = classNames('fa', {
+    'fa-expand': !isFullscreen,
+    'fa-compress': isFullscreen,
+  });
   return <div className="co-toolbar">
     <div className="co-toolbar__group co-toolbar__group--left">
       <div className="co-toolbar__item">
@@ -39,11 +45,13 @@ const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
       {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
     </div>
     <div className="co-toolbar__group co-toolbar__group--right">
-      <div className="co-toolbar__item">
-        <button className="btn btn-default" onClick={onDownload}>
-          <i className="fa fa-download" aria-hidden="true"></i>&nbsp;Download
-        </button>
-      </div>
+      <button className="btn btn-link" onClick={onDownload}>
+        <i className="fa fa-download" aria-hidden="true"></i>&nbsp;Download
+      </button>
+      <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
+      <button className="btn btn-link" onClick={toggleFullscreen}>
+        <i className={expandCompressClass} aria-hidden="true"></i>&nbsp;{isFullscreen ? 'Collapse' : 'Expand'}
+      </button>
     </div>
   </div>;
 };
@@ -54,6 +62,7 @@ export class ResourceLog extends SafetyFirst {
     super(props);
     this._buffer = new LineBuffer(props.bufferSize);
     this._download = this._download.bind(this);
+    this._toggleFullscreen = this._toggleFullscreen.bind(this);
     this._onClose = this._onClose.bind(this);
     this._onError = this._onError.bind(this);
     this._onMessage = this._onMessage.bind(this);
@@ -61,13 +70,15 @@ export class ResourceLog extends SafetyFirst {
     this._restartStream = this._restartStream.bind(this);
     this._toggleStreaming = this._toggleStreaming.bind(this);
     this._updateStatus = this._updateStatus.bind(this);
+    this._resourceLogRef = React.createRef();
     this.state = {
       error: false,
       lines: [],
       linesBehind: 0,
       resourceStatus: LOG_SOURCE_WAITING,
       stale: false,
-      status: STREAM_LOADING
+      status: STREAM_LOADING,
+      isFullscreen: false
     };
   }
 
@@ -87,6 +98,14 @@ export class ResourceLog extends SafetyFirst {
   componentDidMount() {
     super.componentDidMount();
     this._wsInit(this.props);
+    if (screenfull.enabled) {
+      screenfull.on('change', () => {
+        this.setState({ isFullscreen: screenfull.isFullscreen });
+      });
+      screenfull.on('error', () => {
+        this.setState({ isFullscreen: false });
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -102,6 +121,8 @@ export class ResourceLog extends SafetyFirst {
   componentWillUnmount() {
     super.componentWillUnmount();
     this._wsDestroy();
+    screenfull.off('change');
+    screenfull.off('error');
   }
 
   // Download currently displayed log content
@@ -160,6 +181,18 @@ export class ResourceLog extends SafetyFirst {
     });
   }
 
+  // Toggle currently displayed log content to/from fullscreen
+  _toggleFullscreen () {
+    const logConsole = this._resourceLogRef.current;
+    if (!logConsole) {
+      return;
+    }
+
+    if (screenfull.enabled) {
+      screenfull.toggle(logConsole);
+    }
+  }
+
   // Toggle streaming/paused status
   _toggleStreaming() {
     const newStatus = this.state.status === STREAM_ACTIVE ? STREAM_PAUSED : STREAM_ACTIVE;
@@ -213,7 +246,7 @@ export class ResourceLog extends SafetyFirst {
 
   render() {
     const {dropdown, kind, bufferSize} = this.props;
-    const {error, lines, linesBehind, stale, status} = this.state;
+    const {error, lines, linesBehind, stale, status, isFullscreen} = this.state;
     const bufferFull = lines.length === bufferSize;
 
     // TODO create alert component or use pf-react alerts here.
@@ -232,17 +265,22 @@ export class ResourceLog extends SafetyFirst {
           Refresh
         </button>
       </p>}
-      <LogControls
-        dropdown={dropdown}
-        status={status}
-        toggleStreaming={this._toggleStreaming}
-        onDownload={this._download} />
-      <LogWindow
-        lines={lines}
-        linesBehind={linesBehind}
-        bufferFull={bufferFull}
-        status={status}
-        updateStatus={this._updateStatus} />
+      <div ref={this._resourceLogRef} className={classNames('resource-log', {'resource-log--fullscreen': isFullscreen})}>
+        <LogControls
+          dropdown={dropdown}
+          isFullscreen={isFullscreen}
+          onDownload={this._download}
+          status={status}
+          toggleFullscreen={this._toggleFullscreen}
+          toggleStreaming={this._toggleStreaming} />
+        <LogWindow
+          lines={lines}
+          linesBehind={linesBehind}
+          bufferFull={bufferFull}
+          isFullscreen={isFullscreen}
+          status={status}
+          updateStatus={this._updateStatus} />
+      </div>
     </React.Fragment>;
   }
 }
