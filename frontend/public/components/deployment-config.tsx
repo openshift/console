@@ -6,11 +6,12 @@ import { k8sCreate, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
+import { Cog, DeploymentPodCounts, LoadingInline, navFactory, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
+import { ContainerTable } from './deployment';
 
 registerTemplate('apps.openshift.io/v1.DeploymentConfig', `apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
@@ -68,8 +69,12 @@ const menuActions = [
 ];
 
 export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deploymentConfig}) => {
-  const isRecreate = 'Recreate' === _.get(deploymentConfig, 'spec.strategy.type');
   const reason = _.get(deploymentConfig, 'status.details.message');
+  const timeout = _.get(deploymentConfig, 'spec.strategy.rollingParams.timeoutSeconds');
+  const updatePeriod = _.get(deploymentConfig, 'spec.strategy.rollingParams.updatePeriodSeconds');
+  const interval = _.get(deploymentConfig, 'spec.strategy.rollingParams.intervalSeconds');
+  const isRecreate = 'Recreate' === _.get(deploymentConfig, 'spec.strategy.type');
+  const triggers = _.map(deploymentConfig.spec.triggers, 'type').join(', ');
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -91,16 +96,28 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deployment
               {reason && <dd>{reason}</dd>}
               <dt>Update Strategy</dt>
               <dd>{_.get(deploymentConfig, 'spec.strategy.type', 'Rolling')}</dd>
+              {timeout && <dt>Timeout</dt>}
+              {timeout && <dd>{pluralize(timeout, 'second')}</dd>}
+              {updatePeriod && <dt>Update Period</dt>}
+              {updatePeriod && <dd>{pluralize(updatePeriod, 'second')}</dd>}
+              {interval && <dt>Interval</dt>}
+              {interval && <dd>{pluralize(interval, 'second')}</dd>}
               {isRecreate || <dt>Max Unavailable</dt>}
               {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxUnavailable', 1)} of {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
               {isRecreate || <dt>Max Surge</dt>}
               {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxSurge', 1)} greater than {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
               <dt>Min Ready Seconds</dt>
               <dd>{deploymentConfig.spec.minReadySeconds ? pluralize(deploymentConfig.spec.minReadySeconds, 'second') : 'Not Configured'}</dd>
+              {triggers && <dt>Triggers</dt>}
+              {triggers && <dd>{triggers}</dd>}
             </dl>
           </div>
         </div>
       </div>
+    </div>
+    <div className="co-m-pane__body">
+      <h1 className="co-section-title">Containers</h1>
+      <ContainerTable containers={deploymentConfig.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
       <h1 className="co-section-title">Conditions</h1>
