@@ -203,6 +203,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/tectonic/version", authHandler(s.versionHandler))
 	handle("/api/tectonic/ldap/validate", authHandler(handleLDAPVerification))
 	handle("/api/tectonic/certs", authHandler(s.certsHandler))
+	handle("/api/console/version", authHandler(s.consoleVersionHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
@@ -298,6 +299,14 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if err := tpls.ExecuteTemplate(w, indexPageTemplateName, jsg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func (s *Server) consoleVersionHandler(w http.ResponseWriter, r *http.Request) {
+	sendResponse(w, http.StatusOK, struct {
+		ConsoleVersion string `json:"consoleVersion"`
+	}{
+		ConsoleVersion: version.Version,
+	})
 }
 
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
