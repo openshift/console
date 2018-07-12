@@ -48,16 +48,19 @@ export const authSvc = {
 
     coFetch(window.SERVER_FLAGS.logoutURL, {
       method: 'POST',
-    }).catch(e => {
+    }).then(() => authSvc._onLogout(next)).catch(e => {
       // eslint-disable-next-line no-console
       console.error('ERROR LOGGING OUT', e);
-    }).finally(() => {
-      if (window.SERVER_FLAGS.logoutRedirect && !next) {
-        window.location = window.SERVER_FLAGS.logoutRedirect;
-      } else {
-        authSvc.login();
-      }
+      authSvc._onLogout(next);
     });
+  },
+
+  _onLogout: (next) => {
+    if (window.SERVER_FLAGS.logoutRedirect && !next) {
+      window.location = window.SERVER_FLAGS.logoutRedirect;
+    } else {
+      authSvc.login();
+    }
   },
 
   login: () => {
