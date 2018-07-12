@@ -52,6 +52,8 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
 
 export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: imageStream}) => {
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
+  const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
+  const imageCount = _.get(imageStream, 'status.tags.length');
   const specTagByName = _.keyBy(imageStream.spec.tags, 'name');
 
   return <div>
@@ -59,6 +61,10 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
       <ResourceSummary resource={imageStream} showPodSelector={false} showNodeSelector={false}>
         {imageRepository && <dt>Image Repository</dt>}
         {imageRepository && <dd>{imageRepository}</dd>}
+        {publicImageRepository && <dt>Public Image Repository</dt>}
+        {publicImageRepository && <dd>{publicImageRepository}</dd>}
+        <dt>Image Count</dt>
+        <dd>{imageCount ? imageCount : 0}</dd>
       </ResourceSummary>
     </div>
     <div className="co-m-pane__body">
