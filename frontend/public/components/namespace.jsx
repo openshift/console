@@ -247,13 +247,13 @@ class NamespaceDropdown_ extends React.Component {
     const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
     return <div className="co-namespace-selector">
-      <span>{model.label}:</span>
       <Dropdown
         className="co-namespace-selector__dropdown"
         menuClassName="co-namespace-selector__menu"
         noButton
         canFavorite
         items={items}
+        titlePrefix={model.label}
         title={title}
         onChange={onChange}
         selectedKey={activeNamespace || ALL_NAMESPACES_KEY}

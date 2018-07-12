@@ -287,14 +287,16 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, storageKey, canFavorite, dropDownClassName} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix} = this.props;
 
     const button = noButton
       ? <div onClick={this.toggle} className="dropdown__not-btn" id={this.props.id}>
+        {titlePrefix && `${titlePrefix}: `}
         <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
       </div>
       : <button onClick={this.toggle} type="button" className="btn btn-default btn--dropdown dropdown-toggle" id={this.props.id}>
         <div className="btn--dropdown__content-wrap">
+          {titlePrefix && `${titlePrefix}: `}
           {title}&nbsp;&nbsp;<Caret />
         </div>
       </button>;
