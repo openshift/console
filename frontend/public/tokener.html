@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Tectonic Console</title>
+    [[ if eq .Branding "origin" ]]
+    <title>OpenShift Origin</title>
+    [[ end ]]
+    [[ if eq .Branding "ocp" ]]
+    <title>OpenShift Container Platform</title>
+    [[ end ]]
+    [[ if eq .Branding "online" ]]
+    <title>OpenShift Online</title>
+    [[ end ]]
+    [[ if eq .Branding "tectonic" ]]
+    <title>Tectonic</title>
+    [[ end ]]
     <script type="text/javascript">
       // eslint-disable-next-line no-var
       var json = [[.]];
@@ -13,7 +24,11 @@
       } catch (e) {
         error = e;
         console.error(e);
-        document.body.append('localStorage must be enabled to access Tectonic Console:');
+        [[ if eq .Branding "tectonic" ]]
+        document.body.append('localStorage must be enabled to use Tectonic Console:');
+        [[ else ]]
+        document.body.append('localStorage must be enabled to use OpenShift Console:');
+        [[ end ]]
         document.body.append(e.message || e.toString());
       }
       if (!error) {
@@ -33,6 +48,10 @@
     </script>
   </head>
   <body>
-    <noscript>JavaScript must be enabled to access Tectonic Console.</noscript>
+    [[ if eq .Branding "tectonic" ]]
+    <noscript>JavaScript must be enabled to use Tectonic Console.</noscript>
+    [[ else ]]
+    <noscript>JavaScript must be enabled to use OpenShift Console.</noscript>
+    [[ end ]]
   </body>
 </html>
