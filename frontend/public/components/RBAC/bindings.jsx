@@ -17,6 +17,7 @@ import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, Ms
   resourceObjPath, StatusBox, getQueryArgument } from '../utils';
 import { isSystemRole } from './index';
 import { registerTemplate } from '../../yaml-templates';
+import { connectToFlags, FLAGS, flagPending } from '../../features';
 
 registerTemplate('rbac.authorization.k8s.io/v1beta1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -279,14 +280,17 @@ class ListDropdown_ extends React.Component {
 
     return <div>
       { Component }
-      { loaded && _.isEmpty(items) && <p className="alert alert-info"><span className="pficon pficon-info"></span>No {desc} found or defined.</p> }
+      { loaded && _.isEmpty(items) && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>No {desc} found or defined.</p> }
     </div>;
   }
 }
 
-const ListDropdown = props => <Firehose resources={props.kinds.map(kind => ({kind, isList: true, prop: kind}))}>
-  <ListDropdown_ {...props} />
-</Firehose>;
+const ListDropdown = props => {
+  const resources = _.map(props.resources, resource => _.assign({ isList: true, prop: resource.kind }, resource));
+  return <Firehose resources={resources}>
+    <ListDropdown_ {...props} />
+  </Firehose>;
+};
 
 ListDropdown.propTypes = {
   dataFilter: PropTypes.func,
@@ -295,28 +299,58 @@ ListDropdown.propTypes = {
   selectedKey: PropTypes.string,
   selectedKeyKind: PropTypes.string,
   fixed: PropTypes.bool,
-  kinds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  resources: PropTypes.arrayOf(PropTypes.shape({
+    kind: PropTypes.string.isRequired,
+    namespace: PropTypes.string,
+  })).isRequired,
   placeholder: PropTypes.string,
 };
 
-const NsDropdown = props => <ListDropdown {...props} desc="Namespaces" kinds={['Namespace']} selectedKeyKind="Namespace" placeholder="Select namespace" />;
+const NsDropdown_ = props => {
+  const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
+  if (flagPending(openshiftFlag)) {
+    return null;
+  }
+  const kind = openshiftFlag ? 'Project' : 'Namespace';
+  const resources = [{ kind }];
+  return <ListDropdown {...props} desc="Namespaces" resources={resources} selectedKeyKind={kind} placeholder="Select namespace" />;
+};
+const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);
 
-const NsRoleDropdown = props => {
-  const roleFilter = role => !isSystemRole(role) && (!props.namespace || !role.metadata.namespace || role.metadata.namespace === props.namespace);
+const NsRoleDropdown_ = props => {
+  const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
+  if (flagPending(openshiftFlag)) {
+    return null;
+  }
+
+  const roleFilter = role => !isSystemRole(role);
+
+  let kinds;
+  if (props.fixed) {
+    kinds = [props.selectedKeyKind];
+  } else if (props.namespace) {
+    kinds = ['Role', 'ClusterRole'];
+  } else {
+    kinds = ['ClusterRole'];
+  }
+  const resourceForKind = kind => ({ kind, namespace: kind === 'Role' ? props.namespace : null });
+  const resources = _.map(kinds, resourceForKind);
+
   return <ListDropdown
     {...props}
     dataFilter={roleFilter}
     desc="Namespace Roles (Role)"
-    kinds={props.fixed ? [props.selectedKeyKind] : ['Role', 'ClusterRole']}
+    resources={resources}
     placeholder="Select role name"
   />;
 };
+const NsRoleDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsRoleDropdown_);
 
 const ClusterRoleDropdown = props => <ListDropdown
   {...props}
   dataFilter={role => !isSystemRole(role)}
   desc="Cluster-wide Roles (ClusterRole)"
-  kinds={['ClusterRole']}
+  resources={[{ kind: 'ClusterRole' }]}
   placeholder="Select role name"
 />;
 
