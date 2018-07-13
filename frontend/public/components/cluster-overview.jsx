@@ -36,6 +36,9 @@ const getConsoleTitle = isOpenShift => isOpenShift ? 'OpenShift Console' : 'Tect
 
 const Graphs = requirePrometheus(({isOpenShift, namespace}) => {
   const consoleTitle = getConsoleTitle(isOpenShift);
+  // TODO: Revert this change in OpenShift 4.0. In OpenShift 3.11, the scheduler and controller manager is a single component.
+  const controllerManagerJob = isOpenShift ? 'kube-controllers' : 'kube-controller-manager';
+  const schedulerJob = isOpenShift ? 'kube-controllers' : 'kube-scheduler';
   return <React.Fragment>
     <div className="group">
       <div className="group__title">
@@ -82,10 +85,10 @@ const Graphs = requirePrometheus(({isOpenShift, namespace}) => {
               <Gauge title="API Servers Up" query={'(sum(up{job="apiserver"} == 1) / count(up{job="apiserver"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Controller Managers Up" query={'(sum(up{job="kube-controller-manager"} == 1) / count(up{job="kube-controller-manager"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+              <Gauge title="Controller Managers Up" query={`(sum(up{job="${controllerManagerJob}"} == 1) / count(up{job="${controllerManagerJob}"})) * 100`} invert={true} thresholds={{warn: 15, error: 50}} />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Schedulers Up" query={'(sum(up{job="kube-scheduler"} == 1) / count(up{job="kube-scheduler"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+              <Gauge title="Schedulers Up" query={`(sum(up{job="${schedulerJob}"} == 1) / count(up{job="${schedulerJob}"})) * 100`} invert={true} thresholds={{warn: 15, error: 50}} />
             </div>
             <div className="col-md-3 col-sm-6">
               <Gauge title="API Request Success Rate" query={'sum(rate(apiserver_request_count{code=~"2.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'} invert={true} thresholds={{warn: 15, error: 30}} />
