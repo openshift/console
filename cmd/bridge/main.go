@@ -82,7 +82,7 @@ func main() {
 	fOpenshiftConsoleURL := fs.String("openshift-console-url", "", "URL for OpenShift console used in context switcher")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
-	fLogoImageName := fs.String("logo-image-name", "", "Logo image used in the masthead.")
+	fBranding := fs.String("branding", "origin", "Console branding for the masthead logo and title. One of origin, ocp, online, or tectonic. Defaults to origin.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
@@ -148,7 +148,7 @@ func main() {
 		TectonicCACertFile:   caCertFilePath,
 		ClusterName:          *fTectonicClusterName,
 		OpenshiftConsoleURL:  *fOpenshiftConsoleURL,
-		LogoImageName:        *fLogoImageName,
+		Branding:             *fBranding,
 		DocumentationBaseURL: documentationBaseURL,
 		GoogleTagManagerID:   *fGoogleTagManagerID,
 		LoadTestFactor:       *fLoadTestFactor,

@@ -8,7 +8,7 @@ import * as PropTypes from 'prop-types';
 
 import store from '../redux';
 import { ALL_NAMESPACES_KEY } from '../const';
-import { connectToFlags, featureActions, FLAGS } from '../features';
+import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
@@ -109,7 +109,7 @@ const ActiveNamespaceRedirect = ({location}) => {
 // The default page component lets us connect to flags without connecting the entire App.
 const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
-  if (openshiftFlag === undefined) {
+  if (flagPending(openshiftFlag)) {
     return <Loading />;
   }
 
@@ -135,9 +135,27 @@ class App extends React.PureComponent {
     analyticsSvc.route(pathname);
   }
 
+  getProductName () {
+    switch (window.SERVER_FLAGS.branding) {
+      case 'origin':
+        return 'OpenShift Origin';
+      case 'ocp':
+        return 'OpenShift Container Platform';
+      case 'online':
+        return 'OpenShift Online';
+      case 'tectonic':
+        return 'Tectonic';
+      default:
+        return null;
+    }
+  }
+
   render () {
+    const productName = this.getProductName();
     return <React.Fragment>
-      <Helmet titleTemplate="%s · Tectonic" />
+      {productName
+        ? <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+        : <Helmet defaultTitle="Console" />}
       <Masthead />
       <Nav />
       <div id="content">
