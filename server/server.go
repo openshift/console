@@ -116,9 +116,11 @@ func (s *Server) HTTPHandler() http.Handler {
 		jsg := struct {
 			auth.LoginJSON  `json:",inline"`
 			LoginSuccessURL string `json:"loginSuccessURL"`
+			Branding        string `json:"branding"`
 		}{
 			LoginJSON:       loginInfo,
 			LoginSuccessURL: successURL,
+			Branding:        s.Branding,
 		}
 
 		tpl := template.New(tokenizerPageTemplateName)
