@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
-import { getJobTypeAndCompletions, isNodeReady, podPhase, podReadiness, K8sResourceKind, K8sKind, K8sResourceKindReference } from '../../module/k8s';
+import { getJobTypeAndCompletions, isNodeReady, podPhase, podPhaseFilterReducer, podReadiness, K8sResourceKind, K8sKind, K8sResourceKindReference } from '../../module/k8s';
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
@@ -50,7 +50,7 @@ const listFilters = {
       return true;
     }
 
-    const phase = podPhase(pod);
+    const phase = podPhaseFilterReducer(pod);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 

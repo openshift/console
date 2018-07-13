@@ -209,6 +209,17 @@ export const podPhase = (pod): PodPhase => {
   return phase;
 };
 
+export const podPhaseFilterReducer = (pod): PodPhase => {
+  const status = podPhase(pod);
+  if (status === 'Terminating') {
+    return status;
+  }
+  if (status.includes('CrashLoopBackOff')) {
+    return 'CrashLoopBackOff';
+  }
+  return _.get(pod, 'status.phase', 'Unknown');
+};
+
 export const podReadiness = ({status}): PodReadiness => {
   if (_.isEmpty(status.conditions)) {
     return null;
