@@ -6,7 +6,7 @@ import { K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Triggers } from './utils';
+import { BuildHooks, BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, WebhookTriggers } from './utils';
 import { BuildsPage, BuildEnvironmentComponent } from './build';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
@@ -71,8 +71,8 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
       </div>
     </div>
   </div>
+  <WebhookTriggers resource={buildConfig} />
   <BuildHooks resource={buildConfig} />
-  <Triggers resource={buildConfig} />
 </React.Fragment>;
 
 const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
