@@ -29,12 +29,14 @@ export class Line extends BaseGraph {
         zeroline: false,
         ticks: '',
         showline: false,
+        fixedrange: true,
       },
       xaxis: {
         zeroline: false,
         tickformat:'%H:%M',
         ticks: '',
         showline: false,
+        fixedrange: true,
       },
       legend: {
         x: 0, y: 1,
