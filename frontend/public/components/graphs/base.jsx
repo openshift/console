@@ -7,6 +7,7 @@ import { coFetchJSON } from '../../co-fetch';
 import { SafetyFirst } from '../safety-first';
 
 import { prometheusBasePath } from './index';
+import { MonitoringRoutes } from '../../monitoring';
 
 export class BaseGraph extends SafetyFirst {
   constructor(props) {
@@ -98,6 +99,11 @@ export class BaseGraph extends SafetyFirst {
   }
 
   prometheusURL () {
+    const base = this.props.urls && this.props.urls[MonitoringRoutes.Prometheus];
+    if (!base) {
+      return null;
+    }
+
     let queries = this.props.query;
     if (!_.isArray(queries)) {
       queries = [{
@@ -111,16 +117,19 @@ export class BaseGraph extends SafetyFirst {
       params.set(`g${i}.tab`, '0');
     });
 
-    return `/prometheus/graph?${params.toString()}`;
+    return `${base}/graph?${params.toString()}`;
   }
 
   render () {
-    return <a href={this.prometheusURL()} target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
-      <div className="graph-wrapper" style={this.style}>
-        <h5 className="graph-title">{this.props.title}</h5>
-        <div ref={this.setNode} style={{width: '100%'}}/>
-      </div>
-    </a>;
+    const url = this.prometheusURL();
+    const graph = <div className="graph-wrapper" style={this.style}>
+      <h5 className="graph-title">{this.props.title}</h5>
+      <div ref={this.setNode} style={{width: '100%'}}/>
+    </div>;
+
+    return url
+      ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>{graph}</a>
+      : graph;
   }
 }
 
@@ -136,4 +145,8 @@ BaseGraph.propTypes = {
   title: PropTypes.string.isRequired,
   timeSpan: PropTypes.number,
   basePath: PropTypes.string,
+};
+
+BaseGraph.contextTypes = {
+  urls: PropTypes.object,
 };

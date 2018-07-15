@@ -1,11 +1,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { relayout, register } from 'plotly.js/lib/core';
 import * as pie from 'plotly.js/lib/pie';
 // Horrible hack to get around plotly vs webpack incompatibility
 register(pie);
 
 import { BaseGraph } from './base';
+import { connectToURLs, MonitoringRoutes } from '../../monitoring';
 
 const colors = {
   ok: 'rgb(46,201,141)',
@@ -22,7 +24,7 @@ const fontColors = {
   error: '#d64456',
 };
 
-export class Gauge extends BaseGraph {
+class Gauge_ extends BaseGraph {
   constructor (props) {
     super(props);
 
@@ -167,6 +169,7 @@ export class Gauge extends BaseGraph {
     relayout(this.node, this.layout);
   }
 }
+export const Gauge = connectToURLs(MonitoringRoutes.Prometheus)(Gauge_);
 
 Gauge.defaultProps = {
   invert: false,
@@ -174,4 +177,8 @@ Gauge.defaultProps = {
     warn: 67,
     error: 92,
   },
+};
+
+Gauge_.contextTypes = {
+  urls: PropTypes.object,
 };

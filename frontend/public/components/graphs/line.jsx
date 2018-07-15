@@ -1,8 +1,10 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { restyle } from 'plotly.js/lib/core';
 
 import { BaseGraph } from './base';
+import { connectToURLs, MonitoringRoutes } from '../../monitoring';
 
 const baseData = {
   x: [],
@@ -12,7 +14,7 @@ const baseData = {
   type: 'scatter',
 };
 
-export class Line extends BaseGraph {
+export class Line_ extends BaseGraph {
   constructor (props) {
     super(props);
 
@@ -121,3 +123,8 @@ export class Line extends BaseGraph {
     });
   }
 }
+export const Line = connectToURLs(MonitoringRoutes.Prometheus)(Line_);
+
+Line_.contextTypes = {
+  urls: PropTypes.object,
+};

@@ -9,6 +9,7 @@ import * as PropTypes from 'prop-types';
 import store from '../redux';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
+import { detectMonitoringURLs } from '../monitoring';
 import { analyticsSvc } from '../module/analytics';
 import { ClusterOverviewContainer } from './cluster-overview-container';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
@@ -227,6 +228,7 @@ class App extends React.PureComponent {
 
 _.each(featureActions, store.dispatch);
 store.dispatch(k8sActions.getResources());
+store.dispatch(detectMonitoringURLs);
 
 analyticsSvc.push({tier: 'tectonic'});
 
