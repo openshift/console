@@ -26,6 +26,5 @@ export BRIDGE_K8S_AUTH="bearer-token"
 secretname=$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}')
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret "$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode)
 export BRIDGE_K8S_AUTH_BEARER_TOKEN
-export BRIDGE_BRANDING="tectonic"
 
 echo "Using $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT"

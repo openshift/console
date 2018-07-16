@@ -82,7 +82,7 @@ func main() {
 	fOpenshiftConsoleURL := fs.String("openshift-console-url", "", "URL for OpenShift console used in context switcher")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
-	fBranding := fs.String("branding", "origin", "Console branding for the masthead logo and title. One of origin, ocp, online, or tectonic. Defaults to origin.")
+	fBranding := fs.String("branding", "origin", "Console branding for the masthead logo and title. One of origin, ocp, or online. Defaults to origin.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 

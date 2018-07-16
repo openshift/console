@@ -12,5 +12,4 @@
     --user-auth=openshift \
     --user-auth-oidc-client-id=console-oauth-client \
     --user-auth-oidc-client-secret-file=examples/console-client-secret \
-    --user-auth-oidc-ca-file=examples/ca.crt \
-    --branding=origin
+    --user-auth-oidc-ca-file=examples/ca.crt
