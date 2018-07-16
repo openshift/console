@@ -95,19 +95,19 @@ const NodeLink = ({name}) => name ? <Link to={`/k8s/cluster/nodes/${name}`}>{nam
 export const ContainerRow = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
-
-  const fixes = _.get(pod.metadata, 'labels[secscan/fixables]');
+  const startedAt = _.get(cstate, 'startedAt');
+  const finishedAt = _.get(cstate, 'finishedAt');
 
   return <div className="row">
     <div className="col-sm-2 col-xs-4">
       <ContainerLink pod={pod} name={container.name} />
     </div>
-    <Overflow className="col-sm-2 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
-    <Overflow className="col-sm-2 col-xs-8" value={container.image} />
-    <div className="col-md-2 col-sm-2 hidden-xs">{fixes ? `${fixes} fixable packages` : '-'}</div>
+    <Overflow className="col-md-2 col-sm-3 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
+    <Overflow className="col-md-2 col-sm-3 col-xs-8" value={container.image} />
     <div className="col-md-1 col-sm-2 hidden-xs text-nowrap">{_.get(cstate, 'label', '-')}</div>
     <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
-    <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(cstate, 'startedAt')} /></div>
+    <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
+    <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
   </div>;
 };
 
@@ -138,12 +138,12 @@ const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
         <div className="col-sm-2 col-xs-4">Name</div>
-        <div className="col-sm-2 hidden-xs">Id</div>
-        <div className="col-sm-2 col-xs-8">Image</div>
-        <div className="col-md-2 col-sm-2 hidden-xs">Security Scan</div>
+        <div className="col-md-2 col-sm-3 hidden-xs">Id</div>
+        <div className="col-md-2 col-sm-3 col-xs-8">Image</div>
         <div className="col-md-1 col-sm-2 hidden-xs">State</div>
         <div className="col-md-1 col-sm-2 hidden-xs">Restart Count</div>
         <div className="col-md-2 hidden-sm hidden-xs">Started At</div>
+        <div className="col-md-2 hidden-sm hidden-xs">Finished At</div>
       </div>
       <div className="co-m-table-grid__body">
         {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
@@ -182,6 +182,7 @@ const Details = ({obj: pod}) => {
     return sum + value;
   }, 0);
   const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
+  const securityScan = _.get(pod, 'metadata.labels[secscan/fixables]');
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -200,24 +201,33 @@ const Details = ({obj: pod}) => {
             <dd>{podPhase(pod)}</dd>
             <dt>Restart Policy</dt>
             <dd>{getRestartPolicyLabel(pod)}</dd>
-            {activeDeadlineSeconds && <React.Fragment>
-              <dt>Active Deadline</dt>
-              {/* Convert to ms for formatDuration */}
-              <dd>{formatDuration(activeDeadlineSeconds * 1000)}</dd>
-            </React.Fragment>}
+            {
+              activeDeadlineSeconds &&
+                <React.Fragment>
+                  <dt>Active Deadline</dt>
+                  {/* Convert to ms for formatDuration */}
+                  <dd>{formatDuration(activeDeadlineSeconds * 1000)}</dd>
+                </React.Fragment>
+            }
             <dt>Pod IP</dt>
             <dd>{pod.status.podIP || '-'}</dd>
             <dt>Node</dt>
             <dd><NodeLink name={pod.spec.nodeName} /></dd>
+            {
+              securityScan &&
+                <React.Fragment>
+                  <dt>Security Scan</dt>
+                  <dd>{securityScan} fixable packages</dd>
+                </React.Fragment>
+            }
           </dl>
         </div>
       </div>
 
     </div>
 
-    {pod.spec.initContainers && <ContainerTable heading="Init Containers" containers={pod.spec.initContainers} pod={pod} />}
-
-    <ContainerTable heading="Containers" containers={pod.spec.containers} pod={pod} />
+    {pod.spec.initContainers && <ContainerTable key="initContainerTable" heading="Init Containers" containers={pod.spec.initContainers} pod={pod} />}
+    <ContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
 
     <div className="co-m-pane__body">
       <h1 className="co-section-title">Pod Volumes</h1>
