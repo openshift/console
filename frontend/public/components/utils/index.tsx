@@ -37,7 +37,7 @@ export * from './entitlements';
 export * from './build-strategy';
 export * from './copy-to-clipboard';
 export * from './build-hooks';
-export * from './triggers';
+export * from './webhooks';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
