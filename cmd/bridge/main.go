@@ -63,6 +63,7 @@ func main() {
 	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
+	fK8sModeOffClusterCAFile := fs.String("k8s-mode-off-cluster-ca-file", "", "PEM file for Kubernetes API server, if not present, the system's Root CAs will be used")
 
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
@@ -286,10 +287,30 @@ func main() {
 	case "off-cluster":
 		k8sEndpoint = validateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
 
+		tlsConfig := &tls.Config{}
+		if *fK8sModeOffClusterSkipVerifyTLS {
+			if *fK8sModeOffClusterCAFile != "" {
+				log.Fatalf("only one of k8s-mode-off-cluster-ca-file and k8s-mode-off-cluster-skip-verify-tls can be present")
+			} else {
+				tlsConfig.InsecureSkipVerify = *fK8sModeOffClusterSkipVerifyTLS
+			}
+		} else {
+			if *fK8sModeOffClusterCAFile != "" {
+				rootCAs := x509.NewCertPool()
+				ca, err := ioutil.ReadFile(*fK8sModeOffClusterCAFile)
+				if err != nil {
+					log.Fatalf("failed to read k8s-mode-off-cluster CA file: %v", err)
+				}
+				if !rootCAs.AppendCertsFromPEM(ca) {
+					log.Fatalf("no CA found for the API server")
+				}
+				tlsConfig.RootCAs = rootCAs
+			} else {
+				tlsConfig.RootCAs = x509.NewCertPool()
+			}
+		}
 		srv.K8sProxyConfig = &proxy.Config{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
-			},
+			TLSClientConfig: tlsConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
 		}
