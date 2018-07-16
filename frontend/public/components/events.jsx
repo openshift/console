@@ -385,30 +385,31 @@ class EventStream extends SafetyFirst {
           There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
           </div>
         </div>
-
-        <WindowScroller>
-          {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-            <AutoSizer disableHeight>
-              {({width}) => <div ref={registerChild}>
-                <VirtualList
-                  autoHeight
-                  data={filteredMessages}
-                  height={height}
-                  isScrolling={isScrolling}
-                  onScroll={onChildScroll}
-                  rowRenderer={this.rowRenderer}
-                  scrollTop={scrollTop}
-                  width={width}
-                  rowCount={count}
-                  tabIndex={null}
-                  // TODO: set rowHeight based on media query
-                  // @media screen and (min-width: 768px)...
-                  // rowHeight={width > 548 ? 135 : 250}
-                  rowHeight={135}
-                />
-              </div>}
-            </AutoSizer> }
-        </WindowScroller>
+        { count > 0 &&
+            <WindowScroller>
+              {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
+                <AutoSizer disableHeight>
+                  {({width}) => <div ref={registerChild}>
+                    <VirtualList
+                      autoHeight
+                      data={filteredMessages}
+                      height={height}
+                      isScrolling={isScrolling}
+                      onScroll={onChildScroll}
+                      rowRenderer={this.rowRenderer}
+                      scrollTop={scrollTop}
+                      width={width}
+                      rowCount={count}
+                      tabIndex={null}
+                      // TODO: set rowHeight based on media query
+                      // @media screen and (min-width: 768px)...
+                      // rowHeight={width > 548 ? 135 : 250}
+                      rowHeight={135}
+                    />
+                  </div>}
+                </AutoSizer> }
+            </WindowScroller>
+        }
         { sysEventStatus }
       </div>
     </div>;
