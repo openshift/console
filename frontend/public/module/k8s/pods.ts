@@ -77,6 +77,11 @@ export const VolumeSource = {
     label: 'ConfigMap',
     description: 'ConfigMap to be consumed in volume.',
   },
+  projected: {
+    id: 'projected',
+    label: 'Projected',
+    description: 'A projected volume maps several existing volume sources into the same directory.',
+  },
 };
 
 export const getVolumeType = volume => {
@@ -117,6 +122,7 @@ export const getVolumeLocation = volume => {
     case VolumeSource.configMap.id:
     case VolumeSource.emptyDir.id:
     case VolumeSource.secret.id:
+    case VolumeSource.projected.id:
       return null;
     // Defaults to space separated sorted keys.
     default:
