@@ -125,8 +125,11 @@ const Graphs = requirePrometheus(({isOpenShift, namespace}) => {
   </React.Fragment>;
 });
 
-const LimitedGraphs = requirePrometheus(({isOpenShift}) => {
-  const consoleTitle = getConsoleTitle(isOpenShift);
+const LimitedGraphs = ({openshiftFlag}) => {
+  if (flagPending(openshiftFlag)) {
+    return null;
+  }
+  const consoleTitle = getConsoleTitle(openshiftFlag);
   return <div className="group">
     <div className="group__title">
       <h2 className="h3">Health</h2>
@@ -142,10 +145,10 @@ const LimitedGraphs = requirePrometheus(({isOpenShift}) => {
       </div>
     </div>
   </div>;
-});
+};
 
 const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
-  const graphs = limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} />;
+  const graphs = limited ? <LimitedGraphs namespace={namespace} openshiftFlag={openshiftFlag} /> : <Graphs namespace={namespace} />;
   const body = <div className="row">
     <div className="col-lg-8 col-md-12">
       {!fake && graphs}
