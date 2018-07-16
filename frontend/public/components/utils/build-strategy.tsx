@@ -25,6 +25,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   const commitAuthorName = _.get(resource, 'spec.revision.git.author.name');
   const pushSecret = _.get(resource, 'spec.output.pushSecret');
   const resourceLimits = _.get(resource, 'spec.resources.limits');
+  const triggers = _.map(resource.spec.triggers, 'type').join(', ');
 
   return <dl className="co-m-pane__details">
     {children}
@@ -61,6 +62,8 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
     <dd>{resource.spec.runPolicy || 'Serial'}</dd>
     {resourceLimits && <dt>Resource Limits</dt>}
     {resourceLimits && <dd>{_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ')}</dd>}
+    {triggers && <dt>Triggers</dt>}
+    {triggers && <dd>{triggers}</dd>}
   </dl>;
 };
 

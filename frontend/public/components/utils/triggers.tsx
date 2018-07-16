@@ -1,11 +1,13 @@
+/* eslint-disable no-undef */
+
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { ResourceLink } from './';
+import { Overflow } from './overflow';
 
 const kubeAPIServerURL = (window as any).SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
-/* eslint-disable no-undef */
 enum TriggerTypes {
   Bitbucket ='Bitbucket',
   ConfigChange = 'ConfigChange',
@@ -15,44 +17,57 @@ enum TriggerTypes {
   ImageChange = 'ImageChange',
 }
 const webhookTriggers = new Set<TriggerTypes>([TriggerTypes.Bitbucket, TriggerTypes.Generic, TriggerTypes.GitHub, TriggerTypes.GitLab]);
-/* eslint-enable no-undef */
-const getTriggerProperty = trigger => webhookTriggers.has(trigger.type) ? trigger.type.toLowerCase() : null;
+const getTriggerProperty = trigger => trigger.type.toLowerCase();
 
-export const Triggers: React.SFC<TriggersProps> = ({ resource }) => {
-  const triggers = _.get(resource, 'spec.triggers');
-  const namespace = resource.metadata.namespace;
-  const buildConfigName = resource.metadata.name;
+export const WebhookTriggers: React.SFC<WebhookTriggersProps> = ({ resource }) => {
+  const { name, namespace } = resource.metadata;
+  const { triggers } = resource.spec;
+  const webhooks = _.filter(triggers, trigger => webhookTriggers.has(trigger.type));
+  if (_.isEmpty(webhooks)) {
+    return null;
+  }
+
   const getWebhookURL = trigger => {
     const triggerProperty = getTriggerProperty(trigger);
-    return triggerProperty
-      ? `${kubeAPIServerURL}/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${buildConfigName}/webhooks/<secret>/${triggerProperty}`
-      : '-';
+
+    // FIXME: Consider showing the secret in the table so that users can copy the real URL. Maybe a show/hide toggle like secrets?
+    // const secret = _.get(trigger, [triggerProperty, 'secret'], '<secret>');
+    // return `${kubeAPIServerURL}/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${name}/webhooks/${secret}/${triggerProperty}`;
+
+    return `${kubeAPIServerURL}/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${name}/webhooks/<secret>/${triggerProperty}`;
   };
+
   const getSecretReference = trigger => {
     const triggerProperty = getTriggerProperty(trigger);
     const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
     return secretName
       ? <ResourceLink kind="Secret" name={secretName} namespace={namespace} title={secretName} />
-      : '-';
+      : <span className="text-muted">No secret</span>;
   };
-  return !_.isEmpty(triggers) && <div className="co-m-pane__body">
-    <h1 className="co-section-title">Triggers</h1>
+
+  return <div className="co-m-pane__body">
+    <h1 className="co-section-title">Webhooks</h1>
     <div className="co-table-container">
       <table className="table">
+        <colgroup>
+          <col className="col-sm-2" />
+          <col className="col-sm-7" />
+          <col className="col-sm-3" />
+        </colgroup>
         <thead>
           <tr>
             <th>Type</th>
             <th>Webhook URL</th>
-            <th>Secret Reference</th>
+            <th>Secret</th>
           </tr>
         </thead>
         <tbody>
-          {_.map(triggers, (trigger, i) => {
+          {_.map(webhooks, (trigger, i) => {
             const webhookURL = getWebhookURL(trigger);
             const secretReference = getSecretReference(trigger);
             return <tr key={i}>
               <td>{trigger.type}</td>
-              <td>{webhookURL}</td>
+              <td><Overflow value={webhookURL} /></td>
               <td>{secretReference}</td>
             </tr>;
           })}
@@ -62,10 +77,8 @@ export const Triggers: React.SFC<TriggersProps> = ({ resource }) => {
   </div>;
 };
 
-/* eslint-disable no-undef */
-export type TriggersProps = {
+export type WebhookTriggersProps = {
   resource: K8sResourceKind;
 };
-/* eslint-enable no-undef */
 
-Triggers.displayName = 'Triggers';
+WebhookTriggers.displayName = 'WebhookTriggers';
