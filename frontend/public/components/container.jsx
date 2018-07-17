@@ -5,9 +5,16 @@ import { getContainerState, getContainerStatus, getPullPolicyLabel } from '../mo
 import * as k8sProbe from '../module/k8s/probe';
 import { Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav, ResourceLink } from './utils';
 
-const getResourceLimitValue = container => {
+const formatComputeResources = resources => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
+
+const getResourceRequestsValue = container => {
+  const requests = _.get(container, 'resources.requests');
+  return formatComputeResources(requests);
+};
+
+const getResourceLimitsValue = container => {
   const limits = _.get(container, 'resources.limits');
-  return limits && _.map(limits, (v, k) => `${k}: ${v}`).join(', ');
+  return formatComputeResources(limits);
 };
 
 const Lifecycle = ({lifecycle}) => {
@@ -23,10 +30,15 @@ const Lifecycle = ({lifecycle}) => {
   </div>;
 };
 
-const Liveness = ({liveness, podIP}) => {
-  const label = liveness && k8sProbe.getActionLabelFromObject(liveness);
-  const value = liveness && _.get(k8sProbe.mapLivenessProbeToFields(liveness, podIP), 'cmd');
-  return value ? <span>{label} <code>{value}</code></span> : <span>-</span>;
+const Probe = ({probe, podIP}) => {
+  const label = probe && k8sProbe.getActionLabelFromObject(probe);
+  const value = probe && _.get(k8sProbe.mapProbeToFields(probe, podIP), 'cmd');
+  if (!value) {
+    return '-';
+  }
+  const isMultiline = value.indexOf('\n') !== -1;
+  const formattedValue = isMultiline ? <pre>{value}</pre> : <code>{value}</code>;
+  return <React.Fragment>{label} {formattedValue}</React.Fragment>;
 };
 
 const Ports = ({ports}) => {
@@ -43,7 +55,7 @@ const Ports = ({ports}) => {
     </thead>
     <tbody>
       {ports.map((p, i) => <tr key={i}>
-        <td>{p.name}</td>
+        <td>{p.name || '-'}</td>
         <td>{p.containerPort}</td>
       </tr>)}
     </tbody>
@@ -131,14 +143,18 @@ const Details = (props) => {
           <dd>{state.label}</dd>
           <dt>ID</dt>
           <dd><Overflow value={status.containerID} /></dd>
-          <dt>Restart Count</dt>
+          <dt>Restarts</dt>
           <dd>{status.restartCount}</dd>
+          <dt>Resource Requests</dt>
+          <dd>{getResourceRequestsValue(container) || '-'}</dd>
           <dt>Resource Limits</dt>
-          <dd>{getResourceLimitValue(container) || '-'}</dd>
+          <dd>{getResourceLimitsValue(container) || '-'}</dd>
           <dt>Lifecycle Hooks</dt>
           <dd><Lifecycle lifecycle={container.lifecycle} /></dd>
+          <dt>Readiness Probe</dt>
+          <dd><Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} /></dd>
           <dt>Liveness Probe</dt>
-          <dd><Liveness liveness={container.livenessProbe} podIP={pod.status.podIP || '-'} /></dd>
+          <dd><Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} /></dd>
           <dt>Started</dt>
           <dd><Timestamp timestamp={state.startedAt} /></dd>
           <dt>Finished</dt>
