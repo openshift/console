@@ -1,13 +1,15 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 import { DeploymentModel } from '../models';
 import { configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, DeploymentPodCounts, navFactory, LoadingInline, pluralize, ResourceSummary } from './utils';
+import { Cog, DeploymentPodCounts, LoadingInline, navFactory, Overflow, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
+import { formatDuration } from './utils/datetime';
 
 registerTemplate('apps/v1.Deployment', `apiVersion: apps/v1
 kind: Deployment
@@ -50,8 +52,34 @@ const menuActions = [
   ...common,
 ];
 
+const ContainerRow = ({container}) => {
+  const resourceLimits = _.get(container, 'resources.limits');
+  const ports = _.get(container, 'ports');
+  return <div className="row">
+    <div className="col-xs-6 col-sm-4 col-md-3">
+      {container.name}
+    </div>
+    <Overflow className="col-xs-6 col-sm-4 col-md-3" value={container.image} />
+    <div className="col-sm-4 col-md-3 hidden-xs">{_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ') || '-'}</div>
+    <Overflow className="col-md-3 hidden-xs hidden-sm" value={_.map(ports, port => `${port.containerPort}/${port.protocol}`).join(', ')} />
+  </div>;
+};
+
+export const ContainerTable = ({containers}) => <div className="co-m-table-grid co-m-table-grid--bordered">
+  <div className="row co-m-table-grid__head">
+    <div className="col-xs-6 col-sm-4 col-md-3">Name</div>
+    <div className="col-xs-6 col-sm-4 col-md-3">Image</div>
+    <div className="col-sm-4 col-md-3 hidden-xs">Resource Limits</div>
+    <div className="col-md-3 hidden-xs hidden-sm">Ports</div>
+  </div>
+  <div className="co-m-table-grid__body">
+    {_.map(containers, (c, i) => <ContainerRow key={i} container={c} />)}
+  </div>
+</div>;
+
 const DeploymentDetails = ({obj: deployment}) => {
   const isRecreate = (deployment.spec.strategy.type === 'Recreate');
+  const progressDeadlineSeconds = _.get(deployment, 'spec.progressDeadlineSeconds');
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -73,12 +101,18 @@ const DeploymentDetails = ({obj: deployment}) => {
               {isRecreate || <dd>{deployment.spec.strategy.rollingUpdate.maxUnavailable || 1} of {pluralize(deployment.spec.replicas, 'pod')}</dd>}
               {isRecreate || <dt>Max Surge</dt>}
               {isRecreate || <dd>{deployment.spec.strategy.rollingUpdate.maxSurge || 1} greater than {pluralize(deployment.spec.replicas, 'pod')}</dd>}
+              {progressDeadlineSeconds && <dt>Progress Deadline</dt>}
+              {progressDeadlineSeconds && <dd>{/* Convert to ms for formatDuration */ formatDuration(progressDeadlineSeconds * 1000)}</dd>}
               <dt>Min Ready Seconds</dt>
               <dd>{deployment.spec.minReadySeconds ? pluralize(deployment.spec.minReadySeconds, 'second') : 'Not Configured'}</dd>
             </dl>
           </div>
         </div>
       </div>
+    </div>
+    <div className="co-m-pane__body">
+      <h1 className="co-section-title">Containers</h1>
+      <ContainerTable containers={deployment.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
       <h1 className="co-section-title">Conditions</h1>
