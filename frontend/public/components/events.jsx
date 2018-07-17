@@ -318,7 +318,7 @@ class EventStream extends SafetyFirst {
   }
 
   render () {
-    const { fake } = this.props;
+    const { fake, resourceEventStream } = this.props;
     const {active, error, loading, filteredMessages, sortedMessages} = this.state;
     const count = filteredMessages.length;
     const allCount = sortedMessages.length;
@@ -326,7 +326,7 @@ class EventStream extends SafetyFirst {
     const noMatches = allCount > 0 && count === 0;
     let sysEventStatus, statusBtnTxt;
 
-    if (noEvents || fake) {
+    if (noEvents || fake || (noMatches && resourceEventStream)) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="text-center cos-status-box__detail">
@@ -335,7 +335,7 @@ class EventStream extends SafetyFirst {
         </Box>
       );
     }
-    if (noMatches) {
+    if (noMatches && !resourceEventStream) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="cos-status-box__title">No Matching Events</div>
@@ -433,4 +433,4 @@ EventStream.propTypes = {
 };
 
 
-export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace}}}) => <EventStream filter={{name, kind}} namespace={namespace} />;
+export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace}}}) => <EventStream filter={{name, kind}} namespace={namespace} resourceEventStream />;
