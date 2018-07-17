@@ -54,6 +54,7 @@
     margin-right: 5px;
   }
   &__username {
+    font-weight: 300;
     // truncate very long usernames
     max-width: 200px;
     overflow: hidden;
@@ -65,6 +66,7 @@
 }
 
 .contextselector-pf .bootstrap-select > .dropdown-toggle {
+  font-weight: 300;
   padding-top: 19px;
   width: 100%;
   &:focus {

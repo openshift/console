@@ -115,11 +115,9 @@ $active-border: 3px;
   &.fa-cog {
     font-size: 18px;
   }
-  &.fa-folder-open-o {
+  &.fa-folder-open-o,
+  &.pficon-user {
     font-size: 16px;
-  }
-  &.fa-user {
-    font-size: 17px;
   }
 }
 
