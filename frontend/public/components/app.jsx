@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
@@ -275,7 +275,11 @@ if ('serviceWorker' in navigator) {
   }
 }
 
-const AppGuard = (props) => <AsyncComponent loader={() => coFetch('api/tectonic/version').then(() => App)} {...props} />;
+const AppGuard = connect(({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])}))(
+  (props) => props.inFlight
+    ? <Loading />
+    : <AsyncComponent loader={() => coFetch('api/tectonic/version').then(() => App)} {...props} />
+);
 
 render((
   <Provider store={store}>

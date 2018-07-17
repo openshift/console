@@ -5,8 +5,8 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { types } from './k8s-actions';
 import { getQN, referenceForModel } from './k8s';
-import { K8sResourceKind } from './index';
 import { allModels } from './k8s-models';
+import { K8sResourceKind, K8sKind } from './index';
 import { namespacedResources } from '../../ui/ui-actions';
 
 const moreRecent = (a, b) => {
@@ -74,7 +74,7 @@ const loadList = (oldList, resources) => {
 
 export default (state: ImmutableMap<string, any>, action) => {
   if (!state) {
-    return fromJS({RESOURCES: {inFlight: false, models: allModels()}});
+    return fromJS({RESOURCES: {inFlight: false, models: ImmutableMap<string, K8sKind>()}});
   }
   const {k8sObjects, id} = action;
   const list: ImmutableMap<string, any> = state.getIn([id, 'data']);
@@ -95,7 +95,14 @@ export default (state: ImmutableMap<string, any>, action) => {
           model.namespaced ? namespacedResources.add(referenceForModel(model)) : namespacedResources.delete(referenceForModel(model));
           return model;
         })
-        .reduce((prevState, newModel) => prevState.updateIn(['RESOURCES', 'models'], models => models.set(referenceForModel(newModel), newModel)), state)
+        .reduce((prevState, newModel) => {
+          // TODO(alecmerdler): Use static model if it exists?
+          const modelRef = allModels().find(staticModel => !staticModel.crd && referenceForModel(staticModel) === referenceForModel(newModel))
+            // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
+            ? newModel.kind
+            : referenceForModel(newModel);
+          return prevState.updateIn(['RESOURCES', 'models'], models => models.set(modelRef, newModel));
+        }, state)
         // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
         .setIn(['RESOURCES', 'allResources'], action.resources.allResources)
         .setIn(['RESOURCES', 'safeResources'], action.resources.safeResources)

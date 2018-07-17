@@ -7,17 +7,14 @@ import * as PropTypes from 'prop-types';
 import { history, NavTitle, SelectorInput, LoadingBox } from './utils';
 
 import { namespaceProptype } from '../propTypes';
-import { allModels } from '../module/k8s';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { resourceListPages } from './resource-pages';
 import { ResourceListDropdown } from './resource-dropdown';
+import { connectToModel } from '../kinds';
 
-
-function ResourceList ({kind, namespace, selector}) {
-  const kindObj = allModels().find((v) => v.kind === kind) || {};
-
-  if (!kindObj || !kindObj.labelPlural) {
+const ResourceList = connectToModel(({kind, kindObj, kindsInFlight, namespace, selector}) => {
+  if (kindsInFlight) {
     return <LoadingBox />;
   }
 
@@ -26,7 +23,7 @@ function ResourceList ({kind, namespace, selector}) {
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} />;
-}
+});
 
 const updateUrlParams = (k, v) => {
   const url = new URL(window.location);
