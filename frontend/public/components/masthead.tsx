@@ -19,7 +19,7 @@ const logout = e => {
 
 const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) => {
   const title = <React.Fragment>
-    <i className="fa fa-user co-masthead__user-icon" aria-hidden="true"></i>
+    <i className="pficon pficon-user co-masthead__user-icon" aria-hidden="true"></i>
     <span className="co-masthead__username">{username}</span>
   </React.Fragment>;
   if (_.isEmpty(actions)) {

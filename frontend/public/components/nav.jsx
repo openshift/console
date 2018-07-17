@@ -217,7 +217,7 @@ const NavSection = connect(navSectionStateToProps)(
 
       const maxHeight = !this.state.isOpen ? 0 : 29 * _.get(this.props.children, 'length', 1);
 
-      const iconClassName = icon && `fa ${icon} navigation-container__section__title__icon ${isActive ? 'navigation-container__section__title__icon--active' : ''}`;
+      const iconClassName = icon && `${icon} navigation-container__section__title__icon ${isActive ? 'navigation-container__section__title__icon--active' : ''}`;
       const sectionClassName = isActive && href ? 'navigation-container__section navigation-container__section--active' : 'navigation-container__section';
 
       const Children = React.Children.map(children, c => {
@@ -272,10 +272,10 @@ const UserNavSectionWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT
   }
 
   if (flags[FLAGS.OPENSHIFT]) {
-    return <NavSection text="Logout" icon="fa-user" klass="visible-xs-block" onClick={logout} />;
+    return <NavSection text="Logout" icon="pficon pficon-user" klass="visible-xs-block" onClick={logout} />;
   }
 
-  return <NavSection text="User" icon="fa-user" klass="visible-xs-block">
+  return <NavSection text="User" icon="pficon pficon-user" klass="visible-xs-block">
     <HrefLink href="/settings/profile" name="My Account" onClick={closeMenu} key="myAccount" />
     <HrefLink href="#" name="Logout" onClick={logout} key="logout" />
   </NavSection>;
@@ -344,7 +344,7 @@ export class Nav extends React.Component {
       <div id="sidebar" className={classNames({'open': isOpen})}>
         <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
-          <NavSection text="Overview" icon="fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
+          <NavSection text="Overview" icon="fa fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
           <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
             <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
             <Sep />
@@ -353,7 +353,7 @@ export class Nav extends React.Component {
             <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
           </NavSection>
 
-          <NavSection text="Workloads" icon="fa-folder-open-o">
+          <NavSection text="Workloads" icon="fa fa-folder-open-o">
             <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={this.close} />
             <ResourceNSLink resource="deployments" name="Deployments" onClick={this.close} />
             <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
@@ -381,7 +381,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="services" name="Services" onClick={this.close} />
           </NavSection>
 
-          <NavSection text="Troubleshooting" icon="fa-life-ring">
+          <NavSection text="Troubleshooting" icon="fa fa-life-ring">
             <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
             <ResourceNSLink resource="events" name="Events" onClick={this.close} />
             { /* FIXME: These links are wrong for OpenShift. */ }
@@ -389,7 +389,7 @@ export class Nav extends React.Component {
             <HrefLink href="/alertmanager" target="_blank" name="Prometheus Alerts" onClick={this.close} required={FLAGS.PROMETHEUS} />
           </NavSection>
 
-          <NavSection text="Administration" icon="fa-cog">
+          <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
