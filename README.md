@@ -1,20 +1,5 @@
-OpenShift Cluster Console
+OpenShift Console
 =========================
-
-
-# External Service Integration Criteria
-
-Any external service that integrates with console should satisfy the following requirements:
-
-- The service can be installed on a 3 node cluster with 4GB of RAM per node.
-- The backend will refuse to create invalid resources. (eg: CPU/RAM requests exceeding limits will result in an HTTP 400 code)
-- API response time is less than 2 seconds for synchronous actions.
-- Errors and statuses are propagated to the correct k8s objects for async actions.
-- The service has basic documentation on debugging. (eg: How do we know if the service is working or not?)
-- Nice to have: Updates to objects finish on the order of seconds, not minutes.
-- Nice to have: Owned resources have ownerReferences.
-- There is an agreed-upon API before any console work is started.
-
 
 Codename: "Bridge"
 
@@ -22,13 +7,12 @@ Codename: "Bridge"
 
 [quay.io/coreos/tectonic-console](https://quay.io/repository/coreos/tectonic-console?tab=tags)
 
-The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, ALM, and identity.  Some things that go on behind the scenes include:
+The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, and OLM.  Some things that go on behind the scenes include:
 
 - Proxying the Kubernetes API under `/api/kubernetes`
 - Providing additional non-Kubernetes APIs for interacting with the cluster
 - Serving all frontend static assets
 - User Authentication
-- Some additional proxying to the Dex API
 
 ## Quickstart
 
@@ -50,32 +34,6 @@ Backend binaries are output to `/bin`.
 
 
 ### Configure the application
-
-#### Tectonic
-
-If you have a working `kubectl` on your path, you can run the application with:
-
-```
-export KUBECONFIG=/path/to/kubeconfig
-source ./contrib/environment.sh
-./bin/bridge
-```
-
-The script in `contrib/environment.sh` sets sensible defaults in the environment, and uses `kubectl` to query your cluster for endpoint and authentication information.
-
-To configure the application to run by hand, (or if `environment.sh` doesn't work for some reason) you can manually provide a Kubernetes bearer token with the following steps.
-
-First get the secret ID that has a type of `kubernetes.io/service-account-token` by running:
-```
-kubectl get secrets
-```
-
-then get the secret contents:
-```
-kubectl describe secrets/<secret-id-obtained-previously>
-```
-
-Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable when running Bridge.
 
 #### OpenShift
 
@@ -126,7 +84,33 @@ source ./contrib/oc-environment.sh
 ./bin/bridge
 ```
 
-## Docker
+#### Native Kubernetes
+
+If you have a working `kubectl` on your path, you can run the application with:
+
+```
+export KUBECONFIG=/path/to/kubeconfig
+source ./contrib/environment.sh
+./bin/bridge
+```
+
+The script in `contrib/environment.sh` sets sensible defaults in the environment, and uses `kubectl` to query your cluster for endpoint and authentication information.
+
+To configure the application to run by hand, (or if `environment.sh` doesn't work for some reason) you can manually provide a Kubernetes bearer token with the following steps.
+
+First get the secret ID that has a type of `kubernetes.io/service-account-token` by running:
+```
+kubectl get secrets
+```
+
+then get the secret contents:
+```
+kubectl describe secrets/<secret-id-obtained-previously>
+```
+
+Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable when running Bridge.
+
+## Images
 
 The `builder-run.sh` script will run any command from a docker container to ensure a consistent build environment.
 For example to build with docker run:
@@ -142,11 +126,11 @@ then update the BUILDER_VERSION variable in `builder-run` to point to
 your new image. Our practice is to manually tag images builder images in the form
 `Builder-v$SEMVER` once we're happy with the state of the push.
 
-### Compile, Build, & Push Docker Image
+### Compile, Build, & Push Image
 
 (Almost no reason to ever do this manually, Jenkins handles this automation)
 
-Build a docker image, tag it with the current git sha, and pushes it to the `quay.io/coreos/tectonic-console` repo.
+Build an image, tag it with the current git sha, and pushes it to the `quay.io/coreos/tectonic-console` repo.
 
 Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercfg` file.
 ```
@@ -239,30 +223,9 @@ This will include the normal k8s CRUD tests and CRUD tests for OpenShift
 resources. It doesn't include ALM tests since it assumes ALM is not
 set up on an OpenShift cluster.
 
-
 #### Hacking Integration Tests
 
 Remove the `--headless` flag to Chrome (chromeOptions) in `frontend/integration-tests/protractor.conf.ts` to see what the tests are actually doing.
-
-### Local Dex
-
-Checkout and build [dex](https://github.com/coreos/dex/).
-
-`./bin/dex serve ../../openshift/console/contrib/dex-config-dev.yaml`
-
-Run bridge with the following options:
-
-```
-./bin/bridge \
-  --user-auth=oidc \
-  --user-auth-oidc-issuer-url='http://127.0.0.1:5556' \
-  --user-auth-oidc-client-id='example-app' \
-  --user-auth-oidc-client-secret='ZXhhbXBsZS1hcHAtc2VjcmV0' \
-  --base-address='http://localhost:9000/' \
-  --kubectl-client-id='example-app' \
-  --kubectl-client-secret='ZXhhbXBsZS1hcHAtc2VjcmV0'
-```
-
 
 ### Dependency Management
 
@@ -305,4 +268,5 @@ We support the latest versions of the following browsers:
 - Chrome
 - Safari
 - Firefox
-- TODO: IE 11. Needs polyfills. Also, IE 11 can't open more than 6 websockets.
+
+IE 11 and earlier is not supported.
