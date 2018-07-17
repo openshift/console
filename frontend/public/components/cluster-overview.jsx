@@ -145,6 +145,9 @@ const LimitedGraphs = ({openshiftFlag}) => {
 };
 
 const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
+  if (flagPending(openshiftFlag)) {
+    return null;
+  }
   const graphs = limited ? <LimitedGraphs namespace={namespace} openshiftFlag={openshiftFlag} /> : <Graphs namespace={namespace} />;
   const body = <div className="row">
     <div className="col-lg-8 col-md-12">
@@ -191,7 +194,16 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
     return body;
   }
 
-  return <Firehose resources={[{kind: 'Namespace', name: namespace, isList: false, prop: 'data'}]}>
+  const resources = [{
+    kind: openshiftFlag
+      ? 'Project'
+      : 'Namespace',
+    name: namespace,
+    isList: false,
+    prop: 'data'
+  }];
+
+  return <Firehose resources={resources}>
     <StatusBox label="Namespaces">
       { body }
     </StatusBox>
