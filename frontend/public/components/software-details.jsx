@@ -74,6 +74,7 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
         cloudProviders: null,
         openshiftVersionObj: null,
         tectonicVersionObj: null,
+        consoleVersion: null,
       };
     }
 
@@ -96,7 +97,8 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
       }
 
       if (openshiftFlag) {
-        this._checkOpenshiftVersion();
+        this._checkOpenShiftVersion();
+        this._checkOpenShiftConsoleVersion();
       } else {
         this._checkTectonicVersion();
         this._checkAppVersions();
@@ -130,11 +132,19 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
       }).catch(() => this.setState({currentTectonicVersion: 'unknown'}));
     }
 
-    _checkOpenshiftVersion() {
+    _checkOpenShiftVersion() {
       coFetchJSON('api/kubernetes/version/openshift')
         .then((data) => {
           this.setState({openshiftVersion: data.gitVersion, openshiftVersionObj: data});
         }).catch(() => this.setState({openshiftVersion: 'unknown'}));
+    }
+
+    _checkOpenShiftConsoleVersion() {
+      coFetchJSON('api/console/version')
+        .then((data) => {
+          const {consoleVersion} = data;
+          this.setState({consoleVersion});
+        }).catch(() => this.setState({consoleVersion: 'unknown'}));
     }
 
     _checkCloudProvider() {
@@ -144,42 +154,45 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     render() {
-      const {openshiftVersion, currentTectonicVersion, tectonicVersion, kubernetesVersion, cloudProviders} = this.state;
+      const {openshiftVersion, consoleVersion, currentTectonicVersion, tectonicVersion, kubernetesVersion, cloudProviders} = this.state;
       const openshiftFlag = this.props.flags[FLAGS.OPENSHIFT];
-
       if (flagPending(openshiftFlag)) {
         return null;
       }
 
-      return <div>
+      return <React.Fragment>
         <SoftwareDetailRow
           title="Kubernetes"
           detail={kubernetesVersion}
           text="Kubernetes version could not be determined."
         />
-        {openshiftFlag ? (
-          <SoftwareDetailRow
-            title="OpenShift"
-            detail={openshiftVersion}
-            text="OpenShift version could not be determined."
-          />
-        ) : (
-          <React.Fragment>
+        {openshiftFlag
+          ? <React.Fragment>
+            <SoftwareDetailRow
+              title="OpenShift"
+              detail={openshiftVersion}
+              text="OpenShift version could not be determined."
+            />
+            <SoftwareDetailRow
+              title="Console"
+              detail={consoleVersion}
+              text="OpenShift console version could not be determined."
+            />
+          </React.Fragment>
+          : <React.Fragment>
             <SoftwareDetailRow
               title="Tectonic"
               detail={currentTectonicVersion || tectonicVersion}
               text="Tectonic version could not be determined."
             />
             {cloudProviders &&
-            <SoftwareDetailRow
-              title="Cloud Provider"
-              detail={cloudProviderNames(cloudProviders)}
-              text="Cloud Provider could not be determined."
-            />
-            }
-          </React.Fragment>
-        )}
-      </div>;
+              <SoftwareDetailRow
+                title="Cloud Provider"
+                detail={cloudProviderNames(cloudProviders)}
+                text="Cloud Provider could not be determined."
+              />}
+          </React.Fragment>}
+      </React.Fragment>;
     }
 
   });
