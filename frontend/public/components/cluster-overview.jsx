@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
-import { NavTitle, AsyncComponent, Firehose, StatusBox, tectonicHelpBase, OpenShiftDocumentationLinks, TectonicDocumentationLinks, OpenShiftAdditionalSupportLinks, TectonicAdditionalSupportLinks } from './utils';
+import { NavTitle, AsyncComponent, Firehose, StatusBox, DocumentationLinks, AdditionalSupportLinks } from './utils';
 import { k8sBasePath } from '../module/k8s';
 import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
@@ -32,10 +32,8 @@ const fetchConsoleHealth = () => coFetchJSON('health')
 
 
 const DashboardLink = ({to, id}) => <Link id={id} className="co-external-link" target="_blank" to={to}>View Grafana Dashboard</Link>;
-const getConsoleTitle = isOpenShift => isOpenShift ? 'OpenShift Console' : 'Tectonic Console';
 
 const Graphs = requirePrometheus(({isOpenShift, namespace}) => {
-  const consoleTitle = getConsoleTitle(isOpenShift);
   // TODO: Revert this change in OpenShift 4.0. In OpenShift 3.11, the scheduler and controller manager is a single component.
   const controllerManagerJob = isOpenShift ? 'kube-controllers' : 'kube-controller-manager';
   const schedulerJob = isOpenShift ? 'kube-controllers' : 'kube-scheduler';
@@ -51,7 +49,7 @@ const Graphs = requirePrometheus(({isOpenShift, namespace}) => {
             <Status title="Kubernetes API" fetch={fetchHealth} />
           </div>
           <div className="col-md-3 col-sm-6">
-            <Status title={consoleTitle} fetch={fetchConsoleHealth} />
+            <Status title="OpenShift Console" fetch={fetchConsoleHealth} />
           </div>
           <div className="col-md-3 col-sm-6">
             <Status
@@ -129,7 +127,6 @@ const LimitedGraphs = ({openshiftFlag}) => {
   if (flagPending(openshiftFlag)) {
     return null;
   }
-  const consoleTitle = getConsoleTitle(openshiftFlag);
   return <div className="group">
     <div className="group__title">
       <h2 className="h3">Health</h2>
@@ -140,7 +137,7 @@ const LimitedGraphs = ({openshiftFlag}) => {
           <Status title="Kubernetes API" fetch={fetchHealth} />
         </div>
         <div className="col-lg-6 col-md-6">
-          <Status title={consoleTitle} fetch={fetchConsoleHealth} />
+          <Status title="OpenShift Console" fetch={fetchConsoleHealth} />
         </div>
       </div>
     </div>
@@ -166,31 +163,27 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Software Info</h2>
-          {!flagPending(openshiftFlag) && !openshiftFlag && <a href="https://coreos.com/tectonic/releases/" target="_blank" className="co-external-link" rel="noopener noreferrer">Release Notes</a>}
         </div>
         <div className="container-fluid group__body">
           <SoftwareDetails />
         </div>
       </div>
-      {!flagPending(openshiftFlag) && <React.Fragment>
-        <div className="group">
-          <div className="group__title">
-            <h2 className="h3">Documentation</h2>
-            {!openshiftFlag && <a href={tectonicHelpBase} target="_blank" className="co-external-link" rel="noopener noreferrer">Full Documentation</a>}
-          </div>
-          <div className="container-fluid group__body group__documentation">
-            {openshiftFlag ? <OpenShiftDocumentationLinks /> : <TectonicDocumentationLinks />}
-          </div>
+      <div className="group">
+        <div className="group__title">
+          <h2 className="h3">Documentation</h2>
         </div>
-        <div className="group">
-          <div className="group__title">
-            <h2 className="h3">Additional Support</h2>
-          </div>
-          <div className="container-fluid group__body group__additional-support">
-            {openshiftFlag ? <OpenShiftAdditionalSupportLinks /> : <TectonicAdditionalSupportLinks />}
-          </div>
+        <div className="container-fluid group__body group__documentation">
+          <DocumentationLinks />
         </div>
-      </React.Fragment>}
+      </div>
+      <div className="group">
+        <div className="group__title">
+          <h2 className="h3">Additional Support</h2>
+        </div>
+        <div className="container-fluid group__body group__additional-support">
+          <AdditionalSupportLinks />
+        </div>
+      </div>
     </div>
   </div>;
 

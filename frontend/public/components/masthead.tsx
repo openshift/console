@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import * as originLogoImg from '../imgs/openshift-origin-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
-import * as tectonicLogoImg from '../imgs/tectonic-logo.svg';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { authSvc } from '../module/auth';
 import { Dropdown, ActionsMenu } from './utils';
@@ -111,10 +110,6 @@ export const LogoImage = () => {
     case 'online':
       logoImg = onlineLogoImg;
       logoAlt = 'OpenShift Online';
-      break;
-    case 'tectonic':
-      logoImg = tectonicLogoImg;
-      logoAlt = 'Tectonic';
       break;
     default:
       logoImg = originLogoImg;

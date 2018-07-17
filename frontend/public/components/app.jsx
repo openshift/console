@@ -137,25 +137,19 @@ class App extends React.PureComponent {
 
   getProductName () {
     switch (window.SERVER_FLAGS.branding) {
-      case 'origin':
-        return 'OpenShift Origin';
       case 'ocp':
         return 'OpenShift Container Platform';
       case 'online':
         return 'OpenShift Online';
-      case 'tectonic':
-        return 'Tectonic';
       default:
-        return null;
+        return 'OpenShift Origin';
     }
   }
 
   render () {
     const productName = this.getProductName();
     return <React.Fragment>
-      {productName
-        ? <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-        : <Helmet defaultTitle="Console" />}
+      <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <Masthead />
       <Nav />
       <div id="content">
