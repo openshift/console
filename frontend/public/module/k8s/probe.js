@@ -169,7 +169,7 @@ export const mapLifecycleConfigToFields = function(c) {
   return f;
 };
 
-export const mapLivenessProbeToFields = function(c, podIP) {
+export const mapProbeToFields = function(c, podIP) {
   const f = {
     initialDelaySeconds: '',
     type: 'exec',
