@@ -6,6 +6,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
+import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -163,6 +164,9 @@ const NavSection = connect(navSectionStateToProps)(
       const resourcePath = location ? stripNS(location) : '';
 
       return children.filter(c => {
+        if (!c) {
+          return false;
+        }
         if (c.props.startsWith) {
           return c.type.startsWith(resourcePath, c.props.startsWith);
         }
@@ -221,6 +225,9 @@ const NavSection = connect(navSectionStateToProps)(
       const sectionClassName = isActive && href ? 'navigation-container__section navigation-container__section--active' : 'navigation-container__section';
 
       const Children = React.Children.map(children, c => {
+        if (!c) {
+          return null;
+        }
         const {name, required, disallowed} = c.props;
         if (required && (flagPending(flags.get(required)) || !flags.get(required))) {
           return null;
@@ -233,7 +240,7 @@ const NavSection = connect(navSectionStateToProps)(
 
       return <div className={classNames(sectionClassName, klass)}>
         <div id={id} className="navigation-container__section__title" onClick={this.toggle}>
-          {icon && <i className={iconClassName}></i>}
+          {icon && <i className={iconClassName} aria-hidden="true"></i>}
           {img && <img src={isActive && activeImg ? activeImg : img} />}
           { !href
             ? text
@@ -248,6 +255,13 @@ const NavSection = connect(navSectionStateToProps)(
 
 const Sep = () => <div className="navigation-container__section__separator" />;
 
+// HrefLinks are PureComponents...
+const searchStartsWith = ['search'];
+const rolesStartsWith = ['roles', 'clusterroles'];
+const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
+const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
+const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
+
 const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
   // Hide the cluster picker on OpenShift clusters. Make sure flag detection is
   // complete before showing the picker.
@@ -261,12 +275,24 @@ const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
   </div>;
 });
 
+const TroubleshootingNavSection_ = ({urls, closeMenu}) => {
+  const prometheusURL = urls[MonitoringRoutes.Prometheus];
+  const alertManagerURL = urls[MonitoringRoutes.AlertManager];
+  return <NavSection text="Troubleshooting" icon="fa fa-life-ring">
+    <HrefLink href="/search" name="Search" onClick={closeMenu} startsWith={searchStartsWith} />
+    <ResourceNSLink resource="events" name="Events" onClick={closeMenu} />
+    {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Prometheus" onClick={closeMenu} />}
+    {alertManagerURL && <HrefLink href={alertManagerURL} target="_blank" name="Prometheus Alerts" onClick={closeMenu} />}
+  </NavSection>;
+};
+const TroubleshootingNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager)(TroubleshootingNavSection_);
+
 const logout = e => {
   e && e.preventDefault();
   authSvc.logout();
 };
 
-const UserNavSectionWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
+const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
   if (!flags[FLAGS.AUTH_ENABLED] || flagPending(flags[FLAGS.OPENSHIFT])) {
     return null;
   }
@@ -280,13 +306,6 @@ const UserNavSectionWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT
     <HrefLink href="#" name="Logout" onClick={logout} key="logout" />
   </NavSection>;
 });
-
-// HrefLinks are PureComponents...
-const searchStartsWith = ['search'];
-const rolesStartsWith = ['roles', 'clusterroles'];
-const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
-const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
-const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
 
 export class Nav extends React.Component {
   constructor (props) {
@@ -381,13 +400,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="services" name="Services" onClick={this.close} />
           </NavSection>
 
-          <NavSection text="Troubleshooting" icon="fa fa-life-ring">
-            <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
-            <ResourceNSLink resource="events" name="Events" onClick={this.close} />
-            { /* FIXME: These links are wrong for OpenShift. */ }
-            <HrefLink href="/prometheus" target="_blank" name="Prometheus" onClick={this.close} required={FLAGS.PROMETHEUS} />
-            <HrefLink href="/alertmanager" target="_blank" name="Prometheus Alerts" onClick={this.close} required={FLAGS.PROMETHEUS} />
-          </NavSection>
+          <TroubleshootingNavSection closeMenu={this.close} />
 
           <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
@@ -404,7 +417,7 @@ export class Nav extends React.Component {
             <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
 
-          <UserNavSectionWrapper closeMenu={this.close} />
+          <UserNavSection closeMenu={this.close} />
         </div>
       </div>
     </React.Fragment>;
