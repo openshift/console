@@ -108,6 +108,20 @@ const Env = ({env}) => {
   </table>;
 };
 
+// Split image string into the image name and tag.
+const getImageNameAndTag = image => {
+  if (!image) {
+    return {imageName: null, imageTag: null};
+  }
+  const index = image.lastIndexOf(':');
+  if (index === -1 || _.includes(image, '@sha256:')) {
+    return { imageName: image, imageTag: null };
+  }
+  const imageName = image.substr(0, index);
+  const imageTag = image.substr(index + 1);
+  return { imageName, imageTag };
+};
+
 const Details = (props) => {
   const pod = props.obj;
   const container = _.find(pod.spec.containers, {name: props.match.params.name}) ||
@@ -118,9 +132,7 @@ const Details = (props) => {
 
   const status = getContainerStatus(pod, container.name) || {};
   const state = getContainerState(status) || {};
-
-  // Split image string into the Docker image string and tag (aka version) portions. The tag defaults to 'latest'.
-  const [containerImage, containerTag] = container.image ? container.image.split(':') : [null, 'latest'];
+  const { imageName, imageTag } = getImageNameAndTag(container.image);
 
   return <div className="co-m-pane__body">
     <div className="row">
@@ -152,9 +164,9 @@ const Details = (props) => {
         <h1 className="co-section-title">Image Details</h1>
         <dl className="co-m-pane__details">
           <dt>Image</dt>
-          <dd><Overflow value={containerImage || '-'} /></dd>
+          <dd><Overflow value={imageName || '-'} /></dd>
           <dt>Image Version/Tag</dt>
-          <dd>{containerTag || '-'}</dd>
+          <dd><Overflow value={imageTag || '-'} /></dd>
           <dt>Command</dt>
           <dd>{container.command ? <pre><code>{container.command.join(' ')}</code></pre> : <span>-</span>}</dd>
           <dt>Args</dt>
