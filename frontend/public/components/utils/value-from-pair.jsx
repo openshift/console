@@ -136,7 +136,9 @@ const ResourceFieldRef = ({data: {containerName, resource}}) => <span>
 </span>;
 
 const keyStringToComponent = {
-  fieldRef: FieldRef,
+  fieldRef: {
+    component: FieldRef,
+  },
   secretKeyRef: {
     component: ConfigMapSecretKeyRef,
     kind: 'Secret'
@@ -148,7 +150,9 @@ const keyStringToComponent = {
   configMapSecretKeyRef: {
     component: ConfigMapSecretKeyRef
   },
-  resourceFieldRef: ResourceFieldRef,
+  resourceFieldRef: {
+    component: ResourceFieldRef,
+  },
 };
 
 export class ValueFromPair extends React.PureComponent {
