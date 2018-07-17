@@ -318,8 +318,8 @@ describe('Kubernetes resource CRUD operations', () => {
       '/k8s/all-namespaces/events',
       '/k8s/cluster/customresourcedefinitions',
       '/',
-      '/k8s/all-namespaces/alertmanagers',
-      '/k8s/ns/tectonic-system/alertmanagers/main',
+      '/k8s/all-namespaces/monitoring.coreos.com:v1:Alertmanager',
+      '/k8s/ns/tectonic-system/monitoring.coreos.com:v1:Alertmanager/main',
     ]).forEach(route => {
 
       it(`successfully displays view for route: ${route}`, async() => {
