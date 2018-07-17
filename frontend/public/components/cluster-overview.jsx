@@ -155,7 +155,7 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
   const body = <div className="row">
     <div className="col-lg-8 col-md-12">
       {!fake && graphs}
-      <div className={classNames('group', {'group--fake': fake})}>
+      <div className={classNames('group', {'co-disabled': fake})}>
         <div className="group__title">
           <h2 className="h3">Events</h2>
           <a href={formatNamespacedRouteForResource('events', namespace)}>View All</a>

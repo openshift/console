@@ -15,7 +15,7 @@ import { OpenShiftGettingStarted } from './start-guide';
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
 
 const ResourceListPage_ = connectToPlural((props: ResourceListPageProps) => {
-  const { ns, kindObj, kindsInFlight, flags } = allParams(props);
+  const { flags, kindObj, kindsInFlight, modelRef, ns } = allParams(props);
 
   if (!kindObj) {
     if (kindsInFlight) {
@@ -38,7 +38,7 @@ const ResourceListPage_ = connectToPlural((props: ResourceListPageProps) => {
     <Helmet>
       <title>{kindObj.labelPlural}</title>
     </Helmet>
-    {PageComponent && <PageComponent match={props.match} namespace={ns} kind={props.modelRef} fake={showGettingStarted}/>}
+    {PageComponent && <PageComponent fake={showGettingStarted} flags={flags} kind={modelRef} match={props.match} namespace={ns} />}
   </div>;
 });
 
