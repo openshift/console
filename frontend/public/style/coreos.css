@@ -305,8 +305,5 @@ input[type="radio"] {
 .co-m-cog-wrapper {
   display: inline-block; }
 
-.co-m-cog__icon {
-  vertical-align: middle; }
-
 .co-m-cog__icon--disabled {
   color: #ddd; }

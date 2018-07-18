@@ -31,7 +31,7 @@ const ConfigMapHeader = props => <ListHeader>
 </ListHeader>;
 
 const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
-  <div className="col-sm-4 col-xs-6 co-break-word">
+  <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind="ConfigMap" resource={configMap} />
     <ResourceLink kind="ConfigMap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
   </div>

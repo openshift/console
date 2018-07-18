@@ -110,7 +110,7 @@ const ImageStreamsHeader = props => <ListHeader>
 </ListHeader>;
 
 const ImageStreamsRow: React.SFC<ImageStreamsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-3 co-break-word">
+  <div className="col-xs-3 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={ImageStreamsReference} resource={obj} />
     <ResourceLink kind={ImageStreamsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>

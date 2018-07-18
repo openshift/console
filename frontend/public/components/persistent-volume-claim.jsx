@@ -54,7 +54,7 @@ const Header = props => <ListHeader>
 
 const kind = 'PersistentVolumeClaim';
 const Row = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-sm-4 col-xs-6 co-break-word">
+  <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={kind} resource={obj} />
     <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>

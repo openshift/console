@@ -56,7 +56,7 @@ export const PodRow = ({obj: pod}) => {
     : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" />{phase}</span>;
 
   return <ResourceRow obj={pod}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
       <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>

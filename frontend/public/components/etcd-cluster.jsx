@@ -26,7 +26,7 @@ const EtcdClusterLink = (props) => {
 
   return <span className="co-resource-link">
     <ResourceIcon kind={referenceForModel(EtcdClusterModel)} />
-    <Link to={path} title={uid}>{name}</Link>
+    <Link to={path} title={uid} className="co-resource-link__resource-name">{name}</Link>
   </span>;
 };
 
@@ -42,7 +42,7 @@ const EtcdClusterRow = ({obj: cluster}) => {
   const backup = _.get(cluster.spec, 'backup', null);
 
   return <ResourceRow obj={cluster}>
-    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={referenceForModel(EtcdClusterModel)} resource={cluster} />
       <EtcdClusterLink metadata={metadata} />
     </div>

@@ -26,7 +26,7 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
     : phase;
 
   return <ResourceRow obj={props.obj}>
-    <div className="col-md-3">
+    <div className="col-md-3 co-resource-link-wrapper">
       <ResourceCog actions={Cog.factory.common} kind={referenceForModel(InstallPlanModel)} resource={props.obj} />
       <ResourceLink kind={referenceForModel(InstallPlanModel)} namespace={props.obj.metadata.namespace} name={props.obj.metadata.name} title={props.obj.metadata.uid} />
     </div>

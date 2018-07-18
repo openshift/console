@@ -71,7 +71,7 @@ const ReportsHeader = props => <ListHeader>
 
 const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-lg-3 col-md-3 col-xs-4">
+    <div className="col-lg-3 col-md-3 col-xs-4 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
@@ -409,7 +409,7 @@ const ReportGenerationQueriesHeader = props => <ListHeader>
 
 const ReportGenerationQueriesRow: React.SFC<ReportGenerationQueriesRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-md-3 col-sm-4">
+    <div className="col-md-3 col-sm-4 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
       <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>

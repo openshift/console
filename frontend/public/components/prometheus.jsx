@@ -12,7 +12,7 @@ const PrometheusRow = ({obj: instance}) => {
   const {metadata, spec} = instance;
 
   return <ResourceRow obj={instance}>
-    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={referenceForModel(PrometheusModel)} resource={instance} />
       <ResourceLink kind={referenceForModel(PrometheusModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>

@@ -45,7 +45,7 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
   const actions = [disableAction, ...(_.get(props.obj.status, 'installedCSV') ? [viewCSVAction] : [])];
 
   return <div className="row co-resource-list__item">
-    <div className="col-md-3">
+    <div className="col-md-3 co-resource-link-wrapper">
       <ResourceCog actions={actions} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
       <ResourceLink kind={referenceForModel(SubscriptionModel)} name={props.obj.metadata.name} namespace={props.obj.metadata.namespace} title={props.obj.metadata.name} />
     </div>

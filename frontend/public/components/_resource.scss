@@ -100,6 +100,23 @@ $height: 18px;
   margin-right: 7px;
 }
 
+.co-resource-link {
+  align-items: baseline;
+  display: flex;
+  min-width: 0; // required so co-break-word works
+  @include co-break-word;
+  &__resource-name {
+    min-width: 0; // required so co-break-word works
+  }
+  .co-m-resource-icon {
+    flex-shrink: 0;
+  }
+}
+
+.co-resource-link-wrapper {
+  display: flex;
+}
+
 .co-m-selector {
   @include co-break-word;
 }

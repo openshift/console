@@ -27,7 +27,7 @@ const Header = props => <ListHeader>
 
 const kind = 'ResourceQuota';
 const Row = ({obj: rq}) => <div className="row co-resource-list__item">
-  <div className="col-md-5 col-xs-6 co-break-word">
+  <div className="col-md-5 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={kind} resource={rq} />
     <ResourceLink kind={kind} name={rq.metadata.name} namespace={rq.metadata.namespace} title={rq.metadata.name} />
   </div>

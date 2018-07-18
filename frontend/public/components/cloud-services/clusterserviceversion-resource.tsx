@@ -32,7 +32,7 @@ export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionR
 
   return <span className="co-resource-link">
     <ResourceIcon kind={referenceFor(props.obj)} />
-    <Link to={`/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${appName}/${referenceFor(props.obj)}/${name}`}>{name}</Link>
+    <Link to={`/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${appName}/${referenceFor(props.obj)}/${name}`} className="co-resource-link__resource-name">{name}</Link>
   </span>;
 };
 
@@ -40,7 +40,7 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
   const {obj} = props;
 
   return <div className="row co-resource-list__item">
-    <div className="col-xs-2">
+    <div className="col-xs-2 co-resource-link-wrapper">
       <ResourceCog actions={Cog.factory.common} kind={referenceFor(obj)} resource={obj} />
       <ClusterServiceVersionResourceLink obj={obj} />
     </div>

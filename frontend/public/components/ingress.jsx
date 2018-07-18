@@ -53,7 +53,7 @@ const IngressListHeader = props => <ListHeader>
 </ListHeader>;
 
 const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
-  <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
+  <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
     <ResourceLink kind="Ingress" name={ingress.metadata.name}
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />

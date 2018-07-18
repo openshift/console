@@ -52,7 +52,7 @@ const Header = props => <ListHeader>
 
 const kind = 'StatefulSet';
 const Row = ({obj: ss}) => <div className="row co-resource-list__item">
-  <div className="col-md-5 col-xs-6 co-break-word">
+  <div className="col-md-5 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={kind} resource={ss} />
     <ResourceLink kind={kind} name={ss.metadata.name} namespace={ss.metadata.namespace} title={ss.metadata.name} />
   </div>

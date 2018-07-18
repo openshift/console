@@ -36,7 +36,7 @@ const DaemonSetHeader = props => <ListHeader>
 </ListHeader>;
 
 const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind="DaemonSet" resource={daemonset} />
     <ResourceLink kind="DaemonSet" name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
   </div>
