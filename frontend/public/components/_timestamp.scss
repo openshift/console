@@ -1,8 +1,8 @@
 .co-timestamp {
-  display: inline-block;
-  margin-left: 5px;
+  align-items: baseline;
+  display: flex;
+}
 
-  &:first-child {
-    margin-left: 0;
-  }
+.co-timestamp__icon {
+  margin-right: 5px;
 }
