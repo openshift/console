@@ -63,14 +63,14 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
       const key = _.get(pair, [NameValueEditorPair.Index], i);
       return <PairElement onChange={this._change} index={i} nameString={nameString} valueString={valueString} allowSorting={allowSorting} readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
     });
-    return <div>
+    return <React.Fragment>
       <div className="row">
-        <div className="col-xs-5 text-secondary">{nameString.toUpperCase()}</div>
-        <div className="col-xs-6 text-secondary">{valueString.toUpperCase()}</div>
+        <div className="col-md-5 col-xs-5 text-secondary">{nameString.toUpperCase()}</div>
+        <div className="col-md-6 col-xs-5 text-secondary">{valueString.toUpperCase()}</div>
       </div>
       {pairElems}
       <div className="row">
-        <div className="col-xs-12">
+        <div className="col-md-12 col-xs-12">
           {
             readOnly ?
               null :
@@ -91,7 +91,7 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
           }
         </div>
       </div>
-    </div>;
+    </React.Fragment>;
   }
 });
 NameValueEditor.propTypes = {
@@ -214,24 +214,27 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ROW, pairSource, collectSourcePair
 
   render() {
     const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets} = this.props;
-    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__btn pairs-list__delete-icon" aria-hidden="true" onClick={this._onRemove}></i><span className="sr-only">Delete</span></React.Fragment>;
+    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" onClick={this._onRemove}></i><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
-          <div className="col-xs-5 pairs-list__field">
+          <div className="col-md-5 col-xs-5 pairs-list__name-field">
             <input type="text" className="form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly} />
           </div>
-          <div className="col-xs-6 pairs-list__field">
-            {
-              _.isPlainObject(pair[NameValueEditorPair.Value]) ?
-                <ValueFromPair pair={pair[NameValueEditorPair.Value]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeValue} disabled={readOnly} /> :
+          {
+            _.isPlainObject(pair[NameValueEditorPair.Value]) ?
+              <div className="col-md-6 col-xs-5 pairs-list__value-pair-field">
+                <ValueFromPair pair={pair[NameValueEditorPair.Value]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeValue} disabled={readOnly} />
+              </div>
+              :
+              <div className="col-md-6 col-xs-5 pairs-list__value-field">
                 <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly} />
-            }
-          </div>
+              </div>
+          }
           {
             readOnly ? null :
-              <div className="col-xs-1">
+              <div className="col-md-1 col-xs-2">
                 <span className={classNames(allowSorting ? 'pairs-list__span-btns' : null)}>
                   {
                     allowSorting ?

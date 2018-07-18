@@ -7,18 +7,41 @@
   opacity: 0
 }
 
-.pairs-list__field {
+.pairs-list__value-field,
+.pairs-list__name-field {
+  padding-top: 5px;
   padding-right: 0;
 }
 
+.pairs-list__value-pair-field {
+  padding-right: 0;
+  display: flex;
+  flex-direction: column;
+  @media(min-width: $screen-md-min) {
+    flex-direction: row;
+  }
+}
+
 .pairs-list__btn {
+  cursor: pointer;
+  display: block;
+  @media(min-width: $screen-md-min) {
+    padding-right: 8px;
+    display: inline;
+  }
+}
+
+.pairs-list__side-btn {
   cursor: pointer;
   padding-right: 8px;
 }
 
 .pairs-list__action-divider {
-  color: $color-pf-black-500;
-  padding-right: 10px;
+  display: none;
+  @media(min-width: $screen-md-min) {
+    display: inline;
+    padding-right: 10px;
+  }
 }
 
 .pairs-list__delete-icon {

@@ -83,7 +83,7 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
   return <React.Fragment>
     <Dropdown
       menuClassName="co-namespace-selector__menu"
-      className="value-from-pair"
+      className="value-from"
       autocompleteFilter={nameAutocompleteFilter}
       autocompletePlaceholder={placeholderString}
       items={items}
@@ -101,7 +101,7 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
     />
     <Dropdown
       menuClassName="co-namespace-selector__menu"
-      className="value-from-pair"
+      className="value-from"
       autocompleteFilter={keyAutocompleteFilter}
       autocompletePlaceholder="Key"
       items={itemKeys}
@@ -113,8 +113,8 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
 };
 
 const FieldRef = ({data: {fieldPath}}) => <span>
-  <input type="text" className="form-control value-from-pair" value="FieldRef" disabled />
-  <input type="text" className="form-control value-from-pair" value={fieldPath} disabled />
+  <input type="text" className="form-control value-from" value="FieldRef" disabled />
+  <input type="text" className="form-control value-from" value={fieldPath} disabled />
 </span>;
 
 const ConfigMapSecretKeyRef = ({data: {name, key}, configMaps, secrets, onChange, disabled, kind}) => {
@@ -123,16 +123,16 @@ const ConfigMapSecretKeyRef = ({data: {name, key}, configMaps, secrets, onChange
 
   if (disabled) {
     return <span>
-      <input type="text" className="form-control value-from-pair" value={`${name} - ${kind}`} disabled />
-      <input type="text" className="form-control value-from-pair" value={key} disabled />
+      <input type="text" className="form-control value-from" value={`${name} - ${kind}`} disabled />
+      <input type="text" className="form-control value-from" value={key} disabled />
     </span>;
   }
   return NameKeyDropdownPair({name, key, configMaps, secrets, onChange, kind, nameTitle, placeholderString});
 };
 
 const ResourceFieldRef = ({data: {containerName, resource}}) => <span>
-  <input type="text" className="form-control value-from-pair" value={`${containerName} - Resource Field`} disabled />
-  <input type="text" className="form-control value-from-pair" value={resource} disabled />
+  <input type="text" className="form-control value-from" value={`${containerName} - Resource Field`} disabled />
+  <input type="text" className="form-control value-from" value={resource} disabled />
 </span>;
 
 const keyStringToComponent = {
