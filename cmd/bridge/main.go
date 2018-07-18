@@ -79,7 +79,7 @@ func main() {
 	fKubectlClientSecretFile := fs.String("kubectl-client-secret-file", "", "File containing the OAuth2 client_secret of kubectl.")
 	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
 
-	fOpenshiftConsoleURL := fs.String("openshift-console-url", "", "URL for OpenShift console used in context switcher")
+	fDeveloperConsoleURL := fs.String("developer-console-url", "", "URL for the developer console used in masthead context switcher. This option will be removed in a future release.")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
 	fBranding := fs.String("branding", "origin", "Console branding for the masthead logo and title. One of origin, ocp, or online. Defaults to origin.")
@@ -136,8 +136,8 @@ func main() {
 		documentationBaseURL = validateFlagIsURL("documentation-base-url", *fDocumentationBaseURL)
 	}
 
-	if *fOpenshiftConsoleURL != "" && !strings.HasSuffix(*fOpenshiftConsoleURL, "/") {
-		flagFatalf("openshift-console-url", "value must end with slash")
+	if *fDeveloperConsoleURL != "" && !strings.HasSuffix(*fDeveloperConsoleURL, "/") {
+		flagFatalf("developer-console-url", "value must end with slash")
 	}
 
 	srv := &server.Server{
@@ -147,7 +147,7 @@ func main() {
 		LogoutRedirect:       logoutRedirect,
 		TectonicCACertFile:   caCertFilePath,
 		ClusterName:          *fTectonicClusterName,
-		OpenshiftConsoleURL:  *fOpenshiftConsoleURL,
+		DeveloperConsoleURL:  *fDeveloperConsoleURL,
 		Branding:             *fBranding,
 		DocumentationBaseURL: documentationBaseURL,
 		GoogleTagManagerID:   *fGoogleTagManagerID,

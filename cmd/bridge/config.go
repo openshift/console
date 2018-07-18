@@ -41,6 +41,9 @@ type ClusterInfo struct {
 	ConsoleBaseAddress string `yaml:"consoleBaseAddress"`
 	ConsoleBasePath    string `yaml:"consoleBasePath"`
 	MasterPublicURL    string `yaml:"masterPublicURL"`
+	// DeveloperPublicConsoleURL is an optional URL of the developer console. If specified, a context switcher is
+	// added to the masthead with a link to the developer console. This option will be removed in a future release.
+	DeveloperPublicConsoleURL string `yaml:"developerConsolePublicURL"`
 }
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".
@@ -142,6 +145,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 
 	if clusterInfo.MasterPublicURL != "" {
 		fs.Set("k8s-public-endpoint", clusterInfo.MasterPublicURL)
+	}
+
+	if clusterInfo.DeveloperPublicConsoleURL != "" {
+		fs.Set("developer-console-url", clusterInfo.DeveloperPublicConsoleURL)
 	}
 }
 
