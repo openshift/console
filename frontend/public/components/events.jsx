@@ -401,10 +401,8 @@ class EventStream extends SafetyFirst {
                       width={width}
                       rowCount={count}
                       tabIndex={null}
-                      // TODO: set rowHeight based on media query
-                      // @media screen and (min-width: 768px)...
-                      // rowHeight={width > 548 ? 135 : 250}
-                      rowHeight={135}
+                      /* Width goes up to 675 and then goes down to 416 when the mobile/desktop breakpoint kicks in. It keeps increasing from there. You have to pick a number that won't overlap both ranges multiple times unless you want to write a ton of media queries. */
+                      rowHeight={width < 416 ? 140 : 110}
                     />
                   </div>}
                 </AutoSizer> }
