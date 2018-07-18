@@ -20,15 +20,12 @@ class DeleteModal extends PromiseComponent {
   _submit(event) {
     event.preventDefault();
     const {kind, resource} = this.props;
-    let json = null;
+
     //https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
-    if (_.has(kind, 'propagationPolicy') && this.state.isChecked) {
-      json = {
-        kind : 'DeleteOptions',
-        apiVersion : 'v1',
-        propagationPolicy : kind.propagationPolicy
-      };
-    }
+    const propagationPolicy = this.state.isChecked ? kind.propagationPolicy : 'Orphan';
+    const json = propagationPolicy
+      ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
+      : null;
 
     this.handlePromise( k8sKill(kind, resource, {}, json)).then(() => {
       this.props.close();
