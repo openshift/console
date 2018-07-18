@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { modelFor, k8sPatch, k8sGet } from '../module/k8s';
-import { PromiseComponent, NameValueEditorPair, LoadingBox, AsyncComponent } from './utils';
+import { PromiseComponent, NameValueEditorPair, LoadingBox, AsyncComponent, ResourceIcon } from './utils';
 import { ConfigMapModel, SecretModel } from '../models';
 
 /**
@@ -228,7 +228,7 @@ export class EnvironmentPage extends PromiseComponent {
     const containerVars = currentEnvVars.map((envVar, i) => {
       const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : obj.metadata.name;
       return <div key={keyString} className="co-m-pane__body-group">
-        { _.isArray(rawEnvData) && <h1 className="co-section-title">Container {keyString}</h1> }
+        { _.isArray(rawEnvData) && <h1 className="co-section-title co-section-title--contains-resource-icon"><ResourceIcon kind="Container" className="co-m-resource-icon--align-left co-m-resource-icon--flex-child" /> {keyString}</h1> }
         <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
       </div>;
     });

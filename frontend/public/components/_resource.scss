@@ -96,6 +96,10 @@ $height: 18px;
   margin-left: 0;
 }
 
+.co-m-resource-icon--flex-child {
+  margin-right: 7px;
+}
+
 .co-m-selector {
   @include co-break-word;
 }
