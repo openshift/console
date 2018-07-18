@@ -125,13 +125,13 @@ $color-bookmarker: #DDD;
 
 .co-namespace-selector__menu.dropdown-menu {
   left: 15px;
+  margin-top: 0;
   max-height: calc(100vh - (#{$masthead-height-mobile} + #{$co-namespace-selector-mobile}));
   max-width: 100%;
   min-width: 210px;
   overflow-y: auto;
 
   @media (min-width: $grid-float-breakpoint) {
-    left: 105px;
     max-height: calc(100vh - (#{$masthead-height-desktop} + #{$co-namespace-selector-desktop}));
     min-width: 250px;
   }
