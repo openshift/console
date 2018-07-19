@@ -96,7 +96,6 @@ export default (state: ImmutableMap<string, any>, action) => {
           return model;
         })
         .reduce((prevState, newModel) => {
-          // TODO(alecmerdler): Use static model if it exists?
           const modelRef = allModels().find(staticModel => !staticModel.crd && referenceForModel(staticModel) === referenceForModel(newModel))
             // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
             ? newModel.kind
@@ -108,6 +107,7 @@ export default (state: ImmutableMap<string, any>, action) => {
         .setIn(['RESOURCES', 'safeResources'], action.resources.safeResources)
         .setIn(['RESOURCES', 'adminResources'], action.resources.adminResources)
         .setIn(['RESOURCES', 'namespacedSet'], action.resources.namespacedSet)
+        .setIn(['RESOURCES', 'preferredVersions'], action.resources.preferredVersions)
         .setIn(['RESOURCES', 'inFlight'], false);
 
     case types.filterList:

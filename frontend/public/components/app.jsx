@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
-import { Provider, connect } from 'react-redux';
+import { Provider } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
@@ -34,7 +34,7 @@ import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './cloud-services';
 import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
-import { ClusterServiceVersionModel, CatalogSourceModel } from '../models';
+import { ClusterServiceVersionModel, CatalogSourceModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
 import { coFetch } from '../co-fetch';
@@ -171,6 +171,8 @@ class App extends React.PureComponent {
           <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={CreateSubscriptionYAML} />
           <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={NamespaceFromURL(CreateSubscriptionYAML)} />
 
+          <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
+
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact component={NamespaceFromURL(CreateCRDYAML)} />
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
@@ -275,11 +277,7 @@ if ('serviceWorker' in navigator) {
   }
 }
 
-const AppGuard = connect(({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])}))(
-  (props) => props.inFlight
-    ? <Loading />
-    : <AsyncComponent loader={() => coFetch('api/tectonic/version').then(() => App)} {...props} />
-);
+const AppGuard = (props) => <AsyncComponent loader={() => coFetch('api/tectonic/version').then(() => App)} {...props} />;
 
 render((
   <Provider store={store}>
