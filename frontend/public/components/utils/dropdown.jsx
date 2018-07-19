@@ -12,6 +12,7 @@ export class DropdownMixin extends React.PureComponent {
     this.state = {active: !!props.active, selectedKey: props.selectedKey};
     this.toggle = this.toggle.bind(this);
     this.dropdownElement = React.createRef();
+    this.dropdownList = React.createRef();
   }
 
   _onWindowClick (event) {
@@ -42,6 +43,7 @@ export class DropdownMixin extends React.PureComponent {
   }
 
   onClick_ (selectedKey, e) {
+    e.preventDefault();
     e.stopPropagation();
 
     const {onChange, noSelection, title} = this.props;
@@ -53,11 +55,22 @@ export class DropdownMixin extends React.PureComponent {
     this.setState({
       active: false,
       selectedKey: selectedKey,
+      keyboardHoverKey: selectedKey,
       title: noSelection ? title : this.props.items[selectedKey]
     });
   }
 
+  onArrowKey_ (selectedKey, e) {
+    e.preventDefault();
+
+    this.setState({
+      active: true,
+      selectedKey: null,
+    });
+  }
+
   toggle (e) {
+    e.preventDefault();
     if (this.state.active) {
       this.hide(e);
     } else {
@@ -87,20 +100,22 @@ const Caret = () => <span className="caret" />;
 class DropDownRow extends React.PureComponent {
   render () {
     const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey} = this.props;
+
     let prefix;
     if (onUnBookmark) {
-      prefix = <a className="bookmarker" onClick={e => onUnBookmark(e, itemKey)}><i className="fa fa-minus-circle" /></a>;
+      prefix = <a className={classNames('bookmarker', {focus: selected, hover})} onClick={e => onUnBookmark(e, itemKey)}><i className="fa fa-minus-circle" /></a>;
     }
     if (onBookmark) {
-      prefix = <a className="bookmarker" onClick={e => onBookmark(e, itemKey, content)}><i className="fa fa-plus-circle" /></a>;
+      prefix = <a className={classNames('bookmarker', {focus: selected, hover})} onClick={e => onBookmark(e, itemKey, content)}><i className="fa fa-plus-circle" /></a>;
     }
 
     let suffix;
     if (onUnBookmark && canFavorite) {
       const isFavorite = favoriteKey === itemKey;
-      suffix = <a className="bookmarker" onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
+      suffix = <a className={classNames('bookmarker', {focus: selected, hover})} onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
     }
-    return <li className={className} key={itemKey}>
+
+    return <li className={classNames(className)} key={itemKey}>
       {prefix}
       <a ref={ref => this.ref=ref} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
       {suffix}
@@ -116,6 +131,7 @@ export class Dropdown extends DropdownMixin {
     this.onBookmark = (...args) => this.onBookmark_(...args);
     this.onFavorite = (...args) => this.onFavorite_(...args);
     this.onClick = (...args) => this.onClick_(...args);
+    this.onArrow = (...args) => this.onArrowKey_(...args);
 
     let bookmarks = props.defaultBookmarks || {};
     let favoriteKey;
@@ -212,7 +228,8 @@ export class Dropdown extends DropdownMixin {
 
   onKeyDown_ (e) {
     const { key } = e;
-    if (key === 'Escape') {
+
+    if (key === 'Escape' || key === 'Tab') {
       this.hide(e);
       return;
     }
@@ -221,38 +238,57 @@ export class Dropdown extends DropdownMixin {
       return;
     }
 
-    const { items, keyboardHoverKey } = this.state;
+    const { items, keyboardHoverKey, selectedKey } = this.state;
 
     if (key === 'Enter') {
       if (!keyboardHoverKey) {
         this.hide(e);
         return;
       }
-      this.onClick_(keyboardHoverKey, e);
+
+      if (this.state.active) {
+        this.onClick(keyboardHoverKey, e);
+        return;
+      }
+
+      this.toggle(e);
       return;
     }
 
     const keys = Object.keys(items);
-
     let index = _.indexOf(keys, keyboardHoverKey);
+
+    const { current } = this.dropdownList;
+
+    // so namespace and Events resource selector advance correctly
+    if (selectedKey && index === -1) {
+      const correctIndex = _.indexOf(keys, selectedKey);
+      index = correctIndex;
+    }
 
     if (key === 'ArrowDown') {
       index += 1;
+      if (index > 0) {
+        current.scrollTop += 20;
+      }
     } else {
       index -= 1;
+      current.scrollTop -= 20;
     }
 
     // periodic boundaries
     if (index >= keys.length ) {
       index = 0;
+      current.scrollTop = 0;
     }
     if (index < 0) {
       index = keys.length - 1;
+      current.scrollTop = (keys.length * 20);
     }
-
 
     const newKey = keys[index];
     this.setState({keyboardHoverKey: newKey});
+    this.onArrow(newKey, e);
     e.stopPropagation();
   }
 
@@ -295,7 +331,7 @@ export class Dropdown extends DropdownMixin {
     const bookMarkRows = [];
 
     const addItem = (key, content) => {
-      const selected = !noSelection && key === selectedKey;
+      const selected = key === selectedKey;
       const hover = key === keyboardHoverKey;
       const klass = classNames({'active': selected});
       if (storageKey && bookmarks && bookmarks[key]) {
@@ -327,7 +363,7 @@ export class Dropdown extends DropdownMixin {
               {titlePrefix && `${titlePrefix}: `}
               <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
             </div>
-            : <button onClick={this.toggle} type="button" className={classNames('btn', 'btn--dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
+            : <button onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn--dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
               <div className="btn--dropdown__content-wrap">
                 {titlePrefix && `${titlePrefix}: `}
                 {title}&nbsp;&nbsp;<Caret />
@@ -335,7 +371,7 @@ export class Dropdown extends DropdownMixin {
             </button>
         }
         {
-          active && <ul className={classNames('dropdown-menu', menuClassName)}>
+          active && <ul ref={this.dropdownList} className={classNames('dropdown-menu', menuClassName)}>
             {
               autocompleteFilter && <div className="dropdown-menu__filter">
                 <input
