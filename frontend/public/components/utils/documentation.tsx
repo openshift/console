@@ -48,7 +48,7 @@ export const AdditionalSupportLinks = () => <ul className="co-additional-support
 </ul>;
 /* eslint-enable react/jsx-no-target-blank */
 
-export const DocumentationSidebar = ({props}) => <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered">
+export const DocumentationSidebar = props => <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered">
   <div className="co-m-pane__body">
     <h1 className="co-p-has-sidebar__sidebar-heading co-p-has-sidebar__sidebar-heading--first">Documentation</h1>
     <DocumentationLinks />
