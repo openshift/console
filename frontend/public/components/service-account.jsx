@@ -81,7 +81,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
 
   return (
     <ResourceRow obj={serviceaccount}>
-      <div className="col-sm-4 col-xs-3 co-break-word">
+      <div className="col-sm-4 col-xs-3 co-resource-link-wrapper">
         <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
         <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
       </div>

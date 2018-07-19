@@ -32,7 +32,7 @@ const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
   const clusterType = _.get(obj, ['metadata', 'annotations', 'multicluster.coreos.com/directory']);
 
   return <div className="row co-resource-list__item">
-    <div className="col-xs-4">
+    <div className="col-xs-4 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={referenceForModel(ClusterModel)} resource={obj} />
       <ResourceLink kind={referenceForModel(ClusterModel)} name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
     </div>

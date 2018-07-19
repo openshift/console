@@ -103,11 +103,11 @@ const Header = props => <ListHeader>
 </ListHeader>;
 
 export const BindingName = connect(null, {startImpersonate: UIActions.startImpersonate})(
-  ({binding, startImpersonate}) => <span>
+  ({binding, startImpersonate}) => <React.Fragment>
     {binding.subjects &&
       <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
-    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} />
-  </span>);
+    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name"/>
+  </React.Fragment>);
 
 export const RoleLink = ({binding}) => {
   const kind = binding.roleRef.kind;
@@ -118,7 +118,7 @@ export const RoleLink = ({binding}) => {
 };
 
 const Row = ({obj: binding}) => <ResourceRow obj={binding}>
-  <div className="col-xs-3 co-break-word">
+  <div className="col-xs-3 co-resource-link-wrapper">
     <BindingName binding={binding} />
   </div>
   <OverflowYFade className="col-xs-3">

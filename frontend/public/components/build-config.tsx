@@ -94,7 +94,7 @@ const BuildConfigsHeader = props => <ListHeader>
 </ListHeader>;
 
 const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-3 co-break-word">
+  <div className="col-xs-3 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={BuildConfigsReference} resource={obj} />
     <ResourceLink kind={BuildConfigsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>

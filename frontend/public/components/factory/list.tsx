@@ -385,7 +385,7 @@ export class ResourceRow extends React.Component<ResourceRowProps> {
 }
 
 export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions, obj: o}) => <ResourceRow obj={o}>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={actions} kind={kind} resource={o} />
     <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
   </div>

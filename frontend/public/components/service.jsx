@@ -37,7 +37,7 @@ const ServiceHeader = props => <ListHeader>
 </ListHeader>;
 
 const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-break-word">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind="Service" resource={s} />
     <ResourceLink kind="Service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
   </div>

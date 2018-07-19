@@ -140,7 +140,7 @@ const RouteListHeader: React.SFC<RouteHeaderProps> = props => <ListHeader>
 </ListHeader>;
 
 const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow obj={route}>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-break-word">
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind="Route" resource={route} />
     <ResourceLink kind="Route" name={route.metadata.name}
       namespace={route.metadata.namespace} title={route.metadata.uid} />

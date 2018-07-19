@@ -82,7 +82,7 @@ const NodeRow = ({obj: node, expand}) => {
   const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
   return <ResourceRow obj={node}>
-    <div className="col-xs-4 co-break-word">
+    <div className="col-xs-4 co-resource-link-wrapper">
       <NodeCog node={node} />
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>

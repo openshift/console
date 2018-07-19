@@ -39,7 +39,7 @@ const Header = props => <ListHeader>
 
 const kind = 'NetworkPolicy';
 const Row = ({obj: np}) => <div className="row co-resource-list__item">
-  <div className="col-xs-4">
+  <div className="col-xs-4 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={kind} resource={np} />
     <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} title={np.metadata.name} />
   </div>
