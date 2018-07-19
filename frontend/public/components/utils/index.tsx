@@ -1,3 +1,4 @@
+export * from './line-buffer';
 export * from './promise-component';
 export * from './cog';
 export * from './selector';
