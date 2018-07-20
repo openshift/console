@@ -9,13 +9,13 @@ import { confirmModal } from '../modals';
 
 export const RulesList = ({rules, name, namespace}) => <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
   <div className="row co-m-table-grid__head">
-    <div className="col-xs-2">
+    <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">
       Actions
     </div>
-    <div className="col-xs-2">
+    <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">
       API Groups
     </div>
-    <div className="col-xs-8">
+    <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
       Resources
     </div>
   </div>
@@ -63,7 +63,7 @@ const Resources = connect(({k8s}) => ({allModels: k8s.getIn(['RESOURCES', 'model
       const kind = allModels.find(model => model.plural === base);
 
       allResources.push(<span key={r} className="rbac-rule-resource rbac-rule-row">
-        <ResourceIcon kind={kind ? kind.kind : r} /> {r}
+        <ResourceIcon kind={kind ? kind.kind : r} /> <span className="rbac-rule-resource__label">{r}</span>
       </span>);
     });
 
@@ -81,7 +81,7 @@ const Resources = connect(({k8s}) => ({allModels: k8s.getIn(['RESOURCES', 'model
       });
       allResources.push.apply(allResources, URLs);
     }
-    return <div>{allResources}</div>;
+    return <div className="rbac-rule-resources">{allResources}</div>;
   });
 
 const DeleteRule = (name, namespace, i) => ({
@@ -113,16 +113,16 @@ const RuleCog = ({name, namespace, i}) => {
 };
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">
-  <div className="col-xs-2 rbac-rule__actions">
+  <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2 rbac-rule__actions">
     <div className="rbac-rule__cog">
       <RuleCog name={name} namespace={namespace} i={i} />
     </div>
     <Actions verbs={verbs} />
   </div>
-  <div className="col-xs-2">
+  <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">
     <Groups apiGroups={apiGroups} />
   </div>
-  <div className="col-xs-8">
+  <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
     <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
   </div>
 </div>;
