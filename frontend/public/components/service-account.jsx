@@ -70,10 +70,10 @@ metadata:
   name: example`);
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-2 col-xs-3" sortField="secrets">Secrets</ColHead>
-  <ColHead {...props} className="col-sm-2 col-xs-3" sortField="metadata.creationTimestamp">Age</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="secrets">Secrets</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Age</ColHead>
 </ListHeader>;
 
 const ServiceAccountRow = ({obj: serviceaccount}) => {
@@ -81,17 +81,17 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
 
   return (
     <ResourceRow obj={serviceaccount}>
-      <div className="col-sm-4 col-xs-3 co-resource-link-wrapper">
+      <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
         <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
         <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
       </div>
-      <div className="col-sm-4 col-xs-3 co-break-word">
+      <div className="col-sm-4 col-xs-6 co-break-word">
         <ResourceLink kind="Namespace" name={namespace} title={namespace}/> {}
       </div>
-      <div className="col-sm-2 col-xs-3">
+      <div className="col-sm-2 hidden-xs">
         {secrets ? secrets.length : 0}
       </div>
-      <div className="col-sm-2 col-xs-3">
+      <div className="col-sm-2 hidden-xs">
         {fromNow(creationTimestamp)}
       </div>
     </ResourceRow>

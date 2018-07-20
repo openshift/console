@@ -93,13 +93,11 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
 };
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="roleRef.name">Role Ref</ColHead>
-  <div className="col-xs-6">
-    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="subject.kind">Subject Kind</ColHead>
-    <ColHead {...props} className="col-md-5 col-xs-7" sortField="subject.name">Subject Name</ColHead>
-    <ColHead {...props} className="col-md-4 col-xs-5" sortField="metadata.namespace">Namespace</ColHead>
-  </div>
+  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="roleRef.name">Role Ref</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="subject.kind">Subject Kind</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="subject.name">Subject Name</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
 </ListHeader>;
 
 export const BindingName = connect(null, {startImpersonate: UIActions.startImpersonate})(
@@ -118,23 +116,21 @@ export const RoleLink = ({binding}) => {
 };
 
 const Row = ({obj: binding}) => <ResourceRow obj={binding}>
-  <div className="col-xs-3 co-resource-link-wrapper">
+  <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
     <BindingName binding={binding} />
   </div>
-  <OverflowYFade className="col-xs-3">
+  <OverflowYFade className="col-md-3 col-sm-4 hidden-xs">
     <RoleLink binding={binding} />
   </OverflowYFade>
-  <div className="col-xs-6">
-    <OverflowYFade className="col-md-3 hidden-sm hidden-xs">
-      {binding.subject.kind}
-    </OverflowYFade>
-    <OverflowYFade className="col-md-5 col-xs-7">
-      {binding.subject.name}
-    </OverflowYFade>
-    <OverflowYFade className="col-md-4 col-sm-5 col-xs-5">
-      {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
-    </OverflowYFade>
-  </div>
+  <OverflowYFade className="col-md-2 hidden-sm hidden-xs">
+    {binding.subject.kind}
+  </OverflowYFade>
+  <OverflowYFade className="col-md-2 hidden-sm hidden-xs">
+    {binding.subject.name}
+  </OverflowYFade>
+  <OverflowYFade className="col-md-2 col-sm-4 col-xs-6 co-break-word">
+    {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
+  </OverflowYFade>
 </ResourceRow>;
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
