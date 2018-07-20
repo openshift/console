@@ -112,28 +112,40 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
   </React.Fragment>;
 };
 
-const FieldRef = ({data: {fieldPath}}) => <span>
-  <input type="text" className="form-control value-from" value="FieldRef" disabled />
-  <input type="text" className="form-control value-from" value={fieldPath} disabled />
-</span>;
+const FieldRef = ({data: {fieldPath}}) => <React.Fragment>
+  <div className="pairs-list__value-ro-field">
+    <input type="text" className="form-control" value="FieldRef" disabled />
+  </div>
+  <div className="pairs-list__value-ro-field">
+    <input type="text" className="form-control" value={fieldPath} disabled />
+  </div>
+</React.Fragment>;
 
 const ConfigMapSecretKeyRef = ({data: {name, key}, configMaps, secrets, onChange, disabled, kind}) => {
   const placeholderString = 'Config Map or Secret';
   const nameTitle = _.isEmpty(name) ? <span className="text-muted">Select a resource</span> : <ResourceName kind={kind} name={name} />;
 
   if (disabled) {
-    return <span>
-      <input type="text" className="form-control value-from" value={`${name} - ${kind}`} disabled />
-      <input type="text" className="form-control value-from" value={key} disabled />
-    </span>;
+    return <React.Fragment>
+      <div className="pairs-list__value-ro-field">
+        <input type="text" className="form-control" value={`${name} - ${kind}`} disabled />
+      </div>
+      <div className="pairs-list__value-ro-field">
+        <input type="text" className="form-control" value={key} disabled />
+      </div>
+    </React.Fragment>;
   }
   return NameKeyDropdownPair({name, key, configMaps, secrets, onChange, kind, nameTitle, placeholderString});
 };
 
-const ResourceFieldRef = ({data: {containerName, resource}}) => <span>
-  <input type="text" className="form-control value-from" value={`${containerName} - Resource Field`} disabled />
-  <input type="text" className="form-control value-from" value={resource} disabled />
-</span>;
+const ResourceFieldRef = ({data: {containerName, resource}}) => <React.Fragment>
+  <div className="pairs-list__value-ro-field">
+    <input type="text" className="form-control value-from" value={`${containerName} - Resource Field`} disabled />
+  </div>
+  <div className="pairs-list__value-ro-field">
+    <input type="text" className="form-control value-from" value={resource} disabled />
+  </div>
+</React.Fragment>;
 
 const keyStringToComponent = {
   fieldRef: {

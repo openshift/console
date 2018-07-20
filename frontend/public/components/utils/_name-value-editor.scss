@@ -22,6 +22,11 @@
   }
 }
 
+.pairs-list__value-ro-field {
+  flex-grow: 1;
+  padding-top: 5px;
+}
+
 .pairs-list__btn {
   cursor: pointer;
   display: block;
