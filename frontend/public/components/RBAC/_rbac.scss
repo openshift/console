@@ -3,7 +3,6 @@
 }
 
 .rbac-rule {
-  width: 100%; // since its parent .co-resource-list__item is a flex container
   &__actions {
     align-items: baseline;
     display: flex;
@@ -13,9 +12,23 @@
   }
 }
 
-.rbac-rule-resource  {
-  min-width: 230px;
-  display: inline-block;
+.rbac-rule-resource {
+  align-items: baseline;
+  display: inline-flex;
+  margin-right: 20px;
+  min-width: 0; // so co-break-word works on .rbac-rule-resource__label
+  &__label {
+    @include co-break-word;
+    min-width: 0; // so co-break-word works
+  }
+  .co-m-resource-icon {
+    flex-shrink: 0;
+  }
+}
+
+.rbac-rule-resources {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .rbac-rule-row:not(:last-of-type) {
