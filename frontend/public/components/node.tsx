@@ -8,6 +8,7 @@ import { PodsPage } from './pod';
 import { Cog, navFactory, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 import { Line, requirePrometheus } from './graphs';
 import { NodeModel } from '../models';
+import { CamelCaseWrap } from './utils/camel-case-wrap';
 
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable...',
@@ -243,9 +244,9 @@ const Details = ({obj: node}) => {
           </thead>
           <tbody>
             {_.map(node.status.conditions, (c, i) => <tr key={i}>
-              <td>{c.type}</td>
+              <td><CamelCaseWrap value={c.type} /></td>
               <td>{c.status || '-'}</td>
-              <td>{c.reason || '-'}</td>
+              <td><CamelCaseWrap value={c.reason} /></td>
               <td><Timestamp timestamp={c.lastHeartbeatTime} /></td>
               <td><Timestamp timestamp={c.lastTransitionTime} /></td>
             </tr>)}
