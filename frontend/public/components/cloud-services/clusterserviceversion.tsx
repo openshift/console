@@ -215,8 +215,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
       <div style={{marginBottom: '15px'}}>
         { status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <button disabled={true} className="btn btn-primary">Create New</button> }
         { status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded && ownedCRDs.length > 1 && <Dropdown
-          noButton={true}
-          className="btn btn-primary"
+          buttonClassName="btn-primary"
           title="Create New"
           items={ownedCRDs.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
           onChange={(name) => history.push(route(name))} /> }

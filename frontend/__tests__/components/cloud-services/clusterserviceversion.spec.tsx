@@ -362,11 +362,10 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     let obj = _.cloneDeep(testClusterServiceVersion);
     obj.spec.customresourcedefinitions.owned.push({name: 'foobars.testapp.coreos.com', displayName: 'Foo Bars', version: 'v1', kind: 'FooBars'});
     wrapper.setProps({obj});
-    const createButton: ShallowWrapper<any> = wrapper.find('.btn-primary');
+    const createButton: ShallowWrapper<any> = wrapper.find('Dropdown');
 
     expect(createButton.type()).toEqual(Dropdown);
     expect(createButton.props().title).toEqual('Create New');
-    expect(createButton.props().noButton).toEqual(true);
     expect(createButton.props().items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
     expect(createButton.props().onChange).toBeDefined();
   });
