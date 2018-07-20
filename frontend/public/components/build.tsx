@@ -134,24 +134,24 @@ export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>
 BuildsDetailsPage.displayName = 'BuildsDetailsPage';
 
 const BuildsHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="status.phase">Status</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.creationTimestamp">Created</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="status.phase">Status</ColHead>
+  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co-resource-list__item">
-  <div className="col-xs-3 co-resource-link-wrapper">
+  <div className="col-sm-3 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={BuildsReference} resource={obj} />
     <ResourceLink kind={BuildsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-xs-3 co-break-word">
+  <div className="col-sm-3 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-sm-3 hidden-xs">
     {obj.status.phase}
   </div>
-  <div className="col-xs-3">
+  <div className="col-sm-3 hidden-xs">
     {fromNow(obj.metadata.creationTimestamp)}
   </div>
 </div>;
