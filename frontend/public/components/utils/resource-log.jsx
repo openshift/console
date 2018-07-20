@@ -7,6 +7,7 @@ import { LoadingInline, LogWindow, TogglePlay } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { SafetyFirst } from '../safety-first';
 import { WSFactory } from '../../module/ws-factory';
+import { LineBuffer } from './line-buffer';
 
 export const STREAM_EOF = 'eof';
 export const STREAM_LOADING = 'loading';
@@ -51,7 +52,7 @@ const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
 export class ResourceLog extends SafetyFirst {
   constructor(props) {
     super(props);
-    this._buffer = [];
+    this._buffer = new LineBuffer(props.bufferSize);
     this._download = this._download.bind(this);
     this._onClose = this._onClose.bind(this);
     this._onError = this._onError.bind(this);
@@ -62,7 +63,6 @@ export class ResourceLog extends SafetyFirst {
     this._updateStatus = this._updateStatus.bind(this);
     this.state = {
       error: false,
-      currentLine: '',
       lines: [],
       linesBehind: 0,
       resourceStatus: LOG_SOURCE_WAITING,
@@ -128,43 +128,26 @@ export class ResourceLog extends SafetyFirst {
 
   // Handler for websocket onmessage event
   _onMessage(msg){
-    const { linesBehind } = this.state;
+    const { linesBehind, status } = this.state;
     if (msg){
       const text = Base64.decode(msg);
-      const currentLine = this._pushToBuffer(text);
-      const incrementLinesBehind = (this.state.status === STREAM_PAUSED && currentLine.length === 0);
+      const linesAdded = this._buffer.ingest(text);
       this.setState({
-        currentLine,
-        linesBehind: incrementLinesBehind ? linesBehind + 1 : linesBehind,
-        lines: this._buffer
+        linesBehind: status === STREAM_PAUSED ? linesBehind + linesAdded : linesBehind,
+        lines: this._buffer.getLines()
       });
     }
   }
 
   // Handler for websocket onopen event
   _onOpen(){
-    this._buffer = [];
+    this._buffer.clear();
     this._updateStatus(STREAM_ACTIVE);
-  }
-
-  // Push one line to the buffer. First item is removed if buffer is at limit.
-  _pushToBuffer(text){
-    const prev = this.state.currentLine;
-    const next = `${prev}${text}`;
-    if (/\n$/.test(text)) {
-      if (this._buffer.length === this.props.bufferSize) {
-        this._buffer.shift();
-      }
-      this._buffer.push(next);
-      return '';
-    }
-    return next;
   }
 
   // Destroy and reinitialize websocket connection
   _restartStream() {
     this.setState({
-      currentLine: '',
       error: false,
       lines: [],
       linesBehind: 0,
@@ -184,10 +167,11 @@ export class ResourceLog extends SafetyFirst {
 
   // Updates log status
   _updateStatus(newStatus) {
+    const {status} = this.state;
     let newState = {status: newStatus};
 
     // Reset linesBehind when transitioning out of paused state
-    if (this.state.status !== STREAM_ACTIVE && newStatus === STREAM_ACTIVE) {
+    if (status !== STREAM_ACTIVE && newStatus === STREAM_ACTIVE) {
       newState.linesBehind = 0;
     }
     this.setState(newState);
