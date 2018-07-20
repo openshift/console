@@ -103,24 +103,24 @@ export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = 
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 
 const ImageStreamsHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.creationTimestamp">Created</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const ImageStreamsRow: React.SFC<ImageStreamsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-3 co-resource-link-wrapper">
+  <div className="col-sm-3 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={ImageStreamsReference} resource={obj} />
     <ResourceLink kind={ImageStreamsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-xs-3 co-break-word">
+  <div className="col-sm-3 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-sm-3 hidden-xs">
     <LabelList kind={ImageStreamsReference} labels={obj.metadata.labels} />
   </div>
-  <div className="col-xs-3">
+  <div className="col-sm-3 hidden-xs">
     { fromNow(obj.metadata.creationTimestamp) }
   </div>
 </div>;

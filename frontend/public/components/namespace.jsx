@@ -45,20 +45,20 @@ const deleteModal = (kind, ns) => {
 const nsMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, deleteModal];
 
 const NamespaceHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="status.phase">Status</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="status.phase">Status</ColHead>
+  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
 </ListHeader>;
 
 const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
-  <div className="col-xs-4 co-resource-link-wrapper">
+  <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={nsMenuActions} kind="Namespace" resource={ns} />
     <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
   </div>
-  <div className="col-xs-4 co-break-word">
+  <div className="col-sm-4 col-xs-6 co-break-word">
     {ns.status.phase}
   </div>
-  <div className="col-xs-4">
+  <div className="col-sm-4 hidden-xs">
     <LabelList kind="Namespace" labels={ns.metadata.labels} />
   </div>
 </ResourceRow>;

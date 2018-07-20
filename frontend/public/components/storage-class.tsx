@@ -21,26 +21,26 @@ export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
 const StorageClassHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="provisioner">Provisioner</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="reclaimPolicy">Reclaim Policy</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.creationTimestamp">Created</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="provisioner">Provisioner</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="reclaimPolicy">Reclaim Policy</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 
 const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-xs-3 co-break-word co-resource-link-wrapper">
+    <div className="col-sm-4 col-xs-6 co-break-word co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={StorageClassReference} resource={obj} />
       <ResourceLink kind={StorageClassReference} name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
     </div>
-    <div className="col-xs-3 co-break-word">
+    <div className="col-sm-4 col-xs-6 co-break-word">
       {obj.provisioner}
     </div>
-    <div className="col-xs-3">
+    <div className="col-sm-2 hidden-xs">
       {obj.reclaimPolicy}
     </div>
-    <div className="col-xs-3">
+    <div className="col-sm-2 hidden-xs">
       { fromNow(obj.metadata.creationTimestamp) }
     </div>
   </div>;

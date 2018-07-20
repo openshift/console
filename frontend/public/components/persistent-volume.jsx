@@ -23,21 +23,21 @@ spec:
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const kind = 'PersistentVolume';
 const Row = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-4 co-resource-link-wrapper">
+  <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind={kind} resource={obj} />
     <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-xs-4">
+  <div className="col-sm-4 col-xs-6">
     <LabelList kind={kind} labels={obj.metadata.labels} />
   </div>
-  <div className="col-xs-4">
+  <div className="col-sm-4 hidden-xs">
     <Timestamp timestamp={obj.metadata.creationTimestamp} />
   </div>
 </div>;
