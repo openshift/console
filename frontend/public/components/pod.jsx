@@ -13,6 +13,7 @@ import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { EnvironmentPage } from './environment';
 import { formatDuration } from './utils/datetime';
+import { CamelCaseWrap } from './utils/camel-case-wrap';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);
@@ -39,11 +40,11 @@ export const Readiness = ({pod}) => {
     return null;
   }
   if (validReadinessStates.has(readiness)) {
-    return <span>{readiness}</span>;
+    return <CamelCaseWrap value={readiness} />;
   }
-  return <span className="co-error">
-    <i className="fa fa-times-circle co-icon-space-r" />
-    {readiness}
+  return <span className="co-error co-icon-and-text">
+    <i className="fa fa-times-circle co-icon-and-text__icon" aria-hidden="true" />
+    <CamelCaseWrap value={readiness} />
   </span>;
 };
 
@@ -52,8 +53,8 @@ Readiness.displayName = 'Readiness';
 export const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
   const status = validStatuses.has(phase)
-    ? phase
-    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" />{phase}</span>;
+    ? <CamelCaseWrap value={phase} />
+    : <span className="co-error co-icon-and-text"><i className="fa fa-times-circle co-icon-and-text__icon" aria-hidden="true" /><CamelCaseWrap value={phase} /></span>;
 
   return <ResourceRow obj={pod}>
     <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">

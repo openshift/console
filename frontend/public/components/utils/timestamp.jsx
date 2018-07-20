@@ -128,8 +128,8 @@ export class Timestamp extends SafetyFirst {
       return timestamp;
     }
 
-    return <div className="co-timestamp">
-      <i className="fa fa-globe co-timestamp__icon" aria-hidden="true" />
+    return <div className="co-timestamp co-icon-and-text">
+      <i className="fa fa-globe co-icon-and-text__icon" aria-hidden="true" />
       <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{ mdate.toISOString() }</span>]}>
         { timestamp }
       </Tooltip>
