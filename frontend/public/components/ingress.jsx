@@ -84,10 +84,10 @@ const RulesRow = ({rule, namespace}) => {
       <div>{rule.path}</div>
     </div>
     <div className="col-xs-3">
-      <ResourceLink kind="Service" name={rule.serviceName} namespace={namespace} />
+      {rule.serviceName ? <ResourceLink kind="Service" name={rule.serviceName} namespace={namespace} /> : '-'}
     </div>
     <div className="col-xs-2">
-      <div>{rule.servicePort}</div>
+      <div>{rule.servicePort || '-'}</div>
     </div>
   </div>;
 };
@@ -97,14 +97,24 @@ const RulesRows = (props) => {
 
   if (_.has(props.spec, 'rules')) {
     _.forEach(props.spec.rules, rule => {
-      _.forEach(rule.http.paths, path => {
+      const paths = _.get(rule, 'http.paths');
+      if (_.isEmpty(paths)) {
         rules.push({
-          host: rule.host || '',
-          path: path.path || '',
-          serviceName: path.backend.serviceName,
-          servicePort: path.backend.servicePort,
+          host: rule.host || '*',
+          path: '*',
+          serviceName: _.get(props.spec, 'backend.serviceName'),
+          servicePort: _.get(props.spec, 'backend.servicePort'),
         });
-      });
+      } else {
+        _.forEach(paths, path => {
+          rules.push({
+            host: rule.host || '*',
+            path: path.path || '*',
+            serviceName: path.backend.serviceName,
+            servicePort: path.backend.servicePort,
+          });
+        });
+      }
     });
 
     const rows = _.map(rules, rule => {
@@ -120,7 +130,7 @@ const RulesRows = (props) => {
 const Details = ({obj: ingress}) => <React.Fragment>
   <div className="co-m-pane__body">
     <ResourceSummary resource={ingress} showPodSelector={false} showNodeSelector={false}>
-      <dt>Tls Certificate</dt>
+      <dt>TLS Certificate</dt>
       <dd>{getTLSCert(ingress)}</dd>
     </ResourceSummary>
   </div>
