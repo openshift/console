@@ -49,6 +49,7 @@ const stateToProps = ({k8s}, {obj}) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
 });
 
+/** @type {React.SFC<{obj: object, rawEnvData: any, readOnly: boolean, envPath: any}>} */
 export const EnvironmentPage = connect(stateToProps)(
   class EnvironmentPage extends PromiseComponent {
   /**
@@ -59,9 +60,9 @@ export const EnvironmentPage = connect(stateToProps)(
     constructor(props) {
       super(props);
 
-      this.reload = () => this._reload();
-      this.saveChanges = (...args) => this._saveChanges(...args);
-      this.updateEnvVars = (...args) => this._updateEnvVars(...args);
+      this.reload = this._reload.bind(this);
+      this.saveChanges = this._saveChanges.bind(this);
+      this.updateEnvVars = this._updateEnvVars.bind(this);
 
       const currentEnvVars = envVarsToArray(this.props.rawEnvData);
       this.state = {
