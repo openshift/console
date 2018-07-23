@@ -12,6 +12,8 @@ import { Dropdown, ActionsMenu } from './utils';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 
+const developerConsoleURL = (window as any).SERVER_FLAGS.developerConsoleURL;
+
 const logout = e => {
   e.preventDefault();
   authSvc.logout();
@@ -84,11 +86,9 @@ export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
 }
 
 const ContextSwitcher = () => {
-  const openshiftConsoleURL = (window as any).SERVER_FLAGS.openshiftConsoleURL;
-
   const items = {
-    [`${openshiftConsoleURL}catalog`]: 'Service Catalog',
-    [`${openshiftConsoleURL}projects`]: 'Application Console',
+    [`${developerConsoleURL}catalog`]: 'Service Catalog',
+    [`${developerConsoleURL}projects`]: 'Application Console',
     [(window as any).SERVER_FLAGS.basePath]: 'Cluster Console'
   };
 
@@ -123,9 +123,9 @@ export const LogoImage = () => {
 
 export const Masthead = () => <header role="banner" className="co-masthead">
   <LogoImage />
-  <div className="co-masthead__console-picker">
-    { (window as any).SERVER_FLAGS.openshiftConsoleURL && <ContextSwitcher /> }
-  </div>
+  {developerConsoleURL && <div className="co-masthead__console-picker">
+    <ContextSwitcher />
+  </div>}
   <div className="co-masthead__user">
     <UserMenuWrapper />
   </div>
