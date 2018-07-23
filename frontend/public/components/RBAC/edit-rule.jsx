@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { k8sGet, k8sUpdate } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
 import { errorModal } from '../modals';
-import { Heading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar, LoadingBox } from '../utils';
+import { SectionHeading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar, LoadingBox } from '../utils';
 import k8sActions from '../../module/k8s/k8s-actions';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
@@ -266,7 +266,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResource
             <title>{`${name} · ${heading}`}</title>
           </Helmet>
           <div className="co-m-pane__body">
-            <Heading text={heading} />
+            <SectionHeading text={heading} />
             <div className="row">
               <div className="col-xs-12">
                 <p className="text-secondary">

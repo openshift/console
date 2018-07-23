@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, CopyToClipboard, ResourceCog, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
+import { Cog, CopyToClipboard, SectionHeading, ResourceCog, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 
 import { registerTemplate } from '../yaml-templates';
@@ -226,20 +226,21 @@ const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
   <React.Fragment>
     {_.map(ingresses, (ingress) =>
       <div key={ingress.routerName} className="co-m-route-ingress-status">
-        <h1 className="co-section-title">Router: {ingress.routerName}</h1>
+        <SectionHeading text={`Router: ${ingress.routerName}`} />
         <dl>
           <dt>Hostname</dt>
           <dd>{ingress.host}</dd>
           <dt>Wildcard Policy</dt>
           <dd>{ingress.wildcardPolicy}</dd>
         </dl>
-        <h2 className="co-section-title-secondary">Conditions</h2>
+        <h3 className="co-section-heading-secondary">Conditions</h3>
         <Conditions conditions={ingress.conditions} />
       </div>)}
   </React.Fragment>;
 
 const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
   <div className="co-m-pane__body">
+    <SectionHeading text="Route Overview" />
     <div className="row">
       <div className="col-sm-6">
         <ResourceSummary resource={route} showPodSelector={false} showNodeSelector={false}>
@@ -266,11 +267,11 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
     </div>
   </div>
   <div className="co-m-pane__body">
-    <h1 className="co-section-title">TLS Settings</h1>
+    <SectionHeading text="TLS Settings" />
     <TLSSettings tls={route.spec.tls} />
   </div>
   { !_.isEmpty(route.spec.alternateBackends) && <div className="co-m-pane__body">
-    <h1 className="co-section-title">Traffic</h1>
+    <SectionHeading text="Traffic" />
     <p className="co-m-pane__explanation">
       This route splits traffic across multiple services.
     </p>

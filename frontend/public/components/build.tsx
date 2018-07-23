@@ -6,7 +6,7 @@ import { K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { cloneBuild, formatBuildDuration } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Cog, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp } from './utils';
+import { BuildHooks, BuildStrategy, Cog, SectionHeading, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp } from './utils';
 import { BuildPipeline } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
@@ -42,7 +42,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
 
   return <React.Fragment>
     <div className="co-m-pane__body">
-      <h1 className="co-m-pane__heading">Build Overview</h1>
+      <SectionHeading text="Build Overview" />
       {hasPipeline && <div className="row">
         <div className="col-xs-12">
           <BuildPipeline obj={build} />

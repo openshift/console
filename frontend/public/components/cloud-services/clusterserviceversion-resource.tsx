@@ -175,7 +175,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
-          <h1 className="co-section-title">{`${thisDefinition ? thisDefinition.displayName : kind} Overview`}</h1>
+          <h2 className="co-section-heading">{`${thisDefinition ? thisDefinition.displayName : kind} Overview`}</h2>
           <div className="row">
             { podStatusesDescriptor && <div className="col-sm-6 col-md-4"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={() => blockValue(podStatusesDescriptor, status)} /></div> }
             { metricsValue && metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (

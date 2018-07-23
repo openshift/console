@@ -4,7 +4,7 @@ import * as fuzzy from 'fuzzysearch';
 import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
-import { Cog, Heading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp } from '../utils';
+import { Cog, SectionHeading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingsList, RulesList } from './index';
 import { registerTemplate } from '../../yaml-templates';
 import { flatten as bindingsFlatten } from './bindings';
@@ -74,7 +74,7 @@ class Details extends React.Component {
 
     return <div>
       <div className="co-m-pane__body">
-        <Heading text="Role Overview" />
+        <SectionHeading text="Role Overview" />
         <div className="row">
           <div className="col-xs-6">
             <dl className="co-m-pane__details">
@@ -95,7 +95,7 @@ class Details extends React.Component {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <Heading text="Rules" />
+        <SectionHeading text="Rules" />
         <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
           <div className="co-m-pane__filter-bar-group">
             <Link to={addHref(name, namespace)} className="co-m-primary-action">

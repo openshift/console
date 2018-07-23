@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Cog, SectionHeading, LabelList, navFactory, Overflow, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
 
@@ -58,6 +58,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
 
   return <div>
     <div className="co-m-pane__body">
+      <SectionHeading text="Image Stream Overview" />
       <ResourceSummary resource={imageStream} showPodSelector={false} showNodeSelector={false}>
         {imageRepository && <dt>Image Repository</dt>}
         {imageRepository && <dd>{imageRepository}</dd>}
@@ -68,7 +69,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
       </ResourceSummary>
     </div>
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Tags</h1>
+      <SectionHeading text="Tags" />
       {_.isEmpty(imageStream.status.tags)
         ? <span className="text-muted">No tags</span>
         : <div className="row">

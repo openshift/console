@@ -6,7 +6,7 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
+import { SectionHeading, Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line, requirePrometheus } from './graphs';
@@ -134,7 +134,7 @@ const Volume = ({pod, volume}) => {
 };
 
 const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane__body">
-  <h1 className="co-section-title">{heading}</h1>
+  <SectionHeading text={heading} />
   <div className="row">
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
@@ -187,7 +187,7 @@ const Details = ({obj: pod}) => {
 
   return <React.Fragment>
     <div className="co-m-pane__body">
-      <h1 className="co-m-pane__heading">Pod Overview</h1>
+      <SectionHeading text="Pod Overview" />
       <PodGraphs pod={pod} />
       <div className="row">
         <div className="col-sm-6">
@@ -231,7 +231,7 @@ const Details = ({obj: pod}) => {
     <ContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
 
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Pod Volumes</h1>
+      <SectionHeading text="Pod Volumes" />
       <div className="row">
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">

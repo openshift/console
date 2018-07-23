@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { getContainerState, getContainerStatus, getPullPolicyLabel } from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import { Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav, ResourceLink } from './utils';
+import { SectionHeading, Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav, ResourceLink } from './utils';
 
 const formatComputeResources = resources => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
 
@@ -149,7 +149,7 @@ const Details = (props) => {
   return <div className="co-m-pane__body">
     <div className="row">
       <div className="col-lg-4">
-        <h1 className="co-section-title">Container Overview</h1>
+        <SectionHeading text="Container Overview" />
         <dl className="co-m-pane__details">
           <dt>State</dt>
           <dd>{state.label}</dd>
@@ -177,7 +177,7 @@ const Details = (props) => {
       </div>
 
       <div className="col-lg-4">
-        <h1 className="co-section-title">Image Details</h1>
+        <SectionHeading text="Image Details" />
         <dl className="co-m-pane__details">
           <dt>Image</dt>
           <dd><Overflow value={imageName || '-'} /></dd>
@@ -193,7 +193,7 @@ const Details = (props) => {
       </div>
 
       <div className="col-lg-4">
-        <h1 className="co-section-title">Network</h1>
+        <SectionHeading text="Network" />
         <dl className="co-m-pane__details">
           <dt>Node</dt>
           <dd><ResourceLink kind="Node" name={pod.spec.nodeName} title={pod.spec.nodeName} /></dd>
@@ -207,21 +207,21 @@ const Details = (props) => {
 
     <div className="row">
       <div className="col-lg-4">
-        <h1 className="co-section-title">Ports</h1>
+        <SectionHeading text="Ports" />
         <div className="co-table-container">
           <Ports ports={container.ports} />
         </div>
       </div>
 
       <div className="col-lg-4">
-        <h1 className="co-section-title">Mounted Volumes</h1>
+        <SectionHeading text="Mounted Volumes" />
         <div className="co-table-container">
           <Volumes volumes={container.volumeMounts} />
         </div>
       </div>
 
       <div className="col-lg-4">
-        <h1 className="co-section-title">Environment Variables</h1>
+        <SectionHeading text="Environment Variables" />
         <div className="co-table-container">
           <Env env={container.env} />
         </div>

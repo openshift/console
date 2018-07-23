@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SecretData } from './configmap-and-secret-data';
-import { Cog, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
+import { Cog, SectionHeading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
 import { SecretType } from './secrets/create-secret';
@@ -73,6 +73,7 @@ const SecretRow = ({obj: secret}) => {
 const SecretDetails = ({obj: secret}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
+      <SectionHeading text="Secret Overview" />
       <ResourceSummary resource={secret} showPodSelector={false} showNodeSelector={false} />
     </div>
     <div className="co-m-pane__body">

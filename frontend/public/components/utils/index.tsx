@@ -40,6 +40,7 @@ export * from './build-strategy';
 export * from './copy-to-clipboard';
 export * from './build-hooks';
 export * from './webhooks';
+export * from './section-heading';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

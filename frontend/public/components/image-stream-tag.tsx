@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory';
-import { Cog, navFactory, Overflow, ResourceSummary } from './utils';
+import { Cog, SectionHeading, navFactory, Overflow, ResourceSummary } from './utils';
 import { humanizeMem } from './utils/units';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -49,7 +49,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
     <div className="co-m-pane__body-group">
       <div className="row">
         <div className="col-md-6 col-sm-12">
-          <h1 className="co-section-title">Image Overview</h1>
+          <SectionHeading text="Image Overview" />
           <ResourceSummary resource={imageStreamTag} showPodSelector={false} showNodeSelector={false}>
             {labels.name && <dt>Image Name</dt>}
             {labels.name && <dd>{labels.name}</dd>}
@@ -60,7 +60,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
           </ResourceSummary>
         </div>
         <div className="col-md-6 col-sm-12">
-          <h1 className="co-section-title">Configuration</h1>
+          <SectionHeading text="Configuration" />
           <dl className="co-m-pane__details">
             {entrypoint && <dt>Entrypoint</dt>}
             {entrypoint && <dd><Overflow value={entrypoint} /></dd>}
@@ -79,7 +79,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
       </div>
     </div>
     <div className="co-m-pane__body-group">
-      <h1 className="co-section-title">Image Labels</h1>
+      <SectionHeading text="Image Labels" />
       {_.isEmpty(sortedLabels)
         ? <span className="text-muted">No labels</span>
         : <div className="co-table-container">
@@ -100,7 +100,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
         </div>}
     </div>
     <div className="co-m-pane__body-group">
-      <h1 className="co-section-title">Environment Variables</h1>
+      <SectionHeading text="Environment Variables" />
       {_.isEmpty(config.Env)
         ? <span className="text-muted">No environment variables</span>
         : <div className="co-table-container">

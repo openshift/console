@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { SafetyFirst } from './safety-first';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, NavBar, NavTitle, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
+import { Cog, navFactory, NavBar, NavTitle, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
 import { LoadError, LoadingBox, LoadingInline, MsgBox } from './utils/status-box';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
@@ -89,7 +89,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
     const phase = _.get(obj, ['status', 'phase']);
     return <div>
       <div className="co-m-pane__body">
-        <Heading text="Report Overview" />
+        <SectionHeading text="Report Overview" />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true} />
@@ -335,9 +335,9 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
 
     return <div>
       <div className="co-m-pane__body">
-        <Heading text="Usage Report">
+        <SectionHeading text="Usage Report">
           <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
-        </Heading>
+        </SectionHeading>
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <div className="btn-group">
@@ -427,7 +427,7 @@ const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsPr
 
   return <div>
     <div className="co-m-pane__body">
-      <Heading text="Chargeback Report Generation Query" />
+      <SectionHeading text="Chargeback Report Generation Query" />
       <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
         <dt>Query</dt>
         <dd><pre><code>{_.get(obj, ['spec', 'query'])}</code></pre></dd>

@@ -471,7 +471,7 @@ const LDAPs = reduxForm({
         const populated = !!this.state.populated[stepName];
         const lastStep = i === Steps.length - 1;
         const step = <div key={`step-${stepName}`}>
-          { s.name && <h1 className="co-section-title ldap-group">{s.name}</h1> }
+          { s.name && <h2 className="co-section-heading ldap-group">{s.name}</h2> }
           { s.description && <p className="co-m-form-row">{s.description}</p> }
           { _.map(fields, FieldRow) }
           { stepName === 'Globals' && <Security /> }
@@ -520,7 +520,7 @@ const LDAPs = reduxForm({
           <button className="btn btn-primary" onClick={e => this.continue(e)} disabled={disabled}>Continue</button>
           }
           {stateMachine === STATES.updating && <div>
-            <h1 className="co-section-title ldap-group">Update Tectonic Identity</h1>
+            <h2 className="co-section-heading ldap-group">Update Tectonic Identity</h2>
             <p>
             The last step is to apply the updated configuration to the cluster.
             This is done via <code>kubectl</code> to avoid locking yourself out if something goes wrong.

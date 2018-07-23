@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { ContainerRow } from '../pod';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '../factory';
-import { MsgBox, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
+import { SectionHeading, MsgBox, navFactory, Overflow, ResourceIcon, ResourceLink, ResourceSummary, Timestamp } from '../utils';
 import { isScanned, isSupported, imagesScanned, hasAccess, makePodvuln, CountVulnerabilityFilter, severityBreakdownInfo } from '../../module/k8s/podvulns';
 import { AsyncComponent } from '../utils/async';
 
@@ -162,7 +162,7 @@ const Details = ({obj: pod}) => {
 
   return <React.Fragment>
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Pod Vulnerability Overview</h1>
+      <SectionHeading text="Pod Vulnerability Overview" />
       <div className="row">
         <div className="col-sm-8 col-xs-12">
           <div className="row">
@@ -187,7 +187,7 @@ const Details = ({obj: pod}) => {
     </div>
 
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Containers</h1>
+      <SectionHeading text="Containers" />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
           <div className="col-sm-2 col-xs-4">Name</div>
@@ -205,7 +205,7 @@ const Details = ({obj: pod}) => {
     </div>
 
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Container Vulnerabilities</h1>
+      <SectionHeading text="Container Vulnerabilities" />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
           <div className="col-sm-2 col-xs-4">CVE</div>

@@ -6,7 +6,7 @@ import { K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Cog, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, WebhookTriggers } from './utils';
+import { BuildHooks, BuildStrategy, Cog, SectionHeading, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, WebhookTriggers } from './utils';
 import { BuildsPage, BuildEnvironmentComponent } from './build';
 import { fromNow } from './utils/datetime';
 import { registerTemplate } from '../yaml-templates';
@@ -62,7 +62,7 @@ const menuActions = [
 
 export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: buildConfig}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <h1 className="co-m-pane__heading">Build Config Overview</h1>
+    <SectionHeading text="Build Config Overview" />
     <div className="row">
       <div className="col-sm-6">
         <ResourceSummary resource={buildConfig} showPodSelector={false} showNodeSelector={false} />

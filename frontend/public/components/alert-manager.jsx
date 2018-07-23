@@ -4,7 +4,7 @@ import * as React from 'react';
 import { referenceForModel } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
 import { ColHead, List, ListHeader, ListPage, ResourceRow, DetailsPage } from './factory';
-import { LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
+import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
 import { SettingsRow, SettingsContent } from './cluster-settings/cluster-settings';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
@@ -43,8 +43,7 @@ class Details extends SafetyFirst {
     const {metadata, spec} = alertManager;
     return <div>
       <div className="co-m-pane__body">
-        <h1 className="co-section-title">Alert Manager Overview</h1>
-
+        <SectionHeading text="Alert Manager Overview" />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <dl className="co-m-pane__details">

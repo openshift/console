@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
+import { Cog, detailsPage, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { referenceForModel, apiVersionForModel } from '../module/k8s';
 import { registerTemplate } from '../yaml-templates';
@@ -52,7 +52,7 @@ const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
 
 const ClustersDetails: React.SFC<ClustersDetailsProps> = ({obj}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="Cluster Overview" />
+    <SectionHeading text="Cluster Overview" />
     <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
   </div>
 </React.Fragment>;

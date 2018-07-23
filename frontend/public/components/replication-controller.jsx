@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ResourceEventStream } from './events';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
-import { navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
+import { navFactory, SectionHeading, ResourceSummary, ResourcePodCount } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
@@ -31,7 +31,7 @@ spec:
 
 const Details = ({obj: replicationController}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="Replication Controller Overview" />
+    <SectionHeading text="Replication Controller Overview" />
     <div className="row">
       <div className="col-md-6">
         <ResourceSummary resource={replicationController} />
