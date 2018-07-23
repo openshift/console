@@ -113,21 +113,14 @@ export let featureActions = [
 
 // generate additional featureActions
 [
-  [ FLAGS.CAN_LIST_NS, 'namespaces'],
-  [ FLAGS.CAN_LIST_NODE, 'nodes'],
-  [ FLAGS.CAN_LIST_PV, 'persistentvolumes'],
-  [ FLAGS.CAN_LIST_STORE, 'storageclasses'],
-  [ FLAGS.CAN_LIST_CRD, 'customresourcedefinitions'],
-].forEach((restriction) => {
-  const FLAG = _.head(restriction);
-  const resourceName = _.last(restriction);
+  [FLAGS.CAN_LIST_NS, { resource: 'namespaces', verb: 'list' }],
+  [FLAGS.CAN_LIST_NODE, { resource: 'nodes', verb: 'list' }],
+  [FLAGS.CAN_LIST_PV, { resource: 'persistentvolumes', verb: 'list' }],
+  [FLAGS.CAN_LIST_STORE, { group: 'storage.k8s.io', resource: 'storageclasses', verb: 'list' }],
+  [FLAGS.CAN_LIST_CRD, { group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' }],
+].forEach(_.spread((FLAG, resourceAttributes) => {
   const req = {
-    spec: {
-      resourceAttributes: {
-        resource: resourceName,
-        verb: 'list'
-      }
-    }
+    spec: { resourceAttributes }
   };
   const fn = (dispatch) => {
     return k8sCreate(SelfSubjectAccessReviewModel, req)
@@ -137,7 +130,7 @@ export let featureActions = [
       );
   };
   featureActions.push(fn);
-});
+}));
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: ImmutableMap<string, any>, action) => {
