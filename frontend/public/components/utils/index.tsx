@@ -13,6 +13,7 @@ export * from './timestamp';
 export * from './vertnav';
 export * from './details-page';
 export * from './inject';
+export * from './disabled';
 export * from './file-input';
 export * from './firehose';
 export * from './dropdown';

@@ -2,21 +2,6 @@
   margin-bottom: ($grid-gutter-width / 2);
 }
 
-.group.group--fake::before {
-  background-color: #fff;
-  bottom: 0;
-  content: '';
-  cursor: not-allowed;
-  left: 0;
-  opacity: 0.4;
-  overflow: hidden;
-  position: absolute;
-  right: 0;
-  top: 0;
-  user-select: none;
-  z-index: 10;
-}
-
 .group__title {
   border: 1px solid $color-grey-background-border;
   background-color: $color-grey-background;
@@ -30,6 +15,7 @@
     margin: 0;
   }
 }
+
 .group__body {
   border: 1px solid $color-grey-background-border;
   border-top: none;
@@ -47,7 +33,6 @@
 .group__graphs {
   overflow: hidden;
 }
-
 
 .cluster-overview-cell {
   margin-top: -($grid-gutter-width / 2);

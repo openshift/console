@@ -7,7 +7,7 @@ import * as PropTypes from 'prop-types';
 
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
-import { Dropdown, Firehose, kindObj, NavTitle, history, inject} from '../utils';
+import { Dropdown, Firehose, kindObj, NavTitle, history, inject, Disabled} from '../utils';
 import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
@@ -309,10 +309,7 @@ export const MultiListPage = props => {
       <ListPageWrapper_ ListComponent={props.ListComponent} kinds={_.map(resources, 'kind')} rowFilters={props.rowFilters} staticFilters={props.staticFilters} flatten={flatten} label={props.label} fake={fake} />
     </Firehose>
   </FireMan_>;
-  if (fake) {
-    return <div style={{position: 'relative'}}><div className="fake-list" />{elems}</div>;
-  }
-  return elems;
+  return fake ? <Disabled>{elems}</Disabled> : elems;
 };
 
 MultiListPage.displayName = 'MultiListPage';

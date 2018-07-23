@@ -35,20 +35,6 @@
   margin-right: 0 !important;
 }
 
-.fake-list {
-  user-select: none;
-  position: absolute;
-  opacity: 0.4;
-  background-color: #fff;
-  z-index: 10;
-  cursor: not-allowed;
-  overflow: hidden;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
 .co-m-cog__dropdown {
   margin-bottom: 10px;
 }

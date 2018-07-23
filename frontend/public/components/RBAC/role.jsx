@@ -8,6 +8,7 @@ import { Cog, Heading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp 
 import { BindingName, BindingsList, RulesList } from './index';
 import { registerTemplate } from '../../yaml-templates';
 import { flatten as bindingsFlatten } from './bindings';
+import { flagPending } from '../../features';
 
 registerTemplate('rbac.authorization.k8s.io/v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
@@ -174,28 +175,31 @@ export const roleType = role => {
   return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-export const RolesPage = ({namespace, showTitle}) => <MultiListPage
-  ListComponent={RolesList}
-  canCreate={true}
-  showTitle={showTitle}
-  namespace={namespace}
-  createButtonText="Create Role"
-  createProps={{to: `/k8s/ns/${namespace || 'default'}/roles/new`}}
-  filterLabel="Roles by name"
-  flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
-  resources={[
-    {kind: 'Role', namespaced: true},
-    {kind: 'ClusterRole', namespaced: false, optional: true},
-  ]}
-  rowFilters={[{
-    type: 'role-kind',
-    selected: ['cluster', 'namespace'],
-    reducer: roleType,
-    items: [
-      {id: 'cluster', title: 'Cluster-wide Roles'},
-      {id: 'namespace', title: 'Namespace Roles'},
-      {id: 'system', title: 'System Roles'},
-    ],
-  }]}
-  title="Roles"
-/>;
+export const RolesPage = ({namespace, showTitle, flags}) => {
+  const projectsAvailable = !flagPending(flags.PROJECTS_AVAILBLE) && flags.PROJECTS_AVAILBLE;
+  return <MultiListPage
+    ListComponent={RolesList}
+    canCreate={true}
+    showTitle={showTitle}
+    namespace={namespace}
+    createButtonText="Create Role"
+    createProps={{to: `/k8s/ns/${namespace || 'default'}/roles/new`}}
+    filterLabel="Roles by name"
+    flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
+    resources={[
+      {kind: 'Role', namespaced: true, optional: !projectsAvailable},
+      {kind: 'ClusterRole', namespaced: false, optional: true},
+    ]}
+    rowFilters={[{
+      type: 'role-kind',
+      selected: ['cluster', 'namespace'],
+      reducer: roleType,
+      items: [
+        {id: 'cluster', title: 'Cluster-wide Roles'},
+        {id: 'namespace', title: 'Namespace Roles'},
+        {id: 'system', title: 'System Roles'},
+      ],
+    }]}
+    title="Roles"
+  />;
+};
