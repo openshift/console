@@ -7,7 +7,7 @@ export const createYAMLLink = $('#yaml-link');
 /**
  * Returns a promise that resolves after the loading spinner is not present.
  */
-export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(500));
+export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(1000));
 
 export const resourceRows = $$('.co-resource-list__item');
 export const resourceRowNamesAndNs = $$('.co-m-resource-icon + a');
