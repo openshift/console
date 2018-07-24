@@ -64,7 +64,7 @@ const SecretRow = ({obj: secret}) => {
     <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
       <ResourceLink kind="Namespace" name={secret.metadata.namespace} title={secret.metadata.namespace} />
     </div>
-    <div className="col-md-3 col-sm-4 hidden-xs">{secret.type}</div>
+    <div className="col-md-3 col-sm-4 hidden-xs co-break-word">{secret.type}</div>
     <div className="col-md-1 hidden-sm hidden-xs">{data}</div>
     <div className="col-md-2 hidden-sm hidden-xs">{age}</div>
   </ResourceRow>;
