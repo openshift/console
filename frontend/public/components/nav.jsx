@@ -275,11 +275,11 @@ const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
   </div>;
 });
 
-const TroubleshootingNavSection_ = ({urls, closeMenu}) => {
+const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const alertManagerURL = urls[MonitoringRoutes.AlertManager];
   const grafanaURL = urls[MonitoringRoutes.Grafana];
-  return <NavSection text="Troubleshooting" icon="fa fa-life-ring">
+  return <NavSection text="Monitoring" icon="pficon pficon-screen">
     <HrefLink href="/search" name="Search" onClick={closeMenu} startsWith={searchStartsWith} />
     <ResourceNSLink resource="events" name="Events" onClick={closeMenu} />
     {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
@@ -287,7 +287,7 @@ const TroubleshootingNavSection_ = ({urls, closeMenu}) => {
     {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
   </NavSection>;
 };
-const TroubleshootingNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager, MonitoringRoutes.Grafana)(TroubleshootingNavSection_);
+const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
 const logout = e => {
   e && e.preventDefault();
@@ -402,7 +402,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="services" name="Services" onClick={this.close} />
           </NavSection>
 
-          <TroubleshootingNavSection closeMenu={this.close} />
+          <MonitoringNavSection closeMenu={this.close} />
 
           <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
