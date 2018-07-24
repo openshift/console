@@ -39,6 +39,10 @@ $active-border: 3px;
   }
 }
 
+.co-m-nav-link__external a:after {
+  color: $color-os-nav-icon;
+}
+
 .navigation-container {
   flex: 1 1 auto;
   overflow-x: hidden;
@@ -106,7 +110,7 @@ $active-border: 3px;
 }
 
 .navigation-container__section__title__icon {
-  color: #72767b;
+  color: $color-os-nav-icon;
   margin-right: 9px;
   width: 18px;
   &.fa {
