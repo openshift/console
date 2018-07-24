@@ -84,21 +84,48 @@ const SecretDetails = ({obj: secret}) => {
 const SecretsList = props => <List {...props} Header={SecretHeader} Row={SecretRow} />;
 SecretsList.displayName = 'SecretsList';
 
-const secretType = secret => secret.type;
+const IMAGE_FILTER_VALUE = 'Image';
+const SOURCE_FILTER_VALUE = 'Source';
+const TLS_FILTER_VALUE = 'TLS';
+const SA_TOKEN_FILTER_VALUE = 'Service Account Token';
+const OPAQUE_FILTER_VALUE = 'Opaque';
+
+const secretTypeFilterValues = [
+  IMAGE_FILTER_VALUE,
+  SOURCE_FILTER_VALUE,
+  TLS_FILTER_VALUE,
+  SA_TOKEN_FILTER_VALUE,
+  OPAQUE_FILTER_VALUE
+];
+
+export const secretTypeFilterReducer = secret => {
+  switch (secret.type) {
+    case SecretType.dockercfg:
+    case SecretType.dockerconfigjson:
+      return IMAGE_FILTER_VALUE;
+
+    case SecretType.basicAuth:
+    case SecretType.sshAuth:
+      return SOURCE_FILTER_VALUE;
+
+    case SecretType.tls:
+      return TLS_FILTER_VALUE;
+
+    case SecretType.serviceAccountToken:
+      return SA_TOKEN_FILTER_VALUE;
+
+    default:
+      // This puts all unrecognized types under "Opaque". Since unrecognized types should be uncommon,
+      // it avoids an "Other" category that is usually empty.
+      return OPAQUE_FILTER_VALUE;
+  }
+};
 
 const filters = [{
   type: 'secret-type',
-  selected: ['kubernetes.io/service-account-token', 'kubernetes.io/dockercfg', 'kubernetes.io/dockerconfigjson', 'kubernetes.io/basic-auth', 'kubernetes.io/ssh-auth', 'kubernetes.io/tls', 'Opaque'],
-  reducer: secretType,
-  items: [
-    {id: 'kubernetes.io/basic-auth', title: 'basic-auth'},
-    {id: 'kubernetes.io/dockercfg', title: 'dockercfg'},
-    {id: 'kubernetes.io/dockerconfigjson', title: 'dockerconfigjson'},
-    {id: 'kubernetes.io/service-account-token', title: 'service-account-token'},
-    {id: 'kubernetes.io/ssh-auth', title: 'ssh-auth'},
-    {id: 'kubernetes.io/tls', title: 'tls'},
-    {id: 'Opaque', title: 'Opaque'}
-  ],
+  selected: secretTypeFilterValues,
+  reducer: secretTypeFilterReducer,
+  items: secretTypeFilterValues.map(filterValue => ({ id: filterValue, title: filterValue })),
 }];
 
 const SecretsPage = props => {

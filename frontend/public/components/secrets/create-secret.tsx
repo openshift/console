@@ -17,8 +17,12 @@ enum SecretTypeAbstraction {
 
 export enum SecretType {
   basicAuth = 'kubernetes.io/basic-auth',
+  dockercfg = 'kubernetes.io/dockercfg',
+  dockerconfigjson = 'kubernetes.io/dockerconfigjson',
+  opaque = 'Opaque',
+  serviceAccountToken = 'kubernetes.io/service-account-token',
   sshAuth = 'kubernetes.io/ssh-auth',
-  opaque = 'Opaque'
+  tls = 'kubernetes.io/tls',
 }
 
 export type BasicAuthSubformState = {
