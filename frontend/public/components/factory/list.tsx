@@ -13,9 +13,10 @@ import { getJobTypeAndCompletions, isNodeReady, podPhase, podPhaseFilterReducer,
 import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
+import { routeStatus } from '../routes';
+import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
 import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator, EmptyBox } from '../utils';
-import { routeStatus } from '../routes';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
@@ -120,7 +121,7 @@ const listFilters = {
     if (!types || !types.selected || !types.selected.size) {
       return true;
     }
-    const type = secret.type;
+    const type = secretTypeFilterReducer(secret);
     return types.selected.has(type) || !_.includes(types.all, type);
   },
 
