@@ -28,7 +28,7 @@ export const LoadingBox = ({className}) => <Box className={className}><Loading /
 LoadingBox.displayName = 'LoadingBox';
 
 export const EmptyBox = ({label}) => <Box>
-  <div className="text-center">No {label} Found</div>
+  <div className="text-center">{label ? `No ${label} Found` : 'Not Found'}</div>
 </Box>;
 EmptyBox.displayName = 'EmptyBox';
 
