@@ -30,7 +30,7 @@ class DeleteModal extends PromiseComponent {
     this.handlePromise( k8sKill(kind, resource, {}, json)).then(() => {
       this.props.close();
       // If we are currently on the deleted resource's page, redirect to the resource list page
-      const re = new RegExp(`/${resource.metadata.name}.*$`);
+      const re = new RegExp(`/${resource.metadata.name}(/|$)`);
       if (re.test(window.location.pathname)) {
         history.push( resource.metadata.namespace
           ? formatNamespacedRouteForResource(kind.path)
