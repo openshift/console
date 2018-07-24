@@ -42,10 +42,10 @@ class NavLink extends React.PureComponent {
   }
 
   render() {
-    const { isActive, id, name, target, onClick } = this.props;
+    const { isActive, isExternal, id, name, target, onClick } = this.props;
 
-    return <li className={classNames('co-m-nav-link', { active: isActive })}>
-      <Link id={id} to={this.to} target={target} onClick={onClick}>{name}</Link>
+    return <li className={classNames('co-m-nav-link', { active: isActive, 'co-m-nav-link__external': isExternal })}>
+      <Link id={id} to={this.to} target={target} onClick={onClick} className={classNames({'co-external-link': isExternal})}>{name}</Link>
     </li>;
   }
 }
@@ -275,17 +275,19 @@ const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
   </div>;
 });
 
-const TroubleshootingNavSection_ = ({urls, closeMenu}) => {
+const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const alertManagerURL = urls[MonitoringRoutes.AlertManager];
-  return <NavSection text="Troubleshooting" icon="fa fa-life-ring">
+  const grafanaURL = urls[MonitoringRoutes.Grafana];
+  return <NavSection text="Monitoring" icon="pficon pficon-screen">
     <HrefLink href="/search" name="Search" onClick={closeMenu} startsWith={searchStartsWith} />
     <ResourceNSLink resource="events" name="Events" onClick={closeMenu} />
-    {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Prometheus" onClick={closeMenu} />}
-    {alertManagerURL && <HrefLink href={alertManagerURL} target="_blank" name="Prometheus Alerts" onClick={closeMenu} />}
+    {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
+    {alertManagerURL && <HrefLink href={alertManagerURL} target="_blank" name="Alerts" onClick={closeMenu} isExternal={true} />}
+    {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
   </NavSection>;
 };
-const TroubleshootingNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager)(TroubleshootingNavSection_);
+const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
 const logout = e => {
   e && e.preventDefault();
@@ -400,7 +402,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="services" name="Services" onClick={this.close} />
           </NavSection>
 
-          <TroubleshootingNavSection closeMenu={this.close} />
+          <MonitoringNavSection closeMenu={this.close} />
 
           <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
