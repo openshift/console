@@ -695,7 +695,8 @@ export const CronJobModel: K8sKind = {
   namespaced: true,
   kind: 'CronJob',
   id: 'cronjob',
-  labelPlural: 'Cron Jobs'
+  labelPlural: 'Cron Jobs',
+  propagationPolicy : 'Foreground',
 };
 
 export const StorageClassModel: K8sKind = {
