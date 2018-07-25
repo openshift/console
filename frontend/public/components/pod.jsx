@@ -6,7 +6,7 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
+import { SectionHeading, Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
 import { PodLogs } from './pod-logs';
 import { registerTemplate } from '../yaml-templates';
 import { Line, requirePrometheus } from './graphs';
@@ -186,6 +186,8 @@ const Details = ({obj: pod}) => {
   const securityScan = _.get(pod, 'metadata.labels[secscan/fixables]');
 
   return <React.Fragment>
+    <ScrollToTopOnMount />
+
     <div className="co-m-pane__body">
       <SectionHeading text="Pod Overview" />
       <PodGraphs pod={pod} />
