@@ -4,27 +4,29 @@ import { connect } from 'react-redux';
 
 import { k8sPatch } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
-import { Cog, ResourceIcon } from '../utils';
+import { Cog, EmptyBox, ResourceIcon } from '../utils';
 import { confirmModal } from '../modals';
 
-export const RulesList = ({rules, name, namespace}) => <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
-  <div className="row co-m-table-grid__head">
-    <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">
-      Actions
+export const RulesList = ({rules, name, namespace}) => _.isEmpty(rules)
+  ? <EmptyBox label="Rules" />
+  : <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
+    <div className="row co-m-table-grid__head">
+      <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">
+        Actions
+      </div>
+      <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">
+        API Groups
+      </div>
+      <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
+        Resources
+      </div>
     </div>
-    <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">
-      API Groups
+    <div className="co-m-table-grid__body">
+      {rules.map((rule, i) => <div className="row co-resource-list__item" key={i}>
+        <Rule {...rule} name={name} namespace={namespace} i={i} />
+      </div>)}
     </div>
-    <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
-      Resources
-    </div>
-  </div>
-  <div className="co-m-table-grid__body">
-    {rules.map((rule, i) => <div className="row co-resource-list__item" key={i}>
-      <Rule {...rule} name={name} namespace={namespace} i={i} />
-    </div>)}
-  </div>
-</div>;
+  </div>;
 
 const Actions = ({verbs}) => {
   let actions = [];
